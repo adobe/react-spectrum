@@ -365,6 +365,10 @@ footer li:last-child:after {
   margin-bottom: 0;
 }
 
+.propTable td[data-column="CSS Selector"] code {
+  white-space: nowrap;
+}
+
 .type-description {
   margin-top: 0;
 }
@@ -555,6 +559,14 @@ details[open] > summary svg {
   transform: rotate(90deg);
 }
 
+.nav summary {
+  margin-left: -12px !important;
+}
+
+.nav details:last-child {
+  margin-bottom: 60px;
+}
+
 .headingAnchor {
   transition: all 125ms ease-in-out;
   margin-left: 4px;
@@ -711,6 +723,10 @@ h2.sectionHeader {
   /* Hide the table of contents */
   main {
     margin-right: 0;
+  }
+
+  .propTable td[data-column="CSS Selector"] code {
+    white-space: normal;
   }
 }
 
@@ -913,4 +929,10 @@ h2.sectionHeader {
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 24px;
   }
+}
+
+.cardGroup[data-size=small] {
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  max-width: 800px;
 }

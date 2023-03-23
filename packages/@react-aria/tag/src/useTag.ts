@@ -26,9 +26,9 @@ export interface TagAria {
   /** Props for the tag visible label (if any). */
   labelProps: DOMAttributes,
   /** Props for the tag cell element. */
-  tagProps: DOMAttributes,
+  gridCellProps: DOMAttributes,
   /** Props for the tag row element. */
-  tagRowProps: DOMAttributes,
+  rowProps: DOMAttributes,
   /** Props for the tag clear button. */
   clearButtonProps: AriaButtonProps
 }
@@ -60,7 +60,7 @@ export function useTag<T>(props: TagProps<T>, state: TagGroupState<T>, ref: RefO
   let onRemove = chain(props.onRemove, state.onRemove);
 
   let onKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'Delete' || e.key === 'Backspace' || e.key === ' ') {
+    if (e.key === 'Delete' || e.key === 'Backspace') {
       onRemove(item.key);
       e.preventDefault();
     }
@@ -73,17 +73,18 @@ export function useTag<T>(props: TagProps<T>, state: TagGroupState<T>, ref: RefO
       'aria-label': removeString,
       'aria-labelledby': `${buttonId} ${labelId}`,
       id: buttonId,
-      onPress: () => allowsRemoving && onRemove ? onRemove(item.key) : null
+      onPress: () => allowsRemoving && onRemove ? onRemove(item.key) : null,
+      excludeFromTabOrder: true
     },
     labelProps: {
       id: labelId
     },
-    tagRowProps: {
+    rowProps: {
       ...rowProps,
       tabIndex: (isFocused || state.selectionManager.focusedKey == null) ? 0 : -1,
       onKeyDown: allowsRemoving ? onKeyDown : null
     },
-    tagProps: mergeProps(domProps, gridCellProps, {
+    gridCellProps: mergeProps(domProps, gridCellProps, {
       'aria-errormessage': props['aria-errormessage'],
       'aria-label': props['aria-label']
     })
