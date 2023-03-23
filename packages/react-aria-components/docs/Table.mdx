@@ -101,6 +101,11 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
   min-height: 100px;
   align-self: start;
 
+  &[data-focus-visible] {
+    border-color: var(--highlight-background);
+    box-shadow: 0 0 0 1px var(--highlight-background);
+  }
+
   .react-aria-TableHeader {
     &:after {
       content: '';
@@ -175,13 +180,6 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
 
     &[aria-disabled] {
       color: var(--text-color-disabled);
-    }
-
-    .react-aria-Checkbox {
-      --selected-color: white;
-      --selected-color-pressed: #ddd;
-      --checkmark-color: slateblue;
-      --background-color: var(--highlight-background);
     }
   }
 
@@ -288,6 +286,13 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
   }
 }
 
+:where(.react-aria-Row) .react-aria-Checkbox {
+  --selected-color: white;
+  --selected-color-pressed: #ddd;
+  --checkmark-color: slateblue;
+  --background-color: var(--highlight-background);
+}
+
 .react-aria-Button {
   background: transparent;
   border: none;
@@ -335,9 +340,9 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
 
     --deselected-color: ButtonBorder;
     --deselected-color-pressed: ButtonBorder;
-    --selected-color: ButtonFace;
-    --selected-color-pressed: ButtonFace;
-    --checkmark-color: ButtonText;
+    --selected-color: Highlight;
+    --selected-color-pressed: Highlight;
+    --checkmark-color: HighlightText;
     --spectrum-alias-background-color-default: Canvas;
     --focus-ring-color: Highlight;
 
@@ -346,6 +351,12 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
       --deselected-color: GrayText;
       --selected-color: GrayText;
     }
+  }
+
+  .react-aria-Row .react-aria-Checkbox {
+    --selected-color: ButtonFace;
+    --selected-color-pressed: ButtonFace;
+    --checkmark-color: ButtonText;
   }
 
   .react-aria-Button {
@@ -469,7 +480,9 @@ The states and selectors for each component used in a `Table` are documented bel
 
 ### Table
 
-A `Table` can be targeted with the `.react-aria-Table` CSS selector, or by overriding with a custom `className`.
+A `Table` can be targeted with the `.react-aria-Table` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.TableRenderProps.properties} />
 
 ### TableHeader
 
@@ -1180,7 +1193,9 @@ function Example() {
   width: 150px;
   padding: 4px 8px;
   display: flex;
+  align-items: center;
   justify-content: space-between;
+  gap: 4px;
   background: slateblue;
   color: white;
   border-radius: 4px;

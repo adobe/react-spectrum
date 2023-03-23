@@ -59,7 +59,7 @@ import {Meter, Label} from 'react-aria-components';
 
 ```css
 .react-aria-Meter {
-  --bar-color: var(--spectrum-global-color-gray-400);
+  --bar-color: var(--spectrum-global-color-gray-500);
   --text-color: var(--spectrum-alias-text-color);
 
   display: grid;
@@ -76,14 +76,14 @@ import {Meter, Label} from 'react-aria-components';
 
   .bar {
     grid-area: bar;
-    background: var(--bar-color);
+    box-shadow: inset 0px 0px 0px 1px var(--bar-color);
     height: 10px;
     border-radius: 5px;
     overflow: hidden;
   }
 
   .fill {
-    background: orange;
+    background: forestgreen;
     height: 100%;
   }
 }

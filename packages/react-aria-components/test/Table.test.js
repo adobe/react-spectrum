@@ -548,6 +548,31 @@ describe('Table', () => {
     expect(cell).toHaveTextContent('No results');
   });
 
+  it('supports removing rows', () => {
+    let {getAllByRole, rerender} = render(<DynamicTable tableBodyProps={{rows}} />);
+
+    userEvent.tab();
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+    fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+
+    let body = getAllByRole('rowgroup')[1];
+    let gridRows = within(body).getAllByRole('row');
+    expect(gridRows).toHaveLength(4);
+    let cell = within(gridRows[1]).getAllByRole('rowheader')[0];
+    expect(cell).toHaveTextContent('Program Files');
+    expect(document.activeElement).toBe(cell);
+
+    rerender(<DynamicTable tableBodyProps={{items: [rows[0], ...rows.slice(2)]}} />);
+
+    gridRows = within(body).getAllByRole('row');
+    expect(gridRows).toHaveLength(3);
+    cell = within(gridRows[1]).getAllByRole('rowheader')[0];
+    expect(cell).toHaveTextContent('bootmgr');
+    expect(document.activeElement).toBe(cell);
+  });
+
   describe('drag and drop', () => {
     it('should support drag button slot', () => {
       let {getAllByRole} = render(<DraggableTable />);
