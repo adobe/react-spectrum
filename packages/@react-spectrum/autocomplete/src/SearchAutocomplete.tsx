@@ -165,7 +165,7 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
           isLoading={loadingState === 'loadingMore'}
           onLoadMore={onLoadMore}
           renderEmptyState={() => isAsync && (
-            <span>
+            <span className={classNames(searchAutocompleteStyles, 'no-results')}>
               {stringFormatter.format('noResults')}
             </span>
           )} />
@@ -225,6 +225,10 @@ function _SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>, ref
         classNames(
           styles,
           'spectrum-InputGroup-input-circleLoader'
+        ),
+        classNames(
+          searchStyles,
+          'spectrum-Search-circleLoader'
         )
       )} />
   );
@@ -307,6 +311,7 @@ function _SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>, ref
             classNames(
               searchStyles,
               'spectrum-Search',
+              'spectrum-Search--loadable',
               'spectrum-Textfield',
               {
                 'is-disabled': isDisabled,
