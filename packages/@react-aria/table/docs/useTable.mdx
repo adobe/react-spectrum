@@ -842,7 +842,7 @@ As mentioned previously, we first need to call <TypeLink links={statelyDocs.link
 We'll pass the state returned by <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableColumnResizeState} /> along with any user defined `onResize` handlers
 to our `ResizableTableColumnHeaders` so it can be used by <TypeLink links={docs.links} type={docs.exports.useTableColumnResize} />.
 
-The various style changes below are to add a wrapper div so the table is scrollable when the row content overflows and to support table body/column widths greater than the 400px applied to the table itself.
+The various style changes below are to add a wrapper div so the table is scrollable when the row content overflows and to support table body/column widths greater than the 300px applied to the table itself.
 
 ```tsx example export=true render=false
 import {useCallback} from 'react';
@@ -873,7 +873,7 @@ function ResizableColumnsTable(props) {
 
   let layoutState = useTableColumnResizeState({
     // Matches the width of the table itself
-    tableWidth: 400,
+    tableWidth: 300,
     getDefaultMinWidth
   }, state);
   /*- end highlight -*/
@@ -925,7 +925,7 @@ function ResizableColumnsTable(props) {
 
 ```css
 .aria-table-wrapper {
-  width: 400px;
+  width: 300px;
   overflow: auto;
 }
 
