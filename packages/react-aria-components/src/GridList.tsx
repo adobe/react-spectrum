@@ -287,6 +287,12 @@ function GridListItem({item}) {
   // eslint-disable-next-line
   }, []);
 
+  useEffect(() => {
+    if (!item.textValue) {
+      console.warn('A `textValue` prop is required for <Item> elements with non-plain text children in order to support accessibility features such as type to select.');
+    }
+  }, [item.textValue]);
+
   return (
     <>
       {dragAndDropHooks?.useDropIndicator &&

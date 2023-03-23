@@ -431,8 +431,9 @@ function MyGridList<T extends object>({children, ...props}: GridListProps<T>) {
 }
 
 function MyItem({children, ...props}: ItemProps) {
+  let textValue = typeof children === 'string' ? children : undefined;
   return (
-    <Item textValue={String(children)} {...props}>
+    <Item textValue={textValue} {...props}>
       {({selectionMode, selectionBehavior, allowsDragging}) => <>
         {/* Add elements for drag and drop and selection. */}
         {allowsDragging && <Button slot="drag">≡</Button>}
@@ -483,7 +484,7 @@ function ExampleList(props: GridListProps<ItemValue>) {
   return (
     <MyGridList aria-label="Example dynamic collection List" selectionMode="multiple" items={rows} {...props}>
       {item => (
-        <MyItem>
+        <MyItem textValue={item.name}>
           {item.name}
           <Button aria-label="Info" onPress={() => alert(`Info for ${item.name}...`)}>ⓘ</Button>
         </MyItem>
@@ -627,7 +628,7 @@ function AsyncList() {
       aria-label="Async loading ListView example"
       items={list.items}>
       {(item) => (
-        <MyItem key={item.name}>{item.name}</MyItem>
+        <MyItem id={item.name}>{item.name}</MyItem>
       )}
     </MyGridList>
   );
@@ -1132,7 +1133,7 @@ function DroppableGridList() {
 
   return (
     <MyGridList aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop items here"}>
-      {item => <MyItem>{React.createElement(item.style, null, item.name)}</MyItem>}
+      {item => <MyItem textValue={item.name}>{React.createElement(item.style, null, item.name)}</MyItem>}
     </MyGridList>
   );
 }
@@ -1181,7 +1182,7 @@ function Example() {
   return (
     <MyGridList aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop images here"}>
       {item => (
-        <MyItem>
+        <MyItem textValue={item.name}>
           <div className="image-item">
             <img src={item.url} />
             <span>{item.name}</span>
@@ -1263,7 +1264,7 @@ function Example() {
   return (
     <MyGridList aria-label="Droppable list" items={files} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop directory here"}>
       {item => (
-        <MyItem id={item.name}>
+        <MyItem id={item.name} textValue={item.name}>
           <div className="dir-item">
             {item.kind === 'directory' ? <Folder /> : <File />}
             <span>{item.name}</span>
@@ -1466,7 +1467,7 @@ function Example() {
   return (
     <MyGridList aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop PNGs here"}>
       {item => (
-        <MyItem>
+        <MyItem textValue={item.name}>
           <div className="image-item">
             <img src={item.url} />
             <span>{item.name}</span>
