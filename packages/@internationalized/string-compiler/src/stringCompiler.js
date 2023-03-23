@@ -65,6 +65,10 @@ function compileParts(parts, inline = false, pluralValue = '') {
         res += '${formatter.number(' + pluralValue + ')}';
         usesFormatter = true;
         break;
+      case TYPE.number:
+        res += '${formatter.number(args.' + part.value + ')}';
+        usesFormatter = true;
+        break;
       default:
         throw new Error('Unsupported message type: ' + part.type);
     }
