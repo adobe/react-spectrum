@@ -369,6 +369,7 @@
   }
 
   .react-spectrum-ListViewItem-thumbnail {
+    box-sizing: content-box;
     grid-area: thumbnail;
     justify-items: center;
     padding-inline-end: var(--spectrum-global-dimension-size-100);
@@ -703,6 +704,8 @@
   }
 
   .react-spectrum-ListViewItem-draghandle-container {
+    box-sizing: content-box;
+
     .react-spectrum-ListViewItem-draghandle-button {
       /* Use CanvasText, so that focus ring color on drag handle button matches
       focus ring color for other interactive elements within the listview item. */

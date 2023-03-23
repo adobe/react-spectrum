@@ -289,7 +289,9 @@ If you will use a Tooltip in multiple places in your app, you can wrap all of th
 This example wraps `Tooltip` and all of its children together into a single component.
 
 ```tsx example export=true
-function MyTooltip({children, ...props}) {
+import type {TooltipProps} from 'react-aria-components';
+
+function MyTooltip({children, ...props}: TooltipProps) {
   return (
     <Tooltip {...props}>
       <OverlayArrow>

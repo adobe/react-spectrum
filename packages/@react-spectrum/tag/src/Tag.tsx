@@ -87,11 +87,8 @@ function TagRemoveButton(props) {
   let {styleProps} = useStyleProps(props);
 
   return (
-    <span
-      {...styleProps}>
-      <ClearButton
-        preventFocus
-        {...props} />
+    <span {...styleProps}>
+      <ClearButton {...props} />
     </span>
   );
 }

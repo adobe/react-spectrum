@@ -247,7 +247,7 @@ function Example() {
     {id: 3, label: 'March 2022 Assets'}
   ]);
 
-  let navigate = (item) => {
+  let navigate = (item: typeof breadcrumbs[0]) => {
     setBreadcrumbs(breadcrumbs.slice(0, breadcrumbs.indexOf(item) + 1));
   };
 

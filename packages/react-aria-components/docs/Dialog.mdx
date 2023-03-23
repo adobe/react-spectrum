@@ -273,7 +273,7 @@ A `Dialog` may be placed within a [Popover](Popover.html) to display it in conte
 import {Popover, OverlayArrow} from 'react-aria-components';
 
 <DialogTrigger>
-  <Button aria-label="Help">?⃝</Button>
+  <Button aria-label="Help">ⓘ</Button>
   <Popover>
     <OverlayArrow>
       <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
@@ -291,18 +291,21 @@ import {Popover, OverlayArrow} from 'react-aria-components';
 
 ```css
 .react-aria-Popover {
-  border: 1px solid var(--spectrum-global-color-gray-400);
+  --background-color: var(--page-background);
+  --border-color: var(--spectrum-global-color-gray-400);
+
+  border: 1px solid var(--border-color);
   box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
   border-radius: 6px;
-  background: var(--page-background);
+  background: var(--background-color);
   outline: none;
   padding: 30px;
   max-width: 250px;
 
   & .react-aria-OverlayArrow svg {
     display: block;
-    fill: var(--page-background);
-    stroke: var(--spectrum-global-color-gray-400);
+    fill: var(--background-color);
+    stroke: var(--border-color);
     stroke-width: 1px;
   }
 
@@ -353,6 +356,13 @@ import {Popover, OverlayArrow} from 'react-aria-components';
   to {
     transform: translateY(0);
     opacity: 1;
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Popover {
+    --background-color: Canvas;
+    --border-color: ButtonBorder;
   }
 }
 ```
