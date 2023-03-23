@@ -316,7 +316,6 @@ describe('TagGroup', function () {
     Name                         | props
     ${'on `Delete` keypress'}    | ${{keyPress: 'Delete'}}
     ${'on `Backspace` keypress'} | ${{keyPress: 'Backspace'}}
-    ${'on `space` keypress'}     | ${{keyPress: ' '}}
   `('Remove tag $Name', function ({Name, props}) {
     let {getByText} = render(
       <Provider theme={theme}>
@@ -333,6 +332,23 @@ describe('TagGroup', function () {
     fireEvent.keyUp(tag, {key: props.keyPress});
     expect(onRemoveSpy).toHaveBeenCalledTimes(1);
     expect(onRemoveSpy).toHaveBeenCalledWith('1');
+  });
+
+  it('Space does not trigger removal', function () {
+    let {getByText} = render(
+      <Provider theme={theme}>
+        <TagGroup aria-label="tag group" allowsRemoving onRemove={onRemoveSpy}>
+          <Item key="1" aria-label="Tag 1">Tag 1</Item>
+          <Item key="2" aria-label="Tag 2">Tag 2</Item>
+          <Item key="3" aria-label="Tag 3">Tag 3</Item>
+        </TagGroup>
+      </Provider>
+    );
+
+    let tag = getByText('Tag 1');
+    fireEvent.keyDown(tag, {key: ' '});
+    fireEvent.keyUp(tag, {key: ' '});
+    expect(onRemoveSpy).toHaveBeenCalledTimes(0);
   });
 
   it('should remove tag when remove button is clicked', function () {
@@ -360,7 +376,6 @@ describe('TagGroup', function () {
     Name                         | props
     ${'on `Delete` keypress'}    | ${{keyPress: 'Delete'}}
     ${'on `Backspace` keypress'} | ${{keyPress: 'Backspace'}}
-    ${'on `space` keypress'}     | ${{keyPress: ' '}}
   `('Can move focus after removing tag $Name', function ({Name, props}) {
 
     function TagGroupWithDelete(props) {

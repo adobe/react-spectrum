@@ -60,7 +60,7 @@ export function useTag<T>(props: TagProps<T>, state: TagGroupState<T>, ref: RefO
   let onRemove = chain(props.onRemove, state.onRemove);
 
   let onKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'Delete' || e.key === 'Backspace' || e.key === ' ') {
+    if (e.key === 'Delete' || e.key === 'Backspace') {
       onRemove(item.key);
       e.preventDefault();
     }
