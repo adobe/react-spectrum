@@ -50,7 +50,6 @@ export function Table(props) {
     tableWidth: 300,
     getDefaultMinWidth
   }, state);
-  let {widths} = layoutState;
 
   return (
     <table
@@ -85,7 +84,7 @@ export function Table(props) {
                 key={cell.key}
                 cell={cell}
                 state={state}
-                widths={widths} />
+                layoutState={layoutState} />
             ))}
           </ResizableTableRow>
         ))}
@@ -120,7 +119,6 @@ function ResizableTableHeaderRow({item, state, children}) {
 }
 
 function ResizableTableColumnHeader({column, state, layoutState, onResizeStart, onResize, onResizeEnd}) {
-  let {widths} = layoutState;
   let ref = useRef(null);
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
   let allowsResizing = column.props.allowsResizing;
@@ -130,7 +128,7 @@ function ResizableTableColumnHeader({column, state, layoutState, onResizeStart, 
       {...mergeProps(columnHeaderProps)}
       className={classNames(ariaStyles, 'aria-table-headerCell')}
       style={{
-        width: widths.get(column.key)
+        width: layoutState.getColumnWidth(column.key)
       }}
       ref={ref}>
       <div style={{display: 'flex', position: 'relative'}}>
@@ -156,9 +154,9 @@ function Button(props) {
 function Resizer(props) {
   let {column, layoutState, onResizeStart, onResize, onResizeEnd} = props;
   let ref = useRef();
-  let {resizerProps, inputProps} = useTableColumnResize({
+  let {resizerProps, inputProps, isResizing} = useTableColumnResize({
     column,
-    label: 'Resizer',
+    'aria-label': 'Resizer',
     onResizeStart,
     onResize,
     onResizeEnd
@@ -168,7 +166,7 @@ function Resizer(props) {
   return (
     <div
       role="presentation"
-      className={classNames(ariaStyles, 'aria-table-resizer', {'focus': isFocusVisible, 'resizing': layoutState.resizingColumn === column.key})}
+      className={classNames(ariaStyles, 'aria-table-resizer', {'focus': isFocusVisible, 'resizing': isResizing})}
       {...resizerProps}>
       <VisuallyHidden>
         <input
@@ -211,7 +209,7 @@ function ResizableTableRow({item, children, state}) {
   );
 }
 
-function ResizableTableCell({cell, state, widths}) {
+function ResizableTableCell({cell, state, layoutState}) {
   let ref = useRef();
   let {gridCellProps} = useTableCell({node: cell}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
@@ -221,7 +219,7 @@ function ResizableTableCell({cell, state, widths}) {
     <td
       {...mergeProps(gridCellProps, focusProps)}
       className={classNames(ariaStyles, 'aria-table-cell', {'focus': isFocusVisible})}
-      style={{width: widths.get(column.key)}}
+      style={{width: layoutState.getColumnWidth(column.key)}}
       ref={ref}>
       {cell.rendered}
     </td>

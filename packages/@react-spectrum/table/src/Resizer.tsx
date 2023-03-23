@@ -63,7 +63,7 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
 
   let {inputProps, resizerProps} = useTableColumnResize<unknown>(
     mergeProps(props, {
-      label: stringFormatter.format('columnResizer'),
+      'aria-label': stringFormatter.format('columnResizer'),
       isDisabled: isEmpty,
       shouldResizeOnFocus: true,
       onResizeStart: () => {
