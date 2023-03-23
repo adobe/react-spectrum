@@ -181,13 +181,6 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
     &[aria-disabled] {
       color: var(--text-color-disabled);
     }
-
-    .react-aria-Checkbox {
-      --selected-color: white;
-      --selected-color-pressed: #ddd;
-      --checkmark-color: slateblue;
-      --background-color: var(--highlight-background);
-    }
   }
 
   .react-aria-Cell,
@@ -293,6 +286,13 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
   }
 }
 
+:where(.react-aria-Row) .react-aria-Checkbox {
+  --selected-color: white;
+  --selected-color-pressed: #ddd;
+  --checkmark-color: slateblue;
+  --background-color: var(--highlight-background);
+}
+
 .react-aria-Button {
   background: transparent;
   border: none;
@@ -340,9 +340,9 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
 
     --deselected-color: ButtonBorder;
     --deselected-color-pressed: ButtonBorder;
-    --selected-color: ButtonFace;
-    --selected-color-pressed: ButtonFace;
-    --checkmark-color: ButtonText;
+    --selected-color: Highlight;
+    --selected-color-pressed: Highlight;
+    --checkmark-color: HighlightText;
     --spectrum-alias-background-color-default: Canvas;
     --focus-ring-color: Highlight;
 
@@ -351,6 +351,12 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
       --deselected-color: GrayText;
       --selected-color: GrayText;
     }
+  }
+
+  .react-aria-Row .react-aria-Checkbox {
+    --selected-color: ButtonFace;
+    --selected-color-pressed: ButtonFace;
+    --checkmark-color: ButtonText;
   }
 
   .react-aria-Button {
