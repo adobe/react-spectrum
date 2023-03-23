@@ -225,10 +225,6 @@ function _SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>, ref
         classNames(
           styles,
           'spectrum-InputGroup-input-circleLoader'
-        ),
-        classNames(
-          searchStyles,
-          'spectrum-Search-circleLoader'
         )
       )} />
   );
@@ -297,6 +293,10 @@ function _SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>, ref
               'spectrum-InputGroup--invalid': validationState === 'invalid' && !isDisabled,
               'is-hovered': isHovered
             },
+            classNames(
+              searchAutocompleteStyles,
+              'searchautocomplete'
+            ),
             className
           )
         }>
