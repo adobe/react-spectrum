@@ -270,10 +270,6 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
                 'spectrum-Search--invalid': validationState === 'invalid' && !isDisabled,
                 'spectrum-Search--valid': validationState === 'valid' && !isDisabled
               }
-            ),
-            classNames(
-              styles,
-              'spectrum-InputGroup-field'
             )
           )
         }>
