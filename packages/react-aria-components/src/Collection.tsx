@@ -265,7 +265,7 @@ export class ElementNode<T> extends BaseNode<T> {
 
   constructor(type: string, ownerDocument: Document<T, any>) {
     super(ownerDocument);
-    this.node = new NodeValue(TYPE_MAP[type] || type, ++id);
+    this.node = new NodeValue(TYPE_MAP[type] || type, `react-aria-${++id}`);
   }
 
   get index() {
