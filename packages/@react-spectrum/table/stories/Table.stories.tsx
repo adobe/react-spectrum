@@ -1791,3 +1791,47 @@ export const ResizingControlledHideHeader: TableStory = {
   `}}
 };
 
+export const ColumnHeaderFocusRingTable = {
+  render: (args) => <LoadingTable />,
+  storyName: 'column header focus after loading',
+  parameters: {
+    description: {
+      data: 'Column header should remain focused even if the table collections empties/loading state changes to loading'
+    }
+  }
+};
+
+const allItems = [
+  {key: 'sam', name: 'Sam', height: 66, birthday: 'May 3'},
+  {key: 'julia', name: 'Julia', height: 70, birthday: 'February 10'}
+];
+
+function LoadingTable() {
+  const [items, setItems] = useState(allItems);
+  const [loadingState, setLoadingState] = useState(undefined);
+  const onSortChange = () => {
+    setItems([]);
+    setLoadingState('loading');
+    setTimeout(() => {
+      setItems([...items.slice(0, 1)]);
+      setLoadingState(undefined);
+    }, 1000);
+  };
+
+  return (
+    <TableView aria-label="Table" selectionMode="multiple" onSortChange={onSortChange} height={300}>
+      <TableHeader>
+        <Column key="name">Name</Column>
+        <Column key="height" allowsSorting>Height</Column>
+        <Column key="birthday">Birthday</Column>
+      </TableHeader>
+      <TableBody items={items} loadingState={loadingState}>
+        {item => (
+          <Row key={item.key}>
+            {column => <Cell>{item[column]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}

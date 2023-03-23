@@ -164,6 +164,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       }
     };
   } else if (isDisabled) {
+    itemProps.tabIndex = key === manager.focusedKey ? 0 : undefined;
     itemProps.onMouseDown = (e) => {
       // Prevent focus going to the body when clicking on a disabled item.
       e.preventDefault();
