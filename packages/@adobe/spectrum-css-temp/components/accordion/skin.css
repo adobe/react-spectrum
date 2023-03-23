@@ -64,10 +64,6 @@ governing permissions and limitations under the License.
       color: var(--spectrum-accordion-text-color-disabled);
       background-color: transparent;
     }
-
-    + .spectrum-Accordion-itemIndicator {
-      color: var(--spectrum-accordion-icon-color-disabled);
-    }
   }
 }
 @media (forced-colors: active) {
