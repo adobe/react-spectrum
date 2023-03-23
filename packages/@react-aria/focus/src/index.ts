@@ -15,6 +15,7 @@ export {FocusRing} from './FocusRing';
 export {FocusableProvider, useFocusable} from './useFocusable';
 export {useFocusRing} from './useFocusRing';
 export {focusSafely} from './focusSafely';
+export {useHasTabbableChild} from './useHasTabbableChild';
 
 export type {FocusScopeProps, FocusManager, FocusManagerOptions} from './FocusScope';
 export type {FocusRingProps} from './FocusRing';

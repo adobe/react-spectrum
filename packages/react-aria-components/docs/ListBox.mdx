@@ -86,6 +86,11 @@ import {ListBox, Item} from 'react-aria-components';
     font-style: italic;
   }
 
+  &[data-focus-visible] {
+    border-color: var(--highlight-background);
+    box-shadow: 0 0 0 1px var(--highlight-background);
+  }
+
   .react-aria-Section:not(:first-child) {
     margin-top: 12px;
   }
@@ -264,7 +269,9 @@ The states and selectors for each component used in a `ListBox` are documented b
 
 ### ListBox
 
-A `ListBox` can be targeted with the `.react-aria-ListBox` CSS selector, or by overriding with a custom `className`.
+A `ListBox` can be targeted with the `.react-aria-ListBox` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.ListBoxRenderProps.properties} />
 
 ### Section
 
@@ -764,7 +771,9 @@ function Example() {
   width: 150px;
   padding: 4px 8px;
   display: flex;
+  align-items: center;
   justify-content: space-between;
+  gap: 4px;
   background: slateblue;
   color: white;
   border-radius: 4px;
@@ -1089,7 +1098,7 @@ function DroppableListBox() {
 
   return (
     <ListBox aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop items here"}>
-      {item => <Item>{React.createElement(item.style, null, item.name)}</Item>}
+      {item => <Item textValue={item.name}>{React.createElement(item.style, null, item.name)}</Item>}
     </ListBox>
   );
 }
@@ -1138,7 +1147,7 @@ function Example() {
   return (
     <ListBox aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop items here"}>
       {item => (
-        <Item>
+        <Item textValue={item.name}>
           <div className="image-item">
             <img src={item.url} />
             <span>{item.name}</span>
@@ -1220,7 +1229,7 @@ function Example() {
   return (
     <ListBox aria-label="Droppable list" items={files} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop items here"}>
       {item => (
-        <Item id={item.name}>
+        <Item id={item.name} textValue={item.name}>
           <div className="dir-item">
             {item.kind === 'directory' ? <Folder /> : <File />}
             <span>{item.name}</span>
@@ -1423,7 +1432,7 @@ function Example() {
   return (
     <ListBox aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop items here"}>
       {item => (
-        <Item>
+        <Item textValue={item.name}>
           <div className="image-item">
             <img src={item.url} />
             <span>{item.name}</span>
