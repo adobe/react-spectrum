@@ -11,7 +11,6 @@
  */
 
 import {CollectionStateBase, Node, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
-import type {DragAndDropHooks} from '@react-spectrum/dnd';
 import {GridState, useGridState} from '@react-stately/grid';
 import {TableCollection as ITableCollection} from '@react-types/table';
 import {Key, useMemo, useState} from 'react';
@@ -24,6 +23,8 @@ export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   collection: ITableCollection<T>,
   /** Whether the row selection checkboxes should be displayed. */
   showSelectionCheckboxes: boolean,
+  /** Whether the row drag button should be displayed. */
+  showDragButtons: boolean,
   /** The current sorted column and direction. */
   sortDescriptor: SortDescriptor,
   /** Calls the provided onSortChange handler with the provided column key and sort direction. */
@@ -44,10 +45,10 @@ export interface CollectionBuilderContext<T> {
 export interface TableStateProps<T> extends CollectionStateBase<T, ITableCollection<T>>, MultipleSelectionStateProps, Sortable {
   /** Whether the row selection checkboxes should be displayed. */
   showSelectionCheckboxes?: boolean,
-  /**
-   * The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the ListView.
+  /** Whether the row drag button should be displayed.
+   * @private
    */
-  dragAndDropHooks?: DragAndDropHooks['dragAndDropHooks']
+  showDragButtons: boolean
 }
 
 const OPPOSITE_SORT_DIRECTION = {
@@ -61,16 +62,15 @@ const OPPOSITE_SORT_DIRECTION = {
  */
 export function useTableState<T extends object>(props: TableStateProps<T>): TableState<T> {
   let [isKeyboardNavigationDisabled, setKeyboardNavigationDisabled] = useState(false);
-  let {selectionMode = 'none', dragAndDropHooks} = props;
-  let isTableDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
+  let {selectionMode = 'none'} = props;
 
   let context = useMemo(() => ({
     showSelectionCheckboxes: props.showSelectionCheckboxes && selectionMode !== 'none',
-    showDragButtons: isTableDraggable,
+    showDragButtons: props.showDragButtons,
     selectionMode,
     columns: []
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }), [props.children, props.showSelectionCheckboxes, selectionMode, isTableDraggable]);
+  }), [props.children, props.showSelectionCheckboxes, selectionMode, props.showDragButtons]);
 
   let collection = useCollection<T, ITableCollection<T>>(
     props,
@@ -88,6 +88,7 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     disabledKeys,
     selectionManager,
     showSelectionCheckboxes: props.showSelectionCheckboxes || false,
+    showDragButtons: props.showDragButtons || false,
     sortDescriptor: props.sortDescriptor,
     isKeyboardNavigationDisabled: collection.size === 0 || isKeyboardNavigationDisabled,
     setKeyboardNavigationDisabled,
