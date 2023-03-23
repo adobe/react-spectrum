@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 import {classNames} from '@react-spectrum/utils';
-import {Direction} from '@react-types/shared';
+import {Direction, Node} from '@react-types/shared';
 import {Flex} from '@react-spectrum/layout';
 import {GridNode} from '@react-types/grid';
 import React from 'react';
@@ -20,7 +20,7 @@ import stylesOverrides from './table.css';
 import type {TableLayout} from '@react-stately/layout';
 
 interface DragPreviewProps<T> {
-  item:  any,
+  item:  Node<T>,
   itemCount: number,
   density: SpectrumTableProps<T>['density'],
   layout: TableLayout<T>,
