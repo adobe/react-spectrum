@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {announce} from '@react-aria/live-announcer';
+import {announce, clearAnnouncer} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
 import {DOMAttributes, InputBase, RangeInputBase, Validation, ValueBase} from '@react-types/shared';
 // @ts-ignore
@@ -132,6 +132,7 @@ export function useSpinButton(
 
   useEffect(() => {
     if (isFocused.current) {
+      clearAnnouncer('assertive');
       announce(textValue, 'assertive');
     }
   }, [textValue]);

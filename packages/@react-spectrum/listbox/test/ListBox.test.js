@@ -110,7 +110,7 @@ describe('ListBox', function () {
     for (let item of items) {
       expect(item).toHaveAttribute('tabindex');
       expect(item).not.toHaveAttribute('aria-selected');
-      expect(item).toHaveAttribute('aria-disabled');
+      expect(item).not.toHaveAttribute('aria-disabled');
       expect(item).toHaveAttribute('aria-posinset', '' + i++);
       expect(item).toHaveAttribute('aria-setsize');
     }
@@ -713,6 +713,36 @@ describe('ListBox', function () {
     let tree = renderComponent({'data-testid': 'test'});
     let listbox = tree.getByRole('listbox');
     expect(listbox).toHaveAttribute('data-testid', 'test');
+  });
+
+  it('items support custom data attributes', function () {
+    let items = [{key: 0, name: 'Foo'}, {key: 1, name: 'Bar'}];
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <ListBox aria-label="listbox" items={items}>
+          {item => <Item data-name={item.name}>{item.name}</Item>}
+        </ListBox>
+      </Provider>
+    );
+    act(() => jest.runAllTimers());
+    let listbox = getByRole('listbox');
+    let option = within(listbox).getAllByRole('option')[0];
+    expect(option).toHaveAttribute('data-name', 'Foo');
+  });
+
+  it('item id should not get overridden by custom id', function () {
+    let items = [{key: 0, name: 'Foo'}, {key: 1, name: 'Bar'}];
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <ListBox aria-label="listbox" items={items}>
+          {item => <Item id={item.name}>{item.name}</Item>}
+        </ListBox>
+      </Provider>
+    );
+    act(() => jest.runAllTimers());
+    let listbox = getByRole('listbox');
+    let option = within(listbox).getAllByRole('option')[0];
+    expect(option.id).not.toEqual('Foo');
   });
 
   describe('async loading', function () {
