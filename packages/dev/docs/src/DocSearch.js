@@ -5,7 +5,7 @@ import DOMPurify from 'dompurify';
 import {Icon} from '@react-spectrum/icon';
 import {Item, SearchAutocomplete, Section} from '@react-spectrum/autocomplete';
 import News from '@spectrum-icons/workflow/News';
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Text} from '@adobe/react-spectrum';
 import {ThemeProvider} from './ThemeSwitcher';
 
@@ -73,6 +73,24 @@ export default function DocSearch() {
   const [loadingState, setLoadingState] = useState(null);
   const [predictions, setPredictions] = useState(null);
   const [suggestions, setSuggestions] = useState(null);
+
+  const searchAutocompleteRef = useRef();
+
+  useEffect(() => {
+    // Focus search input when user presses Ctrl/Cmd + K
+    let handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        searchAutocompleteRef.current.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   let updatePredictions = ({hits}) => {
     setPredictions(hits);
@@ -230,8 +248,6 @@ export default function DocSearch() {
       window.location.href = `${window.location.hostname === 'reactspectrum.blob.core.windows.net' ? window.location.href.replace(/(.+\/docs\/)(.+)/, '$1') : '/'}${url.replace('https://react-spectrum.adobe.com/', '')}`;
     }
   };
-
-  const searchAutocompleteRef = useRef();
 
   return (
     <ThemeProvider UNSAFE_className={docsStyle.docSearchBoxThemeProvider}>
