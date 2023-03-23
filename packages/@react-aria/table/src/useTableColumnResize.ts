@@ -26,14 +26,16 @@ export interface TableColumnResizeAria {
   /** Props for the visually hidden input element. */
   inputProps: DOMAttributes,
   /** Props for the resizer element. */
-  resizerProps: DOMAttributes
+  resizerProps: DOMAttributes,
+  /** Whether this column is currently being resized. */
+  isResizing: boolean
 }
 
 export interface AriaTableColumnResizeProps<T> {
   /** An object representing the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader). Contains all the relevant information that makes up the column header. */
   column: GridNode<T>,
   /** Aria label for the hidden input. Gets read when resizing. */
-  label: string,
+  'aria-label': string,
   /**
    * Ref to the trigger if resizing was started from a column header menu. If it's provided,
    * focus will be returned there when resizing is done. If it isn't provided, it is assumed that the resizer is
@@ -59,7 +61,7 @@ export interface AriaTableColumnResizeState<T> extends Omit<TableColumnResizeSta
  * @param ref - The ref attached to the resizer's visually hidden input element.
  */
 export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, state: AriaTableColumnResizeState<T>, ref: RefObject<HTMLInputElement>): TableColumnResizeAria {
-  let {column: item, triggerRef, isDisabled, onResizeStart, onResize, onResizeEnd} = props;
+  let {column: item, triggerRef, isDisabled, onResizeStart, onResize, onResizeEnd, 'aria-label': ariaLabel} = props;
   const stringFormatter = useLocalizedStringFormatter(intlMessages);
   let id = useId();
   let isResizing = useRef(false);
@@ -174,7 +176,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
   let description = triggerRef?.current == null && (modality === 'keyboard' || modality === 'virtual') && !isResizing.current ? stringFormatter.format('resizerDescription') : undefined;
   let descriptionProps = useDescription(description);
   let ariaProps = {
-    'aria-label': props.label,
+    'aria-label': ariaLabel,
     'aria-orientation': 'horizontal' as 'horizontal',
     'aria-labelledby': `${id} ${getColumnHeaderId(state.tableState, item.key)}`,
     'aria-valuetext': stringFormatter.format('columnSize', {value}),
@@ -265,6 +267,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
         disabled: isDisabled
       },
       ariaProps
-    )
+    ),
+    isResizing: state.resizingColumn === item.key
   };
 }
