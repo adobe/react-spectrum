@@ -51,6 +51,7 @@ svg.spectrum-Table-sortedIcon {
 }
 
 .spectrum-Table-headWrapper {
+  box-sizing: content-box;
   border-inline-start-width: 1px;
   border-inline-start-style: solid;
   border-inline-end-width: 1px;
