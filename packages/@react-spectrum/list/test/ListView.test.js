@@ -636,18 +636,20 @@ describe('ListView', function () {
     expect(progressbar.parentNode.parentNode.parentNode.style.height).toBe('40px');
   });
 
-  it('should render empty state', function () {
+  it('should render empty state', async function () {
     let {getByText} = render(<ListView aria-label="List" renderEmptyState={renderEmptyState} />);
+    await act(() => Promise.resolve()); // wait for MutationObserver in useHasTabbableChild or we get act warnings
     expect(getByText('No results')).toBeTruthy();
   });
 
-  it('should allow you to tab into ListView body if empty with link', function () {
+  it('should allow you to tab into ListView body if empty with link', async function () {
     let {getByRole} = render(
       <>
         <ActionButton>Toggle</ActionButton>
         <ListView aria-label="List" renderEmptyState={renderEmptyState}>{[]}</ListView>
       </>
     );
+    await act(() => Promise.resolve());
     let toggleButton = getByRole('button');
     let link = getByRole('link');
 
