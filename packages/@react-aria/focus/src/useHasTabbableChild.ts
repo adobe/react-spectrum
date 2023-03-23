@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {getFocusableTreeWalker} from '@react-aria/focus';
+import {getFocusableTreeWalker} from './FocusScope';
 import {RefObject, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 
