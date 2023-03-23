@@ -113,6 +113,9 @@ storiesOf('Button/ActionButton', module)
       </View>
     )
   )
+
+storiesOf('Languages/ActionButton', module)
+  .addParameters({chromaticProvider: {locales: ['en-US', 'ja-JP']}})
   .add(
     'Japanese, icon + text, staticColor: white',
     () => (

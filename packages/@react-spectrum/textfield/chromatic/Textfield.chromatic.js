@@ -18,7 +18,7 @@ import {storiesOf} from '@storybook/react';
 import {TextField} from '../';
 
 storiesOf('Textfield', module)
-  .addParameters({chromaticProvider: {locales: ['en-US', 'ar-AE', 'zh-TW']}})
+  .addParameters({chromaticProvider: {locales: ['en-US', 'ar-AE']}})
   .add(
     'Default',
     () => render()
@@ -83,14 +83,6 @@ storiesOf('Textfield', module)
     () => render({icon: <Info />, validationState: 'invalid', width: 275})
   )
   .add(
-    'value: 測試, icon: Info, labelPosition: side, validationState: valid',
-    () => render({value: '測試', icon: <Info />, labelPosition: 'side', validationState: 'valid'})
-  )
-  .add(
-    'value: اختبار, isRequired: false, necessityIndicator: label',
-    () => render({value: 'اختبار', isRequired: false, necessityIndicator: 'label'})
-  )
-  .add(
     'contextual help',
     args => render({...args, contextualHelp: (
       <ContextualHelp>
@@ -123,7 +115,7 @@ storiesOf('Languages/Textfield', module)
     chromaticProvider: {
       colorSchemes: ['light'],
       express: false,
-      locales: ['en-US', 'ar-AE', 'fr-FR', 'de-DE'],
+      locales: ['en-US', 'ar-AE', 'fr-FR', 'de-DE', 'zh-TW'],
       scales: ['large']
     }
   })
@@ -137,6 +129,14 @@ storiesOf('Languages/Textfield', module)
         <TextField label="Äpfel" value="Äpfel" />
       </Flex>
     )
+  )
+  .add(
+    'value: 測試, icon: Info, labelPosition: side, validationState: valid',
+    () => render({value: '測試', icon: <Info />, labelPosition: 'side', validationState: 'valid'})
+  )
+  .add(
+    'value: اختبار, isRequired: false, necessityIndicator: label',
+    () => render({value: 'اختبار', isRequired: false, necessityIndicator: 'label'})
   );
 
 // allow some stories where disabled styles probably won't affect anything to turn that off, mostly to reduce clutter

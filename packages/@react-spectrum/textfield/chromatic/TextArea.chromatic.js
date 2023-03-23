@@ -86,14 +86,6 @@ storiesOf('TextArea', module)
     () => render({icon: <Info />, validationState: 'invalid', height: 350})
   )
   .add(
-    'value: 測試, icon: Info, labelPosition: side, validationState: valid',
-    () => render({value: '測試', icon: <Info />, labelPosition: 'side', validationState: 'valid'})
-  )
-  .add(
-    'value: اختبار, isRequired: false, necessityIndicator: label',
-    () => render({value: 'اختبار', isRequired: false, necessityIndicator: 'label'})
-  )
-  .add(
     'contextual help',
     args => render({...args, contextualHelp: (
       <ContextualHelp>
@@ -120,6 +112,24 @@ storiesOf('TextArea', module)
       </ContextualHelp>
     )}, false)
   );
+
+storiesOf('Languages/TextArea', module)
+  .addParameters({
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      express: false,
+      locales: ['en-US', 'ar-AE', 'zh-TW'],
+      scales: ['large']
+    }
+  })
+  .add(
+    'value: 測試, icon: Info, labelPosition: side, validationState: valid',
+    () => render({value: '測試', icon: <Info />, labelPosition: 'side', validationState: 'valid'})
+  )
+  .add(
+    'value: اختبار, isRequired: false, necessityIndicator: label',
+    () => render({value: 'اختبار', isRequired: false, necessityIndicator: 'label'})
+  )
 
 // allow some stories where disabled styles probably won't affect anything to turn that off, mostly to reduce clutter
 function render(props = {}, disabled = true) {
