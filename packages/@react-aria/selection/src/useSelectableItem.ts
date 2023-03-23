@@ -165,7 +165,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     };
   } else if (isDisabled) {
     // if the last focused key is the current item, keep the element focusable
-    itemProps.tabIndex = key === manager.focusedKey ? 0 : undefined;
+    itemProps.tabIndex = manager.isFocused && manager.focusedKey === key ? 0 : undefined;
     itemProps.onMouseDown = (e) => {
       // Prevent focus going to the body when clicking on a disabled item.
       e.preventDefault();
