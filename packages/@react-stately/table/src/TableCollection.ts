@@ -193,7 +193,7 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
         value: null,
         textValue: '',
         level: 0,
-        index: 1,
+        index: opts?.showDragButtons ? 1 : 0,
         hasChildNodes: false,
         rendered: null,
         childNodes: [],
