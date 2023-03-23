@@ -14,6 +14,7 @@ import {classNames, useFocusableRef, useIsMobileDevice, useResizeObserver, useUn
 import {ClearButton} from '@react-spectrum/button';
 import {DOMRefValue, FocusableRef} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
+import {filterDOMProps, useLayoutEffect} from '@react-aria/utils';
 import {FocusRing} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -41,7 +42,6 @@ import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.
 import {useComboBoxState} from '@react-stately/combobox';
 import {useFilter, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useHover} from '@react-aria/interactions';
-import {useLayoutEffect} from '@react-aria/utils';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useSearchAutocomplete} from '@react-aria/autocomplete';
 
@@ -211,6 +211,7 @@ function _SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>, ref
   } = props;
   let {hoverProps, isHovered} = useHover({});
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let domProps = filterDOMProps(props);
   let timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   let [showLoading, setShowLoading] = useState(false);
 
@@ -305,6 +306,7 @@ function _SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>, ref
           )
         }>
         <TextFieldBase
+          {...domProps}
           inputProps={inputProps}
           inputRef={inputRef}
           UNSAFE_className={
