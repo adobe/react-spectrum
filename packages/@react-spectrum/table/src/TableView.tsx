@@ -527,7 +527,8 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
             let rowHeaderColumnKeys = state.collection.rowHeaderColumnKeys;
             let itemCount = dragState.draggingKeys.size;
             let maxWidth = bodyRef.current.getBoundingClientRect().width;
-            return <SpectrumDragPreview layout={layout} item={item} itemCount={itemCount} density={density} direction={direction} maxWidth={maxWidth} rowHeaderColumnKeys={rowHeaderColumnKeys} />;
+            let children = state.collection.getChildren(item.key);
+            return <SpectrumDragPreview layout={layout} item={item} children={children} itemCount={itemCount} density={density} direction={direction} maxWidth={maxWidth} rowHeaderColumnKeys={rowHeaderColumnKeys} />;
           }}
         </DragPreview>
       }

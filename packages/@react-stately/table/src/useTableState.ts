@@ -48,7 +48,7 @@ export interface TableStateProps<T> extends CollectionStateBase<T, ITableCollect
   /** Whether the row drag button should be displayed.
    * @private
    */
-  showDragButtons: boolean
+  showDragButtons?: boolean
 }
 
 const OPPOSITE_SORT_DIRECTION = {

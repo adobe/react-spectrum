@@ -21,6 +21,7 @@ import type {TableLayout} from '@react-stately/layout';
 
 interface DragPreviewProps<T> {
   item:  Node<T>,
+  children: Iterable<Node<T>>,
   itemCount: number,
   density: SpectrumTableProps<T>['density'],
   layout: TableLayout<T>,
@@ -64,6 +65,7 @@ export function TableCellPreview(props: TableCellPreviewProps) {
 export function DragPreview(props: DragPreviewProps<unknown>) {
   let {
     item,
+    children,
     itemCount,
     density,
     layout,
@@ -72,7 +74,8 @@ export function DragPreview(props: DragPreviewProps<unknown>) {
   } = props;
   let {height} = layout.getLayoutInfo(item.key).rect;
   let isDraggingMultiple = itemCount > 1;
-  let cells = [...item.childNodes].filter(cell => rowHeaderColumnKeys.has(cell.column.key));
+  // @ts-ignore
+  let cells = [...children].filter(cell => rowHeaderColumnKeys.has(cell.column.key));
 
   return (
     <Flex
