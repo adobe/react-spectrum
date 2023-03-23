@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-.spectrum-Tags-item {
+.spectrum-Tag {
   color: var(--spectrum-tag-text-color);
   background-color: var(--spectrum-tag-background-color);
   border-color: var(--spectrum-tag-border-color);
@@ -27,41 +27,6 @@ governing permissions and limitations under the License.
     border-color: var(--spectrum-tag-border-color-key-focus);
     &:after {
       box-shadow: 0 0 0 var(--spectrum-focus-ring-border-size) var(--spectrum-tag-border-color-key-focus);
-    }
-  }
-
-  &.is-selected {
-    background-color: var(--spectrum-tag-background-color-selected);
-    color: var(--spectrum-tag-text-color-selected);
-    border-color: var(--spectrum-tag-border-color-selected);
-    &:hover {
-      background-color: var(--spectrum-tag-background-color-selected-hover);
-    }
-
-    &.focus-ring {
-      box-shadow: 0 0 0 calc(2 * var(--spectrum-focus-ring-border-size)) var(--spectrum-tag-border-color-selected-key-focus);
-      border-color: var(--spectrum-tag-text-color-selected-key-focus);
-      &:after {
-        box-shadow: 0 0 0 calc(2 * var(--spectrum-focus-ring-border-size)) var(--spectrum-tag-border-color-selected-key-focus);
-      }
-    }
-    &.is-invalid {
-      border-color: var(--spectrum-tag-border-color-error-selected);
-      .spectrum-Tag-icon,
-      .spectrum-Tags-itemLabel,
-      .spectrum-Tag-removeButton {
-        color: var(--spectrum-tag-text-color-error-selected);
-      }
-      &.focus-ring {
-        box-shadow: 0 0 0 calc(2 * var(--spectrum-focus-ring-border-size)) var(--spectrum-tag-border-color-key-focus);
-        border-color: var(--spectrum-tag-border-color-error-selected);
-        &:after {
-          box-shadow: 0 0 0 calc(2 * var(--spectrum-focus-ring-border-size)) var(--spectrum-tag-border-color-key-focus);
-        }
-      }
-      &:hover {
-        border-color: var(--spectrum-tag-border-color-selected);
-      }
     }
   }
 
@@ -83,7 +48,6 @@ governing permissions and limitations under the License.
     .spectrum-Tag-removeButton {
       color: var(--spectrum-tag-border-color-error);
     }
-
   }
 
   &.is-disabled {
@@ -91,13 +55,13 @@ governing permissions and limitations under the License.
     background-color: var(--spectrum-tag-background-color-disabled);
     border-color: var(--spectrum-tag-border-color-disabled);
 
-    .spectrum-Tag-avatar {
+    .spectrum-TagItem-avatar {
       /* Duplicated so state is on the tag */
       opacity: var(--spectrum-avatar-small-opacity-disabled);
     }
   }
 
-  &.is-removable {
+  &.spectrum-Tag--removable {
     &:hover {
       color: var(--spectrum-tag-removable-text-color-hover);
     }
@@ -134,20 +98,6 @@ governing permissions and limitations under the License.
       }
     }
 
-    &.is-selected {
-      color: var(--spectrum-tag-removable-text-color-selected);
-      &.is-focused {
-         color: var(--spectrum-tag-removable-text-color-selected-key-focus);
-      }
-      .spectrum-Tag-removeButton {
-        color: var(--spectrum-tag-removable-button-icon-color-selected);
-        &:hover {
-           background-color: var(--spectrum-tag-removable-button-background-color-selected-hover);
-           color: var(--spectrum-tag-removable-button-icon-color-selected-hover);
-        }
-      }
-    }
-
     .spectrum-Tag-removeButton {
       &.is-focused {
          border: 2px solid var(--spectrum-tag-removable-border-color-key-focus);
@@ -164,7 +114,7 @@ governing permissions and limitations under the License.
 }
 
 @media (forced-colors: active) {
-  .spectrum-Tags-item {
+  .spectrum-Tag {
     forced-color-adjust: none;
     --spectrum-tag-background-color: ButtonFace;
     --spectrum-tag-background-color-disabled: ButtonFace;
