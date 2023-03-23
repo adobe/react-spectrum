@@ -19,16 +19,6 @@ import {Item, SearchAutocomplete} from '@react-spectrum/autocomplete';
 import {mergeProps} from '@react-aria/utils';
 import React from 'react';
 
-let actions = {
-  onOpenChange: action('onOpenChange'),
-  onInputChange: action('onInputChange'),
-  onBlur: action('onBlur'),
-  onFocus: action('onFocus'),
-  onChange: action('onChange'),
-  onSubmit: action('onSubmit'),
-  onClear: action('onClear')
-};
-
 type SearchAutocompleteStory = ComponentStoryObj<typeof SearchAutocomplete>;
 
 export default {
