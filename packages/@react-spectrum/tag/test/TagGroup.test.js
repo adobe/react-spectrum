@@ -256,7 +256,7 @@ describe('TagGroup', function () {
     expect(tag).not.toHaveAttribute('icon');
     expect(tag).not.toHaveAttribute('unsafe_classname');
     expect(tag).toHaveAttribute('class', expect.stringContaining('test-class'));
-    expect(tag).toHaveAttribute('class', expect.stringContaining('-item'));
+    expect(tag).toHaveAttribute('class', expect.stringContaining('spectrum-Tag'));
     expect(tag).toHaveAttribute('role', 'row');
     expect(tag).toHaveAttribute('tabIndex', '0');
   });
