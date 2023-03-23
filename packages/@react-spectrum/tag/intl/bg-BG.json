@@ -1,5 +1,5 @@
 {
   "actions": "Действия",
   "hideButtonLabel": "Показване на по-малко",
-  "showAllButtonLabel": "Показване на всички ({tagCount})"
+  "showAllButtonLabel": "Показване на всички ({tagCount, number})"
 }
