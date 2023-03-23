@@ -1,5 +1,5 @@
 {
   "actions": "Eylemler",
   "hideButtonLabel": "Daha az göster",
-  "showAllButtonLabel": "Tümünü göster ({tagCount})"
+  "showAllButtonLabel": "Tümünü göster ({tagCount, number})"
 }

@@ -1,5 +1,5 @@
 {
   "actions": "Radnje",
   "hideButtonLabel": "Prikaži manje",
-  "showAllButtonLabel": "Prikaži sve ({tagCount})"
+  "showAllButtonLabel": "Prikaži sve ({tagCount, number})"
 }
