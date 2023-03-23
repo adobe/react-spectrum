@@ -19,7 +19,6 @@ import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Keyboard} from '@react-spectrum/text';
 
 ```tsx import
-import {useToastState} from '@react-stately/toast';
 import {useToastRegion} from '@react-aria/toast';
 ```
 
@@ -104,10 +103,16 @@ function ToastProvider({children}) {
 The `ToastRegion` component will be rendered when there are toasts to display. It uses the <TypeLink links={docs.links} type={docs.exports.useToastRegion} /> hook to create a landmark region, allowing keyboard and screen reader users to easily navigate to it.
 
 ```tsx example export=true render=false
+import type {AriaToastRegionProps} from '@react-aria/toast';
+import type {ToastState} from '@react-stately/toast';
 import {useToastRegion} from '@react-aria/toast';
 
-function ToastRegion({state, ...props}) {
-  let ref = React.useRef();
+interface ToastRegionProps<T> extends AriaToastRegionProps {
+  state: ToastState<T>
+}
+
+function ToastRegion<T>({state, ...props}: ToastRegionProps<T>) {
+  let ref = React.useRef(null);
   let {regionProps} = useToastRegion(props, state, ref);
 
   return (
@@ -123,13 +128,18 @@ function ToastRegion({state, ...props}) {
 Finally, we need the `Toast` component to render an individual toast within a `ToastRegion`, built with <TypeLink links={docs.links} type={docs.exports.useToast} />.
 
 ```tsx example render=false export=true
+import type {AriaToastProps} from '@react-aria/toast';
 import {useToast} from '@react-aria/toast';
 
 // Reuse the Button from your component library. See below for details.
 import {Button} from 'your-component-library';
 
-function Toast({state, ...props}) {
-  let ref = React.useRef();
+interface ToastProps<T> extends AriaToastProps<T> {
+  state: ToastState<T>
+}
+
+function Toast<T>({state, ...props}: ToastProps<T>) {
+  let ref = React.useRef(null);
   let {toastProps, titleProps, closeButtonProps} = useToast(props, state, ref);
 
   return (
@@ -208,7 +218,7 @@ The `Button` component is used in the above example to close a toast. It is buil
 import {useButton} from '@react-aria/button';
 
 function Button(props) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {buttonProps} = useButton(props, ref);
   return <button {...buttonProps} ref={ref}>{props.children}</button>;
 }
@@ -356,7 +366,7 @@ function ToastRegion() {
 }
 
 function Toast({state, ...props}) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {toastProps, titleProps, closeButtonProps} = useToast(props, state, ref);
 
   return (

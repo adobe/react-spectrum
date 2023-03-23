@@ -277,6 +277,7 @@ exclude the root of the droppable list from the drop targets reachable via any o
 please see the [API section](#high-level-drop-handlers-and-options) below.
 
 ```tsx example export=true render=false
+import type {TextDropItem} from '@react-spectrum/dnd';
 import Folder from '@spectrum-icons/illustrations/Folder';
 import {Text} from '@react-spectrum/text';
 import {useDragAndDrop} from '@react-spectrum/dnd';
@@ -302,7 +303,7 @@ function DroppableList() {
         target
       } = e;
       let processedItems = await Promise.all(
-        items.map(async item => JSON.parse(await item.getText('adobe-app')))
+        items.map(async (item: TextDropItem) => JSON.parse(await item.getText('adobe-app')))
       );
 
       if (target.dropPosition === 'before') {
@@ -317,7 +318,7 @@ function DroppableList() {
         target
       } = e;
       let processedItems = await Promise.all(
-        items.map(async item => JSON.parse(await item.getText('adobe-app')))
+        items.map(async (item: TextDropItem) => JSON.parse(await item.getText('adobe-app')))
       );
       let targetItem = list.getItem(target.key);
       list.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
@@ -356,6 +357,7 @@ see the [API section](#low-level-drop-handlers-and-options) below and the `useDr
 The ListView below allows external directories to be dropped at its root level or between existing items. Files of a specific type can be dropped on certain pre-existing directories only.
 
 ```tsx example
+import type {FileDropItem, DirectoryDropItem} from '@react-spectrum/dnd';
 import {DIRECTORY_DRAG_TYPE} from '@react-spectrum/dnd';
 
 function DroppableListLowLevelAPI() {
@@ -373,14 +375,14 @@ function DroppableListLowLevelAPI() {
         e.items
           .filter((item) => {
             // Check if dropped item is accepted.
-            if (e.target.type === 'item' && e.target.dropPosition === 'on') {
+            if (item.kind === 'file' && e.target.type === 'item' && e.target.dropPosition === 'on') {
               let folder = list.getItem(e.target.key);
               return folder.accept.includes(item.type);
             }
 
             return item.kind === 'directory';
           })
-          .map(async (item) => {
+          .map(async (item: FileDropItem | DirectoryDropItem) => {
             // Collect child count from dropped directories.
             let contains = 0;
             let accept;

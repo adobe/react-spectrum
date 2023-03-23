@@ -26,6 +26,7 @@ import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
+import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 
 storiesOf('DialogTrigger', module)
   .addParameters({providerSwitcher: {status: 'notice'}})
@@ -362,6 +363,27 @@ storiesOf('DialogTrigger', module)
   .add(
     'adjustable dialog',
     () => <AdjustableDialog />
+  )
+  .add(
+    'withTooltip',
+    () => (
+      <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
+        <DialogTrigger isDismissable>
+          <ActionButton>Trigger</ActionButton>
+          <Dialog>
+            <Heading>Has tooltip</Heading>
+            <Divider />
+            <Content>
+              <p>Pressing escape when Tooltip is open closes Tooltip and not Dialog too.</p>
+              <TooltipTrigger>
+                <Button variant="cta">Has tooltip</Button>
+                <Tooltip>Press escape</Tooltip>
+              </TooltipTrigger>
+            </Content>
+          </Dialog>
+        </DialogTrigger>
+      </div>
+    )
   );
 
 function render({width = 'auto', ...props}) {

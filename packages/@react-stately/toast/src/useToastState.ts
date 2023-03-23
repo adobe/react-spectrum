@@ -12,7 +12,7 @@
 
 import {useCallback, useMemo} from 'react';
 // Shim to support React 17 and below.
-import {useSyncExternalStore} from 'use-sync-external-store/shim';
+import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
 
 export interface ToastStateProps {
   /** The maximum number of toasts to display at a time. */
@@ -79,7 +79,7 @@ export function useToastState<T>(props: ToastStateProps = {}): ToastState<T> {
 export function useToastQueue<T>(queue: ToastQueue<T>): ToastState<T> {
   let subscribe = useCallback(fn => queue.subscribe(fn), [queue]);
   let getSnapshot = useCallback(() => queue.visibleToasts, [queue]);
-  let visibleToasts = useSyncExternalStore(subscribe, getSnapshot);
+  let visibleToasts = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 
   return {
     visibleToasts,
