@@ -955,7 +955,6 @@ to the header element.
 import {Button} from 'your-component-library';
 
 function ResizableTableColumnHeader({column, state, layoutState, onResizeStart, onResize, onResizeEnd}) {
-  let {widths} = layoutState;
   let allowsResizing = column.props.allowsResizing;
   let ref = useRef(null);
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
@@ -964,7 +963,7 @@ function ResizableTableColumnHeader({column, state, layoutState, onResizeStart, 
     <th
       {...columnHeaderProps}
       className="aria-table-headerCell"
-      style={{width: widths.get(column.key)}}
+      style={{width: layoutState.getColumnWidth(column.key)}}
       ref={ref}>
       <div style={{display: 'flex', position: 'relative'}}>
         <Button className="aria-table-headerTitle">
@@ -1045,9 +1044,9 @@ import {useTableColumnResize} from '@react-aria/table';
 function Resizer(props) {
   let {column, layoutState, onResizeStart, onResize, onResizeEnd} = props;
   let ref = useRef(null);
-  let {resizerProps, inputProps} = useTableColumnResize({
+  let {resizerProps, inputProps, isResizing} = useTableColumnResize({
     column,
-    label: 'Resizer',
+    'aria-label': 'Resizer',
     onResizeStart,
     onResize,
     onResizeEnd
@@ -1057,7 +1056,7 @@ function Resizer(props) {
   return (
     <div
       role="presentation"
-      className={`aria-table-resizer ${isFocusVisible ? 'focus' : ''} ${layoutState.resizingColumn === column.key ? 'resizing' : ''}`}
+      className={`aria-table-resizer ${isFocusVisible ? 'focus' : ''} ${isResizing ? 'resizing' : ''}`}
       {...resizerProps}>
       <VisuallyHidden>
         <input
