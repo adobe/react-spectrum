@@ -41,7 +41,7 @@ export function useCheckboxGroupItem(props: AriaCheckboxGroupItemProps, state: C
     }
   });
 
-  let {inputProps} = useCheckbox({
+  let res = useCheckbox({
     ...props,
     isReadOnly: props.isReadOnly || state.isReadOnly,
     isDisabled: props.isDisabled || state.isDisabled,
@@ -49,8 +49,9 @@ export function useCheckboxGroupItem(props: AriaCheckboxGroupItemProps, state: C
   }, toggleState, inputRef);
 
   return {
+    ...res,
     inputProps: {
-      ...inputProps,
+      ...res.inputProps,
       'aria-describedby': [
         state.validationState === 'invalid' ? checkboxGroupErrorMessageIds.get(state) : null,
         checkboxGroupDescriptionIds.get(state)

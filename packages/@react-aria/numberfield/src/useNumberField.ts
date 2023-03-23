@@ -85,6 +85,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     decrement,
     decrementToMin,
     numberValue,
+    inputValue,
     commit
   } = state;
 
@@ -98,6 +99,14 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
       commit();
     }
   });
+
+  let numberFormatter = useNumberFormatter(formatOptions);
+  let intlOptions = useMemo(() => numberFormatter.resolvedOptions(), [numberFormatter]);
+
+  // Replace negative textValue formatted using currencySign: 'accounting'
+  // with a textValue that can be announced using a minus sign.
+  let textValueFormatter = useNumberFormatter({...formatOptions, currencySign: undefined});
+  let textValue = useMemo(() => isNaN(numberValue) ? '' : textValueFormatter.format(numberValue), [textValueFormatter, numberValue]);
 
   let {
     spinButtonProps,
@@ -115,7 +124,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
       onDecrement: decrement,
       onDecrementToMin: decrementToMin,
       value: numberValue,
-      textValue: state.inputValue
+      textValue
     }
   );
 
@@ -144,8 +153,6 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   // Browsers and operating systems are quite inconsistent about what keys are available, however.
   // We choose between numeric and decimal based on whether we allow negative and fractional numbers,
   // and based on testing on various devices to determine what keys are available in each inputMode.
-  let numberFormatter = useNumberFormatter(formatOptions);
-  let intlOptions = useMemo(() => numberFormatter.resolvedOptions(), [numberFormatter]);
   let hasDecimals = intlOptions.maximumFractionDigits > 0;
   let hasNegative = isNaN(state.minValue) || state.minValue < 0;
   let inputMode: TextInputDOMProps['inputMode'] = 'numeric';
@@ -183,7 +190,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     isReadOnly,
     isRequired,
     validationState,
-    value: state.inputValue,
+    value: inputValue,
     defaultValue: undefined, // defaultValue already used to populate state.inputValue, unneeded here
     autoComplete: 'off',
     'aria-label': props['aria-label'] || null,

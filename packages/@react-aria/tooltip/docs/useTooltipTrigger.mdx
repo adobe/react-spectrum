@@ -106,7 +106,7 @@ function Tooltip({state, ...props}) {
 
 function TooltipButton(props) {
   let state = useTooltipTriggerState(props);
-  let ref = React.useRef();
+  let ref = React.useRef(null);
 
   // Get props for the trigger and its tooltip
   let {triggerProps, tooltipProps} = useTooltipTrigger(props, state, ref);

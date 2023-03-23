@@ -23,7 +23,7 @@ import {useLocale} from '@react-aria/i18n';
 
 export interface TagGroupAria {
   /** Props for the tag grouping element. */
-  tagGroupProps: DOMAttributes,
+  gridProps: DOMAttributes,
   /** Props for the tag group's visible label (if any). */
   labelProps: DOMAttributes,
   /** Props for the tag group description element, if any. */
@@ -62,7 +62,7 @@ export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: TagGroupState
   });
   let domProps = filterDOMProps(props);
   return {
-    tagGroupProps: mergeProps(gridProps, domProps, {
+    gridProps: mergeProps(gridProps, domProps, {
       role: state.collection.size ? 'grid' : null,
       'aria-atomic': false,
       'aria-relevant': 'additions',

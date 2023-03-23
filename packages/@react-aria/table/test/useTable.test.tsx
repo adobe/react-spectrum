@@ -66,7 +66,7 @@ function Table(props) {
       <TableRowGroup type="thead" style={{borderBottom: '2px solid gray', display: 'block'}}>
         {collection.headerRows.map(headerRow => (
           <TableHeaderRow key={headerRow.key} item={headerRow} state={state}>
-            {[...headerRow.childNodes].map(column =>
+            {[...state.collection.getChildren(headerRow.key)].map(column =>
               column.props.isSelectionCell
                 ? <TableSelectAllCell key={column.key} column={column} state={state} />
                 : <TableColumnHeader key={column.key} column={column} state={state} />
@@ -75,9 +75,9 @@ function Table(props) {
         ))}
       </TableRowGroup>
       <TableRowGroup ref={bodyRef} type="tbody" style={{display: 'block', overflow: 'auto', maxHeight: '200px'}}>
-        {[...collection.body.childNodes].map(row => (
+        {[...collection].map(row => (
           <TableRow key={row.key} item={row} state={state}>
-            {[...row.childNodes].map(cell =>
+            {[...state.collection.getChildren(row.key)].map(cell =>
               cell.props.isSelectionCell
                 ? <TableCheckboxCell key={cell.key} cell={cell} state={state} />
                 : <TableCell key={cell.key} cell={cell} state={state} />
