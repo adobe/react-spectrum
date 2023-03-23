@@ -45,6 +45,7 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
     key
   } = item;
   let domProps = filterDOMProps(item.props);
+  delete domProps.id;
   let state = useContext(ListBoxContext);
 
   let ref = useRef<HTMLDivElement>();

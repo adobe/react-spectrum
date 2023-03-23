@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
-:root {
+.spectrum-Radio {
   --spectrum-radio-radius: calc(var(--spectrum-radio-circle-diameter) / 2);
   --spectrum-radio-border-width-checked: calc(calc(var(--spectrum-radio-circle-diameter) / 2) - calc(var(--spectrum-radio-circle-dot-size) / 2));
 

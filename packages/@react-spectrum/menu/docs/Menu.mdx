@@ -167,7 +167,7 @@ function Example() {
           <Item key='Console'>Console</Item>
         </Menu>
       </MenuTrigger>
-      <p>Current selection (controlled): {[...selected].join(', ')}</p>
+      <p>Current selection (controlled): {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
     </>
   );
 }
