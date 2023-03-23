@@ -6,7 +6,7 @@ import {CheckboxContext} from './Checkbox';
 import {ContextValue, defaultSlot, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useTableState} from 'react-stately';
 import {DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
-import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
+import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 import {TableCollection as ITableCollection, TableProps as SharedTableProps} from '@react-types/table';
@@ -290,18 +290,20 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
           [InternalTableContext, {state, dragAndDropHooks, dragState, dropState}],
           [DropIndicatorContext, {render: TableDropIndicator}]
         ]}>
-        <table
-          {...filterDOMProps(props)}
-          {...renderProps}
-          {...mergeProps(gridProps, focusProps, droppableCollection?.collectionProps)}
-          ref={ref}
-          slot={props.slot}
-          data-drop-target={isRootDropTarget || undefined}
-          data-focused={isFocused || undefined}
-          data-focus-visible={isFocusVisible || undefined}>
-          <TableHeaderRowGroup collection={collection} />
-          <TableBodyRowGroup collection={collection} isDroppable={isListDroppable} />
-        </table>
+        <FocusScope>
+          <table
+            {...filterDOMProps(props)}
+            {...renderProps}
+            {...mergeProps(gridProps, focusProps, droppableCollection?.collectionProps)}
+            ref={ref}
+            slot={props.slot}
+            data-drop-target={isRootDropTarget || undefined}
+            data-focused={isFocused || undefined}
+            data-focus-visible={isFocusVisible || undefined}>
+            <TableHeaderRowGroup collection={collection} />
+            <TableBodyRowGroup collection={collection} isDroppable={isListDroppable} />
+          </table>
+        </FocusScope>
         {dragPreview}
       </Provider>
       <TableOptionsContext.Provider value={ctx}>

@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, ListKeyboardDelegate, mergeProps, useFocusRing, useGridList, useGridListItem, useGridListSelectionCheckbox, useHover, useVisuallyHidden, VisuallyHidden} from 'react-aria';
+import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useGridList, useGridListItem, useGridListSelectionCheckbox, useHover, useVisuallyHidden, VisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
 import {CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
@@ -191,28 +191,30 @@ function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<H
   }
 
   return (
-    <div
-      {...filterDOMProps(props)}
-      {...renderProps}
-      {...mergeProps(gridProps, focusProps, droppableCollection?.collectionProps, emptyStatePropOverrides)}
-      ref={ref}
-      slot={props.slot}
-      data-drop-target={isRootDropTarget || undefined}
-      data-empty={state.collection.size === 0 || undefined}
-      data-focused={isFocused || undefined}
-      data-focus-visible={isFocusVisible || undefined}>
-      <Provider
-        values={[
-          [InternalGridListContext, {state, dragAndDropHooks, dragState, dropState}],
-          [DropIndicatorContext, {render: GridListDropIndicator}]
-        ]}>
-        {isListDroppable && <RootDropIndicator />}
-        {children}
-      </Provider>
-      {emptyState}
-      {dragPreview}
-      {portal}
-    </div>
+    <FocusScope>
+      <div
+        {...filterDOMProps(props)}
+        {...renderProps}
+        {...mergeProps(gridProps, focusProps, droppableCollection?.collectionProps, emptyStatePropOverrides)}
+        ref={ref}
+        slot={props.slot}
+        data-drop-target={isRootDropTarget || undefined}
+        data-empty={state.collection.size === 0 || undefined}
+        data-focused={isFocused || undefined}
+        data-focus-visible={isFocusVisible || undefined}>
+        <Provider
+          values={[
+            [InternalGridListContext, {state, dragAndDropHooks, dragState, dropState}],
+            [DropIndicatorContext, {render: GridListDropIndicator}]
+          ]}>
+          {isListDroppable && <RootDropIndicator />}
+          {children}
+        </Provider>
+        {emptyState}
+        {dragPreview}
+        {portal}
+      </div>
+    </FocusScope>
   );
 }
 
