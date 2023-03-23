@@ -264,6 +264,10 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
     --text-color: ButtonText;
     --text-color-disabled: GrayText;
     --focus-ring-color: Highlight;
+
+    .react-aria-Button:disabled span[aria-hidden] {
+      background: transparent;
+    }
   }
 
   .react-aria-ListBox {
