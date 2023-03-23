@@ -14,7 +14,7 @@ import {Direction, Node} from '@react-types/shared';
 import {Flex} from '@react-spectrum/layout';
 import {GridNode} from '@react-types/grid';
 import React from 'react';
-import {SpectrumTableProps} from '@react-types/table';
+import type {SpectrumTableProps} from './TableView';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
 import type {TableLayout} from '@react-stately/layout';
