@@ -55,7 +55,7 @@ governing permissions and limitations under the License.
     background-color: var(--spectrum-tag-background-color-disabled);
     border-color: var(--spectrum-tag-border-color-disabled);
 
-    .spectrum-TagItem-avatar {
+    .spectrum-Tag-avatar {
       /* Duplicated so state is on the tag */
       opacity: var(--spectrum-avatar-small-opacity-disabled);
     }
