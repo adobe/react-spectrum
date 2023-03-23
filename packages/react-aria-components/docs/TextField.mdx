@@ -239,9 +239,16 @@ If you will use a TextField in multiple places in your app, you can wrap all of 
 This example wraps `TextField` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#description)).
 
 ```tsx example export=true
+import type {TextFieldProps} from 'react-aria-components';
 import {Text} from 'react-aria-components';
 
-function MyTextField({label, description, errorMessage, ...props}) {
+interface MyTextFieldProps extends TextFieldProps {
+  label?: string,
+  description?: string,
+  errorMessage?: string
+}
+
+function MyTextField({label, description, errorMessage, ...props}: MyTextFieldProps) {
   return (
     <TextField {...props}>
       <Label>{label}</Label>
@@ -275,7 +282,7 @@ The `value` prop can be used to make the value controlled. The `onChange` event 
 
 ```tsx example
 function Example() {
-  let [text, setText] = React.useState();
+  let [text, setText] = React.useState('');
 
   return (
     <>

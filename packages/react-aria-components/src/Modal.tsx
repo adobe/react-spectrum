@@ -29,8 +29,8 @@ interface InternalModalContextValue {
   isExiting: boolean
 }
 
-export const ModalContext = createContext<ModalContextValue>(null);
-const InternalModalContext = createContext<InternalModalContextValue>(null);
+export const ModalContext = createContext<ModalContextValue | null>(null);
+const InternalModalContext = createContext<InternalModalContextValue | null>(null);
 
 export interface ModalRenderProps {
   /**
@@ -98,7 +98,7 @@ export const ModalOverlay = forwardRef((props: ModalOverlayProps, ref: Forwarded
   let state = ctx?.state ?? useOverlayTriggerState(props);
 
   let objectRef = useObjectRef(ref);
-  let modalRef = useRef(null);
+  let modalRef = useRef<HTMLDivElement>(null);
   let isOverlayExiting = useExitAnimation(objectRef, state.isOpen);
   let isModalExiting = useExitAnimation(modalRef, state.isOpen);
   let isExiting = isOverlayExiting || isModalExiting;
@@ -159,7 +159,7 @@ interface ModalContentProps extends RenderProps<ModalRenderProps> {
 }
 
 function ModalContent(props: ModalContentProps) {
-  let {modalProps, modalRef, isExiting} = useContext(InternalModalContext);
+  let {modalProps, modalRef, isExiting} = useContext(InternalModalContext)!;
   let mergedRefs = useMemo(() => mergeRefs(props.modalRef, modalRef), [props.modalRef, modalRef]);
 
   let ref = useObjectRef(mergedRefs);
