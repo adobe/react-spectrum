@@ -67,7 +67,7 @@ function compileParts(parts, inline = false, pluralValue = '') {
         break;
       case TYPE.number:
         // TODO: Eventually this will need to support the formatting options that are possible here.
-        // They're in part.parsedOptions. Would require changes to the formatter to support it though.
+        //  They're in part.parsedOptions. Would require changes to the formatter to support it though.
         res += '${formatter.number(args.' + part.value + ')}';
         usesFormatter = true;
         break;
