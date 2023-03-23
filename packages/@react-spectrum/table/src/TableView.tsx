@@ -628,6 +628,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
   }, [collection, domRef, bodyRef, headerRef, layout, state.virtualizer]);
 
   let {virtualizerProps} = useVirtualizer({
+    tabIndex: otherProps.tabIndex,
     focusedKey,
     scrollToItem
   }, state, domRef);
