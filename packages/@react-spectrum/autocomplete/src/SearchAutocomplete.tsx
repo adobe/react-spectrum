@@ -340,7 +340,7 @@ function _SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>, ref
           isLoading={showLoading && (isOpen || menuTrigger === 'manual' || loadingState === 'loading')}
           loadingIndicator={loadingState != null ? loadingCircle : undefined}
           icon={icon}
-          wrapperChildren={(inputValue !== '' && !isReadOnly) ? clearButton : undefined}
+          wrapperChildren={(inputValue !== '' || loadingState === 'filtering' || validationState != null) && !isReadOnly && clearButton}
           disableFocusRing />
       </div>
     </FocusRing>
