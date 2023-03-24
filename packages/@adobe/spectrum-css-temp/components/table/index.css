@@ -359,7 +359,7 @@ svg.spectrum-Table-sortedIcon {
       content: '';
       position: sticky;
       inset-inline-start: 0;
-      height: 100%;
+      height: calc(100% - 1px);
       width: var(--spectrum-table-row-sticky-focus-indicator-width);
       z-index: 4;
       margin-inline-end: calc(var(--spectrum-table-row-sticky-focus-indicator-width) * -1);
