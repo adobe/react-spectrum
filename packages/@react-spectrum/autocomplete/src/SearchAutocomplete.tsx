@@ -328,6 +328,12 @@ function _SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>, ref
             )
           }
           inputClassName={classNames(searchStyles, 'spectrum-Search-input')}
+          validationIconClassName={
+            classNames(
+              searchStyles,
+              'spectrum-Search-validationIcon'
+            )
+          }
           isDisabled={isDisabled}
           isQuiet={isQuiet}
           validationState={validationState}
