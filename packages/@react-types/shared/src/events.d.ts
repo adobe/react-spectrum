@@ -44,7 +44,11 @@ export interface PressEvent {
   /** Whether the meta keyboard modifier was held during the press event. */
   metaKey: boolean,
   /** Whether the alt keyboard modifier was held during the press event. */
-  altKey: boolean
+  altKey: boolean,
+  /** X position relative to the target. */
+  x: number,
+  /** Y position relative to the target. */
+  y: number
 }
 
 export interface LongPressEvent extends Omit<PressEvent, 'type'> {
@@ -58,7 +62,11 @@ export interface HoverEvent {
   /** The pointer type that triggered the hover event. */
   pointerType: 'mouse' | 'pen',
   /** The target element of the hover event. */
-  target: HTMLElement
+  target: HTMLElement,
+  /** X position relative to the target. */
+  x: number,
+  /** Y position relative to the target. */
+  y: number
 }
 
 export interface KeyboardEvents {
