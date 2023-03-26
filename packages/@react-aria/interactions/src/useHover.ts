@@ -117,7 +117,9 @@ export function useHover(props: HoverProps): HoverResult {
         onHoverStart({
           type: 'hoverstart',
           target,
-          pointerType
+          pointerType,
+          x: event.clientX,
+          y: event.clientY
         });
       }
 
@@ -142,7 +144,9 @@ export function useHover(props: HoverProps): HoverResult {
         onHoverEnd({
           type: 'hoverend',
           target,
-          pointerType
+          pointerType,
+          x: event.clientX,
+          y: event.clientY
         });
       }
 
