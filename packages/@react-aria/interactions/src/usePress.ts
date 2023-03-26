@@ -61,7 +61,9 @@ interface EventBase {
   shiftKey: boolean,
   ctrlKey: boolean,
   metaKey: boolean,
-  altKey: boolean
+  altKey: boolean,
+  clientX: number,
+  clientY: number
 }
 
 export interface PressResult {
@@ -138,7 +140,9 @@ export function usePress(props: PressHookProps): PressResult {
           shiftKey: originalEvent.shiftKey,
           metaKey: originalEvent.metaKey,
           ctrlKey: originalEvent.ctrlKey,
-          altKey: originalEvent.altKey
+          altKey: originalEvent.altKey,
+          x: originalEvent.clientX,
+          y: originalEvent.clientY
         });
       }
 
@@ -167,7 +171,9 @@ export function usePress(props: PressHookProps): PressResult {
           shiftKey: originalEvent.shiftKey,
           metaKey: originalEvent.metaKey,
           ctrlKey: originalEvent.ctrlKey,
-          altKey: originalEvent.altKey
+          altKey: originalEvent.altKey,
+          x: originalEvent.clientX,
+          y: originalEvent.clientY
         });
       }
 
@@ -185,7 +191,9 @@ export function usePress(props: PressHookProps): PressResult {
           shiftKey: originalEvent.shiftKey,
           metaKey: originalEvent.metaKey,
           ctrlKey: originalEvent.ctrlKey,
-          altKey: originalEvent.altKey
+          altKey: originalEvent.altKey,
+          x: originalEvent.clientX,
+          y: originalEvent.clientY
         });
       }
     };
@@ -204,7 +212,9 @@ export function usePress(props: PressHookProps): PressResult {
           shiftKey: originalEvent.shiftKey,
           metaKey: originalEvent.metaKey,
           ctrlKey: originalEvent.ctrlKey,
-          altKey: originalEvent.altKey
+          altKey: originalEvent.altKey,
+          x: originalEvent.clientX,
+          y: originalEvent.clientY
         });
       }
     };
@@ -239,7 +249,7 @@ export function usePress(props: PressHookProps): PressResult {
           if (!state.isPressed && !e.repeat) {
             state.target = e.currentTarget;
             state.isPressed = true;
-            triggerPressStart(e, 'keyboard');
+            triggerPressStart(initEventCoordinates(e), 'keyboard');
 
             // Focus may move before the key up event, so register the event on the document
             // instead of the same element where the key down event occurred.
@@ -254,7 +264,7 @@ export function usePress(props: PressHookProps): PressResult {
       },
       onKeyUp(e) {
         if (isValidKeyboardEvent(e.nativeEvent, e.currentTarget) && !e.repeat && e.currentTarget.contains(e.target as Element)) {
-          triggerPressUp(createEvent(state.target, e), 'keyboard');
+          triggerPressUp(createEvent(state.target, initEventCoordinates(e)), 'keyboard');
         }
       },
       onClick(e) {
@@ -296,7 +306,7 @@ export function usePress(props: PressHookProps): PressResult {
 
         state.isPressed = false;
         let target = e.target as Element;
-        triggerPressEnd(createEvent(state.target, e), 'keyboard', state.target.contains(target));
+        triggerPressEnd(createEvent(state.target, initEventCoordinates(e)), 'keyboard', state.target.contains(target));
         removeAllGlobalListeners();
 
         // If the target is a link, trigger the click method to open the URL,
@@ -557,7 +567,7 @@ export function usePress(props: PressHookProps): PressResult {
           disableTextSelection(state.target);
         }
 
-        triggerPressStart(e, state.pointerType);
+        triggerPressStart(initEventCoordinates(e), state.pointerType);
 
         addGlobalListener(window, 'scroll', onScroll, true);
       };
@@ -576,13 +586,13 @@ export function usePress(props: PressHookProps): PressResult {
         if (touch && isOverTarget(touch, e.currentTarget)) {
           if (!state.isOverTarget) {
             state.isOverTarget = true;
-            triggerPressStart(e, state.pointerType);
+            triggerPressStart(initEventCoordinates(e), state.pointerType);
           }
         } else if (state.isOverTarget) {
           state.isOverTarget = false;
-          triggerPressEnd(e, state.pointerType, false);
+          triggerPressEnd(initEventCoordinates(e), state.pointerType, false);
           if (propsRef.current.shouldCancelOnPointerExit) {
-            cancel(e);
+            cancel(initEventCoordinates(e));
           }
         }
       };
@@ -599,10 +609,10 @@ export function usePress(props: PressHookProps): PressResult {
 
         let touch = getTouchById(e.nativeEvent, state.activePointerId);
         if (touch && isOverTarget(touch, e.currentTarget)) {
-          triggerPressUp(e, state.pointerType);
-          triggerPressEnd(e, state.pointerType);
+          triggerPressUp(initEventCoordinates(e), state.pointerType);
+          triggerPressEnd(initEventCoordinates(e), state.pointerType);
         } else if (state.isOverTarget) {
-          triggerPressEnd(e, state.pointerType, false);
+          triggerPressEnd(initEventCoordinates(e), state.pointerType, false);
         }
 
         state.isPressed = false;
@@ -622,7 +632,7 @@ export function usePress(props: PressHookProps): PressResult {
 
         e.stopPropagation();
         if (state.isPressed) {
-          cancel(e);
+          cancel(initEventCoordinates(e));
         }
       };
 
@@ -633,7 +643,9 @@ export function usePress(props: PressHookProps): PressResult {
             shiftKey: false,
             ctrlKey: false,
             metaKey: false,
-            altKey: false
+            altKey: false,
+            clientX: 0,
+            clientY: 0
           });
         }
       };
@@ -718,7 +730,9 @@ function createEvent(target: FocusableElement, e: EventBase): EventBase {
     shiftKey: e.shiftKey,
     ctrlKey: e.ctrlKey,
     metaKey: e.metaKey,
-    altKey: e.altKey
+    altKey: e.altKey,
+    clientX: e.clientX,
+    clientY: e.clientY
   };
 }
 
@@ -802,4 +816,8 @@ function isValidInputKey(target: HTMLInputElement, key: string) {
   return target.type === 'checkbox' || target.type === 'radio'
     ? key === ' '
     : nonTextInputTypes.has(target.type);
+}
+
+function initEventCoordinates(originalEvent: Omit<EventBase, 'clientX' | 'clientY'>):EventBase {
+  return {clientX: 0, clientY: 0, ...originalEvent};
 }
