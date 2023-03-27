@@ -141,6 +141,10 @@ export default {
       control: 'select',
       options: ['top', 'side']
     },
+    loadingState: {
+      control: 'select',
+      options: ['idle', 'loading', 'loadingMore', 'filtering']
+    },
     validationState: {
       control: 'select',
       options: [null, 'valid', 'invalid']
@@ -254,4 +258,3 @@ export const iconNull: SearchAutocompleteStory = {
   args: {icon: null},
   storyName: 'icon: null'
 };
-
