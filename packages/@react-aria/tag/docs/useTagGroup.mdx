@@ -146,9 +146,10 @@ function Tag(props) {
       {...rowProps}
       {...focusProps}
     >
-      <span {...gridCellProps} {...labelProps}>{item.rendered}</span>
-      {allowsRemoving && 
-        <Button {...clearButtonProps}>❎</Button>}
+      <div {...gridCellProps}>
+        <span {...labelProps}>{item.rendered}</span>
+        {allowsRemoving && <Button {...clearButtonProps}>❎</Button>}
+      </div>
     </span>
   );
 }
