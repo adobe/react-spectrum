@@ -647,7 +647,7 @@ export function useCollection<T extends object, C extends BaseCollection<T>>(pro
   let collection = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
   let children = useCachedChildren(props);
   let wrappedChildren = useMemo(() => (
-    <ShallowRenderContext.Provider value={true}>
+    <ShallowRenderContext.Provider value>
       {children}
     </ShallowRenderContext.Provider>
   ), [children]);
