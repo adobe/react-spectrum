@@ -136,6 +136,27 @@ storiesOf('Dialog', module)
     }
   )
   .add(
+    'popover: crossOffset50',
+    () => renderTriggerProps({type: 'popover', crossOffset: 50}), {
+      chromatic: {viewports: [1200]},
+      chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['large'], disableAnimations: true}
+    }
+  )
+  .add(
+    'popover: crossOffset200',
+    () => renderTriggerProps({type: 'popover', crossOffset: 200}), {
+      chromatic: {viewports: [1200]},
+      chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['large'], disableAnimations: true}
+    }
+  )
+  .add(
+    'popover: crossOffset1000',
+    () => renderTriggerProps({type: 'popover', crossOffset: 1000}), {
+      chromatic: {viewports: [1200]},
+      chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['large'], disableAnimations: true}
+    }
+  )
+  .add(
     'mobileType fullscreenTakeover, modal',
     () => renderTriggerProps({type: 'modal', mobileType: 'fullscreenTakeover'}), {
       chromatic: {viewports: [320, 1200]},

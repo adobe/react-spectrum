@@ -15,4 +15,4 @@ export {Item} from './Item';
 export {Section} from './Section';
 export {useCollection} from './useCollection';
 export {getItemCount} from './getItemCount';
-export {getChildNodes, getFirstItem, getLastItem, getNthItem} from './getChildNodes';
+export {getChildNodes, getFirstItem, getLastItem, getNthItem, compareNodeOrder} from './getChildNodes';

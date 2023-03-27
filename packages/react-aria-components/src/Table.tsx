@@ -6,7 +6,7 @@ import {CheckboxContext} from './Checkbox';
 import {ContextValue, defaultSlot, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useTableState} from 'react-stately';
 import {DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
-import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
+import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 import {TableCollection as ITableCollection, TableProps as SharedTableProps} from '@react-types/table';
@@ -160,7 +160,17 @@ const InternalTableContext = createContext<InternalTableContextValue | null>(nul
 
 export interface TableRenderProps {
   /**
-   * Whether the table root is currently the active drop target.
+   * Whether the table is currently focused.
+   * @selector [data-focused]
+   */
+  isFocused: boolean,
+  /**
+   * Whether the table is currently keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
+   * Whether the table is currently the active drop target.
    * @selector [data-drop-target]
    */
   isDropTarget: boolean
@@ -253,12 +263,15 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
     isRootDropTarget = dropState.isDropTarget({type: 'root'});
   }
 
+  let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let renderProps = useRenderProps({
     className: props.className,
     style: props.style,
     defaultClassName: 'react-aria-Table',
     values: {
-      isDropTarget: isRootDropTarget
+      isDropTarget: isRootDropTarget,
+      isFocused,
+      isFocusVisible
     }
   });
 
@@ -277,16 +290,20 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
           [InternalTableContext, {state, dragAndDropHooks, dragState, dropState}],
           [DropIndicatorContext, {render: TableDropIndicator}]
         ]}>
-        <table
-          {...filterDOMProps(props)}
-          {...renderProps}
-          {...mergeProps(gridProps, droppableCollection?.collectionProps)}
-          ref={ref}
-          slot={props.slot}
-          data-drop-target={isRootDropTarget || undefined}>
-          <TableHeaderRowGroup collection={collection} />
-          <TableBodyRowGroup collection={collection} isDroppable={isListDroppable} />
-        </table>
+        <FocusScope>
+          <table
+            {...filterDOMProps(props)}
+            {...renderProps}
+            {...mergeProps(gridProps, focusProps, droppableCollection?.collectionProps)}
+            ref={ref}
+            slot={props.slot}
+            data-drop-target={isRootDropTarget || undefined}
+            data-focused={isFocused || undefined}
+            data-focus-visible={isFocusVisible || undefined}>
+            <TableHeaderRowGroup collection={collection} />
+            <TableBodyRowGroup collection={collection} isDroppable={isListDroppable} />
+          </table>
+        </FocusScope>
         {dragPreview}
       </Provider>
       <TableOptionsContext.Provider value={ctx}>
