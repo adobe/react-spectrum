@@ -306,11 +306,13 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       // Restore the scroll position to what it was before.
       scrollRef.current.scrollTop = scrollPos.current.top;
       scrollRef.current.scrollLeft = scrollPos.current.left;
+    }
 
+    if (!isVirtualized && manager.focusedKey != null) {
       // Refocus and scroll the focused item into view if it exists within the scrollable region.
       let element = scrollRef.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
       if (element) {
-        // This prevents a flash of focus on the first/last element in the collection
+        // This prevents a flash of focus on the first/last element in the collection, or the collection itself.
         focusWithoutScrolling(element);
         scrollIntoView(scrollRef.current, element);
       }

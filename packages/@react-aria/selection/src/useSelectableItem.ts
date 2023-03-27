@@ -139,10 +139,10 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // Focus the associated DOM node when this item becomes the focusedKey
   useEffect(() => {
     let isFocused = key === manager.focusedKey;
-    if (isFocused && manager.isFocused && !shouldUseVirtualFocus && document.activeElement !== ref.current) {
+    if (isFocused && manager.isFocused && !shouldUseVirtualFocus) {
       if (focus) {
         focus();
-      } else {
+      } else if (document.activeElement !== ref.current) {
         focusSafely(ref.current);
       }
     }
