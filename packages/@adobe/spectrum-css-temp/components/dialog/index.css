@@ -65,6 +65,8 @@ governing permissions and limitations under the License.
   --spectrum-dialog-padding-x: var(--spectrum-dialog-padding);
   --spectrum-dialog-padding-y: var(--spectrum-dialog-padding);
   --spectrum-dialog-border-radius: var(--spectrum-border-radius);
+
+  border-radius: var(--spectrum-dialog-border-radius);
 }
 
 .spectrum-Dialog--small {
@@ -271,6 +273,7 @@ governing permissions and limitations under the License.
   width: 100%;
   height: 100%;
 
+  border-style: none;
   border-radius: 0;
 }
 /** @unofficial */
@@ -441,9 +444,6 @@ governing permissions and limitations under the License.
     border-top-right-radius: var(--spectrum-dialog-border-radius);
     overflow-y: auto;
 
-    /* Account for border-size so that the scrolling grid does not overflow the Dialog. */
-    margin-bottom: calc(2 * var(--spectrum-popover-border-size));
-
     grid-template-columns: var(--spectrum-dialog-padding-x) auto 1fr auto minmax(0, auto) var(--spectrum-dialog-padding-x);
     grid-template-rows: auto var(--spectrum-dialog-padding-y) auto auto auto 1fr auto auto var(--spectrum-dialog-padding-y);
     grid-template-areas:
@@ -530,11 +530,5 @@ governing permissions and limitations under the License.
     .spectrum-Dialog-heading {
       font-size: var(--spectrum-dialog-title-text-size);
     }
-  }
-}
-
-@media (forced-colors: active) {
-  .spectrum-Dialog:not(.spectrum-Dialog--fullscreenTakeover) {
-    border-radius: var(--spectrum-dialog-border-radius);
   }
 }

@@ -10,12 +10,12 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-.spectrum-Modal {
-  background: var(--spectrum-dialog-background-color);
+
+:root {
+  --spectrum-dialog-border-color: var(--spectrum-alias-border-color-transparent);
 }
 
-@media (forced-colors: active) {
-  .spectrum-Modal:not(.spectrum-Modal--fullscreenTakeover) {
-    border-color: transparent;
-  }
+.spectrum-Modal {
+  background: var(--spectrum-dialog-background-color);
+  border-color: var(--spectrum-dialog-border-color);
 }

@@ -171,8 +171,6 @@ governing permissions and limitations under the License.
   }
 }
 
-@media (forced-colors: active) {
-  .spectrum-Dropdown-popover {
-    overflow: hidden;
-  }
+.spectrum-Dropdown-popover {
+  overflow: hidden;
 }

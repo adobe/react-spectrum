@@ -13,10 +13,3 @@
 .spectrum-Tray {
   background-color: var(--spectrum-tray-background-color);
 }
-
-@media (forced-colors: active) {
-  .spectrum-Tray {
-    --spectrum-tray-background-color: Canvas;
-    border-color: transparent;
-  }
-}

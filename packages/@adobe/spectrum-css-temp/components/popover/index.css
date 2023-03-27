@@ -145,15 +145,9 @@ governing permissions and limitations under the License.
   }
 }
 
-
-@media (forced-colors: active) {
-  .spectrum-Popover {
-    /* With a popover that contains a menu,
-    the menu scrolls. Add overflow: hidden,
-    so the menu's scrollbar doesn't overflow the
-    the popover's border-radius in the corners. */
-    &:has(> [class*='spectrum-Menu-popover']) {
-      overflow: hidden;
-    }
+@media screen and (max-height: 400px) {
+  .spectrum-Popover [role="dialog"] {
+    /* Account for border-size so that the scrolling .spectrum-Dialog-grid does not overflow the .spectrum-Popover. */
+    padding-block-end: calc(2 * var(--spectrum-popover-border-size));
   }
 }
