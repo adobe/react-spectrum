@@ -34,7 +34,7 @@ storiesOf('DialogTrigger', module)
     args: {
       crossOffset: 0,
       offset: 0,
-      containerPadding: 0,
+      containerPadding: 12,
       placement: 'top',
       shouldFlip: false,
       isKeyboardDismissDisabled: false
