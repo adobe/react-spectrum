@@ -12,7 +12,7 @@
 
 export {Breadcrumbs, BreadcrumbsContext} from './Breadcrumbs';
 export {Button, ButtonContext} from './Button';
-export {Calendar, CalendarGrid, CalendarCell, RangeCalendar, CalendarContext, RangeCalendarContext} from './Calendar';
+export {Calendar, CalendarGrid, CalendarGridHeader, CalendarGridBody, CalendarHeaderCell, CalendarCell, RangeCalendar, CalendarContext, RangeCalendarContext} from './Calendar';
 export {Checkbox, CheckboxGroup, CheckboxGroupContext, CheckboxContext} from './Checkbox';
 export {ComboBox, ComboBoxContext} from './ComboBox';
 export {DateField, DateInput, DateSegment, TimeField, DateFieldContext, TimeFieldContext} from './DateField';
@@ -53,7 +53,7 @@ export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem
 
 export type {BreadcrumbsProps} from './Breadcrumbs';
 export type {ButtonProps, ButtonRenderProps} from './Button';
-export type {CalendarCellProps, CalendarProps, CalendarGridProps, CalendarCellRenderProps, RangeCalendarProps} from './Calendar';
+export type {CalendarCellProps, CalendarProps, CalendarGridProps, CalendarGridHeaderProps, CalendarGridBodyProps, CalendarHeaderCellProps, CalendarCellRenderProps, RangeCalendarProps} from './Calendar';
 export type {CheckboxGroupProps, CheckboxGroupRenderProps, CheckboxRenderProps, CheckboxProps} from './Checkbox';
 export type {ComboBoxProps} from './ComboBox';
 export type {DateFieldProps, DateInputProps, DateSegmentProps, DateSegmentRenderProps, TimeFieldProps} from './DateField';
