@@ -30,6 +30,7 @@ function ResizableContainer({children}) {
   return (
     <div style={{width: '200px', height: '200px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
       {children}
+      <p>Use the resize handle to resize the container.</p>
     </div>
   );
 }
