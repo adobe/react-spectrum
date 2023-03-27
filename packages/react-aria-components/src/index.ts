@@ -20,6 +20,7 @@ export {DatePicker, DateRangePicker, DatePickerContext, DateRangePickerContext} 
 export {DialogTrigger, Dialog, DialogContext} from './Dialog';
 export {GridList, GridListContext} from './GridList';
 export {Group, GroupContext} from './Group';
+export {Header} from './Header';
 export {Heading, HeadingContext} from './Heading';
 export {Input, InputContext} from './Input';
 export {Item, Section, Collection} from './Collection';

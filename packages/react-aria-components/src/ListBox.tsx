@@ -16,6 +16,7 @@ import {ContextValue, forwardRefType, HiddenContext, Provider, SlotProps, StyleP
 import {DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {Header} from './Header';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
@@ -245,11 +246,16 @@ function ListBoxSection<T>({section, className, style, ...otherProps}: ListBoxSe
   let children = useCachedChildren({
     items: state.collection.getChildren!(section.key),
     children: item => {
-      if (item.type !== 'item') {
-        throw new Error('Only items are allowed within a section');
+      switch (item.type) {
+        case 'header': {
+          let {rendered, ...otherProps} = item.props;
+          return <Header {...headingProps} {...otherProps}>{rendered}</Header>;
+        }
+        case 'item':
+          return <Option item={item} />;
+        default:
+          throw new Error('Unsupported element type in Section: ' + item.type);
       }
-
-      return <Option item={item} />;
     }
   });
 

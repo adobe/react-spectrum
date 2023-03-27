@@ -17,6 +17,7 @@ import {MenuTriggerProps as BaseMenuTriggerProps, Node, TreeState, useMenuTrigge
 import {ButtonContext} from './Button';
 import {ContextValue, forwardRefType, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
+import {Header} from './Header';
 import {KeyboardContext} from './Keyboard';
 import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
@@ -135,11 +136,16 @@ function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionP
   let children = useCachedChildren({
     items: state.collection.getChildren!(section.key),
     children: item => {
-      if (item.type !== 'item') {
-        throw new Error('Only items are allowed within a section');
+      switch (item.type) {
+        case 'header': {
+          let {rendered, ...otherProps} = item.props;
+          return <Header {...headingProps} {...otherProps}>{rendered}</Header>;
+        }
+        case 'item':
+          return <MenuItem item={item} />;
+        default:
+          throw new Error('Unsupported element type in Section: ' + item.type);
       }
-
-      return <MenuItem item={item} />;
     }
   });
 

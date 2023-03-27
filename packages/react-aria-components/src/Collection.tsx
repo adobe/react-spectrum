@@ -631,6 +631,8 @@ export function useCachedChildren<T extends object>(props: CachedChildrenOptions
   }, [children, items, cache, idScope]);
 }
 
+const ShallowRenderContext = createContext(false);
+
 interface CollectionResult<C> {
   portal: ReactPortal,
   collection: C
@@ -644,7 +646,12 @@ export function useCollection<T extends object, C extends BaseCollection<T>>(pro
   let getSnapshot = useCallback(() => document.getCollection(), [document]);
   let collection = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
   let children = useCachedChildren(props);
-  let portal = createPortal(children, document as unknown as Element);
+  let wrappedChildren = useMemo(() => (
+    <ShallowRenderContext.Provider value={true}>
+      {children}
+    </ShallowRenderContext.Provider>
+  ), [children]);
+  let portal = createPortal(wrappedChildren, document as unknown as Element);
 
   useLayoutEffect(() => {
     if (document.dirtyNodes.size > 0) {
@@ -653,6 +660,17 @@ export function useCollection<T extends object, C extends BaseCollection<T>>(pro
   });
 
   return {portal, collection};
+}
+
+/** Renders a DOM element (e.g. separator or header) shallowly when inside a collection. */
+export function useShallowRender<T extends Element>(Element: string, props: React.HTMLAttributes<T>, ref: React.RefObject<T>): ReactElement | null {
+  let isShallow = useContext(ShallowRenderContext);
+  if (isShallow) {
+    // @ts-ignore
+    return <Element multiple={{...props, ref, rendered: props.children}} />;
+  }
+
+  return null;
 }
 
 export interface ItemRenderProps {
@@ -741,6 +759,7 @@ export function Section<T extends object>(props: SectionProps<T>): JSX.Element {
 export const CollectionContext = createContext<CachedChildrenOptions<unknown> | null>(null);
 export const CollectionRendererContext = createContext<CollectionProps<unknown>['children']>(null);
 
+/** A Collection renders a list of items, automatically managing caching and keys. */
 export function Collection<T extends object>(props: CollectionProps<T>): JSX.Element {
   let ctx = useContext(CollectionContext)!;
   props = mergeProps(ctx, props);
