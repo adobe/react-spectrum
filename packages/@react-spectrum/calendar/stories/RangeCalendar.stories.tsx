@@ -141,6 +141,12 @@ export const DateUnavailableInvalid: RangeCalendarStory = {
   storyName: 'isDateUnavailable, invalid'
 };
 
+export const WithAnchorDate: RangeCalendarStory = {
+  ...Default,
+  args: {anchorDate: new CalendarDate(2023, 3, 27)},
+  storyName: 'anchorDate'
+}
+
 function render(props) {
   return (
     <View maxWidth="100vw" overflow="auto">
