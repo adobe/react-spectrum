@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, render, within} from '@react-spectrum/test-utils';
-import {Item, ListBox, ListBoxContext, Section, Text, useDragAndDrop} from '../';
+import {Header, Item, ListBox, ListBoxContext, Section, Text, useDragAndDrop} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -107,12 +107,14 @@ describe('ListBox', () => {
   it('should support sections', () => {
     let {getAllByRole} = render(
       <ListBox aria-label="Sandwich contents" selectionMode="multiple">
-        <Section title="Veggies">
+        <Section>
+          <Header>Veggies</Header>
           <Item id="lettuce">Lettuce</Item>
           <Item id="tomato">Tomato</Item>
           <Item id="onion">Onion</Item>
         </Section>
-        <Section title="Protein">
+        <Section>
+          <Header>Protein</Header>
           <Item id="ham">Ham</Item>
           <Item id="tuna">Tuna</Item>
           <Item id="tofu">Tofu</Item>

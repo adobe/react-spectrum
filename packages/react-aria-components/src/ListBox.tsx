@@ -12,10 +12,10 @@
 
 import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useListBox, useListBoxSection, useOption} from 'react-aria';
 import {CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
-import {ContextValue, forwardRefType, HiddenContext, Provider, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, forwardRefType, HiddenContext, Provider, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
-import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {Header} from './Header';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
 import {Separator, SeparatorContext} from './Separator';
@@ -238,8 +238,9 @@ interface ListBoxSectionProps<T> extends StyleProps {
 
 function ListBoxSection<T>({section, className, style, ...otherProps}: ListBoxSectionProps<T>) {
   let {state} = useContext(InternalListBoxContext)!;
+  let [headingRef, heading] = useSlot();
   let {headingProps, groupProps} = useListBoxSection({
-    heading: section.rendered,
+    heading,
     'aria-label': section['aria-label'] ?? undefined
   });
 
@@ -248,8 +249,15 @@ function ListBoxSection<T>({section, className, style, ...otherProps}: ListBoxSe
     children: item => {
       switch (item.type) {
         case 'header': {
-          let {rendered, ...otherProps} = item.props;
-          return <Header {...headingProps} {...otherProps}>{rendered}</Header>;
+          let {rendered, ref, ...otherProps} = item.props;
+          return (
+            <Header
+              {...headingProps}
+              {...otherProps}
+              ref={mergeRefs(headingRef, ref)}>
+              {rendered}
+            </Header>
+          );
         }
         case 'item':
           return <Option item={item} />;
@@ -265,11 +273,6 @@ function ListBoxSection<T>({section, className, style, ...otherProps}: ListBoxSe
       {...groupProps}
       className={className || section.props?.className || 'react-aria-Section'}
       style={style || section.props?.style}>
-      {section.rendered &&
-        <header {...headingProps}>
-          {section.rendered}
-        </header>
-      }
       {children}
     </section>
   );

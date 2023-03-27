@@ -743,7 +743,7 @@ export function Item<T extends object>(props: ItemProps<T>): JSX.Element {
   return <item multiple={{...props, rendered: props.children}} />;
 }
 
-export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children'>, DOMProps {
+export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children' | 'title'>, DOMProps {
   id?: Key,
   /** Static child items or a function to render children. */
   children?: ReactNode | ((item: T) => ReactElement)

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, Group, Heading, Input, Item, Keyboard, Label, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, TabPanels, Tabs, Text, TimeField, Tooltip, TooltipTrigger} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, TabPanels, Tabs, Text, TimeField, Tooltip, TooltipTrigger} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import React from 'react';
@@ -50,13 +50,15 @@ export const ListBoxExample = () => (
 
 export const ListBoxSections = () => (
   <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace">
-    <Section title={<span style={{fontSize: '1.2em'}}>Section 1</span>} className={styles.group}>
+    <Section className={styles.group}>
+      <Header style={{fontSize: '1.2em'}}>Section 1</Header>
       <MyItem>Foo</MyItem>
       <MyItem>Bar</MyItem>
       <MyItem>Baz</MyItem>
     </Section>
     <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
-    <Section title={<span style={{fontSize: '1.2em'}}>Section 2</span>} className={styles.group}>
+    <Section className={styles.group}>
+      <Header style={{fontSize: '1.2em'}}>Section 1</Header>
       <MyItem>Foo</MyItem>
       <MyItem>Bar</MyItem>
       <MyItem>Baz</MyItem>
@@ -103,13 +105,15 @@ export const MenuExample = () => (
     <Button aria-label="Menu">☰</Button>
     <Popover>
       <Menu className={styles.menu}>
-        <Section title={<span style={{fontSize: '1.2em'}}>Section 1</span>} className={styles.group}>
+        <Section className={styles.group}>
+          <Header style={{fontSize: '1.2em'}}>Section 1</Header>
           <MyItem>Foo</MyItem>
           <MyItem>Bar</MyItem>
           <MyItem>Baz</MyItem>
         </Section>
         <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
-        <Section title={<span style={{fontSize: '1.2em'}}>Section 2</span>} className={styles.group}>
+        <Section className={styles.group}>
+          <Header style={{fontSize: '1.2em'}}>Section 2</Header>
           <MyItem>Foo</MyItem>
           <MyItem>Bar</MyItem>
           <MyItem>Baz</MyItem>

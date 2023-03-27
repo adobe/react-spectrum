@@ -257,7 +257,7 @@ export interface CalendarGridProps extends StyleProps {
    * or children containing a `<CalendarGridHeader>`` and `<CalendarGridBody>`
    * when additional customization is needed.
    */
-  children?: ReactElement | ((date: CalendarDate) => ReactElement),
+  children?: ReactElement | ReactElement[] | ((date: CalendarDate) => ReactElement),
   /**
    * An offset from the beginning of the visible date range that this
    * CalendarGrid should display. Useful when displaying more than one

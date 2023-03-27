@@ -15,8 +15,8 @@ import {AriaMenuProps, mergeProps, useFocusRing, useMenu, useMenuItem, useMenuSe
 import {BaseCollection, CollectionProps, ItemProps, ItemRenderProps, useCachedChildren, useCollection} from './Collection';
 import {MenuTriggerProps as BaseMenuTriggerProps, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
 import {ButtonContext} from './Button';
-import {ContextValue, forwardRefType, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
-import {filterDOMProps} from '@react-aria/utils';
+import {ContextValue, forwardRefType, Provider, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {filterDOMProps, mergeRefs} from '@react-aria/utils';
 import {Header} from './Header';
 import {KeyboardContext} from './Keyboard';
 import {PopoverContext} from './Popover';
@@ -128,8 +128,9 @@ interface MenuSectionProps<T> extends StyleProps {
 
 function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionProps<T>) {
   let state = useContext(InternalMenuContext)!;
+  let [headingRef, heading] = useSlot();
   let {headingProps, groupProps} = useMenuSection({
-    heading: section.rendered,
+    heading,
     'aria-label': section['aria-label'] ?? undefined
   });
 
@@ -138,8 +139,15 @@ function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionP
     children: item => {
       switch (item.type) {
         case 'header': {
-          let {rendered, ...otherProps} = item.props;
-          return <Header {...headingProps} {...otherProps}>{rendered}</Header>;
+          let {rendered, ref, ...otherProps} = item.props;
+          return (
+            <Header
+              {...headingProps}
+              {...otherProps}
+              ref={mergeRefs(headingRef, ref)}>
+              {rendered}
+            </Header>
+          );
         }
         case 'item':
           return <MenuItem item={item} />;
@@ -155,11 +163,6 @@ function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionP
       {...groupProps}
       className={className || section.props?.className || 'react-aria-Section'}
       style={style || section.props?.style}>
-      {section.rendered &&
-        <header {...headingProps}>
-          {section.rendered}
-        </header>
-      }
       {children}
     </section>
   );
