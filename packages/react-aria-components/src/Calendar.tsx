@@ -252,7 +252,17 @@ export interface CalendarCellRenderProps {
 }
 
 export interface CalendarGridProps extends StyleProps {
-  children?: React.ReactChild | ((date: CalendarDate) => ReactElement),
+  /**
+   * Either a function to render calendar cells for each date in the month,
+   * or children containing a `<CalendarGridHeader>`` and `<CalendarGridBody>`
+   * when additional customization is needed.
+   */
+  children?: ReactElement | ((date: CalendarDate) => ReactElement),
+  /**
+   * An offset from the beginning of the visible date range that this
+   * CalendarGrid should display. Useful when displaying more than one
+   * month at a time.
+   */
   offset?: DateDuration
 }
 
@@ -308,6 +318,7 @@ const _CalendarGrid = forwardRef(CalendarGrid);
 export {_CalendarGrid as CalendarGrid};
 
 export interface CalendarGridHeaderProps extends StyleProps {
+  /** A function to render a `<CalendarHeaderCell>` for a weekday name. */
   children: (day: string) => ReactElement
 }
 
@@ -353,6 +364,7 @@ const CalendarHeaderCellForwardRef = forwardRef(CalendarHeaderCell);
 export {CalendarHeaderCellForwardRef as CalendarHeaderCell};
 
 export interface CalendarGridBodyProps extends StyleProps {
+  /** A function to render a `<CalendarCell>` for a given date. */
   children: (date: CalendarDate) => ReactElement
 }
 
@@ -387,6 +399,7 @@ const CalendarGridBodyForwardRef = forwardRef(CalendarGridBody);
 export {CalendarGridBodyForwardRef as CalendarGridBody};
 
 export interface CalendarCellProps extends RenderProps<CalendarCellRenderProps> {
+  /** The date to render in the cell. */
   date: CalendarDate
 }
 
