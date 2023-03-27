@@ -14,6 +14,7 @@ import {SeparatorProps as AriaSeparatorProps, useSeparator} from 'react-aria';
 import {ContextValue, SlotProps, StyleProps, useContextProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {createContext, ElementType, ForwardedRef, forwardRef} from 'react';
+import {useShallowRender} from './Collection';
 
 export interface SeparatorProps extends AriaSeparatorProps, StyleProps, SlotProps {}
 
@@ -21,6 +22,11 @@ export const SeparatorContext = createContext<ContextValue<SeparatorProps, Eleme
 
 function Separator(props: SeparatorProps, ref: ForwardedRef<Element>) {
   [props, ref] = useContextProps(props, ref, SeparatorContext);
+  let shallow = useShallowRender('separator', props, ref);
+  if (shallow) {
+    return shallow;
+  }
+
   let {elementType, orientation, style, className} = props;
   let Element = (elementType as ElementType) || 'hr';
   if (Element === 'hr' && orientation === 'vertical') {
