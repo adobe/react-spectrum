@@ -618,7 +618,7 @@ export function useCachedChildren<T extends object>(props: CachedChildrenOptions
               key = idScope + ':' + key;
             }
             // TODO: only works if wrapped Item passes through id...
-            rendered = cloneElement(rendered, {key, id: key});
+            rendered = cloneElement(rendered, {key, id: key, value: item});
           }
           cache.set(item, rendered);
         }
@@ -730,7 +730,10 @@ export interface ItemRenderProps {
 }
 
 export interface ItemProps<T = object> extends Omit<SharedItemProps<T>, 'children'>, RenderProps<ItemRenderProps> {
-  id?: Key
+  /** The unique id of the item. */
+  id?: Key,
+  /** The object value that this item represents. When using dynamic collections, this is set automatically. */
+  value?: T
 }
 
 export function Item<T extends object>(props: ItemProps<T>): JSX.Element {
@@ -744,7 +747,10 @@ export function Item<T extends object>(props: ItemProps<T>): JSX.Element {
 }
 
 export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children' | 'title'>, DOMProps {
+  /** The unique id of the section. */
   id?: Key,
+  /** The object value that this section represents. When using dynamic collections, this is set automatically. */
+  value?: T,
   /** Static child items or a function to render children. */
   children?: ReactNode | ((item: T) => ReactElement)
 }
