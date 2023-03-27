@@ -322,11 +322,13 @@ export interface CalendarGridHeaderProps extends StyleProps {
   children: (day: string) => ReactElement
 }
 
-function CalendarGridHeader({children, style, className}: CalendarGridHeaderProps, ref: ForwardedRef<HTMLTableSectionElement>) {
+function CalendarGridHeader(props: CalendarGridHeaderProps, ref: ForwardedRef<HTMLTableSectionElement>) {
+  let {children, style, className} = props;
   let {headerProps, weekDays} = useContext(InternalCalendarGridContext)!;
 
   return (
     <thead
+      {...filterDOMProps(props as any)}
       {...headerProps}
       ref={ref}
       style={style}
@@ -346,9 +348,11 @@ export {CalendarGridHeaderForwardRef as CalendarGridHeader};
 
 export interface CalendarHeaderCellProps extends DOMProps {}
 
-function CalendarHeaderCell({children, style, className}: CalendarHeaderCellProps, ref: ForwardedRef<HTMLTableCellElement>) {
+function CalendarHeaderCell(props: CalendarHeaderCellProps, ref: ForwardedRef<HTMLTableCellElement>) {
+  let {children, style, className} = props;
   return (
     <th
+      {...filterDOMProps(props as any)}
       ref={ref}
       style={style}
       className={className || 'react-aria-CalendarHeaderCell'}>
@@ -368,7 +372,8 @@ export interface CalendarGridBodyProps extends StyleProps {
   children: (date: CalendarDate) => ReactElement
 }
 
-function CalendarGridBody({children, style, className}: CalendarGridBodyProps, ref: ForwardedRef<HTMLTableSectionElement>) {
+function CalendarGridBody(props: CalendarGridBodyProps, ref: ForwardedRef<HTMLTableSectionElement>) {
+  let {children, style, className} = props;
   let state = useContext(InternalCalendarContext)!;
   let {startDate} = useContext(InternalCalendarGridContext)!;
   let {locale} = useLocale();
@@ -376,6 +381,7 @@ function CalendarGridBody({children, style, className}: CalendarGridBodyProps, r
 
   return (
     <tbody
+      {...filterDOMProps(props as any)}
       ref={ref}
       style={style}
       className={className || 'react-aria-CalendarGridBody'}>
