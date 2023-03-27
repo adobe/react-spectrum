@@ -256,7 +256,7 @@ describe('TagGroup', function () {
     expect(tag).not.toHaveAttribute('icon');
     expect(tag).not.toHaveAttribute('unsafe_classname');
     expect(tag).toHaveAttribute('class', expect.stringContaining('test-class'));
-    expect(tag).toHaveAttribute('class', expect.stringContaining('-item'));
+    expect(tag).toHaveAttribute('class', expect.stringContaining('spectrum-Tag'));
     expect(tag).toHaveAttribute('role', 'row');
     expect(tag).toHaveAttribute('tabIndex', '0');
   });
@@ -316,7 +316,6 @@ describe('TagGroup', function () {
     Name                         | props
     ${'on `Delete` keypress'}    | ${{keyPress: 'Delete'}}
     ${'on `Backspace` keypress'} | ${{keyPress: 'Backspace'}}
-    ${'on `space` keypress'}     | ${{keyPress: ' '}}
   `('Remove tag $Name', function ({Name, props}) {
     let {getByText} = render(
       <Provider theme={theme}>
@@ -333,6 +332,23 @@ describe('TagGroup', function () {
     fireEvent.keyUp(tag, {key: props.keyPress});
     expect(onRemoveSpy).toHaveBeenCalledTimes(1);
     expect(onRemoveSpy).toHaveBeenCalledWith('1');
+  });
+
+  it('Space does not trigger removal', function () {
+    let {getByText} = render(
+      <Provider theme={theme}>
+        <TagGroup aria-label="tag group" allowsRemoving onRemove={onRemoveSpy}>
+          <Item key="1" aria-label="Tag 1">Tag 1</Item>
+          <Item key="2" aria-label="Tag 2">Tag 2</Item>
+          <Item key="3" aria-label="Tag 3">Tag 3</Item>
+        </TagGroup>
+      </Provider>
+    );
+
+    let tag = getByText('Tag 1');
+    fireEvent.keyDown(tag, {key: ' '});
+    fireEvent.keyUp(tag, {key: ' '});
+    expect(onRemoveSpy).toHaveBeenCalledTimes(0);
   });
 
   it('should remove tag when remove button is clicked', function () {
@@ -360,7 +376,6 @@ describe('TagGroup', function () {
     Name                         | props
     ${'on `Delete` keypress'}    | ${{keyPress: 'Delete'}}
     ${'on `Backspace` keypress'} | ${{keyPress: 'Backspace'}}
-    ${'on `space` keypress'}     | ${{keyPress: ' '}}
   `('Can move focus after removing tag $Name', function ({Name, props}) {
 
     function TagGroupWithDelete(props) {
@@ -413,6 +428,8 @@ describe('TagGroup', function () {
       .mockImplementationOnce(() => ({x: 200, y: 400, width: 95, height: 32, top: 400, right: 290, bottom: 435, left: 200}))
       .mockImplementationOnce(() => ({x: 200, y: 300, width: 200, height: 128, top: 300, right: 400, bottom: 435, left: 200}))
       .mockImplementationOnce(() => ({x: 265, y: 335, width: 75, height: 32, top: 335, right: 345, bottom: 370, left: 265}));
+    let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px', marginTop: '4px', height: '24px'}));
+
     let {getAllByRole, getByRole} = render(
       <Provider theme={theme}>
         <TagGroup maxRows={2} aria-label="tag group">
@@ -444,6 +461,7 @@ describe('TagGroup', function () {
     expect(button).toHaveTextContent('Show all (7)');
 
     offsetWidth.mockReset();
+    computedStyles.mockReset();
   });
 
   it('maxRows should not show button if there is enough room to show all tags', function () {
@@ -453,6 +471,7 @@ describe('TagGroup', function () {
       .mockImplementationOnce(() => ({x: 200, y: 335, width: 65, height: 32, top: 335, right: 265, bottom: 370, left: 200}))
       .mockImplementationOnce(() => ({x: 265, y: 335, width: 75, height: 32, top: 335, right: 345, bottom: 370, left: 265}))
       .mockImplementationOnce(() => ({x: 200, y: 370, width: 120, height: 32, top: 370, right: 320, bottom: 400, left: 200}));
+    let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px', marginTop: '4px', height: '24px'}));
     let {getAllByRole, queryAllByRole} = render(
       <Provider theme={theme}>
         <TagGroup maxRows={2} aria-label="tag group">
@@ -469,6 +488,7 @@ describe('TagGroup', function () {
     expect(buttons.length).toBe(0);
 
     offsetWidth.mockReset();
+    computedStyles.mockReset();
   });
 
   it('can keyboard navigate to a custom action', function () {
@@ -483,7 +503,7 @@ describe('TagGroup', function () {
         };
       }
     ];
-
+    let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px', marginTop: '4px', height: '24px'}));
     mockImplementation(target, mockCalls, true);
     let {getAllByRole, getByRole} = render(
       <Provider theme={theme}>
@@ -527,6 +547,8 @@ describe('TagGroup', function () {
 
     userEvent.tab({shift: true});
     expect(document.activeElement).toBe(tags[1]);
+
+    computedStyles.mockReset();
   });
 
   it('can keyboard navigate to show all button and custom action', function () {
@@ -540,6 +562,7 @@ describe('TagGroup', function () {
       .mockImplementationOnce(() => ({x: 200, y: 300, width: 200, height: 128, top: 300, right: 400, bottom: 435, left: 200}))
       .mockImplementationOnce(() => ({x: 265, y: 335, width: 75, height: 32, top: 335, right: 345, bottom: 370, left: 265}))
       .mockImplementationOnce(() => ({x: 200, y: 300, width: 75, height: 32, top: 300, right: 275, bottom: 335, left: 200}));
+    let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px', marginTop: '4px', height: '24px'}));
     let {getAllByRole} = render(
       <Provider theme={theme}>
         <TagGroup
@@ -592,9 +615,12 @@ describe('TagGroup', function () {
     expect(onClearSpy).toHaveBeenCalledWith();
 
     offsetWidth.mockReset();
+    computedStyles.mockReset();
   });
 
   it('action group is labelled correctly', function () {
+    let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px', marginTop: '4px', height: '24px'}));
+
     let {getByRole} = render(
       <Provider theme={theme}>
         <TagGroup
@@ -613,5 +639,7 @@ describe('TagGroup', function () {
     let tagGroup = getByRole('grid');
     expect(actionGroup).toHaveAttribute('aria-label', 'Actions');
     expect(actionGroup).toHaveAttribute('aria-labelledby', `${tagGroup.id} ${actionGroup.id}`);
+
+    computedStyles.mockReset();
   });
 });

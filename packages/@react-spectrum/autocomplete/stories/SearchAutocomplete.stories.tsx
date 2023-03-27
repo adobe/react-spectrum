@@ -12,25 +12,160 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import Filter from '@spectrum-icons/workflow/Filter';
 import {Flex} from '@react-spectrum/layout';
 import {Item, SearchAutocomplete} from '@react-spectrum/autocomplete';
 import {mergeProps} from '@react-aria/utils';
-import {Meta} from '@storybook/react';
 import React from 'react';
-import {SpectrumSearchAutocompleteProps} from '@react-types/autocomplete';
 
-const StoryFn = ({storyFn}) => storyFn();
+type SearchAutocompleteStory = ComponentStoryObj<typeof SearchAutocomplete>;
 
-const meta: Meta<SpectrumSearchAutocompleteProps<{}>> = {
+export default {
   title: 'SearchAutocomplete',
   component: SearchAutocomplete,
-  decorators: [storyFn => <StoryFn storyFn={storyFn} />]
-};
+  render: (args) => (
+    <SearchAutocomplete label="Search with Autocomplete" {...args}>
+      <Item>Aerospace</Item>
+      <Item>Mechanical</Item>
+      <Item>Civil</Item>
+      <Item>Biomedical</Item>
+      <Item>Nuclear</Item>
+      <Item>Industrial</Item>
+      <Item>Chemical</Item>
+      <Item>Agricultural</Item>
+      <Item>Electrical</Item>
+    </SearchAutocomplete>
+  ),
+  args: {
+    label: 'Search with Autocomplete',
+    onOpenChange: action('onOpenChange'),
+    onInputChange: action('onInputChange'),
+    onSelectionChange: action('onSelectionChange'),
+    onBlur: action('onBlur'),
+    onFocus: action('onFocus'),
+    onSubmit: action('onSubmit'),
+    onClear: action('onClear')
+  },
+  argTypes: {
+    defaultItems: {
+      table: {
+        disable: true
+      }
+    },
+    contextualHelp: {
+      table: {
+        disable: true
+      }
+    },
+    onOpenChange: {
+      table: {
+        disable: true
+      }
+    },
+    disabledKeys: {
+      table: {
+        disable: true
+      }
+    },
+    inputValue: {
+      table: {
+        disable: true
+      }
+    },
+    defaultInputValue: {
+      table: {
+        disable: true
+      }
+    },
+    defaultSelectedKey: {
+      table: {
+        disable: true
+      }
+    },
+    selectedKey: {
+      table: {
+        disable: true
+      }
+    },
+    onInputChange: {
+      table: {
+        disable: true
+      }
+    },
+    onSelectionChange: {
+      table: {
+        disable: true
+      }
+    },
+    onBlur: {
+      table: {
+        disable: true
+      }
+    },
+    onFocus: {
+      table: {
+        disable: true
+      }
+    },
+    label: {
+      control: 'text'
+    },
+    'aria-label': {
+      control: 'text'
+    },
+    isDisabled: {
+      control: 'boolean'
+    },
+    isQuiet: {
+      control: 'boolean'
+    },
+    isReadOnly: {
+      control: 'boolean'
+    },
+    autoFocus: {
+      control: 'boolean'
+    },
+    isRequired: {
+      control: 'boolean'
+    },
+    necessityIndicator: {
+      control: 'select',
+      options: ['icon', 'label']
+    },
+    labelAlign: {
+      control: 'select',
+      options: ['end', 'start']
+    },
+    labelPosition: {
+      control: 'select',
+      options: ['top', 'side']
+    },
+    validationState: {
+      control: 'select',
+      options: [null, 'valid', 'invalid']
+    },
+    description: {
+      control: 'text'
+    },
+    errorMessage: {
+      control: 'text'
+    },
+    menuTrigger: {
+      control: 'select',
+      options: ['focus', 'manual']
+    },
+    direction: {
+      control: 'select',
+      options: ['top', 'bottom']
+    },
+    width: {
+      control: 'text'
+    }
+  }
+} as ComponentMeta<typeof SearchAutocomplete>;
 
-export default meta;
-
-let options = [
+let items = [
   {id: 1, name: 'Aerospace'},
   {id: 2, name: 'Mechanical'},
   {id: 3, name: 'Civil'},
@@ -42,51 +177,39 @@ let options = [
   {id: 9, name: 'Electrical'}
 ];
 
-let actions = {
-  onOpenChange: action('onOpenChange'),
-  onInputChange: action('onInputChange'),
-  onBlur: action('onBlur'),
-  onFocus: action('onFocus'),
-  onChange: action('onChange'),
-  onSubmit: action('onSubmit'),
-  onClear: action('onClear')
+export const Default: SearchAutocompleteStory = {
+  storyName: 'static items'
 };
 
-function Default(props) {
-  return (
-    <SearchAutocomplete label="Search with Autocomplete" {...mergeProps(props, actions)}>
-      <Item>Aerospace</Item>
-      <Item>Mechanical</Item>
-      <Item>Civil</Item>
-      <Item>Biomedical</Item>
-      <Item>Nuclear</Item>
-      <Item>Industrial</Item>
-      <Item>Chemical</Item>
-      <Item>Agricultural</Item>
-      <Item>Electrical</Item>
-    </SearchAutocomplete>
-  );
-}
-
-function Dynamic(props) {
-  return (
-    <SearchAutocomplete defaultItems={options} label="Search with Autocomplete" {...mergeProps(props, actions)}>
+export const Dynamic: SearchAutocompleteStory = {
+  args: {defaultItems: items},
+  render: (args) => (
+    <SearchAutocomplete defaultItems={items} {...args}>
       {(item: any) => <Item>{item.name}</Item>}
     </SearchAutocomplete>
-  );
-}
+  ),
+  storyName: 'dynamic items'
+};
 
-function Mapped(props) {
-  return (
-    <SearchAutocomplete label="Search with Autocomplete" {...mergeProps(props, actions)}>
-      {options.map((item) => (
+export const NoItems: SearchAutocompleteStory = {
+  ...Dynamic,
+  args: {defaultItems: []},
+  storyName: 'no items'
+};
+
+export const MappedItems: SearchAutocompleteStory = {
+  render: (args) => (
+    <SearchAutocomplete label="Search with Autocomplete" {...args}>
+      {items.map((item) => (
         <Item key={item.id}>
           {item.name}
         </Item>
       ))}
     </SearchAutocomplete>
-  );
-}
+  ),
+  storyName: 'with mapped items'
+};
+
 
 function CustomOnSubmit(props) {
   let [searchTerm, setSearchTerm] = React.useState('');
@@ -95,14 +218,14 @@ function CustomOnSubmit(props) {
     if (value) {
       setSearchTerm(value);
     } else if (key) {
-      let term = options.find(o => o.id === key)?.name;
+      let term = items.find(o => o.id === key)?.name;
       setSearchTerm(term ? term : '');
     }
   };
 
   return (
     <Flex direction="column">
-      <SearchAutocomplete defaultItems={options} label="Search with Autocomplete" {...mergeProps(props, actions, {onSubmit})}>
+      <SearchAutocomplete defaultItems={items} label="Search with Autocomplete" {...mergeProps(props, {onSubmit})}>
         {(item: any) => <Item>{item.name}</Item>}
       </SearchAutocomplete>
       <div>
@@ -112,83 +235,23 @@ function CustomOnSubmit(props) {
   );
 }
 
-export const Static = (props) => <Default {...props} />;
-Static.storyName = 'static items';
+export const noVisibleLabel: SearchAutocompleteStory = {
+  args: {label: undefined, 'aria-label': 'Search Autocomplete'},
+  storyName: 'No visible label'
+};
 
-export const DynamicItems = (props) => <Dynamic {...props} />;
-DynamicItems.storyName = 'dynamic items';
+export const customOnSubmit: SearchAutocompleteStory = {
+  render: (args) => <CustomOnSubmit {...args} />,
+  storyName: 'custom onSubmit'
+};
 
-export const NoItems = (props) =>  <Dynamic {...props} defaultItems={[]} />;
-NoItems.storyName = 'no items';
+export const iconFilter: SearchAutocompleteStory = {
+  args: {icon: <Filter />},
+  storyName: 'icon: Filter'
+};
 
-export const MappedItems = (props) => <Mapped {...props} />;
-MappedItems.storyName = 'with mapped items';
+export const iconNull: SearchAutocompleteStory = {
+  args: {icon: null},
+  storyName: 'icon: null'
+};
 
-export const MenuTriggerFocus = (props) => <Default {...props} menuTrigger="focus" />;
-MenuTriggerFocus.storyName = 'menuTrigger: focus';
-
-export const MenuTriggerManual = (props) => <Default {...props} menuTrigger="manual" />;
-MenuTriggerManual.storyName = 'menuTrigger: manual';
-
-export const isQuiet = (props) => <Default {...props} isQuiet />;
-isQuiet.storyName = 'isQuiet';
-
-export const isDisabled = (props) => <Default {...props} isDisabled />;
-isDisabled.storyName = 'isDisabled';
-
-export const isReadOnly = (props) => <Default {...props} isReadOnly value="Read only" />;
-isReadOnly.storyName = 'isReadOnly';
-
-export const labelAlignEnd = (props) => <Default {...props} labelAlign="end" />;
-labelAlignEnd.storyName = 'labelPosition: top, labelAlign: end';
-
-export const labelPositionSide = (props) => <Default {...props} labelPosition="side" />;
-labelPositionSide.storyName = 'labelPosition: side';
-
-export const noVisibleLabel = (props) =>  <Default {...props} label={undefined} aria-label="Search Autocomplete" />;
-noVisibleLabel.storyName = 'No visible label';
-
-export const noVisibleLabelIsQuiet = (props) => <Default {...props} label={undefined} aria-label="Search Autocomplete" isQuiet />;
-noVisibleLabelIsQuiet.storyName = 'No visible label, isQuiet';
-
-export const isRequired = (props) => <Default {...props} isRequired />;
-isRequired.storyName = 'isRequired';
-
-export const isRequiredNecessityIndicatorLabel = (props) => <Default {...props} isRequired necessityIndicator="label"  />;
-isRequiredNecessityIndicatorLabel.storyName = 'isRequired, necessityIndicator: label';
-
-export const validationStateInvalid = (props) => <Default {...props} validationState="invalid" />;
-validationStateInvalid.storyName = 'validationState: invalid';
-
-export const validationStateValid = (props) => <Default {...props} validationState="invalid" />;
-validationStateValid.storyName = 'validationState: valid';
-
-export const validationStateInvalidIsQuiet = (props) => <Default {...props} validationState="invalid" isQuiet />;
-validationStateInvalidIsQuiet.storyName = 'validationState: invalid, isQuiet';
-
-export const validationStateValidIsQuiet = (props) => <Default {...props} validationState="valid" isQuiet />;
-validationStateValidIsQuiet.storyName = 'validationState: valid, isQuiet';
-
-export const autoFocus = (props) => <Default {...props} autoFocus />;
-autoFocus.storyName = 'autoFocus: true';
-
-export const directionTop = (props) => <Default {...props} direction="top" />;
-directionTop.storyName = 'direction: top';
-
-export const customWidth500 = (props) => <Default {...props} width="size-500" />;
-customWidth500.storyName = 'custom width: size-500';
-
-export const customWidth3000 = (props) => <Default {...props} width="size-3000'" />;
-customWidth3000.storyName = 'custom width: size-3000';
-
-export const customWidth6000 = (props) => <Default {...props} width="size-6000" />;
-customWidth6000.storyName = 'custom width: size-6000';
-
-export const customOnSubmit = (props) => <CustomOnSubmit {...props} />;
-customOnSubmit.storyName = 'custom onSubmit';
-
-export const iconFilter = (props) => <Default {...props} icon={<Filter />} />;
-iconFilter.storyName = 'icon: Filter';
-
-export const iconNull = (props) => <Default {...props} icon={null} />;
-iconNull.storyName = 'icon: null';

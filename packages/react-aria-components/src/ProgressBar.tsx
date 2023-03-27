@@ -21,12 +21,12 @@ export interface ProgressBarRenderProps {
   /**
    * The value as a percentage between the minimum and maximum.
    */
-  percentage: number,
+  percentage?: number,
   /**
    * A formatted version of the value.
    * @selector [aria-valuetext]
    */
-  valueText: string,
+  valueText?: string,
   /**
    * Whether the progress bar is indeterminate.
    * @selector :not([aria-valuenow])
@@ -42,7 +42,7 @@ function ProgressBar(props: ProgressBarProps, ref: ForwardedRef<HTMLDivElement>)
     value = 0,
     minValue = 0,
     maxValue = 100,
-    isIndeterminate
+    isIndeterminate = false
   } = props;
 
   let [labelRef, label] = useSlot();

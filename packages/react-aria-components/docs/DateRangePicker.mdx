@@ -903,7 +903,7 @@ import type {DateRange} from 'react-aria-components';
 import {I18nProvider} from '@react-aria/i18n';
 
 function Example() {
-  let [range, setRange] = React.useState<DateRange>(null);
+  let [range, setRange] = React.useState<DateRange | null>(null);
   return (
     <I18nProvider locale="hi-IN-u-ca-indian">
       <MyDateRangePicker label="Date range" value={range} onChange={setRange} />
@@ -952,9 +952,9 @@ function Example() {
     [now.add({days: 23}), now.add({days: 24})],
   ];
 
-  let isDateUnavailable = (date) => disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
-  let [value, setValue] = React.useState<DateRange>(null);
-  let isInvalid = value && disabledRanges.some(interval => value.end.compare(interval[0]) >= 0 && value.start.compare(interval[1]) <= 0);
+  let isDateUnavailable = (date: DateValue) => disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+  let [value, setValue] = React.useState<DateRange | null>(null);
+  let isInvalid = disabledRanges.some(interval => value && value.end.compare(interval[0]) >= 0 && value.start.compare(interval[1]) <= 0);
 
   return (
     <MyDateRangePicker
@@ -963,7 +963,7 @@ function Example() {
       isDateUnavailable={isDateUnavailable}
       value={value}
       onChange={setValue}
-      validationState={isInvalid ? 'invalid' : null} />
+      validationState={isInvalid ? 'invalid' : undefined} />
   );
 }
 ```
@@ -1007,8 +1007,8 @@ function Example() {
       value={range}
       onChange={setRange}
       validationState={isInvalid ? 'invalid' : 'valid'}
-      description={isInvalid ? null : 'Select your vacation dates'}
-      errorMessage={isInvalid ? 'Maximum stay duration is 1 week' : null} />
+      description={isInvalid ? undefined : 'Select your vacation dates'}
+      errorMessage={isInvalid ? 'Maximum stay duration is 1 week' : undefined} />
   );
 }
 ```

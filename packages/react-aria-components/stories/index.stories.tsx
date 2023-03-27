@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Checkbox, Column, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, Group, Heading, Input, Item, Keyboard, Label, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, TabPanels, Tabs, Text, TimeField, Tooltip, TooltipTrigger} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, Group, Heading, Input, Item, Keyboard, Label, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, TabPanels, Tabs, Text, TimeField, Tooltip, TooltipTrigger} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import React from 'react';
 import styles from '../example/index.css';
+import {useListData} from 'react-stately';
 
 export default {
   title: 'React Aria Components'
@@ -382,7 +383,7 @@ export const TooltipExample = () => (
 export const PopoverExample = () => (
   <DialogTrigger>
     <Button>Open popover</Button>
-    <Popover 
+    <Popover
       placement="bottom start"
       style={{
         background: 'Canvas',
@@ -474,45 +475,79 @@ export const TabsExample = () => (
   </Tabs>
 );
 
-export const TableExample = () => (
-  <Table
-    aria-label="Example static collection table"
-    style={{height: '210px', maxWidth: '400px'}}
-    selectionMode="multiple">
-    <TableHeader>
-      <Column><MyCheckbox /></Column>
-      <Column>Name</Column>
-      <Column>Type</Column>
-      <Column>Date Modified</Column>
-    </TableHeader>
-    <TableBody>
-      <Row>
-        <Cell><MyCheckbox /></Cell>
-        <Cell>Games</Cell>
-        <Cell>File folder</Cell>
-        <Cell>6/7/2020</Cell>
-      </Row>
-      <Row>
-        <Cell><MyCheckbox /></Cell>
-        <Cell>Program Files</Cell>
-        <Cell>File folder</Cell>
-        <Cell>4/7/2021</Cell>
-      </Row>
-      <Row>
-        <Cell><MyCheckbox /></Cell>
-        <Cell>bootmgr</Cell>
-        <Cell>System file</Cell>
-        <Cell>11/20/2010</Cell>
-      </Row>
-      <Row>
-        <Cell><MyCheckbox /></Cell>
-        <Cell>log.txt</Cell>
-        <Cell>Text Document</Cell>
-        <Cell>1/18/2016</Cell>
-      </Row>
-    </TableBody>
-  </Table>
-);
+export const TableExample = () => {
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
+      {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
+      {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
+      {id: 4, name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
+    ]
+  });
+
+  return (
+    <Table
+      aria-label="Example table"
+      style={{height: '210px', maxWidth: '400px'}}>
+      <TableHeader>
+        <Column isRowHeader>Name</Column>
+        <Column>Type</Column>
+        <Column>Date Modified</Column>
+        <Column>Actions</Column>
+      </TableHeader>
+      <TableBody items={list.items}>
+        {item => (
+          <Row>
+            <Cell>{item.name}</Cell>
+            <Cell>{item.type}</Cell>
+            <Cell>{item.date}</Cell>
+            <Cell>
+              <DialogTrigger>
+                <Button>Delete</Button>
+                <ModalOverlay
+                  style={{
+                    position: 'fixed',
+                    zIndex: 100,
+                    top: 0,
+                    left: 0,
+                    bottom: 0,
+                    right: 0,
+                    background: 'rgba(0, 0, 0, 0.5)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                  <Modal
+                    style={{
+                      background: 'Canvas',
+                      color: 'CanvasText',
+                      border: '1px solid gray',
+                      padding: 30
+                    }}>
+                    <Dialog>
+                      {({close}) => (<>
+                        <Heading>Delete item</Heading>
+                        <p>Are you sure?</p>
+                        <Button onPress={close}>Cancel</Button>
+                        <Button
+                          onPress={() => {
+                            close();
+                            list.remove(item.id);
+                          }}>
+                          Delete
+                        </Button>
+                      </>)}
+                    </Dialog>
+                  </Modal>
+                </ModalOverlay>
+              </DialogTrigger>
+            </Cell>
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+};
 
 function MyItem(props) {
   return (
@@ -546,27 +581,10 @@ function CustomThumb({index, children}) {
 
 function CustomTab(props) {
   return (
-    <Tab 
-      {...props} 
+    <Tab
+      {...props}
       style={({isSelected}) => ({
         borderBottom: '2px solid ' + (isSelected ? 'slateblue' : 'transparent')
       })} />
-  );
-}
-
-function MyCheckbox(props) {
-  return (
-    <Checkbox {...props}>
-      {({isIndeterminate, isSelected}) => (<>
-        <div style={{border: '2px solid gray', width: 16, height: 16}}>
-          <svg viewBox="0 0 18 18" width={14} height={14} fill="none" stroke="white">
-            {isIndeterminate
-              ? <rect x={1} y={7.5} width={15} height={3} />
-              : <polyline points="1 9 7 14 15 4" strokeWidth={3} strokeDasharray={22} strokeDashoffset={isSelected ? 44 : 66} />
-            }
-          </svg>
-        </div>
-      </>)}
-    </Checkbox>
   );
 }
