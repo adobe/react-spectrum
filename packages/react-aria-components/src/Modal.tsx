@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaModalOverlayProps, Overlay, useModalOverlay} from 'react-aria';
+import {AriaModalOverlayProps, DismissButton, Overlay, useModalOverlay} from 'react-aria';
 import {DOMAttributes} from '@react-types/shared';
 import {mergeRefs, useObjectRef, useViewportSize} from '@react-aria/utils';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
@@ -26,7 +26,9 @@ interface ModalContextValue {
 interface InternalModalContextValue {
   modalProps: DOMAttributes,
   modalRef: RefObject<HTMLDivElement>,
-  isExiting: boolean
+  isExiting: boolean,
+  isDismissable?: boolean,
+  state: OverlayTriggerState
 }
 
 export const ModalContext = createContext<ModalContextValue | null>(null);
@@ -119,7 +121,8 @@ export const ModalOverlay = forwardRef((props: ModalOverlayProps, ref: Forwarded
 
 function ModalOverlayInner(props: ModalOverlayInnerProps) {
   let modalRef = props.modalRef;
-  let {modalProps, underlayProps} = useModalOverlay(props, props.state, modalRef);
+  let {state} = props;
+  let {modalProps, underlayProps} = useModalOverlay(props, state, modalRef);
 
   let entering = useEnterAnimation(props.overlayRef);
   let renderProps = useRenderProps({
@@ -146,7 +149,7 @@ function ModalOverlayInner(props: ModalOverlayInnerProps) {
         ref={props.overlayRef}
         data-entering={entering || undefined}
         data-exiting={props.isExiting || undefined}>
-        <InternalModalContext.Provider value={{modalProps, modalRef, isExiting: props.isExiting}}>
+        <InternalModalContext.Provider value={{modalProps, modalRef, state, isExiting: props.isExiting, isDismissable: props.isDismissable}}>
           {renderProps.children}
         </InternalModalContext.Provider>
       </div>
@@ -159,7 +162,7 @@ interface ModalContentProps extends RenderProps<ModalRenderProps> {
 }
 
 function ModalContent(props: ModalContentProps) {
-  let {modalProps, modalRef, isExiting} = useContext(InternalModalContext)!;
+  let {modalProps, modalRef, isExiting, isDismissable, state} = useContext(InternalModalContext)!;
   let mergedRefs = useMemo(() => mergeRefs(props.modalRef, modalRef), [props.modalRef, modalRef]);
 
   let ref = useObjectRef(mergedRefs);
@@ -180,6 +183,9 @@ function ModalContent(props: ModalContentProps) {
       ref={ref}
       data-entering={entering || undefined}
       data-exiting={isExiting || undefined}>
+      {isDismissable &&
+        <DismissButton onDismiss={state.close} />
+      }
       {renderProps.children}
     </div>
   );
