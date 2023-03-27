@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, ListKeyboardDelegate, mergeProps, useFocusRing, useGridList, useGridListItem, useGridListSelectionCheckbox, useHover, useVisuallyHidden, VisuallyHidden} from 'react-aria';
+import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useGridList, useGridListItem, useGridListSelectionCheckbox, useHover, useVisuallyHidden, VisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
 import {CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
@@ -22,15 +22,25 @@ import {TextContext} from './Text';
 
 export interface GridListRenderProps {
   /**
-   * Whether the grid list root is currently the active drop target.
-   * @selector [data-drop-target]
-   */
-  isDropTarget: boolean,
-  /**
    * Whether the list has no items and should display its empty state.
    * @selector [data-empty]
    */
-  isEmpty: boolean
+  isEmpty: boolean,
+  /**
+   * Whether the grid list is currently focused.
+   * @selector [data-focused]
+   */
+  isFocused: boolean,
+  /**
+   * Whether the grid list is currently keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
+   * Whether the grid list is currently the active drop target.
+   * @selector [data-drop-target]
+   */
+  isDropTarget: boolean
 }
 
 export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<GridListRenderProps>, SlotProps {
@@ -129,13 +139,16 @@ function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<H
     isRootDropTarget = dropState.isDropTarget({type: 'root'});
   }
 
+  let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let renderProps = useRenderProps({
     className: props.className,
     style: props.style,
     defaultClassName: 'react-aria-GridList',
     values: {
       isDropTarget: isRootDropTarget,
-      isEmpty: state.collection.size === 0
+      isEmpty: state.collection.size === 0,
+      isFocused,
+      isFocusVisible
     }
   });
 
@@ -178,26 +191,30 @@ function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<H
   }
 
   return (
-    <div
-      {...filterDOMProps(props)}
-      {...renderProps}
-      {...mergeProps(gridProps, droppableCollection?.collectionProps, emptyStatePropOverrides)}
-      ref={ref}
-      slot={props.slot}
-      data-drop-target={isRootDropTarget || undefined}
-      data-empty={state.collection.size === 0 || undefined}>
-      <Provider
-        values={[
-          [InternalGridListContext, {state, dragAndDropHooks, dragState, dropState}],
-          [DropIndicatorContext, {render: GridListDropIndicator}]
-        ]}>
-        {isListDroppable && <RootDropIndicator />}
-        {children}
-      </Provider>
-      {emptyState}
-      {dragPreview}
-      {portal}
-    </div>
+    <FocusScope>
+      <div
+        {...filterDOMProps(props)}
+        {...renderProps}
+        {...mergeProps(gridProps, focusProps, droppableCollection?.collectionProps, emptyStatePropOverrides)}
+        ref={ref}
+        slot={props.slot}
+        data-drop-target={isRootDropTarget || undefined}
+        data-empty={state.collection.size === 0 || undefined}
+        data-focused={isFocused || undefined}
+        data-focus-visible={isFocusVisible || undefined}>
+        <Provider
+          values={[
+            [InternalGridListContext, {state, dragAndDropHooks, dragState, dropState}],
+            [DropIndicatorContext, {render: GridListDropIndicator}]
+          ]}>
+          {isListDroppable && <RootDropIndicator />}
+          {children}
+        </Provider>
+        {emptyState}
+        {dragPreview}
+        {portal}
+      </div>
+    </FocusScope>
   );
 }
 
@@ -271,6 +288,12 @@ function GridListItem({item}) {
     }
   // eslint-disable-next-line
   }, []);
+
+  useEffect(() => {
+    if (!item.textValue) {
+      console.warn('A `textValue` prop is required for <Item> elements with non-plain text children in order to support accessibility features such as type to select.');
+    }
+  }, [item.textValue]);
 
   return (
     <>
