@@ -19,6 +19,7 @@ import {KeyboardEvent, RefObject} from 'react';
 import type {TagGroupState} from '@react-stately/tag';
 import {TagProps} from '@react-types/tag';
 import {useGridListItem} from '@react-aria/gridlist';
+import {useInteractionModality} from '@react-aria/interactions';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 
@@ -65,7 +66,11 @@ export function useTag<T>(props: TagProps<T>, state: TagGroupState<T>, ref: RefO
     }
   };
 
-  let description = allowsRemoving ? stringFormatter.format('removeDescription') : '';
+  let modality: string = useInteractionModality();
+  if (modality === 'virtual' &&  (typeof window !== 'undefined' && 'ontouchstart' in window)) {
+    modality = 'touch';
+  }
+  let description = allowsRemoving && (modality === 'keyboard' || modality === 'virtual') ? stringFormatter.format('removeDescription') : '';
   let descProps = useDescription(description);
 
   isFocused = isFocused || state.selectionManager.focusedKey === item.key;
