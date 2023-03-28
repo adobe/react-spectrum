@@ -216,7 +216,10 @@ describe('Menu', () => {
     );
 
     let button = getByRole('button');
+    expect(button).not.toHaveAttribute('data-pressed');
+
     userEvent.click(button);
+    expect(button).toHaveAttribute('data-pressed');
 
     let menu = getByRole('menu');
     expect(getAllByRole('menuitem')).toHaveLength(5);

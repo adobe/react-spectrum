@@ -39,6 +39,7 @@ describe('Select', () => {
 
     let button = getByRole('button');
     expect(button).toHaveTextContent('Select an item');
+    expect(button).not.toHaveAttribute('data-pressed');
 
     let select = button.closest('.react-aria-Select');
     expect(select).toHaveAttribute('data-foo', 'bar');
@@ -52,6 +53,8 @@ describe('Select', () => {
     expect(button.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Description Error');
 
     userEvent.click(button);
+
+    expect(button).toHaveAttribute('data-pressed', 'true');
 
     let listbox = getByRole('listbox');
     expect(listbox).toHaveAttribute('class', 'react-aria-ListBox');
