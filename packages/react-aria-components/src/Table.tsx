@@ -1,5 +1,5 @@
 import {AriaLabelingProps} from '@react-types/shared';
-import {BaseCollection, CollectionContext, CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection} from './Collection';
+import {BaseCollection, CollectionContext, CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useCollectionChildren} from './Collection';
 import {buildHeaderRows} from '@react-stately/table';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
@@ -351,7 +351,7 @@ export interface TableHeaderProps<T> {
  * A header within a `<Table>`, containing the table columns.
  */
 export function TableHeader<T extends object>(props: TableHeaderProps<T>) {
-  let children = useCachedChildren({
+  let children = useCollectionChildren({
     children: props.children,
     items: props.columns
   });
@@ -408,7 +408,7 @@ export interface ColumnProps<T = object> extends RenderProps<ColumnRenderProps> 
 export function Column<T extends object>(props: ColumnProps<T>): JSX.Element {
   let render = useContext(CollectionRendererContext);
   let childColumns = typeof render === 'function' ? render : props.children;
-  let children = useCachedChildren({
+  let children = useCollectionChildren({
     children: (props.title || props.childColumns) ? childColumns : null,
     items: props.childColumns
   });
@@ -434,7 +434,7 @@ export interface TableBodyProps<T> extends CollectionProps<T>, StyleRenderProps<
  * The body of a `<Table>`, containing the table rows.
  */
 export function TableBody<T extends object>(props: TableBodyProps<T>) {
-  let children = useCachedChildren(props);
+  let children = useCollectionChildren(props);
 
   // @ts-ignore
   return <tablebody multiple={props}>{children}</tablebody>;
@@ -456,7 +456,7 @@ export interface RowProps<T> extends RenderProps<RowRenderProps> {
  * A row within a `<Table>`.
  */
 export function Row<T extends object>(props: RowProps<T>) {
-  let children = useCachedChildren({
+  let children = useCollectionChildren({
     children: props.children,
     items: props.columns,
     idScope: props.id

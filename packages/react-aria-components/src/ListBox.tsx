@@ -249,13 +249,13 @@ function ListBoxSection<T>({section, className, style, ...otherProps}: ListBoxSe
     children: item => {
       switch (item.type) {
         case 'header': {
-          let {rendered, ref, ...otherProps} = item.props;
+          let {ref, ...otherProps} = item.props;
           return (
             <Header
               {...headingProps}
               {...otherProps}
               ref={mergeRefs(headingRef, ref)}>
-              {rendered}
+              {item.rendered}
             </Header>
           );
         }
