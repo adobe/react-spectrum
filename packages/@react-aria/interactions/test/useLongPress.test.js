@@ -61,7 +61,9 @@ describe('useLongPress', function () {
         ctrlKey: false,
         metaKey: false,
         shiftKey: false,
-        altKey: false
+        altKey: false,
+        x: 0,
+        y: 0
       }
     ]);
 
@@ -74,7 +76,9 @@ describe('useLongPress', function () {
         ctrlKey: false,
         metaKey: false,
         shiftKey: false,
-        altKey: false
+        altKey: false,
+        x: 0,
+        y: 0
       }
     ]);
 
@@ -87,7 +91,9 @@ describe('useLongPress', function () {
         ctrlKey: false,
         metaKey: false,
         shiftKey: false,
-        altKey: false
+        altKey: false,
+        x: 0,
+        y: 0
       },
       {
         type: 'longpressend',
@@ -96,7 +102,9 @@ describe('useLongPress', function () {
         ctrlKey: false,
         metaKey: false,
         shiftKey: false,
-        altKey: false
+        altKey: false,
+        x: 0,
+        y: 0
       },
       {
         type: 'longpress',
@@ -105,7 +113,9 @@ describe('useLongPress', function () {
         ctrlKey: false,
         metaKey: false,
         shiftKey: false,
-        altKey: false
+        altKey: false,
+        x: 0,
+        y: 0
       }
     ]);
 
@@ -118,7 +128,9 @@ describe('useLongPress', function () {
         ctrlKey: false,
         metaKey: false,
         shiftKey: false,
-        altKey: false
+        altKey: false,
+        x: 0,
+        y: 0
       },
       {
         type: 'longpressend',
@@ -127,7 +139,9 @@ describe('useLongPress', function () {
         ctrlKey: false,
         metaKey: false,
         shiftKey: false,
-        altKey: false
+        altKey: false,
+        x: 0,
+        y: 0
       },
       {
         type: 'longpress',
@@ -136,7 +150,9 @@ describe('useLongPress', function () {
         ctrlKey: false,
         metaKey: false,
         shiftKey: false,
-        altKey: false
+        altKey: false,
+        x: 0,
+        y: 0
       }
     ]);
   });
@@ -166,7 +182,9 @@ describe('useLongPress', function () {
         ctrlKey: false,
         metaKey: false,
         shiftKey: false,
-        altKey: false
+        altKey: false,
+        x: 0,
+        y: 0
       },
       {
         type: 'longpressend',
@@ -175,7 +193,9 @@ describe('useLongPress', function () {
         ctrlKey: false,
         metaKey: false,
         shiftKey: false,
-        altKey: false
+        altKey: false,
+        x: 0,
+        y: 0
       }
     ]);
   });
@@ -207,7 +227,9 @@ describe('useLongPress', function () {
         ctrlKey: false,
         metaKey: false,
         shiftKey: false,
-        altKey: false
+        altKey: false,
+        x: 0,
+        y: 0
       },
       {
         type: 'pressstart',
@@ -216,7 +238,9 @@ describe('useLongPress', function () {
         ctrlKey: false,
         metaKey: false,
         shiftKey: false,
-        altKey: false
+        altKey: false,
+        x: 0,
+        y: 0
       },
       {
         type: 'longpressend',
@@ -225,7 +249,9 @@ describe('useLongPress', function () {
         ctrlKey: false,
         metaKey: false,
         shiftKey: false,
-        altKey: false
+        altKey: false,
+        x: 0,
+        y: 0
       },
       {
         type: 'pressend',
@@ -234,7 +260,9 @@ describe('useLongPress', function () {
         ctrlKey: false,
         metaKey: false,
         shiftKey: false,
-        altKey: false
+        altKey: false,
+        x: 0,
+        y: 0
       },
       {
         type: 'longpress',
@@ -243,7 +271,9 @@ describe('useLongPress', function () {
         ctrlKey: false,
         metaKey: false,
         shiftKey: false,
-        altKey: false
+        altKey: false,
+        x: 0,
+        y: 0
       }
     ]);
   });
@@ -275,7 +305,9 @@ describe('useLongPress', function () {
         ctrlKey: false,
         metaKey: false,
         shiftKey: false,
-        altKey: false
+        altKey: false,
+        x: 0,
+        y: 0
       },
       {
         type: 'pressstart',
@@ -284,7 +316,9 @@ describe('useLongPress', function () {
         ctrlKey: false,
         metaKey: false,
         shiftKey: false,
-        altKey: false
+        altKey: false,
+        x: 0,
+        y: 0
       },
       {
         type: 'longpressend',
@@ -293,7 +327,9 @@ describe('useLongPress', function () {
         ctrlKey: false,
         metaKey: false,
         shiftKey: false,
-        altKey: false
+        altKey: false,
+        x: 0,
+        y: 0
       },
       {
         type: 'pressend',
@@ -302,7 +338,9 @@ describe('useLongPress', function () {
         ctrlKey: false,
         metaKey: false,
         shiftKey: false,
-        altKey: false
+        altKey: false,
+        x: 0,
+        y: 0
       },
       {
         type: 'press',
@@ -311,7 +349,9 @@ describe('useLongPress', function () {
         ctrlKey: false,
         metaKey: false,
         shiftKey: false,
-        altKey: false
+        altKey: false,
+        x: 0,
+        y: 0
       }
     ]);
   });
@@ -339,7 +379,9 @@ describe('useLongPress', function () {
         ctrlKey: false,
         metaKey: false,
         shiftKey: false,
-        altKey: false
+        altKey: false,
+        x: 0,
+        y: 0
       }
     ]);
 
@@ -352,7 +394,9 @@ describe('useLongPress', function () {
         ctrlKey: false,
         metaKey: false,
         shiftKey: false,
-        altKey: false
+        altKey: false,
+        x: 0,
+        y: 0
       },
       {
         type: 'longpressend',
@@ -361,7 +405,9 @@ describe('useLongPress', function () {
         ctrlKey: false,
         metaKey: false,
         shiftKey: false,
-        altKey: false
+        altKey: false,
+        x: 0,
+        y: 0
       },
       {
         type: 'longpress',
@@ -370,7 +416,9 @@ describe('useLongPress', function () {
         ctrlKey: false,
         metaKey: false,
         shiftKey: false,
-        altKey: false
+        altKey: false,
+        x: 0,
+        y: 0
       }
     ]);
   });
