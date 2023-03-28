@@ -99,7 +99,7 @@ const overlaySize = {
 const PROVIDER_OFFSET = 50;
 
 describe('calculatePosition', function () {
-  function checkPositionCommon(title, expected, placement, targetDimension, boundaryDimensions, offset, crossOffset, flip, providerOffset = 0) {
+  function checkPositionCommon(title, expected, placement, targetDimension, boundaryDimensions, offset, crossOffset, flip, providerOffset = 0, arrowCrossSize = 8, minOverlayArrowOffset = 0) {
     const placementAxis = placement.split(' ')[0];
 
     // The tests are all based on top/left positioning. Convert to bottom/right positioning if needed.
@@ -154,14 +154,17 @@ describe('calculatePosition', function () {
         shouldFlip: flip,
         boundaryElement: boundariesElem,
         offset,
-        crossOffset
+        crossOffset,
+        arrowCrossSize,
+        minOverlayArrowOffset
       });
+
       expect(result).toEqual(expectedPosition);
       document.documentElement.removeChild(parentElement);
     });
   }
 
-  function checkPosition(placement, targetDimension, expected, offset = 0, crossOffset = 0, flip = false) {
+  function checkPosition(placement, targetDimension, expected, offset = 0, crossOffset = 0, flip = false, providerOffset, arrowCrossSize, minOverlayArrowOffset) {
     checkPositionCommon(
       'Should calculate the correct position',
       expected,
@@ -170,7 +173,10 @@ describe('calculatePosition', function () {
       boundaryDimensions,
       offset,
       crossOffset,
-      flip
+      flip,
+      providerOffset,
+      arrowCrossSize,
+      minOverlayArrowOffset
     );
   }
 
@@ -191,99 +197,123 @@ describe('calculatePosition', function () {
   const testCases = [
     {
       placement: 'left',
-      noOffset: [50, 200, undefined, 100, 350],
-      offsetBefore: [-200, 50, undefined, 0, 500],
-      offsetAfter: [300, 350, undefined, 200, 200],
-      crossAxisOffset: [50, 210, undefined, 90, 340],
-      mainAxisOffset: [40, 200, undefined, 100, 350]
+      noOffset: [50, 200, undefined, 196, 350],
+      offsetBefore: [-200, 50, undefined, 50, 500],
+      offsetAfter: [300, 350, undefined, 196, 200],
+      crossAxisOffsetPositive: [50, 210, undefined, 196, 340],
+      crossAxisOffsetNegative: [50, 190, undefined, 196, 360],
+      mainAxisOffset: [40, 200, undefined, 196, 350],
+      minOverlayArrowOffset: [50, 322, undefined, 176, 228]
     },
     {
       placement: 'left top',
-      noOffset: [50, 250, undefined, 50, 300],
-      offsetBefore: [-200, 50, undefined, 0, 500],
-      offsetAfter: [300, 350, undefined, 200, 200],
-      crossAxisOffset: [50, 260, undefined, 40, 290],
-      mainAxisOffset: [40, 250, undefined, 50, 300]
+      noOffset: [50, 250, undefined, 196, 300],
+      offsetBefore: [-200, 50, undefined, 50, 500],
+      offsetAfter: [300, 350, undefined, 196, 200],
+      crossAxisOffsetPositive: [50, 260, undefined, 196, 290],
+      crossAxisOffsetNegative: [50, 240, undefined, 196, 310],
+      mainAxisOffset: [40, 250, undefined, 196, 300],
+      minOverlayArrowOffset: [50, 322, undefined, 176, 228]
     },
     {
       placement: 'left bottom',
-      noOffset: [50, 150, undefined, 150, 400],
-      offsetBefore: [-200, 50, undefined, 0, 500],
-      offsetAfter: [300, 350, undefined, 200, 200],
-      crossAxisOffset: [50, 160, undefined, 140, 390],
-      mainAxisOffset: [40, 150, undefined, 150, 400]
+      noOffset: [50, 150, undefined, 196, 400],
+      offsetBefore: [-200, 50, undefined, 50, 500],
+      offsetAfter: [300, 350, undefined, 196, 200],
+      crossAxisOffsetPositive: [50, 160, undefined, 196, 390],
+      crossAxisOffsetNegative: [50, 140, undefined, 196, 410],
+      mainAxisOffset: [40, 150, undefined, 196, 400],
+      minOverlayArrowOffset: [50, 322, undefined, 176, 228]
     },
     {
       placement: 'top',
-      noOffset: [200, 50, 100, undefined, 200],
-      offsetBefore: [50, -200, 0, undefined, 0],
-      offsetAfter: [350, 300, 200, undefined, 450],
-      mainAxisOffset: [200, 40, 100, undefined, 200],
-      crossAxisOffset: [210, 50, 90, undefined, 200]
+      noOffset: [200, 50, 196, undefined, 200],
+      offsetBefore: [50, -200, 50, undefined, 0],
+      offsetAfter: [350, 300, 196, undefined, 450],
+      crossAxisOffsetPositive: [210, 50, 196, undefined, 200],
+      crossAxisOffsetNegative: [190, 50, 196, undefined, 200],
+      mainAxisOffset: [200, 40, 196, undefined, 200],
+      minOverlayArrowOffset: [322, 50, 176, undefined, 200]
     },
     {
       placement: 'top left',
-      noOffset: [250, 50, 50, undefined, 200],
-      offsetBefore: [50, -200, 0, undefined, 0],
-      offsetAfter: [350, 300, 200, undefined, 450],
-      mainAxisOffset: [250, 40, 50, undefined, 200],
-      crossAxisOffset: [260, 50, 40, undefined, 200]
+      noOffset: [250, 50, 196, undefined, 200],
+      offsetBefore: [50, -200, 50, undefined, 0],
+      offsetAfter: [350, 300, 196, undefined, 450],
+      crossAxisOffsetPositive: [260, 50, 196, undefined, 200],
+      crossAxisOffsetNegative: [240, 50, 196, undefined, 200],
+      mainAxisOffset: [250, 40, 196, undefined, 200],
+      minOverlayArrowOffset: [322, 50, 176, undefined, 200]
     },
     {
       placement: 'top right',
-      noOffset: [150, 50, 150, undefined, 200],
-      offsetBefore: [50, -200, 0, undefined, 0],
-      offsetAfter: [350, 300, 200, undefined, 450],
-      mainAxisOffset: [150, 40, 150, undefined, 200],
-      crossAxisOffset: [160, 50, 140, undefined, 200]
+      noOffset: [150, 50, 196, undefined, 200],
+      offsetBefore: [50, -200, 50, undefined, 0],
+      offsetAfter: [350, 300, 196, undefined, 450],
+      crossAxisOffsetPositive: [160, 50, 196, undefined, 200],
+      crossAxisOffsetNegative: [140, 50, 196, undefined, 200],
+      mainAxisOffset: [150, 40, 196, undefined, 200],
+      minOverlayArrowOffset: [322, 50, 176, undefined, 200]
     },
     {
       placement: 'bottom',
-      noOffset: [200, 350, 100, undefined, 200],
-      offsetBefore: [50, 100, 0, undefined, 450],
-      offsetAfter: [350, 600, 200, undefined, 0],
-      mainAxisOffset: [200, 360, 100, undefined, 190],
-      crossAxisOffset: [210, 350, 90, undefined, 200]
+      noOffset: [200, 350, 196, undefined, 200],
+      offsetBefore: [50, 100, 50, undefined, 450],
+      offsetAfter: [350, 600, 196, undefined, 0],
+      crossAxisOffsetPositive: [210, 350, 196, undefined, 200],
+      crossAxisOffsetNegative: [190, 350, 196, undefined, 200],
+      mainAxisOffset: [200, 360, 196, undefined, 190],
+      minOverlayArrowOffset: [322, 350, 176, undefined, 200]
     },
     {
       placement: 'bottom left',
-      noOffset: [250, 350, 50, undefined, 200],
-      offsetBefore: [50, 100, 0, undefined, 450],
-      offsetAfter: [350, 600, 200, undefined, 0],
-      mainAxisOffset: [250, 360, 50, undefined, 190],
-      crossAxisOffset: [260, 350, 40, undefined, 200]
+      noOffset: [250, 350, 196, undefined, 200],
+      offsetBefore: [50, 100, 50, undefined, 450],
+      offsetAfter: [350, 600, 196, undefined, 0],
+      crossAxisOffsetPositive: [260, 350, 196, undefined, 200],
+      crossAxisOffsetNegative: [240, 350, 196, undefined, 200],
+      mainAxisOffset: [250, 360, 196, undefined, 190],
+      minOverlayArrowOffset: [322, 350, 176, undefined, 200]
     },
     {
       placement: 'bottom right',
-      noOffset: [150, 350, 150, undefined, 200],
-      offsetBefore: [50, 100, 0, undefined, 450],
-      offsetAfter: [350, 600, 200, undefined, 0],
-      mainAxisOffset: [150, 360, 150, undefined, 190],
-      crossAxisOffset: [160, 350, 140, undefined, 200]
+      noOffset: [150, 350, 196, undefined, 200],
+      offsetBefore: [50, 100, 50, undefined, 450],
+      offsetAfter: [350, 600, 196, undefined, 0],
+      crossAxisOffsetPositive: [160, 350, 196, undefined, 200],
+      crossAxisOffsetNegative: [140, 350, 196, undefined, 200],
+      mainAxisOffset: [150, 360, 196, undefined, 190],
+      minOverlayArrowOffset: [322, 350, 176, undefined, 200]
     },
     {
       placement: 'right',
-      noOffset: [350, 200, undefined, 100, 350],
-      offsetBefore: [100, 50, undefined, 0, 500],
-      offsetAfter: [600, 350, undefined, 200, 200],
-      crossAxisOffset: [350, 210, undefined, 90, 340],
-      mainAxisOffset: [360, 200, undefined, 100, 350]
+      noOffset: [350, 200, undefined, 196, 350],
+      offsetBefore: [100, 50, undefined, 50, 500],
+      offsetAfter: [600, 350, undefined, 196, 200],
+      crossAxisOffsetPositive: [350, 210, undefined, 196, 340],
+      crossAxisOffsetNegative: [350, 190, undefined, 196, 360],
+      mainAxisOffset: [360, 200, undefined, 196, 350],
+      minOverlayArrowOffset: [350, 322, undefined, 176, 228]
     },
     {
       placement: 'right top',
-      noOffset: [350, 250, undefined, 50, 300],
-      offsetBefore: [100, 50, undefined, 0, 500],
-      offsetAfter: [600, 350, undefined, 200, 200],
-      crossAxisOffset: [350, 260, undefined, 40, 290],
-      mainAxisOffset: [360, 250, undefined, 50, 300]
+      noOffset: [350, 250, undefined, 196, 300],
+      offsetBefore: [100, 50, undefined, 50, 500],
+      offsetAfter: [600, 350, undefined, 196, 200],
+      crossAxisOffsetPositive: [350, 260, undefined, 196, 290],
+      crossAxisOffsetNegative: [350, 240, undefined, 196, 310],
+      mainAxisOffset: [360, 250, undefined, 196, 300],
+      minOverlayArrowOffset: [350, 322, undefined, 176, 228]
     },
     {
       placement: 'right bottom',
-      noOffset: [350, 150, undefined, 150, 400],
-      offsetBefore: [100, 50, undefined, 0, 500],
-      offsetAfter: [600, 350, undefined, 200, 200],
-      crossAxisOffset: [350, 160, undefined, 140, 390],
-      mainAxisOffset: [360, 150, undefined, 150, 400]
+      noOffset: [350, 150, undefined, 196, 400],
+      offsetBefore: [100, 50, undefined, 50, 500],
+      offsetAfter: [600, 350, undefined, 196, 200],
+      crossAxisOffsetPositive: [350, 160, undefined, 196, 390],
+      crossAxisOffsetNegative: [350, 140, undefined, 196, 410],
+      mainAxisOffset: [360, 150, undefined, 196, 400],
+      minOverlayArrowOffset: [350, 322, undefined, 176, 228]
     }
   ];
 
@@ -321,9 +351,21 @@ describe('calculatePosition', function () {
         );
       });
 
-      describe('cross axis offset', function () {
+      describe('cross axis offset positive', function () {
         checkPosition(
-          placement, getTargetDimension({left: 250, top: 250}), testCase.crossAxisOffset, 0, 10
+          placement, getTargetDimension({left: 250, top: 250}), testCase.crossAxisOffsetPositive, 0, 10
+        );
+      });
+
+      describe('cross axis offset negative', function () {
+        checkPosition(
+          placement, getTargetDimension({left: 250, top: 250}), testCase.crossAxisOffsetNegative, 0, -10
+        );
+      });
+
+      describe('minimum overlay arrow offset', function () {
+        checkPosition(
+          placement, getTargetDimension({left: 250, top: 250}), testCase.minOverlayArrowOffset, 0, 1000, false, undefined, undefined, 20
         );
       });
     });
@@ -337,14 +379,14 @@ describe('calculatePosition', function () {
 
     describe('positive offset', function () {
       checkPosition(
-        'left', getTargetDimension({left: 0, top: 250}), [110, 200, undefined, 100, 350], 10, 0, true
+        'left', getTargetDimension({left: 0, top: 250}), [110, 200, undefined, 196, 350], 10, 0, true
       );
     });
   });
 
   describe('overlay smaller than target aligns in center', function () {
     checkPosition(
-      'right', getTargetDimension({left: 250, top: 250}, overlaySize.height + 100, overlaySize.width + 100), [550, 300, undefined, 100, 250]
+      'right', getTargetDimension({left: 250, top: 250}, overlaySize.height + 100, overlaySize.width + 100), [550, 300, undefined, 196, 250]
     );
   });
 

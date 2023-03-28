@@ -15,7 +15,7 @@ type Assertiveness = 'assertive' | 'polite';
 /* Inspired by https://github.com/AlmeroSteyn/react-aria-live */
 const LIVEREGION_TIMEOUT_DELAY = 7000;
 
-let liveAnnouncer: LiveAnnouncer = null;
+let liveAnnouncer: LiveAnnouncer | null = null;
 
 /**
  * Announces the message using screen reader technology.
@@ -58,7 +58,7 @@ export function destroyAnnouncer() {
 // is simple enough to implement without React, so that's what we do here.
 // See this discussion for more details: https://github.com/reactwg/react-18/discussions/125#discussioncomment-2382638
 class LiveAnnouncer {
-  node: HTMLElement;
+  node: HTMLElement | null;
   assertiveLog: HTMLElement;
   politeLog: HTMLElement;
 

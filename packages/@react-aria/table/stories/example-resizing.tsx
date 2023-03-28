@@ -50,7 +50,7 @@ export function Table(props) {
     getDefaultMinWidth,
     tableWidth
   }, state);
-  let {widths} = layoutState;
+
   // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
   let shouldShowCheckboxes = state.selectionManager.selectionBehavior !== 'replace';
   if (shouldShowCheckboxes !== showSelectionCheckboxes) {
@@ -85,8 +85,8 @@ export function Table(props) {
           <TableHeaderRow key={headerRow.key} item={headerRow} state={state} className={classNames(ariaStyles, 'aria-table-row', 'aria-table-headerRow')}>
             {[...state.collection.getChildren(headerRow.key)].map(column =>
               column.props.isSelectionCell
-                ? <TableSelectAllCell key={column.key} column={column} state={state} widths={widths} />
-                : <TableColumnHeader key={column.key} column={column} state={state} widths={widths} layout={layout} onResizeStart={props.onResizeStart} onResize={props.onResize} onResizeEnd={props.onResizeEnd} />
+                ? <TableSelectAllCell key={column.key} column={column} state={state} layout={layout} />
+                : <TableColumnHeader key={column.key} column={column} state={state} layout={layout} onResizeStart={props.onResizeStart} onResize={props.onResize} onResizeEnd={props.onResizeEnd} />
             )}
           </TableHeaderRow>
         ))}
@@ -96,8 +96,8 @@ export function Table(props) {
           <TableRow key={row.key} item={row} state={state} className={classNames(ariaStyles, 'aria-table-row')}>
             {[...state.collection.getChildren(row.key)].map(cell =>
               cell.props.isSelectionCell
-                ? <TableCheckboxCell key={cell.key} cell={cell} state={state} widths={widths} />
-                : <TableCell key={cell.key} cell={cell} state={state} widths={widths} />
+                ? <TableCheckboxCell key={cell.key} cell={cell} state={state} layout={layout} />
+                : <TableCell key={cell.key} cell={cell} state={state} layout={layout} />
             )}
           </TableRow>
         ))}
@@ -130,7 +130,7 @@ function Resizer({column, layout, onResizeStart, onResize, onResizeEnd}) {
   let ref = useRef(null);
   let {resizerProps, inputProps} = useTableColumnResize({
     column,
-    label: 'Resizer',
+    'aria-label': 'Resizer',
     onResizeStart,
     onResize,
     onResizeEnd
@@ -163,7 +163,7 @@ function Resizer({column, layout, onResizeStart, onResize, onResizeEnd}) {
     </>
   );
 }
-export function TableColumnHeader({column, state, widths, layout, onResizeStart, onResize, onResizeEnd}) {
+export function TableColumnHeader({column, state, layout, onResizeStart, onResize, onResizeEnd}) {
   let ref = useRef();
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
@@ -174,7 +174,7 @@ export function TableColumnHeader({column, state, widths, layout, onResizeStart,
       {...mergeProps(columnHeaderProps, focusProps)}
       colSpan={column.colspan}
       style={{
-        width: widths.get(column.key),
+        width: layout.getColumnWidth(column.key),
         textAlign: column.colspan > 1 ? 'center' : 'left',
         padding: '5px 10px',
         outline: isFocusVisible ? '2px solid orange' : 'none',
@@ -224,7 +224,7 @@ export function TableRow({item, children, state, className}) {
   );
 }
 
-export function TableCell({cell, state, widths}) {
+export function TableCell({cell, state, layout}) {
   let ref = useRef();
   let {gridCellProps} = useTableCell({node: cell}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
@@ -235,7 +235,7 @@ export function TableCell({cell, state, widths}) {
     <td
       {...mergeProps(gridCellProps, focusProps)}
       style={{
-        width: widths.get(column.key),
+        width: layout.getColumnWidth(column.key),
         padding: '5px 10px',
         outline: isFocusVisible ? '2px solid orange inset' : 'none',
         cursor: 'default',
@@ -257,7 +257,7 @@ export function TableCell({cell, state, widths}) {
   );
 }
 
-export function TableCheckboxCell({cell, state, widths}) {
+export function TableCheckboxCell({cell, state, layout}) {
   let ref = useRef();
   let {gridCellProps} = useTableCell({node: cell}, state, ref);
   let {checkboxProps} = useTableSelectionCheckbox({key: cell.parentKey}, state);
@@ -270,7 +270,7 @@ export function TableCheckboxCell({cell, state, widths}) {
     <td
       {...gridCellProps}
       style={{
-        width: widths.get(column.key)
+        width: layout.getColumnWidth(column.key)
       }}
       ref={ref}>
       <input {...inputProps} />
@@ -278,7 +278,7 @@ export function TableCheckboxCell({cell, state, widths}) {
   );
 }
 
-export function TableSelectAllCell({column, state, widths}) {
+export function TableSelectAllCell({column, state, layout}) {
   let ref = useRef();
   let isSingleSelectionMode = state.selectionManager.selectionMode === 'single';
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
@@ -291,7 +291,7 @@ export function TableSelectAllCell({column, state, widths}) {
     <th
       {...columnHeaderProps}
       style={{
-        width: widths.get(column.key)
+        width: layout.getColumnWidth(column.key)
       }}
       ref={ref}>
       {

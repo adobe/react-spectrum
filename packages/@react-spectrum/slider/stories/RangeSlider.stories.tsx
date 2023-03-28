@@ -43,7 +43,7 @@ storiesOf('Slider/RangeSlider', module)
   })
   .add(
     'Default',
-    args => render({...args, 'aria-label': 'Label'})
+    args => render({...args, 'aria-label': 'Label', label: undefined})
   )
   .add(
     'label',
