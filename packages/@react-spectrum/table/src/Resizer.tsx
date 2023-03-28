@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/role-supports-aria-props */
 import {classNames} from '@react-spectrum/utils';
 import {ColumnSize} from '@react-types/table';
+import {styles as cursorStyles} from './cursors/ResizeCursors';
 import {FocusRing} from '@react-aria/focus';
 import {getInteractionModality} from '@react-aria/interactions';
 import {GridNode} from '@react-types/grid';
@@ -9,7 +10,6 @@ import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
 import React, {Key, RefObject, useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
-import {styles as cursorStyles} from './cursors/ResizeCursors';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useTableColumnResize} from '@react-aria/table';

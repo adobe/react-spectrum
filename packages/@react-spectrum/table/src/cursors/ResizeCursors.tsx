@@ -9,11 +9,11 @@ const CursorWest2x = CreateCursorWest({is2x: true});
 
 let addedToDoc = false;
 export function styles() {
-  if (addedToDoc) {
+  if (addedToDoc || typeof document === 'undefined') {
     return;
   }
   addedToDoc = true;
-  let style = document?.createElement('style');
+  let style = document.createElement('style');
   style.innerHTML = `
 .resize-ew,
 .react-spectrum-Table-columnResizer--ewresize {
@@ -29,7 +29,7 @@ export function styles() {
 }
   `;
 
-  document?.head.appendChild(style);
+  document.head.appendChild(style);
 }
 
 function CreateCursorHorizontal(props) {
