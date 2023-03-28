@@ -60,8 +60,9 @@ export type {DateFieldProps, DateInputProps, DateSegmentProps, DateSegmentRender
 export type {DatePickerProps, DateRangePickerProps} from './DatePicker';
 export type {DialogProps, DialogTriggerProps} from './Dialog';
 export type {GridListProps, GridListRenderProps} from './GridList';
+export type {GroupProps, GroupRenderProps} from './Group';
 export type {HeadingProps} from './Heading';
-export type {HTMLAttributes, InputHTMLAttributes} from 'react';
+export type {InputProps, InputRenderProps} from './Input';
 export type {ItemProps, ItemRenderProps, SectionProps} from './Collection';
 export type {LabelProps} from './Label';
 export type {LinkProps} from './Link';
