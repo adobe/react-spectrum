@@ -55,6 +55,10 @@ governing permissions and limitations under the License.
     font-family: var(--spectrum-font-family-he);
   }
 
+  &:lang(zh) {
+    font-family: var(--spectrum-font-family-zh);
+  }
+
   &:lang(zh-Hans) {
     font-family: var(--spectrum-font-family-zhhans);
   }
@@ -63,8 +67,12 @@ governing permissions and limitations under the License.
     font-family: var(--spectrum-font-family-zhhant);
   }
 
-  &:lang(zh) {
-    font-family: var(--spectrum-font-family-zh);
+  &:lang(zh-SG) {
+    font-family: var(--spectrum-font-family-zhhans);
+  }
+
+  &:lang(zh-CN) {
+    font-family: var(--spectrum-font-family-zhhans);
   }
 
   &:lang(ko) {
