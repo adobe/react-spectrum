@@ -118,21 +118,21 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
 const _Select = (forwardRef as forwardRefType)(Select);
 export {_Select as Select};
 
-export interface SelectValueRenderProps {
+export interface SelectValueRenderProps<T> {
   /**
    * Whether the value is a placeholder.
    * @selector [data-placeholder]
    */
   isPlaceholder: boolean,
   /** The object value of the currently selected item. */
-  selectedItem: object | null,
+  selectedItem: T | null,
   /** The textValue of the currently selected item. */
   selectedText: string | null
 }
 
-export interface SelectValueProps extends Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>, RenderProps<SelectValueRenderProps> {}
+export interface SelectValueProps<T extends object> extends Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>, RenderProps<SelectValueRenderProps<T>> {}
 
-function SelectValue(props: SelectValueProps, ref: ForwardedRef<HTMLSpanElement>) {
+function SelectValue<T extends object>(props: SelectValueProps<T>, ref: ForwardedRef<HTMLSpanElement>) {
   let {state, valueProps} = useContext(InternalSelectContext)!;
   let rendered = state.selectedItem?.rendered;
   if (typeof rendered === 'function') {
@@ -156,7 +156,7 @@ function SelectValue(props: SelectValueProps, ref: ForwardedRef<HTMLSpanElement>
     defaultChildren: rendered || 'Select an item',
     defaultClassName: 'react-aria-SelectValue',
     values: {
-      selectedItem: state.selectedItem?.value ?? null,
+      selectedItem: state.selectedItem?.value as T ?? null,
       selectedText: state.selectedItem?.textValue ?? null,
       isPlaceholder: !state.selectedItem
     }
@@ -176,5 +176,5 @@ function SelectValue(props: SelectValueProps, ref: ForwardedRef<HTMLSpanElement>
  * SelectValue renders the current value of a Select, or a placeholder if no value is selected.
  * It is usually placed within the button element.
  */
-const _SelectValue = forwardRef(SelectValue);
+const _SelectValue = (forwardRef as forwardRefType)(SelectValue);
 export {_SelectValue as SelectValue};
