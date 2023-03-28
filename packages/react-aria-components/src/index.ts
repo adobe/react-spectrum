@@ -56,7 +56,7 @@ export type {ButtonProps, ButtonRenderProps} from './Button';
 export type {CalendarCellProps, CalendarProps, CalendarGridProps, CalendarGridHeaderProps, CalendarGridBodyProps, CalendarHeaderCellProps, CalendarCellRenderProps, RangeCalendarProps} from './Calendar';
 export type {CheckboxGroupProps, CheckboxGroupRenderProps, CheckboxRenderProps, CheckboxProps} from './Checkbox';
 export type {ComboBoxProps} from './ComboBox';
-export type {DateFieldProps, DateInputProps, DateSegmentProps, DateSegmentRenderProps, TimeFieldProps} from './DateField';
+export type {DateFieldProps, DateInputProps, DateInputRenderProps, DateSegmentProps, DateSegmentRenderProps, TimeFieldProps} from './DateField';
 export type {DatePickerProps, DateRangePickerProps} from './DatePicker';
 export type {DialogProps, DialogTriggerProps} from './Dialog';
 export type {GridListProps, GridListRenderProps} from './GridList';
