@@ -13,11 +13,12 @@
 import {action} from '@storybook/addon-actions';
 import {Table as BackwardCompatTable} from './example-backwards-compat';
 import {Cell, Column, Row, TableBody, TableHeader} from '@react-stately/table';
-import {ColumnSize, SpectrumTableProps} from '@react-types/table';
+import {ColumnSize} from '@react-types/table';
 import {Table as DocsTable} from './example-docs';
 import {Meta, Story} from '@storybook/react';
 import React, {Key, useCallback, useMemo, useState} from 'react';
 import {Table as ResizingTable} from './example-resizing';
+import {SpectrumTableProps} from '@react-spectrum/table';
 import {Table} from './example';
 
 const meta: Meta<SpectrumTableProps<any>> = {

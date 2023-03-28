@@ -33,7 +33,7 @@ export interface FocusResult<Target = FocusableElement> {
  * Handles focus events for the immediate target.
  * Focus events on child elements will be ignored.
  */
-export function useFocus<Target = FocusableElement>(props: FocusProps<Target>): FocusResult<Target> {
+export function useFocus<Target extends FocusableElement = FocusableElement>(props: FocusProps<Target>): FocusResult<Target> {
   let {
     isDisabled,
     onFocus: onFocusProp,
@@ -59,7 +59,9 @@ export function useFocus<Target = FocusableElement>(props: FocusProps<Target>): 
   const onSyntheticFocus = useSyntheticBlurEvent<Target>(onBlur);
 
   const onFocus: FocusProps<Target>['onFocus'] = useCallback((e: FocusEvent<Target>) => {
-    if (e.target === e.currentTarget) {
+    // Double check that document.activeElement actually matches e.target in case a previously chained
+    // focus handler already moved focus somewhere else.
+    if (e.target === e.currentTarget && document.activeElement === e.target) {
       if (onFocusProp) {
         onFocusProp(e);
       }

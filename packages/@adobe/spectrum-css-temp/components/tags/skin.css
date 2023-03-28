@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-.spectrum-Tags-item {
+.spectrum-Tag {
   color: var(--spectrum-tag-text-color);
   background-color: var(--spectrum-tag-background-color);
   border-color: var(--spectrum-tag-border-color);
@@ -25,56 +25,9 @@ governing permissions and limitations under the License.
     background-color: var(--spectrum-tag-background-color-key-focus);
     color: var(--spectrum-tag-text-color-key-focus);
     border-color: var(--spectrum-tag-border-color-key-focus);
-  }
-
-  &.is-selected {
-    background-color: var(--spectrum-tag-background-color-selected);
-    color: var(--spectrum-tag-text-color-selected);
-    border-color: var(--spectrum-tag-border-color-selected);
-    &:hover {
-      background-color: var(--spectrum-tag-background-color-selected-hover);
+    &:after {
+      box-shadow: 0 0 0 var(--spectrum-focus-ring-border-size) var(--spectrum-tag-border-color-key-focus);
     }
-
-    &.focus-ring {
-      box-shadow: 0 0 0 2px var(--spectrum-tag-border-color-selected-key-focus);
-      border-color: var(--spectrum-tag-text-color-selected-key-focus);
-    }
-    &.is-invalid {
-      border-color: var(--spectrum-tag-border-color-error-selected);
-      .spectrum-Tags-itemIcon,
-      .spectrum-Tags-itemLabel,
-      .spectrum-Tags-itemClearButton {
-        color: var(--spectrum-tag-text-color-error-selected);
-      }
-      &.focus-ring {
-        box-shadow: 0 0 0 2px var(--spectrum-tag-border-color-key-focus);
-        border-color: var(--spectrum-tag-border-color-error-selected);
-      }
-      &:hover {
-        border-color: var(--spectrum-tag-border-color-selected);
-      }
-    }
-  }
-
-  &.is-invalid {
-    color: var(--spectrum-tag-icon-color-error);
-    border-color: var(--spectrum-tag-border-color-error);
-
-    &:hover {
-      color: var(--spectrum-tag-icon-color-error-hover);
-      border-color: var(--spectrum-tag-border-color-error-hover);
-    }
-
-    &.focus-ring {
-      color: var(--spectrum-tag-icon-color-error-hover);
-      border-color: var(--spectrum-tag-border-color-key-focus);
-    }
-
-    .spectrum-Tags-itemIcon,
-    .spectrum-Tags-itemClearButton {
-      color: var(--spectrum-tag-border-color-error);
-    }
-
   }
 
   &.is-disabled {
@@ -82,121 +35,62 @@ governing permissions and limitations under the License.
     background-color: var(--spectrum-tag-background-color-disabled);
     border-color: var(--spectrum-tag-border-color-disabled);
 
-    .spectrum-Avatar {
+    .spectrum-Tag-avatar {
       /* Duplicated so state is on the tag */
       opacity: var(--spectrum-avatar-small-opacity-disabled);
     }
   }
-}
 
-.spectrum-Tags-item--removable {
-  &:hover {
-    color: var(--spectrum-tag-removable-text-color-hover);
-  }
-
-  &:active {
-    color: var(--spectrum-tag-removable-text-color-down);
-  }
-
-  &.is-invalid {
+  &.spectrum-Tag--removable {
     &:hover {
-      border-color: var(--spectrum-tag-removable-border-color-error-hover);
-      .spectrum-Tags-itemClearButton {
-        color: var(--spectrum-tag-removable-border-color-error-hover);
-      }
+      color: var(--spectrum-tag-removable-text-color-hover);
     }
-
-    .spectrum-Tags-itemClearButton {
-      &.is-focused {
-         color: var(--spectrum-tag-icon-color-error-hover);
-       }
-     }
 
     &:active {
-      border-color: var(--spectrum-tag-removable-border-color-error-down);
-      color: var(--spectrum-tag-removable-text-color-error-down);
+      color: var(--spectrum-tag-removable-text-color-down);
     }
-  }
 
-  &.is-focused {
-    color: var(--spectrum-tag-removable-text-color-key-focus);
-
-    &.is-invalid {
-      color: var(--spectrum-tag-removable-text-color-error-key-focus);
-    }
-  }
-
-  &.is-selected {
-    color: var(--spectrum-tag-removable-text-color-selected);
     &.is-focused {
-       color: var(--spectrum-tag-removable-text-color-selected-key-focus);
+      color: var(--spectrum-tag-removable-text-color-key-focus);
     }
-    .spectrum-Tags-itemClearButton {
-      color: var(--spectrum-tag-removable-button-icon-color-selected);
-      &:hover {
-         background-color: var(--spectrum-tag-removable-button-background-color-selected-hover);
-         color: var(--spectrum-tag-removable-button-icon-color-selected-hover);
+
+    .spectrum-Tag-removeButton {
+      &.is-focused {
+         border: 2px solid var(--spectrum-tag-removable-border-color-key-focus);
+         border-radius: var(--spectrum-alias-border-radius-regular);
+         background-color: var(--spectrum-tag-removable-button-background-color-key-focus);
+         color: var(--spectrum-tag-removable-button-icon-color-key-focus);
       }
-    }
-  }
-
-  .spectrum-Tags-itemClearButton {
-    &.is-focused {
-       border: 2px solid var(--spectrum-tag-removable-border-color-key-focus);
-       border-radius: var(--spectrum-alias-border-radius-regular);
-       background-color: var(--spectrum-tag-removable-button-background-color-key-focus);
-       color: var(--spectrum-tag-removable-button-icon-color-key-focus);
-    }
-    &:hover {
-      background-color: var(--spectrum-tag-removable-button-background-color-hover);
-      color: var(--spectrum-tag-removable-button-icon-color-hover);
+      &:hover {
+        background-color: var(--spectrum-tag-removable-button-background-color-hover);
+        color: var(--spectrum-tag-removable-button-icon-color-hover);
+      }
     }
   }
 }
 
 @media (forced-colors: active) {
-  .spectrum-Tags-item {
+  .spectrum-Tag {
     forced-color-adjust: none;
     --spectrum-tag-background-color: ButtonFace;
     --spectrum-tag-background-color-disabled: ButtonFace;
     --spectrum-tag-background-color-hover: ButtonFace;
     --spectrum-tag-background-color-key-focus: ButtonFace;
-    --spectrum-tag-background-color-selected: Highlight;
-    --spectrum-tag-background-color-selected-hover: Highlight;
     --spectrum-tag-border-color: ButtonText;
     --spectrum-tag-border-color-disabled: GrayText;
-    --spectrum-tag-border-color-error: ButtonText;
-    --spectrum-tag-border-color-error-hover: ButtonText;
-    --spectrum-tag-border-color-error-selected: HighlightText;
     --spectrum-tag-border-color-hover: Highlight;
     --spectrum-tag-border-color-key-focus: Highlight;
-    --spectrum-tag-border-color-selected: HighlightText;
-    --spectrum-tag-border-color-selected-key-focus: ButtonText;
-    --spectrum-tag-icon-color-error: ButtonText;
-    --spectrum-tag-icon-color-error-hover: ButtonText;
-    --spectrum-tag-removable-border-color-error-down: Highlight;
-    --spectrum-tag-removable-border-color-error-hover: Highlight;
     --spectrum-tag-removable-border-color-key-focus: Highlight;
     --spectrum-tag-removable-button-background-color-hover: ButtonFace;
     --spectrum-tag-removable-button-background-color-key-focus: ButtonFace;
-    --spectrum-tag-removable-button-background-color-selected-hover: Highlight;
     --spectrum-tag-removable-button-icon-color-hover: Highlight;
     --spectrum-tag-removable-button-icon-color-key-focus: Highlight;
-    --spectrum-tag-removable-button-icon-color-selected: HighlightText;
-    --spectrum-tag-removable-button-icon-color-selected-hover: HighlightText;
     --spectrum-tag-removable-text-color-down: ButtonText;
-    --spectrum-tag-removable-text-color-error-down: Highlight;
-    --spectrum-tag-removable-text-color-error-key-focus: Highlight;
     --spectrum-tag-removable-text-color-hover: ButtonText;
     --spectrum-tag-removable-text-color-key-focus: ButtonText;
-    --spectrum-tag-removable-text-color-selected: HighlightText;
-    --spectrum-tag-removable-text-color-selected-key-focus: HighlightText;
     --spectrum-tag-text-color: ButtonText;
     --spectrum-tag-text-color-disabled: GrayText;
-    --spectrum-tag-text-color-error-selected: HighlightText;
     --spectrum-tag-text-color-hover: ButtonText;
     --spectrum-tag-text-color-key-focus: ButtonText;
-    --spectrum-tag-text-color-selected: HighlightText;
-    --spectrum-tag-text-color-selected-key-focus: HighlightText;
   }
 }
