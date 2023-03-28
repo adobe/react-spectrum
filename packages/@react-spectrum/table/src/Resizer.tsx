@@ -9,12 +9,13 @@ import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
 import React, {Key, RefObject, useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
-import rspStyles from './table.css';
+import {styles as cursorStyles} from './cursors/ResizeCursors';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useTableColumnResize} from '@react-aria/table';
 import {useTableContext, useVirtualizerContext} from './TableView';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
+cursorStyles();
 
 interface ResizerProps<T> {
   column: GridNode<T>,
@@ -26,9 +27,9 @@ interface ResizerProps<T> {
 }
 
 let CURSOR_CLASSES = {
-  w: classNames(rspStyles, 'resize-w'),
-  e: classNames(rspStyles, 'resize-e'),
-  ew: classNames(rspStyles, 'resize-ew')
+  w: 'resize-w',
+  e: 'resize-e',
+  ew: 'resize-ew'
 };
 
 function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
@@ -117,7 +118,11 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
           className={classNames(
             styles,
             'spectrum-Table-columnResizer',
-            classNames(rspStyles, {
+            classNames({
+              'react-spectrum-Table-columnResizer--ewresize': 'react-spectrum-Table-columnResizer--ewresize',
+              'react-spectrum-Table-columnResizer--eresize': 'react-spectrum-Table-columnResizer--eresize',
+              'react-spectrum-Table-columnResizer--wresize': 'react-spectrum-Table-columnResizer--wresize'
+            }, {
               'react-spectrum-Table-columnResizer--ewresize': !(isEResizable && isWResizable),
               'react-spectrum-Table-columnResizer--eresize': direction === 'rtl' ? isWResizable : isEResizable,
               'react-spectrum-Table-columnResizer--wresize': direction === 'rtl' ? isEResizable : isWResizable
