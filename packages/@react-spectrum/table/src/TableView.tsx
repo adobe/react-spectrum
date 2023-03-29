@@ -388,8 +388,6 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     if (reusableView.viewType === 'section') {
       let header = children.find(c => c.viewType === 'header');
       let headerStyle = layoutInfoToStyle(header.layoutInfo, direction, reusableView.layoutInfo);
-      // Support sticky section header cell
-      headerStyle.overflow = 'visible';
 
       return (
         <TableSection
@@ -397,7 +395,9 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
           key={reusableView.key}
           style={style}
           header={header}
-          headerStyle={headerStyle}>
+          // Support sticky section header cell
+          // TODO: needed to do it this way cuz test complained about overflow being readonly for some reason, will do away with this in the refactor
+          headerStyle={{...headerStyle, overflow: 'visible'}}>
           {renderChildren(children.filter(c => c.viewType !== 'header'))}
         </TableSection>
       );

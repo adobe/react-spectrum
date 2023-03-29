@@ -36,7 +36,8 @@ import userEvent from '@testing-library/user-event';
 let {
   InlineDeleteButtons: DeletableRowsTable,
   EmptyStateStory: EmptyStateTable,
-  WithBreadcrumbNavigation: TableWithBreadcrumbs
+  WithBreadcrumbNavigation: TableWithBreadcrumbs,
+  DynamicSections: DynamicTableSections
 } = composeStories(stories);
 
 
@@ -827,6 +828,79 @@ describe('TableView', function () {
     expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${rowheaders[0].id} ${rowheaders[1].id}`);
   });
 
+  it('renders a table with sections', function () {
+    let {getByRole} = render(<DynamicTableSections />);
+
+    let grid = getByRole('grid');
+    expect(grid).toBeVisible();
+    expect(grid).toHaveAttribute('aria-rowcount', '11');
+    expect(grid).toHaveAttribute('aria-colcount', '5');
+
+    let rowgroups = within(grid).getAllByRole('rowgroup');
+    expect(rowgroups).toHaveLength(3);
+
+    let headerRows = within(rowgroups[0]).getAllByRole('row');
+    expect(headerRows).toHaveLength(1);
+    expect(headerRows[0]).toHaveAttribute('aria-rowindex', '1');
+
+    let headers = within(grid).getAllByRole('columnheader');
+    expect(headers).toHaveLength(5);
+    expect(headers[0]).toHaveAttribute('aria-colindex', '1');
+    expect(headers[1]).toHaveAttribute('aria-colindex', '2');
+    expect(headers[2]).toHaveAttribute('aria-colindex', '3');
+    expect(headers[3]).toHaveAttribute('aria-colindex', '4');
+    expect(headers[4]).toHaveAttribute('aria-colindex', '5');
+
+    let rowindex = 2;
+    for (let i = 1; i < rowgroups.length; i++) {
+      let section = rowgroups[i];
+      let sectionRows = within(section).getAllByRole('row');
+      let sectionTitleRow = sectionRows[0];
+      let sectionRowHeader = within(sectionTitleRow).getByRole('rowheader');
+
+      expect(section).toHaveAttribute('aria-labelledby', sectionRowHeader.id);
+      expect(sectionRows).toHaveLength(5);
+      expect(sectionRowHeader).toHaveAttribute('aria-colspan', '5');
+      expect(sectionRowHeader).toHaveTextContent(`section${i}`);
+
+      for (let row of sectionRows) {
+        expect(row).toHaveAttribute('aria-rowindex', (rowindex++).toString(10));
+      }
+    }
+  });
+
+  it('renders a table with sections and selection', function () {
+    let {getByRole} = render(<DynamicTableSections selectionMode="multiple" selectionStyle="checkbox" />);
+
+    let grid = getByRole('grid');
+    let rowgroups = within(grid).getAllByRole('rowgroup');
+    let headers = within(grid).getAllByRole('columnheader');
+    expect(headers).toHaveLength(6);
+    expect(headers[0]).toHaveAttribute('aria-colindex', '1');
+    expect(headers[1]).toHaveAttribute('aria-colindex', '2');
+    expect(headers[2]).toHaveAttribute('aria-colindex', '3');
+    expect(headers[3]).toHaveAttribute('aria-colindex', '4');
+    expect(headers[4]).toHaveAttribute('aria-colindex', '5');
+    expect(headers[5]).toHaveAttribute('aria-colindex', '6');
+    let checkbox = within(headers[0]).getByRole('checkbox');
+    expect(checkbox).toHaveAttribute('aria-label', 'Select All');
+
+    for (let i = 1; i < rowgroups.length; i++) {
+      let section = rowgroups[i];
+      let sectionRows = within(section).getAllByRole('row');
+      for (let j = 0; j < sectionRows; j++) {
+        let row = sectionRows[j];
+        if (j === 0) {
+          let sectionRowHeader = within(row).getByRole('rowheader');
+          expect(sectionRowHeader).toHaveAttribute('aria-colspan', '6');
+          expect(within(row).queryByRole('checkbox')).toBeFalsy();
+        } else {
+          expect(within(row).queryByRole('checkbox')).toBeTruthy();
+        }
+      }
+    }
+  });
+
   describe('keyboard focus', function () {
     // locale is being set here, since we can't nest them, use original render function
     let renderTable = (locale = 'en-US', props = {}) => {
@@ -1144,6 +1218,13 @@ describe('TableView', function () {
         moveFocus('ArrowUp');
         expect(document.activeElement).toBe(getCell(tree, 'Bar 1'));
       });
+
+      it('should skip sections', function () {
+        let tree = render(<DynamicTableSections />);
+        focusCell(tree, 'Foo 1');
+        moveFocus('ArrowUp');
+        expect(document.activeElement).toBe(getCell(tree, 'Foo'));
+      });
     });
 
     describe('ArrowDown', function () {
@@ -1182,6 +1263,13 @@ describe('TableView', function () {
         focusCell(tree, 'Bar 1');
         moveFocus('ArrowDown');
         expect(document.activeElement).toBe(getCell(tree, 'Bar 2'));
+      });
+
+      it('should skip sections', function () {
+        let tree = render(<DynamicTableSections />);
+        focusCell(tree, 'Foo');
+        moveFocus('ArrowDown');
+        expect(document.activeElement).toBe(getCell(tree, 'Foo 1'));
       });
     });
 
