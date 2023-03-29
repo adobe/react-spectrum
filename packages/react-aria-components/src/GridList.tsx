@@ -301,7 +301,7 @@ function GridListItem({item}) {
         renderDropIndicator({type: 'item', key: item.key, dropPosition: 'before'})
       }
       {dropIndicator && !dropIndicator.isHidden &&
-        <div role="row">
+        <div role="row" ref={fixGap}>
           <div role="gridcell">
             <div role="button" {...visuallyHiddenProps} {...dropIndicator?.dropIndicatorProps} ref={dropIndicatorRef} />
           </div>
@@ -402,10 +402,25 @@ function RootDropIndicator() {
   }
 
   return (
-    <div role="row" aria-hidden={dropIndicatorProps['aria-hidden']}>
+    <div role="row" aria-hidden={dropIndicatorProps['aria-hidden']} ref={fixGap}>
       <div role="gridcell">
         <div role="button" {...visuallyHiddenProps} {...dropIndicatorProps} ref={ref} />
       </div>
     </div>
   );
+}
+
+// Applies a negative margin to offset the gap of a parent flex or grid layout.
+function fixGap(element: HTMLElement | null) {
+  if (element && element.parentElement) {
+    let {display, rowGap, columnGap} = window.getComputedStyle(element.parentElement);
+    if (/flex|grid/.test(display)) {
+      if (rowGap && rowGap !== 'normal') {
+        element.style.marginTop = '-' + rowGap;
+      }
+      if (columnGap && columnGap !== 'normal') {
+        element.style.marginLeft = '-' + columnGap;
+      }
+    }
+  }
 }
