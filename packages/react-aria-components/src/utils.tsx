@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, DOMProps as SharedDOMProps} from '@react-types/shared';
 import {filterDOMProps, mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
-import React, {CSSProperties, ReactNode, RefCallback, RefObject, useCallback, useContext, useEffect, useRef, useState} from 'react';
+import React, {createContext, CSSProperties, ReactNode, RefCallback, RefObject, useCallback, useContext, useEffect, useRef, useState} from 'react';
 
 // Override forwardRef types so generics work.
 declare function forwardRef<T, P = {}>(
@@ -22,13 +22,14 @@ declare function forwardRef<T, P = {}>(
 export type forwardRefType = typeof forwardRef;
 
 export const slotCallbackSymbol = Symbol('callback');
+export const defaultSlot = Symbol('default');
 
 interface SlottedValue<T> {
-  slots?: Record<string, T>,
+  slots?: Record<string | symbol, T>,
   [slotCallbackSymbol]?: (value: T) => void
 }
 
-export type ContextValue<T extends SlotProps, E extends Element> = SlottedValue<WithRef<T, E>> | WithRef<T, E>;
+export type ContextValue<T extends SlotProps, E extends Element> = SlottedValue<WithRef<T, E>> | WithRef<T, E> | null | undefined;
 
 type ProviderValue<T> = [React.Context<T>, T];
 type ProviderValues<A, B, C, D, E, F, G, H> =
@@ -117,15 +118,16 @@ export interface SlotProps {
 
 export function useContextProps<T, U, E extends Element>(props: T & SlotProps, ref: React.ForwardedRef<E>, context: React.Context<ContextValue<U, E>>): [T, React.RefObject<E>] {
   let ctx = useContext(context) || {};
-  if ('slots' in ctx) {
-    if (!props.slot) {
+  if ('slots' in ctx && ctx.slots) {
+    if (!props.slot && !ctx.slots[defaultSlot]) {
       throw new Error('A slot prop is required');
     }
-    if (!ctx.slots[props.slot]) {
+    let slot = props.slot || defaultSlot;
+    if (!ctx.slots[slot]) {
       // @ts-ignore
       throw new Error(`Invalid slot "${props.slot}". Valid slot names are ` + new Intl.ListFormat().format(Object.keys(ctx.slots).map(p => `"${p}"`)) + '.');
     }
-    ctx = ctx.slots[props.slot];
+    ctx = ctx.slots[slot];
   }
   // @ts-ignore - TS says "Type 'unique symbol' cannot be used as an index type." but not sure why.
   let {ref: contextRef, [slotCallbackSymbol]: callback, ...contextProps} = ctx;
@@ -201,7 +203,7 @@ export function useExitAnimation(ref: RefObject<HTMLElement>, isOpen: boolean) {
 }
 
 function useAnimation(ref: RefObject<HTMLElement>, isActive: boolean, onEnd: () => void) {
-  let prevAnimation = useRef(null);
+  let prevAnimation = useRef<string | null>(null);
   if (isActive && ref.current) {
     prevAnimation.current = window.getComputedStyle(ref.current).animation;
   }
@@ -213,12 +215,13 @@ function useAnimation(ref: RefObject<HTMLElement>, isActive: boolean, onEnd: () 
       if (computedStyle.animationName !== 'none' && computedStyle.animation !== prevAnimation.current) {
         let onAnimationEnd = (e: AnimationEvent) => {
           if (e.target === ref.current) {
+            element.removeEventListener('animationend', onAnimationEnd);
             onEnd();
           }
         };
 
         let element = ref.current;
-        element.addEventListener('animationend', onAnimationEnd, {once: true});
+        element.addEventListener('animationend', onAnimationEnd);
         return () => {
           element.removeEventListener('animationend', onAnimationEnd);
         };
@@ -228,3 +231,5 @@ function useAnimation(ref: RefObject<HTMLElement>, isActive: boolean, onEnd: () 
     }
   }, [ref, isActive, onEnd]);
 }
+
+export const HiddenContext = createContext<boolean>(false);

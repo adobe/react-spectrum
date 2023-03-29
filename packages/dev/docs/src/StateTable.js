@@ -17,7 +17,12 @@ import styles from './docs.css';
 import tableStyles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
-export function StateTable({properties}) {
+export function StateTable({properties, showOptional}) {
+  let props = Object.values(properties);
+  if (!showOptional) {
+    props = props.filter(prop => !prop.optional);
+  }
+
   return (
     <table className={`${tableStyles['spectrum-Table']} ${tableStyles['spectrum-Table--quiet']} ${styles.propTable}`}>
       <thead>
@@ -28,7 +33,7 @@ export function StateTable({properties}) {
         </tr>
       </thead>
       <tbody className={tableStyles['spectrum-Table-body']}>
-        {Object.values(properties).map((prop, index) => (
+        {props.map((prop, index) => (
           <tr key={index} className={clsx(tableStyles['spectrum-Table-row'], styles.tableRow)}>
             <td role="rowheader" className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)} data-column="Name">
               <code className={`${typographyStyles['spectrum-Code4']}`}>

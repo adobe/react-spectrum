@@ -40,7 +40,7 @@ export const DialogContext = createContext<ContextValue<DialogProps, HTMLElement
 export function DialogTrigger(props: DialogTriggerProps) {
   let state = useOverlayTriggerState(props);
 
-  let buttonRef = useRef();
+  let buttonRef = useRef<HTMLButtonElement>(null);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state, buttonRef);
 
   return (
@@ -64,7 +64,7 @@ function Dialog(props: DialogProps, ref: ForwardedRef<HTMLElement>) {
   let children = props.children;
   if (typeof children === 'function') {
     children = children({
-      close: props.onClose
+      close: props.onClose || (() => {})
     });
   }
 

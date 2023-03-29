@@ -20,7 +20,7 @@ interface OverlayArrowContextValue {
   placement: PlacementAxis
 }
 
-export const OverlayArrowContext = createContext<OverlayArrowContextValue>(null);
+export const OverlayArrowContext = createContext<OverlayArrowContextValue | null>(null);
 
 export interface OverlayArrowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'className' | 'style' | 'children'>, RenderProps<OverlayArrowRenderProps> {}
 
@@ -33,7 +33,7 @@ export interface OverlayArrowRenderProps {
 }
 
 function OverlayArrow(props: OverlayArrowProps, ref: ForwardedRef<HTMLDivElement>) {
-  let {arrowProps, placement} = useContext(OverlayArrowContext);
+  let {arrowProps, placement} = useContext(OverlayArrowContext)!;
   let style: CSSProperties = {
     ...arrowProps.style,
     position: 'absolute',
