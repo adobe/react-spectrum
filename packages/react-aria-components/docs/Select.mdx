@@ -164,7 +164,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
     margin-top: 12px;
   }
 
-  .react-aria-Section header {
+  .react-aria-Header {
     font-size: 1.143rem;
     font-weight: bold;
     padding: 0 0.571rem 0 1.571rem;
@@ -411,7 +411,7 @@ Within a `<Select>`, most `<ListBox>` props are set automatically. The `<ListBox
 
 ### Section
 
-A `<Section>` defines the child items, and optional title for a section within a `<ListBox>`.
+A `<Section>` defines the child items for a section within a `<ListBox>`. It may also contain an optional `<Header>` element. If there is no header, then an `aria-label` must be provided to identify the section to assistive technologies.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
@@ -419,6 +419,10 @@ A `<Section>` defines the child items, and optional title for a section within a
 <PropTable component={docs.exports.Section} links={docs.links} />
 
 </details>
+
+### Header
+
+A `<Header>` defines the title for a `<Section>`. It accepts all DOM attributes.
 
 ### Item
 
@@ -522,7 +526,11 @@ A `ListBox` can be targeted with the `.react-aria-ListBox` CSS selector, or by o
 
 ### Section
 
-A `Section` can be targeted with the `.react-aria-Section` CSS selector, or by overriding with a custom `className`.  The section title can be targeted with the `header` selector. The `title` prop also allows JSX elements and not just strings, which can enable custom formatting. However, keep in mind that interactive elements within a listbox are not allowed. See [sections](#sections) for examples.
+A `Section` can be targeted with the `.react-aria-Section` CSS selector, or by overriding with a custom `className`. See [sections](#sections) for examples.
+
+### Header
+
+A `Header` within a `Section` can be targeted with the `.react-aria-Header` CSS selector, or by overriding with a custom `className`. See [sections](#sections) for examples.
 
 ### Item
 
@@ -669,15 +677,16 @@ function Example() {
 
 ### Sections
 
-Select supports sections in order to group options. Sections can be used by wrapping groups of items in a `Section` element. Each `Section` takes a `title` prop.
+Select supports sections in order to group options. Sections can be used by wrapping groups of items in a `Section` element. A `<Header>` element may also be included to label the section.
 
 #### Static items
 
 ```tsx example
-import {Section} from 'react-aria-components';
+import {Section, Header} from 'react-aria-components';
 
 <MySelect label="Preferred fruit or vegetable">
-  <Section title="Fruit">
+  <Section>
+    <Header>Fruit</Header>
     <Item id="Apple">Apple</Item>
     <Item id="Banana">Banana</Item>
     <Item id="Orange">Orange</Item>
@@ -687,7 +696,8 @@ import {Section} from 'react-aria-components';
     <Item id="Cantaloupe">Cantaloupe</Item>
     <Item id="Pear">Pear</Item>
   </Section>
-  <Section title="Vegetable">
+  <Section>
+    <Header>Vegetable</Header>
     <Item id="Cabbage">Cabbage</Item>
     <Item id="Broccoli">Broccoli</Item>
     <Item id="Carrots">Carrots</Item>
@@ -702,9 +712,12 @@ import {Section} from 'react-aria-components';
 
 #### Dynamic items
 
-Sections used with dynamic items are populated from a hierarchical data structure. Similarly to the props on Select, `<Section>` takes an array of data using the `items` prop.
+Sections used with dynamic items are populated from a hierarchical data structure. Similarly to the props on Select, `<Section>` takes an array of data using the `items` prop. If the section also has a header,
+the <TypeLink links={docs.links} type={docs.exports.Collection} /> component can be used to render the child items.
 
 ```tsx example
+import {Collection} from 'react-aria-components';
+
 function Example() {
   let options = [
     {name: 'Fruit', children: [
@@ -731,9 +744,12 @@ function Example() {
 
   return (
     <MySelect label="Preferred fruit or vegetable" items={options}>
-      {item => (
-        <Section id={item.name} items={item.children} title={item.name}>
-          {item => <Item id={item.name}>{item.name}</Item>}
+      {section => (
+        <Section id={section.name}>
+          <Header>{section.name}</Header>
+          <Collection items={section.children}>
+            {item => <Item id={item.name}>{item.name}</Item>}
+          </Collection>
         </Section>
       )}
     </MySelect>
