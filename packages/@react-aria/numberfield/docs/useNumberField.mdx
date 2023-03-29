@@ -114,7 +114,7 @@ import {Button} from 'your-component-library';
 function NumberField(props) {
   let {locale} = useLocale();
   let state = useNumberFieldState({...props, locale});
-  let inputRef = React.useRef();
+  let inputRef = React.useRef(null);
   let {
     labelProps,
     groupProps,
@@ -155,7 +155,7 @@ The `Button` component is used in the above example to increment and decrement t
 import {useButton} from '@react-aria/button';
 
 function Button(props) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {buttonProps} = useButton(props, ref);
   return <button {...buttonProps} ref={ref}>{props.children}</button>;
 }

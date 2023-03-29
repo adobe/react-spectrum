@@ -17,8 +17,8 @@
     "build:storybook-17": "build-storybook -c .storybook -o dist/$(git rev-parse HEAD)/storybook-17",
     "start:chromatic": "CHROMATIC=1 NODE_ENV=storybook start-storybook -p 9004 --ci -c '.chromatic'",
     "build:chromatic": "CHROMATIC=1 build-storybook -c .chromatic -o dist/$(git rev-parse HEAD)/chromatic",
-    "start:docs": "DOCS_ENV=dev parcel 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/@internationalized/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx'",
-    "build:docs": "DOCS_ENV=staging parcel build 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/@internationalized/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx'",
+    "start:docs": "DOCS_ENV=dev parcel 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/react-aria-components/docs/*.mdx' 'packages/@internationalized/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx'",
+    "build:docs": "DOCS_ENV=staging parcel build 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/react-aria-components/docs/*.mdx' 'packages/@internationalized/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx'",
     "test": "yarn jest",
     "test-strict": "cross-env STRICT_MODE=1 yarn jest",
     "build": "make build",
@@ -47,6 +47,7 @@
   "workspaces": [
     "packages/react-stately",
     "packages/react-aria",
+    "packages/react-aria-components",
     "packages/*/*"
   ],
   "devDependencies": {

@@ -16,9 +16,10 @@ import {GridCollection} from '@react-types/grid';
 import {GridKeyboardDelegate} from './GridKeyboardDelegate';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
-import {Key, RefObject, useMemo} from 'react';
+import {Key, RefObject, useCallback, useMemo} from 'react';
 import {useCollator, useLocale} from '@react-aria/i18n';
 import {useGridSelectionAnnouncement} from './useGridSelectionAnnouncement';
+import {useHasTabbableChild} from '@react-aria/focus';
 import {useHighlightSelectionDescription} from './useHighlightSelectionDescription';
 import {useSelectableCollection} from '@react-aria/selection';
 
@@ -72,6 +73,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     onRowAction,
     onCellAction
   } = props;
+  let {selectionManager: manager} = state;
 
   if (!props['aria-label'] && !props['aria-labelledby']) {
     console.warn('An aria-label or aria-labelledby prop is required for accessibility.');
@@ -81,18 +83,19 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   // When virtualized, the layout object will be passed in as a prop and override this.
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let {direction} = useLocale();
+  let disabledBehavior = state.selectionManager.disabledBehavior;
   let delegate = useMemo(() => keyboardDelegate || new GridKeyboardDelegate({
     collection: state.collection,
-    disabledKeys: state.disabledKeys,
+    disabledKeys: disabledBehavior === 'selection' ? new Set() : state.disabledKeys,
     ref,
     direction,
     collator,
     focusMode
-  }), [keyboardDelegate, state.collection, state.disabledKeys, ref, direction, collator, focusMode]);
+  }), [keyboardDelegate, state.collection, state.disabledKeys, disabledBehavior, ref, direction, collator, focusMode]);
 
   let {collectionProps} = useSelectableCollection({
     ref,
-    selectionManager: state.selectionManager,
+    selectionManager: manager,
     keyboardDelegate: delegate,
     isVirtualized,
     scrollRef
@@ -102,19 +105,50 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   gridMap.set(state, {keyboardDelegate: delegate, actions: {onRowAction, onCellAction}});
 
   let descriptionProps = useHighlightSelectionDescription({
-    selectionManager: state.selectionManager,
+    selectionManager: manager,
     hasItemActions: !!(onRowAction || onCellAction)
   });
 
   let domProps = filterDOMProps(props, {labelable: true});
+
+  let onFocus = useCallback((e) => {
+    if (manager.isFocused) {
+      // If a focus event bubbled through a portal, reset focus state.
+      if (!e.currentTarget.contains(e.target)) {
+        manager.setFocused(false);
+      }
+
+      return;
+    }
+
+    // Focus events can bubble through portals. Ignore these events.
+    if (!e.currentTarget.contains(e.target)) {
+      return;
+    }
+
+    manager.setFocused(true);
+  }, [manager]);
+
+  // Continue to track collection focused state even if keyboard navigation is disabled
+  let navDisabledHandlers = useMemo(() => ({
+    onBlur: collectionProps.onBlur,
+    onFocus
+  }), [onFocus, collectionProps.onBlur]);
+
+  let hasTabbableChild = useHasTabbableChild(ref, {
+    isDisabled: state.collection.size !== 0
+  });
+
   let gridProps: DOMAttributes = mergeProps(
     domProps,
     {
       role: 'grid',
       id,
-      'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined
+      'aria-multiselectable': manager.selectionMode === 'multiple' ? 'true' : undefined
     },
-    state.isKeyboardNavigationDisabled ? {} : collectionProps,
+    state.isKeyboardNavigationDisabled ? navDisabledHandlers : collectionProps,
+    // If collection is empty, make sure the grid is tabbable unless there is a child tabbable element.
+    state.collection.size === 0 && {tabIndex: hasTabbableChild ? -1 : 0},
     descriptionProps
   );
 

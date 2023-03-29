@@ -140,6 +140,7 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       'aria-label': stringFormatter.format('calendar'),
       'aria-labelledby': `${labelledBy} ${buttonId}`,
       'aria-describedby': ariaDescribedBy,
+      'aria-expanded': state.isOpen || undefined,
       onPress: () => state.setOpen(true)
     },
     dialogProps: {

@@ -40,6 +40,14 @@ export function useObjectRef<T>(forwardedRef?: ((instance: T | null) => void) | 
     } else {
       forwardedRef.current = objRef.current;
     }
+
+    return () => {
+      if (typeof forwardedRef === 'function') {
+        forwardedRef(null);
+      } else {
+        forwardedRef.current = null;
+      }
+    };
   }, [forwardedRef]);
 
   return objRef;

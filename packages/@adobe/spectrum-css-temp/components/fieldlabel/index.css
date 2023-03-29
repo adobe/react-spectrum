@@ -64,6 +64,7 @@ governing permissions and limitations under the License.
  * and this causes both the label and inner field to resize as well. */
 .spectrum-Field {
   --spectrum-field-default-width: var(--spectrum-component-single-line-width);
+  height: max-content; /* don't stretch in a flex layout */
 
   .spectrum-Field-contextualHelp {
     grid-area: contextualHelp;
