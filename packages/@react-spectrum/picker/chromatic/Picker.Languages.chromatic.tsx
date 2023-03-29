@@ -11,8 +11,8 @@
  */
 import {ComponentMeta, Story} from '@storybook/react';
 import {Item, Picker, Section} from '..';
-import {SpectrumPickerProps} from '@react-types/select';
 import React from 'react';
+import {SpectrumPickerProps} from '@react-types/select';
 
 export default {
   title: 'Languages/Picker',
