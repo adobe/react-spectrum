@@ -25,9 +25,9 @@ export default {
   parameters: {
     chromaticProvider: {
       colorSchemes: ['light'],
-      locales: ['en-US', 'ar-AE', 'zh-CN', 'zh-TW', 'ja-JP', 'ko-KR'],
-      scales: ['large'],
-      express: false
+      express: false,
+      locales: ['ar-AE', 'zh-CN', 'zh-TW', 'ja-JP', 'ko-KR'],
+      scales: ['large', 'medium']
     }
   }
 } as ComponentMeta<typeof IllustratedMessage>;

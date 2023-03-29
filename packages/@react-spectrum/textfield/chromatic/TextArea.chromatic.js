@@ -118,8 +118,8 @@ storiesOf('Languages/TextArea', module)
     chromaticProvider: {
       colorSchemes: ['light'],
       express: false,
-      locales: ['en-US', 'ar-AE', 'zh-TW'],
-      scales: ['large']
+      locales: ['ar-AE', 'zh-TW'],
+      scales: ['large', 'medium']
     }
   })
   .add(

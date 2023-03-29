@@ -115,8 +115,8 @@ storiesOf('Languages/Textfield', module)
     chromaticProvider: {
       colorSchemes: ['light'],
       express: false,
-      locales: ['en-US', 'ar-AE', 'fr-FR', 'de-DE', 'zh-TW'],
-      scales: ['large']
+      locales: ['ar-AE', 'fr-FR', 'de-DE', 'zh-TW'],
+      scales: ['large', 'medium']
     }
   })
   .add(

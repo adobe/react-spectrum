@@ -38,8 +38,8 @@ storiesOf('Languages/StatusLight', module)
     chromaticProvider: {
       colorSchemes: ['light'],
       express: false,
-      locales: ['en-US', 'ar-AE', 'zh-CN', 'zh-TW', 'ja-JP', 'ko-KR'],
-      scales: ['large']
+      locales: ['ar-AE', 'zh-CN', 'zh-TW', 'ja-JP', 'ko-KR'],
+      scales: ['large', 'medium']
     }
   })
   .add(
