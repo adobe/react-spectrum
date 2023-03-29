@@ -22,10 +22,6 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-Accordion-itemIndicator {
-  color: var(--spectrum-alias-text-color);
-}
-
 .spectrum-Accordion-itemHeader {
   color: var(--spectrum-alias-text-color);
 
@@ -33,10 +29,6 @@ governing permissions and limitations under the License.
     color: var(--spectrum-alias-text-color-hover);
 
     background-color: var(--spectrum-accordion-background-color-hover);
-
-    + .spectrum-Accordion-itemIndicator {
-      color: var(--spectrum-alias-text-color-hover);
-    }
   }
 
   &:focus-ring {
