@@ -475,7 +475,7 @@ export class TableLayout<T> extends ListLayout<T> {
 
         // Add persisted rows after the visible rows.
         while (persistedChildren && persistIndex < persistedChildren.length) {
-          let idx = persistedChildren[persistIndex];
+          let idx = persistedChildren[persistIndex++];
           // TODO: the section index is going to be larger than node.children.length because node.children.lenght is the count of Sections only.
           // find a different metric (maybe look at the last row's index?) Will need to refactor this when we modify table collection to store
           // indicies w/ respect to the immediate parent. If we keep as is, we can replace node.children.length with the following:
@@ -484,7 +484,6 @@ export class TableLayout<T> extends ListLayout<T> {
             res.push(node.children[idx].layoutInfo);
             this.addVisibleLayoutInfos(res, node.children[idx], rect);
           }
-          persistIndex++;
         }
         break;
       }
@@ -515,11 +514,10 @@ export class TableLayout<T> extends ListLayout<T> {
 
         // Add any remaining sticky cells after the visible cells.
         while (stickyIndex < persistedCellIndices.length) {
-          let idx = persistedCellIndices[stickyIndex];
+          let idx = persistedCellIndices[stickyIndex++];
           if (idx < node.children.length) {
             res.push(node.children[idx].layoutInfo);
           }
-          stickyIndex++;
         }
         break;
       }
@@ -560,12 +558,11 @@ export class TableLayout<T> extends ListLayout<T> {
 
         // Add persisted rows after the visible rows.
         while (persistedRowIndices && persistIndex < persistedRowIndices.length) {
-          let idx = persistedRowIndices[persistIndex];
+          let idx = persistedRowIndices[persistIndex++];
           if (idx < node.children.length) {
             res.push(node.children[idx].layoutInfo);
             this.addVisibleLayoutInfos(res, node.children[idx], rect);
           }
-          persistIndex++;
         }
 
         break;
