@@ -21,14 +21,14 @@ import {VisuallyHidden} from '@react-aria/visually-hidden';
 // @ts-ignore
 import wCursor from 'bundle-text:./cursors/Cur_MoveToLeft_9_9.svg';
 
-function getCursor(svg: string) {
+function getCursor(svg: string, fallback: string) {
   // WebKit renders SVG cursors blurry on 2x screens: https://bugs.webkit.org/show_bug.cgi?id=160657
   // To work around this, we generate two SVGs at different sizes and use image-set to pick between them.
   // Only do this in WebKit to avoid Firefox rendering the cursor at twice the size.
   if (isWebKit()) {
-    return `image-set(url("data:image/svg+xml,${encodeURIComponent(svg)}") 1x, url("data:image/svg+xml,${encodeURIComponent(svg.replace('width="32" height="32"', 'width="64" height="64"'))}") 2x) 8 8, ew-resize`;
+    return `image-set(url("data:image/svg+xml,${encodeURIComponent(svg)}") 1x, url("data:image/svg+xml,${encodeURIComponent(svg.replace('width="32" height="32"', 'width="64" height="64"'))}") 2x) 8 8, ${fallback}`;
   } else {
-    return `url("data:image/svg+xml,${encodeURIComponent(svg)}") 8 8, ew-resize`;
+    return `url("data:image/svg+xml,${encodeURIComponent(svg)}") 8 8, ${fallback}`;
   }
 }
 
@@ -42,9 +42,9 @@ interface ResizerProps<T> {
 }
 
 const CURSORS = {
-  ew: getCursor(ewCursor),
-  w: getCursor(wCursor),
-  e: getCursor(eCursor)
+  ew: getCursor(ewCursor, 'ew-resize'),
+  w: getCursor(wCursor, 'w-resize'),
+  e: getCursor(eCursor, 'e-resize')
 };
 
 function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
