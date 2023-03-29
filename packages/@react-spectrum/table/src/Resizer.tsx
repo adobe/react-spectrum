@@ -1,7 +1,6 @@
 /* eslint-disable jsx-a11y/role-supports-aria-props */
 import {classNames} from '@react-spectrum/utils';
 import {ColumnSize} from '@react-types/table';
-import {styles as cursorStyles} from './cursors/ResizeCursors';
 import {FocusRing} from '@react-aria/focus';
 import {getInteractionModality} from '@react-aria/interactions';
 import {GridNode} from '@react-types/grid';
