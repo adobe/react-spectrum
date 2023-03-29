@@ -834,7 +834,7 @@ function DraggableListBox() {
 
   return (
     <ListBox aria-label="Draggable list" selectionMode="multiple" items={items} dragAndDropHooks={dragAndDropHooks}>
-      {([id, item]) => <Item id={id} textValue={item.name}>{React.createElement(item.style, null, item.name)}</Item>}
+      {([id, item]) => <Item id={id} textValue={item.name}>{React.createElement(item.style || 'span', null, item.name)}</Item>}
     </ListBox>
   );
 }
@@ -1098,7 +1098,7 @@ function DroppableListBox() {
 
   return (
     <ListBox aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop items here"}>
-      {item => <Item textValue={item.name}>{React.createElement(item.style, null, item.name)}</Item>}
+      {item => <Item textValue={item.name}>{React.createElement(item.style || 'span', null, item.name)}</Item>}
     </ListBox>
   );
 }
