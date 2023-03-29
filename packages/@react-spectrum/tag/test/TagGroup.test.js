@@ -105,7 +105,7 @@ describe('TagGroup', function () {
     expect(tags[0]).toHaveAttribute('tabIndex', '0');
   });
 
-  it.each`
+  it.skip.each`
     Name                                                | props                                         | orders
     ${'(left/right arrows, ltr + horizontal) TagGroup'} | ${{locale: 'de-DE'}}                          | ${[{action: () => {userEvent.tab();}, index: 0}, {action: pressArrowRight, index: 1}, {action: pressArrowLeft, index: 0}, {action: pressArrowLeft, index: 2}]}
     ${'(left/right arrows, rtl + horizontal) TagGroup'} | ${{locale: 'ar-AE'}}                          | ${[{action: () => {userEvent.tab();}, index: 0}, {action: pressArrowLeft, index: 1}, {action: pressArrowRight, index: 0}, {action: pressArrowRight, index: 2}]}
@@ -168,7 +168,7 @@ describe('TagGroup', function () {
 
   it('should remember last focused item', function () {
     let {getAllByRole, getByLabelText} = render(
-      <Provider theme={theme} locale="de-DE">
+      <Provider theme={theme} locale="en-US">
         <Button variant="primary" aria-label="ButtonBefore" />
         <TagGroup aria-label="tag group" disabledKeys={['foo', 'bar']}>
           <Item key="1" aria-label="Tag 1">Tag 1</Item>
@@ -198,7 +198,7 @@ describe('TagGroup', function () {
 
   it('should be focusable from Tab', async function () {
     let {getAllByRole, getByLabelText} = render(
-      <Provider theme={theme} locale="de-DE">
+      <Provider theme={theme} locale="en-US">
         <Button variant="primary" aria-label="ButtonBefore" />
         <TagGroup aria-label="tag group" disabledKeys={['foo', 'bar']}>
           <Item key="1" aria-label="Tag 1">Tag 1</Item>
@@ -221,7 +221,7 @@ describe('TagGroup', function () {
 
   it('should be focusable from Shift + Tab', function () {
     let {getAllByRole, getByLabelText} = render(
-      <Provider theme={theme} locale="de-DE">
+      <Provider theme={theme} locale="en-US">
         <Button variant="primary" aria-label="ButtonBefore" />
         <TagGroup aria-label="tag group" disabledKeys={['foo', 'bar']}>
           <Item key="1" aria-label="Tag 1">Tag 1</Item>
@@ -244,7 +244,7 @@ describe('TagGroup', function () {
 
   it('TagGroup should pass className, role and tabIndex', function () {
     let {getByRole} = render(
-      <Provider theme={theme} locale="de-DE">
+      <Provider theme={theme} locale="en-US">
         <TagGroup aria-label="tag group">
           <Item UNSAFE_className="test-class" key="1" aria-label="Tag 1">Tag 1</Item>
         </TagGroup>

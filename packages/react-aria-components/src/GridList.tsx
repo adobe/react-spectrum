@@ -301,7 +301,7 @@ function GridListItem({item}) {
         renderDropIndicator({type: 'item', key: item.key, dropPosition: 'before'})
       }
       {dropIndicator && !dropIndicator.isHidden &&
-        <div role="row">
+        <div role="row" style={{position: 'absolute'}}>
           <div role="gridcell">
             <div role="button" {...visuallyHiddenProps} {...dropIndicator?.dropIndicatorProps} ref={dropIndicatorRef} />
           </div>
@@ -402,7 +402,7 @@ function RootDropIndicator() {
   }
 
   return (
-    <div role="row" aria-hidden={dropIndicatorProps['aria-hidden']}>
+    <div role="row" aria-hidden={dropIndicatorProps['aria-hidden']} style={{position: 'absolute'}}>
       <div role="gridcell">
         <div role="button" {...visuallyHiddenProps} {...dropIndicatorProps} ref={ref} />
       </div>
