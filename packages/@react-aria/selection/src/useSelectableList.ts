@@ -74,7 +74,11 @@ export interface AriaSelectableListOptions {
   /**
    * Whether navigation through tab key is enabled.
    */
-  allowsTabNavigation?: boolean
+  allowsTabNavigation?: boolean,
+  /**
+   * Whether the escape key should clear selection.
+   */
+  preventEscapeClearsSelection?: boolean
 }
 
 export interface SelectableListAria {
@@ -101,7 +105,8 @@ export function useSelectableList(props: AriaSelectableListOptions): SelectableL
     selectOnFocus = selectionManager.selectionBehavior === 'replace',
     disallowTypeAhead,
     shouldUseVirtualFocus,
-    allowsTabNavigation
+    allowsTabNavigation,
+    preventEscapeClearsSelection
   } = props;
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
@@ -124,6 +129,7 @@ export function useSelectableList(props: AriaSelectableListOptions): SelectableL
     shouldUseVirtualFocus,
     allowsTabNavigation,
     isVirtualized,
+    preventEscapeClearsSelection,
     scrollRef: ref
   });
 
