@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="-1 0 32 32">
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="-1 0 31 32">
   <filter id="shadow">
     <feDropShadow dx="0" dy="0.5" stdDeviation="1.2" flood-opacity="0.7"/>
   </filter>
