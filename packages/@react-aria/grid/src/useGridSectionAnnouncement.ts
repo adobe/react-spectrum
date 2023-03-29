@@ -36,6 +36,7 @@ export function useGridSectionAnnouncement<T>(state: GridSelectionState<T>) {
   // VoiceOver on MacOS doesn't announce TableView/ListView sections when navigating with arrow keys so we do this ourselves
   // TODO: what other information should be conveyed? Should we announce the number of rows in the section and the current focused row/cell?
   // At the moment the announcement comes after the default VO announcement for the row header/cell content.
+  // TODO: update after updating the TableCollection for proper parent child index calculations
   let sectionKey;
   let parentNode = collection.getItem(focusedItem?.parentKey ?? null);
   while (sectionKey == null && parentNode) {
@@ -46,7 +47,7 @@ export function useGridSectionAnnouncement<T>(state: GridSelectionState<T>) {
   }
   let lastSection = useRef(sectionKey);
   useUpdateEffect(() => {
-    if (isMac() && focusedItem != null && sectionKey !== lastSection.current) {
+    if (isMac() && focusedItem != null && selectionManager.isFocused && sectionKey !== lastSection.current) {
       let section = sectionKey != null ? collection.getItem(sectionKey) : null;
       let sectionTitle = section?.['aria-label'] || (typeof section?.rendered === 'string' ? section.rendered : '') || '';
 
@@ -58,5 +59,5 @@ export function useGridSectionAnnouncement<T>(state: GridSelectionState<T>) {
     }
 
     lastSection.current = sectionKey;
-  }, [focusedItem, sectionKey]);
+  }, [focusedItem, sectionKey, selectionManager]);
 }

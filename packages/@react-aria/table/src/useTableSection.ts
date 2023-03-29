@@ -35,7 +35,7 @@ export interface TableSectionAria {
  * @param props - Props for the section.
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function useTableSection<T>(props: AriaTableSectionProps): TableSectionAria {
+export function useTableSection(props: AriaTableSectionProps): TableSectionAria {
   let {node, isVirtualized} = props;
   // TODO: may need to register this headerId in the weakmap if we need to also associate the first/last row in the section with the section
   // prob map from section key to id?
