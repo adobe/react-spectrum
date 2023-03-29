@@ -23,6 +23,8 @@ export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   collection: ITableCollection<T>,
   /** Whether the row selection checkboxes should be displayed. */
   showSelectionCheckboxes: boolean,
+  /** Whether the row drag button should be displayed. */
+  showDragButtons: boolean,
   /** The current sorted column and direction. */
   sortDescriptor: SortDescriptor,
   /** Calls the provided onSortChange handler with the provided column key and sort direction. */
@@ -35,13 +37,18 @@ export interface TableState<T> extends GridState<T, ITableCollection<T>> {
 
 export interface CollectionBuilderContext<T> {
   showSelectionCheckboxes: boolean,
+  showDragButtons: boolean,
   selectionMode: SelectionMode,
   columns: Node<T>[]
 }
 
 export interface TableStateProps<T> extends CollectionStateBase<T, ITableCollection<T>>, MultipleSelectionStateProps, Sortable {
   /** Whether the row selection checkboxes should be displayed. */
-  showSelectionCheckboxes?: boolean
+  showSelectionCheckboxes?: boolean,
+  /** Whether the row drag button should be displayed.
+   * @private
+   */
+  showDragButtons?: boolean
 }
 
 const OPPOSITE_SORT_DIRECTION = {
@@ -59,10 +66,11 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
 
   let context = useMemo(() => ({
     showSelectionCheckboxes: props.showSelectionCheckboxes && selectionMode !== 'none',
+    showDragButtons: props.showDragButtons,
     selectionMode,
     columns: []
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }), [props.children, props.showSelectionCheckboxes, selectionMode]);
+  }), [props.children, props.showSelectionCheckboxes, selectionMode, props.showDragButtons]);
 
   let collection = useCollection<T, ITableCollection<T>>(
     props,
@@ -80,6 +88,7 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     disabledKeys,
     selectionManager,
     showSelectionCheckboxes: props.showSelectionCheckboxes || false,
+    showDragButtons: props.showDragButtons || false,
     sortDescriptor: props.sortDescriptor,
     isKeyboardNavigationDisabled: collection.size === 0 || isKeyboardNavigationDisabled,
     setKeyboardNavigationDisabled,

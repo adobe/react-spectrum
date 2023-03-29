@@ -18,7 +18,7 @@ function Example({triggerTop = 250, ...props}) {
   let targetRef = useRef();
   let containerRef = useRef();
   let overlayRef = useRef();
-  let {overlayProps, placement, arrowProps} = useOverlayPosition({targetRef, containerRef, overlayRef, ...props});
+  let {overlayProps, placement, arrowProps} = useOverlayPosition({targetRef, containerRef, overlayRef, arrowCrossSize: 8, ...props});
   let style = {width: 300, height: 200, ...overlayProps.style};
   return (
     <React.Fragment>
@@ -62,6 +62,7 @@ describe('useOverlayPosition', function () {
     `);
 
     expect(overlay).toHaveTextContent('placement: bottom');
+    // Arrow should be placed in the center of the button aka trigger left + trigger width / 2 - overlay left.
     expect(arrow).toHaveStyle(`
       left: 48px;
     `);

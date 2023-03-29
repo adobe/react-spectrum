@@ -21,7 +21,7 @@ import {
   SelectionBehavior,
   SelectionMode
 } from '@react-types/shared';
-import {getChildNodes, getFirstItem} from '@react-stately/collections';
+import {compareNodeOrder, getChildNodes, getFirstItem} from '@react-stately/collections';
 import {Key} from 'react';
 import {MultipleSelectionManager, MultipleSelectionState} from './types';
 import {Selection} from './Selection';
@@ -173,7 +173,7 @@ export class SelectionManager implements MultipleSelectionManager {
     let first: Node<unknown> | null = null;
     for (let key of this.state.selectedKeys) {
       let item = this.collection.getItem(key);
-      if (!first || item?.index < first.index) {
+      if (!first || (item && compareNodeOrder(this.collection, item, first) < 0)) {
         first = item;
       }
     }
@@ -185,7 +185,7 @@ export class SelectionManager implements MultipleSelectionManager {
     let last: Node<unknown> | null = null;
     for (let key of this.state.selectedKeys) {
       let item = this.collection.getItem(key);
-      if (!last || item?.index > last.index) {
+      if (!last || (item && compareNodeOrder(this.collection, item, last) > 0)) {
         last = item;
       }
     }
@@ -243,7 +243,7 @@ export class SelectionManager implements MultipleSelectionManager {
     let fromItem = this.collection.getItem(from);
     let toItem = this.collection.getItem(to);
     if (fromItem && toItem) {
-      if (fromItem.index <= toItem.index) {
+      if (compareNodeOrder(this.collection, fromItem, toItem) <= 0) {
         return this.getKeyRangeInternal(from, to);
       }
 

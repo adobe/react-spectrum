@@ -1,0 +1,177 @@
+html {
+  color-scheme: dark light;
+  font-family: system-ui;
+}
+
+.menu {
+  display: block;
+  min-width: 150px;
+  width: fit-content;
+  margin: 4px 0 0 0;
+  border: 1px solid gray;
+  background: lightgray;
+}
+
+.menu, .group {
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  padding: 2px 5px;
+  outline: none;
+  cursor: default;
+  color: black;
+  background: transparent;
+  display: grid;
+  grid-template-areas: "label       kbd"
+                       "description kbd";
+
+  [slot=label] {
+    grid-area: label;
+    font-weight: semibold;
+  }
+
+  [slot=description] {
+    grid-area: description;
+    font-size: small;
+  }
+
+  kbd {
+    grid-area: kbd;
+    place-self: center end;
+  }
+}
+
+.item.focused {
+  background: gray;
+  color: white;
+}
+
+.item.selected {
+  background: purple;
+  color: white;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.field {
+  display: inline-flex;
+  padding: 2px 4px;
+  border-radius: 2px;
+  border: 1px solid gray;
+  background: Field;
+  color: FieldText;
+}
+
+.field:focus-within {
+  border-color: blue;
+}
+
+.segment {
+  padding: 0 2px;
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+
+.segment.placeholder {
+  color: gray;
+}
+
+.segment:focus {
+  color: white;
+  background: blue;
+  outline: none;
+  border-radius: 2px;
+  caret-color: transparent;
+}
+
+.slider {
+  display: flex;
+
+  .label {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .track {
+    position: relative;
+  }
+
+  &[data-disabled] {
+    .track {
+      opacity: 0.4;
+    }
+  }
+
+  /* track line */
+  .track:before {
+    content: '';
+    display: block;
+    position: absolute;
+    background: gray;
+  }
+
+  .thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: gray;
+
+    &[data-dragging] {
+      background: dimgray;
+    }
+
+    &[data-focus-visible] {
+      background: orange;
+    }
+  }
+
+  &[data-orientation=horizontal] {
+    flex-direction: column;
+    width: 300px;
+
+    .track {
+      height: 30px;
+      width: 100%;
+      &:before {
+        height: 3px;
+        width: 100%;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+    }
+
+    .thumb {
+      top: 50%;
+    }
+  }
+
+  &[data-orientation=vertical] {
+    height: 150px;
+
+    .label {
+      display: none;
+    }
+
+    .track {
+      width: 30px;
+      height: 100%;
+
+      &:before {
+        width: 3px;
+        height: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+    }
+
+    .thumb {
+      left: 50%;
+    }
+  }
+}

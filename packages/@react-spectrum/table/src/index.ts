@@ -31,4 +31,5 @@ export {
   Cell
 } from '@react-stately/table';
 
-export type {SpectrumTableProps, SpectrumColumnProps, SpectrumTableSectionProps, TableHeaderProps, TableBodyProps, RowProps, CellProps} from '@react-types/table';
+export type {SpectrumColumnProps, SpectrumTableSectionProps, TableHeaderProps, TableBodyProps, RowProps, CellProps} from '@react-types/table';
+export type {SpectrumTableProps} from './TableView';

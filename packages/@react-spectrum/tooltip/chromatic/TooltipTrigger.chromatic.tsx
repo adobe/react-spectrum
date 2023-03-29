@@ -59,6 +59,16 @@ export const CrossOffset50: TooltipTriggerStory = {
   args: {crossOffset: 50}
 };
 
+// Test case where putting the arrow in the center of the button is no lnger viable
+export const CrossOffset70: TooltipTriggerStory = {
+  args: {crossOffset: 70}
+};
+
+// Test case where putting the arrow in the center of the button is no lnger viable
+export const CrossOffset1000: TooltipTriggerStory = {
+  args: {crossOffset: 1000}
+};
+
 export const ContainerPadding50AtEdge: TooltipTriggerStory = {
   args: {
     placement: 'start',
