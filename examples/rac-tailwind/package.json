@@ -1,0 +1,30 @@
+{
+  "name": "rac-tailwind-example",
+  "private": true,
+  "scripts": {
+    "start": "parcel src/index.html"
+  },
+  "workspaces": [
+    "../../packages/react-aria-components",
+    "../../packages/react-aria",
+    "../../packages/react-stately",
+    "../../packages/*/*"
+  ],
+  "dependencies": {
+    "@heroicons/react": "^2.0.16",
+    "parcel": "^2.8.3",
+    "postcss": "^8.4.21",
+    "react": "^18.2.0",
+    "react-aria-components": "^1.0.0-alpha.0",
+    "react-dom": "^18.2.0",
+    "tailwindcss": "^3.3.0",
+    "tailwindcss-animate": "^1.0.5"
+  },
+  "devDependencies": {
+    "process": "^0.11.10"
+  },
+  "resolutions": {
+    "react": "link:../../node_modules/react",
+    "react-dom": "link:../../node_modules/react-dom"
+  }
+}
