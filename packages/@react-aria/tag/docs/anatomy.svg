@@ -45,7 +45,7 @@
       <ellipse cx="2.863" cy="2.863" rx="2.863" ry="2.863" stroke="none"/>
       <ellipse cx="2.863" cy="2.863" rx="2.363" ry="2.363" fill="none"/>
     </g>
-    <text id="Close_icon-3" data-name="Close icon" transform="translate(75.657 13)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="0" y="0">Close icon</tspan></text>
+    <text id="Close_icon-3" data-name="Close icon" transform="translate(62 13)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="0" y="0">Remove button</tspan></text>
   </g>
   <g id="Group_1" data-name="Group 1" transform="translate(-104.895 -47.94)">
     <line id="Line_2" data-name="Line 2" x1="320.222" transform="translate(153.889 237.767)" fill="none" stroke="var(--anatomy-gray-600)" stroke-width="1"/>
