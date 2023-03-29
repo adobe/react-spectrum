@@ -310,18 +310,19 @@ module.exports = new Transformer({
 
       if (path.isTSQualifiedName()) {
         let left = processExport(path.get('left'));
-        if (left.type === 'interface' || left.type === 'object') {
-          let property = left.properties[path.node.right.name];
-          if (property) {
-            return property.value;
+        if (left) {
+          if (left.type === 'interface' || left.type === 'object') {
+            let property = left.properties[path.node.right.name];
+            if (property) {
+              return property.value;
+            }
           }
-        }
 
-        return Object.assign(node, {
-          type: 'identifier',
-          name: left.name + '.' + path.node.right.name,
-          ...(!node.id ? {id: `${asset.filePath}:${left.name}.${path.node.right.name}`} : {})
-        });
+          return Object.assign(node, {
+            type: 'identifier',
+            name: left.name + '.' + path.node.right.name,
+            ...(!node.id ? {id: `${asset.filePath}:${left.name}.${path.node.right.name}`} : {})
+          });
       }
 
       if (path.isImportSpecifier()) {
@@ -694,12 +695,19 @@ module.exports = new Transformer({
         return false;
       }
 
-      if (!t.isMemberExpression(path.node.callee)) {
-        return path.get('callee').referencesImport(module, name);
+      let callee = path.node.callee;
+      let calleePath = path.get('callee');
+      if (t.isTSAsExpression(callee)) {
+        callee = callee.expression;
+        calleePath = calleePath.get('expression');
       }
 
-      if (path.get('callee.object').referencesImport(module, 'default')) {
-        return t.isIdentifier(path.node.callee.property, {name});
+      if (!t.isMemberExpression(callee)) {
+        return calleePath.referencesImport(module, name);
+      }
+
+      if (calleePath.get('object').referencesImport(module, 'default')) {
+        return t.isIdentifier(callee.property, {name});
       }
 
       return false;
@@ -707,6 +715,16 @@ module.exports = new Transformer({
 
     function isReactComponent(path) {
       if (path.isFunction()) {
+        if (
+          path.node.returnType &&
+          t.isTSTypeReference(path.node.returnType.typeAnnotation) &&
+          t.isTSQualifiedName(path.node.returnType.typeAnnotation.typeName) &&
+          t.isIdentifier(path.node.returnType.typeAnnotation.typeName.left, {name: 'JSX'}) &&
+          t.isIdentifier(path.node.returnType.typeAnnotation.typeName.right, {name: 'Element'})
+        ) {
+          return true;
+        }
+
         let returnsJSX = false;
         path.traverse({
           ReturnStatement(path) {
@@ -760,6 +778,8 @@ module.exports = new Transformer({
             }
 
             result.params[tag.name] = tag.description;
+          } else if (tag.title === 'selector') {
+            result.selector = tag.description;
           }
         }
 
@@ -799,6 +819,10 @@ module.exports = new Transformer({
 
       if (docs.access) {
         value.access = docs.access;
+      }
+
+      if (docs.selector) {
+        value.selector = docs.selector;
       }
 
       if (value.type === 'property' || value.type === 'method') {
