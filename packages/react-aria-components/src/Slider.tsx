@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaSliderProps, AriaSliderThumbProps, mergeProps, Orientation, useFocusRing, useNumberFormatter, useSlider, useSliderThumb, VisuallyHidden} from 'react-aria';
+import {AriaSliderProps, AriaSliderThumbProps, mergeProps, Orientation, useFocusRing, useHover, useNumberFormatter, useSlider, useSliderThumb, VisuallyHidden} from 'react-aria';
 import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DOMAttributes} from '@react-types/shared';
 import {LabelContext} from './Label';
@@ -141,6 +141,11 @@ export interface SliderThumbRenderProps {
    */
   isDragging: boolean,
   /**
+   * Whether the thumb is currently hovered with a mouse.
+   * @selector [data-hovered]
+   */
+  isHovered: boolean,
+  /**
    * Whether the thumb is currently focused.
    * @selector [data-focused]
    */
@@ -173,19 +178,21 @@ function SliderThumb(props: SliderThumbProps, ref: ForwardedRef<HTMLDivElement>)
   }, state);
 
   let {focusProps, isFocusVisible} = useFocusRing();
+  let {hoverProps, isHovered} = useHover({});
 
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-SliderThumb',
-    values: {state, isDragging, isFocused, isFocusVisible, isDisabled}
+    values: {state, isHovered, isDragging, isFocused, isFocusVisible, isDisabled}
   });
 
   return (
     <div
-      {...thumbProps}
+      {...mergeProps(thumbProps, hoverProps)}
       {...renderProps}
       ref={ref}
       style={{...thumbProps.style, ...renderProps.style}}
+      data-hovered={isHovered || undefined}
       data-dragging={isDragging || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
