@@ -36,7 +36,7 @@ const searchOptions = {
     'content:10'
   ],
   snippetEllipsisText: '…',
-  highlightPreTag: `<mark class="${docsStyle.docSearchBoxMark}">`,
+  highlightPreTag: `<mark role="presentation" class="${docsStyle.docSearchBoxMark}">`,
   highlightPostTag: '</mark>',
   hitsPerPage: 20
 };
