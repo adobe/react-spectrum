@@ -66,7 +66,7 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
       values={[
         [GroupContext, {...groupProps, ref: groupRef}],
         [DateInputContext, {state: fieldState, fieldProps: dateFieldProps, ref: fieldRef}],
-        [ButtonContext, buttonProps],
+        [ButtonContext, {...buttonProps, isPressed: state.isOpen}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [CalendarContext, calendarProps],
         [PopoverContext, {state, triggerRef: groupRef, placement: 'bottom start'}],
@@ -137,7 +137,7 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
     <Provider
       values={[
         [GroupContext, {...groupProps, ref: groupRef}],
-        [ButtonContext, buttonProps],
+        [ButtonContext, {...buttonProps, isPressed: state.isOpen}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [RangeCalendarContext, calendarProps],
         [PopoverContext, {state, triggerRef: groupRef, placement: 'bottom start'}],
