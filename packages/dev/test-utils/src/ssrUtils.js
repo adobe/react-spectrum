@@ -38,6 +38,10 @@ Module._resolveFilename = (request, parent) => {
     return request;
   }
 
+  if (request.startsWith('bundle-text:')) {
+    return path.join(__dirname, '../../../../__mocks__/fileMock.js');
+  }
+
   let resolved = resolver(request, {
     basedir: path.dirname(parent.filename),
     extensions: ['.js', '.json', '.ts', '.tsx'],

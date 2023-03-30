@@ -10,15 +10,64 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextValue, useContextProps} from './utils';
+import {ContextValue, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {mergeProps, useFocusRing, useHover} from 'react-aria';
 import React, {createContext, ForwardedRef, forwardRef, InputHTMLAttributes} from 'react';
 
-export const InputContext = createContext<ContextValue<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>>({});
-
-function Input(props: InputHTMLAttributes<HTMLInputElement>, ref: ForwardedRef<HTMLInputElement>) {
-  [props, ref] = useContextProps(props, ref, InputContext);
-  return <input {...props} ref={ref} className={props.className ?? 'react-aria-Input'} />;
+export interface InputRenderProps {
+  /**
+   * Whether the input is currently hovered with a mouse.
+   * @selector [data-hovered]
+   */
+  isHovered: boolean,
+  /**
+   * Whether the input is focused, either via a mouse or keyboard.
+   * @selector :focus
+   */
+  isFocused: boolean,
+  /**
+   * Whether the input is keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
+   * Whether the input is disabled.
+   * @selector :disabled
+   */
+  isDisabled: boolean
 }
 
+export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'style'>, StyleRenderProps<InputRenderProps> {}
+
+export const InputContext = createContext<ContextValue<InputProps, HTMLInputElement>>({});
+
+function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
+  [props, ref] = useContextProps(props, ref, InputContext);
+
+  let {hoverProps, isHovered} = useHover({});
+  let {isFocused, isFocusVisible, focusProps} = useFocusRing({
+    isTextInput: true,
+    autoFocus: props.autoFocus
+  });
+
+  let renderProps = useRenderProps({
+    ...props,
+    values: {isHovered, isFocused, isFocusVisible, isDisabled: props.disabled || false},
+    defaultClassName: 'react-aria-Input'
+  });
+
+  return (
+    <input
+      {...mergeProps(props, focusProps, hoverProps)}
+      {...renderProps}
+      ref={ref}
+      data-hovered={isHovered || undefined}
+      data-focus-visible={isFocusVisible || undefined} />
+  );
+}
+
+/**
+ * An input allows a user to input text.
+ */
 const _Input = forwardRef(Input);
 export {_Input as Input};

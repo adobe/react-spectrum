@@ -69,7 +69,7 @@ describe('Slider', () => {
     let {getByRole} = renderSlider({}, {className: ({isFocusVisible}) => `thumb ${isFocusVisible ? 'focus' : ''}`});
     let slider = getByRole('slider');
     let thumb = slider.closest('.thumb');
-    
+
     expect(thumb).not.toHaveAttribute('data-focus-visible');
     expect(thumb).not.toHaveClass('focus');
 
@@ -97,6 +97,22 @@ describe('Slider', () => {
     fireEvent.mouseUp(thumb);
     expect(thumb).not.toHaveAttribute('data-dragging');
     expect(thumb).not.toHaveClass('dragging');
+  });
+
+  it('should support hover state', () => {
+    let {getByRole} = renderSlider({}, {className: ({isHovered}) => `thumb ${isHovered ? 'hovered' : ''}`});
+    let thumb = getByRole('slider').closest('.thumb');
+
+    expect(thumb).not.toHaveAttribute('data-hovered');
+    expect(thumb).not.toHaveClass('hovered');
+
+    userEvent.hover(thumb);
+    expect(thumb).toHaveAttribute('data-hovered', 'true');
+    expect(thumb).toHaveClass('hovered');
+
+    userEvent.unhover(thumb);
+    expect(thumb).not.toHaveAttribute('data-hovered');
+    expect(thumb).not.toHaveClass('hovered');
   });
 
   it('should support disabled state', () => {
