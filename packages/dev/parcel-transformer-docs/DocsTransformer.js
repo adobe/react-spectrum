@@ -323,6 +323,7 @@ module.exports = new Transformer({
             name: left.name + '.' + path.node.right.name,
             ...(!node.id ? {id: `${asset.filePath}:${left.name}.${path.node.right.name}`} : {})
           });
+        }
       }
 
       if (path.isImportSpecifier()) {
