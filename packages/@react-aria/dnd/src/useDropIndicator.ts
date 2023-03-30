@@ -61,12 +61,19 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
       itemText: getText(target.key)
     });
   } else {
-    let before = target.dropPosition === 'before'
-      ? collection.getKeyBefore(target.key)
-      : target.key;
-    let after = target.dropPosition === 'after'
-      ? collection.getKeyAfter(target.key)
-      : target.key;
+    let before: Key | null;
+    let after: Key | null;
+    if (collection.getFirstKey() === target.key && target.dropPosition === 'before') {
+      before = null;
+    } else {
+      before = target.dropPosition === 'before' ? collection.getKeyBefore(target.key) : target.key;
+    }
+
+    if (collection.getLastKey() === target.key && target.dropPosition === 'after') {
+      after = null;
+    } else {
+      after = target.dropPosition === 'after' ? collection.getKeyAfter(target.key) : target.key;
+    }
 
     if (before && after) {
       label = stringFormatter.format('insertBetween', {
