@@ -151,6 +151,7 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
       'aria-label': stringFormatter.format('calendar'),
       'aria-labelledby': `${labelledBy} ${buttonId}`,
       'aria-describedby': ariaDescribedBy,
+      'aria-expanded': state.isOpen || undefined,
       onPress: () => state.setOpen(true)
     },
     dialogProps: {

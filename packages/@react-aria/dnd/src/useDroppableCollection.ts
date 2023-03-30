@@ -297,6 +297,13 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       // is some indication that items were added.
       if (state.selectionManager.focusedKey === droppingState.current.focusedKey) {
         let first = newKeys.keys().next().value;
+        let item = state.collection.getItem(first);
+
+        // If this is a cell, focus the parent row.
+        if (item?.type === 'cell') {
+          first = item.parentKey;
+        }
+
         state.selectionManager.setFocusedKey(first);
 
         if (state.selectionManager.selectionMode === 'none') {

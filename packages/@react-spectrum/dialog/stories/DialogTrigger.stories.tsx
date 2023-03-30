@@ -31,14 +31,6 @@ import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 storiesOf('DialogTrigger', module)
   .addParameters({
     providerSwitcher: {status: 'notice'},
-    args: {
-      crossOffset: 0,
-      offset: 0,
-      containerPadding: 0,
-      placement: 'top',
-      shouldFlip: false,
-      isKeyboardDismissDisabled: false
-    },
     argTypes: {
       crossOffset: {
         control: {
