@@ -41,7 +41,7 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
   let {hoverProps, isHovered} = useHover({});
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
   let ref = useRef();
-  let {clearButtonProps, labelProps, gridCellProps, rowProps} = useTag({
+  let {removeButtonProps, labelProps, gridCellProps, rowProps} = useTag({
     ...props,
     allowsRemoving,
     item,
@@ -74,7 +74,7 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
           }}>
           {typeof children === 'string' ? <Text>{children}</Text> : children}
           <ClearSlots>
-            {allowsRemoving && <TagRemoveButton item={item} {...clearButtonProps} UNSAFE_className={classNames(styles, 'spectrum-Tag-removeButton')} />}
+            {allowsRemoving && <TagRemoveButton item={item} {...removeButtonProps} UNSAFE_className={classNames(styles, 'spectrum-Tag-removeButton')} />}
           </ClearSlots>
         </SlotProvider>
       </div>

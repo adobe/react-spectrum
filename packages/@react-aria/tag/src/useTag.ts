@@ -30,8 +30,8 @@ export interface TagAria {
   gridCellProps: DOMAttributes,
   /** Props for the tag row element. */
   rowProps: DOMAttributes,
-  /** Props for the tag clear button. */
-  clearButtonProps: AriaButtonProps
+  /** Props for the tag remove button. */
+  removeButtonProps: AriaButtonProps
 }
 
 /**
@@ -75,7 +75,7 @@ export function useTag<T>(props: TagProps<T>, state: TagGroupState<T>, ref: RefO
   let domProps = filterDOMProps(props);
   let isFocused = item.key === state.selectionManager.focusedKey;
   return {
-    clearButtonProps: {
+    removeButtonProps: {
       'aria-label': stringFormatter.format('removeButtonLabel', {label: item.textValue}),
       'aria-labelledby': `${buttonId} ${labelId}`,
       id: buttonId,
