@@ -42,7 +42,6 @@ export interface TagAria {
  */
 export function useTag<T>(props: TagProps<T>, state: TagGroupState<T>, ref: RefObject<FocusableElement>): TagAria {
   let {
-    isFocused,
     allowsRemoving,
     item
   } = props;
@@ -73,8 +72,8 @@ export function useTag<T>(props: TagProps<T>, state: TagGroupState<T>, ref: RefO
   let description = allowsRemoving && (modality === 'keyboard' || modality === 'virtual') ? stringFormatter.format('removeDescription') : '';
   let descProps = useDescription(description);
 
-  isFocused = isFocused || state.selectionManager.focusedKey === item.key;
   let domProps = filterDOMProps(props);
+  let isFocused = item.key === state.selectionManager.focusedKey;
   return {
     clearButtonProps: {
       'aria-label': stringFormatter.format('removeButtonLabel', {label: item.textValue}),
