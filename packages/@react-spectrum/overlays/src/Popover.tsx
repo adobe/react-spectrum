@@ -53,7 +53,7 @@ let arrowPlacement = {
   right: 'right',
   top: 'bottom',
   bottom: 'bottom'
-} as const;
+};
 
 function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
   let {
