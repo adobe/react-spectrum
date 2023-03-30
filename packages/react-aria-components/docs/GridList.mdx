@@ -875,7 +875,7 @@ function DraggableGridList() {
 
   return (
     <MyGridList aria-label="Draggable list" selectionMode="multiple" items={items} dragAndDropHooks={dragAndDropHooks}>
-      {([id, item]) => <MyItem id={id} textValue={item.name}>{React.createElement(item.style, null, item.name)}</MyItem>}
+      {([id, item]) => <MyItem id={id} textValue={item.name}>{React.createElement(item.style || 'span', null, item.name)}</MyItem>}
     </MyGridList>
   );
 }
@@ -1149,7 +1149,7 @@ function DroppableGridList() {
 
   return (
     <MyGridList aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop items here"}>
-      {item => <MyItem textValue={item.name}>{React.createElement(item.style, null, item.name)}</MyItem>}
+      {item => <MyItem textValue={item.name}>{React.createElement(item.style || 'span', null, item.name)}</MyItem>}
     </MyGridList>
   );
 }

@@ -42,7 +42,7 @@ export interface AriaTagGroupProps<T> extends TagGroupProps<T>, DOMProps, AriaLa
 
 /**
  * Provides the behavior and accessibility implementation for a tag group component.
- * Tags allow users to categorize content. They can represent keywords or people, and are grouped to describe an item or a search request.
+ * A tag group is a focusable list of labels, categories, keywords, or other items, with support for keyboard navigation and removal.
  * @param props - Props to be applied to the tag group.
  * @param state - State for the tag group, as returned by `useTagGroupState`.
  * @param ref - A ref to a DOM element for the tag group.
