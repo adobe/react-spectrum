@@ -208,6 +208,10 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
       classNames(
         styles,
         'spectrum-InputGroup-input-validationIcon'
+      ),
+      classNames(
+        searchStyles,
+        'spectrum-Search-validationIcon'
       )
     )
   });
@@ -264,6 +268,7 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
             classNames(
               searchStyles,
               'spectrum-Search',
+              'spectrum-Search--loadable',
               {
                 'is-disabled': isDisabled,
                 'is-quiet': isQuiet,

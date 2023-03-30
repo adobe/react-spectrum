@@ -95,4 +95,13 @@ describe('DateRangePicker', () => {
     expect(group.closest('.react-aria-DateRangePicker')).toHaveAttribute('slot', 'test');
     expect(group).toHaveAttribute('aria-label', 'test');
   });
+
+  it('should apply isPressed state to button when expanded', () => {
+    let {getByRole} = render(<TestDateRangePicker />);
+    let button = getByRole('button');
+
+    expect(button).not.toHaveAttribute('data-pressed');
+    userEvent.click(button);
+    expect(button).toHaveAttribute('data-pressed');
+  });
 });
