@@ -123,7 +123,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
 
       menuOpenTrigger.current = trigger;
       triggerState.open(focusStrategy);
-      selectionManager.setFocused(true);
     }
   };
 
@@ -142,7 +141,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     // Only update the menuOpenTrigger if menu is currently closed
     if (!triggerState.isOpen) {
       menuOpenTrigger.current = trigger;
-      selectionManager.setFocused(true);
     }
 
     toggleMenu(focusStrategy);
