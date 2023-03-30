@@ -38,7 +38,7 @@ interface GridSelectionState<T> {
 
 export function useGridSelectionAnnouncement<T>(props: GridSelectionAnnouncementProps, state: GridSelectionState<T>) {
   let {
-    getRowText = (key) => state.collection.getItem(key)?.textValue
+    getRowText = (key) => state.collection.getTextValue?.(key) ?? state.collection.getItem(key)?.textValue
   } = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
