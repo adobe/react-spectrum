@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AsyncLoadable, CollectionChildren, LoadingState, MultipleSelection, Sortable} from '@react-types/shared';
+import {AriaLabelingProps, AsyncLoadable, CollectionChildren, DOMProps, LoadingState, MultipleSelection, Sortable, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {Key, ReactElement, ReactNode} from 'react';
 
@@ -30,6 +30,43 @@ export interface TableProps<T> extends MultipleSelection, Sortable {
   children: [ReactElement<TableHeaderProps<T>>, ReactElement<TableBodyProps<T>>],
   /** A list of row keys to disable. */
   disabledKeys?: Iterable<Key>
+}
+
+/**
+ * @deprecated - use SpectrumTableProps from '@adobe/react-spectrum' instead.
+ */
+export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionProps, DOMProps, AriaLabelingProps, StyleProps {
+  /**
+   * Sets the amount of vertical padding within each cell.
+   * @default 'regular'
+   */
+  density?: 'compact' | 'regular' | 'spacious',
+  /**
+   * Sets the overflow behavior for the cell contents.
+   * @default 'truncate'
+   */
+  overflowMode?: 'wrap' | 'truncate',
+  /** Whether the TableView should be displayed with a quiet style. */
+  isQuiet?: boolean,
+  /** Sets what the TableView should render when there is no content to display. */
+  renderEmptyState?: () => JSX.Element,
+  /** Handler that is called when a user performs an action on a row. */
+  onAction?: (key: Key) => void,
+  /**
+   * Handler that is called when a user starts a column resize.
+   */
+  onResizeStart?: (widths: Map<Key, ColumnSize>) => void,
+  /**
+   * Handler that is called when a user performs a column resize.
+   * Can be used with the width property on columns to put the column widths into
+   * a controlled state.
+   */
+  onResize?: (widths: Map<Key, ColumnSize>) => void,
+  /**
+   * Handler that is called after a user performs a column resize.
+   * Can be used to store the widths of columns for another future session.
+   */
+  onResizeEnd?: (widths: Map<Key, ColumnSize>) => void
 }
 
 export interface TableHeaderProps<T> {
