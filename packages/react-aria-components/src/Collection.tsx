@@ -299,17 +299,18 @@ export class ElementNode<T> extends BaseNode<T> {
 
   // Special property that React passes through as an object rather than a string via setAttribute.
   // See below for details.
-  set multiple(value: any) {
+  set multiple(obj: any) {
     let node = this.ownerDocument.getMutableNode(this);
-    node.props = value;
-    node.rendered = value.rendered;
-    node.value = value.value;
-    node.textValue = value.textValue || (typeof value.rendered === 'string' ? value.rendered : '') || value['aria-label'] || '';
-    if (value.id != null && value.id !== node.key) {
+    let {rendered, value, textValue, id, ...props} = obj;
+    node.props = props;
+    node.rendered = rendered;
+    node.value = value;
+    node.textValue = textValue || (typeof rendered === 'string' ? rendered : '') || obj['aria-label'] || '';
+    if (id != null && id !== node.key) {
       if (this.parentNode) {
         throw new Error('Cannot change the id of an item');
       }
-      node.key = value.id;
+      node.key = id;
     }
   }
 
@@ -593,11 +594,12 @@ export interface CollectionProps<T> extends Omit<CollectionBase<T>, 'children'> 
 }
 
 interface CachedChildrenOptions<T> extends CollectionProps<T> {
-  idScope?: Key
+  idScope?: Key,
+  addIdAndValue?: boolean
 }
 
 export function useCachedChildren<T extends object>(props: CachedChildrenOptions<T>) {
-  let {children, items, idScope} = props;
+  let {children, items, idScope, addIdAndValue} = props;
   let cache = useMemo(() => new WeakMap(), []);
   return useMemo(() => {
     if (items && typeof children === 'function') {
@@ -618,7 +620,10 @@ export function useCachedChildren<T extends object>(props: CachedChildrenOptions
               key = idScope + ':' + key;
             }
             // TODO: only works if wrapped Item passes through id...
-            rendered = cloneElement(rendered, {key, id: key});
+            rendered = cloneElement(
+              rendered,
+              addIdAndValue ? {key, id: key, value: item} : {key}
+            );
           }
           cache.set(item, rendered);
         }
@@ -628,8 +633,14 @@ export function useCachedChildren<T extends object>(props: CachedChildrenOptions
     } else {
       return children;
     }
-  }, [children, items, cache, idScope]);
+  }, [children, items, cache, idScope, addIdAndValue]);
 }
+
+export function useCollectionChildren<T extends object>(props: CachedChildrenOptions<T>) {
+  return useCachedChildren({...props, addIdAndValue: true});
+}
+
+const ShallowRenderContext = createContext(false);
 
 interface CollectionResult<C> {
   portal: ReactPortal,
@@ -643,8 +654,13 @@ export function useCollection<T extends object, C extends BaseCollection<T>>(pro
   let subscribe = useCallback((fn: () => void) => document.subscribe(fn), [document]);
   let getSnapshot = useCallback(() => document.getCollection(), [document]);
   let collection = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
-  let children = useCachedChildren(props);
-  let portal = createPortal(children, document as unknown as Element);
+  let children = useCollectionChildren(props);
+  let wrappedChildren = useMemo(() => (
+    <ShallowRenderContext.Provider value>
+      {children}
+    </ShallowRenderContext.Provider>
+  ), [children]);
+  let portal = createPortal(wrappedChildren, document as unknown as Element);
 
   useLayoutEffect(() => {
     if (document.dirtyNodes.size > 0) {
@@ -653,6 +669,17 @@ export function useCollection<T extends object, C extends BaseCollection<T>>(pro
   });
 
   return {portal, collection};
+}
+
+/** Renders a DOM element (e.g. separator or header) shallowly when inside a collection. */
+export function useShallowRender<T extends Element>(Element: string, props: React.HTMLAttributes<T>, ref: React.RefObject<T>): ReactElement | null {
+  let isShallow = useContext(ShallowRenderContext);
+  if (isShallow) {
+    // @ts-ignore
+    return <Element multiple={{...props, ref, rendered: props.children}} />;
+  }
+
+  return null;
 }
 
 export interface ItemRenderProps {
@@ -712,7 +739,10 @@ export interface ItemRenderProps {
 }
 
 export interface ItemProps<T = object> extends Omit<SharedItemProps<T>, 'children'>, RenderProps<ItemRenderProps> {
-  id?: Key
+  /** The unique id of the item. */
+  id?: Key,
+  /** The object value that this item represents. When using dynamic collections, this is set automatically. */
+  value?: T
 }
 
 export function Item<T extends object>(props: ItemProps<T>): JSX.Element {
@@ -725,14 +755,17 @@ export function Item<T extends object>(props: ItemProps<T>): JSX.Element {
   return <item multiple={{...props, rendered: props.children}} />;
 }
 
-export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children'>, DOMProps {
+export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children' | 'title'>, DOMProps {
+  /** The unique id of the section. */
   id?: Key,
+  /** The object value that this section represents. When using dynamic collections, this is set automatically. */
+  value?: T,
   /** Static child items or a function to render children. */
   children?: ReactNode | ((item: T) => ReactElement)
 }
 
 export function Section<T extends object>(props: SectionProps<T>): JSX.Element {
-  let children = useCachedChildren(props);
+  let children = useCollectionChildren(props);
 
   // @ts-ignore
   return <section multiple={{...props, rendered: props.title}}>{children}</section>;
@@ -741,13 +774,14 @@ export function Section<T extends object>(props: SectionProps<T>): JSX.Element {
 export const CollectionContext = createContext<CachedChildrenOptions<unknown> | null>(null);
 export const CollectionRendererContext = createContext<CollectionProps<unknown>['children']>(null);
 
+/** A Collection renders a list of items, automatically managing caching and keys. */
 export function Collection<T extends object>(props: CollectionProps<T>): JSX.Element {
   let ctx = useContext(CollectionContext)!;
   props = mergeProps(ctx, props);
   let renderer = typeof props.children === 'function' ? props.children : null;
   return (
     <CollectionRendererContext.Provider value={renderer}>
-      {useCachedChildren(props)}
+      {useCollectionChildren(props)}
     </CollectionRendererContext.Provider>
   );
 }

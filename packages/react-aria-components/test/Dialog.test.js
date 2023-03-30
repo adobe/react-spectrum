@@ -131,7 +131,11 @@ describe('Dialog', () => {
     );
 
     let button = getByRole('button');
+    expect(button).not.toHaveAttribute('data-pressed');
+
     userEvent.click(button);
+
+    expect(button).toHaveAttribute('data-pressed');
 
     let dialog = getByRole('dialog');
     let heading = getByRole('heading');
