@@ -23,8 +23,6 @@ export interface TagGroupProps<T> extends Omit<CollectionBase<T>, 'disabledKeys'
 }
 
 export interface TagProps<T> extends ItemProps<any> {
-  /** Whether the tag is focused. */
-  isFocused: boolean,
   /** Whether the tag is removable. */
   allowsRemoving?: boolean,
   /** An object representing the tag. Contains all the relevant information that makes up the tag. */
