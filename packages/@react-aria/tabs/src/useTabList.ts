@@ -20,17 +20,18 @@ import {TabsKeyboardDelegate} from './TabsKeyboardDelegate';
 import {useLocale} from '@react-aria/i18n';
 import {useSelectableCollection} from '@react-aria/selection';
 
+export interface AriaTabListOptions<T> extends Omit<AriaTabListProps<T>, 'children'> {}
+
 export interface TabListAria {
   /** Props for the tablist container. */
   tabListProps: DOMAttributes
 }
 
-
 /**
  * Provides the behavior and accessibility implementation for a tab list.
  * Tabs organize content into multiple sections and allow users to navigate between them.
  */
-export function useTabList<T>(props: AriaTabListProps<T>, state: TabListState<T>, ref: RefObject<HTMLElement>): TabListAria {
+export function useTabList<T>(props: AriaTabListOptions<T>, state: TabListState<T>, ref: RefObject<HTMLElement>): TabListAria {
   let {
     orientation = 'horizontal',
     keyboardActivation = 'automatic'

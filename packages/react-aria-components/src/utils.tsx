@@ -29,7 +29,7 @@ interface SlottedValue<T> {
   [slotCallbackSymbol]?: (value: T) => void
 }
 
-export type ContextValue<T extends SlotProps, E extends Element> = SlottedValue<WithRef<T, E>> | WithRef<T, E>;
+export type ContextValue<T extends SlotProps, E extends Element> = SlottedValue<WithRef<T, E>> | WithRef<T, E> | null | undefined;
 
 type ProviderValue<T> = [React.Context<T>, T];
 type ProviderValues<A, B, C, D, E, F, G, H> =
@@ -118,7 +118,7 @@ export interface SlotProps {
 
 export function useContextProps<T, U, E extends Element>(props: T & SlotProps, ref: React.ForwardedRef<E>, context: React.Context<ContextValue<U, E>>): [T, React.RefObject<E>] {
   let ctx = useContext(context) || {};
-  if ('slots' in ctx) {
+  if ('slots' in ctx && ctx.slots) {
     if (!props.slot && !ctx.slots[defaultSlot]) {
       throw new Error('A slot prop is required');
     }
@@ -203,7 +203,7 @@ export function useExitAnimation(ref: RefObject<HTMLElement>, isOpen: boolean) {
 }
 
 function useAnimation(ref: RefObject<HTMLElement>, isActive: boolean, onEnd: () => void) {
-  let prevAnimation = useRef(null);
+  let prevAnimation = useRef<string | null>(null);
   if (isActive && ref.current) {
     prevAnimation.current = window.getComputedStyle(ref.current).animation;
   }

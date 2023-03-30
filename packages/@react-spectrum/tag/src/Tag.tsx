@@ -54,12 +54,12 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
       {...mergeProps(rowProps, hoverProps, focusProps)}
       className={classNames(
           styles,
-          'spectrum-Tags-item',
+          'spectrum-Tag',
         {
           'focus-ring': isFocusVisible,
           'is-focused': isFocused,
           'is-hovered': isHovered,
-          'is-removable': allowsRemoving
+          'spectrum-Tag--removable': allowsRemoving
         },
           styleProps.className
         )}
@@ -87,11 +87,8 @@ function TagRemoveButton(props) {
   let {styleProps} = useStyleProps(props);
 
   return (
-    <span
-      {...styleProps}>
-      <ClearButton
-        preventFocus
-        {...props} />
+    <span {...styleProps}>
+      <ClearButton {...props} />
     </span>
   );
 }

@@ -33,7 +33,7 @@ export const SearchFieldContext = createContext<ContextValue<SearchFieldProps, H
 
 function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SearchFieldContext);
-  let inputRef = useRef(null);
+  let inputRef = useRef<HTMLInputElement>(null);
   let [labelRef, label] = useSlot();
   let state = useSearchFieldState(props);
   let {labelProps, inputProps, clearButtonProps, descriptionProps, errorMessageProps} = useSearchField({
@@ -48,7 +48,7 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
   });
 
   return (
-    <div 
+    <div
       {...renderProps}
       ref={ref}
       slot={props.slot}

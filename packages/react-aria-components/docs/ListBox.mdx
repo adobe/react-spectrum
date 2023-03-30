@@ -86,11 +86,16 @@ import {ListBox, Item} from 'react-aria-components';
     font-style: italic;
   }
 
+  &[data-focus-visible] {
+    border-color: var(--highlight-background);
+    box-shadow: 0 0 0 1px var(--highlight-background);
+  }
+
   .react-aria-Section:not(:first-child) {
     margin-top: 12px;
   }
 
-  .react-aria-Section header {
+  .react-aria-Header {
     font-size: 1.143rem;
     font-weight: bold;
     padding: 0 0.714rem;
@@ -189,7 +194,7 @@ Users can select one or more options by clicking, tapping, or navigating with th
 
 ### Section
 
-A `<Section>` defines the child items, and optional title for a section within a `<ListBox>`.
+A `<Section>` defines the child items for a section within a `<ListBox>`. It may also contain an optional `<Header>` element. If there is no header, then an `aria-label` must be provided to identify the section to assistive technologies.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
@@ -197,6 +202,10 @@ A `<Section>` defines the child items, and optional title for a section within a
 <PropTable component={docs.exports.Section} links={docs.links} />
 
 </details>
+
+### Header
+
+A `<Header>` defines the title for a `<Section>`. It accepts all DOM attributes.
 
 ### Item
 
@@ -264,11 +273,17 @@ The states and selectors for each component used in a `ListBox` are documented b
 
 ### ListBox
 
-A `ListBox` can be targeted with the `.react-aria-ListBox` CSS selector, or by overriding with a custom `className`.
+A `ListBox` can be targeted with the `.react-aria-ListBox` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.ListBoxRenderProps.properties} />
 
 ### Section
 
-A `Section` can be targeted with the `.react-aria-Section` CSS selector, or by overriding with a custom `className`. The section title can be targeted with the `header` selector. The `title` prop also allows JSX elements and not just strings, which can enable custom formatting. However, keep in mind that interactive elements within a listbox are not allowed. See [sections](#sections) for examples.
+A `Section` can be targeted with the `.react-aria-Section` CSS selector, or by overriding with a custom `className`. See [sections](#sections) for examples.
+
+### Header
+
+A `Header` within a `Section` can be targeted with the `.react-aria-Header` CSS selector, or by overriding with a custom `className`. See [sections](#sections) for examples.
 
 ### Item
 
@@ -450,25 +465,28 @@ These selection behaviors are defined in [Aria Practices](https://w3c.github.io/
 
 ### Sections
 
-ListBox supports sections in order to group options. Sections can be used by wrapping groups of items in a `Section` element. Each `Section` takes a `title` prop.
+ListBox supports sections in order to group options. Sections can be used by wrapping groups of items in a `Section` element. A `<Header>` element may also be included to label the section.
 
 #### Static items
 
 ```tsx example
-import {Section} from 'react-aria-components';
+import {Section, Header} from 'react-aria-components';
 
 <ListBox aria-label="Sandwich contents" selectionMode="multiple">
-  <Section title="Veggies">
+  <Section>
+    <Header>Veggies</Header>
     <Item id="lettuce">Lettuce</Item>
     <Item id="tomato">Tomato</Item>
     <Item id="onion">Onion</Item>
   </Section>
-  <Section title="Protein">
+  <Section>
+    <Header>Protein</Header>
     <Item id="ham">Ham</Item>
     <Item id="tuna">Tuna</Item>
     <Item id="tofu">Tofu</Item>
   </Section>
-  <Section title="Condiments">
+  <Section>
+    <Header>Condiments</Header>
     <Item id="mayo">Mayonaise</Item>
     <Item id="mustard">Mustard</Item>
     <Item id="ranch">Ranch</Item>
@@ -479,10 +497,12 @@ import {Section} from 'react-aria-components';
 #### Dynamic items
 
 The above example shows sections with static items. Sections can also be populated from a heirarchical data structure.
-Similarly to the props on ListBox, `<Section>` takes an array of data using the `items` prop.
+Similarly to the props on ListBox, `<Section>` takes an array of data using the `items` prop. If the section also has a header,
+the <TypeLink links={docs.links} type={docs.exports.Collection} /> component can be used to render the child items.
 
 ```tsx example
 import type {Selection} from 'react-aria-components';
+import {Collection} from 'react-aria-components';
 
 function Example() {
   let options = [
@@ -506,9 +526,12 @@ function Example() {
       selectedKeys={selected}
       selectionMode="single"
       onSelectionChange={setSelected}>
-      {item => (
-        <Section id={item.name} items={item.children} title={item.name}>
-          {item => <Item>{item.name}</Item>}
+      {section => (
+        <Section id={section.name}>
+          <Header>{section.name}</Header>
+          <Collection items={section.children}>
+            {item => <Item>{item.name}</Item>}
+          </Collection>
         </Section>
       )}
     </ListBox>
@@ -764,7 +787,9 @@ function Example() {
   width: 150px;
   padding: 4px 8px;
   display: flex;
+  align-items: center;
   justify-content: space-between;
+  gap: 4px;
   background: slateblue;
   color: white;
   border-radius: 4px;
@@ -812,7 +837,7 @@ function DraggableListBox() {
     /*- begin highlight -*/
     getItems(keys) {
       return [...keys].map(key => {
-        let item = items.get(key as string);
+        let item = items.get(key as string)!;
         return {
           'text/plain': item.name,
           'text/html': `<${item.style}>${item.name}</${item.style}>`,
@@ -825,7 +850,7 @@ function DraggableListBox() {
 
   return (
     <ListBox aria-label="Draggable list" selectionMode="multiple" items={items} dragAndDropHooks={dragAndDropHooks}>
-      {([id, item]) => <Item id={id} textValue={item.name}>{React.createElement(item.style, null, item.name)}</Item>}
+      {([id, item]) => <Item id={id} textValue={item.name}>{React.createElement(item.style || 'span', null, item.name)}</Item>}
     </ListBox>
   );
 }
@@ -842,8 +867,13 @@ function DraggableListBox() {
 Dropping on the ListBox as a whole can be enabled using the `onRootDrop` event. When a valid drag hovers over the ListBox, it receives the `isDropTarget` state and can be styled using the `[data-drop-target]` CSS selector.
 
 ```tsx example
+interface Item {
+  id: number,
+  name: string
+}
+
 function Example() {
-  let [items, setItems] = React.useState([]);
+  let [items, setItems] = React.useState<Item[]>([]);
 
   let { dragAndDropHooks } = useDragAndDrop({
     /*- begin highlight -*/
@@ -926,8 +956,6 @@ function Example() {
 Dropping between items can be enabled using the `onInsert` event. ListBox renders a <TypeLink links={docs.links} type={docs.exports.DropIndicator} /> between items to indicate the insertion position, which can be styled using the `.react-aria-DropIndicator` selector. When it is active, it receives the `[data-drop-target]` state.
 
 ```tsx example
-import type {TextDropItem} from 'react-aria-components';
-
 function Example() {
   let list = useListData({
     initialItems: [
@@ -1059,17 +1087,25 @@ A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.T
 The example below uses the `acceptedDragTypes` prop to accept items that include a custom app-specific type, which is retrieved using the item's `getText` method. The same draggable component as used in the above example is used here, but rather than displaying the plain text representation, the custom format is used instead. When `acceptedDragTypes` is specified, the dropped items are filtered to include only items that include the accepted types.
 
 ```tsx example export=true
-import type {TextDropItem} from 'react-aria-components';
+import {isTextDropItem} from 'react-aria-components';
+
+interface TextItem {
+  id: string,
+  name: string,
+  style: string
+}
 
 function DroppableListBox() {
-  let [items, setItems] = React.useState([]);
+  let [items, setItems] = React.useState<TextItem[]>([]);
 
   let { dragAndDropHooks } = useDragAndDrop({
     /*- begin highlight -*/
     acceptedDragTypes: ['custom-app-type'],
     async onRootDrop(e) {
       let items = await Promise.all(
-        e.items.map(async (item: TextDropItem) => JSON.parse(await item.getText('custom-app-type')))
+        e.items
+          .filter(isTextDropItem)
+          .map(async item => JSON.parse(await item.getText('custom-app-type')))
       );
       setItems(items);
     }
@@ -1078,7 +1114,7 @@ function DroppableListBox() {
 
   return (
     <ListBox aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop items here"}>
-      {({name, style: Tag = 'span'}) => <Item><Tag>{name}</Tag></Item>}
+      {item => <Item textValue={item.name}>{React.createElement(item.style || 'span', null, item.name)}</Item>}
     </ListBox>
   );
 }
@@ -1097,17 +1133,23 @@ A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.F
 This example accepts JPEG and PNG image files, and renders them by creating a local [object URL](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL). When the list is empty, you can drop on the whole collection, and otherwise items can be inserted.
 
 ```tsx example
-import type {FileDropItem} from 'react-aria-components';
+import {isFileDropItem} from 'react-aria-components';
+
+interface ImageItem {
+  id: number,
+  url: string,
+  name: string
+}
 
 function Example() {
-  let [items, setItems] = React.useState([]);
+  let [items, setItems] = React.useState<ImageItem[]>([]);
 
   let { dragAndDropHooks } = useDragAndDrop({
     /*- begin highlight -*/
     acceptedDragTypes: ['image/jpeg', 'image/png'],
     async onRootDrop(e) {
       let items = await Promise.all(
-        e.items.map(async (item: FileDropItem) => ({
+        e.items.filter(isFileDropItem).map(async item => ({
           id: Math.random(),
           url: URL.createObjectURL(await item.getFile()),
           name: item.name
@@ -1121,7 +1163,7 @@ function Example() {
   return (
     <ListBox aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop items here"}>
       {item => (
-        <Item>
+        <Item textValue={item.name}>
           <div className="image-item">
             <img src={item.url} />
             <span>{item.name}</span>
@@ -1168,23 +1210,28 @@ The `getEntries` method returns an [async iterable](https://developer.mozilla.or
 This example accepts directory drops over the whole collection, and renders the contents as items in the list. `DIRECTORY_DRAG_TYPE` is imported from `react-aria-components` and included in the `acceptedDragTypes` prop to limit the accepted items to only directories.
 
 ```tsx example
-import type {DirectoryDropItem} from 'react-aria-components';
 import File from '@spectrum-icons/workflow/FileTxt';
 import Folder from '@spectrum-icons/workflow/Folder';
 ///- begin highlight -///
-import {DIRECTORY_DRAG_TYPE} from 'react-aria-components';
+import {DIRECTORY_DRAG_TYPE, isDirectoryDropItem} from 'react-aria-components';
 ///- end highlight -///
 
+interface DirItem {
+  name: string,
+  kind: string
+}
+
 function Example() {
-  let [files, setFiles] = React.useState([]);
+  let [files, setFiles] = React.useState<DirItem[]>([]);
 
   let { dragAndDropHooks } = useDragAndDrop({
     /*- begin highlight -*/
     acceptedDragTypes: [DIRECTORY_DRAG_TYPE],
     async onRootDrop(e) {
       // Read entries in directory and update state with relevant info.
+      let dir = e.items.find(isDirectoryDropItem)!;
       let files = [];
-      for await (let entry of (e.items[0] as DirectoryDropItem).getEntries()) {
+      for await (let entry of dir.getEntries()) {
         files.push({
           name: entry.name,
           kind: entry.kind
@@ -1198,7 +1245,7 @@ function Example() {
   return (
     <ListBox aria-label="Droppable list" items={files} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop items here"}>
       {item => (
-        <Item id={item.name}>
+        <Item id={item.name} textValue={item.name}>
           <div className="dir-item">
             {item.kind === 'directory' ? <Folder /> : <File />}
             <span>{item.name}</span>
@@ -1367,8 +1414,15 @@ The `getDropOperation` function passed to `useDragAndDrop` can be used to provid
 In the below example, the drop target only supports dropping PNG images. If a PNG is dragged over the target, it will be highlighted and the operating system displays a copy cursor. If another type is dragged over the target, then there is no visual feedback, indicating that a drop is not accepted there. If the user holds a modifier key such as <Keyboard>Control</Keyboard> while dragging over the drop target in order to change the drop operation, then the drop target does not accept the drop.
 
 ```tsx example
+///- begin collapse -///
+interface ImageItem {
+  id: number,
+  url: string,
+  name: string
+}
+///- end collapse -///
 function Example() {
-  let [items, setItems] = React.useState([]);
+  let [items, setItems] = React.useState<ImageItem[]>([]);
 
   let { dragAndDropHooks } = useDragAndDrop({
     /*- begin highlight -*/
@@ -1378,7 +1432,7 @@ function Example() {
     async onRootDrop(e) {
       ///- begin collapse -///
       let items = await Promise.all(
-        e.items.map(async (item: FileDropItem) => ({
+        e.items.filter(isFileDropItem).map(async item => ({
           id: Math.random(),
           url: URL.createObjectURL(await item.getFile()),
           name: item.name
@@ -1394,7 +1448,7 @@ function Example() {
   return (
     <ListBox aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop items here"}>
       {item => (
-        <Item>
+        <Item textValue={item.name}>
           <div className="image-item">
             <img src={item.url} />
             <span>{item.name}</span>
@@ -1433,10 +1487,10 @@ let onItemDrop = async (e) => {
 
 ### Drag between lists
 
-This example puts together many of the concepts described above, allowing users to drag items between lists bidirectionally. Items are always moved to avoid duplicate items being added to the same list.
+This example puts together many of the concepts described above, allowing users to drag items between lists bidirectionally. It also supports reordering items within the same list. When a list is empty, it accepts drops on the whole collection. `getDropOperation` ensures that items are always moved rather than copied, which avoids duplicate items.
 
 ```tsx example
-import type {TextDropItem} from 'react-aria-components';
+import {isTextDropItem} from 'react-aria-components';
 
 interface FileItem {
   id: string,
@@ -1485,7 +1539,9 @@ function DndListBox(props: DndListBoxProps) {
     // Handle drops between items from other lists.
     async onInsert(e) {
       let processedItems = await Promise.all(
-        e.items.map(async (item: TextDropItem) => JSON.parse(await item.getText('custom-app-type')))
+        e.items
+          .filter(isTextDropItem)
+          .map(async item => JSON.parse(await item.getText('custom-app-type')))
       );
       if (e.target.dropPosition === 'before') {
         list.insertBefore(e.target.key, ...processedItems);
@@ -1497,7 +1553,9 @@ function DndListBox(props: DndListBoxProps) {
     // Handle drops on the collection when empty.
     async onRootDrop(e) {
       let processedItems = await Promise.all(
-        e.items.map(async (item: TextDropItem) => JSON.parse(await item.getText('custom-app-type')))
+        e.items
+          .filter(isTextDropItem)
+          .map(async item => JSON.parse(await item.getText('custom-app-type')))
       );
       list.append(...processedItems);
     },

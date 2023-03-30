@@ -218,6 +218,13 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
 
     // Save some state of the collection/selection before the drop occurs so we can compare later.
     let focusedKey = state.selectionManager.focusedKey;
+
+    // If parent key was dragged, we want to use it instead (i.e. focus row instead of cell after dropping)
+    if (globalDndState.draggingKeys.has(state.collection.getItem(focusedKey)?.parentKey)) {
+      focusedKey = state.collection.getItem(focusedKey).parentKey;
+      state.selectionManager.setFocusedKey(focusedKey);
+    }
+
     droppingState.current = {
       timeout: null,
       focusedKey,
@@ -290,6 +297,13 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       // is some indication that items were added.
       if (state.selectionManager.focusedKey === droppingState.current.focusedKey) {
         let first = newKeys.keys().next().value;
+        let item = state.collection.getItem(first);
+
+        // If this is a cell, focus the parent row.
+        if (item?.type === 'cell') {
+          first = item.parentKey;
+        }
+
         state.selectionManager.setFocusedKey(first);
 
         if (state.selectionManager.selectionMode === 'none') {

@@ -10,27 +10,38 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DroppableCollectionResult, DroppableItemResult, ListKeyboardDelegate, mergeProps, useHover, useListBox, useListBoxSection, useOption} from 'react-aria';
+import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useListBox, useListBoxSection, useOption} from 'react-aria';
 import {CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
-import {ContextValue, forwardRefType, HiddenContext, Provider, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, forwardRefType, HiddenContext, Provider, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
-import {filterDOMProps, useObjectRef} from '@react-aria/utils';
-import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
+import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
+import {Header} from './Header';
+import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
 
 export interface ListBoxRenderProps {
   /**
-   * Whether the listbox root is currently the active drop target.
-   * @selector [data-drop-target]
-   */
-  isDropTarget: boolean,
-  /**
-   * Whether the list has no items and should display its empty state.
+   * Whether the listbox has no items and should display its empty state.
    * @selector [data-empty]
    */
-  isEmpty: boolean
+  isEmpty: boolean,
+  /**
+   * Whether the listbox is currently focused.
+   * @selector [data-focused]
+   */
+  isFocused: boolean,
+  /**
+   * Whether the listbox is currently keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
+   * Whether the listbox is currently the active drop target.
+   * @selector [data-drop-target]
+   */
+  isDropTarget: boolean
 }
 
 export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<ListBoxRenderProps>, SlotProps {
@@ -48,14 +59,14 @@ interface ListBoxContextValue<T> extends ListBoxProps<T> {
 
 interface InternalListBoxContextValue {
   state: ListState<unknown>,
-  shouldFocusOnHover: boolean,
+  shouldFocusOnHover?: boolean,
   dragAndDropHooks?: DragAndDropHooks,
   dragState?: DraggableCollectionState,
   dropState?: DroppableCollectionState
 }
 
 export const ListBoxContext = createContext<ContextValue<ListBoxContextValue<any>, HTMLDivElement>>(null);
-const InternalListBoxContext = createContext<InternalListBoxContextValue>(null);
+const InternalListBoxContext = createContext<InternalListBoxContextValue | null>(null);
 
 function ListBox<T>(props: ListBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ListBoxContext);
@@ -128,28 +139,29 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
     console.warn('Drop hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
   }
 
-  let dragState: DraggableCollectionState;
-  let dropState: DroppableCollectionState;
-  let droppableCollection: DroppableCollectionResult;
-  let isRootDropTarget: boolean;
-  let dragPreview: JSX.Element;
-  let preview = useRef(null);
+  let dragState: DraggableCollectionState | undefined = undefined;
+  let dropState: DroppableCollectionState | undefined = undefined;
+  let droppableCollection: DroppableCollectionResult | undefined = undefined;
+  let isRootDropTarget = false;
+  let dragPreview: JSX.Element | null = null;
+  let preview = useRef<DragPreviewRenderer>(null);
 
-  if (isListDraggable) {
-    dragState = dragAndDropHooks.useDraggableCollectionState({
+  if (isListDraggable && dragAndDropHooks) {
+    dragState = dragAndDropHooks.useDraggableCollectionState!({
       collection,
       selectionManager,
-      preview: dragAndDropHooks.renderDragPreview ? preview : null
+      preview: dragAndDropHooks.renderDragPreview ? preview : undefined
     });
-    dragAndDropHooks.useDraggableCollection({}, dragState, listBoxRef);
+    dragAndDropHooks.useDraggableCollection!({}, dragState, listBoxRef);
 
+    let DragPreview = dragAndDropHooks.DragPreview!;
     dragPreview = dragAndDropHooks.renderDragPreview
-      ? <dragAndDropHooks.DragPreview ref={preview}>{dragAndDropHooks.renderDragPreview}</dragAndDropHooks.DragPreview>
+      ? <DragPreview ref={preview}>{dragAndDropHooks.renderDragPreview}</DragPreview>
       : null;
   }
 
-  if (isListDroppable) {
-    dropState = dragAndDropHooks.useDroppableCollectionState({
+  if (isListDroppable && dragAndDropHooks) {
+    dropState = dragAndDropHooks.useDroppableCollectionState!({
       collection,
       selectionManager
     });
@@ -160,7 +172,7 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
       listBoxRef
     );
     let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(collection, listBoxRef);
-    droppableCollection = dragAndDropHooks.useDroppableCollection({
+    droppableCollection = dragAndDropHooks.useDroppableCollection!({
       keyboardDelegate,
       dropTargetDelegate
     }, dropState, listBoxRef);
@@ -168,17 +180,20 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
     isRootDropTarget = dropState.isDropTarget({type: 'root'});
   }
 
+  let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let renderProps = useRenderProps({
     className: props.className,
     style: props.style,
     defaultClassName: 'react-aria-ListBox',
     values: {
       isDropTarget: isRootDropTarget,
-      isEmpty: state.collection.size === 0
+      isEmpty: state.collection.size === 0,
+      isFocused,
+      isFocusVisible
     }
   });
 
-  let emptyState;
+  let emptyState: JSX.Element | null = null;
   if (state.collection.size === 0 && props.renderEmptyState) {
     emptyState = (
       <div
@@ -191,25 +206,29 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
   }
 
   return (
-    <div
-      {...filterDOMProps(props)}
-      {...mergeProps(listBoxProps, droppableCollection?.collectionProps)}
-      {...renderProps}
-      ref={listBoxRef}
-      slot={props.slot}
-      data-drop-target={isRootDropTarget || undefined}
-      data-empty={state.collection.size === 0 || undefined}>
-      <Provider
-        values={[
-          [InternalListBoxContext, {state, shouldFocusOnHover: props.shouldFocusOnHover, dragAndDropHooks, dragState, dropState}],
-          [SeparatorContext, {elementType: 'li'}],
-          [DropIndicatorContext, {render: ListBoxDropIndicator}]
-        ]}>
-        {children}
-      </Provider>
-      {emptyState}
-      {dragPreview}
-    </div>
+    <FocusScope>
+      <div
+        {...filterDOMProps(props)}
+        {...mergeProps(listBoxProps, focusProps, droppableCollection?.collectionProps)}
+        {...renderProps}
+        ref={listBoxRef}
+        slot={props.slot}
+        data-drop-target={isRootDropTarget || undefined}
+        data-empty={state.collection.size === 0 || undefined}
+        data-focused={isFocused || undefined}
+        data-focus-visible={isFocusVisible || undefined}>
+        <Provider
+          values={[
+            [InternalListBoxContext, {state, shouldFocusOnHover: props.shouldFocusOnHover, dragAndDropHooks, dragState, dropState}],
+            [SeparatorContext, {elementType: 'li'}],
+            [DropIndicatorContext, {render: ListBoxDropIndicator}]
+          ]}>
+          {children}
+        </Provider>
+        {emptyState}
+        {dragPreview}
+      </div>
+    </FocusScope>
   );
 }
 
@@ -218,20 +237,33 @@ interface ListBoxSectionProps<T> extends StyleProps {
 }
 
 function ListBoxSection<T>({section, className, style, ...otherProps}: ListBoxSectionProps<T>) {
-  let {state} = useContext(InternalListBoxContext);
+  let {state} = useContext(InternalListBoxContext)!;
+  let [headingRef, heading] = useSlot();
   let {headingProps, groupProps} = useListBoxSection({
-    heading: section.rendered,
-    'aria-label': section['aria-label']
+    heading,
+    'aria-label': section['aria-label'] ?? undefined
   });
 
   let children = useCachedChildren({
-    items: state.collection.getChildren(section.key),
+    items: state.collection.getChildren!(section.key),
     children: item => {
-      if (item.type !== 'item') {
-        throw new Error('Only items are allowed within a section');
+      switch (item.type) {
+        case 'header': {
+          let {ref, ...otherProps} = item.props;
+          return (
+            <Header
+              {...headingProps}
+              {...otherProps}
+              ref={mergeRefs(headingRef, ref)}>
+              {item.rendered}
+            </Header>
+          );
+        }
+        case 'item':
+          return <Option item={item} />;
+        default:
+          throw new Error('Unsupported element type in Section: ' + item.type);
       }
-
-      return <Option item={item} />;
     }
   });
 
@@ -241,11 +273,6 @@ function ListBoxSection<T>({section, className, style, ...otherProps}: ListBoxSe
       {...groupProps}
       className={className || section.props?.className || 'react-aria-Section'}
       style={style || section.props?.style}>
-      {section.rendered &&
-        <header {...headingProps}>
-          {section.rendered}
-        </header>
-      }
       {children}
     </section>
   );
@@ -256,8 +283,8 @@ interface OptionProps<T> {
 }
 
 function Option<T>({item}: OptionProps<T>) {
-  let ref = useRef();
-  let {state, shouldFocusOnHover, dragAndDropHooks, dragState, dropState} = useContext(InternalListBoxContext);
+  let ref = useRef<HTMLDivElement>(null);
+  let {state, shouldFocusOnHover, dragAndDropHooks, dragState, dropState} = useContext(InternalListBoxContext)!;
   let {optionProps, labelProps, descriptionProps, ...states} = useOption(
     {key: item.key},
     state,
@@ -273,14 +300,14 @@ function Option<T>({item}: OptionProps<T>) {
     isHovered = states.isFocused;
   }
 
-  let draggableItem: DraggableItemResult;
-  if (dragState) {
-    draggableItem = dragAndDropHooks.useDraggableItem({key: item.key}, dragState);
+  let draggableItem: DraggableItemResult | null = null;
+  if (dragState && dragAndDropHooks) {
+    draggableItem = dragAndDropHooks.useDraggableItem!({key: item.key}, dragState);
   }
 
-  let droppableItem: DroppableItemResult;
-  if (dropState) {
-    droppableItem = dragAndDropHooks.useDroppableItem({
+  let droppableItem: DroppableItemResult | null = null;
+  if (dropState && dragAndDropHooks) {
+    droppableItem = dragAndDropHooks.useDroppableItem!({
       target: {type: 'item', key: item.key, dropPosition: 'on'}
     }, dropState, ref);
   }
@@ -304,6 +331,12 @@ function Option<T>({item}: OptionProps<T>) {
   });
 
   let renderDropIndicator = dragAndDropHooks?.renderDropIndicator || (target => <DropIndicator target={target} />);
+
+  useEffect(() => {
+    if (!item.textValue) {
+      console.warn('A `textValue` prop is required for <Item> elements with non-plain text children in order to support accessibility features such as type to select.');
+    }
+  }, [item.textValue]);
 
   return (
     <>
@@ -341,10 +374,10 @@ function Option<T>({item}: OptionProps<T>) {
 
 function ListBoxDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
   ref = useObjectRef(ref);
-  let {dragAndDropHooks, dropState} = useContext(InternalListBoxContext);
-  let {dropIndicatorProps, isHidden, isDropTarget} = dragAndDropHooks.useDropIndicator(
+  let {dragAndDropHooks, dropState} = useContext(InternalListBoxContext)!;
+  let {dropIndicatorProps, isHidden, isDropTarget} = dragAndDropHooks!.useDropIndicator!(
     props,
-    dropState,
+    dropState!,
     ref
   );
 

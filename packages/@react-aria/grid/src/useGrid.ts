@@ -19,6 +19,7 @@ import {GridState} from '@react-stately/grid';
 import {Key, RefObject, useCallback, useMemo} from 'react';
 import {useCollator, useLocale} from '@react-aria/i18n';
 import {useGridSelectionAnnouncement} from './useGridSelectionAnnouncement';
+import {useHasTabbableChild} from '@react-aria/focus';
 import {useHighlightSelectionDescription} from './useHighlightSelectionDescription';
 import {useSelectableCollection} from '@react-aria/selection';
 
@@ -134,6 +135,10 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     onFocus
   }), [onFocus, collectionProps.onBlur]);
 
+  let hasTabbableChild = useHasTabbableChild(ref, {
+    isDisabled: state.collection.size !== 0
+  });
+
   let gridProps: DOMAttributes = mergeProps(
     domProps,
     {
@@ -142,6 +147,8 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
       'aria-multiselectable': manager.selectionMode === 'multiple' ? 'true' : undefined
     },
     state.isKeyboardNavigationDisabled ? navDisabledHandlers : collectionProps,
+    // If collection is empty, make sure the grid is tabbable unless there is a child tabbable element.
+    state.collection.size === 0 && {tabIndex: hasTabbableChild ? -1 : 0},
     descriptionProps
   );
 

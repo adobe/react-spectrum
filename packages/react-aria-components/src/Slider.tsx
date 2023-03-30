@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaSliderProps, AriaSliderThumbProps, mergeProps, Orientation, useFocusRing, useNumberFormatter, useSlider, useSliderThumb, VisuallyHidden} from 'react-aria';
+import {AriaSliderProps, AriaSliderThumbProps, mergeProps, Orientation, useFocusRing, useHover, useNumberFormatter, useSlider, useSliderThumb, VisuallyHidden} from 'react-aria';
 import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DOMAttributes} from '@react-types/shared';
 import {LabelContext} from './Label';
@@ -33,7 +33,7 @@ interface SliderContextValue {
 }
 
 export const SliderContext = createContext<ContextValue<SliderProps, HTMLDivElement>>(null);
-const InternalSliderContext = createContext<SliderContextValue>(null);
+const InternalSliderContext = createContext<SliderContextValue | null>(null);
 
 export interface SliderRenderProps {
   /**
@@ -50,7 +50,7 @@ export interface SliderRenderProps {
 
 function Slider<T extends number | number[]>(props: SliderProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SliderContext);
-  let trackRef = useRef(null);
+  let trackRef = useRef<HTMLDivElement>(null);
   let numberFormatter = useNumberFormatter(props.formatOptions);
   let state = useSliderState({...props, numberFormatter});
   let [labelRef, label] = useSlot();
@@ -93,7 +93,7 @@ export {_Slider as Slider};
 export interface SliderOutputProps extends RenderProps<SliderState> {}
 
 function SliderOutput({children, style, className}: SliderOutputProps, ref: ForwardedRef<HTMLOutputElement>) {
-  let {state, outputProps} = useContext(InternalSliderContext);
+  let {state, outputProps} = useContext(InternalSliderContext)!;
   let renderProps = useRenderProps({
     className,
     style,
@@ -115,7 +115,7 @@ export {_SliderOutput as SliderOutput};
 export interface SliderTrackProps extends RenderProps<SliderState> {}
 
 function SliderTrack(props: SliderTrackProps, ref: ForwardedRef<HTMLDivElement>) {
-  let {state, trackProps, trackRef} = useContext(InternalSliderContext);
+  let {state, trackProps, trackRef} = useContext(InternalSliderContext)!;
   let domRef = mergeRefs(ref, trackRef);
   let renderProps = useRenderProps({
     ...props,
@@ -141,6 +141,11 @@ export interface SliderThumbRenderProps {
    */
   isDragging: boolean,
   /**
+   * Whether the thumb is currently hovered with a mouse.
+   * @selector [data-hovered]
+   */
+  isHovered: boolean,
+  /**
    * Whether the thumb is currently focused.
    * @selector [data-focused]
    */
@@ -160,9 +165,9 @@ export interface SliderThumbRenderProps {
 export interface SliderThumbProps extends AriaSliderThumbProps, RenderProps<SliderThumbRenderProps> {}
 
 function SliderThumb(props: SliderThumbProps, ref: ForwardedRef<HTMLDivElement>) {
-  let {state, trackRef} = useContext(InternalSliderContext);
+  let {state, trackRef} = useContext(InternalSliderContext)!;
   let {index = 0} = props;
-  let inputRef = useRef(null);
+  let inputRef = useRef<HTMLInputElement>(null);
   let [labelRef, label] = useSlot();
   let {thumbProps, inputProps, labelProps, isDragging, isFocused, isDisabled} = useSliderThumb({
     ...props,
@@ -173,19 +178,21 @@ function SliderThumb(props: SliderThumbProps, ref: ForwardedRef<HTMLDivElement>)
   }, state);
 
   let {focusProps, isFocusVisible} = useFocusRing();
+  let {hoverProps, isHovered} = useHover({});
 
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-SliderThumb',
-    values: {state, isDragging, isFocused, isFocusVisible, isDisabled}
+    values: {state, isHovered, isDragging, isFocused, isFocusVisible, isDisabled}
   });
 
   return (
     <div
-      {...thumbProps}
+      {...mergeProps(thumbProps, hoverProps)}
       {...renderProps}
       ref={ref}
       style={{...thumbProps.style, ...renderProps.style}}
+      data-hovered={isHovered || undefined}
       data-dragging={isDragging || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
