@@ -12,8 +12,8 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaNumberFieldProps} from '@react-types/numberfield';
-import {DOMAttributes, TextInputDOMProps} from '@react-types/shared';
 import {chain, filterDOMProps, isAndroid, isIOS, isIPhone, mergeProps, useId} from '@react-aria/utils';
+import {DOMAttributes, TextInputDOMProps} from '@react-types/shared';
 import {
   InputHTMLAttributes,
   LabelHTMLAttributes,
