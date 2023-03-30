@@ -882,12 +882,8 @@ describe('NumberField', function () {
     act(() => {textField.focus();});
     textField.setSelectionRange(2, 3);
     userEvent.type(textField, '{backspace}');
-    expect(announce).toHaveBeenCalledTimes(2);
-    expect(announce).toHaveBeenLastCalledWith('−$0.00', 'assertive');
     textField.setSelectionRange(2, 2);
     typeText(textField, '1');
-    expect(announce).toHaveBeenCalledTimes(3);
-    expect(announce).toHaveBeenLastCalledWith('−$1.00', 'assertive');
     textField.setSelectionRange(3, 3);
     typeText(textField, '8');
     expect(textField).toHaveAttribute('value', '($18.00)');
@@ -895,15 +891,11 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', '($18.00)');
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
     expect(onChangeSpy).toHaveBeenLastCalledWith(-18);
-    expect(announce).toHaveBeenCalledTimes(4);
-    expect(announce).toHaveBeenLastCalledWith('−$18.00', 'assertive');
 
     act(() => {textField.focus();});
     textField.setSelectionRange(7, 8);
     userEvent.type(textField, '{backspace}');
     expect(textField).toHaveAttribute('value', '($18.00');
-    expect(announce).toHaveBeenCalledTimes(5);
-    expect(announce).toHaveBeenLastCalledWith('$18.00', 'assertive');
     act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', '$18.00');
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
@@ -911,12 +903,8 @@ describe('NumberField', function () {
 
     act(() => {textField.focus();});
     userEvent.clear(textField);
-    expect(announce).toHaveBeenCalledTimes(6);
-    expect(announce).toHaveBeenLastCalledWith('Empty', 'assertive');
     typeText(textField, '($32)');
     expect(textField).toHaveAttribute('value', '($32)');
-    expect(announce).toHaveBeenCalledTimes(9);
-    expect(announce).toHaveBeenLastCalledWith('−$32.00', 'assertive');
     act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', '($32.00)');
     expect(onChangeSpy).toHaveBeenCalledTimes(4);
@@ -930,10 +918,9 @@ describe('NumberField', function () {
     let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD', currencySign: 'accounting'}}, {locale: 'ar-AE'});
 
     act(() => {textField.focus();});
-    userEvent.type(textField, '(10)');
+    typeText(textField, '(10)');
     expect(textField).toHaveAttribute('value', '(10)');
-    expect(announce).toHaveBeenCalledTimes(3);
-    expect(announce).toHaveBeenLastCalledWith('؜−١٠٫٠٠ US$', 'assertive');
+    expect(announce).toHaveBeenCalledTimes(0);
     act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', '(US$10.00)');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
@@ -963,17 +950,11 @@ describe('NumberField', function () {
     });
     textField.setSelectionRange(1, 2);
     userEvent.type(textField, '{backspace}');
-    expect(announce).toHaveBeenCalledTimes(2);
-    expect(announce).toHaveBeenLastCalledWith('−0,00 $', 'assertive');
     textField.setSelectionRange(1, 1);
     typeText(textField, '1');
-    expect(announce).toHaveBeenCalledTimes(3);
-    expect(announce).toHaveBeenLastCalledWith('−1,00 $', 'assertive');
     textField.setSelectionRange(2, 2);
     typeText(textField, '8');
     expect(textField).toHaveAttribute('value', '-18,00 $');
-    expect(announce).toHaveBeenCalledTimes(4);
-    expect(announce).toHaveBeenLastCalledWith('−18,00 $', 'assertive');
     act(() => {
       textField.blur();
     });
