@@ -11,12 +11,14 @@
  */
 
 import {DOMAttributes} from '@react-types/shared';
+import {getChildNodes, getFirstItem} from '@react-stately/collections';
 import {GridNode} from '@react-types/grid';
+import {TableState} from '@react-stately/table';
 import {useId} from '@react-aria/utils';
 
-export interface AriaTableSectionProps {
+export interface AriaTableSectionProps<T> {
   /** An object representing the table section. Contains all the relevant information that makes up the section. */
-  node: GridNode<unknown>,
+  node: GridNode<T>,
   /** Whether the cell is contained in a virtual scroller. */
   isVirtualized?: boolean
 }
@@ -34,8 +36,7 @@ export interface TableSectionAria {
  * Provides the behavior and accessibility implementation for a section in a table.
  * @param props - Props for the section.
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function useTableSection(props: AriaTableSectionProps): TableSectionAria {
+export function useTableSection<T>(props: AriaTableSectionProps<T>, state: TableState<T>): TableSectionAria {
   let {node, isVirtualized} = props;
   // TODO: may need to register this headerId in the weakmap if we need to also associate the first/last row in the section with the section
   // prob map from section key to id?
@@ -43,8 +44,12 @@ export function useTableSection(props: AriaTableSectionProps): TableSectionAria 
   let rowIndex;
 
   if (isVirtualized) {
-    // TODO will need to update now that the node index is with respect to its parent
-    rowIndex = node.index + 1;
+    // TODO: should getChildNodes and getFirstItem return an iterable that matches the type of the node passed to it?
+    // TODO: using getFirstItem and getChildNodes returns a row node that doesn't have the extra stuff added by GridCollection, figure out why.
+    // using state.collection.getItem works becuase it accesses the keyMap made in GridCollection? But getChildnodes should do the same, perhaps the section
+    // node isn't getting updated
+    // rowIndex = (getFirstItem(getChildNodes(node, state.collection)) as GridNode<T>)?.rowIndex;
+    rowIndex = (state.collection.getItem(node.nextKey) as GridNode<T>).rowIndex;
   }
 
   return {
@@ -54,7 +59,6 @@ export function useTableSection(props: AriaTableSectionProps): TableSectionAria 
     },
     rowProps: {
       role: 'row',
-
       'aria-rowindex': rowIndex
     },
     gridCellProps: {

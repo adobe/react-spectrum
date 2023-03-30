@@ -274,7 +274,7 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
     this.rowHeaderColumnKeys = rowHeaderColumnKeys;
     this.body = body;
     this.headerRows = headerRows;
-    this._size = rows.length - headerRows.length;
+    this._size = this.rows.length - headerRows.length;
 
     // Default row header column to the first one.
     if (this.rowHeaderColumnKeys.size === 0) {

@@ -28,6 +28,7 @@ TableSection.getCollectionNode = function* getCollectionNode<T>(props: TableSect
     rendered: title,
     'aria-label': props['aria-label'],
     *childNodes() {
+      // Automatically include a section header row
       yield {
         type: 'item',
         // TODO: needs a key for some reason, otherwise doesn't show up in the collection nodes

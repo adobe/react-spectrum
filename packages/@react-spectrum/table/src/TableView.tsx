@@ -130,6 +130,11 @@ export function useVirtualizerContext() {
   return useContext(VirtualizerContext);
 }
 
+const TableSectionContext = React.createContext(null);
+function useSectionContext() {
+  return useContext(TableSectionContext);
+}
+
 export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionProps, DOMProps, AriaLabelingProps, StyleProps {
   /**
    * Sets the amount of vertical padding within each cell.
@@ -168,9 +173,6 @@ export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionP
    */
   dragAndDropHooks?: DragAndDropHooks['dragAndDropHooks']
 }
-
-// TODO: type this + maybe just use a weak map
-const TableSectionContext = React.createContext(null)
 
 function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
@@ -358,6 +360,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     if (reusableView.viewType === 'row' && reusableView.content.props.isSectionHeader) {
       return (
         <TableSectionRow
+          key={reusableView.key}
           item={reusableView.content}
           style={style}>
           {renderChildren(children)}
@@ -401,14 +404,6 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     }
 
     if (reusableView.viewType === 'section') {
-      // TODO: now with the sectionheader in the collection row, can get rid of the header node and have this
-      // render all children below. The header row handling should be updated in the layout to always be persisted
-      // Should also add a if statement  that renders <TableSectionHeader> if the reusable view type is row + is sectionRow prop is true
-      // let header = children.find(c => c.viewType === 'header');
-      // let headerStyle = layoutInfoToStyle(header.layoutInfo, direction, reusableView.layoutInfo);
-      // Support sticky section header cell
-      // headerStyle.overflow = 'visible';
-
       return (
         <TableSection
           reusableView={reusableView}
@@ -1494,24 +1489,26 @@ function TableCell({cell}) {
 }
 
 function TableSection({children, style, reusableView}) {
-  let {rowGroupProps, rowProps, gridCellProps} = useTableSection({isVirtualized: true, node: reusableView.content});
-  // TODO: update so it passes the other row and cell props via context
+  let {state} = useTableContext();
+  let {rowGroupProps, rowProps, gridCellProps} = useTableSection({isVirtualized: true, node: reusableView.content}, state);
 
   return (
-    <div
-      {...rowGroupProps}
-      style={style}>
-      {children}
-    </div>
+    <TableSectionContext.Provider value={{rowProps, gridCellProps}}>
+      <div
+        {...rowGroupProps}
+        style={style}>
+        {children}
+      </div>
+    </TableSectionContext.Provider>
   );
 }
 
 function TableSectionRow({children, style, item}) {
-  // TODO: update this so it reflects the heading height, not the typical row height
-  let {state, layout} = useTableContext();
+  let {state} = useTableContext();
+  let {rowProps} = useSectionContext();
   return (
     <div
-      // {...rowProps}
+      {...rowProps}
       className={
         classNames(
           styles,
@@ -1528,10 +1525,10 @@ function TableSectionRow({children, style, item}) {
 }
 
 function TableSectionCell({cell}) {
+  let {gridCellProps} = useSectionContext();
   return (
     <div
-      // TODO need the gridcell props from the tablesection
-      // {...gridCellProps}
+      {...gridCellProps}
       className={
         classNames(
           styles,

@@ -390,28 +390,10 @@ export class TableLayout<T> extends ListLayout<T> {
   buildSection(node: Node<T>, x: number, y: number): LayoutNode {
     let width = this.virtualizer.visibleRect.width;
     let rectHeight = this.headingHeight;
-    // TODO: do we need this anymore? The section header row isn't made here
-    // let isEstimated = false;
-
-    // // If no explicit height is available, use an estimated height.
-    // if (rectHeight == null) {
-    //   // If a previous version of this layout info exists, reuse its height.
-    //   // Mark as estimated if the size of the overall collection view changed,
-    //   // or the content of the item changed.
-    //   let previousLayoutNode = this.layoutNodes.get(node.key);
-    //   if (previousLayoutNode && previousLayoutNode.header) {
-    //     let curNode = this.collection.getItem(node.key);
-    //     let lastNode = this.lastCollection ? this.lastCollection.getItem(node.key) : null;
-    //     rectHeight = previousLayoutNode.header.rect.height;
-    //     isEstimated = width !== this.lastWidth || curNode !== lastNode || previousLayoutNode.header.estimatedSize;
-    //   } else {
-    //     rectHeight = (node.rendered ? this.estimatedHeadingHeight : 0);
-    //     isEstimated = true;
-    //   }
-    // }
 
     if (rectHeight == null) {
       // TODO bring in the same default height var as ListLayout?
+      // confirm if this ever even runs
       rectHeight = 48;
     }
 

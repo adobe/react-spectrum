@@ -35,5 +35,8 @@ export interface GridNode<T> extends Node<T> {
   /** The number of columns spanned by this cell. */
   colspan?: number,
   /** The column index of this cell, accounting for any colspans. */
-  colIndex?: number
+  colIndex?: number,
+  // TODO: move this to Node? Not entirely sure if a ListBox would need this
+  /** The row index of the node. Calculated with respect to the entire collection. */
+  rowIndex?: number
 }
