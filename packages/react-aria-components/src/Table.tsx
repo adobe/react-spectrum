@@ -160,9 +160,9 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
 
     // Otherwise combine the text of each of the row header columns.
     let rowHeaderColumnKeys = this.rowHeaderColumnKeys;
-    let text = [];
+    let text: string[] = [];
     for (let cell of this.getChildren(key)) {
-      let column = this.columns[cell.index];
+      let column = this.columns[cell.index!];
       if (rowHeaderColumnKeys.has(column.key) && cell.textValue) {
         text.push(cell.textValue);
       }
