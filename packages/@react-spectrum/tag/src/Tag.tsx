@@ -43,7 +43,6 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
   let ref = useRef();
   let {clearButtonProps, labelProps, gridCellProps, rowProps} = useTag({
     ...props,
-    isFocused,
     allowsRemoving,
     item,
     onRemove
