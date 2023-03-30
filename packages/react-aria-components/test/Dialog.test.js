@@ -86,6 +86,34 @@ describe('Dialog', () => {
     expect(dialog).not.toBeInTheDocument();
   });
 
+  it('has dismiss button when isDismissable', () => {
+    let {getByRole, getByLabelText} = render(
+      <DialogTrigger>
+        <Button>Delete…</Button>
+        <Modal data-test="modal" isDismissable>
+          <Dialog role="alertdialog" data-test="dialog">
+            {({close}) => (
+              <>
+                <Heading>Alert</Heading>
+                <Button onPress={close}>Close</Button>
+              </>
+            )}
+          </Dialog>
+        </Modal>
+      </DialogTrigger>
+    );
+
+    let button = getByRole('button');
+    userEvent.click(button);
+
+    let dialog = getByRole('alertdialog');
+
+    let dismiss = getByLabelText('Dismiss');
+    userEvent.click(dismiss);
+
+    expect(dialog).not.toBeInTheDocument();
+  });
+
   it('works with popover', () => {
     let {getByRole} = render(
       <DialogTrigger>
@@ -103,7 +131,11 @@ describe('Dialog', () => {
     );
 
     let button = getByRole('button');
+    expect(button).not.toHaveAttribute('data-pressed');
+
     userEvent.click(button);
+
+    expect(button).toHaveAttribute('data-pressed');
 
     let dialog = getByRole('dialog');
     let heading = getByRole('heading');

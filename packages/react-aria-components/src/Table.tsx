@@ -1,12 +1,12 @@
 import {AriaLabelingProps} from '@react-types/shared';
-import {BaseCollection, CollectionContext, CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection} from './Collection';
+import {BaseCollection, CollectionContext, CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useCollectionChildren} from './Collection';
 import {buildHeaderRows} from '@react-stately/table';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
 import {ContextValue, defaultSlot, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useTableState} from 'react-stately';
 import {DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
-import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
+import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 import {TableCollection as ITableCollection, TableProps as SharedTableProps} from '@react-types/table';
@@ -160,7 +160,17 @@ const InternalTableContext = createContext<InternalTableContextValue | null>(nul
 
 export interface TableRenderProps {
   /**
-   * Whether the table root is currently the active drop target.
+   * Whether the table is currently focused.
+   * @selector [data-focused]
+   */
+  isFocused: boolean,
+  /**
+   * Whether the table is currently keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
+   * Whether the table is currently the active drop target.
    * @selector [data-drop-target]
    */
   isDropTarget: boolean
@@ -253,12 +263,15 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
     isRootDropTarget = dropState.isDropTarget({type: 'root'});
   }
 
+  let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let renderProps = useRenderProps({
     className: props.className,
     style: props.style,
     defaultClassName: 'react-aria-Table',
     values: {
-      isDropTarget: isRootDropTarget
+      isDropTarget: isRootDropTarget,
+      isFocused,
+      isFocusVisible
     }
   });
 
@@ -277,16 +290,20 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
           [InternalTableContext, {state, dragAndDropHooks, dragState, dropState}],
           [DropIndicatorContext, {render: TableDropIndicator}]
         ]}>
-        <table
-          {...filterDOMProps(props)}
-          {...renderProps}
-          {...mergeProps(gridProps, droppableCollection?.collectionProps)}
-          ref={ref}
-          slot={props.slot}
-          data-drop-target={isRootDropTarget || undefined}>
-          <TableHeaderRowGroup collection={collection} />
-          <TableBodyRowGroup collection={collection} isDroppable={isListDroppable} />
-        </table>
+        <FocusScope>
+          <table
+            {...filterDOMProps(props)}
+            {...renderProps}
+            {...mergeProps(gridProps, focusProps, droppableCollection?.collectionProps)}
+            ref={ref}
+            slot={props.slot}
+            data-drop-target={isRootDropTarget || undefined}
+            data-focused={isFocused || undefined}
+            data-focus-visible={isFocusVisible || undefined}>
+            <TableHeaderRowGroup collection={collection} />
+            <TableBodyRowGroup collection={collection} isDroppable={isListDroppable} />
+          </table>
+        </FocusScope>
         {dragPreview}
       </Provider>
       <TableOptionsContext.Provider value={ctx}>
@@ -334,7 +351,7 @@ export interface TableHeaderProps<T> {
  * A header within a `<Table>`, containing the table columns.
  */
 export function TableHeader<T extends object>(props: TableHeaderProps<T>) {
-  let children = useCachedChildren({
+  let children = useCollectionChildren({
     children: props.children,
     items: props.columns
   });
@@ -391,7 +408,7 @@ export interface ColumnProps<T = object> extends RenderProps<ColumnRenderProps> 
 export function Column<T extends object>(props: ColumnProps<T>): JSX.Element {
   let render = useContext(CollectionRendererContext);
   let childColumns = typeof render === 'function' ? render : props.children;
-  let children = useCachedChildren({
+  let children = useCollectionChildren({
     children: (props.title || props.childColumns) ? childColumns : null,
     items: props.childColumns
   });
@@ -417,7 +434,7 @@ export interface TableBodyProps<T> extends CollectionProps<T>, StyleRenderProps<
  * The body of a `<Table>`, containing the table rows.
  */
 export function TableBody<T extends object>(props: TableBodyProps<T>) {
-  let children = useCachedChildren(props);
+  let children = useCollectionChildren(props);
 
   // @ts-ignore
   return <tablebody multiple={props}>{children}</tablebody>;
@@ -439,7 +456,7 @@ export interface RowProps<T> extends RenderProps<RowRenderProps> {
  * A row within a `<Table>`.
  */
 export function Row<T extends object>(props: RowProps<T>) {
-  let children = useCachedChildren({
+  let children = useCollectionChildren({
     children: props.children,
     items: props.columns,
     idScope: props.id
