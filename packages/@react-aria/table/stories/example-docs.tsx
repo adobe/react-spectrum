@@ -168,11 +168,9 @@ function Resizer(props) {
       role="presentation"
       className={classNames(ariaStyles, 'aria-table-resizer', {'focus': isFocusVisible, 'resizing': isResizing})}
       {...resizerProps}>
-      <VisuallyHidden>
-        <input
-          ref={ref}
-          {...mergeProps(inputProps, focusProps)} />
-      </VisuallyHidden>
+      <input
+        ref={ref}
+        {...mergeProps(inputProps, focusProps)} />
     </div>
   );
 }

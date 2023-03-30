@@ -111,11 +111,9 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
           style={style}
           className={classNames(styles, 'spectrum-Table-columnResizer')}
           {...resizerProps}>
-          <VisuallyHidden>
-            <input
-              ref={ref}
-              {...inputProps} />
-          </VisuallyHidden>
+          <input
+            ref={ref}
+            {...inputProps} />
         </div>
       </FocusRing>
       {/* Placeholder so that the title doesn't intersect with space reserved by the resizer when it appears. */}
