@@ -49,7 +49,7 @@ describe('ComboBox', () => {
 
     expect(input).toHaveAttribute('aria-describedby');
     expect(input.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Description Error');
-  
+
     let button = getByRole('button');
     userEvent.click(button);
 
@@ -74,5 +74,14 @@ describe('ComboBox', () => {
     let combobox = getByRole('combobox');
     expect(combobox.closest('.react-aria-ComboBox')).toHaveAttribute('slot', 'test');
     expect(combobox).toHaveAttribute('aria-label', 'test');
+  });
+
+  it('should apply isPressed state to button when expanded', () => {
+    let {getByRole} = render(<TestComboBox />);
+    let button = getByRole('button');
+
+    expect(button).not.toHaveAttribute('data-pressed');
+    userEvent.click(button);
+    expect(button).toHaveAttribute('data-pressed');
   });
 });

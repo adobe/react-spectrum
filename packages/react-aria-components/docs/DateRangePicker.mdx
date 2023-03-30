@@ -565,12 +565,45 @@ A `<RangeCalendar>` accepts one or more month grids as chilren, along with previ
 
 ### CalendarGrid
 
-A `<CalendarGrid>` renders an individual month within a `<RangeCalendar>`. It accepts a function as its `children`, which is called to render a `<CalendarCell>` for each date.
+A `<CalendarGrid>` renders an individual month within a `<RangeCalendar>`. It accepts a function as its `children`, which is called to render a `<CalendarCell>` for each date. This renders a default `<CalendarGridHeader>`, which displays the weekday names in the column headers. This can be customized by providing a `<CalendarGridHeader>` and `<CalendarGridBody>` as children instead of a function.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
 
 <PropTable component={docs.exports.CalendarGrid} links={docs.links} />
+
+</details>
+
+### CalendarGridHeader
+
+A `<CalendarGridHeader>` renders the header within a `<CalendarGrid>`, displaying a list of weekday names. It accepts a function as its `children`, which is called with a day name abbreviation to render a `<CalendarHeaderCell>` for each column header.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.CalendarGridHeader} links={docs.links} />
+
+</details>
+
+### CalendarHeaderCell
+
+A `<CalendarHeaderCell>` renders a column header within a `<CalendarGridHeader>`. It typically displays a weekday name.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.CalendarHeaderCell} links={docs.links} />
+
+</details>
+
+### CalendarGridBody
+
+A `<CalendarGridBody>` renders the body within a `<CalendarGrid>`. It accepts a function as its `children`, which is called to render a `<CalendarCell>` for each date.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.CalendarGridBody} links={docs.links} />
 
 </details>
 
@@ -646,11 +679,15 @@ A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overr
 
 ### Group
 
-A `Group` can be targeted with the `.react-aria-Group` selector, or by overriding with a custom `className`.
+A `Group` can be targeted with the `.react-aria-Group` selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.GroupRenderProps.properties} />
 
 ### DateInput
 
-A `DateInput` can be targeted with the `.react-aria-DateInput` CSS selector, or by overriding with a custom `className`.
+A `DateInput` can be targeted with the `.react-aria-DateInput` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.DateInputRenderProps.properties} />
 
 ### DateSegment
 
@@ -680,7 +717,19 @@ A [RangeCalendar](RangeCalendar.html) can be targeted with the `.react-aria-Rang
 
 ### CalendarGrid
 
-A `CalendarGrid` can be targeted with the `.react-aria-CalendarGrid` CSS selector, or by overriding with a custom `className`.
+A `CalendarGrid` can be targeted with the `.react-aria-CalendarGrid` CSS selector, or by overriding with a custom `className`. When a function is provided as children, a default `<CalendarGridHeader>` and `<CalendarGridBody>` are rendered. If you need to customize the styling of the header cells, you can render them yourself. See the [RangeCalendar](RangeCalendar.html#calendargrid-1) docs for an example.
+
+### CalendarGridHeader
+
+A `CalendarGridHeader` can be targeted with the `.react-aria-CalendarGridHeader` CSS selector, or by overriding with a custom `className`.
+
+### CalendarHeaderCell
+
+A `CalendarHeaderCell` can be targeted with the `.react-aria-CalendarHeaderCell` CSS selector, or by overriding with a custom `className`.
+
+### CalendarGridBody
+
+A `CalendarGridBody` can be targeted with the `.react-aria-CalendarGridBody` CSS selector, or by overriding with a custom `className`.
 
 ### CalendarCell
 
@@ -903,7 +952,7 @@ import type {DateRange} from 'react-aria-components';
 import {I18nProvider} from '@react-aria/i18n';
 
 function Example() {
-  let [range, setRange] = React.useState<DateRange>(null);
+  let [range, setRange] = React.useState<DateRange | null>(null);
   return (
     <I18nProvider locale="hi-IN-u-ca-indian">
       <MyDateRangePicker label="Date range" value={range} onChange={setRange} />
@@ -952,9 +1001,9 @@ function Example() {
     [now.add({days: 23}), now.add({days: 24})],
   ];
 
-  let isDateUnavailable = (date) => disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
-  let [value, setValue] = React.useState<DateRange>(null);
-  let isInvalid = value && disabledRanges.some(interval => value.end.compare(interval[0]) >= 0 && value.start.compare(interval[1]) <= 0);
+  let isDateUnavailable = (date: DateValue) => disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+  let [value, setValue] = React.useState<DateRange | null>(null);
+  let isInvalid = disabledRanges.some(interval => value && value.end.compare(interval[0]) >= 0 && value.start.compare(interval[1]) <= 0);
 
   return (
     <MyDateRangePicker
@@ -963,7 +1012,7 @@ function Example() {
       isDateUnavailable={isDateUnavailable}
       value={value}
       onChange={setValue}
-      validationState={isInvalid ? 'invalid' : null} />
+      validationState={isInvalid ? 'invalid' : undefined} />
   );
 }
 ```
@@ -1007,8 +1056,8 @@ function Example() {
       value={range}
       onChange={setRange}
       validationState={isInvalid ? 'invalid' : 'valid'}
-      description={isInvalid ? null : 'Select your vacation dates'}
-      errorMessage={isInvalid ? 'Maximum stay duration is 1 week' : null} />
+      description={isInvalid ? undefined : 'Select your vacation dates'}
+      errorMessage={isInvalid ? 'Maximum stay duration is 1 week' : undefined} />
   );
 }
 ```

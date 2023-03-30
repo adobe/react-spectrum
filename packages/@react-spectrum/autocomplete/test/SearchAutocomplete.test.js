@@ -270,6 +270,13 @@ describe('SearchAutocomplete', function () {
     expect(searchAutocomplete).toHaveAttribute('aria-activedescendant', items[0].id);
   });
 
+  it('supports custom data attributes', function () {
+    let {getByRole} = renderSearchAutocomplete({'data-testid': 'test'});
+
+    let searchAutocomplete = getByRole('combobox');
+    expect(searchAutocomplete).toHaveAttribute('data-testid', 'test');
+  });
+
   describe('refs', function () {
     it('attaches a ref to the label wrapper', function () {
       let ref = React.createRef();

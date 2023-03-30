@@ -115,7 +115,7 @@ const TYPE_MAPPING = {
   dayperiod: 'dayPeriod'
 };
 
-export interface DateFieldStateOptions extends DatePickerProps<DateValue> {
+export interface DateFieldStateOptions<T extends DateValue = DateValue> extends DatePickerProps<T> {
   /**
    * The maximum unit to display in the date field.
    * @default 'year'
@@ -137,7 +137,7 @@ export interface DateFieldStateOptions extends DatePickerProps<DateValue> {
  * A date field allows users to enter and edit date and time values using a keyboard.
  * Each part of a date value is displayed in an individually editable segment.
  */
-export function useDateFieldState(props: DateFieldStateOptions): DateFieldState {
+export function useDateFieldState<T extends DateValue = DateValue>(props: DateFieldStateOptions<T>): DateFieldState {
   let {
     locale,
     createCalendar,

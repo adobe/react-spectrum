@@ -17,7 +17,7 @@ export {useCheckbox, useCheckboxGroup, useCheckboxGroupItem} from '@react-aria/c
 export {useComboBox} from '@react-aria/combobox';
 export {useDateField, useDatePicker, useDateRangePicker, useDateSegment, useTimeField} from '@react-aria/datepicker';
 export {useDialog} from '@react-aria/dialog';
-export {useDrag, useDrop, useDraggableCollection, useDroppableCollection, useDroppableItem, useDropIndicator, useDraggableItem, useClipboard, DragPreview, ListDropTargetDelegate, DIRECTORY_DRAG_TYPE} from '@react-aria/dnd';
+export {useDrag, useDrop, useDraggableCollection, useDroppableCollection, useDroppableItem, useDropIndicator, useDraggableItem, useClipboard, DragPreview, ListDropTargetDelegate, DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem} from '@react-aria/dnd';
 export {FocusRing, FocusScope, useFocusManager, useFocusRing, useFocusable} from '@react-aria/focus';
 export {I18nProvider, useCollator, useDateFormatter, useFilter, useLocale, useLocalizedStringFormatter, useMessageFormatter, useNumberFormatter} from '@react-aria/i18n';
 export {useFocus, useFocusVisible, useFocusWithin, useHover, useInteractOutside, useKeyboard, useMove, usePress, useLongPress} from '@react-aria/interactions';
@@ -73,7 +73,7 @@ export type {SSRProviderProps} from '@react-aria/ssr';
 export type {AriaSliderProps, AriaSliderThumbProps, AriaSliderThumbOptions, SliderAria, SliderThumbAria} from '@react-aria/slider';
 export type {AriaSwitchProps, SwitchAria} from '@react-aria/switch';
 export type {AriaTableCellProps, AriaTableColumnHeaderProps, AriaTableProps, AriaTableSelectionCheckboxProps, GridAria, GridRowAria, GridRowProps, TableCellAria, TableColumnHeaderAria, TableHeaderRowAria, TableSelectAllCheckboxAria, TableSelectionCheckboxAria} from '@react-aria/table';
-export type {AriaTabListProps, AriaTabPanelProps, AriaTabProps, TabAria, TabListAria, TabPanelAria} from '@react-aria/tabs';
+export type {AriaTabListProps, AriaTabListOptions, AriaTabPanelProps, AriaTabProps, TabAria, TabListAria, TabPanelAria} from '@react-aria/tabs';
 export type {AriaTextFieldOptions, AriaTextFieldProps, TextFieldAria} from '@react-aria/textfield';
 export type {AriaTooltipProps, TooltipAria, TooltipTriggerAria, TooltipTriggerProps} from '@react-aria/tooltip';
 export type {VisuallyHiddenAria, VisuallyHiddenProps} from '@react-aria/visually-hidden';

@@ -106,7 +106,7 @@ import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
     margin-top: 12px;
   }
 
-  .react-aria-Section header {
+  .react-aria-Header {
     font-size: 1.143rem;
     font-weight: bold;
     padding: 0 0.714rem;
@@ -313,7 +313,7 @@ A `<Popover>` is a container to hold the `<Menu>`. By default, it has a `placeme
 
 ### Section
 
-A `<Section>` defines the child items, and optional title for a section within a `<Menu>`.
+A `<Section>` defines the child items for a section within a `<Menu>`. It may also contain an optional `<Header>` element. If there is no header, then an `aria-label` must be provided to identify the section to assistive technologies.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
@@ -321,6 +321,10 @@ A `<Section>` defines the child items, and optional title for a section within a
 <PropTable component={docs.exports.Section} links={docs.links} />
 
 </details>
+
+### Header
+
+A `<Header>` defines the title for a `<Section>`. It accepts all DOM attributes.
 
 ### Item
 
@@ -427,7 +431,11 @@ A `Menu` can be targeted with the `.react-aria-Menu` CSS selector, or by overrid
 
 ### Section
 
-A `Section` can be targeted with the `.react-aria-Section` CSS selector, or by overriding with a custom `className`. The section title can be targeted with the `header` selector. The `title` prop also allows JSX elements and not just strings, which can enable custom formatting. However, keep in mind that interactive elements within a menu are not allowed. See [sections](#sections) for examples.
+A `Section` can be targeted with the `.react-aria-Section` CSS selector, or by overriding with a custom `className`. See [sections](#sections) for examples.
+
+### Header
+
+A `Header` within a `Section` can be targeted with the `.react-aria-Header` CSS selector, or by overriding with a custom `className`. See [sections](#sections) for examples.
 
 ### Item
 
@@ -615,19 +623,21 @@ import {Separator} from 'react-aria-components';
 
 ### Sections
 
-Menu supports sections with separators and headings in order to group options. Sections can be used by wrapping groups of Items in a `Section` component. Each `Section` takes a `title` prop.
+Menu supports sections with headings in order to group items. Sections can be used by wrapping groups of Items in a `Section` component. A `<Header>` element may also be included to label the section.
 
 #### Static items
 
 ```tsx example
-import {Section} from 'react-aria-components';
+import {Section, Header} from 'react-aria-components';
 
 <MyMenuButton label="Actions" onAction={alert}>
-  <Section title="Styles">
+  <Section>
+    <Header>Styles</Header>
     <Item id="bold">Bold</Item>
     <Item id="underline">Underline</Item>
   </Section>
-  <Section title="Align">
+  <Section>
+    <Header>Align</Header>
     <Item id="left">Left</Item>
     <Item id="middle">Middle</Item>
     <Item id="right">Right</Item>
@@ -638,10 +648,12 @@ import {Section} from 'react-aria-components';
 #### Dynamic items
 
 The above example shows sections with static items. Sections can also be populated from a heirarchical data structure.
-Similarly to the props on Menu, `<Section>` takes an array of data using the `items` prop.
+Similarly to the props on Menu, `<Section>` takes an array of data using the `items` prop. If the section also has a header,
+the <TypeLink links={docs.links} type={docs.exports.Collection} /> component can be used to render the child items.
 
 ```tsx example
 import type {Selection} from 'react-aria-components';
+import {Collection} from 'react-aria-components';
 
 function Example() {
   let [selected, setSelected] = React.useState<Selection>(new Set([1,3]));
@@ -671,9 +683,12 @@ function Example() {
       selectionMode="multiple"
       selectedKeys={selected}
       onSelectionChange={setSelected}>
-      {item => (
-        <Section items={item.children} title={item.name}>
-          {item => <Item>{item.name}</Item>}
+      {section => (
+        <Section>
+          <Header>{section.name}</Header>
+          <Collection items={section.children}>
+            {item => <Item>{item.name}</Item>}
+          </Collection>
         </Section>
       )}
     </MyMenuButton>

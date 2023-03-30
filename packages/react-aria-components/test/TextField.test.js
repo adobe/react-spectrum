@@ -13,11 +13,12 @@
 import {Input, Label, Text, TextField, TextFieldContext} from '../';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils';
+import userEvent from '@testing-library/user-event';
 
 let TestTextField = (props) => (
   <TextField defaultValue="test" data-foo="bar" {...props}>
     <Label>Test</Label>
-    <Input />
+    <Input {...props.inputProps} />
     <Text slot="description">Description</Text>
     <Text slot="errorMessage">Error</Text>
   </TextField>
@@ -29,6 +30,7 @@ describe('TextField', () => {
 
     let input = getByRole('textbox');
     expect(input).toHaveValue('test');
+    expect(input).toHaveAttribute('class', 'react-aria-Input');
 
     expect(input.closest('.react-aria-TextField')).toHaveAttribute('data-foo', 'bar');
 
@@ -51,5 +53,38 @@ describe('TextField', () => {
     let textbox = getByRole('textbox');
     expect(textbox.closest('.react-aria-TextField')).toHaveAttribute('slot', 'test');
     expect(textbox).toHaveAttribute('aria-label', 'test');
+  });
+
+  it('should support hover state', () => {
+    let {getByRole} = render(<TestTextField inputProps={{className: ({isHovered}) => isHovered ? 'hover' : ''}} />);
+    let input = getByRole('textbox');
+
+    expect(input).not.toHaveAttribute('data-hovered');
+    expect(input).not.toHaveClass('hover');
+
+    userEvent.hover(input);
+    expect(input).toHaveAttribute('data-hovered', 'true');
+    expect(input).toHaveClass('hover');
+
+    userEvent.unhover(input);
+    expect(input).not.toHaveAttribute('data-hovered');
+    expect(input).not.toHaveClass('hover');
+  });
+
+  it('should support focus visible state', () => {
+    let {getByRole} = render(<TestTextField inputProps={{className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''}} />);
+    let input = getByRole('textbox');
+
+    expect(input).not.toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveClass('focus');
+
+    userEvent.tab();
+    expect(document.activeElement).toBe(input);
+    expect(input).toHaveAttribute('data-focus-visible', 'true');
+    expect(input).toHaveClass('focus');
+
+    userEvent.tab();
+    expect(input).not.toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveClass('focus');
   });
 });

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMAttributes} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, FocusableElement} from '@react-types/shared';
 import {FocusableProvider} from '@react-aria/focus';
 import {mergeProps, OverlayContainer, PlacementAxis, PositionProps, useOverlayPosition, useTooltip, useTooltipTrigger} from 'react-aria';
 import {mergeRefs, useObjectRef} from '@react-aria/utils';
@@ -45,11 +45,11 @@ export interface TooltipRenderProps {
 
 interface TooltipContextValue {
   state: TooltipTriggerState,
-  triggerRef: RefObject<HTMLDivElement>,
+  triggerRef: RefObject<FocusableElement>,
   tooltipProps: DOMAttributes
 }
 
-const InternalTooltipContext = createContext<TooltipContextValue>(null);
+const InternalTooltipContext = createContext<TooltipContextValue | null>(null);
 
 /**
  * TooltipTrigger wraps around a trigger element and a Tooltip. It handles opening and closing
@@ -58,7 +58,7 @@ const InternalTooltipContext = createContext<TooltipContextValue>(null);
  */
 export function TooltipTrigger(props: TooltipTriggerComponentProps) {
   let state = useTooltipTriggerState(props);
-  let ref = useRef();
+  let ref = useRef<FocusableElement>(null);
   let {triggerProps, tooltipProps} = useTooltipTrigger(props, state, ref);
 
   return (
@@ -71,7 +71,7 @@ export function TooltipTrigger(props: TooltipTriggerComponentProps) {
 }
 
 function Tooltip(props: TooltipProps, ref: ForwardedRef<HTMLDivElement>) {
-  let {state} = useContext(InternalTooltipContext);
+  let {state} = useContext(InternalTooltipContext)!;
   let objectRef = useObjectRef(ref);
   let isExiting = useExitAnimation(objectRef, state.isOpen);
   if (!state.isOpen && !isExiting) {
@@ -92,9 +92,9 @@ const _Tooltip = forwardRef(Tooltip);
 export {_Tooltip as Tooltip};
 
 function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: ForwardedRef<HTMLDivElement>}) {
-  let {state, triggerRef, tooltipProps: triggerTooltipProps} = useContext(InternalTooltipContext);
+  let {state, triggerRef, tooltipProps: triggerTooltipProps} = useContext(InternalTooltipContext)!;
 
-  let overlayRef = useRef();
+  let overlayRef = useRef<HTMLDivElement>(null);
   let {overlayProps, arrowProps, placement} = useOverlayPosition({
     placement: props.placement || 'top',
     targetRef: triggerRef,

@@ -13,11 +13,12 @@
 import {Button, Group, Input, Label, NumberField, NumberFieldContext, Text} from '../';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils';
+import userEvent from '@testing-library/user-event';
 
 let TestNumberField = (props) => (
   <NumberField defaultValue={1024} minValue={0} data-foo="bar" {...props}>
     <Label>Width</Label>
-    <Group>
+    <Group {...props.groupProps}>
       <Button slot="decrement">-</Button>
       <Input />
       <Button slot="increment">+</Button>
@@ -33,6 +34,7 @@ describe('NumberField', () => {
 
     let group = getByRole('group');
     expect(group).toBeInTheDocument();
+    expect(group).toHaveAttribute('class', 'react-aria-Group');
 
     expect(group.closest('.react-aria-NumberField')).toHaveAttribute('data-foo', 'bar');
 
@@ -46,7 +48,7 @@ describe('NumberField', () => {
 
     expect(input).toHaveAttribute('aria-describedby');
     expect(input.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Description Error');
-  
+
     let buttons = getAllByRole('button');
     expect(buttons[0]).toHaveAttribute('aria-label', 'Decrease');
     expect(buttons[1]).toHaveAttribute('aria-label', 'Increase');
@@ -62,5 +64,39 @@ describe('NumberField', () => {
     let textbox = getByRole('textbox');
     expect(textbox.closest('.react-aria-NumberField')).toHaveAttribute('slot', 'test');
     expect(textbox).toHaveAttribute('aria-label', 'test');
+  });
+
+  it('should support hover state', () => {
+    let {getByRole} = render(<TestNumberField groupProps={{className: ({isHovered}) => isHovered ? 'hover' : ''}} />);
+    let group = getByRole('group');
+
+    expect(group).not.toHaveAttribute('data-hovered');
+    expect(group).not.toHaveClass('hover');
+
+    userEvent.hover(group);
+    expect(group).toHaveAttribute('data-hovered', 'true');
+    expect(group).toHaveClass('hover');
+
+    userEvent.unhover(group);
+    expect(group).not.toHaveAttribute('data-hovered');
+    expect(group).not.toHaveClass('hover');
+  });
+
+  it('should support focus visible state', () => {
+    let {getByRole} = render(<TestNumberField groupProps={{className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''}} />);
+    let group = getByRole('group');
+    let input = getByRole('textbox');
+
+    expect(group).not.toHaveAttribute('data-focus-visible');
+    expect(group).not.toHaveClass('focus');
+
+    userEvent.tab();
+    expect(document.activeElement).toBe(input);
+    expect(group).toHaveAttribute('data-focus-visible', 'true');
+    expect(group).toHaveClass('focus');
+
+    userEvent.tab();
+    expect(group).not.toHaveAttribute('data-focus-visible');
+    expect(group).not.toHaveClass('focus');
   });
 });
