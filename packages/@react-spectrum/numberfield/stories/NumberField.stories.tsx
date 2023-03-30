@@ -22,6 +22,7 @@ import {Item, Picker} from '@react-spectrum/picker';
 import {NumberField} from '../src';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
+import {TextField} from '@react-spectrum/textfield';
 
 storiesOf('NumberField', module)
   .addParameters({providerSwitcher: {status: 'notice'}})
@@ -252,7 +253,16 @@ storiesOf('NumberField', module)
   .add(
     'reset controlled state to blank with null',
     () => <NumberFieldControlledStateReset />
-  );
+  )
+  .add('form submit', () => (
+    <Form onSubmit={chain(action('submit'), (e) => e.preventDefault())}>
+      <NumberField label="Give me a number" onChange={action('change')} formatOptions={{style: 'currency', currency: 'JPY'}} />
+      <TextField label="Give me a string" onChange={action('changestring')} />
+      <Button type="submit" variant="accent">
+        Click Me
+      </Button>
+    </Form>
+  ));
 
 function render(props: any = {}) {
   return (
