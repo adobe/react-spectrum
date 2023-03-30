@@ -209,8 +209,12 @@ This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to
 ```tsx example
 import {useAsyncList} from '@react-stately/data';
 
+interface Character {
+  name: string
+}
+
 function AsyncLoadingExample() {
-  let list = useAsyncList({
+  let list = useAsyncList<Character>({
     async load({signal, cursor, filterText}) {
       if (cursor) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');

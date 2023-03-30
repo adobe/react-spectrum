@@ -24,6 +24,7 @@ import {Key, RefObject} from 'react';
 import {listMap} from './utils';
 import {ListState} from '@react-stately/list';
 import {useGridSelectionAnnouncement, useHighlightSelectionDescription} from '@react-aria/grid';
+import {useHasTabbableChild} from '@react-aria/focus';
 import {useSelectableList} from '@react-aria/selection';
 
 export interface GridListProps<T> extends CollectionBase<T>, MultipleSelection {
@@ -89,6 +90,10 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     hasItemActions: !!onAction
   });
 
+  let hasTabbableChild = useHasTabbableChild(ref, {
+    isDisabled: state.collection.size !== 0
+  });
+
   let domProps = filterDOMProps(props, {labelable: true});
   let gridProps: DOMAttributes = mergeProps(
     domProps,
@@ -97,7 +102,8 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
       id,
       'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined
     },
-    state.collection.size === 0 ? {} : listProps,
+    // If collection is empty, make sure the grid is tabbable unless there is a child tabbable element.
+    state.collection.size === 0 ? {tabIndex: hasTabbableChild ? -1 : 0} : listProps,
     descriptionProps
   );
 

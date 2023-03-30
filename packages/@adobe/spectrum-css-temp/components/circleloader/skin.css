@@ -43,6 +43,7 @@ governing permissions and limitations under the License.
 @media (forced-colors: active) {
   .spectrum-CircleLoader {
     --spectrum-loader-circle-medium-track-fill-color: Highlight;
-    --spectrum-loader-circle-medium-over-background-track-fill-color: Canvas;
+    --spectrum-loader-circle-medium-over-background-track-fill-color: Highlight;
+    --spectrum-loader-circle-medium-track-color: CanvasText;
   }
 }
