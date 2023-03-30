@@ -17,9 +17,9 @@ import userEvent from '@testing-library/user-event';
 
 let TestGridList = ({listBoxProps, itemProps}) => (
   <GridList aria-label="Test" {...listBoxProps}>
-    <Item {...itemProps} id="cat"><Checkbox slot="selection" /> Cat</Item>
-    <Item {...itemProps} id="dog"><Checkbox slot="selection" /> Dog</Item>
-    <Item {...itemProps} id="kangaroo"><Checkbox slot="selection" /> Kangaroo</Item>
+    <Item {...itemProps} id="cat" textValue="Cat"><Checkbox slot="selection" /> Cat</Item>
+    <Item {...itemProps} id="dog" textValue="Dog"><Checkbox slot="selection" /> Dog</Item>
+    <Item {...itemProps} id="kangaroo" textValue="Kangaroo"><Checkbox slot="selection" /> Kangaroo</Item>
   </GridList>
 );
 

@@ -359,7 +359,7 @@ svg.spectrum-Table-sortedIcon {
       content: '';
       position: sticky;
       inset-inline-start: 0;
-      height: 100%;
+      height: calc(100% - 1px);
       width: var(--spectrum-table-row-sticky-focus-indicator-width);
       z-index: 4;
       margin-inline-end: calc(var(--spectrum-table-row-sticky-focus-indicator-width) * -1);
@@ -495,19 +495,6 @@ svg.spectrum-Table-sortedIcon {
   &.spectrum-Table-colResizeNubbin--visible {
     display: block;
   }
-}
-
-.resize-ew,
-.spectrum-Table-columnResizer--ewresize {
-  cursor: ew-resize !important;
-}
-.resize-e,
-.spectrum-Table-columnResizer--eresize {
-  cursor: e-resize !important;
-}
-.resize-w,
-.spectrum-Table-columnResizer--wresize {
-  cursor: w-resize !important;
 }
 
 @media (forced-colors: active) {

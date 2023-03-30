@@ -12,7 +12,7 @@
 
 export {Breadcrumbs, BreadcrumbsContext} from './Breadcrumbs';
 export {Button, ButtonContext} from './Button';
-export {Calendar, CalendarGrid, CalendarCell, RangeCalendar, CalendarContext, RangeCalendarContext} from './Calendar';
+export {Calendar, CalendarGrid, CalendarGridHeader, CalendarGridBody, CalendarHeaderCell, CalendarCell, RangeCalendar, CalendarContext, RangeCalendarContext} from './Calendar';
 export {Checkbox, CheckboxGroup, CheckboxGroupContext, CheckboxContext} from './Checkbox';
 export {ComboBox, ComboBoxContext} from './ComboBox';
 export {DateField, DateInput, DateSegment, TimeField, DateFieldContext, TimeFieldContext} from './DateField';
@@ -20,6 +20,7 @@ export {DatePicker, DateRangePicker, DatePickerContext, DateRangePickerContext} 
 export {DialogTrigger, Dialog, DialogContext} from './Dialog';
 export {GridList, GridListContext} from './GridList';
 export {Group, GroupContext} from './Group';
+export {Header} from './Header';
 export {Heading, HeadingContext} from './Heading';
 export {Input, InputContext} from './Input';
 export {Item, Section, Collection} from './Collection';
@@ -52,20 +53,21 @@ export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem
 
 export type {BreadcrumbsProps} from './Breadcrumbs';
 export type {ButtonProps, ButtonRenderProps} from './Button';
-export type {CalendarCellProps, CalendarProps, CalendarGridProps, CalendarCellRenderProps, RangeCalendarProps} from './Calendar';
+export type {CalendarCellProps, CalendarProps, CalendarGridProps, CalendarGridHeaderProps, CalendarGridBodyProps, CalendarHeaderCellProps, CalendarCellRenderProps, RangeCalendarProps} from './Calendar';
 export type {CheckboxGroupProps, CheckboxGroupRenderProps, CheckboxRenderProps, CheckboxProps} from './Checkbox';
 export type {ComboBoxProps} from './ComboBox';
-export type {DateFieldProps, DateInputProps, DateSegmentProps, DateSegmentRenderProps, TimeFieldProps} from './DateField';
+export type {DateFieldProps, DateInputProps, DateInputRenderProps, DateSegmentProps, DateSegmentRenderProps, TimeFieldProps} from './DateField';
 export type {DatePickerProps, DateRangePickerProps} from './DatePicker';
 export type {DialogProps, DialogTriggerProps} from './Dialog';
-export type {GridListProps} from './GridList';
+export type {GridListProps, GridListRenderProps} from './GridList';
+export type {GroupProps, GroupRenderProps} from './Group';
 export type {HeadingProps} from './Heading';
-export type {HTMLAttributes, InputHTMLAttributes} from 'react';
+export type {InputProps, InputRenderProps} from './Input';
 export type {ItemProps, ItemRenderProps, SectionProps} from './Collection';
 export type {LabelProps} from './Label';
 export type {LinkProps} from './Link';
 export type {LinkRenderProps} from './Link';
-export type {ListBoxProps} from './ListBox';
+export type {ListBoxProps, ListBoxRenderProps} from './ListBox';
 export type {MenuItemRenderProps, MenuProps, MenuTriggerProps} from './Menu';
 export type {MeterProps, MeterRenderProps} from './Meter';
 export type {ModalOverlayProps, ModalRenderProps} from './Modal';
@@ -79,7 +81,7 @@ export type {SelectProps, SelectValueProps, SelectValueRenderProps} from './Sele
 export type {SeparatorProps} from './Separator';
 export type {SliderOutputProps, SliderProps, SliderRenderProps, SliderThumbProps, SliderTrackProps, SliderThumbRenderProps} from './Slider';
 export type {SwitchProps, SwitchRenderProps} from './Switch';
-export type {TableProps, TableHeaderProps, TableBodyProps, ColumnProps, ColumnRenderProps, RowProps, RowRenderProps, CellProps, CellRenderProps} from './Table';
+export type {TableProps, TableRenderProps, TableHeaderProps, TableBodyProps, ColumnProps, ColumnRenderProps, RowProps, RowRenderProps, CellProps, CellRenderProps} from './Table';
 export type {TabListProps, TabListRenderProps, TabPanelProps, TabPanelsProps, TabPanelRenderProps, TabProps, TabsProps, TabRenderProps, TabsRenderProps} from './Tabs';
 export type {TextFieldProps} from './TextField';
 export type {TextProps} from './Text';
