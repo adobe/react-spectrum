@@ -23,7 +23,7 @@ import {useCollator} from '@react-aria/i18n';
 import {useField} from '@react-aria/label';
 import {useMenuTrigger} from '@react-aria/menu';
 
-export interface AriaSelectOptions<T> extends AriaSelectProps<T> {
+export interface AriaSelectOptions<T> extends Omit<AriaSelectProps<T>, 'children'> {
   /**
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
