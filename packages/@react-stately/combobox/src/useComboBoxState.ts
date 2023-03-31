@@ -102,6 +102,11 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     if (props.onOpenChange) {
       props.onOpenChange(open, open ? menuOpenTrigger.current : undefined);
     }
+
+    selectionManager.setFocused(open);
+    if (!open) {
+      selectionManager.setFocusedKey(null);
+    }
   };
 
   let triggerState = useMenuTriggerState({...props, onOpenChange, isOpen: undefined, defaultOpen: undefined});
@@ -247,13 +252,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     lastSelectedKey.current = selectedKey;
     lastSelectedKeyText.current = selectedItemText;
   });
-
-  useEffect(() => {
-    // Reset focused key when the menu closes
-    if (!triggerState.isOpen) {
-      selectionManager.setFocusedKey(null);
-    }
-  }, [triggerState.isOpen, selectionManager]);
 
   // Revert input value and close menu
   let revert = () => {
