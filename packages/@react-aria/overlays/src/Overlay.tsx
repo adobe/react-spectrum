@@ -44,7 +44,7 @@ export function Overlay(props: OverlayProps) {
 
   let contents = (
     <OverlayContext.Provider value={contextValue}>
-      <FocusScope restoreFocus={props.restoreFocus ?? true} contain={contain}>
+      <FocusScope restoreFocus contain={contain}>
         {props.children}
       </FocusScope>
     </OverlayContext.Provider>
