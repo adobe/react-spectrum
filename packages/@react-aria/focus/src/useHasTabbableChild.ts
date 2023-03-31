@@ -23,7 +23,10 @@ interface AriaHasTabbableChildOptions {
 // are empty they can have a message with a tabbable element, which is like them
 // being not empty, when it comes to focus and tab order.
 
-/** Returns whether an element has a tabbable child, and updates as children change. */
+/**
+ * Returns whether an element has a tabbable child, and updates as children change.
+ * @private
+ */
 export function useHasTabbableChild(ref: RefObject<Element>, options?: AriaHasTabbableChildOptions): boolean {
   let isDisabled = options?.isDisabled;
   let [hasTabbableChild, setHasTabbableChild] = useState(false);
