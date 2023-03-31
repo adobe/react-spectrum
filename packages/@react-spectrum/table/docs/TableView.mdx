@@ -753,11 +753,13 @@ import {useListData} from '@adobe/react-spectrum';
 interface Item {
   name: string,
   type?: string,
+  date?: string,
   childNodes?: Item[]
 }
 
 interface DndTableViewProps extends DragAndDropOptions {
-  list: ListData<Item>
+  list: ListData<Item>,
+  columns: { name: string; id: string; }[]
 }
 
 function DraggableTableView(props: DndTableViewProps) {
@@ -796,13 +798,12 @@ function DraggableTableView(props: DndTableViewProps) {
       height="size-2400"
       /*- begin highlight -*/
       dragAndDropHooks={dragAndDropHooks}
-      /*- end highlight -*/
-      items={list.items}>
+      /*- end highlight -*/>
       <TableHeader columns={columns}>
         {column => (
           <Column
-            key={column.uid}
-            align={column.uid === 'date' ? 'end' : 'start'}>
+            key={column.id}
+            align={column.id === 'date' ? 'end' : 'start'}>
             {column.name}
           </Column>
         )}
@@ -860,13 +861,12 @@ function DroppableTableView(props: DndTableViewProps) {
       height="size-2400"
       /*- begin highlight -*/
       dragAndDropHooks={dragAndDropHooks}
-      /*- end highlight -*/
-      items={list.items}>
+      /*- end highlight -*/>
       <TableHeader columns={columns}>
         {column => (
           <Column
-            key={column.uid}
-            align={column.uid === 'date' ? 'end' : 'start'}>
+            key={column.id}
+            align={column.id === 'date' ? 'end' : 'start'}>
             {column.name}
           </Column>
         )}
@@ -884,9 +884,9 @@ function DroppableTableView(props: DndTableViewProps) {
 
 function DragIntoTable() {
   let columns = [
-    {name: 'Name', uid: 'name'},
-    {name: 'Type', uid: 'type'},
-    {name: 'Date Modified', uid: 'date'}
+    {name: 'Name', id: 'name'},
+    {name: 'Type', id: 'type'},
+    {name: 'Date Modified', id: 'date'}
   ];
 
   let sourceList = useListData({
@@ -962,13 +962,12 @@ function DraggableTableViewFolder(props: DndTableViewProps) {
       selectionMode="multiple"
       width="size-5000"
       height="size-3600"
-      dragAndDropHooks={dragAndDropHooks}
-      items={list.items}>
+      dragAndDropHooks={dragAndDropHooks}>
       <TableHeader columns={columns}>
         {column => (
           <Column
-            key={column.uid}
-            align={column.uid === 'date' ? 'end' : 'start'}>
+            key={column.id}
+            align={column.id === 'date' ? 'end' : 'start'}>
             {column.name}
           </Column>
         )}
@@ -1041,13 +1040,12 @@ function DroppableTableViewFolder(props: DndTableViewProps) {
       aria-label="Droppable TableView in drop into folder example"
       width="size-5000"
       height="size-3600"
-      dragAndDropHooks={dragAndDropHooks}
-      items={list.items}>
+      dragAndDropHooks={dragAndDropHooks}>
       <TableHeader columns={columns}>
         {column => (
           <Column
-            key={column.uid}
-            align={column.uid === 'date' ? 'end' : 'start'}>
+            key={column.id}
+            align={column.id === 'date' ? 'end' : 'start'}>
             {column.name}
           </Column>
         )}
@@ -1069,9 +1067,9 @@ function DroppableTableViewFolder(props: DndTableViewProps) {
 
 function DragIntoTableFolder() {
   let columns = [
-    {name: 'Name', uid: 'name'},
-    {name: 'Type', uid: 'type'},
-    {name: 'Date Modified', uid: 'date'}
+    {name: 'Name', id: 'name'},
+    {name: 'Type', id: 'type'},
+    {name: 'Date Modified', id: 'date'}
   ];
 
   let sourceList = useListData({
@@ -1116,9 +1114,9 @@ The example below demonstrates how to make a TableView draggable and droppable a
 ```tsx example export=true render=false
 function ReorderableTable() {
   let columns = [
-    {name: 'Name', uid: 'name'},
-    {name: 'Type', uid: 'type'},
-    {name: 'Date Modified', uid: 'date'}
+    {name: 'Name', id: 'name'},
+    {name: 'Type', id: 'type'},
+    {name: 'Date Modified', id: 'date'}
   ];
 
   let list = useListData({
@@ -1164,13 +1162,12 @@ function ReorderableTable() {
       selectionMode="multiple"
       width="size-5000"
       height="size-3600"
-      items={list.items}
       dragAndDropHooks={dragAndDropHooks}>
       <TableHeader columns={columns}>
         {column => (
           <Column
-            key={column.uid}
-            align={column.uid === 'date' ? 'end' : 'start'}>
+            key={column.id}
+            align={column.id === 'date' ? 'end' : 'start'}>
             {column.name}
           </Column>
         )}
@@ -1272,13 +1269,12 @@ function BidirectionalDnDTableView(props: DndTableViewProps) {
       selectionMode="multiple"
       width="size-5000"
       height="size-3600"
-      items={list.items}
       dragAndDropHooks={dragAndDropHooks}>
       <TableHeader columns={columns}>
         {column => (
           <Column
-            key={column.uid}
-            align={column.uid === 'date' ? 'end' : 'start'}>
+            key={column.id}
+            align={column.id === 'date' ? 'end' : 'start'}>
             {column.name}
           </Column>
         )}
@@ -1296,9 +1292,9 @@ function BidirectionalDnDTableView(props: DndTableViewProps) {
 
 function DragBetweenTablesExample() {
   let columns = [
-    {name: 'Name', uid: 'name'},
-    {name: 'Type', uid: 'type'},
-    {name: 'Date Modified', uid: 'date'}
+    {name: 'Name', id: 'name'},
+    {name: 'Type', id: 'type'},
+    {name: 'Date Modified', id: 'date'}
   ];
 
   let list1 = useListData({
@@ -1375,13 +1371,12 @@ function DraggableTableViewDefaultCopy(props: DndTableViewProps) {
       selectionMode="multiple"
       width="size-5000"
       height="size-2400"
-      dragAndDropHooks={dragAndDropHooks}
-      items={list.items}>
+      dragAndDropHooks={dragAndDropHooks}>
       <TableHeader columns={columns}>
         {column => (
           <Column
-            key={column.uid}
-            align={column.uid === 'date' ? 'end' : 'start'}>
+            key={column.id}
+            align={column.id === 'date' ? 'end' : 'start'}>
             {column.name}
           </Column>
         )}
@@ -1447,13 +1442,12 @@ function DroppableTableViewDefaultCopy(props: DndTableViewProps) {
       aria-label="Droppable TableView in default copy operation example"
       width="size-5000"
       height="size-2400"
-      dragAndDropHooks={dragAndDropHooks}
-      items={list.items}>
+      dragAndDropHooks={dragAndDropHooks}>
       <TableHeader columns={columns}>
         {column => (
           <Column
-            key={column.uid}
-            align={column.uid === 'date' ? 'end' : 'start'}>
+            key={column.id}
+            align={column.id === 'date' ? 'end' : 'start'}>
             {column.name}
           </Column>
         )}
@@ -1471,9 +1465,9 @@ function DroppableTableViewDefaultCopy(props: DndTableViewProps) {
 
 function DragIntoTablesDefaultCopy() {
   let columns = [
-    {name: 'Name', uid: 'name'},
-    {name: 'Type', uid: 'type'},
-    {name: 'Date Modified', uid: 'date'}
+    {name: 'Name', id: 'name'},
+    {name: 'Type', id: 'type'},
+    {name: 'Date Modified', id: 'date'}
   ];
 
   let sourceList = useListData({
