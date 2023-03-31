@@ -13,10 +13,10 @@
 import {FocusEvent as ReactFocusEvent, useCallback, useRef} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 
-export class SyntheticFocusEvent implements ReactFocusEvent {
+export class SyntheticFocusEvent<Target = Element> implements ReactFocusEvent<Target> {
   nativeEvent: FocusEvent;
-  target: Element;
-  currentTarget: Element;
+  target: EventTarget & Target;
+  currentTarget: EventTarget & Target;
   relatedTarget: Element;
   bubbles: boolean;
   cancelable: boolean;
@@ -28,8 +28,8 @@ export class SyntheticFocusEvent implements ReactFocusEvent {
 
   constructor(type: string, nativeEvent: FocusEvent) {
     this.nativeEvent = nativeEvent;
-    this.target = nativeEvent.target as Element;
-    this.currentTarget = nativeEvent.currentTarget as Element;
+    this.target = nativeEvent.target as EventTarget & Target;
+    this.currentTarget = nativeEvent.currentTarget as EventTarget & Target;
     this.relatedTarget = nativeEvent.relatedTarget as Element;
     this.bubbles = nativeEvent.bubbles;
     this.cancelable = nativeEvent.cancelable;
@@ -61,7 +61,7 @@ export class SyntheticFocusEvent implements ReactFocusEvent {
   persist() {}
 }
 
-export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
+export function useSyntheticBlurEvent<Target = Element>(onBlur: (e: ReactFocusEvent<Target>) => void) {
   let stateRef = useRef({
     isFocused: false,
     onBlur,
@@ -82,7 +82,7 @@ export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
   }, []);
 
   // This function is called during a React onFocus event.
-  return useCallback((e: ReactFocusEvent) => {
+  return useCallback((e: ReactFocusEvent<Target>) => {
     // React does not fire onBlur when an element is disabled. https://github.com/facebook/react/issues/9142
     // Most browsers fire a native focusout event in this case, except for Firefox. In that case, we use a
     // MutationObserver to watch for the disabled attribute, and dispatch these events ourselves.
