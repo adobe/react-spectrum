@@ -18,7 +18,7 @@ function Example({triggerTop = 250, ...props}) {
   let targetRef = useRef();
   let containerRef = useRef();
   let overlayRef = useRef();
-  let {overlayProps, placement, arrowProps} = useOverlayPosition({targetRef, containerRef, overlayRef, arrowCrossSize: 8, ...props});
+  let {overlayProps, placement, arrowProps} = useOverlayPosition({targetRef, containerRef, overlayRef, arrowSize: 8, ...props});
   let style = {width: 300, height: 200, ...overlayProps.style};
   return (
     <React.Fragment>
