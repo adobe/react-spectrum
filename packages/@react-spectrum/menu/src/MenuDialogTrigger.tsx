@@ -10,25 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import {ItemElement, ItemProps} from "@react-types/shared";
-import React, {ReactElement} from "react";
-import {SpectrumDialogClose} from "@react-types/dialog";
-import {MenuDialogContext, useMenuItemContext} from "./MenuItem";
-import {DialogContainer} from "@react-spectrum/dialog";
-import {Popover, Tray} from "@react-spectrum/overlays";
-import {useOverlayTriggerState} from "@react-stately/overlays";
-import {classNames, SlotProvider, useIsMobileDevice} from "@react-spectrum/utils";
+import {classNames, SlotProvider, useIsMobileDevice} from '@react-spectrum/utils';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
+import {ItemProps} from '@react-types/shared';
+import {MenuDialogContext, useMenuContext} from './context';
+import {Popover, Tray} from '@react-spectrum/overlays';
+import React, {Key, ReactElement} from 'react';
+import {SpectrumDialogClose} from '@react-types/dialog';
+import {useOverlayTriggerState} from '@react-stately/overlays';
 
-
-function MenuDialogTrigger<T>(props: ItemProps<T>): ReactElement {
+function MenuDialogTrigger<T>(props: ItemProps<T> & {isUnavailable?: boolean, targetKey: Key}): ReactElement {
   let {isUnavailable} = props;
 
-  let {openKey, setOpenKey, hoveredItem, setHoveredItem, menuRef, openRef} = useMenuItemContext();
-  let state = useOverlayTriggerState({isOpen: openKey === props.targetKey, onOpenChange: (val) => {
+  let {state: menuTriggerState} = useMenuContext();
+  let state = useOverlayTriggerState({isOpen: menuTriggerState.openKey === props.targetKey, onOpenChange: (val) => {
     if (!val) {
-      console.log('should close')
-      setOpenKey(null)
+      menuTriggerState.setOpenKey(null);
     }
   }});
   let slots = {};
@@ -41,7 +38,6 @@ function MenuDialogTrigger<T>(props: ItemProps<T>): ReactElement {
   }
   let [trigger] = React.Children.toArray(props.children);
   let [, content] = props.children as [ReactElement, SpectrumDialogClose];
-  console.log('restore focus', state.isOpen ? true : false)
 
   let isMobile = useIsMobileDevice();
   return (
@@ -50,11 +46,11 @@ function MenuDialogTrigger<T>(props: ItemProps<T>): ReactElement {
       <SlotProvider slots={slots}>
         {
           isMobile ? (
-            <Tray state={state} safeTriangle>
+            <Tray state={state}>
               {content}
             </Tray>
           ) : (
-            <Popover restoreFocus={state.isOpen ? true : false} state={state} triggerRef={openRef} placement="end top" hideArrow offset={-10} safeTriangle>{content}</Popover>
+            <Popover state={state} triggerRef={menuTriggerState.openRef} placement="end top" hideArrow offset={-10} isNonModal>{content}</Popover>
           )
         }
       </SlotProvider>

@@ -16,12 +16,11 @@ import {MenuContext} from './context';
 import {Placement} from '@react-types/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
 import {PressResponder} from '@react-aria/interactions';
-import React, {forwardRef, Fragment, useCallback, useRef, useState} from 'react';
+import React, {forwardRef, Fragment, useRef} from 'react';
 import {SpectrumMenuTriggerProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useMenuTriggerState} from '@react-stately/menu';
-import {MenuItemContext} from "./MenuItem";
 
 function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) {
   let triggerRef = useRef<HTMLElement>();
@@ -37,18 +36,8 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
     trigger = 'press'
   } = props;
 
-  let [openKey, setOpenKey] = useState();
-  let [openRef, setOpenRef] = useState();
-  let [hoveredItem, _setHoveredItem] = useState();
-  let setHoveredItem = useCallback((key) => {
-    if (key != null) {
-      setOpenKey(key);
-    }
-    _setHoveredItem(key);
-  }, [_setHoveredItem, setOpenKey]);
-
   let [menuTrigger, menu] = React.Children.toArray(children);
-  let state = useMenuTriggerState({...props, disableClosing: openKey != null});
+  let state = useMenuTriggerState(props);
 
   let {menuTriggerProps, menuProps} = useMenuTrigger({trigger}, state, menuTriggerRef);
 
@@ -69,6 +58,7 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
   let isMobile = useIsMobileDevice();
   let menuContext = {
     ...menuProps,
+    state,
     ref: menuRef,
     onClose: state.close,
     closeOnSelect,
@@ -109,11 +99,9 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
           {menuTrigger}
         </PressResponder>
       </SlotProvider>
-      <MenuItemContext.Provider value={{openKey, setOpenKey, hoveredItem, setHoveredItem, state, menuRef, setOpenRef, openRef}}>
-        <MenuContext.Provider value={menuContext}>
-          {overlay}
-        </MenuContext.Provider>
-      </MenuItemContext.Provider>
+      <MenuContext.Provider value={menuContext}>
+        {overlay}
+      </MenuContext.Provider>
     </Fragment>
   );
 }

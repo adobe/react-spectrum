@@ -11,15 +11,15 @@
  */
 
 import {DOMAttributes, FocusableElement, PressEvent} from '@react-types/shared';
+import {focusSafely} from '@react-aria/focus';
 import {getItemCount} from '@react-stately/collections';
-import {isFocusVisible, useHover, usePress} from '@react-aria/interactions';
+import {isFocusVisible, useHover, useKeyboard, usePress} from '@react-aria/interactions';
 import {Key, RefObject, useCallback} from 'react';
 import {menuData} from './useMenu';
+import {MenuTriggerState} from '@react-stately/menu';
 import {mergeProps, useSlotId} from '@react-aria/utils';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableItem} from '@react-aria/selection';
-import {focusSafely} from "@react-aria/focus";
-import {useMenuDialogContext, useMenuItemContext} from "@react-spectrum/menu/src/MenuItem";
 
 export interface MenuItemAria {
   /** Props for the menu item element. */
@@ -41,7 +41,9 @@ export interface MenuItemAria {
   /** Whether the item is currently in a pressed state. */
   isPressed: boolean,
   /** Whether the item is disabled. */
-  isDisabled: boolean
+  isDisabled: boolean,
+  /** Whether the item is hovered. */
+  isHovered: boolean
 }
 
 export interface AriaMenuItemProps {
@@ -82,7 +84,9 @@ export interface AriaMenuItemProps {
    * Handler that is called when the user activates the item.
    * @deprecated - pass to the menu instead.
    */
-  onAction?: (key: Key) => void
+  onAction?: (key: Key) => void,
+  isMenuDialogTrigger?: boolean,
+  triggerState?: MenuTriggerState
 }
 
 /**
@@ -95,16 +99,12 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let {
     key,
     closeOnSelect,
-    isVirtualized
+    isVirtualized,
+    isMenuDialogTrigger,
+    triggerState = {} as MenuTriggerState
   } = props;
 
-  let menuDialogContext = useMenuDialogContext();
-  let isMenuDialogTrigger = !!menuDialogContext;
-  let isUnavailable;
-  let {openKey, setOpenKey, hoveredItem, setHoveredItem, setOpenRef} = useMenuItemContext() ?? {};
-  if (isMenuDialogTrigger) {
-    isUnavailable = menuDialogContext.isUnavailable;
-  }
+  let {openKey, setOpenKey, setOpenRef} = triggerState;
 
   let isDisabled = props.isDisabled ?? state.disabledKeys.has(key);
   let isSelected = props.isSelected ?? state.selectionManager.isSelected(key);
@@ -112,9 +112,9 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let data = menuData.get(state);
   let onClose = props.onClose || data.onClose;
   let onActionMenuDialogTrigger = useCallback(() => {
-    setOpenKey(key);
-    setOpenRef(ref);
-  }, []);
+    setOpenKey?.(key);
+    setOpenRef?.(ref);
+  }, [setOpenKey, setOpenRef, key, ref]);
   let onAction = isMenuDialogTrigger ? onActionMenuDialogTrigger : props.onAction || data.onAction;
 
   let role = 'menuitem';
@@ -145,27 +145,10 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     ariaProps['aria-setsize'] = getItemCount(state.collection);
   }
 
-  let onKeyDown = (e: KeyboardEvent) => {
-    // Ignore repeating events, which may have started on the menu trigger before moving
-    // focus to the menu item. We want to wait for a second complete key press sequence.
-    if (e.repeat) {
-      return;
-    }
-
-    switch (e.key) {
-      case ' ':
-        if (!isDisabled && state.selectionManager.selectionMode === 'none' && !isMenuDialogTrigger && closeOnSelect !== false && onClose) {
-          onClose();
-        }
-        break;
-      case 'Enter':
-        // The Enter key should always close on select, except if overridden.
-        if (!isDisabled && closeOnSelect !== false && !isMenuDialogTrigger && onClose) {
-          onClose();
-        }
-        break;
-    }
-  };
+  if (isMenuDialogTrigger) {
+    ariaProps['aria-haspopup'] = 'dialog';
+    ariaProps['aria-expanded'] = openKey === key ? 'true' : 'false';
+  }
 
   let onPressStart = (e: PressEvent) => {
     if (e.pointerType === 'keyboard' && onAction) {
@@ -196,7 +179,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   });
 
   let {pressProps, isPressed} = usePress({onPressStart, onPressUp, isDisabled});
-  let {hoverProps} = useHover({
+  let {hoverProps, isHovered} = useHover({
     isDisabled,
     onHoverStart() {
       if (!isFocusVisible()) {
@@ -205,17 +188,54 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
         // focus immediately so that a focus scope opened on hover has the correct restore node
         let isFocused = key === state.selectionManager.focusedKey;
         if (isFocused && state.selectionManager.isFocused && document.activeElement !== ref.current) {
-          console.log('we focused on hover', key)
           focusSafely(ref.current);
         }
       }
+    },
+    onHoverChange: isHovered => {
+      if (isHovered && isMenuDialogTrigger) {
+        setOpenKey?.(key);
+        setOpenRef?.(ref);
+      }
+    }
+  });
+
+  let {keyboardProps} = useKeyboard({
+    onKeyDown: (e) => {
+      // Ignore repeating events, which may have started on the menu trigger before moving
+      // focus to the menu item. We want to wait for a second complete key press sequence.
+      if (e.repeat) {
+        e.continuePropagation();
+        return;
+      }
+
+      switch (e.key) {
+        case ' ':
+          if (!isDisabled && state.selectionManager.selectionMode === 'none' && !isMenuDialogTrigger && closeOnSelect !== false && onClose) {
+            onClose();
+          }
+          break;
+        case 'Enter':
+          // The Enter key should always close on select, except if overridden.
+          if (!isDisabled && closeOnSelect !== false && !isMenuDialogTrigger && onClose) {
+            onClose();
+          }
+          break;
+        case 'ArrowRight':
+          if (isMenuDialogTrigger) {
+            setOpenKey(key);
+            setOpenRef(ref);
+          }
+          break;
+      }
+      e.continuePropagation();
     }
   });
 
   return {
     menuItemProps: {
       ...ariaProps,
-      ...mergeProps(itemProps, pressProps, hoverProps, {onKeyDown})
+      ...mergeProps(itemProps, pressProps, hoverProps, keyboardProps)
     },
     labelProps: {
       id: labelId
@@ -229,6 +249,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     isFocused,
     isSelected,
     isPressed,
+    isHovered,
     isDisabled
   };
 }

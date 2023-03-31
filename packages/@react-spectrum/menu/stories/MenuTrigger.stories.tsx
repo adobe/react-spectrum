@@ -17,17 +17,16 @@ import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
 import Blower from '@spectrum-icons/workflow/Blower';
 import Book from '@spectrum-icons/workflow/Book';
+import {Content, Footer} from '@react-spectrum/view';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
-import {Item, Menu, MenuDialogTrigger, MenuTrigger, Section} from '../';
+import {Dialog} from '@react-spectrum/dialog';
 import {Heading, Keyboard, Text} from '@react-spectrum/text';
+import {Item, Menu, MenuDialogTrigger, MenuTrigger, Section} from '../';
+import {Link} from '@react-spectrum/link';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
-import {Dialog} from "@react-spectrum/dialog";
-import {Title} from "@storybook/components";
-import {Content, Footer, Header} from "@react-spectrum/view";
-import {Link} from "@react-spectrum/link";
 
 let iconMap = {
   AlignCenter,

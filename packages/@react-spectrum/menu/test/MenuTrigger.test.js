@@ -11,15 +11,15 @@
  */
 
 import {act, DEFAULT_LONG_PRESS_TIME, fireEvent, installPointerEvent, render, triggerLongPress, triggerPress, triggerTouch, within} from '@react-spectrum/test-utils';
+import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
+import {Content} from '@react-spectrum/view';
+import {Dialog} from '@react-spectrum/dialog';
+import {Heading} from '@react-spectrum/text';
 import {Item, Menu, MenuDialogTrigger, MenuTrigger, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {action} from '@storybook/addon-actions';
-import {Dialog} from '@react-spectrum/dialog';
-import {Heading} from '@react-spectrum/text';
-import {Content} from '@react-spectrum/view';
 
 let triggerText = 'Menu Button';
 
