@@ -50,11 +50,8 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
   }
 
   protected isRow(node: Node<T>) {
-    return node.type === 'row' || node.type === 'item';
-  }
-
-  protected isSection(node: Node<T>) {
-    return node.type === 'section';
+    // Skip section row headers since they shouldn't be focusable
+    return !node.props?.isSectionHeader && (node.type === 'row' || node.type === 'item');
   }
 
   protected findPreviousKey(fromKey?: Key, pred?: (item: Node<T>) => boolean) {
@@ -99,7 +96,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
 
     // Find the next item
-    key = this.findNextKey(key, item => !this.isSection(item));
+    key = this.findNextKey(key, item => this.isRow(item));
     if (key != null) {
       // If focus was on a cell, focus the cell with the same index in the next row.
       if (this.isCell(startItem)) {
@@ -126,7 +123,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
 
     // Find the previous item
-    key = this.findPreviousKey(key, item => !this.isSection(item));
+    key = this.findPreviousKey(key, item => this.isRow(item));
     if (key != null) {
       // If focus was on a cell, focus the cell with the same index in the previous row.
       if (this.isCell(startItem)) {
@@ -374,7 +371,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
         }
       }
 
-      key = this.findNextKey(key, item => !this.isSection(item));
+      key = this.findNextKey(key, item => this.isRow(item));
 
       // Wrap around when reaching the end of the collection
       if (key == null && !hasWrapped) {

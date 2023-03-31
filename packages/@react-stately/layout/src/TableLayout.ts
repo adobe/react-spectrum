@@ -676,13 +676,8 @@ export class TableLayout<T> extends ListLayout<T> {
         }
 
         let index = collectionNode.index;
-        let parentNode = this.collection.getItem(collectionNode.parentKey);
-        if (layoutInfo.parentKey === 'body') {
+        if (layoutInfo.parentKey === 'body' && collectionNode.type === 'row') {
           index -= this.collection.headerRows.length;
-        } else if (parentNode && parentNode.type === 'section') {
-          // Adjust the index of the row inside a section so it represents the row's position with respect to the
-          // section rather than the row's index with respect to the entire collection
-          index -= parentNode.index + 1;
         }
 
         if (!indices.includes(index)) {
