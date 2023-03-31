@@ -31,15 +31,12 @@ TableSection.getCollectionNode = function* getCollectionNode<T>(props: TableSect
       // Automatically include a section header row
       yield {
         type: 'item',
-        // TODO: needs a key for some reason, otherwise doesn't show up in the collection nodes
-        key: 'section_header',
+        key: 'section-header',
         hasChildNodes: true,
-        // TODO: is this the right way to render the section header cell?
         *childNodes() {
           yield {
             type: 'cell',
-            // TODO: do I need this key and the props?
-            key: 'blah',
+            key: 'section-header-cell',
             rendered: title,
             props: {
               isSectionCell: true

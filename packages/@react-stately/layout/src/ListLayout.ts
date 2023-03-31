@@ -302,16 +302,15 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     }
 
     let headerRect = new Rect(0, y, width, rectHeight);
-    // TODO rename this to section header to differentiate it from tableview header?
     let header = new LayoutInfo('header', node.key + ':header', headerRect);
     header.estimatedSize = isEstimated;
     header.parentKey = node.key;
+    y += header.rect.height;
 
     let rect = new Rect(0, y, width, 0);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
 
     let startY = y;
-    y += header.rect.height;
     let skipped = 0;
     let children = [];
     for (let child of getChildNodes(node, this.collection)) {
@@ -326,7 +325,6 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
 
       let layoutNode = this.buildChild(child, x, y);
       y = layoutNode.layoutInfo.rect.maxY;
-      width = Math.max(width, layoutNode.layoutInfo.rect.width);
       children.push(layoutNode);
 
       if (y > this.validRect.maxY) {
@@ -337,17 +335,13 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     }
 
     rect.height = y - startY;
-    rect.width = width;
-    headerRect.width = width;
 
-    let layoutNode = {
+    return {
       header,
       layoutInfo,
       children,
       validRect: layoutInfo.rect.intersection(this.validRect)
     };
-
-    return layoutNode;
   }
 
   buildItem(node: Node<T>, x: number, y: number): LayoutNode {
@@ -563,9 +557,6 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     x += this.virtualizer.visibleRect.x;
     y += this.virtualizer.visibleRect.y;
 
-    // TODO: this is a bit problematic because this will return the section that contains the rows
-    // so we can never drop between the rows. Maybe if we detect that the key is a section we iterate over
-    // every layout in said section and find what key is at that point
     let key = this.virtualizer.keyAtPoint(new Point(x, y));
     if (key == null || this.collection.size === 0) {
       return {type: 'root'};
