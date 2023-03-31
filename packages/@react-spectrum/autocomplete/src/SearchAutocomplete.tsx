@@ -179,7 +179,7 @@ let SearchAutocompleteBase = React.forwardRef(_SearchAutocompleteBase) as <T>(pr
 
 interface SearchAutocompleteInputProps<T> extends SpectrumSearchAutocompleteProps<T> {
   inputProps: InputHTMLAttributes<HTMLInputElement>,
-  inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
+  inputRef: RefObject<HTMLInputElement>,
   style?: React.CSSProperties,
   className?: string,
   isOpen?: boolean,

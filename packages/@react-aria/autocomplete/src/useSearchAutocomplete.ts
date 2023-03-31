@@ -12,25 +12,13 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaListBoxOptions} from '@react-aria/listbox';
+import {AriaSearchAutocompleteProps} from '@react-types/autocomplete';
 import {ComboBoxState} from '@react-stately/combobox';
-import {DOMAttributes} from '@react-types/shared';
+import {DOMAttributes, KeyboardDelegate} from '@react-types/shared';
 import {InputHTMLAttributes, RefObject} from 'react';
-import {KeyboardDelegate} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
-import {SearchAutocompleteProps} from '@react-types/autocomplete';
 import {useComboBox} from '@react-aria/combobox';
 import {useSearchField} from '@react-aria/searchfield';
-
-export interface AriaSearchAutocompleteProps<T> extends SearchAutocompleteProps<T> {
-  /** The ref for the input element. */
-  inputRef: RefObject<HTMLInputElement>,
-  /** The ref for the list box popover. */
-  popoverRef: RefObject<HTMLDivElement>,
-  /** The ref for the list box. */
-  listBoxRef: RefObject<HTMLElement>,
-  /** An optional keyboard delegate implementation, to override the default. */
-  keyboardDelegate?: KeyboardDelegate
-}
 
 export interface SearchAutocompleteAria<T> {
   /** Props for the label element. */
@@ -43,13 +31,24 @@ export interface SearchAutocompleteAria<T> {
   clearButtonProps: AriaButtonProps
 }
 
+export interface AriaSearchAutocompleteOptions<T> extends AriaSearchAutocompleteProps<T> {
+  /** The ref for the input element. */
+  inputRef: RefObject<HTMLInputElement>,
+  /** The ref for the list box popover. */
+  popoverRef: RefObject<HTMLDivElement>,
+  /** The ref for the list box. */
+  listBoxRef: RefObject<HTMLElement>,
+  /** An optional keyboard delegate implementation, to override the default. */
+  keyboardDelegate?: KeyboardDelegate
+}
+
 /**
  * Provides the behavior and accessibility implementation for a search autocomplete component.
  * A search autocomplete combines a combobox with a searchfield, allowing users to filter a list of options to items matching a query.
  * @param props - Props for the search autocomplete.
  * @param state - State for the search autocomplete, as returned by `useSearchAutocomplete`.
  */
-export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteProps<T>, state: ComboBoxState<T>): SearchAutocompleteAria<T> {
+export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteOptions<T>, state: ComboBoxState<T>): SearchAutocompleteAria<T> {
   let {
     popoverRef,
     inputRef,
