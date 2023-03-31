@@ -487,7 +487,17 @@ export class TableLayout<T> extends ListLayout<T> {
         }
         break;
       }
-      case 'rowgroup': {
+      case 'rowgroup':
+      case 'section': {
+        if (node.layoutInfo.type === 'section') {
+          let sectionHeader = node.children[0];
+          // Add the section header to the visible layout infos since we always need to render it for labelling.
+          res.push(sectionHeader.layoutInfo);
+          for (let child of sectionHeader.children) {
+            res.push(child.layoutInfo);
+          }
+        }
+
         // Note: this.persistedIndicies is structured as follow:
         // parentKey: [array of child indicies that should be preserved] (aka the row/section index values, cells won't be included here)
         // this could be "body": [array of child indicies that should be preserved aka the focused row index]
@@ -510,7 +520,7 @@ export class TableLayout<T> extends ListLayout<T> {
           persistedChildren[persistIndex] < firstVisibleChild
         ) {
           let idx = persistedChildren[persistIndex];
-          if (idx < node.children.length) {
+          if (idx < node.children.length && (node.layoutInfo.type !== 'section' || idx !== 0)) {
             res.push(node.children[idx].layoutInfo);
             this.addVisibleLayoutInfos(res, node.children[idx], rect);
           }
@@ -519,7 +529,7 @@ export class TableLayout<T> extends ListLayout<T> {
 
         for (let i = firstVisibleChild; i <= lastVisibleChild; i++) {
           // Skip persisted rows/sections that overlap with visible cells.
-          while (persistedChildren && persistIndex < persistedChildren.length && persistedChildren[persistIndex] < i) {
+          while (persistedChildren && persistIndex < persistedChildren.length && persistedChildren[persistIndex] <= i) {
             persistIndex++;
           }
 
@@ -530,10 +540,6 @@ export class TableLayout<T> extends ListLayout<T> {
         // Add persisted rows after the visible rows.
         while (persistedChildren && persistIndex < persistedChildren.length) {
           let idx = persistedChildren[persistIndex++];
-          // TODO: the section index is going to be larger than node.children.length because node.children.lenght is the count of Sections only.
-          // find a different metric (maybe look at the last row's index?) Will need to refactor this when we modify table collection to store
-          // indicies w/ respect to the immediate parent. If we keep as is, we can replace node.children.length with the following:
-          // this.collection.getItem(node.children[node.children.length - 1].layoutInfo.key).index
           if (idx < node.children.length) {
             res.push(node.children[idx].layoutInfo);
             this.addVisibleLayoutInfos(res, node.children[idx], rect);
@@ -573,56 +579,6 @@ export class TableLayout<T> extends ListLayout<T> {
             res.push(node.children[idx].layoutInfo);
           }
         }
-        break;
-      }
-      case 'section': {
-        let sectionHeader = node.children[0];
-        // Add the section header to the visible layout infos since we always need to render it for labelling.
-        res.push(sectionHeader.layoutInfo);
-        for (let child of sectionHeader.children) {
-          res.push(child.layoutInfo);
-        }
-
-        // Note: the first/last row index calculated here is with respect to the section, not the index of the row in the collection itself
-        let firstVisibleRow = this.binarySearch(node.children, rect.topLeft, 'y');
-        let lastVisibleRow = this.binarySearch(node.children, rect.bottomRight, 'y');
-
-        // Add persisted rows before the visible rows.
-        let persistedRowIndices = this.persistedIndices.get(node.layoutInfo.key);
-        let persistIndex = 0;
-
-        while (
-          persistedRowIndices &&
-          persistIndex < persistedRowIndices.length &&
-          persistedRowIndices[persistIndex] < firstVisibleRow
-        ) {
-          let idx = persistedRowIndices[persistIndex];
-          if (idx < node.children.length && idx !== 0) {
-            res.push(node.children[idx].layoutInfo);
-            this.addVisibleLayoutInfos(res, node.children[idx], rect);
-          }
-          persistIndex++;
-        }
-
-        for (let i = firstVisibleRow; i <= lastVisibleRow; i++) {
-          // Skip persisted rows that overlap with visible cells.
-          while (persistedRowIndices && persistIndex < persistedRowIndices.length && persistedRowIndices[persistIndex] < i) {
-            persistIndex++;
-          }
-
-          res.push(node.children[i].layoutInfo);
-          this.addVisibleLayoutInfos(res, node.children[i], rect);
-        }
-
-        // Add persisted rows after the visible rows.
-        while (persistedRowIndices && persistIndex < persistedRowIndices.length) {
-          let idx = persistedRowIndices[persistIndex++];
-          if (idx < node.children.length) {
-            res.push(node.children[idx].layoutInfo);
-            this.addVisibleLayoutInfos(res, node.children[idx], rect);
-          }
-        }
-
         break;
       }
 
@@ -676,7 +632,7 @@ export class TableLayout<T> extends ListLayout<T> {
         }
 
         let index = collectionNode.index;
-        if (layoutInfo.parentKey === 'body' && collectionNode.type === 'row') {
+        if (layoutInfo.parentKey === 'body' && layoutInfo.type === 'row') {
           index -= this.collection.headerRows.length;
         }
 
