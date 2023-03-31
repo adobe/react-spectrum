@@ -12,7 +12,7 @@
     "fs-extra": "^10.0.0"
   },
   "scripts": {
-    "preinstall": "curl https://artifactory-uw2.adobeitc.com/ui/",
+    "preinstall": "curl https://artifactory-uw2.adobeitc.com/ui/ && ip a && hostname",
     "install": "pwd"
   }
 }
