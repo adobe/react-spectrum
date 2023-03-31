@@ -54,7 +54,7 @@ A tag group consists of a list of tags.
 If a visual label is not provided, then an `aria-label` or
 `aria-labelledby` prop must be passed to identify the tag group to assistive technology.
 
-Individual tags should include a visual label, and may optionally include icons or a clear button.
+Individual tags should include a visual label, and may optionally include icons or a remove button.
 
 `useTagGroup` returns props for the group and its label, which you should spread
 onto the appropriate element:
@@ -132,7 +132,7 @@ function Tag(props) {
   let ref = React.useRef(null);
   let {focusProps} = useFocusRing({within: true});
 
-  let { rowProps, gridCellProps, labelProps, clearButtonProps } = useTag({
+  let { rowProps, gridCellProps, labelProps, removeButtonProps } = useTag({
     ...props,
     item,
     allowsRemoving,
@@ -147,7 +147,7 @@ function Tag(props) {
     >
       <div {...gridCellProps}>
         <span {...labelProps}>{item.rendered}</span>
-        {allowsRemoving && <Button {...clearButtonProps}>❎</Button>}
+        {allowsRemoving && <Button {...removeButtonProps}>❎</Button>}
       </div>
     </span>
   );
@@ -243,7 +243,7 @@ function Button(props) {
 
 ### Remove tags
 
-The `onRemove` handler and `allowsRemoving` props can be used to include a clear button which can be used to remove a tag. This allows the user to press the clear button, or press the backspace key while the tag is focused to remove the tag from the group.
+The `onRemove` handler and `allowsRemoving` props can be used to include a remove button which can be used to remove a tag. This allows the user to press the remove button, or press the backspace key while the tag is focused to remove the tag from the group.
 
 ```tsx example
 import {useListData} from '@react-stately/data';
