@@ -308,10 +308,11 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
 
     let pageY = Math.max(0, itemRect.maxY - this.getPageHeight());
-
-    while (itemRect && itemRect.y > pageY) {
-      key = this.getKeyAbove(key);
+    let nodeAbove = this.collection.getItem(this.getKeyAbove(key));
+    while (itemRect && itemRect.y > pageY && nodeAbove && nodeAbove.type !== 'column') {
+      key = nodeAbove.key;
       itemRect = this.getItemRect(key);
+      nodeAbove = this.collection.getItem(this.getKeyAbove(key));
     }
 
     return key;

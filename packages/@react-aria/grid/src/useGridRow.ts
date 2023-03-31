@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, FocusableElement, Node} from '@react-types/shared';
-import {GridCollection} from '@react-types/grid';
+import {DOMAttributes, FocusableElement} from '@react-types/shared';
+import {GridCollection, GridNode} from '@react-types/grid';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
 import {RefObject} from 'react';
@@ -19,7 +19,7 @@ import {SelectableItemStates, useSelectableItem} from '@react-aria/selection';
 
 export interface GridRowProps<T> {
   /** An object representing the grid row. Contains all the relevant information that makes up the grid row. */
-  node: Node<T>,
+  node: GridNode<T>,
   /** Whether the grid row is contained in a virtual scroller. */
   isVirtualized?: boolean,
   /** Whether selection should occur on press up instead of press down. */
@@ -73,7 +73,7 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
   };
 
   if (isVirtualized) {
-    rowProps['aria-rowindex'] = node.index + 1; // aria-rowindex is 1 based
+    rowProps['aria-rowindex'] = node.rowIndex;
   }
 
   return {

@@ -500,7 +500,7 @@ export class TableLayout<T> extends ListLayout<T> {
         let lastVisibleChild = this.binarySearch(node.children, rect.bottomRight, 'y');
 
         // Add persisted row/section before the first visible row/section.
-        // Note: We don't need to do any updates to this logic for sections since persistedChildren here will only consist of section less rows and sections since we are at the "body" parent key level
+        // Note: We don't need to do any updates to this logic for sections since persistedChildren here will only consist of section-less rows and sections since we are at the "body" parent key level
         let persistedChildren = this.persistedIndices.get(node.layoutInfo.key);
         let persistIndex = 0;
 

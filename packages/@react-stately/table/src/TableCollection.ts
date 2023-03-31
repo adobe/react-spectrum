@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {getFirstItem, getLastItem} from '@react-stately/collections';
+import {getChildNodes, getFirstItem, getLastItem, getNthItem} from '@react-stately/collections';
 import {GridCollection} from '@react-stately/grid';
 import {GridNode} from '@react-types/grid';
 import {TableCollection as ITableCollection} from '@react-types/table';
@@ -267,6 +267,15 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
       items: rows,
       visitNode: node => {
         node.column = columns[node.index];
+        // TODO: the "column" set here is applied onto the Section's row nodes and remain when retrieved
+        // via the Section's childNodes generator call. However, GridCollection adds some more information on each Row such
+        // as rowIndex which won't be reflected by the nodes retrieved from Section's childNodes call. They are instead stored in the
+        // key map. How to fix this discrepency?
+        // This is also a problem for non-sectioned tables, nodes from state.collection.keyMap contain more information than nodes retrieved from [...state.collection.body.childNodes]
+        // TODO: Potentially refactor GridCollection so it takes in collection.body instead of rows, then make it do the same kind
+        // of "visit" stategy where it dives into each nodes' childNodes and applies the extra rowNode information that it currently generates
+        // to the row nodes retrieved from childNodes? This would mean taking the logic from the items.forEach and calling it when it finds a row/section node
+        // in childNodes. Maybe just wait till we refactor collections as a whole and replace with RAC's collection approach
         return node;
       }
     });
@@ -313,11 +322,26 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
   }
 
   getFirstKey() {
-    return getFirstItem(this.body.childNodes)?.key;
+    // TODO this.body isn't in the keymap so can't use getChildNodes
+    let key;
+    let firstNode = getFirstItem(this.body.childNodes);
+    if (firstNode != null && firstNode.type === 'item') {
+      key = firstNode.key;
+    } else if (firstNode.type === 'section') {
+      key = getNthItem(getChildNodes(firstNode, this), 1)?.key;
+    }
+    return key;
   }
 
   getLastKey() {
-    return getLastItem(this.body.childNodes)?.key;
+    let key;
+    let lastNode = getLastItem(this.body.childNodes);
+    if (lastNode != null && lastNode.type === 'item') {
+      key = lastNode.key;
+    } else if (lastNode.type === 'section') {
+      key = getLastItem(getChildNodes(lastNode, this))?.key;
+    }
+    return key;
   }
 
   getItem(key: Key) {

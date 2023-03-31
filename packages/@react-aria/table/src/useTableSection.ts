@@ -46,9 +46,9 @@ export function useTableSection<T>(props: AriaTableSectionProps<T>, state: Table
   if (isVirtualized) {
     // TODO: should getChildNodes and getFirstItem return an iterable that matches the type of the node passed to it?
     // TODO: using getFirstItem and getChildNodes returns a row node that doesn't have the extra stuff added by GridCollection, figure out why.
-    // using state.collection.getItem works becuase it accesses the keyMap made in GridCollection? But getChildnodes should do the same, perhaps the section
-    // node isn't getting updated
-    // rowIndex = (getFirstItem(getChildNodes(node, state.collection)) as GridNode<T>)?.rowIndex;
+    // this seems to be the difference in accessing a the modified section row node that was pushed to the keymap via collection.getItem (aka GridCollection)
+    // and accessing the child rows of the section via the section's getChildren which returns something different (see comment in TableCollection about why)
+    // for now, grab row node from keymap via .getItem
     rowIndex = (state.collection.getItem(node.nextKey) as GridNode<T>).rowIndex;
   }
 
