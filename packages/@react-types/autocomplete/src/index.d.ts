@@ -41,9 +41,7 @@ export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<Sear
    * A `key` will be passed if the submission is a selected item (e.g. a user clicks or presses enter on an option).
    * If the input is a custom value, `key` will be null.
    */
-  onSubmit?: (value: string | null, key: Key | null) => void,
-  /** An icon to display at the start of the input. */
-  icon?: ReactElement | null
+  onSubmit?: (value: string | null, key: Key | null) => void
 }
 
 export interface AriaSearchAutocompleteProps<T> extends SearchAutocompleteProps<T>, DOMProps, AriaLabelingProps {}
@@ -68,5 +66,7 @@ export interface SpectrumSearchAutocompleteProps<T> extends SpectrumTextInputBas
    * @default true
    */
   shouldFlip?: boolean,
-  onLoadMore?: () => void
+  onLoadMore?: () => void,
+  /** An icon to display at the start of the input. */
+  icon?: ReactElement | null
 }
