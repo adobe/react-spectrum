@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, CollectionBase, DOMProps, KeyboardDelegate, LoadingState, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps} from '@react-types/shared';
-import {Key, ReactElement, RefObject} from 'react';
+import {AriaLabelingProps, AsyncLoadable, CollectionBase, DOMProps, LoadingState, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps} from '@react-types/shared';
+import {Key, ReactElement} from 'react';
 import {MenuTriggerAction} from '@react-types/combobox';
 import {SearchFieldProps} from '@react-types/searchfield';
 
@@ -46,16 +46,7 @@ export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<Sear
   icon?: ReactElement | null
 }
 
-export interface AriaSearchAutocompleteProps<T> extends SearchAutocompleteProps<T>, DOMProps, AriaLabelingProps {
-  /** The ref for the input element. */
-  inputRef: RefObject<HTMLInputElement>,
-  /** The ref for the list box popover. */
-  popoverRef: RefObject<HTMLDivElement>,
-  /** The ref for the list box. */
-  listBoxRef: RefObject<HTMLElement>,
-  /** An optional keyboard delegate implementation, to override the default. */
-  keyboardDelegate?: KeyboardDelegate
-}
+export interface AriaSearchAutocompleteProps<T> extends SearchAutocompleteProps<T>, DOMProps, AriaLabelingProps {}
 
 export interface SpectrumSearchAutocompleteProps<T> extends SpectrumTextInputBase, Omit<AriaSearchAutocompleteProps<T>, 'menuTrigger'>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
   /**
