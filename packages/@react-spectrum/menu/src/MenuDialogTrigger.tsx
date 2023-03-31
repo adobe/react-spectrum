@@ -73,5 +73,5 @@ MenuDialogTrigger.getCollectionNode = function* getCollectionNode<T>(props: Item
   };
 };
 
-let _Item = MenuDialogTrigger as <T>(props: ItemProps<T>) => JSX.Element;
+let _Item = MenuDialogTrigger as <T>(props: ItemProps<T> & {isUnavailable?: boolean}) => JSX.Element;
 export {_Item as MenuDialogTrigger};
