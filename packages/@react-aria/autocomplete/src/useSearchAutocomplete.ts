@@ -12,25 +12,13 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaListBoxOptions} from '@react-aria/listbox';
+import {AriaSearchAutocompleteProps} from '@react-types/autocomplete';
 import {ComboBoxState} from '@react-stately/combobox';
 import {DOMAttributes} from '@react-types/shared';
-import {InputHTMLAttributes, RefObject} from 'react';
-import {KeyboardDelegate} from '@react-types/shared';
+import {InputHTMLAttributes} from 'react';
 import {mergeProps} from '@react-aria/utils';
-import {SearchAutocompleteProps} from '@react-types/autocomplete';
 import {useComboBox} from '@react-aria/combobox';
 import {useSearchField} from '@react-aria/searchfield';
-
-export interface AriaSearchAutocompleteProps<T> extends SearchAutocompleteProps<T> {
-  /** The ref for the input element. */
-  inputRef: RefObject<HTMLInputElement>,
-  /** The ref for the list box popover. */
-  popoverRef: RefObject<HTMLDivElement>,
-  /** The ref for the list box. */
-  listBoxRef: RefObject<HTMLElement>,
-  /** An optional keyboard delegate implementation, to override the default. */
-  keyboardDelegate?: KeyboardDelegate
-}
 
 export interface SearchAutocompleteAria<T> {
   /** Props for the label element. */

@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaSearchFieldProps} from '@react-types/searchfield';
-import {AsyncLoadable, CollectionBase, LoadingState, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps} from '@react-types/shared';
-import {Key, ReactElement} from 'react';
+import {AriaLabelingProps, AsyncLoadable, CollectionBase, DOMProps, KeyboardDelegate, LoadingState, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps} from '@react-types/shared';
+import {Key, ReactElement, RefObject} from 'react';
 import {MenuTriggerAction} from '@react-types/combobox';
+import {SearchFieldProps} from '@react-types/searchfield';
 
-export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<AriaSearchFieldProps, 'onSubmit'> {
+export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<SearchFieldProps, 'onSubmit' | 'defaultValue' | 'value'> {
   /** The list of SearchAutocomplete items (uncontrolled). */
   defaultItems?: Iterable<T>,
   /** The list of SearchAutocomplete items (controlled). */
@@ -46,7 +46,18 @@ export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<Aria
   icon?: ReactElement | null
 }
 
-export interface SpectrumSearchAutocompleteProps<T> extends SpectrumTextInputBase, Omit<SearchAutocompleteProps<T>, 'menuTrigger'>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
+export interface AriaSearchAutocompleteProps<T> extends SearchAutocompleteProps<T>, DOMProps, AriaLabelingProps {
+  /** The ref for the input element. */
+  inputRef: RefObject<HTMLInputElement>,
+  /** The ref for the list box popover. */
+  popoverRef: RefObject<HTMLDivElement>,
+  /** The ref for the list box. */
+  listBoxRef: RefObject<HTMLElement>,
+  /** An optional keyboard delegate implementation, to override the default. */
+  keyboardDelegate?: KeyboardDelegate
+}
+
+export interface SpectrumSearchAutocompleteProps<T> extends SpectrumTextInputBase, Omit<AriaSearchAutocompleteProps<T>, 'menuTrigger'>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
   /**
    * The interaction required to display the SearchAutocomplete menu. Note that this prop has no effect on the mobile SearchAutocomplete experience.
    * @default 'input'
