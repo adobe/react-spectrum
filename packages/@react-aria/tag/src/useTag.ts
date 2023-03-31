@@ -11,14 +11,15 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {chain, filterDOMProps, mergeProps, useId} from '@react-aria/utils';
-import {DOMAttributes, FocusableElement} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, DOMProps, FocusableElement} from '@react-types/shared';
+import {chain, filterDOMProps, mergeProps, useDescription, useId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {KeyboardEvent, RefObject} from 'react';
 import type {TagGroupState} from '@react-stately/tag';
 import {TagProps} from '@react-types/tag';
 import {useGridListItem} from '@react-aria/gridlist';
+import {useInteractionModality} from '@react-aria/interactions';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 
@@ -29,9 +30,11 @@ export interface TagAria {
   gridCellProps: DOMAttributes,
   /** Props for the tag row element. */
   rowProps: DOMAttributes,
-  /** Props for the tag clear button. */
-  clearButtonProps: AriaButtonProps
+  /** Props for the tag remove button. */
+  removeButtonProps: AriaButtonProps
 }
+
+export interface AriaTagProps<T> extends TagProps<T>, DOMProps, AriaLabelingProps {}
 
 /**
  * Provides the behavior and accessibility implementation for a tag component.
@@ -39,14 +42,12 @@ export interface TagAria {
  * @param state - State for the tag group, as returned by `useTagGroupState`.
  * @param ref - A ref to a DOM element for the tag.
  */
-export function useTag<T>(props: TagProps<T>, state: TagGroupState<T>, ref: RefObject<FocusableElement>): TagAria {
+export function useTag<T>(props: AriaTagProps<T>, state: TagGroupState<T>, ref: RefObject<FocusableElement>): TagAria {
   let {
-    isFocused,
     allowsRemoving,
     item
   } = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
-  let removeString = stringFormatter.format('remove');
   let labelId = useId();
   let buttonId = useId();
 
@@ -66,11 +67,18 @@ export function useTag<T>(props: TagProps<T>, state: TagGroupState<T>, ref: RefO
     }
   };
 
-  isFocused = isFocused || state.selectionManager.focusedKey === item.key;
+  let modality: string = useInteractionModality();
+  if (modality === 'virtual' &&  (typeof window !== 'undefined' && 'ontouchstart' in window)) {
+    modality = 'touch';
+  }
+  let description = allowsRemoving && (modality === 'keyboard' || modality === 'virtual') ? stringFormatter.format('removeDescription') : '';
+  let descProps = useDescription(description);
+
   let domProps = filterDOMProps(props);
+  let isFocused = item.key === state.selectionManager.focusedKey;
   return {
-    clearButtonProps: {
-      'aria-label': removeString,
+    removeButtonProps: {
+      'aria-label': stringFormatter.format('removeButtonLabel', {label: item.textValue}),
       'aria-labelledby': `${buttonId} ${labelId}`,
       id: buttonId,
       onPress: () => allowsRemoving && onRemove ? onRemove(item.key) : null,
@@ -82,7 +90,8 @@ export function useTag<T>(props: TagProps<T>, state: TagGroupState<T>, ref: RefO
     rowProps: {
       ...rowProps,
       tabIndex: (isFocused || state.selectionManager.focusedKey == null) ? 0 : -1,
-      onKeyDown: allowsRemoving ? onKeyDown : null
+      onKeyDown: allowsRemoving ? onKeyDown : null,
+      'aria-describedby': descProps['aria-describedby']
     },
     gridCellProps: mergeProps(domProps, gridCellProps, {
       'aria-errormessage': props['aria-errormessage'],

@@ -84,7 +84,7 @@ publish-nightly: build
 build:
 	parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/{message,string,date,number}/ packages/react-aria-components --no-optimize
 	yarn lerna run prepublishOnly
-	for pkg in packages/@react-{spectrum,aria,stately}/*/  packages/@internationalized/{message,string,date,number}/ packages/@adobe/react-spectrum/ packages/react-aria/ packages/react-stately/; \
+	for pkg in packages/@react-{spectrum,aria,stately}/*/  packages/@internationalized/{message,string,date,number}/ packages/@adobe/react-spectrum/ packages/react-aria/ packages/react-stately/ packages/react-aria-components/; \
 		do cp $$pkg/dist/module.js $$pkg/dist/import.mjs; \
 	done
 	sed -i.bak s/\.js/\.mjs/ packages/@react-aria/i18n/dist/import.mjs
