@@ -130,15 +130,14 @@ function TagGroup(props) {
 function Tag(props) {
   let { item, state, allowsRemoving, onRemove } = props;
   let ref = React.useRef(null);
-  let { isFocused, focusProps } = useFocusRing({
-    within: true
-  });
+  let {focusProps} = useFocusRing({within: true});
 
-  let { rowProps, gridCellProps, labelProps, clearButtonProps } = useTag(
-    { ...props, isFocused, item, allowsRemoving, onRemove },
-    state,
-    ref
-  );
+  let { rowProps, gridCellProps, labelProps, clearButtonProps } = useTag({
+    ...props,
+    item,
+    allowsRemoving,
+    onRemove
+  }, state, ref);
 
   return (
     <span
