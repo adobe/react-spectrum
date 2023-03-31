@@ -15,6 +15,8 @@
 let refCountMap = new WeakMap<Element, number>();
 let observerStack = [];
 
+const supportsInert = () => typeof HTMLElement !== 'undefined' && Object.prototype.hasOwnProperty.call(HTMLElement.prototype, 'inert');
+
 /**
  * Hides all elements in the DOM outside the given targets from screen readers using aria-hidden,
  * and returns a function to revert these changes. In addition, changes to the DOM are watched
@@ -86,6 +88,8 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
     }
 
     if (refCount === 0) {
+      supportsInert() ?
+      ((node as HTMLElement).inert = true) :
       node.setAttribute('aria-hidden', 'true');
     }
 
@@ -150,6 +154,8 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
     for (let node of hiddenNodes) {
       let count = refCountMap.get(node);
       if (count === 1) {
+        supportsInert() ?
+        ((node as HTMLElement).inert = false) :
         node.removeAttribute('aria-hidden');
         refCountMap.delete(node);
       } else {
