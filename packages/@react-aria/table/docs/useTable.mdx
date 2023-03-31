@@ -1058,11 +1058,9 @@ function Resizer(props) {
       role="presentation"
       className={`aria-table-resizer ${isFocusVisible ? 'focus' : ''} ${isResizing ? 'resizing' : ''}`}
       {...resizerProps}>
-      <VisuallyHidden>
-        <input
-          ref={ref}
-          {...mergeProps(inputProps, focusProps)} />
-      </VisuallyHidden>
+      <input
+        ref={ref}
+        {...mergeProps(inputProps, focusProps)} />
     </div>
   );
 };
