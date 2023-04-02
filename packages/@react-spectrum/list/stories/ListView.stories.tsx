@@ -10,7 +10,7 @@ import {Content} from '@react-spectrum/view';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Delete from '@spectrum-icons/workflow/Delete';
 import {DIRECTORY_DRAG_TYPE} from '@react-aria/dnd';
-import {Droppable} from '@react-aria/dnd/stories/dnd.stories';
+import {Droppable} from '../../../@react-aria/dnd/stories/dnd.stories';
 import Edit from '@spectrum-icons/workflow/Edit';
 import File from '@spectrum-icons/illustrations/File';
 import {Flex} from '@react-spectrum/layout';

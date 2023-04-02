@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton} from '@react-spectrum/button/src';
+import {ActionButton} from '@react-spectrum/button';
 import {Divider} from '../';
 import Properties from '@spectrum-icons/workflow/Properties';
 import React from 'react';
