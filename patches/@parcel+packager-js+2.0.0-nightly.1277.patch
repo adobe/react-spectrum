@@ -1,5 +1,5 @@
 diff --git a/node_modules/@parcel/packager-js/lib/ScopeHoistingPackager.js b/node_modules/@parcel/packager-js/lib/ScopeHoistingPackager.js
-index a0cb562..79c8236 100644
+index c19e5bc..44b2632 100644
 --- a/node_modules/@parcel/packager-js/lib/ScopeHoistingPackager.js
 +++ b/node_modules/@parcel/packager-js/lib/ScopeHoistingPackager.js
 @@ -435,7 +435,7 @@ class ScopeHoistingPackager {
@@ -20,11 +20,11 @@ index a0cb562..79c8236 100644
      let prepend = '';
      let prependLineCount = 0;
      let append = '';
-@@ -937,6 +937,7 @@ ${code}
-         // additional assignments after each mutation of the original binding.
-         prepend += `\n${usedExports.map(exp => {
+@@ -939,6 +939,7 @@ ${code}
+           var _asset$symbols$get2, _asset$symbols$get2$m;
+ 
            let resolved = this.getSymbolResolution(asset, asset, exp);
 +          resolved = replacements.get(resolved) || resolved;
            let get = this.buildFunctionExpression([], resolved);
-           let set = asset.meta.hasCJSExports ? ', ' + this.buildFunctionExpression(['v'], `${resolved} = v`) : '';
-           return `$parcel$export($${assetId}$exports, ${JSON.stringify(exp)}, ${get}${set});`;
+           let isEsmExport = !!((_asset$symbols$get2 = asset.symbols.get(exp)) !== null && _asset$symbols$get2 !== void 0 && (_asset$symbols$get2$m = _asset$symbols$get2.meta) !== null && _asset$symbols$get2$m !== void 0 && _asset$symbols$get2$m.isEsm);
+           let set = !isEsmExport && asset.meta.hasCJSExports ? ', ' + this.buildFunctionExpression(['v'], `${resolved} = v`) : '';

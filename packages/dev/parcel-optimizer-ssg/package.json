@@ -4,11 +4,11 @@
   "private": true,
   "main": "SSGOptimizer.js",
   "engines": {
-    "parcel": "^2.8.2"
+    "parcel": "^2.0.0-nightly.1265"
   },
   "dependencies": {
-    "@parcel/plugin": "^2.8.2",
-    "@parcel/utils": "^2.8.2",
+    "@parcel/plugin": "nightly",
+    "@parcel/utils": "nightly",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "require-from-string": "^2.0.2"
