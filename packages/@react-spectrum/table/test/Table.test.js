@@ -1412,6 +1412,87 @@ describe('TableView', function () {
         moveFocus('S');
         expect(document.activeElement).toBe(getCell(tree, 'Sam'));
       });
+
+      describe('', function () {
+        beforeEach(function () {
+          offsetHeight.mockRestore();
+          offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
+            .mockImplementationOnce(() => 20)
+            .mockImplementation(() => 100);
+        });
+        afterEach(function () {
+          offsetHeight.mockRestore();
+          offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+        });
+        it('wraps around when no items past the current one match', function () {
+          offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
+            .mockImplementationOnce(() => 20)
+            .mockImplementation(() => 100);
+          let columns = [
+            {name: 'First Name', id: 'firstname', isRowHeader: true},
+            {name: 'Last Name', id: 'lastname', isRowHeader: true},
+            {name: 'Birthday', id: 'birthday'},
+            {name: 'Edit', id: 'edit'}
+          ];
+          let items = [
+            ...Array.from({length: 100}, (v, i) => ({id: i, firstname: 'Aubrey', lastname: 'Sheppard', birthday: 'May 7'})),
+            {id: 101, firstname: 'John', lastname: 'Doe', birthday: 'May 7'}
+          ];
+          let tree = render(
+            <TableView aria-label="Table" selectionMode="none">
+              <TableHeader columns={columns}>
+                {(col) => (
+                  <Column key={col.id} isRowHeader={col.isRowHeader}>{col.name}</Column>
+                )}
+              </TableHeader>
+              <TableBody items={items}>
+                {(item) => (
+                  <Row key={item.id}>
+                    {(key) =>
+                      key === 'edit' ? (
+                        <Cell>
+                          <DialogTrigger>
+                            <ActionButton aria-label="Add Info">
+                              <Add />
+                            </ActionButton>
+                            <Dialog>
+                              <Heading>Add Info</Heading>
+                              <Divider />
+                              <Content>
+                                <TextField label="Enter a J" />
+                              </Content>
+                            </Dialog>
+                          </DialogTrigger>
+                        </Cell>
+                      ) : (
+                        <Cell>{item[key]}</Cell>
+                      )
+                    }
+                  </Row>
+                )}
+              </TableBody>
+            </TableView>
+          );
+          let trigger = tree.getAllByRole('button')[0];
+          triggerPress(trigger);
+          act(() => {
+            jest.runAllTimers();
+          });
+          let textfield = tree.getByLabelText('Enter a J');
+          act(() => {textfield.focus();});
+          fireEvent.keyDown(textfield, {key: 'J'});
+          fireEvent.keyUp(textfield, {key: 'J'});
+          act(() => {
+            jest.runAllTimers();
+          });
+          expect(document.activeElement).toBe(textfield);
+          fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+          fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+          act(() => {
+            jest.runAllTimers();
+          });
+        });
+      });
     });
 
     describe('focus marshalling', function () {
