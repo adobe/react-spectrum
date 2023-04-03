@@ -308,7 +308,7 @@ function ControlledExample(props) {
 
   return (
     <Flex direction="column" alignItems="center" gap="size-150">
-      <DateRangePicker label="Controlled" {...props} value={value} onChange={chain(setValue, action('onChange'))} />
+      <DateRangePicker label="Controlled" {...props} granularity="minute" value={value} onChange={chain(setValue, action('onChange'))} />
       <ActionButton onPress={() => setValue({start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)})}>Change value</ActionButton>
       <ActionButton onPress={() => setValue(null)}>Clear</ActionButton>
     </Flex>
