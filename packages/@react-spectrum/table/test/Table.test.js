@@ -29,6 +29,7 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import * as stories from '../stories/Table.stories';
 import {Switch} from '@react-spectrum/switch';
+import {TableSection} from '@react-stately/table';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
@@ -37,7 +38,9 @@ let {
   InlineDeleteButtons: DeletableRowsTable,
   EmptyStateStory: EmptyStateTable,
   WithBreadcrumbNavigation: TableWithBreadcrumbs,
-  DynamicSections: DynamicTableSections
+  StaticWithSections: StaticTableSections,
+  DynamicSections: DynamicTableSections,
+  ManySections: ManySections
 } = composeStories(stories);
 
 
@@ -1294,6 +1297,15 @@ describe('TableView', function () {
         moveFocus('Home');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[1]);
       });
+
+      it('should focus the first row with Home (sections)', function () {
+        let tree = render(<DynamicTableSections />);
+        let rows = tree.getAllByRole('row');
+        act(() => {rows[8].focus();});
+        moveFocus('Home');
+        // Section header row isn't focusable and is the first row, so goes one row down
+        expect(document.activeElement).toBe(rows[2]);
+      });
     });
 
     describe('End', function () {
@@ -1316,6 +1328,14 @@ describe('TableView', function () {
         act(() => {tree.getAllByRole('row')[1].focus();});
         moveFocus('End');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[2]);
+      });
+
+      it('should focus the last row with End (sections)', function () {
+        let tree = render(<DynamicTableSections />);
+        let rows = tree.getAllByRole('row');
+        act(() => {rows[2].focus();});
+        moveFocus('End');
+        expect(document.activeElement).toBe(rows[10]);
       });
     });
 
@@ -1349,6 +1369,26 @@ describe('TableView', function () {
         moveFocus('PageDown');
         expect(document.activeElement).toBe(tree.getByRole('row', {name: 'Foo 100'}));
       });
+
+      it('should focus the row a page below (sections)', function () {
+        let tree = render(<ManySections />);
+        let rows = tree.getAllByRole('row');
+        act(() => {rows[2].focus();});
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(tree.getByRole('row', {name: '22, 0'}));
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(tree.getByRole('row', {name: '44, 0'}));
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(tree.getByRole('row', {name: '66, 0'}));
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(tree.getByRole('row', {name: '88, 0'}));
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(tree.getByRole('row', {name: '110, 0'}));
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(tree.getByRole('row', {name: '132, 0'}));
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(tree.getByRole('row', {name: '149, 0'}));
+      });
     });
 
     describe('PageUp', function () {
@@ -1370,6 +1410,28 @@ describe('TableView', function () {
         act(() => {tree.getAllByRole('row')[12].focus();});
         moveFocus('PageUp');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[1]);
+      });
+
+      it('should focus the row a page above (sections)', function () {
+        let tree = render(<ManySections />);
+        let rows = tree.getAllByRole('row');
+        act(() => {rows[2].focus();});
+        moveFocus('End');
+        expect(document.activeElement).toBe(tree.getByRole('row', {name: '149, 0'}));
+        moveFocus('PageUp');
+        expect(document.activeElement).toBe(tree.getByRole('row', {name: '127, 0'}));
+        moveFocus('PageUp');
+        expect(document.activeElement).toBe(tree.getByRole('row', {name: '105, 0'}));
+        moveFocus('PageUp');
+        expect(document.activeElement).toBe(tree.getByRole('row', {name: '83, 0'}));
+        moveFocus('PageUp');
+        expect(document.activeElement).toBe(tree.getByRole('row', {name: '61, 0'}));
+        moveFocus('PageUp');
+        expect(document.activeElement).toBe(tree.getByRole('row', {name: '39, 0'}));
+        moveFocus('PageUp');
+        expect(document.activeElement).toBe(tree.getByRole('row', {name: '17, 0'}));
+        moveFocus('PageUp');
+        expect(document.activeElement).toBe(tree.getByRole('row', {name: '0, 0'}));
       });
     });
 
@@ -1500,6 +1562,17 @@ describe('TableView', function () {
         moveFocus('S');
         expect(document.activeElement).toBe(getCell(tree, 'Sam'));
       });
+
+      it('should not match section headers', function () {
+        let tree = render(<StaticTableSections />);
+        let rows = tree.getAllByRole('row');
+        act(() => {rows[2].focus();});
+        expect(document.activeElement).toBe(rows[2]);
+        moveFocus('Sect');
+        expect(document.activeElement).toBe(rows[2]);
+        moveFocus('A');
+        expect(document.activeElement).toBe(rows[5]);
+      });
     });
 
     describe('focus marshalling', function () {
@@ -1523,6 +1596,36 @@ describe('TableView', function () {
                 <Cell textValue="Yahoo"><Link><a href="https://yahoo.com" target="_blank">Yahoo</a></Link></Cell>
                 <Cell>Baz 2</Cell>
               </Row>
+            </TableBody>
+          </TableView>
+          <input data-testid="after" />
+        </>
+      );
+
+      let renderFocusableWithSections = () => render(
+        <>
+          <input data-testid="before" />
+          <TableView aria-label="Table" selectionMode="multiple">
+            <TableHeader>
+              <Column>Foo</Column>
+              <Column>Bar</Column>
+              <Column>baz</Column>
+            </TableHeader>
+            <TableBody>
+              <TableSection title="section 1">
+                <Row>
+                  <Cell textValue="Foo 1"><Switch aria-label="Foo 1" /></Cell>
+                  <Cell textValue="Google"><Link><a href="https://google.com" target="_blank">Google</a></Link></Cell>
+                  <Cell>Baz 1</Cell>
+                </Row>
+              </TableSection>
+              <TableSection title="section 2">
+                <Row>
+                  <Cell textValue="Foo 2"><Switch aria-label="Foo 2" /><Switch aria-label="Foo 3" /></Cell>
+                  <Cell textValue="Yahoo"><Link><a href="https://yahoo.com" target="_blank">Yahoo</a></Link></Cell>
+                  <Cell>Baz 2</Cell>
+                </Row>
+              </TableSection>
             </TableBody>
           </TableView>
           <input data-testid="after" />
@@ -1596,6 +1699,23 @@ describe('TableView', function () {
         expect(document.activeElement).toBe(within(table).getAllByRole('row')[1]);
       });
 
+      it('should move focus to the first row when tabbing into the table from the start (sections)', function () {
+        let tree = renderFocusableWithSections();
+
+        let table = tree.getByRole('grid');
+        expect(table).toHaveAttribute('tabIndex', '0');
+
+        let before = tree.getByTestId('before');
+        act(() => before.focus());
+
+        // Simulate tabbing to the first "tabbable" item inside the table
+        fireEvent.keyDown(before, {key: 'Tab'});
+        act(() => {within(table).getAllByRole('switch')[0].focus();});
+        fireEvent.keyUp(before, {key: 'Tab'});
+
+        expect(document.activeElement).toBe(within(table).getAllByRole('row')[2]);
+      });
+
       it('should move focus to the last row when tabbing into the table from the end', function () {
         let tree = renderFocusable();
 
@@ -1613,6 +1733,25 @@ describe('TableView', function () {
         });
 
         expect(document.activeElement).toBe(within(table).getAllByRole('row')[2]);
+      });
+
+      it('should move focus to the last row when tabbing into the table from the end', function () {
+        let tree = renderFocusableWithSections();
+
+        let table = tree.getByRole('grid');
+        expect(table).toHaveAttribute('tabIndex', '0');
+
+        let after = tree.getByTestId('after');
+        act(() => after.focus());
+
+        // Simulate tabbing to the last "tabbable" item inside the table
+        act(() => {
+          fireEvent.keyDown(after, {key: 'Tab', shiftKey: true});
+          within(table).getAllByRole('link')[1].focus();
+          fireEvent.keyUp(after, {key: 'Tab', shiftKey: true});
+        });
+
+        expect(document.activeElement).toBe(within(table).getAllByRole('row')[4]);
       });
 
       it('should move focus to the last focused cell when tabbing into the table from the start', function () {
@@ -1850,6 +1989,53 @@ describe('TableView', function () {
         moveFocus('ArrowLeft');
         expect(body.scrollTop).toBe(164);
         expect(document.activeElement).toBe(getCell(tree, 'Foo 5 4'));
+      });
+
+      it('should scroll to a cell when it is focused off screen (sections)', function () {
+        let tree = render(<ManySections selectionMode="multiple" selectionStyle="checkbox" />);
+        let body = tree.getByRole('grid').childNodes[1];
+
+        let cell = getCell(tree, '5, 5');
+        act(() => cell.focus());
+        expect(document.activeElement).toBe(cell);
+        expect(body.scrollTop).toBe(0);
+
+        // When scrolling the focused item out of view, focus should remain on the item,
+        // virtualizer keeps focused items from being reused
+        body.scrollTop = 2000;
+        body.scrollLeft = 1000;
+        fireEvent.scroll(body);
+
+        expect(body.scrollTop).toBe(2000);
+        expect(document.activeElement).toBe(cell);
+        expect(tree.queryByText('5, 5')).toBe(cell.firstElementChild);
+
+        // Ensure we have the correct sticky cells in the right order.
+        let persistedRow = cell.closest('[role=row]');
+        let cells = within(persistedRow).getAllByRole(role => role === 'gridcell' || role === 'rowheader');
+        expect(cells).toHaveLength(14);
+        expect(cells[0]).toHaveAttribute('aria-colindex', '1'); // checkbox
+        expect(cells[1]).toHaveAttribute('aria-colindex', '2'); // rowheader
+        expect(cells[2]).toHaveAttribute('aria-colindex', '7'); // persisted
+        expect(cells[2]).toBe(cell);
+        expect(cells[3]).toHaveAttribute('aria-colindex', '11'); // first visible
+
+        let renderedSections = tree.getAllByRole('rowgroup').slice(1);
+        // First section is the persisted section containing the previously focused row
+        let rowsInFirstSection = within(renderedSections[0]).getAllByRole('row');
+        // Should only have two rows, the section header row and the persisted row
+        expect(rowsInFirstSection.length).toBe(2);
+        expect(rowsInFirstSection[0]).toHaveAttribute('aria-rowindex', '2');
+        expect(rowsInFirstSection[0]).toHaveTextContent('Section 0');
+        expect(persistedRow).toBe(rowsInFirstSection[1]);
+
+        // Next rendered section should be much lower
+        expect(within(renderedSections[1]).getAllByRole('row')[0]).toHaveTextContent('Section 4');
+
+        // Moving focus should scroll the new focused item into view
+        moveFocus('ArrowLeft');
+        expect(body.scrollTop).toBe(240);
+        expect(document.activeElement).toBe(getCell(tree, '5, 4'));
       });
 
       it('should not scroll when a column header receives focus', function () {
@@ -2182,6 +2368,30 @@ describe('TableView', function () {
         checkRowSelection(rows.slice(21), false);
       });
 
+      it('should support selecting a range with a pointer (sections)', function () {
+        let onSelectionChange = jest.fn();
+        let tree = render(<DynamicTableSections onSelectionChange={onSelectionChange} onAction={null} selectionMode="multiple" selectionStyle="checkbox" />);
+
+        checkSelectAll(tree, 'unchecked');
+
+        let rows = tree.getAllByRole('row');
+        checkRowSelection(rows.slice(2, 5), false);
+        checkRowSelection(rows.slice(7, 11), false);
+        triggerPress(getCell(tree, 'Foo 1'));
+
+        onSelectionChange.mockReset();
+        triggerPress(getCell(tree, 'Foo 8'), {shiftKey: true});
+
+        checkSelection(onSelectionChange, [
+          'Foo 1', 'Foo 2', 'Foo 3', 'Foo 4', 'Foo 5', 'Foo 6', 'Foo 7', 'Foo 8'
+        ]);
+
+        checkRowSelection(rows.slice(2, 5), true);
+        checkRowSelection(rows.slice(7, 11), true);
+        expect(rows[1]).not.toHaveAttribute('aria-selected');
+        expect(rows[6]).not.toHaveAttribute('aria-selected');
+      });
+
       it('should anchor range selections with a pointer', function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
@@ -2234,6 +2444,29 @@ describe('TableView', function () {
         checkRowSelection(rows.slice(12), false);
       });
 
+      it('should extend a selection with Shift + ArrowDown (sections)', function () {
+        let onSelectionChange = jest.fn();
+        let tree = render(<DynamicTableSections onSelectionChange={onSelectionChange} onAction={null} selectionMode="multiple" selectionStyle="checkbox" />);
+
+        checkSelectAll(tree, 'unchecked');
+
+        let rows = tree.getAllByRole('row');
+        checkRowSelection(rows.slice(2, 5), false);
+        checkRowSelection(rows.slice(7, 11), false);
+        pressWithKeyboard(getCell(tree, 'Foo 4'));
+
+        onSelectionChange.mockReset();
+        fireEvent.keyDown(getCell(tree, 'Foo 4'), {key: 'ArrowDown', shiftKey: true});
+
+        checkSelection(onSelectionChange, ['Foo 4', 'Foo 5']);
+        checkRowSelection(rows.slice(2, 4), false);
+        expect(rows[5]).toHaveAttribute('aria-selected', 'true');
+        expect(rows[7]).toHaveAttribute('aria-selected', 'true');
+        checkRowSelection(rows.slice(8, 11), false);
+        expect(rows[1]).not.toHaveAttribute('aria-selected');
+        expect(rows[6]).not.toHaveAttribute('aria-selected');
+      });
+
       it('should extend a selection with Shift + ArrowUp', function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
@@ -2251,6 +2484,29 @@ describe('TableView', function () {
         checkRowSelection(rows.slice(1, 9), false);
         checkRowSelection(rows.slice(9, 10), true);
         checkRowSelection(rows.slice(11), false);
+      });
+
+      it('should extend a selection with Shift + ArrowUp (sections)', function () {
+        let onSelectionChange = jest.fn();
+        let tree = render(<DynamicTableSections onSelectionChange={onSelectionChange} onAction={null} selectionMode="multiple" selectionStyle="checkbox" />);
+
+        checkSelectAll(tree, 'unchecked');
+
+        let rows = tree.getAllByRole('row');
+        checkRowSelection(rows.slice(2, 5), false);
+        checkRowSelection(rows.slice(7, 11), false);
+        pressWithKeyboard(getCell(tree, 'Foo 5'));
+
+        onSelectionChange.mockReset();
+        fireEvent.keyDown(getCell(tree, 'Foo 5'), {key: 'ArrowUp', shiftKey: true});
+
+        checkSelection(onSelectionChange, ['Foo 4', 'Foo 5']);
+        checkRowSelection(rows.slice(2, 4), false);
+        expect(rows[5]).toHaveAttribute('aria-selected', 'true');
+        expect(rows[7]).toHaveAttribute('aria-selected', 'true');
+        checkRowSelection(rows.slice(8, 11), false);
+        expect(rows[1]).not.toHaveAttribute('aria-selected');
+        expect(rows[6]).not.toHaveAttribute('aria-selected');
       });
 
       it('should extend a selection with Ctrl + Shift + Home', function () {

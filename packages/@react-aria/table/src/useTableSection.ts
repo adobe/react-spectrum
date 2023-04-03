@@ -11,7 +11,6 @@
  */
 
 import {DOMAttributes} from '@react-types/shared';
-import {getChildNodes, getFirstItem} from '@react-stately/collections';
 import {GridNode} from '@react-types/grid';
 import {TableState} from '@react-stately/table';
 import {useId} from '@react-aria/utils';

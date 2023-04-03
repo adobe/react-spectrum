@@ -162,16 +162,32 @@ export const StaticWithSections: TableStory = {
     <TableView {...args}>
       <TableHeader>
         <Column key="foo">Foo</Column>
+        <Column key="bar">Bar</Column>
+        <Column key="baz">Baz</Column>
       </TableHeader>
       <TableBody>
         <TableSection title="Section1">
           <Row>
             <Cell>One</Cell>
+            <Cell>Two</Cell>
+            <Cell>Three</Cell>
+          </Row>
+          <Row>
+            <Cell>Four</Cell>
+            <Cell>Five</Cell>
+            <Cell>Six</Cell>
           </Row>
         </TableSection>
         <TableSection title="Section2">
           <Row>
-            <Cell>two</Cell>
+            <Cell>A</Cell>
+            <Cell>B</Cell>
+            <Cell>C</Cell>
+          </Row>
+          <Row>
+            <Cell>D</Cell>
+            <Cell>E</Cell>
+            <Cell>F</Cell>
           </Row>
         </TableSection>
       </TableBody>
@@ -605,6 +621,20 @@ for (let i = 0; i < 1000; i++) {
   manyRows.push(row);
 }
 
+let manySections = [];
+
+for (let secIndex = 0; secIndex < 15; secIndex++) {
+  let children = [];
+  for (let i = 0; i < 10; i++) {
+    let row  = {key: `${secIndex} R ${i}`};
+    for (let j = 0; j < 100; j++) {
+      row['C' + j] = `${i + secIndex * 10}, ${j}`;
+    }
+    children.push(row);
+  }
+  manySections.push({name: 'Section ' + secIndex, children});
+}
+
 export const ManyColumnsAndRows: TableStory = {
   args: {
     'aria-label': 'TableView with many columns and rows',
@@ -623,7 +653,7 @@ export const ManyColumnsAndRows: TableStory = {
         </TableHeader>
         <TableBody items={manyRows}>
           {item =>
-            (<Row key={item.foo}>
+            (<Row key={item.key}>
               {key => <Cell>{item[key]}</Cell>}
             </Row>)
           }
@@ -634,6 +664,41 @@ export const ManyColumnsAndRows: TableStory = {
     </>
   ),
   storyName: 'many columns and rows'
+};
+
+export const ManySections: TableStory = {
+  args: {
+    'aria-label': 'TableView with many sections',
+    width: 700,
+    height: 500
+  },
+  render: (args) => (
+    <>
+      <label htmlFor="focus-before">Focus before</label>
+      <input data-testid="before" id="focus-before" />
+      <TableView {...args}>
+        <TableHeader columns={manyColunns}>
+          {column =>
+            <Column minWidth={100}>{column.name}</Column>
+          }
+        </TableHeader>
+        <TableBody items={manySections}>
+          {item => (
+            <TableSection key={item.name} items={item.children} title={item.name}>
+              {(item: any) =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableSection>
+          )}
+        </TableBody>
+      </TableView>
+      <label htmlFor="focus-after">Focus after</label>
+      <input data-testid="after" id="focus-after" />
+    </>
+  ),
+  storyName: 'many sections'
 };
 
 const TableViewFilledCellWidths = (props: SpectrumTableProps<unknown> & {allowsResizing: boolean}) => {

@@ -34,7 +34,7 @@ import {InsertionIndicator} from './InsertionIndicator';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
-import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, useVirtualizerItem, VirtualizerItem} from '@react-aria/virtualizer';
+import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
 import ListGripper from '@spectrum-icons/ui/ListGripper';
 import {Nubbin} from './Nubbin';
 import {ProgressCircle} from '@react-spectrum/progress';
@@ -366,7 +366,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
           {renderChildren(children)}
         </TableSectionRow>
 
-      )
+      );
     }
 
     if (reusableView.viewType === 'row') {

@@ -466,6 +466,7 @@ export class TableLayout<T> extends ListLayout<T> {
     let res: LayoutInfo[] = [];
 
     this.buildPersistedIndices();
+    console.log('persisted', this.persistedIndices)
     for (let node of this.rootNodes) {
       res.push(node.layoutInfo);
       this.addVisibleLayoutInfos(res, node, rect);
@@ -498,85 +499,107 @@ export class TableLayout<T> extends ListLayout<T> {
           }
         }
 
-        // Note: this.persistedIndicies is structured as follow:
-        // parentKey: [array of child indicies that should be preserved] (aka the row/section index values, cells won't be included here)
-        // this could be "body": [array of child indicies that should be preserved aka the focused row index]
-        // this happens per level of parent so if we focus a cell in a row we will also have:
-        // "row1" (key of row containing foucused children): [array of cell indicies] (includes checkbox (0), rowheader (1 and w/e extra row headers the user specified), and focused cell index)
-
-        // Note: the top level "rowgroup" (aka TableBody) can have rows and sections. Sections don't have to be differentiated here
-        // since we can regard them as a tall row at this level
-        let firstVisibleChild = this.binarySearch(node.children, rect.topLeft, 'y');
-        let lastVisibleChild = this.binarySearch(node.children, rect.bottomRight, 'y');
-
-        // Add persisted row/section before the first visible row/section.
-        // Note: We don't need to do any updates to this logic for sections since persistedChildren here will only consist of section-less rows and sections since we are at the "body" parent key level
         let persistedChildren = this.persistedIndices.get(node.layoutInfo.key);
         let persistIndex = 0;
 
-        while (
-          persistedChildren &&
-          persistIndex < persistedChildren.length &&
-          persistedChildren[persistIndex] < firstVisibleChild
-        ) {
-          let idx = persistedChildren[persistIndex];
-          if (idx < node.children.length && (node.layoutInfo.type !== 'section' || idx !== 0)) {
+        // If the children don't overlap the visible rect, just add all persisted nodes to the visible layout
+        let childrenRectTop = node.children[0].layoutInfo.rect.y;
+        let childrenRectBottom = node.children[node.children.length - 1].layoutInfo.rect.maxY;
+        if (!(childrenRectTop > rect.bottomRight.y || childrenRectBottom < rect.topLeft.y)) {
+          for (let idx of persistedChildren) {
             res.push(node.children[idx].layoutInfo);
             this.addVisibleLayoutInfos(res, node.children[idx], rect);
           }
-          persistIndex++;
-        }
+        } else {
+          // Note:
+          // this.persistedIndicies is structured as follows:
+          // parentKey: [array of child indicies that should be preserved] (aka the row/section index values, cells won't be included here)
+          // this could be "body": [array of child indicies that should be preserved aka the focused row index]
+          // this happens per level of parent so if we focus a cell in a row we will also have:
+          // "row1" (key of row containing foucused children): [array of cell indicies] (includes checkbox (0), rowheader (1 and w/e extra row headers the user specified), and focused cell index)
 
-        for (let i = firstVisibleChild; i <= lastVisibleChild; i++) {
-          // Skip persisted rows/sections that overlap with visible cells.
-          while (persistedChildren && persistIndex < persistedChildren.length && persistedChildren[persistIndex] <= i) {
+          // Note: the top level "rowgroup" (aka TableBody) can have rows and sections. Sections don't have to be differentiated here
+          // since we can regard them as a tall row at this level
+          let firstVisibleChild = this.binarySearch(node.children, rect.topLeft, 'y');
+          let lastVisibleChild = this.binarySearch(node.children, rect.bottomRight, 'y');
+
+          // Add persisted row/section before the first visible row/section.
+          // Note: We don't need to do any updates to this logic for sections since persistedChildren here will only consist of section-less rows and sections since we are at the "body" parent key level
+          while (
+            persistedChildren &&
+            persistIndex < persistedChildren.length &&
+            persistedChildren[persistIndex] < firstVisibleChild
+          ) {
+            let idx = persistedChildren[persistIndex];
+            if (idx < node.children.length && (node.layoutInfo.type !== 'section' || idx !== 0)) {
+              res.push(node.children[idx].layoutInfo);
+              this.addVisibleLayoutInfos(res, node.children[idx], rect);
+            }
             persistIndex++;
           }
 
-          res.push(node.children[i].layoutInfo);
-          this.addVisibleLayoutInfos(res, node.children[i], rect);
-        }
+          for (let i = firstVisibleChild; i <= lastVisibleChild; i++) {
+            // Skip persisted rows/sections that overlap with visible cells.
+            while (persistedChildren && persistIndex < persistedChildren.length && persistedChildren[persistIndex] <= i) {
+              persistIndex++;
+            }
 
-        // Add persisted rows after the visible rows.
-        while (persistedChildren && persistIndex < persistedChildren.length) {
-          let idx = persistedChildren[persistIndex++];
-          if (idx < node.children.length) {
-            res.push(node.children[idx].layoutInfo);
-            this.addVisibleLayoutInfos(res, node.children[idx], rect);
+            res.push(node.children[i].layoutInfo);
+            this.addVisibleLayoutInfos(res, node.children[i], rect);
+          }
+
+          // Add persisted rows after the visible rows.
+          while (persistedChildren && persistIndex < persistedChildren.length) {
+            let idx = persistedChildren[persistIndex++];
+            if (idx < node.children.length) {
+              res.push(node.children[idx].layoutInfo);
+              this.addVisibleLayoutInfos(res, node.children[idx], rect);
+            }
           }
         }
         break;
       }
       case 'headerrow':
       case 'row': {
-        let firstVisibleCell = this.binarySearch(node.children, rect.topLeft, 'x');
-        let lastVisibleCell = this.binarySearch(node.children, rect.topRight, 'x');
-        let stickyIndex = 0;
-
-        // Add persisted/sticky cells before the visible cells.
         let persistedCellIndices = this.persistedIndices.get(node.layoutInfo.key) || this.stickyColumnIndices;
-        while (stickyIndex < persistedCellIndices.length && persistedCellIndices[stickyIndex] < firstVisibleCell) {
-          let idx = persistedCellIndices[stickyIndex];
-          if (idx < node.children.length) {
-            res.push(node.children[idx].layoutInfo);
-          }
-          stickyIndex++;
-        }
 
-        for (let i = firstVisibleCell; i <= lastVisibleCell; i++) {
-          // Skip sticky cells that overlap with visible cells.
-          while (stickyIndex < persistedCellIndices.length && persistedCellIndices[stickyIndex] < i) {
+        // If the children don't overlap the visible rect, just add all persisted nodes to the visible layout
+        let childrenRectLeft = node.children[0].layoutInfo.rect.x;
+        let childrenRectRight = node.children[node.children.length - 1].layoutInfo.rect.maxX;
+        if (!(childrenRectLeft > rect.topRight.x || childrenRectRight < rect.topLeft.x)) {
+          for (let idx of persistedCellIndices) {
+            res.push(node.children[idx].layoutInfo);
+            this.addVisibleLayoutInfos(res, node.children[idx], rect);
+          }
+        } else {
+          let firstVisibleCell = this.binarySearch(node.children, rect.topLeft, 'x');
+          let lastVisibleCell = this.binarySearch(node.children, rect.topRight, 'x');
+          let stickyIndex = 0;
+
+          // Add persisted/sticky cells before the visible cells.
+          while (stickyIndex < persistedCellIndices.length && persistedCellIndices[stickyIndex] < firstVisibleCell) {
+            let idx = persistedCellIndices[stickyIndex];
+            if (idx < node.children.length) {
+              res.push(node.children[idx].layoutInfo);
+            }
             stickyIndex++;
           }
 
-          res.push(node.children[i].layoutInfo);
-        }
+          for (let i = firstVisibleCell; i <= lastVisibleCell; i++) {
+            // Skip sticky cells that overlap with visible cells.
+            while (stickyIndex < persistedCellIndices.length && persistedCellIndices[stickyIndex] < i) {
+              stickyIndex++;
+            }
 
-        // Add any remaining sticky cells after the visible cells.
-        while (stickyIndex < persistedCellIndices.length) {
-          let idx = persistedCellIndices[stickyIndex++];
-          if (idx < node.children.length) {
-            res.push(node.children[idx].layoutInfo);
+            res.push(node.children[i].layoutInfo);
+          }
+
+          // Add any remaining sticky cells after the visible cells.
+          while (stickyIndex < persistedCellIndices.length) {
+            let idx = persistedCellIndices[stickyIndex++];
+            if (idx < node.children.length) {
+              res.push(node.children[idx].layoutInfo);
+            }
           }
         }
         break;
