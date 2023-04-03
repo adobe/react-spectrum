@@ -135,7 +135,8 @@ export default function DocSearch() {
       title: 'Search by',
       children: [
         {
-          key: 'algolia-footer-logo'
+          key: 'algolia-footer-logo',
+          textValue: 'Algolia'
         }
       ]
     });
