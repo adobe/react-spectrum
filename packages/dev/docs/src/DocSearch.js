@@ -125,7 +125,7 @@ export default function DocSearch() {
         }
       ));
 
-      sections.push({title, items: items.flat()});
+      sections.push({title, items: items.map((item) => item[0])});
     }
     let titles = Object.values(sectionTitles);
     sections = sections.sort((a, b) => titles.indexOf(a.title) < titles.indexOf(b.title) ? -1 : 1);
