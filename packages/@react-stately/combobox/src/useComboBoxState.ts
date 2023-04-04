@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, FocusStrategy, Node} from '@react-types/shared';
+import {Collection, CollectionStateBase, FocusStrategy, Node} from '@react-types/shared';
 import {ComboBoxProps, MenuTriggerAction} from '@react-types/combobox';
+import {getChildNodes} from '@react-stately/collections';
 import {ListCollection, useSingleSelectListState} from '@react-stately/list';
 import {SelectState} from '@react-stately/select';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
@@ -35,7 +36,7 @@ export interface ComboBoxState<T> extends SelectState<T> {
 
 type FilterFn = (textValue: string, inputValue: string) => boolean;
 
-export interface ComboBoxStateOptions<T> extends ComboBoxProps<T> {
+export interface ComboBoxStateOptions<T> extends Omit<ComboBoxProps<T>, 'children'>, CollectionStateBase<T> {
   /** The filter function used to determine if a option should be included in the combo box list. */
   defaultFilter?: FilterFn,
   /** Whether the combo box allows the menu to be open when the collection is empty. */
@@ -100,6 +101,11 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
   let onOpenChange = (open: boolean) => {
     if (props.onOpenChange) {
       props.onOpenChange(open, open ? menuOpenTrigger.current : undefined);
+    }
+
+    selectionManager.setFocused(open);
+    if (!open) {
+      selectionManager.setFocusedKey(null);
     }
   };
 
@@ -247,13 +253,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     lastSelectedKeyText.current = selectedItemText;
   });
 
-  useEffect(() => {
-    // Reset focused key when the menu closes
-    if (!triggerState.isOpen) {
-      selectionManager.setFocusedKey(null);
-    }
-  }, [triggerState.isOpen, selectionManager]);
-
   // Revert input value and close menu
   let revert = () => {
     if (allowsCustomValue && selectedKey == null) {
@@ -357,18 +356,20 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
 }
 
 function filterCollection<T extends object>(collection: Collection<Node<T>>, inputValue: string, filter: FilterFn): Collection<Node<T>> {
-  return new ListCollection(filterNodes(collection, inputValue, filter));
+  return new ListCollection(filterNodes(collection, collection, inputValue, filter));
 }
 
-function filterNodes<T>(nodes: Iterable<Node<T>>, inputValue: string, filter: FilterFn): Iterable<Node<T>> {
+function filterNodes<T>(collection: Collection<Node<T>>, nodes: Iterable<Node<T>>, inputValue: string, filter: FilterFn): Iterable<Node<T>> {
   let filteredNode = [];
   for (let node of nodes) {
     if (node.type === 'section' && node.hasChildNodes) {
-      let filtered = filterNodes(node.childNodes, inputValue, filter);
-      if ([...filtered].length > 0) {
+      let filtered = filterNodes(collection, getChildNodes(node, collection), inputValue, filter);
+      if ([...filtered].some(node => node.type === 'item')) {
         filteredNode.push({...node, childNodes: filtered});
       }
-    } else if (node.type !== 'section' && filter(node.textValue, inputValue)) {
+    } else if (node.type === 'item' && filter(node.textValue, inputValue)) {
+      filteredNode.push({...node});
+    } else if (node.type !== 'item') {
       filteredNode.push({...node});
     }
   }

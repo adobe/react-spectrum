@@ -204,7 +204,7 @@ storiesOf('Form', module)
     'form with numberfield and locale=ar-AE',
     () => (
       <Flex gap="size-100">
-        <NumberField label="Outside form" />
+        <NumberField label="Outside form" description="Hello" />
         <Form>
           <NumberField label="Inside form" />
         </Form>

@@ -956,7 +956,7 @@ describe('ActionGroup', function () {
 
       const itemThree = within(menu).getByRole('menuitem', {name: 'Three'});
       expect(itemThree).toBeVisible();
-      expect(itemThree).toHaveAttribute('aria-disabled', 'false');
+      expect(itemThree).not.toHaveAttribute('aria-disabled');
 
       const itemFour = within(menu).getByRole('menuitem', {name: 'Four'});
       expect(itemFour).toBeVisible();

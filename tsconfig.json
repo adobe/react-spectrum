@@ -34,6 +34,8 @@
         "name": "typescript-strict-plugin",
         "paths": [
           "./packages/@react-aria/a",
+          "./packages/@react-aria/b",
+          "./packages/@react-aria/l",
           "./packages/@react-spectrum/a",
           "./packages/@react-spectrum/b",
           "./packages/@react-spectrum/color",
@@ -59,7 +61,8 @@
           "./packages/@react-types/statuslight",
           "./packages/@react-types/text",
           "./packages/@react-types/view",
-          "./packages/@react-types/well"
+          "./packages/@react-types/well",
+          "./packages/react-aria-components"
         ]
       }
     ]
