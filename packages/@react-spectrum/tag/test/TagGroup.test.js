@@ -657,7 +657,7 @@ describe('TagGroup', function () {
     expect(getByText('None')).toBeTruthy();
   });
 
-  it('should allow you to tab into TagGroup body if empty with link', async function () {
+  it('should allow you to tab into TagGroup if empty with link', async function () {
     let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px', marginTop: '4px', height: '24px'}));
 
     let renderEmptyState = () => (
