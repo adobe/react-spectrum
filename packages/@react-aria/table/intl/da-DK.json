@@ -4,6 +4,7 @@
   "columnSize": "{value} pixels",
   "descending": "faldende",
   "descendingSort": "sorteret efter kolonne {columnName} i faldende rækkefølge",
+  "resizerDescription": "Tryk på Enter for at ændre størrelse",
   "select": "Vælg",
   "selectAll": "Vælg alle",
   "sortable": "sorterbar kolonne"
