@@ -171,6 +171,16 @@ export default function DocSearch() {
     }
   };
 
+  let observer = new MutationObserver((mutationList) => {
+    let target = mutationList[0].target;
+    let top = (searchAutocompleteRef.current.UNSAFE_getDOMNode().getBoundingClientRect().height + 8) + 'px';
+    if (target.style.top !== top) {
+      observer.disconnect();
+      mutationList[0].target.style.top = top;
+      observer.observe(target, {attributes: true, attributeFilter: ['style']});
+    }
+  });
+
   return (
     <ThemeProvider UNSAFE_className={docsStyle.docSearchBoxThemeProvider}>
       <span role="search">
@@ -182,6 +192,21 @@ export default function DocSearch() {
           loadingState={loadingState}
           value={searchValue}
           onInputChange={onInputChange}
+          onOpenChange={(isOpen) => {
+            if (isOpen) {
+              setTimeout(() => {
+                const listbox = document.querySelector('[role="listbox"][aria-label="Suggestions"]');
+                if (listbox) {
+                  listbox.parentElement.style.position = 'fixed';
+                  let top = (searchAutocompleteRef.current.UNSAFE_getDOMNode().getBoundingClientRect().height + 8) + 'px';
+                  listbox.parentElement.style.top = top;
+                  observer.observe(listbox.parentElement, {attributes: true, attributeFilter: ['style']});
+                }
+              }, 200);
+            } else {
+              observer.disconnect();
+            }
+          }}
           onSubmit={onSubmit}>
           {(section) => (
             <Section key={section.key} items={section.children} title={section.title}>
