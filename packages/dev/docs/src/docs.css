@@ -713,6 +713,11 @@ h2.sectionHeader {
   margin-left: var(--spectrum-global-dimension-size-100);
 }
 
+body.docsearch-open [data-testid="popover"] {
+  position: fixed !important;
+  top: 38px !important;
+}
+
 /* hamburger menu should be hidden so that it doesn't receive focus before the sidenav */
 .hamburgerButton {
   display:none;
