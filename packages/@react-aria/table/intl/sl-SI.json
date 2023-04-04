@@ -4,6 +4,7 @@
   "columnSize": "{value} slikovnih pik",
   "descending": "padajoče",
   "descendingSort": "razvrščeno po stolpcu {columnName} v padajočem vrstnem redu",
+  "resizerDescription": "Pritisnite tipko Enter da začnete spreminjati velikost",
   "select": "Izberite",
   "selectAll": "Izberite vse",
   "sortable": "razvrstljivi stolpec"

@@ -4,6 +4,7 @@
   "columnSize": "{value} pixels",
   "descending": "décroissant",
   "descendingSort": "trié en fonction de la colonne {columnName} par ordre décroissant",
+  "resizerDescription": "Appuyez sur Entrée pour commencer le redimensionnement.",
   "select": "Sélectionner",
   "selectAll": "Sélectionner tout",
   "sortable": "colonne triable"
