@@ -89,14 +89,14 @@ export class GridCollection<T> implements IGridCollection<T> {
     let sectionCounter = 0;
     let rowCounter = 0;
     let rowIndex = 1;
-    opts.items.forEach((node, i) => {
+    opts.items.forEach((node: GridNode<T>, i) => {
       // Reset row counter if entering a new section so we have a index reflecting the position of the
       // row within the section
       if (node.type === 'section') {
         rowCounter = 0;
       }
 
-      let rowNode = {
+      let defaultProps = {
         level: 0,
         key: 'row-' + i,
         type: 'row',
@@ -105,29 +105,35 @@ export class GridCollection<T> implements IGridCollection<T> {
         childNodes: [...node.childNodes],
         rendered: undefined,
         textValue: undefined,
-        colspan: node.type === 'section' || node.props?.isSectionHeader ? this.columnCount : 1,
-        ...node,
+        colspan: node.type === 'section' || node.props?.isSectionHeader ? this.columnCount : 1
+      };
+
+      let newProps = {
         index: node.type === 'section' ? sectionCounter++ : rowCounter++,
         rowIndex: node.type !== 'section' ? rowIndex : undefined
-      } as GridNode<T>;
+      };
+
+      // Use Object.assign instead of spread to preseve object reference, ensures retrieving nodes
+      // via .childNodes returns the same object as the keyMap
+      Object.assign(node, defaultProps, {...node}, newProps);
 
       if (last) {
-        last.nextKey = rowNode.key;
-        rowNode.prevKey = last.key;
+        last.nextKey = node.key;
+        node.prevKey = last.key;
       } else {
-        rowNode.prevKey = null;
+        node.prevKey = null;
       }
 
-      if (rowNode.type === 'section') {
-        this.sections.push(rowNode);
+      if (node.type === 'section') {
+        this.sections.push(node);
       } else {
-        this.rows.push(rowNode);
+        this.rows.push(node);
         rowIndex++;
       }
 
-      visit(rowNode);
+      visit(node);
 
-      last = rowNode;
+      last = node;
     });
 
     if (last) {

@@ -11,6 +11,7 @@
  */
 
 import {DOMAttributes} from '@react-types/shared';
+import {getChildNodes, getFirstItem} from '@react-stately/collections';
 import {GridNode} from '@react-types/grid';
 import {TableState} from '@react-stately/table';
 import {useId} from '@react-aria/utils';
@@ -43,12 +44,7 @@ export function useTableSection<T>(props: AriaTableSectionProps<T>, state: Table
   let rowIndex;
 
   if (isVirtualized) {
-    // TODO: should getChildNodes and getFirstItem return an iterable that matches the type of the node passed to it?
-    // TODO: using getFirstItem and getChildNodes returns a row node that doesn't have the extra stuff added by GridCollection, figure out why.
-    // this seems to be the difference in accessing a the modified section row node that was pushed to the keymap via collection.getItem (aka GridCollection)
-    // and accessing the child rows of the section via the section's getChildren which returns something different (see comment in TableCollection about why)
-    // for now, grab row node from keymap via .getItem
-    rowIndex = (state.collection.getItem(node.nextKey) as GridNode<T>).rowIndex;
+    rowIndex = (getFirstItem(getChildNodes(node, state.collection)) as GridNode<T>).rowIndex;
   }
 
   return {
