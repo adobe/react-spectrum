@@ -18,6 +18,7 @@ import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Heading, Text} from '@react-spectrum/text';
 import {Item, SpectrumTagGroupProps, TagGroup} from '../src';
+import {Link} from '@react-spectrum/link';
 import React, {useState} from 'react';
 
 let manyItems = [];
@@ -236,6 +237,16 @@ export const WithLabelDescriptionContextualHelpAndAction: TagGroupStory = {
   storyName: 'with label, description, contextual help + action'
 };
 
+export const EmptyState: TagGroupStory = {
+  render: (args) => <EmptyStateExample {...args} />,
+  storyName: 'Empty state'
+};
+
+export const CustomEmptyState: TagGroupStory = {
+  render: (args) => <EmptyStateExample withCustomEmptyState {...args} />,
+  storyName: 'Custom empty state'
+};
+
 function OnRemoveExample(props) {
   let {withAvatar, ...otherProps} = props;
   let [items, setItems] = useState([
@@ -258,6 +269,36 @@ function OnRemoveExample(props) {
         <Item key={item.key} textValue={item.label}>
           {withAvatar && <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />}
           <Text>{item.label}</Text>
+        </Item>
+      )}
+    </TagGroup>
+  );
+}
+
+function EmptyStateExample(props) {
+  let {withCustomEmptyState, ...otherProps} = props;
+  let [items, setItems] = useState([
+    {id: 1, label: 'Cool Tag 1'},
+    {id: 2, label: 'Another cool tag'}
+  ]);
+
+  let onRemove = (key) => {
+    setItems(prevItems => prevItems.filter((item) => key !== item.id));
+    action('onRemove')(key);
+  };
+
+  let renderEmptyState: () => JSX.Element;
+  if (withCustomEmptyState) {
+    renderEmptyState = () => (
+      <span>No tags. <Link><a href="//react-spectrum.com">Click here</a></Link> to add some.</span>
+    );
+  }
+
+  return (
+    <TagGroup renderEmptyState={renderEmptyState} description="Remove tags to reveal empty state." allowsRemoving label="Tag group with empty state" items={items} onRemove={key => onRemove(key)} {...otherProps}>
+      {(item: any) => (
+        <Item key={item.key} textValue={item.label}>
+          {item.label}
         </Item>
       )}
     </TagGroup>

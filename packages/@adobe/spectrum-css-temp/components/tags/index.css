@@ -18,6 +18,12 @@ governing permissions and limitations under the License.
 
 .spectrum-Tags {
   display: inline;
+
+  &.focus-ring {
+    &:after {
+      box-shadow: 0 0 0 var(--spectrum-focus-ring-border-size) var(--spectrum-tag-border-color-key-focus);
+    }
+  }
 }
 
 .spectrum-Tags-container {

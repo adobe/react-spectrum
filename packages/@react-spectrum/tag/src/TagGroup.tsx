@@ -15,7 +15,7 @@ import {AriaTagGroupProps, TagKeyboardDelegate, useTagGroup} from '@react-aria/t
 import {classNames, useDOMRef} from '@react-spectrum/utils';
 import {DOMRef, SpectrumHelpTextProps, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
-import {FocusScope} from '@react-aria/focus';
+import {FocusRing, FocusScope} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListCollection} from '@react-stately/list';
@@ -32,7 +32,9 @@ export interface SpectrumTagGroupProps<T> extends AriaTagGroupProps<T>, StylePro
   /** The label to display on the action button.  */
   actionLabel?: string,
   /** Handler that is called when the action button is pressed. */
-  onAction?: () => void
+  onAction?: () => void,
+  /** Sets what the TagGroup should render when there are no tags to display. */
+  renderEmptyState?: () => JSX.Element
 }
 
 function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
@@ -45,7 +47,8 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
     children,
     actionLabel,
     onAction,
-    labelPosition
+    labelPosition,
+    renderEmptyState = () => <div>None</div>
   } = props;
   let domRef = useDOMRef(ref);
   let containerRef = useRef(null);
@@ -151,6 +154,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   };
 
   let showActions = tagState.showCollapseButton || (actionLabel && onAction);
+  let isEmpty = state.collection.size === 0;
 
   return (
     <FocusScope>
@@ -175,23 +179,26 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           style={maxRows != null && tagState.showCollapseButton && isCollapsed ? {maxHeight: tagState.maxHeight, overflow: 'hidden'} : undefined}
           ref={containerRef}
           className={classNames(styles, 'spectrum-Tags-container')}>
-          <div
-            ref={tagsRef}
-            {...gridProps}
-            className={classNames(styles, 'spectrum-Tags')}>
-            {visibleTags.map(item => (
-              <Tag
-                {...item.props}
-                key={item.key}
-                item={item}
-                state={state}
-                allowsRemoving={allowsRemoving}
-                onRemove={onRemove}>
-                {item.rendered}
-              </Tag>
-            ))}
-          </div>
-          {showActions &&
+          <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+            <div
+              ref={tagsRef}
+              {...gridProps}
+              className={classNames(styles, 'spectrum-Tags')}>
+              {visibleTags.map(item => (
+                <Tag
+                  {...item.props}
+                  key={item.key}
+                  item={item}
+                  state={state}
+                  allowsRemoving={allowsRemoving}
+                  onRemove={onRemove}>
+                  {item.rendered}
+                </Tag>
+              ))}
+              {isEmpty && renderEmptyState()}
+            </div>
+          </FocusRing>
+          {showActions && !isEmpty &&
             <Provider isDisabled={false}>
               <div
                 role="group"

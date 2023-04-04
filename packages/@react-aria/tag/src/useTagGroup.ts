@@ -53,9 +53,6 @@ export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: TagGroupState
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField(props);
   let {gridProps} = useGridList({...props, ...fieldProps, keyboardDelegate}, state, ref);
 
-  // Don't want the grid to be focusable or accessible via keyboard
-  delete gridProps.tabIndex;
-
   let [isFocusWithin, setFocusWithin] = useState(false);
   let {focusWithinProps} = useFocusWithin({
     onFocusWithinChange: setFocusWithin
