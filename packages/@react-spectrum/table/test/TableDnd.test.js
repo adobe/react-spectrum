@@ -145,7 +145,7 @@ describe('TableView', function () {
         let rowgroups = within(grid).getAllByRole('rowgroup');
         let rows = within(rowgroups[1]).getAllByRole('row');
         let row = rows[0];
-        let cell = within(row).getByRole('rowheader');
+        let cell = within(row).getAllByRole('rowheader')[0];
         let cellText = getAllByText(cell.textContent);
         expect(cellText).toHaveLength(1);
 
@@ -179,7 +179,7 @@ describe('TableView', function () {
         let rows = within(rowgroups[1]).getAllByRole('row');
         let row = rows[0];
         expect(row).toHaveAttribute('draggable', 'true');
-        let cell = within(row).getByRole('rowheader');
+        let cell = within(row).getAllByRole('rowheader')[0];
         expect(cell).toHaveTextContent('Vin');
 
         let dataTransfer = new DataTransfer();
@@ -255,19 +255,19 @@ describe('TableView', function () {
 
         expect(new Set(onSelectionChange.mock.calls[3][0])).toEqual(new Set(['a', 'b', 'c', 'd']));
 
-        let cellA = within(rows[0]).getByRole('rowheader');
+        let cellA = within(rows[0]).getAllByRole('rowheader')[0];
         expect(cellA).toHaveTextContent('Vin');
         expect(rows[0]).toHaveAttribute('draggable', 'true');
 
-        let cellB = within(rows[1]).getByRole('rowheader');
+        let cellB = within(rows[1]).getAllByRole('rowheader')[0];
         expect(cellB).toHaveTextContent('Lexy');
         expect(rows[1]).toHaveAttribute('draggable', 'true');
 
-        let cellC = within(rows[2]).getByRole('rowheader');
+        let cellC = within(rows[2]).getAllByRole('rowheader')[0];
         expect(cellC).toHaveTextContent('Robbi');
         expect(rows[2]).toHaveAttribute('draggable', 'true');
 
-        let cellD = within(rows[3]).getByRole('rowheader');
+        let cellD = within(rows[3]).getAllByRole('rowheader')[0];
         expect(cellD).toHaveTextContent('Dodie');
         expect(rows[3]).toHaveAttribute('draggable', 'true');
 
@@ -335,7 +335,7 @@ describe('TableView', function () {
         let rowgroups = within(grid).getAllByRole('rowgroup');
         let rows = within(rowgroups[1]).getAllByRole('row');
         let row = rows[0];
-        let cell = within(row).getByRole('rowheader');
+        let cell = within(row).getAllByRole('rowheader')[0];
         expect(cell).toHaveTextContent('Vin');
         expect(row).not.toHaveAttribute('draggable', 'true');
 
@@ -354,7 +354,7 @@ describe('TableView', function () {
         let grid = getByRole('grid');
         let rowgroups = within(grid).getAllByRole('rowgroup');
         let rows = within(rowgroups[1]).getAllByRole('row');
-        let cell = within(rows[2]).getByRole('rowheader');
+        let cell = within(rows[2]).getAllByRole('rowheader')[0];
         let dataTransfer = new DataTransfer();
         let event = new DragEvent('dragstart', {dataTransfer, clientX: 5, clientY: 5});
 
@@ -381,7 +381,7 @@ describe('TableView', function () {
 
         expect(new Set(onSelectionChange.mock.calls[3][0])).toEqual(new Set(['a', 'b', 'c', 'd']));
 
-        let cellA = within(rows[0]).getByRole('rowheader');
+        let cellA = within(rows[0]).getAllByRole('rowheader')[0];
 
         let dataTransfer = new DataTransfer();
         fireEvent.pointerDown(cellA, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
@@ -418,7 +418,7 @@ describe('TableView', function () {
         let rowgroups = within(grid).getAllByRole('rowgroup');
         let rows = within(rowgroups[1]).getAllByRole('row');
         act(() => userEvent.click(within(rows[0]).getByRole('checkbox')));
-        let cellA = within(rows[0]).getByRole('rowheader');
+        let cellA = within(rows[0]).getAllByRole('rowheader')[0];
 
         let dataTransfer = new DataTransfer();
         fireEvent.pointerDown(cellA, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
@@ -474,7 +474,7 @@ describe('TableView', function () {
         let internalFolder = rows[2];
 
         act(() => userEvent.click(within(rows[0]).getByRole('checkbox')));
-        let dragCell = within(rows[0]).getByRole('rowheader');
+        let dragCell = within(rows[0]).getAllByRole('rowheader')[0];
         let dataTransfer = new DataTransfer();
 
         // Dragging over a invalid drop target should not update dropCollectionRef
@@ -504,7 +504,7 @@ describe('TableView', function () {
         function dragWithinList(rows, dropTarget, targetX = 1, targetY = 1) {
           act(() => userEvent.click(within(rows[0]).getByRole('checkbox')));
           act(() => userEvent.click(within(rows[1]).getByRole('checkbox')));
-          let dragCell = within(rows[0]).getByRole('rowheader');
+          let dragCell = within(rows[0]).getAllByRole('rowheader')[0];
 
           let dataTransfer = new DataTransfer();
           fireEvent.pointerDown(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
@@ -524,7 +524,7 @@ describe('TableView', function () {
         function dragBetweenLists(sourceRows, dropTarget, targetX = 1, targetY = 1) {
           act(() => userEvent.click(within(sourceRows[0]).getByRole('checkbox')));
           act(() => userEvent.click(within(sourceRows[1]).getByRole('checkbox')));
-          let dragCell = within(sourceRows[0]).getByRole('rowheader');
+          let dragCell = within(sourceRows[0]).getAllByRole('rowheader')[0];
 
           let dataTransfer = new DataTransfer();
           fireEvent.pointerDown(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
@@ -1047,7 +1047,7 @@ describe('TableView', function () {
           let table2Rows = within(rowgroups2[1]).getAllByRole('row');
           act(() => userEvent.click(within(table2Rows[0]).getByRole('checkbox')));
           act(() => userEvent.click(within(table2Rows[1]).getByRole('checkbox')));
-          let dragCell = within(table2Rows[0]).getByRole('rowheader');
+          let dragCell = within(table2Rows[0]).getAllByRole('rowheader')[0];
 
           let dataTransfer = new DataTransfer();
           fireEvent.pointerDown(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
@@ -1329,7 +1329,7 @@ describe('TableView', function () {
           let table2Rows = within(rowgroups2[1]).getAllByRole('row');
           act(() => userEvent.click(within(table2Rows[0]).getByRole('checkbox')));
           act(() => userEvent.click(within(table2Rows[6]).getByRole('checkbox')));
-          let dragCell = within(table2Rows[0]).getByRole('rowheader');
+          let dragCell = within(table2Rows[0]).getAllByRole('rowheader')[0];
 
           let dataTransfer = new DataTransfer();
           fireEvent.pointerDown(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
@@ -1642,7 +1642,7 @@ describe('TableView', function () {
         let rowgroups = within(grid).getAllByRole('rowgroup');
         let rows = within(rowgroups[1]).getAllByRole('row');
         let row = rows[0];
-        let cell = within(row).getByRole('rowheader');
+        let cell = within(row).getAllByRole('rowheader')[0];
         expect(cell).toHaveTextContent('Vin');
         expect(row).toHaveAttribute('draggable', 'true');
 
@@ -1691,19 +1691,19 @@ describe('TableView', function () {
         let rowgroups = within(grid).getAllByRole('rowgroup');
         let rows = within(rowgroups[1]).getAllByRole('row');
 
-        let cellA = within(rows[0]).getByRole('rowheader');
+        let cellA = within(rows[0]).getAllByRole('rowheader')[0];
         expect(cellA).toHaveTextContent('Vin');
         expect(rows[0]).toHaveAttribute('draggable', 'true');
 
-        let cellB = within(rows[1]).getByRole('rowheader');
+        let cellB = within(rows[1]).getAllByRole('rowheader')[0];
         expect(cellB).toHaveTextContent('Lexy');
         expect(rows[1]).toHaveAttribute('draggable', 'true');
 
-        let cellC = within(rows[2]).getByRole('rowheader');
+        let cellC = within(rows[2]).getAllByRole('rowheader')[0];
         expect(cellC).toHaveTextContent('Robbi');
         expect(rows[2]).toHaveAttribute('draggable', 'true');
 
-        let cellD = within(rows[3]).getByRole('rowheader');
+        let cellD = within(rows[3]).getAllByRole('rowheader')[0];
         expect(cellD).toHaveTextContent('Dodie');
         expect(rows[3]).toHaveAttribute('draggable', 'true');
 
@@ -1856,8 +1856,8 @@ describe('TableView', function () {
           let grids = tree.getAllByRole('grid');
           let rowgroup = within(grids[0]).getAllByRole('rowgroup')[1];
           let row = within(rowgroup).getAllByRole('row')[0];
-          let cell = within(row).getByRole('rowheader');
-          expect(cell).toHaveTextContent('1');
+          let cell = within(row).getAllByRole('rowheader')[0];
+          expect(cell).toHaveTextContent('Adobe Photoshop');
           expect(row).toHaveAttribute('draggable', 'true');
 
           userEvent.tab();
@@ -2406,9 +2406,9 @@ describe('TableView', function () {
         let grid = getByRole('grid');
         let rowgroups = within(grid).getAllByRole('rowgroup');
         let rows = within(rowgroups[1]).getAllByRole('row');
-        expect(within(rows[0]).getByRole('rowheader')).toHaveTextContent('Vin');
-        expect(within(rows[1]).getByRole('rowheader')).toHaveTextContent('Lexy');
-        expect(within(rows[2]).getByRole('rowheader')).toHaveTextContent('Robbi');
+        expect(within(rows[0]).getAllByRole('rowheader')[0]).toHaveTextContent('Vin');
+        expect(within(rows[1]).getAllByRole('rowheader')[0]).toHaveTextContent('Lexy');
+        expect(within(rows[2]).getAllByRole('rowheader')[0]).toHaveTextContent('Robbi');
 
         userEvent.tab();
         let draghandle = within(rows[0]).getAllByRole('button')[0];
@@ -2439,9 +2439,9 @@ describe('TableView', function () {
         rowgroups = within(grid).getAllByRole('rowgroup');
         rows = within(rowgroups[1]).getAllByRole('row');
         // TODO
-        // expect(within(rows[0]).getByRole('rowheader')).toHaveTextContent('Lexy');
-        // expect(within(rows[1]).getByRole('rowheader')).toHaveTextContent('Vin');
-        // expect(within(rows[2]).getByRole('rowheader')).toHaveTextContent('Robbi');
+        // expect(within(rows[0]).getAllByRole('rowheader')[0]).toHaveTextContent('Lexy');
+        // expect(within(rows[1]).getAllByRole('rowheader')[0]).toHaveTextContent('Vin');
+        // expect(within(rows[2]).getAllByRole('rowheader')[0]).toHaveTextContent('Robbi');
 
         // expect(document.activeElement).toBe(rows[1]);
       });
@@ -2452,10 +2452,10 @@ describe('TableView', function () {
         let grid = getByRole('grid');
         let rowgroups = within(grid).getAllByRole('rowgroup');
         let rows = within(rowgroups[1]).getAllByRole('row');
-        expect(within(rows[0]).getByRole('rowheader')).toHaveTextContent('Vin');
-        expect(within(rows[1]).getByRole('rowheader')).toHaveTextContent('Lexy');
-        expect(within(rows[2]).getByRole('rowheader')).toHaveTextContent('Robbi');
-        expect(within(rows[3]).getByRole('rowheader')).toHaveTextContent('Dodie');
+        expect(within(rows[0]).getAllByRole('rowheader')[0]).toHaveTextContent('Vin');
+        expect(within(rows[1]).getAllByRole('rowheader')[0]).toHaveTextContent('Lexy');
+        expect(within(rows[2]).getAllByRole('rowheader')[0]).toHaveTextContent('Robbi');
+        expect(within(rows[3]).getAllByRole('rowheader')[0]).toHaveTextContent('Dodie');
 
         userEvent.tab();
 
@@ -2495,11 +2495,11 @@ describe('TableView', function () {
         grid = getByRole('grid');
         rowgroups = within(grid).getAllByRole('rowgroup');
         rows = within(rowgroups[1]).getAllByRole('row');
-        expect(within(rows[0]).getByRole('rowheader')).toHaveTextContent('Vin');
+        expect(within(rows[0]).getAllByRole('rowheader')[0]).toHaveTextContent('Vin');
         // TODO
-        // expect(within(rows[1]).getByRole('rowheader')).toHaveTextContent('Dodie');
-        // expect(within(rows[2]).getByRole('rowheader')).toHaveTextContent('Lexy');
-        // expect(within(rows[3]).getByRole('rowheader')).toHaveTextContent('Robbi');
+        // expect(within(rows[1]).getAllByRole('rowheader')[0]).toHaveTextContent('Dodie');
+        // expect(within(rows[2]).getAllByRole('rowheader')[0]).toHaveTextContent('Lexy');
+        // expect(within(rows[3]).getAllByRole('rowheader')[0]).toHaveTextContent('Robbi');
 
         // expect(document.activeElement).toBe(rows[3]);
       });
@@ -2514,13 +2514,13 @@ describe('TableView', function () {
         let rowgroups2 = within(table2).getAllByRole('rowgroup');
         let table1rows = within(rowgroups1[1]).getAllByRole('row');
         let table2rows = within(rowgroups2[1]).getAllByRole('row');
-        expect(within(table1rows[0]).getByRole('rowheader')).toHaveTextContent('Item One');
-        expect(within(table1rows[1]).getByRole('rowheader')).toHaveTextContent('Item Two');
-        expect(within(table1rows[2]).getByRole('rowheader')).toHaveTextContent('Item Three');
+        expect(within(table1rows[0]).getAllByRole('rowheader')[0]).toHaveTextContent('Item One');
+        expect(within(table1rows[1]).getAllByRole('rowheader')[0]).toHaveTextContent('Item Two');
+        expect(within(table1rows[2]).getAllByRole('rowheader')[0]).toHaveTextContent('Item Three');
 
-        expect(within(table2rows[0]).getByRole('rowheader')).toHaveTextContent('Item Seven');
-        expect(within(table2rows[1]).getByRole('rowheader')).toHaveTextContent('Item Eight');
-        expect(within(table2rows[2]).getByRole('rowheader')).toHaveTextContent('Item Nine');
+        expect(within(table2rows[0]).getAllByRole('rowheader')[0]).toHaveTextContent('Item Seven');
+        expect(within(table2rows[1]).getAllByRole('rowheader')[0]).toHaveTextContent('Item Eight');
+        expect(within(table2rows[2]).getAllByRole('rowheader')[0]).toHaveTextContent('Item Nine');
 
         userEvent.tab();
 
@@ -2556,13 +2556,13 @@ describe('TableView', function () {
         table1rows = within(rowgroups1[1]).getAllByRole('row');
         table2rows = within(rowgroups2[1]).getAllByRole('row');
 
-        expect(within(table1rows[0]).getByRole('rowheader')).toHaveTextContent('Item Two');
-        expect(within(table1rows[1]).getByRole('rowheader')).toHaveTextContent('Item Three');
-        expect(within(table1rows[2]).getByRole('rowheader')).toHaveTextContent('Item Four');
+        expect(within(table1rows[0]).getAllByRole('rowheader')[0]).toHaveTextContent('Item Two');
+        expect(within(table1rows[1]).getAllByRole('rowheader')[0]).toHaveTextContent('Item Three');
+        expect(within(table1rows[2]).getAllByRole('rowheader')[0]).toHaveTextContent('Item Four');
 
-        expect(within(table2rows[0]).getByRole('rowheader')).toHaveTextContent('Item One');
-        expect(within(table2rows[1]).getByRole('rowheader')).toHaveTextContent('Item Seven');
-        expect(within(table2rows[2]).getByRole('rowheader')).toHaveTextContent('Item Eight');
+        expect(within(table2rows[0]).getAllByRole('rowheader')[0]).toHaveTextContent('Item One');
+        expect(within(table2rows[1]).getAllByRole('rowheader')[0]).toHaveTextContent('Item Seven');
+        expect(within(table2rows[2]).getAllByRole('rowheader')[0]).toHaveTextContent('Item Eight');
 
         expect(document.activeElement).toBe(table2rows[0]);
       });
@@ -2579,13 +2579,13 @@ describe('TableView', function () {
         let table1rows = within(rowgroups1[1]).getAllByRole('row');
         let table2rows = within(rowgroups2[1]).getAllByRole('row');
 
-        expect(within(table1rows[0]).getByRole('rowheader')).toHaveTextContent('Item One');
-        expect(within(table1rows[1]).getByRole('rowheader')).toHaveTextContent('Item Two');
-        expect(within(table1rows[2]).getByRole('rowheader')).toHaveTextContent('Item Three');
+        expect(within(table1rows[0]).getAllByRole('rowheader')[0]).toHaveTextContent('Item One');
+        expect(within(table1rows[1]).getAllByRole('rowheader')[0]).toHaveTextContent('Item Two');
+        expect(within(table1rows[2]).getAllByRole('rowheader')[0]).toHaveTextContent('Item Three');
 
-        expect(within(table2rows[0]).getByRole('rowheader')).toHaveTextContent('Item Seven');
-        expect(within(table2rows[1]).getByRole('rowheader')).toHaveTextContent('Item Eight');
-        expect(within(table2rows[2]).getByRole('rowheader')).toHaveTextContent('Item Nine');
+        expect(within(table2rows[0]).getAllByRole('rowheader')[0]).toHaveTextContent('Item Seven');
+        expect(within(table2rows[1]).getAllByRole('rowheader')[0]).toHaveTextContent('Item Eight');
+        expect(within(table2rows[2]).getAllByRole('rowheader')[0]).toHaveTextContent('Item Nine');
 
         userEvent.tab();
 
@@ -2628,13 +2628,13 @@ describe('TableView', function () {
         table2rows = within(rowgroups2[1]).getAllByRole('row');
 
         // TODO
-        // expect(within(table1rows[0]).getByRole('rowheader')).toHaveTextContent('Item Two');
-        // expect(within(table1rows[1]).getByRole('rowheader')).toHaveTextContent('Item Four');
-        // expect(within(table1rows[2]).getByRole('rowheader')).toHaveTextContent('Item Five');
+        // expect(within(table1rows[0]).getAllByRole('rowheader')[0]).toHaveTextContent('Item Two');
+        // expect(within(table1rows[1]).getAllByRole('rowheader')[0]).toHaveTextContent('Item Four');
+        // expect(within(table1rows[2]).getAllByRole('rowheader')[0]).toHaveTextContent('Item Five');
 
-        // expect(within(table2rows[0]).getByRole('rowheader')).toHaveTextContent('Item One');
-        // expect(within(table2rows[1]).getByRole('rowheader')).toHaveTextContent('Item Three');
-        // expect(within(table2rows[2]).getByRole('rowheader')).toHaveTextContent('Item Seven');
+        // expect(within(table2rows[0]).getAllByRole('rowheader')[0]).toHaveTextContent('Item One');
+        // expect(within(table2rows[1]).getAllByRole('rowheader')[0]).toHaveTextContent('Item Three');
+        // expect(within(table2rows[2]).getAllByRole('rowheader')[0]).toHaveTextContent('Item Seven');
 
         // expect(document.activeElement).toBe(table2rows[0]);
       });
@@ -2727,7 +2727,7 @@ describe('TableView', function () {
       let grid = getByRole('grid');
       let rowgroups = within(grid).getAllByRole('rowgroup');
       let rows = within(rowgroups[1]).getAllByRole('row');
-      let cellA = within(rows[0]).getByRole('rowheader');
+      let cellA = within(rows[0]).getAllByRole('rowheader')[0];
       userEvent.click(cellA, {pointerType: 'mouse'});
       expect(document.activeElement).toBe(cellA);
       let dragHandle = within(rows[0]).getAllByRole('button')[0];

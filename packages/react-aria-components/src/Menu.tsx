@@ -15,8 +15,9 @@ import {AriaMenuProps, mergeProps, useFocusRing, useMenu, useMenuItem, useMenuSe
 import {BaseCollection, CollectionProps, ItemProps, ItemRenderProps, useCachedChildren, useCollection} from './Collection';
 import {MenuTriggerProps as BaseMenuTriggerProps, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
 import {ButtonContext} from './Button';
-import {ContextValue, forwardRefType, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
-import {filterDOMProps} from '@react-aria/utils';
+import {ContextValue, forwardRefType, Provider, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {filterDOMProps, mergeRefs} from '@react-aria/utils';
+import {Header} from './Header';
 import {KeyboardContext} from './Keyboard';
 import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
@@ -127,19 +128,32 @@ interface MenuSectionProps<T> extends StyleProps {
 
 function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionProps<T>) {
   let state = useContext(InternalMenuContext)!;
+  let [headingRef, heading] = useSlot();
   let {headingProps, groupProps} = useMenuSection({
-    heading: section.rendered,
+    heading,
     'aria-label': section['aria-label'] ?? undefined
   });
 
   let children = useCachedChildren({
     items: state.collection.getChildren!(section.key),
     children: item => {
-      if (item.type !== 'item') {
-        throw new Error('Only items are allowed within a section');
+      switch (item.type) {
+        case 'header': {
+          let {ref, ...otherProps} = item.props;
+          return (
+            <Header
+              {...headingProps}
+              {...otherProps}
+              ref={mergeRefs(headingRef, ref)}>
+              {item.rendered}
+            </Header>
+          );
+        }
+        case 'item':
+          return <MenuItem item={item} />;
+        default:
+          throw new Error('Unsupported element type in Section: ' + item.type);
       }
-
-      return <MenuItem item={item} />;
     }
   });
 
@@ -149,11 +163,6 @@ function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionP
       {...groupProps}
       className={className || section.props?.className || 'react-aria-Section'}
       style={style || section.props?.style}>
-      {section.rendered &&
-        <header {...headingProps}>
-          {section.rendered}
-        </header>
-      }
       {children}
     </section>
   );

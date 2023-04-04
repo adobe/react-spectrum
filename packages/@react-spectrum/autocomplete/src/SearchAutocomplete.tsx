@@ -179,7 +179,7 @@ let SearchAutocompleteBase = React.forwardRef(_SearchAutocompleteBase) as <T>(pr
 
 interface SearchAutocompleteInputProps<T> extends SpectrumSearchAutocompleteProps<T> {
   inputProps: InputHTMLAttributes<HTMLInputElement>,
-  inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
+  inputRef: RefObject<HTMLInputElement>,
   style?: React.CSSProperties,
   className?: string,
   isOpen?: boolean,
@@ -328,13 +328,19 @@ function _SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>, ref
             )
           }
           inputClassName={classNames(searchStyles, 'spectrum-Search-input')}
+          validationIconClassName={
+            classNames(
+              searchStyles,
+              'spectrum-Search-validationIcon'
+            )
+          }
           isDisabled={isDisabled}
           isQuiet={isQuiet}
           validationState={validationState}
           isLoading={showLoading && (isOpen || menuTrigger === 'manual' || loadingState === 'loading')}
           loadingIndicator={loadingState != null ? loadingCircle : undefined}
           icon={icon}
-          wrapperChildren={(inputValue !== '' && !isReadOnly) ? clearButton : undefined}
+          wrapperChildren={(inputValue !== '' || loadingState === 'filtering' || validationState != null) && !isReadOnly ? clearButton : undefined}
           disableFocusRing />
       </div>
     </FocusRing>

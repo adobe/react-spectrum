@@ -157,6 +157,13 @@ storiesOf('Dialog', module)
     }
   )
   .add(
+    'popover: containerPadding',
+    () => renderTriggerProps({type: 'popover', containerPadding: 30, shouldFlip: false, placement: 'top'}), {
+      chromatic: {viewports: [1200]},
+      chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['large'], disableAnimations: true}
+    }
+  )
+  .add(
     'mobileType fullscreenTakeover, modal',
     () => renderTriggerProps({type: 'modal', mobileType: 'fullscreenTakeover'}), {
       chromatic: {viewports: [320, 1200]},
