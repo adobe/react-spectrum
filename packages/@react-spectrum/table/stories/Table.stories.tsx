@@ -1802,9 +1802,9 @@ let typeAheadRows = [
   {id: 101, firstname: 'John', lastname: 'Doe', birthday: 'May 7'}
 ];
 export const TypeaheadWithDialog: TableStory = {
-  render: () => (
+  render: (args) => (
     <div style={{height: '90vh'}}>
-      <TableView aria-label="Table" selectionMode="none" height="100%">
+      <TableView aria-label="Table" selectionMode="none" height="100%" {...args}>
         <TableHeader columns={typeAheadColumns}>
           {(col) => (
             <Column key={col.id} isRowHeader={col.isRowHeader}>{col.name}</Column>
@@ -1839,5 +1839,5 @@ export const TypeaheadWithDialog: TableStory = {
       </TableView>
     </div>
   )
-}
+};
 
