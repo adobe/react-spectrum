@@ -13,7 +13,7 @@ import {CollectionBase} from '@react-types/shared';
 import {createPortal} from 'react-dom';
 import {DOMProps, RenderProps} from './utils';
 import {Collection as ICollection, Node, SelectionBehavior, SelectionMode, ItemProps as SharedItemProps, SectionProps as SharedSectionProps} from 'react-stately';
-import {mergeProps} from 'react-aria';
+import {mergeProps, useIsSSR} from 'react-aria';
 import React, {cloneElement, createContext, Key, ReactElement, ReactNode, ReactPortal, useCallback, useContext, useMemo} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
@@ -643,7 +643,7 @@ export function useCollectionChildren<T extends object>(props: CachedChildrenOpt
 const ShallowRenderContext = createContext(false);
 
 interface CollectionResult<C> {
-  portal: ReactPortal,
+  portal: ReactPortal | null,
   collection: C
 }
 
@@ -660,7 +660,7 @@ export function useCollection<T extends object, C extends BaseCollection<T>>(pro
       {children}
     </ShallowRenderContext.Provider>
   ), [children]);
-  let portal = createPortal(wrappedChildren, document as unknown as Element);
+  let portal = useIsSSR() ? null : createPortal(wrappedChildren, document as unknown as Element);
 
   useLayoutEffect(() => {
     if (document.dirtyNodes.size > 0) {

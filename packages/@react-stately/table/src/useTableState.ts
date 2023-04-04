@@ -23,8 +23,6 @@ export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   collection: ITableCollection<T>,
   /** Whether the row selection checkboxes should be displayed. */
   showSelectionCheckboxes: boolean,
-  /** Whether the row drag button should be displayed. */
-  showDragButtons: boolean,
   /** The current sorted column and direction. */
   sortDescriptor: SortDescriptor,
   /** Calls the provided onSortChange handler with the provided column key and sort direction. */
@@ -88,7 +86,6 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     disabledKeys,
     selectionManager,
     showSelectionCheckboxes: props.showSelectionCheckboxes || false,
-    showDragButtons: props.showDragButtons || false,
     sortDescriptor: props.sortDescriptor,
     isKeyboardNavigationDisabled: collection.size === 0 || isKeyboardNavigationDisabled,
     setKeyboardNavigationDisabled,

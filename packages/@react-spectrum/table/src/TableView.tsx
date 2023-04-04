@@ -24,9 +24,9 @@ import {
   useUnwrapDOMRef
 } from '@react-spectrum/utils';
 import {ColumnSize, SpectrumColumnProps, TableProps} from '@react-types/table';
-import {DragAndDropHooks} from '@react-spectrum/dnd';
-import {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
-import {DraggableItemResult, DropIndicatorAria, DroppableCollectionResult, DroppableItemResult} from '@react-aria/dnd';
+import type {DragAndDropHooks} from '@react-spectrum/dnd';
+import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
+import type {DraggableItemResult, DropIndicatorAria, DroppableCollectionResult, DroppableItemResult} from '@react-aria/dnd';
 import {FocusRing, FocusScope, useFocusRing} from '@react-aria/focus';
 import {getInteractionModality, useHover, usePress} from '@react-aria/interactions';
 import {GridNode} from '@react-types/grid';
