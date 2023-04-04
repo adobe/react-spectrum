@@ -1,3 +1,4 @@
 {
-  "remove": "Apăsați pe Space (Spațiu) sau pe Delete (Ștergere) pentru a elimina eticheta."
+  "removeButtonLabel": "Îndepărtaţi",
+  "removeDescription": "Apăsați pe Delete (Ștergere) pentru a elimina eticheta."
 }
