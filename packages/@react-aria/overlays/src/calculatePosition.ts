@@ -23,6 +23,8 @@ interface Position {
 interface Dimensions {
   width: number,
   height: number,
+  totalWidth: number,
+  totalHeight: number,
   top: number,
   left: number,
   scroll: Position
@@ -91,19 +93,26 @@ const AXIS_SIZE = {
   left: 'width'
 };
 
+const TOTAL_SIZE = {
+  width: 'totalWidth',
+  height: 'totalHeight'
+};
+
 const PARSED_PLACEMENT_CACHE = {};
 
 // @ts-ignore
 let visualViewport = typeof window !== 'undefined' && window.visualViewport;
 
 function getContainerDimensions(containerNode: Element): Dimensions {
-  let width = 0, height = 0, top = 0, left = 0;
+  let width = 0, height = 0, totalWidth = 0, totalHeight = 0, top = 0, left = 0;
   let scroll: Position = {};
 
   if (containerNode.tagName === 'BODY') {
     let documentElement = document.documentElement;
-    width = visualViewport?.width ?? documentElement.clientWidth;
-    height = visualViewport?.height ?? documentElement.clientHeight;
+    totalWidth = documentElement.clientWidth;
+    totalHeight = documentElement.clientHeight;
+    width = visualViewport?.width ?? totalWidth;
+    height = visualViewport?.height ?? totalHeight;
 
     scroll.top = documentElement.scrollTop || containerNode.scrollTop;
     scroll.left = documentElement.scrollLeft || containerNode.scrollLeft;
@@ -111,9 +120,11 @@ function getContainerDimensions(containerNode: Element): Dimensions {
     ({width, height, top, left} = getOffset(containerNode));
     scroll.top = containerNode.scrollTop;
     scroll.left = containerNode.scrollLeft;
+    totalWidth = width;
+    totalHeight = height;
   }
 
-  return {width, height, scroll, top, left};
+  return {width, height, totalWidth, totalHeight, scroll, top, left};
 }
 
 function getScroll(node: Element): Offset {
@@ -219,7 +230,7 @@ function computePosition(
     // height, as `bottom` will be relative to this height.  But if the container is static,
     // then it can only be the `document.body`, and `bottom` will be relative to _its_
     // container, which should be as large as boundaryDimensions.
-    const containerHeight = (isContainerPositioned ? containerOffsetWithBoundary[size] : boundaryDimensions[size]);
+    const containerHeight = (isContainerPositioned ? containerOffsetWithBoundary[size] : boundaryDimensions[TOTAL_SIZE[size]]);
     position[FLIPPED_DIRECTION[axis]] = Math.floor(containerHeight - childOffset[axis] + offset);
   } else {
     position[axis] = Math.floor(childOffset[axis] + childOffset[size] + offset);
