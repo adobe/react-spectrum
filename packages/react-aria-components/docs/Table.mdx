@@ -209,21 +209,13 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
 
   /* join selected items if :has selector is supported */
   @supports selector(:has(.foo)) {
-    .react-aria-Row[aria-selected=true]:has(+ [aria-selected=true]) .react-aria-Cell {
-      border-end-start-radius: 0;
-      border-end-end-radius: 0;
-    }
-
-    .react-aria-Row[aria-selected=true] + [aria-selected=true] .react-aria-Cell {
-      border-start-start-radius: 0;
-      border-start-end-radius: 0;
-    }
-
+    .react-aria-Row[aria-selected=true]:has(+ [aria-selected=true]) .react-aria-Cell,
     .react-aria-Row[aria-selected=true]:has(+ .react-aria-DropIndicator + [aria-selected=true]) .react-aria-Cell {
       border-end-start-radius: 0;
       border-end-end-radius: 0;
     }
 
+    .react-aria-Row[aria-selected=true] + [aria-selected=true] .react-aria-Cell,
     .react-aria-Row[aria-selected=true] + .react-aria-DropIndicator + [aria-selected=true] .react-aria-Cell {
       border-start-start-radius: 0;
       border-start-end-radius: 0;
