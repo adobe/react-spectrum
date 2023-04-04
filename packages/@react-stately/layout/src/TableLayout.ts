@@ -466,7 +466,6 @@ export class TableLayout<T> extends ListLayout<T> {
     let res: LayoutInfo[] = [];
 
     this.buildPersistedIndices();
-    console.log('persisted', this.persistedIndices)
     for (let node of this.rootNodes) {
       res.push(node.layoutInfo);
       this.addVisibleLayoutInfos(res, node, rect);
@@ -505,7 +504,7 @@ export class TableLayout<T> extends ListLayout<T> {
         // If the children don't overlap the visible rect, just add all persisted nodes to the visible layout
         let childrenRectTop = node.children[0].layoutInfo.rect.y;
         let childrenRectBottom = node.children[node.children.length - 1].layoutInfo.rect.maxY;
-        if (!(childrenRectTop > rect.bottomRight.y || childrenRectBottom < rect.topLeft.y)) {
+        if (persistedChildren && (childrenRectTop > rect.bottomRight.y || childrenRectBottom < rect.topLeft.y)) {
           for (let idx of persistedChildren) {
             res.push(node.children[idx].layoutInfo);
             this.addVisibleLayoutInfos(res, node.children[idx], rect);
@@ -566,7 +565,7 @@ export class TableLayout<T> extends ListLayout<T> {
         // If the children don't overlap the visible rect, just add all persisted nodes to the visible layout
         let childrenRectLeft = node.children[0].layoutInfo.rect.x;
         let childrenRectRight = node.children[node.children.length - 1].layoutInfo.rect.maxX;
-        if (!(childrenRectLeft > rect.topRight.x || childrenRectRight < rect.topLeft.x)) {
+        if (persistedCellIndices && (childrenRectLeft > rect.topRight.x || childrenRectRight < rect.topLeft.x)) {
           for (let idx of persistedCellIndices) {
             res.push(node.children[idx].layoutInfo);
             this.addVisibleLayoutInfos(res, node.children[idx], rect);
