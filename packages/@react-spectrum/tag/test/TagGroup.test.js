@@ -14,6 +14,7 @@ import {act, fireEvent, mockImplementation, render, triggerPress, within} from '
 import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
 import {Item} from '@react-stately/collections';
+import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {TagGroup} from '../src';
@@ -640,6 +641,39 @@ describe('TagGroup', function () {
     expect(actionGroup).toHaveAttribute('aria-label', 'Actions');
     expect(actionGroup).toHaveAttribute('aria-labelledby', `${tagGroup.id} ${actionGroup.id}`);
 
+    computedStyles.mockReset();
+  });
+
+
+  it('should render empty state', async function () {
+    let {getByText} = render(
+      <Provider theme={theme}>
+        <TagGroup aria-label="tag group">
+          {[]}
+        </TagGroup>
+      </Provider>
+    );
+    await act(() => Promise.resolve()); // wait for MutationObserver in useHasTabbableChild or we get act warnings
+    expect(getByText('None')).toBeTruthy();
+  });
+
+  it('should allow you to tab into TagGroup body if empty with link', async function () {
+    let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px', marginTop: '4px', height: '24px'}));
+
+    let renderEmptyState = () => (
+      <span>No tags. <Link><a href="//react-spectrum.com">Click here</a></Link> to add some.</span>
+    );
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <TagGroup aria-label="tag group" renderEmptyState={renderEmptyState}>
+          {[]}
+        </TagGroup>
+      </Provider>
+    );
+    await act(() => Promise.resolve());
+    let link = getByRole('link');
+    userEvent.tab();
+    expect(document.activeElement).toBe(link);
     computedStyles.mockReset();
   });
 });
