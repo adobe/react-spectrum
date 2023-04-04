@@ -1,9 +1,11 @@
 {
   "ascending": "rastući",
-  "ascendingSort": "sortirano po kolonama {columnName} rastućim redosledom",
+  "ascendingSort": "sorted by column {columnName} in ascending order",
+  "columnSize": "{value} piksela",
   "descending": "padajući",
-  "descendingSort": "sortirano po kolonama {columnName} padajućim redosledom",
+  "descendingSort": "sortirano po kolonama {columnName} rastućim redosledom",
+  "resizerDescription": "Pritisnite Enter da biste započeli promenu veličine",
   "select": "Izaberite",
   "selectAll": "Izaberite sve",
-  "sortable": "kolona koja se može sortirati"
+  "sortable": "sortirano po kolonama {columnName} padajućim redosledom"
 }
