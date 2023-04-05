@@ -93,6 +93,7 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteOptions<T>
       listBoxRef,
       inputRef,
       onFocus: undefined,
+      onFocusChange: undefined,
       onBlur: undefined,
       onKeyDown: undefined,
       onKeyUp: undefined
