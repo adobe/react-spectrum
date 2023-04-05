@@ -9,7 +9,10 @@ import stocks from './stocks.json';
 export function App() {
   return (
     <>
-      <h1 className="text-center text-4xl font-serif font-semibold mb-8">React Aria Components 🤝 Tailwind CSS</h1>
+      <h1 className="text-center text-4xl font-serif font-semibold mb-3">React Aria Components 🤝 Tailwind CSS</h1>
+      <p className="text-center font-serif mb-8">
+        <a className="hover:text-blue-100 transition underline" target="_blank" href="https://github.com/adobe/react-spectrum/blob/main/examples/rac-tailwind/src/App.js">Example code</a> • <a className="hover:text-blue-100 transition underline" target="_blank" href="https://react-spectrum.adobe.com/react-aria/react-aria-components.html">Docs</a>
+      </p>
       <div className="grid gap-4 grid-cols-1 md:grid-cols-[repeat(auto-fit,theme(width.96))] auto-rows-fr justify-center">
         <MenuExample />
         <SelectExample />
