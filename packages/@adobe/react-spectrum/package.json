@@ -28,6 +28,7 @@
     "@react-aria/ssr": "^3.6.0",
     "@react-aria/visually-hidden": "^3.8.0",
     "@react-spectrum/actiongroup": "^3.8.2",
+    "@react-spectrum/avatar": "^3.0.0",
     "@react-spectrum/badge": "^3.1.1",
     "@react-spectrum/breadcrumbs": "^3.7.2",
     "@react-spectrum/button": "^3.12.1",
