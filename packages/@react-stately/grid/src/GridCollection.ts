@@ -31,57 +31,89 @@ export class GridCollection<T> implements IGridCollection<T> {
     this.rows = [];
     this.sections = [];
 
-    let visit = (node: GridNode<T>) => {
-      // If the node is the same object as the previous node for the same key,
-      // we can skip this node and its children. We always visit columns though,
-      // because we depend on order to build the columns array.
-      let prevNode = this.keyMap.get(node.key);
+    let visit = (node: GridNode<T>, i?: number) => {
+      // Reset row counter if entering a new section so we have a index reflecting the position of the
+      // row within the section
+      if (node.type === 'section') {
+        rowCounter = 0;
+      }
+
       if (opts.visitNode) {
         node = opts.visitNode(node);
+      }
+
+      if (node.type === 'headerrow' || node.type === 'item' || node.type === 'section') {
+        // TODO: perhaps only add some of these default props for node.type === 'item'. Previously this was done fo all items provided
+        // to the GridCollection...
+        let defaultProps = {
+          level: 0,
+          key: 'row-' + i,
+          type: 'row',
+          value: undefined,
+          hasChildNodes: true,
+          childNodes: [...node.childNodes],
+          rendered: undefined,
+          textValue: undefined,
+          colspan: node.type === 'section' || node.props?.isSectionHeader ? this.columnCount : 1
+        };
+
+        let newProps = {
+          index: node.type === 'section' ? sectionCounter++ : rowCounter++,
+          rowIndex: node.type !== 'section' ? rowIndex : undefined
+        };
+
+        // Use Object.assign instead of spread to preseve object reference for keyMap. Also ensures retrieving nodes
+        // via .childNodes returns the same object as well
+        Object.assign(node, defaultProps, {...node}, newProps);
+      }
+
+      if (node.type !== 'cell') {
+        if (last) {
+          last.nextKey = node.key;
+          node.prevKey = last.key;
+        }
+        last = node;
       }
 
       this.keyMap.set(node.key, node);
 
       let childKeys = new Set();
-      let last: GridNode<T>;
+      let lastCell: GridNode<T>;
+      let index = 0;
       for (let child of node.childNodes) {
-        if (child.type === 'cell' && child.parentKey == null) {
-          // if child is a cell parent key isn't already established by the collection, match child node to parent row
-          child.parentKey = node.key;
-        }
-        childKeys.add(child.key);
-
-        if (last) {
-          last.nextKey = child.key;
-          child.prevKey = last.key;
-        } else {
-          child.prevKey = null;
-        }
-
-        visit(child);
-        last = child;
-      }
-
-      if (last) {
-        last.nextKey = null;
-      }
-
-      // Remove deleted nodes and their children from the key map
-      if (prevNode) {
-        for (let child of prevNode.childNodes) {
-          if (!childKeys.has(child.key)) {
-            remove(child);
+        if (child.type === 'cell') {
+          if (child.parentKey == null) {
+            // if child is a cell parent key isn't already established by the collection, match child node to parent row
+            child.parentKey = node.key;
           }
+          childKeys.add(child.key);
+
+          if (lastCell) {
+            lastCell.nextKey = child.key;
+            child.prevKey = lastCell.key;
+          } else {
+            child.prevKey = null;
+          }
+
+          visit(child);
+          lastCell = child;
+        } else {
+          if (last) {
+            last.nextKey = child.key;
+            child.prevKey = last.key;
+          } else {
+            child.prevKey = null;
+          }
+          visit(child, index++);
+          last = child;
         }
       }
-    };
 
-    let remove = (node: GridNode<T>) => {
-      this.keyMap.delete(node.key);
-      for (let child of node.childNodes) {
-        if (this.keyMap.get(child.key) === child) {
-          remove(child);
-        }
+      if (node.type === 'section') {
+        this.sections.push(node);
+      } else if (node.type === 'item' || node.type === 'headerrow') {
+        this.rows.push(node);
+        rowIndex++;
       }
     };
 
@@ -90,50 +122,7 @@ export class GridCollection<T> implements IGridCollection<T> {
     let rowCounter = 0;
     let rowIndex = 1;
     opts.items.forEach((node: GridNode<T>, i) => {
-      // Reset row counter if entering a new section so we have a index reflecting the position of the
-      // row within the section
-      if (node.type === 'section') {
-        rowCounter = 0;
-      }
-
-      let defaultProps = {
-        level: 0,
-        key: 'row-' + i,
-        type: 'row',
-        value: undefined,
-        hasChildNodes: true,
-        childNodes: [...node.childNodes],
-        rendered: undefined,
-        textValue: undefined,
-        colspan: node.type === 'section' || node.props?.isSectionHeader ? this.columnCount : 1
-      };
-
-      let newProps = {
-        index: node.type === 'section' ? sectionCounter++ : rowCounter++,
-        rowIndex: node.type !== 'section' ? rowIndex : undefined
-      };
-
-      // Use Object.assign instead of spread to preseve object reference, ensures retrieving nodes
-      // via .childNodes returns the same object as the keyMap
-      Object.assign(node, defaultProps, {...node}, newProps);
-
-      if (last) {
-        last.nextKey = node.key;
-        node.prevKey = last.key;
-      } else {
-        node.prevKey = null;
-      }
-
-      if (node.type === 'section') {
-        this.sections.push(node);
-      } else {
-        this.rows.push(node);
-        rowIndex++;
-      }
-
-      visit(node);
-
-      last = node;
+      visit(node as GridNode<T>, i);
     });
 
     if (last) {
