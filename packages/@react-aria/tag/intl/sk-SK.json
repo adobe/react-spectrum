@@ -1,3 +1,4 @@
 {
-  "remove": "Ak chcete odstrániť značku, stlačte medzerník alebo kláves Delete."
+  "removeButtonLabel": "Odstrániť",
+  "removeDescription": "Ak chcete odstrániť značku, stlačte kláves Delete."
 }

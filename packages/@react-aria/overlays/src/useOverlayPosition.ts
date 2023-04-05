@@ -184,9 +184,11 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     };
 
     visualViewport?.addEventListener('resize', onResize);
+    visualViewport?.addEventListener('scroll', onResize);
 
     return () => {
       visualViewport?.removeEventListener('resize', onResize);
+      visualViewport?.removeEventListener('scroll', onResize);
     };
   }, [updatePosition]);
 

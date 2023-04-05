@@ -1,3 +1,4 @@
 {
-  "remove": "タグを削除するには、スペースまたは削除を押します。"
+  "removeButtonLabel": "削除",
+  "removeDescription": "タグを削除するには、Delete キーを押します。"
 }

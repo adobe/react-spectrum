@@ -364,10 +364,12 @@ function filterNodes<T>(collection: Collection<Node<T>>, nodes: Iterable<Node<T>
   for (let node of nodes) {
     if (node.type === 'section' && node.hasChildNodes) {
       let filtered = filterNodes(collection, getChildNodes(node, collection), inputValue, filter);
-      if ([...filtered].length > 0) {
+      if ([...filtered].some(node => node.type === 'item')) {
         filteredNode.push({...node, childNodes: filtered});
       }
-    } else if (node.type !== 'section' && filter(node.textValue, inputValue)) {
+    } else if (node.type === 'item' && filter(node.textValue, inputValue)) {
+      filteredNode.push({...node});
+    } else if (node.type !== 'item') {
       filteredNode.push({...node});
     }
   }
