@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/theme-default",
-  "version": "3.5.0",
+  "version": "3.5.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -36,7 +36,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-types/provider": "^3.6.0",
+    "@react-types/provider": "^3.6.1",
     "@swc/helpers": "^0.4.14"
   },
   "devDependencies": {
