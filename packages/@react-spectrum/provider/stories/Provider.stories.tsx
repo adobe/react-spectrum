@@ -166,7 +166,18 @@ storiesOf('Provider', module)
             <Breakpoint />
           </Provider>
         );
-      });
+      })
+    .add(
+      'locale: zh-Hant',
+      () => (
+        <div>
+          <div>Heaven and earth are mysterious and yellow, the universe is prehistoric</div>
+          <Provider locale="zh-Hant">
+            <div>天地玄黃，宇宙洪荒</div>
+          </Provider>
+        </div>
+      )
+    );
 
 function render(props = {}) {
   return (
