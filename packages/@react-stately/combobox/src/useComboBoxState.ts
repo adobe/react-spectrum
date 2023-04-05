@@ -102,6 +102,11 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     if (props.onOpenChange) {
       props.onOpenChange(open, open ? menuOpenTrigger.current : undefined);
     }
+
+    selectionManager.setFocused(open);
+    if (!open) {
+      selectionManager.setFocusedKey(null);
+    }
   };
 
   let triggerState = useMenuTriggerState({...props, onOpenChange, isOpen: undefined, defaultOpen: undefined});
@@ -248,13 +253,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     lastSelectedKeyText.current = selectedItemText;
   });
 
-  useEffect(() => {
-    // Reset focused key when the menu closes
-    if (!triggerState.isOpen) {
-      selectionManager.setFocusedKey(null);
-    }
-  }, [triggerState.isOpen, selectionManager]);
-
   // Revert input value and close menu
   let revert = () => {
     if (allowsCustomValue && selectedKey == null) {
@@ -366,10 +364,12 @@ function filterNodes<T>(collection: Collection<Node<T>>, nodes: Iterable<Node<T>
   for (let node of nodes) {
     if (node.type === 'section' && node.hasChildNodes) {
       let filtered = filterNodes(collection, getChildNodes(node, collection), inputValue, filter);
-      if ([...filtered].length > 0) {
+      if ([...filtered].some(node => node.type === 'item')) {
         filteredNode.push({...node, childNodes: filtered});
       }
-    } else if (node.type !== 'section' && filter(node.textValue, inputValue)) {
+    } else if (node.type === 'item' && filter(node.textValue, inputValue)) {
+      filteredNode.push({...node});
+    } else if (node.type !== 'item') {
       filteredNode.push({...node});
     }
   }
