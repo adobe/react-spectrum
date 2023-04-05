@@ -823,6 +823,34 @@ describe('SearchAutocomplete', function () {
       expect(items).toHaveLength(1);
       expect(searchAutocomplete).not.toHaveAttribute('aria-activedescendant');
     });
+
+    it('input events are only called once', function () {
+      let onKeyDown = jest.fn();
+      let onKeyUp = jest.fn();
+      let onFocus = jest.fn();
+      let onInputChange = jest.fn();
+      let onBlur = jest.fn();
+      let {getByRole} = renderSearchAutocomplete({onKeyDown, onKeyUp, onFocus, onInputChange, onBlur});
+
+      let searchAutocomplete = getByRole('combobox');
+      typeText(searchAutocomplete, 'w');
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(onKeyDown).toHaveBeenCalledTimes(1);
+      expect(onKeyUp).toHaveBeenCalledTimes(1);
+      expect(onFocus).toHaveBeenCalledTimes(1);
+      expect(onInputChange).toHaveBeenCalledTimes(1);
+      expect(onBlur).toHaveBeenCalledTimes(0);
+
+      act(() => {
+        userEvent.tab();
+      });
+
+      expect(onBlur).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('blur', function () {
