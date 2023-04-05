@@ -119,7 +119,7 @@ then
   # Install/build RAC Tailwind app
   cd ../../examples/rac-tailwind
   yarn install
-  yarn build
+  yarn build --public-url ./
   mv dist ../../$verdaccio_path/rac-tailwind
 
   cd ../..
