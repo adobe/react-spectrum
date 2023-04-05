@@ -151,7 +151,10 @@ export interface Collection<T> extends Iterable<T> {
   getLastKey(): Key | null,
 
   /** Iterate over the child items of the given key. */
-  getChildren?(key: Key): Iterable<T>
+  getChildren?(key: Key): Iterable<T>,
+
+  /** Returns a string representation of the item's contents. */
+  getTextValue?(key: Key): string
 }
 
 export interface Node<T> {
