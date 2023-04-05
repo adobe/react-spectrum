@@ -43,8 +43,6 @@ export interface TableColumnResizeState<T> {
   getColumnMinWidth: (key: Key) => number,
   /** Gets the current maxWidth for the specified column. */
   getColumnMaxWidth: (key: Key) => number,
-  /** Currently calculated widths for all columns. */
-  widths: Map<Key, number>,
   /** Key of the currently resizing column. */
   resizingColumn: Key | null,
   /** A reference to the table state. */
@@ -105,8 +103,8 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
     setResizingColumn(null);
   }, [setResizingColumn]);
 
-  let columnWidths = useMemo(() =>
-      columnLayout.buildColumnWidths(tableWidth, state.collection, colWidths)
+  useMemo(() =>
+    columnLayout.buildColumnWidths(tableWidth, state.collection, colWidths)
   , [tableWidth, state.collection, colWidths, columnLayout]);
 
   return useMemo(() => ({
@@ -120,7 +118,6 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
       columnLayout.getColumnMinWidth(key),
     getColumnMaxWidth: (key: Key) =>
       columnLayout.getColumnMaxWidth(key),
-    widths: columnWidths,
     tableState: state
   }), [
     columnLayout,
@@ -128,7 +125,6 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
     updateResizedColumns,
     startResize,
     endResize,
-    columnWidths,
     state
   ]);
 }

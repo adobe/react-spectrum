@@ -17,6 +17,7 @@
 
 import {isMac, isVirtualClick} from '@react-aria/utils';
 import {useEffect, useState} from 'react';
+import {useIsSSR} from '@react-aria/ssr';
 
 export type Modality = 'keyboard' | 'pointer' | 'virtual';
 type HandlerEvent = PointerEvent | MouseEvent | KeyboardEvent | FocusEvent;
@@ -192,7 +193,7 @@ export function useInteractionModality(): Modality {
     };
   }, []);
 
-  return modality;
+  return useIsSSR() ? null : modality;
 }
 
 /**

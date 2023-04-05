@@ -263,18 +263,6 @@ export const CrossoffsetExamples: TooltipTriggerStory = {
           <ActionButton>Tooltip Trigger -10</ActionButton>
           <Tooltip>Tooltip message.</Tooltip>
         </TooltipTrigger>
-        <TooltipTrigger delay={0} placement="left top" crossOffset={10}>
-          <ActionButton>Tooltip 10</ActionButton>
-          <Tooltip>Tooltip message.</Tooltip>
-        </TooltipTrigger>
-        <TooltipTrigger delay={0} placement="left top">
-          <ActionButton>Tooltip 0</ActionButton>
-          <Tooltip>Tooltip message.</Tooltip>
-        </TooltipTrigger>
-        <TooltipTrigger delay={0} placement="left top" crossOffset={-10}>
-          <ActionButton>Tooltip -10</ActionButton>
-          <Tooltip>Tooltip message.</Tooltip>
-        </TooltipTrigger>
       </Flex>
       <Flex gap="size-200" direction="column" alignItems="start">
         <span>Left</span>
@@ -290,18 +278,6 @@ export const CrossoffsetExamples: TooltipTriggerStory = {
           <ActionButton>Tooltip Trigger -10</ActionButton>
           <Tooltip>Tooltip message.</Tooltip>
         </TooltipTrigger>
-        <TooltipTrigger delay={0} placement="left" crossOffset={10}>
-          <ActionButton>Tooltip 10</ActionButton>
-          <Tooltip>Tooltip message.</Tooltip>
-        </TooltipTrigger>
-        <TooltipTrigger delay={0} placement="left">
-          <ActionButton>Tooltip 0</ActionButton>
-          <Tooltip>Tooltip message.</Tooltip>
-        </TooltipTrigger>
-        <TooltipTrigger delay={0} placement="left" crossOffset={-10}>
-          <ActionButton>Tooltip -10</ActionButton>
-          <Tooltip>Tooltip message.</Tooltip>
-        </TooltipTrigger>
       </Flex>
       <Flex gap="size-200" direction="column" alignItems="start">
         <span>Left Bottom</span>
@@ -315,18 +291,6 @@ export const CrossoffsetExamples: TooltipTriggerStory = {
         </TooltipTrigger>
         <TooltipTrigger delay={0} placement="left bottom" crossOffset={-10}>
           <ActionButton>Tooltip Trigger -10</ActionButton>
-          <Tooltip>Tooltip message.</Tooltip>
-        </TooltipTrigger>
-        <TooltipTrigger delay={0} placement="left bottom" crossOffset={10}>
-          <ActionButton>Tooltip 10</ActionButton>
-          <Tooltip>Tooltip message.</Tooltip>
-        </TooltipTrigger>
-        <TooltipTrigger delay={0} placement="left bottom">
-          <ActionButton>Tooltip 0</ActionButton>
-          <Tooltip>Tooltip message.</Tooltip>
-        </TooltipTrigger>
-        <TooltipTrigger delay={0} placement="left bottom" crossOffset={-10}>
-          <ActionButton>Tooltip -10</ActionButton>
           <Tooltip>Tooltip message.</Tooltip>
         </TooltipTrigger>
       </Flex>

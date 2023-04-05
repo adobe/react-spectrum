@@ -47,6 +47,8 @@
     "@react-aria/visually-hidden": "^3.7.0",
     "@react-spectrum/button": "^3.12.0",
     "@react-spectrum/checkbox": "^3.7.0",
+    "@react-spectrum/dnd": "^3.1.0",
+    "@react-spectrum/layout": "^3.5.0",
     "@react-spectrum/menu": "^3.10.1",
     "@react-spectrum/progress": "^3.4.0",
     "@react-spectrum/tooltip": "^3.4.0",
@@ -63,7 +65,9 @@
     "@swc/helpers": "^0.4.14"
   },
   "devDependencies": {
-    "@adobe/spectrum-css-temp": "3.0.0-alpha.1"
+    "@adobe/spectrum-css-temp": "3.0.0-alpha.1",
+    "@react-aria/dnd": "^3.1.0",
+    "@react-stately/dnd": "^3.1.0"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0",

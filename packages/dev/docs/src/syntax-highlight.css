@@ -217,3 +217,16 @@
   --hljs-comment-color: var(--spectrum-gray-800);
   --hljs-string-color: var(--spectrum-green-1000);
 }
+
+@media (forced-colors: active) {
+  :global(.source) mark {
+    forced-color-adjust: none;
+    background: Mark;
+    color: MarkText;
+    border-left: none;
+
+    * {
+      color: inherit;
+    }
+  }
+}
