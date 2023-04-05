@@ -1,3 +1,4 @@
 {
-  "remove": "按空格鍵或 Delete 鍵以移除標記。"
+  "removeButtonLabel": "移除",
+  "removeDescription": "按 Delete 鍵以移除標記。"
 }

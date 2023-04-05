@@ -4,6 +4,7 @@
   "columnSize": "{value} pikslit",
   "descending": "laskuv järjestus",
   "descendingSort": "sorditud veeru järgi {columnName} laskuvas järjestuses",
+  "resizerDescription": "Suuruse muutmise alustamiseks vajutage klahvi Enter",
   "select": "Vali",
   "selectAll": "Vali kõik",
   "sortable": "sorditav veerg"
