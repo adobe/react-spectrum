@@ -89,9 +89,8 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
       defaultFilter: contains,
       allowsEmptyCollection: isAsync,
       allowsCustomValue: true,
-      onSelectionChange: (key) => key !== null && onSubmit(null, key),
-      selectedKey: undefined,
-      defaultSelectedKey: undefined
+      selectedKey: null,
+      defaultSelectedKey: null
     }
   );
   let layout = useListBoxLayout(state);

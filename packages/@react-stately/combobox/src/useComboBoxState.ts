@@ -60,6 +60,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
   } = props;
 
   let [showAllItems, setShowAllItems] = useState(false);
+  let [showNoItems, setShowNoItems] = useState(false);
   let [isFocused, setFocusedState] = useState(false);
   let [inputValue, setInputValue] = useControlledState(
     props.inputValue,
@@ -70,6 +71,15 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
   let onSelectionChange = (key) => {
     if (props.onSelectionChange) {
       props.onSelectionChange(key);
+    }
+
+    // If key is controlled to be null, unset the selectedKey, set the inputValue, and show no items
+    if (props.selectedKey === null) {
+      setSelectedKey(null);
+      setShowNoItems(true);
+      if (key) {
+        setInputValue(collection.getItem(key)?.textValue ?? '');
+      }
     }
 
     // If key is the same, reset the inputValue and close the menu
@@ -92,8 +102,8 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     // No default filter if items are controlled.
     props.items != null || !defaultFilter
       ? collection
-      : filterCollection(collection, inputValue, defaultFilter)
-  ), [collection, inputValue, defaultFilter, props.items]);
+      : filterCollection(collection, inputValue, showNoItems ? () => false : defaultFilter)
+  ), [props.items, defaultFilter, collection, inputValue, showNoItems]);
   let [lastCollection, setLastCollection] = useState(filteredCollection);
 
   // Track what action is attempting to open the menu
@@ -252,6 +262,13 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     lastSelectedKey.current = selectedKey;
     lastSelectedKeyText.current = selectedItemText;
   });
+
+  useEffect(() => {
+    if (showNoItems) {
+      setShowNoItems(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inputValue]);
 
   // Revert input value and close menu
   let revert = () => {
