@@ -15,7 +15,7 @@ import statelyDocs from 'docs:@react-stately/combobox';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
-import Anatomy from '/packages/@react-aria/combobox/docs/anatomy.svg';
+import Anatomy from '@react-aria/combobox/docs/anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
@@ -28,7 +28,6 @@ import ListBox from '@react-spectrum/docs/pages/assets/component-illustrations/L
 category: Pickers
 keywords: [combobox, autocomplete, autosuggest, typeahead, search, aria]
 type: component
-after_version: 1.0.0
 ---
 
 # ComboBox
@@ -122,6 +121,7 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
   --text-color-disabled: var(--spectrum-alias-text-color-disabled);
 
   max-height: inherit;
+  box-sizing: border-box;
   overflow: auto;
   padding: 2px;
   outline: none;
