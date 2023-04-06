@@ -5,7 +5,7 @@ import {useCallback, useLayoutEffect, useRef} from 'react';
 // so this is a temporary shim to make this sandbox work.
 // You're not expected to write code like this yourself.
 
-export function useEvent(fn) {
+export function useEffectEvent(fn) {
   const ref = useRef(null);
   useLayoutEffect(() => {
     ref.current = fn;
