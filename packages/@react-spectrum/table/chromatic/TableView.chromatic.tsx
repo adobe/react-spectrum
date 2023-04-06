@@ -11,7 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableView} from '../';
+import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableSection, TableView} from '../';
 import {Content} from '@react-spectrum/view';
 import Delete from '@spectrum-icons/workflow/Delete';
 import {generatePowerset} from '@react-spectrum/story-utils';
@@ -146,6 +146,67 @@ const Template = (): Story => ({columns, items, ...args}) => (
   </Grid>
 );
 
+let columnsWithSections = [
+  {name: 'Foo', key: 'foo'},
+  {name: 'Bar', key: 'bar'},
+  {name: 'Baz', key: 'baz'}
+];
+
+let columnSectionDividers = [
+  {name: 'Foo', key: 'foo', showDivider: true},
+  {name: 'Bar', key: 'bar', showDivider: true},
+  {name: 'Baz', key: 'baz', showDivider: true}
+];
+
+let itemsWithSections = [
+  {id: 0, title: 'Section 1', children: [
+    {test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
+    {test: 'Test 2', foo: 'Foo 2', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
+  ]},
+  {id: 1, title: 'Section 2', children: [
+    {test: 'Test 1', foo: 'Foo 5', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
+    {test: 'Test 2', foo: 'Foo 6', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
+  ]}
+];
+
+const SectionsTemplate = (): Story => ({columns, items, ...args}) => (
+  <Grid columns={repeat(3, '1fr')} autoFlow="row" gap="size-300">
+    {combinations.map(c => {
+      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+      if (!key) {
+        key = 'empty';
+      }
+      return (
+        <View flexGrow={1} maxWidth="size-5000" maxHeight={700}>
+          <TableView {...args} {...c} width="100%" height="100%" key={key} aria-label={key} selectedKeys={['Foo 3', 'Foo 1']} disabledKeys={['Foo 2', 'Foo 4']}>
+            <TableHeader columns={columns}>
+              {(column: any) => (
+                <Column key={column.key} width={column.width} showDivider={column.showDivider} align={column.align} hideHeader={column.hideHeader} childColumns={column.children}>
+                  {column.name}
+                </Column>
+              )}
+            </TableHeader>
+            <TableBody items={items}>
+              {(item: any) => (
+                <TableSection key={item.id} items={item.children} title={item.title}>
+                  {(item: any) =>
+                    (<Row key={item.foo}>
+                      {key => {
+                        let button = <ActionButton isQuiet><Delete /></ActionButton>;
+                        return <Cell>{key === 'baz' ? button : item[key]}</Cell>;
+                      }}
+                    </Row>)
+                  }
+                </TableSection>
+              )}
+            </TableBody>
+          </TableView>
+        </View>
+      );
+    })}
+  </Grid>
+);
+
 function renderEmptyState() {
   return (
     <IllustratedMessage>
@@ -177,6 +238,10 @@ export const Default = Template().bind({});
 Default.storyName = 'default items and columns';
 Default.args = {columns, items};
 
+export const DefaultSections = SectionsTemplate().bind({});
+DefaultSections.storyName = 'default items and columns (sections)';
+DefaultSections.args = {columns: columnsWithSections, items: itemsWithSections};
+
 export const ColumnAlign = Template().bind({});
 ColumnAlign.storyName = 'column alignment';
 ColumnAlign.args = {columns: alignColumns, items};
@@ -184,6 +249,10 @@ ColumnAlign.args = {columns: alignColumns, items};
 export const ColumnDividers = Template().bind({});
 ColumnDividers.storyName = 'columns dividers';
 ColumnDividers.args = {columns: dividerColumns, items};
+
+export const SectionColumnDividers = SectionsTemplate().bind({});
+SectionColumnDividers.storyName = 'column dividers (sections)';
+SectionColumnDividers.args = {columns: columnSectionDividers, items: itemsWithSections};
 
 export const ColumnWidth = Template().bind({});
 ColumnWidth.storyName = 'columns widths';

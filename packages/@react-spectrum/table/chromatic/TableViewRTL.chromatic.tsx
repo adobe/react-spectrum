@@ -26,8 +26,10 @@ export default meta;
 
 export {
   Default,
+  DefaultSections,
   ColumnAlign,
   ColumnDividers,
+  SectionColumnDividers,
   ColumnWidth,
   HiddenColumns,
   NestedColumns,
