@@ -5,5 +5,5 @@
   "selectedAll": "All items selected.",
   "selectedItem": "{item} selected.",
   "longPressToSelect": "Long press to enter selection mode.",
-  "sectionAnnouncement": "Entered section {sectionTitle}"
+  "sectionAnnouncement": "Entered section {sectionTitle}, with {sectionSize, plural, one {# row} other {# rows}}."
 }

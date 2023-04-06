@@ -1492,6 +1492,7 @@ function TableSection({children, style, reusableView}) {
   let {state} = useTableContext();
   let {rowGroupProps, rowProps, gridCellProps} = useTableSection({isVirtualized: true, node: reusableView.content}, state);
 
+  // TODO: Chrome VO states "empty row group", doesn't happen in Safari VO
   return (
     <TableSectionContext.Provider value={{rowProps, gridCellProps}}>
       <div

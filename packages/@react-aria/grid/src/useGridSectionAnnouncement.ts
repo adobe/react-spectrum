@@ -12,6 +12,7 @@
 
 import {announce} from '@react-aria/live-announcer';
 import {Collection, Node} from '@react-types/shared';
+import {getChildNodes, getItemCount} from '@react-stately/collections';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isMac, useUpdateEffect} from '@react-aria/utils';
@@ -47,15 +48,22 @@ export function useGridSectionAnnouncement<T>(state: GridSelectionState<T>) {
   }
   let lastSection = useRef(sectionKey);
   useUpdateEffect(() => {
+    // TODO: NVDA announces the section title when navigating into it with arrow keys as "SECTION TITLE grouping" by defualt, so removing isMac doubles up on the section title announcement
+    // a bit. However, this does add an announcement for the number of rows in a section which might be
+    // Mobile screen readers don't cause this announcement to fire until focus happens on a row via double tap which is pretty strange
     if (isMac() && focusedItem != null && selectionManager.isFocused && sectionKey !== lastSection.current) {
       let section = sectionKey != null ? collection.getItem(sectionKey) : null;
-      let sectionTitle = section?.['aria-label'] || (typeof section?.rendered === 'string' ? section.rendered : '') || '';
+      if (section != null) {
+        let sectionTitle = section?.['aria-label'] || (typeof section?.rendered === 'string' ? section.rendered : '') || '';
+        // Subtract 1 since section header row doesn't count
+        let sectionSize = section ? [...getChildNodes(section, state.collection)].length - 1 : 0;
+        let announcement = stringFormatter.format('sectionAnnouncement', {
+          sectionTitle,
+          sectionSize
+        });
 
-      let announcement = stringFormatter.format('sectionAnnouncement', {
-        sectionTitle
-      });
-
-      announce(announcement);
+        announce(announcement);
+      }
     }
 
     lastSection.current = sectionKey;

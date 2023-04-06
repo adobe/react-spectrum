@@ -184,11 +184,6 @@ export const StaticWithSections: TableStory = {
             <Cell>B</Cell>
             <Cell>C</Cell>
           </Row>
-          <Row>
-            <Cell>D</Cell>
-            <Cell>E</Cell>
-            <Cell>F</Cell>
-          </Row>
         </TableSection>
       </TableBody>
     </TableView>
