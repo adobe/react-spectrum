@@ -112,7 +112,16 @@ storiesOf('Button/ActionButton', module)
         </Flex>
       </View>
     )
-  )
+  );
+
+storiesOf('Languages/ActionButton', module)
+  .addParameters({
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      express: false,
+      locales: ['en-US', 'ja-JP'],
+      scales: ['large', 'medium']
+    }})
   .add(
     'Japanese, icon + text, staticColor: white',
     () => (

@@ -12,8 +12,8 @@ import {useListData} from '@react-stately/data';
 let onSelectionChange = action('onSelectionChange');
 
 let columns = [
-  {name: 'First name', key: 'first_name'},
-  {name: 'Last name', key: 'last_name'},
+  {name: 'First name', key: 'first_name', isRowHeader: true},
+  {name: 'Last name', key: 'last_name', isRowHeader: true},
   {name: 'Email', key: 'email'},
   {name: 'Department', key: 'department'},
   {name: 'Job Title', key: 'job_title'},
@@ -56,11 +56,11 @@ export function DragExample(props?) {
   return (
     <TableView aria-label="TableView with dragging enabled" selectionMode="multiple" width={400} height={300} onSelectionChange={s => onSelectionChange([...s])} dragAndDropHooks={dragAndDropHooks} {...tableViewProps}>
       <TableHeader columns={columns}>
-        {column => <Column minWidth={100}>{column.name}</Column>}
+        {column => <Column minWidth={100} isRowHeader={column.isRowHeader}>{column.name}</Column>}
       </TableHeader>
       <TableBody items={items}>
         {item => (
-          <Row key={item.id} textValue={`${item.first_name} ${item.last_name}`}>
+          <Row>
             {key => <Cell>{item[key]}</Cell>}
           </Row>
         )}
@@ -136,11 +136,11 @@ export function ReorderExample(props) {
   return (
     <TableView aria-label="Reorderable TableView" selectionMode="multiple" width={400} height={300} dragAndDropHooks={dragAndDropHooks} {...tableViewProps}>
       <TableHeader columns={columns}>
-        {column => <Column minWidth={100}>{column.name}</Column>}
+        {column => <Column minWidth={100} isRowHeader={column.isRowHeader}>{column.name}</Column>}
       </TableHeader>
       <TableBody items={list.items}>
         {item => (
-          <Row key={item.id} textValue={`${item.first_name} ${item.last_name}`}>
+          <Row>
             {key => <Cell>{item[key]}</Cell>}
           </Row>
         )}
@@ -247,7 +247,7 @@ export function DragOntoRowExample(props) {
       </TableHeader>
       <TableBody items={list.items}>
         {item => (
-          <Row key={item.id} textValue={item.name}>
+          <Row>
             <Cell>{item.id}</Cell>
             <Cell>{item.type}</Cell>
             <Cell>{item.name}</Cell>
@@ -380,7 +380,7 @@ export function DragBetweenTablesExample(props) {
           </TableHeader>
           <TableBody items={list1.items}>
             {(item: any) => (
-              <Row key={item.id} textValue={item.name}>
+              <Row>
                 {key => <Cell>{item[key]}</Cell>}
               </Row>
             )}
@@ -395,7 +395,7 @@ export function DragBetweenTablesExample(props) {
           </TableHeader>
           <TableBody items={list2.items}>
             {(item: any) => (
-              <Row key={item.id} textValue={item.name}>
+              <Row>
                 {key => <Cell>{item[key]}</Cell>}
               </Row>
             )}
@@ -530,11 +530,11 @@ export function DragBetweenTablesRootOnlyExample(props) {
         <Text alignSelf="center">Table 1</Text>
         <TableView aria-label="First TableView" selectionMode="multiple" width={400} dragAndDropHooks={dragAndDropHooksFirst} {...tableViewProps}>
           <TableHeader columns={itemColumns}>
-            {column => <Column minWidth={100}>{column.name}</Column>}
+            {column => <Column minWidth={100} isRowHeader={column.key === 'name'}>{column.name}</Column>}
           </TableHeader>
           <TableBody items={list1.items}>
             {(item: any) => (
-              <Row key={item.id} textValue={item.name}>
+              <Row>
                 {key => <Cell>{item[key]}</Cell>}
               </Row>
             )}
@@ -545,11 +545,11 @@ export function DragBetweenTablesRootOnlyExample(props) {
         <Text alignSelf="center">Table 2</Text>
         <TableView aria-label="Second TableView" selectionMode="multiple" width={400} dragAndDropHooks={dragAndDropHooksSecond} {...tableViewProps}>
           <TableHeader columns={itemColumns}>
-            {column => <Column minWidth={100}>{column.name}</Column>}
+            {column => <Column minWidth={100} isRowHeader={column.key === 'name'}>{column.name}</Column>}
           </TableHeader>
           <TableBody items={list2.items}>
             {(item: any) => (
-              <Row key={item.id} textValue={item.name}>
+              <Row>
                 {key => <Cell>{item[key]}</Cell>}
               </Row>
             )}
