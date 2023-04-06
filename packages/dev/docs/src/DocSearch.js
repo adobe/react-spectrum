@@ -164,6 +164,7 @@ export default function DocSearch() {
   let onSubmit = (value, key) => {
     if (key === 'algolia-footer-logo') {
       window.open('https://www.algolia.com/ref/docsearch/?utm_source=react-spectrum.adobe.com&amp;utm_medium=referral&amp;utm_content=powered_by&amp;utm_campaign=docsearch', '_blank');
+      searchAutocompleteRef.current.UNSAFE_getDOMNode().querySelector('[role="button"]').click();
     } else if (key) {
       let prediction = predictions.find(prediction => key === prediction.objectID);
       let url = prediction.url;
