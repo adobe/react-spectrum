@@ -12,7 +12,7 @@
 
 import {announce} from '@react-aria/live-announcer';
 import {Collection, Node} from '@react-types/shared';
-import {getChildNodes, getItemCount} from '@react-stately/collections';
+import {getChildNodes} from '@react-stately/collections';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isMac, useUpdateEffect} from '@react-aria/utils';

@@ -187,6 +187,8 @@ describe('TableView', function () {
     return el;
   };
 
+  let focusCell = (tree, text) => act(() => getCell(tree, text).focus());
+  let moveFocus = (key, opts = {}) => {fireEvent.keyDown(document.activeElement, {key, ...opts});};
   it('renders a static table', function () {
     let {getByRole} = render(
       <TableView aria-label="Table" data-testid="test">
@@ -984,9 +986,6 @@ describe('TableView', function () {
         </TableBody>
       </TableView>
     );
-
-    let focusCell = (tree, text) => act(() => getCell(tree, text).focus());
-    let moveFocus = (key, opts = {}) => {fireEvent.keyDown(document.activeElement, {key, ...opts});};
 
     describe('ArrowRight', function () {
       it('should move focus to the next cell in a row with ArrowRight', function () {
@@ -2927,6 +2926,21 @@ describe('TableView', function () {
         expect(announce).toHaveBeenLastCalledWith('sorted by column Foo in ascending order', 'assertive', 500);
         triggerPress(columnheaders[0]);
         expect(announce).toHaveBeenLastCalledWith('sorted by column Foo in descending order', 'assertive', 500);
+      });
+
+      it('should announce when focus moves between sections', function () {
+        let platformMock = jest.spyOn(navigator, 'platform', 'get').mockImplementation(() => 'MacIntel');
+        let tree = render(<StaticTableSections />);
+        focusCell(tree, 'Foo');
+        expect(announce).not.toHaveBeenCalled();
+        moveFocus('ArrowDown');
+        expect(announce).toHaveBeenLastCalledWith('Entered section Section1, with 2 rows.');
+        announce.mockReset();
+        moveFocus('ArrowDown');
+        expect(announce).not.toHaveBeenCalled();
+        moveFocus('ArrowDown');
+        expect(announce).toHaveBeenLastCalledWith('Entered section Section2, with 1 row.');
+        platformMock.mockRestore();
       });
     });
 
