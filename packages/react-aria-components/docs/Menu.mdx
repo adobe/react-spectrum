@@ -14,7 +14,7 @@ import docs from 'docs:react-aria-components';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
-import Anatomy from '/packages/@react-aria/menu/docs/menu-trigger-anatomy.svg';
+import Anatomy from '@react-aria/menu/docs/menu-trigger-anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
@@ -25,7 +25,6 @@ import Popover from '@react-spectrum/docs/pages/assets/component-illustrations/P
 category: Collections
 keywords: [menu trigger, mutli-select menu, aria]
 type: component
-after_version: 1.0.0
 ---
 
 # Menu
@@ -95,6 +94,7 @@ import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
   --text-color-disabled: var(--spectrum-alias-text-color-disabled);
 
   max-height: inherit;
+  box-sizing: border-box;
   overflow: auto;
   padding: 2px;
   margin: 0;
