@@ -4,6 +4,7 @@
   "columnSize": "Liczba pikseli: {value}",
   "descending": "malejąco",
   "descendingSort": "posortowano według kolumny {columnName} w porządku malejącym",
+  "resizerDescription": "Naciśnij Enter, aby rozpocząć zmienianie rozmiaru",
   "select": "Zaznacz",
   "selectAll": "Zaznacz wszystko",
   "sortable": "kolumna z możliwością sortowania"

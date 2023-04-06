@@ -11,7 +11,9 @@ governing permissions and limitations under the License.
 */
 
 :root {
-  --spectrum-font-fallbacks-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --spectrum-font-fallbacks-sans: adobe-clean, 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Ubuntu, 'Trebuchet MS', 'Lucida Grande', sans-serif;
+
+  font-synthesis: weight;
 
   /* Not used
   --spectrum-font-fallbacks-serif: serif;
@@ -27,15 +29,15 @@ governing permissions and limitations under the License.
   --spectrum-font-family-condensed: adobe-clean-condensed, var(--spectrum-font-family-base);
   */
 
-  --spectrum-font-family-base: 'adobe-clean-ux', 'adobe-clean', 'Source Sans Pro', var(--spectrum-font-fallbacks-sans);
+  --spectrum-font-family-base: var(--spectrum-font-fallbacks-sans);
   --spectrum-font-family-han: 'adobe-clean-han-japanese', var(--spectrum-font-fallbacks-sans);
-  --spectrum-font-family-ar: 'adobe-arabic', 'myriad-arabic', var(--spectrum-font-fallbacks-sans);
-  --spectrum-font-family-he: 'adobe-hebrew', var(--spectrum-font-fallbacks-sans);
-  --spectrum-font-family-zhhans: 'adobe-clean-han-simplified-c', 'SimSun', 'Heiti SC Light', var(--spectrum-font-fallbacks-sans);
-  --spectrum-font-family-zh: var(--spectrum-font-family-zhhans);
-  --spectrum-font-family-zhhant: 'adobe-clean-han-traditional', 'Microsoft JhengHei UI', 'Microsoft JhengHei', 'Heiti TC Light', var(--spectrum-font-fallbacks-sans);
-  --spectrum-font-family-ko: 'adobe-clean-han-korean', 'Malgun Gothic', 'Apple Gothic', var(--spectrum-font-fallbacks-sans);
-  --spectrum-font-family-ja: 'adobe-clean-han-japanese', 'Yu Gothic', '\30E1 \30A4 \30EA \30AA', '\30D2 \30E9 \30AE \30CE \89D2 \30B4  Pro W3', 'Hiragino Kaku Gothic Pro W3', 'Osaka', '\FF2D \FF33 \FF30 \30B4 \30B7 \30C3 \30AF', 'MS PGothic', var(--spectrum-font-fallbacks-sans);
+  --spectrum-font-family-ar: 'myriad-arabic', var(--spectrum-font-fallbacks-sans);
+  --spectrum-font-family-he: 'myriad-hebrew', var(--spectrum-font-fallbacks-sans);
+  --spectrum-font-family-zhhans: adobe-clean-han-simplified-c, source-han-simplified-c, 'SimSun', 'Heiti SC Light', sans-serif;
+  --spectrum-font-family-zh: adobe-clean-han-traditional, source-han-traditional, 'MingLiu', 'Heiti TC Light', sans-serif;
+  --spectrum-font-family-zhhant: adobe-clean-han-traditional, source-han-traditional, 'MingLiu', 'Microsoft JhengHei UI', 'Microsoft JhengHei', 'Heiti TC Light', sans-serif;
+  --spectrum-font-family-ko: adobe-clean-han-korean, source-han-korean, 'Malgun Gothic', 'Apple Gothic', sans-serif;
+  --spectrum-font-family-ja: adobe-clean-han-japanese, 'Hiragino Kaku Gothic ProN', 'ヒラギノ角ゴ ProN W3', Osaka, YuGothic, 'Yu Gothic', 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif;
   --spectrum-text-size: var(--spectrum-alias-font-size-default);
   --spectrum-text-body-line-height: var(--spectrum-alias-line-height-medium);
   --spectrum-text-size-text-label: var(--spectrum-label-text-size);
@@ -53,12 +55,24 @@ governing permissions and limitations under the License.
     font-family: var(--spectrum-font-family-he);
   }
 
+  &:lang(zh) {
+    font-family: var(--spectrum-font-family-zh);
+  }
+
   &:lang(zh-Hans) {
     font-family: var(--spectrum-font-family-zhhans);
   }
 
-  &:lang(zh) {
-    font-family: var(--spectrum-font-family-zh);
+  &:lang(zh-Hant) {
+    font-family: var(--spectrum-font-family-zhhant);
+  }
+
+  &:lang(zh-SG) {
+    font-family: var(--spectrum-font-family-zhhans);
+  }
+
+  &:lang(zh-CN) {
+    font-family: var(--spectrum-font-family-zhhans);
   }
 
   &:lang(ko) {
