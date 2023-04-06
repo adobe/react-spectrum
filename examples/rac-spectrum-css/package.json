@@ -1,0 +1,33 @@
+{
+  "name": "rac-spectrum-css",
+  "version": "1.0.0",
+  "source": "src/index.html",
+  "scripts": {
+    "start": "parcel",
+    "build": "parcel build"
+  },
+  "devDependencies": {
+    "postcss": "^8.4.21",
+    "parcel": "^2.8.3"
+  },
+  "dependencies": {
+    "@react-spectrum/utils": "^3.9.1",
+    "@spectrum-css/button": "^9.0.13",
+    "@spectrum-css/icon": "^3.0.36",
+    "@spectrum-css/page": "^5.0.20",
+    "@spectrum-css/tokens": "^8.0.1",
+    "@spectrum-css/vars": "^9.0.0",
+    "clsx": "^1.2.1",
+    "react": "^18.2.0",
+    "react-aria-components": "1.0.0-alpha.2",
+    "react-dom": "^18.2.0"
+  },
+  "@parcel/transformer-css": {
+    "pseudoClasses": {
+      "focusVisible": "focus-visible",
+      "active": "is-active",
+      "hover": "is-hovered",
+      "disabled": "is-disabled"
+    }
+  }
+}
