@@ -29,8 +29,8 @@ describe('SSRProvider', function () {
     );
 
     let divs = tree.getAllByTestId('test');
-    expect(divs[0].id).toBe('react-aria-1');
-    expect(divs[1].id).toBe('react-aria-2');
+    expect(divs[0].id).toBe(React.useId ? 'react-aria-:r0:' : 'react-aria-1');
+    expect(divs[1].id).toBe(React.useId ? 'react-aria-:r1:' : 'react-aria-2');
   });
 
   it('it should generate consistent unique ids with nested SSR providers', function () {
@@ -51,15 +51,27 @@ describe('SSRProvider', function () {
     );
 
     let divs = tree.getAllByTestId('test');
-    expect(divs.map((div) => div.id)).toMatchInlineSnapshot(`
-      Array [
-        "react-aria-1",
-        "react-aria-2-1",
-        "react-aria-2-2-1",
-        "react-aria-3",
-        "react-aria-4-1",
-      ]
-    `);
+    if (React.useId) {
+      expect(divs.map((div) => div.id)).toMatchInlineSnapshot(`
+        Array [
+          "react-aria-:r2:",
+          "react-aria-:r3:",
+          "react-aria-:r4:",
+          "react-aria-:r5:",
+          "react-aria-:r6:",
+        ]
+      `);
+    } else {
+      expect(divs.map((div) => div.id)).toMatchInlineSnapshot(`
+        Array [
+          "react-aria-1",
+          "react-aria-2-1",
+          "react-aria-2-2-1",
+          "react-aria-3",
+          "react-aria-4-1",
+        ]
+      `);
+    }
   });
 
   it('it should generate consistent unique ids in React strict mode', function () {
@@ -73,8 +85,8 @@ describe('SSRProvider', function () {
     );
 
     let divs = tree.getAllByTestId('test');
-    expect(divs[0].id).toBe('react-aria-1');
-    expect(divs[1].id).toBe('react-aria-2');
+    expect(divs[0].id).toBe(React.useId ? 'react-aria-:r8:' : 'react-aria-1');
+    expect(divs[1].id).toBe(React.useId ? 'react-aria-:ra:' : 'react-aria-2');
   });
 
   it('it should generate consistent unique ids in React strict mode with Suspense', function () {
@@ -96,7 +108,7 @@ describe('SSRProvider', function () {
     );
 
     let divs = tree.getAllByTestId('test');
-    expect(divs[0].id).toBe('react-aria-1-1');
-    expect(divs[1].id).toBe('react-aria-2-1');
+    expect(divs[0].id).toBe(React.useId ? 'react-aria-:rc:' : 'react-aria-1-1');
+    expect(divs[1].id).toBe(React.useId ? 'react-aria-:re:' : 'react-aria-2-1');
   });
 });
