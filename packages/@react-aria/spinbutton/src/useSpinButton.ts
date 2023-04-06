@@ -54,6 +54,10 @@ export function useSpinButton(
     onDecrementToMin,
     onIncrementToMax
   } = props;
+  let propsRef = useRef(props);
+  useEffect(() => {
+    propsRef.current = props;
+  });
   const stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   const _async = useRef<number>();
@@ -139,35 +143,35 @@ export function useSpinButton(
   const onIncrementPressStart = useCallback(
     (initialStepDelay: number) => {
       clearAsync();
-      onIncrement();
+      propsRef.current.onIncrement();
       // Start spinning after initial delay
       _async.current = window.setTimeout(
         () => {
-          if (isNaN(maxValue) || isNaN(value) || value < maxValue) {
+          if (isNaN(propsRef.current.maxValue) || isNaN(propsRef.current.value) || propsRef.current.value < propsRef.current.maxValue) {
             onIncrementPressStart(60);
           }
         },
         initialStepDelay
       );
     },
-    [onIncrement, maxValue, value, clearAsync, _async]
+    [clearAsync, _async]
   );
 
   const onDecrementPressStart = useCallback(
     (initialStepDelay: number) => {
       clearAsync();
-      onDecrement();
+      propsRef.current.onDecrement();
       // Start spinning after initial delay
       _async.current = window.setTimeout(
         () => {
-          if (isNaN(minValue) || isNaN(value) || value > minValue) {
+          if (isNaN(propsRef.current.minValue) || isNaN(propsRef.current.value) || propsRef.current.value > propsRef.current.minValue) {
             onDecrementPressStart(60);
           }
         },
         initialStepDelay
       );
     },
-    [onDecrement, minValue, value, clearAsync, _async]
+    [clearAsync, _async]
   );
 
   let cancelContextMenu = useCallback((e) => {
