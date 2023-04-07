@@ -1244,7 +1244,9 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
   } = useFocusRing({within: true});
   let {isFocusVisible, focusProps} = useFocusRing();
   let {hoverProps, isHovered} = useHover({isDisabled});
-  let isFirstRow = state.collection.rows.find(row => row.level === 1)?.key === item.key;
+  let rows = state.collection.rows;
+  // If there are sections, the first row is always the section header row
+  let isFirstRow = state.collection.sections.length === 0 ? rows.find(row => row.level === 1)?.key === item.key : false;
   let isLastRow = item.nextKey == null;
   // Figure out if the TableView content is equal or greater in height to the container. If so, we'll need to round the bottom
   // border corners of the last row when selected.
@@ -1271,7 +1273,7 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
     let target = {type: 'item', key: item.key, dropPosition: 'on'} as DropTarget;
     isDropTarget = dropState.isDropTarget(target);
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    dropIndicator = dragAndDropHooks.useDropIndicator({target}, dropState, dropIndicatorRef);
+    dropIndicator = dragAndDropHooks.useDropIndicator({target, keyboardDelegate: layout}, dropState, dropIndicatorRef);
   }
 
   let dragButtonRef = React.useRef();
@@ -1295,10 +1297,12 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
 
   let dropProps = isDroppable ? droppableItem?.dropProps : {'aria-hidden': droppableItem?.dropProps['aria-hidden']};
   let {visuallyHiddenProps} = useVisuallyHidden();
+  let firstRowInParent = state.collection.sections.length > 0 ? item.index === 1 : layout.getFirstKey();
+  // TODO: fix the look of the inserton indicators when there are sections
 
   return (
     <TableRowContext.Provider value={{dragButtonProps, dragButtonRef, isFocusVisibleWithin}}>
-      {isTableDroppable && isFirstRow &&
+      {isTableDroppable && firstRowInParent &&
         <InsertionIndicator
           rowProps={props}
           key={`${item.key}-before`}

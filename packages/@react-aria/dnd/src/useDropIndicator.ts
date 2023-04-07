@@ -12,7 +12,7 @@
 
 import * as DragManager from './DragManager';
 import {DroppableCollectionState} from '@react-stately/dnd';
-import {DropTarget} from '@react-types/shared';
+import {DropTarget, KeyboardDelegate} from '@react-types/shared';
 import {getDroppableCollectionId} from './utils';
 import {HTMLAttributes, Key, RefObject} from 'react';
 // @ts-ignore
@@ -23,7 +23,9 @@ import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface DropIndicatorProps {
   /** The drop target that the drop indicator represents. */
-  target: DropTarget
+  target: DropTarget,
+  /** A delegate object that implements behavior for keyboard focus movement. */
+  keyboardDelegate?: KeyboardDelegate
 }
 
 export interface DropIndicatorAria {
@@ -42,7 +44,7 @@ export interface DropIndicatorAria {
  * Handles drop interactions for a target within a droppable collection.
  */
 export function useDropIndicator(props: DropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DropIndicatorAria {
-  let {target} = props;
+  let {target, keyboardDelegate} = props;
   let {collection} = state;
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
@@ -63,16 +65,35 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
   } else {
     let before: Key | null;
     let after: Key | null;
-    if (collection.getFirstKey() === target.key && target.dropPosition === 'before') {
-      before = null;
+
+    // TODO: get opinions here, should we accept keyboard delegate here or modify the collection key getters
+    let keyGetter = keyboardDelegate ?? collection;
+
+    // TODO: I've changed it so it will announce "insert after"/"insert before" target if the drop position is between the target and a following/preceeding section
+    // instead of announcing "insert between target and NEXT/PREV_SECTION_ROW". Gather opinions
+
+    // TODO: fix the labeling for insert drop indicators, right now it just says always
+    // Also fix keyboard nav, right now it doesn't seem to skip the section rows
+    let keyBefore = keyboardDelegate != null ? keyboardDelegate.getKeyAbove(target.key) : collection.getKeyBefore(target.key);
+    if (target.dropPosition === 'before') {
+      if (keyGetter.getFirstKey() === target.key || collection.getItem(keyBefore)?.parentKey !== collection.getItem(target.key)?.parentKey) {
+        before = null;
+      } else {
+        before === keyBefore;
+      }
     } else {
-      before = target.dropPosition === 'before' ? collection.getKeyBefore(target.key) : target.key;
+      before = target.key;
     }
 
-    if (collection.getLastKey() === target.key && target.dropPosition === 'after') {
-      after = null;
+    let keyAfter = keyboardDelegate != null ? keyboardDelegate.getKeyBelow(target.key) : collection.getKeyAfter(target.key);
+    if (target.dropPosition === 'after') {
+      if (keyGetter.getLastKey() === target.key || collection.getItem(keyAfter)?.parentKey !== collection.getItem(target.key)?.parentKey) {
+        after = null;
+      } else {
+        before === keyBefore;
+      }
     } else {
-      after = target.dropPosition === 'after' ? collection.getKeyAfter(target.key) : target.key;
+      before = target.key;
     }
 
     if (before && after) {

@@ -23,11 +23,10 @@ interface InsertionIndicatorProps {
 }
 
 export function InsertionIndicator(props: InsertionIndicatorProps) {
-  let {dropState, dragAndDropHooks} = useTableContext();
+  let {dropState, dragAndDropHooks, layout} = useTableContext();
   const {target, rowProps} = props;
-
   let ref = useRef();
-  let {dropIndicatorProps} = dragAndDropHooks.useDropIndicator(props, dropState, ref);
+  let {dropIndicatorProps} = dragAndDropHooks.useDropIndicator({...props, keyboardDelegate: layout}, dropState, ref);
   let {visuallyHiddenProps} = useVisuallyHidden();
 
   let isDropTarget = dropState.isDropTarget(target);

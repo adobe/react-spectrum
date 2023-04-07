@@ -13,7 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {ComponentMeta} from '@storybook/react';
 import defaultConfig from './Table.stories';
-import {DragBetweenTablesComplex, DragBetweenTablesOverride, DragExampleUtilHandlers, FinderDropUtilHandlers, InsertExampleUtilHandlers, ItemDropExampleUtilHandlers, ReorderExampleUtilHandlers, RootDropExampleUtilHandlers} from './TableDnDUtilExamples';
+import {DragBetweenTablesComplex, DragBetweenTablesOverride, DragBetweenTablesSectionsComplex, DragExampleUtilHandlers, FinderDropUtilHandlers, InsertExampleUtilHandlers, ItemDropExampleUtilHandlers, ReorderExampleUtilHandlers, RootDropExampleUtilHandlers} from './TableDnDUtilExamples';
 import {Droppable} from '@react-aria/dnd/stories/dnd.stories';
 import {Flex} from '@react-spectrum/layout';
 import React from 'react';
@@ -160,5 +160,25 @@ export const OverrideUtilHandlers: TableStory = {
   storyName: 'util handlers overridden by onDrop and getDropOperations',
   parameters: {
     description: {data: 'The first table should be draggable, the second table should only be root droppable. No actions for onRootDrop, onReorder, onItemDrop, or onInsert should appear in the storybook actions panel.'}
+  }
+};
+
+export const ComplexDragBetweenTablesSections: TableStory = {
+  args: {
+    disabledKeys: ['7', '2', '8']
+  },
+  render: (args) => (
+    <DragBetweenTablesSectionsComplex
+      tableViewProps={args}
+      firstTableDnDOptions={{
+        onDragStart: action('dragStartTable1')
+      }}
+      secondTableDnDOptions={{
+        onDragStart: action('dragStartTable2')
+      }} />
+  ),
+  storyName: 'complex drag between tables (sections)',
+  parameters: {
+    description: {data: 'The first table should allow dragging and drops into its folder, but disallow reorder operations. External root drops should be placed at the end of the list. The second table should allow all operations and root drops should be placed at the top of the table. Move and copy operations are allowed. The invalid drag item should be able to be dropped in either table if accompanied by other valid drag items.'}
   }
 };

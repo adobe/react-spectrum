@@ -324,15 +324,21 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       }
 
       let {keyboardDelegate} = localState.props;
+      // TODO: debug here, this shouldn't be returning the section header as the keybelow
       let nextKey = target.type === 'item'
         ? keyboardDelegate.getKeyBelow(target.key)
         : keyboardDelegate.getFirstKey();
       let dropPosition: DropPosition = 'before';
 
       if (target.type === 'item') {
+        let targetItem = localState.state.collection.getItem(target.key);
+        let nextItem = nextKey != null ? localState.state.collection.getItem(nextKey) : null;
         let positionIndex = DROP_POSITIONS.indexOf(target.dropPosition);
         let nextDropPosition = DROP_POSITIONS[positionIndex + 1];
-        if (positionIndex < DROP_POSITIONS.length - 1 && !(nextDropPosition === 'after' && nextKey != null)) {
+        if (
+          (positionIndex < DROP_POSITIONS.length - 1 && !(nextDropPosition === 'after' && nextKey != null)) ||
+          (nextDropPosition === 'after' && nextKey != null && targetItem.parentKey !== nextItem.parentKey)
+        ) {
           return {
             type: 'item',
             key: target.key,
@@ -340,9 +346,9 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
           };
         }
 
-        // If the last drop position was 'after', then 'before' on the next key is equivalent.
+        // If the last drop position was 'after', then 'before' on the next key is equivalent if they have the same parent.
         // Switch to 'on' instead.
-        if (target.dropPosition === 'after') {
+        if (target.dropPosition === 'after' && targetItem?.parentKey === nextItem?.parentKey) {
           dropPosition = 'on';
         }
       }
@@ -372,6 +378,8 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       let dropPosition: DropPosition = !target || target.type === 'root' ? 'after' : 'on';
 
       if (target?.type === 'item') {
+        let targetItem = localState.state.collection.getItem(target.key);
+        let nextItem = nextKey != null ? localState.state.collection.getItem(nextKey) : undefined;
         let positionIndex = DROP_POSITIONS.indexOf(target.dropPosition);
         let nextDropPosition = DROP_POSITIONS[positionIndex - 1];
         if (positionIndex > 0 && nextDropPosition !== 'after') {
@@ -382,10 +390,12 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
           };
         }
 
-        // If the last drop position was 'before', then 'after' on the previous key is equivalent.
+        // If the last drop position was 'before', then 'after' on the previous key is equivalent if they have the same parent.
         // Switch to 'on' instead.
-        if (target.dropPosition === 'before') {
+        if (target.dropPosition === 'before' && targetItem?.parentKey === nextItem?.parentKey) {
           dropPosition = 'on';
+        } else if (target.dropPosition === 'before' && nextItem && targetItem.parentKey !== nextItem.parentKey) {
+          dropPosition = 'after';
         }
       }
 
@@ -535,6 +545,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
           onDrop(e, target || localState.state.target);
         }
       },
+      // TODO: debug why the table section headers are valid drop targets
       onKeyDown(e, drag) {
         let {keyboardDelegate} = localState.props;
         let types = getTypes(drag.items);
@@ -579,6 +590,8 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
                     ? target.key
                     : keyboardDelegate.getFirstKey()
                 );
+
+                // Prioritize the same drop position that we started on, even if the next key is less than a whole page down
                 let dropPosition = target.type === 'item' ? target.dropPosition : 'after';
 
                 // If there is no next key, or we are starting on the last key, jump to the last possible position.

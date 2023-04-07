@@ -1,11 +1,11 @@
 
 import {action} from '@storybook/addon-actions';
-import {Cell, Column, Row, TableBody, TableHeader, TableView} from '..';
+import {Cell, Column, Row, TableBody, TableHeader, TableSection, TableView} from '..';
 import {DIRECTORY_DRAG_TYPE, useDragAndDrop} from '@react-spectrum/dnd';
 import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 import {Text} from '@react-spectrum/text';
-import {useListData} from '@react-stately/data';
+import {useListData, useTreeData} from '@react-stately/data';
 
 let onSelectionChange = action('onSelectionChange');
 
@@ -776,6 +776,269 @@ export function DragBetweenTablesOverride(props) {
               <Row key={item.identifier}>
                 {key => <Cell>{item[key]}</Cell>}
               </Row>
+            )}
+          </TableBody>
+        </TableView>
+      </Flex>
+    </>
+  );
+}
+
+let folderList1Section = [
+  {identifier: 'a', type: 'section', name: 'Section 1', childNodes: [
+    {identifier: '1', type: 'file', name: 'Adobe Photoshop'},
+    {identifier: '2', type: 'file', name: 'Adobe XD'},
+    {identifier: '3', type: 'folder', name: 'Documents', childNodes: []}
+  ]},
+  {identifier: 'b', type: 'section', name: 'Section 2', childNodes: [
+    {identifier: '4', type: 'file', name: 'Adobe InDesign'},
+    {identifier: '5', type: 'folder', name: 'Utilities', childNodes: []},
+    {identifier: '6', type: 'file', name: 'Adobe AfterEffects'}
+  ]}
+];
+
+let folderList2Section = [
+  {identifier: 'c', type: 'section', name: 'Section 3', childNodes: [
+    {identifier: '7', type: 'folder', name: 'Pictures', childNodes: []},
+    {identifier: '8', type: 'file', name: 'Adobe Fresco'},
+    {identifier: '9', type: 'folder', name: 'Apps', childNodes: []},
+    {identifier: '10', type: 'file', name: 'Adobe Illustrator'}
+  ]},
+  {identifier: 'd', type: 'section', name: 'Section 4', childNodes: [
+    {identifier: '11', type: 'file', name: 'Adobe Lightroom'},
+    {identifier: '12', type: 'file', name: 'Adobe Dreamweaver'},
+    {identifier: '13', type: 'unique_type', name: 'invalid drag item'}
+  ]}
+];
+
+interface TreeNode {
+  identifier: string,
+  type: string,
+  name: string,
+  childNodes?: Array<TreeNode>
+}
+
+export function DragBetweenTablesSectionsComplex(props) {
+  let {tableViewProps, firstTableDnDOptions, secondTableDnDOptions} = props;
+  let list1 = useTreeData<TreeNode>({
+    initialItems: folderList1Section,
+    getKey: (item) => {
+      return item.identifier;
+    },
+    getChildren: (item) => {
+      return item?.childNodes;
+    }
+  });
+
+  let list2 = useTreeData<TreeNode>({
+    initialItems: folderList2Section,
+    getKey: (item) => {
+      return item.identifier;
+    },
+    getChildren: (item) => {
+      return item?.childNodes;
+    }
+  });
+  let acceptedDragTypes = ['file', 'folder', 'text/plain'];
+
+  // table 1 should allow on item drops and external drops, but disallow reordering/internal drops
+  let {dragAndDropHooks: dragAndDropHooksTable1} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => {
+      let item = list1.getItem(key);
+      return {
+        [`${item.value.type}`]: JSON.stringify(item),
+        'text/plain': JSON.stringify(item)
+      };
+    }),
+    onInsert: async (e) => {
+      // let {
+      //   items,
+      //   target
+      // } = e;
+      action('onInsertTable1')(e);
+      // let processedItems = await itemProcessor(items, acceptedDragTypes);
+
+      // if (target.dropPosition === 'before') {
+      //   list1.insertBefore(target.key, ...processedItems);
+      // } else if (target.dropPosition === 'after') {
+      //   list1.insertAfter(target.key, ...processedItems);
+      // }
+    },
+    onRootDrop: async (e) => {
+      action('onRootDropTable1')(e);
+      // let processedItems = await itemProcessor(e.items, acceptedDragTypes);
+      // list1.append(...processedItems);
+    },
+    onItemDrop: async (e) => {
+      // let {
+      //   items,
+      //   target,
+      //   isInternal,
+      //   dropOperation
+      // } = e;
+      action('onItemDropTable1')(e);
+      // let processedItems = await itemProcessor(items, acceptedDragTypes);
+      // let targetItem = list1.getItem(target.key);
+      // list1.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
+
+      // if (isInternal && dropOperation === 'move') {
+      //   // TODO test this, perhaps it would be easier to also pass the draggedKeys to onItemDrop instead?
+      //   // TODO: dig into other libraries to see how they handle this
+      //   let keysToRemove = processedItems.map(item => item.identifier);
+      //   list1.remove(...keysToRemove);
+      // }
+    },
+    acceptedDragTypes,
+    onDragEnd: (e) => {
+      // let {
+      //   dropOperation,
+      //   isInternal,
+      //   keys
+      // } = e;
+      action('onDragEndTable1')(e);
+      // if (dropOperation === 'move' && !isInternal) {
+      //   list1.remove(...keys);
+      // }
+    },
+    getAllowedDropOperations: () => ['move', 'copy'],
+    shouldAcceptItemDrop: (target) => !!list1.getItem(target.key)?.value.childNodes,
+    ...firstTableDnDOptions
+  });
+
+  // table 2 should allow reordering, on folder drops, and on root drops
+  let {dragAndDropHooks: dragAndDropHooksTable2} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => {
+      let item = list2.getItem(key);
+      let dragItem = {};
+      let itemString = JSON.stringify(item);
+      dragItem[`${item.value.type}`] = itemString;
+      if (item.value.type !== 'unique_type') {
+        dragItem['text/plain'] = itemString;
+      }
+
+      return dragItem;
+    }),
+    onInsert: async (e) => {
+      // let {
+      //   items,
+      //   target
+      // } = e;
+      action('onInsertTable2')(e);
+      // let processedItems = await itemProcessor(items, acceptedDragTypes);
+
+      // if (target.dropPosition === 'before') {
+      //   list2.insertBefore(target.key, ...processedItems);
+      // } else if (target.dropPosition === 'after') {
+      //   list2.insertAfter(target.key, ...processedItems);
+      // }
+    },
+    onReorder: async (e) => {
+      // let {
+      //   keys,
+      //   target,
+      //   dropOperation
+      // } = e;
+      action('onReorderTable2')(e);
+
+      // let itemsToCopy = [];
+      // if (dropOperation === 'copy') {
+      //   for (let key of keys) {
+      //     let item = {...list2.getItem(key)};
+      //     item.identifier = Math.random().toString(36).slice(2);
+      //     itemsToCopy.push(item);
+      //   }
+      // }
+
+      // if (target.dropPosition === 'before') {
+      //   if (dropOperation === 'move') {
+      //     list2.moveBefore(target.key, [...keys]);
+      //   } else if (dropOperation === 'copy') {
+      //     list2.insertBefore(target.key, ...itemsToCopy);
+      //   }
+      // } else if (target.dropPosition === 'after') {
+      //   if (dropOperation === 'move') {
+      //     list2.moveAfter(target.key, [...keys]);
+      //   } else if (dropOperation === 'copy') {
+      //     list2.insertAfter(target.key, ...itemsToCopy);
+      //   }
+      // }
+    },
+    onRootDrop: async (e) => {
+      action('onRootDropTable2')(e);
+      // let processedItems = await itemProcessor(e.items, acceptedDragTypes);
+      // list2.prepend(...processedItems);
+    },
+    onItemDrop: async (e) => {
+      // let {
+      //   items,
+      //   target,
+      //   isInternal,
+      //   dropOperation
+      // } = e;
+      action('onItemDropTable2')(e);
+      // let processedItems = await itemProcessor(items, acceptedDragTypes);
+      // let targetItem = list2.getItem(target.key);
+      // list2.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
+
+      // if (isInternal && dropOperation === 'move') {
+      //   let keysToRemove = processedItems.map(item => item.identifier);
+      //   list2.remove(...keysToRemove);
+      // }
+    },
+    acceptedDragTypes,
+    onDragEnd: (e) => {
+      // let {
+      //   dropOperation,
+      //   isInternal,
+      //   keys
+      // } = e;
+      action('onDragEndTable2')(e);
+      // if (dropOperation === 'move' && !isInternal) {
+      //   let keysToRemove = [...keys].filter(key => list2.getItem(key).type !== 'unique_type');
+      //   list2.remove(...keysToRemove);
+      // }
+    },
+    getAllowedDropOperations: () => ['move', 'copy'],
+    shouldAcceptItemDrop: (target) => !!list2.getItem(target.key)?.value.childNodes,
+    ...secondTableDnDOptions
+  });
+
+  return (
+    <>
+      <Flex direction="column" margin="size-100">
+        <Text alignSelf="center">Table 1</Text>
+        <TableView aria-label="First TableView in drag between table example" selectionMode="multiple" width={300} dragAndDropHooks={dragAndDropHooksTable1} {...tableViewProps}>
+          <TableHeader columns={columns}>
+            {column => <Column isRowHeader={column.key === 'name'}>{column.name}</Column>}
+          </TableHeader>
+          <TableBody items={list1.items}>
+            {(item) => (
+              <TableSection key={item.value.identifier} items={item.children} title={item.value.name}>
+                {(item) => (
+                  <Row key={item.value.identifier}>
+                    {key => <Cell>{item.value[key]}</Cell>}
+                  </Row>
+                )}
+              </TableSection>
+            )}
+          </TableBody>
+        </TableView>
+      </Flex>
+      <Flex direction="column" margin="size-100">
+        <Text alignSelf="center">Table 2</Text>
+        <TableView aria-label="Second TableView in drag between table example" selectionMode="multiple" width={300} dragAndDropHooks={dragAndDropHooksTable2} {...tableViewProps}>
+          <TableHeader columns={columns}>
+            {column => <Column isRowHeader={column.key === 'name'}>{column.name}</Column>}
+          </TableHeader>
+          <TableBody items={list2.items}>
+            {(item) => (
+              <TableSection key={item.value.identifier} items={item.children} title={item.value.name}>
+                {(item) => (
+                  <Row key={item.value.identifier}>
+                    {key => <Cell>{item.value[key]}</Cell>}
+                  </Row>
+                )}
+              </TableSection>
             )}
           </TableBody>
         </TableView>
