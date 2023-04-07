@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/numberfield",
-  "version": "3.4.0",
+  "version": "3.4.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -24,8 +24,8 @@
   "dependencies": {
     "@internationalized/number": "^3.2.0",
     "@react-stately/utils": "^3.6.0",
-    "@react-types/numberfield": "^3.4.0",
-    "@react-types/shared": "^3.17.0",
+    "@react-types/numberfield": "^3.4.1",
+    "@react-types/shared": "^3.18.0",
     "@swc/helpers": "^0.4.14"
   },
   "peerDependencies": {

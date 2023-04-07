@@ -146,6 +146,34 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     collection.body = this.body;
     return collection;
   }
+
+  getTextValue(key: Key): string {
+    let row = this.getItem(key);
+    if (!row) {
+      return '';
+    }
+
+    // If the row has a textValue, use that.
+    if (row.textValue) {
+      return row.textValue;
+    }
+
+    // Otherwise combine the text of each of the row header columns.
+    let rowHeaderColumnKeys = this.rowHeaderColumnKeys;
+    let text: string[] = [];
+    for (let cell of this.getChildren(key)) {
+      let column = this.columns[cell.index!];
+      if (rowHeaderColumnKeys.has(column.key) && cell.textValue) {
+        text.push(cell.textValue);
+      }
+
+      if (text.length === rowHeaderColumnKeys.size) {
+        break;
+      }
+    }
+
+    return text.join(' ');
+  }
 }
 
 interface InternalTableContextValue {

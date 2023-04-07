@@ -91,6 +91,8 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
 
   let commitValue = (date: DateValue, time: TimeValue) => {
     setValue('timeZone' in time ? time.set(toCalendarDate(date)) : toCalendarDateTime(date, time));
+    setSelectedDate(null);
+    setSelectedTime(null);
   };
 
   // Intercept setValue to make sure the Time section is not changed by date selection in Calendar

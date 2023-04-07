@@ -4,6 +4,7 @@
   "columnSize": "{value} פיקסלים",
   "descending": "יורד",
   "descendingSort": "מוין לפי עמודה {columnName} בסדר יורד",
+  "resizerDescription": "הקש Enter כדי לשנות את הגודל",
   "select": "בחר",
   "selectAll": "בחר הכול",
   "sortable": "עמודה שניתן למיין"

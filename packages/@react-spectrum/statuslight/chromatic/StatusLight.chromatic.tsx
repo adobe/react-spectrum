@@ -33,6 +33,29 @@ storiesOf('StatusLight', module)
     )
   );
 
+storiesOf('Languages/StatusLight', module)
+  .addParameters({
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      express: false,
+      locales: ['ar-AE', 'zh-CN', 'zh-TW', 'ja-JP', 'ko-KR'],
+      scales: ['large', 'medium']
+    }
+  })
+  .add(
+    'Neutral: no italic in CCJK',
+    () => (
+      <Flex gap="size-200" direction="row" wrap>
+        <StatusLight variant="neutral">Help</StatusLight>
+        <StatusLight variant="neutral">مساعدة</StatusLight>
+        <StatusLight variant="neutral">帮助</StatusLight>
+        <StatusLight variant="neutral">說明</StatusLight>
+        <StatusLight variant="neutral">ヘルプ</StatusLight>
+        <StatusLight variant="neutral">도움말</StatusLight>
+      </Flex>
+    )
+  );
+
 function render() {
   return (
     <Flex wrap>

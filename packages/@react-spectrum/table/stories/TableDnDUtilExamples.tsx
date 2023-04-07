@@ -78,11 +78,11 @@ export function DragExampleUtilHandlers(props) {
   return (
     <TableView aria-label="TableView with dnd util handlers" selectionMode="multiple" width={400} height={200} onSelectionChange={s => onSelectionChange([...s])} dragAndDropHooks={dragAndDropHooks} {...tableViewProps}>
       <TableHeader columns={columns}>
-        {column => <Column>{column.name}</Column>}
+        {column => <Column isRowHeader={column.key === 'name'}>{column.name}</Column>}
       </TableHeader>
       <TableBody items={list.items}>
         {item => (
-          <Row key={item.identifier} textValue={item.name}>
+          <Row key={item.identifier}>
             {key => <Cell>{item[key]}</Cell>}
           </Row>
         )}
@@ -97,7 +97,7 @@ export function ReorderExampleUtilHandlers(props) {
     initialItems: folderList1,
     getKey: (item) => item.identifier
   });
-  
+
 
   let acceptedDragTypes = ['file', 'folder', 'text/plain'];
   let {dragAndDropHooks} = useDragAndDrop({
@@ -146,17 +146,17 @@ export function ReorderExampleUtilHandlers(props) {
   return (
     <TableView aria-label="Reorderable TableView with util handlers" selectionMode="multiple" width={400} height={200} onSelectionChange={s => onSelectionChange([...s])} dragAndDropHooks={dragAndDropHooks} {...tableViewProps}>
       <TableHeader columns={columns}>
-        {column => <Column>{column.name}</Column>}
+        {column => <Column isRowHeader={column.key === 'name'}>{column.name}</Column>}
       </TableHeader>
       <TableBody items={list.items}>
         {item => (
-          <Row key={item.identifier} textValue={item.name}>
+          <Row key={item.identifier}>
             {key => <Cell>{item[key]}</Cell>}
           </Row>
         )}
       </TableBody>
     </TableView>
-    
+
   );
 }
 
@@ -203,11 +203,11 @@ export function ItemDropExampleUtilHandlers(props) {
   return (
     <TableView aria-label="Row droppable TableView from dnd hook util handlers" selectionMode="multiple" width={400} height={200} onSelectionChange={s => onSelectionChange([...s])} dragAndDropHooks={dragAndDropHooks} {...tableViewProps}>
       <TableHeader columns={columns}>
-        {column => <Column>{column.name}</Column>}
+        {column => <Column isRowHeader={column.key === 'name'}>{column.name}</Column>}
       </TableHeader>
       <TableBody items={list.items}>
         {item => (
-          <Row key={item.identifier} textValue={item.name}>
+          <Row key={item.identifier}>
             {key => <Cell>{item[key]}</Cell>}
           </Row>
         )}
@@ -267,11 +267,11 @@ export function RootDropExampleUtilHandlers(props) {
         <Text alignSelf="center">Table 1</Text>
         <TableView aria-label="First TableView" selectionMode="multiple" width={300} dragAndDropHooks={table1Hooks} {...tableViewProps}>
           <TableHeader columns={columns}>
-            {column => <Column>{column.name}</Column>}
+            {column => <Column isRowHeader={column.key === 'name'}>{column.name}</Column>}
           </TableHeader>
           <TableBody items={list1.items}>
             {(item) => (
-              <Row key={item.identifier} textValue={item.name}>
+              <Row key={item.identifier}>
                 {key => <Cell>{item[key]}</Cell>}
               </Row>
             )}
@@ -282,11 +282,11 @@ export function RootDropExampleUtilHandlers(props) {
         <Text alignSelf="center">Table 2</Text>
         <TableView aria-label="Second TableView" selectionMode="multiple" width={300} dragAndDropHooks={table2Hooks} {...tableViewProps}>
           <TableHeader columns={columns}>
-            {column => <Column>{column.name}</Column>}
+            {column => <Column isRowHeader={column.key === 'name'}>{column.name}</Column>}
           </TableHeader>
           <TableBody items={list2.items}>
             {(item) => (
-              <Row key={item.identifier} textValue={item.name}>
+              <Row key={item.identifier}>
                 {key => <Cell>{item[key]}</Cell>}
               </Row>
             )}
@@ -357,11 +357,11 @@ export function InsertExampleUtilHandlers(props) {
         <Text alignSelf="center">Table 1</Text>
         <TableView aria-label="First TableView" selectionMode="multiple" width={300} dragAndDropHooks={table1Hooks} {...tableViewProps}>
           <TableHeader columns={columns}>
-            {column => <Column>{column.name}</Column>}
+            {column => <Column isRowHeader={column.key === 'name'}>{column.name}</Column>}
           </TableHeader>
           <TableBody items={list1.items}>
             {(item) => (
-              <Row key={item.identifier} textValue={item.name}>
+              <Row key={item.identifier}>
                 {key => <Cell>{item[key]}</Cell>}
               </Row>
             )}
@@ -372,11 +372,11 @@ export function InsertExampleUtilHandlers(props) {
         <Text alignSelf="center">Table 2</Text>
         <TableView aria-label="Second TableView" selectionMode="multiple" width={300} dragAndDropHooks={table2Hooks} {...tableViewProps}>
           <TableHeader columns={columns}>
-            {column => <Column>{column.name}</Column>}
+            {column => <Column isRowHeader={column.key === 'name'}>{column.name}</Column>}
           </TableHeader>
           <TableBody items={list2.items}>
             {(item) => (
-              <Row key={item.identifier} textValue={item.name}>
+              <Row key={item.identifier}>
                 {key => <Cell>{item[key]}</Cell>}
               </Row>
             )}
@@ -426,11 +426,11 @@ export function FinderDropUtilHandlers(props) {
         <Text alignSelf="center">Table 1</Text>
         <TableView aria-label="TableView that accepts directory drops only" selectionMode="multiple" width={300} dragAndDropHooks={table1Hooks} {...tableViewProps}>
           <TableHeader columns={columns}>
-            {column => <Column>{column.name}</Column>}
+            {column => <Column isRowHeader={column.key === 'name'}>{column.name}</Column>}
           </TableHeader>
           <TableBody items={list1.items}>
             {(item) => (
-              <Row key={item.identifier} textValue={item.name}>
+              <Row key={item.identifier}>
                 {key => <Cell>{item[key]}</Cell>}
               </Row>
             )}
@@ -441,11 +441,11 @@ export function FinderDropUtilHandlers(props) {
         <Text alignSelf="center">Table 2</Text>
         <TableView aria-label="TableView that accepts all drag types" selectionMode="multiple" width={300} dragAndDropHooks={table2Hooks} {...tableViewProps}>
           <TableHeader columns={columns}>
-            {column => <Column>{column.name}</Column>}
+            {column => <Column isRowHeader={column.key === 'name'}>{column.name}</Column>}
           </TableHeader>
           <TableBody items={list2.items}>
             {(item) => (
-              <Row key={item.identifier} textValue={item.name}>
+              <Row key={item.identifier}>
                 {key => <Cell>{item[key]}</Cell>}
               </Row>
             )}
@@ -638,11 +638,11 @@ export function DragBetweenTablesComplex(props) {
         <Text alignSelf="center">Table 1</Text>
         <TableView aria-label="First TableView in drag between table example" selectionMode="multiple" width={300} dragAndDropHooks={dragAndDropHooksTable1} {...tableViewProps}>
           <TableHeader columns={columns}>
-            {column => <Column>{column.name}</Column>}
+            {column => <Column isRowHeader={column.key === 'name'}>{column.name}</Column>}
           </TableHeader>
           <TableBody items={list1.items}>
             {(item) => (
-              <Row key={item.identifier} textValue={item.name}>
+              <Row key={item.identifier}>
                 {key => <Cell>{item[key]}</Cell>}
               </Row>
             )}
@@ -653,11 +653,11 @@ export function DragBetweenTablesComplex(props) {
         <Text alignSelf="center">Table 2</Text>
         <TableView aria-label="Second TableView in drag between table example" selectionMode="multiple" width={300} dragAndDropHooks={dragAndDropHooksTable2} {...tableViewProps}>
           <TableHeader columns={columns}>
-            {column => <Column>{column.name}</Column>}
+            {column => <Column isRowHeader={column.key === 'name'}>{column.name}</Column>}
           </TableHeader>
           <TableBody items={list2.items}>
             {(item) => (
-              <Row key={item.identifier} textValue={item.name}>
+              <Row key={item.identifier}>
                 {key => <Cell>{item[key]}</Cell>}
               </Row>
             )}
@@ -754,11 +754,11 @@ export function DragBetweenTablesOverride(props) {
         <Text alignSelf="center">Table 1</Text>
         <TableView aria-label="TableView that accepts directory drops only" selectionMode="multiple" width={300} dragAndDropHooks={dragAndDropHooksTable1} {...props}>
           <TableHeader columns={columns}>
-            {column => <Column>{column.name}</Column>}
+            {column => <Column isRowHeader={column.key === 'name'}>{column.name}</Column>}
           </TableHeader>
           <TableBody items={list1.items}>
             {(item) => (
-              <Row key={item.identifier} textValue={item.name}>
+              <Row key={item.identifier}>
                 {key => <Cell>{item[key]}</Cell>}
               </Row>
             )}
@@ -769,11 +769,11 @@ export function DragBetweenTablesOverride(props) {
         <Text alignSelf="center">Table 2</Text>
         <TableView aria-label="TableView that accepts all drag types" selectionMode="multiple" width={300} dragAndDropHooks={dragAndDropHooksTable2} {...props}>
           <TableHeader columns={columns}>
-            {column => <Column>{column.name}</Column>}
+            {column => <Column isRowHeader={column.key === 'name'}>{column.name}</Column>}
           </TableHeader>
           <TableBody items={list2.items}>
             {(item) => (
-              <Row key={item.identifier} textValue={item.name}>
+              <Row key={item.identifier}>
                 {key => <Cell>{item[key]}</Cell>}
               </Row>
             )}
