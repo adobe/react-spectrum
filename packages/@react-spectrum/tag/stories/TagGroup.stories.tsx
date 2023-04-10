@@ -238,12 +238,19 @@ export const WithLabelDescriptionContextualHelpAndAction: TagGroupStory = {
 };
 
 export const EmptyState: TagGroupStory = {
-  render: (args) => <EmptyStateExample {...args} />,
+  render: (args) => (
+    <TagGroup label="Tag group with empty state" {...args}>
+      []
+    </TagGroup>
+  ),
   storyName: 'Empty state'
 };
 
 export const CustomEmptyState: TagGroupStory = {
-  render: (args) => <EmptyStateExample withCustomEmptyState {...args} />,
+  ...EmptyState,
+  args: {
+    renderEmptyState: () => <span>No tags. <Link><a href="//react-spectrum.com">Click here</a></Link> to add some.</span>
+  },
   storyName: 'Custom empty state'
 };
 
@@ -271,26 +278,6 @@ function OnRemoveExample(props) {
           <Text>{item.label}</Text>
         </Item>
       )}
-    </TagGroup>
-  );
-}
-
-function EmptyStateExample(props) {
-  let {withCustomEmptyState, ...otherProps} = props;
-
-  let renderEmptyState: () => JSX.Element;
-  if (withCustomEmptyState) {
-    renderEmptyState = () => (
-      <span>No tags. <Link><a href="//react-spectrum.com">Click here</a></Link> to add some.</span>
-    );
-  }
-
-  return (
-    <TagGroup
-      label="Tag group with empty state"
-      renderEmptyState={renderEmptyState}
-      {...otherProps}>
-      {[]}
     </TagGroup>
   );
 }
