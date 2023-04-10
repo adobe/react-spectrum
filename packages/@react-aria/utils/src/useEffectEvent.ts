@@ -1,5 +1,6 @@
 
-import {useCallback, useLayoutEffect, useRef} from 'react';
+import {useCallback, useRef} from 'react';
+import {useLayoutEffect} from './useLayoutEffect';
 
 export function useEffectEvent(fn) {
   const ref = useRef(null);
