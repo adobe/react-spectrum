@@ -113,6 +113,7 @@ export class GridCollection<T> implements IGridCollection<T> {
         this.sections.push(node);
       } else if (node.type === 'item' || node.type === 'headerrow') {
         this.rows.push(node);
+        // TODO: get rid of rowIndex, just make aria-rowindex relative to immediate parent
         rowIndex++;
       }
     };

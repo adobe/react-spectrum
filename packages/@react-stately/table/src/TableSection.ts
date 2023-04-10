@@ -30,6 +30,7 @@ TableSection.getCollectionNode = function* getCollectionNode<T>(props: TableSect
     *childNodes() {
       // Automatically include a section header row
       yield {
+        // TODO change this to 'header'
         type: 'item',
         key: 'section-header',
         hasChildNodes: true,

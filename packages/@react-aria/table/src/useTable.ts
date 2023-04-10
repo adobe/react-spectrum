@@ -96,6 +96,8 @@ export function useTable<T>(props: AriaTableProps<T>, state: TableState<T>, ref:
         // merge sort description with long press information
         'aria-describedby': [descriptionProps['aria-describedby'], gridProps['aria-describedby']].filter(Boolean).join(' ')
       }
-    )
+    ),
+    // TODO: alternatively, have TableLayout replicate the table keyboard delegate logic for its keyBefore/After getters
+    keyboardDelegate: delegate
   };
 }
