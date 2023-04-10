@@ -240,7 +240,7 @@ export const WithLabelDescriptionContextualHelpAndAction: TagGroupStory = {
 export const EmptyState: TagGroupStory = {
   render: (args) => (
     <TagGroup label="Tag group with empty state" {...args}>
-      []
+      {[]}
     </TagGroup>
   ),
   storyName: 'Empty state'
