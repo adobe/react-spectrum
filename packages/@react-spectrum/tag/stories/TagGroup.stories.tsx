@@ -277,15 +277,6 @@ function OnRemoveExample(props) {
 
 function EmptyStateExample(props) {
   let {withCustomEmptyState, ...otherProps} = props;
-  let [items, setItems] = useState([
-    {id: 1, label: 'Cool Tag 1'},
-    {id: 2, label: 'Another cool tag'}
-  ]);
-
-  let onRemove = (key) => {
-    setItems(prevItems => prevItems.filter((item) => key !== item.id));
-    action('onRemove')(key);
-  };
 
   let renderEmptyState: () => JSX.Element;
   if (withCustomEmptyState) {
@@ -295,12 +286,11 @@ function EmptyStateExample(props) {
   }
 
   return (
-    <TagGroup renderEmptyState={renderEmptyState} description="Remove tags to reveal empty state." allowsRemoving label="Tag group with empty state" items={items} onRemove={key => onRemove(key)} {...otherProps}>
-      {(item: any) => (
-        <Item key={item.key} textValue={item.label}>
-          {item.label}
-        </Item>
-      )}
+    <TagGroup
+      label="Tag group with empty state"
+      renderEmptyState={renderEmptyState}
+      {...otherProps}>
+      {[]}
     </TagGroup>
   );
 }
