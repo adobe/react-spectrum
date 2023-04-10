@@ -48,7 +48,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
     actionLabel,
     onAction,
     labelPosition,
-    renderEmptyState = () => <div>None</div>
+    renderEmptyState
   } = props;
   let domRef = useDOMRef(ref);
   let containerRef = useRef(null);
@@ -67,6 +67,9 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   delete props.onAction;
   let {gridProps, labelProps, descriptionProps, errorMessageProps} = useTagGroup({...props, keyboardDelegate}, state, tagsRef);
   let actionsId = useId();
+  if (!renderEmptyState) {
+    renderEmptyState = () => <div>{stringFormatter.format('noTags')}</div>;
+  }
 
   let updateVisibleTagCount = useCallback(() => {
     if (maxRows > 0) {
