@@ -394,14 +394,6 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         </TableHeaderRow>
       );
     }
-    let isDropTarget: boolean;
-    let isRootDroptarget: boolean;
-    if (isTableDroppable) {
-      if (parent.content) {
-        isDropTarget =  dropState.isDropTarget({type: 'item', dropPosition: 'on', key: parent.content.key});
-      }
-      isRootDroptarget = dropState.isDropTarget({type: 'root'});
-    }
 
     if (reusableView.viewType === 'section') {
       return (
@@ -412,6 +404,15 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
           {renderChildren(children)}
         </TableSection>
       );
+    }
+
+    let isDropTarget: boolean;
+    let isRootDroptarget: boolean;
+    if (isTableDroppable) {
+      if (parent.content) {
+        isDropTarget =  dropState.isDropTarget({type: 'item', dropPosition: 'on', key: parent.content.key});
+      }
+      isRootDroptarget = dropState.isDropTarget({type: 'root'});
     }
 
     return (

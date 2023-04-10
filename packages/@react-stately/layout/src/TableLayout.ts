@@ -428,6 +428,8 @@ export class TableLayout<T> extends ListLayout<T> {
     rect.height = y - startY;
     rect.width = width;
 
+    // Adjust z-index of section rowgroup element so its last row's drop indicator doesn't get obscured by the following section
+    layoutInfo.zIndex = this.collection.sections.length - node.index - 1;
     let layoutNode = {
       layoutInfo,
       children,
