@@ -27,9 +27,11 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Tags-container {
-  /* Aligns tags with label. */
-  margin-inline-start: calc(calc(var(--spectrum-taggroup-tag-gap-x) / 2) * -1);
-  margin-inline-end: calc(var(--spectrum-taggroup-tag-gap-x) / 2);
+  &:not(.spectrum-Tags-container--empty) {
+    /* Aligns tags with label. */
+    margin-inline-start: calc(calc(var(--spectrum-taggroup-tag-gap-x) / 2) * -1);
+    margin-inline-end: calc(var(--spectrum-taggroup-tag-gap-x) / 2);
+  }
 }
 
 .spectrum-Tag {

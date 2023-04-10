@@ -178,7 +178,15 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         <div
           style={maxRows != null && tagState.showCollapseButton && isCollapsed ? {maxHeight: tagState.maxHeight, overflow: 'hidden'} : undefined}
           ref={containerRef}
-          className={classNames(styles, 'spectrum-Tags-container')}>
+          className={
+            classNames(
+              styles,
+              'spectrum-Tags-container',
+              {
+                'spectrum-Tags-container--empty': isEmpty
+              }
+            )
+          }>
           <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
             <div
               ref={tagsRef}
