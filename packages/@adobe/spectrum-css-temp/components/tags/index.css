@@ -20,9 +20,9 @@ governing permissions and limitations under the License.
   display: inline;
 
   &.focus-ring {
-    &:after {
-      box-shadow: 0 0 0 var(--spectrum-focus-ring-border-size) var(--spectrum-tag-border-color-key-focus);
-    }
+    outline: none;
+    box-shadow: 0 0 0 2px var(--spectrum-tag-border-color-key-focus);
+    display: block;
   }
 }
 
