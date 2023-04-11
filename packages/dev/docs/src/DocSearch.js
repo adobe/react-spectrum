@@ -41,33 +41,6 @@ const searchOptions = {
   hitsPerPage: 20
 };
 
-const sectionTitles = {
-  'react-aria': 'React Aria',
-  'react-spectrum': 'React Spectrum',
-  'react-stately': 'React Stately',
-  'internationalized': 'Internationalized',
-  'blog': 'Blog',
-  'architecture': 'Architecture',
-  'contribute': 'Contribute',
-  'releases': 'Releases',
-  'support': 'Support'
-};
-
-function sectionTitlePredicate(hit) {
-  let sectionTitle;
-  for (const [path, title] of Object.entries(sectionTitles)) {
-    let regexp = new RegExp('^.+//.+/' + path + '[/.].+$', 'i');
-    if (hit.url.match(regexp)) {
-      sectionTitle = title;
-      break;
-    }
-  }
-  if (!sectionTitle) {
-    sectionTitle = 'Documentation';
-  }
-  return sectionTitle;
-}
-
 export default function DocSearch() {
   const [searchValue, setSearchValue] = useState('');
   const [loadingState, setLoadingState] = useState(null);
