@@ -1171,12 +1171,10 @@ function TableDragHeaderCell({column}) {
 function TableRowGroup({children, ...otherProps}) {
   let {state} = useTableContext();
   let {rowGroupProps} = useTableRowGroup();
-
-  if (state.collection.sections.length > 0) {
-    // TODO: move logic into useGridRowGroup hook? Kinda weird to have it there, maybe make a separate hook (useTableBody)?
+  let tableBodyNodes = [...state.collection.body.childNodes];
+  if (tableBodyNodes.find(node => node.type === 'section')) {
     rowGroupProps.role = 'presentation';
 
-    let tableBodyNodes = [...state.collection.body.childNodes];
     if (tableBodyNodes.find(node => node.type !== 'section')) {
       console.warn('Detected rows without a parent section. If a TableView has sections, all rows within a TableView must belong to a section.');
     }
@@ -1247,9 +1245,10 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
   let {isFocusVisible, focusProps} = useFocusRing();
   let {hoverProps, isHovered} = useHover({isDisabled});
   let rows = state.collection.rows;
-  // If there are sections, the first row is always the section header row
-  let isFirstRow = state.collection.sections.length === 0 ? rows.find(row => row.level === 1)?.key === item.key : false;
-  let isLastRow = item.nextKey == null;
+  let hasSections = rows.find(row => row.type === 'header');
+  let isFirstRow = hasSections ? false : rows.find(row => row.level === 1)?.key === item.key;
+  let isFirstDroppableRow = hasSections ? item.index === 1 : isFirstRow;
+  let isLastRow = item.key === state.collection.getLastKey();
   // Figure out if the TableView content is equal or greater in height to the container. If so, we'll need to round the bottom
   // border corners of the last row when selected.
   let isFlushWithContainerBottom = false;
@@ -1299,12 +1298,11 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
 
   let dropProps = isDroppable ? droppableItem?.dropProps : {'aria-hidden': droppableItem?.dropProps['aria-hidden']};
   let {visuallyHiddenProps} = useVisuallyHidden();
-  let firstRowInParent = state.collection.sections.length > 0 ? item.index === 1 : layout.getFirstKey();
-  // TODO: fix the look of the inserton indicators when there are sections
 
+  // TODO: fix the look of the inserton indicators when there are sections
   return (
     <TableRowContext.Provider value={{dragButtonProps, dragButtonRef, isFocusVisibleWithin}}>
-      {isTableDroppable && firstRowInParent &&
+      {isTableDroppable && isFirstDroppableRow &&
         <InsertionIndicator
           rowProps={props}
           key={`${item.key}-before`}

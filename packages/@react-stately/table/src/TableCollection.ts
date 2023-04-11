@@ -315,25 +315,30 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
   }
 
   getFirstKey() {
-    // TODO this.body isn't in the keymap so can't use getChildNodes
     let key;
     let firstNode = getFirstItem(this.body.childNodes);
-    if (firstNode != null && firstNode.type === 'item') {
-      key = firstNode.key;
-    } else if (firstNode.type === 'section') {
-      key = getNthItem(getChildNodes(firstNode, this), 1)?.key;
+    if (firstNode != null) {
+      if (firstNode.type === 'item') {
+        key = firstNode.key;
+      } else if (firstNode.type === 'section') {
+        key = getNthItem(getChildNodes(firstNode, this), 1)?.key;
+      }
     }
+
     return key;
   }
 
   getLastKey() {
     let key;
     let lastNode = getLastItem(this.body.childNodes);
-    if (lastNode != null && lastNode.type === 'item') {
-      key = lastNode.key;
-    } else if (lastNode.type === 'section') {
-      key = getLastItem(getChildNodes(lastNode, this))?.key;
+    if (lastNode != null) {
+      if (lastNode.type === 'item') {
+        key = lastNode.key;
+      } else if (lastNode.type === 'section') {
+        key = getLastItem(getChildNodes(lastNode, this))?.key;
+      }
     }
+
     return key;
   }
 

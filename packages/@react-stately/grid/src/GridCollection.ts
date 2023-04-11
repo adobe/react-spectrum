@@ -23,13 +23,11 @@ export class GridCollection<T> implements IGridCollection<T> {
   keyMap: Map<Key, GridNode<T>> = new Map();
   columnCount: number;
   rows: GridNode<T>[];
-  sections: GridNode<T>[];
 
   constructor(opts?: GridCollectionOptions<T>) {
     this.keyMap = new Map();
     this.columnCount = opts?.columnCount;
     this.rows = [];
-    this.sections = [];
 
     let visit = (node: GridNode<T>, i?: number) => {
       // Reset row counter if entering a new section so we have a index reflecting the position of the
@@ -109,9 +107,7 @@ export class GridCollection<T> implements IGridCollection<T> {
         }
       }
 
-      if (node.type === 'section') {
-        this.sections.push(node);
-      } else if (node.type === 'item' || node.type === 'headerrow' || node.type === 'header') {
+      if (node.type === 'item' || node.type === 'headerrow' || node.type === 'header') {
         this.rows.push(node);
         // TODO: get rid of rowIndex, just make aria-rowindex relative to immediate parent
         rowIndex++;

@@ -65,14 +65,7 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
   } else {
     let before: Key | null;
     let after: Key | null;
-    // TODO: will I need the keyboard delegate if I change the section row not to be a item type
-    // TODO: get opinions here, should we accept keyboard delegate here or modify the collection key getters
-    // In general there is some disparity now where collection keygetters won't skip sections (and shouldn't since it isn't the keyboard delegate) but
-    // the keyboardDelegate does (which it should since it handles where focus should go in response to keyboard navigation). However, there are various areas
-    // where we use layout/keyboard delegate interchangably when they shouldn't. Or maybe they should? Perhaps layout/keyboard delegate getKeyAfter/Before should
-    // reflect keyboard focus behavior and collection shouldn't (aka maybe I should modify table layout to have its own get keyafter/before instead of relying on listlayout )
     let keyGetter = keyboardDelegate ?? collection;
-
     // TODO: I've changed it so it will announce "insert after"/"insert before" target if the drop position is between the target and a following/preceeding section
     // instead of announcing "insert between target and NEXT/PREV_SECTION_ROW". Gather opinions
     let keyBefore = keyboardDelegate != null ? keyboardDelegate.getKeyAbove(target.key) : collection.getKeyBefore(target.key);

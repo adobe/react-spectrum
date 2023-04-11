@@ -19,8 +19,6 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
   head: NodeValue<T> = new NodeValue('tableheader', -1);
   body: NodeValue<T> = new NodeValue('tablebody', -2);
   columnsDirty = true;
-  // TODO: placeholder, will need to figure out sections herer
-  sections: GridNode<T>[] = [];
 
   addNode(node: NodeValue<T>) {
     super.addNode(node);

@@ -2944,7 +2944,7 @@ describe('TableView', function () {
       });
     });
 
-    it.only('can announce deselect even when items are swapped out completely', () => {
+    it('can announce deselect even when items are swapped out completely', () => {
       let tree = render(<TableWithBreadcrumbs selectionMode="multiple" />);
 
       let row = tree.getAllByRole('row')[2];

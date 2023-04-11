@@ -276,7 +276,7 @@ export class TableLayout<T> extends ListLayout<T> {
     let width = 0;
     let children: LayoutNode[] = [];
     // Note: since this.collection.body.childNodes might have rows or sections, we can't shortcut the estimate for
-    // y for children after the valid rectangle (we have to iterate through childNodes to figure out if some thing is a section)
+    // y for children after the valid rectangle (we have to iterate through childNodes to figure out if something is a section)
     for (let node of this.collection) {
       let rowHeight = (this.rowHeight ?? this.estimatedRowHeight) + 1;
       let headingHeight = (this.headingHeight ?? this.estimatedHeadingHeight);
@@ -431,7 +431,7 @@ export class TableLayout<T> extends ListLayout<T> {
     rect.width = width;
 
     // Adjust z-index of section rowgroup element so its last row's drop indicator doesn't get obscured by the following section
-    layoutInfo.zIndex = this.collection.sections.length - node.index - 1;
+    layoutInfo.zIndex = [...this.collection.body.childNodes].length - node.index - 1;
     let layoutNode = {
       layoutInfo,
       children,
