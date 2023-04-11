@@ -95,38 +95,7 @@ export default function DocSearch() {
   let updatePredictions = ({hits}) => {
     setPredictions(hits);
 
-    const groupedBySection = groupBy(hits, (hit) => sectionTitlePredicate(hit));
-    let sections = [];
-    for (const [title, hits] of Object.entries(groupedBySection)) {
-      const items = Object.values(
-        groupBy(hits, (hit) => hit.hierarchy.lvl1)
-      )
-      .map(
-        groupedHits =>
-        groupedHits.map((hit) => {
-          const hierarchy = hit.hierarchy;
-          const objectID = hit.objectID;
-          const docsearchParent = hit.type !== 'lvl1' &&
-            groupedHits.find(
-              (siblingItem) =>
-                siblingItem.type === 'lvl1' &&
-                siblingItem.hierarchy.lvl1 ===
-                  hit.hierarchy.lvl1
-            );
-
-          return {
-            key: objectID,
-            hit,
-            hierarchy,
-            docsearchParent,
-            textValue: hit.type === 'content' ? hit[hit.type] : hierarchy[hit.type]
-          };
-        }
-      ));
-
-      sections.push({title, items: items.map((item) => item[0])});
-    }
-    let newSuggestions = sections.map((section, index) => ({key: `${index}-${section.title}`, title: section.title, children: section.items}));
+    let newSuggestions = hits.map((section, index) => ({key: `${index}-${section.title}`, title: section.title, children: section.items}));
     newSuggestions.push({
       key: 'algolia-footer',
       title: 'Search by',
@@ -295,24 +264,6 @@ function Hash(props) {
       </svg>
     </Icon>
   );
-}
-
-function groupBy(values, predicate = (value) => value) {
-  return values.reduce((accumulator, item) => {
-    const key = predicate(item);
-
-    if (!Object.prototype.hasOwnProperty.call(accumulator, key)) {
-      accumulator[key] = [];
-    }
-
-    // We limit each section to show 20 hits maximum.
-    // This acts as a frontend alternative to `distinct`.
-    if (accumulator[key].length < 21) {
-      accumulator[key].push(item);
-    }
-
-    return accumulator;
-  }, {});
 }
 
 function getPropertyByPath(object, path) {
