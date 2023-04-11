@@ -59,7 +59,9 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteOptions<T>
     listBoxRef,
     keyboardDelegate,
     onSubmit = () => {},
-    onClear
+    onClear,
+    onKeyDown,
+    onKeyUp
   } = props;
 
   let {inputProps, clearButtonProps, descriptionProps, errorMessageProps} = useSearchField({
@@ -78,7 +80,9 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteOptions<T>
       if (state.selectionManager.focusedKey === null) {
         onSubmit(value, null);
       }
-    } 
+    },
+    onKeyDown,
+    onKeyUp
   }, {
     value: state.inputValue,
     setValue: state.setInputValue
@@ -93,7 +97,10 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteOptions<T>
       listBoxRef,
       inputRef,
       onFocus: undefined,
-      onBlur: undefined
+      onFocusChange: undefined,
+      onBlur: undefined,
+      onKeyDown: undefined,
+      onKeyUp: undefined
     },
     state
   );
