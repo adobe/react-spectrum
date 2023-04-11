@@ -16,11 +16,13 @@ import selectionDocs from 'docs:@react-stately/selection';
 import statelyDocs from 'docs:@react-stately/table';
 import focusDocs from 'docs:@react-aria/focus';
 import checkboxDocs from 'docs:@react-aria/checkbox';
-import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription, VersionBadge} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/table/package.json';
 import Anatomy from './TableAnatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import tailwindExample from 'url:./Table-tailwind.png';
 
 ---
 category: Collections
@@ -33,7 +35,7 @@ keywords: [table, aria, grid]
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['useTable', 'useTableCell', 'useTableColumnHeader', 'useTableRow', 'useTableHeaderRow', 'useTableRowGroup', 'useTableSelectAllCheckbox', 'useTableSelectionCheckbox']}
+  componentNames={['useTable', 'useTableCell', 'useTableColumnHeader', 'useTableRow', 'useTableHeaderRow', 'useTableRowGroup', 'useTableSelectAllCheckbox', 'useTableSelectionCheckbox', 'useTableColumnResize']}
   sourceData={[
     {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/grid/'}
   ]} />
@@ -48,6 +50,7 @@ keywords: [table, aria, grid]
 <FunctionAPI function={docs.exports.useTableCell} links={docs.links} />
 <FunctionAPI function={docs.exports.useTableSelectionCheckbox} links={docs.links} />
 <FunctionAPI function={docs.exports.useTableSelectAllCheckbox} links={docs.links} />
+<FunctionAPI function={docs.exports.useTableColumnResize} links={docs.links} />
 
 ## Features
 
@@ -74,6 +77,7 @@ HTML tables are meant for static content, rather than tables with rich interacti
 * Ensures that selections are announced using an ARIA live region
 * Support for using HTML table elements, or custom element types (e.g. `<div>`) for layout flexibility
 * Virtualized scrolling support for performance with large tables
+* Support for resizable columns
 
 ## Anatomy
 
@@ -244,7 +248,8 @@ function TableColumnHeader({column, state}) {
       style={{
         textAlign: column.colspan > 1 ? 'center' : 'left',
         padding: '5px 10px',
-        outline: isFocusVisible ? '2px solid orange' : 'none',
+        outline: 'none',
+        boxShadow: isFocusVisible ? 'inset 0 0 0 2px orange' : 'none',
         cursor: 'default'
       }}
       ref={ref}>
@@ -293,7 +298,8 @@ function TableRow({item, children, state}) {
               ? 'var(--spectrum-alias-highlight-hover)'
               : 'none',
         color: isSelected ? 'white' : null,
-        outline: isFocusVisible ? '2px solid orange' : 'none'
+        outline: 'none',
+        boxShadow: isFocusVisible ? 'inset 0 0 0 2px orange' : 'none',
       }}
       {...mergeProps(rowProps, focusProps)}
       ref={ref}>
@@ -322,7 +328,8 @@ function TableCell({cell, state}) {
       {...mergeProps(gridCellProps, focusProps)}
       style={{
         padding: '5px 10px',
-        outline: isFocusVisible ? '2px solid orange' : 'none',
+        outline: 'none',
+        boxShadow: isFocusVisible ? 'inset 0 0 0 2px orange' : 'none',
         cursor: 'default'
       }}
       ref={ref}>
@@ -489,7 +496,7 @@ function Checkbox(props) {
   let ref = React.useRef(null);
   let state = useToggleState(props);
   let {inputProps} = useCheckbox(props, state, ref);
-  return <input {...inputProps} ref={ref} />;
+  return <input {...inputProps} ref={ref} style={props.style} />;
 }
 ```
 
@@ -816,6 +823,323 @@ let rows = [
   </TableBody>
 </Table>
 ```
+
+
+## Resizable Columns <VersionBadge version="rc" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+
+For resizable column support, two additional hooks need to be added to the table implementation above. The <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableColumnResizeState} />
+hook from `@react-stately/table` is responsible for initializing and tracking the widths of every column in your table, returning functions that you can use to
+update the column widths during a column resize operation. Note that this state is supplementary to the state returned by <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableState} />.
+
+The second column resizing hook is <TypeLink links={docs.links} type={docs.exports.useTableColumnResize} />. This hook handles the interactions for a table column's resizer
+element, allowing the user to drag the resizer or use the keyboard arrows to expand the column's width. Be sure to pass the state returned by <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableColumnResizeState} />
+to this hook so the tracked widths can be updated appropriately. We'll walk through all the required changes to the previous table implementation step by step below. For simplicity's sake, we'll be
+omitting support for selection, sorting, and nested columns.
+
+### Table
+
+As mentioned previously, we first need to call <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableColumnResizeState} /> to initialize the widths for our table's columns.
+We'll pass the state returned by <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableColumnResizeState} /> along with any user defined `onResize` handlers
+to our `ResizableTableColumnHeaders` so it can be used by <TypeLink links={docs.links} type={docs.exports.useTableColumnResize} />.
+
+The various style changes below are to add a wrapper div so the table is scrollable when the row content overflows and to support table body/column widths greater than the 300px applied to the table itself.
+
+```tsx example export=true render=false
+import {useCallback} from 'react';
+import {useTableColumnResizeState} from '@react-stately/table';
+
+function ResizableColumnsTable(props) {
+  let state = useTableState(props);
+  let scrollRef = useRef();
+  let ref = useRef();
+  let {collection} = state;
+  let {gridProps} = useTable(
+    {
+      ...props,
+      /*- begin highlight -*/
+      // The table wrapper is scrollable rather than just the body
+      scrollRef
+      /*- end highlight -*/
+    },
+    state,
+    ref
+  );
+
+  /*- begin highlight -*/
+  // Set the minimum width of the columns to 40px
+  let getDefaultMinWidth = useCallback(() => {
+    return 40;
+  }, []);
+
+  let layoutState = useTableColumnResizeState({
+    // Matches the width of the table itself
+    tableWidth: 300,
+    getDefaultMinWidth
+  }, state);
+  /*- end highlight -*/
+
+  return (
+    /*- begin highlight -*/
+    <div className="aria-table-wrapper" ref={scrollRef}>
+    {/*- end highlight -*/}
+      <table
+        {...gridProps}
+        className="aria-table"
+        ref={ref}>
+        <TableRowGroup type="thead">
+          {collection.headerRows.map(headerRow => (
+            <TableHeaderRow key={headerRow.key} item={headerRow} state={state}>
+              {[...headerRow.childNodes].map(column => (
+                <ResizableTableColumnHeader
+                  key={column.key}
+                  column={column}
+                  state={state}
+                  /*- begin highlight -*/
+                  layoutState={layoutState}
+                  onResizeStart={props.onResizeStart}
+                  onResize={props.onResize}
+                  onResizeEnd={props.onResizeEnd}
+                  /*- end highlight -*/
+                />
+              ))}
+            </TableHeaderRow>
+          ))}
+        </TableRowGroup>
+        <TableRowGroup type="tbody">
+          {[...collection.body.childNodes].map(row => (
+            <TableRow key={row.key} item={row} state={state}>
+              {[...row.childNodes].map(cell => (
+                <TableCell key={cell.key} cell={cell} state={state} />
+              ))}
+            </TableRow>
+          ))}
+        </TableRowGroup>
+      </table>
+    </div>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.aria-table-wrapper {
+  width: 300px;
+  overflow: auto;
+}
+
+.aria-table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: fit-content;
+
+  & td {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+```
+</details>
+
+### Resizable table header
+
+The `TableColumnHeader` is where we see the bulk of the changes required to support resizable columns. First of all, we need to accommodate a `Resizer` element in every resizable column that
+the user can drag or focus to perform a resize operation. Since the resizer will be a focusable element within the table header, we need to make the header title a focusable element as well so keyboard
+focus won't be immediately sent to the resizer as you navigate between the column headers. Finally, we apply the computed width of our column from <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableColumnResizeState} />
+to the header element.
+
+```tsx example export=true render=false
+// Reuse the Button from your component library. See below for details.
+import {Button} from 'your-component-library';
+
+function ResizableTableColumnHeader({column, state, layoutState, onResizeStart, onResize, onResizeEnd}) {
+  let allowsResizing = column.props.allowsResizing;
+  let ref = useRef(null);
+  let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
+
+  return (
+    <th
+      {...columnHeaderProps}
+      className="aria-table-headerCell"
+      style={{width: layoutState.getColumnWidth(column.key)}}
+      ref={ref}>
+      <div style={{display: 'flex', position: 'relative'}}>
+        <Button className="aria-table-headerTitle">
+          {column.rendered}
+        </Button>
+        {allowsResizing &&
+          <Resizer column={column} layoutState={layoutState} onResizeStart={onResizeStart} onResize={onResize} onResizeEnd={onResizeEnd} />
+        }
+      </div>
+    </th>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.aria-table-headerCell {
+  padding: 5px 10px;
+  outline: none;
+  cursor: default;
+  box-sizing: border-box;
+  box-shadow: none;
+  text-align: left;
+}
+
+.aria-table-headerTitle {
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: transparent;
+  flex: 1 1 auto;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  margin-inline-start: -6px;
+  outline: none;
+}
+
+.aria-table-headerTitle.focus {
+  outline: 2px solid orange;
+}
+```
+</details>
+
+### Button
+
+The `Button` component is used in the above example to represent the table column header title. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useButton} from '@react-aria/button';
+
+function Button(props) {
+  let ref = useRef(null);
+  let {focusProps, isFocusVisible} = useFocusRing();
+  let {buttonProps} = useButton(props, ref);
+  return <button {...mergeProps(buttonProps, focusProps)} ref={ref} className={`${props.className} ${isFocusVisible ? 'focus' : ''}`}>{props.children}</button>;
+}
+```
+
+</details>
+
+### Resizer
+
+As described above, we need to implement an element that the user can drag/interact with to resize a column. Here we'll use the <TypeLink links={docs.links} type={docs.exports.useTableColumnResize} />
+hook to create a visible resizer div for physical drag operations and a visually hidden input responsible for keyboard and screenreader interactions, similar to a [slider](useSlider.html).
+Users can press and drag on the visible resizer to trigger the `onResize` callbacks and update the tracked column widths accordingly. When focused, keyboard users can begin resizing the column by pressing <Keyboard>Enter</Keyboard>.
+Once resizing is activated, they can use the arrow keys to trigger the same resize events and press <Keyboard>Enter</Keyboard>, <Keyboard>Esc</Keyboard>, or <Keyboard>Space</Keyboard> to exit resizing. Touch screen reader users can swipe
+left or right to focus the column's resizer input and swipe up and down to resize the column.
+
+```tsx example export=true render=false
+import {useTableColumnResize} from '@react-aria/table';
+
+function Resizer(props) {
+  let {column, layoutState, onResizeStart, onResize, onResizeEnd} = props;
+  let ref = useRef(null);
+  let {resizerProps, inputProps, isResizing} = useTableColumnResize({
+    column,
+    'aria-label': 'Resizer',
+    onResizeStart,
+    onResize,
+    onResizeEnd
+  }, layoutState, ref);
+  let {focusProps, isFocusVisible} = useFocusRing();
+
+  return (
+    <div
+      role="presentation"
+      className={`aria-table-resizer ${isFocusVisible ? 'focus' : ''} ${isResizing ? 'resizing' : ''}`}
+      {...resizerProps}>
+      <input
+        ref={ref}
+        {...mergeProps(inputProps, focusProps)} />
+    </div>
+  );
+};
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.aria-table-resizer {
+  width: 15px;
+  background-color: grey;
+  cursor: col-resize;
+  height: 30px;
+  touch-action: none;
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  border: 5px;
+  border-style: none solid;
+  border-color: transparent;
+  background-clip: content-box;
+}
+
+.aria-table-resizer.focus {
+  background-color: orange;
+}
+
+.aria-table-resizer.resizing {
+  border-color: orange;
+  background-color: transparent;
+}
+```
+
+</details>
+
+And with that, all necessary changes to the previous table implementation have been made and we now have a table that supports resizable columns!
+The example below supports resizing via mouse, keyboard, touch, and screen reader interactions. To see an example with sorting and selection, see the
+[styled example](#styled-examples)!
+
+```tsx example
+<ResizableColumnsTable aria-label="Table with resizable columns">
+  <TableHeader>
+    <Column allowsResizing>Name</Column>
+    <Column allowsResizing>Type</Column>
+    <Column allowsResizing>Level</Column>
+  </TableHeader>
+  <TableBody>
+    <Row key="1">
+      <Cell>Charizard</Cell>
+      <Cell>Fire, Flying</Cell>
+      <Cell>67</Cell>
+    </Row>
+    <Row key="2">
+      <Cell>Blastoise</Cell>
+      <Cell>Water</Cell>
+      <Cell>56</Cell>
+    </Row>
+    <Row key="3">
+      <Cell>Venusaur</Cell>
+      <Cell>Grass, Poison</Cell>
+      <Cell>83</Cell>
+    </Row>
+    <Row key="4">
+      <Cell>Pikachu</Cell>
+      <Cell>Electric</Cell>
+      <Cell>100</Cell>
+    </Row>
+  </TableBody>
+</ResizableColumnsTable>
+```
+
+### Styled examples
+
+<ExampleCard
+  url="https://codesandbox.io/s/objective-cherry-g837on?file=/src/Table.tsx"
+  preview={tailwindExample}
+  title="Tailwind CSS"
+  description="A table supporting resizable columns, selection, and sorting built with Tailwind and React Aria." />
+
 
 ## Internationalization
 
