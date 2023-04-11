@@ -36,7 +36,8 @@ import userEvent from '@testing-library/user-event';
 let {
   InlineDeleteButtons: DeletableRowsTable,
   EmptyStateStory: EmptyStateTable,
-  WithBreadcrumbNavigation: TableWithBreadcrumbs
+  WithBreadcrumbNavigation: TableWithBreadcrumbs,
+  TypeaheadWithDialog: TypeaheadWithDialog
 } = composeStories(stories);
 
 
@@ -1411,6 +1412,43 @@ describe('TableView', function () {
 
         moveFocus('S');
         expect(document.activeElement).toBe(getCell(tree, 'Sam'));
+      });
+
+      describe('type ahead with dialog triggers', function () {
+        beforeEach(function () {
+          offsetHeight.mockRestore();
+          offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
+            .mockImplementationOnce(() => 20)
+            .mockImplementation(() => 100);
+        });
+        afterEach(function () {
+          offsetHeight.mockRestore();
+          offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+        });
+        it('does not pick up typeahead from a dialog', function () {
+          offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
+            .mockImplementationOnce(() => 20)
+            .mockImplementation(() => 100);
+          let tree = render(<TypeaheadWithDialog />);
+          let trigger = tree.getAllByRole('button')[0];
+          triggerPress(trigger);
+          act(() => {
+            jest.runAllTimers();
+          });
+          let textfield = tree.getByLabelText('Enter a J');
+          act(() => {textfield.focus();});
+          fireEvent.keyDown(textfield, {key: 'J'});
+          fireEvent.keyUp(textfield, {key: 'J'});
+          act(() => {
+            jest.runAllTimers();
+          });
+          expect(document.activeElement).toBe(textfield);
+          fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+          fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+          act(() => {
+            jest.runAllTimers();
+          });
+        });
       });
     });
 
