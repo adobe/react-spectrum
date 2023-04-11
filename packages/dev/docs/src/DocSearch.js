@@ -101,7 +101,6 @@ export default function DocSearch() {
       const items = Object.values(
         groupBy(hits, (hit) => hit.hierarchy.lvl1)
       )
-      .reverse()
       .map(
         groupedHits =>
         groupedHits.map((hit) => {
@@ -127,8 +126,6 @@ export default function DocSearch() {
 
       sections.push({title, items: items.map((item) => item[0])});
     }
-    let titles = Object.values(sectionTitles);
-    sections = sections.sort((a, b) => titles.indexOf(a.title) < titles.indexOf(b.title) ? -1 : 1);
     let newSuggestions = sections.map((section, index) => ({key: `${index}-${section.title}`, title: section.title, children: section.items}));
     newSuggestions.push({
       key: 'algolia-footer',
