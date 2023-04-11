@@ -63,7 +63,6 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
     selectionManager: state.selectionManager,
     collection: state.collection,
     disabledKeys: state.disabledKeys,
-    preventEscapeClearsSelection: true,
     shouldFocusWrap
   });
 
@@ -75,7 +74,13 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
   return {
     menuProps: mergeProps(domProps, {
       role: 'menu',
-      ...listProps
+      ...listProps,
+      onKeyDown: (e) => {
+        // don't clear the menu selected keys if the user is presses escape since escape closes the menu
+        if (e.key !== 'Escape') {
+          listProps.onKeyDown(e);
+        }
+      }
     })
   };
 }

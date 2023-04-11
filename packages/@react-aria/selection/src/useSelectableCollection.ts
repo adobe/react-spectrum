@@ -79,11 +79,7 @@ export interface AriaSelectableCollectionOptions {
    * The ref attached to the scrollable body. Used to provide automatic scrolling on item focus for non-virtualized collections.
    * If not provided, defaults to the collection ref.
    */
-  scrollRef?: RefObject<HTMLElement>,
-  /**
-   * Whether the escape key should clear selection.
-   */
-  preventEscapeClearsSelection?: boolean
+  scrollRef?: RefObject<HTMLElement>
 }
 
 export interface SelectableCollectionAria {
@@ -107,7 +103,6 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     disallowTypeAhead = false,
     shouldUseVirtualFocus,
     allowsTabNavigation = false,
-    preventEscapeClearsSelection = false,
     isVirtualized,
     // If no scrollRef is provided, assume the collection ref is the scrollable region
     scrollRef = ref
@@ -228,7 +223,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         break;
       case 'Escape':
         e.preventDefault();
-        if (!disallowEmptySelection && !preventEscapeClearsSelection) {
+        if (!disallowEmptySelection) {
           manager.clearSelection();
         }
         break;
