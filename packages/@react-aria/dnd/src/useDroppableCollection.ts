@@ -382,24 +382,20 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         let nextItem = nextKey != null ? localState.state.collection.getItem(nextKey) : undefined;
         let positionIndex = DROP_POSITIONS.indexOf(target.dropPosition);
         let nextDropPosition = DROP_POSITIONS[positionIndex - 1];
-        if (nextItem.type !== 'item' && nextDropPosition == null) {
-          nextKey = null;
-        } else {
-          if (positionIndex > 0 && nextDropPosition !== 'after') {
-            return {
-              type: 'item',
-              key: target.key,
-              dropPosition: nextDropPosition
-            };
-          }
+        if (positionIndex > 0 && nextDropPosition !== 'after') {
+          return {
+            type: 'item',
+            key: target.key,
+            dropPosition: nextDropPosition
+          };
+        }
 
-          // If the last drop position was 'before', then 'after' on the previous key is equivalent if they have the same parent.
-          // Switch to 'on' instead.
-          if (target.dropPosition === 'before' && targetItem?.parentKey === nextItem?.parentKey) {
-            dropPosition = 'on';
-          } else if (target.dropPosition === 'before' && nextItem && targetItem.parentKey !== nextItem.parentKey) {
-            dropPosition = 'after';
-          }
+        // If the last drop position was 'before', then 'after' on the previous key is equivalent if they have the same parent.
+        // Switch to 'on' instead.
+        if (target.dropPosition === 'before' && targetItem?.parentKey === nextItem?.parentKey) {
+          dropPosition = 'on';
+        } else if (target.dropPosition === 'before' && nextItem && targetItem.parentKey !== nextItem.parentKey) {
+          dropPosition = 'after';
         }
       }
 

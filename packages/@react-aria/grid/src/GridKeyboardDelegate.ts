@@ -52,7 +52,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
   protected isRow(node: Node<T>) {
     // TODO: make section header row a 'header' type rather item/row
     // Skip section row headers since they shouldn't be focusable
-    return !node.props?.isSectionHeader && (node.type === 'row' || node.type === 'item');
+    return node.type === 'row' || node.type === 'item';
   }
 
   protected findPreviousKey(fromKey?: Key, pred?: (item: Node<T>) => boolean) {

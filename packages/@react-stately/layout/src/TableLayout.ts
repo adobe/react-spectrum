@@ -337,6 +337,8 @@ export class TableLayout<T> extends ListLayout<T> {
     switch (node.type) {
       case 'headerrow':
         return this.buildHeaderRow(node, x, y);
+      // TODO: section header row has header type and will end up with a layoutinfo that has 'row' type
+      case 'header':
       case 'item':
         return this.buildRow(node, x, y);
       case 'column':
@@ -480,7 +482,9 @@ export class TableLayout<T> extends ListLayout<T> {
     if (!node.children || node.children.length === 0) {
       return;
     }
-
+    // console.log('node', node)
+    // TODO right now section's layoutInfo type is 'row'
+    // Perhaps make it so the layoutInfo type isn't 'row' and is header? Will conflict with the column header row which has layoutInfo.type = 'header'
     switch (node.layoutInfo.type) {
       case 'header': {
         for (let child of node.children) {
