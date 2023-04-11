@@ -28,7 +28,11 @@ export interface SearchAutocompleteAria<T> {
   /** Props for the list box, to be passed to [useListBox](useListBox.html). */
   listBoxProps: AriaListBoxOptions<T>,
   /** Props for the search input's clear button. */
-  clearButtonProps: AriaButtonProps
+  clearButtonProps: AriaButtonProps,
+  /** Props for the search autocomplete description element, if any. */
+  descriptionProps: DOMAttributes,
+  /** Props for the search autocomplete error message element, if any. */
+  errorMessageProps: DOMAttributes
 }
 
 export interface AriaSearchAutocompleteOptions<T> extends AriaSearchAutocompleteProps<T> {
@@ -60,7 +64,7 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteOptions<T>
     onKeyUp
   } = props;
 
-  let {inputProps, clearButtonProps} = useSearchField({
+  let {inputProps, clearButtonProps, descriptionProps, errorMessageProps} = useSearchField({
     ...props,
     value: state.inputValue,
     onChange: state.setInputValue,
@@ -105,6 +109,8 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteOptions<T>
     labelProps,
     inputProps: mergeProps(inputProps, comboBoxInputProps),
     listBoxProps,
-    clearButtonProps
+    clearButtonProps,
+    descriptionProps,
+    errorMessageProps
   };
 }
