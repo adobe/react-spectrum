@@ -19,9 +19,14 @@ governing permissions and limitations under the License.
 .spectrum-Tags {
   display: inline;
 
+  &:focus-visible {
+    outline: none;
+  }
+
   &.focus-ring {
     outline: none;
     box-shadow: 0 0 0 2px var(--spectrum-tag-border-color-key-focus);
+    /* Allows us to use a box-shadow for the focus ring. Should not cause layout shifts since it is within a container. */
     display: block;
   }
 }
