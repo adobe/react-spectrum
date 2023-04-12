@@ -110,7 +110,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
             'is-disabled': isDisabled,
             'is-selected': isSelected,
             'is-selectable': state.selectionManager.selectionMode !== 'none',
-            'is-hovered': isHovered
+            'is-hovered': isHovered || state.expandedKeys.has(key)
           }
         )}>
         <Grid
