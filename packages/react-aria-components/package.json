@@ -1,6 +1,6 @@
 {
   "name": "react-aria-components",
-  "version": "1.0.0-alpha.2",
+  "version": "1.0.0-alpha.3",
   "description": "A library of styleable components built using React Aria",
   "license": "Apache-2.0",
   "main": "dist/main.js",
