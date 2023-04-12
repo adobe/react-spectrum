@@ -77,7 +77,7 @@ Each individual tag should use `rowProps` on its outer container, and use `gridC
 
 ```tsx example export=true
 import {useTag, useTagGroup} from '@react-aria/tag';
-import {useTagGroupState} from '@react-stately/tag';
+import {useListState} from '@react-stately/list';
 import {Item} from '@react-stately/collections';
 import {useFocusRing} from '@react-aria/focus';
 
@@ -88,7 +88,7 @@ function TagGroup(props) {
   let { label, description, errorMessage, validationState, allowsRemoving, onRemove } = props;
   let ref = React.useRef(null);
 
-  let state = useTagGroupState(props);
+  let state = useListState(props);
   let {
     gridProps,
     labelProps,
