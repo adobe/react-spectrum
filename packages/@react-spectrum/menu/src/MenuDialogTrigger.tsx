@@ -14,7 +14,7 @@ import {classNames, SlotProvider, useIsMobileDevice} from '@react-spectrum/utils
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
 import {ItemProps} from '@react-types/shared';
 import {MenuDialogContext, useMenuContext, useMenuStateContext} from './context';
-import {Popover, Tray} from '@react-spectrum/overlays';
+import {Modal, Popover, Tray} from '@react-spectrum/overlays';
 import React, {Key, ReactElement, useRef} from 'react';
 import {SpectrumDialogClose} from '@react-types/dialog';
 import {useOverlayTriggerState} from '@react-stately/overlays';
@@ -49,7 +49,15 @@ function MenuDialogTrigger<T>(props: ItemProps<T> & {isUnavailable?: boolean, ta
     <>
       <MenuDialogContext.Provider value={{isUnavailable, triggerRef}}>{trigger}</MenuDialogContext.Provider>
       <SlotProvider slots={slots}>
-        <Popover state={state} triggerRef={triggerRef} placement="end top" hideArrow offset={-10} isNonModal={!isMobile}>{content}</Popover>
+        {
+          isMobile ? (
+            <Modal state={state} isDismissable>
+              {content}
+            </Modal>
+          ) : (
+            <Popover state={state} triggerRef={triggerRef} placement="end top" hideArrow offset={-10} isNonModal>{content}</Popover>
+          )
+        }
       </SlotProvider>
     </>
   );
