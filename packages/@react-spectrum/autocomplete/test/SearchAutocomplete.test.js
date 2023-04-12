@@ -32,13 +32,15 @@ let onInputChange = jest.fn();
 let outerBlur = jest.fn();
 let onFocus = jest.fn();
 let onBlur = jest.fn();
+let onClear = jest.fn();
 
 let defaultProps = {
   label: 'Test',
   onOpenChange,
   onInputChange,
   onFocus,
-  onBlur
+  onBlur,
+  onClear
 };
 
 const ExampleSearchAutocomplete = React.forwardRef((props = {}, ref) => (
@@ -266,6 +268,13 @@ describe('SearchAutocomplete', function () {
     });
 
     expect(searchAutocomplete).toHaveAttribute('aria-activedescendant', items[0].id);
+  });
+
+  it('supports custom data attributes', function () {
+    let {getByRole} = renderSearchAutocomplete({'data-testid': 'test'});
+
+    let searchAutocomplete = getByRole('combobox');
+    expect(searchAutocomplete).toHaveAttribute('data-testid', 'test');
   });
 
   describe('refs', function () {
@@ -814,6 +823,36 @@ describe('SearchAutocomplete', function () {
       expect(items).toHaveLength(1);
       expect(searchAutocomplete).not.toHaveAttribute('aria-activedescendant');
     });
+
+    it('input events are only fired once', function () {
+      let onKeyDown = jest.fn();
+      let onKeyUp = jest.fn();
+      let onFocus = jest.fn();
+      let onInputChange = jest.fn();
+      let onFocusChange = jest.fn();
+      let onBlur = jest.fn();
+      let {getByRole} = renderSearchAutocomplete({onKeyDown, onKeyUp, onFocus, onInputChange, onBlur, onFocusChange});
+
+      let searchAutocomplete = getByRole('combobox');
+      typeText(searchAutocomplete, 'w');
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(onKeyDown).toHaveBeenCalledTimes(1);
+      expect(onKeyUp).toHaveBeenCalledTimes(1);
+      expect(onFocus).toHaveBeenCalledTimes(1);
+      expect(onInputChange).toHaveBeenCalledTimes(1);
+      expect(onFocusChange).toHaveBeenCalledTimes(1);
+      expect(onBlur).toHaveBeenCalledTimes(0);
+
+      act(() => {
+        userEvent.tab();
+      });
+
+      expect(onBlur).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('blur', function () {
@@ -871,6 +910,11 @@ describe('SearchAutocomplete', function () {
       act(() => {
         fireEvent.change(searchAutocomplete, {target: {value: 'Bulba'}});
         jest.runAllTimers();
+
+      });
+      expect(onOpenChange).toHaveBeenLastCalledWith(true, 'input');
+
+      act(() => {
         searchAutocomplete.blur();
         jest.runAllTimers();
       });
@@ -1409,7 +1453,7 @@ describe('SearchAutocomplete', function () {
 
   describe('mobile searchAutocomplete', function () {
     beforeEach(() => {
-      jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 600);
+      jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 700);
     });
 
     afterEach(() => {
@@ -1681,6 +1725,7 @@ describe('SearchAutocomplete', function () {
       expect(clearButton.tagName).toBe('DIV');
       expect(clearButton).not.toHaveAttribute('tabIndex');
       triggerPress(clearButton);
+      expect(onClear).toHaveBeenCalledTimes(1);
 
       act(() => {
         jest.runAllTimers();

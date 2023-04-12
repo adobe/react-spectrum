@@ -11,7 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
+import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableView} from '../';
 import {Content} from '@react-spectrum/view';
 import Delete from '@spectrum-icons/workflow/Delete';
 import {generatePowerset} from '@react-spectrum/story-utils';
@@ -20,7 +20,6 @@ import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Meta, Story} from '@storybook/react';
 import React from 'react';
-import {SpectrumTableProps} from '@react-types/table';
 import {View} from '@react-spectrum/view';
 
 let states = [
@@ -57,7 +56,7 @@ const meta: Meta<SpectrumTableProps<object>> = {
   parameters: {
     chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true},
     // large delay with the layout since there are so many tables
-    chromatic: {delay: 2000}
+    chromatic: {delay: 4000}
   }
 };
 

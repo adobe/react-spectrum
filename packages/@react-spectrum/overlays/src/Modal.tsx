@@ -18,27 +18,29 @@ import {Overlay} from './Overlay';
 import {OverlayProps} from '@react-types/overlays';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import overrideStyles from './overlays.css';
-import React, {forwardRef, ReactNode, RefObject} from 'react';
+import React, {forwardRef, MutableRefObject, ReactNode, RefObject, useRef} from 'react';
 import {Underlay} from './Underlay';
 import {useViewportSize} from '@react-aria/utils';
 
-interface ModalProps extends AriaModalOverlayProps, StyleProps, OverlayProps {
+interface ModalProps extends AriaModalOverlayProps, StyleProps, Omit<OverlayProps, 'nodeRef'> {
   children: ReactNode,
   state: OverlayTriggerState,
   type?: 'modal' | 'fullscreen' | 'fullscreenTakeover'
 }
 
 interface ModalWrapperProps extends ModalProps {
-  isOpen?: boolean
+  isOpen?: boolean,
+  wrapperRef: MutableRefObject<HTMLDivElement>
 }
 
 function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
   let {children, state, ...otherProps} = props;
   let domRef = useDOMRef(ref);
+  let wrapperRef = useRef<HTMLDivElement>(null);
 
   return (
-    <Overlay {...otherProps} isOpen={state.isOpen}>
-      <ModalWrapper {...props} ref={domRef}>
+    <Overlay {...otherProps} isOpen={state.isOpen} nodeRef={wrapperRef}>
+      <ModalWrapper {...props} wrapperRef={wrapperRef} ref={domRef}>
         {children}
       </ModalWrapper>
     </Overlay>
@@ -51,10 +53,9 @@ let typeMap = {
 };
 
 let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject<HTMLDivElement>) {
-  let {type, children, state, isOpen} = props;
+  let {type, children, state, isOpen, wrapperRef} = props;
   let typeVariant = typeMap[type];
   let {styleProps} = useStyleProps(props);
-
   let {modalProps, underlayProps} = useModalOverlay(props, state, ref);
 
   let wrapperClassName = classNames(
@@ -87,8 +88,9 @@ let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject
     '--spectrum-visual-viewport-height': viewport.height + 'px'
   };
 
+  // Attach Transition's nodeRef to outer most wrapper for node.reflow: https://github.com/reactjs/react-transition-group/blob/c89f807067b32eea6f68fd6c622190d88ced82e2/src/Transition.js#L231
   return (
-    <>
+    <div ref={wrapperRef}>
       <Underlay {...underlayProps} isOpen={isOpen} />
       <div className={wrapperClassName} style={style}>
         <div
@@ -100,7 +102,7 @@ let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject
           {children}
         </div>
       </div>
-    </>
+    </div>
   );
 });
 

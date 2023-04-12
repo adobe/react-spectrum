@@ -14,17 +14,20 @@ import {CollectionBase, DOMProps, StyleProps} from '@react-types/shared';
 import {Key, ReactNode} from 'react';
 
 export interface ActionBarProps<T> extends CollectionBase<T> {
-  // Required. When zero, the ActionBar is hidden.
+  /** The number of selected items that the ActionBar is currently linked to. If 0, the ActionBar is hidden. */
   selectedItemCount: number | 'all',
-  // Also required. When clicked, the selection should be cleared.
+  /** Handler that is called when the ActionBar clear button is pressed. */
   onClearSelection: () => void,
+  /** Whether the ActionBar should be displayed with a emphasized style. */
   isEmphasized?: boolean,
+  /** Handler that is called when an ActionBar button is pressed. */
   onAction?: (key: Key) => void
 }
 
 export interface SpectrumActionBarProps<T> extends ActionBarProps<T>, DOMProps, StyleProps {}
 
 interface ActionBarContainerProps {
+  /** The contents of the ActionBarContainer. Should include a ActionBar and the renderable content it is associated with. */
   children: ReactNode
 }
 

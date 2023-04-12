@@ -13,7 +13,8 @@
 import {DOMAttributes, FocusableElement, FocusStrategy, KeyboardDelegate} from '@react-types/shared';
 import {FocusEvent, Key, KeyboardEvent, RefObject, useEffect, useRef} from 'react';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
-import {focusWithoutScrolling, mergeProps, scrollIntoView, useEvent} from '@react-aria/utils';
+import {focusWithoutScrolling, mergeProps, scrollIntoView, scrollIntoViewport, useEvent} from '@react-aria/utils';
+import {getInteractionModality} from '@react-aria/interactions';
 import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useLocale} from '@react-aria/i18n';
@@ -305,11 +306,13 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       // Restore the scroll position to what it was before.
       scrollRef.current.scrollTop = scrollPos.current.top;
       scrollRef.current.scrollLeft = scrollPos.current.left;
+    }
 
+    if (!isVirtualized && manager.focusedKey != null) {
       // Refocus and scroll the focused item into view if it exists within the scrollable region.
       let element = scrollRef.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
       if (element) {
-        // This prevents a flash of focus on the first/last element in the collection
+        // This prevents a flash of focus on the first/last element in the collection, or the collection itself.
         focusWithoutScrolling(element);
         scrollIntoView(scrollRef.current, element);
       }
@@ -356,13 +359,17 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   // If not virtualized, scroll the focused element into view when the focusedKey changes.
   // When virtualized, Virtualizer handles this internally.
   useEffect(() => {
-    if (!isVirtualized && manager.focusedKey && scrollRef?.current) {
+    let modality = getInteractionModality();
+    if (!isVirtualized && manager.isFocused && manager.focusedKey != null && scrollRef?.current) {
       let element = scrollRef.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
       if (element) {
         scrollIntoView(scrollRef.current, element);
+        if (modality === 'keyboard') {
+          scrollIntoViewport(element, {containingElement: ref.current});
+        }
       }
     }
-  }, [isVirtualized, scrollRef, manager.focusedKey]);
+  }, [isVirtualized, scrollRef, manager.focusedKey, manager.isFocused, ref]);
 
   let handlers = {
     onKeyDown,

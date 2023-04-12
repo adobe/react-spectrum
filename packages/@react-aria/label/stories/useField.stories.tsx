@@ -13,7 +13,7 @@ interface TextFieldProps {
 
 const TextInputField = (props: TextFieldProps) => {
   const {label, description, errorMessage, validationState} = props;
-  const ref = useRef<HTMLInputElement>();
+  const ref = useRef<HTMLInputElement>(null);
   const {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField(props);
 
   return (

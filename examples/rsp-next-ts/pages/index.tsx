@@ -80,6 +80,7 @@ import {
   ColorWheel,
 } from "@react-spectrum/color";
 import ReorderableListView from "../components/ReorderableListView";
+import {ToastQueue} from '@react-spectrum/toast';
 
 export default function Home() {
   let [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -138,7 +139,7 @@ export default function Home() {
             <ReorderableListView />
             <MenuTrigger>
               <ActionButton>Menu</ActionButton>
-              <Menu onAction={(key) => alert(key)}>
+              <Menu onAction={(key) => ToastQueue.positive(key)}>
                 <Item key="cut">Cut</Item>
                 <Item key="copy">Copy</Item>
                 <Item key="paste">Paste</Item>

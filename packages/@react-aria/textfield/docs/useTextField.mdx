@@ -75,11 +75,12 @@ to identify the element to screen readers.
 ## Example
 
 ```tsx example export=true
+import type {AriaTextFieldProps} from '@react-aria/textfield';
 import {useTextField} from '@react-aria/textfield';
 
-function TextField(props) {
+function TextField(props: AriaTextFieldProps) {
   let {label} = props;
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField(props, ref);
 
   return (
@@ -100,11 +101,12 @@ function TextField(props) {
 `useTextField` also supports multi-line text entry with the `<textarea>` element via the `inputElementType` prop.
 
 ```tsx example
+import type {AriaTextFieldProps} from '@react-aria/textfield';
 import {useTextField} from '@react-aria/textfield';
 
-function TextArea(props) {
+function TextArea(props: AriaTextFieldProps) {
   let {label} = props;
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {labelProps, inputProps} = useTextField({...props, inputElementType: 'textarea'}, ref);
 
   return (
@@ -138,7 +140,7 @@ The `value` prop can be used to make the value controlled. The `onChange` event 
 
 ```tsx example
 function Example() {
-  let [text, setText] = React.useState();
+  let [text, setText] = React.useState('');
 
   return (
     <>

@@ -281,6 +281,7 @@ jobs:
       - run:
           name: compare api
           command: |
+            yarn test:parcel
             mkdir -p dist
             yarn --silent compare:apis --isCI --branch-api-dir="/tmp/dist/branch-api" --base-api-dir="/tmp/dist/base-api" | tee dist/ts-diff.txt
 
@@ -288,6 +289,16 @@ jobs:
           root: dist
           paths:
             - 'ts-diff.txt'
+
+  typecheck-docs:
+    executor: rsp-large
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: check-examples
+          command: make check-examples
 
   storybook:
     executor: rsp-large
@@ -497,6 +508,9 @@ workflows:
           filters:
             branches:
               ignore: main
+      - typecheck-docs:
+          requires:
+            - install
       - storybook:
           requires:
             - install

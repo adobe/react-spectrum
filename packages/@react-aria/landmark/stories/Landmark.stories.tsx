@@ -13,16 +13,15 @@
 import {ActionGroup, Item} from '@react-spectrum/actiongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
 import {Checkbox} from '@react-spectrum/checkbox';
-import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {createLandmarkController, useLandmark} from '../';
 import {Flex} from '@react-spectrum/layout';
 import {Link} from '@react-spectrum/link';
 import {Meta, Story} from '@storybook/react';
-import React, {useRef} from 'react';
+import React, {SyntheticEvent, useEffect, useMemo, useRef} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import styles from './index.css';
 import {TextField} from '@react-spectrum/textfield';
-import {useLandmark} from '../';
-
 
 interface StoryProps {}
 
@@ -44,32 +43,32 @@ const OneWithNoFocusableChildrenExampleTemplate = (): Story<StoryProps> => (prop
 const AllWithNoFocusableChildrenExampleTemplate = (): Story<StoryProps> => (props) => <AllWithNoFocusableChildrenExample {...props} />;
 
 function Main(props) {
-  let ref = useRef();
+  let ref = useFocusableRef(null);
   let {styleProps} = useStyleProps(props);
   let {landmarkProps} = useLandmark({...props, role: 'main'}, ref);
   return <main aria-label="Danni's unicorn corral" ref={ref} {...props} {...landmarkProps} {...styleProps}>{props.children}</main>;
 }
 
 function Navigation(props) {
-  let ref = useRef();
+  let ref = useFocusableRef(null);
   let {styleProps} = useStyleProps(props);
   let {landmarkProps} = useLandmark({...props, role: 'navigation'}, ref);
   return <nav aria-label="Rainbow lookout"  ref={ref} {...props} {...landmarkProps} {...styleProps}>{props.children}</nav>;
 }
 
 function Region(props) {
-  let ref = useRef();
+  let ref = useFocusableRef(null);
   let {styleProps} = useStyleProps(props);
   let {landmarkProps} = useLandmark({...props, role: 'region'}, ref);
   return <article aria-label="The greens" ref={ref} {...props} {...landmarkProps} {...styleProps}>{props.children}</article>;
 }
 
 function Search(props) {
-  let ref = useRef();
+  let ref = useFocusableRef(null);
   let {styleProps} = useStyleProps(props);
   let {landmarkProps} = useLandmark({...props, role: 'search'}, ref);
   return (
-    <form aria-label="Magic seeing eye" ref={ref} {...props} {...landmarkProps} {...styleProps}>
+    <form aria-label="Magic seeing eye" ref={ref} {...props} {...landmarkProps} {...styleProps} className={classNames(styles, 'landmark')}>
       <SearchField label="Search" />
     </form>
   );
@@ -313,6 +312,113 @@ function ApplicationExample() {
   );
 }
 
+function IframeExample() {
+  let controller = useMemo(() => createLandmarkController(), []);
+  useEffect(() => () => controller.dispose(), [controller]);
+  let onLoad = (e: SyntheticEvent) => {
+    let iframe = e.target as HTMLIFrameElement;
+    let window = iframe.contentWindow;
+    let document = window?.document;
+    if (!window || !document) {
+      return;
+    }
+
+    let prevFocusedElement: HTMLElement | null = null;
+    window.addEventListener('react-aria-landmark-navigation', ((e: CustomEvent) => {
+      e.preventDefault();
+      if (!window || !document) {
+        return;
+      }
+      let el = document.activeElement as HTMLElement;
+      if (el !== document.body) {
+        prevFocusedElement = el;
+      }
+
+      // Prevent focus scope from stealing focus back when we move focus to the iframe.
+      document.body.setAttribute('data-react-aria-top-layer', 'true');
+
+      window.parent.postMessage({
+        type: 'landmark-navigation',
+        direction: e.detail.direction
+      });
+
+      setTimeout(() => {
+        document?.body.removeAttribute('data-react-aria-top-layer');
+      }, 100);
+    }) as EventListener);
+
+    // When the iframe is re-focused, restore focus back inside where it was before.
+    window.addEventListener('focus', () => {
+      if (prevFocusedElement) {
+        prevFocusedElement.focus();
+        prevFocusedElement = null;
+      }
+    });
+
+    // Move focus to first or last landmark when we receive a message from the parent page.
+    window.addEventListener('message', e => {
+      if (e.data.type === 'landmark-navigation') {
+        // (Can't use LandmarkController in this example because we need the controller instance inside the iframe)
+        document?.body.dispatchEvent(new KeyboardEvent('keydown', {key: 'F6', shiftKey: e.data.direction === 'backward', bubbles: true}));
+      }
+    });
+  };
+
+  let ref = useRef<HTMLIFrameElement>(null);
+  useEffect(() => {
+    let onMessage = (e: MessageEvent) => {
+      let iframe = ref.current;
+      if (e.data.type === 'landmark-navigation') {
+        // Move focus to the iframe so that when focus is restored there, and we can redirect it back inside (below).
+        iframe?.focus();
+
+        // Now re-dispatch the keyboard event so landmark navigation outside the iframe picks it up.
+        controller.navigate(e.data.direction);
+      }
+    };
+
+    window.addEventListener('message', onMessage);
+    return () => window.removeEventListener('message', onMessage);
+  }, [controller]);
+
+  let {landmarkProps} = useLandmark({
+    role: 'main',
+    focus(direction) {
+      // when iframe landmark receives focus via landmark navigation, go to first/last landmark inside iframe.
+      ref.current?.contentWindow?.postMessage({
+        type: 'landmark-navigation',
+        direction
+      });
+    }
+  }, ref);
+
+  return (
+    <div className={classNames(styles, 'application')}>
+      <Region UNSAFE_className={classNames(styles, 'globalnav')}>
+        <Flex justifyContent="space-between">
+          <Link><a href="//react-spectrum.com">React Spectrum</a></Link>
+          <Search />
+        </Flex>
+      </Region>
+      <Navigation UNSAFE_className={classNames(styles, 'navigation')} aria-label="Site Nav">
+        <ActionGroup orientation="vertical">
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </ActionGroup>
+      </Navigation>
+      <iframe
+        ref={ref}
+        {...landmarkProps}
+        title="iframe"
+        style={{width: '100%', height: '100%'}}
+        src="iframe.html?providerSwitcher-express=false&providerSwitcher-toastPosition=bottom&providerSwitcher-locale=&providerSwitcher-theme=&providerSwitcher-scale=&args=&id=landmark--application-with-landmarks&viewMode=story"
+        onLoad={onLoad}
+        tabIndex={-1} />
+    </div>
+  );
+}
+
 export const FlatLandmarks = Template().bind({});
 FlatLandmarks.args = {};
 
@@ -339,3 +445,5 @@ OneWithNoFocusableChildren.args = {};
 
 export const AllWithNoFocusableChildren = AllWithNoFocusableChildrenExampleTemplate().bind({});
 AllWithNoFocusableChildren.args = {};
+
+export {IframeExample};

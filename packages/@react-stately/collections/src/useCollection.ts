@@ -10,21 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, CollectionBase, Node} from '@react-types/shared';
+import {Collection, CollectionBase, CollectionStateBase, Node} from '@react-types/shared';
 import {CollectionBuilder} from './CollectionBuilder';
 import {useMemo, useRef} from 'react';
 
 type CollectionFactory<T, C extends Collection<Node<T>>> = (node: Iterable<Node<T>>, prev: C | null) => C;
 
-export function useCollection<T extends object, C extends Collection<Node<T>> = Collection<Node<T>>>(props: CollectionBase<T>, factory: CollectionFactory<T, C>, context?: unknown, invalidators: Array<any> = []): C {
+export function useCollection<T extends object, C extends Collection<Node<T>> = Collection<Node<T>>>(props: CollectionStateBase<T, C>, factory: CollectionFactory<T, C>, context?: unknown, invalidators: Array<any> = []): C {
   let builder = useMemo(() => new CollectionBuilder<T>(), []);
 
   let prev = useRef<C>(null);
   return useMemo(() => {
-    let nodes = builder.build(props, context);
+    if (props.collection) {
+      return props.collection;
+    }
+
+    let nodes = builder.build(props as CollectionBase<T>, context);
     prev.current = factory(nodes, prev.current);
     return prev.current;
   // Don't invalidate when any prop changes, just the two we care about.
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [builder, props.children, props.items, context, ...invalidators]);
+  }, [builder, props.children, props.items, props.collection, context, ...invalidators]);
 }

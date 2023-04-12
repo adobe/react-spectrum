@@ -36,6 +36,8 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
 
       key = this.collection.getKeyAfter(key);
     }
+
+    return null;
   }
 
   getKeyAbove(key: Key) {
@@ -48,6 +50,8 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
 
       key = this.collection.getKeyBefore(key);
     }
+
+    return null;
   }
 
   getFirstKey() {
@@ -60,6 +64,8 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
 
       key = this.collection.getKeyAfter(key);
     }
+
+    return null;
   }
 
   getLastKey() {
@@ -72,6 +78,8 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
 
       key = this.collection.getKeyBefore(key);
     }
+
+    return null;
   }
 
   private getItem(key: Key): HTMLElement {
@@ -89,7 +97,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
 
     while (item && item.offsetTop > pageY) {
       key = this.getKeyAbove(key);
-      item = this.getItem(key);
+      item = key == null ? null : this.getItem(key);
     }
 
     return key;
@@ -106,7 +114,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
 
     while (item && item.offsetTop < pageY) {
       key = this.getKeyBelow(key);
-      item = this.getItem(key);
+      item = key == null ? null : this.getItem(key);
     }
 
     return key;

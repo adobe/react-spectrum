@@ -12,29 +12,32 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
-.spectrum-Tags {
-  display: inline-flex;
-  flex-wrap: wrap;
-
-  margin: 0;
-  padding: 0;
-  list-style: none;
+:root {
+  --spectrum-tag-margin: calc(var(--spectrum-taggroup-tag-gap-y) / 2) calc(var(--spectrum-taggroup-tag-gap-x) / 2);
 }
 
-.spectrum-Tags-item {
+.spectrum-Tags {
+  display: inline;
+}
+
+.spectrum-Tags-container {
+  /* Aligns tags with label. */
+  margin-inline-start: calc(calc(var(--spectrum-taggroup-tag-gap-x) / 2) * -1);
+  margin-inline-end: calc(var(--spectrum-taggroup-tag-gap-x) / 2);
+}
+
+.spectrum-Tag {
   @inherit: %spectrum-FocusRing;
   --spectrum-focus-ring-border-radius: var(--spectrum-tag-border-radius);
   --spectrum-focus-ring-border-size: var(--spectrum-tag-border-size);
 
-  display: grid;
-  grid-template-columns: 1fr auto;
-  grid-template-areas: "icon content action";
+  display: inline-grid;
   align-items: center;
   box-sizing: border-box;
   position: relative;
 
-  margin: calc(var(--spectrum-taggroup-tag-gap-y) / 2) calc(var(--spectrum-taggroup-tag-gap-x) / 2);
-  padding-inline-start:calc(var(--spectrum-tag-padding-x) - var(--spectrum-tag-border-size));
+  margin: var(--spectrum-tag-margin);
+  padding-inline-start: calc(var(--spectrum-tag-padding-x) - var(--spectrum-tag-border-size));
   block-size: var(--spectrum-tag-height);
   max-inline-size: 100%;
 
@@ -53,33 +56,73 @@ governing permissions and limitations under the License.
     pointer-events: none;
   }
 
-  .spectrum-Tag-action {
+  .spectrum-Tag-removeButton {
     grid-area: action;
     height: calc(var(--spectrum-tag-height) - (2 * var(--spectrum-tag-border-size)));
     width: var(--spectrum-global-dimension-size-300);
   }
+
+  .spectrum-Tag-cell {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: grid;
+    align-items: center;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: "decoration content action";
+  }
+
+  .spectrum-Tag-icon {
+    grid-area: decoration;
+    margin-inline-end: var(--spectrum-global-dimension-size-100);
+  }
+
+  .spectrum-Tag-avatar {
+    grid-area: decoration;
+    margin-inline-end: var(--spectrum-global-dimension-size-100);
+  }
+
+  .spectrum-Tag-content {
+    grid-area: content;
+    line-height: calc(var(--spectrum-tag-height) - calc(var(--spectrum-tag-border-size) * 2));
+    margin-inline-end: var(--spectrum-tag-padding-x);
+    flex: 1 1 auto;
+    font-size: var(--spectrum-tag-text-size);
+    cursor: default;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    outline: none;
+  }
+
+  &.spectrum-Tag--removable {
+    .spectrum-Tag-content {
+      margin-inline-end: 0;
+    }
+  }
 }
 
-.spectrum-Tag-icon {
-  grid-area: icon;
-  margin-inline-end: var(--spectrum-global-dimension-size-100);
+.spectrum-Tags-actions {
+  display: inline;
+
+  .spectrum-Tags-actionButton {
+    display: inline;
+    height: var(--spectrum-tag-height);
+    font-size: var(--spectrum-tag-text-size);
+    margin: var(--spectrum-tag-margin);
+
+    &.spectrum-Tags-actionButton {
+      > span {
+        padding-inline-start: var(--spectrum-tag-padding-x);
+        padding-inline-end: var(--spectrum-tag-padding-x);
+      }
+    }
+  }
 }
 
-.spectrum-Tag-content {
-  grid-area: content;
-  block-size: 100%;
-  line-height: calc(var(--spectrum-tag-height) - calc(var(--spectrum-tag-border-size) * 2));
-  margin-inline-end: var(--spectrum-tag-padding-x);
-  flex: 1 1 auto;
-  font-size: var(--spectrum-tag-text-size);
-  cursor: default;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  outline: none;
-}
+.spectrum-Tags-fieldWrapper.spectrum-Tags-fieldWrapper {
+  width: unset;
 
-.tags-removable {
-  margin-inline-end: 0;
+  &:not(.spectrum-Tags-fieldWrapper--positionSide) {
+    display: grid;
+  }
 }
-

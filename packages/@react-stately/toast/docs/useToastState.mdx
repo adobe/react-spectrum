@@ -1,0 +1,46 @@
+{/* Copyright 2022 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-stately/toast';
+import {ClassAPI, HeaderInfo, TypeContext, FunctionAPI, TypeLink, PageDescription} from '@react-spectrum/docs';
+import packageData from '@react-stately/toast/package.json';
+
+---
+category: Status
+keywords: [toast, notifications, alert, state]
+---
+
+# useToastState
+
+<PageDescription>{docs.exports.useToastState.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useToastState']} />
+
+## API
+
+<FunctionAPI function={docs.exports.useToastState} links={docs.links} />
+
+## Interface
+
+<ClassAPI links={docs.links} class={docs.links[docs.exports.useToastState.return.base.id]} />
+
+## ToastQueue
+
+`useToastState` uses a `ToastQueue` under the hood, which means the queue is owned by the component that calls it. If you want to have a global toast queue outside the React tree, you can use the `ToastQueue` class directly. The <TypeLink links={docs.links} type={docs.exports.useToastQueue} /> hook can be used to to subscribe to a `ToastQueue` within a React component, and returns the same interface as described above.
+
+<ClassAPI links={docs.links} class={docs.exports.ToastQueue} />
+
+## Example
+
+See the docs for [useToast](../react-aria/useToast.html) in react-aria for an example of `useToastState`.
