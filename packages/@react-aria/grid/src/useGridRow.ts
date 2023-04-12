@@ -73,7 +73,10 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
   };
 
   if (isVirtualized) {
-    rowProps['aria-rowindex'] = node.rowIndex;
+    // rowProps['aria-rowindex'] = node.index + 1;
+    rowProps['aria-posinset'] = node.index + 1;
+    rowProps['aria-level'] = node.level;
+    rowProps['aria-setsize'] = [...state.collection.getItem(node.parentKey).childNodes].length;
   }
 
   return {

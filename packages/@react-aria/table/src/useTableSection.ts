@@ -42,9 +42,8 @@ export function useTableSection<T>(props: AriaTableSectionProps<T>, state: Table
   // prob map from section key to id?
   let headerId = useId();
   let rowIndex;
-
   if (isVirtualized) {
-    rowIndex = (getFirstItem(getChildNodes(node, state.collection)) as GridNode<T>).rowIndex;
+    rowIndex = (getFirstItem(getChildNodes(node, state.collection)) as GridNode<T>).index + 1;
   }
 
   return {
@@ -54,7 +53,9 @@ export function useTableSection<T>(props: AriaTableSectionProps<T>, state: Table
     },
     rowProps: {
       role: 'row',
-      'aria-rowindex': rowIndex
+      'aria-posinset': rowIndex,
+      'aria-level': node.level + 1,
+      'aria-setsize': [...node.childNodes].length
     },
     gridCellProps: {
       id: headerId,
