@@ -13,6 +13,7 @@
 import {FocusStrategy} from '@react-types/shared';
 import {MenuTriggerState} from '@react-stately/menu';
 import React, {HTMLAttributes, MutableRefObject, useContext} from 'react';
+import {TreeState} from '@react-stately/tree';
 
 export interface MenuContextValue extends HTMLAttributes<HTMLElement> {
   onClose?: () => void,
@@ -30,12 +31,23 @@ export function useMenuContext(): MenuContextValue {
 }
 
 export interface MenuDialogContextValue {
-  isUnavailable?: boolean
+  isUnavailable?: boolean,
+  triggerRef?: MutableRefObject<HTMLLIElement>
 }
 
 export const MenuDialogContext = React.createContext<MenuDialogContextValue | undefined>(undefined);
 
 export function useMenuDialogContext(): MenuDialogContextValue {
   return useContext(MenuDialogContext);
+}
+
+export interface MenuStateContextValue<T> {
+  state?: TreeState<T>
+}
+
+export const MenuStateContext = React.createContext<MenuStateContextValue<any>>({});
+
+export function useMenuStateContext<T>(): MenuStateContextValue<T> {
+  return useContext(MenuStateContext);
 }
 

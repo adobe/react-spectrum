@@ -14,10 +14,10 @@ import {DOMAttributes, FocusableElement, PressEvent} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
 import {getItemCount} from '@react-stately/collections';
 import {isFocusVisible, useHover, useKeyboard, usePress} from '@react-aria/interactions';
-import {Key, RefObject, useCallback} from 'react';
+import {Key, RefObject, useCallback, useRef} from 'react';
 import {menuData} from './useMenu';
 import {MenuTriggerState} from '@react-stately/menu';
-import {mergeProps, useSlotId} from '@react-aria/utils';
+import {mergeProps, useLayoutEffect, useSlotId} from '@react-aria/utils';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableItem} from '@react-aria/selection';
 
@@ -100,21 +100,44 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     key,
     closeOnSelect,
     isVirtualized,
-    isMenuDialogTrigger,
     triggerState = {} as MenuTriggerState
   } = props;
 
-  let {openKey, setOpenKey, setOpenRef} = triggerState;
+  let isMenuDialogTrigger = state.collection.getItem(key).hasChildNodes;
+  let isOpen = state.expandedKeys.has(key);
+
+  let {setDisableClosing} = triggerState;
 
   let isDisabled = props.isDisabled ?? state.disabledKeys.has(key);
   let isSelected = props.isSelected ?? state.selectionManager.isSelected(key);
 
+  let openTimeout = useRef<ReturnType<typeof setTimeout> | undefined>();
+  let cancelOpenTimeout = useCallback(() => {
+    if (openTimeout.current) {
+      clearTimeout(openTimeout.current);
+      openTimeout.current = undefined;
+    }
+  }, [openTimeout]);
+  let openSubMenuFunc = useCallback(() => {
+    setDisableClosing?.(true);
+    if (!state.expandedKeys.has(key)) {
+      state.toggleKey(key);
+    }
+  }, [setDisableClosing, state]);
+  let openSubMenu = useRef(openSubMenuFunc);
+  useLayoutEffect(() => {
+    openSubMenu.current = openSubMenuFunc;
+  });
+  useLayoutEffect(() => {
+    return () => cancelOpenTimeout();
+  }, [cancelOpenTimeout]);
+
   let data = menuData.get(state);
   let onClose = props.onClose || data.onClose;
   let onActionMenuDialogTrigger = useCallback(() => {
-    setOpenKey?.(key);
-    setOpenRef?.(ref);
-  }, [setOpenKey, setOpenRef, key, ref]);
+    cancelOpenTimeout();
+    openSubMenu.current();
+  }, [setDisableClosing, key, ref]);
   let onAction = isMenuDialogTrigger ? onActionMenuDialogTrigger : props.onAction || data.onAction;
 
   let role = 'menuitem';
@@ -147,7 +170,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
 
   if (isMenuDialogTrigger) {
     ariaProps['aria-haspopup'] = 'dialog';
-    ariaProps['aria-expanded'] = openKey === key ? 'true' : 'false';
+    ariaProps['aria-expanded'] = isOpen ? 'true' : 'false';
   }
 
   let onPressStart = (e: PressEvent) => {
@@ -194,8 +217,13 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     },
     onHoverChange: isHovered => {
       if (isHovered && isMenuDialogTrigger) {
-        setOpenKey?.(key);
-        setOpenRef?.(ref);
+        if (!openTimeout.current) {
+          openTimeout.current = setTimeout(() => {
+            openSubMenu.current();
+          }, 500);
+        }
+      } else if (!isHovered) {
+        cancelOpenTimeout();
       }
     }
   });
@@ -223,12 +251,14 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
           break;
         case 'ArrowRight':
           if (isMenuDialogTrigger) {
-            setOpenKey(key);
-            setOpenRef(ref);
+            cancelOpenTimeout();
+            openSubMenu.current();
           }
           break;
+        default:
+          e.continuePropagation();
+          break;
       }
-      e.continuePropagation();
     }
   });
 

@@ -13,9 +13,9 @@
 import {classNames, SlotProvider, useIsMobileDevice} from '@react-spectrum/utils';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
 import {ItemProps} from '@react-types/shared';
-import {MenuDialogContext, useMenuContext} from './context';
+import {MenuDialogContext, useMenuContext, useMenuStateContext} from './context';
 import {Popover, Tray} from '@react-spectrum/overlays';
-import React, {Key, ReactElement} from 'react';
+import React, {Key, ReactElement, useRef} from 'react';
 import {SpectrumDialogClose} from '@react-types/dialog';
 import {useOverlayTriggerState} from '@react-stately/overlays';
 
@@ -23,9 +23,13 @@ function MenuDialogTrigger<T>(props: ItemProps<T> & {isUnavailable?: boolean, ta
   let {isUnavailable} = props;
 
   let {state: menuTriggerState} = useMenuContext();
-  let state = useOverlayTriggerState({isOpen: menuTriggerState.openKey === props.targetKey, onOpenChange: (val) => {
+  let {state: menuState} = useMenuStateContext();
+  let state = useOverlayTriggerState({isOpen: menuState.expandedKeys.has(props.targetKey), onOpenChange: (val) => {
     if (!val) {
-      menuTriggerState.setOpenKey(null);
+      menuTriggerState.setDisableClosing(false);
+      if (menuState.expandedKeys.has(props.targetKey)) {
+        menuState.toggleKey(props.targetKey);
+      }
     }
   }});
   let slots = {};
@@ -40,19 +44,12 @@ function MenuDialogTrigger<T>(props: ItemProps<T> & {isUnavailable?: boolean, ta
   let [, content] = props.children as [ReactElement, SpectrumDialogClose];
 
   let isMobile = useIsMobileDevice();
+  let triggerRef = useRef<HTMLLIElement>(null);
   return (
     <>
-      <MenuDialogContext.Provider value={{isUnavailable}}>{trigger}</MenuDialogContext.Provider>
+      <MenuDialogContext.Provider value={{isUnavailable, triggerRef}}>{trigger}</MenuDialogContext.Provider>
       <SlotProvider slots={slots}>
-        {
-          isMobile ? (
-            <Tray state={state}>
-              {content}
-            </Tray>
-          ) : (
-            <Popover state={state} triggerRef={menuTriggerState.openRef} placement="end top" hideArrow offset={-10} isNonModal>{content}</Popover>
-          )
-        }
+        <Popover state={state} triggerRef={triggerRef} placement="end top" hideArrow offset={-10} isNonModal={!isMobile}>{content}</Popover>
       </SlotProvider>
     </>
   );

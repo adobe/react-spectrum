@@ -953,7 +953,7 @@ describe('MenuTrigger', function () {
               <Menu onAction={action('onAction')}>
                 <Item key="1">One</Item>
                 <MenuDialogTrigger isUnavailable>
-                  <Item key="foo">Two</Item>
+                  <Item key="foo" hasChildItems>Two</Item>
                   <Dialog>
                     <Heading>hello</Heading>
                     <Content>Is it me you're looking for?</Content>
@@ -987,13 +987,22 @@ describe('MenuTrigger', function () {
       it('can open a sub dialog with hover', function () {
         renderTree();
         let menu = openMenu();
-        let unavailableItem = within(menu).getAllByRole('menuitem')[1];
+        let menuItems = within(menu).getAllByRole('menuitem');
+        let unavailableItem = menuItems[1];
         expect(unavailableItem).toBeVisible();
-        // expect(unavailableItem).toBeHaveAttribute('aria-haspopup', 'dialog');
+        expect(unavailableItem).toHaveAttribute('aria-haspopup', 'dialog');
 
         fireEvent.mouseEnter(unavailableItem);
+        act(() => {jest.runAllTimers();});
         let dialog = tree.getByRole('dialog');
         expect(dialog).toBeVisible();
+
+        fireEvent.mouseLeave(unavailableItem);
+        fireEvent.mouseEnter(menuItems[2]);
+        act(() => {jest.runAllTimers();});
+        expect(menu).toBeVisible();
+        expect(dialog).not.toBeInTheDocument();
+        expect(document.activeElement).toBe(menuItems[2]);
       });
 
       it('can open a sub dialog with keyboard', function () {

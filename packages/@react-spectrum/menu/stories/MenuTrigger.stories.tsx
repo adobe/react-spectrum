@@ -574,7 +574,7 @@ storiesOf('MenuTrigger', module)
       <Menu onAction={action('onAction')}>
         <Item key="1">One</Item>
         <MenuDialogTrigger isUnavailable>
-          <Item key="foo">Two</Item>
+          <Item key="foo" hasChildItems>Two</Item>
           <Dialog>
             <Heading>hello</Heading>
             <Content>Is it me you're looking for?</Content>
@@ -582,7 +582,7 @@ storiesOf('MenuTrigger', module)
         </MenuDialogTrigger>
         <Item key="3">Three</Item>
         <MenuDialogTrigger isUnavailable>
-          <Item key="bar">Four</Item>
+          <Item key="bar" hasChildItems>Four</Item>
           <Dialog>
             <Heading>hello</Heading>
             <Content>Is it me you're looking for?</Content>

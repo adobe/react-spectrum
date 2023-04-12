@@ -14,7 +14,7 @@ import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
-import InfoMedium from '@spectrum-icons/ui/InfoMedium';
+import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
@@ -44,6 +44,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   } = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let menuDialogContext = useMenuDialogContext();
+  let {triggerRef} = menuDialogContext || {};
   let {state: triggerState} = useMenuContext();
   let isMenuDialogTrigger = !!menuDialogContext;
   let isUnavailable;
@@ -65,7 +66,10 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   let isSelected = state.selectionManager.isSelected(key);
   let isDisabled = state.disabledKeys.has(key);
 
-  let ref = useRef<HTMLLIElement>();
+  let ref = useRef<HTMLLIElement>(null);
+  if (triggerRef) {
+    ref = triggerRef;
+  }
   let {
     menuItemProps,
     labelProps,
@@ -119,7 +123,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
             <SlotProvider
               slots={{
                 text: {UNSAFE_className: styles['spectrum-Menu-itemLabel'], ...labelProps},
-                end: {UNSAFE_className: styles['spectrum-Menu-end'], ...descriptionProps},
+                end: {UNSAFE_className: styles['spectrum-Menu-end'], size: 'XS', alignSelf: 'center', ...descriptionProps},
                 icon: {UNSAFE_className: styles['spectrum-Menu-icon'], size: 'S'},
                 description: {UNSAFE_className: styles['spectrum-Menu-description'], ...descriptionProps},
                 keyboard: {UNSAFE_className: styles['spectrum-Menu-keyboard'], ...keyboardShortcutProps}
@@ -136,7 +140,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
                   } />
               }
               {
-                isUnavailable && <InfoMedium slot="end" aria-label={stringFormatter.format('unavailable')} />
+                isUnavailable && <InfoOutline slot="end" aria-label={stringFormatter.format('unavailable')} />
               }
             </SlotProvider>
           </ClearSlots>
