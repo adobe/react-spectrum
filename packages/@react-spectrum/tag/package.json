@@ -48,7 +48,6 @@
     "@react-spectrum/utils": "^3.9.1",
     "@react-stately/collections": "^3.7.0",
     "@react-stately/list": "^3.8.0",
-    "@react-stately/tag": "3.0.0-rc.0",
     "@react-types/shared": "^3.18.0",
     "@react-types/tag": "3.0.0-rc.0",
     "@swc/helpers": "^0.4.14"
