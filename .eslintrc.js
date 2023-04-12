@@ -118,7 +118,7 @@ module.exports = {
     'no-unused-vars': [ERROR, {args: 'none', vars: 'all', varsIgnorePattern: '[rR]eact'}],
     'space-in-parens': [ERROR, 'never'],
     'space-unary-ops': [ERROR, {words: true, nonwords: false}],
-    'spaced-comment': [ERROR, 'always', {exceptions: ['*'], markers: ['/']}],
+    'spaced-comment': [ERROR, 'always', {exceptions: ['*', '#__PURE__'], markers: ['/']}],
     'max-depth': [WARN, 4],
     'radix': [ERROR, 'always'],
     'react/jsx-uses-react': WARN,
