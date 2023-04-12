@@ -953,7 +953,7 @@ describe('MenuTrigger', function () {
               <Menu onAction={action('onAction')}>
                 <Item key="1">One</Item>
                 <MenuDialogTrigger isUnavailable>
-                  <Item key="foo" hasChildItems>Two</Item>
+                  <Item key="foo">Two</Item>
                   <Dialog>
                     <Heading>hello</Heading>
                     <Content>Is it me you're looking for?</Content>

@@ -31,6 +31,9 @@ export interface MenuItemAria {
   /** Props for the description text element inside the menu item, if any. */
   descriptionProps: DOMAttributes,
 
+  /** Props for the description text element inside the menu item, if any. */
+  endProps: DOMAttributes,
+
   /** Props for the keyboard shortcut text element inside the item, if any. */
   keyboardShortcutProps: DOMAttributes,
 
@@ -99,14 +102,11 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let {
     key,
     closeOnSelect,
-    isVirtualized,
-    triggerState = {} as MenuTriggerState
+    isVirtualized
   } = props;
 
   let isMenuDialogTrigger = state.collection.getItem(key).hasChildNodes;
   let isOpen = state.expandedKeys.has(key);
-
-  let {setDisableClosing} = triggerState;
 
   let isDisabled = props.isDisabled ?? state.disabledKeys.has(key);
   let isSelected = props.isSelected ?? state.selectionManager.isSelected(key);
@@ -119,11 +119,10 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     }
   }, [openTimeout]);
   let openSubMenuFunc = useCallback(() => {
-    setDisableClosing?.(true);
     if (!state.expandedKeys.has(key)) {
       state.toggleKey(key);
     }
-  }, [setDisableClosing, state, key]);
+  }, [state, key]);
   let openSubMenu = useRef(openSubMenuFunc);
   useLayoutEffect(() => {
     openSubMenu.current = openSubMenuFunc;
@@ -137,7 +136,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let onActionMenuDialogTrigger = useCallback(() => {
     cancelOpenTimeout();
     openSubMenu.current();
-  }, [setDisableClosing, key, ref, cancelOpenTimeout, openSubMenu]);
+  }, [cancelOpenTimeout, openSubMenu]);
   let onAction = isMenuDialogTrigger ? onActionMenuDialogTrigger : props.onAction || data.onAction;
 
   let role = 'menuitem';
@@ -149,6 +148,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
 
   let labelId = useSlotId();
   let descriptionId = useSlotId();
+  let endId = useSlotId();
   let keyboardId = useSlotId();
 
   let ariaProps = {
@@ -156,7 +156,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     role,
     'aria-label': props['aria-label'],
     'aria-labelledby': labelId,
-    'aria-describedby': [descriptionId, keyboardId].filter(Boolean).join(' ') || undefined
+    'aria-describedby': [descriptionId, endId, keyboardId].filter(Boolean).join(' ') || undefined
   };
 
   if (state.selectionManager.selectionMode !== 'none') {
@@ -220,7 +220,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
         if (!openTimeout.current) {
           openTimeout.current = setTimeout(() => {
             openSubMenu.current();
-          }, 500);
+          }, 200);
         }
       } else if (!isHovered) {
         cancelOpenTimeout();
@@ -272,6 +272,9 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     },
     descriptionProps: {
       id: descriptionId
+    },
+    endProps: {
+      id: endId
     },
     keyboardShortcutProps: {
       id: keyboardId

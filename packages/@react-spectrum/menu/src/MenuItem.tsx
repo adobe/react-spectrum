@@ -47,7 +47,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   let {triggerRef} = menuDialogContext || {};
   let {state: triggerState} = useMenuContext();
   let isMenuDialogTrigger = !!menuDialogContext;
-  let isUnavailable;
+  let isUnavailable = false;
 
   if (isMenuDialogTrigger) {
     isUnavailable = menuDialogContext.isUnavailable;
@@ -74,6 +74,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
     menuItemProps,
     labelProps,
     descriptionProps,
+    endProps,
     keyboardShortcutProps,
     isHovered
   } = useMenuItem(
@@ -123,7 +124,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
             <SlotProvider
               slots={{
                 text: {UNSAFE_className: styles['spectrum-Menu-itemLabel'], ...labelProps},
-                end: {UNSAFE_className: styles['spectrum-Menu-end'], size: 'XS', alignSelf: 'center', ...descriptionProps},
+                end: {UNSAFE_className: styles['spectrum-Menu-end'], ...endProps},
                 icon: {UNSAFE_className: styles['spectrum-Menu-icon'], size: 'S'},
                 description: {UNSAFE_className: styles['spectrum-Menu-description'], ...descriptionProps},
                 keyboard: {UNSAFE_className: styles['spectrum-Menu-keyboard'], ...keyboardShortcutProps}
@@ -140,7 +141,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
                   } />
               }
               {
-                isUnavailable && <InfoOutline slot="end" aria-label={stringFormatter.format('unavailable')} />
+                isUnavailable && <InfoOutline slot="end" size="XS" alignSelf="center" aria-label={stringFormatter.format('unavailable')} />
               }
             </SlotProvider>
           </ClearSlots>

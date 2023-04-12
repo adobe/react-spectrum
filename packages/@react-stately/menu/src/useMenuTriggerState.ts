@@ -23,9 +23,7 @@ export interface MenuTriggerState extends OverlayTriggerState {
   open(focusStrategy?: FocusStrategy | null): void,
 
   /** Toggles the menu. */
-  toggle(focusStrategy?: FocusStrategy | null): void,
-  disableClosing: boolean,
-  setDisableClosing: (val: boolean) => void
+  toggle(focusStrategy?: FocusStrategy | null): void
 }
 
 /**
@@ -36,28 +34,19 @@ export function useMenuTriggerState(props: MenuTriggerProps): MenuTriggerState  
   let overlayTriggerState = useOverlayTriggerState(props);
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy>(null);
 
-
-  let [disableClosing, setDisableClosing] = useState<boolean>(false);
-
   return {
     focusStrategy,
     ...overlayTriggerState,
     close() {
-      if (!disableClosing) {
-        overlayTriggerState.close();
-      }
+      overlayTriggerState.close();
     },
     open(focusStrategy: FocusStrategy = null) {
       setFocusStrategy(focusStrategy);
       overlayTriggerState.open();
     },
     toggle(focusStrategy: FocusStrategy = null) {
-      if (overlayTriggerState.isOpen && !disableClosing || !overlayTriggerState.isOpen) {
-        setFocusStrategy(focusStrategy);
-        overlayTriggerState.toggle();
-      }
-    },
-    disableClosing,
-    setDisableClosing
+      setFocusStrategy(focusStrategy);
+      overlayTriggerState.toggle();
+    }
   };
 }

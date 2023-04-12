@@ -13,7 +13,7 @@
 import {classNames, SlotProvider, useIsMobileDevice} from '@react-spectrum/utils';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
 import {ItemProps} from '@react-types/shared';
-import {MenuDialogContext, useMenuContext, useMenuStateContext} from './context';
+import {MenuDialogContext, useMenuStateContext} from './context';
 import {Modal, Popover} from '@react-spectrum/overlays';
 import React, {Key, ReactElement, useRef} from 'react';
 import {SpectrumDialogClose} from '@react-types/dialog';
@@ -22,11 +22,9 @@ import {useOverlayTriggerState} from '@react-stately/overlays';
 function MenuDialogTrigger<T>(props: ItemProps<T> & {isUnavailable?: boolean, targetKey: Key}): ReactElement {
   let {isUnavailable} = props;
 
-  let {state: menuTriggerState} = useMenuContext();
   let {state: menuState} = useMenuStateContext();
   let state = useOverlayTriggerState({isOpen: menuState.expandedKeys.has(props.targetKey), onOpenChange: (val) => {
     if (!val) {
-      menuTriggerState.setDisableClosing(false);
       if (menuState.expandedKeys.has(props.targetKey)) {
         menuState.toggleKey(props.targetKey);
       }
@@ -64,11 +62,11 @@ function MenuDialogTrigger<T>(props: ItemProps<T> & {isUnavailable?: boolean, ta
 }
 
 MenuDialogTrigger.getCollectionNode = function* getCollectionNode<T>(props: ItemProps<T>) {
-  let [trigger] = React.Children.toArray(props.children);
+  let [trigger] = React.Children.toArray(props.children) as ReactElement[];
   let [, content] = props.children as [ReactElement, SpectrumDialogClose];
 
   yield {
-    element: trigger,
+    element: React.cloneElement(trigger, {...trigger.props, hasChildItems: true}),
     wrapper: (element) => (
       <MenuDialogTrigger key={element.key} targetKey={element.key} {...props}>
         {element}
