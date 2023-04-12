@@ -11,9 +11,9 @@
  */
 
 import {FocusStrategy} from '@react-types/shared';
-import {Key, useState} from 'react';
 import {MenuTriggerProps} from '@react-types/menu';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
+import {useState} from 'react';
 
 export interface MenuTriggerState extends OverlayTriggerState {
   /** Controls which item will be auto focused when the menu opens. */

@@ -123,7 +123,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     if (!state.expandedKeys.has(key)) {
       state.toggleKey(key);
     }
-  }, [setDisableClosing, state]);
+  }, [setDisableClosing, state, key]);
   let openSubMenu = useRef(openSubMenuFunc);
   useLayoutEffect(() => {
     openSubMenu.current = openSubMenuFunc;
@@ -137,7 +137,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let onActionMenuDialogTrigger = useCallback(() => {
     cancelOpenTimeout();
     openSubMenu.current();
-  }, [setDisableClosing, key, ref]);
+  }, [setDisableClosing, key, ref, cancelOpenTimeout, openSubMenu]);
   let onAction = isMenuDialogTrigger ? onActionMenuDialogTrigger : props.onAction || data.onAction;
 
   let role = 'menuitem';
