@@ -86,7 +86,7 @@ export function useTable<T>(props: AriaTableProps<T>, state: TableState<T>, ref:
     announce(sortDescription, 'assertive', 500);
   }, [sortDescription]);
 
-  // useGridSectionAnnouncement(state);
+  useGridSectionAnnouncement(state);
 
   return {
     gridProps: mergeProps(

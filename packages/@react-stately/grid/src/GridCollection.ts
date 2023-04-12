@@ -57,7 +57,7 @@ export class GridCollection<T> implements IGridCollection<T> {
 
         let newProps = {
           index: node.type === 'section' ? sectionCounter++ : rowCounter++,
-          // rowIndex: node.type !== 'section' ? rowIndex : undefined
+          rowIndex: node.type !== 'section' ? rowIndex : undefined
         };
 
         // Use Object.assign instead of spread to preseve object reference for keyMap. Also ensures retrieving nodes
@@ -110,7 +110,7 @@ export class GridCollection<T> implements IGridCollection<T> {
       if (node.type === 'item' || node.type === 'headerrow' || node.type === 'header') {
         this.rows.push(node);
         // TODO: get rid of rowIndex, just make aria-rowindex relative to immediate parent
-        // rowIndex++;
+        rowIndex++;
       }
     };
 
