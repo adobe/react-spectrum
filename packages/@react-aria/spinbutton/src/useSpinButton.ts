@@ -16,7 +16,7 @@ import {DOMAttributes, InputBase, RangeInputBase, Validation, ValueBase} from '@
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useCallback, useEffect, useMemo, useRef} from 'react';
-import {useGlobalListeners} from '@react-aria/utils';
+import {useEffectEvent, useGlobalListeners} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 
@@ -54,10 +54,7 @@ export function useSpinButton(
     onDecrementToMin,
     onIncrementToMax
   } = props;
-  let propsRef = useRef(props);
-  useEffect(() => {
-    propsRef.current = props;
-  });
+
   const stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   const _async = useRef<number>();
@@ -140,39 +137,33 @@ export function useSpinButton(
     }
   }, [textValue]);
 
-  const onIncrementPressStart = useCallback(
-    (initialStepDelay: number) => {
-      clearAsync();
-      propsRef.current.onIncrement();
-      // Start spinning after initial delay
-      _async.current = window.setTimeout(
-        () => {
-          if (isNaN(propsRef.current.maxValue) || isNaN(propsRef.current.value) || propsRef.current.value < propsRef.current.maxValue) {
-            onIncrementPressStart(60);
-          }
-        },
-        initialStepDelay
-      );
-    },
-    [clearAsync, _async]
-  );
+  let onIncrementPressStart = useEffectEvent((initialStepDelay: number) => {
+    clearAsync();
+    onIncrement();
+    // Start spinning after initial delay
+    _async.current = window.setTimeout(
+      () => {
+        if (isNaN(maxValue) || isNaN(value) || value < maxValue) {
+          onIncrementPressStart(60);
+        }
+      },
+      initialStepDelay
+    );
+  });
 
-  const onDecrementPressStart = useCallback(
-    (initialStepDelay: number) => {
-      clearAsync();
-      propsRef.current.onDecrement();
-      // Start spinning after initial delay
-      _async.current = window.setTimeout(
-        () => {
-          if (isNaN(propsRef.current.minValue) || isNaN(propsRef.current.value) || propsRef.current.value > propsRef.current.minValue) {
-            onDecrementPressStart(60);
-          }
-        },
-        initialStepDelay
-      );
-    },
-    [clearAsync, _async]
-  );
+  let onDecrementPressStart = useEffectEvent((initialStepDelay: number) => {
+    clearAsync();
+    onDecrement();
+    // Start spinning after initial delay
+    _async.current = window.setTimeout(
+      () => {
+        if (isNaN(minValue) || isNaN(value) || value > minValue) {
+          onDecrementPressStart(60);
+        }
+      },
+      initialStepDelay
+    );
+  });
 
   let cancelContextMenu = useCallback((e) => {
     e.preventDefault();

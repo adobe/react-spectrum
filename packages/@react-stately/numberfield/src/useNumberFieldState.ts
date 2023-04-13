@@ -157,12 +157,8 @@ export function useNumberFieldState(
     }
   }, [inputValue, setNumberValue, setInputValue, value, format, numberValue, parsedValue, step, minValue, maxValue, numberParser]);
 
-  let spinRef = useRef(parsedValue);
-  useEffect(() => {
-    spinRef.current = parsedValue;
-  });
   let safeNextStep = useCallback((operation: '+' | '-', minMax: number) => {
-    let prev = spinRef.current;
+    let prev = parsedValue;
 
     if (isNaN(prev)) {
       // if the input is empty, start from the min/max value when incrementing/decrementing,
@@ -184,7 +180,7 @@ export function useNumberFieldState(
         clampStep
       );
     }
-  }, [minValue, maxValue, clampStep]);
+  }, [parsedValue, minValue, maxValue, clampStep]);
 
   let increment = useCallback(() => {
     let newValue = safeNextStep('+', minValue);

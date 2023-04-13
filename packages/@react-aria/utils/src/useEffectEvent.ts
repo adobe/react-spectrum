@@ -13,13 +13,13 @@
 import {useCallback, useRef} from 'react';
 import {useLayoutEffect} from './useLayoutEffect';
 
-export function useEffectEvent(fn) {
+export function useEffectEvent<T extends Function>(fn: T): T {
   const ref = useRef(null);
   useLayoutEffect(() => {
     ref.current = fn;
   }, [fn]);
-  return useCallback((...args) => {
+  return useCallback<any>((...args) => {
     const f = ref.current;
     return f(...args);
-  }, []);
+  }, []) as T;
 }

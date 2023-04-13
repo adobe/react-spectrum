@@ -126,12 +126,8 @@ export function useColorFieldState(
     }
   }, [inputValue, safelySetColorValue, setInputValue, value, colorValue, parsedColor]);
 
-  let spinRef = useRef(parsedColor);
-  useEffect(() => {
-    spinRef.current = parsedColor;
-  });
   let increment = useCallback(() => {
-    let newValue = addColorValue(spinRef.current, step);
+    let newValue = addColorValue(parsedColor, step);
     // if we've arrived at the same value that was previously in the state, the
     // input value should be updated to match
     // ex type 4, press increment, highlight the number in the input, type 4 again, press increment
@@ -140,9 +136,9 @@ export function useColorFieldState(
       setInputValue(newValue.toString('hex'));
     }
     safelySetColorValue(newValue);
-  }, [safelySetColorValue, colorValue, setInputValue, step]);
+  }, [parsedColor, safelySetColorValue, colorValue, setInputValue, step]);
   let decrement = useCallback(() => {
-    let newValue = addColorValue(spinRef.current, -step);
+    let newValue = addColorValue(parsedColor, -step);
     // if we've arrived at the same value that was previously in the state, the
     // input value should be updated to match
     // ex type 4, press increment, highlight the number in the input, type 4 again, press increment
@@ -151,7 +147,7 @@ export function useColorFieldState(
       setInputValue(newValue.toString('hex'));
     }
     safelySetColorValue(newValue);
-  }, [safelySetColorValue, colorValue, setInputValue, step]);
+  }, [parsedColor, safelySetColorValue, colorValue, setInputValue, step]);
   let incrementToMax = useCallback(() => {
     safelySetColorValue(MAX_COLOR);
   }, [safelySetColorValue]);
