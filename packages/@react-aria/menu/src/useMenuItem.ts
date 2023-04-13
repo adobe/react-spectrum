@@ -30,9 +30,6 @@ export interface MenuItemAria {
   /** Props for the description text element inside the menu item, if any. */
   descriptionProps: DOMAttributes,
 
-  /** Props for the description text element inside the menu item, if any. */
-  endProps: DOMAttributes,
-
   /** Props for the keyboard shortcut text element inside the item, if any. */
   keyboardShortcutProps: DOMAttributes,
 
@@ -147,7 +144,6 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
 
   let labelId = useSlotId();
   let descriptionId = useSlotId();
-  let endId = useSlotId();
   let keyboardId = useSlotId();
 
   let ariaProps = {
@@ -155,7 +151,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     role,
     'aria-label': props['aria-label'],
     'aria-labelledby': labelId,
-    'aria-describedby': [descriptionId, endId, keyboardId].filter(Boolean).join(' ') || undefined
+    'aria-describedby': [descriptionId, keyboardId].filter(Boolean).join(' ') || undefined
   };
 
   if (state.selectionManager.selectionMode !== 'none') {
@@ -271,9 +267,6 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     },
     descriptionProps: {
       id: descriptionId
-    },
-    endProps: {
-      id: endId
     },
     keyboardShortcutProps: {
       id: keyboardId

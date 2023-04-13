@@ -582,7 +582,10 @@ storiesOf('MenuTrigger', module)
         </MenuDialogTrigger>
         <Item key="3">Three</Item>
         <MenuDialogTrigger isUnavailable>
-          <Item key="bar">Four</Item>
+          <Item key="bar">
+            <Text>Four</Text>
+            <Text slot={'description'}>Shut the door</Text>
+          </Item>
           <Dialog>
             <Heading>hello</Heading>
             <Content>Is it me you're looking for?</Content>

@@ -12,13 +12,13 @@
 
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
+import {DOMAttributes, Node} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps} from '@react-aria/utils';
-import {Node} from '@react-types/shared';
+import {mergeProps, useSlotId} from '@react-aria/utils';
 import React, {Key, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/text';
@@ -69,11 +69,11 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   if (triggerRef) {
     ref = triggerRef;
   }
+
   let {
     menuItemProps,
     labelProps,
     descriptionProps,
-    endProps,
     keyboardShortcutProps
   } = useMenuItem(
     {
@@ -85,11 +85,17 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
       closeOnSelect,
       isVirtualized,
       onAction,
-      'aria-haspopup': isMenuDialogTrigger ? 'menu' : undefined
+      'aria-haspopup': isMenuDialogTrigger ? 'dialog' : undefined
     },
     state,
     ref
   );
+  let endId = useSlotId();
+  let endProps: DOMAttributes = {};
+  if (endId) {
+    endProps.id = endId;
+    menuItemProps['aria-describedby'] = menuItemProps['aria-describedby'] + ' ' + endId;
+  }
 
   let contents = typeof rendered === 'string'
     ? <Text>{rendered}</Text>
