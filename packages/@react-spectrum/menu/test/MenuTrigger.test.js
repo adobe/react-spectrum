@@ -17,10 +17,10 @@ import {Content, Footer} from '@react-spectrum/view';
 import {Dialog} from '@react-spectrum/dialog';
 import {Heading, Text} from '@react-spectrum/text';
 import {Item, Menu, MenuDialogTrigger, MenuTrigger, Section} from '../';
+import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {Link} from '@react-spectrum/link';
 import userEvent from '@testing-library/user-event';
 
 let triggerText = 'Menu Button';
