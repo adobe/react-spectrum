@@ -84,7 +84,8 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
       onClose,
       closeOnSelect,
       isVirtualized,
-      onAction
+      onAction,
+      'aria-haspopup': isMenuDialogTrigger ? 'menu' : undefined
     },
     state,
     ref

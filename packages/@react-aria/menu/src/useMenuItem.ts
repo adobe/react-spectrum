@@ -84,7 +84,10 @@ export interface AriaMenuItemProps {
    * Handler that is called when the user activates the item.
    * @deprecated - pass to the menu instead.
    */
-  onAction?: (key: Key) => void
+  onAction?: (key: Key) => void,
+
+  /** What kind of popup the item opens. */
+  'aria-haspopup'?: 'menu' | 'dialog'
 }
 
 /**
@@ -97,7 +100,8 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let {
     key,
     closeOnSelect,
-    isVirtualized
+    isVirtualized,
+    'aria-haspopup': hasPopup
   } = props;
 
   let isMenuDialogTrigger = state.collection.getItem(key).hasChildNodes;
@@ -163,8 +167,8 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     ariaProps['aria-setsize'] = getItemCount(state.collection);
   }
 
-  if (isMenuDialogTrigger) {
-    ariaProps['aria-haspopup'] = 'dialog';
+  if (hasPopup != null) {
+    ariaProps['aria-haspopup'] = hasPopup;
     ariaProps['aria-expanded'] = isOpen ? 'true' : 'false';
   }
 
