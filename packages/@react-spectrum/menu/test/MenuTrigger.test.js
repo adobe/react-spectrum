@@ -13,13 +13,15 @@
 import {act, DEFAULT_LONG_PRESS_TIME, fireEvent, installPointerEvent, render, triggerLongPress, triggerPress, triggerTouch, within} from '@react-spectrum/test-utils';
 import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
-import {Content} from '@react-spectrum/view';
+import {Content, Footer} from '@react-spectrum/view';
 import {Dialog} from '@react-spectrum/dialog';
-import {Heading} from '@react-spectrum/text';
+import {Heading, Text} from '@react-spectrum/text';
 import {Item, Menu, MenuDialogTrigger, MenuTrigger, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
+import {Link} from '@react-spectrum/link';
+import userEvent from '@testing-library/user-event';
 
 let triggerText = 'Menu Button';
 
@@ -984,14 +986,25 @@ describe('MenuTrigger', function () {
               <Menu onAction={action('onAction')}>
                 <Item key="1">One</Item>
                 <MenuDialogTrigger isUnavailable>
-                  <Item key="foo">Two</Item>
+                  <Item key="foo" textValue="Hello">
+                    <Text>Hello</Text>
+                    <Text slot="description">Is it me you're looking for?</Text>
+                  </Item>
                   <Dialog>
-                    <Heading>hello</Heading>
-                    <Content>Is it me you're looking for?</Content>
+                    <Heading>Lionel Richie says:</Heading>
+                    <Content>I can see it in your eyes</Content>
                   </Dialog>
                 </MenuDialogTrigger>
                 <Item key="3">Three</Item>
                 <Item key="5">Five</Item>
+                <MenuDialogTrigger isUnavailable>
+                  <Item key="bar" textValue="Choose a college major">Choose a College Major</Item>
+                  <Dialog>
+                    <Heading>Choosing a College Major</Heading>
+                    <Content>What factors should I consider when choosing a college major?</Content>
+                    <Footer>Visit this link before choosing this action. <Link>Learn more</Link></Footer>
+                  </Dialog>
+                </MenuDialogTrigger>
               </Menu>
             </MenuTrigger>
           </Provider>
@@ -1051,6 +1064,44 @@ describe('MenuTrigger', function () {
 
         let dialog = tree.getByRole('dialog');
         expect(dialog).toBeVisible();
+      });
+
+      it('will close sub dialogs as you hover other items even if you click open it', function () {
+        renderTree();
+        let menu = openMenu();
+        let menuItems = within(menu).getAllByRole('menuitem');
+        let unavailableItem = menuItems[1];
+        expect(unavailableItem).toBeVisible();
+        expect(unavailableItem).toHaveAttribute('aria-haspopup', 'dialog');
+
+        fireEvent.mouseEnter(unavailableItem);
+        fireEvent.mouseDown(unavailableItem);
+        fireEvent.mouseUp(unavailableItem);
+        act(() => {jest.runAllTimers();});
+        let dialog = tree.getByRole('dialog');
+        expect(dialog).toBeVisible();
+
+        fireEvent.mouseLeave(unavailableItem);
+        fireEvent.mouseEnter(menuItems[2]);
+        act(() => {jest.runAllTimers();});
+        expect(dialog).not.toBeVisible();
+
+        fireEvent.mouseLeave(menuItems[2]);
+        fireEvent.mouseEnter(menuItems[3]);
+        act(() => {jest.runAllTimers();});
+        fireEvent.mouseLeave(menuItems[3]);
+        fireEvent.mouseEnter(menuItems[4]);
+        act(() => {jest.runAllTimers();});
+
+        expect(menu).toBeVisible();
+        dialog = tree.getByRole('dialog');
+        expect(dialog).toBeInTheDocument();
+        expect(document.activeElement).toBe(dialog);
+
+        userEvent.tab();
+        act(() => {jest.runAllTimers();});
+        expect(dialog).not.toBeInTheDocument();
+        expect(document.activeElement).toBe(menuItems[4]);
       });
     });
   });

@@ -16,7 +16,7 @@ import {getItemCount} from '@react-stately/collections';
 import {isFocusVisible, useHover, useKeyboard, usePress} from '@react-aria/interactions';
 import {Key, RefObject, useCallback, useRef} from 'react';
 import {menuData} from './useMenu';
-import {mergeProps, useLayoutEffect, useSlotId} from '@react-aria/utils';
+import {mergeProps, useEffectEvent, useLayoutEffect, useSlotId} from '@react-aria/utils';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableItem} from '@react-aria/selection';
 
@@ -114,15 +114,14 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
       openTimeout.current = undefined;
     }
   }, [openTimeout]);
-  let openSubMenuFunc = useCallback(() => {
+
+  let onSubmenuOpen = useEffectEvent(() => {
+    cancelOpenTimeout();
     if (!state.expandedKeys.has(key)) {
       state.toggleKey(key);
     }
-  }, [state, key]);
-  let openSubMenu = useRef(openSubMenuFunc);
-  useLayoutEffect(() => {
-    openSubMenu.current = openSubMenuFunc;
   });
+
   useLayoutEffect(() => {
     return () => cancelOpenTimeout();
   }, [cancelOpenTimeout]);
@@ -130,9 +129,8 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let data = menuData.get(state);
   let onClose = props.onClose || data.onClose;
   let onActionMenuDialogTrigger = useCallback(() => {
-    cancelOpenTimeout();
-    openSubMenu.current();
-  }, [cancelOpenTimeout, openSubMenu]);
+    onSubmenuOpen();
+  }, []);
   let onAction = isMenuDialogTrigger ? onActionMenuDialogTrigger : props.onAction || data.onAction;
 
   let role = 'menuitem';
@@ -206,6 +204,11 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
         // focus immediately so that a focus scope opened on hover has the correct restore node
         let isFocused = key === state.selectionManager.focusedKey;
         if (isFocused && state.selectionManager.isFocused && document.activeElement !== ref.current) {
+          if (state.expandedKeys.size > 0 && !state.expandedKeys.has(key)) {
+            for (let expandedKey of state.expandedKeys) {
+              state.toggleKey(expandedKey);
+            }
+          }
           focusSafely(ref.current);
         }
       }
@@ -214,7 +217,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
       if (isHovered && isMenuDialogTrigger) {
         if (!openTimeout.current) {
           openTimeout.current = setTimeout(() => {
-            openSubMenu.current();
+            onSubmenuOpen();
           }, 200);
         }
       } else if (!isHovered) {
@@ -246,8 +249,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
           break;
         case 'ArrowRight':
           if (isMenuDialogTrigger) {
-            cancelOpenTimeout();
-            openSubMenu.current();
+            onSubmenuOpen();
           }
           break;
         default:
