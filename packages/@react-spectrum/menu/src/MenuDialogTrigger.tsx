@@ -16,7 +16,6 @@ import {ItemProps} from '@react-types/shared';
 import {MenuDialogContext, useMenuStateContext} from './context';
 import {Modal, Popover} from '@react-spectrum/overlays';
 import React, {Key, ReactElement, useRef} from 'react';
-import {SpectrumDialogClose} from '@react-types/dialog';
 import {useOverlayTriggerState} from '@react-stately/overlays';
 
 function MenuDialogTrigger<T>(props: ItemProps<T> & {isUnavailable?: boolean, targetKey: Key}): ReactElement {
@@ -39,7 +38,7 @@ function MenuDialogTrigger<T>(props: ItemProps<T> & {isUnavailable?: boolean, ta
     };
   }
   let [trigger] = React.Children.toArray(props.children);
-  let [, content] = props.children as [ReactElement, SpectrumDialogClose];
+  let [, content] = props.children as [ReactElement, ReactElement];
 
   let isMobile = useIsMobileDevice();
   let triggerRef = useRef<HTMLLIElement>(null);
@@ -63,7 +62,7 @@ function MenuDialogTrigger<T>(props: ItemProps<T> & {isUnavailable?: boolean, ta
 
 MenuDialogTrigger.getCollectionNode = function* getCollectionNode<T>(props: ItemProps<T>) {
   let [trigger] = React.Children.toArray(props.children) as ReactElement[];
-  let [, content] = props.children as [ReactElement, SpectrumDialogClose];
+  let [, content] = props.children as [ReactElement, ReactElement];
 
   yield {
     element: React.cloneElement(trigger, {...trigger.props, hasChildItems: true}),

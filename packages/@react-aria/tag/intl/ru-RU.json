@@ -1,3 +1,4 @@
 {
-  "remove": "Нажмите клавишу пробел или Delete, чтобы удалить тег."
+  "removeButtonLabel": "Удалить",
+  "removeDescription": "Нажмите DELETE, чтобы удалить тег."
 }

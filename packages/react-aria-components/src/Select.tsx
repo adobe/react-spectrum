@@ -115,7 +115,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
 /**
  * A select displays a collapsible list of options and allows a user to select one of them.
  */
-const _Select = (forwardRef as forwardRefType)(Select);
+const _Select = /*#__PURE__*/ (forwardRef as forwardRefType)(Select);
 export {_Select as Select};
 
 export interface SelectValueRenderProps<T> {
@@ -176,5 +176,5 @@ function SelectValue<T extends object>(props: SelectValueProps<T>, ref: Forwarde
  * SelectValue renders the current value of a Select, or a placeholder if no value is selected.
  * It is usually placed within the button element.
  */
-const _SelectValue = (forwardRef as forwardRefType)(SelectValue);
+const _SelectValue = /*#__PURE__*/ (forwardRef as forwardRefType)(SelectValue);
 export {_SelectValue as SelectValue};

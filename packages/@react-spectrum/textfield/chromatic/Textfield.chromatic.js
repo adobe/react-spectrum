@@ -18,7 +18,7 @@ import {storiesOf} from '@storybook/react';
 import {TextField} from '../';
 
 storiesOf('Textfield', module)
-  .addParameters({chromaticProvider: {locales: ['en-US', 'ar-AE', 'zh-TW']}})
+  .addParameters({chromaticProvider: {locales: ['en-US', 'ar-AE']}})
   .add(
     'Default',
     () => render()
@@ -83,14 +83,6 @@ storiesOf('Textfield', module)
     () => render({icon: <Info />, validationState: 'invalid', width: 275})
   )
   .add(
-    'value: 測試, icon: Info, labelPosition: side, validationState: valid',
-    () => render({value: '測試', icon: <Info />, labelPosition: 'side', validationState: 'valid'})
-  )
-  .add(
-    'value: اختبار, isRequired: false, necessityIndicator: label',
-    () => render({value: 'اختبار', isRequired: false, necessityIndicator: 'label'})
-  )
-  .add(
     'contextual help',
     args => render({...args, contextualHelp: (
       <ContextualHelp>
@@ -116,6 +108,35 @@ storiesOf('Textfield', module)
         <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
       </ContextualHelp>
     )}, false)
+  );
+
+storiesOf('Languages/Textfield', module)
+  .addParameters({
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      express: false,
+      locales: ['ar-AE', 'fr-FR', 'de-DE', 'zh-TW'],
+      scales: ['large', 'medium']
+    }
+  })
+  .add(
+    'diacritics',
+    () => (
+      <Flex gap="size-200" direction="row" wrap>
+        <TextField label="Label" value="value" />
+        <TextField label="رِفِتـــانٍ خانٍِ" value="رِفِتـــانٍ خانٍِ" />
+        <TextField label="Ç" value="Ç" />
+        <TextField label="Äpfel" value="Äpfel" />
+      </Flex>
+    )
+  )
+  .add(
+    'value: 測試, icon: Info, labelPosition: side, validationState: valid',
+    () => render({value: '測試', icon: <Info />, labelPosition: 'side', validationState: 'valid'})
+  )
+  .add(
+    'value: اختبار, isRequired: false, necessityIndicator: label',
+    () => render({value: 'اختبار', isRequired: false, necessityIndicator: 'label'})
   );
 
 // allow some stories where disabled styles probably won't affect anything to turn that off, mostly to reduce clutter
