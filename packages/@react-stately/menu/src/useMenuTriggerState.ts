@@ -37,9 +37,6 @@ export function useMenuTriggerState(props: MenuTriggerProps): MenuTriggerState  
   return {
     focusStrategy,
     ...overlayTriggerState,
-    close() {
-      overlayTriggerState.close();
-    },
     open(focusStrategy: FocusStrategy = null) {
       setFocusStrategy(focusStrategy);
       overlayTriggerState.open();
