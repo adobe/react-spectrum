@@ -884,19 +884,13 @@ export function DragBetweenTablesSectionsComplex(props) {
       } = e;
       action('onItemDropTable1')(e);
       let processedItems = await itemProcessor(items, acceptedDragTypes);
-      let itemsToInsert = processedItems.map(item => ({
-        ...item,
-        identifier: Math.random().toString(36).slice(2)
-      }));
+      let targetItem = list1.getItem(target.key).value;
+      list1.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
 
       if (isInternal && dropOperation === 'move') {
         let keysToRemove = processedItems.map(item => item.identifier);
-        // TODO: need to call remove operation before update
         list1.remove(...keysToRemove);
       }
-
-      let targetItem = list1.getItem(target.key).value;
-      list1.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...itemsToInsert]});
     },
     acceptedDragTypes,
     onDragEnd: (e) => {
@@ -951,25 +945,25 @@ export function DragBetweenTablesSectionsComplex(props) {
       action('onReorderTable2')(e);
 
       let itemsToCopy = [];
-      // let targetItem = list1.getItem(target.key).value;
-      if (dropOperation === 'copy') {
-        for (let key of keys) {
-          let item = {...list2.getItem(key).value};
+      for (let key of keys) {
+        let item = {...list2.getItem(key).value};
+        if (dropOperation === 'copy') {
           item.identifier = Math.random().toString(36).slice(2);
-          itemsToCopy.push(item);
         }
+        itemsToCopy.push(item);
       }
 
       if (target.dropPosition === 'before') {
         if (dropOperation === 'move') {
-          // TODO: update useTreeData with moveBefore and moveAfter
-          // list2.moveAfter(target.key, [...keys]);
+          list2.remove(...keys);
+          list2.insertBefore(target.key, ...itemsToCopy);
         } else if (dropOperation === 'copy') {
           list2.insertBefore(target.key, ...itemsToCopy);
         }
       } else if (target.dropPosition === 'after') {
         if (dropOperation === 'move') {
-          // list2.moveAfter(target.key, [...keys]);
+          list2.remove(...keys);
+          list2.insertAfter(target.key, ...itemsToCopy);
         } else if (dropOperation === 'copy') {
           list2.insertAfter(target.key, ...itemsToCopy);
         }
@@ -990,19 +984,13 @@ export function DragBetweenTablesSectionsComplex(props) {
       action('onItemDropTable2')(e);
 
       let processedItems = await itemProcessor(items, acceptedDragTypes);
-      let itemsToInsert = processedItems.map(item => ({
-        ...item,
-        identifier: Math.random().toString(36).slice(2)
-      }));
+      let targetItem = list2.getItem(target.key).value;
+      list2.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
 
       if (isInternal && dropOperation === 'move') {
         let keysToRemove = processedItems.map(item => item.identifier);
-        // TODO: need to call remove operation before update for some reason
         list2.remove(...keysToRemove);
       }
-
-      let targetItem = list2.getItem(target.key).value;
-      list2.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...itemsToInsert]});
     },
     acceptedDragTypes,
     onDragEnd: (e) => {

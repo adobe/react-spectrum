@@ -289,12 +289,13 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
       }
     },
     remove(...keys: Key[]) {
-      let newItems = items;
-      for (let key of keys) {
-        newItems = updateTree(newItems, key, () => null);
-      }
-
-      setItems(newItems);
+      setItems(items => {
+        let newItems = items;
+        for (let key of keys) {
+          newItems = updateTree(newItems, key, () => null);
+        }
+        return newItems;
+      });
 
       let selection = new Set(selectedKeys);
       for (let key of selectedKeys) {
