@@ -11,7 +11,7 @@
  */
 
 import {DOMAttributes, FocusableElement} from '@react-types/shared';
-import {Key, RefObject, useEffect, useRef} from 'react';
+import {Key, RefObject, useEffect} from 'react';
 import {ListState} from '@react-stately/list';
 import {mergeProps, useEffectEvent} from '@react-aria/utils';
 import {PressProps} from '@react-aria/interactions';
@@ -54,7 +54,7 @@ export function useActionGroupItem<T>(props: AriaActionGroupItemProps, state: Li
     return () => {
       onRemovedWithFocus();
     };
-  }, []);
+  }, [onRemovedWithFocus]);
 
   return {
     buttonProps: mergeProps(buttonProps, {
