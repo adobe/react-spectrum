@@ -32,7 +32,7 @@ import {CalendarState} from './types';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo, useRef, useState} from 'react';
 
-export interface CalendarStateOptions extends CalendarProps<DateValue> {
+export interface CalendarStateOptions<T extends DateValue = DateValue> extends CalendarProps<T> {
   /** The locale to display and edit the value according to. */
   locale: string,
   /**
@@ -55,7 +55,7 @@ export interface CalendarStateOptions extends CalendarProps<DateValue> {
  * Provides state management for a calendar component.
  * A calendar displays one or more date grids and allows users to select a single date.
  */
-export function useCalendarState(props: CalendarStateOptions): CalendarState {
+export function useCalendarState<T extends DateValue = DateValue>(props: CalendarStateOptions<T>): CalendarState {
   let defaultFormatter = useMemo(() => new DateFormatter(props.locale), [props.locale]);
   let resolvedOptions = useMemo(() => defaultFormatter.resolvedOptions(), [defaultFormatter]);
   let {

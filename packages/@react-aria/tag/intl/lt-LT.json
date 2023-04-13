@@ -1,3 +1,4 @@
 {
-  "remove": "Norėdami pašalinti žymą, paspauskite tarpo arba „Delete“ klavišą."
+  "removeButtonLabel": "Pašalinti",
+  "removeDescription": "Norėdami pašalinti žymą, paspauskite „Delete“ klavišą."
 }

@@ -10,7 +10,7 @@
     "@mdx-js/mdx": "next",
     "@mdx-js/react": "next",
     "@parcel/plugin": "^2.8.2",
-    "dprint-node": "^1.0.5",
+    "dprint-node": "^1.0.7",
     "js-yaml": "^3.13.1",
     "mdast-util-toc": "^6.1.0",
     "remark-frontmatter": "^4.0.1",

@@ -3,7 +3,7 @@ module.exports = {
   core: {
     builder: "storybook-builder-parcel",
   },
-  stories: ['../packages/*/*/stories/*.stories.{js,jsx,ts,tsx}'],
+  stories: ['../packages/**/stories/*.stories.{js,jsx,ts,tsx}'],
   addons: [
     '@storybook/addon-actions',
     '@storybook/addon-a11y',

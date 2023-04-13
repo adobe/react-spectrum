@@ -23,7 +23,8 @@ import React, {ReactNode, useContext, useLayoutEffect, useMemo, useRef, useState
 // consistent ids regardless of the loading order.
 interface SSRContextValue {
   prefix: string,
-  current: number
+  current: number,
+  isSSR: boolean
 }
 
 // Default context value to use in case there is no SSRProvider. This is fine for
@@ -33,7 +34,8 @@ interface SSRContextValue {
 // SSR case multiple copies of React Aria is not supported.
 const defaultContext: SSRContextValue = {
   prefix: String(Math.round(Math.random() * 10000000000)),
-  current: 0
+  current: 0,
+  isSSR: false
 };
 
 const SSRContext = React.createContext<SSRContextValue>(defaultContext);
@@ -50,12 +52,25 @@ export interface SSRProviderProps {
 export function SSRProvider(props: SSRProviderProps): JSX.Element {
   let cur = useContext(SSRContext);
   let counter = useCounter(cur === defaultContext);
+  let [isSSR, setIsSSR] = useState(true);
   let value: SSRContextValue = useMemo(() => ({
     // If this is the first SSRProvider, start with an empty string prefix, otherwise
     // append and increment the counter.
     prefix: cur === defaultContext ? '' : `${cur.prefix}-${counter}`,
-    current: 0
-  }), [cur, counter]);
+    current: 0,
+    isSSR
+  }), [cur, counter, isSSR]);
+
+  // If on the client, and the component was initially server rendered,
+  // then schedule a layout effect to update the component after hydration.
+  if (typeof window !== 'undefined') {
+    // This if statement technically breaks the rules of hooks, but is safe
+    // because the condition never changes after mounting.
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useLayoutEffect(() => {
+      setIsSSR(false);
+    }, []);
+  }
 
   return (
     <SSRContext.Provider value={value}>
@@ -131,19 +146,5 @@ export function useSSRSafeId(defaultId?: string): string {
  */
 export function useIsSSR(): boolean {
   let cur = useContext(SSRContext);
-  let isInSSRContext = cur !== defaultContext;
-  let [isSSR, setIsSSR] = useState(isInSSRContext);
-
-  // If on the client, and the component was initially server rendered,
-  // then schedule a layout effect to update the component after hydration.
-  if (typeof window !== 'undefined' && isInSSRContext) {
-    // This if statement technically breaks the rules of hooks, but is safe
-    // because the condition never changes after mounting.
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useLayoutEffect(() => {
-      setIsSSR(false);
-    }, []);
-  }
-
-  return isSSR;
+  return cur.isSSR;
 }

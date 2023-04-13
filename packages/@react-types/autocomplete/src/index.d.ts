@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaSearchFieldProps} from '@react-types/searchfield';
-import {AsyncLoadable, CollectionBase, LoadingState, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, AsyncLoadable, CollectionBase, DOMProps, LoadingState, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps} from '@react-types/shared';
 import {Key, ReactElement} from 'react';
 import {MenuTriggerAction} from '@react-types/combobox';
+import {SearchFieldProps} from '@react-types/searchfield';
 
-export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<AriaSearchFieldProps, 'onSubmit'> {
+export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<SearchFieldProps, 'onSubmit' | 'defaultValue' | 'value'> {
   /** The list of SearchAutocomplete items (uncontrolled). */
   defaultItems?: Iterable<T>,
   /** The list of SearchAutocomplete items (controlled). */
@@ -41,12 +41,12 @@ export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<Aria
    * A `key` will be passed if the submission is a selected item (e.g. a user clicks or presses enter on an option).
    * If the input is a custom value, `key` will be null.
    */
-  onSubmit?: (value: string | null, key: Key | null) => void,
-  /** An icon to display at the start of the input. */
-  icon?: ReactElement | null
+  onSubmit?: (value: string | null, key: Key | null) => void
 }
 
-export interface SpectrumSearchAutocompleteProps<T> extends SpectrumTextInputBase, Omit<SearchAutocompleteProps<T>, 'menuTrigger'>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
+export interface AriaSearchAutocompleteProps<T> extends SearchAutocompleteProps<T>, DOMProps, AriaLabelingProps {}
+
+export interface SpectrumSearchAutocompleteProps<T> extends SpectrumTextInputBase, Omit<AriaSearchAutocompleteProps<T>, 'menuTrigger'>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
   /**
    * The interaction required to display the SearchAutocomplete menu. Note that this prop has no effect on the mobile SearchAutocomplete experience.
    * @default 'input'
@@ -66,5 +66,7 @@ export interface SpectrumSearchAutocompleteProps<T> extends SpectrumTextInputBas
    * @default true
    */
   shouldFlip?: boolean,
-  onLoadMore?: () => void
+  onLoadMore?: () => void,
+  /** An icon to display at the start of the input. */
+  icon?: ReactElement | null
 }

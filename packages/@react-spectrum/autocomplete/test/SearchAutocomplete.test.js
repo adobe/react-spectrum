@@ -270,6 +270,13 @@ describe('SearchAutocomplete', function () {
     expect(searchAutocomplete).toHaveAttribute('aria-activedescendant', items[0].id);
   });
 
+  it('supports custom data attributes', function () {
+    let {getByRole} = renderSearchAutocomplete({'data-testid': 'test'});
+
+    let searchAutocomplete = getByRole('combobox');
+    expect(searchAutocomplete).toHaveAttribute('data-testid', 'test');
+  });
+
   describe('refs', function () {
     it('attaches a ref to the label wrapper', function () {
       let ref = React.createRef();
@@ -815,6 +822,36 @@ describe('SearchAutocomplete', function () {
       items = within(listbox).getAllByRole('option');
       expect(items).toHaveLength(1);
       expect(searchAutocomplete).not.toHaveAttribute('aria-activedescendant');
+    });
+
+    it('input events are only fired once', function () {
+      let onKeyDown = jest.fn();
+      let onKeyUp = jest.fn();
+      let onFocus = jest.fn();
+      let onInputChange = jest.fn();
+      let onFocusChange = jest.fn();
+      let onBlur = jest.fn();
+      let {getByRole} = renderSearchAutocomplete({onKeyDown, onKeyUp, onFocus, onInputChange, onBlur, onFocusChange});
+
+      let searchAutocomplete = getByRole('combobox');
+      typeText(searchAutocomplete, 'w');
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(onKeyDown).toHaveBeenCalledTimes(1);
+      expect(onKeyUp).toHaveBeenCalledTimes(1);
+      expect(onFocus).toHaveBeenCalledTimes(1);
+      expect(onInputChange).toHaveBeenCalledTimes(1);
+      expect(onFocusChange).toHaveBeenCalledTimes(1);
+      expect(onBlur).toHaveBeenCalledTimes(0);
+
+      act(() => {
+        userEvent.tab();
+      });
+
+      expect(onBlur).toHaveBeenCalledTimes(1);
     });
   });
 

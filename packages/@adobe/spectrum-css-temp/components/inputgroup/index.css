@@ -32,6 +32,7 @@ governing permissions and limitations under the License.
 
   position: relative;
   display: inline-flex;
+  block-size: max-content;
   flex-direction: row;
   flex-wrap: nowrap;
   min-width: calc(2.5 * var(--spectrum-dropdown-height));
