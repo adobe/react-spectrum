@@ -177,4 +177,20 @@ describe('CheckboxGroup', () => {
     expect(checkbox).toHaveAttribute('aria-describedby');
     expect(checkbox.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Error Description');
   });
+
+  it('should support render props', () => {
+    let {getByRole} = render(
+      <CheckboxGroup isRequired>
+        {({isRequired}) => (
+          <>
+            <Label data-required={isRequired}>Test</Label>
+            <Checkbox value="a">A</Checkbox>
+          </>
+        )}
+      </CheckboxGroup>
+    );
+    let group = getByRole('group');
+    let label = document.getElementById(group.getAttribute('aria-labelledby'));
+    expect(label).toHaveAttribute('data-required', 'true');
+  });
 });

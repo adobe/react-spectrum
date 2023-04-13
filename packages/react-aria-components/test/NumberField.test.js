@@ -99,4 +99,29 @@ describe('NumberField', () => {
     expect(group).not.toHaveAttribute('data-focus-visible');
     expect(group).not.toHaveClass('focus');
   });
+
+  it('should support render props', () => {
+    let {getByRole} = render(
+      <NumberField defaultValue={1024} minValue={0}>
+        {({decrementToMin}) => (
+          <>
+            <Label>Width</Label>
+            <Group>
+              <Button slot="decrement">-</Button>
+              <Input />
+              <Button slot="increment">+</Button>
+            </Group>
+            <button onClick={() => decrementToMin()}>Minimum</button>
+          </>
+        )}
+      </NumberField>
+    );
+
+    let input = getByRole('textbox');
+    expect(input).toHaveValue('1,024');
+
+    let minButton = getByRole('button', {name: 'Minimum'});
+    userEvent.click(minButton);
+    expect(input).toHaveValue('0');
+  });
 });

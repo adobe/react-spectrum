@@ -140,6 +140,21 @@ describe('Menu', () => {
     expect(document.getElementById(groups[0].getAttribute('aria-labelledby'))).toHaveTextContent('Veggies');
   });
 
+  it('should support dynamic collections', () => {
+    let items = [
+      {id: 'cat', name: 'Cat'},
+      {id: 'dog', name: 'Dog'}
+    ];
+    
+    let {getAllByRole} = render(
+      <Menu aria-label="Test" items={items}>
+        {(item) => <Item id={item.id}>{item.name}</Item>}
+      </Menu>
+    );
+
+    expect(getAllByRole('menuitem').map((it) => it.textContent)).toEqual(['Cat', 'Dog']);
+  });
+
   it('should support focus ring', () => {
     let {getAllByRole} = renderMenu({}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
     let menuitem = getAllByRole('menuitem')[0];
