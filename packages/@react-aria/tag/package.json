@@ -28,7 +28,6 @@
     "@react-aria/label": "^3.5.1",
     "@react-aria/utils": "^3.16.0",
     "@react-stately/list": "^3.8.0",
-    "@react-stately/tag": "3.0.0-rc.0",
     "@react-types/button": "^3.7.2",
     "@react-types/shared": "^3.18.0",
     "@react-types/tag": "3.0.0-rc.0",
