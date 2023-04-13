@@ -15,8 +15,15 @@ let itemProcessor = async (items, acceptedDragTypes) => {
   for (let item of items) {
     for (let type of acceptedDragTypes) {
       if (item.kind === 'text' && item.types.has(type)) {
+        let processedItem;
         text = await item.getText(type);
-        processedItems.push(JSON.parse(text));
+        processedItem = JSON.parse(text);
+        // If processed item has a parent key, then it is from a section. We need to extract its original value of the item in these
+        // cases
+        if (processedItem?.parentKey != null) {
+          processedItem = processedItem.value;
+        }
+        processedItems.push(processedItem);
         break;
       } else if (item.types.size === 1 && item.types.has('text/plain')) {
         // Fallback for Chrome Android case: https://bugs.chromium.org/p/chromium/issues/detail?id=1293803
@@ -811,16 +818,16 @@ let folderList2Section = [
   ]}
 ];
 
-interface TreeNode {
+interface TableItems {
   identifier: string,
   type: string,
   name: string,
-  childNodes?: Array<TreeNode>
+  childNodes?: Array<TableItems>
 }
 
 export function DragBetweenTablesSectionsComplex(props) {
   let {tableViewProps, firstTableDnDOptions, secondTableDnDOptions} = props;
-  let list1 = useTreeData<TreeNode>({
+  let list1 = useTreeData<TableItems>({
     initialItems: folderList1Section,
     getKey: (item) => {
       return item.identifier;
@@ -830,7 +837,7 @@ export function DragBetweenTablesSectionsComplex(props) {
     }
   });
 
-  let list2 = useTreeData<TreeNode>({
+  let list2 = useTreeData<TableItems>({
     initialItems: folderList2Section,
     getKey: (item) => {
       return item.identifier;
@@ -851,54 +858,57 @@ export function DragBetweenTablesSectionsComplex(props) {
       };
     }),
     onInsert: async (e) => {
-      // let {
-      //   items,
-      //   target
-      // } = e;
+      let {
+        items,
+        target
+      } = e;
       action('onInsertTable1')(e);
-      // let processedItems = await itemProcessor(items, acceptedDragTypes);
-
-      // if (target.dropPosition === 'before') {
-      //   list1.insertBefore(target.key, ...processedItems);
-      // } else if (target.dropPosition === 'after') {
-      //   list1.insertAfter(target.key, ...processedItems);
-      // }
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
+      if (target.dropPosition === 'before') {
+        list1.insertBefore(target.key, ...processedItems);
+      } else if (target.dropPosition === 'after') {
+        list1.insertAfter(target.key, ...processedItems);
+      }
     },
     onRootDrop: async (e) => {
       action('onRootDropTable1')(e);
-      // let processedItems = await itemProcessor(e.items, acceptedDragTypes);
-      // list1.append(...processedItems);
+      let processedItems = await itemProcessor(e.items, acceptedDragTypes);
+      list1.append('a', ...processedItems);
     },
     onItemDrop: async (e) => {
-      // let {
-      //   items,
-      //   target,
-      //   isInternal,
-      //   dropOperation
-      // } = e;
+      let {
+        items,
+        target,
+        isInternal,
+        dropOperation
+      } = e;
       action('onItemDropTable1')(e);
-      // let processedItems = await itemProcessor(items, acceptedDragTypes);
-      // let targetItem = list1.getItem(target.key);
-      // list1.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
+      let itemsToInsert = processedItems.map(item => ({
+        ...item,
+        identifier: Math.random().toString(36).slice(2)
+      }));
 
-      // if (isInternal && dropOperation === 'move') {
-      //   // TODO test this, perhaps it would be easier to also pass the draggedKeys to onItemDrop instead?
-      //   // TODO: dig into other libraries to see how they handle this
-      //   let keysToRemove = processedItems.map(item => item.identifier);
-      //   list1.remove(...keysToRemove);
-      // }
+      if (isInternal && dropOperation === 'move') {
+        let keysToRemove = processedItems.map(item => item.identifier);
+        // TODO: need to call remove operation before update
+        list1.remove(...keysToRemove);
+      }
+
+      let targetItem = list1.getItem(target.key).value;
+      list1.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...itemsToInsert]});
     },
     acceptedDragTypes,
     onDragEnd: (e) => {
-      // let {
-      //   dropOperation,
-      //   isInternal,
-      //   keys
-      // } = e;
+      let {
+        dropOperation,
+        isInternal,
+        keys
+      } = e;
       action('onDragEndTable1')(e);
-      // if (dropOperation === 'move' && !isInternal) {
-      //   list1.remove(...keys);
-      // }
+      if (dropOperation === 'move' && !isInternal) {
+        list1.remove(...keys);
+      }
     },
     getAllowedDropOperations: () => ['move', 'copy'],
     shouldAcceptItemDrop: (target) => !!list1.getItem(target.key)?.value.childNodes,
@@ -919,84 +929,93 @@ export function DragBetweenTablesSectionsComplex(props) {
       return dragItem;
     }),
     onInsert: async (e) => {
-      // let {
-      //   items,
-      //   target
-      // } = e;
+      let {
+        items,
+        target
+      } = e;
       action('onInsertTable2')(e);
-      // let processedItems = await itemProcessor(items, acceptedDragTypes);
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
 
-      // if (target.dropPosition === 'before') {
-      //   list2.insertBefore(target.key, ...processedItems);
-      // } else if (target.dropPosition === 'after') {
-      //   list2.insertAfter(target.key, ...processedItems);
-      // }
+      if (target.dropPosition === 'before') {
+        list2.insertBefore(target.key, ...processedItems);
+      } else if (target.dropPosition === 'after') {
+        list2.insertAfter(target.key, ...processedItems);
+      }
     },
     onReorder: async (e) => {
-      // let {
-      //   keys,
-      //   target,
-      //   dropOperation
-      // } = e;
+      let {
+        keys,
+        target,
+        dropOperation
+      } = e;
       action('onReorderTable2')(e);
 
-      // let itemsToCopy = [];
-      // if (dropOperation === 'copy') {
-      //   for (let key of keys) {
-      //     let item = {...list2.getItem(key)};
-      //     item.identifier = Math.random().toString(36).slice(2);
-      //     itemsToCopy.push(item);
-      //   }
-      // }
+      let itemsToCopy = [];
+      // let targetItem = list1.getItem(target.key).value;
+      if (dropOperation === 'copy') {
+        for (let key of keys) {
+          let item = {...list2.getItem(key).value};
+          item.identifier = Math.random().toString(36).slice(2);
+          itemsToCopy.push(item);
+        }
+      }
 
-      // if (target.dropPosition === 'before') {
-      //   if (dropOperation === 'move') {
-      //     list2.moveBefore(target.key, [...keys]);
-      //   } else if (dropOperation === 'copy') {
-      //     list2.insertBefore(target.key, ...itemsToCopy);
-      //   }
-      // } else if (target.dropPosition === 'after') {
-      //   if (dropOperation === 'move') {
-      //     list2.moveAfter(target.key, [...keys]);
-      //   } else if (dropOperation === 'copy') {
-      //     list2.insertAfter(target.key, ...itemsToCopy);
-      //   }
-      // }
+      if (target.dropPosition === 'before') {
+        if (dropOperation === 'move') {
+          // TODO: update useTreeData with moveBefore and moveAfter
+          // list2.moveAfter(target.key, [...keys]);
+        } else if (dropOperation === 'copy') {
+          list2.insertBefore(target.key, ...itemsToCopy);
+        }
+      } else if (target.dropPosition === 'after') {
+        if (dropOperation === 'move') {
+          // list2.moveAfter(target.key, [...keys]);
+        } else if (dropOperation === 'copy') {
+          list2.insertAfter(target.key, ...itemsToCopy);
+        }
+      }
     },
     onRootDrop: async (e) => {
       action('onRootDropTable2')(e);
-      // let processedItems = await itemProcessor(e.items, acceptedDragTypes);
-      // list2.prepend(...processedItems);
+      let processedItems = await itemProcessor(e.items, acceptedDragTypes);
+      list1.append('c', ...processedItems);
     },
     onItemDrop: async (e) => {
-      // let {
-      //   items,
-      //   target,
-      //   isInternal,
-      //   dropOperation
-      // } = e;
+      let {
+        items,
+        target,
+        isInternal,
+        dropOperation
+      } = e;
       action('onItemDropTable2')(e);
-      // let processedItems = await itemProcessor(items, acceptedDragTypes);
-      // let targetItem = list2.getItem(target.key);
-      // list2.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
 
-      // if (isInternal && dropOperation === 'move') {
-      //   let keysToRemove = processedItems.map(item => item.identifier);
-      //   list2.remove(...keysToRemove);
-      // }
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
+      let itemsToInsert = processedItems.map(item => ({
+        ...item,
+        identifier: Math.random().toString(36).slice(2)
+      }));
+
+      if (isInternal && dropOperation === 'move') {
+        let keysToRemove = processedItems.map(item => item.identifier);
+        // TODO: need to call remove operation before update for some reason
+        list2.remove(...keysToRemove);
+      }
+
+      let targetItem = list2.getItem(target.key).value;
+      list2.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...itemsToInsert]});
     },
     acceptedDragTypes,
     onDragEnd: (e) => {
-      // let {
-      //   dropOperation,
-      //   isInternal,
-      //   keys
-      // } = e;
+      let {
+        dropOperation,
+        isInternal,
+        keys
+      } = e;
       action('onDragEndTable2')(e);
-      // if (dropOperation === 'move' && !isInternal) {
-      //   let keysToRemove = [...keys].filter(key => list2.getItem(key).type !== 'unique_type');
-      //   list2.remove(...keysToRemove);
-      // }
+      if (dropOperation === 'move' && !isInternal) {
+        let keysToRemove = [...keys].filter(key => list2.getItem(key).value.type !== 'unique_type');
+        list2.remove(...keysToRemove);
+      }
     },
     getAllowedDropOperations: () => ['move', 'copy'],
     shouldAcceptItemDrop: (target) => !!list2.getItem(target.key)?.value.childNodes,
