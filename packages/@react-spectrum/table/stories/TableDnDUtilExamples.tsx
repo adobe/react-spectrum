@@ -955,6 +955,9 @@ export function DragBetweenTablesSectionsComplex(props) {
 
       if (target.dropPosition === 'before') {
         if (dropOperation === 'move') {
+          // TODO: this breaks if moving an item(s) to positions immediately adjacent to itself, will
+          // need to update useTreeData so it has something like move from useListData
+          // for now perhaps use useTreeData.move and do a move for each and calculate a new index everyti,e
           list2.remove(...keys);
           list2.insertBefore(target.key, ...itemsToCopy);
         } else if (dropOperation === 'copy') {
@@ -972,7 +975,7 @@ export function DragBetweenTablesSectionsComplex(props) {
     onRootDrop: async (e) => {
       action('onRootDropTable2')(e);
       let processedItems = await itemProcessor(e.items, acceptedDragTypes);
-      list1.append('c', ...processedItems);
+      list2.append('c', ...processedItems);
     },
     onItemDrop: async (e) => {
       let {
@@ -1016,7 +1019,7 @@ export function DragBetweenTablesSectionsComplex(props) {
         <Text alignSelf="center">Table 1</Text>
         <TableView aria-label="First TableView in drag between table example" selectionMode="multiple" width={300} dragAndDropHooks={dragAndDropHooksTable1} {...tableViewProps}>
           <TableHeader columns={columns}>
-            {column => <Column isRowHeader={column.key === 'name'}>{column.name}</Column>}
+            {column => <Column isRowHeader={column.key === 'name'} allowsResizing>{column.name}</Column>}
           </TableHeader>
           <TableBody items={list1.items}>
             {(item) => (
@@ -1035,7 +1038,7 @@ export function DragBetweenTablesSectionsComplex(props) {
         <Text alignSelf="center">Table 2</Text>
         <TableView aria-label="Second TableView in drag between table example" selectionMode="multiple" width={300} dragAndDropHooks={dragAndDropHooksTable2} {...tableViewProps}>
           <TableHeader columns={columns}>
-            {column => <Column isRowHeader={column.key === 'name'}>{column.name}</Column>}
+            {column => <Column isRowHeader={column.key === 'name'} allowsResizing>{column.name}</Column>}
           </TableHeader>
           <TableBody items={list2.items}>
             {(item) => (
