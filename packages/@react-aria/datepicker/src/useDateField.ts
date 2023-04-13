@@ -120,7 +120,7 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
 
   useEffect(() => {
     if (autoFocusRef.current) {
-      focusManager.focusFirst();
+      focusManager.focusFirst({tabbable: true});
     }
     autoFocusRef.current = false;
   }, [focusManager]);
