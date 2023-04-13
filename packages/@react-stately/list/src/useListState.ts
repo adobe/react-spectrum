@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, CollectionBase, Node} from '@react-types/shared';
+import {Collection, CollectionStateBase, Node} from '@react-types/shared';
 import {Key, useEffect, useMemo, useRef} from 'react';
 import {ListCollection} from './ListCollection';
 import {MultipleSelectionStateProps, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {useCollection} from '@react-stately/collections';
 
-export interface ListProps<T> extends CollectionBase<T>, MultipleSelectionStateProps {
+export interface ListProps<T> extends CollectionStateBase<T>, MultipleSelectionStateProps {
   /** Filter function to generate a filtered list of nodes. */
   filter?: (nodes: Iterable<Node<T>>) => Iterable<Node<T>>,
   /** @private */

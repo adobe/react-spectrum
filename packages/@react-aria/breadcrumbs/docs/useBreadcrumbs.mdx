@@ -92,13 +92,13 @@ import {useBreadcrumbs, useBreadcrumbItem} from '@react-aria/breadcrumbs';
 
 function Breadcrumbs(props) {
   let {navProps} = useBreadcrumbs(props);
-  let children = React.Children.toArray(props.children);
+  let childCount = React.Children.count(props.children);
 
   return (
     <nav {...navProps}>
       <ol style={{display: 'flex', listStyle: 'none', margin: 0, padding: 0}}>
-        {children.map((child, i) =>
-          React.cloneElement(child, {isCurrent: i === children.length - 1})
+        {React.Children.map(props.children, (child, i) =>
+          React.cloneElement(child, {isCurrent: i === childCount - 1})
         )}
       </ol>
     </nav>
@@ -106,7 +106,7 @@ function Breadcrumbs(props) {
 }
 
 function BreadcrumbItem(props) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {itemProps} = useBreadcrumbItem({...props, elementType: 'span'}, ref);
   return (
     <li>
@@ -144,13 +144,13 @@ for each BreadcrumbItem. This is the default `elementType`, so the option can be
 ///- begin collapse -///
 function Breadcrumbs(props) {
   let {navProps} = useBreadcrumbs(props);
-  let children = React.Children.toArray(props.children);
+  let childCount = React.Children.count(props.children);
 
   return (
     <nav {...navProps}>
       <ol style={{display: 'flex', listStyle: 'none', margin: 0, padding: 0}}>
-        {children.map((child, i) =>
-          React.cloneElement(child, {isCurrent: i === children.length - 1})
+        {React.Children.map(props.children, (child, i) =>
+          React.cloneElement(child, {isCurrent: i === childCount - 1})
         )}
       </ol>
     </nav>
@@ -158,7 +158,7 @@ function Breadcrumbs(props) {
 }
 ///- end collapse -///
 function BreadcrumbItem(props) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {itemProps} = useBreadcrumbItem(props, ref);
   return (
     <li>
@@ -200,13 +200,13 @@ the current has elementType `h3` and all other breadcrumbs are of type `a`.
 ///- begin collapse -///
 function Breadcrumbs(props) {
   let {navProps} = useBreadcrumbs(props);
-  let children = React.Children.toArray(props.children);
+  let childCount = React.Children.count(props.children);
 
   return (
     <nav {...navProps}>
       <ol style={{display: 'flex', listStyle: 'none', margin: 0, padding: 0}}>
-        {children.map((child, i) =>
-          React.cloneElement(child, {isCurrent: i === children.length - 1})
+        {React.Children.map(props.children, (child, i) =>
+          React.cloneElement(child, {isCurrent: i === childCount - 1})
         )}
       </ol>
     </nav>
@@ -214,7 +214,7 @@ function Breadcrumbs(props) {
 }
 ///- end collapse -///
 function BreadcrumbItem(props) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {itemProps} = useBreadcrumbItem({
     ...props,
     elementType: props.isCurrent ? 'h3' : 'a'

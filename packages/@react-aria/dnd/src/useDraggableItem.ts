@@ -116,7 +116,8 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
     if (isSelected) {
       dragButtonLabel = stringFormatter.format('dragSelectedItems', {count: numKeysForDrag});
     } else {
-      dragButtonLabel = stringFormatter.format('dragItem', {itemText: item?.textValue ?? ''});
+      let itemText = state.collection.getTextValue?.(props.key) ?? item?.textValue ?? '';
+      dragButtonLabel = stringFormatter.format('dragItem', {itemText});
     }
   }
 
