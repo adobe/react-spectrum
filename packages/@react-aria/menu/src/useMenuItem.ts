@@ -16,7 +16,6 @@ import {getItemCount} from '@react-stately/collections';
 import {isFocusVisible, useHover, useKeyboard, usePress} from '@react-aria/interactions';
 import {Key, RefObject, useCallback, useRef} from 'react';
 import {menuData} from './useMenu';
-import {MenuTriggerState} from '@react-stately/menu';
 import {mergeProps, useLayoutEffect, useSlotId} from '@react-aria/utils';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableItem} from '@react-aria/selection';
@@ -44,9 +43,7 @@ export interface MenuItemAria {
   /** Whether the item is currently in a pressed state. */
   isPressed: boolean,
   /** Whether the item is disabled. */
-  isDisabled: boolean,
-  /** Whether the item is hovered. */
-  isHovered: boolean
+  isDisabled: boolean
 }
 
 export interface AriaMenuItemProps {
@@ -87,9 +84,7 @@ export interface AriaMenuItemProps {
    * Handler that is called when the user activates the item.
    * @deprecated - pass to the menu instead.
    */
-  onAction?: (key: Key) => void,
-  isMenuDialogTrigger?: boolean,
-  triggerState?: MenuTriggerState
+  onAction?: (key: Key) => void
 }
 
 /**
@@ -202,7 +197,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   });
 
   let {pressProps, isPressed} = usePress({onPressStart, onPressUp, isDisabled});
-  let {hoverProps, isHovered} = useHover({
+  let {hoverProps} = useHover({
     isDisabled,
     onHoverStart() {
       if (!isFocusVisible()) {
@@ -282,7 +277,6 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     isFocused,
     isSelected,
     isPressed,
-    isHovered,
     isDisabled
   };
 }

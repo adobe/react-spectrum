@@ -53,7 +53,7 @@ function MenuDialogTrigger<T>(props: ItemProps<T> & {isUnavailable?: boolean, ta
               {content}
             </Modal>
           ) : (
-            <Popover state={state} triggerRef={triggerRef} placement="end top" hideArrow offset={-10} isNonModal>{content}</Popover>
+            <Popover state={state} triggerRef={triggerRef} placement="end top" hideArrow offset={-10} isNonModal shouldContainFocus={false}>{content}</Popover>
           )
         }
       </SlotProvider>

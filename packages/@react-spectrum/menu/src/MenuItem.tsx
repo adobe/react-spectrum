@@ -45,7 +45,6 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let menuDialogContext = useMenuDialogContext();
   let {triggerRef} = menuDialogContext || {};
-  let {state: triggerState} = useMenuContext();
   let isMenuDialogTrigger = !!menuDialogContext;
   let isUnavailable = false;
 
@@ -75,8 +74,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
     labelProps,
     descriptionProps,
     endProps,
-    keyboardShortcutProps,
-    isHovered
+    keyboardShortcutProps
   } = useMenuItem(
     {
       isSelected,
@@ -86,9 +84,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
       onClose,
       closeOnSelect,
       isVirtualized,
-      onAction,
-      isMenuDialogTrigger,
-      triggerState
+      onAction
     },
     state,
     ref
@@ -110,7 +106,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
             'is-disabled': isDisabled,
             'is-selected': isSelected,
             'is-selectable': state.selectionManager.selectionMode !== 'none',
-            'is-hovered': isHovered || state.expandedKeys.has(key)
+            'is-open': state.expandedKeys.has(key)
           }
         )}>
         <Grid

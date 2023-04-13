@@ -12,6 +12,7 @@
 
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
+import {FocusScope} from '@react-aria/focus';
 import {MenuContext, MenuStateContext} from './context';
 import {MenuItem} from './MenuItem';
 import {MenuSection} from './MenuSection';
@@ -36,43 +37,45 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
 
   return (
     <MenuStateContext.Provider value={{state}}>
-      <ul
-        {...menuProps}
-        {...styleProps}
-        ref={domRef}
-        className={
-          classNames(
-            styles,
-            'spectrum-Menu',
-            styleProps.className
-          )
-        }>
-        {[...state.collection].map(item => {
-          if (item.type === 'section') {
-            return (
-              <MenuSection
+      <FocusScope contain={state.expandedKeys.size > 0}>
+        <ul
+          {...menuProps}
+          {...styleProps}
+          ref={domRef}
+          className={
+            classNames(
+              styles,
+              'spectrum-Menu',
+              styleProps.className
+            )
+          }>
+          {[...state.collection].map(item => {
+            if (item.type === 'section') {
+              return (
+                <MenuSection
+                  key={item.key}
+                  item={item}
+                  state={state}
+                  onAction={completeProps.onAction} />
+              );
+            }
+
+            let menuItem = (
+              <MenuItem
                 key={item.key}
                 item={item}
                 state={state}
                 onAction={completeProps.onAction} />
             );
-          }
 
-          let menuItem = (
-            <MenuItem
-              key={item.key}
-              item={item}
-              state={state}
-              onAction={completeProps.onAction} />
-          );
+            if (item.wrapper) {
+              menuItem = item.wrapper(menuItem);
+            }
 
-          if (item.wrapper) {
-            menuItem = item.wrapper(menuItem);
-          }
-
-          return menuItem;
-        })}
-      </ul>
+            return menuItem;
+          })}
+        </ul>
+      </FocusScope>
     </MenuStateContext.Provider>
   );
 }

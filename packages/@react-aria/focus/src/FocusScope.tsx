@@ -314,7 +314,7 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain: boolean) {
 
       let focusedElement = document.activeElement;
       let scope = scopeRef.current;
-      if (!isElementInScope(focusedElement, scope)) {
+      if (!isElementInChildScope(focusedElement, scopeRef)) {
         return;
       }
 
@@ -639,11 +639,6 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
             let treeNode = clonedTree.getTreeNode(scopeRef);
             while (treeNode) {
               if (treeNode.nodeToRestore && document.body.contains(treeNode.nodeToRestore)) {
-                // in case of collections, the nodeToRestore may have changed, such as hovering over a new list item in submenus
-                // defer to the collection's focus scope to focus the correct element
-                if (treeNode.nodeToRestore.tabIndex === -1) {
-                  break;
-                }
                 focusElement(treeNode.nodeToRestore);
                 return;
               }
