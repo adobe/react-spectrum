@@ -534,7 +534,9 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
     let onFocus = () => {
       // If focusing an element in a child scope of the currently active scope, the child becomes active.
       // Moving out of the active scope to an ancestor is not allowed.
-      if (!activeScope || isAncestorScope(activeScope, scopeRef)) {
+      if ((!activeScope || isAncestorScope(activeScope, scopeRef)) &&             
+      isElementInScope(document.activeElement, scopeRef.current)
+      ) {
         activeScope = scopeRef;
       }
     };
@@ -622,6 +624,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
 
       // if we already lost focus to the body and this was the active scope, then we should attempt to restore
       if (
+        (activeScope === scopeRef || isAncestorScope(scopeRef, activeScope)) &&
         restoreFocus
         && nodeToRestore
         && (
