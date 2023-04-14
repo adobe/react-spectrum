@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, DEFAULT_LONG_PRESS_TIME, fireEvent, installPointerEvent, render, triggerLongPress, triggerPress, triggerTouch, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, render, screen, within} from '@testing-library/react';
 import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {Content, Footer} from '@react-spectrum/view';
+import {DEFAULT_LONG_PRESS_TIME, installPointerEvent, triggerLongPress, triggerPress, triggerTouch} from '@react-spectrum/test-utils';
 import {Dialog} from '@react-spectrum/dialog';
 import {Heading, Text} from '@react-spectrum/text';
 import {Item, Menu, MenuDialogTrigger, MenuTrigger, Section} from '../';
@@ -1100,8 +1101,36 @@ describe('MenuTrigger', function () {
 
         userEvent.tab();
         act(() => {jest.runAllTimers();});
+        let link = screen.getByRole('link');
+        expect(document.activeElement).toBe(link);
+
+        userEvent.tab();
+        act(() => {jest.runAllTimers();});
         expect(dialog).not.toBeInTheDocument();
         expect(document.activeElement).toBe(menuItems[4]);
+      });
+
+      it('will close everything if the user shift tabs out of the subdialog', function () {
+        renderTree();
+        let menu = openMenu();
+        let menuItems = within(menu).getAllByRole('menuitem');
+        let unavailableItem = menuItems[4];
+        expect(unavailableItem).toBeVisible();
+        expect(unavailableItem).toHaveAttribute('aria-haspopup', 'dialog');
+
+        fireEvent.mouseEnter(unavailableItem);
+        act(() => {jest.runAllTimers();});
+        let dialog = tree.getByRole('dialog');
+        expect(dialog).toBeVisible();
+
+        expect(document.activeElement).toBe(dialog);
+
+        userEvent.tab({shift: true});
+        act(() => {jest.runAllTimers();});
+        act(() => {jest.runAllTimers();});
+        expect(dialog).not.toBeInTheDocument();
+
+        expect(document.activeElement).toBe(screen.getByRole('button'));
       });
     });
   });

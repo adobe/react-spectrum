@@ -314,16 +314,33 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain: boolean) {
 
       let focusedElement = document.activeElement;
       let scope = scopeRef.current;
-      if (!isElementInChildScope(focusedElement, scopeRef)) {
+      let childScopeRef = isElementInChildScope(focusedElement, scopeRef);
+      if (!childScopeRef || typeof childScopeRef !== 'object') {
         return;
       }
+      let focusNextInChildScope = (childScopeRef: ScopeRef): FocusableElement | null => {
+        if (childScopeRef !== scopeRef) {
+          let walker = getFocusableTreeWalker(getScopeRoot(childScopeRef.current), {tabbable: true}, scope, scopeRef);
+          walker.currentNode = focusedElement;
+          let nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as FocusableElement;
+          if (nextElement) {
+            return nextElement;
+          } else {
+            return focusNextInChildScope(focusScopeTree.getTreeNode(childScopeRef).parent.scopeRef);
+          }
+        }
+        return null;
+      };
+      let nextElement = focusNextInChildScope(childScopeRef);
 
-      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable: true}, scope);
-      walker.currentNode = focusedElement;
-      let nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as FocusableElement;
-      if (!nextElement) {
-        walker.currentNode = e.shiftKey ? scope[scope.length - 1].nextElementSibling : scope[0].previousElementSibling;
-        nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode())  as FocusableElement;
+      if (!nextElement && isElementInScope(focusedElement, scope)) {
+        let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable: true}, scope);
+        walker.currentNode = focusedElement;
+        nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as FocusableElement;
+        if (!nextElement) {
+          walker.currentNode = e.shiftKey ? scope[scope.length - 1].nextElementSibling : scope[0].previousElementSibling;
+          nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as FocusableElement;
+        }
       }
 
       e.preventDefault();
@@ -400,7 +417,7 @@ function isElementInScope(element: Element, scope: Element[]) {
   return scope.some(node => node.contains(element));
 }
 
-function isElementInChildScope(element: Element, scope: ScopeRef = null) {
+function isElementInChildScope(element: Element, scope: ScopeRef = null): ScopeRef | boolean {
   // If the element is within a top layer element (e.g. toasts), always allow moving focus there.
   if (element instanceof Element && element.closest('[data-react-aria-top-layer]')) {
     return true;
@@ -410,7 +427,7 @@ function isElementInChildScope(element: Element, scope: ScopeRef = null) {
   // but does not cover child scopes in portals.
   for (let {scopeRef: s} of focusScopeTree.traverse(focusScopeTree.getTreeNode(scope))) {
     if (isElementInScope(element, s.current)) {
-      return true;
+      return s;
     }
   }
 
@@ -666,7 +683,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
  * Create a [TreeWalker]{@link https://developer.mozilla.org/en-US/docs/Web/API/TreeWalker}
  * that matches all focusable/tabbable elements.
  */
-export function getFocusableTreeWalker(root: Element, opts?: FocusManagerOptions, scope?: Element[]) {
+export function getFocusableTreeWalker(root: Element, opts?: FocusManagerOptions, scope?: Element[], scopeRef?: ScopeRef) {
   let selector = opts?.tabbable ? TABBABLE_ELEMENT_SELECTOR : FOCUSABLE_ELEMENT_SELECTOR;
   let walker = document.createTreeWalker(
     root,
@@ -680,7 +697,7 @@ export function getFocusableTreeWalker(root: Element, opts?: FocusManagerOptions
 
         if ((node as Element).matches(selector)
           && isElementVisible(node as Element)
-          && (!scope || isElementInScope(node as Element, scope))
+          && ((!scope || isElementInScope(node as Element, scope)) || (scopeRef && isElementInChildScope(node as Element, scopeRef)))
           && (!opts?.accept || opts.accept(node as Element))
         ) {
           return NodeFilter.FILTER_ACCEPT;
