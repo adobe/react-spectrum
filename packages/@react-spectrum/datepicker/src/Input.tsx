@@ -18,6 +18,7 @@ import {mergeProps, mergeRefs, useEvent, useLayoutEffect, useResizeObserver} fro
 import React, {useCallback, useRef} from 'react';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useFocusRing} from '@react-aria/focus';
+import {useInteractionModality} from "@react-aria/interactions";
 
 function Input(props, ref) {
   let inputRef = useRef(null);
@@ -121,10 +122,12 @@ function Input(props, ref) {
     validationIcon = <Checkmark data-testid="valid-icon" UNSAFE_className={iconClass} />;
   }
 
+  let modality: string = useInteractionModality();
+
   return (
     <div role="presentation" {...mergeProps(fieldProps, focusProps)} className={textfieldClass} style={style}>
       <div role="presentation" className={inputClass}>
-        <div role="presentation" className={classNames(datepickerStyles, 'react-spectrum-Datepicker-inputContents')} tabIndex={-1} ref={mergeRefs(ref, inputRef)}>
+        <div role="presentation" className={classNames(datepickerStyles, 'react-spectrum-Datepicker-inputContents')} tabIndex={modality !== 'virtual' ? -1 : undefined} ref={mergeRefs(ref, inputRef)}>
           {children}
         </div>
       </div>
