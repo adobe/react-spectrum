@@ -93,6 +93,15 @@ export const DragBetweenTablesRootOnly: TableStory = {
   storyName: 'Drag between tables (Root only)'
 };
 
+export const DragBetweenTablesRootOnlyNoDisabled: TableStory = {
+  render: (args) => (
+    <Flex direction="row" wrap alignItems="center">
+      <DragBetweenTablesRootOnlyExample tableViewProps={args} />
+    </Flex>
+  ),
+  storyName: 'Drag between tables (Root only) no disabled'
+};
+
 export const DraggableRowsCopyLink: TableStory = {
   args: {
     disabledKeys: ['Foo 2']

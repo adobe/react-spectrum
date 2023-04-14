@@ -116,6 +116,12 @@ export default {
     },
     disallowEmptySelection: {
       control: 'boolean'
+    },
+    height: {
+      control: 'number'
+    },
+    width: {
+      control: 'number'
     }
   }
 } as ComponentMeta<typeof TableView>;
@@ -1664,7 +1670,7 @@ export const ResizingHidingColumns: TableStory = {
   storyName: 'allowsResizing, hiding columns'
 };
 
-function EmptyState() {
+export function EmptyState() {
   return (
     <IllustratedMessage>
       <NoSearchResults />

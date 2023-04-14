@@ -8,6 +8,7 @@ import React from 'react';
 import {Text} from '@react-spectrum/text';
 import {useDragAndDrop} from '@react-spectrum/dnd';
 import {useListData} from '@react-stately/data';
+import {EmptyState} from "./Table.stories";
 
 let onSelectionChange = action('onSelectionChange');
 
@@ -543,7 +544,13 @@ export function DragBetweenTablesRootOnlyExample(props) {
       </Flex>
       <Flex direction="column" margin="size-100">
         <Text alignSelf="center">Table 2</Text>
-        <TableView aria-label="Second TableView" selectionMode="multiple" width={400} dragAndDropHooks={dragAndDropHooksSecond} {...tableViewProps}>
+        <TableView
+          aria-label="Second TableView"
+          selectionMode="multiple"
+          width={400}
+          dragAndDropHooks={dragAndDropHooksSecond}
+          renderEmptyState={() => <EmptyState />}
+          {...tableViewProps}>
           <TableHeader columns={itemColumns}>
             {column => <Column minWidth={100} isRowHeader={column.key === 'name'}>{column.name}</Column>}
           </TableHeader>
