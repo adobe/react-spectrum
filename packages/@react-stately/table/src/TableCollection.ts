@@ -324,4 +324,36 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
     const keys = [...this.getKeys()];
     return this.getItem(keys[idx]);
   }
+
+  getTextValue(key: Key): string {
+    let row = this.getItem(key);
+    if (!row) {
+      return '';
+    }
+
+    // If the row has a textValue, use that.
+    if (row.textValue) {
+      return row.textValue;
+    }
+
+    // Otherwise combine the text of each of the row header columns.
+    let rowHeaderColumnKeys = this.rowHeaderColumnKeys;
+    if (rowHeaderColumnKeys) {
+      let text = [];
+      for (let cell of row.childNodes) {
+        let column = this.columns[cell.index];
+        if (rowHeaderColumnKeys.has(column.key) && cell.textValue) {
+          text.push(cell.textValue);
+        }
+
+        if (text.length === rowHeaderColumnKeys.size) {
+          break;
+        }
+      }
+
+      return text.join(' ');
+    }
+
+    return '';
+  }
 }
