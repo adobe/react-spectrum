@@ -314,8 +314,8 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain: boolean) {
 
       let focusedElement = document.activeElement;
       let scope = scopeRef.current;
-      let childScopeRef = isElementInChildScope(focusedElement, scopeRef);
-      if (!childScopeRef || typeof childScopeRef !== 'object') {
+      let childScopeRef = getChildScopeElementIsIn(focusedElement, scopeRef);
+      if (childScopeRef == null) {
         return;
       }
       let focusNextInChildScope = (childScopeRef: ScopeRef): FocusableElement | null => {
@@ -410,17 +410,34 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain: boolean) {
 }
 
 function isElementInAnyScope(element: Element) {
-  return isElementInChildScope(element);
+  return !!isElementInChildScope(element);
 }
 
 function isElementInScope(element: Element, scope: Element[]) {
   return scope.some(node => node.contains(element));
 }
 
-function isElementInChildScope(element: Element, scope: ScopeRef = null): ScopeRef | boolean {
+function isElementInChildScope(element: Element, scope: ScopeRef = null) {
   // If the element is within a top layer element (e.g. toasts), always allow moving focus there.
   if (element instanceof Element && element.closest('[data-react-aria-top-layer]')) {
     return true;
+  }
+
+  // node.contains in isElementInScope covers child scopes that are also DOM children,
+  // but does not cover child scopes in portals.
+  for (let {scopeRef: s} of focusScopeTree.traverse(focusScopeTree.getTreeNode(scope))) {
+    if (isElementInScope(element, s.current)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function getChildScopeElementIsIn(element: Element, scope: ScopeRef = null): ScopeRef | null {
+  // If the element is within a top layer element (e.g. toasts), always allow moving focus there.
+  if (element instanceof Element && element.closest('[data-react-aria-top-layer]')) {
+    return null;
   }
 
   // node.contains in isElementInScope covers child scopes that are also DOM children,
@@ -431,12 +448,12 @@ function isElementInChildScope(element: Element, scope: ScopeRef = null): ScopeR
     }
   }
 
-  return false;
+  return null;
 }
 
 /** @private */
 export function isElementInChildOfActiveScope(element: Element) {
-  return isElementInChildScope(element, activeScope);
+  return !!isElementInChildScope(element, activeScope);
 }
 
 function isAncestorScope(ancestor: ScopeRef, scope: ScopeRef) {
@@ -598,6 +615,13 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
       if (!document.body.contains(nodeToRestore) || nodeToRestore === document.body) {
         nodeToRestore = null;
         focusScopeTree.getTreeNode(scopeRef).nodeToRestore = null;
+      }
+
+      if (nodeToRestore && nextElement && nodeToRestore === nextElement) {
+        e.preventDefault();
+        e.stopPropagation();
+        focusElement(nextElement, true);
+        return;
       }
 
       // If there is no next element, or it is outside the current scope, move focus to the

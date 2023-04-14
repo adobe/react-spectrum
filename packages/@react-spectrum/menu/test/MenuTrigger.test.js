@@ -1132,7 +1132,7 @@ describe('MenuTrigger', function () {
         act(() => {jest.runAllTimers();});
         expect(dialog).not.toBeInTheDocument();
 
-        expect(document.activeElement).toBe(screen.getByRole('button'));
+        expect(document.activeElement).toBe(unavailableItem);
       });
 
       it('will close everything if the user shift tabs out of the subdialog', function () {
