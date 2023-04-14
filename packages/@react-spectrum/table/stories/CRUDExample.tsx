@@ -31,6 +31,10 @@ import {TextField} from '@react-spectrum/textfield';
 import {useListData} from '@react-stately/data';
 
 export function CRUDExample(props) {
+  let {
+    loadingState,
+    ...otherProps
+  } = props;
   let list = useListData({
     initialItems: [
       {id: 1, firstName: 'Sam', lastName: 'Smith', birthday: 'May 3'},
@@ -58,7 +62,7 @@ export function CRUDExample(props) {
         width={500}
         height={300}
         selectionMode="multiple"
-        {...props}
+        {...otherProps}
         selectedKeys={list.selectedKeys}
         onSelectionChange={list.setSelectedKeys}
         renderEmptyState={list.items.length === 0 ? () => <EmptyState /> : undefined}>
@@ -68,7 +72,7 @@ export function CRUDExample(props) {
           <Column key="birthday">Birthday</Column>
           <Column key="actions" align="end">Actions</Column>
         </TableHeader>
-        <TableBody items={list.items}>
+        <TableBody items={list.items} loadingState={loadingState}>
           {item =>
             (<Row>
               {column =>

@@ -700,8 +700,8 @@ export const ManySections: TableStory = {
   storyName: 'many sections'
 };
 
-const TableViewFilledCellWidths = (props: SpectrumTableProps<unknown> & {allowsResizing: boolean}) => {
-  let {allowsResizing, ...otherProps} = props;
+const TableViewFilledCellWidths = (props: SpectrumTableProps<object> & TableBodyProps<object> & {allowsResizing: boolean}) => {
+  let {allowsResizing, loadingState, ...otherProps} = props;
   return (
     <TableView {...otherProps}>
       <TableHeader>
@@ -710,7 +710,7 @@ const TableViewFilledCellWidths = (props: SpectrumTableProps<unknown> & {allowsR
         <Column allowsResizing={allowsResizing} align="end">Size</Column>
         <Column allowsResizing={allowsResizing}>Description</Column>
       </TableHeader>
-      <TableBody>
+      <TableBody loadingState={loadingState}>
         <Row>
           <Cell>2018 Proposal</Cell>
           <Cell>PDF</Cell>
@@ -817,7 +817,7 @@ export const ShouldFillCellWidth: ComponentStoryObj<typeof TableViewFilledCellWi
     width: 500,
     height: 200
   },
-  render: (args) => <TableViewFilledCellWidths {...args} />,
+  render: (args: SpectrumTableProps<object> & TableBodyProps<object> & {allowsResizing}) => <TableViewFilledCellWidths {...args} />,
   storyName: 'should fill cell width',
   argTypes: {
     allowsResizing: {type: 'boolean'}
@@ -927,11 +927,15 @@ export const CustomRowHeaderLabeling: TableStory = {
 };
 
 export const CRUD: TableStory = {
-  render: (args) => <CRUDExample {...args} />,
+  render: (args: SpectrumTableProps<object> & TableBodyProps<object>) => <CRUDExample {...args} />,
   storyName: 'CRUD'
 };
 
-function DeletableRowsTable(props: SpectrumTableProps<unknown>) {
+function DeletableRowsTable(props: SpectrumTableProps<object> & TableBodyProps<object>) {
+  let {
+    loadingState,
+    ...otherProps
+  } = props;
   let list = useListData({
     initialItems: [
       {id: 1, firstName: 'Sam', lastName: 'Smith', birthday: 'May 3'},
@@ -945,7 +949,7 @@ function DeletableRowsTable(props: SpectrumTableProps<unknown>) {
 
   return (
     <TableView
-      {...props}
+      {...otherProps}
       selectedKeys={list.selectedKeys}
       onSelectionChange={onSelectionChange}
       renderEmptyState={list.items.length === 0 ? () => <EmptyState /> : undefined}>
@@ -955,7 +959,7 @@ function DeletableRowsTable(props: SpectrumTableProps<unknown>) {
         <Column key="birthday">Birthday</Column>
         <Column key="actions" align="end">Actions</Column>
       </TableHeader>
-      <TableBody items={list.items}>
+      <TableBody items={list.items} loadingState={loadingState}>
         {item =>
           (<Row>
             {column =>
@@ -1026,13 +1030,17 @@ function renderEmptyState() {
   );
 }
 
-function EmptyStateTable({loadingState = 'idle', ...props}) {
+function EmptyStateTable(props) {
+  let {
+    loadingState,
+    ...otherProps
+  } = props;
   let [show, setShow] = useState(false);
   let [sortDescriptor, setSortDescriptor] = useState({});
   return (
     <Flex direction="column">
       <ActionButton width="100px" onPress={() => setShow(show => !show)}>Toggle items</ActionButton>
-      <TableView aria-label="TableView with empty state" width={700} height={400} {...props} renderEmptyState={renderEmptyState} selectionMode="multiple" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor}>
+      <TableView aria-label="TableView with empty state" width={700} height={400} {...otherProps} renderEmptyState={renderEmptyState} selectionMode="multiple" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor}>
         <TableHeader columns={manyColunns}>
           {column =>
             <Column allowsResizing allowsSorting minWidth={100}>{column.name}</Column>
@@ -1051,7 +1059,7 @@ function EmptyStateTable({loadingState = 'idle', ...props}) {
 }
 
 export const EmptyStateStory: TableStory = {
-  render: (args) => <EmptyStateTable {...args} />,
+  render: (args: SpectrumTableProps<object> & TableBodyProps<object>) => <EmptyStateTable {...args} />,
   storyName: 'renderEmptyState'
 };
 
@@ -1809,7 +1817,7 @@ export const ResizingManyColumnsRows: TableStory = {
 };
 
 export const ResizingHidingColumns: TableStory = {
-  render: (args) => <HidingColumnsAllowsResizing {...args} />,
+  render: (args: SpectrumTableProps<object> & TableBodyProps<object>) => <HidingColumnsAllowsResizing {...args} />,
   storyName: 'allowsResizing, hiding columns'
 };
 
@@ -1874,7 +1882,7 @@ let uncontrolledColumns: PokemonColumn[] = [
 ];
 
 export const ResizingControlledNoInitialWidths: TableStory = {
-  render: (args) =>
+  render: (args: SpectrumTableProps<object> & TableBodyProps<object>) =>
     <ControllingResize {...args} width={900} columns={uncontrolledColumns} />,
   storyName: 'allowsResizing, controlled, no widths',
   parameters: {description: {data: `
