@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Label, Slider, SliderContext, SliderOutput, SliderThumb, SliderTrack} from '../';
 import {fireEvent, render} from '@react-spectrum/test-utils';
+import {Label, Slider, SliderContext, SliderOutput, SliderThumb, SliderTrack} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -54,26 +54,20 @@ describe('Slider', () => {
   });
 
   it('should support render props', () => {
-    let {getByRole} = render(
-      <Slider defaultValue={30}>
-        {({setThumbPercent}) => (
-          <>
+    let {getByTestId} = render(
+      <Slider orientation="vertical">
+        {({orientation}) => (
+          <div className={`slider-${orientation}`} data-testid="wrapper">
             <Label>Opacity</Label>
             <SliderOutput />
             <SliderTrack>
               <SliderThumb />
             </SliderTrack>
-            <Button onPress={() => setThumbPercent(0, 0)}>Reset</Button>
-          </>
+          </div>
         )}
       </Slider>
     );
-    let slider = getByRole('slider');
-    expect(slider).toHaveValue('30');
-    
-    let reset = getByRole('button', {name: 'Reset'});
-    userEvent.click(reset);
-    expect(slider).toHaveValue('0');
+    expect(getByTestId('wrapper')).toHaveClass('slider-vertical');
   });
 
   it('should support slot', () => {
