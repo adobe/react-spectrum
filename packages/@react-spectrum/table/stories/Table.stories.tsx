@@ -983,12 +983,12 @@ export const InlineDeleteButtons: TableStory = {
     width: 500,
     height: 300
   },
-  render: (args) => <DeletableRowsTable {...args} />,
+  render: (args: SpectrumTableProps<object> & TableBodyProps<object>) => <DeletableRowsTable {...args} />,
   storyName: 'Inline delete buttons'
 };
 
 export const HidingColumnsExample: TableStory = {
-  render: (args) => <HidingColumns {...args} />,
+  render: (args: SpectrumTableProps<object> & TableBodyProps<object>) => <HidingColumns {...args} />,
   storyName: 'hiding columns'
 };
 
