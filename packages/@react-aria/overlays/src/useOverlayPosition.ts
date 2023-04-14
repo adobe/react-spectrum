@@ -10,100 +10,100 @@
  * governing permissions and limitations under the License.
  */
 
-import { calculatePosition, PositionResult } from "./calculatePosition";
-import { DOMAttributes } from "@react-types/shared";
-import { Placement, PlacementAxis, PositionProps } from "@react-types/overlays";
-import { RefObject, useCallback, useRef, useState } from "react";
-import { useCloseOnScroll } from "./useCloseOnScroll";
-import { useLayoutEffect, useResizeObserver } from "@react-aria/utils";
-import { useLocale } from "@react-aria/i18n";
+import {calculatePosition, PositionResult} from './calculatePosition';
+import {DOMAttributes} from '@react-types/shared';
+import {Placement, PlacementAxis, PositionProps} from '@react-types/overlays';
+import {RefObject, useCallback, useRef, useState} from 'react';
+import {useCloseOnScroll} from './useCloseOnScroll';
+import {useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import {useLocale} from '@react-aria/i18n';
 
 export interface AriaPositionProps extends PositionProps {
   /**
    * Cross size of the overlay arrow in pixels.
    * @default 0
    */
-  arrowSize?: number;
+  arrowSize?: number,
   /**
    * Element that that serves as the positioning boundary.
    * @default document.body
    */
-  boundaryElement?: Element;
+  boundaryElement?: Element,
   /**
    * The ref for the element which the overlay positions itself with respect to.
    */
-  targetRef: RefObject<Element>;
+  targetRef: RefObject<Element>,
   /**
    * The ref for the overlay element.
    */
-  overlayRef: RefObject<Element>;
+  overlayRef: RefObject<Element>,
   /**
    * A ref for the scrollable region within the overlay.
    * @default overlayRef
    */
-  scrollRef?: RefObject<Element>;
+  scrollRef?: RefObject<Element>,
   /**
    * Whether the overlay should update its position automatically.
    * @default true
    */
-  shouldUpdatePosition?: boolean;
+  shouldUpdatePosition?: boolean,
   /** Handler that is called when the overlay should close. */
-  onClose?: () => void;
+  onClose?: () => void,
   /**
    * The maxHeight specified for the overlay element.
    * By default, it will take all space up to the current viewport height.
    */
-  maxHeight?: number;
+  maxHeight?: number,
   /**
    * The minimum distance the arrow's edge should be from the edge of the overlay element.
    * @default 0
    */
-  arrowBoundaryOffset?: number;
+  arrowBoundaryOffset?: number
 }
 
 export interface PositionAria {
   /** Props for the overlay container element. */
-  overlayProps: DOMAttributes;
+  overlayProps: DOMAttributes,
   /** Props for the overlay tip arrow if any. */
-  arrowProps: DOMAttributes;
+  arrowProps: DOMAttributes,
   /** Placement of the overlay with respect to the overlay trigger. */
-  placement: PlacementAxis;
+  placement: PlacementAxis,
   /** Updates the position of the overlay. */
-  updatePosition(): void;
+  updatePosition(): void
 }
 
 // @ts-ignore
-let visualViewport = typeof window !== "undefined" && window.visualViewport;
+let visualViewport = typeof window !== 'undefined' && window.visualViewport;
 
 /**
  * Handles positioning overlays like popovers and menus relative to a trigger
  * element, and updating the position when the window resizes.
  */
 export function useOverlayPosition(props: AriaPositionProps): PositionAria {
-  let { direction } = useLocale();
+  let {direction} = useLocale();
   let {
     arrowSize = 0,
     targetRef,
     overlayRef,
     scrollRef = overlayRef,
-    placement = "bottom" as Placement,
+    placement = 'bottom' as Placement,
     containerPadding = 12,
     shouldFlip = true,
-    boundaryElement = typeof document !== "undefined" ? document.body : null,
+    boundaryElement = typeof document !== 'undefined' ? document.body : null,
     offset = 0,
     crossOffset = 0,
     shouldUpdatePosition = true,
     isOpen = true,
     onClose,
     maxHeight,
-    arrowBoundaryOffset = 0,
+    arrowBoundaryOffset = 0
   } = props;
   let [position, setPosition] = useState<PositionResult>({
     position: {},
     arrowOffsetLeft: undefined,
     arrowOffsetTop: undefined,
     maxHeight: undefined,
-    placement: undefined,
+    placement: undefined
   });
 
   let deps = [
@@ -121,18 +121,11 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     direction,
     maxHeight,
     arrowBoundaryOffset,
-    arrowSize,
+    arrowSize
   ];
 
   let updatePosition = useCallback(() => {
-    if (
-      shouldUpdatePosition === false ||
-      !isOpen ||
-      !overlayRef.current ||
-      !targetRef.current ||
-      !scrollRef.current ||
-      !boundaryElement
-    ) {
+    if (shouldUpdatePosition === false || !isOpen || !overlayRef.current || !targetRef.current || !scrollRef.current || !boundaryElement) {
       return;
     }
 
@@ -148,22 +141,17 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       crossOffset,
       maxHeight,
       arrowSize,
-      arrowBoundaryOffset,
+      arrowBoundaryOffset
     });
 
     // Modify overlay styles directly so positioning happens immediately without the need of a second render
     // This is so we don't have to delay autoFocus scrolling or delay applying preventScroll for popovers
-    Object.keys(position.position).forEach(
-      (key) =>
-        ((overlayRef.current as HTMLElement).style[key] =
-          position.position[key] + "px")
-    );
-    (overlayRef.current as HTMLElement).style.maxHeight =
-      position.maxHeight != null ? position.maxHeight + "px" : undefined;
+    Object.keys(position.position).forEach(key => (overlayRef.current as HTMLElement).style[key] = position.position[key] + 'px');
+    (overlayRef.current as HTMLElement).style.maxHeight = position.maxHeight != null ?  position.maxHeight + 'px' : undefined;
 
     // Trigger a set state for a second render anyway for arrow positioning
     setPosition(position);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 
   // Update position when anything changes
@@ -176,7 +164,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   // Update position when the overlay changes size (might need to flip).
   useResizeObserver({
     ref: overlayRef,
-    onResize: updatePosition,
+    onResize: updatePosition
   });
 
   // Reposition the overlay and do not close on scroll while the visual viewport is resizing.
@@ -195,10 +183,10 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       updatePosition();
     };
 
-    visualViewport?.addEventListener("resize", onResize);
+    visualViewport?.addEventListener('resize', onResize);
 
     return () => {
-      visualViewport?.removeEventListener("resize", onResize);
+      visualViewport?.removeEventListener('resize', onResize);
     };
   }, [updatePosition]);
 
@@ -213,48 +201,41 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   useCloseOnScroll({
     triggerRef: targetRef,
     isOpen,
-    onClose: onClose && close,
-  });
-
-  console.log({
-    position: "absolute",
-    zIndex: 100000, // should match the z-index in ModalTrigger
-    ...position.position,
-    maxHeight: position.maxHeight,
+    onClose: onClose && close
   });
 
   return {
     overlayProps: {
       style: {
-        position: "absolute",
+        position: 'absolute',
         zIndex: 100000, // should match the z-index in ModalTrigger
         ...position.position,
-        maxHeight: position.maxHeight,
-      },
+        maxHeight: position.maxHeight
+      }
     },
     placement: position.placement,
     arrowProps: {
       style: {
         left: position.arrowOffsetLeft,
-        top: position.arrowOffsetTop,
-      },
+        top: position.arrowOffsetTop
+      }
     },
-    updatePosition,
+    updatePosition
   };
 }
 
 function useResize(onResize) {
   useLayoutEffect(() => {
-    window.addEventListener("resize", onResize, false);
+    window.addEventListener('resize', onResize, false);
     return () => {
-      window.removeEventListener("resize", onResize, false);
+      window.removeEventListener('resize', onResize, false);
     };
   }, [onResize]);
 }
 
 function translateRTL(position, direction) {
-  if (direction === "rtl") {
-    return position.replace("start", "right").replace("end", "left");
+  if (direction === 'rtl') {
+    return position.replace('start', 'right').replace('end', 'left');
   }
-  return position.replace("start", "left").replace("end", "right");
+  return position.replace('start', 'left').replace('end', 'right');
 }
