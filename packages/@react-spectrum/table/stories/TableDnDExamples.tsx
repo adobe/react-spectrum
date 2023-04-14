@@ -2,13 +2,13 @@
 import {action} from '@storybook/addon-actions';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {chain} from '@react-aria/utils';
+import {EmptyState} from './Table.stories';
 import {Flex} from '@react-spectrum/layout';
 import {ItemDropTarget} from '@react-types/shared';
 import React from 'react';
 import {Text} from '@react-spectrum/text';
 import {useDragAndDrop} from '@react-spectrum/dnd';
 import {useListData} from '@react-stately/data';
-import {EmptyState} from "./Table.stories";
 
 let onSelectionChange = action('onSelectionChange');
 
