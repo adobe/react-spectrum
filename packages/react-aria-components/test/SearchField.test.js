@@ -13,7 +13,6 @@
 import {Button, Input, Label, SearchField, SearchFieldContext, Text} from '../';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils';
-import userEvent from '@testing-library/user-event';
 
 let TestSearchField = (props) => (
   <SearchField defaultValue="test" data-foo="bar" {...props}>
@@ -61,22 +60,19 @@ describe('SearchField', () => {
   it('should support render props', () => {
     let {getByRole} = render(
       <SearchField defaultValue="test">
-        {({setValue}) => (
+        {({value}) => (
           <>
             <Label>Test</Label>
             <Input />
             <Button>x</Button>
-            <button onClick={() => setValue('preload')}>Preload</button>
+            <Text slot="description">You are looking for "{value}"</Text>
           </>
         )}
       </SearchField>
     );
 
     let searchbox = getByRole('searchbox');
-    expect(searchbox).toHaveValue('test');
-
-    let preload = getByRole('button', {name: 'Preload'});
-    userEvent.click(preload);
-    expect(searchbox).toHaveValue('preload');
+    let description = document.getElementById(searchbox.getAttribute('aria-describedby'));
+    expect(description).toHaveTextContent('You are looking for "test"');
   });
 });
