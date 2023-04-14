@@ -15,7 +15,7 @@ import {ActionButton, Button} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
 import {Breadcrumbs, Item} from '@react-spectrum/breadcrumbs';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
-import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableSection, TableView} from '../';
+import {Cell, Column, Row, SpectrumTableProps, TableBody, TableBodyProps, TableHeader, TableSection, TableView} from '../';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {ControllingResize, PokemonColumn} from './ControllingResize';
@@ -116,6 +116,10 @@ export default {
     },
     disallowEmptySelection: {
       control: 'boolean'
+    },
+    loadingState: {
+      control: 'select',
+      options: ['idle', 'filtering', 'loading', 'loadingMore']
     }
   }
 } as ComponentMeta<typeof TableView>;
@@ -128,14 +132,14 @@ export const Static = {
     width: 300,
     height: 200
   },
-  render: (args) => (
+  render: ({loadingState, ...args}) => (
     <TableView {...args}>
       <TableHeader>
         <Column key="foo">Foo</Column>
         <Column key="bar">Bar</Column>
         <Column key="baz">Baz</Column>
       </TableHeader>
-      <TableBody>
+      <TableBody loadingState={loadingState}>
         <Row>
           <Cell>One</Cell>
           <Cell>Two</Cell>
@@ -158,14 +162,14 @@ export const StaticWithSections: TableStory = {
     width: 300,
     height: 200
   },
-  render: (args) => (
+  render: ({loadingState, ...args}: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <TableView {...args}>
       <TableHeader>
         <Column key="foo">Foo</Column>
         <Column key="bar">Bar</Column>
         <Column key="baz">Baz</Column>
       </TableHeader>
-      <TableBody>
+      <TableBody loadingState={loadingState}>
         <TableSection title="Section1">
           <Row>
             <Cell>One</Cell>
@@ -197,12 +201,12 @@ export const StaticWithMixed: TableStory = {
     width: 300,
     height: 200
   },
-  render: (args) => (
+  render: ({loadingState, ...args}: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <TableView {...args}>
       <TableHeader>
         <Column key="foo">Foo</Column>
       </TableHeader>
-      <TableBody>
+      <TableBody loadingState={loadingState}>
         <Row>
           <Cell>A</Cell>
         </Row>
@@ -294,12 +298,12 @@ export const Dynamic: TableStory = {
     width: 300,
     height: 200
   },
-  render: (args) => (
+  render: ({loadingState, ...args}: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <TableView {...args}>
       <TableHeader columns={columns}>
         {column => <Column>{column.name}</Column>}
       </TableHeader>
-      <TableBody items={items}>
+      <TableBody items={items} loadingState={loadingState}>
         {item =>
           (<Row key={item.foo}>
             {key => <Cell>{item[key]}</Cell>}
@@ -317,12 +321,12 @@ export const DynamicSections: TableStory = {
     width: 300,
     height: 200
   },
-  render: (args) => (
+  render: ({loadingState, ...args}: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <TableView {...args}>
       <TableHeader columns={columnsWithSections}>
         {column => <Column>{column.name}</Column>}
       </TableHeader>
-      <TableBody items={itemsWithSections}>
+      <TableBody items={itemsWithSections} loadingState={loadingState}>
         {item => (
           <TableSection key={item.id} items={item.children} title={item.title}>
             {item =>
@@ -349,12 +353,12 @@ export const DynamicFalsyRowKeys: TableStory = {
     width: 300,
     height: 200
   },
-  render: (args) => (
+  render: ({loadingState, ...args}: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <TableView {...args}>
       <TableHeader columns={columns}>
         {column => <Column>{column.name}</Column>}
       </TableHeader>
-      <TableBody items={itemsWithFalsyId}>
+      <TableBody items={itemsWithFalsyId} loadingState={loadingState}>
         {item =>
           (<Row>
             {key => <Cell>{item[key]}</Cell>}
@@ -372,12 +376,12 @@ export const HorizontalScrollingOnly: TableStory = {
     width: 200,
     height: 220
   },
-  render: (args) => (
+  render: ({loadingState, ...args}: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <TableView {...args}>
       <TableHeader columns={columns}>
         {column => <Column>{column.name}</Column>}
       </TableHeader>
-      <TableBody items={items.slice(0, 3)}>
+      <TableBody items={items.slice(0, 3)} loadingState={loadingState}>
         {item =>
           (<Row key={item.foo}>
             {key => <Cell>{item[key]}</Cell>}
@@ -395,12 +399,12 @@ export const HorizontalScrollingOnlyFlushBottom: TableStory = {
     width: 200,
     height: 174
   },
-  render: (args) => (
+  render: ({loadingState, ...args}: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <TableView {...args}>
       <TableHeader columns={columns}>
         {column => <Column>{column.name}</Column>}
       </TableHeader>
-      <TableBody items={items.slice(0, 3)}>
+      <TableBody items={items.slice(0, 3)} loadingState={loadingState}>
         {item =>
           (<Row key={item.foo}>
             {key => <Cell>{item[key]}</Cell>}
@@ -427,12 +431,12 @@ export const DynamicShowDividers: TableStory = {
     width: 300,
     height: 200
   },
-  render: (args) => (
+  render: ({loadingState, ...args}: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <TableView {...args}>
       <TableHeader columns={columns}>
         {column => <Column showDivider>{column.name}</Column>}
       </TableHeader>
-      <TableBody items={items}>
+      <TableBody items={items} loadingState={loadingState}>
         {item =>
           (<Row key={item.foo}>
             {key => <Cell>{item[key]}</Cell>}
@@ -465,7 +469,7 @@ export const StaticNestedColumns: TableStory = {
     width: 500,
     height: 200
   },
-  render: (args) => (
+  render: ({loadingState, ...args}: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <TableView {...args}>
       <TableHeader>
         <Column key="test">Test</Column>
@@ -477,7 +481,7 @@ export const StaticNestedColumns: TableStory = {
           <Column key="baz">Baz</Column>
         </Column>
       </TableHeader>
-      <TableBody>
+      <TableBody loadingState={loadingState}>
         <Row>
           <Cell>Test1</Cell>
           <Cell>One</Cell>
@@ -516,14 +520,14 @@ export const DynamicNestedColumns: TableStory = {
     width: 700,
     height: 300
   },
-  render: (args) => (
+  render: ({loadingState, ...args}: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <TableView {...args}>
       <TableHeader columns={nestedColumns}>
         {column =>
           <Column childColumns={column.children}>{column.name}</Column>
         }
       </TableHeader>
-      <TableBody items={items}>
+      <TableBody items={items} loadingState={loadingState}>
         {item =>
           (<Row key={item.foo}>
             {key => <Cell>{item[key]}</Cell>}
@@ -541,14 +545,14 @@ export const DynamicNestedColumnsWithResizing: TableStory = {
     width: 700,
     height: 300
   },
-  render: (args) => (
+  render: ({loadingState, ...args}: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <TableView {...args}>
       <TableHeader columns={nestedColumns}>
         {column =>
           <Column allowsResizing childColumns={column.children}>{column.name}</Column>
         }
       </TableHeader>
-      <TableBody items={items}>
+      <TableBody items={items} loadingState={loadingState}>
         {item =>
           (<Row key={item.foo}>
             {key => <Cell>{item[key]}</Cell>}
@@ -566,7 +570,7 @@ export const FocusableCells: TableStory = {
     width: 450,
     height: 200
   },
-  render: (args) => (
+  render: ({loadingState, ...args}: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <Flex direction="column">
       <label htmlFor="focus-before">Focus before</label>
       <input id="focus-before" />
@@ -576,7 +580,7 @@ export const FocusableCells: TableStory = {
           <Column key="bar">Bar</Column>
           <Column key="baz">baz</Column>
         </TableHeader>
-        <TableBody>
+        <TableBody loadingState={loadingState}>
           <Row>
             <Cell><Switch aria-label="Foo" /></Cell>
             <Cell><Link><a href="https://yahoo.com" target="_blank">Yahoo</a></Link></Cell>
@@ -636,7 +640,7 @@ export const ManyColumnsAndRows: TableStory = {
     width: 700,
     height: 500
   },
-  render: (args) => (
+  render: ({loadingState, ...args}: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <>
       <label htmlFor="focus-before">Focus before</label>
       <input id="focus-before" />
@@ -646,7 +650,7 @@ export const ManyColumnsAndRows: TableStory = {
             <Column minWidth={100}>{column.name}</Column>
           }
         </TableHeader>
-        <TableBody items={manyRows}>
+        <TableBody items={manyRows} loadingState={loadingState}>
           {item =>
             (<Row key={item.key}>
               {key => <Cell>{item[key]}</Cell>}
@@ -667,7 +671,7 @@ export const ManySections: TableStory = {
     width: 700,
     height: 500
   },
-  render: (args) => (
+  render: ({loadingState, ...args}: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <>
       <label htmlFor="focus-before">Focus before</label>
       <input data-testid="before" id="focus-before" />
@@ -677,7 +681,7 @@ export const ManySections: TableStory = {
             <Column minWidth={100}>{column.name}</Column>
           }
         </TableHeader>
-        <TableBody items={manySections}>
+        <TableBody items={manySections} loadingState={loadingState}>
           {item => (
             <TableSection key={item.name} items={item.children} title={item.name}>
               {(item: any) =>
@@ -827,14 +831,14 @@ export const ColumnWidthsAndDividers: TableStory = {
     width: 500,
     height: 200
   },
-  render: (args) => (
+  render: ({loadingState, ...args}: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <TableView {...args}>
       <TableHeader>
         <Column width={250} showDivider>File Name</Column>
         <Column>Type</Column>
         <Column align="end">Size</Column>
       </TableHeader>
-      <TableBody>
+      <TableBody loadingState={loadingState}>
         <Row>
           <Cell>2018 Proposal</Cell>
           <Cell>PDF</Cell>
@@ -858,14 +862,14 @@ export const CellWithLongContent: TableStory = {
     width: 500,
     height: 300
   },
-  render: (args) => (
+  render: ({loadingState, ...args}: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <TableView {...args}>
       <TableHeader>
         <Column width={250} showDivider>File Name</Column>
         <Column>Type</Column>
         <Column align="end">Size</Column>
       </TableHeader>
-      <TableBody>
+      <TableBody loadingState={loadingState}>
         <Row>
           <Cell>2018 Proposal with very very very very very very long long long long long filename</Cell>
           <Cell>PDF</Cell>
@@ -893,14 +897,14 @@ export const CustomRowHeaderLabeling: TableStory = {
     width: 500,
     height: 200
   },
-  render: (args) => (
+  render: ({loadingState, ...args}: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <TableView {...args}>
       <TableHeader>
         <Column isRowHeader>First Name</Column>
         <Column isRowHeader>Last Name</Column>
         <Column>Birthday</Column>
       </TableHeader>
-      <TableBody>
+      <TableBody loadingState={loadingState}>
         <Row>
           <Cell>Sam</Cell>
           <Cell>Smith</Cell>
@@ -990,14 +994,14 @@ export const IsLoading: TableStory = {
     width: 700,
     height: 200
   },
-  render: (args) => (
+  render: ({loadingState, ...args}: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <TableView {...args}>
       <TableHeader columns={manyColunns}>
         {column =>
           <Column minWidth={100}>{column.name}</Column>
         }
       </TableHeader>
-      <TableBody items={[]} loadingState="loading">
+      <TableBody items={[]} loadingState={loadingState}>
         {item =>
           (<Row key={item.foo}>
             {key => <Cell>{item[key]}</Cell>}
@@ -1009,55 +1013,6 @@ export const IsLoading: TableStory = {
   storyName: 'isLoading'
 };
 
-export const IsLoadingMore: TableStory = {
-  args: {
-    'aria-label': 'TableView loading more',
-    width: 700,
-    height: 200
-  },
-  render: (args) => (
-    <TableView {...args}>
-      <TableHeader columns={manyColunns}>
-        {column =>
-          <Column minWidth={100}>{column.name}</Column>
-        }
-      </TableHeader>
-      <TableBody items={[]} loadingState="loadingMore">
-        {item =>
-          (<Row key={item.foo}>
-            {key => <Cell>{item[key]}</Cell>}
-          </Row>)
-        }
-      </TableBody>
-    </TableView>
-  ),
-  storyName: 'isLoading more'
-};
-
-export const Filtering: TableStory = {
-  args: {
-    'aria-label': 'TableView filtering',
-    width: 700,
-    height: 200
-  },
-  render: (args) => (
-    <TableView {...args}>
-      <TableHeader columns={columns}>
-        {column =>
-          <Column minWidth={100}>{column.name}</Column>
-        }
-      </TableHeader>
-      <TableBody items={items} loadingState="filtering">
-        {item =>
-          (<Row key={item.foo}>
-            {key => <Cell>{item[key]}</Cell>}
-          </Row>)
-        }
-      </TableBody>
-    </TableView>
-  ),
-  storyName: 'filtering'
-};
 
 function renderEmptyState() {
   return (
@@ -1071,7 +1026,7 @@ function renderEmptyState() {
   );
 }
 
-function EmptyStateTable(props) {
+function EmptyStateTable({loadingState = 'idle', ...props}) {
   let [show, setShow] = useState(false);
   let [sortDescriptor, setSortDescriptor] = useState({});
   return (
@@ -1083,7 +1038,7 @@ function EmptyStateTable(props) {
             <Column allowsResizing allowsSorting minWidth={100}>{column.name}</Column>
           }
         </TableHeader>
-        <TableBody items={show ? manyRows : []}>
+        <TableBody items={show ? manyRows : []} loadingState={loadingState}>
           {item =>
             (<Row key={item.foo}>
               {key => <Cell>{item[key]}</Cell>}
@@ -1179,7 +1134,7 @@ export const HideHeader: TableStory = {
     width: 350,
     height: 200
   },
-  render: (args) => (
+  render: ({loadingState, ...args}: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <TableView {...args}>
       <TableHeader>
         <Column key="foo">
@@ -1194,7 +1149,7 @@ export const HideHeader: TableStory = {
         <Column key="bar">Bar</Column>
         <Column key="baz">Baz</Column>
       </TableHeader>
-      <TableBody>
+      <TableBody loadingState={loadingState}>
         <Row>
           <Cell>One</Cell>
           <Cell>
@@ -1504,14 +1459,14 @@ export const WithDialogTrigger: TableStory = {
     width: 300,
     height: 200
   },
-  render: (args) => (
+  render: ({loadingState, ...args}: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <TableView {...args}>
       <TableHeader>
         <Column key="foo">Foo</Column>
         <Column key="bar">Bar</Column>
         <Column key="baz">Baz</Column>
       </TableHeader>
-      <TableBody>
+      <TableBody loadingState={loadingState}>
         <Row>
           <Cell>One</Cell>
           <Cell>Two</Cell>
@@ -1626,7 +1581,7 @@ export const ResizingUncontrolledDynamicWidths: TableStory = {
     width: 800,
     height: 200
   },
-  render: (args) => (
+  render: ({loadingState, ...args}: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <>
       <label htmlFor="focusable-before">Focusable before</label>
       <input id="focusable-before" />
@@ -1637,7 +1592,7 @@ export const ResizingUncontrolledDynamicWidths: TableStory = {
           <Column allowsResizing defaultWidth="2fr">Size</Column>
           <Column allowsResizing defaultWidth="1fr">Weight</Column>
         </TableHeader>
-        <TableBody>
+        <TableBody loadingState={loadingState}>
           <Row>
             <Cell>2018 Proposal</Cell>
             <Cell>PDF</Cell>
@@ -1665,14 +1620,14 @@ export const ResizingUncontrolledStaticWidths: TableStory = {
     width: 800,
     height: 200
   },
-  render: (args) => (
+  render: ({loadingState, ...args}: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <TableView {...args}>
       <TableHeader>
         <Column allowsResizing defaultWidth="50%">File Name</Column>
         <Column allowsResizing defaultWidth="20%">Type</Column>
         <Column allowsResizing defaultWidth={239}>Size</Column>
       </TableHeader>
-      <TableBody>
+      <TableBody loadingState={loadingState}>
         <Row>
           <Cell>2018 Proposal</Cell>
           <Cell>PDF</Cell>
@@ -1695,14 +1650,14 @@ export const ResizingUncontrolledColumnDivider: TableStory = {
     width: 800,
     height: 200
   },
-  render: (args) => (
+  render: ({loadingState, ...args}: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <TableView {...args}>
       <TableHeader>
         <Column allowsResizing showDivider>File Name</Column>
         <Column allowsResizing defaultWidth="3fr">Type</Column>
         <Column allowsResizing>Size</Column>
       </TableHeader>
-      <TableBody>
+      <TableBody loadingState={loadingState}>
         <Row>
           <Cell>2018 Proposal</Cell>
           <Cell>PDF</Cell>
@@ -1725,14 +1680,14 @@ export const ResizingUncontrolledMinMax: TableStory = {
     width: 800,
     height: 200
   },
-  render: (args) => (
+  render: ({loadingState, ...args}: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <TableView {...args}>
       <TableHeader>
         <Column allowsResizing defaultWidth={200} minWidth={175} maxWidth={300}>File Name</Column>
         <Column allowsResizing defaultWidth="1fr" minWidth={175} maxWidth={500}>Size</Column>
         <Column allowsResizing defaultWidth={200} minWidth={175} maxWidth={300}>Type</Column>
       </TableHeader>
-      <TableBody>
+      <TableBody loadingState={loadingState}>
         <Row>
           <Cell>2018 Proposal</Cell>
           <Cell>PDF</Cell>
@@ -1755,7 +1710,7 @@ export const ResizingUncontrolledSomeNotAllowed: TableStory = {
     width: 800,
     height: 200
   },
-  render: (args) => (
+  render: ({loadingState, ...args}: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <TableView {...args}>
       <TableHeader>
         <Column allowsResizing >File Name</Column>
@@ -1763,7 +1718,7 @@ export const ResizingUncontrolledSomeNotAllowed: TableStory = {
         <Column defaultWidth="2fr">Size</Column>
         <Column allowsResizing defaultWidth="2fr">Weight</Column>
       </TableHeader>
-      <TableBody>
+      <TableBody loadingState={loadingState}>
         <Row>
           <Cell>2018 Proposal</Cell>
           <Cell>PDF</Cell>
@@ -1786,7 +1741,7 @@ export const ResizingUncontrolledNoHeightWidth: TableStory = {
   args: {
     'aria-label': 'TableView with resizable columns and no width or height set'
   },
-  render: (args) => (
+  render: ({loadingState, ...args}: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <TableView {...args}>
       <TableHeader>
         <Column allowsResizing defaultWidth={150}>File Name</Column>
@@ -1794,7 +1749,7 @@ export const ResizingUncontrolledNoHeightWidth: TableStory = {
         <Column allowsResizing defaultWidth={100}>Size</Column>
         <Column allowsResizing defaultWidth={100}>Weight</Column>
       </TableHeader>
-      <TableBody>
+      <TableBody loadingState={loadingState}>
         <Row>
           <Cell>2018 Proposal</Cell>
           <Cell>PDF</Cell>
@@ -1828,7 +1783,7 @@ export const ResizingManyColumnsRows: TableStory = {
     width: 700,
     height: 500
   },
-  render: (args) => (
+  render: ({loadingState, ...args}: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <>
       <label htmlFor="focusable-before">Focusable before</label>
       <input id="focusable-before" />
@@ -1838,7 +1793,7 @@ export const ResizingManyColumnsRows: TableStory = {
             <Column allowsResizing minWidth={100}>{column.name}</Column>
           }
         </TableHeader>
-        <TableBody items={manyRows}>
+        <TableBody items={manyRows} loadingState={loadingState}>
           {item =>
             (<Row key={item.foo}>
               {key => <Cell>{item[key]}</Cell>}
@@ -1901,7 +1856,7 @@ function ZoomResizing(props) {
 }
 
 export const ResizingZoom: TableStory = {
-  render: (args) => (
+  render: (args: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <div style={{position: 'absolute', height: 'calc(100vh-32px)', width: 'calc(100vw - 32px)'}}>
       <ZoomResizing {...args} />
     </div>
@@ -1937,7 +1892,7 @@ let columnsSomeFR: PokemonColumn[] = [
 ];
 
 export const ResizingControlledSomeInitialWidths: TableStory = {
-  render: (args) => (
+  render: (args: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <ControllingResize {...args} width={900} columns={columnsSomeFR} />
   ),
   storyName: 'allowsResizing, controlled, some widths',
@@ -1957,7 +1912,7 @@ let columnsFR: PokemonColumn[] = [
 ];
 
 export const ResizingControlledAllInitialWidths: TableStory = {
-  render: (args) => (
+  render: (args: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <ControllingResize {...args} width={900} columns={columnsFR} />
   ),
   storyName: 'allowsResizing, controlled, all widths',
@@ -1976,7 +1931,7 @@ let columnsFRHideHeaders: PokemonColumn[] = [
 ];
 
 export const ResizingControlledHideHeader: TableStory = {
-  render: (args) => (
+  render: (args: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <ControllingResize {...args} width={900} columns={columnsFRHideHeaders} />
   ),
   storyName: 'allowsResizing, controlled, hideHeader',
@@ -1996,7 +1951,7 @@ let typeAheadRows = [
   {id: 101, firstname: 'John', lastname: 'Doe', birthday: 'May 7'}
 ];
 export const TypeaheadWithDialog: TableStory = {
-  render: (args) => (
+  render: ({loadingState, ...args}: SpectrumTableProps<object> & TableBodyProps<object>) => (
     <div style={{height: '90vh'}}>
       <TableView aria-label="Table" selectionMode="none" height="100%" {...args}>
         <TableHeader columns={typeAheadColumns}>
@@ -2004,7 +1959,7 @@ export const TypeaheadWithDialog: TableStory = {
             <Column key={col.id} isRowHeader={col.isRowHeader}>{col.name}</Column>
           )}
         </TableHeader>
-        <TableBody items={typeAheadRows}>
+        <TableBody items={typeAheadRows} loadingState={loadingState}>
           {(item) => (
             <Row key={item.id}>
               {(key) =>
