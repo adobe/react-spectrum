@@ -297,14 +297,15 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
         return newItems;
       });
 
-      let selection = new Set(selectedKeys);
-      for (let key of selectedKeys) {
-        if (!map.has(key)) {
-          selection.delete(key);
+      setSelectedKeys(selectedKeys => {
+        let selection = new Set(selectedKeys);
+        for (let key of selectedKeys) {
+          if (!map.has(key)) {
+            selection.delete(key);
+          }
         }
-      }
-
-      setSelectedKeys(selection);
+        return selection;
+      });
     },
     removeSelectedItems() {
       this.remove(...selectedKeys);
