@@ -979,9 +979,11 @@ describe('MenuTrigger', function () {
     });
 
     describe('unavailable item', function () {
-      let renderTree = () => {
+      let renderTree = (options = {}) => {
+        let {providerProps = {}} = options;
+        let {locale = 'en-US'} = providerProps;
         tree = render(
-          <Provider theme={theme}>
+          <Provider theme={theme} locale={locale}>
             <MenuTrigger>
               <ActionButton>Menu</ActionButton>
               <Menu onAction={action('onAction')}>
@@ -1131,6 +1133,23 @@ describe('MenuTrigger', function () {
         expect(dialog).not.toBeInTheDocument();
 
         expect(document.activeElement).toBe(screen.getByRole('button'));
+      });
+
+      it('will close everything if the user shift tabs out of the subdialog', function () {
+        renderTree({providerProps: {locale: 'ar-AE'}});
+        let menu = openMenu();
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+        let unavailableItem = within(menu).getAllByRole('menuitem')[1];
+        expect(document.activeElement).toBe(unavailableItem);
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft'});
+
+        let dialog = tree.getByRole('dialog');
+        expect(dialog).toBeVisible();
       });
     });
   });

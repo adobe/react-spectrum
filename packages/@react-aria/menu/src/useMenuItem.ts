@@ -18,6 +18,7 @@ import {Key, RefObject, useCallback, useRef} from 'react';
 import {menuData} from './useMenu';
 import {mergeProps, useEffectEvent, useLayoutEffect, useSlotId} from '@react-aria/utils';
 import {TreeState} from '@react-stately/tree';
+import {useLocale} from '@react-aria/i18n';
 import {useSelectableItem} from '@react-aria/selection';
 
 export interface MenuItemAria {
@@ -100,6 +101,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     isVirtualized,
     'aria-haspopup': hasPopup
   } = props;
+  let {direction} = useLocale();
 
   let isMenuDialogTrigger = state.collection.getItem(key).hasChildNodes;
   let isOpen = state.expandedKeys.has(key);
@@ -131,7 +133,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let onActionMenuDialogTrigger = useCallback(() => {
     onSubmenuOpen();
     // will need to disable this lint rule when using useEffectEvent https://react.dev/learn/separating-events-from-effects#logic-inside-effects-is-reactive
-    // eslinte-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   let onAction = isMenuDialogTrigger ? onActionMenuDialogTrigger : props.onAction || data.onAction;
 
@@ -250,8 +252,17 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
           }
           break;
         case 'ArrowRight':
-          if (isMenuDialogTrigger) {
+          if (isMenuDialogTrigger && direction === 'ltr') {
             onSubmenuOpen();
+          } else {
+            e.continuePropagation();
+          }
+          break;
+        case 'ArrowLeft':
+          if (isMenuDialogTrigger && direction === 'rtl') {
+            onSubmenuOpen();
+          } else {
+            e.continuePropagation();
           }
           break;
         default:
