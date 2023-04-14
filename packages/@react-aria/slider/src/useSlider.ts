@@ -11,7 +11,7 @@
  */
 
 import {AriaSliderProps} from '@react-types/slider';
-import {clamp, mergeProps, useGlobalListeners, useLayoutEffect} from '@react-aria/utils';
+import {clamp, mergeProps, useEffectEvent, useGlobalListeners} from '@react-aria/utils';
 import {DOMAttributes} from '@react-types/shared';
 import {getSliderThumbId, sliderIds} from './utils';
 import React, {LabelHTMLAttributes, OutputHTMLAttributes, RefObject, useRef} from 'react';
@@ -61,47 +61,47 @@ export function useSlider<T extends number | number[]>(
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
   // When the user clicks or drags the track, we want the motion to set and drag the
-  // closest thumb.  Hence we also need to install useMove() on the track element.
+  // closest thumb. Hence, we also need to install useMove() on the track element.
   // Here, we keep track of which index is the "closest" to the drag start point.
   // It is set onMouseDown/onTouchDown; see trackProps below.
   const realTimeTrackDraggingIndex = useRef<number | null>(null);
 
-  const stateRef = useRef<SliderState>(null);
-  useLayoutEffect(() => {
-    stateRef.current = state;
-  });
+
   const reverseX = direction === 'rtl';
   const currentPosition = useRef<number>(null);
-  const {moveProps} = useMove({
-    onMoveStart() {
-      currentPosition.current = null;
-    },
-    onMove({deltaX, deltaY}) {
-      let {height, width} = trackRef.current.getBoundingClientRect();
-      let size = isVertical ? height : width;
+  let onMoveStart = useEffectEvent(() => {
+    currentPosition.current = null;
+  });
+  let onMove = useEffectEvent(({deltaX, deltaY}) => {
+    let {height, width} = trackRef.current.getBoundingClientRect();
+    let size = isVertical ? height : width;
 
-      if (currentPosition.current == null) {
-        currentPosition.current = stateRef.current.getThumbPercent(realTimeTrackDraggingIndex.current) * size;
-      }
-
-      let delta = isVertical ? deltaY : deltaX;
-      if (isVertical || reverseX) {
-        delta = -delta;
-      }
-
-      currentPosition.current += delta;
-
-      if (realTimeTrackDraggingIndex.current != null && trackRef.current) {
-        const percent = clamp(currentPosition.current / size, 0, 1);
-        stateRef.current.setThumbPercent(realTimeTrackDraggingIndex.current, percent);
-      }
-    },
-    onMoveEnd() {
-      if (realTimeTrackDraggingIndex.current != null) {
-        stateRef.current.setThumbDragging(realTimeTrackDraggingIndex.current, false);
-        realTimeTrackDraggingIndex.current = null;
-      }
+    if (currentPosition.current == null) {
+      currentPosition.current = state.getThumbPercent(realTimeTrackDraggingIndex.current) * size;
     }
+
+    let delta = isVertical ? deltaY : deltaX;
+    if (isVertical || reverseX) {
+      delta = -delta;
+    }
+
+    currentPosition.current += delta;
+
+    if (realTimeTrackDraggingIndex.current != null && trackRef.current) {
+      const percent = clamp(currentPosition.current / size, 0, 1);
+      state.setThumbPercent(realTimeTrackDraggingIndex.current, percent);
+    }
+  });
+  let onMoveEnd = useEffectEvent(() => {
+    if (realTimeTrackDraggingIndex.current != null) {
+      state.setThumbDragging(realTimeTrackDraggingIndex.current, false);
+      realTimeTrackDraggingIndex.current = null;
+    }
+  });
+  const {moveProps} = useMove({
+    onMoveStart,
+    onMove,
+    onMoveEnd
   });
 
   let currentPointer = useRef<number | null | undefined>(undefined);

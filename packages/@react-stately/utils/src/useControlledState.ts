@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {useCallback, useEffect, useRef, useState} from 'react';
+import {useCallback, useRef, useState} from 'react';
 
 export function useControlledState<T>(
   value: T,
@@ -18,33 +18,30 @@ export function useControlledState<T>(
   onChange: (value: T, ...args: any[]) => void
 ): [T, (value: T, ...args: any[]) => void]  {
   let [stateValue, setStateValue] = useState(value || defaultValue);
+  let ref = useRef(value !== undefined);
+  let wasControlled = ref.current;
   let isControlled = value !== undefined;
   // Internal state reference for useCallback
   let stateRef = useRef(stateValue);
+  if (wasControlled !== isControlled) {
+    console.warn(`WARN: A component changed from ${wasControlled ? 'controlled' : 'uncontrolled'} to ${isControlled ? 'controlled' : 'uncontrolled'}.`);
+  }
 
-  // detect if a component is switching from controlled to uncontrolled or vice versa, warn if so
-  let isControlledRef = useRef(isControlled);
-  useEffect(() => {
-    let wasControlled = isControlledRef.current;
-    if (isControlled !== wasControlled) {
-      console.warn(`WARN: A component changed from ${wasControlled ? 'controlled' : 'uncontrolled'} to ${isControlled ? 'controlled' : 'uncontrolled'}.`);
-    }
-    isControlledRef.current = isControlled;
-  }, [value, isControlled]);
+  ref.current = isControlled;
 
-  let setValue = useCallback((newValue, ...args) => {
-    let onChangeCaller = (updateValue, ...onChangeArgs) => {
+  let setValue = useCallback((value, ...args) => {
+    let onChangeCaller = (value, ...onChangeArgs) => {
       if (onChange) {
-        if (!Object.is(stateRef.current, updateValue)) {
-          onChange(updateValue, ...onChangeArgs);
+        if (!Object.is(stateRef.current, value)) {
+          onChange(value, ...onChangeArgs);
         }
       }
       if (!isControlled) {
-        stateRef.current = updateValue;
+        stateRef.current = value;
       }
     };
 
-    if (typeof newValue === 'function') {
+    if (typeof value === 'function') {
       console.warn('We can not support a function callback. See Github Issues for details https://github.com/adobe/react-spectrum/issues/2320');
       // this supports functional updates https://reactjs.org/docs/hooks-reference.html#functional-updates
       // when someone using useControlledState calls setControlledState(myFunc)
@@ -52,7 +49,7 @@ export function useControlledState<T>(
       // if we're in an uncontrolled state, then we also return the value of myFunc which to setState looks as though it was just called with myFunc from the beginning
       // otherwise we just return the controlled value, which won't cause a rerender because React knows to bail out when the value is the same
       let updateFunction = (oldValue, ...functionArgs) => {
-        let interceptedValue = newValue(isControlled ? stateRef.current : oldValue, ...functionArgs);
+        let interceptedValue = value(isControlled ? stateRef.current : oldValue, ...functionArgs);
         onChangeCaller(interceptedValue, ...args);
         if (!isControlled) {
           return interceptedValue;
@@ -62,19 +59,16 @@ export function useControlledState<T>(
       setStateValue(updateFunction);
     } else {
       if (!isControlled) {
-        setStateValue(newValue);
+        setStateValue(value);
       }
-      onChangeCaller(newValue, ...args);
+      onChangeCaller(value, ...args);
     }
   }, [isControlled, onChange]);
 
-  useEffect(() => {
-    // If a controlled component's value prop changes, we need to update stateRef
-    if (isControlled) {
-      stateRef.current = value;
-    }
-  });
-  if (!isControlled) {
+  // If a controlled component's value prop changes, we need to update stateRef
+  if (isControlled) {
+    stateRef.current = value;
+  } else {
     value = stateValue;
   }
 
