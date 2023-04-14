@@ -730,6 +730,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
                 )
               )
             }
+            tabIndex={collection.size === 0 ? -1 : undefined}
             style={{flex: 1}}
             innerStyle={{overflow: 'visible', transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined}}
             ref={bodyRef}
@@ -1115,7 +1116,7 @@ function TableDragHeaderCell({column}) {
       <div
         {...columnHeaderProps}
         ref={ref}
-        className={ 
+        className={
           classNames(
             styles,
             'spectrum-Table-headCell',
