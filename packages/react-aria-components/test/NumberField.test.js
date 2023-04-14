@@ -102,26 +102,22 @@ describe('NumberField', () => {
 
   it('should support render props', () => {
     let {getByRole} = render(
-      <NumberField defaultValue={1024} minValue={0}>
-        {({decrementToMin}) => (
+      <NumberField defaultValue={1024} minValue={300} maxValue={1400}>
+        {({minValue, maxValue}) => (
           <>
-            <Label>Width</Label>
+            <Label>Width (min: {minValue}, max: {maxValue})</Label>
             <Group>
               <Button slot="decrement">-</Button>
               <Input />
               <Button slot="increment">+</Button>
             </Group>
-            <button onClick={() => decrementToMin()}>Minimum</button>
           </>
         )}
       </NumberField>
     );
 
     let input = getByRole('textbox');
-    expect(input).toHaveValue('1,024');
-
-    let minButton = getByRole('button', {name: 'Minimum'});
-    userEvent.click(minButton);
-    expect(input).toHaveValue('0');
+    let label = document.getElementById(input.getAttribute('aria-labelledby'));
+    expect(label).toHaveTextContent('Width (min: 300, max: 1400)');
   });
 });
