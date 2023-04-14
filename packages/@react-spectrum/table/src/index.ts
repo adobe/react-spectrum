@@ -14,7 +14,8 @@
 
 export {TableView} from './TableView';
 import {Column, TableSection} from '@react-stately/table';
-import {SpectrumColumnProps, SpectrumTableSectionProps} from '@react-types/table';
+import {SpectrumColumnProps} from '@react-types/table';
+import {SpectrumTableSectionProps} from './TableView';
 
 // Override TS for TableSection to require title prop.
 const SpectrumTableSection = TableSection as <T>(props: SpectrumTableSectionProps<T>) => JSX.Element;
@@ -31,6 +32,5 @@ export {
   Cell
 } from '@react-stately/table';
 
-// TODO: figure out why SpectrumTableProps was moved to TableView directly, perhaps we should do the same for SpectrumColumn and SpectrumTableSection props
-export type {SpectrumColumnProps, SpectrumTableSectionProps, TableHeaderProps, TableBodyProps, RowProps, CellProps} from '@react-types/table';
+export type {SpectrumColumnProps, TableHeaderProps, TableBodyProps, RowProps, CellProps} from '@react-types/table';
 export type {SpectrumTableProps} from './TableView';

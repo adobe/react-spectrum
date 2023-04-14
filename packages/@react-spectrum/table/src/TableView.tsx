@@ -23,7 +23,7 @@ import {
   useStyleProps,
   useUnwrapDOMRef
 } from '@react-spectrum/utils';
-import {ColumnSize, SpectrumColumnProps, TableProps} from '@react-types/table';
+import {ColumnSize, SpectrumColumnProps, TableProps, TableSectionProps} from '@react-types/table';
 import type {DragAndDropHooks} from '@react-spectrum/dnd';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
 import type {DraggableItemResult, DropIndicatorAria, DroppableCollectionResult, DroppableItemResult} from '@react-aria/dnd';
@@ -38,7 +38,7 @@ import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, Virtualize
 import ListGripper from '@spectrum-icons/ui/ListGripper';
 import {Nubbin} from './Nubbin';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {DOMAttributes, HTMLAttributes, Key, ReactElement, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {DOMAttributes, HTMLAttributes, Key, ReactElement, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
 import {Resizer} from './Resizer';
 import {RootDropIndicator} from './RootDropIndicator';
@@ -133,6 +133,11 @@ export function useVirtualizerContext() {
 const TableSectionContext = React.createContext(null);
 function useSectionContext() {
   return useContext(TableSectionContext);
+}
+
+export interface SpectrumTableSectionProps<T> extends Omit<TableSectionProps<T>, 'aria-label'> {
+  /** Rendered contents of the table section, e.g. a header. */
+  title: ReactNode
 }
 
 export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionProps, DOMProps, AriaLabelingProps, StyleProps {
@@ -324,7 +329,6 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     layout,
     onRowAction: onAction
   }, state, domRef);
-
   let [headerMenuOpen, setHeaderMenuOpen] = useState(false);
   let [headerRowHovered, setHeaderRowHovered] = useState(false);
 
@@ -332,7 +336,6 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   type View = ReusableView<GridNode<T>, unknown>;
   let renderWrapper = (parent: View, reusableView: View, children: View[], renderChildren: (views: View[]) => ReactElement[]) => {
     let style = layoutInfoToStyle(reusableView.layoutInfo, direction, parent && parent.layoutInfo);
-
     if (style.overflow === 'hidden') {
       style.overflow = 'visible'; // needed to support position: sticky
     }
@@ -558,7 +561,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     focusProps,
     dragAndDropHooks?.isVirtualDragging() && {tabIndex: null}
   );
-  // console.log('collection', state.collection, layout)
+
   return (
     <TableContext.Provider value={{state, dragState, dropState, dragAndDropHooks, isTableDraggable, isTableDroppable, layout, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, headerMenuOpen, setHeaderMenuOpen, shouldShowCheckboxes}}>
       <TableVirtualizer
@@ -1298,8 +1301,6 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
 
   let dropProps = isDroppable ? droppableItem?.dropProps : {'aria-hidden': droppableItem?.dropProps['aria-hidden']};
   let {visuallyHiddenProps} = useVisuallyHidden();
-
-  // TODO: fix the look of the inserton indicators when there are sections
   return (
     <TableRowContext.Provider value={{dragButtonProps, dragButtonRef, isFocusVisibleWithin}}>
       {isTableDroppable && isFirstDroppableRow &&

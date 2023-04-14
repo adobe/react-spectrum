@@ -41,8 +41,6 @@ export class GridCollection<T> implements IGridCollection<T> {
       }
 
       if (node.type === 'headerrow' || node.type === 'item' || node.type === 'section' || node.type === 'header') {
-        // TODO: perhaps only add some of these default props for node.type === 'item'. Previously this was done fo all items provided
-        // to the GridCollection...
         let defaultProps = {
           level: 0,
           key: 'row-' + i,
@@ -109,7 +107,6 @@ export class GridCollection<T> implements IGridCollection<T> {
 
       if (node.type === 'item' || node.type === 'headerrow' || node.type === 'header') {
         this.rows.push(node);
-        // TODO: get rid of rowIndex, just make aria-rowindex relative to immediate parent
         rowIndex++;
       }
     };

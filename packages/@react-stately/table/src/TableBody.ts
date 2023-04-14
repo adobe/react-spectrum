@@ -33,9 +33,9 @@ TableBody.getCollectionNode = function* getCollectionNode<T>(props: TableBodyPro
         for (let item of items) {
           let element = children(item);
           if (element.props?.title != null) {
-            // This yield is the partialNode in CollectionBuilder and is then compared to the full node generated from the TableSection collection element
+            // Note: This yield is the partialNode in CollectionBuilder and is then compared to the full node generated from the TableSection collection element
             // The type needs to match the type returned by the respective collection element, the renderer is the function provided to TableBody that will
-            // yield Section or Item, and value is the value propagated to the full node
+            // yield Section or Item, and value is propagated to the full node
             yield {
               type: 'section',
               value: item,

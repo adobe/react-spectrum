@@ -957,7 +957,7 @@ export function DragBetweenTablesSectionsComplex(props) {
         if (dropOperation === 'move') {
           // TODO: this breaks if moving an item(s) to positions immediately adjacent to itself, will
           // need to update useTreeData so it has something like move from useListData
-          // for now perhaps use useTreeData.move and do a move for each and calculate a new index everyti,e
+          // for now perhaps use useTreeData.move and do a move for each and calculate a new index everytime?
           list2.remove(...keys);
           list2.insertBefore(target.key, ...itemsToCopy);
         } else if (dropOperation === 'copy') {

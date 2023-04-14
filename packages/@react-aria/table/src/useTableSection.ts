@@ -38,8 +38,6 @@ export interface TableSectionAria {
  */
 export function useTableSection<T>(props: AriaTableSectionProps<T>, state: TableState<T>): TableSectionAria {
   let {node, isVirtualized} = props;
-  // TODO: may need to register this headerId in the weakmap if we need to also associate the first/last row in the section with the section
-  // prob map from section key to id?
   let headerId = useId();
   let rowIndex;
 

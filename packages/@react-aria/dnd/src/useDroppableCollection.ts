@@ -324,7 +324,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       }
 
       let {keyboardDelegate} = localState.props;
-      // TODO: debug here, this shouldn't be returning the section header as the keybelow
       let nextKey = target.type === 'item'
         ? keyboardDelegate.getKeyBelow(target.key)
         : keyboardDelegate.getFirstKey();

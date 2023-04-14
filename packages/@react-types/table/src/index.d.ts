@@ -103,6 +103,11 @@ export interface ColumnProps<T> {
   textValue?: string
 }
 
+export interface TableSectionProps<T> extends SectionProps<T> {
+  /** Rendered contents of the section or row child items. */
+  children: RowElement | RowElement[] | RowRenderer<T>
+}
+
 // TODO: how to support these in CollectionBuilder...
 export interface SpectrumColumnProps<T> extends ColumnProps<T> {
   /**
@@ -129,16 +134,6 @@ export interface TableBodyProps<T> extends Omit<AsyncLoadable, 'isLoading'> {
   items?: Iterable<T>,
   /** The current loading state of the table. */
   loadingState?: LoadingState
-}
-
-export interface TableSectionProps<T> extends SectionProps<T> {
-  /** Rendered contents of the section or row child items. */
-  children: RowElement | RowElement[] | RowRenderer<T>
-}
-
-export interface SpectrumTableSectionProps<T> extends Omit<TableSectionProps<T>, 'aria-label'> {
-  /** Rendered contents of the table section, e.g. a header. */
-  title: ReactNode
 }
 
 export interface RowProps {
