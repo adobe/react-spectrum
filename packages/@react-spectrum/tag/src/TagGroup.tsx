@@ -13,12 +13,12 @@
 import {ActionButton} from '@react-spectrum/button';
 import {AriaTagGroupProps, TagKeyboardDelegate, useTagGroup} from '@react-aria/tag';
 import {classNames, useDOMRef} from '@react-spectrum/utils';
-import {DOMRef, SpectrumHelpTextProps, SpectrumLabelableProps, StyleProps, Validation} from '@react-types/shared';
+import {DOMRef, SpectrumHelpTextProps, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
 import {FocusScope} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {ListCollection} from '@react-stately/list';
+import {ListCollection, useListState} from '@react-stately/list';
 import {Provider, useProviderProps} from '@react-spectrum/provider';
 import React, {ReactElement, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
@@ -26,9 +26,8 @@ import {Tag} from './Tag';
 import {useFormProps} from '@react-spectrum/form';
 import {useId, useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useTagGroupState} from '@react-stately/tag';
 
-export interface SpectrumTagGroupProps<T> extends AriaTagGroupProps<T>, StyleProps, SpectrumLabelableProps, Validation, Omit<SpectrumHelpTextProps, 'showErrorIcon'> {
+export interface SpectrumTagGroupProps<T> extends AriaTagGroupProps<T>, StyleProps, SpectrumLabelableProps, Omit<SpectrumHelpTextProps, 'showErrorIcon'> {
   /** The label to display on the action button.  */
   actionLabel?: string,
   /** Handler that is called when the action button is pressed. */
@@ -53,8 +52,8 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   let {direction} = useLocale();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let [isCollapsed, setIsCollapsed] = useState(maxRows != null);
-  let state = useTagGroupState(props);
-  let [tagState, setTagState] = useValueEffect({visibleTagCount: state.collection.size, showCollapseButton: false});
+  let state = useListState(props);
+  let [tagState, setTagState] = useValueEffect({visibleTagCount: state.collection.size, showCollapseButton: false, maxHeight: undefined});
   let keyboardDelegate = useMemo(() => (
     isCollapsed
       ? new TagKeyboardDelegate(new ListCollection([...state.collection].slice(0, tagState.visibleTagCount)), direction)
@@ -62,17 +61,16 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   ), [direction, isCollapsed, state.collection, tagState.visibleTagCount]) as TagKeyboardDelegate<T>;
   // Remove onAction from props so it doesn't make it into useGridList.
   delete props.onAction;
-  let {tagGroupProps, labelProps, descriptionProps, errorMessageProps} = useTagGroup({...props, keyboardDelegate}, state, tagsRef);
+  let {gridProps, labelProps, descriptionProps, errorMessageProps} = useTagGroup({...props, keyboardDelegate}, state, tagsRef);
   let actionsId = useId();
 
   let updateVisibleTagCount = useCallback(() => {
     if (maxRows > 0) {
       let computeVisibleTagCount = () => {
         // Refs can be null at runtime.
-        let currDomRef: HTMLDivElement | null = domRef.current;
-        let currContainerRef: HTMLDivElement | null = containerRef.current; 
+        let currContainerRef: HTMLDivElement | null = containerRef.current;
         let currTagsRef: HTMLDivElement | null = tagsRef.current;
-        if (!currDomRef || !currContainerRef || !currTagsRef) {
+        if (!currContainerRef || !currTagsRef) {
           return;
         }
 
@@ -81,7 +79,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         let currY = -Infinity;
         let rowCount = 0;
         let index = 0;
-        let tagWidths = [];
+        let tagWidths: number[] = [];
         // Count rows and show tags until we hit the maxRows.
         for (let tag of tags) {
           let {width, y} = tag.getBoundingClientRect();
@@ -100,31 +98,37 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
 
         // Remove tags until there is space for the collapse button and action button (if present) on the last row.
         let buttonsWidth = buttons.reduce((acc, curr) => acc += curr.getBoundingClientRect().width, 0);
+        buttonsWidth += parseInt(window.getComputedStyle(buttons[buttons.length - 1]).marginRight, 10) * 2;
         let end = direction === 'ltr' ? 'right' : 'left';
-        let containerEnd = currContainerRef.getBoundingClientRect()[end];
+        let containerEnd = currContainerRef.parentElement.getBoundingClientRect()[end];
         let lastTagEnd = tags[index - 1]?.getBoundingClientRect()[end];
+        lastTagEnd += parseInt(window.getComputedStyle(tags[index - 1]).marginRight, 10);
         let availableWidth = containerEnd - lastTagEnd;
-        for (let tagWidth of tagWidths.reverse()) {
-          if (availableWidth >= buttonsWidth || index <= 1 || index >= state.collection.size) {
-            break;
-          }
-          availableWidth += tagWidth;
+
+        while (availableWidth < buttonsWidth && index < state.collection.size && index > 0) {
+          availableWidth += tagWidths.pop();
           index--;
         }
-        return {visibleTagCount: index, showCollapseButton: index < state.collection.size};
+        let tagStyle = window.getComputedStyle(tags[0]);
+        let maxHeight = (parseInt(tagStyle.height, 10) + parseInt(tagStyle.marginTop, 10) * 2) * maxRows;
+        return {
+          visibleTagCount: index,
+          showCollapseButton: index < state.collection.size,
+          maxHeight
+        };
       };
-    
+
       setTagState(function *() {
         // Update to show all items.
-        yield {visibleTagCount: state.collection.size, showCollapseButton: true};
+        yield {visibleTagCount: state.collection.size, showCollapseButton: true, maxHeight: undefined};
 
         // Measure, and update to show the items until maxRows is reached.
         yield computeVisibleTagCount();
       });
     }
-  }, [maxRows, setTagState, domRef, direction, state.collection.size]);
+  }, [maxRows, setTagState, direction, state.collection.size]);
 
-  useResizeObserver({ref: domRef, onResize: updateVisibleTagCount});
+  useResizeObserver({ref: containerRef, onResize: updateVisibleTagCount});
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useLayoutEffect(updateVisibleTagCount, [children]);
 
@@ -156,6 +160,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         errorMessageProps={errorMessageProps}
         showErrorIcon
         ref={domRef}
+        elementType="span"
         UNSAFE_className={
           classNames(
             styles,
@@ -166,10 +171,12 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           )
         }>
         <div
-          ref={containerRef}>
+          style={maxRows != null && tagState.showCollapseButton && isCollapsed ? {maxHeight: tagState.maxHeight, overflow: 'hidden'} : undefined}
+          ref={containerRef}
+          className={classNames(styles, 'spectrum-Tags-container')}>
           <div
             ref={tagsRef}
-            {...tagGroupProps}
+            {...gridProps}
             className={classNames(styles, 'spectrum-Tags')}>
             {visibleTags.map(item => (
               <Tag
@@ -189,7 +196,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
                 role="group"
                 id={actionsId}
                 aria-label={stringFormatter.format('actions')}
-                aria-labelledby={`${tagGroupProps.id} ${actionsId}`}
+                aria-labelledby={`${gridProps.id} ${actionsId}`}
                 className={classNames(styles, 'spectrum-Tags-actions')}>
                 {tagState.showCollapseButton &&
                   <ActionButton

@@ -32,6 +32,9 @@ export interface TableProps<T> extends MultipleSelection, Sortable {
   disabledKeys?: Iterable<Key>
 }
 
+/**
+ * @deprecated - use SpectrumTableProps from '@adobe/react-spectrum' instead.
+ */
 export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionProps, DOMProps, AriaLabelingProps, StyleProps {
   /**
    * Sets the amount of vertical padding within each cell.

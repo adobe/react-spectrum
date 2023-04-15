@@ -68,7 +68,9 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
 
   let onSyntheticFocus = useSyntheticBlurEvent(onBlur);
   let onFocus = useCallback((e: FocusEvent) => {
-    if (!state.current.isFocusWithin) {
+    // Double check that document.activeElement actually matches e.target in case a previously chained
+    // focus handler already moved focus somewhere else.
+    if (!state.current.isFocusWithin && document.activeElement === e.target) {
       if (onFocusWithin) {
         onFocusWithin(e);
       }

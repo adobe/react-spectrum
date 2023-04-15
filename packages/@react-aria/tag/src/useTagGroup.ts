@@ -12,9 +12,9 @@
 
 import {AriaLabelingProps, DOMAttributes, DOMProps, Validation} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import type {ListState} from '@react-stately/list';
 import {RefObject, useState} from 'react';
 import {TagGroupProps} from '@react-types/tag';
-import type {TagGroupState} from '@react-stately/tag';
 import {TagKeyboardDelegate} from './TagKeyboardDelegate';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
@@ -23,7 +23,7 @@ import {useLocale} from '@react-aria/i18n';
 
 export interface TagGroupAria {
   /** Props for the tag grouping element. */
-  tagGroupProps: DOMAttributes,
+  gridProps: DOMAttributes,
   /** Props for the tag group's visible label (if any). */
   labelProps: DOMAttributes,
   /** Props for the tag group description element, if any. */
@@ -42,12 +42,12 @@ export interface AriaTagGroupProps<T> extends TagGroupProps<T>, DOMProps, AriaLa
 
 /**
  * Provides the behavior and accessibility implementation for a tag group component.
- * Tags allow users to categorize content. They can represent keywords or people, and are grouped to describe an item or a search request.
+ * A tag group is a focusable list of labels, categories, keywords, or other items, with support for keyboard navigation and removal.
  * @param props - Props to be applied to the tag group.
- * @param state - State for the tag group, as returned by `useTagGroupState`.
+ * @param state - State for the tag group, as returned by `useListState`.
  * @param ref - A ref to a DOM element for the tag group.
  */
-export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: TagGroupState<T>, ref: RefObject<HTMLElement>): TagGroupAria {
+export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: ListState<T>, ref: RefObject<HTMLElement>): TagGroupAria {
   let {direction} = useLocale();
   let keyboardDelegate = props.keyboardDelegate || new TagKeyboardDelegate(state.collection, direction);
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField(props);
@@ -62,7 +62,7 @@ export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: TagGroupState
   });
   let domProps = filterDOMProps(props);
   return {
-    tagGroupProps: mergeProps(gridProps, domProps, {
+    gridProps: mergeProps(gridProps, domProps, {
       role: state.collection.size ? 'grid' : null,
       'aria-atomic': false,
       'aria-relevant': 'additions',

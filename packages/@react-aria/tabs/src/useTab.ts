@@ -23,7 +23,9 @@ export interface TabAria {
   /** Whether the tab is currently selected. */
   isSelected: boolean,
   /** Whether the tab is disabled. */
-  isDisabled: boolean
+  isDisabled: boolean,
+  /** Whether the tab is currently in a pressed state. */
+  isPressed: boolean
 }
 
 /**
@@ -35,17 +37,18 @@ export function useTab<T>(
   state: TabListState<T>,
   ref: RefObject<FocusableElement>
 ): TabAria {
-  let {key, isDisabled: propsDisabled} = props;
+  let {key, isDisabled: propsDisabled, shouldSelectOnPressUp} = props;
   let {selectionManager: manager, selectedKey} = state;
 
   let isSelected = key === selectedKey;
 
   let isDisabled = propsDisabled || state.isDisabled || state.disabledKeys.has(key);
-  let {itemProps} = useSelectableItem({
+  let {itemProps, isPressed} = useSelectableItem({
     selectionManager: manager,
     key,
     ref,
-    isDisabled
+    isDisabled,
+    shouldSelectOnPressUp
   });
 
   let tabId = generateId(state, key, 'tab');
@@ -63,7 +66,7 @@ export function useTab<T>(
       role: 'tab'
     },
     isSelected,
-    isDisabled
+    isDisabled,
+    isPressed
   };
 }
-

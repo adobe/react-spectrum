@@ -25,12 +25,14 @@ export interface AriaTabProps extends AriaLabelingProps {
   /** The key of the tab. */
   key: Key,
   /** Whether the tab should be disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  /** Whether the tab selection should occur on press up instead of press down. */
+  shouldSelectOnPressUp?: boolean
 }
 
 export interface TabListProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'disallowEmptySelection'> {
   /**
-   * Whether the Tabs are disabled.
+   * Whether the TabList is disabled.
    * Shows that a selection exists, but is not available in that circumstance.
    */
   isDisabled?: boolean
@@ -60,6 +62,8 @@ export interface SpectrumTabsProps<T> extends AriaTabListBase, SingleSelection, 
   items?: Iterable<T>,
   /** The keys of the tabs that are disabled. These tabs cannot be selected, focused, or otherwise interacted with. */
   disabledKeys?: Iterable<Key>,
+  /** Whether the Tabs are disabled. */
+  isDisabled?: boolean,
   /** Whether the tabs are displayed in a quiet style. */
   isQuiet?: boolean,
   /** Whether the tabs are displayed in an emphasized style. */

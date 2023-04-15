@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Button} from '@react-spectrum/button';
+import {ActionButton, Flex, Link} from '@adobe/react-spectrum';
+import DocSearch from './DocSearch';
 import docsStyle from './docs.css';
 import LinkOut from '@spectrum-icons/workflow/LinkOut';
 import {listen} from 'quicklink';
 import React, {useEffect, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
-import {Text} from '@react-spectrum/text';
 import {ThemeSwitcher} from './ThemeSwitcher';
 
 if (process.env.NODE_ENV === 'production') {
@@ -70,9 +70,9 @@ function Hamburger() {
   let hamburgerButtonRef = useRef(null);
 
   let onPress = (event) => {
-    let nav = document.querySelector('.' + docsStyle.nav);
+    let nav = document.querySelector(`.${docsStyle.nav}`);
     let main = document.querySelector('main');
-    let themeSwitcher = event.target.parentElement.nextElementSibling;
+    let themeSwitcher = document.querySelector(`header.${docsStyle.pageHeader} > div:last-of-type`);
 
     nav.classList.toggle(docsStyle.visible);
 
@@ -94,10 +94,10 @@ function Hamburger() {
 
   useEffect(() => {
     let mediaQueryList = window.matchMedia('(max-width: 1020px)');
-    let nav = document.querySelector('.' + docsStyle.nav);
+    let nav = document.querySelector(`.${docsStyle.nav}`);
     let main = document.querySelector('main');
     let hamburgerButton = hamburgerButtonRef.current;
-    let themeSwitcher = hamburgerRef.current.nextElementSibling;
+    let themeSwitcher = document.querySelector(`header.${docsStyle.pageHeader} > div:last-of-type`);
 
     let removeVisible = (isNotResponsive = false) => {
       setIsPressed(false);
@@ -184,21 +184,22 @@ function Hamburger() {
 
 ReactDOM.render(<>
   <Hamburger />
+  <DocSearch />
   <ThemeSwitcher />
 </>, document.querySelector('.' + docsStyle.pageHeader));
 
 let pathToPage = document.querySelector('[data-github-src]').getAttribute('data-github-src');
 if (pathToPage) {
   ReactDOM.render(
-    <Button
-      variant="primary"
-      isQuiet
-      elementType="a"
-      href={encodeURI(`https://github.com/adobe/react-spectrum/tree/main/${encodeURI(pathToPage)}`)}
-      target="_blank">
-      <LinkOut />
-      <Text>Edit this page</Text>
-    </Button>,
+    <Link>
+      <a
+        href={encodeURI(`https://github.com/adobe/react-spectrum/tree/main/${encodeURI(pathToPage)}`)}
+        target="_blank">
+        <Flex gap="size-100" alignItems="center">
+          <span>Edit this page</span><LinkOut size="S" />
+        </Flex>
+      </a>
+    </Link>,
     document.querySelector('#edit-page')
   );
 }

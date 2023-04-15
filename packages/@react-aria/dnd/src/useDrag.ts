@@ -140,7 +140,7 @@ export function useDrag(options: DragOptions): DragResult {
         }
 
         // Rounding height to an even number prevents blurry preview seen on some screens
-        let height = 2 * Math.round(rect.height / 2);
+        let height = 2 * Math.round(size.height / 2);
         node.style.height = `${height}px`;
 
         e.dataTransfer.setDragImage(node, x, y);

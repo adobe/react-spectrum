@@ -19,6 +19,7 @@ import {ComboBox, Item, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
+import {SSRProvider} from '@react-aria/ssr';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import {useAsyncList} from '@react-stately/data';
 import {useFilter} from '@react-aria/i18n';
@@ -1210,6 +1211,18 @@ describe('ComboBox', function () {
         expect(queryByRole('listbox')).toBeNull();
       });
     });
+
+    it('works with SSR', () => {
+      let {getByRole} = render(<SSRProvider><ExampleComboBox selectedKey="2" /></SSRProvider>);
+
+      let button = getByRole('button');
+      triggerPress(button);
+      act(() => jest.runAllTimers());
+
+      let listbox = getByRole('listbox');
+      let items = within(listbox).getAllByRole('option');
+      expect(items).toHaveLength(3);
+    });
   });
 
   describe('typing in the textfield', function () {
@@ -1532,9 +1545,14 @@ describe('ComboBox', function () {
         userEvent.click(combobox);
         jest.runAllTimers();
       });
+
       act(() => {
         fireEvent.change(combobox, {target: {value: 'Bulba'}});
         jest.runAllTimers();
+      });
+      expect(onOpenChange).toHaveBeenLastCalledWith(true, 'input');
+
+      act(() => {
         combobox.blur();
         jest.runAllTimers();
       });
@@ -3616,7 +3634,7 @@ describe('ComboBox', function () {
       expect(dialog).toHaveAttribute('aria-labelledby', input.getAttribute('aria-labelledby'));
 
       expect(input).toHaveAttribute('role', 'searchbox');
-      expect(input).toHaveAttribute('aria-expanded', 'true');
+      expect(input).not.toHaveAttribute('aria-expanded');
       expect(input).toHaveAttribute('aria-controls', listbox.id);
       expect(input).toHaveAttribute('aria-haspopup', 'listbox');
 

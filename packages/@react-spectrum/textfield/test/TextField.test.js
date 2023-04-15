@@ -115,8 +115,9 @@ describe('Shared TextField behavior', () => {
   `('$Name calls onFocus when the the input field is focused', ({Name, Component}) => {
     let tree = renderComponent(Component, {onFocus, 'aria-label': 'mandatory label'});
     let input = tree.getByTestId(testId);
-    fireEvent.focus(input);
+    act(() => input.focus());
     expect(onFocus).toHaveBeenCalledTimes(1);
+    act(() => input.blur());
     userEvent.click(input);
     expect(onFocus).toHaveBeenCalledTimes(2);
   });

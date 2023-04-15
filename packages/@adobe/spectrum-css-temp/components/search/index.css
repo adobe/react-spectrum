@@ -21,7 +21,6 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Search {
-  display: inline-block;
   position: relative;
   --spectrum-textfield-border-radius: var(--spectrum-search-border-radius);
 

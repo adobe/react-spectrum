@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, CollectionBase, Node} from '@react-types/shared';
-import {Key, useEffect, useMemo, useRef} from 'react';
+import {Collection, CollectionStateBase, Node} from '@react-types/shared';
+import {Key, useCallback, useEffect, useMemo, useRef} from 'react';
 import {ListCollection} from './ListCollection';
 import {MultipleSelectionStateProps, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {useCollection} from '@react-stately/collections';
 
-export interface ListProps<T> extends CollectionBase<T>, MultipleSelectionStateProps {
+export interface ListProps<T> extends CollectionStateBase<T>, MultipleSelectionStateProps {
   /** Filter function to generate a filtered list of nodes. */
   filter?: (nodes: Iterable<Node<T>>) => Iterable<Node<T>>,
   /** @private */
@@ -46,10 +46,10 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
 
-  let factory = nodes => filter ? new ListCollection(filter(nodes)) : new ListCollection(nodes as Iterable<Node<T>>);
+  let factory = useCallback(nodes => filter ? new ListCollection(filter(nodes)) : new ListCollection(nodes as Iterable<Node<T>>), [filter]);
   let context = useMemo(() => ({suppressTextValueWarning: props.suppressTextValueWarning}), [props.suppressTextValueWarning]);
 
-  let collection = useCollection(props, factory, context, [filter]);
+  let collection = useCollection(props, factory, context);
 
   let selectionManager = useMemo(() =>
     new SelectionManager(collection, selectionState)

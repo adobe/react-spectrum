@@ -14,6 +14,7 @@ import {classNames, useFocusableRef, useIsMobileDevice, useResizeObserver, useUn
 import {ClearButton} from '@react-spectrum/button';
 import {DOMRefValue, FocusableRef} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
+import {filterDOMProps, useLayoutEffect} from '@react-aria/utils';
 import {FocusRing} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -41,7 +42,6 @@ import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.
 import {useComboBoxState} from '@react-stately/combobox';
 import {useFilter, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useHover} from '@react-aria/interactions';
-import {useLayoutEffect} from '@react-aria/utils';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useSearchAutocomplete} from '@react-aria/autocomplete';
 
@@ -96,7 +96,7 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
   );
   let layout = useListBoxLayout(state);
 
-  let {inputProps, listBoxProps, labelProps, clearButtonProps} = useSearchAutocomplete(
+  let {inputProps, listBoxProps, labelProps, clearButtonProps, descriptionProps, errorMessageProps} = useSearchAutocomplete(
     {
       ...props,
       keyboardDelegate: layout,
@@ -133,7 +133,12 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
 
   return (
     <>
-      <Field {...props} labelProps={labelProps} ref={domRef}>
+      <Field
+        {...props}
+        descriptionProps={descriptionProps}
+        errorMessageProps={errorMessageProps}
+        labelProps={labelProps}
+        ref={domRef}>
         <SearchAutocompleteInput
           {...props}
           isOpen={state.isOpen}
@@ -165,7 +170,7 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
           isLoading={loadingState === 'loadingMore'}
           onLoadMore={onLoadMore}
           renderEmptyState={() => isAsync && (
-            <span>
+            <span className={classNames(searchAutocompleteStyles, 'no-results')}>
               {stringFormatter.format('noResults')}
             </span>
           )} />
@@ -179,7 +184,7 @@ let SearchAutocompleteBase = React.forwardRef(_SearchAutocompleteBase) as <T>(pr
 
 interface SearchAutocompleteInputProps<T> extends SpectrumSearchAutocompleteProps<T> {
   inputProps: InputHTMLAttributes<HTMLInputElement>,
-  inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
+  inputRef: RefObject<HTMLInputElement>,
   style?: React.CSSProperties,
   className?: string,
   isOpen?: boolean,
@@ -211,6 +216,7 @@ function _SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>, ref
   } = props;
   let {hoverProps, isHovered} = useHover({});
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let domProps = filterDOMProps(props);
   let timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   let [showLoading, setShowLoading] = useState(false);
 
@@ -225,6 +231,10 @@ function _SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>, ref
         classNames(
           styles,
           'spectrum-InputGroup-input-circleLoader'
+        ),
+        classNames(
+          searchStyles,
+          'spectrum-Search-circleLoader'
         )
       )} />
   );
@@ -301,12 +311,14 @@ function _SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>, ref
           )
         }>
         <TextFieldBase
+          {...domProps}
           inputProps={inputProps}
           inputRef={inputRef}
           UNSAFE_className={
             classNames(
               searchStyles,
               'spectrum-Search',
+              'spectrum-Search--loadable',
               'spectrum-Textfield',
               {
                 'is-disabled': isDisabled,
@@ -321,13 +333,19 @@ function _SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>, ref
             )
           }
           inputClassName={classNames(searchStyles, 'spectrum-Search-input')}
+          validationIconClassName={
+            classNames(
+              searchStyles,
+              'spectrum-Search-validationIcon'
+            )
+          }
           isDisabled={isDisabled}
           isQuiet={isQuiet}
           validationState={validationState}
           isLoading={showLoading && (isOpen || menuTrigger === 'manual' || loadingState === 'loading')}
           loadingIndicator={loadingState != null ? loadingCircle : undefined}
           icon={icon}
-          wrapperChildren={(inputValue !== '' && !isReadOnly) ? clearButton : undefined}
+          wrapperChildren={(inputValue !== '' || loadingState === 'filtering' || validationState != null) && !isReadOnly ? clearButton : undefined}
           disableFocusRing />
       </div>
     </FocusRing>
@@ -340,5 +358,5 @@ let SearchAutocompleteInput = React.forwardRef(_SearchAutocompleteInput) as <T>(
 /**
  * A SearchAutocomplete is a searchfield that supports a dynamic list of suggestions.
  */
-let _SearchAutocomplete = forwardRef(SearchAutocomplete);
+let _SearchAutocomplete = forwardRef(SearchAutocomplete) as <T>(props: SpectrumSearchAutocompleteProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
 export {_SearchAutocomplete as SearchAutocomplete};

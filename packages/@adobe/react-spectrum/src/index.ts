@@ -14,6 +14,7 @@ export {ActionGroup} from '@react-spectrum/actiongroup';
 export {Badge} from '@react-spectrum/badge';
 export {Breadcrumbs} from '@react-spectrum/breadcrumbs';
 export {ActionButton, Button, LogicButton, ToggleButton} from '@react-spectrum/button';
+export {Avatar} from '@react-spectrum/avatar';
 export {ButtonGroup} from '@react-spectrum/buttongroup';
 export {Calendar, RangeCalendar} from '@react-spectrum/calendar';
 export {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
@@ -60,6 +61,7 @@ export {SSRProvider} from '@react-aria/ssr';
 export {useDragAndDrop, DIRECTORY_DRAG_TYPE} from '@react-spectrum/dnd';
 
 export type {SpectrumActionGroupProps} from '@react-spectrum/actiongroup';
+export type {SpectrumAvatarProps} from '@react-spectrum/avatar';
 export type {SpectrumBadgeProps} from '@react-spectrum/badge';
 export type {SpectrumBreadcrumbsProps} from '@react-spectrum/breadcrumbs';
 export type {SpectrumActionButtonProps, SpectrumButtonProps, SpectrumLogicButtonProps, SpectrumToggleButtonProps} from '@react-spectrum/button';
@@ -103,3 +105,4 @@ export type {VisuallyHiddenAria, VisuallyHiddenProps} from '@react-aria/visually
 export type {DateFormatter, DateFormatterOptions, Filter, FormatMessage, Locale, LocalizedStrings} from '@react-aria/i18n';
 export type {SSRProviderProps} from '@react-aria/ssr';
 export type {DirectoryDropItem, DragAndDropHooks, DragAndDropOptions, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragPreviewRenderer, DragTypes, DropItem, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem} from '@react-spectrum/dnd';
+export type {Selection} from '@react-types/shared';
