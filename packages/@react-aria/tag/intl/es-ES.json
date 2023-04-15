@@ -1,3 +1,4 @@
 {
-  "remove": "Pulse Espacio o Eliminar para quitar la etiqueta."
+  "removeButtonLabel": "Quitar",
+  "removeDescription": "Pulse Eliminar para quitar la etiqueta."
 }

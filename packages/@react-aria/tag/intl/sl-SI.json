@@ -1,3 +1,4 @@
 {
-  "remove": "Pritisnite presledek ali Izbriši, da odstranite oznako."
+  "removeButtonLabel": "Odstrani",
+  "removeDescription": "Pritisnite Delete, da odstranite oznako."
 }

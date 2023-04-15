@@ -99,7 +99,7 @@ const overlaySize = {
 const PROVIDER_OFFSET = 50;
 
 describe('calculatePosition', function () {
-  function checkPositionCommon(title, expected, placement, targetDimension, boundaryDimensions, offset, crossOffset, flip, providerOffset = 0, arrowCrossSize = 8, minOverlayArrowOffset = 0) {
+  function checkPositionCommon(title, expected, placement, targetDimension, boundaryDimensions, offset, crossOffset, flip, providerOffset = 0, arrowSize = 8, arrowBoundaryOffset = 0) {
     const placementAxis = placement.split(' ')[0];
 
     // The tests are all based on top/left positioning. Convert to bottom/right positioning if needed.
@@ -155,8 +155,8 @@ describe('calculatePosition', function () {
         boundaryElement: boundariesElem,
         offset,
         crossOffset,
-        arrowCrossSize,
-        minOverlayArrowOffset
+        arrowSize,
+        arrowBoundaryOffset
       });
 
       expect(result).toEqual(expectedPosition);
@@ -164,7 +164,7 @@ describe('calculatePosition', function () {
     });
   }
 
-  function checkPosition(placement, targetDimension, expected, offset = 0, crossOffset = 0, flip = false, providerOffset, arrowCrossSize, minOverlayArrowOffset) {
+  function checkPosition(placement, targetDimension, expected, offset = 0, crossOffset = 0, flip = false, providerOffset, arrowSize, arrowBoundaryOffset) {
     checkPositionCommon(
       'Should calculate the correct position',
       expected,
@@ -175,8 +175,8 @@ describe('calculatePosition', function () {
       crossOffset,
       flip,
       providerOffset,
-      arrowCrossSize,
-      minOverlayArrowOffset
+      arrowSize,
+      arrowBoundaryOffset
     );
   }
 
@@ -203,7 +203,7 @@ describe('calculatePosition', function () {
       crossAxisOffsetPositive: [50, 210, undefined, 196, 340],
       crossAxisOffsetNegative: [50, 190, undefined, 196, 360],
       mainAxisOffset: [40, 200, undefined, 196, 350],
-      minOverlayArrowOffset: [50, 322, undefined, 176, 228]
+      arrowBoundaryOffset: [50, 322, undefined, 176, 228]
     },
     {
       placement: 'left top',
@@ -213,7 +213,7 @@ describe('calculatePosition', function () {
       crossAxisOffsetPositive: [50, 260, undefined, 196, 290],
       crossAxisOffsetNegative: [50, 240, undefined, 196, 310],
       mainAxisOffset: [40, 250, undefined, 196, 300],
-      minOverlayArrowOffset: [50, 322, undefined, 176, 228]
+      arrowBoundaryOffset: [50, 322, undefined, 176, 228]
     },
     {
       placement: 'left bottom',
@@ -223,7 +223,7 @@ describe('calculatePosition', function () {
       crossAxisOffsetPositive: [50, 160, undefined, 196, 390],
       crossAxisOffsetNegative: [50, 140, undefined, 196, 410],
       mainAxisOffset: [40, 150, undefined, 196, 400],
-      minOverlayArrowOffset: [50, 322, undefined, 176, 228]
+      arrowBoundaryOffset: [50, 322, undefined, 176, 228]
     },
     {
       placement: 'top',
@@ -233,7 +233,7 @@ describe('calculatePosition', function () {
       crossAxisOffsetPositive: [210, 50, 196, undefined, 200],
       crossAxisOffsetNegative: [190, 50, 196, undefined, 200],
       mainAxisOffset: [200, 40, 196, undefined, 200],
-      minOverlayArrowOffset: [322, 50, 176, undefined, 200]
+      arrowBoundaryOffset: [322, 50, 176, undefined, 200]
     },
     {
       placement: 'top left',
@@ -243,7 +243,7 @@ describe('calculatePosition', function () {
       crossAxisOffsetPositive: [260, 50, 196, undefined, 200],
       crossAxisOffsetNegative: [240, 50, 196, undefined, 200],
       mainAxisOffset: [250, 40, 196, undefined, 200],
-      minOverlayArrowOffset: [322, 50, 176, undefined, 200]
+      arrowBoundaryOffset: [322, 50, 176, undefined, 200]
     },
     {
       placement: 'top right',
@@ -253,7 +253,7 @@ describe('calculatePosition', function () {
       crossAxisOffsetPositive: [160, 50, 196, undefined, 200],
       crossAxisOffsetNegative: [140, 50, 196, undefined, 200],
       mainAxisOffset: [150, 40, 196, undefined, 200],
-      minOverlayArrowOffset: [322, 50, 176, undefined, 200]
+      arrowBoundaryOffset: [322, 50, 176, undefined, 200]
     },
     {
       placement: 'bottom',
@@ -263,7 +263,7 @@ describe('calculatePosition', function () {
       crossAxisOffsetPositive: [210, 350, 196, undefined, 200],
       crossAxisOffsetNegative: [190, 350, 196, undefined, 200],
       mainAxisOffset: [200, 360, 196, undefined, 190],
-      minOverlayArrowOffset: [322, 350, 176, undefined, 200]
+      arrowBoundaryOffset: [322, 350, 176, undefined, 200]
     },
     {
       placement: 'bottom left',
@@ -273,7 +273,7 @@ describe('calculatePosition', function () {
       crossAxisOffsetPositive: [260, 350, 196, undefined, 200],
       crossAxisOffsetNegative: [240, 350, 196, undefined, 200],
       mainAxisOffset: [250, 360, 196, undefined, 190],
-      minOverlayArrowOffset: [322, 350, 176, undefined, 200]
+      arrowBoundaryOffset: [322, 350, 176, undefined, 200]
     },
     {
       placement: 'bottom right',
@@ -283,7 +283,7 @@ describe('calculatePosition', function () {
       crossAxisOffsetPositive: [160, 350, 196, undefined, 200],
       crossAxisOffsetNegative: [140, 350, 196, undefined, 200],
       mainAxisOffset: [150, 360, 196, undefined, 190],
-      minOverlayArrowOffset: [322, 350, 176, undefined, 200]
+      arrowBoundaryOffset: [322, 350, 176, undefined, 200]
     },
     {
       placement: 'right',
@@ -293,7 +293,7 @@ describe('calculatePosition', function () {
       crossAxisOffsetPositive: [350, 210, undefined, 196, 340],
       crossAxisOffsetNegative: [350, 190, undefined, 196, 360],
       mainAxisOffset: [360, 200, undefined, 196, 350],
-      minOverlayArrowOffset: [350, 322, undefined, 176, 228]
+      arrowBoundaryOffset: [350, 322, undefined, 176, 228]
     },
     {
       placement: 'right top',
@@ -303,7 +303,7 @@ describe('calculatePosition', function () {
       crossAxisOffsetPositive: [350, 260, undefined, 196, 290],
       crossAxisOffsetNegative: [350, 240, undefined, 196, 310],
       mainAxisOffset: [360, 250, undefined, 196, 300],
-      minOverlayArrowOffset: [350, 322, undefined, 176, 228]
+      arrowBoundaryOffset: [350, 322, undefined, 176, 228]
     },
     {
       placement: 'right bottom',
@@ -313,7 +313,7 @@ describe('calculatePosition', function () {
       crossAxisOffsetPositive: [350, 160, undefined, 196, 390],
       crossAxisOffsetNegative: [350, 140, undefined, 196, 410],
       mainAxisOffset: [360, 150, undefined, 196, 400],
-      minOverlayArrowOffset: [350, 322, undefined, 176, 228]
+      arrowBoundaryOffset: [350, 322, undefined, 176, 228]
     }
   ];
 
@@ -365,7 +365,7 @@ describe('calculatePosition', function () {
 
       describe('minimum overlay arrow offset', function () {
         checkPosition(
-          placement, getTargetDimension({left: 250, top: 250}), testCase.minOverlayArrowOffset, 0, 1000, false, undefined, undefined, 20
+          placement, getTargetDimension({left: 250, top: 250}), testCase.arrowBoundaryOffset, 0, 1000, false, undefined, undefined, 20
         );
       });
     });
