@@ -12,9 +12,9 @@
 
 import {useCallback, useRef, useState} from 'react';
 
-export function useControlledState<T, C = T>(value: T, defaultValue: T | undefined, onChange?: (v: C) => void): [T, (value: T) => void];
-export function useControlledState<T, C = T>(value: T | undefined, defaultValue: T, onChange?: (v: C) => void): [T, (value: T) => void];
-export function useControlledState<T, C = T>(value: T, defaultValue: T, onChange?: (v: C) => void): [T, (value: T) => void] {
+export function useControlledState<T, C = T>(value: T, defaultValue: T | undefined, onChange?: (v: C, ...args: any[]) => void): [T, (value: T) => void];
+export function useControlledState<T, C = T>(value: T | undefined, defaultValue: T, onChange?: (v: C, ...args: any[]) => void): [T, (value: T) => void];
+export function useControlledState<T, C = T>(value: T, defaultValue: T, onChange?: (v: C, ...args: any[]) => void): [T, (value: T) => void] {
   let [stateValue, setStateValue] = useState(value || defaultValue);
   let ref = useRef(value !== undefined);
   let wasControlled = ref.current;
@@ -27,11 +27,11 @@ export function useControlledState<T, C = T>(value: T, defaultValue: T, onChange
 
   ref.current = isControlled;
 
-  let setValue = useCallback((value) => {
-    let onChangeCaller = (value) => {
+  let setValue = useCallback((value, ...args) => {
+    let onChangeCaller = (value, ...onChangeArgs) => {
       if (onChange) {
         if (!Object.is(stateRef.current, value)) {
-          onChange(value);
+          onChange(value, ...onChangeArgs);
         }
       }
       if (!isControlled) {
@@ -48,7 +48,7 @@ export function useControlledState<T, C = T>(value: T, defaultValue: T, onChange
       // otherwise we just return the controlled value, which won't cause a rerender because React knows to bail out when the value is the same
       let updateFunction = (oldValue, ...functionArgs) => {
         let interceptedValue = value(isControlled ? stateRef.current : oldValue, ...functionArgs);
-        onChangeCaller(interceptedValue);
+        onChangeCaller(interceptedValue, ...args);
         if (!isControlled) {
           return interceptedValue;
         }
@@ -59,7 +59,7 @@ export function useControlledState<T, C = T>(value: T, defaultValue: T, onChange
       if (!isControlled) {
         setStateValue(value);
       }
-      onChangeCaller(value);
+      onChangeCaller(value, ...args);
     }
   }, [isControlled, onChange]);
 
