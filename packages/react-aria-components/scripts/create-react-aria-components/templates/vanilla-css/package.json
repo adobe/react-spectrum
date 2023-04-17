@@ -1,0 +1,51 @@
+{
+  "name": "create-react-aria-components-vanilla-css",
+  "version": "1.0.0",
+  "description": "A library of components built with React Aria Components. ",
+  "main": "index.js",
+  "modules": "dist/module.js",
+  "types": "dist/types/index.d.ts",
+  "source": "src/index.ts",
+  "exports": {
+    "types": "./dist/types.d.ts",
+    "import": "./dist/import.mjs",
+    "require": "./dist/main.js"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "parcel build",
+    "start": "storybook",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
+  "keywords": [
+    "react-aria",
+    "react-aria-components"
+  ],
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-aria-components": "1.0.0-alpha.3",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.21.4",
+    "@babel/preset-react": "^7.18.6",
+    "@storybook/addon-essentials": "^7.0.5",
+    "@storybook/addon-interactions": "^7.0.5",
+    "@storybook/addon-links": "^7.0.5",
+    "@storybook/blocks": "^7.0.5",
+    "@storybook/react": "^7.0.5",
+    "@storybook/react-webpack5": "^7.0.5",
+    "@storybook/testing-library": "^0.0.14-next.2",
+    "@testing-library/react": "^14.0.0",
+    "jest": "^29.5.0",
+    "parcel": "^2.8.3",
+    "prop-types": "^15.8.1",
+    "storybook": "^7.0.5"
+  }
+}

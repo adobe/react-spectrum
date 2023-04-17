@@ -1,0 +1,20 @@
+{
+  "name": "create-react-aria-components",
+  "version": "1.0.0",
+  "description": "A command line tool for creating React Aria Components from templates. Easily start a new component library, or add components to an existing project. ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "react-aria",
+    "react-aria-components"
+  ],
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "chalk": "^5.2.0",
+    "prompts": "^2.4.2",
+    "react-aria-components": "1.0.0-alpha.3"
+  }
+}
