@@ -624,7 +624,6 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
 
       // if we already lost focus to the body and this was the active scope, then we should attempt to restore
       if (
-        (activeScope === scopeRef || isAncestorScope(scopeRef, activeScope)) &&
         restoreFocus
         && nodeToRestore
         && (
