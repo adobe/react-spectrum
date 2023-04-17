@@ -693,6 +693,38 @@ describe('FocusScope', function () {
         await waitFor(() => expect(document.activeElement).toBe(focusable));
       });
     });
+
+    it('should not not restore focus when active element is outside the scope', function () {
+      function Test() {
+        const [display, setDisplay] = useState(false)
+
+        return (
+          <div>
+            <input data-testid="trigger" onFocus={() => setDisplay(state => !state)} />
+            {display &&
+              <FocusScope autoFocus restoreFocus>
+                <input data-testid="input1" />
+              </FocusScope>
+            }
+          </div>
+        );
+      }
+
+      let {getByTestId} = render(<Test />);
+
+      let trigger = getByTestId('trigger');
+      act(() => {trigger.focus();});
+
+      act(() => {jest.runAllTimers();});
+
+
+      let input1 = getByTestId('input1');
+      expect(document.activeElement).toBe(input1);
+
+      act(() => {trigger.focus();});
+
+      expect(input1).not.toBeInTheDocument()
+    });
   });
 
   describe('auto focus', function () {
