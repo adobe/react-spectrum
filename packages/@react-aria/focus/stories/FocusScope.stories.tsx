@@ -149,6 +149,27 @@ function FocusableFirstInScopeExample() {
   );
 }
 
+function IgnoreRestoreFocusExample() {
+  const [display, setDisplay] = useState(false)
+
+  return (
+    <div>
+       <button type="button" onClick={() => setDisplay(state => !state)}>
+              {display ? "Close dialog" : "Open dialog"}
+       </button>
+      {display &&
+        <FocusScope autoFocus restoreFocus>
+                    <div role="dialog">
+              <input  />
+             <input  />
+             <input  />
+                    </div>
+        </FocusScope>
+      }
+    </div>
+  );
+}
+
 export const KeyboardNavigation = Template().bind({});
 KeyboardNavigation.args = {isPortaled: false};
 
@@ -164,3 +185,8 @@ KeyboardNavigationInsidePortalNoContain.args = {isPortaled: true, contain: false
 const FocusableFirstInScopeTemplate = (): Story<StoryProps> => () => <FocusableFirstInScopeExample />;
 
 export const FocusableFirstInScope = FocusableFirstInScopeTemplate().bind({});
+
+
+const IgnoreRestoreFocusTemplate = (): Story<StoryProps> => () => <IgnoreRestoreFocusExample />;
+
+export const IgnoreRestoreFocus = IgnoreRestoreFocusTemplate().bind({});
