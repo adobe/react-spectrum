@@ -18,7 +18,7 @@ import {Field} from '@react-spectrum/label';
 import {FocusScope} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {ListCollection} from '@react-stately/list';
+import {ListCollection, useListState} from '@react-stately/list';
 import {Provider, useProviderProps} from '@react-spectrum/provider';
 import React, {ReactElement, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
@@ -26,7 +26,6 @@ import {Tag} from './Tag';
 import {useFormProps} from '@react-spectrum/form';
 import {useId, useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useTagGroupState} from '@react-stately/tag';
 
 export interface SpectrumTagGroupProps<T> extends AriaTagGroupProps<T>, StyleProps, SpectrumLabelableProps, Omit<SpectrumHelpTextProps, 'showErrorIcon'> {
   /** The label to display on the action button.  */
@@ -53,7 +52,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   let {direction} = useLocale();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let [isCollapsed, setIsCollapsed] = useState(maxRows != null);
-  let state = useTagGroupState(props);
+  let state = useListState(props);
   let [tagState, setTagState] = useValueEffect({visibleTagCount: state.collection.size, showCollapseButton: false, maxHeight: undefined});
   let keyboardDelegate = useMemo(() => (
     isCollapsed
