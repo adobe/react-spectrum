@@ -19,6 +19,7 @@ import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 import {TableStory} from './Table.stories';
 import {TableView} from '../';
+import {View} from '@react-spectrum/view';
 
 export default {
   ...defaultConfig,
@@ -51,11 +52,11 @@ export const CustomDragPreview: TableStory = {
           onDragStart: action('dragStart'),
           onDragEnd: action('dragEnd'),
           renderPreview: (keys, draggedKey) => (
-            <div>
+            <View backgroundColor="gray-50" padding="size-100" borderRadius="medium" borderWidth="thin" borderColor="blue-500">
               <div>Custom Preview</div>
-              <div>Keys: {[...keys].join(',')}</div>
+              <div>Keys: {[...keys].join(', ')}</div>
               <div>Dragged Key: {draggedKey}</div>
-            </div>
+            </View>
           )}}
         tableViewProps={args} />
     </Flex>
