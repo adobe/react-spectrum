@@ -1,7 +1,7 @@
 import chalk from 'chalk';
+import {exec} from 'child_process';
 import fs from 'fs';
 import prompts from 'prompts';
-var exec =  require('child_process').exec;
 
 const readTemplates = () => fs.readdirSync('./templates');
 const readComponents = (template) =>
