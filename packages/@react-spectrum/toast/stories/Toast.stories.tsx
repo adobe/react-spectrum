@@ -33,17 +33,15 @@ export default {
       </>
     )
   ],
-  parameters: {
-    args: {
-      shouldCloseOnAction: false,
-      timeout: null
-    },
-    argTypes: {
-      timeout: {
-        control: {
-          type: 'radio',
-          options: [null, 5000]
-        }
+  args: {
+    shouldCloseOnAction: false,
+    timeout: null
+  },
+  argTypes: {
+    timeout: {
+      control: {
+        type: 'radio',
+        options: [null, 5000]
       }
     }
   }
