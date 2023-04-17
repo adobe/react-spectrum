@@ -696,7 +696,7 @@ describe('FocusScope', function () {
 
     it('should not not restore focus when active element is outside the scope', function () {
       function Test() {
-        const [display, setDisplay] = useState(false)
+        const [display, setDisplay] = useState(false);
 
         return (
           <div>
@@ -723,7 +723,7 @@ describe('FocusScope', function () {
 
       act(() => {trigger.focus();});
 
-      expect(input1).not.toBeInTheDocument()
+      expect(input1).not.toBeInTheDocument();
     });
   });
 

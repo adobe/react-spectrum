@@ -150,20 +150,20 @@ function FocusableFirstInScopeExample() {
 }
 
 function IgnoreRestoreFocusExample() {
-  const [display, setDisplay] = useState(false)
+  const [display, setDisplay] = useState(false);
 
   return (
     <div>
-       <button type="button" onClick={() => setDisplay(state => !state)}>
-              {display ? "Close dialog" : "Open dialog"}
-       </button>
+      <button type="button" onClick={() => setDisplay(state => !state)}>
+        {display ? 'Close dialog' : 'Open dialog'}
+      </button>
       {display &&
         <FocusScope autoFocus restoreFocus>
-                    <div role="dialog">
-              <input  />
-             <input  />
-             <input  />
-                    </div>
+          <div role="dialog">
+            <input  />
+            <input  />
+            <input  />
+          </div>
         </FocusScope>
       }
     </div>
