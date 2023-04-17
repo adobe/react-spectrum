@@ -103,7 +103,7 @@ function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRe
 /**
  * A calendar displays one or more date grids and allows users to select a single date.
  */
-const _Calendar = (forwardRef as forwardRefType)(Calendar);
+const _Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(Calendar);
 export {_Calendar as Calendar};
 
 function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
@@ -172,7 +172,7 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: F
 /**
  * A range calendar displays one or more date grids and allows users to select a contiguous range of dates.
  */
-const _RangeCalendar = (forwardRef as forwardRefType)(RangeCalendar);
+const _RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(RangeCalendar);
 export {_RangeCalendar as RangeCalendar};
 
 export interface CalendarCellRenderProps {
