@@ -11,73 +11,29 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
-import {Direction, Node} from '@react-types/shared';
 import {Flex} from '@react-spectrum/layout';
-import {GridNode} from '@react-types/grid';
 import React from 'react';
 import type {SpectrumTableProps} from './TableView';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
-import type {TableLayout} from '@react-stately/layout';
 
 interface DragPreviewProps<T> {
-  item:  Node<T>,
-  children: Iterable<Node<T>>,
+  itemText: string,
   itemCount: number,
   density: SpectrumTableProps<T>['density'],
-  layout: TableLayout<T>,
-  direction: Direction,
-  maxWidth: number,
-  rowHeaderColumnKeys: Set<React.Key>
-}
-
-interface TableCellPreviewProps {
-  cell: GridNode<any>
-}
-
-export function TableCellPreview(props: TableCellPreviewProps) {
-  let {cell} = props;
-
-  return (
-    <div
-      className={
-          classNames(
-            styles,
-            'spectrum-Table-cell',
-            classNames(
-              stylesOverrides,
-              'react-spectrum-Table-cell'
-            )
-          )
-        }>
-      <span
-        className={
-            classNames(
-              styles,
-              'spectrum-Table-cellContents'
-            )
-        }>
-        {cell.rendered}
-      </span>
-    </div>
-  );
+  height: number,
+  maxWidth: number
 }
 
 export function DragPreview(props: DragPreviewProps<unknown>) {
   let {
-    item,
-    children,
+    itemText,
     itemCount,
     density,
-    layout,
-    maxWidth,
-    rowHeaderColumnKeys
+    height,
+    maxWidth
   } = props;
-  let {height} = layout.getLayoutInfo(item.key).rect;
   let isDraggingMultiple = itemCount > 1;
-  // @ts-ignore
-  let cells = [...children].filter(cell => rowHeaderColumnKeys.has(cell.column.key));
-
   return (
     <Flex
       justifyContent="space-between"
@@ -95,12 +51,26 @@ export function DragPreview(props: DragPreviewProps<unknown>) {
           )
         )
       }>
-      <div>
-        {cells.map((cell) => (
-          <TableCellPreview
-            key={cell.key}
-            cell={cell} />
-        ))}
+      <div
+        className={
+        classNames(
+          styles,
+          'spectrum-Table-cell',
+          classNames(
+            stylesOverrides,
+            'react-spectrum-Table-cell'
+          )
+        )
+      }>
+        <span
+          className={
+            classNames(
+              styles,
+              'spectrum-Table-cellContents'
+            )
+        }>
+          {itemText}
+        </span>
       </div>
       {isDraggingMultiple &&
         <div className={classNames(stylesOverrides, 'react-spectrum-Table-row-badge')}>{itemCount}</div>
