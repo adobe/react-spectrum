@@ -56,4 +56,23 @@ describe('SearchField', () => {
     expect(searchbox.closest('.react-aria-SearchField')).toHaveAttribute('slot', 'test');
     expect(searchbox).toHaveAttribute('aria-label', 'test');
   });
+
+  it('should support render props', () => {
+    let {getByRole} = render(
+      <SearchField defaultValue="test">
+        {({value}) => (
+          <>
+            <Label>Test</Label>
+            <Input />
+            <Button>x</Button>
+            <Text slot="description">You are looking for "{value}"</Text>
+          </>
+        )}
+      </SearchField>
+    );
+
+    let searchbox = getByRole('searchbox');
+    let description = document.getElementById(searchbox.getAttribute('aria-describedby'));
+    expect(description).toHaveTextContent('You are looking for "test"');
+  });
 });
