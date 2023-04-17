@@ -6,7 +6,7 @@ import {ActionMenu} from '@react-spectrum/menu';
 import Add from '@spectrum-icons/workflow/Add';
 import {Breadcrumbs} from '@react-spectrum/breadcrumbs';
 import {chain} from '@react-aria/utils';
-import {Content} from '@react-spectrum/view';
+import {Content, View} from '@react-spectrum/view';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Delete from '@spectrum-icons/workflow/Delete';
 import {DIRECTORY_DRAG_TYPE} from '@react-aria/dnd';
@@ -375,6 +375,27 @@ storiesOf('ListView/Drag and Drop', module)
         <Droppable />
         <DragExample
           dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}}
+          listViewProps={args} />
+      </Flex>
+    )
+  )
+  .add(
+    'Custom drag preview',
+    args => (
+      <Flex direction="row" wrap alignItems="center">
+        <input />
+        <Droppable />
+        <DragExample
+          dragHookOptions={{
+            onDragStart: action('dragStart'),
+            onDragEnd: action('dragEnd'),
+            renderPreview: (keys, draggedKey) => (
+              <View backgroundColor="gray-50" padding="size-100" borderRadius="medium" borderWidth="thin" borderColor="blue-500">
+                <strong>Custom Preview</strong>
+                <div>Keys: [{[...keys].join(', ')}]</div>
+                <div>Dragged: {draggedKey}</div>
+              </View>
+            )}}
           listViewProps={args} />
       </Flex>
     )
