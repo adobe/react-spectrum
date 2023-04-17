@@ -562,6 +562,9 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
       {DragPreview && isTableDraggable &&
         <DragPreview ref={preview}>
           {() => {
+            if (dragAndDropHooks.renderPreview) {
+              return dragAndDropHooks.renderPreview(dragState.draggingKeys, dragState.draggedKey);
+            }
             let item = state.collection.getItem(dragState.draggedKey);
             let rowHeaderColumnKeys = state.collection.rowHeaderColumnKeys;
             let itemCount = dragState.draggingKeys.size;

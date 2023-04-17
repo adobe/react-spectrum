@@ -39,6 +39,29 @@ export const DragOutOfTable: TableStory = {
   ),
   storyName: 'Drag out of table'
 };
+export const CustomDragPreview: TableStory = {
+  args: {
+    disabledKeys: ['Foo 2']
+  },
+  render: (args) => (
+    <Flex direction="row" wrap alignItems="center" gap="size-200">
+      <Droppable />
+      <DragExample
+        dragHookOptions={{
+          onDragStart: action('dragStart'),
+          onDragEnd: action('dragEnd'),
+          renderPreview: (keys, draggedKey) => (
+            <div>
+              <div>Custom Preview</div>
+              <div>Keys: {[...keys].join(',')}</div>
+              <div>Dragged Key: {draggedKey}</div>
+            </div>
+          )}}
+        tableViewProps={args} />
+    </Flex>
+  ),
+  storyName: 'Custom drag preview'
+};
 
 export const DragWithinTable: TableStory = {
   args: {
