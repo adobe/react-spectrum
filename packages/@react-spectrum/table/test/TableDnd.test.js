@@ -168,6 +168,29 @@ describe('TableView', function () {
         expect(cellText).toHaveLength(1);
       });
 
+      it('should render a custom drag preview', function () {
+        let renderPreview = jest.fn().mockImplementation((keys, draggedKey) => <div>Custom preview for [{[...keys].join(', ')}] , while dragging {draggedKey}.</div>);
+        let {getByRole} = render(
+          <DraggableTableView dragHookOptions={{renderPreview}} tableViewProps={{selectedKeys: ['a', 'b']}} />
+        );
+
+        let grid = getByRole('grid');
+        let rowgroups = within(grid).getAllByRole('rowgroup');
+        let rows = within(rowgroups[1]).getAllByRole('row');
+        let row = rows[0];
+        let cell = within(row).getAllByRole('rowheader')[0];
+
+        let dataTransfer = new DataTransfer();
+
+        fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 5, clientY: 5});
+        fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 5, clientY: 5}));
+        expect(dataTransfer._dragImage.node.tagName).toBe('DIV');
+        expect(dataTransfer._dragImage.node.textContent).toBe('Custom preview for [a, b] , while dragging a.');
+        expect(dataTransfer._dragImage.x).toBe(5);
+        expect(dataTransfer._dragImage.y).toBe(5);
+      });
+
+
       it('should allow drag and drop of a single row', async function () {
         let {getByRole, getByText} = render(
           <DraggableTableView />
