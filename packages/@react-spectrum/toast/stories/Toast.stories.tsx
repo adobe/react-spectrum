@@ -21,11 +21,19 @@ import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import React, {SyntheticEvent, useEffect, useMemo, useRef, useState} from 'react';
 import {SpectrumToastOptions} from '../src/ToastContainer';
-import {storiesOf} from '@storybook/react';
 import {ToastContainer, ToastQueue} from '../';
 
-storiesOf('Toast', module)
-  .addParameters({
+export default {
+  title: 'Toast',
+  decorators: [
+    (story, {parameters}) => (
+      <>
+        {!parameters.disableToastContainer && <ToastContainer />}
+        <MainLandmark>{story()}</MainLandmark>
+      </>
+    )
+  ],
+  parameters: {
     args: {
       shouldCloseOnAction: false,
       timeout: null
@@ -38,50 +46,52 @@ storiesOf('Toast', module)
         }
       }
     }
-  })
-  .addDecorator((story, {parameters}) => (
-    <>
-      {!parameters.disableToastContainer && <ToastContainer />}
-      <MainLandmark>
-        {story()}
-      </MainLandmark>
-    </>
-  ))
-  .add(
-    'Default',
-    args => <RenderProvider {...args} />
-  )
-  .add(
-    'With action',
-    args => <RenderProvider {...args} actionLabel="Action" onAction={action('onAction')} />
-  )
-  .add(
-    'With dialog',
-    args => (
-      <DialogTrigger isDismissable>
-        <Button variant="accent">Open dialog</Button>
-        <Dialog>
-          <Heading>Toasty</Heading>
-          <Content>
-            <RenderProvider {...args} />
-          </Content>
-        </Dialog>
-      </DialogTrigger>
-    )
-  )
-  .add(
-    'multiple ToastContainers',
-    args => <Multiple {...args} />,
-    {disableToastContainer: true}
-  )
-  .add(
-    'programmatically closing',
-    args => <ToastToggle {...args} />
-  )
-  .add(
-    'with iframe',
-    () => <IframeExample />
-  );
+  }
+};
+
+export const Default = (args) => <RenderProvider {...args} />;
+export const WithAction = (args) => (
+  <RenderProvider {...args} actionLabel="Action" onAction={action('onAction')} />
+);
+
+WithAction.story = {
+  name: 'With action'
+};
+
+export const WithDialog = (args) => (
+  <DialogTrigger isDismissable>
+    <Button variant="accent">Open dialog</Button>
+    <Dialog>
+      <Heading>Toasty</Heading>
+      <Content>
+        <RenderProvider {...args} />
+      </Content>
+    </Dialog>
+  </DialogTrigger>
+);
+
+WithDialog.story = {
+  name: 'With dialog'
+};
+
+export const MultipleToastContainers = (args) => <Multiple {...args} />;
+
+MultipleToastContainers.story = {
+  name: 'multiple ToastContainers',
+  parameters: {disableToastContainer: true}
+};
+
+export const ProgrammaticallyClosing = (args) => <ToastToggle {...args} />;
+
+ProgrammaticallyClosing.story = {
+  name: 'programmatically closing'
+};
+
+export const WithIframe = () => <IframeExample />;
+
+WithIframe.story = {
+  name: 'with iframe'
+};
 
 function RenderProvider(options: SpectrumToastOptions) {
   return (
