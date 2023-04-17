@@ -13,6 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {ComponentMeta} from '@storybook/react';
 import defaultConfig from './Table.stories';
+import {Divider} from '@react-spectrum/divider';
 import {DragBetweenTablesExample, DragBetweenTablesRootOnlyExample, DragExample, DragOntoRowExample, ReorderExample} from './TableDnDExamples';
 import {Droppable} from '@react-aria/dnd/stories/dnd.stories';
 import {Flex} from '@react-spectrum/layout';
@@ -53,9 +54,10 @@ export const CustomDragPreview: TableStory = {
           onDragEnd: action('dragEnd'),
           renderPreview: (keys, draggedKey) => (
             <View backgroundColor="gray-50" padding="size-100" borderRadius="medium" borderWidth="thin" borderColor="blue-500">
-              <div>Custom Preview</div>
-              <div>Keys: {[...keys].join(', ')}</div>
-              <div>Dragged Key: {draggedKey}</div>
+              <strong>Custom Preview</strong>
+              <Divider size="S" />
+              <div>Keys: [{[...keys].join(', ')}]</div>
+              <div>Dragged: {draggedKey}</div>
             </View>
           )}}
         tableViewProps={args} />
