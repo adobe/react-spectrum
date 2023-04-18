@@ -1,76 +1,12 @@
 import chalk from 'chalk';
+import {copyComponents} from './helpers/copyComponents.js';
+import {copyPackageJson} from './helpers/copyPackageJson.js';
+import {createProjectFolder} from './helpers/createProjectFolder.js';
 import {exec} from 'child_process';
 import fs from 'fs';
 import prompts from 'prompts';
-
-const readTemplates = () => fs.readdirSync('./templates');
-const readComponents = (template) =>
-  fs
-    .readdirSync(`./templates/${template}`)
-    .filter((file) =>
-      fs.lstatSync(`./templates/${template}/${file}`).isDirectory()
-    );
-
-const createProjectFolder = (projectName) => {
-  if (!fs.existsSync(projectName)) {
-    fs.mkdirSync(projectName);
-  }
-};
-
-const copyPackageJson = (template, destination, includedFeatures) => {
-  const packageJson = JSON.parse(fs.read(`templates/${template}/package.json`));
-  packageJson.name = destination;
-  if (!includedFeatures.includes('Tests')) {
-    delete packageJson.dependencies['jest'];
-    delete packageJson.dependencies['react-testing-library'];
-  }
-  if (!includedFeatures.includes('Stories')) {
-    delete packageJson.dependencies['@storybook/react'];
-  }
-  if (!includedFeatures.includes('Docs')) {
-    delete packageJson.dependencies['@storybook/addon-docs'];
-  }
-
-  fs.write(`${destination}/package.json`, JSON.stringify(packageJson, null, 2));
-};
-
-const copyComponents = (
-  components,
-  template,
-  destination,
-  includedFeatures
-) => {
-  if (components.includes('All')) {
-    components = readComponents(template);
-  }
-  components.forEach((component) => {
-    const sourceDir = `./templates/${template}/${component}`;
-    const destDir = `${destination}/${component}`;
-
-    if (!fs.existsSync(destDir)) {
-      fs.mkdirSync(destDir);
-    }
-
-    fs.copyFileSync(
-      `${sourceDir}/${component}.tsx`,
-      `${destDir}/${component}.tsx`
-    );
-
-    if (includedFeatures.includes('Tests')) {
-      fs.copyFileSync(
-        `${sourceDir}/${component}.test.tsx`,
-        `${destDir}/${component}.test.tsx`
-      );
-    }
-
-    if (includedFeatures.includes('Stories')) {
-      fs.copyFileSync(
-        `${sourceDir}/${component}.stories.tsx`,
-        `${destDir}/${component}.stories.tsx`
-      );
-    }
-  });
-};
+import {readComponents} from './helpers/readComponents.js';
+import {readTemplates} from './helpers/readTemplates.js';
 
 async function main() {
   const {action} = await prompts({
@@ -89,7 +25,7 @@ async function main() {
     ]
   });
 
-  const templates = readTemplates();
+  const templates = await readTemplates();
   const {template} = await prompts({
     type: 'select',
     name: 'template',
@@ -111,7 +47,7 @@ async function main() {
     projectName = '.';
   }
 
-  const components = readComponents(template);
+  const components = await readComponents(template);
   const {selectedComponents} = await prompts({
     type: 'multiselect',
     name: 'selectedComponents',
