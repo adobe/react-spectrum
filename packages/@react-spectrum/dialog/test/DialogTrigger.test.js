@@ -32,7 +32,6 @@ describe('DialogTrigger', function () {
   });
   afterAll(() => {
     jest.clearAllMocks();
-    jest.useRealTimers();
   });
 
   beforeEach(() => {
