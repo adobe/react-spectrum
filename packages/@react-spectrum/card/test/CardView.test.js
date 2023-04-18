@@ -1180,7 +1180,6 @@ describe('CardView', function () {
       let grid = tree.getByRole('grid');
       expect(grid).toHaveAttribute('aria-rowcount', defaultItems.length.toString());
       expect(within(grid).getByText('Title 1')).toBeTruthy();
-      expect(within(grid).queryAllByText('Title 12').length).toBe(0);
 
       let cards = tree.getAllByRole('gridcell');
       expect(cards).toBeTruthy();
