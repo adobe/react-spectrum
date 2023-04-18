@@ -1,42 +1,36 @@
-import fs from 'fs';
-import {readComponents} from './readComponents.js';
+import {createDirectory} from './createDirectory.js';
+import {downloadFile} from './downloadFile.js';
+import got from 'got';
 
-export const copyComponents = (
+export const copyComponents = async (
   components,
   template,
   destination,
   includedFeatures
 ) => {
-  if (components.includes('All')) {
-    components = readComponents(template);
-  }
-  components.forEach((component) => {
-    const sourceDir = `./templates/${template}/${component}`;
+  createDirectory(destination);
+  let downloadPromises = [];
+
+  await Promise.all(components.map(async (component) => {
     const destDir = `${destination}/${component}`;
+    createDirectory(destDir);
 
-    // TODO, fetch from github API
-
-    if (!fs.existsSync(destDir)) {
-      fs.mkdirSync(destDir);
-    }
-
-    fs.copyFileSync(
-      `${sourceDir}/${component}.tsx`,
-      `${destDir}/${component}.tsx`
-    );
-
-    if (includedFeatures.includes('Tests')) {
-      fs.copyFileSync(
-        `${sourceDir}/${component}.test.tsx`,
-        `${destDir}/${component}.test.tsx`
-      );
-    }
-
-    if (includedFeatures.includes('Stories')) {
-      fs.copyFileSync(
-        `${sourceDir}/${component}.stories.tsx`,
-        `${destDir}/${component}.stories.tsx`
-      );
-    }
-  });
+    let res = await got(`https://api.github.com/repositories/208362715/contents/packages/react-aria-components/scripts/create-react-aria-components/templates/${template}/components/${component}?ref=create-react-aria-components`).catch((e) => e);
+    let files = JSON.parse(res.body).filter(file => file.type === 'file');
+    files = files.filter(file => {
+      if (file.name.endsWith('.test.tsx') && !includedFeatures.includes('Tests')) {
+        return false;
+      }
+      if (file.name.endsWith('.stories.tsx') && !includedFeatures.includes('Stories')) {
+        return false;
+      }
+      if (file.name.endsWith('.mdx') && !includedFeatures.includes('Docs')) {
+        return false;
+      }
+      return true;
+    });
+    downloadPromises.push(...files.map(file => downloadFile(file.download_url, `${destDir}/${file.name}`)));
+  }));
+  await Promise.all(downloadPromises);
+  console.log('All components downloaded successfully!');
 };

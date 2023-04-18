@@ -1,9 +1,8 @@
 import chalk from 'chalk';
 import {copyComponents} from './helpers/copyComponents.js';
 import {copyPackageJson} from './helpers/copyPackageJson.js';
-import {createProjectFolder} from './helpers/createProjectFolder.js';
 import {exec} from 'child_process';
-import fs from 'fs';
+import path from 'path';
 import prompts from 'prompts';
 import {readComponents} from './helpers/readComponents.js';
 import {readTemplates} from './helpers/readTemplates.js';
@@ -42,13 +41,12 @@ async function main() {
       initial: 'my-component-library'
     });
     projectName = response.projectName;
-    createProjectFolder(projectName);
   } else {
     projectName = '.';
   }
 
   const components = await readComponents(template);
-  const {selectedComponents} = await prompts({
+  let {selectedComponents} = await prompts({
     type: 'multiselect',
     name: 'selectedComponents',
     message: 'Select the components you want to include',
@@ -57,13 +55,16 @@ async function main() {
       ...components.map((c) => ({title: c, value: c}))
     ]
   });
+  if (selectedComponents.includes('All')) {
+    selectedComponents = components;
+  }
 
   let features = [
     {title: 'Tests (with Jest + React Testing Library)', value: 'Tests'},
     {title: 'Stories (with Storybook)', value: 'Stories'},
-    {title: 'Docs (with Storybook addon)', value: 'Docs'}
+    {title: 'Docs (with Storybook Autodocs)', value: 'Docs'}
   ];
-  const {includedFeatures} = await prompts({
+  let {includedFeatures} = await prompts({
     type: 'multiselect',
     name: 'includedFeatures',
     message: 'Select the features you want to include',
@@ -72,42 +73,43 @@ async function main() {
       ...features
     ]
   });
+  if (includedFeatures.includes('All')) {
+    includedFeatures = features.map((f) => f.value);
+  }
 
-  copyComponents(selectedComponents, template, projectName, includedFeatures);
+  await copyComponents(selectedComponents, template, projectName, includedFeatures);
 
   if (action === 'Create a new library') {
-    copyPackageJson(template, projectName, includedFeatures);
-    let packageJson = JSON.parse(fs.get(`${projectName}/package.json`));
-    let dependencies = packageJson.dependencies;
-    let devDependencies = packageJson.devDependencies;
+    await copyPackageJson(template, projectName, includedFeatures);
+
     console.log(
-      `Creating a new component library in ${__dirname}/${projectName}.`
+      `Creating a new component library in ${path.resolve()}/${projectName}.`
     );
-    console.log('Using npm.');
     console.log(`Initializing project with template: ${template}`);
-    console.log('Installing dependencies:');
+    console.log('Installing dependencies...');
 
-    for (let dependency in [...dependencies, ...devDependencies]) {
-      console.log(`- ${dependency}`);
-    }
-
-    const {stdout, stderr} = await exec(`cd ${projectName} && npm install`);
-    console.log(stdout);
-    console.log(stderr);
+    exec(`cd ${projectName} && npm install`);
     console.log(
       chalk.green(
-        `Success! Created ${projectName} at ${__dirname}/${projectName}`
+        `\nSuccess! Created ${projectName} at ${path.resolve()}/${projectName}`
       )
     );
   } else {
-    console.log(chalk.green('Components successfully added!'));
+    console.log(chalk.green('\nComponents successfully added!'));
   }
 
   console.log(
-    chalk.green(
-      'You can access the docs here: https://react-spectrum.adobe.com/react-aria/react-aria-components.html'
-    )
+    chalk.cyan('\nYou can access the React Aria Components docs here: ') +
+    chalk.underline('https://react-spectrum.adobe.com/react-aria/react-aria-components.html')
   );
+
+  if (action === 'Create a new library' && includedFeatures.includes('Stories')) {
+    console.log(
+      chalk.cyan(`\nYou can start Storybook by running:\n\ncd ${projectName}\nnpm run storybook`)
+    );
+  }
+
+  process.exit(0);
 }
 
 main();

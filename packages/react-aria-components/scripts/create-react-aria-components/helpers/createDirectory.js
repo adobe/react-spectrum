@@ -1,8 +1,7 @@
 import fs from 'fs';
 
-export const createProjectFolder = (projectName) => {
+export const createDirectory = (projectName) => {
   if (!fs.existsSync(projectName)) {
     fs.mkdirSync(projectName);
   }
-    // TODO handle error
 };
