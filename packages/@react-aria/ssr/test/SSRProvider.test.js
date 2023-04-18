@@ -10,17 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import React from 'react';
-import {render} from '@react-spectrum/test-utils';
-import {SSRProvider} from '../';
-import {useId} from '@react-aria/utils';
+import React from "react";
+import { render } from "@react-spectrum/test-utils";
+import { SSRProvider } from "../";
+import { useId } from "@react-aria/utils";
 
 function Test() {
   return <div data-testid="test" id={useId()} />;
 }
 
-describe('SSRProvider', function () {
-  it('it should generate consistent unique ids', function () {
+describe("SSRProvider", function () {
+  it("it should generate consistent unique ids", function () {
     let tree = render(
       <SSRProvider>
         <Test />
@@ -28,12 +28,12 @@ describe('SSRProvider', function () {
       </SSRProvider>
     );
 
-    let divs = tree.getAllByTestId('test');
-    expect(divs[0].id).toBe('react-aria-1');
-    expect(divs[1].id).toBe('react-aria-2');
+    let divs = tree.getAllByTestId("test");
+    expect(divs[0].id).toBe("react-aria-1");
+    expect(divs[1].id).toBe("react-aria-2");
   });
 
-  it('it should generate consistent unique ids with nested SSR providers', function () {
+  it("it should generate consistent unique ids with nested SSR providers", function () {
     let tree = render(
       <SSRProvider>
         <Test />
@@ -50,9 +50,9 @@ describe('SSRProvider', function () {
       </SSRProvider>
     );
 
-    let divs = tree.getAllByTestId('test');
+    let divs = tree.getAllByTestId("test");
     expect(divs.map((div) => div.id)).toMatchInlineSnapshot(`
-      Array [
+      [
         "react-aria-1",
         "react-aria-2-1",
         "react-aria-2-2-1",
@@ -62,7 +62,7 @@ describe('SSRProvider', function () {
     `);
   });
 
-  it('it should generate consistent unique ids in React strict mode', function () {
+  it("it should generate consistent unique ids in React strict mode", function () {
     let tree = render(
       <React.StrictMode>
         <SSRProvider>
@@ -72,12 +72,12 @@ describe('SSRProvider', function () {
       </React.StrictMode>
     );
 
-    let divs = tree.getAllByTestId('test');
-    expect(divs[0].id).toBe('react-aria-1');
-    expect(divs[1].id).toBe('react-aria-2');
+    let divs = tree.getAllByTestId("test");
+    expect(divs[0].id).toBe("react-aria-1");
+    expect(divs[1].id).toBe("react-aria-2");
   });
 
-  it('it should generate consistent unique ids in React strict mode with Suspense', function () {
+  it("it should generate consistent unique ids in React strict mode with Suspense", function () {
     let tree = render(
       <React.StrictMode>
         <SSRProvider>
@@ -95,8 +95,8 @@ describe('SSRProvider', function () {
       </React.StrictMode>
     );
 
-    let divs = tree.getAllByTestId('test');
-    expect(divs[0].id).toBe('react-aria-1-1');
-    expect(divs[1].id).toBe('react-aria-2-1');
+    let divs = tree.getAllByTestId("test");
+    expect(divs[0].id).toBe("react-aria-1-1");
+    expect(divs[1].id).toBe("react-aria-2-1");
   });
 });

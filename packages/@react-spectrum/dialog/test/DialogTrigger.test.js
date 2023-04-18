@@ -28,7 +28,7 @@ describe('DialogTrigger', function () {
   let warnMock;
   let windowSpy;
   beforeAll(() => {
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
   afterAll(() => {
     jest.clearAllMocks();
@@ -37,8 +37,6 @@ describe('DialogTrigger', function () {
 
   beforeEach(() => {
     windowSpy = jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
-    // this needs to be a setTimeout so that the dialog can be removed from the dom before the callback is invoked
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(() => cb(), 0));
     if (process.env.STRICT_MODE) {
       warnMock = jest.spyOn(global.console, 'warn').mockImplementation();
     }
@@ -54,8 +52,6 @@ describe('DialogTrigger', function () {
         jest.runAllTimers();
       });
     }
-
-    window.requestAnimationFrame.mockRestore();
 
     if (process.env.STRICT_MODE && warnMock.mock.calls.length > 0) {
       expect(warnMock).toHaveBeenCalledTimes(1);

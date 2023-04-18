@@ -97,6 +97,9 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   }
 
   isVisible(layoutInfo: LayoutInfo, rect: Rect) {
+    if (layoutInfo.type === 'loader') {
+      console.log(layoutInfo, rect);
+    }
     return layoutInfo.rect.intersects(rect);
   }
 

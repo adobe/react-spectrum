@@ -29,6 +29,15 @@ export function useAutoScroll(ref: RefObject<Element>) {
     dy: 0
   }).current;
 
+  useEffect(() => {
+    return () => {
+      if (state.timer) {
+        cancelAnimationFrame(state.timer);
+        state.timer = null;
+      }
+    };
+  }, []);
+
   let scroll = useCallback(() => {
     scrollableRef.current.scrollLeft += state.dx;
     scrollableRef.current.scrollTop += state.dy;
