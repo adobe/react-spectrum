@@ -1,5 +1,6 @@
 import chalk from 'chalk';
 import {copyComponents} from './helpers/copyComponents.js';
+import {copyIndexFile} from './helpers/copyIndexFile.js';
 import {copyPackageJson} from './helpers/copyPackageJson.js';
 import {exec} from 'child_process';
 import path from 'path';
@@ -55,7 +56,8 @@ async function main() {
       ...components.map((c) => ({title: c, value: c}))
     ]
   });
-  if (selectedComponents.includes('All')) {
+  let includesAll = selectedComponents.includes('All');
+  if (includesAll) {
     selectedComponents = components;
   }
 
@@ -81,6 +83,7 @@ async function main() {
 
   if (action === 'Create a new library') {
     await copyPackageJson(template, projectName, includedFeatures);
+    await copyIndexFile(template, projectName, selectedComponents, includesAll);
 
     console.log(
       `Creating a new component library in ${path.resolve()}/${projectName}.`
