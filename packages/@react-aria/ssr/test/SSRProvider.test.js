@@ -53,11 +53,11 @@ describe('SSRProvider', function () {
     let divs = tree.getAllByTestId('test');
     expect(divs.map((div) => div.id)).toMatchInlineSnapshot(`
       [
-        'react-aria-1',
-        'react-aria-2-1',
-        'react-aria-2-2-1',
-        'react-aria-3',
-        'react-aria-4-1',
+        "react-aria-1",
+        "react-aria-2-1",
+        "react-aria-2-2-1",
+        "react-aria-3",
+        "react-aria-4-1",
       ]
     `);
   });
