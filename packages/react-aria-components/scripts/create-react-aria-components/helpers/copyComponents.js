@@ -8,11 +8,12 @@ export const copyComponents = async (
   destination,
   includedFeatures
 ) => {
-  createDirectory(destination);
+  createDirectory(`${destination}/`);
+  createDirectory(`${destination}/components/`);
   let downloadPromises = [];
 
   await Promise.all(components.map(async (component) => {
-    const destDir = `${destination}/${component}`;
+    const destDir = `${destination}/components/${component}`;
     createDirectory(destDir);
 
     let res = await got(`https://api.github.com/repositories/208362715/contents/packages/react-aria-components/scripts/create-react-aria-components/templates/${template}/components/${component}?ref=create-react-aria-components`).catch((e) => e);
