@@ -12,14 +12,17 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import React, {useRef} from 'react';
-import {storiesOf} from '@storybook/react';
 import {useButton} from '../';
 
-storiesOf('useButton', module)
-  .add(
-    'input type button',
-    () => <InputButton />
-  );
+export default {
+  title: 'useButton'
+};
+
+export const InputTypeButton = () => <InputButton />;
+
+InputTypeButton.story = {
+  name: 'input type button'
+};
 
 interface InputButtonProps extends AriaButtonProps<'input'> {
   value?: string
