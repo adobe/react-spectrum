@@ -36,7 +36,8 @@ export function useAutoScroll(ref: RefObject<Element>) {
         state.timer = null;
       }
     };
-  }, []);
+  // state will become a new object, so it's ok to use in the dependency array for unmount
+  }, [state]);
 
   let scroll = useCallback(() => {
     scrollableRef.current.scrollLeft += state.dx;
