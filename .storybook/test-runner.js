@@ -29,9 +29,7 @@ module.exports = {
       axeOptions: storyContext.parameters?.a11y?.options,
     });
 
-    // This can properly target a selector pattern to run the rule on when running the tests but
-    // for some reason it causes a bunch of elements to fail even though they aren't aria hidden...
-    // try a different selector?
+    // Approach for global axe storybook config, simply merge with the storyContext rules
     // await configureAxe(page, {
     //   rules: [
     //     {
@@ -41,35 +39,5 @@ module.exports = {
     //     }
     //   ]
     // })
-
-
-    // const disabledRulesForStory = () => {
-    //   switch (context.title) {
-    //     case "Picker":
-    //       return {
-    //         'aria-hidden-focus': {enabled: false}
-    //       }
-
-    //     default:
-    //       return {}
-    //   }
-    // }
-
-
-
-    // await checkA11y(page, '#root', {
-    //   detailedReport: true,
-    //   detailedReportOptions: {
-    //     html: true,
-    //   },
-    //   axeOptions: {
-    //     rules: {
-    //       // The below disables aria-hidden-focus run for the Picker story tests properly but
-    //       // can't use the selector strategy... This feels overly broad
-    //       // 'aria-hidden-focus': {enabled: false}
-    //       ...disabledRulesForStory()
-    //     }
-    //   }
-    // });
   },
 };
