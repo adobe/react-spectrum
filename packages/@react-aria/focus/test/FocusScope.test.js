@@ -697,33 +697,41 @@ describe('FocusScope', function () {
     it('should not not restore focus when active element is outside the scope', function () {
       function Test() {
         const [display, setDisplay] = useState(false);
-
+      
         return (
           <div>
-            <input data-testid="trigger" onFocus={() => setDisplay(state => !state)} />
-            {display &&
-              <FocusScope autoFocus restoreFocus>
-                <input data-testid="input1" />
+            <button
+              data-testid="button1"
+              type="button"
+              onClick={() => setDisplay((state) => !state)}>
+              {display ? 'Close dialog' : 'Open dialog'}
+            </button>
+            <button
+              data-testid="button2"
+              type="button"
+              onClick={() => setDisplay((state) => !state)}>
+              {display ? 'Close dialog' : 'Open dialog'}
+            </button>{' '}
+            {display && (
+              <FocusScope restoreFocus>
+                <input />
+                <input />
+                <input />
               </FocusScope>
-            }
+            )}
           </div>
         );
-      }
+      }      
 
       let {getByTestId} = render(<Test />);
-
-      let trigger = getByTestId('trigger');
-      act(() => {trigger.focus();});
-
+      let button1 = getByTestId('button1');
+      act(() => {button1.focus();});
+      expect(document.activeElement).toBe(button1);
+      
+      let button2 = getByTestId('button2');
+      act(() => {button2.focus();});
       act(() => {jest.runAllTimers();});
-
-
-      let input1 = getByTestId('input1');
-      expect(document.activeElement).toBe(input1);
-
-      act(() => {trigger.focus();});
-
-      expect(input1).not.toBeInTheDocument();
+      expect(document.activeElement).toBe(button2);
     });
   });
 
