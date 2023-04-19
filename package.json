@@ -43,8 +43,8 @@
     "check-published-apis": "yarn build:api-published && yarn build:api-branch && yarn compare:apis",
     "bumpVersions": "node scripts/bumpVersions.js",
     "test:parcel": "jest --testMatch '**/*.parceltest.{ts,tsx}'",
-    "blc:local": "npx -p broken-link-checker@0.7.8 blc http://localhost:1234/ -ro",
-    "blc:prod": "npx -p broken-link-checker@0.7.8 blc https://react-spectrum.adobe.com/ -ro"
+    "blc:local": "npx git+ssh://git@github.com:ktabors/rsp-blc.git -u http://localhost:1234/",
+    "blc:prod": "npx git+ssh://git@github.com:ktabors/rsp-blc.git -u https://react-spectrum.adobe.com/"
   },
   "workspaces": [
     "packages/react-stately",
