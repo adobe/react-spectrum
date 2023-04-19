@@ -37,7 +37,6 @@ describe('ColorArea', () => {
 
   beforeAll(() => {
     jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => SIZE);
-    // @ts-ignore
     jest.useFakeTimers();
   });
 
