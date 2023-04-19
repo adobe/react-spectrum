@@ -15,6 +15,7 @@ import {act, fireEvent, installPointerEvent, render as renderComponent, triggerP
 import {ActionButton, Button} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
 import {announce} from '@react-aria/live-announcer';
+import {axe} from 'jest-axe';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {composeStories} from '@storybook/testing-react';
@@ -183,6 +184,34 @@ describe('TableView', function () {
 
     return el;
   };
+
+  it.only('accessibility check', async function () {
+    let {container} = render(
+      <TableView aria-label="Table" data-testid="test">
+        <TableHeader>
+          <Column>Foo</Column>
+          <Column>Bar</Column>
+          <Column>Baz</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>Foo 1</Cell>
+            <Cell>Bar 1</Cell>
+            <Cell>Baz 1</Cell>
+          </Row>
+          <Row>
+            <Cell>Foo 2</Cell>
+            <Cell>Bar 2</Cell>
+            <Cell>Baz 2</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    );
+    jest.useRealTimers();
+    const results = await axe(container);
+    jest.useFakeTimers();
+    expect(results).toHaveNoViolations();
+  });
 
   it('renders a static table', function () {
     let {getByRole} = render(

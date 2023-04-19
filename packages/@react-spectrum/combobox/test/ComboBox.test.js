@@ -13,6 +13,7 @@
 jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, render, screen, triggerPress, typeText, waitFor, within} from '@react-spectrum/test-utils';
 import {announce} from '@react-aria/live-announcer';
+import {axe} from 'jest-axe';
 import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
 import {ComboBox, Item, Section} from '../';
@@ -267,6 +268,14 @@ describe('ComboBox', function () {
 
   afterAll(function () {
     jest.restoreAllMocks();
+  });
+
+  it.only('accessibility check', async function () {
+    let {container} = renderComboBox();
+    jest.useRealTimers();
+    const results = await axe(container);
+    jest.useFakeTimers();
+    expect(results).toHaveNoViolations();
   });
 
   it('renders correctly', function () {

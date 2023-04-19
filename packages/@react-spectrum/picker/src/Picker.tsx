@@ -159,6 +159,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
 
   let picker = (
     <div
+      role="menuitem"
       className={
         classNames(
           styles,

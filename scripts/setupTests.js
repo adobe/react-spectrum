@@ -12,6 +12,7 @@
 
 // setup file
 import '@testing-library/jest-dom';
+import {toHaveNoViolations} from 'jest-axe';
 
 // this prints a nice stack like this
 /**
@@ -88,6 +89,8 @@ expect.extend({
     }
   }
 });
+
+expect.extend(toHaveNoViolations);
 
 failTestOnConsoleWarn();
 failTestOnConsoleError();

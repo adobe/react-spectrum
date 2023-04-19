@@ -14,6 +14,7 @@ jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, installPointerEvent, render as renderComponent, triggerPress, within} from '@react-spectrum/test-utils';
 import {ActionButton} from '@react-spectrum/button';
 import {announce} from '@react-aria/live-announcer';
+import {axe} from 'jest-axe';
 import {FocusExample, renderEmptyState} from '../stories/ListView.stories';
 import {Item, ListView} from '../src';
 import {Provider} from '@react-spectrum/provider';
@@ -141,6 +142,21 @@ describe('ListView', function () {
   };
 
   let focusRow = (tree, text) => act(() => getRow(tree, text).focus());
+
+  it.only('accessibility check', async function () {
+    let {container} = render(
+      <ListView aria-label="List" data-testid="test">
+        <Item>Foo</Item>
+        <Item>Bar</Item>
+        <Item>Baz</Item>
+      </ListView>
+    );
+
+    jest.useRealTimers();
+    const results = await axe(container);
+    jest.useFakeTimers();
+    expect(results).toHaveNoViolations();
+  });
 
   it('renders a static listview', function () {
     let {getByRole, getAllByRole} = render(

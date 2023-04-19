@@ -125,6 +125,7 @@
     "identity-obj-proxy": "^3.0.0",
     "ignore-styles": "^5.0.1",
     "jest": "^27.4.3",
+    "jest-axe": "^7.0.1",
     "jest-environment-jsdom": "^27.4.3",
     "jest-junit": "^12.0.0",
     "jest-matchmedia-mock": "^1.0.0",
