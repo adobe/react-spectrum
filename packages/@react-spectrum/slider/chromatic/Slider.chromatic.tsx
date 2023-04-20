@@ -13,7 +13,7 @@
 import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Heading} from '@react-spectrum/text';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import React from 'react';
 import {Slider} from '../';
 import {SpectrumSliderProps} from '@react-types/slider';

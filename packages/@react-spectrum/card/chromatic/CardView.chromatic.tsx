@@ -14,7 +14,7 @@ import {Card, CardView, GalleryLayout, GridLayout, WaterfallLayout} from '..';
 import {Content} from '@react-spectrum/view';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import React, {useMemo} from 'react';
 import {SpectrumCardViewProps} from '@react-types/card';
 import {useCollator} from '@react-aria/i18n';

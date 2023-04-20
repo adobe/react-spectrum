@@ -10,16 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import { ColorArea, ColorField, ColorSlider, ColorWheel } from '../';
-import { Flex } from '@adobe/react-spectrum';
-import { Meta, StoryFn } from '@storybook/react';
-import { parseColor } from '@react-stately/color';
-import React, { useState } from 'react';
-import { SpectrumColorAreaProps } from '@react-types/color';
+import {ColorArea, ColorField, ColorSlider, ColorWheel} from '../';
+import {Flex} from '@adobe/react-spectrum';
+import {Meta, StoryFn} from '@storybook/react';
+import {parseColor} from '@react-stately/color';
+import React, {useState} from 'react';
+import {SpectrumColorAreaProps} from '@react-types/color';
 
 const meta: Meta<SpectrumColorAreaProps> = {
   title: 'ColorArea',
-  component: ColorArea,
+  component: ColorArea
 };
 
 export default meta;
@@ -27,13 +27,13 @@ export default meta;
 const Template: StoryFn<SpectrumColorAreaProps> = (args) => <ColorAreaExample {...args} />;
 
 function ColorAreaExample(props: SpectrumColorAreaProps) {
-  let { xChannel, yChannel, isDisabled } = props;
+  let {xChannel, yChannel, isDisabled} = props;
   let defaultValue =
     typeof props.defaultValue === 'string' ? parseColor(props.defaultValue) : props.defaultValue;
   let [color, setColor] = useState(defaultValue || parseColor('#ff00ff'));
-  let xyChannels = { xChannel, yChannel };
+  let xyChannels = {xChannel, yChannel};
   let colorSpace = color.getColorSpace();
-  let { zChannel } = color.getColorSpaceAxes(xyChannels);
+  let {zChannel} = color.getColorSpaceAxes(xyChannels);
   let isHue = zChannel === 'hue';
 
   function onChange(e) {
@@ -53,8 +53,7 @@ function ColorAreaExample(props: SpectrumColorAreaProps) {
             {...props}
             value={color}
             onChange={onChange}
-            onChangeEnd={props.onChangeEnd}
-          />
+            onChangeEnd={props.onChangeEnd} />
           {isHue ? (
             <ColorWheel
               value={color}
@@ -63,17 +62,15 @@ function ColorAreaExample(props: SpectrumColorAreaProps) {
               isDisabled={isDisabled}
               size={'size-2400'}
               UNSAFE_style={{
-                marginTop: 'calc( -.75 * var(--spectrum-global-dimension-size-2400))',
-              }}
-            />
+                marginTop: 'calc( -.75 * var(--spectrum-global-dimension-size-2400))'
+              }} />
           ) : (
             <ColorSlider
               value={color}
               onChange={onChange}
               onChangeEnd={props.onChangeEnd}
               channel={zChannel}
-              isDisabled={isDisabled}
-            />
+              isDisabled={isDisabled} />
           )}
         </Flex>
         <Flex direction="column" alignItems="center" gap="size-100" minWidth="size-1200">
@@ -81,8 +78,7 @@ function ColorAreaExample(props: SpectrumColorAreaProps) {
             role="img"
             aria-label={`color swatch: ${color.toString('rgb')}`}
             title={`${color.toString('hex')}`}
-            style={{ width: '96px', height: '96px', background: color.toString('css') }}
-          />
+            style={{width: '96px', height: '96px', background: color.toString('css')}} />
           <ColorField
             label="HEX Color"
             value={color}
@@ -91,8 +87,7 @@ function ColorAreaExample(props: SpectrumColorAreaProps) {
               event.key === 'Enter' && onChange((event.target as HTMLInputElement).value)
             }
             isDisabled={isDisabled}
-            width="size-1200"
-          />
+            width="size-1200" />
         </Flex>
       </Flex>
     </div>
@@ -101,55 +96,55 @@ function ColorAreaExample(props: SpectrumColorAreaProps) {
 export const XBlueYGreen = {
   render: Template,
   name: 'RGB xChannel="blue", yChannel="green"',
-  args: { xChannel: 'blue', yChannel: 'green' },
+  args: {xChannel: 'blue', yChannel: 'green'}
 };
 
 export const XGreenYBlue = {
   render: Template,
   name: 'RGB xChannel="green", yChannel="blue"',
-  args: { ...XBlueYGreen.args, xChannel: 'green', yChannel: 'blue' },
+  args: {...XBlueYGreen.args, xChannel: 'green', yChannel: 'blue'}
 };
 
 export const XBlueYRed = {
   render: Template,
   name: 'RGB xChannel="blue", yChannel="red"',
-  args: { ...XBlueYGreen.args, xChannel: 'blue', yChannel: 'red' },
+  args: {...XBlueYGreen.args, xChannel: 'blue', yChannel: 'red'}
 };
 
 export const XRedYBlue = {
   render: Template,
   name: 'RGB xChannel="red", yChannel="blue"',
-  args: { ...XBlueYGreen.args, xChannel: 'red', yChannel: 'blue' },
+  args: {...XBlueYGreen.args, xChannel: 'red', yChannel: 'blue'}
 };
 
 export const XRedYGreen = {
   render: Template,
   name: 'RGB xChannel="red", yChannel="green"',
-  args: { ...XBlueYGreen.args, xChannel: 'red', yChannel: 'green' },
+  args: {...XBlueYGreen.args, xChannel: 'red', yChannel: 'green'}
 };
 
 export const XGreenYRed = {
   render: Template,
   name: 'RGB xChannel="green", yChannel="red"',
-  args: { ...XBlueYGreen.args, xChannel: 'green', yChannel: 'red' },
+  args: {...XBlueYGreen.args, xChannel: 'green', yChannel: 'red'}
 };
 
 export const XBlueYGreenisDisabled = {
   render: Template,
   name: 'RGB xChannel="blue", yChannel="green", isDisabled',
-  args: { ...XBlueYGreen.args, isDisabled: true },
+  args: {...XBlueYGreen.args, isDisabled: true}
 };
 
 export const XBlueYGreenSize3000 = {
   render: Template,
   name: 'RGB xChannel="blue", yChannel="green", size="size-3000"',
-  args: { ...XBlueYGreen.args, size: 'size-3000' },
+  args: {...XBlueYGreen.args, size: 'size-3000'}
 };
 
 export const XBlueYGreenSize600 = {
   render: Template,
   name: 'RGB xChannel="blue", yChannel="green", size="size-600"',
-  args: { ...XBlueYGreen.args, size: 'size-600' },
+  args: {...XBlueYGreen.args, size: 'size-600'}
 };
 
 export const XSaturationYLightness = {
@@ -159,8 +154,8 @@ export const XSaturationYLightness = {
     ...XBlueYGreen.args,
     xChannel: 'saturation',
     yChannel: 'lightness',
-    defaultValue: 'hsl(0, 100%, 50%)',
-  },
+    defaultValue: 'hsl(0, 100%, 50%)'
+  }
 };
 
 export const XLightnessYSaturation = {
@@ -170,8 +165,8 @@ export const XLightnessYSaturation = {
     ...XBlueYGreen.args,
     xChannel: 'lightness',
     yChannel: 'saturation',
-    defaultValue: 'hsl(0, 100%, 50%)',
-  },
+    defaultValue: 'hsl(0, 100%, 50%)'
+  }
 };
 
 export const XHueYSaturationHSL = {
@@ -181,8 +176,8 @@ export const XHueYSaturationHSL = {
     ...XSaturationYLightness.args,
     xChannel: 'hue',
     yChannel: 'saturation',
-    defaultValue: 'hsl(0, 100%, 50%)',
-  },
+    defaultValue: 'hsl(0, 100%, 50%)'
+  }
 };
 
 export const XSaturationYHueHSL = {
@@ -192,8 +187,8 @@ export const XSaturationYHueHSL = {
     ...XSaturationYLightness.args,
     xChannel: 'saturation',
     yChannel: 'hue',
-    defaultValue: 'hsl(0, 100%, 50%)',
-  },
+    defaultValue: 'hsl(0, 100%, 50%)'
+  }
 };
 
 export const XHueYLightnessHSL = {
@@ -203,8 +198,8 @@ export const XHueYLightnessHSL = {
     ...XHueYSaturationHSL.args,
     xChannel: 'hue',
     yChannel: 'lightness',
-    defaultValue: 'hsl(0, 100%, 50%)',
-  },
+    defaultValue: 'hsl(0, 100%, 50%)'
+  }
 };
 
 export const XLightnessYHueHSL = {
@@ -214,8 +209,8 @@ export const XLightnessYHueHSL = {
     ...XHueYSaturationHSL.args,
     xChannel: 'lightness',
     yChannel: 'hue',
-    defaultValue: 'hsl(0, 100%, 50%)',
-  },
+    defaultValue: 'hsl(0, 100%, 50%)'
+  }
 };
 
 export const XSaturationYBrightness = {
@@ -225,8 +220,8 @@ export const XSaturationYBrightness = {
     ...XHueYSaturationHSL.args,
     xChannel: 'saturation',
     yChannel: 'brightness',
-    defaultValue: 'hsb(0, 100%, 100%)',
-  },
+    defaultValue: 'hsb(0, 100%, 100%)'
+  }
 };
 
 export const XBrightnessYSaturation = {
@@ -236,14 +231,14 @@ export const XBrightnessYSaturation = {
     ...XHueYSaturationHSL.args,
     xChannel: 'brightness',
     yChannel: 'saturation',
-    defaultValue: 'hsb(0, 100%, 100%)',
-  },
+    defaultValue: 'hsb(0, 100%, 100%)'
+  }
 };
 
 export const XSaturationYBrightnessisDisabled = {
   render: Template,
   name: 'HSB xChannel="saturation", yChannel="brightness", isDisabled',
-  args: { ...XSaturationYBrightness.args, isDisabled: true },
+  args: {...XSaturationYBrightness.args, isDisabled: true}
 };
 
 export const XHueYSaturationHSB = {
@@ -253,8 +248,8 @@ export const XHueYSaturationHSB = {
     ...XSaturationYBrightness.args,
     xChannel: 'hue',
     yChannel: 'saturation',
-    defaultValue: 'hsb(0, 100%, 100%)',
-  },
+    defaultValue: 'hsb(0, 100%, 100%)'
+  }
 };
 
 export const XSaturationYHueHSB = {
@@ -264,8 +259,8 @@ export const XSaturationYHueHSB = {
     ...XSaturationYBrightness.args,
     xChannel: 'saturation',
     yChannel: 'hue',
-    defaultValue: 'hsb(0, 100%, 100%)',
-  },
+    defaultValue: 'hsb(0, 100%, 100%)'
+  }
 };
 
 export const XHueYBrightnessHSB = {
@@ -275,8 +270,8 @@ export const XHueYBrightnessHSB = {
     ...XHueYSaturationHSB.args,
     xChannel: 'hue',
     yChannel: 'brightness',
-    defaultValue: 'hsb(0, 100%, 100%)',
-  },
+    defaultValue: 'hsb(0, 100%, 100%)'
+  }
 };
 
 export const XBrightnessYHueHSB = {
@@ -286,6 +281,6 @@ export const XBrightnessYHueHSB = {
     ...XHueYSaturationHSB.args,
     xChannel: 'brightness',
     yChannel: 'hue',
-    defaultValue: 'hsb(0, 100%, 100%)',
-  },
+    defaultValue: 'hsb(0, 100%, 100%)'
+  }
 };
