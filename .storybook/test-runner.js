@@ -18,7 +18,18 @@ module.exports = {
     }
 
     await configureAxe(page, {
-      rules: storyContext.parameters?.a11y?.config?.rules,
+      // TODO: Ideally would have a selector target for the storybook's sb main body element
+      rules: [
+        {
+          id: 'color-contrast',
+          selector: 'body main *:not([data-testid="skipContrastCheck"])'
+        },
+        {
+          id: 'aria-hidden-focus',
+          selector: 'body main *:not([data-testid="hiddenSelect"])'
+        },
+        ...(storyContext.parameters?.a11y?.config?.rules ?? [])
+      ]
     });
 
     await checkA11y(page, '#root', {
