@@ -30,7 +30,11 @@
   "dependencies": {
     "react": "^18.2.0",
     "react-aria-components": "1.0.0-alpha.3",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "@testing-library/dom": "^9.2.0",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/user-event": "^14.4.3"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.21.4",
@@ -42,7 +46,6 @@
     "@storybook/react": "^7.0.5",
     "@storybook/react-webpack5": "^7.0.5",
     "@storybook/testing-library": "^0.0.14-next.2",
-    "@testing-library/react": "^14.0.0",
     "jest": "^29.5.0",
     "parcel": "^2.8.3",
     "prop-types": "^15.8.1",
