@@ -99,4 +99,25 @@ describe('NumberField', () => {
     expect(group).not.toHaveAttribute('data-focus-visible');
     expect(group).not.toHaveClass('focus');
   });
+
+  it('should support render props', () => {
+    let {getByRole} = render(
+      <NumberField defaultValue={1024} minValue={300} maxValue={1400}>
+        {({minValue, maxValue}) => (
+          <>
+            <Label>Width (min: {minValue}, max: {maxValue})</Label>
+            <Group>
+              <Button slot="decrement">-</Button>
+              <Input />
+              <Button slot="increment">+</Button>
+            </Group>
+          </>
+        )}
+      </NumberField>
+    );
+
+    let input = getByRole('textbox');
+    let label = document.getElementById(input.getAttribute('aria-labelledby'));
+    expect(label).toHaveTextContent('Width (min: 300, max: 1400)');
+  });
 });

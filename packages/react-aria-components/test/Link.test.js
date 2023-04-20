@@ -30,9 +30,17 @@ describe('Link', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole} =  render(<Link data-foo="bar">Test</Link>);
+    let {getByRole} = render(<Link data-foo="bar">Test</Link>);
     let link = getByRole('link');
     expect(link).toHaveAttribute('data-foo', 'bar');
+  });
+
+  it('should support render props', () => {
+    let {getByRole} = render(<Link>{({isHovered}) => isHovered ? 'Hovered' : 'Test'}</Link>);
+    let link = getByRole('link');
+    expect(link).toHaveTextContent('Test');
+    userEvent.hover(link);
+    expect(link).toHaveTextContent('Hovered');
   });
 
   it('should support slot', () => {

@@ -61,6 +61,24 @@ describe('RadioGroup', () => {
     }
   });
 
+  it('should support render props', () => {
+    let {getByRole} = render(
+      <RadioGroup isRequired>
+        {({isRequired}) => (
+          <>
+            <Label data-required={isRequired}>Test</Label>
+            <Radio value="a">A</Radio>
+            <Radio value="b">B</Radio>
+            <Radio value="c">C</Radio>
+          </>
+        )}
+      </RadioGroup>
+    );
+    let group = getByRole('radiogroup');
+    let label = document.getElementById(group.getAttribute('aria-labelledby'));
+    expect(label).toHaveAttribute('data-required', 'true');
+  });
+
   it('should support slot', () => {
     let {getByRole} = render(
       <RadioGroupContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
