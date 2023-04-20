@@ -165,43 +165,43 @@ const BreakpointOmittedTemplate = (): Story<ProviderProps> => () => {
 };
 
 export const Default = Template().bind({});
-Default.storyName = 'default';
+Default.name = 'default';
 Default.args = {};
 
 // keeping custom theme to show that the theme only changes expected things, in this case, the button, nothing else
 export const CustomTheme = Template().bind({});
-CustomTheme.storyName = 'custom theme';
+CustomTheme.name = 'custom theme';
 CustomTheme.args = {theme: THEME};
 
 export const NestedColorScheme = NestedColorSchemeTemplate().bind({});
-NestedColorScheme.storyName = 'nested color schemes';
+NestedColorScheme.name = 'nested color schemes';
 NestedColorScheme.args = {};
 
 export const NestedProp = NestedPropTemplate().bind({});
-NestedProp.storyName = 'nested props';
+NestedProp.name = 'nested props';
 NestedProp.args = {};
 
 // Previous this weren't included because of unit tests and visual comparisions
 // in the individual components, but we should have this to confirm that components
 // are using usePRoviderProps correctly
 export const Quiet = Template().bind({});
-Quiet.storyName = 'isQuiet';
+Quiet.name = 'isQuiet';
 Quiet.args = {isQuiet: true};
 
 export const Emphasized = Template().bind({});
-Emphasized.storyName = 'isEmphasized';
+Emphasized.name = 'isEmphasized';
 Emphasized.args = {isEmphasized: true};
 
 export const Disabled = Template().bind({});
-Disabled.storyName = 'isDisabled';
+Disabled.name = 'isDisabled';
 Disabled.args = {isDisabled: true};
 
 export const ReadOnly = Template().bind({});
-ReadOnly.storyName = 'isReadOnly';
+ReadOnly.name = 'isReadOnly';
 ReadOnly.args = {isReadOnly: true};
 
 export const Required = Template().bind({});
-Required.storyName = 'isRequired';
+Required.name = 'isRequired';
 Required.args = {isRequired: true};
 
 export const ResponsiveStyle = ResponsiveStyleTemplate().bind({});

@@ -107,29 +107,29 @@ const NoLabelTemplate: Story<SpectrumColorFieldProps> = (args) => (
 );
 
 export const PropDefaults = Template.bind({});
-PropDefaults.storyName = 'default';
+PropDefaults.name = 'default';
 PropDefaults.args = {};
 
 export const PropDefaultValue = Template.bind({});
-PropDefaultValue.storyName = 'default value';
+PropDefaultValue.name = 'default value';
 PropDefaultValue.args = {...PropDefaults.args, defaultValue: '#abcdef'};
 
 export const PropPlaceholder = Template.bind({});
-PropPlaceholder.storyName = 'placeholder';
+PropPlaceholder.name = 'placeholder';
 PropPlaceholder.args = {...PropDefaults.args, placeholder: 'Enter a hex color'};
 
 export const PropAriaLabelled = NoLabelTemplate.bind({});
-PropAriaLabelled.storyName = 'aria-label';
+PropAriaLabelled.name = 'aria-label';
 PropAriaLabelled.args = {'aria-label': 'Label'};
 
 export const PropLabelEnd = Template.bind({});
-PropLabelEnd.storyName = 'label end';
+PropLabelEnd.name = 'label end';
 PropLabelEnd.args = {...PropDefaults.args, labelAlign: 'end', defaultValue: '#abcdef'};
 
 export const PropLabelSide = TemplateSmall.bind({});
-PropLabelSide.storyName = 'label side';
+PropLabelSide.name = 'label side';
 PropLabelSide.args = {...PropDefaults.args, labelPosition: 'side', defaultValue: '#abcdef'};
 
 export const PropCustomWidth = Template.bind({});
-PropCustomWidth.storyName = 'custom width';
+PropCustomWidth.name = 'custom width';
 PropCustomWidth.args = {...PropDefaults.args, width: 'size-3000'};

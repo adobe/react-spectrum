@@ -147,16 +147,16 @@ const TemplateEmptyState = (): Story => () => (
 );
 
 export const Default = Template().bind({});
-Default.storyName = 'all visual option combos 1 of 3';
+Default.name = 'all visual option combos 1 of 3';
 Default.args = {combos: combinations.slice(0, chunkSize)};
 
 export const ComboPt2 = Template().bind({});
 ComboPt2.args = {combos: combinations.slice(chunkSize, chunkSize * 2)};
-ComboPt2.storyName = 'all visual option combos 2 of 3';
+ComboPt2.name = 'all visual option combos 2 of 3';
 
 export const ComboPt3 = Template().bind({});
 ComboPt3.args = {combos: combinations.slice(chunkSize * 2, chunkSize * 3)};
-ComboPt3.storyName = 'all visual option combos 3 of 3';
+ComboPt3.name = 'all visual option combos 3 of 3';
 
 export const Empty = TemplateEmptyState().bind({});
-Empty.storyName = 'empty state';
+Empty.name = 'empty state';

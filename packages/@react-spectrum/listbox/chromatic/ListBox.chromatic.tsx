@@ -137,17 +137,17 @@ const TemplateComplex = (): Story<SpectrumListBoxProps<object>> => (args) => (
 );
 
 export const Default = Template().bind({});
-Default.storyName = 'flat list with selection';
+Default.name = 'flat list with selection';
 Default.args = {selectedKeys: ['Snake', 'Aardvark'], disabledKeys: ['Ross'], selectionMode: 'multiple'};
 
 export const Sections = TemplateWithSections().bind({});
-Sections.storyName = 'with sections';
+Sections.name = 'with sections';
 Sections.args = {selectedKeys: ['Snake', 'Aardvark'], disabledKeys: ['Ross'], selectionMode: 'multiple'};
 
 export const SectionsNoTitle = TemplateNoTitle().bind({});
-SectionsNoTitle.storyName = 'sections without titles';
+SectionsNoTitle.name = 'sections without titles';
 SectionsNoTitle.args = {selectedKeys: ['Snake', 'Aardvark'],  disabledKeys: ['Ross'], selectionMode: 'multiple'};
 
 export const ComplexItems = TemplateComplex().bind({});
-ComplexItems.storyName = 'complex items';
+ComplexItems.name = 'complex items';
 ComplexItems.args = {selectedKeys: ['Puppy', 'Cut'],  disabledKeys: ['Paste'], selectionMode: 'multiple'};
