@@ -110,7 +110,8 @@ export function useMultipleSelectionState(props: MultipleSelectionStateProps): M
     },
     selectedKeys,
     setSelectedKeys(keys) {
-      if (allowDuplicateSelectionEvents || !equalSets(keys, selectedKeys)) {
+      let isKeysMatched = keys === 'all' && selectedKeys === 'all';
+      if (isKeysMatched && allowDuplicateSelectionEvents || !equalSets(keys, selectedKeys)) {
         setSelectedKeys(keys);
       }
     },
