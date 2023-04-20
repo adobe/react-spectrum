@@ -218,7 +218,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       case 'a':
         if (isCtrlKeyPressed(e) && manager.selectionMode === 'multiple' && disallowSelectAll !== true) {
           e.preventDefault();
-          manager.selectAll();
+          manager.toggleSelectAll();
         }
         break;
       case 'Escape':
