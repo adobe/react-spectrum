@@ -11,7 +11,7 @@
  */
 
 import {Breadcrumbs, Item} from '../';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import React from 'react';
 import {SpectrumBreadcrumbsProps} from '@react-types/breadcrumbs';
 
@@ -22,7 +22,7 @@ const meta: Meta<SpectrumBreadcrumbsProps<object>> = {
 
 export default meta;
 
-const Template = <T extends object>(): StoryFn<SpectrumBreadcrumbsProps<T>> => (args) => (
+const Template = (args) => (
   <Breadcrumbs {...args}>
     <Item key="Folder 1">The quick brown fox jumps over</Item>
     <Item key="Folder 2">My Documents</Item>

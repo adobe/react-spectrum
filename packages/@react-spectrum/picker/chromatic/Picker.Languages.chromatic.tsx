@@ -9,8 +9,9 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {ComponentMeta, Story} from '@storybook/react';
+
 import {Item, Picker, Section} from '..';
+import {Meta} from '@storybook/react';
 import React from 'react';
 import {SpectrumPickerProps} from '@react-types/select';
 
@@ -20,9 +21,9 @@ export default {
   parameters: {
     chromaticProvider: {colorSchemes: ['light'], express: false, locales: ['en-US'], scales: ['large', 'medium']}
   }
-} as ComponentMeta<typeof Picker>;
+} as Meta<typeof Picker>;
 
-const Template = <T extends object>(): Story<SpectrumPickerProps<T>> => (args) => (
+const Template = (args: SpectrumPickerProps<object>) => (
   <Picker {...args}>
     <Section title="Animals">
       <Item key="Aardvark">Aardvark</Item>
@@ -36,33 +37,47 @@ const Template = <T extends object>(): Story<SpectrumPickerProps<T>> => (args) =
     </Section>
   </Picker>
 );
+export const ArabicPlaceholder = {
+  render: Template,
+  args: {label: 'Pick your favorite', placeholder: 'دولفين'},
 
-export const ArabicPlaceholder = Template().bind({});
-ArabicPlaceholder.args = {label: 'Pick your favorite', placeholder: 'دولفين'};
-ArabicPlaceholder.parameters = {
-  chromaticProvider: {locales: ['ar-AE']}
+  parameters: {
+    chromaticProvider: {locales: ['ar-AE']}
+  }
 };
 
-export const ChineseSimplifiedPlaceholder = Template().bind({});
-ChineseSimplifiedPlaceholder.args = {label: 'Pick your favorite', placeholder: '海豚'};
-ChineseSimplifiedPlaceholder.parameters = {
-  chromaticProvider: {locales: ['zh-CN']}
+export const ChineseSimplifiedPlaceholder = {
+  render: Template,
+  args: {label: 'Pick your favorite', placeholder: '海豚'},
+
+  parameters: {
+    chromaticProvider: {locales: ['zh-CN']}
+  }
 };
 
-export const ChineseTraditionalPlaceholder = Template().bind({});
-ChineseTraditionalPlaceholder.args = {label: 'Pick your favorite', placeholder: '海豚'};
-ChineseTraditionalPlaceholder.parameters = {
-  chromaticProvider: {locales: ['zh-TW']}
+export const ChineseTraditionalPlaceholder = {
+  render: Template,
+  args: {label: 'Pick your favorite', placeholder: '海豚'},
+
+  parameters: {
+    chromaticProvider: {locales: ['zh-TW']}
+  }
 };
 
-export const JapanesePlaceholder = Template().bind({});
-JapanesePlaceholder.args = {label: 'Pick your favorite', placeholder: 'イルカ'};
-JapanesePlaceholder.parameters = {
-  chromaticProvider: {locales: ['ja-JP']}
+export const JapanesePlaceholder = {
+  render: Template,
+  args: {label: 'Pick your favorite', placeholder: 'イルカ'},
+
+  parameters: {
+    chromaticProvider: {locales: ['ja-JP']}
+  }
 };
 
-export const KoreanPlaceholder = Template().bind({});
-KoreanPlaceholder.args = {label: 'Pick your favorite', placeholder: '돌고래'};
-KoreanPlaceholder.parameters = {
-  chromaticProvider: {locales: ['ko-KR']}
+export const KoreanPlaceholder = {
+  render: Template,
+  args: {label: 'Pick your favorite', placeholder: '돌고래'},
+
+  parameters: {
+    chromaticProvider: {locales: ['ko-KR']}
+  }
 };
