@@ -84,29 +84,29 @@ const VerticalTemplate: Story<SpectrumColorSliderProps> = (args) => (
 );
 
 export const PropChannelRed = Template.bind({});
-PropChannelRed.storyName = 'channel: red';
+PropChannelRed.name = 'channel: red';
 PropChannelRed.args = {channel: 'red', defaultValue: '#7f0000'};
 
 export const PropChannelAlpha = Template.bind({});
-PropChannelAlpha.storyName = 'channel: alpha';
+PropChannelAlpha.name = 'channel: alpha';
 PropChannelAlpha.args = {channel: 'alpha', defaultValue: '#7f0000'};
 
 export const PropChannelLightness = Template.bind({});
-PropChannelLightness.storyName = 'channel: lightness';
+PropChannelLightness.name = 'channel: lightness';
 PropChannelLightness.args = {channel: 'lightness', defaultValue: 'hsla(0, 100%, 50%, 0.5)'};
 
 export const PropChannelBrightness = Template.bind({});
-PropChannelBrightness.storyName = 'channel: brightness';
+PropChannelBrightness.name = 'channel: brightness';
 PropChannelBrightness.args = {channel: 'brightness', defaultValue: 'hsba(0, 100%, 50%, 0.5)'};
 
 export const PropVertical = VerticalTemplate.bind({});
-PropVertical.storyName = 'orientation: vertical';
+PropVertical.name = 'orientation: vertical';
 PropVertical.args = {channel: 'red', defaultValue: '#7f0000'};
 
 export const PropCustomWidth = Template.bind({});
-PropCustomWidth.storyName = 'custom width';
+PropCustomWidth.name = 'custom width';
 PropCustomWidth.args = {channel: 'red', defaultValue: '#7f0000', width: 'size-3600'};
 
 export const PropCustomHeight = VerticalTemplate.bind({});
-PropCustomHeight.storyName = 'custom height';
+PropCustomHeight.name = 'custom height';
 PropCustomHeight.args = {channel: 'red', defaultValue: '#7f0000', height: 'size-3600'};

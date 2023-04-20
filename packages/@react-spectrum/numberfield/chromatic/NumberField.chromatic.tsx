@@ -156,19 +156,19 @@ const TemplateWithForcedStyles: Story<SpectrumNumberFieldProps> = (args) => (
 );
 
 export const PropDefaults = Template.bind({});
-PropDefaults.storyName = 'default';
+PropDefaults.name = 'default';
 PropDefaults.args = {};
 
 export const PropDefaultValue = Template.bind({});
-PropDefaultValue.storyName = 'default value';
+PropDefaultValue.name = 'default value';
 PropDefaultValue.args = {...PropDefaults.args, defaultValue: 10};
 
 export const PropValue = Template.bind({});
-PropValue.storyName = 'value';
+PropValue.name = 'value';
 PropValue.args = {...PropDefaults.args, value: 10};
 
 export const PropValueMobileViewport = TemplateVertical.bind({});
-PropValueMobileViewport.storyName = 'value, mobile viewport';
+PropValueMobileViewport.name = 'value, mobile viewport';
 PropValueMobileViewport.args = {...PropDefaults.args, value: 10};
 PropValueMobileViewport.parameters = {
   chromatic: {viewports: [320]},
@@ -176,34 +176,34 @@ PropValueMobileViewport.parameters = {
 };
 
 export const PropAriaLabelled = Template.bind({});
-PropAriaLabelled.storyName = 'aria-label';
+PropAriaLabelled.name = 'aria-label';
 PropAriaLabelled.args = {'aria-label': 'Label'};
 
 export const PropLabelEnd = Template.bind({});
-PropLabelEnd.storyName = 'label end';
+PropLabelEnd.name = 'label end';
 PropLabelEnd.args = {...PropDefaults.args, labelAlign: 'end', defaultValue: 10};
 
 export const PropMinValue = Template.bind({});
-PropMinValue.storyName = 'min value';
+PropMinValue.name = 'min value';
 PropMinValue.args = {...PropDefaults.args, minValue: 10, defaultValue: 10};
 
 export const PropMaxValue = Template.bind({});
-PropMaxValue.storyName = 'max value';
+PropMaxValue.name = 'max value';
 PropMaxValue.args = {...PropDefaults.args, maxValue: 10, defaultValue: 10};
 
 export const PropLabelSide = TemplateSmall.bind({});
-PropLabelSide.storyName = 'label side';
+PropLabelSide.name = 'label side';
 PropLabelSide.args = {...PropDefaults.args, labelPosition: 'side', defaultValue: 10};
 
 export const PropCustomWidth = TemplateSmall.bind({});
-PropCustomWidth.storyName = 'custom width';
+PropCustomWidth.name = 'custom width';
 PropCustomWidth.args = {...PropDefaults.args, width: 'size-3000'};
 
 // we can only force the interaction styles on the no visible label stories
 export const PropInteractionStyles = TemplateWithForcedStyles.bind({});
-PropInteractionStyles.storyName = 'interaction styles';
+PropInteractionStyles.name = 'interaction styles';
 PropInteractionStyles.args = {...PropAriaLabelled.args};
 
 export const PropInteractionStylesMinValue = TemplateWithForcedStyles.bind({});
-PropInteractionStylesMinValue.storyName = 'interaction styles min value';
+PropInteractionStylesMinValue.name = 'interaction styles min value';
 PropInteractionStylesMinValue.args = {...PropAriaLabelled.args, minValue: 10, defaultValue: 10};

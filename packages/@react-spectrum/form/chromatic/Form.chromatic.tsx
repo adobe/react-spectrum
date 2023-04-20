@@ -76,49 +76,49 @@ const Template = (): Story<SpectrumFormProps> => (args) => (
 
 // No need to make a set of all permutations, rely on each individual component story to do that for us. Just make sure Form is passing the options down
 export const Default = Template().bind({});
-Default.storyName = 'default';
+Default.name = 'default';
 Default.args = {};
 
 export const LabelPositionSide = Template().bind({});
-LabelPositionSide.storyName = 'label position: side';
+LabelPositionSide.name = 'label position: side';
 LabelPositionSide.args = {...Default.args, labelPosition: 'side'};
 
 export const LabelAlignEnd = Template().bind({});
-LabelAlignEnd.storyName = 'label align: end';
+LabelAlignEnd.name = 'label align: end';
 LabelAlignEnd.args = {...Default.args, labelAlign: 'end'};
 
 export const LabelAlignSideEnd = Template().bind({});
-LabelAlignSideEnd.storyName = 'label position: side, label align: end';
+LabelAlignSideEnd.name = 'label position: side, label align: end';
 LabelAlignSideEnd.args = {...Default.args, labelPosition: 'side', labelAlign: 'end'};
 
 export const Required = Template().bind({});
-Required.storyName = 'isRequired';
+Required.name = 'isRequired';
 Required.args = {...Default.args, isRequired: true};
 
 export const NecessityIndicatorLabel = Template().bind({});
-NecessityIndicatorLabel.storyName = 'necessity indicator: label';
+NecessityIndicatorLabel.name = 'necessity indicator: label';
 NecessityIndicatorLabel.args = {...Default.args, necessityIndicator: 'label'};
 
 export const Quiet = Template().bind({});
-Quiet.storyName = 'isQuiet';
+Quiet.name = 'isQuiet';
 Quiet.args = {...Default.args, isQuiet: true};
 
 export const Emphasized = Template().bind({});
-Emphasized.storyName = 'isEmphasized';
+Emphasized.name = 'isEmphasized';
 Emphasized.args = {...Default.args, isEmphasized: true};
 
 export const Disabled = Template().bind({});
-Disabled.storyName = 'isDisabled';
+Disabled.name = 'isDisabled';
 Disabled.args = {...Default.args, isDisabled: true};
 
 export const ReadOnly = Template().bind({});
-ReadOnly.storyName = 'isReadOnly';
+ReadOnly.name = 'isReadOnly';
 ReadOnly.args = {...Default.args, isReadOnly: true};
 
 export const ValidationStateInvalid = Template().bind({});
-ValidationStateInvalid.storyName = 'validationState: invalid';
+ValidationStateInvalid.name = 'validationState: invalid';
 ValidationStateInvalid.args = {...Default.args, validationState: 'invalid'};
 
 export const ValidationStateValid = Template().bind({});
-ValidationStateValid.storyName = 'validationState: valid';
+ValidationStateValid.name = 'validationState: valid';
 ValidationStateValid.args = {...Default.args, validationState: 'valid'};

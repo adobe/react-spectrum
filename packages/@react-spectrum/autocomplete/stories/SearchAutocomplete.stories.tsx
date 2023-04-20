@@ -182,7 +182,7 @@ let items = [
 ];
 
 export const Default: SearchAutocompleteStory = {
-  storyName: 'static items'
+  name: 'static items'
 };
 
 export const Dynamic: SearchAutocompleteStory = {
@@ -192,13 +192,13 @@ export const Dynamic: SearchAutocompleteStory = {
       {(item: any) => <Item>{item.name}</Item>}
     </SearchAutocomplete>
   ),
-  storyName: 'dynamic items'
+  name: 'dynamic items'
 };
 
 export const NoItems: SearchAutocompleteStory = {
   ...Dynamic,
   args: {defaultItems: []},
-  storyName: 'no items'
+  name: 'no items'
 };
 
 export const MappedItems: SearchAutocompleteStory = {
@@ -211,7 +211,7 @@ export const MappedItems: SearchAutocompleteStory = {
       ))}
     </SearchAutocomplete>
   ),
-  storyName: 'with mapped items'
+  name: 'with mapped items'
 };
 
 
@@ -241,20 +241,20 @@ function CustomOnSubmit(props) {
 
 export const noVisibleLabel: SearchAutocompleteStory = {
   args: {label: undefined, 'aria-label': 'Search Autocomplete'},
-  storyName: 'No visible label'
+  name: 'No visible label'
 };
 
 export const customOnSubmit: SearchAutocompleteStory = {
   render: (args) => <CustomOnSubmit {...args} />,
-  storyName: 'custom onSubmit'
+  name: 'custom onSubmit'
 };
 
 export const iconFilter: SearchAutocompleteStory = {
   args: {icon: <Filter />},
-  storyName: 'icon: Filter'
+  name: 'icon: Filter'
 };
 
 export const iconNull: SearchAutocompleteStory = {
   args: {icon: null},
-  storyName: 'icon: null'
+  name: 'icon: null'
 };

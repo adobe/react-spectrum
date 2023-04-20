@@ -31,12 +31,12 @@ const AvatarTemplate: Story<SpectrumAvatarProps> = (args) => (
 
 export const Default = AvatarTemplate.bind({});
 Default.args = {src: SRC_URL_1};
-Default.storyName = 'default';
+Default.name = 'default';
 
 export const Disabled = AvatarTemplate.bind({});
 Disabled.args = {isDisabled: true, src: SRC_URL_1};
-Disabled.storyName = 'isDisabled';
+Disabled.name = 'isDisabled';
 
 export const CustomSize = AvatarTemplate.bind({});
 CustomSize.args = {size: 'avatar-size-700', src: SRC_URL_2};
-CustomSize.storyName = 'with custom size';
+CustomSize.name = 'with custom size';

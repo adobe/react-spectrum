@@ -174,27 +174,27 @@ const EmptyTemplate = (): Story => (args) => (
 );
 
 export const Default = Template().bind({});
-Default.storyName = 'default items and columns';
+Default.name = 'default items and columns';
 Default.args = {columns, items};
 
 export const ColumnAlign = Template().bind({});
-ColumnAlign.storyName = 'column alignment';
+ColumnAlign.name = 'column alignment';
 ColumnAlign.args = {columns: alignColumns, items};
 
 export const ColumnDividers = Template().bind({});
-ColumnDividers.storyName = 'columns dividers';
+ColumnDividers.name = 'columns dividers';
 ColumnDividers.args = {columns: dividerColumns, items};
 
 export const ColumnWidth = Template().bind({});
-ColumnWidth.storyName = 'columns widths';
+ColumnWidth.name = 'columns widths';
 ColumnWidth.args = {columns: customWidth, items};
 
 export const HiddenColumns = Template().bind({});
-HiddenColumns.storyName = 'hidden columns';
+HiddenColumns.name = 'hidden columns';
 HiddenColumns.args = {columns: hiddenColumns, items};
 
 export const NestedColumns = Template().bind({});
-NestedColumns.storyName = 'nested columns';
+NestedColumns.name = 'nested columns';
 NestedColumns.args = {columns: nestedColumns, items};
 
 export const MaxHeight = () => (
@@ -209,5 +209,5 @@ export const MaxHeight = () => (
   );
 
 export const Empty = EmptyTemplate().bind({});
-Empty.storyName = 'empty table';
+Empty.name = 'empty table';
 Empty.args = {};

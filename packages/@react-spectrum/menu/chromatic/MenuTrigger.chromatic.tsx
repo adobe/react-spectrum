@@ -161,57 +161,57 @@ const TemplateArabicWithIcons = (): Story<SpectrumMenuTriggerProps> => (args) =>
 );
 
 export const Default = Template().bind({});
-Default.storyName = 'flat list';
+Default.name = 'flat list';
 
 export const WithSections = TemplateWithSections().bind({});
-WithSections.storyName = 'with sections';
+WithSections.name = 'with sections';
 
 export const Complex = TemplateWithIcons().bind({});
-Complex.storyName = 'complex items';
+Complex.name = 'complex items';
 
 export const AlignEnd = Template().bind({});
-AlignEnd.storyName = 'align="end"';
+AlignEnd.name = 'align="end"';
 AlignEnd.args = {align: 'end'};
 
 export const DirectionTop = Template().bind({});
-DirectionTop.storyName = 'direction="top"';
+DirectionTop.name = 'direction="top"';
 DirectionTop.args = {direction: 'top'};
 
 export const DirectionBottom = Template().bind({});
-DirectionBottom.storyName = 'direction="bottom"';
+DirectionBottom.name = 'direction="bottom"';
 DirectionBottom.args = {direction: 'bottom'};
 
 export const DirectionStart = Template().bind({});
-DirectionStart.storyName = 'direction="start"';
+DirectionStart.name = 'direction="start"';
 DirectionStart.args = {direction: 'start'};
 
 export const DirectionStartEnd = Template().bind({});
-DirectionStartEnd.storyName = 'direction="start", align="end"';
+DirectionStartEnd.name = 'direction="start", align="end"';
 DirectionStartEnd.args = {direction: 'start', align: 'end'};
 
 export const DirectionEnd = Template().bind({});
-DirectionEnd.storyName = 'direction="end"';
+DirectionEnd.name = 'direction="end"';
 DirectionEnd.args = {direction: 'end'};
 
 export const DirectionEndEnd = Template().bind({});
-DirectionEndEnd.storyName = 'direction="end" align="end"';
+DirectionEndEnd.name = 'direction="end" align="end"';
 DirectionEndEnd.args = {direction: 'end', align: 'end'};
 
 export const DirectionLeft = Template().bind({});
-DirectionLeft.storyName = 'direction="left"';
+DirectionLeft.name = 'direction="left"';
 DirectionLeft.args = {direction: 'left'};
 
 export const DirectionLeftEnd = Template().bind({});
-DirectionLeftEnd.storyName = 'direction="left", align="end"';
+DirectionLeftEnd.name = 'direction="left", align="end"';
 DirectionLeftEnd.args = {direction: 'left', align: 'end'};
 
 export const DirectionRight = Template().bind({});
-DirectionRight.storyName = 'direction="right"';
+DirectionRight.name = 'direction="right"';
 DirectionRight.args = {direction: 'right'};
 
 export const DirectionRightEnd = Template().bind({});
-DirectionRightEnd.storyName = 'direction="right", align="end"';
+DirectionRightEnd.name = 'direction="right", align="end"';
 DirectionRightEnd.args = {direction: 'right', align: 'end'};
 
 export const ArabicComplex = TemplateArabicWithIcons().bind({});
-ArabicComplex.storyName = 'Arabic complex items';
+ArabicComplex.name = 'Arabic complex items';

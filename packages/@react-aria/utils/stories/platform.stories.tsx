@@ -44,5 +44,5 @@ const Template: Story<object> = (args) => (
 );
 
 export const Default = Template.bind({});
-Default.storyName = 'all platforms';
+Default.name = 'all platforms';
 Default.args = {};

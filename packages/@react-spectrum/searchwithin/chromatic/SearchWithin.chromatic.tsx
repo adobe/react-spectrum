@@ -101,17 +101,17 @@ const TemplateSideLabel: Story<SpectrumSearchWithinProps> = (args) => (
 );
 
 export const PropDefaults = Template.bind({});
-PropDefaults.storyName = 'default';
+PropDefaults.name = 'default';
 PropDefaults.args = {};
 
 export const PropLabelSide = TemplateSideLabel.bind({});
-PropLabelSide.storyName = 'label side';
+PropLabelSide.name = 'label side';
 PropLabelSide.args = {...PropDefaults.args, labelPosition: 'side'};
 
 export const PropNoLabel = TemplateSideLabel.bind({});
-PropNoLabel.storyName = 'no label';
+PropNoLabel.name = 'no label';
 PropNoLabel.args = {...PropDefaults.args, label: undefined, 'aria-label': 'Aria Label'};
 
 export const PropCustomWidth = Template.bind({});
-PropCustomWidth.storyName = 'custom width';
+PropCustomWidth.name = 'custom width';
 PropCustomWidth.args = {...PropDefaults.args, width: 300};

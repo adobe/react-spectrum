@@ -107,27 +107,27 @@ const TemplateSideLabel: Story<SpectrumSearchAutocompleteProps<object>> = (args)
 );
 
 export const PropDefaults = Template.bind({});
-PropDefaults.storyName = 'default';
+PropDefaults.name = 'default';
 PropDefaults.args = {};
 
 export const PropInputValue = Template.bind({});
-PropInputValue.storyName = 'inputValue: Blah';
+PropInputValue.name = 'inputValue: Blah';
 PropInputValue.args = {inputValue: 'Blah'};
 
 export const PropAriaLabelled = Template.bind({});
-PropAriaLabelled.storyName = 'aria-label';
+PropAriaLabelled.name = 'aria-label';
 PropAriaLabelled.args = {'aria-label': 'Label'};
 
 export const PropLabelEnd = Template.bind({});
-PropLabelEnd.storyName = 'label end';
+PropLabelEnd.name = 'label end';
 PropLabelEnd.args = {...PropDefaults.args, labelAlign: 'end'};
 
 export const PropLabelSide = TemplateSideLabel.bind({});
-PropLabelSide.storyName = 'label side';
+PropLabelSide.name = 'label side';
 PropLabelSide.args = {...PropDefaults.args, labelPosition: 'side'};
 
 export const PropCustomWidth = Template.bind({});
-PropCustomWidth.storyName = 'custom width';
+PropCustomWidth.name = 'custom width';
 PropCustomWidth.args = {...PropDefaults.args, width: 'size-1600'};
 PropCustomWidth.parameters = {
   chromaticProvider: {
@@ -136,9 +136,9 @@ PropCustomWidth.parameters = {
 };
 
 export const PropIconFilter = Template.bind({});
-PropIconFilter.storyName = 'icon: Filter';
+PropIconFilter.name = 'icon: Filter';
 PropIconFilter.args = {...PropDefaults.args, icon: <Filter />};
 
 export const PropIconNull = Template.bind({});
-PropIconNull.storyName = 'icon: null';
+PropIconNull.name = 'icon: null';
 PropIconNull.args = {...PropDefaults.args, icon: null};

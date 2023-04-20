@@ -68,41 +68,41 @@ const Template = (): Story<SpectrumFormProps> => (args) => (
 
 // No need to make a set of all permutations, rely on each individual component story to do that for us. Just make sure Form is passing the options down
 export const Default = Template().bind({});
-Default.storyName = 'default';
+Default.name = 'default';
 Default.args = {};
 
 export const DefaultNarrow = Template().bind({});
-DefaultNarrow.storyName = 'default, width: 200px';
+DefaultNarrow.name = 'default, width: 200px';
 DefaultNarrow.args = {width: '200px'};
 
 export const LabelPositionSide = Template().bind({});
-LabelPositionSide.storyName = 'label position: side';
+LabelPositionSide.name = 'label position: side';
 LabelPositionSide.args = {...Default.args, labelPosition: 'side'};
 
 export const LabelAlignEnd = Template().bind({});
-LabelAlignEnd.storyName = 'label align: end';
+LabelAlignEnd.name = 'label align: end';
 LabelAlignEnd.args = {...Default.args, labelAlign: 'end'};
 
 export const NecessityIndicatorLabel = Template().bind({});
-NecessityIndicatorLabel.storyName = 'necessity indicator: label';
+NecessityIndicatorLabel.name = 'necessity indicator: label';
 NecessityIndicatorLabel.args = {...Default.args, necessityIndicator: 'label'};
 
 export const LabelPositionSideRequiredNecessityIndicatorLabel = Template().bind({});
-LabelPositionSideRequiredNecessityIndicatorLabel.storyName = 'label position: side, isRequired, necessity indicator: label';
+LabelPositionSideRequiredNecessityIndicatorLabel.name = 'label position: side, isRequired, necessity indicator: label';
 LabelPositionSideRequiredNecessityIndicatorLabel.args = {...Default.args, labelPosition: 'side', necessityIndicator: 'label', isRequired: true};
 
 export const LabelPositionSideRequiredNecessityIndicatorLabelNarrow = Template().bind({});
-LabelPositionSideRequiredNecessityIndicatorLabelNarrow.storyName = 'label position: side, isRequired, necessity indicator: label, width: 200px';
+LabelPositionSideRequiredNecessityIndicatorLabelNarrow.name = 'label position: side, isRequired, necessity indicator: label, width: 200px';
 LabelPositionSideRequiredNecessityIndicatorLabelNarrow.args = {...Default.args, labelPosition: 'side', necessityIndicator: 'label', isRequired: true, width: '200px'};
 
 export const Quiet = Template().bind({});
-Quiet.storyName = 'isQuiet';
+Quiet.name = 'isQuiet';
 Quiet.args = {...Default.args, isQuiet: true};
 
 export const QuietLabelPositionSideAlignEnd = Template().bind({});
-QuietLabelPositionSideAlignEnd.storyName = 'isQuiet, label position: side, label align: end';
+QuietLabelPositionSideAlignEnd.name = 'isQuiet, label position: side, label align: end';
 QuietLabelPositionSideAlignEnd.args = {...Default.args, isQuiet: true, labelPosition: 'side', labelAlign: 'end'};
 
 export const QuietLabelPositionSideNarrow = Template().bind({});
-QuietLabelPositionSideNarrow.storyName = 'isQuiet, label position: side, width: 200px';
+QuietLabelPositionSideNarrow.name = 'isQuiet, label position: side, width: 200px';
 QuietLabelPositionSideNarrow.args = {...Default.args, isQuiet: true, labelPosition: 'side', width: '200px'};
