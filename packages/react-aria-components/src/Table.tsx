@@ -368,7 +368,7 @@ export function useTableOptions(): TableOptionsContextValue {
   return useContext(TableOptionsContext)!;
 }
 
-export interface TableHeaderProps<T> {
+export interface TableHeaderProps<T> extends StyleRenderProps<T> {
   /** A list of table columns. */
   columns?: T[],
   /** A list of `Column(s)` or a function. If the latter, a list of columns must be provided using the `columns` prop. */
