@@ -1,10 +1,13 @@
-import {Button as AriaButton} from 'react-aria-components';
+import {Button as AriaButton, ButtonProps as AriaButtonProps} from 'react-aria-components';
 import './Button.css';
 import React from 'react';
 
-function Button({children, ...props}) {
+export interface ButtonProps extends AriaButtonProps {}
+
+function Button(props: ButtonProps, ref: React.ForwardedRef<HTMLButtonElement>) {
+  let {children} = props;
   return (
-    <AriaButton {...props}>
+    <AriaButton ref={ref} {...props}>
       {children}
     </AriaButton>
   );
