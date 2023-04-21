@@ -71,6 +71,9 @@
   border: 1px solid var(--spectrum-dropzone-border-color-selected-hover);
   border-radius: var(--spectrum-alias-border-radius-regular);
   background-color: var(--spectrum-table-background-color);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 
   /* forced-color-adjust: none, so that background-color style will render */
   forced-color-adjust: none;

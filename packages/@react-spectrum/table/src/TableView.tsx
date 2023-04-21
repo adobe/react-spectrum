@@ -562,10 +562,9 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
       {DragPreview && isTableDraggable &&
         <DragPreview ref={preview}>
           {() => {
-            let item = state.collection.getItem(dragState.draggedKey);
             let itemCount = dragState.draggingKeys.size;
             let maxWidth = bodyRef.current.getBoundingClientRect().width;
-            let {height} = layout.getLayoutInfo(item.key).rect;
+            let height = ROW_HEIGHTS[density][scale];
             let itemText = state.collection.getTextValue(dragState.draggedKey);
             return <SpectrumDragPreview itemText={itemText} itemCount={itemCount} density={density} height={height} maxWidth={maxWidth} />;
           }}
