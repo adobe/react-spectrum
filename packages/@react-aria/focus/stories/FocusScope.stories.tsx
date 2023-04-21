@@ -158,7 +158,7 @@ function IgnoreRestoreFocusExample() {
         {display ? 'Close dialog' : 'Open dialog'}
       </button>
       {display &&
-        <FocusScope autoFocus restoreFocus>
+        <FocusScope restoreFocus>
           <div role="dialog">
             <input  />
             <input  />
