@@ -67,189 +67,179 @@ export const Default = () => (
   </Flex>
 );
 
-export const NestedDropRegions = () => (
-  <Flex direction="column" gap="size-200" alignItems="center">
-    <Draggable />
-    <Droppable actionId="Parent">
-      <Droppable actionId="Child" />
-    </Droppable>
-  </Flex>
-);
-
-NestedDropRegions.story = {
+export const NestedDropRegions = {
+  render: () => (
+    <Flex direction="column" gap="size-200" alignItems="center">
+      <Draggable />
+      <Droppable actionId="Parent">
+        <Droppable actionId="Child" />
+      </Droppable>
+    </Flex>
+  ),
   name: 'nested drop regions'
 };
 
-export const DraggableListbox = () => (
-  <Flex direction="column" gap="size-200" alignItems="center">
-    <DraggableListBox selectionMode="multiple" selectionBehavior="replace">
-      <Item>Foo</Item>
-      <Item>Bar</Item>
-      <Item>Baz</Item>
-    </DraggableListBox>
-    <Droppable />
-  </Flex>
-);
-
-DraggableListbox.story = {
+export const DraggableListbox = {
+  render: () => (
+    <Flex direction="column" gap="size-200" alignItems="center">
+      <DraggableListBox selectionMode="multiple" selectionBehavior="replace">
+        <Item>Foo</Item>
+        <Item>Bar</Item>
+        <Item>Baz</Item>
+      </DraggableListBox>
+      <Droppable />
+    </Flex>
+  ),
   name: 'Draggable listbox'
 };
 
-export const DraggableListboxOnAction = () => (
-  <Flex direction="column" gap="size-200" alignItems="center">
-    <DraggableListBox
-      selectionMode="multiple"
-      selectionBehavior="replace"
-      onAction={action('onAction')}>
-      <Item>Foo</Item>
-      <Item key="bar">Bar</Item>
-      <Item>Baz</Item>
-    </DraggableListBox>
-    <Droppable />
-  </Flex>
-);
-
-DraggableListboxOnAction.story = {
+export const DraggableListboxOnAction = {
+  render: () => (
+    <Flex direction="column" gap="size-200" alignItems="center">
+      <DraggableListBox
+        selectionMode="multiple"
+        selectionBehavior="replace"
+        onAction={action('onAction')}>
+        <Item>Foo</Item>
+        <Item key="bar">Bar</Item>
+        <Item>Baz</Item>
+      </DraggableListBox>
+      <Droppable />
+    </Flex>
+  ),
   name: 'Draggable listbox, onAction'
 };
 
-export const DroppableListbox = () => (
-  <Flex direction="row" gap="size-200" alignItems="center">
-    <Draggable />
-    <DroppableListBox>
-      <Item key="1" textValue="One">
-        <Folder size="S" />
-        <span>One</span>
-      </Item>
-      <Item key="2">Two</Item>
-      <Item key="3" textValue="Three">
-        <Folder size="S" />
-        <span>Three</span>
-      </Item>
-    </DroppableListBox>
-  </Flex>
-);
-
-DroppableListbox.story = {
+export const DroppableListbox = {
+  render: () => (
+    <Flex direction="row" gap="size-200" alignItems="center">
+      <Draggable />
+      <DroppableListBox>
+        <Item key="1" textValue="One">
+          <Folder size="S" />
+          <span>One</span>
+        </Item>
+        <Item key="2">Two</Item>
+        <Item key="3" textValue="Three">
+          <Folder size="S" />
+          <span>Three</span>
+        </Item>
+      </DroppableListBox>
+    </Flex>
+  ),
   name: 'Droppable listbox'
 };
 
-export const InDialog = () => (
-  <Flex direction="column" gap="size-200" alignItems="center">
-    <Draggable />
-    <DialogButton>
-      <Dialog>
-        <Heading>Dialog</Heading>
-        <Content>
-          <Flex direction="column" gap="size-200" alignItems="center">
-            <Draggable />
-            <Droppable />
-            <Droppable />
-          </Flex>
-        </Content>
-      </Dialog>
-    </DialogButton>
-    <Droppable />
-  </Flex>
-);
-
-InDialog.story = {
+export const InDialog = {
+  render: () => (
+    <Flex direction="column" gap="size-200" alignItems="center">
+      <Draggable />
+      <DialogButton>
+        <Dialog>
+          <Heading>Dialog</Heading>
+          <Content>
+            <Flex direction="column" gap="size-200" alignItems="center">
+              <Draggable />
+              <Droppable />
+              <Droppable />
+            </Flex>
+          </Content>
+        </Dialog>
+      </DialogButton>
+      <Droppable />
+    </Flex>
+  ),
   name: 'In dialog'
 };
 
-export const DraggableGridDroppableListbox = () => (
-  <Flex direction="row" gap="size-200" alignItems="center" wrap>
-    <DraggableCollectionExample />
-    <DroppableListBoxExample />
-  </Flex>
-);
-
-DraggableGridDroppableListbox.story = {
+export const DraggableGridDroppableListbox = {
+  render: () => (
+    <Flex direction="row" gap="size-200" alignItems="center" wrap>
+      <DraggableCollectionExample />
+      <DroppableListBoxExample />
+    </Flex>
+  ),
   name: 'Draggable grid, droppable listbox'
 };
 
-export const DroppableGrid = () => (
-  <Flex direction="column" alignItems="start">
-    <ActionGroup
-      onAction={(action) => {
-        switch (action) {
-          case 'copy':
-          case 'cut': {
-            let selected = document.querySelector(
-              '[aria-label="Draggable list"] [aria-selected="true"] [role="gridcell"]'
-            ) as HTMLElement;
-            selected?.focus();
-            document.execCommand(action);
-            break;
+export const DroppableGrid = {
+  render: () => (
+    <Flex direction="column" alignItems="start">
+      <ActionGroup
+        onAction={(action) => {
+          switch (action) {
+            case 'copy':
+            case 'cut': {
+              let selected = document.querySelector(
+                '[aria-label="Draggable list"] [aria-selected="true"] [role="gridcell"]'
+              ) as HTMLElement;
+              selected?.focus();
+              document.execCommand(action);
+              break;
+            }
+            case 'paste': {
+              // This only works in Safari...
+              let selected = document.querySelector(
+                '[aria-label="List"] [aria-selected="true"] [role="gridcell"]'
+              ) as HTMLElement;
+              selected?.focus();
+              document.execCommand('paste');
+              break;
+            }
           }
-          case 'paste': {
-            // This only works in Safari...
-            let selected = document.querySelector(
-              '[aria-label="List"] [aria-selected="true"] [role="gridcell"]'
-            ) as HTMLElement;
-            selected?.focus();
-            document.execCommand('paste');
-            break;
-          }
-        }
-      }}>
-      <Item key="copy" aria-label="Copy">
-        <Copy />
-      </Item>
-      <Item key="cut" aria-label="Cut">
-        <Cut />
-      </Item>
-      <Item key="paste" aria-label="Paste">
-        <Paste />
-      </Item>
-    </ActionGroup>
-    <Flex direction="row" gap="size-200" alignItems="center" wrap>
-      <DraggableCollectionExample />
-      <DroppableGridExample
-        onDropEnter={action('onDropEnter')}
-        onDropExit={action('onDropExit')}
-        onDrop={action('onDrop')} />
+        }}>
+        <Item key="copy" aria-label="Copy">
+          <Copy />
+        </Item>
+        <Item key="cut" aria-label="Cut">
+          <Cut />
+        </Item>
+        <Item key="paste" aria-label="Paste">
+          <Paste />
+        </Item>
+      </ActionGroup>
+      <Flex direction="row" gap="size-200" alignItems="center" wrap>
+        <DraggableCollectionExample />
+        <DroppableGridExample
+          onDropEnter={action('onDropEnter')}
+          onDropExit={action('onDropExit')}
+          onDrop={action('onDrop')} />
+      </Flex>
     </Flex>
-  </Flex>
-);
-
-DroppableGrid.story = {
+  ),
   name: 'Droppable grid'
 };
 
-export const DroppableGridWithManyItems = () => (
-  <Flex direction="row" gap="size-200" alignItems="center" wrap>
-    <DraggableCollectionExample />
-    <DroppableGridExample items={manyItems} />
-  </Flex>
-);
-
-DroppableGridWithManyItems.story = {
+export const DroppableGridWithManyItems = {
+  render: () => (
+    <Flex direction="row" gap="size-200" alignItems="center" wrap>
+      <DraggableCollectionExample />
+      <DroppableGridExample items={manyItems} />
+    </Flex>
+  ),
   name: 'Droppable grid with many items'
 };
 
-export const VirtualizedListbox = () => (
-  <Flex direction="row" gap="size-200" alignItems="center" wrap>
-    <DraggableCollectionExample />
-    <VirtualizedListBoxExample items={manyItems} />
-  </Flex>
-);
-
-VirtualizedListbox.story = {
+export const VirtualizedListbox = {
+  render: () => (
+    <Flex direction="row" gap="size-200" alignItems="center" wrap>
+      <DraggableCollectionExample />
+      <VirtualizedListBoxExample items={manyItems} />
+    </Flex>
+  ),
   name: 'Virtualized listbox'
 };
 
-export const MultipleCollectionDropTargets = () => (
-  <Flex direction="row" gap="size-200" alignItems="center" wrap>
-    <DraggableCollectionExample />
-    <VirtualizedListBoxExample
-      items={manyItems.map((item) => ({...item, type: 'folder'}))}
-      accept="folder" />
-    <VirtualizedListBoxExample items={manyItems} accept="item" />
-  </Flex>
-);
-
-MultipleCollectionDropTargets.story = {
+export const MultipleCollectionDropTargets = {
+  render: () => (
+    <Flex direction="row" gap="size-200" alignItems="center" wrap>
+      <DraggableCollectionExample />
+      <VirtualizedListBoxExample
+        items={manyItems.map((item) => ({...item, type: 'folder'}))}
+        accept="folder" />
+      <VirtualizedListBoxExample items={manyItems} accept="item" />
+    </Flex>
+  ),
   name: 'Multiple collection drop targets'
 };
 

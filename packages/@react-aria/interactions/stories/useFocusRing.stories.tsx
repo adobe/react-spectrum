@@ -37,9 +37,8 @@ export default {
   title: 'useFocusRing'
 };
 
-export const SearchTableview = () => <SearchExample />;
-
-SearchTableview.story = {
+export const SearchTableview = {
+  render: () => <SearchExample />,
   name: 'search + tableview'
 };
 

@@ -18,9 +18,8 @@ export default {
   title: 'useButton'
 };
 
-export const InputTypeButton = () => <InputButton />;
-
-InputTypeButton.story = {
+export const InputTypeButton = {
+  render: () => <InputButton />,
   name: 'input type button'
 };
 

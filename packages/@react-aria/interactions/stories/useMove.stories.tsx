@@ -76,18 +76,17 @@ export const Log = () => {
   return <div {...moveProps} style={{width: '200px', height: '200px', background: 'white', border: '1px solid black', touchAction: 'none'}} />;
 };
 
-export const _Ball1D = () => (
-  <Flex direction="column" gap="size-1000">
-    <Ball1D />
-    <Ball1D />
-  </Flex>
-);
-
-_Ball1D.story = {
+export const _Ball1D = {
+  render: () => (
+    <Flex direction="column" gap="size-1000">
+      <Ball1D />
+      <Ball1D />
+    </Flex>
+  ),
   name: 'Ball 1D'
 };
 
-export const Ball2D = () => {
+function Ball2DStory() {
   let [state, setState] = useState({x: 0, y: 0, color: 'black'});
 
   let props = useClampedMove({
@@ -104,13 +103,14 @@ export const Ball2D = () => {
       <div tabIndex={0} {...props} style={{width: '30px', height: '30px', borderRadius: '100%', position: 'absolute', left: state.x + 'px', top: state.y + 'px', background: state.color}} />
     </div>
   );
-};
+}
 
-Ball2D.story = {
+export const Ball2D = {
+  render: () => <Ball2DStory />,
   name: 'Ball 2D'
 };
 
-export const BallNested = () => {
+function BallNestedStory() {
   let [ballState, setBallState] = useState({x: 0, y: 0, color: 'black'});
   let [boxState, setBoxState] = useState({x: 100, y: 100, color: 'grey'});
 
@@ -130,8 +130,9 @@ export const BallNested = () => {
       <div tabIndex={0} {...ballProps} style={{width: '30px', height: '30px', borderRadius: '100%', position: 'absolute', left: ballState.x + 'px', top: ballState.y + 'px', background: ballState.color}} />
     </div>
   );
-};
+}
 
-BallNested.story = {
+export const BallNested = {
+  render: () => <BallNestedStory />,
   name: 'Ball nested'
 };

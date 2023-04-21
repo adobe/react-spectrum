@@ -26,27 +26,26 @@ export default {
   title: 'useMenu'
 };
 
-export const DoubleMenuFiresOnInteractOutside = () => (
-  <div>
+export const DoubleMenuFiresOnInteractOutside = {
+  render: () => (
     <div>
-      This should just be there to show that onInteractOutside fires when clicking on another
-      trigger.
+      <div>
+        This should just be there to show that onInteractOutside fires when clicking on another
+        trigger.
+      </div>
+      <MenuButton label="Actions">
+        <Item key="copy">Copy</Item>
+        <Item key="cut">Cut</Item>
+        <Item key="paste">Paste</Item>
+      </MenuButton>
+      <MenuButton label="Actions2">
+        <Item key="copy">Copy</Item>
+        <Item key="cut">Cut</Item>
+        <Item key="paste">Paste</Item>
+      </MenuButton>
+      <input />
     </div>
-    <MenuButton label="Actions">
-      <Item key="copy">Copy</Item>
-      <Item key="cut">Cut</Item>
-      <Item key="paste">Paste</Item>
-    </MenuButton>
-    <MenuButton label="Actions2">
-      <Item key="copy">Copy</Item>
-      <Item key="cut">Cut</Item>
-      <Item key="paste">Paste</Item>
-    </MenuButton>
-    <input />
-  </div>
-);
-
-DoubleMenuFiresOnInteractOutside.story = {
+  ),
   name: 'double menu fires onInteractOutside'
 };
 

@@ -18,15 +18,13 @@ export default {
   title: 'useModal'
 };
 
-export const DefaultContainer = () => <App />;
-
-DefaultContainer.story = {
+export const DefaultContainer = {
+  render: () => <App />,
   name: 'default container'
 };
 
-export const DifferentContainer = () => <App useAlternateContainer />;
-
-DifferentContainer.story = {
+export const DifferentContainer = {
+  render: () => <App useAlternateContainer />,
   name: 'different container'
 };
 

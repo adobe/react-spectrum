@@ -19,31 +19,23 @@ export default {
   title: 'useGrid'
 };
 
-export const GridFocusModeRowCellFocusModeCell = () =>
-  render({gridFocusMode: 'row', cellFocusMode: 'cell'});
-
-GridFocusModeRowCellFocusModeCell.story = {
+export const GridFocusModeRowCellFocusModeCell = {
+  render: () => render({gridFocusMode: 'row', cellFocusMode: 'cell'}),
   name: 'gridFocusMode = row, cellFocusMode = cell'
 };
 
-export const GridFocusModeRowCellFocusModeChild = () =>
-  render({gridFocusMode: 'row', cellFocusMode: 'child'});
-
-GridFocusModeRowCellFocusModeChild.story = {
+export const GridFocusModeRowCellFocusModeChild = {
+  render: () => render({gridFocusMode: 'row', cellFocusMode: 'child'}),
   name: 'gridFocusMode = row, cellFocusMode = child'
 };
 
-export const GridFocusModeCellCellFocusModeChild = () =>
-  render({gridFocusMode: 'cell', cellFocusMode: 'child'});
-
-GridFocusModeCellCellFocusModeChild.story = {
+export const GridFocusModeCellCellFocusModeChild = {
+  render: () => render({gridFocusMode: 'cell', cellFocusMode: 'child'}),
   name: 'gridFocusMode = cell, cellFocusMode = child'
 };
 
-export const GridFocusModeCellCellFocusModeCell = () =>
-  render({gridFocusMode: 'cell', cellFocusMode: 'cell'});
-
-GridFocusModeCellCellFocusModeCell.story = {
+export const GridFocusModeCellCellFocusModeCell = {
+  render: () => render({gridFocusMode: 'cell', cellFocusMode: 'cell'}),
   name: 'gridFocusMode = cell, cellFocusMode = cell'
 };
 

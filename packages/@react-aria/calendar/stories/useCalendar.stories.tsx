@@ -17,26 +17,22 @@ export default {
   title: 'Date and Time/useCalendar'
 };
 
-export const Days3 = () => <Example visibleDuration={{days: 3}} />;
-
-Days3.story = {
+export const Days3 = {
+  render: () => <Example visibleDuration={{days: 3}} />,
   name: 'days: 3'
 };
 
-export const Weeks1 = () => <Example visibleDuration={{weeks: 1}} />;
-
-Weeks1.story = {
+export const Weeks1 = {
+  render: () => <Example visibleDuration={{weeks: 1}} />,
   name: 'weeks: 1'
 };
 
-export const Weeks2 = () => <Example visibleDuration={{weeks: 2}} />;
-
-Weeks2.story = {
+export const Weeks2 = {
+  render: () => <Example visibleDuration={{weeks: 2}} />,
   name: 'weeks: 2'
 };
 
-export const Months1 = () => <Example visibleDuration={{months: 1}} />;
-
-Months1.story = {
+export const Months1 = {
+  render: () => <Example visibleDuration={{months: 1}} />,
   name: 'months: 1'
 };

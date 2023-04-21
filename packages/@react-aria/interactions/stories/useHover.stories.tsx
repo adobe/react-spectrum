@@ -20,9 +20,8 @@ export default {
   title: 'useHover'
 };
 
-export const HoverDisabling = () => <App />;
-
-HoverDisabling.story = {
+export const HoverDisabling = {
+  render: () => <App />,
   name: 'hover disabling'
 };
 
