@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, CalendarCell, CalendarGrid, DateInput, DateRangePicker, DateRangePickerContext, DateSegment, Dialog, Group, Heading, Label, Popover, RangeCalendar, Text} from 'react-aria-components';import React from 'react';
+import {Button, CalendarCell, CalendarGrid, DateInput, DateRangePicker, DateRangePickerContext, DateSegment, Dialog, Group, Heading, Label, Popover, RangeCalendar, Text} from 'react-aria-components';
+import {CalendarDate} from '@internationalized/date';
+import React from 'react';
 import {render} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
@@ -103,5 +105,44 @@ describe('DateRangePicker', () => {
     expect(button).not.toHaveAttribute('data-pressed');
     userEvent.click(button);
     expect(button).toHaveAttribute('data-pressed');
+  });
+
+  it('should support render props', () => {
+    let {getByRole} = render(
+      <DateRangePicker defaultValue={{start: new CalendarDate(2023, 1, 10), end: new CalendarDate(2023, 1, 1)}}>
+        {({validationState}) => (
+          <>
+            <Label>Trip dates</Label>
+            <Group data-validation-state={validationState}>
+              <DateInput slot="start">
+                {(segment) => <DateSegment segment={segment} />}
+              </DateInput>
+              <span aria-hidden="true">–</span>
+              <DateInput slot="end">
+                {(segment) => <DateSegment segment={segment} />}
+              </DateInput>
+              <Button>▼</Button>
+            </Group>
+            <Popover>
+              <Dialog>
+                <RangeCalendar>
+                  <header>
+                    <Button slot="previous">◀</Button>
+                    <Heading />
+                    <Button slot="next">▶</Button>
+                  </header>
+                  <CalendarGrid>
+                    {(date) => <CalendarCell date={date} />}
+                  </CalendarGrid>
+                </RangeCalendar>
+              </Dialog>
+            </Popover>
+          </>
+        )}
+      </DateRangePicker>
+    );
+    
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-validation-state', 'invalid');
   });
 });
