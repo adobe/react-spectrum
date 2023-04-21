@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import chalk from 'chalk';
 import {copyComponents} from './helpers/copyComponents.js';
 import {copyIndexFile} from './helpers/copyIndexFile.js';
