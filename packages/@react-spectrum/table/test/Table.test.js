@@ -2347,6 +2347,13 @@ describe('TableView', function () {
         expect(onSelectionChange.mock.calls[0][0]).toEqual('all');
         checkRowSelection(rows.slice(1), true);
         checkSelectAll(tree, 'checked');
+
+        fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: 'a', ctrlKey: true});
+
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        expect(onSelectionChange.mock.calls[0][0]).toEqual('all');
+        checkRowSelection(rows.slice(1), true);
+        checkSelectAll(tree, 'checked');
       });
 
       it('should deselect an item after selecting all', function () {

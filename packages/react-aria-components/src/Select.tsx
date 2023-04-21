@@ -99,9 +99,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
           }
         }]
       ]}>
-      <div {...renderProps} ref={ref} slot={props.slot}>
-        {props.children}
-      </div>
+      <div {...renderProps} ref={ref} slot={props.slot} />
       {portal}
       <HiddenSelect
         state={state}

@@ -68,4 +68,18 @@ describe('Tooltip', () => {
     let arrow = tooltip.querySelector('.react-aria-OverlayArrow');
     expect(arrow).toHaveStyle('position: absolute');
   });
+
+  it('should support render props', () => {
+    const {getByRole} = render(
+      <TooltipTrigger delay={0}>
+        <Button><span aria-hidden="true">✏️</span></Button>
+        <Tooltip placement="bottom start">{({placement}) => `Content at ${placement}`}</Tooltip>
+      </TooltipTrigger>
+    );
+
+    userEvent.tab();
+
+    let tooltip = getByRole('tooltip');
+    expect(tooltip).toHaveTextContent('Content at bottom');
+  });
 });
