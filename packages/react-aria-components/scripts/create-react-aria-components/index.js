@@ -94,7 +94,7 @@ async function main() {
     exec(`cd ${projectName} && npm install`);
     console.log(
       chalk.green(
-        `\nSuccess! Created ${projectName} at ${path.resolve()}/${projectName}`
+        `\nSuccess! Created ${chalk.bold(projectName)} at ${path.resolve()}/${projectName}`
       )
     );
   } else {
@@ -102,8 +102,8 @@ async function main() {
   }
 
   console.log(
-    chalk.cyan('\nYou can access the React Aria Components docs here: ') +
-    chalk.underline('https://react-spectrum.adobe.com/react-aria/react-aria-components.html')
+    chalk.cyan('\nYou can access the React Aria Components documentation here: ') +
+    chalk.underline('\nhttps://react-spectrum.adobe.com/react-aria/react-aria-components.html')
   );
 
   if (action === 'Create a new library' && includedFeatures.includes('Stories')) {
