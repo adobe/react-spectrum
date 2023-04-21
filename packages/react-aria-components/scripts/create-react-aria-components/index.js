@@ -25,14 +25,6 @@ async function main() {
     ]
   });
 
-  const templates = await readTemplates();
-  const {template} = await prompts({
-    type: 'select',
-    name: 'template',
-    message: 'Select a template',
-    choices: templates.map((t) => ({title: t, value: t}))
-  });
-
   let projectName;
   if (action === 'Create a new library') {
     const response = await prompts({
@@ -45,6 +37,14 @@ async function main() {
   } else {
     projectName = '.';
   }
+
+  const templates = await readTemplates();
+  const {template} = await prompts({
+    type: 'select',
+    name: 'template',
+    message: 'Select a template',
+    choices: templates.map((t) => ({title: t, value: t}))
+  });
 
   const components = await readComponents(template);
   let {selectedComponents} = await prompts({
