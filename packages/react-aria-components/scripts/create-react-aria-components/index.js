@@ -112,6 +112,12 @@ async function main() {
     );
   }
 
+  if (action === 'Add components') {
+    console.log(
+      chalk.cyan('\nBe sure your project includes all dependencies needed (Storybook, Jest, etc.)')
+    );
+  }
+
   process.exit(0);
 }
 
