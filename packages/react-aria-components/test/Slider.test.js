@@ -53,6 +53,23 @@ describe('Slider', () => {
     expect(group.querySelector('.react-aria-SliderTrack')).toHaveAttribute('data-test', 'test');
   });
 
+  it('should support render props', () => {
+    let {getByTestId} = render(
+      <Slider orientation="vertical">
+        {({orientation}) => (
+          <div className={`slider-${orientation}`} data-testid="wrapper">
+            <Label>Opacity</Label>
+            <SliderOutput />
+            <SliderTrack>
+              <SliderThumb />
+            </SliderTrack>
+          </div>
+        )}
+      </Slider>
+    );
+    expect(getByTestId('wrapper')).toHaveClass('slider-vertical');
+  });
+
   it('should support slot', () => {
     let {getByRole} = render(
       <SliderContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
