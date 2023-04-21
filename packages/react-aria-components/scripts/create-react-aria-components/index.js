@@ -25,6 +25,10 @@ async function main() {
     ]
   });
 
+  if (action === 'Add components') {
+    console.log('Components will be added to the current directory.');
+  }
+
   let projectName;
   if (action === 'Create a new library') {
     const response = await prompts({
