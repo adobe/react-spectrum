@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, triggerPress, within} from '@react-spectrum/test-utils';
 import {Button} from '@react-spectrum/button';
 import {clearToastQueue, ToastContainer, ToastQueue} from '../src/ToastContainer';
 import {defaultTheme} from '@adobe/react-spectrum';
@@ -46,6 +46,11 @@ function fireAnimationEnd(alert) {
 }
 
 describe('Toast Provider and Container', function () {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   beforeEach(() => {
     jest.useFakeTimers();
     clearToastQueue();
@@ -105,7 +110,7 @@ describe('Toast Provider and Container', function () {
     expect(queryByRole('alert')).toBeNull();
   });
 
-  it('pauses timers when hovering', () => {
+  it('pauses timers when hovering', async () => {
     let {getByRole, queryByRole} = renderComponent(<RenderToastButton timeout={5000} />);
     let button = getByRole('button');
 
@@ -115,12 +120,12 @@ describe('Toast Provider and Container', function () {
     expect(toast).toBeVisible();
 
     act(() => jest.advanceTimersByTime(1000));
-    act(() => userEvent.hover(toast));
+    await user.hover(toast);
 
     act(() => jest.advanceTimersByTime(7000));
     expect(toast).not.toHaveAttribute('data-animation', 'exiting');
 
-    act(() => userEvent.unhover(toast));
+    await user.unhover(toast);
 
     act(() => jest.advanceTimersByTime(4000));
     expect(toast).toHaveAttribute('data-animation', 'exiting');

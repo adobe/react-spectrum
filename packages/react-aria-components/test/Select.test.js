@@ -11,8 +11,8 @@
  */
 
 import {Button, Item, Label, ListBox, Popover, Select, SelectContext, SelectValue, Text} from '../';
+import {pointerMap, render, within} from '@react-spectrum/test-utils';
 import React from 'react';
-import {render, within} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestSelect = (props) => (
@@ -34,7 +34,12 @@ let TestSelect = (props) => (
 );
 
 describe('Select', () => {
-  it('provides slots', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
+  it('provides slots', async () => {
     let {getByRole} = render(<TestSelect />);
 
     let button = getByRole('button');
@@ -52,7 +57,7 @@ describe('Select', () => {
     expect(button).toHaveAttribute('aria-describedby');
     expect(button.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Description Error');
 
-    userEvent.click(button);
+    await user.click(button);
 
     expect(button).toHaveAttribute('data-pressed', 'true');
 
@@ -63,7 +68,7 @@ describe('Select', () => {
     let options = within(listbox).getAllByRole('option');
     expect(options).toHaveLength(3);
 
-    userEvent.click(options[1]);
+    await user.click(options[1]);
     expect(button).toHaveTextContent('Dog');
   });
 

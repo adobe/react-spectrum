@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@react-spectrum/test-utils';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
 import {Tab, TabList, TabPanel, TabPanels, Tabs} from '../';
 import userEvent from '@testing-library/user-event';
@@ -31,6 +31,11 @@ let renderTabs = (tabsProps, tablistProps, tabProps, tabpanelProps) => render(
 );
 
 describe('Tabs', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   it('should render tabs with default classes', () => {
     let {getByRole, getAllByRole} = renderTabs();
     let tablist = getByRole('tablist');
@@ -99,35 +104,35 @@ describe('Tabs', () => {
     expect(tablist).toHaveAttribute('aria-label', 'Test horizonal');
   });
 
-  it('should support hover', () => {
+  it('should support hover', async () => {
     let {getAllByRole} = renderTabs({}, {}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
     let tab = getAllByRole('tab')[0];
 
     expect(tab).not.toHaveAttribute('data-hovered');
     expect(tab).not.toHaveClass('hover');
 
-    userEvent.hover(tab);
+    await user.hover(tab);
     expect(tab).toHaveAttribute('data-hovered', 'true');
     expect(tab).toHaveClass('hover');
 
-    userEvent.unhover(tab);
+    await user.unhover(tab);
     expect(tab).not.toHaveAttribute('data-hovered');
     expect(tab).not.toHaveClass('hover');
   });
 
-  it('should support focus ring', () => {
+  it('should support focus ring', async () => {
     let {getAllByRole} = renderTabs({}, {}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
     let tab = getAllByRole('tab')[0];
-    
+
     expect(tab).not.toHaveAttribute('data-focus-visible');
     expect(tab).not.toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(tab);
     expect(tab).toHaveAttribute('data-focus-visible', 'true');
     expect(tab).toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(tab).not.toHaveAttribute('data-focus-visible');
     expect(tab).not.toHaveClass('focus');
   });
@@ -165,7 +170,7 @@ describe('Tabs', () => {
     expect(tab).toHaveClass('disabled');
   });
 
-  it('should support selected state', () => {
+  it('should support selected state', async () => {
     let onSelectionChange = jest.fn();
     let {getAllByRole} = renderTabs({}, {onSelectionChange}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
     let tabs = getAllByRole('tab');
@@ -173,14 +178,14 @@ describe('Tabs', () => {
     expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
     expect(tabs[0]).toHaveClass('selected');
 
-    userEvent.click(tabs[1]);
+    await user.click(tabs[1]);
     expect(onSelectionChange).toHaveBeenLastCalledWith('b');
     expect(tabs[0]).not.toHaveAttribute('aria-selected', 'true');
     expect(tabs[0]).not.toHaveClass('selected');
     expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
     expect(tabs[1]).toHaveClass('selected');
 
-    userEvent.click(tabs[0]);
+    await user.click(tabs[0]);
     expect(onSelectionChange).toHaveBeenLastCalledWith('a');
     expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
     expect(tabs[0]).toHaveClass('selected');

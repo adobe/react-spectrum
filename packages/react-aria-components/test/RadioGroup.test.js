@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@react-spectrum/test-utils';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import {Label, Radio, RadioGroup, RadioGroupContext, Text} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -27,6 +27,11 @@ let TestRadioGroup = ({groupProps, radioProps}) => (
 let renderGroup = (groupProps, radioProps) => render(<TestRadioGroup {...{groupProps, radioProps}} />);
 
 describe('RadioGroup', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   it('should render a radio group with default classes', () => {
     let {getByRole, getAllByRole} = renderGroup();
     let group = getByRole('radiogroup');
@@ -91,36 +96,36 @@ describe('RadioGroup', () => {
     expect(group).toHaveAttribute('aria-label', 'test');
   });
 
-  it('should support hover', () => {
+  it('should support hover', async () => {
     let {getAllByRole} = renderGroup({}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
     let radio = getAllByRole('radio')[0].closest('label');
 
     expect(radio).not.toHaveAttribute('data-hovered');
     expect(radio).not.toHaveClass('hover');
 
-    userEvent.hover(radio);
+    await user.hover(radio);
     expect(radio).toHaveAttribute('data-hovered', 'true');
     expect(radio).toHaveClass('hover');
 
-    userEvent.unhover(radio);
+    await user.unhover(radio);
     expect(radio).not.toHaveAttribute('data-hovered');
     expect(radio).not.toHaveClass('hover');
   });
 
-  it('should support focus ring', () => {
+  it('should support focus ring', async () => {
     let {getAllByRole} = renderGroup({}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
     let radio = getAllByRole('radio')[0];
     let label = radio.closest('label');
-    
+
     expect(label).not.toHaveAttribute('data-focus-visible');
     expect(label).not.toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(radio);
     expect(label).toHaveAttribute('data-focus-visible', 'true');
     expect(label).toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(label).not.toHaveAttribute('data-focus-visible');
     expect(label).not.toHaveClass('focus');
   });
@@ -166,7 +171,7 @@ describe('RadioGroup', () => {
     expect(label).toHaveClass('disabled');
   });
 
-  it('should support selected state', () => {
+  it('should support selected state', async () => {
     let onChange = jest.fn();
     let {getAllByRole} = renderGroup({onChange}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
     let radios = getAllByRole('radio');
@@ -176,13 +181,13 @@ describe('RadioGroup', () => {
     expect(label).not.toHaveAttribute('data-selected');
     expect(label).not.toHaveClass('selected');
 
-    userEvent.click(radios[0]);
+    await user.click(radios[0]);
     expect(onChange).toHaveBeenLastCalledWith('a');
     expect(radios[0]).toBeChecked();
     expect(label).toHaveAttribute('data-selected', 'true');
     expect(label).toHaveClass('selected');
 
-    userEvent.click(radios[1]);
+    await user.click(radios[1]);
     expect(onChange).toHaveBeenLastCalledWith('b');
     expect(radios[0]).not.toBeChecked();
     expect(label).not.toHaveAttribute('data-selected');

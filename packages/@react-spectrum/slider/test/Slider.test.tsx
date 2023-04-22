@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, installMouseEvent, render} from '@react-spectrum/test-utils';
+import {act, fireEvent, installMouseEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import {press, testKeypresses} from './utils';
 import {Provider} from '@adobe/react-spectrum';
 import React, {useState} from 'react';
@@ -19,6 +19,11 @@ import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
 describe('Slider', function () {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   it('supports aria-label', function () {
     let {getByRole} = render(<Slider aria-label="The Label" />);
 
@@ -65,7 +70,7 @@ describe('Slider', function () {
     expect(queryByRole('status')).toBeNull();
   });
 
-  it('supports disabled', function () {
+  it('supports disabled', async function () {
     let {getByRole, getAllByRole} = render(<div>
       <button>A</button>
       <Slider label="The Label" defaultValue={20} isDisabled />
@@ -76,13 +81,13 @@ describe('Slider', function () {
     let [buttonA, buttonB] = getAllByRole('button');
     expect(slider).toBeDisabled();
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(buttonA);
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(buttonB);
   });
 
-  it('can be focused', function () {
+  it('can be focused', async function () {
     let {getByRole, getAllByRole} = render(<div>
       <button>A</button>
       <Slider label="The Label" defaultValue={20} />
@@ -96,10 +101,10 @@ describe('Slider', function () {
     });
 
     expect(document.activeElement).toBe(slider);
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(buttonB);
-    userEvent.tab({shift: true});
-    userEvent.tab({shift: true});
+    await user.tab({shift: true});
+    await user.tab({shift: true});
     expect(document.activeElement).toBe(buttonA);
   });
 

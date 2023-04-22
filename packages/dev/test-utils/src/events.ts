@@ -11,6 +11,7 @@
  */
 
 import {act, fireEvent} from '@testing-library/react';
+// @ts-ignore
 import type {ITypeOpts} from '@testing-library/user-event';
 import userEvent from '@testing-library/user-event';
 

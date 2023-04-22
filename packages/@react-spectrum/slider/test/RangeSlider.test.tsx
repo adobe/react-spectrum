@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@react-spectrum/test-utils';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import {press, testKeypresses} from './utils';
 import {Provider} from '@adobe/react-spectrum';
 import {RangeSlider} from '../';
@@ -20,6 +20,11 @@ import userEvent from '@testing-library/user-event';
 
 
 describe('RangeSlider', function () {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   it('supports aria-label', function () {
     let {getByRole} = render(<RangeSlider aria-label="The Label" />);
 
@@ -63,7 +68,7 @@ describe('RangeSlider', function () {
     expect(queryByRole('status')).toBeNull();
   });
 
-  it('supports disabled', function () {
+  it('supports disabled', async function () {
     let {getAllByRole} = render(<div>
       <button>A</button>
       <RangeSlider label="The Label" isDisabled />
@@ -75,13 +80,13 @@ describe('RangeSlider', function () {
     expect(rightSlider).toBeDisabled();
     let [buttonA, buttonB] = getAllByRole('button');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(buttonA);
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(buttonB);
   });
 
-  it('can be focused', function () {
+  it('can be focused', async function () {
     let {getAllByRole} = render(<div>
       <button>A</button>
       <RangeSlider label="The Label" defaultValue={{start: 20, end: 50}} />
@@ -91,19 +96,19 @@ describe('RangeSlider', function () {
     let [sliderLeft, sliderRight] = getAllByRole('slider');
     let [buttonA, buttonB] = getAllByRole('button');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(buttonA);
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(sliderLeft);
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(sliderRight);
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(buttonB);
-    userEvent.tab({shift: true});
+    await user.tab({shift: true});
     expect(document.activeElement).toBe(sliderRight);
-    userEvent.tab({shift: true});
+    await user.tab({shift: true});
     expect(document.activeElement).toBe(sliderLeft);
-    userEvent.tab({shift: true});
+    await user.tab({shift: true});
     expect(document.activeElement).toBe(buttonA);
   });
 

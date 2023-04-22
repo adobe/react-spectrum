@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, mockImplementation, render, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, mockImplementation, pointerMap, render, triggerPress, within} from '@react-spectrum/test-utils';
 import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
 import {Item} from '@react-stately/collections';
@@ -20,33 +20,14 @@ import {TagGroup} from '../src';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
-function pressKeyOnButton(key) {
-  return (button) => {
-    fireEvent.keyDown(button, {key});
-    fireEvent.keyUp(button, {key});
-  };
-}
-
-function pressArrowRight(button) {
-  return pressKeyOnButton('ArrowRight')(button);
-}
-
-function pressArrowLeft(button) {
-  return pressKeyOnButton('ArrowLeft')(button);
-}
-
-function pressArrowUp(button) {
-  return pressKeyOnButton('ArrowUp')(button);
-}
-
-function pressArrowDown(button) {
-  return pressKeyOnButton('ArrowDown')(button);
-}
 
 describe('TagGroup', function () {
   let onRemoveSpy = jest.fn();
   let onClearSpy = jest.fn();
+  let user;
+
   beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
   });
 
@@ -60,6 +41,12 @@ describe('TagGroup', function () {
   afterAll(function () {
     jest.restoreAllMocks();
   });
+
+  let tab = async () => await user.tab();
+  let pressArrowRight = async () => await user.keyboard('{ArrowRight}');
+  let pressArrowLeft = async () => await user.keyboard('{ArrowLeft}');
+  let pressArrowUp = async () => await user.keyboard('{ArrowUp}');
+  let pressArrowDown = async () => await user.keyboard('{ArrowDown}');
 
   it('provides context for Tag component', function () {
     let {getAllByRole} = render(
@@ -105,13 +92,13 @@ describe('TagGroup', function () {
     expect(tags[0]).toHaveAttribute('tabIndex', '0');
   });
 
-  it.skip.each`
+  it.each`
     Name                                                | props                                         | orders
-    ${'(left/right arrows, ltr + horizontal) TagGroup'} | ${{locale: 'de-DE'}}                          | ${[{action: () => {userEvent.tab();}, index: 0}, {action: pressArrowRight, index: 1}, {action: pressArrowLeft, index: 0}, {action: pressArrowLeft, index: 2}]}
-    ${'(left/right arrows, rtl + horizontal) TagGroup'} | ${{locale: 'ar-AE'}}                          | ${[{action: () => {userEvent.tab();}, index: 0}, {action: pressArrowLeft, index: 1}, {action: pressArrowRight, index: 0}, {action: pressArrowRight, index: 2}]}
-    ${'(up/down arrows, ltr + horizontal) TagGroup'}    | ${{locale: 'de-DE'}}                          | ${[{action: () => {userEvent.tab();}, index: 0}, {action: pressArrowDown, index: 1}, {action: pressArrowUp, index: 0}, {action: pressArrowUp, index: 2}]}
-    ${'(up/down arrows, rtl + horizontal) TagGroup'}    | ${{locale: 'ar-AE'}}                          | ${[{action: () => {userEvent.tab();}, index: 0}, {action: pressArrowUp, index: 2}, {action: pressArrowDown, index: 0}, {action: pressArrowDown, index: 1}]}
-  `('$Name shifts button focus in the correct direction on key press', function ({Name, props, orders}) {
+    ${'(left/right arrows, ltr + horizontal) TagGroup'} | ${{locale: 'de-DE'}}                          | ${[{action: tab, index: 0}, {action: pressArrowRight, index: 1}, {action: pressArrowLeft, index: 0}, {action: pressArrowLeft, index: 2}]}
+    ${'(left/right arrows, rtl + horizontal) TagGroup'} | ${{locale: 'ar-AE'}}                          | ${[{action: tab, index: 0}, {action: pressArrowLeft, index: 1}, {action: pressArrowRight, index: 0}, {action: pressArrowRight, index: 2}]}
+    ${'(up/down arrows, ltr + horizontal) TagGroup'}    | ${{locale: 'de-DE'}}                          | ${[{action: tab, index: 0}, {action: pressArrowDown, index: 1}, {action: pressArrowUp, index: 0}, {action: pressArrowUp, index: 2}]}
+    ${'(up/down arrows, rtl + horizontal) TagGroup'}    | ${{locale: 'ar-AE'}}                          | ${[{action: tab, index: 0}, {action: pressArrowUp, index: 2}, {action: pressArrowDown, index: 0}, {action: pressArrowDown, index: 1}]}
+  `('$Name shifts button focus in the correct direction on key press', async function ({Name, props, orders}) {
     let {getAllByRole} = render(
       <Provider theme={theme} locale={props.locale}>
         <TagGroup aria-label="tag group">
@@ -123,10 +110,11 @@ describe('TagGroup', function () {
     );
 
     let tags = getAllByRole('row');
-    orders.forEach(({action, index}, i) => {
-      action(document.activeElement);
+
+    for (let {action, index} of orders) {
+      await action();
       expect(document.activeElement).toBe(tags[index]);
-    });
+    }
   });
 
   it('TagGroup allows aria-label', function () {
@@ -166,7 +154,7 @@ describe('TagGroup', function () {
     expect(tag).toHaveAttribute('aria-label', 'Tag 1');
   });
 
-  it('should remember last focused item', function () {
+  it('should remember last focused item', async function () {
     let {getAllByRole, getByLabelText} = render(
       <Provider theme={theme} locale="en-US">
         <Button variant="primary" aria-label="ButtonBefore" />
@@ -183,16 +171,16 @@ describe('TagGroup', function () {
     let tags = getAllByRole('row');
     act(() => {buttonBefore.focus();});
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(tags[0]);
 
-    pressArrowRight(tags[0]);
+    await pressArrowRight(tags[0]);
     expect(document.activeElement).toBe(tags[1]);
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(buttonAfter);
 
-    userEvent.tab({shift: true});
+    await user.tab({shift: true});
     expect(document.activeElement).toBe(tags[1]);
   });
 
@@ -213,13 +201,13 @@ describe('TagGroup', function () {
     let tags = getAllByRole('row');
     act(() => {buttonBefore.focus();});
     expect(buttonBefore).toHaveFocus();
-    userEvent.tab();
+    await user.tab();
     expect(tags[0]).toHaveFocus();
-    userEvent.tab();
+    await user.tab();
     expect(buttonAfter).toHaveFocus();
   });
 
-  it('should be focusable from Shift + Tab', function () {
+  it('should be focusable from Shift + Tab', async function () {
     let {getAllByRole, getByLabelText} = render(
       <Provider theme={theme} locale="en-US">
         <Button variant="primary" aria-label="ButtonBefore" />
@@ -235,9 +223,9 @@ describe('TagGroup', function () {
     let buttonAfter = getByLabelText('ButtonAfter');
     let tags = getAllByRole('row');
     act(() => {buttonAfter.focus();});
-    userEvent.tab({shift: true});
+    await user.tab({shift: true});
     expect(document.activeElement).toBe(tags[1]);
-    userEvent.tab({shift: true});
+    await user.tab({shift: true});
     expect(document.activeElement).toBe(buttonBefore);
     expect(buttonBefore).toHaveFocus();
   });
@@ -261,7 +249,7 @@ describe('TagGroup', function () {
     expect(tag).toHaveAttribute('tabIndex', '0');
   });
 
-  it('handles keyboard focus management properly', function () {
+  it('handles keyboard focus management properly', async function () {
     let {getAllByRole} = render(
       <Provider theme={theme}>
         <TagGroup aria-label="tag group">
@@ -280,7 +268,7 @@ describe('TagGroup', function () {
     expect(tags[2]).toHaveAttribute('tabIndex', '0');
     expect(tags[3]).toHaveAttribute('tabIndex', '0');
 
-    userEvent.tab();
+    await user.tab();
     expect(tags[0]).toHaveAttribute('tabIndex', '0');
     expect(tags[1]).toHaveAttribute('tabIndex', '-1');
     expect(tags[2]).toHaveAttribute('tabIndex', '-1');
@@ -376,7 +364,7 @@ describe('TagGroup', function () {
     Name                         | props
     ${'on `Delete` keypress'}    | ${{keyPress: 'Delete'}}
     ${'on `Backspace` keypress'} | ${{keyPress: 'Backspace'}}
-  `('Can move focus after removing tag $Name', function ({Name, props}) {
+  `('Can move focus after removing tag $Name', async function ({Name, props}) {
 
     function TagGroupWithDelete(props) {
       let [items, setItems] = React.useState([
@@ -406,7 +394,7 @@ describe('TagGroup', function () {
     );
 
     let tags = getAllByRole('row');
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(tags[0]);
     fireEvent.keyDown(document.activeElement, {key: props.keyPress});
     fireEvent.keyUp(document.activeElement, {key: props.keyPress});
@@ -414,11 +402,11 @@ describe('TagGroup', function () {
     expect(onRemoveSpy).toHaveBeenCalledWith(1);
     tags = getAllByRole('row');
     expect(document.activeElement).toBe(tags[0]);
-    pressArrowRight(tags[0]);
+    await pressArrowRight(tags[0]);
     expect(document.activeElement).toBe(tags[1]);
   });
 
-  it('maxRows should limit the number of tags shown', function () {
+  it('maxRows should limit the number of tags shown', async function () {
     let offsetWidth = jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
       .mockImplementationOnce(() => ({x: 200, y: 300, width: 75, height: 32, top: 300, right: 275, bottom: 335, left: 200}))
       .mockImplementationOnce(() => ({x: 275, y: 300, width: 110, height: 32, top: 300, right: 385, bottom: 335, left: 275}))
@@ -450,12 +438,12 @@ describe('TagGroup', function () {
     let button = getByRole('button');
     expect(button).toHaveTextContent('Show all (7)');
 
-    userEvent.click(button);
+    await user.click(button);
     tags = getAllByRole('gridcell');
     expect(tags.length).toBe(7);
     expect(button).toHaveTextContent('Show less');
 
-    userEvent.click(button);
+    await user.click(button);
     tags = getAllByRole('gridcell');
     expect(tags.length).toBe(3);
     expect(button).toHaveTextContent('Show all (7)');
@@ -491,7 +479,7 @@ describe('TagGroup', function () {
     computedStyles.mockReset();
   });
 
-  it('can keyboard navigate to a custom action', function () {
+  it('can keyboard navigate to a custom action', async function () {
     let target = [HTMLDivElement.prototype, 'getBoundingClientRect'];
     let mockCalls = [
       function () {
@@ -524,10 +512,10 @@ describe('TagGroup', function () {
     expect(tags.length).toBe(4);
     expect(action).toHaveTextContent('Clear');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(tags[0]);
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(action);
 
     fireEvent.keyDown(document.activeElement, {key: 'Enter'});
@@ -535,23 +523,23 @@ describe('TagGroup', function () {
     expect(onClearSpy).toHaveBeenCalledTimes(1);
     expect(onClearSpy).toHaveBeenCalledWith();
 
-    userEvent.tab({shift: true});
+    await user.tab({shift: true});
     expect(document.activeElement).toBe(tags[0]);
 
     fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
     fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
     expect(document.activeElement).toBe(tags[1]);
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(action);
 
-    userEvent.tab({shift: true});
+    await user.tab({shift: true});
     expect(document.activeElement).toBe(tags[1]);
 
     computedStyles.mockReset();
   });
 
-  it('can keyboard navigate to show all button and custom action', function () {
+  it('can keyboard navigate to show all button and custom action', async function () {
     let offsetWidth = jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
       .mockImplementationOnce(() => ({x: 200, y: 300, width: 75, height: 32, top: 300, right: 275, bottom: 335, left: 200}))
       .mockImplementationOnce(() => ({x: 275, y: 300, width: 110, height: 32, top: 300, right: 385, bottom: 335, left: 275}))
@@ -588,13 +576,13 @@ describe('TagGroup', function () {
     expect(buttons[0]).toHaveTextContent('Show all (7)');
     expect(buttons[1]).toHaveTextContent('Clear');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(tags[0]);
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(buttons[0]);
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(buttons[1]);
 
     fireEvent.keyDown(document.activeElement, {key: 'Enter'});
@@ -602,10 +590,10 @@ describe('TagGroup', function () {
     expect(onClearSpy).toHaveBeenCalledTimes(1);
     expect(onClearSpy).toHaveBeenCalledWith();
 
-    userEvent.tab({shift: true});
+    await user.tab({shift: true});
     expect(document.activeElement).toBe(buttons[0]);
 
-    userEvent.tab({shift: true});
+    await user.tab({shift: true});
     expect(document.activeElement).toBe(tags[0]);
 
     // Ensure onAction isn't triggered when clicking a tag.

@@ -21,12 +21,8 @@ import {useLocale} from '@react-aria/i18n';
 let keyCodes = {'Enter': 13, ' ': 32, 'PageUp': 33, 'PageDown': 34, 'End': 35, 'Home': 36, 'ArrowLeft': 37, 'ArrowUp': 38, 'ArrowRight': 39, 'ArrowDown': 40};
 
 describe('Calendar', () => {
-  beforeEach(() => {
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
-  });
-
-  afterEach(() => {
-    window.requestAnimationFrame.mockRestore();
+  beforeAll(() => {
+    jest.useFakeTimers();
   });
 
   describe('basics', () => {

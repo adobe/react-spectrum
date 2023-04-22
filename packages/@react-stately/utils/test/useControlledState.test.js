@@ -10,12 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {actHook as act, act as actDOM, render, renderHook} from '@react-spectrum/test-utils';
+import {actHook as act, pointerMap, render, renderHook} from '@react-spectrum/test-utils';
 import React, {useEffect, useState} from 'react';
 import {useControlledState} from '../src';
 import userEvent from '@testing-library/user-event';
 
 describe('useControlledState tests', function () {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   it('can handle default setValue behavior, wont invoke onChange for the same value twice in a row', () => {
     let onChangeSpy = jest.fn();
     let {result} = renderHook(() => useControlledState(undefined, 'defaultValue', onChangeSpy));
@@ -82,7 +87,7 @@ describe('useControlledState tests', function () {
     expect(consoleWarnSpy).toHaveBeenLastCalledWith('We can not support a function callback. See Github Issues for details https://github.com/adobe/react-spectrum/issues/2320');
   });
 
-  it('does not trigger too many renders', () => {
+  it('does not trigger too many renders', async () => {
     let renderSpy = jest.fn();
 
     let TestComponent = (props) => {
@@ -100,9 +105,7 @@ describe('useControlledState tests', function () {
     let button = getByRole('button');
     getByTestId('5');
     expect(renderSpy).toBeCalledTimes(1);
-    actDOM(() =>
-      userEvent.click(button)
-    );
+    await user.click(button);
     getByTestId('6');
     expect(renderSpy).toBeCalledTimes(2);
   });

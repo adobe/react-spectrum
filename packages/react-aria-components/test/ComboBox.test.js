@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {act} from '@testing-library/react';
 import {Button, ComboBox, ComboBoxContext, Header, Input, Item, Label, ListBox, Popover, Section, Text} from '../';
+import {pointerMap, render, within} from '@react-spectrum/test-utils';
 import React from 'react';
-import {render, within} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestComboBox = (props) => (
@@ -33,7 +34,11 @@ let TestComboBox = (props) => (
 );
 
 describe('ComboBox', () => {
-  it('provides slots', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+  it('provides slots', async () => {
     let {getByRole} = render(<TestComboBox />);
 
     let input = getByRole('combobox');
@@ -51,7 +56,7 @@ describe('ComboBox', () => {
     expect(input.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Description Error');
 
     let button = getByRole('button');
-    userEvent.click(button);
+    await user.click(button);
 
     let listbox = getByRole('listbox');
     expect(listbox).toHaveAttribute('class', 'react-aria-ListBox');
@@ -60,7 +65,7 @@ describe('ComboBox', () => {
     let options = within(listbox).getAllByRole('option');
     expect(options).toHaveLength(3);
 
-    userEvent.click(options[1]);
+    await user.click(options[1]);
     expect(input).toHaveValue('Dog');
   });
 
@@ -76,16 +81,16 @@ describe('ComboBox', () => {
     expect(combobox).toHaveAttribute('aria-label', 'test');
   });
 
-  it('should apply isPressed state to button when expanded', () => {
+  it('should apply isPressed state to button when expanded', async () => {
     let {getByRole} = render(<TestComboBox />);
     let button = getByRole('button');
 
     expect(button).not.toHaveAttribute('data-pressed');
-    userEvent.click(button);
+    await user.click(button);
     expect(button).toHaveAttribute('data-pressed');
   });
 
-  it('should support filtering sections', () => {
+  it('should support filtering sections', async () => {
     let {getByRole} = render(
       <ComboBox>
         <Label>Preferred fruit or vegetable</Label>
@@ -109,7 +114,10 @@ describe('ComboBox', () => {
     );
 
     let input = getByRole('combobox');
-    userEvent.type(input, 'p');
+    act(() => {
+      input.focus();
+    });
+    await user.keyboard('p');
 
     let listbox = getByRole('listbox');
     let groups = within(listbox).getAllByRole('group');
@@ -122,7 +130,7 @@ describe('ComboBox', () => {
   });
 
   // FIXME: not sure why this test hangs
-  it.skip('should support render props', () => {
+  it.skip('should support render props', async () => {
     let {getByRole} = render(
       <ComboBox>
         {({isOpen}) => (
@@ -145,7 +153,7 @@ describe('ComboBox', () => {
     let button = getByRole('button');
     expect(button).toHaveTextContent('open');
 
-    userEvent.click(button);
+    await user.click(button);
     expect(button).toHaveTextContent('close');
   });
 });
