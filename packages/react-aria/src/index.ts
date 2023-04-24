@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+export {useActionGroup, useActionGroupItem} from '@react-aria/actiongroup';
 export {useBreadcrumbItem, useBreadcrumbs} from '@react-aria/breadcrumbs';
 export {useButton, useToggleButton} from '@react-aria/button';
 export {useCalendar, useCalendarCell, useCalendarGrid, useRangeCalendar} from '@react-aria/calendar';
@@ -45,6 +46,7 @@ export {useTooltip, useTooltipTrigger} from '@react-aria/tooltip';
 export {chain, mergeProps, useId} from '@react-aria/utils';
 export {VisuallyHidden, useVisuallyHidden} from '@react-aria/visually-hidden';
 
+export type {ActionGroupAria, ActionGroupItemAria, AriaActionGroupItemProps, AriaActionGroupProps} from '@react-aria/actiongroup';
 export type {AriaBreadcrumbItemProps, AriaBreadcrumbsProps, BreadcrumbItemAria, BreadcrumbsAria} from '@react-aria/breadcrumbs';
 export type {AriaButtonProps, AriaToggleButtonProps, ButtonAria} from '@react-aria/button';
 export type {AriaCalendarCellProps, AriaCalendarGridProps, AriaCalendarProps, AriaRangeCalendarProps, CalendarAria, CalendarCellAria, CalendarGridAria, CalendarProps, RangeCalendarProps} from '@react-aria/calendar';
