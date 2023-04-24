@@ -41,7 +41,7 @@ import {useDrop} from './useDrop';
 
 export interface DroppableCollectionOptions extends DroppableCollectionProps {
   /** A delegate object that implements behavior for keyboard focus movement. */
-  keyboardDelegate: KeyboardDelegate,
+  keyboardDelegate: KeyboardDelegate<unknown>,
   /** A delegate object that provides drop targets for pointer coordinates within the collection. */
   dropTargetDelegate: DropTargetDelegate
 }
@@ -324,9 +324,14 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       }
 
       let {keyboardDelegate} = localState.props;
+      let itemFilter = (item) => {
+        let isEmptySection = item.type === 'section' && [...item.childNodes].filter((child) => child.type === 'item').length === 0;
+        return item.type === 'item' || isEmptySection;
+      };
+
       let nextKey = target.type === 'item'
-        ? keyboardDelegate.getKeyBelow(target.key)
-        : keyboardDelegate.getFirstKey();
+        ? keyboardDelegate.getKeyBelow(target.key, itemFilter)
+        : keyboardDelegate.getFirstKey(undefined, undefined, itemFilter);
       let dropPosition: DropPosition = 'before';
 
       if (target.type === 'item') {
@@ -334,7 +339,9 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         let nextItem = nextKey != null ? localState.state.collection.getItem(nextKey) : null;
         let positionIndex = DROP_POSITIONS.indexOf(target.dropPosition);
         let nextDropPosition = DROP_POSITIONS[positionIndex + 1];
+
         if (
+          targetItem?.type === 'item' &&
           (positionIndex < DROP_POSITIONS.length - 1 && !(nextDropPosition === 'after' && nextKey != null)) ||
           (nextDropPosition === 'after' && nextKey != null && targetItem.parentKey !== nextItem.parentKey)
         ) {
@@ -346,8 +353,8 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         }
 
         // If the last drop position was 'after', then 'before' on the next key is equivalent if they have the same parent.
-        // Switch to 'on' instead.
-        if (target.dropPosition === 'after' && targetItem?.parentKey === nextItem?.parentKey) {
+        // Switch to 'on' instead. Do the same if the next key is a section as well.
+        if (target.dropPosition === 'after' && (targetItem?.parentKey === nextItem?.parentKey || nextItem?.type === 'section')) {
           dropPosition = 'on';
         }
       }
@@ -371,9 +378,16 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
 
     let getPreviousTarget = (target: DropTarget, wrap = true): DropTarget => {
       let {keyboardDelegate} = localState.props;
+
+      let itemFilter = (item) => {
+        let isEmptySection = item.type === 'section' && [...item.childNodes].filter((child) => child.type === 'item').length === 0;
+        return item.type === 'item' || isEmptySection;
+      };
+      // TODO: bug where it seems to focus the row column header which it shouldn't
+      // Also bug where readding rows to the section results in a super tall section
       let nextKey = target?.type === 'item'
-        ? keyboardDelegate.getKeyAbove(target.key)
-        : keyboardDelegate.getLastKey();
+        ? keyboardDelegate.getKeyAbove(target.key, itemFilter)
+        : keyboardDelegate.getLastKey(undefined, undefined, itemFilter);
       let dropPosition: DropPosition = !target || target.type === 'root' ? 'after' : 'on';
 
       if (target?.type === 'item') {
@@ -381,7 +395,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         let nextItem = nextKey != null ? localState.state.collection.getItem(nextKey) : undefined;
         let positionIndex = DROP_POSITIONS.indexOf(target.dropPosition);
         let nextDropPosition = DROP_POSITIONS[positionIndex - 1];
-        if (positionIndex > 0 && nextDropPosition !== 'after') {
+        if (targetItem?.type === 'item' && positionIndex > 0 && nextDropPosition !== 'after') {
           return {
             type: 'item',
             key: target.key,
@@ -390,8 +404,8 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         }
 
         // If the last drop position was 'before', then 'after' on the previous key is equivalent if they have the same parent.
-        // Switch to 'on' instead.
-        if (target.dropPosition === 'before' && targetItem?.parentKey === nextItem?.parentKey) {
+        // Switch to 'on' instead. Do the same if the next key is a section as well.
+        if (target.dropPosition === 'before' && (targetItem?.parentKey === nextItem?.parentKey || nextItem?.type === 'section')) {
           dropPosition = 'on';
         } else if (target.dropPosition === 'before' && nextItem && targetItem.parentKey !== nextItem.parentKey) {
           dropPosition = 'after';

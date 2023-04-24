@@ -96,6 +96,7 @@ export function useTable<T>(props: AriaTableProps<T>, state: TableState<T>, ref:
         // merge sort description with long press information
         'aria-describedby': [descriptionProps['aria-describedby'], gridProps['aria-describedby']].filter(Boolean).join(' ')
       }
-    )
+    ),
+    keyboardDelegate: delegate
   };
 }

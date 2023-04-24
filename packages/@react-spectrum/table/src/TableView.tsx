@@ -295,6 +295,13 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     return proxy as TableLayout<T> & {tableState: TableState<T>};
   }, [state, tableLayout]);
 
+  let {gridProps, keyboardDelegate} = useTable({
+    ...props,
+    isVirtualized: true,
+    layout,
+    onRowAction: onAction
+  }, state, domRef);
+
   let dragState: DraggableCollectionState;
   let preview = useRef(null);
   if (isTableDraggable) {
@@ -316,19 +323,13 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
       selectionManager: state.selectionManager
     });
     droppableCollection = dragAndDropHooks.useDroppableCollection({
-      keyboardDelegate: layout,
+      keyboardDelegate: keyboardDelegate,
       dropTargetDelegate: layout
     }, dropState, domRef);
 
     isRootDropTarget = dropState.isDropTarget({type: 'root'});
   }
 
-  let {gridProps} = useTable({
-    ...props,
-    isVirtualized: true,
-    layout,
-    onRowAction: onAction
-  }, state, domRef);
   let [headerMenuOpen, setHeaderMenuOpen] = useState(false);
   let [headerRowHovered, setHeaderRowHovered] = useState(false);
 
@@ -1496,10 +1497,10 @@ function TableCell({cell}) {
 function TableSection({children, style, reusableView}) {
   let {state} = useTableContext();
   let {rowGroupProps, rowProps, gridCellProps} = useTableSection({isVirtualized: true, node: reusableView.content}, state);
-
+  let isEmptySection = useMemo(() => children.length < 2, [children]);
   // TODO: Chrome VO states "empty row group", doesn't happen in Safari VO
   return (
-    <TableSectionContext.Provider value={{rowProps, gridCellProps}}>
+    <TableSectionContext.Provider value={{rowProps, gridCellProps, isEmptySection}}>
       <div
         {...rowGroupProps}
         style={style}>
@@ -1510,8 +1511,9 @@ function TableSection({children, style, reusableView}) {
 }
 
 function TableSectionRow({children, style, item}) {
-  let {state} = useTableContext();
-  let {rowProps} = useSectionContext();
+  let {state, isTableDroppable} = useTableContext();
+  let {rowProps, isEmptySection} = useSectionContext();
+  // Bug where it doesn't seem to render the indicator for the section here
   return (
     <div
       {...rowProps}
@@ -1525,6 +1527,12 @@ function TableSectionRow({children, style, item}) {
         )
       }
       style={style}>
+      {isTableDroppable && isEmptySection &&
+        <InsertionIndicator
+          rowProps={{style: style}}
+          key={item.key}
+          target={{key: item.parentKey, type: 'item', dropPosition: 'on'}} />
+      }
       {children}
     </div>
   );

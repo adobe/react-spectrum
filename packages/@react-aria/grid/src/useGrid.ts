@@ -53,7 +53,9 @@ export interface GridProps extends DOMProps, AriaLabelingProps {
 
 export interface GridAria {
   /** Props for the grid element. */
-  gridProps: DOMAttributes
+  gridProps: DOMAttributes,
+  /** The keyboard delegate used by the grid. */
+  keyboardDelegate: KeyboardDelegate
 }
 
 /**
@@ -159,6 +161,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
 
   useGridSelectionAnnouncement({getRowText}, state);
   return {
-    gridProps
+    gridProps,
+    keyboardDelegate: delegate
   };
 }

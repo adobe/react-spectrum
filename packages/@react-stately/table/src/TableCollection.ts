@@ -315,17 +315,7 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
   }
 
   getFirstKey() {
-    let key;
-    let firstNode = getFirstItem(this.body.childNodes);
-    if (firstNode != null) {
-      if (firstNode.type === 'item') {
-        key = firstNode.key;
-      } else if (firstNode.type === 'section') {
-        key = getNthItem(getChildNodes(firstNode, this), 1)?.key;
-      }
-    }
-
-    return key;
+    return getFirstItem(this.body.childNodes)?.key;
   }
 
   getLastKey() {
@@ -335,7 +325,7 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
       if (lastNode.type === 'item') {
         key = lastNode.key;
       } else if (lastNode.type === 'section') {
-        key = getLastItem(getChildNodes(lastNode, this))?.key;
+        key = getLastItem(getChildNodes(lastNode, this))?.key || lastNode.key;
       }
     }
 
