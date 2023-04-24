@@ -13,6 +13,7 @@
 import {AriaLabelingProps, DOMProps as SharedDOMProps} from '@react-types/shared';
 import {filterDOMProps, mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import React, {createContext, CSSProperties, ReactNode, RefCallback, RefObject, useCallback, useContext, useEffect, useRef, useState} from 'react';
+import ReactDOM from 'react-dom';
 
 // Override forwardRef types so generics work.
 declare function forwardRef<T, P = {}>(
@@ -195,7 +196,7 @@ export function useExitAnimation(ref: RefObject<HTMLElement>, isOpen: boolean) {
     isExiting,
     useCallback(() => {
       exitState.current = 'exited';
-      setExiting(false);
+      ReactDOM.flushSync(() => {setExiting(false);});
     }, [])
   );
 
