@@ -13,23 +13,20 @@
 import {classNames} from '@react-spectrum/utils';
 import {Flex} from '@react-spectrum/layout';
 import React from 'react';
-import type {SpectrumTableProps} from './TableView';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
 
-interface DragPreviewProps<T> {
+interface DragPreviewProps {
   itemText: string,
   itemCount: number,
-  density: SpectrumTableProps<T>['density'],
   height: number,
   maxWidth: number
 }
 
-export function DragPreview(props: DragPreviewProps<unknown>) {
+export function DragPreview(props: DragPreviewProps) {
   let {
     itemText,
     itemCount,
-    density,
     height,
     maxWidth
   } = props;
@@ -37,7 +34,8 @@ export function DragPreview(props: DragPreviewProps<unknown>) {
   return (
     <Flex
       justifyContent="space-between"
-      UNSAFE_style={{height, maxWidth}}
+      height={height}
+      maxWidth={maxWidth}
       UNSAFE_className={
         classNames(
           styles,
@@ -46,8 +44,7 @@ export function DragPreview(props: DragPreviewProps<unknown>) {
             stylesOverrides,
             'react-spectrum-Table-row',
             'react-spectrum-Table-row-dragPreview',
-            {'react-spectrum-Table-row-dragPreview--multiple': isDraggingMultiple},
-            `react-spectrum-Table-row-dragPreview--${density}`
+            {'react-spectrum-Table-row-dragPreview--multiple': isDraggingMultiple}
           )
         )
       }>
