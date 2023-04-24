@@ -196,7 +196,7 @@ export function useExitAnimation(ref: RefObject<HTMLElement>, isOpen: boolean) {
     isExiting,
     useCallback(() => {
       exitState.current = 'exited';
-      ReactDOM.flushSync(() => {setExiting(false);});
+      setExiting(false);
     }, [])
   );
 
@@ -217,7 +217,7 @@ function useAnimation(ref: RefObject<HTMLElement>, isActive: boolean, onEnd: () 
         let onAnimationEnd = (e: AnimationEvent) => {
           if (e.target === ref.current) {
             element.removeEventListener('animationend', onAnimationEnd);
-            onEnd();
+            ReactDOM.flushSync(() => {onEnd();});
           }
         };
 
