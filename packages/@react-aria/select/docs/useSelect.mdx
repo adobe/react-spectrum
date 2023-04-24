@@ -273,7 +273,8 @@ function ListBox(props) {
         listStyle: "none",
         maxHeight: 150,
         overflow: "auto",
-        minWidth: 100
+        minWidth: 100,
+        background: 'lightgray'
       }}>
       {[...state.collection].map(item => (
         <Option
@@ -307,13 +308,17 @@ function Option({item, state}) {
       {...optionProps}
       ref={ref}
       style={{
-        background: backgroundColor,
-        color: color,
+        background: isFocused ? 'gray' : 'transparent',
+        color: isDisabled ? 'gray' : isFocused ? 'white' : 'black',
         padding: '2px 5px',
         outline: 'none',
-        cursor: 'pointer'
+        cursor: 'pointer',
+        display: 'flex',
+        justifyContent: 'space-between',
+        gap: '10px'
       }}>
       {item.rendered}
+      {isSelected ? <span>✓</span> : null}
     </li>
   );
 }
