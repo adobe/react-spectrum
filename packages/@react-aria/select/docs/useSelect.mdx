@@ -290,19 +290,6 @@ function Option({item, state}) {
   let ref = React.useRef(null);
   let {optionProps, isSelected, isFocused, isDisabled} = useOption({key: item.key}, state, ref);
 
-  let backgroundColor;
-  let color = 'black';
-
-  if (isSelected) {
-    backgroundColor = 'blueviolet';
-    color = 'white';
-  } else if (isFocused) {
-    backgroundColor = 'gray';
-  } else if (isDisabled) {
-    backgroundColor = 'transparent';
-    color = 'gray';
-  }
-
   return (
     <li
       {...optionProps}
