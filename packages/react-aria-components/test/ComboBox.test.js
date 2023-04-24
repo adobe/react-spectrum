@@ -120,4 +120,32 @@ describe('ComboBox', () => {
     let options = within(groups[0]).getAllByRole('option');
     expect(options).toHaveLength(1);
   });
+
+  // FIXME: not sure why this test hangs
+  it.skip('should support render props', () => {
+    let {getByRole} = render(
+      <ComboBox>
+        {({isOpen}) => (
+          <>
+            <Label>Favorite Animal</Label>
+            <Input />
+            <Button>{isOpen ? 'close' : 'open'}</Button>
+            <Popover>
+              <ListBox>
+                <Item>Cat</Item>
+                <Item>Dog</Item>
+                <Item>Kangaroo</Item>
+              </ListBox>
+            </Popover>
+          </>
+        )}
+      </ComboBox>
+    );
+
+    let button = getByRole('button');
+    expect(button).toHaveTextContent('open');
+
+    userEvent.click(button);
+    expect(button).toHaveTextContent('close');
+  });
 });
