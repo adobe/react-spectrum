@@ -47,7 +47,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
     actionLabel,
     onAction,
     labelPosition,
-    renderEmptyState = () => <div>{stringFormatter.format('noTags')}</div>
+    renderEmptyState = () => stringFormatter.format('noTags')
   } = props;
   let domRef = useDOMRef(ref);
   let containerRef = useRef(null);
@@ -202,7 +202,11 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
                   {item.rendered}
                 </Tag>
               ))}
-              {isEmpty && renderEmptyState()}
+              {isEmpty && (
+                <div className={classNames(styles, 'spectrum-Tags-empty-state')}>
+                  {renderEmptyState()}
+                </div>
+              )}
             </div>
           </FocusRing>
           {showActions && !isEmpty &&

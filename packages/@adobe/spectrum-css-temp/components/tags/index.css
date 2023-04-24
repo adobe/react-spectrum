@@ -139,3 +139,7 @@ governing permissions and limitations under the License.
     display: grid;
   }
 }
+
+.spectrum-Tags-empty-state {
+  min-height: var(--spectrum-tag-height);
+}
