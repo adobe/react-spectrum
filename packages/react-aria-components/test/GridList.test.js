@@ -204,6 +204,22 @@ describe('GridList', () => {
     expect(gridList).toHaveAttribute('data-empty', 'true');
   });
 
+  it('should support dynamic collections', () => {
+    let items = [
+      {id: 'cat', name: 'Cat'},
+      {id: 'dog', name: 'Dog'}
+    ];
+
+    let {getByRole} = render(
+      <GridList aria-label="Test" items={items}>
+        {(item) => <Item id={item.id}>{item.name}</Item>}
+      </GridList>
+    );
+
+    let gridList = getByRole('grid');
+    expect(within(gridList).getAllByRole('row').map((r) => r.textContent)).toEqual(['Cat', 'Dog']);
+  });
+
   describe('drag and drop', () => {
     it('should support drag button slot', () => {
       let {getAllByRole} = render(<DraggableGridList />);

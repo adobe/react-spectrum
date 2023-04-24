@@ -1,3 +1,4 @@
 {
-  "remove": "Stisknutím mezerníku nebo klávesy Delete odeberte značku."
+  "removeButtonLabel": "Odebrat",
+  "removeDescription": "Stisknutím klávesy Delete odeberete značku."
 }

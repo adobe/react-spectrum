@@ -1,3 +1,4 @@
 {
-  "remove": "Drücken Sie Leertaste oder Löschen, um das Tag zu entfernen."
+  "removeButtonLabel": "Entfernen",
+  "removeDescription": "Auf „Löschen“ drücken, um das Tag zu entfernen."
 }

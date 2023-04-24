@@ -87,7 +87,7 @@ function Slider<T extends number | number[]>(props: SliderProps<T>, ref: Forward
 /**
  * A slider allows a user to select one or more values within a range.
  */
-const _Slider = (forwardRef as forwardRefType)(Slider);
+const _Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(Slider);
 export {_Slider as Slider};
 
 export interface SliderOutputProps extends RenderProps<SliderState> {}
