@@ -12,7 +12,7 @@
 
 import {FocusScope} from '../';
 import {Meta, Story} from '@storybook/react';
-import React, {ReactNode, useState} from 'react';
+import React, {ReactNode, useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 
 const dialogsRoot = 'dialogsRoot';
@@ -151,11 +151,25 @@ function FocusableFirstInScopeExample() {
 
 function IgnoreRestoreFocusExample() {
   const [display, setDisplay] = useState(false);
+  useEffect(() => {
+    let handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setDisplay(false);
+      }
+    };
+    document.body.addEventListener('keyup', handleKeyDown);
+    return () => {
+      document.body.removeEventListener('keyup', handleKeyDown);
+    };
+  }, []);
 
   return (
     <div>
       <button type="button" onClick={() => setDisplay(state => !state)}>
-        {display ? 'Close dialog' : 'Open dialog'}
+        {display ? 'Close dialog 1' : 'Open dialog 1'}
+      </button>
+      <button type="button" onClick={() => setDisplay(state => !state)}>
+        {display ? 'Close dialog 2' : 'Open dialog 2'}
       </button>
       {display &&
         <FocusScope restoreFocus>
