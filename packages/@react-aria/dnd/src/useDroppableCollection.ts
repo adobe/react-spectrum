@@ -332,14 +332,13 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       let nextKey = target.type === 'item'
         ? keyboardDelegate.getKeyBelow(target.key, itemFilter)
         : keyboardDelegate.getFirstKey(undefined, undefined, itemFilter);
-      let dropPosition: DropPosition = 'before';
+      let targetItem = target.type === 'item' ? localState.state.collection.getItem(target.key) : undefined;
+      let nextItem = nextKey != null ? localState.state.collection.getItem(nextKey) : undefined;
+      let dropPosition: DropPosition = nextItem && nextItem.type === 'section' ? 'on' : 'before';
 
-      if (target.type === 'item') {
-        let targetItem = localState.state.collection.getItem(target.key);
-        let nextItem = nextKey != null ? localState.state.collection.getItem(nextKey) : null;
+      if (target?.type === 'item' && targetItem?.type !== 'section') {
         let positionIndex = DROP_POSITIONS.indexOf(target.dropPosition);
         let nextDropPosition = DROP_POSITIONS[positionIndex + 1];
-
         if (
           targetItem?.type === 'item' &&
           (positionIndex < DROP_POSITIONS.length - 1 && !(nextDropPosition === 'after' && nextKey != null)) ||
@@ -383,12 +382,11 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       let nextKey = target?.type === 'item'
         ? keyboardDelegate.getKeyAbove(target.key, itemFilter)
         : keyboardDelegate.getLastKey(undefined, undefined, itemFilter);
+      let targetItem = target?.type === 'item' ? localState.state.collection.getItem(target.key) : undefined;
       let nextItem = nextKey != null ? localState.state.collection.getItem(nextKey) : undefined;
       let dropPosition: DropPosition = (!target || target.type === 'root') && nextItem.type !== 'section' ? 'after' : 'on';
 
-      if (target?.type === 'item') {
-        let targetItem = localState.state.collection.getItem(target.key);
-
+      if (target?.type === 'item' && targetItem?.type !== 'section') {
         let positionIndex = DROP_POSITIONS.indexOf(target.dropPosition);
         let nextDropPosition = DROP_POSITIONS[positionIndex - 1];
         if (targetItem?.type === 'item' && positionIndex > 0 && nextDropPosition !== 'after') {
@@ -491,7 +489,10 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         let item = localState.state.collection.getItem(key);
         if (item?.type === 'cell') {
           key = item.parentKey;
-        } else if (item != null && !itemFilter(item)) {
+          item = localState.state.collection.getItem(key);
+        }
+
+        if (item != null && !itemFilter(item)) {
           // If the previously focused item in the droppable collection isn't an item or a section (e.g. table column header)
           // then set key to null so we start from root
           key = null;
@@ -680,7 +681,12 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
               }
             }
 
-            localState.state.setTarget(target ?? localState.state.target);
+            let finalTarget = target ?? localState.state.target;
+            if (finalTarget.type === 'item' && localState.state.collection.getItem(finalTarget.key).type === 'section') {
+              finalTarget.dropPosition = 'on';
+            }
+
+            localState.state.setTarget(finalTarget);
             break;
           }
         }

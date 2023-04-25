@@ -26,6 +26,7 @@ TableSection.getCollectionNode = function* getCollectionNode<T>(props: TableSect
     props: props,
     hasChildNodes: true,
     rendered: title,
+    textValue: typeof title === 'string' ? title : props['aria-label'],
     'aria-label': props['aria-label'],
     *childNodes() {
       // Automatically include a section header row
