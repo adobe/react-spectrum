@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {ReactElement, ReactNode} from 'react';
+import React, {JSXElementConstructor, ReactElement, ReactNode} from 'react';
 
-export function getWrappedElement(children: string | ReactElement | ReactNode): ReactElement {
+export function getWrappedElement(children: string | ReactElement | ReactNode): ReactElement<any, JSXElementConstructor<any>> {
   let element;
   if (typeof children === 'string') {
     element = <span>{children}</span>;

@@ -105,4 +105,17 @@ describe('Button', () => {
     expect(button).toBeDisabled();
     expect(button).toHaveClass('disabled');
   });
+
+  it('should support render props', () => {
+    let {getByRole} = render(<Button>{({isPressed}) => isPressed ? 'Pressed' : 'Test'}</Button>);
+    let button = getByRole('button');
+    
+    expect(button).toHaveTextContent('Test');
+    
+    fireEvent.mouseDown(button);
+    expect(button).toHaveTextContent('Pressed');
+    
+    fireEvent.mouseUp(button);
+    expect(button).toHaveTextContent('Test');
+  });
 });

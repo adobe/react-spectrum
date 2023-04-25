@@ -12,11 +12,11 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaLabelingProps, DOMAttributes, DOMProps, FocusableElement} from '@react-types/shared';
-import {chain, filterDOMProps, mergeProps, useDescription, useId} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useDescription, useId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {KeyboardEvent, RefObject} from 'react';
-import type {TagGroupState} from '@react-stately/tag';
+import type {ListState} from '@react-stately/list';
 import {TagProps} from '@react-types/tag';
 import {useGridListItem} from '@react-aria/gridlist';
 import {useInteractionModality} from '@react-aria/interactions';
@@ -39,13 +39,14 @@ export interface AriaTagProps<T> extends TagProps<T>, DOMProps, AriaLabelingProp
 /**
  * Provides the behavior and accessibility implementation for a tag component.
  * @param props - Props to be applied to the tag.
- * @param state - State for the tag group, as returned by `useTagGroupState`.
+ * @param state - State for the tag group, as returned by `useListState`.
  * @param ref - A ref to a DOM element for the tag.
  */
-export function useTag<T>(props: AriaTagProps<T>, state: TagGroupState<T>, ref: RefObject<FocusableElement>): TagAria {
+export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefObject<FocusableElement>): TagAria {
   let {
     allowsRemoving,
-    item
+    item,
+    onRemove
   } = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let labelId = useId();
@@ -57,8 +58,6 @@ export function useTag<T>(props: AriaTagProps<T>, state: TagGroupState<T>, ref: 
 
   // We want the group to handle keyboard navigation between tags.
   delete rowProps.onKeyDownCapture;
-
-  let onRemove = chain(props.onRemove, state.onRemove);
 
   let onKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Delete' || e.key === 'Backspace') {

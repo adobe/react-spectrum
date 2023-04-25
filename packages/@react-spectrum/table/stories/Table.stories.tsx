@@ -1791,3 +1791,53 @@ export const ResizingControlledHideHeader: TableStory = {
   `}}
 };
 
+let typeAheadColumns = [
+  {name: 'First Name', id: 'firstname', isRowHeader: true},
+  {name: 'Last Name', id: 'lastname', isRowHeader: true},
+  {name: 'Birthday', id: 'birthday'},
+  {name: 'Edit', id: 'edit'}
+];
+let typeAheadRows = [
+  ...Array.from({length: 100}, (v, i) => ({id: i, firstname: 'Aubrey', lastname: 'Sheppard', birthday: 'May 7'})),
+  {id: 101, firstname: 'John', lastname: 'Doe', birthday: 'May 7'}
+];
+export const TypeaheadWithDialog: TableStory = {
+  render: (args) => (
+    <div style={{height: '90vh'}}>
+      <TableView aria-label="Table" selectionMode="none" height="100%" {...args}>
+        <TableHeader columns={typeAheadColumns}>
+          {(col) => (
+            <Column key={col.id} isRowHeader={col.isRowHeader}>{col.name}</Column>
+          )}
+        </TableHeader>
+        <TableBody items={typeAheadRows}>
+          {(item) => (
+            <Row key={item.id}>
+              {(key) =>
+                key === 'edit' ? (
+                  <Cell>
+                    <DialogTrigger>
+                      <ActionButton aria-label="Add Info">
+                        <Add />
+                      </ActionButton>
+                      <Dialog>
+                        <Heading>Add Info</Heading>
+                        <Divider />
+                        <Content>
+                          <TextField label="Enter a J" />
+                        </Content>
+                      </Dialog>
+                    </DialogTrigger>
+                  </Cell>
+                ) : (
+                  <Cell>{item[key]}</Cell>
+                )
+              }
+            </Row>
+          )}
+        </TableBody>
+      </TableView>
+    </div>
+  )
+};
+

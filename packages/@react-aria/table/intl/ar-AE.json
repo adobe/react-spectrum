@@ -4,6 +4,7 @@
   "columnSize": "{value} بالبكسل",
   "descending": "تنازلي",
   "descendingSort": "ترتيب حسب العمود {columnName} بترتيب تنازلي",
+  "resizerDescription": "اضغط على مفتاح Enter لبدء تغيير الحجم",
   "select": "تحديد",
   "selectAll": "تحديد الكل",
   "sortable": "عمود قابل للترتيب"

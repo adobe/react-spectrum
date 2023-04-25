@@ -82,7 +82,7 @@ interface PopoverInnerProps extends AriaPopoverProps, RenderProps<PopoverRenderP
   isExiting: boolean
 }
 
-function PopoverInner({children, state, isExiting, ...props}: PopoverInnerProps) {
+function PopoverInner({state, isExiting, ...props}: PopoverInnerProps) {
   let {popoverProps, underlayProps, arrowProps, placement} = usePopover({
     ...props,
     offset: props.offset ?? 8
@@ -116,7 +116,7 @@ function PopoverInner({children, state, isExiting, ...props}: PopoverInnerProps)
         data-exiting={isExiting || undefined}>
         {!props.isNonModal && <DismissButton onDismiss={state.close} />}
         <OverlayArrowContext.Provider value={{arrowProps, placement}}>
-          {children}
+          {renderProps.children}
         </OverlayArrowContext.Provider>
         <DismissButton onDismiss={state.close} />
       </div>
