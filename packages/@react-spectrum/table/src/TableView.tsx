@@ -1527,13 +1527,13 @@ function TableSectionRow({children, style, item}) {
         )
       }
       style={style}>
+      {children}
       {isTableDroppable && isEmptySection &&
         <InsertionIndicator
-          rowProps={{style: style}}
+          rowProps={{style: {...style, top: style.height}}}
           key={item.key}
           target={{key: item.parentKey, type: 'item', dropPosition: 'on'}} />
       }
-      {children}
     </div>
   );
 }

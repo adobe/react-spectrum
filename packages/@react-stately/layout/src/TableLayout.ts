@@ -703,6 +703,8 @@ export class TableLayout<T> extends ListLayout<T> {
 
     return isChrome105;
   }
+
+  // TODO: fix the below so mouse DnD works with empty sections
   getDropTargetFromPoint(x: number, y: number, isValidDropTarget: (target: DropTarget) => boolean): DropTarget {
     x += this.virtualizer.visibleRect.x;
     y += this.virtualizer.visibleRect.y;

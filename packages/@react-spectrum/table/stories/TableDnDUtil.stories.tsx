@@ -165,7 +165,7 @@ export const OverrideUtilHandlers: TableStory = {
 
 export const ComplexDragBetweenTablesSections: TableStory = {
   args: {
-    disabledKeys: ['7', '2', '8']
+    disabledKeys: ['7', '8']
   },
   render: (args) => (
     <DragBetweenTablesSectionsComplex

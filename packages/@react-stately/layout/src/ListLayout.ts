@@ -51,7 +51,7 @@ const DEFAULT_HEIGHT = 48;
  * delegate with an additional method to do this (it uses the same delegate object as
  * the collection view itself).
  */
-export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, DropTargetDelegate {
+export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate<T>, DropTargetDelegate {
   protected rowHeight: number;
   protected estimatedRowHeight: number;
   protected headingHeight: number;

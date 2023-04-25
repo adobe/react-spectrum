@@ -22,7 +22,17 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
     return node.type === 'cell' || node.type === 'rowheader' || node.type === 'column';
   }
 
-  getKeyBelow(key: Key, itemFilter: (item: Node<T>) => boolean = item => this.isRow(item)) {
+  getKeyBelow(key: Key, itemFilter?: (item: Node<T>) => boolean) {
+    // TODO: discuss this behavior, really just need a way to change what keys are matched for DND (we only want rows + empty sections, no columns).
+    // however TableKeyboardDelegate's getKeyBelow and getKeyAbove is rife with specific logic to focus columns in specific situations
+    // This proves to be problematic in getKeyAbove where if I provide a itemFilter of row + column it will break pageup/down.
+    // Maybe just a boolean for "isDnD" instead of itemFilter? Maybe revert to providing list layout to useDroppableCollection?
+    // Maybe make a DnDTableKeyboardDelegate that has its own getKeyBelow/Above/firstKEy/lastKey?
+    // If item filter is provided, override behavior entirely
+    if (itemFilter != null) {
+      return super.getKeyBelow(key, itemFilter);
+    }
+
     let startItem = this.collection.getItem(key);
     if (!startItem) {
       return;
@@ -45,13 +55,17 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
       return getNthItem(getChildNodes(firstItem, this.collection), startItem.index).key;
     }
 
-    return super.getKeyBelow(key, itemFilter);
+    return super.getKeyBelow(key);
   }
 
-  getKeyAbove(key: Key, itemFilter: (item: Node<T>) => boolean = item => this.isRow(item)) {
+  getKeyAbove(key: Key, itemFilter?: (item: Node<T>) => boolean) {
     let startItem = this.collection.getItem(key);
     if (!startItem) {
       return;
+    }
+
+    if (itemFilter != null) {
+      return super.getKeyAbove(key, itemFilter);
     }
 
     // If focus was on a column, focus the parent column if any
@@ -65,7 +79,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
     }
 
     // only return above row key if not header row
-    let superKey = super.getKeyAbove(key, itemFilter);
+    let superKey = super.getKeyAbove(key);
     if (superKey != null && this.collection.getItem(superKey).type !== 'headerrow') {
       return superKey;
     }

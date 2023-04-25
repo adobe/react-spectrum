@@ -383,11 +383,12 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         let isEmptySection = item.type === 'section' && [...item.childNodes].filter((child) => child.type === 'item').length === 0;
         return item.type === 'item' || isEmptySection;
       };
-      // TODO: bug where it seems to focus the row column header which it shouldn't
-      // Also bug where readding rows to the section results in a super tall section
+
+      // TODO: bug where readding rows to the section results in a super tall section (perhaps due to improper way of adding stuff back into the tree data?)
       let nextKey = target?.type === 'item'
         ? keyboardDelegate.getKeyAbove(target.key, itemFilter)
         : keyboardDelegate.getLastKey(undefined, undefined, itemFilter);
+
       let dropPosition: DropPosition = !target || target.type === 'root' ? 'after' : 'on';
 
       if (target?.type === 'item') {
@@ -405,9 +406,10 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
 
         // If the last drop position was 'before', then 'after' on the previous key is equivalent if they have the same parent.
         // Switch to 'on' instead. Do the same if the next key is a section as well.
+        // If we are changing sections or moving from an empty section to a row then the dropPosition is after
         if (target.dropPosition === 'before' && (targetItem?.parentKey === nextItem?.parentKey || nextItem?.type === 'section')) {
           dropPosition = 'on';
-        } else if (target.dropPosition === 'before' && nextItem && targetItem.parentKey !== nextItem.parentKey) {
+        } else if ((target.dropPosition === 'before' || targetItem.type === 'section') && nextItem && targetItem.parentKey !== nextItem.parentKey) {
           dropPosition = 'after';
         }
       }

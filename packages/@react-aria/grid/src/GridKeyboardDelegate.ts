@@ -83,6 +83,8 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
   }
 
+  // TODO: pretty weird that itemFilter might be "return true if item is a row", but then getKeyBelow
+  // can return a cell key due to the extra logic within
   getKeyBelow(key: Key, itemFilter: (item: Node<T>) => boolean = item => this.isRow(item)) {
     let startItem = this.collection.getItem(key);
     if (!startItem) {

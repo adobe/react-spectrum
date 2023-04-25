@@ -25,7 +25,7 @@ export interface DropIndicatorProps {
   /** The drop target that the drop indicator represents. */
   target: DropTarget,
   /** A delegate object that implements behavior for keyboard focus movement. */
-  keyboardDelegate?: KeyboardDelegate
+  keyboardDelegate?: KeyboardDelegate<unknown>
 }
 
 export interface DropIndicatorAria {
@@ -65,6 +65,8 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
   } else {
     let before: Key | null;
     let after: Key | null;
+
+    // TODO: update useDropIndicator for empty sections (empty section drop target) and for new keyboardDelegate
     let keyGetter = keyboardDelegate ?? collection;
     // TODO: I've changed it so it will announce "insert after"/"insert before" target if the drop position is between the target and a following/preceeding section
     // instead of announcing "insert between target and NEXT/PREV_SECTION_ROW". Gather opinions
