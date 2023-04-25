@@ -525,7 +525,6 @@ export class TableLayout<T> extends ListLayout<T> {
           // since we can regard them as a tall row at this level
           let firstVisibleChild = this.binarySearch(node.children, rect.topLeft, 'y');
           let lastVisibleChild = this.binarySearch(node.children, rect.bottomRight, 'y');
-
           // Add persisted row/section before the first visible row/section.
           // Note: We don't need to do any updates to this logic for sections since persistedChildren here will only consist of section-less rows and sections since we are at the "body" parent key level
           while (
@@ -547,8 +546,11 @@ export class TableLayout<T> extends ListLayout<T> {
               persistIndex++;
             }
 
-            res.push(node.children[i].layoutInfo);
-            this.addVisibleLayoutInfos(res, node.children[i], rect);
+            // Skip adding the section header since we've already added it
+            if (!(node.layoutInfo.type === 'section' && i === 0)) {
+              res.push(node.children[i].layoutInfo);
+              this.addVisibleLayoutInfos(res, node.children[i], rect);
+            }
           }
 
           // Add persisted rows after the visible rows.
@@ -704,7 +706,6 @@ export class TableLayout<T> extends ListLayout<T> {
     return isChrome105;
   }
 
-  // TODO: fix the below so mouse DnD works with empty sections
   getDropTargetFromPoint(x: number, y: number, isValidDropTarget: (target: DropTarget) => boolean): DropTarget {
     x += this.virtualizer.visibleRect.x;
     y += this.virtualizer.visibleRect.y;
@@ -716,7 +717,14 @@ export class TableLayout<T> extends ListLayout<T> {
     let key: Key;
     let point = new Point(x, y);
     let rectAtPoint = new Rect(point.x, point.y, 1, 1);
-    let layoutInfos = this.virtualizer.layout.getVisibleLayoutInfos(rectAtPoint).filter(info => info.type === 'row');
+    let layoutInfos = this.virtualizer.layout.getVisibleLayoutInfos(rectAtPoint).filter(info => {
+      if (info.type === 'row') {
+        // TODO: alternative to this is to classify the section header row as a different type than 'row'
+        return this.collection.getItem(info.key).type === 'item';
+      } else if (info.type === 'section') {
+        return [...this.collection.getItem(info.key).childNodes].filter((child) => child.type === 'item').length === 0;
+      }
+    });
 
     // Layout may return multiple layout infos in the case of
     // persisted keys, so find the first one that actually intersects.
