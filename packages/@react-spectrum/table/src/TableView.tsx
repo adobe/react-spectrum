@@ -295,13 +295,6 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     return proxy as TableLayout<T> & {tableState: TableState<T>};
   }, [state, tableLayout]);
 
-  let {gridProps, keyboardDelegate} = useTable({
-    ...props,
-    isVirtualized: true,
-    layout,
-    onRowAction: onAction
-  }, state, domRef);
-
   let dragState: DraggableCollectionState;
   let preview = useRef(null);
   if (isTableDraggable) {
@@ -323,12 +316,19 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
       selectionManager: state.selectionManager
     });
     droppableCollection = dragAndDropHooks.useDroppableCollection({
-      keyboardDelegate: keyboardDelegate,
+      keyboardDelegate: layout,
       dropTargetDelegate: layout
     }, dropState, domRef);
 
     isRootDropTarget = dropState.isDropTarget({type: 'root'});
   }
+
+  let {gridProps} = useTable({
+    ...props,
+    isVirtualized: true,
+    layout,
+    onRowAction: onAction
+  }, state, domRef);
 
   let [headerMenuOpen, setHeaderMenuOpen] = useState(false);
   let [headerRowHovered, setHeaderRowHovered] = useState(false);

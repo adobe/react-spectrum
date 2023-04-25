@@ -20,7 +20,7 @@ import {MultipleSelectionManager} from '@react-stately/selection';
 import {useLocale} from '@react-aria/i18n';
 import {useTypeSelect} from './useTypeSelect';
 
-export interface AriaSelectableCollectionOptions {
+export interface AriaSelectableCollectionOptions<T> {
   /**
    * An interface for reading and updating multiple selection state.
    */
@@ -28,7 +28,7 @@ export interface AriaSelectableCollectionOptions {
   /**
    * A delegate object that implements behavior for keyboard focus movement.
    */
-  keyboardDelegate: KeyboardDelegate,
+  keyboardDelegate: KeyboardDelegate<T>,
   /**
    * The ref attached to the element representing the collection.
    */
@@ -90,7 +90,7 @@ export interface SelectableCollectionAria {
 /**
  * Handles interactions with selectable collections.
  */
-export function useSelectableCollection(options: AriaSelectableCollectionOptions): SelectableCollectionAria {
+export function useSelectableCollection<T>(options: AriaSelectableCollectionOptions<T>): SelectableCollectionAria {
   let {
     selectionManager: manager,
     keyboardDelegate: delegate,

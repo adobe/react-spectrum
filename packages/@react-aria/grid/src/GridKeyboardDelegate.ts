@@ -26,7 +26,7 @@ export interface GridKeyboardDelegateOptions<T, C> {
   focusMode?: 'row' | 'cell'
 }
 
-export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements KeyboardDelegate {
+export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements KeyboardDelegate<T> {
   collection: C;
   protected disabledKeys: Set<Key>;
   protected ref: RefObject<HTMLElement>;
@@ -82,10 +82,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
       key = this.collection.getKeyAfter(key);
     }
   }
-
-  // TODO: pretty weird that itemFilter might be "return true if item is a row", but then getKeyBelow
-  // can return a cell key due to the extra logic within
-  getKeyBelow(key: Key, itemFilter: (item: Node<T>) => boolean = item => this.isRow(item)) {
+  getKeyBelow(key: Key) {
     let startItem = this.collection.getItem(key);
     if (!startItem) {
       return;
@@ -97,7 +94,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
 
     // Find the next item
-    key = this.findNextKey(key, itemFilter);
+    key = this.findNextKey(key, item => this.isRow(item));
     if (key != null) {
       // If focus was on a cell, focus the cell with the same index in the next row.
       if (this.isCell(startItem)) {
@@ -112,7 +109,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
   }
 
-  getKeyAbove(key: Key, itemFilter: (item: Node<T>) => boolean = item => this.isRow(item)) {
+  getKeyAbove(key: Key) {
     let startItem = this.collection.getItem(key);
     if (!startItem) {
       return;
@@ -124,7 +121,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
 
     // Find the previous item
-    key = this.findPreviousKey(key, itemFilter);
+    key = this.findPreviousKey(key, item => this.isRow(item));
     if (key != null) {
       // If focus was on a cell, focus the cell with the same index in the previous row.
       if (this.isCell(startItem)) {
@@ -211,7 +208,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
   }
 
-  getFirstKey(key?: Key, global?: boolean, itemFilter: (item: Node<T>) => boolean = item => this.isRow(item)) {
+  getFirstKey(key?: Key, global?: boolean) {
     let item: Node<T>;
     if (key != null) {
       item = this.collection.getItem(key);
@@ -227,8 +224,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
       }
     }
 
-    // Find the first key matching the keyFilter
-    key = this.findNextKey(null, itemFilter);
+    key = this.findNextKey(null, item => this.isRow(item));
 
     // If global flag is set (or if focus mode is cell), focus the first cell in the first row.
     if ((key != null && item && this.isCell(item) && global) || this.focusMode === 'cell') {
@@ -240,7 +236,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     return key;
   }
 
-  getLastKey(key?: Key, global?: boolean, itemFilter: (item: Node<T>) => boolean = item => this.isRow(item)) {
+  getLastKey(key?: Key, global?: boolean) {
     let item: Node<T>;
     if (key != null) {
       item = this.collection.getItem(key);
@@ -257,8 +253,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
       }
     }
 
-    // Find the last key matching the keyFilter
-    key = this.findPreviousKey(null, itemFilter);
+    key = this.findPreviousKey(null, item => this.isRow(item));
 
     // If global flag is set (or if focus mode is cell), focus the last cell in the last row.
     if ((key != null && item && this.isCell(item) && global) || this.focusMode === 'cell') {

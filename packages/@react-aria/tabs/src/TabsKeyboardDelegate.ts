@@ -13,7 +13,7 @@
 import {Collection, Direction, KeyboardDelegate, Orientation} from '@react-types/shared';
 import {Key} from 'react';
 
-export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
+export class TabsKeyboardDelegate<T> implements KeyboardDelegate<T> {
   private collection: Collection<T>;
   private flipDirection: boolean;
   private disabledKeys: Set<Key>;

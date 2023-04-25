@@ -17,7 +17,7 @@ import {MultipleSelectionManager} from '@react-stately/selection';
 import {useCollator} from '@react-aria/i18n';
 import {useSelectableCollection} from './useSelectableCollection';
 
-export interface AriaSelectableListOptions {
+export interface AriaSelectableListOptions<T> {
   /**
    * An interface for reading and updating multiple selection state.
    */
@@ -37,7 +37,7 @@ export interface AriaSelectableListOptions {
   /**
    * A delegate that returns collection item keys with respect to visual layout.
    */
-  keyboardDelegate?: KeyboardDelegate,
+  keyboardDelegate?: KeyboardDelegate<T>,
   /**
    * Whether the collection or one of its items should be automatically focused upon render.
    * @default false
@@ -87,7 +87,7 @@ export interface SelectableListAria {
 /**
  * Handles interactions with a selectable list.
  */
-export function useSelectableList(props: AriaSelectableListOptions): SelectableListAria {
+export function useSelectableList<T>(props: AriaSelectableListOptions<T>): SelectableListAria {
   let {
     selectionManager,
     collection,

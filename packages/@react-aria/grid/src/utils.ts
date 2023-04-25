@@ -16,7 +16,7 @@ import {Key} from 'react';
 import type {KeyboardDelegate} from '@react-types/shared';
 
 interface GridMapShared {
-  keyboardDelegate: KeyboardDelegate,
+  keyboardDelegate: KeyboardDelegate<unknown>,
   actions: {
     onRowAction: (key: Key) => void,
     onCellAction: (key: Key) => void

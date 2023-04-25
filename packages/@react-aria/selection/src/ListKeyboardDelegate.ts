@@ -13,7 +13,7 @@
 import {Collection, KeyboardDelegate, Node} from '@react-types/shared';
 import {Key, RefObject} from 'react';
 
-export class ListKeyboardDelegate<T> implements KeyboardDelegate {
+export class ListKeyboardDelegate<T> implements KeyboardDelegate<T> {
   private collection: Collection<Node<T>>;
   private disabledKeys: Set<Key>;
   private ref: RefObject<HTMLElement>;

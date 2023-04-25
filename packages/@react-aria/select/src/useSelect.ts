@@ -28,7 +28,7 @@ export interface AriaSelectOptions<T> extends Omit<AriaSelectProps<T>, 'children
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
    */
-  keyboardDelegate?: KeyboardDelegate
+  keyboardDelegate?: KeyboardDelegate<T>
 }
 
 export interface SelectAria<T> {

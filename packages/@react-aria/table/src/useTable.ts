@@ -24,7 +24,7 @@ import {TableState} from '@react-stately/table';
 import {useCollator, useLocale} from '@react-aria/i18n';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
-export interface AriaTableProps<T> extends GridProps {
+export interface AriaTableProps<T> extends GridProps<T> {
   /** The layout object for the table. Computes what content is visible and how to position and style them. */
   layout?: Layout<Node<T>>
 }
@@ -96,7 +96,6 @@ export function useTable<T>(props: AriaTableProps<T>, state: TableState<T>, ref:
         // merge sort description with long press information
         'aria-describedby': [descriptionProps['aria-describedby'], gridProps['aria-describedby']].filter(Boolean).join(' ')
       }
-    ),
-    keyboardDelegate: delegate
+    )
   };
 }

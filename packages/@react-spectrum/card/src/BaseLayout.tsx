@@ -28,7 +28,7 @@ export interface BaseLayoutOptions {
   margin?: number
 }
 
-export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
+export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate<T> {
   protected contentSize: Size;
   protected layoutInfos: Map<Key, LayoutInfo>;
   protected collator: Intl.Collator;

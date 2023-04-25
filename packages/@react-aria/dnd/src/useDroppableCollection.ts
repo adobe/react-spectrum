@@ -74,6 +74,11 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
   localState.props = props;
   localState.state = state;
 
+  let itemFilter = useCallback((item) => {
+    let isEmptySection = item?.type === 'section' && [...item.childNodes].filter((child) => child.type === 'item').length === 0;
+    return item.type === 'item' || isEmptySection;
+  }, []);
+
   let defaultOnDrop = useCallback(async (e: DroppableCollectionDropEvent) => {
     let {
       onInsert,
@@ -324,11 +329,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       }
 
       let {keyboardDelegate} = localState.props;
-      let itemFilter = (item) => {
-        let isEmptySection = item.type === 'section' && [...item.childNodes].filter((child) => child.type === 'item').length === 0;
-        return item.type === 'item' || isEmptySection;
-      };
-
       let nextKey = target.type === 'item'
         ? keyboardDelegate.getKeyBelow(target.key, itemFilter)
         : keyboardDelegate.getFirstKey(undefined, undefined, itemFilter);
@@ -379,21 +379,16 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
     let getPreviousTarget = (target: DropTarget, wrap = true): DropTarget => {
       let {keyboardDelegate} = localState.props;
 
-      let itemFilter = (item) => {
-        let isEmptySection = item.type === 'section' && [...item.childNodes].filter((child) => child.type === 'item').length === 0;
-        return item.type === 'item' || isEmptySection;
-      };
-
       // TODO: bug where readding rows to the section results in a super tall section (perhaps due to improper way of adding stuff back into the tree data?)
       let nextKey = target?.type === 'item'
         ? keyboardDelegate.getKeyAbove(target.key, itemFilter)
         : keyboardDelegate.getLastKey(undefined, undefined, itemFilter);
-
-      let dropPosition: DropPosition = !target || target.type === 'root' ? 'after' : 'on';
+      let nextItem = nextKey != null ? localState.state.collection.getItem(nextKey) : undefined;
+      let dropPosition: DropPosition = (!target || target.type === 'root') && nextItem.type !== 'section' ? 'after' : 'on';
 
       if (target?.type === 'item') {
         let targetItem = localState.state.collection.getItem(target.key);
-        let nextItem = nextKey != null ? localState.state.collection.getItem(nextKey) : undefined;
+
         let positionIndex = DROP_POSITIONS.indexOf(target.dropPosition);
         let nextDropPosition = DROP_POSITIONS[positionIndex - 1];
         if (targetItem?.type === 'item' && positionIndex > 0 && nextDropPosition !== 'after') {
@@ -496,6 +491,10 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         let item = localState.state.collection.getItem(key);
         if (item?.type === 'cell') {
           key = item.parentKey;
+        } else if (item != null && !itemFilter(item)) {
+          // If the previously focused item in the droppable collection isn't an item or a section (e.g. table column header)
+          // then set key to null so we start from root
+          key = null;
         }
 
         // If the focused item is also selected, the default drop target is after the last selected item.
@@ -602,16 +601,18 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
                 let nextKey = keyboardDelegate.getKeyPageBelow(
                   target.type === 'item'
                     ? target.key
-                    : keyboardDelegate.getFirstKey()
+                    : keyboardDelegate.getFirstKey(undefined, undefined, itemFilter),
+                  itemFilter
                 );
 
                 // Prioritize the same drop position that we started on, even if the next key is less than a whole page down
                 let dropPosition = target.type === 'item' ? target.dropPosition : 'after';
 
                 // If there is no next key, or we are starting on the last key, jump to the last possible position.
-                if (nextKey == null || (target.type === 'item' && target.key === keyboardDelegate.getLastKey())) {
-                  nextKey = keyboardDelegate.getLastKey();
+                if (nextKey == null || (target.type === 'item' && target.key === keyboardDelegate.getLastKey(undefined, undefined, itemFilter))) {
+                  nextKey = keyboardDelegate.getLastKey(undefined, undefined, itemFilter);
                   dropPosition = 'after';
+
                 }
 
                 target = {
@@ -619,7 +620,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
                   key: nextKey,
                   dropPosition
                 };
-
                 // If the target does not accept the drop, find the next valid target.
                 // If no next valid target, find the previous valid target.
                 let {draggingCollectionRef, draggingKeys} = globalDndState;
@@ -631,7 +631,12 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
                 }
               }
 
-              localState.state.setTarget(target ?? localState.state.target);
+              let finalTarget = target ?? localState.state.target;
+              if (finalTarget.type === 'item' && localState.state.collection.getItem(finalTarget.key).type === 'section') {
+                finalTarget.dropPosition = 'on';
+              }
+
+              localState.state.setTarget(finalTarget);
             }
             break;
           }
@@ -645,15 +650,15 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
               target = nextValidTarget(null, types, drag.allowedDropOperations, getPreviousTarget);
             } else if (target.type === 'item') {
               // If at the top already, switch to the root. Otherwise navigate a page up.
-              if (target.key === keyboardDelegate.getFirstKey()) {
+              if (target.key === keyboardDelegate.getFirstKey(undefined, undefined, itemFilter)) {
                 target = {
                   type: 'root'
                 };
               } else {
-                let nextKey = keyboardDelegate.getKeyPageAbove(target.key);
+                let nextKey = keyboardDelegate.getKeyPageAbove(target.key, itemFilter);
                 let dropPosition = target.dropPosition;
                 if (nextKey == null) {
-                  nextKey = keyboardDelegate.getFirstKey();
+                  nextKey = keyboardDelegate.getFirstKey(undefined, undefined, itemFilter);
                   dropPosition = 'before';
                 }
 
@@ -681,7 +686,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         }
       }
     });
-  }, [localState, ref, onDrop]);
+  }, [localState, ref, onDrop, itemFilter]);
 
   let id = useId();
   droppableCollectionMap.set(state, {id, ref});
