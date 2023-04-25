@@ -79,6 +79,13 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
 
         let tags = [...currTagsRef.children];
         let buttons = [...currContainerRef.parentElement.querySelectorAll('button')];
+        if (tags.length === 0 || buttons.length === 0) {
+          return {
+            visibleTagCount: 0,
+            showCollapseButton: false,
+            maxHeight: undefined
+          };
+        }
         let currY = -Infinity;
         let rowCount = 0;
         let index = 0;
