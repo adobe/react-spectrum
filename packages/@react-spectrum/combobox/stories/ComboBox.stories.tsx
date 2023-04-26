@@ -192,6 +192,9 @@ export default {
     },
     width: {
       control: 'text'
+    },
+    shouldFlip: {
+      control: 'boolean'
     }
   }
 } as ComponentMeta<typeof ComboBox>;
