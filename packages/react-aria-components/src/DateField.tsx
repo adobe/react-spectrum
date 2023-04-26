@@ -61,9 +61,7 @@ function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: Forwarded
           }
         }]
       ]}>
-      <div {...renderProps} ref={ref} slot={props.slot}>
-        {props.children}
-      </div>
+      <div {...renderProps} ref={ref} slot={props.slot} />
     </Provider>
   );
 }
@@ -105,9 +103,7 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
           }
         }]
       ]}>
-      <div {...renderProps} ref={ref} slot={props.slot}>
-        {props.children}
-      </div>
+      <div {...renderProps} ref={ref} slot={props.slot} />
     </Provider>
   );
 }
