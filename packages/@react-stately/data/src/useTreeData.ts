@@ -20,7 +20,12 @@ export interface TreeOptions<T extends object> {
   /** A function that returns a unique key for an item object. */
   getKey?: (item: T) => Key,
   /** A function that returns the children for an item object. */
-  getChildren?: (item: T) => T[]
+  getChildren?: (item: T) => T[],
+  // TODO: naming + should it be required? These functions allow the user to tell useTreeData how to properly update
+  // the tracked TreeNode.value. Previously, TreeNode.value wouldn't be updated since useTreeData didn't know what format the
+  // user data was stored in
+  propsInsert: (parentNodeValue: TreeNode<T>['value'], index: number, ...values: T[]) => {[v: string]: T[]},
+  propsRemove: (parentNodeValue: TreeNode<T>['value'], key: Key) => T
 }
 
 interface TreeNode<T extends object> {
@@ -106,6 +111,11 @@ export interface TreeData<T extends object> {
    */
   move(key: Key, toParentKey: Key, index: number): void,
 
+  // TODO for a moveBefore and moveAfter
+  // Case 1: you are moving items of the same parent within the same parent
+  // Case 2: you are moving items from a different parent
+  // Case 3: you are moving a mix of items
+  // Alternatively
   /**
    * Updates an item in the tree.
    * @param key - The key of the item to update.
@@ -123,7 +133,9 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
     initialItems = [],
     initialSelectedKeys,
     getKey = (item: any) => item.id || item.key,
-    getChildren = (item: any) => item.children
+    getChildren = (item: any) => item.children,
+    propsInsert,
+    propsRemove
   } = options;
   let map = useMemo(() => new Map<Key, TreeNode<T>>(), []);
 
@@ -168,7 +180,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
       let copy: TreeNode<T> = {
         key: nextParent.key,
         parentKey: nextParent.parentKey,
-        value: nextParent.value,
+        value: newNode == null ? propsRemove(nextParent.value, key) : nextParent.value,
         children: null
       };
 
@@ -242,7 +254,11 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
         return updateTree(items, parentKey, parentNode => ({
           key: parentNode.key,
           parentKey: parentNode.parentKey,
-          value: parentNode.value,
+          value: {...parentNode.value, ...propsInsert(parentNode.value, index, ...values)},
+               // TODO: ideally we would be able to modify the value here but we don't know what exactly
+          // the shape of the item is.
+          // value: {...parentNode.value, [childNodesName]: {...parentNode[childNodesName], values}},
+          // value: parentNode.value,
           children: [
             ...parentNode.children.slice(0, index),
             ...nodes,

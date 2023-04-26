@@ -20,9 +20,9 @@ let itemProcessor = async (items, acceptedDragTypes) => {
         processedItem = JSON.parse(text);
         // If processed item has a parent key, then it is from a section. We need to extract its original value of the item in these
         // cases
-        if (processedItem?.parentKey != null) {
-          processedItem = processedItem.value;
-        }
+        // if (processedItem?.parentKey != null) {
+        //   processedItem = processedItem.value;
+        // }
         processedItems.push(processedItem);
         break;
       } else if (item.types.size === 1 && item.types.has('text/plain')) {
@@ -492,7 +492,6 @@ export function DragBetweenTablesComplex(props) {
       } = e;
       action('onInsertTable1')(e);
       let processedItems = await itemProcessor(items, acceptedDragTypes);
-
       if (target.dropPosition === 'before') {
         list1.insertBefore(target.key, ...processedItems);
       } else if (target.dropPosition === 'after') {
@@ -834,6 +833,21 @@ export function DragBetweenTablesSectionsComplex(props) {
     },
     getChildren: (item) => {
       return item?.childNodes;
+    },
+    propsInsert: (parentNodeValue, index, ...values) => {
+      return ({
+        childNodes: [
+          ...parentNodeValue.childNodes.slice(0, index),
+          ...values,
+          ...parentNodeValue.childNodes.slice(index)
+        ]
+      });
+    },
+    propsRemove: (parentNodeValue, key) => {
+      return ({
+        ...parentNodeValue,
+        childNodes: parentNodeValue.childNodes.filter(node => node.identifier !== key)
+      });
     }
   });
 
@@ -844,6 +858,21 @@ export function DragBetweenTablesSectionsComplex(props) {
     },
     getChildren: (item) => {
       return item?.childNodes;
+    },
+    propsInsert: (parentNodeValue, index, ...values) => {
+      return ({
+        childNodes: [
+          ...parentNodeValue.childNodes.slice(0, index),
+          ...values,
+          ...parentNodeValue.childNodes.slice(index)
+        ]
+      });
+    },
+    propsRemove: (parentNodeValue, key) => {
+      return ({
+        ...parentNodeValue,
+        childNodes: parentNodeValue.childNodes.filter(node => node.identifier !== key)
+      });
     }
   });
   let acceptedDragTypes = ['file', 'folder', 'text/plain'];
@@ -852,6 +881,7 @@ export function DragBetweenTablesSectionsComplex(props) {
   let {dragAndDropHooks: dragAndDropHooksTable1} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => {
       let item = list1.getItem(key);
+      console.log('item of list 1 drag', item)
       return {
         [`${item.value.type}`]: JSON.stringify(item),
         'text/plain': JSON.stringify(item)
@@ -863,17 +893,36 @@ export function DragBetweenTablesSectionsComplex(props) {
         target
       } = e;
       action('onInsertTable1')(e);
+      // let processedItems = await itemProcessor(items, acceptedDragTypes);
+      // console.log('processedItems insert list 1', processedItems);
+      // // debugger;
+      // if (target.dropPosition === 'before') {
+      //   list1.insertBefore(target.key, ...processedItems);
+      // } else if (target.dropPosition === 'after') {
+      //   list1.insertAfter(target.key, ...processedItems);
+      // }
+
+
       let processedItems = await itemProcessor(items, acceptedDragTypes);
+      console.log('processedItems insert list 1', processedItems);
+      let itemsToAppend = processedItems.map(item => ({
+        ...item.value,
+        // childNodes: item.value.childNodes ? item.children.map(child => child.value) : undefined
+      }));
       if (target.dropPosition === 'before') {
-        list1.insertBefore(target.key, ...processedItems);
+        list1.insertBefore(target.key, ...itemsToAppend);
       } else if (target.dropPosition === 'after') {
-        list1.insertAfter(target.key, ...processedItems);
+        list1.insertAfter(target.key, ...itemsToAppend);
       }
     },
     onRootDrop: async (e) => {
       action('onRootDropTable1')(e);
       let processedItems = await itemProcessor(e.items, acceptedDragTypes);
-      list1.append('a', ...processedItems);
+      let itemsToAppend = processedItems.map(item => ({
+        ...item.value,
+        // childNodes: item.value.childNodes ? item.children.map(child => child.value) : undefined
+      }));
+      list1.append('a', ...itemsToAppend);
     },
     onItemDrop: async (e) => {
       let {
@@ -883,14 +932,28 @@ export function DragBetweenTablesSectionsComplex(props) {
         dropOperation
       } = e;
       action('onItemDropTable1')(e);
-      let processedItems = await itemProcessor(items, acceptedDragTypes);
-      let targetItem = list1.getItem(target.key).value;
-      list1.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
+      // let processedItems = await itemProcessor(items, acceptedDragTypes);
+      // console.log('processedItems onitemDrop list 1', processedItems);
+      // // debugger;
+      // if (isInternal && dropOperation === 'move') {
+      //   let keysToRemove = processedItems.map(item => item.identifier);
+      //   list1.remove(...keysToRemove);
+      // }
+      // list1.append(target.key, ...processedItems);
 
+
+
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
+      console.log('processedItems onitemDrop list 1', processedItems);
+      let itemsToAppend = processedItems.map(item => ({
+        ...item.value,
+        // childNodes: item.value.childNodes ? item.children.map(child => child.value) : undefined
+      }));
       if (isInternal && dropOperation === 'move') {
-        let keysToRemove = processedItems.map(item => item.identifier);
+        let keysToRemove = itemsToAppend.map(item => item.identifier);
         list1.remove(...keysToRemove);
       }
+      list1.append(target.key, ...itemsToAppend);
     },
     acceptedDragTypes,
     onDragEnd: (e) => {
@@ -919,7 +982,7 @@ export function DragBetweenTablesSectionsComplex(props) {
       if (item.value.type !== 'unique_type') {
         dragItem['text/plain'] = itemString;
       }
-
+      console.log('item of list 2 drag', item, dragItem)
       return dragItem;
     }),
     onInsert: async (e) => {
@@ -928,12 +991,27 @@ export function DragBetweenTablesSectionsComplex(props) {
         target
       } = e;
       action('onInsertTable2')(e);
-      let processedItems = await itemProcessor(items, acceptedDragTypes);
+      // let processedItems = await itemProcessor(items, acceptedDragTypes);
+      // console.log('processedItems insert list 2', processedItems);
+      // // debugger;
+      // if (target.dropPosition === 'before') {
+      //   list2.insertBefore(target.key, ...processedItems);
+      // } else if (target.dropPosition === 'after') {
+      //   list2.insertAfter(target.key, ...processedItems);
+      // }
 
+
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
+      console.log('processedItems on insert list 2', processedItems)
+      let itemsToAppend = processedItems.map(item => ({
+        ...item.value,
+        // childNodes: item.value.childNodes ? item.children.map(child => child.value) : undefined
+      }));
+      console.log('reprocessed items on insert list 2', itemsToAppend)
       if (target.dropPosition === 'before') {
-        list2.insertBefore(target.key, ...processedItems);
+        list2.insertBefore(target.key, ...itemsToAppend);
       } else if (target.dropPosition === 'after') {
-        list2.insertAfter(target.key, ...processedItems);
+        list2.insertAfter(target.key, ...itemsToAppend);
       }
     },
     onReorder: async (e) => {
@@ -946,11 +1024,15 @@ export function DragBetweenTablesSectionsComplex(props) {
 
       let itemsToCopy = [];
       for (let key of keys) {
-        let item = {...list2.getItem(key).value};
+        let item = list2.getItem(key);
+        let itemCopy = {
+          ...item.value,
+          // childNodes: item.value.childNodes ? item.children.map(child => child.value) : undefined
+        };
         if (dropOperation === 'copy') {
-          item.identifier = Math.random().toString(36).slice(2);
+          itemCopy.identifier = Math.random().toString(36).slice(2);
         }
-        itemsToCopy.push(item);
+        itemsToCopy.push(itemCopy);
       }
 
       if (target.dropPosition === 'before') {
@@ -958,6 +1040,7 @@ export function DragBetweenTablesSectionsComplex(props) {
           // TODO: this breaks if moving an item(s) to positions immediately adjacent to itself, will
           // need to update useTreeData so it has something like move from useListData
           // for now perhaps use useTreeData.move and do a move for each and calculate a new index everytime?
+          // Can't do .move without reimplementing the same logic that useListData does for move operations
           list2.remove(...keys);
           list2.insertBefore(target.key, ...itemsToCopy);
         } else if (dropOperation === 'copy') {
@@ -975,7 +1058,11 @@ export function DragBetweenTablesSectionsComplex(props) {
     onRootDrop: async (e) => {
       action('onRootDropTable2')(e);
       let processedItems = await itemProcessor(e.items, acceptedDragTypes);
-      list2.append('c', ...processedItems);
+      let itemsToAppend = processedItems.map(item => ({
+        ...item.value,
+        // childNodes: item.value.childNodes ? item.children.map(child => child.value) : undefined
+      }));
+      list2.append('c', ...itemsToAppend);
     },
     onItemDrop: async (e) => {
       let {
@@ -985,15 +1072,48 @@ export function DragBetweenTablesSectionsComplex(props) {
         dropOperation
       } = e;
       action('onItemDropTable2')(e);
+      // // TODO: internal drop onItemDrop is broken, it doesn't seem to remove the items
+      // // TODO: drops from one list to another list's folder updates the tracked children properly but the
+      // // "value" in the 2nd list doesn't update to reflect the change. This might actaully be expected
+      // // since useTreeData doesn't actually know what the "value" is of the node (doesn't know that it is the "childNodes" prop) and thus doesn't update it
+      // // This seems to be problematic because adding items to the folder of one list and then dragging that folder back to the second list
+      // // doesn't retain the children of that folder
 
+      // // TODO: calling append after remove makes it update properly, but calling append before remove doesn't remove the items
+      // let processedItems = await itemProcessor(items, acceptedDragTypes);
+      // console.log('processedItems on item drop list 2', processedItems)
+      // if (isInternal && dropOperation === 'move') {
+      //   let keysToRemove = processedItems.map(item => item.identifier);
+      //   list2.remove(...keysToRemove);
+      // }
+
+      // list2.append(target.key, ...processedItems);
+
+
+
+      // TODO: internal drop onItemDrop is broken, it doesn't seem to remove the items
+      // TODO: drops from one list to another list's folder updates the tracked children properly but the
+      // "value" in the 2nd list doesn't update to reflect the change. This might actaully be expected
+      // since useTreeData doesn't actually know what the "value" is of the node (doesn't know that it is the "childNodes" prop) and thus doesn't update it
+      // This seems to be problematic because adding items to the folder of one list and then dragging that folder back to the second list
+      // doesn't retain the children of that folder
+
+      // TODO: calling append after remove makes it update properly, but calling append before remove doesn't remove the items
       let processedItems = await itemProcessor(items, acceptedDragTypes);
-      let targetItem = list2.getItem(target.key).value;
-      list2.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
-
+      console.log('processedItems on item drop list 2', processedItems)
+      // Now that we are returning the entire item tree node from tree, need to reformat the items into the TableItems format
+      // that the tree methods understand.
+      let itemsToAppend = processedItems.map(item => ({
+        ...item.value,
+        // childNodes: item.value.childNodes ? item.children.map(child => child.value) : undefined
+      }));
       if (isInternal && dropOperation === 'move') {
-        let keysToRemove = processedItems.map(item => item.identifier);
+        let keysToRemove = itemsToAppend.map(item => item.identifier);
+        console.log('keys to remove in onItemDrop list 2', keysToRemove)
         list2.remove(...keysToRemove);
       }
+
+      list2.append(target.key, ...itemsToAppend);
     },
     acceptedDragTypes,
     onDragEnd: (e) => {
@@ -1012,7 +1132,9 @@ export function DragBetweenTablesSectionsComplex(props) {
     shouldAcceptItemDrop: (target) => !!list2.getItem(target.key)?.value.childNodes,
     ...secondTableDnDOptions
   });
-
+  console.log('list1 items', list1.items)
+  console.log('list2 items', list2.items);
+  // console.log('folder', list2.getItem('9'), list2.getItem('9').children, list2.getItem('9').value);
   return (
     <>
       <Flex direction="column" margin="size-100">
