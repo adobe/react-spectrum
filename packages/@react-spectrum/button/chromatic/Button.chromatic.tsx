@@ -17,7 +17,6 @@ import {Flex} from '@react-spectrum/layout';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {Text} from '@react-spectrum/text';
 import {View} from '@react-spectrum/view';
@@ -35,79 +34,99 @@ let states = [
 
 let combinations = generatePowerset(states, v => (v.UNSAFE_className && v.isDisabled) || (v['data-focus'] && (v['data-hover'] || v['data-active'])) || (v['data-hover'] && v['data-active']));
 
-storiesOf('Button', module)
-  .addParameters({chromaticProvider: {locales: ['en-US']}})
-  .add(
-    'variant: accent',
-    () => render({variant: 'accent'})
-  )
-  .add(
-    'variant: primary',
-    () => render({variant: 'primary'})
-  )
-  .add(
-    'variant: secondary',
-    () => render({variant: 'secondary'})
-  )
-  .add(
-    'variant: negative',
-    () => render({variant: 'negative'})
-  )
-  .add(
-    'element: a',
-    () => render({elementType: 'a', variant: 'primary'})
-  )
-  .add(
-    'with icon',
-    () => (
-      <Flex gap="size-200">
-        <Button variant="primary">
-          <Bell />
-          <Text>Default</Text>
-        </Button>
-        <Button
-          isDisabled
-          variant="primary">
-          <Text>Disabled</Text>
-          <Bell />
-        </Button>
-      </Flex>
-    ),
-    {chromaticProvider: {locales: ['en-US', 'ar-AE']}}
-  )
-  .add(
-    'icon only',
-    () => (
-      <Flex gap="size-200">
-        <Button variant="primary" aria-label="Notifications">
-          <Bell />
-        </Button>
-        <Button
-          isDisabled
-          variant="primary"
-          aria-label="Notifications">
-          <Bell />
-        </Button>
-      </Flex>
-    ),
-    {chromaticProvider: {locales: ['en-US', 'ar-AE']}}
-  )
-  .add(
-    'double text node',
-    () => (
-      <Flex gap="size-200">
-        <Button
-          variant="primary">
-          {0} Dogs
-        </Button>
-        <Button
-          isDisabled
-          variant="primary">
-          {0} Dogs
-        </Button>
-      </Flex>
-    )
-  );
+export default {
+  title: 'Button',
+  parameters: {
+    chromaticProvider: {locales: ['en-US']}
+  }
+};
+
+export const VariantAccent = () => render({variant: 'accent'});
+
+VariantAccent.story = {
+  name: 'variant: accent'
+};
+
+export const VariantPrimary = () => render({variant: 'primary'});
+
+VariantPrimary.story = {
+  name: 'variant: primary'
+};
+
+export const VariantSecondary = () => render({variant: 'secondary'});
+
+VariantSecondary.story = {
+  name: 'variant: secondary'
+};
+
+export const VariantNegative = () => render({variant: 'negative'});
+
+VariantNegative.story = {
+  name: 'variant: negative'
+};
+
+export const ElementA = () => render({elementType: 'a', variant: 'primary'});
+
+ElementA.story = {
+  name: 'element: a'
+};
+
+export const WithIcon = () => (
+  <Flex gap="size-200">
+    <Button variant="primary">
+      <Bell />
+      <Text>Default</Text>
+    </Button>
+    <Button
+      isDisabled
+      variant="primary">
+      <Text>Disabled</Text>
+      <Bell />
+    </Button>
+  </Flex>
+);
+
+WithIcon.story = {
+  name: 'with icon',
+  parameters: {chromaticProvider: {locales: ['en-US', 'ar-AE']}}
+};
+
+export const IconOnly = () => (
+  <Flex gap="size-200">
+    <Button variant="primary" aria-label="Notifications">
+      <Bell />
+    </Button>
+    <Button
+      isDisabled
+      variant="primary"
+      aria-label="Notifications">
+      <Bell />
+    </Button>
+  </Flex>
+);
+
+IconOnly.story = {
+  name: 'icon only',
+  parameters: {chromaticProvider: {locales: ['en-US', 'ar-AE']}}
+};
+
+export const DoubleTextNode = () => (
+  <Flex gap="size-200">
+    <Button
+      variant="primary">
+      {0} Dogs
+    </Button>
+    <Button
+      isDisabled
+      variant="primary">
+      {0} Dogs
+    </Button>
+  </Flex>
+);
+
+DoubleTextNode.story = {
+  name: 'double text node'
+};
 
 function render(props: any = {}) {
   return (
