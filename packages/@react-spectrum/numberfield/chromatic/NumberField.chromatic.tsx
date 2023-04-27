@@ -17,7 +17,7 @@ import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {mergeProps} from '@react-aria/utils';
-import {Meta, Story} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import {NumberField} from '../src';
 import React from 'react';
 import {SpectrumNumberFieldProps} from '@react-types/numberfield';
@@ -110,7 +110,7 @@ const meta: Meta = {
 
 export default meta;
 
-const Template: Story<SpectrumNumberFieldProps> = (args) => (
+const Template: StoryFn<SpectrumNumberFieldProps> = (args) => (
   <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
     {combinations.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -122,7 +122,7 @@ const Template: Story<SpectrumNumberFieldProps> = (args) => (
   </Grid>
 );
 
-const TemplateVertical: Story<SpectrumNumberFieldProps> = (args) => (
+const TemplateVertical: StoryFn<SpectrumNumberFieldProps> = (args) => (
   <Grid autoFlow="row" gap="size-300">
     {combinations.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -134,7 +134,7 @@ const TemplateVertical: Story<SpectrumNumberFieldProps> = (args) => (
   </Grid>
 );
 
-const TemplateSmall: Story<SpectrumNumberFieldProps> = (args) => (
+const TemplateSmall: StoryFn<SpectrumNumberFieldProps> = (args) => (
   <Grid columns={repeat(4, '1fr')} autoFlow="row" gap="size-200">
     {combinations.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -146,7 +146,7 @@ const TemplateSmall: Story<SpectrumNumberFieldProps> = (args) => (
   </Grid>
 );
 
-const TemplateWithForcedStyles: Story<SpectrumNumberFieldProps> = (args) => (
+const TemplateWithForcedStyles: StoryFn<SpectrumNumberFieldProps> = (args) => (
   <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
     {combinationsStyles.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -155,55 +155,84 @@ const TemplateWithForcedStyles: Story<SpectrumNumberFieldProps> = (args) => (
   </Grid>
 );
 
-export const PropDefaults = Template.bind({});
-PropDefaults.storyName = 'default';
-PropDefaults.args = {};
-
-export const PropDefaultValue = Template.bind({});
-PropDefaultValue.storyName = 'default value';
-PropDefaultValue.args = {...PropDefaults.args, defaultValue: 10};
-
-export const PropValue = Template.bind({});
-PropValue.storyName = 'value';
-PropValue.args = {...PropDefaults.args, value: 10};
-
-export const PropValueMobileViewport = TemplateVertical.bind({});
-PropValueMobileViewport.storyName = 'value, mobile viewport';
-PropValueMobileViewport.args = {...PropDefaults.args, value: 10};
-PropValueMobileViewport.parameters = {
-  chromatic: {viewports: [320]},
-  chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['large'], disableAnimations: true}
+export const PropDefaults = {
+  render: Template,
+  name: 'default',
+  args: {}
 };
 
-export const PropAriaLabelled = Template.bind({});
-PropAriaLabelled.storyName = 'aria-label';
-PropAriaLabelled.args = {'aria-label': 'Label'};
+export const PropDefaultValue = {
+  render: Template,
+  name: 'default value',
+  args: {...PropDefaults.args, defaultValue: 10}
+};
 
-export const PropLabelEnd = Template.bind({});
-PropLabelEnd.storyName = 'label end';
-PropLabelEnd.args = {...PropDefaults.args, labelAlign: 'end', defaultValue: 10};
+export const PropValue = {
+  render: Template,
+  name: 'value',
+  args: {...PropDefaults.args, value: 10}
+};
 
-export const PropMinValue = Template.bind({});
-PropMinValue.storyName = 'min value';
-PropMinValue.args = {...PropDefaults.args, minValue: 10, defaultValue: 10};
+export const PropValueMobileViewport = {
+  render: TemplateVertical,
+  name: 'value, mobile viewport',
+  args: {...PropDefaults.args, value: 10},
 
-export const PropMaxValue = Template.bind({});
-PropMaxValue.storyName = 'max value';
-PropMaxValue.args = {...PropDefaults.args, maxValue: 10, defaultValue: 10};
+  parameters: {
+    chromatic: {viewports: [320]},
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      locales: ['en-US'],
+      scales: ['large'],
+      disableAnimations: true
+    }
+  }
+};
 
-export const PropLabelSide = TemplateSmall.bind({});
-PropLabelSide.storyName = 'label side';
-PropLabelSide.args = {...PropDefaults.args, labelPosition: 'side', defaultValue: 10};
+export const PropAriaLabelled = {
+  render: Template,
+  name: 'aria-label',
+  args: {'aria-label': 'Label'}
+};
 
-export const PropCustomWidth = TemplateSmall.bind({});
-PropCustomWidth.storyName = 'custom width';
-PropCustomWidth.args = {...PropDefaults.args, width: 'size-3000'};
+export const PropLabelEnd = {
+  render: Template,
+  name: 'label end',
+  args: {...PropDefaults.args, labelAlign: 'end', defaultValue: 10}
+};
 
-// we can only force the interaction styles on the no visible label stories
-export const PropInteractionStyles = TemplateWithForcedStyles.bind({});
-PropInteractionStyles.storyName = 'interaction styles';
-PropInteractionStyles.args = {...PropAriaLabelled.args};
+export const PropMinValue = {
+  render: Template,
+  name: 'min value',
+  args: {...PropDefaults.args, minValue: 10, defaultValue: 10}
+};
 
-export const PropInteractionStylesMinValue = TemplateWithForcedStyles.bind({});
-PropInteractionStylesMinValue.storyName = 'interaction styles min value';
-PropInteractionStylesMinValue.args = {...PropAriaLabelled.args, minValue: 10, defaultValue: 10};
+export const PropMaxValue = {
+  render: Template,
+  name: 'max value',
+  args: {...PropDefaults.args, maxValue: 10, defaultValue: 10}
+};
+
+export const PropLabelSide = {
+  render: TemplateSmall,
+  name: 'label side',
+  args: {...PropDefaults.args, labelPosition: 'side', defaultValue: 10}
+};
+
+export const PropCustomWidth = {
+  render: TemplateSmall,
+  name: 'custom width',
+  args: {...PropDefaults.args, width: 'size-3000'}
+};
+
+export const PropInteractionStyles = {
+  render: TemplateWithForcedStyles,
+  name: 'interaction styles',
+  args: {...PropAriaLabelled.args}
+};
+
+export const PropInteractionStylesMinValue = {
+  render: TemplateWithForcedStyles,
+  name: 'interaction styles min value',
+  args: {...PropAriaLabelled.args, minValue: 10, defaultValue: 10}
+};

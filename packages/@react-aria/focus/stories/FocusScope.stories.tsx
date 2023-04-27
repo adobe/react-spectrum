@@ -11,8 +11,8 @@
  */
 
 import {FocusScope} from '../';
-import {Meta, Story} from '@storybook/react';
-import React, {ReactNode, useEffect, useState} from 'react';
+import {Meta} from '@storybook/react';
+import React, {ReactNode, useState} from 'react';
 import ReactDOM from 'react-dom';
 
 const dialogsRoot = 'dialogsRoot';
@@ -34,9 +34,9 @@ const meta: Meta<StoryProps> = {
 
 export default meta;
 
-const Template = (): Story<StoryProps> => ({isPortaled, contain = true}) => <Example isPortaled={isPortaled} contain={contain} />;
+const Template = ({isPortaled, contain = true}) => <Example isPortaled={isPortaled} contain={contain} />;
 
-function MaybePortal({children, isPortaled}: { children: ReactNode, isPortaled: boolean}) {
+function MaybePortal({children, isPortaled}: {children: ReactNode, isPortaled: boolean}) {
   if (!isPortaled) {
     return <>{children}</>;
   }
@@ -184,23 +184,30 @@ function IgnoreRestoreFocusExample() {
   );
 }
 
-export const KeyboardNavigation = Template().bind({});
-KeyboardNavigation.args = {isPortaled: false};
+export const KeyboardNavigation = {
+  render: Template,
+  args: {isPortaled: false}
+};
 
-export const KeyboardNavigationInsidePortal = Template().bind({});
-KeyboardNavigationInsidePortal.args = {isPortaled: true};
+export const KeyboardNavigationInsidePortal = {
+  render: Template,
+  args: {isPortaled: true}
+};
 
-export const KeyboardNavigationNoContain = Template().bind({});
-KeyboardNavigationNoContain.args = {isPortaled: false, contain: false};
+export const KeyboardNavigationNoContain = {
+  render: Template,
+  args: {isPortaled: false, contain: false}
+};
 
-export const KeyboardNavigationInsidePortalNoContain = Template().bind({});
-KeyboardNavigationInsidePortalNoContain.args = {isPortaled: true, contain: false};
+export const KeyboardNavigationInsidePortalNoContain = {
+  render: Template,
+  args: {isPortaled: true, contain: false}
+};
 
-const FocusableFirstInScopeTemplate = (): Story<StoryProps> => () => <FocusableFirstInScopeExample />;
+export const IgnoreRestoreFocus = {
+  render: () => <IgnoreRestoreFocusExample />
+}
 
-export const FocusableFirstInScope = FocusableFirstInScopeTemplate().bind({});
-
-
-const IgnoreRestoreFocusTemplate = (): Story<StoryProps> => () => <IgnoreRestoreFocusExample />;
-
-export const IgnoreRestoreFocus = IgnoreRestoreFocusTemplate().bind({});
+export const FocusableFirstInScope = {
+  render: () => <FocusableFirstInScopeExample />
+};

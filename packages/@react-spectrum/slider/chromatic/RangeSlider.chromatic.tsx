@@ -13,7 +13,7 @@
 import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Heading} from '@react-spectrum/text';
-import {Meta, Story} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import {RangeSlider} from '../';
 import React from 'react';
 import {SpectrumRangeSliderProps} from '@react-types/slider';
@@ -25,34 +25,21 @@ const meta: Meta<SpectrumRangeSliderProps> = {
 
 export default meta;
 
+export const Default = {
+  args: {label: 'RangeSlider label'}
+};
 
-const Template = (): Story<SpectrumRangeSliderProps> => (args) => (
-  <RangeSlider {...args} />
-);
+export const Disabled = {
+  args: {...Default.args, isDisabled: true}
+};
 
+export const SmallerRange = {
+  args: {...Default.args, defaultValue: {start: 30, end: 70}}
+};
 
-export const Default = Template().bind({});
-Default.args = {label: 'RangeSlider label'};
-
-export const Disabled = Template().bind({});
-Disabled.args = {...Default.args, isDisabled: true};
-/*
-Doesn't exist yet
-export const Vertical = Template().bind({});
-Vertical.args = {...Default.args, orientation: 'vertical'};
-*/
-
-export const SmallerRange = Template().bind({});
-SmallerRange.args = {...Default.args, defaultValue: {start: 30, end: 70}};
-
-/*
-Not supported but prop exists
-export const LabelAlignEnd = Template().bind({});
-LabelAlignEnd.args = {...Default.args, labelAlign: 'end', showValueLabel: false};
-*/
-
-export const LabelAlignEnd = Template().bind({});
-LabelAlignEnd.args = {...Default.args, labelAlign: 'end'};
+export const LabelAlignEnd = {
+  args: {...Default.args, labelAlign: 'end'}
+};
 
 let contextualHelp = (
   <ContextualHelp>
@@ -61,8 +48,10 @@ let contextualHelp = (
   </ContextualHelp>
 );
 
-export const _ContextualHelp = Template().bind({});
-_ContextualHelp.args = {label: 'Slider label', contextualHelp};
+export const _ContextualHelp = {
+  args: {label: 'Slider label', contextualHelp}
+};
 
-export const ContextualHelpSideLabel = Template().bind({});
-ContextualHelpSideLabel.args = {label: 'Slider label', contextualHelp, labelPosition: 'side'};
+export const ContextualHelpSideLabel = {
+  args: {label: 'Slider label', contextualHelp, labelPosition: 'side'}
+};
