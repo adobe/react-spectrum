@@ -12,175 +12,150 @@
 
 import {action} from '@storybook/addon-actions';
 import {CalendarDateTime, parseTime, parseZonedDateTime, Time, toZoned} from '@internationalized/date';
-import {Content} from '@react-spectrum/view';
-import {ContextualHelp} from '@react-spectrum/contextualhelp';
-import {Heading} from '@react-spectrum/text';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 import {TimeField} from '../';
 
 const BlockDecorator = storyFn => <div>{storyFn()}</div>;
 
-storiesOf('Date and Time/TimeField', module)
-  .addDecorator(BlockDecorator)
-  .add(
-    'default',
-    () => render()
-  )
-  .add(
-    'defaultValue',
-    () => render({defaultValue: parseTime('20:24')})
-  )
-  .add(
-    'controlled value',
-    () => render({value: new Time(2, 35)})
-  )
-  .add(
-    'granularity: second',
-    () => render({granularity: 'second'})
-  )
-  .add(
-    'hourCycle: 12',
-    () => render({hourCycle: 12, defaultValue: parseTime('00:00')})
-  )
-  .add(
-    'hourCycle: 24',
-    () => render({hourCycle: 24, defaultValue: parseTime('00:00')})
-  )
-  .add(
-    'hourCycle: 12, granularity: hour',
-    () => render({hourCycle: 12, granularity: 'hour'})
-  )
-  .add(
-    'hourCycle: 24, granularity: hour',
-    () => render({hourCycle: 24, granularity: 'hour'})
-  )
-  .add(
-    'zoned',
-    () => render({defaultValue: parseZonedDateTime('2021-11-07T00:45-07:00[America/Los_Angeles]')})
-  )
-  .add(
-    'hideTimeZone',
-    () => render({defaultValue: parseZonedDateTime('2021-11-07T00:45-07:00[America/Los_Angeles]'), hideTimeZone: true})
-  )
-  .add(
-    'isDisabled',
-    () => render({isDisabled: true, value: new Time(2, 35)})
-  )
-  .add(
-    'isQuiet, isDisabled',
-    () => render({isQuiet: true, isDisabled: true, value: new Time(2, 35)})
-  )
-  .add(
-    'isReadOnly',
-    () => render({isReadOnly: true, value: new Time(2, 35)})
-  )
-  .add(
-    'autoFocus',
-    () => render({autoFocus: true})
-  )
-  .add(
-    'validationState: invalid',
-    () => render({validationState: 'invalid', value: new Time(2, 35)})
-  )
-  .add(
-    'validationState: valid',
-    () => render({validationState: 'valid', value: new Time(2, 35)})
-  )
-  .add(
-    'placeholderValue: 8 AM',
-    () => render({placeholderValue: new Time(8)})
-  )
-  .add(
-    'placeholderValue: 1980/1/1 8AM, zoned',
-    () => render({placeholderValue: toZoned(new CalendarDateTime(1980, 1, 1, 8), 'America/Los_Angeles')})
-  )
-  .add(
-    'minValue: 8 AM',
-    () => render({minValue: new Time(8)})
-  )
-  .add(
-    'maxValue: 8 PM',
-    () => render({maxValue: new Time(20)})
-  )
-  .add(
-    'minValue: 8 AM, maxValue: 8 PM',
-    () => render({minValue: new Time(8), maxValue: new Time(20)})
-  )
-  .add(
-    'all the events',
-    () => render({onBlur: action('onBlur'), onFocus: action('onFocus'), onFocusChange: action('onFocusChange'), onKeyDown: action('onKeyDown'), onKeyUp: action('onKeyUp'), onOpenChange: action('onOpenChange')})
-  );
+export default {
+  title: 'Date and Time/TimeField',
+  decorators: [BlockDecorator],
+  excludeStories: ['render']
+};
 
-storiesOf('Date and Time/TimeField/styling', module)
-  .addDecorator(BlockDecorator)
-  .add(
-    'isQuiet',
-    () => render({isQuiet: true})
-  )
-  .add(
-    'labelPosition: side',
-    () => render({labelPosition: 'side'})
-  )
-  .add(
-    'labelAlign: end',
-    () => render({labelPosition: 'top', labelAlign: 'end'})
-  )
-  .add(
-    'required',
-    () => render({isRequired: true})
-  )
-  .add(
-    'required with label',
-    () => render({isRequired: true, necessityIndicator: 'label'})
-  )
-  .add(
-    'optional',
-    () => render({necessityIndicator: 'label'})
-  )
-  .add(
-    'no visible label',
-    () => render({'aria-label': 'Time', label: null})
-  )
-  .add(
-    'quiet no visible label',
-    () => render({isQuiet: true, 'aria-label': 'Time', label: null})
-  )
-  .add(
-    'custom width',
-    () => render({width: 'size-3000'})
-  )
-  .add(
-    'quiet custom width',
-    () => render({isQuiet: true, width: 'size-3000'})
-  )
-  .add(
-    'custom width no visible label',
-    () => render({width: 'size-3000', label: null, 'aria-label': 'Time'})
-  )
-  .add(
-    'custom width, labelPosition=side',
-    () => render({width: 'size-3000', labelPosition: 'side'})
-  )
-  .add(
-    'description',
-    () => render({description: 'Help text'})
-  )
-  .add(
-    'errorMessage',
-    () => render({errorMessage: 'Time must be between 9 AM and 5 PM', validationState: 'invalid'})
-  )
-  .add(
-    'contextual help',
-    () => render({contextualHelp: (
-      <ContextualHelp>
-        <Heading>What is a segment?</Heading>
-        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
-      </ContextualHelp>
-    )})
-  );
+export const Default = () => render();
 
-function render(props = {}) {
+Default.story = {
+  name: 'default'
+};
+
+export const DefaultValue = () => render({defaultValue: parseTime('20:24')});
+
+DefaultValue.story = {
+  name: 'defaultValue'
+};
+
+export const ControlledValue = () => render({value: new Time(2, 35)});
+
+ControlledValue.story = {
+  name: 'controlled value'
+};
+
+export const GranularitySecond = () => render({granularity: 'second'});
+
+GranularitySecond.story = {
+  name: 'granularity: second'
+};
+
+export const HourCycle12 = () => render({hourCycle: 12, defaultValue: parseTime('00:00')});
+
+HourCycle12.story = {
+  name: 'hourCycle: 12'
+};
+
+export const HourCycle24 = () => render({hourCycle: 24, defaultValue: parseTime('00:00')});
+
+HourCycle24.story = {
+  name: 'hourCycle: 24'
+};
+
+export const HourCycle12GranularityHour = () => render({hourCycle: 12, granularity: 'hour'});
+
+HourCycle12GranularityHour.story = {
+  name: 'hourCycle: 12, granularity: hour'
+};
+
+export const HourCycle24GranularityHour = () => render({hourCycle: 24, granularity: 'hour'});
+
+HourCycle24GranularityHour.story = {
+  name: 'hourCycle: 24, granularity: hour'
+};
+
+export const Zoned = () => render({defaultValue: parseZonedDateTime('2021-11-07T00:45-07:00[America/Los_Angeles]')});
+
+Zoned.story = {
+  name: 'zoned'
+};
+
+export const HideTimeZone = () => render({defaultValue: parseZonedDateTime('2021-11-07T00:45-07:00[America/Los_Angeles]'), hideTimeZone: true});
+
+HideTimeZone.story = {
+  name: 'hideTimeZone'
+};
+
+export const IsDisabled = () => render({isDisabled: true, value: new Time(2, 35)});
+
+IsDisabled.story = {
+  name: 'isDisabled'
+};
+
+export const IsQuietIsDisabled = () => render({isQuiet: true, isDisabled: true, value: new Time(2, 35)});
+
+IsQuietIsDisabled.story = {
+  name: 'isQuiet, isDisabled'
+};
+
+export const IsReadOnly = () => render({isReadOnly: true, value: new Time(2, 35)});
+
+IsReadOnly.story = {
+  name: 'isReadOnly'
+};
+
+export const AutoFocus = () => render({autoFocus: true});
+
+AutoFocus.story = {
+  name: 'autoFocus'
+};
+
+export const ValidationStateInvalid = () => render({validationState: 'invalid', value: new Time(2, 35)});
+
+ValidationStateInvalid.story = {
+  name: 'validationState: invalid'
+};
+
+export const ValidationStateValid = () => render({validationState: 'valid', value: new Time(2, 35)});
+
+ValidationStateValid.story = {
+  name: 'validationState: valid'
+};
+
+export const PlaceholderValue8Am = () => render({placeholderValue: new Time(8)});
+
+PlaceholderValue8Am.story = {
+  name: 'placeholderValue: 8 AM'
+};
+
+export const PlaceholderValue1980118AmZoned = () => render({placeholderValue: toZoned(new CalendarDateTime(1980, 1, 1, 8), 'America/Los_Angeles')});
+
+PlaceholderValue1980118AmZoned.story = {
+  name: 'placeholderValue: 1980/1/1 8AM, zoned'
+};
+
+export const MinValue8Am = () => render({minValue: new Time(8)});
+
+MinValue8Am.story = {
+  name: 'minValue: 8 AM'
+};
+
+export const MaxValue8Pm = () => render({maxValue: new Time(20)});
+
+MaxValue8Pm.story = {
+  name: 'maxValue: 8 PM'
+};
+
+export const MinValue8AmMaxValue8Pm = () => render({minValue: new Time(8), maxValue: new Time(20)});
+
+MinValue8AmMaxValue8Pm.story = {
+  name: 'minValue: 8 AM, maxValue: 8 PM'
+};
+
+export const AllTheEvents = () => render({onBlur: action('onBlur'), onFocus: action('onFocus'), onFocusChange: action('onFocusChange'), onKeyDown: action('onKeyDown'), onKeyUp: action('onKeyUp'), onOpenChange: action('onOpenChange')});
+
+AllTheEvents.story = {
+  name: 'all the events'
+};
+
+export function render(props = {}) {
   return (
     <TimeField
       label="Time"
