@@ -13,27 +13,40 @@
 import {Example} from '../stories/Example';
 import {Flex} from '@react-spectrum/layout';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 
-storiesOf('ActionBar', module)
-  .add(
-    'default',
-    () => (
-      <Flex gap="size-250">
-        <Example />
-        <Example defaultSelectedKeys={new Set(['Foo 1'])} />
-      </Flex>
-    )
-  )
-  .add(
-    'isEmphasized',
-    () => <Example isEmphasized defaultSelectedKeys={new Set(['Foo 1'])} />
-  )
-  .add(
-    'large width',
-    () => <Example isEmphasized tableWidth={800} isQuiet defaultSelectedKeys={new Set(['Foo 1'])} />
-  )
-  .add(
-    'collapsed icons',
-    () => <Example isEmphasized tableWidth={500} isQuiet defaultSelectedKeys={new Set(['Foo 1'])} />
-  );
+export default {
+  title: 'ActionBar'
+};
+
+export const Default = () => (
+  <Flex gap="size-250">
+    <Example />
+    <Example defaultSelectedKeys={new Set(['Foo 1'])} />
+  </Flex>
+);
+
+Default.story = {
+  name: 'default'
+};
+
+export const IsEmphasized = () => <Example isEmphasized defaultSelectedKeys={new Set(['Foo 1'])} />;
+
+IsEmphasized.story = {
+  name: 'isEmphasized'
+};
+
+export const LargeWidth = () => (
+  <Example isEmphasized tableWidth={800} isQuiet defaultSelectedKeys={new Set(['Foo 1'])} />
+);
+
+LargeWidth.story = {
+  name: 'large width'
+};
+
+export const CollapsedIcons = () => (
+  <Example isEmphasized tableWidth={500} isQuiet defaultSelectedKeys={new Set(['Foo 1'])} />
+);
+
+CollapsedIcons.story = {
+  name: 'collapsed icons'
+};
