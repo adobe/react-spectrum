@@ -150,6 +150,7 @@ html, body {
   --anatomy-gray-100: #f4f6fc;
   --anatomy-gray-75: #FDFDFE;
   --anatomy-gray-50: #FFFFFF;
+  --docsearch-logo-color: #5468FF;
 }
 
 .dark {
@@ -167,6 +168,7 @@ html, body {
   --anatomy-gray-100: #141e35;
   --anatomy-gray-75: #0e1525;
   --anatomy-gray-50: #0c1220;
+  --docsearch-logo-color: #fff;
   .example {
     background-color: var(--spectrum-global-color-gray-100);
   }
@@ -679,6 +681,7 @@ h2.sectionHeader {
 }
 
 .pageHeader {
+  gap: var(--spectrum-global-dimension-size-100);
   position: fixed;
   top: 0;
   display: inline-flex;
@@ -693,6 +696,84 @@ h2.sectionHeader {
   [dir='rtl'] & {
     left: 0;
   }
+
+  z-index: 1;
+}
+
+.docSearchBoxThemeProvider {
+  height: var(--spectrum-global-dimension-size-400);
+
+  .docSearchBox {
+    margin-inline-start: auto;
+    max-width: var(--spectrum-global-dimension-size-3000);
+    width: calc(
+      100vw
+      - 2 * var(--spectrum-actionbutton-min-width, var(--spectrum-global-dimension-size-400))
+      - 4 * var(--spectrum-alias-border-size-thin)
+      - 4 * var(--spectrum-global-dimension-size-100)
+    );
+    min-width: calc(
+      var(--spectrum-global-dimension-size-225)
+      + 2 * var(--spectrum-global-dimension-size-150)
+      + 2 * var(--spectrum-alias-border-size-thin)
+    );
+  }
+}
+
+.docSearchBoxMark {
+  font-weight: bold;
+  background: var(--spectrum-alias-text-highlight-color);
+  color: var(--spectrum-global-color-blue-700);
+}
+
+.docSearchItemIndent {
+  margin-inline-start: var(--spectrum-global-dimension-size-325);
+}
+
+.docSearchFooter {
+  align-items: center;
+  display: flex;
+  flex-direction: row-reverse;
+  flex-shrink: 0;
+  justify-content: space-between;
+
+  border-top-color: var(--spectrum-global-color-gray-300);
+  border-top-style: solid;
+  border-top-width: var(--spectrum-alias-border-size-thick);
+  margin-left: var(--spectrum-global-dimension-size-150);
+  margin-right: var(--spectrum-global-dimension-size-150);
+  margin-top: var(--spectrum-global-dimension-size-40);
+}
+
+.docSearchLogo {
+  padding-top: var(--spectrum-global-dimension-size-75);
+  padding-bottom: var(--spectrum-global-dimension-size-75);
+}
+
+.docSearchLogo a {
+  color: var(--spectrum-global-color-gray-700);
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.docSearchLogoLabel {
+  font-size: var(--spectrum-global-dimension-font-size-75);
+}
+
+.docSearchLogo a:hover .docSearchLogoLabel,
+.docSearchLogo a:focus .docSearchLogoLabel {
+  text-decoration: underline;
+}
+
+.docSearchLogo svg {
+  color: var(--docsearch-logo-color);
+  margin-left: var(--spectrum-global-dimension-size-100);
+}
+
+body.docsearch-open [data-testid="popover"] {
+  position: fixed !important;
+  top: 38px !important;
 }
 
 /* hamburger menu should be hidden so that it doesn't receive focus before the sidenav */
@@ -768,6 +849,26 @@ h2.sectionHeader {
   content: ' • ';
 }
 
+/* Show line under page header and push main down to make room for search. */
+@media (max-width: 1780px) {
+  html, body {
+    scroll-padding-top: var(--spectrum-global-dimension-size-600);
+  }
+
+  main {
+    margin-top: 48px;
+  }
+
+  .pageHeader {
+    border-bottom: 1px solid var(--spectrum-global-color-gray-200);
+    background: var(--page-background);
+    z-index: 50;
+    display: flex;
+    justify-content: flex-end;
+    left: 256px;
+  }
+}
+
 @media (max-width: 750px) {
   .float {
     float: none;
@@ -785,6 +886,24 @@ h2.sectionHeader {
 
   .propTable td[data-column="CSS Selector"] code {
     white-space: normal;
+  }
+}
+
+@media (max-width: 375px) {
+  .docSearchBoxThemeProvider {
+    .docSearchBox {
+      max-width: unset;
+      > div,
+      > div > div {
+        min-width: calc(
+          var(--spectrum-global-dimension-size-150)
+          + var(--spectrum-global-dimension-size-225)
+          + var(--spectrum-global-dimension-size-65)
+          + var(--spectrum-global-dimension-size-350)
+        );
+        width: 100%;
+      }
+    }
   }
 }
 
@@ -905,8 +1024,11 @@ h2.sectionHeader {
     background: var(--page-background);
     z-index: 50;
     display: flex;
+    justify-content: space-between;
+    left: 0;
     width: 100%;
   }
+
   .hamburgerButton {
     display: inline-flex;
   }

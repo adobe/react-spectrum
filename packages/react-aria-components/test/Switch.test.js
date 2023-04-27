@@ -29,9 +29,24 @@ describe('Switch', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole} =  render(<Switch data-foo="bar">Test</Switch>);
+    let {getByRole} = render(<Switch data-foo="bar">Test</Switch>);
     let s = getByRole('switch');
     expect(s).toHaveAttribute('data-foo', 'bar');
+  });
+
+  it('should support render props', () => {
+    let {getByRole} = render(
+      <Switch>{({isSelected}) => isSelected ? 'On' : 'Off'}</Switch>
+    );
+    let s = getByRole('switch');
+    let label = s.closest('label');
+    expect(s).not.toBeChecked();
+    expect(label).toHaveTextContent('Off');
+    
+    userEvent.click(s);
+    
+    expect(s).toBeChecked();
+    expect(label).toHaveTextContent('On');
   });
 
   it('should support slot', () => {

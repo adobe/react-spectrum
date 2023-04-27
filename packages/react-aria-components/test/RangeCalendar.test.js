@@ -12,7 +12,7 @@
 
 import {act, fireEvent, render, within} from '@react-spectrum/test-utils';
 import {Button, CalendarCell, CalendarGrid, CalendarGridBody, CalendarGridHeader, CalendarHeaderCell, Heading, RangeCalendar, RangeCalendarContext} from 'react-aria-components';
-import {getLocalTimeZone, startOfMonth, startOfWeek, today} from '@internationalized/date';
+import {CalendarDate, getLocalTimeZone, startOfMonth, startOfWeek, today} from '@internationalized/date';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -124,6 +124,31 @@ describe('RangeCalendar', () => {
     let group = getByRole('group');
     expect(group).toHaveAttribute('slot', 'test');
     expect(group).toHaveAttribute('aria-label', expect.stringContaining('test'));
+  });
+
+  it('should support render props', () => {
+    let {getByRole} = render(
+      <RangeCalendar
+        aria-label="Trip dates"
+        minValue={new CalendarDate(2023, 1, 1)}
+        defaultValue={{start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 2, 10)}}>
+        {({validationState}) => (
+          <>
+            <header>
+              <Button slot="previous">◀</Button>
+              <Heading />
+              <Button slot="next">▶</Button>
+            </header>
+            <CalendarGrid data-validation-state={validationState}>
+              {(date) => <CalendarCell date={date} />}
+            </CalendarGrid>
+          </>
+        )}
+      </RangeCalendar>
+    );
+
+    let grid = getByRole('grid');
+    expect(grid).toHaveAttribute('data-validation-state', 'invalid');
   });
 
   it('should support multi-month calendars', () => {
