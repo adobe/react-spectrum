@@ -13,26 +13,31 @@
 import {Grid} from './example';
 import {Item} from '@react-stately/collections';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
 
-storiesOf('useGrid', module)
-  .add(
-    'gridFocusMode = row, cellFocusMode = cell',
-    () => render({gridFocusMode: 'row', cellFocusMode: 'cell'})
-  )
-  .add(
-    'gridFocusMode = row, cellFocusMode = child',
-    () => render({gridFocusMode: 'row', cellFocusMode: 'child'})
-  )
-  .add(
-    'gridFocusMode = cell, cellFocusMode = child',
-    () => render({gridFocusMode: 'cell', cellFocusMode: 'child'})
-  )
-  .add(
-    'gridFocusMode = cell, cellFocusMode = cell',
-    () => render({gridFocusMode: 'cell', cellFocusMode: 'cell'})
-  );
+export default {
+  title: 'useGrid'
+};
+
+export const GridFocusModeRowCellFocusModeCell = {
+  render: () => render({gridFocusMode: 'row', cellFocusMode: 'cell'}),
+  name: 'gridFocusMode = row, cellFocusMode = cell'
+};
+
+export const GridFocusModeRowCellFocusModeChild = {
+  render: () => render({gridFocusMode: 'row', cellFocusMode: 'child'}),
+  name: 'gridFocusMode = row, cellFocusMode = child'
+};
+
+export const GridFocusModeCellCellFocusModeChild = {
+  render: () => render({gridFocusMode: 'cell', cellFocusMode: 'child'}),
+  name: 'gridFocusMode = cell, cellFocusMode = child'
+};
+
+export const GridFocusModeCellCellFocusModeCell = {
+  render: () => render({gridFocusMode: 'cell', cellFocusMode: 'cell'}),
+  name: 'gridFocusMode = cell, cellFocusMode = cell'
+};
 
 function render(props = {}) {
   return (

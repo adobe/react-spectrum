@@ -39,7 +39,7 @@ export const DragOutOfTable: TableStory = {
         tableViewProps={args} />
     </Flex>
   ),
-  storyName: 'Drag out of table'
+  name: 'Drag out of table'
 };
 export const CustomDragPreview: TableStory = {
   args: {
@@ -75,7 +75,7 @@ export const DragWithinTable: TableStory = {
       <ReorderExample tableViewProps={args} onDrop={action('drop')} onDragStart={action('dragStart')} onDragEnd={action('dragEnd')} />
     </Flex>
   ),
-  storyName: 'Drag within table (Reorder)'
+  name: 'Drag within table (Reorder)'
 };
 
 export const DragOntoRow: TableStory = {
@@ -87,7 +87,7 @@ export const DragOntoRow: TableStory = {
       <DragOntoRowExample tableViewProps={args} />
     </Flex>
   ),
-  storyName: 'Drag onto row',
+  name: 'Drag onto row',
   parameters: {
     description: {
       data: 'Drag item types onto folder types.'
@@ -104,7 +104,7 @@ export const DragBetweenTables: TableStory = {
       <DragBetweenTablesExample {...args} />
     </Flex>
   ),
-  storyName: 'Drag between tables'
+  name: 'Drag between tables'
 };
 
 export const DragBetweenTablesRootOnly: TableStory = {
@@ -116,7 +116,7 @@ export const DragBetweenTablesRootOnly: TableStory = {
       <DragBetweenTablesRootOnlyExample tableViewProps={args} />
     </Flex>
   ),
-  storyName: 'Drag between tables (Root only)'
+  name: 'Drag between tables (Root only)'
 };
 
 export const DraggableRowsCopyLink: TableStory = {
@@ -129,7 +129,7 @@ export const DraggableRowsCopyLink: TableStory = {
       <DragExample tableViewProps={{onAction: action('onAction'), ...args}} dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd'), getAllowedDropOperations: () => { getAllowedDropOperationsAction(); return ['copy', 'link', 'cancel'];}}} />
     </Flex>
   ),
-  storyName: 'draggable rows, allow copy and link',
+  name: 'draggable rows, allow copy and link',
   parameters: {
     description: {data: 'Allows copy, link, and cancel operations. Copy should be the default operation, and link should be the operation when the CTRL key is held while dragging.'}
   }

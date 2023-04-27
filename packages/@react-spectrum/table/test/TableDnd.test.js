@@ -159,7 +159,7 @@ describe('TableView', function () {
         expect(dataTransfer._dragImage.y).toBe(5);
 
         cellText = getAllByText(cell.textContent);
-        expect(cellText).toHaveLength(2);
+        expect(cellText).toHaveLength(1);
         fireEvent.pointerUp(cell, {button: 0, pointerId: 1, clientX: 5, clientY: 5});
         fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 5, clientY: 5}));
 

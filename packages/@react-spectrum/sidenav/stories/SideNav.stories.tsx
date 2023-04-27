@@ -15,103 +15,128 @@ import {Item, Section} from '@react-spectrum/tree';
 import React from 'react';
 import {SideNav} from '../';
 import snStyles from './SideNav.css';
-import {storiesOf} from '@storybook/react';
 
-let flatItems = [
-  {name: 'Aardvark'},
-  {name: 'Kangaroo'},
-  {name: 'Snake'}
-];
+let flatItems = [{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}];
 
 let withSection = [
-  {name: 'Animals', children: [
-    {name: 'Aardvark'},
-    {name: 'Kangaroo'},
-    {name: 'Snake'}
-  ]},
-  {name: 'People', children: [
-    {name: 'Danni'},
-    {name: 'Devon'},
-    {name: 'Ross'}
-  ]}
+  {name: 'Animals', children: [{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]},
+  {name: 'People', children: [{name: 'Danni'}, {name: 'Devon'}, {name: 'Ross'}]}
 ];
 
-storiesOf('SideNav', module)
-  .add(
-    'Default',
-    () => (
-      <SideNav items={flatItems} UNSAFE_className={snStyles['storybook-SideNav']} onSelectionChange={action('onSelectionChange')}>
-        {item => <Item key={item.name}>{item.name}</Item>}
-      </SideNav>
-    )
-  )
-  .add(
-    'with default selected item',
-    () => (
-      <SideNav selectionMode="single" defaultSelectedKeys={['Kangaroo']} items={flatItems} UNSAFE_className={snStyles['storybook-SideNav']} onSelectionChange={action('onSelectionChange')}>
-        {item => <Item key={item.name}>{item.name}</Item>}
-      </SideNav>
-    )
-  )
-  .add(
-    'with selected item (controlled)',
-    () => (
-      <SideNav selectionMode="single" selectedKeys={['Kangaroo']} items={flatItems} UNSAFE_className={snStyles['storybook-SideNav']} onSelectionChange={action('onSelectionChange')}>
-        {item => <Item key={item.name}>{item.name}</Item>}
-      </SideNav>
-    )
-  )
-  .add(
-    'with disabled items',
-    () => (
-      <SideNav selectionMode="single" disabledKeys={['Kangaroo']} UNSAFE_className={snStyles['storybook-SideNav']} onSelectionChange={action('onSelectionChange')} items={flatItems}>
-        {item => <Item key={item.name}>{item.name}</Item>}
-      </SideNav>
-    )
-  )
-  .add(
-    'with keyboard selection wrapping',
-    () => (
-      <SideNav selectionMode="single" items={flatItems} UNSAFE_className={snStyles['storybook-SideNav']} onSelectionChange={action('onSelectionChange')} shouldFocusWrap>
-        {item => <Item key={item.name}>{item.name}</Item>}
-      </SideNav>
-    )
-  )
-  .add(
-    'Default with sections',
-    () => (
-      <SideNav UNSAFE_className={snStyles['storybook-SideNav']} items={withSection} onSelectionChange={action('onSelectionChange')}>
-        {item => (
-          <Section key={item.name} items={item.children} title={item.name}>
-            {item => <Item key={item.name}>{item.name}</Item>}
-          </Section>
-        )}
-      </SideNav>
-    )
-  )
-  .add(
-    'Static',
-    () => (
-      <SideNav UNSAFE_className={snStyles['storybook-SideNav']} onSelectionChange={action('onSelectionChange')}>
-        <Item>Foo</Item>
-        <Item>Bar</Item>
-        <Item>Bob</Item>
-        <Item>Alice</Item>
-      </SideNav>
-    )
-  )
-  .add(
-    'Static with sections',
-    () => (
-      <SideNav UNSAFE_className={snStyles['storybook-SideNav']} onSelectionChange={action('onSelect')}>
-        <Section title="Section 1">
-          <Item>Foo 1</Item>
-          <Item>Bar 1</Item>
-        </Section>
-        <Section title="Section 2">
-          <Item>Foo 2</Item>
-          <Item>Bar 2</Item>
-        </Section>
-      </SideNav>
-    )
+export default {
+  title: 'SideNav'
+};
+
+export const Default = () => (
+  <SideNav
+    items={flatItems}
+    UNSAFE_className={snStyles['storybook-SideNav']}
+    onSelectionChange={action('onSelectionChange')}>
+    {(item) => <Item key={item.name}>{item.name}</Item>}
+  </SideNav>
 );
+
+export const WithDefaultSelectedItem = () => (
+  <SideNav
+    selectionMode="single"
+    defaultSelectedKeys={['Kangaroo']}
+    items={flatItems}
+    UNSAFE_className={snStyles['storybook-SideNav']}
+    onSelectionChange={action('onSelectionChange')}>
+    {(item) => <Item key={item.name}>{item.name}</Item>}
+  </SideNav>
+);
+
+WithDefaultSelectedItem.story = {
+  name: 'with default selected item'
+};
+
+export const WithSelectedItemControlled = () => (
+  <SideNav
+    selectionMode="single"
+    selectedKeys={['Kangaroo']}
+    items={flatItems}
+    UNSAFE_className={snStyles['storybook-SideNav']}
+    onSelectionChange={action('onSelectionChange')}>
+    {(item) => <Item key={item.name}>{item.name}</Item>}
+  </SideNav>
+);
+
+WithSelectedItemControlled.story = {
+  name: 'with selected item (controlled)'
+};
+
+export const WithDisabledItems = () => (
+  <SideNav
+    selectionMode="single"
+    disabledKeys={['Kangaroo']}
+    UNSAFE_className={snStyles['storybook-SideNav']}
+    onSelectionChange={action('onSelectionChange')}
+    items={flatItems}>
+    {(item) => <Item key={item.name}>{item.name}</Item>}
+  </SideNav>
+);
+
+WithDisabledItems.story = {
+  name: 'with disabled items'
+};
+
+export const WithKeyboardSelectionWrapping = () => (
+  <SideNav
+    selectionMode="single"
+    items={flatItems}
+    UNSAFE_className={snStyles['storybook-SideNav']}
+    onSelectionChange={action('onSelectionChange')}
+    shouldFocusWrap>
+    {(item) => <Item key={item.name}>{item.name}</Item>}
+  </SideNav>
+);
+
+WithKeyboardSelectionWrapping.story = {
+  name: 'with keyboard selection wrapping'
+};
+
+export const DefaultWithSections = () => (
+  <SideNav
+    UNSAFE_className={snStyles['storybook-SideNav']}
+    items={withSection}
+    onSelectionChange={action('onSelectionChange')}>
+    {(item) => (
+      <Section key={item.name} items={item.children} title={item.name}>
+        {(item) => <Item key={item.name}>{item.name}</Item>}
+      </Section>
+    )}
+  </SideNav>
+);
+
+DefaultWithSections.story = {
+  name: 'Default with sections'
+};
+
+export const Static = () => (
+  <SideNav
+    UNSAFE_className={snStyles['storybook-SideNav']}
+    onSelectionChange={action('onSelectionChange')}>
+    <Item>Foo</Item>
+    <Item>Bar</Item>
+    <Item>Bob</Item>
+    <Item>Alice</Item>
+  </SideNav>
+);
+
+export const StaticWithSections = () => (
+  <SideNav UNSAFE_className={snStyles['storybook-SideNav']} onSelectionChange={action('onSelect')}>
+    <Section title="Section 1">
+      <Item>Foo 1</Item>
+      <Item>Bar 1</Item>
+    </Section>
+    <Section title="Section 2">
+      <Item>Foo 2</Item>
+      <Item>Bar 2</Item>
+    </Section>
+  </SideNav>
+);
+
+StaticWithSections.story = {
+  name: 'Static with sections'
+};

@@ -59,7 +59,7 @@ export function Provider<A, B, C, D, E, F, G, H>({values, children}: ProviderPro
 export interface StyleProps {
   /** The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. */
   className?: string,
-  /** The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/Element/style) for the element. */
+  /** The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the element. */
   style?: CSSProperties
 }
 
@@ -71,7 +71,7 @@ export interface DOMProps extends StyleProps {
 export interface StyleRenderProps<T> {
   /** The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state. */
   className?: string | ((values: T) => string),
-  /** The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/Element/style) for the element. A function may be provided to compute the style based on component state. */
+  /** The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the element. A function may be provided to compute the style based on component state. */
   style?: CSSProperties | ((values: T) => CSSProperties)
 }
 
