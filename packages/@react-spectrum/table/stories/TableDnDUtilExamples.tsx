@@ -15,15 +15,8 @@ let itemProcessor = async (items, acceptedDragTypes) => {
   for (let item of items) {
     for (let type of acceptedDragTypes) {
       if (item.kind === 'text' && item.types.has(type)) {
-        let processedItem;
         text = await item.getText(type);
-        processedItem = JSON.parse(text);
-        // If processed item has a parent key, then it is from a section. We need to extract its original value of the item in these
-        // cases
-        if (processedItem?.parentKey != null) {
-          processedItem = processedItem.value;
-        }
-        processedItems.push(processedItem);
+        processedItems.push(JSON.parse(text));
         break;
       } else if (item.types.size === 1 && item.types.has('text/plain')) {
         // Fallback for Chrome Android case: https://bugs.chromium.org/p/chromium/issues/detail?id=1293803
@@ -492,7 +485,6 @@ export function DragBetweenTablesComplex(props) {
       } = e;
       action('onInsertTable1')(e);
       let processedItems = await itemProcessor(items, acceptedDragTypes);
-
       if (target.dropPosition === 'before') {
         list1.insertBefore(target.key, ...processedItems);
       } else if (target.dropPosition === 'after') {
@@ -864,16 +856,25 @@ export function DragBetweenTablesSectionsComplex(props) {
       } = e;
       action('onInsertTable1')(e);
       let processedItems = await itemProcessor(items, acceptedDragTypes);
+      // TODO: additional work to make useTreeData handle updating .value easier is in https://github.com/adobe/react-spectrum/pull/4444/files
+      let itemsToAppend = processedItems.map(item => ({
+        ...item.value,
+        childNodes: item.value.childNodes ? item.children.map(child => child.value) : undefined
+      }));
       if (target.dropPosition === 'before') {
-        list1.insertBefore(target.key, ...processedItems);
+        list1.insertBefore(target.key, ...itemsToAppend);
       } else if (target.dropPosition === 'after') {
-        list1.insertAfter(target.key, ...processedItems);
+        list1.insertAfter(target.key, ...itemsToAppend);
       }
     },
     onRootDrop: async (e) => {
       action('onRootDropTable1')(e);
       let processedItems = await itemProcessor(e.items, acceptedDragTypes);
-      list1.append('a', ...processedItems);
+      let itemsToAppend = processedItems.map(item => ({
+        ...item.value,
+        childNodes: item.value.childNodes ? item.children.map(child => child.value) : undefined
+      }));
+      list1.append('a', ...itemsToAppend);
     },
     onItemDrop: async (e) => {
       let {
@@ -884,13 +885,16 @@ export function DragBetweenTablesSectionsComplex(props) {
       } = e;
       action('onItemDropTable1')(e);
       let processedItems = await itemProcessor(items, acceptedDragTypes);
-      let targetItem = list1.getItem(target.key).value;
-      list1.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
-
+      let itemsToAppend = processedItems.map(item => ({
+        ...item.value,
+        childNodes: item.value.childNodes ? item.children.map(child => child.value) : undefined
+      }));
+      // TODO: Investigation as to why .remove must be called before .append to be done in https://github.com/adobe/react-spectrum/pull/4444/files
       if (isInternal && dropOperation === 'move') {
-        let keysToRemove = processedItems.map(item => item.identifier);
+        let keysToRemove = itemsToAppend.map(item => item.identifier);
         list1.remove(...keysToRemove);
       }
+      list1.append(target.key, ...itemsToAppend);
     },
     acceptedDragTypes,
     onDragEnd: (e) => {
@@ -919,7 +923,6 @@ export function DragBetweenTablesSectionsComplex(props) {
       if (item.value.type !== 'unique_type') {
         dragItem['text/plain'] = itemString;
       }
-
       return dragItem;
     }),
     onInsert: async (e) => {
@@ -929,11 +932,15 @@ export function DragBetweenTablesSectionsComplex(props) {
       } = e;
       action('onInsertTable2')(e);
       let processedItems = await itemProcessor(items, acceptedDragTypes);
+      let itemsToAppend = processedItems.map(item => ({
+        ...item.value,
+        childNodes: item.value.childNodes ? item.children.map(child => child.value) : undefined
+      }));
 
       if (target.dropPosition === 'before') {
-        list2.insertBefore(target.key, ...processedItems);
+        list2.insertBefore(target.key, ...itemsToAppend);
       } else if (target.dropPosition === 'after') {
-        list2.insertAfter(target.key, ...processedItems);
+        list2.insertAfter(target.key, ...itemsToAppend);
       }
     },
     onReorder: async (e) => {
@@ -946,18 +953,20 @@ export function DragBetweenTablesSectionsComplex(props) {
 
       let itemsToCopy = [];
       for (let key of keys) {
-        let item = {...list2.getItem(key).value};
+        let item = list2.getItem(key);
+        let itemCopy = {
+          ...item.value,
+          childNodes: item.value.childNodes ? item.children.map(child => child.value) : undefined
+        };
         if (dropOperation === 'copy') {
-          item.identifier = Math.random().toString(36).slice(2);
+          itemCopy.identifier = Math.random().toString(36).slice(2);
         }
-        itemsToCopy.push(item);
+        itemsToCopy.push(itemCopy);
       }
 
       if (target.dropPosition === 'before') {
         if (dropOperation === 'move') {
-          // TODO: this breaks if moving an item(s) to positions immediately adjacent to itself, will
-          // need to update useTreeData so it has something like move from useListData
-          // for now perhaps use useTreeData.move and do a move for each and calculate a new index everytime?
+          // TODO: work to add moveBefore/after methods to useTreeData to be done in https://github.com/adobe/react-spectrum/pull/4444/files
           list2.remove(...keys);
           list2.insertBefore(target.key, ...itemsToCopy);
         } else if (dropOperation === 'copy') {
@@ -975,7 +984,11 @@ export function DragBetweenTablesSectionsComplex(props) {
     onRootDrop: async (e) => {
       action('onRootDropTable2')(e);
       let processedItems = await itemProcessor(e.items, acceptedDragTypes);
-      list2.append('c', ...processedItems);
+      let itemsToAppend = processedItems.map(item => ({
+        ...item.value,
+        childNodes: item.value.childNodes ? item.children.map(child => child.value) : undefined
+      }));
+      list2.append('c', ...itemsToAppend);
     },
     onItemDrop: async (e) => {
       let {
@@ -985,15 +998,19 @@ export function DragBetweenTablesSectionsComplex(props) {
         dropOperation
       } = e;
       action('onItemDropTable2')(e);
-
       let processedItems = await itemProcessor(items, acceptedDragTypes);
-      let targetItem = list2.getItem(target.key).value;
-      list2.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
-
+      // Now that we are returning the entire item tree node from tree, need to reformat the items into the TableItems format
+      // that the tree methods understand.
+      let itemsToAppend = processedItems.map(item => ({
+        ...item.value,
+        childNodes: item.value.childNodes ? item.children.map(child => child.value) : undefined
+      }));
       if (isInternal && dropOperation === 'move') {
-        let keysToRemove = processedItems.map(item => item.identifier);
+        let keysToRemove = itemsToAppend.map(item => item.identifier);
         list2.remove(...keysToRemove);
       }
+
+      list2.append(target.key, ...itemsToAppend);
     },
     acceptedDragTypes,
     onDragEnd: (e) => {
