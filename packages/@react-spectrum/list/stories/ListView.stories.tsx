@@ -148,7 +148,7 @@ export default {
 
 export type ListViewStory = ComponentStoryObj<typeof ListView>;
 
-export const DefaultListBox: ListViewStory = {
+export const Default: ListViewStory = {
   render: (args) => (
     <ListView width="250px" aria-label="default ListView" {...args}>
       <Item textValue="Adobe Photoshop">Adobe Photoshop</Item>
