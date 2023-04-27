@@ -562,12 +562,11 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
       {DragPreview && isTableDraggable &&
         <DragPreview ref={preview}>
           {() => {
-            let item = state.collection.getItem(dragState.draggedKey);
-            let rowHeaderColumnKeys = state.collection.rowHeaderColumnKeys;
             let itemCount = dragState.draggingKeys.size;
             let maxWidth = bodyRef.current.getBoundingClientRect().width;
-            let children = state.collection.getChildren(item.key);
-            return <SpectrumDragPreview layout={layout} item={item} children={children} itemCount={itemCount} density={density} direction={direction} maxWidth={maxWidth} rowHeaderColumnKeys={rowHeaderColumnKeys} />;
+            let height = ROW_HEIGHTS[density][scale];
+            let itemText = state.collection.getTextValue(dragState.draggedKey);
+            return <SpectrumDragPreview itemText={itemText} itemCount={itemCount} height={height} maxWidth={maxWidth} />;
           }}
         </DragPreview>
       }
