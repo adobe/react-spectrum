@@ -78,9 +78,7 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
           }
         }]
       ]}>
-      <div {...renderProps} ref={ref} slot={props.slot}>
-        {props.children}
-      </div>
+      <div {...renderProps} ref={ref} slot={props.slot} />
     </Provider>
   );
 }
@@ -163,9 +161,7 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
           }
         }]
       ]}>
-      <div {...renderProps} ref={ref} slot={props.slot}>
-        {props.children}
-      </div>
+      <div {...renderProps} ref={ref} slot={props.slot} />
     </Provider>
   );
 }

@@ -13,7 +13,7 @@
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
 import {Item, Picker} from '@react-spectrum/picker';
-import {Meta, Story} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {SearchWithin} from '../';
@@ -59,7 +59,7 @@ const meta: Meta<SpectrumSearchWithinProps> = {
 
 export default meta;
 
-const Template: Story<SpectrumSearchWithinProps> = (args) => (
+const Template: StoryFn<SpectrumSearchWithinProps> = (args) => (
   <Grid columns={repeat(4, '1fr')} autoFlow="row" gap="size-200">
     {combinations.map(c => {
       let key = Object.keys(c).map(k => shortName(k)).join(' ');
@@ -80,7 +80,7 @@ const Template: Story<SpectrumSearchWithinProps> = (args) => (
 );
 
 // Chromatic can't handle the size of the side label story so removed some extraneous props that don't matter for side label case.
-const TemplateSideLabel: Story<SpectrumSearchWithinProps> = (args) => (
+const TemplateSideLabel: StoryFn<SpectrumSearchWithinProps> = (args) => (
   <Grid columns={repeat(2, '1fr')} autoFlow="row" gap="size-200">
     {combinations.map(c => {
       let key = Object.keys(c).map(k => shortName(k)).join(' ');
@@ -100,18 +100,26 @@ const TemplateSideLabel: Story<SpectrumSearchWithinProps> = (args) => (
   </Grid>
 );
 
-export const PropDefaults = Template.bind({});
-PropDefaults.storyName = 'default';
-PropDefaults.args = {};
+export const PropDefaults = {
+  render: Template,
+  name: 'default',
+  args: {}
+};
 
-export const PropLabelSide = TemplateSideLabel.bind({});
-PropLabelSide.storyName = 'label side';
-PropLabelSide.args = {...PropDefaults.args, labelPosition: 'side'};
+export const PropLabelSide = {
+  render: TemplateSideLabel,
+  name: 'label side',
+  args: {...PropDefaults.args, labelPosition: 'side'}
+};
 
-export const PropNoLabel = TemplateSideLabel.bind({});
-PropNoLabel.storyName = 'no label';
-PropNoLabel.args = {...PropDefaults.args, label: undefined, 'aria-label': 'Aria Label'};
+export const PropNoLabel = {
+  render: TemplateSideLabel,
+  name: 'no label',
+  args: {...PropDefaults.args, label: undefined, 'aria-label': 'Aria Label'}
+};
 
-export const PropCustomWidth = Template.bind({});
-PropCustomWidth.storyName = 'custom width';
-PropCustomWidth.args = {...PropDefaults.args, width: 300};
+export const PropCustomWidth = {
+  render: Template,
+  name: 'custom width',
+  args: {...PropDefaults.args, width: 300}
+};
