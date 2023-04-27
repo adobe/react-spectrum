@@ -206,7 +206,7 @@ export const KeyboardNavigationInsidePortalNoContain = {
 
 export const IgnoreRestoreFocus = {
   render: () => <IgnoreRestoreFocusExample />
-}
+};
 
 export const FocusableFirstInScope = {
   render: () => <FocusableFirstInScopeExample />
