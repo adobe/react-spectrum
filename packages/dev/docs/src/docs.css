@@ -126,6 +126,14 @@
   font-family: "adobe-clean-serif",sans-serif;
 }
 
+:root {
+  overflow-y:scroll !important;
+}
+
+html {
+  padding-right: 0 !important;
+}
+
 html, body {
   margin: 0;
   text-size-adjust: none;
