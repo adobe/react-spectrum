@@ -17,7 +17,7 @@ import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils'
 import {createLandmarkController, useLandmark} from '../';
 import {Flex} from '@react-spectrum/layout';
 import {Link} from '@react-spectrum/link';
-import {Meta, Story} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import React, {SyntheticEvent, useEffect, useMemo, useRef} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import styles from './index.css';
@@ -32,15 +32,15 @@ const meta: Meta<StoryProps> = {
 
 export default meta;
 
-const Template = (): Story<StoryProps> => (props) => <Example {...props} />;
-const NestedTemplate = (): Story<StoryProps> => (props) => <NestedExample {...props} />;
-const TableTemplate = (): Story<StoryProps> => (props) => <TableExample {...props} />;
-const ApplicationTemplate = (): Story<StoryProps> => (props) => <ApplicationExample {...props} />;
-const DuplicateRolesWithLabelsTemplate = (): Story<StoryProps> => (props) => <DuplicateRolesWithLabelsExample {...props} />;
-const DuplicateRolesWithNoLabelsTemplate = (): Story<StoryProps> => (props) => <DuplicateRolesNoLabelExample {...props} />;
-const DuplicateRolesWithSameLabelsTemplate = (): Story<StoryProps> => (props) => <DuplicateRolesWithSameLabelsExample {...props} />;
-const OneWithNoFocusableChildrenExampleTemplate = (): Story<StoryProps> => (props) => <OneWithNoFocusableChildrenExample {...props} />;
-const AllWithNoFocusableChildrenExampleTemplate = (): Story<StoryProps> => (props) => <AllWithNoFocusableChildrenExample {...props} />;
+const Template = (props) => <Example {...props} />;
+const NestedTemplate = (props) => <NestedExample {...props} />;
+const TableTemplate = (props) => <TableExample {...props} />;
+const ApplicationTemplate = (props) => <ApplicationExample {...props} />;
+const DuplicateRolesWithLabelsTemplate = (props) => <DuplicateRolesWithLabelsExample {...props} />;
+const DuplicateRolesWithNoLabelsTemplate = (props) => <DuplicateRolesNoLabelExample {...props} />;
+const DuplicateRolesWithSameLabelsTemplate = (props) => <DuplicateRolesWithSameLabelsExample {...props} />;
+const OneWithNoFocusableChildrenExampleTemplate = (props) => <OneWithNoFocusableChildrenExample {...props} />;
+const AllWithNoFocusableChildrenExampleTemplate = (props) => <AllWithNoFocusableChildrenExample {...props} />;
 
 function Main(props) {
   let ref = useFocusableRef(null);
@@ -419,31 +419,40 @@ function IframeExample() {
   );
 }
 
-export const FlatLandmarks = Template().bind({});
-FlatLandmarks.args = {};
+export const FlatLandmarks = {
+  render: Template
+};
 
-export const NestedLandmarks = NestedTemplate().bind({});
-NestedLandmarks.args = {};
+export const NestedLandmarks = {
+  render: NestedTemplate
+};
 
-export const TableLandmark = TableTemplate().bind({});
-TableLandmark.args = {};
+export const TableLandmark = {
+  render: TableTemplate
+};
 
-export const ApplicationWithLandmarks = ApplicationTemplate().bind({});
-ApplicationWithLandmarks.args = {};
+export const ApplicationWithLandmarks = {
+  render: ApplicationTemplate
+};
 
-export const DuplicateRolesWithLabels = DuplicateRolesWithLabelsTemplate().bind({});
-DuplicateRolesWithLabels.args = {};
+export const DuplicateRolesWithLabels = {
+  render: DuplicateRolesWithLabelsTemplate
+};
 
-export const DuplicateRolesWithNoLabels = DuplicateRolesWithNoLabelsTemplate().bind({});
-DuplicateRolesWithNoLabels.args = {};
+export const DuplicateRolesWithNoLabels = {
+  render: DuplicateRolesWithNoLabelsTemplate
+};
 
-export const DuplicateRolesWithSameLabels = DuplicateRolesWithSameLabelsTemplate().bind({});
-DuplicateRolesWithSameLabels.args = {};
+export const DuplicateRolesWithSameLabels = {
+  render: DuplicateRolesWithSameLabelsTemplate
+};
 
-export const OneWithNoFocusableChildren = OneWithNoFocusableChildrenExampleTemplate().bind({});
-OneWithNoFocusableChildren.args = {};
+export const OneWithNoFocusableChildren = {
+  render: OneWithNoFocusableChildrenExampleTemplate
+};
 
-export const AllWithNoFocusableChildren = AllWithNoFocusableChildrenExampleTemplate().bind({});
-AllWithNoFocusableChildren.args = {};
+export const AllWithNoFocusableChildren = {
+  render: AllWithNoFocusableChildrenExampleTemplate
+};
 
 export {IframeExample};
