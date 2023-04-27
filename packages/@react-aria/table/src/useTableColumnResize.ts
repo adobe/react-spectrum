@@ -21,6 +21,7 @@ import intlMessages from '../intl/*.json';
 import {TableColumnResizeState} from '@react-stately/table';
 import {useInteractionModality, useKeyboard, useMove, usePress} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
 export interface TableColumnResizeAria {
   /** Props for the visually hidden input element. */
@@ -236,6 +237,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       }
     }
   });
+  let {visuallyHiddenProps} = useVisuallyHidden();
 
   return {
     resizerProps: mergeProps(
@@ -244,12 +246,9 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       pressProps
     ),
     inputProps: mergeProps(
+      visuallyHiddenProps,
       {
         id,
-        // Override browser default margin. Without this, scrollIntoViewport will think we need to scroll the input into view
-        style: {
-          margin: '0px'
-        },
         onFocus: () => {
           let resizeOnFocus = !!triggerRef?.current;
           if (resizeOnFocus) {

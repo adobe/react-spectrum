@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/ssr",
-  "version": "3.5.0",
+  "version": "3.6.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",

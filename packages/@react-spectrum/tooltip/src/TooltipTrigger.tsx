@@ -69,8 +69,8 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
     isOpen: state.isOpen,
     shouldFlip: props.shouldFlip,
     containerPadding: props.containerPadding,
-    arrowCrossSize: arrowWidth,
-    minOverlayArrowOffset: borderRadius
+    arrowSize: arrowWidth,
+    arrowBoundaryOffset: borderRadius
   });
 
   return (

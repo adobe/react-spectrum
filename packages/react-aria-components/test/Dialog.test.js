@@ -131,7 +131,11 @@ describe('Dialog', () => {
     );
 
     let button = getByRole('button');
+    expect(button).not.toHaveAttribute('data-pressed');
+
     userEvent.click(button);
+
+    expect(button).toHaveAttribute('data-pressed');
 
     let dialog = getByRole('dialog');
     let heading = getByRole('heading');
@@ -147,6 +151,38 @@ describe('Dialog', () => {
     expect(arrow).toHaveAttribute('data-test', 'arrow');
 
     userEvent.click(document.body);
+
+    expect(dialog).not.toBeInTheDocument();
+  });
+
+  it('should support render props', () => {
+    let {getByRole} = render(
+      <DialogTrigger>
+        <Button aria-label="Help">?⃝</Button>
+        <Popover>
+          <Dialog>
+            {({close}) => (
+              <>
+                <Heading>Help</Heading>
+                <p>For help accessing your account, please contact support.</p>
+                <Button onPress={() => close()}>Dismiss</Button>
+              </>
+            )}
+          </Dialog>
+        </Popover>
+      </DialogTrigger>
+    );
+
+    let button = getByRole('button');
+
+    userEvent.click(button);
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toBeInTheDocument();
+
+    let dismiss = within(dialog).getByRole('button');
+
+    userEvent.click(dismiss);
 
     expect(dialog).not.toBeInTheDocument();
   });

@@ -35,7 +35,8 @@ async function build() {
     version: '0.0.0',
     private: true,
     workspaces: [
-      'packages/*/*'
+      'packages/*/*',
+      'packages/react-aria-components'
     ],
     devDependencies: Object.fromEntries(
       Object.entries(packageJSON.devDependencies)
@@ -53,13 +54,14 @@ async function build() {
     dependencies: {
       '@adobe/react-spectrum': 'latest',
       'react-aria': 'latest',
-      'react-stately': 'latest'
+      'react-stately': 'latest',
+      'react-aria-components': 'latest'
     },
     resolutions: packageJSON.resolutions,
     browserslist: packageJSON.browserslist,
     scripts: {
       // Add a public url if provided via arg (for verdaccio prod doc website build since we want a commit hash)
-      build: `DOCS_ENV=production PARCEL_WORKER_BACKEND=process parcel build 'docs/*/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx' ${publicUrlFlag}`,
+      build: `DOCS_ENV=production PARCEL_WORKER_BACKEND=process parcel build 'docs/*/*/docs/*.mdx' 'docs/react-aria-components/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx' ${publicUrlFlag}`,
       postinstall: 'patch-package'
     }
   };
@@ -67,7 +69,7 @@ async function build() {
   // Add dependencies on each published package to the package.json, and
   // copy the docs from the current package into the temp dir.
   let packagesDir = path.join(__dirname, '..', 'packages');
-  let packages = glob.sync('*/*/package.json', {cwd: packagesDir});
+  let packages = glob.sync('*/*/package.json', {cwd: packagesDir}).concat('react-aria-components/package.json');
   for (let p of packages) {
     let json = JSON.parse(fs.readFileSync(path.join(packagesDir, p), 'utf8'));
     if (!json.private && json.name !== '@adobe/react-spectrum') {

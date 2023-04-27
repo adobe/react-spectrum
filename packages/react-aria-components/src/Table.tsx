@@ -1,9 +1,9 @@
 import {AriaLabelingProps} from '@react-types/shared';
-import {BaseCollection, CollectionContext, CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection} from './Collection';
+import {BaseCollection, CollectionContext, CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useCollectionChildren} from './Collection';
 import {buildHeaderRows} from '@react-stately/table';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
-import {ContextValue, defaultSlot, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, defaultSlot, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useTableState} from 'react-stately';
 import {DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
@@ -145,6 +145,34 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     collection.head = this.head;
     collection.body = this.body;
     return collection;
+  }
+
+  getTextValue(key: Key): string {
+    let row = this.getItem(key);
+    if (!row) {
+      return '';
+    }
+
+    // If the row has a textValue, use that.
+    if (row.textValue) {
+      return row.textValue;
+    }
+
+    // Otherwise combine the text of each of the row header columns.
+    let rowHeaderColumnKeys = this.rowHeaderColumnKeys;
+    let text: string[] = [];
+    for (let cell of this.getChildren(key)) {
+      let column = this.columns[cell.index!];
+      if (rowHeaderColumnKeys.has(column.key) && cell.textValue) {
+        text.push(cell.textValue);
+      }
+
+      if (text.length === rowHeaderColumnKeys.size) {
+        break;
+      }
+    }
+
+    return text.join(' ');
   }
 }
 
@@ -340,7 +368,7 @@ export function useTableOptions(): TableOptionsContextValue {
   return useContext(TableOptionsContext)!;
 }
 
-export interface TableHeaderProps<T> {
+export interface TableHeaderProps<T> extends StyleProps {
   /** A list of table columns. */
   columns?: T[],
   /** A list of `Column(s)` or a function. If the latter, a list of columns must be provided using the `columns` prop. */
@@ -351,7 +379,7 @@ export interface TableHeaderProps<T> {
  * A header within a `<Table>`, containing the table columns.
  */
 export function TableHeader<T extends object>(props: TableHeaderProps<T>) {
-  let children = useCachedChildren({
+  let children = useCollectionChildren({
     children: props.children,
     items: props.columns
   });
@@ -408,7 +436,7 @@ export interface ColumnProps<T = object> extends RenderProps<ColumnRenderProps> 
 export function Column<T extends object>(props: ColumnProps<T>): JSX.Element {
   let render = useContext(CollectionRendererContext);
   let childColumns = typeof render === 'function' ? render : props.children;
-  let children = useCachedChildren({
+  let children = useCollectionChildren({
     children: (props.title || props.childColumns) ? childColumns : null,
     items: props.childColumns
   });
@@ -434,7 +462,7 @@ export interface TableBodyProps<T> extends CollectionProps<T>, StyleRenderProps<
  * The body of a `<Table>`, containing the table rows.
  */
 export function TableBody<T extends object>(props: TableBodyProps<T>) {
-  let children = useCachedChildren(props);
+  let children = useCollectionChildren(props);
 
   // @ts-ignore
   return <tablebody multiple={props}>{children}</tablebody>;
@@ -456,7 +484,7 @@ export interface RowProps<T> extends RenderProps<RowRenderProps> {
  * A row within a `<Table>`.
  */
 export function Row<T extends object>(props: RowProps<T>) {
-  let children = useCachedChildren({
+  let children = useCollectionChildren({
     children: props.children,
     items: props.columns,
     idScope: props.id

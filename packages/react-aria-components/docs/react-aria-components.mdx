@@ -1,0 +1,685 @@
+{/* Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import styles from '@react-spectrum/docs/src/docs.css';
+
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import ComboBoxAnatomy from '@react-spectrum/docs/pages/assets/component-illustrations/ComboBox.svg';
+import SelectAnatomy from '@react-spectrum/docs/pages/assets/component-illustrations/Picker.svg';
+import Button from '@react-spectrum/docs/pages/assets/component-illustrations/Button.svg';
+import ToggleButton from '@react-spectrum/docs/pages/assets/component-illustrations/ToggleButton.svg';
+import Checkbox from '@react-spectrum/docs/pages/assets/component-illustrations/Checkbox.svg';
+import CheckboxGroup from '@react-spectrum/docs/pages/assets/component-illustrations/CheckboxGroup.svg';
+import RadioGroup from '@react-spectrum/docs/pages/assets/component-illustrations/RadioGroup.svg';
+import Switch from '@react-spectrum/docs/pages/assets/component-illustrations/Switch.svg';
+import TextField from '@react-spectrum/docs/pages/assets/component-illustrations/TextField.svg';
+import NumberField from '@react-spectrum/docs/pages/assets/component-illustrations/NumberField.svg';
+import SearchField from '@react-spectrum/docs/pages/assets/component-illustrations/SearchField.svg';
+import Meter from '@react-spectrum/docs/pages/assets/component-illustrations/Meter.svg';
+import ProgressBar from '@react-spectrum/docs/pages/assets/component-illustrations/ProgressCircle.svg';
+import Tabs from '@react-spectrum/docs/pages/assets/component-illustrations/Tabs.svg';
+import Link from '@react-spectrum/docs/pages/assets/component-illustrations/Link.svg';
+import Breadcrumbs from '@react-spectrum/docs/pages/assets/component-illustrations/Breadcrumbs.svg';
+import Slider from '@react-spectrum/docs/pages/assets/component-illustrations/Slider.svg';
+import Dialog from '@react-spectrum/docs/pages/assets/component-illustrations/Dialog.svg';
+import Tooltip from '@react-spectrum/docs/pages/assets/component-illustrations/Tooltip.svg';
+import Popover from '@react-spectrum/docs/pages/assets/component-illustrations/Popover.svg';
+import Menu from '@react-spectrum/docs/pages/assets/component-illustrations/Menu.svg';
+import ListBox from '@react-spectrum/docs/pages/assets/component-illustrations/ListBox.svg';
+import ListView from '@react-spectrum/docs/pages/assets/component-illustrations/ListView.svg';
+import Table from '@react-spectrum/docs/pages/assets/component-illustrations/Table.svg';
+import Calendar from '@react-spectrum/docs/pages/assets/component-illustrations/Calendar.svg';
+import RangeCalendar from '@react-spectrum/docs/pages/assets/component-illustrations/RangeCalendar.svg';
+import DateField from '@react-spectrum/docs/pages/assets/component-illustrations/DateField.svg';
+import TimeField from '@react-spectrum/docs/pages/assets/component-illustrations/TimeField.svg';
+import DatePicker from '@react-spectrum/docs/pages/assets/component-illustrations/DatePicker.svg';
+import DateRangePicker from '@react-spectrum/docs/pages/assets/component-illustrations/DateRangePicker.svg';
+
+---
+category: Concepts
+keywords: [aria, accessibility, react, component]
+navigationTitle: Overview
+type: component
+description: React Aria Components is a library of unstyled components built on top of the React Aria hooks. It provides a simpler way to build accessible components with custom styles, while offering the flexibility to drop down to hooks for even more customizability where needed.
+---
+
+# React Aria Components
+
+React Aria Components is a library of unstyled components built on top of the React Aria hooks. It provides a simpler way to build accessible components with custom styles, while offering the flexibility to drop down to hooks for even more customizability where needed.
+
+## What is React Aria Components?
+
+React Aria Components is a new library of unstyled components implementing [ARIA patterns](https://www.w3.org/WAI/ARIA/apg/), built on top of the existing [React Aria](index.html) hooks. It provides components for common UI patterns, with [accessibility](accessibility.html), [internationalization](internationalization.html), [interactions](interactions.html), and behavior built in, allowing you to focus on your unique design and styling rather than re-building these challenging aspects. React Aria has been meticulously tested across a wide variety of devices, interaction modalities, and assistive technologies to ensure the best experience possible for all users.
+
+Compared with the React Aria hooks, the components provide a default DOM structure and styling API, and abstract away the glue code necessary to connect the hooks together. The components and hooks also work together, allowing them to be mixed and matched depending on the level of customization required. Eventually, React Aria Components will be recommended as a starting point when building a new component, dropping down to hooks only when additional flexibility is needed. Both hooks and components will continue to be maintained and developed going forward.
+
+## Status
+
+React Aria Components is currently in **alpha**. This means APIs will likely change in future updates as we discover the best ways to use it, and there are some known bugs and limitations. That said, it is based on a solid and battle-tested foundation in React Aria, and we would love for you to try it out and give us feedback! This will directly help us shape the APIs and make it the best library it can be. Please report issues and feature requests [on GitHub](https://github.com/adobe/react-spectrum/issues).
+
+## Installation
+
+React Aria Components can be installed using a package manager like [npm](https://docs.npmjs.com/cli/npm) or
+[yarn](https://classic.yarnpkg.com/lang/en/).
+
+```
+yarn add react-aria-components
+```
+
+All components are available in this one package for ease of dependency management.
+
+## Implementing a component
+
+Once installed, you can import and render the components you need. Each component may include several parts, as documented on the corresponding component page. The API is designed around composition, where each component generally has a 1:1 relationship with a single DOM element. This makes it easy to style every element, and control the layout and DOM order as needed to implement your design.
+
+This example renders a custom [Select](Select.html).
+
+```tsx example
+import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-aria-components';
+
+<Select>
+  <Label>Favorite Animal</Label>
+  <Button>
+    <SelectValue />
+    <span aria-hidden="true">▼</span>
+  </Button>
+  <Popover>
+    <ListBox>
+      <Item>Cat</Item>
+      <Item>Dog</Item>
+      <Item>Kangaroo</Item>
+    </ListBox>
+  </Popover>
+</Select>
+```
+
+<details style={{marginBottom: 12}}>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Select {
+  --border-color: var(--spectrum-alias-border-color);
+  --border-color-disabled: var(--spectrum-alias-border-color-disabled);
+  --text-color: var(--spectrum-alias-text-color);
+  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+  --focus-ring-color: slateblue;
+
+  .react-aria-Button {
+    color: var(--text-color);
+    background: var(--spectrum-global-color-gray-50);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 1px 2px rgba(0 0 0 / 0.1);
+    border-radius: 6px;
+    appearance: none;
+    vertical-align: middle;
+    font-size: 1.072rem;
+    padding: 0.286rem 0.286rem 0.286rem 0.571rem;
+    margin: 0;
+    outline: none;
+    display: flex;
+    align-items: center;
+    max-width: 250px;
+
+    &[data-focus-visible] {
+      border-color: var(--focus-ring-color);
+      box-shadow: 0 0 0 1px var(--focus-ring-color);
+    }
+
+    &[data-pressed] {
+      background: var(--spectrum-global-color-gray-150);
+    }
+
+    &:disabled {
+      border-color: var(--border-color-disabled);
+      color: var(--text-color-disabled);
+      & span[aria-hidden] {
+        background: var(--border-color-disabled);
+      }
+
+      .react-aria-SelectValue {
+        &[data-placeholder] {
+          color: var(--text-color-disabled);
+        }
+      }
+    }
+  }
+
+  .react-aria-SelectValue {
+    &[data-placeholder] {
+      font-style: italic;
+      color: var(--spectrum-global-color-gray-700);
+    }
+
+    & [slot=description] {
+      display: none;
+    }
+  }
+
+  & span[aria-hidden] {
+    width: 1.5rem;
+    line-height: 1.375rem;
+    margin-left: 1rem;
+    padding: 1px;
+    background: slateblue;
+    color: white;
+    border-radius: 4px;
+    font-size: 0.857rem;
+  }
+
+  [slot=description] {
+    font-size: 12px;
+  }
+
+  [slot=errorMessage] {
+    font-size: 12px;
+    color: var(--spectrum-global-color-red-600);
+  }
+}
+
+.react-aria-ListBox {
+  --highlight-background: slateblue;
+  --highlight-foreground: white;
+  --text-color: var(--spectrum-alias-text-color);
+  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+
+  max-height: inherit;
+  box-sizing: border-box;
+  overflow: auto;
+  padding: 2px;
+  outline: none;
+
+  .react-aria-Section:not(:first-child) {
+    margin-top: 12px;
+  }
+
+  .react-aria-Header {
+    font-size: 1.143rem;
+    font-weight: bold;
+    padding: 0 0.571rem 0 1.571rem;
+  }
+
+  .react-aria-Item {
+    margin: 2px;
+    padding: 0.286rem 0.571rem 0.286rem 1.571rem;
+    border-radius: 6px;
+    outline: none;
+    cursor: default;
+    color: var(--text-color);
+    font-size: 1.072rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+
+    &[aria-selected=true] {
+      font-weight: 600;
+
+      &::before {
+        content: '✓';
+        content: '✓' / '';
+        alt: ' ';
+        position: absolute;
+        top: 4px;
+        left: 4px;
+      }
+    }
+
+    &[data-focused],
+    &[data-pressed] {
+      background: var(--highlight-background);
+      color: var(--highlight-foreground);
+    }
+
+    &[aria-disabled] {
+      color: var(--text-color-disabled);
+    }
+
+    [slot=label] {
+      font-weight: bold;
+    }
+
+    [slot=description] {
+      font-size: small;
+    }
+  }
+}
+
+.react-aria-Popover {
+  --background-color: var(--page-background);
+  --border-color: var(--spectrum-global-color-gray-400);
+
+  border: 1px solid var(--border-color);
+  min-width: var(--trigger-width);
+  max-width: 250px;
+  box-sizing: border-box;
+  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
+  border-radius: 6px;
+  background: var(--background-color);
+  outline: none;
+
+  &[data-placement=top] {
+    --origin: translateY(8px);
+  }
+
+  &[data-placement=bottom] {
+    --origin: translateY(-8px);
+  }
+
+  &[data-entering] {
+    animation: slide 200ms;
+  }
+
+  &[data-exiting] {
+    animation: slide 200ms reverse ease-in;
+  }
+}
+
+@keyframes slide {
+  from {
+    transform: var(--origin);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Select {
+    --border-color: ButtonBorder;
+    --border-color-disabled: GrayText;
+    --text-color: ButtonText;
+    --text-color-disabled: GrayText;
+    --focus-ring-color: Highlight;
+
+    .react-aria-Button:disabled span[aria-hidden] {
+      background: transparent;
+    }
+  }
+
+  .react-aria-ListBox {
+    forced-color-adjust: none;
+
+    --highlight-background: Highlight;
+    --highlight-foreground: HighlightText;
+    --border-color: ButtonBorder;
+    --background-color: ButtonFace;
+    --text-color: ButtonText;
+    --text-color-disabled: GrayText;
+  }
+}
+```
+
+</details>
+
+If you're using SSR via a framework like Next.js or Remix, you'll also need to wrap your application in an `<SSRProvider>`. See the [Server Side Rendering](ssr.html) docs for more details.
+
+## Styling
+
+React Aria Components do not include any styles by default, allowing you to build custom designs to fit your application or design system. Each component accepts the standard `className` and `style` props which enable using vanilla CSS, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc.
+
+When a custom `className` is not provided, each component includes a default class name following the `react-aria-ComponentName` naming convention. You can use this to style a component with standard CSS without needing any custom classes.
+
+```css render=false
+.react-aria-Select {
+  /* ... */
+}
+```
+
+### States
+
+Some components support multiple UI states (e.g. pressed, hovered, selected, etc.). React Aria Components exposes states using DOM attributes, which can be targeted by CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. They can be thought of like custom CSS pseudo classes. For example:
+
+```css render=false
+.react-aria-Item[aria-selected=true] {
+  /* ... */
+}
+
+.react-aria-Item[data-focused] {
+  /* ... */
+}
+```
+
+If you're using Tailwind CSS, you can use [ARIA states](https://tailwindcss.com/docs/hover-focus-and-other-states#aria-states) and [data attributes](https://tailwindcss.com/docs/hover-focus-and-other-states#data-attributes) as modifiers.
+
+```jsx
+<Item className="aria-selected:bg-blue-400 data-[focused]:bg-gray-100">
+  Item
+</Item>
+````
+
+In order to ensure high quality interactions across browsers and devices, React Aria Components includes states such as `data-hovered` and `data-pressed` which are similar to CSS pseudo classes such as `:hover` and `:active`, but work consistently between mouse, touch, and keyboard modalities. You can read more about this in our [blog post series](../blog/building-a-button-part-1.html) and our [Interactions](interactions.html) overview.
+
+All of the states and selectors for each component are listed in their respective documentation.
+
+### Render props
+
+The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
+
+```jsx
+<Item className={({isSelected}) => isSelected ? 'bg-blue-400' : 'bg-gray-100'}>
+  Item
+</Item>
+```
+
+Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render a checkmark icon when an item is selected.
+
+```jsx
+<Item>
+  {({isSelected}) => (
+    <>
+      {isSelected && <CheckmarkIcon />}
+      <span>Item</span>
+    </>
+  )}
+</Item>
+```
+
+### Animation
+
+Overlay components such as [Popover](Popover.html) and [Modal](Modal.html) support entry and exit animations via the `[data-entering]` and `[data-exiting]` states, or via the corresponding render prop functions. You can use these states to apply CSS keyframe animations. These components will automatically wait for any exit animations to complete before they are removed from the DOM.
+
+```css render=false
+.react-aria-Popover[data-entering] {
+  animation: slide 300ms;
+}
+
+.react-aria-Popover[data-exiting] {
+  animation: slide 300ms reverse;
+}
+
+@keyframes slide {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+```
+
+If you are using Tailwind CSS, we recommend using the [tailwindcss-animate](https://github.com/jamiebuilds/tailwindcss-animate) plugin. This includes utilities for building common animations such as fading, sliding, and zooming.
+
+```jsx
+<Popover className="data-[entering]:animate-in data-[entering]:fade-in data-[exiting]:animate-out data-[exiting]:fade-out">
+  {/* ... */}
+</Popover>
+```
+
+## Examples
+
+The documentation for each component includes many examples styled using vanilla CSS and the default class names. We also have an example of many of the components using Tailwind CSS. You can find the [code](https://github.com/adobe/react-spectrum/blob/main/examples/rac-tailwind/src/App.js) in the repo, as well as a [live demo](https://reactspectrum.blob.core.windows.net/reactspectrum/f239d0b1a96c3e6119135fe6bbf1994dc9984257/verdaccio/rac-tailwind/index.html).
+
+## Components
+
+### Buttons
+
+<section className={styles.cardGroup}>
+
+<ExampleCard
+  url="Button.html"
+  title="Button"
+  description="A button allows a user to perform an action with a mouse, touch, or keyboard.">
+  <Button />
+</ExampleCard>
+
+<ExampleCard
+  url="ToggleButton.html"
+  title="ToggleButton"
+  description="A toggle button allows a user to toggle between two states.">
+  <ToggleButton />
+</ExampleCard>
+
+</section>
+
+### Pickers
+
+<section className={styles.cardGroup}>
+
+<ExampleCard
+  url="ComboBox.html"
+  title="ComboBox"
+  description="A combobox combines a text input with a listbox, and allows a user to filter a list of options.">
+  <ComboBoxAnatomy />
+</ExampleCard>
+
+<ExampleCard
+  url="Select.html"
+  title="Select"
+  description="A select displays a collapsible list of options, and allows a user to select one of them.">
+  <SelectAnatomy />
+</ExampleCard>
+
+</section>
+
+### Collections
+
+<section className={styles.cardGroup}>
+
+<ExampleCard
+  url="Menu.html"
+  title="Menu"
+  description="A menu displays a list of actions or options that a user can choose.">
+  <Menu />
+</ExampleCard>
+
+<ExampleCard
+  url="ListBox.html"
+  title="ListBox"
+  description="A listbox displays a list of options, and allows a user to select one or more of them.">
+  <ListBox />
+</ExampleCard>
+
+<ExampleCard
+  url="GridList.html"
+  title="GridList"
+  description="A grid list displays a list of interactive items, with keyboard navigation, row selection, and actions.">
+  <ListView />
+</ExampleCard>
+
+<ExampleCard
+  url="Table.html"
+  title="Table"
+  description="A table displays data in rows and columns, with row selection and sorting.">
+  <Table />
+</ExampleCard>
+
+</section>
+
+### Date and time
+
+<section className={styles.cardGroup}>
+
+<ExampleCard
+  url="DatePicker.html"
+  title="DatePicker"
+  description="A date picker combines a DateField and a Calendar popover.">
+  <DatePicker />
+</ExampleCard>
+
+<ExampleCard
+  url="DateRangePicker.html"
+  title="DateRangePicker"
+  description="A date range picker combines two DateFields and a RangeCalendar popover.">
+  <DateRangePicker />
+</ExampleCard>
+
+<ExampleCard
+  url="DateField.html"
+  title="DateField"
+  description="A date field allows a user to enter and edit date values using a keyboard.">
+  <DateField />
+</ExampleCard>
+
+<ExampleCard
+  url="TimeField.html"
+  title="TimeField"
+  description="A time field allows a user to enter and edit time values using a keyboard.">
+  <TimeField />
+</ExampleCard>
+
+<ExampleCard
+  url="Calendar.html"
+  title="Calendar"
+  description="A calendar allows a user to select a single date from a date grid.">
+  <Calendar />
+</ExampleCard>
+
+<ExampleCard
+  url="RangeCalendar.html"
+  title="RangeCalendar"
+  description="A range calendar allows a user to select a contiguous range of dates.">
+  <RangeCalendar />
+</ExampleCard>
+
+</section>
+
+### Overlays
+
+<section className={styles.cardGroup}>
+
+<ExampleCard
+  url="Dialog.html"
+  title="Dialog"
+  description="A dialog is an overlay shown above other content in an application.">
+  <Dialog />
+</ExampleCard>
+
+<ExampleCard
+  url="Popover.html"
+  title="Popover"
+  description="A popover displays interactive content in context with a trigger element.">
+  <Popover />
+</ExampleCard>
+
+<ExampleCard
+  url="Tooltip.html"
+  title="Tooltip"
+  description="A tooltip displays a description of an element on hover or focus.">
+  <Tooltip />
+</ExampleCard>
+
+</section>
+
+### Forms
+
+<section className={styles.cardGroup}>
+
+<ExampleCard
+  url="Checkbox.html"
+  title="Checkbox"
+  description="A checkbox allows a user to select an individual option.">
+  <Checkbox />
+</ExampleCard>
+
+<ExampleCard
+  url="CheckboxGroup.html"
+  title="CheckboxGroup"
+  description="A checkbox group allows a user to select one or more items in a list of options.">
+  <CheckboxGroup />
+</ExampleCard>
+
+<ExampleCard
+  url="RadioGroup.html"
+  title="RadioGroup"
+  description="A radio group allows a user to select a single item from a list of options.">
+  <RadioGroup />
+</ExampleCard>
+
+<ExampleCard
+  url="Switch.html"
+  title="Switch"
+  description="A switch allows a user to turn a setting on or off.">
+  <Switch />
+</ExampleCard>
+
+<ExampleCard
+  url="TextField.html"
+  title="TextField"
+  description="A text field allows a user to enter a plain text value with a keyboard.">
+  <TextField />
+</ExampleCard>
+
+<ExampleCard
+  url="SearchField.html"
+  title="SearchField"
+  description="A search field allows a user to enter and clear a search query.">
+  <SearchField />
+</ExampleCard>
+
+<ExampleCard
+  url="NumberField.html"
+  title="NumberField"
+  description="A number field allows a user to enter, increment, or decrement a numeric value.">
+  <NumberField />
+</ExampleCard>
+
+<ExampleCard
+  url="Slider.html"
+  title="Slider"
+  description="A slider allows a user to select one or more values within a range.">
+  <Slider />
+</ExampleCard>
+
+</section>
+
+### Navigation
+
+<section className={styles.cardGroup}>
+
+<ExampleCard
+  url="Tabs.html"
+  title="Tabs"
+  description="Tabs organize content into multiple sections, and allow a user to view one at a time.">
+  <Tabs />
+</ExampleCard>
+
+<ExampleCard
+  url="Link.html"
+  title="Link"
+  description="A link allows a user to navigate to another page.">
+  <Link />
+</ExampleCard>
+
+<ExampleCard
+  url="Breadcrumbs.html"
+  title="Breadcrumbs"
+  description="Breadcrumbs display a heirarchy of links to the current page or resource.">
+  <Breadcrumbs />
+</ExampleCard>
+
+</section>
+
+### Status
+
+<section className={styles.cardGroup}>
+
+<ExampleCard
+  url="ProgressBar.html"
+  title="ProgressBar"
+  description="A progress bar shows progress of an operation over time.">
+  <ProgressBar />
+</ExampleCard>
+
+<ExampleCard
+  url="Meter.html"
+  title="Meter"
+  description="A meter represents a quantity within a known range, or a fractional value.">
+  <Meter />
+</ExampleCard>
+
+</section>
