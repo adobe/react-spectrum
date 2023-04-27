@@ -11,10 +11,10 @@
  */
 
 import {ActionButton, Button} from '@react-spectrum/button';
-import {AlertDialog, Dialog, DialogTrigger} from '../';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Content, Footer, Header} from '@react-spectrum/view';
+import {Dialog, DialogTrigger} from '../';
 import {Divider} from '@react-spectrum/divider';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
@@ -22,346 +22,239 @@ import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
-import {SpectrumAlertDialogProps} from '@react-types/dialog';
-import {storiesOf} from '@storybook/react';
 import {TextField} from '@react-spectrum/textfield';
 
-// Dialogs mostly compose of other components, so we won't worry about themes
-// Dialogs are really only meant to have one visible at a time, so we must make individual stories for each one
-// might be good to eventually make the stories display-able without the trigger that imposes this restriction
-storiesOf('Dialog', module)
-  .addParameters({chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true, express: false}})
-  .add(
-    'default',
-    () => render({})
-  )
-  .add(
-    'isDismissable',
-    () => render({isDismissable: true})
-  )
-  .add(
-    'long content',
-    () => renderLongContent({})
-  )
-  .add(
-    'long content, mobile viewport',
-    () => renderLongContent({}),
-    {chromatic: {viewports: [320]}}
-  )
-  .add(
-    'with hero',
-    () => renderHero({})
-  )
-  .add(
-    'with hero, isDimissable',
-    () => renderHero({isDismissable: true})
-  )
-  .add(
-    'with footer',
-    () => renderFooter({})
-  )
-  .add(
-    'small',
-    () => render({size: 'S'})
-  )
-  .add(
-    'medium',
-    () => render({size: 'M'})
-  )
-  .add(
-    'large',
-    () => render({size: 'L'})
-  )
-  .add(
-    'form',
-    () => renderWithForm({})
-  )
-  .add(
-    'fullscreenTakeover form',
-    () => renderWithForm({type: 'fullscreenTakeover'})
-  )
-  .add(
-    'fullscreenTakeover form, mobile viewport',
-    () => renderWithForm({type: 'fullscreenTakeover'}),
-    {chromatic: {viewports: [320]}}
-  )
-  .add(
-    'three buttons',
-    () => renderWithThreeButtons({})
-  )
-  .add(
-    'three buttons, vertical orientation',
-    () => renderWithThreeButtonsVertical({})
-  )
-  .add(
-    'three buttons, footer',
-    () => renderWithThreeButtons({showFooter: true})
-  )
-  .add(
-    'three buttons, footer, extraLabel',
-    () => renderWithThreeButtons({showFooter: true, extraLabel: ': This is the extra text'})
-  )
-  .add(
-    'cleared content',
-    () => renderWithDividerInContent({})
-  )
-  .add(
-    'extra long footer',
-    () => renderWithOptions({extraFooterLabel: 'This is all the extra text for a long footer to get it to wrap'})
-  )
-  .add(
-    'showHeader, longer heading and header',
-    () => renderWithOptions({showHeader: true, extraHeadering: ' This is extra text for long heading and header'})
-  )
-  .add(
-    'extra long footer, longer heading and header',
-    () => renderWithOptions({extraFooterLabel: 'This is all the extra text for a long footer to get it to wrap', extraHeadering: ' This is extra text for long heading that wraps to make sure it fills the width'})
-  )
-  .add(
-    'extra long footer, showHeader, longer heading and header',
-    () => renderWithOptions({extraFooterLabel: 'This is all the extra text for a long footer to get it to wrap', showHeader: true, extraHeadering: ' This is extra text for long heading and header'})
-   )
-  .add(
-    'tray',
-    () => renderTriggerProps({type: 'tray'}), {
-      chromatic: {viewports: [320, 1200]},
-      chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
-    }
-  )
-  .add(
-    'popover',
-    () => renderTriggerProps({type: 'popover'}), {
-      chromatic: {viewports: [320, 1200]},
-      chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
-    }
-  )
-  .add(
-    'popover: crossOffset50',
-    () => renderTriggerProps({type: 'popover', crossOffset: 50}), {
-      chromatic: {viewports: [1200]},
-      chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['large'], disableAnimations: true}
-    }
-  )
-  .add(
-    'popover: crossOffset200',
-    () => renderTriggerProps({type: 'popover', crossOffset: 200}), {
-      chromatic: {viewports: [1200]},
-      chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['large'], disableAnimations: true}
-    }
-  )
-  .add(
-    'popover: crossOffset1000',
-    () => renderTriggerProps({type: 'popover', crossOffset: 1000}), {
-      chromatic: {viewports: [1200]},
-      chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['large'], disableAnimations: true}
-    }
-  )
-  .add(
-    'popover: containerPadding',
-    () => renderTriggerProps({type: 'popover', containerPadding: 30, shouldFlip: false, placement: 'top'}), {
-      chromatic: {viewports: [1200]},
-      chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['large'], disableAnimations: true}
-    }
-  )
-  .add(
-    'mobileType fullscreenTakeover, modal',
-    () => renderTriggerProps({type: 'modal', mobileType: 'fullscreenTakeover'}), {
-      chromatic: {viewports: [320, 1200]},
-      chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
-    }
-  )
-  .add(
-    'mobileType: modal, popover',
-    () => renderTriggerProps({type: 'popover', mobileType: 'modal'}), {
-      chromatic: {viewports: [320, 1200]},
-      chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
-    }
-  )
-  .add(
-    'mobileType: tray, popover',
-    () => renderTriggerProps({type: 'popover', mobileType: 'tray'}), {
-      chromatic: {viewports: [320, 1200]},
-      chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
-    }
-  );
+export default {
+  title: 'Dialog',
+  parameters: {
+    chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true, express: false}
+  },
+  excludeStories: ['singleParagraph', 'renderTriggerProps']
+};
 
+export const Default = () => render({});
 
-storiesOf('Dialog/Alert', module)
-  .addParameters({chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true, express: false}})
-  .add(
-    'destructive',
-    () => renderAlert({
-      variant: 'destructive',
-      title: 'Warning Destructive',
-      children: singleParagraph(),
-      primaryActionLabel: 'Accept',
-      cancelLabel: 'Cancel'
-    })
-  )
-  .add(
-    'confirmation',
-    () => renderAlert({
-      variant: 'confirmation',
-      title: 'Confirmation Required',
-      children: singleParagraph(),
-      primaryActionLabel: 'Accept',
-      cancelLabel: 'Cancel'
-    })
-  )
-  .add(
-    'information',
-    () => renderAlert({
-      variant: 'information',
-      title: 'Informative Alert',
-      children: singleParagraph(),
-      primaryActionLabel: 'Accept',
-      cancelLabel: 'Cancel'
-    })
-  )
-  .add(
-    'error',
-    () => renderAlert({
-      variant: 'error',
-      title: 'Error: Danger Will Robinson',
-      children: singleParagraph(),
-      primaryActionLabel: 'Accept',
-      cancelLabel: 'Cancel'
-    })
-  )
-  .add(
-    'warning',
-    () => renderAlert({
-      variant: 'warning',
-      title: 'This is a warning',
-      children: singleParagraph(),
-      primaryActionLabel: 'Accept',
-      cancelLabel: 'Cancel'
-    })
-  )
-  .add(
-    'primary disabled',
-    () => renderAlert({
-      variant: 'error',
-      title: 'Error: Danger Will Robinson',
-      children: singleParagraph(),
-      primaryActionLabel: 'Accept',
-      cancelLabel: 'Cancel',
-      isPrimaryActionDisabled: true
-    })
-  )
-  .add(
-    'autoFocus primary',
-    () => renderAlert({
-      variant: 'error',
-      title: 'Error: Danger Will Robinson',
-      children: singleParagraph(),
-      primaryActionLabel: 'Accept',
-      cancelLabel: 'Cancel',
-      secondaryActionLabel: 'Secondary button',
-      autoFocusButton: 'primary'
-    })
-  )
-  .add(
-    'secondary disabled',
-    () => renderAlert({
-      variant: 'error',
-      title: 'Error: Danger Will Robinson',
-      children: singleParagraph(),
-      primaryActionLabel: 'Accept',
-      secondaryActionLabel: 'Secondary button',
-      cancelLabel: 'Cancel',
-      isSecondaryActionDisabled: true
-    })
-  )
-  .add(
-    'autoFocus secondary',
-    () => renderAlert({
-      variant: 'error',
-      title: 'Error: Danger Will Robinson',
-      children: singleParagraph(),
-      primaryActionLabel: 'Accept',
-      cancelLabel: 'Cancel',
-      secondaryActionLabel: 'Secondary button',
-      autoFocusButton: 'secondary'
-    })
-  )
-  .add(
-    'autoFocus cancel',
-    () => renderAlert({
-      variant: 'error',
-      title: 'Error: Danger Will Robinson',
-      children: singleParagraph(),
-      primaryActionLabel: 'Accept',
-      cancelLabel: 'Cancel',
-      secondaryActionLabel: 'Secondary button',
-      autoFocusButton: 'cancel'
-    })
-  );
+Default.story = {
+  name: 'default'
+};
 
-storiesOf('Dialog/Express', module)
-  .addParameters({chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true, express: true}})
-  .add(
-    'destructive',
-    () => renderAlert({
-      variant: 'destructive',
-      title: 'Warning Destructive',
-      children: singleParagraph(),
-      primaryActionLabel: 'Accept',
-      cancelLabel: 'Cancel'
-    })
-  )
-  .add(
-    'confirmation',
-    () => renderAlert({
-      variant: 'confirmation',
-      title: 'Confirmation Required',
-      children: singleParagraph(),
-      primaryActionLabel: 'Accept',
-      cancelLabel: 'Cancel'
-    })
-  )
-  .add(
-    'information',
-    () => renderAlert({
-      variant: 'information',
-      title: 'Informative Alert',
-      children: singleParagraph(),
-      primaryActionLabel: 'Accept',
-      cancelLabel: 'Cancel'
-    })
-  )
-  .add(
-    'error',
-    () => renderAlert({
-      variant: 'error',
-      title: 'Error: Danger Will Robinson',
-      children: singleParagraph(),
-      primaryActionLabel: 'Accept',
-      cancelLabel: 'Cancel'
-    })
-  )
-  .add(
-    'warning',
-    () => renderAlert({
-      variant: 'warning',
-      title: 'This is a warning',
-      children: singleParagraph(),
-      primaryActionLabel: 'Accept',
-      cancelLabel: 'Cancel'
-    })
-  )
-  .add(
-    'tray',
-    () => renderTriggerProps({type: 'tray'}), {
-      chromatic: {viewports: [320, 1200]}
-    }
-  )
-  .add(
-    'popover',
-    () => renderTriggerProps({type: 'popover'}), {
-      chromatic: {viewports: [320, 1200]}
-    }
-  );
+export const IsDismissable = () => render({isDismissable: true});
+
+IsDismissable.story = {
+  name: 'isDismissable'
+};
+
+export const LongContent = () => renderLongContent({});
+
+LongContent.story = {
+  name: 'long content'
+};
+
+export const LongContentMobileViewport = () => renderLongContent({});
+
+LongContentMobileViewport.story = {
+  name: 'long content, mobile viewport',
+  parameters: {chromatic: {viewports: [320]}}
+};
+
+export const WithHero = () => renderHero({});
+
+WithHero.story = {
+  name: 'with hero'
+};
+
+export const WithHeroIsDimissable = () => renderHero({isDismissable: true});
+
+WithHeroIsDimissable.story = {
+  name: 'with hero, isDimissable'
+};
+
+export const WithFooter = () => renderFooter({});
+
+WithFooter.story = {
+  name: 'with footer'
+};
+
+export const Small = () => render({size: 'S'});
+
+Small.story = {
+  name: 'small'
+};
+
+export const Medium = () => render({size: 'M'});
+
+Medium.story = {
+  name: 'medium'
+};
+
+export const Large = () => render({size: 'L'});
+
+Large.story = {
+  name: 'large'
+};
+
+export const _Form = () => renderWithForm({});
+
+_Form.story = {
+  name: 'form'
+};
+
+export const FullscreenTakeoverForm = () => renderWithForm({type: 'fullscreenTakeover'});
+
+FullscreenTakeoverForm.story = {
+  name: 'fullscreenTakeover form'
+};
+
+export const FullscreenTakeoverFormMobileViewport = () => renderWithForm({type: 'fullscreenTakeover'});
+
+FullscreenTakeoverFormMobileViewport.story = {
+  name: 'fullscreenTakeover form, mobile viewport',
+  parameters: {chromatic: {viewports: [320]}}
+};
+
+export const ThreeButtons = () => renderWithThreeButtons({});
+
+ThreeButtons.story = {
+  name: 'three buttons'
+};
+
+export const ThreeButtonsVerticalOrientation = () => renderWithThreeButtonsVertical({});
+
+ThreeButtonsVerticalOrientation.story = {
+  name: 'three buttons, vertical orientation'
+};
+
+export const ThreeButtonsFooter = () => renderWithThreeButtons({showFooter: true});
+
+ThreeButtonsFooter.story = {
+  name: 'three buttons, footer'
+};
+
+export const ThreeButtonsFooterExtraLabel = () => renderWithThreeButtons({showFooter: true, extraLabel: ': This is the extra text'});
+
+ThreeButtonsFooterExtraLabel.story = {
+  name: 'three buttons, footer, extraLabel'
+};
+
+export const ClearedContent = () => renderWithDividerInContent({});
+
+ClearedContent.story = {
+  name: 'cleared content'
+};
+
+export const ExtraLongFooter = () => renderWithOptions({extraFooterLabel: 'This is all the extra text for a long footer to get it to wrap'});
+
+ExtraLongFooter.story = {
+  name: 'extra long footer'
+};
+
+export const ShowHeaderLongerHeadingAndHeader = () => renderWithOptions({showHeader: true, extraHeadering: ' This is extra text for long heading and header'});
+
+ShowHeaderLongerHeadingAndHeader.story = {
+  name: 'showHeader, longer heading and header'
+};
+
+export const ExtraLongFooterLongerHeadingAndHeader = () => renderWithOptions({extraFooterLabel: 'This is all the extra text for a long footer to get it to wrap', extraHeadering: ' This is extra text for long heading that wraps to make sure it fills the width'});
+
+ExtraLongFooterLongerHeadingAndHeader.story = {
+  name: 'extra long footer, longer heading and header'
+};
+
+export const ExtraLongFooterShowHeaderLongerHeadingAndHeader = () => renderWithOptions({extraFooterLabel: 'This is all the extra text for a long footer to get it to wrap', showHeader: true, extraHeadering: ' This is extra text for long heading and header'});
+
+ExtraLongFooterShowHeaderLongerHeadingAndHeader.story = {
+  name: 'extra long footer, showHeader, longer heading and header'
+};
+
+export const Tray = () => renderTriggerProps({type: 'tray'});
+
+Tray.story = {
+  name: 'tray',
+  parameters: {
+    chromatic: {viewports: [320, 1200]},
+    chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
+  }
+};
+
+export const Popover = () => renderTriggerProps({type: 'popover'});
+
+Popover.story = {
+  name: 'popover',
+  parameters: {
+    chromatic: {viewports: [320, 1200]},
+    chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
+  }
+};
+
+export const PopoverCrossOffset50 = () => renderTriggerProps({type: 'popover', crossOffset: 50});
+
+PopoverCrossOffset50.story = {
+  name: 'popover: crossOffset50',
+  parameters: {
+    chromatic: {viewports: [1200]},
+    chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['large'], disableAnimations: true}
+  }
+};
+
+export const PopoverCrossOffset200 = () => renderTriggerProps({type: 'popover', crossOffset: 200});
+
+PopoverCrossOffset200.story = {
+  name: 'popover: crossOffset200',
+  parameters: {
+    chromatic: {viewports: [1200]},
+    chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['large'], disableAnimations: true}
+  }
+};
+
+export const PopoverCrossOffset1000 = () => renderTriggerProps({type: 'popover', crossOffset: 1000});
+
+PopoverCrossOffset1000.story = {
+  name: 'popover: crossOffset1000',
+  parameters: {
+    chromatic: {viewports: [1200]},
+    chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['large'], disableAnimations: true}
+  }
+};
+
+export const PopoverContainerPadding = () => renderTriggerProps({type: 'popover', containerPadding: 30, shouldFlip: false, placement: 'top'});
+
+PopoverContainerPadding.story = {
+  name: 'popover: containerPadding',
+  parameters: {
+    chromatic: {viewports: [1200]},
+    chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['large'], disableAnimations: true}
+  }
+};
+
+export const MobileTypeFullscreenTakeoverModal = () => renderTriggerProps({type: 'modal', mobileType: 'fullscreenTakeover'});
+
+MobileTypeFullscreenTakeoverModal.story = {
+  name: 'mobileType fullscreenTakeover, modal',
+  parameters: {
+    chromatic: {viewports: [320, 1200]},
+    chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
+  }
+};
+
+export const MobileTypeModalPopover = () => renderTriggerProps({type: 'popover', mobileType: 'modal'});
+
+MobileTypeModalPopover.story = {
+  name: 'mobileType: modal, popover',
+  parameters: {
+    chromatic: {viewports: [320, 1200]},
+    chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
+  }
+};
+
+export const MobileTypeTrayPopover = () => renderTriggerProps({type: 'popover', mobileType: 'tray'});
+
+MobileTypeTrayPopover.story = {
+  name: 'mobileType: tray, popover',
+  parameters: {
+    chromatic: {viewports: [320, 1200]},
+    chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
+  }
+};
 
 function render({width = 'auto', isDismissable = undefined, ...props}) {
   return (
@@ -386,7 +279,7 @@ function render({width = 'auto', isDismissable = undefined, ...props}) {
   );
 }
 
-function renderTriggerProps({width = 'auto', isDismissable = undefined, ...triggerProps}) {
+export function renderTriggerProps({width = 'auto', isDismissable = undefined, ...triggerProps}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
       <DialogTrigger isDismissable={isDismissable} defaultOpen {...triggerProps}>
@@ -457,18 +350,6 @@ function renderFooter({width = 'auto', isDismissable = undefined, ...props}) {
   );
 }
 
-function renderAlert({...props}: SpectrumAlertDialogProps) {
-  return (
-    <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
-      <DialogTrigger defaultOpen>
-        <ActionButton>Trigger</ActionButton>
-        <AlertDialog {...props} />
-      </DialogTrigger>
-    </div>
-  );
-}
-
-
 function renderWithForm({width = 'auto', ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
@@ -506,7 +387,7 @@ function renderWithForm({width = 'auto', ...props}) {
     </div>
   );
 }
-let singleParagraph = () => <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text>;
+export let singleParagraph = () => <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text>;
 let fiveParagraphs = () => (
   <React.Fragment>
     <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mi proin sed libero enim. Mattis ullamcorper velit sed ullamcorper morbi tincidunt. Sed enim ut sem viverra aliquet eget sit amet tellus. Diam quis enim lobortis scelerisque fermentum dui faucibus in ornare. Diam quam nulla porttitor massa id. Eleifend mi in nulla posuere sollicitudin. Turpis nunc eget lorem dolor sed viverra ipsum nunc. Faucibus in ornare quam viverra. Risus commodo viverra maecenas accumsan lacus vel facilisis volutpat est. Nam libero justo laoreet sit amet cursus sit. Netus et malesuada fames ac. Dictum fusce ut placerat orci nulla pellentesque dignissim enim sit. Eros donec ac odio tempor orci. Ut etiam sit amet nisl purus in mollis nunc. Nisl rhoncus mattis rhoncus urna neque viverra. Convallis aenean et tortor at risus. Diam phasellus vestibulum lorem sed risus ultricies.</Text>

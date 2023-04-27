@@ -79,6 +79,12 @@
     box-shadow: none;
   }
 
+  .react-spectrum-Table-cell {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
   &.react-spectrum-Table-row-dragPreview--multiple {
     position: relative;
 
