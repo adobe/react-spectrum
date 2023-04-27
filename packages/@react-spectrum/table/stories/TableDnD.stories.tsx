@@ -13,12 +13,14 @@
 import {action} from '@storybook/addon-actions';
 import {ComponentMeta} from '@storybook/react';
 import defaultConfig from './Table.stories';
+import {Divider} from '@react-spectrum/divider';
 import {DragBetweenTablesExample, DragBetweenTablesRootOnlyExample, DragExample, DragOntoRowExample, ReorderExample} from './TableDnDExamples';
 import {Droppable} from '@react-aria/dnd/stories/dnd.stories';
 import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 import {TableStory} from './Table.stories';
 import {TableView} from '../';
+import {View} from '@react-spectrum/view';
 
 export default {
   ...defaultConfig,
@@ -38,6 +40,30 @@ export const DragOutOfTable: TableStory = {
     </Flex>
   ),
   name: 'Drag out of table'
+};
+export const CustomDragPreview: TableStory = {
+  args: {
+    disabledKeys: ['Foo 2']
+  },
+  render: (args) => (
+    <Flex direction="row" wrap alignItems="center" gap="size-200">
+      <Droppable />
+      <DragExample
+        dragHookOptions={{
+          onDragStart: action('dragStart'),
+          onDragEnd: action('dragEnd'),
+          renderPreview: (keys, draggedKey) => (
+            <View backgroundColor="gray-50" padding="size-100" borderRadius="medium" borderWidth="thin" borderColor="blue-500">
+              <strong>Custom Preview</strong>
+              <Divider size="S" />
+              <div>Keys: [{[...keys].join(', ')}]</div>
+              <div>Dragged: {draggedKey}</div>
+            </View>
+          )}}
+        tableViewProps={args} />
+    </Flex>
+  ),
+  storyName: 'Custom drag preview'
 };
 
 export const DragWithinTable: TableStory = {
