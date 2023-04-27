@@ -746,6 +746,10 @@ export class TableLayout<T> extends ListLayout<T> {
       dropPosition: 'on'
     };
 
+    if (this.collection.getItem(target.key).type === 'section') {
+      return target;
+    }
+
     // If dropping on the item isn't accepted, try the target before or after depending on the y position.
     // Otherwise, if dropping on the item is accepted, still try the before/after positions if within 10px
     // of the top or bottom of the item.
