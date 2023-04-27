@@ -12,7 +12,7 @@
 
 import {FocusScope} from '../';
 import {Meta} from '@storybook/react';
-import React, {ReactNode, useState} from 'react';
+import React, {ReactNode, useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 
 const dialogsRoot = 'dialogsRoot';
