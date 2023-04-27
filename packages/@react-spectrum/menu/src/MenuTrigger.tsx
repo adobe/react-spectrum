@@ -58,6 +58,7 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
   let isMobile = useIsMobileDevice();
   let menuContext = {
     ...menuProps,
+    state,
     ref: menuRef,
     onClose: state.close,
     closeOnSelect,
