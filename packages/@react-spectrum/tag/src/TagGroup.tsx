@@ -161,7 +161,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         showErrorIcon
         ref={domRef}
         elementType="span"
-        UNSAFE_className={
+        wrapperClassName={
           classNames(
             styles,
             'spectrum-Tags-fieldWrapper',
