@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, TabPanels, Tabs, TabsProps, Text, TimeField, Tooltip, TooltipTrigger} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, Group, Header, Heading, Input, Item, Keyboard, Label, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, TabPanels, Tabs, TabsProps, Text, TimeField, Tooltip, TooltipTrigger} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import React, {useState} from 'react';
@@ -18,7 +18,6 @@ import styles from '../example/index.css';
 import type {TextDropItem} from 'react-aria';
 import {useDrag} from 'react-aria';
 import {useListData} from 'react-stately';
-import { DropZone } from '../src/DropZone'; //this is a temporary solution 
 
 export default {
   title: 'React Aria Components'
@@ -694,6 +693,7 @@ function Draggable() {
       role="button"
       tabIndex={0}
       className={`draggable ${isDragging ? 'dragging' : ''}`}
+      defaultValue="poppy"
     >
       Drag me
     </div>
@@ -710,7 +710,6 @@ export const DropZoneExample = () => (
         )
         .map((item: TextDropItem) => console.log('hello'))
     )} style={{border: '2px solid white', margin: '20px', padding: '20px'}}>
-      DropZone Area
     </DropZone>
   </div>
 );
