@@ -60,10 +60,6 @@ interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
    * @default 'button'
    */
   type?: 'button' | 'submit' | 'reset',
-  /** Indicates that the button should have input focus when the page loads. */
-  autoFocus?: boolean | undefined,
-  /** Prevents the user from interacting with the button: it cannot be pressed or focused. */
-  disabled?: boolean | undefined,
   /** 
    * The <form> element to associate the button with.
    * The value of this attribute must be the id of a <form> in the same document.
