@@ -43,7 +43,6 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
     >
-
     </div>
   );
 }
