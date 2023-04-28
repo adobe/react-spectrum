@@ -15,7 +15,10 @@ import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import React, {useState} from 'react';
 import styles from '../example/index.css';
+import type {TextDropItem} from 'react-aria';
+import {useDrag} from 'react-aria';
 import {useListData} from 'react-stately';
+import { DropZone } from '../src/DropZone'; //this is a temporary solution 
 
 export default {
   title: 'React Aria Components'
@@ -674,3 +677,40 @@ function CustomTab(props) {
       })} />
   );
 }
+
+function Draggable() {
+  let { dragProps, isDragging } = useDrag({
+    getItems() {
+      return [{
+        'text/plain': 'hello world',
+        'my-app-custom-type': JSON.stringify({ message: 'hello world' })
+      }];
+    }
+  });
+
+  return (
+    <div
+      {...dragProps}
+      role="button"
+      tabIndex={0}
+      className={`draggable ${isDragging ? 'dragging' : ''}`}
+    >
+      Drag me
+    </div>
+  );
+}
+
+export const DropZoneExample = () => (
+  <div>
+    <Draggable/>
+    <DropZone onDrop={async(e) => await Promise.all(
+      e.items
+        .filter((item) =>
+          item.kind === 'text' && item.types.has('text/plain')
+        )
+        .map((item: TextDropItem) => console.log('hello'))
+    )} style={{border: '2px solid white', margin: '20px', padding: '20px'}}>
+      DropZone Area
+    </DropZone>
+  </div>
+);
