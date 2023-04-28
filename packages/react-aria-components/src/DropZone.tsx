@@ -11,23 +11,23 @@
  */
 
 import {DropOptions, mergeProps, useFocusRing, useHover, useDrop, AriaFocusRingProps, HoverProps} from 'react-aria';
-import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import React, {createContext, ForwardedRef, forwardRef} from 'react';
+import {ContextValue, DOMProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import React, {createContext, ForwardedRef, forwardRef, useState} from 'react';
 
 // props are subject to change
-export interface DropZoneProps extends Omit<DropOptions, 'onDropActivate' | 'getDropOperation' | 'onInsert' | 'onRootDrop' | 'onItemDrop' | 'onReorder'>, SlotProps, AriaFocusRingProps, HoverProps {};
+export interface DropZoneProps extends Omit<DropOptions, 'onDropActivate' | 'getDropOperation' | 'onInsert' | 'onRootDrop' | 'onItemDrop' | 'onReorder'>, DOMProps, SlotProps, AriaFocusRingProps, HoverProps {};
 
 export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDivElement>>(null);
 
 function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DropZoneContext);
-  let {dropProps} = useDrop(props);
+  let {dropProps, isDropTarget} = useDrop({ref, ...props});
   let {focusProps, isFocused, isFocusVisible} = useFocusRing(props);
   let {hoverProps, isHovered} = useHover(props);
 
   let renderProps = useRenderProps({
     ...props,
-    values: {isHovered, isFocused, isFocusVisible},
+    values: {isHovered, isFocused, isFocusVisible, isDropTarget},
     defaultClassName: 'react-aria-DropZone' // is this what we want to call this?
   });
 
@@ -43,12 +43,13 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
     >
+      {props.children}
     </div>
   );
 }
 
 /**
- A drop zone is an area into which an object can be dragged and dropped. It's a common interaction in uploading and file management workflows.
+ A drop zone is an area into which an object can be dragged and dropped
  */
 const _DropZone = forwardRef(DropZone);
 export {_DropZone as DropZone};
