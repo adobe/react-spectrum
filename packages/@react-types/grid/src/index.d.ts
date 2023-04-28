@@ -23,8 +23,7 @@ export interface GridCollection<T> extends Collection<Node<T>> {
 export interface GridRow<T> {
   key?: Key,
   type: string,
-  childNodes: Iterable<Node<T>>,
-  props?: any
+  childNodes: Iterable<Node<T>>
 }
 
 export interface GridNode<T> extends Node<T> {

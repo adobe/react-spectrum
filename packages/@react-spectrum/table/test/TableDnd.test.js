@@ -12,7 +12,7 @@
 
 jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, installPointerEvent, render as renderComponent, waitFor, within} from '@react-spectrum/test-utils';
-import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
+import {Cell, Column, Row, TableBody, TableHeader, TableSection, TableView} from '../';
 import {CUSTOM_DRAG_TYPE} from '@react-aria/dnd/src/constants';
 import {DataTransfer, DataTransferItem, DragEvent, FileSystemDirectoryEntry, FileSystemFileEntry} from '@react-aria/dnd/test/mocks';
 import {DIRECTORY_DRAG_TYPE} from '@react-aria/dnd';
@@ -25,7 +25,7 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {useDragAndDrop} from '@react-spectrum/dnd';
-import {useListData} from '@react-stately/data';
+import {useListData, useTreeData} from '@react-stately/data';
 import userEvent from '@testing-library/user-event';
 
 let isReact18 = parseInt(React.version, 10) >= 18;
@@ -116,6 +116,69 @@ describe('TableView', function () {
     function DragBetweenTables(props) {
       return (
         <DragBetweenTablesExample onDrop={onDrop} onDragStart={onDragStart} onDragEnd={onDragEnd} {...props} />
+      );
+    }
+
+    function EmptySectionTable() {
+      let columns = [
+        {name: 'ID', key: 'identifier'},
+        {name: 'Name', key: 'name'},
+        {name: 'Type', key: 'type'}
+      ];
+
+      let folderSection = [
+        {identifier: 'a', type: 'section', name: 'Section A', childNodes: [
+          {identifier: '1', type: 'file', name: 'Adobe Photoshop'},
+          {identifier: '2', type: 'file', name: 'Adobe XD'},
+          {identifier: '3', type: 'folder', name: 'Documents', childNodes: []}
+        ]},
+        {identifier: 'b', type: 'section', name: 'Section B', childNodes: []},
+        {identifier: 'c', type: 'section', name: 'Section C', childNodes: [
+          {identifier: '7', type: 'file', name: 'Adobe Premier'},
+          {identifier: '8', type: 'folder', name: 'My Photos', childNodes: []},
+          {identifier: '9', type: 'file', name: 'Adobe Media Encoder'}
+        ]}
+      ];
+      let tree = useTreeData({
+        initialItems: folderSection,
+        getKey: (item) => {
+          return item.identifier;
+        },
+        getChildren: (item) => {
+          return item?.childNodes;
+        }
+      });
+
+      let {dragAndDropHooks} = useDragAndDrop({
+        getItems: (keys) => [...keys].map(key => {
+          let item = tree.getItem(key);
+          return {
+            [`${item.value.type}`]: JSON.stringify(item),
+            'text/plain': JSON.stringify(item)
+          };
+        }),
+        ...mockUtilityOptions,
+        onDragEnd,
+        acceptedDragTypes: 'all'
+      });
+
+      return (
+        <TableView aria-label="Empty section table" selectionMode="multiple" dragAndDropHooks={dragAndDropHooks}>
+          <TableHeader columns={columns}>
+            {column => <Column isRowHeader={column.key === 'name'} allowsResizing>{column.name}</Column>}
+          </TableHeader>
+          <TableBody items={tree.items}>
+            {(item) => (
+              <TableSection key={item.value.identifier} items={item.children} title={item.value.name}>
+                {(item) => (
+                  <Row key={item.value.identifier}>
+                    {key => <Cell>{item.value[key]}</Cell>}
+                  </Row>
+                )}
+              </TableSection>
+            )}
+          </TableBody>
+        </TableView>
       );
     }
 
@@ -1641,7 +1704,7 @@ describe('TableView', function () {
             fireEvent(dropTarget, new DragEvent('dragover', {dataTransfer, clientX: targetX, clientY: targetY}));
             fireEvent.pointerUp(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
             fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: targetX, clientY: targetY}));
-            fireEvent(dragCell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
+            fireEvent(dragCell, new DragEvent('dragend', {dataTransfer, clientX: targetX, clientY: targetY}));
             act(() => jest.runAllTimers());
           }
 
@@ -1707,10 +1770,10 @@ describe('TableView', function () {
             let items = await Promise.all(onInsert.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
             expect(items).toContainObject({
               children: [],
-              key: '7',
-              parentKey: 'c',
+              key: '10',
+              parentKey: 'd',
               value: {
-                identifier: '7',
+                identifier: '10',
                 type: 'folder',
                 name: 'Pictures',
                 childNodes: []
@@ -1719,10 +1782,10 @@ describe('TableView', function () {
 
             expect(items).toContainObject({
               children: [],
-              key: '8',
-              parentKey: 'c',
+              key: '11',
+              parentKey: 'd',
               value: {
-                identifier: '8',
+                identifier: '11',
                 type: 'file',
                 name: 'Adobe Fresco'
               }
@@ -1788,10 +1851,10 @@ describe('TableView', function () {
             let items = await Promise.all(onRootDrop.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
             expect(items).toContainObject({
               children: [],
-              key: '7',
-              parentKey: 'c',
+              key: '10',
+              parentKey: 'd',
               value: {
-                identifier: '7',
+                identifier: '10',
                 type: 'folder',
                 name: 'Pictures',
                 childNodes: []
@@ -1800,10 +1863,10 @@ describe('TableView', function () {
 
             expect(items).toContainObject({
               children: [],
-              key: '8',
-              parentKey: 'c',
+              key: '11',
+              parentKey: 'd',
               value: {
-                identifier: '8',
+                identifier: '11',
                 type: 'file',
                 name: 'Adobe Fresco'
               }
@@ -1826,7 +1889,7 @@ describe('TableView', function () {
             expect(onDragEnd).toHaveBeenCalledTimes(1);
             expect(onDragEnd).toHaveBeenCalledWith({
               type: 'dragend',
-              keys: new Set(['7', '8']),
+              keys: new Set(['10', '11']),
               x: 1,
               y: 285,
               dropOperation: 'move',
@@ -1860,10 +1923,10 @@ describe('TableView', function () {
             let items = await Promise.all(onItemDrop.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
             expect(items).toContainObject({
               children: [],
-              key: '7',
-              parentKey: 'c',
+              key: '10',
+              parentKey: 'd',
               value: {
-                identifier: '7',
+                identifier: '10',
                 type: 'folder',
                 name: 'Pictures',
                 childNodes: []
@@ -1871,19 +1934,114 @@ describe('TableView', function () {
             });
             expect(items).toContainObject({
               children: [],
-              key: '8',
-              parentKey: 'c',
+              key: '11',
+              parentKey: 'd',
               value: {
-                identifier: '8',
+                identifier: '11',
                 type: 'file',
                 name: 'Adobe Fresco'
               }
             });
           });
+
+          it('should allow drops on empty sections', async function () {
+            let tree = render(<EmptySectionTable />);
+            let grid = tree.getByRole('grid');
+            let rowgroups = within(grid).getAllByRole('rowgroup');
+            let sourceRows = within(rowgroups[1]).getAllByRole('row');
+            let emptySection = rowgroups[2];
+            dragWithinSectionTable(sourceRows, emptySection, 1, 200);
+
+            expect(onDragEnd).toHaveBeenCalledTimes(1);
+            expect(onDragEnd).toHaveBeenCalledWith({
+              type: 'dragend',
+              keys: new Set(['1', '2']),
+              x: 1,
+              y: 200,
+              dropOperation: 'move',
+              isInternal: true
+            });
+            expect(onReorder).toHaveBeenCalledTimes(0);
+            expect(onItemDrop).toHaveBeenCalledTimes(1);
+            expect(onRootDrop).toHaveBeenCalledTimes(0);
+            expect(onInsert).toHaveBeenCalledTimes(0);
+            expect(onItemDrop).toHaveBeenCalledWith({
+              target: {
+                key: 'b',
+                dropPosition: 'on',
+                type: 'item'
+              },
+              isInternal: true,
+              dropOperation: 'move',
+              items: [
+                {
+                  kind: 'text',
+                  types: new Set(['text/plain', 'file']),
+                  getText: expect.any(Function)
+                },
+                {
+                  kind: 'text',
+                  types: new Set(['text/plain', 'file']),
+                  getText: expect.any(Function)
+                }
+              ]
+            });
+            let items = await Promise.all(onItemDrop.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
+            expect(items).toContainObject({
+              children: [],
+              key: '1',
+              parentKey: 'a',
+              value: {
+                identifier: '1',
+                type: 'file',
+                name: 'Adobe Photoshop'
+              }
+            });
+            expect(items).toContainObject({
+              children: [],
+              key: '2',
+              parentKey: 'a',
+              value: {
+                identifier: '2',
+                type: 'file',
+                name: 'Adobe XD'
+              }
+            });
+          });
+
+          it('should return an after drop target for the previous row if dropping above a empty section', function () {
+            let tree = render(<EmptySectionTable />);
+            let grid = tree.getByRole('grid');
+            let rowgroups = within(grid).getAllByRole('rowgroup');
+            let sourceRows = within(rowgroups[1]).getAllByRole('row');
+            let emptySection = rowgroups[2];
+            dragWithinSectionTable(sourceRows, emptySection, 1, 190);
+
+            expect(onDragEnd).toHaveBeenCalledTimes(1);
+            expect(onDragEnd).toHaveBeenCalledWith({
+              type: 'dragend',
+              keys: new Set(['1', '2']),
+              x: 1,
+              y: 190,
+              dropOperation: 'move',
+              isInternal: true
+            });
+            expect(onReorder).toHaveBeenCalledTimes(1);
+            expect(onItemDrop).toHaveBeenCalledTimes(0);
+            expect(onRootDrop).toHaveBeenCalledTimes(0);
+            expect(onInsert).toHaveBeenCalledTimes(0);
+            expect(onReorder).toHaveBeenCalledWith({
+              target: {
+                key: '3',
+                dropPosition: 'after',
+                type: 'item'
+              },
+              keys: new Set(['1', '2']),
+              dropOperation: 'move'
+            });
+          });
         });
       });
-
-
     });
 
     describe('via keyboard', function () {
@@ -2718,11 +2876,18 @@ describe('TableView', function () {
 
             expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Adobe Lightroom');
 
-            for (let i = 0; i < 3; i++) {
+            for (let i = 0; i < 4; i++) {
               fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
               fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
             }
-            expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after invalid drag item');
+            expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Adobe Audition');
+
+            for (let i = 0; i < 5; i++) {
+              fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+              fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+            }
+
+            expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Adobe Animate');
 
             fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
             fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
@@ -2752,7 +2917,7 @@ describe('TableView', function () {
             expect(onInsert).toHaveBeenCalledWith({
               dropOperation: 'move',
               target: {
-                key: '7',
+                key: '10',
                 dropPosition: 'before',
                 type: 'item'
               },
@@ -2883,7 +3048,7 @@ describe('TableView', function () {
             expect(onInsert).toHaveBeenCalledTimes(0);
             expect(onItemDrop).toHaveBeenCalledWith({
               target: {
-                key: '7',
+                key: '10',
                 dropPosition: 'on',
                 type: 'item'
               },
@@ -2959,6 +3124,79 @@ describe('TableView', function () {
                 name: 'Adobe Photoshop'
               }
             });
+          });
+
+          it('should allow you to drop onto a section if it is empty', async function () {
+            let tree = render(<EmptySectionTable />);
+            beginDragSections(tree);
+            for (let i = 0; i < 5; i++) {
+              fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+              fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+            }
+
+            expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Section B');
+            fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+            fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+            expect(onReorder).toHaveBeenCalledTimes(0);
+            expect(onItemDrop).toHaveBeenCalledTimes(1);
+            expect(onRootDrop).toHaveBeenCalledTimes(0);
+            expect(onDragEnd).toHaveBeenCalledTimes(1);
+            expect(onDragEnd).toHaveBeenLastCalledWith({
+              type: 'dragend',
+              keys: new Set(['1']),
+              x: 50,
+              y: 25,
+              dropOperation: 'move',
+              isInternal: true
+            });
+            expect(onInsert).toHaveBeenCalledTimes(0);
+            expect(onItemDrop).toHaveBeenLastCalledWith({
+              target: {
+                key: 'b',
+                dropPosition: 'on',
+                type: 'item'
+              },
+              isInternal: true,
+              dropOperation: 'move',
+              items: [
+                {
+                  kind: 'text',
+                  types: new Set(['text/plain', 'file']),
+                  getText: expect.any(Function)
+                }
+              ]
+            });
+            let items = await Promise.all(onItemDrop.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
+            expect(items).toContainObject({
+              children: [],
+              key: '1',
+              parentKey: 'a',
+              value: {
+                identifier: '1',
+                type: 'file',
+                name: 'Adobe Photoshop'
+              }
+            });
+          });
+
+          it('should allow you to navigate through a section if it is empty', async function () {
+            let tree = render(<EmptySectionTable />);
+            beginDragSections(tree);
+            for (let i = 0; i < 4; i++) {
+              fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+              fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+            }
+
+            expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Documents');
+
+            fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+            fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+            expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Section B');
+
+            fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+            fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+            expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Adobe Premier');
           });
         });
       });

@@ -719,7 +719,6 @@ export class TableLayout<T> extends ListLayout<T> {
     let rectAtPoint = new Rect(point.x, point.y, 1, 1);
     let layoutInfos = this.virtualizer.layout.getVisibleLayoutInfos(rectAtPoint).filter(info => {
       if (info.type === 'row') {
-        // TODO: alternative to this is to classify the section header row as a different type than 'row'
         return this.collection.getItem(info.key).type === 'item';
       } else if (info.type === 'section') {
         return [...this.collection.getItem(info.key).childNodes].filter((child) => child.type === 'item').length === 0;

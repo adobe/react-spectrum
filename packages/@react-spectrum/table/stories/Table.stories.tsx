@@ -250,7 +250,7 @@ export const StaticWithMixed: TableStory = {
       data: 'This is a unsupported use case, make sure a console warning appears that lets the user know that they cant do this.'
     }
   }
-}
+};
 
 let columns = [
   {name: 'Foo', key: 'foo'},

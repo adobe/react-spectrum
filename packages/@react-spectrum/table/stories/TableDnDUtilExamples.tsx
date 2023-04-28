@@ -784,29 +784,39 @@ export function DragBetweenTablesOverride(props) {
 }
 
 let folderList1Section = [
-  {identifier: 'a', type: 'section', name: 'Section 1', childNodes: [
+  {identifier: 'a', type: 'section', name: 'Section A', childNodes: [
     {identifier: '1', type: 'file', name: 'Adobe Photoshop'},
     {identifier: '2', type: 'file', name: 'Adobe XD'},
     {identifier: '3', type: 'folder', name: 'Documents', childNodes: []}
   ]},
-  {identifier: 'b', type: 'section', name: 'Section 2', childNodes: [
+  {identifier: 'b', type: 'section', name: 'Section B', childNodes: [
     {identifier: '4', type: 'file', name: 'Adobe InDesign'},
     {identifier: '5', type: 'folder', name: 'Utilities', childNodes: []},
     {identifier: '6', type: 'file', name: 'Adobe AfterEffects'}
+  ]},
+  {identifier: 'c', type: 'section', name: 'Section C', childNodes: [
+    {identifier: '7', type: 'file', name: 'Adobe Premier'},
+    {identifier: '8', type: 'folder', name: 'My Photos', childNodes: []},
+    {identifier: '9', type: 'file', name: 'Adobe Media Encoder'}
   ]}
 ];
 
 let folderList2Section = [
-  {identifier: 'c', type: 'section', name: 'Section 3', childNodes: [
-    {identifier: '7', type: 'folder', name: 'Pictures', childNodes: []},
-    {identifier: '8', type: 'file', name: 'Adobe Fresco'},
-    {identifier: '9', type: 'folder', name: 'Apps', childNodes: []},
-    {identifier: '10', type: 'file', name: 'Adobe Illustrator'}
+  {identifier: 'd', type: 'section', name: 'Section D', childNodes: [
+    {identifier: '10', type: 'folder', name: 'Pictures', childNodes: []},
+    {identifier: '11', type: 'file', name: 'Adobe Fresco'},
+    {identifier: '12', type: 'folder', name: 'Apps', childNodes: []},
+    {identifier: '13', type: 'file', name: 'Adobe Illustrator'}
   ]},
-  {identifier: 'd', type: 'section', name: 'Section 4', childNodes: [
-    {identifier: '11', type: 'file', name: 'Adobe Lightroom'},
-    {identifier: '12', type: 'file', name: 'Adobe Dreamweaver'},
-    {identifier: '13', type: 'unique_type', name: 'invalid drag item'}
+  {identifier: 'e', type: 'section', name: 'Section E', childNodes: [
+    {identifier: '14', type: 'file', name: 'Adobe Lightroom'},
+    {identifier: '15', type: 'file', name: 'Adobe Dreamweaver'},
+    {identifier: '16', type: 'folder', name: 'Adobe Audition', childNodes: []}
+  ]},
+  {identifier: 'f', type: 'section', name: 'Section 6', childNodes: [
+    {identifier: '17', type: 'file', name: 'Adobe Aero'},
+    {identifier: '18', type: 'folder', name: 'dev', childNodes: []},
+    {identifier: '19', type: 'file', name: 'Adobe Animate'}
   ]}
 ];
 
@@ -988,7 +998,7 @@ export function DragBetweenTablesSectionsComplex(props) {
         ...item.value,
         childNodes: item.value.childNodes ? item.children.map(child => child.value) : undefined
       }));
-      list2.append('c', ...itemsToAppend);
+      list2.append('d', ...itemsToAppend);
     },
     onItemDrop: async (e) => {
       let {

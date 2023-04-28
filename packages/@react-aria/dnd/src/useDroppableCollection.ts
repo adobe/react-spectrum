@@ -377,8 +377,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
 
     let getPreviousTarget = (target: DropTarget, wrap = true): DropTarget => {
       let {keyboardDelegate} = localState.props;
-
-      // TODO: bug where readding rows to the section results in a super tall section (perhaps due to improper way of adding stuff back into the tree data?)
       let nextKey = target?.type === 'item'
         ? keyboardDelegate.getKeyAbove(target.key, itemFilter)
         : keyboardDelegate.getLastKey(undefined, undefined, itemFilter);

@@ -179,6 +179,6 @@ export const ComplexDragBetweenTablesSections: TableStory = {
   ),
   storyName: 'complex drag between tables (sections)',
   parameters: {
-    description: {data: 'The first table should allow dragging and drops into its folder, but disallow reorder operations. External root drops should be placed at the end of the list. The second table should allow all operations and root drops should be placed at the top of the table. Move and copy operations are allowed. The invalid drag item should be able to be dropped in either table if accompanied by other valid drag items.'}
+    description: {data: 'The first table should allow dragging and drops into its folder, but disallow reorder operations. External root drops should be placed into the first section. The second table should allow all operations and root drops should be placed at the top of the table. Move and copy operations are allowed.'}
   }
 };
