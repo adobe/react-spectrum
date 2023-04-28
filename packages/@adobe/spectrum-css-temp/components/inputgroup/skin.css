@@ -26,7 +26,9 @@ governing permissions and limitations under the License.
       }
 
       .spectrum-FieldButton {
-        border-color: var(--spectrum-textfield-border-color-key-focus);
+        &:before {
+          border-color: var(--spectrum-textfield-border-color-key-focus);
+        }
       }
     }
   }
@@ -116,7 +118,9 @@ governing permissions and limitations under the License.
     &:active,
     &.is-selected,
     &.spectrum-FieldButton--invalid {
-      border-color: var(--spectrum-textfield-quiet-border-color);
+      &:before {
+         border-color: var(--spectrum-textfield-quiet-border-color);
+      }
     }
 
     &:disabled,
