@@ -5,6 +5,7 @@ import {Droppable} from '@react-aria/dnd/stories/dnd.stories';
 import {Flex} from '@react-spectrum/layout';
 import {ListView} from '../';
 import React from 'react';
+import {View} from '@react-spectrum/view';
 
 export default {
   title: 'ListView/Drag and Drop',
@@ -68,6 +69,28 @@ export const DragOut: ListViewStory = {
     </Flex>
   ),
   name: 'Drag out of list'
+};
+
+export const CustomDragPreview: ListViewStory = {
+  render: (args) => (
+    <Flex direction="row" wrap alignItems="center">
+      <input />
+      <Droppable />
+      <DragExample
+        dragHookOptions={{
+          onDragStart: action('dragStart'),
+          onDragEnd: action('dragEnd'),
+          renderPreview: (keys, draggedKey) => (
+            <View backgroundColor="gray-50" padding="size-100" borderRadius="medium" borderWidth="thin" borderColor="blue-500">
+              <strong>Custom Preview</strong>
+              <div>Keys: [{[...keys].join(', ')}]</div>
+              <div>Dragged: {draggedKey}</div>
+            </View>
+          )}}
+        listViewProps={args} />
+    </Flex>
+  ),
+  name: 'Custom drag preview'
 };
 
 export const DragWithin: ListViewStory = {

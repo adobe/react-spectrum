@@ -11,14 +11,17 @@
  */
 
 import {FocusStrategy} from '@react-types/shared';
+import {MenuTriggerState} from '@react-stately/menu';
 import React, {HTMLAttributes, MutableRefObject, useContext} from 'react';
+import {TreeState} from '@react-stately/tree';
 
 export interface MenuContextValue extends HTMLAttributes<HTMLElement> {
   onClose?: () => void,
   closeOnSelect?: boolean,
   shouldFocusWrap?: boolean,
   autoFocus?: boolean | FocusStrategy,
-  ref?: MutableRefObject<HTMLUListElement>
+  ref?: MutableRefObject<HTMLUListElement>,
+  state?: MenuTriggerState
 }
 
 export const MenuContext = React.createContext<MenuContextValue>({});
@@ -26,3 +29,25 @@ export const MenuContext = React.createContext<MenuContextValue>({});
 export function useMenuContext(): MenuContextValue {
   return useContext(MenuContext);
 }
+
+export interface MenuDialogContextValue {
+  isUnavailable?: boolean,
+  triggerRef?: MutableRefObject<HTMLLIElement>
+}
+
+export const MenuDialogContext = React.createContext<MenuDialogContextValue | undefined>(undefined);
+
+export function useMenuDialogContext(): MenuDialogContextValue {
+  return useContext(MenuDialogContext);
+}
+
+export interface MenuStateContextValue<T> {
+  state?: TreeState<T>
+}
+
+export const MenuStateContext = React.createContext<MenuStateContextValue<any>>({});
+
+export function useMenuStateContext<T>(): MenuStateContextValue<T> {
+  return useContext(MenuStateContext);
+}
+
