@@ -87,7 +87,7 @@ export type {TextFieldProps} from './TextField';
 export type {TextProps} from './Text';
 export type {ToggleButtonProps, ToggleButtonRenderProps} from './ToggleButton';
 export type {TooltipProps, TooltipRenderProps, TooltipTriggerComponentProps} from './Tooltip';
-export type {DragAndDropHooks, DragAndDropOptions} from './useDragAndDrop';
+export type {DragAndDropHooks, DragAndDropOptions, DropIndicatorProps} from './useDragAndDrop';
 
 export type {DateValue, DateRange, TimeValue} from 'react-aria';
 export type {DirectoryDropItem, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragPreviewRenderer, DragTypes, DropItem, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem} from 'react-aria';

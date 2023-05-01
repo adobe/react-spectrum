@@ -12,21 +12,24 @@
 
 import CalendarCheckColor from '../CalendarCheckColor';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 
-storiesOf('Icons/Color', module)
-  .add(
-    'Color icon with sizes',
-    () => renderIconSizes(CalendarCheckColor, {'aria-label': 'Adobe Analytics Color'})
-  );
+export default {
+  title: 'Icons/Color'
+};
+
+export const ColorIconWithSizes = () => renderIconSizes(CalendarCheckColor, {'aria-label': 'Adobe Analytics Color'});
+
+ColorIconWithSizes.story = {
+  name: 'Color icon with sizes'
+};
 
 function renderIconSizes(Component, props) {
   let sizes = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL'];
   return (
     <div>
-      {sizes.map(size => {
-        return <Component size={size} margin="15px" {...props} />
-      })}
+      {sizes.map((size) => {
+        return <Component size={size} margin="15px" {...props} />;
+     })}
     </div>
-  )
+  );
 }

@@ -11,7 +11,15 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {classNames, SlotProvider, unwrapDOMRef, useDOMRef, useHasChild, useStyleProps} from '@react-spectrum/utils';
+import {
+  classNames,
+  SlotProvider,
+  unwrapDOMRef,
+  useDOMRef,
+  useHasChild,
+  useSlotProps,
+  useStyleProps
+} from '@react-spectrum/utils';
 import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {DialogContext, DialogContextValue} from './context';
 import {DOMRef} from '@react-types/shared';
@@ -34,6 +42,7 @@ let sizeMap = {
 };
 
 function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
+  props = useSlotProps(props, 'dialog');
   let {
     type = 'modal',
     ...contextProps

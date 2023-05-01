@@ -3,7 +3,7 @@ import {BaseCollection, CollectionContext, CollectionProps, CollectionRendererCo
 import {buildHeaderRows} from '@react-stately/table';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
-import {ContextValue, defaultSlot, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, defaultSlot, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useTableState} from 'react-stately';
 import {DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
@@ -368,7 +368,7 @@ export function useTableOptions(): TableOptionsContextValue {
   return useContext(TableOptionsContext)!;
 }
 
-export interface TableHeaderProps<T> {
+export interface TableHeaderProps<T> extends StyleProps {
   /** A list of table columns. */
   columns?: T[],
   /** A list of `Column(s)` or a function. If the latter, a list of columns must be provided using the `columns` prop. */

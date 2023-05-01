@@ -162,7 +162,7 @@ export const StaticColorWhite: ActionGroupStory = {
       {render(args)}
     </View>
   ),
-  storyName: 'staticColor=white'
+  name: 'staticColor=white'
 };
 
 export const StaticColorBlack: ActionGroupStory = {
@@ -172,7 +172,7 @@ export const StaticColorBlack: ActionGroupStory = {
       {render(args)}
     </View>
   ),
-  storyName: 'staticColor=black'
+  name: 'staticColor=black'
 };
 
 export const WithTooltips: ActionGroupStory = {
@@ -183,13 +183,13 @@ export const WithTooltips: ActionGroupStory = {
 export const Overflow: ActionGroupStory = {
   args: {disabledKeys: ['1', '5']},
   render: (args) => renderOverflow(args),
-  storyName: 'overflowMode'
+  name: 'overflowMode'
 };
 
 export const SummaryIcon: ActionGroupStory = {
   ...Overflow,
   args: {disabledKeys: ['1', '5'], summaryIcon: <TextIcon />},
-  storyName: 'summary icon overflow'
+  name: 'summary icon overflow'
 };
 
 export const VerticalOverflow: ActionGroupStory = {
@@ -201,7 +201,7 @@ export const VerticalOverflow: ActionGroupStory = {
       </div>
     </Flex>
   ),
-  storyName: 'special vertical overflow case'
+  name: 'special vertical overflow case'
 };
 
 
