@@ -10,53 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {ComboBox, Item} from '../';
-import {Content} from '@react-spectrum/view';
-import {ContextualHelp} from '@react-spectrum/contextualhelp';
-import {generatePowerset} from '@react-spectrum/story-utils';
-import {Grid, repeat} from '@react-spectrum/layout';
-import {Heading} from '@react-spectrum/text';
-import {Meta, StoryFn} from '@storybook/react';
-import React from 'react';
+import {Meta} from '@storybook/react';
+import {PropDefaults, PropSelectedKey} from './ComboBox.chromatic';
 import {SpectrumComboBoxProps} from '@react-types/combobox';
-
-// Skipping focus styles because don't have a way of applying it via classnames
-// No controlled open state also means no menu
-let states = [
-  {isQuiet: true},
-  {isReadOnly: true},
-  {isDisabled: true},
-  {validationState: ['valid', 'invalid']},
-  {isRequired: true},
-  {necessityIndicator: 'label'}
-];
-
-let combinations = generatePowerset(states, v => v.validationState && v.contextualHelp);
-
-function shortName(key, value) {
-  let returnVal = '';
-  switch (key) {
-    case 'isQuiet':
-      returnVal = 'quiet';
-      break;
-    case 'isReadOnly':
-      returnVal = 'ro';
-      break;
-    case 'isDisabled':
-      returnVal = 'disable';
-      break;
-    case 'validationState':
-      returnVal = `vs ${value}`;
-      break;
-    case 'isRequired':
-      returnVal = 'req';
-      break;
-    case 'necessityIndicator':
-      returnVal = 'necInd=label';
-      break;
-  }
-  return returnVal;
-}
 
 const meta: Meta<SpectrumComboBoxProps<object>> = {
   title: 'ComboBox',
@@ -70,37 +26,6 @@ const meta: Meta<SpectrumComboBoxProps<object>> = {
 
 export default meta;
 
-let items = [
-  {name: 'Aardvark', id: '1'},
-  {name: 'Kangaroo', id: '2'},
-  {name: 'Snake', id: '3'}
-];
+export const PropDefaultsHCM = PropDefaults;
 
-const Template: StoryFn<SpectrumComboBoxProps<object>> = (args) => (
-  <Grid columns={repeat(4, '1fr')} autoFlow="row" gap="size-200">
-    {combinations.map(c => {
-      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
-      if (!key) {
-        key = 'empty';
-      }
-
-      return (
-        <ComboBox key={key} {...args} {...c} label={args['aria-label'] ? undefined : key} defaultItems={items}>
-          {(item: any) => <Item>{item.name}</Item>}
-        </ComboBox>
-      );
-    })}
-  </Grid>
-);
-
-export const PropDefaults = {
-  render: Template,
-  name: 'default',
-  args: {}
-};
-
-export const PropSelectedKey = {
-  render: Template,
-  name: 'selectedKey: 2',
-  args: {selectedKey: '2'}
-};
+export const PropSelectedKeyHCM = PropSelectedKey;
