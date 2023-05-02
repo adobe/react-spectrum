@@ -1515,7 +1515,7 @@ function TableSection({children, style, reusableView}) {
 function TableSectionRow({children, style, item}) {
   let {state, isTableDroppable} = useTableContext();
   let {rowProps, isEmptySection} = useSectionContext();
-  // Bug where it doesn't seem to render the indicator for the section here
+
   return (
     <div
       {...rowProps}
