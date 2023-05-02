@@ -90,7 +90,7 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   return (
     <button
       {...filterDOMProps(props, {propNames: additionalButtonHTMLAttributes})}
-      {...mergeProps(props, buttonProps, focusProps, hoverProps)}
+      {...mergeProps(buttonProps, focusProps, hoverProps)}
       {...renderProps}
       ref={ref}
       slot={props.slot}
