@@ -208,14 +208,14 @@ governing permissions and limitations under the License.
     /* Focus ring: When one of the inputs or the button has keyboard focus, render the focus ring border around the entire input group by styling an adjacent descendant element. */
     &:focus-ring {
       .spectrum-FieldButton {
-        &.before {
+        box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-key-focus);
+        &:before {
            border-color: var(--spectrum-dropdown-border-color-key-focus);
-           box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-key-focus);
          }
       }
     }
     .spectrum-FieldButton {
-      &.before {
+      &:before {
          border-color: var(--spectrum-dropdown-border-color-error);
        }
       &.spectrum-FieldButton--invalid {
@@ -232,8 +232,8 @@ governing permissions and limitations under the License.
 
       &.spectrum-InputGroup--invalid {
         .spectrum-FieldButton {
-          &.before {
-             box-shadow: none;
+          box-shadow: none;
+          &:before {
              border-color: var(--spectrum-dropdown-border-color-key-focus);
            }
           &.spectrum-FieldButton--invalid {
@@ -270,9 +270,9 @@ governing permissions and limitations under the License.
     }
 
     &.is-disabled:not(.spectrum-InputGroup--invalid):not(.spectrum-InputGroup--quiet) .spectrum-FieldButton {
-      &.before {
+      border-width: 1px;
+      &:before {
          border-color: GrayText;
-         border-width: 1px;
        }
     }
   }
@@ -294,7 +294,7 @@ governing permissions and limitations under the License.
     }
     &.is-disabled {
       .spectrum-FieldButton {
-        &.before {
+        &:before {
            border-color: GrayText;
          }
       }
@@ -302,7 +302,7 @@ governing permissions and limitations under the License.
   }
   .spectrum-InputGroup--invalid {
     .spectrum-FieldButton {
-      &.before {
+      &:before {
          border-color: Highlight;
        }
     }
@@ -314,13 +314,13 @@ governing permissions and limitations under the License.
         border-color: GrayText;
       }
       &.spectrum-InputGroup--quiet .spectrum-FieldButton {
-        &.before {
+        &:before {
            border-color: GrayText;
          }
       }
     }
     &.is-disabled:not(.spectrum-InputGroup--quiet) .spectrum-FieldButton {
-      &.before {
+      &:before {
          border-color: GrayText;
        }
     }
