@@ -8,7 +8,9 @@ import {usePress} from '@react-aria/interactions';
 
 export function useDatePickerGroup(state: DatePickerState | DateRangePickerState | DateFieldState, ref: RefObject<Element>, disableArrowNavigation?: boolean) {
   let {direction} = useLocale();
-  let focusManager = useMemo(() => createFocusManager(ref), [ref]);
+  let focusManager = useMemo(() => createFocusManager(ref, {accept: node => {
+    return node.getAttribute('role') !== 'presentation';
+  }}), [ref]);
 
   // Open the popover on alt + arrow down
   let onKeyDown = (e: KeyboardEvent) => {
