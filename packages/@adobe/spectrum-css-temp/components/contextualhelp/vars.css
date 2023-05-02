@@ -10,12 +10,5 @@
  * governing permissions and limitations under the License.
  */
 
-/// <reference types="css-module-types" />
-
-export {MenuTrigger} from './MenuTrigger';
-export {Menu} from './Menu';
-export {ActionMenu} from './ActionMenu';
-export {MenuDialogTrigger} from './MenuDialogTrigger';
-export {Item, Section} from '@react-stately/collections';
-export type {SpectrumMenuTriggerProps} from '@react-types/menu';
-export type {SpectrumActionMenuProps, SpectrumMenuProps} from '@react-types/menu';
+@import './index.css';
+@import './skin.css';
