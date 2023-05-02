@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from '@storybook/addon-actions';
 import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, Group, Header, Heading, Input, Item, Keyboard, Label, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, TabPanels, Tabs, TabsProps, Text, TimeField, Tooltip, TooltipTrigger} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
@@ -701,13 +702,9 @@ export const DropZoneExample = () => (
   <div>
     <Draggable />
     <DropZone 
-      onDrop={async(e) => await Promise.all(
-        e.items
-          .filter((item) =>
-            item.kind === 'text' && item.types.has('text/plain')
-          )
-          .map(() => console.log('hello'))
-    )} 
+      onDrop={action('On Drop')}
+      onDropEnter={action('Drop Enter')}
+      onDropExit={action('Drop Exit')}
       style={{border: '2px solid white', margin: '20px', padding: '20px'}}>
       DropZone Area
     </DropZone>
