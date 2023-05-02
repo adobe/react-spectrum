@@ -208,10 +208,10 @@ governing permissions and limitations under the License.
     /* Focus ring: When one of the inputs or the button has keyboard focus, render the focus ring border around the entire input group by styling an adjacent descendant element. */
     &:focus-ring {
       .spectrum-FieldButton {
-        box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-key-focus);
         &:before {
            border-color: var(--spectrum-dropdown-border-color-key-focus);
-         }
+        }
+        box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-key-focus);
       }
     }
     .spectrum-FieldButton {
