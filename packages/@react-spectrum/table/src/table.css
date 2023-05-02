@@ -126,7 +126,6 @@
   /* forced-color-adjust: none, so that box-shadow style will render */
   forced-color-adjust: none;
 
-  /* TODO: decide what color the section should be when root dropping */
   .react-spectrum-Table-cell {
     background-color: var(--spectrum-table-cell-background-color);
   }

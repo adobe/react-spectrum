@@ -47,6 +47,7 @@ export function useTableSection<T>(props: AriaTableSectionProps<T>, state: Table
 
   return {
     rowGroupProps: {
+      // TODO: Chrome VO states "empty row group", doesn't happen in Safari VO. Doesn't happen in NVDA or TalkBack
       role: 'rowgroup',
       'aria-labelledby': headerId
     },

@@ -813,7 +813,7 @@ let folderList2Section = [
     {identifier: '15', type: 'file', name: 'Adobe Dreamweaver'},
     {identifier: '16', type: 'folder', name: 'Adobe Audition', childNodes: []}
   ]},
-  {identifier: 'f', type: 'section', name: 'Section 6', childNodes: [
+  {identifier: 'f', type: 'section', name: 'Section F', childNodes: [
     {identifier: '17', type: 'file', name: 'Adobe Aero'},
     {identifier: '18', type: 'folder', name: 'dev', childNodes: []},
     {identifier: '19', type: 'file', name: 'Adobe Animate'}
@@ -1041,7 +1041,7 @@ export function DragBetweenTablesSectionsComplex(props) {
   });
 
   return (
-    <>
+    <Flex direction="row" width="100%" wrap>
       <Flex direction="column" margin="size-100">
         <Text alignSelf="center">Table 1</Text>
         <TableView aria-label="First TableView in drag between table example" selectionMode="multiple" width={300} dragAndDropHooks={dragAndDropHooksTable1} {...tableViewProps}>
@@ -1080,6 +1080,6 @@ export function DragBetweenTablesSectionsComplex(props) {
           </TableBody>
         </TableView>
       </Flex>
-    </>
+    </Flex>
   );
 }
