@@ -17,33 +17,39 @@ import Edit from '@spectrum-icons/workflow/Edit';
 import Properties from '@spectrum-icons/workflow/Properties';
 import React from 'react';
 import Select from '@spectrum-icons/workflow/Select';
-import {storiesOf} from '@storybook/react';
 
-storiesOf('Divider', module)
-  // pretty simple component, test the three variants at once
-  .add('Horizontal',
-    () => (
-      <section>
-        <h1>Large</h1>
-        <Divider />
-        <p>Page or Section Titles.</p>
-        <Divider size="M" />
-        <p>Divide subsections or groups of elements.</p>
-        <Divider size="S" />
-        <p>Divide like-elements.</p>
-      </section>
-    )
-  )
-  .add('Vertical',
-    () => (
-      <section style={{display: 'flex'}}>
-        <ActionButton aria-label="Properties" isQuiet><Properties /></ActionButton>
-        <Divider orientation="vertical" />
-        <ActionButton aria-label="Select" isQuiet><Select /></ActionButton>
-        <Divider orientation="vertical" size="M" />
-        <ActionButton aria-label="Edit" isQuiet><Edit /></ActionButton>
-        <Divider orientation="vertical" size="S" />
-        <ActionButton aria-label="Copy" isQuiet><Copy /></ActionButton>
-      </section>
-    )
-  );
+export default {
+  title: 'Divider'
+};
+
+export const Horizontal = () => (
+  <section>
+    <h1>Large</h1>
+    <Divider />
+    <p>Page or Section Titles.</p>
+    <Divider size="M" />
+    <p>Divide subsections or groups of elements.</p>
+    <Divider size="S" />
+    <p>Divide like-elements.</p>
+  </section>
+);
+
+export const Vertical = () => (
+  <section style={{display: 'flex'}}>
+    <ActionButton aria-label="Properties" isQuiet>
+      <Properties />
+    </ActionButton>
+    <Divider orientation="vertical" />
+    <ActionButton aria-label="Select" isQuiet>
+      <Select />
+    </ActionButton>
+    <Divider orientation="vertical" size="M" />
+    <ActionButton aria-label="Edit" isQuiet>
+      <Edit />
+    </ActionButton>
+    <Divider orientation="vertical" size="S" />
+    <ActionButton aria-label="Copy" isQuiet>
+      <Copy />
+    </ActionButton>
+  </section>
+);
