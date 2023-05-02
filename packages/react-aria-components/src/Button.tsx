@@ -11,6 +11,7 @@
  */
 import {AriaButtonProps, mergeProps, useButton, useFocusRing, useHover} from 'react-aria';
 import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {filterDOMProps} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 
 export interface ButtonRenderProps {
@@ -41,10 +42,36 @@ export interface ButtonRenderProps {
   isDisabled: boolean
 }
 
-export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, SlotProps, RenderProps<ButtonRenderProps> {}
+export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, SlotProps, RenderProps<ButtonRenderProps> {
+  /** 
+   * The <form> element to associate the button with.
+   * The value of this attribute must be the id of a <form> in the same document.
+   */
+  form?: string | undefined,
+  /** 
+   * The URL that processes the information submitted by the button.
+   * Overrides the action attribute of the button's form owner.
+   */
+  formAction?: string | undefined,
+  /** Indicates how to encode the form data that is submitted. */
+  formEncType?: string | undefined,
+  /** Indicates the HTTP method used to submit the form. */
+  formMethod?: string | undefined,
+  /** Indicates that the form is not to be validated when it is submitted. */
+  formNoValidate?: boolean | undefined,
+  /** Overrides the target attribute of the button's form owner. */
+  formTarget?: string | undefined,
+  /** Submitted as a pair with the button's value as part of the form data. */
+  name?: string | undefined,
+  /** The value associated with the button's name when it's submitted with the form data. */
+  value?: string | undefined
+}
+
 interface ButtonContextValue extends ButtonProps {
   isPressed?: boolean
 }
+
+const additionalButtonHTMLAttributes = new Set(['form', 'formAction', 'formEncType', 'formMethod', 'formNoValidate', 'formTarget', 'name', 'value']);
 
 export const ButtonContext = createContext<ContextValue<ButtonContextValue, HTMLButtonElement>>({});
 
@@ -62,7 +89,8 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
 
   return (
     <button
-      {...mergeProps(buttonProps, focusProps, hoverProps)}
+      {...filterDOMProps(props, {propNames: additionalButtonHTMLAttributes})}
+      {...mergeProps(props, buttonProps, focusProps, hoverProps)}
       {...renderProps}
       ref={ref}
       slot={props.slot}
