@@ -16,7 +16,7 @@ import statelyDocs from 'docs:@react-stately/datepicker';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
-import Anatomy from '/packages/@react-aria/datepicker/docs/timefield-anatomy.svg';
+import Anatomy from '@react-aria/datepicker/docs/timefield-anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
@@ -26,7 +26,6 @@ import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Lab
 category: Date and Time
 keywords: [input, form, field, date, time]
 type: component
-after_version: 1.0.0
 ---
 
 # TimeField
@@ -286,7 +285,9 @@ A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overr
 
 ### DateInput
 
-A `DateInput` can be targeted with the `.react-aria-DateInput` CSS selector, or by overriding with a custom `className`.
+A `DateInput` can be targeted with the `.react-aria-DateInput` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.DateInputRenderProps.properties} />
 
 ### DateSegment
 
@@ -301,9 +302,16 @@ If you will use a TimeField in multiple places in your app, you can wrap all of 
 This example wraps `TimeField` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)).
 
 ```tsx example export=true
+import type {TimeFieldProps, TimeValue} from 'react-aria-components';
 import {Text} from 'react-aria-components';
 
-function MyTimeField({label, description, errorMessage, ...props}) {
+interface MyTimeFieldProps<T extends TimeValue> extends TimeFieldProps<T> {
+  label?: string,
+  description?: string,
+  errorMessage?: string
+}
+
+function MyTimeField<T extends TimeValue>({label, description, errorMessage, ...props}: MyTimeFieldProps<T>) {
   return (
     <TimeField {...props}>
       <Label>{label}</Label>
@@ -387,7 +395,6 @@ import {parseAbsoluteToLocal} from '@internationalized/date';
 `TimeField` accepts an `onChange` prop which is triggered whenever the time is edited by the user. The example below uses `onChange` to update a separate element with a formatted version of the date in the user's locale and local time zone. This is done by converting the date to a native JavaScript `Date` object to pass to the formatter. `TimeField` allows editing the time components while keeping the date fixed.
 
 ```tsx example
-import {getLocalTimeZone} from '@internationalized/date';
 import {useDateFormatter} from '@react-aria/i18n';
 
 function Example() {
@@ -397,7 +404,7 @@ function Example() {
   return (
     <>
       <MyTimeField label="Time" value={date} onChange={setDate} />
-      <p>Selected date and time: {formatter.format(date.toDate(getLocalTimeZone()))}</p>
+      <p>Selected date and time: {formatter.format(date.toDate())}</p>
     </>
   );
 }
@@ -445,8 +452,8 @@ function Example() {
       value={time}
       onChange={setTime}
       validationState={isInvalid ? 'invalid' : 'valid'}
-      description={isInvalid ? null : 'Select a meeting time'}
-      errorMessage={isInvalid ? 'Meetings start every 15 minutes.' : null} />
+      description={isInvalid ? undefined : 'Select a meeting time'}
+      errorMessage={isInvalid ? 'Meetings start every 15 minutes.' : undefined} />
   );
 }
 ```

@@ -72,6 +72,14 @@ const mdxComponents = {
       </span>
     </h3>
   ),
+  h4: ({children, ...props}) => (
+    <h4 {...props} className={clsx(typographyStyles['spectrum-Heading5'], docStyles['sectionHeader'], docStyles['docsHeader'])}>
+      {children}
+      <span className={docStyles['headingAnchor']}>
+        <a className={clsx(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)} href={`#${props.id}`} aria-label={`Direct link to ${children}`}>#</a>
+      </span>
+    </h4>
+  ),
   p: ({children, ...props}) => <p className={typographyStyles['spectrum-Body3']} {...props}>{children}</p>,
   ul: ({children, ...props}) => <ul {...props} className={typographyStyles['spectrum-Body3']}>{children}</ul>,
   ol: ({children, ...props}) => <ol {...props} className={typographyStyles['spectrum-Body3']}>{children}</ol>,

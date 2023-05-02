@@ -31,7 +31,7 @@ module.exports = {
       'jsdoc/require-description-complete-sentence': [ERROR, {abbreviations: ['e.g', 'i.e']}],
       'jsdoc/check-alignment': ERROR,
       'jsdoc/check-indentation': ERROR,
-      'jsdoc/check-tag-names': [ERROR, {definedTags: ['selector']}],
+      'jsdoc/check-tag-names': [ERROR, {definedTags: ['selector', 'note']}],
       // enable this rule to see literally everything missing jsdocs, this rule needs some refinement but is good as a sanity check.
       // 'jsdoc/require-jsdoc': [ERROR, {contexts:['TSInterfaceDeclaration TSPropertySignature', 'TSInterfaceDeclaration TSMethodSignature']}],
       'jsdoc/require-description': [ERROR, {exemptedBy: ['deprecated'], checkConstructors: false}],
@@ -118,7 +118,7 @@ module.exports = {
     'no-unused-vars': [ERROR, {args: 'none', vars: 'all', varsIgnorePattern: '[rR]eact'}],
     'space-in-parens': [ERROR, 'never'],
     'space-unary-ops': [ERROR, {words: true, nonwords: false}],
-    'spaced-comment': [ERROR, 'always', {exceptions: ['*'], markers: ['/']}],
+    'spaced-comment': [ERROR, 'always', {exceptions: ['*', '#__PURE__'], markers: ['/']}],
     'max-depth': [WARN, 4],
     'radix': [ERROR, 'always'],
     'react/jsx-uses-react': WARN,

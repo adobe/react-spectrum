@@ -15,7 +15,7 @@ import statelyDocs from 'docs:@react-stately/select';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
-import Anatomy from '/packages/@react-aria/select/docs/anatomy.svg';
+import Anatomy from '@react-aria/select/docs/anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
@@ -28,7 +28,6 @@ import ListBox from '@react-spectrum/docs/pages/assets/component-illustrations/L
 category: Pickers
 keywords: [listbox, select, aria]
 type: component
-after_version: 1.0.0
 ---
 
 # Select
@@ -105,6 +104,15 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
     &:disabled {
       border-color: var(--border-color-disabled);
       color: var(--text-color-disabled);
+      & span[aria-hidden] {
+        background: var(--border-color-disabled);
+      }
+
+      .react-aria-SelectValue {
+        &[data-placeholder] {
+          color: var(--text-color-disabled);
+        }
+      }
     }
   }
 
@@ -143,12 +151,11 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
 .react-aria-ListBox {
   --highlight-background: slateblue;
   --highlight-foreground: white;
-  --border-color: var(--spectrum-global-color-gray-400);
-  --background-color: var(--page-background);
   --text-color: var(--spectrum-alias-text-color);
   --text-color-disabled: var(--spectrum-alias-text-color-disabled);
 
   max-height: inherit;
+  box-sizing: border-box;
   overflow: auto;
   padding: 2px;
   outline: none;
@@ -157,7 +164,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
     margin-top: 12px;
   }
 
-  .react-aria-Section header {
+  .react-aria-Header {
     font-size: 1.143rem;
     font-weight: bold;
     padding: 0 0.571rem 0 1.571rem;
@@ -212,8 +219,8 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
   --background-color: var(--page-background);
   --border-color: var(--spectrum-global-color-gray-400);
 
-  border: 1px solid var(--spectrum-global-color-gray-400);
-  min-width: var(--button-width);
+  border: 1px solid var(--border-color);
+  min-width: var(--trigger-width);
   max-width: 250px;
   box-sizing: border-box;
   box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
@@ -257,6 +264,10 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
     --text-color: ButtonText;
     --text-color-disabled: GrayText;
     --focus-ring-color: Highlight;
+
+    .react-aria-Button:disabled span[aria-hidden] {
+      background: transparent;
+    }
   }
 
   .react-aria-ListBox {
@@ -400,7 +411,7 @@ Within a `<Select>`, most `<ListBox>` props are set automatically. The `<ListBox
 
 ### Section
 
-A `<Section>` defines the child items, and optional title for a section within a `<ListBox>`.
+A `<Section>` defines the child items for a section within a `<ListBox>`. It may also contain an optional `<Header>` element. If there is no header, then an `aria-label` must be provided to identify the section to assistive technologies.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
@@ -408,6 +419,10 @@ A `<Section>` defines the child items, and optional title for a section within a
 <PropTable component={docs.exports.Section} links={docs.links} />
 
 </details>
+
+### Header
+
+A `<Header>` defines the title for a `<Section>`. It accepts all DOM attributes.
 
 ### Item
 
@@ -497,7 +512,7 @@ A `SelectValue` can be targed with the `.react-aria-SelectValue` CSS selector, o
 
 The [Popover](Popover.html) component can be targeted with the `.react-aria-Popover` CSS selector, or by overriding with a custom `className`. Note that it renders in a [React Portal](https://reactjs.org/docs/portals.html), so it will not appear as a descendant of the Select in the DOM.
 
-The `--button-width` CSS custom property will be set on the popover, which you can use to make the popover match the width of the select button.
+The `--trigger-width` CSS custom property will be set on the popover, which you can use to make the popover match the width of the select button.
 
 ```css render=false
 .react-aria-Popover {
@@ -511,7 +526,11 @@ A `ListBox` can be targeted with the `.react-aria-ListBox` CSS selector, or by o
 
 ### Section
 
-A `Section` can be targeted with the `.react-aria-Section` CSS selector, or by overriding with a custom `className`.  The section title can be targeted with the `header` selector. The `title` prop also allows JSX elements and not just strings, which can enable custom formatting. However, keep in mind that interactive elements within a listbox are not allowed. See [sections](#sections) for examples.
+A `Section` can be targeted with the `.react-aria-Section` CSS selector, or by overriding with a custom `className`. See [sections](#sections) for examples.
+
+### Header
+
+A `Header` within a `Section` can be targeted with the `.react-aria-Header` CSS selector, or by overriding with a custom `className`. See [sections](#sections) for examples.
 
 ### Item
 
@@ -534,9 +553,17 @@ If you will use a Select in multiple places in your app, you can wrap all of the
 This example wraps `Select` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)). The `Item` component is also wrapped to apply class names based on the current state, as described [above](#styling).
 
 ```tsx example export=true
+import type {SelectProps, ItemProps} from 'react-aria-components';
 import {Text} from 'react-aria-components';
 
-function MySelect({label, description, errorMessage, children, ...props}) {
+interface MySelectProps<T extends object> extends SelectProps<T> {
+  label?: string,
+  description?: string,
+  errorMessage?: string,
+  children: React.ReactNode | ((item: T) => React.ReactNode)
+}
+
+function MySelect<T extends object>({label, description, errorMessage, children, ...props}: MySelectProps<T>) {
   return (
     <Select {...props}>
       <Label>{label}</Label>
@@ -555,7 +582,7 @@ function MySelect({label, description, errorMessage, children, ...props}) {
   );
 }
 
-function MyItem(props) {
+function MyItem(props: ItemProps) {
   return <Item {...props} className={({isFocused, isSelected}) => `my-item ${isFocused ? 'focused' : ''} ${isSelected ? 'selected' : ''}`} />
 }
 
@@ -650,15 +677,16 @@ function Example() {
 
 ### Sections
 
-Select supports sections in order to group options. Sections can be used by wrapping groups of items in a `Section` element. Each `Section` takes a `title` prop.
+Select supports sections in order to group options. Sections can be used by wrapping groups of items in a `Section` element. A `<Header>` element may also be included to label the section.
 
 #### Static items
 
 ```tsx example
-import {Section} from 'react-aria-components';
+import {Section, Header} from 'react-aria-components';
 
 <MySelect label="Preferred fruit or vegetable">
-  <Section title="Fruit">
+  <Section>
+    <Header>Fruit</Header>
     <Item id="Apple">Apple</Item>
     <Item id="Banana">Banana</Item>
     <Item id="Orange">Orange</Item>
@@ -668,7 +696,8 @@ import {Section} from 'react-aria-components';
     <Item id="Cantaloupe">Cantaloupe</Item>
     <Item id="Pear">Pear</Item>
   </Section>
-  <Section title="Vegetable">
+  <Section>
+    <Header>Vegetable</Header>
     <Item id="Cabbage">Cabbage</Item>
     <Item id="Broccoli">Broccoli</Item>
     <Item id="Carrots">Carrots</Item>
@@ -683,9 +712,12 @@ import {Section} from 'react-aria-components';
 
 #### Dynamic items
 
-Sections used with dynamic items are populated from a hierarchical data structure. Similarly to the props on Select, `<Section>` takes an array of data using the `items` prop.
+Sections used with dynamic items are populated from a hierarchical data structure. Similarly to the props on Select, `<Section>` takes an array of data using the `items` prop. If the section also has a header,
+the <TypeLink links={docs.links} type={docs.exports.Collection} /> component can be used to render the child items.
 
 ```tsx example
+import {Collection} from 'react-aria-components';
+
 function Example() {
   let options = [
     {name: 'Fruit', children: [
@@ -712,9 +744,12 @@ function Example() {
 
   return (
     <MySelect label="Preferred fruit or vegetable" items={options}>
-      {item => (
-        <Section id={item.name} items={item.children} title={item.name}>
-          {item => <Item id={item.name}>{item.name}</Item>}
+      {section => (
+        <Section id={section.name}>
+          <Header>{section.name}</Header>
+          <Collection items={section.children}>
+            {item => <Item id={item.name}>{item.name}</Item>}
+          </Collection>
         </Section>
       )}
     </MySelect>
@@ -762,7 +797,7 @@ function Example() {
     {name: 'Bison'},
     {name: 'Skunk'}
   ];
-  let [animal, setAnimal] = React.useState("Bison");
+  let [animal, setAnimal] = React.useState<React.Key>("Bison");
 
   return (
     <MySelect
@@ -785,8 +820,12 @@ state to the user, or support features like infinite scroll to load more data.
 ```tsx example
 import {useAsyncList} from '@react-stately/data';
 
+interface Character {
+  name: string
+}
+
 function AsyncLoadingExample() {
-  let list = useAsyncList({
+  let list = useAsyncList<Character>({
     async load({signal, filterText}) {
       let res = await fetch(
         `https://pokeapi.co/api/v2/pokemon`,
@@ -801,7 +840,7 @@ function AsyncLoadingExample() {
   });
 
   return (
-    <MySelect label="Pick a Pokemon" items={list.items} selectionMode="single">
+    <MySelect label="Pick a Pokemon" items={list.items}>
       {(item) => <Item id={item.name}>{item.name}</Item>}
     </MySelect>
   );
@@ -867,7 +906,7 @@ The `description` slot can be used to associate additional help text with a Sele
 
 ```tsx example
 function Example() {
-  let [animalId, setAnimalId] = React.useState();
+  let [animalId, setAnimalId] = React.useState<React.Key | null>(null);
   let options = [
     { id: 1, name: 'Aardvark' },
     { id: 2, name: 'Cat' },
@@ -887,8 +926,8 @@ function Example() {
     <MySelect
       validationState={isValid ? 'valid' : 'invalid'}
       label="Favorite animal"
-      description={isValid ? 'Pick your favorite animal, you will be judged.' : null}
-      errorMessage={isValid ? null : animalId === 2
+      description={isValid ? 'Pick your favorite animal, you will be judged.' : undefined}
+      errorMessage={isValid ? undefined : animalId === 2
         ? 'The author of this example is a dog person.'
         : "Oh no it's a snake! Choose anything else."}
       items={options}

@@ -52,8 +52,9 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
   let dragSession = DragManager.useDragSession();
   let {dropProps} = useDroppableItem(props, state, ref);
   let id = useId();
-  let getText = (key: Key) => collection.getItem(key)?.textValue;
   // TODO: update labeling for dropindicators before first row in section and after last row in section
+  let getText = (key: Key) => collection.getTextValue?.(key) ?? collection.getItem(key)?.textValue;
+
   let label = '';
   let labelledBy: string;
   if (target.type === 'root') {

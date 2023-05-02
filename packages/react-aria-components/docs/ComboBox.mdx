@@ -15,7 +15,7 @@ import statelyDocs from 'docs:@react-stately/combobox';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
-import Anatomy from '/packages/@react-aria/combobox/docs/anatomy.svg';
+import Anatomy from '@react-aria/combobox/docs/anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
@@ -28,7 +28,6 @@ import ListBox from '@react-spectrum/docs/pages/assets/component-illustrations/L
 category: Pickers
 keywords: [combobox, autocomplete, autosuggest, typeahead, search, aria]
 type: component
-after_version: 1.0.0
 ---
 
 # ComboBox
@@ -118,26 +117,20 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
 .react-aria-ListBox {
   --highlight-background: slateblue;
   --highlight-foreground: white;
-  --border-color: var(--spectrum-global-color-gray-400);
-  --background-color: var(--page-background);
   --text-color: var(--spectrum-alias-text-color);
   --text-color-disabled: var(--spectrum-alias-text-color-disabled);
 
   max-height: inherit;
+  box-sizing: border-box;
   overflow: auto;
   padding: 2px;
-  border: 1px solid var(--border-color);
-  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
-  border-radius: 6px;
-  background: var(--background-color);
-  width: var(--combobox-width);
-  box-sizing: border-box;
+  outline: none;
 
   .react-aria-Section:not(:first-child) {
     margin-top: 12px;
   }
 
-  .react-aria-Section header {
+  .react-aria-Header {
     font-size: 1.143rem;
     font-weight: bold;
     padding: 0 0.571rem 0 1.571rem;
@@ -188,7 +181,28 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
   }
 }
 
+.react-aria-Popover {
+  --background-color: var(--page-background);
+  --border-color: var(--spectrum-global-color-gray-400);
+
+  border: 1px solid var(--border-color);
+  width: var(--trigger-width);
+  box-sizing: border-box;
+  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
+  border-radius: 6px;
+  background: var(--background-color);
+  outline: none;
+}
+
 @media (forced-colors: active) {
+  .react-aria-ComboBox {
+    .react-aria-Button {
+      background: ButtonFace;
+      color: ButtonText;
+      border: 1px solid ButtonBorder;
+    }
+  }
+
   .react-aria-ListBox {
     forced-color-adjust: none;
 
@@ -330,7 +344,7 @@ Within a `<ComboBox>`, most `<ListBox>` props are set automatically. The `<ListB
 
 ### Section
 
-A `<Section>` defines the child items, and optional title for a section within a `<ListBox>`.
+A `<Section>` defines the child items for a section within a `<ListBox>`. It may also contain an optional `<Header>` element. If there is no header, then an `aria-label` must be provided to identify the section to assistive technologies.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
@@ -338,6 +352,10 @@ A `<Section>` defines the child items, and optional title for a section within a
 <PropTable component={docs.exports.Section} links={docs.links} />
 
 </details>
+
+### Header
+
+A `<Header>` defines the title for a `<Section>`. It accepts all DOM attributes.
 
 ### Item
 
@@ -425,11 +443,11 @@ A [Button](Button.html) can be targeted with the `.react-aria-Button` CSS select
 
 The [Popover](Popover.html) component can be targeted with the `.react-aria-Popover` CSS selector, or by overriding with a custom `className`. Note that it renders in a [React Portal](https://reactjs.org/docs/portals.html), so it will not appear as a descendant of the ComboBox in the DOM.
 
-The `--combobox-width` CSS custom property will be set on the popover, which you can use to make the popover match the width of the combobox.
+The `--trigger-width` CSS custom property will be set on the popover, which you can use to make the popover match the width of the combobox.
 
 ```css render=false
 .react-aria-Popover {
-  width: var(--combobox-width);
+  width: var(--trigger-width);
 }
 ```
 
@@ -439,7 +457,11 @@ A [ListBox](ListBox.html) can be targeted with the `.react-aria-ListBox` CSS sel
 
 ### Section
 
-A `Section` can be targeted with the `.react-aria-Section` CSS selector, or by overriding with a custom `className`. The section title can be targeted with the `header` selector. The `title` prop also allows JSX elements and not just strings, which can enable custom formatting. However, keep in mind that interactive elements within a listbox are not allowed. See [sections](#sections) for examples.
+A `Section` can be targeted with the `.react-aria-Section` CSS selector, or by overriding with a custom `className`. See [sections](#sections) for examples.
+
+### Header
+
+A `Header` within a `Section` can be targeted with the `.react-aria-Header` CSS selector, or by overriding with a custom `className`. See [sections](#sections) for examples.
 
 ### Item
 
@@ -462,9 +484,17 @@ If you will use a ComboBox in multiple places in your app, you can wrap all of t
 This example wraps `ComboBox` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)). The `Item` component is also wrapped to apply class names based on the current state, as described [above](#styling).
 
 ```tsx example export=true
+import type {ComboBoxProps, ItemProps} from 'react-aria-components';
 import {Text} from 'react-aria-components';
 
-function MyComboBox({label, description, errorMessage, children, ...props}) {
+interface MyComboBoxProps<T extends object> extends ComboBoxProps<T> {
+  label?: string,
+  description?: string | null,
+  errorMessage?: string | null,
+  children: React.ReactNode | ((item: T) => React.ReactNode)
+}
+
+function MyComboBox<T extends object>({label, description, errorMessage, children, ...props}: MyComboBoxProps<T>) {
   return (
     <ComboBox {...props}>
       <Label>{label}</Label>
@@ -483,7 +513,7 @@ function MyComboBox({label, description, errorMessage, children, ...props}) {
   );
 }
 
-function MyItem(props) {
+function MyItem(props: ItemProps) {
   return <Item {...props} className={({isFocused, isSelected}) => `my-item ${isFocused ? 'focused' : ''} ${isSelected ? 'selected' : ''}`} />
 }
 
@@ -565,7 +595,7 @@ function Example() {
     {id: 8, name: 'Agricultural'},
     {id: 9, name: 'Electrical'}
   ];
-  let [majorId, setMajorId] = React.useState();
+  let [majorId, setMajorId] = React.useState<React.Key | null>(null);
 
   return (
     <>
@@ -597,15 +627,16 @@ any value within the field.
 
 ### Sections
 
-ComboBox supports sections in order to group options. Sections can be used by wrapping groups of items in a `Section` element. Each `Section` takes a `title` prop.
+ComboBox supports sections in order to group options. Sections can be used by wrapping groups of items in a `Section` element. A `<Header>` element may also be included to label the section.
 
 #### Static items
 
 ```tsx example
-import {Section} from 'react-aria-components';
+import {Section, Header} from 'react-aria-components';
 
 <MyComboBox label="Preferred fruit or vegetable">
-  <Section title="Fruit">
+  <Section>
+    <Header>Fruit</Header>
     <Item id="Apple">Apple</Item>
     <Item id="Banana">Banana</Item>
     <Item id="Orange">Orange</Item>
@@ -615,7 +646,8 @@ import {Section} from 'react-aria-components';
     <Item id="Cantaloupe">Cantaloupe</Item>
     <Item id="Pear">Pear</Item>
   </Section>
-  <Section title="Vegetable">
+  <Section>
+    <Header>Vegetable</Header>
     <Item id="Cabbage">Cabbage</Item>
     <Item id="Broccoli">Broccoli</Item>
     <Item id="Carrots">Carrots</Item>
@@ -630,9 +662,12 @@ import {Section} from 'react-aria-components';
 
 #### Dynamic items
 
-Sections used with dynamic items are populated from a hierarchical data structure. Please note that `Section` takes an array of data using the `items` prop only.
+Sections used with dynamic items are populated from a hierarchical data structure. Please note that `Section` takes an array of data using the `items` prop only. If the section also has a header,
+the <TypeLink links={docs.links} type={docs.exports.Collection} /> component can be used to render the child items.
 
 ```tsx example
+import {Collection} from 'react-aria-components';
+
 function Example() {
   let options = [
     {name: 'Fruit', children: [
@@ -659,9 +694,12 @@ function Example() {
 
   return (
     <MyComboBox label="Preferred fruit or vegetable" defaultItems={options}>
-      {item => (
-        <Section id={item.name} items={item.children} title={item.name}>
-          {item => <Item id={item.name}>{item.name}</Item>}
+      {section => (
+        <Section id={section.name}>
+          <Header>{section.name}</Header>
+          <Collection items={section.children}>
+            {item => <Item id={item.name}>{item.name}</Item>}
+          </Collection>
         </Section>
       )}
     </MyComboBox>
@@ -764,7 +802,7 @@ function ControlledComboBox() {
   // Store ComboBox input value, selected option, open state, and items
   // in a state tracker
   let [fieldState, setFieldState] = React.useState({
-    selectedKey: '',
+    selectedKey: '' as React.Key,
     inputValue: '',
     items: optionList
   });
@@ -775,7 +813,7 @@ function ControlledComboBox() {
 
   // Specify how each of the ComboBox values should change when an
   // option is selected from the list box
-  let onSelectionChange = (key) => {
+  let onSelectionChange = (key: React.Key) => {
     setFieldState(prevState => {
       let selectedItem = prevState.items.find(option => option.id === key);
       return ({
@@ -788,16 +826,16 @@ function ControlledComboBox() {
 
   // Specify how each of the ComboBox values should change when the input
   // field is altered by the user
-  let onInputChange = (value) => {
+  let onInputChange = (value: string) => {
     setFieldState(prevState => ({
       inputValue: value,
-      selectedKey: value === '' ? null : prevState.selectedKey,
+      selectedKey: value === '' ? '' : prevState.selectedKey,
       items: optionList.filter(item => startsWith(item.name, value))
     }));
   };
 
   // Show entire list if user opens the menu manually
-  let onOpenChange = (isOpen, menuTrigger) => {
+  let onOpenChange = (isOpen: boolean, menuTrigger?: string) => {
     if (menuTrigger === 'manual' && isOpen) {
       setFieldState(prevState => ({
         inputValue: prevState.inputValue,
@@ -875,8 +913,12 @@ of a ComboBox supporting those features.
 ```tsx example
 import {useAsyncList} from '@react-stately/data';
 
+interface Character {
+  name: string
+}
+
 function AsyncLoadingExample() {
-  let list = useAsyncList({
+  let list = useAsyncList<Character>({
     async load({signal, filterText}) {
       let res = await fetch(
         `https://swapi.py4e.com/api/people/?search=${filterText}`,
@@ -908,7 +950,7 @@ The `description` slot can be used to associate additional help text with a Comb
 
 ```tsx example
 function Example() {
-  let [animalId, setAnimalId] = React.useState();
+  let [animalId, setAnimalId] = React.useState<React.Key | null>(null);
   let options = [
     { id: 1, name: 'Aardvark' },
     { id: 2, name: 'Cat' },

@@ -28,7 +28,7 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
   [props, ref] = useContextProps(props, ref, NumberFieldContext);
   let {locale} = useLocale();
   let state = useNumberFieldState({...props, locale});
-  let inputRef = useRef();
+  let inputRef = useRef<HTMLInputElement>(null);
   let [labelRef, label] = useSlot();
   let {
     labelProps,
@@ -65,9 +65,7 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
           }
         }]
       ]}>
-      <div {...renderProps} ref={ref} slot={props.slot}>
-        {props.children}
-      </div>
+      <div {...renderProps} ref={ref} slot={props.slot} />
     </Provider>
   );
 }

@@ -12,22 +12,27 @@
 
 import {Example} from './Example';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 
-storiesOf('Date and Time/useCalendar', module)
-  .add(
-    'days: 3',
-    () => <Example visibleDuration={{days: 3}} />
-  )
-  .add(
-    'weeks: 1',
-    () => <Example visibleDuration={{weeks: 1}} />
-  )
-  .add(
-    'weeks: 2',
-    () => <Example visibleDuration={{weeks: 2}} />
-  )
-  .add(
-    'months: 1',
-    () => <Example visibleDuration={{months: 1}} />
-  );
+export default {
+  title: 'Date and Time/useCalendar'
+};
+
+export const Days3 = {
+  render: () => <Example visibleDuration={{days: 3}} />,
+  name: 'days: 3'
+};
+
+export const Weeks1 = {
+  render: () => <Example visibleDuration={{weeks: 1}} />,
+  name: 'weeks: 1'
+};
+
+export const Weeks2 = {
+  render: () => <Example visibleDuration={{weeks: 2}} />,
+  name: 'weeks: 2'
+};
+
+export const Months1 = {
+  render: () => <Example visibleDuration={{months: 1}} />,
+  name: 'months: 1'
+};

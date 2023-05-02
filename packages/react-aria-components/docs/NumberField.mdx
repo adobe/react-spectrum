@@ -15,7 +15,7 @@ import statelyDocs from 'docs:@react-stately/numberfield';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
-import Anatomy from '/packages/@react-aria/numberfield/docs/anatomy.svg';
+import Anatomy from '@react-aria/numberfield/docs/anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
@@ -27,7 +27,6 @@ import Input from '@react-spectrum/docs/pages/assets/component-illustrations/Inp
 category: Forms
 keywords: [number field, input, form, aria]
 type: component
-after_version: 1.0.0
 ---
 
 # NumberField
@@ -294,11 +293,15 @@ A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overr
 
 ### Group
 
-A `Group` can be targeted with the `.react-aria-Group` selector, or by overriding with a custom `className`.
+A `Group` can be targeted with the `.react-aria-Group` selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.GroupRenderProps.properties} />
 
 ### Input
 
-An `Input` can be targeted with the `.react-aria-Input` CSS selector, or by overriding with a custom `className`. It supports standard CSS pseudo classes such as `:focus` for states. See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes#user_action_pseudo-classes) for details.
+An `Input` can be targeted with the `.react-aria-Input` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.InputRenderProps.properties} />
 
 ### Button
 
@@ -317,9 +320,16 @@ If you will use a NumberField in multiple places in your app, you can wrap all o
 This example wraps `NumberField` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)).
 
 ```tsx example export=true
+import type {NumberFieldProps} from 'react-aria-components';
 import {Text} from 'react-aria-components';
 
-function MyNumberField({label, description, errorMessage, ...props}) {
+interface MyNumberFieldProps extends NumberFieldProps {
+  label?: string,
+  description?: string,
+  errorMessage?: string
+}
+
+function MyNumberField({label, description, errorMessage, ...props}: MyNumberFieldProps) {
   return (
     <NumberField {...props}>
       <Label>{label}</Label>
@@ -513,16 +523,16 @@ The `description` slot can be used to associate additional help text with a numb
 ```tsx example
 function Example() {
   let [value, setValue] = React.useState(1);
-  let isValid = React.useMemo(() => value > 0 || value === NaN, [value]);
+  let isValid = React.useMemo(() => value > 0 || Number.isNaN(value), [value]);
 
   return (
     <MyNumberField
-      validationState={value === NaN ? undefined : (isValid ? 'valid' : 'invalid')}
+      validationState={Number.isNaN(value) ? undefined : (isValid ? 'valid' : 'invalid')}
       value={value}
       onChange={setValue}
       label="Positive numbers only"
-      description={isValid ? 'Enter a positive number.' : null}
-      errorMessage={isValid ? null : value === 0 ? 'Is zero positive?' : 'Positive numbers are bigger than 0.'} />
+      description={isValid ? 'Enter a positive number.' : undefined}
+      errorMessage={isValid ? undefined : value === 0 ? 'Is zero positive?' : 'Positive numbers are bigger than 0.'} />
   );
 }
 ```

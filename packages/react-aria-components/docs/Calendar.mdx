@@ -16,7 +16,7 @@ import statelyDocs from 'docs:@react-stately/calendar';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
-import Anatomy from '/packages/@react-aria/calendar/docs/calendar-anatomy.svg';
+import Anatomy from '@react-aria/calendar/docs/calendar-anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
@@ -26,7 +26,6 @@ import Button from '@react-spectrum/docs/pages/assets/component-illustrations/Ac
 category: Date and Time
 keywords: [input, form, field, date, time]
 type: component
-after_version: 1.0.0
 ---
 
 # Calendar
@@ -258,12 +257,45 @@ A `<Button>` accepts its contents as `children`. Other props such as `onPress` a
 
 ### CalendarGrid
 
-A `<CalendarGrid>` renders an individual month within a `<Calendar>`. It accepts a function as its `children`, which is called to render a `<CalendarCell>` for each date.
+A `<CalendarGrid>` renders an individual month within a `<Calendar>`. It accepts a function as its `children`, which is called to render a `<CalendarCell>` for each date. This renders a default `<CalendarGridHeader>`, which displays the weekday names in the column headers. This can be customized by providing a `<CalendarGridHeader>` and `<CalendarGridBody>` as children instead of a function.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
 
 <PropTable component={docs.exports.CalendarGrid} links={docs.links} />
+
+</details>
+
+### CalendarGridHeader
+
+A `<CalendarGridHeader>` renders the header within a `<CalendarGrid>`, displaying a list of weekday names. It accepts a function as its `children`, which is called with a day name abbreviation to render a `<CalendarHeaderCell>` for each column header.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.CalendarGridHeader} links={docs.links} />
+
+</details>
+
+### CalendarHeaderCell
+
+A `<CalendarHeaderCell>` renders a column header within a `<CalendarGridHeader>`. It typically displays a weekday name.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.CalendarHeaderCell} links={docs.links} />
+
+</details>
+
+### CalendarGridBody
+
+A `<CalendarGridBody>` renders the body within a `<CalendarGrid>`. It accepts a function as its `children`, which is called to render a `<CalendarCell>` for each date.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.CalendarGridBody} links={docs.links} />
 
 </details>
 
@@ -341,7 +373,39 @@ A [Button](Button.html) can be targeted with the `.react-aria-Button` CSS select
 
 ### CalendarGrid
 
-A `CalendarGrid` can be targeted with the `.react-aria-CalendarGrid` CSS selector, or by overriding with a custom `className`.
+A `CalendarGrid` can be targeted with the `.react-aria-CalendarGrid` CSS selector, or by overriding with a custom `className`. When a function is provided as children, a default `<CalendarGridHeader>` and `<CalendarGridBody>` are rendered. If you need to customize the styling of the header cells, you can render them yourself.
+
+```tsx example
+import {CalendarGridHeader, CalendarHeaderCell, CalendarGridBody} from 'react-aria-components';
+
+<Calendar aria-label="Appointment date">
+  <header>
+    <Button slot="previous">◀</Button>
+    <Heading />
+    <Button slot="next">▶</Button>
+  </header>
+  <CalendarGrid>
+    <CalendarGridHeader>
+      {day => <CalendarHeaderCell style={{color: 'var(--blue)'}}>{day}</CalendarHeaderCell>}
+    </CalendarGridHeader>
+    <CalendarGridBody>
+      {date => <CalendarCell date={date} />}
+    </CalendarGridBody>
+  </CalendarGrid>
+</Calendar>
+````
+
+### CalendarGridHeader
+
+A `CalendarGridHeader` can be targeted with the `.react-aria-CalendarGridHeader` CSS selector, or by overriding with a custom `className`.
+
+### CalendarHeaderCell
+
+A `CalendarHeaderCell` can be targeted with the `.react-aria-CalendarHeaderCell` CSS selector, or by overriding with a custom `className`.
+
+### CalendarGridBody
+
+A `CalendarGridBody` can be targeted with the `.react-aria-CalendarGridBody` CSS selector, or by overriding with a custom `className`.
 
 ### CalendarCell
 
@@ -382,9 +446,14 @@ If you will use a Calendar in multiple places in your app, you can wrap all of t
 This example also shows how to use the `errorMessage` slot to render help text in case of a validation error ([see below for details](#error-message)).
 
 ```tsx example export=true
+import type {CalendarProps, DateValue} from 'react-aria-components';
 import {Text} from 'react-aria-components';
 
-function MyCalendar({errorMessage, ...props}) {
+interface MyCalendarProps<T extends DateValue> extends CalendarProps<T> {
+  errorMessage?: string
+}
+
+function MyCalendar<T extends DateValue>({errorMessage, ...props}: MyCalendarProps<T>) {
   return (
     <Calendar {...props}>
       <header>
@@ -468,7 +537,7 @@ The below example displays a `Calendar` in the Hindi language, using the Indian 
 import {I18nProvider} from '@react-aria/i18n';
 
 function Example() {
-  let [date, setDate] = React.useState(null);
+  let [date, setDate] = React.useState<DateValue | null>(null);
   return (
     <I18nProvider locale="hi-IN-u-ca-indian">
       <MyCalendar aria-label="Date" value={date} onChange={setDate} />
@@ -510,7 +579,7 @@ function Example() {
   ];
 
   let {locale} = useLocale();
-  let isDateUnavailable = (date) => isWeekend(date, locale) || disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+  let isDateUnavailable = (date: DateValue) => isWeekend(date, locale) || disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
 
   return <MyCalendar aria-label="Appointment date" minValue={today(getLocalTimeZone())} isDateUnavailable={isDateUnavailable} />
 }
@@ -575,7 +644,7 @@ function Example() {
       value={date}
       onChange={setDate}
       validationState={isInvalid ? 'invalid' : 'valid'}
-      errorMessage={isInvalid ? 'We are closed on weekends' : null} />
+      errorMessage={isInvalid ? 'We are closed on weekends' : undefined} />
   );
 }
 ```

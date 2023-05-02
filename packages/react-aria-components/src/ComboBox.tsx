@@ -9,10 +9,10 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaComboBoxProps} from '@react-types/combobox';
+import {AriaComboBoxProps, useComboBox, useFilter} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ComboBoxState, useComboBoxState} from 'react-stately';
-import {ContextValue, Provider, RenderProps, slotCallbackSymbol, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, forwardRefType, Provider, RenderProps, slotCallbackSymbol, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListBoxProps} from './ListBox';
@@ -20,7 +20,6 @@ import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, useCallback, useRef, useState} from 'react';
 import {TextContext} from './Text';
 import {useCollection} from './Collection';
-import {useComboBox, useFilter} from 'react-aria';
 import {useResizeObserver} from '@react-aria/utils';
 
 export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children' | 'placeholder' | 'name' | 'label' | 'description' | 'errorMessage'>, RenderProps<ComboBoxState<T>>, SlotProps {
@@ -43,14 +42,14 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
     defaultFilter: props.defaultFilter || contains,
     ...props,
     items: propsFromListBox ? (props.items ?? propsFromListBox.items) : [],
-    children: null,
+    children: undefined,
     collection
   });
 
   let buttonRef = useRef<HTMLButtonElement>(null);
   let inputRef = useRef<HTMLInputElement>(null);
-  let listBoxRef = useRef(null);
-  let popoverRef = useRef(null);
+  let listBoxRef = useRef<HTMLDivElement>(null);
+  let popoverRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot();
   let {
     buttonProps,
@@ -70,7 +69,7 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
   state);
 
   // Make menu width match input + button
-  let [menuWidth, setMenuWidth] = useState(null);
+  let [menuWidth, setMenuWidth] = useState<string | null>(null);
   let onResize = useCallback(() => {
     if (inputRef.current) {
       let buttonRect = buttonRef.current?.getBoundingClientRect();
@@ -96,7 +95,7 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
     <Provider
       values={[
         [LabelContext, {...labelProps, ref: labelRef}],
-        [ButtonContext, {...buttonProps, ref: buttonRef}],
+        [ButtonContext, {...buttonProps, ref: buttonRef, isPressed: state.isOpen}],
         [InputContext, {...inputProps, ref: inputRef}],
         [PopoverContext, {
           state,
@@ -105,7 +104,7 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
           placement: 'bottom start',
           preserveChildren: true,
           isNonModal: true,
-          style: {'--combobox-width': menuWidth} as React.CSSProperties
+          style: {'--trigger-width': menuWidth} as React.CSSProperties
         }],
         [ListBoxContext, {state, [slotCallbackSymbol]: setListBoxProps, ...listBoxProps, ref: listBoxRef}],
         [TextContext, {
@@ -115,9 +114,7 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
           }
         }]
       ]}>
-      <div {...renderProps} ref={ref} slot={props.slot}>
-        {props.children}
-      </div>
+      <div {...renderProps} ref={ref} slot={props.slot} />
       {portal}
     </Provider>
   );
@@ -126,5 +123,5 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
 /**
  * A combo box combines a text input with a listbox, allowing users to filter a list of options to items matching a query.
  */
-const _ComboBox = forwardRef(ComboBox);
+const _ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(ComboBox);
 export {_ComboBox as ComboBox};

@@ -1,3 +1,4 @@
 {
-  "remove": "Druk op Spatie of Verwijderen om de tag te verwijderen."
+  "removeButtonLabel": "Verwijderen",
+  "removeDescription": "Druk op Verwijderen om de tag te verwijderen."
 }

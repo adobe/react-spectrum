@@ -9,14 +9,13 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaDatePickerProps, AriaDateRangePickerProps, useDateField, useDatePicker, useDateRangePicker, useLocale} from 'react-aria';
+import {AriaDatePickerProps, AriaDateRangePickerProps, DateValue, useDateField, useDatePicker, useDateRangePicker, useLocale} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CalendarContext, RangeCalendarContext} from './Calendar';
-import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {createCalendar} from '@internationalized/date';
 import {DateInputContext} from './DateField';
 import {DatePickerState, DateRangePickerState, useDateFieldState, useDatePickerState, useDateRangePickerState} from 'react-stately';
-import {DateValue} from '@react-types/datepicker';
 import {DialogContext} from './Dialog';
 import {GroupContext} from './Group';
 import {LabelContext} from './Label';
@@ -33,7 +32,7 @@ export const DateRangePickerContext = createContext<ContextValue<DateRangePicker
 function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DatePickerContext);
   let state = useDatePickerState(props);
-  let groupRef = useRef();
+  let groupRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot();
   let {
     groupProps,
@@ -53,7 +52,7 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
     createCalendar
   });
 
-  let fieldRef = useRef();
+  let fieldRef = useRef<HTMLDivElement>(null);
   let {fieldProps: dateFieldProps} = useDateField({...fieldProps, label}, fieldState, fieldRef);
 
   let renderProps = useRenderProps({
@@ -67,7 +66,7 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
       values={[
         [GroupContext, {...groupProps, ref: groupRef}],
         [DateInputContext, {state: fieldState, fieldProps: dateFieldProps, ref: fieldRef}],
-        [ButtonContext, buttonProps],
+        [ButtonContext, {...buttonProps, isPressed: state.isOpen}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [CalendarContext, calendarProps],
         [PopoverContext, {state, triggerRef: groupRef, placement: 'bottom start'}],
@@ -79,9 +78,7 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
           }
         }]
       ]}>
-      <div {...renderProps} ref={ref} slot={props.slot}>
-        {props.children}
-      </div>
+      <div {...renderProps} ref={ref} slot={props.slot} />
     </Provider>
   );
 }
@@ -89,13 +86,13 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
 /**
  * A date picker combines a DateField and a Calendar popover to allow users to enter or select a date and time value.
  */
-const _DatePicker = forwardRef(DatePicker);
+const _DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(DatePicker);
 export {_DatePicker as DatePicker};
 
 function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DateRangePickerContext);
   let state = useDateRangePickerState(props);
-  let groupRef = useRef();
+  let groupRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot();
   let {
     groupProps,
@@ -116,7 +113,7 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
     createCalendar
   });
 
-  let startFieldRef = useRef();
+  let startFieldRef = useRef<HTMLDivElement>(null);
   let {fieldProps: startDateFieldProps} = useDateField({...startFieldProps, label}, startFieldState, startFieldRef);
 
   let endFieldState = useDateFieldState({
@@ -125,7 +122,7 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
     createCalendar
   });
 
-  let endFieldRef = useRef();
+  let endFieldRef = useRef<HTMLDivElement>(null);
   let {fieldProps: endDateFieldProps} = useDateField({...endFieldProps, label}, endFieldState, endFieldRef);
 
   let renderProps = useRenderProps({
@@ -138,7 +135,7 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
     <Provider
       values={[
         [GroupContext, {...groupProps, ref: groupRef}],
-        [ButtonContext, buttonProps],
+        [ButtonContext, {...buttonProps, isPressed: state.isOpen}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [RangeCalendarContext, calendarProps],
         [PopoverContext, {state, triggerRef: groupRef, placement: 'bottom start'}],
@@ -164,9 +161,7 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
           }
         }]
       ]}>
-      <div {...renderProps} ref={ref} slot={props.slot}>
-        {props.children}
-      </div>
+      <div {...renderProps} ref={ref} slot={props.slot} />
     </Provider>
   );
 }
@@ -175,5 +170,5 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
  * A date range picker combines two DateFields and a RangeCalendar popover to allow
  * users to enter or select a date and time range.
  */
-const _DateRangePicker = forwardRef(DateRangePicker);
+const _DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(DateRangePicker);
 export {_DateRangePicker as DateRangePicker};

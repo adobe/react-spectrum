@@ -15,7 +15,7 @@ import statelyDocs from 'docs:@react-stately/searchfield';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
-import Anatomy from '/packages/@react-aria/searchfield/docs/anatomy.svg';
+import Anatomy from '@react-aria/searchfield/docs/anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
@@ -28,7 +28,6 @@ import {Keyboard} from '@react-spectrum/text';
 category: Forms
 keywords: [searchbox, input, search, aria]
 type: component
-after_version: 1.0.0
 ---
 
 # SearchField
@@ -309,7 +308,9 @@ A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overr
 
 ### Input
 
-An `Input` can be targeted with the `.react-aria-Input` CSS selector, or by overriding with a custom `className`.
+An `Input` can be targeted with the `.react-aria-Input` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.InputRenderProps.properties} />
 
 ### Button
 
@@ -328,9 +329,16 @@ If you will use a SearchField in multiple places in your app, you can wrap all o
 This example wraps `SearchField` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#description)).
 
 ```tsx example export=true
+import type {SearchFieldProps} from 'react-aria-components';
 import {Text} from 'react-aria-components';
 
-function MySearchField({label, description, errorMessage, ...props}) {
+interface MySearchFieldProps extends SearchFieldProps {
+  label?: string,
+  description?: string,
+  errorMessage?: string
+}
+
+function MySearchField({label, description, errorMessage, ...props}: MySearchFieldProps) {
   return (
     <SearchField {...props}>
       <Label>{label}</Label>
@@ -365,7 +373,7 @@ The `value` prop can be used to make the value controlled. The `onChange` event 
 
 ```tsx example
 function Example() {
-  let [text, setText] = React.useState();
+  let [text, setText] = React.useState('');
 
   return (
     <>

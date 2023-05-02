@@ -15,7 +15,7 @@ import typesDocs from 'docs:@react-types/overlays';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
-import Anatomy from '/packages/@react-aria/overlays/docs/popover-anatomy.svg';
+import Anatomy from '@react-aria/overlays/docs/popover-anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
@@ -25,7 +25,6 @@ import {Keyboard} from '@react-spectrum/text';
 category: Overlays
 keywords: [dialog, popover, aria]
 type: component
-after_version: 1.0.0
 ---
 
 # Popover
@@ -62,18 +61,21 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow} from 'react-aria-c
 
 ```css
 .react-aria-Popover {
-  border: 1px solid var(--spectrum-global-color-gray-400);
+  --background-color: var(--page-background);
+  --border-color: var(--spectrum-global-color-gray-400);
+
+  border: 1px solid var(--border-color);
   box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
   border-radius: 6px;
-  background: var(--page-background);
+  background: var(--background-color);
   outline: none;
   padding: 30px;
   max-width: 250px;
 
   .react-aria-OverlayArrow svg {
     display: block;
-    fill: var(--page-background);
-    stroke: var(--spectrum-global-color-gray-400);
+    fill: var(--background-color);
+    stroke: var(--border-color);
     stroke-width: 1px;
   }
 
@@ -163,13 +165,8 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow} from 'react-aria-c
 
 @media (forced-colors: active) {
   .react-aria-Popover {
-    border-color: ButtonBorder;
-    background: Canvas;
-
-    .react-aria-OverlayArrow svg {
-      fill: Canvas;
-      stroke: ButtonBorder;
-    }
+    --background-color: Canvas;
+    --border-color: ButtonBorder;
   }
 }
 ```
@@ -274,7 +271,9 @@ If you will use a Popover in multiple places in your app, you can wrap all of th
 This example wraps `Popover` and all of its children together into a single component. Since the `Dialog` is built in, this means it can't be used for components like Select, Menu, and ComboBox. Exclude the dialog if your popover will be reused in these components.
 
 ```tsx example export=true
-function MyPopover({children, ...props}) {
+import type {PopoverProps} from 'react-aria-components';
+
+function MyPopover({children, ...props}: PopoverProps) {
   return (
     <Popover {...props}>
       <OverlayArrow>
@@ -301,6 +300,7 @@ The following examples show how to use the `MyPopover` component created in the 
 
 The popover's placement with respect to its anchor element can be adjusted using the `placement`
 prop. See <TypeLink links={typesDocs.links} type={typesDocs.links[typesDocs.exports.Placement.id]} /> for a full list of available placement combinations.
+Popovers will also automatically [flip](#flipping) to the opposite direction if there isn't enough space.
 
 ```tsx example
 <div style={{display: 'flex', gap: 8}}>

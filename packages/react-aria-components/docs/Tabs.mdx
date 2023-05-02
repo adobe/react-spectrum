@@ -15,7 +15,7 @@ import statelyDocs from 'docs:@react-stately/select';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
-import Anatomy from '/packages/@react-aria/tabs/docs/anatomy.svg';
+import Anatomy from '@react-aria/tabs/docs/anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {Keyboard} from '@react-spectrum/text';
@@ -24,7 +24,6 @@ import {Keyboard} from '@react-spectrum/text';
 category: Navigation
 keywords: [tabs, aria]
 type: component
-after_version: 1.0.0
 ---
 
 # Tabs
@@ -303,8 +302,8 @@ When `Tabs` is used with dynamic items as described below, the key of each item 
 See the `react-stately` [Selection docs](../react-stately/selection.html) for more details.
 
 ```tsx example
-<Tabs defaultSelectedKey="keyboard">
-  <TabList aria-label="Input settings">
+<Tabs>
+  <TabList aria-label="Input settings" defaultSelectedKey="keyboard">
     <Tab id="mouse">Mouse Settings</Tab>
     <Tab id="keyboard">Keyboard Settings</Tab>
     <Tab id="gamepad">Gamepad Settings</Tab>
@@ -323,13 +322,13 @@ Selection can be controlled using the `selectedKey` prop, paired with the `onSel
 
 ```tsx example
 function Example() {
-  let [timePeriod, setTimePeriod] = React.useState('triassic');
+  let [timePeriod, setTimePeriod] = React.useState<React.Key>('triassic');
 
   return (
     <>
       <p>Selected time period: {timePeriod}</p>
-      <Tabs selectedKey={timePeriod} onSelectionChange={setTimePeriod}>
-        <TabList aria-label="Mesozoic time periods">
+      <Tabs>
+        <TabList aria-label="Mesozoic time periods" selectedKey={timePeriod} onSelectionChange={setTimePeriod}>
           <Tab id="triassic">Triassic</Tab>
           <Tab id="jurassic">Jurassic</Tab>
           <Tab id="cretaceous">Cretaceous</Tab>

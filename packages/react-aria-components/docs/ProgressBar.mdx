@@ -14,7 +14,7 @@ import docs from 'docs:react-aria-components';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
-import Anatomy from '/packages/@react-aria/progress/docs/anatomy.svg';
+import Anatomy from '@react-aria/progress/docs/anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
@@ -24,7 +24,6 @@ import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Lab
 category: Status
 keywords: [progressbar, aria]
 type: component
-after_version: 1.0.0
 ---
 
 # ProgressBar
@@ -59,7 +58,7 @@ import {ProgressBar, Label} from 'react-aria-components';
 
 ```css
 .react-aria-ProgressBar {
-  --bar-color: var(--spectrum-global-color-gray-400);
+  --bar-color: var(--spectrum-global-color-gray-500);
   --circle-color: var(--bar-color);
   --fill-color: slateblue;
 
@@ -76,7 +75,7 @@ import {ProgressBar, Label} from 'react-aria-components';
 
   .bar {
     grid-area: bar;
-    background: var(--bar-color);
+    box-shadow: inset 0px 0px 0px 1px var(--bar-color);
     height: 10px;
     border-radius: 5px;
     overflow: hidden;
@@ -219,7 +218,8 @@ let c = 2 * r * Math.PI;
 <ProgressBar aria-label="Loading…" value={60}>
   {({percentage}) => <>
     <svg width={64} height={64} viewBox="0 0 32 32" fill="none" strokeWidth={strokeWidth}>
-      <circle cx={center} cy={center} r={r} stroke="var(--circle-color)" />
+      <circle cx={center} cy={center} r={r - (strokeWidth / 2 - 0.25)} stroke="var(--circle-color)" strokeWidth={0.5} />
+      <circle cx={center} cy={center} r={r + (strokeWidth / 2 - 0.25)} stroke="var(--circle-color)" strokeWidth={0.5} />
       <circle
         cx={center}
         cy={center}
@@ -241,7 +241,13 @@ If you will use a ProgressBar in multiple places in your app, you can wrap all o
 This example wraps `ProgressBar` and all of its children together into a single component which accepts a `label` prop that is passed to the right place.
 
 ```tsx example export=true
-function MyProgressBar({label, ...props}) {
+import type {ProgressBarProps} from 'react-aria-components';
+
+interface MyProgressBarProps extends ProgressBarProps {
+  label?: string
+}
+
+function MyProgressBar({label, ...props}: MyProgressBarProps) {
   return (
     <ProgressBar {...props}>
       {({percentage, valueText}) => <>

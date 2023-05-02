@@ -16,34 +16,38 @@ import {FocusScope} from '@react-aria/focus';
 import {Item} from '@react-stately/collections';
 import {mergeProps} from '@react-aria/utils';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 import {useButton} from '@react-aria/button';
 import {useFocus, useInteractOutside} from '@react-aria/interactions';
 import {useMenu, useMenuItem, useMenuTrigger} from '@react-aria/menu';
 import {useMenuTriggerState} from '@react-stately/menu';
 import {useTreeState} from '@react-stately/tree';
 
+export default {
+  title: 'useMenu'
+};
 
-storiesOf('useMenu', module)
-  .add('double menu fires onInteractOutside',
-    () => (
+export const DoubleMenuFiresOnInteractOutside = {
+  render: () => (
+    <div>
       <div>
-        <div>This should just be there to show that onInteractOutside fires when clicking on another trigger.</div>
-        <MenuButton label="Actions">
-          <Item key="copy">Copy</Item>
-          <Item key="cut">Cut</Item>
-          <Item key="paste">Paste</Item>
-        </MenuButton>
-        <MenuButton label="Actions2">
-          <Item key="copy">Copy</Item>
-          <Item key="cut">Cut</Item>
-          <Item key="paste">Paste</Item>
-        </MenuButton>
-        <input />
+        This should just be there to show that onInteractOutside fires when clicking on another
+        trigger.
       </div>
-    )
-  );
-
+      <MenuButton label="Actions">
+        <Item key="copy">Copy</Item>
+        <Item key="cut">Cut</Item>
+        <Item key="paste">Paste</Item>
+      </MenuButton>
+      <MenuButton label="Actions2">
+        <Item key="copy">Copy</Item>
+        <Item key="cut">Cut</Item>
+        <Item key="paste">Paste</Item>
+      </MenuButton>
+      <input />
+    </div>
+  ),
+  name: 'double menu fires onInteractOutside'
+};
 
 function MenuButton(props) {
   // Create state based on the incoming props

@@ -36,7 +36,8 @@ import userEvent from '@testing-library/user-event';
 let {
   InlineDeleteButtons: DeletableRowsTable,
   EmptyStateStory: EmptyStateTable,
-  WithBreadcrumbNavigation: TableWithBreadcrumbs
+  WithBreadcrumbNavigation: TableWithBreadcrumbs,
+  TypeaheadWithDialog: TypeaheadWithDialog
 } = composeStories(stories);
 
 
@@ -1412,6 +1413,43 @@ describe('TableView', function () {
         moveFocus('S');
         expect(document.activeElement).toBe(getCell(tree, 'Sam'));
       });
+
+      describe('type ahead with dialog triggers', function () {
+        beforeEach(function () {
+          offsetHeight.mockRestore();
+          offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
+            .mockImplementationOnce(() => 20)
+            .mockImplementation(() => 100);
+        });
+        afterEach(function () {
+          offsetHeight.mockRestore();
+          offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+        });
+        it('does not pick up typeahead from a dialog', function () {
+          offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
+            .mockImplementationOnce(() => 20)
+            .mockImplementation(() => 100);
+          let tree = render(<TypeaheadWithDialog />);
+          let trigger = tree.getAllByRole('button')[0];
+          triggerPress(trigger);
+          act(() => {
+            jest.runAllTimers();
+          });
+          let textfield = tree.getByLabelText('Enter a J');
+          act(() => {textfield.focus();});
+          fireEvent.keyDown(textfield, {key: 'J'});
+          fireEvent.keyUp(textfield, {key: 'J'});
+          act(() => {
+            jest.runAllTimers();
+          });
+          expect(document.activeElement).toBe(textfield);
+          fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+          fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+          act(() => {
+            jest.runAllTimers();
+          });
+        });
+      });
     });
 
     describe('focus marshalling', function () {
@@ -2302,6 +2340,13 @@ describe('TableView', function () {
 
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
+
+        fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: 'a', ctrlKey: true});
+
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        expect(onSelectionChange.mock.calls[0][0]).toEqual('all');
+        checkRowSelection(rows.slice(1), true);
+        checkSelectAll(tree, 'checked');
 
         fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: 'a', ctrlKey: true});
 
@@ -3590,7 +3635,7 @@ describe('TableView', function () {
       expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
     });
 
-    it('can bulk remove items', function () {
+    it('can bulk remove items', async function () {
       let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
 
       let addButton = tree.getAllByRole('button')[0];
@@ -3617,6 +3662,7 @@ describe('TableView', function () {
       rows = within(table).getAllByRole('row');
 
       // account for renderEmptyState
+      await act(() => Promise.resolve());
       expect(rows).toHaveLength(2);
       expect(rows[1].firstChild.getAttribute('aria-colspan')).toBe('5');
       expect(rows[1].textContent).toBe('No results');
@@ -4300,7 +4346,7 @@ describe('TableView', function () {
   });
 
   describe('empty state', function () {
-    it('should display an empty state when there are no items', function () {
+    it('should display an empty state when there are no items', async function () {
       let tree = render(
         <TableView aria-label="Table" renderEmptyState={() => <h3>No results</h3>}>
           <TableHeader>
@@ -4312,6 +4358,8 @@ describe('TableView', function () {
           </TableBody>
         </TableView>
       );
+
+      await act(() => Promise.resolve()); // wait for MutationObserver in useHasTabbableChild or we get act warnings
 
       let table = tree.getByRole('grid');
       let rows = within(table).getAllByRole('row');
@@ -4333,7 +4381,7 @@ describe('TableView', function () {
       expect(heading).not.toBeInTheDocument();
     });
 
-    it('empty table select all should be disabled', function () {
+    it('empty table select all should be disabled', async function () {
       let onSelectionChange = jest.fn();
       let tree = render(
         <div>
@@ -4350,6 +4398,8 @@ describe('TableView', function () {
         </div>
       );
 
+      await act(() => Promise.resolve());
+
       let table = tree.getByRole('grid');
       let selectAll = tree.getByRole('checkbox');
 
@@ -4360,8 +4410,9 @@ describe('TableView', function () {
       expect(selectAll).toHaveAttribute('disabled');
     });
 
-    it('should allow the user to tab into the table body', function () {
+    it('should allow the user to tab into the table body', async function () {
       let tree = render(<EmptyStateTable />);
+      await act(() => Promise.resolve());
       let toggleButton = tree.getAllByRole('button')[0];
       let link = tree.getByRole('link');
 
@@ -4371,8 +4422,9 @@ describe('TableView', function () {
       expect(document.activeElement).toBe(link);
     });
 
-    it('should disable keyboard navigation within the table', function () {
+    it('should disable keyboard navigation within the table', async function () {
       let tree = render(<EmptyStateTable />);
+      await act(() => Promise.resolve());
       let table = tree.getByRole('grid');
       let header = within(table).getAllByRole('columnheader')[2];
       expect(header).not.toHaveAttribute('tabindex');
@@ -4385,8 +4437,9 @@ describe('TableView', function () {
       expect(document.activeElement).toBe(document.body);
     });
 
-    it('should disable press interactions with the column headers', function () {
+    it('should disable press interactions with the column headers', async function () {
       let tree = render(<EmptyStateTable />);
+      await act(() => Promise.resolve());
       let table = tree.getByRole('grid');
       let headers = within(table).getAllByRole('columnheader');
       let toggleButton = tree.getAllByRole('button')[0];

@@ -11,6 +11,7 @@
  */
 
 import {Button, Calendar, CalendarCell, CalendarGrid, DateInput, DatePicker, DatePickerContext, DateSegment, Dialog, Group, Heading, Label, Popover, Text} from 'react-aria-components';
+import {CalendarDate} from '@internationalized/date';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
@@ -90,5 +91,49 @@ describe('DatePicker', () => {
     let group = getByRole('group');
     expect(group.closest('.react-aria-DatePicker')).toHaveAttribute('slot', 'test');
     expect(group).toHaveAttribute('aria-label', 'test');
+  });
+
+  it('should apply isPressed state to button when expanded', () => {
+    let {getByRole} = render(<TestDatePicker />);
+    let button = getByRole('button');
+
+    expect(button).not.toHaveAttribute('data-pressed');
+    userEvent.click(button);
+    expect(button).toHaveAttribute('data-pressed');
+  });
+
+  it('should support render props', () => {
+    let {getByRole} = render(
+      <DatePicker minValue={new CalendarDate(2023, 1, 1)} defaultValue={new CalendarDate(2020, 2, 3)}>
+        {({validationState}) => (
+          <>
+            <Label>Birth date</Label>
+            <Group data-validation-state={validationState}>
+              <DateInput>
+                {(segment) => <DateSegment segment={segment} />}
+              </DateInput>
+              <Button>▼</Button>
+            </Group>
+            <Popover>
+              <Dialog>
+                <Calendar>
+                  <header>
+                    <Button slot="previous">◀</Button>
+                    <Heading />
+                    <Button slot="next">▶</Button>
+                  </header>
+                  <CalendarGrid>
+                    {(date) => <CalendarCell date={date} />}
+                  </CalendarGrid>
+                </Calendar>
+              </Dialog>
+            </Popover>
+          </>
+        )}
+      </DatePicker>
+    );
+    
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-validation-state', 'invalid');
   });
 });

@@ -1,5 +1,5 @@
 {
-  "showAllButtonLabel": "Show all ({tagCount})",
+  "showAllButtonLabel": "Show all ({tagCount, number})",
   "hideButtonLabel": "Show less",
   "actions": "Actions"
 }

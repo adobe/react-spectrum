@@ -34,6 +34,15 @@ describe('ToggleButton', () => {
     expect(button).toHaveAttribute('data-foo', 'bar');
   });
 
+  it('should support render props', () => {
+    let {getByRole} =  render(<ToggleButton>{({isSelected}) => isSelected ? 'On' : 'Off'}</ToggleButton>);
+    let button = getByRole('button');
+    expect(button).toHaveTextContent('Off');
+
+    userEvent.click(button);
+    expect(button).toHaveTextContent('On');
+  });
+
   it('should support slot', () => {
     let {getByRole} = render(
       <ToggleButtonContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>

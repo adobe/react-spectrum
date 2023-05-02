@@ -15,7 +15,7 @@ import typesDocs from 'docs:@react-types/overlays';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
-import Anatomy from '/packages/@react-aria/dialog/docs/anatomy.svg';
+import Anatomy from '@react-aria/dialog/docs/anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
@@ -25,7 +25,6 @@ import {Keyboard} from '@react-spectrum/text';
 category: Overlays
 keywords: [dialog, popover, aria]
 type: component
-after_version: 1.0.0
 ---
 
 # Dialog
@@ -273,7 +272,7 @@ A `Dialog` may be placed within a [Popover](Popover.html) to display it in conte
 import {Popover, OverlayArrow} from 'react-aria-components';
 
 <DialogTrigger>
-  <Button aria-label="Help">?⃝</Button>
+  <Button aria-label="Help">ⓘ</Button>
   <Popover>
     <OverlayArrow>
       <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
@@ -291,18 +290,21 @@ import {Popover, OverlayArrow} from 'react-aria-components';
 
 ```css
 .react-aria-Popover {
-  border: 1px solid var(--spectrum-global-color-gray-400);
+  --background-color: var(--page-background);
+  --border-color: var(--spectrum-global-color-gray-400);
+
+  border: 1px solid var(--border-color);
   box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
   border-radius: 6px;
-  background: var(--page-background);
+  background: var(--background-color);
   outline: none;
   padding: 30px;
   max-width: 250px;
 
   & .react-aria-OverlayArrow svg {
     display: block;
-    fill: var(--page-background);
-    stroke: var(--spectrum-global-color-gray-400);
+    fill: var(--background-color);
+    stroke: var(--border-color);
     stroke-width: 1px;
   }
 
@@ -353,6 +355,13 @@ import {Popover, OverlayArrow} from 'react-aria-components';
   to {
     transform: translateY(0);
     opacity: 1;
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Popover {
+    --background-color: Canvas;
+    --border-color: ButtonBorder;
   }
 }
 ```

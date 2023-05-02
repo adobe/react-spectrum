@@ -649,12 +649,19 @@ module.exports = new Transformer({
         return false;
       }
 
-      if (!t.isMemberExpression(path.node.callee)) {
-        return path.get('callee').referencesImport(module, name);
+      let callee = path.node.callee;
+      let calleePath = path.get('callee');
+      if (t.isTSAsExpression(callee)) {
+        callee = callee.expression;
+        calleePath = calleePath.get('expression');
       }
 
-      if (path.get('callee.object').referencesImport(module, 'default')) {
-        return t.isIdentifier(path.node.callee.property, {name});
+      if (!t.isMemberExpression(callee)) {
+        return calleePath.referencesImport(module, name);
+      }
+
+      if (calleePath.get('object').referencesImport(module, 'default')) {
+        return t.isIdentifier(callee.property, {name});
       }
 
       return false;
@@ -664,7 +671,7 @@ module.exports = new Transformer({
       if (path.isFunction()) {
         if (
           path.node.returnType &&
-          t.isTSTypeReference(path.node.returnType.typeAnnotation) && 
+          t.isTSTypeReference(path.node.returnType.typeAnnotation) &&
           t.isTSQualifiedName(path.node.returnType.typeAnnotation.typeName) &&
           t.isIdentifier(path.node.returnType.typeAnnotation.typeName.left, {name: 'JSX'}) &&
           t.isIdentifier(path.node.returnType.typeAnnotation.typeName.right, {name: 'Element'})

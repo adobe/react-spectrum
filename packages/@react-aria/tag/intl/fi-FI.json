@@ -1,3 +1,4 @@
 {
-  "remove": "Poista tunniste painamalla Välilyönti tai Poista."
+  "removeButtonLabel": "Poista",
+  "removeDescription": "Poista tunniste painamalla Poista-painiketta."
 }
