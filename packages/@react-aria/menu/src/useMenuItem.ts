@@ -198,7 +198,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     allowsDifferentPressOrigin: true
   });
 
-  let {pressProps, isPressed} = usePress({onPressStart, onPressUp, isDisabled});
+  let {pressProps, isPressed} = usePress({onPressStart, onPressUp, isDisabled: isDisabled || (isMenuDialogTrigger && state.expandedKeys.has(key))});
   let {hoverProps} = useHover({
     isDisabled,
     onHoverStart() {
