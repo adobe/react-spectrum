@@ -24,8 +24,9 @@
   --spectrum-listview-item-title-text-size: var(--spectrum-global-dimension-font-size-100);
   --spectrum-listview-item-description-text-color: var(--spectrum-global-color-gray-700);
   --spectrum-listview-item-description-text-size: var(--spectrum-global-dimension-font-size-75);
-  --spectrum-listview-section-header-padding-top: var(--spectrum-global-dimension-size-200);
-  --spectrum-listview-section-header-padding-bottom: var(--spectrum-global-dimension-size-100);
+  --spectrum-listview-section-header-padding-y: var(--spectrum-global-dimension-size-100);
+  --spectrum-listview-section-header-padding-x: var(--spectrum-global-dimension-size-200);
+
 
   --spectrum-listview-border-color: var(--spectrum-table-border-color, var(--spectrum-alias-border-color-mid));
   --spectrum-listview-border-color-key-focus: var(--spectrum-table-cell-border-color-key-focus, var(--spectrum-alias-focus-color));
@@ -58,6 +59,12 @@
 
 /* Common shared ListView styles */
 .react-spectrum-ListView {
+  box-sizing: border-box;
+  border-color: var(--spectrum-listview-border-color);
+  border-style: solid;
+  border-width: var(--spectrum-listview-border-width);
+  border-radius: var(--spectrum-listview-border-radius);
+  background-color: var(--spectrum-listview-background-color);
   position: relative;
   overflow: auto;
   vertical-align: var(--spectrum-table-cell-vertical-alignment);
@@ -162,6 +169,14 @@
           border-start-end-radius: var(--spectrum-listview-item-border-radius);
         }
       }
+
+      /* Box shadow for bottom border for non-selected rows that aren't immediately above a selected row (grey border bottom). */
+      /* Also omit bottom border for last row if the total content height of the ListView is equal or greater than the height of the container. This avoids overlapping bottom borders. */
+      &:not(.is-selected):not(.is-next-selected):not(.react-spectrum-ListViewItem--isFlushBottom) {
+        &:after {
+          box-shadow: inset 0 -1px 0 0 var(--spectrum-listview-item-border-color);
+        }
+      }
     }
 
     &.react-spectrum-ListView--isVerticalScrollbarVisible {
@@ -195,101 +210,18 @@
   }
 }
 
-
-/* Specfic style overrides for ListView without sections */
-.react-spectrum-ListView:not(.react-spectrum-ListView--hasSections) {
-  box-sizing: border-box;
-  border-color: var(--spectrum-listview-border-color);
-  border-style: solid;
-  border-width: var(--spectrum-listview-border-width);
-  border-radius: var(--spectrum-listview-border-radius);
-  background-color: var(--spectrum-listview-background-color);
-
-  &.react-spectrum-ListView--emphasized {
-    &:not(.react-spectrum-ListView--quiet) {
-      .react-spectrum-ListViewItem {
-        /* Box shadow for bottom border for non-selected rows that aren't immediately above a selected row (grey border bottom). */
-        /* Also omit bottom border for last row if the total content height of the ListView is equal or greater than the height of the container. This avoids overlapping bottom borders. */
-        &:not(.is-selected):not(.is-next-selected):not(.react-spectrum-ListViewItem--isFlushBottom) {
-          &:after {
-            box-shadow: inset 0 -1px 0 0 var(--spectrum-listview-item-border-color);
-          }
-        }
-      }
-    }
-  }
-
-}
-
 /* Specfic style overrides for ListView with sections */
 .react-spectrum-ListView.react-spectrum-ListView--hasSections {
-  border: none;
-  &.react-spectrum-ListView--emphasized {
-    .react-spectrum-ListViewItem:not(.is-selected) {
-      &:after {
-        box-shadow:
-          inset 1px 0 0 0 var(--spectrum-listview-item-border-color),
-          inset -1px 0 0 0 var(--spectrum-listview-item-border-color),
-          inset 0 -1px 0 0 var(--spectrum-listview-item-border-color);
-      }
-
-      &.react-spectrum-ListViewItem--firstRow {
-        &:after {
-          border-start-start-radius: var(--spectrum-listview-item-border-radius);
-          border-start-end-radius: var(--spectrum-listview-item-border-radius);
-          box-shadow:
-            inset 1px 0 0 0 var(--spectrum-listview-item-border-color),
-            inset -1px 0 0 0 var(--spectrum-listview-item-border-color),
-            inset 0 -1px 0 0 var(--spectrum-listview-item-border-color),
-            inset 0 1px 0 0 var(--spectrum-listview-item-border-color);
-        }
-      }
-
-      &:not(.is-hovered):not(.is-focused):not(.is-active) {
-        background-color: var(--spectrum-listview-background-color);
-      }
-    }
-
-    &.react-spectrum-ListView--quiet {
-      .react-spectrum-ListViewItem:not(.is-selected) {
-        &:after {
-          box-shadow: none
-        }
-
-        &:not(.is-hovered):not(.is-focused):not(.is-active) {
-          background-color: var(--spectrum-listview-quiet-background-color);
-        }
-      }
-    }
-
-    &:not(.react-spectrum-ListView--quiet) {
-      .react-spectrum-ListViewSection {
-        .react-spectrum-ListViewItem {
-          &.react-spectrum-ListViewItem--lastRow {
-            &:after {
-              border-end-start-radius: var(--spectrum-listview-item-border-radius);
-              border-end-end-radius: var(--spectrum-listview-item-border-radius);
-            }
-          }
-        }
-      }
-    }
-  }
-
   .react-spectrum-ListViewSection {
     .react-spectrum-ListViewSection-header {
       font-size: var(--spectrum-table-cell-text-size, var(--spectrum-alias-font-size-default));
       font-weight: var(--spectrum-table-header-text-font-weight);
-      padding-top: var(--spectrum-listview-section-header-padding-top);
-      padding-bottom: var(--spectrum-listview-section-header-padding-bottom);
+      padding: var(--spectrum-listview-section-header-padding-y) var(--spectrum-listview-section-header-padding-x);
       line-height: var(--spectrum-table-header-text-line-height);
+      color: var(--spectrum-alias-text-color);
+      background-color: var(--spectrum-global-color-gray-200);
     }
 
-    &.react-spectrum-ListViewSection--firstRow {
-      .react-spectrum-ListViewSection-header {
-        padding-top: 0px;
-      }
-    }
   }
 }
 
