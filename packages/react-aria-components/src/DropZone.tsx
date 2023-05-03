@@ -10,22 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaFocusRingProps, DropOptions, HoverProps, mergeProps, useDrop, useFocusRing, useHover} from 'react-aria';
 import {ContextValue, DOMProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {DropOptions, mergeProps, useButton, useDrop, useFocusRing, useHover} from 'react-aria';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 
-// props are subject to change
-export interface DropZoneProps extends Omit<DropOptions, 'onDropActivate' | 'onInsert' | 'onRootDrop' | 'onItemDrop' | 'onReorder'>, DOMProps, SlotProps, AriaFocusRingProps, HoverProps {}
+export interface DropZoneProps extends Omit<DropOptions, 'onDropActivate' | 'onInsert' | 'onRootDrop' | 'onItemDrop' | 'onReorder'>, DOMProps, SlotProps {}
 
 export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDivElement>>(null);
 
 function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DropZoneContext);
   let {dropProps, isDropTarget} = useDrop({...props, ref});
-  let {focusProps, isFocused, isFocusVisible} = useFocusRing(props);
-  let {hoverProps, isHovered} = useHover(props);
-
-  let renderProps = useRenderProps({
+  let {focusProps, isFocused, isFocusVisible} = useFocusRing();
+  let {hoverProps, isHovered} = useHover({});
+  let {buttonProps} = useButton({elementType: 'div'}, ref);
+  let renderProps = useRenderProps({ 
     ...props,
     values: {isHovered, isFocused, isFocusVisible, isDropTarget},
     defaultClassName: 'react-aria-DropZone'
@@ -33,11 +32,10 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
 
   return (
     <div
-      {...mergeProps(dropProps, focusProps, hoverProps)}
+      {...mergeProps(dropProps, focusProps, hoverProps, buttonProps)}
       {...renderProps}
       ref={ref}
-      slot={props.slot}
-
+      slot={props.slot} 
       data-hovered={isHovered || isDropTarget || undefined} 
       data-focused={isFocused || undefined} 
       data-focus-visible={isFocusVisible || undefined}> 

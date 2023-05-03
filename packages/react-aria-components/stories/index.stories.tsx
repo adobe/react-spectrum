@@ -702,9 +702,9 @@ export const DropZoneExample = () => (
   <div>
     <Draggable />
     <DropZone 
-      onDrop={action('On Drop')}
-      onDropEnter={action('Drop Enter')}
-      onDropExit={action('Drop Exit')}
+      onDrop={action('OnDrop')}
+      onDropEnter={action('OnDropEnter')}
+      onDropExit={action('OnDropExit')}
       style={{border: '2px solid white', margin: '20px', padding: '20px'}}>
       DropZone Area
     </DropZone>
