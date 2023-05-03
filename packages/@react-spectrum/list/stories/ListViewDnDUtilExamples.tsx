@@ -890,7 +890,6 @@ interface ListItems {
   childNodes?: Array<ListItems>
 }
 
-// TODO update the dnd portion to work with useTreeData
 export function DnDSections(props) {
   let {listViewProps, firstListDnDOptions, secondListDnDOptions} = props;
   let list1 = useTreeData<ListItems>({
@@ -915,7 +914,7 @@ export function DnDSections(props) {
   let acceptedDragTypes = ['file', 'folder', 'text/plain'];
 
 
-  // TODO: List of dnd bugs with sections.
+  // TODO: List of dnd bugs with sections. Double check these now that I pulled in TableView's Section DnD logic
   //  1. Need to adapt the below handlers and stuff to work with sections/useTreeData.
   //  2. keyboard DnD navigation works for the most part, drop targets are preserved. However, there are
   //  some things that will need to be updated, namely that we need to take into account the sections when adding insertion indicators
@@ -1096,7 +1095,7 @@ export function DnDSections(props) {
         let keysToRemove = itemsToAppend.map(item => item.identifier);
         list2.remove(...keysToRemove);
       }
-
+      // TODO: droping onto a folder doesn't seem to increase the number of items within in, double check
       list2.append(target.key, ...itemsToAppend);
     },
     acceptedDragTypes,
@@ -1116,7 +1115,6 @@ export function DnDSections(props) {
     shouldAcceptItemDrop: (target) => !!list2.getItem(target.key)?.value.childNodes,
     ...secondListDnDOptions
   });
-
 
   return (
     <Flex wrap gap="size-300">

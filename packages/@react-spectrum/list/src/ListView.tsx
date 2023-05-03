@@ -145,7 +145,9 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
   });
   let {collection, selectionManager} = state;
 
-  if (collection.sections.length > 0 && collection.rows.find(node => node.parentKey == null)) {
+  let nodes = [...collection];
+  let hasSections = !!nodes.find(node => node.type === 'section');
+  if (hasSections && nodes.find(node => node.type !== 'section')) {
     console.warn('Detected rows without a parent section. If a ListView has sections, all rows within a ListView must belong to a section.');
   }
 
@@ -271,7 +273,7 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
                   'react-spectrum-ListView--isHorizontalScrollbarVisible': isHorizontalScrollbarVisible,
                   'react-spectrum-ListView--hasAnyChildren': hasAnyChildren,
                   'react-spectrum-ListView--wrap': overflowMode === 'wrap',
-                  'react-spectrum-ListView--hasSections': collection.sections.length > 0
+                  'react-spectrum-ListView--hasSections': hasSections
                 },
                 styleProps.className
               )
@@ -301,7 +303,7 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
                         target={{key: item.key, type: 'item', dropPosition: 'after'}}
                         // Note: if there are sections, the after drop indicator shouldn't be presentational if the next item is a section since "after" that row isn't equivalent
                         // to "before" the next actual row
-                        isPresentationOnly={collection.sections.length === 0 ? keyAfter != null : (keyAfter != null && itemAfter?.type !== 'section')} />
+                        isPresentationOnly={hasSections ? (keyAfter != null && itemAfter?.type !== 'section') : keyAfter != null} />
                     }
                   </>
                 );

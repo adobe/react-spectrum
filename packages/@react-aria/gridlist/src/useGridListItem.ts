@@ -182,9 +182,10 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
 
   if (isVirtualized) {
     let {collection} = state;
+    let nodes = [...collection];
     // TODO: refactor ListCollection to store an absolute index of a node's position?
     // May need to refactor this if we refactor the index info of a node to truely represent the index of the node within its parent
-    rowProps['aria-rowindex'] = collection.sections.length > 0 ? [...collection.getKeys()].findIndex((key) => key === node.key) + 1 : node.index + 1;
+    rowProps['aria-rowindex'] = nodes.find(node => node.type === 'section') ? [...collection.getKeys()].findIndex((key) => key === node.key) + 1 : node.index + 1;
   }
 
   let gridCellProps = {

@@ -18,27 +18,21 @@ export class ListCollection<T> implements Collection<Node<T>> {
   private iterable: Iterable<Node<T>>;
   private firstKey: Key;
   private lastKey: Key;
-  sections: Node<T>[];
-  rows: Node<T>[];
 
   constructor(nodes: Iterable<Node<T>>) {
     this.iterable = nodes;
-    this.sections = [];
-    this.rows = [];
-
+    // TODO: decide to make index absolute or to make it relative to the parent
+    // If making it relative to parent, then introduce rowIndex for ease of calculating aria-rowindex
     let sectionIndex = 0;
     let visit = (node: Node<T>) => {
       this.keyMap.set(node.key, node);
       if (node.type === 'section') {
         node.index = sectionIndex++;
-        this.sections.push(node);
         if (node.childNodes) {
           for (let child of node.childNodes) {
             visit(child);
           }
         }
-      } else if (node.type === 'item') {
-        this.rows.push(node);
       }
     };
 
