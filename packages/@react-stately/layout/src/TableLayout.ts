@@ -616,7 +616,7 @@ export class TableLayout<T> extends ListLayout<T> {
         key = layoutInfo.key;
       }
     }
-    
+
     if (key == null || this.collection.size === 0) {
       return {type: 'root'};
     }

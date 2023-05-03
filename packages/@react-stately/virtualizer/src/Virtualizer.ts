@@ -838,6 +838,7 @@ export class Virtualizer<T extends object, V, W> {
 
     let buildTree = (parent: ReusableView<T, V>, views: ReusableView<T, V>[]): W[] => views.map(view => {
       let children = viewsByParentKey.get(view.layoutInfo.key);
+      console.log(children, view.layoutInfo.key)
       return this.delegate.renderWrapper(
         parent,
         view,

@@ -14,6 +14,8 @@ import {GridCollection} from '@react-stately/grid';
 import {GridNode} from '@react-types/grid';
 import {TableCollection as ITableCollection} from '@react-types/table';
 import {Key} from 'react';
+import {BaseCollection, NodeValue} from 'react-aria-components/src/Collection';
+import {Node} from '@react-types/shared';
 
 interface GridCollectionOptions {
   showSelectionCheckboxes?: boolean,
@@ -173,156 +175,139 @@ export function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: G
   });
 }
 
-export class TableCollection<T> extends GridCollection<T> implements ITableCollection<T> {
-  headerRows: GridNode<T>[];
-  columns: GridNode<T>[];
-  rowHeaderColumnKeys: Set<Key>;
-  body: GridNode<T>;
-  _size: number = 0;
+export class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {
+  headerRows: GridNode<T>[] = [];
+  columns: GridNode<T>[] = [];
+  rowHeaderColumnKeys: Set<Key> = new Set();
+  head: NodeValue<T> = new NodeValue('tableheader', -1);
+  body: NodeValue<T> = new NodeValue('tablebody', -2);
+  columnsDirty = true;
 
-  constructor(nodes: Iterable<GridNode<T>>, prev?: ITableCollection<T>, opts?: GridCollectionOptions) {
-    let rowHeaderColumnKeys: Set<Key> = new Set();
-    let body: GridNode<T>;
-    let columns: GridNode<T>[] = [];
+  addNode(node: NodeValue<T>) {
+    super.addNode(node);
 
-    // Add cell for selection checkboxes if needed.
-    if (opts?.showSelectionCheckboxes) {
-      let rowHeaderColumn: GridNode<T> = {
-        type: 'column',
-        key: ROW_HEADER_COLUMN_KEY,
-        value: null,
-        textValue: '',
-        level: 0,
-        index: opts?.showDragButtons ? 1 : 0,
-        hasChildNodes: false,
-        rendered: null,
-        childNodes: [],
-        props: {
-          isSelectionCell: true
-        }
-      };
-
-      columns.unshift(rowHeaderColumn);
+    this.columnsDirty ||= node.type === 'column';
+    if (node.type === 'tableheader') {
+      this.head = node;
     }
 
-    // Add cell for drag buttons if needed.
-    if (opts?.showDragButtons) {
-      let rowHeaderColumn: GridNode<T> = {
-        type: 'column',
-        key: ROW_HEADER_COLUMN_KEY_DRAG,
-        value: null,
-        textValue: '',
-        level: 0,
-        index: 0,
-        hasChildNodes: false,
-        rendered: null,
-        childNodes: [],
-        props: {
-          isDragButtonCell: true
-        }
-      };
+    if (node.type === 'tablebody') {
+      this.body = node;
+    }
+  }
 
-      columns.unshift(rowHeaderColumn);
+  commit(firstKey: Key, lastKey: Key) {
+    this.updateColumns();
+    super.commit(firstKey, lastKey);
+  }
+
+  private updateColumns() {
+    if (!this.columnsDirty) {
+      return;
     }
 
-    let rows = [];
+    this.rowHeaderColumnKeys = new Set();
+    this.columns = [];
+
     let columnKeyMap = new Map();
-    let visit = (node: GridNode<T>) => {
+    let visit = (node: Node<T>) => {
       switch (node.type) {
-        case 'body':
-          body = node;
-          break;
         case 'column':
           columnKeyMap.set(node.key, node);
           if (!node.hasChildNodes) {
-            columns.push(node);
+            node.index = this.columns.length;
+            this.columns.push(node);
 
             if (node.props.isRowHeader) {
-              rowHeaderColumnKeys.add(node.key);
+              this.rowHeaderColumnKeys.add(node.key);
             }
           }
           break;
-        case 'item':
-          rows.push(node);
-          return; // do not go into childNodes
       }
-      for (let child of node.childNodes) {
+      for (let child of this.getChildren(node.key)) {
         visit(child);
       }
     };
 
-    for (let node of nodes) {
+    for (let node of this.getChildren(this.head.key)) {
       visit(node);
     }
 
-    let headerRows = buildHeaderRows(columnKeyMap, columns) as GridNode<T>[];
-    headerRows.forEach((row, i) => rows.splice(i, 0, row));
-
-    super({
-      columnCount: columns.length,
-      items: rows,
-      visitNode: node => {
-        node.column = columns[node.index];
-        return node;
-      }
-    });
-    this.columns = columns;
-    this.rowHeaderColumnKeys = rowHeaderColumnKeys;
-    this.body = body;
-    this.headerRows = headerRows;
-    this._size = [...body.childNodes].length;
-
-    // Default row header column to the first one.
-    if (this.rowHeaderColumnKeys.size === 0) {
-      if (opts?.showSelectionCheckboxes) {
-        if (opts?.showDragButtons) {
-          this.rowHeaderColumnKeys.add(this.columns[2].key);
-        } else {
-          this.rowHeaderColumnKeys.add(this.columns[1].key);
-        }
-      } else {
-        this.rowHeaderColumnKeys.add(this.columns[0].key);
-      }
+    this.headerRows = buildHeaderRows(columnKeyMap, this.columns);
+    this.columnsDirty = false;
+    if (this.rowHeaderColumnKeys.size === 0 && this.columns.length > 0) {
+      throw new Error('A table must have at least one Column with the isRowHeader prop set to true');
     }
   }
 
+  get columnCount() {
+    return this.columns.length;
+  }
+
+  get rows() {
+    return [...this.getChildren(this.body.key)];
+  }
+
   *[Symbol.iterator]() {
-    yield* this.body.childNodes;
+    yield* this.getChildren(this.body.key);
   }
 
   get size() {
-    return this._size;
-  }
-
-  getKeys() {
-    return this.keyMap.keys();
-  }
-
-  getKeyBefore(key: Key) {
-    let node = this.keyMap.get(key);
-    return node ? node.prevKey : null;
-  }
-
-  getKeyAfter(key: Key) {
-    let node = this.keyMap.get(key);
-    return node ? node.nextKey : null;
+    return [...this.getChildren(this.body.key)].length;
   }
 
   getFirstKey() {
-    return getFirstItem(this.body.childNodes)?.key;
+    return [...this.getChildren(this.body.key)][0]?.key;
   }
 
   getLastKey() {
-    return getLastItem(this.body.childNodes)?.key;
+    let rows = [...this.getChildren(this.body.key)];
+    return rows[rows.length - 1]?.key;
   }
 
-  getItem(key: Key) {
-    return this.keyMap.get(key);
+  getKeyAfter(key: Key) {
+    let node = this.getItem(key);
+    if (node?.type === 'column') {
+      return node.nextKey ?? null;
+    }
+
+    return super.getKeyAfter(key);
   }
 
-  at(idx: number) {
-    const keys = [...this.getKeys()];
-    return this.getItem(keys[idx]);
+  getKeyBefore(key: Key) {
+    let node = this.getItem(key);
+    if (node?.type === 'column') {
+      return node.prevKey ?? null;
+    }
+
+    let k = super.getKeyBefore(key);
+    if (k != null && this.getItem(k)?.type === 'tablebody') {
+      return null;
+    }
+
+    return k;
+  }
+
+  getChildren(key: Key): Iterable<Node<T>> {
+    if (!this.getItem(key)) {
+      for (let row of this.headerRows) {
+        if (row.key === key) {
+          return row.childNodes;
+        }
+      }
+    }
+
+    return super.getChildren(key);
+  }
+
+  clone() {
+    let collection = super.clone();
+    collection.headerRows = this.headerRows;
+    collection.columns = this.columns;
+    collection.rowHeaderColumnKeys = this.rowHeaderColumnKeys;
+    collection.head = this.head;
+    collection.body = this.body;
+    return collection;
   }
 
   getTextValue(key: Key): string {
@@ -338,22 +323,18 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
 
     // Otherwise combine the text of each of the row header columns.
     let rowHeaderColumnKeys = this.rowHeaderColumnKeys;
-    if (rowHeaderColumnKeys) {
-      let text = [];
-      for (let cell of row.childNodes) {
-        let column = this.columns[cell.index];
-        if (rowHeaderColumnKeys.has(column.key) && cell.textValue) {
-          text.push(cell.textValue);
-        }
-
-        if (text.length === rowHeaderColumnKeys.size) {
-          break;
-        }
+    let text: string[] = [];
+    for (let cell of this.getChildren(key)) {
+      let column = this.columns[cell.index!];
+      if (rowHeaderColumnKeys.has(column.key) && cell.textValue) {
+        text.push(cell.textValue);
       }
 
-      return text.join(' ');
+      if (text.length === rowHeaderColumnKeys.size) {
+        break;
+      }
     }
 
-    return '';
+    return text.join(' ');
   }
 }

@@ -163,7 +163,7 @@ export class TableColumnLayout<T> {
     // initial layout or table/window resizing
     let columnWidths = calculateColumnSizes(
       tableWidth,
-      collection.columns.map(col => ({...col.column.props, key: col.key})),
+      collection.columns.map(col => ({...col.props, key: col.key})),
       widths,
       (i) => this.getDefaultWidth(collection.columns[i]),
       (i) => this.getDefaultMinWidth(collection.columns[i])
@@ -174,8 +174,8 @@ export class TableColumnLayout<T> {
       let key = collection.columns[index].key;
       let column = collection.columns[index];
       this.columnWidths.set(key, width);
-      this.columnMinWidths.set(key, getMinWidth(column.column.props.minWidth ?? this.getDefaultMinWidth(column), tableWidth));
-      this.columnMaxWidths.set(key, getMaxWidth(column.column.props.maxWidth, tableWidth));
+      this.columnMinWidths.set(key, getMinWidth(column.props.minWidth ?? this.getDefaultMinWidth(column), tableWidth));
+      this.columnMaxWidths.set(key, getMaxWidth(column.props.maxWidth, tableWidth));
     });
     return this.columnWidths;
   }

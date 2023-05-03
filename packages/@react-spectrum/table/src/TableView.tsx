@@ -45,7 +45,7 @@ import {RootDropIndicator} from './RootDropIndicator';
 import {DragPreview as SpectrumDragPreview} from './DragPreview';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
-import {TableColumnLayout, TableState, useTableState} from '@react-stately/table';
+import {TableCollection, TableColumnLayout, TableState, useTableState} from '@react-stately/table';
 import {TableLayout} from '@react-stately/layout';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {useButton} from '@react-aria/button';
@@ -62,6 +62,7 @@ import {
   useTableSelectionCheckbox
 } from '@react-aria/table';
 import {useVisuallyHidden, VisuallyHidden} from '@react-aria/visually-hidden';
+import {useCollection} from 'react-aria-components/src/Collection';
 
 const DEFAULT_HEADER_HEIGHT = {
   medium: 34,
@@ -225,8 +226,12 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   // entering resizing/exiting resizing doesn't trigger a render
   // with table layout, so we need to track it here
   let [, setIsResizing] = useState(false);
+  let initialCollection = useMemo(() => new TableCollection<any>(), []);
+  let {portal, collection} = useCollection(props, initialCollection);
   let state = useTableState({
     ...props,
+    // TODO: see if we need TableCollection here
+    collection,
     showSelectionCheckboxes,
     showDragButtons: isTableDraggable,
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
@@ -573,6 +578,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
           }}
         </DragPreview>
       }
+      {portal}
     </TableContext.Provider>
   );
 }
@@ -1118,7 +1124,7 @@ function TableDragHeaderCell({column}) {
       <div
         {...columnHeaderProps}
         ref={ref}
-        className={ 
+        className={
           classNames(
             styles,
             'spectrum-Table-headCell',
