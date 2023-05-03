@@ -47,24 +47,24 @@ export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' |
    * The <form> element to associate the button with.
    * The value of this attribute must be the id of a <form> in the same document.
    */
-  form?: string | undefined,
+  form?: string,
   /** 
    * The URL that processes the information submitted by the button.
    * Overrides the action attribute of the button's form owner.
    */
-  formAction?: string | undefined,
+  formAction?: string,
   /** Indicates how to encode the form data that is submitted. */
-  formEncType?: string | undefined,
+  formEncType?: string,
   /** Indicates the HTTP method used to submit the form. */
-  formMethod?: string | undefined,
+  formMethod?: string,
   /** Indicates that the form is not to be validated when it is submitted. */
-  formNoValidate?: boolean | undefined,
+  formNoValidate?: boolean,
   /** Overrides the target attribute of the button's form owner. */
-  formTarget?: string | undefined,
+  formTarget?: string,
   /** Submitted as a pair with the button's value as part of the form data. */
-  name?: string | undefined,
+  name?: string,
   /** The value associated with the button's name when it's submitted with the form data. */
-  value?: string | undefined
+  value?: string
 }
 
 interface ButtonContextValue extends ButtonProps {
