@@ -43,7 +43,7 @@ export interface AriaSearchAutocompleteOptions<T> extends AriaSearchAutocomplete
   /** The ref for the list box. */
   listBoxRef: RefObject<HTMLElement>,
   /** An optional keyboard delegate implementation, to override the default. */
-  keyboardDelegate?: KeyboardDelegate
+  keyboardDelegate?: KeyboardDelegate<T>
 }
 
 /**
@@ -87,7 +87,7 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteOptions<T>
     value: state.inputValue,
     setValue: state.setInputValue
   }, inputRef);
-  
+
 
   let {listBoxProps, labelProps, inputProps: comboBoxInputProps} = useComboBox(
     {

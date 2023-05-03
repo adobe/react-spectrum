@@ -25,8 +25,7 @@ export interface DropIndicatorProps {
   /** The drop target that the drop indicator represents. */
   target: DropTarget,
   /** A delegate object that implements behavior for keyboard focus movement. */
-  keyboardDelegate?: KeyboardDelegate
-
+  keyboardDelegate?: KeyboardDelegate<unknown>
 }
 
 export interface DropIndicatorAria {
@@ -52,7 +51,6 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
   let dragSession = DragManager.useDragSession();
   let {dropProps} = useDroppableItem(props, state, ref);
   let id = useId();
-  // TODO: update labeling for dropindicators before first row in section and after last row in section
   let getText = (key: Key) => collection.getTextValue?.(key) ?? collection.getItem(key)?.textValue;
 
   let label = '';
@@ -68,9 +66,7 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
     let before: Key | null;
     let after: Key | null;
 
-    // TODO: get opinions here, should we accept keyboard delegate here or modify the collection key getters
     let keyGetter = keyboardDelegate ?? collection;
-
     // TODO: I've changed it so it will announce "insert after"/"insert before" target if the drop position is between the target and a following/preceeding section
     // instead of announcing "insert between target and NEXT/PREV_SECTION_ROW". Gather opinions
     let keyBefore = keyboardDelegate != null ? keyboardDelegate.getKeyAbove(target.key) : collection.getKeyBefore(target.key);
@@ -78,7 +74,7 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
       if (keyGetter.getFirstKey() === target.key || collection.getItem(keyBefore)?.parentKey !== collection.getItem(target.key)?.parentKey) {
         before = null;
       } else {
-        before === keyBefore;
+        before = keyBefore;
       }
     } else {
       before = target.key;
@@ -89,10 +85,10 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
       if (keyGetter.getLastKey() === target.key || collection.getItem(keyAfter)?.parentKey !== collection.getItem(target.key)?.parentKey) {
         after = null;
       } else {
-        before === keyBefore;
+        after = keyAfter;
       }
     } else {
-      before = target.key;
+      after = target.key;
     }
 
     if (before && after) {

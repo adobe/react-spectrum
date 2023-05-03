@@ -23,7 +23,7 @@ import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {Key, RefObject} from 'react';
 import {listMap} from './utils';
 import {ListState} from '@react-stately/list';
-import {useGridSectionAnnouncement, useGridSelectionAnnouncement, useHighlightSelectionDescription} from '@react-aria/grid';
+import {useGridSelectionAnnouncement, useHighlightSelectionDescription} from '@react-aria/grid';
 import {useHasTabbableChild} from '@react-aria/focus';
 import {useSelectableList} from '@react-aria/selection';
 
@@ -46,7 +46,7 @@ export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'chil
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
    */
-  keyboardDelegate?: KeyboardDelegate
+  keyboardDelegate?: KeyboardDelegate<T>
 }
 
 export interface GridListAria {
@@ -113,7 +113,6 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
   }
 
   useGridSelectionAnnouncement({}, state);
-  useGridSectionAnnouncement(state);
 
   return {
     gridProps

@@ -41,7 +41,7 @@ import {useDrop} from './useDrop';
 
 export interface DroppableCollectionOptions extends DroppableCollectionProps {
   /** A delegate object that implements behavior for keyboard focus movement. */
-  keyboardDelegate: KeyboardDelegate,
+  keyboardDelegate: KeyboardDelegate<unknown>,
   /** A delegate object that provides drop targets for pointer coordinates within the collection. */
   dropTargetDelegate: DropTargetDelegate
 }
@@ -73,6 +73,11 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
   }).current;
   localState.props = props;
   localState.state = state;
+
+  let itemFilter = useCallback((item) => {
+    let isEmptySection = item?.type === 'section' && [...item.childNodes].filter((child) => child.type === 'item').length === 0;
+    return item.type === 'item' || isEmptySection;
+  }, []);
 
   let defaultOnDrop = useCallback(async (e: DroppableCollectionDropEvent) => {
     let {
@@ -325,17 +330,17 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
 
       let {keyboardDelegate} = localState.props;
       let nextKey = target.type === 'item'
-        ? keyboardDelegate.getKeyBelow(target.key)
-        : keyboardDelegate.getFirstKey();
-      let dropPosition: DropPosition = 'before';
+        ? keyboardDelegate.getKeyBelow(target.key, itemFilter)
+        : keyboardDelegate.getFirstKey(undefined, undefined, itemFilter);
+      let targetItem = target.type === 'item' ? localState.state.collection.getItem(target.key) : undefined;
+      let nextItem = nextKey != null ? localState.state.collection.getItem(nextKey) : undefined;
+      let dropPosition: DropPosition = nextItem && nextItem.type === 'section' ? 'on' : 'before';
 
-      if (target.type === 'item') {
-        let targetItem = localState.state.collection.getItem(target.key);
-        let nextItem = nextKey != null ? localState.state.collection.getItem(nextKey) : null;
+      if (target?.type === 'item' && targetItem?.type !== 'section') {
         let positionIndex = DROP_POSITIONS.indexOf(target.dropPosition);
         let nextDropPosition = DROP_POSITIONS[positionIndex + 1];
-
         if (
+          targetItem?.type === 'item' &&
           (positionIndex < DROP_POSITIONS.length - 1 && !(nextDropPosition === 'after' && nextKey != null)) ||
           (nextDropPosition === 'after' && nextKey != null && targetItem.parentKey !== nextItem.parentKey)
         ) {
@@ -347,8 +352,8 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         }
 
         // If the last drop position was 'after', then 'before' on the next key is equivalent if they have the same parent.
-        // Switch to 'on' instead.
-        if (target.dropPosition === 'after' && targetItem?.parentKey === nextItem?.parentKey) {
+        // Switch to 'on' instead. Do the same if the next key is a section as well.
+        if (target.dropPosition === 'after' && (targetItem?.parentKey === nextItem?.parentKey || nextItem?.type === 'section')) {
           dropPosition = 'on';
         }
       }
@@ -373,16 +378,16 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
     let getPreviousTarget = (target: DropTarget, wrap = true): DropTarget => {
       let {keyboardDelegate} = localState.props;
       let nextKey = target?.type === 'item'
-        ? keyboardDelegate.getKeyAbove(target.key)
-        : keyboardDelegate.getLastKey();
-      let dropPosition: DropPosition = !target || target.type === 'root' ? 'after' : 'on';
+        ? keyboardDelegate.getKeyAbove(target.key, itemFilter)
+        : keyboardDelegate.getLastKey(undefined, undefined, itemFilter);
+      let targetItem = target?.type === 'item' ? localState.state.collection.getItem(target.key) : undefined;
+      let nextItem = nextKey != null ? localState.state.collection.getItem(nextKey) : undefined;
+      let dropPosition: DropPosition = (!target || target.type === 'root') && nextItem.type !== 'section' ? 'after' : 'on';
 
-      if (target?.type === 'item') {
-        let targetItem = localState.state.collection.getItem(target.key);
-        let nextItem = nextKey != null ? localState.state.collection.getItem(nextKey) : undefined;
+      if (target?.type === 'item' && targetItem?.type !== 'section') {
         let positionIndex = DROP_POSITIONS.indexOf(target.dropPosition);
         let nextDropPosition = DROP_POSITIONS[positionIndex - 1];
-        if (positionIndex > 0 && nextDropPosition !== 'after') {
+        if (targetItem?.type === 'item' && positionIndex > 0 && nextDropPosition !== 'after') {
           return {
             type: 'item',
             key: target.key,
@@ -391,10 +396,11 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         }
 
         // If the last drop position was 'before', then 'after' on the previous key is equivalent if they have the same parent.
-        // Switch to 'on' instead.
-        if (target.dropPosition === 'before' && targetItem?.parentKey === nextItem?.parentKey) {
+        // Switch to 'on' instead. Do the same if the next key is a section as well.
+        // If we are changing sections or moving from an empty section to a row then the dropPosition is after
+        if (target.dropPosition === 'before' && (targetItem?.parentKey === nextItem?.parentKey || nextItem?.type === 'section')) {
           dropPosition = 'on';
-        } else if (target.dropPosition === 'before' && nextItem && targetItem.parentKey !== nextItem.parentKey) {
+        } else if ((target.dropPosition === 'before' || targetItem.type === 'section') && nextItem && targetItem.parentKey !== nextItem.parentKey) {
           dropPosition = 'after';
         }
       }
@@ -481,6 +487,13 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         let item = localState.state.collection.getItem(key);
         if (item?.type === 'cell') {
           key = item.parentKey;
+          item = localState.state.collection.getItem(key);
+        }
+
+        if (item != null && !itemFilter(item)) {
+          // If the previously focused item in the droppable collection isn't an item or a section (e.g. table column header)
+          // then set key to null so we start from root
+          key = null;
         }
 
         // If the focused item is also selected, the default drop target is after the last selected item.
@@ -587,15 +600,18 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
                 let nextKey = keyboardDelegate.getKeyPageBelow(
                   target.type === 'item'
                     ? target.key
-                    : keyboardDelegate.getFirstKey()
+                    : keyboardDelegate.getFirstKey(undefined, undefined, itemFilter),
+                  itemFilter
                 );
+
                 // Prioritize the same drop position that we started on, even if the next key is less than a whole page down
                 let dropPosition = target.type === 'item' ? target.dropPosition : 'after';
 
                 // If there is no next key, or we are starting on the last key, jump to the last possible position.
-                if (nextKey == null || (target.type === 'item' && target.key === keyboardDelegate.getLastKey())) {
-                  nextKey = keyboardDelegate.getLastKey();
+                if (nextKey == null || (target.type === 'item' && target.key === keyboardDelegate.getLastKey(undefined, undefined, itemFilter))) {
+                  nextKey = keyboardDelegate.getLastKey(undefined, undefined, itemFilter);
                   dropPosition = 'after';
+
                 }
 
                 target = {
@@ -603,7 +619,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
                   key: nextKey,
                   dropPosition
                 };
-
                 // If the target does not accept the drop, find the next valid target.
                 // If no next valid target, find the previous valid target.
                 let {draggingCollectionRef, draggingKeys} = globalDndState;
@@ -615,7 +630,12 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
                 }
               }
 
-              localState.state.setTarget(target ?? localState.state.target);
+              let finalTarget = target ?? localState.state.target;
+              if (finalTarget.type === 'item' && localState.state.collection.getItem(finalTarget.key).type === 'section') {
+                finalTarget.dropPosition = 'on';
+              }
+
+              localState.state.setTarget(finalTarget);
             }
             break;
           }
@@ -629,15 +649,15 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
               target = nextValidTarget(null, types, drag.allowedDropOperations, getPreviousTarget);
             } else if (target.type === 'item') {
               // If at the top already, switch to the root. Otherwise navigate a page up.
-              if (target.key === keyboardDelegate.getFirstKey()) {
+              if (target.key === keyboardDelegate.getFirstKey(undefined, undefined, itemFilter)) {
                 target = {
                   type: 'root'
                 };
               } else {
-                let nextKey = keyboardDelegate.getKeyPageAbove(target.key);
+                let nextKey = keyboardDelegate.getKeyPageAbove(target.key, itemFilter);
                 let dropPosition = target.dropPosition;
                 if (nextKey == null) {
-                  nextKey = keyboardDelegate.getFirstKey();
+                  nextKey = keyboardDelegate.getFirstKey(undefined, undefined, itemFilter);
                   dropPosition = 'before';
                 }
 
@@ -659,13 +679,18 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
               }
             }
 
-            localState.state.setTarget(target ?? localState.state.target);
+            let finalTarget = target ?? localState.state.target;
+            if (finalTarget.type === 'item' && localState.state.collection.getItem(finalTarget.key).type === 'section') {
+              finalTarget.dropPosition = 'on';
+            }
+
+            localState.state.setTarget(finalTarget);
             break;
           }
         }
       }
     });
-  }, [localState, ref, onDrop]);
+  }, [localState, ref, onDrop, itemFilter]);
 
   let id = useId();
   droppableCollectionMap.set(state, {id, ref});

@@ -51,7 +51,7 @@ const DEFAULT_HEIGHT = 48;
  * delegate with an additional method to do this (it uses the same delegate object as
  * the collection view itself).
  */
-export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, DropTargetDelegate {
+export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate<T>, DropTargetDelegate {
   protected rowHeight: number;
   protected estimatedRowHeight: number;
   protected headingHeight: number;
@@ -437,13 +437,13 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     return this.contentSize;
   }
 
-  getKeyAbove(key: Key): Key | null {
+  getKeyAbove(key: Key, itemFilter: (item: Node<T>) => boolean = item => item.type === 'item'): Key | null {
     let collection = this.collection;
 
     key = collection.getKeyBefore(key);
     while (key != null) {
       let item = collection.getItem(key);
-      if (item.type === 'item' && (this.allowDisabledKeyFocus || !this.disabledKeys.has(item.key))) {
+      if (itemFilter(item) && (this.allowDisabledKeyFocus || !this.disabledKeys.has(item.key))) {
         return key;
       }
 
@@ -451,13 +451,13 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     }
   }
 
-  getKeyBelow(key: Key): Key | null {
+  getKeyBelow(key: Key, itemFilter: (item: Node<T>) => boolean = item => item.type === 'item'): Key | null {
     let collection = this.collection;
 
     key = collection.getKeyAfter(key);
     while (key != null) {
       let item = collection.getItem(key);
-      if (item.type === 'item' && (this.allowDisabledKeyFocus || !this.disabledKeys.has(item.key))) {
+      if (itemFilter(item) && (this.allowDisabledKeyFocus || !this.disabledKeys.has(item.key))) {
         return key;
       }
 
@@ -465,13 +465,13 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     }
   }
 
-  getKeyPageAbove(key: Key): Key | null {
+  getKeyPageAbove(key: Key, itemFilter: (item: Node<T>) => boolean = item => item.type === 'item'): Key | null {
     let layoutInfo = this.getLayoutInfo(key);
 
     if (layoutInfo) {
       let pageY = Math.max(0, layoutInfo.rect.y + layoutInfo.rect.height - this.virtualizer.visibleRect.height);
       while (layoutInfo && layoutInfo.rect.y > pageY) {
-        let keyAbove = this.getKeyAbove(layoutInfo.key);
+        let keyAbove = this.getKeyAbove(layoutInfo.key, itemFilter);
         layoutInfo = this.getLayoutInfo(keyAbove);
       }
 
@@ -480,16 +480,16 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
       }
     }
 
-    return this.getFirstKey();
+    return this.getFirstKey(undefined, undefined, itemFilter);
   }
 
-  getKeyPageBelow(key: Key): Key | null {
+  getKeyPageBelow(key: Key, itemFilter: (item: Node<T>) => boolean = item => item.type === 'item'): Key | null {
     let layoutInfo = this.getLayoutInfo(key != null ? key : this.getFirstKey());
 
     if (layoutInfo) {
       let pageY = Math.min(this.virtualizer.contentSize.height, layoutInfo.rect.y - layoutInfo.rect.height + this.virtualizer.visibleRect.height);
       while (layoutInfo && layoutInfo.rect.y < pageY) {
-        let keyBelow = this.getKeyBelow(layoutInfo.key);
+        let keyBelow = this.getKeyBelow(layoutInfo.key, itemFilter);
         layoutInfo = this.getLayoutInfo(keyBelow);
       }
 
@@ -498,15 +498,16 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
       }
     }
 
-    return this.getLastKey();
+    return this.getLastKey(undefined, undefined, itemFilter);
   }
 
-  getFirstKey(): Key | null {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  getFirstKey(key = undefined, global = undefined, itemFilter: (item: Node<T>) => boolean = item => item.type === 'item'): Key | null {
     let collection = this.collection;
-    let key = collection.getFirstKey();
+    key = collection.getFirstKey();
     while (key != null) {
       let item = collection.getItem(key);
-      if (item.type === 'item' && (this.allowDisabledKeyFocus || !this.disabledKeys.has(item.key))) {
+      if (itemFilter(item) && (this.allowDisabledKeyFocus || !this.disabledKeys.has(item.key))) {
         return key;
       }
 
@@ -514,12 +515,13 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     }
   }
 
-  getLastKey(): Key | null {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  getLastKey(key = undefined, global = undefined, itemFilter: (item: Node<T>) => boolean = item => item.type === 'item'): Key | null {
     let collection = this.collection;
-    let key = collection.getLastKey();
+    key = collection.getLastKey();
     while (key != null) {
       let item = collection.getItem(key);
-      if (item.type === 'item' && (this.allowDisabledKeyFocus || !this.disabledKeys.has(item.key))) {
+      if (itemFilter(item) && (this.allowDisabledKeyFocus || !this.disabledKeys.has(item.key))) {
         return key;
       }
 

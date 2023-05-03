@@ -39,6 +39,7 @@ export function ListViewSection<T>(props: ListViewSectionProps<T>) {
     ref: headerRowRef
   });
 
+  // TODO: add insertion indicator for 'on' drop
   return (
     <div
       {...rowGroupProps}

@@ -92,12 +92,13 @@ export interface SortDescriptor {
 
 export type SortDirection = 'ascending' | 'descending';
 
-export interface KeyboardDelegate {
+export interface KeyboardDelegate<T> {
+  // TODO: what do we think about this update to the keyboard delegate api?
   /** Returns the key visually below the given one, or `null` for none. */
-  getKeyBelow?(key: Key): Key | null,
+  getKeyBelow?(key: Key, itemFilter?: (item: Node<T>) => boolean): Key | null,
 
   /** Returns the key visually above the given one, or `null` for none. */
-  getKeyAbove?(key: Key): Key | null,
+  getKeyAbove?(key: Key, itemFilter?: (item: Node<T>) => boolean): Key | null,
 
   /** Returns the key visually to the left of the given one, or `null` for none. */
   getKeyLeftOf?(key: Key): Key | null,
@@ -106,16 +107,16 @@ export interface KeyboardDelegate {
   getKeyRightOf?(key: Key): Key | null,
 
   /** Returns the key visually one page below the given one, or `null` for none. */
-  getKeyPageBelow?(key: Key): Key | null,
+  getKeyPageBelow?(key: Key, itemFilter?: (item: Node<T>) => boolean): Key | null,
 
   /** Returns the key visually one page above the given one, or `null` for none. */
-  getKeyPageAbove?(key: Key): Key | null,
+  getKeyPageAbove?(key: Key, itemFilter?: (item: Node<T>) => boolean): Key | null,
 
   /** Returns the first key, or `null` for none. */
-  getFirstKey?(key?: Key, global?: boolean): Key | null,
+  getFirstKey?(key?: Key, global?: boolean, itemFilter?: (item: Node<T>) => boolean): Key | null,
 
   /** Returns the last key, or `null` for none. */
-  getLastKey?(key?: Key, global?: boolean): Key | null,
+  getLastKey?(key?: Key, global?: boolean, itemFilter?: (item: Node<T>) => boolean): Key | null,
 
   /** Returns the next key after `fromKey` that matches the given search string, or `null` for none. */
   getKeyForSearch?(search: string, fromKey?: Key): Key | null

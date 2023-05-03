@@ -481,7 +481,10 @@ export class SelectionManager implements MultipleSelectionManager {
     }
 
     let item = this.collection.getItem(key);
-    if (!item || (item.type === 'cell' && !this.allowsCellSelection)) {
+    // TODO: discuss how best to indicate that a row/item is not selectable without making it disabled
+    // Some general item prop (isInert, notSelectable)? isSectionHeader might be too specific.
+    // Maybe not an item prop? Maybe I shouldn't be making the section header an actual row/item in the collection
+    if (!item || (item.type === 'cell' && !this.allowsCellSelection) || item.props?.isSectionHeader) {
       return false;
     }
 

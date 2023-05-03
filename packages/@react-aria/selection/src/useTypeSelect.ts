@@ -23,7 +23,7 @@ export interface AriaTypeSelectOptions {
   /**
    * A delegate that returns collection item keys with respect to visual layout.
    */
-  keyboardDelegate: KeyboardDelegate,
+  keyboardDelegate: KeyboardDelegate<unknown>,
   /**
    * An interface for reading and updating multiple selection state.
    */

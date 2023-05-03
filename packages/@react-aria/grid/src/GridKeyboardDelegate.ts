@@ -26,7 +26,7 @@ export interface GridKeyboardDelegateOptions<T, C> {
   focusMode?: 'row' | 'cell'
 }
 
-export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements KeyboardDelegate {
+export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements KeyboardDelegate<T> {
   collection: C;
   protected disabledKeys: Set<Key>;
   protected ref: RefObject<HTMLElement>;

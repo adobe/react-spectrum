@@ -37,7 +37,7 @@ export interface AriaComboBoxOptions<T> extends Omit<AriaComboBoxProps<T>, 'chil
   /** The ref for the optional list box popup trigger button.  */
   buttonRef?: RefObject<Element>,
   /** An optional keyboard delegate implementation, to override the default. */
-  keyboardDelegate?: KeyboardDelegate
+  keyboardDelegate?: KeyboardDelegate<T>
 }
 
 export interface ComboBoxAria<T> {

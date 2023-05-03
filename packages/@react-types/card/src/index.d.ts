@@ -37,7 +37,7 @@ interface LayoutOptions {
 }
 
 // TODO: double check if this is the best way to type the layout provided to the CardView
-interface CardViewLayout<T> extends Layout<Node<T>>, KeyboardDelegate {
+interface CardViewLayout<T> extends Layout<Node<T>>, KeyboardDelegate<T> {
   collection: Collection<Node<T>>,
   disabledKeys: any,
   isLoading: boolean,

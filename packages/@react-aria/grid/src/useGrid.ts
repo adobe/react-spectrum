@@ -23,14 +23,14 @@ import {useHasTabbableChild} from '@react-aria/focus';
 import {useHighlightSelectionDescription} from './useHighlightSelectionDescription';
 import {useSelectableCollection} from '@react-aria/selection';
 
-export interface GridProps extends DOMProps, AriaLabelingProps {
+export interface GridProps<T> extends DOMProps, AriaLabelingProps {
   /** Whether the grid uses virtual scrolling. */
   isVirtualized?: boolean,
   /**
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
    */
-  keyboardDelegate?: KeyboardDelegate,
+  keyboardDelegate?: KeyboardDelegate<T>,
   /**
    * Whether initial grid focus should be placed on the grid row or grid cell.
    * @default 'row'
@@ -63,7 +63,7 @@ export interface GridAria {
  * @param state - State for the grid, as returned by `useGridState`.
  * @param ref - The ref attached to the grid element.
  */
-export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<T>>, ref: RefObject<HTMLElement>): GridAria {
+export function useGrid<T>(props: GridProps<T>, state: GridState<T, GridCollection<T>>, ref: RefObject<HTMLElement>): GridAria {
   let {
     isVirtualized,
     keyboardDelegate,

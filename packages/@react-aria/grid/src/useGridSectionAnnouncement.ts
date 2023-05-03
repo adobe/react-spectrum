@@ -12,6 +12,7 @@
 
 import {announce} from '@react-aria/live-announcer';
 import {Collection, Node} from '@react-types/shared';
+import {getChildNodes} from '@react-stately/collections';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isMac, useUpdateEffect} from '@react-aria/utils';
@@ -33,9 +34,6 @@ export function useGridSectionAnnouncement<T>(state: GridSelectionState<T>) {
     ? state.collection.getItem(state.selectionManager.focusedKey)
     : undefined;
 
-  // VoiceOver on MacOS doesn't announce TableView/ListView sections when navigating with arrow keys so we do this ourselves
-  // TODO: what other information should be conveyed? Should we announce the number of rows in the section and the current focused row/cell?
-  // At the moment the announcement comes after the default VO announcement for the row header/cell content.
   let sectionKey;
   let parentNode = collection.getItem(focusedItem?.parentKey ?? null);
   while (sectionKey == null && parentNode) {
@@ -45,18 +43,26 @@ export function useGridSectionAnnouncement<T>(state: GridSelectionState<T>) {
     parentNode = collection.getItem(parentNode?.parentKey ?? null);
   }
   let lastSection = useRef(sectionKey);
+  // VoiceOver on MacOS doesn't announce TableView/ListView sections when navigating with arrow keys so we do this ourselves
+  // TODO: NVDA announces the section title when navigating into it with arrow keys as "SECTION TITLE grouping" by defualt, so removing isMac() doubles up on the section title announcement
+  // a bit. However, this does add an announcement for the number of rows in a section which might be
+  // Mobile screen readers don't cause this announcement to fire until focus happens on a row via double tap which is pretty strange
   useUpdateEffect(() => {
-    if (isMac() && focusedItem != null && sectionKey !== lastSection.current) {
+    if (isMac() && focusedItem != null && selectionManager.isFocused && sectionKey !== lastSection.current) {
       let section = sectionKey != null ? collection.getItem(sectionKey) : null;
-      let sectionTitle = section?.['aria-label'] || (typeof section?.rendered === 'string' ? section.rendered : '') || '';
+      if (section != null) {
+        let sectionTitle = section?.['aria-label'] || (typeof section?.rendered === 'string' ? section.rendered : '') || '';
+        // Subtract 1 since section header row doesn't count
+        let sectionSize = section ? [...getChildNodes(section, state.collection)].length - 1 : 0;
+        let announcement = stringFormatter.format('sectionAnnouncement', {
+          sectionTitle,
+          sectionSize
+        });
 
-      let announcement = stringFormatter.format('sectionAnnouncement', {
-        sectionTitle
-      });
-
-      announce(announcement);
+        announce(announcement);
+      }
     }
 
     lastSection.current = sectionKey;
-  }, [focusedItem, sectionKey]);
+  }, [focusedItem, sectionKey, selectionManager]);
 }

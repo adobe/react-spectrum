@@ -40,7 +40,7 @@ export interface WaterfallLayoutOptions extends BaseLayoutOptions {
 }
 
 // TODO: this didn't have any options that varied with card size, should it have?
-export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
+export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegate<T> {
   protected minItemSize: Size;
   protected maxItemSize: Size;
   protected minSpace: Size;

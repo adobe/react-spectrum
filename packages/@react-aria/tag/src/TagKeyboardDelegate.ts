@@ -13,7 +13,7 @@
 import {Collection, Direction, KeyboardDelegate} from '@react-types/shared';
 import {Key} from 'react';
 
-export class TagKeyboardDelegate<T> implements KeyboardDelegate {
+export class TagKeyboardDelegate<T> implements KeyboardDelegate<T> {
   private collection: Collection<T>;
   private direction: Direction;
 
@@ -29,7 +29,7 @@ export class TagKeyboardDelegate<T> implements KeyboardDelegate {
   getLastKey() {
     return this.collection.getLastKey();
   }
-  
+
   getKeyRightOf(key: Key) {
     return this.direction === 'rtl' ? this.getKeyAbove(key) : this.getKeyBelow(key);
   }
