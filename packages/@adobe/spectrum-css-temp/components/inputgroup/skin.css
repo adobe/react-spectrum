@@ -270,7 +270,6 @@ governing permissions and limitations under the License.
     }
 
     &.is-disabled:not(.spectrum-InputGroup--invalid):not(.spectrum-InputGroup--quiet) .spectrum-FieldButton {
-      border-width: 1px;
       &:before {
          border-color: GrayText;
        }
