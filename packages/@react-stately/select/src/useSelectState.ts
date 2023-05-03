@@ -11,12 +11,12 @@
  */
 
 import {CollectionStateBase} from '@react-types/shared';
-import {ListCollection, SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
 import {MenuTriggerState, useMenuTriggerState} from '@react-stately/menu';
 import {SelectProps} from '@react-types/select';
+import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
 import {useState} from 'react';
 
-export interface SelectStateOptions<T> extends Omit<SelectProps<T>, 'children'>, CollectionStateBase<T, ListCollection<T>> {}
+export interface SelectStateOptions<T> extends Omit<SelectProps<T>, 'children'>, CollectionStateBase<T> {}
 
 export interface SelectState<T> extends SingleSelectListState<T>, MenuTriggerState {
   /** Whether the select is currently focused. */
