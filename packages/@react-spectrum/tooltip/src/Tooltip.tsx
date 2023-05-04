@@ -62,6 +62,8 @@ function Tooltip(props: SpectrumTooltipProps, ref: DOMRef) {
         },
         styleProps.className
       )}
+      onMouseDown={e => e.stopPropagation()}
+      onClick={e => e.stopPropagation()}
       ref={overlayRef}>
       {showIcon && variant !== 'neutral' && <Icon UNSAFE_className={classNames(styles, 'spectrum-Tooltip-typeIcon')} aria-hidden />}
       {props.children && (
