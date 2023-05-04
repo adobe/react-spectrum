@@ -19,7 +19,7 @@ import {
   classNames,
   useDOMRef,
   useFocusableRef,
-  useIsMobileDevice,
+  useIsMobileDevice, useSlotProps,
   useStyleProps,
   useUnwrapDOMRef
 } from '@react-spectrum/utils';
@@ -63,6 +63,7 @@ import {
 } from '@react-aria/table';
 import {useVisuallyHidden, VisuallyHidden} from '@react-aria/visually-hidden';
 import {useCollection} from 'react-aria-components/src/Collection';
+import {ButtonContext, useContextProps} from 'react-aria-components';
 
 const DEFAULT_HEADER_HEIGHT = {
   medium: 34,
@@ -421,6 +422,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         return null;
       case 'cell': {
         if (item.props.isSelectionCell) {
+          console.log('found a selection cell', item)
           return <TableCheckboxCell cell={item} />;
         }
 
@@ -1065,7 +1067,7 @@ function ResizableTableColumnHeader(props) {
   );
 }
 
-function TableSelectAllCell({column}) {
+export function TableSelectAllCell({column}) {
   let ref = useRef();
   let {state} = useTableContext();
   let isSingleSelectionMode = state.selectionManager.selectionMode === 'single';
@@ -1152,7 +1154,7 @@ function TableRowGroup({children, ...otherProps}) {
   );
 }
 
-function DragButton() {
+export function DragButton() {
   let {dragButtonProps, dragButtonRef, isFocusVisibleWithin} = useTableRowContext();
   let {visuallyHiddenProps} = useVisuallyHidden();
   return (

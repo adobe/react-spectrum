@@ -156,7 +156,8 @@ export class TableLayout<T> extends ListLayout<T> {
     let y = 0;
     let width = 0;
     let children: LayoutNode[] = [];
-    for (let headerRow of this.collection.headerRows) {
+    console.log('build header')
+    for (let headerRow of getChildNodes(this.collection.head, this.collection)) {
       let layoutNode = this.buildChild(headerRow, 0, y);
       layoutNode.layoutInfo.parentKey = 'header';
       y = layoutNode.layoutInfo.rect.maxY;

@@ -48,6 +48,7 @@ export interface TableCellAria {
 export function useTableCell<T>(props: AriaTableCellProps, state: TableState<T>, ref: RefObject<FocusableElement>): TableCellAria {
   let {gridCellProps, isPressed} = useGridCell(props, state, ref);
 
+  console.log(props.node)
   let columnKey = props.node.value.key;
   if (state.collection.rowHeaderColumnKeys.has(columnKey)) {
     gridCellProps.role = 'rowheader';
