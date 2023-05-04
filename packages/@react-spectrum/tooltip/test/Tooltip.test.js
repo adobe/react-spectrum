@@ -40,4 +40,14 @@ describe('Tooltip', function () {
     let tooltip = getByRole('tooltip');
     expect(ref.current.UNSAFE_getDOMNode()).toBe(tooltip);
   });
+
+  it('click does not propagate to parent', () => {
+    let mockClick = jest.fn();
+    let {getByRole} = render(<div onClick={mockClick}><Tooltip>This is a tooltip</Tooltip></div>);
+    let tooltip = getByRole('tooltip');
+    fireEvent.pointerDown(tooltip);
+    fireEvent.click(tooltip);
+    fireEvent.mouseDown(tooltip);
+    expect(mockClick).not.toHaveBeenCalled();
+  });
 });
