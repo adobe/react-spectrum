@@ -11,7 +11,7 @@
  */
 
 import React from 'react';
-import {render, fireEvent} from '@react-spectrum/test-utils';
+import {fireEvent, render} from '@react-spectrum/test-utils';
 import {Tooltip} from '../';
 
 describe('Tooltip', function () {
@@ -43,6 +43,7 @@ describe('Tooltip', function () {
 
   it('click does not propagate to parent', () => {
     let mockClick = jest.fn();
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
     let {getByRole} = render(<div onClick={mockClick}><Tooltip>This is a tooltip</Tooltip></div>);
     let tooltip = getByRole('tooltip');
     fireEvent.pointerDown(tooltip);
