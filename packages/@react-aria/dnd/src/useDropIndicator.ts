@@ -79,7 +79,11 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
 
     let keyAfter = keyboardDelegate != null ? keyboardDelegate.getKeyBelow(target.key, itemFilter) : collection.getKeyAfter(target.key);
     if (keyGetter.getLastKey() === target.key && target.dropPosition === 'after') {
-      after = null;
+      if (getNode(targetNode.parentKey)?.type === 'section') {
+        after = targetNode.parentKey;
+      } else {
+        after = null;
+      }
     } else {
       if (target.dropPosition === 'before') {
         after = target.key;
