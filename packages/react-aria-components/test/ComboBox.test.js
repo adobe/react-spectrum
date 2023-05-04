@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ComboBox, ComboBoxContext, Input, Item, Label, ListBox, Popover, Text} from '../';
+import {Button, ComboBox, ComboBoxContext, Header, Input, Item, Label, ListBox, Popover, Section, Text} from '../';
 import React from 'react';
 import {render, within} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
@@ -83,5 +83,69 @@ describe('ComboBox', () => {
     expect(button).not.toHaveAttribute('data-pressed');
     userEvent.click(button);
     expect(button).toHaveAttribute('data-pressed');
+  });
+
+  it('should support filtering sections', () => {
+    let {getByRole} = render(
+      <ComboBox>
+        <Label>Preferred fruit or vegetable</Label>
+        <Input />
+        <Button />
+        <Popover>
+          <ListBox>
+            <Section>
+              <Header>Fruit</Header>
+              <Item id="Apple">Apple</Item>
+              <Item id="Banana">Banana</Item>
+            </Section>
+            <Section>
+              <Header>Vegetable</Header>
+              <Item id="Cabbage">Cabbage</Item>
+              <Item id="Broccoli">Broccoli</Item>
+            </Section>
+          </ListBox>
+        </Popover>
+      </ComboBox>
+    );
+
+    let input = getByRole('combobox');
+    userEvent.type(input, 'p');
+
+    let listbox = getByRole('listbox');
+    let groups = within(listbox).getAllByRole('group');
+    expect(groups).toHaveLength(1);
+    expect(groups[0]).toHaveAttribute('aria-labelledby');
+    expect(document.getElementById(groups[0].getAttribute('aria-labelledby'))).toHaveTextContent('Fruit');
+
+    let options = within(groups[0]).getAllByRole('option');
+    expect(options).toHaveLength(1);
+  });
+
+  // FIXME: not sure why this test hangs
+  it.skip('should support render props', () => {
+    let {getByRole} = render(
+      <ComboBox>
+        {({isOpen}) => (
+          <>
+            <Label>Favorite Animal</Label>
+            <Input />
+            <Button>{isOpen ? 'close' : 'open'}</Button>
+            <Popover>
+              <ListBox>
+                <Item>Cat</Item>
+                <Item>Dog</Item>
+                <Item>Kangaroo</Item>
+              </ListBox>
+            </Popover>
+          </>
+        )}
+      </ComboBox>
+    );
+
+    let button = getByRole('button');
+    expect(button).toHaveTextContent('open');
+
+    userEvent.click(button);
+    expect(button).toHaveTextContent('close');
   });
 });

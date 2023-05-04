@@ -1,3 +1,4 @@
 {
-  "remove": "Naciśnij Spację lub przycisk Usuń, aby usunąć znacznik."
+  "removeButtonLabel": "Usuń",
+  "removeDescription": "Naciśnij Usuń, aby usunąć znacznik."
 }

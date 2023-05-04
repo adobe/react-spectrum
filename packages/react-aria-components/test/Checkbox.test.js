@@ -168,4 +168,14 @@ describe('Checkbox', () => {
     expect(label).toHaveAttribute('data-required', 'true');
     expect(label).toHaveClass('required');
   });
+
+  it('should support render props', () => {
+    let {getByRole} =  render(<Checkbox>{({isSelected}) => isSelected ? 'Selected' : 'Not Selected'}</Checkbox>);
+    let checkbox = getByRole('checkbox').closest('label');
+    
+    expect(checkbox).toHaveTextContent('Not Selected');
+
+    userEvent.click(checkbox);
+    expect(checkbox).toHaveTextContent('Selected');
+  });
 });

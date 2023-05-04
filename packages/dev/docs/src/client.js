@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton} from '@react-spectrum/button';
+import {ActionButton} from '@adobe/react-spectrum';
+import DocSearch from './DocSearch';
 import docsStyle from './docs.css';
 import {listen} from 'quicklink';
 import React, {useEffect, useRef, useState} from 'react';
@@ -68,9 +69,9 @@ function Hamburger() {
   let hamburgerButtonRef = useRef(null);
 
   let onPress = (event) => {
-    let nav = document.querySelector('.' + docsStyle.nav);
+    let nav = document.querySelector(`.${docsStyle.nav}`);
     let main = document.querySelector('main');
-    let themeSwitcher = event.target.parentElement.nextElementSibling;
+    let themeSwitcher = document.querySelector(`header.${docsStyle.pageHeader} > div:last-of-type`);
 
     nav.classList.toggle(docsStyle.visible);
 
@@ -92,10 +93,10 @@ function Hamburger() {
 
   useEffect(() => {
     let mediaQueryList = window.matchMedia('(max-width: 1020px)');
-    let nav = document.querySelector('.' + docsStyle.nav);
+    let nav = document.querySelector(`.${docsStyle.nav}`);
     let main = document.querySelector('main');
     let hamburgerButton = hamburgerButtonRef.current;
-    let themeSwitcher = hamburgerRef.current.nextElementSibling;
+    let themeSwitcher = document.querySelector(`header.${docsStyle.pageHeader} > div:last-of-type`);
 
     let removeVisible = (isNotResponsive = false) => {
       setIsPressed(false);
@@ -182,6 +183,7 @@ function Hamburger() {
 
 ReactDOM.render(<>
   <Hamburger />
+  <DocSearch />
   <ThemeSwitcher />
 </>, document.querySelector('.' + docsStyle.pageHeader));
 

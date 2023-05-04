@@ -4,6 +4,7 @@
   "columnSize": "{value} pixels",
   "descending": "decrescente",
   "descendingSort": "classificado pela coluna {columnName} em ordem decrescente",
+  "resizerDescription": "Pressione Enter para começar a redimensionar",
   "select": "Selecionar",
   "selectAll": "Selecionar tudo",
   "sortable": "coluna classificável"

@@ -12,11 +12,10 @@
 
 import {ColorArea, ColorField, ColorSlider, ColorWheel} from '../';
 import {Flex} from '@adobe/react-spectrum';
-import {Meta, Story} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import {parseColor} from '@react-stately/color';
 import React, {useState} from 'react';
 import {SpectrumColorAreaProps} from '@react-types/color';
-
 
 const meta: Meta<SpectrumColorAreaProps> = {
   title: 'ColorArea',
@@ -25,13 +24,12 @@ const meta: Meta<SpectrumColorAreaProps> = {
 
 export default meta;
 
-const Template: Story<SpectrumColorAreaProps> = (args) => (
-  <ColorAreaExample {...args} />
-);
+const Template: StoryFn<SpectrumColorAreaProps> = (args) => <ColorAreaExample {...args} />;
 
 function ColorAreaExample(props: SpectrumColorAreaProps) {
   let {xChannel, yChannel, isDisabled} = props;
-  let defaultValue = typeof props.defaultValue === 'string' ? parseColor(props.defaultValue) : props.defaultValue;
+  let defaultValue =
+    typeof props.defaultValue === 'string' ? parseColor(props.defaultValue) : props.defaultValue;
   let [color, setColor] = useState(defaultValue || parseColor('#ff00ff'));
   let xyChannels = {xChannel, yChannel};
   let colorSpace = color.getColorSpace();
@@ -85,9 +83,8 @@ function ColorAreaExample(props: SpectrumColorAreaProps) {
             label="HEX Color"
             value={color}
             onChange={onChange}
-            onKeyDown={event =>
-              event.key === 'Enter' &&
-              onChange((event.target as HTMLInputElement).value)
+            onKeyDown={(event) =>
+              event.key === 'Enter' && onChange((event.target as HTMLInputElement).value)
             }
             isDisabled={isDisabled}
             width="size-1200" />
@@ -96,91 +93,194 @@ function ColorAreaExample(props: SpectrumColorAreaProps) {
     </div>
   );
 }
+export const XBlueYGreen = {
+  render: Template,
+  name: 'RGB xChannel="blue", yChannel="green"',
+  args: {xChannel: 'blue', yChannel: 'green'}
+};
 
-export let XBlueYGreen = Template.bind({});
-XBlueYGreen.storyName = 'RGB xChannel="blue", yChannel="green"';
-XBlueYGreen.args = {xChannel: 'blue', yChannel: 'green'};
+export const XGreenYBlue = {
+  render: Template,
+  name: 'RGB xChannel="green", yChannel="blue"',
+  args: {...XBlueYGreen.args, xChannel: 'green', yChannel: 'blue'}
+};
 
-export let XGreenYBlue = Template.bind({});
-XGreenYBlue.storyName = 'RGB xChannel="green", yChannel="blue"';
-XGreenYBlue.args = {...XBlueYGreen.args, xChannel: 'green', yChannel: 'blue'};
+export const XBlueYRed = {
+  render: Template,
+  name: 'RGB xChannel="blue", yChannel="red"',
+  args: {...XBlueYGreen.args, xChannel: 'blue', yChannel: 'red'}
+};
 
-export let XBlueYRed = Template.bind({});
-XBlueYRed.storyName = 'RGB xChannel="blue", yChannel="red"';
-XBlueYRed.args = {...XBlueYGreen.args, xChannel: 'blue', yChannel: 'red'};
+export const XRedYBlue = {
+  render: Template,
+  name: 'RGB xChannel="red", yChannel="blue"',
+  args: {...XBlueYGreen.args, xChannel: 'red', yChannel: 'blue'}
+};
 
-export let XRedYBlue = Template.bind({});
-XRedYBlue.storyName = 'RGB xChannel="red", yChannel="blue"';
-XRedYBlue.args = {...XBlueYGreen.args, xChannel: 'red', yChannel: 'blue'};
+export const XRedYGreen = {
+  render: Template,
+  name: 'RGB xChannel="red", yChannel="green"',
+  args: {...XBlueYGreen.args, xChannel: 'red', yChannel: 'green'}
+};
 
-export let XRedYGreen = Template.bind({});
-XRedYGreen.storyName = 'RGB xChannel="red", yChannel="green"';
-XRedYGreen.args = {...XBlueYGreen.args, xChannel: 'red', yChannel: 'green'};
+export const XGreenYRed = {
+  render: Template,
+  name: 'RGB xChannel="green", yChannel="red"',
+  args: {...XBlueYGreen.args, xChannel: 'green', yChannel: 'red'}
+};
 
-export let XGreenYRed = Template.bind({});
-XGreenYRed.storyName = 'RGB xChannel="green", yChannel="red"';
-XGreenYRed.args = {...XBlueYGreen.args, xChannel: 'green', yChannel: 'red'};
+export const XBlueYGreenisDisabled = {
+  render: Template,
+  name: 'RGB xChannel="blue", yChannel="green", isDisabled',
+  args: {...XBlueYGreen.args, isDisabled: true}
+};
 
-export let XBlueYGreenisDisabled = Template.bind({});
-XBlueYGreenisDisabled.storyName = 'RGB xChannel="blue", yChannel="green", isDisabled';
-XBlueYGreenisDisabled.args = {...XBlueYGreen.args, isDisabled: true};
+export const XBlueYGreenSize3000 = {
+  render: Template,
+  name: 'RGB xChannel="blue", yChannel="green", size="size-3000"',
+  args: {...XBlueYGreen.args, size: 'size-3000'}
+};
 
-export let XBlueYGreenSize3000 = Template.bind({});
-XBlueYGreenSize3000.storyName = 'RGB xChannel="blue", yChannel="green", size="size-3000"';
-XBlueYGreenSize3000.args = {...XBlueYGreen.args, size: 'size-3000'};
+export const XBlueYGreenSize600 = {
+  render: Template,
+  name: 'RGB xChannel="blue", yChannel="green", size="size-600"',
+  args: {...XBlueYGreen.args, size: 'size-600'}
+};
 
-export let XBlueYGreenSize600 = Template.bind({});
-XBlueYGreenSize600.storyName = 'RGB xChannel="blue", yChannel="green", size="size-600"';
-XBlueYGreenSize600.args = {...XBlueYGreen.args, size: 'size-600'};
+export const XSaturationYLightness = {
+  render: Template,
+  name: 'HSL xChannel="saturation", yChannel="lightness"',
+  args: {
+    ...XBlueYGreen.args,
+    xChannel: 'saturation',
+    yChannel: 'lightness',
+    defaultValue: 'hsl(0, 100%, 50%)'
+  }
+};
 
-export let XSaturationYLightness = Template.bind({});
-XSaturationYLightness.storyName = 'HSL xChannel="saturation", yChannel="lightness"';
-XSaturationYLightness.args = {...XBlueYGreen.args, xChannel: 'saturation', yChannel: 'lightness', defaultValue: 'hsl(0, 100%, 50%)'};
+export const XLightnessYSaturation = {
+  render: Template,
+  name: 'HSL xChannel="lightness", yChannel="saturation"',
+  args: {
+    ...XBlueYGreen.args,
+    xChannel: 'lightness',
+    yChannel: 'saturation',
+    defaultValue: 'hsl(0, 100%, 50%)'
+  }
+};
 
-export let XLightnessYSaturation = Template.bind({});
-XLightnessYSaturation.storyName = 'HSL xChannel="lightness", yChannel="saturation"';
-XLightnessYSaturation.args = {...XBlueYGreen.args, xChannel: 'lightness', yChannel: 'saturation', defaultValue: 'hsl(0, 100%, 50%)'};
+export const XHueYSaturationHSL = {
+  render: Template,
+  name: 'HSL xChannel="hue", yChannel="saturation"',
+  args: {
+    ...XSaturationYLightness.args,
+    xChannel: 'hue',
+    yChannel: 'saturation',
+    defaultValue: 'hsl(0, 100%, 50%)'
+  }
+};
 
-export let XHueYSaturationHSL = Template.bind({});
-XHueYSaturationHSL.storyName = 'HSL xChannel="hue", yChannel="saturation"';
-XHueYSaturationHSL.args = {...XSaturationYLightness.args, xChannel: 'hue', yChannel: 'saturation', defaultValue: 'hsl(0, 100%, 50%)'};
+export const XSaturationYHueHSL = {
+  render: Template,
+  name: 'HSL xChannel="saturation", yChannel="hue"',
+  args: {
+    ...XSaturationYLightness.args,
+    xChannel: 'saturation',
+    yChannel: 'hue',
+    defaultValue: 'hsl(0, 100%, 50%)'
+  }
+};
 
-export let XSaturationYHueHSL = Template.bind({});
-XSaturationYHueHSL.storyName = 'HSL xChannel="saturation", yChannel="hue"';
-XSaturationYHueHSL.args = {...XSaturationYLightness.args, xChannel: 'saturation', yChannel: 'hue', defaultValue: 'hsl(0, 100%, 50%)'};
+export const XHueYLightnessHSL = {
+  render: Template,
+  name: 'HSL xChannel="hue", yChannel="lightness"',
+  args: {
+    ...XHueYSaturationHSL.args,
+    xChannel: 'hue',
+    yChannel: 'lightness',
+    defaultValue: 'hsl(0, 100%, 50%)'
+  }
+};
 
-export let XHueYLightnessHSL = Template.bind({});
-XHueYLightnessHSL.storyName = 'HSL xChannel="hue", yChannel="lightness"';
-XHueYLightnessHSL.args = {...XHueYSaturationHSL.args, xChannel: 'hue', yChannel: 'lightness', defaultValue: 'hsl(0, 100%, 50%)'};
+export const XLightnessYHueHSL = {
+  render: Template,
+  name: 'HSL xChannel="lightness", yChannel="hue"',
+  args: {
+    ...XHueYSaturationHSL.args,
+    xChannel: 'lightness',
+    yChannel: 'hue',
+    defaultValue: 'hsl(0, 100%, 50%)'
+  }
+};
 
-export let XLightnessYHueHSL = Template.bind({});
-XLightnessYHueHSL.storyName = 'HSL xChannel="lightness", yChannel="hue"';
-XLightnessYHueHSL.args = {...XHueYSaturationHSL.args, xChannel: 'lightness', yChannel: 'hue', defaultValue: 'hsl(0, 100%, 50%)'};
+export const XSaturationYBrightness = {
+  render: Template,
+  name: 'HSB xChannel="saturation", yChannel="brightness"',
+  args: {
+    ...XHueYSaturationHSL.args,
+    xChannel: 'saturation',
+    yChannel: 'brightness',
+    defaultValue: 'hsb(0, 100%, 100%)'
+  }
+};
 
-export let XSaturationYBrightness = Template.bind({});
-XSaturationYBrightness.storyName = 'HSB xChannel="saturation", yChannel="brightness"';
-XSaturationYBrightness.args = {...XHueYSaturationHSL.args, xChannel: 'saturation', yChannel: 'brightness', defaultValue: 'hsb(0, 100%, 100%)'};
+export const XBrightnessYSaturation = {
+  render: Template,
+  name: 'HSB xChannel="brightness", yChannel="saturation"',
+  args: {
+    ...XHueYSaturationHSL.args,
+    xChannel: 'brightness',
+    yChannel: 'saturation',
+    defaultValue: 'hsb(0, 100%, 100%)'
+  }
+};
 
-export let XBrightnessYSaturation = Template.bind({});
-XBrightnessYSaturation.storyName = 'HSB xChannel="brightness", yChannel="saturation"';
-XBrightnessYSaturation.args = {...XHueYSaturationHSL.args, xChannel: 'brightness', yChannel: 'saturation', defaultValue: 'hsb(0, 100%, 100%)'};
+export const XSaturationYBrightnessisDisabled = {
+  render: Template,
+  name: 'HSB xChannel="saturation", yChannel="brightness", isDisabled',
+  args: {...XSaturationYBrightness.args, isDisabled: true}
+};
 
-export let XSaturationYBrightnessisDisabled = Template.bind({});
-XSaturationYBrightnessisDisabled.storyName = 'HSB xChannel="saturation", yChannel="brightness", isDisabled';
-XSaturationYBrightnessisDisabled.args = {...XSaturationYBrightness.args, isDisabled: true};
+export const XHueYSaturationHSB = {
+  render: Template,
+  name: 'HSB xChannel="hue", yChannel="saturation"',
+  args: {
+    ...XSaturationYBrightness.args,
+    xChannel: 'hue',
+    yChannel: 'saturation',
+    defaultValue: 'hsb(0, 100%, 100%)'
+  }
+};
 
-export let XHueYSaturationHSB = Template.bind({});
-XHueYSaturationHSB.storyName = 'HSB xChannel="hue", yChannel="saturation"';
-XHueYSaturationHSB.args = {...XSaturationYBrightness.args, xChannel: 'hue', yChannel: 'saturation', defaultValue: 'hsb(0, 100%, 100%)'};
+export const XSaturationYHueHSB = {
+  render: Template,
+  name: 'HSB xChannel="saturation", yChannel="hue"',
+  args: {
+    ...XSaturationYBrightness.args,
+    xChannel: 'saturation',
+    yChannel: 'hue',
+    defaultValue: 'hsb(0, 100%, 100%)'
+  }
+};
 
-export let XSaturationYHueHSB = Template.bind({});
-XSaturationYHueHSB.storyName = 'HSB xChannel="saturation", yChannel="hue"';
-XSaturationYHueHSB.args = {...XSaturationYBrightness.args, xChannel: 'saturation', yChannel: 'hue', defaultValue: 'hsb(0, 100%, 100%)'};
+export const XHueYBrightnessHSB = {
+  render: Template,
+  name: 'HSB xChannel="hue", yChannel="brightness"',
+  args: {
+    ...XHueYSaturationHSB.args,
+    xChannel: 'hue',
+    yChannel: 'brightness',
+    defaultValue: 'hsb(0, 100%, 100%)'
+  }
+};
 
-export let XHueYBrightnessHSB = Template.bind({});
-XHueYBrightnessHSB.storyName = 'HSB xChannel="hue", yChannel="brightness"';
-XHueYBrightnessHSB.args = {...XHueYSaturationHSB.args, xChannel: 'hue', yChannel: 'brightness', defaultValue: 'hsb(0, 100%, 100%)'};
-
-export let XBrightnessYHueHSB = Template.bind({});
-XBrightnessYHueHSB.storyName = 'HSB xChannel="brightness", yChannel="hue"';
-XBrightnessYHueHSB.args = {...XHueYSaturationHSB.args, xChannel: 'brightness', yChannel: 'hue', defaultValue: 'hsb(0, 100%, 100%)'};
+export const XBrightnessYHueHSB = {
+  render: Template,
+  name: 'HSB xChannel="brightness", yChannel="hue"',
+  args: {
+    ...XHueYSaturationHSB.args,
+    xChannel: 'brightness',
+    yChannel: 'hue',
+    defaultValue: 'hsb(0, 100%, 100%)'
+  }
+};
