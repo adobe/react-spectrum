@@ -52,6 +52,8 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
   let {dropProps} = useDroppableItem(props, state, ref);
   let id = useId();
   let getText = (key: Key) => collection.getTextValue?.(key) ?? collection.getItem(key)?.textValue;
+  let itemFilter = (item) => item.type === 'item' || item.type === 'section';
+  let getNode = (key: Key) => collection.getItem(key);
 
   let label = '';
   let labelledBy: string;
@@ -65,37 +67,54 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
   } else {
     let before: Key | null;
     let after: Key | null;
-
     let keyGetter = keyboardDelegate ?? collection;
-    // TODO: I've changed it so it will announce "insert after"/"insert before" target if the drop position is between the target and a following/preceeding section
-    // instead of announcing "insert between target and NEXT/PREV_SECTION_ROW". Gather opinions
-    let keyBefore = keyboardDelegate != null ? keyboardDelegate.getKeyAbove(target.key) : collection.getKeyBefore(target.key);
-    if (target.dropPosition === 'before') {
-      if (keyGetter.getFirstKey() === target.key || collection.getItem(keyBefore)?.parentKey !== collection.getItem(target.key)?.parentKey) {
-        before = null;
-      } else {
-        before = keyBefore;
-      }
+
+    let targetNode = getNode(target.key);
+    let keyBefore = keyboardDelegate != null ? keyboardDelegate.getKeyAbove(target.key, itemFilter) : collection.getKeyBefore(target.key);
+    if (keyGetter.getFirstKey() === target.key && target.dropPosition === 'before' && getNode(targetNode.parentKey)?.type !== 'section') {
+      before = null;
     } else {
-      before = target.key;
+      before = target.dropPosition === 'before' ? keyBefore : target.key;
     }
 
-    let keyAfter = keyboardDelegate != null ? keyboardDelegate.getKeyBelow(target.key) : collection.getKeyAfter(target.key);
-    if (target.dropPosition === 'after') {
-      if (keyGetter.getLastKey() === target.key || collection.getItem(keyAfter)?.parentKey !== collection.getItem(target.key)?.parentKey) {
-        after = null;
+    let keyAfter = keyboardDelegate != null ? keyboardDelegate.getKeyBelow(target.key, itemFilter) : collection.getKeyAfter(target.key);
+    if (keyGetter.getLastKey() === target.key && target.dropPosition === 'after') {
+      if (getNode(targetNode.parentKey)?.type === 'section') {
+        after = targetNode.parentKey;
       } else {
-        after = keyAfter;
+        after = null;
       }
     } else {
-      after = target.key;
+      if (target.dropPosition === 'before') {
+        after = target.key;
+      } else {
+        if (getNode(keyAfter)?.type === 'section') {
+          after = targetNode.parentKey;
+        } else {
+          after = keyAfter;
+        }
+      }
     }
 
     if (before && after) {
-      label = stringFormatter.format('insertBetween', {
-        beforeItemText: getText(before),
-        afterItemText: getText(after)
-      });
+      let beforeNode = getNode(before);
+      let afterNode = getNode(after);
+      if (beforeNode.type === 'section') {
+        label = stringFormatter.format('insertAfterSection', {
+          itemText: getText(after),
+          sectionText: getText(before)
+        });
+      } else if (afterNode.type === 'section') {
+        label = stringFormatter.format('insertBeforeSection', {
+          itemText: getText(before),
+          sectionText: getText(after)
+        });
+      } else {
+        label = stringFormatter.format('insertBetween', {
+          beforeItemText: getText(before),
+          afterItemText: getText(after)
+        });
+      }
     } else if (before) {
       label = stringFormatter.format('insertAfter', {
         itemText: getText(before)
