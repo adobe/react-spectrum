@@ -234,6 +234,10 @@ export class TableCollection<T> extends BaseCollection<T> implements ITableColle
     }
 
     this.headerRows = buildHeaderRows(columnKeyMap, this.columns);
+    this.headerRows.forEach(row => {
+      console.log(row)
+      this.addNode(row);
+    });
     this.columnsDirty = false;
     if (this.rowHeaderColumnKeys.size === 0 && this.columns.length > 0) {
       throw new Error('A table must have at least one Column with the isRowHeader prop set to true');

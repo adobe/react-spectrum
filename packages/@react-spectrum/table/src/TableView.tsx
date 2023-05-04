@@ -370,6 +370,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     }
 
     if (reusableView.viewType === 'headerrow') {
+      console.log(reusableView)
       return (
         <TableHeaderRow
           onHoverChange={setHeaderRowHovered}
@@ -699,6 +700,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
     virtualizerProps,
     isVirtualDragging && {tabIndex: null}
   );
+  console.log('rendering table virtualizer', layout, collection);
 
   return (
     <VirtualizerContext.Provider value={resizingColumn}>
@@ -1318,6 +1320,7 @@ function TableHeaderRow({item, children, style, ...props}) {
   let {rowProps} = useTableHeaderRow({node: item, isVirtualized: true}, state, ref);
   let {hoverProps} = useHover({...props, isDisabled: headerMenuOpen});
 
+  console.log('rendered the table header row')
   return (
     <div {...mergeProps(rowProps, hoverProps)} ref={ref} style={style}>
       {children}
@@ -1405,7 +1408,7 @@ function TableCheckboxCell({cell}) {
 function TableCell({cell}) {
   let {state} = useTableContext();
   let ref = useRef();
-  let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
+  let columnProps = cell.value as SpectrumColumnProps<unknown>;
   let isDisabled = state.disabledKeys.has(cell.parentKey);
   let {gridCellProps} = useTableCell({
     node: cell,
@@ -1422,7 +1425,7 @@ function TableCell({cell}) {
             styles,
             'spectrum-Table-cell',
             {
-              'spectrum-Table-cell--divider': columnProps.showDivider && cell.column.nextKey !== null,
+              'spectrum-Table-cell--divider': columnProps.showDivider && cell.nextKey !== null,
               'spectrum-Table-cell--hideHeader': columnProps.hideHeader,
               'is-disabled': isDisabled
             },
