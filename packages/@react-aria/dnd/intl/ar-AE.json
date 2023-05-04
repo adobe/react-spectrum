@@ -25,5 +25,7 @@
   "endDragVirtual": "السحب. انقر لإلغاء السحب.",
   "insertAfter": "أدخل بعد {itemText}",
   "insertBefore": "أدخل قبل {itemText}",
-  "insertBetween": "أدخل بين {beforeItemText} و {afterItemText}"
+  "insertBetween": "أدخل بين {beforeItemText} و {afterItemText}",
+  "insertBeforeSection": "Insert after {itemText} in {sectionText}",
+  "insertAfterSection": "Insert before {itemText} in {sectionText}"
 }

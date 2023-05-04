@@ -28,6 +28,7 @@ export {SpectrumColumn as Column};
 export {
   TableHeader,
   TableBody,
+  Section,
   Row,
   Cell
 } from '@react-stately/table';

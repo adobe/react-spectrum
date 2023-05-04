@@ -25,5 +25,7 @@
   "dropOnItem": "Drop on {itemText}",
   "insertBefore": "Insert before {itemText}",
   "insertBetween": "Insert between {beforeItemText} and {afterItemText}",
-  "insertAfter": "Insert after {itemText}"
+  "insertAfter": "Insert after {itemText}",
+  "insertBeforeSection": "Insert after {itemText} in {sectionText}",
+  "insertAfterSection": "Insert before {itemText} in {sectionText}"
 }

@@ -700,6 +700,41 @@ export const ManySections: TableStory = {
   storyName: 'many sections'
 };
 
+export const ManyRowsInSections: TableStory = {
+  args: {
+    'aria-label': 'TableView with many rows in a section',
+    width: 700,
+    height: 500
+  },
+  render: ({loadingState, ...args}: SpectrumTableProps<object> & TableBodyProps<object>) => (
+    <>
+      <label htmlFor="focus-before">Focus before</label>
+      <input data-testid="before" id="focus-before" />
+      <TableView {...args}>
+        <TableHeader columns={manyColunns}>
+          {column =>
+            <Column minWidth={100}>{column.name}</Column>
+          }
+        </TableHeader>
+        <TableBody items={[{name: 'Section 1', children: manyRows}]} loadingState={loadingState}>
+          {item => (
+            <TableSection key={item.name} items={item.children} title={item.name}>
+              {(item: any) =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableSection>
+          )}
+        </TableBody>
+      </TableView>
+      <label htmlFor="focus-after">Focus after</label>
+      <input data-testid="after" id="focus-after" />
+    </>
+  ),
+  storyName: 'many rows in a section'
+};
+
 const TableViewFilledCellWidths = (props: SpectrumTableProps<object> & TableBodyProps<object> & {allowsResizing: boolean}) => {
   let {allowsResizing, loadingState, ...otherProps} = props;
   return (

@@ -21,6 +21,7 @@ export {TableBody} from './TableBody';
 export {Column} from './Column';
 export {Row} from './Row';
 export {Cell} from './Cell';
+export {Section} from '@react-stately/collections';
 export {TableSection} from './TableSection';
 export {TableCollection, buildHeaderRows} from './TableCollection';
 export {TableColumnLayout} from './TableColumnLayout';

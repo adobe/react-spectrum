@@ -370,7 +370,6 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
           style={style}>
           {renderChildren(children)}
         </TableSectionRow>
-
       );
     }
 

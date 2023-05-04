@@ -2885,7 +2885,7 @@ describe('TableView', function () {
             fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
             fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
 
-            expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Pictures');
+            expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Pictures in Section D');
 
             // Move to drop indicator before next section
             for (let i = 0; i < 6; i++) {
@@ -2893,24 +2893,24 @@ describe('TableView', function () {
               fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
             }
 
-            expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Adobe Illustrator');
+            expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Adobe Illustrator in Section D');
             fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
             fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
 
-            expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Adobe Lightroom');
+            expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Adobe Lightroom in Section E');
 
             for (let i = 0; i < 4; i++) {
               fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
               fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
             }
-            expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Adobe Audition');
+            expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Adobe Audition in Section E');
 
             for (let i = 0; i < 5; i++) {
               fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
               fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
             }
 
-            expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Adobe Animate');
+            expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Adobe Animate in Section F');
 
             fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
             fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
@@ -2929,7 +2929,7 @@ describe('TableView', function () {
             fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
             fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
 
-            expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Pictures');
+            expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Pictures in Section D');
             fireEvent.keyDown(document.activeElement, {key: 'Enter'});
             fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
@@ -3211,7 +3211,7 @@ describe('TableView', function () {
               fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
             }
 
-            expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Documents');
+            expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Documents in Section A');
 
             fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
             fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
@@ -3219,7 +3219,7 @@ describe('TableView', function () {
 
             fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
             fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
-            expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Adobe Premier');
+            expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Adobe Premier in Section C');
           });
         });
       });
