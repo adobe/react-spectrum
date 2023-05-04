@@ -16,7 +16,7 @@ import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import React, {useState} from 'react';
 import styles from '../example/index.css';
-import {useDrag} from 'react-aria';
+import {useClipboard, useDrag} from 'react-aria';
 import {useListData} from 'react-stately';
 
 export default {
@@ -681,9 +681,7 @@ function Draggable() {
   let {dragProps, isDragging} = useDrag({
     getItems() {
       return [{
-        'text/plain': 'hello world',
-        'my-app-custom-type': JSON.stringify({message: 'hello world'})
-      }];
+        'text/plain': 'hello world'}];
     }
   });
 
@@ -698,15 +696,41 @@ function Draggable() {
   );
 }
 
-export const DropZoneExample = () => (
+function Copyable() {
+  let {clipboardProps} = useClipboard({
+    getItems() {
+      return [{
+        'text/plain': 'hello world'
+      }];
+    }
+  });
+
+  return (
+    <div role="textbox" tabIndex={0} {...clipboardProps}>
+      Copy me 
+    </div>
+  );
+}
+
+export const DropZoneExample = (props) => (
   <div>
     <Draggable />
-    <DropZone 
+    <Copyable />
+    <DropZone
+      {...props}
+      className={styles.dropzone}
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
-      onDropExit={action('OnDropExit')}
-      style={{border: '2px solid white', margin: '20px', padding: '20px'}}>
-      DropZone Area
+      onDropExit={action('OnDropExit')}>
+      {({isHovered, isFocused, isFocusVisible, isDropTarget}) => (
+        <div>
+          <div>DropZone</div>
+          <div>isHovered: {isHovered ? 'true' : 'false'}</div>
+          <div>isFocused: {isFocused ? 'true' : 'false'}</div>
+          <div>isFocusVisible: {isFocusVisible ? 'true' : 'false'}</div>
+          <div>isDropTarget: {isDropTarget ? 'true' : 'false'}</div>
+        </div>
+      )}
     </DropZone>
   </div>
 );

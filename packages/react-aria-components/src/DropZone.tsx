@@ -10,11 +10,34 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextValue, DOMProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import {DropOptions, mergeProps, useButton, useDrop, useFocusRing, useHover} from 'react-aria';
+import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {DropOptions, mergeProps, useButton, useClipboard, useDrop, useFocusRing, useHover} from 'react-aria';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 
-export interface DropZoneProps extends Omit<DropOptions, 'onDropActivate' | 'onInsert' | 'onRootDrop' | 'onItemDrop' | 'onReorder'>, DOMProps, SlotProps {}
+export interface DropZoneRenderProps {
+  /**
+   * Whether the dropzone is currently hovered with a mouse.
+   * @selector [data-hovered]
+   */
+  isHovered: boolean,
+  /**
+   * Whether the dropzone is focused, either via a mouse or keyboard.
+   * @selector :focus
+   */
+  isFocused: boolean,
+  /**
+   * Whether the dropzone is keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
+   * Whether the dropzone is the drop target.
+   * @selector [data-drop-target]
+   */
+  isDropTarget: boolean
+}
+
+export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'onDropActivate' | 'onInsert' | 'onRootDrop' | 'onItemDrop' | 'onReorder'>, RenderProps<DropZoneRenderProps>, SlotProps {}
 
 export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDivElement>>(null);
 
@@ -24,6 +47,15 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let {hoverProps, isHovered} = useHover({});
   let {buttonProps} = useButton({elementType: 'div'}, ref);
+  let {clipboardProps} = useClipboard({
+    onPaste: (items) => props.onDrop?.({
+      type: 'drop',
+      items,
+      x: 0,
+      y: 0,
+      dropOperation: 'copy'
+    })
+  });
   let renderProps = useRenderProps({ 
     ...props,
     values: {isHovered, isFocused, isFocusVisible, isDropTarget},
@@ -32,11 +64,11 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
 
   return (
     <div
-      {...mergeProps(dropProps, focusProps, hoverProps, buttonProps)}
+      {...mergeProps(dropProps, focusProps, hoverProps, buttonProps, clipboardProps)}
       {...renderProps}
       ref={ref}
       slot={props.slot} 
-      data-hovered={isHovered || isDropTarget || undefined} 
+      data-hovered={isHovered || undefined} 
       data-focused={isFocused || undefined} 
       data-focus-visible={isFocusVisible || undefined}> 
       {renderProps.children}

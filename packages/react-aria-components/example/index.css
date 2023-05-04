@@ -175,3 +175,9 @@ html {
     }
   }
 }
+
+.dropzone {
+  border: 2px solid white;
+  margin: 20px;
+  padding: 20px;
+}
