@@ -98,7 +98,7 @@ export const ContextualHelpStory: ColorSliderStory = {
       </ContextualHelp>
     )
   },
-  storyName: 'contextual help'
+  name: 'contextual help'
 };
 
 export const RGBA: ColorSliderStory = {
