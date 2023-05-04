@@ -180,9 +180,25 @@ function TableHeader<T extends object>(props: TableHeaderProps<T>) {
   return (
     <CollectionRendererContext.Provider value={renderer}>
       {/* @ts-ignore */}
-      <tableheader multiple={props}>{children}</tableheader>
+      <tableheader multiple={props}>
+        <TableHeaderRow>
+          {children}
+        </TableHeaderRow>
+      {/* @ts-ignore */}
+      </tableheader>
     </CollectionRendererContext.Provider>
   );
+}
+
+function TableHeaderRow(props) {
+  let children = useCollectionChildren({
+    children: props.children,
+    items: props.columns
+  });
+  console.log('TableHeaderRow render', props);
+
+  // @ts-ignore
+  return <headerrow multiple={props}>{children}</headerrow>;
 }
 
 export function Column<T extends object>(props: ColumnProps<T>): JSX.Element {

@@ -232,7 +232,6 @@ export class Virtualizer<T extends object, V, W> {
    * Returns the item with the given key.
    */
   getItem(key: Key) {
-    console.log('getItem', key, this._collection ? this._collection.getItem(key) : null);
     return this._collection ? this._collection.getItem(key) : null;
   }
 

@@ -233,11 +233,6 @@ export class TableCollection<T> extends BaseCollection<T> implements ITableColle
       visit(node);
     }
 
-    this.headerRows = buildHeaderRows(columnKeyMap, this.columns);
-    this.headerRows.forEach(row => {
-      console.log(row)
-      this.addNode(row);
-    });
     this.columnsDirty = false;
     if (this.rowHeaderColumnKeys.size === 0 && this.columns.length > 0) {
       throw new Error('A table must have at least one Column with the isRowHeader prop set to true');
@@ -290,18 +285,6 @@ export class TableCollection<T> extends BaseCollection<T> implements ITableColle
     }
 
     return k;
-  }
-
-  getChildren(key: Key): Iterable<Node<T>> {
-    if (!this.getItem(key)) {
-      for (let row of this.headerRows) {
-        if (row.key === key) {
-          return row.childNodes;
-        }
-      }
-    }
-
-    return super.getChildren(key);
   }
 
   clone() {
