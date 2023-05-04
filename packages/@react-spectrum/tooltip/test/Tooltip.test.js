@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import React from 'react';
 import {fireEvent, render} from '@react-spectrum/test-utils';
+import React from 'react';
 import {Tooltip} from '../';
 
 describe('Tooltip', function () {
