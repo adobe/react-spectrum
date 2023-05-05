@@ -138,6 +138,36 @@ export default {
 
 export type TableStory = ComponentStoryObj<typeof TableView>;
 
+export const Static: TableStory = {
+  args: {
+    'aria-label': 'TableView with static contents',
+    width: 300,
+    height: 200
+  },
+  render: (args) => (
+    <TableView {...args}>
+      <TableHeader>
+        <Column key="foo" isRowHeader>Foo</Column>
+        <Column key="bar">Bar</Column>
+        <Column key="baz">Baz</Column>
+      </TableHeader>
+      <TableBody>
+        <Row>
+          <Cell>One</Cell>
+          <Cell>Two</Cell>
+          <Cell>Three</Cell>
+        </Row>
+        <Row>
+          <Cell>One</Cell>
+          <Cell>Two</Cell>
+          <Cell>Three</Cell>
+        </Row>
+      </TableBody>
+    </TableView>
+  ),
+  name: 'static'
+};
+
 // TODO BREAKING: required isRowHeader
 let columns = [
   {name: 'Foo', key: 'foo', isRowHeader: true},

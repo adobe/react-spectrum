@@ -1442,7 +1442,7 @@ function TableCheckboxCell({cell}) {
 function TableCell({cell}) {
   let {state} = useTableContext();
   let ref = useRef();
-  let columnProps = cell.value as SpectrumColumnProps<unknown>;
+  let columnProps = state.collection.columns[cell.index].props as SpectrumColumnProps<unknown>;
   let isDisabled = state.disabledKeys.has(cell.parentKey);
   let {gridCellProps} = useTableCell({
     node: cell,
