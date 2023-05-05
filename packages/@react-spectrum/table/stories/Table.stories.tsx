@@ -146,22 +146,22 @@ export const Static: TableStory = {
   },
   render: (args) => (
     <TableView {...args}>
-      <TableHeader>
+      <MyTableHeader>
         <Column key="foo" isRowHeader>Foo</Column>
         <Column key="bar">Bar</Column>
         <Column key="baz">Baz</Column>
-      </TableHeader>
+      </MyTableHeader>
       <TableBody>
-        <Row>
+        <MyRow>
           <Cell>One</Cell>
           <Cell>Two</Cell>
           <Cell>Three</Cell>
-        </Row>
-        <Row>
+        </MyRow>
+        <MyRow>
           <Cell>One</Cell>
           <Cell>Two</Cell>
           <Cell>Three</Cell>
-        </Row>
+        </MyRow>
       </TableBody>
     </TableView>
   ),
@@ -176,14 +176,14 @@ let columns = [
 ];
 
 let items = [
-  {id: 1, test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
-  {id: 2, test: 'Test 2', foo: 'Foo 2', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
-  {id: 3, test: 'Test 1', foo: 'Foo 3', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
-  {id: 4, test: 'Test 2', foo: 'Foo 4', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
-  {id: 5, test: 'Test 1', foo: 'Foo 5', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
-  {id: 6, test: 'Test 2', foo: 'Foo 6', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
-  {id: 7, test: 'Test 1', foo: 'Foo 7', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
-  {id: 8, test: 'Test 2', foo: 'Foo 8', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
+  {id: 'Foo 1', test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
+  {id: 'Foo 2', test: 'Test 2', foo: 'Foo 2', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
+  {id: 'Foo 3', test: 'Test 1', foo: 'Foo 3', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
+  {id: 'Foo 4', test: 'Test 2', foo: 'Foo 4', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
+  {id: 'Foo 5', test: 'Test 1', foo: 'Foo 5', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
+  {id: 'Foo 6', test: 'Test 2', foo: 'Foo 6', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
+  {id: 'Foo 7', test: 'Test 1', foo: 'Foo 7', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
+  {id: 'Foo 8', test: 'Test 2', foo: 'Foo 8', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
 ];
 
 export const Dynamic: TableStory = {
@@ -256,7 +256,6 @@ function TableHeaderRow(props) {
     children: props.children,
     items: props.columns
   });
-  console.log('TableHeaderRow render', props);
 
   // @ts-ignore
   return <headerrow multiple={props}>{children}</headerrow>;
@@ -307,7 +306,6 @@ function MyRow<T extends object>({ id, columns, children }: RowProps<T>) {
     selectionMode,
     allowsDragging} = useTablePropsContext();
 
-  console.log('rendering secret cells?', allowsDragging, selectionMode, selectionStyle);
   return (
     <Row id={id}>
       {allowsDragging && (
@@ -327,3 +325,35 @@ export function Cell(props: CellProps): JSX.Element {
   // @ts-ignore
   return <cell multiple={{...props, rendered: props.children}} />;
 }
+
+export const DynamicWithDisabledKeys: TableStory = {
+  ...Dynamic,
+  args: {
+    ...Dynamic.args,
+    disabledKeys: new Set(['Foo 1', 'Foo 3'])
+  },
+  name: 'dynamic with disabled keys'
+};
+
+export const DynamicShowDividers: TableStory = {
+  args: {
+    'aria-label': 'TableView with static contents',
+    width: 300,
+    height: 200
+  },
+  render: (args) => (
+    <TableView {...args}>
+      <MyTableHeader columns={columns}>
+        {column => <Column showDivider isRowHeader={column.isRowHeader}>{column.name}</Column>}
+      </MyTableHeader>
+      <TableBody items={items}>
+        {item =>
+          (<MyRow columns={columns}>
+            {column => <Cell>{item[column.key]}</Cell>}
+          </MyRow>)
+        }
+      </TableBody>
+    </TableView>
+  ),
+  name: 'dynamic showDividers'
+};
