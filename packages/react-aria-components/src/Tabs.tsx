@@ -124,7 +124,7 @@ function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
       slot={props.slot}
       data-orientation={orientation}>
       <InternalTabsContext.Provider value={{state, setState, orientation}}>
-        {props.children}
+        {renderProps.children}
       </InternalTabsContext.Provider>
     </div>
   );

@@ -125,7 +125,7 @@ export const WithIcons: TagGroupStory = {
 
 export const OnRemove: TagGroupStory = {
   render: (args) => <OnRemoveExample {...args} />,
-  storyName: 'onRemove'
+  name: 'onRemove'
 };
 
 export const Wrapping: TagGroupStory = {
@@ -147,7 +147,7 @@ export const LabelTruncation: TagGroupStory = {
 export const MaxRows: TagGroupStory = {
   args: {maxRows: 2},
   decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
-  storyName: 'maxRows'
+  name: 'maxRows'
 };
 
 export const MaxRowsManyTags: TagGroupStory = {
@@ -160,14 +160,14 @@ export const MaxRowsManyTags: TagGroupStory = {
     </TagGroup>
   ),
   decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
-  storyName: 'maxRows with many tags'
+  name: 'maxRows with many tags'
 };
 
 export const MaxRowsOnRemove: TagGroupStory = {
   args: {maxRows: 2},
   render: (args) => <OnRemoveExample {...args} />,
   decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
-  storyName: 'maxRows + onRemove'
+  name: 'maxRows + onRemove'
 };
 
 export const WithAvatar: TagGroupStory = {
@@ -182,17 +182,17 @@ export const WithAvatar: TagGroupStory = {
       )}
     </TagGroup>
   ),
-  storyName: 'with avatar'
+  name: 'with avatar'
 };
 
 export const WithAvatarOnRemove: TagGroupStory = {
   render: (args) => <OnRemoveExample withAvatar {...args} />,
-  storyName: 'with avatar + onRemove'
+  name: 'with avatar + onRemove'
 };
 
 export const WithAction: TagGroupStory = {
   args: {onAction: action('clear'), actionLabel: 'Clear'},
-  storyName: 'with action'
+  name: 'with action'
 };
 
 export const WithActionAndMaxRows: TagGroupStory = {
@@ -202,7 +202,7 @@ export const WithActionAndMaxRows: TagGroupStory = {
     actionLabel: 'Clear'
   },
   decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
-  storyName: 'with action and maxRows'
+  name: 'with action and maxRows'
 };
 
 export const WithLabelDescriptionContextualHelp: TagGroupStory = {
@@ -217,7 +217,7 @@ export const WithLabelDescriptionContextualHelp: TagGroupStory = {
     )
   },
   decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
-  storyName: 'with label, description, contextual help'
+  name: 'with label, description, contextual help'
 };
 
 export const WithLabelDescriptionContextualHelpAndAction: TagGroupStory = {
@@ -234,7 +234,7 @@ export const WithLabelDescriptionContextualHelpAndAction: TagGroupStory = {
     )
   },
   decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
-  storyName: 'with label, description, contextual help + action'
+  name: 'with label, description, contextual help + action'
 };
 
 export const EmptyState: TagGroupStory = {

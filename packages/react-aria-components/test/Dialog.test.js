@@ -154,4 +154,36 @@ describe('Dialog', () => {
 
     expect(dialog).not.toBeInTheDocument();
   });
+
+  it('should support render props', () => {
+    let {getByRole} = render(
+      <DialogTrigger>
+        <Button aria-label="Help">?⃝</Button>
+        <Popover>
+          <Dialog>
+            {({close}) => (
+              <>
+                <Heading>Help</Heading>
+                <p>For help accessing your account, please contact support.</p>
+                <Button onPress={() => close()}>Dismiss</Button>
+              </>
+            )}
+          </Dialog>
+        </Popover>
+      </DialogTrigger>
+    );
+
+    let button = getByRole('button');
+
+    userEvent.click(button);
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toBeInTheDocument();
+
+    let dismiss = within(dialog).getByRole('button');
+
+    userEvent.click(dismiss);
+
+    expect(dialog).not.toBeInTheDocument();
+  });
 });
