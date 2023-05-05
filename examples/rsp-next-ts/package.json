@@ -14,6 +14,7 @@
   "dependencies": {
     "@adobe/react-spectrum": "^3.22.0",
     "@react-spectrum/color": "^3.0.0-beta.16",
+    "@react-spectrum/tag": "3.0.0-rc.0",
     "@react-spectrum/toast": "^3.0.0-alpha.0",
     "@spectrum-icons/illustrations": "^3.5.0",
     "@spectrum-icons/workflow": "^4.0.3",
