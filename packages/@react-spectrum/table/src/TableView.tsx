@@ -1125,7 +1125,8 @@ function TableDragHeaderCell({column}) {
             'spectrum-Table-headCell',
             classNames(
               stylesOverrides,
-              'react-spectrum-dragButtonHeadCell'
+              'react-spectrum-Table-headCell',
+              'react-spectrum-Table-dragButtonHeadCell'
             )
           )
         }>
@@ -1155,7 +1156,7 @@ function DragButton() {
         className={
           classNames(
             stylesOverrides,
-            'react-spectrum-Table-row-draghandle-button'
+            'react-spectrum-Table-dragButton'
           )
         }
         style={!isFocusVisibleWithin ? {...visuallyHiddenProps.style} : {}}

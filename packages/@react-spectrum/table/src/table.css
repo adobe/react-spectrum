@@ -172,16 +172,18 @@
   }
 }
 
-.react-spectrum-Table-cell {
-  &.react-spectrum-dragButtonHeadCell {
+.react-spectrum-Table-headCell {
+  &.react-spectrum-Table-dragButtonHeadCell {
     padding: 0;
     height: inherit;
   }
+}
 
+.react-spectrum-Table-cell {
   &.react-spectrum-Table-dragButtonCell {
     padding: var(--spectrum-global-dimension-size-40);
 
-    .react-spectrum-Table-row-draghandle-button {
+    .react-spectrum-Table-dragButton {
       border-radius: var(--spectrum-alias-border-radius-regular);
       padding: var(--spectrum-global-dimension-size-10);
 
