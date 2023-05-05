@@ -74,6 +74,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate<T
   protected placeholderHeight: number;
   protected lastValidRect: Rect;
   protected validRect: Rect;
+  protected numberOfSections: number;
 
   /**
    * Creates a new ListLayout with options. See the list of properties below for a description
@@ -99,6 +100,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate<T
     this.lastValidRect = new Rect();
     this.validRect = new Rect();
     this.contentSize = new Size();
+    this.numberOfSections = 0;
   }
 
   getLayoutInfo(key: Key) {
@@ -194,6 +196,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate<T
     let y = this.padding;
     let skipped = 0;
     let nodes = [];
+    this.numberOfSections = [...this.collection].filter(node => node.type === 'section').length;
     for (let node of this.collection) {
       let rowHeight = (this.rowHeight ?? this.estimatedRowHeight);
 
@@ -302,9 +305,9 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate<T
     }
 
     let headerRect = new Rect(0, y, width, rectHeight);
-    // TODO rename this to section header to differentiate it from tableview header?
     let header = new LayoutInfo('header', node.key + ':header', headerRect);
     header.estimatedSize = isEstimated;
+    header.allowOverflow = true;
     header.parentKey = node.key;
 
     let rect = new Rect(0, y, width, 0);
@@ -339,6 +342,9 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate<T
     rect.height = y - startY;
     rect.width = width;
     headerRect.width = width;
+    // Adjust z-index of section rowgroup element so its last row's drop indicator doesn't get obscured by the following section
+    layoutInfo.zIndex = this.numberOfSections - node.index - 1;
+    layoutInfo.allowOverflow = true;
 
     let layoutNode = {
       header,

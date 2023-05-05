@@ -622,6 +622,13 @@
   background-color: var(--spectrum-listview-droptarget-background-color);
   box-shadow: inset 0 0 0 1px var(--spectrum-listview-item-border-color-key-focus);
 
+  .react-spectrum-ListViewSection {
+    .react-spectrum-ListViewSection-header {
+      background-color: unset;
+      /* todo: need bottom border, match row box shadow or border */
+    }
+  }
+
   /* forced-color-adjust: none, so that box-shadow and background color styles will render */
   forced-color-adjust: none;
 

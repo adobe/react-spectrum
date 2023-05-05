@@ -11,6 +11,8 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
+import {getChildNodes} from '@react-stately/collections';
+import InsertionIndicator from './InsertionIndicator'
 import {layoutInfoToStyle, useVirtualizerItem} from '@react-aria/virtualizer';
 import listStyles from './styles.css';
 import {ListViewContext} from './ListView';
@@ -28,7 +30,7 @@ interface ListViewSectionProps<T> {
 
 export function ListViewSection<T>(props: ListViewSectionProps<T>) {
   let {children, reusableView: sectionView, header} = props;
-  let {state} = useContext(ListViewContext);
+  let {state, isListDroppable} = useContext(ListViewContext);
   let {direction} = useLocale();
   let item = sectionView.content;
   let {rowGroupProps, rowProps, cellProps} = useGridListSection({node: item, isVirtualized: true}, state);
@@ -38,8 +40,9 @@ export function ListViewSection<T>(props: ListViewSectionProps<T>) {
     reusableView: header,
     ref: headerRowRef
   });
+  let headerStyles = layoutInfoToStyle(header.layoutInfo, direction, sectionView.layoutInfo);
+  let isEmptySection = [...getChildNodes(item, state.collection)].length < 1;
 
-  // TODO: add insertion indicator for 'on' drop
   return (
     <div
       {...rowGroupProps}
@@ -56,7 +59,7 @@ export function ListViewSection<T>(props: ListViewSectionProps<T>) {
       <div
         role="presentation"
         ref={headerRowRef}
-        style={layoutInfoToStyle(header.layoutInfo, direction, sectionView.layoutInfo)}>
+        style={headerStyles}>
         <div
           {...rowProps}
           className={
@@ -69,6 +72,11 @@ export function ListViewSection<T>(props: ListViewSectionProps<T>) {
             {item.rendered}
           </span>
         </div>
+        {isListDroppable && isEmptySection &&
+          <InsertionIndicator
+            key={item.key}
+            target={{key: item.key, type: 'item', dropPosition: 'on'}} />
+        }
       </div>
       {children}
     </div>
