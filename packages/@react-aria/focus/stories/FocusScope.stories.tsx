@@ -12,7 +12,7 @@
 
 import {FocusScope} from '../';
 import {Meta} from '@storybook/react';
-import React, {ReactNode, useState} from 'react';
+import React, {ReactNode, useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 
 const dialogsRoot = 'dialogsRoot';
@@ -149,6 +149,41 @@ function FocusableFirstInScopeExample() {
   );
 }
 
+function IgnoreRestoreFocusExample() {
+  const [display, setDisplay] = useState(false);
+  useEffect(() => {
+    let handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setDisplay(false);
+      }
+    };
+    document.body.addEventListener('keyup', handleKeyDown);
+    return () => {
+      document.body.removeEventListener('keyup', handleKeyDown);
+    };
+  }, []);
+
+  return (
+    <div>
+      <button type="button" onClick={() => setDisplay(state => !state)}>
+        {display ? 'Close dialog 1' : 'Open dialog 1'}
+      </button>
+      <button type="button" onClick={() => setDisplay(state => !state)}>
+        {display ? 'Close dialog 2' : 'Open dialog 2'}
+      </button>
+      {display &&
+        <FocusScope restoreFocus>
+          <div role="dialog">
+            <input  />
+            <input  />
+            <input  />
+          </div>
+        </FocusScope>
+      }
+    </div>
+  );
+}
+
 export const KeyboardNavigation = {
   render: Template,
   args: {isPortaled: false}
@@ -167,6 +202,10 @@ export const KeyboardNavigationNoContain = {
 export const KeyboardNavigationInsidePortalNoContain = {
   render: Template,
   args: {isPortaled: true, contain: false}
+};
+
+export const IgnoreRestoreFocus = {
+  render: () => <IgnoreRestoreFocusExample />
 };
 
 export const FocusableFirstInScope = {
