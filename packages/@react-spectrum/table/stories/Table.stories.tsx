@@ -206,10 +206,13 @@ function MyTableHeader<T extends object>(props: TableHeaderProps<T>) {
     allowsDragging} = useTablePropsContext();
   return (
     <TableHeader id={props.id}>
-       {/*Add extra columns for drag and drop and selection. */}
+      { /*Add extra columns for drag and drop and selection. */ }
       {allowsDragging && <Column />}
-      {selectionStyle === 'checkbox' && (!!selectionMode && selectionMode !== 'none') && (
-        <Column>{selectionMode === 'multiple' && <Checkbox />}</Column>
+      {selectionStyle === 'checkbox' && (!!selectionMode && selectionMode !== 'none') && selectionMode === 'single' && (
+        <Column />
+      )}
+      {selectionStyle === 'checkbox' && (!!selectionMode && selectionMode !== 'none') && selectionMode === 'multiple' && (
+        <Column isSelectionCell />
       )}
       <Collection items={props.columns}>
         {props.children}

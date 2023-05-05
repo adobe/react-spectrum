@@ -68,7 +68,6 @@ export function useTable<T>(props: AriaTableProps<T>, state: TableState<T>, ref:
 
   // Override to include header rows
   if (isVirtualized) {
-    console.log(state.collection);
     gridProps['aria-rowcount'] = state.collection.size + state.collection.headerRows.length;
   }
 

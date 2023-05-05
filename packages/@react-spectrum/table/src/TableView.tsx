@@ -376,7 +376,6 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     }
 
     if (reusableView.viewType === 'headerrow') {
-      console.log(reusableView)
       return (
         <TableHeaderRow
           onHoverChange={setHeaderRowHovered}
@@ -427,7 +426,6 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         return null;
       case 'cell': {
         if (item.props.isSelectionCell) {
-          console.log('found a selection cell', item)
           return <TableCheckboxCell cell={item} />;
         }
 
@@ -738,7 +736,6 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
     virtualizerProps,
     isVirtualDragging && {tabIndex: null}
   );
-  console.log('rendering table virtualizer', layout, collection);
 
   return (
     <VirtualizerContext.Provider value={resizingColumn}>
@@ -1358,7 +1355,6 @@ function TableHeaderRow({item, children, style, ...props}) {
   let {rowProps} = useTableHeaderRow({node: item, isVirtualized: true}, state, ref);
   let {hoverProps} = useHover({...props, isDisabled: headerMenuOpen});
 
-  console.log('rendered the table header row')
   return (
     <div {...mergeProps(rowProps, hoverProps)} ref={ref} style={style}>
       {children}
