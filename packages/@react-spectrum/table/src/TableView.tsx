@@ -1155,7 +1155,7 @@ function DragButton() {
         className={
           classNames(
             stylesOverrides,
-            'spectrum-Table-row-draghandle-button'
+            'react-spectrum-Table-row-draghandle-button'
           )
         }
         style={!isFocusVisibleWithin ? {...visuallyHiddenProps.style} : {}}
