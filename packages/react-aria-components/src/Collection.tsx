@@ -620,6 +620,7 @@ export function useCachedChildren<T extends object>(props: CachedChildrenOptions
               key = idScope + ':' + key;
             }
             // TODO: only works if wrapped Item passes through id...
+            console.log(key, item);
             rendered = cloneElement(
               rendered,
               addIdAndValue ? {key, id: key, value: item} : {key}

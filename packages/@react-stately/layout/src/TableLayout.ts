@@ -156,7 +156,6 @@ export class TableLayout<T> extends ListLayout<T> {
     let y = 0;
     let width = 0;
     let children: LayoutNode[] = [];
-    console.log('build header')
     for (let headerRow of getChildNodes(this.collection.head, this.collection)) {
       let layoutNode = this.buildChild(headerRow, 0, y);
       layoutNode.layoutInfo.parentKey = 'header';
@@ -183,9 +182,7 @@ export class TableLayout<T> extends ListLayout<T> {
 
     let height = 0;
     let columns: LayoutNode[] = [];
-    console.log('build header row')
     for (let cell of getChildNodes(headerRow, this.collection)) {
-      console.log('buildHeaderRow', cell)
       let layoutNode = this.buildChild(cell, x, y);
       layoutNode.layoutInfo.parentKey = row.key;
       x = layoutNode.layoutInfo.rect.maxX;
@@ -336,7 +333,6 @@ export class TableLayout<T> extends ListLayout<T> {
   }
 
   buildNode(node: GridNode<T>, x: number, y: number): LayoutNode {
-    console.log('buildNode', node.type)
     switch (node.type) {
       case 'headerrow':
         return this.buildHeaderRow(node, x, y);

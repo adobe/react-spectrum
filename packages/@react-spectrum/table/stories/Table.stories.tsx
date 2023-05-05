@@ -42,9 +42,19 @@ import {View} from '@react-spectrum/view';
 import {
   CollectionContext,
   CollectionRendererContext,
-  useCollectionChildren
+  useCollectionChildren,
+  Collection
 } from 'react-aria-components/src/Collection';
-import {CellProps, ColumnProps, RowProps, TableBodyProps, TableHeaderProps} from 'react-aria-components';
+import {
+  CellProps,
+  ColumnProps,
+  RowProps,
+  TableBodyProps,
+  TableHeaderProps,
+  useTableOptions
+} from 'react-aria-components';
+import {Checkbox} from '@react-spectrum/checkbox';
+import {DragButton, useTableContext, useTablePropsContext} from '../src/TableView';
 
 export default {
   title: 'TableView',
@@ -154,14 +164,14 @@ export const Dynamic: TableStory = {
   },
   render: (args) => (
     <TableView {...args}>
-      <TableHeader columns={columns}>
+      <MyTableHeader columns={columns}>
         {column => <Column isRowHeader={column.isRowHeader}>{column.name}</Column>}
-      </TableHeader>
+      </MyTableHeader>
       <TableBody items={items}>
         {item =>
-          (<Row columns={columns}>
+          (<MyRow columns={columns}>
             {column => <Cell>{item[column.key]}</Cell>}
-          </Row>)
+          </MyRow>)
         }
       </TableBody>
     </TableView>
@@ -187,6 +197,24 @@ function TableHeader<T extends object>(props: TableHeaderProps<T>) {
       {/* @ts-ignore */}
       </tableheader>
     </CollectionRendererContext.Provider>
+  );
+}
+
+function MyTableHeader<T extends object>(props: TableHeaderProps<T>) {
+  let {selectionStyle,
+    selectionMode,
+    allowsDragging} = useTablePropsContext();
+  return (
+    <TableHeader id={props.id}>
+       {/*Add extra columns for drag and drop and selection. */}
+      {allowsDragging && <Column />}
+      {selectionStyle === 'checkbox' && (!!selectionMode && selectionMode !== 'none') && (
+        <Column>{selectionMode === 'multiple' && <Checkbox />}</Column>
+      )}
+      <Collection items={props.columns}>
+        {props.children}
+      </Collection>
+    </TableHeader>
   );
 }
 
@@ -220,6 +248,7 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
   return <tablebody multiple={props}>{children}</tablebody>;
 }
 
+
 export function Row<T extends object>(props: RowProps<T>) {
   let children = useCollectionChildren({
     children: props.children,
@@ -237,6 +266,27 @@ export function Row<T extends object>(props: RowProps<T>) {
       </CollectionContext.Provider>
       {/* @ts-ignore */}
     </item>
+  );
+}
+
+function MyRow<T extends object>({ id, columns, children }: RowProps<T>) {
+  let {selectionStyle,
+    selectionMode,
+    allowsDragging} = useTablePropsContext();
+
+  console.log('rendering secret cells?', allowsDragging, selectionMode, selectionStyle);
+  return (
+    <Row id={id}>
+      {allowsDragging && (
+        <Cell isDragButtonCell />
+      )}
+      {selectionStyle === 'checkbox' && (!!selectionMode && selectionMode !== 'none') && (
+        <Cell isSelectionCell />
+      )}
+      <Collection items={columns}>
+        {children}
+      </Collection>
+    </Row>
   );
 }
 

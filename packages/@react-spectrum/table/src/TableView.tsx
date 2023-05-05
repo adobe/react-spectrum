@@ -131,6 +131,11 @@ export function useVirtualizerContext() {
   return useContext(VirtualizerContext);
 }
 
+const TablePropsContext = React.createContext(null);
+export function useTablePropsContext() {
+  return useContext(TablePropsContext);
+}
+
 export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionProps, DOMProps, AriaLabelingProps, StyleProps {
   /**
    * Sets the amount of vertical padding within each cell.
@@ -531,58 +536,89 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     dragAndDropHooks?.isVirtualDragging() && {tabIndex: null}
   );
 
+  let {selectionStyle, selectionMode, disallowEmptySelection} = props;
+  let ctx = useMemo(() => ({
+    selectionMode,
+    selectionStyle,
+    disallowEmptySelection,
+    allowsDragging: isTableDraggable
+  }), [selectionStyle, selectionMode, disallowEmptySelection, isTableDraggable]);
   return (
-    <TableContext.Provider value={{state, dragState, dropState, dragAndDropHooks, isTableDraggable, isTableDroppable, layout, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, headerMenuOpen, setHeaderMenuOpen, shouldShowCheckboxes}}>
-      <TableVirtualizer
-        {...mergedProps}
-        {...styleProps}
-        className={
-          classNames(
-            styles,
-            'spectrum-Table',
-            `spectrum-Table--${density}`,
-            {
-              'spectrum-Table--quiet': isQuiet,
-              'spectrum-Table--wrap': props.overflowMode === 'wrap',
-              'spectrum-Table--loadingMore': state.collection.body.props.loadingState === 'loadingMore',
-              'spectrum-Table--isVerticalScrollbarVisible': isVerticalScrollbarVisible,
-              'spectrum-Table--isHorizontalScrollbarVisible': isHorizontalScrollbarVisible
-            },
+    <>
+      <TableContext.Provider
+        value={{
+          state,
+          dragState,
+          dropState,
+          dragAndDropHooks,
+          isTableDraggable,
+          isTableDroppable,
+          layout,
+          onResizeStart,
+          onResize: props.onResize,
+          onResizeEnd,
+          headerRowHovered,
+          isInResizeMode,
+          setIsInResizeMode,
+          isEmpty,
+          onFocusedResizer,
+          headerMenuOpen,
+          setHeaderMenuOpen,
+          shouldShowCheckboxes
+        }}>
+        <TableVirtualizer
+          {...mergedProps}
+          {...styleProps}
+          className={
             classNames(
-              stylesOverrides,
-              'react-spectrum-Table'
-            ),
-            styleProps.className
-          )
+              styles,
+              'spectrum-Table',
+              `spectrum-Table--${density}`,
+              {
+                'spectrum-Table--quiet': isQuiet,
+                'spectrum-Table--wrap': props.overflowMode === 'wrap',
+                'spectrum-Table--loadingMore': state.collection.body.props.loadingState === 'loadingMore',
+                'spectrum-Table--isVerticalScrollbarVisible': isVerticalScrollbarVisible,
+                'spectrum-Table--isHorizontalScrollbarVisible': isHorizontalScrollbarVisible
+              },
+              classNames(
+                stylesOverrides,
+                'react-spectrum-Table'
+              ),
+              styleProps.className
+            )
+          }
+          layout={layout}
+          collection={state.collection}
+          focusedKey={focusedKey}
+          renderView={renderView}
+          renderWrapper={renderWrapper}
+          onVisibleRectChange={onVisibleRectChange}
+          domRef={domRef}
+          headerRef={headerRef}
+          bodyRef={bodyRef}
+          isFocusVisible={isFocusVisible}
+          isVirtualDragging={dragAndDropHooks?.isVirtualDragging()}
+          isRootDropTarget={isRootDropTarget} />
+        {DragPreview && isTableDraggable &&
+          <DragPreview ref={preview}>
+            {() => {
+              if (dragAndDropHooks.renderPreview) {
+                return dragAndDropHooks.renderPreview(dragState.draggingKeys, dragState.draggedKey);
+              }
+              let itemCount = dragState.draggingKeys.size;
+              let maxWidth = bodyRef.current.getBoundingClientRect().width;
+              let height = ROW_HEIGHTS[density][scale];
+              let itemText = state.collection.getTextValue(dragState.draggedKey);
+              return <SpectrumDragPreview itemText={itemText} itemCount={itemCount} height={height} maxWidth={maxWidth} />;
+            }}
+          </DragPreview>
         }
-        layout={layout}
-        collection={state.collection}
-        focusedKey={focusedKey}
-        renderView={renderView}
-        renderWrapper={renderWrapper}
-        onVisibleRectChange={onVisibleRectChange}
-        domRef={domRef}
-        headerRef={headerRef}
-        bodyRef={bodyRef}
-        isFocusVisible={isFocusVisible}
-        isVirtualDragging={dragAndDropHooks?.isVirtualDragging()}
-        isRootDropTarget={isRootDropTarget} />
-      {DragPreview && isTableDraggable &&
-        <DragPreview ref={preview}>
-          {() => {
-            if (dragAndDropHooks.renderPreview) {
-              return dragAndDropHooks.renderPreview(dragState.draggingKeys, dragState.draggedKey);
-            }
-            let itemCount = dragState.draggingKeys.size;
-            let maxWidth = bodyRef.current.getBoundingClientRect().width;
-            let height = ROW_HEIGHTS[density][scale];
-            let itemText = state.collection.getTextValue(dragState.draggedKey);
-            return <SpectrumDragPreview itemText={itemText} itemCount={itemCount} height={height} maxWidth={maxWidth} />;
-          }}
-        </DragPreview>
-      }
-      {portal}
-    </TableContext.Provider>
+      </TableContext.Provider>
+      <TablePropsContext.Provider value={ctx}>
+        {portal}
+      </TablePropsContext.Provider>
+    </>
   );
 }
 
