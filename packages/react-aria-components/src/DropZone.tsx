@@ -10,10 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import {DropOptions, mergeProps, useButton, useClipboard, useDrop, useFocusRing, useHover} from 'react-aria';
-import React, {createContext, ForwardedRef, forwardRef} from 'react';
-
+import {ButtonContext} from './Button';
+import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {DropOptions, mergeProps, useButton, useClipboard, useDrop, useFocusRing, useHover, usePress, VisuallyHidden} from 'react-aria';
+import {InputContext} from './Input';
+import {LinkContext} from './Link';
+import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 export interface DropZoneRenderProps {
   /**
    * Whether the dropzone is currently hovered with a mouse.
@@ -44,11 +46,17 @@ export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDiv
 function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DropZoneContext);
   let {dropProps, isDropTarget} = useDrop({...props, ref});
-  let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let {hoverProps, isHovered} = useHover({});
-  let {buttonProps} = useButton({elementType: 'div'}, ref);
+  let buttonRef = useRef<HTMLButtonElement>(null);
+  let inputRef = useRef<HTMLInputElement>(null);
+  let uploadLinkRef = useRef<HTMLAnchorElement>(null);
+  let uploadButtonRef = useRef<HTMLButtonElement>(null);
+  let {buttonProps} = useButton({
+    onPress: inputRef.current ? () => inputRef.current.click() : undefined}, 
+    buttonRef);
+  let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let {clipboardProps} = useClipboard({
-    onPaste: (items) => props.onDrop?.({
+    onPaste: (items) => props.onDrop?.({  
       type: 'drop',
       items,
       x: 0,
@@ -61,18 +69,62 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
     values: {isHovered, isFocused, isFocusVisible, isDropTarget},
     defaultClassName: 'react-aria-DropZone'
   });
+  let onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (props.onDrop) {
+      props.onDrop(
+        {
+          type: 'drop',
+          dropOperation: 'copy',
+          x: 0,
+          y: 0,
+          items: [...e.target.files].map((file) =>
+            ({
+              kind: 'file', 
+              type: file.type, 
+              name: file.name,
+              getFile: () => Promise.resolve(file),
+              getText: () => Promise.resolve('')
+            })
+          )
+        }
+      );
+    }
+  };
+
+  let {pressProps} = usePress({
+    ref,
+    onPress: () => {
+      if (inputRef.current) {
+        inputRef.current.click();
+      }
+    }
+  });
+
+  let hasInputLink = uploadLinkRef.current || uploadButtonRef.current;
+
+  console.log(hasInputLink);
 
   return (
-    <div
-      {...mergeProps(dropProps, focusProps, hoverProps, buttonProps, clipboardProps)}
-      {...renderProps}
-      ref={ref}
-      slot={props.slot} 
-      data-hovered={isHovered || undefined} 
-      data-focused={isFocused || undefined} 
-      data-focus-visible={isFocusVisible || undefined}> 
-      {renderProps.children}
-    </div>
+    <Provider
+      values={[
+        [InputContext, {ref: inputRef, type: 'file', style: {display: 'none'}, onChange: onInputChange}],
+        [LinkContext, {slot: 'file', onPress: () => inputRef.current.click(), ref: uploadLinkRef}],
+        [ButtonContext, {slot: 'file', onPress: () => inputRef.current.click(), ref: uploadButtonRef}]
+      ]}>
+      <div
+        {...mergeProps(dropProps, focusProps, hoverProps, clipboardProps, pressProps)}
+        {...renderProps}
+        ref={ref}
+        slot={props.slot} 
+        data-hovered={isHovered || undefined} 
+        data-focused={isFocused || undefined} 
+        data-focus-visible={isFocusVisible || undefined}> 
+        {hasInputLink && <VisuallyHidden>
+          <button {...buttonProps} />
+        </VisuallyHidden>}
+        {renderProps.children}
+      </div>
+    </Provider>
   );
 }
 

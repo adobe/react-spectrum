@@ -11,13 +11,14 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, Group, Header, Heading, Input, Item, Keyboard, Label, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, TabPanels, Tabs, TabsProps, Text, TimeField, Tooltip, TooltipTrigger} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, TabPanels, Tabs, TabsProps, Text, TimeField, Tooltip, TooltipTrigger} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import React, {useState} from 'react';
 import styles from '../example/index.css';
 import {useClipboard, useDrag} from 'react-aria';
 import {useListData} from 'react-stately';
+import Copy from '@spectrum-icons/workflow/Copy';
 
 export default {
   title: 'React Aria Components'
@@ -714,7 +715,51 @@ function Copyable() {
 
 export const DropZoneExample = (props) => (
   <div>
+    <DropZone
+      {...props}
+      className={styles.dropzone}
+      onDrop={action('OnDrop')}
+      onDropEnter={action('OnDropEnter')}
+      onDropExit={action('OnDropExit')}>
+      {({isHovered, isFocused, isFocusVisible, isDropTarget}) => (
+        <div>
+          <div>DropZone</div>
+          <div>isHovered: {isHovered ? 'true' : 'false'}</div>
+          <div>isFocused: {isFocused ? 'true' : 'false'}</div>
+          <div>isFocusVisible: {isFocusVisible ? 'true' : 'false'}</div>
+          <div>isDropTarget: {isDropTarget ? 'true' : 'false'}</div>
+          <Input />
+        </div>
+      )}
+    </DropZone>
+  </div>
+);
+
+export const DropZoneExampleWithDraggableObject = (props) => (
+  <div>
     <Draggable />
+    <DropZone
+      {...props}
+      className={styles.dropzone}
+      onDrop={action('OnDrop')}
+      onDropEnter={action('OnDropEnter')}
+      onDropExit={action('OnDropExit')}>
+      {({isHovered, isFocused, isFocusVisible, isDropTarget}) => (
+        <div>
+          <div>DropZone</div>
+          <div>isHovered: {isHovered ? 'true' : 'false'}</div>
+          <div>isFocused: {isFocused ? 'true' : 'false'}</div>
+          <div>isFocusVisible: {isFocusVisible ? 'true' : 'false'}</div>
+          <div>isDropTarget: {isDropTarget ? 'true' : 'false'}</div>
+          <Input />
+        </div>
+      )}
+    </DropZone>
+  </div>
+);
+
+export const DropZoneExampleWithCopy = (props) => (
+  <div>
     <Copyable />
     <DropZone
       {...props}
@@ -731,6 +776,55 @@ export const DropZoneExample = (props) => (
           <div>isDropTarget: {isDropTarget ? 'true' : 'false'}</div>
         </div>
       )}
+    </DropZone>
+  </div>
+);
+
+export const DropZoneWithInput = (props) => (
+  <div>
+    <DropZone
+      {...props}
+      className={styles.dropzone}
+      onDrop={action('OnDrop')}
+      onDropEnter={action('OnDropEnter')}
+      onDropExit={action('OnDropExit')}>
+      <div>
+        <div>DropZone</div>
+        <Input />
+      </div>
+    </DropZone>
+  </div>
+);
+
+export const DropZoneWithLink = (props) => (
+  <div>
+    <DropZone
+      {...props}
+      className={styles.dropzone}
+      onDrop={action('OnDrop')}
+      onDropEnter={action('OnDropEnter')}
+      onDropExit={action('OnDropExit')}>
+      <div>
+        <Input />
+        <Link slot="file">upload</Link>
+      </div>
+    </DropZone>
+  </div>
+);
+
+export const DropZoneWithoutInput = (props) => (
+  <div>
+    <Draggable />
+    <Copyable />
+    <DropZone
+      {...props}
+      className={styles.dropzone}
+      onDrop={action('OnDrop')}
+      onDropEnter={action('OnDropEnter')}
+      onDropExit={action('OnDropExit')}>
+      <div>
+        <div>DropZone</div>
+      </div>
     </DropZone>
   </div>
 );
