@@ -27,5 +27,8 @@
     "eslint": "^8.24.0",
     "eslint-config-next": "13.2.4",
     "typescript": "^4.8.4"
+  },
+  "resolutions": {
+    "@pkgr/utils": "2.3.1"
   }
 }
