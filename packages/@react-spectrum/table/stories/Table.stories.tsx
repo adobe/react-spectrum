@@ -146,22 +146,22 @@ export const Static: TableStory = {
   },
   render: (args) => (
     <TableView {...args}>
-      <MyTableHeader>
+      <TableHeader>
         <Column key="foo" isRowHeader>Foo</Column>
         <Column key="bar">Bar</Column>
         <Column key="baz">Baz</Column>
-      </MyTableHeader>
+      </TableHeader>
       <TableBody>
-        <MyRow>
+        <Row>
           <Cell>One</Cell>
           <Cell>Two</Cell>
           <Cell>Three</Cell>
-        </MyRow>
-        <MyRow>
+        </Row>
+        <Row>
           <Cell>One</Cell>
           <Cell>Two</Cell>
           <Cell>Three</Cell>
-        </MyRow>
+        </Row>
       </TableBody>
     </TableView>
   ),
@@ -194,14 +194,14 @@ export const Dynamic: TableStory = {
   },
   render: (args) => (
     <TableView {...args}>
-      <MyTableHeader columns={columns}>
+      <TableHeader columns={columns}>
         {column => <Column isRowHeader={column.isRowHeader}>{column.name}</Column>}
-      </MyTableHeader>
+      </TableHeader>
       <TableBody items={items}>
         {item =>
-          (<MyRow columns={columns}>
+          (<Row columns={columns}>
             {column => <Cell>{item[column.key]}</Cell>}
-          </MyRow>)
+          </Row>)
         }
       </TableBody>
     </TableView>
@@ -210,12 +210,11 @@ export const Dynamic: TableStory = {
 };
 // TODO BREAKING: had to provide columns to Row
 
-function TableHeader<T extends object>(props: TableHeaderProps<T>) {
+function BaseTableHeader<T extends object>(props: TableHeaderProps<T>) {
   let children = useCollectionChildren({
     children: props.children,
     items: props.columns
   });
-
   let renderer = typeof props.children === 'function' ? props.children : null;
   return (
     <CollectionRendererContext.Provider value={renderer}>
@@ -230,24 +229,22 @@ function TableHeader<T extends object>(props: TableHeaderProps<T>) {
   );
 }
 
-function MyTableHeader<T extends object>(props: TableHeaderProps<T>) {
+function TableHeader<T extends object>(props: TableHeaderProps<T>) {
   let {selectionStyle,
     selectionMode,
     allowsDragging} = useTablePropsContext();
+
   return (
-    <TableHeader id={props.id}>
+    <BaseTableHeader id={props.id}>
       { /*Add extra columns for drag and drop and selection. */ }
-      {allowsDragging && <Column />}
-      {selectionStyle === 'checkbox' && (!!selectionMode && selectionMode !== 'none') && selectionMode === 'single' && (
-        <Column />
-      )}
-      {selectionStyle === 'checkbox' && (!!selectionMode && selectionMode !== 'none') && selectionMode === 'multiple' && (
+      {allowsDragging && <Column isDragButtonCell />}
+      {selectionStyle === 'checkbox' && !!selectionMode && selectionMode !== 'none' && (
         <Column isSelectionCell />
       )}
       <Collection items={props.columns}>
         {props.children}
       </Collection>
-    </TableHeader>
+    </BaseTableHeader>
   );
 }
 
@@ -273,6 +270,21 @@ export function Column<T extends object>(props: ColumnProps<T>): JSX.Element {
   return <column multiple={{...props, rendered: props.title ?? props.children}}>{children}</column>;
 }
 
+export function MyColumn<T extends object>(props: ColumnProps<T>): JSX.Element {
+  let spans = props.colspan ?? 1;
+  if (props.title) {
+
+  }
+  return (
+    <Column id={props.id}>
+
+      <Collection items={props.columns}>
+        {props.children}
+      </Collection>
+    </Column>
+  );
+};
+
 export function TableBody<T extends object>(props: TableBodyProps<T>) {
   let children = useCollectionChildren(props);
 
@@ -281,7 +293,7 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
 }
 
 
-export function Row<T extends object>(props: RowProps<T>) {
+export function BaseRow<T extends object>(props: RowProps<T>) {
   let children = useCollectionChildren({
     children: props.children,
     items: props.columns,
@@ -301,13 +313,13 @@ export function Row<T extends object>(props: RowProps<T>) {
   );
 }
 
-function MyRow<T extends object>({ id, columns, children }: RowProps<T>) {
+function Row<T extends object>({ id, columns, children }: RowProps<T>) {
   let {selectionStyle,
     selectionMode,
     allowsDragging} = useTablePropsContext();
 
   return (
-    <Row id={id}>
+    <BaseRow id={id}>
       {allowsDragging && (
         <Cell isDragButtonCell />
       )}
@@ -317,7 +329,7 @@ function MyRow<T extends object>({ id, columns, children }: RowProps<T>) {
       <Collection items={columns}>
         {children}
       </Collection>
-    </Row>
+    </BaseRow>
   );
 }
 
@@ -343,17 +355,84 @@ export const DynamicShowDividers: TableStory = {
   },
   render: (args) => (
     <TableView {...args}>
-      <MyTableHeader columns={columns}>
+      <TableHeader columns={columns}>
         {column => <Column showDivider isRowHeader={column.isRowHeader}>{column.name}</Column>}
-      </MyTableHeader>
+      </TableHeader>
       <TableBody items={items}>
         {item =>
-          (<MyRow columns={columns}>
+          (<Row columns={columns}>
             {column => <Cell>{item[column.key]}</Cell>}
-          </MyRow>)
+          </Row>)
         }
       </TableBody>
     </TableView>
   ),
   name: 'dynamic showDividers'
+};
+
+export const StaticNestedColumns: TableStory = {
+  args: {
+    'aria-label': 'TableView with nested columns',
+    width: 500,
+    height: 200
+  },
+  render: (args) => (
+    <TableView {...args}>
+      <TableHeader>
+        <Column key="test">Test</Column>
+        <Column title="Group 1" colspan={2}>
+          <Column key="foo" isRowHeader>Foo</Column>
+          <Column key="bar">Bar</Column>
+        </Column>
+        <Column title="Group 2" colspan={1}>
+          <Column key="baz">Baz</Column>
+        </Column>
+      </TableHeader>
+      <TableBody>
+        <Row>
+          <Cell>Test1</Cell>
+          <Cell>One</Cell>
+          <Cell>Two</Cell>
+          <Cell>Three</Cell>
+        </Row>
+        <Row>
+          <Cell>Test2</Cell>
+          <Cell>One</Cell>
+          <Cell>Two</Cell>
+          <Cell>Three</Cell>
+        </Row>
+      </TableBody>
+    </TableView>
+  ),
+  name: 'static with nested columns'
+};
+
+export const ResizingUncontrolledStaticWidths: TableStory = {
+  args: {
+    'aria-label': 'TableView with resizable columns',
+    width: 800,
+    height: 200
+  },
+  render: (args) => (
+    <TableView {...args}>
+      <TableHeader>
+        <Column allowsResizing defaultWidth="50%" isRowHeader>File Name</Column>
+        <Column allowsResizing defaultWidth="20%">Type</Column>
+        <Column allowsResizing defaultWidth={239}>Size</Column>
+      </TableHeader>
+      <TableBody>
+        <Row>
+          <Cell>2018 Proposal</Cell>
+          <Cell>PDF</Cell>
+          <Cell>214 KB</Cell>
+        </Row>
+        <Row>
+          <Cell>Budget</Cell>
+          <Cell>XLS</Cell>
+          <Cell>120 KB</Cell>
+        </Row>
+      </TableBody>
+    </TableView>
+  ),
+  name: 'allowsResizing, uncontrolled, static widths'
 };

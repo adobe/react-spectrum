@@ -93,16 +93,16 @@ export class TableColumnLayout<T> {
       let frKey;
       let frValue;
       minWidths.set(column.key, this.getDefaultMinWidth(collection.columns[i]));
-      if (col !== column.key && !column.column.props.width && !isStatic(uncontrolledWidths.get(column.key))) {
+      if (col !== column.key && !column.props.width && !isStatic(uncontrolledWidths.get(column.key))) {
         // uncontrolled don't have props.width for us, so instead get from our state
         frKey = column.key;
         frValue = parseFractionalUnit(uncontrolledWidths.get(column.key) as string);
-      } else if (col !== column.key && !isStatic(column.column.props.width) && !uncontrolledWidths.get(column.key)) {
+      } else if (col !== column.key && !isStatic(column.props.width) && !uncontrolledWidths.get(column.key)) {
         // controlledWidths will be the same in the collection
         frKey = column.key;
-        frValue = parseFractionalUnit(column.column.props.width);
-      } else if (col !== column.key && column.column.props.width?.endsWith?.('%')) {
-        percentKeys.set(column.key, column.column.props.width);
+        frValue = parseFractionalUnit(column.props.width);
+      } else if (col !== column.key && column.props.width?.endsWith?.('%')) {
+        percentKeys.set(column.key, column.props.width);
       }
       // don't freeze columns to the right of the resizing one
       if (resizeIndex < i) {
@@ -124,7 +124,7 @@ export class TableColumnLayout<T> {
     // predict pixels sizes for all columns based on resize
     let columnWidths = calculateColumnSizes(
       tableWidth,
-      collection.columns.map(col => ({...col.column.props, key: col.key})),
+      collection.columns.map(col => ({...col.props, key: col.key})),
       resizingChanged,
       (i) => this.getDefaultWidth(collection.columns[i]),
       (i) => this.getDefaultMinWidth(collection.columns[i])
