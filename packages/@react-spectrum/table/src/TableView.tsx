@@ -726,6 +726,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
                 },
                 classNames(
                   stylesOverrides,
+                  'react-spectrum-Table-body',
                   {
                     'react-spectrum-Table-body--dropTarget': !!isRootDropTarget
                   }
@@ -1290,6 +1291,7 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
             },
             classNames(
               stylesOverrides,
+              'react-spectrum-Table-row',
               {'react-spectrum-Table-row--dropTarget': isDropTarget}
             )
           )
