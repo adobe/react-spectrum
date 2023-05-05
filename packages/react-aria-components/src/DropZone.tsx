@@ -47,15 +47,22 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DropZoneContext);
   let {dropProps, isDropTarget} = useDrop({...props, ref});
   let {hoverProps, isHovered} = useHover({});
+  let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let buttonRef = useRef<HTMLButtonElement>(null);
   let inputRef = useRef<HTMLInputElement>(null);
   let uploadLinkRef = useRef<HTMLAnchorElement>(null);
   let uploadButtonRef = useRef<HTMLButtonElement>(null);
+  let hasInputLink = uploadLinkRef.current || uploadButtonRef.current;
   let {buttonProps} = useButton({
-    onPress: inputRef.current ? () => inputRef.current.click() : undefined}, 
+    onPress: () => {
+      if (inputRef.current) {
+        return inputRef.current.click();
+      } 
+      return undefined;
+    },
+    elementType: 'div'}, 
     buttonRef);
-  let {focusProps, isFocused, isFocusVisible} = useFocusRing();
-  let {clipboardProps} = useClipboard({
+  let {clipboardProps} = useClipboard({ // copying does not currently work
     onPaste: (items) => props.onDrop?.({  
       type: 'drop',
       items,
@@ -69,47 +76,42 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
     values: {isHovered, isFocused, isFocusVisible, isDropTarget},
     defaultClassName: 'react-aria-DropZone'
   });
-  let onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (props.onDrop) {
-      props.onDrop(
-        {
-          type: 'drop',
-          dropOperation: 'copy',
-          x: 0,
-          y: 0,
-          items: [...e.target.files].map((file) =>
-            ({
-              kind: 'file', 
-              type: file.type, 
-              name: file.name,
-              getFile: () => Promise.resolve(file),
-              getText: () => Promise.resolve('')
-            })
-          )
-        }
-      );
-    }
-  };
-
   let {pressProps} = usePress({
     ref,
     onPress: () => {
-      if (inputRef.current) {
+      if (inputRef.current && !hasInputLink) { // !hasInputLink prevents the whole dropzone from being clickable when there is an button or link
         inputRef.current.click();
       }
     }
   });
 
-  let hasInputLink = uploadLinkRef.current || uploadButtonRef.current;
-
-  console.log(hasInputLink);
-
+  let onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (props.onDrop) {
+      props.onDrop({
+        type: 'drop',
+        dropOperation: 'copy',
+        x: 0,
+        y: 0,
+        items: [...(e.target.files || [])].map((file) =>
+          ({
+            kind: 'file', 
+            type: file.type, 
+            name: file.name,
+            getFile: () => Promise.resolve(file),
+            getText: () => Promise.resolve('')
+          })
+        )
+      }
+      );
+    }
+  };
+  
   return (
     <Provider
       values={[
         [InputContext, {ref: inputRef, type: 'file', style: {display: 'none'}, onChange: onInputChange}],
-        [LinkContext, {slot: 'file', onPress: () => inputRef.current.click(), ref: uploadLinkRef}],
-        [ButtonContext, {slot: 'file', onPress: () => inputRef.current.click(), ref: uploadButtonRef}]
+        [LinkContext, {slot: 'file', onPress: () => inputRef.current?.click(), ref: uploadLinkRef}],
+        [ButtonContext, {slot: 'file', onPress: () => inputRef.current?.click(), ref: uploadButtonRef}]
       ]}>
       <div
         {...mergeProps(dropProps, focusProps, hoverProps, clipboardProps, pressProps)}
@@ -119,7 +121,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
         data-hovered={isHovered || undefined} 
         data-focused={isFocused || undefined} 
         data-focus-visible={isFocusVisible || undefined}> 
-        {hasInputLink && <VisuallyHidden>
+        {!hasInputLink && <VisuallyHidden>
           <button {...buttonProps} />
         </VisuallyHidden>}
         {renderProps.children}

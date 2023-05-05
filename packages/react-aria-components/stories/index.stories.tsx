@@ -18,7 +18,6 @@ import React, {useState} from 'react';
 import styles from '../example/index.css';
 import {useClipboard, useDrag} from 'react-aria';
 import {useListData} from 'react-stately';
-import Copy from '@spectrum-icons/workflow/Copy';
 
 export default {
   title: 'React Aria Components'
@@ -713,7 +712,7 @@ function Copyable() {
   );
 }
 
-export const DropZoneExample = (props) => (
+export const DropzoneExampleWithInput = (props) => (
   <div>
     <DropZone
       {...props}
@@ -721,21 +720,43 @@ export const DropZoneExample = (props) => (
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
-      {({isHovered, isFocused, isFocusVisible, isDropTarget}) => (
-        <div>
-          <div>DropZone</div>
-          <div>isHovered: {isHovered ? 'true' : 'false'}</div>
-          <div>isFocused: {isFocused ? 'true' : 'false'}</div>
-          <div>isFocusVisible: {isFocusVisible ? 'true' : 'false'}</div>
-          <div>isDropTarget: {isDropTarget ? 'true' : 'false'}</div>
-          <Input />
-        </div>
-      )}
+      DropZone Area
+      <Input />
     </DropZone>
   </div>
 );
 
-export const DropZoneExampleWithDraggableObject = (props) => (
+export const DropzoneExampleWithLinkAndInput = (props) => (
+  <div>
+    <DropZone
+      {...props}
+      className={styles.dropzone}
+      onDrop={action('OnDrop')}
+      onDropEnter={action('OnDropEnter')}
+      onDropExit={action('OnDropExit')}>
+      <Input />
+      <Link slot="file">Upload</Link>
+    </DropZone>
+  </div>
+);
+
+
+export const DropzoneExampleWithButton = (props) => (
+  <div>
+    <DropZone
+      {...props}
+      className={styles.dropzone}
+      onDrop={action('OnDrop')}
+      onDropEnter={action('OnDropEnter')}
+      onDropExit={action('OnDropExit')}>
+      <Input />
+      <Button slot="file">upload</Button>
+    </DropZone>
+  </div>
+);
+
+
+export const DropzoneExampleWithDraggableObject = (props) => (
   <div>
     <Draggable />
     <DropZone
@@ -744,21 +765,13 @@ export const DropZoneExampleWithDraggableObject = (props) => (
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
-      {({isHovered, isFocused, isFocusVisible, isDropTarget}) => (
-        <div>
-          <div>DropZone</div>
-          <div>isHovered: {isHovered ? 'true' : 'false'}</div>
-          <div>isFocused: {isFocused ? 'true' : 'false'}</div>
-          <div>isFocusVisible: {isFocusVisible ? 'true' : 'false'}</div>
-          <div>isDropTarget: {isDropTarget ? 'true' : 'false'}</div>
-          <Input />
-        </div>
-      )}
+      DropZone Area
     </DropZone>
   </div>
 );
 
-export const DropZoneExampleWithCopy = (props) => (
+// copying does not currently work 
+export const DropzoneExampleWithCopyableObject = (props) => (
   <div>
     <Copyable />
     <DropZone
@@ -767,52 +780,12 @@ export const DropZoneExampleWithCopy = (props) => (
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
-      {({isHovered, isFocused, isFocusVisible, isDropTarget}) => (
-        <div>
-          <div>DropZone</div>
-          <div>isHovered: {isHovered ? 'true' : 'false'}</div>
-          <div>isFocused: {isFocused ? 'true' : 'false'}</div>
-          <div>isFocusVisible: {isFocusVisible ? 'true' : 'false'}</div>
-          <div>isDropTarget: {isDropTarget ? 'true' : 'false'}</div>
-        </div>
-      )}
+      DropzoneArea
     </DropZone>
   </div>
 );
 
-export const DropZoneWithInput = (props) => (
-  <div>
-    <DropZone
-      {...props}
-      className={styles.dropzone}
-      onDrop={action('OnDrop')}
-      onDropEnter={action('OnDropEnter')}
-      onDropExit={action('OnDropExit')}>
-      <div>
-        <div>DropZone</div>
-        <Input />
-      </div>
-    </DropZone>
-  </div>
-);
-
-export const DropZoneWithLink = (props) => (
-  <div>
-    <DropZone
-      {...props}
-      className={styles.dropzone}
-      onDrop={action('OnDrop')}
-      onDropEnter={action('OnDropEnter')}
-      onDropExit={action('OnDropExit')}>
-      <div>
-        <Input />
-        <Link slot="file">upload</Link>
-      </div>
-    </DropZone>
-  </div>
-);
-
-export const DropZoneWithoutInput = (props) => (
+export const DropzoneWithRenderProps = (props) => (
   <div>
     <Draggable />
     <Copyable />
@@ -822,9 +795,26 @@ export const DropZoneWithoutInput = (props) => (
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
-      <div>
-        <div>DropZone</div>
-      </div>
+      {({isHovered, isFocused, isFocusVisible, isDropTarget}) => (
+        <div>
+          <div>DropZone</div>
+          <div>isHovered: {isHovered ? 'true' : 'false'}</div>
+          <div>isFocused: {isFocused ? 'true' : 'false'}</div>
+          <div>isFocusVisible: {isFocusVisible ? 'true' : 'false'}</div>
+          <div>isDropTarget: {isDropTarget ? 'true' : 'false'}</div>
+        </div>
+      )}
     </DropZone>
+  </div>
+);
+
+export const DropzoneExample = (props) => (
+  <div>
+    <DropZone
+      {...props}
+      className={styles.dropzone}
+      onDrop={action('OnDrop')}
+      onDropEnter={action('OnDropEnter')}
+      onDropExit={action('OnDropExit')} />
   </div>
 );
