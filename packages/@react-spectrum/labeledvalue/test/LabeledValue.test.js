@@ -96,7 +96,7 @@ describe('LabeledValue', function () {
   });
 
   it('renders correctly with CalendarDateTime value with user provided format options', function () {
-    let {getByTestId, debug} = render(
+    let {getByTestId} = render(
       <LabeledValue
         data-testid="test-id"
         label="Field label"
@@ -106,7 +106,6 @@ describe('LabeledValue', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    debug()
     expect(staticField).toHaveTextContent('Feb 3, 2020, 12:23:24 PM');
 
   });
