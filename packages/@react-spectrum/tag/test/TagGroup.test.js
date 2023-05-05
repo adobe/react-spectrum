@@ -419,6 +419,58 @@ describe('TagGroup', function () {
     expect(document.activeElement).toBe(tags[1]);
   });
 
+  it.each`
+    Name                         | props
+    ${'on `Delete` keypress'}    | ${{keyPress: 'Delete'}}
+    ${'on `Backspace` keypress'} | ${{keyPress: 'Backspace'}}
+  `('Should focus container after last tag is removed $Name', function ({Name, props}) {
+
+    function TagGroupWithDelete(props) {
+      let [items, setItems] = React.useState([
+        {id: 1, label: 'Cool Tag 1'},
+        {id: 2, label: 'Another cool tag'}
+      ]);
+
+      let removeItem = (key) => {
+        setItems(prevItems => prevItems.filter((item) => key !== item.id));
+      };
+
+      return (
+        <Provider theme={theme}>
+          <TagGroup items={items} aria-label="tag group" allowsRemoving onRemove={chain(removeItem, onRemoveSpy)} {...props}>
+            {item => <Item>{item.label}</Item>}
+          </TagGroup>
+        </Provider>
+      );
+    }
+
+    let {getAllByRole, getByRole, queryAllByRole} = render(
+      <TagGroupWithDelete {...props} />
+    );
+
+    let tags = getAllByRole('row');
+    let container = getByRole('grid');
+    userEvent.tab();
+    expect(document.activeElement).toBe(tags[0]);
+    fireEvent.keyDown(document.activeElement, {key: props.keyPress});
+    fireEvent.keyUp(document.activeElement, {key: props.keyPress});
+    expect(onRemoveSpy).toHaveBeenCalledTimes(1);
+    expect(onRemoveSpy).toHaveBeenCalledWith(1);
+
+    tags = getAllByRole('row');
+    expect(document.activeElement).toBe(tags[0]);
+    fireEvent.keyDown(document.activeElement, {key: props.keyPress});
+    fireEvent.keyUp(document.activeElement, {key: props.keyPress});
+    expect(onRemoveSpy).toHaveBeenCalledTimes(2);
+    expect(onRemoveSpy).toHaveBeenCalledWith(2);
+
+    act(() => jest.runAllTimers());
+
+    tags = queryAllByRole('row');
+    expect(tags.length).toBe(0);
+    expect(document.activeElement).toBe(container);
+  });
+
   it('maxRows should limit the number of tags shown', function () {
     let offsetWidth = jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
       .mockImplementationOnce(() => ({x: 200, y: 300, width: 75, height: 32, top: 300, right: 275, bottom: 335, left: 200}))

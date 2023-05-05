@@ -63,9 +63,20 @@ export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefO
     if (e.key === 'Delete' || e.key === 'Backspace') {
       onRemove(item.key);
       e.preventDefault();
+
+      // Focus container if last tag was removed.
+      if (state.collection.size === 1 && state.collection.getFirstKey() === item.key) {
+        let lastTag = ref;
+        let container = ref.current.parentElement;
+        setTimeout(() => {
+          if (!lastTag.current) {
+            container.focus();
+          }
+        }, 50);
+      }
     }
   };
-
+  
   let modality: string = useInteractionModality();
   if (modality === 'virtual' &&  (typeof window !== 'undefined' && 'ontouchstart' in window)) {
     modality = 'touch';
