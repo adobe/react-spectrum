@@ -215,10 +215,10 @@
     /* forced-color-adjust: none, so that box-shadow style will render */
     forced-color-adjust: none;
   }
-}
 
-.react-spectrum-Table-cellWrapper.react-spectrum-Table-cellWrapper--dropTarget {
-  background-color: var(--spectrum-table-droptarget-background-color);
+  .react-spectrum-Table-cellWrapper.react-spectrum-Table-cellWrapper--dropTarget {
+    background-color: var(--spectrum-table-droptarget-background-color);
+  }
 }
 
 @media (forced-colors: active) {
