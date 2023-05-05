@@ -12,7 +12,7 @@
 
 import {Heading, Text} from '@react-spectrum/text';
 import {Item, TabList, TabPanels, Tabs} from '../';
-import {Meta, Story} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import React from 'react';
 import {SpectrumTabsProps} from '@react-types/tabs';
 
@@ -29,9 +29,7 @@ const meta: Meta<SpectrumTabsProps<object>> = {
 
 export default meta;
 
-
-const Template = <T extends object>(): Story<SpectrumTabsProps<T>> => (args) => (
-
+const Template = (args: SpectrumTabsProps<object>) => (
   <Tabs {...args} aria-label="Tab example" maxWidth={500}>
     <TabList>
       <Item key="val1">Tab 1</Item>
@@ -75,48 +73,77 @@ const Template = <T extends object>(): Story<SpectrumTabsProps<T>> => (args) => 
   </Tabs>
 );
 
+export const Default = {
+  render: Template,
+  args: {}
+};
 
-export const Default = Template().bind({});
-Default.args = {};
+export const DefaultMobileViewport = {
+  render: Template,
+  parameters: {chromatic: {viewports: [320]}}
+};
 
-export const DefaultMobileViewport = Template().bind({});
-DefaultMobileViewport.parameters = {chromatic: {viewports: [320]}};
+export const Quiet = {
+  render: Template,
+  args: {...Default.args, isQuiet: true}
+};
 
-export const Quiet = Template().bind({});
-Quiet.args = {...Default.args, isQuiet: true};
+export const Emphasized = {
+  render: Template,
+  args: {...Default.args, isEmphasized: true}
+};
 
-export const Emphasized = Template().bind({});
-Emphasized.args = {...Default.args, isEmphasized: true};
+export const Compact = {
+  render: Template,
+  args: {...Default.args, density: 'compact'}
+};
 
-export const Compact = Template().bind({});
-Compact.args = {...Default.args, density: 'compact'};
+export const CompactQuiet = {
+  render: Template,
+  args: {...Quiet.args, ...Compact.args}
+};
 
-export const CompactQuiet = Template().bind({});
-CompactQuiet.args = {...Quiet.args, ...Compact.args};
+export const Vertical = {
+  render: Template,
+  args: {...Default.args, orientation: 'vertical'}
+};
 
-export const Vertical = Template().bind({});
-Vertical.args = {...Default.args, orientation: 'vertical'};
+export const VerticalQuiet = {
+  render: Template,
+  args: {...Vertical.args, ...Quiet.args}
+};
 
-export const VerticalQuiet = Template().bind({});
-VerticalQuiet.args = {...Vertical.args, ...Quiet.args};
+export const VerticalCompact = {
+  render: Template,
+  args: {...Vertical.args, ...Compact.args}
+};
 
-export const VerticalCompact = Template().bind({});
-VerticalCompact.args = {...Vertical.args, ...Compact.args};
+export const VerticalCompactQuiet = {
+  render: Template,
+  args: {...Vertical.args, ...CompactQuiet.args}
+};
 
-export const VerticalCompactQuiet = Template().bind({});
-VerticalCompactQuiet.args = {...Vertical.args, ...CompactQuiet.args};
+export const EmphasizedQuiet = {
+  render: Template,
+  args: {...Emphasized.args, ...Quiet.args}
+};
 
-export const EmphasizedQuiet = Template().bind({});
-EmphasizedQuiet.args = {...Emphasized.args, ...Quiet.args};
+export const EmphasizedVertical = {
+  render: Template,
+  args: {...Emphasized.args, ...Vertical.args}
+};
 
-export const EmphasizedVertical = Template().bind({});
-EmphasizedVertical.args = {...Emphasized.args, ...Vertical.args};
+export const EmphasizedVerticalQuiet = {
+  render: Template,
+  args: {...Emphasized.args, ...Vertical.args, ...Quiet.args}
+};
 
-export const EmphasizedVerticalQuiet = Template().bind({});
-EmphasizedVerticalQuiet.args = {...Emphasized.args, ...Vertical.args, ...Quiet.args};
+export const EmphasizedCompact = {
+  render: Template,
+  args: {...Emphasized.args, ...Compact.args}
+};
 
-export const EmphasizedCompact = Template().bind({});
-EmphasizedCompact.args = {...Emphasized.args, ...Compact.args};
-
-export const EmphasizedCompactVertical = Template().bind({});
-EmphasizedCompactVertical.args = {...Emphasized.args, ...Compact.args, ...Vertical.args};
+export const EmphasizedCompactVertical = {
+  render: Template,
+  args: {...Emphasized.args, ...Compact.args, ...Vertical.args}
+};
