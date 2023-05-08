@@ -76,9 +76,22 @@ let withSection = [
     {name: 'Daniel'},
     {name: 'Rob'},
     {name: 'Reid'},
-    {name: 'Kyle'}
+    {name: 'Kyle'},
+    {name: 'Yihui'},
+    {name: 'Matt'},
+    {name: 'Michael'}
   ]}
 ];
+
+let lotsOfSections: any[] = [];
+for (let i = 0; i < 50; i++) {
+  let children = [];
+  for (let j = 0; j < 50; j++) {
+    children.push({name: `Section ${i}, Item ${j}`});
+  }
+
+  lotsOfSections.push({name: 'Section ' + i, children});
+}
 
 export function renderEmptyState() {
   return (
@@ -300,6 +313,35 @@ export const DynamicSections: ListViewStory = {
     </ListView>
   ),
   name: 'dynamic sections'
+};
+
+export const ManySections: ListViewStory = {
+  render: (args) => (
+    <ListView aria-label="Many sections" items={lotsOfSections} width="300px" height="250px" {...args}>
+      {(item: any) => (
+        <ListSection key={item.name} items={item.children} title={item.name}>
+          {(item: any) => (
+            <Item key={item.name} textValue={item.name}>
+              <Text>
+                {item.name}
+              </Text>
+              <ActionGroup buttonLabelBehavior="hide">
+                <Item key="edit">
+                  <Edit />
+                  <Text>Edit</Text>
+                </Item>
+                <Item key="delete">
+                  <Delete />
+                  <Text>Delete</Text>
+                </Item>
+              </ActionGroup>
+            </Item>
+          )}
+        </ListSection>
+        )}
+    </ListView>
+  ),
+  name: 'many sections'
 };
 
 export const Falsy: ListViewStory = {

@@ -26,5 +26,8 @@ export {
   Default,
   ComboPt2,
   ComboPt3,
-  Empty
+  Empty,
+  DefaultSections,
+  SectionsComboPt2,
+  SectionsComboPt3
 } from './ListView.chromatic';

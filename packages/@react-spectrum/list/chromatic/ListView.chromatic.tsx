@@ -22,7 +22,7 @@ import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Image} from '@react-spectrum/image';
 import Info from '@spectrum-icons/workflow/Info';
-import {Item, ListView} from '../';
+import {Item, ListSection, ListView} from '../';
 import {Meta} from '@storybook/react';
 import React from 'react';
 
@@ -128,6 +128,33 @@ const Template = ({combos, ...args}) => (
   </Grid>
 );
 
+const SectionsTemplate = ({combos, ...args}) => (
+  <Grid columns={repeat(3, '1fr')} autoFlow="row" gap="size-300">
+    {combos.map(c => {
+      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+      if (!key) {
+        key = 'empty';
+      }
+      return (
+        <View flexGrow={1} maxWidth="size-5000" maxHeight={700} id={key}>
+          <ListView aria-label={key} width="size-3600" height="100%" selectedKeys={['a', 'd']} disabledKeys={['c']} {...args} {...c}>
+            <ListSection key="section1" title="Section One">
+              <Item textValue="Adobe Photoshop">Adobe Photoshop</Item>
+              <Item textValue="Adobe Illustrator">Adobe Illustrator</Item>
+              <Item textValue="Adobe XD">Adobe XD</Item>
+            </ListSection>
+            <ListSection key="section2" title="Section Two">
+              <Item textValue="1">1</Item>
+              <Item textValue="2">2</Item>
+              <Item textValue="3">3</Item>
+            </ListSection>
+          </ListView>
+        </View>
+      );
+    })}
+  </Grid>
+);
+
 function renderEmptyState() {
   return (
     <IllustratedMessage>
@@ -167,4 +194,22 @@ export const ComboPt3 = {
 export const Empty = {
   render: TemplateEmptyState,
   name: 'empty state'
+};
+
+export const DefaultSections = {
+  render: SectionsTemplate,
+  name: 'sections, all visual option combos 1 of 3',
+  args: {combos: combinations.slice(0, chunkSize)}
+};
+
+export const SectionsComboPt2 = {
+  render: SectionsTemplate,
+  name: 'sections, all visual option combos 2 of 3',
+  args: {combos: combinations.slice(chunkSize, chunkSize * 2)}
+};
+
+export const SectionsComboPt3 = {
+  render: SectionsTemplate,
+  name: 'sections, all visual option combos 3 of 3',
+  args: {combos: combinations.slice(chunkSize * 2, chunkSize * 3)}
 };
