@@ -50,6 +50,7 @@ function MenuDialogTrigger<T>(props: ItemProps<T> & {isUnavailable?: boolean, ta
         {
           isMobile ? (
             <Modal state={state} isDismissable>
+              <DismissButton onDismiss={state.close} />
               {content}
               <DismissButton onDismiss={state.close} />
             </Modal>
