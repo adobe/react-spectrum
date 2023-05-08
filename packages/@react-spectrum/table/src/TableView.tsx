@@ -769,6 +769,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
                 },
                 classNames(
                   stylesOverrides,
+                  'react-spectrum-Table-body',
                   {
                     'react-spectrum-Table-body--dropTarget': !!isRootDropTarget
                   }
@@ -1167,7 +1168,8 @@ function TableDragHeaderCell({column}) {
             'spectrum-Table-headCell',
             classNames(
               stylesOverrides,
-              'react-spectrum-dragButtonHeadCell'
+              'react-spectrum-Table-headCell',
+              'react-spectrum-Table-dragButtonHeadCell'
             )
           )
         }>
@@ -1197,7 +1199,7 @@ export function DragButton() {
         className={
           classNames(
             stylesOverrides,
-            'spectrum-Table-row-draghandle-button'
+            'react-spectrum-Table-dragButton'
           )
         }
         style={!isFocusVisibleWithin ? {...visuallyHiddenProps.style} : {}}
@@ -1333,6 +1335,7 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
             },
             classNames(
               stylesOverrides,
+              'react-spectrum-Table-row',
               {'react-spectrum-Table-row--dropTarget': isDropTarget}
             )
           )
