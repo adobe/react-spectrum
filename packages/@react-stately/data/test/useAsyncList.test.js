@@ -907,7 +907,7 @@ describe('useAsyncList', () => {
     }
 
     beforeAll(() => {
-      jest.useFakeTimers('legacy');
+      jest.useFakeTimers();
     });
 
     it('should accept initial filter text', async () => {

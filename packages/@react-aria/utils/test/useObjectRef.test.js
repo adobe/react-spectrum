@@ -12,8 +12,8 @@
 
 import React, {useEffect} from 'react';
 import {render, renderHook, screen} from '@react-spectrum/test-utils';
-import {useLayoutEffect} from '@react-aria/utils';
-import {useObjectRef} from '../';
+// eslint-disable-next-line rulesdir/useLayoutEffectRule
+import {useLayoutEffect, useObjectRef} from '../';
 
 describe('useObjectRef', () => {
   it('returns an empty object ref by default', () => {
