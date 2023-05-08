@@ -17,6 +17,7 @@ import {MenuDialogContext, useMenuStateContext} from './context';
 import {Modal, Popover} from '@react-spectrum/overlays';
 import React, {Key, ReactElement, useRef} from 'react';
 import {useOverlayTriggerState} from '@react-stately/overlays';
+import {DismissButton} from "@react-aria/overlays";
 
 function MenuDialogTrigger<T>(props: ItemProps<T> & {isUnavailable?: boolean, targetKey: Key}): ReactElement {
   let {isUnavailable} = props;
@@ -50,6 +51,7 @@ function MenuDialogTrigger<T>(props: ItemProps<T> & {isUnavailable?: boolean, ta
           isMobile ? (
             <Modal state={state} isDismissable>
               {content}
+              <DismissButton onDismiss={state.close} />
             </Modal>
           ) : (
             <Popover state={state} triggerRef={triggerRef} placement="end top" hideArrow offset={-10} isNonModal shouldContainFocus={false}>{content}</Popover>
