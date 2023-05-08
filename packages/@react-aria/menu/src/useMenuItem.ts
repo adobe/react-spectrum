@@ -119,6 +119,9 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
 
   let onSubmenuOpen = useEffectEvent(() => {
     cancelOpenTimeout();
+    for (let expandedKey of state.expandedKeys) {
+      state.toggleKey(expandedKey);
+    }
     if (!state.expandedKeys.has(key)) {
       state.toggleKey(key);
     }
@@ -198,27 +201,22 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     allowsDifferentPressOrigin: true
   });
 
-  let {pressProps, isPressed} = usePress({onPressStart, onPressUp, isDisabled});
+  let {pressProps, isPressed} = usePress({onPressStart, onPressUp, isDisabled: isDisabled || (isMenuDialogTrigger && state.expandedKeys.has(key))});
   let {hoverProps} = useHover({
     isDisabled,
     onHoverStart() {
-      if (!isFocusVisible()) {
+      if (!isFocusVisible() && !(isMenuDialogTrigger && state.expandedKeys.has(key))) {
         state.selectionManager.setFocused(true);
         state.selectionManager.setFocusedKey(key);
         // focus immediately so that a focus scope opened on hover has the correct restore node
         let isFocused = key === state.selectionManager.focusedKey;
         if (isFocused && state.selectionManager.isFocused && document.activeElement !== ref.current) {
-          if (state.expandedKeys.size > 0 && !state.expandedKeys.has(key)) {
-            for (let expandedKey of state.expandedKeys) {
-              state.toggleKey(expandedKey);
-            }
-          }
           focusSafely(ref.current);
         }
       }
     },
     onHoverChange: isHovered => {
-      if (isHovered && isMenuDialogTrigger) {
+      if (isHovered && isMenuDialogTrigger && !state.expandedKeys.has(key)) {
         if (!openTimeout.current) {
           openTimeout.current = setTimeout(() => {
             onSubmenuOpen();
