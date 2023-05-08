@@ -622,19 +622,37 @@
   background-color: var(--spectrum-listview-droptarget-background-color);
   box-shadow: inset 0 0 0 1px var(--spectrum-listview-item-border-color-key-focus);
 
+  /* forced-color-adjust: none, so that box-shadow and background color styles will render */
+  forced-color-adjust: none;
+
   .react-spectrum-ListViewSection {
     .react-spectrum-ListViewSection-header {
       background-color: unset;
-      /* todo: need bottom border, match row box shadow or border */
     }
   }
-
-  /* forced-color-adjust: none, so that box-shadow and background color styles will render */
-  forced-color-adjust: none;
 
   /* Add border to quiet ListView only when it is a drop target */
   &.react-spectrum-ListView--quiet {
     box-shadow: inset 0 0 0 1px var(--spectrum-listview-item-border-color-key-focus), 0 0 0 1px var(--spectrum-listview-item-border-color-key-focus);
+  }
+
+  &:not(.react-spectrum-ListView--quiet) {
+    .react-spectrum-ListViewSection {
+      .react-spectrum-ListViewSection-header {
+        &:after {
+          content: '';
+          display: block;
+          position: absolute;
+          inset-inline-start: 1;
+          inset-inline-end: 1;
+          inset-block-end: 0;
+          inset-block-start: 0;
+          z-index: 3;
+          pointer-events: none;
+          box-shadow: inset 0 -1px 0 0 var(--spectrum-listview-item-border-color);
+        }
+      }
+    }
   }
 }
 
