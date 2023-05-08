@@ -176,13 +176,13 @@ export const TooltripTriggerInsideActionGroup: TooltipTriggerStory = {
   )
 };
 
-const TooltipDivRender = (args) => {
+const TooltipDivRender = (props) => {
   const [isDisabled, setIsDisabled] = useState(false);
   const wrapperStyle: CSSProperties = {width: '400px', height: '400px', backgroundColor: 'red', position: 'absolute'};
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
     <div onClick={() => setIsDisabled(!isDisabled)} style={wrapperStyle}>
-      <TooltipTrigger {...args} isOpen>
+      <TooltipTrigger {...props} isOpen>
         <ActionButton isDisabled={isDisabled} aria-label="Edit" UNSAFE_style={{top: '50px'}}>click red to disable</ActionButton>
         <Tooltip>Click on tooltip doesn't propagate to parent</Tooltip>
       </TooltipTrigger>
@@ -191,7 +191,7 @@ const TooltipDivRender = (args) => {
 };
 export const TooltripTriggerInsideDiv: TooltipTriggerStory = {
   args: {delay: 0},
-  render: TooltipDivRender
+  render: (args) => <TooltipDivRender {...args} />
 };
 
 export const ArrowPositioningAtEdge: TooltipTriggerStory = {

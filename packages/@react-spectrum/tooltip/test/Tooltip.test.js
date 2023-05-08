@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@react-spectrum/test-utils';
 import React from 'react';
+import {render, triggerPress} from '@react-spectrum/test-utils';
 import {Tooltip} from '../';
 
 describe('Tooltip', function () {
@@ -46,9 +46,7 @@ describe('Tooltip', function () {
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
     let {getByRole} = render(<div onClick={mockClick}><Tooltip>This is a tooltip</Tooltip></div>);
     let tooltip = getByRole('tooltip');
-    fireEvent.pointerDown(tooltip);
-    fireEvent.click(tooltip);
-    fireEvent.mouseDown(tooltip);
+    triggerPress(tooltip);
     expect(mockClick).not.toHaveBeenCalled();
   });
 });
