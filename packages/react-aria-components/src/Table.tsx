@@ -3,7 +3,7 @@ import {BaseCollection, CollectionContext, CollectionProps, CollectionRendererCo
 import {buildHeaderRows} from '@react-stately/table';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
-import {ContextValue, defaultSlot, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, defaultSlot, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useTableState} from 'react-stately';
 import {DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
@@ -145,6 +145,34 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     collection.head = this.head;
     collection.body = this.body;
     return collection;
+  }
+
+  getTextValue(key: Key): string {
+    let row = this.getItem(key);
+    if (!row) {
+      return '';
+    }
+
+    // If the row has a textValue, use that.
+    if (row.textValue) {
+      return row.textValue;
+    }
+
+    // Otherwise combine the text of each of the row header columns.
+    let rowHeaderColumnKeys = this.rowHeaderColumnKeys;
+    let text: string[] = [];
+    for (let cell of this.getChildren(key)) {
+      let column = this.columns[cell.index!];
+      if (rowHeaderColumnKeys.has(column.key) && cell.textValue) {
+        text.push(cell.textValue);
+      }
+
+      if (text.length === rowHeaderColumnKeys.size) {
+        break;
+      }
+    }
+
+    return text.join(' ');
   }
 }
 
@@ -340,7 +368,7 @@ export function useTableOptions(): TableOptionsContextValue {
   return useContext(TableOptionsContext)!;
 }
 
-export interface TableHeaderProps<T> {
+export interface TableHeaderProps<T> extends StyleProps {
   /** A list of table columns. */
   columns?: T[],
   /** A list of `Column(s)` or a function. If the latter, a list of columns must be provided using the `columns` prop. */

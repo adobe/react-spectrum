@@ -96,7 +96,7 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
   );
   let layout = useListBoxLayout(state);
 
-  let {inputProps, listBoxProps, labelProps, clearButtonProps} = useSearchAutocomplete(
+  let {inputProps, listBoxProps, labelProps, clearButtonProps, descriptionProps, errorMessageProps} = useSearchAutocomplete(
     {
       ...props,
       keyboardDelegate: layout,
@@ -133,7 +133,12 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
 
   return (
     <>
-      <Field {...props} labelProps={labelProps} ref={domRef}>
+      <Field
+        {...props}
+        descriptionProps={descriptionProps}
+        errorMessageProps={errorMessageProps}
+        labelProps={labelProps}
+        ref={domRef}>
         <SearchAutocompleteInput
           {...props}
           isOpen={state.isOpen}
@@ -179,7 +184,7 @@ let SearchAutocompleteBase = React.forwardRef(_SearchAutocompleteBase) as <T>(pr
 
 interface SearchAutocompleteInputProps<T> extends SpectrumSearchAutocompleteProps<T> {
   inputProps: InputHTMLAttributes<HTMLInputElement>,
-  inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
+  inputRef: RefObject<HTMLInputElement>,
   style?: React.CSSProperties,
   className?: string,
   isOpen?: boolean,

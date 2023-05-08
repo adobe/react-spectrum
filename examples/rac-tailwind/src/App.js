@@ -9,8 +9,11 @@ import stocks from './stocks.json';
 export function App() {
   return (
     <>
-      <h1 className="text-center text-4xl font-serif font-semibold mb-8">React Aria Components 🤝 Tailwind CSS</h1>
-      <div className="grid gap-4 grid-cols-[repeat(auto-fit,theme(width.96))] auto-rows-fr justify-center">
+      <h1 className="text-center text-4xl font-serif font-semibold mb-3">React Aria Components 🤝 Tailwind CSS</h1>
+      <p className="text-center font-serif mb-8">
+        <a className="hover:text-blue-100 transition underline" target="_blank" href="https://github.com/adobe/react-spectrum/blob/main/examples/rac-tailwind/src/App.js">Example code</a> • <a className="hover:text-blue-100 transition underline" target="_blank" href="https://react-spectrum.adobe.com/react-aria/react-aria-components.html">Docs</a>
+      </p>
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-[repeat(auto-fit,theme(width.96))] auto-rows-fr justify-center">
         <MenuExample />
         <SelectExample />
         <DatePickerExample />
@@ -53,13 +56,13 @@ function MenuExample() {
 
 function MenuItem(props) {
   return <Item {...props} className={({ isFocused }) => `
-    group flex w-full items-center rounded-md px-3 py-2 text-sm outline-none cursor-default
+    group flex w-full items-center rounded-md px-3 py-2 sm:text-sm outline-none cursor-default
     ${isFocused ? 'bg-violet-500 text-white' : 'text-gray-900'}
   `} />;
 }
 
 function OverlayButton(props) {
-  return <Button {...props} className="inline-flex items-center justify-center rounded-md bg-black bg-opacity-20 bg-clip-padding border border-white/20 px-3.5 py-2 text-sm font-medium text-white data-[hovered]:bg-opacity-30 data-[pressed]:bg-opacity-40 transition-colors cursor-default outline-none data-[focus-visible]:ring-2 data-[focus-visible]:ring-white/75" />;
+  return <Button {...props} className="inline-flex items-center justify-center rounded-md bg-black bg-opacity-20 bg-clip-padding border border-white/20 px-3.5 py-2 sm:text-sm font-medium text-white data-[hovered]:bg-opacity-30 data-[pressed]:bg-opacity-40 transition-colors cursor-default outline-none data-[focus-visible]:ring-2 data-[focus-visible]:ring-white/75" />;
 }
 
 function SelectExample() {
@@ -67,13 +70,13 @@ function SelectExample() {
     <div className="bg-gradient-to-r from-amber-500 to-rose-500 p-8 rounded-lg flex justify-center">
       <Select className="flex flex-col gap-1 w-5/6">
         <Label className="text-sm">Favorite Animal</Label>
-        <Button className="flex relative w-full cursor-default rounded-lg bg-white bg-white bg-opacity-90 data-[pressed]:bg-opacity-100 transition py-2 pl-3 pr-2 text-left shadow-md text-gray-700 focus:outline-none data-[focus-visible]:border-indigo-500 data-[focus-visible]:ring-2 data-[focus-visible]:ring-black text-sm">
+        <Button className="flex relative w-full cursor-default rounded-lg bg-white bg-white bg-opacity-90 data-[pressed]:bg-opacity-100 transition py-2 pl-3 pr-2 text-left shadow-md text-gray-700 focus:outline-none data-[focus-visible]:border-indigo-500 data-[focus-visible]:ring-2 data-[focus-visible]:ring-black sm:text-sm">
           <SelectValue className="flex-1 truncate data-[placeholder]:italic" />
           <ChevronUpDownIcon
             className="h-5 w-5 text-gray-500"
             aria-hidden="true" />
         </Button>
-        <Popover className="max-h-60 w-[--trigger-width] overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black ring-opacity-5 text-sm data-[entering]:animate-in data-[entering]:fade-in data-[exiting]:animate-out data-[exiting]:fade-out fill-mode-forwards">
+        <Popover className="max-h-60 w-[--trigger-width] overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black ring-opacity-5 sm:text-sm data-[entering]:animate-in data-[entering]:fade-in data-[exiting]:animate-out data-[exiting]:fade-out fill-mode-forwards">
           <ListBox className="outline-none p-1 [--focus-bg:theme(colors.rose.600)]">
             <ListBoxItem>Aardvark</ListBoxItem>
             <ListBoxItem>Cat</ListBoxItem>
@@ -116,7 +119,7 @@ function ComboBoxExample() {
       <ComboBox className="flex flex-col gap-1 w-5/6">
         <Label className="text-sm text-black">Favorite Animal</Label>
         <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white bg-opacity-90 focus-within:bg-opacity-100 transition text-left shadow-md [&:has([data-focus-visible])]:ring-2 [&:has([data-focus-visible])]:ring-black sm:text-sm">
-          <Input className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 bg-transparent outline-none" />
+          <Input className="w-full border-none py-2 pl-3 pr-10 sm:text-sm leading-5 text-gray-900 bg-transparent outline-none" />
           <Button className="absolute inset-y-0 right-0 flex items-center px-2 cursor-default transition border-l border-l-sky-200 data-[pressed]:bg-sky-100">
             <ChevronUpDownIcon
               className="h-5 w-5 text-gray-500"
@@ -179,9 +182,9 @@ function MyTab(props) {
     <Tab
       {...props}
       className={({isSelected, isFocusVisible}) => `
-        w-full rounded-full py-2.5 text-sm font-medium leading-5 text-center cursor-default ring-black outline-none transition-colors
+        w-full rounded-full py-2.5 sm:text-sm font-medium leading-5 text-center cursor-default ring-black outline-none transition-colors
         ${isFocusVisible ? 'ring-2' : ''}
-        ${isSelected ? 'text-emerald-700 bg-white shadow' : 'text-lime-50 hover:bg-white/[0.12] hover:text-white'}
+        ${isSelected ? 'text-emerald-700 bg-white shadow' : 'text-lime-50 data-[hovered]:bg-white/[0.12] data-[hovered]:text-white data-[pressed]:bg-white/[0.12] data-[pressed]:text-white'}
       `} />
   );
 }
@@ -355,7 +358,7 @@ function SliderExample() {
   return (
     <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-8 rounded-lg flex items-center justify-center">
       <Slider defaultValue={30} className="w-5/6">
-        <div className="flex text-sm">
+        <div className="flex sm:text-sm">
           <Label className="flex-1">Opacity</Label>
           <SliderOutput />
         </div>
@@ -395,7 +398,7 @@ function DatePickerExample() {
       <DatePicker className="flex flex-col gap-1 w-5/6">
         <Label className="text-sm">Date</Label>
         <Group className="flex rounded-lg bg-white/90 focus-within:bg-white [&:has([data-pressed])]:bg-white transition pl-3 text-left shadow-md text-gray-700 focus:outline-none data-[focus-visible]:[&:not(:has(button[data-focus-visible]))]:ring-2 data-[focus-visible]:ring-black">
-          <DateInput className="flex flex-1 py-2 text-sm input">
+          <DateInput className="flex flex-1 py-2 sm:text-sm input">
             {(segment) => <DateSegment segment={segment} className="px-0.5 box-content tabular-nums text-right outline-none rounded-sm focus:bg-violet-700 focus:text-white group caret-transparent data-[placeholder]:italic" />}
           </DateInput>
           <Button className="cursor-default outline-none px-2 transition border-l border-l-purple-200 rounded-r-lg data-[pressed]:bg-purple-100 data-[focus-visible]:ring-2 data-[focus-visible]:ring-black">
@@ -510,7 +513,7 @@ function TableExample() {
   }, [sortDescriptor]);
 
   return (
-    <div className="bg-gradient-to-r from-indigo-500 to-violet-500 p-8 rounded-lg flex items-center justify-center col-span-2">
+    <div className="bg-gradient-to-r from-indigo-500 to-violet-500 p-8 rounded-lg flex items-center justify-center md:col-span-2">
       <div className="max-h-[280px] overflow-auto relative bg-white rounded-lg shadow text-gray-600">
         <Table aria-label="Stocks" selectionMode="single" selectionBehavior="replace" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor} className="border-separate border-spacing-0">
           <TableHeader>

@@ -17,7 +17,6 @@ import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useTableColumnResize} from '@react-aria/table';
 import {useTableContext, useVirtualizerContext} from './TableView';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
 // @ts-ignore
 import wCursor from 'bundle-text:./cursors/Cur_MoveToLeft_9_9.svg';
 
@@ -111,11 +110,9 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
           style={style}
           className={classNames(styles, 'spectrum-Table-columnResizer')}
           {...resizerProps}>
-          <VisuallyHidden>
-            <input
-              ref={ref}
-              {...inputProps} />
-          </VisuallyHidden>
+          <input
+            ref={ref}
+            {...inputProps} />
         </div>
       </FocusRing>
       {/* Placeholder so that the title doesn't intersect with space reserved by the resizer when it appears. */}

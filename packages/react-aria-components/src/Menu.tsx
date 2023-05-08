@@ -119,7 +119,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
 /**
  * A menu displays a list of actions or options that a user can choose.
  */
-const _Menu = (forwardRef as forwardRefType)(Menu);
+const _Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(Menu);
 export {_Menu as Menu};
 
 interface MenuSectionProps<T> extends StyleProps {

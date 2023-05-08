@@ -4,6 +4,7 @@
   "columnSize": "{value} pikseļi",
   "descending": "dilstošā secībā",
   "descendingSort": "kārtots pēc kolonnas {columnName} dilstošā secībā",
+  "resizerDescription": "Nospiediet Enter, lai sāktu izmēru mainīšanu",
   "select": "Atlasīt",
   "selectAll": "Atlasīt visu",
   "sortable": "kārtojamā kolonna"

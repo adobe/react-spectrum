@@ -16,4 +16,4 @@ export {useTagGroup} from './useTagGroup';
 
 export type {TagProps} from '@react-types/tag';
 export type {TagGroupAria, AriaTagGroupProps} from './useTagGroup';
-export type {TagAria} from './useTag';
+export type {AriaTagProps, TagAria} from './useTag';

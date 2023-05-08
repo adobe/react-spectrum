@@ -18,7 +18,7 @@ import React, {useCallback, useState} from 'react';
 import {Overlay as ReactAriaOverlay} from '@react-aria/overlays';
 
 function Overlay(props: OverlayProps, ref: DOMRef<HTMLDivElement>) {
-  let {children, isOpen, container, onEnter, onEntering, onEntered, onExit, onExiting, onExited, nodeRef} = props;
+  let {children, isOpen, shouldContainFocus, container, onEnter, onEntering, onEntered, onExit, onExiting, onExited, nodeRef} = props;
   let [exited, setExited] = useState(!isOpen);
 
   let handleEntered = useCallback(() => {
@@ -43,7 +43,7 @@ function Overlay(props: OverlayProps, ref: DOMRef<HTMLDivElement>) {
   }
 
   return (
-    <ReactAriaOverlay portalContainer={container}>
+    <ReactAriaOverlay portalContainer={container} shouldContainFocus={shouldContainFocus}>
       <Provider ref={ref} UNSAFE_style={{background: 'transparent', isolation: 'isolate'}} isDisabled={false}>
         <OpenTransition
           in={isOpen}
