@@ -571,10 +571,29 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate<T
     x += this.virtualizer.visibleRect.x;
     y += this.virtualizer.visibleRect.y;
 
-    // TODO: this is a bit problematic because this will return the section that contains the rows
-    // so we can never drop between the rows. Maybe if we detect that the key is a section we iterate over
-    // every layout in said section and find what key is at that point
-    let key = this.virtualizer.keyAtPoint(new Point(x, y));
+    // Custom variation of this.virtualizer.keyAtPoint that ignores body
+    let key: Key;
+    let point = new Point(x, y);
+    let rectAtPoint = new Rect(point.x, point.y, 1, 1);
+    // TODO: This code is very similar to the one in TableLayout, but the layoutInfo's filter is slightly different
+    // Ideally we'd provide an argument to customize the valid layoutInfos filter and then we can have tableLayout call super.getDropTargetFromPoint?
+    // Would need to get LayoutInfo into the types or perhaps have the filter take a "type" string arg?
+    let layoutInfos = this.virtualizer.layout.getVisibleLayoutInfos(rectAtPoint).filter(info => {
+      if (info.type === 'item') {
+        return true;
+      } else if (info.type === 'section') {
+        return [...this.collection.getItem(info.key).childNodes].filter((child) => child.type === 'item').length === 0;
+      }
+    });
+
+    // Layout may return multiple layout infos in the case of
+    // persisted keys, so find the first one that actually intersects.
+    for (let layoutInfo of layoutInfos) {
+      if (layoutInfo.rect.intersects(rectAtPoint)) {
+        key = layoutInfo.key;
+      }
+    }
+
     if (key == null || this.collection.size === 0) {
       return {type: 'root'};
     }
@@ -586,6 +605,10 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate<T
       key: layoutInfo.key,
       dropPosition: 'on'
     };
+
+    if (this.collection.getItem(target.key).type === 'section') {
+      return target;
+    }
 
     // If dropping on the item isn't accepted, try the target before or after depending on the y position.
     // Otherwise, if dropping on the item is accepted, still try the before/after positions if within 10px
