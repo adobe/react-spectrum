@@ -65,6 +65,7 @@ export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: ListState<T>,
     if (prevCount.current > 0 && state.collection.size === 0 && isFocusWithin) {
       ref.current.focus();
     }
+    prevCount.current = state.collection.size;
   }, [state.collection.size, isFocusWithin, ref]);
 
   return {
