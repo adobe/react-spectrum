@@ -191,7 +191,8 @@ const TooltipDivRender = (props) => {
 };
 export const TooltripTriggerInsideDiv: TooltipTriggerStory = {
   args: {delay: 0},
-  render: (args) => <TooltipDivRender {...args} />
+  render: (args) => <TooltipDivRender {...args} />,
+  parameters: {description: {data: 'Event handlers are attached to the parent of the tooltip trigger. They should not be called when the tooltip itself is clicked.'}}
 };
 
 export const ArrowPositioningAtEdge: TooltipTriggerStory = {
