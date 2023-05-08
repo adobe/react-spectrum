@@ -18,6 +18,7 @@ import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Heading, Text} from '@react-spectrum/text';
 import {Item, SpectrumTagGroupProps, TagGroup} from '../src';
+import {Link} from '@react-spectrum/link';
 import React, {useState} from 'react';
 
 let manyItems = [];
@@ -234,6 +235,23 @@ export const WithLabelDescriptionContextualHelpAndAction: TagGroupStory = {
   },
   decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
   name: 'with label, description, contextual help + action'
+};
+
+export const EmptyState: TagGroupStory = {
+  render: (args) => (
+    <TagGroup label="Tag group with empty state" {...args}>
+      {[]}
+    </TagGroup>
+  ),
+  storyName: 'Empty state'
+};
+
+export const CustomEmptyState: TagGroupStory = {
+  ...EmptyState,
+  args: {
+    renderEmptyState: () => <span>No tags. <Link><a href="//react-spectrum.com">Click here</a></Link> to add some.</span>
+  },
+  storyName: 'Custom empty state'
 };
 
 function OnRemoveExample(props) {
