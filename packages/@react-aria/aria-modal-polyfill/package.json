@@ -24,7 +24,7 @@
   "dependencies": {
     "@react-types/shared": "^3.18.0",
     "@swc/helpers": "^0.4.14",
-    "aria-hidden": "^1.1.1"
+    "aria-hidden": "^1.2.3"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0"
