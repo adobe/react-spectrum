@@ -25,7 +25,6 @@ function TestTray(props) {
 
 describe('Tray', function () {
   beforeAll(() => jest.useFakeTimers());
-  afterAll(() => jest.useRealTimers());
 
   it('should render nothing if isOpen is not set', function () {
     let {queryByRole} = render(

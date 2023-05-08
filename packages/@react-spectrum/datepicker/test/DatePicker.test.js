@@ -55,7 +55,7 @@ function render(el) {
 
 describe('DatePicker', function () {
   beforeAll(() => {
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
   afterEach(() => {
     act(() => {
