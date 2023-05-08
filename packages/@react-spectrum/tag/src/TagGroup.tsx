@@ -15,6 +15,7 @@ import {AriaTagGroupProps, TagKeyboardDelegate, useTagGroup} from '@react-aria/t
 import {classNames, useDOMRef} from '@react-spectrum/utils';
 import {DOMRef, SpectrumHelpTextProps, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
+import {flushSync} from 'react-dom';
 import {FocusRing, FocusScope} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -56,7 +57,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let [isCollapsed, setIsCollapsed] = useState(maxRows != null);
   let state = useListState(props);
-  let [tagState, setTagState] = useValueEffect({visibleTagCount: state.collection.size, showCollapseButton: false, maxHeight: undefined});
+  let [tagState, setTagState] = useValueEffect({visibleTagCount: state.collection.size, showCollapseButton: false});
   let keyboardDelegate = useMemo(() => (
     isCollapsed
       ? new TagKeyboardDelegate(new ListCollection([...state.collection].slice(0, tagState.visibleTagCount)), direction)
@@ -82,8 +83,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         if (tags.length === 0 || buttons.length === 0) {
           return {
             visibleTagCount: 0,
-            showCollapseButton: false,
-            maxHeight: undefined
+            showCollapseButton: false
           };
         }
         let currY = -Infinity;
@@ -119,21 +119,20 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           availableWidth += tagWidths.pop();
           index--;
         }
-        let tagStyle = window.getComputedStyle(tags[0]);
-        let maxHeight = (parseInt(tagStyle.height, 10) + parseInt(tagStyle.marginTop, 10) * 2) * maxRows;
         return {
-          visibleTagCount: index,
-          showCollapseButton: index < state.collection.size,
-          maxHeight
+          visibleTagCount: Math.max(index, 1),
+          showCollapseButton: index < state.collection.size
         };
       };
 
-      setTagState(function *() {
-        // Update to show all items.
-        yield {visibleTagCount: state.collection.size, showCollapseButton: true, maxHeight: undefined};
+      flushSync(() => {
+        setTagState(function *() {
+          // Update to show all items.
+          yield {visibleTagCount: state.collection.size, showCollapseButton: true};
 
-        // Measure, and update to show the items until maxRows is reached.
-        yield computeVisibleTagCount();
+          // Measure, and update to show the items until maxRows is reached.
+          yield computeVisibleTagCount();
+        });
       });
     }
   }, [maxRows, setTagState, direction, state.collection.size]);
@@ -148,10 +147,10 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  let visibleTags = [...state.collection];
-  if (maxRows != null && isCollapsed) {
-    visibleTags = visibleTags.slice(0, tagState.visibleTagCount);
-  }
+  let visibleTags = useMemo(() =>
+    [...state.collection].slice(0, isCollapsed ? tagState.visibleTagCount : state.collection.size),
+    [isCollapsed, state.collection, tagState.visibleTagCount]
+  );
 
   let handlePressCollapse = () => {
     // Prevents button from losing focus if focusedKey got collapsed.
@@ -182,7 +181,6 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           )
         }>
         <div
-          style={maxRows != null && tagState.showCollapseButton && isCollapsed ? {maxHeight: tagState.maxHeight, overflow: 'hidden'} : undefined}
           ref={containerRef}
           className={
             classNames(
