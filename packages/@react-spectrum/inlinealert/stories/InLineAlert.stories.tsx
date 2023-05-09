@@ -26,8 +26,7 @@ const meta: Meta<StoryArgs> = {
   component: InLineAlert,
   args: {
     title: 'Title',
-    content: 'Content',
-    variant: 'info'
+    content: 'Content'
   },
   argTypes: {
     variant: {
@@ -60,5 +59,12 @@ export const LongContent = {
   args: {
     title: 'Unable to process payment',
     content: 'There was an error processing your payment. Please check your credit card information is correct, then try again.'
+  }
+};
+
+export const InfoVariant = {
+  ...Default,
+  args: {
+    variant: 'info'
   }
 };
