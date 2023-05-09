@@ -38,8 +38,9 @@ export interface DropZoneRenderProps {
    */
   isDropTarget: boolean
 }
-
-export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'onDropActivate' | 'onInsert' | 'onRootDrop' | 'onItemDrop' | 'onReorder'>, RenderProps<DropZoneRenderProps>, SlotProps {}
+// possibly add isDisabled prop in the future
+export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'onDropActivate' | 'onInsert' | 'onRootDrop' | 'onItemDrop' | 'onReorder'>, 
+  RenderProps<DropZoneRenderProps>, SlotProps {}
 
 export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDivElement>>(null);
 
@@ -48,21 +49,22 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   let {dropProps, isDropTarget} = useDrop({...props, ref});
   let {hoverProps, isHovered} = useHover({});
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
+
   let buttonRef = useRef<HTMLButtonElement>(null);
   let inputRef = useRef<HTMLInputElement>(null);
   let uploadLinkRef = useRef<HTMLAnchorElement>(null);
   let uploadButtonRef = useRef<HTMLButtonElement>(null);
   let hasInputLink = uploadLinkRef.current || uploadButtonRef.current;
+
   let {buttonProps} = useButton({
     onPress: () => {
       if (inputRef.current) {
         return inputRef.current.click();
-      } 
+      }
       return undefined;
-    },
-    elementType: 'div'}, 
+    }},
     buttonRef);
-  let {clipboardProps} = useClipboard({ // copying does not currently work
+  let {clipboardProps} = useClipboard({
     onPaste: (items) => props.onDrop?.({  
       type: 'drop',
       items,
@@ -86,13 +88,15 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   });
 
   let onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (props.onDrop) {
+    if (!e.target.files) {
+      return;
+    } else if (props.onDrop) {
       props.onDrop({
         type: 'drop',
         dropOperation: 'copy',
         x: 0,
         y: 0,
-        items: [...(e.target.files || [])].map((file) =>
+        items: [...e.target.files].map((file) =>
           ({
             kind: 'file', 
             type: file.type, 
@@ -114,7 +118,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
         [ButtonContext, {slot: 'file', onPress: () => inputRef.current?.click(), ref: uploadButtonRef}]
       ]}>
       <div
-        {...mergeProps(dropProps, focusProps, hoverProps, clipboardProps, pressProps)}
+        {...mergeProps(dropProps, hoverProps, pressProps)}
         {...renderProps}
         ref={ref}
         slot={props.slot} 
@@ -122,7 +126,11 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
         data-focused={isFocused || undefined} 
         data-focus-visible={isFocusVisible || undefined}> 
         {!hasInputLink && <VisuallyHidden>
-          <button {...buttonProps} />
+          <button 
+            {...mergeProps(buttonProps, focusProps, clipboardProps)} 
+            ref={buttonRef} 
+            // will want to update this to a translated string below
+            aria-label="Press enter to select a file" /> 
         </VisuallyHidden>}
         {renderProps.children}
       </div>

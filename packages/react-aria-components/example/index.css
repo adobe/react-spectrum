@@ -180,4 +180,12 @@ html {
   border: 2px solid white;
   margin: 20px;
   padding: 20px;
+
+  &[data-focus-visible][data-focused] {
+    border-color: blue;
+  }
+
+  &[data-hovered]{
+    border-color: green;
+  }
 }
