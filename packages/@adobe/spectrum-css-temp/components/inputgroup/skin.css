@@ -66,7 +66,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  &.is-disabled {
+  &.is-disabled:not(.spectrum-InputGroup--quiet) {
     .spectrum-FieldButton {
       &:before {
         border-color: transparent;
@@ -125,7 +125,17 @@ governing permissions and limitations under the License.
 
     &:disabled,
     &:disabled:hover {
-      border-color: var(--spectrum-textfield-quiet-border-color-disabled);
+      &:before {
+        border-color: var(--spectrum-textfield-quiet-border-color-disabled);
+      }
+    }
+  }
+
+  &.is-disabled {
+    .spectrum-FieldButton {
+      &:before {
+        border-color: var(--spectrum-textfield-quiet-border-color-disabled);
+      }
     }
   }
 
