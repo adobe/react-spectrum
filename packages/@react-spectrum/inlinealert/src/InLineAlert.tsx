@@ -18,7 +18,7 @@ import {Grid} from '@react-spectrum/layout';
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {useRef} from 'react';
+import React from 'react';
 import {SpectrumInLineAlertProps} from '@react-types/inlinealert';
 import styles from '@adobe/spectrum-css-temp/components/inlinealert/vars.css';
 import SuccessMedium from '@spectrum-icons/ui/SuccessMedium';
@@ -34,7 +34,6 @@ let ICONS = {
 };
 
 function InLineAlert(props: SpectrumInLineAlertProps, ref: DOMRef<HTMLDivElement>) {
-  // Grabs specific props from the closest Provider (see https://react-spectrum.adobe.com/react-spectrum/Provider.html#property-groups). Remove if your component doesn't support any of the listed props.
   props = useProviderProps(props);
   let {
     children,
@@ -42,10 +41,8 @@ function InLineAlert(props: SpectrumInLineAlertProps, ref: DOMRef<HTMLDivElement
     ...otherProps
   } = props;
 
-  // Handles RSP specific style options, UNSAFE_style, and UNSAFE_className props (see https://react-spectrum.adobe.com/react-spectrum/styling.html#style-props)
   let {styleProps} = useStyleProps(otherProps);
   let domRef = useDOMRef(ref);
-  let gridRef = useRef();
   let {alertProps} = useAlert();
 
   let slots = {
@@ -70,7 +67,7 @@ function InLineAlert(props: SpectrumInLineAlertProps, ref: DOMRef<HTMLDivElement
       ref={domRef}
       className={classNames(styles, 'spectrum-InLineAlert',
         `spectrum-InLineAlert--${variant}`, styleProps.className)}>
-      <Grid ref={gridRef} UNSAFE_className={styles['spectrum-InLineAlert-grid']}>
+      <Grid UNSAFE_className={styles['spectrum-InLineAlert-grid']}>
         <SlotProvider slots={slots}>
           {Icon && <Icon slot="icon" aria-label={iconAlt} />}
           {children}
