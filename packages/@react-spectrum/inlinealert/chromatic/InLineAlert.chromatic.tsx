@@ -10,27 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
-import {InlineAlert} from '../';
+import {Content, Header} from '@react-spectrum/view';
+import {InLineAlert} from '../';
 import {Meta, Story} from '@storybook/react';
 import React from 'react';
-
-interface SpectrumInlineAlertProps {
-
-}
+import {SpectrumInLineAlertProps} from '@react-types/inlinealert';
 
 // see https://github.com/storybookjs/storybook/issues/8426#issuecomment-669021940
 const StoryFn = ({storyFn}) => storyFn();
 
-const meta: Meta<SpectrumInlineAlertProps> = {
-  title: 'InlineAlert',
-  component: InlineAlert,
+const meta: Meta<SpectrumInLineAlertProps> = {
+  title: 'InLineAlert',
+  component: InLineAlert,
   decorators: [storyFn => <StoryFn storyFn={storyFn} />]
 };
 
 export default meta;
 
-const Template = (): Story<SpectrumInlineAlertProps> => (args) => (
-  <InlineAlert {...args}>This is a React Spectrum InlineAlert</InlineAlert>
+const Template = (): Story<SpectrumInLineAlertProps> => (args) => (
+  <InLineAlert {...args}>
+    <Header>In-Line Alert Header</Header>
+    <Content>This is a React Spectrum InlineAlert</Content>
+  </InLineAlert>
 );
 
 export const Default = Template().bind({});
