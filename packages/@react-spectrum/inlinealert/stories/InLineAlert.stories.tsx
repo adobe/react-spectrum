@@ -46,16 +46,19 @@ const meta: Meta<StoryArgs> = {
 
 export default meta;
 
-const Template = (): Story<StoryArgs> => (args) => (
-  <InLineAlert {...args}>
-    <Header>{args.title}</Header>
-    <Content>{args.content}</Content>
-  </InLineAlert>
-);
+export const Default = {
+  render: (args) => (
+      <InLineAlert {...args}>
+        <Header>{args.title}</Header>
+        <Content>{args.content}</Content>
+      </InLineAlert>
+  )
+};
 
-export const Default = Template().bind({});
-export const LongContent = Template().bind({});
-LongContent.args = {
-  title: 'Unable to process payment',
-  content: 'There was an error processing your payment. Please check your credit card information is correct, then try again.'
+export const LongContent = {
+  ...Default,
+  args: {
+    title: 'Unable to process payment',
+    content: 'There was an error processing your payment. Please check your credit card information is correct, then try again.'
+  }
 };
