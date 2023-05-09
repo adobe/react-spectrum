@@ -36,14 +36,10 @@ function TestPopover(props) {
 
 describe('Popover', function () {
   beforeAll(() => {
-    jest.useFakeTimers('legacy');
-  });
-  afterAll(() => {
-    jest.useRealTimers();
+    jest.useFakeTimers();
   });
 
   beforeEach(() => {
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
     jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({
       getPropertyValue: () => '20'
     }));
@@ -53,7 +49,6 @@ describe('Popover', function () {
     act(() => {
       jest.runAllTimers();
     });
-    window.requestAnimationFrame.mockRestore();
     window.getComputedStyle.mockRestore();
   });
 
@@ -258,7 +253,7 @@ describe('Popover', function () {
           <TestPopover isOpen onOpenChange={onOpenChange} />
         </Provider>
       );
-  
+
       let buttons = getAllByRole('button');
       expect(buttons[0]).toHaveAttribute('aria-label', 'Dismiss');
       expect(buttons[1]).toHaveAttribute('aria-label', 'Dismiss');

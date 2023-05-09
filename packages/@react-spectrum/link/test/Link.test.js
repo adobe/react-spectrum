@@ -30,11 +30,7 @@ describe('Link', function () {
   let onOpenChange = jest.fn();
 
   beforeAll(() => {
-    jest.useFakeTimers('legacy');
-  });
-
-  afterAll(() => {
-    jest.useRealTimers();
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
