@@ -285,10 +285,9 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
               if (type === 'item') {
                 let keyAfter = collection.getKeyAfter(item.key);
                 let itemAfter = collection.getItem(keyAfter);
-
                 return (
                   <>
-                    {isListDroppable && collection.getKeyBefore(item.key) == null &&
+                    {isListDroppable && collection.getKeyBefore(item.key) == null && item.parentKey == null &&
                       <RootDropIndicator key="root" />
                     }
                     {isListDroppable &&

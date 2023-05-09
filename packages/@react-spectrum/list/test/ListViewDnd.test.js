@@ -15,18 +15,18 @@ import {act, fireEvent, installPointerEvent, render as renderComponent, waitFor,
 import {CUSTOM_DRAG_TYPE} from '@react-aria/dnd/src/constants';
 import {DataTransfer, DataTransferItem, DragEvent, FileSystemDirectoryEntry, FileSystemFileEntry} from '@react-aria/dnd/test/mocks';
 import {DIRECTORY_DRAG_TYPE} from '@react-aria/dnd';
-import {DragBetweenListsComplex} from '../stories/ListViewDnDUtilExamples';
+import {DnDSections, DragBetweenListsComplex} from '../stories/ListViewDnDUtilExamples';
 import {DragBetweenListsExample, DragBetweenListsRootOnlyExample, DragExample, DragIntoItemExample, ReorderExample} from '../stories/ListViewDnDExamples';
 import {Droppable} from '@react-aria/dnd/test/examples';
 import {Flex} from '@react-spectrum/layout';
 import {globalDndState} from '@react-aria/dnd/src/utils';
-import {Item, ListView} from '../';
+import {Item, ListSection, ListView} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import {useDragAndDrop} from '@react-spectrum/dnd';
-import {useListData} from '@react-stately/data';
+import {useListData, useTreeData} from '@react-stately/data';
 import userEvent from '@testing-library/user-event';
 
 let isReact18 = parseInt(React.version, 10) >= 18;
@@ -117,6 +117,60 @@ describe('ListView', function () {
     function DragBetweenLists(props) {
       return (
         <DragBetweenListsExample onDrop={onDrop} onDragStart={onDragStart} onDragEnd={onDragEnd} {...props} />
+      );
+    }
+
+    function EmptySectionList() {
+      let folderSection = [
+        {identifier: 'a', type: 'section', name: 'Section A', childNodes: [
+          {identifier: '1', type: 'file', name: 'Adobe Photoshop'},
+          {identifier: '2', type: 'file', name: 'Adobe XD'},
+          {identifier: '3', type: 'folder', name: 'Documents', childNodes: []}
+        ]},
+        {identifier: 'b', type: 'section', name: 'Section B', childNodes: []},
+        {identifier: 'c', type: 'section', name: 'Section C', childNodes: [
+          {identifier: '7', type: 'file', name: 'Adobe Premier'},
+          {identifier: '8', type: 'folder', name: 'My Photos', childNodes: []},
+          {identifier: '9', type: 'file', name: 'Adobe Media Encoder'}
+        ]}
+      ];
+      let tree = useTreeData({
+        initialItems: folderSection,
+        getKey: (item) => {
+          return item.identifier;
+        },
+        getChildren: (item) => {
+          return item?.childNodes;
+        }
+      });
+
+      let {dragAndDropHooks} = useDragAndDrop({
+        getItems: (keys) => [...keys].map(key => {
+          let item = tree.getItem(key);
+          return {
+            [`${item.value.type}`]: JSON.stringify(item),
+            'text/plain': JSON.stringify(item)
+          };
+        }),
+        ...mockUtilityOptions,
+        onDragEnd,
+        acceptedDragTypes: 'all'
+      });
+
+      return (
+        <ListView aria-label="Empty section list" selectionMode="multiple" items={tree.items} dragAndDropHooks={dragAndDropHooks}>
+          {(item) => (
+            <ListSection key={item.value.identifier} items={item.children} title={item.value.name}>
+              {(item) => (
+                <Item key={item.value.identifier} textValue={item.value.name}>
+                  <Text>
+                    {item.value.name}
+                  </Text>
+                </Item>
+              )}
+            </ListSection>
+            )}
+        </ListView>
       );
     }
 
@@ -1835,6 +1889,361 @@ describe('ListView', function () {
             ]
           });
         });
+
+        describe('with sections', function () {
+          function dragWithinSectionLists(rows, dropTarget, targetX = 1, targetY = 1) {
+            act(() => userEvent.click(within(rows[1]).getByRole('checkbox')));
+            act(() => userEvent.click(within(rows[2]).getByRole('checkbox')));
+            let dragCell = within(rows[1]).getAllByRole('gridcell')[0];
+
+            let dataTransfer = new DataTransfer();
+            fireEvent.pointerDown(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+            fireEvent(dragCell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+
+            act(() => jest.runAllTimers());
+            expect(onReorder).toHaveBeenCalledTimes(0);
+            fireEvent.pointerMove(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+            fireEvent(dragCell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
+            fireEvent(dropTarget, new DragEvent('dragover', {dataTransfer, clientX: targetX, clientY: targetY}));
+            fireEvent.pointerUp(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+            fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: targetX, clientY: targetY}));
+            fireEvent(dragCell, new DragEvent('dragend', {dataTransfer, clientX: targetX, clientY: targetY}));
+            act(() => jest.runAllTimers());
+          }
+
+          function dragBetweenSectionLists(sourceRows, dropTarget, targetX = 1, targetY = 1) {
+            act(() => userEvent.click(within(sourceRows[1]).getByRole('checkbox')));
+            act(() => userEvent.click(within(sourceRows[2]).getByRole('checkbox')));
+            let dragCell = within(sourceRows[1]).getAllByRole('gridcell')[0];
+
+            let dataTransfer = new DataTransfer();
+            fireEvent.pointerDown(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+            fireEvent(dragCell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+
+            act(() => jest.runAllTimers());
+            expect(onInsert).toHaveBeenCalledTimes(0);
+            fireEvent.pointerMove(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+            fireEvent(dragCell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
+            fireEvent(dropTarget, new DragEvent('dragover', {dataTransfer, clientX: targetX, clientY: targetY}));
+            fireEvent.pointerUp(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+            fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: targetX, clientY: targetY}));
+            fireEvent(dragCell, new DragEvent('dragend', {dataTransfer, clientX: targetX, clientY: targetY}));
+            act(() => jest.runAllTimers());
+          }
+
+          it('should call onInsert when dropping between section header and row', async function () {
+            let tree = render(
+              <DnDSections firstListDnDOptions={mockUtilityOptions} secondListDnDOptions={mockUtilityOptions} />
+            );
+
+            let grids = tree.getAllByRole('grid');
+            expect(grids).toHaveLength(2);
+
+            let rowgroups1 = within(grids[0]).getAllByRole('rowgroup');
+            let rowgroups2 = within(grids[1]).getAllByRole('rowgroup');
+
+            let dropTarget = within(rowgroups1[0]).getAllByRole('row')[1];
+            let list2Rows = within(rowgroups2[0]).getAllByRole('row');
+            dragBetweenSectionLists(list2Rows, dropTarget, 1, 48);
+
+            expect(onReorder).toHaveBeenCalledTimes(0);
+            expect(onItemDrop).toHaveBeenCalledTimes(0);
+            expect(onRootDrop).toHaveBeenCalledTimes(0);
+            expect(onInsert).toHaveBeenCalledTimes(1);
+            expect(onInsert).toHaveBeenCalledWith({
+              dropOperation: 'move',
+              target: {
+                key: '1',
+                dropPosition: 'before',
+                type: 'item'
+              },
+              items: [
+                {
+                  kind: 'text',
+                  types: new Set(['text/plain', 'folder']),
+                  getText: expect.any(Function)
+                },
+                {
+                  kind: 'text',
+                  types: new Set(['text/plain', 'file']),
+                  getText: expect.any(Function)
+                }
+              ]
+            });
+            let items = await Promise.all(onInsert.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
+            expect(items).toContainObject({
+              children: [],
+              key: '10',
+              parentKey: 'd',
+              value: {
+                identifier: '10',
+                type: 'folder',
+                name: 'Pictures',
+                childNodes: []
+              }
+            });
+
+            expect(items).toContainObject({
+              children: [],
+              key: '11',
+              parentKey: 'd',
+              value: {
+                identifier: '11',
+                type: 'file',
+                name: 'Adobe Fresco'
+              }
+            });
+          });
+
+          it('should call onReorder when performing a insert drop in the source list', function () {
+            let tree = render(
+              <DnDSections firstListDnDOptions={mockUtilityOptions} />
+            );
+
+            let grids = tree.getAllByRole('grid');
+            let rowgroups = within(grids[0]).getAllByRole('rowgroup');
+            let sourceRows = within(rowgroups[0]).getAllByRole('row');
+            let targetRows = within(rowgroups[1]).getAllByRole('row');
+            let dropTarget = targetRows[1];
+            dragWithinSectionLists(sourceRows, dropTarget, 1, 240);
+            expect(onReorder).toHaveBeenCalledTimes(1);
+            expect(onItemDrop).toHaveBeenCalledTimes(0);
+            expect(onRootDrop).toHaveBeenCalledTimes(0);
+            expect(onInsert).toHaveBeenCalledTimes(0);
+            expect(onReorder).toHaveBeenCalledWith({
+              target: {
+                key: '5',
+                dropPosition: 'before',
+                type: 'item'
+              },
+              keys: new Set(['1', '2']),
+              dropOperation: 'move'
+            });
+          });
+
+          it('should call onRootDrop when dropping on the list root', async function () {
+            let tree = render(
+              <DnDSections firstListDnDOptions={{...mockUtilityOptions, onInsert: null}} secondListDnDOptions={mockUtilityOptions} />
+            );
+
+            let grids = tree.getAllByRole('grid');
+            expect(grids).toHaveLength(2);
+
+            let dropTarget = grids[0];
+            let rowgroups = within(grids[1]).getAllByRole('rowgroup');
+            let list2Rows = within(rowgroups[0]).getAllByRole('row');
+            dragBetweenSectionLists(list2Rows, dropTarget);
+            expect(onReorder).toHaveBeenCalledTimes(0);
+            expect(onItemDrop).toHaveBeenCalledTimes(0);
+            expect(onRootDrop).toHaveBeenCalledTimes(1);
+            expect(onRootDrop).toHaveBeenCalledWith({
+              dropOperation: 'move',
+              items: [
+                {
+                  kind: 'text',
+                  types: new Set(['text/plain', 'folder']),
+                  getText: expect.any(Function)
+                },
+                {
+                  kind: 'text',
+                  types: new Set(['text/plain', 'file']),
+                  getText: expect.any(Function)
+                }
+              ]
+            });
+            let items = await Promise.all(onRootDrop.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
+            expect(items).toContainObject({
+              children: [],
+              key: '10',
+              parentKey: 'd',
+              value: {
+                identifier: '10',
+                type: 'folder',
+                name: 'Pictures',
+                childNodes: []
+              }
+            });
+
+            expect(items).toContainObject({
+              children: [],
+              key: '11',
+              parentKey: 'd',
+              value: {
+                identifier: '11',
+                type: 'file',
+                name: 'Adobe Fresco'
+              }
+            });
+          });
+
+          it('should call onItemDrop when dropping on a folder in the list', async function () {
+            let tree = render(
+              <DnDSections firstListDnDOptions={mockUtilityOptions} secondListDnDOptions={{onDragEnd}} />
+            );
+
+            let grids = tree.getAllByRole('grid');
+            expect(grids).toHaveLength(2);
+
+            let rowgroups1 = within(grids[0]).getAllByRole('rowgroup');
+            let rowgroups2 = within(grids[1]).getAllByRole('rowgroup');
+            let dropTarget = within(rowgroups1[1]).getAllByRole('row')[2];
+            let list2Rows = within(rowgroups2[0]).getAllByRole('row');
+            dragBetweenSectionLists(list2Rows, dropTarget, 1, 265);
+            expect(onDragEnd).toHaveBeenCalledTimes(1);
+            expect(onDragEnd).toHaveBeenCalledWith({
+              type: 'dragend',
+              keys: new Set(['10', '11']),
+              x: 1,
+              y: 265,
+              dropOperation: 'move',
+              isInternal: false
+            });
+            expect(onReorder).toHaveBeenCalledTimes(0);
+            expect(onItemDrop).toHaveBeenCalledTimes(1);
+            expect(onRootDrop).toHaveBeenCalledTimes(0);
+            expect(onInsert).toHaveBeenCalledTimes(0);
+            expect(onItemDrop).toHaveBeenCalledWith({
+              target: {
+                key: '5',
+                dropPosition: 'on',
+                type: 'item'
+              },
+              isInternal: false,
+              dropOperation: 'move',
+              items: [
+                {
+                  kind: 'text',
+                  types: new Set(['text/plain', 'folder']),
+                  getText: expect.any(Function)
+                },
+                {
+                  kind: 'text',
+                  types: new Set(['text/plain', 'file']),
+                  getText: expect.any(Function)
+                }
+              ]
+            });
+            let items = await Promise.all(onItemDrop.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
+            expect(items).toContainObject({
+              children: [],
+              key: '10',
+              parentKey: 'd',
+              value: {
+                identifier: '10',
+                type: 'folder',
+                name: 'Pictures',
+                childNodes: []
+              }
+            });
+            expect(items).toContainObject({
+              children: [],
+              key: '11',
+              parentKey: 'd',
+              value: {
+                identifier: '11',
+                type: 'file',
+                name: 'Adobe Fresco'
+              }
+            });
+          });
+
+          it('should allow drops on empty sections', async function () {
+            let tree = render(<EmptySectionList />);
+            let grid = tree.getByRole('grid');
+            let rowgroups = within(grid).getAllByRole('rowgroup');
+            let sourceRows = within(rowgroups[0]).getAllByRole('row');
+            let emptySection = rowgroups[1];
+            dragWithinSectionLists(sourceRows, emptySection, 1, 180);
+
+            expect(onDragEnd).toHaveBeenCalledTimes(1);
+            expect(onDragEnd).toHaveBeenCalledWith({
+              type: 'dragend',
+              keys: new Set(['1', '2']),
+              x: 1,
+              y: 180,
+              dropOperation: 'move',
+              isInternal: true
+            });
+            expect(onReorder).toHaveBeenCalledTimes(0);
+            expect(onItemDrop).toHaveBeenCalledTimes(1);
+            expect(onRootDrop).toHaveBeenCalledTimes(0);
+            expect(onInsert).toHaveBeenCalledTimes(0);
+            expect(onItemDrop).toHaveBeenCalledWith({
+              target: {
+                key: 'b',
+                dropPosition: 'on',
+                type: 'item'
+              },
+              isInternal: true,
+              dropOperation: 'move',
+              items: [
+                {
+                  kind: 'text',
+                  types: new Set(['text/plain', 'file']),
+                  getText: expect.any(Function)
+                },
+                {
+                  kind: 'text',
+                  types: new Set(['text/plain', 'file']),
+                  getText: expect.any(Function)
+                }
+              ]
+            });
+            let items = await Promise.all(onItemDrop.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
+            expect(items).toContainObject({
+              children: [],
+              key: '1',
+              parentKey: 'a',
+              value: {
+                identifier: '1',
+                type: 'file',
+                name: 'Adobe Photoshop'
+              }
+            });
+            expect(items).toContainObject({
+              children: [],
+              key: '2',
+              parentKey: 'a',
+              value: {
+                identifier: '2',
+                type: 'file',
+                name: 'Adobe XD'
+              }
+            });
+          });
+
+          it('should return an after drop target for the previous row if dropping above a empty section', function () {
+            let tree = render(<EmptySectionList />);
+            let grid = tree.getByRole('grid');
+            let rowgroups = within(grid).getAllByRole('rowgroup');
+            let sourceRows = within(rowgroups[0]).getAllByRole('row');
+            let emptySection = rowgroups[1];
+            dragWithinSectionLists(sourceRows, emptySection, 1, 150);
+
+            expect(onDragEnd).toHaveBeenCalledTimes(1);
+            expect(onDragEnd).toHaveBeenCalledWith({
+              type: 'dragend',
+              keys: new Set(['1', '2']),
+              x: 1,
+              y: 150,
+              dropOperation: 'move',
+              isInternal: true
+            });
+            expect(onReorder).toHaveBeenCalledTimes(1);
+            expect(onItemDrop).toHaveBeenCalledTimes(0);
+            expect(onRootDrop).toHaveBeenCalledTimes(0);
+            expect(onInsert).toHaveBeenCalledTimes(0);
+            expect(onReorder).toHaveBeenCalledWith({
+              target: {
+                key: '3',
+                dropPosition: 'after',
+                type: 'item'
+              },
+              keys: new Set(['1', '2']),
+              dropOperation: 'move'
+            });
+          });
+        });
       });
     });
 
@@ -2596,6 +3005,389 @@ describe('ListView', function () {
                 getText: expect.any(Function)
               }
             ]
+          });
+        });
+
+        describe('section', function () {
+          function beginDragSections(tree) {
+            let grids = tree.getAllByRole('grid');
+            let rowgroup = within(grids[0]).getAllByRole('rowgroup')[0];
+            let row = within(rowgroup).getAllByRole('row')[1];
+            let cell = within(row).getAllByRole('gridcell')[0];
+            expect(cell).toHaveTextContent('Adobe Photoshop');
+            expect(row).toHaveAttribute('draggable', 'true');
+
+            userEvent.tab();
+            let draghandle = within(row).getAllByRole('button')[0];
+            expect(draghandle).toBeTruthy();
+            expect(draghandle).toHaveAttribute('draggable', 'true');
+            fireEvent.keyDown(draghandle, {key: 'Enter'});
+            fireEvent.keyUp(draghandle, {key: 'Enter'});
+            act(() => jest.runAllTimers());
+          }
+
+          it('shouldnt render drag handles on the section header', function () {
+            let tree = render(
+              <DnDSections secondListDnDOptions={mockUtilityOptions} />
+            );
+
+            let grids = tree.getAllByRole('grid');
+            for (let grid of grids) {
+              let rowgroups = within(grid).getAllByRole('rowgroup');
+              for (let rowgroup of rowgroups) {
+                let sectionHeaderRow = within(rowgroup).getAllByRole('row')[0];
+                expect(within(sectionHeaderRow).queryAllByRole('button')).toHaveLength(0);
+              }
+            }
+          });
+
+          it('should skip sections and section header rows when moving between drop targets', async function () {
+            let tree = render(
+              <DnDSections secondListDnDOptions={mockUtilityOptions} />
+            );
+
+            beginDragSections(tree);
+            userEvent.tab();
+            expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
+
+            fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+            fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+            expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Pictures in Section D');
+
+            // Move to drop indicator before next section
+            for (let i = 0; i < 6; i++) {
+              fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+              fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+            }
+
+            expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Adobe Illustrator in Section D');
+            fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+            fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+            expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Adobe Lightroom in Section E');
+
+            for (let i = 0; i < 4; i++) {
+              fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+              fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+            }
+            expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Adobe Audition in Section E');
+
+            for (let i = 0; i < 5; i++) {
+              fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+              fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+            }
+
+            expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Adobe Animate in Section F');
+
+            fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+            fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+            expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
+          });
+
+          it('should call onInsert when dropping between rows in a different list', async function () {
+            let tree = render(
+              <DnDSections secondListDnDOptions={mockUtilityOptions} />
+            );
+
+            beginDragSections(tree);
+            // Move to 2nd list's first insert indicator
+            userEvent.tab();
+            fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+            fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+            expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Pictures in Section D');
+            fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+            fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+            expect(onReorder).toHaveBeenCalledTimes(0);
+            expect(onItemDrop).toHaveBeenCalledTimes(0);
+            expect(onRootDrop).toHaveBeenCalledTimes(0);
+            expect(onInsert).toHaveBeenCalledTimes(1);
+            expect(onInsert).toHaveBeenCalledWith({
+              dropOperation: 'move',
+              target: {
+                key: '10',
+                dropPosition: 'before',
+                type: 'item'
+              },
+              items: [
+                {
+                  kind: 'text',
+                  types: new Set(['text/plain', 'file']),
+                  getText: expect.any(Function)
+                }
+              ]
+            });
+            let items = await Promise.all(onInsert.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
+            expect(items).toContainObject({
+              children: [],
+              key: '1',
+              parentKey: 'a',
+              value: {
+                identifier: '1',
+                type: 'file',
+                name: 'Adobe Photoshop'
+              }
+            });
+          });
+
+          it('should call onReorder when performing a insert drop in the source list', function () {
+            let tree = render(
+              <DnDSections firstListDnDOptions={mockUtilityOptions} />
+            );
+
+            beginDragSections(tree);
+            fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+            fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+            expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Adobe XD and Documents');
+            fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+            fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+            expect(onReorder).toHaveBeenCalledTimes(1);
+            expect(onItemDrop).toHaveBeenCalledTimes(0);
+            expect(onRootDrop).toHaveBeenCalledTimes(0);
+            expect(onInsert).toHaveBeenCalledTimes(0);
+            expect(onReorder).toHaveBeenCalledWith({
+              target: {
+                key: '3',
+                dropPosition: 'before',
+                type: 'item'
+              },
+              keys: new Set(['1']),
+              dropOperation: 'move'
+            });
+          });
+
+          it('should call onRootDrop when dropping on the list root', async function () {
+            let tree = render(
+              <DnDSections firstListDnDOptions={{onDragEnd}} secondListDnDOptions={mockUtilityOptions} />
+            );
+
+            beginDragSections(tree);
+            userEvent.tab();
+
+            expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
+            fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+            fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+            expect(onReorder).toHaveBeenCalledTimes(0);
+            expect(onItemDrop).toHaveBeenCalledTimes(0);
+            expect(onRootDrop).toHaveBeenCalledTimes(1);
+            expect(onDragEnd).toHaveBeenCalledTimes(1);
+            expect(onDragEnd).toHaveBeenCalledWith({
+              type: 'dragend',
+              keys: new Set(['1']),
+              x: 50,
+              y: 25,
+              dropOperation: 'move',
+              isInternal: false
+            });
+            expect(onRootDrop).toHaveBeenCalledWith({
+              dropOperation: 'move',
+              items: [
+                {
+                  kind: 'text',
+                  types: new Set(['text/plain', 'file']),
+                  getText: expect.any(Function)
+                }
+              ]
+            });
+            let items = await Promise.all(onRootDrop.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
+            expect(items).toContainObject({
+              children: [],
+              key: '1',
+              parentKey: 'a',
+              value: {
+                identifier: '1',
+                type: 'file',
+                name: 'Adobe Photoshop'
+              }
+            });
+          });
+
+          it('should call onItemDrop when dropping on a folder in the list', async function () {
+            let tree = render(
+              <DnDSections firstListDnDOptions={{...mockUtilityOptions, onDragEnd}} secondListDnDOptions={mockUtilityOptions} />
+            );
+
+            beginDragSections(tree);
+            userEvent.tab();
+            fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+            fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+            fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+            fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+            expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Pictures');
+            fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+            fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+            expect(onReorder).toHaveBeenCalledTimes(0);
+            expect(onItemDrop).toHaveBeenCalledTimes(1);
+            expect(onRootDrop).toHaveBeenCalledTimes(0);
+            expect(onDragEnd).toHaveBeenCalledTimes(1);
+            expect(onDragEnd).toHaveBeenCalledWith({
+              type: 'dragend',
+              keys: new Set(['1']),
+              x: 50,
+              y: 25,
+              dropOperation: 'move',
+              isInternal: false
+            });
+            expect(onInsert).toHaveBeenCalledTimes(0);
+            expect(onItemDrop).toHaveBeenCalledWith({
+              target: {
+                key: '10',
+                dropPosition: 'on',
+                type: 'item'
+              },
+              isInternal: false,
+              dropOperation: 'move',
+              items: [
+                {
+                  kind: 'text',
+                  types: new Set(['text/plain', 'file']),
+                  getText: expect.any(Function)
+                }
+              ]
+            });
+            let items = await Promise.all(onItemDrop.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
+            expect(items).toContainObject({
+              children: [],
+              key: '1',
+              parentKey: 'a',
+              value: {
+                identifier: '1',
+                type: 'file',
+                name: 'Adobe Photoshop'
+              }
+            });
+
+            // Drop on folder in same list
+            beginDragSections(tree);
+            fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+            fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+            fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+            fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+            expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Documents');
+            fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+            fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+            expect(onReorder).toHaveBeenCalledTimes(0);
+            expect(onItemDrop).toHaveBeenCalledTimes(2);
+            expect(onRootDrop).toHaveBeenCalledTimes(0);
+            expect(onDragEnd).toHaveBeenCalledTimes(2);
+            expect(onDragEnd).toHaveBeenLastCalledWith({
+              type: 'dragend',
+              keys: new Set(['1']),
+              x: 50,
+              y: 25,
+              dropOperation: 'move',
+              isInternal: true
+            });
+            expect(onInsert).toHaveBeenCalledTimes(0);
+            expect(onItemDrop).toHaveBeenLastCalledWith({
+              target: {
+                key: '3',
+                dropPosition: 'on',
+                type: 'item'
+              },
+              isInternal: true,
+              dropOperation: 'move',
+              items: [
+                {
+                  kind: 'text',
+                  types: new Set(['text/plain', 'file']),
+                  getText: expect.any(Function)
+                }
+              ]
+            });
+            items = await Promise.all(onItemDrop.mock.calls[1][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
+            expect(items).toContainObject({
+              children: [],
+              key: '1',
+              parentKey: 'a',
+              value: {
+                identifier: '1',
+                type: 'file',
+                name: 'Adobe Photoshop'
+              }
+            });
+          });
+
+          it('should allow you to drop onto a section if it is empty', async function () {
+            let tree = render(<EmptySectionList />);
+            beginDragSections(tree);
+            for (let i = 0; i < 5; i++) {
+              fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+              fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+            }
+
+            expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Section B');
+            fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+            fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+            expect(onReorder).toHaveBeenCalledTimes(0);
+            expect(onItemDrop).toHaveBeenCalledTimes(1);
+            expect(onRootDrop).toHaveBeenCalledTimes(0);
+            expect(onDragEnd).toHaveBeenCalledTimes(1);
+            expect(onDragEnd).toHaveBeenLastCalledWith({
+              type: 'dragend',
+              keys: new Set(['1']),
+              x: 50,
+              y: 25,
+              dropOperation: 'move',
+              isInternal: true
+            });
+            expect(onInsert).toHaveBeenCalledTimes(0);
+            expect(onItemDrop).toHaveBeenLastCalledWith({
+              target: {
+                key: 'b',
+                dropPosition: 'on',
+                type: 'item'
+              },
+              isInternal: true,
+              dropOperation: 'move',
+              items: [
+                {
+                  kind: 'text',
+                  types: new Set(['text/plain', 'file']),
+                  getText: expect.any(Function)
+                }
+              ]
+            });
+            let items = await Promise.all(onItemDrop.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
+            expect(items).toContainObject({
+              children: [],
+              key: '1',
+              parentKey: 'a',
+              value: {
+                identifier: '1',
+                type: 'file',
+                name: 'Adobe Photoshop'
+              }
+            });
+          });
+
+          it('should allow you to navigate through a section if it is empty', async function () {
+            let tree = render(<EmptySectionList />);
+            beginDragSections(tree);
+            for (let i = 0; i < 4; i++) {
+              fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+              fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+            }
+
+            expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Documents in Section A');
+
+            fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+            fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+            expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Section B');
+
+            fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+            fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+            expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Adobe Premier in Section C');
           });
         });
       });

@@ -19,6 +19,7 @@ import {ListViewContext} from './ListView';
 import {Node} from '@react-types/shared';
 import React, {ReactNode, useContext, useRef} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
+import RootDropIndicator from './RootDropIndicator';
 import {useGridListSection} from '@react-aria/gridlist';
 import {useLocale} from '@react-aria/i18n';
 
@@ -56,6 +57,9 @@ export function ListViewSection<T>(props: ListViewSectionProps<T>) {
           }
         )
       }>
+      {isListDroppable && item.index === 0 &&
+        <RootDropIndicator key="root" />
+      }
       <div
         role="presentation"
         ref={headerRowRef}

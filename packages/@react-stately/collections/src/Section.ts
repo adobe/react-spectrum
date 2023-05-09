@@ -25,6 +25,7 @@ Section.getCollectionNode = function* getCollectionNode<T>(props: SectionProps<T
     props: props,
     hasChildNodes: true,
     rendered: title,
+    textValue: typeof title === 'string' ? title : props['aria-label'],
     'aria-label': props['aria-label'],
     *childNodes() {
       if (typeof children === 'function') {
