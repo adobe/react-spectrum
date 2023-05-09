@@ -81,6 +81,7 @@ import {
   ColorWheel,
 } from "@react-spectrum/color";
 import ReorderableListView from "../components/ReorderableListView";
+import {TagGroup} from '@react-spectrum/tag';
 import {ToastQueue} from '@react-spectrum/toast';
 
 export default function Home() {
@@ -382,6 +383,13 @@ export default function Home() {
             <ProgressCircle aria-label="Loading…" isIndeterminate />
 
             <StatusLight variant="positive">Ready</StatusLight>
+
+            <TagGroup aria-label="Static TagGroup items example">
+              <Item>News</Item>
+              <Item>Travel</Item>
+              <Item>Gaming</Item>
+              <Item>Shopping</Item>
+            </TagGroup>
           </Section>
 
           <Section title="Content">
