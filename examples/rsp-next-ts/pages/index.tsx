@@ -69,6 +69,7 @@ import {
   View,
   Well,
   DialogContainer,
+  Avatar,
 } from "@adobe/react-spectrum";
 import Edit from "@spectrum-icons/workflow/Edit";
 import NotFound from "@spectrum-icons/illustrations/NotFound";
@@ -392,6 +393,8 @@ export default function Home() {
           </Section>
 
           <Section title="Content">
+            <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />
+
             <Content>Content is king</Content>
 
             <Flex direction="column" gap="size-125">

@@ -2,6 +2,7 @@ export default {
   transpilePackages: [
     "@adobe/react-spectrum",
     "@react-spectrum/actiongroup",
+    "@react-spectrum/avatar",
     "@react-spectrum/badge",
     "@react-spectrum/breadcrumbs",
     "@react-spectrum/button",
