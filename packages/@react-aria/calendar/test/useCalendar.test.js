@@ -17,8 +17,7 @@ import React from 'react';
 
 describe('useCalendar', () => {
   beforeAll(() => {
-    jest.useFakeTimers('legacy');
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+    jest.useFakeTimers();
   });
 
   afterEach(() => {

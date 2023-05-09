@@ -40,12 +40,7 @@ describe('ColorArea', () => {
 
   beforeAll(() => {
     jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => SIZE);
-    // @ts-ignore
-    jest.useFakeTimers('modern');
-  });
-  afterAll(() => {
-    // @ts-ignore
-    jest.useRealTimers();
+    jest.useFakeTimers();
   });
 
   afterEach(() => {

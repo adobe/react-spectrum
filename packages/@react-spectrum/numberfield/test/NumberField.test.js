@@ -38,11 +38,6 @@ describe('NumberField', function () {
     jest.useFakeTimers();
   });
 
-  afterAll(() => {
-    jest.useRealTimers();
-  });
-
-
   afterEach(() => {
     onChangeSpy.mockClear();
     onBlurSpy.mockClear();
