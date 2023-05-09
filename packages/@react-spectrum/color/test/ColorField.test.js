@@ -272,8 +272,8 @@ describe('ColorField', function () {
 
     act(() => {
       colorField.focus();
-      userEvent.clear(colorField);
     });
+    userEvent.clear(colorField);
     typeText(colorField, 'abcxyz8b');
     expect(colorField.value).toBe('abc8b');
     act(() => {colorField.blur();});
