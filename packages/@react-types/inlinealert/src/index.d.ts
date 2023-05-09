@@ -13,10 +13,9 @@
 import {DOMProps, StyleProps} from '@react-types/shared';
 import {ReactNode} from 'react';
 
-
 export interface SpectrumInLineAlertProps extends DOMProps, StyleProps {
-   /**
-   * The [visual style](https://spectrum.adobe.com/page/in-line-alert/#Options) of the In Line Alert.
+  /**
+   * The [visual style](https://spectrum.adobe.com/page/in-line-alert/#Options) of the In-Line Alert.
    * @default 'neutral'
    */
   variant?: 'neutral' | 'info' | 'positive' | 'notice' | 'negative',
