@@ -52,10 +52,7 @@ describe('useColorWheel', () => {
   let onChangeSpy = jest.fn();
 
   beforeAll(() => {
-    // @ts-ignore
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => cb());
-    // @ts-ignore
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   afterEach(() => {

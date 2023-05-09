@@ -1,93 +1,93 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`DocsTransformer - API builtins writes export entry for referenced function 1`] = `
-Object {
-  "exports": Object {
-    "d": Object {},
+{
+  "exports": {
+    "d": {},
   },
-  "links": Object {},
+  "links": {},
 }
 `;
 
 exports[`DocsTransformer - API builtins writes export entry for referenced string 1`] = `
-Object {
-  "exports": Object {
-    "c": Object {},
+{
+  "exports": {
+    "c": {},
   },
-  "links": Object {},
+  "links": {},
 }
 `;
 
 exports[`DocsTransformer - API builtins writes export entry for static number 1`] = `
-Object {
-  "exports": Object {
-    "a": Object {},
+{
+  "exports": {
+    "a": {},
   },
-  "links": Object {},
+  "links": {},
 }
 `;
 
 exports[`DocsTransformer - API builtins writes export entry for static string 1`] = `
-Object {
-  "exports": Object {
-    "b": Object {},
+{
+  "exports": {
+    "b": {},
   },
-  "links": Object {},
+  "links": {},
 }
 `;
 
 exports[`DocsTransformer - API components writes export entry for React component 1`] = `
-Object {
-  "exports": Object {
-    "App1": Object {
+{
+  "exports": {
+    "App1": {
       "description": null,
       "id": "/test/src/index.tsx:App1",
       "name": "App1",
       "props": null,
       "type": "component",
-      "typeParameters": Array [],
+      "typeParameters": [],
     },
   },
-  "links": Object {},
+  "links": {},
 }
 `;
 
 exports[`DocsTransformer - API components writes export entry for localName React component 1`] = `
-Object {
-  "exports": Object {
-    "AppReal": Object {
+{
+  "exports": {
+    "AppReal": {
       "description": null,
       "id": "/test/src/index.tsx:App2",
       "name": "AppReal",
       "props": null,
       "type": "component",
-      "typeParameters": Array [],
+      "typeParameters": [],
     },
   },
-  "links": Object {},
+  "links": {},
 }
 `;
 
 exports[`DocsTransformer - API identifiers writes export entry for identifiers 1`] = `
-Object {
-  "exports": Object {
-    "Column": Object {
+{
+  "exports": {
+    "Column": {
       "id": null,
       "name": null,
-      "parameters": Array [
-        Object {
+      "parameters": [
+        {
           "description": null,
           "name": "props",
           "rest": false,
           "type": "parameter",
-          "value": Object {
-            "properties": Object {
-              "id": Object {
+          "value": {
+            "properties": {
+              "id": {
                 "default": null,
                 "name": "id",
                 "optional": false,
                 "type": "property",
-                "value": Object {
+                "value": {
                   "type": "string",
                 },
               },
@@ -96,125 +96,125 @@ Object {
           },
         },
       ],
-      "return": Object {
+      "return": {
         "description": null,
         "type": "any",
       },
       "type": "function",
-      "typeParameters": Array [],
+      "typeParameters": [],
     },
   },
-  "links": Object {},
+  "links": {},
 }
 `;
 
 exports[`DocsTransformer - API interfaces follows imported interfaces 1`] = `
-Object {
-  "exports": Object {
-    "Bar": Object {
+{
+  "exports": {
+    "Bar": {
       "id": "/test/src/index.tsx:Bar",
       "name": "Bar",
-      "parameters": Array [
-        Object {
+      "parameters": [
+        {
           "description": null,
           "name": "props",
           "rest": false,
           "type": "parameter",
-          "value": Object {
+          "value": {
             "id": "/test/src/component.tsx:Foo",
             "type": "link",
           },
         },
       ],
-      "return": Object {
+      "return": {
         "description": null,
         "type": "any",
       },
       "type": "function",
-      "typeParameters": Array [],
+      "typeParameters": [],
     },
   },
-  "links": Object {
-    "/test/src/component.tsx:Foo": Object {
-      "extends": Array [],
+  "links": {
+    "/test/src/component.tsx:Foo": {
+      "extends": [],
       "id": "/test/src/component.tsx:Foo",
       "name": "Foo",
-      "properties": Object {
-        "a": Object {
+      "properties": {
+        "a": {
           "default": null,
           "name": "a",
           "optional": false,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "number",
           },
         },
       },
       "type": "interface",
-      "typeParameters": Array [],
+      "typeParameters": [],
     },
   },
 }
 `;
 
 exports[`DocsTransformer - API interfaces writes export entry for interface 1`] = `
-Object {
-  "exports": Object {
-    "Foo": Object {
-      "extends": Array [],
+{
+  "exports": {
+    "Foo": {
+      "extends": [],
       "id": "/test/src/index.tsx:Foo",
       "name": "Foo",
-      "properties": Object {
-        "a": Object {
+      "properties": {
+        "a": {
           "default": null,
           "name": "a",
           "optional": false,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "number",
           },
         },
       },
       "type": "interface",
-      "typeParameters": Array [],
+      "typeParameters": [],
     },
   },
-  "links": Object {},
+  "links": {},
 }
 `;
 
 exports[`DocsTransformer - API types writes export entry for complex type regex 1`] = `
-Object {
-  "exports": Object {
-    "Foo": Object {
+{
+  "exports": {
+    "Foo": {
       "id": "/test/src/index.tsx:Foo",
       "type": "link",
     },
   },
-  "links": Object {
-    "/test/src/index.tsx:Foo": Object {
+  "links": {
+    "/test/src/index.tsx:Foo": {
       "description": null,
       "id": "/test/src/index.tsx:Foo",
       "name": "Foo",
       "type": "alias",
-      "typeParameters": Array [],
-      "value": Object {
-        "elements": Array [
-          Object {
+      "typeParameters": [],
+      "value": {
+        "elements": [
+          {
             "type": "number",
           },
-          Object {
+          {
             "type": "string",
             "value": ".",
           },
-          Object {
+          {
             "type": "number",
           },
-          Object {
+          {
             "type": "string",
             "value": " ",
           },
-          Object {
+          {
             "type": "string",
           },
         ],
@@ -226,21 +226,21 @@ Object {
 `;
 
 exports[`DocsTransformer - API types writes export entry for type 1`] = `
-Object {
-  "exports": Object {
-    "Foo": Object {
+{
+  "exports": {
+    "Foo": {
       "id": "/test/src/index.tsx:Foo",
       "type": "link",
     },
   },
-  "links": Object {
-    "/test/src/index.tsx:Foo": Object {
+  "links": {
+    "/test/src/index.tsx:Foo": {
       "description": null,
       "id": "/test/src/index.tsx:Foo",
       "name": "Foo",
       "type": "alias",
-      "typeParameters": Array [],
-      "value": Object {
+      "typeParameters": [],
+      "value": {
         "type": "number",
       },
     },
@@ -249,26 +249,26 @@ Object {
 `;
 
 exports[`DocsTransformer - API types writes export entry for type regex 1`] = `
-Object {
-  "exports": Object {
-    "Foo": Object {
+{
+  "exports": {
+    "Foo": {
       "id": "/test/src/index.tsx:Foo",
       "type": "link",
     },
   },
-  "links": Object {
-    "/test/src/index.tsx:Foo": Object {
+  "links": {
+    "/test/src/index.tsx:Foo": {
       "description": null,
       "id": "/test/src/index.tsx:Foo",
       "name": "Foo",
       "type": "alias",
-      "typeParameters": Array [],
-      "value": Object {
-        "elements": Array [
-          Object {
+      "typeParameters": [],
+      "value": {
+        "elements": [
+          {
             "type": "number",
           },
-          Object {
+          {
             "type": "string",
             "value": "%",
           },
@@ -281,26 +281,26 @@ Object {
 `;
 
 exports[`DocsTransformer - API types writes export entry for type union 1`] = `
-Object {
-  "exports": Object {
-    "Foo": Object {
+{
+  "exports": {
+    "Foo": {
       "id": "/test/src/index.tsx:Foo",
       "type": "link",
     },
   },
-  "links": Object {
-    "/test/src/index.tsx:Foo": Object {
+  "links": {
+    "/test/src/index.tsx:Foo": {
       "description": null,
       "id": "/test/src/index.tsx:Foo",
       "name": "Foo",
       "type": "alias",
-      "typeParameters": Array [],
-      "value": Object {
-        "elements": Array [
-          Object {
+      "typeParameters": [],
+      "value": {
+        "elements": [
+          {
             "type": "number",
           },
-          Object {
+          {
             "type": "string",
           },
         ],

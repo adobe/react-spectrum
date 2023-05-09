@@ -29,6 +29,16 @@ export function useAutoScroll(ref: RefObject<Element>) {
     dy: 0
   }).current;
 
+  useEffect(() => {
+    return () => {
+      if (state.timer) {
+        cancelAnimationFrame(state.timer);
+        state.timer = null;
+      }
+    };
+  // state will become a new object, so it's ok to use in the dependency array for unmount
+  }, [state]);
+
   let scroll = useCallback(() => {
     scrollableRef.current.scrollLeft += state.dx;
     scrollableRef.current.scrollTop += state.dy;
