@@ -46,7 +46,8 @@ export default {
     },
     variant: {
       control: 'select',
-      options: ['and', 'or']
+      options: ['and', 'or'],
+      defaultValue: 'and'
     }
   }
 } as ComponentMeta<typeof LogicButton>;

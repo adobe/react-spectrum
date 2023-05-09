@@ -52,7 +52,8 @@ export default {
     },
     variant: {
       control: 'select',
-      options: ['accent', 'primary', 'secondary', 'negative', 'cta', 'overBackground']
+      options: ['accent', 'primary', 'secondary', 'negative', 'cta', 'overBackground'],
+      defaultValue: 'accent'
     },
     style: {
       control: 'select',
