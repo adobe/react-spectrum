@@ -37,7 +37,6 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/alert": "^3.0.0-alpha.1",
     "@react-aria/i18n": "^3.7.1",
     "@react-aria/utils": "^3.0.0",
     "@react-spectrum/layout": "^3.5.1",
