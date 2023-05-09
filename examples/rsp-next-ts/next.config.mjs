@@ -39,6 +39,7 @@ export default {
     "@react-spectrum/switch",
     "@react-spectrum/table",
     "@react-spectrum/tabs",
+    "@react-spectrum/tag",
     "@react-spectrum/text",
     "@react-spectrum/textfield",
     "@react-spectrum/theme-dark",
