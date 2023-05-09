@@ -14,14 +14,21 @@ jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, installPointerEvent, render as renderComponent, triggerPress, within} from '@react-spectrum/test-utils';
 import {ActionButton} from '@react-spectrum/button';
 import {announce} from '@react-aria/live-announcer';
+import {composeStories} from '@storybook/testing-react';
 import {FocusExample} from '../stories/ListViewActions.stories';
 import {Item, ListView} from '../src';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {renderEmptyState} from '../stories/ListView.stories';
+import * as stories from '../stories/ListView.stories';
 import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
+
+let {
+  DynamicSections,
+  ManySections
+} = composeStories(stories);
 
 function pointerEvent(type, opts) {
   let evt = new Event(type, {bubbles: true, cancelable: true});
@@ -203,6 +210,55 @@ describe('ListView', function () {
     expect(gridCells[0]).toHaveAttribute('aria-colindex', '1');
   });
 
+
+  it('renders a list with sections', function () {
+    let {getByRole} = render(<DynamicSections />);
+    let grid = getByRole('grid');
+    expect(grid).toBeVisible();
+    expect(grid).toHaveAttribute('aria-rowcount', '18');
+    expect(grid).toHaveAttribute('aria-colcount', '1');
+
+    let rowgroups = within(grid).getAllByRole('rowgroup');
+    expect(rowgroups).toHaveLength(2);
+
+    let rowindex = 1;
+    for (let i = 0; i < rowgroups.length; i++) {
+      let section = rowgroups[i];
+      let sectionRows = within(section).getAllByRole('row');
+      let sectionTitleRow = sectionRows[0];
+      let sectionRowHeader = within(sectionTitleRow).getByRole('rowheader');
+      expect(section).toHaveAttribute('aria-labelledby', sectionRowHeader.id);
+
+      for (let [i, row] of sectionRows.entries()) {
+        expect(row).toHaveAttribute('aria-rowindex', (rowindex++).toString(10));
+        if (i !== 0) {
+          let gridCells = within(row).getAllByRole('gridcell');
+          expect(gridCells).toHaveLength(1);
+          expect(gridCells[0]).toHaveAttribute('aria-colindex', '1');
+        }
+      }
+    }
+  });
+
+  it('renders a list with sections and selection', function () {
+    let {getByRole} = render(<DynamicSections selectionMode="multiple" selectionStyle="checkbox" />)
+    let grid = getByRole('grid');
+    expect(grid).toBeVisible();
+    let rowgroups = within(grid).getAllByRole('rowgroup');
+
+    for (let i = 0; i < rowgroups.length; i++) {
+      let section = rowgroups[i];
+      let sectionRows = within(section).getAllByRole('row');
+      for (let [i, row] of sectionRows.entries()) {
+        if (i !== 0) {
+          expect(within(row).queryByRole('checkbox')).toBeTruthy();
+        } else {
+          expect(within(row).queryByRole('checkbox')).toBeFalsy();
+        }
+      }
+    }
+  });
+
   it('renders a falsy ids', function () {
     let items = [
       {id: 0, label: 'Foo'},
@@ -294,6 +350,39 @@ describe('ListView', function () {
   });
 
   describe('keyboard focus', function () {
+    it('should move focus to the first row when tabbing into the ListView from the start (sections)', function () {
+      let tree = render(
+        <>
+          <input data-testid="before" />
+          <DynamicSections />
+        </>
+      );
+      let list = tree.getByRole('grid');
+      expect(list).toHaveAttribute('tabIndex', '0');
+
+      let before = tree.getByTestId('before');
+      act(() => before.focus());
+      userEvent.tab();
+      expect(document.activeElement).toBe(getRow(tree, 'Aardvark'));
+    });
+
+    it('should move focus to the last element in the last row when tabbing into the ListView from the end (sections)', function () {
+      let tree = render(
+        <>
+          <DynamicSections />
+          <input data-testid="after" />
+        </>
+      );
+      let list = tree.getByRole('grid');
+      expect(list).toHaveAttribute('tabIndex', '0');
+
+      let after = tree.getByTestId('after');
+      act(() => after.focus());
+      userEvent.tab({shift: true});
+      let target = within(getRow(tree, 'Michael')).getAllByRole('button')[1];
+      expect(document.activeElement).toBe(target);
+    });
+
     describe('Type to select', function () {
       it('focuses the correct cell when typing', function () {
         let tree = renderList();
@@ -307,6 +396,16 @@ describe('ListView', function () {
         fireEvent.keyDown(grid, {key: 'Z'});
         fireEvent.keyUp(grid, {key: 'Z'});
         expect(document.activeElement).toBe(target);
+      });
+
+      it('should not match section headers', function () {
+        let tree = render(<DynamicSections />);
+        userEvent.tab();
+        expect(document.activeElement).toBe(getRow(tree, 'Aardvark'));
+        moveFocus('Sect');
+        expect(document.activeElement).toBe(getRow(tree, 'Aardvark'));
+        moveFocus('M');
+        expect(document.activeElement).toBe(getRow(tree, 'Matt'));
       });
     });
 
@@ -423,6 +522,15 @@ describe('ListView', function () {
         moveFocus('ArrowUp');
         expect(document.activeElement).toBe(end);
       });
+
+      it('should skip sections', function () {
+        let tree = render(<DynamicSections />);
+        let start = getRow(tree, 'Danni');
+        let end = getRow(tree, 'Capybara');
+        triggerPress(start);
+        moveFocus('ArrowUp');
+        expect(document.activeElement).toBe(end);
+      });
     });
 
     describe('ArrowDown', function () {
@@ -460,6 +568,15 @@ describe('ListView', function () {
         moveFocus('ArrowDown');
         expect(document.activeElement).toBe(end);
       });
+
+      it('should skip sections', function () {
+        let tree = render(<DynamicSections />);
+        let start = getRow(tree, 'Capybara');
+        let end = getRow(tree, 'Danni');
+        triggerPress(start);
+        moveFocus('ArrowDown');
+        expect(document.activeElement).toBe(end);
+      });
     });
 
     describe('PageUp', function () {
@@ -479,6 +596,20 @@ describe('ListView', function () {
         expect(document.activeElement).toBe(start);
         moveFocus('PageUp');
         expect(document.activeElement).toBe(getRow(tree, 'Foo 1'));
+      });
+
+      it('should focus the row a page above (sections)', function () {
+        let tree = render(<ManySections />);
+        let start = getRow(tree, 'Section 0, Item 0');
+        triggerPress(start);
+        moveFocus('End');
+        expect(document.activeElement).toBe(getRow(tree, 'Section 49, Item 49'));
+        moveFocus('PageUp');
+        expect(document.activeElement).toBe(getRow(tree, 'Section 49, Item 25'));
+        moveFocus('PageUp');
+        expect(document.activeElement).toBe(getRow(tree, 'Section 49, Item 1'));
+        moveFocus('PageUp');
+        expect(document.activeElement).toBe(getRow(tree, 'Section 48, Item 28'));
       });
     });
 
@@ -503,6 +634,21 @@ describe('ListView', function () {
         moveFocus('PageDown');
         expect(document.activeElement).toBe(getRow(tree, 'Foo 49'));
       });
+
+
+      it('should focus the row a page below (sections)', function () {
+        let tree = render(<ManySections />);
+        let start = getRow(tree, 'Section 0, Item 0');
+        triggerPress(start);
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(getRow(tree, 'Section 0, Item 25'));
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(getRow(tree, 'Section 0, Item 49'));
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(getRow(tree, 'Section 1, Item 22'));
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(getRow(tree, 'Section 1, Item 46'));
+      });
     });
 
     describe('Home', function () {
@@ -523,6 +669,14 @@ describe('ListView', function () {
         moveFocus('Home');
         expect(document.activeElement).toBe(getRow(tree, 'Foo 1'));
       });
+
+      it('should focus the first row with Home (sections)', function () {
+        let tree = render(<DynamicSections />);
+        let start = getRow(tree, 'Matt');
+        triggerPress(start);
+        moveFocus('Home');
+        expect(document.activeElement).toBe(getRow(tree, 'Aardvark'));
+      });
     });
 
     describe('End', function () {
@@ -541,6 +695,14 @@ describe('ListView', function () {
         expect(document.activeElement).toBe(start);
         moveFocus('End');
         expect(document.activeElement).toBe(getRow(tree, 'Foo 100'));
+      });
+
+      it('should focus the first row with End (sections)', function () {
+        let tree = render(<DynamicSections />);
+        let start = getRow(tree, 'Aardvark');
+        triggerPress(start);
+        moveFocus('End');
+        expect(document.activeElement).toBe(getRow(tree, 'Michael'));
       });
     });
 
@@ -1464,7 +1626,39 @@ describe('ListView', function () {
       expect(body.scrollTop).toBe(0);
       expect(document.activeElement).toBe(getRow(tree, 'Item 1'));
     });
+
+    it('should scroll to a row when it is focused off screen (sections)', function () {
+      let tree = render(<ManySections selectionMode="multiple" selectionStyle="checkbox" />);
+      let body = tree.getByRole('grid');
+      let start = getRow(tree, 'Section 0, Item 0');
+      act(() => start.focus());
+      expect(document.activeElement).toBe(start);
+      expect(body.scrollTop).toBe(0);
+
+      // When scrolling the focused item out of view, focus should remain on the item
+      body.scrollTop = 10000;
+      fireEvent.scroll(body);
+
+      expect(body.scrollTop).toBe(10000);
+      expect(document.activeElement).toBe(start);
+
+      let renderedSections = tree.getAllByRole('rowgroup');
+      // First section is the persisted section containing the previously focused row
+      let rowsInFirstSection = within(renderedSections[0]).getAllByRole('row');
+      // Should only have two rows, the section header row and the persisted row
+      expect(rowsInFirstSection.length).toBe(2);
+      expect(rowsInFirstSection[0]).toHaveAttribute('aria-rowindex', '1');
+      expect(rowsInFirstSection[0]).toHaveTextContent('Section 0');
+      expect(start).toBe(rowsInFirstSection[1]);
+
+      // Next rendered section should be much lower
+      expect(within(renderedSections[1]).getAllByRole('row')[0]).toHaveTextContent('Section 4');
+
+      // Moving focus should scroll the new focused item into view
+      moveFocus('ArrowDown');
+      body = tree.getByRole('grid');
+      expect(body.scrollTop).toBe(80);
+      expect(document.activeElement).toBe(getRow(tree, 'Section 0, Item 1'));
+    });
   });
-
-
 });
