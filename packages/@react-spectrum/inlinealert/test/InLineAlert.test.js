@@ -10,17 +10,65 @@
  * governing permissions and limitations under the License.
  */
 
-import {InlineAlert} from '../';
-import {render} from '@react-spectrum/test-utils';
+import {Content, Header} from '@react-spectrum/view';
+import {InLineAlert} from '../';
 import React from 'react';
+import {render} from '@react-spectrum/test-utils';
 
-describe('InlineAlert', function () {
-  it.each`
-    Name | Component      | props
-    ${'InlineAlert'} | ${InlineAlert} | ${{}}
-  `('$Name handles defaults', function ({Component, props}) {
-    let tree = render(<Component {...props} />);
+describe('InLineAlert', function () {
+  it('has alert role', function () {
+    let {getByRole} = render(
+      <InLineAlert>
+        <Header>Title</Header>
+        <Content>Content</Content>
+      </InLineAlert>
+    );
 
-    expect(tree).toBeTruthy();
+    let alert = getByRole('alert');
+    expect(alert).toBeVisible();
   });
+
+  it('has a header', function () {
+    let {getByTestId} = render(
+      <InLineAlert>
+        <Header data-testid="testid1">Test Title</Header>
+        <Content>Content</Content>
+      </InLineAlert>
+    );
+
+    let header = getByTestId('testid1');
+    expect(header).toBeVisible();
+    expect(header).toHaveTextContent('Test Title');
+  });
+
+  it('has body content', function () {
+    let {getByTestId} = render(
+      <InLineAlert>
+        <Header>Title</Header>
+        <Content data-testid="testid1">Test Content</Content>
+      </InLineAlert>
+    );
+
+    let content = getByTestId('testid1');
+    expect(content).toBeVisible();
+    expect(content).toHaveTextContent('Test Content');
+  });
+
+  it.each`
+      variant
+      ${'neutral'}
+      ${'info'}
+      ${'positive'}
+      ${'notice'}
+      ${'negative'}
+    `('$variant variant renders correctly', function ({variant}) {
+      let {getByTestId} = render(
+        <InLineAlert variant={variant} data-testid="testid1">
+          <Header>Title</Header>
+          <Content>Content</Content>
+        </InLineAlert>
+      );
+      let alert = getByTestId('testid1');
+      expect(alert).toHaveClass(`spectrum-InLineAlert--${variant}`);
+    });
 });
