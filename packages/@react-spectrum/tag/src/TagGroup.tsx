@@ -15,7 +15,6 @@ import {AriaTagGroupProps, TagKeyboardDelegate, useTagGroup} from '@react-aria/t
 import {classNames, useDOMRef} from '@react-spectrum/utils';
 import {DOMRef, SpectrumHelpTextProps, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
-import {flushSync} from 'react-dom';
 import {FocusRing, FocusScope} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -75,7 +74,10 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         let currContainerRef: HTMLDivElement | null = containerRef.current;
         let currTagsRef: HTMLDivElement | null = tagsRef.current;
         if (!currContainerRef || !currTagsRef) {
-          return;
+          return {
+            visibleTagCount: 0,
+            showCollapseButton: false
+          };
         }
 
         let tags = [...currTagsRef.children];
@@ -125,14 +127,12 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         };
       };
 
-      flushSync(() => {
-        setTagState(function *() {
-          // Update to show all items.
-          yield {visibleTagCount: state.collection.size, showCollapseButton: true};
+      setTagState(function *() {
+        // Update to show all items.
+        yield {visibleTagCount: state.collection.size, showCollapseButton: true};
 
-          // Measure, and update to show the items until maxRows is reached.
-          yield computeVisibleTagCount();
-        });
+        // Measure, and update to show the items until maxRows is reached.
+        yield computeVisibleTagCount();
       });
     }
   }, [maxRows, setTagState, direction, state.collection.size]);
@@ -161,6 +161,17 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   let showActions = tagState.showCollapseButton || (actionLabel && onAction);
   let isEmpty = state.collection.size === 0;
 
+  let containerStyle = useMemo(() => {
+    if (maxRows == null || !isCollapsed || !tagsRef.current) {
+      return undefined;
+    }
+    let tag = tagsRef.current.children[0];
+    let tagStyle = window.getComputedStyle(tag);
+    let maxHeight = (tag.getBoundingClientRect().height + parseInt(tagStyle.marginTop, 10) + parseInt(tagStyle.marginBottom, 10)) * maxRows;
+    return {maxHeight, overflow: 'hidden'};
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isCollapsed, maxRows, tagsRef.current]);
+
   return (
     <FocusScope>
       <Field
@@ -182,6 +193,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         }>
         <div
           ref={containerRef}
+          style={containerStyle}
           className={
             classNames(
               styles,
