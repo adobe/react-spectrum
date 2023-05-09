@@ -48,8 +48,6 @@ function InLineAlert(props: SpectrumInLineAlertProps, ref: DOMRef<HTMLDivElement
   let gridRef = useRef();
   let {alertProps} = useAlert();
 
-  console.log(styles);
-
   let slots = {
     icon: {UNSAFE_className: styles['spectrum-InLineAlert-icon'], gridArea: 'icon'},
     header: {UNSAFE_className: styles['spectrum-InLineAlert-header'], gridArea: 'header'},
