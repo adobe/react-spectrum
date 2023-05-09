@@ -52,7 +52,6 @@ function InLineAlert(props: SpectrumInLineAlertProps, ref: DOMRef<HTMLDivElement
     icon: {UNSAFE_className: styles['spectrum-InLineAlert-icon'], gridArea: 'icon'},
     header: {UNSAFE_className: styles['spectrum-InLineAlert-header'], gridArea: 'header'},
     content: {UNSAFE_className: styles['spectrum-InLineAlert-content'], gridArea: 'content'},
-    buttonGroup: {UNSAFE_className: styles['spectrum-InLineAlert-buttonGroup'], gridArea: 'buttonGroup'}
   };
 
   let Icon = null;

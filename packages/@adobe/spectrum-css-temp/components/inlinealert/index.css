@@ -70,8 +70,7 @@ governing permissions and limitations under the License.
   column-gap: var(--spectrum-inlinealert-spacing-header-to-icon);
   grid-template-areas:
     "header      icon       "
-    "content     content    "
-    "buttonGroup buttonGroup";
+    "content     content    ";
   width: 100%;
 }
 
@@ -116,10 +115,3 @@ governing permissions and limitations under the License.
   font-size: var(--spectrum-inlinealert-content-font-size);
   line-height: var(--spectrum-inlinealert-content-line-height);
 }
-
-.spectrum-InLineAlert-buttonGroup {
-  display: flex;
-  justify-content: flex-end;
-  margin-block-start: var(--spectrum-inlinealert-spacing-header-content-button);
-}
-

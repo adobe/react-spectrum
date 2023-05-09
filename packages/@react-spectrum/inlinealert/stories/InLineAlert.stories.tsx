@@ -10,8 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button} from '@react-spectrum/button';
-import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Content, Header} from '@react-spectrum/view';
 import {InLineAlert} from '../';
 import {Meta, Story} from '@storybook/react';
@@ -55,21 +53,9 @@ const Template = (): Story<StoryArgs> => (args) => (
   </InLineAlert>
 );
 
-const ButtonTemplate = (): Story<StoryArgs> => (args) => (
-  <InLineAlert {...args}>
-    <Header>{args.title}</Header>
-    <Content>{args.content}</Content>
-    <ButtonGroup>
-      <Button variant="secondary" onPress={close}>Close</Button>
-    </ButtonGroup>
-  </InLineAlert>
-);
-
 export const Default = Template().bind({});
 export const LongContent = Template().bind({});
 LongContent.args = {
   title: 'Unable to process payment',
   content: 'There was an error processing your payment. Please check your credit card information is correct, then try again.'
 };
-
-export const WithButtons = ButtonTemplate().bind({});
