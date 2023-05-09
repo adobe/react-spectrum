@@ -66,5 +66,10 @@ const ButtonTemplate = (): Story<StoryArgs> => (args) => (
 );
 
 export const Default = Template().bind({});
+export const LongContent = Template().bind({});
+LongContent.args = {
+  title: 'Unable to process payment',
+  content: 'There was an error processing your payment. Please check your credit card information is correct, then try again.'
+};
 
 export const WithButtons = ButtonTemplate().bind({});
