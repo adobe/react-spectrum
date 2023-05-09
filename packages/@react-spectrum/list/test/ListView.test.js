@@ -984,6 +984,56 @@ describe('ListView', function () {
       expect(announce).toHaveBeenCalledTimes(3);
     });
 
+    it('should support range selection across sections (pointer)', function () {
+      let onSelectionChange = jest.fn();
+      let tree = render(<DynamicSections onSelectionChange={onSelectionChange} disabledKeys={[]} selectionMode="multiple" selectionStyle="checkbox" />);
+
+      triggerPress(getRow(tree, 'Aardvark'));
+      checkSelection(onSelectionChange, ['Aardvark']);
+      onSelectionChange.mockClear();
+      triggerPress(getRow(tree, 'Daniel'), {shiftKey: true});
+      checkSelection(onSelectionChange, ['Aardvark', 'Kangaroo', 'Snake', 'Badger', 'Red Panda', 'Capybara', 'Danni', 'Devon', 'Ross', 'Daniel']);
+      onSelectionChange.mockClear();
+      expect(announce).toHaveBeenLastCalledWith('10 items selected.');
+      expect(announce).toHaveBeenCalledTimes(2);
+    });
+
+    it('should support range selection across sections (Arrow Down)', function () {
+      let onSelectionChange = jest.fn();
+      let tree = render(<DynamicSections onSelectionChange={onSelectionChange} disabledKeys={[]} selectionMode="multiple" selectionStyle="checkbox" />);
+
+      let start = getRow(tree, 'Capybara');
+      triggerPress(start);
+      checkSelection(onSelectionChange, ['Capybara']);
+      expect(announce).toHaveBeenLastCalledWith('Capybara selected.');
+      expect(announce).toHaveBeenCalledTimes(1);
+      onSelectionChange.mockClear();
+      fireEvent.keyDown(start, {key: 'ArrowDown', shiftKey: true});
+      fireEvent.keyUp(start, {key: 'ArrowDown', shiftKey: true});
+      checkSelection(onSelectionChange, ['Capybara', 'Danni']);
+      onSelectionChange.mockClear();
+      expect(announce).toHaveBeenLastCalledWith('Danni selected. 2 items selected.');
+      expect(announce).toHaveBeenCalledTimes(2);
+    });
+
+    it('should support range selection across sections (Arrow Down)', function () {
+      let onSelectionChange = jest.fn();
+      let tree = render(<DynamicSections onSelectionChange={onSelectionChange} disabledKeys={[]} selectionMode="multiple" selectionStyle="checkbox" />);
+
+      let start = getRow(tree, 'Danni');
+      triggerPress(start);
+      checkSelection(onSelectionChange, ['Danni']);
+      expect(announce).toHaveBeenLastCalledWith('Danni selected.');
+      expect(announce).toHaveBeenCalledTimes(1);
+      onSelectionChange.mockClear();
+      fireEvent.keyDown(start, {key: 'ArrowUp', shiftKey: true});
+      fireEvent.keyUp(start, {key: 'ArrowUp', shiftKey: true});
+      checkSelection(onSelectionChange, ['Danni', 'Capybara']);
+      onSelectionChange.mockClear();
+      expect(announce).toHaveBeenLastCalledWith('Capybara selected. 2 items selected.');
+      expect(announce).toHaveBeenCalledTimes(2);
+    });
+
     it('should support select all and clear all via keyboard', function () {
       let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple'});
 
@@ -1008,6 +1058,7 @@ describe('ListView', function () {
       expect(announce).toHaveBeenLastCalledWith('No items selected.');
       expect(announce).toHaveBeenCalledTimes(3);
     });
+
 
     describe('onAction', function () {
       installPointerEvent();
@@ -1660,5 +1711,18 @@ describe('ListView', function () {
       expect(body.scrollTop).toBe(80);
       expect(document.activeElement).toBe(getRow(tree, 'Section 0, Item 1'));
     });
+  });
+
+  it('should announce when focus moves between sections', function () {
+    let platformMock = jest.spyOn(navigator, 'platform', 'get').mockImplementation(() => 'MacIntel');
+    let tree = render(<DynamicSections />);
+    focusRow(tree, 'Red Panda');
+    expect(announce).toHaveBeenLastCalledWith('Entered section Animals, with 6 rows.');
+    announce.mockReset();
+    moveFocus('ArrowDown');
+    expect(announce).not.toHaveBeenCalled();
+    moveFocus('ArrowDown');
+    expect(announce).toHaveBeenLastCalledWith('Entered section People, with 10 rows.');
+    platformMock.mockRestore();
   });
 });

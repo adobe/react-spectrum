@@ -23,7 +23,7 @@ import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {Key, RefObject} from 'react';
 import {listMap} from './utils';
 import {ListState} from '@react-stately/list';
-import {useGridSelectionAnnouncement, useHighlightSelectionDescription} from '@react-aria/grid';
+import {useGridSectionAnnouncement, useGridSelectionAnnouncement, useHighlightSelectionDescription} from '@react-aria/grid';
 import {useHasTabbableChild} from '@react-aria/focus';
 import {useSelectableList} from '@react-aria/selection';
 
@@ -113,6 +113,7 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
   }
 
   useGridSelectionAnnouncement({}, state);
+  useGridSectionAnnouncement(state);
 
   return {
     gridProps
