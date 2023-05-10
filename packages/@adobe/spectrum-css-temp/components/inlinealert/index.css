@@ -69,8 +69,8 @@ governing permissions and limitations under the License.
   grid-template-rows: auto auto auto;
   column-gap: var(--spectrum-inlinealert-spacing-header-to-icon);
   grid-template-areas:
-    "header      icon       "
-    "content     content    ";
+    "header      icon   "
+    "content     content";
   width: 100%;
 }
 
