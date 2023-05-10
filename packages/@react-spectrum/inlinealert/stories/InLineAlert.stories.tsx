@@ -16,9 +16,6 @@ import {Meta} from '@storybook/react';
 import React from 'react';
 import {SpectrumInLineAlertProps} from '@react-types/inlinealert';
 
-// see https://github.com/storybookjs/storybook/issues/8426#issuecomment-669021940
-const StoryFn = ({storyFn}) => storyFn();
-
 type StoryArgs = SpectrumInLineAlertProps & {title: string, content: string};
 
 const meta: Meta<StoryArgs> = {
@@ -39,8 +36,7 @@ const meta: Meta<StoryArgs> = {
     content: {
       control: 'text'
     }
-  },
-  decorators: [storyFn => <StoryFn storyFn={storyFn} />]
+  }
 };
 
 export default meta;

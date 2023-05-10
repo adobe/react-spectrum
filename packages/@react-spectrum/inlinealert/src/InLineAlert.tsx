@@ -44,9 +44,8 @@ function InLineAlert(props: SpectrumInLineAlertProps, ref: DOMRef<HTMLDivElement
   let domRef = useDOMRef(ref);
 
   let slots = {
-    icon: {UNSAFE_className: styles['spectrum-InLineAlert-icon'], gridArea: 'icon'},
-    header: {UNSAFE_className: styles['spectrum-InLineAlert-header'], gridArea: 'header'},
-    content: {UNSAFE_className: styles['spectrum-InLineAlert-content'], gridArea: 'content'}
+    header: {UNSAFE_className: styles['spectrum-InLineAlert-header']},
+    content: {UNSAFE_className: styles['spectrum-InLineAlert-content']}
   };
 
   let Icon = null;
@@ -67,7 +66,7 @@ function InLineAlert(props: SpectrumInLineAlertProps, ref: DOMRef<HTMLDivElement
       role="alert">
       <Grid UNSAFE_className={styles['spectrum-InLineAlert-grid']}>
         <SlotProvider slots={slots}>
-          {Icon && <Icon slot="icon" aria-label={iconAlt} />}
+          {Icon && <Icon UNSAFE_className={styles['spectrum-InLineAlert-icon']} aria-label={iconAlt} />}
           {children}
         </SlotProvider>
       </Grid>

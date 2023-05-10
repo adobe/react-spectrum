@@ -19,5 +19,8 @@ export interface SpectrumInLineAlertProps extends DOMProps, StyleProps {
    * @default 'neutral'
    */
   variant?: 'neutral' | 'info' | 'positive' | 'notice' | 'negative',
+  /**
+   * The contents of the In-line Alert.
+   */
   children: ReactNode
 }

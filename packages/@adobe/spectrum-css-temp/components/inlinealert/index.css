@@ -34,7 +34,7 @@ governing permissions and limitations under the License.
   /* Spacing*/
   --spectrum-inlinealert-spacing-edge-to-text: var(--spectrum-global-dimension-static-size-300);
   --spectrum-inlinealert-spacing-header-to-icon: var(--spectrum-global-dimension-static-size-300);
-  --spectrum-inlinealert-spacing-header-content-button: var(--spectrum-global-dimension-static-size-200);
+  --spectrum-inlinealert-spacing-header-content: var(--spectrum-global-dimension-static-size-200);
 
   /* Color */
   --spectrum-inlinealert-background-color: var(--spectrum-alias-background-color-default);
@@ -74,22 +74,20 @@ governing permissions and limitations under the License.
   width: 100%;
 }
 
-@media (forced-colors: active) {
-  .spectrum-InLineAlert {
-    --highcontrast-inlinealert-background-color: Background;
-    --highcontrast-inlinealert-header-color: CanvasText;
-    --highcontrast-inlinealert-content-color: CanvasText;
-    --highcontrast-inlinealert-border-and-icon-color: ButtonBorder;
-  }
+.spectrum-InLineAlert.spectrum-InLineAlert--neutral .spectrum-InLineAlert-grid {
+  grid-template-areas: "header" "content";
 }
 
 .spectrum-InLineAlert-icon {
+  grid-area: icon;
+
   inline-size: var(--spectrum-inlinealert-icon-size);
   block-size: var(--spectrum-inlinealert-icon-size);
 }
 
 .spectrum-InLineAlert-header {
   display: block;
+  grid-area: header;
 
   font-weight: var(--spectrum-inlinealert-heading-font-weight);
   font-style: var(--spectrum-inlinealert-heading-font-style);
@@ -102,7 +100,9 @@ governing permissions and limitations under the License.
 
 .spectrum-InLineAlert-content {
   display: block;
-  margin-block-start: var(--spectrum-inlinealert-spacing-header-content-button);
+  grid-area: content;
+
+  margin-block-start: var(--spectrum-inlinealert-spacing-header-content);
   margin-block-end: 0;
   margin-inline-start: 0;
   margin-inline-end: 0;
