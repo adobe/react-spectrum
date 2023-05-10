@@ -13,6 +13,7 @@
 import {AriaLabelingProps, DOMProps as SharedDOMProps} from '@react-types/shared';
 import {filterDOMProps, mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import React, {createContext, CSSProperties, ReactNode, RefCallback, RefObject, useCallback, useContext, useEffect, useRef, useState} from 'react';
+import ReactDOM from 'react-dom';
 
 // Override forwardRef types so generics work.
 declare function forwardRef<T, P = {}>(
@@ -216,7 +217,7 @@ function useAnimation(ref: RefObject<HTMLElement>, isActive: boolean, onEnd: () 
         let onAnimationEnd = (e: AnimationEvent) => {
           if (e.target === ref.current) {
             element.removeEventListener('animationend', onAnimationEnd);
-            onEnd();
+            ReactDOM.flushSync(() => {onEnd();});
           }
         };
 
