@@ -38,7 +38,7 @@ export interface DropZoneRenderProps {
    */
   isDropTarget: boolean
 }
-// possibly add isDisabled prop in the future
+// note: possibly add isDisabled prop in the future
 export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'onDropActivate' | 'onInsert' | 'onRootDrop' | 'onItemDrop' | 'onReorder'>, 
   RenderProps<DropZoneRenderProps>, SlotProps {}
 
@@ -114,22 +114,23 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
     <Provider
       values={[
         [InputContext, {ref: inputRef, type: 'file', style: {display: 'none'}, onChange: onInputChange}],
-        [LinkContext, {slot: 'file', onPress: () => inputRef.current?.click(), ref: uploadLinkRef}],
+        [LinkContext, {slot: 'file', onPress: () => inputRef.current?.click(), ref: uploadLinkRef}], 
         [ButtonContext, {slot: 'file', onPress: () => inputRef.current?.click(), ref: uploadButtonRef}]
       ]}>
       <div
         {...mergeProps(dropProps, hoverProps, pressProps)}
-        {...renderProps}
+        {...renderProps}  
         ref={ref}
         slot={props.slot} 
-        data-hovered={isHovered || undefined} 
+        data-hovered={isHovered || undefined}
         data-focused={isFocused || undefined} 
-        data-focus-visible={isFocusVisible || undefined}> 
+        data-focus-visible={isFocusVisible || undefined}
+        data-drop-target={isDropTarget || undefined} > 
         {!hasInputLink && <VisuallyHidden>
           <button 
-            {...mergeProps(buttonProps, focusProps, clipboardProps)} 
+            {...mergeProps(buttonProps, focusProps, clipboardProps)}
             ref={buttonRef} 
-            // will want to update this to a translated string below
+            // follow up: update this to translated string
             aria-label="Press enter to select a file" /> 
         </VisuallyHidden>}
         {renderProps.children}

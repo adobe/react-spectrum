@@ -183,9 +183,24 @@ html {
 
   &[data-focus-visible][data-focused] {
     border-color: blue;
+    border-style: dashed;
   }
 
   &[data-hovered]{
     border-color: green;
+    border-style: dashed;
+  }
+
+  &[data-is-drop-target]{
+    border-color: purple;
+    border-style: dashed;
+  }
+}
+
+.draggable {
+  outline: none;
+  
+  &.focus-ring{
+    border: 2px solid blue;
   }
 }

@@ -14,9 +14,9 @@ import {action} from '@storybook/addon-actions';
 import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, TabPanels, Tabs, TabsProps, Text, TimeField, Tooltip, TooltipTrigger} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
-import React, {useState} from 'react';
+import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
+import React, {useRef, useState} from 'react';
 import styles from '../example/index.css';
-import {useClipboard, useDrag} from 'react-aria';
 import {useListData} from 'react-stately';
 
 export default {
@@ -678,21 +678,24 @@ function CustomTab(props) {
 }
 
 function Draggable() {
+  let buttonRef = useRef(null);
   let {dragProps, isDragging} = useDrag({
     getItems() {
       return [{
         'text/plain': 'hello world'}];
     }
   });
+  let {buttonProps} = useButton({elementType: 'div'}, buttonRef);
 
   return (
-    <div
-      {...dragProps}
-      role="button"
-      tabIndex={0}
-      className={`draggable ${isDragging ? 'dragging' : ''}`}>
-      Drag me
-    </div>
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+      <div
+        {...mergeProps(buttonProps, dragProps)}
+        ref={buttonRef}
+        className={classNames(styles, 'draggable', {['dragging']: isDragging})}>
+        Drag me
+      </div>
+    </FocusRing>
   );
 }
 
@@ -706,7 +709,10 @@ function Copyable() {
   });
 
   return (
-    <div role="textbox" tabIndex={0} {...clipboardProps}>
+    <div 
+      {...clipboardProps}
+      role="textbox" 
+      tabIndex={0}>
       Copy me 
     </div>
   );
@@ -740,7 +746,6 @@ export const DropzoneExampleWithLinkAndInput = (props) => (
   </div>
 );
 
-
 export const DropzoneExampleWithButton = (props) => (
   <div>
     <DropZone
@@ -754,7 +759,6 @@ export const DropzoneExampleWithButton = (props) => (
     </DropZone>
   </div>
 );
-
 
 export const DropzoneExampleWithDraggableObject = (props) => (
   <div>
@@ -770,7 +774,6 @@ export const DropzoneExampleWithDraggableObject = (props) => (
   </div>
 );
 
-// copying does not currently work 
 export const DropzoneExampleWithCopyableObject = (props) => (
   <div>
     <Copyable />
@@ -805,16 +808,5 @@ export const DropzoneWithRenderProps = (props) => (
         </div>
       )}
     </DropZone>
-  </div>
-);
-
-export const DropzoneExample = (props) => (
-  <div>
-    <DropZone
-      {...props}
-      className={styles.dropzone}
-      onDrop={action('OnDrop')}
-      onDropEnter={action('OnDropEnter')}
-      onDropExit={action('OnDropExit')} />
   </div>
 );
