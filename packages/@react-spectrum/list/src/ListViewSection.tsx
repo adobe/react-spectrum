@@ -12,7 +12,7 @@
 
 import {classNames} from '@react-spectrum/utils';
 import {getChildNodes} from '@react-stately/collections';
-import InsertionIndicator from './InsertionIndicator'
+import InsertionIndicator from './InsertionIndicator';
 import {layoutInfoToStyle, useVirtualizerItem} from '@react-aria/virtualizer';
 import listStyles from './styles.css';
 import {ListViewContext} from './ListView';

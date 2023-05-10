@@ -241,7 +241,7 @@ describe('ListView', function () {
   });
 
   it('renders a list with sections and selection', function () {
-    let {getByRole} = render(<DynamicSections selectionMode="multiple" selectionStyle="checkbox" />)
+    let {getByRole} = render(<DynamicSections selectionMode="multiple" selectionStyle="checkbox" />);
     let grid = getByRole('grid');
     expect(grid).toBeVisible();
     let rowgroups = within(grid).getAllByRole('rowgroup');

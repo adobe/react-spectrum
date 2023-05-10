@@ -240,7 +240,8 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     // This is to handle cases where a selectedKey is specified but the items aren't available (async loading) or the selected item's text value updates.
     // Only reset if the user isn't currently within the field so we don't erroneously modify user input.
     // If inputValue is controlled, it is the user's responsibility to update the inputValue when items change.
-    let selectedItemText = collection.getItem(selectedKey)?.textValue ?? '';
+    let isItem = collection.getItem(selectedKey)?.type === 'item';
+    let selectedItemText = isItem ? collection.getItem(selectedKey)?.textValue ?? '' : '';
     if (!isFocused && selectedKey != null && props.inputValue === undefined && selectedKey === lastSelectedKey.current) {
       if (lastSelectedKeyText.current !== selectedItemText) {
         lastValue.current = selectedItemText;
