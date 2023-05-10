@@ -75,6 +75,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-InLineAlert.spectrum-InLineAlert--neutral .spectrum-InLineAlert-grid {
+  column-gap: 0;
   grid-template-areas: "header" "content";
 }
 
