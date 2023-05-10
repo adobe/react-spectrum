@@ -913,19 +913,6 @@ export function DnDSections(props) {
   });
   let acceptedDragTypes = ['file', 'folder', 'text/plain'];
 
-
-  // TODO: List of dnd bugs with sections. Double check these now that I pulled in TableView's Section DnD logic
-  //  1. Need to adapt the below handlers and stuff to work with sections/useTreeData.
-  //  2. keyboard DnD navigation works for the most part, drop targets are preserved. However, there are
-  //  some things that will need to be updated, namely that we need to take into account the sections when adding insertion indicators
-  //  At the moment, I cannot drop after the last element in a section, the next drop indicator is in the next section before its first item.
-  //  3. Mouse drag and drop is borked, maybe because of sections being recognized as drop target? Looks to be that the section and header is considered
-  //  an item, ideally we'd disallow those. Maybe somethingin getAllowedDropOperation or something we should automatically detect in ListDropTargetDelegate/drop hooks
-
-  // Scenarios to consider:
-  // 1. What if root drop is enabled? We don't want to allow sections with items that don't belong to any sections, but we'd be relying
-  // on the user to handle that case
-
   // list 1 should allow on item drops and external drops, but disallow reordering/internal drops
   let {dragAndDropHooks: dragAndDropHooksList1} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => {
@@ -1095,7 +1082,6 @@ export function DnDSections(props) {
         let keysToRemove = itemsToAppend.map(item => item.identifier);
         list2.remove(...keysToRemove);
       }
-      // TODO: droping onto a folder doesn't seem to increase the number of items within in, double check
       list2.append(target.key, ...itemsToAppend);
     },
     acceptedDragTypes,
@@ -1135,7 +1121,7 @@ export function DnDSections(props) {
                   {item.value.type === 'folder' &&
                     <>
                       <Folder />
-                      <Text slot="description">{`contains ${item.value.childNodes?.length} dropped item(s)`}</Text>
+                      <Text slot="description">{`contains ${item.children?.length} dropped item(s)`}</Text>
                     </>
                   }
                 </Item>
@@ -1162,7 +1148,7 @@ export function DnDSections(props) {
                   {item.value.type === 'folder' &&
                     <>
                       <Folder />
-                      <Text slot="description">{`contains ${item.value.childNodes?.length} dropped item(s)`}</Text>
+                      <Text slot="description">{`contains ${item.children?.length} dropped item(s)`}</Text>
                     </>
                   }
                 </Item>
