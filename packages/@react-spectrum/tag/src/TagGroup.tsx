@@ -19,13 +19,24 @@ import {FocusRing, FocusScope} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListCollection, useListState} from '@react-stately/list';
-import {Provider, useProviderProps} from '@react-spectrum/provider';
+import {Provider, useProvider, useProviderProps} from '@react-spectrum/provider';
 import React, {ReactElement, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {Tag} from './Tag';
 import {useFormProps} from '@react-spectrum/form';
 import {useId, useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+
+const TAG_STYLES = {
+  medium: {
+    height: 24,
+    margin: 4
+  },
+  large: {
+    height: 30,
+    margin: 5
+  }
+};
 
 export interface SpectrumTagGroupProps<T> extends Omit<AriaTagGroupProps<T>, 'keyboardDelegate'>, StyleProps, SpectrumLabelableProps, Omit<SpectrumHelpTextProps, 'showErrorIcon'> {
   /** The label to display on the action button.  */
@@ -53,6 +64,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   let containerRef = useRef(null);
   let tagsRef = useRef(null);
   let {direction} = useLocale();
+  let {scale} = useProvider();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let [isCollapsed, setIsCollapsed] = useState(maxRows != null);
   let state = useListState(props);
@@ -109,7 +121,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           let end = direction === 'ltr' ? 'right' : 'left';
           let containerEnd = currContainerRef.parentElement.getBoundingClientRect()[end];
           let lastTagEnd = tags[index - 1]?.getBoundingClientRect()[end];
-          lastTagEnd += parseInt(window.getComputedStyle(tags[index - 1]).marginRight, 10);
+          lastTagEnd += TAG_STYLES[scale].margin;
           let availableWidth = containerEnd - lastTagEnd;
 
           while (availableWidth < buttonsWidth && index < state.collection.size && index > 0) {
@@ -132,7 +144,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         yield computeVisibleTagCount();
       });
     }
-  }, [maxRows, setTagState, direction, state.collection.size]);
+  }, [maxRows, setTagState, direction, scale, state.collection.size]);
 
   useResizeObserver({ref: containerRef, onResize: updateVisibleTagCount});
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -162,9 +174,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
     if (maxRows == null || !isCollapsed || !tagsRef.current) {
       return undefined;
     }
-    let tag = tagsRef.current.children[0];
-    let tagStyle = window.getComputedStyle(tag);
-    let maxHeight = (tag.getBoundingClientRect().height + parseInt(tagStyle.marginTop, 10) + parseInt(tagStyle.marginBottom, 10)) * maxRows;
+    let maxHeight = (TAG_STYLES[scale].height + (TAG_STYLES[scale].margin * 2)) * maxRows;
     return {maxHeight, overflow: 'hidden'};
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCollapsed, maxRows, tagsRef.current]);
