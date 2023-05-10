@@ -90,6 +90,8 @@ describe('ListView', function () {
     );
     // Allow for Virtualizer layout to update
     act(() => {jest.runAllTimers();});
+    // Allow section layout info to be updated as a result of the initial render's useVirtualizerItem call
+    act(() => {jest.runAllTimers();});
     return tree;
   };
 
@@ -635,19 +637,19 @@ describe('ListView', function () {
         expect(document.activeElement).toBe(getRow(tree, 'Foo 49'));
       });
 
-      // TODO: investigate why we land on item 24 in react 17 test
-      it.skip('should focus the row a page below (sections)', function () {
+      it('should focus the row a page below (sections)', function () {
         let tree = render(<ManySections />);
         let start = getRow(tree, 'Section 0, Item 0');
         triggerPress(start);
+
         moveFocus('PageDown');
-        expect(document.activeElement).toBe(getRow(tree, 'Section 0, Item 25'));
+        expect(document.activeElement).toBe(getRow(tree, 'Section 0, Item 24'));
         moveFocus('PageDown');
-        expect(document.activeElement).toBe(getRow(tree, 'Section 0, Item 49'));
+        expect(document.activeElement).toBe(getRow(tree, 'Section 0, Item 48'));
         moveFocus('PageDown');
-        expect(document.activeElement).toBe(getRow(tree, 'Section 1, Item 22'));
+        expect(document.activeElement).toBe(getRow(tree, 'Section 1, Item 21'));
         moveFocus('PageDown');
-        expect(document.activeElement).toBe(getRow(tree, 'Section 1, Item 46'));
+        expect(document.activeElement).toBe(getRow(tree, 'Section 1, Item 45'));
       });
     });
 
