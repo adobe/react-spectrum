@@ -73,26 +73,19 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         // Refs can be null at runtime.
         let currContainerRef: HTMLDivElement | null = containerRef.current;
         let currTagsRef: HTMLDivElement | null = tagsRef.current;
-        if (!currContainerRef || !currTagsRef) {
+        let tags = currTagsRef ? [...currTagsRef.children] : [];
+        if (!currContainerRef || tags.length === 0) {
           return {
             visibleTagCount: 0,
             showCollapseButton: false
           };
         }
 
-        let tags = [...currTagsRef.children];
-        let buttons = [...currContainerRef.parentElement.querySelectorAll('button')];
-        if (tags.length === 0 || buttons.length === 0) {
-          return {
-            visibleTagCount: 0,
-            showCollapseButton: false
-          };
-        }
+        // Count rows and show tags until we hit the maxRows.
         let currY = -Infinity;
         let rowCount = 0;
         let index = 0;
         let tagWidths: number[] = [];
-        // Count rows and show tags until we hit the maxRows.
         for (let tag of tags) {
           let {width, y} = tag.getBoundingClientRect();
 
@@ -109,18 +102,22 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         }
 
         // Remove tags until there is space for the collapse button and action button (if present) on the last row.
-        let buttonsWidth = buttons.reduce((acc, curr) => acc += curr.getBoundingClientRect().width, 0);
-        buttonsWidth += parseInt(window.getComputedStyle(buttons[buttons.length - 1]).marginRight, 10) * 2;
-        let end = direction === 'ltr' ? 'right' : 'left';
-        let containerEnd = currContainerRef.parentElement.getBoundingClientRect()[end];
-        let lastTagEnd = tags[index - 1]?.getBoundingClientRect()[end];
-        lastTagEnd += parseInt(window.getComputedStyle(tags[index - 1]).marginRight, 10);
-        let availableWidth = containerEnd - lastTagEnd;
+        let buttons = [...currContainerRef.parentElement.querySelectorAll('button')];
+        if (buttons.length > 0) {
+          let buttonsWidth = buttons.reduce((acc, curr) => acc += curr.getBoundingClientRect().width, 0);
+          buttonsWidth += parseInt(window.getComputedStyle(buttons[buttons.length - 1]).marginRight, 10) * 2;
+          let end = direction === 'ltr' ? 'right' : 'left';
+          let containerEnd = currContainerRef.parentElement.getBoundingClientRect()[end];
+          let lastTagEnd = tags[index - 1]?.getBoundingClientRect()[end];
+          lastTagEnd += parseInt(window.getComputedStyle(tags[index - 1]).marginRight, 10);
+          let availableWidth = containerEnd - lastTagEnd;
 
-        while (availableWidth < buttonsWidth && index < state.collection.size && index > 0) {
-          availableWidth += tagWidths.pop();
-          index--;
+          while (availableWidth < buttonsWidth && index < state.collection.size && index > 0) {
+            availableWidth += tagWidths.pop();
+            index--;
+          }
         }
+
         return {
           visibleTagCount: Math.max(index, 1),
           showCollapseButton: index < state.collection.size
