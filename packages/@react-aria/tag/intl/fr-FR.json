@@ -1,3 +1,4 @@
 {
-  "remove": "Appuyez sur Espace ou Supprimer pour supprimer la balise."
+  "removeButtonLabel": "Supprimer",
+  "removeDescription": "Appuyez sur Supprimer pour supprimer l’étiquette."
 }

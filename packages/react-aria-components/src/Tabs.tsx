@@ -124,7 +124,7 @@ function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
       slot={props.slot}
       data-orientation={orientation}>
       <InternalTabsContext.Provider value={{state, setState, orientation}}>
-        {props.children}
+        {renderProps.children}
       </InternalTabsContext.Provider>
     </div>
   );
@@ -185,7 +185,7 @@ function TabList<T extends object>(props: TabListProps<T>, ref: ForwardedRef<HTM
  * A TabList is used within Tabs to group tabs that a user can switch between.
  * The ids of the items within the <TabList> must match up with a corresponding item inside the <TabPanels>.
  */
-const _TabList = (forwardRef as forwardRefType)(TabList);
+const _TabList = /*#__PURE__*/ (forwardRef as forwardRefType)(TabList);
 export {_TabList as TabList};
 
 /**

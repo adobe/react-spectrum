@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Meta, Story} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import {ProgressBar} from '../';
 import React, {CSSProperties} from 'react';
 import {SpectrumProgressBarProps} from '@react-types/progress';
@@ -31,29 +31,37 @@ const grayedBoxStyle: CSSProperties = {
   justifyContent: 'center'
 };
 
-const Template = (): Story<SpectrumProgressBarProps> => (args) => (
-  <ProgressBar {...args} />
-);
+export const Default = {
+  args: {label: 'Progress label', value: 50}
+};
 
+export const SizeS = {
+  args: {...Default.args, size: 'S'}
+};
 
-export const Default = Template().bind({});
-Default.args = {label: 'Progress label', value: 50};
+export const ShowValueLabelFalse = {
+  args: {...Default.args, showValueLabel: false}
+};
 
-export const SizeS = Template().bind({});
-SizeS.args = {...Default.args, size: 'S'};
+export const LabelPositionSide = {
+  args: {...Default.args, labelPosition: 'side'}
+};
 
-export const ShowValueLabelFalse = Template().bind({});
-ShowValueLabelFalse.args = {...Default.args, showValueLabel: false};
+export const OverBackground = {
+  args: {...Default.args, variant: 'overBackground'},
+  decorators: [
+    (Story) => (
+      <div style={grayedBoxStyle}>
+        <Story />
+      </div>
+    )
+  ]
+};
 
-export const LabelPositionSide = Template().bind({});
-LabelPositionSide.args = {...Default.args, labelPosition: 'side'};
+export const Value0 = {
+  args: {...Default.args, value: 0}
+};
 
-export const OverBackground = Template().bind({});
-OverBackground.args = {...Default.args, variant: 'overBackground'};
-OverBackground.decorators = [(Story) => <div style={grayedBoxStyle}><Story /></div>];
-
-export const Value0 = Template().bind({});
-Value0.args = {...Default.args, value: 0};
-
-export const Value100 = Template().bind({});
-Value100.args = {...Default.args, value: 100};
+export const Value100 = {
+  args: {...Default.args, value: 100}
+};

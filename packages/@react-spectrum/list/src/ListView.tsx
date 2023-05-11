@@ -290,6 +290,9 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
       {DragPreview && isListDraggable &&
         <DragPreview ref={preview}>
           {() => {
+            if (dragAndDropHooks.renderPreview) {
+              return dragAndDropHooks.renderPreview(dragState.draggingKeys, dragState.draggedKey);
+            }
             let item = state.collection.getItem(dragState.draggedKey);
             let itemCount = dragState.draggingKeys.size;
             let itemHeight = layout.getLayoutInfo(dragState.draggedKey).rect.height;

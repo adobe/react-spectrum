@@ -337,7 +337,7 @@ export function TabPanels<T>(props: SpectrumTabPanelsProps<T>) {
   const {tabState, tabProps} = useContext(TabContext);
   const {tabListState} = tabState;
 
-  const factory = nodes => new ListCollection(nodes);
+  const factory = useCallback(nodes => new ListCollection(nodes), []);
   const collection = useCollection({items: tabProps.items, ...props}, factory, {suppressTextValueWarning: true});
   const selectedItem = tabListState ? collection.getItem(tabListState.selectedKey) : null;
 

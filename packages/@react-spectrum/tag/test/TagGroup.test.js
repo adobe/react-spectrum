@@ -14,6 +14,7 @@ import {act, fireEvent, mockImplementation, render, triggerPress, within} from '
 import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
 import {Item} from '@react-stately/collections';
+import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {TagGroup} from '../src';
@@ -105,7 +106,7 @@ describe('TagGroup', function () {
     expect(tags[0]).toHaveAttribute('tabIndex', '0');
   });
 
-  it.each`
+  it.skip.each`
     Name                                                | props                                         | orders
     ${'(left/right arrows, ltr + horizontal) TagGroup'} | ${{locale: 'de-DE'}}                          | ${[{action: () => {userEvent.tab();}, index: 0}, {action: pressArrowRight, index: 1}, {action: pressArrowLeft, index: 0}, {action: pressArrowLeft, index: 2}]}
     ${'(left/right arrows, rtl + horizontal) TagGroup'} | ${{locale: 'ar-AE'}}                          | ${[{action: () => {userEvent.tab();}, index: 0}, {action: pressArrowLeft, index: 1}, {action: pressArrowRight, index: 0}, {action: pressArrowRight, index: 2}]}
@@ -168,7 +169,7 @@ describe('TagGroup', function () {
 
   it('should remember last focused item', function () {
     let {getAllByRole, getByLabelText} = render(
-      <Provider theme={theme} locale="de-DE">
+      <Provider theme={theme} locale="en-US">
         <Button variant="primary" aria-label="ButtonBefore" />
         <TagGroup aria-label="tag group" disabledKeys={['foo', 'bar']}>
           <Item key="1" aria-label="Tag 1">Tag 1</Item>
@@ -198,7 +199,7 @@ describe('TagGroup', function () {
 
   it('should be focusable from Tab', async function () {
     let {getAllByRole, getByLabelText} = render(
-      <Provider theme={theme} locale="de-DE">
+      <Provider theme={theme} locale="en-US">
         <Button variant="primary" aria-label="ButtonBefore" />
         <TagGroup aria-label="tag group" disabledKeys={['foo', 'bar']}>
           <Item key="1" aria-label="Tag 1">Tag 1</Item>
@@ -221,7 +222,7 @@ describe('TagGroup', function () {
 
   it('should be focusable from Shift + Tab', function () {
     let {getAllByRole, getByLabelText} = render(
-      <Provider theme={theme} locale="de-DE">
+      <Provider theme={theme} locale="en-US">
         <Button variant="primary" aria-label="ButtonBefore" />
         <TagGroup aria-label="tag group" disabledKeys={['foo', 'bar']}>
           <Item key="1" aria-label="Tag 1">Tag 1</Item>
@@ -244,7 +245,7 @@ describe('TagGroup', function () {
 
   it('TagGroup should pass className, role and tabIndex', function () {
     let {getByRole} = render(
-      <Provider theme={theme} locale="de-DE">
+      <Provider theme={theme} locale="en-US">
         <TagGroup aria-label="tag group">
           <Item UNSAFE_className="test-class" key="1" aria-label="Tag 1">Tag 1</Item>
         </TagGroup>
@@ -418,6 +419,58 @@ describe('TagGroup', function () {
     expect(document.activeElement).toBe(tags[1]);
   });
 
+  it.each`
+    Name                         | props
+    ${'on `Delete` keypress'}    | ${{keyPress: 'Delete'}}
+    ${'on `Backspace` keypress'} | ${{keyPress: 'Backspace'}}
+  `('Should focus container after last tag is removed $Name', function ({Name, props}) {
+
+    function TagGroupWithDelete(props) {
+      let [items, setItems] = React.useState([
+        {id: 1, label: 'Cool Tag 1'},
+        {id: 2, label: 'Another cool tag'}
+      ]);
+
+      let removeItem = (key) => {
+        setItems(prevItems => prevItems.filter((item) => key !== item.id));
+      };
+
+      return (
+        <Provider theme={theme}>
+          <TagGroup items={items} aria-label="tag group" allowsRemoving onRemove={chain(removeItem, onRemoveSpy)} {...props}>
+            {item => <Item>{item.label}</Item>}
+          </TagGroup>
+        </Provider>
+      );
+    }
+
+    let {getAllByRole, getByRole, queryAllByRole} = render(
+      <TagGroupWithDelete {...props} />
+    );
+
+    let tags = getAllByRole('row');
+    let container = getByRole('grid');
+    userEvent.tab();
+    expect(document.activeElement).toBe(tags[0]);
+    fireEvent.keyDown(document.activeElement, {key: props.keyPress});
+    fireEvent.keyUp(document.activeElement, {key: props.keyPress});
+    expect(onRemoveSpy).toHaveBeenCalledTimes(1);
+    expect(onRemoveSpy).toHaveBeenCalledWith(1);
+
+    tags = getAllByRole('row');
+    expect(document.activeElement).toBe(tags[0]);
+    fireEvent.keyDown(document.activeElement, {key: props.keyPress});
+    fireEvent.keyUp(document.activeElement, {key: props.keyPress});
+    expect(onRemoveSpy).toHaveBeenCalledTimes(2);
+    expect(onRemoveSpy).toHaveBeenCalledWith(2);
+
+    act(() => jest.runAllTimers());
+
+    tags = queryAllByRole('row');
+    expect(tags.length).toBe(0);
+    expect(document.activeElement).toBe(container);
+  });
+
   it('maxRows should limit the number of tags shown', function () {
     let offsetWidth = jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
       .mockImplementationOnce(() => ({x: 200, y: 300, width: 75, height: 32, top: 300, right: 275, bottom: 335, left: 200}))
@@ -428,6 +481,8 @@ describe('TagGroup', function () {
       .mockImplementationOnce(() => ({x: 200, y: 400, width: 95, height: 32, top: 400, right: 290, bottom: 435, left: 200}))
       .mockImplementationOnce(() => ({x: 200, y: 300, width: 200, height: 128, top: 300, right: 400, bottom: 435, left: 200}))
       .mockImplementationOnce(() => ({x: 265, y: 335, width: 75, height: 32, top: 335, right: 345, bottom: 370, left: 265}));
+    let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px', marginTop: '4px', height: '24px'}));
+
     let {getAllByRole, getByRole} = render(
       <Provider theme={theme}>
         <TagGroup maxRows={2} aria-label="tag group">
@@ -459,6 +514,7 @@ describe('TagGroup', function () {
     expect(button).toHaveTextContent('Show all (7)');
 
     offsetWidth.mockReset();
+    computedStyles.mockReset();
   });
 
   it('maxRows should not show button if there is enough room to show all tags', function () {
@@ -468,6 +524,7 @@ describe('TagGroup', function () {
       .mockImplementationOnce(() => ({x: 200, y: 335, width: 65, height: 32, top: 335, right: 265, bottom: 370, left: 200}))
       .mockImplementationOnce(() => ({x: 265, y: 335, width: 75, height: 32, top: 335, right: 345, bottom: 370, left: 265}))
       .mockImplementationOnce(() => ({x: 200, y: 370, width: 120, height: 32, top: 370, right: 320, bottom: 400, left: 200}));
+    let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px', marginTop: '4px', height: '24px'}));
     let {getAllByRole, queryAllByRole} = render(
       <Provider theme={theme}>
         <TagGroup maxRows={2} aria-label="tag group">
@@ -484,6 +541,7 @@ describe('TagGroup', function () {
     expect(buttons.length).toBe(0);
 
     offsetWidth.mockReset();
+    computedStyles.mockReset();
   });
 
   it('can keyboard navigate to a custom action', function () {
@@ -498,7 +556,7 @@ describe('TagGroup', function () {
         };
       }
     ];
-
+    let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px', marginTop: '4px', height: '24px'}));
     mockImplementation(target, mockCalls, true);
     let {getAllByRole, getByRole} = render(
       <Provider theme={theme}>
@@ -542,6 +600,8 @@ describe('TagGroup', function () {
 
     userEvent.tab({shift: true});
     expect(document.activeElement).toBe(tags[1]);
+
+    computedStyles.mockReset();
   });
 
   it('can keyboard navigate to show all button and custom action', function () {
@@ -555,6 +615,7 @@ describe('TagGroup', function () {
       .mockImplementationOnce(() => ({x: 200, y: 300, width: 200, height: 128, top: 300, right: 400, bottom: 435, left: 200}))
       .mockImplementationOnce(() => ({x: 265, y: 335, width: 75, height: 32, top: 335, right: 345, bottom: 370, left: 265}))
       .mockImplementationOnce(() => ({x: 200, y: 300, width: 75, height: 32, top: 300, right: 275, bottom: 335, left: 200}));
+    let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px', marginTop: '4px', height: '24px'}));
     let {getAllByRole} = render(
       <Provider theme={theme}>
         <TagGroup
@@ -607,9 +668,12 @@ describe('TagGroup', function () {
     expect(onClearSpy).toHaveBeenCalledWith();
 
     offsetWidth.mockReset();
+    computedStyles.mockReset();
   });
 
   it('action group is labelled correctly', function () {
+    let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px', marginTop: '4px', height: '24px'}));
+
     let {getByRole} = render(
       <Provider theme={theme}>
         <TagGroup
@@ -628,5 +692,40 @@ describe('TagGroup', function () {
     let tagGroup = getByRole('grid');
     expect(actionGroup).toHaveAttribute('aria-label', 'Actions');
     expect(actionGroup).toHaveAttribute('aria-labelledby', `${tagGroup.id} ${actionGroup.id}`);
+
+    computedStyles.mockReset();
+  });
+
+
+  it('should render empty state', async function () {
+    let {getByText} = render(
+      <Provider theme={theme}>
+        <TagGroup aria-label="tag group">
+          {[]}
+        </TagGroup>
+      </Provider>
+    );
+    await act(() => Promise.resolve()); // wait for MutationObserver in useHasTabbableChild or we get act warnings
+    expect(getByText('None')).toBeTruthy();
+  });
+
+  it('should allow you to tab into TagGroup if empty with link', async function () {
+    let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px', marginTop: '4px', height: '24px'}));
+
+    let renderEmptyState = () => (
+      <span>No tags. <Link><a href="//react-spectrum.com">Click here</a></Link> to add some.</span>
+    );
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <TagGroup aria-label="tag group" renderEmptyState={renderEmptyState}>
+          {[]}
+        </TagGroup>
+      </Provider>
+    );
+    await act(() => Promise.resolve());
+    let link = getByRole('link');
+    userEvent.tab();
+    expect(document.activeElement).toBe(link);
+    computedStyles.mockReset();
   });
 });

@@ -143,8 +143,7 @@ describe('SearchAutocomplete', function () {
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -268,6 +267,13 @@ describe('SearchAutocomplete', function () {
     });
 
     expect(searchAutocomplete).toHaveAttribute('aria-activedescendant', items[0].id);
+  });
+
+  it('supports custom data attributes', function () {
+    let {getByRole} = renderSearchAutocomplete({'data-testid': 'test'});
+
+    let searchAutocomplete = getByRole('combobox');
+    expect(searchAutocomplete).toHaveAttribute('data-testid', 'test');
   });
 
   describe('refs', function () {
@@ -815,6 +821,36 @@ describe('SearchAutocomplete', function () {
       items = within(listbox).getAllByRole('option');
       expect(items).toHaveLength(1);
       expect(searchAutocomplete).not.toHaveAttribute('aria-activedescendant');
+    });
+
+    it('input events are only fired once', function () {
+      let onKeyDown = jest.fn();
+      let onKeyUp = jest.fn();
+      let onFocus = jest.fn();
+      let onInputChange = jest.fn();
+      let onFocusChange = jest.fn();
+      let onBlur = jest.fn();
+      let {getByRole} = renderSearchAutocomplete({onKeyDown, onKeyUp, onFocus, onInputChange, onBlur, onFocusChange});
+
+      let searchAutocomplete = getByRole('combobox');
+      typeText(searchAutocomplete, 'w');
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(onKeyDown).toHaveBeenCalledTimes(1);
+      expect(onKeyUp).toHaveBeenCalledTimes(1);
+      expect(onFocus).toHaveBeenCalledTimes(1);
+      expect(onInputChange).toHaveBeenCalledTimes(1);
+      expect(onFocusChange).toHaveBeenCalledTimes(1);
+      expect(onBlur).toHaveBeenCalledTimes(0);
+
+      act(() => {
+        userEvent.tab();
+      });
+
+      expect(onBlur).toHaveBeenCalledTimes(1);
     });
   });
 

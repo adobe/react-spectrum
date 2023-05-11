@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Item, Keyboard, Menu, MenuContext, MenuTrigger, Popover, Section, Separator, Text} from '../';
+import {Button, Header, Item, Keyboard, Menu, MenuContext, MenuTrigger, Popover, Section, Separator, Text} from '../';
 import {fireEvent, render} from '@react-spectrum/test-utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -99,16 +99,30 @@ describe('Menu', () => {
     expect(separator).toHaveClass('react-aria-Separator');
   });
 
+  it('should support separators with custom class names', () => {
+    let {getByRole} = render(
+      <Menu aria-label="Actions">
+        <Item>Foo</Item>
+        <Separator className="my-separator" />
+        <Item>Bar</Item>
+      </Menu>
+    );
+
+    let separator = getByRole('separator');
+    expect(separator).toHaveClass('my-separator');
+  });
 
   it('should support sections', () => {
     let {getAllByRole} = render(
       <Menu aria-label="Sandwich contents" selectionMode="multiple">
-        <Section title="Veggies">
+        <Section>
+          <Header>Veggies</Header>
           <Item id="lettuce">Lettuce</Item>
           <Item id="tomato">Tomato</Item>
           <Item id="onion">Onion</Item>
         </Section>
-        <Section title="Protein">
+        <Section>
+          <Header>Protein</Header>
           <Item id="ham">Ham</Item>
           <Item id="tuna">Tuna</Item>
           <Item id="tofu">Tofu</Item>
@@ -124,6 +138,21 @@ describe('Menu', () => {
 
     expect(groups[0]).toHaveAttribute('aria-labelledby');
     expect(document.getElementById(groups[0].getAttribute('aria-labelledby'))).toHaveTextContent('Veggies');
+  });
+
+  it('should support dynamic collections', () => {
+    let items = [
+      {id: 'cat', name: 'Cat'},
+      {id: 'dog', name: 'Dog'}
+    ];
+    
+    let {getAllByRole} = render(
+      <Menu aria-label="Test" items={items}>
+        {(item) => <Item id={item.id}>{item.name}</Item>}
+      </Menu>
+    );
+
+    expect(getAllByRole('menuitem').map((it) => it.textContent)).toEqual(['Cat', 'Dog']);
   });
 
   it('should support focus ring', () => {
@@ -202,7 +231,10 @@ describe('Menu', () => {
     );
 
     let button = getByRole('button');
+    expect(button).not.toHaveAttribute('data-pressed');
+
     userEvent.click(button);
+    expect(button).toHaveAttribute('data-pressed');
 
     let menu = getByRole('menu');
     expect(getAllByRole('menuitem')).toHaveLength(5);

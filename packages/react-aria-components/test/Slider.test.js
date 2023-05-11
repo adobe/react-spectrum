@@ -53,6 +53,23 @@ describe('Slider', () => {
     expect(group.querySelector('.react-aria-SliderTrack')).toHaveAttribute('data-test', 'test');
   });
 
+  it('should support render props', () => {
+    let {getByTestId} = render(
+      <Slider orientation="vertical">
+        {({orientation}) => (
+          <div className={`slider-${orientation}`} data-testid="wrapper">
+            <Label>Opacity</Label>
+            <SliderOutput />
+            <SliderTrack>
+              <SliderThumb />
+            </SliderTrack>
+          </div>
+        )}
+      </Slider>
+    );
+    expect(getByTestId('wrapper')).toHaveClass('slider-vertical');
+  });
+
   it('should support slot', () => {
     let {getByRole} = render(
       <SliderContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
@@ -69,7 +86,7 @@ describe('Slider', () => {
     let {getByRole} = renderSlider({}, {className: ({isFocusVisible}) => `thumb ${isFocusVisible ? 'focus' : ''}`});
     let slider = getByRole('slider');
     let thumb = slider.closest('.thumb');
-    
+
     expect(thumb).not.toHaveAttribute('data-focus-visible');
     expect(thumb).not.toHaveClass('focus');
 
@@ -97,6 +114,22 @@ describe('Slider', () => {
     fireEvent.mouseUp(thumb);
     expect(thumb).not.toHaveAttribute('data-dragging');
     expect(thumb).not.toHaveClass('dragging');
+  });
+
+  it('should support hover state', () => {
+    let {getByRole} = renderSlider({}, {className: ({isHovered}) => `thumb ${isHovered ? 'hovered' : ''}`});
+    let thumb = getByRole('slider').closest('.thumb');
+
+    expect(thumb).not.toHaveAttribute('data-hovered');
+    expect(thumb).not.toHaveClass('hovered');
+
+    userEvent.hover(thumb);
+    expect(thumb).toHaveAttribute('data-hovered', 'true');
+    expect(thumb).toHaveClass('hovered');
+
+    userEvent.unhover(thumb);
+    expect(thumb).not.toHaveAttribute('data-hovered');
+    expect(thumb).not.toHaveClass('hovered');
   });
 
   it('should support disabled state', () => {
