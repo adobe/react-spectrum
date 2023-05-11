@@ -1020,7 +1020,7 @@ describe('DateRangePicker', function () {
       expect(endField).not.toHaveAttribute('aria-describedby');
 
       let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
-      expect(description).toBe('Selected Range: February 3, 2020, 8:00 AM to February 10, 2020, 10:00 AM');
+      expect(description).toBe('Selected Range: February 3, 2020 at 8:00 AM to February 10, 2020 at 10:00 AM');
     });
 
     it('should handle selected range description when start and end dates are the same', function () {
@@ -1034,7 +1034,7 @@ describe('DateRangePicker', function () {
       expect(endField).not.toHaveAttribute('aria-describedby');
 
       let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
-      expect(description).toBe('Selected Range: February 3, 2020, 8:00 AM to February 3, 2020, 8:00 AM');
+      expect(description).toBe('Selected Range: February 3, 2020 at 8:00 AM to February 3, 2020 at 8:00 AM');
     });
 
     it('should support format help text', function () {
