@@ -17,5 +17,5 @@ export {Menu} from './Menu';
 export {ActionMenu} from './ActionMenu';
 export {MenuDialogTrigger} from './MenuDialogTrigger';
 export {Item, Section} from '@react-stately/collections';
-export type {SpectrumMenuTriggerProps} from '@react-types/menu';
-export type {SpectrumActionMenuProps, SpectrumMenuProps} from '@react-types/menu';
+export type {SpectrumActionMenuProps, SpectrumMenuProps, SpectrumMenuTriggerProps} from '@react-types/menu';
+export type {SpectrumMenuDialogTriggerProps} from './MenuDialogTrigger';
