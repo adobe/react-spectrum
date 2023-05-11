@@ -38,11 +38,6 @@ describe('NumberField', function () {
     jest.useFakeTimers();
   });
 
-  afterAll(() => {
-    jest.useRealTimers();
-  });
-
-
   afterEach(() => {
     onChangeSpy.mockClear();
     onBlurSpy.mockClear();
@@ -932,7 +927,7 @@ describe('NumberField', function () {
     userEvent.type(textField, '(10)');
     expect(textField).toHaveAttribute('value', '(10)');
     expect(announce).toHaveBeenCalledTimes(3);
-    expect(announce).toHaveBeenLastCalledWith('؜−١٠٫٠٠ US$', 'assertive');
+    expect(announce).toHaveBeenLastCalledWith('‎−US$ 10.00', 'assertive');
     act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', '(US$10.00)');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
@@ -984,7 +979,7 @@ describe('NumberField', function () {
   it.each`
     Name              | props                                                    | locale     | expected
     ${'US Euros'}     | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'en-US'} | ${'€10.00'}
-    ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${'١٠٫٠٠ €'}
+    ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${'€ 10.00'}
     ${'French Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${'10,00 €'}
     ${'US JPY'}       | ${{formatOptions: {style: 'currency', currency: 'JPY'}}} | ${'en-US'} | ${'¥10'}
   `('$Name keeps formatted value on focus', ({props, locale, expected}) => {
@@ -1001,10 +996,10 @@ describe('NumberField', function () {
     Name                       | props                                                                       | locale     | expected
     ${'US Euros'}              | ${{defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}}}  | ${'en-US'} | ${['€10.00', '€11.00', '€9.00']}
     ${'French Euros'}          | ${{defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}}}  | ${'fr-FR'} | ${['10,00 €', '11,00 €', '9,00 €']}
-    ${'Arabic Euros'}          | ${{defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}}}  | ${'ar-AE'} | ${['١٠٫٠٠ €', '١١٫٠٠ €', '٩٫٠٠ €']}
+    ${'Arabic Euros'}          | ${{defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}}}  | ${'ar-AE'} | ${['€ 10.00', '€ 11.00', '€ 9.00']}
     ${'US Euros negative'}     | ${{defaultValue: -10, formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'en-US'} | ${['-€10.00', '-€9.00', '-€11.00']}
     ${'French Euros negative'} | ${{defaultValue: -10, formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['-10,00 €', '-9,00 €', '-11,00 €']}
-    ${'Arabic Euros negative'} | ${{defaultValue: -10, formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['\u061C-\u0661\u0660\u066B\u0660\u0660\xA0\u20AC', '\u061C-\u0669\u066B\u0660\u0660\xA0\u20AC', '\u061C-\u0661\u0661\u066B\u0660\u0660\xA0\u20AC']}
+    ${'Arabic Euros negative'} | ${{defaultValue: -10, formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['‎-€ 10.00', '‎-€ 9.00', '‎-€ 11.00']}
   `('$Name pressing increment & decrement keeps formatting', ({props, locale, expected}) => {
     let {textField, incrementButton, decrementButton} = renderNumberField({minValue: -15, ...props}, {locale});
 
@@ -1020,7 +1015,7 @@ describe('NumberField', function () {
     Name              | props                                                    | locale     | expected
     ${'US Euros'}     | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'en-US'} | ${['€10.00', '€11.00', '€9.00', '€9.00']}
     ${'French Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['10,00 €', '11,00 €', '9,00 €', '9,00 €']}
-    ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['١٠٫٠٠ €', '١١٫٠٠ €', '٩٫٠٠ €', '٩٫٠٠ €']}
+    ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['€ 10.00', '€ 11.00', '€ 9.00', '€ 9.00']}
   `('$Name pressing up arrow & down arrow keeps focus state formatting', ({props, locale, expected}) => {
     let {textField} = renderNumberField({defaultValue: 10, onKeyDown: onKeyDownSpy, onKeyUp: onKeyUpSpy, ...props}, {locale});
 
