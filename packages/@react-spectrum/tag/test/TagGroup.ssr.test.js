@@ -10,7 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-export {useSelectState} from './useSelectState';
+import {testSSR} from '@react-spectrum/test-utils';
 
-export type {SelectProps} from '@react-types/select';
-export type {SelectState, SelectStateOptions} from './useSelectState';
+describe('TagGroup SSR', function () {
+  it('should render without errors', async function () {
+    await testSSR(__filename, `
+      import {TagGroup, Item} from '../';
+      <TagGroup aria-label="Static TagGroup items example">
+        <Item>News</Item>
+        <Item>Travel</Item>
+        <Item>Gaming</Item>
+        <Item>Shopping</Item>
+      </TagGroup>
+    `);
+  });
+});
