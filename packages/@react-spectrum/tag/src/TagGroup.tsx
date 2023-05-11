@@ -85,8 +85,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         // Refs can be null at runtime.
         let currContainerRef: HTMLDivElement | null = containerRef.current;
         let currTagsRef: HTMLDivElement | null = tagsRef.current;
-        let tags = currTagsRef ? [...currTagsRef.children] : [];
-        if (!currContainerRef || tags.length === 0) {
+        if (!currContainerRef || !currTagsRef || state.collection.size === 0) {
           return {
             visibleTagCount: 0,
             showCollapseButton: false
@@ -94,6 +93,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         }
 
         // Count rows and show tags until we hit the maxRows.
+        let tags = [...currTagsRef.children];
         let currY = -Infinity;
         let rowCount = 0;
         let index = 0;
@@ -171,13 +171,12 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   let isEmpty = state.collection.size === 0;
 
   let containerStyle = useMemo(() => {
-    if (maxRows == null || !isCollapsed || !tagsRef.current) {
+    if (maxRows == null || !isCollapsed) {
       return undefined;
     }
     let maxHeight = (TAG_STYLES[scale].height + (TAG_STYLES[scale].margin * 2)) * maxRows;
     return {maxHeight, overflow: 'hidden'};
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isCollapsed, maxRows, tagsRef.current]);
+  }, [isCollapsed, maxRows, scale]);
 
   return (
     <FocusScope>
