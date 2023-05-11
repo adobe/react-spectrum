@@ -1,10 +1,11 @@
 
 import {action} from '@storybook/addon-actions';
-import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
+import {Cell, Column, Row, TableBody, TableHeader} from './RACCollections';
 import {chain} from '@react-aria/utils';
 import {Flex} from '@react-spectrum/layout';
 import {ItemDropTarget} from '@react-types/shared';
 import React from 'react';
+import {TableView} from '../';
 import {Text} from '@react-spectrum/text';
 import {useDragAndDrop} from '@react-spectrum/dnd';
 import {useListData} from '@react-stately/data';
@@ -60,8 +61,8 @@ export function DragExample(props?) {
       </TableHeader>
       <TableBody items={items}>
         {item => (
-          <Row>
-            {key => <Cell>{item[key]}</Cell>}
+          <Row columns={columns}>
+            {column => <Cell>{item[column.key]}</Cell>}
           </Row>
         )}
       </TableBody>
@@ -140,8 +141,8 @@ export function ReorderExample(props) {
       </TableHeader>
       <TableBody items={list.items}>
         {item => (
-          <Row>
-            {key => <Cell>{item[key]}</Cell>}
+          <Row columns={columns}>
+            {column => <Cell>{item[column.key]}</Cell>}
           </Row>
         )}
       </TableBody>
@@ -380,8 +381,8 @@ export function DragBetweenTablesExample(props) {
           </TableHeader>
           <TableBody items={list1.items}>
             {(item: any) => (
-              <Row>
-                {key => <Cell>{item[key]}</Cell>}
+              <Row columns={itemColumns}>
+                {column => <Cell>{item[column.key]}</Cell>}
               </Row>
             )}
           </TableBody>
@@ -395,8 +396,8 @@ export function DragBetweenTablesExample(props) {
           </TableHeader>
           <TableBody items={list2.items}>
             {(item: any) => (
-              <Row>
-                {key => <Cell>{item[key]}</Cell>}
+              <Row columns={itemColumns}>
+                {column => <Cell>{item[column.key]}</Cell>}
               </Row>
             )}
           </TableBody>
@@ -534,8 +535,8 @@ export function DragBetweenTablesRootOnlyExample(props) {
           </TableHeader>
           <TableBody items={list1.items}>
             {(item: any) => (
-              <Row>
-                {key => <Cell>{item[key]}</Cell>}
+              <Row columns={itemColumns}>
+                {column => <Cell>{item[column.key]}</Cell>}
               </Row>
             )}
           </TableBody>
@@ -549,8 +550,8 @@ export function DragBetweenTablesRootOnlyExample(props) {
           </TableHeader>
           <TableBody items={list2.items}>
             {(item: any) => (
-              <Row>
-                {key => <Cell>{item[key]}</Cell>}
+              <Row columns={itemColumns}>
+                {column => <Cell>{item[column.key]}</Cell>}
               </Row>
             )}
           </TableBody>

@@ -12,7 +12,7 @@
 
 jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, installPointerEvent, render as renderComponent, waitFor, within} from '@react-spectrum/test-utils';
-import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
+import {Cell, Column, Row, TableBody, TableHeader} from '../stories/RACCollections';
 import {CUSTOM_DRAG_TYPE} from '@react-aria/dnd/src/constants';
 import {DataTransfer, DataTransferItem, DragEvent, FileSystemDirectoryEntry, FileSystemFileEntry} from '@react-aria/dnd/test/mocks';
 import {DIRECTORY_DRAG_TYPE} from '@react-aria/dnd';
@@ -23,6 +23,7 @@ import {Flex} from '@react-spectrum/layout';
 import {globalDndState} from '@react-aria/dnd/src/utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {TableView} from '../';
 import {theme} from '@react-spectrum/theme-default';
 import {useDragAndDrop} from '@react-spectrum/dnd';
 import {useListData} from '@react-stately/data';
@@ -765,8 +766,8 @@ describe('TableView', function () {
                   </TableHeader>
                   <TableBody items={list1.items}>
                     {item => (
-                      <Row key={item.id} textValue={item.name}>
-                        {key => <Cell>{item[key]}</Cell>}
+                      <Row columns={columns} textValue={item.name}>
+                        {column => <Cell>{item[column.key]}</Cell>}
                       </Row>
                     )}
                   </TableBody>
@@ -782,8 +783,8 @@ describe('TableView', function () {
                   </TableHeader>
                   <TableBody items={list2.items}>
                     {item => (
-                      <Row key={item.id} textValue={`${item.first_name} ${item.last_name}`}>
-                        {key => <Cell>{item[key]}</Cell>}
+                      <Row columns={columns} textValue={`${item.first_name} ${item.last_name}`}>
+                        {column => <Cell>{item[column.key]}</Cell>}
                       </Row>
                     )}
                   </TableBody>

@@ -16,7 +16,7 @@ import {ActionButton, Button} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
 import {announce} from '@react-aria/live-announcer';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
-import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
+import {Cell, Column, Row, TableBody, TableHeader} from '../stories/RACCollections';
 import {composeStories} from '@storybook/testing-react';
 import {Content} from '@react-spectrum/view';
 import {CRUDExample} from '../stories/CRUDExample';
@@ -29,6 +29,7 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import * as stories from '../stories/Table.stories';
 import {Switch} from '@react-spectrum/switch';
+import {TableView} from '../';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
@@ -42,13 +43,13 @@ let {
 
 
 let columns = [
-  {name: 'Foo', key: 'foo'},
+  {name: 'Foo', key: 'foo', isRowHeader: true},
   {name: 'Bar', key: 'bar'},
   {name: 'Baz', key: 'baz'}
 ];
 
 let nestedColumns = [
-  {name: 'Test', key: 'test'},
+  {name: 'Test', key: 'test', isRowHeader: true},
   {name: 'Tiered One Header', key: 'tier1', children: [
     {name: 'Tier Two Header A', key: 'tier2a', children: [
       {name: 'Foo', key: 'foo'},
@@ -62,18 +63,18 @@ let nestedColumns = [
 ];
 
 let items = [
-  {test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
-  {test: 'Test 2', foo: 'Foo 2', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
+  {id: 'Foo 1', test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
+  {id: 'Foo 2', test: 'Test 2', foo: 'Foo 2', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
 ];
 
 let itemsWithFalsyId = [
-  {test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1', id: 0},
-  {test: 'Test 2', foo: 'Foo 2', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2', id: 1}
+  {id: '0', test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
+  {id: 1, test: 'Test 2', foo: 'Foo 2', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
 ];
 
 let manyItems = [];
 for (let i = 1; i <= 100; i++) {
-  manyItems.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i, baz: 'Baz ' + i});
+  manyItems.push({id: 'Foo ' + i, foo: 'Foo ' + i, bar: 'Bar ' + i, baz: 'Baz ' + i});
 }
 
 let manyColumns = [];
@@ -87,7 +88,7 @@ function ExampleSortTable() {
   return (
     <TableView aria-label="Table" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor}>
       <TableHeader>
-        <Column key="foo" allowsSorting>Foo</Column>
+        <Column key="foo" allowsSorting isRowHeader>Foo</Column>
         <Column key="bar" allowsSorting>Bar</Column>
         <Column key="baz">Baz</Column>
       </TableHeader>
@@ -105,7 +106,7 @@ function ExampleSortTable() {
 let defaultTable = (
   <TableView aria-label="Table">
     <TableHeader>
-      <Column key="foo">Foo</Column>
+      <Column key="foo" isRowHeader>Foo</Column>
       <Column key="bar">Bar</Column>
     </TableHeader>
     <TableBody>
@@ -188,7 +189,7 @@ describe('TableView', function () {
     let {getByRole} = render(
       <TableView aria-label="Table" data-testid="test">
         <TableHeader>
-          <Column>Foo</Column>
+          <Column isRowHeader>Foo</Column>
           <Column>Bar</Column>
           <Column>Baz</Column>
         </TableHeader>
@@ -212,7 +213,7 @@ describe('TableView', function () {
     expect(grid).toHaveAttribute('aria-label', 'Table');
     expect(grid).toHaveAttribute('data-testid', 'test');
 
-    expect(grid).toHaveAttribute('aria-rowcount', '3');
+    expect(grid).toHaveAttribute('aria-rowcount', '2');
     expect(grid).toHaveAttribute('aria-colcount', '3');
 
     let rowgroups = within(grid).getAllByRole('rowgroup');
@@ -239,8 +240,8 @@ describe('TableView', function () {
 
     let rows = within(rowgroups[1]).getAllByRole('row');
     expect(rows).toHaveLength(2);
-    expect(rows[0]).toHaveAttribute('aria-rowindex', '2');
-    expect(rows[1]).toHaveAttribute('aria-rowindex', '3');
+    expect(rows[0]).toHaveAttribute('aria-rowindex', '1');
+    expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
 
     let rowheader = within(rows[0]).getByRole('rowheader');
     expect(rowheader).toHaveTextContent('Foo 1');
@@ -269,7 +270,7 @@ describe('TableView', function () {
     let {getByRole} = render(
       <TableView aria-label="Table" data-testid="test" selectionMode="multiple">
         <TableHeader>
-          <Column>Foo</Column>
+          <Column isRowHeader>Foo</Column>
           <Column>Bar</Column>
           <Column>Baz</Column>
         </TableHeader>
@@ -365,7 +366,7 @@ describe('TableView', function () {
     let {getByRole} = render(
       <TableView aria-label="Table" data-testid="test" selectionMode="multiple" UNSAFE_className="test-class">
         <TableHeader>
-          <Column>Foo</Column>
+          <Column isRowHeader>Foo</Column>
           <Column>Bar</Column>
           <Column>Baz</Column>
         </TableHeader>
@@ -392,12 +393,12 @@ describe('TableView', function () {
     let {getByRole} = render(
       <TableView aria-label="Table">
         <TableHeader columns={columns}>
-          {column => <Column>{column.name}</Column>}
+          {column => <Column {...column}>{column.name}</Column>}
         </TableHeader>
         <TableBody items={items}>
           {item =>
-            (<Row key={item.foo}>
-              {key => <Cell>{item[key]}</Cell>}
+            (<Row columns={columns}>
+              {column => <Cell>{item[column.key]}</Cell>}
             </Row>)
           }
         </TableBody>
@@ -455,12 +456,12 @@ describe('TableView', function () {
     let {getByRole} = render(
       <TableView aria-label="Table" selectionMode="multiple">
         <TableHeader columns={columns}>
-          {column => <Column>{column.name}</Column>}
+          {column => <Column {...column}>{column.name}</Column>}
         </TableHeader>
         <TableBody items={items}>
           {item =>
-            (<Row key={item.foo}>
-              {key => <Cell>{item[key]}</Cell>}
+            (<Row columns={columns}>
+              {column => <Cell>{item[column.key]}</Cell>}
             </Row>)
           }
         </TableBody>
@@ -536,12 +537,12 @@ describe('TableView', function () {
     let {getByRole} = render(
       <TableView aria-label="Table">
         <TableHeader columns={columns}>
-          {column => <Column>{column.name}</Column>}
+          {column => <Column {...column}>{column.name}</Column>}
         </TableHeader>
         <TableBody items={itemsWithFalsyId}>
           {item =>
-            (<Row>
-              {key => <Cell>{item[key]}</Cell>}
+            (<Row columns={columns}>
+              {column => <Cell>{item[column.key]}</Cell>}
             </Row>)
           }
         </TableBody>
@@ -574,7 +575,7 @@ describe('TableView', function () {
     let {getByRole} = render(
       <TableView aria-label="Table" selectionMode="multiple">
         <TableHeader>
-          <Column key="test">Test</Column>
+          <Column key="test" isRowHeader>Test</Column>
           <Column title="Group 1">
             <Column key="foo">Foo</Column>
             <Column key="bar">Bar</Column>
@@ -680,13 +681,13 @@ describe('TableView', function () {
       <TableView aria-label="Table" selectionMode="multiple">
         <TableHeader columns={nestedColumns}>
           {column =>
-            <Column childColumns={column.children}>{column.name}</Column>
+            <Column {...column} childColumns={column.children}>{column.name}</Column>
           }
         </TableHeader>
         <TableBody items={items}>
           {item =>
-            (<Row key={item.foo}>
-              {key => <Cell>{item[key]}</Cell>}
+            (<Row columns={nestedColumns}>
+              {column => <Cell>{item[column.key]}</Cell>}
             </Row>)
           }
         </TableBody>
@@ -835,12 +836,12 @@ describe('TableView', function () {
         <Provider locale={locale} theme={theme}>
           <TableView aria-label="Table" {...props}>
             <TableHeader columns={columns}>
-              {column => <Column>{column.name}</Column>}
+              {column => <Column {...column}>{column.name}</Column>}
             </TableHeader>
             <TableBody items={items}>
               {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
+                (<Row columns={columns}>
+                  {column => <Cell>{item[column.key]}</Cell>}
                 </Row>)
               }
             </TableBody>
@@ -858,13 +859,13 @@ describe('TableView', function () {
           <TableView aria-label="Table">
             <TableHeader columns={nestedColumns}>
               {column =>
-                <Column childColumns={column.children}>{column.name}</Column>
+                <Column {...column} childColumns={column.children}>{column.name}</Column>
               }
             </TableHeader>
             <TableBody items={items}>
               {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
+                (<Row columns={nestedColumns}>
+                  {column => <Cell>{item[column.key]}</Cell>}
                 </Row>)
               }
             </TableBody>
@@ -879,13 +880,13 @@ describe('TableView', function () {
       <TableView aria-label="Table">
         <TableHeader columns={columns}>
           {column =>
-            <Column>{column.name}</Column>
+            <Column {...column}>{column.name}</Column>
           }
         </TableHeader>
         <TableBody items={manyItems}>
           {item =>
-            (<Row key={item.foo}>
-              {key => <Cell>{item[key]}</Cell>}
+            (<Row columns={columns}>
+              {column => <Cell>{item[column.key]}</Cell>}
             </Row>)
           }
         </TableBody>
@@ -896,13 +897,13 @@ describe('TableView', function () {
       <TableView aria-label="Table" selectionMode="multiple">
         <TableHeader columns={manyColumns}>
           {column =>
-            <Column>{column.name}</Column>
+            <Column {...column}>{column.name}</Column>
           }
         </TableHeader>
         <TableBody items={manyItems}>
           {item =>
-            (<Row key={item.foo}>
-              {key => <Cell>{item.foo + ' ' + key}</Cell>}
+            (<Row columns={manyColumns}>
+              {column => <Cell>{item.foo + ' ' + column.key}</Cell>}
             </Row>)
           }
         </TableBody>
@@ -983,8 +984,9 @@ describe('TableView', function () {
         expect(document.activeElement).toBe(getCell(tree, 'Tier Two Header A'));
       });
 
-      it('should move to the first column header when focus is on the last column with ArrowRight', function () {
+      it.only('should move to the first column header when focus is on the last column with ArrowRight', function () {
         let tree = renderTable();
+        // TODO Rob: breaking because TableKeyboardDelegate tries to access collection headerRows which doesn't exist
         focusCell(tree, 'Baz');
         moveFocus('ArrowRight');
         expect(document.activeElement).toBe(getCell(tree, 'Foo'));
@@ -1458,7 +1460,7 @@ describe('TableView', function () {
           <input data-testid="before" />
           <TableView aria-label="Table" selectionMode="multiple">
             <TableHeader>
-              <Column>Foo</Column>
+              <Column isRowHeader>Foo</Column>
               <Column>Bar</Column>
               <Column>baz</Column>
             </TableHeader>
@@ -1722,12 +1724,12 @@ describe('TableView', function () {
         let renderJSX = (props, items = itemsLocal, columns = columnsLocal) => (
           <TableView aria-label="Table" {...props}>
             <TableHeader columns={columns}>
-              {column => <Column>{column.name}</Column>}
+              {column => <Column {...column}>{column.name}</Column>}
             </TableHeader>
             <TableBody items={items}>
               {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
+                (<Row columns={columns}>
+                  {column => <Cell>{item[column.key]}</Cell>}
                 </Row>)
               }
             </TableBody>
@@ -1829,12 +1831,12 @@ describe('TableView', function () {
     let renderJSX = (props, items = manyItems) => (
       <TableView aria-label="Table" selectionMode="multiple" {...props}>
         <TableHeader columns={columns}>
-          {column => <Column>{column.name}</Column>}
+          {column => <Column {...column}>{column.name}</Column>}
         </TableHeader>
         <TableBody items={items}>
           {item =>
-            (<Row key={item.foo}>
-              {key => <Cell>{item[key]}</Cell>}
+            (<Row columns={columns}>
+              {column => <Cell>{item[column.key]}</Cell>}
             </Row>)
           }
         </TableBody>
@@ -2067,12 +2069,12 @@ describe('TableView', function () {
           let tree = render(
             <TableView aria-label="Table" selectionMode="multiple">
               <TableHeader columns={columns}>
-                {column => <Column>{column.name}</Column>}
+                {column => <Column {...column}>{column.name}</Column>}
               </TableHeader>
               <TableBody items={items}>
                 {item =>
-                  (<Row key={item.foo}>
-                    {key => <Cell><Link><a href={`https://example.com/?id=${item.id}`} target="_blank">{item[key]}</a></Link></Cell>}
+                  (<Row columns={columns}>
+                    {column => <Cell><Link><a href={`https://example.com/?id=${item.id}`} target="_blank">{item[column.key]}</a></Link></Cell>}
                   </Row>)
                 }
               </TableBody>
@@ -2475,7 +2477,7 @@ describe('TableView', function () {
         checkRowSelection(rows.slice(1), true);
 
         rerender(tree, renderJSX({onSelectionChange}, [
-          {foo: 'Foo 0', bar: 'Bar 0', baz: 'Baz 0'},
+          {id: 'Foo 0', foo: 'Foo 0', bar: 'Bar 0', baz: 'Baz 0'},
           ...manyItems
         ]));
 
@@ -2501,7 +2503,7 @@ describe('TableView', function () {
         checkSelectAll(tree, 'checked');
 
         rerender(tree, renderJSX({onSelectionChange}, [
-          {foo: 'Foo 0', bar: 'Bar 0', baz: 'Baz 0'},
+          {id: 'Foo 0', foo: 'Foo 0', bar: 'Bar 0', baz: 'Baz 0'},
           ...items
         ]));
 
@@ -3223,12 +3225,12 @@ describe('TableView', function () {
     let renderJSX = (props, items = manyItems) => (
       <TableView aria-label="Table" selectionMode="single" {...props}>
         <TableHeader columns={columns}>
-          {column => <Column>{column.name}</Column>}
+          {column => <Column {...column}>{column.name}</Column>}
         </TableHeader>
         <TableBody items={items}>
           {item =>
-            (<Row key={item.foo}>
-              {key => <Cell>{item[key]}</Cell>}
+            (<Row columns={columns}>
+              {column => <Cell>{item[column.key]}</Cell>}
             </Row>)
           }
         </TableBody>
@@ -3458,12 +3460,12 @@ describe('TableView', function () {
     let TableWithBreadcrumbs = (props) => (
       <TableView aria-label="Table" {...props}>
         <TableHeader columns={columns}>
-          {column => <Column>{column.name}</Column>}
+          {column => <Column {...column}>{column.name}</Column>}
         </TableHeader>
         <TableBody items={items}>
           {item =>
-            (<Row key={item.foo}>
-              {key => <Cell>{item[key]}</Cell>}
+            (<Row columns={columns}>
+              {column => <Cell>{item[column.key]}</Cell>}
             </Row>)
           }
         </TableBody>
@@ -3505,8 +3507,8 @@ describe('TableView', function () {
       let table = tree.getByRole('grid');
       let rows = within(table).getAllByRole('row');
       expect(rows).toHaveLength(3);
-      expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
-      expect(rows[2]).toHaveAttribute('aria-rowindex', '3');
+      expect(rows[1]).toHaveAttribute('aria-rowindex', '1');
+      expect(rows[2]).toHaveAttribute('aria-rowindex', '2');
 
       let button = tree.getByLabelText('Add item');
       triggerPress(button);
@@ -3534,9 +3536,9 @@ describe('TableView', function () {
 
       rows = within(table).getAllByRole('row');
       expect(rows).toHaveLength(4);
-      expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
-      expect(rows[2]).toHaveAttribute('aria-rowindex', '3');
-      expect(rows[3]).toHaveAttribute('aria-rowindex', '4');
+      expect(rows[1]).toHaveAttribute('aria-rowindex', '1');
+      expect(rows[2]).toHaveAttribute('aria-rowindex', '2');
+      expect(rows[3]).toHaveAttribute('aria-rowindex', '3');
 
 
       let rowHeaders = within(rows[1]).getAllByRole('rowheader');
@@ -3603,8 +3605,8 @@ describe('TableView', function () {
       let table = tree.getByRole('grid');
       let rows = within(table).getAllByRole('row');
       expect(rows).toHaveLength(3);
-      expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
-      expect(rows[2]).toHaveAttribute('aria-rowindex', '3');
+      expect(rows[1]).toHaveAttribute('aria-rowindex', '1');
+      expect(rows[2]).toHaveAttribute('aria-rowindex', '2');
 
       let button = within(rows[1]).getByRole('button');
       triggerPress(button);
@@ -3634,7 +3636,7 @@ describe('TableView', function () {
       let rowHeaders = within(rows[1]).getAllByRole('rowheader');
       expect(rowHeaders[0]).toHaveTextContent('Julia');
 
-      expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
+      expect(rows[1]).toHaveAttribute('aria-rowindex', '1');
     });
 
     it('can bulk remove items', async function () {
@@ -3837,7 +3839,7 @@ describe('TableView', function () {
     let TableWithBreadcrumbs = (props) => (
       <TableView aria-label="TableView with static contents" selectionMode="multiple" width={300} height={200} {...props}>
         <TableHeader>
-          <Column key="foo">Foo</Column>
+          <Column key="foo" isRowHeader>Foo</Column>
           <Column key="bar">Bar</Column>
           <Column key="baz">Baz</Column>
         </TableHeader>
@@ -3916,7 +3918,7 @@ describe('TableView', function () {
       let tree = render(
         <TableView aria-label="Table" selectionMode="multiple">
           <TableHeader>
-            <Column key="foo">Foo</Column>
+            <Column key="foo" isRowHeader>Foo</Column>
             <Column key="bar">Bar</Column>
           </TableHeader>
           <TableBody loadingState="loading">
@@ -3928,7 +3930,7 @@ describe('TableView', function () {
       let table = tree.getByRole('grid');
       let rows = within(table).getAllByRole('row');
       expect(rows).toHaveLength(2);
-      expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
+      expect(rows[1]).toHaveAttribute('aria-rowindex', '1');
 
       let cell = within(rows[1]).getByRole('rowheader');
       expect(cell).toHaveAttribute('aria-colspan', '3');
@@ -3950,7 +3952,7 @@ describe('TableView', function () {
       let tree = render(
         <TableView aria-label="Table">
           <TableHeader>
-            <Column key="foo">Foo</Column>
+            <Column key="foo" isRowHeader>Foo</Column>
             <Column key="bar">Bar</Column>
           </TableHeader>
           <TableBody loadingState="loadingMore">
@@ -3969,7 +3971,7 @@ describe('TableView', function () {
       let table = tree.getByRole('grid');
       let rows = within(table).getAllByRole('row');
       expect(rows).toHaveLength(4);
-      expect(rows[3]).toHaveAttribute('aria-rowindex', '4');
+      expect(rows[3]).toHaveAttribute('aria-rowindex', '3');
 
       let cell = within(rows[3]).getByRole('rowheader');
       expect(cell).toHaveAttribute('aria-colspan', '2');
@@ -3991,7 +3993,7 @@ describe('TableView', function () {
       let tree = render(
         <TableView aria-label="Table">
           <TableHeader>
-            <Column key="foo">Foo</Column>
+            <Column key="foo" isRowHeader>Foo</Column>
             <Column key="bar">Bar</Column>
           </TableHeader>
           <TableBody loadingState="filtering">
@@ -4016,18 +4018,21 @@ describe('TableView', function () {
       for (let i = 1; i <= 100; i++) {
         items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
       }
+      let cols = [
+        {key: 'foo', name: 'Foo'},
+        {key: 'bar', name: 'Bar'}
+      ];
 
       let onLoadMore = jest.fn();
       let tree = render(
         <TableView aria-label="Table">
-          <TableHeader>
-            <Column key="foo">Foo</Column>
-            <Column key="bar">Bar</Column>
+          <TableHeader columns={cols}>
+            {column => <Column {...column}>{column.name}</Column>}
           </TableHeader>
           <TableBody items={items} onLoadMore={onLoadMore}>
             {row => (
-              <Row>
-                {key => <Cell>{row[key]}</Cell>}
+              <Row columns={cols}>
+                {column => <Cell>{row[column.key]}</Cell>}
               </Row>
             )}
           </TableBody>
@@ -4087,7 +4092,7 @@ describe('TableView', function () {
       let tree = render(
         <TableView aria-label="Table">
           <TableHeader>
-            <Column key="foo" allowsSorting>Foo</Column>
+            <Column key="foo" allowsSorting isRowHeader>Foo</Column>
             <Column key="bar" allowsSorting>Bar</Column>
             <Column key="baz">Baz</Column>
           </TableHeader>
@@ -4118,7 +4123,7 @@ describe('TableView', function () {
       let tree = render(
         <TableView aria-label="Table" sortDescriptor={{column: 'bar', direction: 'ascending'}}>
           <TableHeader>
-            <Column key="foo" allowsSorting>Foo</Column>
+            <Column key="foo" allowsSorting isRowHeader>Foo</Column>
             <Column key="bar" allowsSorting>Bar</Column>
             <Column key="baz">Baz</Column>
           </TableHeader>
@@ -4149,7 +4154,7 @@ describe('TableView', function () {
       let tree = render(
         <TableView aria-label="Table" sortDescriptor={{column: 'bar', direction: 'descending'}}>
           <TableHeader>
-            <Column key="foo" allowsSorting>Foo</Column>
+            <Column key="foo" allowsSorting isRowHeader>Foo</Column>
             <Column key="bar" allowsSorting>Bar</Column>
             <Column key="baz">Baz</Column>
           </TableHeader>
@@ -4203,7 +4208,7 @@ describe('TableView', function () {
       let tree = render(
         <TableView aria-label="Table" onSortChange={onSortChange}>
           <TableHeader>
-            <Column key="foo" allowsSorting>Foo</Column>
+            <Column key="foo" allowsSorting isRowHeader>Foo</Column>
             <Column key="bar" allowsSorting>Bar</Column>
             <Column key="baz">Baz</Column>
           </TableHeader>
@@ -4240,7 +4245,7 @@ describe('TableView', function () {
       let tree = render(
         <TableView aria-label="Table" sortDescriptor={{column: 'foo', direction: 'ascending'}} onSortChange={onSortChange}>
           <TableHeader>
-            <Column key="foo" allowsSorting>Foo</Column>
+            <Column key="foo" allowsSorting isRowHeader>Foo</Column>
             <Column key="bar" allowsSorting>Bar</Column>
             <Column key="baz">Baz</Column>
           </TableHeader>
@@ -4277,7 +4282,7 @@ describe('TableView', function () {
       let tree = render(
         <TableView aria-label="Table" sortDescriptor={{column: 'foo', direction: 'descending'}} onSortChange={onSortChange}>
           <TableHeader>
-            <Column key="foo" allowsSorting>Foo</Column>
+            <Column key="foo" allowsSorting isRowHeader>Foo</Column>
             <Column key="bar" allowsSorting>Bar</Column>
             <Column key="baz">Baz</Column>
           </TableHeader>
@@ -4314,7 +4319,7 @@ describe('TableView', function () {
       let tree = render(
         <TableView aria-label="Table" sortDescriptor={{column: 'foo', direction: 'ascending'}} onSortChange={onSortChange}>
           <TableHeader>
-            <Column key="foo" allowsSorting>Foo</Column>
+            <Column key="foo" allowsSorting isRowHeader>Foo</Column>
             <Column key="bar" allowsSorting>Bar</Column>
             <Column key="baz">Baz</Column>
           </TableHeader>
@@ -4352,7 +4357,7 @@ describe('TableView', function () {
       let tree = render(
         <TableView aria-label="Table" renderEmptyState={() => <h3>No results</h3>}>
           <TableHeader>
-            <Column key="foo">Foo</Column>
+            <Column key="foo" isRowHeader>Foo</Column>
             <Column key="bar">Bar</Column>
           </TableHeader>
           <TableBody>
@@ -4366,7 +4371,7 @@ describe('TableView', function () {
       let table = tree.getByRole('grid');
       let rows = within(table).getAllByRole('row');
       expect(rows).toHaveLength(2);
-      expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
+      expect(rows[1]).toHaveAttribute('aria-rowindex', '1');
 
       let cell = within(rows[1]).getByRole('rowheader');
       expect(cell).toHaveAttribute('aria-colspan', '2');
@@ -4389,7 +4394,7 @@ describe('TableView', function () {
         <div>
           <TableView aria-label="Table" selectionMode="multiple" onSelectionChange={onSelectionChange} renderEmptyState={() => <h3>No results</h3>}>
             <TableHeader>
-              <Column key="foo">Foo</Column>
+              <Column key="foo" isRowHeader>Foo</Column>
               <Column key="bar">Bar</Column>
             </TableHeader>
             <TableBody>

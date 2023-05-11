@@ -15,7 +15,7 @@ import {ActionGroup} from '@react-spectrum/actiongroup';
 import Add from '@spectrum-icons/workflow/Add';
 import {AlertDialog, Dialog, DialogContainer, useDialogContainer} from '@react-spectrum/dialog';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
-import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
+import {Cell, Column, Row, TableBody, TableHeader} from './RACCollections';
 import {Content} from '@react-spectrum/view';
 import Delete from '@spectrum-icons/workflow/Delete';
 import {Divider} from '@react-spectrum/divider';
@@ -27,6 +27,7 @@ import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import More from '@spectrum-icons/workflow/More';
 import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
 import React, {useState} from 'react';
+import {TableView} from '../';
 import {TextField} from '@react-spectrum/textfield';
 import {useListData} from '@react-stately/data';
 
@@ -37,6 +38,12 @@ export function CRUDExample(props) {
       {id: 2, firstName: 'Julia', lastName: 'Jones', birthday: 'February 10'}
     ]
   });
+  let columns = [
+    {key: 'firstName', title: 'First Name', isRowHeader: true},
+    {key: 'lastName', title: 'Last Name', isRowHeader: true},
+    {key: 'birthday', title: 'Birthday'},
+    {key: 'actions', title: 'Actions', align: 'end'}
+  ];
 
   let [dialog, setDialog] = useState(null);
   let createItem = (item) => {
@@ -62,7 +69,7 @@ export function CRUDExample(props) {
         selectedKeys={list.selectedKeys}
         onSelectionChange={list.setSelectedKeys}
         renderEmptyState={list.items.length === 0 ? () => <EmptyState /> : undefined}>
-        <TableHeader>
+        <TableHeader columns={columns}>
           <Column isRowHeader key="firstName">First Name</Column>
           <Column isRowHeader key="lastName">Last Name</Column>
           <Column key="birthday">Birthday</Column>
@@ -70,10 +77,10 @@ export function CRUDExample(props) {
         </TableHeader>
         <TableBody items={list.items}>
           {item =>
-            (<Row>
+            (<Row columns={columns}>
               {column =>
                 (<Cell>
-                  {column === 'actions'
+                  {column.key === 'actions'
                     ? <MenuTrigger align="end">
                       <ActionButton isQuiet aria-label="Actions"><More /></ActionButton>
                       <Menu onAction={action => setDialog({action, item})}>
@@ -81,7 +88,7 @@ export function CRUDExample(props) {
                         <Item key="delete">Delete...</Item>
                       </Menu>
                     </MenuTrigger>
-                    : item[column]
+                    : item[column.key]
                   }
                 </Cell>)
               }

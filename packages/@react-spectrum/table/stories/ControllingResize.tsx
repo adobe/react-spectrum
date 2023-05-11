@@ -11,13 +11,14 @@
  */
 
 import {Button} from '@react-spectrum/button';
-import {Cell, Column, Row, SpectrumColumnProps, TableBody, TableHeader, TableView} from '../';
+import {Cell, Column, Row, TableBody, TableHeader} from './RACCollections';
 import {ColumnSize} from '@react-types/table';
 import React, {Key, useCallback, useMemo, useState} from 'react';
+import {SpectrumColumnProps, TableView} from '../';
 
 export interface PokemonColumn extends Omit<SpectrumColumnProps<any>, 'children'> {
   name: string,
-  uid: string,
+  id: string,
   width?: ColumnSize | null
 }
 export interface PokemonData {
@@ -29,11 +30,11 @@ export interface PokemonData {
   height: string
 }
 let defaultColumns: PokemonColumn[] = [
-  {name: 'Name', uid: 'name', width: '1fr'},
-  {name: 'Type', uid: 'type', width: '1fr'},
-  {name: 'Height', uid: 'height'},
-  {name: 'Weight', uid: 'weight'},
-  {name: 'Level', uid: 'level', width: '5fr'}
+  {name: 'Name', id: 'name', width: '1fr', isRowHeader: true},
+  {name: 'Type', id: 'type', width: '1fr'},
+  {name: 'Height', id: 'height'},
+  {name: 'Weight', id: 'weight'},
+  {name: 'Level', id: 'level', width: '5fr'}
 ];
 
 let defaultRows: PokemonData[] = [
@@ -53,10 +54,10 @@ let defaultRows: PokemonData[] = [
 
 export function ControllingResize(props: {columns?: PokemonColumn[], rows?: PokemonData[], onResize?: (sizes: Map<Key, ColumnSize>) => void, [name: string]: any}) {
   let {columns = defaultColumns, rows = defaultRows, onResize, ...otherProps} = props;
-  let [widths, _setWidths] = useState<Map<Key, ColumnSize>>(() => new Map(columns.filter(col => col.width).map((col) => [col.uid as Key, col.width])));
+  let [widths, _setWidths] = useState<Map<Key, ColumnSize>>(() => new Map(columns.filter(col => col.width).map((col) => [col.id as Key, col.width])));
 
   let setWidths = useCallback((vals: Map<Key, ColumnSize>) => {
-    let controlledKeys = new Set(columns.filter(col => col.width).map((col) => col.uid as Key));
+    let controlledKeys = new Set(columns.filter(col => col.width).map((col) => col.id as Key));
     let newVals = new Map(Array.from(vals).filter(([key]) => controlledKeys.has(key)));
     _setWidths(newVals);
     onResize?.(vals);
@@ -79,12 +80,12 @@ export function ControllingResize(props: {columns?: PokemonColumn[], rows?: Poke
       <div key={renderKey}>
         <TableView aria-label="Table with resizable columns" onResize={setWidths} {...otherProps}>
           <TableHeader columns={cols}>
-            {column => <Column {...column} key={column.uid} width={widths.get(column.uid)} allowsResizing>{column.name}</Column>}
+            {column => <Column {...column} width={widths.get(column.id)} allowsResizing>{column.name}</Column>}
           </TableHeader>
           <TableBody items={rows}>
             {item => (
-              <Row>
-                {key => <Cell>{item[key]}</Cell>}
+              <Row columns={cols}>
+                {column => <Cell>{item[column.id]}</Cell>}
               </Row>
             )}
           </TableBody>

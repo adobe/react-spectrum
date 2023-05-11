@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
+import {Cell, Column, Row, TableBody, TableHeader} from './RACCollections';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
 import React from 'react';
+import {TableView} from '../';
 
 let columns = [
   {key: 'planName', title: 'Plan Name'},
@@ -45,6 +46,10 @@ export function HidingColumns(props) {
 
     setVisibleColumns(columns);
   };
+  let visibleColumnsArray = columns.filter(c => visibleColumns.has(c.key))
+  if (visibleColumnsArray.length > 0) {
+    visibleColumnsArray[0].isRowHeader = true;
+  }
 
   return (
     <Flex>
@@ -54,13 +59,13 @@ export function HidingColumns(props) {
         )}
       </Form>
       <TableView aria-label="Table with hideable columns" width={900} height={500} selectionMode="single" {...props}>
-        <TableHeader columns={columns.filter(c => visibleColumns.has(c.key))}>
-          {column => <Column>{column.title}</Column>}
+        <TableHeader columns={visibleColumnsArray}>
+          {column => <Column {...column}>{column.title}</Column>}
         </TableHeader>
         <TableBody items={data}>
           {item => (
-            <Row>
-              {key => <Cell>{item[key]}</Cell>}
+            <Row columns={visibleColumnsArray}>
+              {column => <Cell>{item[column.key]}</Cell>}
             </Row>
           )}
         </TableBody>

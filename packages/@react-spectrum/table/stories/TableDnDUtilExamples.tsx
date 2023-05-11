@@ -1,9 +1,10 @@
 
 import {action} from '@storybook/addon-actions';
-import {Cell, Column, Row, TableBody, TableHeader, TableView} from '..';
+import {Cell, Column, Row, TableBody, TableHeader} from './RACCollections';
 import {DIRECTORY_DRAG_TYPE, useDragAndDrop} from '@react-spectrum/dnd';
 import {Flex} from '@react-spectrum/layout';
 import React from 'react';
+import {TableView} from '..';
 import {Text} from '@react-spectrum/text';
 import {useListData} from '@react-stately/data';
 
@@ -31,27 +32,27 @@ let itemProcessor = async (items, acceptedDragTypes) => {
 };
 
 let folderList1 = [
-  {identifier: '1', type: 'file', name: 'Adobe Photoshop'},
-  {identifier: '2', type: 'file', name: 'Adobe XD'},
-  {identifier: '3', type: 'folder', name: 'Documents',  childNodes: []},
-  {identifier: '4', type: 'file', name: 'Adobe InDesign'},
-  {identifier: '5', type: 'folder', name: 'Utilities',  childNodes: []},
-  {identifier: '6', type: 'file', name: 'Adobe AfterEffects'}
+  {id: '1', identifier: '1', type: 'file', name: 'Adobe Photoshop'},
+  {id: '2', identifier: '2', type: 'file', name: 'Adobe XD'},
+  {id: '3', identifier: '3', type: 'folder', name: 'Documents',  childNodes: []},
+  {id: '4', identifier: '4', type: 'file', name: 'Adobe InDesign'},
+  {id: '5', identifier: '5', type: 'folder', name: 'Utilities',  childNodes: []},
+  {id: '6', identifier: '6', type: 'file', name: 'Adobe AfterEffects'}
 ];
 
 let folderList2 = [
-  {identifier: '7', type: 'folder', name: 'Pictures',  childNodes: []},
-  {identifier: '8', type: 'file', name: 'Adobe Fresco'},
-  {identifier: '9', type: 'folder', name: 'Apps',  childNodes: []},
-  {identifier: '10', type: 'file', name: 'Adobe Illustrator'},
-  {identifier: '11', type: 'file', name: 'Adobe Lightroom'},
-  {identifier: '12', type: 'file', name: 'Adobe Dreamweaver'},
-  {identifier: '13', type: 'unique_type', name: 'invalid drag item'}
+  {id: '7', identifier: '7', type: 'folder', name: 'Pictures',  childNodes: []},
+  {id: '8', identifier: '8', type: 'file', name: 'Adobe Fresco'},
+  {id: '9', identifier: '9', type: 'folder', name: 'Apps',  childNodes: []},
+  {id: '10', identifier: '10', type: 'file', name: 'Adobe Illustrator'},
+  {id: '11', identifier: '11', type: 'file', name: 'Adobe Lightroom'},
+  {id: '12', identifier: '12', type: 'file', name: 'Adobe Dreamweaver'},
+  {id: '13', identifier: '13', type: 'unique_type', name: 'invalid drag item'}
 ];
 
 let columns = [
     {name: 'ID', key: 'identifier'},
-    {name: 'Name', key: 'name'},
+    {name: 'Name', key: 'name', isRowHeader: true},
     {name: 'Type', key: 'type'}
 ];
 
@@ -78,12 +79,12 @@ export function DragExampleUtilHandlers(props) {
   return (
     <TableView aria-label="TableView with dnd util handlers" selectionMode="multiple" width={400} height={200} onSelectionChange={s => onSelectionChange([...s])} dragAndDropHooks={dragAndDropHooks} {...tableViewProps}>
       <TableHeader columns={columns}>
-        {column => <Column isRowHeader={column.key === 'name'}>{column.name}</Column>}
+        {column => <Column {...column}>{column.name}</Column>}
       </TableHeader>
       <TableBody items={list.items}>
         {item => (
-          <Row key={item.identifier}>
-            {key => <Cell>{item[key]}</Cell>}
+          <Row columns={columns}>
+            {column => <Cell>{item[column.key]}</Cell>}
           </Row>
         )}
       </TableBody>
@@ -150,8 +151,8 @@ export function ReorderExampleUtilHandlers(props) {
       </TableHeader>
       <TableBody items={list.items}>
         {item => (
-          <Row key={item.identifier}>
-            {key => <Cell>{item[key]}</Cell>}
+          <Row columns={columns}>
+            {column => <Cell>{item[column.key]}</Cell>}
           </Row>
         )}
       </TableBody>
@@ -207,8 +208,8 @@ export function ItemDropExampleUtilHandlers(props) {
       </TableHeader>
       <TableBody items={list.items}>
         {item => (
-          <Row key={item.identifier}>
-            {key => <Cell>{item[key]}</Cell>}
+          <Row columns={columns}>
+            {column => <Cell>{item[column.key]}</Cell>}
           </Row>
         )}
       </TableBody>
@@ -271,8 +272,8 @@ export function RootDropExampleUtilHandlers(props) {
           </TableHeader>
           <TableBody items={list1.items}>
             {(item) => (
-              <Row key={item.identifier}>
-                {key => <Cell>{item[key]}</Cell>}
+              <Row columns={columns}>
+                {column => <Cell>{item[column.key]}</Cell>}
               </Row>
             )}
           </TableBody>
@@ -286,8 +287,8 @@ export function RootDropExampleUtilHandlers(props) {
           </TableHeader>
           <TableBody items={list2.items}>
             {(item) => (
-              <Row key={item.identifier}>
-                {key => <Cell>{item[key]}</Cell>}
+              <Row columns={columns}>
+                {column => <Cell>{item[column.key]}</Cell>}
               </Row>
             )}
           </TableBody>
@@ -361,8 +362,8 @@ export function InsertExampleUtilHandlers(props) {
           </TableHeader>
           <TableBody items={list1.items}>
             {(item) => (
-              <Row key={item.identifier}>
-                {key => <Cell>{item[key]}</Cell>}
+              <Row columns={columns}>
+                {column => <Cell>{item[column.key]}</Cell>}
               </Row>
             )}
           </TableBody>
@@ -376,8 +377,8 @@ export function InsertExampleUtilHandlers(props) {
           </TableHeader>
           <TableBody items={list2.items}>
             {(item) => (
-              <Row key={item.identifier}>
-                {key => <Cell>{item[key]}</Cell>}
+              <Row columns={columns}>
+                {column => <Cell>{item[column.key]}</Cell>}
               </Row>
             )}
           </TableBody>
@@ -430,8 +431,8 @@ export function FinderDropUtilHandlers(props) {
           </TableHeader>
           <TableBody items={list1.items}>
             {(item) => (
-              <Row key={item.identifier}>
-                {key => <Cell>{item[key]}</Cell>}
+              <Row columns={columns}>
+                {column => <Cell>{item[column.key]}</Cell>}
               </Row>
             )}
           </TableBody>
@@ -445,8 +446,8 @@ export function FinderDropUtilHandlers(props) {
           </TableHeader>
           <TableBody items={list2.items}>
             {(item) => (
-              <Row key={item.identifier}>
-                {key => <Cell>{item[key]}</Cell>}
+              <Row columns={columns}>
+                {column => <Cell>{item[column.key]}</Cell>}
               </Row>
             )}
           </TableBody>
@@ -642,8 +643,8 @@ export function DragBetweenTablesComplex(props) {
           </TableHeader>
           <TableBody items={list1.items}>
             {(item) => (
-              <Row key={item.identifier}>
-                {key => <Cell>{item[key]}</Cell>}
+              <Row columns={columns}>
+                {column => <Cell>{item[column.key]}</Cell>}
               </Row>
             )}
           </TableBody>
@@ -657,8 +658,8 @@ export function DragBetweenTablesComplex(props) {
           </TableHeader>
           <TableBody items={list2.items}>
             {(item) => (
-              <Row key={item.identifier}>
-                {key => <Cell>{item[key]}</Cell>}
+              <Row columns={columns}>
+                {column => <Cell>{item[column.key]}</Cell>}
               </Row>
             )}
           </TableBody>
@@ -671,22 +672,22 @@ export function DragBetweenTablesComplex(props) {
 export function DragBetweenTablesOverride(props) {
   let list1 = useListData({
     initialItems: [
-      {identifier: '1', type: 'file', name: 'Adobe Photoshop'},
-      {identifier: '2', type: 'file', name: 'Adobe XD'},
-      {identifier: '3', type: 'file', name: 'Adobe InDesign'},
-      {identifier: '4', type: 'file', name: 'Adobe AfterEffects'}
+      {id: '1', identifier: '1', type: 'file', name: 'Adobe Photoshop'},
+      {id: '2', identifier: '2', type: 'file', name: 'Adobe XD'},
+      {id: '3', identifier: '3', type: 'file', name: 'Adobe InDesign'},
+      {id: '4', identifier: '4', type: 'file', name: 'Adobe AfterEffects'}
     ],
     getKey: (item) => item.identifier
   });
 
   let list2 = useListData({
     initialItems: [
-      {identifier: '7', type: 'folder', name: 'Pictures',  childNodes: []},
-      {identifier: '8', type: 'file', name: 'Adobe Fresco'},
-      {identifier: '9', type: 'folder', name: 'Apps',  childNodes: []},
-      {identifier: '10', type: 'file', name: 'Adobe Illustrator'},
-      {identifier: '11', type: 'file', name: 'Adobe Lightroom'},
-      {identifier: '12', type: 'file', name: 'Adobe Dreamweaver'}
+      {id: '7', identifier: '7', type: 'folder', name: 'Pictures',  childNodes: []},
+      {id: '8', identifier: '8', type: 'file', name: 'Adobe Fresco'},
+      {id: '9', identifier: '9', type: 'folder', name: 'Apps',  childNodes: []},
+      {id: '10', identifier: '10', type: 'file', name: 'Adobe Illustrator'},
+      {id: '11', identifier: '11', type: 'file', name: 'Adobe Lightroom'},
+      {id: '12', identifier: '12', type: 'file', name: 'Adobe Dreamweaver'}
     ],
     getKey: (item) => item.identifier
   });
@@ -758,8 +759,8 @@ export function DragBetweenTablesOverride(props) {
           </TableHeader>
           <TableBody items={list1.items}>
             {(item) => (
-              <Row key={item.identifier}>
-                {key => <Cell>{item[key]}</Cell>}
+              <Row columns={columns}>
+                {column => <Cell>{item[column.key]}</Cell>}
               </Row>
             )}
           </TableBody>
@@ -773,8 +774,8 @@ export function DragBetweenTablesOverride(props) {
           </TableHeader>
           <TableBody items={list2.items}>
             {(item) => (
-              <Row key={item.identifier}>
-                {key => <Cell>{item[key]}</Cell>}
+              <Row columns={columns}>
+                {column => <Cell>{item[column.key]}</Cell>}
               </Row>
             )}
           </TableBody>

@@ -89,6 +89,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
 
     // Wrap around to the first column
     let row = this.collection.headerRows[column.level];
+    console.log(key, row);
     for (let item of getChildNodes(row, this.collection)) {
       if (item.type === 'column') {
         return item.key;
