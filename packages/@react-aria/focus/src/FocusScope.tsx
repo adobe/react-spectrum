@@ -320,7 +320,7 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain: boolean) {
       }
       let focusNextInChildScope = (childScopeRef: ScopeRef): FocusableElement | null => {
         if (childScopeRef !== scopeRef) {
-          let walker = getFocusableTreeWalker(getScopeRoot(childScopeRef.current), {tabbable: true}, scope, scopeRef);
+          let walker = getFocusableTreeWalker(getScopeRoot(childScopeRef.current), {tabbable: true}, scope);
           walker.currentNode = focusedElement;
           let nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as FocusableElement;
           if (nextElement) {
@@ -568,7 +568,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
     let onFocus = () => {
       // If focusing an element in a child scope of the currently active scope, the child becomes active.
       // Moving out of the active scope to an ancestor is not allowed.
-      if ((!activeScope || isAncestorScope(activeScope, scopeRef)) &&             
+      if ((!activeScope || isAncestorScope(activeScope, scopeRef)) &&
       isElementInScope(document.activeElement, scopeRef.current)
       ) {
         activeScope = scopeRef;
@@ -709,7 +709,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
  * Create a [TreeWalker]{@link https://developer.mozilla.org/en-US/docs/Web/API/TreeWalker}
  * that matches all focusable/tabbable elements.
  */
-export function getFocusableTreeWalker(root: Element, opts?: FocusManagerOptions, scope?: Element[], scopeRef?: ScopeRef) {
+export function getFocusableTreeWalker(root: Element, opts?: FocusManagerOptions, scope?: Element[]) {
   let selector = opts?.tabbable ? TABBABLE_ELEMENT_SELECTOR : FOCUSABLE_ELEMENT_SELECTOR;
   let walker = document.createTreeWalker(
     root,
@@ -719,6 +719,16 @@ export function getFocusableTreeWalker(root: Element, opts?: FocusManagerOptions
         // Skip nodes inside the starting node.
         if (opts?.from?.contains(node)) {
           return NodeFilter.FILTER_REJECT;
+        }
+
+        let scopeRef = null;
+        if (scope) {
+          for (let node of focusScopeTree.traverse()) {
+            if (node.scopeRef.current === scope) {
+              scopeRef = node.scopeRef;
+              break;
+            }
+          }
         }
 
         if ((node as Element).matches(selector)
