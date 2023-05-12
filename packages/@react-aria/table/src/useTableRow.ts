@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusableElement} from '@react-types/shared';
-import {getRowLabelledBy} from './utils';
-import {GridRowAria, GridRowProps, useGridRow} from '@react-aria/grid';
-import {RefObject} from 'react';
-import {TableCollection} from '@react-types/table';
-import {TableState} from '@react-stately/table';
+import { FocusableElement } from '@react-types/shared';
+import { getRowLabelledBy } from './utils';
+import { GridRowAria, GridRowProps, useGridRow } from '@react-aria/grid';
+import { RefObject } from 'react';
+import { TableCollection } from '@react-types/table';
+import { TableState } from '@react-stately/table';
 
 /**
  * Provides the behavior and accessibility implementation for a row in a table.
@@ -23,8 +23,10 @@ import {TableState} from '@react-stately/table';
  * @param state - State of the table, as returned by `useTableState`.
  */
 export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T>, ref: RefObject<FocusableElement>): GridRowAria {
-  let {node} = props;
-  let {rowProps, ...states} = useGridRow<T, TableCollection<T>, TableState<T>>(props, state, ref);
+  let { node } = props;
+  let { rowProps, ...states } = useGridRow<T, TableCollection<T>, TableState<T>>(props, state, ref);
+
+  rowProps['aria-rowindex'] = state.collection.getItem(state.collection.head.lastChildKey).index + node.index + 2;
   return {
     rowProps: {
       ...rowProps,

@@ -19,7 +19,6 @@ import {Node} from '@react-types/shared';
 
 
 export class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {
-  headerRows: GridNode<T>[] = [];
   columns: GridNode<T>[] = [];
   rowHeaderColumnKeys: Set<Key> = new Set();
   head: NodeValue<T> = new NodeValue('tableheader', -1);
@@ -132,7 +131,6 @@ export class TableCollection<T> extends BaseCollection<T> implements ITableColle
 
   clone() {
     let collection = super.clone();
-    collection.headerRows = this.headerRows;
     collection.columns = this.columns;
     collection.rowHeaderColumnKeys = this.rowHeaderColumnKeys;
     collection.head = this.head;

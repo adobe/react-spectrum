@@ -68,7 +68,8 @@ export function useTable<T>(props: AriaTableProps<T>, state: TableState<T>, ref:
 
   // Override to include header rows
   if (isVirtualized) {
-    gridProps['aria-rowcount'] = state.collection.size + state.collection.headerRows.length;
+    // TODO Rob: fix headerRows
+    gridProps['aria-rowcount'] = state.collection.size; // + state.collection.headerRows.length;
   }
 
   let {column, direction: sortDirection} = state.sortDescriptor || {};
