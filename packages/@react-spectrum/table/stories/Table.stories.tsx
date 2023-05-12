@@ -992,7 +992,7 @@ function AsyncLoadingExample(props) {
     </div>
   );
 }
-// TODO ROB: sorting not working with async loading
+// TODO ROB: sorting not working with async loading // FIXED
 
 export const AsyncLoading: TableStory = {
   args: {
