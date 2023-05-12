@@ -64,6 +64,7 @@
     "@react-spectrum/switch": "^3.4.1",
     "@react-spectrum/table": "^3.8.0",
     "@react-spectrum/tabs": "^3.5.2",
+    "@react-spectrum/tag": "^3.0.0-rc.0",
     "@react-spectrum/text": "^3.4.1",
     "@react-spectrum/textfield": "^3.10.1",
     "@react-spectrum/theme-dark": "^3.5.1",
