@@ -541,6 +541,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     disallowEmptySelection,
     allowsDragging: isTableDraggable
   }), [selectionStyle, selectionMode, disallowEmptySelection, isTableDraggable]);
+
   return (
     <>
       <TableContext.Provider

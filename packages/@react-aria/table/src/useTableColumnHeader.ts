@@ -10,18 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, FocusableElement} from '@react-types/shared';
-import {getColumnHeaderId} from './utils';
-import {GridNode} from '@react-types/grid';
+import { DOMAttributes, FocusableElement } from '@react-types/shared';
+import { getColumnHeaderId } from './utils';
+import { GridNode } from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isAndroid, mergeProps, useDescription} from '@react-aria/utils';
-import {RefObject} from 'react';
-import {TableState} from '@react-stately/table';
-import {useFocusable} from '@react-aria/focus';
-import {useGridCell} from '@react-aria/grid';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
-import {usePress} from '@react-aria/interactions';
+import { isAndroid, mergeProps, useDescription } from '@react-aria/utils';
+import { RefObject } from 'react';
+import { TableState } from '@react-stately/table';
+import { useFocusable } from '@react-aria/focus';
+import { useGridCell } from '@react-aria/grid';
+import { useLocalizedStringFormatter } from '@react-aria/i18n';
+import { usePress } from '@react-aria/interactions';
 
 export interface AriaTableColumnHeaderProps<T> {
   /** An object representing the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader). Contains all the relevant information that makes up the column header. */
@@ -42,14 +42,14 @@ export interface TableColumnHeaderAria {
  * @param ref - The ref attached to the column header element.
  */
 export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, state: TableState<T>, ref: RefObject<FocusableElement>): TableColumnHeaderAria {
-  let {node} = props;
+  let { node } = props;
   let allowsSorting = node.props.allowsSorting;
   // if there are no focusable children, the column header will focus the cell
-  let {gridCellProps} = useGridCell({...props, focusMode: 'child'}, state, ref);
+  let { gridCellProps } = useGridCell({ ...props, focusMode: 'child' }, state, ref);
 
   let isSelectionCellDisabled = node.props.isSelectionCell && state.selectionManager.selectionMode === 'single';
 
-  let {pressProps} = usePress({
+  let { pressProps } = usePress({
     isDisabled: !allowsSorting || isSelectionCellDisabled,
     onPress() {
       state.sort(node.key);
@@ -58,7 +58,7 @@ export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, st
   });
 
   // Needed to pick up the focusable context, enabling things like Tooltips for example
-  let {focusableProps} = useFocusable({}, ref);
+  let { focusableProps } = useFocusable({}, ref);
 
   let ariaSort: DOMAttributes['aria-sort'] = null;
   let isSortedColumn = state.sortDescriptor?.column === node.key;
@@ -88,7 +88,7 @@ export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, st
         focusableProps,
         descriptionProps,
         // If the table is empty, make all column headers untabbable or programatically focusable
-        state.collection.size === 0 && {tabIndex: null}
+        state.collection.size === 0 && { tabIndex: null }
       ),
       role: 'columnheader',
       id: getColumnHeaderId(state, node.key),
