@@ -157,7 +157,7 @@ describe('TableView', function () {
   });
 
   afterEach(() => {
-    act(() => { jest.runAllTimers(); });
+    act(() => {jest.runAllTimers();});
   });
 
   let render = (children, scale = 'medium') => {
@@ -167,7 +167,7 @@ describe('TableView', function () {
       </Provider>
     );
     // account for table column resizing to do initial pass due to relayout from useTableColumnResizeState render
-    act(() => { jest.runAllTimers(); });
+    act(() => {jest.runAllTimers();});
     return tree;
   };
 
@@ -177,7 +177,7 @@ describe('TableView', function () {
         {children}
       </Provider>
     );
-    act(() => { jest.runAllTimers(); });
+    act(() => {jest.runAllTimers();});
     return newTree;
   };
   // I'd use tree.getByRole(role, {name: text}) here, but it's unbearably slow.
@@ -854,7 +854,7 @@ describe('TableView', function () {
           </TableView>
         </Provider>
       );
-      act(() => { jest.runAllTimers(); });
+      act(() => {jest.runAllTimers();});
       return tree;
     };
 
@@ -878,7 +878,7 @@ describe('TableView', function () {
           </TableView>
         </Provider>
       );
-      act(() => { jest.runAllTimers(); });
+      act(() => {jest.runAllTimers();});
       return tree;
     };
 
@@ -1380,7 +1380,7 @@ describe('TableView', function () {
         moveFocus('J');
         expect(document.activeElement).toBe(getCell(tree, 'Julia'));
 
-        act(() => { jest.runAllTimers(); });
+        act(() => {jest.runAllTimers();});
 
         moveFocus('J');
         expect(document.activeElement).toBe(getCell(tree, 'Julia'));
@@ -1399,7 +1399,7 @@ describe('TableView', function () {
         moveFocus('h');
         expect(document.activeElement).toBe(getCell(tree, 'John'));
 
-        act(() => { jest.runAllTimers(); });
+        act(() => {jest.runAllTimers();});
 
         moveFocus('J');
         expect(document.activeElement).toBe(getCell(tree, 'John'));
@@ -1415,7 +1415,7 @@ describe('TableView', function () {
         moveFocus('J');
         expect(document.activeElement).toBe(getCell(tree, 'Julia'));
 
-        act(() => { jest.runAllTimers(); });
+        act(() => {jest.runAllTimers();});
 
         moveFocus('S');
         expect(document.activeElement).toBe(getCell(tree, 'Sam'));
@@ -1682,7 +1682,7 @@ describe('TableView', function () {
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
-        act(() => { jest.runAllTimers(); });
+        act(() => {jest.runAllTimers();});
 
         rows = tree.getAllByRole('row');
         expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
@@ -1711,7 +1711,7 @@ describe('TableView', function () {
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
-        act(() => { jest.runAllTimers(); });
+        act(() => {jest.runAllTimers();});
 
         rows = tree.getAllByRole('row');
         expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
@@ -3006,7 +3006,7 @@ describe('TableView', function () {
           let onAction = jest.fn();
           let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
 
-          act(() => { jest.runAllTimers(); });
+          act(() => {jest.runAllTimers();});
           userEvent.click(document.body);
 
           fireEvent.pointerDown(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
@@ -3027,27 +3027,27 @@ describe('TableView', function () {
 
           fireEvent.pointerUp(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
           onSelectionChange.mockReset();
-          act(() => { jest.runAllTimers(); });
+          act(() => {jest.runAllTimers();});
 
           userEvent.click(getCell(tree, 'Foo 10'), {pointerType: 'touch'});
-          act(() => { jest.runAllTimers(); });
+          act(() => {jest.runAllTimers();});
           expect(announce).toHaveBeenLastCalledWith('Foo 10 selected. 2 items selected.');
           expect(announce).toHaveBeenCalledTimes(2);
           checkSelection(onSelectionChange, ['Foo 5', 'Foo 10']);
 
           // Deselect all to exit selection mode
           userEvent.click(getCell(tree, 'Foo 10'), {pointerType: 'touch'});
-          act(() => { jest.runAllTimers(); });
+          act(() => {jest.runAllTimers();});
           expect(announce).toHaveBeenLastCalledWith('Foo 10 not selected. 1 item selected.');
           expect(announce).toHaveBeenCalledTimes(3);
           onSelectionChange.mockReset();
 
           userEvent.click(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
-          act(() => { jest.runAllTimers(); });
+          act(() => {jest.runAllTimers();});
           expect(announce).toHaveBeenLastCalledWith('Foo 5 not selected.');
           expect(announce).toHaveBeenCalledTimes(4);
 
-          act(() => { jest.runAllTimers(); });
+          act(() => {jest.runAllTimers();});
           checkSelection(onSelectionChange, []);
           expect(onAction).not.toHaveBeenCalled();
           expect(tree.queryByLabelText('Select All')).toBeNull();
@@ -3535,7 +3535,7 @@ describe('TableView', function () {
 
       let createButton = tree.getByText('Create');
       triggerPress(createButton);
-      act(() => { jest.runAllTimers(); });
+      act(() => {jest.runAllTimers();});
 
       expect(dialog).not.toBeInTheDocument();
 
@@ -3711,7 +3711,7 @@ describe('TableView', function () {
 
       expect(dialog).not.toBeInTheDocument();
 
-      act(() => { jest.runAllTimers(); });
+      act(() => {jest.runAllTimers();});
 
       let rowHeaders = within(rows[2]).getAllByRole('rowheader');
       expect(rowHeaders[0]).toHaveTextContent('Jessica');
@@ -3727,7 +3727,7 @@ describe('TableView', function () {
       expect(rows).toHaveLength(3);
 
       act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
-      act(() => { jest.runAllTimers(); });
+      act(() => {jest.runAllTimers();});
       let button = within(rows[1]).getByRole('button');
       expect(document.activeElement).toBe(button);
 
@@ -3746,28 +3746,28 @@ describe('TableView', function () {
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});
       fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', altKey: true});
-      act(() => { jest.runAllTimers(); });
+      act(() => {jest.runAllTimers();});
 
       let menu = tree.getByRole('menu');
       expect(document.activeElement).toBe(within(menu).getAllByRole('menuitem')[0]);
 
       fireEvent.keyDown(document.activeElement, {key: 'Enter'});
       fireEvent.keyUp(document.activeElement, {key: 'Enter'});
-      act(() => { jest.runAllTimers(); });
+      act(() => {jest.runAllTimers();});
       userEvent.tab();
-      act(() => { jest.runAllTimers(); });
+      act(() => {jest.runAllTimers();});
       userEvent.tab();
-      act(() => { jest.runAllTimers(); });
+      act(() => {jest.runAllTimers();});
       userEvent.tab();
-      act(() => { jest.runAllTimers(); });
+      act(() => {jest.runAllTimers();});
       userEvent.tab();
-      act(() => { jest.runAllTimers(); });
+      act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(tree.getAllByRole('button')[1]);
 
       fireEvent.keyDown(document.activeElement, {key: 'Enter'});
       fireEvent.keyUp(document.activeElement, {key: 'Enter'});
-      act(() => { jest.runAllTimers(); });
-      act(() => { jest.runAllTimers(); });
+      act(() => {jest.runAllTimers();});
+      act(() => {jest.runAllTimers();});
 
       expect(document.activeElement).toBe(button);
     });
@@ -3780,7 +3780,7 @@ describe('TableView', function () {
       expect(rows).toHaveLength(3);
 
       act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
-      act(() => { jest.runAllTimers(); });
+      act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});
@@ -3798,7 +3798,7 @@ describe('TableView', function () {
       expect(rows).toHaveLength(3);
 
       act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
-      act(() => { jest.runAllTimers(); });
+      act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowUp', altKey: true});
@@ -3816,7 +3816,7 @@ describe('TableView', function () {
       expect(rows).toHaveLength(3);
 
       act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
-      act(() => { jest.runAllTimers(); });
+      act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});
@@ -4052,15 +4052,15 @@ describe('TableView', function () {
 
       scrollView.scrollTop = 250;
       fireEvent.scroll(scrollView);
-      act(() => { jest.runAllTimers(); });
+      act(() => {jest.runAllTimers();});
 
       scrollView.scrollTop = 1500;
       fireEvent.scroll(scrollView);
-      act(() => { jest.runAllTimers(); });
+      act(() => {jest.runAllTimers();});
 
       scrollView.scrollTop = 2800;
       fireEvent.scroll(scrollView);
-      act(() => { jest.runAllTimers(); });
+      act(() => {jest.runAllTimers();});
 
       expect(onLoadMore).toHaveBeenCalledTimes(3);
     });
@@ -4464,7 +4464,7 @@ describe('TableView', function () {
       expect(document.activeElement).toBe(toggleButton);
       expect(tree.queryByRole('menuitem')).toBeFalsy();
       fireEvent.mouseEnter(headers[2]);
-      act(() => { jest.runAllTimers(); });
+      act(() => {jest.runAllTimers();});
       expect(tree.queryByRole('slider')).toBeFalsy();
     });
 
@@ -4478,34 +4478,34 @@ describe('TableView', function () {
       userEvent.tab();
       expect(document.activeElement).toBe(toggleButton);
       triggerPress(toggleButton);
-      act(() => { jest.runAllTimers(); });
+      act(() => {jest.runAllTimers();});
 
       expect(selectAll).not.toHaveAttribute('disabled');
       triggerPress(selectAll);
-      act(() => { jest.runAllTimers(); });
+      act(() => {jest.runAllTimers();});
       expect(selectAll.checked).toBeTruthy();
       expect(document.activeElement).toBe(selectAll);
 
       fireEvent.mouseEnter(headers[2]);
-      act(() => { jest.runAllTimers(); });
+      act(() => {jest.runAllTimers();});
       expect(tree.queryAllByRole('slider')).toBeTruthy();
 
       let column1Button = within(headers[1]).getByRole('button');
       let column2Button = within(headers[2]).getByRole('button');
       triggerPress(column2Button);
-      act(() => { jest.runAllTimers(); });
+      act(() => {jest.runAllTimers();});
       expect(tree.queryAllByRole('menuitem')).toBeTruthy();
       fireEvent.keyDown(document.activeElement, {key: 'Escape'});
       fireEvent.keyUp(document.activeElement, {key: 'Escape'});
-      act(() => { jest.runAllTimers(); });
-      act(() => { jest.runAllTimers(); });
+      act(() => {jest.runAllTimers();});
+      act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(column2Button);
       fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
       fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
       expect(document.activeElement).toBe(column1Button);
 
       triggerPress(toggleButton);
-      act(() => { jest.runAllTimers(); });
+      act(() => {jest.runAllTimers();});
       expect(selectAll).toHaveAttribute('disabled');
       triggerPress(headers[2]);
       expect(document.activeElement).toBe(toggleButton);

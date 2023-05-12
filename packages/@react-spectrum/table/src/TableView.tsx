@@ -108,7 +108,7 @@ interface TableContextValue<T> {
   isTableDraggable: boolean,
   isTableDroppable: boolean,
   shouldShowCheckboxes: boolean,
-  layout: TableLayout<T> & { tableState: TableState<T> },
+  layout: TableLayout<T> & {tableState: TableState<T>},
   headerRowHovered: boolean,
   isInResizeMode: boolean,
   setIsInResizeMode: (val: boolean) => void,
@@ -292,7 +292,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         return prop === 'tableState' ? state : Reflect.get(target, prop, receiver);
       }
     });
-    return proxy as TableLayout<T> & { tableState: TableState<T> };
+    return proxy as TableLayout<T> & {tableState: TableState<T>};
   }, [state, tableLayout]);
 
   let dragState: DraggableCollectionState;
@@ -533,10 +533,6 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     focusProps,
     dragAndDropHooks?.isVirtualDragging() && {tabIndex: null}
   );
-
-  useEffect(() => {
-    console.log('collection changed');
-  }, [collection]);
 
   let {selectionStyle, selectionMode, disallowEmptySelection} = props;
   let ctx = useMemo(() => ({
@@ -1501,7 +1497,7 @@ function CenteredWrapper({children}) {
   return (
     <div
       role="row"
-      aria-rowindex={state.collection.getItem(state.collection.head.lastChildKey).index + state.collection.size + 1}
+      aria-rowindex={state.collection.headerRows.length + state.collection.size + 1}
       className={classNames(stylesOverrides, 'react-spectrum-Table-centeredWrapper')}>
       <div role="rowheader" aria-colspan={state.collection.columns.length}>
         {children}

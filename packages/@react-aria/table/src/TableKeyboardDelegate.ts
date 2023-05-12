@@ -88,9 +88,11 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
     }
 
     // Wrap around to the first column
-    let colsInRow = this.collection.columns.filter(col => col.level === column.level);
-    if (colsInRow.length - 1 === column.index) {
-      return colsInRow[0].key;
+    let row = this.collection.headerRows[column.level];
+    for (let item of getChildNodes(row, this.collection)) {
+      if (item.type === 'column') {
+        return item.key;
+      }
     }
   }
 
@@ -102,9 +104,13 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
     }
 
     // Wrap around to the last column
-    let colsInRow = this.collection.columns.filter(col => col.level === column.level);
-    if (column.index === 0) {
-      return colsInRow[colsInRow.length - 1].key;
+    let row = this.collection.headerRows[column.level];
+    let childNodes = [...getChildNodes(row, this.collection)];
+    for (let i = childNodes.length - 1; i >= 0; i--) {
+      let item = childNodes[i];
+      if (item.type === 'column') {
+        return item.key;
+      }
     }
   }
 
