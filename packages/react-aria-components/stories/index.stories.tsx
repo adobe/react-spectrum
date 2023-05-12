@@ -17,6 +17,7 @@ import clsx from 'clsx';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
 import React, {useRef, useState} from 'react';
 import styles from '../example/index.css';
+import {useDragAndDrop} from '@react-spectrum/dnd';
 import {useListData} from 'react-stately';
 
 export default {
@@ -676,7 +677,6 @@ function CustomTab(props) {
       })} />
   );
 }
-
 function Draggable() {
   let buttonRef = useRef(null);
   let {dragProps, isDragging} = useDrag({
@@ -732,6 +732,28 @@ export const DropzoneExampleWithInput = (props) => (
   </div>
 );
 
+let getAllowedDropOperationsAction = action('getAllowedDropOperationsAction');
+
+export function DropZoneExample() {
+  let {dragAndDropHooks} = useDragAndDrop({
+    getAllowedDropOperations() {
+      getAllowedDropOperationsAction();
+      return ['move', 'cancel'];
+    }});
+
+  return (
+    <div>
+      <DropZone
+        dragAndDropHooks={dragAndDropHooks}
+        className={styles.dropzone}
+        onDrop={action('OnDrop')}
+        onDropEnter={action('OnDropEnter')}
+        onDropExit={action('OnDropExit')} >
+        DropZone Area
+      </DropZone>
+    </div>
+  );
+}
 export const DropzoneExampleWithLinkAndInput = (props) => (
   <div>
     <DropZone
