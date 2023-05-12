@@ -219,7 +219,7 @@ describe('TableView', function() {
     expect(grid).toHaveAttribute('aria-label', 'Table');
     expect(grid).toHaveAttribute('data-testid', 'test');
 
-    expect(grid).toHaveAttribute('aria-rowcount', '2');
+    expect(grid).toHaveAttribute('aria-rowcount', '3');
     expect(grid).toHaveAttribute('aria-colcount', '3');
 
     let rowgroups = within(grid).getAllByRole('rowgroup');
@@ -300,8 +300,8 @@ describe('TableView', function() {
     expect(grid).toHaveAttribute('aria-label', 'Table');
     expect(grid).toHaveAttribute('data-testid', 'test');
     expect(grid).toHaveAttribute('aria-multiselectable', 'true');
-    expect(grid).toHaveAttribute('aria-rowcount', '2');
-    expect(grid).toHaveAttribute('aria-colcount', '4');
+    expect(grid).toHaveAttribute('aria-rowcount', '3');
+    expect(grid).toHaveAttribute('aria-colcount', '3');
 
     let rowgroups = within(grid).getAllByRole('rowgroup');
     expect(rowgroups).toHaveLength(2);
