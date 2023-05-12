@@ -95,16 +95,15 @@ export function useRenderProps<T>(props: RenderPropsHookOptions<T>) {
     defaultClassName,
     defaultChildren,
     values,
-    'aria-label': ariaLabel,
-    'aria-labelledby': ariaLabelledby,
-    'aria-describedby': ariaDescribedby,
-    'aria-details': ariaDetails
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    id,
+    ...otherProps
   } = props;
 
   return useMemo(() => {
-    let computedClassName: string;
-    let computedStyle: React.CSSProperties;
-    let computedChildren: React.ReactNode;
+    let computedClassName: string | undefined;
+    let computedStyle: React.CSSProperties | undefined;
+    let computedChildren: React.ReactNode | undefined;
 
     if (typeof className === 'function') {
       computedClassName = className(values);
@@ -127,15 +126,12 @@ export function useRenderProps<T>(props: RenderPropsHookOptions<T>) {
     }
 
     return {
-      'aria-label': ariaLabel,
-      'aria-labelledby': ariaLabelledby,
-      'aria-describedby': ariaDescribedby,
-      'aria-details': ariaDetails,
+      ...filterDOMProps(otherProps),
       className: computedClassName ?? defaultClassName,
       style: computedStyle,
       children: computedChildren
     };
-  }, [className, style, children, defaultClassName, defaultChildren, values, ariaLabel, ariaLabelledby, ariaDescribedby, ariaDetails]);
+  }, [className, style, children, defaultClassName, defaultChildren, values]);
 }
 
 export type WithRef<T, E> = T & {ref?: React.ForwardedRef<E>};

@@ -40,7 +40,12 @@ export const ComboBoxExample = () => (
   </ComboBox>
 );
 
-let items = [{id: '1', name: 'Foo'}, {id: '2', name: 'Bar'},{id: '3', name: 'Baz'}];
+interface ComboBoxItem {
+  id: string,
+  name: string
+}
+
+let items: ComboBoxItem[] = [{id: '1', name: 'Foo'}, {id: '2', name: 'Bar'}, {id: '3', name: 'Baz'}];
 export const ComboBoxRenderPropsStatic = () => (
   <ComboBox>
     {({isOpen}) => (
@@ -77,7 +82,7 @@ export const ComboBoxRenderPropsDefaultItems = () => (
         </div>
         <Popover placement="bottom end">
           <ListBox className={styles.menu}>
-            {item => <MyItem key={item.id}>{item.name}</MyItem>}
+            {(item: ComboBoxItem) => <MyItem key={item.id}>{item.name}</MyItem>}
           </ListBox>
         </Popover>
       </>
@@ -99,7 +104,7 @@ export const ComboBoxRenderPropsItems = () => (
         </div>
         <Popover placement="bottom end">
           <ListBox className={styles.menu}>
-            {item => <MyItem key={item.id}>{item.name}</MyItem>}
+            {(item: ComboBoxItem) => <MyItem key={item.id}>{item.name}</MyItem>}
           </ListBox>
         </Popover>
       </>
@@ -127,8 +132,6 @@ export const ComboBoxRenderPropsListBoxDynamic = () => (
     )}
   </ComboBox>
 );
-
-
 
 export const ListBoxExample = () => (
   <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace">
