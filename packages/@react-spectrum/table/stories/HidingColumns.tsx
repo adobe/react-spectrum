@@ -37,6 +37,7 @@ let data = [
 
 // TODO Rob & Daniel: NOOOOOOOOOO, the rows are cached and not updated with the new columns
 // will need to pass columns to tablebody as well as tableheader
+// do we want to move columns prop? we should support a dependencies prop for invalidating our cache
 let ColumnContext = React.createContext({});
 let useColumnContext = () => React.useContext(ColumnContext);
 
@@ -71,7 +72,7 @@ export function HidingColumns(props) {
         <ColumnContext.Provider value={{ columns: visibleColumnsArray }}>
           <TableBody items={data}>
             {item => (
-              <MyRow>
+              <MyRow columns={visibleColumnsArray}>
                 {column => <Cell>{item[column.key]}</Cell>}
               </MyRow>
             )}

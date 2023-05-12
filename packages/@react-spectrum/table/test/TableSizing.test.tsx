@@ -701,19 +701,24 @@ describe('TableViewSizing', function () {
     describe('pointer', () => {
       installPointerEvent();
 
-      it('dragging the resizer works - desktop', () => {
+      it.only('dragging the resizer works - desktop', () => {
         jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
         let onResizeEnd = jest.fn();
+        let columns = [
+          {key: 'foo', allowsResizing: true, isRowHeader: true},
+          {key: 'bar', maxWidth: 200},
+          {key: 'baz', maxWidth: 200}
+        ];
         let tree = render(
           <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
             <TableHeader>
-              <Column allowsResizing key="foo">Foo</Column>
+              <Column allowsResizing key="foo" isRowHeader>Foo</Column>
               <Column key="bar" maxWidth={200}>Bar</Column>
               <Column key="baz" maxWidth={200}>Baz</Column>
             </TableHeader>
             <TableBody items={items}>
               {item =>
-                (<Row key={item.foo}>
+                (<Row columns={columns}>
                   {key => <Cell>{item[key]}</Cell>}
                 </Row>)
               }

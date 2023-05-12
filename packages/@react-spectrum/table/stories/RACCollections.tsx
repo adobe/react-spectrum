@@ -19,9 +19,7 @@ export function BaseTableHeader<T extends object>(props: TableHeaderProps<T>) {
     <CollectionRendererContext.Provider value={renderer}>
       {/* @ts-ignore */}
       <tableheader multiple={props}>
-        <TableHeaderRow>
-          {children}
-        </TableHeaderRow>
+        {children}
         {/* @ts-ignore */}
       </tableheader>
     </CollectionRendererContext.Provider>
