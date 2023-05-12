@@ -10,19 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import { announce } from '@react-aria/live-announcer';
-import { GridAria, GridProps, useGrid } from '@react-aria/grid';
-import { gridIds } from './utils';
+import {announce} from '@react-aria/live-announcer';
+import {GridAria, GridProps, useGrid} from '@react-aria/grid';
+import {gridIds} from './utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import { Layout } from '@react-stately/virtualizer';
-import { mergeProps, useDescription, useId, useUpdateEffect } from '@react-aria/utils';
-import { Node } from '@react-types/shared';
-import { RefObject, useMemo } from 'react';
-import { TableKeyboardDelegate } from './TableKeyboardDelegate';
-import { TableState } from '@react-stately/table';
-import { useCollator, useLocale } from '@react-aria/i18n';
-import { useLocalizedStringFormatter } from '@react-aria/i18n';
+import {Layout} from '@react-stately/virtualizer';
+import {mergeProps, useDescription, useId, useUpdateEffect} from '@react-aria/utils';
+import {Node} from '@react-types/shared';
+import {RefObject, useMemo} from 'react';
+import {TableKeyboardDelegate} from './TableKeyboardDelegate';
+import {TableState} from '@react-stately/table';
+import {useCollator, useLocale} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface AriaTableProps<T> extends GridProps {
   /** The layout object for the table. Computes what content is visible and how to position and style them. */
@@ -46,8 +46,8 @@ export function useTable<T>(props: AriaTableProps<T>, state: TableState<T>, ref:
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
   // When virtualized, the layout object will be passed in as a prop and override this.
-  let collator = useCollator({ usage: 'search', sensitivity: 'base' });
-  let { direction } = useLocale();
+  let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let {direction} = useLocale();
   let disabledBehavior = state.selectionManager.disabledBehavior;
   let delegate = useMemo(() => keyboardDelegate || new TableKeyboardDelegate({
     collection: state.collection,
@@ -60,7 +60,7 @@ export function useTable<T>(props: AriaTableProps<T>, state: TableState<T>, ref:
   let id = useId(props.id);
   gridIds.set(state, id);
 
-  let { gridProps } = useGrid({
+  let {gridProps} = useGrid({
     ...props,
     id,
     keyboardDelegate: delegate
@@ -72,11 +72,11 @@ export function useTable<T>(props: AriaTableProps<T>, state: TableState<T>, ref:
     gridProps['aria-rowcount'] = state.collection.size + (state.collection.getItem(state.collection.head.lastChildKey)?.index ?? 0) + 1;
   }
 
-  let { column, direction: sortDirection } = state.sortDescriptor || {};
+  let {column, direction: sortDirection} = state.sortDescriptor || {};
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let sortDescription = useMemo(() => {
     let columnName = state.collection.columns.find(c => c.key === column)?.textValue;
-    return sortDirection && column ? stringFormatter.format(`${sortDirection}Sort`, { columnName }) : undefined;
+    return sortDirection && column ? stringFormatter.format(`${sortDirection}Sort`, {columnName}) : undefined;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sortDirection, column, state.collection.columns]);
 

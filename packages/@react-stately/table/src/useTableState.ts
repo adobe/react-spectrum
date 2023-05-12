@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import { CollectionStateBase, Node, SelectionMode, Sortable, SortDescriptor, SortDirection } from '@react-types/shared';
-import { GridState, useGridState } from '@react-stately/grid';
-import { TableCollection as ITableCollection } from '@react-types/table';
-import { Key, useCallback, useMemo, useState } from 'react';
-import { MultipleSelectionStateProps } from '@react-stately/selection';
-import { TableCollection } from './TableCollection';
-import { useCollection } from '@react-stately/collections';
+import {CollectionStateBase, Node, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
+import {GridState, useGridState} from '@react-stately/grid';
+import {TableCollection as ITableCollection} from '@react-types/table';
+import {Key, useCallback, useMemo, useState} from 'react';
+import {MultipleSelectionStateProps} from '@react-stately/selection';
+import {TableCollection} from './TableCollection';
+import {useCollection} from '@react-stately/collections';
 
 export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   /** A collection of rows and columns in the table. */
@@ -60,7 +60,7 @@ const OPPOSITE_SORT_DIRECTION = {
  */
 export function useTableState<T extends object>(props: TableStateProps<T>): TableState<T> {
   let [isKeyboardNavigationDisabled, setKeyboardNavigationDisabled] = useState(false);
-  let { selectionMode = 'none', showSelectionCheckboxes, showDragButtons } = props;
+  let {selectionMode = 'none', showSelectionCheckboxes, showDragButtons} = props;
 
   let context = useMemo(() => ({
     showSelectionCheckboxes: showSelectionCheckboxes && selectionMode !== 'none',
@@ -75,7 +75,7 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     useCallback((nodes) => new TableCollection(nodes, null, context), [context]),
     context
   );
-  let { disabledKeys, selectionManager } = useGridState({
+  let {disabledKeys, selectionManager} = useGridState({
     ...props,
     collection,
     disabledBehavior: props.disabledBehavior || 'selection'
@@ -90,7 +90,7 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     isKeyboardNavigationDisabled: collection.size === 0 || isKeyboardNavigationDisabled,
     setKeyboardNavigationDisabled,
     sort(columnKey: Key, direction?: 'ascending' | 'descending') {
-      console.log(collection.getItem(columnKey))
+      console.log(collection.getItem(columnKey));
       props.onSortChange({
         column: columnKey,
         direction: direction ?? (props.sortDescriptor?.column === columnKey

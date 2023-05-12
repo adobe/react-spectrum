@@ -10,29 +10,29 @@
  * governing permissions and limitations under the License.
  */
 
-import { Cell, Column, Row, TableBody, TableHeader } from './RACCollections';
-import { Checkbox } from '@react-spectrum/checkbox';
-import { Collection } from 'react-aria-components';
-import { Flex } from '@react-spectrum/layout';
-import { Form } from '@react-spectrum/form';
+import {Cell, Column, Row, TableBody, TableHeader} from './RACCollections';
+import {Checkbox} from '@react-spectrum/checkbox';
+import {Collection} from 'react-aria-components';
+import {Flex} from '@react-spectrum/layout';
+import {Form} from '@react-spectrum/form';
 import React from 'react';
-import { TableView } from '../';
+import {TableView} from '../';
 
 let columns = [
-  { key: 'planName', title: 'Plan Name' },
-  { key: 'audienceType', title: 'Audience Type' },
-  { key: 'netBudget', title: 'Net Budget' },
-  { key: 'targetOTP', title: 'Target OTP' },
-  { key: 'reach', title: 'Reach' }
+  {key: 'planName', title: 'Plan Name'},
+  {key: 'audienceType', title: 'Audience Type'},
+  {key: 'netBudget', title: 'Net Budget'},
+  {key: 'targetOTP', title: 'Target OTP'},
+  {key: 'reach', title: 'Reach'}
 ];
 
 let data = [
-  { id: 1, planName: 'Plan 1: $300k, digital', audienceType: 'Strategic', netBudget: '$300,000', targetOTP: '7.4%', reach: '11.52%' },
-  { id: 2, planName: 'Plan 2: $500k, digital', audienceType: 'Strategic', netBudget: '$500,000', targetOTP: '22.5%', reach: '11.5%' },
-  { id: 3, planName: 'Plan 3: $800k, digital', audienceType: 'Strategic', netBudget: '$800,000', targetOTP: '22.5%', reach: '11.5%' },
-  { id: 4, planName: 'Plan 4: $300k, MRI', audienceType: 'Demo+strategic', netBudget: '$300,000', targetOTP: '22.5%', reach: '11.5%' },
-  { id: 5, planName: 'Plan 5: $500k, MRI', audienceType: 'Demo+strategic', netBudget: '$500,000', targetOTP: '22.5%', reach: '11.5%' },
-  { id: 6, planName: 'Plan 6: $800k, MRI', audienceType: 'Demo+strategic', netBudget: '$800,000', targetOTP: '22.5%', reach: '11.5%' }
+  {id: 1, planName: 'Plan 1: $300k, digital', audienceType: 'Strategic', netBudget: '$300,000', targetOTP: '7.4%', reach: '11.52%'},
+  {id: 2, planName: 'Plan 2: $500k, digital', audienceType: 'Strategic', netBudget: '$500,000', targetOTP: '22.5%', reach: '11.5%'},
+  {id: 3, planName: 'Plan 3: $800k, digital', audienceType: 'Strategic', netBudget: '$800,000', targetOTP: '22.5%', reach: '11.5%'},
+  {id: 4, planName: 'Plan 4: $300k, MRI', audienceType: 'Demo+strategic', netBudget: '$300,000', targetOTP: '22.5%', reach: '11.5%'},
+  {id: 5, planName: 'Plan 5: $500k, MRI', audienceType: 'Demo+strategic', netBudget: '$500,000', targetOTP: '22.5%', reach: '11.5%'},
+  {id: 6, planName: 'Plan 6: $800k, MRI', audienceType: 'Demo+strategic', netBudget: '$800,000', targetOTP: '22.5%', reach: '11.5%'}
 ];
 
 // TODO Rob & Daniel: NOOOOOOOOOO, the rows are cached and not updated with the new columns
@@ -53,7 +53,7 @@ export function HidingColumns(props) {
 
     setVisibleColumns(columns);
   };
-  let visibleColumnsArray = columns.filter(c => visibleColumns.has(c.key))
+  let visibleColumnsArray = columns.filter(c => visibleColumns.has(c.key));
   if (visibleColumnsArray.length > 0) {
     visibleColumnsArray[0].isRowHeader = true;
   }
@@ -69,7 +69,7 @@ export function HidingColumns(props) {
         <TableHeader columns={visibleColumnsArray}>
           {column => <Column {...column}>{column.title}</Column>}
         </TableHeader>
-        <ColumnContext.Provider value={{ columns: visibleColumnsArray }}>
+        <ColumnContext.Provider value={{columns: visibleColumnsArray}}>
           <TableBody items={data}>
             {item => (
               <MyRow columns={visibleColumnsArray}>
@@ -84,7 +84,7 @@ export function HidingColumns(props) {
 }
 
 function MyRow(props) {
-  let { columns } = useColumnContext();
+  let {columns} = useColumnContext();
   return (
     <Row id={props.id}>
       <Collection items={columns}>

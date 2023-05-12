@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import { ColumnSize, TableCollection } from '@react-types/table';
-import { DropTarget, Node } from '@react-types/shared';
-import { getChildNodes } from '@react-stately/collections';
-import { GridNode } from '@react-types/grid';
-import { InvalidationContext, LayoutInfo, Point, Rect, Size } from '@react-stately/virtualizer';
-import { Key } from 'react';
-import { LayoutNode, ListLayout, ListLayoutOptions } from './ListLayout';
-import { TableColumnLayout } from '@react-stately/table';
+import {ColumnSize, TableCollection} from '@react-types/table';
+import {DropTarget, Node} from '@react-types/shared';
+import {getChildNodes} from '@react-stately/collections';
+import {GridNode} from '@react-types/grid';
+import {InvalidationContext, LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
+import {Key} from 'react';
+import {LayoutNode, ListLayout, ListLayoutOptions} from './ListLayout';
+import {TableColumnLayout} from '@react-stately/table';
 
 type TableLayoutOptions<T> = ListLayoutOptions<T> & {
   columnLayout: TableColumnLayout<T>,
@@ -106,7 +106,7 @@ export class TableLayout<T> extends ListLayout<T> {
     // relayoutNow still uses setState, should happen at the same time the parent
     // component's state is processed as a result of props.onColumnResize
     if (this.uncontrolledWidths.size > 0) {
-      this.virtualizer.relayoutNow({ sizeChanged: true });
+      this.virtualizer.relayoutNow({sizeChanged: true});
     }
     return newSizes;
   }
@@ -250,12 +250,12 @@ export class TableLayout<T> extends ListLayout<T> {
       }
     }
 
-    return { height, isEstimated };
+    return {height, isEstimated};
   }
 
   buildColumn(node: GridNode<T>, x: number, y: number): LayoutNode {
     let width = this.getRenderedColumnWidth(node);
-    let { height, isEstimated } = this.getEstimatedHeight(node, width, this.headingHeight, this.estimatedHeadingHeight);
+    let {height, isEstimated} = this.getEstimatedHeight(node, width, this.headingHeight, this.estimatedHeadingHeight);
     let rect = new Rect(x, y, width, height);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
     layoutInfo.isSticky = !this.disableSticky && (node.props?.isDragButtonCell || node.props?.isSelectionCell);
@@ -306,7 +306,7 @@ export class TableLayout<T> extends ListLayout<T> {
       loader.parentKey = 'body';
       loader.isSticky = !this.disableSticky && children.length === 0;
       this.layoutInfos.set('loader', loader);
-      children.push({ layoutInfo: loader, validRect: loader.rect });
+      children.push({layoutInfo: loader, validRect: loader.rect});
       y = loader.rect.maxY;
       width = Math.max(width, rect.width);
     } else if (children.length === 0) {
@@ -315,7 +315,7 @@ export class TableLayout<T> extends ListLayout<T> {
       empty.parentKey = 'body';
       empty.isSticky = !this.disableSticky;
       this.layoutInfos.set('empty', empty);
-      children.push({ layoutInfo: empty, validRect: empty.rect });
+      children.push({layoutInfo: empty, validRect: empty.rect});
       y = empty.rect.maxY;
       width = Math.max(width, rect.width);
     }
@@ -385,7 +385,7 @@ export class TableLayout<T> extends ListLayout<T> {
 
   buildCell(node: GridNode<T>, x: number, y: number): LayoutNode {
     let width = this.getRenderedColumnWidth(node);
-    let { height, isEstimated } = this.getEstimatedHeight(node, width, this.rowHeight, this.estimatedRowHeight);
+    let {height, isEstimated} = this.getEstimatedHeight(node, width, this.rowHeight, this.estimatedRowHeight);
     let rect = new Rect(x, y, width, height);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
     layoutInfo.isSticky = !this.disableSticky && (node.props?.isDragButtonCell || node.props?.isSelectionCell);
@@ -552,7 +552,7 @@ export class TableLayout<T> extends ListLayout<T> {
 
         let index = collectionNode.index;
         if (layoutInfo.parentKey === 'body') {
-          index -= 0; //this.collection.headerRows.length;
+          index -= 0; // this.collection.headerRows.length;
         }
 
         if (!indices.includes(index)) {
@@ -618,7 +618,7 @@ export class TableLayout<T> extends ListLayout<T> {
     }
 
     if (key == null || this.collection.size === 0) {
-      return { type: 'root' };
+      return {type: 'root'};
     }
 
     let layoutInfo = this.getLayoutInfo(key);
@@ -633,14 +633,14 @@ export class TableLayout<T> extends ListLayout<T> {
     // Otherwise, if dropping on the item is accepted, still try the before/after positions if within 10px
     // of the top or bottom of the item.
     if (!isValidDropTarget(target)) {
-      if (y <= rect.y + rect.height / 2 && isValidDropTarget({ ...target, dropPosition: 'before' })) {
+      if (y <= rect.y + rect.height / 2 && isValidDropTarget({...target, dropPosition: 'before'})) {
         target.dropPosition = 'before';
-      } else if (isValidDropTarget({ ...target, dropPosition: 'after' })) {
+      } else if (isValidDropTarget({...target, dropPosition: 'after'})) {
         target.dropPosition = 'after';
       }
-    } else if (y <= rect.y + 10 && isValidDropTarget({ ...target, dropPosition: 'before' })) {
+    } else if (y <= rect.y + 10 && isValidDropTarget({...target, dropPosition: 'before'})) {
       target.dropPosition = 'before';
-    } else if (y >= rect.maxY - 10 && isValidDropTarget({ ...target, dropPosition: 'after' })) {
+    } else if (y >= rect.maxY - 10 && isValidDropTarget({...target, dropPosition: 'after'})) {
       target.dropPosition = 'after';
     }
 
