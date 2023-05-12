@@ -40,7 +40,8 @@ export const ComboBoxExample = () => (
   </ComboBox>
 );
 
-export const ComboBoxRenderProps = () => (
+let items = [{id: '1', name: 'Foo'}, {id: '2', name: 'Bar'},{id: '3', name: 'Baz'}];
+export const ComboBoxRenderPropsStatic = () => (
   <ComboBox>
     {({isOpen}) => (
       <>
@@ -62,6 +63,72 @@ export const ComboBoxRenderProps = () => (
     )}
   </ComboBox>
 );
+
+export const ComboBoxRenderPropsDefaultItems = () => (
+  <ComboBox defaultItems={items}>
+    {({isOpen}) => (
+      <>
+        <Label style={{display: 'block'}}>Test</Label>
+        <div style={{display: 'flex'}}>
+          <Input />
+          <Button>
+            <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
+          </Button>
+        </div>
+        <Popover placement="bottom end">
+          <ListBox className={styles.menu}>
+            {item => <MyItem key={item.id}>{item.name}</MyItem>}
+          </ListBox>
+        </Popover>
+      </>
+    )}
+  </ComboBox>
+);
+
+// Note this won't filter cuz controlled items
+export const ComboBoxRenderPropsItems = () => (
+  <ComboBox items={items}>
+    {({isOpen}) => (
+      <>
+        <Label style={{display: 'block'}}>Test</Label>
+        <div style={{display: 'flex'}}>
+          <Input />
+          <Button>
+            <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
+          </Button>
+        </div>
+        <Popover placement="bottom end">
+          <ListBox className={styles.menu}>
+            {item => <MyItem key={item.id}>{item.name}</MyItem>}
+          </ListBox>
+        </Popover>
+      </>
+    )}
+  </ComboBox>
+);
+
+export const ComboBoxRenderPropsListBoxDynamic = () => (
+  <ComboBox>
+    {({isOpen}) => (
+      <>
+        <Label style={{display: 'block'}}>Test</Label>
+        <div style={{display: 'flex'}}>
+          <Input />
+          <Button>
+            <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
+          </Button>
+        </div>
+        <Popover placement="bottom end">
+          <ListBox className={styles.menu} items={items}>
+            {item => <MyItem key={item.id}>{item.name}</MyItem>}
+          </ListBox>
+        </Popover>
+      </>
+    )}
+  </ComboBox>
+);
+
+
 
 export const ListBoxExample = () => (
   <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace">

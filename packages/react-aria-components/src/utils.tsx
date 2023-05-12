@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, DOMProps as SharedDOMProps} from '@react-types/shared';
 import {filterDOMProps, mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
-import React, {createContext, CSSProperties, ReactNode, RefCallback, RefObject, useCallback, useContext, useEffect, useRef, useState} from 'react';
+import React, {createContext, CSSProperties, ReactNode, RefCallback, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 
 // Override forwardRef types so generics work.
@@ -87,28 +87,55 @@ interface RenderPropsHookOptions<T> extends RenderProps<T>, SharedDOMProps, Aria
   defaultClassName?: string
 }
 
-export function useRenderProps<T>({className, style, children, defaultClassName, defaultChildren, values, ...otherProps}: RenderPropsHookOptions<T>) {
-  if (typeof className === 'function') {
-    className = className(values);
-  }
-
-  if (typeof style === 'function') {
-    style = style(values);
-  }
-
-  if (typeof children === 'function') {
-    children = children(values);
-  } else if (children == null) {
-    children = defaultChildren;
-  }
-
-  delete otherProps.id;
-  return {
-    ...filterDOMProps(otherProps),
-    className: className ?? defaultClassName,
+export function useRenderProps<T>(props: RenderPropsHookOptions<T>) {
+  let {
+    className,
     style,
-    children
-  };
+    children,
+    defaultClassName,
+    defaultChildren,
+    values,
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledby,
+    'aria-describedby': ariaDescribedby,
+    'aria-details': ariaDetails
+  } = props;
+
+  return useMemo(() => {
+    let computedClassName: string;
+    let computedStyle: React.CSSProperties;
+    let computedChildren: React.ReactNode;
+
+    if (typeof className === 'function') {
+      computedClassName = className(values);
+    } else {
+      computedClassName = className;
+    }
+
+    if (typeof style === 'function') {
+      computedStyle = style(values);
+    } else {
+      computedStyle = style;
+    }
+
+    if (typeof children === 'function') {
+      computedChildren = children(values);
+    } else if (children == null) {
+      computedChildren = defaultChildren;
+    } else {
+      computedChildren = children;
+    }
+
+    return {
+      'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabelledby,
+      'aria-describedby': ariaDescribedby,
+      'aria-details': ariaDetails,
+      className: computedClassName ?? defaultClassName,
+      style: computedStyle,
+      children: computedChildren
+    };
+  }, [className, style, children, defaultClassName, defaultChildren, values, ariaLabel, ariaLabelledby, ariaDescribedby, ariaDetails]);
 }
 
 export type WithRef<T, E> = T & {ref?: React.ForwardedRef<E>};

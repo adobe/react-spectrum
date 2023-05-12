@@ -17,7 +17,7 @@ import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListBoxProps} from './ListBox';
 import {PopoverContext} from './Popover';
-import React, {createContext, ForwardedRef, forwardRef, useCallback, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useCallback, useMemo, useRef, useState} from 'react';
 import {TextContext} from './Text';
 import {useCollection} from './Collection';
 import {useResizeObserver} from '@react-aria/utils';
@@ -41,11 +41,14 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
   let state = useComboBoxState({
     defaultFilter: props.defaultFilter || contains,
     ...props,
-    items: propsFromListBox ? (props.items ?? propsFromListBox.items) : [],
+    // If props.items isn't provided, rely on collection filtering (aka listbox.items is provided or defaultItems provided to Combobox)
+    items: props.items,
     children: undefined,
     collection
   });
 
+  // Only expose a subset of state to renderProps function to avoid infinite render loop
+  let renderPropsState = useMemo(() => ({isOpen: state.isOpen, isFocused: state.isFocused}), [state.isOpen, state.isFocused]);
   let buttonRef = useRef<HTMLButtonElement>(null);
   let inputRef = useRef<HTMLInputElement>(null);
   let listBoxRef = useRef<HTMLDivElement>(null);
@@ -87,7 +90,7 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
 
   let renderProps = useRenderProps({
     ...props,
-    values: state,
+    values: renderPropsState,
     defaultClassName: 'react-aria-ComboBox'
   });
 
