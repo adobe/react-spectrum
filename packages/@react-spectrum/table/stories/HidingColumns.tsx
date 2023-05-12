@@ -36,6 +36,7 @@ let data = [
 ];
 
 // TODO Rob & Daniel: NOOOOOOOOOO, the rows are cached and not updated with the new columns
+// will need to pass columns to tablebody as well as tableheader
 let ColumnContext = React.createContext({});
 let useColumnContext = () => React.useContext(ColumnContext);
 
