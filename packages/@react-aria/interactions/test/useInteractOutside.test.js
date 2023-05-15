@@ -13,6 +13,7 @@
 import {fireEvent, installPointerEvent, render} from '@react-spectrum/test-utils';
 import React, {useRef} from 'react';
 import {useInteractOutside} from '../';
+import ReactDOM from 'react-dom';
 
 function Example(props) {
   let ref = useRef();
@@ -171,6 +172,7 @@ describe('useInteractOutside', function () {
       expect(onInteractOutside).not.toHaveBeenCalled();
     });
   });
+
   describe('disable interact outside events', function () {
     it('does not handle pointer events if disabled', function () {
       let onInteractOutside = jest.fn();
@@ -205,4 +207,55 @@ describe('useInteractOutside', function () {
       expect(onInteractOutside).not.toHaveBeenCalled();
     });
   });
+
+  describe("shadow dom support", function () {
+    function App({ onInteractOutside }) {
+      const ref = useRef(null);
+      useInteractOutside({
+        ref,
+        onInteractOutside,
+      });
+
+      return <div>
+        <div id="outside">I am outside</div>
+        <div id="inside" ref={ref}>I am inside</div>
+      </div>
+    }
+
+    function Example({ onInteractOutside }) {
+      React.useEffect(() => {
+        const host = document.getElementById('shadowHost');
+        if (!!host.shadowRoot && !!(host.shadowRoot).getElementById('mountDiv')) {
+          return;
+        }
+
+        host.attachShadow({mode: 'open'});
+        const mountDiv = document.createElement('div');
+        host.shadowRoot.appendChild(mountDiv);
+
+        ReactDOM.render(
+          <App onInteractOutside={onInteractOutside} />,
+          mountDiv
+        );
+      }, []);
+
+      return (<div id="shadowHost" />);
+    }
+
+    it("does not trigger if clicking inside and triggers if clicking outside", function () {
+      const onInteractOutside = jest.fn();
+      render(<Example onInteractOutside={onInteractOutside} />);
+
+      const shadowDom = document.getElementById('shadowHost').shadowRoot;
+      const inside = shadowDom.querySelector('#inside');
+      fireEvent.mouseDown(inside);
+      fireEvent.mouseUp(inside);
+      expect(onInteractOutside).not.toHaveBeenCalled();
+
+      const outside = shadowDom.querySelector('#outside');
+      fireEvent.mouseDown(outside);
+      fireEvent.mouseUp(outside);
+      expect(onInteractOutside).toHaveBeenCalledTimes(1);
+    });
+  })
 });

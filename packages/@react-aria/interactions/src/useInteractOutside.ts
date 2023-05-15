@@ -123,5 +123,15 @@ function isValidEvent(event, ref) {
     }
   }
 
-  return ref.current && !ref.current.contains(event.target);
+  if (!ref.current) {
+    return false;
+  }
+
+  const refWithChildren = [ref.current, ...Array.from(ref.current.childNodes)];
+  return intersection(refWithChildren, event.composedPath()).length === 0;
+}
+
+// TODO: replace this with lodash.intersection
+function intersection(a: any[], b:any[]) {
+  return a.filter(value => b.includes(value));
 }
