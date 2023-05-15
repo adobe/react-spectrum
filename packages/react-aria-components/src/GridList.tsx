@@ -361,12 +361,6 @@ function GridListDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTML
   );
 
   let {visuallyHiddenProps} = useVisuallyHidden();
-
-  if (isHidden) {
-    return null;
-  }
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-DropIndicator',
@@ -374,6 +368,10 @@ function GridListDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTML
       isDropTarget
     }
   });
+
+  if (isHidden) {
+    return null;
+  }
 
   return (
     <div

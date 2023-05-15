@@ -858,12 +858,6 @@ function TableDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLEle
   );
 
   let {visuallyHiddenProps} = useVisuallyHidden();
-
-  if (isHidden) {
-    return null;
-  }
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-DropIndicator',
@@ -871,6 +865,10 @@ function TableDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLEle
       isDropTarget
     }
   });
+
+  if (isHidden) {
+    return null;
+  }
 
   return (
     <tr

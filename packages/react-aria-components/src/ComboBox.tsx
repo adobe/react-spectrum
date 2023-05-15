@@ -90,7 +90,7 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
 
   let renderProps = useRenderProps({
     ...props,
-    values: renderPropsState,
+    values: renderPropsState as ComboBoxState<T>,
     defaultClassName: 'react-aria-ComboBox'
   });
 

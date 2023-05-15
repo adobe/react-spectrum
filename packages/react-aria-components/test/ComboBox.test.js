@@ -121,8 +121,7 @@ describe('ComboBox', () => {
     expect(options).toHaveLength(1);
   });
 
-  // FIXME: not sure why this test hangs
-  it.skip('should support render props', () => {
+  it('should support render props', () => {
     let {getByRole} = render(
       <ComboBox>
         {({isOpen}) => (

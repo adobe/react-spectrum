@@ -381,11 +381,6 @@ function ListBoxDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLE
     ref
   );
 
-  if (isHidden) {
-    return null;
-  }
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-DropIndicator',
@@ -393,6 +388,10 @@ function ListBoxDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLE
       isDropTarget
     }
   });
+
+  if (isHidden) {
+    return null;
+  }
 
   return (
     <div

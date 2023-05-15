@@ -77,7 +77,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
 
   let renderProps = useRenderProps({
     ...props,
-    values: renderPropsState,
+    values: renderPropsState as SelectState<T>,
     defaultClassName: 'react-aria-Select'
   });
 
