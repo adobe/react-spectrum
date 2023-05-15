@@ -150,7 +150,7 @@ export const Static: TableStory = {
       </TableBody>
     </TableView>
   ),
-  storyName: 'static'
+  name: 'static'
 };
 
 let columns = [
@@ -190,7 +190,7 @@ export const Dynamic: TableStory = {
       </TableBody>
     </TableView>
   ),
-  storyName: 'dynamic'
+  name: 'dynamic'
 };
 
 let itemsWithFalsyId = [
@@ -218,7 +218,7 @@ export const DynamicFalsyRowKeys: TableStory = {
       </TableBody>
     </TableView>
   ),
-  storyName: 'dynamic, falsy row keys'
+  name: 'dynamic, falsy row keys'
 };
 
 export const HorizontalScrollingOnly: TableStory = {
@@ -241,7 +241,7 @@ export const HorizontalScrollingOnly: TableStory = {
       </TableBody>
     </TableView>
   ),
-  storyName: 'horizontal scrolling only'
+  name: 'horizontal scrolling only'
 };
 
 export const HorizontalScrollingOnlyFlushBottom: TableStory = {
@@ -264,7 +264,7 @@ export const HorizontalScrollingOnlyFlushBottom: TableStory = {
       </TableBody>
     </TableView>
   ),
-  storyName: 'horizontal scrolling only flush bottom'
+  name: 'horizontal scrolling only flush bottom'
 };
 
 export const DynamicWithDisabledKeys: TableStory = {
@@ -273,7 +273,7 @@ export const DynamicWithDisabledKeys: TableStory = {
     ...Dynamic.args,
     disabledKeys: new Set(['Foo 1', 'Foo 3'])
   },
-  storyName: 'dynamic with disabled keys'
+  name: 'dynamic with disabled keys'
 };
 
 export const DynamicShowDividers: TableStory = {
@@ -296,7 +296,7 @@ export const DynamicShowDividers: TableStory = {
       </TableBody>
     </TableView>
   ),
-  storyName: 'dynamic showDividers'
+  name: 'dynamic showDividers'
 };
 
 export const DynamicSelectedKeys: TableStory = {
@@ -306,7 +306,7 @@ export const DynamicSelectedKeys: TableStory = {
     selectedKeys: new Set(['Foo 1', 'Foo 3']),
     selectionMode: 'multiple'
   },
-  storyName: 'selectedKeys',
+  name: 'selectedKeys',
   parameters: {
     controls: {
       exclude: /selectionMode/
@@ -348,7 +348,7 @@ export const StaticNestedColumns: TableStory = {
       </TableBody>
     </TableView>
   ),
-  storyName: 'static with nested columns'
+  name: 'static with nested columns'
 };
 
 let nestedColumns = [
@@ -387,7 +387,7 @@ export const DynamicNestedColumns: TableStory = {
       </TableBody>
     </TableView>
   ),
-  storyName: 'dynamic with nested columns'
+  name: 'dynamic with nested columns'
 };
 
 export const DynamicNestedColumnsWithResizing: TableStory = {
@@ -412,7 +412,7 @@ export const DynamicNestedColumnsWithResizing: TableStory = {
       </TableBody>
     </TableView>
   ),
-  storyName: 'dynamic with nested columns with resizing'
+  name: 'dynamic with nested columns with resizing'
 };
 
 export const FocusableCells: TableStory = {
@@ -453,7 +453,7 @@ export const FocusableCells: TableStory = {
       <input id="focus-after" />
     </Flex>
   ),
-  storyName: 'focusable cells'
+  name: 'focusable cells'
 };
 
 let manyColunns = [];
@@ -499,7 +499,7 @@ export const ManyColumnsAndRows: TableStory = {
       <input id="focus-after" />
     </>
   ),
-  storyName: 'many columns and rows'
+  name: 'many columns and rows'
 };
 
 const TableViewFilledCellWidths = (props: SpectrumTableProps<unknown> & {allowsResizing: boolean}) => {
@@ -620,7 +620,7 @@ export const ShouldFillCellWidth: ComponentStoryObj<typeof TableViewFilledCellWi
     height: 200
   },
   render: (args) => <TableViewFilledCellWidths {...args} />,
-  storyName: 'should fill cell width',
+  name: 'should fill cell width',
   argTypes: {
     allowsResizing: {type: 'boolean'}
   }
@@ -654,7 +654,7 @@ export const ColumnWidthsAndDividers: TableStory = {
       </TableBody>
     </TableView>
   ),
-  storyName: 'column widths and dividers'
+  name: 'column widths and dividers'
 };
 
 
@@ -685,7 +685,7 @@ export const CellWithLongContent: TableStory = {
       </TableBody>
     </TableView>
   ),
-  storyName: 'cell with long content',
+  name: 'cell with long content',
   parameters: {
     description: {
       data: 'After changing overflowMode, refresh page to see the change.'
@@ -720,7 +720,7 @@ export const CustomRowHeaderLabeling: TableStory = {
       </TableBody>
     </TableView>
   ),
-  storyName: 'custom isRowHeader labeling',
+  name: 'custom isRowHeader labeling',
   parameters: {
     description: {
       content: 'Changes how the screen reader labels rows.'
@@ -730,7 +730,7 @@ export const CustomRowHeaderLabeling: TableStory = {
 
 export const CRUD: TableStory = {
   render: (args) => <CRUDExample {...args} />,
-  storyName: 'CRUD'
+  name: 'CRUD'
 };
 
 function DeletableRowsTable(props: SpectrumTableProps<unknown>) {
@@ -782,12 +782,12 @@ export const InlineDeleteButtons: TableStory = {
     height: 300
   },
   render: (args) => <DeletableRowsTable {...args} />,
-  storyName: 'Inline delete buttons'
+  name: 'Inline delete buttons'
 };
 
 export const HidingColumnsExample: TableStory = {
   render: (args) => <HidingColumns {...args} />,
-  storyName: 'hiding columns'
+  name: 'hiding columns'
 };
 
 export const IsLoading: TableStory = {
@@ -812,7 +812,7 @@ export const IsLoading: TableStory = {
       </TableBody>
     </TableView>
   ),
-  storyName: 'isLoading'
+  name: 'isLoading'
 };
 
 export const IsLoadingMore: TableStory = {
@@ -837,7 +837,7 @@ export const IsLoadingMore: TableStory = {
       </TableBody>
     </TableView>
   ),
-  storyName: 'isLoading more'
+  name: 'isLoading more'
 };
 
 export const Filtering: TableStory = {
@@ -862,7 +862,7 @@ export const Filtering: TableStory = {
       </TableBody>
     </TableView>
   ),
-  storyName: 'filtering'
+  name: 'filtering'
 };
 
 function renderEmptyState() {
@@ -903,7 +903,7 @@ function EmptyStateTable(props) {
 
 export const EmptyStateStory: TableStory = {
   render: (args) => <EmptyStateTable {...args} />,
-  storyName: 'renderEmptyState'
+  name: 'renderEmptyState'
 };
 
 
@@ -976,7 +976,7 @@ export const AsyncLoading: TableStory = {
     height: 400
   },
   render: (args) => <AsyncLoadingExample {...args} />,
-  storyName: 'async loading'
+  name: 'async loading'
 };
 
 export const HideHeader: TableStory = {
@@ -1094,7 +1094,7 @@ export const HideHeader: TableStory = {
       </TableBody>
     </TableView>
   ),
-  storyName: 'hideHeader'
+  name: 'hideHeader'
 };
 
 let COLUMNS = [
@@ -1207,7 +1207,7 @@ function ProjectListTable(props) {
 
 export const AsyncLoadingClientFiltering: TableStory = {
   render: (args) => <ProjectListTable {...args} />,
-  storyName: 'async client side filter loading'
+  name: 'async client side filter loading'
 };
 
 
@@ -1293,7 +1293,7 @@ function AsyncServerFilterTable(props) {
 
 export const AsyncLoadingServerFiltering: TableStory = {
   render: (args) => <AsyncServerFilterTable {...args} />,
-  storyName: 'async server side filter loading'
+  name: 'async server side filter loading'
 };
 
 export const AsyncLoadingServerFilteringLoadMore: TableStory = {
@@ -1301,7 +1301,7 @@ export const AsyncLoadingServerFilteringLoadMore: TableStory = {
     height: 500
   },
   render: (args) => <AsyncServerFilterTable {...args} />,
-  storyName: 'loads more on scroll when contentSize.height < rect.height * 2'
+  name: 'loads more on scroll when contentSize.height < rect.height * 2'
 };
 
 export const WithDialogTrigger: TableStory = {
@@ -1343,7 +1343,7 @@ export const WithDialogTrigger: TableStory = {
       </TableBody>
     </TableView>
   ),
-  storyName: 'with dialog trigger'
+  name: 'with dialog trigger'
 };
 
 
@@ -1423,7 +1423,7 @@ export const WithBreadcrumbNavigation: TableStory = {
     onAction: undefined
   },
   render: (args) => <TableWithBreadcrumbs {...args} />,
-  storyName: 'table with breadcrumb navigation'
+  name: 'table with breadcrumb navigation'
 };
 
 export const ResizingUncontrolledDynamicWidths: TableStory = {
@@ -1462,7 +1462,7 @@ export const ResizingUncontrolledDynamicWidths: TableStory = {
       <input id="focusable-after" />
     </>
   ),
-  storyName: 'allowsResizing, uncontrolled, dynamic widths'
+  name: 'allowsResizing, uncontrolled, dynamic widths'
 };
 
 export const ResizingUncontrolledStaticWidths: TableStory = {
@@ -1492,7 +1492,7 @@ export const ResizingUncontrolledStaticWidths: TableStory = {
       </TableBody>
     </TableView>
   ),
-  storyName: 'allowsResizing, uncontrolled, static widths'
+  name: 'allowsResizing, uncontrolled, static widths'
 };
 
 export const ResizingUncontrolledColumnDivider: TableStory = {
@@ -1522,7 +1522,7 @@ export const ResizingUncontrolledColumnDivider: TableStory = {
       </TableBody>
     </TableView>
   ),
-  storyName: 'allowsResizing, uncontrolled, column divider'
+  name: 'allowsResizing, uncontrolled, column divider'
 };
 
 export const ResizingUncontrolledMinMax: TableStory = {
@@ -1552,7 +1552,7 @@ export const ResizingUncontrolledMinMax: TableStory = {
       </TableBody>
     </TableView>
   ),
-  storyName: 'allowsResizing, uncontrolled, min/max widths'
+  name: 'allowsResizing, uncontrolled, min/max widths'
 };
 
 export const ResizingUncontrolledSomeNotAllowed: TableStory = {
@@ -1585,7 +1585,7 @@ export const ResizingUncontrolledSomeNotAllowed: TableStory = {
       </TableBody>
     </TableView>
   ),
-  storyName: 'allowsResizing, uncontrolled, some columns not allowed resizing'
+  name: 'allowsResizing, uncontrolled, some columns not allowed resizing'
 };
 
 export const ResizingUncontrolledNoHeightWidth: TableStory = {
@@ -1616,7 +1616,7 @@ export const ResizingUncontrolledNoHeightWidth: TableStory = {
       </TableBody>
     </TableView>
   ),
-  storyName: 'allowsResizing, uncontrolled, undefined table width and height'
+  name: 'allowsResizing, uncontrolled, undefined table width and height'
 };
 
 export const ResizingUncontrolledSortableColumns: TableStory = {
@@ -1625,7 +1625,7 @@ export const ResizingUncontrolledSortableColumns: TableStory = {
     height: 400
   },
   render: (args) => <AsyncLoadingExample isResizable {...args} />,
-  storyName: 'allowsResizing, uncontrolled, sortable columns'
+  name: 'allowsResizing, uncontrolled, sortable columns'
 };
 
 export const ResizingManyColumnsRows: TableStory = {
@@ -1656,12 +1656,12 @@ export const ResizingManyColumnsRows: TableStory = {
       <input id="focusable-after" />
     </>
   ),
-  storyName: 'allowsResizing, many columns and rows'
+  name: 'allowsResizing, many columns and rows'
 };
 
 export const ResizingHidingColumns: TableStory = {
   render: (args) => <HidingColumnsAllowsResizing {...args} />,
-  storyName: 'allowsResizing, hiding columns'
+  name: 'allowsResizing, hiding columns'
 };
 
 function EmptyState() {
@@ -1712,7 +1712,7 @@ export const ResizingZoom: TableStory = {
       <ZoomResizing {...args} />
     </div>
   ),
-  storyName: 'zoom resizing table',
+  name: 'zoom resizing table',
   parameters: {description: {data: 'Using browser zoom should not trigger an infinite resizing loop. CMD+"+" to zoom in and CMD+"-" to zoom out.'}}
 };
 
@@ -1727,7 +1727,7 @@ let uncontrolledColumns: PokemonColumn[] = [
 export const ResizingControlledNoInitialWidths: TableStory = {
   render: (args) =>
     <ControllingResize {...args} width={900} columns={uncontrolledColumns} />,
-  storyName: 'allowsResizing, controlled, no widths',
+  name: 'allowsResizing, controlled, no widths',
   parameters: {description: {data: `
     You can use the buttons to save and restore the column widths. When restoring,
     you will notice that the entire table reverts, this is because no columns are controlled.
@@ -1746,7 +1746,7 @@ export const ResizingControlledSomeInitialWidths: TableStory = {
   render: (args) => (
     <ControllingResize {...args} width={900} columns={columnsSomeFR} />
   ),
-  storyName: 'allowsResizing, controlled, some widths',
+  name: 'allowsResizing, controlled, some widths',
   parameters: {description: {data: `
     You can use the buttons to save and restore the column widths. When restoring,
     you will see a quick flash because the entire table is re-rendered. This
@@ -1766,7 +1766,7 @@ export const ResizingControlledAllInitialWidths: TableStory = {
   render: (args) => (
     <ControllingResize {...args} width={900} columns={columnsFR} />
   ),
-  storyName: 'allowsResizing, controlled, all widths',
+  name: 'allowsResizing, controlled, all widths',
   parameters: {description: {data: `
     You can use the buttons to save and restore the column widths. When restoring,
     you will see a quick flash because the entire table is re-rendered. This
@@ -1785,9 +1785,58 @@ export const ResizingControlledHideHeader: TableStory = {
   render: (args) => (
     <ControllingResize {...args} width={900} columns={columnsFRHideHeaders} />
   ),
-  storyName: 'allowsResizing, controlled, hideHeader',
+  name: 'allowsResizing, controlled, hideHeader',
   parameters: {description: {data: `
     Hide headers columns should not be resizable.
   `}}
 };
 
+let typeAheadColumns = [
+  {name: 'First Name', id: 'firstname', isRowHeader: true},
+  {name: 'Last Name', id: 'lastname', isRowHeader: true},
+  {name: 'Birthday', id: 'birthday'},
+  {name: 'Edit', id: 'edit'}
+];
+let typeAheadRows = [
+  ...Array.from({length: 100}, (v, i) => ({id: i, firstname: 'Aubrey', lastname: 'Sheppard', birthday: 'May 7'})),
+  {id: 101, firstname: 'John', lastname: 'Doe', birthday: 'May 7'}
+];
+export const TypeaheadWithDialog: TableStory = {
+  render: (args) => (
+    <div style={{height: '90vh'}}>
+      <TableView aria-label="Table" selectionMode="none" height="100%" {...args}>
+        <TableHeader columns={typeAheadColumns}>
+          {(col) => (
+            <Column key={col.id} isRowHeader={col.isRowHeader}>{col.name}</Column>
+          )}
+        </TableHeader>
+        <TableBody items={typeAheadRows}>
+          {(item) => (
+            <Row key={item.id}>
+              {(key) =>
+                key === 'edit' ? (
+                  <Cell>
+                    <DialogTrigger>
+                      <ActionButton aria-label="Add Info">
+                        <Add />
+                      </ActionButton>
+                      <Dialog>
+                        <Heading>Add Info</Heading>
+                        <Divider />
+                        <Content>
+                          <TextField label="Enter a J" />
+                        </Content>
+                      </Dialog>
+                    </DialogTrigger>
+                  </Cell>
+                ) : (
+                  <Cell>{item[key]}</Cell>
+                )
+              }
+            </Row>
+          )}
+        </TableBody>
+      </TableView>
+    </div>
+  )
+};

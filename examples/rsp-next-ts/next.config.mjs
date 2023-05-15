@@ -2,6 +2,7 @@ export default {
   transpilePackages: [
     "@adobe/react-spectrum",
     "@react-spectrum/actiongroup",
+    "@react-spectrum/avatar",
     "@react-spectrum/badge",
     "@react-spectrum/breadcrumbs",
     "@react-spectrum/button",
@@ -39,6 +40,7 @@ export default {
     "@react-spectrum/switch",
     "@react-spectrum/table",
     "@react-spectrum/tabs",
+    "@react-spectrum/tag",
     "@react-spectrum/text",
     "@react-spectrum/textfield",
     "@react-spectrum/theme-dark",

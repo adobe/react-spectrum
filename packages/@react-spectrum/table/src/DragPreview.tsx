@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Adobe. All rights reserved.
+ * Copyright 2023 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -9,78 +9,33 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
 import {classNames} from '@react-spectrum/utils';
-import {Direction, Node} from '@react-types/shared';
 import {Flex} from '@react-spectrum/layout';
-import {GridNode} from '@react-types/grid';
 import React from 'react';
-import type {SpectrumTableProps} from './TableView';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
-import type {TableLayout} from '@react-stately/layout';
 
-interface DragPreviewProps<T> {
-  item:  Node<T>,
-  children: Iterable<Node<T>>,
+interface DragPreviewProps {
+  itemText: string,
   itemCount: number,
-  density: SpectrumTableProps<T>['density'],
-  layout: TableLayout<T>,
-  direction: Direction,
-  maxWidth: number,
-  rowHeaderColumnKeys: Set<React.Key>
+  height: number,
+  maxWidth: number
 }
 
-interface TableCellPreviewProps {
-  cell: GridNode<any>
-}
-
-export function TableCellPreview(props: TableCellPreviewProps) {
-  let {cell} = props;
-
-  return (
-    <div
-      className={
-          classNames(
-            styles,
-            'spectrum-Table-cell',
-            classNames(
-              stylesOverrides,
-              'react-spectrum-Table-cell'
-            )
-          )
-        }>
-      <span
-        className={
-            classNames(
-              styles,
-              'spectrum-Table-cellContents'
-            )
-        }>
-        {cell.rendered}
-      </span>
-    </div>
-  );
-}
-
-export function DragPreview(props: DragPreviewProps<unknown>) {
+export function DragPreview(props: DragPreviewProps) {
   let {
-    item,
-    children,
+    itemText,
     itemCount,
-    density,
-    layout,
-    maxWidth,
-    rowHeaderColumnKeys
+    height,
+    maxWidth
   } = props;
-  let {height} = layout.getLayoutInfo(item.key).rect;
   let isDraggingMultiple = itemCount > 1;
-  // @ts-ignore
-  let cells = [...children].filter(cell => rowHeaderColumnKeys.has(cell.column.key));
-
   return (
     <Flex
       justifyContent="space-between"
-      UNSAFE_style={{height, maxWidth}}
+      height={height}
+      maxWidth={maxWidth}
       UNSAFE_className={
         classNames(
           styles,
@@ -89,17 +44,30 @@ export function DragPreview(props: DragPreviewProps<unknown>) {
             stylesOverrides,
             'react-spectrum-Table-row',
             'react-spectrum-Table-row-dragPreview',
-            {'react-spectrum-Table-row-dragPreview--multiple': isDraggingMultiple},
-            `react-spectrum-Table-row-dragPreview--${density}`
+            {'react-spectrum-Table-row-dragPreview--multiple': isDraggingMultiple}
           )
         )
       }>
-      <div>
-        {cells.map((cell) => (
-          <TableCellPreview
-            key={cell.key}
-            cell={cell} />
-        ))}
+      <div
+        className={
+        classNames(
+          styles,
+          'spectrum-Table-cell',
+          classNames(
+            stylesOverrides,
+            'react-spectrum-Table-cell'
+          )
+        )
+      }>
+        <span
+          className={
+            classNames(
+              styles,
+              'spectrum-Table-cellContents'
+            )
+        }>
+          {itemText}
+        </span>
       </div>
       {isDraggingMultiple &&
         <div className={classNames(stylesOverrides, 'react-spectrum-Table-row-badge')}>{itemCount}</div>

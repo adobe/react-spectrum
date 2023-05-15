@@ -100,19 +100,19 @@ export const WithTime: RangeCalendarStory = {
 
 export const ZonedTime: RangeCalendarStory = {
   render: (args) => <RangeCalendarWithZonedTime {...args} />,
-  storyName: 'with zoned time'
+  name: 'with zoned time'
 };
 
 export const OneWeek: RangeCalendarStory = {
   ...Default,
   args: {minValue: today(getLocalTimeZone()), maxValue: today(getLocalTimeZone()).add({weeks: 1})},
-  storyName: 'minValue: today, maxValue: 1 week from now'
+  name: 'minValue: today, maxValue: 1 week from now'
 };
 
 export const DefaultMinMax: RangeCalendarStory = {
   ...Default,
   args: {defaultValue: {start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 12)}, minValue: new CalendarDate(2019, 6, 5), maxValue: new CalendarDate(2019, 6, 20)},
-  storyName: 'defaultValue + minValue + maxValue'
+  name: 'defaultValue + minValue + maxValue'
 };
 
 export const DateUnavailable: RangeCalendarStory = {
@@ -121,24 +121,24 @@ export const DateUnavailable: RangeCalendarStory = {
     const disabledIntervals = [[today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})], [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]];
     return disabledIntervals.some((interval) => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0);
   }},
-  storyName: 'isDateUnavailable'
+  name: 'isDateUnavailable'
 };
 
 export const MinValue: RangeCalendarStory = {
   ...Default,
   args: {minValue: today(getLocalTimeZone())},
-  storyName: 'minValue: today'
+  name: 'minValue: today'
 };
 
 export const DefaultValVisibleMonths: RangeCalendarStory = {
   ...Default,
   args: {visibleMonths: 3, defaultValue: {start: new CalendarDate(2021, 10, 5), end: new CalendarDate(2021, 12, 10)}},
-  storyName: 'defaultValue, visibleMonths: 3'
+  name: 'defaultValue, visibleMonths: 3'
 };
 
 export const DateUnavailableInvalid: RangeCalendarStory = {
   render: (args) => <DateUnavailableAndInvalid {...args} />,
-  storyName: 'isDateUnavailable, invalid'
+  name: 'isDateUnavailable, invalid'
 };
 
 function render(props) {

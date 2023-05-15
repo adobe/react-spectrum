@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Adobe. All rights reserved.
+ * Copyright 2023 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,7 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-export {useTagGroupState} from './useTagGroupState';
+import {useCallback, useRef} from 'react';
+import {useLayoutEffect} from './useLayoutEffect';
 
-export type {TagGroupState} from './useTagGroupState';
-export type {TagGroupProps} from '@react-types/tag';
+export function useEffectEvent(fn) {
+  const ref = useRef(null);
+  useLayoutEffect(() => {
+    ref.current = fn;
+  }, [fn]);
+  return useCallback((...args) => {
+    const f = ref.current;
+    return f(...args);
+  }, []);
+}

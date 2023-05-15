@@ -78,9 +78,7 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
           }
         }]
       ]}>
-      <div {...renderProps} ref={ref} slot={props.slot}>
-        {props.children}
-      </div>
+      <div {...renderProps} ref={ref} slot={props.slot} />
     </Provider>
   );
 }
@@ -88,7 +86,7 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
 /**
  * A date picker combines a DateField and a Calendar popover to allow users to enter or select a date and time value.
  */
-const _DatePicker = (forwardRef as forwardRefType)(DatePicker);
+const _DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(DatePicker);
 export {_DatePicker as DatePicker};
 
 function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, ref: ForwardedRef<HTMLDivElement>) {
@@ -163,9 +161,7 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
           }
         }]
       ]}>
-      <div {...renderProps} ref={ref} slot={props.slot}>
-        {props.children}
-      </div>
+      <div {...renderProps} ref={ref} slot={props.slot} />
     </Provider>
   );
 }
@@ -174,5 +170,5 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
  * A date range picker combines two DateFields and a RangeCalendar popover to allow
  * users to enter or select a date and time range.
  */
-const _DateRangePicker = (forwardRef as forwardRefType)(DateRangePicker);
+const _DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(DateRangePicker);
 export {_DateRangePicker as DateRangePicker};

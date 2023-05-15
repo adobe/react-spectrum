@@ -14,28 +14,32 @@ import {ComboBox} from './example';
 import {Item} from '@react-stately/collections';
 import React from 'react';
 
-const meta = {
+export default {
   title: 'useComboBox'
 };
-
-export default meta;
 
 let lotsOfItems: any[] = [];
 for (let i = 0; i < 50; i++) {
   lotsOfItems.push({name: 'Item ' + i});
 }
 
-const Template = () => (args) => (
+const Template = (args) => (
   <ComboBox {...args} label="Example" defaultItems={lotsOfItems}>
     {(item: any) => <Item key={item.name}>{item.name}</Item>}
   </ComboBox>
 );
 
-export const ScrollTesting = Template().bind({});
-ScrollTesting.args = {};
+export const ScrollTesting = {
+  render: Template,
+  args: {}
+};
 
-export const Disabled = Template().bind({});
-Disabled.args = {isDisabled: true};
+export const Disabled = {
+  render: Template,
+  args: {isDisabled: true}
+};
 
-export const FocusWrapping = Template().bind({});
-FocusWrapping.args = {shouldFocusWrap: true};
+export const FocusWrapping = {
+  render: Template,
+  args: {shouldFocusWrap: true}
+};

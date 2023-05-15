@@ -34,6 +34,13 @@ describe('Button', () => {
     expect(button).toHaveAttribute('data-foo', 'bar');
   });
 
+  it('should support form props', () => {
+    let {getByRole} = render(<form id="foo"><Button form="foo" formMethod="post">Test</Button></form>);
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('form', 'foo');
+    expect(button).toHaveAttribute('formMethod', 'post');
+  });
+
   it('should support slot', () => {
     let {getByRole} = render(
       <ButtonContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
@@ -65,7 +72,7 @@ describe('Button', () => {
   it('should support focus ring', () => {
     let {getByRole} = render(<Button className={({isFocusVisible}) => isFocusVisible ? 'focus' : ''}>Test</Button>);
     let button = getByRole('button');
-    
+
     expect(button).not.toHaveAttribute('data-focus-visible');
     expect(button).not.toHaveClass('focus');
 
@@ -104,5 +111,18 @@ describe('Button', () => {
 
     expect(button).toBeDisabled();
     expect(button).toHaveClass('disabled');
+  });
+
+  it('should support render props', () => {
+    let {getByRole} = render(<Button>{({isPressed}) => isPressed ? 'Pressed' : 'Test'}</Button>);
+    let button = getByRole('button');
+
+    expect(button).toHaveTextContent('Test');
+
+    fireEvent.mouseDown(button);
+    expect(button).toHaveTextContent('Pressed');
+
+    fireEvent.mouseUp(button);
+    expect(button).toHaveTextContent('Test');
   });
 });

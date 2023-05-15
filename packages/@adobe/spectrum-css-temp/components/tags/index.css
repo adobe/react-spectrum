@@ -18,12 +18,25 @@ governing permissions and limitations under the License.
 
 .spectrum-Tags {
   display: inline;
+
+  &:focus-visible {
+    outline: none;
+  }
+
+  &.focus-ring {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--spectrum-tag-border-color-key-focus);
+    /* Allows us to use a box-shadow for the focus ring. Should not cause layout shifts since it is within a container. */
+    display: block;
+  }
 }
 
 .spectrum-Tags-container {
-  /* Aligns tags with label. */
-  margin-inline-start: calc(calc(var(--spectrum-taggroup-tag-gap-x) / 2) * -1);
-  margin-inline-end: calc(var(--spectrum-taggroup-tag-gap-x) / 2);
+  &:not(.spectrum-Tags-container--empty) {
+    /* Aligns tags with label. */
+    margin-inline-start: calc(calc(var(--spectrum-taggroup-tag-gap-x) / 2) * -1);
+    margin-inline-end: calc(var(--spectrum-taggroup-tag-gap-x) / 2);
+  }
 }
 
 .spectrum-Tag {
@@ -125,4 +138,8 @@ governing permissions and limitations under the License.
   &:not(.spectrum-Tags-fieldWrapper--positionSide) {
     display: grid;
   }
+}
+
+.spectrum-Tags-empty-state {
+  min-height: var(--spectrum-tag-height);
 }
