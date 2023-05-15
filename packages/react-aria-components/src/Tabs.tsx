@@ -15,7 +15,7 @@ import {AriaTabListProps, AriaTabPanelProps, mergeProps, Orientation, useFocusRi
 import {CollectionProps, Item, useCollection} from './Collection';
 import {ContextValue, forwardRefType, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {Node, TabListState, useTabListState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, Key, useContext, useEffect, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, Key, useContext, useEffect, useMemo, useState} from 'react';
 import {useObjectRef} from '@react-aria/utils';
 
 export interface TabsProps extends RenderProps<TabsRenderProps>, SlotProps {
@@ -107,14 +107,13 @@ const InternalTabsContext = createContext<InternalTabsContextValue | null>(null)
 function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TabsContext);
   let {orientation = 'horizontal'} = props;
+  let values = useMemo(() => ({orientation}), [orientation]);
   let [state, setState] = useState<TabListState<unknown> | null>(null);
 
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-Tabs',
-    values: {
-      orientation
-    }
+    values
   });
 
   return (
