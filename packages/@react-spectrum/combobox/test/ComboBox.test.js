@@ -19,6 +19,7 @@ import {ComboBox, Item, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
+import {SSRProvider} from '@react-aria/ssr';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import {useAsyncList} from '@react-stately/data';
 import {useFilter} from '@react-aria/i18n';
@@ -1209,6 +1210,18 @@ describe('ComboBox', function () {
 
         expect(queryByRole('listbox')).toBeNull();
       });
+    });
+
+    it('works with SSR', () => {
+      let {getByRole} = render(<SSRProvider><ExampleComboBox selectedKey="2" /></SSRProvider>);
+
+      let button = getByRole('button');
+      triggerPress(button);
+      act(() => jest.runAllTimers());
+
+      let listbox = getByRole('listbox');
+      let items = within(listbox).getAllByRole('option');
+      expect(items).toHaveLength(3);
     });
   });
 

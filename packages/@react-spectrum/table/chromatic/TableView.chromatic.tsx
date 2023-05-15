@@ -18,7 +18,7 @@ import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
-import {Meta, Story} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import React from 'react';
 import {View} from '@react-spectrum/view';
 
@@ -112,7 +112,7 @@ let items = [
   {foo: 'Foo 5', bar: 'Baaaaaaaaaar 5', baz: 'Baz 1'}
 ];
 
-const Template = (): Story => ({columns, items, ...args}) => (
+const Template = ({columns, items, ...args}) => (
   <Grid columns={repeat(3, '1fr')} autoFlow="row" gap="size-300">
     {combinations.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -158,44 +158,59 @@ function renderEmptyState() {
   );
 }
 
-const EmptyTemplate = (): Story => (args) => (
-  <TableView {...args} maxWidth={700} height={400} renderEmptyState={renderEmptyState}>
-    <TableHeader columns={columns}>
-      {(column: any) => (
-        <Column key={column.key} width={column.width} showDivider={column.showDivider} align={column.align}>
-          {column.name}
-        </Column>
-      )}
-    </TableHeader>
-    <TableBody>
-      {[]}
-    </TableBody>
-  </TableView>
-);
+const EmptyTemplate = (args) =>
+  (
+    <TableView {...args} maxWidth={700} height={400} renderEmptyState={renderEmptyState}>
+      <TableHeader columns={columns}>
+        {(column: any) => (
+          <Column
+            key={column.key}
+            width={column.width}
+            showDivider={column.showDivider}
+            align={column.align}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody>{[]}</TableBody>
+    </TableView>
+  );
 
-export const Default = Template().bind({});
-Default.storyName = 'default items and columns';
-Default.args = {columns, items};
+export const Default = {
+  render: Template,
+  name: 'default items and columns',
+  args: {columns, items}
+};
 
-export const ColumnAlign = Template().bind({});
-ColumnAlign.storyName = 'column alignment';
-ColumnAlign.args = {columns: alignColumns, items};
+export const ColumnAlign = {
+  render: Template,
+  name: 'column alignment',
+  args: {columns: alignColumns, items}
+};
 
-export const ColumnDividers = Template().bind({});
-ColumnDividers.storyName = 'columns dividers';
-ColumnDividers.args = {columns: dividerColumns, items};
+export const ColumnDividers = {
+  render: Template,
+  name: 'columns dividers',
+  args: {columns: dividerColumns, items}
+};
 
-export const ColumnWidth = Template().bind({});
-ColumnWidth.storyName = 'columns widths';
-ColumnWidth.args = {columns: customWidth, items};
+export const ColumnWidth = {
+  render: Template,
+  name: 'columns widths',
+  args: {columns: customWidth, items}
+};
 
-export const HiddenColumns = Template().bind({});
-HiddenColumns.storyName = 'hidden columns';
-HiddenColumns.args = {columns: hiddenColumns, items};
+export const HiddenColumns = {
+  render: Template,
+  name: 'hidden columns',
+  args: {columns: hiddenColumns, items}
+};
 
-export const NestedColumns = Template().bind({});
-NestedColumns.storyName = 'nested columns';
-NestedColumns.args = {columns: nestedColumns, items};
+export const NestedColumns = {
+  render: Template,
+  name: 'nested columns',
+  args: {columns: nestedColumns, items}
+};
 
 export const MaxHeight = () => (
   <TableView maxHeight="size-1200">
@@ -203,11 +218,13 @@ export const MaxHeight = () => (
       {(column: any) => <Column key={column.key}>{column.name}</Column>}
     </TableHeader>
     <TableBody items={items}>
-      {(item: any) => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
+      {(item: any) => <Row key={item.foo}>{(key) => <Cell>{item[key]}</Cell>}</Row>}
     </TableBody>
   </TableView>
-  );
+);
 
-export const Empty = EmptyTemplate().bind({});
-Empty.storyName = 'empty table';
-Empty.args = {};
+export const Empty = {
+  render: EmptyTemplate,
+  name: 'empty table',
+  args: {}
+};

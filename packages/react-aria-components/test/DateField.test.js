@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {CalendarDate} from '@internationalized/date';
 import {DateField, DateFieldContext, DateInput, DateSegment, Label, Text} from '../';
 import React from 'react';
 import {render, within} from '@react-spectrum/test-utils';
@@ -145,5 +146,22 @@ describe('DateField', () => {
     let group = getByRole('group');
     expect(group).toHaveAttribute('data-disabled');
     expect(group).toHaveClass('disabled');
+  });
+
+  it('should support render props', () => {
+    let {getByRole} = render(
+      <DateField minValue={new CalendarDate(2023, 1, 1)} defaultValue={new CalendarDate(2020, 2, 3)}>
+        {({validationState}) => (
+          <>
+            <Label>Birth date</Label>
+            <DateInput data-validation-state={validationState}>
+              {segment => <DateSegment segment={segment} />}
+            </DateInput>
+          </>
+        )}
+      </DateField>
+    );
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-validation-state', 'invalid');
   });
 });

@@ -12,9 +12,9 @@
 
 import {AriaLabelingProps, DOMAttributes, DOMProps, Validation} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {RefObject, useState} from 'react';
+import type {ListState} from '@react-stately/list';
+import {RefObject, useEffect, useRef, useState} from 'react';
 import {TagGroupProps} from '@react-types/tag';
-import type {TagGroupState} from '@react-stately/tag';
 import {TagKeyboardDelegate} from './TagKeyboardDelegate';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
@@ -44,23 +44,30 @@ export interface AriaTagGroupProps<T> extends TagGroupProps<T>, DOMProps, AriaLa
  * Provides the behavior and accessibility implementation for a tag group component.
  * A tag group is a focusable list of labels, categories, keywords, or other items, with support for keyboard navigation and removal.
  * @param props - Props to be applied to the tag group.
- * @param state - State for the tag group, as returned by `useTagGroupState`.
+ * @param state - State for the tag group, as returned by `useListState`.
  * @param ref - A ref to a DOM element for the tag group.
  */
-export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: TagGroupState<T>, ref: RefObject<HTMLElement>): TagGroupAria {
+export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: ListState<T>, ref: RefObject<HTMLElement>): TagGroupAria {
   let {direction} = useLocale();
   let keyboardDelegate = props.keyboardDelegate || new TagKeyboardDelegate(state.collection, direction);
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField(props);
   let {gridProps} = useGridList({...props, ...fieldProps, keyboardDelegate}, state, ref);
-
-  // Don't want the grid to be focusable or accessible via keyboard
-  delete gridProps.tabIndex;
 
   let [isFocusWithin, setFocusWithin] = useState(false);
   let {focusWithinProps} = useFocusWithin({
     onFocusWithinChange: setFocusWithin
   });
   let domProps = filterDOMProps(props);
+
+  // If the last tag is removed, focus the container.
+  let prevCount = useRef(state.collection.size);
+  useEffect(() => {
+    if (prevCount.current > 0 && state.collection.size === 0 && isFocusWithin) {
+      ref.current.focus();
+    }
+    prevCount.current = state.collection.size;
+  }, [state.collection.size, isFocusWithin, ref]);
+
   return {
     gridProps: mergeProps(gridProps, domProps, {
       role: state.collection.size ? 'grid' : null,

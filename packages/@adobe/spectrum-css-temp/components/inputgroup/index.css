@@ -140,7 +140,6 @@ governing permissions and limitations under the License.
 
   &.is-disabled {
     .spectrum-FieldButton {
-      border-bottom-width: 1px;
       border-radius: 0;
     }
   }

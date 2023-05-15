@@ -51,6 +51,64 @@
   font-weight: 900;
 }
 
+/** pulled from web project id: 'uei1lip' */
+@font-face {
+  font-family: "myriad-arabic";
+  src: url("https://use.typekit.net/af/ad6dbc/00000000000000007735a300/30/l?unicode=AAAHygAAAAdhg4V2jXrgvTqablOmIuR90xJ6f7oYX7HHszHOhbuHChMcgQn5RM8D_2_09h-EDof5QbhEgbbA63nwPrW_c-fWpSq9I3W2wnPr2mXL5hwU9XCfpfCkLYjBT4lM8H7L4ONWX3ugfaTSwXm4HDcbyteaHuCpkuHywfcZB3Qmfrf-lhmtbmdiEYP1_3wmtwTqUe-84RpPif-WvZba-nEoqF8x54v53DpQrOTj48ldu33mIr3t5_p7J-7EIbKWiAPY-6fOlmzgfKcT52EWvLAE-pP79aefMQlHioFliM5EGken-uDgxR0sm5rfhBd4WUTkH-k-gPs7g-WyugAAAb0&features=ALL&v=3");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
+@font-face {
+  font-family: "myriad-arabic";
+  src: url("https://use.typekit.net/af/d1936b/00000000000000007735a2fd/30/l?unicode=AAAHygAAAAdhg4V2jXrgvTqablOmIuR90xJ6f7oYX7HHszHOhbuHChMcgQn5RM8D_2_09h-EDof5QbhEgbbA63nwPrW_c-fWpSq9I3W2wnPr2mXL5hwU9XCfpfCkLYjBT4lM8H7L4ONWX3ugfaTSwXm4HDcbyteaHuCpkuHywfcZB3Qmfrf-lhmtbmdiEYP1_3wmtwTqUe-84RpPif-WvZba-nEoqF8x54v53DpQrOTj48ldu33mIr3t5_p7J-7EIbKWiAPY-6fOlmzgfKcT52EWvLAE-pP79aefMQlHioFliM5EGken-uDgxR0sm5rfhBd4WUTkH-k-gPs7g-WyugAAAb0&features=ALL&v=3");
+  font-display: swap;
+  font-style: italic;
+  font-weight: 400;
+}
+@font-face {
+  font-family: "myriad-hebrew";
+  src: url("https://use.typekit.net/af/e6598e/00000000000000007735a31b/30/l?unicode=AAAHygAAAAdhg4V2jXrgvTqablOmIuR90xJ6f7oYX7HHszHOhbuHChMcgQn5RM8D_2_09h-EDof5QbhEgbbA63nwPrW_c-fWpSq9I3W2wnPr2mXL5hwU9XCfpfCkLYjBT4lM8H7L4ONWX3ugfaTSwXm4HDcbyteaHuCpkuHywfcZB3Qmfrf-lhmtbmdiEYP1_3wmtwTqUe-84RpPif-WvZba-nEoqF8x54v53DpQrOTj48ldu33mIr3t5_p7J-7EIbKWiAPY-6fOlmzgfKcT52EWvLAE-pP79aefMQlHioFliM5EGken-uDgxR0sm5rfhBd4WUTkH-k-gPs7g-WyugAAAb0&features=ALL&v=3");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
+@font-face {
+  font-family: "myriad-hebrew";
+  src: url("https://use.typekit.net/af/26f595/00000000000000007735a313/30/l?unicode=AAAHygAAAAdhg4V2jXrgvTqablOmIuR90xJ6f7oYX7HHszHOhbuHChMcgQn5RM8D_2_09h-EDof5QbhEgbbA63nwPrW_c-fWpSq9I3W2wnPr2mXL5hwU9XCfpfCkLYjBT4lM8H7L4ONWX3ugfaTSwXm4HDcbyteaHuCpkuHywfcZB3Qmfrf-lhmtbmdiEYP1_3wmtwTqUe-84RpPif-WvZba-nEoqF8x54v53DpQrOTj48ldu33mIr3t5_p7J-7EIbKWiAPY-6fOlmzgfKcT52EWvLAE-pP79aefMQlHioFliM5EGken-uDgxR0sm5rfhBd4WUTkH-k-gPs7g-WyugAAAb0&features=ALL&v=3");
+  font-display: swap;
+  font-style: italic;
+  font-weight: 400;
+}
+@font-face {
+  font-family: "adobe-clean-han-japanese";
+  src: url("https://use.typekit.net/af/3a5e38/00000000000000007735dabb/30/m?features=ALL&v=4&chunks=511&order=0");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
+@font-face {
+  font-family: "adobe-clean-han-korean";
+  src: url("https://use.typekit.net/af/d5dab5/00000000000000007735dabc/30/m?features=ALL&v=4&chunks=511&order=0");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
+@font-face {
+  font-family: "adobe-clean-han-simplified-c";
+  src: url("https://use.typekit.net/af/e35bab/00000000000000007735dabd/30/m?features=ALL&v=4&chunks=511&order=0");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
+@font-face {
+  font-family: "adobe-clean-han-traditional";
+  src: url("https://use.typekit.net/af/758ab2/00000000000000007735dabe/30/m?features=ALL&v=4&chunks=511&order=0");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
+
 /* https://use.typekit.net/use4asx.css */
 @font-face {
   font-family: "Source Code Pro";
@@ -92,6 +150,7 @@ html, body {
   --anatomy-gray-100: #f4f6fc;
   --anatomy-gray-75: #FDFDFE;
   --anatomy-gray-50: #FFFFFF;
+  --docsearch-logo-color: #5468FF;
 }
 
 .dark {
@@ -109,6 +168,7 @@ html, body {
   --anatomy-gray-100: #141e35;
   --anatomy-gray-75: #0e1525;
   --anatomy-gray-50: #0c1220;
+  --docsearch-logo-color: #fff;
   .example {
     background-color: var(--spectrum-global-color-gray-100);
   }
@@ -621,6 +681,7 @@ h2.sectionHeader {
 }
 
 .pageHeader {
+  gap: var(--spectrum-global-dimension-size-100);
   position: fixed;
   top: 0;
   display: inline-flex;
@@ -635,6 +696,84 @@ h2.sectionHeader {
   [dir='rtl'] & {
     left: 0;
   }
+
+  z-index: 1;
+}
+
+.docSearchBoxThemeProvider {
+  height: var(--spectrum-global-dimension-size-400);
+
+  .docSearchBox {
+    margin-inline-start: auto;
+    max-width: var(--spectrum-global-dimension-size-3000);
+    width: calc(
+      100vw
+      - 2 * var(--spectrum-actionbutton-min-width, var(--spectrum-global-dimension-size-400))
+      - 4 * var(--spectrum-alias-border-size-thin)
+      - 4 * var(--spectrum-global-dimension-size-100)
+    );
+    min-width: calc(
+      var(--spectrum-global-dimension-size-225)
+      + 2 * var(--spectrum-global-dimension-size-150)
+      + 2 * var(--spectrum-alias-border-size-thin)
+    );
+  }
+}
+
+.docSearchBoxMark {
+  font-weight: bold;
+  background: var(--spectrum-alias-text-highlight-color);
+  color: var(--spectrum-global-color-blue-700);
+}
+
+.docSearchItemIndent {
+  margin-inline-start: var(--spectrum-global-dimension-size-325);
+}
+
+.docSearchFooter {
+  align-items: center;
+  display: flex;
+  flex-direction: row-reverse;
+  flex-shrink: 0;
+  justify-content: space-between;
+
+  border-top-color: var(--spectrum-global-color-gray-300);
+  border-top-style: solid;
+  border-top-width: var(--spectrum-alias-border-size-thick);
+  margin-left: var(--spectrum-global-dimension-size-150);
+  margin-right: var(--spectrum-global-dimension-size-150);
+  margin-top: var(--spectrum-global-dimension-size-40);
+}
+
+.docSearchLogo {
+  padding-top: var(--spectrum-global-dimension-size-75);
+  padding-bottom: var(--spectrum-global-dimension-size-75);
+}
+
+.docSearchLogo a {
+  color: var(--spectrum-global-color-gray-700);
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.docSearchLogoLabel {
+  font-size: var(--spectrum-global-dimension-font-size-75);
+}
+
+.docSearchLogo a:hover .docSearchLogoLabel,
+.docSearchLogo a:focus .docSearchLogoLabel {
+  text-decoration: underline;
+}
+
+.docSearchLogo svg {
+  color: var(--docsearch-logo-color);
+  margin-left: var(--spectrum-global-dimension-size-100);
+}
+
+body.docsearch-open [data-testid="popover"] {
+  position: fixed !important;
+  top: 38px !important;
 }
 
 /* hamburger menu should be hidden so that it doesn't receive focus before the sidenav */
@@ -710,6 +849,26 @@ h2.sectionHeader {
   content: ' • ';
 }
 
+/* Show line under page header and push main down to make room for search. */
+@media (max-width: 1780px) {
+  html, body {
+    scroll-padding-top: var(--spectrum-global-dimension-size-600);
+  }
+
+  main {
+    margin-top: 48px;
+  }
+
+  .pageHeader {
+    border-bottom: 1px solid var(--spectrum-global-color-gray-200);
+    background: var(--page-background);
+    z-index: 50;
+    display: flex;
+    justify-content: flex-end;
+    left: 256px;
+  }
+}
+
 @media (max-width: 750px) {
   .float {
     float: none;
@@ -727,6 +886,24 @@ h2.sectionHeader {
 
   .propTable td[data-column="CSS Selector"] code {
     white-space: normal;
+  }
+}
+
+@media (max-width: 375px) {
+  .docSearchBoxThemeProvider {
+    .docSearchBox {
+      max-width: unset;
+      > div,
+      > div > div {
+        min-width: calc(
+          var(--spectrum-global-dimension-size-150)
+          + var(--spectrum-global-dimension-size-225)
+          + var(--spectrum-global-dimension-size-65)
+          + var(--spectrum-global-dimension-size-350)
+        );
+        width: 100%;
+      }
+    }
   }
 }
 
@@ -847,8 +1024,11 @@ h2.sectionHeader {
     background: var(--page-background);
     z-index: 50;
     display: flex;
+    justify-content: space-between;
+    left: 0;
     width: 100%;
   }
+
   .hamburgerButton {
     display: inline-flex;
   }

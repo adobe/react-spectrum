@@ -1,3 +1,4 @@
 {
-  "remove": "Nospiediet atstarpes taustiņu vai taustiņu Delete, lai noņemtu tagu."
+  "removeButtonLabel": "Noņemt",
+  "removeDescription": "Nospiediet Delete [Dzēst], lai noņemtu tagu."
 }

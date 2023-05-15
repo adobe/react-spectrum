@@ -13,6 +13,7 @@
 import {AriaLabelingProps, DOMProps as SharedDOMProps} from '@react-types/shared';
 import {filterDOMProps, mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import React, {createContext, CSSProperties, ReactNode, RefCallback, RefObject, useCallback, useContext, useEffect, useRef, useState} from 'react';
+import ReactDOM from 'react-dom';
 
 // Override forwardRef types so generics work.
 declare function forwardRef<T, P = {}>(
@@ -59,7 +60,7 @@ export function Provider<A, B, C, D, E, F, G, H>({values, children}: ProviderPro
 export interface StyleProps {
   /** The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. */
   className?: string,
-  /** The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/Element/style) for the element. */
+  /** The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the element. */
   style?: CSSProperties
 }
 
@@ -71,7 +72,7 @@ export interface DOMProps extends StyleProps {
 export interface StyleRenderProps<T> {
   /** The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state. */
   className?: string | ((values: T) => string),
-  /** The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/Element/style) for the element. A function may be provided to compute the style based on component state. */
+  /** The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the element. A function may be provided to compute the style based on component state. */
   style?: CSSProperties | ((values: T) => CSSProperties)
 }
 
@@ -216,7 +217,7 @@ function useAnimation(ref: RefObject<HTMLElement>, isActive: boolean, onEnd: () 
         let onAnimationEnd = (e: AnimationEvent) => {
           if (e.target === ref.current) {
             element.removeEventListener('animationend', onAnimationEnd);
-            onEnd();
+            ReactDOM.flushSync(() => {onEnd();});
           }
         };
 

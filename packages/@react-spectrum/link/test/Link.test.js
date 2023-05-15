@@ -30,11 +30,7 @@ describe('Link', function () {
   let onOpenChange = jest.fn();
 
   beforeAll(() => {
-    jest.useFakeTimers('legacy');
-  });
-
-  afterAll(() => {
-    jest.useRealTimers();
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -73,14 +69,16 @@ describe('Link', function () {
   });
 
   it('Wraps custom child element', () => {
+    let ref = React.createRef();
     let {getByRole} = render(
       <Link UNSAFE_className="test-class" onPress={onPressSpy} >
-        <a href="#only-hash-in-jsdom" >Click me </a>
+        <a href="#only-hash-in-jsdom" ref={ref}>Click me </a>
       </Link>
     );
     let link = getByRole('link');
     expect(link).toBeDefined();
     expect(link.nodeName).toBe('A');
+    expect(ref.current).toBe(link);
     expect(link).toHaveAttribute('class', expect.stringContaining('test-class'));
     expect(link).toHaveAttribute('href', '#only-hash-in-jsdom');
     triggerPress(link);

@@ -11,13 +11,16 @@
  */
 
 import {ColorArea} from '../';
-import {XBlueYGreen as DefaultColorArea, XSaturationYBrightness, XSaturationYLightness} from '../stories/ColorArea.stories';
+import {composeStories} from '@storybook/testing-react';
 import {defaultTheme} from '@adobe/react-spectrum';
 import {fireEvent, installMouseEvent, installPointerEvent, render} from '@react-spectrum/test-utils';
 import {parseColor} from '@react-stately/color';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import * as stories from '../stories/ColorArea.stories';
 import userEvent from '@testing-library/user-event';
+
+let {XRedYGreen: DefaultColorArea, XBlueYGreen, XSaturationYBrightness, XSaturationYLightness} = composeStories(stories);
 
 const SIZE = 160;
 const CENTER = SIZE / 2;
@@ -37,12 +40,7 @@ describe('ColorArea', () => {
 
   beforeAll(() => {
     jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => SIZE);
-    // @ts-ignore
-    jest.useFakeTimers('modern');
-  });
-  afterAll(() => {
-    // @ts-ignore
-    jest.useRealTimers();
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -506,7 +504,7 @@ describe('ColorArea', () => {
   });
   describe('full implementation controlled', () => {
     it('sets input props rgb', () => {
-      let {getAllByRole, getByLabelText} = render(<DefaultColorArea {...DefaultColorArea.args} />);
+      let {getAllByRole, getByLabelText} = render(<XBlueYGreen {...XBlueYGreen.args} />);
       let sliders = getAllByRole('slider');
 
       expect(sliders.length).toBe(2);

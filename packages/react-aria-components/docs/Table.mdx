@@ -15,7 +15,7 @@ import sharedDocs from 'docs:@react-types/shared';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
-import Anatomy from '/packages/@react-aria/table/docs/TableAnatomy.svg';
+import Anatomy from '@react-aria/table/docs/TableAnatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
@@ -25,7 +25,6 @@ import {Keyboard} from '@react-spectrum/text';
 category: Collections
 keywords: [table, aria, grid]
 type: component
-after_version: 1.0.0
 ---
 
 # Table
@@ -196,6 +195,8 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
   }
 
   .react-aria-Cell {
+    transform: translateZ(0);
+
     &:first-child {
       border-radius: 6px 0 0 6px;
     }
@@ -207,12 +208,14 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
 
   /* join selected items if :has selector is supported */
   @supports selector(:has(.foo)) {
-    .react-aria-Row[aria-selected=true]:has(+ [aria-selected=true]) .react-aria-Cell {
+    .react-aria-Row[aria-selected=true]:has(+ [aria-selected=true]) .react-aria-Cell,
+    .react-aria-Row[aria-selected=true]:has(+ .react-aria-DropIndicator + [aria-selected=true]) .react-aria-Cell {
       border-end-start-radius: 0;
       border-end-end-radius: 0;
     }
 
-    .react-aria-Row[aria-selected=true] + [aria-selected=true] .react-aria-Cell {
+    .react-aria-Row[aria-selected=true] + [aria-selected=true] .react-aria-Cell,
+    .react-aria-Row[aria-selected=true] + .react-aria-DropIndicator + [aria-selected=true] .react-aria-Cell {
       border-start-start-radius: 0;
       border-start-end-radius: 0;
     }
@@ -1081,6 +1084,7 @@ function Example() {
 .react-aria-Row {
   &[data-dragging] {
     opacity: 0.6;
+    transform: translateZ(0);
   }
 
   [slot=drag] {
@@ -1103,6 +1107,7 @@ function Example() {
 
 .react-aria-DropIndicator[data-drop-target] {
   outline: 1px solid var(--highlight-background);
+  transform: translateZ(0);
 }
 ```
 
@@ -1402,6 +1407,7 @@ function Example() {
 ```css
 .react-aria-DropIndicator[data-drop-target] {
   outline: 1px solid var(--highlight-background);
+  transform: translateZ(0);
 }
 ```
 
@@ -1471,6 +1477,7 @@ function Example() {
 ```css
 .my-drop-indicator.active {
   outline: 1px solid #e70073;
+  transform: translateZ(0);
 }
 ```
 

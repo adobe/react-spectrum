@@ -11,12 +11,14 @@
  */
 
 import {DOMAttributes, FocusableElement, PressEvent} from '@react-types/shared';
+import {focusSafely} from '@react-aria/focus';
 import {getItemCount} from '@react-stately/collections';
-import {isFocusVisible, useHover, usePress} from '@react-aria/interactions';
-import {Key, RefObject} from 'react';
+import {isFocusVisible, useHover, useKeyboard, usePress} from '@react-aria/interactions';
+import {Key, RefObject, useCallback, useRef} from 'react';
 import {menuData} from './useMenu';
-import {mergeProps, useSlotId} from '@react-aria/utils';
+import {mergeProps, useEffectEvent, useLayoutEffect, useSlotId} from '@react-aria/utils';
 import {TreeState} from '@react-stately/tree';
+import {useLocale} from '@react-aria/i18n';
 import {useSelectableItem} from '@react-aria/selection';
 
 export interface MenuItemAria {
@@ -80,7 +82,10 @@ export interface AriaMenuItemProps {
    * Handler that is called when the user activates the item.
    * @deprecated - pass to the menu instead.
    */
-  onAction?: (key: Key) => void
+  onAction?: (key: Key) => void,
+
+  /** What kind of popup the item opens. */
+  'aria-haspopup'?: 'menu' | 'dialog'
 }
 
 /**
@@ -93,15 +98,47 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let {
     key,
     closeOnSelect,
-    isVirtualized
+    isVirtualized,
+    'aria-haspopup': hasPopup
   } = props;
+  let {direction} = useLocale();
+
+  let isMenuDialogTrigger = state.collection.getItem(key).hasChildNodes;
+  let isOpen = state.expandedKeys.has(key);
 
   let isDisabled = props.isDisabled ?? state.disabledKeys.has(key);
   let isSelected = props.isSelected ?? state.selectionManager.isSelected(key);
 
+  let openTimeout = useRef<ReturnType<typeof setTimeout> | undefined>();
+  let cancelOpenTimeout = useCallback(() => {
+    if (openTimeout.current) {
+      clearTimeout(openTimeout.current);
+      openTimeout.current = undefined;
+    }
+  }, [openTimeout]);
+
+  let onSubmenuOpen = useEffectEvent(() => {
+    cancelOpenTimeout();
+    for (let expandedKey of state.expandedKeys) {
+      state.toggleKey(expandedKey);
+    }
+    if (!state.expandedKeys.has(key)) {
+      state.toggleKey(key);
+    }
+  });
+
+  useLayoutEffect(() => {
+    return () => cancelOpenTimeout();
+  }, [cancelOpenTimeout]);
+
   let data = menuData.get(state);
   let onClose = props.onClose || data.onClose;
-  let onAction = props.onAction || data.onAction;
+  let onActionMenuDialogTrigger = useCallback(() => {
+    onSubmenuOpen();
+    // will need to disable this lint rule when using useEffectEvent https://react.dev/learn/separating-events-from-effects#logic-inside-effects-is-reactive
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  let onAction = isMenuDialogTrigger ? onActionMenuDialogTrigger : props.onAction || data.onAction;
 
   let role = 'menuitem';
   if (state.selectionManager.selectionMode === 'single') {
@@ -131,27 +168,10 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     ariaProps['aria-setsize'] = getItemCount(state.collection);
   }
 
-  let onKeyDown = (e: KeyboardEvent) => {
-    // Ignore repeating events, which may have started on the menu trigger before moving
-    // focus to the menu item. We want to wait for a second complete key press sequence.
-    if (e.repeat) {
-      return;
-    }
-
-    switch (e.key) {
-      case ' ':
-        if (!isDisabled && state.selectionManager.selectionMode === 'none' && closeOnSelect !== false && onClose) {
-          onClose();
-        }
-        break;
-      case 'Enter':
-        // The Enter key should always close on select, except if overridden.
-        if (!isDisabled && closeOnSelect !== false && onClose) {
-          onClose();
-        }
-        break;
-    }
-  };
+  if (hasPopup != null) {
+    ariaProps['aria-haspopup'] = hasPopup;
+    ariaProps['aria-expanded'] = isOpen ? 'true' : 'false';
+  }
 
   let onPressStart = (e: PressEvent) => {
     if (e.pointerType === 'keyboard' && onAction) {
@@ -167,7 +187,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
 
       // Pressing a menu item should close by default in single selection mode but not multiple
       // selection mode, except if overridden by the closeOnSelect prop.
-      if (onClose && (closeOnSelect ?? state.selectionManager.selectionMode !== 'multiple')) {
+      if (!isMenuDialogTrigger && onClose && (closeOnSelect ?? state.selectionManager.selectionMode !== 'multiple')) {
         onClose();
       }
     }
@@ -181,13 +201,71 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     allowsDifferentPressOrigin: true
   });
 
-  let {pressProps, isPressed} = usePress({onPressStart, onPressUp, isDisabled});
+  let {pressProps, isPressed} = usePress({onPressStart, onPressUp, isDisabled: isDisabled || (isMenuDialogTrigger && state.expandedKeys.has(key))});
   let {hoverProps} = useHover({
     isDisabled,
     onHoverStart() {
-      if (!isFocusVisible()) {
+      if (!isFocusVisible() && !(isMenuDialogTrigger && state.expandedKeys.has(key))) {
         state.selectionManager.setFocused(true);
         state.selectionManager.setFocusedKey(key);
+        // focus immediately so that a focus scope opened on hover has the correct restore node
+        let isFocused = key === state.selectionManager.focusedKey;
+        if (isFocused && state.selectionManager.isFocused && document.activeElement !== ref.current) {
+          focusSafely(ref.current);
+        }
+      }
+    },
+    onHoverChange: isHovered => {
+      if (isHovered && isMenuDialogTrigger && !state.expandedKeys.has(key)) {
+        if (!openTimeout.current) {
+          openTimeout.current = setTimeout(() => {
+            onSubmenuOpen();
+          }, 200);
+        }
+      } else if (!isHovered) {
+        cancelOpenTimeout();
+      }
+    }
+  });
+
+  let {keyboardProps} = useKeyboard({
+    onKeyDown: (e) => {
+      // Ignore repeating events, which may have started on the menu trigger before moving
+      // focus to the menu item. We want to wait for a second complete key press sequence.
+      if (e.repeat) {
+        e.continuePropagation();
+        return;
+      }
+
+      switch (e.key) {
+        case ' ':
+          if (!isDisabled && state.selectionManager.selectionMode === 'none' && !isMenuDialogTrigger && closeOnSelect !== false && onClose) {
+            onClose();
+          }
+          break;
+        case 'Enter':
+          // The Enter key should always close on select, except if overridden.
+          if (!isDisabled && closeOnSelect !== false && !isMenuDialogTrigger && onClose) {
+            onClose();
+          }
+          break;
+        case 'ArrowRight':
+          if (isMenuDialogTrigger && direction === 'ltr') {
+            onSubmenuOpen();
+          } else {
+            e.continuePropagation();
+          }
+          break;
+        case 'ArrowLeft':
+          if (isMenuDialogTrigger && direction === 'rtl') {
+            onSubmenuOpen();
+          } else {
+            e.continuePropagation();
+          }
+          break;
+        default:
+          e.continuePropagation();
+          break;
       }
     }
   });
@@ -195,7 +273,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   return {
     menuItemProps: {
       ...ariaProps,
-      ...mergeProps(itemProps, pressProps, hoverProps, {onKeyDown})
+      ...mergeProps(itemProps, pressProps, hoverProps, keyboardProps)
     },
     labelProps: {
       id: labelId

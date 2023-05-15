@@ -25,7 +25,9 @@ export interface AriaTabProps extends AriaLabelingProps {
   /** The key of the tab. */
   key: Key,
   /** Whether the tab should be disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  /** Whether the tab selection should occur on press up instead of press down. */
+  shouldSelectOnPressUp?: boolean
 }
 
 export interface TabListProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'disallowEmptySelection'> {
