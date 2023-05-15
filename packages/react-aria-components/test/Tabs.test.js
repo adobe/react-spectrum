@@ -75,6 +75,30 @@ describe('Tabs', () => {
     expect(tabpanel).toHaveAttribute('data-test', 'tabpanel');
   });
 
+  // FIXME: not sure why this test hangs
+  it.skip('should support render props', () => {
+    let {getByRole} = render(
+      <Tabs orientation="horizontal">
+        {({orientation}) => (
+          <>
+            <TabList aria-label={`Test ${orientation}`}>
+              <Tab id="a">A</Tab>
+              <Tab id="b">B</Tab>
+              <Tab id="c">C</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel id="a">A</TabPanel>
+              <TabPanel id="b">B</TabPanel>
+              <TabPanel id="c">C</TabPanel>
+            </TabPanels>
+          </>
+        )}
+      </Tabs>
+    );
+    let tablist = getByRole('tablist');
+    expect(tablist).toHaveAttribute('aria-label', 'Test horizonal');
+  });
+
   it('should support hover', () => {
     let {getAllByRole} = renderTabs({}, {}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
     let tab = getAllByRole('tab')[0];

@@ -71,4 +71,20 @@ describe('Breadcrumbs', () => {
     expect(breadcrumbs).toHaveAttribute('slot', 'test');
     expect(breadcrumbs).toHaveAttribute('aria-label', 'test');
   });
+
+  it('should support dynamic collections', () => {
+    let items = [
+      {id: 1, name: 'Item 1'},
+      {id: 2, name: 'Item 2'},
+      {id: 3, name: 'Item 3'}
+    ];
+
+    let {getAllByRole} = render(
+      <Breadcrumbs items={items}>
+        {(item) => <Item>{item.name}</Item>}
+      </Breadcrumbs>
+    );
+    
+    expect(getAllByRole('listitem').map((it) => it.textContent)).toEqual(['Item 1', 'Item 2', 'Item 3']);
+  });
 });

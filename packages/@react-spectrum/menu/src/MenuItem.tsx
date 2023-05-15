@@ -12,16 +12,19 @@
 
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
+import {DOMAttributes, Node} from '@react-types/shared';
+import {filterDOMProps, mergeProps, useSlotId} from '@react-aria/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
-import {mergeProps} from '@react-aria/utils';
-import {Node} from '@react-types/shared';
+import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import React, {Key, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/text';
 import {TreeState} from '@react-stately/tree';
-import {useHover} from '@react-aria/interactions';
-import {useMenuContext} from './context';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useMenuContext, useMenuDialogContext} from './context';
 import {useMenuItem} from '@react-aria/menu';
 
 interface MenuItemProps<T> {
@@ -39,6 +42,17 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
     isVirtualized,
     onAction
   } = props;
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let menuDialogContext = useMenuDialogContext();
+  let {triggerRef} = menuDialogContext || {};
+  let isMenuDialogTrigger = !!menuDialogContext;
+  let isUnavailable = false;
+
+  if (isMenuDialogTrigger) {
+    isUnavailable = menuDialogContext.isUnavailable;
+  }
+  
+  let domProps = filterDOMProps(item.props);
 
   let {
     onClose,
@@ -53,8 +67,17 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   let isSelected = state.selectionManager.isSelected(key);
   let isDisabled = state.disabledKeys.has(key);
 
-  let ref = useRef<HTMLLIElement>();
-  let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps} = useMenuItem(
+  let ref = useRef<HTMLLIElement>(null);
+  if (triggerRef) {
+    ref = triggerRef;
+  }
+
+  let {
+    menuItemProps,
+    labelProps,
+    descriptionProps,
+    keyboardShortcutProps
+  } = useMenuItem(
     {
       isSelected,
       isDisabled,
@@ -63,12 +86,18 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
       onClose,
       closeOnSelect,
       isVirtualized,
-      onAction
+      onAction,
+      'aria-haspopup': isMenuDialogTrigger ? 'dialog' : undefined
     },
     state,
     ref
   );
-  let {hoverProps, isHovered} = useHover({isDisabled});
+  let endId = useSlotId();
+  let endProps: DOMAttributes = {};
+  if (endId) {
+    endProps.id = endId;
+    menuItemProps['aria-describedby'] = menuItemProps['aria-describedby'] + ' ' + endId;
+  }
 
   let contents = typeof rendered === 'string'
     ? <Text>{rendered}</Text>
@@ -77,7 +106,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <li
-        {...mergeProps(menuItemProps, hoverProps)}
+        {...mergeProps(menuItemProps, domProps)}
         ref={ref}
         className={classNames(
           styles,
@@ -86,7 +115,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
             'is-disabled': isDisabled,
             'is-selected': isSelected,
             'is-selectable': state.selectionManager.selectionMode !== 'none',
-            'is-hovered': isHovered
+            'is-open': state.expandedKeys.has(key)
           }
         )}>
         <Grid
@@ -100,7 +129,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
             <SlotProvider
               slots={{
                 text: {UNSAFE_className: styles['spectrum-Menu-itemLabel'], ...labelProps},
-                end: {UNSAFE_className: styles['spectrum-Menu-end'], ...descriptionProps},
+                end: {UNSAFE_className: styles['spectrum-Menu-end'], ...endProps},
                 icon: {UNSAFE_className: styles['spectrum-Menu-icon'], size: 'S'},
                 description: {UNSAFE_className: styles['spectrum-Menu-description'], ...descriptionProps},
                 keyboard: {UNSAFE_className: styles['spectrum-Menu-keyboard'], ...keyboardShortcutProps}
@@ -110,12 +139,15 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
                 <CheckmarkMedium
                   slot="checkmark"
                   UNSAFE_className={
-                        classNames(
-                          styles,
-                          'spectrum-Menu-checkmark'
-                        )
-                      } />
-                  }
+                    classNames(
+                      styles,
+                      'spectrum-Menu-checkmark'
+                    )
+                  } />
+              }
+              {
+                isUnavailable && <InfoOutline slot="end" size="XS" alignSelf="center" aria-label={stringFormatter.format('unavailable')} />
+              }
             </SlotProvider>
           </ClearSlots>
         </Grid>

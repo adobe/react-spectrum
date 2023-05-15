@@ -29,12 +29,7 @@ function type(key) {
 
 describe('RangeCalendar', () => {
   beforeEach(() => {
-    jest.useFakeTimers('legacy');
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
-  });
-
-  afterEach(() => {
-    window.requestAnimationFrame.mockRestore();
+    jest.useFakeTimers();
   });
 
   describe('basics', () => {

@@ -1,5 +1,5 @@
 {
   "actions": "アクション",
   "hideButtonLabel": "表示を減らす",
-  "showAllButtonLabel": "({tagCount, number}) 個をすべて表示"
+  "showAllButtonLabel": "すべての ({tagCount, number}) を表示"
 }

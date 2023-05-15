@@ -95,7 +95,7 @@ function ListBoxPortal({props, listBoxRef}) {
 /**
  * A listbox displays a list of options and allows a user to select one or more of them.
  */
-const _ListBox = (forwardRef as forwardRefType)(ListBox);
+const _ListBox = /*#__PURE__*/ (forwardRef as forwardRefType)(ListBox);
 export {_ListBox as ListBox};
 
 interface ListBoxInnerProps<T> {

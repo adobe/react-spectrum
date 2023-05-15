@@ -19,7 +19,6 @@ import userEvent from '@testing-library/user-event';
 
 describe('useDroppableCollection', () => {
   beforeEach(() => {
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
     jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
       let y = 0;
       let height = 50;
@@ -63,7 +62,7 @@ describe('useDroppableCollection', () => {
       return this.getBoundingClientRect().height;
     });
 
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -224,35 +223,35 @@ describe('useDroppableCollection', () => {
 
       let dataTransfer = new DataTransfer();
       fireEvent(draggable, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
-      act(() => jest.runAllTimers());
+      act(() => jest.advanceTimersToNextTimer());
       expect(draggable).toHaveAttribute('data-dragging', 'true');
 
       fireEvent(cells[0], new DragEvent('dragenter', {dataTransfer, clientX: 30, clientY: 30}));
-      act(() => jest.runOnlyPendingTimers());
+      act(() => jest.advanceTimersToNextTimer());
       expect(scrollTop).not.toHaveBeenCalled();
 
       fireEvent(cells[2], new DragEvent('dragover', {dataTransfer, clientX: 30, clientY: 100}));
-      act(() => jest.runOnlyPendingTimers());
+      act(() => jest.advanceTimersToNextTimer());
       expect(scrollTop).not.toHaveBeenCalled();
 
       fireEvent(cells[4], new DragEvent('dragover', {dataTransfer, clientX: 30, clientY: 135}));
-      act(() => jest.runOnlyPendingTimers());
+      act(() => jest.advanceTimersToNextTimer());
       expect(scrollTop).toHaveBeenCalledTimes(1);
-      act(() => jest.runOnlyPendingTimers());
+      act(() => jest.advanceTimersToNextTimer());
       expect(scrollTop).toHaveBeenCalledTimes(2);
       jest.clearAllTimers();
 
       fireEvent(cells[2], new DragEvent('dragover', {dataTransfer, clientX: 30, clientY: 100}));
-      act(() => jest.runAllTimers());
+      act(() => jest.advanceTimersToNextTimer());
       expect(scrollTop).toHaveBeenCalledTimes(2);
 
       fireEvent(cells[2], new DragEvent('dragover', {dataTransfer, clientX: 30, clientY: 15}));
-      act(() => jest.runOnlyPendingTimers());
+      act(() => jest.advanceTimersToNextTimer());
       expect(scrollTop).toHaveBeenCalledTimes(3);
       jest.clearAllTimers();
 
       fireEvent(cells[2], new DragEvent('dragover', {dataTransfer, clientX: 30, clientY: 30}));
-      act(() => jest.runAllTimers());
+      act(() => jest.advanceTimersToNextTimer());
       expect(scrollTop).toHaveBeenCalledTimes(3);
     });
 

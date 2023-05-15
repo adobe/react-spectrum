@@ -1,5 +1,5 @@
 {
   "actions": "操作",
   "hideButtonLabel": "显示更少",
-  "showAllButtonLabel": "显示全部 ({tagCount, number})"
+  "showAllButtonLabel": "全部显示 ({tagCount, number})"
 }

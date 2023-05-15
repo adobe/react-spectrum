@@ -13,6 +13,7 @@
 import Audio from '@spectrum-icons/workflow/Audio';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Item, TagGroup} from '../';
+import {Link} from '@react-spectrum/link';
 import React from 'react';
 import {Text} from '@react-spectrum/text';
 
@@ -124,3 +125,19 @@ export const MaxRowsCustomAction: TagGroupStory = {
   ]
 };
 
+export const EmptyState: TagGroupStory = {
+  render: (args) => (
+    <TagGroup label="Tag group with empty state" {...args}>
+      {[]}
+    </TagGroup>
+  ),
+  storyName: 'Empty state'
+};
+
+export const CustomEmptyState: TagGroupStory = {
+  ...EmptyState,
+  args: {
+    renderEmptyState: () => <span>No tags. <Link><a href="//react-spectrum.com">Click here</a></Link> to add some.</span>
+  },
+  storyName: 'Custom empty state'
+};

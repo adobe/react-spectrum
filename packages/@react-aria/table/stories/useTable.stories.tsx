@@ -15,7 +15,7 @@ import {Table as BackwardCompatTable} from './example-backwards-compat';
 import {Cell, Column, Row, TableBody, TableHeader} from '@react-stately/table';
 import {ColumnSize} from '@react-types/table';
 import {Table as DocsTable} from './example-docs';
-import {Meta, Story} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import React, {Key, useCallback, useMemo, useState} from 'react';
 import {Table as ResizingTable} from './example-resizing';
 import {SpectrumTableProps} from '@react-spectrum/table';
@@ -48,7 +48,7 @@ let defaultRows = [
   {id: 12, name: 'Pikachu', type: 'Electric', level: '100', weight: '13lbs', height: '1\'4"'}
 ];
 
-const Template: Story<SpectrumTableProps<any>> = (args) => (
+const Template: StoryFn<SpectrumTableProps<any>> = (args) => (
   <>
     <label htmlFor="focusable-before">Focusable before</label>
     <input id="focusable-before" />
@@ -73,7 +73,7 @@ const Template: Story<SpectrumTableProps<any>> = (args) => (
   </>
 );
 
-const TemplateBackwardsCompat: Story<SpectrumTableProps<any>> = (args) => (
+const TemplateBackwardsCompat: StoryFn<SpectrumTableProps<any>> = (args) => (
   <>
     <label htmlFor="focusable-before">Focusable before</label>
     <input id="focusable-before" />
@@ -100,32 +100,33 @@ const TemplateBackwardsCompat: Story<SpectrumTableProps<any>> = (args) => (
   </>
 );
 
-export const ScrollTesting = Template.bind({});
-ScrollTesting.args = {};
+export const ScrollTesting = {
+  render: Template
+};
 
-export const ActionTesting = Template.bind({});
-ActionTesting.args = {selectionBehavior: 'replace', selectionStyle: 'highlight', onAction: action('onAction')};
+export const ActionTesting = {
+  render: Template,
+  args: {selectionBehavior: 'replace', selectionStyle: 'highlight', onAction: action('onAction')}
+};
 
-export const BackwardCompatActionTesting = TemplateBackwardsCompat.bind({});
-BackwardCompatActionTesting.args = {selectionBehavior: 'replace', selectionStyle: 'highlight', onAction: action('onAction')};
+export const BackwardCompatActionTesting = {
+  render: TemplateBackwardsCompat,
+  args: {selectionBehavior: 'replace', selectionStyle: 'highlight', onAction: action('onAction')}
+};
 
 export const TableWithResizingNoProps = {
   args: {},
   render: (args) => (
     <ResizingTable {...args}>
       <TableHeader columns={columns}>
-        {column => (
+        {(column) => (
           <Column key={column.uid} allowsResizing>
             {column.name}
           </Column>
         )}
       </TableHeader>
       <TableBody items={defaultRows}>
-        {item => (
-          <Row>
-            {columnKey => <Cell>{item[columnKey]}</Cell>}
-          </Row>
-        )}
+        {(item) => <Row>{(columnKey) => <Cell>{item[columnKey]}</Cell>}</Row>}
       </TableBody>
     </ResizingTable>
   )
