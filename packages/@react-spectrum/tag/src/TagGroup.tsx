@@ -124,7 +124,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           lastTagEnd += TAG_STYLES[scale].margin;
           let availableWidth = containerEnd - lastTagEnd;
 
-          while (availableWidth < buttonsWidth && index < state.collection.size && index > 0) {
+          while (availableWidth < buttonsWidth && index > 0) {
             availableWidth += tagWidths.pop();
             index--;
           }

@@ -531,11 +531,16 @@ describe('TagGroup', function () {
 
   it('maxRows should not show button if there is enough room to show all tags', function () {
     let offsetWidth = jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
-      .mockImplementationOnce(() => ({x: 200, y: 300, width: 75, height: 32, top: 300, right: 275, bottom: 335, left: 200}))
-      .mockImplementationOnce(() => ({x: 275, y: 300, width: 110, height: 32, top: 300, right: 385, bottom: 335, left: 275}))
-      .mockImplementationOnce(() => ({x: 200, y: 335, width: 65, height: 32, top: 335, right: 265, bottom: 370, left: 200}))
-      .mockImplementationOnce(() => ({x: 265, y: 335, width: 75, height: 32, top: 335, right: 345, bottom: 370, left: 265}))
-      .mockImplementationOnce(() => ({x: 200, y: 370, width: 120, height: 32, top: 370, right: 320, bottom: 400, left: 200}));
+      .mockImplementationOnce(() => ({width: 44, y: 411}))
+      .mockImplementationOnce(() => ({width: 46, y: 411}))
+      .mockImplementationOnce(() => ({width: 80}))
+      .mockImplementationOnce(() => ({right: 432}))
+      .mockImplementationOnce(() => ({right: 336}))
+      .mockImplementationOnce(() => ({width: 44, y: 411}))
+      .mockImplementationOnce(() => ({width: 46, y: 411}))
+      .mockImplementationOnce(() => ({width: 80}))
+      .mockImplementationOnce(() => ({right: 432}))
+      .mockImplementationOnce(() => ({right: 336}));
     let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px'}));
     let {getAllByRole, queryAllByRole} = render(
       <Provider theme={theme}>
