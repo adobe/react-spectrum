@@ -13,6 +13,7 @@
 import {AriaToggleButtonProps, mergeProps, useFocusRing, useHover, useToggleButton} from 'react-aria';
 import {ButtonRenderProps} from './Button';
 import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {filterDOMProps} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 import {useToggleState} from 'react-stately';
 
@@ -40,9 +41,12 @@ function ToggleButton(props: ToggleButtonProps, ref: ForwardedRef<HTMLButtonElem
     defaultClassName: 'react-aria-ToggleButton'
   });
 
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
+
   return (
     <button
-      {...mergeProps(buttonProps, focusProps, hoverProps)}
+      {...mergeProps(DOMProps, buttonProps, focusProps, hoverProps)}
       {...renderProps}
       ref={ref}
       slot={props.slot}

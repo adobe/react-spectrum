@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, DOMProps as SharedDOMProps} from '@react-types/shared';
-import {filterDOMProps, mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
+import {mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import React, {createContext, CSSProperties, ReactNode, RefCallback, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 
@@ -94,10 +94,7 @@ export function useRenderProps<T>(props: RenderPropsHookOptions<T>) {
     children,
     defaultClassName,
     defaultChildren,
-    values,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    id,
-    ...otherProps
+    values
   } = props;
 
   return useMemo(() => {
@@ -126,7 +123,6 @@ export function useRenderProps<T>(props: RenderPropsHookOptions<T>) {
     }
 
     return {
-      ...filterDOMProps(otherProps),
       className: computedClassName ?? defaultClassName,
       style: computedStyle,
       children: computedChildren

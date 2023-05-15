@@ -11,9 +11,9 @@
  */
 
 import {AriaLabelingProps, DOMAttributes, FocusableElement} from '@react-types/shared';
+import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {FocusableProvider} from '@react-aria/focus';
 import {mergeProps, OverlayContainer, PlacementAxis, PositionProps, useOverlayPosition, useTooltip, useTooltipTrigger} from 'react-aria';
-import {mergeRefs, useObjectRef} from '@react-aria/utils';
 import {OverlayArrowContext} from './OverlayArrow';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
 import {RenderProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
@@ -115,12 +115,15 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: For
     }
   });
 
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
+
   props = mergeProps(props, overlayProps);
   let {tooltipProps} = useTooltip(props, state);
 
   return (
     <div
-      {...mergeProps(triggerTooltipProps, tooltipProps)}
+      {...mergeProps(DOMProps, triggerTooltipProps, tooltipProps)}
       ref={mergeRefs(overlayRef, props.tooltipRef)}
       {...renderProps}
       style={{...renderProps.style, ...overlayProps.style}}

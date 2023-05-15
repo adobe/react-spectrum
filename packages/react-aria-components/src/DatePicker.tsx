@@ -17,11 +17,13 @@ import {createCalendar} from '@internationalized/date';
 import {DateInputContext} from './DateField';
 import {DatePickerState, DateRangePickerState, useDateFieldState, useDatePickerState, useDateRangePickerState} from 'react-stately';
 import {DialogContext} from './Dialog';
+import {filterDOMProps} from '@react-aria/utils';
 import {GroupContext} from './Group';
 import {LabelContext} from './Label';
 import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
+
 
 export interface DatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DatePickerState>, SlotProps {}
 export interface DateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateRangePickerState>, SlotProps {}
@@ -61,6 +63,9 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
     defaultClassName: 'react-aria-DatePicker'
   });
 
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
+
   return (
     <Provider
       values={[
@@ -78,7 +83,7 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
           }
         }]
       ]}>
-      <div {...renderProps} ref={ref} slot={props.slot} />
+      <div {...DOMProps} {...renderProps} ref={ref} slot={props.slot} />
     </Provider>
   );
 }
@@ -131,6 +136,9 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
     defaultClassName: 'react-aria-DateRangePicker'
   });
 
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
+
   return (
     <Provider
       values={[
@@ -161,7 +169,7 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
           }
         }]
       ]}>
-      <div {...renderProps} ref={ref} slot={props.slot} />
+      <div {...DOMProps} {...renderProps} ref={ref} slot={props.slot} />
     </Provider>
   );
 }

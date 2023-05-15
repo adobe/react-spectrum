@@ -586,6 +586,9 @@ function TableBodyRowGroup<T>({collection, isDroppable}: {collection: TableColle
     }
   });
 
+  let DOMProps = filterDOMProps(props as any);
+  delete DOMProps.id;
+
   let emptyState;
   if (collection.size === 0 && props.renderEmptyState) {
     emptyState = (
@@ -600,8 +603,8 @@ function TableBodyRowGroup<T>({collection, isDroppable}: {collection: TableColle
   let {rowGroupProps} = useTableRowGroup();
   return (
     <tbody
+      {...mergeProps(DOMProps, rowGroupProps)}
       {...renderProps}
-      {...rowGroupProps}
       data-empty={collection.size === 0 || undefined}>
       {isDroppable && <RootDropIndicator />}
       {bodyRows}
@@ -670,9 +673,12 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
     }
   });
 
+  let DOMProps = filterDOMProps(props as any);
+  delete DOMProps.id;
+
   return (
     <th
-      {...mergeProps(columnHeaderProps, focusProps)}
+      {...mergeProps(DOMProps, columnHeaderProps, focusProps)}
       {...renderProps}
       colSpan={column.colspan}
       ref={ref}
@@ -745,6 +751,9 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
     }
   });
 
+  let DOMProps = filterDOMProps(props as any);
+  delete DOMProps.id;
+
   let cells = useCachedChildren({
     items: state.collection.getChildren!(item.key),
     children: (item: Node<unknown>) => {
@@ -770,7 +779,7 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
         </tr>
       )}
       <tr
-        {...mergeProps(rowProps, focusProps, hoverProps, draggableItem?.dragProps)}
+        {...mergeProps(DOMProps, rowProps, focusProps, hoverProps, draggableItem?.dragProps)}
         {...renderProps}
         ref={ref}
         data-hovered={isHovered || undefined}
@@ -834,9 +843,12 @@ function TableCell<T>({cell}: {cell: GridNode<T>}) {
     }
   });
 
+  let DOMProps = filterDOMProps(props as any);
+  delete DOMProps.id;
+
   return (
     <td
-      {...mergeProps(gridCellProps, focusProps)}
+      {...mergeProps(DOMProps, gridCellProps, focusProps)}
       {...renderProps}
       ref={ref}
       data-focused={isFocused || undefined}
@@ -866,12 +878,16 @@ function TableDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLEle
     }
   });
 
+  let DOMProps = filterDOMProps(props as any);
+  delete DOMProps.id;
+
   if (isHidden) {
     return null;
   }
 
   return (
     <tr
+      {...DOMProps}
       {...renderProps}
       role="row"
       ref={ref as RefObject<HTMLTableRowElement>}
