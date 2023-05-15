@@ -403,13 +403,14 @@ it changed:
 -interface Collection extends Iterable<T> {
 -size: number
 -getKeys: () => Iterable<Key>
--getItem: (Key) => T
--at: (number) => T
+-getItem: (Key) => T | null
+-at: (number) => T | null
 -getKeyBefore: (Key) => Key | null
 -getKeyAfter: (Key) => Key | null
 -getFirstKey: () => Key | null
 -getLastKey: () => Key | null
 -getChildren: (Key) => Iterable<T>
+-getTextValue: (Key) => string
 -}
 it changed:
 - @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps

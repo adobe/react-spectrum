@@ -1,48 +1,48 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`DocsTransformer - API builtins writes export entry for mapped types 1`] = `
-Object {
-  "exports": Object {
-    "Mutable": Object {
+{
+  "exports": {
+    "Mutable": {
       "id": "/test/src/index.tsx:Mutable",
       "type": "link",
     },
   },
-  "links": Object {
-    "/test/src/index.tsx:Mutable": Object {
+  "links": {
+    "/test/src/index.tsx:Mutable": {
       "description": null,
       "id": "/test/src/index.tsx:Mutable",
       "name": "Mutable",
       "type": "alias",
-      "typeParameters": Array [
-        Object {
+      "typeParameters": [
+        {
           "constraint": null,
           "default": null,
           "name": "T",
           "type": "typeParameter",
         },
       ],
-      "value": Object {
+      "value": {
         "readonly": "-",
         "type": "mapped",
-        "typeAnnotation": Object {
-          "indexType": Object {
+        "typeAnnotation": {
+          "indexType": {
             "id": "/test/src/index.tsx:P",
             "name": "P",
             "type": "identifier",
           },
-          "objectType": Object {
+          "objectType": {
             "id": "/test/src/index.tsx:T",
             "name": "T",
             "type": "identifier",
           },
           "type": "indexedAccess",
         },
-        "typeParameter": Object {
-          "constraint": Object {
+        "typeParameter": {
+          "constraint": {
             "operator": "keyof",
             "type": "typeOperator",
-            "value": Object {
+            "value": {
               "id": "/test/src/index.tsx:T",
               "name": "T",
               "type": "identifier",
@@ -60,107 +60,107 @@ Object {
 `;
 
 exports[`DocsTransformer - API builtins writes export entry for referenced function 1`] = `
-Object {
-  "exports": Object {
-    "d": Object {},
+{
+  "exports": {
+    "d": {},
   },
-  "links": Object {},
+  "links": {},
 }
 `;
 
 exports[`DocsTransformer - API builtins writes export entry for referenced string 1`] = `
-Object {
-  "exports": Object {
-    "c": Object {},
+{
+  "exports": {
+    "c": {},
   },
-  "links": Object {},
+  "links": {},
 }
 `;
 
 exports[`DocsTransformer - API builtins writes export entry for static number 1`] = `
-Object {
-  "exports": Object {
-    "a": Object {
+{
+  "exports": {
+    "a": {
       "id": "/test/src/index.tsx:a",
       "name": "a",
       "type": "variable",
-      "typeAnnotation": Object {
+      "typeAnnotation": {
         "type": "number",
       },
     },
   },
-  "links": Object {},
+  "links": {},
 }
 `;
 
 exports[`DocsTransformer - API builtins writes export entry for static string 1`] = `
-Object {
-  "exports": Object {
-    "b": Object {
+{
+  "exports": {
+    "b": {
       "id": "/test/src/index.tsx:b",
       "name": "b",
       "type": "variable",
-      "typeAnnotation": Object {
+      "typeAnnotation": {
         "type": "string",
       },
     },
   },
-  "links": Object {},
+  "links": {},
 }
 `;
 
 exports[`DocsTransformer - API components writes export entry for React component 1`] = `
-Object {
-  "exports": Object {
-    "App1": Object {
+{
+  "exports": {
+    "App1": {
       "description": null,
       "id": "/test/src/index.tsx:App1",
       "name": "App1",
       "props": null,
       "type": "component",
-      "typeParameters": Array [],
+      "typeParameters": [],
     },
   },
-  "links": Object {},
+  "links": {},
 }
 `;
 
 exports[`DocsTransformer - API components writes export entry for localName React component 1`] = `
-Object {
-  "exports": Object {
-    "AppReal": Object {
+{
+  "exports": {
+    "AppReal": {
       "description": null,
       "id": "/test/src/index.tsx:App2",
       "name": "AppReal",
       "props": null,
       "type": "component",
-      "typeParameters": Array [],
+      "typeParameters": [],
     },
   },
-  "links": Object {},
+  "links": {},
 }
 `;
 
 exports[`DocsTransformer - API identifiers writes export entry for identifiers 1`] = `
-Object {
-  "exports": Object {
-    "Column": Object {
+{
+  "exports": {
+    "Column": {
       "id": "/test/src/column.tsx:Column",
       "name": "Column",
-      "parameters": Array [
-        Object {
+      "parameters": [
+        {
           "description": null,
           "name": "props",
           "rest": false,
           "type": "parameter",
-          "value": Object {
-            "properties": Object {
-              "id": Object {
+          "value": {
+            "properties": {
+              "id": {
                 "default": null,
                 "name": "id",
                 "optional": false,
                 "type": "property",
-                "value": Object {
+                "value": {
                   "type": "string",
                 },
               },
@@ -169,39 +169,39 @@ Object {
           },
         },
       ],
-      "return": Object {
+      "return": {
         "description": null,
         "type": "any",
       },
       "type": "function",
-      "typeParameters": Array [],
+      "typeParameters": [],
     },
   },
-  "links": Object {},
+  "links": {},
 }
 `;
 
 exports[`DocsTransformer - API identifiers writes export entry for identifiers real file 1`] = `
-Object {
-  "exports": Object {
-    "Column": Object {
+{
+  "exports": {
+    "Column": {
       "id": "/test/src/src.tsx:SpectrumColumn",
       "name": "Column",
       "type": "variable",
-      "typeAnnotation": Object {
-        "parameters": Array [
-          Object {
+      "typeAnnotation": {
+        "parameters": [
+          {
             "name": "props",
             "rest": false,
             "type": "parameter",
-            "value": Object {
-              "base": Object {
+            "value": {
+              "base": {
                 "id": "/packages/@react-types/table/src/index.d.ts:SpectrumColumnProps",
                 "type": "link",
               },
               "type": "application",
-              "typeParameters": Array [
-                Object {
+              "typeParameters": [
+                {
                   "id": "/test/src/src.tsx:T",
                   "name": "T",
                   "type": "identifier",
@@ -210,14 +210,14 @@ Object {
             },
           },
         ],
-        "return": Object {
+        "return": {
           "id": "/test/src/src.tsx:JSX.Element",
           "name": "JSX.Element",
           "type": "identifier",
         },
         "type": "function",
-        "typeParameters": Array [
-          Object {
+        "typeParameters": [
+          {
             "constraint": null,
             "default": null,
             "name": "T",
@@ -226,28 +226,28 @@ Object {
         ],
       },
     },
-    "SpectrumColumnProps": Object {
-      "extends": Array [],
+    "SpectrumColumnProps": {
+      "extends": [],
       "id": "/packages/@react-types/table/src/index.d.ts:SpectrumColumnProps",
       "name": "SpectrumColumnProps",
-      "properties": Object {
-        "align": Object {
+      "properties": {
+        "align": {
           "default": "'start'",
           "description": "The alignment of the column's contents relative to its allotted width.",
           "name": "align",
           "optional": true,
           "type": "property",
-          "value": Object {
-            "elements": Array [
-              Object {
+          "value": {
+            "elements": [
+              {
                 "type": "string",
                 "value": "start",
               },
-              Object {
+              {
                 "type": "string",
                 "value": "center",
               },
-              Object {
+              {
                 "type": "string",
                 "value": "end",
               },
@@ -255,34 +255,34 @@ Object {
             "type": "union",
           },
         },
-        "allowsResizing": Object {
+        "allowsResizing": {
           "default": null,
           "description": "Whether the column allows resizing.",
           "name": "allowsResizing",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "boolean",
           },
         },
-        "allowsSorting": Object {
+        "allowsSorting": {
           "default": null,
           "description": "Whether the column allows sorting.",
           "name": "allowsSorting",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "boolean",
           },
         },
-        "childColumns": Object {
+        "childColumns": {
           "default": null,
           "description": "A list of child columns used when dynamically rendering nested child columns.",
           "name": "childColumns",
           "optional": true,
           "type": "property",
-          "value": Object {
-            "elementType": Object {
+          "value": {
+            "elementType": {
               "id": "/packages/@react-types/table/src/index.d.ts:T",
               "name": "T",
               "type": "identifier",
@@ -290,41 +290,41 @@ Object {
             "type": "array",
           },
         },
-        "children": Object {
+        "children": {
           "default": null,
           "description": "Static child columns or content to render as the column header.",
           "name": "children",
           "optional": false,
           "type": "property",
-          "value": Object {
-            "elements": Array [
-              Object {
+          "value": {
+            "elements": [
+              {
                 "name": "ReactNode",
                 "type": "identifier",
               },
-              Object {
-                "base": Object {
+              {
+                "base": {
                   "id": "/packages/@react-types/table/src/index.d.ts:ColumnElement",
                   "type": "link",
                 },
                 "type": "application",
-                "typeParameters": Array [
-                  Object {
+                "typeParameters": [
+                  {
                     "id": "/packages/@react-types/table/src/index.d.ts:T",
                     "name": "T",
                     "type": "identifier",
                   },
                 ],
               },
-              Object {
-                "elementType": Object {
-                  "base": Object {
+              {
+                "elementType": {
+                  "base": {
                     "id": "/packages/@react-types/table/src/index.d.ts:ColumnElement",
                     "type": "link",
                   },
                   "type": "application",
-                  "typeParameters": Array [
-                    Object {
+                  "typeParameters": [
+                    {
                       "id": "/packages/@react-types/table/src/index.d.ts:T",
                       "name": "T",
                       "type": "identifier",
@@ -337,26 +337,26 @@ Object {
             "type": "union",
           },
         },
-        "defaultWidth": Object {
+        "defaultWidth": {
           "default": null,
           "description": "The default width of the column.",
           "name": "defaultWidth",
           "optional": true,
           "type": "property",
-          "value": Object {
-            "elements": Array [
-              Object {
+          "value": {
+            "elements": [
+              {
                 "id": "/packages/@react-types/table/src/index.d.ts:ColumnSize",
                 "type": "link",
               },
-              Object {
+              {
                 "type": "null",
               },
             ],
             "type": "union",
           },
         },
-        "hideHeader": Object {
+        "hideHeader": {
           "default": null,
           "description": "Whether the column should hide its header text. A tooltip with the column's header text
 will be displayed when the column header is focused instead. Note that this prop is specifically for columns
@@ -364,102 +364,102 @@ that contain ActionButtons in place of text content.",
           "name": "hideHeader",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "boolean",
           },
         },
-        "isRowHeader": Object {
+        "isRowHeader": {
           "default": null,
           "description": "Whether a column is a [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) and should be announced by assistive technology during row navigation.",
           "name": "isRowHeader",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "boolean",
           },
         },
-        "maxWidth": Object {
+        "maxWidth": {
           "default": null,
           "description": "The maximum width of the column.",
           "name": "maxWidth",
           "optional": true,
           "type": "property",
-          "value": Object {
-            "elements": Array [
-              Object {
+          "value": {
+            "elements": [
+              {
                 "id": "/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
                 "type": "link",
               },
-              Object {
+              {
                 "type": "null",
               },
             ],
             "type": "union",
           },
         },
-        "minWidth": Object {
+        "minWidth": {
           "default": null,
           "description": "The minimum width of the column.",
           "name": "minWidth",
           "optional": true,
           "type": "property",
-          "value": Object {
-            "elements": Array [
-              Object {
+          "value": {
+            "elements": [
+              {
                 "id": "/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
                 "type": "link",
               },
-              Object {
+              {
                 "type": "null",
               },
             ],
             "type": "union",
           },
         },
-        "showDivider": Object {
+        "showDivider": {
           "default": null,
           "description": "Whether the column should render a divider between it and the next column.",
           "name": "showDivider",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "boolean",
           },
         },
-        "textValue": Object {
+        "textValue": {
           "default": null,
           "description": "A string representation of the column's contents, used for accessibility announcements.",
           "name": "textValue",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "string",
           },
         },
-        "title": Object {
+        "title": {
           "default": null,
           "description": "Rendered contents of the column if \`children\` contains child columns.",
           "name": "title",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "name": "ReactNode",
             "type": "identifier",
           },
         },
-        "width": Object {
+        "width": {
           "default": null,
           "description": "The width of the column.",
           "name": "width",
           "optional": true,
           "type": "property",
-          "value": Object {
-            "elements": Array [
-              Object {
+          "value": {
+            "elements": [
+              {
                 "id": "/packages/@react-types/table/src/index.d.ts:ColumnSize",
                 "type": "link",
               },
-              Object {
+              {
                 "type": "null",
               },
             ],
@@ -468,8 +468,8 @@ that contain ActionButtons in place of text content.",
         },
       },
       "type": "interface",
-      "typeParameters": Array [
-        Object {
+      "typeParameters": [
+        {
           "constraint": null,
           "default": null,
           "name": "T",
@@ -478,21 +478,21 @@ that contain ActionButtons in place of text content.",
       ],
     },
   },
-  "links": Object {
-    "/packages/@react-types/table/src/index.d.ts:ColumnDynamicSize": Object {
+  "links": {
+    "/packages/@react-types/table/src/index.d.ts:ColumnDynamicSize": {
       "description": "Widths that change size in relation to the remaining space and in ratio to other dynamic columns.
 All numbers must be integers and greater than 0.
 FR units take up remaining, if any, space in the table.",
       "id": "/packages/@react-types/table/src/index.d.ts:ColumnDynamicSize",
       "name": "ColumnDynamicSize",
       "type": "alias",
-      "typeParameters": Array [],
-      "value": Object {
-        "elements": Array [
-          Object {
+      "typeParameters": [],
+      "value": {
+        "elements": [
+          {
             "type": "number",
           },
-          Object {
+          {
             "type": "string",
             "value": "fr",
           },
@@ -500,34 +500,34 @@ FR units take up remaining, if any, space in the table.",
         "type": "template",
       },
     },
-    "/packages/@react-types/table/src/index.d.ts:ColumnElement": Object {
+    "/packages/@react-types/table/src/index.d.ts:ColumnElement": {
       "description": null,
       "id": "/packages/@react-types/table/src/index.d.ts:ColumnElement",
       "name": "ColumnElement",
       "type": "alias",
-      "typeParameters": Array [
-        Object {
+      "typeParameters": [
+        {
           "constraint": null,
           "default": null,
           "name": "T",
           "type": "typeParameter",
         },
       ],
-      "value": Object {
-        "base": Object {
+      "value": {
+        "base": {
           "name": "ReactElement",
           "type": "identifier",
         },
         "type": "application",
-        "typeParameters": Array [
-          Object {
-            "base": Object {
+        "typeParameters": [
+          {
+            "base": {
               "id": "/packages/@react-types/table/src/index.d.ts:ColumnProps",
               "type": "link",
             },
             "type": "application",
-            "typeParameters": Array [
-              Object {
+            "typeParameters": [
+              {
                 "id": "/packages/@react-types/table/src/index.d.ts:T",
                 "name": "T",
                 "type": "identifier",
@@ -537,39 +537,39 @@ FR units take up remaining, if any, space in the table.",
         ],
       },
     },
-    "/packages/@react-types/table/src/index.d.ts:ColumnProps": Object {
-      "extends": Array [],
+    "/packages/@react-types/table/src/index.d.ts:ColumnProps": {
+      "extends": [],
       "id": "/packages/@react-types/table/src/index.d.ts:ColumnProps",
       "name": "ColumnProps",
-      "properties": Object {
-        "allowsResizing": Object {
+      "properties": {
+        "allowsResizing": {
           "default": null,
           "description": "Whether the column allows resizing.",
           "name": "allowsResizing",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "boolean",
           },
         },
-        "allowsSorting": Object {
+        "allowsSorting": {
           "default": null,
           "description": "Whether the column allows sorting.",
           "name": "allowsSorting",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "boolean",
           },
         },
-        "childColumns": Object {
+        "childColumns": {
           "default": null,
           "description": "A list of child columns used when dynamically rendering nested child columns.",
           "name": "childColumns",
           "optional": true,
           "type": "property",
-          "value": Object {
-            "elementType": Object {
+          "value": {
+            "elementType": {
               "id": "/packages/@react-types/table/src/index.d.ts:T",
               "name": "T",
               "type": "identifier",
@@ -577,41 +577,41 @@ FR units take up remaining, if any, space in the table.",
             "type": "array",
           },
         },
-        "children": Object {
+        "children": {
           "default": null,
           "description": "Static child columns or content to render as the column header.",
           "name": "children",
           "optional": false,
           "type": "property",
-          "value": Object {
-            "elements": Array [
-              Object {
+          "value": {
+            "elements": [
+              {
                 "name": "ReactNode",
                 "type": "identifier",
               },
-              Object {
-                "base": Object {
+              {
+                "base": {
                   "id": "/packages/@react-types/table/src/index.d.ts:ColumnElement",
                   "type": "link",
                 },
                 "type": "application",
-                "typeParameters": Array [
-                  Object {
+                "typeParameters": [
+                  {
                     "id": "/packages/@react-types/table/src/index.d.ts:T",
                     "name": "T",
                     "type": "identifier",
                   },
                 ],
               },
-              Object {
-                "elementType": Object {
-                  "base": Object {
+              {
+                "elementType": {
+                  "base": {
                     "id": "/packages/@react-types/table/src/index.d.ts:ColumnElement",
                     "type": "link",
                   },
                   "type": "application",
-                  "typeParameters": Array [
-                    Object {
+                  "typeParameters": [
+                    {
                       "id": "/packages/@react-types/table/src/index.d.ts:T",
                       "name": "T",
                       "type": "identifier",
@@ -624,107 +624,107 @@ FR units take up remaining, if any, space in the table.",
             "type": "union",
           },
         },
-        "defaultWidth": Object {
+        "defaultWidth": {
           "default": null,
           "description": "The default width of the column.",
           "name": "defaultWidth",
           "optional": true,
           "type": "property",
-          "value": Object {
-            "elements": Array [
-              Object {
+          "value": {
+            "elements": [
+              {
                 "id": "/packages/@react-types/table/src/index.d.ts:ColumnSize",
                 "type": "link",
               },
-              Object {
+              {
                 "type": "null",
               },
             ],
             "type": "union",
           },
         },
-        "isRowHeader": Object {
+        "isRowHeader": {
           "default": null,
           "description": "Whether a column is a [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) and should be announced by assistive technology during row navigation.",
           "name": "isRowHeader",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "boolean",
           },
         },
-        "maxWidth": Object {
+        "maxWidth": {
           "default": null,
           "description": "The maximum width of the column.",
           "name": "maxWidth",
           "optional": true,
           "type": "property",
-          "value": Object {
-            "elements": Array [
-              Object {
+          "value": {
+            "elements": [
+              {
                 "id": "/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
                 "type": "link",
               },
-              Object {
+              {
                 "type": "null",
               },
             ],
             "type": "union",
           },
         },
-        "minWidth": Object {
+        "minWidth": {
           "default": null,
           "description": "The minimum width of the column.",
           "name": "minWidth",
           "optional": true,
           "type": "property",
-          "value": Object {
-            "elements": Array [
-              Object {
+          "value": {
+            "elements": [
+              {
                 "id": "/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
                 "type": "link",
               },
-              Object {
+              {
                 "type": "null",
               },
             ],
             "type": "union",
           },
         },
-        "textValue": Object {
+        "textValue": {
           "default": null,
           "description": "A string representation of the column's contents, used for accessibility announcements.",
           "name": "textValue",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "string",
           },
         },
-        "title": Object {
+        "title": {
           "default": null,
           "description": "Rendered contents of the column if \`children\` contains child columns.",
           "name": "title",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "name": "ReactNode",
             "type": "identifier",
           },
         },
-        "width": Object {
+        "width": {
           "default": null,
           "description": "The width of the column.",
           "name": "width",
           "optional": true,
           "type": "property",
-          "value": Object {
-            "elements": Array [
-              Object {
+          "value": {
+            "elements": [
+              {
                 "id": "/packages/@react-types/table/src/index.d.ts:ColumnSize",
                 "type": "link",
               },
-              Object {
+              {
                 "type": "null",
               },
             ],
@@ -733,8 +733,8 @@ FR units take up remaining, if any, space in the table.",
         },
       },
       "type": "interface",
-      "typeParameters": Array [
-        Object {
+      "typeParameters": [
+        {
           "constraint": null,
           "default": null,
           "name": "T",
@@ -742,19 +742,19 @@ FR units take up remaining, if any, space in the table.",
         },
       ],
     },
-    "/packages/@react-types/table/src/index.d.ts:ColumnSize": Object {
+    "/packages/@react-types/table/src/index.d.ts:ColumnSize": {
       "description": "All possible sizes a column can be assigned.",
       "id": "/packages/@react-types/table/src/index.d.ts:ColumnSize",
       "name": "ColumnSize",
       "type": "alias",
-      "typeParameters": Array [],
-      "value": Object {
-        "elements": Array [
-          Object {
+      "typeParameters": [],
+      "value": {
+        "elements": [
+          {
             "id": "/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
             "type": "link",
           },
-          Object {
+          {
             "id": "/packages/@react-types/table/src/index.d.ts:ColumnDynamicSize",
             "type": "link",
           },
@@ -762,31 +762,31 @@ FR units take up remaining, if any, space in the table.",
         "type": "union",
       },
     },
-    "/packages/@react-types/table/src/index.d.ts:ColumnStaticSize": Object {
+    "/packages/@react-types/table/src/index.d.ts:ColumnStaticSize": {
       "description": "Widths that result in a constant pixel value for the same Table width.",
       "id": "/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
       "name": "ColumnStaticSize",
       "type": "alias",
-      "typeParameters": Array [],
-      "value": Object {
-        "elements": Array [
-          Object {
+      "typeParameters": [],
+      "value": {
+        "elements": [
+          {
             "type": "number",
           },
-          Object {
-            "elements": Array [
-              Object {
+          {
+            "elements": [
+              {
                 "type": "number",
               },
             ],
             "type": "template",
           },
-          Object {
-            "elements": Array [
-              Object {
+          {
+            "elements": [
+              {
                 "type": "number",
               },
-              Object {
+              {
                 "type": "string",
                 "value": "%",
               },
@@ -797,28 +797,28 @@ FR units take up remaining, if any, space in the table.",
         "type": "union",
       },
     },
-    "/packages/@react-types/table/src/index.d.ts:SpectrumColumnProps": Object {
-      "extends": Array [],
+    "/packages/@react-types/table/src/index.d.ts:SpectrumColumnProps": {
+      "extends": [],
       "id": "/packages/@react-types/table/src/index.d.ts:SpectrumColumnProps",
       "name": "SpectrumColumnProps",
-      "properties": Object {
-        "align": Object {
+      "properties": {
+        "align": {
           "default": "'start'",
           "description": "The alignment of the column's contents relative to its allotted width.",
           "name": "align",
           "optional": true,
           "type": "property",
-          "value": Object {
-            "elements": Array [
-              Object {
+          "value": {
+            "elements": [
+              {
                 "type": "string",
                 "value": "start",
               },
-              Object {
+              {
                 "type": "string",
                 "value": "center",
               },
-              Object {
+              {
                 "type": "string",
                 "value": "end",
               },
@@ -826,34 +826,34 @@ FR units take up remaining, if any, space in the table.",
             "type": "union",
           },
         },
-        "allowsResizing": Object {
+        "allowsResizing": {
           "default": null,
           "description": "Whether the column allows resizing.",
           "name": "allowsResizing",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "boolean",
           },
         },
-        "allowsSorting": Object {
+        "allowsSorting": {
           "default": null,
           "description": "Whether the column allows sorting.",
           "name": "allowsSorting",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "boolean",
           },
         },
-        "childColumns": Object {
+        "childColumns": {
           "default": null,
           "description": "A list of child columns used when dynamically rendering nested child columns.",
           "name": "childColumns",
           "optional": true,
           "type": "property",
-          "value": Object {
-            "elementType": Object {
+          "value": {
+            "elementType": {
               "id": "/packages/@react-types/table/src/index.d.ts:T",
               "name": "T",
               "type": "identifier",
@@ -861,41 +861,41 @@ FR units take up remaining, if any, space in the table.",
             "type": "array",
           },
         },
-        "children": Object {
+        "children": {
           "default": null,
           "description": "Static child columns or content to render as the column header.",
           "name": "children",
           "optional": false,
           "type": "property",
-          "value": Object {
-            "elements": Array [
-              Object {
+          "value": {
+            "elements": [
+              {
                 "name": "ReactNode",
                 "type": "identifier",
               },
-              Object {
-                "base": Object {
+              {
+                "base": {
                   "id": "/packages/@react-types/table/src/index.d.ts:ColumnElement",
                   "type": "link",
                 },
                 "type": "application",
-                "typeParameters": Array [
-                  Object {
+                "typeParameters": [
+                  {
                     "id": "/packages/@react-types/table/src/index.d.ts:T",
                     "name": "T",
                     "type": "identifier",
                   },
                 ],
               },
-              Object {
-                "elementType": Object {
-                  "base": Object {
+              {
+                "elementType": {
+                  "base": {
                     "id": "/packages/@react-types/table/src/index.d.ts:ColumnElement",
                     "type": "link",
                   },
                   "type": "application",
-                  "typeParameters": Array [
-                    Object {
+                  "typeParameters": [
+                    {
                       "id": "/packages/@react-types/table/src/index.d.ts:T",
                       "name": "T",
                       "type": "identifier",
@@ -908,26 +908,26 @@ FR units take up remaining, if any, space in the table.",
             "type": "union",
           },
         },
-        "defaultWidth": Object {
+        "defaultWidth": {
           "default": null,
           "description": "The default width of the column.",
           "name": "defaultWidth",
           "optional": true,
           "type": "property",
-          "value": Object {
-            "elements": Array [
-              Object {
+          "value": {
+            "elements": [
+              {
                 "id": "/packages/@react-types/table/src/index.d.ts:ColumnSize",
                 "type": "link",
               },
-              Object {
+              {
                 "type": "null",
               },
             ],
             "type": "union",
           },
         },
-        "hideHeader": Object {
+        "hideHeader": {
           "default": null,
           "description": "Whether the column should hide its header text. A tooltip with the column's header text
 will be displayed when the column header is focused instead. Note that this prop is specifically for columns
@@ -935,102 +935,102 @@ that contain ActionButtons in place of text content.",
           "name": "hideHeader",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "boolean",
           },
         },
-        "isRowHeader": Object {
+        "isRowHeader": {
           "default": null,
           "description": "Whether a column is a [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) and should be announced by assistive technology during row navigation.",
           "name": "isRowHeader",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "boolean",
           },
         },
-        "maxWidth": Object {
+        "maxWidth": {
           "default": null,
           "description": "The maximum width of the column.",
           "name": "maxWidth",
           "optional": true,
           "type": "property",
-          "value": Object {
-            "elements": Array [
-              Object {
+          "value": {
+            "elements": [
+              {
                 "id": "/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
                 "type": "link",
               },
-              Object {
+              {
                 "type": "null",
               },
             ],
             "type": "union",
           },
         },
-        "minWidth": Object {
+        "minWidth": {
           "default": null,
           "description": "The minimum width of the column.",
           "name": "minWidth",
           "optional": true,
           "type": "property",
-          "value": Object {
-            "elements": Array [
-              Object {
+          "value": {
+            "elements": [
+              {
                 "id": "/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
                 "type": "link",
               },
-              Object {
+              {
                 "type": "null",
               },
             ],
             "type": "union",
           },
         },
-        "showDivider": Object {
+        "showDivider": {
           "default": null,
           "description": "Whether the column should render a divider between it and the next column.",
           "name": "showDivider",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "boolean",
           },
         },
-        "textValue": Object {
+        "textValue": {
           "default": null,
           "description": "A string representation of the column's contents, used for accessibility announcements.",
           "name": "textValue",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "string",
           },
         },
-        "title": Object {
+        "title": {
           "default": null,
           "description": "Rendered contents of the column if \`children\` contains child columns.",
           "name": "title",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "name": "ReactNode",
             "type": "identifier",
           },
         },
-        "width": Object {
+        "width": {
           "default": null,
           "description": "The width of the column.",
           "name": "width",
           "optional": true,
           "type": "property",
-          "value": Object {
-            "elements": Array [
-              Object {
+          "value": {
+            "elements": [
+              {
                 "id": "/packages/@react-types/table/src/index.d.ts:ColumnSize",
                 "type": "link",
               },
-              Object {
+              {
                 "type": "null",
               },
             ],
@@ -1039,8 +1039,8 @@ that contain ActionButtons in place of text content.",
         },
       },
       "type": "interface",
-      "typeParameters": Array [
-        Object {
+      "typeParameters": [
+        {
           "constraint": null,
           "default": null,
           "name": "T",
@@ -1053,186 +1053,186 @@ that contain ActionButtons in place of text content.",
 `;
 
 exports[`DocsTransformer - API interface merging merges omit properties when extending 1`] = `
-Object {
-  "exports": Object {
-    "Baz": Object {
-      "extends": Array [],
+{
+  "exports": {
+    "Baz": {
+      "extends": [],
       "id": "/test/src/index.tsx:Baz",
       "name": "Baz",
-      "properties": Object {
-        "foo": Object {
+      "properties": {
+        "foo": {
           "default": null,
           "name": "foo",
           "optional": false,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "string",
           },
         },
       },
       "type": "interface",
-      "typeParameters": Array [],
+      "typeParameters": [],
     },
   },
-  "links": Object {},
+  "links": {},
 }
 `;
 
 exports[`DocsTransformer - API interface merging merges properties when extending 1`] = `
-Object {
-  "exports": Object {
-    "State": Object {
-      "extends": Array [],
+{
+  "exports": {
+    "State": {
+      "extends": [],
       "id": "/test/src/index.tsx:State",
       "name": "State",
-      "properties": Object {
-        "foo": Object {
+      "properties": {
+        "foo": {
           "default": null,
           "name": "foo",
           "optional": false,
           "type": "property",
-          "value": Object {
+          "value": {
             "id": "/test/src/index.tsx:Foo",
             "name": "Foo",
             "type": "identifier",
           },
         },
-        "isValid": Object {
+        "isValid": {
           "default": null,
           "name": "isValid",
           "optional": false,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "boolean",
           },
         },
       },
       "type": "interface",
-      "typeParameters": Array [],
+      "typeParameters": [],
     },
   },
-  "links": Object {},
+  "links": {},
 }
 `;
 
 exports[`DocsTransformer - API interface merging merges properties when extending and does not substitute generics when none are provided 1`] = `
-Object {
-  "exports": Object {
-    "Baz": Object {
-      "extends": Array [],
+{
+  "exports": {
+    "Baz": {
+      "extends": [],
       "id": "/test/src/index.tsx:Baz",
       "name": "Baz",
-      "properties": Object {
-        "coo": Object {
+      "properties": {
+        "coo": {
           "default": null,
           "name": "coo",
           "optional": false,
           "type": "property",
-          "value": Object {
+          "value": {
             "id": "/test/src/index.tsx:F",
             "name": "F",
             "type": "identifier",
           },
         },
-        "foo": Object {
+        "foo": {
           "default": null,
           "name": "foo",
           "optional": false,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "string",
           },
         },
       },
       "type": "interface",
-      "typeParameters": Array [],
+      "typeParameters": [],
     },
   },
-  "links": Object {},
+  "links": {},
 }
 `;
 
 exports[`DocsTransformer - API interface merging merges properties when extending with split exports 1`] = `
-Object {
-  "exports": Object {
-    "SpectrumTagGroupProps": Object {
-      "extends": Array [],
+{
+  "exports": {
+    "SpectrumTagGroupProps": {
+      "extends": [],
       "id": "/test/src/index.tsx:SpectrumTagGroupProps",
       "name": "SpectrumTagGroupProps",
-      "properties": Object {
-        "actionLabel": Object {
+      "properties": {
+        "actionLabel": {
           "default": null,
           "name": "actionLabel",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "string",
           },
         },
-        "allowsRemoving": Object {
+        "allowsRemoving": {
           "default": null,
           "description": "Whether the TagGroup allows removal of tags.",
           "name": "allowsRemoving",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "boolean",
           },
         },
-        "aria-describedby": Object {
+        "aria-describedby": {
           "default": null,
           "description": "Identifies the element (or elements) that describes the object.",
           "name": "aria-describedby",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "string",
           },
         },
-        "aria-details": Object {
+        "aria-details": {
           "default": null,
           "description": "Identifies the element (or elements) that provide a detailed, extended description for the object.",
           "name": "aria-details",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "string",
           },
         },
-        "aria-label": Object {
+        "aria-label": {
           "default": null,
           "description": "Defines a string value that labels the current element.",
           "name": "aria-label",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "string",
           },
         },
-        "aria-labelledby": Object {
+        "aria-labelledby": {
           "default": null,
           "description": "Identifies the element (or elements) that labels the current element.",
           "name": "aria-labelledby",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "string",
           },
         },
-        "children": Object {
+        "children": {
           "default": null,
           "description": "The contents of the collection.",
           "name": "children",
           "optional": false,
           "type": "property",
-          "value": Object {
-            "base": Object {
+          "value": {
+            "base": {
               "id": "/packages/@react-types/shared/src/collections.d.ts:CollectionChildren",
               "type": "link",
             },
             "type": "application",
-            "typeParameters": Array [
-              Object {
+            "typeParameters": [
+              {
                 "id": "/test/src/index.tsx:T",
                 "name": "T",
                 "type": "identifier",
@@ -1240,74 +1240,74 @@ Object {
             ],
           },
         },
-        "description": Object {
+        "description": {
           "default": null,
           "description": "A description for the field. Provides a hint such as specific requirements for what to choose.",
           "name": "description",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "name": "ReactNode",
             "type": "identifier",
           },
         },
-        "errorMessage": Object {
+        "errorMessage": {
           "default": null,
           "description": "An error message for the field.",
           "name": "errorMessage",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "name": "ReactNode",
             "type": "identifier",
           },
         },
-        "id": Object {
+        "id": {
           "default": null,
           "description": "The element's unique identifier. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/id).",
           "name": "id",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "string",
           },
         },
-        "isDisabled": Object {
+        "isDisabled": {
           "default": null,
           "description": "Whether the description is displayed with lighter text.",
           "name": "isDisabled",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "boolean",
           },
         },
-        "isRequired": Object {
+        "isRequired": {
           "default": null,
           "description": "Whether user input is required on the input before form submission.
 Often paired with the \`necessityIndicator\` prop to add a visual indicator to the input.",
           "name": "isRequired",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "boolean",
           },
         },
-        "items": Object {
+        "items": {
           "default": null,
           "description": "Item objects in the collection.",
           "name": "items",
           "optional": true,
           "type": "property",
-          "value": Object {
-            "base": Object {
+          "value": {
+            "base": {
               "id": "/packages/@react-types/shared/src/collections.d.ts:Iterable",
               "name": "Iterable",
               "type": "identifier",
             },
             "type": "application",
-            "typeParameters": Array [
-              Object {
+            "typeParameters": [
+              {
                 "id": "/test/src/index.tsx:T",
                 "name": "T",
                 "type": "identifier",
@@ -1315,21 +1315,21 @@ Often paired with the \`necessityIndicator\` prop to add a visual indicator to t
             ],
           },
         },
-        "keyboardDelegate": Object {
+        "keyboardDelegate": {
           "default": null,
           "description": "An optional keyboard delegate to handle arrow key navigation,
 to override the default.",
           "name": "keyboardDelegate",
           "optional": true,
           "type": "property",
-          "value": Object {
-            "base": Object {
+          "value": {
+            "base": {
               "id": "/packages/@react-aria/tag/src/TagKeyboardDelegate.ts:TagKeyboardDelegate",
               "type": "link",
             },
             "type": "application",
-            "typeParameters": Array [
-              Object {
+            "typeParameters": [
+              {
                 "id": "/test/src/index.tsx:T",
                 "name": "T",
                 "type": "identifier",
@@ -1337,73 +1337,73 @@ to override the default.",
             ],
           },
         },
-        "maxRows": Object {
+        "maxRows": {
           "default": null,
           "description": "Limit the number of rows initially shown. This will render a button that allows the user to expand to show all tags.",
           "name": "maxRows",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "number",
           },
         },
-        "onAction": Object {
+        "onAction": {
           "default": null,
           "name": "onAction",
           "optional": true,
           "type": "property",
-          "value": Object {
-            "parameters": Array [],
-            "return": Object {
+          "value": {
+            "parameters": [],
+            "return": {
               "description": null,
               "type": "void",
             },
             "type": "function",
-            "typeParameters": Array [],
+            "typeParameters": [],
           },
         },
-        "onRemove": Object {
+        "onRemove": {
           "default": null,
           "description": "Called when the user removes a tag.",
           "name": "onRemove",
           "optional": true,
           "type": "property",
-          "value": Object {
-            "parameters": Array [
-              Object {
+          "value": {
+            "parameters": [
+              {
                 "description": null,
                 "name": "key",
                 "rest": false,
                 "type": "parameter",
-                "value": Object {
+                "value": {
                   "name": "Key",
                   "type": "identifier",
                 },
               },
             ],
-            "return": Object {
+            "return": {
               "description": null,
               "type": "void",
             },
             "type": "function",
-            "typeParameters": Array [],
+            "typeParameters": [],
           },
         },
-        "validationState": Object {
+        "validationState": {
           "default": null,
-          "description": "Whether the input should display its \\"valid\\" or \\"invalid\\" visual styling.",
+          "description": "Whether the input should display its "valid" or "invalid" visual styling.",
           "name": "validationState",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "id": "/packages/@react-types/shared/src/inputs.d.ts:ValidationState",
             "type": "link",
           },
         },
       },
       "type": "interface",
-      "typeParameters": Array [
-        Object {
+      "typeParameters": [
+        {
           "constraint": null,
           "default": null,
           "name": "T",
@@ -1412,26 +1412,26 @@ to override the default.",
       ],
     },
   },
-  "links": Object {
-    "/packages/@react-aria/tag/src/TagKeyboardDelegate.ts:TagKeyboardDelegate": Object {
-      "extends": Array [],
+  "links": {
+    "/packages/@react-aria/tag/src/TagKeyboardDelegate.ts:TagKeyboardDelegate": {
+      "extends": [],
       "id": "/packages/@react-aria/tag/src/TagKeyboardDelegate.ts:TagKeyboardDelegate",
       "name": "TagKeyboardDelegate",
-      "properties": Object {
-        "collection": Object {
+      "properties": {
+        "collection": {
           "access": "private",
           "default": null,
           "name": "collection",
           "optional": false,
           "type": "property",
-          "value": Object {
-            "base": Object {
+          "value": {
+            "base": {
               "id": "/packages/@react-types/shared/src/collections.d.ts:Collection",
               "type": "link",
             },
             "type": "application",
-            "typeParameters": Array [
-              Object {
+            "typeParameters": [
+              {
                 "id": "/packages/@react-aria/tag/src/TagKeyboardDelegate.ts:T",
                 "name": "T",
                 "type": "identifier",
@@ -1439,25 +1439,25 @@ to override the default.",
             ],
           },
         },
-        "constructor": Object {
+        "constructor": {
           "default": null,
           "name": "constructor",
           "type": "method",
-          "value": Object {
-            "parameters": Array [
-              Object {
+          "value": {
+            "parameters": [
+              {
                 "description": null,
                 "name": "collection",
                 "rest": false,
                 "type": "parameter",
-                "value": Object {
-                  "base": Object {
+                "value": {
+                  "base": {
                     "id": "/packages/@react-types/shared/src/collections.d.ts:Collection",
                     "type": "link",
                   },
                   "type": "application",
-                  "typeParameters": Array [
-                    Object {
+                  "typeParameters": [
+                    {
                       "id": "/packages/@react-aria/tag/src/TagKeyboardDelegate.ts:T",
                       "name": "T",
                       "type": "identifier",
@@ -1465,214 +1465,214 @@ to override the default.",
                   ],
                 },
               },
-              Object {
+              {
                 "description": null,
                 "name": "direction",
                 "rest": false,
                 "type": "parameter",
-                "value": Object {
+                "value": {
                   "id": "/packages/@react-types/shared/src/locale.d.ts:Direction",
                   "type": "link",
                 },
               },
             ],
-            "return": Object {
+            "return": {
               "description": null,
               "type": "void",
             },
             "type": "function",
-            "typeParameters": Array [],
+            "typeParameters": [],
           },
         },
-        "direction": Object {
+        "direction": {
           "access": "private",
           "default": null,
           "name": "direction",
           "optional": false,
           "type": "property",
-          "value": Object {
+          "value": {
             "id": "/packages/@react-types/shared/src/locale.d.ts:Direction",
             "type": "link",
           },
         },
-        "getFirstKey": Object {
+        "getFirstKey": {
           "default": null,
           "name": "getFirstKey",
           "type": "method",
-          "value": Object {
-            "parameters": Array [],
-            "return": Object {
+          "value": {
+            "parameters": [],
+            "return": {
               "description": null,
               "type": "void",
             },
             "type": "function",
-            "typeParameters": Array [],
+            "typeParameters": [],
           },
         },
-        "getKeyAbove": Object {
+        "getKeyAbove": {
           "default": null,
           "name": "getKeyAbove",
           "type": "method",
-          "value": Object {
-            "parameters": Array [
-              Object {
+          "value": {
+            "parameters": [
+              {
                 "description": null,
                 "name": "key",
                 "rest": false,
                 "type": "parameter",
-                "value": Object {
+                "value": {
                   "type": "any",
                 },
               },
             ],
-            "return": Object {
+            "return": {
               "description": null,
               "type": "void",
             },
             "type": "function",
-            "typeParameters": Array [],
+            "typeParameters": [],
           },
         },
-        "getKeyBelow": Object {
+        "getKeyBelow": {
           "default": null,
           "name": "getKeyBelow",
           "type": "method",
-          "value": Object {
-            "parameters": Array [
-              Object {
+          "value": {
+            "parameters": [
+              {
                 "description": null,
                 "name": "key",
                 "rest": false,
                 "type": "parameter",
-                "value": Object {
+                "value": {
                   "type": "any",
                 },
               },
             ],
-            "return": Object {
+            "return": {
               "description": null,
               "type": "void",
             },
             "type": "function",
-            "typeParameters": Array [],
+            "typeParameters": [],
           },
         },
-        "getKeyLeftOf": Object {
+        "getKeyLeftOf": {
           "default": null,
           "name": "getKeyLeftOf",
           "type": "method",
-          "value": Object {
-            "parameters": Array [
-              Object {
+          "value": {
+            "parameters": [
+              {
                 "description": null,
                 "name": "key",
                 "rest": false,
                 "type": "parameter",
-                "value": Object {
+                "value": {
                   "name": "Key",
                   "type": "identifier",
                 },
               },
             ],
-            "return": Object {
+            "return": {
               "description": null,
               "type": "void",
             },
             "type": "function",
-            "typeParameters": Array [],
+            "typeParameters": [],
           },
         },
-        "getKeyPageAbove": Object {
+        "getKeyPageAbove": {
           "default": null,
           "name": "getKeyPageAbove",
           "type": "method",
-          "value": Object {
-            "parameters": Array [
-              Object {
+          "value": {
+            "parameters": [
+              {
                 "description": null,
                 "name": "key",
                 "rest": false,
                 "type": "parameter",
-                "value": Object {
+                "value": {
                   "type": "any",
                 },
               },
             ],
-            "return": Object {
+            "return": {
               "description": null,
               "type": "void",
             },
             "type": "function",
-            "typeParameters": Array [],
+            "typeParameters": [],
           },
         },
-        "getKeyPageBelow": Object {
+        "getKeyPageBelow": {
           "default": null,
           "name": "getKeyPageBelow",
           "type": "method",
-          "value": Object {
-            "parameters": Array [
-              Object {
+          "value": {
+            "parameters": [
+              {
                 "description": null,
                 "name": "key",
                 "rest": false,
                 "type": "parameter",
-                "value": Object {
+                "value": {
                   "type": "any",
                 },
               },
             ],
-            "return": Object {
+            "return": {
               "description": null,
               "type": "void",
             },
             "type": "function",
-            "typeParameters": Array [],
+            "typeParameters": [],
           },
         },
-        "getKeyRightOf": Object {
+        "getKeyRightOf": {
           "default": null,
           "name": "getKeyRightOf",
           "type": "method",
-          "value": Object {
-            "parameters": Array [
-              Object {
+          "value": {
+            "parameters": [
+              {
                 "description": null,
                 "name": "key",
                 "rest": false,
                 "type": "parameter",
-                "value": Object {
+                "value": {
                   "name": "Key",
                   "type": "identifier",
                 },
               },
             ],
-            "return": Object {
+            "return": {
               "description": null,
               "type": "void",
             },
             "type": "function",
-            "typeParameters": Array [],
+            "typeParameters": [],
           },
         },
-        "getLastKey": Object {
+        "getLastKey": {
           "default": null,
           "name": "getLastKey",
           "type": "method",
-          "value": Object {
-            "parameters": Array [],
-            "return": Object {
+          "value": {
+            "parameters": [],
+            "return": {
               "description": null,
               "type": "void",
             },
             "type": "function",
-            "typeParameters": Array [],
+            "typeParameters": [],
           },
         },
       },
       "type": "interface",
-      "typeParameters": Array [
-        Object {
+      "typeParameters": [
+        {
           "constraint": null,
           "default": null,
           "name": "T",
@@ -1680,19 +1680,19 @@ to override the default.",
         },
       ],
     },
-    "/packages/@react-types/shared/src/collections.d.ts:Collection": Object {
+    "/packages/@react-types/shared/src/collections.d.ts:Collection": {
       "description": "A generic interface to access a readonly sequential
 collection of unique keyed items.",
-      "extends": Array [
-        Object {
-          "base": Object {
+      "extends": [
+        {
+          "base": {
             "id": "/packages/@react-types/shared/src/collections.d.ts:Iterable",
             "name": "Iterable",
             "type": "identifier",
           },
           "type": "application",
-          "typeParameters": Array [
-            Object {
+          "typeParameters": [
+            {
               "id": "/packages/@react-types/shared/src/collections.d.ts:T",
               "name": "T",
               "type": "identifier",
@@ -1702,62 +1702,70 @@ collection of unique keyed items.",
       ],
       "id": "/packages/@react-types/shared/src/collections.d.ts:Collection",
       "name": "Collection",
-      "properties": Object {
-        "at": Object {
+      "properties": {
+        "at": {
           "default": null,
           "description": "Get an item by the index of its key.",
           "name": "at",
           "type": "method",
-          "value": Object {
-            "parameters": Array [
-              Object {
+          "value": {
+            "parameters": [
+              {
                 "description": null,
                 "name": "idx",
                 "rest": false,
                 "type": "parameter",
-                "value": Object {
+                "value": {
                   "type": "number",
                 },
               },
             ],
-            "return": Object {
+            "return": {
               "description": null,
-              "id": "/packages/@react-types/shared/src/collections.d.ts:T",
-              "name": "T",
-              "type": "identifier",
+              "elements": [
+                {
+                  "id": "/packages/@react-types/shared/src/collections.d.ts:T",
+                  "name": "T",
+                  "type": "identifier",
+                },
+                {
+                  "type": "null",
+                },
+              ],
+              "type": "union",
             },
             "type": "function",
-            "typeParameters": Array [],
+            "typeParameters": [],
           },
         },
-        "getChildren": Object {
+        "getChildren": {
           "default": null,
           "description": "Iterate over the child items of the given key.",
           "name": "getChildren",
           "type": "method",
-          "value": Object {
-            "parameters": Array [
-              Object {
+          "value": {
+            "parameters": [
+              {
                 "description": null,
                 "name": "key",
                 "rest": false,
                 "type": "parameter",
-                "value": Object {
+                "value": {
                   "name": "Key",
                   "type": "identifier",
                 },
               },
             ],
-            "return": Object {
-              "base": Object {
+            "return": {
+              "base": {
                 "id": "/packages/@react-types/shared/src/collections.d.ts:Iterable",
                 "name": "Iterable",
                 "type": "identifier",
               },
               "description": null,
               "type": "application",
-              "typeParameters": Array [
-                Object {
+              "typeParameters": [
+                {
                   "id": "/packages/@react-types/shared/src/collections.d.ts:T",
                   "name": "T",
                   "type": "identifier",
@@ -1765,195 +1773,229 @@ collection of unique keyed items.",
               ],
             },
             "type": "function",
-            "typeParameters": Array [],
+            "typeParameters": [],
           },
         },
-        "getFirstKey": Object {
+        "getFirstKey": {
           "default": null,
           "description": "Get the first key in the collection.",
           "name": "getFirstKey",
           "type": "method",
-          "value": Object {
-            "parameters": Array [],
-            "return": Object {
+          "value": {
+            "parameters": [],
+            "return": {
               "description": null,
-              "elements": Array [
-                Object {
+              "elements": [
+                {
                   "name": "Key",
                   "type": "identifier",
                 },
-                Object {
+                {
                   "type": "null",
                 },
               ],
               "type": "union",
             },
             "type": "function",
-            "typeParameters": Array [],
+            "typeParameters": [],
           },
         },
-        "getItem": Object {
+        "getItem": {
           "default": null,
           "description": "Get an item by its key.",
           "name": "getItem",
           "type": "method",
-          "value": Object {
-            "parameters": Array [
-              Object {
+          "value": {
+            "parameters": [
+              {
                 "description": null,
                 "name": "key",
                 "rest": false,
                 "type": "parameter",
-                "value": Object {
+                "value": {
                   "name": "Key",
                   "type": "identifier",
                 },
               },
             ],
-            "return": Object {
+            "return": {
               "description": null,
-              "id": "/packages/@react-types/shared/src/collections.d.ts:T",
-              "name": "T",
-              "type": "identifier",
+              "elements": [
+                {
+                  "id": "/packages/@react-types/shared/src/collections.d.ts:T",
+                  "name": "T",
+                  "type": "identifier",
+                },
+                {
+                  "type": "null",
+                },
+              ],
+              "type": "union",
             },
             "type": "function",
-            "typeParameters": Array [],
+            "typeParameters": [],
           },
         },
-        "getKeyAfter": Object {
+        "getKeyAfter": {
           "default": null,
           "description": "Get the key that comes after the given key in the collection.",
           "name": "getKeyAfter",
           "type": "method",
-          "value": Object {
-            "parameters": Array [
-              Object {
+          "value": {
+            "parameters": [
+              {
                 "description": null,
                 "name": "key",
                 "rest": false,
                 "type": "parameter",
-                "value": Object {
+                "value": {
                   "name": "Key",
                   "type": "identifier",
                 },
               },
             ],
-            "return": Object {
+            "return": {
               "description": null,
-              "elements": Array [
-                Object {
+              "elements": [
+                {
                   "name": "Key",
                   "type": "identifier",
                 },
-                Object {
+                {
                   "type": "null",
                 },
               ],
               "type": "union",
             },
             "type": "function",
-            "typeParameters": Array [],
+            "typeParameters": [],
           },
         },
-        "getKeyBefore": Object {
+        "getKeyBefore": {
           "default": null,
           "description": "Get the key that comes before the given key in the collection.",
           "name": "getKeyBefore",
           "type": "method",
-          "value": Object {
-            "parameters": Array [
-              Object {
+          "value": {
+            "parameters": [
+              {
                 "description": null,
                 "name": "key",
                 "rest": false,
                 "type": "parameter",
-                "value": Object {
+                "value": {
                   "name": "Key",
                   "type": "identifier",
                 },
               },
             ],
-            "return": Object {
+            "return": {
               "description": null,
-              "elements": Array [
-                Object {
+              "elements": [
+                {
                   "name": "Key",
                   "type": "identifier",
                 },
-                Object {
+                {
                   "type": "null",
                 },
               ],
               "type": "union",
             },
             "type": "function",
-            "typeParameters": Array [],
+            "typeParameters": [],
           },
         },
-        "getKeys": Object {
+        "getKeys": {
           "default": null,
           "description": "Iterate over all keys in the collection.",
           "name": "getKeys",
           "type": "method",
-          "value": Object {
-            "parameters": Array [],
-            "return": Object {
-              "base": Object {
+          "value": {
+            "parameters": [],
+            "return": {
+              "base": {
                 "id": "/packages/@react-types/shared/src/collections.d.ts:Iterable",
                 "name": "Iterable",
                 "type": "identifier",
               },
               "description": null,
               "type": "application",
-              "typeParameters": Array [
-                Object {
+              "typeParameters": [
+                {
                   "name": "Key",
                   "type": "identifier",
                 },
               ],
             },
             "type": "function",
-            "typeParameters": Array [],
+            "typeParameters": [],
           },
         },
-        "getLastKey": Object {
+        "getLastKey": {
           "default": null,
           "description": "Get the last key in the collection.",
           "name": "getLastKey",
           "type": "method",
-          "value": Object {
-            "parameters": Array [],
-            "return": Object {
+          "value": {
+            "parameters": [],
+            "return": {
               "description": null,
-              "elements": Array [
-                Object {
+              "elements": [
+                {
                   "name": "Key",
                   "type": "identifier",
                 },
-                Object {
+                {
                   "type": "null",
                 },
               ],
               "type": "union",
             },
             "type": "function",
-            "typeParameters": Array [],
+            "typeParameters": [],
           },
         },
-        "size": Object {
+        "getTextValue": {
+          "default": null,
+          "description": "Returns a string representation of the item's contents.",
+          "name": "getTextValue",
+          "type": "method",
+          "value": {
+            "parameters": [
+              {
+                "description": null,
+                "name": "key",
+                "rest": false,
+                "type": "parameter",
+                "value": {
+                  "name": "Key",
+                  "type": "identifier",
+                },
+              },
+            ],
+            "return": {
+              "description": null,
+              "type": "string",
+            },
+            "type": "function",
+            "typeParameters": [],
+          },
+        },
+        "size": {
           "default": null,
           "description": "The number of items in the collection.",
           "name": "size",
           "optional": false,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "number",
           },
         },
       },
       "type": "interface",
-      "typeParameters": Array [
-        Object {
+      "typeParameters": [
+        {
           "constraint": null,
           "default": null,
           "name": "T",
@@ -1961,44 +2003,44 @@ collection of unique keyed items.",
         },
       ],
     },
-    "/packages/@react-types/shared/src/collections.d.ts:CollectionChildren": Object {
+    "/packages/@react-types/shared/src/collections.d.ts:CollectionChildren": {
       "description": null,
       "id": "/packages/@react-types/shared/src/collections.d.ts:CollectionChildren",
       "name": "CollectionChildren",
       "type": "alias",
-      "typeParameters": Array [
-        Object {
+      "typeParameters": [
+        {
           "constraint": null,
           "default": null,
           "name": "T",
           "type": "typeParameter",
         },
       ],
-      "value": Object {
-        "elements": Array [
-          Object {
-            "base": Object {
+      "value": {
+        "elements": [
+          {
+            "base": {
               "id": "/packages/@react-types/shared/src/collections.d.ts:CollectionElement",
               "type": "link",
             },
             "type": "application",
-            "typeParameters": Array [
-              Object {
+            "typeParameters": [
+              {
                 "id": "/packages/@react-types/shared/src/collections.d.ts:T",
                 "name": "T",
                 "type": "identifier",
               },
             ],
           },
-          Object {
-            "elementType": Object {
-              "base": Object {
+          {
+            "elementType": {
+              "base": {
                 "id": "/packages/@react-types/shared/src/collections.d.ts:CollectionElement",
                 "type": "link",
               },
               "type": "application",
-              "typeParameters": Array [
-                Object {
+              "typeParameters": [
+                {
                   "id": "/packages/@react-types/shared/src/collections.d.ts:T",
                   "name": "T",
                   "type": "identifier",
@@ -2007,27 +2049,27 @@ collection of unique keyed items.",
             },
             "type": "array",
           },
-          Object {
-            "parameters": Array [
-              Object {
+          {
+            "parameters": [
+              {
                 "name": "item",
                 "rest": false,
                 "type": "parameter",
-                "value": Object {
+                "value": {
                   "id": "/packages/@react-types/shared/src/collections.d.ts:T",
                   "name": "T",
                   "type": "identifier",
                 },
               },
             ],
-            "return": Object {
-              "base": Object {
+            "return": {
+              "base": {
                 "id": "/packages/@react-types/shared/src/collections.d.ts:CollectionElement",
                 "type": "link",
               },
               "type": "application",
-              "typeParameters": Array [
-                Object {
+              "typeParameters": [
+                {
                   "id": "/packages/@react-types/shared/src/collections.d.ts:T",
                   "name": "T",
                   "type": "identifier",
@@ -2035,49 +2077,49 @@ collection of unique keyed items.",
               ],
             },
             "type": "function",
-            "typeParameters": Array [],
+            "typeParameters": [],
           },
         ],
         "type": "union",
       },
     },
-    "/packages/@react-types/shared/src/collections.d.ts:CollectionElement": Object {
+    "/packages/@react-types/shared/src/collections.d.ts:CollectionElement": {
       "description": null,
       "id": "/packages/@react-types/shared/src/collections.d.ts:CollectionElement",
       "name": "CollectionElement",
       "type": "alias",
-      "typeParameters": Array [
-        Object {
+      "typeParameters": [
+        {
           "constraint": null,
           "default": null,
           "name": "T",
           "type": "typeParameter",
         },
       ],
-      "value": Object {
-        "elements": Array [
-          Object {
-            "base": Object {
+      "value": {
+        "elements": [
+          {
+            "base": {
               "id": "/packages/@react-types/shared/src/collections.d.ts:SectionElement",
               "type": "link",
             },
             "type": "application",
-            "typeParameters": Array [
-              Object {
+            "typeParameters": [
+              {
                 "id": "/packages/@react-types/shared/src/collections.d.ts:T",
                 "name": "T",
                 "type": "identifier",
               },
             ],
           },
-          Object {
-            "base": Object {
+          {
+            "base": {
               "id": "/packages/@react-types/shared/src/collections.d.ts:ItemElement",
               "type": "link",
             },
             "type": "application",
-            "typeParameters": Array [
-              Object {
+            "typeParameters": [
+              {
                 "id": "/packages/@react-types/shared/src/collections.d.ts:T",
                 "name": "T",
                 "type": "identifier",
@@ -2088,34 +2130,34 @@ collection of unique keyed items.",
         "type": "union",
       },
     },
-    "/packages/@react-types/shared/src/collections.d.ts:ItemElement": Object {
+    "/packages/@react-types/shared/src/collections.d.ts:ItemElement": {
       "description": null,
       "id": "/packages/@react-types/shared/src/collections.d.ts:ItemElement",
       "name": "ItemElement",
       "type": "alias",
-      "typeParameters": Array [
-        Object {
+      "typeParameters": [
+        {
           "constraint": null,
           "default": null,
           "name": "T",
           "type": "typeParameter",
         },
       ],
-      "value": Object {
-        "base": Object {
+      "value": {
+        "base": {
           "name": "ReactElement",
           "type": "identifier",
         },
         "type": "application",
-        "typeParameters": Array [
-          Object {
-            "base": Object {
+        "typeParameters": [
+          {
+            "base": {
               "id": "/packages/@react-types/shared/src/collections.d.ts:ItemProps",
               "type": "link",
             },
             "type": "application",
-            "typeParameters": Array [
-              Object {
+            "typeParameters": [
+              {
                 "id": "/packages/@react-types/shared/src/collections.d.ts:T",
                 "name": "T",
                 "type": "identifier",
@@ -2125,36 +2167,36 @@ collection of unique keyed items.",
         ],
       },
     },
-    "/packages/@react-types/shared/src/collections.d.ts:ItemProps": Object {
-      "extends": Array [],
+    "/packages/@react-types/shared/src/collections.d.ts:ItemProps": {
+      "extends": [],
       "id": "/packages/@react-types/shared/src/collections.d.ts:ItemProps",
       "name": "ItemProps",
-      "properties": Object {
-        "aria-label": Object {
+      "properties": {
+        "aria-label": {
           "default": null,
           "description": "An accessibility label for this item.",
           "name": "aria-label",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "string",
           },
         },
-        "childItems": Object {
+        "childItems": {
           "default": null,
           "description": "A list of child item objects. Used for dynamic collections.",
           "name": "childItems",
           "optional": true,
           "type": "property",
-          "value": Object {
-            "base": Object {
+          "value": {
+            "base": {
               "id": "/packages/@react-types/shared/src/collections.d.ts:Iterable",
               "name": "Iterable",
               "type": "identifier",
             },
             "type": "application",
-            "typeParameters": Array [
-              Object {
+            "typeParameters": [
+              {
                 "id": "/packages/@react-types/shared/src/collections.d.ts:T",
                 "name": "T",
                 "type": "identifier",
@@ -2162,52 +2204,52 @@ collection of unique keyed items.",
             ],
           },
         },
-        "children": Object {
+        "children": {
           "default": null,
           "description": "Rendered contents of the item or child items.",
           "name": "children",
           "optional": false,
           "type": "property",
-          "value": Object {
+          "value": {
             "name": "ReactNode",
             "type": "identifier",
           },
         },
-        "hasChildItems": Object {
+        "hasChildItems": {
           "default": null,
           "description": "Whether this item has children, even if not loaded yet.",
           "name": "hasChildItems",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "boolean",
           },
         },
-        "textValue": Object {
+        "textValue": {
           "default": null,
           "description": "A string representation of the item's contents, used for features like typeahead.",
           "name": "textValue",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "string",
           },
         },
-        "title": Object {
+        "title": {
           "default": null,
           "description": "Rendered contents of the item if \`children\` contains child items.",
           "name": "title",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "name": "ReactNode",
             "type": "identifier",
           },
         },
       },
       "type": "interface",
-      "typeParameters": Array [
-        Object {
+      "typeParameters": [
+        {
           "constraint": null,
           "default": null,
           "name": "T",
@@ -2215,40 +2257,40 @@ collection of unique keyed items.",
         },
       ],
     },
-    "/packages/@react-types/shared/src/collections.d.ts:ItemRenderer": Object {
+    "/packages/@react-types/shared/src/collections.d.ts:ItemRenderer": {
       "description": null,
       "id": "/packages/@react-types/shared/src/collections.d.ts:ItemRenderer",
       "name": "ItemRenderer",
       "type": "alias",
-      "typeParameters": Array [
-        Object {
+      "typeParameters": [
+        {
           "constraint": null,
           "default": null,
           "name": "T",
           "type": "typeParameter",
         },
       ],
-      "value": Object {
-        "parameters": Array [
-          Object {
+      "value": {
+        "parameters": [
+          {
             "name": "item",
             "rest": false,
             "type": "parameter",
-            "value": Object {
+            "value": {
               "id": "/packages/@react-types/shared/src/collections.d.ts:T",
               "name": "T",
               "type": "identifier",
             },
           },
         ],
-        "return": Object {
-          "base": Object {
+        "return": {
+          "base": {
             "id": "/packages/@react-types/shared/src/collections.d.ts:ItemElement",
             "type": "link",
           },
           "type": "application",
-          "typeParameters": Array [
-            Object {
+          "typeParameters": [
+            {
               "id": "/packages/@react-types/shared/src/collections.d.ts:T",
               "name": "T",
               "type": "identifier",
@@ -2256,37 +2298,37 @@ collection of unique keyed items.",
           ],
         },
         "type": "function",
-        "typeParameters": Array [],
+        "typeParameters": [],
       },
     },
-    "/packages/@react-types/shared/src/collections.d.ts:SectionElement": Object {
+    "/packages/@react-types/shared/src/collections.d.ts:SectionElement": {
       "description": null,
       "id": "/packages/@react-types/shared/src/collections.d.ts:SectionElement",
       "name": "SectionElement",
       "type": "alias",
-      "typeParameters": Array [
-        Object {
+      "typeParameters": [
+        {
           "constraint": null,
           "default": null,
           "name": "T",
           "type": "typeParameter",
         },
       ],
-      "value": Object {
-        "base": Object {
+      "value": {
+        "base": {
           "name": "ReactElement",
           "type": "identifier",
         },
         "type": "application",
-        "typeParameters": Array [
-          Object {
-            "base": Object {
+        "typeParameters": [
+          {
+            "base": {
               "id": "/packages/@react-types/shared/src/collections.d.ts:SectionProps",
               "type": "link",
             },
             "type": "application",
-            "typeParameters": Array [
-              Object {
+            "typeParameters": [
+              {
                 "id": "/packages/@react-types/shared/src/collections.d.ts:T",
                 "name": "T",
                 "type": "identifier",
@@ -2296,52 +2338,52 @@ collection of unique keyed items.",
         ],
       },
     },
-    "/packages/@react-types/shared/src/collections.d.ts:SectionProps": Object {
-      "extends": Array [],
+    "/packages/@react-types/shared/src/collections.d.ts:SectionProps": {
+      "extends": [],
       "id": "/packages/@react-types/shared/src/collections.d.ts:SectionProps",
       "name": "SectionProps",
-      "properties": Object {
-        "aria-label": Object {
+      "properties": {
+        "aria-label": {
           "default": null,
           "description": "An accessibility label for the section.",
           "name": "aria-label",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "string",
           },
         },
-        "children": Object {
+        "children": {
           "default": null,
           "description": "Static child items or a function to render children.",
           "name": "children",
           "optional": false,
           "type": "property",
-          "value": Object {
-            "elements": Array [
-              Object {
-                "base": Object {
+          "value": {
+            "elements": [
+              {
+                "base": {
                   "id": "/packages/@react-types/shared/src/collections.d.ts:ItemElement",
                   "type": "link",
                 },
                 "type": "application",
-                "typeParameters": Array [
-                  Object {
+                "typeParameters": [
+                  {
                     "id": "/packages/@react-types/shared/src/collections.d.ts:T",
                     "name": "T",
                     "type": "identifier",
                   },
                 ],
               },
-              Object {
-                "elementType": Object {
-                  "base": Object {
+              {
+                "elementType": {
+                  "base": {
                     "id": "/packages/@react-types/shared/src/collections.d.ts:ItemElement",
                     "type": "link",
                   },
                   "type": "application",
-                  "typeParameters": Array [
-                    Object {
+                  "typeParameters": [
+                    {
                       "id": "/packages/@react-types/shared/src/collections.d.ts:T",
                       "name": "T",
                       "type": "identifier",
@@ -2350,14 +2392,14 @@ collection of unique keyed items.",
                 },
                 "type": "array",
               },
-              Object {
-                "base": Object {
+              {
+                "base": {
                   "id": "/packages/@react-types/shared/src/collections.d.ts:ItemRenderer",
                   "type": "link",
                 },
                 "type": "application",
-                "typeParameters": Array [
-                  Object {
+                "typeParameters": [
+                  {
                     "id": "/packages/@react-types/shared/src/collections.d.ts:T",
                     "name": "T",
                     "type": "identifier",
@@ -2368,21 +2410,21 @@ collection of unique keyed items.",
             "type": "union",
           },
         },
-        "items": Object {
+        "items": {
           "default": null,
           "description": "Item objects in the section.",
           "name": "items",
           "optional": true,
           "type": "property",
-          "value": Object {
-            "base": Object {
+          "value": {
+            "base": {
               "id": "/packages/@react-types/shared/src/collections.d.ts:Iterable",
               "name": "Iterable",
               "type": "identifier",
             },
             "type": "application",
-            "typeParameters": Array [
-              Object {
+            "typeParameters": [
+              {
                 "id": "/packages/@react-types/shared/src/collections.d.ts:T",
                 "name": "T",
                 "type": "identifier",
@@ -2390,21 +2432,21 @@ collection of unique keyed items.",
             ],
           },
         },
-        "title": Object {
+        "title": {
           "default": null,
           "description": "Rendered contents of the section, e.g. a header.",
           "name": "title",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "name": "ReactNode",
             "type": "identifier",
           },
         },
       },
       "type": "interface",
-      "typeParameters": Array [
-        Object {
+      "typeParameters": [
+        {
           "constraint": null,
           "default": null,
           "name": "T",
@@ -2412,19 +2454,19 @@ collection of unique keyed items.",
         },
       ],
     },
-    "/packages/@react-types/shared/src/inputs.d.ts:ValidationState": Object {
+    "/packages/@react-types/shared/src/inputs.d.ts:ValidationState": {
       "description": null,
       "id": "/packages/@react-types/shared/src/inputs.d.ts:ValidationState",
       "name": "ValidationState",
       "type": "alias",
-      "typeParameters": Array [],
-      "value": Object {
-        "elements": Array [
-          Object {
+      "typeParameters": [],
+      "value": {
+        "elements": [
+          {
             "type": "string",
             "value": "valid",
           },
-          Object {
+          {
             "type": "string",
             "value": "invalid",
           },
@@ -2432,19 +2474,19 @@ collection of unique keyed items.",
         "type": "union",
       },
     },
-    "/packages/@react-types/shared/src/locale.d.ts:Direction": Object {
+    "/packages/@react-types/shared/src/locale.d.ts:Direction": {
       "description": null,
       "id": "/packages/@react-types/shared/src/locale.d.ts:Direction",
       "name": "Direction",
       "type": "alias",
-      "typeParameters": Array [],
-      "value": Object {
-        "elements": Array [
-          Object {
+      "typeParameters": [],
+      "value": {
+        "elements": [
+          {
             "type": "string",
             "value": "ltr",
           },
-          Object {
+          {
             "type": "string",
             "value": "rtl",
           },
@@ -2457,73 +2499,73 @@ collection of unique keyed items.",
 `;
 
 exports[`DocsTransformer - API interfaces can infer properties 1`] = `
-Object {
-  "exports": Object {
-    "IntrinsicHTMLAttributes": Object {
+{
+  "exports": {
+    "IntrinsicHTMLAttributes": {
       "id": "/test/src/index.tsx:IntrinsicHTMLAttributes",
       "type": "link",
     },
   },
-  "links": Object {
-    "/test/src/index.tsx:IntrinsicHTMLAttributes": Object {
+  "links": {
+    "/test/src/index.tsx:IntrinsicHTMLAttributes": {
       "description": null,
       "id": "/test/src/index.tsx:IntrinsicHTMLAttributes",
       "name": "IntrinsicHTMLAttributes",
       "type": "alias",
-      "typeParameters": Array [],
-      "value": Object {
+      "typeParameters": [],
+      "value": {
         "type": "mapped",
-        "typeAnnotation": Object {
-          "checkType": Object {
-            "indexType": Object {
+        "typeAnnotation": {
+          "checkType": {
+            "indexType": {
               "id": "/test/src/index.tsx:K",
               "name": "K",
               "type": "identifier",
             },
-            "objectType": Object {
+            "objectType": {
               "id": "/test/src/index.tsx:ReactDOM",
               "name": "ReactDOM",
               "type": "identifier",
             },
             "type": "indexedAccess",
           },
-          "extendsType": Object {
-            "base": Object {
+          "extendsType": {
+            "base": {
               "id": "/test/src/index.tsx:DOMFactory",
               "name": "DOMFactory",
               "type": "identifier",
             },
             "type": "application",
-            "typeParameters": Array [
-              Object {
+            "typeParameters": [
+              {
                 "type": "infer",
-                "value": Object {
+                "value": {
                   "constraint": null,
                   "default": null,
                   "name": "T",
                   "type": "typeParameter",
                 },
               },
-              Object {
+              {
                 "type": "any",
               },
             ],
           },
-          "falseType": Object {
+          "falseType": {
             "type": "never",
           },
-          "trueType": Object {
+          "trueType": {
             "id": "/test/src/index.tsx:T",
             "name": "T",
             "type": "identifier",
           },
           "type": "conditional",
         },
-        "typeParameter": Object {
-          "constraint": Object {
+        "typeParameter": {
+          "constraint": {
             "operator": "keyof",
             "type": "typeOperator",
-            "value": Object {
+            "value": {
               "id": "/test/src/index.tsx:ReactDOM",
               "name": "ReactDOM",
               "type": "identifier",
@@ -2541,118 +2583,118 @@ Object {
 `;
 
 exports[`DocsTransformer - API interfaces can omit properties 1`] = `
-Object {
-  "exports": Object {
-    "State": Object {
-      "extends": Array [],
+{
+  "exports": {
+    "State": {
+      "extends": [],
       "id": "/test/src/index.tsx:State",
       "name": "State",
-      "properties": Object {
-        "b": Object {
+      "properties": {
+        "b": {
           "default": null,
           "name": "b",
           "optional": false,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "string",
           },
         },
       },
       "type": "interface",
-      "typeParameters": Array [],
+      "typeParameters": [],
     },
   },
-  "links": Object {},
+  "links": {},
 }
 `;
 
 exports[`DocsTransformer - API interfaces can pick properties 1`] = `
-Object {
-  "exports": Object {},
-  "links": Object {},
+{
+  "exports": {},
+  "links": {},
 }
 `;
 
 exports[`DocsTransformer - API interfaces follows imported interfaces 1`] = `
-Object {
-  "exports": Object {
-    "Bar": Object {
+{
+  "exports": {
+    "Bar": {
       "id": "/test/src/index.tsx:Bar",
       "name": "Bar",
-      "parameters": Array [
-        Object {
+      "parameters": [
+        {
           "description": null,
           "name": "props",
           "rest": false,
           "type": "parameter",
-          "value": Object {
+          "value": {
             "id": "/test/src/component.tsx:Foo",
             "type": "link",
           },
         },
       ],
-      "return": Object {
+      "return": {
         "description": null,
         "type": "null",
       },
       "type": "function",
-      "typeParameters": Array [],
+      "typeParameters": [],
     },
   },
-  "links": Object {
-    "/test/src/component.tsx:Foo": Object {
-      "extends": Array [],
+  "links": {
+    "/test/src/component.tsx:Foo": {
+      "extends": [],
       "id": "/test/src/component.tsx:Foo",
       "name": "Foo",
-      "properties": Object {
-        "a": Object {
+      "properties": {
+        "a": {
           "default": null,
           "name": "a",
           "optional": false,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "number",
           },
         },
       },
       "type": "interface",
-      "typeParameters": Array [],
+      "typeParameters": [],
     },
   },
 }
 `;
 
 exports[`DocsTransformer - API interfaces follows local references 1`] = `
-Object {
-  "exports": Object {
-    "State": Object {
-      "extends": Array [],
+{
+  "exports": {
+    "State": {
+      "extends": [],
       "id": "/test/src/index.tsx:State",
       "name": "State",
-      "properties": Object {
-        "foo": Object {
+      "properties": {
+        "foo": {
           "default": null,
           "name": "foo",
           "optional": false,
           "type": "property",
-          "value": Object {
+          "value": {
             "id": "/test/src/index.tsx:Foo",
             "type": "link",
           },
         },
       },
       "type": "interface",
-      "typeParameters": Array [],
+      "typeParameters": [],
     },
   },
-  "links": Object {
-    "/test/src/index.tsx:Foo": Object {
+  "links": {
+    "/test/src/index.tsx:Foo": {
       "description": null,
       "id": "/test/src/index.tsx:Foo",
       "name": "Foo",
       "type": "alias",
-      "typeParameters": Array [],
-      "value": Object {
+      "typeParameters": [],
+      "value": {
         "type": "string",
       },
     },
@@ -2661,61 +2703,61 @@ Object {
 `;
 
 exports[`DocsTransformer - API interfaces writes export entry for interface 1`] = `
-Object {
-  "exports": Object {
-    "Foo": Object {
-      "extends": Array [],
+{
+  "exports": {
+    "Foo": {
+      "extends": [],
       "id": "/test/src/index.tsx:Foo",
       "name": "Foo",
-      "properties": Object {
-        "a": Object {
+      "properties": {
+        "a": {
           "default": null,
           "name": "a",
           "optional": false,
           "type": "property",
-          "value": Object {
+          "value": {
             "type": "number",
           },
         },
       },
       "type": "interface",
-      "typeParameters": Array [],
+      "typeParameters": [],
     },
   },
-  "links": Object {},
+  "links": {},
 }
 `;
 
 exports[`DocsTransformer - API links css modules 1`] = `
-Object {
-  "exports": Object {
-    "theme": Object {
+{
+  "exports": {
+    "theme": {
       "id": "/test/src/index.tsx:theme",
       "name": "theme",
       "type": "variable",
-      "typeAnnotation": Object {
+      "typeAnnotation": {
         "id": "/test/src/theme.tsx:Theme",
         "type": "link",
       },
     },
   },
-  "links": Object {
-    "/test/src/theme.tsx:CSSModule": Object {
+  "links": {
+    "/test/src/theme.tsx:CSSModule": {
       "description": null,
       "id": "/test/src/theme.tsx:CSSModule",
       "name": "CSSModule",
       "type": "alias",
-      "typeParameters": Array [],
-      "value": Object {
-        "properties": Object {
-          "className": Object {
+      "typeParameters": [],
+      "value": {
+        "properties": {
+          "className": {
             "default": null,
-            "indexType": Object {
+            "indexType": {
               "type": "string",
             },
             "name": "className",
             "type": "property",
-            "value": Object {
+            "value": {
               "type": "string",
             },
           },
@@ -2723,71 +2765,71 @@ Object {
         "type": "object",
       },
     },
-    "/test/src/theme.tsx:Theme": Object {
-      "extends": Array [],
+    "/test/src/theme.tsx:Theme": {
+      "extends": [],
       "id": "/test/src/theme.tsx:Theme",
       "name": "Theme",
-      "properties": Object {
-        "global": Object {
+      "properties": {
+        "global": {
           "default": null,
           "name": "global",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "id": "/test/src/theme.tsx:CSSModule",
             "type": "link",
           },
         },
-        "light": Object {
+        "light": {
           "default": null,
           "name": "light",
           "optional": true,
           "type": "property",
-          "value": Object {
+          "value": {
             "id": "/test/src/theme.tsx:CSSModule",
             "type": "link",
           },
         },
       },
       "type": "interface",
-      "typeParameters": Array [],
+      "typeParameters": [],
     },
   },
 }
 `;
 
 exports[`DocsTransformer - API types writes export entry for complex type regex 1`] = `
-Object {
-  "exports": Object {
-    "Foo": Object {
+{
+  "exports": {
+    "Foo": {
       "id": "/test/src/index.tsx:Foo",
       "type": "link",
     },
   },
-  "links": Object {
-    "/test/src/index.tsx:Foo": Object {
+  "links": {
+    "/test/src/index.tsx:Foo": {
       "description": null,
       "id": "/test/src/index.tsx:Foo",
       "name": "Foo",
       "type": "alias",
-      "typeParameters": Array [],
-      "value": Object {
-        "elements": Array [
-          Object {
+      "typeParameters": [],
+      "value": {
+        "elements": [
+          {
             "type": "number",
           },
-          Object {
+          {
             "type": "string",
             "value": ".",
           },
-          Object {
+          {
             "type": "number",
           },
-          Object {
+          {
             "type": "string",
             "value": " ",
           },
-          Object {
+          {
             "type": "string",
           },
         ],
@@ -2799,21 +2841,21 @@ Object {
 `;
 
 exports[`DocsTransformer - API types writes export entry for type 1`] = `
-Object {
-  "exports": Object {
-    "Foo": Object {
+{
+  "exports": {
+    "Foo": {
       "id": "/test/src/index.tsx:Foo",
       "type": "link",
     },
   },
-  "links": Object {
-    "/test/src/index.tsx:Foo": Object {
+  "links": {
+    "/test/src/index.tsx:Foo": {
       "description": null,
       "id": "/test/src/index.tsx:Foo",
       "name": "Foo",
       "type": "alias",
-      "typeParameters": Array [],
-      "value": Object {
+      "typeParameters": [],
+      "value": {
         "type": "number",
       },
     },
@@ -2822,26 +2864,26 @@ Object {
 `;
 
 exports[`DocsTransformer - API types writes export entry for type regex 1`] = `
-Object {
-  "exports": Object {
-    "Foo": Object {
+{
+  "exports": {
+    "Foo": {
       "id": "/test/src/index.tsx:Foo",
       "type": "link",
     },
   },
-  "links": Object {
-    "/test/src/index.tsx:Foo": Object {
+  "links": {
+    "/test/src/index.tsx:Foo": {
       "description": null,
       "id": "/test/src/index.tsx:Foo",
       "name": "Foo",
       "type": "alias",
-      "typeParameters": Array [],
-      "value": Object {
-        "elements": Array [
-          Object {
+      "typeParameters": [],
+      "value": {
+        "elements": [
+          {
             "type": "number",
           },
-          Object {
+          {
             "type": "string",
             "value": "%",
           },
@@ -2854,26 +2896,26 @@ Object {
 `;
 
 exports[`DocsTransformer - API types writes export entry for type union 1`] = `
-Object {
-  "exports": Object {
-    "Foo": Object {
+{
+  "exports": {
+    "Foo": {
       "id": "/test/src/index.tsx:Foo",
       "type": "link",
     },
   },
-  "links": Object {
-    "/test/src/index.tsx:Foo": Object {
+  "links": {
+    "/test/src/index.tsx:Foo": {
       "description": null,
       "id": "/test/src/index.tsx:Foo",
       "name": "Foo",
       "type": "alias",
-      "typeParameters": Array [],
-      "value": Object {
-        "elements": Array [
-          Object {
+      "typeParameters": [],
+      "value": {
+        "elements": [
+          {
             "type": "number",
           },
-          Object {
+          {
             "type": "string",
           },
         ],

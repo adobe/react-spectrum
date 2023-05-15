@@ -11,6 +11,7 @@
  */
 
 import {classNames, SlotProvider, useIsMobileDevice} from '@react-spectrum/utils';
+import {DismissButton} from '@react-aria/overlays';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
 import {ItemProps} from '@react-types/shared';
 import {MenuDialogContext, useMenuStateContext} from './context';
@@ -18,7 +19,12 @@ import {Modal, Popover} from '@react-spectrum/overlays';
 import React, {Key, ReactElement, useRef} from 'react';
 import {useOverlayTriggerState} from '@react-stately/overlays';
 
-function MenuDialogTrigger<T>(props: ItemProps<T> & {isUnavailable?: boolean, targetKey: Key}): ReactElement {
+export interface SpectrumMenuDialogTriggerProps<T> extends ItemProps<T> {
+  isUnavailable?: boolean,
+  targetKey: Key
+}
+
+function MenuDialogTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): ReactElement {
   let {isUnavailable} = props;
 
   let {state: menuState} = useMenuStateContext();
@@ -49,7 +55,9 @@ function MenuDialogTrigger<T>(props: ItemProps<T> & {isUnavailable?: boolean, ta
         {
           isMobile ? (
             <Modal state={state} isDismissable>
+              <DismissButton onDismiss={state.close} />
               {content}
+              <DismissButton onDismiss={state.close} />
             </Modal>
           ) : (
             <Popover state={state} triggerRef={triggerRef} placement="end top" hideArrow offset={-10} isNonModal shouldContainFocus={false}>{content}</Popover>
