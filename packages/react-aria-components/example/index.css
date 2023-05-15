@@ -180,26 +180,32 @@ html {
   border: 2px solid white;
   margin: 20px;
   padding: 20px;
+  outline: none;
 
   &[data-focus-visible][data-focused] {
-    border-color: blue;
-    border-style: dashed;
+    border: 2px dashed blue;
   }
 
   &[data-hovered]{
-    border-color: green;
-    border-style: dashed;
+    border-color: 2px dashed green;
   }
 
-  &[data-is-drop-target]{
-    border-color: purple;
-    border-style: dashed;
+  &[data-drop-target]{
+    border: 2px dashed purple;
   }
 }
 
 .draggable {
   outline: none;
   
+  &.focus-ring{
+    border: 2px solid blue;
+  }
+}
+
+.copyable {
+  outline: none;
+
   &.focus-ring{
     border: 2px solid blue;
   }

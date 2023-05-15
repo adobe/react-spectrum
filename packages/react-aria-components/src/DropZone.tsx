@@ -12,11 +12,11 @@
 
 import {ButtonContext} from './Button';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import type {DragAndDropHooks} from '@react-spectrum/dnd';
 import {DropOptions, mergeProps, useButton, useClipboard, useDrop, useFocusRing, useHover, usePress, VisuallyHidden} from 'react-aria';
 import {InputContext} from './Input';
+import {isVirtualDragging} from '@react-aria/dnd';
 import {LinkContext} from './Link';
-import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useMemo, useRef} from 'react';
 export interface DropZoneRenderProps {
   /**
    * Whether the dropzone is currently hovered with a mouse.
@@ -42,14 +42,12 @@ export interface DropZoneRenderProps {
 // note: possibly add isDisabled prop in the future
 export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'onDropActivate' | 'onInsert' | 'onRootDrop' | 'onItemDrop' | 'onReorder'>, 
   RenderProps<DropZoneRenderProps>, SlotProps {
-    dragAndDropHooks?: DragAndDropHooks['dragAndDropHooks']
   }
 
 export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDivElement>>(null);
 
 function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DropZoneContext);
-  let {dragAndDropHooks} = props;
   let {dropProps, isDropTarget} = useDrop({...props, ref});
   let {hoverProps, isHovered} = useHover({});
   let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
@@ -58,9 +56,17 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   let uploadLinkRef = useRef<HTMLAnchorElement>(null);
   let uploadButtonRef = useRef<HTMLButtonElement>(null);
   let hasInputLink = uploadLinkRef.current || uploadButtonRef.current;
-
-  console.log(dragAndDropHooks);
-  console.log(dragAndDropHooks?.isVirtualDragging());
+  let isVirtualDrag = isVirtualDragging();
+  let inputRefCurrent = inputRef.current;
+  let labelText = useMemo(() => {
+    if (isVirtualDrag) {
+      return 'This is a drop target';
+    } 
+    if (inputRefCurrent) {
+      return 'Press enter to select a file';
+    }
+    return 'DropZone';
+  }, [isVirtualDrag, inputRefCurrent]);
 
   let {buttonProps} = useButton({
     onPress: () => {
@@ -119,7 +125,6 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
     }
   };
   
-  // with a single button
   return (
     <Provider
       values={[
@@ -142,45 +147,12 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
             {...mergeProps(buttonProps, focusProps, clipboardProps)}
             ref={buttonRef} 
             // follow up: update this to translated string
-            // if there is no input, then say something like 'dropzone' -> this is subject to change
-            aria-label={inputRef.current ? 'Press enter to select a file' : 'dropzone'} /> 
+            aria-label={labelText} /> 
         </VisuallyHidden>}
         {renderProps.children}
       </div>
     </Provider>
   );
-
-  // two buttons
-
-  // return (
-  //   <Provider
-  //     values={[
-  //       [InputContext, {ref: inputRef, type: 'file', style: {display: 'none'}, onChange: onInputChange}],
-  //       [LinkContext, {slot: 'file', onPress: () => inputRef.current?.click(), ref: uploadLinkRef}], 
-  //       [ButtonContext, {slot: 'file', onPress: () => inputRef.current?.click(), ref: uploadButtonRef}]
-  //     ]}>
-  //     <div
-  //       {...mergeProps(dropProps, hoverProps, pressProps)}
-  //       {...renderProps}
-  //       // isVirtualDragging={dragAndDropHooks?.isVirtualDragging()}
-  //       ref={ref}
-  //       slot={props.slot} 
-  //       tabIndex={-1} 
-  //       data-hovered={isHovered || undefined}
-  //       data-focused={isFocused || undefined} 
-  //       data-focus-visible={isFocusVisible || undefined}
-  //       data-drop-target={isDropTarget || undefined} > 
-  //       {!hasInputLink && <VisuallyHidden>
-  //         <button 
-  //           {...mergeProps(buttonProps, focusProps, clipboardProps)}
-  //           ref={buttonRef} 
-  //           // follow up: update this to translated string
-  //           aria-label={inputRef.current ? 'Press enter to select a file' : 'dropzone-area'} /> 
-  //       </VisuallyHidden>}
-  //       {renderProps.children}
-  //     </div>
-  //   </Provider>
-  // );
 }
 
 /**

@@ -17,7 +17,6 @@ import clsx from 'clsx';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
 import React, {useRef, useState} from 'react';
 import styles from '../example/index.css';
-import {useDragAndDrop} from '@react-spectrum/dnd';
 import {useListData} from 'react-stately';
 
 export default {
@@ -709,12 +708,15 @@ function Copyable() {
   });
 
   return (
-    <div 
-      {...clipboardProps}
-      role="textbox" 
-      tabIndex={0}>
-      Copy me 
-    </div>
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+      <div 
+        {...clipboardProps}
+        role="textbox" 
+        tabIndex={0}
+        className={styles.copyable}>
+        Copy me 
+      </div>
+    </FocusRing>
   );
 }
 
@@ -732,28 +734,6 @@ export const DropzoneExampleWithInput = (props) => (
   </div>
 );
 
-let getAllowedDropOperationsAction = action('getAllowedDropOperationsAction');
-
-export function DropZoneExample() {
-  let {dragAndDropHooks} = useDragAndDrop({
-    getAllowedDropOperations() {
-      getAllowedDropOperationsAction();
-      return ['move', 'cancel'];
-    }});
-
-  return (
-    <div>
-      <DropZone
-        dragAndDropHooks={dragAndDropHooks}
-        className={styles.dropzone}
-        onDrop={action('OnDrop')}
-        onDropEnter={action('OnDropEnter')}
-        onDropExit={action('OnDropExit')} >
-        DropZone Area
-      </DropZone>
-    </div>
-  );
-}
 export const DropzoneExampleWithLinkAndInput = (props) => (
   <div>
     <DropZone
