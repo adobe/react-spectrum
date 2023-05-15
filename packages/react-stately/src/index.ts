@@ -21,7 +21,7 @@ export type {MenuTriggerProps, MenuTriggerState} from '@react-stately/menu';
 export type {OverlayTriggerProps, OverlayTriggerState} from '@react-stately/overlays';
 export type {RadioGroupProps, RadioGroupState} from '@react-stately/radio';
 export type {SearchFieldProps, SearchFieldState} from '@react-stately/searchfield';
-export type {SelectProps, SelectState} from '@react-stately/select';
+export type {SelectProps, SelectState, SelectStateOptions} from '@react-stately/select';
 export type {SliderState, SliderStateOptions} from '@react-stately/slider';
 export type {MultipleSelectionManager, MultipleSelectionState, SingleSelectionState} from '@react-stately/selection';
 export type {NumberFieldState, NumberFieldStateOptions} from '@react-stately/numberfield';

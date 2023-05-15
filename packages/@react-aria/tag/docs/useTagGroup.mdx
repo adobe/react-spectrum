@@ -1,0 +1,297 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/tag';
+import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
+import {Keyboard} from '@react-spectrum/text';
+import packageData from '@react-aria/tag/package.json';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import tailwindExample from 'url:./tailwind.png';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import Anatomy from './anatomy.svg';
+
+---
+category: Status
+keywords: [tag, aria]
+---
+
+# useTagGroup
+
+<PageDescription>{docs.exports.useTagGroup.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useTagGroup']} />
+
+## API
+
+<FunctionAPI function={docs.exports.useTagGroup} links={docs.links} />
+<FunctionAPI function={docs.exports.useTag} links={docs.links} />
+
+## Features
+
+* Exposed to assistive technology as a grid using ARIA
+* Keyboard navigation support including arrow keys, home/end, page up/down, and delete
+* Keyboard focus management and cross browser normalization
+* Labeling support for accessibility
+* Support for mouse, touch, and keyboard interactions
+
+## Anatomy
+
+<Anatomy />
+
+A tag group consists of a list of tags.
+If a visual label is not provided, then an `aria-label` or
+`aria-labelledby` prop must be passed to identify the tag group to assistive technology.
+
+Individual tags should include a visual label, and may optionally include icons or a remove button.
+
+`useTagGroup` returns props for the group and its label, which you should spread
+onto the appropriate element:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useTagGroup.return.id].properties} />
+</TypeContext.Provider>
+
+`useTag` returns props for an individual tag:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useTag.return.id].properties} />
+</TypeContext.Provider>
+
+In order to be correctly identified to assistive technologies and enable proper keyboard navigation, the tag group should use `gridProps` on its outer container.
+
+Each individual tag should use `rowProps` on its outer container, and use `gridCellProps` on an inner container.
+
+## Example
+
+```tsx example export=true
+import {useTag, useTagGroup} from '@react-aria/tag';
+import {useListState} from '@react-stately/list';
+import {Item} from '@react-stately/collections';
+import {useFocusRing} from '@react-aria/focus';
+
+// Reuse the Button from your component library. See below for details.
+import {Button} from 'your-component-library';
+
+function TagGroup(props) {
+  let { label, description, errorMessage, validationState, allowsRemoving, onRemove } = props;
+  let ref = React.useRef(null);
+
+  let state = useListState(props);
+  let {
+    gridProps,
+    labelProps,
+    descriptionProps,
+    errorMessageProps
+  } = useTagGroup(props, state, ref);
+
+  return (
+    <div ref={ref} className="tag-group">
+      <div {...labelProps}>{label}</div>
+      <div {...gridProps}>
+        {[...state.collection].map((item) => (
+          <Tag
+            {...item.props}
+            key={item.key}
+            item={item}
+            state={state}
+            allowsRemoving={allowsRemoving}
+            onRemove={onRemove}
+          >
+            {item.rendered}
+          </Tag>
+        ))}
+      </div>
+      {description && (
+        <div {...descriptionProps} className="description">
+          {description}
+        </div>
+      )}
+      {errorMessage && validationState === "invalid" && (
+        <div {...errorMessageProps} className="error-message">
+          {errorMessage}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Tag(props) {
+  let { item, state, allowsRemoving, onRemove } = props;
+  let ref = React.useRef(null);
+  let {focusProps} = useFocusRing({within: true});
+
+  let { rowProps, gridCellProps, labelProps, removeButtonProps } = useTag({
+    ...props,
+    item,
+    allowsRemoving,
+    onRemove
+  }, state, ref);
+
+  return (
+    <span
+      ref={ref}
+      {...rowProps}
+      {...focusProps}
+    >
+      <div {...gridCellProps}>
+        <span {...labelProps}>{item.rendered}</span>
+        {allowsRemoving && <Button {...removeButtonProps}>❎</Button>}
+      </div>
+    </span>
+  );
+}
+
+<TagGroup label="Categories">
+  <Item key="news">News</Item>
+  <Item key="travel">Travel</Item>
+  <Item key="gaming">Gaming</Item>
+  <Item key="shopping">Shopping</Item>
+</TagGroup>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+/* css */
+.tag-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.tag-group div {
+  margin: 5px 0;
+}
+
+.tag-group [role="grid"] {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.tag-group [role="row"] {
+  display: flex;
+  align-items: center;
+  border: 1px solid gray;
+  border-radius: 4px;
+  padding: 2px 5px;
+  margin: 2px;
+}
+
+.tag-group [role="gridcell"] {
+  margin: 0 5px;
+}
+
+.tag-group [role="row"] button {
+  background: none;
+  border: none;
+  padding-right: 0;
+}
+
+.tag-group .description {
+  font-size: 12px;
+}
+
+.tag-group .error-message {
+  color: red;
+  font-size: 12px;
+}
+```
+
+</details>
+
+### Button
+
+The `Button` component is used in the above example to remove a tag. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useButton} from '@react-aria/button';
+
+function Button(props) {
+  let ref = React.useRef(null);
+  let {buttonProps} = useButton(props, ref);
+  return <button {...buttonProps} ref={ref}>{props.children}</button>;
+}
+```
+
+</details>
+
+
+## Styled examples
+
+<ExampleCard
+  url="https://codesandbox.io/s/usetaggroup-with-tailwind-css-zxxrpv"
+  preview={tailwindExample}
+  title="Tailwind CSS"
+  description="A TagGroup built with Tailwind." />
+
+## Usage
+
+### Remove tags
+
+The `onRemove` handler and `allowsRemoving` props can be used to include a remove button which can be used to remove a tag. This allows the user to press the remove button, or press the backspace key while the tag is focused to remove the tag from the group.
+
+```tsx example
+import {useListData} from '@react-stately/data';
+
+function Example() {
+  let list = useListData({
+    initialItems: [
+      { id: 1, name: "News" },
+      { id: 2, name: "Travel" },
+      { id: 3, name: "Gaming" },
+      { id: 4, name: "Shopping" }
+    ]
+  });
+
+  return (
+    <TagGroup
+      label="Categories"
+      items={list.items}
+      onRemove={list.remove}
+      allowsRemoving>
+      {(item) => <Item>{item.name}</Item>}
+    </TagGroup>
+  );
+}
+```
+
+### Description
+
+The `description` prop can be used to associate additional help text with a tag group.
+
+```tsx example
+<TagGroup label="Categories" description="Your selected categories.">
+  <Item key="news">News</Item>
+  <Item key="travel">Travel</Item>
+  <Item key="gaming">Gaming</Item>
+  <Item key="shopping">Shopping</Item>
+</TagGroup>
+```
+
+### Error message
+
+The `errorMessage` prop can be used to help the user fix a validation error. It should be combined with the `validationState` prop.
+
+```tsx example
+<TagGroup label="Categories" errorMessage="Invalid set of categories." validationState="invalid">
+  <Item key="news">News</Item>
+  <Item key="travel">Travel</Item>
+  <Item key="gaming">Gaming</Item>
+  <Item key="shopping">Shopping</Item>
+</TagGroup>
+```

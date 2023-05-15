@@ -273,7 +273,8 @@ function ListBox(props) {
         listStyle: "none",
         maxHeight: 150,
         overflow: "auto",
-        minWidth: 100
+        minWidth: 100,
+        background: 'lightgray'
       }}>
       {[...state.collection].map(item => (
         <Option
@@ -289,31 +290,22 @@ function Option({item, state}) {
   let ref = React.useRef(null);
   let {optionProps, isSelected, isFocused, isDisabled} = useOption({key: item.key}, state, ref);
 
-  let backgroundColor;
-  let color = 'black';
-
-  if (isSelected) {
-    backgroundColor = 'blueviolet';
-    color = 'white';
-  } else if (isFocused) {
-    backgroundColor = 'gray';
-  } else if (isDisabled) {
-    backgroundColor = 'transparent';
-    color = 'gray';
-  }
-
   return (
     <li
       {...optionProps}
       ref={ref}
       style={{
-        background: backgroundColor,
-        color: color,
+        background: isFocused ? 'gray' : 'transparent',
+        color: isDisabled ? 'gray' : isFocused ? 'white' : 'black',
         padding: '2px 5px',
         outline: 'none',
-        cursor: 'pointer'
+        cursor: 'pointer',
+        display: 'flex',
+        justifyContent: 'space-between',
+        gap: '10px'
       }}>
       {item.rendered}
+      {isSelected ? <span>✓</span> : null}
     </li>
   );
 }

@@ -23,7 +23,7 @@ export interface AriaPositionProps extends PositionProps {
    * Cross size of the overlay arrow in pixels.
    * @default 0
    */
-  arrowCrossSize?: number,
+  arrowSize?: number,
   /**
    * Element that that serves as the positioning boundary.
    * @default document.body
@@ -58,7 +58,7 @@ export interface AriaPositionProps extends PositionProps {
    * The minimum distance the arrow's edge should be from the edge of the overlay element.
    * @default 0
    */
-  minOverlayArrowOffset?: number
+  arrowBoundaryOffset?: number
 }
 
 export interface PositionAria {
@@ -82,7 +82,7 @@ let visualViewport = typeof window !== 'undefined' && window.visualViewport;
 export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   let {direction} = useLocale();
   let {
-    arrowCrossSize = 0,
+    arrowSize = 0,
     targetRef,
     overlayRef,
     scrollRef = overlayRef,
@@ -96,7 +96,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     isOpen = true,
     onClose,
     maxHeight,
-    minOverlayArrowOffset = 0
+    arrowBoundaryOffset = 0
   } = props;
   let [position, setPosition] = useState<PositionResult>({
     position: {},
@@ -120,7 +120,8 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     isOpen,
     direction,
     maxHeight,
-    minOverlayArrowOffset
+    arrowBoundaryOffset,
+    arrowSize
   ];
 
   let updatePosition = useCallback(() => {
@@ -139,8 +140,8 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       offset,
       crossOffset,
       maxHeight,
-      arrowCrossSize,
-      minOverlayArrowOffset
+      arrowSize,
+      arrowBoundaryOffset
     });
 
     // Modify overlay styles directly so positioning happens immediately without the need of a second render
@@ -183,9 +184,11 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     };
 
     visualViewport?.addEventListener('resize', onResize);
+    visualViewport?.addEventListener('scroll', onResize);
 
     return () => {
       visualViewport?.removeEventListener('resize', onResize);
+      visualViewport?.removeEventListener('scroll', onResize);
     };
   }, [updatePosition]);
 

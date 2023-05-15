@@ -13,6 +13,7 @@
 import {DateInput, DateSegment, Label, Text, TimeField, TimeFieldContext} from '../';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils';
+import {Time} from '@internationalized/date';
 
 describe('TimeField', () => {
   it('provides slots', () => {
@@ -83,5 +84,23 @@ describe('TimeField', () => {
     let group = getByRole('group');
     expect(group.closest('.react-aria-TimeField')).toHaveAttribute('slot', 'test');
     expect(group).toHaveAttribute('aria-label', 'test');
+  });
+
+  it('should support render props', () => {
+    let {getByRole} = render(
+      <TimeField minValue={new Time(6, 0, 0)} defaultValue={new Time(5, 0, 0)}>
+        {({validationState}) => (
+          <>
+            <Label>Birth date</Label>
+            <DateInput data-validation-state={validationState}>
+              {segment => <DateSegment segment={segment} />}
+            </DateInput>
+          </>
+        )}
+      </TimeField>
+    );
+
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-validation-state', 'invalid');
   });
 });

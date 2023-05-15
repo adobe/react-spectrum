@@ -55,7 +55,7 @@ function render(el) {
 
 describe('DatePicker', function () {
   beforeAll(() => {
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
   afterEach(() => {
     act(() => {
@@ -619,6 +619,74 @@ describe('DatePicker', function () {
 
       expect(dialog).not.toBeInTheDocument();
       expect(onChange).not.toHaveBeenCalled();
+    });
+
+    it('should clear date and time when controlled value is set to null', function () {
+      function ControlledDatePicker() {
+        let [value, setValue] = React.useState(null);
+        return (<>
+          <DatePicker label="Date" granularity="minute" value={value} onChange={setValue} />
+          <button onClick={() => setValue(null)}>Clear</button>
+        </>);
+      }
+
+      let {getAllByRole, getAllByLabelText} = render(
+        <Provider theme={theme}>
+          <ControlledDatePicker />
+        </Provider>
+      );
+
+      let combobox = getAllByRole('group')[0];
+      let formatter = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'});
+      expectPlaceholder(combobox, 'mm/dd/yyyy, ––:–– AM');
+
+      let button = getAllByRole('button')[0];
+      triggerPress(button);
+
+      let cells = getAllByRole('gridcell');
+      let timeField = getAllByLabelText('Time')[0];
+      let todayCell = cells.find(cell => cell.firstChild.getAttribute('aria-label')?.startsWith('Today'));
+      triggerPress(todayCell.firstChild);
+
+      expect(todayCell).toHaveAttribute('aria-selected', 'true');
+
+      let hour = within(timeField).getByLabelText('hour');
+      act(() => hour.focus());
+      fireEvent.keyDown(hour, {key: 'ArrowUp'});
+      fireEvent.keyUp(hour, {key: 'ArrowUp'});
+      expect(hour).toHaveAttribute('aria-valuetext', '12 AM');
+
+      fireEvent.keyDown(hour, {key: 'ArrowRight'});
+      fireEvent.keyUp(hour, {key: 'ArrowRight'});
+      expect(document.activeElement).toHaveAttribute('aria-label', 'minute');
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+      expect(document.activeElement).toHaveAttribute('aria-valuetext', '00');
+
+      fireEvent.keyDown(hour, {key: 'ArrowRight'});
+      fireEvent.keyUp(hour, {key: 'ArrowRight'});
+      expect(document.activeElement).toHaveAttribute('aria-label', 'AM/PM');
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+      expect(document.activeElement).toHaveAttribute('aria-valuetext', 'AM');
+
+      userEvent.click(document.body);
+      act(() => jest.runAllTimers());
+
+      let value = toCalendarDateTime(today(getLocalTimeZone()));
+      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
+
+      let clear = getAllByRole('button')[1];
+      triggerPress(clear);
+      expectPlaceholder(combobox, 'mm/dd/yyyy, ––:–– AM');
+
+      triggerPress(button);
+      cells = getAllByRole('gridcell');
+      let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
+      expect(selected).toBeUndefined();
+
+      timeField = getAllByLabelText('Time')[0];
+      expectPlaceholder(timeField, '––:–– AM');
     });
   });
 

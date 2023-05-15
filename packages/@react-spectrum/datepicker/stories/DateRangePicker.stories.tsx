@@ -14,211 +14,170 @@ import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {CalendarDate, getLocalTimeZone, isWeekend, parseDate, today, toZoned} from '@internationalized/date';
 import {chain} from '@react-aria/utils';
-import {Content} from '@react-spectrum/view';
-import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {DateRangePicker} from '../';
 import {DateValue} from '@react-types/calendar';
 import {Flex} from '@react-spectrum/layout';
-import {Heading} from '@react-spectrum/text';
 import {Item, Picker, Section} from '@react-spectrum/picker';
 import {Provider} from '@adobe/react-spectrum';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 import {useLocale} from '@react-aria/i18n';
 
 const BlockDecorator = storyFn => <div>{storyFn()}</div>;
 
-storiesOf('Date and Time/DateRangePicker', module)
-  .addDecorator(BlockDecorator)
-  .add(
-    'default',
-    () => render()
-  )
-  .add(
-    'defaultValue',
-    () => render({defaultValue: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}})
-  )
-  .add(
-    'controlled value',
-    () => <ControlledExample />
-  )
-  .add(
-    'defaultValue, zoned',
-    () => render({defaultValue: {start: toZoned(parseDate('2020-02-03'), 'America/New_York'), end: toZoned(parseDate('2020-02-05'), 'America/Los_Angeles')}})
-  )
-  .add(
-    'granularity: minute',
-    () => render({granularity: 'minute'})
-  )
-  .add(
-    'granularity: second',
-    () => render({granularity: 'second'})
-  )
-  .add(
-    'hourCycle: 12',
-    () => render({granularity: 'minute', hourCycle: 12})
-  )
-  .add(
-    'hourCycle: 24',
-    () => render({granularity: 'minute', hourCycle: 24})
-  )
-  .add(
-    'isDisabled',
-    () => render({isDisabled: true, value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}})
-  )
-  .add(
-    'isQuiet, isDisabled',
-    () => render({isQuiet: true, isDisabled: true, value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}})
-  )
-  .add(
-    'isReadOnly',
-    () => render({isReadOnly: true, value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}})
-  )
-  .add(
-    'autoFocus',
-    () => render({autoFocus: true})
-  )
-  .add(
-    'validationState: invalid',
-    () => render({validationState: 'invalid', value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}})
-  )
-  .add(
-    'validationState: valid',
-    () => render({validationState: 'valid', value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}})
-  )
-  .add(
-    'minDate: 2010/1/1, maxDate: 2020/1/1',
-    () => render({minValue: new CalendarDate(2010, 1, 1), maxValue: new CalendarDate(2020, 1, 1)})
-  )
-  .add(
-    'isDateUnavailable',
-    () => {
-      const disabledRanges = [[today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})], [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]];
-      let [value, setValue] = React.useState(null);
-      let isInvalid = value && disabledRanges.some(interval => value.end.compare(interval[0]) >= 0 && value.start.compare(interval[1]) <= 0);
-      let isDateUnavailable = (date) => disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
-      return render({
-        value,
-        onChange: setValue,
-        validationState: isInvalid ? 'invalid' : null,
-        isDateUnavailable,
-        errorMessage: 'Selected ranges may not include unavailable dates.'
-      });
-    }
-  )
-  .add(
-    'isDateAvailable, allowsNonContiguousRanges',
-    () => {
-      let {locale} = useLocale();
-      return render({isDateUnavailable: (date: DateValue) => isWeekend(date, locale), allowsNonContiguousRanges: true});
-    }
-  )
-  .add(
-    'placeholderValue: 1980/1/1',
-    () => render({placeholderValue: new CalendarDate(1980, 1, 1)})
-  )
-  .add(
-    'maxVisibleMonths: 2',
-    () => render({maxVisibleMonths: 2, granularity: 'minute'})
-  )
-  .add(
-    'maxVisibleMonths: 3',
-    () => render({maxVisibleMonths: 3, granularity: 'minute'})
-  )
-  .add(
-    'showFormatHelpText',
-    () => render({showFormatHelpText: true})
-  )
-  .add(
-    'all the events',
-    () => render({onBlur: action('onBlur'), onFocus: action('onFocus'), onFocusChange: action('onFocusChange'), onKeyDown: action('onKeyDown'), onKeyUp: action('onKeyUp'), onOpenChange: action('onOpenChange')})
-  );
+export default {
+  title: 'Date and Time/DateRangePicker',
+  decorators: [BlockDecorator],
+  excludeStories: ['render']
+};
 
-storiesOf('Date and Time/DateRangePicker/styling', module)
-  .addDecorator(BlockDecorator)
-  .add(
-    'isQuiet',
-    () => render({isQuiet: true})
-  )
-  .add(
-    'labelPosition: side',
-    () => render({labelPosition: 'side'})
-  )
-  .add(
-    'labelAlign: end',
-    () => render({labelPosition: 'top', labelAlign: 'end'})
-  )
-  .add(
-    'required',
-    () => render({isRequired: true})
-  )
-  .add(
-    'required with label',
-    () => render({isRequired: true, necessityIndicator: 'label'})
-  )
-  .add(
-    'optional',
-    () => render({necessityIndicator: 'label'})
-  )
-  .add(
-    'no visible label',
-    () => render({'aria-label': 'Date range', label: null})
-  )
-  .add(
-    'quiet no visible label',
-    () => render({isQuiet: true, 'aria-label': 'Date range', label: null})
-  )
-  .add(
-    'custom width',
-    () => render({width: 'size-4600'})
-  )
-  .add(
-    'quiet custom width',
-    () => render({isQuiet: true, width: 'size-4600'})
-  )
-  .add(
-    'custom width no visible label',
-    () => render({width: 'size-4600', label: null, 'aria-label': 'Date range'})
-  )
-  .add(
-    'custom width, labelPosition=side',
-    () => render({width: 'size-4600', labelPosition: 'side'})
-  )
-  .add(
-    'description',
-    () => render({description: 'Help text'})
-  )
-  .add(
-    'errorMessage',
-    () => render({errorMessage: 'Dates must be after today', validationState: 'invalid'})
-  )
-  .add(
-    'invalid with time',
-    () => render({validationState: 'invalid', granularity: 'minute', defaultValue: {start: toZoned(parseDate('2020-02-03'), 'America/New_York'), end: toZoned(parseDate('2020-02-12'), 'America/Los_Angeles')}})
-  )
-  .add(
-    'contextual help',
-    () => render({contextualHelp: (
-      <ContextualHelp>
-        <Heading>What is a segment?</Heading>
-        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
-      </ContextualHelp>
-    )})
-  )
-  .add(
-    'in scrollable container',
-    () => (
-      <div style={{height: '200vh'}}>
-        {render({granularity: 'second'})}
-      </div>
-    )
-  )
-  .add(
-    'shouldFlip: false',
-    () => render({shouldFlip: false})
-  );
+export const Default = () => render();
 
-function render(props = {}) {
+Default.story = {
+  name: 'default'
+};
+
+export const DefaultValue = () => render({defaultValue: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}});
+
+DefaultValue.story = {
+  name: 'defaultValue'
+};
+
+export const ControlledValue = () => <ControlledExample />;
+
+ControlledValue.story = {
+  name: 'controlled value'
+};
+
+export const DefaultValueZoned = () => render({defaultValue: {start: toZoned(parseDate('2020-02-03'), 'America/New_York'), end: toZoned(parseDate('2020-02-05'), 'America/Los_Angeles')}});
+
+DefaultValueZoned.story = {
+  name: 'defaultValue, zoned'
+};
+
+export const GranularityMinute = () => render({granularity: 'minute'});
+
+GranularityMinute.story = {
+  name: 'granularity: minute'
+};
+
+export const GranularitySecond = () => render({granularity: 'second'});
+
+GranularitySecond.story = {
+  name: 'granularity: second'
+};
+
+export const HourCycle12 = () => render({granularity: 'minute', hourCycle: 12});
+
+HourCycle12.story = {
+  name: 'hourCycle: 12'
+};
+
+export const HourCycle24 = () => render({granularity: 'minute', hourCycle: 24});
+
+HourCycle24.story = {
+  name: 'hourCycle: 24'
+};
+
+export const IsDisabled = () => render({isDisabled: true, value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}});
+
+IsDisabled.story = {
+  name: 'isDisabled'
+};
+
+export const IsQuietIsDisabled = () => render({isQuiet: true, isDisabled: true, value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}});
+
+IsQuietIsDisabled.story = {
+  name: 'isQuiet, isDisabled'
+};
+
+export const IsReadOnly = () => render({isReadOnly: true, value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}});
+
+IsReadOnly.story = {
+  name: 'isReadOnly'
+};
+
+export const AutoFocus = () => render({autoFocus: true});
+
+AutoFocus.story = {
+  name: 'autoFocus'
+};
+
+export const ValidationStateInvalid = () => render({validationState: 'invalid', value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}});
+
+ValidationStateInvalid.story = {
+  name: 'validationState: invalid'
+};
+
+export const ValidationStateValid = () => render({validationState: 'valid', value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}});
+
+ValidationStateValid.story = {
+  name: 'validationState: valid'
+};
+
+export const MinDate201011MaxDate202011 = () => render({minValue: new CalendarDate(2010, 1, 1), maxValue: new CalendarDate(2020, 1, 1)});
+
+MinDate201011MaxDate202011.story = {
+  name: 'minDate: 2010/1/1, maxDate: 2020/1/1'
+};
+
+export const IsDateUnavailable = () => {
+  const disabledRanges = [[today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})], [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]];
+  let [value, setValue] = React.useState(null);
+  let isInvalid = value && disabledRanges.some(interval => value.end.compare(interval[0]) >= 0 && value.start.compare(interval[1]) <= 0);
+  let isDateUnavailable = (date) => disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+  return render({
+    value,
+    onChange: setValue,
+    validationState: isInvalid ? 'invalid' : null,
+    isDateUnavailable,
+    errorMessage: 'Selected ranges may not include unavailable dates.'
+  });
+};
+
+IsDateUnavailable.story = {
+  name: 'isDateUnavailable'
+};
+
+export const IsDateAvailableAllowsNonContiguousRanges = () => {
+  let {locale} = useLocale();
+  return render({isDateUnavailable: (date: DateValue) => isWeekend(date, locale), allowsNonContiguousRanges: true});
+};
+
+IsDateAvailableAllowsNonContiguousRanges.story = {
+  name: 'isDateAvailable, allowsNonContiguousRanges'
+};
+
+export const PlaceholderValue198011 = () => render({placeholderValue: new CalendarDate(1980, 1, 1)});
+
+PlaceholderValue198011.story = {
+  name: 'placeholderValue: 1980/1/1'
+};
+
+export const MaxVisibleMonths2 = () => render({maxVisibleMonths: 2, granularity: 'minute'});
+
+MaxVisibleMonths2.story = {
+  name: 'maxVisibleMonths: 2'
+};
+
+export const MaxVisibleMonths3 = () => render({maxVisibleMonths: 3, granularity: 'minute'});
+
+MaxVisibleMonths3.story = {
+  name: 'maxVisibleMonths: 3'
+};
+
+export const ShowFormatHelpText = () => render({showFormatHelpText: true});
+
+ShowFormatHelpText.story = {
+  name: 'showFormatHelpText'
+};
+
+export const AllTheEvents = () => render({onBlur: action('onBlur'), onFocus: action('onFocus'), onFocusChange: action('onFocusChange'), onKeyDown: action('onKeyDown'), onKeyUp: action('onKeyUp'), onOpenChange: action('onOpenChange')});
+
+AllTheEvents.story = {
+  name: 'all the events'
+};
+
+export function render(props = {}) {
   return (
     <div>
       <Example
@@ -308,7 +267,7 @@ function ControlledExample(props) {
 
   return (
     <Flex direction="column" alignItems="center" gap="size-150">
-      <DateRangePicker label="Controlled" {...props} value={value} onChange={chain(setValue, action('onChange'))} />
+      <DateRangePicker label="Controlled" {...props} granularity="minute" value={value} onChange={chain(setValue, action('onChange'))} />
       <ActionButton onPress={() => setValue({start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)})}>Change value</ActionButton>
       <ActionButton onPress={() => setValue(null)}>Clear</ActionButton>
     </Flex>

@@ -61,13 +61,13 @@ module.exports = {
   transpilePackages: [
     "@adobe/react-spectrum",
     "@react-spectrum/actiongroup",
+    "@react-spectrum/avatar",
     "@react-spectrum/badge",
     "@react-spectrum/breadcrumbs",
     "@react-spectrum/button",
     "@react-spectrum/buttongroup",
     "@react-spectrum/calendar",
     "@react-spectrum/checkbox",
-    "@react-spectrum/color",
     "@react-spectrum/combobox",
     "@react-spectrum/contextualhelp",
     "@react-spectrum/datepicker",
@@ -98,6 +98,7 @@ module.exports = {
     "@react-spectrum/switch",
     "@react-spectrum/table",
     "@react-spectrum/tabs",
+    "@react-spectrum/tag",
     "@react-spectrum/text",
     "@react-spectrum/textfield",
     "@react-spectrum/theme-dark",
@@ -108,7 +109,7 @@ module.exports = {
     "@react-spectrum/well",
     "@spectrum-icons/illustrations",
     "@spectrum-icons/ui",
-    "@spectrum-icons/workflow",
+    "@spectrum-icons/workflow"
   ]
 };
 ```
@@ -128,8 +129,9 @@ With this installed, add the following to your `next.config.js` file.
 const withTM = require("next-transpile-modules")([
   "@adobe/react-spectrum",
   "@react-spectrum/actiongroup",
-  "@react-spectrum/breadcrumbs",
+  "@react-spectrum/avatar",
   "@react-spectrum/badge",
+  "@react-spectrum/breadcrumbs",
   "@react-spectrum/button",
   "@react-spectrum/buttongroup",
   "@react-spectrum/calendar",
@@ -139,6 +141,7 @@ const withTM = require("next-transpile-modules")([
   "@react-spectrum/datepicker",
   "@react-spectrum/dialog",
   "@react-spectrum/divider",
+  "@react-spectrum/dnd",
   "@react-spectrum/form",
   "@react-spectrum/icon",
   "@react-spectrum/illustratedmessage",
@@ -163,6 +166,7 @@ const withTM = require("next-transpile-modules")([
   "@react-spectrum/switch",
   "@react-spectrum/table",
   "@react-spectrum/tabs",
+  "@react-spectrum/tag",
   "@react-spectrum/text",
   "@react-spectrum/textfield",
   "@react-spectrum/theme-dark",

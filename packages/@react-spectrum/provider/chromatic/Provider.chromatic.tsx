@@ -16,7 +16,7 @@ import {ComboBox, Item} from '@react-spectrum/combobox';
 import customTheme from './custom-theme.css';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
-import {Meta, Story} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Provider} from '../';
 import {ProviderProps} from '@react-types/provider';
@@ -41,7 +41,7 @@ const meta: Meta<ProviderProps> = {
 
 export default meta;
 
-const Template = (): Story<ProviderProps> => (args) => (
+const Template = (args: ProviderProps) => (
   <Provider {...args} UNSAFE_style={{padding: 50}}>
     <Form>
       <Flex> {/* Extra div via Flex so that the button does not expand to 100% width */}
@@ -77,7 +77,7 @@ const Template = (): Story<ProviderProps> => (args) => (
   </Provider>
 );
 
-const NestedColorSchemeTemplate = (): Story<ProviderProps> => () => (
+const NestedColorSchemeTemplate = () => (
   <Provider colorScheme="dark" UNSAFE_style={{padding: 50, textAlign: 'center', width: 500}}>
     <Button variant="primary">I am a dark button</Button>
     <Provider colorScheme="light" UNSAFE_style={{padding: 50, margin: 50, textAlign: 'center'}}>
@@ -86,7 +86,7 @@ const NestedColorSchemeTemplate = (): Story<ProviderProps> => () => (
   </Provider>
 );
 
-const NestedPropTemplate = (): Story<ProviderProps> => () => (
+const NestedPropTemplate = () => (
   <Provider isDisabled>
     <Button variant="primary">I am disabled</Button>
     <Provider isQuiet>
@@ -95,7 +95,7 @@ const NestedPropTemplate = (): Story<ProviderProps> => () => (
   </Provider>
 );
 
-const ResponsiveStyleTemplate = (): Story<ProviderProps> => () => (
+const ResponsiveStyleTemplate = () => (
   <Provider>
     <div>
       <TextField
@@ -112,7 +112,7 @@ const ResponsiveStyleTemplate = (): Story<ProviderProps> => () => (
   </Provider>
 );
 
-const CustomResponsivStylePropsTemplate = (): Story<ProviderProps> => () => {
+const CustomResponsivStylePropsTemplate = () => {
   let Breakpoint = () => {
     let {matchedBreakpoints} = useBreakpoint();
     let breakpoint = matchedBreakpoints[0];
@@ -139,7 +139,7 @@ const CustomResponsivStylePropsTemplate = (): Story<ProviderProps> => () => {
   );
 };
 
-const BreakpointOmittedTemplate = (): Story<ProviderProps> => () => {
+const BreakpointOmittedTemplate = () => {
   let Breakpoint = () => {
     let {matchedBreakpoints} = useBreakpoint();
     let breakpoint = matchedBreakpoints[0];
@@ -164,61 +164,99 @@ const BreakpointOmittedTemplate = (): Story<ProviderProps> => () => {
   );
 };
 
-export const Default = Template().bind({});
-Default.storyName = 'default';
-Default.args = {};
-
-// keeping custom theme to show that the theme only changes expected things, in this case, the button, nothing else
-export const CustomTheme = Template().bind({});
-CustomTheme.storyName = 'custom theme';
-CustomTheme.args = {theme: THEME};
-
-export const NestedColorScheme = NestedColorSchemeTemplate().bind({});
-NestedColorScheme.storyName = 'nested color schemes';
-NestedColorScheme.args = {};
-
-export const NestedProp = NestedPropTemplate().bind({});
-NestedProp.storyName = 'nested props';
-NestedProp.args = {};
-
-// Previous this weren't included because of unit tests and visual comparisions
-// in the individual components, but we should have this to confirm that components
-// are using usePRoviderProps correctly
-export const Quiet = Template().bind({});
-Quiet.storyName = 'isQuiet';
-Quiet.args = {isQuiet: true};
-
-export const Emphasized = Template().bind({});
-Emphasized.storyName = 'isEmphasized';
-Emphasized.args = {isEmphasized: true};
-
-export const Disabled = Template().bind({});
-Disabled.storyName = 'isDisabled';
-Disabled.args = {isDisabled: true};
-
-export const ReadOnly = Template().bind({});
-ReadOnly.storyName = 'isReadOnly';
-ReadOnly.args = {isReadOnly: true};
-
-export const Required = Template().bind({});
-Required.storyName = 'isRequired';
-Required.args = {isRequired: true};
-
-export const ResponsiveStyle = ResponsiveStyleTemplate().bind({});
-ResponsiveStyle.parameters = {
-  chromatic: {viewports: [320, 700, 1000, 1200, 1300]},
-  chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['large'], disableAnimations: true}
+export const Default = {
+  render: Template,
+  name: 'default',
+  args: {}
 };
 
-export const CustomResponsivStyleProps = CustomResponsivStylePropsTemplate().bind({});
-CustomResponsivStyleProps.storyNname = 'custom responsive styleProps';
-CustomResponsivStyleProps.parameters = {
-  chromatic: {viewports: [320, 600, 1000, 1200, 1300, 1600]},
-  chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['large'], disableAnimations: true}
+export const CustomTheme = {
+  render: Template,
+  name: 'custom theme',
+  args: {theme: THEME}
 };
 
-export const BreakpointOmitted = BreakpointOmittedTemplate().bind({});
-BreakpointOmitted.parameters = {
-  chromatic: {viewports: [320, 1000, 1200]},
-  chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['large'], disableAnimations: true}
+export const NestedColorScheme = {
+  render: NestedColorSchemeTemplate,
+  name: 'nested color schemes',
+  args: {}
+};
+
+export const NestedProp = {
+  render: NestedPropTemplate,
+  name: 'nested props',
+  args: {}
+};
+
+export const Quiet = {
+  render: Template,
+  name: 'isQuiet',
+  args: {isQuiet: true}
+};
+
+export const Emphasized = {
+  render: Template,
+  name: 'isEmphasized',
+  args: {isEmphasized: true}
+};
+
+export const Disabled = {
+  render: Template,
+  name: 'isDisabled',
+  args: {isDisabled: true}
+};
+
+export const ReadOnly = {
+  render: Template,
+  name: 'isReadOnly',
+  args: {isReadOnly: true}
+};
+
+export const Required = {
+  render: Template,
+  name: 'isRequired',
+  args: {isRequired: true}
+};
+
+export const ResponsiveStyle = {
+  render: ResponsiveStyleTemplate,
+
+  parameters: {
+    chromatic: {viewports: [320, 700, 1000, 1200, 1300]},
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      locales: ['en-US'],
+      scales: ['large'],
+      disableAnimations: true
+    }
+  }
+};
+
+export const CustomResponsivStyleProps = {
+  render: CustomResponsivStylePropsTemplate,
+  storyNname: 'custom responsive styleProps',
+
+  parameters: {
+    chromatic: {viewports: [320, 600, 1000, 1200, 1300, 1600]},
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      locales: ['en-US'],
+      scales: ['large'],
+      disableAnimations: true
+    }
+  }
+};
+
+export const BreakpointOmitted = {
+  render: BreakpointOmittedTemplate,
+
+  parameters: {
+    chromatic: {viewports: [320, 1000, 1200]},
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      locales: ['en-US'],
+      scales: ['large'],
+      disableAnimations: true
+    }
+  }
 };
