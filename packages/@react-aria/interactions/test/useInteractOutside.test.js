@@ -12,8 +12,8 @@
 
 import {fireEvent, installPointerEvent, render} from '@react-spectrum/test-utils';
 import React, {useRef} from 'react';
-import {useInteractOutside} from '../';
 import ReactDOM from 'react-dom';
+import {useInteractOutside} from '../';
 
 function Example(props) {
   let ref = useRef();
@@ -208,21 +208,21 @@ describe('useInteractOutside', function () {
     });
   });
 
-  describe("shadow dom support", function () {
-    function App({ onInteractOutside }) {
+  describe('shadow dom support', function () {
+    function App({onInteractOutside}) {
       const ref = useRef(null);
       useInteractOutside({
         ref,
-        onInteractOutside,
+        onInteractOutside
       });
 
-      return <div>
+      return (<div>
         <div id="outside">I am outside</div>
         <div id="inside" ref={ref}>I am inside</div>
-      </div>
+      </div>);
     }
 
-    function Example({ onInteractOutside }) {
+    function Example({onInteractOutside}) {
       React.useEffect(() => {
         const host = document.getElementById('shadowHost');
         if (!!host.shadowRoot && !!(host.shadowRoot).getElementById('mountDiv')) {
@@ -237,12 +237,12 @@ describe('useInteractOutside', function () {
           <App onInteractOutside={onInteractOutside} />,
           mountDiv
         );
-      }, []);
+      }, [onInteractOutside]);
 
       return (<div id="shadowHost" />);
     }
 
-    it("does not trigger if clicking inside and triggers if clicking outside", function () {
+    it('does not trigger if clicking inside and triggers if clicking outside', function () {
       const onInteractOutside = jest.fn();
       render(<Example onInteractOutside={onInteractOutside} />);
 
@@ -257,5 +257,5 @@ describe('useInteractOutside', function () {
       fireEvent.mouseUp(outside);
       expect(onInteractOutside).toHaveBeenCalledTimes(1);
     });
-  })
+  });
 });
