@@ -128,10 +128,9 @@ function isValidEvent(event, ref) {
   }
 
   const refWithChildren = [ref.current, ...Array.from(ref.current.childNodes)];
-  return intersection(refWithChildren, event.composedPath()).length === 0;
+  return !hasIntersection(refWithChildren, event.composedPath());
 }
 
-// TODO: replace this with lodash.intersection
-function intersection(a: any[], b:any[]) {
-  return a.filter(value => b.includes(value));
+function hasIntersection(a: any[], b: any[]) {
+  return a.some(value => b.includes(value));
 }
