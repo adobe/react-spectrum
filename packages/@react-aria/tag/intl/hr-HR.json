@@ -1,3 +1,4 @@
 {
-  "remove": "Pritisnite Space ili Delete za uklanjanje oznake."
+  "removeButtonLabel": "Ukloni",
+  "removeDescription": "Pritisnite Delete za uklanjanje oznake."
 }

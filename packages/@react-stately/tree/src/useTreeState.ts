@@ -11,7 +11,7 @@
  */
 
 import {Collection, CollectionStateBase, Expandable, MultipleSelection, Node} from '@react-types/shared';
-import {Key, useEffect, useMemo} from 'react';
+import {Key, useCallback, useEffect, useMemo, useRef} from 'react';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {TreeCollection} from './TreeCollection';
 import {useCollection} from '@react-stately/collections';
@@ -45,13 +45,19 @@ export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T
     props.defaultExpandedKeys ? new Set(props.defaultExpandedKeys) : new Set(),
     props.onExpandedChange
   );
+  let currentExpandedKeys = useRef(expandedKeys);
+  // I don't know a way to avoid this, we have to sync to the controlled state in case the prop `expandedKeys` changed.
+  // And we need to track the 'previous state' otherwise two back to back calls to `toggleKey` will only register the last call.
+  if (currentExpandedKeys.current !== expandedKeys) {
+    currentExpandedKeys.current = expandedKeys;
+  }
 
   let selectionState = useMultipleSelectionState(props);
   let disabledKeys = useMemo(() =>
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
 
-  let tree = useCollection(props, nodes => new TreeCollection(nodes, {expandedKeys}), null, [expandedKeys]);
+  let tree = useCollection(props, useCallback(nodes => new TreeCollection(nodes, {expandedKeys}), [expandedKeys]), null);
 
   // Reset focused key if that item is deleted from the collection.
   useEffect(() => {
@@ -62,7 +68,9 @@ export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T
   }, [tree, selectionState.focusedKey]);
 
   let onToggle = (key: Key) => {
-    setExpandedKeys(toggleKey(expandedKeys, key));
+    let newSet = toggleKey(currentExpandedKeys.current, key);
+    currentExpandedKeys.current = newSet;
+    setExpandedKeys(newSet);
   };
 
   return {

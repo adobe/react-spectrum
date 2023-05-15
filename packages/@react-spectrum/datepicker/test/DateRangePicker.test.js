@@ -67,7 +67,6 @@ function render(el) {
 describe('DateRangePicker', function () {
   // there are live announcers, we need to be able to get rid of them after each test or get a warning in the console about act()
   beforeAll(() => jest.useFakeTimers());
-  afterAll(() => jest.useRealTimers());
   afterEach(() => {
     act(() => {
       jest.runAllTimers();
@@ -712,6 +711,83 @@ describe('DateRangePicker', function () {
       expect(dialog).not.toBeInTheDocument();
       expect(onChange).not.toHaveBeenCalled();
     });
+
+    it('should clear date and time when controlled value is set to null', function () {
+      function ControlledDateRangePicker() {
+        let [value, setValue] = React.useState(null);
+        return (<>
+          <DateRangePicker label="Date" granularity="minute" value={value} onChange={setValue} />
+          <button onClick={() => setValue(null)}>Clear</button>
+        </>);
+      }
+
+      let {getAllByRole, getAllByLabelText, getByTestId} = render(
+        <Provider theme={theme}>
+          <ControlledDateRangePicker />
+        </Provider>
+      );
+
+      let formatter = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'});
+      let startDate = getByTestId('start-date');
+      let endDate = getByTestId('end-date');
+      expectPlaceholder(startDate, 'mm/dd/yyyy, ––:–– AM');
+      expectPlaceholder(endDate, 'mm/dd/yyyy, ––:–– AM');
+
+      let button = getAllByRole('button')[0];
+      triggerPress(button);
+
+      let cells = getAllByRole('gridcell');
+      let startTimeField = getAllByLabelText('Start time')[0];
+      let endTimeField = getAllByLabelText('End time')[0];
+
+      let enabledCells = cells.filter(cell => !cell.hasAttribute('aria-disabled'));
+      triggerPress(enabledCells[0].firstChild);
+      triggerPress(enabledCells[1].firstChild);
+
+      for (let timeField of [startTimeField, endTimeField]) {
+        let hour = within(timeField).getByLabelText('hour');
+        act(() => hour.focus());
+        fireEvent.keyDown(hour, {key: 'ArrowUp'});
+        fireEvent.keyUp(hour, {key: 'ArrowUp'});
+        expect(hour).toHaveAttribute('aria-valuetext', '12 AM');
+
+        fireEvent.keyDown(hour, {key: 'ArrowRight'});
+        fireEvent.keyUp(hour, {key: 'ArrowRight'});
+        expect(document.activeElement).toHaveAttribute('aria-label', 'minute');
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+        expect(document.activeElement).toHaveAttribute('aria-valuetext', '00');
+
+        fireEvent.keyDown(hour, {key: 'ArrowRight'});
+        fireEvent.keyUp(hour, {key: 'ArrowRight'});
+        expect(document.activeElement).toHaveAttribute('aria-label', 'AM/PM');
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+      }
+
+      userEvent.click(document.body);
+      act(() => jest.runAllTimers());
+
+      let startValue = toCalendarDateTime(today(getLocalTimeZone())).set({day: 1});
+      let endValue = toCalendarDateTime(today(getLocalTimeZone())).set({day: 2});
+      expect(getTextValue(startDate)).toBe(formatter.format(startValue.toDate(getLocalTimeZone())));
+      expect(getTextValue(endDate)).toBe(formatter.format(endValue.toDate(getLocalTimeZone())));
+
+      let clear = getAllByRole('button')[1];
+      triggerPress(clear);
+      expectPlaceholder(startDate, 'mm/dd/yyyy, ––:–– AM');
+      expectPlaceholder(endDate, 'mm/dd/yyyy, ––:–– AM');
+
+      triggerPress(button);
+      cells = getAllByRole('gridcell');
+      let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
+      expect(selected).toBeUndefined();
+
+      startTimeField = getAllByLabelText('Start time')[0];
+      endTimeField = getAllByLabelText('End time')[0];
+      expectPlaceholder(startTimeField, '––:–– AM');
+      expectPlaceholder(endTimeField, '––:–– AM');
+    });
   });
 
   describe('labeling', function () {
@@ -944,7 +1020,7 @@ describe('DateRangePicker', function () {
       expect(endField).not.toHaveAttribute('aria-describedby');
 
       let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
-      expect(description).toBe('Selected Range: February 3, 2020, 8:00 AM to February 10, 2020, 10:00 AM');
+      expect(description).toBe('Selected Range: February 3, 2020 at 8:00 AM to February 10, 2020 at 10:00 AM');
     });
 
     it('should handle selected range description when start and end dates are the same', function () {
@@ -958,7 +1034,7 @@ describe('DateRangePicker', function () {
       expect(endField).not.toHaveAttribute('aria-describedby');
 
       let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
-      expect(description).toBe('Selected Range: February 3, 2020, 8:00 AM to February 3, 2020, 8:00 AM');
+      expect(description).toBe('Selected Range: February 3, 2020 at 8:00 AM to February 3, 2020 at 8:00 AM');
     });
 
     it('should support format help text', function () {

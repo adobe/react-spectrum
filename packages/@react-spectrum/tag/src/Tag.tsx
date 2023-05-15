@@ -12,10 +12,10 @@
 
 import {classNames, ClearSlots, SlotProvider, useStyleProps} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
+import type {ListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
-import type {TagGroupState} from '@react-stately/tag';
 import {TagProps} from '@react-types/tag';
 import {Text} from '@react-spectrum/text';
 import {useFocusRing} from '@react-aria/focus';
@@ -23,12 +23,11 @@ import {useHover} from '@react-aria/interactions';
 import {useTag} from '@react-aria/tag';
 
 export interface SpectrumTagProps<T> extends TagProps<T> {
-  state: TagGroupState<T>
+  state: ListState<T>
 }
 
 export function Tag<T>(props: SpectrumTagProps<T>) {
   const {
-    children,
     allowsRemoving,
     item,
     state,
@@ -41,7 +40,7 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
   let {hoverProps, isHovered} = useHover({});
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
   let ref = useRef();
-  let {clearButtonProps, labelProps, gridCellProps, rowProps} = useTag({
+  let {removeButtonProps, labelProps, gridCellProps, rowProps} = useTag({
     ...props,
     allowsRemoving,
     item,
@@ -72,9 +71,9 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
             text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content'), ...labelProps},
             avatar: {UNSAFE_className: classNames(styles, 'spectrum-Tag-avatar'), size: 'avatar-size-50'}
           }}>
-          {typeof children === 'string' ? <Text>{children}</Text> : children}
+          {typeof item.rendered === 'string' ? <Text>{item.rendered}</Text> : item.rendered}
           <ClearSlots>
-            {allowsRemoving && <TagRemoveButton item={item} {...clearButtonProps} UNSAFE_className={classNames(styles, 'spectrum-Tag-removeButton')} />}
+            {allowsRemoving && <TagRemoveButton item={item} {...removeButtonProps} UNSAFE_className={classNames(styles, 'spectrum-Tag-removeButton')} />}
           </ClearSlots>
         </SlotProvider>
       </div>

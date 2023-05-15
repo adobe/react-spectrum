@@ -19,7 +19,6 @@ import {useFocusRing} from '@react-aria/focus';
 import {useRef} from 'react';
 import {useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup} from '@react-aria/table';
 import {useTableColumnResizeState, useTableState} from '@react-stately/table';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 export function Table(props) {
   let {
@@ -168,11 +167,9 @@ function Resizer(props) {
       role="presentation"
       className={classNames(ariaStyles, 'aria-table-resizer', {'focus': isFocusVisible, 'resizing': isResizing})}
       {...resizerProps}>
-      <VisuallyHidden>
-        <input
-          ref={ref}
-          {...mergeProps(inputProps, focusProps)} />
-      </VisuallyHidden>
+      <input
+        ref={ref}
+        {...mergeProps(inputProps, focusProps)} />
     </div>
   );
 }

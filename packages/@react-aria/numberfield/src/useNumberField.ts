@@ -176,7 +176,9 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   }
 
   let onChange = value => {
-    state.setInputValue(value);
+    if (state.validate(value)) {
+      state.setInputValue(value);
+    }
   };
 
   let domProps = filterDOMProps(props);

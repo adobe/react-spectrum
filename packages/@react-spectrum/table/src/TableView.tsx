@@ -24,9 +24,9 @@ import {
   useUnwrapDOMRef
 } from '@react-spectrum/utils';
 import {ColumnSize, SpectrumColumnProps, TableProps} from '@react-types/table';
-import {DragAndDropHooks} from '@react-spectrum/dnd';
-import {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
-import {DraggableItemResult, DropIndicatorAria, DroppableCollectionResult, DroppableItemResult} from '@react-aria/dnd';
+import type {DragAndDropHooks} from '@react-spectrum/dnd';
+import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
+import type {DraggableItemResult, DropIndicatorAria, DroppableCollectionResult, DroppableItemResult} from '@react-aria/dnd';
 import {FocusRing, FocusScope, useFocusRing} from '@react-aria/focus';
 import {getInteractionModality, useHover, usePress} from '@react-aria/interactions';
 import {GridNode} from '@react-types/grid';
@@ -562,12 +562,14 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
       {DragPreview && isTableDraggable &&
         <DragPreview ref={preview}>
           {() => {
-            let item = state.collection.getItem(dragState.draggedKey);
-            let rowHeaderColumnKeys = state.collection.rowHeaderColumnKeys;
+            if (dragAndDropHooks.renderPreview) {
+              return dragAndDropHooks.renderPreview(dragState.draggingKeys, dragState.draggedKey);
+            }
             let itemCount = dragState.draggingKeys.size;
             let maxWidth = bodyRef.current.getBoundingClientRect().width;
-            let children = state.collection.getChildren(item.key);
-            return <SpectrumDragPreview layout={layout} item={item} children={children} itemCount={itemCount} density={density} direction={direction} maxWidth={maxWidth} rowHeaderColumnKeys={rowHeaderColumnKeys} />;
+            let height = ROW_HEIGHTS[density][scale];
+            let itemText = state.collection.getTextValue(dragState.draggedKey);
+            return <SpectrumDragPreview itemText={itemText} itemCount={itemCount} height={height} maxWidth={maxWidth} />;
           }}
         </DragPreview>
       }
@@ -724,6 +726,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
                 },
                 classNames(
                   stylesOverrides,
+                  'react-spectrum-Table-body',
                   {
                     'react-spectrum-Table-body--dropTarget': !!isRootDropTarget
                   }
@@ -1122,7 +1125,8 @@ function TableDragHeaderCell({column}) {
             'spectrum-Table-headCell',
             classNames(
               stylesOverrides,
-              'react-spectrum-dragButtonHeadCell'
+              'react-spectrum-Table-headCell',
+              'react-spectrum-Table-dragButtonHeadCell'
             )
           )
         }>
@@ -1152,7 +1156,7 @@ function DragButton() {
         className={
           classNames(
             stylesOverrides,
-            'spectrum-Table-row-draghandle-button'
+            'react-spectrum-Table-dragButton'
           )
         }
         style={!isFocusVisibleWithin ? {...visuallyHiddenProps.style} : {}}
@@ -1288,6 +1292,7 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
             },
             classNames(
               stylesOverrides,
+              'react-spectrum-Table-row',
               {'react-spectrum-Table-row--dropTarget': isDropTarget}
             )
           )

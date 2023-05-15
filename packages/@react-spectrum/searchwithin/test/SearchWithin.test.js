@@ -40,7 +40,7 @@ function renderSearchWithin(props = {}, searchFieldProps = {}, pickerProps = {})
 
 describe('SearchWithin', function () {
   beforeAll(function () {
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   afterEach(() => {

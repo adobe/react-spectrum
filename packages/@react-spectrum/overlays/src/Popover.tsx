@@ -24,7 +24,8 @@ import {useLayoutEffect} from '@react-aria/utils';
 interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef' | 'maxHeight'>, StyleProps {
   children: ReactNode,
   hideArrow?: boolean,
-  state: OverlayTriggerState
+  state: OverlayTriggerState,
+  shouldContainFocus?: boolean
 }
 
 interface PopoverWrapperProps extends PopoverProps {
@@ -53,7 +54,7 @@ let arrowPlacement = {
   right: 'right',
   top: 'bottom',
   bottom: 'bottom'
-} as const;
+};
 
 function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
   let {
@@ -93,8 +94,8 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
     ...props,
     popoverRef: ref,
     maxHeight: null,
-    arrowCrossSize: hideArrow ? 0 : secondary,
-    minOverlayArrowOffset: borderRadius
+    arrowSize: hideArrow ? 0 : secondary,
+    arrowBoundaryOffset: borderRadius
   }, state);
 
   // Attach Transition's nodeRef to outermost wrapper for node.reflow: https://github.com/reactjs/react-transition-group/blob/c89f807067b32eea6f68fd6c622190d88ced82e2/src/Transition.js#L231

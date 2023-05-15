@@ -222,7 +222,7 @@ function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<H
  * A grid list displays a list of interactive items, with support for keyboard navigation,
  * single or multiple selection, and row actions.
  */
-const _GridList = (forwardRef as forwardRefType)(GridList);
+const _GridList = /*#__PURE__*/ (forwardRef as forwardRefType)(GridList);
 export {_GridList as GridList};
 
 function GridListItem({item}) {

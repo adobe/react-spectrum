@@ -2,14 +2,9 @@
   "name": "rac-tailwind-example",
   "private": true,
   "scripts": {
-    "start": "parcel src/index.html"
+    "start": "parcel src/index.html",
+    "build": "parcel build src/index.html"
   },
-  "workspaces": [
-    "../../packages/react-aria-components",
-    "../../packages/react-aria",
-    "../../packages/react-stately",
-    "../../packages/*/*"
-  ],
   "dependencies": {
     "@heroicons/react": "^2.0.16",
     "parcel": "^2.8.3",
@@ -22,9 +17,5 @@
   },
   "devDependencies": {
     "process": "^0.11.10"
-  },
-  "resolutions": {
-    "react": "link:../../node_modules/react",
-    "react-dom": "link:../../node_modules/react-dom"
   }
 }

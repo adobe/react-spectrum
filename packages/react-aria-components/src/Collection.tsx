@@ -13,7 +13,7 @@ import {CollectionBase} from '@react-types/shared';
 import {createPortal} from 'react-dom';
 import {DOMProps, RenderProps} from './utils';
 import {Collection as ICollection, Node, SelectionBehavior, SelectionMode, ItemProps as SharedItemProps, SectionProps as SharedSectionProps} from 'react-stately';
-import {mergeProps} from 'react-aria';
+import {mergeProps, useIsSSR} from 'react-aria';
 import React, {cloneElement, createContext, Key, ReactElement, ReactNode, ReactPortal, useCallback, useContext, useMemo} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
@@ -262,6 +262,7 @@ export class ElementNode<T> extends BaseNode<T> {
   nodeType = 8; // COMMENT_NODE (we'd use ELEMENT_NODE but React DevTools will fail to get its dimensions)
   node: NodeValue<T>;
   private _index: number = 0;
+  private hasSetProps = false;
 
   constructor(type: string, ownerDocument: Document<T, any>) {
     super(ownerDocument);
@@ -297,21 +298,20 @@ export class ElementNode<T> extends BaseNode<T> {
     node.lastChildKey = this.lastChild?.node.key ?? null;
   }
 
-  // Special property that React passes through as an object rather than a string via setAttribute.
-  // See below for details.
-  set multiple(obj: any) {
+  setProps(obj: any, rendered?: ReactNode) {
     let node = this.ownerDocument.getMutableNode(this);
-    let {rendered, value, textValue, id, ...props} = obj;
+    let {value, textValue, id, ...props} = obj;
     node.props = props;
     node.rendered = rendered;
     node.value = value;
     node.textValue = textValue || (typeof rendered === 'string' ? rendered : '') || obj['aria-label'] || '';
     if (id != null && id !== node.key) {
-      if (this.parentNode) {
+      if (this.hasSetProps) {
         throw new Error('Cannot change the id of an item');
       }
       node.key = id;
     }
+    this.hasSetProps = true;
   }
 
   get style() {
@@ -643,7 +643,7 @@ export function useCollectionChildren<T extends object>(props: CachedChildrenOpt
 const ShallowRenderContext = createContext(false);
 
 interface CollectionResult<C> {
-  portal: ReactPortal,
+  portal: ReactPortal | null,
   collection: C
 }
 
@@ -660,7 +660,7 @@ export function useCollection<T extends object, C extends BaseCollection<T>>(pro
       {children}
     </ShallowRenderContext.Provider>
   ), [children]);
-  let portal = createPortal(wrappedChildren, document as unknown as Element);
+  let portal = useIsSSR() ? null : createPortal(wrappedChildren, document as unknown as Element);
 
   useLayoutEffect(() => {
     if (document.dirtyNodes.size > 0) {
@@ -672,11 +672,13 @@ export function useCollection<T extends object, C extends BaseCollection<T>>(pro
 }
 
 /** Renders a DOM element (e.g. separator or header) shallowly when inside a collection. */
-export function useShallowRender<T extends Element>(Element: string, props: React.HTMLAttributes<T>, ref: React.RefObject<T>): ReactElement | null {
+export function useShallowRender<T extends Element>(Element: string, props: React.HTMLAttributes<T>, ref: React.Ref<T>): ReactElement | null {
   let isShallow = useContext(ShallowRenderContext);
+  props = useMemo(() => ({...props, ref}), [props, ref]);
+  ref = useCollectionItemRef(props, props.children);
   if (isShallow) {
     // @ts-ignore
-    return <Element multiple={{...props, ref, rendered: props.children}} />;
+    return <Element ref={ref} />;
   }
 
   return null;
@@ -738,6 +740,13 @@ export interface ItemRenderProps {
   isDropTarget?: boolean
 }
 
+export function useCollectionItemRef(props: any, rendered?: ReactNode) {
+  // Return a callback ref that sets the props object on the fake DOM node.
+  return useCallback((element) => {
+    element?.setProps(props, rendered);
+  }, [props, rendered]);
+}
+
 export interface ItemProps<T = object> extends Omit<SharedItemProps<T>, 'children'>, RenderProps<ItemRenderProps> {
   /** The unique id of the item. */
   id?: Key,
@@ -746,13 +755,8 @@ export interface ItemProps<T = object> extends Omit<SharedItemProps<T>, 'childre
 }
 
 export function Item<T extends object>(props: ItemProps<T>): JSX.Element {
-  // HACK: the `multiple` prop is special in that React will pass it through as a property rather
-  // than converting to a string and using setAttribute. This allows our custom fake DOM to receive
-  // the props as an object. Once React supports custom elements, we can switch to that instead.
-  // https://github.com/facebook/react/issues/11347
-  // https://github.com/facebook/react/blob/82c64e1a49239158c0daa7f0d603d2ad2ee667a9/packages/react-dom/src/shared/DOMProperty.js#L386
   // @ts-ignore
-  return <item multiple={{...props, rendered: props.children}} />;
+  return <item ref={useCollectionItemRef(props, props.children)} />;
 }
 
 export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children' | 'title'>, DOMProps {
@@ -768,7 +772,7 @@ export function Section<T extends object>(props: SectionProps<T>): JSX.Element {
   let children = useCollectionChildren(props);
 
   // @ts-ignore
-  return <section multiple={{...props, rendered: props.title}}>{children}</section>;
+  return <section ref={useCollectionItemRef(props)}>{children}</section>;
 }
 
 export const CollectionContext = createContext<CachedChildrenOptions<unknown> | null>(null);
