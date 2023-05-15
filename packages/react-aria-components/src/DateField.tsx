@@ -61,9 +61,7 @@ function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: Forwarded
           }
         }]
       ]}>
-      <div {...renderProps} ref={ref} slot={props.slot}>
-        {props.children}
-      </div>
+      <div {...renderProps} ref={ref} slot={props.slot} />
     </Provider>
   );
 }
@@ -72,7 +70,7 @@ function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: Forwarded
  * A date field allows users to enter and edit date and time values using a keyboard.
  * Each part of a date value is displayed in an individually editable segment.
  */
-const _DateField = (forwardRef as forwardRefType)(DateField);
+const _DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(DateField);
 export {_DateField as DateField};
 
 function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: ForwardedRef<HTMLDivElement>) {
@@ -105,9 +103,7 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
           }
         }]
       ]}>
-      <div {...renderProps} ref={ref} slot={props.slot}>
-        {props.children}
-      </div>
+      <div {...renderProps} ref={ref} slot={props.slot} />
     </Provider>
   );
 }
@@ -116,7 +112,7 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
  * A time field allows users to enter and edit time values using a keyboard.
  * Each part of a time value is displayed in an individually editable segment.
  */
-const _TimeField = (forwardRef as forwardRefType)(TimeField);
+const _TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(TimeField);
 export {_TimeField as TimeField};
 
 const InternalDateInputContext = createContext<DateFieldState| null>(null);

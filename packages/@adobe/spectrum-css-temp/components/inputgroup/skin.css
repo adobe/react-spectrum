@@ -26,7 +26,9 @@ governing permissions and limitations under the License.
       }
 
       .spectrum-FieldButton {
-        border-color: var(--spectrum-textfield-border-color-key-focus);
+        &:before {
+          border-color: var(--spectrum-textfield-border-color-key-focus);
+        }
       }
     }
   }
@@ -64,7 +66,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  &.is-disabled {
+  &.is-disabled:not(.spectrum-InputGroup--quiet) {
     .spectrum-FieldButton {
       &:before {
         border-color: transparent;
@@ -116,18 +118,32 @@ governing permissions and limitations under the License.
     &:active,
     &.is-selected,
     &.spectrum-FieldButton--invalid {
-      border-color: var(--spectrum-textfield-quiet-border-color);
+      &:before {
+         border-color: var(--spectrum-textfield-quiet-border-color);
+      }
     }
 
     &:disabled,
     &:disabled:hover {
-      border-color: var(--spectrum-textfield-quiet-border-color-disabled);
+      &:before {
+        border-color: var(--spectrum-textfield-quiet-border-color-disabled);
+      }
+    }
+  }
+
+  &.is-disabled {
+    .spectrum-FieldButton {
+      &:before {
+        border-color: var(--spectrum-textfield-quiet-border-color-disabled);
+      }
     }
   }
 
   &:hover:not(.spectrum-InputGroup--invalid):not(.is-focused):not(.is-disabled) {
     .spectrum-FieldButton {
-      border-color: var(--spectrum-textfield-quiet-border-color-hover);
+      &:before {
+         border-color: var(--spectrum-textfield-quiet-border-color-hover);
+      }
     }
   }
 
@@ -139,14 +155,14 @@ governing permissions and limitations under the License.
       }
 
       &:hover {
-        .spectrum-FieldButton,
+        .spectrum-FieldButton:before,
         .spectrum-InputGroup-input {
           border-color: var(--spectrum-textfield-border-color-error-hover);
         }
       }
 
       &:active {
-        .spectrum-FieldButton,
+        .spectrum-FieldButton:before,
         .spectrum-InputGroup-input {
           border-color: var(--spectrum-textfield-border-color-error-down);
         }
@@ -202,12 +218,16 @@ governing permissions and limitations under the License.
     /* Focus ring: When one of the inputs or the button has keyboard focus, render the focus ring border around the entire input group by styling an adjacent descendant element. */
     &:focus-ring {
       .spectrum-FieldButton {
-        border-color: var(--spectrum-dropdown-border-color-key-focus);
+        &:before {
+           border-color: var(--spectrum-dropdown-border-color-key-focus);
+        }
         box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-key-focus);
       }
     }
     .spectrum-FieldButton {
-      border-color: var(--spectrum-dropdown-border-color-error);
+      &:before {
+         border-color: var(--spectrum-dropdown-border-color-error);
+       }
       &.spectrum-FieldButton--invalid {
         &:focus-ring {
           border-color: var(--spectrum-dropdown-border-color-key-focus);
@@ -223,7 +243,9 @@ governing permissions and limitations under the License.
       &.spectrum-InputGroup--invalid {
         .spectrum-FieldButton {
           box-shadow: none;
-          border-color: var(--spectrum-dropdown-border-color-key-focus);
+          &:before {
+             border-color: var(--spectrum-dropdown-border-color-key-focus);
+           }
           &.spectrum-FieldButton--invalid {
             &:focus-ring {
               box-shadow: 0 2px 0 0 var(--spectrum-dropdown-border-color-key-focus);
@@ -258,8 +280,9 @@ governing permissions and limitations under the License.
     }
 
     &.is-disabled:not(.spectrum-InputGroup--invalid):not(.spectrum-InputGroup--quiet) .spectrum-FieldButton {
-      border-color: GrayText;
-      border-width: 1px;
+      &:before {
+         border-color: GrayText;
+       }
     }
   }
 
@@ -272,19 +295,25 @@ governing permissions and limitations under the License.
       .spectrum-FieldButton {
         &:disabled,
         &:disabled:hover {
-          border-color: var(--spectrum-textfield-quiet-border-color);
+          &:before {
+             border-color: var(--spectrum-textfield-quiet-border-color);
+           }
         }
       }
     }
     &.is-disabled {
       .spectrum-FieldButton {
-        border-color: GrayText;
+        &:before {
+           border-color: GrayText;
+         }
       }
     }
   }
   .spectrum-InputGroup--invalid {
     .spectrum-FieldButton {
-      border-color: Highlight;
+      &:before {
+         border-color: Highlight;
+       }
     }
     &.is-disabled:not(.spectrum-InputGroup--quiet) .spectrum-InputGroup-input {
       border-color: GrayText;
@@ -294,11 +323,15 @@ governing permissions and limitations under the License.
         border-color: GrayText;
       }
       &.spectrum-InputGroup--quiet .spectrum-FieldButton {
-        border-color: GrayText;
+        &:before {
+           border-color: GrayText;
+         }
       }
     }
     &.is-disabled:not(.spectrum-InputGroup--quiet) .spectrum-FieldButton {
-      border-color: GrayText;
+      &:before {
+         border-color: GrayText;
+       }
     }
   }
 

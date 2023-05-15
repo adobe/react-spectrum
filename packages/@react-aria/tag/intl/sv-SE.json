@@ -1,3 +1,4 @@
 {
-  "remove": "Tryck på blanksteg eller radera för att ta bort taggen."
+  "removeButtonLabel": "Ta bort",
+  "removeDescription": "Tryck på Radera för att ta bort taggen."
 }

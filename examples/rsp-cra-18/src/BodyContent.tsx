@@ -5,7 +5,6 @@ import JournalList from './JournalList';
 import ToDo from './ToDo'
 import Journal from './Journal'
 
-
 function BodyContent(){
 
   //states for the To-Do list
@@ -25,7 +24,7 @@ function BodyContent(){
     {id: "Okay", name: "Okay"},
     {id: "Good", name: "Good"},
     {id: "Great", name: "Great"}
-  ] 
+  ]
 
   //functions for the To-Do list
   function handleSubmitToDo(e: FormEvent<HTMLInputElement>){
@@ -34,19 +33,19 @@ function BodyContent(){
     if (value.length > 0){
         setList(prevListArray => {
             return [
-                ...prevListArray, 
+                ...prevListArray,
                 {id: count.current, task: value}]
         })
 
         count.current = count.current + 1;
-    }   
+    }
     setValue(""); //clears text field on submit
   }
 
   function updateCompleted(complete : string){
     setCompleted(prevListArray => {
         return [
-            ...prevListArray, 
+            ...prevListArray,
             {id: prevListArray.length, task: complete}]
     });
   }
@@ -82,18 +81,18 @@ function BodyContent(){
       </TabList>
       <TabPanels>
         <Item key="TdL">
-          <TodoList list={list} 
-                    setList={setList} 
-                    handleSubmit={handleSubmitToDo} 
-                    value={value} 
-                    setValue={setValue} 
+          <TodoList list={list}
+                    setList={setList}
+                    handleSubmit={handleSubmitToDo}
+                    value={value}
+                    setValue={setValue}
                     completed={completed}
                     updateCompleted={updateCompleted}
                     clearCompleted={clearCompleted}/>
         </Item>
         <Item key="DJ">
-            <JournalList rating={rating} 
-                          setRating={setRating} 
+            <JournalList rating={rating}
+                          setRating={setRating}
                           entryList={entryList}
                           options={options}
                           description={description}

@@ -41,8 +41,7 @@ function pointerEvent(type, opts) {
 
 describe('usePress', function () {
   beforeAll(() => {
-    jest.useFakeTimers('legacy');
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -2441,7 +2440,7 @@ describe('usePress', function () {
       fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
       fireEvent.touchEnd(el, {changedTouches: [{identifier: 1}]});
 
-      act(() => {jest.advanceTimersByTime(300);});
+      act(() => {jest.advanceTimersByTime(316);});
       expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
 
       // Checkbox doesn't remove `user-select: none;` style from HTML Element issue
@@ -2611,7 +2610,7 @@ describe('usePress', function () {
       expect(document.documentElement.style.webkitUserSelect).toBe('none');
 
       unmount();
-      act(() => {jest.advanceTimersByTime(300);});
+      act(() => {jest.advanceTimersByTime(316);});
       expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
     });
 
@@ -2698,17 +2697,12 @@ describe('usePress', function () {
     }
 
     beforeAll(() => {
-      jest.useFakeTimers('legacy');
-    });
-    afterAll(() => {
-      jest.useRealTimers();
+      jest.useFakeTimers();
     });
 
     let matchMedia;
     beforeEach(() => {
       matchMedia = new MatchMediaMock();
-      // this needs to be a setTimeout so that the dialog can be removed from the dom before the callback is invoked
-      jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(() => cb(), 0));
     });
 
     afterEach(() => {
@@ -2723,7 +2717,6 @@ describe('usePress', function () {
       }
 
       matchMedia.clear();
-      window.requestAnimationFrame.mockRestore();
     });
 
     describe.each`

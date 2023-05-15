@@ -4,6 +4,7 @@
   "columnSize": "{value} пиксела",
   "descending": "низходящ",
   "descendingSort": "сортирано по колона {columnName} в низходящ ред",
+  "resizerDescription": "Натиснете „Enter“, за да започнете да преоразмерявате",
   "select": "Изберете",
   "selectAll": "Изберете всичко",
   "sortable": "сортираща колона"
