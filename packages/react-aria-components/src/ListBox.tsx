@@ -221,7 +221,7 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
           values={[
             [InternalListBoxContext, {state, shouldFocusOnHover: props.shouldFocusOnHover, dragAndDropHooks, dragState, dropState}],
             [SeparatorContext, {elementType: 'li'}],
-            [DropIndicatorContext, {render: ListBoxDropIndicator}]
+            [DropIndicatorContext, {render: ListBoxDropIndicatorWrapper}]
           ]}>
           {children}
         </Provider>
@@ -372,7 +372,7 @@ function Option<T>({item}: OptionProps<T>) {
   );
 }
 
-function ListBoxDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
+function ListBoxDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
   ref = useObjectRef(ref);
   let {dragAndDropHooks, dropState} = useContext(InternalListBoxContext)!;
   let {dropIndicatorProps, isHidden, isDropTarget} = dragAndDropHooks!.useDropIndicator!(
@@ -381,17 +381,34 @@ function ListBoxDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLE
     ref
   );
 
+  if (isHidden) {
+    return null;
+  }
+
+  return (
+    <ListBoxtDropIndicatorForwardRef {...props} dropIndicatorProps={dropIndicatorProps} isDropTarget={isDropTarget} ref={ref} />
+  );
+}
+
+interface ListBoxDropIndicatorProps extends DropIndicatorProps {
+  dropIndicatorProps: React.HTMLAttributes<HTMLElement>,
+  isDropTarget: boolean
+}
+
+function ListBoxtDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
+  let {
+    dropIndicatorProps,
+    isDropTarget,
+    ...otherProps
+  } = props;
+
   let renderProps = useRenderProps({
-    ...props,
+    ...otherProps,
     defaultClassName: 'react-aria-DropIndicator',
     values: {
       isDropTarget
     }
   });
-
-  if (isHidden) {
-    return null;
-  }
 
   return (
     <div
@@ -403,3 +420,5 @@ function ListBoxDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLE
       data-drop-target={isDropTarget || undefined} />
   );
 }
+
+const ListBoxtDropIndicatorForwardRef = forwardRef(ListBoxtDropIndicator);

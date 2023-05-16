@@ -316,7 +316,7 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
       <Provider
         values={[
           [InternalTableContext, {state, dragAndDropHooks, dragState, dropState}],
-          [DropIndicatorContext, {render: TableDropIndicator}]
+          [DropIndicatorContext, {render: TableDropIndicatorWrapper}]
         ]}>
         <FocusScope>
           <table
@@ -847,9 +847,9 @@ function TableCell<T>({cell}: {cell: GridNode<T>}) {
   );
 }
 
-function TableDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
+function TableDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
   ref = useObjectRef(ref);
-  let {state, dragAndDropHooks, dropState} = useContext(InternalTableContext)!;
+  let {dragAndDropHooks, dropState} = useContext(InternalTableContext)!;
   let buttonRef = useRef<HTMLDivElement>(null);
   let {dropIndicatorProps, isHidden, isDropTarget} = dragAndDropHooks!.useDropIndicator!(
     props,
@@ -857,18 +857,38 @@ function TableDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLEle
     buttonRef
   );
 
+  if (isHidden) {
+    return null;
+  }
+
+  return (
+    <TableDropIndicatorForwardRef {...props} dropIndicatorProps={dropIndicatorProps} isDropTarget={isDropTarget} buttonRef={buttonRef} ref={ref} />
+  );
+}
+
+interface TableDropIndicatorProps extends DropIndicatorProps {
+  dropIndicatorProps: React.HTMLAttributes<HTMLElement>,
+  isDropTarget: boolean,
+  buttonRef: RefObject<HTMLDivElement>
+}
+
+function TableDropIndicator(props: TableDropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
+  let {
+    dropIndicatorProps,
+    isDropTarget,
+    buttonRef,
+    ...otherProps
+  } = props;
+
+  let {state} = useContext(InternalTableContext)!;
   let {visuallyHiddenProps} = useVisuallyHidden();
   let renderProps = useRenderProps({
-    ...props,
+    ...otherProps,
     defaultClassName: 'react-aria-DropIndicator',
     values: {
       isDropTarget
     }
   });
-
-  if (isHidden) {
-    return null;
-  }
 
   return (
     <tr
@@ -886,6 +906,8 @@ function TableDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLEle
     </tr>
   );
 }
+
+const TableDropIndicatorForwardRef = forwardRef(TableDropIndicator);
 
 function RootDropIndicator() {
   let {state, dragAndDropHooks, dropState} = useContext(InternalTableContext)!;
