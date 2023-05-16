@@ -90,27 +90,33 @@ export const ComboBoxRenderPropsDefaultItems = () => (
   </ComboBox>
 );
 
-// Note this won't filter cuz controlled items
-export const ComboBoxRenderPropsItems = () => (
-  <ComboBox items={items}>
-    {({isOpen}) => (
-      <>
-        <Label style={{display: 'block'}}>Test</Label>
-        <div style={{display: 'flex'}}>
-          <Input />
-          <Button>
-            <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
-          </Button>
-        </div>
-        <Popover placement="bottom end">
-          <ListBox className={styles.menu}>
-            {(item: ComboBoxItem) => <MyItem key={item.id}>{item.name}</MyItem>}
-          </ListBox>
-        </Popover>
-      </>
-    )}
-  </ComboBox>
-);
+export const ComboBoxRenderPropsItems = {
+  render: () => (
+    <ComboBox items={items}>
+      {({isOpen}) => (
+        <>
+          <Label style={{display: 'block'}}>Test</Label>
+          <div style={{display: 'flex'}}>
+            <Input />
+            <Button>
+              <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
+            </Button>
+          </div>
+          <Popover placement="bottom end">
+            <ListBox className={styles.menu}>
+              {(item: ComboBoxItem) => <MyItem key={item.id}>{item.name}</MyItem>}
+            </ListBox>
+          </Popover>
+        </>
+      )}
+    </ComboBox>
+  ),
+  parameters: {
+    description: {
+      data: 'Note this won\'t filter the items in the listbox because it is fully controlled'
+    }
+  }
+};
 
 export const ComboBoxRenderPropsListBoxDynamic = () => (
   <ComboBox>
