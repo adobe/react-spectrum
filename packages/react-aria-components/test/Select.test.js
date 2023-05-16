@@ -35,13 +35,12 @@ let TestSelect = (props) => (
 
 describe('Select', () => {
   it('provides slots', () => {
-    let {getByRole, getAllByTestId} = render(<TestSelect />);
+    let {getByRole, getByTestId} = render(<TestSelect />);
 
     let button = getByRole('button');
     expect(button).toHaveTextContent('Select an item');
     expect(button).not.toHaveAttribute('data-pressed');
-    expect(button).toHaveAttribute('data-testid', 'bar');
-    expect(getAllByTestId('bar').length).toBe(1);
+    expect(button).toBe(getByTestId('bar'));
     expect(button).toHaveAttribute('aria-labelledby');
 
     let label = document.getElementById(button.getAttribute('aria-labelledby').split(' ')[0]);

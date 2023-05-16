@@ -18,7 +18,7 @@ import userEvent from '@testing-library/user-event';
 
 describe('DateField', () => {
   it('provides slots', () => {
-    let {getByRole, getAllByRole, getAllByTestId} = render(
+    let {getByRole, getAllByRole, getByTestId} = render(
       <DateField data-testid="bar">
         <Label>Birth date</Label>
         <DateInput data-bar="foo">
@@ -35,8 +35,7 @@ describe('DateField', () => {
     // TODO: the below is a bit strange since the data attributes provided to the top level
     // DateField are propagated to the DateInput via the fieldProps...
     expect(input).toHaveAttribute('data-bar', 'foo');
-    expect(input).toHaveAttribute('data-testid', 'bar');
-    expect(getAllByTestId('bar').length).toBe(1);
+    expect(input).toBe(getByTestId('bar'));
     expect(input).toHaveAttribute('aria-labelledby');
 
     let label = document.getElementById(input.getAttribute('aria-labelledby'));

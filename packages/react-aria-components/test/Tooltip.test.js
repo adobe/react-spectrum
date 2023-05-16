@@ -35,7 +35,7 @@ describe('Tooltip', () => {
   });
 
   it('shows on hover', () => {
-    let {getByRole, getAllByTestId} = renderTooltip();
+    let {getByRole, getByTestId} = renderTooltip();
     let button = getByRole('button');
 
     fireEvent.mouseMove(document.body);
@@ -47,8 +47,7 @@ describe('Tooltip', () => {
     expect(tooltip).toHaveClass('react-aria-Tooltip');
     expect(tooltip).toHaveAttribute('data-placement', 'top');
     expect(tooltip).toHaveStyle('position: absolute');
-    expect(tooltip).toHaveAttribute('data-testid', 'tooltip');
-    expect(getAllByTestId('tooltip').length).toBe(1);
+    expect(tooltip).toBe(getByTestId('tooltip'));
 
     let arrow = tooltip.querySelector('.react-aria-OverlayArrow');
     expect(arrow).toHaveStyle('position: absolute');

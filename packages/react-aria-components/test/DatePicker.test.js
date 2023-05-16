@@ -46,7 +46,7 @@ let TestDatePicker = (props) => (
 
 describe('DatePicker', () => {
   it('provides slots', () => {
-    let {getByRole, getAllByRole, getAllByTestId} = render(<TestDatePicker />);
+    let {getByRole, getAllByRole, getByTestId} = render(<TestDatePicker />);
 
     let group = getByRole('group');
     let input = group.querySelector('.react-aria-DateInput');
@@ -56,7 +56,7 @@ describe('DatePicker', () => {
 
     expect(group).toHaveAttribute('aria-labelledby');
     expect(group).toHaveAttribute('data-testid', 'bar');
-    expect(getAllByTestId('bar').length).toBe(1);
+    expect(group).toBe(getByTestId('bar'));
     let label = document.getElementById(group.getAttribute('aria-labelledby'));
     expect(label).toHaveAttribute('class', 'react-aria-Label');
     expect(label).toHaveTextContent('Birth date');

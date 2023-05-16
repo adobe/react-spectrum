@@ -26,12 +26,11 @@ let TestSearchField = (props) => (
 
 describe('SearchField', () => {
   it('provides slots', () => {
-    let {getByRole, getAllByTestId} = render(<TestSearchField />);
+    let {getByRole, getByTestId} = render(<TestSearchField />);
 
     let input = getByRole('searchbox');
     expect(input).toHaveValue('test');
-    expect(input).toHaveAttribute('data-testid', 'bar');
-    expect(getAllByTestId('bar').length).toBe(1);
+    expect(input).toBe(getByTestId('bar'));
     expect(input).toHaveAttribute('aria-labelledby');
 
     let label = document.getElementById(input.getAttribute('aria-labelledby'));

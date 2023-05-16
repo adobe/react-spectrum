@@ -17,7 +17,7 @@ import {Time} from '@internationalized/date';
 
 describe('TimeField', () => {
   it('provides slots', () => {
-    let {getByRole, getAllByRole, getAllByTestId} = render(
+    let {getByRole, getAllByRole, getByTestId} = render(
       <TimeField data-testid="bar">
         <Label>Birth date</Label>
         <DateInput data-bar="foo">
@@ -32,8 +32,7 @@ describe('TimeField', () => {
     expect(input).toHaveTextContent('––:–– AM');
     expect(input).toHaveAttribute('class', 'react-aria-DateInput');
     expect(input).toHaveAttribute('data-bar', 'foo');
-    expect(input).toHaveAttribute('data-testid', 'bar');
-    expect(getAllByTestId('bar').length).toBe(1);
+    expect(input).toBe(getByTestId('bar'));
     expect(input).toHaveAttribute('aria-labelledby');
     let label = document.getElementById(input.getAttribute('aria-labelledby'));
     expect(label).toHaveAttribute('class', 'react-aria-Label');

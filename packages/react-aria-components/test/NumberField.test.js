@@ -30,7 +30,7 @@ let TestNumberField = (props) => (
 
 describe('NumberField', () => {
   it('provides slots', () => {
-    let {getByRole, getAllByRole, getAllByTestId} = render(<TestNumberField />);
+    let {getByRole, getAllByRole, getByTestId} = render(<TestNumberField />);
 
     let group = getByRole('group');
     expect(group).toBeInTheDocument();
@@ -40,8 +40,7 @@ describe('NumberField', () => {
     expect(input).toHaveValue('1,024');
 
     expect(input).toHaveAttribute('aria-labelledby');
-    expect(input).toHaveAttribute('data-testid', 'bar');
-    expect(getAllByTestId('bar').length).toBe(1);
+    expect(input).toBe(getByTestId('bar'));
     let label = document.getElementById(input.getAttribute('aria-labelledby'));
     expect(label).toHaveAttribute('class', 'react-aria-Label');
     expect(label).toHaveTextContent('Width');

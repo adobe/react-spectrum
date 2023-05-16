@@ -26,14 +26,13 @@ let TestMeter = (props) => (
 
 describe('Meter', () => {
   it('renders', () => {
-    let {getByRole, getAllByTestId} = render(<TestMeter />);
+    let {getByRole, getByTestId} = render(<TestMeter />);
 
     let meter = getByRole('meter');
     expect(meter).toHaveClass('react-aria-Meter');
     expect(meter).toHaveAttribute('aria-valuenow', '25');
     expect(meter).toHaveAttribute('aria-labelledby');
-    expect(meter).toHaveAttribute('data-testid', 'bar');
-    expect(getAllByTestId('bar').length).toBe(1);
+    expect(meter).toBe(getByTestId('bar'));
     expect(document.getElementById(meter.getAttribute('aria-labelledby'))).toHaveTextContent('Storage space');
 
     let value = meter.querySelector('.value');

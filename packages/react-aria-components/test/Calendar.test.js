@@ -67,14 +67,12 @@ describe('Calendar', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole, getAllByTestId} = renderCalendar({'data-testid': 'bar'}, {'data-testid': 'baz'}, {'data-testid': 'foo'});
+    let {getByRole, getByTestId} = renderCalendar({'data-testid': 'bar'}, {'data-testid': 'baz'}, {'data-testid': 'foo'});
     let group = getByRole('group');
-    expect(group).toHaveAttribute('data-testid', 'bar');
-    expect(getAllByTestId('bar').length).toBe(1);
+    expect(group).toBe(getByTestId('bar'));
 
     let grid = getByRole('grid');
-    expect(grid).toHaveAttribute('data-testid', 'baz');
-    expect(getAllByTestId('baz').length).toBe(1);
+    expect(grid).toBe(getByTestId('baz'));
 
     for (let cell of within(grid).getAllByRole('button')) {
       expect(cell).toHaveAttribute('data-testid', 'foo');

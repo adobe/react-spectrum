@@ -53,10 +53,9 @@ describe('RadioGroup', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole, getAllByRole, getAllByTestId} = renderGroup({'data-testid': 'bar'}, {'data-testid': 'test'});
+    let {getByRole, getAllByRole, getByTestId, getAllByTestId} = renderGroup({'data-testid': 'bar'}, {'data-testid': 'test'});
     let group = getByRole('radiogroup');
-    expect(group).toHaveAttribute('data-testid', 'bar');
-    expect(getAllByTestId('bar').length).toBe(1);
+    expect(group).toBe(getByTestId('bar'));
     for (let radio of getAllByRole('radio')) {
       expect(radio).toHaveAttribute('data-testid', 'test');
     }

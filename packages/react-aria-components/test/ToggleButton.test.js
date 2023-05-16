@@ -29,10 +29,9 @@ describe('ToggleButton', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole, getAllByTestId} =  render(<ToggleButton data-testid="bar">Test</ToggleButton>);
+    let {getByRole, getByTestId} =  render(<ToggleButton data-testid="bar">Test</ToggleButton>);
     let button = getByRole('button');
-    expect(button).toHaveAttribute('data-testid', 'bar');
-    expect(getAllByTestId('bar').length).toBe(1);
+    expect(button).toBe(getByTestId('bar'));
   });
 
   it('should support render props', () => {

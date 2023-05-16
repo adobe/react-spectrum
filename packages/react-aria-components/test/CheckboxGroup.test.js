@@ -53,10 +53,9 @@ describe('CheckboxGroup', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole, getAllByTestId} = renderGroup({'data-testid': 'bar'});
+    let {getByRole, getByTestId} = renderGroup({'data-testid': 'bar'});
     let group = getByRole('group');
-    expect(group).toHaveAttribute('data-testid', 'bar');
-    expect(getAllByTestId('bar').length).toBe(1);
+    expect(group).toBe(getByTestId('bar'));
   });
 
   it('should support slot', () => {

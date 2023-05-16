@@ -221,7 +221,7 @@ describe('Table', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole, getAllByRole, getAllByTestId} = renderTable({
+    let {getByRole, getAllByRole, getByTestId, getAllByTestId} = renderTable({
       tableProps: {'data-testid': 'table'},
       tableHeaderProps: {'data-testid': 'table-header'},
       columnProps: {'data-testid': 'column'},
@@ -230,8 +230,7 @@ describe('Table', () => {
       cellProps: {'data-testid': 'cell'}
     });
     let table = getByRole('grid');
-    expect(table).toHaveAttribute('data-testid', 'table');
-    expect(getAllByTestId('table').length).toBe(1);
+    expect(table).toBe(getByTestId('table'));
 
     for (let row of getAllByRole('row').slice(1)) {
       expect(row).toHaveAttribute('data-testid', 'row');
@@ -240,10 +239,8 @@ describe('Table', () => {
 
     let rowGroups = getAllByRole('rowgroup');
     expect(rowGroups).toHaveLength(2);
-    expect(rowGroups[0]).toHaveAttribute('data-testid', 'table-header');
-    expect(getAllByTestId('table-header').length).toBe(1);
-    expect(rowGroups[1]).toHaveAttribute('data-testid', 'table-body');
-    expect(getAllByTestId('table-body').length).toBe(1);
+    expect(rowGroups[0]).toBe(getByTestId('table-header'));
+    expect(rowGroups[1]).toBe(getByTestId('table-body'));
 
     for (let cell of getAllByRole('columnheader')) {
       expect(cell).toHaveAttribute('data-testid', 'column');

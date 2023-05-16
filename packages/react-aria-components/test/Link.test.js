@@ -30,10 +30,9 @@ describe('Link', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole, getAllByTestId} = render(<Link data-testid="bar">Test</Link>);
+    let {getByRole, getByTestId} = render(<Link data-testid="bar">Test</Link>);
     let link = getByRole('link');
-    expect(link).toHaveAttribute('data-testid', 'bar');
-    expect(getAllByTestId('bar').length).toBe(1);
+    expect(link).toBe(getByTestId('bar'));
   });
 
   it('should support render props', () => {

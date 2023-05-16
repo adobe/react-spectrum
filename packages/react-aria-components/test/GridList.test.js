@@ -66,10 +66,9 @@ describe('GridList', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole, getAllByRole, getAllByTestId} = renderGridList({'data-testid': 'bar'}, {'data-bar': 'foo'});
+    let {getByRole, getAllByRole, getByTestId} = renderGridList({'data-testid': 'bar'}, {'data-bar': 'foo'});
     let grid = getByRole('grid');
-    expect(grid).toHaveAttribute('data-testid', 'bar');
-    expect(getAllByTestId('bar').length).toBe(1);
+    expect(grid).toBe(getByTestId('bar'));
 
     for (let row of getAllByRole('row')) {
       expect(row).toHaveAttribute('data-bar', 'foo');

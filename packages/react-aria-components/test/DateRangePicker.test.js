@@ -50,7 +50,7 @@ let TestDateRangePicker = (props) => (
 
 describe('DateRangePicker', () => {
   it('provides slots', () => {
-    let {getByRole, getAllByRole, getAllByTestId} = render(<TestDateRangePicker />);
+    let {getByRole, getAllByRole, getByTestId} = render(<TestDateRangePicker />);
 
     let group = getByRole('group');
     let inputs = group.querySelectorAll('.react-aria-DateInput');
@@ -61,7 +61,7 @@ describe('DateRangePicker', () => {
 
     expect(group).toHaveAttribute('aria-labelledby');
     expect(group).toHaveAttribute('data-testid', 'bar');
-    expect(getAllByTestId('bar').length).toBe(1);
+    expect(group).toBe(getByTestId('bar'));
     let label = document.getElementById(group.getAttribute('aria-labelledby'));
     expect(label).toHaveAttribute('class', 'react-aria-Label');
     expect(label).toHaveTextContent('Trip dates');

@@ -29,10 +29,9 @@ describe('Switch', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole, getAllByTestId} = render(<Switch data-testid="bar">Test</Switch>);
+    let {getByRole, getByTestId} = render(<Switch data-testid="bar">Test</Switch>);
     let s = getByRole('switch');
-    expect(s).toHaveAttribute('data-testid', 'bar');
-    expect(getAllByTestId('bar').length).toBe(1);
+    expect(s).toBe(getByTestId('bar'));
   });
 
   it('should support render props', () => {

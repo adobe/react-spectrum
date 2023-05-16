@@ -17,7 +17,7 @@ import userEvent from '@testing-library/user-event';
 
 describe('Dialog', () => {
   it('works with modal', () => {
-    let {getByRole, getAllByTestId} = render(
+    let {getByRole, getByTestId} = render(
       <DialogTrigger>
         <Button>Delete…</Button>
         <Modal data-testid="modal">
@@ -41,8 +41,7 @@ describe('Dialog', () => {
     expect(dialog).toHaveAttribute('aria-labelledby', heading.id);
     expect(dialog).toHaveAttribute('data-test', 'dialog');
 
-    expect(dialog.closest('.react-aria-Modal')).toHaveAttribute('data-testid', 'modal');
-    expect(getAllByTestId('modal').length).toBe(1);
+    expect(dialog.closest('.react-aria-Modal')).toBe(getByTestId('modal'));
     expect(dialog.closest('.react-aria-ModalOverlay')).toBeInTheDocument();
 
     let close = within(dialog).getByRole('button');
@@ -116,7 +115,7 @@ describe('Dialog', () => {
   });
 
   it('works with popover', () => {
-    let {getByRole, getAllByTestId} = render(
+    let {getByRole, getByTestId} = render(
       <DialogTrigger>
         <Button aria-label="Help">?⃝</Button>
         <Popover data-testid="popover">
@@ -145,8 +144,7 @@ describe('Dialog', () => {
 
     let popover = dialog.closest('.react-aria-Popover');
     expect(popover).toHaveStyle('position: absolute');
-    expect(popover).toHaveAttribute('data-testid', 'popover');
-    expect(getAllByTestId('popover').length).toBe(1);
+    expect(popover).toBe(getByTestId('popover'));
 
     let arrow = popover.querySelector('.react-aria-OverlayArrow');
     expect(arrow).toHaveStyle('position: absolute');

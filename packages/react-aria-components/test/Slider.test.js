@@ -46,16 +46,12 @@ describe('Slider', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole, getAllByTestId} = renderSlider({'data-testid': 'bar'}, {'data-testid': 'foo'}, {'data-testid': 'test'}, {'data-testid': 'output'});
+    let {getByRole, getByTestId} = renderSlider({'data-testid': 'bar'}, {'data-testid': 'foo'}, {'data-testid': 'test'}, {'data-testid': 'output'});
     let group = getByRole('group');
-    expect(group).toHaveAttribute('data-testid', 'bar');
-    expect(getAllByTestId('bar').length).toBe(1);
-    expect(group.querySelector('.react-aria-SliderThumb')).toHaveAttribute('data-testid', 'foo');
-    expect(getAllByTestId('foo').length).toBe(1);
-    expect(group.querySelector('.react-aria-SliderTrack')).toHaveAttribute('data-testid', 'test');
-    expect(getAllByTestId('test').length).toBe(1);
-    expect(group.querySelector('.react-aria-SliderOutput')).toHaveAttribute('data-testid', 'output');
-    expect(getAllByTestId('output').length).toBe(1);
+    expect(group).toBe(getByTestId('bar'));
+    expect(group.querySelector('.react-aria-SliderThumb')).toBe(getByTestId('foo'));
+    expect(group.querySelector('.react-aria-SliderTrack')).toBe(getByTestId('test'));
+    expect(group.querySelector('.react-aria-SliderOutput')).toBe(getByTestId('output'));
   });
 
   it('should support render props', () => {

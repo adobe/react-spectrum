@@ -34,7 +34,7 @@ let TestComboBox = (props) => (
 
 describe('ComboBox', () => {
   it('provides slots', () => {
-    let {getByRole, getAllByTestId} = render(<TestComboBox />);
+    let {getByRole, getByTestId} = render(<TestComboBox />);
 
     let input = getByRole('combobox');
     expect(input).toHaveValue('C');
@@ -43,8 +43,7 @@ describe('ComboBox', () => {
     expect(combobox).toBeTruthy();
 
     expect(input).toHaveAttribute('aria-labelledby');
-    expect(input).toHaveAttribute('data-testid', 'bar');
-    expect(getAllByTestId('bar').length).toBe(1);
+    expect(input).toBe(getByTestId('bar'));
     let label = document.getElementById(input.getAttribute('aria-labelledby').split(' ')[0]);
     expect(label).toHaveAttribute('class', 'react-aria-Label');
     expect(label).toHaveTextContent('Favorite Animal');
