@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {Collection} from 'react-aria-components';
+
 jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, installPointerEvent, render as renderComponent, triggerPress, typeText, within} from '@react-spectrum/test-utils';
 import {ActionButton, Button} from '@react-spectrum/button';
@@ -94,9 +96,9 @@ function ExampleSortTable() {
   return (
     <TableView aria-label="Table" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor}>
       <TableHeader>
-        <Column key="foo" allowsSorting isRowHeader>Foo</Column>
-        <Column key="bar" allowsSorting>Bar</Column>
-        <Column key="baz">Baz</Column>
+        <Column id="foo" allowsSorting isRowHeader>Foo</Column>
+        <Column id="bar" allowsSorting>Bar</Column>
+        <Column id="baz">Baz</Column>
       </TableHeader>
       <TableBody>
         <Row>
@@ -112,8 +114,8 @@ function ExampleSortTable() {
 let defaultTable = (
   <TableView aria-label="Table">
     <TableHeader>
-      <Column key="foo" isRowHeader>Foo</Column>
-      <Column key="bar">Bar</Column>
+      <Column id="foo" isRowHeader>Foo</Column>
+      <Column id="bar">Bar</Column>
     </TableHeader>
     <TableBody>
       <Row>
@@ -1723,6 +1725,18 @@ describe('TableView', function () {
         expect(document.activeElement).toBe(within(rows[0]).getAllByRole('columnheader')[4]);
       });
 
+      let ColumnContext = React.createContext({});
+      let useColumnContext = () => React.useContext(ColumnContext);
+      function MyRow(props) {
+        let {columns} = useColumnContext();
+        return (
+          <Row id={props.id}>
+            <Collection items={columns}>
+              {props.children}
+            </Collection>
+          </Row>
+        );
+      }
       it('should send focus to the appropriate column and row if both the current row and column are removed', function () {
         let itemsLocal = items;
         let columnsLocal = columns;
@@ -1731,13 +1745,15 @@ describe('TableView', function () {
             <TableHeader columns={columns}>
               {column => <Column {...column}>{column.name}</Column>}
             </TableHeader>
+            <ColumnContext.Provider value={{columns}}>
             <TableBody items={items}>
               {item =>
-              (<Row columns={columns}>
+              (<MyRow columns={columns}>
                 {column => <Cell>{item[column.key]}</Cell>}
-              </Row>)
+              </MyRow>)
               }
             </TableBody>
+            </ColumnContext.Provider>
           </TableView>
         );
 
@@ -3844,9 +3860,9 @@ describe('TableView', function () {
     let TableWithBreadcrumbs = (props) => (
       <TableView aria-label="TableView with static contents" selectionMode="multiple" width={300} height={200} {...props}>
         <TableHeader>
-          <Column key="foo" isRowHeader>Foo</Column>
-          <Column key="bar">Bar</Column>
-          <Column key="baz">Baz</Column>
+          <Column id="foo" isRowHeader>Foo</Column>
+          <Column id="bar">Bar</Column>
+          <Column id="baz">Baz</Column>
         </TableHeader>
         <TableBody>
           <Row>
@@ -3923,8 +3939,8 @@ describe('TableView', function () {
       let tree = render(
         <TableView aria-label="Table" selectionMode="multiple">
           <TableHeader>
-            <Column key="foo" isRowHeader>Foo</Column>
-            <Column key="bar">Bar</Column>
+            <Column id="foo" isRowHeader>Foo</Column>
+            <Column id="bar">Bar</Column>
           </TableHeader>
           <TableBody loadingState="loading">
             {[]}
@@ -3957,8 +3973,8 @@ describe('TableView', function () {
       let tree = render(
         <TableView aria-label="Table">
           <TableHeader>
-            <Column key="foo" isRowHeader>Foo</Column>
-            <Column key="bar">Bar</Column>
+            <Column id="foo" isRowHeader>Foo</Column>
+            <Column id="bar">Bar</Column>
           </TableHeader>
           <TableBody loadingState="loadingMore">
             <Row>
@@ -3998,8 +4014,8 @@ describe('TableView', function () {
       let tree = render(
         <TableView aria-label="Table">
           <TableHeader>
-            <Column key="foo" isRowHeader>Foo</Column>
-            <Column key="bar">Bar</Column>
+            <Column id="foo" isRowHeader>Foo</Column>
+            <Column id="bar">Bar</Column>
           </TableHeader>
           <TableBody loadingState="filtering">
             <Row>
@@ -4072,8 +4088,8 @@ describe('TableView', function () {
       let TableMock = (props) => (
         <TableView aria-label="Table">
           <TableHeader>
-            <Column key="foo">Foo</Column>
-            <Column key="bar">Bar</Column>
+            <Column id="foo">Foo</Column>
+            <Column id="bar">Bar</Column>
           </TableHeader>
           <TableBody items={props.items} onLoadMore={onLoadMoreSpy}>
             {row => (
@@ -4097,9 +4113,9 @@ describe('TableView', function () {
       let tree = render(
         <TableView aria-label="Table">
           <TableHeader>
-            <Column key="foo" allowsSorting isRowHeader>Foo</Column>
-            <Column key="bar" allowsSorting>Bar</Column>
-            <Column key="baz">Baz</Column>
+            <Column id="foo" allowsSorting isRowHeader>Foo</Column>
+            <Column id="bar" allowsSorting>Bar</Column>
+            <Column id="baz">Baz</Column>
           </TableHeader>
           <TableBody>
             <Row>
@@ -4128,9 +4144,9 @@ describe('TableView', function () {
       let tree = render(
         <TableView aria-label="Table" sortDescriptor={{column: 'bar', direction: 'ascending'}}>
           <TableHeader>
-            <Column key="foo" allowsSorting isRowHeader>Foo</Column>
-            <Column key="bar" allowsSorting>Bar</Column>
-            <Column key="baz">Baz</Column>
+            <Column id="foo" allowsSorting isRowHeader>Foo</Column>
+            <Column id="bar" allowsSorting>Bar</Column>
+            <Column id="baz">Baz</Column>
           </TableHeader>
           <TableBody>
             <Row>
@@ -4159,9 +4175,9 @@ describe('TableView', function () {
       let tree = render(
         <TableView aria-label="Table" sortDescriptor={{column: 'bar', direction: 'descending'}}>
           <TableHeader>
-            <Column key="foo" allowsSorting isRowHeader>Foo</Column>
-            <Column key="bar" allowsSorting>Bar</Column>
-            <Column key="baz">Baz</Column>
+            <Column id="foo" allowsSorting isRowHeader>Foo</Column>
+            <Column id="bar" allowsSorting>Bar</Column>
+            <Column id="baz">Baz</Column>
           </TableHeader>
           <TableBody>
             <Row>
@@ -4213,9 +4229,9 @@ describe('TableView', function () {
       let tree = render(
         <TableView aria-label="Table" onSortChange={onSortChange}>
           <TableHeader>
-            <Column key="foo" allowsSorting isRowHeader>Foo</Column>
-            <Column key="bar" allowsSorting>Bar</Column>
-            <Column key="baz">Baz</Column>
+            <Column id="foo" allowsSorting isRowHeader>Foo</Column>
+            <Column id="bar" allowsSorting>Bar</Column>
+            <Column id="baz">Baz</Column>
           </TableHeader>
           <TableBody>
             <Row>
@@ -4250,9 +4266,9 @@ describe('TableView', function () {
       let tree = render(
         <TableView aria-label="Table" sortDescriptor={{column: 'foo', direction: 'ascending'}} onSortChange={onSortChange}>
           <TableHeader>
-            <Column key="foo" allowsSorting isRowHeader>Foo</Column>
-            <Column key="bar" allowsSorting>Bar</Column>
-            <Column key="baz">Baz</Column>
+            <Column id="foo" allowsSorting isRowHeader>Foo</Column>
+            <Column id="bar" allowsSorting>Bar</Column>
+            <Column id="baz">Baz</Column>
           </TableHeader>
           <TableBody>
             <Row>
@@ -4287,9 +4303,9 @@ describe('TableView', function () {
       let tree = render(
         <TableView aria-label="Table" sortDescriptor={{column: 'foo', direction: 'descending'}} onSortChange={onSortChange}>
           <TableHeader>
-            <Column key="foo" allowsSorting isRowHeader>Foo</Column>
-            <Column key="bar" allowsSorting>Bar</Column>
-            <Column key="baz">Baz</Column>
+            <Column id="foo" allowsSorting isRowHeader>Foo</Column>
+            <Column id="bar" allowsSorting>Bar</Column>
+            <Column id="baz">Baz</Column>
           </TableHeader>
           <TableBody>
             <Row>
@@ -4324,9 +4340,9 @@ describe('TableView', function () {
       let tree = render(
         <TableView aria-label="Table" sortDescriptor={{column: 'foo', direction: 'ascending'}} onSortChange={onSortChange}>
           <TableHeader>
-            <Column key="foo" allowsSorting isRowHeader>Foo</Column>
-            <Column key="bar" allowsSorting>Bar</Column>
-            <Column key="baz">Baz</Column>
+            <Column id="foo" allowsSorting isRowHeader>Foo</Column>
+            <Column id="bar" allowsSorting>Bar</Column>
+            <Column id="baz">Baz</Column>
           </TableHeader>
           <TableBody>
             <Row>
@@ -4362,8 +4378,8 @@ describe('TableView', function () {
       let tree = render(
         <TableView aria-label="Table" renderEmptyState={() => <h3>No results</h3>}>
           <TableHeader>
-            <Column key="foo" isRowHeader>Foo</Column>
-            <Column key="bar">Bar</Column>
+            <Column id="foo" isRowHeader>Foo</Column>
+            <Column id="bar">Bar</Column>
           </TableHeader>
           <TableBody>
             {[]}
@@ -4376,7 +4392,7 @@ describe('TableView', function () {
       let table = tree.getByRole('grid');
       let rows = within(table).getAllByRole('row');
       expect(rows).toHaveLength(2);
-      expect(rows[1]).toHaveAttribute('aria-rowindex', '1');
+      expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
 
       let cell = within(rows[1]).getByRole('rowheader');
       expect(cell).toHaveAttribute('aria-colspan', '2');
@@ -4399,8 +4415,8 @@ describe('TableView', function () {
         <div>
           <TableView aria-label="Table" selectionMode="multiple" onSelectionChange={onSelectionChange} renderEmptyState={() => <h3>No results</h3>}>
             <TableHeader>
-              <Column key="foo" isRowHeader>Foo</Column>
-              <Column key="bar">Bar</Column>
+              <Column id="foo" isRowHeader>Foo</Column>
+              <Column id="bar">Bar</Column>
             </TableHeader>
             <TableBody>
               {[]}

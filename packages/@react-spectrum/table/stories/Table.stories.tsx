@@ -955,7 +955,6 @@ function AsyncLoadingExample(props) {
       return {items: json.data.children.map(item => ({...item, id: item.data.id})), cursor: json.data.after};
     },
     sort({items, sortDescriptor}) {
-      console.log('sort', sortDescriptor, items);
       return {
         items: items.slice().sort((a, b) => {
           let cmp = a.data[sortDescriptor.column] < b.data[sortDescriptor.column] ? -1 : 1;

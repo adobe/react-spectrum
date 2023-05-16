@@ -552,7 +552,7 @@ export class TableLayout<T> extends ListLayout<T> {
 
         let index = collectionNode.index;
         if (layoutInfo.parentKey === 'body') {
-          index -= this.collection.headerRows.length;
+          index -= this.collection.headerRows.length - 1;
         }
 
         if (!indices.includes(index)) {

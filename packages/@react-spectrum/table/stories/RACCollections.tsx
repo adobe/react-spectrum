@@ -55,11 +55,6 @@ export function TableHeaderRow(props) {
   return <headerrow multiple={props}>{children}</headerrow>;
 }
 
-export function ColumnPlaceholder(props) {
-  // @ts-ignore
-  return <placeholder />;
-}
-
 export function Column<T extends object>(props: ColumnProps<T>): JSX.Element {
   let render = useContext(CollectionRendererContext);
   let childColumns = typeof render === 'function' ? render : props.children;
@@ -71,21 +66,6 @@ export function Column<T extends object>(props: ColumnProps<T>): JSX.Element {
   // @ts-ignore
   return <column multiple={{...props, rendered: props.title ?? props.children}}>{children}</column>;
 }
-
-export function MyColumn<T extends object>(props: ColumnProps<T>): JSX.Element {
-  let spans = props.colspan ?? 1;
-  if (props.title) {
-
-  }
-  return (
-    <Column id={props.id}>
-
-      <Collection items={props.columns}>
-        {props.children}
-      </Collection>
-    </Column>
-  );
-};
 
 export function TableBody<T extends object>(props: TableBodyProps<T>) {
   let children = useCollectionChildren(props);

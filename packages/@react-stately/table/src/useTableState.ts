@@ -90,7 +90,6 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     isKeyboardNavigationDisabled: collection.size === 0 || isKeyboardNavigationDisabled,
     setKeyboardNavigationDisabled,
     sort(columnKey: Key, direction?: 'ascending' | 'descending') {
-      console.log(collection.getItem(columnKey));
       props.onSortChange({
         column: columnKey,
         direction: direction ?? (props.sortDescriptor?.column === columnKey
