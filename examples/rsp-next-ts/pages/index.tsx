@@ -72,6 +72,7 @@ import {
   Avatar,
 } from "@adobe/react-spectrum";
 import Edit from "@spectrum-icons/workflow/Edit";
+import {MenuDialogTrigger} from '@react-spectrum/menu';
 import NotFound from "@spectrum-icons/illustrations/NotFound";
 import Section from "../components/Section";
 import {
@@ -152,6 +153,21 @@ export default function Home() {
               <ActionButton>Menu Trigger</ActionButton>
               <Menu>
                 <Item>Cut</Item>
+                <Item>Copy</Item>
+                <Item>Paste</Item>
+              </Menu>
+            </MenuTrigger>
+            <MenuTrigger>
+              <ActionButton>Menu Trigger With Unavailable</ActionButton>
+              <Menu>
+                <MenuDialogTrigger isUnavailable>
+                  <Item>Cut</Item>
+                  <Dialog>
+                    <Heading>hello</Heading>
+                    <Content>Is it me you're looking for?</Content>
+                    <Footer><Link>Learn more</Link></Footer>
+                  </Dialog>
+                </MenuDialogTrigger>
                 <Item>Copy</Item>
                 <Item>Paste</Item>
               </Menu>
