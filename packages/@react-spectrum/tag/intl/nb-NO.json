@@ -1,5 +1,6 @@
 {
   "actions": "Handlinger",
   "hideButtonLabel": "Vis mindre",
+  "noTags": "Ingen",
   "showAllButtonLabel": "Vis alle ({tagCount, number})"
 }
