@@ -177,12 +177,12 @@ governing permissions and limitations under the License.
   }
 }
 
-/* Added .spectrum-Menu so paddings from component styles are overridden */
+/* Added .spectrum-Menu so paddings from component styles are overriden */
 .spectrum-Menu .spectrum-Menu-end {
   grid-area: end;
   justify-self: end;
   align-self: flex-start;
-  padding-inline-start: var(--spectrum-global-dimension-size-250);
+  padding-inline-start: var(--spectrum-global-dimension-size-125);
 }
 .spectrum-Menu-icon {
   grid-area: icon;
