@@ -217,12 +217,15 @@ describe('ListBox', () => {
 
   it('should update collection when descendants update', () => {
     let setShowTwo;
+    let setItemText;
     function Child() {
       let [showTwo, _setShowTwo] = useState(false);
       setShowTwo = _setShowTwo;
+      let [itemText, _setItemText] = useState('One');
+      setItemText = _setItemText;
       return (
         <>
-          <Item id={1}>One</Item>
+          <Item id={1}>{itemText}</Item>
           {showTwo && <Item id={2}>Two</Item>}
         </>
       );
@@ -238,6 +241,12 @@ describe('ListBox', () => {
 
     act(() => setShowTwo(true));
     expect(getAllByRole('option').map(o => o.textContent)).toEqual(['One', 'Two']);
+
+    act(() => setShowTwo(false));
+    expect(getAllByRole('option').map(o => o.textContent)).toEqual(['One']);
+
+    act(() => setItemText('Hi'));
+    expect(getAllByRole('option').map(o => o.textContent)).toEqual(['Hi']);
   });
 
   it('should support hover', () => {
