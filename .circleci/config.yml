@@ -6,14 +6,14 @@ orbs:
 executors:
   rsp:
     docker:
-      - image: cimg/node:16.13.2
+      - image: cimg/node:16.20.0
     environment:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
 
   rsp-large:
     docker:
-      - image: cimg/node:16.13.2
+      - image: cimg/node:16.20.0
     resource_class: large
     environment:
       CACHE_VERSION: v1
@@ -21,7 +21,7 @@ executors:
 
   rsp-xlarge:
     docker:
-      - image: cimg/node:16.13.2
+      - image: cimg/node:16.20.0
     resource_class: xlarge
     environment:
       CACHE_VERSION: v1
@@ -108,6 +108,26 @@ jobs:
             - ~/react-spectrum
           key: react-spectrum17-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
+  install-canary:
+    executor: rsp-large
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
+            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-
+
+      - run:
+          name: build
+          command: |
+            yarn install --pure-lockfile --cache-folder ~/.cache/yarn && yarn install-canary --cache-folder ~/.cache/yarn
+
+      - save_cache:
+          paths:
+            - ~/react-spectrum
+          key: react-spectrum-canary-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
   test-ssr:
     executor: rsp-xlarge
     steps:
@@ -166,6 +186,17 @@ jobs:
           command: |
             yarn test:ssr
 
+  test-ssr-canary:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-canary-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: test ssr
+          command: |
+            yarn test:ssr
+
   test-16:
     parallelism: 3
     executor: rsp-xlarge
@@ -214,6 +245,29 @@ jobs:
       - store_artifacts:
           path: ~/junit
 
+  test-canary:
+    parallelism: 3
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-canary-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run: mkdir ~/junit
+
+      - run:
+          name: test
+          command: |
+            shopt -s globstar
+            TESTFILES=$(circleci tests glob "packages/**/*.test.[tj]{s,sx}" | circleci tests split --split-by=timings)
+            JEST_JUNIT_OUTPUT_NAME="junit-canary.xml" yarn test ${TESTFILES}
+
+      - run:
+          command: cp junit-canary.xml ~/junit/
+          when: always
+      - store_test_results:
+          path: ~/junit
+      - store_artifacts:
+          path: ~/junit
 
   test-esm:
     executor: rsp-xlarge-nodeupdate
@@ -465,6 +519,7 @@ workflows:
       - install
       - install-16
       - install-17
+      - install-canary
       - test-ssr:
           requires:
             - install
@@ -483,6 +538,12 @@ workflows:
       - test-17:
           requires:
             - install-17
+      - test-ssr-canary:
+          requires:
+            - install-canary
+      - test-canary:
+          requires:
+            - install-canary
       - test-esm:
           requires:
             - install
@@ -544,6 +605,9 @@ workflows:
             - test-16
             - test-ssr-17
             - test-17
+            - test-ssr-canary
+            - test-canary
+            - test-ssr-canary
             - test-esm
             - storybook
             - storybook-16

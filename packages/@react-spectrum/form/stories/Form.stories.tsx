@@ -28,196 +28,362 @@ import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React, {Key, useEffect, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {StatusLight} from '@react-spectrum/statuslight';
-import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
 import {TagGroup} from '@react-spectrum/tag';
 import {TextArea, TextField} from '@react-spectrum/textfield';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import {Well} from '@react-spectrum/well';
 
-storiesOf('Form', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
-  .add(
-    'Default',
-    () => render({})
-  )
-  .add(
-    'labelPosition: side',
-    () => render({labelPosition: 'side'})
-  )
-  .add(
-    'custom width',
-    () => render({width: 400})
-  )
-  .add(
-    'custom width, labelPosition: side',
-    () => render({width: 400, labelPosition: 'side'})
-  )
-  .add(
-    'labelAlign: end',
-    () => render({width: 400, labelAlign: 'end'})
-  )
-  .add(
-    'labelPosition: side, labelAlign: end',
-    () => render({width: 400, labelPosition: 'side', labelAlign: 'end'})
-  )
-  .add(
-    'fields next to each other',
-    () => (
-      <Form>
+export default {
+  title: 'Form',
+  providerSwitcher: {status: 'positive'}
+};
+
+export const Default = () => render({});
+export const LabelPositionSide = () => render({labelPosition: 'side'});
+
+LabelPositionSide.story = {
+  name: 'labelPosition: side'
+};
+
+export const CustomWidth = () => render({width: 400});
+
+CustomWidth.story = {
+  name: 'custom width'
+};
+
+export const CustomWidthLabelPositionSide = () => render({width: 400, labelPosition: 'side'});
+
+CustomWidthLabelPositionSide.story = {
+  name: 'custom width, labelPosition: side'
+};
+
+export const LabelAlignEnd = () => render({width: 400, labelAlign: 'end'});
+
+LabelAlignEnd.story = {
+  name: 'labelAlign: end'
+};
+
+export const LabelPositionSideLabelAlignEnd = () =>
+  render({width: 400, labelPosition: 'side', labelAlign: 'end'});
+
+LabelPositionSideLabelAlignEnd.story = {
+  name: 'labelPosition: side, labelAlign: end'
+};
+
+export const FieldsNextToEachOther = () => (
+  <Form>
+    <Flex>
+      <TextField
+        label="First Name"
+        marginEnd="size-100"
+        flex={1}
+        description="Please enter your first name." />
+      <TextField label="Last Name" flex={1} description="Please enter your last name." />
+    </Flex>
+    <TextField label="Street Address" description="Please include apartment or suite number." />
+    <Flex>
+      <TextField
+        label="City"
+        marginEnd="size-100"
+        flex={1}
+        description="Please enter the city you live in." />
+      <Picker label="State" items={states} marginEnd="size-100" flex={1}>
+        {(item) => <Item key={item.abbr}>{item.name}</Item>}
+      </Picker>
+      <TextField label="Zip code" flex={1} description="Please enter a five-digit zip code." />
+    </Flex>
+  </Form>
+);
+
+FieldsNextToEachOther.story = {
+  name: 'fields next to each other'
+};
+
+export const FieldsWithAutoCompleteProperty = () => {
+  const [checked, setChecked] = useState(true);
+  return (
+    <Form>
+      <Well role="group" aria-labelledby="billing-legend">
+        <h2 id="billing-legend" className={typographyStyles['spectrum-Heading4']}>
+          Billing address
+        </h2>
         <Flex>
-          <TextField label="First Name" marginEnd="size-100" flex={1} description="Please enter your first name." />
-          <TextField label="Last Name" flex={1} description="Please enter your last name." />
+          <TextField
+            autoComplete="billing given-name"
+            name="firstName"
+            isRequired
+            label="First Name"
+            marginEnd="size-100"
+            flex={1} />
+          <TextField
+            autoComplete="billing family-name"
+            name="lastName"
+            isRequired
+            label="Last Name"
+            flex={1} />
         </Flex>
-        <TextField label="Street Address" description="Please include apartment or suite number." />
         <Flex>
-          <TextField label="City" marginEnd="size-100" flex={1} description="Please enter the city you live in." />
-          <Picker label="State" items={states} marginEnd="size-100" flex={1}>
-            {item => <Item key={item.abbr}>{item.name}</Item>}
+          <TextArea
+            autoComplete="billing street-address"
+            name="streetAddress"
+            isRequired
+            label="Street Address"
+            flex={1} />
+        </Flex>
+        <Flex>
+          <TextField
+            autoComplete="billing address-level2"
+            name="city"
+            isRequired
+            label="City"
+            marginEnd="size-100"
+            flex={1} />
+          <Picker
+            autoComplete="billing address-level1"
+            name="state"
+            isRequired
+            label="State"
+            items={states}
+            marginEnd="size-100"
+            flex={1}>
+            {(item) => <Item key={item.abbr}>{item.name}</Item>}
           </Picker>
-          <TextField label="Zip code" flex={1} description="Please enter a five-digit zip code." />
+          <TextField
+            autoComplete="billing postal-code"
+            name="zip"
+            isRequired
+            label="Zip code"
+            flex={1} />
         </Flex>
-      </Form>
-    )
-  )
-  .add(
-    'fields with autoComplete property',
-    () => {
-      const [checked, setChecked] = useState(true);
-      return (
-        <Form>
-          <Well role="group" aria-labelledby="billing-legend">
-            <h2 id="billing-legend" className={typographyStyles['spectrum-Heading4']}>Billing address</h2>
+        <Flex>
+          <Picker
+            autoComplete="billing country"
+            name="country"
+            isRequired
+            label="Country"
+            items={countries}
+            marginEnd="size-100"
+            flex={1}>
+            {(item) => <Item key={item.code}>{item.name}</Item>}
+          </Picker>
+        </Flex>
+        <Flex>
+          <TextField
+            autoComplete="billing tel"
+            type="tel"
+            name="phone"
+            label="Phone number"
+            marginEnd="size-100"
+            flex={1} />
+          <TextField
+            autoComplete="billing email"
+            type="email"
+            name="email"
+            isRequired
+            label="Email address"
+            marginEnd="size-100"
+            flex={1} />
+        </Flex>
+      </Well>
+      <Well role="group" aria-labelledby="shipping-legend">
+        <h2 id="shipping-legend" className={typographyStyles['spectrum-Heading4']}>
+          Shipping address
+        </h2>
+        <Checkbox isSelected={checked} onChange={setChecked}>
+          Same as billing address
+        </Checkbox>
+        {!checked && (
+          <>
             <Flex>
-              <TextField autoComplete="billing given-name" name="firstName" isRequired label="First Name" marginEnd="size-100" flex={1} />
-              <TextField autoComplete="billing family-name" name="lastName" isRequired label="Last Name" flex={1} />
+              <TextField
+                autoComplete="shipping given-name"
+                name="shippingFirstName"
+                isRequired
+                label="First Name"
+                marginEnd="size-100"
+                flex={1} />
+              <TextField
+                autoComplete="shipping family-name"
+                name="shippingLastName"
+                isRequired
+                label="Last Name"
+                flex={1} />
             </Flex>
             <Flex>
-              <TextArea autoComplete="billing street-address" name="streetAddress" isRequired label="Street Address" flex={1} />
+              <TextArea
+                autoComplete="shipping street-address"
+                name="shippingStreetAddress"
+                isRequired
+                label="Street Address"
+                flex={1} />
             </Flex>
             <Flex>
-              <TextField autoComplete="billing address-level2" name="city" isRequired label="City" marginEnd="size-100" flex={1} />
-              <Picker autoComplete="billing address-level1" name="state" isRequired label="State" items={states} marginEnd="size-100" flex={1}>
-                {item => <Item key={item.abbr}>{item.name}</Item>}
+              <TextField
+                autoComplete="shipping address-level2"
+                name="shippingCity"
+                isRequired
+                label="City"
+                marginEnd="size-100"
+                flex={1} />
+              <Picker
+                autoComplete="shipping address-level1"
+                name="shippingState"
+                isRequired
+                label="State"
+                items={states}
+                marginEnd="size-100"
+                flex={1}>
+                {(item) => <Item key={item.abbr}>{item.name}</Item>}
               </Picker>
-              <TextField autoComplete="billing postal-code" name="zip" isRequired label="Zip code" flex={1} />
+              <TextField
+                autoComplete="shipping postal-code"
+                name="shippingZip"
+                isRequired
+                label="Zip code"
+                flex={1} />
             </Flex>
             <Flex>
-              <Picker autoComplete="billing country" name="country" isRequired label="Country" items={countries} marginEnd="size-100" flex={1}>
-                {item => <Item key={item.code}>{item.name}</Item>}
+              <Picker
+                autoComplete="shipping country"
+                name="shippingCountry"
+                isRequired
+                label="Country"
+                items={countries}
+                marginEnd="size-100"
+                flex={1}>
+                {(item) => <Item key={item.code}>{item.name}</Item>}
               </Picker>
             </Flex>
             <Flex>
-              <TextField autoComplete="billing tel" type="tel" name="phone" label="Phone number" marginEnd="size-100" flex={1} />
-              <TextField autoComplete="billing email" type="email" name="email" isRequired label="Email address" marginEnd="size-100" flex={1} />
+              <TextField
+                autoComplete="shipping tel"
+                type="tel"
+                name="shippingPhone"
+                label="Phone number"
+                marginEnd="size-100"
+                flex={1} />
+              <TextField
+                autoComplete="shipping email"
+                type="email"
+                name="shippingEmail"
+                isRequired
+                label="Email address"
+                marginEnd="size-100"
+                flex={1} />
             </Flex>
-          </Well>
-          <Well role="group" aria-labelledby="shipping-legend">
-            <h2 id="shipping-legend" className={typographyStyles['spectrum-Heading4']}>Shipping address</h2>
-            <Checkbox isSelected={checked} onChange={setChecked} >Same as billing address</Checkbox>
-            {
-              !checked &&
-              <>
-                <Flex>
-                  <TextField autoComplete="shipping given-name" name="shippingFirstName" isRequired label="First Name" marginEnd="size-100" flex={1} />
-                  <TextField autoComplete="shipping family-name" name="shippingLastName" isRequired label="Last Name" flex={1} />
-                </Flex>
-                <Flex>
-                  <TextArea autoComplete="shipping street-address" name="shippingStreetAddress" isRequired label="Street Address" flex={1} />
-                </Flex>
-                <Flex>
-                  <TextField autoComplete="shipping address-level2" name="shippingCity" isRequired label="City" marginEnd="size-100" flex={1} />
-                  <Picker autoComplete="shipping address-level1" name="shippingState" isRequired label="State" items={states} marginEnd="size-100" flex={1}>
-                    {item => <Item key={item.abbr}>{item.name}</Item>}
-                  </Picker>
-                  <TextField autoComplete="shipping postal-code" name="shippingZip" isRequired label="Zip code" flex={1} />
-                </Flex>
-                <Flex>
-                  <Picker autoComplete="shipping country" name="shippingCountry" isRequired label="Country" items={countries} marginEnd="size-100" flex={1}>
-                    {item => <Item key={item.code}>{item.name}</Item>}
-                  </Picker>
-                </Flex>
-                <Flex>
-                  <TextField autoComplete="shipping tel" type="tel" name="shippingPhone" label="Phone number" marginEnd="size-100" flex={1} />
-                  <TextField autoComplete="shipping email" type="email" name="shippingEmail" isRequired label="Email address" marginEnd="size-100" flex={1} />
-                </Flex>
-              </>
-            }
-          </Well>
-        </Form>
-      );
-    }
-  )
-  .add(
-    'isRequired: true',
-    () => render({isRequired: true})
-  )
-  .add(
-    'isRequired: true, necessityIndicator: label',
-    () => render({isRequired: true, necessityIndicator: 'label'})
-  )
-  .add(
-    'isRequired: false, necessityIndicator: label',
-    () => render({isRequired: false, necessityIndicator: 'label'})
-  )
-  .add(
-    'isDisabled',
-    () => render({isDisabled: true})
-  )
-  .add(
-    'isQuiet',
-    () => render({isQuiet: true})
-  )
-  .add(
-    'isQuiet, labelPosition: side',
-    () => render({isQuiet: true, labelPosition: 'side'})
-  )
-  .add(
-    'isEmphasized',
-    () => render({isEmphasized: true})
-  )
-  .add(
-    'validationState: invalid',
-    () => render({validationState: 'invalid'})
-  )
-  .add(
-    'validationState: valid',
-    () => render({validationState: 'valid'})
-  )
-  .add(
-    'validationState: invalid, isQuiet: true',
-    () => render({validationState: 'invalid', isQuiet: true})
-  )
-  .add(
-    'validationState: valid, isQuiet: true',
-    () => render({validationState: 'valid', isQuiet: true})
-  )
-  .add(
-    'form with reset',
-    () => <FormWithControls />
-  )
-  .add(
-    'form with submit',
-    () => <FormWithSubmit />
-  )
-  .add(
-    'form with numberfield and locale=ar-AE',
-    () => (
-      <Flex gap="size-100">
-        <NumberField label="Outside form" description="Hello" />
-        <Form>
-          <NumberField label="Inside form" />
-        </Form>
-        <Form>
-          <TextField label="First Name" />
-        </Form>
-        <Form>
-          <TextField label="First Name" />
-          <NumberField label="Inside form" />
-        </Form>
-      </Flex>
-    )
+          </>
+        )}
+      </Well>
+    </Form>
   );
+};
+
+FieldsWithAutoCompleteProperty.story = {
+  name: 'fields with autoComplete property'
+};
+
+export const IsRequiredTrue = () => render({isRequired: true});
+
+IsRequiredTrue.story = {
+  name: 'isRequired: true'
+};
+
+export const IsRequiredTrueNecessityIndicatorLabel = () =>
+  render({isRequired: true, necessityIndicator: 'label'});
+
+IsRequiredTrueNecessityIndicatorLabel.story = {
+  name: 'isRequired: true, necessityIndicator: label'
+};
+
+export const IsRequiredFalseNecessityIndicatorLabel = () =>
+  render({isRequired: false, necessityIndicator: 'label'});
+
+IsRequiredFalseNecessityIndicatorLabel.story = {
+  name: 'isRequired: false, necessityIndicator: label'
+};
+
+export const IsDisabled = () => render({isDisabled: true});
+
+IsDisabled.story = {
+  name: 'isDisabled'
+};
+
+export const IsQuiet = () => render({isQuiet: true});
+
+IsQuiet.story = {
+  name: 'isQuiet'
+};
+
+export const IsQuietLabelPositionSide = () => render({isQuiet: true, labelPosition: 'side'});
+
+IsQuietLabelPositionSide.story = {
+  name: 'isQuiet, labelPosition: side'
+};
+
+export const IsEmphasized = () => render({isEmphasized: true});
+
+IsEmphasized.story = {
+  name: 'isEmphasized'
+};
+
+export const ValidationStateInvalid = () => render({validationState: 'invalid'});
+
+ValidationStateInvalid.story = {
+  name: 'validationState: invalid'
+};
+
+export const ValidationStateValid = () => render({validationState: 'valid'});
+
+ValidationStateValid.story = {
+  name: 'validationState: valid'
+};
+
+export const ValidationStateInvalidIsQuietTrue = () =>
+  render({validationState: 'invalid', isQuiet: true});
+
+ValidationStateInvalidIsQuietTrue.story = {
+  name: 'validationState: invalid, isQuiet: true'
+};
+
+export const ValidationStateValidIsQuietTrue = () =>
+  render({validationState: 'valid', isQuiet: true});
+
+ValidationStateValidIsQuietTrue.story = {
+  name: 'validationState: valid, isQuiet: true'
+};
+
+export const FormWithReset = () => <FormWithControls />;
+
+FormWithReset.story = {
+  name: 'form with reset'
+};
+
+export const _FormWithSubmit = () => <FormWithSubmit />;
+
+_FormWithSubmit.story = {
+  name: 'form with submit'
+};
+
+export const FormWithNumberfieldAndLocaleArAe = () => (
+  <Flex gap="size-100">
+    <NumberField label="Outside form" description="Hello" />
+    <Form>
+      <NumberField label="Inside form" />
+    </Form>
+    <Form>
+      <TextField label="First Name" />
+    </Form>
+    <Form>
+      <TextField label="First Name" />
+      <NumberField label="Inside form" />
+    </Form>
+  </Flex>
+);
+
+FormWithNumberfieldAndLocaleArAe.story = {
+  name: 'form with numberfield and locale=ar-AE'
+};
 
 function render(props: any = {}) {
   return (

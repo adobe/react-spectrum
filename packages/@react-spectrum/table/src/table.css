@@ -79,6 +79,12 @@
     box-shadow: none;
   }
 
+  .react-spectrum-Table-cell {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
   &.react-spectrum-Table-row-dragPreview--multiple {
     position: relative;
 
@@ -112,13 +118,15 @@
   }
 }
 
-.react-spectrum-Table-body--dropTarget {
-  border-color: var(--spectrum-table-dropindicator-border-color);
-  background-color: var(--spectrum-alias-highlight-selected);
-  box-shadow: inset 0 0 0 1px var(--spectrum-table-cell-border-color-key-focus);
+.react-spectrum-Table-body {
+  &.react-spectrum-Table-body--dropTarget {
+    border-color: var(--spectrum-table-dropindicator-border-color);
+    background-color: var(--spectrum-alias-highlight-selected);
+    box-shadow: inset 0 0 0 1px var(--spectrum-table-cell-border-color-key-focus);
 
-  /* forced-color-adjust: none, so that box-shadow style will render */
-  forced-color-adjust: none;
+    /* forced-color-adjust: none, so that box-shadow style will render */
+    forced-color-adjust: none;
+  }
 }
 
 .react-spectrum-Table-InsertionIndicator {
@@ -164,46 +172,53 @@
   }
 }
 
-.react-spectrum-Table-dragButtonCell {
-  padding: var(--spectrum-global-dimension-size-40);
+.react-spectrum-Table-headCell {
+  &.react-spectrum-Table-dragButtonHeadCell {
+    padding: 0;
+    height: inherit;
+  }
 }
 
-.spectrum-Table-row-draghandle-button {
-  border-radius: var(--spectrum-alias-border-radius-regular);
-  padding: var(--spectrum-global-dimension-size-10);
+.react-spectrum-Table-cell {
+  &.react-spectrum-Table-dragButtonCell {
+    padding: var(--spectrum-global-dimension-size-40);
 
-  &:focus-ring {
-    box-shadow: inset 0 0 0 2px var(--spectrum-table-cell-border-color-key-focus);
-    outline: none;
+    .react-spectrum-Table-dragButton {
+      border-radius: var(--spectrum-alias-border-radius-regular);
+      padding: var(--spectrum-global-dimension-size-10);
+
+      &:focus-ring {
+        box-shadow: inset 0 0 0 2px var(--spectrum-table-cell-border-color-key-focus);
+        outline: none;
+
+        /* forced-color-adjust: none, so that box-shadow style will render */
+        forced-color-adjust: none;
+      }
+
+      svg {
+        margin: auto 0;
+        display: block;
+        padding: var(--spectrum-global-dimension-size-40);
+      }
+    }
+  }
+}
+
+.react-spectrum-Table-row {
+  &.react-spectrum-Table-row--dropTarget {
+    border: 1px var(--spectrum-table-dropindicator-border-color);
+    box-shadow: inset 2px 0 0 0 var(--spectrum-table-dropindicator-border-color),
+      inset -2px 0 0 0 var(--spectrum-table-dropindicator-border-color),
+      inset 0 -3px 0 0 var(--spectrum-table-dropindicator-border-color),
+      inset 0 2px 0 0 var(--spectrum-table-dropindicator-border-color);
 
     /* forced-color-adjust: none, so that box-shadow style will render */
     forced-color-adjust: none;
   }
-  svg {
-    margin: auto 0;
-    display: block;
-    padding: var(--spectrum-global-dimension-size-40);
+
+  .react-spectrum-Table-cellWrapper.react-spectrum-Table-cellWrapper--dropTarget {
+    background-color: var(--spectrum-table-droptarget-background-color);
   }
-}
-
-.react-spectrum-dragButtonHeadCell {
-  padding: 0;
-  height: inherit;
-}
-
-.react-spectrum-Table-row--dropTarget {
-  border: 1px var(--spectrum-table-dropindicator-border-color);
-  box-shadow: inset 2px 0 0 0 var(--spectrum-table-dropindicator-border-color),
-    inset -2px 0 0 0 var(--spectrum-table-dropindicator-border-color),
-    inset 0 -3px 0 0 var(--spectrum-table-dropindicator-border-color),
-    inset 0 2px 0 0 var(--spectrum-table-dropindicator-border-color);
-
-  /* forced-color-adjust: none, so that box-shadow style will render */
-  forced-color-adjust: none;
-}
-
-.react-spectrum-Table-cellWrapper.react-spectrum-Table-cellWrapper--dropTarget {
-  background-color: var(--spectrum-table-droptarget-background-color);
 }
 
 @media (forced-colors: active) {
