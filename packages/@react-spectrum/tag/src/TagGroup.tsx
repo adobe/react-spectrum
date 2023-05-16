@@ -117,7 +117,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
 
         // Remove tags until there is space for the collapse button and action button (if present) on the last row.
         let buttons = [...currActionsRef.children];
-        if (buttons.length > 0) {
+        if (buttons.length > 0 && rowCount >= maxRows) {
           let buttonsWidth = buttons.reduce((acc, curr) => acc += curr.getBoundingClientRect().width, 0);
           buttonsWidth += TAG_STYLES[scale].margin * 2 * buttons.length;
           let end = direction === 'ltr' ? 'right' : 'left';
