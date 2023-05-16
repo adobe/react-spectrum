@@ -67,16 +67,20 @@ describe('RangeCalendar', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole} = renderCalendar({'data-foo': 'bar'}, {'data-bar': 'baz'}, {'data-baz': 'foo'});
+    let {getByRole, getAllByTestId} = renderCalendar({'data-testid': 'bar'}, {'data-testid': 'baz'}, {'data-testid': 'foo'});
     let group = getByRole('group');
-    expect(group).toHaveAttribute('data-foo', 'bar');
+    expect(group).toHaveAttribute('data-testid', 'bar');
+    expect(getAllByTestId('bar').length).toBe(1);
 
     let grid = getByRole('grid');
-    expect(grid).toHaveAttribute('data-bar', 'baz');
+    expect(grid).toHaveAttribute('data-testid', 'baz');
+    expect(getAllByTestId('baz').length).toBe(1);
 
     for (let cell of within(grid).getAllByRole('button')) {
-      expect(cell).toHaveAttribute('data-baz', 'foo');
+      expect(cell).toHaveAttribute('data-testid', 'foo');
     }
+
+    expect(getAllByTestId('foo').length).toBe(within(grid).getAllByRole('button').length);
   });
 
   it('should support custom CalendarGridHeader', () => {

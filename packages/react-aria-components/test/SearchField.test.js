@@ -15,7 +15,7 @@ import React from 'react';
 import {render} from '@react-spectrum/test-utils';
 
 let TestSearchField = (props) => (
-  <SearchField defaultValue="test" data-foo="bar" {...props}>
+  <SearchField defaultValue="test" data-testid="bar" {...props}>
     <Label>Test</Label>
     <Input />
     <Button>x</Button>
@@ -26,21 +26,21 @@ let TestSearchField = (props) => (
 
 describe('SearchField', () => {
   it('provides slots', () => {
-    let {getByRole} = render(<TestSearchField />);
+    let {getByRole, getAllByTestId} = render(<TestSearchField />);
 
     let input = getByRole('searchbox');
     expect(input).toHaveValue('test');
-
-    expect(input.closest('.react-aria-SearchField')).toHaveAttribute('data-foo', 'bar');
-
+    expect(input).toHaveAttribute('data-testid', 'bar');
+    expect(getAllByTestId('bar').length).toBe(1);
     expect(input).toHaveAttribute('aria-labelledby');
+
     let label = document.getElementById(input.getAttribute('aria-labelledby'));
     expect(label).toHaveAttribute('class', 'react-aria-Label');
     expect(label).toHaveTextContent('Test');
 
     expect(input).toHaveAttribute('aria-describedby');
     expect(input.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Description Error');
-  
+
     let button = getByRole('button');
     expect(button).toHaveAttribute('aria-label', 'Clear search');
   });

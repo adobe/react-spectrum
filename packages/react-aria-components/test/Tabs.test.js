@@ -62,17 +62,21 @@ describe('Tabs', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole, getAllByRole} = renderTabs({'data-test': 'tabs'}, {'data-test': 'tablist'}, {'data-test': 'tab'}, {'data-test': 'tabpanel'});
+    let {getByRole, getAllByRole, getAllByTestId} = renderTabs({'data-testid': 'tabs'}, {'data-testid': 'tablist'}, {'data-testid': 'tab'}, {'data-testid': 'tabpanel'});
     let tablist = getByRole('tablist');
     let tabs = tablist.closest('.react-aria-Tabs');
-    expect(tabs).toHaveAttribute('data-test', 'tabs');
-    expect(tablist).toHaveAttribute('data-test', 'tablist');
+    expect(tabs).toHaveAttribute('data-testid', 'tabs');
+    expect(getAllByTestId('tabs').length).toBe(1);
+    expect(tablist).toHaveAttribute('data-testid', 'tablist');
+    expect(getAllByTestId('tablist').length).toBe(1);
     for (let tab of getAllByRole('tab')) {
-      expect(tab).toHaveAttribute('data-test', 'tab');
+      expect(tab).toHaveAttribute('data-testid', 'tab');
     }
+    expect(getAllByTestId('tab').length).toBe(getAllByRole('tab').length);
 
     let tabpanel = getByRole('tabpanel');
-    expect(tabpanel).toHaveAttribute('data-test', 'tabpanel');
+    expect(tabpanel).toHaveAttribute('data-testid', 'tabpanel');
+    expect(getAllByTestId('tabpanel').length).toBe(1);
   });
 
   it('should support render props', () => {

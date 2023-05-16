@@ -17,7 +17,7 @@ import {render} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestDateRangePicker = (props) => (
-  <DateRangePicker data-foo="bar" {...props}>
+  <DateRangePicker data-testid="bar" {...props}>
     <Label>Trip dates</Label>
     <Group>
       <DateInput slot="start">
@@ -50,7 +50,7 @@ let TestDateRangePicker = (props) => (
 
 describe('DateRangePicker', () => {
   it('provides slots', () => {
-    let {getByRole, getAllByRole} = render(<TestDateRangePicker />);
+    let {getByRole, getAllByRole, getAllByTestId} = render(<TestDateRangePicker />);
 
     let group = getByRole('group');
     let inputs = group.querySelectorAll('.react-aria-DateInput');
@@ -59,9 +59,9 @@ describe('DateRangePicker', () => {
     expect(inputs[0]).toHaveTextContent('mm/dd/yyyy');
     expect(button).toHaveAttribute('aria-label', 'Calendar');
 
-    expect(group.closest('.react-aria-DateRangePicker')).toHaveAttribute('data-foo', 'bar');
-
     expect(group).toHaveAttribute('aria-labelledby');
+    expect(group).toHaveAttribute('data-testid', 'bar');
+    expect(getAllByTestId('bar').length).toBe(1);
     let label = document.getElementById(group.getAttribute('aria-labelledby'));
     expect(label).toHaveAttribute('class', 'react-aria-Label');
     expect(label).toHaveTextContent('Trip dates');
@@ -141,7 +141,7 @@ describe('DateRangePicker', () => {
         )}
       </DateRangePicker>
     );
-    
+
     let group = getByRole('group');
     expect(group).toHaveAttribute('data-validation-state', 'invalid');
   });

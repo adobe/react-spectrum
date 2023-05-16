@@ -18,7 +18,7 @@ import userEvent from '@testing-library/user-event';
 let renderTooltip = () => render(
   <TooltipTrigger delay={0}>
     <Button><span aria-hidden="true">✏️</span></Button>
-    <Tooltip data-test="tooltip">
+    <Tooltip data-testid="tooltip">
       <OverlayArrow>
         <svg width={8} height={8}>
           <path d="M0 0,L4 4,L8 0" />
@@ -35,7 +35,7 @@ describe('Tooltip', () => {
   });
 
   it('shows on hover', () => {
-    let {getByRole} = renderTooltip();
+    let {getByRole, getAllByTestId} = renderTooltip();
     let button = getByRole('button');
 
     fireEvent.mouseMove(document.body);
@@ -47,7 +47,8 @@ describe('Tooltip', () => {
     expect(tooltip).toHaveClass('react-aria-Tooltip');
     expect(tooltip).toHaveAttribute('data-placement', 'top');
     expect(tooltip).toHaveStyle('position: absolute');
-    expect(tooltip).toHaveAttribute('data-test', 'tooltip');
+    expect(tooltip).toHaveAttribute('data-testid', 'tooltip');
+    expect(getAllByTestId('tooltip').length).toBe(1);
 
     let arrow = tooltip.querySelector('.react-aria-OverlayArrow');
     expect(arrow).toHaveStyle('position: absolute');

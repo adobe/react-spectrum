@@ -221,7 +221,7 @@ describe('Table', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole, getAllByRole} = renderTable({
+    let {getByRole, getAllByRole, getAllByTestId} = renderTable({
       tableProps: {'data-testid': 'table'},
       tableHeaderProps: {'data-testid': 'table-header'},
       columnProps: {'data-testid': 'column'},
@@ -231,19 +231,24 @@ describe('Table', () => {
     });
     let table = getByRole('grid');
     expect(table).toHaveAttribute('data-testid', 'table');
+    expect(getAllByTestId('table').length).toBe(1);
 
     for (let row of getAllByRole('row').slice(1)) {
       expect(row).toHaveAttribute('data-testid', 'row');
     }
+    expect(getAllByTestId('row').length).toBe(getAllByRole('row').length - 1);
 
     let rowGroups = getAllByRole('rowgroup');
     expect(rowGroups).toHaveLength(2);
     expect(rowGroups[0]).toHaveAttribute('data-testid', 'table-header');
+    expect(getAllByTestId('table-header').length).toBe(1);
     expect(rowGroups[1]).toHaveAttribute('data-testid', 'table-body');
+    expect(getAllByTestId('table-body').length).toBe(1);
 
     for (let cell of getAllByRole('columnheader')) {
       expect(cell).toHaveAttribute('data-testid', 'column');
     }
+    expect(getAllByTestId('column').length).toBe(getAllByRole('columnheader').length);
 
     for (let cell of getAllByRole('rowheader')) {
       expect(cell).toHaveAttribute('data-testid', 'cell');
@@ -252,6 +257,8 @@ describe('Table', () => {
     for (let cell of getAllByRole('gridcell')) {
       expect(cell).toHaveAttribute('data-testid', 'cell');
     }
+
+    expect(getAllByTestId('cell').length).toBe(getAllByRole('rowheader').length + getAllByRole('gridcell').length);
   });
 
   it('should render checkboxes for selection', () => {

@@ -17,7 +17,6 @@ import {createCalendar} from '@internationalized/date';
 import {DateInputContext} from './DateField';
 import {DatePickerState, DateRangePickerState, useDateFieldState, useDatePickerState, useDateRangePickerState} from 'react-stately';
 import {DialogContext} from './Dialog';
-import {filterDOMProps} from '@react-aria/utils';
 import {GroupContext} from './Group';
 import {LabelContext} from './Label';
 import {PopoverContext} from './Popover';
@@ -63,9 +62,6 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
     defaultClassName: 'react-aria-DatePicker'
   });
 
-  let DOMProps = filterDOMProps(props);
-  delete DOMProps.id;
-
   return (
     <Provider
       values={[
@@ -83,7 +79,7 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
           }
         }]
       ]}>
-      <div {...DOMProps} {...renderProps} ref={ref} slot={props.slot} />
+      <div {...renderProps} ref={ref} slot={props.slot} />
     </Provider>
   );
 }
@@ -136,9 +132,6 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
     defaultClassName: 'react-aria-DateRangePicker'
   });
 
-  let DOMProps = filterDOMProps(props);
-  delete DOMProps.id;
-
   return (
     <Provider
       values={[
@@ -169,7 +162,7 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
           }
         }]
       ]}>
-      <div {...DOMProps} {...renderProps} ref={ref} slot={props.slot} />
+      <div {...renderProps} ref={ref} slot={props.slot} />
     </Provider>
   );
 }

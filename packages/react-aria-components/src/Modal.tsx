@@ -135,7 +135,6 @@ function ModalOverlayInner(props: ModalOverlayInnerProps) {
     }
   });
 
-
   let viewport = useViewportSize();
   let style = {
     ...renderProps.style,

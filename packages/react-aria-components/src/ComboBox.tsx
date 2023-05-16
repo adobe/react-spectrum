@@ -13,7 +13,6 @@ import {AriaComboBoxProps, useComboBox, useFilter} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ComboBoxState, useComboBoxState} from 'react-stately';
 import {ContextValue, forwardRefType, Provider, RenderProps, slotCallbackSymbol, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListBoxProps} from './ListBox';
@@ -21,6 +20,7 @@ import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, useCallback, useMemo, useRef, useState} from 'react';
 import {TextContext} from './Text';
 import {useCollection} from './Collection';
+import {useResizeObserver} from '@react-aria/utils';
 
 export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children' | 'placeholder' | 'name' | 'label' | 'description' | 'errorMessage'>, RenderProps<ComboBoxState<T>>, SlotProps {
   /** The filter function used to determine if a option should be included in the combo box list. */
@@ -94,9 +94,6 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
     defaultClassName: 'react-aria-ComboBox'
   });
 
-  let DOMProps = filterDOMProps(props);
-  delete DOMProps.id;
-
   return (
     <Provider
       values={[
@@ -120,7 +117,7 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
           }
         }]
       ]}>
-      <div {...DOMProps}  {...renderProps} ref={ref} slot={props.slot} />
+      <div {...renderProps} ref={ref} slot={props.slot} />
       {portal}
     </Provider>
   );

@@ -16,22 +16,23 @@ import {Switch, SwitchContext} from '../';
 import userEvent from '@testing-library/user-event';
 
 describe('Switch', () => {
-  it('should render a s with default class', () => {
+  it('should render a switch with default class', () => {
     let {getByRole} = render(<Switch>Test</Switch>);
     let s = getByRole('switch').closest('label');
     expect(s).toHaveAttribute('class', 'react-aria-Switch');
   });
 
-  it('should render a s with custom class', () => {
+  it('should render a switch with custom class', () => {
     let {getByRole} = render(<Switch className="test">Test</Switch>);
     let s = getByRole('switch').closest('label');
     expect(s).toHaveAttribute('class', 'test');
   });
 
   it('should support DOM props', () => {
-    let {getByRole} = render(<Switch data-foo="bar">Test</Switch>);
+    let {getByRole, getAllByTestId} = render(<Switch data-testid="bar">Test</Switch>);
     let s = getByRole('switch');
-    expect(s).toHaveAttribute('data-foo', 'bar');
+    expect(s).toHaveAttribute('data-testid', 'bar');
+    expect(getAllByTestId('bar').length).toBe(1);
   });
 
   it('should support render props', () => {
@@ -42,9 +43,9 @@ describe('Switch', () => {
     let label = s.closest('label');
     expect(s).not.toBeChecked();
     expect(label).toHaveTextContent('Off');
-    
+
     userEvent.click(s);
-    
+
     expect(s).toBeChecked();
     expect(label).toHaveTextContent('On');
   });
@@ -81,7 +82,7 @@ describe('Switch', () => {
     let {getByRole} = render(<Switch className={({isFocusVisible}) => isFocusVisible ? 'focus' : ''}>Test</Switch>);
     let s = getByRole('switch');
     let label = s.closest('label');
-    
+
     expect(label).not.toHaveAttribute('data-focus-visible');
     expect(label).not.toHaveClass('focus');
 

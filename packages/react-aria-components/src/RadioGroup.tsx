@@ -189,12 +189,9 @@ function Radio(props: RadioProps, ref: ForwardedRef<HTMLInputElement>) {
     }
   });
 
-  let DOMProps = filterDOMProps(props);
-  delete DOMProps.id;
-
   return (
     <label
-      {...mergeProps(DOMProps, pressProps, hoverProps, renderProps)}
+      {...mergeProps(pressProps, hoverProps, renderProps)}
       data-selected={isSelected || undefined}
       data-pressed={pressed || undefined}
       data-hovered={isHovered || undefined}

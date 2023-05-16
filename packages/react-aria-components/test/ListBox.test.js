@@ -66,9 +66,10 @@ describe('ListBox', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole, getAllByRole} = renderListbox({'data-foo': 'bar'}, {'data-bar': 'foo'});
+    let {getByRole, getAllByRole, getAllByTestId} = renderListbox({'data-testid': 'bar'}, {'data-bar': 'foo'});
     let listbox = getByRole('listbox');
-    expect(listbox).toHaveAttribute('data-foo', 'bar');
+    expect(listbox).toHaveAttribute('data-testid', 'bar');
+    expect(getAllByTestId('bar').length).toBe(1);
 
     for (let option of getAllByRole('option')) {
       expect(option).toHaveAttribute('data-bar', 'foo');

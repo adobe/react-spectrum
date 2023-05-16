@@ -15,7 +15,7 @@ import React from 'react';
 import {render} from '@react-spectrum/test-utils';
 
 let TestMeter = (props) => (
-  <Meter value={25} data-foo="bar" {...props}>
+  <Meter value={25} data-testid="bar" {...props}>
     {({percentage, valueText}) => (<>
       <Label>Storage space</Label>
       <span className="value">{valueText}</span>
@@ -26,13 +26,14 @@ let TestMeter = (props) => (
 
 describe('Meter', () => {
   it('renders', () => {
-    let {getByRole} = render(<TestMeter />);
+    let {getByRole, getAllByTestId} = render(<TestMeter />);
 
     let meter = getByRole('meter');
     expect(meter).toHaveClass('react-aria-Meter');
     expect(meter).toHaveAttribute('aria-valuenow', '25');
     expect(meter).toHaveAttribute('aria-labelledby');
-    expect(meter).toHaveAttribute('data-foo', 'bar');
+    expect(meter).toHaveAttribute('data-testid', 'bar');
+    expect(getAllByTestId('bar').length).toBe(1);
     expect(document.getElementById(meter.getAttribute('aria-labelledby'))).toHaveTextContent('Storage space');
 
     let value = meter.querySelector('.value');

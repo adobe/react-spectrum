@@ -47,9 +47,10 @@ describe('Menu', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole, getAllByRole} = renderMenu({'data-foo': 'bar'}, {'data-bar': 'foo'});
+    let {getByRole, getAllByRole, getAllByTestId} = renderMenu({'data-testid': 'bar'}, {'data-bar': 'foo'});
     let menu = getByRole('menu');
-    expect(menu).toHaveAttribute('data-foo', 'bar');
+    expect(menu).toHaveAttribute('data-testid', 'bar');
+    expect(getAllByTestId('bar').length).toBe(1);
 
     for (let menuitem of getAllByRole('menuitem')) {
       expect(menuitem).toHaveAttribute('data-bar', 'foo');
@@ -145,7 +146,7 @@ describe('Menu', () => {
       {id: 'cat', name: 'Cat'},
       {id: 'dog', name: 'Dog'}
     ];
-    
+
     let {getAllByRole} = render(
       <Menu aria-label="Test" items={items}>
         {(item) => <Item id={item.id}>{item.name}</Item>}

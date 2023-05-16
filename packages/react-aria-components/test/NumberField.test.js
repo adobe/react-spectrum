@@ -16,7 +16,7 @@ import {render} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestNumberField = (props) => (
-  <NumberField defaultValue={1024} minValue={0} data-foo="bar" {...props}>
+  <NumberField defaultValue={1024} minValue={0} data-testid="bar" {...props}>
     <Label>Width</Label>
     <Group {...props.groupProps}>
       <Button slot="decrement">-</Button>
@@ -30,18 +30,18 @@ let TestNumberField = (props) => (
 
 describe('NumberField', () => {
   it('provides slots', () => {
-    let {getByRole, getAllByRole} = render(<TestNumberField />);
+    let {getByRole, getAllByRole, getAllByTestId} = render(<TestNumberField />);
 
     let group = getByRole('group');
     expect(group).toBeInTheDocument();
     expect(group).toHaveAttribute('class', 'react-aria-Group');
 
-    expect(group.closest('.react-aria-NumberField')).toHaveAttribute('data-foo', 'bar');
-
     let input = getByRole('textbox');
     expect(input).toHaveValue('1,024');
 
     expect(input).toHaveAttribute('aria-labelledby');
+    expect(input).toHaveAttribute('data-testid', 'bar');
+    expect(getAllByTestId('bar').length).toBe(1);
     let label = document.getElementById(input.getAttribute('aria-labelledby'));
     expect(label).toHaveAttribute('class', 'react-aria-Label');
     expect(label).toHaveTextContent('Width');

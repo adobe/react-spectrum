@@ -82,10 +82,6 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
     defaultClassName: 'react-aria-Select'
   });
 
-  let DOMProps = filterDOMProps(props);
-  delete DOMProps.id;
-
-
   return (
     <Provider
       values={[
@@ -107,7 +103,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
           }
         }]
       ]}>
-      <div {...DOMProps} {...renderProps} ref={ref} slot={props.slot} />
+      <div {...renderProps} ref={ref} slot={props.slot} />
       {portal}
       <HiddenSelect
         state={state}

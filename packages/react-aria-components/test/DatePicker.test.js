@@ -17,7 +17,7 @@ import {render} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestDatePicker = (props) => (
-  <DatePicker data-foo="bar" {...props}>
+  <DatePicker data-testid="bar" {...props}>
     <Label>Birth date</Label>
     <Group>
       <DateInput>
@@ -46,7 +46,7 @@ let TestDatePicker = (props) => (
 
 describe('DatePicker', () => {
   it('provides slots', () => {
-    let {getByRole, getAllByRole} = render(<TestDatePicker />);
+    let {getByRole, getAllByRole, getAllByTestId} = render(<TestDatePicker />);
 
     let group = getByRole('group');
     let input = group.querySelector('.react-aria-DateInput');
@@ -54,9 +54,9 @@ describe('DatePicker', () => {
     expect(input).toHaveTextContent('mm/dd/yyyy');
     expect(button).toHaveAttribute('aria-label', 'Calendar');
 
-    expect(input.closest('.react-aria-DatePicker')).toHaveAttribute('data-foo', 'bar');
-
     expect(group).toHaveAttribute('aria-labelledby');
+    expect(group).toHaveAttribute('data-testid', 'bar');
+    expect(getAllByTestId('bar').length).toBe(1);
     let label = document.getElementById(group.getAttribute('aria-labelledby'));
     expect(label).toHaveAttribute('class', 'react-aria-Label');
     expect(label).toHaveTextContent('Birth date');
@@ -132,7 +132,7 @@ describe('DatePicker', () => {
         )}
       </DatePicker>
     );
-    
+
     let group = getByRole('group');
     expect(group).toHaveAttribute('data-validation-state', 'invalid');
   });

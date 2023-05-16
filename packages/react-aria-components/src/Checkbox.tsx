@@ -119,12 +119,8 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivEleme
     defaultClassName: 'react-aria-CheckboxGroup'
   });
 
-  let DOMProps = filterDOMProps(props);
-  delete DOMProps.id;
-
   return (
     <div
-      {...DOMProps}
       {...groupProps}
       {...renderProps}
       ref={ref}

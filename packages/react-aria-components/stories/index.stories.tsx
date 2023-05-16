@@ -274,9 +274,9 @@ export const NumberFieldExample = () => (
 );
 
 export const DateFieldExample = () => (
-  <DateField>
+  <DateField data-testid="gawegaweg">
     <Label style={{display: 'block'}}>Date</Label>
-    <DateInput className={styles.field}>
+    <DateInput className={styles.field} data-testid="test">
       {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
     </DateInput>
   </DateField>

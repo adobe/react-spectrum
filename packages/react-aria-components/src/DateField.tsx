@@ -49,9 +49,6 @@ function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: Forwarded
     defaultClassName: 'react-aria-DateField'
   });
 
-  let DOMProps = filterDOMProps(props);
-  delete DOMProps.id;
-
   return (
     <Provider
       values={[
@@ -64,7 +61,7 @@ function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: Forwarded
           }
         }]
       ]}>
-      <div {...DOMProps} {...renderProps} ref={ref} slot={props.slot} />
+      <div {...renderProps} ref={ref} slot={props.slot} />
     </Provider>
   );
 }
@@ -94,9 +91,6 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
     defaultClassName: 'react-aria-TimeField'
   });
 
-  let DOMProps = filterDOMProps(props);
-  delete DOMProps.id;
-
   return (
     <Provider
       values={[
@@ -109,7 +103,7 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
           }
         }]
       ]}>
-      <div {...DOMProps} {...renderProps} ref={ref} slot={props.slot} />
+      <div {...renderProps} ref={ref} slot={props.slot} />
     </Provider>
   );
 }

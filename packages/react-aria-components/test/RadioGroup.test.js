@@ -53,12 +53,14 @@ describe('RadioGroup', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole, getAllByRole} = renderGroup({'data-foo': 'bar'}, {'data-test': 'test'});
+    let {getByRole, getAllByRole, getAllByTestId} = renderGroup({'data-testid': 'bar'}, {'data-testid': 'test'});
     let group = getByRole('radiogroup');
-    expect(group).toHaveAttribute('data-foo', 'bar');
+    expect(group).toHaveAttribute('data-testid', 'bar');
+    expect(getAllByTestId('bar').length).toBe(1);
     for (let radio of getAllByRole('radio')) {
-      expect(radio.closest('label')).toHaveAttribute('data-test', 'test');
+      expect(radio).toHaveAttribute('data-testid', 'test');
     }
+    expect(getAllByTestId('test').length).toBe(3);
   });
 
   it('should support render props', () => {
@@ -111,7 +113,7 @@ describe('RadioGroup', () => {
     let {getAllByRole} = renderGroup({}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
     let radio = getAllByRole('radio')[0];
     let label = radio.closest('label');
-    
+
     expect(label).not.toHaveAttribute('data-focus-visible');
     expect(label).not.toHaveClass('focus');
 

@@ -29,9 +29,10 @@ describe('ToggleButton', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole} =  render(<ToggleButton data-foo="bar">Test</ToggleButton>);
+    let {getByRole, getAllByTestId} =  render(<ToggleButton data-testid="bar">Test</ToggleButton>);
     let button = getByRole('button');
-    expect(button).toHaveAttribute('data-foo', 'bar');
+    expect(button).toHaveAttribute('data-testid', 'bar');
+    expect(getAllByTestId('bar').length).toBe(1);
   });
 
   it('should support render props', () => {
@@ -74,7 +75,7 @@ describe('ToggleButton', () => {
   it('should support focus ring', () => {
     let {getByRole} = render(<ToggleButton className={({isFocusVisible}) => isFocusVisible ? 'focus' : ''}>Test</ToggleButton>);
     let button = getByRole('button');
-    
+
     expect(button).not.toHaveAttribute('data-focus-visible');
     expect(button).not.toHaveClass('focus');
 

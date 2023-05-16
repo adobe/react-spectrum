@@ -16,7 +16,7 @@ import {render, within} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestComboBox = (props) => (
-  <ComboBox defaultInputValue="C" data-foo="bar" {...props}>
+  <ComboBox defaultInputValue="C" data-testid="bar" {...props}>
     <Label>Favorite Animal</Label>
     <Input />
     <Button />
@@ -34,15 +34,17 @@ let TestComboBox = (props) => (
 
 describe('ComboBox', () => {
   it('provides slots', () => {
-    let {getByRole} = render(<TestComboBox />);
+    let {getByRole, getAllByTestId} = render(<TestComboBox />);
 
     let input = getByRole('combobox');
     expect(input).toHaveValue('C');
 
     let combobox = input.closest('.react-aria-ComboBox');
-    expect(combobox).toHaveAttribute('data-foo', 'bar');
+    expect(combobox).toBeTruthy();
 
     expect(input).toHaveAttribute('aria-labelledby');
+    expect(input).toHaveAttribute('data-testid', 'bar');
+    expect(getAllByTestId('bar').length).toBe(1);
     let label = document.getElementById(input.getAttribute('aria-labelledby').split(' ')[0]);
     expect(label).toHaveAttribute('class', 'react-aria-Label');
     expect(label).toHaveTextContent('Favorite Animal');

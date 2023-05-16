@@ -18,8 +18,8 @@ import userEvent from '@testing-library/user-event';
 
 describe('DateField', () => {
   it('provides slots', () => {
-    let {getByRole, getAllByRole} = render(
-      <DateField data-foo="bar">
+    let {getByRole, getAllByRole, getAllByTestId} = render(
+      <DateField data-testid="bar">
         <Label>Birth date</Label>
         <DateInput data-bar="foo">
           {segment => <DateSegment segment={segment} data-test="test" />}
@@ -32,11 +32,13 @@ describe('DateField', () => {
     let input = getByRole('group');
     expect(input).toHaveTextContent('mm/dd/yyyy');
     expect(input).toHaveAttribute('class', 'react-aria-DateInput');
+    // TODO: the below is a bit strange since the data attributes provided to the top level
+    // DateField are propagated to the DateInput via the fieldProps...
     expect(input).toHaveAttribute('data-bar', 'foo');
-
-    expect(input.closest('.react-aria-DateField')).toHaveAttribute('data-foo', 'bar');
-
+    expect(input).toHaveAttribute('data-testid', 'bar');
+    expect(getAllByTestId('bar').length).toBe(1);
     expect(input).toHaveAttribute('aria-labelledby');
+
     let label = document.getElementById(input.getAttribute('aria-labelledby'));
     expect(label).toHaveAttribute('class', 'react-aria-Label');
     expect(label).toHaveTextContent('Birth date');

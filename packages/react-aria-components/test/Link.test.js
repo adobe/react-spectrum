@@ -30,9 +30,10 @@ describe('Link', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole} = render(<Link data-foo="bar">Test</Link>);
+    let {getByRole, getAllByTestId} = render(<Link data-testid="bar">Test</Link>);
     let link = getByRole('link');
-    expect(link).toHaveAttribute('data-foo', 'bar');
+    expect(link).toHaveAttribute('data-testid', 'bar');
+    expect(getAllByTestId('bar').length).toBe(1);
   });
 
   it('should support render props', () => {
@@ -81,7 +82,7 @@ describe('Link', () => {
   it('should support focus ring', () => {
     let {getByRole} = render(<Link className={({isFocusVisible}) => isFocusVisible ? 'focus' : ''}>Test</Link>);
     let link = getByRole('link');
-    
+
     expect(link).not.toHaveAttribute('data-focus-visible');
     expect(link).not.toHaveClass('focus');
 

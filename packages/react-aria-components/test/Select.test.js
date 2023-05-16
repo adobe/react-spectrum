@@ -16,7 +16,7 @@ import {render, within} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestSelect = (props) => (
-  <Select data-foo="bar" {...props}>
+  <Select data-testid="bar" {...props}>
     <Label>Favorite Animal</Label>
     <Button>
       <SelectValue />
@@ -35,16 +35,15 @@ let TestSelect = (props) => (
 
 describe('Select', () => {
   it('provides slots', () => {
-    let {getByRole} = render(<TestSelect />);
+    let {getByRole, getAllByTestId} = render(<TestSelect />);
 
     let button = getByRole('button');
     expect(button).toHaveTextContent('Select an item');
     expect(button).not.toHaveAttribute('data-pressed');
-
-    let select = button.closest('.react-aria-Select');
-    expect(select).toHaveAttribute('data-foo', 'bar');
-
+    expect(button).toHaveAttribute('data-testid', 'bar');
+    expect(getAllByTestId('bar').length).toBe(1);
     expect(button).toHaveAttribute('aria-labelledby');
+
     let label = document.getElementById(button.getAttribute('aria-labelledby').split(' ')[0]);
     expect(label).toHaveAttribute('class', 'react-aria-Label');
     expect(label).toHaveTextContent('Favorite Animal');
