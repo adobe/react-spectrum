@@ -12,7 +12,7 @@
 
 import {Content, Header} from '@react-spectrum/view';
 import {InlineAlert} from '../';
-import {Meta, Story} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import React from 'react';
 import {SpectrumInlineAlertProps} from '@react-types/inlinealert';
 
