@@ -12,7 +12,7 @@
 
 import {act, fireEvent, render, within} from '@react-spectrum/test-utils';
 import {Header, Item, ListBox, ListBoxContext, Section, Text, useDragAndDrop} from '../';
-import React from 'react';
+import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';
 
 let TestListBox = ({listBoxProps, itemProps}) => (
@@ -213,6 +213,31 @@ describe('ListBox', () => {
     );
 
     expect(getAllByRole('option').map(o => o.textContent)).toEqual(['Cat', 'Kangaroo', 'Mouse']);
+  });
+
+  it('should update collection when descendants update', () => {
+    let setShowTwo;
+    function Child() {
+      let [showTwo, _setShowTwo] = useState(false);
+      setShowTwo = _setShowTwo;
+      return (
+        <>
+          <Item id={1}>One</Item>
+          {showTwo && <Item id={2}>Two</Item>}
+        </>
+      );
+    }
+
+    let {getAllByRole} = render(
+      <ListBox aria-label="Example">
+        <Child />
+      </ListBox>
+    );
+
+    expect(getAllByRole('option').map(o => o.textContent)).toEqual(['One']);
+
+    act(() => setShowTwo(true));
+    expect(getAllByRole('option').map(o => o.textContent)).toEqual(['One', 'Two']);
   });
 
   it('should support hover', () => {
