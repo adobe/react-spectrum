@@ -64,11 +64,13 @@ describe('TagGroup', function () {
 
   it('provides context for Tag component', function () {
     let {getAllByRole} = render(
-      <TagGroup aria-label="tag group" allowsRemoving onRemove={onRemoveSpy}>
-        <Item aria-label="Tag 1">Tag 1</Item>
-        <Item aria-label="Tag 2">Tag 2</Item>
-        <Item aria-label="Tag 3">Tag 3</Item>
-      </TagGroup>
+      <Provider theme={theme}>
+        <TagGroup aria-label="tag group" allowsRemoving onRemove={onRemoveSpy}>
+          <Item aria-label="Tag 1">Tag 1</Item>
+          <Item aria-label="Tag 2">Tag 2</Item>
+          <Item aria-label="Tag 3">Tag 3</Item>
+        </TagGroup>
+      </Provider>
     );
 
     let tags = getAllByRole('row');
@@ -81,10 +83,12 @@ describe('TagGroup', function () {
 
   it('has correct accessibility roles', () => {
     let {getByRole, getAllByRole} = render(
-      <TagGroup
-        aria-label="tag group">
-        <Item aria-label="Tag 1">Tag 1</Item>
-      </TagGroup>
+      <Provider theme={theme}>
+        <TagGroup
+          aria-label="tag group">
+          <Item aria-label="Tag 1">Tag 1</Item>
+        </TagGroup>
+      </Provider>
     );
 
     let tagGroup = getByRole('grid');
@@ -96,10 +100,12 @@ describe('TagGroup', function () {
 
   it('has correct tab index', () => {
     let {getAllByRole} = render(
-      <TagGroup
-        aria-label="tag group">
-        <Item aria-label="Tag 1">Tag 1</Item>
-      </TagGroup>
+      <Provider theme={theme}>
+        <TagGroup
+          aria-label="tag group">
+          <Item aria-label="Tag 1">Tag 1</Item>
+        </TagGroup>
+      </Provider>
     );
 
     let tags = getAllByRole('row');
@@ -132,9 +138,11 @@ describe('TagGroup', function () {
 
   it('TagGroup allows aria-label', function () {
     let {getByRole} = render(
-      <TagGroup aria-label="tag group">
-        <Item key="1" aria-label="Tag 1">Tag 1</Item>
-      </TagGroup>
+      <Provider theme={theme}>
+        <TagGroup aria-label="tag group">
+          <Item key="1" aria-label="Tag 1">Tag 1</Item>
+        </TagGroup>
+      </Provider>
     );
 
     let tagGroup = getByRole('grid');
@@ -143,9 +151,11 @@ describe('TagGroup', function () {
 
   it('TagGroup allows aria-labelledby', function () {
     let {getByRole} = render(
-      <TagGroup aria-labelledby="tag group">
-        <Item key="1" aria-label="Tag 1">Tag 1</Item>
-      </TagGroup>
+      <Provider theme={theme}>
+        <TagGroup aria-labelledby="tag group">
+          <Item key="1" aria-label="Tag 1">Tag 1</Item>
+        </TagGroup>
+      </Provider>
     );
 
     let tagGroup = getByRole('grid');
@@ -154,11 +164,13 @@ describe('TagGroup', function () {
 
   it('TagGroup allows aria-label on Item', function () {
     let {getByRole} = render(
-      <TagGroup aria-label="tag group">
-        <Item key="1" aria-label="Tag 1">Tag 1</Item>
-        <Item key="2" aria-label="Tag 2">Tag 2</Item>
-        <Item key="3" aria-label="Tag 3">Tag 3</Item>
-      </TagGroup>
+      <Provider theme={theme}>
+        <TagGroup aria-label="tag group">
+          <Item key="1" aria-label="Tag 1">Tag 1</Item>
+          <Item key="2" aria-label="Tag 2">Tag 2</Item>
+          <Item key="3" aria-label="Tag 3">Tag 3</Item>
+        </TagGroup>
+      </Provider>
     );
 
     let tagGroup = getByRole('grid');
@@ -481,7 +493,7 @@ describe('TagGroup', function () {
       .mockImplementationOnce(() => ({x: 200, y: 400, width: 95, height: 32, top: 400, right: 290, bottom: 435, left: 200}))
       .mockImplementationOnce(() => ({x: 200, y: 300, width: 200, height: 128, top: 300, right: 400, bottom: 435, left: 200}))
       .mockImplementationOnce(() => ({x: 265, y: 335, width: 75, height: 32, top: 335, right: 345, bottom: 370, left: 265}));
-    let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px', marginTop: '4px', height: '24px'}));
+    let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px'}));
 
     let {getAllByRole, getByRole} = render(
       <Provider theme={theme}>
@@ -524,7 +536,7 @@ describe('TagGroup', function () {
       .mockImplementationOnce(() => ({x: 200, y: 335, width: 65, height: 32, top: 335, right: 265, bottom: 370, left: 200}))
       .mockImplementationOnce(() => ({x: 265, y: 335, width: 75, height: 32, top: 335, right: 345, bottom: 370, left: 265}))
       .mockImplementationOnce(() => ({x: 200, y: 370, width: 120, height: 32, top: 370, right: 320, bottom: 400, left: 200}));
-    let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px', marginTop: '4px', height: '24px'}));
+    let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px'}));
     let {getAllByRole, queryAllByRole} = render(
       <Provider theme={theme}>
         <TagGroup maxRows={2} aria-label="tag group">
@@ -556,7 +568,7 @@ describe('TagGroup', function () {
         };
       }
     ];
-    let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px', marginTop: '4px', height: '24px'}));
+    let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px'}));
     mockImplementation(target, mockCalls, true);
     let {getAllByRole, getByRole} = render(
       <Provider theme={theme}>
@@ -615,7 +627,7 @@ describe('TagGroup', function () {
       .mockImplementationOnce(() => ({x: 200, y: 300, width: 200, height: 128, top: 300, right: 400, bottom: 435, left: 200}))
       .mockImplementationOnce(() => ({x: 265, y: 335, width: 75, height: 32, top: 335, right: 345, bottom: 370, left: 265}))
       .mockImplementationOnce(() => ({x: 200, y: 300, width: 75, height: 32, top: 300, right: 275, bottom: 335, left: 200}));
-    let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px', marginTop: '4px', height: '24px'}));
+    let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px'}));
     let {getAllByRole} = render(
       <Provider theme={theme}>
         <TagGroup
@@ -672,7 +684,7 @@ describe('TagGroup', function () {
   });
 
   it('action group is labelled correctly', function () {
-    let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px', marginTop: '4px', height: '24px'}));
+    let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px'}));
 
     let {getByRole} = render(
       <Provider theme={theme}>
@@ -710,7 +722,7 @@ describe('TagGroup', function () {
   });
 
   it('should allow you to tab into TagGroup if empty with link', async function () {
-    let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px', marginTop: '4px', height: '24px'}));
+    let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px'}));
 
     let renderEmptyState = () => (
       <span>No tags. <Link><a href="//react-spectrum.com">Click here</a></Link> to add some.</span>

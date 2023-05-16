@@ -1,5 +1,5 @@
 import {AriaLabelingProps} from '@react-types/shared';
-import {BaseCollection, CollectionContext, CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useCollectionChildren} from './Collection';
+import {BaseCollection, CollectionContext, CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useCollectionChildren, useCollectionItemRef} from './Collection';
 import {buildHeaderRows} from '@react-stately/table';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
@@ -388,7 +388,7 @@ export function TableHeader<T extends object>(props: TableHeaderProps<T>) {
   return (
     <CollectionRendererContext.Provider value={renderer}>
       {/* @ts-ignore */}
-      <tableheader multiple={props}>{children}</tableheader>
+      <tableheader ref={useCollectionItemRef(props)}>{children}</tableheader>
     </CollectionRendererContext.Provider>
   );
 }
@@ -442,7 +442,7 @@ export function Column<T extends object>(props: ColumnProps<T>): JSX.Element {
   });
 
   // @ts-ignore
-  return <column multiple={{...props, rendered: props.title ?? props.children}}>{children}</column>;
+  return <column ref={useCollectionItemRef(props, props.title ?? props.children)}>{children}</column>;
 }
 
 export interface TableBodyRenderProps {
@@ -465,7 +465,7 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
   let children = useCollectionChildren(props);
 
   // @ts-ignore
-  return <tablebody multiple={props}>{children}</tablebody>;
+  return <tablebody ref={useCollectionItemRef(props)}>{children}</tablebody>;
 }
 
 export interface RowRenderProps extends ItemRenderProps {}
@@ -494,7 +494,7 @@ export function Row<T extends object>(props: RowProps<T>) {
 
   return (
     // @ts-ignore
-    <item multiple={props}>
+    <item ref={useCollectionItemRef(props)}>
       <CollectionContext.Provider value={ctx}>
         {children}
       </CollectionContext.Provider>
@@ -534,7 +534,7 @@ export interface CellProps extends RenderProps<CellRenderProps> {
  */
 export function Cell(props: CellProps): JSX.Element {
   // @ts-ignore
-  return <cell multiple={{...props, rendered: props.children}} />;
+  return <cell ref={useCollectionItemRef(props, props.children)} />;
 }
 
 function TableHeaderRowGroup<T>({collection}: {collection: TableCollection<T>}) {

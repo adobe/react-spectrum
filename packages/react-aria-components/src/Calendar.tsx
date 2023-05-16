@@ -263,7 +263,13 @@ export interface CalendarGridProps extends StyleProps {
    * CalendarGrid should display. Useful when displaying more than one
    * month at a time.
    */
-  offset?: DateDuration
+  offset?: DateDuration,
+  /**
+   * The style of weekday names to display in the calendar grid header,
+   * e.g. single letter, abbreviation, or full day name.
+   * @default "narrow"
+   */
+  weekdayStyle?: 'narrow' | 'short' | 'long'
 }
 
 interface InternalCalendarGridContextValue {
@@ -283,7 +289,8 @@ function CalendarGrid(props: CalendarGridProps, ref: ForwardedRef<HTMLTableEleme
 
   let {gridProps, headerProps, weekDays} = useCalendarGrid({
     startDate,
-    endDate: endOfMonth(startDate)
+    endDate: endOfMonth(startDate),
+    weekdayStyle: props.weekdayStyle
   }, state);
 
   return (

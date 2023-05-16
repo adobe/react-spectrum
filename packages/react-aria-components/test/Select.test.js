@@ -139,6 +139,12 @@ describe('Select', () => {
     expect(button).toHaveTextContent('1 - Cat');
   });
 
+  it('supports placeholder', () => {
+    let {getByRole} = render(<TestSelect placeholder="Select an animal" />);
+    let button = getByRole('button');
+    expect(button).toHaveTextContent('Select an animal');
+  });
+
   it('should support render props', () => {
     let {getByRole} = render(
       <Select>
