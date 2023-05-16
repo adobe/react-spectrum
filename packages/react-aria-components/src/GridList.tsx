@@ -280,9 +280,6 @@ function GridListItem({item}) {
     }
   });
 
-  let DOMProps = filterDOMProps(props as any);
-  delete DOMProps.id;
-
   let renderDropIndicator = dragAndDropHooks?.renderDropIndicator || (target => <DropIndicator target={target} />);
   let dragButtonRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
@@ -311,7 +308,7 @@ function GridListItem({item}) {
         </div>
       }
       <div
-        {...mergeProps(DOMProps, rowProps, focusProps, hoverProps, draggableItem?.dragProps)}
+        {...mergeProps(filterDOMProps(props as any), rowProps, focusProps, hoverProps, draggableItem?.dragProps)}
         {...renderProps}
         ref={ref}
         data-hovered={isHovered || undefined}

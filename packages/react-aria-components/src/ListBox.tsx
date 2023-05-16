@@ -330,9 +330,6 @@ function Option<T>({item}: OptionProps<T>) {
     }
   });
 
-  let DOMProps = filterDOMProps(props as any);
-  delete DOMProps.id;
-
   let renderDropIndicator = dragAndDropHooks?.renderDropIndicator || (target => <DropIndicator target={target} />);
 
   useEffect(() => {
@@ -347,7 +344,7 @@ function Option<T>({item}: OptionProps<T>) {
         renderDropIndicator({type: 'item', key: item.key, dropPosition: 'before'})
       }
       <div
-        {...mergeProps(DOMProps, optionProps, hoverProps, draggableItem?.dragProps, droppableItem?.dropProps)}
+        {...mergeProps(filterDOMProps(props as any), optionProps, hoverProps, draggableItem?.dragProps, droppableItem?.dropProps)}
         {...renderProps}
         ref={ref}
         data-hovered={isHovered || undefined}

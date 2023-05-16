@@ -444,9 +444,6 @@ function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRe
     }
   });
 
-  let DOMProps = filterDOMProps(otherProps as any);
-  delete DOMProps.id;
-
   let dataAttrs = {
     'data-hovered': isHovered || undefined,
     'data-pressed': states.isPressed || undefined,
@@ -462,7 +459,7 @@ function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRe
 
   return (
     <td {...cellProps}>
-      <div {...mergeProps(DOMProps, buttonProps, focusProps, hoverProps, dataAttrs, renderProps)} ref={objectRef} />
+      <div {...mergeProps(filterDOMProps(otherProps as any), buttonProps, focusProps, hoverProps, dataAttrs, renderProps)} ref={objectRef} />
     </td>
   );
 }
