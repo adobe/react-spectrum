@@ -117,7 +117,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         let buttons = [...currContainerRef.parentElement.querySelectorAll('button')];
         if (buttons.length > 0) {
           let buttonsWidth = buttons.reduce((acc, curr) => acc += curr.getBoundingClientRect().width, 0);
-          buttonsWidth += parseInt(window.getComputedStyle(buttons[buttons.length - 1]).marginRight, 10) * 2;
+          buttonsWidth += TAG_STYLES[scale].margin * 2 * buttons.length;
           let end = direction === 'ltr' ? 'right' : 'left';
           let containerEnd = currContainerRef.parentElement.getBoundingClientRect()[end];
           let lastTagEnd = tags[index - 1]?.getBoundingClientRect()[end];
