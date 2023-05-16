@@ -7,7 +7,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License. */}
 
-import {Layout} from '@react-spectrum/docs';
+import {Layout, VersionBadge} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/menu';
@@ -278,6 +278,44 @@ import {Keyboard, Text} from '@react-spectrum/text';
       <Text>Copy</Text>
       <Keyboard>⌘C</Keyboard>
     </Item>
+    <Item key="paste" textValue="paste">
+      <Paste size="S"/>
+      <Text>Paste</Text>
+      <Keyboard>⌘V</Keyboard>
+    </Item>
+  </Menu>
+</MenuTrigger>
+```
+
+## Unavailable Menu Items  <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+
+Sometimes, Menu Items need to be disabled, but still shown so people know that those options exist. For example, maybe a user needs to get additional permissions to perform an action.
+
+```tsx example
+import {MenuDialogTrigger} from '@react-spectrum/menu';
+import {Dialog, Heading, Content, Footer, Link} from '@adobe/react-spectrum';
+<MenuTrigger>
+  <ActionButton>
+    Edit
+  </ActionButton>
+  <Menu>
+    <Item key="cut" textValue="cut">
+      <Cut size="S"/>
+      <Text>Cut</Text>
+      <Keyboard>⌘X</Keyboard>
+    </Item>
+    <MenuDialogTrigger isUnavailable>
+      <Item key="copy" textValue="copy">
+        <Copy size="S"/>
+        <Text>Copy</Text>
+        <Keyboard>⌘C</Keyboard>
+      </Item>
+      <Dialog>
+        <Heading>hello</Heading>
+        <Content>Is it me you're looking for?</Content>
+        <Footer><Link>Learn more</Link></Footer>
+      </Dialog>
+    </MenuDialogTrigger>
     <Item key="paste" textValue="paste">
       <Paste size="S"/>
       <Text>Paste</Text>
