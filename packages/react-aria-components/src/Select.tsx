@@ -27,7 +27,8 @@ export interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 
 
 interface SelectValueContext {
   state: SelectState<unknown>,
-  valueProps: HTMLAttributes<HTMLElement>
+  valueProps: HTMLAttributes<HTMLElement>,
+  placeholder?: string
 }
 
 export const SelectContext = createContext<ContextValue<SelectProps<any>, HTMLDivElement>>(null);
@@ -81,9 +82,9 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
   return (
     <Provider
       values={[
-        [InternalSelectContext, {state, valueProps}],
+        [InternalSelectContext, {state, valueProps, placeholder: props.placeholder}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
-        [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen}],
+        [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen, children: state.selectedItem?.textValue ?? props.placeholder}],
         [PopoverContext, {
           state,
           triggerRef: buttonRef,
@@ -131,7 +132,7 @@ export interface SelectValueRenderProps<T> {
 export interface SelectValueProps<T extends object> extends Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>, RenderProps<SelectValueRenderProps<T>> {}
 
 function SelectValue<T extends object>(props: SelectValueProps<T>, ref: ForwardedRef<HTMLSpanElement>) {
-  let {state, valueProps} = useContext(InternalSelectContext)!;
+  let {state, valueProps, placeholder} = useContext(InternalSelectContext)!;
   let rendered = state.selectedItem?.rendered;
   if (typeof rendered === 'function') {
     // If the selected item has a function as a child, we need to call it to render to JSX.
@@ -151,7 +152,7 @@ function SelectValue<T extends object>(props: SelectValueProps<T>, ref: Forwarde
   let renderProps = useRenderProps({
     ...props,
     // TODO: localize this.
-    defaultChildren: rendered || 'Select an item',
+    defaultChildren: rendered || placeholder || 'Select an item',
     defaultClassName: 'react-aria-SelectValue',
     values: {
       selectedItem: state.selectedItem?.value as T ?? null,

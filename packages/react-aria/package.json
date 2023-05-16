@@ -54,6 +54,7 @@
     "@react-aria/switch": "^3.5.0",
     "@react-aria/table": "^3.9.0",
     "@react-aria/tabs": "^3.5.0",
+    "@react-aria/tag": "^3.0.0-rc.0",
     "@react-aria/textfield": "^3.9.1",
     "@react-aria/tooltip": "^3.5.0",
     "@react-aria/utils": "^3.16.0",

@@ -19,7 +19,12 @@ import {Modal, Popover} from '@react-spectrum/overlays';
 import React, {Key, ReactElement, useRef} from 'react';
 import {useOverlayTriggerState} from '@react-stately/overlays';
 
-function MenuDialogTrigger<T>(props: ItemProps<T> & {isUnavailable?: boolean, targetKey: Key}): ReactElement {
+export interface SpectrumMenuDialogTriggerProps<T> extends ItemProps<T> {
+  isUnavailable?: boolean,
+  targetKey: Key
+}
+
+function MenuDialogTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): ReactElement {
   let {isUnavailable} = props;
 
   let {state: menuState} = useMenuStateContext();
