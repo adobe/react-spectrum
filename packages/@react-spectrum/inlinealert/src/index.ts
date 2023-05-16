@@ -12,4 +12,4 @@
 
 /// <reference types="css-module-types" />
 
-export {InLineAlert} from './InLineAlert';
+export {InlineAlert} from './InlineAlert';

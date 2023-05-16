@@ -14,22 +14,22 @@ import {Content, Header} from '@react-spectrum/view';
 import {InLineAlert} from '../';
 import {Meta, Story} from '@storybook/react';
 import React from 'react';
-import {SpectrumInLineAlertProps} from '@react-types/inlinealert';
+import {SpectrumInlineAlertProps} from '@react-types/inlinealert';
 
 // see https://github.com/storybookjs/storybook/issues/8426#issuecomment-669021940
 const StoryFn = ({storyFn}) => storyFn();
 
-const meta: Meta<SpectrumInLineAlertProps> = {
-  title: 'InLineAlert',
+const meta: Meta<SpectrumInlineAlertProps> = {
+  title: 'InlineAlert',
   component: InLineAlert,
   decorators: [storyFn => <StoryFn storyFn={storyFn} />]
 };
 
 export default meta;
 
-const Template = (): Story<SpectrumInLineAlertProps> => (args) => (
+const Template = (): Story<SpectrumInlineAlertProps> => (args) => (
   <InLineAlert {...args}>
-    <Header>In-Line Alert Header</Header>
+    <Header>In-line Alert Header</Header>
     <Content>This is a React Spectrum InlineAlert</Content>
   </InLineAlert>
 );

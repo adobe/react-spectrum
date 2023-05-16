@@ -11,17 +11,17 @@
  */
 
 import {Content, Header} from '@react-spectrum/view';
-import {InLineAlert} from '../';
+import {InlineAlert} from '../';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils';
 
-describe('InLineAlert', function () {
+describe('InlineAlert', function () {
   it('has alert role', function () {
     let {getByRole} = render(
-      <InLineAlert>
+      <InlineAlert>
         <Header>Title</Header>
         <Content>Content</Content>
-      </InLineAlert>
+      </InlineAlert>
     );
 
     let alert = getByRole('alert');
@@ -30,10 +30,10 @@ describe('InLineAlert', function () {
 
   it('has a header', function () {
     let {getByTestId} = render(
-      <InLineAlert>
+      <InlineAlert>
         <Header data-testid="testid1">Test Title</Header>
         <Content>Content</Content>
-      </InLineAlert>
+      </InlineAlert>
     );
 
     let header = getByTestId('testid1');
@@ -43,10 +43,10 @@ describe('InLineAlert', function () {
 
   it('has body content', function () {
     let {getByTestId} = render(
-      <InLineAlert>
+      <InlineAlert>
         <Header>Title</Header>
         <Content data-testid="testid1">Test Content</Content>
-      </InLineAlert>
+      </InlineAlert>
     );
 
     let content = getByTestId('testid1');
@@ -63,10 +63,10 @@ describe('InLineAlert', function () {
       ${'negative'}
     `('$variant variant renders correctly', function ({variant}) {
       let {getByTestId} = render(
-        <InLineAlert variant={variant} data-testid="testid1">
+        <InlineAlert variant={variant} data-testid="testid1">
           <Header>Title</Header>
           <Content>Content</Content>
-        </InLineAlert>
+        </InlineAlert>
       );
       let alert = getByTestId('testid1');
       expect(alert).toHaveClass(`spectrum-InLineAlert--${variant}`);

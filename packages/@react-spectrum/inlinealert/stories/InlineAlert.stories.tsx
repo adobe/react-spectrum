@@ -11,16 +11,16 @@
  */
 
 import {Content, Header} from '@react-spectrum/view';
-import {InLineAlert} from '../';
+import {InlineAlert} from '../';
 import {Meta} from '@storybook/react';
 import React from 'react';
-import {SpectrumInLineAlertProps} from '@react-types/inlinealert';
+import {SpectrumInlineAlertProps} from '@react-types/inlinealert';
 
-type StoryArgs = SpectrumInLineAlertProps & {title: string, content: string};
+type StoryArgs = SpectrumInlineAlertProps & {title: string, content: string};
 
 const meta: Meta<StoryArgs> = {
-  title: 'InLineAlert',
-  component: InLineAlert,
+  title: 'InlineAlert',
+  component: InlineAlert,
   args: {
     title: 'Title',
     content: 'Content'
@@ -43,10 +43,10 @@ export default meta;
 
 export const Default = {
   render: (args) => (
-    <InLineAlert {...args}>
+    <InlineAlert {...args}>
       <Header>{args.title}</Header>
       <Content>{args.content}</Content>
-    </InLineAlert>
+    </InlineAlert>
   )
 };
 

@@ -1,4 +1,4 @@
-/*!
+/*
 Copyright 2023 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
@@ -24,17 +24,17 @@ governing permissions and limitations under the License.
   --spectrum-inlinealert-content-font-size: var(--spectrum-global-dimension-font-size-100);
   --spectrum-inlinealert-content-line-height: var(--spectrum-alias-line-height-body);
 
-  /* Size*/
+  /* Size */
   --spectrum-inlinealert-border-width: var(--spectrum-alias-border-size-thick);
   --spectrum-inlinealert-border-radius: var(--spectrum-border-radius);
   --spectrum-inlinealert-icon-size: var(--spectrum-global-dimension-size-225);
   --spectrum-inlinealert-min-inline-size: 240px;
   --spectrum-inlinealert-header-min-block-size: var(--spectrum-global-dimension-size-250);
 
-  /* Spacing*/
+  /* Spacing */
   --spectrum-inlinealert-spacing-edge-to-text: var(--spectrum-global-dimension-static-size-300);
   --spectrum-inlinealert-spacing-header-to-icon: var(--spectrum-global-dimension-static-size-300);
-  --spectrum-inlinealert-spacing-header-content: var(--spectrum-global-dimension-static-size-200);
+  --spectrum-inlinealert-spacing-header-content-button: var(--spectrum-global-dimension-static-size-200);
 
   /* Color */
   --spectrum-inlinealert-background-color: var(--spectrum-alias-background-color-default);
@@ -103,7 +103,7 @@ governing permissions and limitations under the License.
   display: block;
   grid-area: content;
 
-  margin-block-start: var(--spectrum-inlinealert-spacing-header-content);
+  margin-block-start: var(--spectrum-inlinealert-spacing-header-content-button);
   margin-block-end: 0;
   margin-inline-start: 0;
   margin-inline-end: 0;
