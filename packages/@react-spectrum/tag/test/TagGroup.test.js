@@ -112,7 +112,7 @@ describe('TagGroup', function () {
     expect(tags[0]).toHaveAttribute('tabIndex', '0');
   });
 
-  it.skip.each`
+  it.each`
     Name                                                | props                                         | orders
     ${'(left/right arrows, ltr + horizontal) TagGroup'} | ${{locale: 'de-DE'}}                          | ${[{action: () => {userEvent.tab();}, index: 0}, {action: pressArrowRight, index: 1}, {action: pressArrowLeft, index: 0}, {action: pressArrowLeft, index: 2}]}
     ${'(left/right arrows, rtl + horizontal) TagGroup'} | ${{locale: 'ar-AE'}}                          | ${[{action: () => {userEvent.tab();}, index: 0}, {action: pressArrowLeft, index: 1}, {action: pressArrowRight, index: 0}, {action: pressArrowRight, index: 2}]}
