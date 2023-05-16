@@ -227,7 +227,7 @@ export {_GridList as GridList};
 
 function GridListItem({item}) {
   let {state, dragAndDropHooks, dragState, dropState} = useContext(InternalGridListContext)!;
-  let ref = React.useRef<HTMLDivElement>(null);
+  let ref = useObjectRef<HTMLDivElement>(item.props.ref);
   let {rowProps, gridCellProps, descriptionProps, ...states} = useGridListItem(
     {
       node: item,

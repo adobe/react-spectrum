@@ -87,6 +87,22 @@ describe('ListBox', () => {
     expect(listbox).toHaveAttribute('aria-label', 'test');
   });
 
+  it('should support refs', () => {
+    let listBoxRef = React.createRef();
+    let sectionRef = React.createRef();
+    let itemRef = React.createRef();
+    render(
+      <ListBox aria-label="Test" ref={listBoxRef}>
+        <Section ref={sectionRef}>
+          <Item ref={itemRef}>Cat</Item>
+        </Section>
+      </ListBox>
+    );
+    expect(listBoxRef.current).toBeInstanceOf(HTMLElement);
+    expect(sectionRef.current).toBeInstanceOf(HTMLElement);
+    expect(itemRef.current).toBeInstanceOf(HTMLElement);
+  });
+
   it('should support slots', () => {
     let {getByRole} = render(
       <ListBox aria-label="Sandwich contents" selectionMode="multiple">
