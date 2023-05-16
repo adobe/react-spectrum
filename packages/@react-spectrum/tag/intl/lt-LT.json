@@ -1,5 +1,6 @@
 {
   "actions": "Veiksmai",
   "hideButtonLabel": "Rodyti mažiau",
+  "noTags": "Nėra",
   "showAllButtonLabel": "Rodyti viską ({tagCount, number})"
 }
