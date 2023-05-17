@@ -44,7 +44,7 @@ function getTextValue(el) {
 }
 
 function expectPlaceholder(el, placeholder) {
-  expect(getTextValue(el)).toBe(placeholder);
+  expect(getTextValue(el).replaceAll(' ', ' ')).toBe(placeholder);
 }
 
 function render(el) {
@@ -482,8 +482,8 @@ describe('DateRangePicker', function () {
 
       let startDate = getByTestId('start-date');
       let endDate = getByTestId('end-date');
-      expect(getTextValue(startDate)).toBe('2/3/2019, 8:45 AM');
-      expect(getTextValue(endDate)).toBe('5/6/2019, 10:45 AM');
+      expect(getTextValue(startDate).replaceAll(' ', ' ')).toBe('2/3/2019, 8:45 AM');
+      expect(getTextValue(endDate).replaceAll(' ', ' ')).toBe('5/6/2019, 10:45 AM');
 
       let button = getByRole('button');
       triggerPress(button);
@@ -496,10 +496,10 @@ describe('DateRangePicker', function () {
       expect(selected.children[0]).toHaveAttribute('aria-label', 'Selected Range: Sunday, February 3 to Monday, May 6, 2019, Sunday, February 3, 2019 selected');
 
       let startTimeField = getAllByLabelText('Start time')[0];
-      expect(getTextValue(startTimeField)).toBe('8:45 AM');
+      expect(getTextValue(startTimeField).replaceAll(' ', ' ')).toBe('8:45 AM');
 
       let endTimeField = getAllByLabelText('End time')[0];
-      expect(getTextValue(endTimeField)).toBe('10:45 AM');
+      expect(getTextValue(endTimeField).replaceAll(' ', ' ')).toBe('10:45 AM');
 
       // selecting a date should not close the popover
       triggerPress(getByLabelText('Sunday, February 10, 2019 selected'));
@@ -508,8 +508,8 @@ describe('DateRangePicker', function () {
       expect(dialog).toBeVisible();
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenCalledWith({start: new CalendarDateTime(2019, 2, 10, 8, 45), end: new CalendarDateTime(2019, 2, 17, 10, 45)});
-      expect(getTextValue(startDate)).toBe('2/10/2019, 8:45 AM');
-      expect(getTextValue(endDate)).toBe('2/17/2019, 10:45 AM');
+      expect(getTextValue(startDate).replaceAll(' ', ' ')).toBe('2/10/2019, 8:45 AM');
+      expect(getTextValue(endDate).replaceAll(' ', ' ')).toBe('2/17/2019, 10:45 AM');
 
       let hour = within(startTimeField).getByLabelText('hour,');
       expect(hour).toHaveAttribute('role', 'spinbutton');
@@ -524,8 +524,8 @@ describe('DateRangePicker', function () {
       expect(dialog).toBeVisible();
       expect(onChange).toHaveBeenCalledTimes(2);
       expect(onChange).toHaveBeenCalledWith({start: new CalendarDateTime(2019, 2, 10, 9, 45), end: new CalendarDateTime(2019, 2, 17, 10, 45)});
-      expect(getTextValue(startDate)).toBe('2/10/2019, 9:45 AM');
-      expect(getTextValue(endDate)).toBe('2/17/2019, 10:45 AM');
+      expect(getTextValue(startDate).replaceAll(' ', ' ')).toBe('2/10/2019, 9:45 AM');
+      expect(getTextValue(endDate).replaceAll(' ', ' ')).toBe('2/17/2019, 10:45 AM');
 
       hour = within(endTimeField).getByLabelText('hour,');
       expect(hour).toHaveAttribute('role', 'spinbutton');
@@ -540,8 +540,8 @@ describe('DateRangePicker', function () {
       expect(dialog).toBeVisible();
       expect(onChange).toHaveBeenCalledTimes(3);
       expect(onChange).toHaveBeenCalledWith({start: new CalendarDateTime(2019, 2, 10, 9, 45), end: new CalendarDateTime(2019, 2, 17, 11, 45)});
-      expect(getTextValue(startDate)).toBe('2/10/2019, 9:45 AM');
-      expect(getTextValue(endDate)).toBe('2/17/2019, 11:45 AM');
+      expect(getTextValue(startDate).replaceAll(' ', ' ')).toBe('2/10/2019, 9:45 AM');
+      expect(getTextValue(endDate).replaceAll(' ', ' ')).toBe('2/17/2019, 11:45 AM');
     });
 
     it('should not fire onChange until both date range and time range are selected', function () {
@@ -628,8 +628,8 @@ describe('DateRangePicker', function () {
       let startValue = toCalendarDateTime(today(getLocalTimeZone())).set({day: 1});
       let endValue = toCalendarDateTime(today(getLocalTimeZone())).set({day: 2});
       expect(onChange).toHaveBeenCalledWith({start: startValue, end: endValue});
-      expect(getTextValue(startDate)).toBe(formatter.format(startValue.toDate(getLocalTimeZone())));
-      expect(getTextValue(endDate)).toBe(formatter.format(endValue.toDate(getLocalTimeZone())));
+      expect(getTextValue(startDate).replaceAll(' ', ' ')).toBe(formatter.format(startValue.toDate(getLocalTimeZone())));
+      expect(getTextValue(endDate).replaceAll(' ', ' ')).toBe(formatter.format(endValue.toDate(getLocalTimeZone())));
     });
 
     it('should confirm time placeholders on blur if date range is selected', function () {
@@ -668,8 +668,8 @@ describe('DateRangePicker', function () {
       let startValue = toCalendarDateTime(today(getLocalTimeZone())).set({day: 1});
       let endValue = toCalendarDateTime(today(getLocalTimeZone())).set({day: 2});
       expect(onChange).toHaveBeenCalledWith({start: startValue, end: endValue});
-      expect(getTextValue(startDate)).toBe(formatter.format(startValue.toDate(getLocalTimeZone())));
-      expect(getTextValue(endDate)).toBe(formatter.format(endValue.toDate(getLocalTimeZone())));
+      expect(getTextValue(startDate).replaceAll(' ', ' ')).toBe(formatter.format(startValue.toDate(getLocalTimeZone())));
+      expect(getTextValue(endDate).replaceAll(' ', ' ')).toBe(formatter.format(endValue.toDate(getLocalTimeZone())));
     });
 
     it('should not confirm on blur if date range is not selected', function () {
@@ -745,7 +745,7 @@ describe('DateRangePicker', function () {
       triggerPress(enabledCells[1].firstChild);
 
       for (let timeField of [startTimeField, endTimeField]) {
-        let hour = within(timeField).getByLabelText('hour');
+        let hour = within(timeField).getByLabelText('hour,');
         act(() => hour.focus());
         fireEvent.keyDown(hour, {key: 'ArrowUp'});
         fireEvent.keyUp(hour, {key: 'ArrowUp'});
@@ -753,14 +753,14 @@ describe('DateRangePicker', function () {
 
         fireEvent.keyDown(hour, {key: 'ArrowRight'});
         fireEvent.keyUp(hour, {key: 'ArrowRight'});
-        expect(document.activeElement).toHaveAttribute('aria-label', 'minute');
+        expect(document.activeElement).toHaveAttribute('aria-label', 'minute, ');
         fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
         expect(document.activeElement).toHaveAttribute('aria-valuetext', '00');
 
         fireEvent.keyDown(hour, {key: 'ArrowRight'});
         fireEvent.keyUp(hour, {key: 'ArrowRight'});
-        expect(document.activeElement).toHaveAttribute('aria-label', 'AM/PM');
+        expect(document.activeElement).toHaveAttribute('aria-label', 'AM/PM, ');
         fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
       }
@@ -770,8 +770,8 @@ describe('DateRangePicker', function () {
 
       let startValue = toCalendarDateTime(today(getLocalTimeZone())).set({day: 1});
       let endValue = toCalendarDateTime(today(getLocalTimeZone())).set({day: 2});
-      expect(getTextValue(startDate)).toBe(formatter.format(startValue.toDate(getLocalTimeZone())));
-      expect(getTextValue(endDate)).toBe(formatter.format(endValue.toDate(getLocalTimeZone())));
+      expect(getTextValue(startDate).replaceAll(' ', ' ')).toBe(formatter.format(startValue.toDate(getLocalTimeZone())));
+      expect(getTextValue(endDate).replaceAll(' ', ' ')).toBe(formatter.format(endValue.toDate(getLocalTimeZone())));
 
       let clear = getAllByRole('button')[1];
       triggerPress(clear);
@@ -1020,7 +1020,7 @@ describe('DateRangePicker', function () {
       expect(endField).not.toHaveAttribute('aria-describedby');
 
       let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
-      expect(description).toBe('Selected Range: February 3, 2020 at 8:00 AM to February 10, 2020 at 10:00 AM');
+      expect(description.replaceAll(' ', ' ')).toBe('Selected Range: February 3, 2020 at 8:00 AM to February 10, 2020 at 10:00 AM');
     });
 
     it('should handle selected range description when start and end dates are the same', function () {
