@@ -1,5 +1,6 @@
 {
   "actions": "動作",
   "hideButtonLabel": "顯示較少",
+  "noTags": "無",
   "showAllButtonLabel": "顯示全部 ({tagCount, number})"
 }
