@@ -12,8 +12,8 @@
 
 import {AriaRadioGroupProps, AriaRadioProps, Orientation, useFocusRing, useHover, usePress, useRadio, useRadioGroup, VisuallyHidden} from 'react-aria';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
 import {LabelContext} from './Label';
+import {mergeProps, useObjectRef} from '@react-aria/utils';
 import {RadioGroupState, useRadioGroupState, ValidationState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, useState} from 'react';
 import {TextContext} from './Text';
@@ -121,11 +121,8 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
     defaultClassName: 'react-aria-RadioGroup'
   });
 
-  let DOMProps = filterDOMProps(props);
-  delete DOMProps.id;
-
   return (
-    <div {...DOMProps} {...radioGroupProps} {...renderProps} ref={ref} slot={props.slot}>
+    <div {...radioGroupProps} {...renderProps} ref={ref} slot={props.slot}>
       <Provider
         values={[
           [InternalRadioContext, state],

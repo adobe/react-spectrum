@@ -12,7 +12,6 @@
 
 import {AriaMeterProps, useMeter} from 'react-aria';
 import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {filterDOMProps} from '@react-aria/utils';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 
@@ -58,11 +57,8 @@ function Meter(props: MeterProps, ref: ForwardedRef<HTMLDivElement>) {
     }
   });
 
-  let DOMProps = filterDOMProps(props);
-  delete DOMProps.id;
-
   return (
-    <div {...DOMProps} {...meterProps} {...renderProps} ref={ref} slot={props.slot}>
+    <div {...meterProps} {...renderProps} ref={ref} slot={props.slot}>
       <LabelContext.Provider value={{...labelProps, ref: labelRef, elementType: 'span'}}>
         {renderProps.children}
       </LabelContext.Provider>
