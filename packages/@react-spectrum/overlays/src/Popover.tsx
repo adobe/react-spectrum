@@ -24,8 +24,7 @@ import {useLayoutEffect} from '@react-aria/utils';
 interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef' | 'maxHeight'>, StyleProps {
   children: ReactNode,
   hideArrow?: boolean,
-  state: OverlayTriggerState,
-  shouldContainFocus?: boolean
+  state: OverlayTriggerState
 }
 
 interface PopoverWrapperProps extends PopoverProps {

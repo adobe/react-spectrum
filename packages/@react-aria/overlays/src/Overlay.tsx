@@ -23,9 +23,7 @@ export interface OverlayProps {
    */
   portalContainer?: Element,
   /** The overlay to render in the portal. */
-  children: ReactNode,
-  /** Whether to contain focus within the overlay. This is an override, by default Dialogs contain and nothing else does. */
-  shouldContainFocus?: boolean
+  children: ReactNode
 }
 
 export const OverlayContext = React.createContext(null);
@@ -46,7 +44,7 @@ export function Overlay(props: OverlayProps) {
 
   let contents = (
     <OverlayContext.Provider value={contextValue}>
-      <FocusScope restoreFocus contain={props.shouldContainFocus ?? contain}>
+      <FocusScope restoreFocus contain={contain}>
         {props.children}
       </FocusScope>
     </OverlayContext.Provider>
