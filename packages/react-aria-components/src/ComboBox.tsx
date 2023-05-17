@@ -120,7 +120,7 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
           }
         }]
       ]}>
-      <div {...DOMProps}  {...renderProps} ref={ref} slot={props.slot} />
+      <div {...DOMProps} {...renderProps} ref={ref} slot={props.slot} />
       {portal}
     </Provider>
   );

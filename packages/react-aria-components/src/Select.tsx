@@ -85,7 +85,6 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
   let DOMProps = filterDOMProps(props);
   delete DOMProps.id;
 
-
   return (
     <Provider
       values={[
