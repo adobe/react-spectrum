@@ -314,33 +314,16 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain: boolean) {
 
       let focusedElement = document.activeElement;
       let scope = scopeRef.current;
-      let childScopeRef = getChildScopeElementIsIn(focusedElement, scopeRef);
-      if (childScopeRef == null) {
+      if (!isElementInScope(focusedElement, scope)) {
         return;
       }
-      let focusNextInChildScope = (childScopeRef: ScopeRef): FocusableElement | null => {
-        if (childScopeRef !== scopeRef) {
-          let walker = getFocusableTreeWalker(getScopeRoot(childScopeRef.current), {tabbable: true}, scope);
-          walker.currentNode = focusedElement;
-          let nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as FocusableElement;
-          if (nextElement) {
-            return nextElement;
-          } else {
-            return focusNextInChildScope(focusScopeTree.getTreeNode(childScopeRef).parent.scopeRef);
-          }
-        }
-        return null;
-      };
-      let nextElement = focusNextInChildScope(childScopeRef);
 
-      if (!nextElement && isElementInScope(focusedElement, scope)) {
-        let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable: true}, scope);
-        walker.currentNode = focusedElement;
-        nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as FocusableElement;
-        if (!nextElement) {
-          walker.currentNode = e.shiftKey ? scope[scope.length - 1].nextElementSibling : scope[0].previousElementSibling;
-          nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as FocusableElement;
-        }
+      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable: true}, scope);
+      walker.currentNode = focusedElement;
+      let nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as FocusableElement;
+      if (!nextElement) {
+        walker.currentNode = e.shiftKey ? scope[scope.length - 1].nextElementSibling : scope[0].previousElementSibling;
+        nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode())  as FocusableElement;
       }
 
       e.preventDefault();
@@ -410,7 +393,7 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain: boolean) {
 }
 
 function isElementInAnyScope(element: Element) {
-  return !!isElementInChildScope(element);
+  return isElementInChildScope(element);
 }
 
 function isElementInScope(element: Element, scope: Element[]) {
@@ -434,26 +417,9 @@ function isElementInChildScope(element: Element, scope: ScopeRef = null) {
   return false;
 }
 
-function getChildScopeElementIsIn(element: Element, scope: ScopeRef = null): ScopeRef | null {
-  // If the element is within a top layer element (e.g. toasts), always allow moving focus there.
-  if (element instanceof Element && element.closest('[data-react-aria-top-layer]')) {
-    return null;
-  }
-
-  // node.contains in isElementInScope covers child scopes that are also DOM children,
-  // but does not cover child scopes in portals.
-  for (let {scopeRef: s} of focusScopeTree.traverse(focusScopeTree.getTreeNode(scope))) {
-    if (isElementInScope(element, s.current)) {
-      return s;
-    }
-  }
-
-  return null;
-}
-
 /** @private */
 export function isElementInChildOfActiveScope(element: Element) {
-  return !!isElementInChildScope(element, activeScope);
+  return isElementInChildScope(element, activeScope);
 }
 
 function isAncestorScope(ancestor: ScopeRef, scope: ScopeRef) {
@@ -568,7 +534,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
     let onFocus = () => {
       // If focusing an element in a child scope of the currently active scope, the child becomes active.
       // Moving out of the active scope to an ancestor is not allowed.
-      if ((!activeScope || isAncestorScope(activeScope, scopeRef)) &&
+      if ((!activeScope || isAncestorScope(activeScope, scopeRef)) &&             
       isElementInScope(document.activeElement, scopeRef.current)
       ) {
         activeScope = scopeRef;
@@ -617,13 +583,6 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
       if (!document.body.contains(nodeToRestore) || nodeToRestore === document.body) {
         nodeToRestore = null;
         focusScopeTree.getTreeNode(scopeRef).nodeToRestore = null;
-      }
-
-      if (nodeToRestore && nextElement && nodeToRestore === nextElement) {
-        e.preventDefault();
-        e.stopPropagation();
-        focusElement(nextElement, true);
-        return;
       }
 
       // If there is no next element, or it is outside the current scope, move focus to the
@@ -721,19 +680,9 @@ export function getFocusableTreeWalker(root: Element, opts?: FocusManagerOptions
           return NodeFilter.FILTER_REJECT;
         }
 
-        let scopeRef = null;
-        if (scope) {
-          for (let node of focusScopeTree.traverse()) {
-            if (node.scopeRef.current === scope) {
-              scopeRef = node.scopeRef;
-              break;
-            }
-          }
-        }
-
         if ((node as Element).matches(selector)
           && isElementVisible(node as Element)
-          && ((!scope || isElementInScope(node as Element, scope)) || (scopeRef && isElementInChildScope(node as Element, scopeRef)))
+          && (!scope || isElementInScope(node as Element, scope))
           && (!opts?.accept || opts.accept(node as Element))
         ) {
           return NodeFilter.FILTER_ACCEPT;
