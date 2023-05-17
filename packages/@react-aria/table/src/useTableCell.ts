@@ -47,9 +47,10 @@ export interface TableCellAria {
  */
 export function useTableCell<T>(props: AriaTableCellProps, state: TableState<T>, ref: RefObject<FocusableElement>): TableCellAria {
   let {gridCellProps, isPressed} = useGridCell(props, state, ref);
-
-  let columnKey = state.collection.columns[props.node.index].key;
-  if (state.collection.rowHeaderColumnKeys.has(columnKey)) {
+  // TODO: See if we can remove the ? here when we provide columns to the TableBody and thus don't cache the row node
+  // data any longer since columns will change and
+  let columnKey = state.collection.columns[props.node.index]?.key;
+  if (columnKey != null && state.collection.rowHeaderColumnKeys.has(columnKey)) {
     gridCellProps.role = 'rowheader';
     gridCellProps.id = getCellId(state, props.node.parentKey, columnKey);
   }

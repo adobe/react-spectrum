@@ -1747,6 +1747,7 @@ describe('TableView', function () {
           </Row>
         );
       }
+
       it('should send focus to the appropriate column and row if both the current row and column are removed', function () {
         let itemsLocal = items;
         let columnsLocal = columns;
@@ -1756,13 +1757,13 @@ describe('TableView', function () {
               {column => <Column {...column}>{column.name}</Column>}
             </TableHeader>
             <ColumnContext.Provider value={{columns}}>
-            <TableBody items={items}>
-              {item =>
-              (<MyRow columns={columns}>
-                {column => <Cell>{item[column.key]}</Cell>}
-              </MyRow>)
-              }
-            </TableBody>
+              <TableBody items={items}>
+                {item =>
+                (<MyRow columns={columns}>
+                  {column => <Cell>{item[column.key]}</Cell>}
+                </MyRow>)
+                }
+              </TableBody>
             </ColumnContext.Provider>
           </TableView>
         );
@@ -1784,7 +1785,7 @@ describe('TableView', function () {
 
         focusCell(tree, 'Foo 2');
 
-        rerender(tree, renderJSX({}, [itemsLocal[0], itemsLocal[0]], columnsLocal));
+        rerender(tree, renderJSX({}, [itemsLocal[0]], columnsLocal));
 
         expect(document.activeElement).toBe(getCell(tree, 'Foo 1'));
       });

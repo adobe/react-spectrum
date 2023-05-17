@@ -1446,6 +1446,8 @@ function TableCheckboxCell({cell}) {
 function TableCell({cell}) {
   let {state} = useTableContext();
   let ref = useRef();
+  // TODO: See if we can remove the ? here when we provide columns to the TableBody and thus don't cache the row node
+  // data any longer since columns will change and trigger a fresh
   let columnProps = state.collection.columns[cell.index]?.props as SpectrumColumnProps<unknown>;
   let isDisabled = state.disabledKeys.has(cell.parentKey);
   let {gridCellProps} = useTableCell({
@@ -1463,17 +1465,17 @@ function TableCell({cell}) {
             styles,
             'spectrum-Table-cell',
             {
-              'spectrum-Table-cell--divider': columnProps.showDivider && cell.nextKey !== null,
-              'spectrum-Table-cell--hideHeader': columnProps.hideHeader,
+              'spectrum-Table-cell--divider': columnProps?.showDivider && cell.nextKey !== null,
+              'spectrum-Table-cell--hideHeader': columnProps?.hideHeader,
               'is-disabled': isDisabled
             },
             classNames(
               stylesOverrides,
               'react-spectrum-Table-cell',
               {
-                'react-spectrum-Table-cell--alignStart': columnProps.align === 'start',
-                'react-spectrum-Table-cell--alignCenter': columnProps.align === 'center',
-                'react-spectrum-Table-cell--alignEnd': columnProps.align === 'end'
+                'react-spectrum-Table-cell--alignStart': columnProps?.align === 'start',
+                'react-spectrum-Table-cell--alignCenter': columnProps?.align === 'center',
+                'react-spectrum-Table-cell--alignEnd': columnProps?.align === 'end'
               }
             )
           )
