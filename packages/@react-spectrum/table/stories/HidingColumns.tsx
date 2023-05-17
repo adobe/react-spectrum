@@ -69,15 +69,22 @@ export function HidingColumns(props) {
         <TableHeader columns={visibleColumnsArray}>
           {column => <Column {...column}>{column.title}</Column>}
         </TableHeader>
-        <ColumnContext.Provider value={{columns: visibleColumnsArray}}>
-          <TableBody items={data}>
+        {/* <ColumnContext.Provider value={{columns: visibleColumnsArray}}>
+          <TableBody items={data} columns={visibleColumnsArray}>
             {item => (
               <MyRow columns={visibleColumnsArray}>
                 {column => <Cell>{item[column.key]}</Cell>}
               </MyRow>
             )}
           </TableBody>
-        </ColumnContext.Provider>
+        </ColumnContext.Provider> */}
+        <TableBody items={data} columns={visibleColumnsArray}>
+          {item => (
+            <Row columns={visibleColumnsArray}>
+              {column => <Cell>{item[column.key]}</Cell>}
+            </Row>
+          )}
+        </TableBody>
       </TableView>
     </Flex>
   );

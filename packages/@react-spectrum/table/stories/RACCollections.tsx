@@ -67,8 +67,9 @@ export function Column<T extends object>(props: ColumnProps<T>): JSX.Element {
   return <column multiple={{...props, rendered: props.title ?? props.children}}>{children}</column>;
 }
 
+// TODO: add columns to prop type if we wanna go this route. Bit wary of using columns as a dep
 export function TableBody<T extends object>(props: TableBodyProps<T>) {
-  let children = useCollectionChildren(props);
+  let children = useCollectionChildren(props, [props.columns]);
 
   // @ts-ignore
   return <tablebody multiple={props}>{children}</tablebody>;
@@ -100,6 +101,8 @@ export function Row<T extends object>({ id, columns, children }: RowProps<T>) {
     selectionMode,
     allowsDragging} = useTablePropsContext();
 
+
+  // TODO: perhaps we can cycle though columns and construct our leaf elements?
   return (
     <BaseRow id={id}>
       {allowsDragging && (

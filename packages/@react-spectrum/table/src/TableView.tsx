@@ -1446,8 +1446,6 @@ function TableCheckboxCell({cell}) {
 function TableCell({cell}) {
   let {state} = useTableContext();
   let ref = useRef();
-  // TODO: See if we can remove the ? here when we provide columns to the TableBody and thus don't cache the row node
-  // data any longer since columns will change and trigger a fresh
   let columnProps = state.collection.columns[cell.index]?.props as SpectrumColumnProps<unknown>;
   let isDisabled = state.disabledKeys.has(cell.parentKey);
   let {gridCellProps} = useTableCell({

@@ -598,9 +598,12 @@ interface CachedChildrenOptions<T> extends CollectionProps<T> {
   addIdAndValue?: boolean
 }
 
-export function useCachedChildren<T extends object>(props: CachedChildrenOptions<T>) {
+export function useCachedChildren<T extends object>(props: CachedChildrenOptions<T>, depArray: ReadonlyArray<any> = []) {
   let {children, items, idScope, addIdAndValue} = props;
-  let cache = useMemo(() => new WeakMap(), []);
+  let cache = useMemo(() => {
+    return new WeakMap();
+  }, [...depArray]);
+
   return useMemo(() => {
     if (items && typeof children === 'function') {
       let res: ReactElement[] = [];
@@ -636,8 +639,8 @@ export function useCachedChildren<T extends object>(props: CachedChildrenOptions
   }, [children, items, cache, idScope, addIdAndValue]);
 }
 
-export function useCollectionChildren<T extends object>(props: CachedChildrenOptions<T>) {
-  return useCachedChildren({...props, addIdAndValue: true});
+export function useCollectionChildren<T extends object>(props: CachedChildrenOptions<T>, depArray: ReadonlyArray<any> = []) {
+  return useCachedChildren({...props, addIdAndValue: true}, depArray);
 }
 
 const ShallowRenderContext = createContext(false);
