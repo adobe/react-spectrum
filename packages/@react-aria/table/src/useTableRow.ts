@@ -26,6 +26,7 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T>, ref
   let {node} = props;
   let {rowProps, ...states} = useGridRow<T, TableCollection<T>, TableState<T>>(props, state, ref);
 
+  rowProps['aria-rowindex'] = state.collection.headerRows.length + node.index + 1;
   return {
     rowProps: {
       ...rowProps,
