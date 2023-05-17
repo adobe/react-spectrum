@@ -208,7 +208,7 @@ describe('useInteractOutside', function () {
     });
   });
 
-  describe('shadow dom support', function () {
+  describe('react in shadow root', function () {
     function App({onInteractOutside}) {
       const ref = useRef(null);
       useInteractOutside({
@@ -217,8 +217,10 @@ describe('useInteractOutside', function () {
       });
 
       return (<div>
-        <div id="outside">I am outside</div>
-        <div id="inside" ref={ref}>I am inside</div>
+        <div id="outside-popover" />
+        <div id="popover" ref={ref}>
+          <div id="inside-popover" />
+        </div>
       </div>);
     }
 
@@ -242,19 +244,53 @@ describe('useInteractOutside', function () {
       return (<div id="shadowHost" />);
     }
 
-    it('does not trigger if clicking inside and triggers if clicking outside', function () {
+    it('does not trigger when clicking inside popover', function () {
       const onInteractOutside = jest.fn();
       render(<Example onInteractOutside={onInteractOutside} />);
 
       const shadowDom = document.getElementById('shadowHost').shadowRoot;
-      const inside = shadowDom.querySelector('#inside');
-      fireEvent.mouseDown(inside);
-      fireEvent.mouseUp(inside);
-      expect(onInteractOutside).not.toHaveBeenCalled();
+      const insidePopover = shadowDom.getElementById('inside-popover');
+      fireEvent.mouseDown(insidePopover);
+      fireEvent.mouseUp(insidePopover);
 
-      const outside = shadowDom.querySelector('#outside');
-      fireEvent.mouseDown(outside);
-      fireEvent.mouseUp(outside);
+      expect(onInteractOutside).not.toHaveBeenCalled();
+    });
+
+    it('does not trigger when clicking the popover', function () {
+      const onInteractOutside = jest.fn();
+      render(<Example onInteractOutside={onInteractOutside} />);
+
+      const shadowDom = document.getElementById('shadowHost').shadowRoot;
+      const popover = shadowDom.getElementById('popover');
+      fireEvent.mouseDown(popover);
+      fireEvent.mouseUp(popover);
+
+      expect(onInteractOutside).not.toHaveBeenCalled();
+    });
+
+    it('triggers when clicking outside the popover', function () {
+      const onInteractOutside = jest.fn();
+      render(<Example onInteractOutside={onInteractOutside} />);
+
+      const shadowDom = document.getElementById('shadowHost').shadowRoot;
+      const outsidePopover = shadowDom.getElementById('outside-popover');
+      fireEvent.mouseDown(outsidePopover);
+      fireEvent.mouseUp(outsidePopover);
+
+      expect(onInteractOutside).toHaveBeenCalledTimes(1);
+    });
+
+    it('triggers when clicking a button outside the shadow dom altogether', function () {
+      const onInteractOutside = jest.fn();
+      render(<>
+        <Example onInteractOutside={onInteractOutside} />
+        <button id="outside-button" />
+      </>);
+
+      const button = document.getElementById('outside-button');
+      fireEvent.mouseDown(button);
+      fireEvent.mouseUp(button);
+
       expect(onInteractOutside).toHaveBeenCalledTimes(1);
     });
   });

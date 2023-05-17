@@ -127,10 +127,9 @@ function isValidEvent(event, ref) {
     return false;
   }
 
-  const refWithChildren = [ref.current, ...Array.from(ref.current.childNodes)];
-  return !hasIntersection(refWithChildren, event.composedPath());
-}
-
-function hasIntersection(a: any[], b: any[]) {
-  return a.some(value => b.includes(value));
+  // When the event source is inside a Shadow DOM, event.target is just the shadow root.
+  // Using event.composedPath instead means we can get the actual element inside the shadow root.
+  // This only works if the shadow root is open, there is no way to detect if it is closed.
+  // If the event composed path contains the ref, interaction is inside.
+  return !event.composedPath().includes(ref.current);
 }
