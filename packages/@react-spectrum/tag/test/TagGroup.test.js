@@ -112,7 +112,7 @@ describe('TagGroup', function () {
     expect(tags[0]).toHaveAttribute('tabIndex', '0');
   });
 
-  it.skip.each`
+  it.each`
     Name                                                | props                                         | orders
     ${'(left/right arrows, ltr + horizontal) TagGroup'} | ${{locale: 'de-DE'}}                          | ${[{action: () => {userEvent.tab();}, index: 0}, {action: pressArrowRight, index: 1}, {action: pressArrowLeft, index: 0}, {action: pressArrowLeft, index: 2}]}
     ${'(left/right arrows, rtl + horizontal) TagGroup'} | ${{locale: 'ar-AE'}}                          | ${[{action: () => {userEvent.tab();}, index: 0}, {action: pressArrowLeft, index: 1}, {action: pressArrowRight, index: 0}, {action: pressArrowRight, index: 2}]}
@@ -493,7 +493,6 @@ describe('TagGroup', function () {
       .mockImplementationOnce(() => ({x: 200, y: 400, width: 95, height: 32, top: 400, right: 290, bottom: 435, left: 200}))
       .mockImplementationOnce(() => ({x: 200, y: 300, width: 200, height: 128, top: 300, right: 400, bottom: 435, left: 200}))
       .mockImplementationOnce(() => ({x: 265, y: 335, width: 75, height: 32, top: 335, right: 345, bottom: 370, left: 265}));
-    let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px'}));
 
     let {getAllByRole, getByRole} = render(
       <Provider theme={theme}>
@@ -526,17 +525,20 @@ describe('TagGroup', function () {
     expect(button).toHaveTextContent('Show all (7)');
 
     offsetWidth.mockReset();
-    computedStyles.mockReset();
   });
 
   it('maxRows should not show button if there is enough room to show all tags', function () {
     let offsetWidth = jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
-      .mockImplementationOnce(() => ({x: 200, y: 300, width: 75, height: 32, top: 300, right: 275, bottom: 335, left: 200}))
-      .mockImplementationOnce(() => ({x: 275, y: 300, width: 110, height: 32, top: 300, right: 385, bottom: 335, left: 275}))
-      .mockImplementationOnce(() => ({x: 200, y: 335, width: 65, height: 32, top: 335, right: 265, bottom: 370, left: 200}))
-      .mockImplementationOnce(() => ({x: 265, y: 335, width: 75, height: 32, top: 335, right: 345, bottom: 370, left: 265}))
-      .mockImplementationOnce(() => ({x: 200, y: 370, width: 120, height: 32, top: 370, right: 320, bottom: 400, left: 200}));
-    let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px'}));
+      .mockImplementationOnce(() => ({width: 44, y: 411}))
+      .mockImplementationOnce(() => ({width: 46, y: 411}))
+      .mockImplementationOnce(() => ({width: 80}))
+      .mockImplementationOnce(() => ({right: 432}))
+      .mockImplementationOnce(() => ({right: 336}))
+      .mockImplementationOnce(() => ({width: 44, y: 411}))
+      .mockImplementationOnce(() => ({width: 46, y: 411}))
+      .mockImplementationOnce(() => ({width: 80}))
+      .mockImplementationOnce(() => ({right: 432}))
+      .mockImplementationOnce(() => ({right: 336}));
     let {getAllByRole, queryAllByRole} = render(
       <Provider theme={theme}>
         <TagGroup maxRows={2} aria-label="tag group">
@@ -553,7 +555,6 @@ describe('TagGroup', function () {
     expect(buttons.length).toBe(0);
 
     offsetWidth.mockReset();
-    computedStyles.mockReset();
   });
 
   it('can keyboard navigate to a custom action', function () {
@@ -568,7 +569,6 @@ describe('TagGroup', function () {
         };
       }
     ];
-    let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px'}));
     mockImplementation(target, mockCalls, true);
     let {getAllByRole, getByRole} = render(
       <Provider theme={theme}>
@@ -612,8 +612,6 @@ describe('TagGroup', function () {
 
     userEvent.tab({shift: true});
     expect(document.activeElement).toBe(tags[1]);
-
-    computedStyles.mockReset();
   });
 
   it('can keyboard navigate to show all button and custom action', function () {
@@ -627,7 +625,6 @@ describe('TagGroup', function () {
       .mockImplementationOnce(() => ({x: 200, y: 300, width: 200, height: 128, top: 300, right: 400, bottom: 435, left: 200}))
       .mockImplementationOnce(() => ({x: 265, y: 335, width: 75, height: 32, top: 335, right: 345, bottom: 370, left: 265}))
       .mockImplementationOnce(() => ({x: 200, y: 300, width: 75, height: 32, top: 300, right: 275, bottom: 335, left: 200}));
-    let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px'}));
     let {getAllByRole} = render(
       <Provider theme={theme}>
         <TagGroup
@@ -680,12 +677,9 @@ describe('TagGroup', function () {
     expect(onClearSpy).toHaveBeenCalledWith();
 
     offsetWidth.mockReset();
-    computedStyles.mockReset();
   });
 
   it('action group is labelled correctly', function () {
-    let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px'}));
-
     let {getByRole} = render(
       <Provider theme={theme}>
         <TagGroup
@@ -704,8 +698,6 @@ describe('TagGroup', function () {
     let tagGroup = getByRole('grid');
     expect(actionGroup).toHaveAttribute('aria-label', 'Actions');
     expect(actionGroup).toHaveAttribute('aria-labelledby', `${tagGroup.id} ${actionGroup.id}`);
-
-    computedStyles.mockReset();
   });
 
 
@@ -722,8 +714,6 @@ describe('TagGroup', function () {
   });
 
   it('should allow you to tab into TagGroup if empty with link', async function () {
-    let computedStyles = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({marginRight: '4px'}));
-
     let renderEmptyState = () => (
       <span>No tags. <Link><a href="//react-spectrum.com">Click here</a></Link> to add some.</span>
     );
@@ -738,6 +728,5 @@ describe('TagGroup', function () {
     let link = getByRole('link');
     userEvent.tab();
     expect(document.activeElement).toBe(link);
-    computedStyles.mockReset();
   });
 });

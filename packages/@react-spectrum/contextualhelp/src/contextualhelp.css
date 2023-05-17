@@ -27,6 +27,7 @@
     block-size: var(--spectrum-contextualhelp-icon-size);
     inline-size: var(--spectrum-contextualhelp-icon-size);
   }
+
 }
 
 .react-spectrum-ContextualHelp-dialog.react-spectrum-ContextualHelp-dialog {
