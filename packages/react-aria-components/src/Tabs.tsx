@@ -118,7 +118,7 @@ function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
 
   return (
     <div
-      {...filterDOMProps(props as any)}
+      {...filterDOMProps(props)}
       {...renderProps}
       ref={ref}
       slot={props.slot}

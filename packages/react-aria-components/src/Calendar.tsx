@@ -9,19 +9,19 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {CalendarProps as BaseCalendarProps, RangeCalendarProps as BaseRangeCalendarProps, DateValue, mergeProps, useCalendar, useCalendarCell, useCalendarGrid, useFocusRing, useHover, useLocale, useRangeCalendar, VisuallyHidden} from 'react-aria';
+import {AriaCalendarProps, AriaRangeCalendarProps, DateValue, mergeProps, useCalendar, useCalendarCell, useCalendarGrid, useFocusRing, useHover, useLocale, useRangeCalendar, VisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CalendarDate, createCalendar, DateDuration, endOfMonth, getWeeksInMonth, isSameDay, isSameMonth} from '@internationalized/date';
 import {CalendarState, RangeCalendarState, useCalendarState, useRangeCalendarState} from 'react-stately';
-import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {createContext, ForwardedRef, forwardRef, ReactElement, useContext} from 'react';
-import {DOMAttributes, FocusableElement} from '@react-types/shared';
+import {DataAttributes, DOMAttributes, FocusableElement} from '@react-types/shared';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {HeadingContext} from './Heading';
 import React from 'react';
 import {TextContext} from './Text';
 
-export interface CalendarProps<T extends DateValue> extends Omit<BaseCalendarProps<T>, 'errorMessage'>, RenderProps<CalendarState>, SlotProps {
+export interface CalendarProps<T extends DateValue> extends Omit<AriaCalendarProps<T>, 'errorMessage'>, RenderProps<CalendarState>, SlotProps {
   /**
    * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
@@ -29,7 +29,7 @@ export interface CalendarProps<T extends DateValue> extends Omit<BaseCalendarPro
   visibleDuration?: DateDuration
 }
 
-export interface RangeCalendarProps<T extends DateValue> extends Omit<BaseRangeCalendarProps<T>, 'errorMessage'>, RenderProps<RangeCalendarState>, SlotProps {
+export interface RangeCalendarProps<T extends DateValue> extends Omit<AriaRangeCalendarProps<T>, 'errorMessage'>, RenderProps<RangeCalendarState>, SlotProps {
   /**
    * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
@@ -251,7 +251,7 @@ export interface CalendarCellRenderProps {
   isInvalid: boolean
 }
 
-export interface CalendarGridProps extends StyleProps {
+export interface CalendarGridProps extends DOMProps {
   /**
    * Either a function to render calendar cells for each date in the month,
    * or children containing a `<CalendarGridHeader>`` and `<CalendarGridBody>`
@@ -296,7 +296,7 @@ function CalendarGrid(props: CalendarGridProps, ref: ForwardedRef<HTMLTableEleme
   return (
     <InternalCalendarGridContext.Provider value={{headerProps, weekDays, startDate}}>
       <table
-        {...filterDOMProps(props as any)}
+        {...filterDOMProps(props)}
         {...gridProps}
         ref={ref}
         style={props.style}
@@ -324,7 +324,7 @@ function CalendarGrid(props: CalendarGridProps, ref: ForwardedRef<HTMLTableEleme
 const _CalendarGrid = forwardRef(CalendarGrid);
 export {_CalendarGrid as CalendarGrid};
 
-export interface CalendarGridHeaderProps extends StyleProps {
+export interface CalendarGridHeaderProps extends DOMProps {
   /** A function to render a `<CalendarHeaderCell>` for a weekday name. */
   children: (day: string) => ReactElement
 }
@@ -335,7 +335,7 @@ function CalendarGridHeader(props: CalendarGridHeaderProps, ref: ForwardedRef<HT
 
   return (
     <thead
-      {...filterDOMProps(props as any)}
+      {...filterDOMProps(props)}
       {...headerProps}
       ref={ref}
       style={style}
@@ -359,7 +359,7 @@ function CalendarHeaderCell(props: CalendarHeaderCellProps, ref: ForwardedRef<HT
   let {children, style, className} = props;
   return (
     <th
-      {...filterDOMProps(props as any)}
+      {...filterDOMProps(props)}
       ref={ref}
       style={style}
       className={className || 'react-aria-CalendarHeaderCell'}>
@@ -374,7 +374,7 @@ function CalendarHeaderCell(props: CalendarHeaderCellProps, ref: ForwardedRef<HT
 const CalendarHeaderCellForwardRef = forwardRef(CalendarHeaderCell);
 export {CalendarHeaderCellForwardRef as CalendarHeaderCell};
 
-export interface CalendarGridBodyProps extends StyleProps {
+export interface CalendarGridBodyProps extends DOMProps {
   /** A function to render a `<CalendarCell>` for a given date. */
   children: (date: CalendarDate) => ReactElement
 }
@@ -388,7 +388,7 @@ function CalendarGridBody(props: CalendarGridBodyProps, ref: ForwardedRef<HTMLTa
 
   return (
     <tbody
-      {...filterDOMProps(props as any)}
+      {...filterDOMProps(props)}
       ref={ref}
       style={style}
       className={className || 'react-aria-CalendarGridBody'}>
@@ -466,7 +466,7 @@ function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRe
 
   return (
     <td {...cellProps}>
-      <div {...mergeProps(filterDOMProps(otherProps as any), buttonProps, focusProps, hoverProps, dataAttrs, renderProps)} ref={objectRef} />
+      <div {...mergeProps(filterDOMProps(otherProps), buttonProps, focusProps, hoverProps, dataAttrs, renderProps)} ref={objectRef} />
     </td>
   );
 }

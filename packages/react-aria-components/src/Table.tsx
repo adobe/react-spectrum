@@ -1,4 +1,4 @@
-import {AriaLabelingProps} from '@react-types/shared';
+import {AriaLabelingProps, DataAttributes} from '@react-types/shared';
 import {BaseCollection, CollectionContext, CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useCollectionChildren, useCollectionItemRef} from './Collection';
 import {buildHeaderRows} from '@react-stately/table';
 import {ButtonContext} from './Button';
@@ -204,7 +204,7 @@ export interface TableRenderProps {
   isDropTarget: boolean
 }
 
-export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, StyleRenderProps<TableRenderProps>, SlotProps, AriaLabelingProps {
+export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, StyleRenderProps<TableRenderProps>, SlotProps, AriaLabelingProps, DataAttributes {
   /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
   children?: ReactNode,
   /**
@@ -453,7 +453,7 @@ export interface TableBodyRenderProps {
   isEmpty: boolean
 }
 
-export interface TableBodyProps<T> extends CollectionProps<T>, StyleRenderProps<TableBodyRenderProps> {
+export interface TableBodyProps<T> extends CollectionProps<T>, StyleRenderProps<TableBodyRenderProps>, DataAttributes {
   /** Provides content to display when there are no rows in the table. */
   renderEmptyState?: () => ReactNode
 }
@@ -600,7 +600,7 @@ function TableBodyRowGroup<T>({collection, isDroppable}: {collection: TableColle
   let {rowGroupProps} = useTableRowGroup();
   return (
     <tbody
-      {...mergeProps(filterDOMProps(props as any), rowGroupProps)}
+      {...mergeProps(filterDOMProps(props), rowGroupProps)}
       {...renderProps}
       data-empty={collection.size === 0 || undefined}>
       {isDroppable && <RootDropIndicator />}
@@ -672,7 +672,7 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
 
   return (
     <th
-      {...mergeProps(filterDOMProps(props as any), columnHeaderProps, focusProps)}
+      {...mergeProps(filterDOMProps({...props, id: undefined}), columnHeaderProps, focusProps)}
       {...renderProps}
       colSpan={column.colspan}
       ref={ref}
@@ -770,7 +770,7 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
         </tr>
       )}
       <tr
-        {...mergeProps(filterDOMProps(props as any), rowProps, focusProps, hoverProps, draggableItem?.dragProps)}
+        {...mergeProps(filterDOMProps(props), rowProps, focusProps, hoverProps, draggableItem?.dragProps)}
         {...renderProps}
         ref={ref}
         data-hovered={isHovered || undefined}
@@ -836,7 +836,7 @@ function TableCell<T>({cell}: {cell: GridNode<T>}) {
 
   return (
     <td
-      {...mergeProps(filterDOMProps(props as any), gridCellProps, focusProps)}
+      {...mergeProps(filterDOMProps(props), gridCellProps, focusProps)}
       {...renderProps}
       ref={ref}
       data-focused={isFocused || undefined}
@@ -892,7 +892,7 @@ function TableDropIndicator(props: TableDropIndicatorProps, ref: ForwardedRef<HT
 
   return (
     <tr
-      {...filterDOMProps(props as any)}
+      {...filterDOMProps(props)}
       {...renderProps}
       role="row"
       ref={ref as RefObject<HTMLTableRowElement>}

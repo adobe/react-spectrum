@@ -201,7 +201,7 @@ function MenuItem<T>({item}: MenuItemProps<T>) {
     }
   });
 
-  let DOMProps = filterDOMProps(props as any);
+  let DOMProps = filterDOMProps(props);
   delete DOMProps.id;
 
   return (

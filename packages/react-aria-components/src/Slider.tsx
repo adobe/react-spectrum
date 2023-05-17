@@ -107,7 +107,7 @@ function SliderOutput({children, style, className, ...otherProps}: SliderOutputP
     values: state
   });
 
-  return <output {...mergeProps(filterDOMProps(otherProps as any), outputProps)} {...renderProps} ref={ref} />;
+  return <output {...mergeProps(filterDOMProps(otherProps), outputProps)} {...renderProps} ref={ref} />;
 }
 
 /**
@@ -127,7 +127,7 @@ function SliderTrack(props: SliderTrackProps, ref: ForwardedRef<HTMLDivElement>)
     values: state
   });
 
-  return <div {...mergeProps(filterDOMProps(props as any), trackProps)} {...renderProps} ref={domRef} />;
+  return <div {...mergeProps(filterDOMProps(props), trackProps)} {...renderProps} ref={domRef} />;
 }
 
 /**

@@ -144,7 +144,7 @@ function ModalOverlayInner(props: ModalOverlayInnerProps) {
   return (
     <Overlay>
       <div
-        {...mergeProps(filterDOMProps(props as any), underlayProps)}
+        {...mergeProps(filterDOMProps(props), underlayProps)}
         {...renderProps}
         style={style}
         ref={props.overlayRef}
@@ -179,7 +179,7 @@ function ModalContent(props: ModalContentProps) {
 
   return (
     <div
-      {...mergeProps(filterDOMProps(props as any), modalProps)}
+      {...mergeProps(filterDOMProps(props), modalProps)}
       {...renderProps}
       ref={ref}
       data-entering={entering || undefined}

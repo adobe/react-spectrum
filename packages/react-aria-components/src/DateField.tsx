@@ -162,7 +162,7 @@ function DateInput({children, slot, ...otherProps}: DateInputProps, ref: Forward
   return (
     <InternalDateInputContext.Provider value={state}>
       <div
-        {...mergeProps(filterDOMProps(otherProps as any), fieldProps, focusProps, hoverProps)}
+        {...mergeProps(filterDOMProps(otherProps), fieldProps, focusProps, hoverProps)}
         {...renderProps}
         ref={fieldRef}
         slot={slot}
@@ -225,7 +225,7 @@ function DateSegment({segment, ...otherProps}: DateSegmentProps, ref: ForwardedR
 
   return (
     <div
-      {...mergeProps(filterDOMProps(otherProps as any), segmentProps)}
+      {...mergeProps(filterDOMProps(otherProps), segmentProps)}
       {...renderProps}
       ref={domRef}
       data-type={segment.type} />

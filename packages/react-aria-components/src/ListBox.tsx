@@ -344,7 +344,7 @@ function Option<T>({item}: OptionProps<T>) {
         renderDropIndicator({type: 'item', key: item.key, dropPosition: 'before'})
       }
       <div
-        {...mergeProps(filterDOMProps(props as any), optionProps, hoverProps, draggableItem?.dragProps, droppableItem?.dropProps)}
+        {...mergeProps(filterDOMProps(props), optionProps, hoverProps, draggableItem?.dragProps, droppableItem?.dropProps)}
         {...renderProps}
         ref={ref}
         data-hovered={isHovered || undefined}

@@ -51,9 +51,13 @@ export interface AriaValidationProps {
   'aria-errormessage'?: string
 }
 
+export interface DataAttributes {
+  [key: `data-${string}`]: string
+}
+
 // A set of common DOM props that are allowed on any component
 // Ensure this is synced with DOMPropNames in filterDOMProps
-export interface DOMProps {
+export interface DOMProps extends DataAttributes {
   /**
    * The element's unique identifier. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/id).
    */

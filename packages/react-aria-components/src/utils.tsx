@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps as SharedDOMProps} from '@react-types/shared';
+import {AriaLabelingProps, DataAttributes, DOMProps as SharedDOMProps} from '@react-types/shared';
 import {mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import React, {createContext, CSSProperties, ReactNode, RefCallback, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
@@ -64,7 +64,7 @@ export interface StyleProps {
   style?: CSSProperties
 }
 
-export interface DOMProps extends StyleProps {
+export interface DOMProps extends StyleProps, DataAttributes {
   /** The children of the component. */
   children?: ReactNode
 }
@@ -76,7 +76,7 @@ export interface StyleRenderProps<T> {
   style?: CSSProperties | ((values: T) => CSSProperties)
 }
 
-export interface RenderProps<T> extends StyleRenderProps<T> {
+export interface RenderProps<T> extends StyleRenderProps<T>, DataAttributes {
   /** The children of the component. A function may be provided to alter the children based on component state. */
   children?: ReactNode | ((values: T) => ReactNode)
 }
