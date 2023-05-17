@@ -22,11 +22,9 @@ let renderTabs = (tabsProps, tablistProps, tabProps, tabpanelProps) => render(
       <Tab {...tabProps} id="b">B</Tab>
       <Tab {...tabProps} id="c">C</Tab>
     </TabList>
-    <TabPanels>
-      <TabPanel {...tabpanelProps} id="a">A</TabPanel>
-      <TabPanel {...tabpanelProps} id="b">B</TabPanel>
-      <TabPanel {...tabpanelProps} id="c">C</TabPanel>
-    </TabPanels>
+    <TabPanel {...tabpanelProps} id="a">A</TabPanel>
+    <TabPanel {...tabpanelProps} id="b">B</TabPanel>
+    <TabPanel {...tabpanelProps} id="c">C</TabPanel>
   </Tabs>
 );
 
@@ -118,7 +116,7 @@ describe('Tabs', () => {
   it('should support focus ring', () => {
     let {getAllByRole} = renderTabs({}, {}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
     let tab = getAllByRole('tab')[0];
-    
+
     expect(tab).not.toHaveAttribute('data-focus-visible');
     expect(tab).not.toHaveClass('focus');
 
@@ -149,7 +147,7 @@ describe('Tabs', () => {
   });
 
   it('should support disabled state on all tabs', () => {
-    let {getAllByRole} = renderTabs({}, {isDisabled: true}, {className: ({isDisabled}) => isDisabled ? 'disabled' : ''});
+    let {getAllByRole} = renderTabs({isDisabled: true}, {}, {className: ({isDisabled}) => isDisabled ? 'disabled' : ''});
     let tab = getAllByRole('tab')[0];
 
     expect(tab).toHaveAttribute('aria-disabled', 'true');
@@ -158,7 +156,7 @@ describe('Tabs', () => {
 
   it('should support disabled state on tab', () => {
     let className = ({isDisabled}) => isDisabled ? 'disabled' : '';
-    let {getAllByRole} = renderTabs({}, {disabledKeys: ['a'], className}, {className});
+    let {getAllByRole} = renderTabs({disabledKeys: ['a']}, {className}, {className});
     let tab = getAllByRole('tab')[0];
 
     expect(tab).toHaveAttribute('aria-disabled', 'true');
@@ -167,7 +165,7 @@ describe('Tabs', () => {
 
   it('should support selected state', () => {
     let onSelectionChange = jest.fn();
-    let {getAllByRole} = renderTabs({}, {onSelectionChange}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
+    let {getAllByRole} = renderTabs({onSelectionChange}, {}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
     let tabs = getAllByRole('tab');
 
     expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
@@ -197,5 +195,21 @@ describe('Tabs', () => {
 
     expect(tabs).toHaveAttribute('data-orientation', 'vertical');
     expect(tabs).toHaveClass('vertical');
+  });
+
+  it('should support shouldForceMount', () => {
+    let {getAllByRole} = renderTabs({}, {}, {}, {shouldForceMount: true});
+    let tabpanels = document.querySelectorAll('.react-aria-TabPanel');
+    expect(tabpanels).toHaveLength(3);
+    expect(tabpanels[0]).not.toHaveAttribute('inert');
+    expect(tabpanels[1]).toHaveAttribute('inert');
+    expect(tabpanels[2]).toHaveAttribute('inert');
+
+    let tabs = getAllByRole('tab');
+    userEvent.click(tabs[1]);
+
+    expect(tabpanels[0]).toHaveAttribute('inert');
+    expect(tabpanels[1]).not.toHaveAttribute('inert');
+    expect(tabpanels[2]).toHaveAttribute('inert');
   });
 });

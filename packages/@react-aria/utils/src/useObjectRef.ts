@@ -23,7 +23,7 @@ import {useLayoutEffect} from './';
  * @see https://reactjs.org/docs/forwarding-refs.html
  */
 export function useObjectRef<T>(forwardedRef?: ((instance: T | null) => void) | MutableRefObject<T | null> | null): MutableRefObject<T> {
-  const objRef = useRef<T>();
+  let objRef = useRef<T>();
 
   /**
    * We're using `useLayoutEffect` here instead of `useEffect` because we want
@@ -48,7 +48,7 @@ export function useObjectRef<T>(forwardedRef?: ((instance: T | null) => void) | 
         forwardedRef.current = null;
       }
     };
-  }, [forwardedRef]);
+  });
 
   return objRef;
 }
