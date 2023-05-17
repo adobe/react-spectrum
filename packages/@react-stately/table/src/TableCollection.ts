@@ -251,7 +251,8 @@ export class TableCollection<T> extends BaseCollection<T> implements ITableColle
   }
 
   getItem(key: Key): Node<T> | null {
-    // make build headers rows also create a map or add to keymap
+    // TODO: make build headers rows also create a map or add to keymap? This will allow us to not
+    // special case columns and placeholders in getKeyAfter/etc
     let potentialKey = super.getItem(key);
     if (!potentialKey) {
       for (let row of this.headerRows) {
@@ -296,7 +297,7 @@ export class TableCollection<T> extends BaseCollection<T> implements ITableColle
 
   getKeyAfter(key: Key) {
     let node = this.getItem(key);
-    if (node?.type === 'column') {
+    if (node?.type === 'column' || node?.type === 'placeholder') {
       return node.nextKey ?? null;
     }
 
@@ -305,7 +306,7 @@ export class TableCollection<T> extends BaseCollection<T> implements ITableColle
 
   getKeyBefore(key: Key) {
     let node = this.getItem(key);
-    if (node?.type === 'column') {
+    if (node?.type === 'column' || node?.type === 'placeholder') {
       return node.prevKey ?? null;
     }
 

@@ -376,6 +376,17 @@ let nestedColumns = [
   }
 ];
 
+// TODO: Currently need leaf columns to be passed to the Row in the nested column case, Row can't figure out the leaf columns
+// from the nestedColumns array...
+// TODO: Tabbing into a nested column table makes the layout blow up. Specifically
+let leafColumns = [
+  {name: 'Test', key: 'test', isRowHeader: true},
+  {name: 'Foo', key: 'foo'},
+  {name: 'Bar', key: 'bar'},
+  {name: 'Baz', key: 'baz'},
+  {name: 'Yay', key: 'yay'}
+];
+
 export const DynamicNestedColumns: TableStory = {
   args: {
     'aria-label': 'TableView with nested columns',
@@ -391,7 +402,7 @@ export const DynamicNestedColumns: TableStory = {
       </TableHeader>
       <TableBody items={items}>
         {item =>
-        (<Row columns={columns}>
+        (<Row columns={leafColumns}>
           {column => <Cell>{item[column.key]}</Cell>}
         </Row>)
         }

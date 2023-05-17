@@ -70,6 +70,16 @@ let nestedColumns = [
   }
 ];
 
+// TODO: Currently need leaf columns to be passed to the Row in the nested column case, Row can't figure out the leaf columns
+// from the nestedColumns array...
+let leafColumns = [
+  {name: 'Test', key: 'test', isRowHeader: true},
+  {name: 'Foo', key: 'foo'},
+  {name: 'Bar', key: 'bar'},
+  {name: 'Baz', key: 'baz'},
+  {name: 'Yay', key: 'yay'}
+];
+
 let items = [
   {id: 'Foo 1', test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
   {id: 'Foo 2', test: 'Test 2', foo: 'Foo 2', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
@@ -303,7 +313,7 @@ describe('TableView', function () {
     expect(grid).toHaveAttribute('data-testid', 'test');
     expect(grid).toHaveAttribute('aria-multiselectable', 'true');
     expect(grid).toHaveAttribute('aria-rowcount', '3');
-    expect(grid).toHaveAttribute('aria-colcount', '3');
+    expect(grid).toHaveAttribute('aria-colcount', '4');
 
     let rowgroups = within(grid).getAllByRole('rowgroup');
     expect(rowgroups).toHaveLength(2);
@@ -694,7 +704,7 @@ describe('TableView', function () {
         </TableHeader>
         <TableBody items={items}>
           {item =>
-          (<Row columns={nestedColumns}>
+          (<Row columns={leafColumns}>
             {column => <Cell>{item[column.key]}</Cell>}
           </Row>)
           }
