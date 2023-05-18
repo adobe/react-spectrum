@@ -409,11 +409,11 @@ governing permissions and limitations under the License.
     --spectrum-high-contrast-highlight-text: HighlightText;
     --spectrum-high-contrast-gray-text: GrayText;
 
-    --spectrum-high-contrast-focus-ring-color: var(--spectrum-high-contrast-button-text);
+    --spectrum-high-contrast-focus-ring-color: ButtonText;
   }
 
   .spectrum-FieldButton {
-    --spectrum-high-contrast-focus-ring-color: var(--spectrum-high-contrast-highlight);
+    --spectrum-high-contrast-focus-ring-color: Highlight;
   }
 }
 
