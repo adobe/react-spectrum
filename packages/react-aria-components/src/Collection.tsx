@@ -15,7 +15,6 @@ import {DOMProps, RenderProps} from './utils';
 import {Collection as ICollection, Node, SelectionBehavior, SelectionMode, ItemProps as SharedItemProps, SectionProps as SharedSectionProps} from 'react-stately';
 import {mergeProps, useIsSSR} from 'react-aria';
 import React, {cloneElement, createContext, Key, ReactElement, ReactNode, ReactPortal, useCallback, useContext, useMemo} from 'react';
-import {useLayoutEffect} from '@react-aria/utils';
 import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
 
 // This Collection implementation is perhaps a little unusual. It works by rendering the React tree into a
@@ -112,7 +111,7 @@ class BaseNode<T> {
 
   set firstChild(firstChild) {
     this._firstChild = firstChild;
-    this.ownerDocument.dirtyNodes.add(this);
+    this.ownerDocument.markDirty(this);
   }
 
   get lastChild() {
@@ -121,7 +120,7 @@ class BaseNode<T> {
 
   set lastChild(lastChild) {
     this._lastChild = lastChild;
-    this.ownerDocument.dirtyNodes.add(this);
+    this.ownerDocument.markDirty(this);
   }
 
   get previousSibling() {
@@ -130,7 +129,7 @@ class BaseNode<T> {
 
   set previousSibling(previousSibling) {
     this._previousSibling = previousSibling;
-    this.ownerDocument.dirtyNodes.add(this);
+    this.ownerDocument.markDirty(this);
   }
 
   get nextSibling() {
@@ -139,7 +138,7 @@ class BaseNode<T> {
 
   set nextSibling(nextSibling) {
     this._nextSibling = nextSibling;
-    this.ownerDocument.dirtyNodes.add(this);
+    this.ownerDocument.markDirty(this);
   }
 
   get parentNode() {
@@ -148,10 +147,11 @@ class BaseNode<T> {
 
   set parentNode(parentNode) {
     this._parentNode = parentNode;
-    this.ownerDocument.dirtyNodes.add(this);
+    this.ownerDocument.markDirty(this);
   }
 
   appendChild(child: ElementNode<T>) {
+    this.ownerDocument.startTransaction();
     if (child.parentNode) {
       child.parentNode.removeChild(child);
     }
@@ -173,8 +173,10 @@ class BaseNode<T> {
     child.nextSibling = null;
     this.lastChild = child;
 
-    this.ownerDocument.dirtyNodes.add(this);
+    this.ownerDocument.markDirty(this);
     this.ownerDocument.addNode(child);
+    this.ownerDocument.endTransaction();
+    this.ownerDocument.queueUpdate();
   }
 
   insertBefore(newNode: ElementNode<T>, referenceNode: ElementNode<T>) {
@@ -182,6 +184,7 @@ class BaseNode<T> {
       return this.appendChild(newNode);
     }
 
+    this.ownerDocument.startTransaction();
     if (newNode.parentNode) {
       newNode.parentNode.removeChild(newNode);
     }
@@ -206,6 +209,8 @@ class BaseNode<T> {
     }
 
     this.ownerDocument.addNode(newNode);
+    this.ownerDocument.endTransaction();
+    this.ownerDocument.queueUpdate();
   }
 
   removeChild(child: ElementNode<T>) {
@@ -213,6 +218,7 @@ class BaseNode<T> {
       return;
     }
 
+    this.ownerDocument.startTransaction();
     let node = child.nextSibling;
     while (node) {
       node.index--;
@@ -241,6 +247,8 @@ class BaseNode<T> {
     child.index = 0;
 
     this.ownerDocument.removeNode(child);
+    this.ownerDocument.endTransaction();
+    this.ownerDocument.queueUpdate();
   }
 
   addEventListener() {}
@@ -248,11 +256,6 @@ class BaseNode<T> {
 }
 
 let id = 0;
-const TYPE_MAP = {
-  hr: 'separator',
-  optgroup: 'section',
-  option: 'item'
-};
 
 /**
  * A mutable element node in the fake DOM tree. It owns an immutable
@@ -266,7 +269,11 @@ export class ElementNode<T> extends BaseNode<T> {
 
   constructor(type: string, ownerDocument: Document<T, any>) {
     super(ownerDocument);
-    this.node = new NodeValue(TYPE_MAP[type] || type, `react-aria-${++id}`);
+    this.node = new NodeValue(type, `react-aria-${++id}`);
+    // Start a transaction so that no updates are emitted from the collection
+    // until the props for this node are set. We don't know the real id for the
+    // node until then, so we need to avoid emitting collections in an inconsistent state.
+    this.ownerDocument.startTransaction();
   }
 
   get index() {
@@ -275,7 +282,7 @@ export class ElementNode<T> extends BaseNode<T> {
 
   set index(index) {
     this._index = index;
-    this.ownerDocument.dirtyNodes.add(this);
+    this.ownerDocument.markDirty(this);
   }
 
   get level(): number {
@@ -311,25 +318,23 @@ export class ElementNode<T> extends BaseNode<T> {
       }
       node.key = id;
     }
-    this.hasSetProps = true;
+
+    // If this is the first time props have been set, end the transaction started in the constructor
+    // so this node can be emitted.
+    if (!this.hasSetProps) {
+      this.ownerDocument.endTransaction();
+      this.hasSetProps = true;
+    }
+
+    this.ownerDocument.queueUpdate();
   }
 
   get style() {
-    let node = this.ownerDocument.getMutableNode(this);
-    if (!node.props.style) {
-      node.props.style = {};
-    }
-    return node.props.style;
+    return {};
   }
 
   hasAttribute() {}
-  setAttribute(key: string, value: string) {
-    let node = this.ownerDocument.getMutableNode(this);
-    if (key in node) {
-      node[key] = value;
-    }
-  }
-
+  setAttribute() {}
   setAttributeNS() {}
   removeAttribute() {}
 }
@@ -482,7 +487,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
  * A mutable Document in the fake DOM. It owns an immutable Collection instance,
  * which is lazily copied on write during updates.
  */
-export class Document<T, C extends BaseCollection<T>> extends BaseNode<T> {
+export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extends BaseNode<T> {
   nodeType = 11; // DOCUMENT_FRAGMENT_NODE
   ownerDocument = this;
   dirtyNodes: Set<BaseNode<T>> = new Set();
@@ -490,6 +495,7 @@ export class Document<T, C extends BaseCollection<T>> extends BaseNode<T> {
   private collectionMutated: boolean;
   private mutatedNodes: Set<ElementNode<T>> = new Set();
   private subscriptions: Set<() => void> = new Set();
+  private transactionCount = 0;
 
   constructor(collection: C) {
     // @ts-ignore
@@ -513,7 +519,7 @@ export class Document<T, C extends BaseCollection<T>> extends BaseNode<T> {
       this.mutatedNodes.add(element);
       element.node = node;
     }
-    this.dirtyNodes.add(element);
+    this.markDirty(element);
     return node;
   }
 
@@ -526,6 +532,18 @@ export class Document<T, C extends BaseCollection<T>> extends BaseNode<T> {
     return this.collection;
   }
 
+  markDirty(node: BaseNode<T>) {
+    this.dirtyNodes.add(node);
+  }
+
+  startTransaction() {
+    this.transactionCount++;
+  }
+
+  endTransaction() {
+    this.transactionCount--;
+  }
+
   addNode(element: ElementNode<T>) {
     let collection = this.getMutableCollection();
     if (!collection.getItem(element.node.key)) {
@@ -536,7 +554,7 @@ export class Document<T, C extends BaseCollection<T>> extends BaseNode<T> {
       }
     }
 
-    this.dirtyNodes.add(element);
+    this.markDirty(element);
   }
 
   removeNode(node: ElementNode<T>) {
@@ -547,7 +565,7 @@ export class Document<T, C extends BaseCollection<T>> extends BaseNode<T> {
 
     let collection = this.getMutableCollection();
     collection.removeNode(node.node.key);
-    this.dirtyNodes.add(node);
+    this.markDirty(node);
   }
 
   /** Finalizes the collection update, updating all nodes and freezing the collection. */
@@ -577,6 +595,12 @@ export class Document<T, C extends BaseCollection<T>> extends BaseNode<T> {
   }
 
   queueUpdate() {
+    // Don't emit any updates if there is a transaction in progress.
+    // queueUpdate should be called again after the transaction.
+    if (this.dirtyNodes.size === 0 || this.transactionCount > 0) {
+      return;
+    }
+
     for (let fn of this.subscriptions) {
       fn();
     }
@@ -661,13 +685,6 @@ export function useCollection<T extends object, C extends BaseCollection<T>>(pro
     </ShallowRenderContext.Provider>
   ), [children]);
   let portal = useIsSSR() ? null : createPortal(wrappedChildren, document as unknown as Element);
-
-  useLayoutEffect(() => {
-    if (document.dirtyNodes.size > 0) {
-      document.queueUpdate();
-    }
-  });
-
   return {portal, collection};
 }
 
