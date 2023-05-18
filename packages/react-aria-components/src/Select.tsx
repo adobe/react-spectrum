@@ -84,7 +84,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
       values={[
         [InternalSelectContext, {state, valueProps, placeholder: props.placeholder}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
-        [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen, children: state.selectedItem?.textValue ?? props.placeholder}],
+        [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen}],
         [PopoverContext, {
           state,
           triggerRef: buttonRef,
