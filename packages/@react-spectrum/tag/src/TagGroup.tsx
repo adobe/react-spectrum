@@ -78,6 +78,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   delete props.onAction;
   let {gridProps, labelProps, descriptionProps, errorMessageProps} = useTagGroup({...props, keyboardDelegate}, state, tagsRef);
   let actionsId = useId();
+  let actionsRef = useRef(null);
 
   let updateVisibleTagCount = useCallback(() => {
     if (maxRows > 0) {
@@ -85,6 +86,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         // Refs can be null at runtime.
         let currContainerRef: HTMLDivElement | null = containerRef.current;
         let currTagsRef: HTMLDivElement | null = tagsRef.current;
+        let currActionsRef: HTMLDivElement | null = actionsRef.current;
         if (!currContainerRef || !currTagsRef || state.collection.size === 0) {
           return {
             visibleTagCount: 0,
@@ -114,17 +116,17 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         }
 
         // Remove tags until there is space for the collapse button and action button (if present) on the last row.
-        let buttons = [...currContainerRef.parentElement.querySelectorAll('button')];
-        if (buttons.length > 0) {
+        let buttons = [...currActionsRef.children];
+        if (buttons.length > 0 && rowCount >= maxRows) {
           let buttonsWidth = buttons.reduce((acc, curr) => acc += curr.getBoundingClientRect().width, 0);
-          buttonsWidth += parseInt(window.getComputedStyle(buttons[buttons.length - 1]).marginRight, 10) * 2;
+          buttonsWidth += TAG_STYLES[scale].margin * 2 * buttons.length;
           let end = direction === 'ltr' ? 'right' : 'left';
           let containerEnd = currContainerRef.parentElement.getBoundingClientRect()[end];
           let lastTagEnd = tags[index - 1]?.getBoundingClientRect()[end];
           lastTagEnd += TAG_STYLES[scale].margin;
           let availableWidth = containerEnd - lastTagEnd;
 
-          while (availableWidth < buttonsWidth && index < state.collection.size && index > 0) {
+          while (availableWidth < buttonsWidth && index > 0) {
             availableWidth += tagWidths.pop();
             index--;
           }
@@ -236,6 +238,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
             <Provider isDisabled={false}>
               <div
                 role="group"
+                ref={actionsRef}
                 id={actionsId}
                 aria-label={stringFormatter.format('actions')}
                 aria-labelledby={`${gridProps.id} ${actionsId}`}
