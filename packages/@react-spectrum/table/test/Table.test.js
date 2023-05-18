@@ -2678,7 +2678,7 @@ describe('TableView', function () {
       let link = tree.getAllByRole('link')[1];
       triggerPress(link);
 
-      expect(announce).toHaveBeenLastCalledWith('No items selected.');
+      expect(announce).toHaveBeenLastCalledWith('File B not selected.');
       expect(announce).toHaveBeenCalledTimes(2);
     });
 
