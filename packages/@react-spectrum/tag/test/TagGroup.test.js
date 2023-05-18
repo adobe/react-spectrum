@@ -55,10 +55,6 @@ describe('TagGroup', function () {
     act(() => {
       jest.runAllTimers();
     });
-    jest.clearAllMocks();
-  });
-
-  afterAll(function () {
     jest.restoreAllMocks();
   });
 
@@ -332,8 +328,6 @@ describe('TagGroup', function () {
     fireEvent.keyDown(document.activeElement, {key: 'PageUp'});
     fireEvent.keyUp(document.activeElement, {key: 'PageUp'});
     expect(document.activeElement).toBe(tags[0]);
-
-    jest.restoreAllMocks();
   });
 
   it.each`
@@ -739,5 +733,23 @@ describe('TagGroup', function () {
     let link = getByRole('link');
     userEvent.tab();
     expect(document.activeElement).toBe(link);
+  });
+
+  it('should support data attributes', function () {
+    let {getAllByRole} = render(
+      <Provider theme={theme}>
+        <TagGroup aria-label="tag group" data-foo="bar">
+          <Item key="1" data-foo="one">Tag 1</Item>
+          <Item key="2" data-foo="two">Tag 2</Item>
+        </TagGroup>
+      </Provider>
+    );
+
+    let group = getAllByRole('grid')[0];
+    expect(group).toHaveAttribute('data-foo', 'bar');
+
+    let tags = getAllByRole('row');
+    expect(tags[0]).toHaveAttribute('data-foo', 'one');
+    expect(tags[1]).toHaveAttribute('data-foo', 'two');
   });
 });

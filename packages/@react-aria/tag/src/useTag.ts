@@ -12,12 +12,12 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {DOMAttributes, FocusableElement, Node} from '@react-types/shared';
+import {filterDOMProps, mergeProps, useDescription, useId} from '@react-aria/utils';
 import {hookData} from './useTagGroup';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {KeyboardEvent, RefObject} from 'react';
 import type {ListState} from '@react-stately/list';
-import {mergeProps, useDescription, useId} from '@react-aria/utils';
 import {SelectableItemStates} from '@react-aria/selection';
 import {useGridListItem} from '@react-aria/gridlist';
 import {useInteractionModality} from '@react-aria/interactions';
@@ -79,6 +79,8 @@ export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefO
   let descProps = useDescription(description);
 
   let isFocused = item.key === state.selectionManager.focusedKey;
+  // @ts-ignore - data attributes are ok but TS doesn't know about them.
+  let domProps = filterDOMProps(props);
   return {
     removeButtonProps: {
       'aria-label': stringFormatter.format('removeButtonLabel'),
@@ -87,7 +89,7 @@ export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefO
       onPress: () => onRemove ? onRemove(new Set([item.key])) : null,
       excludeFromTabOrder: true
     },
-    rowProps: mergeProps(rowProps, {
+    rowProps: mergeProps(rowProps, domProps, {
       tabIndex: (isFocused || state.selectionManager.focusedKey == null) ? 0 : -1,
       onKeyDown: onRemove ? onKeyDown : undefined,
       'aria-describedby': descProps['aria-describedby']
