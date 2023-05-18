@@ -27,15 +27,17 @@ export function BaseTableHeader<T extends object>(props: TableHeaderProps<T>) {
 }
 
 export function TableHeader<T extends object>(props: TableHeaderProps<T>) {
-  let {selectionStyle,
+  let {
     selectionMode,
-    allowsDragging} = useTablePropsContext();
+    allowsDragging,
+    shouldShowCheckboxes
+  } = useTablePropsContext();
 
   return (
     <BaseTableHeader id={props.id}>
       { /*Add extra columns for drag and drop and selection. */ }
       {allowsDragging && <Column isDragButtonCell />}
-      {selectionStyle !== 'highlight' && !!selectionMode && selectionMode !== 'none' && (
+      {shouldShowCheckboxes && (!!selectionMode && selectionMode !== 'none') &&  (
         <Column isSelectionCell />
       )}
       <Collection items={props.columns}>
@@ -97,10 +99,11 @@ export function BaseRow<T extends object>(props: RowProps<T>) {
 }
 
 export function Row<T extends object>({ id, columns, children }: RowProps<T>) {
-  let {selectionStyle,
+  let {
     selectionMode,
-    allowsDragging} = useTablePropsContext();
-
+    allowsDragging,
+    shouldShowCheckboxes
+  } = useTablePropsContext();
 
   // TODO: perhaps we can cycle though columns and construct our leaf elements?
   return (
@@ -108,7 +111,7 @@ export function Row<T extends object>({ id, columns, children }: RowProps<T>) {
       {allowsDragging && (
         <Cell isDragButtonCell />
       )}
-      {selectionStyle !== 'highlight' && (!!selectionMode && selectionMode !== 'none') && (
+      {shouldShowCheckboxes && (!!selectionMode && selectionMode !== 'none') && (
         <Cell isSelectionCell />
       )}
       <Collection items={columns}>

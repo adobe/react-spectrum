@@ -62,6 +62,8 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
   let [isKeyboardNavigationDisabled, setKeyboardNavigationDisabled] = useState(false);
   let {selectionMode = 'none', showSelectionCheckboxes, showDragButtons} = props;
 
+  // TODO: Think we don't need this context with RAC, it is meant for the old style collection components
+  // Breaking change if we remove since people would be using the old style collection components
   let context = useMemo(() => ({
     showSelectionCheckboxes: showSelectionCheckboxes && selectionMode !== 'none',
     showDragButtons: showDragButtons,

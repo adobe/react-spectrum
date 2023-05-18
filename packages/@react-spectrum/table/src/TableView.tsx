@@ -107,7 +107,6 @@ interface TableContextValue<T> {
   dragAndDropHooks: DragAndDropHooks['dragAndDropHooks'],
   isTableDraggable: boolean,
   isTableDroppable: boolean,
-  shouldShowCheckboxes: boolean,
   layout: TableLayout<T> & {tableState: TableState<T>},
   headerRowHovered: boolean,
   isInResizeMode: boolean,
@@ -197,8 +196,6 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     }
   }, [isTableDraggable, isTableDroppable]);
   let {styleProps} = useStyleProps(props);
-
-  let [showSelectionCheckboxes, setShowSelectionCheckboxes] = useState(props.selectionStyle !== 'highlight');
   let {direction} = useLocale();
   let {scale} = useProvider();
 
@@ -238,16 +235,9 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     ...props,
     // TODO: see if we need TableCollection here
     collection,
-    showSelectionCheckboxes,
     showDragButtons: isTableDraggable,
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
-
-  // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
-  let shouldShowCheckboxes = state.selectionManager.selectionBehavior !== 'replace';
-  if (shouldShowCheckboxes !== showSelectionCheckboxes) {
-    setShowSelectionCheckboxes(shouldShowCheckboxes);
-  }
 
   let domRef = useDOMRef(ref);
   let headerRef = useRef<HTMLDivElement>();
@@ -534,13 +524,13 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     dragAndDropHooks?.isVirtualDragging() && {tabIndex: null}
   );
 
-  let {selectionStyle, selectionMode, disallowEmptySelection} = props;
+  let {selectionMode, disallowEmptySelection} = props;
   let ctx = useMemo(() => ({
     selectionMode,
-    selectionStyle,
     disallowEmptySelection,
-    allowsDragging: isTableDraggable
-  }), [selectionStyle, selectionMode, disallowEmptySelection, isTableDraggable]);
+    allowsDragging: isTableDraggable,
+    shouldShowCheckboxes: state.selectionManager.selectionBehavior !== 'replace'
+  }), [selectionMode, disallowEmptySelection, isTableDraggable, state.selectionManager.selectionBehavior]);
 
   return (
     <>
@@ -562,8 +552,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
           isEmpty,
           onFocusedResizer,
           headerMenuOpen,
-          setHeaderMenuOpen,
-          shouldShowCheckboxes
+          setHeaderMenuOpen
         }}>
         <TableVirtualizer
           {...mergedProps}
