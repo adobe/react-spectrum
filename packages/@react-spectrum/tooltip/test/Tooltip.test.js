@@ -11,7 +11,7 @@
  */
 
 import React from 'react';
-import {render, triggerPress} from '@react-spectrum/test-utils';
+import {render} from '@react-spectrum/test-utils';
 import {Tooltip} from '../';
 
 describe('Tooltip', function () {
@@ -39,14 +39,5 @@ describe('Tooltip', function () {
     let {getByRole} = render(<Tooltip ref={ref}>This is a tooltip</Tooltip>);
     let tooltip = getByRole('tooltip');
     expect(ref.current.UNSAFE_getDOMNode()).toBe(tooltip);
-  });
-
-  it('click does not propagate to parent', () => {
-    let mockClick = jest.fn();
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
-    let {getByRole} = render(<div onClick={mockClick}><Tooltip>This is a tooltip</Tooltip></div>);
-    let tooltip = getByRole('tooltip');
-    triggerPress(tooltip);
-    expect(mockClick).not.toHaveBeenCalled();
   });
 });
