@@ -4052,8 +4052,8 @@ describe('TableView', function () {
         items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
       }
       let cols = [
-        {key: 'foo', name: 'Foo'},
-        {key: 'bar', name: 'Bar'}
+        {isRowHeader: true, id: 'foo', name: 'Foo'},
+        {id: 'bar', name: 'Bar'}
       ];
 
       let onLoadMore = jest.fn();
@@ -4065,7 +4065,7 @@ describe('TableView', function () {
           <TableBody items={items} onLoadMore={onLoadMore}>
             {row => (
               <Row columns={cols}>
-                {column => <Cell>{row[column.key]}</Cell>}
+                {column => <Cell>{row[column.id]}</Cell>}
               </Row>
             )}
           </TableBody>
@@ -4075,38 +4075,47 @@ describe('TableView', function () {
       let body = tree.getAllByRole('rowgroup')[1];
       let scrollView = body.parentNode.parentNode;
 
+      // Note: previously onLoadMore was called twice on initial render since TableVirtualizer's had a contentsize of 0 on the first render.
+      // Now, since the RAC collection takes two renders to become defined, those two loadMores are skipped since collection.body.props.onLoadMore is undef at that point
       let rows = within(body).getAllByRole('row');
       expect(rows).toHaveLength(25); // each row is 41px tall. table is 1000px tall. 25 rows fit.
+      expect(onLoadMore).toHaveBeenCalledTimes(0);
 
       scrollView.scrollTop = 250;
       fireEvent.scroll(scrollView);
       act(() => {jest.runAllTimers();});
+      expect(onLoadMore).toHaveBeenCalledTimes(0);
 
       scrollView.scrollTop = 1500;
       fireEvent.scroll(scrollView);
       act(() => {jest.runAllTimers();});
+      expect(onLoadMore).toHaveBeenCalledTimes(0);
 
+      // Calls loadMore at this scrollPosition because we don't have a table height worth of content left out of view
+      // 41px * 100 rows = 4100 px of content, table height is 1000px, scroll position is 2800 so only 4100-2800-1000 = 300px of content out of view
       scrollView.scrollTop = 2800;
       fireEvent.scroll(scrollView);
       act(() => {jest.runAllTimers();});
-
-      expect(onLoadMore).toHaveBeenCalledTimes(3);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
 
     it('should automatically fire onLoadMore if there aren\'t enough items to fill the Table', function () {
       let items = [{id: 1, foo: 'Foo 1', bar: 'Bar 1'}];
+      let cols = [
+        {isRowHeader: true, id: 'foo', name: 'Foo'},
+        {id: 'bar', name: 'Bar'}
+      ];
       let onLoadMoreSpy = jest.fn();
 
       let TableMock = (props) => (
         <TableView aria-label="Table">
-          <TableHeader>
-            <Column id="foo">Foo</Column>
-            <Column id="bar">Bar</Column>
+          <TableHeader columns={cols}>
+            {column => <Column {...column}>{column.name}</Column>}
           </TableHeader>
           <TableBody items={props.items} onLoadMore={onLoadMoreSpy}>
             {row => (
-              <Row>
-                {key => <Cell>{row[key]}</Cell>}
+              <Row columns={cols}>
+                {column => <Cell>{row[column.id]}</Cell>}
               </Row>
             )}
           </TableBody>
@@ -4114,9 +4123,11 @@ describe('TableView', function () {
       );
 
       render(<TableMock items={items} />);
-      act(() => jest.runAllTimers());
-      // first loadMore triggered by onVisibleRectChange, other 2 by useLayoutEffect
-      expect(onLoadMoreSpy).toHaveBeenCalledTimes(3);
+      act(() => {jest.runAllTimers();});
+      // Note: on the first render, RAC collection hasn't been calculated and thus TableVirtualizer's onVisibleRectChange
+      // doesn't call onLoadMore since collection.body.props.onLoadMore is undef. This results in just one loadMore being triggered
+      // by TableVirtualizer's useLayoutEffect once the animation is done and loadMore is defined.
+      expect(onLoadMoreSpy).toHaveBeenCalledTimes(1);
     });
   });
 
