@@ -466,7 +466,7 @@ function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRe
 
   return (
     <td {...cellProps}>
-      <div {...mergeProps(buttonProps, focusProps, hoverProps, dataAttrs, renderProps)} ref={objectRef} />
+      <div {...mergeProps(filterDOMProps(otherProps as any), buttonProps, focusProps, hoverProps, dataAttrs, renderProps)} ref={objectRef} />
     </td>
   );
 }

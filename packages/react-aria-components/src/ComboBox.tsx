@@ -13,14 +13,14 @@ import {AriaComboBoxProps, useComboBox, useFilter} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ComboBoxState, useComboBoxState} from 'react-stately';
 import {ContextValue, forwardRefType, Provider, RenderProps, slotCallbackSymbol, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListBoxProps} from './ListBox';
 import {PopoverContext} from './Popover';
-import React, {createContext, ForwardedRef, forwardRef, useCallback, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useCallback, useMemo, useRef, useState} from 'react';
 import {TextContext} from './Text';
 import {useCollection} from './Collection';
-import {useResizeObserver} from '@react-aria/utils';
 
 export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children' | 'placeholder' | 'name' | 'label' | 'description' | 'errorMessage'>, RenderProps<ComboBoxState<T>>, SlotProps {
   /** The filter function used to determine if a option should be included in the combo box list. */
@@ -41,11 +41,14 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
   let state = useComboBoxState({
     defaultFilter: props.defaultFilter || contains,
     ...props,
-    items: propsFromListBox ? (props.items ?? propsFromListBox.items) : [],
+    // If props.items isn't provided, rely on collection filtering (aka listbox.items is provided or defaultItems provided to Combobox)
+    items: props.items,
     children: undefined,
     collection
   });
 
+  // Only expose a subset of state to renderProps function to avoid infinite render loop
+  let renderPropsState = useMemo(() => ({isOpen: state.isOpen, isFocused: state.isFocused}), [state.isOpen, state.isFocused]);
   let buttonRef = useRef<HTMLButtonElement>(null);
   let inputRef = useRef<HTMLInputElement>(null);
   let listBoxRef = useRef<HTMLDivElement>(null);
@@ -87,9 +90,12 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
 
   let renderProps = useRenderProps({
     ...props,
-    values: state,
+    values: renderPropsState as ComboBoxState<T>,
     defaultClassName: 'react-aria-ComboBox'
   });
+
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
 
   return (
     <Provider
@@ -114,7 +120,7 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
           }
         }]
       ]}>
-      <div {...renderProps} ref={ref} slot={props.slot} />
+      <div {...DOMProps} {...renderProps} ref={ref} slot={props.slot} />
       {portal}
     </Provider>
   );

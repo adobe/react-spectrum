@@ -201,9 +201,12 @@ function MenuItem<T>({item}: MenuItemProps<T>) {
     }
   });
 
+  let DOMProps = filterDOMProps(props as any);
+  delete DOMProps.id;
+
   return (
     <div
-      {...mergeProps(menuItemProps, focusProps)}
+      {...mergeProps(DOMProps, menuItemProps, focusProps)}
       {...renderProps}
       ref={ref}
       data-hovered={states.isFocused || undefined}
