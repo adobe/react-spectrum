@@ -79,12 +79,16 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     if (this.orientation === 'horizontal') {
       return this.direction === 'rtl' ? this.getKeyAbove(key) : this.getKeyBelow(key);
     }
+
+    return null;
   }
 
   getKeyLeftOf(key: Key) {
     if (this.orientation === 'horizontal') {
       return this.direction === 'rtl' ? this.getKeyBelow(key) : this.getKeyAbove(key);
     }
+
+    return null;
   }
 
   getFirstKey() {
