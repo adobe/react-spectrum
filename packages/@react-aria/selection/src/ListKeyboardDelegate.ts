@@ -10,20 +10,41 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, KeyboardDelegate, Node} from '@react-types/shared';
+import {Collection, Direction, KeyboardDelegate, Node, Orientation} from '@react-types/shared';
 import {Key, RefObject} from 'react';
+
+interface ListKeyboardDelegateOptions<T> {
+  collection: Collection<Node<T>>,
+  ref: RefObject<HTMLElement>,
+  orientation?: Orientation,
+  direction?: Direction,
+  disabledKeys?: Set<Key>
+}
 
 export class ListKeyboardDelegate<T> implements KeyboardDelegate {
   private collection: Collection<Node<T>>;
   private disabledKeys: Set<Key>;
   private ref: RefObject<HTMLElement>;
   private collator: Intl.Collator;
+  private orientation?: Orientation;
+  private direction?: Direction;
 
-  constructor(collection: Collection<Node<T>>, disabledKeys: Set<Key>, ref: RefObject<HTMLElement>, collator?: Intl.Collator) {
-    this.collection = collection;
-    this.disabledKeys = disabledKeys;
-    this.ref = ref;
-    this.collator = collator;
+  constructor(collection: Collection<Node<T>>, disabledKeys: Set<Key>, ref: RefObject<HTMLElement>, collator?: Intl.Collator);
+  constructor(options: ListKeyboardDelegateOptions<T>);
+  constructor(...args: any[]) {
+    if (args.length === 1) {
+      let opts = args[0] as ListKeyboardDelegateOptions<T>;
+      this.collection = opts.collection;
+      this.ref = opts.ref;
+      this.disabledKeys = opts.disabledKeys || new Set();
+      this.orientation = opts.orientation;
+      this.direction = opts.direction;
+    } else {
+      this.collection = args[0];
+      this.disabledKeys = args[1];
+      this.ref = args[2];
+      this.collator = args[3];
+    }
   }
 
   getKeyBelow(key: Key) {
@@ -52,6 +73,18 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     }
 
     return null;
+  }
+
+  getKeyRightOf(key: Key) {
+    if (this.orientation === 'horizontal') {
+      return this.direction === 'rtl' ? this.getKeyAbove(key) : this.getKeyBelow(key);
+    }
+  }
+
+  getKeyLeftOf(key: Key) {
+    if (this.orientation === 'horizontal') {
+      return this.direction === 'rtl' ? this.getKeyBelow(key) : this.getKeyAbove(key);
+    }
   }
 
   getFirstKey() {
@@ -93,14 +126,23 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       return null;
     }
 
-    let pageY = Math.max(0, item.offsetTop + item.offsetHeight - menu.offsetHeight);
+    if (this.orientation === 'horizontal') {
+      let pageX = Math.max(0, item.offsetLeft + item.offsetWidth - menu.offsetWidth);
 
-    while (item && item.offsetTop > pageY) {
-      key = this.getKeyAbove(key);
-      item = key == null ? null : this.getItem(key);
+      while (item && item.offsetLeft > pageX) {
+        key = this.getKeyAbove(key);
+        item = key == null ? null : this.getItem(key);
+      }
+    } else {
+      let pageY = Math.max(0, item.offsetTop + item.offsetHeight - menu.offsetHeight);
+
+      while (item && item.offsetTop > pageY) {
+        key = this.getKeyAbove(key);
+        item = key == null ? null : this.getItem(key);
+      }
     }
 
-    return key;
+    return key ?? this.getFirstKey();
   }
 
   getKeyPageBelow(key: Key) {
@@ -110,14 +152,23 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       return null;
     }
 
-    let pageY = Math.min(menu.scrollHeight, item.offsetTop - item.offsetHeight + menu.offsetHeight);
+    if (this.orientation === 'horizontal') {
+      let pageX = Math.min(menu.scrollWidth, item.offsetLeft - item.offsetWidth + menu.offsetWidth);
 
-    while (item && item.offsetTop < pageY) {
-      key = this.getKeyBelow(key);
-      item = key == null ? null : this.getItem(key);
+      while (item && item.offsetLeft < pageX) {
+        key = this.getKeyBelow(key);
+        item = key == null ? null : this.getItem(key);
+      }
+    } else {
+      let pageY = Math.min(menu.scrollHeight, item.offsetTop - item.offsetHeight + menu.offsetHeight);
+
+      while (item && item.offsetTop < pageY) {
+        key = this.getKeyBelow(key);
+        item = key == null ? null : this.getItem(key);
+      }
     }
 
-    return key;
+    return key ?? this.getLastKey();
   }
 
   getKeyForSearch(search: string, fromKey?: Key) {
