@@ -11,7 +11,6 @@
  */
 import {AriaComboBoxProps, useComboBox, useFilter} from 'react-aria';
 import {ButtonContext} from './Button';
-import {ComboBoxState, useComboBoxState} from 'react-stately';
 import {ContextValue, forwardRefType, Provider, RenderProps, slotCallbackSymbol, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {InputContext} from './Input';
@@ -21,6 +20,7 @@ import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, useCallback, useMemo, useRef, useState} from 'react';
 import {TextContext} from './Text';
 import {useCollection} from './Collection';
+import {useComboBoxState} from 'react-stately';
 
 export interface ComboBoxRenderProps {
   /**
@@ -35,7 +35,7 @@ export interface ComboBoxRenderProps {
   isOpen: boolean
 }
 
-export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children' | 'placeholder' | 'name' | 'label' | 'description' | 'errorMessage'>, RenderProps<ComboBoxState<T>>, SlotProps {
+export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children' | 'placeholder' | 'name' | 'label' | 'description' | 'errorMessage'>, RenderProps<ComboBoxRenderProps>, SlotProps {
   /** The filter function used to determine if a option should be included in the combo box list. */
   defaultFilter?: (textValue: string, inputValue: string) => boolean
 }
@@ -103,7 +103,7 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
 
   let renderProps = useRenderProps({
     ...props,
-    values: renderPropsState as ComboBoxState<T>,
+    values: renderPropsState,
     defaultClassName: 'react-aria-ComboBox'
   });
 
