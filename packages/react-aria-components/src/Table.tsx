@@ -316,7 +316,7 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
       <Provider
         values={[
           [InternalTableContext, {state, dragAndDropHooks, dragState, dropState}],
-          [DropIndicatorContext, {render: TableDropIndicator}]
+          [DropIndicatorContext, {render: TableDropIndicatorWrapper}]
         ]}>
         <FocusScope>
           <table
@@ -600,8 +600,8 @@ function TableBodyRowGroup<T>({collection, isDroppable}: {collection: TableColle
   let {rowGroupProps} = useTableRowGroup();
   return (
     <tbody
+      {...mergeProps(filterDOMProps(props as any), rowGroupProps)}
       {...renderProps}
-      {...rowGroupProps}
       data-empty={collection.size === 0 || undefined}>
       {isDroppable && <RootDropIndicator />}
       {bodyRows}
@@ -672,7 +672,7 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
 
   return (
     <th
-      {...mergeProps(columnHeaderProps, focusProps)}
+      {...mergeProps(filterDOMProps(props as any), columnHeaderProps, focusProps)}
       {...renderProps}
       colSpan={column.colspan}
       ref={ref}
@@ -770,7 +770,7 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
         </tr>
       )}
       <tr
-        {...mergeProps(rowProps, focusProps, hoverProps, draggableItem?.dragProps)}
+        {...mergeProps(filterDOMProps(props as any), rowProps, focusProps, hoverProps, draggableItem?.dragProps)}
         {...renderProps}
         ref={ref}
         data-hovered={isHovered || undefined}
@@ -836,7 +836,7 @@ function TableCell<T>({cell}: {cell: GridNode<T>}) {
 
   return (
     <td
-      {...mergeProps(gridCellProps, focusProps)}
+      {...mergeProps(filterDOMProps(props as any), gridCellProps, focusProps)}
       {...renderProps}
       ref={ref}
       data-focused={isFocused || undefined}
@@ -847,9 +847,9 @@ function TableCell<T>({cell}: {cell: GridNode<T>}) {
   );
 }
 
-function TableDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
+function TableDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
   ref = useObjectRef(ref);
-  let {state, dragAndDropHooks, dropState} = useContext(InternalTableContext)!;
+  let {dragAndDropHooks, dropState} = useContext(InternalTableContext)!;
   let buttonRef = useRef<HTMLDivElement>(null);
   let {dropIndicatorProps, isHidden, isDropTarget} = dragAndDropHooks!.useDropIndicator!(
     props,
@@ -857,15 +857,33 @@ function TableDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLEle
     buttonRef
   );
 
-  let {visuallyHiddenProps} = useVisuallyHidden();
-
   if (isHidden) {
     return null;
   }
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+  return (
+    <TableDropIndicatorForwardRef {...props} dropIndicatorProps={dropIndicatorProps} isDropTarget={isDropTarget} buttonRef={buttonRef} ref={ref} />
+  );
+}
+
+interface TableDropIndicatorProps extends DropIndicatorProps {
+  dropIndicatorProps: React.HTMLAttributes<HTMLElement>,
+  isDropTarget: boolean,
+  buttonRef: RefObject<HTMLDivElement>
+}
+
+function TableDropIndicator(props: TableDropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
+  let {
+    dropIndicatorProps,
+    isDropTarget,
+    buttonRef,
+    ...otherProps
+  } = props;
+
+  let {state} = useContext(InternalTableContext)!;
+  let {visuallyHiddenProps} = useVisuallyHidden();
   let renderProps = useRenderProps({
-    ...props,
+    ...otherProps,
     defaultClassName: 'react-aria-DropIndicator',
     values: {
       isDropTarget
@@ -874,6 +892,7 @@ function TableDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLEle
 
   return (
     <tr
+      {...filterDOMProps(props as any)}
       {...renderProps}
       role="row"
       ref={ref as RefObject<HTMLTableRowElement>}
@@ -887,6 +906,8 @@ function TableDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLEle
     </tr>
   );
 }
+
+const TableDropIndicatorForwardRef = forwardRef(TableDropIndicator);
 
 function RootDropIndicator() {
   let {state, dragAndDropHooks, dropState} = useContext(InternalTableContext)!;

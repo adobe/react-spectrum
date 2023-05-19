@@ -75,8 +75,7 @@ describe('Tabs', () => {
     expect(tabpanel).toHaveAttribute('data-test', 'tabpanel');
   });
 
-  // FIXME: not sure why this test hangs
-  it.skip('should support render props', () => {
+  it('should support render props', () => {
     let {getByRole} = render(
       <Tabs orientation="horizontal">
         {({orientation}) => (
@@ -96,7 +95,7 @@ describe('Tabs', () => {
       </Tabs>
     );
     let tablist = getByRole('tablist');
-    expect(tablist).toHaveAttribute('aria-label', 'Test horizonal');
+    expect(tablist).toHaveAttribute('aria-label', 'Test horizontal');
   });
 
   it('should support hover', () => {
@@ -118,7 +117,7 @@ describe('Tabs', () => {
   it('should support focus ring', () => {
     let {getAllByRole} = renderTabs({}, {}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
     let tab = getAllByRole('tab')[0];
-    
+
     expect(tab).not.toHaveAttribute('data-focus-visible');
     expect(tab).not.toHaveClass('focus');
 
