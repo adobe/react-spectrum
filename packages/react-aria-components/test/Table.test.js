@@ -602,6 +602,37 @@ describe('Table', () => {
     expect(cellRef.current).toBeInstanceOf(HTMLTableCellElement);
   });
 
+  it('should support cell render props', () => {
+    let {getAllByRole} = render(
+      <Table aria-label="Search results">
+        <TableHeader>
+          <Column isRowHeader>
+            {({isFocused}) => `Name${isFocused ? ' (focused)' : ''}`}
+          </Column>
+          <Column>Type</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>
+              {({isFocused}) => `Foo${isFocused ? ' (focused)' : ''}`}
+            </Cell>
+            <Cell>Bar</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    );
+
+    let headers = getAllByRole('columnheader');
+    expect(headers[0]).toHaveTextContent('Name');
+    act(() => headers[0].focus());
+    expect(headers[0]).toHaveTextContent('Name (focused)');
+
+    let cells = getAllByRole('rowheader');
+    expect(cells[0]).toHaveTextContent('Foo');
+    act(() => cells[0].focus());
+    expect(cells[0]).toHaveTextContent('Foo (focused)');
+  });
+
   describe('drag and drop', () => {
     it('should support drag button slot', () => {
       let {getAllByRole} = render(<DraggableTable />);
