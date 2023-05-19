@@ -62,7 +62,6 @@ governing permissions and limitations under the License.
          color: var(--spectrum-tag-removable-button-icon-color-key-focus);
       }
       &:hover {
-        background-color: var(--spectrum-tag-removable-button-background-color-hover);
         color: var(--spectrum-tag-removable-button-icon-color-hover);
       }
     }
