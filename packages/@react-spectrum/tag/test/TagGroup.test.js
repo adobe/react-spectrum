@@ -312,15 +312,6 @@ describe('TagGroup', function () {
     fireEvent.keyUp(document.activeElement, {key: 'Home'});
     expect(document.activeElement).toBe(tags[0]);
 
-    jest.spyOn(HTMLElement.prototype, 'scrollWidth', 'get').mockImplementation(() => 100);
-    jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () {
-      return this.getAttribute('role') === 'row' ? 10 : 100;
-    });
-
-    jest.spyOn(HTMLElement.prototype, 'offsetLeft', 'get').mockImplementation(function () {
-      return [...this.parentElement.childNodes].indexOf(this) * 10;
-    });
-
     fireEvent.keyDown(document.activeElement, {key: 'PageDown'});
     fireEvent.keyUp(document.activeElement, {key: 'PageDown'});
     expect(document.activeElement).toBe(tags[3]);

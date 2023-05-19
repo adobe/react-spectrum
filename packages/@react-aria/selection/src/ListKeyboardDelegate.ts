@@ -135,19 +135,25 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       return this.getFirstKey();
     }
 
+    let containerRect = menu.getBoundingClientRect();
+    let itemRect = item.getBoundingClientRect();
     if (this.orientation === 'horizontal') {
-      let pageX = Math.max(0, item.offsetLeft + item.offsetWidth - menu.offsetWidth);
+      let containerX = containerRect.x - menu.scrollLeft;
+      let pageX = Math.max(0, (itemRect.x - containerX) + itemRect.width - containerRect.width);
 
-      while (item && item.offsetLeft > pageX) {
+      while (item && (itemRect.x - containerX) > pageX) {
         key = this.getKeyAbove(key);
         item = key == null ? null : this.getItem(key);
+        itemRect = item?.getBoundingClientRect();
       }
     } else {
-      let pageY = Math.max(0, item.offsetTop + item.offsetHeight - menu.offsetHeight);
+      let containerY = containerRect.y - menu.scrollTop;
+      let pageY = Math.max(0, (itemRect.y - containerY) + itemRect.height - containerRect.height);
 
-      while (item && item.offsetTop > pageY) {
+      while (item && (itemRect.y - containerY) > pageY) {
         key = this.getKeyAbove(key);
         item = key == null ? null : this.getItem(key);
+        itemRect = item?.getBoundingClientRect();
       }
     }
 
@@ -165,19 +171,25 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       return this.getLastKey();
     }
 
+    let containerRect = menu.getBoundingClientRect();
+    let itemRect = item.getBoundingClientRect();
     if (this.orientation === 'horizontal') {
-      let pageX = Math.min(menu.scrollWidth, item.offsetLeft - item.offsetWidth + menu.offsetWidth);
+      let containerX = containerRect.x - menu.scrollLeft;
+      let pageX = Math.min(menu.scrollWidth, (itemRect.x - containerX) - itemRect.width + containerRect.width);
 
-      while (item && item.offsetLeft < pageX) {
+      while (item && (itemRect.x - containerX) < pageX) {
         key = this.getKeyBelow(key);
         item = key == null ? null : this.getItem(key);
+        itemRect = item?.getBoundingClientRect();
       }
     } else {
-      let pageY = Math.min(menu.scrollHeight, item.offsetTop - item.offsetHeight + menu.offsetHeight);
+      let containerY = containerRect.y - menu.scrollTop;
+      let pageY = Math.min(menu.scrollHeight, (itemRect.y - containerY) - itemRect.height + containerRect.height);
 
-      while (item && item.offsetTop < pageY) {
+      while (item && (itemRect.y - containerY) < pageY) {
         key = this.getKeyBelow(key);
         item = key == null ? null : this.getItem(key);
+        itemRect = item?.getBoundingClientRect();
       }
     }
 
