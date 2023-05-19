@@ -186,10 +186,6 @@ html {
     border: 2px dashed blue;
   }
 
-  &[data-hovered]{
-    border-color: 2px dashed green;
-  }
-
   &[data-drop-target]{
     border: 2px dashed purple;
   }

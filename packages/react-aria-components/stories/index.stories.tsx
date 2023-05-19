@@ -676,6 +676,7 @@ function CustomTab(props) {
       })} />
   );
 }
+
 function Draggable() {
   let buttonRef = useRef(null);
   let {dragProps, isDragging} = useDrag({
@@ -728,7 +729,9 @@ export const DropzoneExampleWithInput = (props) => (
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
-      DropZone Area
+      <Text slot="heading">
+        DropZone Area
+      </Text>
       <Input />
     </DropZone>
   </div>
@@ -756,8 +759,8 @@ export const DropzoneExampleWithButton = (props) => (
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
-      <Input />
       <Button slot="file">upload</Button>
+      <Input />
     </DropZone>
   </div>
 );
@@ -770,8 +773,10 @@ export const DropzoneExampleWithDraggableObject = (props) => (
       className={styles.dropzone}
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
-      onDropExit={action('OnDropExit')}>
-      DropZone Area
+      onDropExit={action('OnDropExit')} >
+      <Text slot="heading">
+        DropZone Area
+      </Text>
     </DropZone>
   </div>
 );
@@ -785,7 +790,9 @@ export const DropzoneExampleWithCopyableObject = (props) => (
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
-      DropzoneArea
+      <Text slot="heading">
+        DropzoneArea
+      </Text>
     </DropZone>
   </div>
 );
@@ -802,7 +809,9 @@ export const DropzoneWithRenderProps = (props) => (
       onDropExit={action('OnDropExit')}>
       {({isHovered, isFocused, isFocusVisible, isDropTarget}) => (
         <div>
-          <div>DropZone</div>
+          <Text slot="heading">
+            DropzoneArea
+          </Text>
           <div>isHovered: {isHovered ? 'true' : 'false'}</div>
           <div>isFocused: {isFocused ? 'true' : 'false'}</div>
           <div>isFocusVisible: {isFocusVisible ? 'true' : 'false'}</div>
