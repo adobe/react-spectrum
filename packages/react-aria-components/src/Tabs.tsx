@@ -191,17 +191,20 @@ function TabList<T extends object>(props: TabListProps<T>, ref: ForwardedRef<HTM
 const _TabList = /*#__PURE__*/ (forwardRef as forwardRefType)(TabList);
 export {_TabList as TabList};
 
+function Tab(props: TabProps, ref: ForwardedRef<HTMLDivElement>) {
+  // @ts-ignore
+  return <Item {...props} ref={ref} />;
+}
+
 /**
  * A Tab provides a title for an individual item within a TabList.
  */
-export function Tab(props: TabProps): JSX.Element {
-  // @ts-ignore
-  return Item(props);
-}
+const _Tab = forwardRef(Tab);
+export {_Tab as Tab};
 
 function TabInner({item, state}: {item: Node<object>, state: TabListState<object>}) {
   let {key} = item;
-  let ref = React.useRef<HTMLDivElement>(null);
+  let ref = useObjectRef<HTMLDivElement>(item.props.ref);
   let {tabProps, isSelected, isDisabled, isPressed} = useTab({key}, state, ref);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let {hoverProps, isHovered} = useHover({
@@ -256,16 +259,19 @@ export function TabPanels<T extends object>(props: TabPanelsProps<T>) {
   );
 }
 
+function TabPanel(props: TabPanelProps, ref: ForwardedRef<HTMLDivElement>) {
+  return <Item {...props} ref={ref} />;
+}
+
 /**
  * A TabPanel provides the content for a tab.
  */
-export function TabPanel(props: TabPanelProps): JSX.Element {
-  return Item(props);
-}
+const _TabPanel = forwardRef(TabPanel);
+export {_TabPanel as TabPanel};
 
 function SelectedTabPanel({item}: {item: Node<object>}) {
   const {state} = useContext(InternalTabsContext)!;
-  let ref = React.useRef<HTMLDivElement>(null);
+  let ref = useObjectRef<HTMLDivElement>(item.props.ref);
   let {tabPanelProps} = useTabPanel(item.props, state!, ref);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
 
