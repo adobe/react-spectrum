@@ -16,8 +16,8 @@ import {FocusScope} from '@react-aria/focus';
 import {MenuContext, MenuStateContext} from './context';
 import {MenuItem} from './MenuItem';
 import {MenuSection} from './MenuSection';
-import {mergeProps, useSyncRef} from '@react-aria/utils';
-import React, {ReactElement, useContext} from 'react';
+import {mergeProps, useLayoutEffect, useSyncRef} from '@react-aria/utils';
+import React, {ReactElement, useContext, useRef} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useMenu} from '@react-aria/menu';
@@ -30,51 +30,54 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
   };
 
   let domRef = useDOMRef(ref);
+  let scopedRef = useRef(null);
   let state = useTreeState(completeProps);
   let {menuProps} = useMenu(completeProps, state, domRef);
   let {styleProps} = useStyleProps(completeProps);
   useSyncRef(contextProps, domRef);
 
   return (
-    <MenuStateContext.Provider value={{state}}>
-      <FocusScope contain={state.expandedKeys.size > 0}>
-        <ul
-          {...menuProps}
-          {...styleProps}
-          ref={domRef}
-          className={
-            classNames(
-              styles,
-              'spectrum-Menu',
-              styleProps.className
-            )
-          }>
-          {[...state.collection].map(item => {
-            if (item.type === 'section') {
-              return (
-                <MenuSection
+    <MenuStateContext.Provider value={{state, container: scopedRef}}>
+      <FocusScope name="menu" contain={state.expandedKeys.size > 0}>
+        <div ref={scopedRef}>
+          <ul
+            {...menuProps}
+            {...styleProps}
+            ref={domRef}
+            className={
+              classNames(
+                styles,
+                'spectrum-Menu',
+                styleProps.className
+              )
+            }>
+            {[...state.collection].map(item => {
+              if (item.type === 'section') {
+                return (
+                  <MenuSection
+                    key={item.key}
+                    item={item}
+                    state={state}
+                    onAction={completeProps.onAction} />
+                );
+              }
+
+              let menuItem = (
+                <MenuItem
                   key={item.key}
                   item={item}
                   state={state}
                   onAction={completeProps.onAction} />
               );
-            }
 
-            let menuItem = (
-              <MenuItem
-                key={item.key}
-                item={item}
-                state={state}
-                onAction={completeProps.onAction} />
-            );
+              if (item.wrapper) {
+                menuItem = item.wrapper(menuItem);
+              }
 
-            if (item.wrapper) {
-              menuItem = item.wrapper(menuItem);
-            }
-
-            return menuItem;
-          })}
-        </ul>
+              return menuItem;
+            })}
+          </ul>
+        </div>
       </FocusScope>
     </MenuStateContext.Provider>
   );

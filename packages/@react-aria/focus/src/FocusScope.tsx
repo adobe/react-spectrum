@@ -124,10 +124,10 @@ export function FocusScope(props: FocusScopeProps) {
     scopeRef.current = nodes;
   }, [children]);
 
-  useActiveScopeTracker(scopeRef, restoreFocus, contain);
-  useFocusContainment(scopeRef, contain);
-  useRestoreFocus(scopeRef, restoreFocus, contain);
-  useAutoFocus(scopeRef, autoFocus);
+  useActiveScopeTracker(scopeRef, restoreFocus, contain, props.name);
+  useFocusContainment(scopeRef, contain, props.name);
+  useRestoreFocus(scopeRef, restoreFocus, contain, props.name);
+  useAutoFocus(scopeRef, autoFocus, props.name);
 
   // this layout effect needs to run last so that focusScopeTree cleanup happens at the last moment possible
   useEffect(() => {
@@ -202,6 +202,7 @@ function createFocusManagerForScope(scopeRef: React.RefObject<Element[]>): Focus
       let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable, accept}, scope);
       walker.currentNode = isElementInScope(node, scope) ? node : sentinel;
       let nextNode = walker.nextNode() as FocusableElement;
+      console.log('nextNode', nextNode.outerHTML)
       if (!nextNode && wrap) {
         walker.currentNode = sentinel;
         nextNode = walker.nextNode() as FocusableElement;
@@ -314,33 +315,16 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain: boolean) {
 
       let focusedElement = document.activeElement;
       let scope = scopeRef.current;
-      let childScopeRef = getChildScopeElementIsIn(focusedElement, scopeRef);
-      if (childScopeRef == null) {
+      if (!isElementInScope(focusedElement, scope)) {
         return;
       }
-      let focusNextInChildScope = (childScopeRef: ScopeRef): FocusableElement | null => {
-        if (childScopeRef !== scopeRef) {
-          let walker = getFocusableTreeWalker(getScopeRoot(childScopeRef.current), {tabbable: true}, scope);
-          walker.currentNode = focusedElement;
-          let nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as FocusableElement;
-          if (nextElement) {
-            return nextElement;
-          } else {
-            return focusNextInChildScope(focusScopeTree.getTreeNode(childScopeRef).parent.scopeRef);
-          }
-        }
-        return null;
-      };
-      let nextElement = focusNextInChildScope(childScopeRef);
 
-      if (!nextElement && isElementInScope(focusedElement, scope)) {
-        let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable: true}, scope);
-        walker.currentNode = focusedElement;
-        nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as FocusableElement;
-        if (!nextElement) {
-          walker.currentNode = e.shiftKey ? scope[scope.length - 1].nextElementSibling : scope[0].previousElementSibling;
-          nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as FocusableElement;
-        }
+      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable: true}, scope);
+      walker.currentNode = focusedElement;
+      let nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as FocusableElement;
+      if (!nextElement) {
+        walker.currentNode = e.shiftKey ? scope[scope.length - 1].nextElementSibling : scope[0].previousElementSibling;
+        nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode())  as FocusableElement;
       }
 
       e.preventDefault();
@@ -432,23 +416,6 @@ function isElementInChildScope(element: Element, scope: ScopeRef = null) {
   }
 
   return false;
-}
-
-function getChildScopeElementIsIn(element: Element, scope: ScopeRef = null): ScopeRef | null {
-  // If the element is within a top layer element (e.g. toasts), always allow moving focus there.
-  if (element instanceof Element && element.closest('[data-react-aria-top-layer]')) {
-    return null;
-  }
-
-  // node.contains in isElementInScope covers child scopes that are also DOM children,
-  // but does not cover child scopes in portals.
-  for (let {scopeRef: s} of focusScopeTree.traverse(focusScopeTree.getTreeNode(scope))) {
-    if (isElementInScope(element, s.current)) {
-      return s;
-    }
-  }
-
-  return null;
 }
 
 /** @private */
@@ -553,7 +520,7 @@ function shouldRestoreFocus(scopeRef: ScopeRef) {
   return scope?.scopeRef === scopeRef;
 }
 
-function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, contain: boolean) {
+function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, contain: boolean, name) {
   // create a ref during render instead of useLayoutEffect so the active element is saved before a child with autoFocus=true mounts.
   const nodeToRestoreRef = useRef(typeof document !== 'undefined' ? document.activeElement as FocusableElement : null);
 
@@ -617,13 +584,6 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
       if (!document.body.contains(nodeToRestore) || nodeToRestore === document.body) {
         nodeToRestore = null;
         focusScopeTree.getTreeNode(scopeRef).nodeToRestore = null;
-      }
-
-      if (nodeToRestore && nextElement && nodeToRestore === nextElement) {
-        e.preventDefault();
-        e.stopPropagation();
-        focusElement(nextElement, true);
-        return;
       }
 
       // If there is no next element, or it is outside the current scope, move focus to the
@@ -721,19 +681,9 @@ export function getFocusableTreeWalker(root: Element, opts?: FocusManagerOptions
           return NodeFilter.FILTER_REJECT;
         }
 
-        let scopeRef = null;
-        if (scope) {
-          for (let node of focusScopeTree.traverse()) {
-            if (node.scopeRef.current === scope) {
-              scopeRef = node.scopeRef;
-              break;
-            }
-          }
-        }
-
         if ((node as Element).matches(selector)
           && isElementVisible(node as Element)
-          && ((!scope || isElementInScope(node as Element, scope)) || (scopeRef && isElementInChildScope(node as Element, scopeRef)))
+          && (!scope || isElementInScope(node as Element, scope))
           && (!opts?.accept || opts.accept(node as Element))
         ) {
           return NodeFilter.FILTER_ACCEPT;

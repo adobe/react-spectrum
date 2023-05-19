@@ -15,9 +15,11 @@ import {DismissButton} from '@react-aria/overlays';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
 import {ItemProps} from '@react-types/shared';
 import {MenuDialogContext, useMenuStateContext} from './context';
-import {Modal, Popover} from '@react-spectrum/overlays';
+import {Modal} from '@react-spectrum/overlays';
+import {Popover} from './SubDialogPopover';
 import React, {Key, ReactElement, useRef} from 'react';
 import {useOverlayTriggerState} from '@react-stately/overlays';
+import {useFocusManager} from "@react-aria/focus";
 
 export interface SpectrumMenuDialogTriggerProps<T> extends ItemProps<T> {
   isUnavailable?: boolean,
@@ -27,7 +29,8 @@ export interface SpectrumMenuDialogTriggerProps<T> extends ItemProps<T> {
 function MenuDialogTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): ReactElement {
   let {isUnavailable} = props;
 
-  let {state: menuState} = useMenuStateContext();
+  let triggerRef = useRef<HTMLLIElement>(null);
+  let {state: menuState, container} = useMenuStateContext();
   let state = useOverlayTriggerState({isOpen: menuState.expandedKeys.has(props.targetKey), onOpenChange: (val) => {
     if (!val) {
       if (menuState.expandedKeys.has(props.targetKey)) {
@@ -47,7 +50,10 @@ function MenuDialogTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): ReactEl
   let [, content] = props.children as [ReactElement, ReactElement];
 
   let isMobile = useIsMobileDevice();
-  let triggerRef = useRef<HTMLLIElement>(null);
+  let focusManager = useFocusManager();
+  let onFocus = () => {
+    focusManager.focusFirst();
+  };
   return (
     <>
       <MenuDialogContext.Provider value={{isUnavailable, triggerRef}}>{trigger}</MenuDialogContext.Provider>
@@ -60,7 +66,10 @@ function MenuDialogTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): ReactEl
               <DismissButton onDismiss={state.close} />
             </Modal>
           ) : (
-            <Popover state={state} triggerRef={triggerRef} placement="end top" hideArrow offset={-10} isNonModal shouldContainFocus={false}>{content}</Popover>
+            <Popover container={container.current} state={state} triggerRef={triggerRef} placement="end top" offset={-10} isNonModal shouldContainFocus={false} shouldRestoreFocus={false}>
+              {content}
+              <div onFocus={onFocus} tabIndex={0} />
+            </Popover>
           )
         }
       </SlotProvider>

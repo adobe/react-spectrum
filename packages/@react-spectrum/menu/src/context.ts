@@ -12,7 +12,7 @@
 
 import {FocusStrategy} from '@react-types/shared';
 import {MenuTriggerState} from '@react-stately/menu';
-import React, {HTMLAttributes, MutableRefObject, useContext} from 'react';
+import React, {HTMLAttributes, MutableRefObject, Ref, useContext} from 'react';
 import {TreeState} from '@react-stately/tree';
 
 export interface MenuContextValue extends HTMLAttributes<HTMLElement> {
@@ -42,7 +42,8 @@ export function useMenuDialogContext(): MenuDialogContextValue {
 }
 
 export interface MenuStateContextValue<T> {
-  state?: TreeState<T>
+  state?: TreeState<T>,
+  container: Ref<any>
 }
 
 export const MenuStateContext = React.createContext<MenuStateContextValue<any>>({});
