@@ -1030,10 +1030,13 @@ function DragIntoListDefaultCopy() {
 
 Use the `renderPreview` prop to provide a custom drag preview. `keys` and `draggedKey` are passed to this function, where `keys` includes all the keys of the items being dragged, and `draggedKey` is the key of the item the user initiated the drag from.
 
-```tsx example
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
 import {View} from '@react-spectrum/view';
 
-function CustomDragPreview() {
+function CustomDragPreviewExample() {
   let list = useListData({
     initialItems: [
       {id: '1', type: 'file', name: 'Adobe Photoshop'},
@@ -1078,7 +1081,11 @@ function CustomDragPreview() {
     </ListView>
   );
 }
+```
+  
+</details>
 
+```tsx example
 <CustomDragPreview />
 ```
 
