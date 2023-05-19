@@ -573,6 +573,35 @@ describe('Table', () => {
     expect(document.activeElement).toBe(cell);
   });
 
+  it('should support refs', () => {
+    let tableRef = React.createRef();
+    let headerRef = React.createRef();
+    let columnRef = React.createRef();
+    let bodyRef = React.createRef();
+    let rowRef = React.createRef();
+    let cellRef = React.createRef();
+    render(
+      <Table aria-label="Search results" ref={tableRef}>
+        <TableHeader ref={headerRef}>
+          <Column isRowHeader ref={columnRef}>Name</Column>
+          <Column>Type</Column>
+        </TableHeader>
+        <TableBody ref={bodyRef}>
+          <Row ref={rowRef}>
+            <Cell ref={cellRef}>Foo</Cell>
+            <Cell>Bar</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    );
+    expect(tableRef.current).toBeInstanceOf(HTMLTableElement);
+    expect(headerRef.current).toBeInstanceOf(HTMLTableSectionElement);
+    expect(columnRef.current).toBeInstanceOf(HTMLTableCellElement);
+    expect(bodyRef.current).toBeInstanceOf(HTMLTableSectionElement);
+    expect(rowRef.current).toBeInstanceOf(HTMLTableRowElement);
+    expect(cellRef.current).toBeInstanceOf(HTMLTableCellElement);
+  });
+
   describe('drag and drop', () => {
     it('should support drag button slot', () => {
       let {getAllByRole} = render(<DraggableTable />);
