@@ -1514,9 +1514,13 @@ If no row header columns were specified, the first column will be used, as menti
 
 Use the `renderPreview` prop to provide a custom drag preview. `keys` and `draggedKey` are passed to this function, where `keys` includes all the keys of the items being dragged, and `draggedKey` is the key of the item the user initiated the drag from.
 
-```tsx example
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
 import {View} from '@react-spectrum/view';
-function CustomDragPreview() {
+  
+function CustomDragPreviewExample() {
   let columns = [
     {name: 'Name', id: 'name'},
     {name: 'Type', id: 'type'},
@@ -1577,7 +1581,10 @@ function CustomDragPreview() {
     </TableView>
   );
 }
-<CustomDragPreview />
+```
+
+```tsx example
+<CustomDragPreviewExample />
 ```
 
 ## Props
