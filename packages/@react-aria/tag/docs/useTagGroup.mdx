@@ -99,9 +99,9 @@ function TagGroup<T extends object>(props: AriaTagGroupProps<T>) {
   } = useTagGroup(props, state, ref);
 
   return (
-    <div ref={ref} className="tag-group">
+    <div className="tag-group">
       <div {...labelProps}>{label}</div>
-      <div {...gridProps}>
+      <div {...gridProps} ref={ref}>
         {[...state.collection].map((item) => (
           <Tag
             key={item.key}
