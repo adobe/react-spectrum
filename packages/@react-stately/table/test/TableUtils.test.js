@@ -1,7 +1,8 @@
 import {calculateColumnSizes} from '../src/TableUtils';
 import {TableColumnLayout} from '../src/TableColumnLayout';
 
-describe.skip('TableUtils', () => {
+// TODO figure out what breaks here
+describe('TableUtils', () => {
   describe('column building', () => {
     it('real life case 1', () => {
       let controlledWidths = new Map([['name', '0.9982425307557117fr'], ['type', 286], ['level', '4fr']]);

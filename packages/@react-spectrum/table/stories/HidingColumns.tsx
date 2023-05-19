@@ -78,6 +78,7 @@ export function HidingColumns(props) {
             )}
           </TableBody>
         </ColumnContext.Provider> */}
+        {/* TODO: to avoid a wrapping context, provides columns to TableBody to invalidate the caching when it changes. Bit odd to include it in so many places... */}
         <TableBody items={data} columns={visibleColumnsArray}>
           {item => (
             <Row columns={visibleColumnsArray}>

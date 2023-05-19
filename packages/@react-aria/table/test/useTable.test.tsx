@@ -44,6 +44,7 @@ let rows = [
 ];
 // copied in so as to put onAction into the TableRow
 // TODO: to fix test wil need to convert to use RAC collection components + useCollection+portal stuff
+// see example.tsx and useTable.stories
 function Table(props) {
   let state = useTableState({
     ...props,

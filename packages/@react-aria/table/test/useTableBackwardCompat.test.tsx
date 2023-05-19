@@ -92,7 +92,8 @@ let getCell = (tree, text) => {
   return el;
 };
 
-describe.skip('useTable', () => {
+// TODO: convert to minimum working form like in example.tsx + useTable stories
+describe('useTable', () => {
   describe('actions on rows', () => {
     installPointerEvent();
 

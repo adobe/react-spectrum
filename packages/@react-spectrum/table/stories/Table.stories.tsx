@@ -427,7 +427,7 @@ export const DynamicNestedColumnsWithResizing: TableStory = {
       </TableHeader>
       <TableBody items={items}>
         {item =>
-        (<Row columns={columns}>
+        (<Row columns={leafColumns}>
           {column => <Cell>{item[column.key]}</Cell>}
         </Row>)
         }

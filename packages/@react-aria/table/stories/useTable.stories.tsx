@@ -97,6 +97,7 @@ const Template: StoryFn<SpectrumTableProps<any>> = (args) => (
       </MyTableHeader>
       <TableBody items={defaultRows}>
         {item => (
+          // Note the id concat, this is necessary if columns doesn't have id
           <MyRow id={item.id} columns={columns}>
             {column => <Cell id={column.uid + item.id}>{item[column.uid]}</Cell>}
           </MyRow>

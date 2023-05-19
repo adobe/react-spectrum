@@ -54,7 +54,8 @@ function resizeTable(clientWidth, newValue) {
   act(() => {jest.runAllTimers();});
 }
 
-describe.skip('Aria Table', () => {
+// TODO convert aria resizing table example to match
+describe('Aria Table', () => {
   resizingTests(render, (tree, ...args) => tree.rerender(...args), Table, TableWithSomeResizingFRsControlled, resizeCol, resizeTable);
 });
 
