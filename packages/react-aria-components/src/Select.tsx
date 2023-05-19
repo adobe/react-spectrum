@@ -23,6 +23,17 @@ import React, {forwardRef} from 'react';
 import {SelectState, useSelectState} from 'react-stately';
 import {TextContext} from './Text';
 
+export interface SelectRenderProps {
+  /**
+   * Whether the select is focused, either via a mouse or keyboard.
+   */
+  isFocused: boolean,
+  /**
+   * Whether the select is currently open.
+   */
+  isOpen: boolean
+}
+
 export interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<SelectState<T>>, SlotProps {}
 
 interface SelectValueContext {

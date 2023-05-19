@@ -22,6 +22,17 @@ import React, {createContext, ForwardedRef, forwardRef, useCallback, useMemo, us
 import {TextContext} from './Text';
 import {useCollection} from './Collection';
 
+export interface ComboBoxRenderProps {
+  /**
+   * Whether the combobox is focused, either via a mouse or keyboard.
+   */
+  isFocused: boolean,
+  /**
+   * Whether the combobox is currently open.
+   */
+  isOpen: boolean
+}
+
 export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children' | 'placeholder' | 'name' | 'label' | 'description' | 'errorMessage'>, RenderProps<ComboBoxState<T>>, SlotProps {
   /** The filter function used to determine if a option should be included in the combo box list. */
   defaultFilter?: (textValue: string, inputValue: string) => boolean
