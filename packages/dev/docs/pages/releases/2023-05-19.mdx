@@ -31,7 +31,7 @@ As always, thanks to all of our contributors for helping to make this release po
 ### TagGroup API changes in official release
 * Removes labelProps of a Tag from needing to be a separate element, and just uses the tag itself in the aria-labelledby of the remove button.
 * Ensures Spectrum specific props like maxRows and validationState are not in the aria API.
-* Changes the onRemove prop to accept a Set<Key> instead of a single Key. This is to support multiple selection and bulk removal. Clicking the delete button on a tag still only removes that one tag.
+* Changes the onRemove prop to accept a `Set<Key>` instead of a single Key. This is to support multiple selection and bulk removal. Clicking the delete button on a tag still only removes that one tag.
 * Users no longer need to pass onRemove from useTagGroup to useTag.
 * Removes allowsRemoval prop and simply infers this from onRemove being present or not. Returns the computed value of this from useTag so render function can decide whether to show remove button or not.
 * Returns states from useTag for rendering, matching useGridListItem.
