@@ -52,7 +52,7 @@ export const Removable: TagGroupStory = {
   ...Default,
   args: {
     items: defaultItems,
-    allowsRemoving: true,
+    onRemove: () => {},
     label: 'Removable Tags'
   }
 };
@@ -61,7 +61,7 @@ export const CustomAction: TagGroupStory = {
   ...Default,
   args: {
     items: defaultItems,
-    allowsRemoving: true,
+    onRemove: () => {},
     actionLabel: 'Clear',
     description: 'Go ahead, clear them all.'
   }
