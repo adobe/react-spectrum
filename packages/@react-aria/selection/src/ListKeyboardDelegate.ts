@@ -11,6 +11,7 @@
  */
 
 import {Collection, Direction, KeyboardDelegate, Node, Orientation} from '@react-types/shared';
+import {isScrollable} from '@react-aria/utils';
 import {Key, RefObject} from 'react';
 
 interface ListKeyboardDelegateOptions<T> {
@@ -130,6 +131,10 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       return null;
     }
 
+    if (!isScrollable(menu)) {
+      return this.getFirstKey();
+    }
+
     if (this.orientation === 'horizontal') {
       let pageX = Math.max(0, item.offsetLeft + item.offsetWidth - menu.offsetWidth);
 
@@ -154,6 +159,10 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     let item = this.getItem(key);
     if (!item) {
       return null;
+    }
+
+    if (!isScrollable(menu)) {
+      return this.getLastKey();
     }
 
     if (this.orientation === 'horizontal') {
