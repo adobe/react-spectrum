@@ -26,10 +26,12 @@ import {TextContext} from './Text';
 export interface SelectRenderProps {
   /**
    * Whether the select is focused, either via a mouse or keyboard.
+   * @selector [data-focused]
    */
   isFocused: boolean,
   /**
    * Whether the select is currently open.
+   * @selector [data-open]
    */
   isOpen: boolean
 }
@@ -117,7 +119,13 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
           }
         }]
       ]}>
-      <div {...DOMProps} {...renderProps} ref={ref} slot={props.slot} />
+      <div
+        {...DOMProps}
+        {...renderProps}
+        ref={ref}
+        slot={props.slot}
+        data-focused={state.isFocused || undefined}
+        data-open={state.isOpen || undefined} />
       {portal}
       <HiddenSelect
         state={state}

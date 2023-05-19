@@ -25,10 +25,12 @@ import {useCollection} from './Collection';
 export interface ComboBoxRenderProps {
   /**
    * Whether the combobox is focused, either via a mouse or keyboard.
+   * @selector [data-focused]
    */
   isFocused: boolean,
   /**
    * Whether the combobox is currently open.
+   * @selector [data-open]
    */
   isOpen: boolean
 }
@@ -131,7 +133,13 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
           }
         }]
       ]}>
-      <div {...DOMProps} {...renderProps} ref={ref} slot={props.slot} />
+      <div
+        {...DOMProps}
+        {...renderProps}
+        ref={ref}
+        slot={props.slot}
+        data-focused={state.isFocused || undefined}
+        data-open={state.isOpen || undefined} />
       {portal}
     </Provider>
   );
