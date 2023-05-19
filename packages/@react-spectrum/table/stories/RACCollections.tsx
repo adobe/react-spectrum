@@ -35,9 +35,9 @@ export function TableHeader<T extends object>(props: TableHeaderProps<T>) {
 
   return (
     <BaseTableHeader id={props.id}>
-      { /*Add extra columns for drag and drop and selection. */ }
+      { /* Add extra columns for drag and drop and selection. */}
       {allowsDragging && <Column isDragButtonCell />}
-      {shouldShowCheckboxes && (!!selectionMode && selectionMode !== 'none') &&  (
+      {shouldShowCheckboxes && (!!selectionMode && selectionMode !== 'none') && (
         <Column isSelectionCell />
       )}
       <Collection items={props.columns}>
@@ -61,7 +61,7 @@ export function Column<T extends object>(props: ColumnProps<T>): JSX.Element {
   let render = useContext(CollectionRendererContext);
   let childColumns = typeof render === 'function' ? render : props.children;
   let children = useCollectionChildren({
-    children: (props.title || props.childColumns) ? childColumns : null,
+    children: ((props.title && React.Children.count(props.children) > 0) || props.childColumns) ? childColumns : null,
     items: props.childColumns
   });
 
@@ -98,7 +98,7 @@ export function BaseRow<T extends object>(props: RowProps<T>) {
   );
 }
 
-export function Row<T extends object>({ id, columns, children }: RowProps<T>) {
+export function Row<T extends object>({id, columns, children}: RowProps<T>) {
   let {
     selectionMode,
     allowsDragging,

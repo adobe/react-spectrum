@@ -67,7 +67,7 @@ export function HidingColumns(props) {
       </Form>
       <TableView aria-label="Table with hideable columns" width={900} height={500} selectionMode="single" {...props}>
         <TableHeader columns={visibleColumnsArray}>
-          {column => <Column {...column}>{column.title}</Column>}
+          {column => <Column {...column} />}
         </TableHeader>
         {/* <ColumnContext.Provider value={{columns: visibleColumnsArray}}>
           <TableBody items={data} columns={visibleColumnsArray}>

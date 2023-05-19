@@ -36,16 +36,22 @@ let columns = [
 
 let nestedColumns = [
   {name: 'Test', id: 'test', isRowHeader: true},
-  {name: 'Tiered One Header', id: 'tier1', children: [
-    {name: 'Tier Two Header A', id: 'tier2a', children: [
-      {name: 'Foo', id: 'foo'},
-      {name: 'Bar', id: 'bar'}
-    ]},
-    {name: 'Yay', id: 'yay'},
-    {name: 'Tier Two Header B', id: 'tier2b', children: [
-      {name: 'Baz', id: 'baz'}
-    ]}
-  ]}
+  {
+    name: 'Tiered One Header', id: 'tier1', children: [
+      {
+        name: 'Tier Two Header A', id: 'tier2a', children: [
+          {name: 'Foo', id: 'foo'},
+          {name: 'Bar', id: 'bar'}
+        ]
+      },
+      {name: 'Yay', id: 'yay'},
+      {
+        name: 'Tier Two Header B', id: 'tier2b', children: [
+          {name: 'Baz', id: 'baz'}
+        ]
+      }
+    ]
+  }
 ];
 
 let leafColumns = [
@@ -74,7 +80,7 @@ let render = (children, scale: Scale = 'medium') => {
     </Provider>
   );
   // account for table column resizing to do initial pass due to relayout from useTableColumnResizeState render
-  act(() => {jest.runAllTimers();});
+  act(() => { jest.runAllTimers(); });
   return tree;
 };
 
@@ -84,7 +90,7 @@ let rerender = (tree, children, scale: Scale = 'medium') => {
       {children}
     </Provider>
   );
-  act(() => {jest.runAllTimers();});
+  act(() => { jest.runAllTimers(); });
   return newTree;
 };
 
@@ -103,7 +109,7 @@ describe('TableViewSizing', function () {
   });
 
   afterEach(() => {
-    act(() => {jest.runAllTimers();});
+    act(() => { jest.runAllTimers(); });
   });
 
   describe('layout', function () {
@@ -115,9 +121,9 @@ describe('TableViewSizing', function () {
           </TableHeader>
           <TableBody items={items}>
             {item =>
-              (<Row columns={columns}>
-                {column => <Cell>{item[column.id]}</Cell>}
-              </Row>)
+            (<Row columns={columns}>
+              {column => <Cell>{item[column.id]}</Cell>}
+            </Row>)
             }
           </TableBody>
         </TableView>
@@ -239,7 +245,7 @@ describe('TableViewSizing', function () {
           });
 
         let tree = renderTable({overflowMode: 'wrap'});
-        act(() => {jest.runAllTimers();});
+        act(() => { jest.runAllTimers(); });
         let rows = tree.getAllByRole('row');
         expect(rows).toHaveLength(3);
 
@@ -274,14 +280,14 @@ describe('TableViewSizing', function () {
             </TableHeader>
             <TableBody items={items}>
               {item =>
-                (<Row columns={leafColumns}>
-                  {column => <Cell>{item[column.id]}</Cell>}
-                </Row>)
+              (<Row columns={leafColumns}>
+                {column => <Cell>{item[column.id]}</Cell>}
+              </Row>)
               }
             </TableBody>
           </TableView>
         );
-        act(() => {jest.runAllTimers();});
+        act(() => { jest.runAllTimers(); });
         let rows = tree.getAllByRole('row');
         expect(rows).toHaveLength(5);
 
@@ -321,9 +327,9 @@ describe('TableViewSizing', function () {
               </TableHeader>
               <TableBody items={items}>
                 {item =>
-                  (<Row columns={columns}>
-                    {column => <Cell>{item[column.id]}</Cell>}
-                  </Row>)
+                (<Row columns={columns}>
+                  {column => <Cell>{item[column.id]}</Cell>}
+                </Row>)
                 }
               </TableBody>
             </TableView>
@@ -331,16 +337,16 @@ describe('TableViewSizing', function () {
         }
 
         let tree = render(<ControlledSelection selectionMode="multiple" />);
-        act(() => {jest.runAllTimers();});
+        act(() => { jest.runAllTimers(); });
         let row = tree.getAllByRole('row')[2];
         expect(row).toHaveAttribute('aria-selected', 'false');
         userEvent.click(within(row).getByRole('checkbox'));
-        act(() => {jest.runAllTimers();});
+        act(() => { jest.runAllTimers(); });
         expect(row).toHaveAttribute('aria-selected', 'true');
 
         // Without ListLayout fix, throws here with "TypeError: Cannot set property 'estimatedSize' of undefined"
         rerender(tree, <ControlledSelection selectionMode="none" />);
-        act(() => {jest.runAllTimers();});
+        act(() => { jest.runAllTimers(); });
         expect(tree.queryByRole('checkbox')).toBeNull();
       });
 
@@ -375,9 +381,9 @@ describe('TableViewSizing', function () {
             </TableHeader>
             <TableBody items={items}>
               {item =>
-                (<Row columns={columns}>
-                  {column => <Cell>{item[column.id]}</Cell>}
-                </Row>)
+              (<Row columns={columns}>
+                {column => <Cell>{item[column.id]}</Cell>}
+              </Row>)
               }
             </TableBody>
           </TableView>
@@ -401,9 +407,9 @@ describe('TableViewSizing', function () {
             </TableHeader>
             <TableBody items={items}>
               {item =>
-                (<Row columns={columns}>
-                  {column => <Cell>{item[column.id]}</Cell>}
-                </Row>)
+              (<Row columns={columns}>
+                {column => <Cell>{item[column.id]}</Cell>}
+              </Row>)
               }
             </TableBody>
           </TableView>
@@ -429,9 +435,9 @@ describe('TableViewSizing', function () {
             </TableHeader>
             <TableBody items={items}>
               {item =>
-                (<Row columns={columns}>
-                  {column => <Cell>{item[column.id]}</Cell>}
-                </Row>)
+              (<Row columns={columns}>
+                {column => <Cell>{item[column.id]}</Cell>}
+              </Row>)
               }
             </TableBody>
           </TableView>
@@ -456,9 +462,9 @@ describe('TableViewSizing', function () {
             </TableHeader>
             <TableBody items={items}>
               {item =>
-                (<Row columns={columns}>
-                  {column => <Cell>{item[column.id]}</Cell>}
-                </Row>)
+              (<Row columns={columns}>
+                {column => <Cell>{item[column.id]}</Cell>}
+              </Row>)
               }
             </TableBody>
           </TableView>
@@ -484,9 +490,9 @@ describe('TableViewSizing', function () {
             </TableHeader>
             <TableBody items={items}>
               {item =>
-                (<Row columns={columns}>
-                  {column => <Cell>{item[column.id]}</Cell>}
-                </Row>)
+              (<Row columns={columns}>
+                {column => <Cell>{item[column.id]}</Cell>}
+              </Row>)
               }
             </TableBody>
           </TableView>
@@ -511,9 +517,9 @@ describe('TableViewSizing', function () {
             </TableHeader>
             <TableBody items={items}>
               {item =>
-                (<Row columns={columns}>
-                  {column => <Cell>{item[column.id]}</Cell>}
-                </Row>)
+              (<Row columns={columns}>
+                {column => <Cell>{item[column.id]}</Cell>}
+              </Row>)
               }
             </TableBody>
           </TableView>
@@ -539,9 +545,9 @@ describe('TableViewSizing', function () {
             </TableHeader>
             <TableBody items={items}>
               {item =>
-                (<Row columns={columns}>
-                  {column => <Cell>{item[column.id]}</Cell>}
-                </Row>)
+              (<Row columns={columns}>
+                {column => <Cell>{item[column.id]}</Cell>}
+              </Row>)
               }
             </TableBody>
           </TableView>
@@ -567,9 +573,9 @@ describe('TableViewSizing', function () {
             </TableHeader>
             <TableBody items={items}>
               {item =>
-                (<Row columns={columns}>
-                  {column => <Cell>{item[column.id]}</Cell>}
-                </Row>)
+              (<Row columns={columns}>
+                {column => <Cell>{item[column.id]}</Cell>}
+              </Row>)
               }
             </TableBody>
           </TableView>
@@ -594,9 +600,9 @@ describe('TableViewSizing', function () {
             </TableHeader>
             <TableBody items={items}>
               {item =>
-                (<Row columns={columns}>
-                  {column => <Cell>{item[column.id]}</Cell>}
-                </Row>)
+              (<Row columns={columns}>
+                {column => <Cell>{item[column.id]}</Cell>}
+              </Row>)
               }
             </TableBody>
           </TableView>
@@ -622,9 +628,9 @@ describe('TableViewSizing', function () {
               </TableHeader>
               <TableBody items={items}>
                 {item =>
-                  (<Row columns={columns}>
-                    {column => <Cell>{item[column.id]}</Cell>}
-                  </Row>)
+                (<Row columns={columns}>
+                  {column => <Cell>{item[column.id]}</Cell>}
+                </Row>)
                 }
               </TableBody>
             </TableView>
@@ -651,9 +657,9 @@ describe('TableViewSizing', function () {
               </TableHeader>
               <TableBody items={items}>
                 {item =>
-                  (<Row columns={columns}>
-                    {column => <Cell>{item[column.id]}</Cell>}
-                  </Row>)
+                (<Row columns={columns}>
+                  {column => <Cell>{item[column.id]}</Cell>}
+                </Row>)
                 }
               </TableBody>
             </TableView>
@@ -677,9 +683,9 @@ describe('TableViewSizing', function () {
             </TableHeader>
             <TableBody items={items}>
               {item =>
-                (<Row columns={leafColumns}>
-                  {column => <Cell>{item[column.id]}</Cell>}
-                </Row>)
+              (<Row columns={leafColumns}>
+                {column => <Cell>{item[column.id]}</Cell>}
+              </Row>)
               }
             </TableBody>
           </TableView>
@@ -728,9 +734,9 @@ describe('TableViewSizing', function () {
             </TableHeader>
             <TableBody items={items}>
               {item =>
-                (<Row columns={columns}>
-                  {column => <Cell>{item[column.id]}</Cell>}
-                </Row>)
+              (<Row columns={columns}>
+                {column => <Cell>{item[column.id]}</Cell>}
+              </Row>)
               }
             </TableBody>
           </TableView>
@@ -788,7 +794,7 @@ describe('TableViewSizing', function () {
 
         fireEvent.pointerLeave(resizer, {pointerType: 'mouse', pointerId: 1});
         fireEvent.pointerLeave(resizableHeader, {pointerType: 'mouse', pointerId: 1});
-        act(() => {jest.runAllTimers();});
+        act(() => { jest.runAllTimers(); });
 
         expect(tree.queryByRole('slider')).toBeNull();
       });
@@ -804,9 +810,9 @@ describe('TableViewSizing', function () {
             </TableHeader>
             <TableBody items={items}>
               {item =>
-                (<Row columns={columns}>
-                  {column => <Cell>{item[column.id]}</Cell>}
-                </Row>)
+              (<Row columns={columns}>
+                {column => <Cell>{item[column.id]}</Cell>}
+              </Row>)
               }
             </TableBody>
           </TableView>
@@ -862,7 +868,7 @@ describe('TableViewSizing', function () {
 
         fireEvent.pointerLeave(resizer, {pointerType: 'mouse', pointerId: 1});
         fireEvent.pointerLeave(resizableHeader, {pointerType: 'mouse', pointerId: 1});
-        act(() => {jest.runAllTimers();});
+        act(() => { jest.runAllTimers(); });
 
         expect(tree.queryByRole('slider')).toBeNull();
       });
@@ -884,16 +890,16 @@ describe('TableViewSizing', function () {
             </TableHeader>
             <TableBody items={items}>
               {item =>
-                (<Row columns={columns}>
-                  {column => <Cell>{item[column.id]}</Cell>}
-                </Row>)
+              (<Row columns={columns}>
+                {column => <Cell>{item[column.id]}</Cell>}
+              </Row>)
               }
             </TableBody>
           </TableView>
         );
 
         triggerTouch(document.body);
-        act(() => {jest.runAllTimers();});
+        act(() => { jest.runAllTimers(); });
 
         expect(tree.queryByRole('slider')).toBeNull();
 
@@ -909,12 +915,12 @@ describe('TableViewSizing', function () {
         let resizableHeader = within(header).getByRole('button');
 
         triggerTouch(resizableHeader);
-        act(() => {jest.runAllTimers();});
+        act(() => { jest.runAllTimers(); });
 
         let resizeMenuItem = tree.getAllByRole('menuitem')[0];
 
         triggerTouch(resizeMenuItem);
-        act(() => {jest.runAllTimers();});
+        act(() => { jest.runAllTimers(); });
 
         expect(tree.getByRole('slider')).toBeVisible();
         let resizer = tree.getByRole('slider');
@@ -946,7 +952,7 @@ describe('TableViewSizing', function () {
 
         // tapping on the document.body doesn't cause a blur in jest because the body isn't focusable, so just call blur
         act(() => resizer.blur());
-        act(() => {jest.runAllTimers();});
+        act(() => { jest.runAllTimers(); });
 
         expect(onResizeEnd).toHaveBeenCalledTimes(1);
         expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 620], ['bar', '1fr'], ['baz', '1fr']]));
@@ -966,9 +972,9 @@ describe('TableViewSizing', function () {
             </TableHeader>
             <TableBody items={items}>
               {item =>
-                (<Row columns={columns}>
-                  {column => <Cell>{item[column.id]}</Cell>}
-                </Row>)
+              (<Row columns={columns}>
+                {column => <Cell>{item[column.id]}</Cell>}
+              </Row>)
               }
             </TableBody>
           </TableView>
@@ -976,7 +982,7 @@ describe('TableViewSizing', function () {
 
         fireEvent.pointerDown(document.body, {pointerType: 'touch', pointerId: 1});
         fireEvent.pointerUp(document.body, {pointerType: 'touch', pointerId: 1});
-        act(() => {jest.runAllTimers();});
+        act(() => { jest.runAllTimers(); });
 
         expect(tree.queryByRole('slider')).toBeNull();
 
@@ -993,13 +999,13 @@ describe('TableViewSizing', function () {
 
         fireEvent.pointerDown(resizableHeader, {pointerType: 'touch', pointerId: 1});
         fireEvent.pointerUp(resizableHeader, {pointerType: 'touch', pointerId: 1});
-        act(() => {jest.runAllTimers();});
+        act(() => { jest.runAllTimers(); });
 
         let resizeMenuItem = tree.getAllByRole('menuitem')[0];
 
         fireEvent.pointerDown(resizeMenuItem, {pointerType: 'touch', pointerId: 1});
         fireEvent.pointerUp(resizeMenuItem, {pointerType: 'touch', pointerId: 1});
-        act(() => {jest.runAllTimers();});
+        act(() => { jest.runAllTimers(); });
 
         let resizer = tree.getByRole('slider');
         expect(resizer).toBeVisible();
@@ -1033,7 +1039,7 @@ describe('TableViewSizing', function () {
 
         // tapping on the document.body doesn't cause a blur in jest because the body isn't focusable, so just call blur
         act(() => resizer.blur());
-        act(() => {jest.runAllTimers();});
+        act(() => { jest.runAllTimers(); });
 
         expect(onResizeEnd).toHaveBeenCalledTimes(1);
         expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 620], ['bar', '1fr'], ['baz', '1fr']]));
@@ -1055,9 +1061,9 @@ describe('TableViewSizing', function () {
             </TableHeader>
             <TableBody items={items}>
               {item =>
-                (<Row columns={columns}>
-                  {column => <Cell>{item[column.id]}</Cell>}
-                </Row>)
+              (<Row columns={columns}>
+                {column => <Cell>{item[column.id]}</Cell>}
+              </Row>)
               }
             </TableBody>
           </TableView>
@@ -1085,8 +1091,8 @@ describe('TableViewSizing', function () {
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
-        act(() => {jest.runAllTimers();});
-        act(() => {jest.runAllTimers();});
+        act(() => { jest.runAllTimers(); });
+        act(() => { jest.runAllTimers(); });
 
         let resizer = tree.getByRole('slider');
 
@@ -1161,9 +1167,9 @@ describe('TableViewSizing', function () {
             </TableHeader>
             <TableBody items={items}>
               {item =>
-                (<Row columns={columns}>
-                  {column => <Cell>{item[column.id]}</Cell>}
-                </Row>)
+              (<Row columns={columns}>
+                {column => <Cell>{item[column.id]}</Cell>}
+              </Row>)
               }
             </TableBody>
           </TableView>
@@ -1190,8 +1196,8 @@ describe('TableViewSizing', function () {
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
-        act(() => {jest.runAllTimers();});
-        act(() => {jest.runAllTimers();});
+        act(() => { jest.runAllTimers(); });
+        act(() => { jest.runAllTimers(); });
 
         let resizer = tree.getByRole('slider');
 
@@ -1242,9 +1248,9 @@ describe('TableViewSizing', function () {
             </TableHeader>
             <TableBody items={items}>
               {item =>
-                (<Row columns={columns}>
-                  {column => <Cell>{item[column.id]}</Cell>}
-                </Row>)
+              (<Row columns={columns}>
+                {column => <Cell>{item[column.id]}</Cell>}
+              </Row>)
               }
             </TableBody>
           </TableView>
@@ -1265,8 +1271,8 @@ describe('TableViewSizing', function () {
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
-        act(() => {jest.runAllTimers();});
-        act(() => {jest.runAllTimers();});
+        act(() => { jest.runAllTimers(); });
+        act(() => { jest.runAllTimers(); });
 
         let resizer = tree.getByRole('slider');
 
@@ -1292,9 +1298,9 @@ describe('TableViewSizing', function () {
             </TableHeader>
             <TableBody items={items}>
               {item =>
-                (<Row columns={columns}>
-                  {column => <Cell>{item[column.id]}</Cell>}
-                </Row>)
+              (<Row columns={columns}>
+                {column => <Cell>{item[column.id]}</Cell>}
+              </Row>)
               }
             </TableBody>
           </TableView>
@@ -1314,8 +1320,8 @@ describe('TableViewSizing', function () {
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
-        act(() => {jest.runAllTimers();});
-        act(() => {jest.runAllTimers();});
+        act(() => { jest.runAllTimers(); });
+        act(() => { jest.runAllTimers(); });
 
         let resizer = tree.getByRole('slider');
 
@@ -1342,9 +1348,9 @@ describe('TableViewSizing', function () {
             </TableHeader>
             <TableBody items={items}>
               {item =>
-                (<Row columns={columns}>
-                  {column => <Cell>{item[column.id]}</Cell>}
-                </Row>)
+              (<Row columns={columns}>
+                {column => <Cell>{item[column.id]}</Cell>}
+              </Row>)
               }
             </TableBody>
           </TableView>
@@ -1365,8 +1371,8 @@ describe('TableViewSizing', function () {
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
-        act(() => {jest.runAllTimers();});
-        act(() => {jest.runAllTimers();});
+        act(() => { jest.runAllTimers(); });
+        act(() => { jest.runAllTimers(); });
 
         let resizer = tree.getByRole('slider');
         expect(document.activeElement).toBe(resizer);
@@ -1389,9 +1395,9 @@ describe('TableViewSizing', function () {
           </TableHeader>
           <TableBody items={items}>
             {item =>
-              (<Row columns={leafColumns}>
-                {column => <Cell>{item[column.id]}</Cell>}
-              </Row>)
+            (<Row columns={leafColumns}>
+              {column => <Cell>{item[column.id]}</Cell>}
+            </Row>)
             }
           </TableBody>
         </TableView>
@@ -1409,45 +1415,45 @@ describe('TableViewSizing', function () {
   });
 
   describe('updating columns', function () {
-    it.only('should support removing columns', function () {
+    it('should support removing columns', function () {
       let tree = render(<HidingColumns />);
 
-      // let checkbox = tree.getByLabelText('Net Budget') as HTMLInputElement;
-      // expect(checkbox.checked).toBe(true);
+      let checkbox = tree.getByLabelText('Net Budget') as HTMLInputElement;
+      expect(checkbox.checked).toBe(true);
 
-      // let table = tree.getByRole('grid');
-      // let columns = within(table).getAllByRole('columnheader');
-      // expect(columns).toHaveLength(6);
-      // expect(columns[1]).toHaveTextContent('Plan Name');
-      // expect(columns[2]).toHaveTextContent('Audience Type');
-      // expect(columns[3]).toHaveTextContent('Net Budget');
-      // expect(columns[4]).toHaveTextContent('Target OTP');
-      // expect(columns[5]).toHaveTextContent('Reach');
+      let table = tree.getByRole('grid');
+      let columns = within(table).getAllByRole('columnheader');
+      expect(columns).toHaveLength(6);
+      expect(columns[1]).toHaveTextContent('Plan Name');
+      expect(columns[2]).toHaveTextContent('Audience Type');
+      expect(columns[3]).toHaveTextContent('Net Budget');
+      expect(columns[4]).toHaveTextContent('Target OTP');
+      expect(columns[5]).toHaveTextContent('Reach');
 
-      // for (let row of within(table).getAllByRole('row').slice(1)) {
-      //   expect(within(row).getAllByRole('rowheader')).toHaveLength(1);
-      //   expect(within(row).getAllByRole('gridcell')).toHaveLength(5);
-      // }
+      for (let row of within(table).getAllByRole('row').slice(1)) {
+        expect(within(row).getAllByRole('rowheader')).toHaveLength(1);
+        expect(within(row).getAllByRole('gridcell')).toHaveLength(5);
+      }
 
-      // userEvent.click(checkbox);
-      // expect(checkbox.checked).toBe(false);
+      userEvent.click(checkbox);
+      expect(checkbox.checked).toBe(false);
 
-      // act(() => {jest.runAllTimers();});
+      act(() => { jest.runAllTimers(); });
 
-      // columns = within(table).getAllByRole('columnheader');
-      // expect(columns).toHaveLength(5);
-      // expect(columns[1]).toHaveTextContent('Plan Name');
-      // expect(columns[2]).toHaveTextContent('Audience Type');
-      // expect(columns[3]).toHaveTextContent('Target OTP');
-      // expect(columns[4]).toHaveTextContent('Reach');
+      columns = within(table).getAllByRole('columnheader');
+      expect(columns).toHaveLength(5);
+      expect(columns[1]).toHaveTextContent('Plan Name');
+      expect(columns[2]).toHaveTextContent('Audience Type');
+      expect(columns[3]).toHaveTextContent('Target OTP');
+      expect(columns[4]).toHaveTextContent('Reach');
 
-      // for (let row of within(table).getAllByRole('row').slice(1)) {
-      //   expect(within(row).getAllByRole('rowheader')).toHaveLength(1);
-      //   expect(within(row).getAllByRole('gridcell')).toHaveLength(4);
-      // }
+      for (let row of within(table).getAllByRole('row').slice(1)) {
+        expect(within(row).getAllByRole('rowheader')).toHaveLength(1);
+        expect(within(row).getAllByRole('gridcell')).toHaveLength(4);
+      }
     });
 
-    it.only('should support adding columns', function () {
+    it('should support adding columns', function () {
       let tree = render(<HidingColumns />);
 
       let checkbox = tree.getByLabelText('Net Budget') as HTMLInputElement;
@@ -1456,7 +1462,7 @@ describe('TableViewSizing', function () {
       userEvent.click(checkbox);
       expect(checkbox.checked).toBe(false);
 
-      act(() => {jest.runAllTimers();});
+      act(() => { jest.runAllTimers(); });
 
       let table = tree.getByRole('grid');
       let columns = within(table).getAllByRole('columnheader');
@@ -1465,7 +1471,7 @@ describe('TableViewSizing', function () {
       userEvent.click(checkbox);
       expect(checkbox.checked).toBe(true);
 
-      act(() => {jest.runAllTimers();});
+      act(() => { jest.runAllTimers(); });
 
       columns = within(table).getAllByRole('columnheader');
       expect(columns).toHaveLength(6);
@@ -1489,7 +1495,7 @@ describe('TableViewSizing', function () {
       }
 
       let tree = render(<HidingColumns />);
-      act(() => {jest.runAllTimers();});
+      act(() => { jest.runAllTimers(); });
       let table = tree.getByRole('grid');
       let columns = within(table).getAllByRole('columnheader');
       expect(columns).toHaveLength(6);
@@ -1504,24 +1510,24 @@ describe('TableViewSizing', function () {
 
       userEvent.click(audienceCheckbox);
       expect(audienceCheckbox.checked).toBe(false);
-      act(() => {jest.runAllTimers();});
+      act(() => { jest.runAllTimers(); });
       oldWidth = compareWidths(rows[1], oldWidth);
 
       userEvent.click(budgetCheckbox);
       expect(budgetCheckbox.checked).toBe(false);
-      act(() => {jest.runAllTimers();});
+      act(() => { jest.runAllTimers(); });
       oldWidth = compareWidths(rows[1], oldWidth);
 
       userEvent.click(targetCheckbox);
       expect(targetCheckbox.checked).toBe(false);
-      act(() => {jest.runAllTimers();});
+      act(() => { jest.runAllTimers(); });
       oldWidth = compareWidths(rows[1], oldWidth);
 
       // This previously failed, the first column wouldn't update its width
       // when the 2nd to last column was removed
       userEvent.click(reachCheckbox);
       expect(reachCheckbox.checked).toBe(false);
-      act(() => {jest.runAllTimers();});
+      act(() => { jest.runAllTimers(); });
       oldWidth = compareWidths(rows[1], oldWidth);
       columns = within(table).getAllByRole('columnheader');
       expect(columns).toHaveLength(2);
@@ -1529,7 +1535,7 @@ describe('TableViewSizing', function () {
       // Re-add the column and check that the width decreases
       userEvent.click(audienceCheckbox);
       expect(audienceCheckbox.checked).toBe(true);
-      act(() => {jest.runAllTimers();});
+      act(() => { jest.runAllTimers(); });
       expect(parseInt((rows[1].childNodes[1] as HTMLElement).style.width, 10)).toBeLessThan(parseInt(oldWidth, 10));
     });
   });
@@ -1539,7 +1545,7 @@ describe('TableViewSizing', function () {
     let renderTable = (props = {}, scale: Scale = 'medium', showDivider = false) => render(
       <TableView aria-label="Table" data-testid="test" {...props}>
         <TableHeader>
-          <Column key="foo">Foo</Column>
+          <Column key="foo" isRowHeader>Foo</Column>
           <Column key="addAction" hideHeader showDivider={showDivider}>
             Add Item
           </Column>
@@ -1657,7 +1663,7 @@ function resizeCol(tree, col, delta) {
   let column = getColumn(tree, col);
 
   // trigger pointer modality
-  act(() => {setInteractionModality('pointer');});
+  act(() => { setInteractionModality('pointer'); });
   fireEvent.pointerMove(tree.container);
 
   fireEvent.pointerEnter(column);
@@ -1666,18 +1672,18 @@ function resizeCol(tree, col, delta) {
 
   // actual locations do not matter, the delta matters between events for the calculation of useMove
   fireEvent.pointerDown(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 0, pageY: 30});
-  act(() => {jest.runAllTimers();});
+  act(() => { jest.runAllTimers(); });
   fireEvent.pointerMove(resizer, {pointerType: 'mouse', pointerId: 1, pageX: delta, pageY: 25});
-  act(() => {jest.runAllTimers();});
+  act(() => { jest.runAllTimers(); });
   fireEvent.pointerUp(resizer, {pointerType: 'mouse', pointerId: 1});
-  act(() => {jest.runAllTimers();});
+  act(() => { jest.runAllTimers(); });
 }
 
 
 function resizeTable(clientWidth, newValue) {
   clientWidth.mockImplementation(() => newValue);
   fireEvent(window, new Event('resize'));
-  act(() => {jest.runAllTimers();});
+  act(() => { jest.runAllTimers(); });
 }
 
 describe('RSP TableView', () => {
