@@ -11,19 +11,28 @@
  */
 
 import {mergeProps} from '@react-aria/utils';
-import React, {useState} from 'react';
+import React, {useContext, useMemo, useState} from 'react';
+import {TableCollection, useTableState} from '@react-stately/table';
 import {useCheckbox} from '@react-aria/checkbox';
+import {useCollection} from 'react-aria-components/src/Collection';
 import {useFocusRing} from '@react-aria/focus';
 import {useRef} from 'react';
 import {useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
-import {useTableState} from '@react-stately/table';
 import {useToggleState} from '@react-stately/toggle';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
+const TablePropsContext = React.createContext(null);
+export function useTablePropsContext() {
+  return useContext(TablePropsContext);
+}
+
 export function Table(props) {
   let [showSelectionCheckboxes, setShowSelectionCheckboxes] = useState(props.selectionStyle !== 'highlight');
+  let initialCollection = useMemo(() => new TableCollection<any>(), []);
+  let {portal, collection} = useCollection(props, initialCollection);
   let state = useTableState({
     ...props,
+    collection,
     showSelectionCheckboxes,
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
@@ -34,7 +43,6 @@ export function Table(props) {
   }
   let ref = useRef();
   let bodyRef = useRef();
-  let {collection} = state;
   let {gridProps} = useTable(
     {
       ...props,
@@ -45,31 +53,51 @@ export function Table(props) {
     ref
   );
 
+  let {selectionBehavior, selectionMode} = state.selectionManager;
+  let ctx = useMemo(() => ({
+    selectionBehavior: selectionMode === 'none' ? null : selectionBehavior,
+    selectionMode
+  }), [selectionBehavior, selectionMode]);
+  console.log('collection', collection, [...state.collection.getChildren(collection.headerRows[0]?.key)]);
+
+
+  // TODO: instead of doing the maps below and using column.props.isSelectionCell and cell.props.isSelectionCell
+  // could use useCachedChildren and follow RAC Table's implementation. Or can combine TableColumnHeader and TableSelectAllCell
+  // so that it renders column.rendered. Would need to then figure out which column is a checkbox column and thus pass checkboxProps accordingly. Alternatively
+  // could set up a context to pass the checkbox props down and make the checkbox component consume this context (kinda like RAC checkbox and RAC Table does now)
+
+  // What is the expectation here? If don't want to allow users to pass arbitrary props to the Column collection component, then they need to modify their
+  // Table to be very much like the RAC table (maybe this is actually what we want?)
   return (
-    <table {...gridProps} ref={ref} style={{borderCollapse: 'collapse'}}>
-      <TableRowGroup type="thead" style={{borderBottom: '2px solid gray', display: 'block'}}>
-        {collection.headerRows.map(headerRow => (
-          <TableHeaderRow key={headerRow.key} item={headerRow} state={state}>
-            {[...state.collection.getChildren(headerRow.key)].map(column =>
-              column.props.isSelectionCell
-                ? <TableSelectAllCell key={column.key} column={column} state={state} />
-                : <TableColumnHeader key={column.key} column={column} state={state} />
-            )}
-          </TableHeaderRow>
-        ))}
-      </TableRowGroup>
-      <TableRowGroup ref={bodyRef} type="tbody" style={{display: 'block', overflow: 'auto', maxHeight: '200px'}}>
-        {[...collection].map(row => (
-          <TableRow key={row.key} item={row} state={state}>
-            {[...state.collection.getChildren(row.key)].map(cell =>
-              cell.props.isSelectionCell
-                ? <TableCheckboxCell key={cell.key} cell={cell} state={state} />
-                : <TableCell key={cell.key} cell={cell} state={state} />
-            )}
-          </TableRow>
-        ))}
-      </TableRowGroup>
-    </table>
+    <>
+      <table {...gridProps} ref={ref} style={{borderCollapse: 'collapse'}}>
+        <TableRowGroup type="thead" style={{borderBottom: '2px solid gray', display: 'block'}}>
+          {collection.headerRows.map(headerRow => (
+            <TableHeaderRow key={headerRow.key} item={headerRow} state={state}>
+              {[...state.collection.getChildren(headerRow.key)].map(column =>
+                column.props.isSelectionCell
+                  ? <TableSelectAllCell key={column.key} column={column} state={state} />
+                  : <TableColumnHeader key={column.key} column={column} state={state} />
+              )}
+            </TableHeaderRow>
+          ))}
+        </TableRowGroup>
+        <TableRowGroup ref={bodyRef} type="tbody" style={{display: 'block', overflow: 'auto', maxHeight: '200px'}}>
+          {[...collection].map(row => (
+            <TableRow key={row.key} item={row} state={state}>
+              {[...state.collection.getChildren(row.key)].map(cell =>
+                cell.props.isSelectionCell
+                  ? <TableCheckboxCell key={cell.key} cell={cell} state={state} />
+                  : <TableCell key={cell.key} cell={cell} state={state} />
+              )}
+            </TableRow>
+          ))}
+        </TableRowGroup>
+      </table>
+      <TablePropsContext.Provider value={ctx}>
+        {portal}
+      </TablePropsContext.Provider>
+    </>
   );
 }
 
@@ -190,7 +218,7 @@ export function TableSelectAllCell({column, state}) {
   let {checkboxProps} = useTableSelectAllCheckbox(state);
   let inputRef = useRef(null);
   let {inputProps} = useCheckbox(checkboxProps, useToggleState(checkboxProps), inputRef);
-
+  console.log('column', column)
   return (
     <th
       {...columnHeaderProps}

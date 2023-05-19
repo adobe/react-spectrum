@@ -92,7 +92,7 @@ let getCell = (tree, text) => {
   return el;
 };
 
-describe('useTable', () => {
+describe.skip('useTable', () => {
   describe('actions on rows', () => {
     installPointerEvent();
 

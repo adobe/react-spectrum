@@ -43,6 +43,7 @@ let rows = [
   {id: 5, name: 'Pikachu', type: 'Electric', level: '100'}
 ];
 // copied in so as to put onAction into the TableRow
+// TODO: to fix test wil need to convert to use RAC collection components + useCollection+portal stuff
 function Table(props) {
   let state = useTableState({
     ...props,

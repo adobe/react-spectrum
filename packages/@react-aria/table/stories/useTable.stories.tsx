@@ -12,14 +12,15 @@
 
 import {action} from '@storybook/addon-actions';
 import {Table as BackwardCompatTable} from './example-backwards-compat';
-import {Cell, Column, Row, TableBody, TableHeader} from '@react-stately/table';
+// import {Cell, Column, Row, TableBody, TableHeader} from '@react-stately/table';
+import {Cell, Checkbox, Collection, Column, Row,  TableBody, TableHeader} from 'react-aria-components';
 import {ColumnSize} from '@react-types/table';
 import {Table as DocsTable} from './example-docs';
 import {Meta, StoryFn} from '@storybook/react';
 import React, {Key, useCallback, useMemo, useState} from 'react';
 import {Table as ResizingTable} from './example-resizing';
 import {SpectrumTableProps} from '@react-spectrum/table';
-import {Table} from './example';
+import {Table, useTablePropsContext} from './example';
 
 const meta: Meta<SpectrumTableProps<any>> = {
   title: 'useTable'
@@ -28,7 +29,7 @@ const meta: Meta<SpectrumTableProps<any>> = {
 export default meta;
 
 let columns = [
-  {name: 'Name', uid: 'name'},
+  {isRowHeader: true, name: 'Name', uid: 'name'},
   {name: 'Type', uid: 'type'},
   {name: 'Level', uid: 'level'}
 ];
@@ -48,23 +49,57 @@ let defaultRows = [
   {id: 12, name: 'Pikachu', type: 'Electric', level: '100', weight: '13lbs', height: '1\'4"'}
 ];
 
+function MyTableHeader({columns, children}) {
+  let {selectionBehavior} = useTablePropsContext();
+
+  return (
+    <TableHeader>
+      {selectionBehavior === 'toggle' && (
+        // If following RAC pattern, we could instead render a checkbox here. This would require users to rewrite their
+        // TableHeaderRow logic so that it doesn't rely on column.props.isSelectionCell and instead just renders the column.rendered.
+        // If we want to only have minimal changes, we can pass this prop, but would need to expand the Column prop type
+        <Column isSelectionCell />
+      )}
+      <Collection items={columns}>
+        {children}
+      </Collection>
+    </TableHeader>
+  );
+}
+
+function MyRow({id, columns, children}) {
+  let {selectionBehavior} = useTablePropsContext();
+
+  return (
+    <Row id={id}>
+      {selectionBehavior === 'toggle' && (
+        // Same deal as above
+        <Cell isSelectionCell />
+      )}
+      <Collection items={columns}>
+        {children}
+      </Collection>
+    </Row>
+  );
+}
+
 const Template: StoryFn<SpectrumTableProps<any>> = (args) => (
   <>
     <label htmlFor="focusable-before">Focusable before</label>
     <input id="focusable-before" />
     <Table aria-label="Table with selection" selectionMode="multiple" {...args}>
-      <TableHeader columns={columns}>
+      <MyTableHeader columns={columns}>
         {column => (
-          <Column key={column.uid}>
+          <Column isRowHeader={column.isRowHeader} id={column.uid}>
             {column.name}
           </Column>
         )}
-      </TableHeader>
+      </MyTableHeader>
       <TableBody items={defaultRows}>
         {item => (
-          <Row>
-            {columnKey => <Cell>{item[columnKey]}</Cell>}
-          </Row>
+          <MyRow id={item.id} columns={columns}>
+            {column => <Cell id={column.uid + item.id}>{item[column.uid]}</Cell>}
+          </MyRow>
         )}
       </TableBody>
     </Table>

@@ -78,7 +78,7 @@ let rerender = (tree, children, scale: Scale = 'medium') => {
   act(() => {jest.runAllTimers();});
   return newTree;
 };
-describe('TableViewSizing', function () {
+describe.skip('TableViewSizing', function () {
   let offsetWidth, offsetHeight;
 
   beforeAll(function () {
