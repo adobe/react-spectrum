@@ -13,7 +13,8 @@
 import {AriaSelectProps, HiddenSelect, useSelect} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, forwardRefType, Provider, RenderProps, slotCallbackSymbol, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {createContext, ForwardedRef, HTMLAttributes, ReactNode, useCallback, useContext, useRef, useState} from 'react';
+import {createContext, ForwardedRef, HTMLAttributes, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
+import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {ItemRenderProps, useCollection} from './Collection';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListBoxProps} from './ListBox';
@@ -21,9 +22,21 @@ import {PopoverContext} from './Popover';
 import React, {forwardRef} from 'react';
 import {SelectState, useSelectState} from 'react-stately';
 import {TextContext} from './Text';
-import {useResizeObserver} from '@react-aria/utils';
 
-export interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<SelectState<T>>, SlotProps {}
+export interface SelectRenderProps {
+  /**
+   * Whether the select is focused, either via a mouse or keyboard.
+   * @selector [data-focused]
+   */
+  isFocused: boolean,
+  /**
+   * Whether the select is currently open.
+   * @selector [data-open]
+   */
+  isOpen: boolean
+}
+
+export interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<SelectRenderProps>, SlotProps {}
 
 interface SelectValueContext {
   state: SelectState<unknown>,
@@ -47,6 +60,9 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
     collection,
     children: undefined
   });
+
+  // Only expose a subset of state to renderProps function to avoid infinite render loop
+  let renderPropsState = useMemo(() => ({isOpen: state.isOpen, isFocused: state.isFocused}), [state.isOpen, state.isFocused]);
 
   // Get props for child elements from useSelect
   let buttonRef = useRef<HTMLButtonElement>(null);
@@ -75,16 +91,19 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
 
   let renderProps = useRenderProps({
     ...props,
-    values: state,
+    values: renderPropsState,
     defaultClassName: 'react-aria-Select'
   });
+
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
 
   return (
     <Provider
       values={[
         [InternalSelectContext, {state, valueProps, placeholder: props.placeholder}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
-        [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen, children: state.selectedItem?.textValue ?? props.placeholder}],
+        [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen}],
         [PopoverContext, {
           state,
           triggerRef: buttonRef,
@@ -100,7 +119,13 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
           }
         }]
       ]}>
-      <div {...renderProps} ref={ref} slot={props.slot} />
+      <div
+        {...DOMProps}
+        {...renderProps}
+        ref={ref}
+        slot={props.slot}
+        data-focused={state.isFocused || undefined}
+        data-open={state.isOpen || undefined} />
       {portal}
       <HiddenSelect
         state={state}
@@ -161,8 +186,11 @@ function SelectValue<T extends object>(props: SelectValueProps<T>, ref: Forwarde
     }
   });
 
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
+
   return (
-    <span ref={ref} {...valueProps} {...renderProps} data-placeholder={!state.selectedItem || undefined}>
+    <span ref={ref} {...DOMProps} {...valueProps} {...renderProps} data-placeholder={!state.selectedItem || undefined}>
       {/* clear description and error message slots */}
       <TextContext.Provider value={undefined}>
         {renderProps.children}

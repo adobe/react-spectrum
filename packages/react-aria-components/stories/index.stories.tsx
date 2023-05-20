@@ -40,7 +40,13 @@ export const ComboBoxExample = () => (
   </ComboBox>
 );
 
-export const ComboBoxRenderProps = () => (
+interface ComboBoxItem {
+  id: string,
+  name: string
+}
+
+let items: ComboBoxItem[] = [{id: '1', name: 'Foo'}, {id: '2', name: 'Bar'}, {id: '3', name: 'Baz'}];
+export const ComboBoxRenderPropsStatic = () => (
   <ComboBox>
     {({isOpen}) => (
       <>
@@ -56,6 +62,76 @@ export const ComboBoxRenderProps = () => (
             <MyItem>Foo</MyItem>
             <MyItem>Bar</MyItem>
             <MyItem>Baz</MyItem>
+          </ListBox>
+        </Popover>
+      </>
+    )}
+  </ComboBox>
+);
+
+export const ComboBoxRenderPropsDefaultItems = () => (
+  <ComboBox defaultItems={items}>
+    {({isOpen}) => (
+      <>
+        <Label style={{display: 'block'}}>Test</Label>
+        <div style={{display: 'flex'}}>
+          <Input />
+          <Button>
+            <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
+          </Button>
+        </div>
+        <Popover placement="bottom end">
+          <ListBox className={styles.menu}>
+            {(item: ComboBoxItem) => <MyItem key={item.id}>{item.name}</MyItem>}
+          </ListBox>
+        </Popover>
+      </>
+    )}
+  </ComboBox>
+);
+
+export const ComboBoxRenderPropsItems = {
+  render: () => (
+    <ComboBox items={items}>
+      {({isOpen}) => (
+        <>
+          <Label style={{display: 'block'}}>Test</Label>
+          <div style={{display: 'flex'}}>
+            <Input />
+            <Button>
+              <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
+            </Button>
+          </div>
+          <Popover placement="bottom end">
+            <ListBox className={styles.menu}>
+              {(item: ComboBoxItem) => <MyItem key={item.id}>{item.name}</MyItem>}
+            </ListBox>
+          </Popover>
+        </>
+      )}
+    </ComboBox>
+  ),
+  parameters: {
+    description: {
+      data: 'Note this won\'t filter the items in the listbox because it is fully controlled'
+    }
+  }
+};
+
+export const ComboBoxRenderPropsListBoxDynamic = () => (
+  <ComboBox>
+    {({isOpen}) => (
+      <>
+        <Label style={{display: 'block'}}>Test</Label>
+        <div style={{display: 'flex'}}>
+          <Input />
+          <Button>
+            <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
+          </Button>
+        </div>
+        <Popover placement="bottom end">
+          <ListBox className={styles.menu} items={items}>
+            {item => <MyItem key={item.id}>{item.name}</MyItem>}
           </ListBox>
         </Popover>
       </>

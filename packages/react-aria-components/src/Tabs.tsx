@@ -14,9 +14,9 @@ import {AriaLabelingProps} from '@react-types/shared';
 import {AriaTabListProps, AriaTabPanelProps, mergeProps, Orientation, useFocusRing, useHover, useTab, useTabList, useTabPanel} from 'react-aria';
 import {BaseCollection, CollectionProps, Document, Item, useCollectionDocument, useCollectionPortal} from './Collection';
 import {ContextValue, forwardRefType, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {Node, TabListState, useTabListState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, Key, useContext} from 'react';
-import {useObjectRef} from '@react-aria/utils';
+import React, {createContext, ForwardedRef, forwardRef, Key, useContext, useMemo} from 'react';
 
 export interface TabsProps extends Omit<AriaTabListProps<any>, 'items' | 'children'>, RenderProps<TabsRenderProps>, SlotProps {}
 
@@ -116,6 +116,7 @@ const InternalTabsContext = createContext<InternalTabsContextValue | null>(null)
 function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TabsContext);
   let {orientation = 'horizontal'} = props;
+  let values = useMemo(() => ({orientation}), [orientation]);
   let {collection, document} = useCollectionDocument();
   let state = useTabListState({
     ...props,
@@ -126,13 +127,12 @@ function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-Tabs',
-    values: {
-      orientation
-    }
+    values
   });
 
   return (
     <div
+      {...filterDOMProps(props as any)}
       {...renderProps}
       ref={ref}
       slot={props.slot}
@@ -169,9 +169,12 @@ function TabList<T extends object>(props: TabListProps<T>, ref: ForwardedRef<HTM
     }
   });
 
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
+
   return (
     <>
-      <div {...tabListProps} ref={objectRef} {...renderProps}>
+      <div {...DOMProps} {...tabListProps} ref={objectRef} {...renderProps}>
         {[...state.collection].map((item) => (
           <TabInner
             key={item.key}
@@ -191,17 +194,20 @@ function TabList<T extends object>(props: TabListProps<T>, ref: ForwardedRef<HTM
 const _TabList = /*#__PURE__*/ (forwardRef as forwardRefType)(TabList);
 export {_TabList as TabList};
 
+function Tab(props: TabProps, ref: ForwardedRef<HTMLDivElement>) {
+  // @ts-ignore
+  return <Item {...props} ref={ref} />;
+}
+
 /**
  * A Tab provides a title for an individual item within a TabList.
  */
-export function Tab(props: TabProps): JSX.Element {
-  // @ts-ignore
-  return Item(props);
-}
+const _Tab = forwardRef(Tab);
+export {_Tab as Tab};
 
 function TabInner({item, state}: {item: Node<object>, state: TabListState<object>}) {
   let {key} = item;
-  let ref = React.useRef<HTMLDivElement>(null);
+  let ref = useObjectRef<HTMLDivElement>(item.props.ref);
   let {tabProps, isSelected, isDisabled, isPressed} = useTab({key}, state, ref);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let {hoverProps, isHovered} = useHover({
@@ -222,9 +228,12 @@ function TabInner({item, state}: {item: Node<object>, state: TabListState<object
     }
   });
 
+  let DOMProps = filterDOMProps(item.props);
+  delete DOMProps.id;
+
   return (
     <div
-      {...mergeProps(tabProps, focusProps, hoverProps, renderProps)}
+      {...mergeProps(DOMProps, tabProps, focusProps, hoverProps, renderProps)}
       ref={ref}
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={isPressed || undefined}
@@ -253,8 +262,11 @@ function TabPanel(props: TabPanelProps, forwardedRef: ForwardedRef<HTMLDivElemen
     return null;
   }
 
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
+
   let domProps = isSelected
-    ? mergeProps(tabPanelProps, focusProps, renderProps)
+    ? mergeProps(DOMProps, tabPanelProps, focusProps, renderProps)
     : renderProps;
 
   return (

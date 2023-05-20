@@ -12,7 +12,7 @@
 
 import {fireEvent, render} from '@react-spectrum/test-utils';
 import React from 'react';
-import {Tab, TabList, TabPanel, TabPanels, Tabs} from '../';
+import {Tab, TabList, TabPanel, Tabs} from '../';
 import userEvent from '@testing-library/user-event';
 
 let renderTabs = (tabsProps, tablistProps, tabProps, tabpanelProps) => render(
@@ -73,8 +73,7 @@ describe('Tabs', () => {
     expect(tabpanel).toHaveAttribute('data-test', 'tabpanel');
   });
 
-  // FIXME: not sure why this test hangs
-  it.skip('should support render props', () => {
+  it('should support render props', () => {
     let {getByRole} = render(
       <Tabs orientation="horizontal">
         {({orientation}) => (
@@ -84,17 +83,15 @@ describe('Tabs', () => {
               <Tab id="b">B</Tab>
               <Tab id="c">C</Tab>
             </TabList>
-            <TabPanels>
-              <TabPanel id="a">A</TabPanel>
-              <TabPanel id="b">B</TabPanel>
-              <TabPanel id="c">C</TabPanel>
-            </TabPanels>
+            <TabPanel id="a">A</TabPanel>
+            <TabPanel id="b">B</TabPanel>
+            <TabPanel id="c">C</TabPanel>
           </>
         )}
       </Tabs>
     );
     let tablist = getByRole('tablist');
-    expect(tablist).toHaveAttribute('aria-label', 'Test horizonal');
+    expect(tablist).toHaveAttribute('aria-label', 'Test horizontal');
   });
 
   it('should support hover', () => {
@@ -195,6 +192,29 @@ describe('Tabs', () => {
 
     expect(tabs).toHaveAttribute('data-orientation', 'vertical');
     expect(tabs).toHaveClass('vertical');
+  });
+
+  it('should support refs', () => {
+    let tabsRef = React.createRef();
+    let tabListRef = React.createRef();
+    let tabRef = React.createRef();
+    let tabPanelRef = React.createRef();
+    render(
+      <Tabs ref={tabsRef}>
+        <TabList ref={tabListRef}>
+          <Tab id="a" ref={tabRef}>A</Tab>
+          <Tab id="b">B</Tab>
+          <Tab id="c">C</Tab>
+        </TabList>
+        <TabPanel id="a" ref={tabPanelRef}>A</TabPanel>
+        <TabPanel id="b">B</TabPanel>
+        <TabPanel id="c">C</TabPanel>
+      </Tabs>
+    );
+    expect(tabsRef.current).toBeInstanceOf(HTMLElement);
+    expect(tabListRef.current).toBeInstanceOf(HTMLElement);
+    expect(tabRef.current).toBeInstanceOf(HTMLElement);
+    expect(tabPanelRef.current).toBeInstanceOf(HTMLElement);
   });
 
   it('should support shouldForceMount', () => {
