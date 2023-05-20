@@ -69,7 +69,7 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
     `('initial column sizes allowsResizing=$allowsResizing', ({allowsResizing}) => {
       it('should handle no value if table was written with default widths', () => {
         let columns = [
-          {name: 'Name', id: 'name', allowsResizing},
+          {name: 'Name', isRowHeader: true, id: 'name', allowsResizing},
           {name: 'Type', id: 'type', allowsResizing},
           {name: 'Level', id: 'level', allowsResizing}
         ];
@@ -78,7 +78,7 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
       });
       it('should handle default pixel widths', () => {
         let columns = [
-          {name: 'Name', id: 'name', defaultWidth: 100, allowsResizing},
+          {name: 'Name', isRowHeader: true, id: 'name', defaultWidth: 100, allowsResizing},
           {name: 'Type', id: 'type', defaultWidth: 100, allowsResizing},
           {name: 'Level', id: 'level', defaultWidth: 400, allowsResizing}
         ];
@@ -87,7 +87,7 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
       });
       it('should handle default percent widths', () => {
         let columns = [
-          {name: 'Name', id: 'name', defaultWidth: '50%', allowsResizing},
+          {name: 'Name', isRowHeader: true, id: 'name', defaultWidth: '50%', allowsResizing},
           {name: 'Type', id: 'type', defaultWidth: '16%', allowsResizing},
           {name: 'Level', id: 'level', defaultWidth: '33%', allowsResizing}
         ];
@@ -96,7 +96,7 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
       });
       it('should handle default fr widths', () => {
         let columns = [
-          {name: 'Name', id: 'name', defaultWidth: '4fr', allowsResizing},
+          {name: 'Name', isRowHeader: true, id: 'name', defaultWidth: '4fr', allowsResizing},
           {name: 'Type', id: 'type', defaultWidth: '3fr', allowsResizing},
           {name: 'Level', id: 'level', defaultWidth: '2fr', allowsResizing}
         ];
@@ -105,7 +105,7 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
       });
       it('should handle a mix of default widths', () => {
         let columns = [
-          {name: 'Name', id: 'name', defaultWidth: '50%', allowsResizing},
+          {name: 'Name', isRowHeader: true, id: 'name', defaultWidth: '50%', allowsResizing},
           {name: 'Type', id: 'type', defaultWidth: '2fr', allowsResizing},
           {name: 'Level', id: 'level', defaultWidth: 100, allowsResizing},
           {name: 'Height', id: 'height', allowsResizing}
@@ -115,7 +115,7 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
       });
       it('any single remaining column with an FR will take the remaining space, regardless of how many FRs it is "worth"', () => {
         let columns = [
-          {name: 'Name', id: 'name', defaultWidth: '50%', allowsResizing},
+          {name: 'Name', isRowHeader: true, id: 'name', defaultWidth: '50%', allowsResizing},
           {name: 'Type', id: 'type', defaultWidth: 100, allowsResizing},
           {name: 'Level', id: 'level', defaultWidth: 100, allowsResizing},
           {name: 'Height', id: 'height', allowsResizing}
@@ -125,7 +125,7 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
       });
       it('cannot size less than the minWidth', () => {
         let columns = [
-          {name: 'Name', id: 'name', minWidth: 500, defaultWidth: '50%', allowsResizing},
+          {name: 'Name', isRowHeader: true, id: 'name', minWidth: 500, defaultWidth: '50%', allowsResizing},
           {name: 'Type', id: 'type', minWidth: 100, defaultWidth: '1fr', allowsResizing},
           {name: 'Level', id: 'level', minWidth: 150, defaultWidth: 100, allowsResizing},
           {name: 'Height', id: 'height', minWidth: 200, allowsResizing}
@@ -135,7 +135,7 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
       });
       it('cannot size more than the maxWidth', () => {
         let columns = [
-          {name: 'Name', id: 'name', maxWidth: 400, defaultWidth: '50%', allowsResizing},
+          {name: 'Name', isRowHeader: true, id: 'name', maxWidth: 400, defaultWidth: '50%', allowsResizing},
           {name: 'Type', id: 'type', maxWidth: 100, defaultWidth: '1fr', allowsResizing},
           {name: 'Level', id: 'level', maxWidth: 100, defaultWidth: 150, allowsResizing},
           {name: 'Height', id: 'height', maxWidth: 100, allowsResizing}
@@ -145,7 +145,7 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
       });
       it('minWidth can be a percent', () => {
         let columns = [
-          {name: 'Name', id: 'name', minWidth: '50%', defaultWidth: '30%', allowsResizing},
+          {name: 'Name', isRowHeader: true, id: 'name', minWidth: '50%', defaultWidth: '30%', allowsResizing},
           {name: 'Type', id: 'type', maxWidth: 100, defaultWidth: '1fr', allowsResizing},
           {name: 'Level', id: 'level', maxWidth: 100, defaultWidth: 100, allowsResizing},
           {name: 'Height', id: 'height', maxWidth: 100, allowsResizing}
@@ -155,7 +155,7 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
       });
       it('maxWidth can be a percent', () => {
         let columns = [
-          {name: 'Name', id: 'name', maxWidth: '50%', defaultWidth: '70%', allowsResizing},
+          {name: 'Name', isRowHeader: true, id: 'name', maxWidth: '50%', defaultWidth: '70%', allowsResizing},
           {name: 'Type', id: 'type', maxWidth: 100, defaultWidth: '1fr', allowsResizing},
           {name: 'Level', id: 'level', maxWidth: 100, defaultWidth: 100, allowsResizing},
           {name: 'Height', id: 'height', maxWidth: 100, allowsResizing}
@@ -206,11 +206,11 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
 
       it('cannot resize to be less than a minWidth, from start to end', function () {
         let columns = [
-          {name: 'Name', uid: 'name', width: '1fr', minWidth: 100},
-          {name: 'Type', uid: 'type', width: '1fr', minWidth: 100},
-          {name: 'Height', uid: 'height', minWidth: 100},
-          {name: 'Weight', uid: 'weight', minWidth: 100},
-          {name: 'Level', uid: 'level', width: '4fr', minWidth: 100}
+          {name: 'Name', isRowHeader: true, id: 'name', width: '1fr', minWidth: 100},
+          {name: 'Type', id: 'type', width: '1fr', minWidth: 100},
+          {name: 'Height', id: 'height', minWidth: 100},
+          {name: 'Weight', id: 'weight', minWidth: 100},
+          {name: 'Level', id: 'level', width: '4fr', minWidth: 100}
         ];
         let columnNames = ['Name', 'Type', 'Height', 'Weight', 'Level'];
 
@@ -244,11 +244,11 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
 
       it('cannot resize to be less than a minWidth, from end to start', function () {
         let columns = [
-          {name: 'Name', uid: 'name', width: '1fr', minWidth: 100},
-          {name: 'Type', uid: 'type', width: '1fr', minWidth: 100},
-          {name: 'Height', uid: 'height', minWidth: 100},
-          {name: 'Weight', uid: 'weight', minWidth: 100},
-          {name: 'Level', uid: 'level', width: '4fr', minWidth: 100}
+          {name: 'Name', isRowHeader: true, id: 'name', width: '1fr', minWidth: 100},
+          {name: 'Type', id: 'type', width: '1fr', minWidth: 100},
+          {name: 'Height', id: 'height', minWidth: 100},
+          {name: 'Weight', id: 'weight', minWidth: 100},
+          {name: 'Level', id: 'level', width: '4fr', minWidth: 100}
         ];
 
         let tree = render(<ControlledTable columns={columns} />);
@@ -266,11 +266,11 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
 
       it('cannot resize to be more than a maxWidth, from start to end', function () {
         let columns = [
-          {name: 'Name', uid: 'name', width: '1fr', maxWidth: 150},
-          {name: 'Type', uid: 'type', width: '1fr', maxWidth: 150},
-          {name: 'Height', uid: 'height', maxWidth: 200},
-          {name: 'Weight', uid: 'weight', maxWidth: 200},
-          {name: 'Level', uid: 'level', width: '4fr', maxWidth: 500}
+          {name: 'Name', isRowHeader: true, id: 'name', width: '1fr', maxWidth: 150},
+          {name: 'Type', id: 'type', width: '1fr', maxWidth: 150},
+          {name: 'Height', id: 'height', maxWidth: 200},
+          {name: 'Weight', id: 'weight', maxWidth: 200},
+          {name: 'Level', id: 'level', width: '4fr', maxWidth: 500}
         ];
 
         let tree = render(<ControlledTable columns={columns} />);
@@ -294,11 +294,11 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
 
       it('cannot resize to be more than a maxWidth, from end to start', function () {
         let columns = [
-          {name: 'Name', uid: 'name', width: '1fr', maxWidth: 150},
-          {name: 'Type', uid: 'type', width: '1fr', maxWidth: 150},
-          {name: 'Height', uid: 'height', maxWidth: 200},
-          {name: 'Weight', uid: 'weight', maxWidth: 200},
-          {name: 'Level', uid: 'level', width: '4fr', maxWidth: 500}
+          {name: 'Name', isRowHeader: true, id: 'name', width: '1fr', maxWidth: 150},
+          {name: 'Type', id: 'type', width: '1fr', maxWidth: 150},
+          {name: 'Height', id: 'height', maxWidth: 200},
+          {name: 'Weight', id: 'weight', maxWidth: 200},
+          {name: 'Level', id: 'level', width: '4fr', maxWidth: 500}
         ];
 
         let tree = render(<ControlledTable columns={columns} />);
@@ -316,11 +316,11 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
 
       it('resizing the starter column will preserve fr column ratios to the right', function () {
         let columns = [
-          {name: 'Name', uid: 'name', width: '1fr'},
-          {name: 'Type', uid: 'type', width: '1fr'},
-          {name: 'Height', uid: 'height'},
-          {name: 'Weight', uid: 'weight'},
-          {name: 'Level', uid: 'level', width: '4fr'}
+          {name: 'Name', isRowHeader: true, id: 'name', width: '1fr'},
+          {name: 'Type', id: 'type', width: '1fr'},
+          {name: 'Height', id: 'height'},
+          {name: 'Weight', id: 'weight'},
+          {name: 'Level', id: 'level', width: '4fr'}
         ];
 
         let tree = render(<ControlledTable columns={columns} />);
@@ -333,11 +333,11 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
 
       it('resizing the last column will lock columns to pixels to the left', function () {
         let columns = [
-          {name: 'Name', uid: 'name', width: '1fr'},
-          {name: 'Type', uid: 'type', width: '1fr'},
-          {name: 'Height', uid: 'height'},
-          {name: 'Weight', uid: 'weight'},
-          {name: 'Level', uid: 'level', width: '4fr'}
+          {name: 'Name', isRowHeader: true, id: 'name', width: '1fr'},
+          {name: 'Type', id: 'type', width: '1fr'},
+          {name: 'Height', id: 'height'},
+          {name: 'Weight', id: 'weight'},
+          {name: 'Level', id: 'level', width: '4fr'}
         ];
 
         let tree = render(<ControlledTable columns={columns} />);
@@ -349,20 +349,20 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
 
       it('can handle removing a column', function () {
         let columns = [
-          {name: 'Name', uid: 'name', width: '1fr'},
-          {name: 'Type', uid: 'type', width: '1fr'},
-          {name: 'Height', uid: 'height'},
-          {name: 'Weight', uid: 'weight'},
-          {name: 'Level', uid: 'level', width: '4fr'}
+          {name: 'Name', isRowHeader: true, id: 'name', width: '1fr'},
+          {name: 'Type', id: 'type', width: '1fr'},
+          {name: 'Height', id: 'height'},
+          {name: 'Weight', id: 'weight'},
+          {name: 'Level', id: 'level', width: '4fr'}
         ];
 
         let tree = render(<ControlledTable columns={columns} />);
         expect(getColumnWidths(tree)).toStrictEqual([113, 112, 113, 112, 450]);
         let newColumns = [
-          {name: 'Name', uid: 'name', width: '1fr'},
-          {name: 'Type', uid: 'type', width: '1fr'},
-          {name: 'Height', uid: 'height'},
-          {name: 'Level', uid: 'level', width: '4fr'}
+          {name: 'Name', isRowHeader: true, id: 'name', width: '1fr'},
+          {name: 'Type', id: 'type', width: '1fr'},
+          {name: 'Height', id: 'height'},
+          {name: 'Level', id: 'level', width: '4fr'}
         ];
         rerender(tree, <ControlledTable columns={newColumns} />);
         expect(getColumnWidths(tree)).toStrictEqual([129, 128, 129, 514]);
@@ -370,20 +370,20 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
 
       it('can handle adding a column', function () {
         let columns = [
-          {name: 'Name', uid: 'name', width: '1fr'},
-          {name: 'Type', uid: 'type', width: '1fr'},
-          {name: 'Height', uid: 'height'},
-          {name: 'Level', uid: 'level', width: '4fr'}
+          {name: 'Name', isRowHeader: true, id: 'name', width: '1fr'},
+          {name: 'Type', id: 'type', width: '1fr'},
+          {name: 'Height', id: 'height'},
+          {name: 'Level', id: 'level', width: '4fr'}
         ];
 
         let tree = render(<ControlledTable columns={columns} />);
         expect(getColumnWidths(tree)).toStrictEqual([129, 128, 129, 514]);
         let newColumns = [
-          {name: 'Name', uid: 'name', width: '1fr'},
-          {name: 'Type', uid: 'type', width: '1fr'},
-          {name: 'Height', uid: 'height'},
-          {name: 'Weight', uid: 'weight'},
-          {name: 'Level', uid: 'level', width: '4fr'}
+          {name: 'Name', isRowHeader: true, id: 'name', width: '1fr'},
+          {name: 'Type', id: 'type', width: '1fr'},
+          {name: 'Height', id: 'height'},
+          {name: 'Weight', id: 'weight'},
+          {name: 'Level', id: 'level', width: '4fr'}
         ];
         rerender(tree, <ControlledTable columns={newColumns} />);
         expect(getColumnWidths(tree)).toStrictEqual([113, 112, 113, 112, 450]);
@@ -391,21 +391,21 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
 
       it('can handle resizing, then removing an uncontrolled column, then adding the column again', function () {
         let columns = [
-          {name: 'Name', uid: 'name', width: '1fr'},
-          {name: 'Type', uid: 'type', width: '1fr'},
-          {name: 'Height', uid: 'height'},
-          {name: 'Weight', uid: 'weight'},
-          {name: 'Level', uid: 'level', width: '4fr'}
+          {name: 'Name', isRowHeader: true, id: 'name', width: '1fr'},
+          {name: 'Type', id: 'type', width: '1fr'},
+          {name: 'Height', id: 'height'},
+          {name: 'Weight', id: 'weight'},
+          {name: 'Level', id: 'level', width: '4fr'}
         ];
 
         let tree = render(<ControlledTable columns={columns} />);
         resizeCol(tree, 'Name', -50);
         expect(getColumnWidths(tree)).toStrictEqual([75, 118, 118, 118, 471]);
         let newColumns = [
-          {name: 'Name', uid: 'name', width: '1fr'},
-          {name: 'Type', uid: 'type', width: '1fr'},
-          {name: 'Height', uid: 'height'},
-          {name: 'Level', uid: 'level', width: '4fr'}
+          {name: 'Name', isRowHeader: true, id: 'name', width: '1fr'},
+          {name: 'Type', id: 'type', width: '1fr'},
+          {name: 'Height', id: 'height'},
+          {name: 'Level', id: 'level', width: '4fr'}
         ];
         rerender(tree, <ControlledTable columns={newColumns} />);
         expect(getColumnWidths(tree)).toStrictEqual([75, 138, 137, 550]);
@@ -415,21 +415,21 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
 
       it('can handle resizing, then removing an controlled column, then adding the column again', function () {
         let columns = [
-          {name: 'Name', uid: 'name', width: '1fr'},
-          {name: 'Type', uid: 'type', width: '1fr'},
-          {name: 'Height', uid: 'height'},
-          {name: 'Weight', uid: 'weight'},
-          {name: 'Level', uid: 'level', width: '4fr'}
+          {name: 'Name', isRowHeader: true, id: 'name', width: '1fr'},
+          {name: 'Type', id: 'type', width: '1fr'},
+          {name: 'Height', id: 'height'},
+          {name: 'Weight', id: 'weight'},
+          {name: 'Level', id: 'level', width: '4fr'}
         ];
 
         let tree = render(<ControlledTable columns={columns} />);
         resizeCol(tree, 'Name', -50);
         expect(getColumnWidths(tree)).toStrictEqual([75, 118, 118, 118, 471]);
         let newColumns = [
-          {name: 'Name', uid: 'name', width: '1fr'},
-          {name: 'Type', uid: 'type', width: '1fr'},
-          {name: 'Height', uid: 'height'},
-          {name: 'Weight', uid: 'weight'}
+          {name: 'Name', isRowHeader: true, id: 'name', width: '1fr'},
+          {name: 'Type', id: 'type', width: '1fr'},
+          {name: 'Height', id: 'height'},
+          {name: 'Weight', id: 'weight'}
         ];
         rerender(tree, <ControlledTable columns={newColumns} />);
         expect(getColumnWidths(tree)).toStrictEqual([75, 275, 275, 275]);
@@ -439,20 +439,20 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
 
       it('can add new columns after resizing', function () {
         let columns = [
-          {name: 'Name', uid: 'name', width: '1fr'},
-          {name: 'Type', uid: 'type', width: '1fr'},
-          {name: 'Height', uid: 'height'}
+          {name: 'Name', isRowHeader: true, id: 'name', width: '1fr'},
+          {name: 'Type', id: 'type', width: '1fr'},
+          {name: 'Height', id: 'height'}
         ];
 
         let tree = render(<ControlledTable columns={columns} />);
         resizeCol(tree, 'Name', -50);
         expect(getColumnWidths(tree)).toStrictEqual([250, 325, 325]);
         let newColumns = [
-          {name: 'Name', uid: 'name', width: '1fr'},
-          {name: 'Type', uid: 'type', width: '1fr'},
-          {name: 'Height', uid: 'height'},
-          {name: 'Weight', uid: 'weight'},
-          {name: 'Level', uid: 'level', width: '4fr'}
+          {name: 'Name', isRowHeader: true, id: 'name', width: '1fr'},
+          {name: 'Type', id: 'type', width: '1fr'},
+          {name: 'Height', id: 'height'},
+          {name: 'Weight', id: 'weight'},
+          {name: 'Level', id: 'level', width: '4fr'}
         ];
         rerender(tree, <ControlledTable columns={newColumns} />);
         expect(getColumnWidths(tree)).toStrictEqual([250, 163, 162, 163, 162]);
@@ -461,21 +461,21 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
       it('can remove and re-add the resized column', function () {
         jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
         let columns = [
-          {name: 'Name', uid: 'name', width: '1fr'},
-          {name: 'Type', uid: 'type', width: '1fr'},
-          {name: 'Height', uid: 'height'},
-          {name: 'Weight', uid: 'weight'},
-          {name: 'Level', uid: 'level', width: '4fr'}
+          {name: 'Name', isRowHeader: true, id: 'name', width: '1fr'},
+          {name: 'Type', id: 'type', width: '1fr'},
+          {name: 'Height', id: 'height'},
+          {name: 'Weight', id: 'weight'},
+          {name: 'Level', id: 'level', width: '4fr'}
         ];
 
         let tree = render(<ControlledTable columns={columns} />);
         resizeCol(tree, 'Type', -50);
         expect(getColumnWidths(tree)).toStrictEqual([113, 75, 119, 118, 475]);
         let newColumns = [
-          {name: 'Name', uid: 'name', width: '1fr'},
-          {name: 'Height', uid: 'height'},
-          {name: 'Weight', uid: 'weight'},
-          {name: 'Level', uid: 'level', width: '4fr'}
+          {name: 'Name', isRowHeader: true, id: 'name', width: '1fr'},
+          {name: 'Height', id: 'height'},
+          {name: 'Weight', id: 'weight'},
+          {name: 'Level', id: 'level', width: '4fr'}
         ];
         rerender(tree, <ControlledTable columns={newColumns} />);
         expect(getColumnWidths(tree)).toStrictEqual([113, 131, 131, 525]);
@@ -485,11 +485,11 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
 
       it('can resize smaller if the minWidth gets smaller', function () {
         let columns = [
-          {name: 'Name', uid: 'name', width: '1fr', minWidth: 100},
-          {name: 'Type', uid: 'type', width: '1fr', minWidth: 100},
-          {name: 'Height', uid: 'height', minWidth: 100},
-          {name: 'Weight', uid: 'weight', minWidth: 100},
-          {name: 'Level', uid: 'level', width: '4fr', minWidth: 100}
+          {name: 'Name', isRowHeader: true, id: 'name', width: '1fr', minWidth: 100},
+          {name: 'Type', id: 'type', width: '1fr', minWidth: 100},
+          {name: 'Height', id: 'height', minWidth: 100},
+          {name: 'Weight', id: 'weight', minWidth: 100},
+          {name: 'Level', id: 'level', width: '4fr', minWidth: 100}
         ];
 
         let tree = render(<ControlledTable columns={columns} />);
@@ -497,11 +497,11 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
         resizeCol(tree, 'Type', -100);
         expect(getColumnWidths(tree)).toStrictEqual([113, 100, 115, 114, 458]);
         let newColumns = [
-          {name: 'Name', uid: 'name', width: '1fr', minWidth: 100},
-          {name: 'Type', uid: 'type', width: '1fr', minWidth: 50},
-          {name: 'Height', uid: 'height', minWidth: 100},
-          {name: 'Weight', uid: 'weight', minWidth: 100},
-          {name: 'Level', uid: 'level', width: '4fr', minWidth: 100}
+          {name: 'Name', isRowHeader: true, id: 'name', width: '1fr', minWidth: 100},
+          {name: 'Type', id: 'type', width: '1fr', minWidth: 50},
+          {name: 'Height', id: 'height', minWidth: 100},
+          {name: 'Weight', id: 'weight', minWidth: 100},
+          {name: 'Level', id: 'level', width: '4fr', minWidth: 100}
         ];
         rerender(tree, <ControlledTable columns={newColumns} />);
         expect(getColumnWidths(tree)).toStrictEqual([113, 100, 115, 114, 458]);
@@ -511,11 +511,11 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
 
       it('onResize end called with values even if no resizing took place', function () {
         let columns = [
-          {name: 'Name', uid: 'name', width: '1fr', minWidth: 100},
-          {name: 'Type', uid: 'type', width: '1fr', minWidth: 100},
-          {name: 'Height', uid: 'height', minWidth: 100},
-          {name: 'Weight', uid: 'weight', minWidth: 100},
-          {name: 'Level', uid: 'level', width: '4fr', minWidth: 100}
+          {name: 'Name', isRowHeader: true, id: 'name', width: '1fr', minWidth: 100},
+          {name: 'Type', id: 'type', width: '1fr', minWidth: 100},
+          {name: 'Height', id: 'height', minWidth: 100},
+          {name: 'Weight', id: 'weight', minWidth: 100},
+          {name: 'Level', id: 'level', width: '4fr', minWidth: 100}
         ];
         let columnNames = ['Name', 'Type', 'Height', 'Weight', 'Level'];
         let onResizeEnd = jest.fn();
@@ -529,11 +529,11 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
 
       it('onResizeStart called with expected values', function () {
         let columns = [
-          {name: 'Name', uid: 'name', width: '1fr'},
-          {name: 'Type', uid: 'type', width: '1fr'},
-          {name: 'Height', uid: 'height'},
-          {name: 'Weight', uid: 'weight'},
-          {name: 'Level', uid: 'level', width: '4fr'}
+          {name: 'Name', isRowHeader: true, id: 'name', width: '1fr'},
+          {name: 'Type', id: 'type', width: '1fr'},
+          {name: 'Height', id: 'height'},
+          {name: 'Weight', id: 'weight'},
+          {name: 'Level', id: 'level', width: '4fr'}
         ];
 
         let columnNames = ['Name', 'Type', 'Height', 'Weight', 'Level'];
@@ -550,11 +550,11 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
     describe('resizing table', () => {
       it('will not affect pixel widths', () => {
         let columns = [
-          {name: 'Name', uid: 'name', width: 100},
-          {name: 'Type', uid: 'type', width: 100},
-          {name: 'Height', uid: 'height'},
-          {name: 'Weight', uid: 'weight'},
-          {name: 'Level', uid: 'level', width: 400}
+          {name: 'Name', isRowHeader: true, id: 'name', width: 100},
+          {name: 'Type', id: 'type', width: 100},
+          {name: 'Height', id: 'height'},
+          {name: 'Weight', id: 'weight'},
+          {name: 'Level', id: 'level', width: 400}
         ];
 
         let tree = render(<ControlledTable columns={columns} />);
@@ -565,11 +565,11 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
 
       it('will resize all percent columns', () => {
         let columns = [
-          {name: 'Name', uid: 'name', width: '20%'},
-          {name: 'Type', uid: 'type', width: '20%'},
-          {name: 'Height', uid: 'height'},
-          {name: 'Weight', uid: 'weight'},
-          {name: 'Level', uid: 'level', width: '40%'}
+          {name: 'Name', isRowHeader: true, id: 'name', width: '20%'},
+          {name: 'Type', id: 'type', width: '20%'},
+          {name: 'Height', id: 'height'},
+          {name: 'Weight', id: 'weight'},
+          {name: 'Level', id: 'level', width: '40%'}
         ];
 
         let tree = render(<ControlledTable columns={columns} />);
@@ -580,11 +580,11 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
 
       it('will resize all fr columns', () => {
         let columns = [
-          {name: 'Name', uid: 'name', width: '1fr'},
-          {name: 'Type', uid: 'type', width: '1fr'},
-          {name: 'Height', uid: 'height'},
-          {name: 'Weight', uid: 'weight'},
-          {name: 'Level', uid: 'level', width: '4fr'}
+          {name: 'Name', isRowHeader: true, id: 'name', width: '1fr'},
+          {name: 'Type', id: 'type', width: '1fr'},
+          {name: 'Height', id: 'height'},
+          {name: 'Weight', id: 'weight'},
+          {name: 'Level', id: 'level', width: '4fr'}
         ];
 
         let tree = render(<ControlledTable columns={columns} />);
@@ -595,11 +595,11 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
 
       it('will resize all fr columns only after percent columns', () => {
         let columns = [
-          {name: 'Name', uid: 'name', width: '1fr'},
-          {name: 'Type', uid: 'type', width: '20%'},
-          {name: 'Height', uid: 'height', width: '20%'},
-          {name: 'Weight', uid: 'weight'},
-          {name: 'Level', uid: 'level', width: '4fr'}
+          {name: 'Name', isRowHeader: true, id: 'name', width: '1fr'},
+          {name: 'Type', id: 'type', width: '20%'},
+          {name: 'Height', id: 'height', width: '20%'},
+          {name: 'Weight', id: 'weight'},
+          {name: 'Level', id: 'level', width: '4fr'}
         ];
 
         let tree = render(<ControlledTable columns={columns} />);
