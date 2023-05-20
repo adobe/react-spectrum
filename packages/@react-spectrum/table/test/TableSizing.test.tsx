@@ -717,6 +717,8 @@ describe('TableViewSizing', function () {
     describe('pointer', () => {
       installPointerEvent();
 
+      // Note: needs "should not throw error if selection mode changes with overflowMode="wrap" and selection was controlled" test to run before it or it fails
+      // TODO: investigate why this is, happens on main as well
       it('dragging the resizer works - desktop', () => {
         jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
         let onResizeEnd = jest.fn();
