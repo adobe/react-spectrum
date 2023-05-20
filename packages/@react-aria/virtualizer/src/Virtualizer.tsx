@@ -185,25 +185,16 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
     isFocusWithin.current = ref.current.contains(e.relatedTarget as Element);
   }, [ref]);
 
-  // When the focused item is scrolled out of view and is removed from the DOM,
-  // move focus to the collection view as a whole if focus was within before.
-  let focusedView = virtualizer.getView(focusedKey);
-  useEffect(() => {
-    if (focusedKey && !focusedView && isFocusWithin.current && document.activeElement !== ref.current) {
-      focusWithoutScrolling(ref.current);
-    }
-  });
-
-  // Set tabIndex to -1 if the focused view is in the DOM, otherwise 0 so that the collection
+  // Set tabIndex to -1 if there is a focused key, otherwise 0 so that the collection
   // itself is tabbable. When the collection receives focus, we scroll the focused item back into
   // view, which will allow it to be properly focused. If using virtual focus, don't set a
   // tabIndex at all so that VoiceOver on iOS 14 doesn't try to move real DOM focus to the element anyway.
   let tabIndex: number;
   if (!shouldUseVirtualFocus) {
-    // When there is no focusedView the default tabIndex is 0. We include logic for empty collections too.
+    // When there is no focusedKey the default tabIndex is 0. We include logic for empty collections too.
     // For collections that are empty, but have a link in the empty children we want to skip focusing this
     // and let focus move to the link similar to link moving to children.
-    tabIndex = focusedView ? -1 : 0;
+    tabIndex = focusedKey != null ? -1 : 0;
 
     // If the collection is empty, we want the tabIndex provided from props (if any)
     // so that we handle when tabbable items are added to the empty state.
