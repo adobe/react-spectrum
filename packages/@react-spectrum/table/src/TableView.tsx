@@ -387,8 +387,9 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     return (
       <VirtualizerItem
         key={reusableView.key}
-        reusableView={reusableView}
-        parent={parent}
+        layoutInfo={reusableView.layoutInfo}
+        virtualizer={reusableView.virtualizer}
+        parent={parent?.layoutInfo}
         className={
           classNames(
             styles,
@@ -401,7 +402,9 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
               }
             )
           )
-        } />
+        }>
+        {reusableView.rendered}
+      </VirtualizerItem>
     );
   };
 

@@ -12,7 +12,7 @@
 
 export type {RTLOffsetType} from './utils';
 export {useVirtualizer, Virtualizer} from './Virtualizer';
-export {useVirtualizerItem} from './useVirtualizerItem';
+export {useVirtualizerItem, VirtualizerItemOptions} from './useVirtualizerItem';
 export {VirtualizerItem, layoutInfoToStyle} from './VirtualizerItem';
 export {ScrollView} from './ScrollView';
 export {getRTLOffsetType, getScrollLeft, setScrollLeft} from './utils';

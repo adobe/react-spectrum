@@ -233,7 +233,10 @@ function defaultRenderWrapper<T extends object, V>(
   return (
     <VirtualizerItem
       key={reusableView.key}
-      reusableView={reusableView}
-      parent={parent} />
+      layoutInfo={reusableView.layoutInfo}
+      virtualizer={reusableView.virtualizer}
+      parent={parent?.layoutInfo}>
+      {reusableView.rendered}
+    </VirtualizerItem>
   );
 }

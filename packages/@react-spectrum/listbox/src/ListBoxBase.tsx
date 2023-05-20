@@ -94,8 +94,10 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
       return (
         <ListBoxSection
           key={reusableView.key}
-          reusableView={reusableView}
-          header={children.find(c => c.viewType === 'header')}>
+          item={reusableView.content}
+          layoutInfo={reusableView.layoutInfo}
+          virtualizer={reusableView.virtualizer}
+          headerLayoutInfo={children.find(c => c.viewType === 'header').layoutInfo}>
           {renderChildren(children.filter(c => c.viewType === 'item'))}
         </ListBoxSection>
       );
@@ -104,8 +106,11 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
     return (
       <VirtualizerItem
         key={reusableView.key}
-        reusableView={reusableView}
-        parent={parent} />
+        layoutInfo={reusableView.layoutInfo}
+        virtualizer={reusableView.virtualizer}
+        parent={parent?.layoutInfo}>
+        {reusableView.rendered}
+      </VirtualizerItem>
     );
   };
 
