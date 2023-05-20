@@ -21,6 +21,7 @@ import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {countries, states} from './data';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '../';
+import {FormTranslatedText} from './../chromatic/FormLanguages.chromatic';
 import {Heading} from '@react-spectrum/text';
 import {Item, Picker} from '@react-spectrum/picker';
 import {NumberField} from '@react-spectrum/numberfield';
@@ -383,6 +384,12 @@ export const FormWithNumberfieldAndLocaleArAe = () => (
 
 FormWithNumberfieldAndLocaleArAe.story = {
   name: 'form with numberfield and locale=ar-AE'
+};
+
+export const WithTranslations = () => <FormTranslatedText />;
+
+WithTranslations.story = {
+  name: 'with translations'
 };
 
 function render(props: any = {}) {
