@@ -35,7 +35,8 @@ interface VirtualizerProps<T extends object, V> extends HTMLAttributes<HTMLEleme
   isLoading?: boolean,
   onLoadMore?: () => void,
   shouldUseVirtualFocus?: boolean,
-  scrollToItem?: (key: Key) => void
+  scrollToItem?: (key: Key) => void,
+  autoFocus?: boolean
 }
 
 function Virtualizer<T extends object, V>(props: VirtualizerProps<T, V>, ref: RefObject<HTMLDivElement>) {
@@ -122,7 +123,8 @@ interface VirtualizerOptions {
   tabIndex?: number,
   focusedKey?: Key,
   scrollToItem?: (key: Key) => void,
-  shouldUseVirtualFocus?: boolean
+  shouldUseVirtualFocus?: boolean,
+  autoFocus?: boolean
 }
 
 export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions, state: VirtualizerState<T, V, W>, ref: RefObject<HTMLElement>) {
@@ -133,15 +135,16 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
   // to all of the item DOM nodes.
   let lastFocusedKey = useRef(null);
   let isFocusWithin = useRef(false);
+  let autoFocus = useRef(props.autoFocus);
   useEffect(() => {
     if (virtualizer.visibleRect.height === 0) {
       return;
     }
 
     // Only scroll the focusedKey into view if the modality is not pointer to avoid jumps in position when clicking/pressing tall items.
-    // Exception made if focus isn't within the virtualizer (e.g. opening a picker via click should scroll the selected item into view)
     let modality = getInteractionModality();
-    if (focusedKey !== lastFocusedKey.current && (modality !== 'pointer' || !isFocusWithin.current)) {
+    if (focusedKey !== lastFocusedKey.current && (modality !== 'pointer' || autoFocus.current)) {
+      autoFocus.current = false;
       if (scrollToItem) {
         // If user provides scrolltoitem, then it is their responsibility to call scrollIntoViewport if desired
         // since we don't know if their scrollToItem may take some time to actually bring the active element into the virtualizer's visible rect.
