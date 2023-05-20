@@ -657,25 +657,32 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
     headerRef.current.scrollLeft = bodyRef.current.scrollLeft;
   }, [bodyRef, headerRef]);
 
+  let isLoadingRef = useRef(isLoading);
+  useLayoutEffect(() => {
+    isLoadingRef.current = isLoading;
+  }, [isLoading]);
+
   let onVisibleRectChange = useCallback((rect: Rect) => {
     state.setVisibleRect(rect);
 
-    if (!isLoading && onLoadMore) {
+    if (!isLoadingRef.current && onLoadMore) {
       let scrollOffset = state.virtualizer.contentSize.height - rect.height * 2;
       if (rect.y > scrollOffset) {
+        isLoadingRef.current = true;
         onLoadMore();
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onLoadMore, isLoading, state.setVisibleRect, state.virtualizer]);
+  }, [onLoadMore, state.setVisibleRect, state.virtualizer]);
 
   useLayoutEffect(() => {
-    if (!isLoading && onLoadMore && !state.isAnimating) {
+    if (!isLoadingRef.current && onLoadMore && !state.isAnimating) {
       if (state.contentSize.height <= state.virtualizer.visibleRect.height) {
+        isLoadingRef.current = true;
         onLoadMore();
       }
     }
-  }, [state.contentSize, state.virtualizer, state.isAnimating, onLoadMore, isLoading]);
+  }, [state.contentSize, state.virtualizer, state.isAnimating, onLoadMore]);
 
   let resizerPosition = layout.getResizerPosition() - 2;
 
@@ -1122,7 +1129,7 @@ function TableDragHeaderCell({column}) {
       <div
         {...columnHeaderProps}
         ref={ref}
-        className={ 
+        className={
           classNames(
             styles,
             'spectrum-Table-headCell',
