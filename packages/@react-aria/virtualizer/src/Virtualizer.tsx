@@ -76,24 +76,31 @@ function Virtualizer<T extends object, V>(props: VirtualizerProps<T, V>, ref: Re
   let {virtualizerProps} = useVirtualizer(props, state, ref);
 
   // Handle scrolling, and call onLoadMore when nearing the bottom.
+  let isLoadingRef = useRef(isLoading);
+  useLayoutEffect(() => {
+    isLoadingRef.current = isLoading;
+  }, [isLoading]);
+
   let onVisibleRectChange = useCallback((rect: Rect) => {
     state.setVisibleRect(rect);
 
-    if (!isLoading && onLoadMore) {
+    if (!isLoadingRef.current && onLoadMore) {
       let scrollOffset = state.virtualizer.contentSize.height - rect.height * 2;
       if (rect.y > scrollOffset) {
+        isLoadingRef.current = true;
         onLoadMore();
       }
     }
-  }, [isLoading, onLoadMore, state]);
+  }, [onLoadMore, state]);
 
   useLayoutEffect(() => {
-    if (!isLoading && onLoadMore && !state.isAnimating) {
+    if (!isLoadingRef.current && onLoadMore && !state.isAnimating) {
       if (state.contentSize.height > 0 && state.contentSize.height <= state.virtualizer.visibleRect.height) {
+        isLoadingRef.current = true;
         onLoadMore();
       }
     }
-  }, [state.contentSize, state.isAnimating, state.virtualizer, onLoadMore, isLoading]);
+  }, [state.contentSize, state.isAnimating, state.virtualizer, onLoadMore]);
 
   return (
     <ScrollView
