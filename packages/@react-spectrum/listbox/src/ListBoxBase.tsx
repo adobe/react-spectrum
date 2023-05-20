@@ -21,7 +21,7 @@ import {ListBoxOption} from './ListBoxOption';
 import {ListBoxSection} from './ListBoxSection';
 import {ListLayout} from '@react-stately/layout';
 import {ListState} from '@react-stately/list';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useMemo} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
@@ -78,8 +78,13 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
   let {styleProps} = useStyleProps(props);
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
-  // Sync loading state into the layout.
-  layout.isLoading = props.isLoading;
+  useLayoutEffect(() => {
+    // Sync loading state into the layout.
+    if (layout.isLoading !== props.isLoading) {
+      layout.isLoading = props.isLoading;
+      layout.virtualizer.relayoutNow();
+    }
+  }, [layout, props.isLoading]);
 
   // This overrides collection view's renderWrapper to support heirarchy of items in sections.
   // The header is extracted from the children so it can receive ARIA labeling properties.

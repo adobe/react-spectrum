@@ -882,7 +882,7 @@ describe('ListBox', function () {
       expect(options.length).toBe(5);
       // onLoadMore called twice from onVisibleRectChange due to ListBox sizeToFit
       // onLoadMore called twice from useLayoutEffect in React < 18
-      expect(onLoadMore).toHaveBeenCalledTimes(parseInt(React.version, 10) >= 18 ? 3 : 4);
+      expect(onLoadMore).toHaveBeenCalledTimes(parseInt(React.version, 10) >= 18 ? 2 : 4);
     });
   });
 
