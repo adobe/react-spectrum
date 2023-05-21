@@ -12,7 +12,7 @@
 
 import {Calendar, now, Time, toCalendar, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
 import {DatePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
-import {useRef, useState} from 'react';
+import {useState} from 'react';
 
 export function isInvalid(value: DateValue, minValue: DateValue, maxValue: DateValue) {
   return value != null && (

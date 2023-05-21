@@ -98,7 +98,7 @@ export function useFormattedTextField(props: AriaTextFieldProps, state: Formatte
     return () => {
       input.removeEventListener('beforeinput', onBeforeInputFallback, false);
     };
-  }, [onBeforeInputFallback]);
+  }, [inputRef, onBeforeInputFallback]);
 
   let onBeforeInput = !supportsNativeBeforeInputEvent()
     ? e => {

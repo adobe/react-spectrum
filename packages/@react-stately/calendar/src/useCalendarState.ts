@@ -30,7 +30,7 @@ import {
 import {CalendarProps, DateValue} from '@react-types/calendar';
 import {CalendarState} from './types';
 import {useControlledState} from '@react-stately/utils';
-import {useMemo, useRef, useState} from 'react';
+import {useMemo, useState} from 'react';
 
 export interface CalendarStateOptions<T extends DateValue = DateValue> extends CalendarProps<T> {
   /** The locale to display and edit the value according to. */

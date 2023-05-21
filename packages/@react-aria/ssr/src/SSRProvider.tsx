@@ -90,6 +90,7 @@ let componentIds = new WeakMap();
 function useCounter(isDisabled = false) {
   let ctx = useContext(SSRContext);
   let ref = useRef<number | null>(null);
+  // eslint-disable-next-line rulesdir/pure-render
   if (ref.current === null && !isDisabled) {
     // In strict mode, React renders components twice, and the ref will be reset to null on the second render.
     // This means our id counter will be incremented twice instead of once. This is a problem because on the
@@ -119,9 +120,11 @@ function useCounter(isDisabled = false) {
       }
     }
 
+    // eslint-disable-next-line rulesdir/pure-render
     ref.current = ++ctx.current;
   }
 
+  // eslint-disable-next-line rulesdir/pure-render
   return ref.current;
 }
 

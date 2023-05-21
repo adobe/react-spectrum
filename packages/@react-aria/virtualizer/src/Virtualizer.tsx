@@ -48,7 +48,9 @@ function Virtualizer<T extends object, V>(props: VirtualizerProps<T, V>, ref: Re
     sizeToFit,
     scrollDirection,
     transitionDuration,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isLoading,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onLoadMore,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     focusedKey,
@@ -98,7 +100,7 @@ interface VirtualizerOptions {
   shouldUseVirtualFocus?: boolean,
   autoFocus?: boolean,
   isLoading?: boolean,
-  onLoadMore?: () => void,
+  onLoadMore?: () => void
 }
 
 export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions, state: VirtualizerState<T, V, W>, ref: RefObject<HTMLElement>) {

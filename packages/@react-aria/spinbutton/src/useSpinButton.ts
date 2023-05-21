@@ -15,7 +15,7 @@ import {AriaButtonProps} from '@react-types/button';
 import {DOMAttributes, InputBase, RangeInputBase, Validation, ValueBase} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {useCallback, useEffect, useRef} from 'react';
+import {useEffect, useRef} from 'react';
 import {useEffectEvent, useGlobalListeners} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
@@ -148,7 +148,7 @@ export function useSpinButton(
         },
         initialStepDelay
       );
-    },
+    }
   );
 
   const onDecrementPressStart = useEffectEvent(
@@ -164,7 +164,7 @@ export function useSpinButton(
         },
         initialStepDelay
       );
-    },
+    }
   );
 
   let cancelContextMenu = (e) => {

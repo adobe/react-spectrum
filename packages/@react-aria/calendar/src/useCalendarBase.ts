@@ -21,7 +21,7 @@ import {hookData, useSelectedDateDescription, useVisibleRangeDescription} from '
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useRef, useState} from 'react';
+import {useState} from 'react';
 
 export interface CalendarAria {
   /** Props for the calendar grouping element. */

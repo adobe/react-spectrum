@@ -11,7 +11,7 @@
  */
 
 import {Key, RefObject, useCallback} from 'react';
-import {LayoutInfo, ReusableView, Size} from '@react-stately/virtualizer';
+import {LayoutInfo, Size} from '@react-stately/virtualizer';
 import {useLayoutEffect} from '@react-aria/utils';
 
 interface IVirtualizer {
@@ -20,7 +20,7 @@ interface IVirtualizer {
 
 export interface VirtualizerItemOptions {
   layoutInfo: LayoutInfo,
-  virtualizer: IVirtualizer
+  virtualizer: IVirtualizer,
   ref: RefObject<HTMLElement>
 }
 
