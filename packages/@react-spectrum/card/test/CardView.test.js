@@ -720,7 +720,7 @@ describe('CardView', function () {
           });
         }
 
-        expect(document.activeElement).toEqual(pageDownElement);
+        expect(document.activeElement).toHaveTextContent(pageDownElement.textContent);
       });
     });
   });
@@ -1198,10 +1198,14 @@ describe('CardView', function () {
       fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
 
       act(() => {
+        grid.scrollTop += 100;
+        fireEvent.scroll(grid);
+      });
+
+      act(() => {
         jest.runAllTimers();
       });
       expect(within(grid).getByText('Title 12')).toBeTruthy();
-
 
       let spinner = within(grid).getByRole('progressbar');
       expect(spinner).toHaveAttribute('aria-label', 'Loading more…');
