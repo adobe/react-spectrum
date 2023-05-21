@@ -11,7 +11,7 @@
  */
 
 import {createListActions, ListData, ListState} from './useListData';
-import {Key, Reducer, useEffect, useReducer} from 'react';
+import {Key, Reducer, useEffect, useReducer, useRef} from 'react';
 import {LoadingState, Selection, SortDescriptor} from '@react-types/shared';
 
 export interface AsyncListOptions<T, C> {
@@ -313,8 +313,12 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     }
   };
 
+  let didDispatchInitialFetch = useRef(false);
   useEffect(() => {
-    dispatchFetch({type: 'loading'}, load);
+    if (!didDispatchInitialFetch.current) {
+      dispatchFetch({type: 'loading'}, load);
+      didDispatchInitialFetch.current = true;
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
