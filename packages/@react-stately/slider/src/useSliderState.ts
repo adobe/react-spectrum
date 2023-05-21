@@ -191,6 +191,7 @@ export function useSliderState<T extends number | number[]>(props: SliderStateOp
   const isEditablesRef = useRef<boolean[]>(new Array(values.length).fill(true));
   const [focusedIndex, setFocusedIndex] = useState<number | undefined>(undefined);
 
+  // These refs should be ok as long as we never read them during render.
   const valuesRef = useRef<number[]>(null);
   valuesRef.current = values;
   const isDraggingsRef = useRef<boolean[]>(null);

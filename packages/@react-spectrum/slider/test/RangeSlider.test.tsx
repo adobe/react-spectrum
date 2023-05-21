@@ -14,7 +14,7 @@ import {fireEvent, render} from '@react-spectrum/test-utils';
 import {press, testKeypresses} from './utils';
 import {Provider} from '@adobe/react-spectrum';
 import {RangeSlider} from '../';
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
@@ -126,11 +126,14 @@ describe('RangeSlider', function () {
   });
 
   it('can be controlled', function () {
-    let renders = [];
+    let setValues = [];
 
     function Test() {
-      let [value, setValue] = useState({start: 20, end: 40});
-      renders.push(value);
+      let [value, _setValue] = useState({start: 20, end: 40});
+      let setValue = useCallback((val) => {
+        setValues.push(val);
+        _setValue(val);
+      }, [_setValue]);
 
       return (<RangeSlider label="The Label" value={value} onChange={setValue} />);
     }
@@ -154,7 +157,7 @@ describe('RangeSlider', function () {
     expect(sliderRight).toHaveAttribute('aria-valuetext', '50');
     expect(output).toHaveTextContent('30 – 50');
 
-    expect(renders).toStrictEqual([{start: 20, end: 40}, {start: 30, end: 40}, {start: 30, end: 50}]);
+    expect(setValues).toStrictEqual([{start: 30, end: 40}, {start: 30, end: 50}]);
   });
 
   it('supports a custom valueLabel', function () {

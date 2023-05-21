@@ -70,11 +70,9 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
     }
   }, [inputXRef]);
 
-  let stateRef = useRef<ColorAreaState>(null);
-  stateRef.current = state;
-  let {xChannel, yChannel, zChannel} = stateRef.current.channels;
-  let xChannelStep = stateRef.current.xChannelStep;
-  let yChannelStep = stateRef.current.yChannelStep;
+  let {xChannel, yChannel, zChannel} = state.channels;
+  let xChannelStep = state.xChannelStep;
+  let yChannelStep = state.yChannelStep;
 
   let currentPosition = useRef<{x: number, y: number}>(null);
 
@@ -88,27 +86,27 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
       // same handling as useMove, don't need to stop propagation, useKeyboard will do that for us
       e.preventDefault();
       // remember to set this and unset it so that onChangeEnd is fired
-      stateRef.current.setDragging(true);
+      state.setDragging(true);
       valueChangedViaKeyboard.current = true;
       switch (e.key) {
         case 'PageUp':
-          stateRef.current.incrementY(stateRef.current.yChannelPageStep);
+          state.incrementY(state.yChannelPageStep);
           focusedInputRef.current = inputYRef.current;
           break;
         case 'PageDown':
-          stateRef.current.decrementY(stateRef.current.yChannelPageStep);
+          state.decrementY(state.yChannelPageStep);
           focusedInputRef.current = inputYRef.current;
           break;
         case 'Home':
-          direction === 'rtl' ? stateRef.current.incrementX(stateRef.current.xChannelPageStep) : stateRef.current.decrementX(stateRef.current.xChannelPageStep);
+          direction === 'rtl' ? state.incrementX(state.xChannelPageStep) : state.decrementX(state.xChannelPageStep);
           focusedInputRef.current = inputXRef.current;
           break;
         case 'End':
-          direction === 'rtl' ? stateRef.current.decrementX(stateRef.current.xChannelPageStep) : stateRef.current.incrementX(stateRef.current.xChannelPageStep);
+          direction === 'rtl' ? state.decrementX(state.xChannelPageStep) : state.incrementX(state.xChannelPageStep);
           focusedInputRef.current = inputXRef.current;
           break;
       }
-      stateRef.current.setDragging(false);
+      state.setDragging(false);
       if (focusedInputRef.current) {
         focusInput(focusedInputRef.current ? focusedInputRef : inputXRef);
       }
@@ -118,7 +116,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
   let moveHandler = {
     onMoveStart() {
       currentPosition.current = null;
-      stateRef.current.setDragging(true);
+      state.setDragging(true);
     },
     onMove({deltaX, deltaY, pointerType, shiftKey}) {
       let {
@@ -132,7 +130,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
         yChannelStep,
         getThumbPosition,
         setColorFromPoint
-      } = stateRef.current;
+      } = state;
       if (currentPosition.current == null) {
         currentPosition.current = getThumbPosition();
       }
@@ -161,7 +159,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
     },
     onMoveEnd() {
       isOnColorArea.current = undefined;
-      stateRef.current.setDragging(false);
+      state.setDragging(false);
       focusInput(focusedInputRef.current ? focusedInputRef : inputXRef);
     }
   };
