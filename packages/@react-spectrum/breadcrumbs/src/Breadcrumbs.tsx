@@ -134,8 +134,13 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
 
   useResizeObserver({ref: domRef, onResize: updateOverflow});
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useLayoutEffect(updateOverflow, [children]);
+  let lastChildren = useRef<typeof children | null>(null);
+  useLayoutEffect(() => {
+    if (children !== lastChildren.current) {
+      lastChildren.current = children;
+      updateOverflow();
+    }
+  });
 
   let contents = childArray;
   if (childArray.length > visibleItems) {
