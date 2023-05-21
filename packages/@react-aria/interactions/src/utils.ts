@@ -125,5 +125,5 @@ export function useSyntheticBlurEvent<Target = Element>(onBlur: (e: ReactFocusEv
 
       stateRef.current.observer.observe(target, {attributes: true, attributeFilter: ['disabled']});
     }
-  }, []);
+  }, [dispatchBlur]);
 }
