@@ -112,12 +112,12 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
   }, [startDate, visibleDuration]);
 
   // Reset focused date and visible range when calendar changes.
-  let lastCalendarIdentifier = useRef(calendar.identifier);
-  if (calendar.identifier !== lastCalendarIdentifier.current) {
+  let [lastCalendarIdentifier, setLastCalendarIdentifier] = useState(calendar.identifier);
+  if (calendar.identifier !== lastCalendarIdentifier) {
     let newFocusedDate = toCalendar(focusedDate, calendar);
     setStartDate(alignCenter(newFocusedDate, visibleDuration, locale, minValue, maxValue));
     setFocusedDate(newFocusedDate);
-    lastCalendarIdentifier.current = calendar.identifier;
+    setLastCalendarIdentifier(calendar.identifier);
   }
 
   if (isInvalid(focusedDate, minValue, maxValue)) {

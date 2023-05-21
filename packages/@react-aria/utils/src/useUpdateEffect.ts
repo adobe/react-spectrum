@@ -18,6 +18,13 @@ export function useUpdateEffect(effect: EffectCallback, dependencies: any[]) {
   const lastDeps = useRef<any[] | null>(null);
 
   useEffect(() => {
+    isInitialMount.current = true;
+    return () => {
+      isInitialMount.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false;
     } else if (!lastDeps.current || dependencies.some((dep, i) => dep !== lastDeps[i])) {
