@@ -30,8 +30,8 @@ export function DialogContainer(props: SpectrumDialogContainerProps) {
     isKeyboardDismissDisabled
   } = props;
 
-  let childCount = React.Children.count(children);
-  if (childCount > 1) {
+  let childArray = React.Children.toArray(children);
+  if (childArray.length > 1) {
     throw new Error('Only a single child can be passed to DialogContainer.');
   }
 
