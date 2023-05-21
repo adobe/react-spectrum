@@ -36,7 +36,16 @@ export function DialogContainer(props: SpectrumDialogContainerProps) {
   }
 
   let [lastChild, setLastChild] = useState<ReactElement | null>(null);
-  let child = React.isValidElement(children) ? children : null;
+
+  // React.Children.toArray mutates the children, and we need them to be stable
+  // between renders so that the lastChild comparison works.
+  let child = null;
+  if (Array.isArray(children)) {
+    child = children.find(React.isValidElement);
+  } else if (React.isValidElement(children)) {
+    child = children;
+  }
+
   if (child && child !== lastChild) {
     setLastChild(child);
   }
