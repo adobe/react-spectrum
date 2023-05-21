@@ -498,6 +498,7 @@ class DragSession {
 
   end() {
     this.teardown();
+    endDragging();
 
     if (typeof this.dragTarget.onDragEnd === 'function') {
       let target = this.currentDropTarget && this.dropOperation !== 'cancel' ? this.currentDropTarget : this.dragTarget;
@@ -526,7 +527,6 @@ class DragSession {
     }
 
     this.setCurrentDropTarget(null);
-    endDragging();
   }
 
   cancel() {
