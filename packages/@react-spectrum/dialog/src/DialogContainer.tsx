@@ -12,7 +12,7 @@
 
 import {DialogContext} from './context';
 import {Modal} from '@react-spectrum/overlays';
-import React, {ReactElement, useRef} from 'react';
+import React, {ReactElement, useState} from 'react';
 import {SpectrumDialogContainerProps} from '@react-types/dialog';
 import {useOverlayTriggerState} from '@react-stately/overlays';
 
@@ -30,15 +30,15 @@ export function DialogContainer(props: SpectrumDialogContainerProps) {
     isKeyboardDismissDisabled
   } = props;
 
-  let childArray = React.Children.toArray(children);
-  if (childArray.length > 1) {
+  let childCount = React.Children.count(children);
+  if (childCount > 1) {
     throw new Error('Only a single child can be passed to DialogContainer.');
   }
 
-  let lastChild = useRef<ReactElement>(null);
-  let child = React.isValidElement(childArray[0]) ? childArray[0] : null;
-  if (child) {
-    lastChild.current = child;
+  let [lastChild, setLastChild] = useState<ReactElement | null>(null);
+  let child = React.isValidElement(children) ? children : null;
+  if (child && child !== lastChild) {
+    setLastChild(child);
   }
 
   let context = {
@@ -63,7 +63,7 @@ export function DialogContainer(props: SpectrumDialogContainerProps) {
       isDismissable={isDismissable}
       isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
       <DialogContext.Provider value={context}>
-        {lastChild.current}
+        {lastChild}
       </DialogContext.Provider>
     </Modal>
   );
