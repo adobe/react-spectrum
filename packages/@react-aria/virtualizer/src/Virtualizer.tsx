@@ -11,9 +11,9 @@
  */
 
 import {Collection} from '@react-types/shared';
-import {focusWithoutScrolling, mergeProps, scrollIntoViewport, useLayoutEffect} from '@react-aria/utils';
 import {getInteractionModality} from '@react-aria/interactions';
 import {Layout, Rect, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
+import {mergeProps, scrollIntoViewport, useLayoutEffect} from '@react-aria/utils';
 import React, {FocusEvent, HTMLAttributes, Key, ReactElement, RefObject, useCallback, useEffect, useMemo, useRef} from 'react';
 import {ScrollView} from './ScrollView';
 import {VirtualizerItem} from './VirtualizerItem';
@@ -74,50 +74,14 @@ function Virtualizer<T extends object, V>(props: VirtualizerProps<T, V>, ref: Re
     }
   });
 
-  let {virtualizerProps} = useVirtualizer(props, state, ref);
-
-  // Handle scrolling, and call onLoadMore when nearing the bottom.
-  let isLoadingRef = useRef(isLoading);
-  let prevProps = useRef(props);
-  useLayoutEffect(() => {
-    // Only update isLoadingRef if props object actually changed,
-    // not if a local state change occurred.
-    if (props !== prevProps.current) {
-      isLoadingRef.current = isLoading;
-      prevProps.current = props;
-    }
-  }, [isLoading, props]);
-
-  let onVisibleRectChange = useCallback((rect: Rect) => {
-    state.setVisibleRect(rect);
-
-    if (!isLoadingRef.current && onLoadMore) {
-      let scrollOffset = state.virtualizer.contentSize.height - rect.height * 2;
-      if (rect.y > scrollOffset) {
-        isLoadingRef.current = true;
-        onLoadMore();
-      }
-    }
-  }, [onLoadMore, state]);
-
-  let lastContentSize = useRef(0);
-  useLayoutEffect(() => {
-    if (!isLoadingRef.current && onLoadMore && !state.isAnimating) {
-      if (state.contentSize.height !== lastContentSize.current && state.contentSize.height > 0 && state.contentSize.height <= state.virtualizer.visibleRect.height) {
-        isLoadingRef.current = true;
-        onLoadMore();
-      }
-    }
-    lastContentSize.current = state.contentSize.height;
-  }, [state.contentSize, state.isAnimating, state.virtualizer, onLoadMore]);
+  let {virtualizerProps, scrollViewProps} = useVirtualizer(props, state, ref);
 
   return (
     <ScrollView
-      {...mergeProps(otherProps, virtualizerProps)}
+      {...mergeProps(otherProps, virtualizerProps, scrollViewProps)}
       ref={ref}
       innerStyle={state.isAnimating ? {transition: `none ${state.virtualizer.transitionDuration}ms`} : undefined}
       contentSize={state.contentSize}
-      onVisibleRectChange={onVisibleRectChange}
       onScrollStart={state.startScrolling}
       onScrollEnd={state.endScrolling}
       sizeToFit={sizeToFit}
@@ -132,11 +96,13 @@ interface VirtualizerOptions {
   focusedKey?: Key,
   scrollToItem?: (key: Key) => void,
   shouldUseVirtualFocus?: boolean,
-  autoFocus?: boolean
+  autoFocus?: boolean,
+  isLoading?: boolean,
+  onLoadMore?: () => void,
 }
 
 export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions, state: VirtualizerState<T, V, W>, ref: RefObject<HTMLElement>) {
-  let {focusedKey, scrollToItem, shouldUseVirtualFocus} = props;
+  let {focusedKey, scrollToItem, shouldUseVirtualFocus, isLoading, onLoadMore} = props;
   let {virtualizer} = state;
   // Scroll to the focusedKey when it changes. Actually focusing the focusedKey
   // is up to the implementation using Virtualizer since we don't have refs
@@ -211,11 +177,49 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
     }
   }
 
+  // Handle scrolling, and call onLoadMore when nearing the bottom.
+  let isLoadingRef = useRef(isLoading);
+  let prevProps = useRef(props);
+  useLayoutEffect(() => {
+    // Only update isLoadingRef if props object actually changed,
+    // not if a local state change occurred.
+    if (props !== prevProps.current) {
+      isLoadingRef.current = isLoading;
+      prevProps.current = props;
+    }
+  }, [isLoading, props]);
+
+  let onVisibleRectChange = useCallback((rect: Rect) => {
+    state.setVisibleRect(rect);
+
+    if (!isLoadingRef.current && onLoadMore) {
+      let scrollOffset = state.virtualizer.contentSize.height - rect.height * 2;
+      if (rect.y > scrollOffset) {
+        isLoadingRef.current = true;
+        onLoadMore();
+      }
+    }
+  }, [onLoadMore, state]);
+
+  let lastContentSize = useRef(0);
+  useLayoutEffect(() => {
+    if (!isLoadingRef.current && onLoadMore && !state.isAnimating) {
+      if (state.contentSize.height !== lastContentSize.current && state.contentSize.height > 0 && state.contentSize.height <= state.virtualizer.visibleRect.height) {
+        isLoadingRef.current = true;
+        onLoadMore();
+      }
+    }
+    lastContentSize.current = state.contentSize.height;
+  }, [state.contentSize, state.isAnimating, state.virtualizer, onLoadMore]);
+
   return {
     virtualizerProps: {
       tabIndex,
       onFocus,
       onBlur
+    },
+    scrollViewProps: {
+      onVisibleRectChange
     }
   };
 }

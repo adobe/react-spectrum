@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, DOMProps, DOMRef, DropTarget, FocusableElement, FocusableRef, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
-import {chain, mergeProps, scrollIntoView, scrollIntoViewport, useLayoutEffect} from '@react-aria/utils';
+import {chain, mergeProps, scrollIntoView, scrollIntoViewport} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {
@@ -581,7 +581,8 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
 }
 
 // This is a custom Virtualizer that also has a header that syncs its scroll position with the body.
-function TableVirtualizer({layout, collection, focusedKey, renderView, renderWrapper, domRef, bodyRef, headerRef, onVisibleRectChange: onVisibleRectChangeProp, isFocusVisible, isVirtualDragging, isRootDropTarget, ...otherProps}) {
+function TableVirtualizer(props) {
+  let {layout, collection, focusedKey, renderView, renderWrapper, domRef, bodyRef, headerRef, onVisibleRectChange: onVisibleRectChangeProp, isFocusVisible, isVirtualDragging, isRootDropTarget, ...otherProps} = props;
   let {direction} = useLocale();
   let loadingState = collection.body.props.loadingState;
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
@@ -632,11 +633,15 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
     }
   }, [collection, domRef, bodyRef, headerRef, layout, state.virtualizer]);
 
-  let {virtualizerProps} = useVirtualizer({
+  let memoedVirtualizerProps = useMemo(() => ({
     tabIndex: otherProps.tabIndex,
     focusedKey,
-    scrollToItem
-  }, state, domRef);
+    scrollToItem,
+    isLoading,
+    onLoadMore
+  }), [otherProps.tabIndex, focusedKey, scrollToItem, isLoading, onLoadMore]);
+
+  let {virtualizerProps, scrollViewProps: {onVisibleRectChange}} = useVirtualizer(memoedVirtualizerProps, state, domRef);
 
   // this effect runs whenever the contentSize changes, it doesn't matter what the content size is
   // only that it changes in a resize, and when that happens, we want to sync the body to the
@@ -656,33 +661,6 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
   let onScroll = useCallback(() => {
     headerRef.current.scrollLeft = bodyRef.current.scrollLeft;
   }, [bodyRef, headerRef]);
-
-  let isLoadingRef = useRef(isLoading);
-  useLayoutEffect(() => {
-    isLoadingRef.current = isLoading;
-  }, [isLoading]);
-
-  let onVisibleRectChange = useCallback((rect: Rect) => {
-    state.setVisibleRect(rect);
-
-    if (!isLoadingRef.current && onLoadMore) {
-      let scrollOffset = state.virtualizer.contentSize.height - rect.height * 2;
-      if (rect.y > scrollOffset) {
-        isLoadingRef.current = true;
-        onLoadMore();
-      }
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onLoadMore, state.setVisibleRect, state.virtualizer]);
-
-  useLayoutEffect(() => {
-    if (!isLoadingRef.current && onLoadMore && !state.isAnimating) {
-      if (state.contentSize.height <= state.virtualizer.visibleRect.height) {
-        isLoadingRef.current = true;
-        onLoadMore();
-      }
-    }
-  }, [state.contentSize, state.virtualizer, state.isAnimating, onLoadMore]);
 
   let resizerPosition = layout.getResizerPosition() - 2;
 
