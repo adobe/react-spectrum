@@ -99,14 +99,17 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
     defaultValue = DEFAULT_COLOR;
   }
 
-  let [value, setValue] = useControlledState(normalizeColor(props.value), normalizeColor(defaultValue), onChange);
+  let [value, setValueState] = useControlledState(normalizeColor(props.value), normalizeColor(defaultValue), onChange);
   let valueRef = useRef(value);
-  valueRef.current = value;
+  let setValue = (value: Color) => {
+    valueRef.current = value;
+    setValueState(value);
+  };
 
   let channelRange = value.getChannelRange('hue');
   let {minValue: minValueX, maxValue: maxValueX, step: step, pageSize: pageStep} = channelRange;
   let [isDragging, setDragging] = useState(false);
-  let isDraggingRef = useRef(false).current;
+  let isDraggingRef = useRef(false);
 
   let hue = value.getChannelValue('hue');
   function setHue(v: number) {
@@ -117,7 +120,6 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
     v = roundToStep(mod(v, 360), step);
     if (hue !== v) {
       let color = value.withChannelValue('hue', v);
-      valueRef.current = color;
       setValue(color);
     }
   }
@@ -128,7 +130,6 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
     pageStep,
     setValue(v) {
       let color = normalizeColor(v);
-      valueRef.current = color;
       setValue(color);
     },
     hue,
@@ -159,8 +160,8 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
       }
     },
     setDragging(isDragging) {
-      let wasDragging = isDraggingRef;
-      isDraggingRef = isDragging;
+      let wasDragging = isDraggingRef.current;
+      isDraggingRef.current = isDragging;
 
       if (onChangeEnd && !isDragging && wasDragging) {
         onChangeEnd(valueRef.current);
