@@ -78,9 +78,15 @@ function Virtualizer<T extends object, V>(props: VirtualizerProps<T, V>, ref: Re
 
   // Handle scrolling, and call onLoadMore when nearing the bottom.
   let isLoadingRef = useRef(isLoading);
+  let prevProps = useRef(props);
   useLayoutEffect(() => {
-    isLoadingRef.current = isLoading;
-  }, [isLoading]);
+    // Only update isLoadingRef if props object actually changed,
+    // not if a local state change occurred.
+    if (props !== prevProps.current) {
+      isLoadingRef.current = isLoading;
+      prevProps.current = props;
+    }
+  }, [isLoading, props]);
 
   let onVisibleRectChange = useCallback((rect: Rect) => {
     state.setVisibleRect(rect);
@@ -94,13 +100,15 @@ function Virtualizer<T extends object, V>(props: VirtualizerProps<T, V>, ref: Re
     }
   }, [onLoadMore, state]);
 
+  let lastContentSize = useRef(0);
   useLayoutEffect(() => {
     if (!isLoadingRef.current && onLoadMore && !state.isAnimating) {
-      if (state.contentSize.height > 0 && state.contentSize.height <= state.virtualizer.visibleRect.height) {
+      if (state.contentSize.height !== lastContentSize.current && state.contentSize.height > 0 && state.contentSize.height <= state.virtualizer.visibleRect.height) {
         isLoadingRef.current = true;
         onLoadMore();
       }
     }
+    lastContentSize.current = state.contentSize.height;
   }, [state.contentSize, state.isAnimating, state.virtualizer, onLoadMore]);
 
   return (

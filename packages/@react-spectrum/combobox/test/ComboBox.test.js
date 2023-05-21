@@ -2153,11 +2153,7 @@ describe('ComboBox', function () {
 
       expect(onOpenChange).toHaveBeenCalledTimes(3);
       expect(onOpenChange).toHaveBeenLastCalledWith(true, 'manual');
-      // Please test this in storybook.
-      // In virtualizer.tsx the onVisibleRectChange() causes this to be called twice
-      // because the browser limits the popover height via calculatePosition(),
-      // while the test doesn't, causing virtualizer to try to load more
-      expect(onLoadMore).toHaveBeenCalledTimes(2);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
       expect(load).toHaveBeenCalledTimes(1);
 
       // close menu
