@@ -185,7 +185,8 @@ export class Virtualizer<T extends object, V, W> {
     this._visibleRect = rect;
 
     if (shouldInvalidate) {
-      this.relayout({
+      // We are already in a layout effect when this method is called, so relayoutNow is appropriate.
+      this.relayoutNow({
         offsetChanged: !rect.pointEquals(current),
         sizeChanged: !rect.sizeEquals(current)
       });

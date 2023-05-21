@@ -4052,7 +4052,7 @@ describe('TableView', function () {
       fireEvent.scroll(scrollView);
       act(() => {jest.runAllTimers();});
 
-      expect(onLoadMore).toHaveBeenCalledTimes(3);
+      expect(onLoadMore).toHaveBeenCalledTimes(2);
     });
 
     it('should automatically fire onLoadMore if there aren\'t enough items to fill the Table', function () {
