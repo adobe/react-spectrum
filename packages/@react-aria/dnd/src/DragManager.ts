@@ -530,6 +530,7 @@ class DragSession {
   }
 
   cancel() {
+    this.setCurrentDropTarget(null);
     this.end();
     if (!this.dragTarget.element.closest('[aria-hidden="true"]')) {
       this.dragTarget.element.focus();
