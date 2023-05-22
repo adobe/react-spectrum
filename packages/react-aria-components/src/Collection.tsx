@@ -11,10 +11,10 @@
  */
 import {CollectionBase} from '@react-types/shared';
 import {createPortal} from 'react-dom';
-import {DOMProps, RenderProps} from './utils';
+import {DOMProps, forwardRefType, RenderProps} from './utils';
 import {Collection as ICollection, Node, SelectionBehavior, SelectionMode, ItemProps as SharedItemProps, SectionProps as SharedSectionProps} from 'react-stately';
 import {mergeProps, useIsSSR} from 'react-aria';
-import React, {cloneElement, createContext, Key, ReactElement, ReactNode, ReactPortal, useCallback, useContext, useMemo} from 'react';
+import React, {cloneElement, createContext, ForwardedRef, forwardRef, Key, ReactElement, ReactNode, ReactPortal, useCallback, useContext, useMemo} from 'react';
 import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
 
 // This Collection implementation is perhaps a little unusual. It works by rendering the React tree into a
@@ -174,7 +174,12 @@ class BaseNode<T> {
     this.lastChild = child;
 
     this.ownerDocument.markDirty(this);
-    this.ownerDocument.addNode(child);
+    if (child.hasSetProps) {
+      // Only add the node to the collection if we already received props for it.
+      // Otherwise wait until then so we have the correct id for the node.
+      this.ownerDocument.addNode(child);
+    }
+
     this.ownerDocument.endTransaction();
     this.ownerDocument.queueUpdate();
   }
@@ -208,7 +213,10 @@ class BaseNode<T> {
       node = node.nextSibling;
     }
 
-    this.ownerDocument.addNode(newNode);
+    if (newNode.hasSetProps) {
+      this.ownerDocument.addNode(newNode);
+    }
+
     this.ownerDocument.endTransaction();
     this.ownerDocument.queueUpdate();
   }
@@ -265,7 +273,7 @@ export class ElementNode<T> extends BaseNode<T> {
   nodeType = 8; // COMMENT_NODE (we'd use ELEMENT_NODE but React DevTools will fail to get its dimensions)
   node: NodeValue<T>;
   private _index: number = 0;
-  private hasSetProps = false;
+  hasSetProps = false;
 
   constructor(type: string, ownerDocument: Document<T, any>) {
     super(ownerDocument);
@@ -305,9 +313,10 @@ export class ElementNode<T> extends BaseNode<T> {
     node.lastChildKey = this.lastChild?.node.key ?? null;
   }
 
-  setProps(obj: any, rendered?: ReactNode) {
+  setProps(obj: any, ref: ForwardedRef<Element>, rendered?: ReactNode) {
     let node = this.ownerDocument.getMutableNode(this);
     let {value, textValue, id, ...props} = obj;
+    props.ref = ref;
     node.props = props;
     node.rendered = rendered;
     node.value = value;
@@ -322,6 +331,7 @@ export class ElementNode<T> extends BaseNode<T> {
     // If this is the first time props have been set, end the transaction started in the constructor
     // so this node can be emitted.
     if (!this.hasSetProps) {
+      this.ownerDocument.addNode(this);
       this.ownerDocument.endTransaction();
       this.hasSetProps = true;
     }
@@ -570,6 +580,10 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
   /** Finalizes the collection update, updating all nodes and freezing the collection. */
   getCollection(): C {
+    if (this.transactionCount > 0) {
+      return this.collection;
+    }
+
     for (let element of this.dirtyNodes) {
       if (element instanceof ElementNode && element.parentNode) {
         element.updateNode();
@@ -689,10 +703,9 @@ export function useCollection<T extends object, C extends BaseCollection<T>>(pro
 }
 
 /** Renders a DOM element (e.g. separator or header) shallowly when inside a collection. */
-export function useShallowRender<T extends Element>(Element: string, props: React.HTMLAttributes<T>, ref: React.Ref<T>): ReactElement | null {
+export function useShallowRender<T extends Element>(Element: string, props: React.HTMLAttributes<T>, ref: ForwardedRef<T>): ReactElement | null {
   let isShallow = useContext(ShallowRenderContext);
-  props = useMemo(() => ({...props, ref}), [props, ref]);
-  ref = useCollectionItemRef(props, props.children);
+  ref = useCollectionItemRef(props, ref, props.children);
   if (isShallow) {
     // @ts-ignore
     return <Element ref={ref} />;
@@ -757,11 +770,11 @@ export interface ItemRenderProps {
   isDropTarget?: boolean
 }
 
-export function useCollectionItemRef(props: any, rendered?: ReactNode) {
+export function useCollectionItemRef<T extends Element>(props: any, ref: ForwardedRef<T>, rendered?: ReactNode) {
   // Return a callback ref that sets the props object on the fake DOM node.
   return useCallback((element) => {
-    element?.setProps(props, rendered);
-  }, [props, rendered]);
+    element?.setProps(props, ref, rendered);
+  }, [props, ref, rendered]);
 }
 
 export interface ItemProps<T = object> extends Omit<SharedItemProps<T>, 'children'>, RenderProps<ItemRenderProps> {
@@ -771,10 +784,13 @@ export interface ItemProps<T = object> extends Omit<SharedItemProps<T>, 'childre
   value?: T
 }
 
-export function Item<T extends object>(props: ItemProps<T>): JSX.Element {
+function Item<T extends object>(props: ItemProps<T>, ref: ForwardedRef<HTMLElement>): JSX.Element {
   // @ts-ignore
-  return <item ref={useCollectionItemRef(props, props.children)} />;
+  return <item ref={useCollectionItemRef(props, ref, props.children)} />;
 }
+
+const _Item = /*#__PURE__*/ (forwardRef as forwardRefType)(Item);
+export {_Item as Item};
 
 export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children' | 'title'>, DOMProps {
   /** The unique id of the section. */
@@ -785,12 +801,14 @@ export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children' 
   children?: ReactNode | ((item: T) => ReactElement)
 }
 
-export function Section<T extends object>(props: SectionProps<T>): JSX.Element {
+function Section<T extends object>(props: SectionProps<T>, ref: ForwardedRef<HTMLElement>): JSX.Element {
   let children = useCollectionChildren(props);
-
   // @ts-ignore
-  return <section ref={useCollectionItemRef(props)}>{children}</section>;
+  return <section ref={useCollectionItemRef(props, ref)}>{children}</section>;
 }
+
+const _Section = /*#__PURE__*/ (forwardRef as forwardRefType)(Section);
+export {_Section as Section};
 
 export const CollectionContext = createContext<CachedChildrenOptions<unknown> | null>(null);
 export const CollectionRendererContext = createContext<CollectionProps<unknown>['children']>(null);

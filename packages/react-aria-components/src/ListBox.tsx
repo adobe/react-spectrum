@@ -272,7 +272,8 @@ function ListBoxSection<T>({section, className, style, ...otherProps}: ListBoxSe
       {...filterDOMProps(otherProps)}
       {...groupProps}
       className={className || section.props?.className || 'react-aria-Section'}
-      style={style || section.props?.style}>
+      style={style || section.props?.style}
+      ref={section.props.ref}>
       {children}
     </section>
   );
@@ -283,7 +284,7 @@ interface OptionProps<T> {
 }
 
 function Option<T>({item}: OptionProps<T>) {
-  let ref = useRef<HTMLDivElement>(null);
+  let ref = useObjectRef<HTMLDivElement>(item.props.ref);
   let {state, shouldFocusOnHover, dragAndDropHooks, dragState, dropState} = useContext(InternalListBoxContext)!;
   let {optionProps, labelProps, descriptionProps, ...states} = useOption(
     {key: item.key},

@@ -197,4 +197,29 @@ describe('Tabs', () => {
     expect(tabs).toHaveAttribute('data-orientation', 'vertical');
     expect(tabs).toHaveClass('vertical');
   });
+
+  it('should support refs', () => {
+    let tabsRef = React.createRef();
+    let tabListRef = React.createRef();
+    let tabRef = React.createRef();
+    let tabPanelRef = React.createRef();
+    render(
+      <Tabs ref={tabsRef}>
+        <TabList ref={tabListRef}>
+          <Tab id="a" ref={tabRef}>A</Tab>
+          <Tab id="b">B</Tab>
+          <Tab id="c">C</Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel id="a" ref={tabPanelRef}>A</TabPanel>
+          <TabPanel id="b">B</TabPanel>
+          <TabPanel id="c">C</TabPanel>
+        </TabPanels>
+      </Tabs>
+    );
+    expect(tabsRef.current).toBeInstanceOf(HTMLElement);
+    expect(tabListRef.current).toBeInstanceOf(HTMLElement);
+    expect(tabRef.current).toBeInstanceOf(HTMLElement);
+    expect(tabPanelRef.current).toBeInstanceOf(HTMLElement);
+  });
 });
