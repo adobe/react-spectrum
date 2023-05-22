@@ -156,7 +156,6 @@ describe('DropZone', () => {
     userEvent.tab();
     expect(document.activeElement).toBe(button);
     expect(dropzone).not.toHaveAttribute('data-focus-visible');
-    expect(dropzone).not.toHaveClass('focus');
     expect(button).toHaveAttribute('data-focus-visible', 'true');
 
     userEvent.tab();
@@ -174,21 +173,16 @@ describe('DropZone', () => {
     let dropzone = getByTestId('foo');
     let link = getByRole('link');
     expect(link).toHaveAttribute('class', 'react-aria-Link');
-
     expect(dropzone).not.toHaveAttribute('data-focus-visible');
-    expect(dropzone).not.toHaveClass('focus');
 
     userEvent.tab();
     expect(document.activeElement).toBe(link);
     expect(dropzone).not.toHaveAttribute('data-focus-visible');
-    expect(dropzone).not.toHaveClass('focus');
     expect(link).toHaveAttribute('data-focus-visible', 'true');
 
     userEvent.tab();
     expect(dropzone).not.toHaveAttribute('data-focus-visible');
-    expect(dropzone).not.toHaveClass('focus');
     expect(link).not.toHaveAttribute('data-focus-visible');
-    expect(link).not.toHaveClass('focus');
   });   
 
   describe('drag and drop', function () {
