@@ -174,7 +174,12 @@ class BaseNode<T> {
     this.lastChild = child;
 
     this.ownerDocument.markDirty(this);
-    this.ownerDocument.addNode(child);
+    if (child.hasSetProps) {
+      // Only add the node to the collection if we already received props for it.
+      // Otherwise wait until then so we have the correct id for the node.
+      this.ownerDocument.addNode(child);
+    }
+
     this.ownerDocument.endTransaction();
     this.ownerDocument.queueUpdate();
   }
@@ -208,7 +213,10 @@ class BaseNode<T> {
       node = node.nextSibling;
     }
 
-    this.ownerDocument.addNode(newNode);
+    if (newNode.hasSetProps) {
+      this.ownerDocument.addNode(newNode);
+    }
+
     this.ownerDocument.endTransaction();
     this.ownerDocument.queueUpdate();
   }
@@ -265,7 +273,7 @@ export class ElementNode<T> extends BaseNode<T> {
   nodeType = 8; // COMMENT_NODE (we'd use ELEMENT_NODE but React DevTools will fail to get its dimensions)
   node: NodeValue<T>;
   private _index: number = 0;
-  private hasSetProps = false;
+  hasSetProps = false;
 
   constructor(type: string, ownerDocument: Document<T, any>) {
     super(ownerDocument);
@@ -323,6 +331,7 @@ export class ElementNode<T> extends BaseNode<T> {
     // If this is the first time props have been set, end the transaction started in the constructor
     // so this node can be emitted.
     if (!this.hasSetProps) {
+      this.ownerDocument.addNode(this);
       this.ownerDocument.endTransaction();
       this.hasSetProps = true;
     }
@@ -571,6 +580,10 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
   /** Finalizes the collection update, updating all nodes and freezing the collection. */
   getCollection(): C {
+    if (this.transactionCount > 0) {
+      return this.collection;
+    }
+
     for (let element of this.dirtyNodes) {
       if (element instanceof ElementNode && element.parentNode) {
         element.updateNode();
