@@ -821,3 +821,20 @@ export const DropzoneWithRenderProps = (props) => (
     </DropZone>
   </div>
 );
+
+export const DropZoneOnlyAcceptPNG = (props) => (
+  <div>
+    <DropZone
+      {...props}
+      getDropOperation={(types) =>  types.has('image/png') ? 'move' : 'cancel'}
+      className={styles.dropzone}
+      onDrop={action('OnDrop')}
+      onDropEnter={action('OnDropEnter')}
+      onDropExit={action('OnDropExit')} >
+      <Input accept="image/png" />
+      <Text slot="heading">
+        DropZone Area
+      </Text>
+    </DropZone>
+  </div>
+);

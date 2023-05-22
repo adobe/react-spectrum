@@ -43,7 +43,7 @@ export interface DropZoneRenderProps {
   isDropTarget: boolean
 }
 // note: possibly add isDisabled prop in the future
-export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'onDropActivate' | 'onInsert' | 'onRootDrop' | 'onItemDrop' | 'onReorder'>, 
+export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'onInsert' | 'onRootDrop' | 'onItemDrop' | 'onReorder'>, 
   RenderProps<DropZoneRenderProps>, SlotProps {
   }
 
@@ -100,7 +100,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   let {pressProps} = usePress({
     ref,
     onPress: () => {
-      if (inputRef.current && (!hasButton || !hasLink)) {
+      if (inputRef.current && !hasButton && !hasLink) {
         inputRef.current.click();
       }
     }
@@ -142,7 +142,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
         {...renderProps} 
         ref={ref}
         slot={props.slot} 
-        tabIndex={-1} 
+        tabIndex={-1}   
         data-hovered={isHovered || undefined}
         data-focused={isFocused || undefined} 
         data-focus-visible={isFocusVisible || undefined}

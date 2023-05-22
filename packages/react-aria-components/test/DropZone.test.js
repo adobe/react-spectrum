@@ -61,8 +61,6 @@ describe('DropZone', () => {
 
     let dropzone = getByTestId('foo');
     expect(dropzone).toHaveAttribute('class', 'react-aria-DropZone');
-
-    console.log(dropzone.outerHTML);
     expect(dropzone).toHaveAttribute('slot', 'test');
   });
 
@@ -153,9 +151,7 @@ describe('DropZone', () => {
     let dropzone = getByTestId('foo');
     let button = getByRole('button');
     expect(button).toHaveAttribute('class', 'react-aria-Button');
-
     expect(dropzone).not.toHaveAttribute('data-focus-visible');
-    expect(dropzone).not.toHaveClass('focus');
 
     userEvent.tab();
     expect(document.activeElement).toBe(button);
@@ -165,9 +161,7 @@ describe('DropZone', () => {
 
     userEvent.tab();
     expect(dropzone).not.toHaveAttribute('data-focus-visible');
-    expect(dropzone).not.toHaveClass('focus');
     expect(button).not.toHaveAttribute('data-focus-visible');
-    expect(button).not.toHaveClass('focus');
   });
 
   it('should support focus ring around visible link', () => {
@@ -374,7 +368,6 @@ describe('DropZone', () => {
         });
 
         expect(dropzone).not.toHaveAttribute('data-drop-target');
-
       });
     });
   });
@@ -431,7 +424,6 @@ describe('DropZone', () => {
       </DropZone>
     );
     let button = getByRole('button');
-    console.log(button.outerHTML);
     expect(button).toHaveAttribute('aria-label', 'Press enter to select a file');
     
     userEvent.upload(button, file);
@@ -439,17 +431,4 @@ describe('DropZone', () => {
     expect(button.files.item(0)).toStrictEqual(file);
     expect(button.files).toHaveLength(1);
   });
-
-  /*
-  1. is drop target (O)
-  2. drag with mouse (O)
-  3. drag with keyboard (O)
-  4. aria labels with virtual drag (O)
-  5. aria labels (O)
-  6. render props (O)
-  7. copy/paste (O)
-  8. opens up file system (O)
-
-  9. support slots ())
-  */
 });
