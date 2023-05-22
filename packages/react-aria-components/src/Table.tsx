@@ -859,7 +859,7 @@ function TableCell<T>({cell}: {cell: GridNode<T>}) {
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={isPressed || undefined}>
-      {cell.rendered}
+      {renderProps.children}
     </td>
   );
 }
