@@ -54,7 +54,6 @@
     "@react-spectrum/utils": "^3.9.1",
     "@react-stately/collections": "^3.7.0",
     "@react-stately/menu": "^3.5.1",
-    "@react-stately/overlays": "^3.5.1",
     "@react-stately/tree": "^3.6.0",
     "@react-stately/utils": "^3.6.0",
     "@react-types/menu": "^3.9.0",

@@ -43,12 +43,12 @@ export interface ButtonRenderProps {
 }
 
 export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, SlotProps, RenderProps<ButtonRenderProps> {
-  /** 
+  /**
    * The <form> element to associate the button with.
    * The value of this attribute must be the id of a <form> in the same document.
    */
   form?: string,
-  /** 
+  /**
    * The URL that processes the information submitted by the button.
    * Overrides the action attribute of the button's form owner.
    */
