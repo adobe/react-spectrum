@@ -58,7 +58,7 @@ interface DropHooks {
 
 export interface DragAndDropHooks {
   /** Drag and drop hooks for the collection element.  */
-  dragAndDropHooks: DragHooks & DropHooks & {isVirtualDragging?: () => boolean}
+  dragAndDropHooks: DragHooks & DropHooks & {isVirtualDragging?: () => boolean, renderPreview?: (keys: Set<Key>, draggedKey: Key) => JSX.Element}
 }
 
 export interface DragAndDropOptions extends Omit<DraggableCollectionProps, 'preview' | 'getItems'>, DroppableCollectionProps {
@@ -66,7 +66,9 @@ export interface DragAndDropOptions extends Omit<DraggableCollectionProps, 'prev
    * A function that returns the items being dragged. If not specified, we assume that the collection is not draggable.
    * @default () => []
    */
-  getItems?: (keys: Set<Key>) => DragItem[]
+  getItems?: (keys: Set<Key>) => DragItem[],
+  /** Provide a custom drag preview. `draggedKey` represents the key of the item the user actually dragged. */
+  renderPreview?: (keys: Set<Key>, draggedKey: Key) => JSX.Element
 }
 
 /**
@@ -80,13 +82,14 @@ export function useDragAndDrop(options: DragAndDropOptions): DragAndDropHooks {
       onItemDrop,
       onReorder,
       onRootDrop,
-      getItems
+      getItems,
+      renderPreview
      } = options;
 
     let isDraggable = !!getItems;
     let isDroppable = !!(onDrop || onInsert || onItemDrop || onReorder || onRootDrop);
 
-    let hooks = {} as DragHooks & DropHooks & {isVirtualDragging?: () => boolean};
+    let hooks = {} as DragHooks & DropHooks & {isVirtualDragging?: () => boolean, renderPreview?: (keys: Set<Key>, draggedKey: Key) => JSX.Element};
     if (isDraggable) {
       hooks.useDraggableCollectionState = function useDraggableCollectionStateOverride(props: DraggableCollectionStateOptions) {
         return useDraggableCollectionState({...props, ...options});
@@ -94,6 +97,7 @@ export function useDragAndDrop(options: DragAndDropOptions): DragAndDropHooks {
       hooks.useDraggableCollection = useDraggableCollection;
       hooks.useDraggableItem = useDraggableItem;
       hooks.DragPreview = DragPreview;
+      hooks.renderPreview = renderPreview;
     }
 
     if (isDroppable) {

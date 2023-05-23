@@ -25,7 +25,6 @@ describe('ContextualHelp', function () {
   });
   afterAll(() => {
     jest.clearAllMocks();
-    jest.useRealTimers();
   });
 
   beforeEach(() => {

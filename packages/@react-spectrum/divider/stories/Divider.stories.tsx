@@ -15,46 +15,57 @@ import {Divider} from '../';
 import Properties from '@spectrum-icons/workflow/Properties';
 import React from 'react';
 import Select from '@spectrum-icons/workflow/Select';
-import {storiesOf} from '@storybook/react';
 
-storiesOf('Divider', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
-  .add('Large (Default)',
-    () => (
-      <section>
-        <h1>Large</h1>
-        <Divider />
-        <p>Page or Section Titles.</p>
-      </section>
-    )
-  )
-  .add('Medium',
-    () => (
-      <section>
-        <h1>Medium</h1>
-        <Divider size="M" />
-        <p>Divide subsections, or divide different groups of elements (between panels, rails, etc.)</p>
-      </section>
-    )
-  )
-  .add('Small',
-    () => (
-      <section>
-        <h1>Small</h1>
-        <Divider size="S" />
-        <p>Divide like-elements (tables, tool groups, elements within a panel, etc.)</p>
-      </section>
-    )
-  )
-  .add('Vertical, Large (Default)',
-    () => renderVertical()
-  )
-  .add('Vertical, Medium',
-    () => renderVertical({size: 'M'})
-  )
-  .add('Vertical, Small',
-    () => renderVertical({size: 'S'})
-  );
+export default {
+  title: 'Divider',
+  providerSwitcher: {status: 'positive'}
+};
+
+export const LargeDefault = () => (
+  <section>
+    <h1>Large</h1>
+    <Divider />
+    <p>Page or Section Titles.</p>
+  </section>
+);
+
+LargeDefault.story = {
+  name: 'Large (Default)'
+};
+
+export const Medium = () => (
+  <section>
+    <h1>Medium</h1>
+    <Divider size="M" />
+    <p>Divide subsections, or divide different groups of elements (between panels, rails, etc.)</p>
+  </section>
+);
+
+export const Small = () => (
+  <section>
+    <h1>Small</h1>
+    <Divider size="S" />
+    <p>Divide like-elements (tables, tool groups, elements within a panel, etc.)</p>
+  </section>
+);
+
+export const VerticalLargeDefault = () => renderVertical();
+
+VerticalLargeDefault.story = {
+  name: 'Vertical, Large (Default)'
+};
+
+export const VerticalMedium = () => renderVertical({size: 'M'});
+
+VerticalMedium.story = {
+  name: 'Vertical, Medium'
+};
+
+export const VerticalSmall = () => renderVertical({size: 'S'});
+
+VerticalSmall.story = {
+  name: 'Vertical, Small'
+};
 
 function renderVertical(props = {}) {
   return (
