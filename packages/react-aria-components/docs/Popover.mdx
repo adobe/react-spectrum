@@ -391,6 +391,24 @@ The example below will maintain at least 50px between the popover and the edge o
 </DialogTrigger>
 ```
 
+### Portal container
+
+By default popovers are rendered in a portal inside document body. 
+This can be overridden by passing a `portalContainer` prop to `Popover` component. 
+
+```tsx example
+
+The example below will insert the popover into the element with id `portal-root`.
+
+```tsx example
+<DialogTrigger>
+  <Button>Trigger</Button>
+  <MyPopover portalContainer={document.getElementById('portal-root')}>
+    This is a popover.
+  </MyPopover>
+</DialogTrigger>
+```
+
 ## Advanced customization
 
 ### Hooks
