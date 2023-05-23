@@ -24,7 +24,13 @@ export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPo
    * When used within a trigger component such as DialogTrigger, MenuTrigger, Select, etc.,
    * this is set automatically. It is only required when used standalone.
    */
-  triggerRef?: RefObject<Element>
+  triggerRef?: RefObject<Element>,
+
+  /**
+   * The container element in which the popover will be placed.
+   * @default document.body
+   */
+  portalContainer?: Element
 }
 
 export interface PopoverRenderProps {
@@ -80,10 +86,11 @@ export {_Popover as Popover};
 
 interface PopoverInnerProps extends AriaPopoverProps, RenderProps<PopoverRenderProps>, SlotProps {
   state: OverlayTriggerState,
-  isExiting: boolean
+  isExiting: boolean,
+  portalContainer?: Element
 }
 
-function PopoverInner({state, isExiting, ...props}: PopoverInnerProps) {
+function PopoverInner({state, isExiting, portalContainer, ...props}: PopoverInnerProps) {
   let {popoverProps, underlayProps, arrowProps, placement} = usePopover({
     ...props,
     offset: props.offset ?? 8
@@ -104,7 +111,7 @@ function PopoverInner({state, isExiting, ...props}: PopoverInnerProps) {
   let style = {...renderProps.style, ...popoverProps.style};
 
   return (
-    <Overlay>
+    <Overlay portalContainer={portalContainer}>
       {!props.isNonModal && <div {...underlayProps} style={{position: 'fixed', inset: 0}} />}
       <div
         {...mergeProps(filterDOMProps(props as any), popoverProps)}
