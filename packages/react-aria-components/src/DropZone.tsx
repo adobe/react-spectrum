@@ -72,12 +72,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   let labelProps = useLabels({'aria-label': labelText, 'aria-labelledby': textId});
 
   let {buttonProps} = useButton({
-    onPress: () => {
-      if (inputRef.current) {
-        return inputRef.current.click();
-      }
-      return undefined;
-    }},
+    onPress: () => inputRef.current?.click()},
     buttonRef);
 
   let {clipboardProps} = useClipboard({
@@ -98,7 +93,11 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
 
   let {pressProps} = usePress({
     ref,
-    onPress: () => inputRef.current?.click()
+    onPress: () => {
+      if (inputRef.current && !hasButton  && !hasLink) 7{
+        inputRef.current.click();
+      }
+    }
   });
 
   let onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
