@@ -423,6 +423,14 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
           return <TableDragCell cell={item} />;
         }
 
+        // TODO: look up the item's column information when it is going to be rendered so the hook
+        // doesn't have to do so. Helps us not inadvertantly look up column information when it might be
+        // out of date/in the process of being removed.
+
+        // let cloneItem = {...item};
+        // cloneItem.column = state.collection.columns[cloneItem.index];
+        // return <TableCell cell={cloneItem} />;
+
         return <TableCell cell={item} />;
       }
       case 'placeholder':
