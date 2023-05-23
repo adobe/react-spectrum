@@ -94,7 +94,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   let {pressProps} = usePress({
     ref,
     onPress: () => {
-      if (inputRef.current && !hasButton  && !hasLink) 7{
+      if (inputRef.current && !hasButton  && !hasLink) {
         inputRef.current.click();
       }
     }
