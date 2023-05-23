@@ -20,6 +20,7 @@ import React, {createContext, ForwardedRef, forwardRef, useMemo, useRef} from 'r
 import {TextContext} from './Text';
 import {useHasChild} from '@react-spectrum/utils';
 import {useLabels} from '@react-aria/utils';
+
 export interface DropZoneRenderProps {
   /**
    * Whether the dropzone is currently hovered with a mouse.
@@ -43,9 +44,7 @@ export interface DropZoneRenderProps {
   isDropTarget: boolean
 }
 // note: possibly add isDisabled prop in the future
-export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'onInsert' | 'onRootDrop' | 'onItemDrop' | 'onReorder'>, 
-  RenderProps<DropZoneRenderProps>, SlotProps {
-  }
+export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'onInsert' | 'onRootDrop' | 'onItemDrop' | 'onReorder'>, RenderProps<DropZoneRenderProps>, SlotProps {}
 
 export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDivElement>>(null);
 
@@ -99,11 +98,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
 
   let {pressProps} = usePress({
     ref,
-    onPress: () => {
-      if (inputRef.current && !hasButton && !hasLink) {
-        inputRef.current.click();
-      }
-    }
+    onPress: () => inputRef.current?.click()
   });
 
   let onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -121,7 +116,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
             type: file.type, 
             name: file.name,
             getFile: () => Promise.resolve(file),
-            getText: () => Promise.resolve('')
+            getText: () => file.text()
           })
         )
       }
@@ -147,11 +142,12 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
         data-focused={isFocused || undefined} 
         data-focus-visible={isFocusVisible || undefined}
         data-drop-target={isDropTarget || undefined} > 
-        {!hasButton && !hasLink && <VisuallyHidden>
-          <button 
-            {...mergeProps(buttonProps, focusProps, clipboardProps, labelProps)}
-            ref={buttonRef}  /> 
-        </VisuallyHidden>}
+        {!hasButton && !hasLink && 
+          <VisuallyHidden>
+            <button 
+              {...mergeProps(buttonProps, focusProps, clipboardProps, labelProps)}
+              ref={buttonRef}  /> 
+          </VisuallyHidden>}
         {renderProps.children}
       </div>
     </Provider>
