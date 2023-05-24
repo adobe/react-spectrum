@@ -27,7 +27,7 @@ export function useUpdateEffect(effect: EffectCallback, dependencies: any[]) {
   useEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false;
-    } else if (!lastDeps.current || dependencies.some((dep, i) => dep !== lastDeps[i])) {
+    } else if (!lastDeps.current || dependencies.some((dep, i) => !Object.is(dep, lastDeps[i]))) {
       effect();
     }
     lastDeps.current = dependencies;
