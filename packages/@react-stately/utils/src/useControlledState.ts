@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {useCallback, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 
 export function useControlledState<T>(
   value: T,
@@ -20,17 +20,14 @@ export function useControlledState<T>(
   let [stateValue, setStateValue] = useState(value || defaultValue);
 
   let isControlledRef = useRef(value !== undefined);
-  // If a component goes from controlled to uncontrolled we always want to warn
-  // even if a render is aborted, so using a ref here is ok.
-  // eslint-disable-next-line rulesdir/pure-render
-  let wasControlled = isControlledRef.current;
   let isControlled = value !== undefined;
-  if (wasControlled !== isControlled) {
-    console.warn(`WARN: A component changed from ${wasControlled ? 'controlled' : 'uncontrolled'} to ${isControlled ? 'controlled' : 'uncontrolled'}.`);
-  }
-
-  // eslint-disable-next-line rulesdir/pure-render
-  isControlledRef.current = isControlled;
+  useEffect(() => {
+    let wasControlled = isControlledRef.current;
+    if (wasControlled !== isControlled) {
+      console.warn(`WARN: A component changed from ${wasControlled ? 'controlled' : 'uncontrolled'} to ${isControlled ? 'controlled' : 'uncontrolled'}.`);
+    }
+    isControlledRef.current = isControlled;
+  }, [isControlled]);
 
   let currentValue = isControlled ? value : stateValue;
   let setValue = useCallback((value, ...args) => {
