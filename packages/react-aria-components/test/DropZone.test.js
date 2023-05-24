@@ -18,6 +18,14 @@ import React from 'react';
 import userEvent from '@testing-library/user-event';
 
 describe('DropZone', () => {
+  beforeAll(function () {
+    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
+    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+    window.HTMLElement.prototype.scrollIntoView = jest.fn();
+    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+    jest.useFakeTimers();
+  });
+
   it('should render a dropzone', () => {
     let {getByTestId} = render(
       <DropZone data-testid="foo">
@@ -424,5 +432,23 @@ describe('DropZone', () => {
     expect(button.files[0]).toStrictEqual(file);
     expect(button.files.item(0)).toStrictEqual(file);
     expect(button.files).toHaveLength(1);
+  });
+});
+
+describe('mobile dropzone', () => {
+  beforeEach(() => {
+    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 700);
+  });
+
+  it('should have correct aria-label with input', () => {
+    let {getByRole} = render(
+      <DropZone>
+        <Input />
+        <Text slot="heading">
+          Test
+        </Text>
+      </DropZone>);
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('aria-label', 'Double tap to select a file');
   });
 });

@@ -10,15 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaLabelingProps} from '@react-types/shared';
 import {ButtonContext} from './Button';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {DropOptions, mergeProps, useButton, useClipboard, useDrop, useFocusRing, useHover, useId, usePress, VisuallyHidden} from 'react-aria';
+import {filterDOMProps, useHasChild, useIsMobileDevice} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {isVirtualDragging} from '@react-aria/dnd';
 import {LinkContext} from './Link';
 import React, {createContext, ForwardedRef, forwardRef, useMemo, useRef} from 'react';
 import {TextContext} from './Text';
-import {useHasChild} from '@react-spectrum/utils';
 import {useLabels} from '@react-aria/utils';
 
 export interface DropZoneRenderProps {
@@ -44,7 +45,7 @@ export interface DropZoneRenderProps {
   isDropTarget: boolean
 }
 // note: possibly add isDisabled prop in the future
-export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'onInsert' | 'onRootDrop' | 'onItemDrop' | 'onReorder'>, RenderProps<DropZoneRenderProps>, SlotProps {}
+export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'onInsert' | 'onRootDrop' | 'onItemDrop' | 'onReorder'>, RenderProps<DropZoneRenderProps>, SlotProps, AriaLabelingProps {}
 
 export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDivElement>>(null);
 
@@ -56,19 +57,21 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
 
   let buttonRef = useRef<HTMLButtonElement>(null);
   let inputRef = useRef<HTMLInputElement>(null);
-  let uploadLinkRef = useRef<HTMLAnchorElement>(null);
-  let uploadButtonRef = useRef<HTMLButtonElement>(null);
   let hasButton = useHasChild('button[slot=file]', ref);
   let hasLink = useHasChild('span[slot=file]', ref);
 
+  let isMobile = useIsMobileDevice();
   let hasInput = useHasChild('input[type=file]', ref);
   let textId = useId();
   let isVirtualDrag = isVirtualDragging();
   let labelText = useMemo(() => {
-    if (!isVirtualDrag && hasInput) {
+    console.log(isMobile);
+    if (!isVirtualDrag && hasInput && !isMobile) {
       return 'Press enter to select a file';
+    } else if (!isVirtualDrag && hasInput) {
+      return 'Double tap to select a file';
     }
-  }, [isVirtualDrag, hasInput]);
+  }, [isVirtualDrag, hasInput, isMobile]);
   let labelProps = useLabels({'aria-label': labelText, 'aria-labelledby': textId});
 
   let {buttonProps} = useButton({
@@ -90,6 +93,8 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
     values: {isHovered, isFocused, isFocusVisible, isDropTarget},
     defaultClassName: 'react-aria-DropZone'
   });
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
 
   let {pressProps} = usePress({
     ref,
@@ -127,12 +132,12 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
     <Provider
       values={[
         [InputContext, {ref: inputRef, type: 'file', style: {display: 'none'}, onChange: onInputChange}],
-        [LinkContext, {slot: 'file', onPress: () => inputRef.current?.click(), ref: uploadLinkRef}], 
-        [ButtonContext, {slot: 'file', onPress: () => inputRef.current?.click(), ref: uploadButtonRef}],
+        [LinkContext, {slot: 'file', onPress: () => inputRef.current?.click()}], 
+        [ButtonContext, {slot: 'file', onPress: () => inputRef.current?.click()}],
         [TextContext, {id: textId, slot: 'heading'}]
       ]}>
       <div
-        {...mergeProps(dropProps, hoverProps, pressProps)}
+        {...mergeProps(dropProps, hoverProps, pressProps, DOMProps)}
         {...renderProps} 
         ref={ref}
         slot={props.slot} 

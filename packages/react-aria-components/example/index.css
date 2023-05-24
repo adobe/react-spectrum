@@ -187,7 +187,7 @@ html {
   }
 
   &[data-drop-target]{
-    border: 2px dashed purple;
+    border: 2px dashed orange;
   }
 }
 
