@@ -40,6 +40,7 @@ export {useSlider, useSliderThumb} from '@react-aria/slider';
 export {useSwitch} from '@react-aria/switch';
 export {useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
 export {useTab, useTabList, useTabPanel} from '@react-aria/tabs';
+export {useTag, useTagGroup} from '@react-aria/tag';
 export {useTextField} from '@react-aria/textfield';
 export {useTooltip, useTooltipTrigger} from '@react-aria/tooltip';
 export {chain, mergeProps, useId} from '@react-aria/utils';
@@ -74,6 +75,7 @@ export type {AriaSliderProps, AriaSliderThumbProps, AriaSliderThumbOptions, Slid
 export type {AriaSwitchProps, SwitchAria} from '@react-aria/switch';
 export type {AriaTableCellProps, AriaTableColumnHeaderProps, AriaTableProps, AriaTableSelectionCheckboxProps, GridAria, GridRowAria, GridRowProps, TableCellAria, TableColumnHeaderAria, TableHeaderRowAria, TableSelectAllCheckboxAria, TableSelectionCheckboxAria} from '@react-aria/table';
 export type {AriaTabListProps, AriaTabListOptions, AriaTabPanelProps, AriaTabProps, TabAria, TabListAria, TabPanelAria} from '@react-aria/tabs';
+export type {AriaTagGroupProps, AriaTagProps, TagAria, TagGroupAria} from '@react-aria/tag';
 export type {AriaTextFieldOptions, AriaTextFieldProps, TextFieldAria} from '@react-aria/textfield';
 export type {AriaTooltipProps, TooltipAria, TooltipTriggerAria, TooltipTriggerProps} from '@react-aria/tooltip';
 export type {VisuallyHiddenAria, VisuallyHiddenProps} from '@react-aria/visually-hidden';
