@@ -11,10 +11,12 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/table';
+import dndDocs from 'docs:@react-spectrum/dnd';
 import tableTypes from 'docs:@react-types/table/src/index.d.ts';
-import {HeaderInfo, PropTable, PageDescription, VersionBadge} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, PageDescription, TypeLink, VersionBadge} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-spectrum/table/package.json';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 
 ```jsx import
 import {ActionButton} from '@react-spectrum/button';
@@ -621,7 +623,7 @@ The `minWidth` and `maxWidth` props define constraints on the size of a column, 
 </TableView>
 ```
 
-## Column Resizing <VersionBadge version="rc" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+## Column Resizing
 
 TableView supports resizable columns, allowing users to dynamically adjust the width of a column. To designate that a Column is resizable, provide it with the `allowsResizing` prop. This will render a draggable
 resizer handle that becomes visible on hover. Keyboard, touch, and screen reader users can start resizing by interacting with the target column's header and selecting the "Resize column" option
@@ -728,6 +730,864 @@ function ResizableTable() {
 <ResizableTable />
 ```
 
+
+## Drag and drop <VersionBadge version="beta" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+
+To enable drag and drop in a TableView, you must provide the drag and drop hooks sourced from <TypeLink links={dndDocs.links} type={dndDocs.exports.useDragAndDrop} /> to the TableView's `dragAndDropHooks` prop.
+See the examples below for various common drag and drop use cases. For more information on `useDragAndDrop` and the various supported ways to perform a drag and drop interaction,
+please see the [drag and drop documentation](dnd.html).
+
+### Draggable TableView and droppable TableView
+
+The example below demonstrates how to create a draggable TableView and a droppable TableView.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import type {DragAndDropOptions, TextDropItem} from '@react-spectrum/dnd';
+import type {ListData} from '@adobe/react-spectrum';
+import {useDragAndDrop} from '@react-spectrum/dnd';
+import {useListData} from '@adobe/react-spectrum';
+
+interface Item {
+  name: string,
+  type?: string,
+  date?: string,
+  childNodes?: Item[]
+}
+
+interface DndTableViewProps extends DragAndDropOptions {
+  list: ListData<Item>,
+  columns: { name: string; id: string; }[]
+}
+
+function DraggableTableView(props: DndTableViewProps) {
+  let {list, columns, ...otherProps} = props;
+  /*- begin highlight -*/
+  let {dragAndDropHooks} = useDragAndDrop({
+    // Only allow move operations when dropping items from this table
+    getAllowedDropOperations: () => ['move'],
+    getItems: (keys) => [...keys].map(key => {
+      let item = list.getItem(key);
+      // Setup the drag types and associated info for each dragged item.
+      return {
+        'custom-app-type': JSON.stringify(item),
+        'text/plain': item.name
+      };
+    }),
+    onDragEnd: (e) => {
+      let {
+        dropOperation,
+        keys
+      } = e;
+
+      if (dropOperation === 'move') {
+        list.remove(...keys);
+      }
+    },
+    ...otherProps
+  });
+  /*- end highlight -*/
+
+  return (
+    <TableView
+      aria-label="Draggable TableView in drag into table example"
+      selectionMode="multiple"
+      width="size-5000"
+      height="size-2400"
+      /*- begin highlight -*/
+      dragAndDropHooks={dragAndDropHooks}
+      /*- end highlight -*/>
+      <TableHeader columns={columns}>
+        {column => (
+          <Column
+            key={column.id}
+            align={column.id === 'date' ? 'end' : 'start'}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={list.items}>
+        {item => (
+          <Row>
+            {columnKey => <Cell>{item[columnKey]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
+
+function DroppableTableView(props: DndTableViewProps) {
+  let {list, columns, ...otherProps} = props;
+  /*- begin highlight -*/
+  let {dragAndDropHooks} = useDragAndDrop({
+    // Only accept items with the following drag type
+    acceptedDragTypes: ['custom-app-type'],
+    onInsert: async (e) => {
+      let {
+        items,
+        target
+      } = e;
+
+      let processedItems = await Promise.all(
+        items.map(async (item) => JSON.parse(await (item as TextDropItem).getText('custom-app-type')))
+      );
+
+      if (target.dropPosition === 'before') {
+        list.insertBefore(target.key, ...processedItems);
+      } else if (target.dropPosition === 'after') {
+        list.insertAfter(target.key, ...processedItems);
+      }
+    },
+    onRootDrop: async (e) => {
+      let {
+        items
+      } = e;
+      let processedItems = await Promise.all(
+        items.map(async (item) => JSON.parse(await (item as TextDropItem).getText('custom-app-type')))
+      );
+      list.append(...processedItems);
+    },
+    ...otherProps
+  });
+  /*- end highlight -*/
+
+  return (
+    <TableView
+      aria-label="Droppable TableView in drag into table example"
+      width="size-5000"
+      height="size-2400"
+      /*- begin highlight -*/
+      dragAndDropHooks={dragAndDropHooks}
+      /*- end highlight -*/>
+      <TableHeader columns={columns}>
+        {column => (
+          <Column
+            key={column.id}
+            align={column.id === 'date' ? 'end' : 'start'}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={list.items}>
+        {item => (
+          <Row>
+            {columnKey => <Cell>{item[columnKey]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
+
+function DragIntoTable() {
+  let columns = [
+    {name: 'Name', id: 'name'},
+    {name: 'Type', id: 'type'},
+    {name: 'Date Modified', id: 'date'}
+  ];
+
+  let sourceList = useListData({
+    initialItems: [
+      {id: '1', type: 'file', name: 'Adobe Photoshop', date: '6/7/2020'},
+      {id: '2', type: 'file', name: 'Adobe XD', date: '4/7/2021'},
+      {id: '3', type: 'file', name: 'Adobe InDesign', date: '11/20/2010'},
+      {id: '4', type: 'file', name: 'Adobe AfterEffects', date: '1/18/2016'}
+    ]
+  });
+
+  let targetList = useListData({
+    initialItems: [
+      {id: '5', type: 'file', name: 'Adobe Dreamweaver', date: '1/18/2016'},
+      {id: '6', type: 'file', name: 'Adobe Fresco', date: '11/20/2010'},
+      {id: '7', type: 'file', name: 'Adobe Connect', date: '4/7/2021'},
+      {id: '8', type: 'file', name: 'Adobe Lightroom', date: '6/7/2020'}
+    ]
+  });
+
+  return (
+    <Flex wrap gap="size-300">
+      <DraggableTableView list={sourceList} columns={columns} />
+      <DroppableTableView list={targetList} columns={columns} />
+    </Flex>
+  );
+}
+```
+</details>
+
+```tsx example
+<DragIntoTable />
+```
+
+### Handling folder drops
+
+The example below replicates the previous example but demonstrates how to handle on item drops.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+function DraggableTableViewFolder(props: DndTableViewProps) {
+  let {list, columns, ...otherProps} = props;
+  let {dragAndDropHooks} = useDragAndDrop({
+    // Only allow move operations when dropping items from this table
+    getAllowedDropOperations: () => ['move'],
+    getItems: (keys) => [...keys].map(key => {
+      let item = list.getItem(key);
+      // Setup the drag types and associated info for each dragged item.
+      return {
+        'custom-app-type-folder-drop': JSON.stringify(item),
+        'text/plain': item.name
+      };
+    }),
+    onDragEnd: (e) => {
+      let {
+        dropOperation,
+        keys
+      } = e;
+
+      if (dropOperation === 'move') {
+        list.remove(...keys);
+      }
+    },
+
+    ...otherProps
+  });
+
+  return (
+    <TableView
+      aria-label="Draggable TableView in drag onto folder example"
+      selectionMode="multiple"
+      width="size-5000"
+      height="size-3600"
+      dragAndDropHooks={dragAndDropHooks}>
+      <TableHeader columns={columns}>
+        {column => (
+          <Column
+            key={column.id}
+            align={column.id === 'date' ? 'end' : 'start'}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={list.items}>
+        {item => (
+          <Row>
+            {columnKey => <Cell>{item[columnKey]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
+
+function DroppableTableViewFolder(props: DndTableViewProps) {
+  let {list, columns, ...otherProps} = props;
+  let {dragAndDropHooks} = useDragAndDrop({
+    /*- begin highlight -*/
+    // Only allow drops on items with childNodes aka folders
+    shouldAcceptItemDrop: (target) => !!list.getItem(target.key).childNodes,
+    /*- end highlight -*/
+    // Only accept items with the following drag type
+    acceptedDragTypes: ['custom-app-type-folder-drop'],
+    onInsert: async (e) => {
+      let {
+        items,
+        target
+      } = e;
+
+      let processedItems = await Promise.all(
+        items.map(async (item) => JSON.parse(await (item as TextDropItem).getText('custom-app-type-folder-drop')))
+      );
+
+      if (target.dropPosition === 'before') {
+        list.insertBefore(target.key, ...processedItems);
+      } else if (target.dropPosition === 'after') {
+        list.insertAfter(target.key, ...processedItems);
+      }
+    },
+    onRootDrop: async (e) => {
+      let {
+        items
+      } = e;
+      let processedItems = await Promise.all(
+        items.map(async (item) => JSON.parse(await (item as TextDropItem).getText('custom-app-type-folder-drop')))
+      );
+      list.append(...processedItems);
+    },
+    /*- begin highlight -*/
+    onItemDrop: async (e) => {
+      let {
+        items,
+        target
+      } = e;
+
+      let processedItems = await Promise.all(
+        items.map(async (item) => JSON.parse(await (item as TextDropItem).getText('custom-app-type-folder-drop')))
+      );
+
+      let targetItem = list.getItem(target.key);
+      list.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
+    },
+    /*- end highlight -*/
+    ...otherProps
+  });
+
+  return (
+    <TableView
+      aria-label="Droppable TableView in drop into folder example"
+      width="size-5000"
+      height="size-3600"
+      dragAndDropHooks={dragAndDropHooks}>
+      <TableHeader columns={columns}>
+        {column => (
+          <Column
+            key={column.id}
+            align={column.id === 'date' ? 'end' : 'start'}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={list.items}>
+        {item => (
+          <Row>
+            {columnKey => (
+              <Cell>
+                {item[columnKey]}
+                {columnKey === 'type' && item[columnKey] === 'folder' && item.childNodes.length > 0 && 
+                 ` (${item.childNodes?.length} dropped item(s)`
+                }
+              </Cell>
+            )}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
+
+function DragIntoTableFolder() {
+  let columns = [
+    {name: 'Name', id: 'name'},
+    {name: 'Type', id: 'type'},
+    {name: 'Date Modified', id: 'date'}
+  ];
+
+  let sourceList = useListData({
+    initialItems: [
+      {id: '1', type: 'file', name: 'Adobe Photoshop', date: '2/1/2020'},
+      {id: '2', type: 'file', name: 'Adobe XD', date: '6/7/2020'},
+      {id: '3', type: 'folder', name: 'Documents', date: '6/13/2020', childNodes: []},
+      {id: '4', type: 'file', name: 'Adobe InDesign', date: '2/4/2020'},
+      {id: '5', type: 'folder', name: 'Utilities', date: '12/3/2020', childNodes: []},
+      {id: '6', type: 'file', name: 'Adobe AfterEffects', date: '3/12/2020'}
+    ]
+  });
+
+  let targetList = useListData({
+    initialItems: [
+      {id: '7', type: 'folder', name: 'Pictures', date: '6/17/2020', childNodes: []},
+      {id: '8', type: 'file', name: 'Adobe Fresco', date: '1/27/2020'},
+      {id: '9', type: 'folder', name: 'Apps', date: '12/23/2020', childNodes: []}
+    ]
+  });
+
+  return (
+    <Flex wrap gap="size-300">
+      <DraggableTableViewFolder list={sourceList} columns={columns} />
+      <DroppableTableViewFolder list={targetList} columns={columns} />
+    </Flex>
+  );
+}
+```
+</details>
+
+```tsx example
+<DragIntoTableFolder />
+```
+
+### Reorderable
+
+The example below demonstrates how to make a TableView draggable and droppable at the same time. The TableView below supports reordering its own rows via drag and drop.
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+function ReorderableTable() {
+  let columns = [
+    {name: 'Name', id: 'name'},
+    {name: 'Type', id: 'type'},
+    {name: 'Date Modified', id: 'date'}
+  ];
+
+  let list = useListData({
+    initialItems: [
+      {id: '1', type: 'file', name: 'Adobe Photoshop', date: '6/3/2020'},
+      {id: '2', type: 'file', name: 'Adobe XD', date: '2/2/2020'},
+      {id: '3', type: 'folder', name: 'Documents', date: '5/1/2020', childNodes: []},
+      {id: '4', type: 'file', name: 'Adobe InDesign', date: '5/9/2020'},
+      {id: '5', type: 'folder', name: 'Utilities', date: '12/7/2020', childNodes: []},
+      {id: '6', type: 'file', name: 'Adobe AfterEffects', date: '6/1/2020'}
+    ]
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems(keys) {
+      return [...keys].map(key => {
+        let item = list.getItem(key);
+        // Setup the drag types and associated info for each dragged item.
+        return {
+          'custom-app-type-reorder': JSON.stringify(item),
+          'text/plain': item.name
+        };
+      });
+    },
+    acceptedDragTypes: ['custom-app-type-reorder'],
+    /*- begin highlight -*/
+    onReorder: async (e) => {
+      let {keys, target} = e;
+
+      if (target.dropPosition === 'before') {
+        list.moveBefore(target.key, [...keys]);
+      } else if (target.dropPosition === 'after') {
+        list.moveAfter(target.key, [...keys]);
+      }
+    },
+    getAllowedDropOperations: () => ['move']
+    /*- end highlight -*/
+  });
+
+  return (
+    <TableView
+      aria-label="Reorderable TableView"
+      selectionMode="multiple"
+      width="size-5000"
+      height="size-3600"
+      dragAndDropHooks={dragAndDropHooks}>
+      <TableHeader columns={columns}>
+        {column => (
+          <Column
+            key={column.id}
+            align={column.id === 'date' ? 'end' : 'start'}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={list.items}>
+        {item => (
+          <Row>
+            {columnKey => <Cell>{item[columnKey]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
+```
+</details>
+
+```tsx example
+<ReorderableTable />
+```
+
+### Bi-directional dragging
+
+The example below demonstrates how to create a pair of TableViews that supports dragging and dropping any items between each table, but disables
+the ability to drop into a folder. Each table is internally reorderable.
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+function BidirectionalDnDTableView(props: DndTableViewProps) {
+  let {list, columns} = props;
+  let {dragAndDropHooks} = useDragAndDrop({
+    acceptedDragTypes: ['custom-app-type-bidirectional'],
+    // Only allow move operations
+    getAllowedDropOperations: () => ['move'],
+    getItems(keys) {
+      return [...keys].map(key => {
+        let item = list.getItem(key);
+        // Setup the drag types and associated info for each dragged item.
+        return {
+          'custom-app-type-bidirectional': JSON.stringify(item),
+          'text/plain': item.name
+        };
+      });
+    },
+    onInsert: async (e) => {
+      let {
+        items,
+        target
+      } = e;
+      let processedItems = await Promise.all(
+        items.map(async (item) => JSON.parse(await (item as TextDropItem).getText('custom-app-type-bidirectional')))
+      );
+      if (target.dropPosition === 'before') {
+        list.insertBefore(target.key, ...processedItems);
+      } else if (target.dropPosition === 'after') {
+        list.insertAfter(target.key, ...processedItems);
+      }
+    },
+    onReorder: async (e) => {
+      let {
+        keys,
+        target
+      } = e;
+
+      if (target.dropPosition === 'before') {
+        list.moveBefore(target.key, [...keys]);
+      } else if (target.dropPosition === 'after') {
+        list.moveAfter(target.key, [...keys]);
+      }
+    },
+    onRootDrop: async (e) => {
+      let {
+        items
+      } = e;
+      let processedItems = await Promise.all(
+        items.map(async item => JSON.parse(await (item as TextDropItem).getText('custom-app-type-bidirectional')))
+      );
+      list.append(...processedItems);
+    },
+    /*- begin highlight -*/
+    onDragEnd: (e) => {
+      let {
+        dropOperation,
+        keys,
+        isInternal
+      } = e;
+      // Only remove the dragged items if they aren't dropped inside the source list
+      if (dropOperation === 'move' && !isInternal) {
+        list.remove(...keys);
+      }
+    }
+    /*- end highlight -*/
+  });
+
+  return (
+    <TableView
+      aria-label={props['aria-label']}
+      selectionMode="multiple"
+      width="size-5000"
+      height="size-3600"
+      dragAndDropHooks={dragAndDropHooks}>
+      <TableHeader columns={columns}>
+        {column => (
+          <Column
+            key={column.id}
+            align={column.id === 'date' ? 'end' : 'start'}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={list.items}>
+        {item => (
+          <Row>
+            {columnKey => <Cell>{item[columnKey]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
+
+function DragBetweenTablesExample() {
+  let columns = [
+    {name: 'Name', id: 'name'},
+    {name: 'Type', id: 'type'},
+    {name: 'Date Modified', id: 'date'}
+  ];
+
+  let list1 = useListData({
+    initialItems: [
+      {id: '1', type: 'file', name: 'Adobe Photoshop', date: '6/7/2020'},
+      {id: '2', type: 'file', name: 'Adobe XD', date: '4/7/2021'},
+      {id: '3', type: 'folder', name: 'Documents', date: '4/9/2021'},
+      {id: '4', type: 'file', name: 'Adobe InDesign', date: '11/20/2010'},
+      {id: '5', type: 'folder', name: 'Utilities', date: '9/18/2016'},
+      {id: '6', type: 'file', name: 'Adobe AfterEffects', date: '1/18/2016'}
+    ]
+  });
+
+  let list2 = useListData({
+    initialItems: [
+      {id: '7', type: 'folder', name: 'Pictures', date: '6/7/2020'},
+      {id: '8', type: 'file', name: 'Adobe Fresco', date: '4/2/2020'},
+      {id: '9', type: 'folder', name: 'Apps', date: '2/3/2020'},
+      {id: '10', type: 'file', name: 'Adobe Illustrator', date: '6/5/2020'},
+      {id: '11', type: 'file', name: 'Adobe Lightroom', date: '3/7/2020'},
+      {id: '12', type: 'file', name: 'Adobe Dreamweaver', date: '3/9/2020'}
+    ]
+  });
+
+
+  return (
+    <Flex wrap gap="size-300">
+      <BidirectionalDnDTableView list={list1} columns={columns} aria-label="First TableView in drag between table example" />
+      <BidirectionalDnDTableView list={list2} columns={columns} aria-label="Second TableView in drag between table example" />
+    </Flex>
+  );
+}
+```
+</details>
+
+```tsx example
+<DragBetweenTablesExample />
+```
+
+### Overriding default drop operation
+
+The example below demonstrates how to use `getDropOperation` to specify the default drop operation of the droppable table.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+function DraggableTableViewDefaultCopy(props: DndTableViewProps) {
+  let {list, columns} = props;
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => {
+      let item = list.getItem(key);
+      // Setup the drag types and associated info for each dragged item.
+      return {
+        'custom-app-type-copy-default': JSON.stringify(item),
+        'text/plain': item.name
+      };
+    }),
+    onDragEnd: (e) => {
+      let {
+        dropOperation,
+        keys
+      } = e;
+
+      if (dropOperation === 'move') {
+        list.remove(...keys);
+      }
+    }
+  });
+
+  return (
+    <TableView
+      aria-label="Draggable TableView in default copy operation example"
+      selectionMode="multiple"
+      width="size-5000"
+      height="size-2400"
+      dragAndDropHooks={dragAndDropHooks}>
+      <TableHeader columns={columns}>
+        {column => (
+          <Column
+            key={column.id}
+            align={column.id === 'date' ? 'end' : 'start'}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={list.items}>
+        {item => (
+          <Row>
+            {columnKey => <Cell>{item[columnKey]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
+
+function DroppableTableViewDefaultCopy(props: DndTableViewProps) {
+  let {list, columns} = props;
+  let {dragAndDropHooks} = useDragAndDrop({
+    acceptedDragTypes: ['custom-app-type-copy-default'],
+    /*- begin highlight -*/
+    getDropOperation: () => 'copy',
+    /*- end highlight -*/
+    onInsert: async (e) => {
+      let {
+        items,
+        target
+      } = e;
+
+      /*- begin highlight -*/
+      // Create random id to allow for multiple copies of the same item
+      let processedItems = await Promise.all(
+        items.map(async (item) => (
+          {...JSON.parse(await (item as TextDropItem).getText('custom-app-type-copy-default')), id: Math.random().toString(36).slice(2)}
+        ))
+      );
+      /*- end highlight -*/
+      if (target.dropPosition === 'before') {
+        list.insertBefore(target.key, ...processedItems);
+      } else if (target.dropPosition === 'after') {
+        list.insertAfter(target.key, ...processedItems);
+      }
+    },
+    onRootDrop: async (e) => {
+      let {
+        items
+      } = e;
+
+      /*- begin highlight -*/
+      // Create random id to allow for multiple copies of the same item
+      let processedItems = await Promise.all(
+        items.map(async (item) => (
+          {...JSON.parse(await (item as TextDropItem).getText('custom-app-type-copy-default')), id: Math.random().toString(36).slice(2)}
+        ))
+      );
+      /*- end highlight -*/
+      list.append(...processedItems);
+    }
+  });
+
+
+  return (
+    <TableView
+      aria-label="Droppable TableView in default copy operation example"
+      width="size-5000"
+      height="size-2400"
+      dragAndDropHooks={dragAndDropHooks}>
+      <TableHeader columns={columns}>
+        {column => (
+          <Column
+            key={column.id}
+            align={column.id === 'date' ? 'end' : 'start'}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={list.items}>
+        {item => (
+          <Row>
+            {columnKey => <Cell>{item[columnKey]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
+
+function DragIntoTablesDefaultCopy() {
+  let columns = [
+    {name: 'Name', id: 'name'},
+    {name: 'Type', id: 'type'},
+    {name: 'Date Modified', id: 'date'}
+  ];
+
+  let sourceList = useListData({
+    initialItems: [
+      {id: '1', type: 'file', name: 'Adobe Photoshop', date: '6/7/2020'},
+      {id: '2', type: 'file', name: 'Adobe XD', date: '4/7/2021'},
+      {id: '3', type: 'file', name: 'Adobe InDesign', date: '11/20/2010'},
+      {id: '4', type: 'file', name: 'Adobe AfterEffects', date: '1/18/2016'}
+    ]
+  });
+
+  let targetList = useListData({
+    initialItems: [
+      {id: '5', type: 'file', name: 'Adobe Dreamweaver', date: '6/7/2020'},
+      {id: '6', type: 'file', name: 'Adobe Fresco', date: '2/17/2020'},
+      {id: '7', type: 'file', name: 'Adobe Connect', date: '1/23/2020'},
+      {id: '8', type: 'file', name: 'Adobe Lightroom', date: '12/17/2020'}
+    ]
+  });
+
+
+  return (
+    <Flex wrap gap="size-300">
+      <DraggableTableViewDefaultCopy list={sourceList} columns={columns} />
+      <DroppableTableViewDefaultCopy list={targetList} columns={columns} />
+    </Flex>
+  );
+}
+```
+</details>
+
+```tsx example
+<DragIntoTablesDefaultCopy />
+```
+
+### Custom drag previews
+
+By default, the drag preview for a dragged row will include the `textValue` provided to that row.
+If no `textValue` was provided, it will default to the contents of the columns that are row headers, as specified by the `isRowHeader` prop on columns.
+If no row header columns were specified, the first column will be used, as mentioned in the [Accessibility](#accessibility) section.
+
+Use the `renderPreview` prop to provide a custom drag preview. `keys` and `draggedKey` are passed to this function, where `keys` includes all the keys of the items being dragged, and `draggedKey` is the key of the item the user initiated the drag from.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {View} from '@react-spectrum/view';
+  
+function CustomDragPreviewExample() {
+  let columns = [
+    {name: 'Name', id: 'name'},
+    {name: 'Type', id: 'type'},
+    {name: 'Date Modified', id: 'date'}
+  ];
+
+  let list = useListData({
+    initialItems: [
+      {id: '1', type: 'file', name: 'Adobe Photoshop', date: '6/3/2020'},
+      {id: '2', type: 'file', name: 'Adobe XD', date: '2/2/2020'},
+      {id: '3', type: 'folder', name: 'Documents', date: '5/1/2020', childNodes: []},
+      {id: '4', type: 'file', name: 'Adobe InDesign', date: '5/9/2020'},
+      {id: '5', type: 'folder', name: 'Utilities', date: '12/7/2020', childNodes: []},
+      {id: '6', type: 'file', name: 'Adobe AfterEffects', date: '6/1/2020'}
+    ]
+  });
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => {
+      let item = list.getItem(key);
+      return {
+        'custom-app-type': JSON.stringify(item),
+        'text/plain': item.name
+      };
+    }),
+    /*- begin highlight -*/
+    renderPreview: (keys, draggedKey) => (
+      <View backgroundColor="gray-50" padding="size-100" borderRadius="medium" borderWidth="thin" borderColor="blue-500">
+        <strong>Custom Preview</strong>
+        <div>Keys: [{[...keys].join(', ')}]</div>
+        <div>Dragged: {draggedKey}</div>
+      </View>
+    )
+    /*- end highlight -*/
+  });
+  return (
+    <TableView
+      aria-label="Draggable TableView example with custom drag preview"
+      selectionMode="multiple"
+      width="size-5000"
+      height="size-3600"
+      dragAndDropHooks={dragAndDropHooks}>
+      <TableHeader columns={columns}>
+        {column => (
+          <Column
+            key={column.id}
+            align={column.id === 'date' ? 'end' : 'start'}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={list.items}>
+        {item => (
+          <Row>
+            {columnKey => <Cell>{item[columnKey]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
+```
+
+</details>
+
+```tsx example
+<CustomDragPreviewExample />
+```
 
 ## Props
 
