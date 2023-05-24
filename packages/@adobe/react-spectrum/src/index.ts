@@ -13,6 +13,7 @@
 export {ActionGroup} from '@react-spectrum/actiongroup';
 export {Badge} from '@react-spectrum/badge';
 export {Breadcrumbs} from '@react-spectrum/breadcrumbs';
+export {ActionBar, ActionBarContainer} from '@react-spectrum/actionbar';
 export {ActionButton, Button, LogicButton, ToggleButton} from '@react-spectrum/button';
 export {Avatar} from '@react-spectrum/avatar';
 export {ButtonGroup} from '@react-spectrum/buttongroup';
@@ -46,6 +47,7 @@ export {Switch} from '@react-spectrum/switch';
 export {Heading, Keyboard, Text} from '@react-spectrum/text';
 export {TableView, TableHeader, TableBody, Column, Row, Cell} from '@react-spectrum/table';
 export {Tabs, TabList, TabPanels} from '@react-spectrum/tabs';
+export {TagGroup} from '@react-spectrum/tag';
 export {TextArea, TextField} from '@react-spectrum/textfield';
 export {theme as darkTheme} from '@react-spectrum/theme-dark';
 export {theme as defaultTheme} from '@react-spectrum/theme-default';
@@ -60,6 +62,7 @@ export {useCollator, useDateFormatter, useFilter, useLocale, useLocalizedStringF
 export {SSRProvider} from '@react-aria/ssr';
 export {useDragAndDrop, DIRECTORY_DRAG_TYPE} from '@react-spectrum/dnd';
 
+export type {SpectrumActionBarContainerProps, SpectrumActionBarProps} from '@react-spectrum/actionbar';
 export type {SpectrumActionGroupProps} from '@react-spectrum/actiongroup';
 export type {SpectrumAvatarProps} from '@react-spectrum/avatar';
 export type {SpectrumBadgeProps} from '@react-spectrum/badge';
@@ -96,6 +99,7 @@ export type {SpectrumSwitchProps} from '@react-spectrum/switch';
 export type {HeadingProps, KeyboardProps, TextProps} from '@react-spectrum/text';
 export type {SpectrumTableProps, SpectrumColumnProps, TableHeaderProps, TableBodyProps, RowProps, CellProps} from '@react-spectrum/table';
 export type {SpectrumTabListProps, SpectrumTabPanelsProps, SpectrumTabsProps} from '@react-spectrum/tabs';
+export type {SpectrumTagGroupProps} from '@react-spectrum/tag';
 export type {SpectrumTextFieldProps} from '@react-spectrum/textfield';
 export type {SpectrumTooltipProps, SpectrumTooltipTriggerProps} from '@react-spectrum/tooltip';
 export type {ContentProps, FooterProps, HeaderProps, ViewProps} from '@react-spectrum/view';

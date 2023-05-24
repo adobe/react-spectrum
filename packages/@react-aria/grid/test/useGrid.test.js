@@ -39,7 +39,7 @@ function renderGrid(props = {}) {
 
 describe('useGrid', () => {
   beforeAll(() => {
-    jest.useFakeTimers('modern');
+    jest.useFakeTimers();
   });
   afterEach(() => {
     // run out notifications

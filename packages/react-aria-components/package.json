@@ -1,6 +1,6 @@
 {
   "name": "react-aria-components",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.4",
   "description": "A library of styleable components built using React Aria",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -23,15 +23,15 @@
   },
   "dependencies": {
     "@internationalized/date": "^3.2.0",
-    "@react-aria/focus": "^3.12.0",
-    "@react-aria/utils": "^3.16.0",
-    "@react-stately/table": "^3.9.0",
-    "@react-types/grid": "^3.1.7",
-    "@react-types/shared": "^3.18.0",
-    "@react-types/table": "^3.6.0",
+    "@react-aria/focus": "^3.12.1",
+    "@react-aria/utils": "^3.17.0",
+    "@react-stately/table": "^3.9.1",
+    "@react-types/grid": "^3.1.8",
+    "@react-types/shared": "^3.18.1",
+    "@react-types/table": "^3.6.1",
     "@swc/helpers": "^0.4.14",
-    "react-aria": "^3.24.0",
-    "react-stately": "^3.22.0",
+    "react-aria": "^3.25.0",
+    "react-stately": "^3.23.0",
     "use-sync-external-store": "^1.2.0"
   },
   "peerDependencies": {
