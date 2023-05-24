@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:@react-spectrum/table';
 import tableTypes from 'docs:@react-types/table/src/index.d.ts';
-import {HeaderInfo, PropTable, PageDescription, VersionBadge} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-spectrum/table/package.json';
 
@@ -621,7 +621,7 @@ The `minWidth` and `maxWidth` props define constraints on the size of a column, 
 </TableView>
 ```
 
-## Column Resizing <VersionBadge version="rc" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+## Column Resizing
 
 TableView supports resizable columns, allowing users to dynamically adjust the width of a column. To designate that a Column is resizable, provide it with the `allowsResizing` prop. This will render a draggable
 resizer handle that becomes visible on hover. Keyboard, touch, and screen reader users can start resizing by interacting with the target column's header and selecting the "Resize column" option
