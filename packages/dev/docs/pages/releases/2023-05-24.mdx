@@ -24,26 +24,25 @@ As always, thanks to all of our contributors for helping to make this release po
 ## New Components/Features
 
 - TagGroup
-  - [@react-spectrum/taggroup](https://react-spectrum.adobe.com/react-spectrum/TagGroup.html)
-  - [@react-aria/tag](https://react-spectrum.adobe.com/react-aria/useTagGroup.html)
+  - `@react-spectrum/taggroup` - [Docs](https://react-spectrum.adobe.com/react-spectrum/TagGroup.html)
+  - `@react-aria/tag` - [Docs](https://react-spectrum.adobe.com/react-aria/useTagGroup.html)
 - Column Resizing
-  - [TableView](https://react-spectrum.adobe.com/react-spectrum/TableView.html#column-resizing)
-  - [Aria hooks](https://react-spectrum.adobe.com/react-aria/useTable.html#resizable-columns)
+  - [TableView docs](https://react-spectrum.adobe.com/react-spectrum/TableView.html#column-resizing)
+  - [useTable docs](https://react-spectrum.adobe.com/react-aria/useTable.html#resizable-columns)
 - ActionBar
- - [@react-spectrum/actionbar](https://react-spectrum.adobe.com/react-spectrum/ActionBar.html)
-
+ - `@react-spectrum/actionbar` - [Docs](https://react-spectrum.adobe.com/react-spectrum/ActionBar.html)
 
 
 ### TagGroup API update
 
 This release of TagGroup includes a few API changes. If you were using a pre-release version please note you will need to update your code. See below for details.
 
-**Spectrum**
-* The `onRemove` callback prop now accepts a `Set<Key>` instead of a single Key. ** Add link to docs
+**React Spectrum**
+* The `onRemove` callback prop now accepts a `Set<Key>` instead of a single Key. [See docs](https://react-spectrum.adobe.com/react-spectrum/TagGroup.html#onremove)
 * Removed `allowsRemoval` prop and instead infer this from `onRemove` being present or not.
 
 **React Aria/Stately**
-* The `onRemove` callback prop now accepts a `Set<Key>` instead of a single Key. ** Add link to docs
+* The `onRemove` callback prop now accepts a `Set<Key>` instead of a single Key. [See docs](https://react-spectrum.adobe.com/react-aria/useTagGroup.html#remove-tags)
 * Removed `allowsRemoval` prop and instead infer this from `onRemove` being present or not.
 * Removed `labelProps` from  `useTag`.
 * Users no longer need to pass `onRemove` from `useTagGroup` to `useTag`.
@@ -57,7 +56,6 @@ This release of TagGroup includes a few API changes. If you were using a pre-rel
 * Dom attributes for `Item` in ActionGroup's collapsed menu - [@cgood92](https://github.com/cgood92) - [PR](https://github.com/adobe/react-spectrum/pull/4499)
 
 ## Fixes
-
 
 * Fix refs on `Link` and ability to prevent link navigation - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/4360)
 * Update `ColorField` and `NumberField` validation to prevent invalid characters - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/4389)
