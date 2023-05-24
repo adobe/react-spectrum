@@ -298,3 +298,25 @@ TagGroup supports a `maxRows` prop that will limit the number of rows initially 
   </TagGroup>
 </View>
 ```
+
+### Empty state
+
+Use the `renderEmptyState` prop to customize what the TagGroup will display if there are no tags provided.
+
+```tsx example
+import {Link} from '@react-spectrum/link';
+
+function renderEmptyState() {
+  return (
+    <span>
+      No categories. <Link><a href="//react-spectrum.com">Click here</a></Link> to add some.
+    </span>
+  );
+}
+
+<TagGroup
+  label="Categories"
+  renderEmptyState={renderEmptyState}>
+  {[]}
+</TagGroup>
+```
