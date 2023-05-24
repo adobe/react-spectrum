@@ -65,7 +65,6 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   let textId = useId();
   let isVirtualDrag = isVirtualDragging();
   let labelText = useMemo(() => {
-    console.log(isMobile);
     if (!isVirtualDrag && hasInput && !isMobile) {
       return 'Press enter to select a file';
     } else if (!isVirtualDrag && hasInput) {
