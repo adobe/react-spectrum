@@ -10,5 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-@import './index.css';
-@import './skin.css';
+import {testSSR} from '@react-spectrum/test-utils';
+
+describe('TagGroup SSR', function () {
+  it('should render without errors', async function () {
+    await testSSR(__filename, `
+      import {TagGroup, Item} from '../';
+      import {Provider} from '@react-spectrum/provider';
+      import {theme} from '@react-spectrum/theme-default';
+      <Provider theme={theme}>
+        <TagGroup aria-label="Static TagGroup items example">
+          <Item>News</Item>
+          <Item>Travel</Item>
+          <Item>Gaming</Item>
+          <Item>Shopping</Item>
+        </TagGroup>
+      </Provider>
+    `);
+  });
+});

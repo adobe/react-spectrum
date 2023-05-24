@@ -17,13 +17,10 @@ import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
 import Blower from '@spectrum-icons/workflow/Blower';
 import Book from '@spectrum-icons/workflow/Book';
-import {Content, Footer} from '@react-spectrum/view';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
-import {Dialog} from '@react-spectrum/dialog';
-import {Heading, Keyboard, Text} from '@react-spectrum/text';
-import {Item, Menu, MenuDialogTrigger, MenuTrigger, Section} from '../';
-import {Link} from '@react-spectrum/link';
+import {Item, Menu, MenuTrigger, Section} from '../';
+import {Keyboard, Text} from '@react-spectrum/text';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React, {useState} from 'react';
 
@@ -715,31 +712,3 @@ function ControlledOpeningMenuTrigger() {
     </div>
   );
 }
-
-export let MenuItemUnavailable = {
-  render: () => render(
-    <Menu onAction={action('onAction')}>
-      <Item key="1">One</Item>
-      <MenuDialogTrigger isUnavailable>
-        <Item key="foo">Two</Item>
-        <Dialog>
-          <Heading>hello</Heading>
-          <Content>Is it me you're looking for?</Content>
-        </Dialog>
-      </MenuDialogTrigger>
-      <Item key="3">Three</Item>
-      <MenuDialogTrigger isUnavailable>
-        <Item key="bar">
-          <Text>Four</Text>
-          <Text slot={'description'}>Shut the door</Text>
-        </Item>
-        <Dialog>
-          <Heading>hello</Heading>
-          <Content>Is it me you're looking for?</Content>
-          <Footer><Link>Learn more</Link></Footer>
-        </Dialog>
-      </MenuDialogTrigger>
-      <Item key="5">Five</Item>
-    </Menu>
-  )
-};

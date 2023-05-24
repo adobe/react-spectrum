@@ -573,6 +573,66 @@ describe('Table', () => {
     expect(document.activeElement).toBe(cell);
   });
 
+  it('should support refs', () => {
+    let tableRef = React.createRef();
+    let headerRef = React.createRef();
+    let columnRef = React.createRef();
+    let bodyRef = React.createRef();
+    let rowRef = React.createRef();
+    let cellRef = React.createRef();
+    render(
+      <Table aria-label="Search results" ref={tableRef}>
+        <TableHeader ref={headerRef}>
+          <Column isRowHeader ref={columnRef}>Name</Column>
+          <Column>Type</Column>
+        </TableHeader>
+        <TableBody ref={bodyRef}>
+          <Row ref={rowRef}>
+            <Cell ref={cellRef}>Foo</Cell>
+            <Cell>Bar</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    );
+    expect(tableRef.current).toBeInstanceOf(HTMLTableElement);
+    expect(headerRef.current).toBeInstanceOf(HTMLTableSectionElement);
+    expect(columnRef.current).toBeInstanceOf(HTMLTableCellElement);
+    expect(bodyRef.current).toBeInstanceOf(HTMLTableSectionElement);
+    expect(rowRef.current).toBeInstanceOf(HTMLTableRowElement);
+    expect(cellRef.current).toBeInstanceOf(HTMLTableCellElement);
+  });
+
+  it('should support cell render props', () => {
+    let {getAllByRole} = render(
+      <Table aria-label="Search results">
+        <TableHeader>
+          <Column isRowHeader>
+            {({isFocused}) => `Name${isFocused ? ' (focused)' : ''}`}
+          </Column>
+          <Column>Type</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>
+              {({isFocused}) => `Foo${isFocused ? ' (focused)' : ''}`}
+            </Cell>
+            <Cell>Bar</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    );
+
+    let headers = getAllByRole('columnheader');
+    expect(headers[0]).toHaveTextContent('Name');
+    act(() => headers[0].focus());
+    expect(headers[0]).toHaveTextContent('Name (focused)');
+
+    let cells = getAllByRole('rowheader');
+    expect(cells[0]).toHaveTextContent('Foo');
+    act(() => cells[0].focus());
+    expect(cells[0]).toHaveTextContent('Foo (focused)');
+  });
+
   describe('drag and drop', () => {
     it('should support drag button slot', () => {
       let {getAllByRole} = render(<DraggableTable />);
