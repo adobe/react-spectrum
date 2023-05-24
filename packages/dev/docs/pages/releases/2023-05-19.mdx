@@ -17,7 +17,7 @@ date: 2023-05-19
 
 # May 19, 2023 Release
 
-In this release, we are moving TagGroup and Column Resizing to GA. We have also been making many improvements and bug fixes to the new [React Aria Components](../react-aria/react-aria-components.html) we announced last release. We have also added the much asked for Search to our docs. We hope this will aid in discoverability for our components and hooks.
+This month TagGroup and TableView column resizing and ActionBar are all being released to 3.0.0! We have also been making many improvements and bug fixes to the new [React Aria Components](../react-aria/react-aria-components.html) we announced last release. We have also added the much asked for Search to our docs. We hope this will aid in discoverability for our components and hooks.
 
 As always, thanks to all of our contributors for helping to make this release possible! Special shoutout to [@auskast](https://github.com/auskast) for an extensive PR to help us improve our React Aria Components.
 
@@ -25,19 +25,28 @@ As always, thanks to all of our contributors for helping to make this release po
 
 - TagGroup
   - [@react-spectrum/taggroup](https://react-spectrum.adobe.com/react-spectrum/TagGroup.html)
+  - [@react-aria/tag](https://react-spectrum.adobe.com/react-aria/useTagGroup.html)
 - Column Resizing
   - [TableView](https://react-spectrum.adobe.com/react-spectrum/TableView.html#column-resizing)
   - [Aria hooks](https://react-spectrum.adobe.com/react-aria/useTable.html#resizable-columns)
+- ActionBar
+ - [@react-spectrum/actionbar](https://react-spectrum.adobe.com/react-spectrum/ActionBar.html)
+
+
 
 ### TagGroup API update
 
-This last release of TagGroup required a breaking change to our pre-release in order to support future features more easily. Please see the details below on breaking changes.
+This release of TagGroup includes a few API changes. If you were using a pre-release version please note you will need to update your code. See below for details.
+
+**Spectrum**
 * The `onRemove` callback prop now accepts a `Set<Key>` instead of a single Key. ** Add link to docs
-* Removed`labelProps` of a Tag from needing to be a separate element, and just uses the tag itself in the aria-labelledby of the remove button.
-* Removed Spectrum specific props from `TagGroup` hooks in React Aria.
-* Users no longer need to pass `onRemove` from `useTagGroup` to `useTag`.
 * Removed `allowsRemoval` prop and instead infer this from `onRemove` being present or not.
-* Removes TagKeyboardDelegate and adds an orientation option to ListKeyboardDelegate instead, along with support for shouldFocusWrap in arrow left/right.
+
+**React Aria/Stately**
+* The `onRemove` callback prop now accepts a `Set<Key>` instead of a single Key. ** Add link to docs
+* Removed `allowsRemoval` prop and instead infer this from `onRemove` being present or not.
+* Removed `labelProps` from  `useTag`.
+* Users no longer need to pass `onRemove` from `useTagGroup` to `useTag`.
 * Removed `@react-stately/tag` package as functionality is covered by the `@react-stately/list` package.
 
 ## Enhancements
