@@ -193,6 +193,26 @@ describe('DropZone', () => {
     expect(link).not.toHaveAttribute('data-focus-visible');
   });   
 
+  it('should support press state', () => {
+    let onPress = jest.fn();
+    let {getByTestId} = render(
+      <DropZone onPress={onPress} data-testid="foo">
+        <Text slot="heading">
+          Test
+        </Text>
+      </DropZone>);
+    let dropzone = getByTestId('foo');
+    expect(dropzone).not.toHaveAttribute('data-pressed');
+
+    fireEvent.mouseDown(dropzone);
+    expect(dropzone).toHaveAttribute('data-pressed', 'true');
+
+    fireEvent.mouseUp(dropzone);
+    expect(dropzone).not.toHaveAttribute('data-pressed');
+
+    expect(onPress).toHaveBeenCalledTimes(1);
+  });
+
   describe('drag and drop', function () {
     beforeEach(() => {
       jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({

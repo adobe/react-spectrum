@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps} from '@react-types/shared';
+import {AriaLabelingProps, PressEvents} from '@react-types/shared';
 import {ButtonContext} from './Button';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {DropOptions, mergeProps, useButton, useClipboard, useDrop, useFocusRing, useHover, useId, usePress, VisuallyHidden} from 'react-aria';
@@ -42,15 +42,21 @@ export interface DropZoneRenderProps {
    * Whether the dropzone is the drop target.
    * @selector [data-drop-target]
    */
-  isDropTarget: boolean
+  isDropTarget: boolean,
+  /**
+   * Whether the button is currently in a pressed state.
+   * @selector [data-pressed]
+   */
+  isPressed: boolean
 }
 // note: possibly add isDisabled prop in the future
-export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'onInsert' | 'onRootDrop' | 'onItemDrop' | 'onReorder'>, RenderProps<DropZoneRenderProps>, SlotProps, AriaLabelingProps {}
+export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'onInsert' | 'onRootDrop' | 'onItemDrop' | 'onReorder'>, RenderProps<DropZoneRenderProps>, SlotProps, AriaLabelingProps, PressEvents {}
 
 export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDivElement>>(null);
 
 function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DropZoneContext);
+  let {onPress, onPressChange, onPressEnd, onPressStart, onPressUp} = props;
   let {dropProps, isDropTarget} = useDrop({...props, ref});
   let {hoverProps, isHovered} = useHover({});
   let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
@@ -73,8 +79,12 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   }, [isVirtualDrag, hasInput, isMobile]);
   let labelProps = useLabels({'aria-label': labelText, 'aria-labelledby': textId});
 
-  let {buttonProps} = useButton({
-    onPress: () => inputRef.current?.click()},
+  let {buttonProps, isPressed} = useButton({
+    onPress: () => {
+      if (inputRef.current && !hasButton  && !hasLink) {
+        inputRef.current.click();
+      }
+    }},
     buttonRef);
 
   let {clipboardProps} = useClipboard({
@@ -89,7 +99,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
 
   let renderProps = useRenderProps({ 
     ...props,
-    values: {isHovered, isFocused, isFocusVisible, isDropTarget},
+    values: {isHovered, isFocused, isFocusVisible, isDropTarget, isPressed},
     defaultClassName: 'react-aria-DropZone'
   });
   let DOMProps = filterDOMProps(props);
@@ -97,11 +107,18 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
 
   let {pressProps} = usePress({
     ref,
-    onPress: () => {
+    onPress: (e) => {
+      if (onPress) {
+        onPress(e);
+      }
       if (inputRef.current && !hasButton  && !hasLink) {
         inputRef.current.click();
       }
-    }
+    },
+    onPressChange,
+    onPressEnd,
+    onPressStart,
+    onPressUp
   });
 
   let onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -136,18 +153,19 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
         [TextContext, {id: textId, slot: 'heading'}]
       ]}>
       <div
-        {...mergeProps(dropProps, hoverProps, pressProps, DOMProps)}
-        {...renderProps} 
+        {...mergeProps(dropProps, hoverProps, pressProps, DOMProps, buttonProps)}
+        {...renderProps}
         ref={ref}
-        slot={props.slot} 
-        tabIndex={-1}   
+        slot={props.slot}
+        tabIndex={-1}
         data-hovered={isHovered || undefined}
-        data-focused={isFocused || undefined} 
+        data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
-        data-drop-target={isDropTarget || undefined} > 
-        {!hasButton && !hasLink && 
+        data-drop-target={isDropTarget || undefined} 
+        data-pressed={isPressed || undefined} >
+        {!hasButton && !hasLink &&
           <VisuallyHidden>
-            <button 
+            <button
               {...mergeProps(buttonProps, focusProps, clipboardProps, labelProps)}
               ref={buttonRef}  /> 
           </VisuallyHidden>}

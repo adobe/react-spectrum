@@ -802,6 +802,7 @@ export const DropzoneExampleWithInput = (props) => (
     <DropZone
       {...props}
       className={styles.dropzone}
+      onPress={action('OnPress')}
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
@@ -818,6 +819,7 @@ export const DropzoneExampleWithLinkAndInput = (props) => (
     <DropZone
       {...props}
       className={styles.dropzone}
+      onPress={action('OnPress')}
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
@@ -832,6 +834,7 @@ export const DropzoneExampleWithButton = (props) => (
     <DropZone
       {...props}
       className={styles.dropzone}
+      onPress={action('OnPress')}
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
@@ -847,6 +850,7 @@ export const DropzoneExampleWithDraggableObject = (props) => (
     <DropZone
       {...props}
       className={styles.dropzone}
+      onPress={action('OnPress')}
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')} >
@@ -863,6 +867,7 @@ export const DropzoneExampleWithCopyableObject = (props) => (
     <DropZone
       {...props}
       className={styles.dropzone}
+      onPress={action('OnPress')}
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
@@ -880,10 +885,11 @@ export const DropzoneWithRenderProps = (props) => (
     <DropZone
       {...props}
       className={styles.dropzone}
+      onPress={action('OnPress')}
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
-      {({isHovered, isFocused, isFocusVisible, isDropTarget}) => (
+      {({isHovered, isFocused, isFocusVisible, isDropTarget, isPressed}) => (
         <div>
           <Text slot="heading">
             DropzoneArea
@@ -892,6 +898,7 @@ export const DropzoneWithRenderProps = (props) => (
           <div>isFocused: {isFocused ? 'true' : 'false'}</div>
           <div>isFocusVisible: {isFocusVisible ? 'true' : 'false'}</div>
           <div>isDropTarget: {isDropTarget ? 'true' : 'false'}</div>
+          <div>isPressed: {isPressed ? 'true' : 'false'} </div>
         </div>
       )}
     </DropZone>
@@ -904,6 +911,7 @@ export const DropZoneOnlyAcceptPNG = (props) => (
       {...props}
       getDropOperation={(types) =>  types.has('image/png') ? 'move' : 'cancel'}
       className={styles.dropzone}
+      onPress={action('OnPress')}
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')} >
