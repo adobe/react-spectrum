@@ -21,22 +21,24 @@ In this release, we are moving TagGroup and Column Resizing to GA. We have also 
 
 As always, thanks to all of our contributors for helping to make this release possible! Special shoutout to [@auskast](https://github.com/auskast) for an extensive PR to help us improve our React Aria Components.
 
-## New Components
+## New Components/Features
 
-- [TagGroup](https://react-spectrum.adobe.com/react-spectrum/TagGroup.html)
+- TagGroup
+  - [@react-spectrum/taggroup](https://react-spectrum.adobe.com/react-spectrum/TagGroup.html)
 - Column Resizing
   - [TableView](https://react-spectrum.adobe.com/react-spectrum/TableView.html#column-resizing)
   - [Aria hooks](https://react-spectrum.adobe.com/react-aria/useTable.html#resizable-columns)
 
-### TagGroup API changes in official release
-* Removes labelProps of a Tag from needing to be a separate element, and just uses the tag itself in the aria-labelledby of the remove button.
-* Ensures Spectrum specific props like maxRows and validationState are not in the aria API.
-* Changes the onRemove prop to accept a `Set<Key>` instead of a single Key. This is to support multiple selection and bulk removal. Clicking the delete button on a tag still only removes that one tag.
-* Users no longer need to pass onRemove from useTagGroup to useTag.
-* Removes allowsRemoval prop and simply infers this from onRemove being present or not. Returns the computed value of this from useTag so render function can decide whether to show remove button or not.
-* Returns states from useTag for rendering, matching useGridListItem.
+### TagGroup API update
+
+This last release of TagGroup required a breaking change to our pre-release in order to support future features more easily. Please see the details below on breaking changes.
+* The `onRemove` callback prop now accepts a `Set<Key>` instead of a single Key. ** Add link to docs
+* Removed`labelProps` of a Tag from needing to be a separate element, and just uses the tag itself in the aria-labelledby of the remove button.
+* Removed Spectrum specific props from `TagGroup` hooks in React Aria.
+* Users no longer need to pass `onRemove` from `useTagGroup` to `useTag`.
+* Removed `allowsRemoval` prop and instead infer this from `onRemove` being present or not.
 * Removes TagKeyboardDelegate and adds an orientation option to ListKeyboardDelegate instead, along with support for shouldFocusWrap in arrow left/right.
-* Tag stately package removed, its functionality is covered by the List stately package.
+* Removed `@react-stately/tag` package as functionality is covered by the `@react-stately/list` package.
 
 ## Enhancements
 
@@ -47,20 +49,20 @@ As always, thanks to all of our contributors for helping to make this release po
 
 ## Fixes
 
-* Fix: Table Header does not support className Prop - [@akash1412](https://github.com/akash1412) - [PR](https://github.com/adobe/react-spectrum/pull/4424)
-* Fix refs on links and ability to prevent link navigation - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/4360)
-* Fix our formatted field's validation preventing invalid characters from being entered - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/4389)
-* Fix table select-all error when triggered twice with keyboard - [@tianenpang](https://github.com/tianenpang) - [PR](https://github.com/adobe/react-spectrum/pull/4415)
-* Fix merging of UNSAFE_className in Date and Tag components - [@akash1412](https://github.com/akash1412) - [PR](https://github.com/adobe/react-spectrum/pull/4262)
-* Fix useRestoreFocus logic so Combobox trigger focus works - [@boutahlilsoufiane](https://github.com/boutahlilsoufiane) - [PR](https://github.com/adobe/react-spectrum/pull/4353)
-* Fix ComboBox wrong border and background colors in Windows High Contrast Mode - [@jcpengy10](https://github.com/jcpengy10) - [PR](https://github.com/adobe/react-spectrum/pull/4453)
-* Fix TableView DnD styles - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/4483)
+
+* Fix refs on `Link` and ability to prevent link navigation - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/4360)
+* Update `ColorField` and `NumberField` validation to prevent invalid characters - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/4389)
+* Fix `Table` select-all error when triggered twice with keyboard - [@tianenpang](https://github.com/tianenpang) - [PR](https://github.com/adobe/react-spectrum/pull/4415)
+* Merge UNSAFE_className in Date and Tag components to fix order  - [@akash1412](https://github.com/akash1412) - [PR](https://github.com/adobe/react-spectrum/pull/4262)
+* Improve `useRestoreFocus` logic to fix focus issues with `ComboBox` trigger - [@boutahlilsoufiane](https://github.com/boutahlilsoufiane) - [PR](https://github.com/adobe/react-spectrum/pull/4353)
+* Fix `ComboBox` border and background colors in Windows High Contrast Mode - [@jcpengy10](https://github.com/jcpengy10) - [PR](https://github.com/adobe/react-spectrum/pull/4453)
+* Improve `TableView` DnD style specificity - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/4483)
 
 ## Docs
 
-* Fixing docs broken links - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/4412)
-* Update broken docs link - [@matthewdeutsch](https://github.com/matthewdeutsch) - [PR](https://github.com/adobe/react-spectrum/pull/4437)
-* Update nextjs config in SSR docs - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/4379)
+* Fix broken links - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/4412)
+* Update broken Spectrum link in `Dialog` - [@matthewdeutsch](https://github.com/matthewdeutsch) - [PR](https://github.com/adobe/react-spectrum/pull/4437)
+* Update Next.js config in SSR docs - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/4379)
 
 
 ## Under construction
@@ -69,6 +71,7 @@ Fixes to pre-released components are listed below. Please feel free to try them 
 
 * **React Aria Components** (Alpha)
 
+* Add `className` prop to `TableHeader` - [@akash1412](https://github.com/akash1412) - [PR](https://github.com/adobe/react-spectrum/pull/4424)
 * Fix(#4369): Fix children renderProps for react-aria-components - [@auskast](https://github.com/auskast) - [PR](https://github.com/adobe/react-spectrum/pull/4385)
 * Adding DropIndicatorProps to RAC export - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/4449)
 * RAC: Allow form attributes in Button - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/4452)
@@ -79,6 +82,7 @@ Fixes to pre-released components are listed below. Please feel free to try them 
 * Fix Infinite rendering in RAC ComboBox/Select with renderProps - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/4520)
 * Add support for refs to collection components - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/4538)
 * Ensure collections update when descendants re-render - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/4536)
+* Fix RAC collections in React canary versions - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/4518)
 
 ## Released packages
 
