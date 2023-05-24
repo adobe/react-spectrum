@@ -23,7 +23,20 @@ import React, {forwardRef} from 'react';
 import {SelectState, useSelectState} from 'react-stately';
 import {TextContext} from './Text';
 
-export interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<SelectState<T>>, SlotProps {}
+export interface SelectRenderProps {
+  /**
+   * Whether the select is focused, either via a mouse or keyboard.
+   * @selector [data-focused]
+   */
+  isFocused: boolean,
+  /**
+   * Whether the select is currently open.
+   * @selector [data-open]
+   */
+  isOpen: boolean
+}
+
+export interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<SelectRenderProps>, SlotProps {}
 
 interface SelectValueContext {
   state: SelectState<unknown>,
@@ -78,7 +91,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
 
   let renderProps = useRenderProps({
     ...props,
-    values: renderPropsState as SelectState<T>,
+    values: renderPropsState,
     defaultClassName: 'react-aria-Select'
   });
 
@@ -106,7 +119,13 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
           }
         }]
       ]}>
-      <div {...DOMProps} {...renderProps} ref={ref} slot={props.slot} />
+      <div
+        {...DOMProps}
+        {...renderProps}
+        ref={ref}
+        slot={props.slot}
+        data-focused={state.isFocused || undefined}
+        data-open={state.isOpen || undefined} />
       {portal}
       <HiddenSelect
         state={state}
