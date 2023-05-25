@@ -25,7 +25,7 @@ export interface OverlayTriggerState {
   /** Toggles the overlay's visibility. */
   toggle(): void
 }
-let i = 0;
+
 /**
  * Manages state for an overlay trigger. Tracks whether the overlay is open, and provides
  * methods to toggle this state.

@@ -73,7 +73,8 @@ export interface OverlayProps {
   onExiting?: () => void,
   onExited?: () => void,
   nodeRef: MutableRefObject<HTMLElement>,
-  shouldContainFocus?: boolean
+  shouldContainFocus?: boolean,
+  shouldRestoreFocus?: boolean
 }
 
 export interface ModalProps extends StyleProps, Omit<OverlayProps, 'nodeRef'> {

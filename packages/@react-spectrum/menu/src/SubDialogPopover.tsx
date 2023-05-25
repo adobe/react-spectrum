@@ -22,7 +22,10 @@ import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
 interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef' | 'maxHeight'>, StyleProps {
   children: ReactNode,
   state: OverlayTriggerState,
-  shouldContainFocus?: boolean
+  shouldContainFocus?: boolean,
+  shouldRestoreFocus?: boolean,
+  onExit?: () => void,
+  container: HTMLElement
 }
 
 interface PopoverWrapperProps extends PopoverProps {

@@ -16,7 +16,7 @@ import {FocusScope} from '@react-aria/focus';
 import {MenuContext, MenuStateContext} from './context';
 import {MenuItem} from './MenuItem';
 import {MenuSection} from './MenuSection';
-import {mergeProps, useLayoutEffect, useSyncRef} from '@react-aria/utils';
+import {mergeProps, useSyncRef} from '@react-aria/utils';
 import React, {ReactElement, useContext, useRef} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
@@ -38,7 +38,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
 
   return (
     <MenuStateContext.Provider value={{state, container: scopedRef}}>
-      <FocusScope name="menu" contain={state.expandedKeys.size > 0}>
+      <FocusScope contain={state.expandedKeys.size > 0}>
         <div ref={scopedRef}>
           <ul
             {...menuProps}

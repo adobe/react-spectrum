@@ -124,10 +124,10 @@ export function FocusScope(props: FocusScopeProps) {
     scopeRef.current = nodes;
   }, [children]);
 
-  useActiveScopeTracker(scopeRef, restoreFocus, contain, props.name);
-  useFocusContainment(scopeRef, contain, props.name);
-  useRestoreFocus(scopeRef, restoreFocus, contain, props.name);
-  useAutoFocus(scopeRef, autoFocus, props.name);
+  useActiveScopeTracker(scopeRef, restoreFocus, contain);
+  useFocusContainment(scopeRef, contain);
+  useRestoreFocus(scopeRef, restoreFocus, contain);
+  useAutoFocus(scopeRef, autoFocus);
 
   // this layout effect needs to run last so that focusScopeTree cleanup happens at the last moment possible
   useEffect(() => {
@@ -202,7 +202,6 @@ function createFocusManagerForScope(scopeRef: React.RefObject<Element[]>): Focus
       let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable, accept}, scope);
       walker.currentNode = isElementInScope(node, scope) ? node : sentinel;
       let nextNode = walker.nextNode() as FocusableElement;
-      console.log('nextNode', nextNode.outerHTML)
       if (!nextNode && wrap) {
         walker.currentNode = sentinel;
         nextNode = walker.nextNode() as FocusableElement;
@@ -520,7 +519,7 @@ function shouldRestoreFocus(scopeRef: ScopeRef) {
   return scope?.scopeRef === scopeRef;
 }
 
-function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, contain: boolean, name) {
+function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, contain: boolean) {
   // create a ref during render instead of useLayoutEffect so the active element is saved before a child with autoFocus=true mounts.
   const nodeToRestoreRef = useRef(typeof document !== 'undefined' ? document.activeElement as FocusableElement : null);
 
@@ -564,7 +563,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
     // using portals for overlays, so that focus goes to the expected element when
     // tabbing out of the overlay.
     let onKeyDown = (e: KeyboardEvent) => {
-      if (e.key !== 'Tab' || e.altKey || e.ctrlKey || e.metaKey) {
+      if (e.key !== 'Tab' || e.altKey || e.ctrlKey || e.metaKey || !shouldContainFocus(scopeRef)) {
         return;
       }
 

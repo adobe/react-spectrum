@@ -19,7 +19,6 @@ import {Modal} from '@react-spectrum/overlays';
 import {Popover} from './SubDialogPopover';
 import React, {Key, ReactElement, useRef} from 'react';
 import {useOverlayTriggerState} from '@react-stately/overlays';
-import {useFocusManager} from "@react-aria/focus";
 
 export interface SpectrumMenuDialogTriggerProps<T> extends ItemProps<T> {
   isUnavailable?: boolean,
@@ -50,9 +49,11 @@ function MenuDialogTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): ReactEl
   let [, content] = props.children as [ReactElement, ReactElement];
 
   let isMobile = useIsMobileDevice();
-  let focusManager = useFocusManager();
-  let onFocus = () => {
-    focusManager.focusFirst();
+
+  let onExit = () => {
+    // need to return focus to the trigger because hitting Esc causes focus to go to the subdialog, which is then unmounted
+    // this leads to blur never being fired nor focus on the body
+    triggerRef.current.focus();
   };
   return (
     <>
@@ -66,9 +67,8 @@ function MenuDialogTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): ReactEl
               <DismissButton onDismiss={state.close} />
             </Modal>
           ) : (
-            <Popover container={container.current} state={state} triggerRef={triggerRef} placement="end top" offset={-10} isNonModal shouldContainFocus={false} shouldRestoreFocus={false}>
+            <Popover onExit={onExit} container={container.current} state={state} triggerRef={triggerRef} placement="end top" offset={-10} isNonModal shouldContainFocus={false} shouldRestoreFocus={false}>
               {content}
-              <div onFocus={onFocus} tabIndex={0} />
             </Popover>
           )
         }
