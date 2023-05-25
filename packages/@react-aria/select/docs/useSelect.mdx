@@ -152,6 +152,7 @@ function Select(props) {
     <div style={{display: 'inline-block'}}>
       <div {...labelProps}>{props.label}</div>
       <HiddenSelect
+        isDisabled={props.isDisabled}
         state={state}
         triggerRef={ref}
         label={props.label}

@@ -13,6 +13,7 @@
 import {AriaSearchFieldProps, useSearchField} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {filterDOMProps} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
@@ -47,8 +48,12 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
     defaultClassName: 'react-aria-SearchField'
   });
 
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
+
   return (
     <div
+      {...DOMProps}
       {...renderProps}
       ref={ref}
       slot={props.slot}

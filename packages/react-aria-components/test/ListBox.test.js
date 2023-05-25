@@ -12,7 +12,7 @@
 
 import {act, fireEvent, render, within} from '@react-spectrum/test-utils';
 import {Header, Item, ListBox, ListBoxContext, Section, Text, useDragAndDrop} from '../';
-import React from 'react';
+import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';
 
 let TestListBox = ({listBoxProps, itemProps}) => (
@@ -85,6 +85,22 @@ describe('ListBox', () => {
     let listbox = getByRole('listbox');
     expect(listbox).toHaveAttribute('slot', 'test');
     expect(listbox).toHaveAttribute('aria-label', 'test');
+  });
+
+  it('should support refs', () => {
+    let listBoxRef = React.createRef();
+    let sectionRef = React.createRef();
+    let itemRef = React.createRef();
+    render(
+      <ListBox aria-label="Test" ref={listBoxRef}>
+        <Section ref={sectionRef}>
+          <Item ref={itemRef}>Cat</Item>
+        </Section>
+      </ListBox>
+    );
+    expect(listBoxRef.current).toBeInstanceOf(HTMLElement);
+    expect(sectionRef.current).toBeInstanceOf(HTMLElement);
+    expect(itemRef.current).toBeInstanceOf(HTMLElement);
   });
 
   it('should support slots', () => {
@@ -213,6 +229,40 @@ describe('ListBox', () => {
     );
 
     expect(getAllByRole('option').map(o => o.textContent)).toEqual(['Cat', 'Kangaroo', 'Mouse']);
+  });
+
+  it('should update collection when descendants update', () => {
+    let setShowTwo;
+    let setItemText;
+    function Child() {
+      let [showTwo, _setShowTwo] = useState(false);
+      setShowTwo = _setShowTwo;
+      let [itemText, _setItemText] = useState('One');
+      setItemText = _setItemText;
+      return (
+        <>
+          <Item id={1}>{itemText}</Item>
+          {showTwo && <Item id={2}>Two</Item>}
+        </>
+      );
+    }
+
+    let {getAllByRole} = render(
+      <ListBox aria-label="Example">
+        <Child />
+      </ListBox>
+    );
+
+    expect(getAllByRole('option').map(o => o.textContent)).toEqual(['One']);
+
+    act(() => setShowTwo(true));
+    expect(getAllByRole('option').map(o => o.textContent)).toEqual(['One', 'Two']);
+
+    act(() => setShowTwo(false));
+    expect(getAllByRole('option').map(o => o.textContent)).toEqual(['One']);
+
+    act(() => setItemText('Hi'));
+    expect(getAllByRole('option').map(o => o.textContent)).toEqual(['Hi']);
   });
 
   it('should support hover', () => {
