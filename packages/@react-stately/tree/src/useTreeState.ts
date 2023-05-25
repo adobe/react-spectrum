@@ -11,7 +11,7 @@
  */
 
 import {Collection, CollectionStateBase, Expandable, MultipleSelection, Node} from '@react-types/shared';
-import {Key, useCallback, useEffect, useMemo, useRef} from 'react';
+import {Key, useCallback, useEffect, useMemo} from 'react';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {TreeCollection} from './TreeCollection';
 import {useCollection} from '@react-stately/collections';
