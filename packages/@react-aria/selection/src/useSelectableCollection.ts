@@ -165,6 +165,9 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         if (delegate.getKeyLeftOf) {
           e.preventDefault();
           let nextKey = delegate.getKeyLeftOf(manager.focusedKey);
+          if (nextKey == null && shouldFocusWrap) {
+            nextKey = direction === 'rtl' ? delegate.getFirstKey?.(manager.focusedKey) : delegate.getLastKey?.(manager.focusedKey);
+          }
           navigateToKey(nextKey, direction === 'rtl' ? 'first' : 'last');
         }
         break;
@@ -173,6 +176,9 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         if (delegate.getKeyRightOf) {
           e.preventDefault();
           let nextKey = delegate.getKeyRightOf(manager.focusedKey);
+          if (nextKey == null && shouldFocusWrap) {
+            nextKey = direction === 'rtl' ? delegate.getLastKey?.(manager.focusedKey) : delegate.getFirstKey?.(manager.focusedKey);
+          }
           navigateToKey(nextKey, direction === 'rtl' ? 'last' : 'first');
         }
         break;

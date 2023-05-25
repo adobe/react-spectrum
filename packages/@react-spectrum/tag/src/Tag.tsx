@@ -10,28 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaTagProps, useTag} from '@react-aria/tag';
 import {classNames, ClearSlots, SlotProvider, useStyleProps} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import type {ListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
-import {TagProps} from '@react-types/tag';
 import {Text} from '@react-spectrum/text';
 import {useFocusRing} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
-import {useTag} from '@react-aria/tag';
 
-export interface SpectrumTagProps<T> extends TagProps<T> {
+export interface SpectrumTagProps<T> extends AriaTagProps<T> {
   state: ListState<T>
 }
 
 export function Tag<T>(props: SpectrumTagProps<T>) {
   const {
-    allowsRemoving,
     item,
     state,
-    onRemove,
     ...otherProps
   } = props;
 
@@ -40,11 +37,9 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
   let {hoverProps, isHovered} = useHover({});
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
   let ref = useRef();
-  let {removeButtonProps, labelProps, gridCellProps, rowProps} = useTag({
+  let {removeButtonProps, gridCellProps, rowProps, allowsRemoving} = useTag({
     ...props,
-    allowsRemoving,
-    item,
-    onRemove
+    item
   }, state, ref);
 
   return (
@@ -68,7 +63,7 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
         <SlotProvider
           slots={{
             icon: {UNSAFE_className: classNames(styles, 'spectrum-Tag-icon'), size: 'XS'},
-            text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content'), ...labelProps},
+            text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content')},
             avatar: {UNSAFE_className: classNames(styles, 'spectrum-Tag-avatar'), size: 'avatar-size-50'}
           }}>
           {typeof item.rendered === 'string' ? <Text>{item.rendered}</Text> : item.rendered}
