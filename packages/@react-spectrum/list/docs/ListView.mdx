@@ -14,7 +14,7 @@ import Anatomy from './anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import docs from 'docs:@react-spectrum/list';
 import dndDocs from 'docs:@react-spectrum/dnd';
-import {HeaderInfo, PropTable, PageDescription, TypeLink, VersionBadge} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, PageDescription, TypeLink} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-spectrum/list/package.json';
 
@@ -1024,6 +1024,69 @@ function DragIntoListDefaultCopy() {
 
 ```tsx example
 <DragIntoListDefaultCopy />
+```
+
+### Custom drag previews
+
+Use the `renderPreview` prop to provide a custom drag preview. `keys` and `draggedKey` are passed to this function, where `keys` includes all the keys of the items being dragged, and `draggedKey` is the key of the item the user initiated the drag from.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {View} from '@react-spectrum/view';
+
+function CustomDragPreviewExample() {
+  let list = useListData({
+    initialItems: [
+      {id: '1', type: 'file', name: 'Adobe Photoshop'},
+      {id: '2', type: 'file', name: 'Adobe XD'},
+      {id: '3', type: 'file', name: 'Adobe InDesign'},
+      {id: '4', type: 'file', name: 'Adobe AfterEffects'}
+    ]
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => {
+      let item = list.getItem(key);
+      return {
+        'custom-app-type': JSON.stringify(item),
+        'text/plain': item.name
+      };
+    }),
+    /*- begin highlight -*/
+    renderPreview: (keys, draggedKey) => (
+      <View backgroundColor="gray-50" padding="size-100" borderRadius="medium" borderWidth="thin" borderColor="blue-500">
+        <strong>Custom Preview</strong>
+        <div>Keys: [{[...keys].join(', ')}]</div>
+        <div>Dragged: {draggedKey}</div>
+      </View>
+    )
+    /*- end highlight -*/
+  });
+
+  return (
+    <ListView
+      aria-label="Draggable ListView with custom drag preview"
+      selectionMode="multiple"
+      width="size-3600"
+      height="size-2400"
+      dragAndDropHooks={dragAndDropHooks}
+      items={list.items}>
+      {item => (
+        <Item textValue={item.name}>
+          {item.name}
+        </Item>
+      )}
+    </ListView>
+  );
+}
+```
+  
+</details>
+
+```tsx example
+<CustomDragPreviewExample />
 ```
 
 ## Props
