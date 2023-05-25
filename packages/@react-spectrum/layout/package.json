@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/layout",
-  "version": "3.5.1",
+  "version": "3.5.2",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -37,10 +37,10 @@
   },
   "dependencies": {
     "@react-aria/ssr": "^3.6.0",
-    "@react-aria/utils": "^3.16.0",
-    "@react-spectrum/utils": "^3.9.1",
-    "@react-types/layout": "^3.3.7",
-    "@react-types/shared": "^3.18.0",
+    "@react-aria/utils": "^3.17.0",
+    "@react-spectrum/utils": "^3.9.2",
+    "@react-types/layout": "^3.3.8",
+    "@react-types/shared": "^3.18.1",
     "@swc/helpers": "^0.4.14",
     "clsx": "^1.1.1"
   },
