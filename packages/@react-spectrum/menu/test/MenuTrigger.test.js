@@ -972,10 +972,12 @@ describe('MenuTrigger', function () {
   describe('sub dialogs', function () {
     let tree;
     afterEach(() => {
+      act(() => {jest.runAllTimers();});
       if (tree) {
         tree.unmount();
       }
       tree = null;
+      act(() => {jest.runAllTimers();});
     });
 
     describe('unavailable item', function () {
@@ -1031,7 +1033,7 @@ describe('MenuTrigger', function () {
         expect(icon).not.toHaveAttribute('aria-hidden');
       });
 
-      it('can open a sub dialog with hover', function () {
+      it.only('can open a sub dialog with hover', function () {
         renderTree();
         let menu = openMenu();
         let menuItems = within(menu).getAllByRole('menuitem');

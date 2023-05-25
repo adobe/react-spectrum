@@ -29,7 +29,8 @@ function MenuDialogTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): ReactEl
   let {isUnavailable} = props;
 
   let triggerRef = useRef<HTMLLIElement>(null);
-  let {state: menuState, container} = useMenuStateContext();
+  let popoverRef = useRef(null);
+  let {state: menuState, container, menu} = useMenuStateContext();
   let state = useOverlayTriggerState({isOpen: menuState.expandedKeys.has(props.targetKey), onOpenChange: (val) => {
     if (!val) {
       if (menuState.expandedKeys.has(props.targetKey)) {
@@ -51,9 +52,12 @@ function MenuDialogTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): ReactEl
   let isMobile = useIsMobileDevice();
 
   let onExit = () => {
-    // need to return focus to the trigger because hitting Esc causes focus to go to the subdialog, which is then unmounted
-    // this leads to blur never being fired nor focus on the body
-    triggerRef.current.focus();
+    // if focus was already moved back to a menu item, don't need to do anything
+    if (!menu.current.contains(document.activeElement)) {
+      // need to return focus to the trigger because hitting Esc causes focus to go to the subdialog, which is then unmounted
+      // this leads to blur never being fired nor focus on the body
+      triggerRef.current.focus();
+    }
   };
   return (
     <>
@@ -67,7 +71,7 @@ function MenuDialogTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): ReactEl
               <DismissButton onDismiss={state.close} />
             </Modal>
           ) : (
-            <Popover onExit={onExit} container={container.current} state={state} triggerRef={triggerRef} placement="end top" offset={-10} isNonModal shouldContainFocus={false} shouldRestoreFocus={false}>
+            <Popover onExit={onExit} container={container.current} state={state} ref={popoverRef} triggerRef={triggerRef} placement="end top" offset={-10} isNonModal shouldContainFocus={false} shouldRestoreFocus={false}>
               {content}
             </Popover>
           )

@@ -43,7 +43,8 @@ export function useMenuDialogContext(): MenuDialogContextValue {
 
 export interface MenuStateContextValue<T> {
   state?: TreeState<T>,
-  container?: RefObject<HTMLElement>
+  container?: RefObject<HTMLElement>,
+  menu?: RefObject<HTMLUListElement>
 }
 
 export const MenuStateContext = React.createContext<MenuStateContextValue<any>>({});
