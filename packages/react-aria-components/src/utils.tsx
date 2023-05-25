@@ -151,7 +151,7 @@ export function useContextProps<T, U, E extends Element>(props: T & SlotProps, r
   }
   // @ts-ignore - TS says "Type 'unique symbol' cannot be used as an index type." but not sure why.
   let {ref: contextRef, [slotCallbackSymbol]: callback, ...contextProps} = ctx;
-  let mergedRef = useObjectRef(mergeRefs(ref, contextRef));
+  let mergedRef = useObjectRef(useMemo(() => mergeRefs(ref, contextRef), [ref, contextRef]));
   let mergedProps = mergeProps(contextProps, props) as unknown as T;
 
   // A parent component might need the props from a child, so call slot callback if needed.
