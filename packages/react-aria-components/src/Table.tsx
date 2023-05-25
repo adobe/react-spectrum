@@ -3,7 +3,7 @@ import {BaseCollection, CollectionContext, CollectionProps, CollectionRendererCo
 import {buildHeaderRows} from '@react-stately/table';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
-import {ContextValue, defaultSlot, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, defaultSlot, forwardRefType, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useTableState} from 'react-stately';
 import {DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
@@ -316,7 +316,7 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
       <Provider
         values={[
           [InternalTableContext, {state, dragAndDropHooks, dragState, dropState}],
-          [DropIndicatorContext, {render: TableDropIndicator}]
+          [DropIndicatorContext, {render: TableDropIndicatorWrapper}]
         ]}>
         <FocusScope>
           <table
@@ -375,10 +375,7 @@ export interface TableHeaderProps<T> extends StyleProps {
   children?: ReactNode | ((item: T) => ReactElement)
 }
 
-/**
- * A header within a `<Table>`, containing the table columns.
- */
-export function TableHeader<T extends object>(props: TableHeaderProps<T>) {
+function TableHeader<T extends object>(props: TableHeaderProps<T>, ref: ForwardedRef<HTMLTableSectionElement>) {
   let children = useCollectionChildren({
     children: props.children,
     items: props.columns
@@ -388,10 +385,16 @@ export function TableHeader<T extends object>(props: TableHeaderProps<T>) {
   return (
     <CollectionRendererContext.Provider value={renderer}>
       {/* @ts-ignore */}
-      <tableheader ref={useCollectionItemRef(props)}>{children}</tableheader>
+      <tableheader ref={useCollectionItemRef(props, ref)}>{children}</tableheader>
     </CollectionRendererContext.Provider>
   );
 }
+
+/**
+ * A header within a `<Table>`, containing the table columns.
+ */
+const _TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(TableHeader);
+export {_TableHeader as TableHeader};
 
 export interface ColumnRenderProps {
   /**
@@ -430,10 +433,7 @@ export interface ColumnProps<T = object> extends RenderProps<ColumnRenderProps> 
   textValue?: string
 }
 
-/**
- * A column within a `<Table>`.
- */
-export function Column<T extends object>(props: ColumnProps<T>): JSX.Element {
+function Column<T extends object>(props: ColumnProps<T>, ref: ForwardedRef<HTMLTableCellElement>): JSX.Element {
   let render = useContext(CollectionRendererContext);
   let childColumns = typeof render === 'function' ? render : props.children;
   let children = useCollectionChildren({
@@ -442,8 +442,14 @@ export function Column<T extends object>(props: ColumnProps<T>): JSX.Element {
   });
 
   // @ts-ignore
-  return <column ref={useCollectionItemRef(props, props.title ?? props.children)}>{children}</column>;
+  return <column ref={useCollectionItemRef(props, ref, props.title ?? props.children)}>{children}</column>;
 }
+
+/**
+ * A column within a `<Table>`.
+ */
+const _Column = /*#__PURE__*/ (forwardRef as forwardRefType)(Column);
+export {_Column as Column};
 
 export interface TableBodyRenderProps {
   /**
@@ -458,15 +464,18 @@ export interface TableBodyProps<T> extends CollectionProps<T>, StyleRenderProps<
   renderEmptyState?: () => ReactNode
 }
 
-/**
- * The body of a `<Table>`, containing the table rows.
- */
-export function TableBody<T extends object>(props: TableBodyProps<T>) {
+function TableBody<T extends object>(props: TableBodyProps<T>, ref: ForwardedRef<HTMLTableSectionElement>) {
   let children = useCollectionChildren(props);
 
   // @ts-ignore
-  return <tablebody ref={useCollectionItemRef(props)}>{children}</tablebody>;
+  return <tablebody ref={useCollectionItemRef(props, ref)}>{children}</tablebody>;
 }
+
+/**
+ * The body of a `<Table>`, containing the table rows.
+ */
+const _TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(TableBody);
+export {_TableBody as TableBody};
 
 export interface RowRenderProps extends ItemRenderProps {}
 
@@ -480,10 +489,7 @@ export interface RowProps<T> extends RenderProps<RowRenderProps> {
   textValue?: string
 }
 
-/**
- * A row within a `<Table>`.
- */
-export function Row<T extends object>(props: RowProps<T>) {
+function Row<T extends object>(props: RowProps<T>, ref: ForwardedRef<HTMLTableRowElement>) {
   let children = useCollectionChildren({
     children: props.children,
     items: props.columns,
@@ -494,7 +500,7 @@ export function Row<T extends object>(props: RowProps<T>) {
 
   return (
     // @ts-ignore
-    <item ref={useCollectionItemRef(props)}>
+    <item ref={useCollectionItemRef(props, ref)}>
       <CollectionContext.Provider value={ctx}>
         {children}
       </CollectionContext.Provider>
@@ -502,6 +508,12 @@ export function Row<T extends object>(props: RowProps<T>) {
     </item>
   );
 }
+
+/**
+ * A row within a `<Table>`.
+ */
+const _Row = /*#__PURE__*/ (forwardRef as forwardRefType)(Row);
+export {_Row as Row};
 
 export interface CellRenderProps {
   /**
@@ -529,13 +541,16 @@ export interface CellProps extends RenderProps<CellRenderProps> {
   textValue?: string
 }
 
+function Cell(props: CellProps, ref: ForwardedRef<HTMLTableCellElement>): JSX.Element {
+  // @ts-ignore
+  return <cell ref={useCollectionItemRef(props, ref, props.children)} />;
+}
+
 /**
  * A cell within a table row.
  */
-export function Cell(props: CellProps): JSX.Element {
-  // @ts-ignore
-  return <cell ref={useCollectionItemRef(props, props.children)} />;
-}
+const _Cell = forwardRef(Cell);
+export {_Cell as Cell};
 
 function TableHeaderRowGroup<T>({collection}: {collection: TableCollection<T>}) {
   let headerRows = useCachedChildren({
@@ -555,6 +570,7 @@ function TableHeaderRowGroup<T>({collection}: {collection: TableCollection<T>}) 
     <thead
       {...filterDOMProps(collection.head.props)}
       {...rowGroupProps}
+      ref={collection.head.props.ref}
       className={collection.head.props.className ?? 'react-aria-TableHeader'}
       style={collection.head.props.style}>
       {headerRows}
@@ -600,8 +616,9 @@ function TableBodyRowGroup<T>({collection, isDroppable}: {collection: TableColle
   let {rowGroupProps} = useTableRowGroup();
   return (
     <tbody
+      {...mergeProps(filterDOMProps(props as any), rowGroupProps)}
       {...renderProps}
-      {...rowGroupProps}
+      ref={collection.body.props.ref}
       data-empty={collection.size === 0 || undefined}>
       {isDroppable && <RootDropIndicator />}
       {bodyRows}
@@ -645,7 +662,7 @@ function TableHeaderRow<T>({item}: {item: GridNode<T>}) {
 }
 
 function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
-  let ref = useRef<HTMLTableHeaderCellElement>(null);
+  let ref = useObjectRef<HTMLTableHeaderCellElement>(column.props.ref);
   let {state} = useContext(InternalTableContext)!;
   let {columnHeaderProps} = useTableColumnHeader(
     {node: column},
@@ -672,7 +689,7 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
 
   return (
     <th
-      {...mergeProps(columnHeaderProps, focusProps)}
+      {...mergeProps(filterDOMProps(props as any), columnHeaderProps, focusProps)}
       {...renderProps}
       colSpan={column.colspan}
       ref={ref}
@@ -684,7 +701,7 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
 }
 
 function TableRow<T>({item}: {item: GridNode<T>}) {
-  let ref = useRef<HTMLTableRowElement>(null);
+  let ref = useObjectRef<HTMLTableRowElement>(item.props.ref);
   let {state, dragAndDropHooks, dragState, dropState} = useContext(InternalTableContext)!;
   let {rowProps, ...states} = useTableRow(
     {
@@ -770,7 +787,7 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
         </tr>
       )}
       <tr
-        {...mergeProps(rowProps, focusProps, hoverProps, draggableItem?.dragProps)}
+        {...mergeProps(filterDOMProps(props as any), rowProps, focusProps, hoverProps, draggableItem?.dragProps)}
         {...renderProps}
         ref={ref}
         data-hovered={isHovered || undefined}
@@ -810,7 +827,7 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
 }
 
 function TableCell<T>({cell}: {cell: GridNode<T>}) {
-  let ref = useRef<HTMLTableCellElement>(null);
+  let ref = useObjectRef<HTMLTableCellElement>(cell.props.ref);
   let {state, dragState} = useContext(InternalTableContext)!;
 
   // @ts-ignore
@@ -836,20 +853,20 @@ function TableCell<T>({cell}: {cell: GridNode<T>}) {
 
   return (
     <td
-      {...mergeProps(gridCellProps, focusProps)}
+      {...mergeProps(filterDOMProps(props as any), gridCellProps, focusProps)}
       {...renderProps}
       ref={ref}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={isPressed || undefined}>
-      {cell.rendered}
+      {renderProps.children}
     </td>
   );
 }
 
-function TableDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
+function TableDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
   ref = useObjectRef(ref);
-  let {state, dragAndDropHooks, dropState} = useContext(InternalTableContext)!;
+  let {dragAndDropHooks, dropState} = useContext(InternalTableContext)!;
   let buttonRef = useRef<HTMLDivElement>(null);
   let {dropIndicatorProps, isHidden, isDropTarget} = dragAndDropHooks!.useDropIndicator!(
     props,
@@ -857,15 +874,33 @@ function TableDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLEle
     buttonRef
   );
 
-  let {visuallyHiddenProps} = useVisuallyHidden();
-
   if (isHidden) {
     return null;
   }
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+  return (
+    <TableDropIndicatorForwardRef {...props} dropIndicatorProps={dropIndicatorProps} isDropTarget={isDropTarget} buttonRef={buttonRef} ref={ref} />
+  );
+}
+
+interface TableDropIndicatorProps extends DropIndicatorProps {
+  dropIndicatorProps: React.HTMLAttributes<HTMLElement>,
+  isDropTarget: boolean,
+  buttonRef: RefObject<HTMLDivElement>
+}
+
+function TableDropIndicator(props: TableDropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
+  let {
+    dropIndicatorProps,
+    isDropTarget,
+    buttonRef,
+    ...otherProps
+  } = props;
+
+  let {state} = useContext(InternalTableContext)!;
+  let {visuallyHiddenProps} = useVisuallyHidden();
   let renderProps = useRenderProps({
-    ...props,
+    ...otherProps,
     defaultClassName: 'react-aria-DropIndicator',
     values: {
       isDropTarget
@@ -874,6 +909,7 @@ function TableDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLEle
 
   return (
     <tr
+      {...filterDOMProps(props as any)}
       {...renderProps}
       role="row"
       ref={ref as RefObject<HTMLTableRowElement>}
@@ -887,6 +923,8 @@ function TableDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLEle
     </tr>
   );
 }
+
+const TableDropIndicatorForwardRef = forwardRef(TableDropIndicator);
 
 function RootDropIndicator() {
   let {state, dragAndDropHooks, dropState} = useContext(InternalTableContext)!;

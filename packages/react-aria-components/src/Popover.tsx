@@ -12,6 +12,7 @@
 
 import {AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PositionProps, usePopover} from 'react-aria';
 import {ContextValue, HiddenContext, RenderProps, SlotProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, RefObject} from 'react';
@@ -106,7 +107,7 @@ function PopoverInner({state, isExiting, ...props}: PopoverInnerProps) {
     <Overlay>
       {!props.isNonModal && <div {...underlayProps} style={{position: 'fixed', inset: 0}} />}
       <div
-        {...popoverProps}
+        {...mergeProps(filterDOMProps(props as any), popoverProps)}
         {...renderProps}
         ref={ref}
         slot={props.slot}
