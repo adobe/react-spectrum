@@ -1,6 +1,6 @@
 {
   "name": "@react-types/badge",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "types": "src/index.d.ts",
@@ -9,7 +9,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-types/shared": "^3.18.0"
+    "@react-types/shared": "^3.18.1"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0"

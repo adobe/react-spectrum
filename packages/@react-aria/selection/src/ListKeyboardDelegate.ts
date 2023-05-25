@@ -10,20 +10,42 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, KeyboardDelegate, Node} from '@react-types/shared';
+import {Collection, Direction, KeyboardDelegate, Node, Orientation} from '@react-types/shared';
+import {isScrollable} from '@react-aria/utils';
 import {Key, RefObject} from 'react';
+
+interface ListKeyboardDelegateOptions<T> {
+  collection: Collection<Node<T>>,
+  ref: RefObject<HTMLElement>,
+  orientation?: Orientation,
+  direction?: Direction,
+  disabledKeys?: Set<Key>
+}
 
 export class ListKeyboardDelegate<T> implements KeyboardDelegate {
   private collection: Collection<Node<T>>;
   private disabledKeys: Set<Key>;
   private ref: RefObject<HTMLElement>;
   private collator: Intl.Collator;
+  private orientation?: Orientation;
+  private direction?: Direction;
 
-  constructor(collection: Collection<Node<T>>, disabledKeys: Set<Key>, ref: RefObject<HTMLElement>, collator?: Intl.Collator) {
-    this.collection = collection;
-    this.disabledKeys = disabledKeys;
-    this.ref = ref;
-    this.collator = collator;
+  constructor(collection: Collection<Node<T>>, disabledKeys: Set<Key>, ref: RefObject<HTMLElement>, collator?: Intl.Collator);
+  constructor(options: ListKeyboardDelegateOptions<T>);
+  constructor(...args: any[]) {
+    if (args.length === 1) {
+      let opts = args[0] as ListKeyboardDelegateOptions<T>;
+      this.collection = opts.collection;
+      this.ref = opts.ref;
+      this.disabledKeys = opts.disabledKeys || new Set();
+      this.orientation = opts.orientation;
+      this.direction = opts.direction;
+    } else {
+      this.collection = args[0];
+      this.disabledKeys = args[1];
+      this.ref = args[2];
+      this.collator = args[3];
+    }
   }
 
   getKeyBelow(key: Key) {
@@ -49,6 +71,22 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       }
 
       key = this.collection.getKeyBefore(key);
+    }
+
+    return null;
+  }
+
+  getKeyRightOf(key: Key) {
+    if (this.orientation === 'horizontal') {
+      return this.direction === 'rtl' ? this.getKeyAbove(key) : this.getKeyBelow(key);
+    }
+
+    return null;
+  }
+
+  getKeyLeftOf(key: Key) {
+    if (this.orientation === 'horizontal') {
+      return this.direction === 'rtl' ? this.getKeyBelow(key) : this.getKeyAbove(key);
     }
 
     return null;
@@ -93,14 +131,33 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       return null;
     }
 
-    let pageY = Math.max(0, item.offsetTop + item.offsetHeight - menu.offsetHeight);
-
-    while (item && item.offsetTop > pageY) {
-      key = this.getKeyAbove(key);
-      item = key == null ? null : this.getItem(key);
+    if (!isScrollable(menu)) {
+      return this.getFirstKey();
     }
 
-    return key;
+    let containerRect = menu.getBoundingClientRect();
+    let itemRect = item.getBoundingClientRect();
+    if (this.orientation === 'horizontal') {
+      let containerX = containerRect.x - menu.scrollLeft;
+      let pageX = Math.max(0, (itemRect.x - containerX) + itemRect.width - containerRect.width);
+
+      while (item && (itemRect.x - containerX) > pageX) {
+        key = this.getKeyAbove(key);
+        item = key == null ? null : this.getItem(key);
+        itemRect = item?.getBoundingClientRect();
+      }
+    } else {
+      let containerY = containerRect.y - menu.scrollTop;
+      let pageY = Math.max(0, (itemRect.y - containerY) + itemRect.height - containerRect.height);
+
+      while (item && (itemRect.y - containerY) > pageY) {
+        key = this.getKeyAbove(key);
+        item = key == null ? null : this.getItem(key);
+        itemRect = item?.getBoundingClientRect();
+      }
+    }
+
+    return key ?? this.getFirstKey();
   }
 
   getKeyPageBelow(key: Key) {
@@ -110,14 +167,33 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       return null;
     }
 
-    let pageY = Math.min(menu.scrollHeight, item.offsetTop - item.offsetHeight + menu.offsetHeight);
-
-    while (item && item.offsetTop < pageY) {
-      key = this.getKeyBelow(key);
-      item = key == null ? null : this.getItem(key);
+    if (!isScrollable(menu)) {
+      return this.getLastKey();
     }
 
-    return key;
+    let containerRect = menu.getBoundingClientRect();
+    let itemRect = item.getBoundingClientRect();
+    if (this.orientation === 'horizontal') {
+      let containerX = containerRect.x - menu.scrollLeft;
+      let pageX = Math.min(menu.scrollWidth, (itemRect.x - containerX) - itemRect.width + containerRect.width);
+
+      while (item && (itemRect.x - containerX) < pageX) {
+        key = this.getKeyBelow(key);
+        item = key == null ? null : this.getItem(key);
+        itemRect = item?.getBoundingClientRect();
+      }
+    } else {
+      let containerY = containerRect.y - menu.scrollTop;
+      let pageY = Math.min(menu.scrollHeight, (itemRect.y - containerY) - itemRect.height + containerRect.height);
+
+      while (item && (itemRect.y - containerY) < pageY) {
+        key = this.getKeyBelow(key);
+        item = key == null ? null : this.getItem(key);
+        itemRect = item?.getBoundingClientRect();
+      }
+    }
+
+    return key ?? this.getLastKey();
   }
 
   getKeyForSearch(search: string, fromKey?: Key) {

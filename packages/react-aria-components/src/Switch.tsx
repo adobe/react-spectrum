@@ -12,6 +12,7 @@
 
 import {AriaSwitchProps, mergeProps, useFocusRing, useHover, usePress, useSwitch, VisuallyHidden} from 'react-aria';
 import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {filterDOMProps} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, useState} from 'react';
 import {useToggleState} from 'react-stately';
 
@@ -101,9 +102,12 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLInputElement>) {
     }
   });
 
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
+
   return (
-    <label 
-      {...mergeProps(pressProps, hoverProps, renderProps)}
+    <label
+      {...mergeProps(DOMProps, pressProps, hoverProps, renderProps)}
       slot={props.slot}
       data-selected={isSelected || undefined}
       data-pressed={pressed || undefined}
