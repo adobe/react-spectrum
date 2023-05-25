@@ -11,14 +11,15 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {AriaTagGroupProps, TagKeyboardDelegate, useTagGroup} from '@react-aria/tag';
+import {AriaTagGroupProps, useTagGroup} from '@react-aria/tag';
 import {classNames, useDOMRef} from '@react-spectrum/utils';
-import {DOMRef, SpectrumHelpTextProps, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
+import {DOMRef, SpectrumLabelableProps, StyleProps, Validation} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
 import {FocusRing, FocusScope} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListCollection, useListState} from '@react-stately/list';
+import {ListKeyboardDelegate} from '@react-aria/selection';
 import {Provider, useProvider, useProviderProps} from '@react-spectrum/provider';
 import React, {ReactElement, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
@@ -38,21 +39,21 @@ const TAG_STYLES = {
   }
 };
 
-export interface SpectrumTagGroupProps<T> extends Omit<AriaTagGroupProps<T>, 'keyboardDelegate'>, StyleProps, SpectrumLabelableProps, Omit<SpectrumHelpTextProps, 'showErrorIcon'> {
+export interface SpectrumTagGroupProps<T> extends Omit<AriaTagGroupProps<T>, 'selectionMode' | 'disallowEmptySelection' | 'selectedKeys' | 'defaultSelectedKeys' | 'onSelectionChange' | 'selectionBehavior' | 'disabledKeys'>, StyleProps, Omit<SpectrumLabelableProps, 'isRequired' | 'necessityIndicator'>, Omit<Validation, 'isRequired'> {
   /** The label to display on the action button.  */
   actionLabel?: string,
   /** Handler that is called when the action button is pressed. */
   onAction?: () => void,
   /** Sets what the TagGroup should render when there are no tags to display. */
-  renderEmptyState?: () => JSX.Element
+  renderEmptyState?: () => JSX.Element,
+  /** Limit the number of rows initially shown. This will render a button that allows the user to expand to show all tags. */
+  maxRows?: number
 }
 
 function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   props = useFormProps(props);
   let {
-    allowsRemoving,
-    onRemove,
     maxRows,
     children,
     actionLabel,
@@ -69,11 +70,17 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   let [isCollapsed, setIsCollapsed] = useState(maxRows != null);
   let state = useListState(props);
   let [tagState, setTagState] = useValueEffect({visibleTagCount: state.collection.size, showCollapseButton: false});
-  let keyboardDelegate = useMemo(() => (
-    isCollapsed
-      ? new TagKeyboardDelegate(new ListCollection([...state.collection].slice(0, tagState.visibleTagCount)), direction)
-      : new TagKeyboardDelegate(new ListCollection([...state.collection]), direction)
-  ), [direction, isCollapsed, state.collection, tagState.visibleTagCount]) as TagKeyboardDelegate<T>;
+  let keyboardDelegate = useMemo(() => {
+    let collection = isCollapsed
+      ? new ListCollection([...state.collection].slice(0, tagState.visibleTagCount))
+      : new ListCollection([...state.collection]);
+    return new ListKeyboardDelegate({
+      collection,
+      ref: domRef,
+      direction,
+      orientation: 'horizontal'
+    });
+  }, [direction, isCollapsed, state.collection, tagState.visibleTagCount, domRef]) as ListKeyboardDelegate<T>;
   // Remove onAction from props so it doesn't make it into useGridList.
   delete props.onAction;
   let {gridProps, labelProps, descriptionProps, errorMessageProps} = useTagGroup({...props, keyboardDelegate}, state, tagsRef);
@@ -173,12 +180,12 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   let isEmpty = state.collection.size === 0;
 
   let containerStyle = useMemo(() => {
-    if (maxRows == null || !isCollapsed) {
+    if (maxRows == null || !isCollapsed || isEmpty) {
       return undefined;
     }
     let maxHeight = (TAG_STYLES[scale].height + (TAG_STYLES[scale].margin * 2)) * maxRows;
     return {maxHeight, overflow: 'hidden'};
-  }, [isCollapsed, maxRows, scale]);
+  }, [isCollapsed, maxRows, isEmpty, scale]);
 
   return (
     <FocusScope>
@@ -221,9 +228,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
                   {...item.props}
                   key={item.key}
                   item={item}
-                  state={state}
-                  allowsRemoving={allowsRemoving}
-                  onRemove={onRemove}>
+                  state={state}>
                   {item.rendered}
                 </Tag>
               ))}
