@@ -1,6 +1,6 @@
 {
   "name": "@spectrum-icons/express",
-  "version": "3.0.0-alpha.5",
+  "version": "3.0.0-alpha.6",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "repository": {
@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@adobe/spectrum-css-ccx-workflow-icons": "1.0.2",
-    "@react-spectrum/icon": "^3.7.1",
+    "@react-spectrum/icon": "^3.7.2",
     "@swc/helpers": "^0.4.14"
   },
   "devDependencies": {

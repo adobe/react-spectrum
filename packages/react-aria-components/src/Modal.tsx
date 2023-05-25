@@ -12,6 +12,7 @@
 
 import {AriaModalOverlayProps, DismissButton, Overlay, useModalOverlay} from 'react-aria';
 import {DOMAttributes} from '@react-types/shared';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {mergeRefs, useObjectRef, useViewportSize} from '@react-aria/utils';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext, useMemo, useRef} from 'react';
@@ -143,7 +144,7 @@ function ModalOverlayInner(props: ModalOverlayInnerProps) {
   return (
     <Overlay>
       <div
-        {...underlayProps}
+        {...mergeProps(filterDOMProps(props as any), underlayProps)}
         {...renderProps}
         style={style}
         ref={props.overlayRef}
@@ -178,7 +179,7 @@ function ModalContent(props: ModalContentProps) {
 
   return (
     <div
-      {...modalProps}
+      {...mergeProps(filterDOMProps(props as any), modalProps)}
       {...renderProps}
       ref={ref}
       data-entering={entering || undefined}

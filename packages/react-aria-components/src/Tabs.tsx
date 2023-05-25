@@ -14,9 +14,9 @@ import {AriaLabelingProps} from '@react-types/shared';
 import {AriaTabListProps, AriaTabPanelProps, mergeProps, Orientation, useFocusRing, useHover, useTab, useTabList, useTabPanel} from 'react-aria';
 import {CollectionProps, Item, useCollection} from './Collection';
 import {ContextValue, forwardRefType, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {Node, TabListState, useTabListState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, Key, useContext, useEffect, useState} from 'react';
-import {useObjectRef} from '@react-aria/utils';
+import React, {createContext, ForwardedRef, forwardRef, Key, useContext, useEffect, useMemo, useState} from 'react';
 
 export interface TabsProps extends RenderProps<TabsRenderProps>, SlotProps {
   /**
@@ -107,18 +107,18 @@ const InternalTabsContext = createContext<InternalTabsContextValue | null>(null)
 function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TabsContext);
   let {orientation = 'horizontal'} = props;
+  let values = useMemo(() => ({orientation}), [orientation]);
   let [state, setState] = useState<TabListState<unknown> | null>(null);
 
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-Tabs',
-    values: {
-      orientation
-    }
+    values
   });
 
   return (
     <div
+      {...filterDOMProps(props as any)}
       {...renderProps}
       ref={ref}
       slot={props.slot}
@@ -166,9 +166,12 @@ function TabList<T extends object>(props: TabListProps<T>, ref: ForwardedRef<HTM
     }
   });
 
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
+
   return (
     <>
-      <div {...tabListProps} ref={objectRef} {...renderProps}>
+      <div {...DOMProps} {...tabListProps} ref={objectRef} {...renderProps}>
         {[...state.collection].map((item) => (
           <TabInner
             key={item.key}
@@ -188,17 +191,20 @@ function TabList<T extends object>(props: TabListProps<T>, ref: ForwardedRef<HTM
 const _TabList = /*#__PURE__*/ (forwardRef as forwardRefType)(TabList);
 export {_TabList as TabList};
 
+function Tab(props: TabProps, ref: ForwardedRef<HTMLDivElement>) {
+  // @ts-ignore
+  return <Item {...props} ref={ref} />;
+}
+
 /**
  * A Tab provides a title for an individual item within a TabList.
  */
-export function Tab(props: TabProps): JSX.Element {
-  // @ts-ignore
-  return Item(props);
-}
+const _Tab = forwardRef(Tab);
+export {_Tab as Tab};
 
 function TabInner({item, state}: {item: Node<object>, state: TabListState<object>}) {
   let {key} = item;
-  let ref = React.useRef<HTMLDivElement>(null);
+  let ref = useObjectRef<HTMLDivElement>(item.props.ref);
   let {tabProps, isSelected, isDisabled, isPressed} = useTab({key}, state, ref);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let {hoverProps, isHovered} = useHover({
@@ -219,9 +225,12 @@ function TabInner({item, state}: {item: Node<object>, state: TabListState<object
     }
   });
 
+  let DOMProps = filterDOMProps(item.props);
+  delete DOMProps.id;
+
   return (
     <div
-      {...mergeProps(tabProps, focusProps, hoverProps, renderProps)}
+      {...mergeProps(DOMProps, tabProps, focusProps, hoverProps, renderProps)}
       ref={ref}
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={isPressed || undefined}
@@ -250,16 +259,19 @@ export function TabPanels<T extends object>(props: TabPanelsProps<T>) {
   );
 }
 
+function TabPanel(props: TabPanelProps, ref: ForwardedRef<HTMLDivElement>) {
+  return <Item {...props} ref={ref} />;
+}
+
 /**
  * A TabPanel provides the content for a tab.
  */
-export function TabPanel(props: TabPanelProps): JSX.Element {
-  return Item(props);
-}
+const _TabPanel = forwardRef(TabPanel);
+export {_TabPanel as TabPanel};
 
 function SelectedTabPanel({item}: {item: Node<object>}) {
   const {state} = useContext(InternalTabsContext)!;
-  let ref = React.useRef<HTMLDivElement>(null);
+  let ref = useObjectRef<HTMLDivElement>(item.props.ref);
   let {tabPanelProps} = useTabPanel(item.props, state!, ref);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
 
@@ -273,9 +285,12 @@ function SelectedTabPanel({item}: {item: Node<object>}) {
     }
   });
 
+  let DOMProps = filterDOMProps(item.props);
+  delete DOMProps.id;
+
   return (
     <div
-      {...mergeProps(tabPanelProps, focusProps, renderProps)}
+      {...mergeProps(DOMProps, tabPanelProps, focusProps, renderProps)}
       ref={ref}
       data-focus-visible={isFocusVisible || undefined} />
   );
