@@ -727,6 +727,13 @@ export let MenuItemUnavailable = {
           <Content>Is it me you're looking for?</Content>
         </Dialog>
       </MenuDialogTrigger>
+      <MenuDialogTrigger isUnavailable>
+        <Item key="baz">Two point five</Item>
+        <Dialog>
+          <Heading>hello</Heading>
+          <Content>Is it me you're looking for?</Content>
+        </Dialog>
+      </MenuDialogTrigger>
       <Item key="3">Three</Item>
       <MenuDialogTrigger isUnavailable>
         <Item key="bar">

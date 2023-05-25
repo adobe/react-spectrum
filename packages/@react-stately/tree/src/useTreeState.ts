@@ -31,6 +31,9 @@ export interface TreeState<T> {
   /** Toggles the expanded state for an item by its key. */
   toggleKey(key: Key): void,
 
+  /** Sets the expanded state for a set of keys. */
+  setExpandedKeys(keys: Set<Key>): void,
+
   /** A selection manager to read and update multiple selection state. */
   readonly selectionManager: SelectionManager
 }
@@ -45,12 +48,6 @@ export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T
     props.defaultExpandedKeys ? new Set(props.defaultExpandedKeys) : new Set(),
     props.onExpandedChange
   );
-  let currentExpandedKeys = useRef(expandedKeys);
-  // I don't know a way to avoid this, we have to sync to the controlled state in case the prop `expandedKeys` changed.
-  // And we need to track the 'previous state' otherwise two back to back calls to `toggleKey` will only register the last call.
-  if (currentExpandedKeys.current !== expandedKeys) {
-    currentExpandedKeys.current = expandedKeys;
-  }
 
   let selectionState = useMultipleSelectionState(props);
   let disabledKeys = useMemo(() =>
@@ -68,9 +65,7 @@ export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T
   }, [tree, selectionState.focusedKey]);
 
   let onToggle = (key: Key) => {
-    let newSet = toggleKey(currentExpandedKeys.current, key);
-    currentExpandedKeys.current = newSet;
-    setExpandedKeys(newSet);
+    setExpandedKeys(toggleKey(expandedKeys, key));
   };
 
   return {
@@ -78,6 +73,7 @@ export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T
     expandedKeys,
     disabledKeys,
     toggleKey: onToggle,
+    setExpandedKeys,
     selectionManager: new SelectionManager(tree, selectionState)
   };
 }

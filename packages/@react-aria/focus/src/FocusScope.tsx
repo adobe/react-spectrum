@@ -393,7 +393,7 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain: boolean) {
 }
 
 function isElementInAnyScope(element: Element) {
-  return !!isElementInChildScope(element);
+  return isElementInChildScope(element);
 }
 
 function isElementInScope(element: Element, scope: Element[]) {
@@ -419,7 +419,7 @@ function isElementInChildScope(element: Element, scope: ScopeRef = null) {
 
 /** @private */
 export function isElementInChildOfActiveScope(element: Element) {
-  return !!isElementInChildScope(element, activeScope);
+  return isElementInChildScope(element, activeScope);
 }
 
 function isAncestorScope(ancestor: ScopeRef, scope: ScopeRef) {
