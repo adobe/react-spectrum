@@ -265,13 +265,13 @@ function OnRemoveExample(props) {
     {id: 6, label: 'Shy tag'}
   ]);
 
-  let onRemove = (key) => {
-    setItems(prevItems => prevItems.filter((item) => key !== item.id));
-    action('onRemove')(key);
+  let onRemove = (keys) => {
+    setItems(prevItems => prevItems.filter((item) => !keys.has(item.id)));
+    action('onRemove')(keys);
   };
 
   return (
-    <TagGroup allowsRemoving aria-label="Tag group with removable tags" items={items} onRemove={key => onRemove(key)} {...otherProps}>
+    <TagGroup aria-label="Tag group with removable tags" items={items} onRemove={key => onRemove(key)} {...otherProps}>
       {(item: any) => (
         <Item key={item.key} textValue={item.label}>
           {withAvatar && <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />}

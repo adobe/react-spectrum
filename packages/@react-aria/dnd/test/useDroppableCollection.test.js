@@ -575,7 +575,7 @@ describe('useDroppableCollection', () => {
       }
       let tree = render(<>
         <Draggable />
-        <DroppableGridExample items={items} onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
+        <DroppableGridExample style={{overflow: 'auto'}} items={items} onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
       </>);
 
       let draggable = tree.getByText('Drag me');
@@ -659,7 +659,7 @@ describe('useDroppableCollection', () => {
       let getDropOperation = (target) => target.type === 'item' && target.dropPosition === 'on' && target.key !== '4' && target.key !== '1' ? 'move' : 'cancel';
       let tree = render(<>
         <Draggable />
-        <DroppableGridExample items={items} getDropOperation={getDropOperation} onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
+        <DroppableGridExample style={{overflow: 'auto'}} items={items} getDropOperation={getDropOperation} onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
       </>);
 
       let draggable = tree.getByText('Drag me');
@@ -742,7 +742,7 @@ describe('useDroppableCollection', () => {
       let getDropOperation = (target) => target.type === 'item' && target.dropPosition === 'on' && target.key !== '0' && target.key !== '5' ? 'move' : 'cancel';
       let tree = render(<>
         <Draggable />
-        <DroppableGridExample items={items} getDropOperation={getDropOperation} onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
+        <DroppableGridExample style={{overflow: 'auto'}} items={items} getDropOperation={getDropOperation} onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
       </>);
 
       let draggable = tree.getByText('Drag me');

@@ -1,6 +1,6 @@
 {
   "name": "@react-types/autocomplete",
-  "version": "3.0.0-alpha.13",
+  "version": "3.0.0-alpha.14",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "types": "src/index.d.ts",
@@ -9,9 +9,9 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-types/combobox": "^3.6.1",
-    "@react-types/searchfield": "^3.4.1",
-    "@react-types/shared": "^3.18.0"
+    "@react-types/combobox": "^3.6.2",
+    "@react-types/searchfield": "^3.4.2",
+    "@react-types/shared": "^3.18.1"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0"
