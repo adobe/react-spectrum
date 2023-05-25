@@ -16,13 +16,9 @@ import {Meta} from '@storybook/react';
 import React from 'react';
 import {SpectrumInlineAlertProps} from '@react-types/inlinealert';
 
-// see https://github.com/storybookjs/storybook/issues/8426#issuecomment-669021940
-const StoryFn = ({storyFn}) => storyFn();
-
 const meta: Meta<SpectrumInlineAlertProps> = {
   title: 'InlineAlert',
-  component: InlineAlert,
-  decorators: [storyFn => <StoryFn storyFn={storyFn} />]
+  component: InlineAlert
 };
 
 export default meta;
@@ -88,14 +84,14 @@ export const Negative = {
 
 export const LongContent = {
   args: {
-    variant: 'info',
-    render: (args) => (
-      <div style={{width: '300px'}}>
-        <InlineAlert {...args}>
-          <Header>In-line Alert Header that goes on and on my friend</Header>
-          <Content>This is a React Spectrum InlineAlert that started announcing without knowing what it was. This is the inline alert that doesn't end. Yes, it goes on and on, my friend.</Content>
-        </InlineAlert>
-      </div>
-    )
-  }
+    variant: 'info'
+  },
+  render: (args) => (
+    <div style={{width: '300px'}}>
+      <InlineAlert {...args}>
+        <Header>In-line Alert Header that goes on and on my friend</Header>
+        <Content>This is a React Spectrum InlineAlert that started announcing without knowing what it was. This is the inline alert that doesn't end. Yes, it goes on and on, my friend.</Content>
+      </InlineAlert>
+    </div>
+  )
 };
