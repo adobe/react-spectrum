@@ -87,6 +87,18 @@ describe('GridList', () => {
     expect(grid).toHaveAttribute('aria-label', 'test');
   });
 
+  it('should support refs', () => {
+    let listBoxRef = React.createRef();
+    let itemRef = React.createRef();
+    render(
+      <GridList aria-label="Test" ref={listBoxRef}>
+        <Item ref={itemRef}>Cat</Item>
+      </GridList>
+    );
+    expect(listBoxRef.current).toBeInstanceOf(HTMLElement);
+    expect(itemRef.current).toBeInstanceOf(HTMLElement);
+  });
+
   it('should support hover', () => {
     let {getAllByRole} = renderGridList({selectionMode: 'multiple'}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
     let row = getAllByRole('row')[0];
