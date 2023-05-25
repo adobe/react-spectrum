@@ -31,10 +31,15 @@ export interface RangeCalendarStateOptions<T extends DateValue = DateValue> exte
    */
   createCalendar: (name: string) => Calendar,
   /**
-   * The amount of days that will be displayed at once. This affects how pagination works.
+   * The amount of days that will be displayed at once. This affects how pagination works in case visibleDuration is not provided.
    * @default {months: 1}
    */
-  visibleDuration?: DateDuration
+  visibleDuration?: DateDuration,
+  /**
+   * The amount of days that will be used for advancing to next/previous page.
+   * @default visibleDuration
+   */
+  pageDuration?: DateDuration
 }
 
 /**

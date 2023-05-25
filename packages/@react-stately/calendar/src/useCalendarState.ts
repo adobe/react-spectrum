@@ -43,10 +43,15 @@ export interface CalendarStateOptions<T extends DateValue = DateValue> extends C
    */
   createCalendar: (name: string) => Calendar,
   /**
-   * The amount of days that will be displayed at once. This affects how pagination works.
+   * The amount of days that will be displayed at once. This affects how pagination works in case visibleDuration is not provided.
    * @default {months: 1}
    */
   visibleDuration?: DateDuration,
+  /**
+   * The amount of days that will be used for advancing to next/previous page.
+   * @default visibleDuration
+   */
+  pageDuration?: DateDuration,
   /** Determines how to align the initial selection relative to the visible date range. */
   selectionAlignment?: 'start' | 'center' | 'end'
 }
@@ -67,6 +72,8 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
     selectionAlignment,
     isDateUnavailable
   } = props;
+
+  let pageDuration = props.pageDuration ?? visibleDuration;
 
   let calendar = useMemo(() => createCalendar(resolvedOptions.calendar), [createCalendar, resolvedOptions.calendar]);
 
@@ -208,23 +215,23 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
       }
     },
     focusNextPage() {
-      let start = startDate.add(visibleDuration);
-      setFocusedDate(constrainValue(focusedDate.add(visibleDuration), minValue, maxValue));
+      let start = startDate.add(pageDuration);
+      setFocusedDate(constrainValue(focusedDate.add(pageDuration), minValue, maxValue));
       setStartDate(
         alignStart(
-          constrainStart(focusedDate, start, visibleDuration, locale, minValue, maxValue),
-          visibleDuration,
+          constrainStart(focusedDate, start, pageDuration, locale, minValue, maxValue),
+          pageDuration,
           locale
         )
       );
     },
     focusPreviousPage() {
-      let start = startDate.subtract(visibleDuration);
-      setFocusedDate(constrainValue(focusedDate.subtract(visibleDuration), minValue, maxValue));
+      let start = startDate.subtract(pageDuration);
+      setFocusedDate(constrainValue(focusedDate.subtract(pageDuration), minValue, maxValue));
       setStartDate(
         alignStart(
-          constrainStart(focusedDate, start, visibleDuration, locale, minValue, maxValue),
-          visibleDuration,
+          constrainStart(focusedDate, start, pageDuration, locale, minValue, maxValue),
+          pageDuration,
           locale
         )
       );
