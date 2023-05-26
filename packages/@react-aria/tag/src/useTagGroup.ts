@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMAttributes, DOMProps, Validation} from '@react-types/shared';
+import {AriaLabelingProps, CollectionBase, DOMAttributes, DOMProps, HelpTextProps, KeyboardDelegate, LabelableProps, MultipleSelection, SelectionBehavior} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {Key, RefObject, useEffect, useRef, useState} from 'react';
+import {ListKeyboardDelegate} from '@react-aria/selection';
 import type {ListState} from '@react-stately/list';
-import {RefObject, useEffect, useRef, useState} from 'react';
-import {TagGroupProps} from '@react-types/tag';
-import {TagKeyboardDelegate} from './TagKeyboardDelegate';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useGridList} from '@react-aria/gridlist';
@@ -32,13 +31,26 @@ export interface TagGroupAria {
   errorMessageProps: DOMAttributes
 }
 
-export interface AriaTagGroupProps<T> extends TagGroupProps<T>, DOMProps, AriaLabelingProps, Validation {
+export interface AriaTagGroupProps<T> extends CollectionBase<T>, MultipleSelection, DOMProps, LabelableProps, AriaLabelingProps, HelpTextProps {
+  /** How multiple selection should behave in the collection. */
+  selectionBehavior?: SelectionBehavior,
+  /** Handler that is called when a user deletes a tag.  */
+  onRemove?: (keys: Set<Key>) => void
+}
+
+export interface AriaTagGroupOptions<T> extends Omit<AriaTagGroupProps<T>, 'children'> {
   /**
    * An optional keyboard delegate to handle arrow key navigation,
    * to override the default.
    */
-  keyboardDelegate?: TagKeyboardDelegate<T>
+  keyboardDelegate?: KeyboardDelegate
 }
+
+interface HookData {
+  onRemove?: (keys: Set<Key>) => void
+}
+
+export const hookData = new WeakMap<ListState<any>, HookData>();
 
 /**
  * Provides the behavior and accessibility implementation for a tag group component.
@@ -47,11 +59,22 @@ export interface AriaTagGroupProps<T> extends TagGroupProps<T>, DOMProps, AriaLa
  * @param state - State for the tag group, as returned by `useListState`.
  * @param ref - A ref to a DOM element for the tag group.
  */
-export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: ListState<T>, ref: RefObject<HTMLElement>): TagGroupAria {
+export function useTagGroup<T>(props: AriaTagGroupOptions<T>, state: ListState<T>, ref: RefObject<HTMLElement>): TagGroupAria {
   let {direction} = useLocale();
-  let keyboardDelegate = props.keyboardDelegate || new TagKeyboardDelegate(state.collection, direction);
+  let keyboardDelegate = props.keyboardDelegate || new ListKeyboardDelegate({
+    collection: state.collection,
+    ref,
+    orientation: 'horizontal',
+    direction,
+    disabledKeys: state.disabledKeys
+  });
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField(props);
-  let {gridProps} = useGridList({...props, ...fieldProps, keyboardDelegate}, state, ref);
+  let {gridProps} = useGridList({
+    ...props,
+    ...fieldProps,
+    keyboardDelegate,
+    shouldFocusWrap: true
+  }, state, ref);
 
   let [isFocusWithin, setFocusWithin] = useState(false);
   let {focusWithinProps} = useFocusWithin({
@@ -67,6 +90,8 @@ export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: ListState<T>,
     }
     prevCount.current = state.collection.size;
   }, [state.collection.size, isFocusWithin, ref]);
+
+  hookData.set(state, {onRemove: props.onRemove});
 
   return {
     gridProps: mergeProps(gridProps, domProps, {

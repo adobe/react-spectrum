@@ -1,5 +1,6 @@
 {
   "actions": "액션",
   "hideButtonLabel": "간단히 표시",
+  "noTags": "없음",
   "showAllButtonLabel": "모두 표시 ({tagCount, number})"
 }
