@@ -221,7 +221,7 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
           values={[
             [InternalListBoxContext, {state, shouldFocusOnHover: props.shouldFocusOnHover, dragAndDropHooks, dragState, dropState}],
             [SeparatorContext, {elementType: 'li'}],
-            [DropIndicatorContext, {render: ListBoxDropIndicator}]
+            [DropIndicatorContext, {render: ListBoxDropIndicatorWrapper}]
           ]}>
           {children}
         </Provider>
@@ -272,7 +272,8 @@ function ListBoxSection<T>({section, className, style, ...otherProps}: ListBoxSe
       {...filterDOMProps(otherProps)}
       {...groupProps}
       className={className || section.props?.className || 'react-aria-Section'}
-      style={style || section.props?.style}>
+      style={style || section.props?.style}
+      ref={section.props.ref}>
       {children}
     </section>
   );
@@ -283,7 +284,7 @@ interface OptionProps<T> {
 }
 
 function Option<T>({item}: OptionProps<T>) {
-  let ref = useRef<HTMLDivElement>(null);
+  let ref = useObjectRef<HTMLDivElement>(item.props.ref);
   let {state, shouldFocusOnHover, dragAndDropHooks, dragState, dropState} = useContext(InternalListBoxContext)!;
   let {optionProps, labelProps, descriptionProps, ...states} = useOption(
     {key: item.key},
@@ -344,7 +345,7 @@ function Option<T>({item}: OptionProps<T>) {
         renderDropIndicator({type: 'item', key: item.key, dropPosition: 'before'})
       }
       <div
-        {...mergeProps(optionProps, hoverProps, draggableItem?.dragProps, droppableItem?.dropProps)}
+        {...mergeProps(filterDOMProps(props as any), optionProps, hoverProps, draggableItem?.dragProps, droppableItem?.dropProps)}
         {...renderProps}
         ref={ref}
         data-hovered={isHovered || undefined}
@@ -372,7 +373,7 @@ function Option<T>({item}: OptionProps<T>) {
   );
 }
 
-function ListBoxDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
+function ListBoxDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
   ref = useObjectRef(ref);
   let {dragAndDropHooks, dropState} = useContext(InternalListBoxContext)!;
   let {dropIndicatorProps, isHidden, isDropTarget} = dragAndDropHooks!.useDropIndicator!(
@@ -385,9 +386,25 @@ function ListBoxDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLE
     return null;
   }
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+  return (
+    <ListBoxtDropIndicatorForwardRef {...props} dropIndicatorProps={dropIndicatorProps} isDropTarget={isDropTarget} ref={ref} />
+  );
+}
+
+interface ListBoxDropIndicatorProps extends DropIndicatorProps {
+  dropIndicatorProps: React.HTMLAttributes<HTMLElement>,
+  isDropTarget: boolean
+}
+
+function ListBoxtDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
+  let {
+    dropIndicatorProps,
+    isDropTarget,
+    ...otherProps
+  } = props;
+
   let renderProps = useRenderProps({
-    ...props,
+    ...otherProps,
     defaultClassName: 'react-aria-DropIndicator',
     values: {
       isDropTarget
@@ -404,3 +421,5 @@ function ListBoxDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLE
       data-drop-target={isDropTarget || undefined} />
   );
 }
+
+const ListBoxtDropIndicatorForwardRef = forwardRef(ListBoxtDropIndicator);

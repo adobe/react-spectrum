@@ -17,7 +17,7 @@ import Delete from '@spectrum-icons/workflow/Delete';
 import Edit from '@spectrum-icons/workflow/Edit';
 import {Flex} from '@react-spectrum/layout';
 import {Link} from '@react-spectrum/link';
-import React, {CSSProperties, useState} from 'react';
+import React, {useState} from 'react';
 import SaveTo from '@spectrum-icons/workflow/SaveTo';
 import {SpectrumTooltipTriggerProps} from '@react-types/tooltip';
 import {Tooltip, TooltipTrigger} from '../src';
@@ -174,25 +174,6 @@ export const TooltripTriggerInsideActionGroup: TooltipTriggerStory = {
       </TooltipTrigger>
     </ActionGroup>
   )
-};
-
-const TooltipDivRender = (props) => {
-  const [isDisabled, setIsDisabled] = useState(false);
-  const wrapperStyle: CSSProperties = {width: '400px', height: '400px', backgroundColor: 'red', position: 'absolute'};
-  return (
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
-    <div onClick={() => setIsDisabled(!isDisabled)} style={wrapperStyle}>
-      <TooltipTrigger {...props} isOpen>
-        <ActionButton isDisabled={isDisabled} aria-label="Edit" UNSAFE_style={{top: '50px'}}>click red to disable</ActionButton>
-        <Tooltip>Click on tooltip doesn't propagate to parent</Tooltip>
-      </TooltipTrigger>
-    </div>
-  );
-};
-export const TooltripTriggerInsideDiv: TooltipTriggerStory = {
-  args: {delay: 0},
-  render: (args) => <TooltipDivRender {...args} />,
-  parameters: {description: {data: 'Event handlers are attached to the parent of the tooltip trigger. They should not be called when the tooltip itself is clicked.'}}
 };
 
 export const ArrowPositioningAtEdge: TooltipTriggerStory = {

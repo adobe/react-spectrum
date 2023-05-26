@@ -15,17 +15,17 @@ import {Label, Slider, SliderContext, SliderOutput, SliderThumb, SliderTrack} fr
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
-let TestSlider = ({sliderProps, thumbProps, trackProps}) => (
+let TestSlider = ({sliderProps, thumbProps, trackProps, outputProps}) => (
   <Slider {...sliderProps}>
     <Label>Opacity</Label>
-    <SliderOutput />
+    <SliderOutput {...outputProps} />
     <SliderTrack {...trackProps}>
       <SliderThumb {...thumbProps} />
     </SliderTrack>
   </Slider>
 );
 
-let renderSlider = (sliderProps, thumbProps, trackProps) => render(<TestSlider {...{sliderProps, thumbProps, trackProps}} />);
+let renderSlider = (sliderProps, thumbProps, trackProps, outputProps) => render(<TestSlider {...{sliderProps, thumbProps, trackProps, outputProps}} />);
 
 describe('Slider', () => {
   it('should render a button with default class', () => {
@@ -46,11 +46,12 @@ describe('Slider', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole} = renderSlider({'data-foo': 'bar'}, {'data-bar': 'foo'}, {'data-test': 'test'});
+    let {getByRole} = renderSlider({'data-foo': 'bar'}, {'data-bar': 'foo'}, {'data-test': 'test'}, {'data-output': 'output'});
     let group = getByRole('group');
     expect(group).toHaveAttribute('data-foo', 'bar');
     expect(group.querySelector('.react-aria-SliderThumb')).toHaveAttribute('data-bar', 'foo');
     expect(group.querySelector('.react-aria-SliderTrack')).toHaveAttribute('data-test', 'test');
+    expect(group.querySelector('.react-aria-SliderOutput')).toHaveAttribute('data-output', 'output');
   });
 
   it('should support render props', () => {

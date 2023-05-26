@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/toggle",
-  "version": "3.5.1",
+  "version": "3.5.2",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -23,8 +23,8 @@
   },
   "dependencies": {
     "@react-stately/utils": "^3.6.0",
-    "@react-types/checkbox": "^3.4.3",
-    "@react-types/shared": "^3.18.0",
+    "@react-types/checkbox": "^3.4.4",
+    "@react-types/shared": "^3.18.1",
     "@swc/helpers": "^0.4.14"
   },
   "peerDependencies": {

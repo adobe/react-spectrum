@@ -11,6 +11,7 @@
     "check-types": "tsc && tsc-strict",
     "install-16": "yarn add -W react@^16.8.0 react-dom@^16.8.0 @testing-library/react@^12 @testing-library/react-hooks@^8 @testing-library/dom@^8",
     "install-17": "yarn add -W react@^17 react-dom@^17 @testing-library/react@^12 @testing-library/react-hooks@^8 @testing-library/dom@^8",
+    "install-canary": "yarn add -W react@canary react-dom@canary",
     "start": "cross-env NODE_ENV=storybook start-storybook -p 9003 --ci -c '.storybook'",
     "build:storybook": "build-storybook -c .storybook -o dist/$(git rev-parse HEAD)/storybook",
     "build:storybook-16": "build-storybook -c .storybook -o dist/$(git rev-parse HEAD)/storybook-16",

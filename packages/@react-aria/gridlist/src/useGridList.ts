@@ -46,7 +46,12 @@ export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'chil
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
    */
-  keyboardDelegate?: KeyboardDelegate
+  keyboardDelegate?: KeyboardDelegate,
+  /**
+   * Whether focus should wrap around when the end/start is reached.
+   * @default false
+   */
+  shouldFocusWrap?: boolean
 }
 
 export interface GridListAria {
@@ -79,7 +84,8 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     ref,
     keyboardDelegate: keyboardDelegate,
     isVirtualized,
-    selectOnFocus: state.selectionManager.selectionBehavior === 'replace'
+    selectOnFocus: state.selectionManager.selectionBehavior === 'replace',
+    shouldFocusWrap: props.shouldFocusWrap
   });
 
   let id = useId(props.id);
