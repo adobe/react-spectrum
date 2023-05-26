@@ -222,7 +222,7 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
       data-readonly={isReadOnly || undefined}
       data-validation-state={props.validationState || groupState?.validationState || undefined}
       data-required={props.isRequired || undefined}>
-      <VisuallyHidden>
+      <VisuallyHidden elementType="span">
         <input {...inputProps} {...focusProps} ref={ref} />
       </VisuallyHidden>
       {renderProps.children}
