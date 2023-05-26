@@ -16,7 +16,7 @@ const reactVersion = require('react-dom/package.json').version;
 module.exports = new Resolver({
   async resolve({specifier}) {
     if (specifier === 'react-dom/client') {
-      let specifier = reactVersion.startsWith('18') ? 'react-dom/client?original' : 'react-dom/index?original';
+      let specifier = reactVersion.startsWith('18') ? 'react-dom/client.js' : 'react-dom/index.js';
       return {
         filePath: __dirname + '/react.js',
         code: `

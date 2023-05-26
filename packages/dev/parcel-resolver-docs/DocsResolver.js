@@ -49,17 +49,7 @@ module.exports = new Resolver({
       }
     }
 
-    if (/^@(react-spectrum|react-aria|react-stately)\/(.*?)\/docs\/(.*)$/.test(specifier)) {
-      let baseDir = process.env.DOCS_ENV === 'production' ? 'docs' : 'packages';
-      return {filePath: path.join(options.projectRoot, baseDir, specifier)};
-    }
-
-    if (/^@(react-spectrum)\/labeledvalue\/src\/(.*)$/.test(specifier)) {
-      let baseDir = process.env.DOCS_ENV === 'production' ? 'docs' : 'packages';
-      return {filePath: path.join(options.projectRoot, baseDir, specifier + '.tsx')};
-    }
-
-    if (/^(react-aria|react-stately|react-aria-components|@(adobe|react-spectrum|react-aria|react-stately|internationalized|spectrum-icons)\/(.*?))\/package\.json$/.test(specifier)) {
+    if (/^@(react-spectrum|react-aria)\/(.*?)\/docs\/(.*)$/.test(specifier)) {
       let baseDir = process.env.DOCS_ENV === 'production' ? 'docs' : 'packages';
       return {filePath: path.join(options.projectRoot, baseDir, specifier)};
     }
