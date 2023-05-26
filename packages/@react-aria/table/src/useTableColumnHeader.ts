@@ -15,8 +15,8 @@ import {getColumnHeaderId} from './utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isAndroid, mergeProps, useDescription} from '@react-aria/utils';
-import {RefObject} from 'react';
+import {isAndroid, mergeProps, useDescription, useLayoutEffect} from '@react-aria/utils';
+import {RefObject, useRef, useState} from 'react';
 import {TableState} from '@react-stately/table';
 import {useFocusable} from '@react-aria/focus';
 import {useGridCell} from '@react-aria/grid';
@@ -80,6 +80,19 @@ export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, st
 
   let descriptionProps = useDescription(sortDescription);
 
+  let shouldDisableFocus = (state.collection.size === 0 &&
+    state.collection.body.props.loadingState !== 'loading' &&
+    state.collection.body.props.loadingState !== 'loadingMore');
+  // delay disabling focus so we get a blur event on the cell to clean up the focus ring
+  let [disableFocus, setDisableFocus]  = useState(shouldDisableFocus);
+
+  useLayoutEffect(() => {
+    if (shouldDisableFocus && !disableFocus && ref.current === document.activeElement) {
+      ref.current?.blur();
+    }
+    setDisableFocus(shouldDisableFocus);
+  }, [shouldDisableFocus, disableFocus]);
+
   return {
     columnHeaderProps: {
       ...mergeProps(
@@ -88,9 +101,7 @@ export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, st
         focusableProps,
         descriptionProps,
         // If the table is empty, make all column headers untabbable or programatically focusable
-        (state.collection.size === 0 &&
-        state.collection.body.props.loadingState !== 'loading' &&
-        state.collection.body.props.loadingState !== 'loadingMore') && {tabIndex: null}
+        shouldDisableFocus && disableFocus && {tabIndex: null}
       ),
       role: 'columnheader',
       id: getColumnHeaderId(state, node.key),

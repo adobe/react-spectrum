@@ -1796,7 +1796,7 @@ export const ColumnHeaderFocusRingTable = {
   storyName: 'column header focus after loading',
   parameters: {
     description: {
-      data: 'Column header should remain focused even if the table collections empties/loading state changes to loading'
+      data: 'Column header should remain focused even if the table collections empties/loading state changes to loading. To simulate this, keyboard navigate to the Height column and sort it a few times. Each sort will remove one item.'
     }
   }
 };
@@ -1813,7 +1813,7 @@ function LoadingTable() {
     setItems([]);
     setLoadingState('loading');
     setTimeout(() => {
-      setItems([...items.slice(0, 1)]);
+      setItems([...items.slice(0, items.length - 1)]);
       setLoadingState(undefined);
     }, 1000);
   };
