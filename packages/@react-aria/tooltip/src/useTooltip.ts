@@ -14,7 +14,7 @@ import {AriaTooltipProps} from '@react-types/tooltip';
 import {DOMAttributes} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {TooltipTriggerState} from '@react-stately/tooltip';
-import {useHover, usePress} from '@react-aria/interactions';
+import {useHover} from '@react-aria/interactions';
 
 export interface TooltipAria {
   /**
@@ -28,7 +28,6 @@ export interface TooltipAria {
  */
 export function useTooltip(props: AriaTooltipProps, state?: TooltipTriggerState): TooltipAria {
   let domProps = filterDOMProps(props, {labelable: true});
-  let {pressProps} = usePress({});
 
   let {hoverProps} = useHover({
     onHoverStart: () => state?.open(true),
@@ -36,7 +35,7 @@ export function useTooltip(props: AriaTooltipProps, state?: TooltipTriggerState)
   });
 
   return {
-    tooltipProps: mergeProps(domProps, hoverProps, pressProps, {
+    tooltipProps: mergeProps(domProps, hoverProps, {
       role: 'tooltip'
     })
   };

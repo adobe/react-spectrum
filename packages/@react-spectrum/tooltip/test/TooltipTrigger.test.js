@@ -976,33 +976,4 @@ describe('TooltipTrigger', function () {
       expect(queryByRole('tooltip')).toBeNull();
     });
   });
-
-  it('does not propagate pointer or click through the portal', () => {
-    let onPointerDown = jest.fn();
-    let onPointerUp = jest.fn();
-    let onClick = jest.fn();
-
-    let {getByRole} = render(
-      <Provider theme={theme}>
-        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */}
-        <div onPointerDown={onPointerDown} onPointerUp={onPointerUp} onClick={onClick}>
-          <TooltipTrigger>
-            <ActionButton>Trigger</ActionButton>
-            <Tooltip>Helpful information.</Tooltip>
-          </TooltipTrigger>
-        </div>
-      </Provider>
-    );
-
-    let button = getByRole('button');
-    act(() => {
-      button.focus();
-    });
-
-    let tooltip = getByRole('tooltip');
-    triggerPress(tooltip);
-    expect(onPointerDown).not.toHaveBeenCalled();
-    expect(onPointerUp).not.toHaveBeenCalled();
-    expect(onClick).not.toHaveBeenCalled();
-  });
 });

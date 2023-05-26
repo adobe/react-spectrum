@@ -1,5 +1,6 @@
 {
   "actions": "Műveletek",
   "hideButtonLabel": "Mutass kevesebbet",
+  "noTags": "Egyik sem",
   "showAllButtonLabel": "Az összes megjelenítése ({tagCount, number})"
 }

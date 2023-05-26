@@ -13,6 +13,7 @@
 import {AriaNumberFieldProps, useLocale, useNumberField} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {filterDOMProps} from '@react-aria/utils';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
@@ -46,6 +47,9 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
     defaultClassName: 'react-aria-NumberField'
   });
 
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
+
   return (
     <Provider
       values={[
@@ -65,7 +69,7 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
           }
         }]
       ]}>
-      <div {...renderProps} ref={ref} slot={props.slot} />
+      <div {...DOMProps} {...renderProps} ref={ref} slot={props.slot} />
     </Provider>
   );
 }
