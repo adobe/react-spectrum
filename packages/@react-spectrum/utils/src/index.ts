@@ -29,8 +29,8 @@ export {
   getResponsiveProp
 } from './styleProps';
 export {useSlotProps, cssModuleToSlots, SlotProvider, ClearSlots} from './Slots';
-export {useHasChild} from './useHasChild';
-export {useIsMobileDevice} from './useIsMobileDevice';
+export {useHasChild} from '@react-aria/utils';
+export {useIsMobileDevice} from '@react-aria/utils';
 export {useValueEffect} from '@react-aria/utils';
 export {BreakpointProvider, useMatchedBreakpoints, useBreakpoint} from './BreakpointProvider';
 export {useResizeObserver} from '@react-aria/utils';

@@ -18,14 +18,6 @@ import React from 'react';
 import userEvent from '@testing-library/user-event';
 
 describe('DropZone', () => {
-  beforeAll(function () {
-    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
-    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
-    window.HTMLElement.prototype.scrollIntoView = jest.fn();
-    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
-    jest.useFakeTimers();
-  });
-
   it('should render a dropzone', () => {
     let {getByTestId} = render(
       <DropZone data-testid="foo">
@@ -132,7 +124,20 @@ describe('DropZone', () => {
         </Text>
       </DropZone>);
     let button = getByRole('button');
-    expect(button).toHaveAttribute('aria-label', 'Press enter to select a file');
+    expect(button).toHaveAttribute('aria-label', 'Open file system');
+  });
+
+  it('should not have a visible input', () => {
+    let {getByTestId} = render(
+      <DropZone>
+        <Input data-testid="foo" />
+        <Text slot="heading">
+          Test
+        </Text>
+      </DropZone>);
+    let input = getByTestId('foo');
+    expect(input).not.toBeVisible();
+    expect(input).toHaveStyle('display: none');
   });
 
   it('should support render props', () => {
@@ -153,7 +158,7 @@ describe('DropZone', () => {
     let {getByTestId, getByRole} = render(
       <DropZone data-testid="foo">
         <Button slot="file">Upload</Button>
-        <Input data-testid="boo" />
+        <Input />
       </DropZone>);
 
     let dropzone = getByTestId('foo');
@@ -163,11 +168,10 @@ describe('DropZone', () => {
 
     userEvent.tab();
     expect(document.activeElement).toBe(button);
-    expect(dropzone).not.toHaveAttribute('data-focus-visible');
+    expect(dropzone).toHaveAttribute('data-focus-visible');
     expect(button).toHaveAttribute('data-focus-visible', 'true');
 
     userEvent.tab();
-    expect(dropzone).not.toHaveAttribute('data-focus-visible');
     expect(button).not.toHaveAttribute('data-focus-visible');
   });
 
@@ -175,7 +179,7 @@ describe('DropZone', () => {
     let {getByTestId, getByRole} = render(
       <DropZone data-testid="foo">
         <Link slot="file">Upload</Link>
-        <Input data-testid="boo" />
+        <Input />
       </DropZone>);
 
     let dropzone = getByTestId('foo');
@@ -185,13 +189,12 @@ describe('DropZone', () => {
 
     userEvent.tab();
     expect(document.activeElement).toBe(link);
-    expect(dropzone).not.toHaveAttribute('data-focus-visible');
+    expect(dropzone).toHaveAttribute('data-focus-visible');
     expect(link).toHaveAttribute('data-focus-visible', 'true');
 
     userEvent.tab();
-    expect(dropzone).not.toHaveAttribute('data-focus-visible');
     expect(link).not.toHaveAttribute('data-focus-visible');
-  });   
+  });  
 
   it('should support press state', () => {
     let onPress = jest.fn();
@@ -446,29 +449,11 @@ describe('DropZone', () => {
       </DropZone>
     );
     let button = getByRole('button');
-    expect(button).toHaveAttribute('aria-label', 'Press enter to select a file');
+    expect(button).toHaveAttribute('aria-label', 'Open file system');
     
     userEvent.upload(button, file);
     expect(button.files[0]).toStrictEqual(file);
     expect(button.files.item(0)).toStrictEqual(file);
     expect(button.files).toHaveLength(1);
-  });
-});
-
-describe('mobile dropzone', () => {
-  beforeEach(() => {
-    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 700);
-  });
-
-  it('should have correct aria-label with input', () => {
-    let {getByRole} = render(
-      <DropZone>
-        <Input />
-        <Text slot="heading">
-          Test
-        </Text>
-      </DropZone>);
-    let button = getByRole('button');
-    expect(button).toHaveAttribute('aria-label', 'Double tap to select a file');
   });
 });

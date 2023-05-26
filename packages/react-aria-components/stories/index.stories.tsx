@@ -872,7 +872,7 @@ export const DropzoneExampleWithCopyableObject = (props) => (
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
       <Text slot="heading">
-        DropzoneArea
+        DropZone Area
       </Text>
     </DropZone>
   </div>

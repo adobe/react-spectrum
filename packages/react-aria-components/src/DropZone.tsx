@@ -14,7 +14,7 @@ import {AriaLabelingProps, PressEvents} from '@react-types/shared';
 import {ButtonContext} from './Button';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {DropOptions, mergeProps, useButton, useClipboard, useDrop, useFocusRing, useHover, useId, usePress, VisuallyHidden} from 'react-aria';
-import {filterDOMProps, useHasChild, useIsMobileDevice} from '@react-aria/utils';
+import {filterDOMProps, useHasChild} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {isVirtualDragging} from '@react-aria/dnd';
 import {LinkContext} from './Link';
@@ -56,7 +56,7 @@ export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDiv
 
 function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DropZoneContext);
-  let {onPress, onPressChange, onPressEnd, onPressStart, onPressUp} = props;
+  let {onPress, onPressStart, onPressEnd, onPressChange, onPressUp} = props;
   let {dropProps, isDropTarget} = useDrop({...props, ref});
   let {hoverProps, isHovered} = useHover({});
   let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
@@ -66,17 +66,14 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   let hasButton = useHasChild('button[slot=file]', ref);
   let hasLink = useHasChild('span[slot=file]', ref);
 
-  let isMobile = useIsMobileDevice();
   let hasInput = useHasChild('input[type=file]', ref);
   let textId = useId();
   let isVirtualDrag = isVirtualDragging();
   let labelText = useMemo(() => {
-    if (!isVirtualDrag && hasInput && !isMobile) {
-      return 'Press enter to select a file';
-    } else if (!isVirtualDrag && hasInput) {
-      return 'Double tap to select a file';
+    if (!isVirtualDrag && hasInput) {
+      return 'Open file system';
     }
-  }, [isVirtualDrag, hasInput, isMobile]);
+  }, [isVirtualDrag, hasInput]);
   let labelProps = useLabels({'aria-label': labelText, 'aria-labelledby': textId});
 
   let {buttonProps, isPressed} = useButton({
@@ -106,7 +103,6 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   delete DOMProps.id;
 
   let {pressProps} = usePress({
-    ref,
     onPress: (e) => {
       if (onPress) {
         onPress(e);
@@ -153,7 +149,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
         [TextContext, {id: textId, slot: 'heading'}]
       ]}>
       <div
-        {...mergeProps(dropProps, hoverProps, pressProps, DOMProps, buttonProps)}
+        {...mergeProps(dropProps, hoverProps, pressProps, DOMProps, buttonProps, focusProps)}
         {...renderProps}
         ref={ref}
         slot={props.slot}
