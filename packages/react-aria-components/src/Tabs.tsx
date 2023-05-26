@@ -78,8 +78,7 @@ export interface TabRenderProps {
 export interface TabPanelProps extends AriaTabPanelProps, RenderProps<TabPanelRenderProps> {
   /**
    * Whether to mount the tab panel in the DOM even when it is not currently selected.
-   * Inactive tab panels are inert so they cannot be interacted with. It is your responsibility
-   * to style them appropriately so this is clear to the user visually as well.
+   * Inactive tab panels are inert and cannot be interacted with. They must be styled appropriately so this is clear to the user visually.
    * @default false
    */
   shouldForceMount?: boolean
