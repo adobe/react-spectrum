@@ -21,7 +21,7 @@ import {FocusScope} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {OpenTransition} from '@react-spectrum/overlays';
-import React, {ReactElement, useEffect, useRef} from 'react';
+import React, {ReactElement, Ref, useEffect, useRef} from 'react';
 import {SpectrumActionBarProps} from '@react-types/actionbar';
 import styles from './actionbar.css';
 import {Text} from '@react-spectrum/text';
@@ -31,13 +31,15 @@ import {useProviderProps} from '@react-spectrum/provider';
 
 function ActionBar<T extends object>(props: SpectrumActionBarProps<T>, ref: DOMRef<HTMLDivElement>) {
   let isOpen = props.selectedItemCount !== 0;
+  let domRef = useDOMRef(ref);
 
   return (
     <OpenTransition
+      nodeRef={domRef}
       in={isOpen}
       mountOnEnter
       unmountOnExit>
-      <ActionBarInnerWithRef {...props} ref={ref} />
+      <ActionBarInnerWithRef {...props} ref={domRef} />
     </OpenTransition>
   );
 }
@@ -46,7 +48,7 @@ interface ActionBarInnerProps<T> extends SpectrumActionBarProps<T> {
   isOpen?: boolean
 }
 
-function ActionBarInner<T>(props: ActionBarInnerProps<T>, ref: DOMRef<HTMLDivElement>) {
+function ActionBarInner<T>(props: ActionBarInnerProps<T>, ref: Ref<HTMLDivElement>) {
   props = useProviderProps(props);
 
   let {
@@ -55,11 +57,11 @@ function ActionBarInner<T>(props: ActionBarInnerProps<T>, ref: DOMRef<HTMLDivEle
     onAction,
     onClearSelection,
     selectedItemCount,
-    isOpen
+    isOpen,
+    items
   } = props;
 
   let {styleProps} = useStyleProps(props);
-  let domRef = useDOMRef(ref);
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   // Store the last count greater than zero in a ref so that we can retain it while rendering the fade-out animation.
@@ -88,7 +90,7 @@ function ActionBarInner<T>(props: ActionBarInnerProps<T>, ref: DOMRef<HTMLDivEle
         {...filterDOMProps(props)}
         {...styleProps}
         {...keyboardProps}
-        ref={domRef}
+        ref={ref}
         className={classNames(
           styles,
           'react-spectrum-ActionBar', {
@@ -99,6 +101,7 @@ function ActionBarInner<T>(props: ActionBarInnerProps<T>, ref: DOMRef<HTMLDivEle
         )}>
         <div className={classNames(styles, 'react-spectrum-ActionBar-bar')}>
           <ActionGroup
+            items={items}
             aria-label={stringFormatter.format('actions')}
             isQuiet
             staticColor={isEmphasized ? 'white' : undefined}
@@ -127,10 +130,10 @@ function ActionBarInner<T>(props: ActionBarInnerProps<T>, ref: DOMRef<HTMLDivEle
   );
 }
 
-const ActionBarInnerWithRef = React.forwardRef(ActionBarInner) as <T>(props: SpectrumActionBarProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof ActionBarInner>;
+const ActionBarInnerWithRef = React.forwardRef(ActionBarInner) as <T>(props: ActionBarInnerProps<T> & {ref?: Ref<HTMLDivElement>}) => ReactElement;
 
 /**
- * TODO: Add description of component here.
+ * Action bars are used for single and bulk selection patterns when a user needs to perform actions on one or more items at the same time.
  */
 const _ActionBar = React.forwardRef(ActionBar) as <T>(props: SpectrumActionBarProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_ActionBar as ActionBar};

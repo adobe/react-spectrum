@@ -24,6 +24,7 @@ import {Key, RefObject} from 'react';
 import {listMap} from './utils';
 import {ListState} from '@react-stately/list';
 import {useGridSelectionAnnouncement, useHighlightSelectionDescription} from '@react-aria/grid';
+import {useHasTabbableChild} from '@react-aria/focus';
 import {useSelectableList} from '@react-aria/selection';
 
 export interface GridListProps<T> extends CollectionBase<T>, MultipleSelection {
@@ -45,7 +46,12 @@ export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'chil
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
    */
-  keyboardDelegate?: KeyboardDelegate
+  keyboardDelegate?: KeyboardDelegate,
+  /**
+   * Whether focus should wrap around when the end/start is reached.
+   * @default false
+   */
+  shouldFocusWrap?: boolean
 }
 
 export interface GridListAria {
@@ -78,15 +84,20 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     ref,
     keyboardDelegate: keyboardDelegate,
     isVirtualized,
-    selectOnFocus: state.selectionManager.selectionBehavior === 'replace'
+    selectOnFocus: state.selectionManager.selectionBehavior === 'replace',
+    shouldFocusWrap: props.shouldFocusWrap
   });
 
-  let id = useId();
+  let id = useId(props.id);
   listMap.set(state, {id, onAction});
 
   let descriptionProps = useHighlightSelectionDescription({
     selectionManager: state.selectionManager,
     hasItemActions: !!onAction
+  });
+
+  let hasTabbableChild = useHasTabbableChild(ref, {
+    isDisabled: state.collection.size !== 0
   });
 
   let domProps = filterDOMProps(props, {labelable: true});
@@ -97,7 +108,8 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
       id,
       'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined
     },
-    state.collection.size === 0 ? {} : listProps,
+    // If collection is empty, make sure the grid is tabbable unless there is a child tabbable element.
+    state.collection.size === 0 ? {tabIndex: hasTabbableChild ? -1 : 0} : listProps,
     descriptionProps
   );
 

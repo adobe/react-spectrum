@@ -17,7 +17,7 @@ import {Keyboard} from '@react-spectrum/text';
 
 ```jsx import
 import {ActionButton} from '@react-spectrum/button'
-import {Item, Menu, MenuTrigger, Section} from '@react-spectrum/menu';
+import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {Flex} from '@react-spectrum/layout';
 
 ```
@@ -224,13 +224,11 @@ They apply controlled and uncontrolled behavior on the Menu respectively.
 ```tsx example
 function Example() {
   let [open, setOpen] = React.useState(false);
-  let [selection, setSelection] = React.useState('');
 
   return (
     <MenuTrigger
       isOpen={open}
-      onOpenChange={setOpen}
-      onSelectionChange={setSelection}>
+      onOpenChange={setOpen}>
       <ActionButton>
         View
       </ActionButton>

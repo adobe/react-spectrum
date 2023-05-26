@@ -1,3 +1,4 @@
 {
-  "remove": "Премахване"
+  "removeButtonLabel": "Премахване",
+  "removeDescription": "Натиснете Delete, за да премахнете маркера."
 }

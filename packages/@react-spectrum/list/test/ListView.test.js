@@ -14,6 +14,7 @@ jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, installPointerEvent, render as renderComponent, triggerPress, within} from '@react-spectrum/test-utils';
 import {ActionButton} from '@react-spectrum/button';
 import {announce} from '@react-aria/live-announcer';
+import {FocusExample} from '../stories/ListViewActions.stories';
 import {Item, ListView} from '../src';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -542,6 +543,65 @@ describe('ListView', function () {
         expect(document.activeElement).toBe(getRow(tree, 'Foo 100'));
       });
     });
+
+    it('should move focus to the next item that is not disabled when the focused item is removed', () => {
+      let tree = render(<FocusExample />);
+      let rows = tree.getAllByRole('row');
+      act(() => rows[3].focus());
+      expect(document.activeElement).toBe(rows[3]);
+      moveFocus('ArrowRight');
+      expect(document.activeElement).toBe(within(rows[3]).getByRole('button'));
+      expect(rows[4]).toHaveAttribute('aria-disabled', 'true');
+      triggerPress(document.activeElement);
+      act(() => {
+        jest.runAllTimers();
+      });
+      rows = tree.getAllByRole('row');
+      expect(document.activeElement).toBe(rows[4]);
+      act(() => rows[rows.length - 1].focus());
+      expect(document.activeElement).toBe(rows[rows.length - 1]);
+      moveFocus('ArrowRight');
+      expect(document.activeElement).toBe(within(rows[rows.length - 1]).getByRole('button'));
+      triggerPress(document.activeElement);
+      act(() => {
+        jest.runAllTimers();
+      });
+      rows = tree.getAllByRole('row');
+      expect(document.activeElement).toBe(rows[rows.length - 1]);
+      moveFocus('ArrowRight');
+      expect(document.activeElement).toBe(within(rows[rows.length - 1]).getByRole('button'));
+      triggerPress(document.activeElement);
+      act(() => {
+        jest.runAllTimers();
+      });
+      rows = tree.getAllByRole('row');
+      expect(document.activeElement).toBe(rows[rows.length - 1]);
+      moveFocus('ArrowRight');
+      expect(document.activeElement).toBe(within(rows[rows.length - 1]).getByRole('button'));
+      triggerPress(document.activeElement);
+      act(() => {
+        jest.runAllTimers();
+      });
+      rows = tree.getAllByRole('row');
+      expect(document.activeElement).toBe(rows[rows.length - 1]);
+      moveFocus('ArrowRight');
+      expect(document.activeElement).toBe(within(rows[rows.length - 1]).getByRole('button'));
+      triggerPress(document.activeElement);
+      act(() => {
+        jest.runAllTimers();
+      });
+      rows = tree.getAllByRole('row');
+      expect(document.activeElement).toBe(rows[rows.length - 1]);
+      moveFocus('ArrowRight');
+      expect(document.activeElement).toBe(within(rows[rows.length - 1]).getByRole('button'));
+      triggerPress(document.activeElement);
+      act(() => {
+        jest.runAllTimers();
+      });
+      rows = tree.getAllByRole('row');
+      expect(document.activeElement).toBe(rows[rows.length - 2]);
+      expect(rows[rows.length - 1]).toHaveAttribute('aria-disabled', 'true');
+    });
   });
 
   it('should display loading affordance with proper height (isLoading)', function () {
@@ -577,18 +637,20 @@ describe('ListView', function () {
     expect(progressbar.parentNode.parentNode.parentNode.style.height).toBe('40px');
   });
 
-  it('should render empty state', function () {
+  it('should render empty state', async function () {
     let {getByText} = render(<ListView aria-label="List" renderEmptyState={renderEmptyState} />);
+    await act(() => Promise.resolve()); // wait for MutationObserver in useHasTabbableChild or we get act warnings
     expect(getByText('No results')).toBeTruthy();
   });
 
-  it('should allow you to tab into ListView body if empty with link', function () {
+  it('should allow you to tab into ListView body if empty with link', async function () {
     let {getByRole} = render(
       <>
         <ActionButton>Toggle</ActionButton>
         <ListView aria-label="List" renderEmptyState={renderEmptyState}>{[]}</ListView>
       </>
     );
+    await act(() => Promise.resolve());
     let toggleButton = getByRole('button');
     let link = getByRole('link');
 
@@ -1403,4 +1465,6 @@ describe('ListView', function () {
       expect(document.activeElement).toBe(getRow(tree, 'Item 1'));
     });
   });
+
+
 });

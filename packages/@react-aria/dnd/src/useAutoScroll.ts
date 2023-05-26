@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {getScrollParent, isIOS, isWebKit} from '@react-aria/utils';
+import {getScrollParent, isIOS, isScrollable, isWebKit} from '@react-aria/utils';
 import {RefObject, useCallback, useEffect, useRef} from 'react';
 
 const AUTOSCROLL_AREA_SIZE = 20;
@@ -19,7 +19,7 @@ export function useAutoScroll(ref: RefObject<Element>) {
   let scrollableRef = useRef<Element>(null);
   useEffect(() => {
     if (ref.current) {
-      scrollableRef.current = getScrollParent(ref.current);
+      scrollableRef.current = isScrollable(ref.current) ? ref.current : getScrollParent(ref.current);
     }
   }, [ref]);
 
@@ -28,6 +28,16 @@ export function useAutoScroll(ref: RefObject<Element>) {
     dx: 0,
     dy: 0
   }).current;
+
+  useEffect(() => {
+    return () => {
+      if (state.timer) {
+        cancelAnimationFrame(state.timer);
+        state.timer = null;
+      }
+    };
+  // state will become a new object, so it's ok to use in the dependency array for unmount
+  }, [state]);
 
   let scroll = useCallback(() => {
     scrollableRef.current.scrollLeft += state.dx;

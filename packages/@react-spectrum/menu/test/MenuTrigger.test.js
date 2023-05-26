@@ -370,7 +370,6 @@ describe('MenuTrigger', function () {
       act(() => {jest.runAllTimers();}); // FocusScope raf
     }
 
-    // Can't figure out why this isn't working for the v2 component
     it.each`
       Name             | Component      | props
       ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
@@ -389,7 +388,39 @@ describe('MenuTrigger', function () {
       expect(document.activeElement).toBe(button);
     });
 
-    // Can't figure out why this isn't working for the v2 component
+    it.each`
+      Name             | Component      | props
+      ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
+    `('$Name does not clear selection with escape', function ({Component, props}) {
+      let onSelectionChange = jest.fn();
+      tree = renderComponent(Component, props, {selectionMode: 'multiple', defaultSelectedKeys: ['Foo'], onSelectionChange});
+      let button = tree.getByRole('button');
+      triggerPress(button);
+      act(() => {jest.runAllTimers();});
+      expect(onSelectionChange).not.toHaveBeenCalled();
+
+      let menu = tree.getByRole('menu');
+      expect(menu).toBeTruthy();
+      expect(within(menu).getAllByRole('menuitemcheckbox')[0]).toHaveAttribute('aria-checked', 'true');
+      fireEvent.keyDown(menu, {key: 'Escape', code: 27, charCode: 27});
+      act(() => {jest.runAllTimers();}); // FocusScope useLayoutEffect cleanup
+      act(() => {jest.runAllTimers();}); // FocusScope raf
+      expect(menu).not.toBeInTheDocument();
+      expect(document.activeElement).toBe(button);
+      expect(onSelectionChange).not.toHaveBeenCalled();
+
+      // reopen and make sure we still have the selection
+      triggerPress(button);
+      act(() => {jest.runAllTimers();});
+      expect(onSelectionChange).not.toHaveBeenCalled();
+
+      menu = tree.getByRole('menu');
+      expect(within(menu).getAllByRole('menuitemcheckbox')[0]).toHaveAttribute('aria-checked', 'true');
+      expect(menu).toBeTruthy();
+      fireEvent.keyDown(menu, {key: 'Escape', code: 27, charCode: 27});
+      expect(onSelectionChange).not.toHaveBeenCalled();
+    });
+
     it.each`
       Name             | Component      | props
       ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}

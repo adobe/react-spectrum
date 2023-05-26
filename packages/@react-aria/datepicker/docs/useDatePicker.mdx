@@ -93,7 +93,7 @@ import {DateField, Popover, Dialog, Calendar, Button} from 'your-component-libra
 
 function DatePicker(props) {
   let state = useDatePickerState(props);
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {groupProps, labelProps, fieldProps, buttonProps, dialogProps, calendarProps} = useDatePicker(props, state, ref);
 
   return (
@@ -128,7 +128,7 @@ The `Button` component is used in the above example to trigger the calendar popo
 import {useButton} from '@react-aria/button';
 
 function Button(props) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {buttonProps} = useButton(props, ref);
   return <button {...buttonProps} ref={ref}>{props.children}</button>;
 }
@@ -156,7 +156,7 @@ function DateField(props) {
     createCalendar
   });
 
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {labelProps, fieldProps} = useDateField(props, state, ref);
 
   return (
@@ -175,7 +175,7 @@ function DateField(props) {
 }
 
 function DateSegment({segment, state}) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {segmentProps} = useDateSegment(segment, state, ref);
 
   return (
@@ -244,11 +244,17 @@ See [usePopover](usePopover.html) for more examples of popovers.
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
+import type {AriaPopoverProps} from 'react-aria';
+import type {OverlayTriggerState} from 'react-stately';
 import {usePopover, Overlay, DismissButton} from '@react-aria/overlays';
 
-function Popover({children, state, ...props}) {
-  let ref = React.useRef();
-  let {popoverRef = ref} = props;
+interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef'> {
+  children: React.ReactNode,
+  state: OverlayTriggerState
+}
+
+function Popover({children, state, ...props}: PopoverProps) {
+  let popoverRef = React.useRef(null);
   let {popoverProps, underlayProps} = usePopover({
     ...props,
     popoverRef
@@ -284,10 +290,16 @@ The `Dialog` component is rendered within the `Popover` component. It is built u
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
+import type {AriaDialogProps} from '@react-aria/dialog';
 import {useDialog} from '@react-aria/dialog';
 
-function Dialog({title, children, ...props}) {
-  let ref = React.useRef();
+interface DialogProps extends AriaDialogProps {
+  title?: React.ReactNode,
+  children: React.ReactNode
+}
+
+function Dialog({title, children, ...props}: DialogProps) {
+  let ref = React.useRef(null);
   let {dialogProps, titleProps} = useDialog(props, ref);
 
   return (
@@ -315,8 +327,7 @@ The `Calendar` component implements the month grid shown within the `DatePicker`
 ```tsx example export=true render=false
 import {useCalendarState} from '@react-stately/calendar';
 import {useCalendar, useCalendarGrid, useCalendarCell} from '@react-aria/calendar';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
-import {createCalendar, startOfWeek, getWeeksInMonth} from '@internationalized/date';
+import {createCalendar, getWeeksInMonth} from '@internationalized/date';
 
 function Calendar(props) {
   let {locale} = useLocale();
@@ -326,11 +337,10 @@ function Calendar(props) {
     createCalendar
   });
 
-  let ref = React.useRef();
-  let {calendarProps, prevButtonProps, nextButtonProps, title} = useCalendar(props, state, ref);
+  let {calendarProps, prevButtonProps, nextButtonProps, title} = useCalendar(props, state);
 
   return (
-    <div {...calendarProps} ref={ref} className="calendar">
+    <div {...calendarProps} className="calendar">
       <div className="header">
         <h2>{title}</h2>
         <Button {...prevButtonProps}>&lt;</Button>
@@ -376,7 +386,7 @@ function CalendarGrid({state, ...props}) {
 }
 
 function CalendarCell({state, date}) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {
     cellProps,
     buttonProps,

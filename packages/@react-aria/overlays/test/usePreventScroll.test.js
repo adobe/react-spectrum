@@ -48,6 +48,22 @@ describe('usePreventScroll', function () {
     expect(document.documentElement).not.toHaveStyle('overflow: hidden');
   });
 
+  it('should work with nested/multiple modals regardless of unmount order', function () {
+    expect(document.documentElement).not.toHaveStyle('overflow: hidden');
+
+    let one = render(<Example />);
+    expect(document.documentElement).toHaveStyle('overflow: hidden');
+
+    let two = render(<Example />);
+    expect(document.documentElement).toHaveStyle('overflow: hidden');
+
+    one.unmount();
+    expect(document.documentElement).toHaveStyle('overflow: hidden');
+
+    two.unmount();
+    expect(document.documentElement).not.toHaveStyle('overflow: hidden');
+  });
+
   it('should remove overflow: hidden when isDisabled option is true', function () {
     expect(document.documentElement).not.toHaveStyle('overflow: hidden');
 

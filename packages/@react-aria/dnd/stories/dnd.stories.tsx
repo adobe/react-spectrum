@@ -37,7 +37,6 @@ import {PressResponder} from '@react-aria/interactions';
 import React, {useRef} from 'react';
 import {ReorderableGridExample} from './Reorderable';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
-import {storiesOf} from '@storybook/react';
 import {unwrapDOMRef} from '@react-spectrum/utils';
 import {useButton} from '@react-aria/button';
 import {useClipboard, useDrag, useDraggableCollection, useDraggableItem, useDrop} from '..';
@@ -52,174 +51,199 @@ for (let i = 0; i < 20; i++) {
   manyItems.push({id: '' + i, type: 'item', text: 'Item ' + i});
 }
 
-storiesOf('Drag and Drop', module)
-  .add(
-    'Default',
-    () => (
-      <Flex direction="column" gap="size-200" alignItems="center">
-        <Draggable />
-        <Droppable />
-        <input />
-        <Droppable type="text/html" />
-        <input />
-        <Droppable />
-      </Flex>
-    )
-  )
-  .add(
-    'nested drop regions',
-    () => (
-      <Flex direction="column" gap="size-200" alignItems="center">
-        <Draggable />
-        <Droppable actionId="Parent">
-          <Droppable actionId="Child" />
-        </Droppable>
-      </Flex>
-    )
-  )
-  .add(
-    'Draggable listbox',
-    () => (
-      <Flex direction="column" gap="size-200" alignItems="center">
-        <DraggableListBox selectionMode="multiple" selectionBehavior="replace">
-          <Item>Foo</Item>
-          <Item>Bar</Item>
-          <Item>Baz</Item>
-        </DraggableListBox>
-        <Droppable />
-      </Flex>
-    )
-  )
-  .add(
-    'Draggable listbox, onAction',
-    () => (
-      <Flex direction="column" gap="size-200" alignItems="center">
-        <DraggableListBox selectionMode="multiple" selectionBehavior="replace" onAction={action('onAction')}>
-          <Item>Foo</Item>
-          <Item key="bar">Bar</Item>
-          <Item>Baz</Item>
-        </DraggableListBox>
-        <Droppable />
-      </Flex>
-    )
-  )
-  .add(
-    'Droppable listbox',
-    () => (
-      <Flex direction="row" gap="size-200" alignItems="center">
-        <Draggable />
-        <DroppableListBox>
-          <Item key="1" textValue="One">
-            <Folder size="S" />
-            <span>One</span>
-          </Item>
-          <Item key="2">Two</Item>
-          <Item key="3" textValue="Three">
-            <Folder size="S" />
-            <span>Three</span>
-          </Item>
-        </DroppableListBox>
-      </Flex>
-    )
-  )
-  .add(
-    'In dialog',
-    () => (
-      <Flex direction="column" gap="size-200" alignItems="center">
-        <Draggable />
-        <DialogButton>
-          <Dialog>
-            <Heading>Dialog</Heading>
-            <Content>
-              <Flex direction="column" gap="size-200" alignItems="center">
-                <Draggable />
-                <Droppable />
-                <Droppable />
-              </Flex>
-            </Content>
-          </Dialog>
-        </DialogButton>
-        <Droppable />
-      </Flex>
-    )
-  )
-  .add(
-    'Draggable grid, droppable listbox',
-    () => (
-      <Flex direction="row" gap="size-200" alignItems="center" wrap>
-        <DraggableCollectionExample />
-        <DroppableListBoxExample />
-      </Flex>
-    )
-  )
-  .add(
-    'Droppable grid',
-    () => (
-      <Flex direction="column" alignItems="start">
-        <ActionGroup
-          onAction={action => {
-            switch (action) {
-              case 'copy':
-              case 'cut': {
-                let selected = document.querySelector('[aria-label="Draggable list"] [aria-selected="true"] [role="gridcell"]') as HTMLElement;
-                selected?.focus();
-                document.execCommand(action);
-                break;
-              }
-              case 'paste': {
-                // This only works in Safari...
-                let selected = document.querySelector('[aria-label="List"] [aria-selected="true"] [role="gridcell"]') as HTMLElement;
-                selected?.focus();
-                document.execCommand('paste');
-                break;
-              }
+export default {
+  title: 'Drag and Drop',
+  excludeStories: ['Droppable']
+};
+
+export const Default = () => (
+  <Flex direction="column" gap="size-200" alignItems="center">
+    <Draggable />
+    <Droppable />
+    <input />
+    <Droppable type="text/html" />
+    <input />
+    <Droppable />
+  </Flex>
+);
+
+export const NestedDropRegions = {
+  render: () => (
+    <Flex direction="column" gap="size-200" alignItems="center">
+      <Draggable />
+      <Droppable actionId="Parent">
+        <Droppable actionId="Child" />
+      </Droppable>
+    </Flex>
+  ),
+  name: 'nested drop regions'
+};
+
+export const DraggableListbox = {
+  render: () => (
+    <Flex direction="column" gap="size-200" alignItems="center">
+      <DraggableListBox selectionMode="multiple" selectionBehavior="replace">
+        <Item>Foo</Item>
+        <Item>Bar</Item>
+        <Item>Baz</Item>
+      </DraggableListBox>
+      <Droppable />
+    </Flex>
+  ),
+  name: 'Draggable listbox'
+};
+
+export const DraggableListboxOnAction = {
+  render: () => (
+    <Flex direction="column" gap="size-200" alignItems="center">
+      <DraggableListBox
+        selectionMode="multiple"
+        selectionBehavior="replace"
+        onAction={action('onAction')}>
+        <Item>Foo</Item>
+        <Item key="bar">Bar</Item>
+        <Item>Baz</Item>
+      </DraggableListBox>
+      <Droppable />
+    </Flex>
+  ),
+  name: 'Draggable listbox, onAction'
+};
+
+export const DroppableListbox = {
+  render: () => (
+    <Flex direction="row" gap="size-200" alignItems="center">
+      <Draggable />
+      <DroppableListBox>
+        <Item key="1" textValue="One">
+          <Folder size="S" />
+          <span>One</span>
+        </Item>
+        <Item key="2">Two</Item>
+        <Item key="3" textValue="Three">
+          <Folder size="S" />
+          <span>Three</span>
+        </Item>
+      </DroppableListBox>
+    </Flex>
+  ),
+  name: 'Droppable listbox'
+};
+
+export const InDialog = {
+  render: () => (
+    <Flex direction="column" gap="size-200" alignItems="center">
+      <Draggable />
+      <DialogButton>
+        <Dialog>
+          <Heading>Dialog</Heading>
+          <Content>
+            <Flex direction="column" gap="size-200" alignItems="center">
+              <Draggable />
+              <Droppable />
+              <Droppable />
+            </Flex>
+          </Content>
+        </Dialog>
+      </DialogButton>
+      <Droppable />
+    </Flex>
+  ),
+  name: 'In dialog'
+};
+
+export const DraggableGridDroppableListbox = {
+  render: () => (
+    <Flex direction="row" gap="size-200" alignItems="center" wrap>
+      <DraggableCollectionExample />
+      <DroppableListBoxExample />
+    </Flex>
+  ),
+  name: 'Draggable grid, droppable listbox'
+};
+
+export const DroppableGrid = {
+  render: () => (
+    <Flex direction="column" alignItems="start">
+      <ActionGroup
+        onAction={(action) => {
+          switch (action) {
+            case 'copy':
+            case 'cut': {
+              let selected = document.querySelector(
+                '[aria-label="Draggable list"] [aria-selected="true"] [role="gridcell"]'
+              ) as HTMLElement;
+              selected?.focus();
+              document.execCommand(action);
+              break;
             }
-          }}>
-          <Item key="copy" aria-label="Copy"><Copy /></Item>
-          <Item key="cut" aria-label="Cut"><Cut /></Item>
-          <Item key="paste" aria-label="Paste"><Paste /></Item>
-        </ActionGroup>
-        <Flex direction="row" gap="size-200" alignItems="center" wrap>
-          <DraggableCollectionExample />
-          <DroppableGridExample onDropEnter={action('onDropEnter')} onDropExit={action('onDropExit')} onDrop={action('onDrop')} />
-        </Flex>
-      </Flex>
-    )
-  )
-  .add(
-    'Droppable grid with many items',
-    () => (
+            case 'paste': {
+              // This only works in Safari...
+              let selected = document.querySelector(
+                '[aria-label="List"] [aria-selected="true"] [role="gridcell"]'
+              ) as HTMLElement;
+              selected?.focus();
+              document.execCommand('paste');
+              break;
+            }
+          }
+        }}>
+        <Item key="copy" aria-label="Copy">
+          <Copy />
+        </Item>
+        <Item key="cut" aria-label="Cut">
+          <Cut />
+        </Item>
+        <Item key="paste" aria-label="Paste">
+          <Paste />
+        </Item>
+      </ActionGroup>
       <Flex direction="row" gap="size-200" alignItems="center" wrap>
         <DraggableCollectionExample />
-        <DroppableGridExample items={manyItems} />
+        <DroppableGridExample
+          onDropEnter={action('onDropEnter')}
+          onDropExit={action('onDropExit')}
+          onDrop={action('onDrop')} />
       </Flex>
-    )
-  )
-  .add(
-    'Virtualized listbox',
-    () => (
-      <Flex direction="row" gap="size-200" alignItems="center" wrap>
-        <DraggableCollectionExample />
-        <VirtualizedListBoxExample items={manyItems} />
-      </Flex>
-    )
-  )
-  .add(
-    'Multiple collection drop targets',
-    () => (
-      <Flex direction="row" gap="size-200" alignItems="center" wrap>
-        <DraggableCollectionExample />
-        <VirtualizedListBoxExample items={manyItems.map(item => ({...item, type: 'folder'}))} accept="folder" />
-        <VirtualizedListBoxExample items={manyItems} accept="item" />
-      </Flex>
-    )
-  )
-  .add(
-    'Reorderable',
-    () => (
-      <ReorderableGridExample />
-    )
-  );
+    </Flex>
+  ),
+  name: 'Droppable grid'
+};
+
+export const DroppableGridWithManyItems = {
+  render: () => (
+    <Flex direction="row" gap="size-200" alignItems="center" wrap>
+      <DraggableCollectionExample />
+      <DroppableGridExample items={manyItems} />
+    </Flex>
+  ),
+  name: 'Droppable grid with many items'
+};
+
+export const VirtualizedListbox = {
+  render: () => (
+    <Flex direction="row" gap="size-200" alignItems="center" wrap>
+      <DraggableCollectionExample />
+      <VirtualizedListBoxExample items={manyItems} />
+    </Flex>
+  ),
+  name: 'Virtualized listbox'
+};
+
+export const MultipleCollectionDropTargets = {
+  render: () => (
+    <Flex direction="row" gap="size-200" alignItems="center" wrap>
+      <DraggableCollectionExample />
+      <VirtualizedListBoxExample
+        items={manyItems.map((item) => ({...item, type: 'folder'}))}
+        accept="folder" />
+      <VirtualizedListBoxExample items={manyItems} accept="item" />
+    </Flex>
+  ),
+  name: 'Multiple collection drop targets'
+};
+
+export const Reorderable = () => <ReorderableGridExample />;
 
 function Draggable() {
   let {dragProps, isDragging} = useDrag({

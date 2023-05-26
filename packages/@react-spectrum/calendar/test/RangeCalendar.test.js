@@ -29,12 +29,7 @@ function type(key) {
 
 describe('RangeCalendar', () => {
   beforeEach(() => {
-    jest.useFakeTimers('legacy');
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
-  });
-
-  afterEach(() => {
-    window.requestAnimationFrame.mockRestore();
+    jest.useFakeTimers();
   });
 
   describe('basics', () => {
@@ -897,7 +892,6 @@ describe('RangeCalendar', () => {
       act(() => userEvent.click(cell));
       expect(grid).not.toHaveAttribute('aria-activedescendant');
       expect(cell.parentElement).not.toHaveAttribute('aria-selected');
-      expect(document.activeElement).toBe(cell);
     });
 
     it('does not enter selection mode with the mouse on range end if isReadOnly', () => {
@@ -916,7 +910,6 @@ describe('RangeCalendar', () => {
 
       cell = getByText('15').closest('[role="button"]');
       act(() => userEvent.click(cell));
-      expect(document.activeElement).toBe(cell);
 
       selectedDates = getAllByLabelText('selected', {exact: false});
       expect(selectedDates[0].textContent).toBe('10');

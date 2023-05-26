@@ -59,8 +59,7 @@ describe('Menu', function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -98,7 +97,7 @@ describe('Menu', function () {
     expect(items.length).toBe(5);
     for (let item of items) {
       expect(item).toHaveAttribute('tabindex');
-      expect(item).toHaveAttribute('aria-disabled');
+      expect(item).not.toHaveAttribute('aria-disabled');
     }
     let item1 = within(menu).getByText('Foo');
     let item2 = within(menu).getByText('Bar');
