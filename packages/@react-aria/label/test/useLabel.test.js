@@ -34,7 +34,7 @@ describe('useLabel hook', () => {
     let {labelProps, fieldProps} = renderLabelHook({label: 'Test', 'aria-labelledby': 'foo'});
     expect(labelProps.id).toBeDefined();
     expect(fieldProps.id).toBeDefined();
-    expect(fieldProps['aria-labelledby']).toBe(`foo ${labelProps.id}`);
+    expect(fieldProps['aria-labelledby']).toBe(`${labelProps.id} foo`);
     expect(labelProps.htmlFor).toBe(fieldProps.id);
     expect(labelProps.id).not.toBe(fieldProps.id);
   });
@@ -44,7 +44,7 @@ describe('useLabel hook', () => {
     expect(labelProps.id).toBeDefined();
     expect(fieldProps.id).toBeDefined();
     expect(fieldProps['aria-label']).toBe('aria');
-    expect(fieldProps['aria-labelledby']).toBe(`foo ${labelProps.id} ${fieldProps.id}`);
+    expect(fieldProps['aria-labelledby']).toBe(`${fieldProps.id} ${labelProps.id} foo`);
     expect(labelProps.htmlFor).toBe(fieldProps.id);
     expect(labelProps.id).not.toBe(fieldProps.id);
   });
@@ -63,7 +63,7 @@ describe('useLabel hook', () => {
     expect(labelProps.id).toBeUndefined();
     expect(labelProps.htmlFor).toBeUndefined();
     expect(fieldProps.id).toBeDefined();
-    expect(fieldProps['aria-labelledby']).toBe(`foo ${fieldProps.id}`);
+    expect(fieldProps['aria-labelledby']).toBe(`${fieldProps.id} foo`);
     expect(fieldProps['aria-label']).toBe('Label');
   });
 
