@@ -9,12 +9,13 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+import {Button} from '@react-spectrum/button';
 import {createCalendar, getWeeksInMonth, startOfWeek} from '@internationalized/date';
 import React, {useRef} from 'react';
 import {useCalendar, useCalendarCell, useCalendarGrid} from '../src';
 import {useCalendarState} from '@react-stately/calendar';
 import {useDateFormatter, useLocale} from '@react-aria/i18n';
+
 
 export function Example(props) {
   let {locale} = useLocale();
@@ -23,7 +24,7 @@ export function Example(props) {
     locale,
     createCalendar
   });
-  let {calendarProps} = useCalendar(props, state);
+  let {calendarProps, prevButtonProps, nextButtonProps} = useCalendar(props, state);
   let {gridProps} = useCalendarGrid(props, state);
 
   let weeks = props.visibleDuration.weeks ?? 1;
@@ -35,6 +36,7 @@ export function Example(props) {
 
   return (
     <div {...calendarProps}>
+      <span>{gridProps['aria-label']}</span>
       <div {...gridProps}>
         {[...new Array(weeks).keys()].map(weekIndex => (
           <div key={weekIndex} role="row">
@@ -43,6 +45,10 @@ export function Example(props) {
             ))}
           </div>
         ))}
+      </div>
+      <div>
+        <Button variant={'secondary'} {...prevButtonProps}>prev</Button>
+        <Button variant={'secondary'} {...nextButtonProps}>next</Button>
       </div>
     </div>
   );

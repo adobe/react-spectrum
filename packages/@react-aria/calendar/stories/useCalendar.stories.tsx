@@ -36,3 +36,13 @@ export const Months1 = {
   render: () => <Example visibleDuration={{months: 1}} />,
   name: 'months: 1'
 };
+
+export const Months2 = {
+  render: () => <Example visibleDuration={{months: 2}} />,
+  name: 'months: 2'
+};
+
+export const Months2Page1 = {
+  render: () => <Example visibleDuration={{months: 2}} pageDuration={{months: 1}} />,
+  name: 'months: 2, page: 1'
+};

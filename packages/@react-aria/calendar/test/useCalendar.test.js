@@ -141,4 +141,41 @@ describe('useCalendar', () => {
       await testKeyboard(new CalendarDate(2019, 6, 5), 'June 2 to 15, 2019', 'End', 1, 'Saturday, June 8, 2019', 'June 2 to 15, 2019', {visibleDuration: {weeks: 2}});
     });
   });
+
+  async function testPagination(defaultValue, rangeBefore, rangeAfter, rel, count,  visibleDuration, pageDuration) {
+    let {getByRole, getByLabelText, unmount} = render(<Example defaultValue={defaultValue} autoFocus visibleDuration={visibleDuration} pageDuration={pageDuration} />);
+    let grid = getByRole('grid');
+    expect(grid).toHaveAttribute('aria-label', rangeBefore);
+
+    let btn = getByLabelText(rel);
+
+    for (let i = 0; i < count; i++) {
+      fireEvent.click(btn);
+    }
+
+    expect(grid).toHaveAttribute('aria-label', rangeAfter);
+
+      // clear any live announcers
+    act(() => {
+      jest.runAllTimers();
+    });
+  
+    unmount();
+  }  
+
+  describe('pagination', () => {
+    it('should use visibleDuration as default value', async () => {
+      await testPagination(new CalendarDate(2019, 1, 1), 'January to February 2019', 'March to April 2019', 'Next', 1, {months: 2});
+      await testPagination(new CalendarDate(2019, 1, 1), 'January to February 2019', 'May to June 2019', 'Next', 2, {months: 2});
+      await testPagination(new CalendarDate(2019, 1, 1), 'January to February 2019', 'November to December 2018', 'Previous', 1, {months: 2});
+      await testPagination(new CalendarDate(2019, 1, 1), 'January to February 2019', 'September to October 2018', 'Previous', 2, {months: 2});
+    });
+
+    it('should use pageDuration to advance displayed range', async () => {
+      await testPagination(new CalendarDate(2019, 1, 1), 'January to February 2019', 'February to March 2019', 'Next', 1, {months: 2}, {months: 1});
+      await testPagination(new CalendarDate(2019, 1, 1), 'January to February 2019', 'March to April 2019', 'Next', 2, {months: 2}, {months: 1});
+      await testPagination(new CalendarDate(2019, 1, 1), 'January to February 2019', 'December 2018 to January 2019', 'Previous', 1, {months: 2}, {months: 1});
+      await testPagination(new CalendarDate(2019, 1, 1), 'January to February 2019', 'November to December 2018', 'Previous', 2, {months: 2}, {months: 1});
+    });
+  });
 });
