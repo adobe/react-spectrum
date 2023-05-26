@@ -13,6 +13,7 @@
 export {ActionGroup} from '@react-spectrum/actiongroup';
 export {Badge} from '@react-spectrum/badge';
 export {Breadcrumbs} from '@react-spectrum/breadcrumbs';
+export {ActionBar, ActionBarContainer} from '@react-spectrum/actionbar';
 export {ActionButton, Button, LogicButton, ToggleButton} from '@react-spectrum/button';
 export {Avatar} from '@react-spectrum/avatar';
 export {ButtonGroup} from '@react-spectrum/buttongroup';
@@ -61,6 +62,7 @@ export {useCollator, useDateFormatter, useFilter, useLocale, useLocalizedStringF
 export {SSRProvider} from '@react-aria/ssr';
 export {useDragAndDrop, DIRECTORY_DRAG_TYPE} from '@react-spectrum/dnd';
 
+export type {SpectrumActionBarContainerProps, SpectrumActionBarProps} from '@react-spectrum/actionbar';
 export type {SpectrumActionGroupProps} from '@react-spectrum/actiongroup';
 export type {SpectrumAvatarProps} from '@react-spectrum/avatar';
 export type {SpectrumBadgeProps} from '@react-spectrum/badge';

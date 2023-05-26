@@ -26,7 +26,7 @@ import {View} from '@react-spectrum/view';
 ```
 
 ---
-category: Status
+category: Collections
 keywords: [TagGroup, status]
 ---
 
@@ -36,7 +36,7 @@ keywords: [TagGroup, status]
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['Item', 'TagGroup']}
+  componentNames={['TagGroup', 'Item']}
   sourceData={[
     {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/tag/'}
   ]} />
@@ -90,7 +90,7 @@ A visual label can be provided with the `label` prop. If a visual label isn't in
 ## Events
 
 ### onRemove
-Removing tags can be enabled by providing the `allowsRemoving` prop to the TagGroup. TagGroup will pass the key of the removed item to the `onRemove` handler as shown below.
+Removing tags can be enabled by providing the `onRemove` prop to the TagGroup, which will receive the set of keys to remove.
 
 ```tsx example
 function Example() {
@@ -103,16 +103,15 @@ function Example() {
 
   let [items, setItems] = React.useState(defaultItems);
 
-  let removeItem = (key) => {
-    setItems(prevItems => prevItems.filter((item) => key !== item.id));
+  let onRemove = (keys) => {
+    setItems(prevItems => prevItems.filter((item) => !keys.has(item.id)));
   };
 
   return (
     <TagGroup
       items={items}
       /*- begin highlight -*/
-      allowsRemoving
-      onRemove={removeItem}
+      onRemove={onRemove}
       /*- end highlight -*/
       aria-label="Removable TagGroup example">
       {item => <Item>{item.name}</Item>}
@@ -230,8 +229,8 @@ function Example() {
 
   let [items, setItems] = React.useState(defaultItems);
 
-  let removeItem = (key) => {
-    setItems(prevItems => prevItems.filter((item) => key !== item.id));
+  let onRemove = (keys) => {
+    setItems(prevItems => prevItems.filter((item) => !keys.has(item.id)));
   };
 
   let isValid = items.length <= 3;
@@ -240,8 +239,7 @@ function Example() {
     <TagGroup
       label="Categories"
       items={items}
-      allowsRemoving
-      onRemove={removeItem}
+      onRemove={onRemove}
       aria-label="TagGroup help text example"
       validationState={isValid ? 'valid' : 'invalid'}
       description="Please include tags for related categories."
@@ -299,4 +297,26 @@ TagGroup supports a `maxRows` prop that will limit the number of rows initially 
     <Item>Science</Item>
   </TagGroup>
 </View>
+```
+
+### Empty state
+
+Use the `renderEmptyState` prop to customize what the TagGroup will display if there are no tags provided.
+
+```tsx example
+import {Link} from '@react-spectrum/link';
+
+function renderEmptyState() {
+  return (
+    <span>
+      No categories. <Link><a href="//react-spectrum.com">Click here</a></Link> to add some.
+    </span>
+  );
+}
+
+<TagGroup
+  label="Categories"
+  renderEmptyState={renderEmptyState}>
+  {[]}
+</TagGroup>
 ```

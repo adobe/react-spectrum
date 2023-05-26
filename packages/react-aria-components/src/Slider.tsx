@@ -13,8 +13,8 @@
 import {AriaSliderProps, AriaSliderThumbProps, mergeProps, Orientation, useFocusRing, useHover, useNumberFormatter, useSlider, useSliderThumb, VisuallyHidden} from 'react-aria';
 import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DOMAttributes} from '@react-types/shared';
+import {filterDOMProps, mergeRefs} from '@react-aria/utils';
 import {LabelContext} from './Label';
-import {mergeRefs} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, OutputHTMLAttributes, RefObject, useContext, useRef} from 'react';
 import {SliderState, useSliderState} from 'react-stately';
 
@@ -67,6 +67,9 @@ function Slider<T extends number | number[]>(props: SliderProps<T>, ref: Forward
     defaultClassName: 'react-aria-Slider'
   });
 
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
+
   return (
     <Provider
       values={[
@@ -74,6 +77,7 @@ function Slider<T extends number | number[]>(props: SliderProps<T>, ref: Forward
         [LabelContext, {...labelProps, ref: labelRef}]
       ]}>
       <div
+        {...DOMProps}
         {...groupProps}
         {...renderProps}
         ref={ref}
@@ -92,7 +96,7 @@ export {_Slider as Slider};
 
 export interface SliderOutputProps extends RenderProps<SliderState> {}
 
-function SliderOutput({children, style, className}: SliderOutputProps, ref: ForwardedRef<HTMLOutputElement>) {
+function SliderOutput({children, style, className, ...otherProps}: SliderOutputProps, ref: ForwardedRef<HTMLOutputElement>) {
   let {state, outputProps} = useContext(InternalSliderContext)!;
   let renderProps = useRenderProps({
     className,
@@ -103,7 +107,7 @@ function SliderOutput({children, style, className}: SliderOutputProps, ref: Forw
     values: state
   });
 
-  return <output {...outputProps} {...renderProps} ref={ref} />;
+  return <output {...mergeProps(filterDOMProps(otherProps as any), outputProps)} {...renderProps} ref={ref} />;
 }
 
 /**
@@ -123,7 +127,7 @@ function SliderTrack(props: SliderTrackProps, ref: ForwardedRef<HTMLDivElement>)
     values: state
   });
 
-  return <div {...trackProps} {...renderProps} ref={domRef} />;
+  return <div {...mergeProps(filterDOMProps(props as any), trackProps)} {...renderProps} ref={domRef} />;
 }
 
 /**
@@ -186,9 +190,12 @@ function SliderThumb(props: SliderThumbProps, ref: ForwardedRef<HTMLDivElement>)
     values: {state, isHovered, isDragging, isFocused, isFocusVisible, isDisabled}
   });
 
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
+
   return (
     <div
-      {...mergeProps(thumbProps, hoverProps)}
+      {...mergeProps(DOMProps, thumbProps, hoverProps)}
       {...renderProps}
       ref={ref}
       style={{...thumbProps.style, ...renderProps.style}}
