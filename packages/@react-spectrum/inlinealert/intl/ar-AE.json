@@ -1,7 +1,6 @@
 {
-  "neutral": "Neutral",
-  "info": "Informative",
-  "positive": "Positive",
-  "notice": "Notice",
-  "negative": "Negative"
+  "negative": "خطأ",
+  "info": "معلومات",
+  "positive": "تم بنجاح",
+  "notice": "تحذير"
 }
