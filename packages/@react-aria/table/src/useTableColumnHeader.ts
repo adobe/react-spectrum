@@ -16,7 +16,7 @@ import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isAndroid, mergeProps, useDescription, useLayoutEffect} from '@react-aria/utils';
-import {RefObject, useRef, useState} from 'react';
+import {RefObject, useState} from 'react';
 import {TableState} from '@react-stately/table';
 import {useFocusable} from '@react-aria/focus';
 import {useGridCell} from '@react-aria/grid';
@@ -91,7 +91,7 @@ export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, st
       ref.current?.blur();
     }
     setDisableFocus(shouldDisableFocus);
-  }, [shouldDisableFocus, disableFocus]);
+  }, [shouldDisableFocus, disableFocus, ref]);
 
   return {
     columnHeaderProps: {
