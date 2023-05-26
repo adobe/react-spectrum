@@ -86,7 +86,11 @@ export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, st
         gridCellProps,
         pressProps,
         focusableProps,
-        descriptionProps
+        descriptionProps,
+        // If the table is empty, make all column headers untabbable or programatically focusable
+        (state.collection.size === 0 &&
+        state.collection.body.props.loadingState !== 'loading' &&
+        state.collection.body.props.loadingState !== 'loadingMore') && {tabIndex: null}
       ),
       role: 'columnheader',
       id: getColumnHeaderId(state, node.key),
