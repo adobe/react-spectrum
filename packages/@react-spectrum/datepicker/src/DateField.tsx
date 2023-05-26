@@ -63,7 +63,7 @@ function DateField<T extends DateValue>(props: SpectrumDateFieldProps<T>, ref: F
       descriptionProps={descriptionProps}
       errorMessageProps={errorMessageProps}
       validationState={state.validationState}
-      UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-fieldWrapper')}>
+      wrapperClassName={classNames(datepickerStyles, 'react-spectrum-Datepicker-fieldWrapper')}>
       <Input
         ref={inputRef}
         fieldProps={fieldProps}

@@ -474,7 +474,7 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
         disallowEmptySelection={state.selectionManager.disallowEmptySelection}
         onSelectionChange={(keys) => state.selectionManager.setSelectedKeys(keys)}
         onAction={onAction}>
-        {node => <Item textValue={node.textValue}>{node.rendered}</Item>}
+        {node => <Item textValue={node.textValue} {...filterDOMProps(node.props)}>{node.rendered}</Item>}
       </Menu>
     </MenuTrigger>
   );

@@ -69,6 +69,7 @@ import {
   View,
   Well,
   DialogContainer,
+  Avatar,
 } from "@adobe/react-spectrum";
 import Edit from "@spectrum-icons/workflow/Edit";
 import NotFound from "@spectrum-icons/illustrations/NotFound";
@@ -80,6 +81,7 @@ import {
   ColorWheel,
 } from "@react-spectrum/color";
 import ReorderableListView from "../components/ReorderableListView";
+import {TagGroup} from '@react-spectrum/tag';
 import {ToastQueue} from '@react-spectrum/toast';
 
 export default function Home() {
@@ -381,9 +383,18 @@ export default function Home() {
             <ProgressCircle aria-label="Loading…" isIndeterminate />
 
             <StatusLight variant="positive">Ready</StatusLight>
+
+            <TagGroup aria-label="Static TagGroup items example">
+              <Item>News</Item>
+              <Item>Travel</Item>
+              <Item>Gaming</Item>
+              <Item>Shopping</Item>
+            </TagGroup>
           </Section>
 
           <Section title="Content">
+            <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />
+
             <Content>Content is king</Content>
 
             <Flex direction="column" gap="size-125">

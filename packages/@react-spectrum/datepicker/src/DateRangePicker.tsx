@@ -119,7 +119,7 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
       descriptionProps={descriptionProps}
       errorMessageProps={errorMessageProps}
       validationState={state.validationState}
-      UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-fieldWrapper')}>
+      wrapperClassName={classNames(datepickerStyles, 'react-spectrum-Datepicker-fieldWrapper')}>
       <div
         {...mergeProps(groupProps, hoverProps, focusProps)}
         className={className}

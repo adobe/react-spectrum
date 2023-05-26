@@ -15,7 +15,8 @@ import {act, fireEvent, installPointerEvent, render as renderComponent, waitFor,
 import {CUSTOM_DRAG_TYPE} from '@react-aria/dnd/src/constants';
 import {DataTransfer, DataTransferItem, DragEvent, FileSystemDirectoryEntry, FileSystemFileEntry} from '@react-aria/dnd/test/mocks';
 import {DIRECTORY_DRAG_TYPE} from '@react-aria/dnd';
-import {DragBetweenListsComplex, DragBetweenListsExample, DragBetweenListsRootOnlyExample, DragExample, DragIntoItemExample, ReorderExample} from '../stories/ListView.stories';
+import {DragBetweenListsComplex} from '../stories/ListViewDnDUtilExamples';
+import {DragBetweenListsExample, DragBetweenListsRootOnlyExample, DragExample, DragIntoItemExample, ReorderExample} from '../stories/ListViewDnDExamples';
 import {Droppable} from '@react-aria/dnd/test/examples';
 import {Flex} from '@react-spectrum/layout';
 import {globalDndState} from '@react-aria/dnd/src/utils';
@@ -163,6 +164,25 @@ describe('ListView', function () {
         act(() => {jest.runAllTimers();});
         cellText = getAllByText(cell.textContent);
         expect(cellText).toHaveLength(1);
+      });
+
+      it('should render a custom drag preview', function () {
+        let renderPreview = jest.fn().mockImplementation((keys, draggedKey) => <div>Custom preview for [{[...keys].join(', ')}] , while dragging {draggedKey}.</div>);
+        let {getAllByRole} = render(
+          <DraggableListView dragHookOptions={{renderPreview}} listViewProps={{selectedKeys: ['a', 'b']}} />
+        );
+
+        let row = getAllByRole('row')[0];
+        let cell = within(row).getByRole('gridcell');
+
+        let dataTransfer = new DataTransfer();
+
+        fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 5, clientY: 5});
+        fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 5, clientY: 5}));
+        expect(dataTransfer._dragImage.node.tagName).toBe('DIV');
+        expect(dataTransfer._dragImage.node.textContent).toBe('Custom preview for [a, b] , while dragging a.');
+        expect(dataTransfer._dragImage.x).toBe(5);
+        expect(dataTransfer._dragImage.y).toBe(5);
       });
 
       it('should allow drag and drop of a single row', async function () {
