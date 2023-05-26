@@ -52,6 +52,17 @@ describe('useObjectRef', () => {
     expect(inputElem.placeholder).toBe('Foo');
   });
 
+  it('should only be called once', () => {
+    const TextField = React.forwardRef((props, forwardedRef) => {
+      const ref = useObjectRef(forwardedRef);
+      return <input {...props} ref={ref} />;
+    });
+
+    let ref = jest.fn();
+    render(<TextField ref={ref} />);
+    expect(ref).toHaveBeenCalledTimes(1);
+  });
+
   /**
    * This describe would completely fail if `useObjectRef` did not account
    * for order of execution and rendering, especially when other components
