@@ -12,79 +12,87 @@
 
 import {Checkbox} from '../';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 import {View} from '@react-spectrum/view';
 
-storiesOf('Checkbox', module)
-  .add(
-    'Default',
-    () => render()
-  )
-  .add(
-    'validationState: "invalid"',
-    () => render({validationState: 'invalid'})
-  )
-  .add(
-    'isDisabled: true',
-    () => render({isDisabled: true})
-  )
-  .add(
-    'isEmphasized: true',
-    () => render({isEmphasized: true})
-  )
-  .add(
-    'isEmphasized: true, validationState: "invalid"',
-    () => render({isEmphasized: true, validationState: 'invalid'})
-  )
-  .add(
-    'isEmphasized: true, isDisabled: true',
-    () => render({isEmphasized: true, isDisabled: true})
-  )
-  .add(
-    'isReadOnly: true',
-    () => render({isReadOnly: true})
-  )
-  .add(
-    'custom label',
-    () => renderCustomLabel()
-  )
-  .add(
-    'long label',
-    () => (
-      <View width="size-2000">
-        <Checkbox>
-          Super long checkbox label. Sample text. Arma virumque cano, Troiae qui primus ab oris.
-        </Checkbox>
-      </View>
-    )
-  )
-  .add(
-    'no label',
-    () => renderNoLabel({'aria-label': 'This checkbox has no visible label'})
-  );
+export default {
+  title: 'Checkbox'
+};
+
+export const Default = () => render();
+export const ValidationStateInvalid = () => render({validationState: 'invalid'});
+
+ValidationStateInvalid.story = {
+  name: 'validationState: "invalid"'
+};
+
+export const IsDisabledTrue = () => render({isDisabled: true});
+
+IsDisabledTrue.story = {
+  name: 'isDisabled: true'
+};
+
+export const IsEmphasizedTrue = () => render({isEmphasized: true});
+
+IsEmphasizedTrue.story = {
+  name: 'isEmphasized: true'
+};
+
+export const IsEmphasizedTrueValidationStateInvalid = () =>
+  render({isEmphasized: true, validationState: 'invalid'});
+
+IsEmphasizedTrueValidationStateInvalid.story = {
+  name: 'isEmphasized: true, validationState: "invalid"'
+};
+
+export const IsEmphasizedTrueIsDisabledTrue = () =>
+  render({isEmphasized: true, isDisabled: true});
+
+IsEmphasizedTrueIsDisabledTrue.story = {
+  name: 'isEmphasized: true, isDisabled: true'
+};
+
+export const IsReadOnlyTrue = () => render({isReadOnly: true});
+
+IsReadOnlyTrue.story = {
+  name: 'isReadOnly: true'
+};
+
+export const CustomLabel = () => renderCustomLabel();
+
+CustomLabel.story = {
+  name: 'custom label'
+};
+
+export const LongLabel = () => (
+  <View width="size-2000">
+    <Checkbox>
+      Super long checkbox label. Sample text. Arma virumque cano, Troiae qui primus ab oris.
+    </Checkbox>
+  </View>
+);
+
+LongLabel.story = {
+  name: 'long label'
+};
+
+export const NoLabel = () => renderNoLabel({'aria-label': 'This checkbox has no visible label'});
+
+NoLabel.story = {
+  name: 'no label'
+};
 
 // need selected + indeterminate because there is a sibling selector `checked + ...` so being careful
 function render(props = {}) {
   return (
     <>
-      <Checkbox
-        {...props}>
-        Label
-      </Checkbox>
-      <Checkbox
-        isSelected
-        {...props}>
+      <Checkbox {...props}>Label</Checkbox>
+      <Checkbox isSelected {...props}>
         Selected Label
       </Checkbox>
-      <Checkbox
-        isIndeterminate
-        {...props}>
+      <Checkbox isIndeterminate {...props}>
         Indeterminate Label
       </Checkbox>
-      <Checkbox
-        isSelected
-        isIndeterminate
-        {...props}>
+      <Checkbox isSelected isIndeterminate {...props}>
         Selected Indeterminate Label
       </Checkbox>
     </>
@@ -94,14 +102,15 @@ function render(props = {}) {
 function renderCustomLabel(props = {}) {
   return (
     <>
-      <Checkbox
-        {...props}>
-        <span><i>Italicized</i> Checkbox Label</span>
+      <Checkbox {...props}>
+        <span>
+          <i>Italicized</i> Checkbox Label
+        </span>
       </Checkbox>
-      <Checkbox
-        isSelected
-        {...props}>
-        <span><i>Italicized</i> and Selected Checkbox Label</span>
+      <Checkbox isSelected {...props}>
+        <span>
+          <i>Italicized</i> and Selected Checkbox Label
+        </span>
       </Checkbox>
     </>
   );

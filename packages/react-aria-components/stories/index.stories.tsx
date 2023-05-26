@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, TabPanels, Tabs, Text, TimeField, Tooltip, TooltipTrigger} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, TabPanels, Tabs, TabsProps, Text, TimeField, Tooltip, TooltipTrigger} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
-import React from 'react';
+import React, {useState} from 'react';
 import styles from '../example/index.css';
 import {useListData} from 'react-stately';
 
@@ -37,6 +37,105 @@ export const ComboBoxExample = () => (
         <MyItem>Baz</MyItem>
       </ListBox>
     </Popover>
+  </ComboBox>
+);
+
+interface ComboBoxItem {
+  id: string,
+  name: string
+}
+
+let items: ComboBoxItem[] = [{id: '1', name: 'Foo'}, {id: '2', name: 'Bar'}, {id: '3', name: 'Baz'}];
+export const ComboBoxRenderPropsStatic = () => (
+  <ComboBox>
+    {({isOpen}) => (
+      <>
+        <Label style={{display: 'block'}}>Test</Label>
+        <div style={{display: 'flex'}}>
+          <Input />
+          <Button>
+            <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
+          </Button>
+        </div>
+        <Popover placement="bottom end">
+          <ListBox className={styles.menu}>
+            <MyItem>Foo</MyItem>
+            <MyItem>Bar</MyItem>
+            <MyItem>Baz</MyItem>
+          </ListBox>
+        </Popover>
+      </>
+    )}
+  </ComboBox>
+);
+
+export const ComboBoxRenderPropsDefaultItems = () => (
+  <ComboBox defaultItems={items}>
+    {({isOpen}) => (
+      <>
+        <Label style={{display: 'block'}}>Test</Label>
+        <div style={{display: 'flex'}}>
+          <Input />
+          <Button>
+            <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
+          </Button>
+        </div>
+        <Popover placement="bottom end">
+          <ListBox className={styles.menu}>
+            {(item: ComboBoxItem) => <MyItem key={item.id}>{item.name}</MyItem>}
+          </ListBox>
+        </Popover>
+      </>
+    )}
+  </ComboBox>
+);
+
+export const ComboBoxRenderPropsItems = {
+  render: () => (
+    <ComboBox items={items}>
+      {({isOpen}) => (
+        <>
+          <Label style={{display: 'block'}}>Test</Label>
+          <div style={{display: 'flex'}}>
+            <Input />
+            <Button>
+              <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
+            </Button>
+          </div>
+          <Popover placement="bottom end">
+            <ListBox className={styles.menu}>
+              {(item: ComboBoxItem) => <MyItem key={item.id}>{item.name}</MyItem>}
+            </ListBox>
+          </Popover>
+        </>
+      )}
+    </ComboBox>
+  ),
+  parameters: {
+    description: {
+      data: 'Note this won\'t filter the items in the listbox because it is fully controlled'
+    }
+  }
+};
+
+export const ComboBoxRenderPropsListBoxDynamic = () => (
+  <ComboBox>
+    {({isOpen}) => (
+      <>
+        <Label style={{display: 'block'}}>Test</Label>
+        <div style={{display: 'flex'}}>
+          <Input />
+          <Button>
+            <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
+          </Button>
+        </div>
+        <Popover placement="bottom end">
+          <ListBox className={styles.menu} items={items}>
+            {item => <MyItem key={item.id}>{item.name}</MyItem>}
+          </ListBox>
+        </Popover>
+      </>
+    )}
   </ComboBox>
 );
 
@@ -97,6 +196,27 @@ export const SelectExample = () => (
         <MyItem>Baz</MyItem>
       </ListBox>
     </Popover>
+  </Select>
+);
+
+export const SelectRenderProps = () => (
+  <Select>
+    {({isOpen}) => (
+      <>
+        <Label style={{display: 'block'}}>Test</Label>
+        <Button>
+          <SelectValue />
+          <span aria-hidden="true" style={{paddingLeft: 5}}>{isOpen ? '▲' : '▼'}</span>
+        </Button>
+        <Popover>
+          <ListBox className={styles.menu}>
+            <MyItem>Foo</MyItem>
+            <MyItem>Bar</MyItem>
+            <MyItem>Baz</MyItem>
+          </ListBox>
+        </Popover>
+      </>
+    )}
   </Select>
 );
 
@@ -478,6 +598,44 @@ export const TabsExample = () => (
     </TabPanels>
   </Tabs>
 );
+
+export const TabsRenderProps = () => {
+  const [tabOrientation, setTabOrientation] = useState<TabsProps['orientation']>('vertical');
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'row', gap: 8}}>
+      <Button onPress={() => setTabOrientation((current) => current === 'vertical' ? 'horizontal' : 'vertical')}>
+        Change Orientation
+      </Button>
+      <Tabs orientation={tabOrientation}>
+        {({orientation}) => (
+          <div>
+            <div style={{display: 'flex', flexDirection: orientation === 'vertical' ? 'row' : 'column', gap: 8}}>
+              <TabList
+                aria-label="History of Ancient Rome"
+                style={{display: 'flex', flexDirection: orientation === 'vertical' ? 'column' : 'row', gap: 8}}>
+                <CustomTab id="FoR">Founding of Rome</CustomTab>
+                <CustomTab id="MaR">Monarchy and Republic</CustomTab>
+                <CustomTab id="Emp">Empire</CustomTab>
+              </TabList>
+              <TabPanels>
+                <TabPanel id="FoR">
+                  Arma virumque cano, Troiae qui primus ab oris.
+                </TabPanel>
+                <TabPanel id="MaR">
+                  Senatus Populusque Romanus.
+                </TabPanel>
+                <TabPanel id="Emp">
+                  Alea jacta est.
+                </TabPanel>
+              </TabPanels>
+            </div>
+          </div>
+        )}
+      </Tabs>
+    </div>
+  );
+};
 
 export const TableExample = () => {
   let list = useListData({

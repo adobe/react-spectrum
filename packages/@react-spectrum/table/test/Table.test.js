@@ -36,7 +36,8 @@ import userEvent from '@testing-library/user-event';
 let {
   InlineDeleteButtons: DeletableRowsTable,
   EmptyStateStory: EmptyStateTable,
-  WithBreadcrumbNavigation: TableWithBreadcrumbs
+  WithBreadcrumbNavigation: TableWithBreadcrumbs,
+  TypeaheadWithDialog: TypeaheadWithDialog
 } = composeStories(stories);
 
 
@@ -1412,6 +1413,43 @@ describe('TableView', function () {
         moveFocus('S');
         expect(document.activeElement).toBe(getCell(tree, 'Sam'));
       });
+
+      describe('type ahead with dialog triggers', function () {
+        beforeEach(function () {
+          offsetHeight.mockRestore();
+          offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
+            .mockImplementationOnce(() => 20)
+            .mockImplementation(() => 100);
+        });
+        afterEach(function () {
+          offsetHeight.mockRestore();
+          offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+        });
+        it('does not pick up typeahead from a dialog', function () {
+          offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
+            .mockImplementationOnce(() => 20)
+            .mockImplementation(() => 100);
+          let tree = render(<TypeaheadWithDialog />);
+          let trigger = tree.getAllByRole('button')[0];
+          triggerPress(trigger);
+          act(() => {
+            jest.runAllTimers();
+          });
+          let textfield = tree.getByLabelText('Enter a J');
+          act(() => {textfield.focus();});
+          fireEvent.keyDown(textfield, {key: 'J'});
+          fireEvent.keyUp(textfield, {key: 'J'});
+          act(() => {
+            jest.runAllTimers();
+          });
+          expect(document.activeElement).toBe(textfield);
+          fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+          fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+          act(() => {
+            jest.runAllTimers();
+          });
+        });
+      });
     });
 
     describe('focus marshalling', function () {
@@ -1750,13 +1788,15 @@ describe('TableView', function () {
 
         // Ensure we have the correct sticky cells in the right order.
         let row = cell.closest('[role=row]');
-        let cells = within(row).getAllByRole(role => role === 'gridcell' || role === 'rowheader');
-        expect(cells).toHaveLength(18);
+        let cells = within(row).getAllByRole('gridcell');
+        let rowHeaders = within(row).getAllByRole('rowheader');
+        expect(cells).toHaveLength(17);
+        expect(rowHeaders).toHaveLength(1);
         expect(cells[0]).toHaveAttribute('aria-colindex', '1'); // checkbox
-        expect(cells[1]).toHaveAttribute('aria-colindex', '2'); // rowheader
-        expect(cells[2]).toHaveAttribute('aria-colindex', '6'); // persisted
-        expect(cells[2]).toBe(cell);
-        expect(cells[3]).toHaveAttribute('aria-colindex', '14'); // first visible
+        expect(rowHeaders[0]).toHaveAttribute('aria-colindex', '2'); // rowheader
+        expect(cells[1]).toHaveAttribute('aria-colindex', '6'); // persisted
+        expect(cells[1]).toBe(cell);
+        expect(cells[2]).toHaveAttribute('aria-colindex', '14'); // first visible
 
         // Moving focus should scroll the new focused item into view
         moveFocus('ArrowLeft');
@@ -2302,6 +2342,13 @@ describe('TableView', function () {
 
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
+
+        fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: 'a', ctrlKey: true});
+
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        expect(onSelectionChange.mock.calls[0][0]).toEqual('all');
+        checkRowSelection(rows.slice(1), true);
+        checkSelectAll(tree, 'checked');
 
         fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: 'a', ctrlKey: true});
 

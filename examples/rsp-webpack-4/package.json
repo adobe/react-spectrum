@@ -14,6 +14,7 @@
   ],
   "dependencies": {
     "@adobe/react-spectrum": "^3.24.1",
+    "@react-spectrum/tag": "^3.0.0-rc.0",
     "@spectrum-icons/workflow": "^4.0.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

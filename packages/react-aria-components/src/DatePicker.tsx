@@ -17,6 +17,7 @@ import {createCalendar} from '@internationalized/date';
 import {DateInputContext} from './DateField';
 import {DatePickerState, DateRangePickerState, useDateFieldState, useDatePickerState, useDateRangePickerState} from 'react-stately';
 import {DialogContext} from './Dialog';
+import {filterDOMProps} from '@react-aria/utils';
 import {GroupContext} from './Group';
 import {LabelContext} from './Label';
 import {PopoverContext} from './Popover';
@@ -61,6 +62,9 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
     defaultClassName: 'react-aria-DatePicker'
   });
 
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
+
   return (
     <Provider
       values={[
@@ -78,9 +82,7 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
           }
         }]
       ]}>
-      <div {...renderProps} ref={ref} slot={props.slot}>
-        {props.children}
-      </div>
+      <div {...DOMProps} {...renderProps} ref={ref} slot={props.slot} />
     </Provider>
   );
 }
@@ -88,7 +90,7 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
 /**
  * A date picker combines a DateField and a Calendar popover to allow users to enter or select a date and time value.
  */
-const _DatePicker = (forwardRef as forwardRefType)(DatePicker);
+const _DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(DatePicker);
 export {_DatePicker as DatePicker};
 
 function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, ref: ForwardedRef<HTMLDivElement>) {
@@ -133,6 +135,9 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
     defaultClassName: 'react-aria-DateRangePicker'
   });
 
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
+
   return (
     <Provider
       values={[
@@ -163,9 +168,7 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
           }
         }]
       ]}>
-      <div {...renderProps} ref={ref} slot={props.slot}>
-        {props.children}
-      </div>
+      <div {...DOMProps} {...renderProps} ref={ref} slot={props.slot} />
     </Provider>
   );
 }
@@ -174,5 +177,5 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
  * A date range picker combines two DateFields and a RangeCalendar popover to allow
  * users to enter or select a date and time range.
  */
-const _DateRangePicker = (forwardRef as forwardRefType)(DateRangePicker);
+const _DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(DateRangePicker);
 export {_DateRangePicker as DateRangePicker};

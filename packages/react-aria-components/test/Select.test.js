@@ -138,4 +138,39 @@ describe('Select', () => {
     let button = getByRole('button');
     expect(button).toHaveTextContent('1 - Cat');
   });
+
+  it('supports placeholder', () => {
+    let {getByRole} = render(<TestSelect placeholder="Select an animal" />);
+    let button = getByRole('button');
+    expect(button).toHaveTextContent('Select an animal');
+  });
+
+  it('should support render props', () => {
+    let {getByRole} = render(
+      <Select>
+        {({isOpen}) => (
+          <>
+            <Label>Favorite Animal</Label>
+            <Button>
+              <SelectValue />
+              <span aria-hidden>{isOpen ? 'close' : 'open'}</span>
+            </Button>
+            <Popover>
+              <ListBox>
+                <Item>Cat</Item>
+                <Item>Dog</Item>
+                <Item>Kangaroo</Item>
+              </ListBox>
+            </Popover>
+          </>
+        )}
+      </Select>
+    );
+
+    let button = getByRole('button');
+    expect(button).toHaveTextContent('open');
+
+    userEvent.click(button);
+    expect(button).toHaveTextContent('close');
+  });
 });

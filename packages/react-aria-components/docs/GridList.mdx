@@ -15,7 +15,7 @@ import sharedDocs from 'docs:@react-types/shared';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
-import Anatomy from '/packages/@react-aria/gridlist/docs/anatomy.svg';
+import Anatomy from '@react-aria/gridlist/docs/anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
@@ -25,7 +25,6 @@ import {Keyboard} from '@react-spectrum/text';
 category: Collections
 keywords: [list, aria, grid]
 type: component
-after_version: 1.0.0
 ---
 
 # GridList
@@ -114,6 +113,7 @@ import {GridList, Item, Button} from 'react-aria-components';
     color: var(--text-color);
     font-size: 1.072rem;
     position: relative;
+    transform: translateZ(0);
 
     &[data-focus-visible] {
       box-shadow: inset 0 0 0 2px var(--highlight-background);
@@ -159,12 +159,14 @@ import {GridList, Item, Button} from 'react-aria-components';
   @supports selector(:has(.foo)) {
     gap: 0;
 
-    & .react-aria-Item[aria-selected=true]:has(+ [aria-selected=true]) {
+    .react-aria-Item[aria-selected=true]:has(+ [aria-selected=true]),
+    .react-aria-Item[aria-selected=true]:has(+ .react-aria-DropIndicator + [aria-selected=true]) {
       border-end-start-radius: 0;
       border-end-end-radius: 0;
     }
 
-    & .react-aria-Item[aria-selected=true] + [aria-selected=true] {
+    .react-aria-Item[aria-selected=true] + [aria-selected=true],
+    .react-aria-Item[aria-selected=true] + .react-aria-DropIndicator + [aria-selected=true] {
       border-start-start-radius: 0;
       border-start-end-radius: 0;
     }
@@ -735,8 +737,10 @@ function Example() {
   }
 }
 
-.react-aria-DropIndicator[data-drop-target] {
-  outline: 1px solid var(--highlight-background);
+.react-aria-DropIndicator {
+  &[data-drop-target] {
+    outline: 1px solid var(--highlight-background);
+  }
 
   @supports not selector(:has(.foo)) {
     /* Undo gap in browsers that don't support :has */
@@ -1022,8 +1026,10 @@ function Example() {
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.react-aria-DropIndicator[data-drop-target] {
-  outline: 1px solid var(--highlight-background);
+.react-aria-DropIndicator {
+  &[data-drop-target] {
+    outline: 1px solid var(--highlight-background);
+  }
 
   @supports not selector(:has(.foo)) {
     /* Undo gap in browsers that don't support :has */
@@ -1095,8 +1101,10 @@ function Example() {
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.my-drop-indicator.active {
-  outline: 1px solid #e70073;
+.my-drop-indicator {
+  &.active {
+    outline: 1px solid #e70073;
+  }
 
   @supports not selector(:has(.foo)) {
     /* Undo gap in browsers that don't support :has */

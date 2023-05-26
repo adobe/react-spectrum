@@ -12,6 +12,7 @@
 
 import {AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PositionProps, usePopover} from 'react-aria';
 import {ContextValue, HiddenContext, RenderProps, SlotProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, RefObject} from 'react';
@@ -82,7 +83,7 @@ interface PopoverInnerProps extends AriaPopoverProps, RenderProps<PopoverRenderP
   isExiting: boolean
 }
 
-function PopoverInner({children, state, isExiting, ...props}: PopoverInnerProps) {
+function PopoverInner({state, isExiting, ...props}: PopoverInnerProps) {
   let {popoverProps, underlayProps, arrowProps, placement} = usePopover({
     ...props,
     offset: props.offset ?? 8
@@ -106,7 +107,7 @@ function PopoverInner({children, state, isExiting, ...props}: PopoverInnerProps)
     <Overlay>
       {!props.isNonModal && <div {...underlayProps} style={{position: 'fixed', inset: 0}} />}
       <div
-        {...popoverProps}
+        {...mergeProps(filterDOMProps(props as any), popoverProps)}
         {...renderProps}
         ref={ref}
         slot={props.slot}
@@ -116,7 +117,7 @@ function PopoverInner({children, state, isExiting, ...props}: PopoverInnerProps)
         data-exiting={isExiting || undefined}>
         {!props.isNonModal && <DismissButton onDismiss={state.close} />}
         <OverlayArrowContext.Provider value={{arrowProps, placement}}>
-          {children}
+          {renderProps.children}
         </OverlayArrowContext.Provider>
         <DismissButton onDismiss={state.close} />
       </div>

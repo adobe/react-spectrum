@@ -75,6 +75,29 @@ describe('Tabs', () => {
     expect(tabpanel).toHaveAttribute('data-test', 'tabpanel');
   });
 
+  it('should support render props', () => {
+    let {getByRole} = render(
+      <Tabs orientation="horizontal">
+        {({orientation}) => (
+          <>
+            <TabList aria-label={`Test ${orientation}`}>
+              <Tab id="a">A</Tab>
+              <Tab id="b">B</Tab>
+              <Tab id="c">C</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel id="a">A</TabPanel>
+              <TabPanel id="b">B</TabPanel>
+              <TabPanel id="c">C</TabPanel>
+            </TabPanels>
+          </>
+        )}
+      </Tabs>
+    );
+    let tablist = getByRole('tablist');
+    expect(tablist).toHaveAttribute('aria-label', 'Test horizontal');
+  });
+
   it('should support hover', () => {
     let {getAllByRole} = renderTabs({}, {}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
     let tab = getAllByRole('tab')[0];
@@ -94,7 +117,7 @@ describe('Tabs', () => {
   it('should support focus ring', () => {
     let {getAllByRole} = renderTabs({}, {}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
     let tab = getAllByRole('tab')[0];
-    
+
     expect(tab).not.toHaveAttribute('data-focus-visible');
     expect(tab).not.toHaveClass('focus');
 
@@ -173,5 +196,30 @@ describe('Tabs', () => {
 
     expect(tabs).toHaveAttribute('data-orientation', 'vertical');
     expect(tabs).toHaveClass('vertical');
+  });
+
+  it('should support refs', () => {
+    let tabsRef = React.createRef();
+    let tabListRef = React.createRef();
+    let tabRef = React.createRef();
+    let tabPanelRef = React.createRef();
+    render(
+      <Tabs ref={tabsRef}>
+        <TabList ref={tabListRef}>
+          <Tab id="a" ref={tabRef}>A</Tab>
+          <Tab id="b">B</Tab>
+          <Tab id="c">C</Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel id="a" ref={tabPanelRef}>A</TabPanel>
+          <TabPanel id="b">B</TabPanel>
+          <TabPanel id="c">C</TabPanel>
+        </TabPanels>
+      </Tabs>
+    );
+    expect(tabsRef.current).toBeInstanceOf(HTMLElement);
+    expect(tabListRef.current).toBeInstanceOf(HTMLElement);
+    expect(tabRef.current).toBeInstanceOf(HTMLElement);
+    expect(tabPanelRef.current).toBeInstanceOf(HTMLElement);
   });
 });
