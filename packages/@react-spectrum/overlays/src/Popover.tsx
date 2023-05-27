@@ -13,16 +13,16 @@
 import {AriaPopoverProps, DismissButton, PopoverAria, usePopover} from '@react-aria/overlays';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, StyleProps} from '@react-types/shared';
+import {FocusWithinProps, useFocusWithin} from '@react-aria/interactions';
+import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {Overlay} from './Overlay';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import overrideStyles from './overlays.css';
 import React, {forwardRef, MutableRefObject, ReactNode, RefObject, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
 import {Underlay} from './Underlay';
-import {mergeProps, useLayoutEffect} from '@react-aria/utils';
-import {useFocusWithin} from "@react-aria/interactions";
 
-interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef' | 'maxHeight'>, StyleProps {
+interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef' | 'maxHeight'>, FocusWithinProps, StyleProps {
   children: ReactNode,
   hideArrow?: boolean,
   state: OverlayTriggerState,
@@ -34,18 +34,12 @@ interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef' | 'maxHeight'
   onExited?: () => void,
   onExit?: () => void,
   container?: HTMLElement,
-  disableFocusManagement?: boolean,
-  onFocusWithin?: (e: FocusEvent) => void,
-  onBlurWithin?: (e: FocusEvent) => void,
-  onFocusWithinChange?: (isFocused: boolean) => void
+  disableFocusManagement?: boolean
 }
 
-interface PopoverWrapperProps extends PopoverProps {
+interface PopoverWrapperProps extends PopoverProps, FocusWithinProps {
   isOpen?: boolean,
-  wrapperRef: MutableRefObject<HTMLDivElement>,
-  onFocusWithin?: (e: FocusEvent) => void,
-  onBlurWithin?: (e: FocusEvent) => void,
-  onFocusWithinChange?: (isFocused: boolean) => void
+  wrapperRef: MutableRefObject<HTMLDivElement>
 }
 
 interface ArrowProps {
