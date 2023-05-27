@@ -71,7 +71,6 @@ export function useLink(props: AriaLinkOptions, ref: RefObject<FocusableElement>
       'aria-disabled': isDisabled || undefined,
       'aria-current': props['aria-current'],
       onClick: (e) => {
-        pressProps.onClick?.(e);
         if (deprecatedOnClick) {
           deprecatedOnClick(e);
           console.warn('onClick is deprecated, please use onPress');
