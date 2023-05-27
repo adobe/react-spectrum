@@ -12,7 +12,7 @@
 
 import {Direction} from '@react-types/shared';
 import {LayoutInfo, ReusableView} from '@react-stately/virtualizer';
-import React, {CSSProperties, useRef} from 'react';
+import React, {CSSProperties, ReactNode, useRef} from 'react';
 import {useLocale} from '@react-aria/i18n';
 import {useVirtualizerItem} from './useVirtualizerItem';
 
@@ -22,7 +22,7 @@ interface VirtualizerItemProps<T extends object, V> {
   className?: string
 }
 
-export function VirtualizerItem<T extends object, V>(props: VirtualizerItemProps<T, V>) {
+export function VirtualizerItem<T extends object, V extends ReactNode>(props: VirtualizerItemProps<T, V>) {
   let {className, reusableView, parent} = props;
   let {direction} = useLocale();
   let ref = useRef();

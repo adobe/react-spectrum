@@ -157,10 +157,12 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
       // Value is optional for standalone checkboxes, but required for CheckboxGroup items;
       // it's passed explicitly here to avoid typescript error (requires ignore).
       // @ts-ignore
-      value: props.value
+      value: props.value,
+      // ReactNode type doesn't allow function children.
+      children: props.children != null
     }, groupState, ref)
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    : useCheckbox(props, useToggleState(props), ref);
+    : useCheckbox({...props, children: props.children != null}, useToggleState(props), ref);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let isInteractionDisabled = isDisabled || isReadOnly;
 

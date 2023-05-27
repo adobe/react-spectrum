@@ -27,7 +27,7 @@ interface DialogRenderProps {
   close: () => void
 }
 
-export interface DialogProps extends AriaDialogProps, DOMProps, SlotProps {
+export interface DialogProps extends AriaDialogProps, StyleProps, SlotProps {
   children?: ReactNode | ((opts: DialogRenderProps) => ReactNode),
   onClose?: () => void
 }

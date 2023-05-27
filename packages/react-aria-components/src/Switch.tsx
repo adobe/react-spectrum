@@ -61,7 +61,11 @@ export const SwitchContext = createContext<ContextValue<SwitchProps, HTMLInputEl
 function Switch(props: SwitchProps, ref: ForwardedRef<HTMLInputElement>) {
   [props, ref] = useContextProps(props, ref, SwitchContext);
   let state = useToggleState(props);
-  let {inputProps, isSelected, isDisabled, isReadOnly, isPressed: isPressedKeyboard} = useSwitch(props, state, ref);
+  let {inputProps, isSelected, isDisabled, isReadOnly, isPressed: isPressedKeyboard} = useSwitch({
+    ...props,
+    // ReactNode type doesn't allow function children.
+    children: props.children != null
+  }, state, ref);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let isInteractionDisabled = props.isDisabled || props.isReadOnly;
 

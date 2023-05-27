@@ -59,7 +59,16 @@ function Popover(props: PopoverProps, ref: ForwardedRef<HTMLElement>) {
   let isExiting = useExitAnimation(ref, state.isOpen);
 
   if (state && !state.isOpen && !isExiting) {
-    return preserveChildren ? <HiddenContext.Provider value>{props.children}</HiddenContext.Provider> : null;
+    let children = props.children;
+    if (typeof children === 'function') {
+      children = children({
+        placement: 'bottom',
+        isEntering: false,
+        isExiting: false
+      });
+    }
+
+    return preserveChildren ? <HiddenContext.Provider value>{children}</HiddenContext.Provider> : null;
   }
 
   return (

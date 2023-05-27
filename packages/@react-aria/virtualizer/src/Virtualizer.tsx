@@ -14,11 +14,11 @@ import {Collection} from '@react-types/shared';
 import {focusWithoutScrolling, mergeProps, scrollIntoViewport, useLayoutEffect} from '@react-aria/utils';
 import {getInteractionModality} from '@react-aria/interactions';
 import {Layout, Rect, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
-import React, {FocusEvent, HTMLAttributes, Key, ReactElement, RefObject, useCallback, useEffect, useMemo, useRef} from 'react';
+import React, {FocusEvent, HTMLAttributes, Key, ReactElement, ReactNode, RefObject, useCallback, useEffect, useMemo, useRef} from 'react';
 import {ScrollView} from './ScrollView';
 import {VirtualizerItem} from './VirtualizerItem';
 
-interface VirtualizerProps<T extends object, V> extends HTMLAttributes<HTMLElement> {
+interface VirtualizerProps<T extends object, V> extends Omit<HTMLAttributes<HTMLElement>, 'children'> {
   children: (type: string, content: T) => V,
   renderWrapper?: (
     parent: ReusableView<T, V> | null,
@@ -38,7 +38,7 @@ interface VirtualizerProps<T extends object, V> extends HTMLAttributes<HTMLEleme
   scrollToItem?: (key: Key) => void
 }
 
-function Virtualizer<T extends object, V>(props: VirtualizerProps<T, V>, ref: RefObject<HTMLDivElement>) {
+function Virtualizer<T extends object, V extends ReactNode>(props: VirtualizerProps<T, V>, ref: RefObject<HTMLDivElement>) {
   let {
     children: renderView,
     renderWrapper,
@@ -118,7 +118,7 @@ interface VirtualizerOptions {
   shouldUseVirtualFocus?: boolean
 }
 
-export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions, state: VirtualizerState<T, V, W>, ref: RefObject<HTMLElement>) {
+export function useVirtualizer<T extends object, V extends ReactNode, W>(props: VirtualizerOptions, state: VirtualizerState<T, V, W>, ref: RefObject<HTMLElement>) {
   let {focusedKey, scrollToItem, shouldUseVirtualFocus} = props;
   let {virtualizer} = state;
   // Scroll to the focusedKey when it changes. Actually focusing the focusedKey
@@ -216,7 +216,7 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
 const _Virtualizer = React.forwardRef(Virtualizer) as <T extends object, V>(props: VirtualizerProps<T, V> & {ref?: RefObject<HTMLDivElement>}) => ReactElement;
 export {_Virtualizer as Virtualizer};
 
-function defaultRenderWrapper<T extends object, V>(
+function defaultRenderWrapper<T extends object, V extends ReactNode>(
   parent: ReusableView<T, V> | null,
   reusableView: ReusableView<T, V>
 ) {
