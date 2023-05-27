@@ -11,7 +11,7 @@
  */
 
 import {AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PositionProps, usePopover} from 'react-aria';
-import {ContextValue, HiddenContext, RenderProps, SlotProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
+import {ContextValue, forwardRefType, HiddenContext, RenderProps, SlotProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerState} from 'react-stately';
@@ -84,7 +84,7 @@ function Popover(props: PopoverProps, ref: ForwardedRef<HTMLElement>) {
 /**
  * A popover is an overlay element positioned relative to a trigger.
  */
-const _Popover = forwardRef(Popover);
+const _Popover = /*#__PURE__*/ (forwardRef as forwardRefType)(Popover);
 export {_Popover as Popover};
 
 interface PopoverInnerProps extends AriaPopoverProps, RenderProps<PopoverRenderProps>, SlotProps {

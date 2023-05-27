@@ -11,7 +11,7 @@
  */
 
 import {AriaSwitchProps, mergeProps, useFocusRing, useHover, usePress, useSwitch, VisuallyHidden} from 'react-aria';
-import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, forwardRefType, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, useState} from 'react';
 import {useToggleState} from 'react-stately';
@@ -131,5 +131,5 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLInputElement>) {
 /**
  * A switch allows a user to turn a setting on or off.
  */
-const _Switch = forwardRef(Switch);
+const _Switch = /*#__PURE__*/ (forwardRef as forwardRefType)(Switch);
 export {_Switch as Switch};

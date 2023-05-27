@@ -12,7 +12,7 @@
 
 import {AriaSearchFieldProps, useSearchField} from 'react-aria';
 import {ButtonContext} from './Button';
-import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
@@ -79,5 +79,5 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
 /**
  * A search field allows a user to enter and clear a search query.
  */
-const _SearchField = forwardRef(SearchField);
+const _SearchField = /*#__PURE__*/ (forwardRef as forwardRefType)(SearchField);
 export {_SearchField as SearchField};
