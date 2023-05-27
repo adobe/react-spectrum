@@ -94,7 +94,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   let endProps: DOMAttributes = {};
   if (endId) {
     endProps.id = endId;
-    menuItemProps['aria-describedby'] = menuItemProps['aria-describedby'] + ' ' + endId;
+    menuItemProps['aria-describedby'] = [menuItemProps['aria-describedby'], endId].filter(Boolean).join(' ');
   }
 
   let contents = typeof rendered === 'string'

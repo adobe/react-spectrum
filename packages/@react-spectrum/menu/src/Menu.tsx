@@ -39,7 +39,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
   return (
     <MenuStateContext.Provider value={{state, container: scopedRef, menu: domRef}}>
       <FocusScope contain={state.expandedKeys.size > 0}>
-        <div ref={scopedRef}>
+        <div ref={scopedRef} style={{display: 'inline-flex', overflow: 'hidden'}}>
           <ul
             {...menuProps}
             {...styleProps}

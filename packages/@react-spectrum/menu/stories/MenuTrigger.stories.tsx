@@ -750,3 +750,24 @@ export let MenuItemUnavailable = {
     </Menu>
   )
 };
+
+export let MenuItemUnavailableDynamic = {
+  render: () => render(
+    <Menu items={flatMenu} onAction={action('onAction')}>
+      {(item) => {
+        if (item.name === 'Kangaroo') {
+          return (
+            <MenuDialogTrigger isUnavailable>
+              <Item key={item.name}>{item.name}</Item>
+              <Dialog>
+                <Heading>hello</Heading>
+                <Content>Is it me you're looking for?</Content>
+              </Dialog>
+            </MenuDialogTrigger>
+          );
+        }
+        return <Item key={item.name}>{item.name}</Item>;
+      }}
+    </Menu>
+  )
+};

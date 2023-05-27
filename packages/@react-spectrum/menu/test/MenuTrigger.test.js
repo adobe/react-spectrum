@@ -1033,7 +1033,7 @@ describe('MenuTrigger', function () {
         expect(icon).not.toHaveAttribute('aria-hidden');
       });
 
-      it.only('can open a sub dialog with hover', function () {
+      it('can open a sub dialog with hover', function () {
         renderTree();
         let menu = openMenu();
         let menuItems = within(menu).getAllByRole('menuitem');
