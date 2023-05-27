@@ -34,7 +34,9 @@ function pointerEvent(type, opts) {
     altKey: false,
     button: opts.button || 0,
     width: 1,
-    height: 1
+    height: 1,
+    clientX: 0,
+    clientY: 0
   }, opts);
   return evt;
 }
@@ -79,7 +81,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -92,7 +96,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -101,7 +107,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -114,7 +122,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -145,7 +155,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -158,7 +170,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 100,
+          y: 100
         },
         {
           type: 'presschange',
@@ -180,7 +194,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -193,7 +209,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 100,
+          y: 100
         },
         {
           type: 'presschange',
@@ -206,7 +224,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -219,7 +239,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -228,7 +250,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -241,7 +265,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -270,7 +296,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -283,7 +311,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -316,7 +346,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -329,7 +361,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -364,7 +398,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -377,7 +413,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 100,
+          y: 100
         },
         {
           type: 'presschange',
@@ -412,7 +450,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: true,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -425,7 +465,9 @@ describe('usePress', function () {
           ctrlKey: true,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -434,7 +476,9 @@ describe('usePress', function () {
           ctrlKey: true,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -447,7 +491,9 @@ describe('usePress', function () {
           ctrlKey: true,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -559,7 +605,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressup',
@@ -568,7 +616,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -577,7 +627,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'press',
@@ -586,7 +638,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -619,7 +673,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressup',
@@ -628,7 +684,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -637,7 +695,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'press',
@@ -646,7 +706,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -710,7 +772,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -723,7 +787,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -732,7 +798,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -745,7 +813,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -776,7 +846,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -789,7 +861,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -812,7 +886,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -825,7 +901,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -838,7 +916,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -851,7 +931,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -860,7 +942,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -873,7 +957,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -904,7 +990,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -917,7 +1005,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -951,7 +1041,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: true,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -964,7 +1056,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: true,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -973,7 +1067,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: true,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -986,7 +1082,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: true,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -1094,7 +1192,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1107,7 +1207,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1142,7 +1244,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1155,7 +1259,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -1164,7 +1270,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1177,7 +1285,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -1207,7 +1317,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1220,7 +1332,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1242,7 +1356,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1255,7 +1371,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1268,7 +1386,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1281,7 +1401,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -1290,7 +1412,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1303,7 +1427,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -1334,7 +1460,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1347,7 +1475,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1387,7 +1517,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1400,7 +1532,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1413,7 +1547,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1426,7 +1562,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -1435,7 +1573,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1448,7 +1588,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -1478,7 +1620,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1491,7 +1635,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1525,7 +1671,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1538,7 +1686,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1578,7 +1728,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1591,7 +1743,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -1600,7 +1754,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1613,7 +1769,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -1642,7 +1800,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1655,7 +1815,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1726,7 +1888,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1739,7 +1903,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -1748,7 +1914,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1761,7 +1929,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -1808,7 +1978,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1821,7 +1993,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -1830,7 +2004,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1843,7 +2019,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -1881,7 +2059,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1894,7 +2074,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -1903,7 +2085,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1916,7 +2100,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'click'
@@ -1960,7 +2146,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1973,7 +2161,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -1982,7 +2172,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1995,7 +2187,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'click'
@@ -2027,7 +2221,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: true,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -2040,7 +2236,9 @@ describe('usePress', function () {
           ctrlKey: true,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -2049,7 +2247,9 @@ describe('usePress', function () {
           ctrlKey: true,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -2062,7 +2262,9 @@ describe('usePress', function () {
           ctrlKey: true,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -2095,7 +2297,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -2108,7 +2312,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -2123,7 +2329,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -2136,7 +2344,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -2145,7 +2355,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -2158,7 +2370,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -2213,7 +2427,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -2231,7 +2447,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -2244,7 +2462,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -2253,7 +2473,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -2266,7 +2488,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -2296,7 +2520,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -2309,7 +2535,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -2318,7 +2546,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -2331,7 +2561,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
