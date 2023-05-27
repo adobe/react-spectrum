@@ -19,18 +19,33 @@ import overrideStyles from './overlays.css';
 import React, {forwardRef, MutableRefObject, ReactNode, RefObject, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
 import {Underlay} from './Underlay';
-import {useLayoutEffect} from '@react-aria/utils';
+import {mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {useFocusWithin} from "@react-aria/interactions";
 
 interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef' | 'maxHeight'>, StyleProps {
   children: ReactNode,
   hideArrow?: boolean,
   state: OverlayTriggerState,
-  shouldContainFocus?: boolean
+  shouldContainFocus?: boolean,
+  onEntering?: () => void,
+  onEnter?: () => void,
+  onEntered?: () => void,
+  onExiting?: () => void,
+  onExited?: () => void,
+  onExit?: () => void,
+  container?: HTMLElement,
+  disableFocusManagement?: boolean,
+  onFocusWithin?: (e: FocusEvent) => void,
+  onBlurWithin?: (e: FocusEvent) => void,
+  onFocusWithinChange?: (isFocused: boolean) => void
 }
 
 interface PopoverWrapperProps extends PopoverProps {
   isOpen?: boolean,
-  wrapperRef: MutableRefObject<HTMLDivElement>
+  wrapperRef: MutableRefObject<HTMLDivElement>,
+  onFocusWithin?: (e: FocusEvent) => void,
+  onBlurWithin?: (e: FocusEvent) => void,
+  onFocusWithinChange?: (isFocused: boolean) => void
 }
 
 interface ArrowProps {
@@ -90,13 +105,19 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
   let borderDiagonal = borderWidth * Math.SQRT2;
   let primary = size + borderDiagonal;
   let secondary = primary * 2;
-  let {popoverProps, arrowProps, underlayProps, placement} = usePopover({
+  let {
+    popoverProps,
+    arrowProps,
+    underlayProps,
+    placement
+  } = usePopover({
     ...props,
     popoverRef: ref,
     maxHeight: null,
     arrowSize: hideArrow ? 0 : secondary,
     arrowBoundaryOffset: borderRadius
   }, state);
+  let {focusWithinProps} = useFocusWithin(props);
 
   // Attach Transition's nodeRef to outermost wrapper for node.reflow: https://github.com/reactjs/react-transition-group/blob/c89f807067b32eea6f68fd6c622190d88ced82e2/src/Transition.js#L231
   return (
@@ -104,7 +125,7 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
       {!isNonModal && <Underlay isTransparent {...underlayProps} isOpen={isOpen} /> }
       <div
         {...styleProps}
-        {...popoverProps}
+        {...mergeProps(popoverProps, focusWithinProps)}
         style={{
           ...styleProps.style,
           ...popoverProps.style

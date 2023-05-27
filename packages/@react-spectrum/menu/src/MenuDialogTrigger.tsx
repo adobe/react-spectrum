@@ -15,8 +15,7 @@ import {DismissButton} from '@react-aria/overlays';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
 import {ItemProps} from '@react-types/shared';
 import {MenuDialogContext, useMenuStateContext} from './context';
-import {Modal} from '@react-spectrum/overlays';
-import {Popover} from './SubDialogPopover';
+import {Modal, Popover} from '@react-spectrum/overlays';
 import React, {Key, ReactElement, useRef} from 'react';
 import {useOverlayTriggerState} from '@react-stately/overlays';
 
@@ -59,6 +58,13 @@ function MenuDialogTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): ReactEl
       triggerRef.current.focus();
     }
   };
+  let onBlurWithin = (e) => {
+    if (e.relatedTarget && popoverRef.current && !popoverRef.current?.UNSAFE_getDOMNode().contains(e.relatedTarget)) {
+      if (menuState.expandedKeys.has(props.targetKey)) {
+        menuState.toggleKey(props.targetKey);
+      }
+    }
+  };
   return (
     <>
       <MenuDialogContext.Provider value={{isUnavailable, triggerRef}}>{trigger}</MenuDialogContext.Provider>
@@ -71,7 +77,18 @@ function MenuDialogTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): ReactEl
               <DismissButton onDismiss={state.close} />
             </Modal>
           ) : (
-            <Popover onExit={onExit} container={container.current} state={state} ref={popoverRef} triggerRef={triggerRef} placement="end top" offset={-10} isNonModal shouldContainFocus={false} shouldRestoreFocus={false}>
+            <Popover
+              onExit={onExit}
+              onBlurWithin={onBlurWithin}
+              container={container.current}
+              state={state}
+              ref={popoverRef}
+              triggerRef={triggerRef}
+              placement="end top"
+              offset={-10}
+              hideArrow
+              isNonModal
+              disableFocusManagement>
               {content}
             </Popover>
           )
