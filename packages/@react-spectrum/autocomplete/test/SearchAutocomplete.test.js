@@ -105,7 +105,7 @@ function testSearchAutocompleteOpen(searchAutocomplete, listbox, focusedItemInde
 
   expect(listbox).toBeVisible();
   expect(listbox).toHaveAttribute('aria-label', 'Suggestions');
-  expect(listbox).toHaveAttribute('aria-labelledby', `${searchAutocompleteLabelledBy} ${listbox.id}`);
+  expect(listbox).toHaveAttribute('aria-labelledby', `${listbox.id} ${searchAutocompleteLabelledBy}`);
   expect(searchAutocomplete).toHaveAttribute('aria-controls', listbox.id);
   expect(searchAutocomplete).toHaveAttribute('aria-expanded', 'true');
 
@@ -1523,7 +1523,7 @@ describe('SearchAutocomplete', function () {
       let {getByRole, getByText} = renderSearchAutocomplete({'aria-labelledby': 'label-id'});
       let button = getByRole('button');
 
-      expect(button).toHaveAttribute('aria-labelledby', `label-id ${getByText('Test').id} ${button.getElementsByTagName('span')[0].id}`);
+      expect(button).toHaveAttribute('aria-labelledby', `${getByText('Test').id} label-id ${button.getElementsByTagName('span')[0].id}`);
     });
 
     it('readonly searchAutocomplete should not open on press', function () {
@@ -1953,7 +1953,7 @@ describe('SearchAutocomplete', function () {
       expect(tray).toBeVisible();
       let listbox = getByRole('listbox');
       expect(listbox).toHaveAttribute('aria-label', 'Suggestions');
-      expect(listbox).toHaveAttribute('aria-labelledby', `${label.id} ${listbox.id}`);
+      expect(listbox).toHaveAttribute('aria-labelledby', `${listbox.id} ${label.id}`);
       let trayInput = within(tray).getByRole('searchbox');
       expect(trayInput).toHaveAttribute('aria-labelledby', label.id);
     });
