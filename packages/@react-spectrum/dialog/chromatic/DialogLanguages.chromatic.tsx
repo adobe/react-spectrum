@@ -20,7 +20,7 @@ import {Heading} from '@react-spectrum/text';
 // @ts-ignore
 import intlMessages from './intl/*.json';
 import {Item, TagGroup} from '@react-spectrum/tag';
-import {Provider} from '@react-spectrum/Provider';
+import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 

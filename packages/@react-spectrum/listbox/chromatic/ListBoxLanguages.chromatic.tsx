@@ -18,7 +18,7 @@ import Draw from '@spectrum-icons/workflow/Draw';
 import intlMessages from './intl/*.json';
 import {Item, ListBox, Section} from '..';
 import {Label} from '@react-spectrum/label';
-import {Provider} from '@react-spectrum/Provider';
+import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {Text} from '@react-spectrum/text';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
