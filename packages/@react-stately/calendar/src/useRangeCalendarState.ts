@@ -12,7 +12,7 @@
 
 import {alignCenter, constrainValue, isInvalid, previousAvailableDate} from './utils';
 import {Calendar, CalendarDate, DateDuration, GregorianCalendar, isEqualDay, maxDate, minDate, toCalendar, toCalendarDate} from '@internationalized/date';
-import {CalendarState, RangeCalendarState} from './types';
+import {CalendarState, PageBehavior, RangeCalendarState} from './types';
 import {DateRange, DateValue} from '@react-types/calendar';
 import {RangeCalendarProps} from '@react-types/calendar';
 import {RangeValue} from '@react-types/shared';
@@ -31,7 +31,7 @@ export interface RangeCalendarStateOptions<T extends DateValue = DateValue> exte
    */
   createCalendar: (name: string) => Calendar,
   /**
-   * The amount of days that will be displayed at once. This affects how pagination works in case visibleDuration is not provided.
+   * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
    */
   visibleDuration?: DateDuration,
@@ -39,7 +39,7 @@ export interface RangeCalendarStateOptions<T extends DateValue = DateValue> exte
    * The amount of days that will be used for advancing to next/previous page.
    * @default visibleDuration
    */
-  pageDuration?: DateDuration
+  pageBehavior?: PageBehavior
 }
 
 /**

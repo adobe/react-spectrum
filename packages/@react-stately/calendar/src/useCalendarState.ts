@@ -28,7 +28,7 @@ import {
   today
 } from '@internationalized/date';
 import {CalendarProps, DateValue} from '@react-types/calendar';
-import {CalendarState} from './types';
+import {CalendarState, PageBehavior} from './types';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo, useRef, useState} from 'react';
 
@@ -43,15 +43,15 @@ export interface CalendarStateOptions<T extends DateValue = DateValue> extends C
    */
   createCalendar: (name: string) => Calendar,
   /**
-   * The amount of days that will be displayed at once. This affects how pagination works in case visibleDuration is not provided.
+   * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
    */
   visibleDuration?: DateDuration,
   /**
-   * The amount of days that will be used for advancing to next/previous page.
-   * @default visibleDuration
+   * Controls the behavior of paging. Pagination either works by advancing the visible page by visibleDuration (default) or one unit of visibleDuration.
+   * @default visible
    */
-  pageDuration?: DateDuration,
+  pageBehavior?: PageBehavior,
   /** Determines how to align the initial selection relative to the visible date range. */
   selectionAlignment?: 'start' | 'center' | 'end'
 }
@@ -70,11 +70,9 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
     minValue,
     maxValue,
     selectionAlignment,
-    isDateUnavailable
+    isDateUnavailable,
+    pageBehavior = 'visible'
   } = props;
-
-  let pageDuration = props.pageDuration ?? visibleDuration;
-
   let calendar = useMemo(() => createCalendar(resolvedOptions.calendar), [createCalendar, resolvedOptions.calendar]);
 
   let [value, setControlledValue] = useControlledState<DateValue>(props.value, props.defaultValue, props.onChange);
@@ -175,6 +173,35 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
     return isInvalid(calendarDateValue, minValue, maxValue);
   }, [calendarDateValue, isDateUnavailable, minValue, maxValue]);
   let validationState = props.validationState || (isUnavailable ? 'invalid' : null);
+
+  let pageDuration = useMemo(() => {
+    if (pageBehavior === 'visible') {
+      return visibleDuration;
+    }
+
+    if (visibleDuration.days) {
+      return {
+        days: 1
+      };
+    }
+
+    if (visibleDuration.weeks) {
+      return {
+        weeks: 1
+      };
+    }
+
+    if (visibleDuration.months) {
+      return {
+        months: 1
+      };
+    }
+    
+    return {
+      years: 1
+    };
+
+  }, [pageBehavior, visibleDuration]);
 
   return {
     isDisabled: props.isDisabled,
