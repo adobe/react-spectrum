@@ -42,7 +42,7 @@ export const Months2 = {
   name: 'months: 2'
 };
 
-export const Months2Page1 = {
-  render: () => <Example visibleDuration={{months: 2}} pageDuration={{months: 1}} />,
-  name: 'months: 2, page: 1'
+export const Months2PageBehaviorSingle = {
+  render: () => <Example visibleDuration={{months: 2}} pageBehavior="single" />,
+  name: 'months: 2, pageBehavior: single'
 };
