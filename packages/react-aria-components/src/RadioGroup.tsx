@@ -201,7 +201,7 @@ function Radio(props: RadioProps, ref: ForwardedRef<HTMLInputElement>) {
       data-readonly={state.isReadOnly || undefined}
       data-validation-state={state.validationState || undefined}
       data-required={state.isRequired || undefined}>
-      <VisuallyHidden>
+      <VisuallyHidden elementType="span">
         <input {...inputProps} {...focusProps} ref={domRef} />
       </VisuallyHidden>
       {renderProps.children}

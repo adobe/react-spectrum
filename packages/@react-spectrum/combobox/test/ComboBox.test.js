@@ -207,11 +207,11 @@ function testComboBoxOpen(combobox, button, listbox, focusedItemIndex) {
 
   expect(listbox).toBeVisible();
   expect(listbox).toHaveAttribute('aria-label', 'Suggestions');
-  expect(listbox).toHaveAttribute('aria-labelledby', `${comboboxLabelledBy} ${listbox.id}`);
+  expect(listbox).toHaveAttribute('aria-labelledby', `${listbox.id} ${comboboxLabelledBy}`);
   expect(button).toHaveAttribute('aria-expanded', 'true');
   expect(button).toHaveAttribute('aria-controls', listbox.id);
   expect(button).toHaveAttribute('aria-label', 'Show suggestions');
-  expect(button).toHaveAttribute('aria-labelledby', `${comboboxLabelledBy} ${buttonId}`);
+  expect(button).toHaveAttribute('aria-labelledby', `${buttonId} ${comboboxLabelledBy}`);
   expect(combobox).toHaveAttribute('aria-controls', listbox.id);
   expect(combobox).toHaveAttribute('aria-expanded', 'true');
 
@@ -3689,7 +3689,7 @@ describe('ComboBox', function () {
       let {getByRole, getByText} = renderComboBox({selectedKey: '2', 'aria-labelledby': 'label-id'});
       let button = getByRole('button');
 
-      expect(button).toHaveAttribute('aria-labelledby', `label-id ${getByText('Test').id} ${getByText('Two').id}`);
+      expect(button).toHaveAttribute('aria-labelledby', `${getByText('Test').id} label-id ${getByText('Two').id}`);
     });
 
     it('readonly combobox should not open on press', function () {
@@ -4161,7 +4161,7 @@ describe('ComboBox', function () {
       expect(tray).toBeVisible();
       let listbox = getByRole('listbox');
       expect(listbox).toHaveAttribute('aria-label', 'Suggestions');
-      expect(listbox).toHaveAttribute('aria-labelledby', `${label.id} ${listbox.id}`);
+      expect(listbox).toHaveAttribute('aria-labelledby', `${listbox.id} ${label.id}`);
       let trayInput = within(tray).getByRole('searchbox');
       expect(trayInput).toHaveAttribute('aria-labelledby', label.id);
     });
