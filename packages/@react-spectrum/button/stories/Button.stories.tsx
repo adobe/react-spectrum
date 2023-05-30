@@ -52,7 +52,8 @@ export default {
     },
     variant: {
       control: 'select',
-      options: ['accent', 'primary', 'secondary', 'negative', 'cta', 'overBackground']
+      options: ['accent', 'primary', 'secondary', 'negative', 'cta', 'overBackground'],
+      defaultValue: 'accent'
     },
     style: {
       control: 'select',
@@ -79,17 +80,17 @@ export const IconOnly: ButtonStory = {
 
 export const AnchorElement: ButtonStory = {
   render: (args) => render({elementType: 'a', ...args}),
-  storyName: 'element: a'
+  name: 'element: a'
 };
 
 export const AnchorElementWithSelf: ButtonStory = {
   render: (args) => render({elementType: 'a',  href: '//example.com', target: '_self', ...args}),
-  storyName: 'element: a, href: \'//example.com\', target: \'_self\''
+  name: 'element: a, href: \'//example.com\', target: \'_self\''
 };
 
 export const AnchorElementNoRefferer: ButtonStory = {
   render: (args) => render({elementType: 'a', href: '//example.com', rel: 'noopener noreferrer', ...args}),
-  storyName: 'element: a, rel: \'noopener noreferrer\''
+  name: 'element: a, rel: \'noopener noreferrer\''
 };
 
 export const UserSelect: ButtonStory = {

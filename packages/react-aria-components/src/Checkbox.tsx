@@ -12,6 +12,7 @@
 import {AriaCheckboxGroupProps, AriaCheckboxProps, mergeProps, useCheckbox, useCheckboxGroup, useCheckboxGroupItem, useFocusRing, useHover, usePress, VisuallyHidden} from 'react-aria';
 import {CheckboxGroupState, useCheckboxGroupState, useToggleState, ValidationState} from 'react-stately';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {filterDOMProps} from '@react-aria/utils';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, useContext, useState} from 'react';
 import {TextContext} from './Text';
@@ -204,9 +205,12 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
     }
   });
 
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
+
   return (
     <label
-      {...mergeProps(pressProps, hoverProps, renderProps)}
+      {...mergeProps(DOMProps, pressProps, hoverProps, renderProps)}
       slot={props.slot}
       data-selected={isSelected || undefined}
       data-indeterminate={props.isIndeterminate || undefined}
@@ -218,7 +222,7 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
       data-readonly={isReadOnly || undefined}
       data-validation-state={props.validationState || groupState?.validationState || undefined}
       data-required={props.isRequired || undefined}>
-      <VisuallyHidden>
+      <VisuallyHidden elementType="span">
         <input {...inputProps} {...focusProps} ref={ref} />
       </VisuallyHidden>
       {renderProps.children}
