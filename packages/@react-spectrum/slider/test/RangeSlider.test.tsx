@@ -38,8 +38,8 @@ describe('RangeSlider', function () {
     let [leftSlider, rightSlider] = getAllByRole('slider');
     expect(leftSlider.getAttribute('aria-label')).toBe('Minimum');
     expect(rightSlider.getAttribute('aria-label')).toBe('Maximum');
-    expect(leftSlider.getAttribute('aria-labelledby')).toBe(`${labelId} ${leftSlider.id}`);
-    expect(rightSlider.getAttribute('aria-labelledby')).toBe(`${labelId} ${rightSlider.id}`);
+    expect(leftSlider.getAttribute('aria-labelledby')).toBe(`${leftSlider.id} ${labelId}`);
+    expect(rightSlider.getAttribute('aria-labelledby')).toBe(`${rightSlider.id} ${labelId}`);
 
     let label = document.getElementById(labelId);
     expect(label).toHaveTextContent('The Label');

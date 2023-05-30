@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/layout",
-  "version": "3.12.0",
+  "version": "3.12.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -22,12 +22,12 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-stately/collections": "^3.7.0",
-    "@react-stately/table": "^3.9.0",
-    "@react-stately/virtualizer": "^3.5.1",
-    "@react-types/grid": "^3.1.7",
-    "@react-types/shared": "^3.18.0",
-    "@react-types/table": "^3.6.0",
+    "@react-stately/collections": "^3.8.0",
+    "@react-stately/table": "^3.9.1",
+    "@react-stately/virtualizer": "^3.5.2",
+    "@react-types/grid": "^3.1.8",
+    "@react-types/shared": "^3.18.1",
+    "@react-types/table": "^3.6.1",
     "@swc/helpers": "^0.4.14"
   },
   "peerDependencies": {

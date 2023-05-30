@@ -119,8 +119,8 @@ describe('ColorArea', () => {
 
           expect(xSlider).toHaveAttribute('aria-label', 'Color picker');
           expect(ySlider).toHaveAttribute('aria-label', 'Color picker');
-          expect(xSlider).toHaveAttribute('aria-labelledby', `label-id ${xSlider.id}`);
-          expect(ySlider).toHaveAttribute('aria-labelledby', `label-id ${ySlider.id}`);
+          expect(xSlider).toHaveAttribute('aria-labelledby', `${xSlider.id} label-id`);
+          expect(ySlider).toHaveAttribute('aria-labelledby', `${ySlider.id} label-id`);
 
           let colorAreaGroup = xSlider.closest('[role="group"]');
           expect(colorAreaGroup).toHaveAttribute('aria-labelledby', 'label-id');
