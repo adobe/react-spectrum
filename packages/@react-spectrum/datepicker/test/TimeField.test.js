@@ -136,6 +136,8 @@ describe('TimeField', function () {
     it('should call blur when focus leaves', function () {
       let {getAllByRole} = render(<TimeField label="Time" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} />);
       let segments = getAllByRole('spinbutton');
+      // workaround bug in userEvent.tab(). hidden inputs aren't focusable.
+      document.querySelector('input[type=hidden]').tabIndex = -1;
 
       expect(onBlurSpy).not.toHaveBeenCalled();
       expect(onFocusChangeSpy).not.toHaveBeenCalled();
@@ -175,6 +177,40 @@ describe('TimeField', function () {
       expect(segments[1]).toHaveFocus();
       expect(onKeyDownSpy).toHaveBeenCalledTimes(1);
       expect(onKeyUpSpy).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('forms', () => {
+    it('supports form reset', () => {
+      function Test() {
+        let [value, setValue] = React.useState(new Time(8, 30));
+        return (
+          <form>
+            <TimeField name="time" label="Value" value={value} onChange={setValue} />
+            <input type="reset" data-testid="reset" />
+          </form>
+        );
+      }
+
+      let {getByTestId, getByRole, getAllByRole} = render(<Test />);
+      let group = getByRole('group');
+      let input = document.querySelector('input[name=time]');
+      let segments = getAllByRole('spinbutton');
+
+      let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+      expect(getDescription()).toBe('Selected Time: 8:30 AM');
+
+      expect(input).toHaveValue('08:30:00');
+      expect(input).toHaveAttribute('name', 'time');
+      fireEvent.keyDown(segments[0], {key: 'ArrowUp'});
+      fireEvent.keyUp(segments[0], {key: 'ArrowUp'});
+      expect(getDescription()).toBe('Selected Time: 9:30 AM');
+      expect(input).toHaveValue('09:30:00');
+
+      let button = getByTestId('reset');
+      act(() => userEvent.click(button));
+      expect(getDescription()).toBe('Selected Time: 8:30 AM');
+      expect(input).toHaveValue('08:30:00');
     });
   });
 });
