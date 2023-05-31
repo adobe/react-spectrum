@@ -146,7 +146,7 @@ function Radio(props: RadioProps, ref: ForwardedRef<HTMLInputElement>) {
   let {inputProps, isSelected, isDisabled, isPressed: isPressedKeyboard} = useRadio({
     ...props,
     // ReactNode type doesn't allow function children.
-    children: props.children != null
+    children: typeof props.children === 'function' ? true : props.children
   }, state, domRef);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let interactionDisabled = isDisabled || state.isReadOnly;

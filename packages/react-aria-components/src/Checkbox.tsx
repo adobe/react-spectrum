@@ -159,10 +159,10 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
       // @ts-ignore
       value: props.value,
       // ReactNode type doesn't allow function children.
-      children: props.children != null
+      children: typeof props.children === 'function' ? true : props.children
     }, groupState, ref)
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    : useCheckbox({...props, children: props.children != null}, useToggleState(props), ref);
+    : useCheckbox({...props, children: typeof props.children === 'function' ? true : props.children}, useToggleState(props), ref);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let isInteractionDisabled = isDisabled || isReadOnly;
 

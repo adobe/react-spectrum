@@ -64,7 +64,7 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLInputElement>) {
   let {inputProps, isSelected, isDisabled, isReadOnly, isPressed: isPressedKeyboard} = useSwitch({
     ...props,
     // ReactNode type doesn't allow function children.
-    children: props.children != null
+    children: typeof props.children === 'function' ? true : props.children
   }, state, ref);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let isInteractionDisabled = props.isDisabled || props.isReadOnly;
