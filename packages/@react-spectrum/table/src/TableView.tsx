@@ -612,8 +612,6 @@ function TableVirtualizer(props) {
     let column = collection.columns[0];
     let virtualizer = state.virtualizer;
 
-    let modality = getInteractionModality();
-
     virtualizer.scrollToItem(key, {
       duration: 0,
       // Prevent scrolling to the top when clicking on column headers.
@@ -628,10 +626,7 @@ function TableVirtualizer(props) {
     // Sync the scroll positions of the column headers and the body so scrollIntoViewport can
     // properly decide if the column is outside the viewport or not
     headerRef.current.scrollLeft = bodyRef.current.scrollLeft;
-    if (modality === 'keyboard') {
-      scrollIntoViewport(document.activeElement, {containingElement: domRef.current});
-    }
-  }, [collection, domRef, bodyRef, headerRef, layout, state.virtualizer]);
+  }, [collection, bodyRef, headerRef, layout, state.virtualizer]);
 
   let memoedVirtualizerProps = useMemo(() => ({
     tabIndex: otherProps.tabIndex,

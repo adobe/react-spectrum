@@ -130,9 +130,6 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
       } else {
         virtualizer.scrollToItem(focusedKey, {duration: 0});
 
-        if (modality === 'keyboard' && ref.current.contains(document.activeElement)) {
-          scrollIntoViewport(document.activeElement, {containingElement: ref.current});
-        }
       }
     }
 
@@ -220,9 +217,9 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
       && (wasLoading || state.contentSize.height !== lastContentSize.current);
 
     if (shouldLoadMore) {
-        isLoadingRef.current = true;
-        onLoadMore();
-      }
+      isLoadingRef.current = true;
+      onLoadMore();
+    }
     lastContentSize.current = state.contentSize.height;
   }, [state.contentSize, state.isAnimating, state.virtualizer, isLoading, onLoadMore, props]);
 

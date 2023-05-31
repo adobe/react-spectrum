@@ -266,10 +266,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     };
   }
 
-  if (!isVirtualized) {
-    itemProps['data-key'] = key;
-  }
-
+  itemProps['data-key'] = key;
   itemPressProps.preventFocusOnPress = shouldUseVirtualFocus;
   let {pressProps, isPressed} = usePress(itemPressProps);
 
