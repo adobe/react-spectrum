@@ -28,7 +28,7 @@ import {HiddenSelect, useSelect} from '@react-aria/select';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
-import {mergeProps, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import {mergeProps, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {Popover, Tray} from '@react-spectrum/overlays';
 import {PressResponder, useHover} from '@react-aria/interactions';
 import {ProgressCircle} from '@react-spectrum/progress';
@@ -70,6 +70,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
 
   let isLoadingInitial = props.isLoading && state.collection.size === 0;
   let isLoadingMore = props.isLoading && state.collection.size > 0;
+  let progressCircleId = useId();
 
   // We create the listbox layout in Picker and pass it to ListBoxBase below
   // so that the layout information can be cached even while the listbox is not mounted.
@@ -77,6 +78,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let layout = useListBoxLayout(state, isLoadingMore);
   let {labelProps, triggerProps, valueProps, menuProps, descriptionProps, errorMessageProps} = useSelect({
     ...props,
+    'aria-describedby': (isLoadingInitial ? progressCircleId : undefined),
     keyboardDelegate: layout
   }, state, unwrappedTriggerRef);
 
@@ -205,6 +207,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
           </SlotProvider>
           {isLoadingInitial &&
             <ProgressCircle
+              id={progressCircleId}
               isIndeterminate
               size="S"
               aria-label={stringFormatter.format('loading')}
