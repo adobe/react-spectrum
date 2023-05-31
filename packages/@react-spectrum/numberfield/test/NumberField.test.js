@@ -2203,4 +2203,30 @@ describe('NumberField', function () {
     expect(resetSpy).toHaveBeenCalledTimes(1);
     expect(textField).toHaveAttribute('value', '');
   });
+
+  it('supports form reset', async () => {
+    function Test() {
+      let [value, setValue] = React.useState(10);
+      return (
+        <Provider theme={theme}>
+          <form>
+            <NumberField data-testid="input" label="Value" value={value} onChange={setValue} />
+            <input type="reset" data-testid="reset" />
+          </form>
+        </Provider>
+      );
+    }
+
+    let {getByTestId} = render(<Test />);
+    let input = getByTestId('input');
+
+    expect(input).toHaveValue('10');
+    await act(() => userEvent.type(input, '0'));
+    expect(input).toHaveValue('100');
+
+    let button = getByTestId('reset');
+    act(() => input.blur());
+    act(() => userEvent.click(button));
+    expect(input).toHaveValue('10');
+  });
 });

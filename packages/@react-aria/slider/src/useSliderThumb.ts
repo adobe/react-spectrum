@@ -1,5 +1,5 @@
 import {AriaSliderThumbProps} from '@react-types/slider';
-import {clamp, focusWithoutScrolling, mergeProps, useGlobalListeners} from '@react-aria/utils';
+import {clamp, focusWithoutScrolling, mergeProps, useFormReset, useGlobalListeners} from '@react-aria/utils';
 import {DOMAttributes} from '@react-types/shared';
 import {getSliderThumbId, sliderIds} from './utils';
 import React, {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, RefObject, useCallback, useEffect, useRef} from 'react';
@@ -222,6 +222,10 @@ export function useSliderThumb(
       onTouchStart: (e: React.TouchEvent) => {onDown(e.changedTouches[0].identifier);}
     }
   ) : {};
+
+  useFormReset(inputRef, value, (v) => {
+    stateRef.current.setThumbValue(index, v);
+  });
 
   // We install mouse handlers for the drag motion on the thumb div, but
   // not the key handler for moving the thumb with the slider.  Instead,

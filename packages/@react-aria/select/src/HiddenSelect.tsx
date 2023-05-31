@@ -11,8 +11,9 @@
  */
 
 import {FocusableElement} from '@react-types/shared';
-import React, {ReactNode, RefObject} from 'react';
+import React, {ReactNode, RefObject, useRef} from 'react';
 import {SelectState} from '@react-stately/select';
+import {useFormReset} from '@react-aria/utils';
 import {useInteractionModality} from '@react-aria/interactions';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
@@ -20,7 +21,7 @@ export interface AriaHiddenSelectProps {
   /**
    * Describes the type of autocomplete functionality the input should provide if any. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
    */
-   autoComplete?: string,
+  autoComplete?: string,
 
   /** The text label for the select. */
   label?: ReactNode,
@@ -40,15 +41,22 @@ export interface HiddenSelectProps<T> extends AriaHiddenSelectProps {
   triggerRef: RefObject<FocusableElement>
 }
 
+export interface AriaHiddenSelectOptions extends AriaHiddenSelectProps {
+  /** A ref to the hidden `<select>` element. */
+  selectRef?: RefObject<HTMLSelectElement>
+}
+
 /**
  * Provides the behavior and accessibility implementation for a hidden `<select>` element, which
  * can be used in combination with `useSelect` to support browser form autofill, mobile form
  * navigation, and native HTML form submission.
  */
-export function useHiddenSelect<T>(props: AriaHiddenSelectProps, state: SelectState<T>, triggerRef: RefObject<FocusableElement>) {
+export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: SelectState<T>, triggerRef: RefObject<FocusableElement>) {
   let {autoComplete, name, isDisabled} = props;
   let modality = useInteractionModality();
   let {visuallyHiddenProps} = useVisuallyHidden();
+
+  useFormReset(props.selectRef, state.selectedKey, state.setSelectedKey);
 
   // In Safari, the <select> cannot have `display: none` or `hidden` for autofill to work.
   // In Firefox, there must be a <label> to identify the <select> whereas other browsers
@@ -98,7 +106,8 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectProps, state: SelectSt
  */
 export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
   let {state, triggerRef, label, name, isDisabled} = props;
-  let {containerProps, inputProps, selectProps} = useHiddenSelect(props, state, triggerRef);
+  let selectRef = useRef(null);
+  let {containerProps, inputProps, selectProps} = useHiddenSelect({...props, selectRef}, state, triggerRef);
 
   // If used in a <form>, use a hidden input so the value can be submitted to a server.
   // If the collection isn't too big, use a hidden <select> element for this so that browser
@@ -109,7 +118,7 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
         <input {...inputProps} />
         <label>
           {label}
-          <select {...selectProps}>
+          <select {...selectProps} ref={selectRef}>
             <option />
             {[...state.collection.getKeys()].map(key => {
               let item = state.collection.getItem(key);
