@@ -966,14 +966,14 @@ describe('DatePicker', function () {
       let {getByTestId, queryByTestId} = render(<DatePicker label="Date" defaultValue={new CalendarDate('BC', 2020, 2, 3)} />);
       let field = getByTestId('date-field');
       let era = getByTestId('era');
-      expect(era).toBe(field.lastChild);
+      expect(era).toBe(within(field).getAllByRole('spinbutton').pop());
 
       act(() => era.focus());
       fireEvent.keyDown(era, {key: 'ArrowUp'});
       fireEvent.keyUp(era, {key: 'ArrowUp'});
 
       expect(queryByTestId('era')).toBeNull();
-      expect(document.activeElement).toBe(field.lastChild);
+      expect(document.activeElement).toBe(within(field).getAllByRole('spinbutton').pop());
     });
 
     it('should focus the next segment when the era is removed and is the first segment', function () {
@@ -1832,6 +1832,40 @@ describe('DatePicker', function () {
       expect(segments[5]).toHaveFocus();
       act(() => {segments[5].blur();});
       expect(onChange).toHaveBeenCalledWith(new CalendarDateTime(2022, 4, 5, 5, 45));
+    });
+  });
+
+  describe('forms', () => {
+    it('supports form reset', () => {
+      function Test() {
+        let [value, setValue] = React.useState(new CalendarDate(2020, 2, 3));
+        return (
+          <form>
+            <DatePicker name="date" label="Value" value={value} onChange={setValue} />
+            <input type="reset" data-testid="reset" />
+          </form>
+        );
+      }
+
+      let {getByTestId, getByRole, getAllByRole} = render(<Test />);
+      let group = getByRole('group');
+      let input = document.querySelector('input[name=date]');
+      let segments = getAllByRole('spinbutton');
+
+      let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+      expect(getDescription()).toBe('Selected Date: February 3, 2020');
+
+      expect(input).toHaveValue('2020-02-03');
+      expect(input).toHaveAttribute('name', 'date');
+      fireEvent.keyDown(segments[0], {key: 'ArrowUp'});
+      fireEvent.keyUp(segments[0], {key: 'ArrowUp'});
+      expect(getDescription()).toBe('Selected Date: March 3, 2020');
+      expect(input).toHaveValue('2020-03-03');
+
+      let button = getByTestId('reset');
+      act(() => userEvent.click(button));
+      expect(getDescription()).toBe('Selected Date: February 3, 2020');
+      expect(input).toHaveValue('2020-02-03');
     });
   });
 });
