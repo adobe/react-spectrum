@@ -1,0 +1,15 @@
+name: Production docs deploy
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  trigger-circleci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run CircleCI
+        id: prod-docs
+        uses: circleci/trigger_circleci_pipeline@v1.0
+        env:
+          CCI_TOKEN: $
