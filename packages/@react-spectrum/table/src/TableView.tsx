@@ -522,7 +522,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     focusProps,
     dragAndDropHooks?.isVirtualDragging() && {tabIndex: null}
   );
-
+    console.log('state',state.collection);
   return (
     <TableContext.Provider value={{state, dragState, dropState, dragAndDropHooks, isTableDraggable, isTableDroppable, layout, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, headerMenuOpen, setHeaderMenuOpen, shouldShowCheckboxes}}>
       <TableVirtualizer
@@ -1119,7 +1119,7 @@ function TableDragHeaderCell({column}) {
       <div
         {...columnHeaderProps}
         ref={ref}
-        className={ 
+        className={
           classNames(
             styles,
             'spectrum-Table-headCell',

@@ -243,8 +243,10 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
           }
           break;
         case 'item':
+          console.log('row node', {...node}, [...node.childNodes])
           rows.push(node);
-          return; // do not go into childNodes
+          // TODO: removing this return will mean we can properly extract the child rows and add them to the rows array (static case for now)
+          // return; // do not go into childNodes
       }
       for (let child of node.childNodes) {
         visit(child);
@@ -254,10 +256,12 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
     for (let node of nodes) {
       visit(node);
     }
-
+    console.log('columnKeymap', columnKeyMap, columns)
+    debugger
     let headerRows = buildHeaderRows(columnKeyMap, columns) as GridNode<T>[];
     headerRows.forEach((row, i) => rows.splice(i, 0, row));
-
+    debugger
+    console.log('rows before', rows);
     super({
       columnCount: columns.length,
       items: rows,

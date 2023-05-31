@@ -20,7 +20,7 @@ function Row(props: RowProps): ReactElement { // eslint-disable-line @typescript
 }
 
 Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps, context: CollectionBuilderContext<T>): Generator<PartialNode<T>> {
-  let {children, textValue} = props;
+  let {children, textValue, childRows, item} = props;
 
   yield {
     type: 'item',
@@ -39,7 +39,7 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps, context:
           }
         };
       }
-      
+
       if (context.showSelectionCheckboxes && context.selectionMode !== 'none') {
         yield {
           type: 'cell',
@@ -51,20 +51,54 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps, context:
       }
 
       if (typeof children === 'function') {
+        // TODO: will have yield rows and not just cells. Use childRows props? Should Rows and Cells be differentiated or should it be childItems as a catch all instead?
         for (let column of context.columns) {
           yield {
             type: 'cell',
             element: children(column.key),
+            // element: children(column.key, item),
             key: column.key // this is combined with the row key by CollectionBuilder
           };
         }
+
+        // TODO: maybe I don't need to yield anything complicated? Just type and value like column and have the Collection be responsible for generating the node information?
+        // The Collection could extract the body's renderer and use that to potentially build the sub rows?
+        // Turns out I just need to provide type and value it seems?
+        if (childRows) {
+          for (let child of childRows) {
+            console.log('yielding child row')
+            // TODO: ideally would call Row here again so we get the same yield logic, not sure how to do so though...
+            yield {
+              type: 'item',
+              hasChildNodes: true,
+              // TODO: maybe don't need value here
+              value: child,
+
+              // *childNodes() {
+
+              // },
+              // renderer: children,
+              // TODO: would need to include more props? How would the user define a aria-label or a key for the nested row?
+              // This problem exists for dynamic nested columns too I believe
+              props: {childRows: child.childRows}
+            };
+          }
+        }
       } else {
         let cells: PartialNode<T>[] = [];
-        React.Children.forEach(children, cell => {
-          cells.push({
-            type: 'cell',
-            element: cell
-          });
+        let childRows: PartialNode<T>[] = [];
+        React.Children.forEach(children, node => {
+          if (node.type === Row) {
+            childRows.push({
+              type: 'item',
+              element: node
+            });
+          } else {
+            cells.push({
+              type: 'cell',
+              element: node
+            });
+          }
         });
 
         if (cells.length !== context.columns.length) {
@@ -72,6 +106,7 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps, context:
         }
 
         yield* cells;
+        yield* childRows;
       }
     },
     shouldInvalidate(newContext: CollectionBuilderContext<T>) {

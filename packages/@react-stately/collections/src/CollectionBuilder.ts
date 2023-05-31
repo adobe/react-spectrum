@@ -31,6 +31,7 @@ export class CollectionBuilder<T extends object> {
     let {children, items} = props;
 
     if (typeof children === 'function') {
+      console.log('collection builder children', children);
       if (!items) {
         throw new Error('props.children was a function but props.items is missing');
       }
@@ -94,6 +95,8 @@ export class CollectionBuilder<T extends object> {
     // use it to render an element for the value.
     let element = partialNode.element;
     if (!element && partialNode.value && state && state.renderer) {
+      debugger
+      console.log('in getFullNode', partialNode.value, state.renderer)
       let cached = this.cache.get(partialNode.value);
       if (cached && (!cached.shouldInvalidate || !cached.shouldInvalidate(this.context))) {
         cached.index = partialNode.index;

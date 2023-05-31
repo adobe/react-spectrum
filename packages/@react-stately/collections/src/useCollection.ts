@@ -19,11 +19,14 @@ type CollectionFactory<T, C extends Collection<Node<T>>> = (node: Iterable<Node<
 export function useCollection<T extends object, C extends Collection<Node<T>> = Collection<Node<T>>>(props: CollectionStateBase<T, C>, factory: CollectionFactory<T, C>, context?: unknown): C {
   let builder = useMemo(() => new CollectionBuilder<T>(), []);
   let {children, items, collection} = props;
+  console.log('children', children, items);
   let result = useMemo(() => {
     if (collection) {
       return collection;
     }
     let nodes = builder.build({children, items}, context);
+    console.log('nodes from builder', [...nodes], [...([...nodes].find(node => node.type === 'body')).childNodes]);
+    // debugger;
     return factory(nodes);
   }, [builder, children, items, collection, context, factory]);
   return result;

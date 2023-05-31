@@ -35,6 +35,7 @@ Column.getCollectionNode = function* getCollectionNode<T>(props: ColumnProps<T>,
     *childNodes() {
       if (childColumns) {
         for (let child of childColumns) {
+          console.log('yielding child columns')
           yield {
             type: 'column',
             value: child

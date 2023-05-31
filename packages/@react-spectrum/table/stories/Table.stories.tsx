@@ -314,6 +314,132 @@ export const DynamicSelectedKeys: TableStory = {
   }
 };
 
+export const StaticExpandableRows = {
+  args: {
+    'aria-label': 'TableView with static expandable rows',
+    width: 500,
+    height: 200
+  },
+  render: (args) => (
+    <TableView {...args}>
+      <TableHeader>
+        <Column key="foo">Foo</Column>
+        <Column key="bar">Bar</Column>
+        <Column key="baz">Baz</Column>
+      </TableHeader>
+      <TableBody>
+        <Row>
+          <Cell>Lvl 1 Foo 1</Cell>
+          <Cell>Lvl 1 Bar 1</Cell>
+          <Row>
+            <Cell>Lvl 2 Foo 1</Cell>
+            <Cell>Lvl 2 Bar 1</Cell>
+            <Cell>Lvl 2 Baz 1</Cell>
+            <Row>
+              <Cell>Lvl 3 Foo 1</Cell>
+              <Cell>Lvl 3 Bar 1</Cell>
+              <Cell>Lvl 3 Baz 1</Cell>
+            </Row>
+          </Row>
+          <Row>
+            <Cell>Lvl 2 Foo 2</Cell>
+            <Cell>Lvl 2 Bar 2</Cell>
+            <Cell>Lvl 2 Baz 2</Cell>
+          </Row>
+          <Cell>Lvl 1 Baz 1</Cell>
+        </Row>
+      </TableBody>
+    </TableView>
+  ),
+  name: 'static with expandable rows'
+};
+
+let nestedItems = [
+  {test: 'Lvl 1 Test 1', foo: 'Lvl 1 Foo 1', bar: 'Lvl 1 Bar 1', yay: 'Lvl 1 Yay 1', baz: 'Lvl 1 Baz 1', childRows: [
+    {test: 'Lvl 2 Test 1', foo: 'Lvl 2 Foo 1', bar: 'Lvl 2 Bar 1', yay: 'Lvl 2 Yay 1', baz: 'Lvl 2 Baz 1', childRows: [
+      {test: 'Lvl 3 Test 1', foo: 'Lvl 3 Foo 1', bar: 'Lvl 3 Bar 1', yay: 'Lvl 3 Yay 1', baz: 'Lvl 3 Baz 1'}
+    ]},
+    {test: 'Lvl 2 Test 2', foo: 'Lvl 2 Foo 2', bar: 'Lvl 2 Bar 2', yay: 'Lvl 2 Yay 2', baz: 'Lvl 2 Baz 2'}
+  ]}
+];
+
+// TODO: Ideally the user would provide something like the below and our collection elements would use the Row's render function
+// as the render function for every child row
+export const DyanmicExpandableRows = {
+  args: {
+    'aria-label': 'TableView with dynamic expandable rows',
+    width: 500,
+    height: 200
+  },
+  render: (args) => (
+    <TableView {...args}>
+      <TableHeader columns={columns}>
+        {column => <Column>{column.name}</Column>}
+      </TableHeader>
+      <TableBody items={nestedItems}>
+        {item =>
+          (<Row key={item.foo} item={item} childRows={item.childRows}>
+            {/* TODO: perhaps the render func needs to provide the row data for each level since "item" is only the top level rows? This means the user
+              needs to provide the row data to Row as a prop now as well */}
+            {/* TODO: additionally, if we yield a renderer and a value from the collection component, that value is used as the only args to the renderer
+              This means we can't get the two separate key and row args used below. Actually I think it shouldn't be using renderer? Really what we would need
+              is a recursive yield of a row ('item') node until there aren't anymore childRows
+            */}
+            {/* {(key, row) => {
+              console.log('rendering row content', key, row);
+              return <Cell>{row[key]}</Cell>
+            }} */}
+
+            {(key) => {
+              console.log('rendering row content', key, item);
+              return <Cell>{item[key]}</Cell>
+            }}
+          </Row>)
+        }
+      </TableBody>
+    </TableView>
+  ),
+  name: 'dynamic with expandable rows'
+};
+
+// TODO: Below is a stab at what the api would look if the user had to explicitly recreate the render structure for X levels of nested rows. Impractical unless
+// the user explictly defines the render function outside the table and recursively calls it.
+// export const DyanmicExpandableRows2 = {
+//   args: {
+//     'aria-label': 'TableView with dynamic expandable rows',
+//     width: 500,
+//     height: 200
+//   },
+//   render: (args) => (
+//     <TableView {...args}>
+//       <TableHeader columns={columns}>
+//         {column => <Column>{column.name}</Column>}
+//       </TableHeader>
+//       <TableBody items={nestedItems}>
+//         {item =>
+//           (<Row key={item.foo} childItems={item.childRows}>
+//             {(key, type) => {
+//               // TODO: type would be a type provided directly by the Row element when it calls "children(column.key)"". It would call
+//               // "children(column.key, 'cell')" instead
+//               if (type === 'cell') {
+//                 return  <Cell>{item[key]}</Cell>
+//               } else {
+//                 // TODO: problem is that the user would need to add the below Row renderer for each level
+//                 return (
+//                   <Row key={item}>
+//                     ... would need to copy the entire renderer again here?
+//                   </Row>
+//                 )
+//               }
+//             }}
+//           </Row>)
+//         }
+//       </TableBody>
+//     </TableView>
+//   ),
+//   name: 'dynamic with expandable rows'
+// };
+
 export const StaticNestedColumns: TableStory = {
   args: {
     'aria-label': 'TableView with nested columns',
@@ -324,12 +450,14 @@ export const StaticNestedColumns: TableStory = {
     <TableView {...args}>
       <TableHeader>
         <Column key="test">Test</Column>
-        <Column title="Group 1">
-          <Column key="foo">Foo</Column>
-          <Column key="bar">Bar</Column>
-        </Column>
-        <Column title="Group 2">
-          <Column key="baz">Baz</Column>
+        <Column title="Blah">
+          <Column title="Group 1">
+            <Column key="foo">Foo</Column>
+            <Column key="bar">Bar</Column>
+          </Column>
+          <Column title="Group 2">
+            <Column key="baz">Baz</Column>
+          </Column>
         </Column>
       </TableHeader>
       <TableBody>
@@ -375,7 +503,7 @@ export const DynamicNestedColumns: TableStory = {
     <TableView {...args}>
       <TableHeader columns={nestedColumns}>
         {column =>
-          <Column childColumns={column.children}>{column.name}</Column>
+          <Column childColumns={column.children} textValue={column.name}>{column.name}</Column>
         }
       </TableHeader>
       <TableBody items={items}>
