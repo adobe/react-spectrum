@@ -166,6 +166,13 @@ describe('Slider', function () {
     expect(slider).toHaveAttribute('aria-valuetext', '55');
   });
 
+  it('supports form name', () => {
+    let {getByRole} = render(<Slider label="Value" value={10} name="cookies" />);
+    let input = getByRole('slider');
+    expect(input).toHaveAttribute('name', 'cookies');
+    expect(input).toHaveValue('10');
+  });
+
   it('supports form reset', () => {
     function Test() {
       let [value, setValue] = React.useState(10);

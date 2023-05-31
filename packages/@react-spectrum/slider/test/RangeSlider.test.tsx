@@ -183,6 +183,15 @@ describe('RangeSlider', function () {
     expect(sliderRight).toHaveAttribute('aria-valuetext', '60');
   });
 
+  it('supports form name', () => {
+    let {getAllByRole} = render(<RangeSlider label="Value" value={{start: 10, end: 40}} startName="minCookies" endName="maxCookies" />);
+    let inputs = getAllByRole('slider');
+    expect(inputs[0]).toHaveAttribute('name', 'minCookies');
+    expect(inputs[0]).toHaveValue('10');
+    expect(inputs[1]).toHaveAttribute('name', 'maxCookies');
+    expect(inputs[1]).toHaveValue('40');
+  });
+
   it('supports form reset', () => {
     function Test() {
       let [value, setValue] = React.useState({start: 10, end: 40});

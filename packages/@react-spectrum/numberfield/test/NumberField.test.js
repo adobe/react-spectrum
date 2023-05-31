@@ -2204,6 +2204,19 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', '');
   });
 
+  it('supports form value', () => {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <NumberField name="age" label="Age" value={30} />
+      </Provider>
+    );
+    let input = getByRole('textbox');
+    expect(input).not.toHaveAttribute('name');
+    let hiddenInput = document.querySelector('input[type=hidden]');
+    expect(hiddenInput).toHaveAttribute('name', 'age');
+    expect(hiddenInput).toHaveValue('30');
+  });
+
   it('supports form reset', async () => {
     function Test() {
       let [value, setValue] = React.useState(10);
