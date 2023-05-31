@@ -179,28 +179,7 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
       return visibleDuration;
     }
 
-    if (visibleDuration.days) {
-      return {
-        days: 1
-      };
-    }
-
-    if (visibleDuration.weeks) {
-      return {
-        weeks: 1
-      };
-    }
-
-    if (visibleDuration.months) {
-      return {
-        months: 1
-      };
-    }
-    
-    return {
-      years: 1
-    };
-
+    return unitDuration(visibleDuration);
   }, [pageBehavior, visibleDuration]);
 
   return {
