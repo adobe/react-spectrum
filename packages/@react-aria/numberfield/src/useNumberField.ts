@@ -186,6 +186,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   let {labelProps, inputProps: textFieldProps, descriptionProps, errorMessageProps} = useFormattedTextField({
     ...otherProps,
     ...domProps,
+    name: undefined,
     label,
     autoFocus,
     isDisabled,

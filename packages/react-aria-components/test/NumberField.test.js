@@ -120,4 +120,10 @@ describe('NumberField', () => {
     let label = document.getElementById(input.getAttribute('aria-labelledby'));
     expect(label).toHaveTextContent('Width (min: 300, max: 1400)');
   });
+
+  it('should support form value', () => {
+    render(<TestNumberField name="test" value={25} formatOptions={{style: 'currency', currency: 'USD'}} />);
+    let input = document.querySelector('input[name=test]');
+    expect(input).toHaveValue('25');
+  });
 });

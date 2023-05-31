@@ -16,12 +16,13 @@ import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useConte
 import {filterDOMProps} from '@react-aria/utils';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
+import {InputDOMProps} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {NumberFieldState, useNumberFieldState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
 
-export interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, RenderProps<NumberFieldState>, SlotProps {}
+export interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, InputDOMProps, RenderProps<NumberFieldState>, SlotProps {}
 
 export const NumberFieldContext = createContext<ContextValue<NumberFieldProps, HTMLDivElement>>(null);
 
@@ -70,6 +71,7 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
         }]
       ]}>
       <div {...DOMProps} {...renderProps} ref={ref} slot={props.slot} />
+      {props.name && <input type="hidden" name={props.name} value={state.numberValue} />}
     </Provider>
   );
 }
