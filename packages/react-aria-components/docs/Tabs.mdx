@@ -40,7 +40,7 @@ type: component
 ## Example
 
 ```tsx example
-import {Tabs, TabList, Tab, TabPanels, TabPanel} from 'react-aria-components';
+import {Tabs, TabList, Tab, TabPanel} from 'react-aria-components';
 
 <Tabs>
   <TabList aria-label="History of Ancient Rome">
@@ -48,17 +48,15 @@ import {Tabs, TabList, Tab, TabPanels, TabPanel} from 'react-aria-components';
     <Tab id="MaR">Monarchy and Republic</Tab>
     <Tab id="Emp">Empire</Tab>
   </TabList>
-  <TabPanels>
-    <TabPanel id="FoR">
-      Arma virumque cano, Troiae qui primus ab oris.
-    </TabPanel>
-    <TabPanel id="MaR">
-      Senatus Populusque Romanus.
-    </TabPanel>
-    <TabPanel id="Emp">
-      Alea jacta est.
-    </TabPanel>
-  </TabPanels>
+  <TabPanel id="FoR">
+    Arma virumque cano, Troiae qui primus ab oris.
+  </TabPanel>
+  <TabPanel id="MaR">
+    Senatus Populusque Romanus.
+  </TabPanel>
+  <TabPanel id="Emp">
+    Alea jacta est.
+  </TabPanel>
 </Tabs>
 
 ```
@@ -204,10 +202,6 @@ Each tab can be clicked, tapped, or navigated to via arrow keys. Depending on th
 
 <PropTable component={docs.exports.Tab} links={docs.links} />
 
-### TabPanels
-
-<PropTable component={docs.exports.TabPanels} links={docs.links} />
-
 ### TabPanel
 
 <PropTable component={docs.exports.TabPanel} links={docs.links} />
@@ -283,10 +277,6 @@ A `Tab` can be targeted with the `.react-aria-Tab` CSS selector, or by overridin
 
 <StateTable properties={docs.exports.TabRenderProps.properties} />
 
-### TabPanels
-
-The `TabPanels` component does not render any DOM elements (it only passes through the currently selected `TabPanel` child) so it does not support styling.
-
 ### TabPanel
 
 A `TabPanel` can be targeted with the `.react-aria-TabPanel` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
@@ -302,17 +292,15 @@ When `Tabs` is used with dynamic items as described below, the key of each item 
 See the `react-stately` [Selection docs](../react-stately/selection.html) for more details.
 
 ```tsx example
-<Tabs>
-  <TabList aria-label="Input settings" defaultSelectedKey="keyboard">
+<Tabs defaultSelectedKey="keyboard">
+  <TabList aria-label="Input settings">
     <Tab id="mouse">Mouse Settings</Tab>
     <Tab id="keyboard">Keyboard Settings</Tab>
     <Tab id="gamepad">Gamepad Settings</Tab>
   </TabList>
-  <TabPanels>
-    <TabPanel id="mouse">Mouse Settings</TabPanel>
-    <TabPanel id="keyboard">Keyboard Settings</TabPanel>
-    <TabPanel id="gamepad">Gamepad Settings</TabPanel>
-  </TabPanels>
+  <TabPanel id="mouse">Mouse Settings</TabPanel>
+  <TabPanel id="keyboard">Keyboard Settings</TabPanel>
+  <TabPanel id="gamepad">Gamepad Settings</TabPanel>
 </Tabs>
 ```
 
@@ -327,23 +315,21 @@ function Example() {
   return (
     <>
       <p>Selected time period: {timePeriod}</p>
-      <Tabs>
-        <TabList aria-label="Mesozoic time periods" selectedKey={timePeriod} onSelectionChange={setTimePeriod}>
+      <Tabs selectedKey={timePeriod} onSelectionChange={setTimePeriod}>
+        <TabList aria-label="Mesozoic time periods">
           <Tab id="triassic">Triassic</Tab>
           <Tab id="jurassic">Jurassic</Tab>
           <Tab id="cretaceous">Cretaceous</Tab>
         </TabList>
-        <TabPanels>
-          <TabPanel id="triassic">
-            The Triassic ranges roughly from 252 million to 201 million years ago, preceding the Jurassic Period.
-          </TabPanel>
-          <TabPanel id="jurassic">
-            The Jurassic ranges from 200 million years to 145 million years ago.
-          </TabPanel>
-          <TabPanel id="cretaceous">
-            The Cretaceous is the longest period of the Mesozoic, spanning from 145 million to 66 years ago.
-          </TabPanel>
-        </TabPanels>
+        <TabPanel id="triassic">
+          The Triassic ranges roughly from 252 million to 201 million years ago, preceding the Jurassic Period.
+        </TabPanel>
+        <TabPanel id="jurassic">
+          The Jurassic ranges from 200 million years to 145 million years ago.
+        </TabPanel>
+        <TabPanel id="cretaceous">
+          The Cretaceous is the longest period of the Mesozoic, spanning from 145 million to 66 years ago.
+        </TabPanel>
       </Tabs>
     </>
   );
@@ -363,23 +349,23 @@ This example uses the same `Tabs` component from above. Try navigating from the 
     <Tab id="2">John Doe</Tab>
     <Tab id="3">Joe Bloggs</Tab>
   </TabList>
-  <TabPanels>
-    <TabPanel id="1">
-      <label>Leave a note for Jane: <input type="text" /></label>
-    </TabPanel>
-    <TabPanel id="2">Senatus Populusque Romanus.</TabPanel>
-    <TabPanel id="3">Alea jacta est.</TabPanel>
-  </TabPanels>
+  <TabPanel id="1">
+    <label>Leave a note for Jane: <input type="text" /></label>
+  </TabPanel>
+  <TabPanel id="2">Senatus Populusque Romanus.</TabPanel>
+  <TabPanel id="3">Alea jacta est.</TabPanel>
 </Tabs>
 ```
 
 ### Dynamic items
 
-The above examples have shown tabs with static items. The `items` prop can be used when creating tabs from a dynamic collection, for example when the user can add and remove tabs, or the tabs come from an external data source. The function passed as the children of the `TabList` component is called for each item in the list, and returns an `<Tab>`. A function passed as the children of the `TabPanels` component returns a corresponding `<TabPanel>` for each tab.
+The above examples have shown tabs with static items. The `items` prop can be used when creating tabs from a dynamic collection, for example when the user can add and remove tabs, or the tabs come from an external data source. The function passed as the children of the `TabList` component is called for each item in the list, and returns an `<Tab>`. A function passed as the children of the <TypeLink links={docs.links} type={docs.exports.Collection} /> component returns a corresponding `<TabPanel>` for each tab.
 
 Each item accepts an `id` prop, which is passed to the `onSelectionChange` handler to identify the selected item. Alternatively, if the item objects contain an `id` property, as shown in the example below, then this is used automatically and an `id` prop is not required. See [Collection Components](../react-stately/collections.html) for more details.
 
 ```tsx example
+import {Collection} from 'react-aria-components';
+
 function Example() {
   let [tabs, setTabs] = React.useState([
     {id: 1, title: 'Tab 1', content: 'Tab body 1'},
@@ -415,9 +401,9 @@ function Example() {
           <button onClick={removeTab}>Remove tab</button>
         </div>
       </div>
-      <TabPanels items={tabs}>
+      <Collection items={tabs}>
         {item => <TabPanel>{item.content}</TabPanel>}
-      </TabPanels>
+      </Collection>
     </Tabs>
   );
 }
@@ -430,17 +416,15 @@ from happening automatically you can set the `keyboardActivation` prop to "manua
 tab selection.
 
 ```tsx example
-<Tabs>
-  <TabList aria-label="Input settings" keyboardActivation="manual">
+<Tabs keyboardActivation="manual">
+  <TabList aria-label="Input settings">
     <Tab id="mouse">Mouse Settings</Tab>
     <Tab id="keyboard">Keyboard Settings</Tab>
     <Tab id="gamepad">Gamepad Settings</Tab>
   </TabList>
-  <TabPanels>
-    <TabPanel id="mouse">Mouse Settings</TabPanel>
-    <TabPanel id="keyboard">Keyboard Settings</TabPanel>
-    <TabPanel id="gamepad">Gamepad Settings</TabPanel>
-  </TabPanels>
+  <TabPanel id="mouse">Mouse Settings</TabPanel>
+  <TabPanel id="keyboard">Keyboard Settings</TabPanel>
+  <TabPanel id="gamepad">Gamepad Settings</TabPanel>
 </Tabs>
 ```
 
@@ -455,11 +439,9 @@ By default, tabs are horizontally oriented. The `orientation` prop can be set to
     <Tab id="2">Jane Doe</Tab>
     <Tab id="3">Joe Bloggs</Tab>
   </TabList>
-  <TabPanels>
-    <TabPanel id="1">There is no prior chat history with John Doe.</TabPanel>
-    <TabPanel id="2">There is no prior chat history with Jane Doe.</TabPanel>
-    <TabPanel id="3">There is no prior chat history with Joe Bloggs.</TabPanel>
-  </TabPanels>
+  <TabPanel id="1">There is no prior chat history with John Doe.</TabPanel>
+  <TabPanel id="2">There is no prior chat history with Jane Doe.</TabPanel>
+  <TabPanel id="3">There is no prior chat history with Joe Bloggs.</TabPanel>
 </Tabs>
 ```
 
@@ -468,17 +450,15 @@ By default, tabs are horizontally oriented. The `orientation` prop can be set to
 All tabs can be disabled using the `isDisabled` prop.
 
 ```tsx example
-<Tabs>
-  <TabList aria-label="Input settings" isDisabled>
+<Tabs isDisabled>
+  <TabList aria-label="Input settings">
     <Tab id="mouse">Mouse Settings</Tab>
     <Tab id="keyboard">Keyboard Settings</Tab>
     <Tab id="gamepad">Gamepad Settings</Tab>
   </TabList>
-  <TabPanels>
-    <TabPanel id="mouse">Mouse Settings</TabPanel>
-    <TabPanel id="keyboard">Keyboard Settings</TabPanel>
-    <TabPanel id="gamepad">Gamepad Settings</TabPanel>
-  </TabPanels>
+  <TabPanel id="mouse">Mouse Settings</TabPanel>
+  <TabPanel id="keyboard">Keyboard Settings</TabPanel>
+  <TabPanel id="gamepad">Gamepad Settings</TabPanel>
 </Tabs>
 ```
 
@@ -489,17 +469,15 @@ corresponds with the `id` prop passed to the `Tab` component, or automatically d
 to the `items` prop. See [Collections](../react-stately/Collections.html) for more details.
 
 ```tsx example
-<Tabs>
-  <TabList aria-label="Input settings" disabledKeys={['gamepad']}>
+<Tabs disabledKeys={['gamepad']}>
+  <TabList aria-label="Input settings">
     <Tab id="mouse">Mouse Settings</Tab>
     <Tab id="keyboard">Keyboard Settings</Tab>
     <Tab id="gamepad">Gamepad Settings</Tab>
   </TabList>
-  <TabPanels>
-    <TabPanel id="mouse">Mouse Settings</TabPanel>
-    <TabPanel id="keyboard">Keyboard Settings</TabPanel>
-    <TabPanel id="gamepad">Gamepad Settings</TabPanel>
-  </TabPanels>
+  <TabPanel id="mouse">Mouse Settings</TabPanel>
+  <TabPanel id="keyboard">Keyboard Settings</TabPanel>
+  <TabPanel id="gamepad">Gamepad Settings</TabPanel>
 </Tabs>
 ```
 
