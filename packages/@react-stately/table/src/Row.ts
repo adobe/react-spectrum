@@ -20,7 +20,7 @@ function Row(props: RowProps): ReactElement { // eslint-disable-line @typescript
 }
 
 Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps, context: CollectionBuilderContext<T>): Generator<PartialNode<T>> {
-  let {children, textValue, childRows, item} = props;
+  let {children, textValue, childRows} = props;
 
   yield {
     type: 'item',
@@ -56,31 +56,27 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps, context:
           yield {
             type: 'cell',
             element: children(column.key),
-            // element: children(column.key, item),
             key: column.key // this is combined with the row key by CollectionBuilder
           };
         }
 
-        // TODO: maybe I don't need to yield anything complicated? Just type and value like column and have the Collection be responsible for generating the node information?
-        // The Collection could extract the body's renderer and use that to potentially build the sub rows?
-        // Turns out I just need to provide type and value it seems?
         if (childRows) {
           for (let child of childRows) {
-            console.log('yielding child row')
-            // TODO: ideally would call Row here again so we get the same yield logic, not sure how to do so though...
+            // Note: in order to reuse he render function of TableBody, we just need to yield a type and a value here. CollectionBuilder will then look up
+            // the parent renderer and use that to build the full node of this child row, using the value provided here to generate the cells
             yield {
               type: 'item',
-              hasChildNodes: true,
-              // TODO: maybe don't need value here
-              value: child,
 
+              value: child
+              // hasChildNodes: true,
+              // TODO: maybe don't need value here
               // *childNodes() {
 
               // },
               // renderer: children,
               // TODO: would need to include more props? How would the user define a aria-label or a key for the nested row?
               // This problem exists for dynamic nested columns too I believe
-              props: {childRows: child.childRows}
+              // props: {childRows: child.childRows}
             };
           }
         }

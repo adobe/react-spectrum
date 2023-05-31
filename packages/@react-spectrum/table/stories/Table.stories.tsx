@@ -363,8 +363,6 @@ let nestedItems = [
   ]}
 ];
 
-// TODO: Ideally the user would provide something like the below and our collection elements would use the Row's render function
-// as the render function for every child row
 export const DyanmicExpandableRows = {
   args: {
     'aria-label': 'TableView with dynamic expandable rows',
@@ -378,21 +376,10 @@ export const DyanmicExpandableRows = {
       </TableHeader>
       <TableBody items={nestedItems}>
         {item =>
-          (<Row key={item.foo} item={item} childRows={item.childRows}>
-            {/* TODO: perhaps the render func needs to provide the row data for each level since "item" is only the top level rows? This means the user
-              needs to provide the row data to Row as a prop now as well */}
-            {/* TODO: additionally, if we yield a renderer and a value from the collection component, that value is used as the only args to the renderer
-              This means we can't get the two separate key and row args used below. Actually I think it shouldn't be using renderer? Really what we would need
-              is a recursive yield of a row ('item') node until there aren't anymore childRows
-            */}
-            {/* {(key, row) => {
-              console.log('rendering row content', key, row);
-              return <Cell>{row[key]}</Cell>
-            }} */}
-
+          (<Row key={item.foo} childRows={item.childRows}>
             {(key) => {
-              console.log('rendering row content', key, item);
-              return <Cell>{item[key]}</Cell>
+              // Note: The "item" here will reflect the child Row's values from nestedItems
+              return <Cell>{item[key]}</Cell>;
             }}
           </Row>)
         }
@@ -401,44 +388,6 @@ export const DyanmicExpandableRows = {
   ),
   name: 'dynamic with expandable rows'
 };
-
-// TODO: Below is a stab at what the api would look if the user had to explicitly recreate the render structure for X levels of nested rows. Impractical unless
-// the user explictly defines the render function outside the table and recursively calls it.
-// export const DyanmicExpandableRows2 = {
-//   args: {
-//     'aria-label': 'TableView with dynamic expandable rows',
-//     width: 500,
-//     height: 200
-//   },
-//   render: (args) => (
-//     <TableView {...args}>
-//       <TableHeader columns={columns}>
-//         {column => <Column>{column.name}</Column>}
-//       </TableHeader>
-//       <TableBody items={nestedItems}>
-//         {item =>
-//           (<Row key={item.foo} childItems={item.childRows}>
-//             {(key, type) => {
-//               // TODO: type would be a type provided directly by the Row element when it calls "children(column.key)"". It would call
-//               // "children(column.key, 'cell')" instead
-//               if (type === 'cell') {
-//                 return  <Cell>{item[key]}</Cell>
-//               } else {
-//                 // TODO: problem is that the user would need to add the below Row renderer for each level
-//                 return (
-//                   <Row key={item}>
-//                     ... would need to copy the entire renderer again here?
-//                   </Row>
-//                 )
-//               }
-//             }}
-//           </Row>)
-//         }
-//       </TableBody>
-//     </TableView>
-//   ),
-//   name: 'dynamic with expandable rows'
-// };
 
 export const StaticNestedColumns: TableStory = {
   args: {
