@@ -68,10 +68,13 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let unwrappedTriggerRef = useUnwrapDOMRef(triggerRef);
   let listboxRef = useRef();
 
+  let isLoadingInitial = props.isLoading && state.collection.size === 0;
+  let isLoadingMore = props.isLoading && state.collection.size > 0;
+
   // We create the listbox layout in Picker and pass it to ListBoxBase below
   // so that the layout information can be cached even while the listbox is not mounted.
   // We also use the layout as the keyboard delegate for type to select.
-  let layout = useListBoxLayout(state);
+  let layout = useListBoxLayout(state, isLoadingMore);
   let {labelProps, triggerProps, valueProps, menuProps, descriptionProps, errorMessageProps} = useSelect({
     ...props,
     keyboardDelegate: layout
@@ -79,9 +82,6 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
 
   let isMobile = useIsMobileDevice();
   let {hoverProps, isHovered} = useHover({isDisabled});
-
-  let isLoadingInitial = props.isLoading && state.collection.size === 0;
-  let isLoadingMore = props.isLoading && state.collection.size > 0;
 
   // On small screen devices, the listbox is rendered in a tray, otherwise a popover.
   let listbox = (
@@ -97,7 +97,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
       width={isMobile ? '100%' : undefined}
       // Set max height: inherit so Tray scrolling works
       UNSAFE_style={{maxHeight: 'inherit'}}
-      isLoading={isLoadingMore}
+      isLoading={props.isLoading}
       onLoadMore={props.onLoadMore} />
   );
 

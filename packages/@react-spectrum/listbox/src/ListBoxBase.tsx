@@ -48,7 +48,7 @@ interface ListBoxBaseProps<T> extends AriaListBoxOptions<T>, DOMProps, AriaLabel
 }
 
 /** @private */
-export function useListBoxLayout<T>(state: ListState<T>): ListLayout<T> {
+export function useListBoxLayout<T>(state: ListState<T>, isLoading: boolean): ListLayout<T> {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let layout = useMemo(() =>
@@ -64,6 +64,14 @@ export function useListBoxLayout<T>(state: ListState<T>): ListLayout<T> {
 
   layout.collection = state.collection;
   layout.disabledKeys = state.disabledKeys;
+
+  useLayoutEffect(() => {
+    // Sync loading state into the layout.
+    if (layout.isLoading !== isLoading) {
+      layout.isLoading = isLoading;
+      layout.virtualizer?.relayoutNow();
+    }
+  }, [layout, isLoading]);
   return layout;
 }
 
@@ -77,14 +85,6 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
   }, state, ref);
   let {styleProps} = useStyleProps(props);
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
-
-  useLayoutEffect(() => {
-    // Sync loading state into the layout.
-    if (layout.isLoading !== props.isLoading) {
-      layout.isLoading = props.isLoading;
-      layout.virtualizer.relayoutNow();
-    }
-  }, [layout, props.isLoading]);
 
   // This overrides collection view's renderWrapper to support heirarchy of items in sections.
   // The header is extracted from the children so it can receive ARIA labeling properties.

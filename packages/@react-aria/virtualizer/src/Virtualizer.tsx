@@ -184,15 +184,6 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
   // Handle scrolling, and call onLoadMore when nearing the bottom.
   let isLoadingRef = useRef(isLoading);
   let prevProps = useRef(props);
-  useLayoutEffect(() => {
-    // Only update isLoadingRef if props object actually changed,
-    // not if a local state change occurred.
-    if (props !== prevProps.current) {
-      isLoadingRef.current = isLoading;
-      prevProps.current = props;
-    }
-  }, [isLoading, props]);
-
   let onVisibleRectChange = useCallback((rect: Rect) => {
     state.setVisibleRect(rect);
 
@@ -207,14 +198,33 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
 
   let lastContentSize = useRef(0);
   useLayoutEffect(() => {
-    if (!isLoadingRef.current && onLoadMore && !state.isAnimating) {
-      if (state.contentSize.height !== lastContentSize.current && state.contentSize.height > 0 && state.contentSize.height <= state.virtualizer.visibleRect.height) {
+    // If animating, wait until we're done.
+    if (state.isAnimating) {
+      return;
+    }
+
+    // Only update isLoadingRef if props object actually changed,
+    // not if a local state change occurred.
+    let wasLoading = isLoadingRef.current;
+    if (props !== prevProps.current) {
+      isLoadingRef.current = isLoading;
+      prevProps.current = props;
+    }
+
+    let shouldLoadMore = !isLoadingRef.current
+      && onLoadMore
+      && state.contentSize.height > 0
+      && state.contentSize.height <= state.virtualizer.visibleRect.height
+      // Only try loading more if the content size changed, or if we just finished
+      // loading and still have room for more items.
+      && (wasLoading || state.contentSize.height !== lastContentSize.current);
+
+    if (shouldLoadMore) {
         isLoadingRef.current = true;
         onLoadMore();
       }
-    }
     lastContentSize.current = state.contentSize.height;
-  }, [state.contentSize, state.isAnimating, state.virtualizer, onLoadMore]);
+  }, [state.contentSize, state.isAnimating, state.virtualizer, isLoading, onLoadMore, props]);
 
   return {
     virtualizerProps: {
