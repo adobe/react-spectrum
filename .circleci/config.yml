@@ -1,4 +1,17 @@
 version: 2.1
+parameters:
+  GHA_Event:
+    type: string
+    default: ""
+  GHA_Actor:
+    type: string
+    default: ""
+  GHA_Action:
+    type: string
+    default: ""
+  GHA_Meta:
+    type: string
+    default: ""
 
 orbs:
   azure-cli: circleci/azure-cli@1.2.0
@@ -584,12 +597,6 @@ workflows:
       - docs:
           requires:
             - install
-      - docs-production:
-          filters:
-            branches:
-              only: main
-          requires:
-            - install
       - docs-verdaccio:
           filters:
             branches:
@@ -613,12 +620,6 @@ workflows:
             - storybook-16
             - storybook-17
             - docs
-      - deploy-production:
-          filters:
-            branches:
-              only: main
-          requires:
-            - docs-production
       - deploy-verdaccio:
           requires:
             - docs-verdaccio
@@ -634,6 +635,28 @@ workflows:
           name: comment-verdaccio
           requires:
             - deploy-verdaccio
+
+  prod-docs:
+    when:
+      and:
+        - equal: [ "prod-docs", << pipeline.parameters.GHA_Action >> ]
+        - or:
+          - equal: [ "release", << pipeline.parameters.GHA_Event >>]
+          - equal: [ "workflow_dispatch", << pipeline.parameters.GHA_Event >>]
+    jobs:
+      - install
+      - docs-production:
+          filters:
+            branches:
+              only: main
+          requires:
+            - install
+      - deploy-production:
+          filters:
+            branches:
+              only: main
+          requires:
+            - docs-production
 
   nightly:
     triggers:
