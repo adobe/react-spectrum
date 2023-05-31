@@ -21,7 +21,11 @@ import {HeadingContext} from './Heading';
 import React from 'react';
 import {TextContext} from './Text';
 
-export interface CalendarProps<T extends DateValue> extends Omit<BaseCalendarProps<T>, 'errorMessage'>, RenderProps<CalendarState>, SlotProps {
+export interface CalendarRenderProps extends Omit<CalendarState, 'setValue' | 'setFocusedDate' | 'focusNextDay' | 'focusPreviousDay' | 'focusNextRow' | 'focusPreviousRow' | 'focusNextPage' | 'focusPreviousPage' | 'focusSectionStart' | 'focusSectionEnd' | 'focusNextSection' | 'focusPreviousSection' | 'selectFocusedDate' | 'selectDate' | 'setFocused'> {}
+
+export interface RangeCalendarRenderProps extends Omit<RangeCalendarState, 'setValue' | 'setFocusedDate' | 'focusNextDay' | 'focusPreviousDay' | 'focusNextRow' | 'focusPreviousRow' | 'focusNextPage' | 'focusPreviousPage' | 'focusSectionStart' | 'focusSectionEnd' | 'focusNextSection' | 'focusPreviousSection' | 'selectFocusedDate' | 'selectDate' | 'setFocused' | 'highlightDate' | 'setAnchorDate' | 'setDragging'> {}
+
+export interface CalendarProps<T extends DateValue> extends Omit<BaseCalendarProps<T>, 'errorMessage'>, RenderProps<CalendarRenderProps>, SlotProps {
   /**
    * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
@@ -29,7 +33,7 @@ export interface CalendarProps<T extends DateValue> extends Omit<BaseCalendarPro
   visibleDuration?: DateDuration
 }
 
-export interface RangeCalendarProps<T extends DateValue> extends Omit<BaseRangeCalendarProps<T>, 'errorMessage'>, RenderProps<RangeCalendarState>, SlotProps {
+export interface RangeCalendarProps<T extends DateValue> extends Omit<BaseRangeCalendarProps<T>, 'errorMessage'>, RenderProps<RangeCalendarRenderProps>, SlotProps {
   /**
    * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
@@ -54,7 +58,26 @@ function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRe
 
   let renderProps = useRenderProps({
     ...props,
-    values: state,
+    values: {
+      focusedDate: state.focusedDate,
+      getDatesInWeek: state.getDatesInWeek,
+      isCellDisabled: state.isCellDisabled,
+      isCellFocused: state.isCellFocused,
+      isCellUnavailable: state.isCellUnavailable,
+      isDisabled: state.isDisabled,
+      isFocused: state.isFocused,
+      isInvalid: state.isInvalid,
+      isNextVisibleRangeInvalid: state.isNextVisibleRangeInvalid,
+      isPreviousVisibleRangeInvalid: state.isPreviousVisibleRangeInvalid,
+      isReadOnly: state.isReadOnly,
+      isSelected: state.isSelected,
+      maxValue: state.maxValue,
+      minValue: state.minValue,
+      timeZone: state.timeZone,
+      validationState: state.validationState,
+      value: state.value,
+      visibleRange: state.visibleRange
+    },
     defaultClassName: 'react-aria-Calendar'
   });
 
@@ -123,7 +146,29 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: F
 
   let renderProps = useRenderProps({
     ...props,
-    values: state,
+    values: {
+      focusedDate: state.focusedDate,
+      getDatesInWeek: state.getDatesInWeek,
+      isCellDisabled: state.isCellDisabled,
+      isCellFocused: state.isCellFocused,
+      isCellUnavailable: state.isCellUnavailable,
+      isDisabled: state.isDisabled,
+      isFocused: state.isFocused,
+      isInvalid: state.isInvalid,
+      isNextVisibleRangeInvalid: state.isNextVisibleRangeInvalid,
+      isPreviousVisibleRangeInvalid: state.isPreviousVisibleRangeInvalid,
+      isReadOnly: state.isReadOnly,
+      isSelected: state.isSelected,
+      maxValue: state.maxValue,
+      minValue: state.minValue,
+      timeZone: state.timeZone,
+      validationState: state.validationState,
+      value: state.value,
+      visibleRange: state.visibleRange,
+      anchorDate: state.anchorDate,
+      highlightedRange: state.highlightedRange,
+      isDragging: state.isDragging
+    },
     defaultClassName: 'react-aria-RangeCalendar'
   });
 

@@ -24,8 +24,11 @@ import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
 
-export interface DatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DatePickerState>, SlotProps {}
-export interface DateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateRangePickerState>, SlotProps {}
+export interface DatePickerRenderProps extends Omit<DatePickerState, 'setValue' | 'setDateValue' | 'setTimeValue' | 'setOpen' | 'open' | 'close' | 'toggle'> {}
+export interface DateRangePickerRenderProps extends Omit<DateRangePickerState, 'setValue' | 'setOpen' | 'open' | 'close' | 'toggle' |  'setDateRange' | 'setTimeRange' | 'setDate' | 'setTime' | 'setDateTime'> {}
+
+export interface DatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DatePickerRenderProps>, SlotProps {}
+export interface DateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateRangePickerRenderProps>, SlotProps {}
 
 export const DatePickerContext = createContext<ContextValue<DatePickerProps<any>, HTMLDivElement>>(null);
 export const DateRangePickerContext = createContext<ContextValue<DateRangePickerProps<any>, HTMLDivElement>>(null);
@@ -58,7 +61,16 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
 
   let renderProps = useRenderProps({
     ...props,
-    values: state,
+    values: {
+      value: state.value,
+      dateValue: state.dateValue,
+      timeValue: state.timeValue,
+      granularity: state.granularity,
+      hasTime: state.hasTime,
+      isOpen: state.isOpen,
+      validationState: state.validationState,
+      formatValue: state.formatValue
+    },
     defaultClassName: 'react-aria-DatePicker'
   });
 
@@ -131,7 +143,16 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
 
   let renderProps = useRenderProps({
     ...props,
-    values: state,
+    values: {
+      value: state.value,
+      dateRange: state.dateRange,
+      timeRange: state.timeRange,
+      granularity: state.granularity,
+      hasTime: state.hasTime,
+      isOpen: state.isOpen,
+      validationState: state.validationState,
+      formatValue: state.formatValue
+    },
     defaultClassName: 'react-aria-DateRangePicker'
   });
 

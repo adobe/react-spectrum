@@ -15,12 +15,12 @@ import {CheckboxContext} from './Checkbox';
 import {CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
 import {ContextValue, defaultSlot, forwardRefType, Provider, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
-import {DraggableCollectionState, DroppableCollectionState, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
+import {DraggableCollectionState, DroppableCollectionState, ListState, MultipleSelectionManager, Node, SelectionBehavior, useListState} from 'react-stately';
 import {filterDOMProps, isIOS, isWebKit, useObjectRef} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
 import {TextContext} from './Text';
 
-export interface GridListRenderProps {
+export interface GridListRenderProps extends Omit<MultipleSelectionManager, 'extendSelection'| 'toggleSelection' | 'replaceSelection' | 'setSelectedKeys' | 'selectAll' | 'clearSelection' | 'toggleSelectAll' | 'select' | 'setSelectionBehavior' | 'setFocused' | 'childFocusStrategy' | 'setFocusedKey'> {
   /**
    * Whether the list has no items and should display its empty state.
    * @selector [data-empty]
@@ -148,7 +148,21 @@ function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<H
       isDropTarget: isRootDropTarget,
       isEmpty: state.collection.size === 0,
       isFocused,
-      isFocusVisible
+      isFocusVisible,
+      disabledKeys: state.disabledKeys,
+      canSelectItem: state.selectionManager.canSelectItem,
+      disabledBehavior: state.selectionManager.disabledBehavior,
+      disallowEmptySelection: state.selectionManager.disallowEmptySelection,
+      firstSelectedKey: state.selectionManager.firstSelectedKey,
+      focusedKey: state.selectionManager.focusedKey,
+      isDisabled: state.selectionManager.isDisabled,
+      isSelectAll: state.selectionManager.isSelectAll,
+      isSelected: state.selectionManager.isSelected,
+      isSelectionEqual: state.selectionManager.isSelectionEqual,
+      lastSelectedKey: state.selectionManager.lastSelectedKey,
+      selectedKeys: state.selectionManager.selectedKeys,
+      selectionBehavior: state.selectionManager.selectionBehavior,
+      selectionMode: state.selectionManager.selectionMode
     }
   });
 

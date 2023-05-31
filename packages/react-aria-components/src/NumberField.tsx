@@ -21,7 +21,9 @@ import {NumberFieldState, useNumberFieldState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
 
-export interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, RenderProps<NumberFieldState>, SlotProps {}
+export interface NumberFieldRenderProps extends Omit<NumberFieldState, 'validate' |'increment' | 'incrementToMax' | 'decrement' | 'decrementToMin' | 'setInputValue' | 'commit' > {}
+
+export interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, RenderProps<NumberFieldRenderProps>, SlotProps {}
 
 export const NumberFieldContext = createContext<ContextValue<NumberFieldProps, HTMLDivElement>>(null);
 
@@ -43,7 +45,14 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
 
   let renderProps = useRenderProps({
     ...props,
-    values: state,
+    values: {
+      canIncrement: state.canDecrement,
+      canDecrement: state.canDecrement,
+      minValue: state.minValue,
+      maxValue: state.maxValue,
+      numberValue: state.numberValue,
+      inputValue: state.inputValue
+    },
     defaultClassName: 'react-aria-NumberField'
   });
 

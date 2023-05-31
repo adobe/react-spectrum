@@ -18,8 +18,9 @@ import {LabelContext} from './Label';
 import React, {cloneElement, createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactElement, useContext, useRef} from 'react';
 import {TextContext} from './Text';
 
-export interface DateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateFieldState>, SlotProps {}
-export interface TimeFieldProps<T extends TimeValue> extends Omit<AriaTimeFieldProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateFieldState>, SlotProps {}
+export interface DateFieldRenderProps extends Omit<DateFieldState, 'setValue' | 'increment' | 'decrement' | 'incrementPage' | 'decrementPage' | 'setSegment' | 'confirmPlaceholder' | 'clearSegment'> {}
+export interface DateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateFieldRenderProps>, SlotProps {}
+export interface TimeFieldProps<T extends TimeValue> extends Omit<AriaTimeFieldProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateFieldRenderProps>, SlotProps {}
 
 interface DateInputContextValue extends SlotProps {
   state: DateFieldState,
@@ -45,7 +46,20 @@ function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: Forwarded
 
   let renderProps = useRenderProps({
     ...props,
-    values: state,
+    values: {
+      value: state.value,
+      dateValue: state.dateValue,
+      calendar: state.calendar,
+      segments: state.segments,
+      dateFormatter: state.dateFormatter,
+      validationState: state.validationState,
+      granularity: state.granularity,
+      maxGranularity: state.maxGranularity,
+      isDisabled: state.isDisabled,
+      isReadOnly: state.isReadOnly,
+      isRequired: state.isRequired,
+      formatValue: state.formatValue
+    },
     defaultClassName: 'react-aria-DateField'
   });
 
@@ -90,7 +104,20 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
 
   let renderProps = useRenderProps({
     ...props,
-    values: state,
+    values: {
+      value: state.value,
+      dateValue: state.dateValue,
+      calendar: state.calendar,
+      segments: state.segments,
+      dateFormatter: state.dateFormatter,
+      validationState: state.validationState,
+      granularity: state.granularity,
+      maxGranularity: state.maxGranularity,
+      isDisabled: state.isDisabled,
+      isReadOnly: state.isReadOnly,
+      isRequired: state.isRequired,
+      formatValue: state.formatValue
+    },
     defaultClassName: 'react-aria-TimeField'
   });
 

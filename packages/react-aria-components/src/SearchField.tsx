@@ -20,15 +20,15 @@ import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {SearchFieldState, useSearchFieldState} from 'react-stately';
 import {TextContext} from './Text';
 
-export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, RenderProps<SearchFieldState>, SlotProps {}
-
-export interface SearchFieldRenderProps {
+export interface SearchFieldRenderProps extends Omit<SearchFieldState, 'setValue'> {
   /**
    * Whether the search field is empty.
    * @selector [data-empty]
    */
   isEmpty: boolean
 }
+
+export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, RenderProps<SearchFieldRenderProps>, SlotProps {}
 
 export const SearchFieldContext = createContext<ContextValue<SearchFieldProps, HTMLDivElement>>(null);
 
@@ -44,7 +44,10 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
 
   let renderProps = useRenderProps({
     ...props,
-    values: state,
+    values: {
+      value: state.value,
+      isEmpty: state.value === ''
+    },
     defaultClassName: 'react-aria-SearchField'
   });
 

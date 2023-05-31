@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaSelectProps, HiddenSelect, useSelect} from 'react-aria';
+import {AriaSelectProps, HiddenSelect, useFocusRing, useSelect} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, forwardRefType, Provider, RenderProps, slotCallbackSymbol, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {createContext, ForwardedRef, HTMLAttributes, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
@@ -29,6 +29,11 @@ export interface SelectRenderProps {
    * @selector [data-focused]
    */
   isFocused: boolean,
+  /**
+   * Whether the select is keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
   /**
    * Whether the select is currently open.
    * @selector [data-open]
@@ -61,8 +66,10 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
     children: undefined
   });
 
+  let {isFocusVisible, focusProps} = useFocusRing({within: true});
+
   // Only expose a subset of state to renderProps function to avoid infinite render loop
-  let renderPropsState = useMemo(() => ({isOpen: state.isOpen, isFocused: state.isFocused}), [state.isOpen, state.isFocused]);
+  let renderPropsState = useMemo(() => ({isOpen: state.isOpen, isFocused: state.isFocused, isFocusVisible}), [state.isOpen, state.isFocused, isFocusVisible]);
 
   // Get props for child elements from useSelect
   let buttonRef = useRef<HTMLButtonElement>(null);
@@ -122,9 +129,11 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
       <div
         {...DOMProps}
         {...renderProps}
+        {...focusProps}
         ref={ref}
         slot={props.slot}
         data-focused={state.isFocused || undefined}
+        data-focus-visible={isFocusVisible || undefined}
         data-open={state.isOpen || undefined} />
       {portal}
       <HiddenSelect

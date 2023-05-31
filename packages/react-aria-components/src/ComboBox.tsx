@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaComboBoxProps, useComboBox, useFilter} from 'react-aria';
+import {AriaComboBoxProps, useComboBox, useFilter, useFocusRing} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, forwardRefType, Provider, RenderProps, slotCallbackSymbol, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
@@ -28,6 +28,11 @@ export interface ComboBoxRenderProps {
    * @selector [data-focused]
    */
   isFocused: boolean,
+  /**
+   * Whether the combobox is keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
   /**
    * Whether the combobox is currently open.
    * @selector [data-open]
@@ -60,8 +65,18 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
     collection
   });
 
+  let {isFocusVisible, focusProps} = useFocusRing({within: true});
+
   // Only expose a subset of state to renderProps function to avoid infinite render loop
-  let renderPropsState = useMemo(() => ({isOpen: state.isOpen, isFocused: state.isFocused}), [state.isOpen, state.isFocused]);
+  let renderPropsState = useMemo(() => ({
+    isOpen: state.isOpen,
+    isFocused: state.isFocused,
+    isFocusVisible,
+    inputValue: state.inputValue,
+    selectedItem: state.selectedItem,
+    selectedKey: state.selectedKey,
+    disabledKeys: state.disabledKeys
+  }), [state.isOpen, state.isFocused, isFocusVisible, state.inputValue, state.selectedItem, state.selectedKey, state.disabledKeys]);
   let buttonRef = useRef<HTMLButtonElement>(null);
   let inputRef = useRef<HTMLInputElement>(null);
   let listBoxRef = useRef<HTMLDivElement>(null);
@@ -136,9 +151,11 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
       <div
         {...DOMProps}
         {...renderProps}
+        {...focusProps}
         ref={ref}
         slot={props.slot}
         data-focused={state.isFocused || undefined}
+        data-focus-visible={isFocusVisible || undefined}
         data-open={state.isOpen || undefined} />
       {portal}
     </Provider>
