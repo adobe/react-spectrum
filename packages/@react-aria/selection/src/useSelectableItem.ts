@@ -103,7 +103,6 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     key,
     ref,
     shouldSelectOnPressUp,
-    isVirtualized,
     shouldUseVirtualFocus,
     focus,
     isDisabled,

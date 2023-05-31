@@ -131,7 +131,7 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
     if (dropHooksProvided.current !== isListDroppable) {
       console.warn('Drop hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
     }
-  }, [isListDraggable, isListDraggable]);
+  }, [isListDraggable, isListDroppable]);
 
   let domRef = useDOMRef(ref);
   let state = useListState({
