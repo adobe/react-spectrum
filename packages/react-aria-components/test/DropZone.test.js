@@ -11,9 +11,9 @@
  */
 
 import {act, fireEvent, render} from '@react-spectrum/test-utils';
-import {Button, DropZone, DropZoneContext, Input, Link, Text} from '../';
 import {ClipboardEvent, DataTransfer, DataTransferItem, DragEvent} from '@react-aria/dnd/test/mocks';
 import {Draggable} from '@react-aria/dnd/test/examples';
+import {DropZone, DropZoneContext, FileTrigger, Text} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -30,7 +30,7 @@ describe('DropZone', () => {
     expect(dropzone).toHaveAttribute('class', 'react-aria-DropZone');
   });
 
-  it('should render a button with custom class', () => {
+  it('should render a dropzone with custom class', () => {
     let {getByTestId} = render(
       <DropZone data-testid="foo" className="test">
         <Text slot="heading">
@@ -80,7 +80,7 @@ describe('DropZone', () => {
     expect(dropzone).not.toHaveClass('hover');
   });
 
-  it('should support focus ring with no file input', () => {
+  it('should support focus ring', () => {
     let {getByTestId, getByRole} = render(
       <DropZone data-testid="foo" className={({isFocusVisible}) => isFocusVisible ? 'focus' : ''}>
         <Text slot="heading">
@@ -103,7 +103,7 @@ describe('DropZone', () => {
     expect(dropzone).not.toHaveClass('focus');
   });
 
-  it('should apply correct aria-labelledby with no input, button, or link', () => {
+  it('should apply correct aria-labelledby', () => {
     let {getByRole, getByText} = render(
       <DropZone className="test">
         <Text slot="heading">
@@ -113,31 +113,6 @@ describe('DropZone', () => {
     let text = getByText('Test');
     let button = getByRole('button');
     expect(button).toHaveAttribute('aria-labelledby', `${text.id}`);
-  });
-
-  it('should have correct aria-label with input', () => {
-    let {getByRole} = render(
-      <DropZone>
-        <Input />
-        <Text slot="heading">
-          Test
-        </Text>
-      </DropZone>);
-    let button = getByRole('button');
-    expect(button).toHaveAttribute('aria-label', 'Open file system');
-  });
-
-  it('should not have a visible input', () => {
-    let {getByTestId} = render(
-      <DropZone>
-        <Input data-testid="foo" />
-        <Text slot="heading">
-          Test
-        </Text>
-      </DropZone>);
-    let input = getByTestId('foo');
-    expect(input).not.toBeVisible();
-    expect(input).toHaveStyle('display: none');
   });
 
   it('should support render props', () => {
@@ -154,66 +129,15 @@ describe('DropZone', () => {
     expect(dropzone).toHaveTextContent('Focused');
   });
 
-  it('should support focus ring around visible button', () => {
-    let {getByTestId, getByRole} = render(
-      <DropZone data-testid="foo">
-        <Button slot="file">Upload</Button>
-        <Input />
-      </DropZone>);
-
-    let dropzone = getByTestId('foo');
-    let button = getByRole('button');
-    expect(button).toHaveAttribute('class', 'react-aria-Button');
-    expect(dropzone).not.toHaveAttribute('data-focus-visible');
-
-    userEvent.tab();
-    expect(document.activeElement).toBe(button);
-    expect(dropzone).toHaveAttribute('data-focus-visible');
-    expect(button).toHaveAttribute('data-focus-visible', 'true');
-
-    userEvent.tab();
-    expect(button).not.toHaveAttribute('data-focus-visible');
-  });
-
-  it('should support focus ring around visible link', () => {
-    let {getByTestId, getByRole} = render(
-      <DropZone data-testid="foo">
-        <Link slot="file">Upload</Link>
-        <Input />
-      </DropZone>);
-
-    let dropzone = getByTestId('foo');
-    let link = getByRole('link');
-    expect(link).toHaveAttribute('class', 'react-aria-Link');
-    expect(dropzone).not.toHaveAttribute('data-focus-visible');
-
-    userEvent.tab();
-    expect(document.activeElement).toBe(link);
-    expect(dropzone).toHaveAttribute('data-focus-visible');
-    expect(link).toHaveAttribute('data-focus-visible', 'true');
-
-    userEvent.tab();
-    expect(link).not.toHaveAttribute('data-focus-visible');
-  });  
-
-  it('should support press state', () => {
-    let onPress = jest.fn();
+  it('should render FileTrigger as a child', () => {
     let {getByTestId} = render(
-      <DropZone onPress={onPress} data-testid="foo">
-        <Text slot="heading">
-          Test
-        </Text>
-      </DropZone>);
-    let dropzone = getByTestId('foo');
-    expect(dropzone).not.toHaveAttribute('data-pressed');
-
-    fireEvent.mouseDown(dropzone);
-    expect(dropzone).toHaveAttribute('data-pressed', 'true');
-
-    fireEvent.mouseUp(dropzone);
-    expect(dropzone).not.toHaveAttribute('data-pressed');
-
-    expect(onPress).toHaveBeenCalledTimes(1);
+      <DropZone>
+        <FileTrigger data-testid="foo" />
+      </DropZone>
+    );
+      
+    let fileTrigger = getByTestId('foo');
+    expect(fileTrigger).toHaveClass('react-aria-FileTrigger');
   });
 
   describe('drag and drop', function () {
@@ -436,24 +360,5 @@ describe('DropZone', () => {
 
       expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('hello world');
     });
-  });
-
-  it('should upload a file with input', () => {
-    let file = new File(['hello'], 'hello.png', {type: 'image/png'});
-    let {getByRole} = render(
-      <DropZone>
-        <Input />
-        <Text slot="heading">
-          Test
-        </Text>
-      </DropZone>
-    );
-    let button = getByRole('button');
-    expect(button).toHaveAttribute('aria-label', 'Open file system');
-    
-    userEvent.upload(button, file);
-    expect(button.files[0]).toStrictEqual(file);
-    expect(button.files.item(0)).toStrictEqual(file);
-    expect(button.files).toHaveLength(1);
   });
 });

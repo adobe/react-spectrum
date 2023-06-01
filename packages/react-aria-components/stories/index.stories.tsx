@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, TabPanels, Tabs, TabsProps, Text, TimeField, Tooltip, TooltipTrigger} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, TabPanels, Tabs, TabsProps, Text, TimeField, Tooltip, TooltipTrigger} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
@@ -797,49 +797,32 @@ function Copyable() {
   );
 }
 
-export const DropzoneExampleWithInput = (props) => (
+export const DropzoneExampleWithFileTriggerLink = (props) => (
   <div>
     <DropZone
       {...props}
       className={styles.dropzone}
-      onPress={action('OnPress')}
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
-      <Text slot="heading">
-        DropZone Area
-      </Text>
-      <Input />
+      <FileTrigger slot="fileTrigger">
+        <Link>Upload</Link>
+      </FileTrigger>
     </DropZone>
   </div>
 );
 
-export const DropzoneExampleWithLinkAndInput = (props) => (
+export const DropzoneExampleWithFileTriggerButton = (props) => (
   <div>
     <DropZone
       {...props}
       className={styles.dropzone}
-      onPress={action('OnPress')}
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
-      <Input />
-      <Link slot="file">Upload</Link>
-    </DropZone>
-  </div>
-);
-
-export const DropzoneExampleWithButton = (props) => (
-  <div>
-    <DropZone
-      {...props}
-      className={styles.dropzone}
-      onPress={action('OnPress')}
-      onDrop={action('OnDrop')}
-      onDropEnter={action('OnDropEnter')}
-      onDropExit={action('OnDropExit')}>
-      <Button slot="file">upload</Button>
-      <Input />
+      <FileTrigger>
+        <Button>Upload</Button>
+      </FileTrigger>
     </DropZone>
   </div>
 );
@@ -850,7 +833,6 @@ export const DropzoneExampleWithDraggableObject = (props) => (
     <DropZone
       {...props}
       className={styles.dropzone}
-      onPress={action('OnPress')}
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')} >
@@ -867,7 +849,6 @@ export const DropzoneExampleWithCopyableObject = (props) => (
     <DropZone
       {...props}
       className={styles.dropzone}
-      onPress={action('OnPress')}
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
@@ -889,7 +870,7 @@ export const DropzoneWithRenderProps = (props) => (
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
-      {({isHovered, isFocused, isFocusVisible, isDropTarget, isPressed}) => (
+      {({isHovered, isFocused, isFocusVisible, isDropTarget}) => (
         <div>
           <Text slot="heading">
             DropzoneArea
@@ -898,27 +879,39 @@ export const DropzoneWithRenderProps = (props) => (
           <div>isFocused: {isFocused ? 'true' : 'false'}</div>
           <div>isFocusVisible: {isFocusVisible ? 'true' : 'false'}</div>
           <div>isDropTarget: {isDropTarget ? 'true' : 'false'}</div>
-          <div>isPressed: {isPressed ? 'true' : 'false'} </div>
         </div>
       )}
     </DropZone>
   </div>
 );
 
-export const DropZoneOnlyAcceptPNG = (props) => (
+export const DropZoneOnlyAcceptPNGWithFileTrigger = (props) => (
   <div>
     <DropZone
       {...props}
-      getDropOperation={(types) =>  types.has('image/png') ? 'move' : 'cancel'}
+      getDropOperation={(types) =>  types.has('image/png') ? 'copy' : 'cancel'}
       className={styles.dropzone}
       onPress={action('OnPress')}
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')} >
-      <Input accept="image/png" />
-      <Text slot="heading">
-        DropZone Area
-      </Text>
+      <FileTrigger accept="image/png">
+        <Button>Upload</Button>
+      </FileTrigger>
     </DropZone>
   </div>
+);
+
+export const FileTriggerButton = (props) => (
+  <FileTrigger 
+    {...props} >
+    <Button>Upload</Button>
+  </FileTrigger>
+);
+
+export const FileTriggerLink = (props) => (
+  <FileTrigger 
+    {...props} >
+    <Link>Select a file</Link>
+  </FileTrigger>
 );
