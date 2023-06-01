@@ -98,7 +98,7 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
         slot={props.slot}
         data-disabled={props.isDisabled || undefined}
         data-validation-state={props.validationState || undefined} />
-      {props.name && <input type="hidden" name={props.name} value={state.numberValue} />}
+      {props.name && <input type="hidden" name={props.name} value={isNaN(state.numberValue) ? '' : state.numberValue} />}
     </Provider>
   );
 }

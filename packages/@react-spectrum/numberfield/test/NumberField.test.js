@@ -2205,16 +2205,14 @@ describe('NumberField', function () {
   });
 
   it('supports form value', () => {
-    let {getByRole} = render(
-      <Provider theme={theme}>
-        <NumberField name="age" label="Age" value={30} />
-      </Provider>
-    );
-    let input = getByRole('textbox');
-    expect(input).not.toHaveAttribute('name');
+    let {textField, rerender} = renderNumberField({name: 'age', value: 30});
+    expect(textField).not.toHaveAttribute('name');
     let hiddenInput = document.querySelector('input[type=hidden]');
     expect(hiddenInput).toHaveAttribute('name', 'age');
     expect(hiddenInput).toHaveValue('30');
+
+    rerender({name: 'age', value: null});
+    expect(hiddenInput).toHaveValue('');
   });
 
   it('supports form reset', async () => {
