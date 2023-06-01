@@ -74,6 +74,7 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
   return {
     menuProps: mergeProps(domProps, {
       role: 'menu',
+      'aria-hidden': state.expandedKeys.size > 0 ? true : undefined,
       ...listProps,
       onKeyDown: (e) => {
         // don't clear the menu selected keys if the user is presses escape since escape closes the menu

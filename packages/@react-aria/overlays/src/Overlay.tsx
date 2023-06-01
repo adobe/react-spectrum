@@ -24,7 +24,11 @@ export interface OverlayProps {
   portalContainer?: Element,
   /** The overlay to render in the portal. */
   children: ReactNode,
-  /** Removes our focus scope, you are expected to manage the focus instead. */
+  /**
+   * Disables default focus management for the overlay, including containment and restoration.
+   * This option should be used very carefully. When focus management is disabled, you must
+   * implement focus containment and restoration to ensure the overlay is keyboard accessible.
+   */
   disableFocusManagement?: boolean
 }
 

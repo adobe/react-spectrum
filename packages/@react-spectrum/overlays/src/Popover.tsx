@@ -34,7 +34,8 @@ interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef' | 'maxHeight'
   onExited?: () => void,
   onExit?: () => void,
   container?: HTMLElement,
-  disableFocusManagement?: boolean
+  disableFocusManagement?: boolean,
+  enableBothDismissButtons?: boolean
 }
 
 interface PopoverWrapperProps extends PopoverProps, FocusWithinProps {
@@ -89,6 +90,7 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
     isOpen,
     hideArrow,
     isNonModal,
+    enableBothDismissButtons,
     state,
     wrapperRef
   } = props;
@@ -144,7 +146,7 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
         }
         role="presentation"
         data-testid="popover">
-        {!isNonModal && <DismissButton onDismiss={state.close} />}
+        {(!isNonModal || enableBothDismissButtons) && <DismissButton onDismiss={state.close} />}
         {children}
         {hideArrow ? null : (
           <Arrow

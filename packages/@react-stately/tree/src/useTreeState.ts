@@ -31,7 +31,7 @@ export interface TreeState<T> {
   /** Toggles the expanded state for an item by its key. */
   toggleKey(key: Key): void,
 
-  /** Sets the expanded state for a set of keys. */
+  /** Replaces the set of expanded keys. */
   setExpandedKeys(keys: Set<Key>): void,
 
   /** A selection manager to read and update multiple selection state. */

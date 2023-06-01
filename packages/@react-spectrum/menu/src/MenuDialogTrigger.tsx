@@ -88,6 +88,7 @@ function MenuDialogTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): ReactEl
               offset={-10}
               hideArrow
               isNonModal
+              enableBothDismissButtons
               disableFocusManagement>
               {content}
             </Popover>
