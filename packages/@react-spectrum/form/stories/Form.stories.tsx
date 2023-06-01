@@ -16,12 +16,13 @@ import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {chain} from '@react-aria/utils';
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
 import {ComboBox} from '@react-spectrum/combobox';
-import {Content} from '@react-spectrum/view';
+import {Content, Header} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {countries, states} from './data';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '../';
 import {Heading} from '@react-spectrum/text';
+import {InlineAlert} from '@react-spectrum/inlinealert';
 import {Item, Picker} from '@react-spectrum/picker';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
@@ -689,6 +690,12 @@ function FormWithSubmit() {
 
   return (
     <Form onSubmit={handleSubmit} isReadOnly={formStatus === 'valid'}>
+      {(formStatus === 'invalid' || formStatus === 'valid') &&
+        <InlineAlert variant={formStatus === 'invalid' ? 'negative' : 'positive'}>
+          <Header>{formStatus === 'invalid' ? 'Error' : 'Success'}</Header>
+          <Content>{formStatus === 'invalid' ? 'There was an error with the form.' : 'Form was successfully completed.'}</Content>
+        </InlineAlert>
+      }
       <TextField
         label="Email address"
         type="email"

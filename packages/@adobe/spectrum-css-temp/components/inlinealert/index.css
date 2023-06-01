@@ -37,7 +37,7 @@ governing permissions and limitations under the License.
   --spectrum-inlinealert-spacing-header-content-button: var(--spectrum-global-dimension-static-size-200);
 
   /* Color */
-  --spectrum-inlinealert-background-color: var(--spectrum-alias-background-color-default);
+  --spectrum-inlinealert-background-color: var(--spectrum-global-color-gray-50);
   --spectrum-inlinealert-border-and-icon-color: var(--spectrum-gray-visual-color);
   --spectrum-inlinealert-header-color: var(--spectrum-alias-heading-text-color);
   --spectrum-inlinealert-content-color: var(--spectrum-alias-text-color);
