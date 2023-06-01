@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, TabPanels, Tabs, TabsProps, Text, TimeField, Tooltip, TooltipTrigger} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Text, TimeField, Tooltip, TooltipTrigger} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
@@ -587,17 +587,15 @@ export const TabsExample = () => (
       <CustomTab id="MaR">Monarchy and Republic</CustomTab>
       <CustomTab id="Emp">Empire</CustomTab>
     </TabList>
-    <TabPanels>
-      <TabPanel id="FoR">
-        Arma virumque cano, Troiae qui primus ab oris.
-      </TabPanel>
-      <TabPanel id="MaR">
-        Senatus Populusque Romanus.
-      </TabPanel>
-      <TabPanel id="Emp">
-        Alea jacta est.
-      </TabPanel>
-    </TabPanels>
+    <TabPanel id="FoR">
+      Arma virumque cano, Troiae qui primus ab oris.
+    </TabPanel>
+    <TabPanel id="MaR">
+      Senatus Populusque Romanus.
+    </TabPanel>
+    <TabPanel id="Emp">
+      Alea jacta est.
+    </TabPanel>
   </Tabs>
 );
 
@@ -620,17 +618,15 @@ export const TabsRenderProps = () => {
                 <CustomTab id="MaR">Monarchy and Republic</CustomTab>
                 <CustomTab id="Emp">Empire</CustomTab>
               </TabList>
-              <TabPanels>
-                <TabPanel id="FoR">
-                  Arma virumque cano, Troiae qui primus ab oris.
-                </TabPanel>
-                <TabPanel id="MaR">
-                  Senatus Populusque Romanus.
-                </TabPanel>
-                <TabPanel id="Emp">
-                  Alea jacta est.
-                </TabPanel>
-              </TabPanels>
+              <TabPanel id="FoR">
+                Arma virumque cano, Troiae qui primus ab oris.
+              </TabPanel>
+              <TabPanel id="MaR">
+                Senatus Populusque Romanus.
+              </TabPanel>
+              <TabPanel id="Emp">
+                Alea jacta est.
+              </TabPanel>
             </div>
           </div>
         )}

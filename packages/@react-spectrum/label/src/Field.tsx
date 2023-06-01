@@ -39,7 +39,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     showErrorIcon,
     contextualHelp,
     children,
-    labelProps,
+    labelProps = {},
     // Not every component that uses <Field> supports help text.
     descriptionProps = {},
     errorMessageProps = {},
@@ -51,6 +51,11 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   let {styleProps} = useStyleProps(otherProps);
   let hasHelpText = !!description || errorMessage && validationState === 'invalid';
   let contextualHelpId = useId();
+
+  let fallbackLabelPropsId = useId();
+  if (label && contextualHelp && !labelProps.id) {
+    labelProps.id = fallbackLabelPropsId;
+  }
 
   let labelWrapperClass = classNames(
       labelStyles,
