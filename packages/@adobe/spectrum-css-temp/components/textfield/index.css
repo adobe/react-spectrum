@@ -76,7 +76,7 @@ governing permissions and limitations under the License.
   /* Change the input font styles in all browsers */
   @extend %i18nFontFamily;
   font-size: var(--spectrum-textfield-text-size);
-  line-height: calc(var(--spectrum-textfield-height) - 2 * var(--spectrum-textfield-border-size));
+  line-height: var(--spectrum-textfield-text-line-height);
   text-overflow: ellipsis;
 
   transition: border-color var(--spectrum-global-animation-duration-100) ease-in-out,
