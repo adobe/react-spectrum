@@ -51,14 +51,11 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   let {dropProps, isDropTarget} = useDrop({...props, ref});
   let {hoverProps, isHovered} = useHover({});
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
-
-  // this sorta works but if you save anything in FileTrigger then hasFileTrigger will be set to false
-  // refreshing the storybook helps fix the issues tho?
   let [fileTriggerRef, hasFileTrigger] = useSlot(); 
 
   let textId = useId();
   let labelProps = useLabels({'aria-labelledby': textId});
-
+  
   let {clipboardProps} = useClipboard({
     onPaste: (items) => props.onDrop?.({  
       type: 'drop',

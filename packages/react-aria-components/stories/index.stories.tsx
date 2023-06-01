@@ -801,7 +801,7 @@ export const DropzoneExampleWithFileTriggerLink = (props) => (
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
-      <FileTrigger slot="fileTrigger">
+      <FileTrigger>
         <Link>Upload</Link>
       </FileTrigger>
     </DropZone>
@@ -817,6 +817,40 @@ export const DropzoneExampleWithFileTriggerButton = (props) => (
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
       <FileTrigger>
+        <Button>Upload</Button>
+      </FileTrigger>
+    </DropZone>
+  </div>
+);
+
+export const DropzoneExampleWithDraggableAndFileTrigger = (props) => (
+  <div>
+    <Draggable />
+    <DropZone
+      {...props}
+      className={styles.dropzone}
+      onDrop={action('OnDrop')}
+      onDropEnter={action('OnDropEnter')}
+      onDropExit={action('OnDropExit')}>
+      <FileTrigger>
+        <Button>Browse</Button>
+      </FileTrigger>
+      Or drag into here
+    </DropZone>
+  </div>
+);
+
+export const DropZoneOnlyAcceptPNGWithFileTrigger = (props) => (
+  <div>
+    <DropZone
+      {...props}
+      getDropOperation={(types) =>  types.has('image/png') ? 'copy' : 'cancel'}
+      className={styles.dropzone}
+      onPress={action('OnPress')}
+      onDrop={action('OnDrop')}
+      onDropEnter={action('OnDropEnter')}
+      onDropExit={action('OnDropExit')} >
+      <FileTrigger accept="image/png">
         <Button>Upload</Button>
       </FileTrigger>
     </DropZone>
@@ -877,23 +911,6 @@ export const DropzoneWithRenderProps = (props) => (
           <div>isDropTarget: {isDropTarget ? 'true' : 'false'}</div>
         </div>
       )}
-    </DropZone>
-  </div>
-);
-
-export const DropZoneOnlyAcceptPNGWithFileTrigger = (props) => (
-  <div>
-    <DropZone
-      {...props}
-      getDropOperation={(types) =>  types.has('image/png') ? 'copy' : 'cancel'}
-      className={styles.dropzone}
-      onPress={action('OnPress')}
-      onDrop={action('OnDrop')}
-      onDropEnter={action('OnDropEnter')}
-      onDropExit={action('OnDropExit')} >
-      <FileTrigger accept="image/png">
-        <Button>Upload</Button>
-      </FileTrigger>
     </DropZone>
   </div>
 );
