@@ -83,6 +83,8 @@ export class GridCollection<T> implements IGridCollection<T> {
       }
     };
 
+    // TODO think about cherrypicking the change from https://github.com/adobe/react-spectrum/pull/4210/commits/ca029a9e517876169b23042faf416492a48fda53#diff-02aef09d221646fed1ffcb88c0bed8d1229c6b8e6d74a413eccdd8ecfa0f2695L105
+    // here so that we preserve the same object reference for keymap node vs nodes from node.childNodes
     let last: GridNode<T>;
     opts.items.forEach((node, i) => {
       let rowNode = {
@@ -95,6 +97,9 @@ export class GridCollection<T> implements IGridCollection<T> {
         rendered: undefined,
         textValue: undefined,
         ...node,
+        // TODO: update this GridCollection logic to have index values with respect to the immediate parent/level?
+        // If we want to change to use treegrid for table always, the index calculation here will need to match the index
+        // calculation regardless if the tree has any nested rows or not.
         index: i
       } as GridNode<T>;
 
