@@ -71,7 +71,7 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
         }]
       ]}>
       <div {...DOMProps} {...renderProps} ref={ref} slot={props.slot} />
-      {props.name && <input type="hidden" name={props.name} value={state.numberValue} />}
+      {props.name && <input type="hidden" name={props.name} value={isNaN(state.numberValue) ? '' : state.numberValue} />}
     </Provider>
   );
 }
