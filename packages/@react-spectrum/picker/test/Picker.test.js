@@ -927,6 +927,24 @@ describe('Picker', function () {
         expect(listbox).toBeVisible();
         expect(listbox).toHaveAttribute('aria-labelledby', label.id);
       });
+
+      it('supports requiredBehavior', () => {
+        let renderSelect = (requiredBehavior) => (
+          <Provider theme={theme}>
+            <Picker label="Test 2" isRequired requiredBehavior={requiredBehavior}>
+              <Item>One</Item>
+              <Item>Two</Item>
+              <Item>Three</Item>
+            </Picker>
+          </Provider>
+        );
+        let {getByRole, rerender} = render(renderSelect('aria'));
+        let hiddenSelect = getByRole('listbox', {hidden: true});
+        expect(hiddenSelect).not.toHaveAttribute('required');
+
+        rerender(renderSelect('native'));
+        expect(hiddenSelect).toHaveAttribute('required');
+      });
     });
 
     describe('help text', function () {

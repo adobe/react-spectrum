@@ -13,6 +13,7 @@
 import {FocusableElement} from '@react-types/shared';
 import React, {ReactNode, RefObject, useRef} from 'react';
 import {SelectState} from '@react-stately/select';
+import {selectData} from './useSelect';
 import {useFormReset} from '@react-aria/utils';
 import {useInteractionModality} from '@react-aria/interactions';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
@@ -52,7 +53,12 @@ export interface AriaHiddenSelectOptions extends AriaHiddenSelectProps {
  * navigation, and native HTML form submission.
  */
 export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: SelectState<T>, triggerRef: RefObject<FocusableElement>) {
-  let {autoComplete, name, isDisabled} = props;
+  let data = selectData.get(state) || {};
+  let {
+    autoComplete = data.autoComplete,
+    name = data.name,
+    isDisabled = data.isDisabled
+  } = props;
   let modality = useInteractionModality();
   let {visuallyHiddenProps} = useVisuallyHidden();
 
@@ -95,6 +101,7 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
       name,
       size: state.collection.size,
       value: state.selectedKey ?? '',
+      required: data.isRequired && data.requiredBehavior === 'native',
       onChange: (e: React.ChangeEvent<HTMLSelectElement>) => state.setSelectedKey(e.target.value)
     }
   };

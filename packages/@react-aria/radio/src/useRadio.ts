@@ -13,7 +13,7 @@
 import {AriaRadioProps} from '@react-types/radio';
 import {filterDOMProps, mergeProps, useFormReset} from '@react-aria/utils';
 import {InputHTMLAttributes, RefObject} from 'react';
-import {radioGroupDescriptionIds, radioGroupErrorMessageIds, radioGroupNames} from './utils';
+import {radioGroupData} from './utils';
 import {RadioGroupState} from '@react-stately/radio';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
@@ -73,21 +73,24 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
     tabIndex = undefined;
   }
 
+  let {name, descriptionId, errorMessageId, isRequired, requiredBehavior} = radioGroupData.get(state)!;
+
   useFormReset(ref, state.selectedValue, state.setSelectedValue);
 
   return {
     inputProps: mergeProps(domProps, {
       ...interactions,
       type: 'radio',
-      name: radioGroupNames.get(state),
+      name,
       tabIndex,
       disabled: isDisabled,
+      required: isRequired && requiredBehavior === 'native',
       checked,
       value,
       onChange,
       'aria-describedby': [
-        state.validationState === 'invalid' ? radioGroupErrorMessageIds.get(state) : null,
-        radioGroupDescriptionIds.get(state)
+        state.validationState === 'invalid' ? errorMessageId : null,
+        descriptionId
       ].filter(Boolean).join(' ') || undefined
     }),
     isDisabled,

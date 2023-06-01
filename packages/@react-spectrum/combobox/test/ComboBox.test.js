@@ -5159,4 +5159,25 @@ describe('ComboBox', function () {
       });
     });
   });
+
+  describe('forms', () => {
+    beforeAll(function () {
+      jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+    });
+
+    afterAll(function () {
+      jest.restoreAllMocks();
+    });
+
+    it('should support requiredBehavior', () => {
+      let {getByRole, rerender} = render(<ExampleComboBox isRequired />);
+      let input = getByRole('combobox');
+      expect(input).toHaveAttribute('aria-required', 'true');
+      expect(input).not.toHaveAttribute('required');
+
+      rerender(<ExampleComboBox isRequired requiredBehavior="native" />);
+      expect(input).not.toHaveAttribute('aria-required', 'true');
+      expect(input).toHaveAttribute('required');
+    });
+  });
 });

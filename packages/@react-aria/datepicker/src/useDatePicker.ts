@@ -128,6 +128,7 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       isDisabled: props.isDisabled,
       isReadOnly: props.isReadOnly,
       isRequired: props.isRequired,
+      requiredBehavior: props.requiredBehavior,
       validationState: state.validationState,
       autoFocus: props.autoFocus,
       name: props.name

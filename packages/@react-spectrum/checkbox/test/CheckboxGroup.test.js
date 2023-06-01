@@ -407,4 +407,20 @@ describe('CheckboxGroup', () => {
     expect(checkboxes[1]).not.toBeChecked();
     expect(checkboxes[2]).not.toBeChecked();
   });
+
+  it('supports requiredBehavior=native', () => {
+    let {getAllByRole} = render(
+      <Provider theme={theme}>
+        <CheckboxGroup label="Favorite Pet" requiredBehavior="native">
+          <Checkbox value="dogs" isRequired>Dogs</Checkbox>
+          <Checkbox value="cats" isRequired>Cats</Checkbox>
+          <Checkbox value="dragons" isRequired>Dragons</Checkbox>
+        </CheckboxGroup>
+      </Provider>
+    );
+    for (let input of getAllByRole('checkbox')) {
+      expect(input).toHaveAttribute('required');
+      expect(input).not.toHaveAttribute('aria-required');
+    }
+  });
 });

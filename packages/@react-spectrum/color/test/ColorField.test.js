@@ -96,7 +96,14 @@ describe('ColorField', function () {
   it('should be required', function () {
     let {getByLabelText} = renderComponent({isRequired: true});
     let colorField = getByLabelText(/Primary Color/);
-    expect(colorField).toBeRequired();
+    expect(colorField).toHaveAttribute('aria-required', 'true');
+    expect(colorField).not.toHaveAttribute('required');
+  });
+
+  it('should support requiredBehavior=native', function () {
+    let {getByLabelText} = renderComponent({isRequired: true, requiredBehavior: 'native'});
+    let colorField = getByLabelText(/Primary Color/);
+    expect(colorField).toHaveAttribute('required');
   });
 
   it('should be empty when invalid value is provided', function () {

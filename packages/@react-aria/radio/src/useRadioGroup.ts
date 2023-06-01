@@ -14,7 +14,7 @@ import {AriaRadioGroupProps} from '@react-types/radio';
 import {DOMAttributes} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {getFocusableTreeWalker} from '@react-aria/focus';
-import {radioGroupDescriptionIds, radioGroupErrorMessageIds, radioGroupNames} from './utils';
+import {radioGroupData} from './utils';
 import {RadioGroupState} from '@react-stately/radio';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
@@ -42,7 +42,8 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
     name,
     validationState,
     isReadOnly,
-    isRequired,
+    isRequired = false,
+    requiredBehavior = 'aria',
     isDisabled,
     orientation = 'vertical'
   } = props;
@@ -54,8 +55,15 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
     // shouldn't be labeled by a <label> element.
     labelElementType: 'span'
   });
-  radioGroupDescriptionIds.set(state, descriptionProps.id);
-  radioGroupErrorMessageIds.set(state, errorMessageProps.id);
+
+  let groupName = useId(name);
+  radioGroupData.set(state, {
+    name: groupName,
+    descriptionId: descriptionProps.id,
+    errorMessageId: errorMessageProps.id,
+    isRequired,
+    requiredBehavior
+  });
 
   let domProps = filterDOMProps(props, {labelable: true});
 
@@ -118,9 +126,6 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
       state.setSelectedValue(nextElem.value);
     }
   };
-
-  let groupName = useId(name);
-  radioGroupNames.set(state, groupName);
 
   return {
     radioGroupProps: mergeProps(domProps, {

@@ -1538,12 +1538,21 @@ describe('NumberField', function () {
     expect(textField).not.toHaveAttribute('aria-valuemax', '100');
     expect(textField).toHaveAttribute('aria-readonly', 'true');
     expect(textField).toHaveAttribute('aria-required', 'true');
+    expect(textField).not.toHaveAttribute('required');
     expect(textField).toHaveAttribute('aria-disabled', 'true');
     expect(textField).not.toHaveAttribute('role');
     expect(textField).toHaveAttribute('id', 'test-numberfield-id');
 
     expect(incrementButton).toHaveAttribute('aria-controls', textField.id);
     expect(decrementButton).toHaveAttribute('aria-controls', textField.id);
+  });
+
+  it('supports requiredBehavior=native', () => {
+    let {textField} = renderNumberField({
+      isRequired: true,
+      requiredBehavior: 'native'
+    });
+    expect(textField).toHaveAttribute('required');
   });
 
   describe('labeling', () => {

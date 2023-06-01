@@ -109,6 +109,7 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     inputElementType = 'input',
     isDisabled = false,
     isRequired = false,
+    requiredBehavior = 'aria',
     isReadOnly = false,
     validationState,
     type = 'text',
@@ -135,7 +136,8 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
       {
         disabled: isDisabled,
         readOnly: isReadOnly,
-        'aria-required': isRequired || undefined,
+        required: isRequired && requiredBehavior === 'native',
+        'aria-required': (isRequired && requiredBehavior === 'aria') || undefined,
         'aria-invalid': validationState === 'invalid' || undefined,
         'aria-errormessage': props['aria-errormessage'],
         'aria-activedescendant': props['aria-activedescendant'],

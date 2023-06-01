@@ -22,6 +22,7 @@ import {setInteractionModality} from '@react-aria/interactions';
 import {useCollator} from '@react-aria/i18n';
 import {useField} from '@react-aria/label';
 import {useMenuTrigger} from '@react-aria/menu';
+import { AriaHiddenSelectProps } from './HiddenSelect';
 
 export interface AriaSelectOptions<T> extends Omit<AriaSelectProps<T>, 'children'> {
   /**
@@ -50,6 +51,13 @@ export interface SelectAria<T> {
   /** Props for the select's error message element, if any. */
   errorMessageProps: DOMAttributes
 }
+
+interface SelectData extends AriaHiddenSelectProps {
+  isRequired?: boolean,
+  requiredBehavior?: 'aria' | 'native'
+}
+
+export const selectData = new WeakMap<SelectState<any>, SelectData>();
 
 /**
  * Provides the behavior and accessibility implementation for a select component.
@@ -122,6 +130,15 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
   let triggerProps = mergeProps(typeSelectProps, menuTriggerProps, fieldProps);
 
   let valueId = useId();
+
+  selectData.set(state, {
+    autoComplete: props.autoComplete,
+    label: props.label,
+    name: props.name,
+    isDisabled,
+    isRequired: props.isRequired,
+    requiredBehavior: props.requiredBehavior
+  });
 
   return {
     labelProps: {

@@ -131,6 +131,21 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
   }, [focusManager]);
 
   useFormReset(props.inputRef, state.value, state.setValue);
+  let inputProps: InputHTMLAttributes<HTMLInputElement> = {
+    type: 'hidden',
+    name: props.name,
+    value: state.value?.toString() || ''
+  };
+
+  if (props.isRequired && props.requiredBehavior === 'native') {
+    // Use a hidden <input type="text"> rather than <input type="hidden">
+    // so that an empty value blocks HTML form submission when the field is required.
+    inputProps.type = 'text';
+    inputProps.hidden = true;
+    inputProps.required = true;
+    // Ignore react warning.
+    inputProps.onChange = () => {};
+  }
 
   let domProps = filterDOMProps(props);
   return {
@@ -152,11 +167,7 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
         }
       }
     }),
-    inputProps: {
-      type: 'hidden',
-      name: props.name,
-      value: state.value?.toString() || '',
-    },
+    inputProps,
     descriptionProps,
     errorMessageProps
   };

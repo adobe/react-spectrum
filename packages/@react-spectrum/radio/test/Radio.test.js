@@ -406,6 +406,14 @@ describe('Radios', function () {
     let radios = getAllByRole('radio');
     for (let radio of radios) {
       expect(radio).not.toHaveAttribute('aria-required');
+      expect(radio).not.toHaveAttribute('required');
+    }
+  });
+
+  it('supports requiredBehavior=native', () => {
+    let {getAllByRole} = renderRadioGroup(RadioGroup, Radio, {isRequired: true, requiredBehavior: 'native'}, []);
+    for (let input of getAllByRole('radio')) {
+      expect(input).toHaveAttribute('required');
     }
   });
 

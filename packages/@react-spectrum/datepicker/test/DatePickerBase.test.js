@@ -129,6 +129,22 @@ describe('DatePickerBase', function () {
       for (let segment of segments) {
         expect(segment).toHaveAttribute('aria-required', 'true');
       }
+
+      let input = document.querySelector('input');
+      expect(input).toHaveAttribute('type', 'hidden');
+      expect(input).not.toHaveAttribute('required');
+    });
+
+    it.each`
+      Name                   | Component
+      ${'DatePicker'}        | ${DatePicker}
+      ${'DateRangePicker'}   | ${DateRangePicker}
+    `('$Name should support requiredBehavior=native', ({Component}) => {
+      render(<Component label="Date" isRequired requiredBehavior="native" />);
+      let input = document.querySelector('input');
+      expect(input).toHaveAttribute('type', 'text');
+      expect(input).toHaveAttribute('required');
+      expect(input).toHaveAttribute('hidden');
     });
 
     it.each`

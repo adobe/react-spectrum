@@ -11,7 +11,7 @@
  */
 
 import {AriaCheckboxGroupProps} from '@react-types/checkbox';
-import {checkboxGroupDescriptionIds, checkboxGroupErrorMessageIds, checkboxGroupNames} from './utils';
+import {checkboxGroupData} from './utils';
 import {CheckboxGroupState} from '@react-stately/checkbox';
 import {DOMAttributes} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
@@ -35,7 +35,7 @@ export interface CheckboxGroupAria {
  * @param state - State for the checkbox group, as returned by `useCheckboxGroupState`.
  */
 export function useCheckboxGroup(props: AriaCheckboxGroupProps, state: CheckboxGroupState): CheckboxGroupAria {
-  let {isDisabled, name} = props;
+  let {isDisabled, name, isRequired, requiredBehavior} = props;
 
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
@@ -43,13 +43,15 @@ export function useCheckboxGroup(props: AriaCheckboxGroupProps, state: CheckboxG
     // shouldn't be labeled by a <label> element.
     labelElementType: 'span'
   });
-  checkboxGroupDescriptionIds.set(state, descriptionProps.id);
-  checkboxGroupErrorMessageIds.set(state, errorMessageProps.id);
+  checkboxGroupData.set(state, {
+    name,
+    descriptionId: descriptionProps.id,
+    errorMessageId: errorMessageProps.id,
+    isRequired,
+    requiredBehavior
+  });
 
   let domProps = filterDOMProps(props, {labelable: true});
-
-  // Pass name prop from group to all items by attaching to the state.
-  checkboxGroupNames.set(state, name);
 
   return {
     groupProps: mergeProps(domProps, {

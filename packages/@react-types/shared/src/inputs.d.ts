@@ -21,7 +21,13 @@ export interface Validation {
    * Whether user input is required on the input before form submission.
    * Often paired with the `necessityIndicator` prop to add a visual indicator to the input.
    */
-  isRequired?: boolean
+  isRequired?: boolean,
+  /**
+   * Whether `isRequired` should use native HTML form validation to prevent form submission
+   * when a value is missing, or only mark the field as required via ARIA.
+   * @default 'aria'
+   */
+  requiredBehavior?: 'aria' | 'native'
 }
 
 export interface InputBase {
