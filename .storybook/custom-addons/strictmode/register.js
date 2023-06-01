@@ -29,12 +29,14 @@ const StrictModeToolBar = ({api}) => {
   );
 };
 
-addons.register('StrictModeSwitcher', (api) => {
-  addons.add('StrictModeSwitcher', {
-    title: 'Strict mode switcher',
-    type: types.TOOL,
-    //👇 Shows the Toolbar UI element if either the Canvas or Docs tab is active
-    match: ({ viewMode }) => !!(viewMode && viewMode.match(/^(story|docs)$/)),
-    render: () => <StrictModeToolBar api={api} />
+if (process.env.NODE_ENV !== 'production') {
+  addons.register('StrictModeSwitcher', (api) => {
+    addons.add('StrictModeSwitcher', {
+      title: 'Strict mode switcher',
+      type: types.TOOL,
+      //👇 Shows the Toolbar UI element if either the Canvas or Docs tab is active
+      match: ({ viewMode }) => !!(viewMode && viewMode.match(/^(story|docs)$/)),
+      render: () => <StrictModeToolBar api={api} />
+    });
   });
-});
+}
