@@ -113,7 +113,7 @@ export const AriaLabelledBy: ColorFieldStory = {
       {render({...args, id: 'colorfield', 'aria-labelledby': 'label'})}
     </>
   ),
-  storyName: 'aria-labelledy'
+  name: 'aria-labelledy'
 };
 
 export const MinWidth: ColorFieldStory = {
@@ -125,7 +125,7 @@ export const MinWidth: ColorFieldStory = {
       </div>
     </Flex>
   ),
-  storyName: 'custom width, 10px for min-width'
+  name: 'custom width, 10px for min-width'
 };
 
 export const ContextualHelpStory: ColorFieldStory = {
@@ -138,7 +138,7 @@ export const ContextualHelpStory: ColorFieldStory = {
       </ContextualHelp>
     )
   },
-  storyName: 'contextual help'
+  name: 'contextual help'
 };
 
 function ControlledColorField(props: SpectrumColorFieldProps) {

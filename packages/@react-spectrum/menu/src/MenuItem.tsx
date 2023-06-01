@@ -12,9 +12,9 @@
 
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
-import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
 import React, {Key, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
@@ -52,6 +52,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
 
   let isSelected = state.selectionManager.isSelected(key);
   let isDisabled = state.disabledKeys.has(key);
+  let domProps = filterDOMProps(item.props);
 
   let ref = useRef<HTMLLIElement>();
   let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps} = useMenuItem(
@@ -77,7 +78,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <li
-        {...mergeProps(menuItemProps, hoverProps)}
+        {...mergeProps(menuItemProps, domProps, hoverProps)}
         ref={ref}
         className={classNames(
           styles,

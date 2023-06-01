@@ -87,6 +87,18 @@ describe('GridList', () => {
     expect(grid).toHaveAttribute('aria-label', 'test');
   });
 
+  it('should support refs', () => {
+    let listBoxRef = React.createRef();
+    let itemRef = React.createRef();
+    render(
+      <GridList aria-label="Test" ref={listBoxRef}>
+        <Item ref={itemRef}>Cat</Item>
+      </GridList>
+    );
+    expect(listBoxRef.current).toBeInstanceOf(HTMLElement);
+    expect(itemRef.current).toBeInstanceOf(HTMLElement);
+  });
+
   it('should support hover', () => {
     let {getAllByRole} = renderGridList({selectionMode: 'multiple'}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
     let row = getAllByRole('row')[0];
@@ -202,6 +214,22 @@ describe('GridList', () => {
     // JSDOM seems to pretend to be WebKit so uses role="group" instead of role="grid".
     let gridList = document.querySelector('.react-aria-GridList');
     expect(gridList).toHaveAttribute('data-empty', 'true');
+  });
+
+  it('should support dynamic collections', () => {
+    let items = [
+      {id: 'cat', name: 'Cat'},
+      {id: 'dog', name: 'Dog'}
+    ];
+
+    let {getByRole} = render(
+      <GridList aria-label="Test" items={items}>
+        {(item) => <Item id={item.id}>{item.name}</Item>}
+      </GridList>
+    );
+
+    let gridList = getByRole('grid');
+    expect(within(gridList).getAllByRole('row').map((r) => r.textContent)).toEqual(['Cat', 'Dog']);
   });
 
   describe('drag and drop', () => {

@@ -13,7 +13,7 @@
 import {CollectionStateBase, Node, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
 import {GridState, useGridState} from '@react-stately/grid';
 import {TableCollection as ITableCollection} from '@react-types/table';
-import {Key, useMemo, useState} from 'react';
+import {Key, useCallback, useMemo, useState} from 'react';
 import {MultipleSelectionStateProps} from '@react-stately/selection';
 import {TableCollection} from './TableCollection';
 import {useCollection} from '@react-stately/collections';
@@ -60,19 +60,19 @@ const OPPOSITE_SORT_DIRECTION = {
  */
 export function useTableState<T extends object>(props: TableStateProps<T>): TableState<T> {
   let [isKeyboardNavigationDisabled, setKeyboardNavigationDisabled] = useState(false);
-  let {selectionMode = 'none'} = props;
+  let {selectionMode = 'none', showSelectionCheckboxes, showDragButtons} = props;
 
   let context = useMemo(() => ({
-    showSelectionCheckboxes: props.showSelectionCheckboxes && selectionMode !== 'none',
-    showDragButtons: props.showDragButtons,
+    showSelectionCheckboxes: showSelectionCheckboxes && selectionMode !== 'none',
+    showDragButtons: showDragButtons,
     selectionMode,
     columns: []
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }), [props.children, props.showSelectionCheckboxes, selectionMode, props.showDragButtons]);
+  }), [props.children, showSelectionCheckboxes, selectionMode, showDragButtons]);
 
   let collection = useCollection<T, ITableCollection<T>>(
     props,
-    (nodes, prev) => new TableCollection(nodes, prev, context),
+    useCallback((nodes) => new TableCollection(nodes, null, context), [context]),
     context
   );
   let {disabledKeys, selectionManager} = useGridState({

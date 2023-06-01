@@ -103,7 +103,7 @@ function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRe
 /**
  * A calendar displays one or more date grids and allows users to select a single date.
  */
-const _Calendar = (forwardRef as forwardRefType)(Calendar);
+const _Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(Calendar);
 export {_Calendar as Calendar};
 
 function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
@@ -172,7 +172,7 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: F
 /**
  * A range calendar displays one or more date grids and allows users to select a contiguous range of dates.
  */
-const _RangeCalendar = (forwardRef as forwardRefType)(RangeCalendar);
+const _RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(RangeCalendar);
 export {_RangeCalendar as RangeCalendar};
 
 export interface CalendarCellRenderProps {
@@ -263,7 +263,13 @@ export interface CalendarGridProps extends StyleProps {
    * CalendarGrid should display. Useful when displaying more than one
    * month at a time.
    */
-  offset?: DateDuration
+  offset?: DateDuration,
+  /**
+   * The style of weekday names to display in the calendar grid header,
+   * e.g. single letter, abbreviation, or full day name.
+   * @default "narrow"
+   */
+  weekdayStyle?: 'narrow' | 'short' | 'long'
 }
 
 interface InternalCalendarGridContextValue {
@@ -283,7 +289,8 @@ function CalendarGrid(props: CalendarGridProps, ref: ForwardedRef<HTMLTableEleme
 
   let {gridProps, headerProps, weekDays} = useCalendarGrid({
     startDate,
-    endDate: endOfMonth(startDate)
+    endDate: endOfMonth(startDate),
+    weekdayStyle: props.weekdayStyle
   }, state);
 
   return (
@@ -459,7 +466,7 @@ function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRe
 
   return (
     <td {...cellProps}>
-      <div {...mergeProps(buttonProps, focusProps, hoverProps, dataAttrs, renderProps)} ref={objectRef} />
+      <div {...mergeProps(filterDOMProps(otherProps as any), buttonProps, focusProps, hoverProps, dataAttrs, renderProps)} ref={objectRef} />
     </td>
   );
 }

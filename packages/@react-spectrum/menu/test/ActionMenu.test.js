@@ -25,7 +25,7 @@ describe('ActionMenu', function () {
   let onOpenChange = jest.fn();
 
   beforeAll(function () {
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   afterEach(() => {

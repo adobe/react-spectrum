@@ -13,34 +13,48 @@
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '../';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 import {View} from '@react-spectrum/view';
 
-storiesOf('ButtonGroup', module)
-  .add(
-    'default',
-    () => render({})
-  )
-  .add(
-    'align: center',
-    () => render({align: 'center'})
-  )
-  .add(
-    'align: end',
-    () => render({align: 'end'})
-  )
-  .add(
-    'orientation: vertical',
-    () => render({orientation: 'vertical'})
-  )
-  .add(
-    'orientation: vertical, align: center',
-    () => render({orientation: 'vertical', align: 'center'})
-  )
-  .add(
-    'orientation: vertical, align: end',
-    () => render({orientation: 'vertical', align: 'end'})
-  );
+export default {
+  title: 'ButtonGroup'
+};
+
+export const Default = () => render({});
+
+Default.story = {
+  name: 'default'
+};
+
+export const AlignCenter = () => render({align: 'center'});
+
+AlignCenter.story = {
+  name: 'align: center'
+};
+
+export const AlignEnd = () => render({align: 'end'});
+
+AlignEnd.story = {
+  name: 'align: end'
+};
+
+export const OrientationVertical = () => render({orientation: 'vertical'});
+
+OrientationVertical.story = {
+  name: 'orientation: vertical'
+};
+
+export const OrientationVerticalAlignCenter = () =>
+  render({orientation: 'vertical', align: 'center'});
+
+OrientationVerticalAlignCenter.story = {
+  name: 'orientation: vertical, align: center'
+};
+
+export const OrientationVerticalAlignEnd = () => render({orientation: 'vertical', align: 'end'});
+
+OrientationVerticalAlignEnd.story = {
+  name: 'orientation: vertical, align: end'
+};
 
 function render(props) {
   return (
