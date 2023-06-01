@@ -88,7 +88,7 @@ describe('useControlledState tests', function () {
     let TestComponent = (props) => {
       let [state, setState] = useControlledState(props.value, props.defaultValue, props.onChange);
       useEffect(() => renderSpy(), [state]);
-      return <button onClick={() => setState((prev) => prev + 1)} data-testid={state} />;
+      return <button onClick={() => setState(state + 1)} data-testid={state} />;
     };
 
     let TestComponentWrapper = (props) => {
