@@ -10,15 +10,38 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTextFieldProps, useTextField} from 'react-aria';
-import {ContextValue, DOMProps, Provider, SlotProps, useContextProps, useSlot} from './utils';
+import {AriaTextFieldProps, useFocusRing, useHover, useTextField} from 'react-aria';
+import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
 
-export interface TextFieldProps extends Omit<AriaTextFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, DOMProps, SlotProps {}
+export interface TextFieldRenderProps {
+  /**
+   * Whether the text field is focused, either via a mouse or keyboard.
+   * @selector [data-focused]
+   */
+  isFocused: boolean,
+  /**
+   * Whether the text field is keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
+   * Whether the text field is currently hovered with a mouse.
+   * @selector [data-hovered]
+   */
+  isHovered: boolean,
+  /**
+   * Whether the text field is disabled.
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean
+}
+
+export interface TextFieldProps extends Omit<AriaTextFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, Omit<DOMProps, 'style' | 'className' | 'children'>, SlotProps, RenderProps<TextFieldRenderProps> {}
 
 export const TextFieldContext = createContext<ContextValue<TextFieldProps, HTMLDivElement>>(null);
 
@@ -31,13 +54,26 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
     label
   }, inputRef);
 
+  let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
+  let {hoverProps, isHovered} = useHover(props);
+  let renderProps = useRenderProps({
+    ...props,
+    values: {isHovered, isFocused, isFocusVisible, isDisabled: props.isDisabled || false},
+    defaultClassName: 'react-aria-TextField'
+  });
+
   return (
     <div
       {...filterDOMProps(props)}
+      {...focusProps}
+      {...hoverProps}
+      {...renderProps}
       ref={ref}
       slot={props.slot}
-      className={props.className ?? 'react-aria-TextField'}
-      style={props.style}>
+      data-hovered={isHovered || undefined}
+      data-focused={isFocused || undefined}
+      data-focus-visible={isFocusVisible || undefined}
+      data-disabled={props.isDisabled || undefined}>
       <Provider
         values={[
           [LabelContext, {...labelProps, ref: labelRef}],
