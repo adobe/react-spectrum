@@ -13,7 +13,7 @@
 import {act, fireEvent, installMouseEvent, render} from '@react-spectrum/test-utils';
 import {press, testKeypresses} from './utils';
 import {Provider} from '@adobe/react-spectrum';
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {Slider} from '../';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
@@ -119,11 +119,14 @@ describe('Slider', function () {
   });
 
   it('can be controlled', function () {
-    let renders = [];
+    let setValues = [];
 
     function Test() {
-      let [value, setValue] = useState(50);
-      renders.push(value);
+      let [value, _setValue] = useState(50);
+      let setValue = useCallback((val) => {
+        setValues.push(val);
+        _setValue(val);
+      }, [_setValue]);
 
       return (<Slider label="The Label" value={value} onChange={setValue} />);
     }
@@ -141,7 +144,7 @@ describe('Slider', function () {
     expect(slider).toHaveAttribute('aria-valuetext', '55');
     expect(output).toHaveTextContent('55');
 
-    expect(renders).toStrictEqual([50, 55]);
+    expect(setValues).toStrictEqual([55]);
   });
 
   it('supports a custom getValueLabel', function () {
