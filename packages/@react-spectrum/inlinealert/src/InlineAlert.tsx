@@ -61,8 +61,12 @@ function InlineAlert(props: SpectrumInlineAlertProps, ref: DOMRef<HTMLDivElement
       {...filterDOMProps(props)}
       {...styleProps}
       ref={domRef}
-      className={classNames(styles, 'spectrum-InLineAlert',
-        `spectrum-InLineAlert--${variant}`, styleProps.className)}
+      className={classNames(
+        styles,
+        'spectrum-InLineAlert',
+        `spectrum-InLineAlert--${variant}`,
+        styleProps.className
+      )}
       role="alert">
       <Grid UNSAFE_className={styles['spectrum-InLineAlert-grid']}>
         <SlotProvider slots={slots}>
@@ -75,7 +79,7 @@ function InlineAlert(props: SpectrumInlineAlertProps, ref: DOMRef<HTMLDivElement
 }
 
 /**
- * In-line alerts display a non-modal message associated with objects in a view.
+ * Inline alerts display a non-modal message associated with objects in a view.
  * These are often used in form validation, providing a place to aggregate feedback related to multiple fields.
  */
 const _InlineAlert = React.forwardRef(InlineAlert);
