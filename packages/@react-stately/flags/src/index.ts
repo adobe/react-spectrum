@@ -10,10 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-export let enableUnavailableMenuItems = false;
-export let enableTableNestedRows = false;
+export let unavailableMenuItems = false;
+export let tableNestedRows = false;
 
-export function setFlags(values: Record<string, boolean>) {
-  enableUnavailableMenuItems = values.enableUnavailableMenuItems ?? false;
-  enableTableNestedRows = values.enableTableNestedRows ?? false;
+export function enableUnavailableMenuItems() {
+  unavailableMenuItems = true;
+}
+
+export function enableTableNestedRows() {
+  tableNestedRows = true;
 }
