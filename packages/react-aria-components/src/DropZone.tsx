@@ -55,7 +55,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
 
   let textId = useId();
   let labelProps = useLabels({'aria-labelledby': textId});
-  
+
   let {clipboardProps} = useClipboard({
     onPaste: (items) => props.onDrop?.({  
       type: 'drop',
@@ -74,7 +74,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   let DOMProps = filterDOMProps(props);
   delete DOMProps.id;
 
-  // pass this to the FileTrigger component
+  // passed to the FileTrigger component
   let onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) {
       return;
@@ -101,7 +101,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   return (
     <Provider
       values={[
-        [FileTriggerContext, {ref: fileTriggerRef, handleChange: onInputChange}],
+        [FileTriggerContext, {ref: fileTriggerRef, onChange: onInputChange}],
         [TextContext, {id: textId, slot: 'heading'}]
       ]}>
       <div

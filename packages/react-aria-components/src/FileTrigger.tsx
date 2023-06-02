@@ -19,17 +19,25 @@ import {LinkContext} from './Link';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 
 export interface FileTriggerProps extends SlotProps, DOMProps, AriaLabelingProps {
-  // want to be able to pass down accept types to the input 
+  /**
+   * Specifies what file types are allowed.
+   */
   accept?: string,
-  // onChange event for the input 
-  handleChange?: React.ChangeEventHandler<HTMLInputElement>
+  /**
+   * Whether multiple files can be selected.
+   */
+  multiple?: boolean,
+  /**
+   * Handler that is called when the file(s) are submitted.
+   */
+  onChange?: React.ChangeEventHandler<HTMLInputElement>
 }
 
 export const FileTriggerContext = createContext<ContextValue<FileTriggerProps, HTMLDivElement>>(null);
 
 function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, FileTriggerContext);
-  let {handleChange, accept, className, ...otherProps} = props;
+  let {onChange, accept, className, multiple, ...otherProps} = props;
   let inputRef = useRef<HTMLInputElement>(null);
 
   return (
@@ -43,7 +51,7 @@ function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLDivElement>)
         {...filterDOMProps(otherProps)}
         ref={ref}
         slot={props.slot}>
-        <Input type="file" style={{display: 'none'}} ref={inputRef} accept={accept} onChange={handleChange} /> 
+        <Input type="file" style={{display: 'none'}} ref={inputRef} accept={accept} onChange={onChange} multiple={multiple} /> 
         {props.children}
       </div>
     </Provider>

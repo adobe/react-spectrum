@@ -917,14 +917,17 @@ export const DropzoneWithRenderProps = (props) => (
 
 export const FileTriggerButton = (props) => (
   <FileTrigger 
-    {...props} >
+    {...props} 
+    onChange={action('OnChange')} >
     <Button>Upload</Button>
   </FileTrigger>
 );
 
 export const FileTriggerLink = (props) => (
   <FileTrigger 
-    {...props} >
+    {...props} 
+    onChange={action('OnChange')}
+    multiple >
     <Link>Select a file</Link>
   </FileTrigger>
 );
