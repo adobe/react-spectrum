@@ -132,6 +132,8 @@ export function Type({type}) {
       return <IndexedAccess {...type} />;
     case 'keyof':
       return <Keyof {...type} />;
+    case 'template':
+      return <TemplateLiteral {...type} />;
     default:
       console.log('no render component for TYPE', type);
       return null;
@@ -425,7 +427,7 @@ export function renderHTMLfromMarkdown(description, opts) {
   return '';
 }
 
-export function InterfaceType({description, properties: props, typeParameters, showRequired, showDefault, isComponent}) {
+export function InterfaceType({description, properties: props, typeParameters, showRequired, showDefault, isComponent, name, hideType}) {
   let properties = Object.values(props).filter(prop => prop.type === 'property' && prop.access !== 'private' && prop.access !== 'protected');
   let methods = Object.values(props).filter(prop => prop.type === 'method' && prop.access !== 'private' && prop.access !== 'protected');
 
@@ -460,9 +462,9 @@ export function InterfaceType({description, properties: props, typeParameters, s
           <thead>
             <tr>
               <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>Name</td>
-              <td role="columnheader" className={tableStyles['spectrum-Table-headCell']} style={{'width': '30%'}}>Type</td>
+              {!hideType && <td role="columnheader" className={tableStyles['spectrum-Table-headCell']} style={{'width': '30%'}}>Type</td>}
               {showDefault && <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>Default</td>}
-              <td role="columnheader" className={tableStyles['spectrum-Table-headCell']} style={{'width': '40%'}}>Description</td>
+              <td role="columnheader" className={tableStyles['spectrum-Table-headCell']} style={!hideType ? {'width': '40%'} : undefined}>Description</td>
             </tr>
           </thead>
           <tbody className={tableStyles['spectrum-Table-body']}>
@@ -477,11 +479,13 @@ export function InterfaceType({description, properties: props, typeParameters, s
                     : null
                   }
                 </td>
-                <td className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)} data-column="Type">
-                  <code className={typographyStyles['spectrum-Code4']}>
-                    <Type type={prop.value} />
-                  </code>
-                </td>
+                {!hideType && 
+                  <td className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)} data-column="Type">
+                    <code className={typographyStyles['spectrum-Code4']}>
+                      <Type type={prop.value} />
+                    </code>
+                  </td>
+                }
                 {showDefault &&
                   <td className={`${tableStyles['spectrum-Table-cell']} ${styles.tableCell} ${!prop.default ? styles.noDefault : ''}`} data-column="Default">
                     {prop.default
@@ -551,7 +555,7 @@ function ObjectType({properties, exact}) {
 
         let punc = optional ? '?: ' : ': ';
         return (
-          <div key={property.key} style={{paddingLeft: '1.5em'}}>
+          <div key={property.key ?? i} style={{paddingLeft: '1.5em'}}>
             {property.indexType && <span className="token punctuation">[</span>}
             <span className={`token ${token}`}>{k}</span>
             {property.indexType && <span className="token punctuation">{': '}</span>}
@@ -599,6 +603,28 @@ function ConditionalType({checkType, extendsType, trueType, falseType}) {
       <Type type={trueType} />
       <span className="token punctuation">{' :' + (falseType.type === 'conditional' ? '\n' : ' ')}</span>
       <Type type={falseType} />
+    </>
+  );
+}
+
+function TemplateLiteral({elements}) {
+  return (
+    <>
+      <span className="token hljs-string">{'`'}</span>
+      {elements.map((element, i) => {
+        if (element.type === 'string' && element.value) {
+          return <span className="token hljs-string" key={i}>{element.value}</span>;
+        }
+
+        return (
+          <React.Fragment key={i}>
+            <span className="token punctuation">{'${'}</span>
+            <Type type={element} />
+            <span className="token punctuation">{'}'}</span>
+          </React.Fragment>
+        );
+      })}
+      <span className="token hljs-string">{'`'}</span>
     </>
   );
 }

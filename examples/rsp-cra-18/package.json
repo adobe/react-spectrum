@@ -5,6 +5,7 @@
   "homepage": ".",
   "dependencies": {
     "@adobe/react-spectrum": "latest",
+    "@react-spectrum/tag": "^3.0.0-rc.0",
     "@spectrum-icons/workflow": "latest",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",

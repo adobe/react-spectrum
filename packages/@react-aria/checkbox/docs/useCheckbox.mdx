@@ -84,7 +84,7 @@ import {useToggleState} from '@react-stately/toggle';
 function Checkbox(props) {
   let {children} = props;
   let state = useToggleState(props);
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {inputProps} = useCheckbox(props, state, ref);
 
   return (
@@ -118,7 +118,7 @@ import {useFocusRing} from '@react-aria/focus';
 
 function Checkbox(props) {
   let state = useToggleState(props);
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {inputProps} = useCheckbox(props, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
   let isSelected = state.isSelected && !props.isIndeterminate;

@@ -4,6 +4,7 @@
   "columnSize": "{value} pixelů",
   "descending": "sestupně",
   "descendingSort": "řazeno sestupně podle sloupce {columnName}",
+  "resizerDescription": "Stisknutím klávesy Enter začnete měnit velikost",
   "select": "Vybrat",
   "selectAll": "Vybrat vše",
   "sortable": "sloupec s možností řazení"

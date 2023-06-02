@@ -74,6 +74,10 @@ export let WithChildren: LinkStory = {
   name: 'children: a'
 };
 
+export let BlockNavigation: LinkStory = {
+  args: {children: <a href="//example.com" target="_self" onClick={(e) => e.preventDefault()}>This is a React Spectrum Link</a>}
+};
+
 export let OnClick: LinkStory = {
   ...Default,
   args: {...Default.args},

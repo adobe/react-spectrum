@@ -32,13 +32,15 @@ let onInputChange = jest.fn();
 let outerBlur = jest.fn();
 let onFocus = jest.fn();
 let onBlur = jest.fn();
+let onClear = jest.fn();
 
 let defaultProps = {
   label: 'Test',
   onOpenChange,
   onInputChange,
   onFocus,
-  onBlur
+  onBlur,
+  onClear
 };
 
 const ExampleSearchAutocomplete = React.forwardRef((props = {}, ref) => (
@@ -103,7 +105,7 @@ function testSearchAutocompleteOpen(searchAutocomplete, listbox, focusedItemInde
 
   expect(listbox).toBeVisible();
   expect(listbox).toHaveAttribute('aria-label', 'Suggestions');
-  expect(listbox).toHaveAttribute('aria-labelledby', `${searchAutocompleteLabelledBy} ${listbox.id}`);
+  expect(listbox).toHaveAttribute('aria-labelledby', `${listbox.id} ${searchAutocompleteLabelledBy}`);
   expect(searchAutocomplete).toHaveAttribute('aria-controls', listbox.id);
   expect(searchAutocomplete).toHaveAttribute('aria-expanded', 'true');
 
@@ -141,8 +143,7 @@ describe('SearchAutocomplete', function () {
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -266,6 +267,13 @@ describe('SearchAutocomplete', function () {
     });
 
     expect(searchAutocomplete).toHaveAttribute('aria-activedescendant', items[0].id);
+  });
+
+  it('supports custom data attributes', function () {
+    let {getByRole} = renderSearchAutocomplete({'data-testid': 'test'});
+
+    let searchAutocomplete = getByRole('combobox');
+    expect(searchAutocomplete).toHaveAttribute('data-testid', 'test');
   });
 
   describe('refs', function () {
@@ -814,6 +822,36 @@ describe('SearchAutocomplete', function () {
       expect(items).toHaveLength(1);
       expect(searchAutocomplete).not.toHaveAttribute('aria-activedescendant');
     });
+
+    it('input events are only fired once', function () {
+      let onKeyDown = jest.fn();
+      let onKeyUp = jest.fn();
+      let onFocus = jest.fn();
+      let onInputChange = jest.fn();
+      let onFocusChange = jest.fn();
+      let onBlur = jest.fn();
+      let {getByRole} = renderSearchAutocomplete({onKeyDown, onKeyUp, onFocus, onInputChange, onBlur, onFocusChange});
+
+      let searchAutocomplete = getByRole('combobox');
+      typeText(searchAutocomplete, 'w');
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(onKeyDown).toHaveBeenCalledTimes(1);
+      expect(onKeyUp).toHaveBeenCalledTimes(1);
+      expect(onFocus).toHaveBeenCalledTimes(1);
+      expect(onInputChange).toHaveBeenCalledTimes(1);
+      expect(onFocusChange).toHaveBeenCalledTimes(1);
+      expect(onBlur).toHaveBeenCalledTimes(0);
+
+      act(() => {
+        userEvent.tab();
+      });
+
+      expect(onBlur).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('blur', function () {
@@ -871,6 +909,11 @@ describe('SearchAutocomplete', function () {
       act(() => {
         fireEvent.change(searchAutocomplete, {target: {value: 'Bulba'}});
         jest.runAllTimers();
+
+      });
+      expect(onOpenChange).toHaveBeenLastCalledWith(true, 'input');
+
+      act(() => {
         searchAutocomplete.blur();
         jest.runAllTimers();
       });
@@ -1409,7 +1452,7 @@ describe('SearchAutocomplete', function () {
 
   describe('mobile searchAutocomplete', function () {
     beforeEach(() => {
-      jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 600);
+      jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 700);
     });
 
     afterEach(() => {
@@ -1480,7 +1523,7 @@ describe('SearchAutocomplete', function () {
       let {getByRole, getByText} = renderSearchAutocomplete({'aria-labelledby': 'label-id'});
       let button = getByRole('button');
 
-      expect(button).toHaveAttribute('aria-labelledby', `label-id ${getByText('Test').id} ${button.getElementsByTagName('span')[0].id}`);
+      expect(button).toHaveAttribute('aria-labelledby', `${getByText('Test').id} label-id ${button.getElementsByTagName('span')[0].id}`);
     });
 
     it('readonly searchAutocomplete should not open on press', function () {
@@ -1681,6 +1724,7 @@ describe('SearchAutocomplete', function () {
       expect(clearButton.tagName).toBe('DIV');
       expect(clearButton).not.toHaveAttribute('tabIndex');
       triggerPress(clearButton);
+      expect(onClear).toHaveBeenCalledTimes(1);
 
       act(() => {
         jest.runAllTimers();
@@ -1909,7 +1953,7 @@ describe('SearchAutocomplete', function () {
       expect(tray).toBeVisible();
       let listbox = getByRole('listbox');
       expect(listbox).toHaveAttribute('aria-label', 'Suggestions');
-      expect(listbox).toHaveAttribute('aria-labelledby', `${label.id} ${listbox.id}`);
+      expect(listbox).toHaveAttribute('aria-labelledby', `${listbox.id} ${label.id}`);
       let trayInput = within(tray).getByRole('searchbox');
       expect(trayInput).toHaveAttribute('aria-labelledby', label.id);
     });

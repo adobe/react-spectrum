@@ -118,7 +118,7 @@ function preventScrollMobileSafari() {
 
   let onTouchMove = (e: TouchEvent) => {
     // Prevent scrolling the window.
-    if (scrollable === document.documentElement || scrollable === document.body) {
+    if (!scrollable || scrollable === document.documentElement || scrollable === document.body) {
       e.preventDefault();
       return;
     }

@@ -293,7 +293,8 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
   let buttonRef = useRef<FocusableRefValue<HTMLElement>>();
   let popoverRef = useRef<HTMLDivElement>();
   let listBoxRef = useRef<HTMLDivElement>();
-  let layout = useListBoxLayout(state);
+  let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
+  let layout = useListBoxLayout(state, isLoading);
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   let {inputProps, listBoxProps, labelProps} = useComboBox(
@@ -331,8 +332,10 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
   // VoiceOver on iOS reads "double tap to collapse" when focused on the input rather than
   // "double tap to edit text", as with a textbox or searchbox. We'd like double tapping to
   // open the virtual keyboard rather than closing the tray.
+  // Unlike "combobox", "aria-expanded" is not a valid attribute on "searchbox".
   inputProps.role = 'searchbox';
   inputProps['aria-haspopup'] = 'listbox';
+  delete inputProps['aria-expanded'];
   delete inputProps.onTouchEnd;
 
   let clearButton = (
@@ -506,7 +509,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
           ref={listBoxRef}
           onScroll={onScroll}
           onLoadMore={onLoadMore}
-          isLoading={loadingState === 'loading' || loadingState === 'loadingMore'} />
+          isLoading={isLoading} />
         <DismissButton onDismiss={onClose} />
       </div>
     </FocusScope>

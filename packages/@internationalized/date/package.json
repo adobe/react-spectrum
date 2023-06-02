@@ -1,13 +1,13 @@
 {
   "name": "@internationalized/date",
-  "version": "3.0.1",
+  "version": "3.2.0",
   "description": "Internationalized calendar, date, and time manipulation utilities",
   "license": "Apache-2.0",
   "main": "dist/main.js",
-  "module": "dist/module.mjs",
+  "module": "dist/module.js",
   "exports": {
     "types": "./dist/types.d.ts",
-    "import": "./dist/module.mjs",
+    "import": "./dist/import.mjs",
     "require": "./dist/main.js"
   },
   "types": "dist/types.d.ts",

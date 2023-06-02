@@ -10,37 +10,52 @@
  * governing permissions and limitations under the License.
  */
 
-import {DialogContainerExample, MenuExample, NestedDialogContainerExample} from './DialogContainerExamples';
+import {
+  DialogContainerExample,
+  MenuExample,
+  NestedDialogContainerExample
+} from './DialogContainerExamples';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 
-storiesOf('DialogContainer', module)
-  .addParameters({providerSwitcher: {status: 'notice'}})
-  .add(
-    'default',
-    () => <DialogContainerExample />
-  )
-  .add(
-    'in a menu',
-    () => <MenuExample />
-  )
-  .add(
-    'type: fullscreen',
-    () => <MenuExample type="fullscreen" />
-  )
-  .add(
-    'type: fullscreenTakeover',
-    () => <MenuExample type="fullscreenTakeover" />
-  )
-  .add(
-    'isDismissable',
-    () => <MenuExample isDismissable />
-  )
-  .add(
-    'isKeyboardDismissDisabled',
-    () => <MenuExample isKeyboardDismissDisabled />
-  )
-  .add(
-    'Nested Dialog Containers',
-    () => <NestedDialogContainerExample />
-  );
+export default {
+  title: 'DialogContainer',
+  providerSwitcher: {status: 'notice'}
+};
+
+export const Default = () => <DialogContainerExample />;
+
+Default.story = {
+  name: 'default'
+};
+
+export const InAMenu = () => <MenuExample />;
+
+InAMenu.story = {
+  name: 'in a menu'
+};
+
+export const TypeFullscreen = () => <MenuExample type="fullscreen" />;
+
+TypeFullscreen.story = {
+  name: 'type: fullscreen'
+};
+
+export const TypeFullscreenTakeover = () => <MenuExample type="fullscreenTakeover" />;
+
+TypeFullscreenTakeover.story = {
+  name: 'type: fullscreenTakeover'
+};
+
+export const IsDismissable = () => <MenuExample isDismissable />;
+
+IsDismissable.story = {
+  name: 'isDismissable'
+};
+
+export const IsKeyboardDismissDisabled = () => <MenuExample isKeyboardDismissDisabled />;
+
+IsKeyboardDismissDisabled.story = {
+  name: 'isKeyboardDismissDisabled'
+};
+
+export const NestedDialogContainers = () => <NestedDialogContainerExample />;

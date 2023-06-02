@@ -28,13 +28,11 @@ function type(key) {
 }
 
 describe('RangeCalendar', () => {
-  beforeEach(() => {
-    jest.useFakeTimers('legacy');
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+  beforeAll(() => {
+    jest.useFakeTimers();
   });
-
   afterEach(() => {
-    window.requestAnimationFrame.mockRestore();
+    act(() => {jest.runAllTimers();});
   });
 
   describe('basics', () => {
@@ -115,7 +113,6 @@ describe('RangeCalendar', () => {
       expect(grid).not.toHaveAttribute('aria-activedescendant');
     });
 
-    // v2 doesn't pass this test - it starts by showing the end date instead of the start date.
     it('should show selected dates across multiple months', () => {
       let {getByRole, getByLabelText, getAllByLabelText, getAllByRole} = render(<RangeCalendar value={{start: new CalendarDate(2019, 6, 20), end: new CalendarDate(2019, 7, 10)}} />);
 
@@ -897,7 +894,6 @@ describe('RangeCalendar', () => {
       act(() => userEvent.click(cell));
       expect(grid).not.toHaveAttribute('aria-activedescendant');
       expect(cell.parentElement).not.toHaveAttribute('aria-selected');
-      expect(document.activeElement).toBe(cell);
     });
 
     it('does not enter selection mode with the mouse on range end if isReadOnly', () => {
@@ -916,7 +912,6 @@ describe('RangeCalendar', () => {
 
       cell = getByText('15').closest('[role="button"]');
       act(() => userEvent.click(cell));
-      expect(document.activeElement).toBe(cell);
 
       selectedDates = getAllByLabelText('selected', {exact: false});
       expect(selectedDates[0].textContent).toBe('10');

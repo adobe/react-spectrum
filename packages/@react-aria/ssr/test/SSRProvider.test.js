@@ -52,7 +52,7 @@ describe('SSRProvider', function () {
 
     let divs = tree.getAllByTestId('test');
     expect(divs.map((div) => div.id)).toMatchInlineSnapshot(`
-      Array [
+      [
         "react-aria-1",
         "react-aria-2-1",
         "react-aria-2-2-1",
@@ -60,5 +60,43 @@ describe('SSRProvider', function () {
         "react-aria-4-1",
       ]
     `);
+  });
+
+  it('it should generate consistent unique ids in React strict mode', function () {
+    let tree = render(
+      <React.StrictMode>
+        <SSRProvider>
+          <Test />
+          <Test />
+        </SSRProvider>
+      </React.StrictMode>
+    );
+
+    let divs = tree.getAllByTestId('test');
+    expect(divs[0].id).toBe('react-aria-1');
+    expect(divs[1].id).toBe('react-aria-2');
+  });
+
+  it('it should generate consistent unique ids in React strict mode with Suspense', function () {
+    let tree = render(
+      <React.StrictMode>
+        <SSRProvider>
+          <SSRProvider>
+            <React.Suspense fallback={<span>Loading</span>}>
+              <Test />
+            </React.Suspense>
+          </SSRProvider>
+          <SSRProvider>
+            <React.Suspense fallback={<span>Loading</span>}>
+              <Test />
+            </React.Suspense>
+          </SSRProvider>
+        </SSRProvider>
+      </React.StrictMode>
+    );
+
+    let divs = tree.getAllByTestId('test');
+    expect(divs[0].id).toBe('react-aria-1-1');
+    expect(divs[1].id).toBe('react-aria-2-1');
   });
 });
