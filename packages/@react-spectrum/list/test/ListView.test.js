@@ -1423,10 +1423,10 @@ describe('ListView', function () {
       });
       expect(grid.scrollTop).toBe(0);
 
-      focusRow(tree, 'Item 10');
-      expect(document.activeElement).toBe(getRow(tree, 'Item 10'));
+      focusRow(tree, 'Item 1');
+      expect(document.activeElement).toBe(getRow(tree, 'Item 1'));
 
-      expect(grid.scrollTop).toBe(380);
+      expect(grid.scrollTop).toBe(20);
     });
 
     it('should scroll to a row when it is focused off screen', function () {
