@@ -26,6 +26,7 @@ import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
+import {TranslateDialog} from './../chromatic/DialogLanguages.chromatic';
 
 export default {
   title: 'DialogTrigger',
@@ -466,6 +467,12 @@ export const WithTooltip = () => (
 
 WithTooltip.story = {
   name: 'withTooltip'
+};
+
+export const WithTranslations = () => <TranslateDialog />;
+
+WithTranslations.story = {
+  name: 'with translations'
 };
 
 function render(props) {
