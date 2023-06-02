@@ -32,7 +32,8 @@ export default {
       locales: ['en-US'],
       scales: ['large']
     }
-  }
+  },
+  excludeStories: ['TranslateListBox']
 };
 
 export let TranslateListBox = () => {

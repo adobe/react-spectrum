@@ -31,7 +31,8 @@ export default {
       locales: ['en-US'],
       scales: ['large']
     }
-  }
+  },
+  excludeStories: ['TranslateMenu']
 };
 
 let iconMap = {

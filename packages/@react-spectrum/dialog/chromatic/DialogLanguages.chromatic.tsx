@@ -33,7 +33,8 @@ export default {
       locales: ['en-US'],
       scales: ['medium']
     }
-  }
+  },
+  excludeStories: ['TranslateDialog']
 };
 
 export let TranslateDialog = (dialogProps) => {
