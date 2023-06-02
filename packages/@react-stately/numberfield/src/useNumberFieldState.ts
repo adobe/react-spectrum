@@ -13,7 +13,7 @@
 import {clamp, snapValueToStep, useControlledState} from '@react-stately/utils';
 import {NumberFieldProps} from '@react-types/numberfield';
 import {NumberFormatter, NumberParser} from '@internationalized/number';
-import {useCallback, useMemo, useRef, useState} from 'react';
+import {useCallback, useMemo, useState} from 'react';
 
 export interface NumberFieldState {
   /**
@@ -104,21 +104,17 @@ export function useNumberFieldState(
   // Update the input value when the number value or format options change. This is done
   // in a useEffect so that the controlled behavior is correct and we only update the
   // textfield after prop changes.
-  let prevValue = useRef(numberValue);
-  let prevLocale = useRef(locale);
-  let prevFormatOptions = useRef(formatOptions);
-  if (!Object.is(numberValue, prevValue.current) || locale !== prevLocale.current || formatOptions !== prevFormatOptions.current) {
+  let [prevValue, setPrevValue] = useState(numberValue);
+  let [prevLocale, setPrevLocale] = useState(locale);
+  let [prevFormatOptions, setPrevFormatOptions] = useState(formatOptions);
+  if (!Object.is(numberValue, prevValue) || locale !== prevLocale || formatOptions !== prevFormatOptions) {
     setInputValue(format(numberValue));
-    prevValue.current = numberValue;
-    prevLocale.current = locale;
-    prevFormatOptions.current = formatOptions;
+    setPrevValue(numberValue);
+    setPrevLocale(locale);
+    setPrevFormatOptions(formatOptions);
   }
 
-  // Store last parsed value in a ref so it can be used by increment/decrement below
   let parsedValue = useMemo(() => numberParser.parse(inputValue), [numberParser, inputValue]);
-  let parsed = useRef(0);
-  parsed.current = parsedValue;
-
   let commit = () => {
     // Set to empty state if input value is empty
     if (!inputValue.length) {
@@ -128,7 +124,7 @@ export function useNumberFieldState(
     }
 
     // if it failed to parse, then reset input to formatted version of current number
-    if (isNaN(parsed.current)) {
+    if (isNaN(parsedValue)) {
       setInputValue(format(numberValue));
       return;
     }
@@ -136,9 +132,9 @@ export function useNumberFieldState(
     // Clamp to min and max, round to the nearest step, and round to specified number of digits
     let clampedValue: number;
     if (isNaN(step)) {
-      clampedValue = clamp(parsed.current, minValue, maxValue);
+      clampedValue = clamp(parsedValue, minValue, maxValue);
     } else {
-      clampedValue = snapValueToStep(parsed.current, minValue, maxValue, step);
+      clampedValue = snapValueToStep(parsedValue, minValue, maxValue, step);
     }
 
     clampedValue = numberParser.parse(format(clampedValue));
@@ -149,7 +145,7 @@ export function useNumberFieldState(
   };
 
   let safeNextStep = (operation: '+' | '-', minMax: number) => {
-    let prev = parsed.current;
+    let prev = parsedValue;
 
     if (isNaN(prev)) {
       // if the input is empty, start from the min/max value when incrementing/decrementing,

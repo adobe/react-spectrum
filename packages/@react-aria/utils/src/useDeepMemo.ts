@@ -10,17 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, StyleProps} from '@react-types/shared';
-import {ReactNode} from 'react';
+/* eslint-disable rulesdir/pure-render */
 
-export interface SpectrumInlineAlertProps extends DOMProps, StyleProps {
-  /**
-   * The [visual style](https://spectrum.adobe.com/page/in-line-alert/#Options) of the Inline Alert.
-   * @default 'neutral'
-   */
-  variant?: 'neutral' | 'info' | 'positive' | 'notice' | 'negative',
-  /**
-   * The contents of the Inline Alert.
-   */
-  children: ReactNode
+import {useRef} from 'react';
+
+export function useDeepMemo<T>(value: T, isEqual: (a: T, b: T) => boolean): T {
+  // Using a ref during render is ok here because it's only an optimization – both values are equivalent.
+  // If a render is thrown away, it'll still work the same no matter if the next render is the same or not.
+  let lastValue = useRef(null);
+  if (value && lastValue.current && isEqual(value, lastValue.current)) {
+    value = lastValue.current;
+  }
+
+  lastValue.current = value;
+  return value;
 }

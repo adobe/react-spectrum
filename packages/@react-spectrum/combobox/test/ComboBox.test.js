@@ -2022,7 +2022,13 @@ describe('ComboBox', function () {
     let scrollHeightSpy;
     beforeEach(() => {
       // clientHeight is needed for ScrollView's updateSize()
-      clientHeightSpy = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementationOnce(() => 0).mockImplementation(() => 40);
+      clientHeightSpy = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementationOnce(() => 0).mockImplementation(function () {
+        if (this.getAttribute('role') === 'listbox') {
+          return 100;
+        }
+
+        return 40;
+      });
       // scrollHeight is for useVirutalizerItem to mock its getSize()
       scrollHeightSpy = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 32);
     });
@@ -2055,7 +2061,6 @@ describe('ComboBox', function () {
       });
       let listbox = getByRole('listbox');
       expect(listbox).toBeVisible();
-      jest.spyOn(listbox, 'clientHeight', 'get').mockImplementation(() => 100);
       // update size, virtualizer raf kicks in
       act(() => {jest.advanceTimersToNextTimer();});
       // onLoadMore queued by previous timer, run it now
@@ -2094,10 +2099,6 @@ describe('ComboBox', function () {
       expect(onOpenChange).toHaveBeenCalledTimes(0);
       expect(onLoadMore).toHaveBeenCalledTimes(0);
 
-      // this call and the one below are more correct for how the code should
-      // behave, the initial call would have a height of zero and after that a measureable height
-      clientHeightSpy.mockRestore();
-      clientHeightSpy = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementationOnce(() => 0).mockImplementation(() => 40);
       // open menu
       triggerPress(button);
       // use async act to resolve initial load
@@ -2107,7 +2108,6 @@ describe('ComboBox', function () {
       });
       let listbox = getByRole('listbox');
       expect(listbox).toBeVisible();
-      jest.spyOn(listbox, 'clientHeight', 'get').mockImplementation(() => 100);
       // update size, virtualizer raf kicks in
       act(() => {jest.advanceTimersToNextTimer();});
       // onLoadMore queued by previous timer, run it now
@@ -2153,11 +2153,7 @@ describe('ComboBox', function () {
 
       expect(onOpenChange).toHaveBeenCalledTimes(3);
       expect(onOpenChange).toHaveBeenLastCalledWith(true, 'manual');
-      // Please test this in storybook.
-      // In virtualizer.tsx the onVisibleRectChange() causes this to be called twice
-      // because the browser limits the popover height via calculatePosition(),
-      // while the test doesn't, causing virtualizer to try to load more
-      expect(onLoadMore).toHaveBeenCalledTimes(2);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
       expect(load).toHaveBeenCalledTimes(1);
 
       // close menu
