@@ -17,7 +17,7 @@ import {GridCollection, GridNode} from '@react-types/grid';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
 import {isFocusVisible} from '@react-aria/interactions';
-import {KeyboardEvent as ReactKeyboardEvent, RefObject} from 'react';
+import {KeyboardEvent as ReactKeyboardEvent, RefObject, useRef} from 'react';
 import {useLocale} from '@react-aria/i18n';
 import {useSelectableItem} from '@react-aria/selection';
 
@@ -62,6 +62,10 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   let {direction} = useLocale();
   let {keyboardDelegate, actions: {onCellAction}} = gridMap.get(state);
 
+  // We need to track the key of the item at the time it was last focused so that we force
+  // focus to go to the item when the DOM node is reused for a different item in a virtualizer.
+  let keyWhenFocused = useRef(null);
+
   // Handles focusing the cell. If there is a focusable child,
   // it is focused, otherwise the cell itself is focused.
   let focus = () => {
@@ -81,7 +85,10 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
       }
     }
 
-    if (!ref.current.contains(document.activeElement)) {
+    if (
+      (keyWhenFocused.current != null && node.key !== keyWhenFocused.current) ||
+      !ref.current.contains(document.activeElement)
+    ) {
       focusSafely(ref.current);
     }
   };
@@ -208,6 +215,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   // Grid cells can have focusable elements inside them. In this case, focus should
   // be marshalled to that element rather than focusing the cell itself.
   let onFocus = (e) => {
+    keyWhenFocused.current = node.key;
     if (e.target !== ref.current) {
       // useSelectableItem only handles setting the focused key when
       // the focused element is the gridcell itself. We also want to
@@ -238,6 +246,21 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
   if (isVirtualized) {
     gridCellProps['aria-colindex'] = (node.colIndex ?? node.index) + 1; // aria-colindex is 1-based
+  }
+
+  // When pressing with a pointer and cell selection is not enabled, usePress will be applied to the
+  // row rather than the cell. However, when the row is draggable, usePress cannot preventDefault
+  // on pointer down, so the browser will try to focus the cell which has a tabIndex applied.
+  // To avoid this, remove the tabIndex from the cell briefly on pointer down.
+  if (shouldSelectOnPressUp && gridCellProps.tabIndex != null && gridCellProps.onPointerDown == null) {
+    gridCellProps.onPointerDown = (e) => {
+      let el = e.currentTarget;
+      let tabindex = el.getAttribute('tabindex');
+      el.removeAttribute('tabindex');
+      requestAnimationFrame(() => {
+        el.setAttribute('tabindex', tabindex);
+      });
+    };
   }
 
   return {

@@ -175,7 +175,7 @@ export const ControlledValue: DateFieldStory = {
 export const DefaultValueZoned: DateFieldStory = {
   ...Default,
   args: {defaultValue: toZoned(parseDate('2020-02-03'), 'America/Los_Angeles')},
-  storyName: 'defaultValue date, zoned'
+  name: 'defaultValue date, zoned'
 };
 
 export const DateTimeValue: DateFieldStory = {
@@ -201,31 +201,31 @@ export const DateTimeValueAbsoluteZoned: DateFieldStory = {
 export const MinMaxValue: DateFieldStory = {
   ...Default,
   args: {minValue: new CalendarDate(2010, 0, 1), maxValue: new CalendarDate(2020, 0, 1)},
-  storyName: 'minValue: 2010/1/1, maxValue: 2020/1/1'
+  name: 'minValue: 2010/1/1, maxValue: 2020/1/1'
 };
 
 export const PlaceholderVal: DateFieldStory = {
   ...Default,
   args: {placeholderValue: new CalendarDate(1980, 1, 1)},
-  storyName: 'placeholder value: 1980/1/1'
+  name: 'placeholder value: 1980/1/1'
 };
 
 export const PlaceholderValTime: DateFieldStory = {
   ...Default,
   args: {placeholderValue: new CalendarDateTime(1980, 1, 1, 8)},
-  storyName: 'placeholder value: 1980/1/1 8AM'
+  name: 'placeholder value: 1980/1/1 8AM'
 };
 
 export const PlaceholderValTimeZoned: DateFieldStory = {
   ...Default,
   args: {placeholderValue: toZoned(new CalendarDate(1980, 1, 1), 'America/Los_Angeles')},
-  storyName: 'placeholder value: 1980/1/1 zoned'
+  name: 'placeholder value: 1980/1/1 zoned'
 };
 
 export const AllEvents: DateFieldStory = {
   ...Default,
   args: {onBlur: action('onBlur'), onFocus: action('onFocus'), onFocusChange: action('onFocusChange'), onKeyDown: action('onKeyDown'), onKeyUp: action('onKeyUp')},
-  storyName: 'all the events'
+  name: 'all the events'
 };
 
 export const ContextualHelpStory: DateFieldStory = {
@@ -238,7 +238,7 @@ export const ContextualHelpStory: DateFieldStory = {
       </ContextualHelp>
     )
   },
-  storyName: 'contextual help'
+  name: 'contextual help'
 };
 
 function render(props = {}) {

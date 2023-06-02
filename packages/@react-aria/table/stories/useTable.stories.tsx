@@ -13,10 +13,12 @@
 import {action} from '@storybook/addon-actions';
 import {Table as BackwardCompatTable} from './example-backwards-compat';
 import {Cell, Column, Row, TableBody, TableHeader} from '@react-stately/table';
-import {ColumnSize, SpectrumTableProps} from '@react-types/table';
-import {Meta, Story} from '@storybook/react';
+import {ColumnSize} from '@react-types/table';
+import {Table as DocsTable} from './example-docs';
+import {Meta, StoryFn} from '@storybook/react';
 import React, {Key, useCallback, useMemo, useState} from 'react';
 import {Table as ResizingTable} from './example-resizing';
+import {SpectrumTableProps} from '@react-spectrum/table';
 import {Table} from './example';
 
 const meta: Meta<SpectrumTableProps<any>> = {
@@ -46,7 +48,7 @@ let defaultRows = [
   {id: 12, name: 'Pikachu', type: 'Electric', level: '100', weight: '13lbs', height: '1\'4"'}
 ];
 
-const Template: Story<SpectrumTableProps<any>> = (args) => (
+const Template: StoryFn<SpectrumTableProps<any>> = (args) => (
   <>
     <label htmlFor="focusable-before">Focusable before</label>
     <input id="focusable-before" />
@@ -71,7 +73,7 @@ const Template: Story<SpectrumTableProps<any>> = (args) => (
   </>
 );
 
-const TemplateBackwardsCompat: Story<SpectrumTableProps<any>> = (args) => (
+const TemplateBackwardsCompat: StoryFn<SpectrumTableProps<any>> = (args) => (
   <>
     <label htmlFor="focusable-before">Focusable before</label>
     <input id="focusable-before" />
@@ -98,32 +100,33 @@ const TemplateBackwardsCompat: Story<SpectrumTableProps<any>> = (args) => (
   </>
 );
 
-export const ScrollTesting = Template.bind({});
-ScrollTesting.args = {};
+export const ScrollTesting = {
+  render: Template
+};
 
-export const ActionTesting = Template.bind({});
-ActionTesting.args = {selectionBehavior: 'replace', selectionStyle: 'highlight', onAction: action('onAction')};
+export const ActionTesting = {
+  render: Template,
+  args: {selectionBehavior: 'replace', selectionStyle: 'highlight', onAction: action('onAction')}
+};
 
-export const BackwardCompatActionTesting = TemplateBackwardsCompat.bind({});
-BackwardCompatActionTesting.args = {selectionBehavior: 'replace', selectionStyle: 'highlight', onAction: action('onAction')};
+export const BackwardCompatActionTesting = {
+  render: TemplateBackwardsCompat,
+  args: {selectionBehavior: 'replace', selectionStyle: 'highlight', onAction: action('onAction')}
+};
 
 export const TableWithResizingNoProps = {
   args: {},
   render: (args) => (
     <ResizingTable {...args}>
       <TableHeader columns={columns}>
-        {column => (
+        {(column) => (
           <Column key={column.uid} allowsResizing>
             {column.name}
           </Column>
         )}
       </TableHeader>
       <TableBody items={defaultRows}>
-        {item => (
-          <Row>
-            {columnKey => <Cell>{item[columnKey]}</Cell>}
-          </Row>
-        )}
+        {(item) => <Row>{(columnKey) => <Cell>{item[columnKey]}</Cell>}</Row>}
       </TableBody>
     </ResizingTable>
   )
@@ -244,3 +247,73 @@ export const TableWithSomeResizingFRsControlled = {
   column width state.
   `}}
 };
+
+export const DocExample = {
+  args: {},
+  render: (args) => (
+    <DocsTable
+      aria-label="Table with always visible resizers"
+      onResizeStart={action('onResizeStart')}
+      onResize={action('onResize')}
+      onResizeEnd={action('onResizeEnd')}
+      {...args}>
+      <TableHeader columns={columns}>
+        {column => (
+          <Column allowsResizing key={column.uid}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={defaultRows}>
+        {item => (
+          <Row>
+            {columnKey => <Cell>{item[columnKey]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </DocsTable>
+  )
+};
+
+export const DocExampleControlled = {
+  args: {columns: columnsFR},
+  render: (args) => (
+    <ControlledDocsTable {...args} />
+  )
+};
+
+function ControlledDocsTable(props: {columns: Array<{name: string, uid: string, width?: ColumnSize | null}>, rows, onResize}) {
+  let {columns, ...otherProps} = props;
+  let [widths, _setWidths] = useState(() => new Map(columns.filter(col => col.width).map((col) => [col.uid as Key, col.width])));
+  let setWidths = useCallback((newWidths: Map<Key, ColumnSize>) => {
+    let controlledKeys = new Set(columns.filter(col => col.width).map((col) => col.uid as Key));
+    let newVals = new Map(Array.from(newWidths).filter(([key]) => controlledKeys.has(key)));
+    _setWidths(newVals);
+  }, [columns]);
+
+  // Needed to get past column caching so new sizes actually are rendered
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  let cols = useMemo(() => columns.map(col => ({...col})), [widths, columns]);
+  return (
+    <DocsTable
+      aria-label="Table with selection"
+      selectionMode="multiple"
+      onResize={setWidths}
+      {...otherProps}>
+      <TableHeader columns={cols}>
+        {column => (
+          <Column allowsResizing key={column.uid} width={widths.get(column.uid)}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={defaultRows}>
+        {item => (
+          <Row>
+            {columnKey => <Cell>{item[columnKey]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </DocsTable>
+  );
+}

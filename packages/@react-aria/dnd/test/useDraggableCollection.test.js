@@ -23,7 +23,6 @@ import userEvent from '@testing-library/user-event';
 
 describe('useDraggableCollection', () => {
   beforeEach(() => {
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
     jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({
       left: 0,
       top: 0,
@@ -33,7 +32,7 @@ describe('useDraggableCollection', () => {
       height: 50
     }));
 
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   afterEach(() => {

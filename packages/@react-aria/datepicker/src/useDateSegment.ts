@@ -346,7 +346,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
   // This is needed because VoiceOver on iOS does not announce groups.
   let name = segment.type === 'literal' ? '' : displayNames.of(segment.type);
   let labelProps = useLabels({
-    'aria-label': (ariaLabel ? ariaLabel + ' ' : '') + name,
+    'aria-label': `${name}${ariaLabel ? `, ${ariaLabel}` : ''}${ariaLabelledBy ? ', ' : ''}`,
     'aria-labelledby': ariaLabelledBy
   });
 

@@ -105,33 +105,33 @@ export const Default: CheckboxGroupStory = {
 export const DefaultValue: CheckboxGroupStory = {
   ...Default,
   args: {defaultValue: ['dragons']},
-  storyName: 'defaultValue: dragons'
+  name: 'defaultValue: dragons'
 };
 
 export const ControlledValue: CheckboxGroupStory = {
   ...Default,
   args: {value: ['dragons']},
-  storyName: 'controlled: dragons'
+  name: 'controlled: dragons'
 };
 
 export const OneCheckboxDisabled: CheckboxGroupStory = {
   render: (args) => render(args, [{}, {isDisabled: true}, {}]),
-  storyName: 'isDisabled on one checkbox'
+  name: 'isDisabled on one checkbox'
 };
 
 export const TwoCheckboxDisabled: CheckboxGroupStory = {
   render: (args) => render({...args, defaultValue: ['dragons']}, [{}, {isDisabled: true}, {isDisabled: true}]),
-  storyName: 'isDisabled two checkboxes and one checked'
+  name: 'isDisabled two checkboxes and one checked'
 };
 
 export const OneInvalidCheckbox: CheckboxGroupStory = {
   render: (args) => render(args, [{}, {validationState: 'invalid'}, {}]),
-  storyName: 'validationState: "invalid" on one checkbox'
+  name: 'validationState: "invalid" on one checkbox'
 };
 
 export const FixedWidth: CheckboxGroupStory = {
   render: (args) => renderWithDescriptionErrorMessageAndValidation(args),
-  storyName: 'with description, error message and validation, fixed width'
+  name: 'with description, error message and validation, fixed width'
 };
 
 export const ContextualHelpStory: CheckboxGroupStory = {
@@ -144,17 +144,17 @@ export const ContextualHelpStory: CheckboxGroupStory = {
       </ContextualHelp>
     )
   },
-  storyName: 'contextual help'
+  name: 'contextual help'
 };
 
 export const AutoFocus: CheckboxGroupStory = {
   render: (args) => render(args, [{}, {autoFocus: true}, {}]),
-  storyName: 'autoFocus on one checkbox'
+  name: 'autoFocus on one checkbox'
 };
 
 export const ControlledGroup: CheckboxGroupStory = {
   render: (args) => <ControlledCheckboxGroup {...args} />,
-  storyName: 'controlled'
+  name: 'controlled'
 };
 
 function render(props: Omit<SpectrumCheckboxGroupProps, 'children'> = {}, checkboxProps: any[] = []) {

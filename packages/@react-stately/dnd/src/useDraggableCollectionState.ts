@@ -98,10 +98,11 @@ export function useDraggableCollectionState(props: DraggableCollectionStateOptio
     preview,
     getAllowedDropOperations,
     startDrag(key, event) {
-      setDragging(true);
       let keys = getKeys(key);
       draggingKeys.current = keys;
       draggedKey.current = key;
+      selectionManager.setFocused(false);
+      setDragging(true);
       if (typeof onDragStart === 'function') {
         onDragStart({
           ...event,
@@ -130,9 +131,9 @@ export function useDraggableCollectionState(props: DraggableCollectionStateOptio
         });
       }
 
-      setDragging(false);
       draggingKeys.current = new Set();
       draggedKey.current = null;
+      setDragging(false);
     }
   };
 }

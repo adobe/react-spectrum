@@ -12,12 +12,13 @@
   },
   "type": "module",
   "dependencies": {
-    "@adobe/react-spectrum": "^3.22.0",
+    "@adobe/react-spectrum": "^3.26.0",
     "@react-spectrum/color": "^3.0.0-beta.16",
+    "@react-spectrum/tag": "^3.0.0-rc.0",
     "@react-spectrum/toast": "^3.0.0-alpha.0",
     "@spectrum-icons/illustrations": "^3.5.0",
     "@spectrum-icons/workflow": "^4.0.3",
-    "next": "^13.1.1",
+    "next": "^13.4.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
@@ -25,7 +26,7 @@
     "@types/node": "^18.8.2",
     "@types/react": "^18.0.21",
     "eslint": "^8.24.0",
-    "eslint-config-next": "^13.1.1",
+    "eslint-config-next": "^13.4.1",
     "typescript": "^4.8.4"
   }
 }

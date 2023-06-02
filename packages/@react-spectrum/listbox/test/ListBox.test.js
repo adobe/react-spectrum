@@ -110,7 +110,7 @@ describe('ListBox', function () {
     for (let item of items) {
       expect(item).toHaveAttribute('tabindex');
       expect(item).not.toHaveAttribute('aria-selected');
-      expect(item).toHaveAttribute('aria-disabled');
+      expect(item).not.toHaveAttribute('aria-disabled');
       expect(item).toHaveAttribute('aria-posinset', '' + i++);
       expect(item).toHaveAttribute('aria-setsize');
     }
@@ -715,6 +715,36 @@ describe('ListBox', function () {
     expect(listbox).toHaveAttribute('data-testid', 'test');
   });
 
+  it('items support custom data attributes', function () {
+    let items = [{key: 0, name: 'Foo'}, {key: 1, name: 'Bar'}];
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <ListBox aria-label="listbox" items={items}>
+          {item => <Item data-name={item.name}>{item.name}</Item>}
+        </ListBox>
+      </Provider>
+    );
+    act(() => jest.runAllTimers());
+    let listbox = getByRole('listbox');
+    let option = within(listbox).getAllByRole('option')[0];
+    expect(option).toHaveAttribute('data-name', 'Foo');
+  });
+
+  it('item id should not get overridden by custom id', function () {
+    let items = [{key: 0, name: 'Foo'}, {key: 1, name: 'Bar'}];
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <ListBox aria-label="listbox" items={items}>
+          {item => <Item id={item.name}>{item.name}</Item>}
+        </ListBox>
+      </Provider>
+    );
+    act(() => jest.runAllTimers());
+    let listbox = getByRole('listbox');
+    let option = within(listbox).getAllByRole('option')[0];
+    expect(option.id).not.toEqual('Foo');
+  });
+
   describe('async loading', function () {
     it('should display a spinner while loading', async function () {
       let {getByRole, rerender} = render(
@@ -823,7 +853,7 @@ describe('ListBox', function () {
       fireEvent.scroll(listbox);
       act(() => jest.runAllTimers());
 
-      expect(onLoadMore).toHaveBeenCalledTimes(2);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
 
     it('should fire onLoadMore if there aren\'t enough items to fill the ListBox ', async function () {
@@ -850,9 +880,7 @@ describe('ListBox', function () {
       let listbox = getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
       expect(options.length).toBe(5);
-      // onLoadMore called twice from onVisibleRectChange due to ListBox sizeToFit
-      // onLoadMore called twice from useLayoutEffect in React < 18
-      expect(onLoadMore).toHaveBeenCalledTimes(parseInt(React.version, 10) >= 18 ? 3 : 4);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
   });
 

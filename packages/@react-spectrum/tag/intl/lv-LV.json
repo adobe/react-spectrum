@@ -1,5 +1,6 @@
 {
   "actions": "Darbības",
   "hideButtonLabel": "Rādīt mazāk",
-  "showAllButtonLabel": "Rādīt visu ({tagCount})"
+  "noTags": "Nav",
+  "showAllButtonLabel": "Rādīt visu ({tagCount, number})"
 }

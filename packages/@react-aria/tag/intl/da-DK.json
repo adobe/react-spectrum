@@ -1,3 +1,4 @@
 {
-  "remove": "Tryk på mellemrum eller Slet for at fjerne tag."
+  "removeButtonLabel": "Fjern",
+  "removeDescription": "Tryk på Slet for at fjerne tag."
 }

@@ -23,7 +23,7 @@ import {useCollator} from '@react-aria/i18n';
 import {useField} from '@react-aria/label';
 import {useMenuTrigger} from '@react-aria/menu';
 
-export interface AriaSelectOptions<T> extends AriaSelectProps<T> {
+export interface AriaSelectOptions<T> extends Omit<AriaSelectProps<T>, 'children'> {
   /**
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
@@ -141,9 +141,9 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
       onKeyDown: chain(triggerProps.onKeyDown, onKeyDown, props.onKeyDown),
       onKeyUp: props.onKeyUp,
       'aria-labelledby': [
+        valueId,
         triggerProps['aria-labelledby'],
-        triggerProps['aria-label'] && !triggerProps['aria-labelledby'] ? triggerProps.id : null,
-        valueId
+        triggerProps['aria-label'] && !triggerProps['aria-labelledby'] ? triggerProps.id : null
       ].filter(Boolean).join(' '),
       onFocus(e: FocusEvent) {
         if (state.isFocused) {

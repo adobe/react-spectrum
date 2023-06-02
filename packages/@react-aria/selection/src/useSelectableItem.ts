@@ -67,6 +67,8 @@ export interface SelectableItemStates {
   isPressed: boolean,
   /** Whether the item is currently selected. */
   isSelected: boolean,
+  /** Whether the item is currently focused. */
+  isFocused: boolean,
   /**
    * Whether the item is non-interactive, i.e. both selection and actions are disabled and the item may
    * not be focused. Dependent on `disabledKeys` and `disabledBehavior`.
@@ -101,7 +103,6 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     key,
     ref,
     shouldSelectOnPressUp,
-    isVirtualized,
     shouldUseVirtualFocus,
     focus,
     isDisabled,
@@ -137,10 +138,10 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // Focus the associated DOM node when this item becomes the focusedKey
   useEffect(() => {
     let isFocused = key === manager.focusedKey;
-    if (isFocused && manager.isFocused && !shouldUseVirtualFocus && document.activeElement !== ref.current) {
+    if (isFocused && manager.isFocused && !shouldUseVirtualFocus) {
       if (focus) {
         focus();
-      } else {
+      } else if (document.activeElement !== ref.current) {
         focusSafely(ref.current);
       }
     }
@@ -264,10 +265,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     };
   }
 
-  if (!isVirtualized) {
-    itemProps['data-key'] = key;
-  }
-
+  itemProps['data-key'] = key;
   itemPressProps.preventFocusOnPress = shouldUseVirtualFocus;
   let {pressProps, isPressed} = usePress(itemPressProps);
 
@@ -312,6 +310,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     ),
     isPressed,
     isSelected: manager.isSelected(key),
+    isFocused: manager.isFocused && manager.focusedKey === key,
     isDisabled,
     allowsSelection,
     hasAction

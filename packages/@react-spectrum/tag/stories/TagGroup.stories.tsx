@@ -18,6 +18,7 @@ import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Heading, Text} from '@react-spectrum/text';
 import {Item, SpectrumTagGroupProps, TagGroup} from '../src';
+import {Link} from '@react-spectrum/link';
 import React, {useState} from 'react';
 
 let manyItems = [];
@@ -30,6 +31,7 @@ function ResizableContainer({children}) {
   return (
     <div style={{width: '200px', height: '200px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
       {children}
+      <p>Use the resize handle to resize the container.</p>
     </div>
   );
 }
@@ -123,7 +125,7 @@ export const WithIcons: TagGroupStory = {
 
 export const OnRemove: TagGroupStory = {
   render: (args) => <OnRemoveExample {...args} />,
-  storyName: 'onRemove'
+  name: 'onRemove'
 };
 
 export const Wrapping: TagGroupStory = {
@@ -145,7 +147,7 @@ export const LabelTruncation: TagGroupStory = {
 export const MaxRows: TagGroupStory = {
   args: {maxRows: 2},
   decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
-  storyName: 'maxRows'
+  name: 'maxRows'
 };
 
 export const MaxRowsManyTags: TagGroupStory = {
@@ -158,14 +160,14 @@ export const MaxRowsManyTags: TagGroupStory = {
     </TagGroup>
   ),
   decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
-  storyName: 'maxRows with many tags'
+  name: 'maxRows with many tags'
 };
 
 export const MaxRowsOnRemove: TagGroupStory = {
   args: {maxRows: 2},
   render: (args) => <OnRemoveExample {...args} />,
   decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
-  storyName: 'maxRows + onRemove'
+  name: 'maxRows + onRemove'
 };
 
 export const WithAvatar: TagGroupStory = {
@@ -180,17 +182,17 @@ export const WithAvatar: TagGroupStory = {
       )}
     </TagGroup>
   ),
-  storyName: 'with avatar'
+  name: 'with avatar'
 };
 
 export const WithAvatarOnRemove: TagGroupStory = {
   render: (args) => <OnRemoveExample withAvatar {...args} />,
-  storyName: 'with avatar + onRemove'
+  name: 'with avatar + onRemove'
 };
 
 export const WithAction: TagGroupStory = {
   args: {onAction: action('clear'), actionLabel: 'Clear'},
-  storyName: 'with action'
+  name: 'with action'
 };
 
 export const WithActionAndMaxRows: TagGroupStory = {
@@ -200,7 +202,7 @@ export const WithActionAndMaxRows: TagGroupStory = {
     actionLabel: 'Clear'
   },
   decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
-  storyName: 'with action and maxRows'
+  name: 'with action and maxRows'
 };
 
 export const WithLabelDescriptionContextualHelp: TagGroupStory = {
@@ -215,7 +217,7 @@ export const WithLabelDescriptionContextualHelp: TagGroupStory = {
     )
   },
   decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
-  storyName: 'with label, description, contextual help'
+  name: 'with label, description, contextual help'
 };
 
 export const WithLabelDescriptionContextualHelpAndAction: TagGroupStory = {
@@ -232,7 +234,24 @@ export const WithLabelDescriptionContextualHelpAndAction: TagGroupStory = {
     )
   },
   decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
-  storyName: 'with label, description, contextual help + action'
+  name: 'with label, description, contextual help + action'
+};
+
+export const EmptyState: TagGroupStory = {
+  render: (args) => (
+    <TagGroup label="Tag group with empty state" {...args}>
+      {[]}
+    </TagGroup>
+  ),
+  storyName: 'Empty state'
+};
+
+export const CustomEmptyState: TagGroupStory = {
+  ...EmptyState,
+  args: {
+    renderEmptyState: () => <span>No tags. <Link><a href="//react-spectrum.com">Click here</a></Link> to add some.</span>
+  },
+  storyName: 'Custom empty state'
 };
 
 function OnRemoveExample(props) {
@@ -246,13 +265,13 @@ function OnRemoveExample(props) {
     {id: 6, label: 'Shy tag'}
   ]);
 
-  let onRemove = (key) => {
-    setItems(prevItems => prevItems.filter((item) => key !== item.id));
-    action('onRemove')(key);
+  let onRemove = (keys) => {
+    setItems(prevItems => prevItems.filter((item) => !keys.has(item.id)));
+    action('onRemove')(keys);
   };
 
   return (
-    <TagGroup allowsRemoving aria-label="Tag group with removable tags" items={items} onRemove={key => onRemove(key)} {...otherProps}>
+    <TagGroup aria-label="Tag group with removable tags" items={items} onRemove={key => onRemove(key)} {...otherProps}>
       {(item: any) => (
         <Item key={item.key} textValue={item.label}>
           {withAvatar && <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />}

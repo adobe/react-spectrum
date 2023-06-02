@@ -42,6 +42,7 @@ export const PressResponder = React.forwardRef(({children, ...props}: PressRespo
         'A PressResponder was rendered without a pressable child. ' +
         'Either call the usePress hook, or wrap your DOM node with <Pressable> component.'
       );
+      isRegistered.current = true; // only warn once in strict mode.
     }
   }, []);
 

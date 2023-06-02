@@ -30,6 +30,16 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps, context:
     hasChildNodes: true,
     *childNodes() {
       // Process cells first
+      if (context.showDragButtons) {
+        yield {
+          type: 'cell',
+          key: 'header-drag', // this is combined with the row key by CollectionBuilder
+          props: {
+            isDragButtonCell: true
+          }
+        };
+      }
+      
       if (context.showSelectionCheckboxes && context.selectionMode !== 'none') {
         yield {
           type: 'cell',
@@ -69,6 +79,7 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps, context:
       return newContext.columns.length !== context.columns.length ||
         newContext.columns.some((c, i) => c.key !== context.columns[i].key) ||
         newContext.showSelectionCheckboxes !== context.showSelectionCheckboxes ||
+        newContext.showDragButtons !== context.showDragButtons ||
         newContext.selectionMode !== context.selectionMode;
     }
   };

@@ -13,7 +13,7 @@
 export type {CalendarState, CalendarStateOptions, RangeCalendarState, RangeCalendarStateOptions} from '@react-stately/calendar';
 export type {CheckboxGroupProps, CheckboxGroupState} from '@react-stately/checkbox';
 export type {ComboBoxState, ComboBoxStateOptions} from '@react-stately/combobox';
-export type {DateFieldState, DateFieldStateOptions, DatePickerState, DatePickerStateOptions, DateRangePickerState, DateRangePickerStateOptions, DateSegment, TimeFieldStateOptions} from '@react-stately/datepicker';
+export type {DateFieldState, DateFieldStateOptions, DatePickerState, DatePickerStateOptions, DateRangePickerState, DateRangePickerStateOptions, DateSegment, SegmentType as DateSegmentType, TimeFieldStateOptions} from '@react-stately/datepicker';
 export type {DraggableCollectionStateOptions, DraggableCollectionState, DroppableCollectionStateOptions, DroppableCollectionState} from '@react-stately/dnd';
 export type {AsyncListData, AsyncListOptions, ListData, ListOptions, TreeData, TreeOptions} from '@react-stately/data';
 export type {ListProps, ListState, SingleSelectListProps, SingleSelectListState} from '@react-stately/list';
@@ -21,7 +21,7 @@ export type {MenuTriggerProps, MenuTriggerState} from '@react-stately/menu';
 export type {OverlayTriggerProps, OverlayTriggerState} from '@react-stately/overlays';
 export type {RadioGroupProps, RadioGroupState} from '@react-stately/radio';
 export type {SearchFieldProps, SearchFieldState} from '@react-stately/searchfield';
-export type {SelectProps, SelectState} from '@react-stately/select';
+export type {SelectProps, SelectState, SelectStateOptions} from '@react-stately/select';
 export type {SliderState, SliderStateOptions} from '@react-stately/slider';
 export type {MultipleSelectionManager, MultipleSelectionState, SingleSelectionState} from '@react-stately/selection';
 export type {NumberFieldState, NumberFieldStateOptions} from '@react-stately/numberfield';
@@ -30,7 +30,7 @@ export type {TabListProps, TabListState} from '@react-stately/tabs';
 export type {ToggleProps, ToggleState} from '@react-stately/toggle';
 export type {TooltipTriggerProps, TooltipTriggerState} from '@react-stately/tooltip';
 export type {TreeProps, TreeState} from '@react-stately/tree';
-export type {ItemProps, SectionProps, Selection} from '@react-types/shared';
+export type {ItemProps, SectionProps, Collection, Node, Orientation, DisabledBehavior, Selection, SelectionBehavior, SelectionMode, SortDirection, ValidationState} from '@react-types/shared';
 
 export {useCalendarState, useRangeCalendarState} from '@react-stately/calendar';
 export {useCheckboxGroupState} from '@react-stately/checkbox';
