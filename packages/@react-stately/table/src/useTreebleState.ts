@@ -62,8 +62,9 @@ export function useTreebleState<T extends object>(props: TreebleStateProps<T>): 
   );
 
   // TODO: support 'all'? Will we have a interaction to expand all
+  // TODO: memo
   let onToggle = (key: Key) => {
-    setExpandedKeys(toggleKey(expandedKeys, key));
+    setExpandedKeys(toggleKey(expandedKeys, key, collection));
   };
 
   // Note: this state should be merged with the state returned from useTableState
@@ -75,17 +76,19 @@ export function useTreebleState<T extends object>(props: TreebleStateProps<T>): 
 }
 
 // TODO: copied from useTreeState, perhaps make this accept multiple keys?
-function toggleKey(set: 'all' | Set<Key>, key: Key): Set<Key> {
+function toggleKey<T>(set: 'all' | Set<Key>, key: Key, collection: ITableCollection<T>): Set<Key> {
   let res;
   if (set === 'all') {
-    // TODO: will need to handle case where we go from 'all' to 'all' minus the newly toggled key
-  }
-
-  res = new Set(set);
-  if (res.has(key)) {
+    // TODO: find all expandable rows in the collection
+    res = new Set(collection.rows.filter(row => row.props.hasChildItems));
     res.delete(key);
   } else {
-    res.add(key);
+    res = new Set(set);
+    if (res.has(key)) {
+      res.delete(key);
+    } else {
+      res.add(key);
+    }
   }
 
   return res;

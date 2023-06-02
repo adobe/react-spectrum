@@ -170,7 +170,7 @@ export class TreebleCollection<T> implements ITableCollection<T> {
     // TODO: refactor later, the below is basically taken from GridCollection but modified. Also borrows from some
     // work done from Sections table work
 
-    let blah = (node: GridNode<T>, i?: number) => {
+    let visitNode = (node: GridNode<T>, i?: number) => {
       // TODO: got rid of childKeys and the remove deleted nodes logic, not sure when that actually ever triggered
       // TODO: this is the opts.visitNode part, add columns data for cells, maybe add a wrapping if to check that and only do
       node.column = columns[node.index];
@@ -209,10 +209,7 @@ export class TreebleCollection<T> implements ITableCollection<T> {
       // Index for nested rows, should be counted separately from adjacent cells. TODO: maybe store these values separately in node.index and into node.posinset maybe?
       let rowIndex = 1;
       for (let child of node.childNodes) {
-        // console.log('child', child, expandedKeys);
-        // debugger
         // TODO: Right now this means if the parent key is not included in expandedKeys but a childKey is, we will ignore it completely since the parent hasn't been expanded
-        // TODO: debug why it isn't showing the proper level of rows when only the top most row is displayed
         if (!(child.type === 'item' && expandedKeys !== 'all' && !expandedKeys.has(node.key))) {
           if (child.parentKey == null) {
             // if child is a cell/expanded row/column and the parent key isn't already established by the collection, match child node to parent row
@@ -227,9 +224,14 @@ export class TreebleCollection<T> implements ITableCollection<T> {
           }
 
           if (child.type === 'item') {
-            blah(child, rowIndex++);
+            // TODO: quick hack to mark that a static row has child rows for expanded key toggling
+            if (node.props.childItems == null) {
+              node.props.childItems = true;
+            }
+
+            visitNode(child, rowIndex++);
           } else {
-            blah(child, index++);
+            visitNode(child, index++);
           }
 
           lastNode = child;
@@ -241,15 +243,13 @@ export class TreebleCollection<T> implements ITableCollection<T> {
       }
     };
 
-
-
     this.keyMap = new Map();
     // This is the last top level node tracker (aka header row or top level rows)
     let last: GridNode<T>;
     topLevelRows.forEach((node: GridNode<T>, i) => {
       // TODO: should the index of the top level rows be affected by the column header? don't think it should but need to test
       let index = node.type === 'column' ? i + 1 : (i - headerRows.length + 1);
-      blah(node as GridNode<T>, index);
+      visitNode(node as GridNode<T>, index);
 
       if (last) {
         last.nextKey = node.key;

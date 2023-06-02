@@ -20,7 +20,7 @@ function Row(props: RowProps): ReactElement { // eslint-disable-line @typescript
 }
 
 Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps, context: CollectionBuilderContext<T>): Generator<PartialNode<T>> {
-  let {children, textValue, childRows} = props;
+  let {children, textValue, childItems} = props;
 
   yield {
     type: 'item',
@@ -60,8 +60,8 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps, context:
           };
         }
 
-        if (childRows) {
-          for (let child of childRows) {
+        if (childItems) {
+          for (let child of childItems) {
             // Note: in order to reuse he render function of TableBody, we just need to yield a type and a value here. CollectionBuilder will then look up
             // the parent renderer and use that to build the full node of this child row, using the value provided here to generate the cells
             yield {
