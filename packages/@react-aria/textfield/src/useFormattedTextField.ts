@@ -11,7 +11,7 @@
  */
 
 import {AriaTextFieldProps} from '@react-types/textfield';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useEffectEvent} from '@react-aria/utils';
 import {RefObject, useEffect, useRef} from 'react';
 import {TextFieldAria, useTextField} from './useTextField';
 
@@ -29,81 +29,76 @@ function supportsNativeBeforeInputEvent() {
 }
 
 export function useFormattedTextField(props: AriaTextFieldProps, state: FormattedTextFieldState, inputRef: RefObject<HTMLInputElement>): TextFieldAria {
-
-  let stateRef = useRef(state);
-  stateRef.current = state;
-
   // All browsers implement the 'beforeinput' event natively except Firefox
   // (currently behind a flag as of Firefox 84). React's polyfill does not
   // run in all cases that the native event fires, e.g. when deleting text.
   // Use the native event if available so that we can prevent invalid deletions.
   // We do not attempt to polyfill this in Firefox since it would be very complicated,
   // the benefit of doing so is fairly minor, and it's going to be natively supported soon.
+  let onBeforeInputFallback = useEffectEvent((e: InputEvent) => {
+    let input = inputRef.current;
+
+    // Compute the next value of the input if the event is allowed to proceed.
+    // See https://www.w3.org/TR/input-events-2/#interface-InputEvent-Attributes for a full list of input types.
+    let nextValue: string;
+    switch (e.inputType) {
+      case 'historyUndo':
+      case 'historyRedo':
+        // Explicitly allow undo/redo. e.data is null in this case, but there's no need to validate,
+        // because presumably the input would have already been validated previously.
+        return;
+      case 'deleteContent':
+      case 'deleteByCut':
+      case 'deleteByDrag':
+        nextValue = input.value.slice(0, input.selectionStart) + input.value.slice(input.selectionEnd);
+        break;
+      case 'deleteContentForward':
+        // This is potentially incorrect, since the browser may actually delete more than a single UTF-16
+        // character. In reality, a full Unicode grapheme cluster consisting of multiple UTF-16 characters
+        // or code points may be deleted. However, in our currently supported locales, there are no such cases.
+        // If we support additional locales in the future, this may need to change.
+        nextValue = input.selectionEnd === input.selectionStart
+          ? input.value.slice(0, input.selectionStart) + input.value.slice(input.selectionEnd + 1)
+          : input.value.slice(0, input.selectionStart) + input.value.slice(input.selectionEnd);
+        break;
+      case 'deleteContentBackward':
+        nextValue = input.selectionEnd === input.selectionStart
+          ? input.value.slice(0, input.selectionStart - 1) + input.value.slice(input.selectionStart)
+          : input.value.slice(0, input.selectionStart) + input.value.slice(input.selectionEnd);
+        break;
+      case 'deleteSoftLineBackward':
+      case 'deleteHardLineBackward':
+        nextValue = input.value.slice(input.selectionStart);
+        break;
+      default:
+        if (e.data != null) {
+          nextValue =
+            input.value.slice(0, input.selectionStart) +
+            e.data +
+            input.value.slice(input.selectionEnd);
+        }
+        break;
+    }
+
+    // If we did not compute a value, or the new value is invalid, prevent the event
+    // so that the browser does not update the input text, move the selection, or add to
+    // the undo/redo stack.
+    if (nextValue == null || !state.validate(nextValue)) {
+      e.preventDefault();
+    }
+  });
+
   useEffect(() => {
     if (!supportsNativeBeforeInputEvent()) {
       return;
     }
 
     let input = inputRef.current;
-
-    let onBeforeInput = (e: InputEvent) => {
-      let state = stateRef.current;
-
-      // Compute the next value of the input if the event is allowed to proceed.
-      // See https://www.w3.org/TR/input-events-2/#interface-InputEvent-Attributes for a full list of input types.
-      let nextValue: string;
-      switch (e.inputType) {
-        case 'historyUndo':
-        case 'historyRedo':
-          // Explicitly allow undo/redo. e.data is null in this case, but there's no need to validate,
-          // because presumably the input would have already been validated previously.
-          return;
-        case 'deleteContent':
-        case 'deleteByCut':
-        case 'deleteByDrag':
-          nextValue = input.value.slice(0, input.selectionStart) + input.value.slice(input.selectionEnd);
-          break;
-        case 'deleteContentForward':
-          // This is potentially incorrect, since the browser may actually delete more than a single UTF-16
-          // character. In reality, a full Unicode grapheme cluster consisting of multiple UTF-16 characters
-          // or code points may be deleted. However, in our currently supported locales, there are no such cases.
-          // If we support additional locales in the future, this may need to change.
-          nextValue = input.selectionEnd === input.selectionStart
-            ? input.value.slice(0, input.selectionStart) + input.value.slice(input.selectionEnd + 1)
-            : input.value.slice(0, input.selectionStart) + input.value.slice(input.selectionEnd);
-          break;
-        case 'deleteContentBackward':
-          nextValue = input.selectionEnd === input.selectionStart
-            ? input.value.slice(0, input.selectionStart - 1) + input.value.slice(input.selectionStart)
-            : input.value.slice(0, input.selectionStart) + input.value.slice(input.selectionEnd);
-          break;
-        case 'deleteSoftLineBackward':
-        case 'deleteHardLineBackward':
-          nextValue = input.value.slice(input.selectionStart);
-          break;
-        default:
-          if (e.data != null) {
-            nextValue =
-              input.value.slice(0, input.selectionStart) +
-              e.data +
-              input.value.slice(input.selectionEnd);
-          }
-          break;
-      }
-
-      // If we did not compute a value, or the new value is invalid, prevent the event
-      // so that the browser does not update the input text, move the selection, or add to
-      // the undo/redo stack.
-      if (nextValue == null || !state.validate(nextValue)) {
-        e.preventDefault();
-      }
-    };
-
-    input.addEventListener('beforeinput', onBeforeInput, false);
+    input.addEventListener('beforeinput', onBeforeInputFallback, false);
     return () => {
-      input.removeEventListener('beforeinput', onBeforeInput, false);
+      input.removeEventListener('beforeinput', onBeforeInputFallback, false);
     };
-  }, [inputRef, stateRef]);
+  }, [inputRef, onBeforeInputFallback]);
 
   let onBeforeInput = !supportsNativeBeforeInputEvent()
     ? e => {

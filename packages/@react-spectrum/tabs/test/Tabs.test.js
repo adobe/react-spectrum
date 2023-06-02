@@ -191,12 +191,15 @@ describe('Tabs', function () {
     act(() => {firstItem.focus();});
     expect(firstItem).toHaveAttribute('aria-selected', 'true');
     fireEvent.keyDown(firstItem, {key: 'ArrowRight', code: 39, charCode: 39});
+    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight', code: 39, charCode: 39});
     expect(secondItem).toHaveAttribute('aria-selected', 'false');
     expect(document.activeElement).toBe(secondItem);
     fireEvent.keyDown(secondItem, {key: 'ArrowRight', code: 39, charCode: 39});
+    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight', code: 39, charCode: 39});
     expect(thirdItem).toHaveAttribute('aria-selected', 'false');
     expect(document.activeElement).toBe(thirdItem);
     fireEvent.keyDown(thirdItem, {key: 'Enter', code: 13, charCode: 13});
+    fireEvent.keyUp(document.activeElement, {key: 'Enter', code: 13, charCode: 13});
     expect(firstItem).toHaveAttribute('aria-selected', 'false');
     expect(secondItem).toHaveAttribute('aria-selected', 'false');
     expect(thirdItem).toHaveAttribute('aria-selected', 'true');

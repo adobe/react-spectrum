@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@react-spectrum/test-utils';
+import {act, fireEvent, render, within} from '@react-spectrum/test-utils';
 import React from 'react';
 import {Tab, TabList, TabPanel, Tabs} from '../';
 import userEvent from '@testing-library/user-event';
@@ -231,5 +231,33 @@ describe('Tabs', () => {
     expect(tabpanels[0]).toHaveAttribute('inert');
     expect(tabpanels[1]).not.toHaveAttribute('inert');
     expect(tabpanels[2]).toHaveAttribute('inert');
+  });
+
+  it('should support keyboardActivation=manual', () => {
+    let onSelectionChange = jest.fn();
+    let {getByRole} = renderTabs({keyboardActivation: 'manual', onSelectionChange, defaultSelectedKey: 'a'});
+
+    let tablist = getByRole('tablist');
+    let tabs = within(tablist).getAllByRole('tab');
+    let firstItem = tabs[0];
+    let secondItem = tabs[1];
+    let thirdItem = tabs[2];
+    act(() => {firstItem.focus();});
+    expect(firstItem).toHaveAttribute('aria-selected', 'true');
+    fireEvent.keyDown(firstItem, {key: 'ArrowRight', code: 39, charCode: 39});
+    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight', code: 39, charCode: 39});
+    expect(secondItem).toHaveAttribute('aria-selected', 'false');
+    expect(document.activeElement).toBe(secondItem);
+    fireEvent.keyDown(secondItem, {key: 'ArrowRight', code: 39, charCode: 39});
+    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight', code: 39, charCode: 39});
+    expect(thirdItem).toHaveAttribute('aria-selected', 'false');
+    expect(document.activeElement).toBe(thirdItem);
+    fireEvent.keyDown(thirdItem, {key: 'Enter', code: 13, charCode: 13});
+    fireEvent.keyUp(document.activeElement, {key: 'Enter', code: 13, charCode: 13});
+    expect(firstItem).toHaveAttribute('aria-selected', 'false');
+    expect(secondItem).toHaveAttribute('aria-selected', 'false');
+    expect(thirdItem).toHaveAttribute('aria-selected', 'true');
+
+    expect(onSelectionChange).toBeCalledTimes(1);
   });
 });
