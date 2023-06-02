@@ -11,7 +11,7 @@
  */
 
 import {AriaLinkOptions, mergeProps, useFocusRing, useHover, useLink} from 'react-aria';
-import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, forwardRefType, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps, mergeRefs} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, useMemo} from 'react';
 
@@ -97,5 +97,5 @@ function Link(props: LinkProps, ref: ForwardedRef<HTMLAnchorElement>) {
  * A link allows a user to navigate to another page or resource within a web page
  * or application.
  */
-const _Link = forwardRef(Link);
+const _Link = /*#__PURE__*/ (forwardRef as forwardRefType)(Link);
 export {_Link as Link};

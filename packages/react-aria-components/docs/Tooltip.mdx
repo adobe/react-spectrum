@@ -290,7 +290,11 @@ This example wraps `Tooltip` and all of its children together into a single comp
 ```tsx example export=true
 import type {TooltipProps} from 'react-aria-components';
 
-function MyTooltip({children, ...props}: TooltipProps) {
+interface MyTooltipProps extends Omit<TooltipProps, 'children'> {
+  children: React.ReactNode
+}
+
+function MyTooltip({children, ...props}: MyTooltipProps) {
   return (
     <Tooltip {...props}>
       <OverlayArrow>

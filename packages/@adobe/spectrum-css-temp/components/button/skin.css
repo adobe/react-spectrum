@@ -398,7 +398,8 @@ governing permissions and limitations under the License.
 
 @media (forced-colors: active) {
   .spectrum-Button,
-  .spectrum-ActionButton {
+  .spectrum-ActionButton,
+  .spectrum-FieldButton {
     forced-color-adjust: none;
 
     --spectrum-high-contrast-transparent: transparent;
@@ -407,8 +408,15 @@ governing permissions and limitations under the License.
     --spectrum-high-contrast-highlight: Highlight;
     --spectrum-high-contrast-highlight-text: HighlightText;
     --spectrum-high-contrast-gray-text: GrayText;
+  }
 
-    --spectrum-high-contrast-focus-ring-color: var(--spectrum-high-contrast-button-text);
+  .spectrum-Button,
+  .spectrum-ActionButton {
+    --spectrum-high-contrast-focus-ring-color: ButtonText;
+  }
+
+  .spectrum-FieldButton {
+    --spectrum-high-contrast-focus-ring-color: Highlight;
   }
 }
 
@@ -965,60 +973,59 @@ governing permissions and limitations under the License.
   .spectrum-LogicButton,
   .spectrum-FieldButton {
     forced-color-adjust: none;
-  --spectrum-clearbutton-medium-background-color: ButtonFace;
-  --spectrum-clearbutton-medium-background-color-disabled: ButtonFace;
-  --spectrum-clearbutton-medium-background-color-down: ButtonFace;
-  --spectrum-clearbutton-medium-background-color-hover: ButtonFace;
-  --spectrum-clearbutton-medium-background-color-key-focus: ButtonFace;
-  --spectrum-clearbutton-medium-icon-color: ButtonText;
-  --spectrum-clearbutton-medium-icon-color-disabled: GrayText;
-  --spectrum-clearbutton-medium-icon-color-down: Highlight;
-  --spectrum-clearbutton-medium-icon-color-hover: Highlight;
-  --spectrum-clearbutton-medium-icon-color-key-focus: Highlight;
-  --spectrum-fieldbutton-background-color: ButtonFace;
-  --spectrum-fieldbutton-background-color-disabled: ButtonFace;
-  --spectrum-fieldbutton-background-color-down: ButtonFace;
-  --spectrum-fieldbutton-background-color-hover: ButtonFace;
-  --spectrum-fieldbutton-background-color-key-focus: ButtonFace;
-  --spectrum-fieldbutton-border-color: ButtonText;
-  --spectrum-fieldbutton-border-color-down: Highlight;
-  --spectrum-fieldbutton-border-color-error: ButtonText;
-  --spectrum-fieldbutton-border-color-error-down: Highlight;
-  --spectrum-fieldbutton-border-color-error-hover: Highlight;
-  --spectrum-fieldbutton-border-color-error-key-focus: Highlight;
-  --spectrum-fieldbutton-border-color-hover: Highlight;
-  --spectrum-fieldbutton-border-color-key-focus: Highlight;
-  --spectrum-fieldbutton-icon-color-disabled: GrayText;
-  --spectrum-fieldbutton-placeholder-text-color-key-focus: ButtonText;
-  --spectrum-fieldbutton-quiet-background-color: ButtonFace;
-  --spectrum-fieldbutton-quiet-background-color-disabled: ButtonFace;
-  --spectrum-fieldbutton-quiet-background-color-down: ButtonFace;
-  --spectrum-fieldbutton-quiet-background-color-hover: ButtonFace;
-  --spectrum-fieldbutton-quiet-background-color-key-focus: ButtonFace;
-  --spectrum-fieldbutton-quiet-border-color: ButtonFace;
-  --spectrum-fieldbutton-quiet-border-color-down: Highlight;
-  --spectrum-fieldbutton-quiet-placeholder-text-color-key-focus: ButtonText;
-  --spectrum-fieldbutton-text-color: ButtonText;
-  --spectrum-fieldbutton-text-color-disabled: GrayText;
-  --spectrum-fieldbutton-text-color-hover: ButtonText;
-  --spectrum-fieldbutton-text-color-key-focus: ButtonText;
-  --spectrum-logicbutton-and-background-color: ButtonFace;
-  --spectrum-logicbutton-and-background-color-disabled: ButtonFace;
-  --spectrum-logicbutton-and-background-color-hover: ButtonFace;
-  --spectrum-logicbutton-and-border-color: ButtonText;
-  --spectrum-logicbutton-and-border-color-disabled: GrayText;
-  --spectrum-logicbutton-and-border-color-hover: Highlight;
-  --spectrum-logicbutton-and-text-color: ButtonText;
-  --spectrum-logicbutton-and-text-color-disabled: GrayText;
-  --spectrum-logicbutton-or-background-color: ButtonFace;
-  --spectrum-logicbutton-or-background-color-hover: ButtonFace;
-  --spectrum-logicbutton-or-border-color: ButtonText;
-  --spectrum-logicbutton-or-border-color-hover: Highlight;
-  --spectrum-logicbutton-or-text-color: ButtonText;
-  --spectrum-button-primary-focus-ring-color-key-focus: CanvasText;
-  --spectrum-button-primary-focus-ring-size-key-focus: 3px;
-  --spectrum-dropdown-border-color-key-focus: Highlight;
-
+    --spectrum-clearbutton-medium-background-color: ButtonFace;
+    --spectrum-clearbutton-medium-background-color-disabled: ButtonFace;
+    --spectrum-clearbutton-medium-background-color-down: ButtonFace;
+    --spectrum-clearbutton-medium-background-color-hover: ButtonFace;
+    --spectrum-clearbutton-medium-background-color-key-focus: ButtonFace;
+    --spectrum-clearbutton-medium-icon-color: ButtonText;
+    --spectrum-clearbutton-medium-icon-color-disabled: GrayText;
+    --spectrum-clearbutton-medium-icon-color-down: Highlight;
+    --spectrum-clearbutton-medium-icon-color-hover: Highlight;
+    --spectrum-clearbutton-medium-icon-color-key-focus: Highlight;
+    --spectrum-fieldbutton-background-color: ButtonFace;
+    --spectrum-fieldbutton-background-color-disabled: ButtonFace;
+    --spectrum-fieldbutton-background-color-down: ButtonFace;
+    --spectrum-fieldbutton-background-color-hover: ButtonFace;
+    --spectrum-fieldbutton-background-color-key-focus: ButtonFace;
+    --spectrum-fieldbutton-border-color: ButtonText;
+    --spectrum-fieldbutton-border-color-down: Highlight;
+    --spectrum-fieldbutton-border-color-error: ButtonText;
+    --spectrum-fieldbutton-border-color-error-down: Highlight;
+    --spectrum-fieldbutton-border-color-error-hover: Highlight;
+    --spectrum-fieldbutton-border-color-error-key-focus: Highlight;
+    --spectrum-fieldbutton-border-color-hover: Highlight;
+    --spectrum-fieldbutton-border-color-key-focus: Highlight;
+    --spectrum-fieldbutton-icon-color-disabled: GrayText;
+    --spectrum-fieldbutton-placeholder-text-color-key-focus: ButtonText;
+    --spectrum-fieldbutton-quiet-background-color: ButtonFace;
+    --spectrum-fieldbutton-quiet-background-color-disabled: ButtonFace;
+    --spectrum-fieldbutton-quiet-background-color-down: ButtonFace;
+    --spectrum-fieldbutton-quiet-background-color-hover: ButtonFace;
+    --spectrum-fieldbutton-quiet-background-color-key-focus: ButtonFace;
+    --spectrum-fieldbutton-quiet-border-color: ButtonFace;
+    --spectrum-fieldbutton-quiet-border-color-down: Highlight;
+    --spectrum-fieldbutton-quiet-placeholder-text-color-key-focus: ButtonText;
+    --spectrum-fieldbutton-text-color: ButtonText;
+    --spectrum-fieldbutton-text-color-disabled: GrayText;
+    --spectrum-fieldbutton-text-color-hover: ButtonText;
+    --spectrum-fieldbutton-text-color-key-focus: ButtonText;
+    --spectrum-logicbutton-and-background-color: ButtonFace;
+    --spectrum-logicbutton-and-background-color-disabled: ButtonFace;
+    --spectrum-logicbutton-and-background-color-hover: ButtonFace;
+    --spectrum-logicbutton-and-border-color: ButtonText;
+    --spectrum-logicbutton-and-border-color-disabled: GrayText;
+    --spectrum-logicbutton-and-border-color-hover: Highlight;
+    --spectrum-logicbutton-and-text-color: ButtonText;
+    --spectrum-logicbutton-and-text-color-disabled: GrayText;
+    --spectrum-logicbutton-or-background-color: ButtonFace;
+    --spectrum-logicbutton-or-background-color-hover: ButtonFace;
+    --spectrum-logicbutton-or-border-color: ButtonText;
+    --spectrum-logicbutton-or-border-color-hover: Highlight;
+    --spectrum-logicbutton-or-text-color: ButtonText;
+    --spectrum-button-primary-focus-ring-color-key-focus: CanvasText;
+    --spectrum-button-primary-focus-ring-size-key-focus: 3px;
+    --spectrum-dropdown-border-color-key-focus: Highlight;
   }
 
   .spectrum-Button--overBackground {
@@ -1044,18 +1051,5 @@ governing permissions and limitations under the License.
     --spectrum-actionbutton-static-color: ButtonText;
     --spectrum-actionbutton-static-color-selected: HighlightText; /* becomes the background of the parent element due to mix-blend-mode */
     --spectrum-actionbutton-static-color-disabled: GrayText;
-  }
-
-  .spectrum-FieldButton {
-    &:focus-ring,
-    &.is-focused {
-      &:not(.spectrum-FieldButton--quiet) {
-        outline:2px solid Highlight;
-      }
-      &.spectrum-FieldButton--quiet {
-        forced-color-adjust: none;
-        box-shadow: 0 2px 0 0 var(--spectrum-dropdown-border-color-key-focus);
-      }
-    }
   }
 }

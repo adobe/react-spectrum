@@ -11,7 +11,7 @@
  */
 import {CollectionBase} from '@react-types/shared';
 import {createPortal} from 'react-dom';
-import {DOMProps, forwardRefType, RenderProps} from './utils';
+import {forwardRefType, RenderProps, StyleProps} from './utils';
 import {Collection as ICollection, Node, SelectionBehavior, SelectionMode, ItemProps as SharedItemProps, SectionProps as SharedSectionProps} from 'react-stately';
 import {mergeProps, useIsSSR} from 'react-aria';
 import React, {cloneElement, createContext, ForwardedRef, forwardRef, Key, ReactElement, ReactNode, ReactPortal, useCallback, useContext, useMemo} from 'react';
@@ -628,7 +628,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
 export interface CollectionProps<T> extends Omit<CollectionBase<T>, 'children'> {
   /** The contents of the collection. */
-  children?: ReactNode | ((item: T) => ReactElement)
+  children?: ReactNode | ((item: T) => ReactNode)
 }
 
 interface CachedChildrenOptions<T> extends CollectionProps<T> {
@@ -636,7 +636,7 @@ interface CachedChildrenOptions<T> extends CollectionProps<T> {
   addIdAndValue?: boolean
 }
 
-export function useCachedChildren<T extends object>(props: CachedChildrenOptions<T>) {
+export function useCachedChildren<T extends object>(props: CachedChildrenOptions<T>): ReactNode {
   let {children, items, idScope, addIdAndValue} = props;
   let cache = useMemo(() => new WeakMap(), []);
   return useMemo(() => {
@@ -668,7 +668,7 @@ export function useCachedChildren<T extends object>(props: CachedChildrenOptions
         res.push(rendered);
       }
       return res;
-    } else {
+    } else if (typeof children !== 'function') {
       return children;
     }
   }, [children, items, cache, idScope, addIdAndValue]);
@@ -686,8 +686,8 @@ interface CollectionResult<C> {
 }
 
 export function useCollection<T extends object, C extends BaseCollection<T>>(props: CollectionProps<T>, initialCollection?: C): CollectionResult<C> {
-  let {collection, document} = useCollectionDocument(initialCollection);
-  let portal = useCollectionPortal(props, document);
+  let {collection, document} = useCollectionDocument<T, C>(initialCollection);
+  let portal = useCollectionPortal<T, C>(props, document);
   return {portal, collection};
 }
 
@@ -806,7 +806,7 @@ function Item<T extends object>(props: ItemProps<T>, ref: ForwardedRef<HTMLEleme
 const _Item = /*#__PURE__*/ (forwardRef as forwardRefType)(Item);
 export {_Item as Item};
 
-export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children' | 'title'>, DOMProps {
+export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children' | 'title'>, StyleProps {
   /** The unique id of the section. */
   id?: Key,
   /** The object value that this section represents. When using dynamic collections, this is set automatically. */
@@ -825,7 +825,7 @@ const _Section = /*#__PURE__*/ (forwardRef as forwardRefType)(Section);
 export {_Section as Section};
 
 export const CollectionContext = createContext<CachedChildrenOptions<unknown> | null>(null);
-export const CollectionRendererContext = createContext<CollectionProps<unknown>['children']>(null);
+export const CollectionRendererContext = createContext<CollectionProps<any>['children']>(null);
 
 /** A Collection renders a list of items, automatically managing caching and keys. */
 export function Collection<T extends object>(props: CollectionProps<T>): JSX.Element {

@@ -11,7 +11,7 @@
  */
 
 import {AriaRadioGroupProps, AriaRadioProps, Orientation, useFocusRing, useHover, usePress, useRadio, useRadioGroup, VisuallyHidden} from 'react-aria';
-import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
 import {LabelContext} from './Label';
 import {RadioGroupState, useRadioGroupState, ValidationState} from 'react-stately';
@@ -143,7 +143,11 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
 function Radio(props: RadioProps, ref: ForwardedRef<HTMLInputElement>) {
   let state = React.useContext(InternalRadioContext)!;
   let domRef = useObjectRef(ref);
-  let {inputProps, isSelected, isDisabled, isPressed: isPressedKeyboard} = useRadio(props, state, domRef);
+  let {inputProps, isSelected, isDisabled, isPressed: isPressedKeyboard} = useRadio({
+    ...props,
+    // ReactNode type doesn't allow function children.
+    children: typeof props.children === 'function' ? true : props.children
+  }, state, domRef);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let interactionDisabled = isDisabled || state.isReadOnly;
 
@@ -212,11 +216,11 @@ function Radio(props: RadioProps, ref: ForwardedRef<HTMLInputElement>) {
 /**
  * A radio group allows a user to select a single item from a list of mutually exclusive options.
  */
-const _RadioGroup = forwardRef(RadioGroup);
+const _RadioGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(RadioGroup);
 
 /**
  * A radio represents an individual option within a radio group.
  */
-const _Radio = forwardRef(Radio);
+const _Radio = /*#__PURE__*/ (forwardRef as forwardRefType)(Radio);
 
 export {_RadioGroup as RadioGroup, _Radio as Radio};
