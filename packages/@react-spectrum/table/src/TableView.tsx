@@ -370,6 +370,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     }
 
     if (reusableView.viewType === 'row') {
+      console.log('resusualbe view', reusableView)
       return (
         <TableRow
           key={reusableView.key}
@@ -1203,6 +1204,7 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
   let ref = useRef();
   let {state, layout, dragAndDropHooks, dragState, dropState} = useTableContext();
   let allowsInteraction = state.selectionManager.selectionMode !== 'none' || hasActions;
+  console.log('item', item);
   let isDisabled = !allowsInteraction || state.disabledKeys.has(item.key);
   let isDroppable = isTableDroppable && !isDisabled;
   let isSelected = state.selectionManager.isSelected(item.key);

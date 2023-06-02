@@ -79,8 +79,7 @@ export function useTreebleState<T extends object>(props: TreebleStateProps<T>): 
 function toggleKey<T>(set: 'all' | Set<Key>, key: Key, collection: ITableCollection<T>): Set<Key> {
   let res;
   if (set === 'all') {
-    // TODO: find all expandable rows in the collection
-    res = new Set(collection.rows.filter(row => row.props.hasChildItems));
+    res = new Set(collection.rows.filter(row => row.props.hasChildItems || row.props.children.length > collection.columnCount));
     res.delete(key);
   } else {
     res = new Set(set);

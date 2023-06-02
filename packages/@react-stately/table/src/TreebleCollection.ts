@@ -224,11 +224,6 @@ export class TreebleCollection<T> implements ITableCollection<T> {
           }
 
           if (child.type === 'item') {
-            // TODO: quick hack to mark that a static row has child rows for expanded key toggling
-            if (node.props.childItems == null) {
-              node.props.childItems = true;
-            }
-
             visitNode(child, rowIndex++);
           } else {
             visitNode(child, index++);
