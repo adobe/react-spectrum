@@ -143,9 +143,9 @@ describe('useCalendar', () => {
   });
 
   function testPagination(defaultValue, rangeBefore, rangeAfter, rel, count,  visibleDuration, pageBehavior) {
-    let {getByRole, getByLabelText, unmount} = render(<Example defaultValue={defaultValue} autoFocus visibleDuration={visibleDuration} pageBehavior={pageBehavior} />);
-    let grid = getByRole('grid');
-    expect(grid).toHaveAttribute('aria-label', rangeBefore);
+    let {getByTestId, getByLabelText, unmount} = render(<Example defaultValue={defaultValue} autoFocus visibleDuration={visibleDuration} pageBehavior={pageBehavior} />);
+    let grid = getByTestId('range');
+    expect(grid).toHaveTextContent(rangeBefore);
 
     let btn = getByLabelText(rel);
 
@@ -153,7 +153,7 @@ describe('useCalendar', () => {
       fireEvent.click(btn);
     }
 
-    expect(grid).toHaveAttribute('aria-label', rangeAfter);
+    expect(grid).toHaveTextContent(rangeAfter);
   
     unmount();
   }  
