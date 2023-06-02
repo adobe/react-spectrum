@@ -12,7 +12,7 @@
 
 import {alignCenter, constrainValue, isInvalid, previousAvailableDate} from './utils';
 import {Calendar, CalendarDate, DateDuration, GregorianCalendar, isEqualDay, maxDate, minDate, toCalendar, toCalendarDate} from '@internationalized/date';
-import {CalendarState, RangeCalendarState} from './types';
+import {CalendarState, PageBehavior, RangeCalendarState} from './types';
 import {DateRange, DateValue} from '@react-types/calendar';
 import {RangeCalendarProps} from '@react-types/calendar';
 import {RangeValue} from '@react-types/shared';
@@ -34,7 +34,12 @@ export interface RangeCalendarStateOptions<T extends DateValue = DateValue> exte
    * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
    */
-  visibleDuration?: DateDuration
+  visibleDuration?: DateDuration,
+  /**
+   * Controls the behavior of paging. Pagination either works by advancing the visible page by visibleDuration (default) or one unit of visibleDuration.
+   * @default visible
+   */
+  pageBehavior?: PageBehavior
 }
 
 /**
