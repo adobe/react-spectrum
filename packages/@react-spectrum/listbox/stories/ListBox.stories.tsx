@@ -26,6 +26,7 @@ import {Label} from '@react-spectrum/label';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React, {useRef, useState} from 'react';
 import {Text} from '@react-spectrum/text';
+import {TranslateListBox} from './../chromatic/ListBoxLanguages.chromatic';
 import {useAsyncList, useTreeData} from '@react-stately/data';
 
 let iconMap = {
@@ -802,6 +803,11 @@ export const RestoreFocusExample = {
   name: 'restore focus after deleting selected items'
 };
 
+export const WithTranslations = {
+  render: () => <TranslateListBox />,
+  decorators: null,
+  name: 'with translations'
+};
 
 let customOption = (item) => {
   let Icon = iconMap[item.icon];
