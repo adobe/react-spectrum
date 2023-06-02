@@ -273,7 +273,11 @@ This example wraps `Popover` and all of its children together into a single comp
 ```tsx example export=true
 import type {PopoverProps} from 'react-aria-components';
 
-function MyPopover({children, ...props}: PopoverProps) {
+interface MyPopoverProps extends Omit<PopoverProps, 'children'> {
+  children: React.ReactNode
+}
+
+function MyPopover({children, ...props}: MyPopoverProps) {
   return (
     <Popover {...props}>
       <OverlayArrow>

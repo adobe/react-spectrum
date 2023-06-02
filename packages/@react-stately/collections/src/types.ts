@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {ItemRenderer} from '@react-types/shared';
 import {Key, ReactElement, ReactNode} from 'react';
 
 export interface PartialNode<T> {
@@ -23,7 +22,7 @@ export interface PartialNode<T> {
   textValue?: string,
   'aria-label'?: string,
   index?: number,
-  renderer?: ItemRenderer<T>,
+  renderer?: (item: T) => ReactElement,
   hasChildNodes?: boolean,
   childNodes?: () => IterableIterator<PartialNode<T>>,
   props?: any,

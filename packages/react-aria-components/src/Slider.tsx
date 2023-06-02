@@ -113,7 +113,7 @@ function SliderOutput({children, style, className, ...otherProps}: SliderOutputP
 /**
  * A slider output displays the current value of a slider as text.
  */
-const _SliderOutput = forwardRef(SliderOutput);
+const _SliderOutput = /*#__PURE__*/ (forwardRef as forwardRefType)(SliderOutput);
 export {_SliderOutput as SliderOutput};
 
 export interface SliderTrackProps extends RenderProps<SliderState> {}
@@ -133,7 +133,7 @@ function SliderTrack(props: SliderTrackProps, ref: ForwardedRef<HTMLDivElement>)
 /**
  * A slider track is a container for one or more slider thumbs.
  */
-const _SliderTrack = forwardRef(SliderTrack);
+const _SliderTrack = /*#__PURE__*/ (forwardRef as forwardRefType)(SliderTrack);
 export {_SliderTrack as SliderTrack};
 
 export interface SliderThumbRenderProps {
@@ -220,5 +220,5 @@ function SliderThumb(props: SliderThumbProps, ref: ForwardedRef<HTMLDivElement>)
 /**
  * A slider thumb represents an individual value that the user can adjust within a slider track.
  */
-const _SliderThumb = forwardRef(SliderThumb);
+const _SliderThumb = /*#__PURE__*/ (forwardRef as forwardRefType)(SliderThumb);
 export {_SliderThumb as SliderThumb};
