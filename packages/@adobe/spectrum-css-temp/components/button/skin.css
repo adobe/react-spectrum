@@ -408,7 +408,10 @@ governing permissions and limitations under the License.
     --spectrum-high-contrast-highlight: Highlight;
     --spectrum-high-contrast-highlight-text: HighlightText;
     --spectrum-high-contrast-gray-text: GrayText;
+  }
 
+  .spectrum-Button,
+  .spectrum-ActionButton {
     --spectrum-high-contrast-focus-ring-color: ButtonText;
   }
 
