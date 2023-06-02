@@ -90,7 +90,7 @@ export function SSRProvider(props: SSRProviderProps) {
     }
     return props.children;
   }
-  return LegacySSRProvider(props);
+  return <LegacySSRProvider {...props} />;
 }
 
 let canUseDOM = Boolean(
@@ -155,7 +155,9 @@ function useLegacySSRSafeId(defaultId?: string): string {
 function useModernSSRSafeId(defaultId?: string): string {
   // @ts-ignore
   let id = React.useId();
-  return defaultId || `react-aria-${id}`;
+  let didSSR = useRef(useIsSSR());
+  let prefix = didSSR.current ? 'react-aria' : `react-aria${defaultContext.prefix}`;
+  return defaultId || `${prefix}-${id}`;
 }
 
 // Use React.useId in React 18 if available, otherwise fall back to our old implementation.
