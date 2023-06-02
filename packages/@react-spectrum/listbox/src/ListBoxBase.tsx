@@ -21,7 +21,7 @@ import {ListBoxOption} from './ListBoxOption';
 import {ListBoxSection} from './ListBoxSection';
 import {ListLayout} from '@react-stately/layout';
 import {ListState} from '@react-stately/list';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useMemo} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
@@ -48,7 +48,7 @@ interface ListBoxBaseProps<T> extends AriaListBoxOptions<T>, DOMProps, AriaLabel
 }
 
 /** @private */
-export function useListBoxLayout<T>(state: ListState<T>): ListLayout<T> {
+export function useListBoxLayout<T>(state: ListState<T>, isLoading: boolean): ListLayout<T> {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let layout = useMemo(() =>
@@ -64,6 +64,14 @@ export function useListBoxLayout<T>(state: ListState<T>): ListLayout<T> {
 
   layout.collection = state.collection;
   layout.disabledKeys = state.disabledKeys;
+
+  useLayoutEffect(() => {
+    // Sync loading state into the layout.
+    if (layout.isLoading !== isLoading) {
+      layout.isLoading = isLoading;
+      layout.virtualizer?.relayoutNow();
+    }
+  }, [layout, isLoading]);
   return layout;
 }
 
@@ -78,9 +86,6 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
   let {styleProps} = useStyleProps(props);
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
-  // Sync loading state into the layout.
-  layout.isLoading = props.isLoading;
-
   // This overrides collection view's renderWrapper to support heirarchy of items in sections.
   // The header is extracted from the children so it can receive ARIA labeling properties.
   type View = ReusableView<Node<T>, unknown>;
@@ -89,8 +94,10 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
       return (
         <ListBoxSection
           key={reusableView.key}
-          reusableView={reusableView}
-          header={children.find(c => c.viewType === 'header')}>
+          item={reusableView.content}
+          layoutInfo={reusableView.layoutInfo}
+          virtualizer={reusableView.virtualizer}
+          headerLayoutInfo={children.find(c => c.viewType === 'header').layoutInfo}>
           {renderChildren(children.filter(c => c.viewType === 'item'))}
         </ListBoxSection>
       );
@@ -99,8 +106,11 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
     return (
       <VirtualizerItem
         key={reusableView.key}
-        reusableView={reusableView}
-        parent={parent} />
+        layoutInfo={reusableView.layoutInfo}
+        virtualizer={reusableView.virtualizer}
+        parent={parent?.layoutInfo}>
+        {reusableView.rendered}
+      </VirtualizerItem>
     );
   };
 
@@ -112,6 +122,7 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
           {...mergeProps(listBoxProps, domProps)}
           ref={ref}
           focusedKey={state.selectionManager.focusedKey}
+          autoFocus={!!props.autoFocus}
           sizeToFit="height"
           scrollDirection="vertical"
           className={

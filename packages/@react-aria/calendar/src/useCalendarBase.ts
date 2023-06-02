@@ -21,7 +21,7 @@ import {hookData, useSelectedDateDescription, useVisibleRangeDescription} from '
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useRef} from 'react';
+import {useState} from 'react';
 
 export interface CalendarAria {
   /** Props for the calendar grouping element. */
@@ -71,17 +71,17 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps & AriaLabeli
   });
 
   // If the next or previous buttons become disabled while they are focused, move focus to the calendar body.
-  let nextFocused = useRef(false);
+  let [nextFocused, setNextFocused] = useState(false);
   let nextDisabled = props.isDisabled || state.isNextVisibleRangeInvalid();
-  if (nextDisabled && nextFocused.current) {
-    nextFocused.current = false;
+  if (nextDisabled && nextFocused) {
+    setNextFocused(false);
     state.setFocused(true);
   }
 
-  let previousFocused = useRef(false);
+  let [previousFocused, setPreviousFocused] = useState(false);
   let previousDisabled = props.isDisabled || state.isPreviousVisibleRangeInvalid();
-  if (previousDisabled && previousFocused.current) {
-    previousFocused.current = false;
+  if (previousDisabled && previousFocused) {
+    setPreviousFocused(false);
     state.setFocused(true);
   }
 
@@ -100,15 +100,13 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps & AriaLabeli
       onPress: () => state.focusNextPage(),
       'aria-label': stringFormatter.format('next'),
       isDisabled: nextDisabled,
-      onFocus: () => nextFocused.current = true,
-      onBlur: () => nextFocused.current = false
+      onFocusChange: setNextFocused
     },
     prevButtonProps: {
       onPress: () => state.focusPreviousPage(),
       'aria-label': stringFormatter.format('previous'),
       isDisabled: previousDisabled,
-      onFocus: () => previousFocused.current = true,
-      onBlur: () => previousFocused.current = false
+      onFocusChange: setPreviousFocused
     },
     errorMessageProps: {
       id: errorMessageId

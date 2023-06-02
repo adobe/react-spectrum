@@ -1,10 +1,11 @@
-import { ArrowUpIcon, BellIcon, CheckCircleIcon, CheckIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
+import { ArrowUpIcon, BellIcon, CheckCircleIcon, CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import { ChatBubbleOvalLeftEllipsisIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { useMemo, useState } from 'react';
-import { Button, Calendar, CalendarCell, CalendarGrid, CalendarGridBody, CalendarGridHeader, CalendarHeaderCell, Cell, Collection, Column, ComboBox, DateInput, DatePicker, DateSegment, Dialog, DialogTrigger, Group, Header, Heading, Input, Item, Label, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, OverlayArrow, Popover, ProgressBar, Radio, RadioGroup, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, Table, TableBody, TableHeader, TabList, TabPanel, TabPanels, Tabs, Text } from 'react-aria-components';
+import { Button, Cell, Collection, Column, ComboBox, DateInput, DatePicker, DateSegment, Dialog, DialogTrigger, Group, Header, Heading, Input, Item, Label, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, OverlayArrow, Popover, ProgressBar, Radio, RadioGroup, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, Table, TableBody, TableHeader, TabList, TabPanel, TabPanels, Tabs, Text } from 'react-aria-components';
 import { useAsyncList } from 'react-stately';
 import { people } from './people.js';
 import stocks from './stocks.json';
+import {AnimatedCalendar} from './AnimatedCalendar';
 
 export function App() {
   return (
@@ -149,29 +150,27 @@ function TabsExample() {
           <MyTab id="releases">Releases</MyTab>
           <MyTab id="docs">Docs</MyTab>
         </TabList>
-        <TabPanels>
-          <MyTabPanel id="blog">
-            <div className="flex flex-col">
-              <Article title="Taming the dragon: Accessible drag and drop" summary="We are excited to announce the release of drag and drop support in React Aria and React Spectrum! This includes a suite of hooks for implementing drag and drop interactions, with support for both mouse and touch, as well as full parity for keyboard and screen reader input." />
-              <Article title="Date and Time Pickers for All" summary="We are very excited to announce the release of the React Aria and React Spectrum date and time picker components! This includes a full suite of fully featured components and hooks including calendars, date and time fields, and range pickers, all with a focus on internationalization and accessibility. It also includes @internationalized/date, a brand new framework-agnostic library for locale-aware date and time manipulation." />
-              <Article title="Creating an accessible autocomplete experience" summary="After many months of research, development, and testing, we’re excited to announce that the React Spectrum ComboBox component and React Aria useComboBox hook are now available! In this post we'll take a deeper look into some of the challenges we faced when building an accessible and mobile friendly ComboBox." />
-            </div>
-          </MyTabPanel>
-          <MyTabPanel id="releases">
-            <div className="flex flex-col">
-              <Article title="February 23, 2023 Release" summary="In this release, we have added support for Node ESM to all of our packages. We have also been busy at work on our pre-releases and improving our focus management in collections." />
-              <Article title="December 16, 2022 Release" summary="It is our last release of the year and we are happy to share a new TableView feature, now in beta. Using the new allowsResizing prop on a Column in TableView gives users the ability to dynamically adjust the width of that column. TableView column resizing supports mouse, keyboard, touch, and screen reader interactions to allow all users to take advantage of a customizable table." />
-              <Article title="November 15, 2022 Release" summary="We are excited to announce the release of drag and drop support in React Aria and React Spectrum! This includes a suite of hooks for implementing drag and drop interactions. There is also an update to all Spectrum colors, aligning React Spectrum with the latest Spectrum designs. Finally, React Aria includes a new simplified API for overlays such as popovers and modals." />
-            </div>
-          </MyTabPanel>
-          <MyTabPanel id="docs">
-            <div className="flex flex-col">
-              <Article title="React Stately" summary="A library of React Hooks that provides cross-platform state management for your design system." />
-              <Article title="React Aria" summary="A library of React Hooks that provides accessible UI primitives for your design system." />
-              <Article title="React Spectrum" summary="A React implementation of Spectrum, Adobe’s design system." />
-            </div>
-          </MyTabPanel>
-        </TabPanels>
+        <MyTabPanel id="blog">
+          <div className="flex flex-col">
+            <Article title="Taming the dragon: Accessible drag and drop" summary="We are excited to announce the release of drag and drop support in React Aria and React Spectrum! This includes a suite of hooks for implementing drag and drop interactions, with support for both mouse and touch, as well as full parity for keyboard and screen reader input." />
+            <Article title="Date and Time Pickers for All" summary="We are very excited to announce the release of the React Aria and React Spectrum date and time picker components! This includes a full suite of fully featured components and hooks including calendars, date and time fields, and range pickers, all with a focus on internationalization and accessibility. It also includes @internationalized/date, a brand new framework-agnostic library for locale-aware date and time manipulation." />
+            <Article title="Creating an accessible autocomplete experience" summary="After many months of research, development, and testing, we’re excited to announce that the React Spectrum ComboBox component and React Aria useComboBox hook are now available! In this post we'll take a deeper look into some of the challenges we faced when building an accessible and mobile friendly ComboBox." />
+          </div>
+        </MyTabPanel>
+        <MyTabPanel id="releases">
+          <div className="flex flex-col">
+            <Article title="February 23, 2023 Release" summary="In this release, we have added support for Node ESM to all of our packages. We have also been busy at work on our pre-releases and improving our focus management in collections." />
+            <Article title="December 16, 2022 Release" summary="It is our last release of the year and we are happy to share a new TableView feature, now in beta. Using the new allowsResizing prop on a Column in TableView gives users the ability to dynamically adjust the width of that column. TableView column resizing supports mouse, keyboard, touch, and screen reader interactions to allow all users to take advantage of a customizable table." />
+            <Article title="November 15, 2022 Release" summary="We are excited to announce the release of drag and drop support in React Aria and React Spectrum! This includes a suite of hooks for implementing drag and drop interactions. There is also an update to all Spectrum colors, aligning React Spectrum with the latest Spectrum designs. Finally, React Aria includes a new simplified API for overlays such as popovers and modals." />
+          </div>
+        </MyTabPanel>
+        <MyTabPanel id="docs">
+          <div className="flex flex-col">
+            <Article title="React Stately" summary="A library of React Hooks that provides cross-platform state management for your design system." />
+            <Article title="React Aria" summary="A library of React Hooks that provides accessible UI primitives for your design system." />
+            <Article title="React Spectrum" summary="A React implementation of Spectrum, Adobe’s design system." />
+          </div>
+        </MyTabPanel>
       </Tabs>
     </div>
   );
@@ -409,21 +408,7 @@ function DatePickerExample() {
         </Group>
         <MyPopover>
           <Dialog className="p-6 text-gray-600">
-            <Calendar>
-              <header className="flex items-center pb-4 px-1 font-serif w-full">
-                <Heading className="flex-1 font-semibold text-2xl ml-2" />
-                <Button slot="previous" className="w-9 h-9 ml-4 outline-none cursor-default rounded-full flex items-center justify-center data-[hovered]:bg-gray-100 data-[pressed]:bg-gray-200 data-[focus-visible]:ring data-[focus-visible]:ring-violet-600 data-[focus-visible]:ring-opacity-70 data-[focus-visible]:ring-offset-2"><ChevronLeftIcon className="h-6 w-6" /></Button>
-                <Button slot="next" className="w-9 h-9 outline-none cursor-default rounded-full flex items-center justify-center data-[hovered]:bg-gray-100 data-[pressed]:bg-gray-200 data-[focus-visible]:ring data-[focus-visible]:ring-violet-600 data-[focus-visible]:ring-opacity-70 data-[focus-visible]:ring-offset-2"><ChevronRightIcon className="h-6 w-6" /></Button>
-              </header>
-              <CalendarGrid className="border-spacing-1 border-separate">
-                <CalendarGridHeader>
-                  {day => <CalendarHeaderCell className="text-xs text-gray-500 font-semibold">{day}</CalendarHeaderCell>}
-                </CalendarGridHeader>
-                <CalendarGridBody>
-                  {date => <CalendarCell date={date} className="w-9 h-9 outline-none cursor-default rounded-full text-sm flex items-center justify-center data-[outside-month]:text-gray-300 data-[hovered]:bg-gray-100 data-[pressed]:bg-gray-200 data-[selected]:data-[hovered]:bg-violet-700 data-[selected]:bg-violet-700 data-[selected]:text-white data-[focus-visible]:ring data-[focus-visible]:ring-violet-600 data-[focus-visible]:ring-opacity-70 data-[focus-visible]:ring-offset-2" />}
-                </CalendarGridBody>
-              </CalendarGrid>
-            </Calendar>
+            <AnimatedCalendar />
           </Dialog>
         </MyPopover>
       </DatePicker>
