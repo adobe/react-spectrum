@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Adobe. All rights reserved.
+ * Copyright 2023 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -28,7 +28,7 @@ export interface FileTriggerProps extends SlotProps, DOMProps, AriaLabelingProps
    */
   multiple?: boolean,
   /**
-   * Handler that is called when the file(s) are submitted.
+   * Handler that is called on submission.
    */
   onChange?: React.ChangeEventHandler<HTMLInputElement>
 }
