@@ -1,6 +1,6 @@
 {
-  "negative": "Viga",
   "info": "Teave",
-  "positive": "Valmis",
-  "notice": "Hoiatus"
+  "negative": "Tõrge",
+  "notice": "Hoiatus",
+  "positive": "Valmis"
 }
