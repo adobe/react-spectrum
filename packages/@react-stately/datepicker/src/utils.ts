@@ -130,23 +130,25 @@ export function createPlaceholderDate(placeholderValue: DateValue, granularity: 
 
 export function useDefaultProps(v: DateValue, granularity: Granularity): [Granularity, string] {
   // Compute default granularity and time zone from the value. If the value becomes null, keep the last values.
-  let [lastValue, setLastValue] = useState<[Granularity, string] | null>(null);
-  if (!v && lastValue) {
-    return lastValue;
-  }
-
   let defaultTimeZone = (v && 'timeZone' in v ? v.timeZone : undefined);
-  granularity = granularity || (v && 'minute' in v ? 'minute' : 'day');
+  let defaultGranularity: Granularity = (v && 'minute' in v ? 'minute' : 'day');
 
   // props.granularity must actually exist in the value if one is provided.
-  if (v && !(granularity in v)) {
+  if (v && granularity && !(granularity in v)) {
     throw new Error('Invalid granularity ' + granularity + ' for value ' + v.toString());
   }
 
+  let [lastValue, setLastValue] = useState<[Granularity, string]>([defaultGranularity, defaultTimeZone]);
+
   // If the granularity or time zone changed, update the last value.
-  if (!lastValue || lastValue[0] !== granularity || lastValue[1] !== defaultTimeZone) {
-    setLastValue([granularity, defaultTimeZone]);
+  if (v && (lastValue[0] !== defaultGranularity || lastValue[1] !== defaultTimeZone)) {
+    setLastValue([defaultGranularity, defaultTimeZone]);
   }
 
-  return [granularity, defaultTimeZone];
+  if (!granularity) {
+    granularity = v ? defaultGranularity : lastValue[0];
+  }
+
+  let timeZone = v ? defaultTimeZone : lastValue[1];
+  return [granularity, timeZone];
 }
