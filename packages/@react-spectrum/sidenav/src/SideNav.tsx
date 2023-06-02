@@ -44,8 +44,10 @@ export function SideNav<T extends object>(props: SpectrumSideNavProps<T>) {
       return (
         <SideNavSection
           key={reusableView.key}
-          reusableView={reusableView}
-          header={children.find(c => c.viewType === 'header')}>
+          item={reusableView.content}
+          layoutInfo={reusableView.layoutInfo}
+          virtualizer={reusableView.virtualizer}
+          headerLayoutInfo={children.find(c => c.viewType === 'header').layoutInfo}>
           {renderChildren(children.filter(c => c.viewType === 'item'))}
         </SideNavSection>
       );
@@ -54,8 +56,11 @@ export function SideNav<T extends object>(props: SpectrumSideNavProps<T>) {
     return (
       <VirtualizerItem
         key={reusableView.key}
-        reusableView={reusableView}
-        parent={parent} />
+        layoutInfo={reusableView.layoutInfo}
+        virtualizer={reusableView.virtualizer}
+        parent={parent?.layoutInfo}>
+        {reusableView.rendered}
+      </VirtualizerItem>
     );
   };
 

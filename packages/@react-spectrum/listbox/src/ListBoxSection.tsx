@@ -11,26 +11,25 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
-import {layoutInfoToStyle, useVirtualizerItem} from '@react-aria/virtualizer';
+import {LayoutInfo} from '@react-stately/virtualizer';
+import {layoutInfoToStyle, useVirtualizerItem, VirtualizerItemOptions} from '@react-aria/virtualizer';
 import {ListBoxContext} from './ListBoxContext';
 import {Node} from '@react-types/shared';
 import React, {Fragment, ReactNode, useContext, useRef} from 'react';
-import {ReusableView} from '@react-stately/virtualizer';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useListBoxSection} from '@react-aria/listbox';
 import {useLocale} from '@react-aria/i18n';
 import {useSeparator} from '@react-aria/separator';
 
-interface ListBoxSectionProps<T> {
-  reusableView: ReusableView<Node<T>, unknown>,
-  header: ReusableView<Node<T>, unknown>,
+interface ListBoxSectionProps<T> extends Omit<VirtualizerItemOptions, 'ref'> {
+  headerLayoutInfo: LayoutInfo,
+  item: Node<T>,
   children?: ReactNode
 }
 
 /** @private */
 export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
-  let {children, reusableView, header} = props;
-  let item = reusableView.content;
+  let {children, layoutInfo, headerLayoutInfo, virtualizer, item} = props;
   let {headingProps, groupProps} = useListBoxSection({
     heading: item.rendered,
     'aria-label': item['aria-label']
@@ -42,7 +41,8 @@ export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
 
   let headerRef = useRef();
   useVirtualizerItem({
-    reusableView: header,
+    layoutInfo: headerLayoutInfo,
+    virtualizer,
     ref: headerRef
   });
 
@@ -51,7 +51,7 @@ export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
 
   return (
     <Fragment>
-      <div role="presentation" ref={headerRef} style={layoutInfoToStyle(header.layoutInfo, direction)}>
+      <div role="presentation" ref={headerRef} style={layoutInfoToStyle(headerLayoutInfo, direction)}>
         {item.key !== state.collection.getFirstKey() &&
           <div
             {...separatorProps}
@@ -75,7 +75,7 @@ export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
       </div>
       <div
         {...groupProps}
-        style={layoutInfoToStyle(reusableView.layoutInfo, direction)}
+        style={layoutInfoToStyle(layoutInfo, direction)}
         className={
           classNames(
             styles,

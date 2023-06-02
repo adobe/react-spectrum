@@ -26,6 +26,6 @@ export const parameters = {
 
 export const decorators = [
   withScrollingSwitcher,
-  withStrictModeSwitcher,
+  ...(process.env.NODE_ENV !== 'production' ? [withStrictModeSwitcher] : []),
   withProviderSwitcher
 ];

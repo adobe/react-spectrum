@@ -11,9 +11,9 @@
  */
 
 import {Collection} from '@react-types/shared';
-import {focusWithoutScrolling, mergeProps, scrollIntoViewport, useLayoutEffect} from '@react-aria/utils';
 import {getInteractionModality} from '@react-aria/interactions';
 import {Layout, Rect, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
+import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import React, {FocusEvent, HTMLAttributes, Key, ReactElement, RefObject, useCallback, useEffect, useMemo, useRef} from 'react';
 import {ScrollView} from './ScrollView';
 import {VirtualizerItem} from './VirtualizerItem';
@@ -35,7 +35,8 @@ interface VirtualizerProps<T extends object, V> extends HTMLAttributes<HTMLEleme
   isLoading?: boolean,
   onLoadMore?: () => void,
   shouldUseVirtualFocus?: boolean,
-  scrollToItem?: (key: Key) => void
+  scrollToItem?: (key: Key) => void,
+  autoFocus?: boolean
 }
 
 function Virtualizer<T extends object, V>(props: VirtualizerProps<T, V>, ref: RefObject<HTMLDivElement>) {
@@ -47,7 +48,9 @@ function Virtualizer<T extends object, V>(props: VirtualizerProps<T, V>, ref: Re
     sizeToFit,
     scrollDirection,
     transitionDuration,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isLoading,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onLoadMore,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     focusedKey,
@@ -55,6 +58,8 @@ function Virtualizer<T extends object, V>(props: VirtualizerProps<T, V>, ref: Re
     shouldUseVirtualFocus,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     scrollToItem,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    autoFocus,
     ...otherProps
   } = props;
 
@@ -73,35 +78,14 @@ function Virtualizer<T extends object, V>(props: VirtualizerProps<T, V>, ref: Re
     }
   });
 
-  let {virtualizerProps} = useVirtualizer(props, state, ref);
-
-  // Handle scrolling, and call onLoadMore when nearing the bottom.
-  let onVisibleRectChange = useCallback((rect: Rect) => {
-    state.setVisibleRect(rect);
-
-    if (!isLoading && onLoadMore) {
-      let scrollOffset = state.virtualizer.contentSize.height - rect.height * 2;
-      if (rect.y > scrollOffset) {
-        onLoadMore();
-      }
-    }
-  }, [isLoading, onLoadMore, state]);
-
-  useLayoutEffect(() => {
-    if (!isLoading && onLoadMore && !state.isAnimating) {
-      if (state.contentSize.height > 0 && state.contentSize.height <= state.virtualizer.visibleRect.height) {
-        onLoadMore();
-      }
-    }
-  }, [state.contentSize, state.isAnimating, state.virtualizer, onLoadMore, isLoading]);
+  let {virtualizerProps, scrollViewProps} = useVirtualizer(props, state, ref);
 
   return (
     <ScrollView
-      {...mergeProps(otherProps, virtualizerProps)}
+      {...mergeProps(otherProps, virtualizerProps, scrollViewProps)}
       ref={ref}
       innerStyle={state.isAnimating ? {transition: `none ${state.virtualizer.transitionDuration}ms`} : undefined}
       contentSize={state.contentSize}
-      onVisibleRectChange={onVisibleRectChange}
       onScrollStart={state.startScrolling}
       onScrollEnd={state.endScrolling}
       sizeToFit={sizeToFit}
@@ -115,26 +99,30 @@ interface VirtualizerOptions {
   tabIndex?: number,
   focusedKey?: Key,
   scrollToItem?: (key: Key) => void,
-  shouldUseVirtualFocus?: boolean
+  shouldUseVirtualFocus?: boolean,
+  autoFocus?: boolean,
+  isLoading?: boolean,
+  onLoadMore?: () => void
 }
 
 export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions, state: VirtualizerState<T, V, W>, ref: RefObject<HTMLElement>) {
-  let {focusedKey, scrollToItem, shouldUseVirtualFocus} = props;
+  let {focusedKey, scrollToItem, shouldUseVirtualFocus, isLoading, onLoadMore} = props;
   let {virtualizer} = state;
   // Scroll to the focusedKey when it changes. Actually focusing the focusedKey
   // is up to the implementation using Virtualizer since we don't have refs
   // to all of the item DOM nodes.
   let lastFocusedKey = useRef(null);
   let isFocusWithin = useRef(false);
+  let autoFocus = useRef(props.autoFocus);
   useEffect(() => {
     if (virtualizer.visibleRect.height === 0) {
       return;
     }
 
     // Only scroll the focusedKey into view if the modality is not pointer to avoid jumps in position when clicking/pressing tall items.
-    // Exception made if focus isn't within the virtualizer (e.g. opening a picker via click should scroll the selected item into view)
     let modality = getInteractionModality();
-    if (focusedKey !== lastFocusedKey.current && (modality !== 'pointer' || !isFocusWithin.current)) {
+    if (focusedKey !== lastFocusedKey.current && (modality !== 'pointer' || autoFocus.current)) {
+      autoFocus.current = false;
       if (scrollToItem) {
         // If user provides scrolltoitem, then it is their responsibility to call scrollIntoViewport if desired
         // since we don't know if their scrollToItem may take some time to actually bring the active element into the virtualizer's visible rect.
@@ -142,9 +130,6 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
       } else {
         virtualizer.scrollToItem(focusedKey, {duration: 0});
 
-        if (modality === 'keyboard' && ref.current.contains(document.activeElement)) {
-          scrollIntoViewport(document.activeElement, {containingElement: ref.current});
-        }
       }
     }
 
@@ -175,25 +160,16 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
     isFocusWithin.current = ref.current.contains(e.relatedTarget as Element);
   }, [ref]);
 
-  // When the focused item is scrolled out of view and is removed from the DOM,
-  // move focus to the collection view as a whole if focus was within before.
-  let focusedView = virtualizer.getView(focusedKey);
-  useEffect(() => {
-    if (focusedKey && !focusedView && isFocusWithin.current && document.activeElement !== ref.current) {
-      focusWithoutScrolling(ref.current);
-    }
-  });
-
-  // Set tabIndex to -1 if the focused view is in the DOM, otherwise 0 so that the collection
+  // Set tabIndex to -1 if there is a focused key, otherwise 0 so that the collection
   // itself is tabbable. When the collection receives focus, we scroll the focused item back into
   // view, which will allow it to be properly focused. If using virtual focus, don't set a
   // tabIndex at all so that VoiceOver on iOS 14 doesn't try to move real DOM focus to the element anyway.
   let tabIndex: number;
   if (!shouldUseVirtualFocus) {
-    // When there is no focusedView the default tabIndex is 0. We include logic for empty collections too.
+    // When there is no focusedKey the default tabIndex is 0. We include logic for empty collections too.
     // For collections that are empty, but have a link in the empty children we want to skip focusing this
     // and let focus move to the link similar to link moving to children.
-    tabIndex = focusedView ? -1 : 0;
+    tabIndex = focusedKey != null ? -1 : 0;
 
     // If the collection is empty, we want the tabIndex provided from props (if any)
     // so that we handle when tabbable items are added to the empty state.
@@ -202,11 +178,59 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
     }
   }
 
+  // Handle scrolling, and call onLoadMore when nearing the bottom.
+  let isLoadingRef = useRef(isLoading);
+  let prevProps = useRef(props);
+  let onVisibleRectChange = useCallback((rect: Rect) => {
+    state.setVisibleRect(rect);
+
+    if (!isLoadingRef.current && onLoadMore) {
+      let scrollOffset = state.virtualizer.contentSize.height - rect.height * 2;
+      if (rect.y > scrollOffset) {
+        isLoadingRef.current = true;
+        onLoadMore();
+      }
+    }
+  }, [onLoadMore, state]);
+
+  let lastContentSize = useRef(0);
+  useLayoutEffect(() => {
+    // If animating, wait until we're done.
+    if (state.isAnimating) {
+      return;
+    }
+
+    // Only update isLoadingRef if props object actually changed,
+    // not if a local state change occurred.
+    let wasLoading = isLoadingRef.current;
+    if (props !== prevProps.current) {
+      isLoadingRef.current = isLoading;
+      prevProps.current = props;
+    }
+
+    let shouldLoadMore = !isLoadingRef.current
+      && onLoadMore
+      && state.contentSize.height > 0
+      && state.contentSize.height <= state.virtualizer.visibleRect.height
+      // Only try loading more if the content size changed, or if we just finished
+      // loading and still have room for more items.
+      && (wasLoading || state.contentSize.height !== lastContentSize.current);
+
+    if (shouldLoadMore) {
+      isLoadingRef.current = true;
+      onLoadMore();
+    }
+    lastContentSize.current = state.contentSize.height;
+  }, [state.contentSize, state.isAnimating, state.virtualizer, isLoading, onLoadMore, props]);
+
   return {
     virtualizerProps: {
       tabIndex,
       onFocus,
       onBlur
+    },
+    scrollViewProps: {
+      onVisibleRectChange
     }
   };
 }
@@ -223,7 +247,10 @@ function defaultRenderWrapper<T extends object, V>(
   return (
     <VirtualizerItem
       key={reusableView.key}
-      reusableView={reusableView}
-      parent={parent} />
+      layoutInfo={reusableView.layoutInfo}
+      virtualizer={reusableView.virtualizer}
+      parent={parent?.layoutInfo}>
+      {reusableView.rendered}
+    </VirtualizerItem>
   );
 }

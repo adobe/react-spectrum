@@ -28,8 +28,11 @@ function type(key) {
 }
 
 describe('RangeCalendar', () => {
-  beforeEach(() => {
+  beforeAll(() => {
     jest.useFakeTimers();
+  });
+  afterEach(() => {
+    act(() => {jest.runAllTimers();});
   });
 
   describe('basics', () => {
@@ -110,7 +113,6 @@ describe('RangeCalendar', () => {
       expect(grid).not.toHaveAttribute('aria-activedescendant');
     });
 
-    // v2 doesn't pass this test - it starts by showing the end date instead of the start date.
     it('should show selected dates across multiple months', () => {
       let {getByRole, getByLabelText, getAllByLabelText, getAllByRole} = render(<RangeCalendar value={{start: new CalendarDate(2019, 6, 20), end: new CalendarDate(2019, 7, 10)}} />);
 
