@@ -283,8 +283,11 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
       // Scroll into view if navigating with a keyboard, otherwise
       // try not to shift the view under the user's mouse/finger.
       // If in a overlay, scrollIntoViewport will only cause scrolling
-      // up to the overlay scroll body to prevent overlay shifting
-      if (getInteractionModality() !== 'pointer') {
+      // up to the overlay scroll body to prevent overlay shifting.
+      // Also only scroll into view if the cell actually got focused.
+      // There are some cases where the cell might be disabled or inside,
+      // an inert container and we don't want to scroll then.
+      if (getInteractionModality() !== 'pointer' && document.activeElement === ref.current) {
         scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
       }
     }
