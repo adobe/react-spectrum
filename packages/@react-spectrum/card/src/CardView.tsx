@@ -92,8 +92,11 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   let renderWrapper = (parent: View, reusableView: View) => (
     <VirtualizerItem
       key={reusableView.key}
-      reusableView={reusableView}
-      parent={parent} />
+      layoutInfo={reusableView.layoutInfo}
+      virtualizer={reusableView.virtualizer}
+      parent={parent?.layoutInfo}>
+      {reusableView.rendered}
+    </VirtualizerItem>
   );
 
   let focusedKey = state.selectionManager.focusedKey;
