@@ -79,7 +79,7 @@ function LegacySSRProvider(props: SSRProviderProps): JSX.Element {
 let warnedAboutSSRProvider = false;
 
 /**
- * When using SSR with React Aria, applications must be wrapped in an SSRProvider.
+ * When using SSR with React Aria in React 16 or 17, applications must be wrapped in an SSRProvider.
  * This ensures that auto generated ids are consistent between the client and server.
  */
 export function SSRProvider(props: SSRProviderProps) {
