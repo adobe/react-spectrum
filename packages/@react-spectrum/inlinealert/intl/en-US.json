@@ -1,7 +1,6 @@
 {
-  "neutral": "Neutral",
-  "info": "Informative",
-  "positive": "Positive",
-  "notice": "Notice",
-  "negative": "Negative"
+  "negative": "Error",
+  "notice": "Warning",
+  "info": "Information",
+  "positive": "Success"
 }

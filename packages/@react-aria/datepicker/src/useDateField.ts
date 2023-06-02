@@ -94,7 +94,7 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
   // Pass labels and other information to segments.
   hookData.set(state, {
     ariaLabel: props['aria-label'],
-    ariaLabelledBy: [props['aria-labelledby'], labelProps.id].filter(Boolean).join(' ') || undefined,
+    ariaLabelledBy: [labelProps.id, props['aria-labelledby']].filter(Boolean).join(' ') || undefined,
     ariaDescribedBy: describedBy,
     focusManager
   });

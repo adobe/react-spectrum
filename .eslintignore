@@ -8,3 +8,4 @@ packages/*/*/dist
 packages/react-aria/dist
 packages/react-stately/dist
 packages/dev/storybook-builder-parcel/preview.js
+examples/**

@@ -686,20 +686,34 @@ interface CollectionResult<C> {
 }
 
 export function useCollection<T extends object, C extends BaseCollection<T>>(props: CollectionProps<T>, initialCollection?: C): CollectionResult<C> {
+  let {collection, document} = useCollectionDocument(initialCollection);
+  let portal = useCollectionPortal(props, document);
+  return {portal, collection};
+}
+
+interface CollectionDocumentResult<T, C extends BaseCollection<T>> {
+  collection: C,
+  document: Document<T, C>
+}
+
+export function useCollectionDocument<T extends object, C extends BaseCollection<T>>(initialCollection?: C): CollectionDocumentResult<T, C> {
   // The document instance is mutable, and should never change between renders.
   // useSyncExternalStore is used to subscribe to updates, which vends immutable Collection objects.
   let document = useMemo(() => new Document<T, C>(initialCollection || new BaseCollection() as C), [initialCollection]);
   let subscribe = useCallback((fn: () => void) => document.subscribe(fn), [document]);
   let getSnapshot = useCallback(() => document.getCollection(), [document]);
   let collection = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  return {collection, document};
+}
+
+export function useCollectionPortal<T extends object, C extends BaseCollection<T>>(props: CollectionProps<T>, document: Document<T, C>): ReactPortal | null {
   let children = useCollectionChildren(props);
   let wrappedChildren = useMemo(() => (
     <ShallowRenderContext.Provider value>
       {children}
     </ShallowRenderContext.Provider>
   ), [children]);
-  let portal = useIsSSR() ? null : createPortal(wrappedChildren, document as unknown as Element);
-  return {portal, collection};
+  return useIsSSR() ? null : createPortal(wrappedChildren, document as unknown as Element);
 }
 
 /** Renders a DOM element (e.g. separator or header) shallowly when inside a collection. */
