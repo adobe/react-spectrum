@@ -30,7 +30,7 @@ import {
 import {CalendarProps, DateValue} from '@react-types/calendar';
 import {CalendarState} from './types';
 import {useControlledState} from '@react-stately/utils';
-import {useMemo, useRef, useState} from 'react';
+import {useMemo, useState} from 'react';
 
 export interface CalendarStateOptions<T extends DateValue = DateValue> extends CalendarProps<T> {
   /** The locale to display and edit the value according to. */
@@ -112,12 +112,12 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
   }, [startDate, visibleDuration]);
 
   // Reset focused date and visible range when calendar changes.
-  let lastCalendarIdentifier = useRef(calendar.identifier);
-  if (calendar.identifier !== lastCalendarIdentifier.current) {
+  let [lastCalendarIdentifier, setLastCalendarIdentifier] = useState(calendar.identifier);
+  if (calendar.identifier !== lastCalendarIdentifier) {
     let newFocusedDate = toCalendar(focusedDate, calendar);
     setStartDate(alignCenter(newFocusedDate, visibleDuration, locale, minValue, maxValue));
     setFocusedDate(newFocusedDate);
-    lastCalendarIdentifier.current = calendar.identifier;
+    setLastCalendarIdentifier(calendar.identifier);
   }
 
   if (isInvalid(focusedDate, minValue, maxValue)) {

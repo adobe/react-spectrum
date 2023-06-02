@@ -73,7 +73,7 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
         rows.length - 1);
       let newRow:GridNode<T>;
       while (index >= 0) {
-        if (!selectionManager.isDisabled(rows[index].key)) {
+        if (!selectionManager.isDisabled(rows[index].key) && rows[index].type !== 'headerrow') {
           newRow = rows[index];
           break;
         }
