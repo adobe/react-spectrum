@@ -206,6 +206,10 @@ governing permissions and limitations under the License.
   flex: 1 1 auto;
   min-height: 0;
 
+  .spectrum-Textfield-input {
+    line-height: var(--spectrum-textfield-text-line-height);
+  }
+
   &.spectrum-Textfield--quiet {
     /* quiet textfields grow based on text content, up to the height of the container. */
     /* but we need to keep help text next to input */
