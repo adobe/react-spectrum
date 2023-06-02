@@ -81,28 +81,53 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps, context:
           }
         }
       } else {
-        let cells: PartialNode<T>[] = [];
-        let childRows: PartialNode<T>[] = [];
+        // TODO: this method preserves the order in which the cell and nested row elements are set by the user
+        // Note that this approach currently has a rendering bug for the static case if a nested row is placed inbetween cells
+        let nodes: PartialNode<T>[] = [];
         React.Children.forEach(children, node => {
           if (node.type === Row) {
-            childRows.push({
+            nodes.push({
               type: 'item',
               element: node
             });
           } else {
-            cells.push({
+            nodes.push({
               type: 'cell',
               element: node
             });
           }
         });
 
-        if (cells.length !== context.columns.length) {
-          throw new Error(`Cell count must match column count. Found ${cells.length} cells and ${context.columns.length} columns.`);
+        let numCells = nodes.filter(node => node.type !== 'item').length;
+        if (numCells !== context.columns.length) {
+          throw new Error(`Cell count must match column count. Found ${numCells} cells and ${context.columns.length} columns.`);
         }
 
-        yield* cells;
-        yield* childRows;
+        yield* nodes;
+
+        // let cells: PartialNode<T>[] = [];
+        // let childRows: PartialNode<T>[] = [];
+        // React.Children.forEach(children, node => {
+        //   if (node.type === Row) {
+        //     // childRows.push({
+        //     //   type: 'item',
+        //     //   element: node
+        //     // });
+        //   } else {
+        //     // cells.push({
+        //     //   type: 'cell',
+        //     //   element: node
+        //     // });
+        //   }
+        // });
+
+        // if (cells.length !== context.columns.length) {
+        //   throw new Error(`Cell count must match column count. Found ${cells.length} cells and ${context.columns.length} columns.`);
+        // }
+
+        // // TODO: this makes childRows always appear at the end after all the cells
+        // yield* cells;
+        // yield* childRows;
       }
     },
     shouldInvalidate(newContext: CollectionBuilderContext<T>) {

@@ -134,8 +134,8 @@ export interface TableBodyProps<T> extends Omit<AsyncLoadable, 'isLoading'> {
 export interface RowProps {
   // TODO: update the props here for treeble
   // treeble case? Unsupported props for now
-  // /** A list of child item objects used when dynamically rendering row children. */
-  // childItems?: Iterable<T>,
+  /** A list of child item objects used when dynamically rendering row children. */
+  childItems?: Iterable<T>,
   // /** Whether this row has children, even if not loaded yet. */
   // hasChildItems?: boolean,
   /** Rendered contents of the row or row child items. */

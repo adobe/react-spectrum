@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, DOMRef, DropTarget, FocusableElement, FocusableRef, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, DOMRef, DropTarget, Expandable, FocusableElement, FocusableRef, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {chain, mergeProps, scrollIntoView, scrollIntoViewport, useLayoutEffect} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
@@ -45,7 +45,7 @@ import {RootDropIndicator} from './RootDropIndicator';
 import {DragPreview as SpectrumDragPreview} from './DragPreview';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
-import {TableColumnLayout, TableState, useTableState} from '@react-stately/table';
+import {TableColumnLayout, TableState, useTableState, useTreebleState} from '@react-stately/table';
 import {TableLayout} from '@react-stately/layout';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {useButton} from '@react-aria/button';
@@ -129,7 +129,8 @@ export function useVirtualizerContext() {
   return useContext(VirtualizerContext);
 }
 
-export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionProps, DOMProps, AriaLabelingProps, StyleProps {
+// TODO: discuss the addition of Expandable interface, namely onExpandedChange naming
+export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionProps, DOMProps, AriaLabelingProps, StyleProps, Expandable {
   /**
    * Sets the amount of vertical padding within each cell.
    * @default 'regular'
@@ -225,12 +226,30 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   // entering resizing/exiting resizing doesn't trigger a render
   // with table layout, so we need to track it here
   let [, setIsResizing] = useState(false);
-  let state = useTableState({
+
+  // TODO: Uncomment below if testing base case
+  // let state = useTableState({
+  //   ...props,
+  //   showSelectionCheckboxes,
+  //   showDragButtons: isTableDraggable,
+  //   selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
+  // });
+
+  let {collection, expandedKeys, toggleKey} = useTreebleState({
     ...props,
+    showSelectionCheckboxes,
+    showDragButtons: isTableDraggable
+  });
+
+  let tableState = useTableState({
+    ...props,
+    collection,
     showSelectionCheckboxes,
     showDragButtons: isTableDraggable,
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
+
+  let state = useMemo(() => ({expandedKeys, toggleKey, ...tableState}), [expandedKeys, toggleKey, tableState]);
 
   // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
   let shouldShowCheckboxes = state.selectionManager.selectionBehavior !== 'replace';

@@ -314,6 +314,7 @@ export const DynamicSelectedKeys: TableStory = {
   }
 };
 
+// TODO: add stories with variable expandedKeys (will need to wait for )
 export const StaticExpandableRows = {
   args: {
     'aria-label': 'TableView with static expandable rows',
@@ -321,7 +322,7 @@ export const StaticExpandableRows = {
     height: 200
   },
   render: (args) => (
-    <TableView {...args}>
+    <TableView {...args} expandedKeys="all">
       <TableHeader>
         <Column key="foo">Foo</Column>
         <Column key="bar">Bar</Column>
@@ -370,13 +371,14 @@ export const DyanmicExpandableRows = {
     height: 200
   },
   render: (args) => (
-    <TableView {...args}>
+    <TableView {...args} expandedKeys={new Set(['Lvl 1 Foo 1'])}>
+    {/* <TableView {...args} expandedKeys="all"> */}
       <TableHeader columns={columns}>
         {column => <Column>{column.name}</Column>}
       </TableHeader>
       <TableBody items={nestedItems}>
         {item =>
-          (<Row key={item.foo} childRows={item.childRows}>
+          (<Row key={item.foo} childItems={item.childRows}>
             {(key) => {
               // Note: The "item" here will reflect the child Row's values from nestedItems
               return <Cell>{item[key]}</Cell>;

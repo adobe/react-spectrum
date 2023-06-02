@@ -311,6 +311,7 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
     allowsDragging: isListDraggable
   }), [selectionBehavior, selectionMode, disallowEmptySelection, isListDraggable]);
 
+  console.log('collection in rac', collection)
   return (
     <>
       <Provider

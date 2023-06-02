@@ -24,7 +24,7 @@ export interface TreebleState<T> {
   /** A collection of rows and columns in the table. */
   collection: ITableCollection<T>,
   /** A set of keys for items that are expanded. */
-  readonly expandedKeys: Set<Key>,
+  expandedKeys: 'all' | Set<Key>,
   /** Toggles the expanded state for a row by its key. */
   toggleKey(key: Key): void
 }
@@ -36,8 +36,8 @@ export interface TreebleStateProps<T> extends Expandable, Omit<CollectionStateBa
 // aria?
 export function useTreebleState<T extends object>(props: TreebleStateProps<T>): TreebleState<T> {
   let [expandedKeys, setExpandedKeys] = useControlledState(
-    props.expandedKeys ? new Set(props.expandedKeys) : undefined,
-    props.defaultExpandedKeys ? new Set(props.defaultExpandedKeys) : new Set(),
+    props.expandedKeys ? convertExpanded(props.expandedKeys) : undefined,
+    props.defaultExpandedKeys ? convertExpanded(props.defaultExpandedKeys) : new Set(),
     props.onExpandedChange
   );
   let {selectionMode = 'none', showSelectionCheckboxes, showDragButtons} = props;
@@ -61,6 +61,7 @@ export function useTreebleState<T extends object>(props: TreebleStateProps<T>): 
     context
   );
 
+  // TODO: support 'all'? Will we have a interaction to expand all
   let onToggle = (key: Key) => {
     setExpandedKeys(toggleKey(expandedKeys, key));
   };
@@ -73,9 +74,14 @@ export function useTreebleState<T extends object>(props: TreebleStateProps<T>): 
   };
 }
 
-// TODO: copied from useTreeState
-function toggleKey(set: Set<Key>, key: Key): Set<Key> {
-  let res = new Set(set);
+// TODO: copied from useTreeState, perhaps make this accept multiple keys?
+function toggleKey(set: 'all' | Set<Key>, key: Key): Set<Key> {
+  let res;
+  if (set === 'all') {
+    // TODO: will need to handle case where we go from 'all' to 'all' minus the newly toggled key
+  }
+
+  res = new Set(set);
   if (res.has(key)) {
     res.delete(key);
   } else {
@@ -83,4 +89,15 @@ function toggleKey(set: Set<Key>, key: Key): Set<Key> {
   }
 
   return res;
+}
+
+// TODO: based off convertedSelected
+function convertExpanded(expanded: 'all' | Iterable<Key>): 'all' | Set<Key> {
+  if (!expanded) {
+    return new Set<Key>();
+  }
+
+  return expanded === 'all'
+    ? 'all'
+    : new Set(expanded);
 }
