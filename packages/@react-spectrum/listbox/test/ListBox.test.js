@@ -853,7 +853,7 @@ describe('ListBox', function () {
       fireEvent.scroll(listbox);
       act(() => jest.runAllTimers());
 
-      expect(onLoadMore).toHaveBeenCalledTimes(2);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
 
     it('should fire onLoadMore if there aren\'t enough items to fill the ListBox ', async function () {
@@ -880,9 +880,7 @@ describe('ListBox', function () {
       let listbox = getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
       expect(options.length).toBe(5);
-      // onLoadMore called twice from onVisibleRectChange due to ListBox sizeToFit
-      // onLoadMore called twice from useLayoutEffect in React < 18
-      expect(onLoadMore).toHaveBeenCalledTimes(parseInt(React.version, 10) >= 18 ? 3 : 4);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
   });
 
