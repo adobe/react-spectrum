@@ -9,43 +9,76 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
-import {createCalendar, getWeeksInMonth, startOfWeek} from '@internationalized/date';
-import React, {useRef} from 'react';
+import {Button} from '@react-spectrum/button';
+import {CalendarState, RangeCalendarState, useCalendarState} from '@react-stately/calendar';
+import {createCalendar, DateDuration, getWeeksInMonth, startOfWeek} from '@internationalized/date';
+import React, {useMemo, useRef} from 'react';
 import {useCalendar, useCalendarCell, useCalendarGrid} from '../src';
-import {useCalendarState} from '@react-stately/calendar';
 import {useDateFormatter, useLocale} from '@react-aria/i18n';
+
 
 export function Example(props) {
   let {locale} = useLocale();
+  const {visibleDuration} = props;
+  
   let state = useCalendarState({
     ...props,
     locale,
     createCalendar
   });
-  let {calendarProps} = useCalendar(props, state);
-  let {gridProps} = useCalendarGrid(props, state);
 
-  let weeks = props.visibleDuration.weeks ?? 1;
-  let startDate = state.visibleRange.start;
-  if (props.visibleDuration.months) {
-    weeks = getWeeksInMonth(state.visibleRange.start, locale);
-    startDate = startOfWeek(startDate, locale);
-  }
+  let {calendarProps, prevButtonProps, nextButtonProps} = useCalendar(props, state);
+
+  let grids = useMemo(() => {
+    let gridCount = 1;
+    if (visibleDuration.months && visibleDuration.months > 0) {
+      gridCount = visibleDuration.months;
+    }
+
+    let components = [];
+    for (let i = 0; i < gridCount; i++) {
+      components.push(<CalendarGrid key={i} state={state} visibleDuration={visibleDuration} offset={{months: i}} />);
+    }
+
+    return components;
+  }, [visibleDuration, state]);
 
   return (
     <div {...calendarProps}>
-      <div {...gridProps}>
-        {[...new Array(weeks).keys()].map(weekIndex => (
-          <div key={weekIndex} role="row">
-            {[...new Array(props.visibleDuration.days ?? 7).keys()].map(dayIndex => (
-              <Cell key={dayIndex} state={state} date={startDate.add({weeks: weekIndex, days: dayIndex})} />
-            ))}
-          </div>
-        ))}
+      <div style={{textAlign: 'center'}} data-testid={'range'}>
+        {calendarProps['aria-label']}
+      </div>
+      <div style={{display: 'grid', gridTemplateColumns: `repeat(${grids.length}, 1fr)`, gap: '1em'}}>
+        {grids}
+      </div>
+      <div>
+        <Button variant={'secondary'} {...prevButtonProps}>prev</Button>
+        <Button variant={'secondary'} {...nextButtonProps}>next</Button>
       </div>
     </div>
   );
+}
+
+function CalendarGrid({state, visibleDuration, offset = {}}: {state: CalendarState | RangeCalendarState, visibleDuration: DateDuration, offset?: DateDuration}) {
+  let {locale} = useLocale();
+  let {gridProps} = useCalendarGrid({}, state);
+
+  let weeks = visibleDuration.weeks ?? 1;
+  let startDate = state.visibleRange.start.add(offset);
+  if (visibleDuration.months) {
+    weeks = getWeeksInMonth(state.visibleRange.start, locale);
+    startDate = startOfWeek(startDate, locale);
+  }
+  return (<div {...gridProps}>
+    {[...new Array(weeks).keys()].map(weekIndex => (
+      <div key={weekIndex} role="row">
+        {[...new Array(visibleDuration.days ?? 7).keys()].map(dayIndex => (
+          <Cell key={dayIndex} state={state} date={startDate.add({weeks: weekIndex, days: dayIndex})} />
+            ))}
+      </div>
+        ))}
+  </div>);
+  
 }
 
 function Cell(props) {
