@@ -60,7 +60,7 @@ describe('SSRProvider', function () {
       expect(new Set(divs.map((div) => div.id)).size).toBe(5);
     } else {
       expect(divs.map((div) => div.id)).toMatchInlineSnapshot(`
-        Array [
+        [
           "react-aria-1",
           "react-aria-2-1",
           "react-aria-2-2-1",
