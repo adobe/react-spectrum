@@ -139,14 +139,11 @@ export function useDefaultProps(v: DateValue, granularity: Granularity): [Granul
   }
 
   let [lastValue, setLastValue] = useState<[Granularity, string]>([granularity, defaultTimeZone]);
-  if (!v) {
-    return lastValue;
-  }
 
-    // If the granularity or time zone changed, update the last value.
+  // If the granularity or time zone changed, update the last value.
   if (lastValue[0] !== granularity || lastValue[1] !== defaultTimeZone) {
     setLastValue([granularity, defaultTimeZone]);
   }
 
-  return [granularity, defaultTimeZone];
+  return v ? [granularity, defaultTimeZone] : lastValue;
 }
