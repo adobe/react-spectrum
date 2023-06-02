@@ -82,13 +82,13 @@ let warnedAboutSSRProvider = false;
  * When using SSR with React Aria in React 16 or 17, applications must be wrapped in an SSRProvider.
  * This ensures that auto generated ids are consistent between the client and server.
  */
-export function SSRProvider(props: SSRProviderProps) {
+export function SSRProvider(props: SSRProviderProps): JSX.Element {
   if (typeof React['useId'] === 'function') {
     if (process.env.NODE_ENV !== 'test' && !warnedAboutSSRProvider) {
       console.warn('In React 18, SSRProvider is not necessary and is a noop. You can remove it from your app.');
       warnedAboutSSRProvider = true;
     }
-    return props.children;
+    return <>{props.children}</>;
   }
   return <LegacySSRProvider {...props} />;
 }
