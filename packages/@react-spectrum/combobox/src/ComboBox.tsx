@@ -95,7 +95,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
       allowsEmptyCollection: isAsync
     }
   );
-  let layout = useListBoxLayout(state);
+  let layout = useListBoxLayout(state, loadingState === 'loadingMore');
 
   let {buttonProps, inputProps, listBoxProps, labelProps, descriptionProps, errorMessageProps} = useComboBox(
     {
@@ -172,7 +172,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
           layout={layout}
           state={state}
           shouldUseVirtualFocus
-          isLoading={loadingState === 'loadingMore'}
+          isLoading={loadingState === 'loading' || loadingState === 'loadingMore'}
           onLoadMore={onLoadMore}
           renderEmptyState={() => isAsync && (
             <span className={classNames(comboboxStyles, 'no-results')}>

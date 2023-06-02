@@ -13,7 +13,7 @@
 import {CalendarDate, isEqualDay, isSameDay, isToday} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {DOMAttributes} from '@react-types/shared';
-import {focusWithoutScrolling, getScrollParent, scrollIntoViewport, useDescription} from '@react-aria/utils';
+import {focusWithoutScrolling, getScrollParent, scrollIntoViewport, useDeepMemo, useDescription} from '@react-aria/utils';
 import {getEraFormat, hookData} from './utils';
 import {getInteractionModality, usePress} from '@react-aria/interactions';
 // @ts-ignore
@@ -102,13 +102,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
 
   // For performance, reuse the same date object as before if the new date prop is the same.
   // This allows subsequent useMemo results to be reused.
-  let lastDate = useRef(null);
-  if (lastDate.current && isEqualDay(date, lastDate.current)) {
-    date = lastDate.current;
-  }
-
-  lastDate.current = date;
-
+  date = useDeepMemo<CalendarDate>(date, isEqualDay);
   let nativeDate = useMemo(() => date.toDate(state.timeZone), [date, state.timeZone]);
 
   // aria-label should be localize Day of week, Month, Day and Year without Time.
