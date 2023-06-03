@@ -94,7 +94,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         let currContainerRef: HTMLDivElement | null = containerRef.current;
         let currTagsRef: HTMLDivElement | null = tagsRef.current;
         let currActionsRef: HTMLDivElement | null = actionsRef.current;
-        if (!currContainerRef || !currTagsRef || state.collection.size === 0) {
+        if (!currContainerRef || !currTagsRef || !currActionsRef || state.collection.size === 0) {
           return {
             visibleTagCount: 0,
             showCollapseButton: false
@@ -180,12 +180,12 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   let isEmpty = state.collection.size === 0;
 
   let containerStyle = useMemo(() => {
-    if (maxRows == null || !isCollapsed) {
+    if (maxRows == null || !isCollapsed || isEmpty) {
       return undefined;
     }
     let maxHeight = (TAG_STYLES[scale].height + (TAG_STYLES[scale].margin * 2)) * maxRows;
     return {maxHeight, overflow: 'hidden'};
-  }, [isCollapsed, maxRows, scale]);
+  }, [isCollapsed, maxRows, isEmpty, scale]);
 
   return (
     <FocusScope>

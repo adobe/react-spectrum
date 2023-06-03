@@ -35,7 +35,7 @@ export interface AriaTagGroupProps<T> extends CollectionBase<T>, MultipleSelecti
   /** How multiple selection should behave in the collection. */
   selectionBehavior?: SelectionBehavior,
   /** Handler that is called when a user deletes a tag.  */
-  onRemove?: (key: Set<Key>) => void
+  onRemove?: (keys: Set<Key>) => void
 }
 
 export interface AriaTagGroupOptions<T> extends Omit<AriaTagGroupProps<T>, 'children'> {

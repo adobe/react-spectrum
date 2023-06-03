@@ -534,7 +534,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
     let onFocus = () => {
       // If focusing an element in a child scope of the currently active scope, the child becomes active.
       // Moving out of the active scope to an ancestor is not allowed.
-      if ((!activeScope || isAncestorScope(activeScope, scopeRef)) &&             
+      if ((!activeScope || isAncestorScope(activeScope, scopeRef)) &&
       isElementInScope(document.activeElement, scopeRef.current)
       ) {
         activeScope = scopeRef;
@@ -563,7 +563,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
     // using portals for overlays, so that focus goes to the expected element when
     // tabbing out of the overlay.
     let onKeyDown = (e: KeyboardEvent) => {
-      if (e.key !== 'Tab' || e.altKey || e.ctrlKey || e.metaKey) {
+      if (e.key !== 'Tab' || e.altKey || e.ctrlKey || e.metaKey || !shouldContainFocus(scopeRef)) {
         return;
       }
 

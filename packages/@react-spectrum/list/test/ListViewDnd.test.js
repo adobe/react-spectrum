@@ -2377,10 +2377,10 @@ describe('ListView', function () {
           beginDrag(tree);
           userEvent.tab();
           // Should automatically jump to the folder target since we didn't provide onRootDrop and onInsert
-          expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Apps');
+          expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Pictures');
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
-          expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Pictures');
+          expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Apps');
         });
 
         it('should allow the user to override the util handlers via onDrop and getDropOperations', function () {

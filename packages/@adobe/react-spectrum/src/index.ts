@@ -13,6 +13,7 @@
 export {ActionGroup} from '@react-spectrum/actiongroup';
 export {Badge} from '@react-spectrum/badge';
 export {Breadcrumbs} from '@react-spectrum/breadcrumbs';
+export {ActionBar, ActionBarContainer} from '@react-spectrum/actionbar';
 export {ActionButton, Button, LogicButton, ToggleButton} from '@react-spectrum/button';
 export {Avatar} from '@react-spectrum/avatar';
 export {ButtonGroup} from '@react-spectrum/buttongroup';
@@ -61,6 +62,7 @@ export {useCollator, useDateFormatter, useFilter, useLocale, useLocalizedStringF
 export {SSRProvider} from '@react-aria/ssr';
 export {useDragAndDrop, DIRECTORY_DRAG_TYPE} from '@react-spectrum/dnd';
 
+export type {SpectrumActionBarContainerProps, SpectrumActionBarProps} from '@react-spectrum/actionbar';
 export type {SpectrumActionGroupProps} from '@react-spectrum/actiongroup';
 export type {SpectrumAvatarProps} from '@react-spectrum/avatar';
 export type {SpectrumBadgeProps} from '@react-spectrum/badge';
@@ -83,7 +85,7 @@ export type {SpectrumLabeledValueProps} from '@react-spectrum/labeledvalue';
 export type {SpectrumLinkProps} from '@react-spectrum/link';
 export type {SpectrumListBoxProps} from '@react-spectrum/listbox';
 export type {SpectrumListViewProps} from '@react-spectrum/list';
-export type {SpectrumActionMenuProps, SpectrumMenuProps, SpectrumMenuTriggerProps} from '@react-spectrum/menu';
+export type {SpectrumActionMenuProps, SpectrumMenuProps, SpectrumMenuTriggerProps, SpectrumMenuDialogTriggerProps} from '@react-spectrum/menu';
 export type {SpectrumMeterProps} from '@react-spectrum/meter';
 export type {SpectrumNumberFieldProps} from '@react-spectrum/numberfield';
 export type {SpectrumPickerProps} from '@react-spectrum/picker';

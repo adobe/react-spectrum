@@ -11,7 +11,7 @@
  */
 import {CollectionBase} from '@react-types/shared';
 import {createPortal} from 'react-dom';
-import {DOMProps, forwardRefType, RenderProps} from './utils';
+import {forwardRefType, RenderProps, StyleProps} from './utils';
 import {Collection as ICollection, Node, SelectionBehavior, SelectionMode, ItemProps as SharedItemProps, SectionProps as SharedSectionProps} from 'react-stately';
 import {mergeProps, useIsSSR} from 'react-aria';
 import React, {cloneElement, createContext, ForwardedRef, forwardRef, Key, ReactElement, ReactNode, ReactPortal, useCallback, useContext, useMemo} from 'react';
@@ -174,7 +174,12 @@ class BaseNode<T> {
     this.lastChild = child;
 
     this.ownerDocument.markDirty(this);
-    this.ownerDocument.addNode(child);
+    if (child.hasSetProps) {
+      // Only add the node to the collection if we already received props for it.
+      // Otherwise wait until then so we have the correct id for the node.
+      this.ownerDocument.addNode(child);
+    }
+
     this.ownerDocument.endTransaction();
     this.ownerDocument.queueUpdate();
   }
@@ -208,7 +213,10 @@ class BaseNode<T> {
       node = node.nextSibling;
     }
 
-    this.ownerDocument.addNode(newNode);
+    if (newNode.hasSetProps) {
+      this.ownerDocument.addNode(newNode);
+    }
+
     this.ownerDocument.endTransaction();
     this.ownerDocument.queueUpdate();
   }
@@ -265,7 +273,7 @@ export class ElementNode<T> extends BaseNode<T> {
   nodeType = 8; // COMMENT_NODE (we'd use ELEMENT_NODE but React DevTools will fail to get its dimensions)
   node: NodeValue<T>;
   private _index: number = 0;
-  private hasSetProps = false;
+  hasSetProps = false;
 
   constructor(type: string, ownerDocument: Document<T, any>) {
     super(ownerDocument);
@@ -323,6 +331,7 @@ export class ElementNode<T> extends BaseNode<T> {
     // If this is the first time props have been set, end the transaction started in the constructor
     // so this node can be emitted.
     if (!this.hasSetProps) {
+      this.ownerDocument.addNode(this);
       this.ownerDocument.endTransaction();
       this.hasSetProps = true;
     }
@@ -571,6 +580,10 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
   /** Finalizes the collection update, updating all nodes and freezing the collection. */
   getCollection(): C {
+    if (this.transactionCount > 0) {
+      return this.collection;
+    }
+
     for (let element of this.dirtyNodes) {
       if (element instanceof ElementNode && element.parentNode) {
         element.updateNode();
@@ -615,7 +628,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
 export interface CollectionProps<T> extends Omit<CollectionBase<T>, 'children'> {
   /** The contents of the collection. */
-  children?: ReactNode | ((item: T) => ReactElement)
+  children?: ReactNode | ((item: T) => ReactNode)
 }
 
 interface CachedChildrenOptions<T> extends CollectionProps<T> {
@@ -623,7 +636,7 @@ interface CachedChildrenOptions<T> extends CollectionProps<T> {
   addIdAndValue?: boolean
 }
 
-export function useCachedChildren<T extends object>(props: CachedChildrenOptions<T>) {
+export function useCachedChildren<T extends object>(props: CachedChildrenOptions<T>): ReactNode {
   let {children, items, idScope, addIdAndValue} = props;
   let cache = useMemo(() => new WeakMap(), []);
   return useMemo(() => {
@@ -655,7 +668,7 @@ export function useCachedChildren<T extends object>(props: CachedChildrenOptions
         res.push(rendered);
       }
       return res;
-    } else {
+    } else if (typeof children !== 'function') {
       return children;
     }
   }, [children, items, cache, idScope, addIdAndValue]);
@@ -673,20 +686,34 @@ interface CollectionResult<C> {
 }
 
 export function useCollection<T extends object, C extends BaseCollection<T>>(props: CollectionProps<T>, initialCollection?: C): CollectionResult<C> {
+  let {collection, document} = useCollectionDocument<T, C>(initialCollection);
+  let portal = useCollectionPortal<T, C>(props, document);
+  return {portal, collection};
+}
+
+interface CollectionDocumentResult<T, C extends BaseCollection<T>> {
+  collection: C,
+  document: Document<T, C>
+}
+
+export function useCollectionDocument<T extends object, C extends BaseCollection<T>>(initialCollection?: C): CollectionDocumentResult<T, C> {
   // The document instance is mutable, and should never change between renders.
   // useSyncExternalStore is used to subscribe to updates, which vends immutable Collection objects.
   let document = useMemo(() => new Document<T, C>(initialCollection || new BaseCollection() as C), [initialCollection]);
   let subscribe = useCallback((fn: () => void) => document.subscribe(fn), [document]);
   let getSnapshot = useCallback(() => document.getCollection(), [document]);
   let collection = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  return {collection, document};
+}
+
+export function useCollectionPortal<T extends object, C extends BaseCollection<T>>(props: CollectionProps<T>, document: Document<T, C>): ReactPortal | null {
   let children = useCollectionChildren(props);
   let wrappedChildren = useMemo(() => (
     <ShallowRenderContext.Provider value>
       {children}
     </ShallowRenderContext.Provider>
   ), [children]);
-  let portal = useIsSSR() ? null : createPortal(wrappedChildren, document as unknown as Element);
-  return {portal, collection};
+  return useIsSSR() ? null : createPortal(wrappedChildren, document as unknown as Element);
 }
 
 /** Renders a DOM element (e.g. separator or header) shallowly when inside a collection. */
@@ -779,7 +806,7 @@ function Item<T extends object>(props: ItemProps<T>, ref: ForwardedRef<HTMLEleme
 const _Item = /*#__PURE__*/ (forwardRef as forwardRefType)(Item);
 export {_Item as Item};
 
-export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children' | 'title'>, DOMProps {
+export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children' | 'title'>, StyleProps {
   /** The unique id of the section. */
   id?: Key,
   /** The object value that this section represents. When using dynamic collections, this is set automatically. */
@@ -798,7 +825,7 @@ const _Section = /*#__PURE__*/ (forwardRef as forwardRefType)(Section);
 export {_Section as Section};
 
 export const CollectionContext = createContext<CachedChildrenOptions<unknown> | null>(null);
-export const CollectionRendererContext = createContext<CollectionProps<unknown>['children']>(null);
+export const CollectionRendererContext = createContext<CollectionProps<any>['children']>(null);
 
 /** A Collection renders a list of items, automatically managing caching and keys. */
 export function Collection<T extends object>(props: CollectionProps<T>): JSX.Element {
