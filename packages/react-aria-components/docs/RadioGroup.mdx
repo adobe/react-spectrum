@@ -292,7 +292,8 @@ This example wraps `RadioGroup` and all of its children together into a single c
 import type {RadioGroupProps} from 'react-aria-components';
 import {Text} from 'react-aria-components';
 
-interface MyRadioGroupProps extends RadioGroupProps {
+interface MyRadioGroupProps extends Omit<RadioGroupProps, 'children'> {
+  children?: React.ReactNode,
   label?: string,
   description?: string,
   errorMessage?: string

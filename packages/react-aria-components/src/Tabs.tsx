@@ -147,7 +147,7 @@ function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
 /**
  * Tabs organize content into multiple sections and allow users to navigate between them.
  */
-const _Tabs = forwardRef(Tabs);
+const _Tabs = /*#__PURE__*/ (forwardRef as forwardRefType)(Tabs);
 export {_Tabs as Tabs};
 
 function TabList<T extends object>(props: TabListProps<T>, ref: ForwardedRef<HTMLDivElement>) {
@@ -203,7 +203,7 @@ function Tab(props: TabProps, ref: ForwardedRef<HTMLDivElement>) {
 /**
  * A Tab provides a title for an individual item within a TabList.
  */
-const _Tab = forwardRef(Tab);
+const _Tab = /*#__PURE__*/ (forwardRef as forwardRefType)(Tab);
 export {_Tab as Tab};
 
 function TabInner({item, state}: {item: Node<object>, state: TabListState<object>}) {
@@ -283,5 +283,5 @@ function TabPanel(props: TabPanelProps, forwardedRef: ForwardedRef<HTMLDivElemen
 /**
  * A TabPanel provides the content for a tab.
  */
-const _TabPanel = forwardRef(TabPanel);
+const _TabPanel = /*#__PURE__*/ (forwardRef as forwardRefType)(TabPanel);
 export {_TabPanel as TabPanel};

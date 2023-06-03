@@ -26,6 +26,7 @@ import {Item, Menu, MenuDialogTrigger, MenuTrigger, Section} from '../';
 import {Link} from '@react-spectrum/link';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React, {useState} from 'react';
+import {TranslateMenu} from './../chromatic/MenuTriggerLanguages.chromatic';
 
 let iconMap = {
   AlignCenter,
@@ -654,6 +655,12 @@ export const ControlledIsOpen = () => <ControlledOpeningMenuTrigger />;
 
 ControlledIsOpen.story = {
   name: 'controlled isOpen'
+};
+
+export const WithTranslations = () => <TranslateMenu />;
+
+WithTranslations.story = {
+  name: 'with translations'
 };
 
 let customMenuItem = (item) => {

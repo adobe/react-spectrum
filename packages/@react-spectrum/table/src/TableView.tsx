@@ -38,7 +38,7 @@ import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, Virtualize
 import ListGripper from '@spectrum-icons/ui/ListGripper';
 import {Nubbin} from './Nubbin';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {DOMAttributes, HTMLAttributes, Key, ReactElement, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {DOMAttributes, HTMLAttributes, Key, ReactElement, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {Resizer} from './Resizer';
 import {ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
 import {RootDropIndicator} from './RootDropIndicator';
@@ -322,7 +322,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   let [headerRowHovered, setHeaderRowHovered] = useState(false);
 
   // This overrides collection view's renderWrapper to support DOM hierarchy.
-  type View = ReusableView<GridNode<T>, unknown>;
+  type View = ReusableView<GridNode<T>, ReactNode>;
   let renderWrapper = (parent: View, reusableView: View, children: View[], renderChildren: (views: View[]) => ReactElement[]) => {
     let style = layoutInfoToStyle(reusableView.layoutInfo, direction, parent && parent.layoutInfo);
     if (style.overflow === 'hidden') {
@@ -595,7 +595,7 @@ function TableVirtualizer(props) {
     // while resizing, prop changes should not cause animations
     transitionDuration = 0;
   }
-  let state = useVirtualizerState({
+  let state = useVirtualizerState<object, ReactNode, ReactNode>({
     layout,
     collection,
     renderView,

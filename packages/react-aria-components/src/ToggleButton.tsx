@@ -12,7 +12,7 @@
 
 import {AriaToggleButtonProps, mergeProps, useFocusRing, useHover, useToggleButton} from 'react-aria';
 import {ButtonRenderProps} from './Button';
-import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, forwardRefType, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 import {useToggleState} from 'react-stately';
 
@@ -55,5 +55,5 @@ function ToggleButton(props: ToggleButtonProps, ref: ForwardedRef<HTMLButtonElem
 /**
  * A toggle button allows a user to toggle a selection on or off, for example switching between two states or modes.
  */
-const _ToggleButton = forwardRef(ToggleButton);
+const _ToggleButton = /*#__PURE__*/ (forwardRef as forwardRefType)(ToggleButton);
 export {_ToggleButton as ToggleButton};

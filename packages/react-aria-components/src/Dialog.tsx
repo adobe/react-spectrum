@@ -11,7 +11,7 @@
  */
 import {AriaDialogProps, useDialog, useOverlayTrigger} from 'react-aria';
 import {ButtonContext} from './Button';
-import {ContextValue, DOMProps, Provider, SlotProps, useContextProps} from './utils';
+import {ContextValue, forwardRefType, Provider, SlotProps, StyleProps, useContextProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {HeadingContext} from './Heading';
 import {ModalContext} from './Modal';
@@ -27,7 +27,7 @@ interface DialogRenderProps {
   close: () => void
 }
 
-export interface DialogProps extends AriaDialogProps, DOMProps, SlotProps {
+export interface DialogProps extends AriaDialogProps, StyleProps, SlotProps {
   children?: ReactNode | ((opts: DialogRenderProps) => ReactNode),
   onClose?: () => void
 }
@@ -91,5 +91,5 @@ function Dialog(props: DialogProps, ref: ForwardedRef<HTMLElement>) {
 /**
  * A dialog is an overlay shown above other content in an application.
  */
-const _Dialog = forwardRef(Dialog);
+const _Dialog = /*#__PURE__*/ (forwardRef as forwardRefType)(Dialog);
 export {_Dialog as Dialog};

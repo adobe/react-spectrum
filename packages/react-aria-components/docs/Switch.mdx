@@ -233,7 +233,11 @@ This example wraps `Switch` and all of its children together into a single compo
 ```tsx example export=true
 import type {SwitchProps} from 'react-aria-components';
 
-function MySwitch({children, ...props}: SwitchProps) {
+interface MySwitchProps extends Omit<SwitchProps, 'children'> {
+  children: React.ReactNode
+}
+
+function MySwitch({children, ...props}: MySwitchProps) {
   return (
     <Switch {...props}>
       <div className="indicator" />

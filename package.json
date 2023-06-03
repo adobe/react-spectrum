@@ -42,7 +42,9 @@
     "check-apis": "yarn build:api-branch --githash=\"origin/main\" --output=\"base-api\" && yarn build:api-branch && yarn compare:apis",
     "check-published-apis": "yarn build:api-published && yarn build:api-branch && yarn compare:apis",
     "bumpVersions": "node scripts/bumpVersions.js",
-    "test:parcel": "jest --testMatch '**/*.parceltest.{ts,tsx}'"
+    "test:parcel": "jest --testMatch '**/*.parceltest.{ts,tsx}'",
+    "blc:local": "npx git+ssh://git@github.com:ktabors/rsp-blc.git -u http://localhost:1234/",
+    "blc:prod": "npx git+ssh://git@github.com:ktabors/rsp-blc.git -u https://react-spectrum.adobe.com/"
   },
   "workspaces": [
     "packages/react-stately",
@@ -87,7 +89,7 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^12.1.3",
-    "@types/react": "^17.0.37",
+    "@types/react": "^18.2.7",
     "@types/storybook__react": "^5.2.1",
     "@typescript-eslint/eslint-plugin": "^5.40.0",
     "@typescript-eslint/parser": "^5.40.0",
