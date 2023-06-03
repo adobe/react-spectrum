@@ -13,13 +13,12 @@
 import {AriaSelectProps, HiddenSelect, useSelect} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, forwardRefType, Provider, RenderProps, slotCallbackSymbol, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {createContext, ForwardedRef, HTMLAttributes, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {ItemRenderProps, useCollection} from './Collection';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListBoxProps} from './ListBox';
 import {PopoverContext} from './Popover';
-import React, {forwardRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {SelectState, useSelectState} from 'react-stately';
 import {TextContext} from './Text';
 

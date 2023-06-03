@@ -21,9 +21,8 @@ import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 import {SSRProvider} from '@react-aria/ssr';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
-import {useAsyncList} from '@react-stately/data';
+import {useAsyncList, useListData} from '@react-stately/data';
 import {useFilter} from '@react-aria/i18n';
-import {useListData} from '@react-stately/data';
 import userEvent from '@testing-library/user-event';
 
 let theme = {
