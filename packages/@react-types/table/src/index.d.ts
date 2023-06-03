@@ -10,13 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, CollectionChildren, DOMProps, LoadingState, MultipleSelection, Sortable, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, AsyncLoadable, DOMProps, LoadingState, MultipleSelection, Sortable, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {Key, ReactElement, ReactNode} from 'react';
 
 /** Widths that result in a constant pixel value for the same Table width. */
 export type ColumnStaticSize = number | `${number}` | `${number}%`; // match regex: /^(\d+)(?=%$)/
-/** Widths that change size in relation to the remaining space and in ratio to other dynamic columns. */
+/**
+ * Widths that change size in relation to the remaining space and in ratio to other dynamic columns.
+ * All numbers must be integers and greater than 0.
+ * FR units take up remaining, if any, space in the table.
+ */
 export type ColumnDynamicSize = `${number}fr`; // match regex: /^(\d+)(?=fr$)/
 /** All possible sizes a column can be assigned. */
 export type ColumnSize = ColumnStaticSize | ColumnDynamicSize;
@@ -28,6 +32,9 @@ export interface TableProps<T> extends MultipleSelection, Sortable {
   disabledKeys?: Iterable<Key>
 }
 
+/**
+ * @deprecated - use SpectrumTableProps from '@adobe/react-spectrum' instead.
+ */
 export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionProps, DOMProps, AriaLabelingProps, StyleProps {
   /**
    * Sets the amount of vertical padding within each cell.
@@ -115,9 +122,10 @@ export interface SpectrumColumnProps<T> extends ColumnProps<T> {
   hideHeader?: boolean
 }
 
+export type RowElement = ReactElement<RowProps>;
 export interface TableBodyProps<T> extends Omit<AsyncLoadable, 'isLoading'> {
   /** The contents of the table body. Supports static items or a function for dynamic rendering. */
-  children: CollectionChildren<T>,
+  children: RowElement | RowElement[] | ((item: T) => RowElement),
   /** A list of row objects in the table body used when dynamically rendering rows. */
   items?: Iterable<T>,
   /** The current loading state of the table. */

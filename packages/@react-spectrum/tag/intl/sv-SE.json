@@ -1,5 +1,6 @@
 {
   "actions": "Åtgärder",
   "hideButtonLabel": "Visa mindre",
-  "showAllButtonLabel": "Visa allt ({tagCount})"
+  "noTags": "Ingen",
+  "showAllButtonLabel": "Visa alla ({tagCount, number})"
 }

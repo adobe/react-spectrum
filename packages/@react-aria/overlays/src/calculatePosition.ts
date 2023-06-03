@@ -11,6 +11,7 @@
  */
 
 import {Axis, Placement, PlacementAxis, SizeAxis} from '@react-types/overlays';
+import {clamp} from '@react-aria/utils';
 
 interface Position {
   top?: number,
@@ -22,6 +23,8 @@ interface Position {
 interface Dimensions {
   width: number,
   height: number,
+  totalWidth: number,
+  totalHeight: number,
   top: number,
   left: number,
   scroll: Position
@@ -44,6 +47,7 @@ interface Offset {
 }
 
 interface PositionOpts {
+  arrowSize: number,
   placement: Placement,
   targetNode: Element,
   overlayNode: Element,
@@ -53,7 +57,8 @@ interface PositionOpts {
   boundaryElement: Element,
   offset: number,
   crossOffset: number,
-  maxHeight?: number
+  maxHeight?: number,
+  arrowBoundaryOffset?: number
 }
 
 export interface PositionResult {
@@ -88,19 +93,26 @@ const AXIS_SIZE = {
   left: 'width'
 };
 
+const TOTAL_SIZE = {
+  width: 'totalWidth',
+  height: 'totalHeight'
+};
+
 const PARSED_PLACEMENT_CACHE = {};
 
 // @ts-ignore
 let visualViewport = typeof window !== 'undefined' && window.visualViewport;
 
 function getContainerDimensions(containerNode: Element): Dimensions {
-  let width = 0, height = 0, top = 0, left = 0;
+  let width = 0, height = 0, totalWidth = 0, totalHeight = 0, top = 0, left = 0;
   let scroll: Position = {};
 
   if (containerNode.tagName === 'BODY') {
     let documentElement = document.documentElement;
-    width = visualViewport?.width ?? documentElement.clientWidth;
-    height = visualViewport?.height ?? documentElement.clientHeight;
+    totalWidth = documentElement.clientWidth;
+    totalHeight = documentElement.clientHeight;
+    width = visualViewport?.width ?? totalWidth;
+    height = visualViewport?.height ?? totalHeight;
 
     scroll.top = documentElement.scrollTop || containerNode.scrollTop;
     scroll.left = documentElement.scrollLeft || containerNode.scrollLeft;
@@ -108,9 +120,11 @@ function getContainerDimensions(containerNode: Element): Dimensions {
     ({width, height, top, left} = getOffset(containerNode));
     scroll.top = containerNode.scrollTop;
     scroll.left = containerNode.scrollLeft;
+    totalWidth = width;
+    totalHeight = height;
   }
 
-  return {width, height, scroll, top, left};
+  return {width, height, totalWidth, totalHeight, scroll, top, left};
 }
 
 function getScroll(node: Element): Offset {
@@ -181,7 +195,9 @@ function computePosition(
   offset: number,
   crossOffset: number,
   containerOffsetWithBoundary: Offset,
-  isContainerPositioned: boolean
+  isContainerPositioned: boolean,
+  arrowSize: number,
+  arrowBoundaryOffset: number
 ) {
   let {placement, crossPlacement, axis, crossAxis, size, crossSize} = placementInfo;
   let position: Position = {};
@@ -202,13 +218,11 @@ function computePosition(
   // add the crossOffset from props
   position[crossAxis] += crossOffset;
 
-  // this is button center position - the overlay size + half of the button to align bottom of overlay with button center
-  let minViablePosition = childOffset[crossAxis] + (childOffset[crossSize] / 2) - overlaySize[crossSize];
-  // this is button position of center, aligns top of overlay with button center
-  let maxViablePosition = childOffset[crossAxis] + (childOffset[crossSize] / 2);
-
-  // clamp it into the range of the min/max positions
-  position[crossAxis] = Math.min(Math.max(minViablePosition, position[crossAxis]), maxViablePosition);
+  // overlay top overlapping arrow with button bottom
+  const minPosition = childOffset[crossAxis] - overlaySize[crossSize] + arrowSize + arrowBoundaryOffset;
+  // overlay bottom overlapping arrow with button top
+  const maxPosition = childOffset[crossAxis] + childOffset[crossSize] - arrowSize - arrowBoundaryOffset;
+  position[crossAxis] = clamp(position[crossAxis], minPosition, maxPosition);
 
   // Floor these so the position isn't placed on a partial pixel, only whole pixels. Shouldn't matter if it was floored or ceiled, so chose one.
   if (placement === axis) {
@@ -216,7 +230,7 @@ function computePosition(
     // height, as `bottom` will be relative to this height.  But if the container is static,
     // then it can only be the `document.body`, and `bottom` will be relative to _its_
     // container, which should be as large as boundaryDimensions.
-    const containerHeight = (isContainerPositioned ? containerOffsetWithBoundary[size] : boundaryDimensions[size]);
+    const containerHeight = (isContainerPositioned ? containerOffsetWithBoundary[size] : boundaryDimensions[TOTAL_SIZE[size]]);
     position[FLIPPED_DIRECTION[axis]] = Math.floor(containerHeight - childOffset[axis] + offset);
   } else {
     position[axis] = Math.floor(childOffset[axis] + childOffset[size] + offset);
@@ -277,11 +291,13 @@ export function calculatePositionInternal(
   offset: number,
   crossOffset: number,
   isContainerPositioned: boolean,
-  userSetMaxHeight?: number
+  userSetMaxHeight: number | undefined,
+  arrowSize: number,
+  arrowBoundaryOffset: number
 ): PositionResult {
   let placementInfo = parsePlacement(placementInput);
   let {size, crossAxis, crossSize, placement, crossPlacement} = placementInfo;
-  let position = computePosition(childOffset, boundaryDimensions, overlaySize, placementInfo, offset, crossOffset, containerOffsetWithBoundary, isContainerPositioned);
+  let position = computePosition(childOffset, boundaryDimensions, overlaySize, placementInfo, offset, crossOffset, containerOffsetWithBoundary, isContainerPositioned, arrowSize, arrowBoundaryOffset);
   let normalizedOffset = offset;
   let space = getAvailableSpace(
     boundaryDimensions,
@@ -295,7 +311,7 @@ export function calculatePositionInternal(
   // Check if the scroll size of the overlay is greater than the available space to determine if we need to flip
   if (flip && scrollSize[size] > space) {
     let flippedPlacementInfo = parsePlacement(`${FLIPPED_DIRECTION[placement]} ${crossPlacement}` as Placement);
-    let flippedPosition = computePosition(childOffset, boundaryDimensions, overlaySize, flippedPlacementInfo, offset, crossOffset, containerOffsetWithBoundary, isContainerPositioned);
+    let flippedPosition = computePosition(childOffset, boundaryDimensions, overlaySize, flippedPlacementInfo, offset, crossOffset, containerOffsetWithBoundary, isContainerPositioned, arrowSize, arrowBoundaryOffset);
     let flippedSpace = getAvailableSpace(
       boundaryDimensions,
       containerOffsetWithBoundary,
@@ -331,12 +347,27 @@ export function calculatePositionInternal(
 
   overlaySize.height = Math.min(overlaySize.height, maxHeight);
 
-  position = computePosition(childOffset, boundaryDimensions, overlaySize, placementInfo, normalizedOffset, crossOffset, containerOffsetWithBoundary, isContainerPositioned);
+  position = computePosition(childOffset, boundaryDimensions, overlaySize, placementInfo, normalizedOffset, crossOffset, containerOffsetWithBoundary, isContainerPositioned, arrowSize, arrowBoundaryOffset);
   delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, padding);
   position[crossAxis] += delta;
 
   let arrowPosition: Position = {};
-  arrowPosition[crossAxis] = (childOffset[crossAxis] - position[crossAxis] + childOffset[crossSize] / 2);
+
+  // All values are transformed so that 0 is at the top/left of the overlay depending on the orientation
+  // Prefer the arrow being in the center of the trigger/overlay anchor element
+  let preferredArrowPosition = childOffset[crossAxis] + .5 * childOffset[crossSize] - overlaySize[crossAxis];
+
+  // Min/Max position limits for the arrow with respect to the overlay
+  const arrowMinPosition = arrowSize / 2 + arrowBoundaryOffset;
+  const arrowMaxPosition = overlaySize[crossSize] - (arrowSize / 2) - arrowBoundaryOffset;
+
+  // Min/Max position limits for the arrow with respect to the trigger/overlay anchor element
+  const arrowOverlappingChildMinEdge = childOffset[crossAxis] - overlaySize[crossAxis] + (arrowSize / 2);
+  const arrowOverlappingChildMaxEdge = childOffset[crossAxis] + childOffset[crossSize] - overlaySize[crossAxis] - (arrowSize / 2);
+
+  // Clamp the arrow positioning so that it always is within the bounds of the anchor and the overlay
+  const arrowPositionOverlappingChild = clamp(preferredArrowPosition, arrowOverlappingChildMinEdge, arrowOverlappingChildMaxEdge);
+  arrowPosition[crossAxis] = clamp(arrowPositionOverlappingChild, arrowMinPosition, arrowMaxPosition);
 
   return {
     position,
@@ -361,16 +392,18 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
     boundaryElement,
     offset,
     crossOffset,
-    maxHeight
+    maxHeight,
+    arrowSize,
+    arrowBoundaryOffset = 0
   } = opts;
 
-  let container = ((overlayNode instanceof HTMLElement && overlayNode.offsetParent) || document.body) as Element;
-  let isBodyContainer = container.tagName === 'BODY';
+  let container = overlayNode instanceof HTMLElement ? getContainingBlock(overlayNode) : document.documentElement;
+  let isViewportContainer = container === document.documentElement;
   const containerPositionStyle = window.getComputedStyle(container).position;
   let isContainerPositioned = !!containerPositionStyle && containerPositionStyle !== 'static';
-  let childOffset: Offset = isBodyContainer ? getOffset(targetNode) : getPosition(targetNode, container);
+  let childOffset: Offset = isViewportContainer ? getOffset(targetNode) : getPosition(targetNode, container);
 
-  if (!isBodyContainer) {
+  if (!isViewportContainer) {
     let {marginTop, marginLeft} = window.getComputedStyle(targetNode);
     childOffset.top += parseInt(marginTop, 10) || 0;
     childOffset.left += parseInt(marginLeft, 10) || 0;
@@ -398,7 +431,9 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
     offset,
     crossOffset,
     isContainerPositioned,
-    maxHeight
+    maxHeight,
+    arrowSize,
+    arrowBoundaryOffset
   );
 }
 
@@ -432,4 +467,55 @@ function getPosition(node: Element, parent: Element): Offset {
   offset.top -= parseInt(style.marginTop, 10) || 0;
   offset.left -= parseInt(style.marginLeft, 10) || 0;
   return offset;
+}
+
+// Returns the containing block of an element, which is the element that
+// this element will be positioned relative to.
+// https://developer.mozilla.org/en-US/docs/Web/CSS/Containing_block
+function getContainingBlock(node: HTMLElement): Element {
+  // The offsetParent of an element in most cases equals the containing block.
+  // https://w3c.github.io/csswg-drafts/cssom-view/#dom-htmlelement-offsetparent
+  let offsetParent = node.offsetParent;
+
+  // The offsetParent algorithm terminates at the document body,
+  // even if the body is not a containing block. Double check that
+  // and use the documentElement if so.
+  if (
+    offsetParent &&
+    offsetParent === document.body &&
+    window.getComputedStyle(offsetParent).position === 'static' &&
+    !isContainingBlock(offsetParent)
+  ) {
+    offsetParent = document.documentElement;
+  }
+
+  // TODO(later): handle table elements?
+
+  // The offsetParent can be null if the element has position: fixed, or a few other cases.
+  // We have to walk up the tree manually in this case because fixed positioned elements
+  // are still positioned relative to their containing block, which is not always the viewport.
+  if (offsetParent == null) {
+    offsetParent = node.parentElement;
+    while (offsetParent && !isContainingBlock(offsetParent)) {
+      offsetParent = offsetParent.parentElement;
+    }
+  }
+
+  // Fall back to the viewport.
+  return offsetParent || document.documentElement;
+}
+
+// https://developer.mozilla.org/en-US/docs/Web/CSS/Containing_block#identifying_the_containing_block
+function isContainingBlock(node: Element): boolean {
+  let style = window.getComputedStyle(node);
+  return (
+    style.transform !== 'none' ||
+    /transform|perspective/.test(style.willChange) ||
+    style.filter !== 'none' ||
+    style.contain === 'paint' ||
+    // @ts-ignore
+    ('backdropFilter' in style && style.backdropFilter !== 'none') ||
+    // @ts-ignore
+    ('WebkitBackdropFilter' in style && style.WebkitBackdropFilter !== 'none')
+  );
 }

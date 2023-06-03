@@ -13,10 +13,10 @@
 import {DOMAttributes, FocusableElement, Node as RSNode} from '@react-types/shared';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getRowId, listMap} from './utils';
+import {getScrollParent, mergeProps, scrollIntoViewport, useSlotId} from '@react-aria/utils';
 import {isFocusVisible} from '@react-aria/interactions';
 import type {ListState} from '@react-stately/list';
-import {mergeProps, useSlotId} from '@react-aria/utils';
-import {KeyboardEvent as ReactKeyboardEvent, RefObject} from 'react';
+import {KeyboardEvent as ReactKeyboardEvent, RefObject, useRef} from 'react';
 import {SelectableItemStates, useSelectableItem} from '@react-aria/selection';
 import {useLocale} from '@react-aria/i18n';
 
@@ -55,10 +55,17 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   let {direction} = useLocale();
   let {onAction} = listMap.get(state);
   let descriptionId = useSlotId();
+
+  // We need to track the key of the item at the time it was last focused so that we force
+  // focus to go to the item when the DOM node is reused for a different item in a virtualizer.
+  let keyWhenFocused = useRef(null);
   let focus = () => {
     // Don't shift focus to the row if the active element is a element within the row already
     // (e.g. clicking on a row button)
-    if (!ref.current.contains(document.activeElement)) {
+    if (
+      (keyWhenFocused.current != null && node.key !== keyWhenFocused.current) ||
+      !ref.current.contains(document.activeElement)
+    ) {
       focusSafely(ref.current);
     }
   };
@@ -92,17 +99,20 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
           e.preventDefault();
           e.stopPropagation();
           focusSafely(focusable);
+          scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
         } else {
           // If there is no next focusable child, then return focus back to the row
           e.preventDefault();
           e.stopPropagation();
           if (direction === 'rtl') {
             focusSafely(ref.current);
+            scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
           } else {
             walker.currentNode = ref.current;
             let lastElement = last(walker);
             if (lastElement) {
               focusSafely(lastElement);
+              scrollIntoViewport(lastElement, {containingElement: getScrollParent(ref.current)});
             }
           }
         }
@@ -117,16 +127,19 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
           e.preventDefault();
           e.stopPropagation();
           focusSafely(focusable);
+          scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
         } else {
           e.preventDefault();
           e.stopPropagation();
           if (direction === 'ltr') {
             focusSafely(ref.current);
+            scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
           } else {
             walker.currentNode = ref.current;
             let lastElement = last(walker);
             if (lastElement) {
               focusSafely(lastElement);
+              scrollIntoViewport(lastElement, {containingElement: getScrollParent(ref.current)});
             }
           }
         }
@@ -149,6 +162,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   };
 
   let onFocus = (e) => {
+    keyWhenFocused.current = node.key;
     if (e.target !== ref.current) {
       // useSelectableItem only handles setting the focused key when
       // the focused element is the row itself. We also want to

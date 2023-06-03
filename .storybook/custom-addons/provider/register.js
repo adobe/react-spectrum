@@ -111,7 +111,7 @@ function ProviderFieldSetter({api}) {
       </div>
       <div style={{marginRight: '10px'}}>
         <label htmlFor="express">Express: </label>
-        <input type="checkbox" name="express" onChange={onExpressChange} checked={values.express} />
+        <input type="checkbox" id="express" name="express" onChange={onExpressChange} checked={values.express} />
       </div>
     </div>
   )

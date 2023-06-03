@@ -28,10 +28,6 @@ governing permissions and limitations under the License.
     &.is-placeholder {
       color: var(--spectrum-textfield-placeholder-text-color-hover);
     }
-
-    & ~ .spectrum-Textfield-icon {
-      fill: var(--spectrum-textfield-icon-color-hover);
-    }
   }
 
   &:active {
@@ -42,10 +38,6 @@ governing permissions and limitations under the License.
     &::placeholder,
     &.is-placeholder {
       color: var(--spectrum-textfield-placeholder-text-color-down);
-    }
-
-    & ~ .spectrum-Textfield-icon {
-      fill: var(--spectrum-textfield-icon-color-down);
     }
   }
 
@@ -168,10 +160,6 @@ governing permissions and limitations under the License.
 
 }
 
-.spectrum-Textfield-icon {
-  fill: var(--spectrum-textfield-icon-color);
-}
-
 .spectrum-Textfield-validationIcon {
   .spectrum-Textfield--valid & {
     fill: var(--spectrum-alert-success-icon-color);
@@ -183,6 +171,7 @@ governing permissions and limitations under the License.
 }
 @media (forced-colors: active) {
   .spectrum-Textfield-input {
+    --spectrum-textfield-border-color: CanvasText;
     --spectrum-textfield-text-color-disabled: GrayText;
     --spectrum-textfield-border-color-disabled: GrayText;
     --spectrum-textfield-quiet-border-color-disabled: GrayText;

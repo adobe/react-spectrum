@@ -15,7 +15,7 @@ import React, {ReactElement, ReactNode, useEffect, useRef} from 'react';
 import {SpectrumToastValue, Toast} from './Toast';
 import {Toaster} from './Toaster';
 import {ToastOptions, ToastQueue, useToastQueue} from '@react-stately/toast';
-import {useSyncExternalStore} from 'use-sync-external-store/shim';
+import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
 
 export interface SpectrumToastContainerProps extends AriaToastRegionProps {}
 
@@ -55,12 +55,18 @@ function subscribe(fn: () => void) {
   return () => subscriptions.delete(fn);
 }
 
+function triggerSubscriptions() {
+  for (let fn of subscriptions) {
+    fn();
+  }
+}
+
 function getActiveToastContainer() {
   return toastProviders.values().next().value;
 }
 
 function useActiveToastContainer() {
-  return useSyncExternalStore(subscribe, getActiveToastContainer);
+  return useSyncExternalStore(subscribe, getActiveToastContainer, getActiveToastContainer);
 }
 
 /**
@@ -73,10 +79,12 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
   // We use a ref to do this, since it will have a stable identity
   // over the lifetime of the component.
   let ref = useRef();
-  toastProviders.add(ref);
 
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
+    toastProviders.add(ref);
+    triggerSubscriptions();
+
     return () => {
       // When this toast provider unmounts, reset all animations so that
       // when the new toast provider renders, it is seamless.
@@ -88,9 +96,7 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
       // This will cause all other instances to re-render,
       // and the first one to become the new active toast provider.
       toastProviders.delete(ref);
-      for (let fn of subscriptions) {
-        fn();
-      }
+      triggerSubscriptions();
     };
   }, []);
 

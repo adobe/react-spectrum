@@ -208,6 +208,10 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
       classNames(
         styles,
         'spectrum-InputGroup-input-validationIcon'
+      ),
+      classNames(
+        searchStyles,
+        'spectrum-Search-validationIcon'
       )
     )
   });
@@ -264,12 +268,17 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
             classNames(
               searchStyles,
               'spectrum-Search',
+              'spectrum-Search--loadable',
               {
                 'is-disabled': isDisabled,
                 'is-quiet': isQuiet,
                 'spectrum-Search--invalid': validationState === 'invalid' && !isDisabled,
                 'spectrum-Search--valid': validationState === 'valid' && !isDisabled
               }
+            ),
+            classNames(
+              styles,
+              'spectrum-InputGroup-field'
             )
           )
         }>
@@ -346,7 +355,8 @@ function SearchAutocompleteTray<T>(props: SearchAutocompleteTrayProps<T>) {
   let inputRef = useRef<HTMLInputElement>(null);
   let popoverRef = useRef<HTMLDivElement>(null);
   let listBoxRef = useRef<HTMLDivElement>(null);
-  let layout = useListBoxLayout(state);
+  let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
+  let layout = useListBoxLayout(state, isLoading);
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   let {inputProps, listBoxProps, labelProps, clearButtonProps} = useSearchAutocomplete<T>(
@@ -573,7 +583,7 @@ function SearchAutocompleteTray<T>(props: SearchAutocompleteTrayProps<T>) {
           ref={listBoxRef}
           onScroll={onScroll}
           onLoadMore={onLoadMore}
-          isLoading={loadingState === 'loading' || loadingState === 'loadingMore'} />
+          isLoading={isLoading} />
         <DismissButton onDismiss={onClose} />
       </div>
     </FocusScope>

@@ -13,7 +13,7 @@
 import {CalendarDate, toCalendar} from '@internationalized/date';
 import {DateFieldState, DateSegment} from '@react-stately/datepicker';
 import {DOMAttributes} from '@react-types/shared';
-import {getScrollParent, isIOS, isMac, mergeProps, scrollIntoView, useEvent, useId, useLabels, useLayoutEffect} from '@react-aria/utils';
+import {getScrollParent, isIOS, isMac, mergeProps, scrollIntoViewport, useEvent, useId, useLabels, useLayoutEffect} from '@react-aria/utils';
 import {hookData} from './useDateField';
 import {NumberParser} from '@internationalized/number';
 import React, {RefObject, useMemo, useRef} from 'react';
@@ -258,7 +258,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
 
   let onFocus = () => {
     enteredKeys.current = '';
-    scrollIntoView(getScrollParent(ref.current) as HTMLElement, ref.current);
+    scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
 
     // Collapse selection to start or Chrome won't fire input events.
     let selection = window.getSelection();
@@ -346,7 +346,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
   // This is needed because VoiceOver on iOS does not announce groups.
   let name = segment.type === 'literal' ? '' : displayNames.of(segment.type);
   let labelProps = useLabels({
-    'aria-label': (ariaLabel ? ariaLabel + ' ' : '') + name,
+    'aria-label': `${name}${ariaLabel ? `, ${ariaLabel}` : ''}${ariaLabelledBy ? ', ' : ''}`,
     'aria-labelledby': ariaLabelledBy
   });
 

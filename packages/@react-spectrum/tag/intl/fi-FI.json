@@ -1,5 +1,6 @@
 {
   "actions": "Toiminnot",
   "hideButtonLabel": "Näytä vähemmän",
-  "showAllButtonLabel": "Näytä kaikki ({tagCount})"
+  "noTags": "Ei mitään",
+  "showAllButtonLabel": "Näytä kaikki ({tagCount, number})"
 }

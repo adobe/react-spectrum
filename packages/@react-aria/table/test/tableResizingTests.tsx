@@ -173,8 +173,8 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
       it.each`
       col         | delta  | expected                     | expectedOnResize
       ${'Name'}   | ${-50} | ${[75, 103, 103, 103, 516]}  | ${[75, '1fr', '1fr', '1fr', '5fr']}
-      ${'Name'}   | ${50}  | ${[150, 94, 94, 94, 468]}    | ${[150, '1fr', '1fr', '1fr', '5fr']}
-      ${'Type'}   | ${-50} | ${[100, 75, 104, 104, 517]}  | ${[100, 75, '1fr', '1fr', '5fr']}
+      ${'Name'}   | ${50}  | ${[150, 94, 94, 93, 469]}    | ${[150, '1fr', '1fr', '1fr', '5fr']}
+      ${'Type'}   | ${-50} | ${[100, 75, 104, 103, 518]}  | ${[100, 75, '1fr', '1fr', '5fr']}
       ${'Type'}   | ${50}  | ${[100, 150, 93, 93, 464]}   | ${[100, 150, '1fr', '1fr', '5fr']}
       ${'Height'} | ${-50} | ${[100, 100, 75, 104, 521]}  | ${[100, 100, 75, '1fr', '5fr']}
       ${'Height'} | ${50}  | ${[100, 100, 150, 92, 458]}  | ${[100, 100, 150, '1fr', '5fr']}
@@ -216,11 +216,11 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
 
         let tree = render(<ControlledTable columns={columns} onResize={onResize} />);
         resizeCol(tree, 'Name', -50); // first column
-        expect(getColumnWidths(tree)).toStrictEqual([100, 114, 114, 114, 458]);
+        expect(getColumnWidths(tree)).toStrictEqual([100, 114, 115, 114, 457]);
         expect(onResize).toHaveBeenCalledTimes(1);
         expect(onResize).toHaveBeenCalledWith(mapFromWidths(columnNames, [100, '1fr', '1fr', '1fr', '4fr']));
         resizeCol(tree, 'Type', -50);
-        expect(getColumnWidths(tree)).toStrictEqual([100, 100, 117, 117, 466]);
+        expect(getColumnWidths(tree)).toStrictEqual([100, 100, 117, 116, 467]);
         expect(onResize).toHaveBeenCalledTimes(2);
         expect(onResize).toHaveBeenCalledWith(mapFromWidths(columnNames, [100, 100, '1fr', '1fr', '4fr']));
         resizeCol(tree, 'Height', -100);
@@ -365,7 +365,7 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
           {name: 'Level', uid: 'level', width: '4fr'}
         ];
         rerender(tree, <ControlledTable columns={newColumns} />);
-        expect(getColumnWidths(tree)).toStrictEqual([129, 129, 128, 514]);
+        expect(getColumnWidths(tree)).toStrictEqual([129, 128, 129, 514]);
       });
 
       it('can handle adding a column', function () {
@@ -377,7 +377,7 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
         ];
 
         let tree = render(<ControlledTable columns={columns} />);
-        expect(getColumnWidths(tree)).toStrictEqual([129, 129, 128, 514]);
+        expect(getColumnWidths(tree)).toStrictEqual([129, 128, 129, 514]);
         let newColumns = [
           {name: 'Name', uid: 'name', width: '1fr'},
           {name: 'Type', uid: 'type', width: '1fr'},
@@ -470,7 +470,7 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
 
         let tree = render(<ControlledTable columns={columns} />);
         resizeCol(tree, 'Type', -50);
-        expect(getColumnWidths(tree)).toStrictEqual([113, 75, 119, 119, 474]);
+        expect(getColumnWidths(tree)).toStrictEqual([113, 75, 119, 118, 475]);
         let newColumns = [
           {name: 'Name', uid: 'name', width: '1fr'},
           {name: 'Height', uid: 'height'},
@@ -480,7 +480,7 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
         rerender(tree, <ControlledTable columns={newColumns} />);
         expect(getColumnWidths(tree)).toStrictEqual([113, 131, 131, 525]);
         rerender(tree, <ControlledTable columns={columns} />);
-        expect(getColumnWidths(tree)).toStrictEqual([113, 75, 119, 119, 474]);
+        expect(getColumnWidths(tree)).toStrictEqual([113, 75, 119, 118, 475]);
       });
 
       it('can resize smaller if the minWidth gets smaller', function () {

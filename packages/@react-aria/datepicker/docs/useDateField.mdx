@@ -107,7 +107,7 @@ export function DateField(props) {
     createCalendar
   });
 
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {labelProps, fieldProps} = useDateField(props, state, ref);
 
   return (
@@ -126,7 +126,7 @@ export function DateField(props) {
 }
 
 function DateSegment({segment, state}) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {segmentProps} = useDateSegment(segment, state, ref);
 
   return (

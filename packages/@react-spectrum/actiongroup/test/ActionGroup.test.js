@@ -130,7 +130,7 @@ function renderComponentWithExtraInputs(props) {
 
 describe('ActionGroup', function () {
   beforeAll(function () {
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
 
     jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () {
       if (this instanceof HTMLButtonElement) {
@@ -744,6 +744,29 @@ describe('ActionGroup', function () {
       expect(onAction).toHaveBeenCalledWith('three');
     });
 
+    it('collapsed menu items can have DOM attributes passed to them', function () {
+      let onAction = jest.fn();
+      let tree = render(
+        <Provider theme={theme}>
+          <ActionGroup overflowMode="collapse" onAction={onAction}>
+            <Item key="one">One</Item>
+            <Item key="two" data-element="two">Two</Item>
+            <Item key="three">Three</Item>
+            <Item key="four">Four</Item>
+          </ActionGroup>
+        </Provider>
+      );
+
+      let actiongroup = tree.getByRole('toolbar');
+      let buttons = within(actiongroup).getAllByRole('button');
+
+      triggerPress(buttons[1]);
+
+      let menu = tree.getByRole('menu');
+      let items = within(menu).getAllByRole('menuitem');
+      expect(items[0]).toHaveAttribute('data-element', 'two');
+    });
+
     it('handles keyboard focus management properly', function () {
       let onAction = jest.fn();
       let tree = render(
@@ -770,6 +793,41 @@ describe('ActionGroup', function () {
       pressArrowRight(buttons[0]);
       expect(buttons[0]).toHaveAttribute('tabIndex', '-1');
       expect(buttons[1]).toHaveAttribute('tabIndex', '0');
+    });
+
+    it('moves focus if the focused button was removed', function () {
+      let onAction = jest.fn();
+      let tree = render(
+        <Provider theme={theme}>
+          <ActionGroup onAction={onAction}>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
+            <Item key="four">Four</Item>
+          </ActionGroup>
+        </Provider>
+      );
+
+      let actiongroup = tree.getByRole('toolbar');
+      let buttons = within(actiongroup).getAllByRole('button');
+      expect(buttons[0]).toHaveAttribute('tabIndex', '0');
+      expect(buttons[1]).toHaveAttribute('tabIndex', '0');
+
+      act(() => buttons[2].focus());
+      tree.rerender(
+        <Provider theme={theme}>
+          <ActionGroup onAction={onAction}>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="four">Four</Item>
+          </ActionGroup>
+        </Provider>
+      );
+      actiongroup = tree.getByRole('toolbar');
+      buttons = within(actiongroup).getAllByRole('button');
+      expect(buttons[0]).toHaveAttribute('tabIndex', '0');
+      expect(buttons[1]).toHaveAttribute('tabIndex', '0');
+      expect(buttons[2]).toHaveAttribute('tabIndex', '0');
     });
 
     it('passes aria labeling props through to menu button if it is the only child', function () {
@@ -956,7 +1014,7 @@ describe('ActionGroup', function () {
 
       const itemThree = within(menu).getByRole('menuitem', {name: 'Three'});
       expect(itemThree).toBeVisible();
-      expect(itemThree).toHaveAttribute('aria-disabled', 'false');
+      expect(itemThree).not.toHaveAttribute('aria-disabled');
 
       const itemFour = within(menu).getByRole('menuitem', {name: 'Four'});
       expect(itemFour).toBeVisible();

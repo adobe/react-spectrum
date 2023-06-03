@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, mockImplementation, render, triggerPress, within} from '@react-spectrum/test-utils';
 import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
 import {Item} from '@react-stately/collections';
+import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {TagGroup} from '../src';
@@ -54,17 +55,18 @@ describe('TagGroup', function () {
     act(() => {
       jest.runAllTimers();
     });
-    onRemoveSpy.mockClear();
-    onClearSpy.mockClear();
+    jest.restoreAllMocks();
   });
 
   it('provides context for Tag component', function () {
     let {getAllByRole} = render(
-      <TagGroup aria-label="tag group" allowsRemoving onRemove={onRemoveSpy}>
-        <Item aria-label="Tag 1">Tag 1</Item>
-        <Item aria-label="Tag 2">Tag 2</Item>
-        <Item aria-label="Tag 3">Tag 3</Item>
-      </TagGroup>
+      <Provider theme={theme}>
+        <TagGroup aria-label="tag group" onRemove={onRemoveSpy}>
+          <Item aria-label="Tag 1">Tag 1</Item>
+          <Item aria-label="Tag 2">Tag 2</Item>
+          <Item aria-label="Tag 3">Tag 3</Item>
+        </TagGroup>
+      </Provider>
     );
 
     let tags = getAllByRole('row');
@@ -77,10 +79,12 @@ describe('TagGroup', function () {
 
   it('has correct accessibility roles', () => {
     let {getByRole, getAllByRole} = render(
-      <TagGroup
-        aria-label="tag group">
-        <Item aria-label="Tag 1">Tag 1</Item>
-      </TagGroup>
+      <Provider theme={theme}>
+        <TagGroup
+          aria-label="tag group">
+          <Item aria-label="Tag 1">Tag 1</Item>
+        </TagGroup>
+      </Provider>
     );
 
     let tagGroup = getByRole('grid');
@@ -92,10 +96,12 @@ describe('TagGroup', function () {
 
   it('has correct tab index', () => {
     let {getAllByRole} = render(
-      <TagGroup
-        aria-label="tag group">
-        <Item aria-label="Tag 1">Tag 1</Item>
-      </TagGroup>
+      <Provider theme={theme}>
+        <TagGroup
+          aria-label="tag group">
+          <Item aria-label="Tag 1">Tag 1</Item>
+        </TagGroup>
+      </Provider>
     );
 
     let tags = getAllByRole('row');
@@ -128,9 +134,11 @@ describe('TagGroup', function () {
 
   it('TagGroup allows aria-label', function () {
     let {getByRole} = render(
-      <TagGroup aria-label="tag group">
-        <Item key="1" aria-label="Tag 1">Tag 1</Item>
-      </TagGroup>
+      <Provider theme={theme}>
+        <TagGroup aria-label="tag group">
+          <Item key="1" aria-label="Tag 1">Tag 1</Item>
+        </TagGroup>
+      </Provider>
     );
 
     let tagGroup = getByRole('grid');
@@ -139,9 +147,11 @@ describe('TagGroup', function () {
 
   it('TagGroup allows aria-labelledby', function () {
     let {getByRole} = render(
-      <TagGroup aria-labelledby="tag group">
-        <Item key="1" aria-label="Tag 1">Tag 1</Item>
-      </TagGroup>
+      <Provider theme={theme}>
+        <TagGroup aria-labelledby="tag group">
+          <Item key="1" aria-label="Tag 1">Tag 1</Item>
+        </TagGroup>
+      </Provider>
     );
 
     let tagGroup = getByRole('grid');
@@ -150,11 +160,13 @@ describe('TagGroup', function () {
 
   it('TagGroup allows aria-label on Item', function () {
     let {getByRole} = render(
-      <TagGroup aria-label="tag group">
-        <Item key="1" aria-label="Tag 1">Tag 1</Item>
-        <Item key="2" aria-label="Tag 2">Tag 2</Item>
-        <Item key="3" aria-label="Tag 3">Tag 3</Item>
-      </TagGroup>
+      <Provider theme={theme}>
+        <TagGroup aria-label="tag group">
+          <Item key="1" aria-label="Tag 1">Tag 1</Item>
+          <Item key="2" aria-label="Tag 2">Tag 2</Item>
+          <Item key="3" aria-label="Tag 3">Tag 3</Item>
+        </TagGroup>
+      </Provider>
     );
 
     let tagGroup = getByRole('grid');
@@ -165,7 +177,7 @@ describe('TagGroup', function () {
 
   it('should remember last focused item', function () {
     let {getAllByRole, getByLabelText} = render(
-      <Provider theme={theme} locale="de-DE">
+      <Provider theme={theme} locale="en-US">
         <Button variant="primary" aria-label="ButtonBefore" />
         <TagGroup aria-label="tag group" disabledKeys={['foo', 'bar']}>
           <Item key="1" aria-label="Tag 1">Tag 1</Item>
@@ -195,7 +207,7 @@ describe('TagGroup', function () {
 
   it('should be focusable from Tab', async function () {
     let {getAllByRole, getByLabelText} = render(
-      <Provider theme={theme} locale="de-DE">
+      <Provider theme={theme} locale="en-US">
         <Button variant="primary" aria-label="ButtonBefore" />
         <TagGroup aria-label="tag group" disabledKeys={['foo', 'bar']}>
           <Item key="1" aria-label="Tag 1">Tag 1</Item>
@@ -218,7 +230,7 @@ describe('TagGroup', function () {
 
   it('should be focusable from Shift + Tab', function () {
     let {getAllByRole, getByLabelText} = render(
-      <Provider theme={theme} locale="de-DE">
+      <Provider theme={theme} locale="en-US">
         <Button variant="primary" aria-label="ButtonBefore" />
         <TagGroup aria-label="tag group" disabledKeys={['foo', 'bar']}>
           <Item key="1" aria-label="Tag 1">Tag 1</Item>
@@ -241,7 +253,7 @@ describe('TagGroup', function () {
 
   it('TagGroup should pass className, role and tabIndex', function () {
     let {getByRole} = render(
-      <Provider theme={theme} locale="de-DE">
+      <Provider theme={theme} locale="en-US">
         <TagGroup aria-label="tag group">
           <Item UNSAFE_className="test-class" key="1" aria-label="Tag 1">Tag 1</Item>
         </TagGroup>
@@ -253,7 +265,7 @@ describe('TagGroup', function () {
     expect(tag).not.toHaveAttribute('icon');
     expect(tag).not.toHaveAttribute('unsafe_classname');
     expect(tag).toHaveAttribute('class', expect.stringContaining('test-class'));
-    expect(tag).toHaveAttribute('class', expect.stringContaining('-item'));
+    expect(tag).toHaveAttribute('class', expect.stringContaining('spectrum-Tag'));
     expect(tag).toHaveAttribute('role', 'row');
     expect(tag).toHaveAttribute('tabIndex', '0');
   });
@@ -287,7 +299,7 @@ describe('TagGroup', function () {
     fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
     fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
     expect(document.activeElement).toBe(tags[1]);
-    
+
     fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
     fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft'});
     expect(document.activeElement).toBe(tags[0]);
@@ -302,7 +314,7 @@ describe('TagGroup', function () {
 
     fireEvent.keyDown(document.activeElement, {key: 'PageDown'});
     fireEvent.keyUp(document.activeElement, {key: 'PageDown'});
-    expect(document.activeElement).toBe(tags[1]);
+    expect(document.activeElement).toBe(tags[3]);
 
     fireEvent.keyDown(document.activeElement, {key: 'PageUp'});
     fireEvent.keyUp(document.activeElement, {key: 'PageUp'});
@@ -313,11 +325,10 @@ describe('TagGroup', function () {
     Name                         | props
     ${'on `Delete` keypress'}    | ${{keyPress: 'Delete'}}
     ${'on `Backspace` keypress'} | ${{keyPress: 'Backspace'}}
-    ${'on `space` keypress'}     | ${{keyPress: ' '}}
   `('Remove tag $Name', function ({Name, props}) {
     let {getByText} = render(
       <Provider theme={theme}>
-        <TagGroup aria-label="tag group" allowsRemoving onRemove={onRemoveSpy}>
+        <TagGroup aria-label="tag group" onRemove={onRemoveSpy}>
           <Item key="1" aria-label="Tag 1">Tag 1</Item>
           <Item key="2" aria-label="Tag 2">Tag 2</Item>
           <Item key="3" aria-label="Tag 3">Tag 3</Item>
@@ -329,13 +340,30 @@ describe('TagGroup', function () {
     fireEvent.keyDown(tag, {key: props.keyPress});
     fireEvent.keyUp(tag, {key: props.keyPress});
     expect(onRemoveSpy).toHaveBeenCalledTimes(1);
-    expect(onRemoveSpy).toHaveBeenCalledWith('1');
+    expect(onRemoveSpy).toHaveBeenCalledWith(new Set(['1']));
+  });
+
+  it('Space does not trigger removal', function () {
+    let {getByText} = render(
+      <Provider theme={theme}>
+        <TagGroup aria-label="tag group" onRemove={onRemoveSpy}>
+          <Item key="1" aria-label="Tag 1">Tag 1</Item>
+          <Item key="2" aria-label="Tag 2">Tag 2</Item>
+          <Item key="3" aria-label="Tag 3">Tag 3</Item>
+        </TagGroup>
+      </Provider>
+    );
+
+    let tag = getByText('Tag 1');
+    fireEvent.keyDown(tag, {key: ' '});
+    fireEvent.keyUp(tag, {key: ' '});
+    expect(onRemoveSpy).toHaveBeenCalledTimes(0);
   });
 
   it('should remove tag when remove button is clicked', function () {
     let {getAllByRole} = render(
       <Provider theme={theme}>
-        <TagGroup aria-label="tag group" allowsRemoving onRemove={onRemoveSpy}>
+        <TagGroup aria-label="tag group" onRemove={onRemoveSpy}>
           <Item key="1" aria-label="Tag 1">Tag 1</Item>
           <Item key="2" aria-label="Tag 2">Tag 2</Item>
           <Item key="3" aria-label="Tag 3">Tag 3</Item>
@@ -350,14 +378,13 @@ describe('TagGroup', function () {
     let removeButton = within(tags[0]).getByRole('button');
     triggerPress(removeButton);
     expect(onRemoveSpy).toHaveBeenCalledTimes(1);
-    expect(onRemoveSpy).toHaveBeenCalledWith('1');
+    expect(onRemoveSpy).toHaveBeenCalledWith(new Set(['1']));
   });
 
   it.each`
     Name                         | props
     ${'on `Delete` keypress'}    | ${{keyPress: 'Delete'}}
     ${'on `Backspace` keypress'} | ${{keyPress: 'Backspace'}}
-    ${'on `space` keypress'}     | ${{keyPress: ' '}}
   `('Can move focus after removing tag $Name', function ({Name, props}) {
 
     function TagGroupWithDelete(props) {
@@ -373,16 +400,16 @@ describe('TagGroup', function () {
       let removeItem = (key) => {
         setItems(prevItems => prevItems.filter((item) => key !== item.id));
       };
-    
+
       return (
         <Provider theme={theme}>
-          <TagGroup items={items} aria-label="tag group" allowsRemoving onRemove={chain(removeItem, onRemoveSpy)} {...props}>
+          <TagGroup items={items} aria-label="tag group" onRemove={chain(removeItem, onRemoveSpy)} {...props}>
             {item => <Item>{item.label}</Item>}
           </TagGroup>
         </Provider>
       );
     }
-      
+
     let {getAllByRole} = render(
       <TagGroupWithDelete {...props} />
     );
@@ -393,11 +420,63 @@ describe('TagGroup', function () {
     fireEvent.keyDown(document.activeElement, {key: props.keyPress});
     fireEvent.keyUp(document.activeElement, {key: props.keyPress});
     expect(onRemoveSpy).toHaveBeenCalledTimes(1);
-    expect(onRemoveSpy).toHaveBeenCalledWith(1);
+    expect(onRemoveSpy).toHaveBeenCalledWith(new Set([1]));
     tags = getAllByRole('row');
     expect(document.activeElement).toBe(tags[0]);
     pressArrowRight(tags[0]);
     expect(document.activeElement).toBe(tags[1]);
+  });
+
+  it.each`
+    Name                         | props
+    ${'on `Delete` keypress'}    | ${{keyPress: 'Delete'}}
+    ${'on `Backspace` keypress'} | ${{keyPress: 'Backspace'}}
+  `('Should focus container after last tag is removed $Name', function ({Name, props}) {
+
+    function TagGroupWithDelete(props) {
+      let [items, setItems] = React.useState([
+        {id: 1, label: 'Cool Tag 1'},
+        {id: 2, label: 'Another cool tag'}
+      ]);
+
+      let onRemove = (keys) => {
+        setItems(prevItems => prevItems.filter((item) => !keys.has(item.id)));
+      };
+
+      return (
+        <Provider theme={theme}>
+          <TagGroup items={items} aria-label="tag group" onRemove={chain(onRemove, onRemoveSpy)} {...props}>
+            {item => <Item>{item.label}</Item>}
+          </TagGroup>
+        </Provider>
+      );
+    }
+
+    let {getAllByRole, getByRole, queryAllByRole} = render(
+      <TagGroupWithDelete {...props} />
+    );
+
+    let tags = getAllByRole('row');
+    let container = getByRole('grid');
+    userEvent.tab();
+    expect(document.activeElement).toBe(tags[0]);
+    fireEvent.keyDown(document.activeElement, {key: props.keyPress});
+    fireEvent.keyUp(document.activeElement, {key: props.keyPress});
+    expect(onRemoveSpy).toHaveBeenCalledTimes(1);
+    expect(onRemoveSpy).toHaveBeenCalledWith(new Set([1]));
+
+    tags = getAllByRole('row');
+    expect(document.activeElement).toBe(tags[0]);
+    fireEvent.keyDown(document.activeElement, {key: props.keyPress});
+    fireEvent.keyUp(document.activeElement, {key: props.keyPress});
+    expect(onRemoveSpy).toHaveBeenCalledTimes(2);
+    expect(onRemoveSpy).toHaveBeenCalledWith(new Set([2]));
+
+    act(() => jest.runAllTimers());
+
+    tags = queryAllByRole('row');
+    expect(tags.length).toBe(0);
+    expect(document.activeElement).toBe(container);
   });
 
   it('maxRows should limit the number of tags shown', function () {
@@ -410,6 +489,7 @@ describe('TagGroup', function () {
       .mockImplementationOnce(() => ({x: 200, y: 400, width: 95, height: 32, top: 400, right: 290, bottom: 435, left: 200}))
       .mockImplementationOnce(() => ({x: 200, y: 300, width: 200, height: 128, top: 300, right: 400, bottom: 435, left: 200}))
       .mockImplementationOnce(() => ({x: 265, y: 335, width: 75, height: 32, top: 335, right: 345, bottom: 370, left: 265}));
+
     let {getAllByRole, getByRole} = render(
       <Provider theme={theme}>
         <TagGroup maxRows={2} aria-label="tag group">
@@ -439,17 +519,22 @@ describe('TagGroup', function () {
     tags = getAllByRole('gridcell');
     expect(tags.length).toBe(3);
     expect(button).toHaveTextContent('Show all (7)');
-    
+
     offsetWidth.mockReset();
   });
 
   it('maxRows should not show button if there is enough room to show all tags', function () {
     let offsetWidth = jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
-      .mockImplementationOnce(() => ({x: 200, y: 300, width: 75, height: 32, top: 300, right: 275, bottom: 335, left: 200}))
-      .mockImplementationOnce(() => ({x: 275, y: 300, width: 110, height: 32, top: 300, right: 385, bottom: 335, left: 275}))
-      .mockImplementationOnce(() => ({x: 200, y: 335, width: 65, height: 32, top: 335, right: 265, bottom: 370, left: 200}))
-      .mockImplementationOnce(() => ({x: 265, y: 335, width: 75, height: 32, top: 335, right: 345, bottom: 370, left: 265}))
-      .mockImplementationOnce(() => ({x: 200, y: 370, width: 120, height: 32, top: 370, right: 320, bottom: 400, left: 200}));
+      .mockImplementationOnce(() => ({width: 44, y: 411}))
+      .mockImplementationOnce(() => ({width: 46, y: 411}))
+      .mockImplementationOnce(() => ({width: 80}))
+      .mockImplementationOnce(() => ({right: 432}))
+      .mockImplementationOnce(() => ({right: 336}))
+      .mockImplementationOnce(() => ({width: 44, y: 411}))
+      .mockImplementationOnce(() => ({width: 46, y: 411}))
+      .mockImplementationOnce(() => ({width: 80}))
+      .mockImplementationOnce(() => ({right: 432}))
+      .mockImplementationOnce(() => ({right: 336}));
     let {getAllByRole, queryAllByRole} = render(
       <Provider theme={theme}>
         <TagGroup maxRows={2} aria-label="tag group">
@@ -464,11 +549,23 @@ describe('TagGroup', function () {
 
     let buttons = queryAllByRole('button');
     expect(buttons.length).toBe(0);
-    
+
     offsetWidth.mockReset();
   });
 
   it('can keyboard navigate to a custom action', function () {
+    let target = [HTMLDivElement.prototype, 'getBoundingClientRect'];
+    let mockCalls = [
+      function () {
+        return {
+          left: 0,
+          right: 0,
+          width: 0,
+          y: 0
+        };
+      }
+    ];
+    mockImplementation(target, mockCalls, true);
     let {getAllByRole, getByRole} = render(
       <Provider theme={theme}>
         <TagGroup
@@ -487,7 +584,7 @@ describe('TagGroup', function () {
     let action = getByRole('button');
     expect(tags.length).toBe(4);
     expect(action).toHaveTextContent('Clear');
-    
+
     userEvent.tab();
     expect(document.activeElement).toBe(tags[0]);
 
@@ -548,7 +645,7 @@ describe('TagGroup', function () {
     expect(buttons.length).toBe(2);
     expect(buttons[0]).toHaveTextContent('Show all (7)');
     expect(buttons[1]).toHaveTextContent('Clear');
-    
+
     userEvent.tab();
     expect(document.activeElement).toBe(tags[0]);
 
@@ -557,7 +654,7 @@ describe('TagGroup', function () {
 
     userEvent.tab();
     expect(document.activeElement).toBe(buttons[1]);
-    
+
     fireEvent.keyDown(document.activeElement, {key: 'Enter'});
     fireEvent.keyUp(document.activeElement, {key: 'Enter'});
     expect(onClearSpy).toHaveBeenCalledTimes(1);
@@ -574,7 +671,7 @@ describe('TagGroup', function () {
     fireEvent.mouseUp(document.activeElement, {key: 'Enter'});
     expect(onClearSpy).toHaveBeenCalledTimes(1);
     expect(onClearSpy).toHaveBeenCalledWith();
-    
+
     offsetWidth.mockReset();
   });
 
@@ -597,5 +694,53 @@ describe('TagGroup', function () {
     let tagGroup = getByRole('grid');
     expect(actionGroup).toHaveAttribute('aria-label', 'Actions');
     expect(actionGroup).toHaveAttribute('aria-labelledby', `${tagGroup.id} ${actionGroup.id}`);
+  });
+
+
+  it('should render empty state', async function () {
+    let {getByText} = render(
+      <Provider theme={theme}>
+        <TagGroup aria-label="tag group">
+          {[]}
+        </TagGroup>
+      </Provider>
+    );
+    await act(() => Promise.resolve()); // wait for MutationObserver in useHasTabbableChild or we get act warnings
+    expect(getByText('None')).toBeTruthy();
+  });
+
+  it('should allow you to tab into TagGroup if empty with link', async function () {
+    let renderEmptyState = () => (
+      <span>No tags. <Link><a href="//react-spectrum.com">Click here</a></Link> to add some.</span>
+    );
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <TagGroup aria-label="tag group" renderEmptyState={renderEmptyState}>
+          {[]}
+        </TagGroup>
+      </Provider>
+    );
+    await act(() => Promise.resolve());
+    let link = getByRole('link');
+    userEvent.tab();
+    expect(document.activeElement).toBe(link);
+  });
+
+  it('should support data attributes', function () {
+    let {getAllByRole} = render(
+      <Provider theme={theme}>
+        <TagGroup aria-label="tag group" data-foo="bar">
+          <Item key="1" data-foo="one">Tag 1</Item>
+          <Item key="2" data-foo="two">Tag 2</Item>
+        </TagGroup>
+      </Provider>
+    );
+
+    let group = getAllByRole('grid')[0];
+    expect(group).toHaveAttribute('data-foo', 'bar');
+
+    let tags = getAllByRole('row');
+    expect(tags[0]).toHaveAttribute('data-foo', 'one');
+    expect(tags[1]).toHaveAttribute('data-foo', 'two');
   });
 });

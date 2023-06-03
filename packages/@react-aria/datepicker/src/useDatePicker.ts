@@ -53,6 +53,7 @@ export interface DatePickerAria {
 export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>, state: DatePickerState, ref: RefObject<Element>): DatePickerAria {
   let buttonId = useId();
   let dialogId = useId();
+  let fieldId = useId();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
@@ -113,6 +114,7 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
     },
     fieldProps: {
       ...fieldProps,
+      id: fieldId,
       [roleSymbol]: 'presentation',
       'aria-describedby': ariaDescribedBy,
       value: state.value,
@@ -136,13 +138,14 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       id: buttonId,
       'aria-haspopup': 'dialog',
       'aria-label': stringFormatter.format('calendar'),
-      'aria-labelledby': `${labelledBy} ${buttonId}`,
+      'aria-labelledby': `${buttonId} ${labelledBy}`,
       'aria-describedby': ariaDescribedBy,
+      'aria-expanded': state.isOpen || undefined,
       onPress: () => state.setOpen(true)
     },
     dialogProps: {
       id: dialogId,
-      'aria-labelledby': `${labelledBy} ${buttonId}`
+      'aria-labelledby': `${buttonId} ${labelledBy}`
     },
     calendarProps: {
       autoFocus: true,

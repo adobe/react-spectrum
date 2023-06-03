@@ -19,7 +19,7 @@ import packageData from '@react-spectrum/dialog/package.json';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Checkbox} from '@react-spectrum/checkbox';
-import {Content, Footer, Header} from '@react-spectrum/view';
+import {Content} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
 import {Form} from '@react-spectrum/form';
@@ -279,7 +279,7 @@ a separate ref to the `targetRef` prop.
 
 ```tsx example
 function Example() {
-  let ref = React.useRef()
+  let ref = React.useRef(null)
 
   return (
     <Flex gap="size-1000">
