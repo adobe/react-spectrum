@@ -127,6 +127,8 @@ WithIframe.story = {
   name: 'with iframe'
 };
 
+export const HorizontalScrolling = () => renderHorizontalScrolling({});
+
 function render({width = 'auto', isDismissable = undefined, ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
@@ -423,6 +425,31 @@ function renderWithDividerInContent({width = 'auto', ...props}) {
             <ButtonGroup>
               <Button variant="primary" onPress={close}>Primary</Button>
               <Button variant="cta" onPress={close} autoFocus>CTA</Button>
+            </ButtonGroup>
+          </Dialog>
+        )}
+      </DialogTrigger>
+    </div>
+  );
+}
+
+function renderHorizontalScrolling({width = 'auto', ...props}) {
+  return (
+    <div style={{display: 'flex', width, margin: '100px 0'}}>
+      <DialogTrigger defaultOpen>
+        <ActionButton>Trigger</ActionButton>
+        {(close) => (
+          <Dialog {...props}>
+            <Heading>The Heading</Heading>
+            <Header>The Header</Header>
+            <Divider />
+            <Content UNSAFE_style={{overflow: 'auto'}}>
+              <TextField label="Top textfield" minWidth="100vw" />
+              <p>scroll this content horizontally</p>
+            </Content>
+            <ButtonGroup>
+              <Button variant="secondary" onPress={close}>Cancel</Button>
+              <Button variant="cta" onPress={close} autoFocus>Confirm</Button>
             </ButtonGroup>
           </Dialog>
         )}
