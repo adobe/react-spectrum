@@ -180,13 +180,13 @@ describe('Switch', function () {
     expect(onChangeSpy).not.toHaveBeenCalled();
   });
 
-  it('supports requiredBehavior', () => {
+  it('supports validationBehavior', () => {
     let {getByRole, rerender} = render(<Switch isRequired>Switch</Switch>);
     let input = getByRole('switch');
     expect(input).toHaveAttribute('aria-required', 'true');
     expect(input).not.toHaveAttribute('required');
 
-    rerender(<Switch isRequired requiredBehavior="native">Switch</Switch>);
+    rerender(<Switch isRequired validationBehavior="native">Switch</Switch>);
     expect(input).not.toHaveAttribute('aria-required', 'true');
     expect(input).toHaveAttribute('required');
   });

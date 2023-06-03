@@ -408,10 +408,10 @@ describe('CheckboxGroup', () => {
     expect(checkboxes[2]).not.toBeChecked();
   });
 
-  it('supports requiredBehavior=native', () => {
+  it('supports validationBehavior=native', () => {
     let {getAllByRole} = render(
       <Provider theme={theme}>
-        <CheckboxGroup label="Favorite Pet" requiredBehavior="native">
+        <CheckboxGroup label="Favorite Pet" validationBehavior="native">
           <Checkbox value="dogs" isRequired>Dogs</Checkbox>
           <Checkbox value="cats" isRequired>Cats</Checkbox>
           <Checkbox value="dragons" isRequired>Dragons</Checkbox>

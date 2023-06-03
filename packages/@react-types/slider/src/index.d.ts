@@ -44,7 +44,7 @@ export interface SliderProps<T = number | number[]> extends RangeInputBase<numbe
   step?: number
 }
 
-export interface SliderThumbProps extends FocusableProps, Omit<Validation, 'requiredBehavior'>, LabelableProps {
+export interface SliderThumbProps extends FocusableProps, Omit<Validation, 'validationBehavior'>, LabelableProps {
   /**
    * The orientation of the Slider.
    * @default 'horizontal'

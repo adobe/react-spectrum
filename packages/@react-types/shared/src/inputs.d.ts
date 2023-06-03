@@ -27,7 +27,7 @@ export interface Validation {
    * when a value is missing, or only mark the field as required via ARIA.
    * @default 'aria'
    */
-  requiredBehavior?: 'aria' | 'native'
+  validationBehavior?: 'aria' | 'native'
 }
 
 export interface InputBase {

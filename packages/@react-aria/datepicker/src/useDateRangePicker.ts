@@ -101,7 +101,7 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
     isDisabled: props.isDisabled,
     isReadOnly: props.isReadOnly,
     isRequired: props.isRequired,
-    requiredBehavior: props.requiredBehavior,
+    validationBehavior: props.validationBehavior,
     validationState: state.validationState
   };
 

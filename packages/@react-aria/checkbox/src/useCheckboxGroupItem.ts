@@ -41,13 +41,13 @@ export function useCheckboxGroupItem(props: AriaCheckboxGroupItemProps, state: C
     }
   });
 
-  let {name, descriptionId, errorMessageId, requiredBehavior} = checkboxGroupData.get(state)!;
+  let {name, descriptionId, errorMessageId, validationBehavior} = checkboxGroupData.get(state)!;
   let res = useCheckbox({
     ...props,
     isReadOnly: props.isReadOnly || state.isReadOnly,
     isDisabled: props.isDisabled || state.isDisabled,
     name: props.name || name,
-    requiredBehavior: props.requiredBehavior || requiredBehavior
+    validationBehavior: props.validationBehavior || validationBehavior
   }, toggleState, inputRef);
 
   return {

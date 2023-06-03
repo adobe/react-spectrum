@@ -17,7 +17,7 @@ interface CheckboxGroupData {
   descriptionId: string,
   errorMessageId: string,
   isRequired: boolean,
-  requiredBehavior: 'aria' | 'native'
+  validationBehavior: 'aria' | 'native'
 }
 
 export const checkboxGroupData = new WeakMap<CheckboxGroupState, CheckboxGroupData>();

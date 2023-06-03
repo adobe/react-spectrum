@@ -100,8 +100,8 @@ describe('ColorField', function () {
     expect(colorField).not.toHaveAttribute('required');
   });
 
-  it('should support requiredBehavior=native', function () {
-    let {getByLabelText} = renderComponent({isRequired: true, requiredBehavior: 'native'});
+  it('should support validationBehavior=native', function () {
+    let {getByLabelText} = renderComponent({isRequired: true, validationBehavior: 'native'});
     let colorField = getByLabelText(/Primary Color/);
     expect(colorField).toHaveAttribute('required');
   });

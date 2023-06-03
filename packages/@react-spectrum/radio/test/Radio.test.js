@@ -410,8 +410,8 @@ describe('Radios', function () {
     }
   });
 
-  it('supports requiredBehavior=native', () => {
-    let {getAllByRole} = renderRadioGroup(RadioGroup, Radio, {isRequired: true, requiredBehavior: 'native'}, []);
+  it('supports validationBehavior=native', () => {
+    let {getAllByRole} = renderRadioGroup(RadioGroup, Radio, {isRequired: true, validationBehavior: 'native'}, []);
     for (let input of getAllByRole('radio')) {
       expect(input).toHaveAttribute('required');
     }

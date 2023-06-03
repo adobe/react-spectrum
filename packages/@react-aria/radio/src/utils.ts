@@ -17,7 +17,7 @@ interface RadioGroupData {
   descriptionId: string,
   errorMessageId: string,
   isRequired: boolean,
-  requiredBehavior: 'aria' | 'native'
+  validationBehavior: 'aria' | 'native'
 }
 
 export const radioGroupData = new WeakMap<RadioGroupState, RadioGroupData>();

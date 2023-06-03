@@ -101,7 +101,7 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
       name,
       size: state.collection.size,
       value: state.selectedKey ?? '',
-      required: data.isRequired && data.requiredBehavior === 'native',
+      required: data.isRequired && data.validationBehavior === 'native',
       onChange: (e: React.ChangeEvent<HTMLSelectElement>) => state.setSelectedKey(e.target.value)
     }
   };

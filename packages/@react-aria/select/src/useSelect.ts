@@ -54,7 +54,7 @@ export interface SelectAria<T> {
 
 interface SelectData extends AriaHiddenSelectProps {
   isRequired?: boolean,
-  requiredBehavior?: 'aria' | 'native'
+  validationBehavior?: 'aria' | 'native'
 }
 
 export const selectData = new WeakMap<SelectState<any>, SelectData>();
@@ -137,7 +137,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     name: props.name,
     isDisabled,
     isRequired: props.isRequired,
-    requiredBehavior: props.requiredBehavior
+    validationBehavior: props.validationBehavior
   });
 
   return {

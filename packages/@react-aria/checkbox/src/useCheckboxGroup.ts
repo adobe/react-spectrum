@@ -35,7 +35,7 @@ export interface CheckboxGroupAria {
  * @param state - State for the checkbox group, as returned by `useCheckboxGroupState`.
  */
 export function useCheckboxGroup(props: AriaCheckboxGroupProps, state: CheckboxGroupState): CheckboxGroupAria {
-  let {isDisabled, name, isRequired, requiredBehavior} = props;
+  let {isDisabled, name, isRequired, validationBehavior} = props;
 
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
@@ -48,7 +48,7 @@ export function useCheckboxGroup(props: AriaCheckboxGroupProps, state: CheckboxG
     descriptionId: descriptionProps.id,
     errorMessageId: errorMessageProps.id,
     isRequired,
-    requiredBehavior
+    validationBehavior
   });
 
   let domProps = filterDOMProps(props, {labelable: true});

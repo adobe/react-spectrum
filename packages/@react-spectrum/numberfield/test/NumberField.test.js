@@ -1547,10 +1547,10 @@ describe('NumberField', function () {
     expect(decrementButton).toHaveAttribute('aria-controls', textField.id);
   });
 
-  it('supports requiredBehavior=native', () => {
+  it('supports validationBehavior=native', () => {
     let {textField} = renderNumberField({
       isRequired: true,
-      requiredBehavior: 'native'
+      validationBehavior: 'native'
     });
     expect(textField).toHaveAttribute('required');
   });

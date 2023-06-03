@@ -5170,13 +5170,13 @@ describe('ComboBox', function () {
         jest.clearAllMocks();
       });
 
-      it('should support requiredBehavior', () => {
+      it('should support validationBehavior', () => {
         let {getByRole, rerender} = render(<ExampleComboBox isRequired />);
         let input = getByRole('combobox');
         expect(input).toHaveAttribute('aria-required', 'true');
         expect(input).not.toHaveAttribute('required');
 
-        rerender(<ExampleComboBox isRequired requiredBehavior="native" />);
+        rerender(<ExampleComboBox isRequired validationBehavior="native" />);
         expect(input).not.toHaveAttribute('aria-required', 'true');
         expect(input).toHaveAttribute('required');
       });
@@ -5237,13 +5237,13 @@ describe('ComboBox', function () {
         jest.clearAllMocks();
       });
 
-      it('should support requiredBehavior', () => {
+      it('should support validationBehavior', () => {
         let {rerender} = render(<ExampleComboBox name="test" isRequired />);
         let input = document.querySelector('input[name=test]');
         expect(input).not.toHaveAttribute('required');
         expect(input).toHaveAttribute('type', 'hidden');
 
-        rerender(<ExampleComboBox name="test" isRequired requiredBehavior="native" />);
+        rerender(<ExampleComboBox name="test" isRequired validationBehavior="native" />);
         expect(input).toHaveAttribute('required');
         expect(input).toHaveAttribute('type', 'text');
         expect(input).toHaveAttribute('hidden');

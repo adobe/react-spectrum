@@ -139,8 +139,8 @@ describe('DatePickerBase', function () {
       Name                   | Component
       ${'DatePicker'}        | ${DatePicker}
       ${'DateRangePicker'}   | ${DateRangePicker}
-    `('$Name should support requiredBehavior=native', ({Component}) => {
-      render(<Component label="Date" isRequired requiredBehavior="native" />);
+    `('$Name should support validationBehavior=native', ({Component}) => {
+      render(<Component label="Date" isRequired validationBehavior="native" />);
       let input = document.querySelector('input');
       expect(input).toHaveAttribute('type', 'text');
       expect(input).toHaveAttribute('required');

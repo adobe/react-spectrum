@@ -43,7 +43,7 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
     validationState,
     isReadOnly,
     isRequired = false,
-    requiredBehavior = 'aria',
+    validationBehavior = 'aria',
     isDisabled,
     orientation = 'vertical'
   } = props;
@@ -62,7 +62,7 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
     descriptionId: descriptionProps.id,
     errorMessageId: errorMessageProps.id,
     isRequired,
-    requiredBehavior
+    validationBehavior
   });
 
   let domProps = filterDOMProps(props, {labelable: true});

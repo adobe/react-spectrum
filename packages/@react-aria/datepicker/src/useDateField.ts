@@ -137,7 +137,7 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
     value: state.value?.toString() || ''
   };
 
-  if (props.isRequired && props.requiredBehavior === 'native') {
+  if (props.isRequired && props.validationBehavior === 'native') {
     // Use a hidden <input type="text"> rather than <input type="hidden">
     // so that an empty value blocks HTML form submission when the field is required.
     inputProps.type = 'text';

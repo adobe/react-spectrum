@@ -285,13 +285,13 @@ describe('Checkbox', function () {
     expect(input).not.toBeChecked();
   });
 
-  it('supports requiredBehavior', () => {
+  it('supports validationBehavior', () => {
     let {getByRole, rerender} = render(<Checkbox isRequired>Checkbox</Checkbox>);
     let input = getByRole('checkbox');
     expect(input).toHaveAttribute('aria-required', 'true');
     expect(input).not.toHaveAttribute('required');
 
-    rerender(<Checkbox isRequired requiredBehavior="native">Checkbox</Checkbox>);
+    rerender(<Checkbox isRequired validationBehavior="native">Checkbox</Checkbox>);
     expect(input).not.toHaveAttribute('aria-required', 'true');
     expect(input).toHaveAttribute('required');
   });

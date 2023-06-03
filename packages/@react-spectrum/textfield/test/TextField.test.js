@@ -218,8 +218,8 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
-  `('$Name supports requiredBehavior=native', ({Component}) => {
-    let tree = renderComponent(Component, {isRequired: true, requiredBehavior: 'native'});
+  `('$Name supports validationBehavior=native', ({Component}) => {
+    let tree = renderComponent(Component, {isRequired: true, validationBehavior: 'native'});
     let input = tree.getByTestId(testId);
     expect(input).toHaveAttribute('required');
     expect(input).not.toHaveAttribute('aria-required');

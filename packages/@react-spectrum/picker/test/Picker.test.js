@@ -928,10 +928,10 @@ describe('Picker', function () {
         expect(listbox).toHaveAttribute('aria-labelledby', label.id);
       });
 
-      it('supports requiredBehavior', () => {
-        let renderSelect = (requiredBehavior) => (
+      it('supports validationBehavior', () => {
+        let renderSelect = (validationBehavior) => (
           <Provider theme={theme}>
-            <Picker label="Test 2" isRequired requiredBehavior={requiredBehavior}>
+            <Picker label="Test 2" isRequired validationBehavior={validationBehavior}>
               <Item>One</Item>
               <Item>Two</Item>
               <Item>Three</Item>
