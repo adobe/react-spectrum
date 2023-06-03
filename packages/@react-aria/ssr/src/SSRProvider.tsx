@@ -175,8 +175,10 @@ function getServerSnapshot() {
   return true;
 }
 
-function subscribe() {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function subscribe(onStoreChange: () => void): () => void {
   // noop
+  return () => {};
 }
 
 /**
