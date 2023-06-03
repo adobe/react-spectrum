@@ -939,7 +939,7 @@ describe('Picker', function () {
           </Provider>
         );
         let {getByRole, rerender} = render(renderSelect('aria'));
-        let hiddenSelect = getByRole('listbox', {hidden: true});
+        let hiddenSelect = getByRole('combobox', {hidden: true});
         expect(hiddenSelect).not.toHaveAttribute('required');
 
         rerender(renderSelect('native'));
@@ -1796,15 +1796,7 @@ describe('Picker', function () {
       expect(hiddenLabel.tagName).toBe('LABEL');
       expect(hiddenLabel.parentElement).toHaveAttribute('aria-hidden', 'true');
 
-      // For anyone else who comes through this listbox/combobox path
-      // I can't use combobox here because there is a size attribute on the html select
-      // everything below this line is the path i followed to get to the correct role:
-      //   not sure why i can't use listbox https://github.com/A11yance/aria-query#elements-to-roles
-      //   however, i think this is correct based on https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles
-      //   which says "The listbox role is used for lists from which a user may select one or more items which are static and, unlike HTML <select> elements, may contain images."
-      //   Also, this test in react testing library seems to indicate something about size which we do not currently have, probably a bug
-      //   https://github.com/testing-library/dom-testing-library/blob/master/src/__tests__/element-queries.js#L548
-      let hiddenSelect = getByRole('listbox', {hidden: true});
+      let hiddenSelect = getByRole('combobox', {hidden: true});
       expect(hiddenSelect.parentElement).toBe(hiddenLabel);
       expect(hiddenSelect).toHaveAttribute('tabIndex', '-1');
       expect(hiddenSelect).toHaveAttribute('autoComplete', 'address-level1');
@@ -2247,6 +2239,87 @@ describe('Picker', function () {
       let button = getByTestId('reset');
       act(() => userEvent.click(button));
       expect(input).toHaveValue('one');
-    })
+    });
+
+    it('supports native validation', async () => {
+      let {getByTestId, getByRole} = render(
+        <Provider theme={theme}>
+          <form data-testid="form">
+            <Picker name="picker" data-testid="picker" label="Test" validationBehavior="native" isRequired>
+              <Item key="one">One</Item>
+              <Item key="two">Two</Item>
+              <Item key="three">Three</Item>
+            </Picker>
+          </form>
+        </Provider>
+      );
+      let picker = getByTestId('picker');
+      let input = document.querySelector('[name=picker]');
+      let form = getByTestId('form');
+
+      expect(picker).not.toHaveAttribute('aria-describedby');
+
+      act(() => form.checkValidity());
+
+      expect(picker).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+
+      triggerPress(picker);
+      act(() => jest.runAllTimers());
+
+      let listbox = getByRole('listbox');
+      let items = within(listbox).getAllByRole('option');
+      expect(items.length).toBe(3);
+      triggerPress(items[1]);
+      expect(input).toHaveValue('two');
+      expect(picker).not.toHaveAttribute('aria-describedby');
+    });
+
+    it('supports native custom validation message', async () => {
+      let tree = (validationState, errorMessage) => (
+        <Provider theme={theme}>
+          <form data-testid="form">
+            <Picker name="picker" data-testid="picker" label="Test" validationBehavior="native" validationState={validationState} errorMessage={errorMessage}>
+              <Item key="one">One</Item>
+              <Item key="two">Two</Item>
+              <Item key="three">Three</Item>
+            </Picker>
+          </form>
+        </Provider>
+      );
+
+      let {getByTestId, rerender} = render(tree('invalid', 'custom'));
+      let picker = getByTestId('picker');
+      let input = document.querySelector('[name=picker]');
+
+      expect(picker).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('custom');
+      expect(input.validity.valid).toBe(false);
+      expect(input.validationMessage).toBe('custom');
+
+      rerender(tree(undefined, undefined));
+      expect(picker).not.toHaveAttribute('aria-describedby');
+      expect(input.validity.valid).toBe(true);
+    });
+
+    it('should not set native validation message when validationBehavior=aria', async () => {
+      let {getByTestId} = render(
+        <Provider theme={theme}>
+          <form data-testid="form">
+            <Picker name="picker" data-testid="picker" label="Test" validationState="invalid" errorMessage="custom">
+              <Item key="one">One</Item>
+              <Item key="two">Two</Item>
+              <Item key="three">Three</Item>
+            </Picker>
+          </form>
+        </Provider>
+      );
+      let picker = getByTestId('picker');
+      let input = document.querySelector('[name=picker]');
+
+      expect(picker).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('custom');
+      expect(input.validity.valid).toBe(true);
+    });
   });
 });

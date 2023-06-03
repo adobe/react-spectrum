@@ -17,9 +17,11 @@ import {TextFieldBase} from './TextFieldBase';
 import {useControlledState} from '@react-stately/utils';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTextField} from '@react-aria/textfield';
+import { useFormProps } from '@react-spectrum/form';
 
 function TextArea(props: SpectrumTextFieldProps, ref: Ref<TextFieldRef>) {
   props = useProviderProps(props);
+  props = useFormProps(props);
   let {
     isDisabled = false,
     isQuiet = false,
@@ -66,7 +68,7 @@ function TextArea(props: SpectrumTextFieldProps, ref: Ref<TextFieldRef>) {
     console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/TextArea.html#help-text');
   }
 
-  let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField({
+  let result = useTextField({
     ...props,
     onChange: chain(onChange, setInputValue),
     inputElementType: 'textarea'
@@ -75,12 +77,9 @@ function TextArea(props: SpectrumTextFieldProps, ref: Ref<TextFieldRef>) {
   return (
     <TextFieldBase
       {...otherProps}
+      {...result}
       ref={ref}
       inputRef={inputRef}
-      labelProps={labelProps}
-      inputProps={inputProps}
-      descriptionProps={descriptionProps}
-      errorMessageProps={errorMessageProps}
       multiLine
       isDisabled={isDisabled}
       isQuiet={isQuiet}

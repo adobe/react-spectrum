@@ -13,14 +13,15 @@
 import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
-import {CalendarDate} from '@internationalized/date';
+import {CalendarDate, getLocalTimeZone, today} from '@internationalized/date';
 import {chain} from '@react-aria/utils';
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
+import {ColorField} from '@react-spectrum/color';
 import {ComboBox} from '@react-spectrum/combobox';
 import {Content, Header} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {countries, states} from './data';
-import {DateField, DateRangePicker} from '@react-spectrum/datepicker';
+import {DateField, DatePicker, DateRangePicker} from '@react-spectrum/datepicker';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '../';
 import {FormTranslatedText} from './../chromatic/FormLanguages.chromatic';
@@ -470,6 +471,8 @@ function FormWithControls(props: any = {}) {
         action('onSubmit')(Object.fromEntries(new FormData(e.target as HTMLFormElement).entries()));
         e.preventDefault();
       }}
+      isRequired
+      validationBehavior="native"
       {...props}>
       <TextField name="first-name" label="First Name (controlled)" value={firstName} onChange={setFirstName} />
       <TextField name="last-name" label="Last Name (uncontrolled)" defaultValue="world" />
@@ -496,11 +499,16 @@ function FormWithControls(props: any = {}) {
         <Radio value="cats">Cats</Radio>
         <Radio value="dragons">Dragons</Radio>
       </RadioGroup>
-      <RadioGroup label="Favorite pet (uncontrolled)" name="favorite-pet-group2" defaultValue="cats">
+      <RadioGroup label="Favorite pet (uncontrolled)" name="favorite-pet-group2">
         <Radio value="dogs">Dogs</Radio>
         <Radio value="cats">Cats</Radio>
         <Radio value="dragons">Dragons</Radio>
       </RadioGroup>
+      <CheckboxGroup name="conditions" label="Agree to the following (uncontrolled)" isRequired>
+        <Checkbox value="terms" isRequired>Terms and conditions</Checkbox>
+        <Checkbox value="privacy" isRequired>Privacy policy</Checkbox>
+        <Checkbox value="cookies" isRequired>Cookie policy</Checkbox>
+      </CheckboxGroup>
       <TextArea name="comments-controlled" label="Comments (controlled)" value={howIFeel} onChange={setHowIFeel} />
       <TextArea name="comments-uncontrolled" label="Comments (uncontrolled)" defaultValue="hello" />
       <ComboBox label="Favorite Animal (uncontrolled)" name="favorite-animal" formValue="key">
@@ -509,10 +517,12 @@ function FormWithControls(props: any = {}) {
         <Item key="kangaroo">Kangaroo</Item>
         <Item key="snake">Snake</Item>
       </ComboBox>
-      <DateField name="date-uncontrolled" label="Birth date (uncontrolled)" />
+      <DateField name="date-uncontrolled" label="Birth date (uncontrolled)" minValue={new CalendarDate(2023, 2, 3)} />
       <DateField name="date-controlled" label="Birth date (controlled)" value={birthday} onChange={setBirthday} />
       <DateRangePicker startName="trip-start" endName="trip-end" label="Trip dates (uncontrolled)" />
+      <DatePicker name="date-picker" label="Appointment date (uncontrolled)" minValue={today(getLocalTimeZone())} />
       <Slider name="cookies" label="Cookies (uncontrolled)" defaultValue={50} />
+      <ColorField name="color" label="Color (uncontrolled)" />
       <ButtonGroup>
         <Button variant="primary" type="submit">Submit</Button>
         <Button variant="secondary" type="reset">Reset</Button>

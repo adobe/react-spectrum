@@ -13,8 +13,8 @@
 import {AriaDateFieldProps as AriaDateFieldPropsBase, AriaTimeFieldProps, DateValue, TimeValue} from '@react-types/datepicker';
 import {createFocusManager, FocusManager} from '@react-aria/focus';
 import {DateFieldState, TimeFieldState} from '@react-stately/datepicker';
-import {DOMAttributes, KeyboardEvent} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useDescription, useFormReset} from '@react-aria/utils';
+import {DOMAttributes, KeyboardEvent, ValidationState} from '@react-types/shared';
+import {filterDOMProps, FormValidationResult, mergeProps, useDescription, useFormReset, useFormValidation} from '@react-aria/utils';
 import {FocusEvent, InputHTMLAttributes, RefObject, useEffect, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -29,7 +29,7 @@ export interface AriaDateFieldOptions<T extends DateValue> extends Omit<AriaDate
   inputRef?: RefObject<HTMLInputElement>
 }
 
-export interface DateFieldAria {
+export interface DateFieldAria extends FormValidationResult {
    /** Props for the field's visible label element, if any. */
   labelProps: DOMAttributes,
    /** Props for the field grouping element. */
@@ -47,7 +47,8 @@ interface HookData {
   ariaLabel: string,
   ariaLabelledBy: string,
   ariaDescribedBy: string,
-  focusManager: FocusManager
+  focusManager: FocusManager,
+  validationState: ValidationState
 }
 
 export const hookData = new WeakMap<DateFieldState, HookData>();
@@ -63,8 +64,11 @@ export const focusManagerSymbol = '__focusManager_' + Date.now();
  * Each part of a date value is displayed in an individually editable segment.
  */
 export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>, state: DateFieldState, ref: RefObject<Element>): DateFieldAria {
+  let {validationState, errorMessage, validationDetails} = useFormValidation(props.inputRef, state.validationState, props.errorMessage, props.validationBehavior);
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
+    validationState,
+    errorMessage,
     labelElementType: 'span'
   });
 
@@ -101,7 +105,8 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
     ariaLabel: props['aria-label'],
     ariaLabelledBy: [labelProps.id, props['aria-labelledby']].filter(Boolean).join(' ') || undefined,
     ariaDescribedBy: describedBy,
-    focusManager
+    focusManager,
+    validationState
   });
 
   let autoFocusRef = useRef(props.autoFocus);
@@ -137,12 +142,12 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
     value: state.value?.toString() || ''
   };
 
-  if (props.isRequired && props.validationBehavior === 'native') {
+  if (props.validationBehavior === 'native') {
     // Use a hidden <input type="text"> rather than <input type="hidden">
     // so that an empty value blocks HTML form submission when the field is required.
     inputProps.type = 'text';
     inputProps.hidden = true;
-    inputProps.required = true;
+    inputProps.required = props.isRequired;
     // Ignore react warning.
     inputProps.onChange = () => {};
   }
@@ -169,7 +174,10 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
     }),
     inputProps,
     descriptionProps,
-    errorMessageProps
+    errorMessageProps,
+    validationState,
+    errorMessage,
+    validationDetails
   };
 }
 

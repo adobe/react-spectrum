@@ -16,7 +16,6 @@ interface CheckboxGroupData {
   name: string,
   descriptionId: string,
   errorMessageId: string,
-  isRequired: boolean,
   validationBehavior: 'aria' | 'native'
 }
 

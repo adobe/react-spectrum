@@ -15,12 +15,14 @@ import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import {TextFieldBase} from './TextFieldBase';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTextField} from '@react-aria/textfield';
+import { useFormProps } from '@react-spectrum/form';
 
 function TextField(props: SpectrumTextFieldProps, ref: Ref<TextFieldRef>) {
   props = useProviderProps(props);
+  props = useFormProps(props);
 
   let inputRef = useRef<HTMLInputElement>(null);
-  let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField(props, inputRef);
+  let result = useTextField(props, inputRef);
 
   if (props.placeholder) {
     console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/TextField.html#help-text');
@@ -29,10 +31,7 @@ function TextField(props: SpectrumTextFieldProps, ref: Ref<TextFieldRef>) {
   return (
     <TextFieldBase
       {...props}
-      labelProps={labelProps}
-      inputProps={inputProps}
-      descriptionProps={descriptionProps}
-      errorMessageProps={errorMessageProps}
+      {...result}
       ref={ref}
       inputRef={inputRef} />
   );

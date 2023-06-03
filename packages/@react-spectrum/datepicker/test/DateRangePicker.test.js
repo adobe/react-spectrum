@@ -1509,5 +1509,71 @@ describe('DateRangePicker', function () {
       expect(start).toHaveValue('2020-02-03');
       expect(end).toHaveValue('2022-04-08');
     });
+
+    it('supports native validation', async () => {
+      let {getByTestId, getByRole, getAllByRole} = render(
+        <form data-testid="form">
+          <DateRangePicker label="Value" startName="start" endName="end" validationBehavior="native" isRequired />
+        </form>
+      );
+      let group = getByRole('group');
+      let spinbuttons = getAllByRole('spinbutton');
+      let form = getByTestId('form');
+
+      expect(group).not.toHaveAttribute('aria-describedby');
+      expect(spinbuttons[0]).not.toHaveAttribute('aria-invalid');
+
+      act(() => form.checkValidity());
+
+      expect(group).toHaveAttribute('aria-describedby');
+      expect(spinbuttons[0]).toHaveAttribute('aria-invalid');
+      expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    });
+
+    it('supports native custom validation message', async () => {
+      let tree = (validationState, errorMessage) => (
+        <form data-testid="form">
+          <DateRangePicker label="Value" startName="start" endName="end" validationBehavior="native" validationState={validationState} errorMessage={errorMessage} />
+        </form>
+      );
+
+      let {getByRole, getAllByRole, rerender} = render(tree('invalid', 'custom'));
+      let group = getByRole('group');
+      let spinbuttons = getAllByRole('spinbutton');
+      let start = document.querySelector('input[name=start]');
+      let end = document.querySelector('input[name=end]');
+
+      expect(group).toHaveAttribute('aria-describedby');
+      expect(spinbuttons[0]).toHaveAttribute('aria-invalid');
+      expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('custom');
+      expect(start.validity.valid).toBe(false);
+      expect(start.validationMessage).toBe('custom');
+      expect(end.validity.valid).toBe(false);
+      expect(end.validationMessage).toBe('custom');
+
+      rerender(tree(undefined, undefined));
+      expect(group).not.toHaveAttribute('aria-describedby');
+      expect(spinbuttons[0]).not.toHaveAttribute('aria-invalid');
+      expect(start.validity.valid).toBe(true);
+      expect(end.validity.valid).toBe(true);
+    });
+
+    it('should not set native validation message when validationBehavior=aria', async () => {
+      let {getByRole, getAllByRole} = render(
+        <form data-testid="form">
+          <DateRangePicker label="Value" startName="start" endName="end" validationState="invalid" errorMessage="custom" />
+        </form>
+      );
+      let group = getByRole('group');
+      let spinbuttons = getAllByRole('spinbutton');
+      let start = document.querySelector('input[name=start]');
+      let end = document.querySelector('input[name=end]');
+
+      expect(group).toHaveAttribute('aria-describedby');
+      expect(spinbuttons[0]).toHaveAttribute('aria-invalid');
+      expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('custom');
+      expect(start.validity.valid).toBe(true);
+      expect(end.validity.valid).toBe(true);
+    });
   });
 });

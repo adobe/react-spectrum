@@ -36,11 +36,10 @@ function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
   let radioGroupProps = useRadioProvider();
   let {
     isEmphasized,
-    validationState,
     state
   } = radioGroupProps;
 
-  let {inputProps} = useRadio({
+  let {inputProps, validationState} = useRadio({
     ...props,
     ...radioGroupProps,
     isDisabled

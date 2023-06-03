@@ -12,7 +12,7 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaSearchFieldProps} from '@react-types/searchfield';
-import {chain} from '@react-aria/utils';
+import {chain, FormValidationResult} from '@react-aria/utils';
 import {DOMAttributes} from '@react-types/shared';
 import {InputHTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
 // @ts-ignore
@@ -21,7 +21,7 @@ import {SearchFieldState} from '@react-stately/searchfield';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useTextField} from '@react-aria/textfield';
 
-export interface SearchFieldAria {
+export interface SearchFieldAria extends FormValidationResult {
   /** Props for the text field's visible label element (if any). */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   /** Props for the input element. */
@@ -91,7 +91,7 @@ export function useSearchField(
     inputRef.current.focus();
   };
 
-  let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField({
+  let {labelProps, inputProps, descriptionProps, errorMessageProps, ...validation} = useTextField({
     ...props,
     value: state.value,
     onChange: state.setValue,
@@ -116,6 +116,7 @@ export function useSearchField(
       onPressStart
     },
     descriptionProps,
-    errorMessageProps
+    errorMessageProps,
+    ...validation
   };
 }

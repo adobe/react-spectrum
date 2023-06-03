@@ -50,6 +50,7 @@ function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
     isDisabled,
     isReadOnly,
     validationState,
+    validationBehavior = 'aria',
     ...otherProps
   } = props;
 
@@ -59,14 +60,15 @@ function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
   let ctx = {
     labelPosition,
     labelAlign,
-    necessityIndicator
+    necessityIndicator,
+    validationBehavior
   };
 
   return (
     <form
       {...filterDOMProps(otherProps, {labelable: true, propNames: formPropNames})}
       {...styleProps}
-      noValidate
+      noValidate={validationBehavior !== 'native'}
       ref={domRef}
       className={
         classNames(

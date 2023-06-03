@@ -156,7 +156,7 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
         data-focused={state.isFocused || undefined}
         data-open={state.isOpen || undefined} />
       {portal}
-      {name && formValue === 'key' && <input type="hidden" name={name} value={state.selectedKey} />}
+      {name && formValue === 'key' && <input type="hidden" name={name} value={state.selectedKey ?? ''} />}
     </Provider>
   );
 }

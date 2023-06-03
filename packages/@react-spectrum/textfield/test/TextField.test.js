@@ -475,4 +475,64 @@ describe('Shared TextField behavior', () => {
     act(() => userEvent.click(button));
     expect(input).toHaveValue('Devon');
   });
+
+  it.each`
+    Name                | Component
+    ${'v3 TextField'}   | ${TextField}
+    ${'v3 TextArea'}    | ${TextArea}
+    ${'v3 SearchField'} | ${SearchField}
+  `('$Name supports native validation', async ({Component}) => {
+    let {getByTestId} = render(
+      <form data-testid="form">
+        <Component label="Name" data-testid="name" name="name" validationBehavior="native" isRequired />
+      </form>
+    );
+    let input = getByTestId('name');
+    let form = getByTestId('form');
+
+    expect(input).not.toHaveAttribute('aria-describedby');
+    expect(input).not.toHaveAttribute('aria-invalid');
+
+    act(() => form.checkValidity());
+
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(input).toHaveAttribute('aria-invalid');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 TextField'}   | ${TextField}
+    ${'v3 TextArea'}    | ${TextArea}
+    ${'v3 SearchField'} | ${SearchField}
+  `('$Name supports native custom validation message', async ({Component}) => {
+    let {getByTestId, rerender} = render(<Component label="Name" data-testid="name" name="name" validationBehavior="native" validationState="invalid" errorMessage="custom" />);
+    let input = getByTestId('name');
+
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(input).toHaveAttribute('aria-invalid');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('custom');
+    expect(input.validity.valid).toBe(false);
+    expect(input.validationMessage).toBe('custom');
+
+    rerender(<Component label="Name" data-testid="name" name="name" validationBehavior="native" />);
+    expect(input).not.toHaveAttribute('aria-describedby');
+    expect(input).not.toHaveAttribute('aria-invalid');
+    expect(input.validity.valid).toBe(true);
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 TextField'}   | ${TextField}
+    ${'v3 TextArea'}    | ${TextArea}
+    ${'v3 SearchField'} | ${SearchField}
+  `('$Name should not set native validation message when validationBehavior=aria', async ({Component}) => {
+    let {getByTestId} = render(<Component label="Name" data-testid="name" name="name" validationState="invalid" errorMessage="custom" />);
+    let input = getByTestId('name');
+
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(input).toHaveAttribute('aria-invalid');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('custom');
+    expect(input.validity.valid).toBe(true);
+  });
 });

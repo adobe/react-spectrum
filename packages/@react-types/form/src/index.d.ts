@@ -31,6 +31,7 @@ export interface SpectrumFormProps extends DOMProps, AriaLabelingProps, StylePro
    * @default 'valid'
    */
   validationState?: ValidationState,
+  validationBehavior?: 'aria' | 'native',
   /**
    * Where to send the form-data when the form is submitted.
    */

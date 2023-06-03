@@ -20,7 +20,7 @@ import {
   RefObject
 } from 'react';
 import {DOMAttributes} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useFormReset} from '@react-aria/utils';
+import {filterDOMProps, FormValidationResult, mergeProps, useFormReset, useFormValidation} from '@react-aria/utils';
 import {useField} from '@react-aria/label';
 import {useFocusable} from '@react-aria/focus';
 
@@ -85,7 +85,7 @@ export interface AriaTextFieldOptions<T extends TextFieldIntrinsicElements> exte
  */
 type TextFieldRefObject<T extends TextFieldIntrinsicElements> = RefObject<TextFieldHTMLElementType[T]>;
 
-export interface TextFieldAria<T extends TextFieldIntrinsicElements = DefaultElementType> {
+export interface TextFieldAria<T extends TextFieldIntrinsicElements = DefaultElementType> extends FormValidationResult {
   /** Props for the input element. */
   inputProps: TextFieldInputProps<T>,
   /** Props for the text field's visible label element, if any. */
@@ -111,14 +111,18 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     isRequired = false,
     validationBehavior = 'aria',
     isReadOnly = false,
-    validationState,
     type = 'text',
     value,
     defaultValue,
     onChange = () => {}
   }: AriaTextFieldOptions<TextFieldIntrinsicElements> = props;
+  let {validationState, errorMessage, validationDetails} = useFormValidation(ref, props.validationState, props.errorMessage, validationBehavior);
   let {focusableProps} = useFocusable(props, ref);
-  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField(props);
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
+    ...props,
+    validationState,
+    errorMessage
+  });
   let domProps = filterDOMProps(props, {labelable: true});
 
   const inputOnlyProps = {
@@ -174,6 +178,9 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
       }
     ),
     descriptionProps,
-    errorMessageProps
+    errorMessageProps,
+    validationState,
+    errorMessage,
+    validationDetails
   };
 }

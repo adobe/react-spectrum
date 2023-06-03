@@ -47,12 +47,14 @@ import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.
 import {useComboBox} from '@react-aria/combobox';
 import {useComboBoxState} from '@react-stately/combobox';
 import {useFilter} from '@react-aria/i18n';
+import {useFormProps} from '@react-spectrum/form';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
+  props = useFormProps(props);
 
   if (props.placeholder) {
     console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/ComboBox.html#help-text');
@@ -103,7 +105,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
   );
   let layout = useListBoxLayout(state, loadingState === 'loadingMore');
 
-  let {buttonProps, inputProps, listBoxProps, labelProps, descriptionProps, errorMessageProps} = useComboBox(
+  let {buttonProps, inputProps, listBoxProps, ...otherFieldProps} = useComboBox(
     {
       ...props,
       keyboardDelegate: layout,
@@ -145,9 +147,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     <>
       <Field
         {...props}
-        descriptionProps={descriptionProps}
-        errorMessageProps={errorMessageProps}
-        labelProps={labelProps}
+        {...otherFieldProps}
         ref={domRef}>
         <ComboBoxInput
           {...props}
@@ -156,9 +156,10 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
           inputProps={inputProps}
           inputRef={inputRef}
           triggerProps={buttonProps}
-          triggerRef={buttonRef} />
+          triggerRef={buttonRef}
+          validationState={otherFieldProps.validationState} />
       </Field>
-      {name && formValue === 'key' && <input type="hidden" name={name} value={state.selectedKey} />}
+      {name && formValue === 'key' && <input type="hidden" name={name} value={state.selectedKey ?? ''} />}
       <Popover
         state={state}
         UNSAFE_style={style}

@@ -35,7 +35,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
   let enteredKeys = useRef('');
   let {locale} = useLocale();
   let displayNames = useDisplayNames();
-  let {ariaLabel, ariaLabelledBy, ariaDescribedBy, focusManager} = hookData.get(state);
+  let {ariaLabel, ariaLabelledBy, ariaDescribedBy, focusManager, validationState} = hookData.get(state);
 
   let textValue = segment.isPlaceholder ? '' : segment.text;
   let options = useMemo(() => state.dateFormatter.resolvedOptions(), [state.dateFormatter]);
@@ -335,7 +335,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
   // Only apply aria-describedby to the first segment, unless the field is invalid. This avoids it being
   // read every time the user navigates to a new segment.
   let firstSegment = useMemo(() => state.segments.find(s => s.isEditable), [state.segments]);
-  if (segment !== firstSegment && state.validationState !== 'invalid') {
+  if (segment !== firstSegment && validationState !== 'invalid') {
     ariaDescribedBy = undefined;
   }
 
@@ -364,7 +364,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     segmentProps: mergeProps(spinButtonProps, labelProps, {
       id,
       ...touchPropOverrides,
-      'aria-invalid': state.validationState === 'invalid' ? 'true' : undefined,
+      'aria-invalid': validationState === 'invalid' ? 'true' : undefined,
       'aria-describedby': ariaDescribedBy,
       'aria-readonly': state.isReadOnly || !segment.isEditable ? 'true' : undefined,
       'data-placeholder': segment.isPlaceholder || undefined,

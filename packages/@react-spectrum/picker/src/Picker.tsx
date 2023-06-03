@@ -28,7 +28,7 @@ import {HiddenSelect, useSelect} from '@react-aria/select';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
-import {mergeProps, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import {mergeProps, useFormValidation, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {Popover, Tray} from '@react-spectrum/overlays';
 import {PressResponder, useHover} from '@react-aria/interactions';
 import {ProgressCircle} from '@react-spectrum/progress';
@@ -36,6 +36,7 @@ import React, {ReactElement, useCallback, useRef, useState} from 'react';
 import {SpectrumPickerProps} from '@react-types/select';
 import styles from '@adobe/spectrum-css-temp/components/dropdown/vars.css';
 import {Text} from '@react-spectrum/text';
+import {useFormProps} from '@react-spectrum/form';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useSelectState} from '@react-stately/select';
@@ -43,6 +44,7 @@ import {useSelectState} from '@react-stately/select';
 function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useSlotProps(props, 'picker');
   props = useProviderProps(props);
+  props = useFormProps(props);
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {
     autoComplete,
@@ -51,7 +53,6 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     align = 'start',
     shouldFlip = true,
     placeholder = stringFormatter.format('placeholder'),
-    validationState,
     isQuiet,
     label,
     labelPosition = 'top' as LabelPosition,
@@ -76,10 +77,16 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   // so that the layout information can be cached even while the listbox is not mounted.
   // We also use the layout as the keyboard delegate for type to select.
   let layout = useListBoxLayout(state, isLoadingMore);
+  let selectRef = useRef<HTMLSelectElement>(null);
+  // TODO: should this be inside useSelect? It currently cannot be because selectRef is not available.
+  // Cannot be in HiddenSelect because we need to set validationState in useSelect too.
+  let {validationState, errorMessage} = useFormValidation(selectRef, props.validationState, props.errorMessage, props.validationBehavior);
   let {labelProps, triggerProps, valueProps, menuProps, descriptionProps, errorMessageProps} = useSelect({
     ...props,
     'aria-describedby': (isLoadingInitial ? progressCircleId : undefined),
-    keyboardDelegate: layout
+    keyboardDelegate: layout,
+    validationState,
+    errorMessage
   }, state, unwrappedTriggerRef);
 
   let isMobile = useIsMobileDevice();
@@ -178,7 +185,8 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
         state={state}
         triggerRef={unwrappedTriggerRef}
         label={label}
-        name={name} />
+        name={name}
+        ref={selectRef} />
       <PressResponder {...mergeProps(hoverProps, triggerProps)}>
         <FieldButton
           ref={triggerRef}
@@ -240,6 +248,8 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
       labelProps={labelProps}
       descriptionProps={descriptionProps}
       errorMessageProps={errorMessageProps}
+      validationState={validationState}
+      errorMessage={errorMessage}
       showErrorIcon={false}
       includeNecessityIndicatorInAccessibilityName
       elementType="span">

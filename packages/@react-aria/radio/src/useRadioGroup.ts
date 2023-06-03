@@ -12,15 +12,16 @@
 
 import {AriaRadioGroupProps} from '@react-types/radio';
 import {DOMAttributes} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
+import {filterDOMProps, FormValidationResult, mergeProps, useId, useInputValidity} from '@react-aria/utils';
 import {getFocusableTreeWalker} from '@react-aria/focus';
 import {radioGroupData} from './utils';
 import {RadioGroupState} from '@react-stately/radio';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
+import {useRef} from 'react';
 
-export interface RadioGroupAria {
+export interface RadioGroupAria extends FormValidationResult {
   /** Props for the radio group wrapper element. */
   radioGroupProps: DOMAttributes,
   /** Props for the radio group's visible label (if any). */
@@ -40,7 +41,6 @@ export interface RadioGroupAria {
 export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState): RadioGroupAria {
   let {
     name,
-    validationState,
     isReadOnly,
     isRequired = false,
     validationBehavior = 'aria',
@@ -49,11 +49,17 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
   } = props;
   let {direction} = useLocale();
 
+  // This ref will point to one of the input elements in the radio group.
+  // It doesn't really matter which one - they should all have the same validation state.
+  let inputRef = useRef<HTMLInputElement>(null);
+  let {validationState, errorMessage, validationDetails} = useInputValidity(inputRef, props.validationState, props.errorMessage, validationBehavior);
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     // Radio group is not an HTML input element so it
     // shouldn't be labeled by a <label> element.
-    labelElementType: 'span'
+    labelElementType: 'span',
+    validationState,
+    errorMessage
   });
 
   let groupName = useId(name);
@@ -62,7 +68,9 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
     descriptionId: descriptionProps.id,
     errorMessageId: errorMessageProps.id,
     isRequired,
-    validationBehavior
+    validationBehavior,
+    errorMessage,
+    inputRef
   });
 
   let domProps = filterDOMProps(props, {labelable: true});
@@ -143,6 +151,9 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
     }),
     labelProps,
     descriptionProps,
-    errorMessageProps
+    errorMessageProps,
+    validationState,
+    errorMessage,
+    validationDetails
   };
 }

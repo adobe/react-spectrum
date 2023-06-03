@@ -295,4 +295,53 @@ describe('Checkbox', function () {
     expect(input).not.toHaveAttribute('aria-required', 'true');
     expect(input).toHaveAttribute('required');
   });
+
+  it('supports native validation', async () => {
+    let {getByTestId, getByRole} = render(
+      <form data-testid="form">
+        <Checkbox name="test" validationBehavior="native" isRequired>Checkbox</Checkbox>
+      </form>
+    );
+    let input = getByRole('checkbox');
+    let form = getByTestId('form');
+
+    expect(input).not.toHaveAttribute('aria-invalid');
+
+    act(() => form.checkValidity());
+    expect(input).toHaveAttribute('aria-invalid');
+
+    act(() => userEvent.click(input));
+    expect(input).not.toHaveAttribute('aria-invalid');
+  });
+
+  it('supports native custom validation message', async () => {
+    let tree = (validationState) => (
+      <form data-testid="form">
+        <Checkbox name="test" validationBehavior="native" validationState={validationState}>Checkbox</Checkbox>
+      </form>
+    );
+
+    let {getByRole, rerender} = render(tree('invalid', 'custom'));
+    let input = getByRole('checkbox');
+
+    expect(input).toHaveAttribute('aria-invalid');
+    expect(input.validity.valid).toBe(false);
+    expect(input.validity.customError).toBe(true);
+
+    rerender(tree(undefined, undefined));
+    expect(input).not.toHaveAttribute('aria-invalid');
+    expect(input.validity.valid).toBe(true);
+  });
+
+  it('should not set native validation message when validationBehavior=aria', async () => {
+    let {getByRole} = render(
+      <form data-testid="form">
+        <Checkbox name="test" validationState="invalid">Checkbox</Checkbox>
+      </form>
+    );
+    let input = getByRole('checkbox');
+
+    expect(input).toHaveAttribute('aria-invalid');
+    expect(input.validity.valid).toBe(true);
+  });
 });

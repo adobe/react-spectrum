@@ -11,10 +11,10 @@
  */
 
 import {FocusableElement} from '@react-types/shared';
-import React, {ReactNode, RefObject, useRef} from 'react';
+import React, {ForwardedRef, forwardRef, ReactNode, RefObject} from 'react';
 import {SelectState} from '@react-stately/select';
 import {selectData} from './useSelect';
-import {useFormReset} from '@react-aria/utils';
+import {useFormReset, useObjectRef, useUpdateEffect} from '@react-aria/utils';
 import {useInteractionModality} from '@react-aria/interactions';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
@@ -63,6 +63,10 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
   let {visuallyHiddenProps} = useVisuallyHidden();
 
   useFormReset(props.selectRef, state.selectedKey, state.setSelectedKey);
+  useUpdateEffect(() => {
+    // When the value changes, emit an event for form validation to pick up.
+    props.selectRef?.current?.dispatchEvent(new Event('change', {bubbles: true}));
+  }, [state.selectedKey]);
 
   // In Safari, the <select> cannot have `display: none` or `hidden` for autofill to work.
   // In Firefox, there must be a <label> to identify the <select> whereas other browsers
@@ -99,7 +103,6 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
       autoComplete,
       disabled: isDisabled,
       name,
-      size: state.collection.size,
       value: state.selectedKey ?? '',
       required: data.isRequired && data.validationBehavior === 'native',
       onChange: (e: React.ChangeEvent<HTMLSelectElement>) => state.setSelectedKey(e.target.value)
@@ -107,13 +110,9 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
   };
 }
 
-/**
- * Renders a hidden native `<select>` element, which can be used to support browser
- * form autofill, mobile form navigation, and native form submission.
- */
-export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
+function HiddenSelect<T>(props: HiddenSelectProps<T>, ref: ForwardedRef<HTMLSelectElement>) {
   let {state, triggerRef, label, name, isDisabled} = props;
-  let selectRef = useRef(null);
+  let selectRef = useObjectRef(ref);
   let {containerProps, inputProps, selectProps} = useHiddenSelect({...props, selectRef}, state, triggerRef);
 
   // If used in a <form>, use a hidden input so the value can be submitted to a server.
@@ -156,3 +155,10 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
 
   return null;
 }
+
+/**
+ * Renders a hidden native `<select>` element, which can be used to support browser
+ * form autofill, mobile form navigation, and native form submission.
+ */
+const _HiddenSelect = forwardRef(HiddenSelect);
+export {_HiddenSelect as HiddenSelect};

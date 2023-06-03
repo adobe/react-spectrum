@@ -15,7 +15,7 @@ import {createCalendar} from '@internationalized/date';
 import {DatePickerSegment} from './DatePickerSegment';
 import datepickerStyles from './styles.css';
 import {DateValue, SpectrumDatePickerProps} from '@react-types/datepicker';
-import React, {useRef} from 'react';
+import React, {RefObject, useRef} from 'react';
 import {useDateField} from '@react-aria/datepicker';
 import {useDateFieldState} from '@react-stately/datepicker';
 import {useLocale} from '@react-aria/i18n';
@@ -23,7 +23,8 @@ import {useLocale} from '@react-aria/i18n';
 interface DatePickerFieldProps<T extends DateValue> extends SpectrumDatePickerProps<T> {
   inputClassName?: string,
   hideValidationIcon?: boolean,
-  maxGranularity?: SpectrumDatePickerProps<T>['granularity']
+  maxGranularity?: SpectrumDatePickerProps<T>['granularity'],
+  inputRef: RefObject<HTMLInputElement>
 }
 
 export function DatePickerField<T extends DateValue>(props: DatePickerFieldProps<T>) {
@@ -31,7 +32,8 @@ export function DatePickerField<T extends DateValue>(props: DatePickerFieldProps
     isDisabled,
     isReadOnly,
     isRequired,
-    inputClassName
+    inputClassName,
+    inputRef
   } = props;
   let ref = useRef();
   let {locale} = useLocale();
@@ -41,7 +43,6 @@ export function DatePickerField<T extends DateValue>(props: DatePickerFieldProps
     createCalendar
   });
 
-  let inputRef = useRef();
   let {fieldProps, inputProps} = useDateField({...props, inputRef}, state, ref);
 
   return (

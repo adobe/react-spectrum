@@ -24,7 +24,7 @@ import {FocusableRef} from '@react-types/shared';
 import {Input} from './Input';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useInputValidity} from '@react-aria/utils';
 import {RangeCalendar} from '@react-spectrum/calendar';
 import React, {ReactElement, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
@@ -33,12 +33,14 @@ import {useDateRangePicker} from '@react-aria/datepicker';
 import {useDateRangePickerState} from '@react-stately/datepicker';
 import {useFocusManagerRef, useFormatHelpText, useVisibleMonths} from './utils';
 import {useFocusRing} from '@react-aria/focus';
+import {useFormProps} from '@react-spectrum/form';
 import {useHover} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
 function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
+  props = useFormProps(props);
   let {
     isQuiet,
     isDisabled,
@@ -49,11 +51,21 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let targetRef = useRef<HTMLDivElement>();
+  let startInputRef = useRef<HTMLInputElement>();
+  let endInputRef = useRef<HTMLInputElement>();
   let state = useDateRangePickerState({
     ...props,
     shouldCloseOnSelect: () => !state.hasTime
   });
-  let {labelProps, groupProps, buttonProps, dialogProps, startFieldProps, endFieldProps, descriptionProps, errorMessageProps, calendarProps} = useDateRangePicker(props, state, targetRef);
+  let startValidation = useInputValidity(startInputRef, state.validationState, props.errorMessage, props.validationBehavior);
+  let endValidation = useInputValidity(endInputRef, state.validationState, props.errorMessage, props.validationBehavior);
+  let validationState = startValidation.validationState || endValidation.validationState;
+  let errorMessage = startValidation.errorMessage || endValidation.errorMessage;
+  let {labelProps, groupProps, buttonProps, dialogProps, startFieldProps, endFieldProps, descriptionProps, errorMessageProps, calendarProps} = useDateRangePicker({
+    ...props,
+    validationState,
+    errorMessage
+  }, state, targetRef);
   let {isOpen, setOpen} = state;
   let {direction} = useLocale();
   let domRef = useFocusManagerRef(ref);
@@ -76,7 +88,7 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
     'spectrum-InputGroup',
     {
       'spectrum-InputGroup--quiet': isQuiet,
-      'spectrum-InputGroup--invalid': state.validationState === 'invalid' && !isDisabled,
+      'spectrum-InputGroup--invalid': validationState === 'invalid' && !isDisabled,
       'is-disabled': isDisabled,
       'is-hovered': isHovered,
       'is-focused': isFocused,
@@ -89,7 +101,7 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
     'spectrum-InputGroup-input',
     {
       'is-disabled': isDisabled,
-      'is-invalid': state.validationState === 'invalid' && !isDisabled
+      'is-invalid': validationState === 'invalid' && !isDisabled
     }
   );
 
@@ -115,10 +127,11 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
       ref={domRef}
       elementType="span"
       description={description}
+      errorMessage={errorMessage}
       labelProps={labelProps}
       descriptionProps={descriptionProps}
       errorMessageProps={errorMessageProps}
-      validationState={state.validationState}
+      validationState={validationState}
       wrapperClassName={classNames(datepickerStyles, 'react-spectrum-Datepicker-fieldWrapper')}>
       <div
         {...mergeProps(groupProps, hoverProps, focusProps)}
@@ -127,7 +140,7 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
         <Input
           isDisabled={isDisabled}
           isQuiet={isQuiet}
-          validationState={state.validationState}
+          validationState={validationState}
           className={classNames(styles, 'spectrum-InputGroup-field')}
           inputClassName={fieldClassName}
           disableFocusRing>
@@ -135,12 +148,14 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
             {...startFieldProps}
             data-testid="start-date"
             isQuiet={props.isQuiet}
-            inputClassName={classNames(datepickerStyles, 'react-spectrum-Datepicker-startField')} />
+            inputClassName={classNames(datepickerStyles, 'react-spectrum-Datepicker-startField')}
+            inputRef={startInputRef} />
           <DateRangeDash />
           <DatePickerField
             {...endFieldProps}
             data-testid="end-date"
             isQuiet={props.isQuiet}
+            inputRef={endInputRef}
             inputClassName={classNames(
               styles,
               'spectrum-Datepicker-endField',
@@ -163,7 +178,7 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
             {...mergeProps(buttonProps, focusPropsButton)}
             UNSAFE_className={classNames(styles, 'spectrum-FieldButton')}
             isQuiet={isQuiet}
-            validationState={state.validationState}
+            validationState={validationState}
             isDisabled={isDisabled || isReadOnly}>
             <CalendarIcon />
           </FieldButton>
@@ -173,7 +188,7 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
                 <RangeCalendar
                   {...calendarProps}
                   visibleMonths={visibleMonths}
-                  UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-calendar', {'is-invalid': state.validationState === 'invalid'})} />
+                  UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-calendar', {'is-invalid': validationState === 'invalid'})} />
                 {showTimeField &&
                   <Flex gap="size-100" marginTop="size-100" UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-timeFields')}>
                     <TimeField

@@ -28,7 +28,7 @@ import {focusSafely} from '@react-aria/focus';
 import intlMessages from '../intl/*.json';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
-import {mergeProps, useFormReset, useId} from '@react-aria/utils';
+import {mergeProps, useFormReset, useFormValidation, useId, useUpdateEffect} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {HTMLAttributes, InputHTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useEffect, useRef, useState} from 'react';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
@@ -54,7 +54,6 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
   let {
     isQuiet,
     isDisabled,
-    validationState,
     isReadOnly,
     name,
     formValue = 'text',
@@ -81,9 +80,13 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
   let domRef = useFocusableRef(ref, buttonRef);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'listbox'}, state, buttonRef);
 
-  let {labelProps, fieldProps} = useField({
+  let inputRef = useRef<HTMLInputElement>(null);
+  let {validationState, errorMessage} = useFormValidation(inputRef, props.validationState, props.errorMessage, validationBehavior);
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
-    labelElementType: 'span'
+    labelElementType: 'span',
+    validationState,
+    errorMessage
   });
 
   // Focus the button and show focus ring when clicking on the label
@@ -97,27 +100,34 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
   let inputProps: InputHTMLAttributes<HTMLInputElement> = {
     type: 'hidden',
     name,
-    value: formValue === 'text' ? state.inputValue : state.selectedKey
+    value: formValue === 'text' ? state.inputValue : state.selectedKey ?? ''
   };
 
-  if (isRequired && validationBehavior === 'native') {
+  if (validationBehavior === 'native') {
     // Use a hidden <input type="text"> rather than <input type="hidden">
     // so that an empty value blocks HTML form submission when the field is required.
     inputProps.type = 'text';
     inputProps.hidden = true;
-    inputProps.required = true;
+    inputProps.required = isRequired;
     // Ignore react warning.
     inputProps.onChange = () => {};
   }
 
-  let inputRef = useRef<HTMLInputElement>(null);
   useFormReset(inputRef, inputProps.value, formValue === 'text' ? state.setInputValue : state.setSelectedKey);
+  useUpdateEffect(() => {
+    // When the value changes, emit an event for form validation to pick up.
+    inputRef.current?.dispatchEvent(new Event('change', {bubbles: true}));
+  }, [inputProps.value]);
 
   return (
     <>
       <Field
         {...props}
         labelProps={labelProps}
+        validationState={validationState}
+        errorMessage={errorMessage}
+        descriptionProps={descriptionProps}
+        errorMessageProps={errorMessageProps}
         elementType="span"
         ref={domRef}
         includeNecessityIndicatorInAccessibilityName>

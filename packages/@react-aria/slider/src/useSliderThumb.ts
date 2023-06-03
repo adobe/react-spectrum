@@ -225,7 +225,7 @@ export function useSliderThumb(
   ) : {};
 
   useFormReset(inputRef, value, (v) => {
-    stateRef.current.setThumbValue(index, v);
+    state.setThumbValue(index, v);
   });
 
   // We install mouse handlers for the drag motion on the thumb div, but

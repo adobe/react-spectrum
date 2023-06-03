@@ -11,11 +11,12 @@
  */
 
 import {AriaCheckboxProps} from '@react-types/checkbox';
+import {FormValidationResult, useFormValidation} from '@react-aria/utils';
 import {InputHTMLAttributes, RefObject, useEffect} from 'react';
 import {ToggleState} from '@react-stately/toggle';
 import {useToggle} from '@react-aria/toggle';
 
-export interface CheckboxAria {
+export interface CheckboxAria extends FormValidationResult {
   /** Props for the input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Whether the checkbox is selected. */
@@ -37,7 +38,11 @@ export interface CheckboxAria {
  * @param inputRef - A ref for the HTML input element.
  */
 export function useCheckbox(props: AriaCheckboxProps, state: ToggleState, inputRef: RefObject<HTMLInputElement>): CheckboxAria {
-  let {inputProps, isSelected, isPressed, isDisabled, isReadOnly} = useToggle(props, state, inputRef);
+  let validation = useFormValidation(inputRef, props.validationState, '', props.validationBehavior);
+  let {inputProps, isSelected, isPressed, isDisabled, isReadOnly} = useToggle({
+    ...props,
+    validationState: validation.validationState
+  }, state, inputRef);
 
   let {isIndeterminate} = props;
   useEffect(() => {
@@ -56,6 +61,7 @@ export function useCheckbox(props: AriaCheckboxProps, state: ToggleState, inputR
     isSelected,
     isPressed,
     isDisabled,
-    isReadOnly
+    isReadOnly,
+    ...validation
   };
 }

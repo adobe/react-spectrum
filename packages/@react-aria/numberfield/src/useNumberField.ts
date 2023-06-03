@@ -14,6 +14,7 @@ import {AriaButtonProps} from '@react-types/button';
 import {AriaNumberFieldProps} from '@react-types/numberfield';
 import {DOMAttributes, TextInputDOMProps} from '@react-types/shared';
 import {filterDOMProps, isAndroid, isIOS, isIPhone, mergeProps, useFormReset, useId} from '@react-aria/utils';
+import {FormValidationResult} from '@react-aria/utils';
 import {
   InputHTMLAttributes,
   LabelHTMLAttributes,
@@ -34,7 +35,7 @@ import {
 import {useScrollWheel} from '@react-aria/interactions';
 import {useSpinButton} from '@react-aria/spinbutton';
 
-export interface NumberFieldAria {
+export interface NumberFieldAria extends FormValidationResult {
   /** Props for the label element. */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   /** Props for the group wrapper around the input and stepper buttons. */
@@ -183,7 +184,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
 
   let domProps = filterDOMProps(props);
 
-  let {labelProps, inputProps: textFieldProps, descriptionProps, errorMessageProps} = useFormattedTextField({
+  let {labelProps, inputProps: textFieldProps, ...otherFieldProps} = useFormattedTextField({
     ...otherProps,
     ...domProps,
     name: undefined,
@@ -302,7 +303,6 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     inputProps,
     incrementButtonProps,
     decrementButtonProps,
-    errorMessageProps,
-    descriptionProps
+    ...otherFieldProps
   };
 }

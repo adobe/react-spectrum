@@ -478,6 +478,86 @@ describe('Radios', function () {
     expect(radios[2]).not.toBeChecked();
   });
 
+  it('supports native validation', async () => {
+    let {getByTestId, getByRole, getAllByRole} = render(
+      <Provider theme={theme}>
+        <form data-testid="form">
+          <RadioGroup name="pet" label="Favorite Pet" validationBehavior="native" isRequired>
+            <Radio value="dogs">Dogs</Radio>
+            <Radio value="cats">Cats</Radio>
+            <Radio value="dragons">Dragons</Radio>
+          </RadioGroup>
+        </form>
+      </Provider>
+    );
+    let group = getByRole('radiogroup');
+    let radios = getAllByRole('radio');
+    let form = getByTestId('form');
+
+    expect(group).not.toHaveAttribute('aria-describedby');
+    expect(group).not.toHaveAttribute('aria-invalid');
+
+    act(() => form.checkValidity());
+
+    expect(group).toHaveAttribute('aria-describedby');
+    expect(group).toHaveAttribute('aria-invalid');
+    expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+
+    act(() => userEvent.click(radios[1]));
+    expect(group).not.toHaveAttribute('aria-describedby');
+    expect(group).not.toHaveAttribute('aria-invalid');
+  });
+
+  it('supports native custom validation message', async () => {
+    let tree = (validationState, errorMessage) => (
+      <Provider theme={theme}>
+        <form data-testid="form">
+          <RadioGroup name="pet" label="Favorite Pet" validationBehavior="native" validationState={validationState} errorMessage={errorMessage}>
+            <Radio value="dogs">Dogs</Radio>
+            <Radio value="cats">Cats</Radio>
+            <Radio value="dragons">Dragons</Radio>
+          </RadioGroup>
+        </form>
+      </Provider>
+    );
+
+    let {getByRole, getAllByRole, rerender} = render(tree('invalid', 'custom'));
+    let group = getByRole('radiogroup');
+    let radios = getAllByRole('radio');
+
+    expect(group).toHaveAttribute('aria-describedby');
+    expect(group).toHaveAttribute('aria-invalid');
+    expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('custom');
+    expect(radios[0].validity.valid).toBe(false);
+    expect(radios[0].validationMessage).toBe('custom');
+
+    rerender(tree(undefined, undefined));
+    expect(group).not.toHaveAttribute('aria-describedby');
+    expect(group).not.toHaveAttribute('aria-invalid');
+    expect(radios[0].validity.valid).toBe(true);
+  });
+
+  it('should not set native validation message when validationBehavior=aria', async () => {
+    let {getByRole, getAllByRole} = render(
+      <Provider theme={theme}>
+        <form data-testid="form">
+          <RadioGroup name="pet" label="Favorite Pet" validationState="invalid" errorMessage="custom">
+            <Radio value="dogs">Dogs</Radio>
+            <Radio value="cats">Cats</Radio>
+            <Radio value="dragons">Dragons</Radio>
+          </RadioGroup>
+        </form>
+      </Provider>
+    );
+    let group = getByRole('radiogroup');
+    let radios = getAllByRole('radio');
+
+    expect(group).toHaveAttribute('aria-describedby');
+    expect(group).toHaveAttribute('aria-invalid');
+    expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('custom');
+    expect(radios[0].validity.valid).toBe(true);
+  });
+
   describe('Radio group supports roving tabIndex ', function () {
     afterEach(() => {
       radioBehavior.reset();

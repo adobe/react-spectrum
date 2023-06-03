@@ -347,5 +347,65 @@ describe('DateField', function () {
       expect(getDescription()).toBe('Selected Date: February 3, 2020');
       expect(input).toHaveValue('2020-02-03');
     });
+
+    it('supports native validation', async () => {
+      let {getByTestId, getByRole, getAllByRole} = render(
+        <form data-testid="form">
+          <DateField label="Value" name="date" validationBehavior="native" isRequired />
+        </form>
+      );
+      let group = getByRole('group');
+      let spinbuttons = getAllByRole('spinbutton');
+      let form = getByTestId('form');
+
+      expect(group).not.toHaveAttribute('aria-describedby');
+      expect(spinbuttons[0]).not.toHaveAttribute('aria-invalid');
+
+      act(() => form.checkValidity());
+
+      expect(group).toHaveAttribute('aria-describedby');
+      expect(spinbuttons[0]).toHaveAttribute('aria-invalid');
+      expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    });
+
+    it('supports native custom validation message', async () => {
+      let tree = (validationState, errorMessage) => (
+        <form data-testid="form">
+          <DateField label="Value" name="date" validationBehavior="native" validationState={validationState} errorMessage={errorMessage} />
+        </form>
+      );
+
+      let {getByRole, getAllByRole, rerender} = render(tree('invalid', 'custom'));
+      let group = getByRole('group');
+      let spinbuttons = getAllByRole('spinbutton');
+      let input = document.querySelector('input[name=date]');
+
+      expect(group).toHaveAttribute('aria-describedby');
+      expect(spinbuttons[0]).toHaveAttribute('aria-invalid');
+      expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('custom');
+      expect(input.validity.valid).toBe(false);
+      expect(input.validationMessage).toBe('custom');
+
+      rerender(tree(undefined, undefined));
+      expect(group).not.toHaveAttribute('aria-describedby');
+      expect(spinbuttons[0]).not.toHaveAttribute('aria-invalid');
+      expect(input.validity.valid).toBe(true);
+    });
+
+    it('should not set native validation message when validationBehavior=aria', async () => {
+      let {getByRole, getAllByRole} = render(
+        <form data-testid="form">
+          <DateField label="Value" name="date" validationState="invalid" errorMessage="custom" />
+        </form>
+      );
+      let group = getByRole('group');
+      let spinbuttons = getAllByRole('spinbutton');
+      let input = document.querySelector('input[name=date]');
+
+      expect(group).toHaveAttribute('aria-describedby');
+      expect(spinbuttons[0]).toHaveAttribute('aria-invalid');
+      expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('custom');
+      expect(input.validity.valid).toBe(true);
+    });
   });
 });

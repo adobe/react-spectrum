@@ -16,7 +16,7 @@ import {AriaComboBoxProps} from '@react-types/combobox';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
 import {BaseEvent, DOMAttributes, KeyboardDelegate, PressEvent} from '@react-types/shared';
-import {chain, isAppleDevice, mergeProps, useLabels} from '@react-aria/utils';
+import {chain, FormValidationResult, isAppleDevice, mergeProps, useLabels} from '@react-aria/utils';
 import {ComboBoxState} from '@react-stately/combobox';
 import {FocusEvent, InputHTMLAttributes, KeyboardEvent, RefObject, TouchEvent, useEffect, useMemo, useRef} from 'react';
 import {getChildNodes, getItemCount} from '@react-stately/collections';
@@ -40,7 +40,7 @@ export interface AriaComboBoxOptions<T> extends Omit<AriaComboBoxProps<T>, 'chil
   keyboardDelegate?: KeyboardDelegate
 }
 
-export interface ComboBoxAria<T> {
+export interface ComboBoxAria<T> extends FormValidationResult {
   /** Props for the label element. */
   labelProps: DOMAttributes,
   /** Props for the combo box input element. */
@@ -166,7 +166,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     state.setFocused(true);
   };
 
-  let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField({
+  let {labelProps, inputProps, ...otherFieldProps} = useTextField({
     ...props,
     onChange: state.setInputValue,
     onKeyDown: !isReadOnly && chain(state.isOpen && collectionProps.onKeyDown, onKeyDown, props.onKeyDown),
@@ -332,7 +332,6 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
       shouldSelectOnPressUp: true,
       shouldFocusOnHover: true
     }),
-    descriptionProps,
-    errorMessageProps
+    ...otherFieldProps
   };
 }

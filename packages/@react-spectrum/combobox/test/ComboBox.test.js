@@ -5225,6 +5225,78 @@ describe('ComboBox', function () {
         expect(hiddenInput).toHaveAttribute('name', 'test');
         expect(hiddenInput).toHaveValue('2');
       });
+
+      it('supports native validation', async () => {
+        let {getByTestId, getByRole} = render(
+          <form data-testid="form">
+            <ExampleComboBox name="test" validationBehavior="native" isRequired />
+          </form>
+        );
+        let input = getByRole('combobox');
+        let form = getByTestId('form');
+
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input).not.toHaveAttribute('aria-invalid');
+
+        act(() => form.checkValidity());
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(input).toHaveAttribute('aria-invalid');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+
+        typeText(input, 'Tw');
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        let listbox = getByRole('listbox');
+        let items = within(listbox).getAllByRole('option');
+        act(() => {
+          triggerPress(items[0]);
+          jest.runAllTimers();
+        });
+
+        expect(input).toHaveValue('Two');
+        act(() => input.blur());
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input).not.toHaveAttribute('aria-invalid');
+      });
+
+      it('supports native custom validation message', async () => {
+        let tree = (validationState, errorMessage) => (
+          <form data-testid="form">
+            <ExampleComboBox name="test" validationBehavior="native" validationState={validationState} errorMessage={errorMessage} />
+          </form>
+        );
+
+        let {getByRole, rerender} = render(tree('invalid', 'custom'));
+        let input = getByRole('combobox');
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(input).toHaveAttribute('aria-invalid');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('custom');
+        expect(input.validity.valid).toBe(false);
+        expect(input.validationMessage).toBe('custom');
+
+        rerender(tree(undefined, undefined));
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input).not.toHaveAttribute('aria-invalid');
+        expect(input.validity.valid).toBe(true);
+      });
+
+      it('should not set native validation message when validationBehavior=aria', async () => {
+        let {getByRole} = render(
+          <form data-testid="form">
+            <ExampleComboBox name="test" validationState="invalid" errorMessage="custom" />
+          </form>
+        );
+        let input = getByRole('combobox');
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(input).toHaveAttribute('aria-invalid');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('custom');
+        expect(input.validity.valid).toBe(true);
+      });
     });
 
     describe('mobile', () => {
@@ -5294,6 +5366,77 @@ describe('ComboBox', function () {
         rerender(<ExampleComboBox name="test" formValue="key" selectedKey="2" />);
         expect(input).toHaveValue('2');
       });
-    })
+
+      it('supports native validation', async () => {
+        let {getByTestId, getAllByRole, getByRole} = render(
+          <form data-testid="form">
+            <ExampleComboBox name="test" validationBehavior="native" isRequired />
+          </form>
+        );
+        let button = getAllByRole('button')[0];
+        let form = getByTestId('form');
+
+        expect(button).not.toHaveAttribute('aria-describedby');
+
+        act(() => form.checkValidity());
+
+        expect(button).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+
+        triggerPress(button);
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        let tray = getByTestId('tray');
+        expect(tray).toBeVisible();
+        let combobox = getByRole('searchbox');
+        expect(combobox).not.toHaveAttribute('name');
+        let listbox = getByRole('listbox');
+
+        let items = within(listbox).getAllByRole('option');
+        act(() => {
+          triggerPress(items[0]);
+          jest.runAllTimers();
+        });
+
+        expect(button).not.toHaveAttribute('aria-describedby');
+      });
+
+      it('supports native custom validation message', async () => {
+        let tree = (validationState, errorMessage) => (
+          <form data-testid="form">
+            <ExampleComboBox name="test" validationBehavior="native" validationState={validationState} errorMessage={errorMessage} />
+          </form>
+        );
+
+        let {getAllByRole, rerender} = render(tree('invalid', 'custom'));
+        let button = getAllByRole('button')[0];
+
+        expect(button).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent('custom');
+        let input = document.querySelector('input[name=test]');
+        expect(input.validity.valid).toBe(false);
+        expect(input.validationMessage).toBe('custom');
+
+        rerender(tree(undefined, undefined));
+        expect(button).not.toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(true);
+      });
+
+      it('should not set native validation message when validationBehavior=aria', async () => {
+        let {getAllByRole} = render(
+          <form data-testid="form">
+            <ExampleComboBox name="test" validationState="invalid" errorMessage="custom" />
+          </form>
+        );
+        let button = getAllByRole('button')[0];
+
+        expect(button).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent('custom');
+        let input = document.querySelector('input[name=test]');
+        expect(input.validity.valid).toBe(true);
+      });
+    });
   });
 });

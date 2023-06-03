@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {MutableRefObject, ReactNode} from 'react';
 import {RadioGroupState} from '@react-stately/radio';
 
 interface RadioGroupData {
@@ -17,7 +18,9 @@ interface RadioGroupData {
   descriptionId: string,
   errorMessageId: string,
   isRequired: boolean,
-  validationBehavior: 'aria' | 'native'
+  validationBehavior: 'aria' | 'native',
+  errorMessage: ReactNode,
+  inputRef: MutableRefObject<HTMLInputElement>
 }
 
 export const radioGroupData = new WeakMap<RadioGroupState, RadioGroupData>();

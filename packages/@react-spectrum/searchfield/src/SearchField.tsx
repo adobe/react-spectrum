@@ -43,7 +43,7 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
 
   let state = useSearchFieldState(props);
   let inputRef = useRef<HTMLInputElement>();
-  let {labelProps, inputProps, clearButtonProps, descriptionProps, errorMessageProps} = useSearchField(props, state, inputRef);
+  let {clearButtonProps, ...textfieldProps} = useSearchField(props, state, inputRef);
 
   let clearButton = (
     <ClearButton
@@ -61,10 +61,7 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
   return (
     <TextFieldBase
       {...otherProps}
-      labelProps={labelProps}
-      inputProps={inputProps}
-      descriptionProps={descriptionProps}
-      errorMessageProps={errorMessageProps}
+      {...textfieldProps}
       UNSAFE_className={
         classNames(
           styles,

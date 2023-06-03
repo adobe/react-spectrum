@@ -2249,4 +2249,65 @@ describe('NumberField', function () {
     act(() => userEvent.click(button));
     expect(input).toHaveValue('10');
   });
+
+  it('supports native validation', async () => {
+    let {getByTestId} = render(
+      <Provider theme={theme}>
+        <form data-testid="form">
+          <NumberField label="Value" data-testid="input" name="name" validationBehavior="native" isRequired />
+        </form>
+      </Provider>
+    );
+    let input = getByTestId('input');
+    let form = getByTestId('form');
+
+    expect(input).not.toHaveAttribute('aria-describedby');
+    expect(input).not.toHaveAttribute('aria-invalid');
+
+    act(() => form.checkValidity());
+
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(input).toHaveAttribute('aria-invalid');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+  });
+
+  it('supports native custom validation message', async () => {
+    let tree = (validationState, errorMessage) => (
+      <Provider theme={theme}>
+        <form data-testid="form">
+          <NumberField label="Value" data-testid="input" name="name" validationBehavior="native" validationState={validationState} errorMessage={errorMessage} />
+        </form>
+      </Provider>
+    );
+
+    let {getByTestId, rerender} = render(tree('invalid', 'custom'));
+    let input = getByTestId('input');
+
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(input).toHaveAttribute('aria-invalid');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('custom');
+    expect(input.validity.valid).toBe(false);
+    expect(input.validationMessage).toBe('custom');
+
+    rerender(tree(undefined, undefined));
+    expect(input).not.toHaveAttribute('aria-describedby');
+    expect(input).not.toHaveAttribute('aria-invalid');
+    expect(input.validity.valid).toBe(true);
+  });
+
+  it('should not set native validation message when validationBehavior=aria', async () => {
+    let {getByTestId} = render(
+      <Provider theme={theme}>
+        <form data-testid="form">
+          <NumberField label="Value" data-testid="input" name="name" validationState="invalid" errorMessage="custom" />
+        </form>
+      </Provider>
+    );
+    let input = getByTestId('input');
+
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(input).toHaveAttribute('aria-invalid');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('custom');
+    expect(input.validity.valid).toBe(true);
+  });
 });

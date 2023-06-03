@@ -21,6 +21,7 @@ import {SpectrumNumberFieldProps} from '@react-types/numberfield';
 import {StepButton} from './StepButton';
 import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
+import {useFormProps} from '@react-spectrum/form';
 import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useNumberField} from '@react-aria/numberfield';
@@ -29,6 +30,7 @@ import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
+  props = useFormProps(props);
   let provider = useProvider();
   let {
     isQuiet,
@@ -50,7 +52,9 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
     incrementButtonProps,
     decrementButtonProps,
     descriptionProps,
-    errorMessageProps
+    errorMessageProps,
+    validationState,
+    errorMessage
   } = useNumberField(props, state, inputRef);
   let isMobile = provider.scale === 'large';
   let showStepper = !hideStepper;
@@ -65,7 +69,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
         'spectrum-Stepper--isQuiet': isQuiet,
         'is-disabled': isDisabled,
         'spectrum-Stepper--readonly': isReadOnly,
-        'is-invalid': props.validationState === 'invalid' && !isDisabled,
+        'is-invalid': validationState === 'invalid' && !isDisabled,
         'spectrum-Stepper--showStepper': showStepper,
         'spectrum-Stepper--isMobile': isMobile,
         'is-hovered': isHovered,
@@ -80,6 +84,8 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
       descriptionProps={descriptionProps}
       errorMessageProps={errorMessageProps}
       labelProps={labelProps}
+      validationState={validationState}
+      errorMessage={errorMessage}
       ref={domRef}
       wrapperClassName={classNames(
         stepperStyle,
@@ -95,6 +101,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
         inputRef={inputRef}
         incrementProps={incrementButtonProps}
         decrementProps={decrementButtonProps}
+        validationState={validationState}
         className={className}
         style={style}
         state={state} />

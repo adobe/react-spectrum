@@ -19,12 +19,12 @@ import {
   useCallback,
   useState
 } from 'react';
-import {mergeProps, useId} from '@react-aria/utils';
+import {FormValidationResult, mergeProps, useId} from '@react-aria/utils';
 import {useFocusWithin, useScrollWheel} from '@react-aria/interactions';
 import {useFormattedTextField} from '@react-aria/textfield';
 import {useSpinButton} from '@react-aria/spinbutton';
 
-export interface ColorFieldAria {
+export interface ColorFieldAria extends FormValidationResult {
   /** Props for the label element. */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   /** Props for the input element. */
@@ -96,7 +96,7 @@ export function useColorField(
     }
   };
 
-  let {labelProps, inputProps} = useFormattedTextField(
+  let {inputProps, ...otherFieldProps} = useFormattedTextField(
     mergeProps(props, {
       id: inputId,
       value: inputValue,
@@ -107,7 +107,6 @@ export function useColorField(
     }), state, ref);
 
   return {
-    labelProps,
     inputProps: mergeProps(inputProps, spinButtonProps, focusWithinProps, {
       role: 'textbox',
       'aria-valuemax': null,
@@ -117,6 +116,7 @@ export function useColorField(
       autoCorrect: 'off',
       spellCheck: 'false',
       onBlur: commit
-    })
+    }),
+    ...otherFieldProps
   };
 }
