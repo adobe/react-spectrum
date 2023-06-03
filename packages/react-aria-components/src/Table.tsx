@@ -426,7 +426,7 @@ export interface ColumnProps<T = object> extends RenderProps<ColumnRenderProps> 
   /** Rendered contents of the column if `children` contains child columns. */
   title?: ReactNode,
   /** A list of child columns used when dynamically rendering nested child columns. */
-  childColumns?: T[],
+  childColumns?: Iterable<T>,
   /** Whether the column allows sorting. */
   allowsSorting?: boolean,
   /** Whether a column is a [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) and should be announced by assistive technology during row navigation. */
@@ -437,7 +437,13 @@ export interface ColumnProps<T = object> extends RenderProps<ColumnRenderProps> 
 
 function Column<T extends object>(props: ColumnProps<T>, ref: ForwardedRef<HTMLTableCellElement>): JSX.Element {
   let render = useContext(CollectionRendererContext);
-  let childColumns = typeof render === 'function' ? render : props.children;
+  let childColumns: ReactNode | ((item: T) => ReactNode);
+  if (typeof render === 'function') {
+    childColumns = render;
+  } else if (typeof props.children !== 'function') {
+    childColumns = props.children;
+  }
+
   let children = useCollectionChildren({
     children: (props.title || props.childColumns) ? childColumns : null,
     items: props.childColumns
@@ -481,7 +487,7 @@ export {_TableBody as TableBody};
 
 export interface RowRenderProps extends ItemRenderProps {}
 
-export interface RowProps<T> extends RenderProps<RowRenderProps> {
+export interface RowProps<T> extends StyleRenderProps<RowRenderProps> {
   id?: Key,
   /** A list of columns used when dynamically rendering cells. */
   columns?: Iterable<T>,

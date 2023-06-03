@@ -11,7 +11,7 @@
  */
 import {AriaCheckboxGroupProps, AriaCheckboxProps, mergeProps, useCheckbox, useCheckboxGroup, useCheckboxGroupItem, useFocusRing, useHover, usePress, VisuallyHidden} from 'react-aria';
 import {CheckboxGroupState, useCheckboxGroupState, useToggleState, ValidationState} from 'react-stately';
-import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, useContext, useState} from 'react';
@@ -157,10 +157,12 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
       // Value is optional for standalone checkboxes, but required for CheckboxGroup items;
       // it's passed explicitly here to avoid typescript error (requires ignore).
       // @ts-ignore
-      value: props.value
+      value: props.value,
+      // ReactNode type doesn't allow function children.
+      children: typeof props.children === 'function' ? true : props.children
     }, groupState, ref)
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    : useCheckbox(props, useToggleState(props), ref);
+    : useCheckbox({...props, children: typeof props.children === 'function' ? true : props.children}, useToggleState(props), ref);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let isInteractionDisabled = isDisabled || isReadOnly;
 
@@ -234,11 +236,11 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
  * A checkbox allows a user to select multiple items from a list of individual items, or
  * to mark one individual item as selected.
  */
-const _Checkbox = forwardRef(Checkbox);
+const _Checkbox = /*#__PURE__*/ (forwardRef as forwardRefType)(Checkbox);
 
 /**
  * A checkbox group allows a user to select multiple items from a list of options.
  */
-const _CheckboxGroup = forwardRef(CheckboxGroup);
+const _CheckboxGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(CheckboxGroup);
 
 export {_Checkbox as Checkbox, _CheckboxGroup as CheckboxGroup};

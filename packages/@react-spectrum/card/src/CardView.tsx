@@ -19,7 +19,7 @@ import {GridCollection, useGridState} from '@react-stately/grid';
 import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {ReactElement, useCallback, useMemo, useRef} from 'react';
+import React, {ReactElement, ReactNode, useCallback, useMemo, useRef} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
 import {SpectrumCardViewProps} from '@react-types/card';
 import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
@@ -88,7 +88,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     keyboardDelegate: cardViewLayout
   }, state, domRef);
 
-  type View = ReusableView<Node<T>, unknown>;
+  type View = ReusableView<Node<T>, ReactNode>;
   let renderWrapper = (parent: View, reusableView: View) => (
     <VirtualizerItem
       key={reusableView.key}
