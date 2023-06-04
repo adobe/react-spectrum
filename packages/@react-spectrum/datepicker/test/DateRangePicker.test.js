@@ -1511,9 +1511,10 @@ describe('DateRangePicker', function () {
     });
 
     it('supports native validation', async () => {
+      let onValidationChange = jest.fn();
       let {getByTestId, getByRole, getAllByRole} = render(
         <form data-testid="form">
-          <DateRangePicker label="Value" startName="start" endName="end" validationBehavior="native" isRequired />
+          <DateRangePicker label="Value" startName="start" endName="end" validationBehavior="native" isRequired onValidationChange={onValidationChange} />
         </form>
       );
       let group = getByRole('group');
@@ -1522,8 +1523,27 @@ describe('DateRangePicker', function () {
 
       expect(group).not.toHaveAttribute('aria-describedby');
       expect(spinbuttons[0]).not.toHaveAttribute('aria-invalid');
+      expect(onValidationChange).not.toHaveBeenCalled();
 
       act(() => form.checkValidity());
+      expect(onValidationChange).toHaveBeenCalledTimes(1);
+      expect(onValidationChange).toHaveBeenLastCalledWith({
+        isInvalid: true,
+        errorMessage: 'Constraints not satisfied',
+        validationDetails: {
+          badInput: false,
+          customError: false,
+          patternMismatch: false,
+          rangeOverflow: false,
+          rangeUnderflow: false,
+          stepMismatch: false,
+          tooLong: false,
+          tooShort: false,
+          typeMismatch: false,
+          valueMissing: true,
+          valid: false
+        }
+      });
 
       expect(group).toHaveAttribute('aria-describedby');
       expect(spinbuttons[0]).toHaveAttribute('aria-invalid');
@@ -1556,6 +1576,69 @@ describe('DateRangePicker', function () {
       expect(spinbuttons[0]).not.toHaveAttribute('aria-invalid');
       expect(start.validity.valid).toBe(true);
       expect(end.validity.valid).toBe(true);
+    });
+
+    it('should set native input invalid when outside min/max range', () => {
+      let onValidationChange = jest.fn();
+      let {getAllByRole} = render(
+        <form data-testid="form">
+          <DateRangePicker label="Value" startName="start" endName="end" validationBehavior="native" minValue={today(getLocalTimeZone())} defaultValue={{start: today(getLocalTimeZone()), end: today(getLocalTimeZone()).add({days: 3})}} onValidationChange={onValidationChange} />
+        </form>
+      );
+      let spinbuttons = getAllByRole('spinbutton');
+      let input = document.querySelector('input[name=start]');
+
+      expect(spinbuttons[0]).not.toHaveAttribute('aria-invalid');
+      expect(input.validity.valid).toBe(true);
+      expect(onValidationChange).not.toHaveBeenCalled();
+
+      fireEvent.keyDown(spinbuttons[0], {key: 'ArrowDown'});
+      fireEvent.keyUp(spinbuttons[0], {key: 'ArrowDown'});
+
+      expect(spinbuttons[0]).toHaveAttribute('aria-invalid');
+      expect(input.validity.valid).toBe(false);
+      expect(onValidationChange).toHaveBeenCalledTimes(1);
+      expect(onValidationChange).toHaveBeenLastCalledWith({
+        isInvalid: true,
+        errorMessage: '',
+        validationDetails: {
+          badInput: false,
+          customError: false,
+          patternMismatch: false,
+          rangeOverflow: false,
+          rangeUnderflow: true,
+          stepMismatch: false,
+          tooLong: false,
+          tooShort: false,
+          typeMismatch: false,
+          valueMissing: false,
+          valid: false
+        }
+      });
+
+      fireEvent.keyDown(spinbuttons[0], {key: 'ArrowUp'});
+      fireEvent.keyUp(spinbuttons[0], {key: 'ArrowUp'});
+
+      expect(spinbuttons[0]).not.toHaveAttribute('aria-invalid');
+      expect(input.validity.valid).toBe(true);
+      expect(onValidationChange).toHaveBeenCalledTimes(2);
+      expect(onValidationChange).toHaveBeenLastCalledWith({
+        isInvalid: false,
+        errorMessage: '',
+        validationDetails: {
+          badInput: false,
+          customError: false,
+          patternMismatch: false,
+          rangeOverflow: false,
+          rangeUnderflow: false,
+          stepMismatch: false,
+          tooLong: false,
+          tooShort: false,
+          typeMismatch: false,
+          valueMissing: false,
+          valid: true
+        }
+      });
     });
 
     it('should not set native validation message when validationBehavior=aria', async () => {

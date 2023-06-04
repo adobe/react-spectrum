@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import { Validation, ValidationState } from '@react-types/shared';
+import {FormValidationEvent, ValidationState} from '@react-types/shared';
 import {ReactNode, RefObject, useEffect, useRef, useState} from 'react';
 import {useEffectEvent} from './useEffectEvent';
 
@@ -43,7 +43,8 @@ export function useFormValidation(
   ref: RefObject<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   validationState: ValidationState,
   errorMessage: ReactNode,
-  validationBehavior: 'native' | 'aria'
+  validationBehavior: 'native' | 'aria',
+  onValidationChange?: (value: FormValidationEvent) => void
 ): FormValidationResult {
   useEffect(() => {
     if (validationBehavior === 'native') {
@@ -57,16 +58,28 @@ export function useFormValidation(
     }
   }, [validationBehavior, validationState, errorMessage]);
 
-  return useInputValidity(ref, validationState, errorMessage, validationBehavior);
+  let [result, setValidity] = useFormValidationState(validationState, errorMessage);
+  useInputValidity(validationBehavior === 'native' ? ref : null, (validity) => {
+    setValidity(validity);
+    if (onValidationChange) {
+      onValidationChange({
+        isInvalid: !validity.validationDetails.valid,
+        errorMessage: validity.errorMessage,
+        validationDetails: validity.validationDetails
+      });
+    }
+  });
+
+  return result;
 }
 
 export interface InputValidity {
-  validity: ValidityState,
-  validationMessage: string
+  validationDetails: ValidityState,
+  errorMessage: string
 }
 
-const DEFAULT_VALIDITY = {
-  validity: {
+const DEFAULT_VALIDITY: InputValidity = {
+  validationDetails: {
     badInput: false,
     customError: false,
     patternMismatch: false,
@@ -79,7 +92,7 @@ const DEFAULT_VALIDITY = {
     valueMissing: false,
     valid: true
   },
-  validationMessage: ''
+  errorMessage: ''
 };
 
 function getValidity(input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement) {
@@ -101,44 +114,65 @@ function getValidity(input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectE
   };
 }
 
-export function useInputValidity(
-  inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
-  validationState: ValidationState,
-  errorMessage: ReactNode,
-  validationBehavior: 'native' | 'aria'
-): FormValidationResult {
-  let [{validity, validationMessage}, setValidation] = useState<InputValidity>(DEFAULT_VALIDITY);
+function isEqual(a: ValidityState, b: ValidityState) {
+  for (let key in a) {
+    if (b[key] !== a[key]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function useInputValidity(
+  inputRef?: RefObject<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
+  onValidationChange?: (value: InputValidity) => void
+) {
+  let validation = useRef(DEFAULT_VALIDITY);
+  let updateValidation = useEffectEvent((newValidation: InputValidity) => {
+    // Ignore custom errors. We don't want events for these.
+    if (newValidation.validationDetails.customError) {
+      return;
+    }
+
+    // Ignore duplicate events.
+    if (
+      validation.current.errorMessage === newValidation.errorMessage &&
+      isEqual(validation.current.validationDetails, newValidation.validationDetails)
+    ) {
+      return;
+    }
+
+    validation.current = newValidation;
+    if (onValidationChange) {
+      onValidationChange(newValidation);
+    }
+  });
 
   useEffect(() => {
-    if (!inputRef || validationBehavior !== 'native') return;
+    if (!inputRef) return;
 
     let input = inputRef.current;
     let form = input.form;
     let onInvalid = (e: InputEvent) => {
       e.preventDefault();
-      setValidation({
-        validity: getValidity(input),
-        validationMessage: input.validationMessage
+      updateValidation({
+        validationDetails: getValidity(input),
+        errorMessage: input.validationMessage
       });
     };
 
-    let onChange = (e) => {
+    let onChange = () => {
       if (input.validity.valid) {
-        setValidation(validation => {
-          if (validation.validity.valid) {
-            return validation;
-          }
-
-          return {
-            validity: getValidity(input),
-            validationMessage: input.validationMessage
-          };
+        updateValidation({
+          validationDetails: getValidity(input),
+          errorMessage: input.validationMessage
         });
       }
     };
 
     let onReset = () => {
-      setValidation(DEFAULT_VALIDITY);
+      updateValidation(DEFAULT_VALIDITY);
     };
 
     input.addEventListener('invalid', onInvalid);
@@ -151,17 +185,40 @@ export function useInputValidity(
       form?.removeEventListener('focusout', onChange);
       form?.removeEventListener('reset', onReset);
     };
-  }, [inputRef, validationBehavior]);
+  }, [inputRef, updateValidation]);
+}
 
-  if (!validationState && !validity.valid && !validity.customError) {
+function getValidationResult(validity: InputValidity, validationState: ValidationState, errorMessage: ReactNode) {
+  if (!validationState && !validity.validationDetails.valid && !validity.validationDetails.customError) {
     // Use native error unless a custom one is provided.
     validationState = 'invalid';
-    errorMessage = validationMessage;
+    errorMessage = validity.errorMessage;
   }
 
   return {
     validationState,
     errorMessage,
-    validationDetails: validity
+    validationDetails: validity.validationDetails
+  };
+}
+
+export function useFormValidationState(validationState: ValidationState, errorMessage: ReactNode): [FormValidationResult, (validity: InputValidity) => void] {
+  let [validation, setValidation] = useState<InputValidity>(DEFAULT_VALIDITY);
+  return [getValidationResult(validation, validationState, errorMessage), setValidation];
+}
+
+export function mergeValidity(a: ValidityState, b: ValidityState) {
+  return {
+    badInput: a.badInput || b.badInput,
+    customError: a.customError || b.customError,
+    patternMismatch: a.patternMismatch || b.patternMismatch,
+    rangeOverflow: a.rangeOverflow || b.rangeOverflow,
+    rangeUnderflow: a.rangeUnderflow || b.rangeUnderflow,
+    stepMismatch: a.stepMismatch || b.stepMismatch,
+    tooLong: a.tooLong || b.tooLong,
+    tooShort: a.tooShort || b.tooShort,
+    typeMismatch: a.typeMismatch || b.typeMismatch,
+    valueMissing: a.valueMissing || b.valueMissing,
+    valid: a.valid && b.valid
   };
 }

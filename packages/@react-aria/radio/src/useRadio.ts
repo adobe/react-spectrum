@@ -12,7 +12,7 @@
 
 import {AriaRadioProps} from '@react-types/radio';
 import {filterDOMProps, mergeProps, useFormReset, useFormValidation} from '@react-aria/utils';
-import {InputHTMLAttributes, RefObject, useEffect} from 'react';
+import {InputHTMLAttributes, RefObject} from 'react';
 import {radioGroupData} from './utils';
 import {RadioGroupState} from '@react-stately/radio';
 import {useFocusable} from '@react-aria/focus';
@@ -76,18 +76,8 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
     tabIndex = undefined;
   }
 
-  let {name, descriptionId, errorMessageId, isRequired, validationBehavior, errorMessage, inputRef} = radioGroupData.get(state)!;
-  let {validationState} = useFormValidation(ref, state.validationState, errorMessage, validationBehavior);
-  useEffect(() => {
-    // Sync ref for this radio into ref provided by radio group.
-    // This will be called for each radio in the group, but it doesn't really matter
-    // which input element ends up here since they will all have the same validation state.
-    inputRef.current = ref.current;
-    return () => {
-      inputRef.current = null;
-    };
-  }, [inputRef]);
-
+  let {name, descriptionId, errorMessageId, isRequired, validationBehavior, errorMessage, onValidationChange} = radioGroupData.get(state)!;
+  let {validationState} = useFormValidation(ref, state.validationState, errorMessage, validationBehavior, onValidationChange);
   useFormReset(ref, state.selectedValue, state.setSelectedValue);
 
   return {

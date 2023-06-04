@@ -24,7 +24,7 @@ import {FocusableRef} from '@react-types/shared';
 import {Input} from './Input';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps, useInputValidity} from '@react-aria/utils';
+import {mergeProps} from '@react-aria/utils';
 import {RangeCalendar} from '@react-spectrum/calendar';
 import React, {ReactElement, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
@@ -47,25 +47,27 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
     isReadOnly,
     autoFocus,
     placeholderValue,
-    maxVisibleMonths = 1
+    maxVisibleMonths = 1,
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let targetRef = useRef<HTMLDivElement>();
-  let startInputRef = useRef<HTMLInputElement>();
-  let endInputRef = useRef<HTMLInputElement>();
   let state = useDateRangePickerState({
     ...props,
     shouldCloseOnSelect: () => !state.hasTime
   });
-  let startValidation = useInputValidity(startInputRef, state.validationState, props.errorMessage, props.validationBehavior);
-  let endValidation = useInputValidity(endInputRef, state.validationState, props.errorMessage, props.validationBehavior);
-  let validationState = startValidation.validationState || endValidation.validationState;
-  let errorMessage = startValidation.errorMessage || endValidation.errorMessage;
-  let {labelProps, groupProps, buttonProps, dialogProps, startFieldProps, endFieldProps, descriptionProps, errorMessageProps, calendarProps} = useDateRangePicker({
-    ...props,
+  let {
+    labelProps,
+    groupProps,
+    buttonProps,
+    dialogProps,
+    startFieldProps,
+    endFieldProps,
+    descriptionProps,
+    errorMessageProps,
+    calendarProps,
     validationState,
     errorMessage
-  }, state, targetRef);
+  } = useDateRangePicker(props, state, targetRef);
   let {isOpen, setOpen} = state;
   let {direction} = useLocale();
   let domRef = useFocusManagerRef(ref);
@@ -148,14 +150,12 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
             {...startFieldProps}
             data-testid="start-date"
             isQuiet={props.isQuiet}
-            inputClassName={classNames(datepickerStyles, 'react-spectrum-Datepicker-startField')}
-            inputRef={startInputRef} />
+            inputClassName={classNames(datepickerStyles, 'react-spectrum-Datepicker-startField')} />
           <DateRangeDash />
           <DatePickerField
             {...endFieldProps}
             data-testid="end-date"
             isQuiet={props.isQuiet}
-            inputRef={endInputRef}
             inputClassName={classNames(
               styles,
               'spectrum-Datepicker-endField',

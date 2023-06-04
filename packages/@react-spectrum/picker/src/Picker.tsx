@@ -80,7 +80,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let selectRef = useRef<HTMLSelectElement>(null);
   // TODO: should this be inside useSelect? It currently cannot be because selectRef is not available.
   // Cannot be in HiddenSelect because we need to set validationState in useSelect too.
-  let {validationState, errorMessage} = useFormValidation(selectRef, props.validationState, props.errorMessage, props.validationBehavior);
+  let {validationState, errorMessage} = useFormValidation(selectRef, props.validationState, props.errorMessage, props.validationBehavior, props.onValidationChange);
   let {labelProps, triggerProps, valueProps, menuProps, descriptionProps, errorMessageProps} = useSelect({
     ...props,
     'aria-describedby': (isLoadingInitial ? progressCircleId : undefined),

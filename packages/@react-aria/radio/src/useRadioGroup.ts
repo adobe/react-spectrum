@@ -11,15 +11,15 @@
  */
 
 import {AriaRadioGroupProps} from '@react-types/radio';
-import {DOMAttributes} from '@react-types/shared';
-import {filterDOMProps, FormValidationResult, mergeProps, useId, useInputValidity} from '@react-aria/utils';
+import {DOMAttributes, FormValidationEvent} from '@react-types/shared';
+import {chain, filterDOMProps, FormValidationResult, mergeProps, useFormValidationState, useId} from '@react-aria/utils';
 import {getFocusableTreeWalker} from '@react-aria/focus';
 import {radioGroupData} from './utils';
 import {RadioGroupState} from '@react-stately/radio';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
-import {useRef} from 'react';
+import { useRef } from 'react';
 
 export interface RadioGroupAria extends FormValidationResult {
   /** Props for the radio group wrapper element. */
@@ -49,10 +49,7 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
   } = props;
   let {direction} = useLocale();
 
-  // This ref will point to one of the input elements in the radio group.
-  // It doesn't really matter which one - they should all have the same validation state.
-  let inputRef = useRef<HTMLInputElement>(null);
-  let {validationState, errorMessage, validationDetails} = useInputValidity(inputRef, props.validationState, props.errorMessage, validationBehavior);
+  let [{validationState, errorMessage, validationDetails}, setValidity] = useFormValidationState(props.validationState, props.errorMessage);
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     // Radio group is not an HTML input element so it
@@ -62,6 +59,26 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
     errorMessage
   });
 
+  let validityRef = useRef(null);
+  let onValidationChange = (v: FormValidationEvent) => {
+    let c = validityRef.current;
+
+    // Ignore duplicate events.
+    if (
+      c &&
+      c.errorMessage === v.errorMessage &&
+      Object.entries(v.validationDetails).every(([k, v]) => c.validationDetails[k] === v)
+    ) {
+      return;
+    }
+
+    validityRef.current = v;
+    setValidity(v);
+    if (props.onValidationChange) {
+      props.onValidationChange(v);
+    }
+  };
+
   let groupName = useId(name);
   radioGroupData.set(state, {
     name: groupName,
@@ -70,7 +87,7 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
     isRequired,
     validationBehavior,
     errorMessage,
-    inputRef
+    onValidationChange
   });
 
   let domProps = filterDOMProps(props, {labelable: true});

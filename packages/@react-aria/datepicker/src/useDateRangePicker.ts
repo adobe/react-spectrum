@@ -15,19 +15,19 @@ import {AriaDatePickerProps, AriaDateRangePickerProps, DateValue} from '@react-t
 import {AriaDialogProps} from '@react-types/dialog';
 import {createFocusManager} from '@react-aria/focus';
 import {DateRangePickerState} from '@react-stately/datepicker';
-import {DOMAttributes, KeyboardEvent} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useDescription, useId} from '@react-aria/utils';
+import {DOMAttributes, FormValidationEvent, KeyboardEvent} from '@react-types/shared';
+import {filterDOMProps, FormValidationResult, mergeProps, mergeValidity, useDescription, useFormValidationState, useId} from '@react-aria/utils';
 import {focusManagerSymbol, roleSymbol} from './useDateField';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {RangeCalendarProps} from '@react-types/calendar';
-import {RefObject, useMemo} from 'react';
+import {RefObject, useMemo, useRef} from 'react';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
-export interface DateRangePickerAria {
+export interface DateRangePickerAria extends FormValidationResult {
   /** Props for the date range picker's visible label element, if any. */
   labelProps: DOMAttributes,
   /** Props for the grouping element containing the date fields and button. */
@@ -55,9 +55,16 @@ export interface DateRangePickerAria {
  */
 export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePickerProps<T>, state: DateRangePickerState, ref: RefObject<Element>): DateRangePickerAria {
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let [startValidation, setStartValidation] = useFormValidationState(state.validationState, props.errorMessage);
+  let [endValidation, setEndValidation] = useFormValidationState(state.validationState, props.errorMessage);
+  let validationState = startValidation.validationState || endValidation.validationState;
+  let errorMessage = startValidation.errorMessage || endValidation.errorMessage;
+  let validationDetails = mergeValidity(startValidation.validationDetails, endValidation.validationDetails);
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
-    labelElementType: 'span'
+    labelElementType: 'span',
+    validationState,
+    errorMessage
   });
 
   let labelledBy = fieldProps['aria-labelledby'] || fieldProps.id;
@@ -116,6 +123,25 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
     onFocusWithinChange: props.onFocusChange
   });
 
+  let validityRef = useRef(null);
+  let onValidationChange = (v: FormValidationEvent) => {
+    let c = validityRef.current;
+
+    // Ignore duplicate events.
+    if (
+      c &&
+      c.errorMessage === v.errorMessage &&
+      Object.entries(v.validationDetails).every(([k, v]) => c.validationDetails[k] === v)
+    ) {
+      return;
+    }
+
+    validityRef.current = v;
+    if (props.onValidationChange) {
+      props.onValidationChange(v);
+    }
+  };
+
   return {
     groupProps: mergeProps(domProps, groupProps, fieldProps, descProps, focusWithinProps, {
       role: 'group',
@@ -166,14 +192,22 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
       value: state.value?.start,
       onChange: start => state.setDateTime('start', start),
       autoFocus: props.autoFocus,
-      name: props.startName
+      name: props.startName,
+      onValidationChange(v) {
+        setStartValidation(v);
+        onValidationChange(getValidationEvent(v, validationResultToEvent(endValidation)));
+      }
     },
     endFieldProps: {
       ...endFieldProps,
       ...commonFieldProps,
       value: state.value?.end,
       onChange: end => state.setDateTime('end', end),
-      name: props.endName
+      name: props.endName,
+      onValidationChange(v) {
+        setEndValidation(v);
+        onValidationChange(getValidationEvent(validationResultToEvent(startValidation), v));
+      }
     },
     descriptionProps,
     errorMessageProps,
@@ -190,6 +224,24 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
       defaultFocusedValue: state.dateRange ? undefined : props.placeholderValue,
       validationState: state.validationState,
       errorMessage: props.errorMessage
-    }
+    },
+    validationState,
+    errorMessage,
+    validationDetails
+  };
+}
+
+function getValidationEvent(a: FormValidationEvent, b: FormValidationEvent): FormValidationEvent {
+  let isInvalid = a.isInvalid || b.isInvalid;
+  let errorMessage = a.errorMessage || b.errorMessage;
+  let validationDetails = mergeValidity(a.validationDetails, b.validationDetails);
+  return {isInvalid, errorMessage, validationDetails};
+}
+
+function validationResultToEvent(result: FormValidationResult): FormValidationEvent {
+  return {
+    isInvalid: !result.validationDetails.valid,
+    errorMessage: typeof result.errorMessage === 'string' ? result.errorMessage : '',
+    validationDetails: result.validationDetails
   };
 }

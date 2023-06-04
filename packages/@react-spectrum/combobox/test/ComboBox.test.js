@@ -5227,9 +5227,10 @@ describe('ComboBox', function () {
       });
 
       it('supports native validation', async () => {
+        let onValidationChange = jest.fn();
         let {getByTestId, getByRole} = render(
           <form data-testid="form">
-            <ExampleComboBox name="test" validationBehavior="native" isRequired />
+            <ExampleComboBox name="test" validationBehavior="native" isRequired onValidationChange={onValidationChange} />
           </form>
         );
         let input = getByRole('combobox');
@@ -5237,8 +5238,27 @@ describe('ComboBox', function () {
 
         expect(input).not.toHaveAttribute('aria-describedby');
         expect(input).not.toHaveAttribute('aria-invalid');
+        expect(onValidationChange).not.toHaveBeenCalled();
 
         act(() => form.checkValidity());
+        expect(onValidationChange).toHaveBeenCalledTimes(1);
+        expect(onValidationChange).toHaveBeenLastCalledWith({
+          isInvalid: true,
+          errorMessage: 'Constraints not satisfied',
+          validationDetails: {
+            badInput: false,
+            customError: false,
+            patternMismatch: false,
+            rangeOverflow: false,
+            rangeUnderflow: false,
+            stepMismatch: false,
+            tooLong: false,
+            tooShort: false,
+            typeMismatch: false,
+            valueMissing: true,
+            valid: false
+          }
+        });
 
         expect(input).toHaveAttribute('aria-describedby');
         expect(input).toHaveAttribute('aria-invalid');
@@ -5260,6 +5280,24 @@ describe('ComboBox', function () {
         act(() => input.blur());
         expect(input).not.toHaveAttribute('aria-describedby');
         expect(input).not.toHaveAttribute('aria-invalid');
+        expect(onValidationChange).toHaveBeenCalledTimes(2);
+        expect(onValidationChange).toHaveBeenLastCalledWith({
+          isInvalid: false,
+          errorMessage: '',
+          validationDetails: {
+            badInput: false,
+            customError: false,
+            patternMismatch: false,
+            rangeOverflow: false,
+            rangeUnderflow: false,
+            stepMismatch: false,
+            tooLong: false,
+            tooShort: false,
+            typeMismatch: false,
+            valueMissing: false,
+            valid: true
+          }
+        });
       });
 
       it('supports native custom validation message', async () => {
@@ -5368,17 +5406,37 @@ describe('ComboBox', function () {
       });
 
       it('supports native validation', async () => {
+        let onValidationChange = jest.fn();
         let {getByTestId, getAllByRole, getByRole} = render(
           <form data-testid="form">
-            <ExampleComboBox name="test" validationBehavior="native" isRequired />
+            <ExampleComboBox name="test" validationBehavior="native" isRequired onValidationChange={onValidationChange} />
           </form>
         );
         let button = getAllByRole('button')[0];
         let form = getByTestId('form');
 
         expect(button).not.toHaveAttribute('aria-describedby');
+        expect(onValidationChange).not.toHaveBeenCalled();
 
         act(() => form.checkValidity());
+        expect(onValidationChange).toHaveBeenCalledTimes(1);
+        expect(onValidationChange).toHaveBeenLastCalledWith({
+          isInvalid: true,
+          errorMessage: 'Constraints not satisfied',
+          validationDetails: {
+            badInput: false,
+            customError: false,
+            patternMismatch: false,
+            rangeOverflow: false,
+            rangeUnderflow: false,
+            stepMismatch: false,
+            tooLong: false,
+            tooShort: false,
+            typeMismatch: false,
+            valueMissing: true,
+            valid: false
+          }
+        });
 
         expect(button).toHaveAttribute('aria-describedby');
         expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
@@ -5401,6 +5459,24 @@ describe('ComboBox', function () {
         });
 
         expect(button).not.toHaveAttribute('aria-describedby');
+        expect(onValidationChange).toHaveBeenCalledTimes(2);
+        expect(onValidationChange).toHaveBeenLastCalledWith({
+          isInvalid: false,
+          errorMessage: '',
+          validationDetails: {
+            badInput: false,
+            customError: false,
+            patternMismatch: false,
+            rangeOverflow: false,
+            rangeUnderflow: false,
+            stepMismatch: false,
+            tooLong: false,
+            tooShort: false,
+            typeMismatch: false,
+            valueMissing: false,
+            valid: true
+          }
+        });
       });
 
       it('supports native custom validation message', async () => {

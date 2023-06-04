@@ -2242,10 +2242,11 @@ describe('Picker', function () {
     });
 
     it('supports native validation', async () => {
+      let onValidationChange = jest.fn();
       let {getByTestId, getByRole} = render(
         <Provider theme={theme}>
           <form data-testid="form">
-            <Picker name="picker" data-testid="picker" label="Test" validationBehavior="native" isRequired>
+            <Picker name="picker" data-testid="picker" label="Test" validationBehavior="native" isRequired onValidationChange={onValidationChange}>
               <Item key="one">One</Item>
               <Item key="two">Two</Item>
               <Item key="three">Three</Item>
@@ -2258,8 +2259,27 @@ describe('Picker', function () {
       let form = getByTestId('form');
 
       expect(picker).not.toHaveAttribute('aria-describedby');
+      expect(onValidationChange).not.toHaveBeenCalled();
 
       act(() => form.checkValidity());
+      expect(onValidationChange).toHaveBeenCalledTimes(1);
+      expect(onValidationChange).toHaveBeenLastCalledWith({
+        isInvalid: true,
+        errorMessage: 'Constraints not satisfied',
+        validationDetails: {
+          badInput: false,
+          customError: false,
+          patternMismatch: false,
+          rangeOverflow: false,
+          rangeUnderflow: false,
+          stepMismatch: false,
+          tooLong: false,
+          tooShort: false,
+          typeMismatch: false,
+          valueMissing: true,
+          valid: false
+        }
+      });
 
       expect(picker).toHaveAttribute('aria-describedby');
       expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
@@ -2273,6 +2293,24 @@ describe('Picker', function () {
       triggerPress(items[1]);
       expect(input).toHaveValue('two');
       expect(picker).not.toHaveAttribute('aria-describedby');
+      expect(onValidationChange).toHaveBeenCalledTimes(2);
+      expect(onValidationChange).toHaveBeenLastCalledWith({
+        isInvalid: false,
+        errorMessage: '',
+        validationDetails: {
+          badInput: false,
+          customError: false,
+          patternMismatch: false,
+          rangeOverflow: false,
+          rangeUnderflow: false,
+          stepMismatch: false,
+          tooLong: false,
+          tooShort: false,
+          typeMismatch: false,
+          valueMissing: false,
+          valid: true
+        }
+      });
     });
 
     it('supports native custom validation message', async () => {

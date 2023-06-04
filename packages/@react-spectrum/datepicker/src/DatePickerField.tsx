@@ -24,7 +24,6 @@ interface DatePickerFieldProps<T extends DateValue> extends SpectrumDatePickerPr
   inputClassName?: string,
   hideValidationIcon?: boolean,
   maxGranularity?: SpectrumDatePickerProps<T>['granularity'],
-  inputRef: RefObject<HTMLInputElement>
 }
 
 export function DatePickerField<T extends DateValue>(props: DatePickerFieldProps<T>) {
@@ -32,8 +31,7 @@ export function DatePickerField<T extends DateValue>(props: DatePickerFieldProps
     isDisabled,
     isReadOnly,
     isRequired,
-    inputClassName,
-    inputRef
+    inputClassName
   } = props;
   let ref = useRef();
   let {locale} = useLocale();
@@ -43,6 +41,7 @@ export function DatePickerField<T extends DateValue>(props: DatePickerFieldProps
     createCalendar
   });
 
+  let inputRef = useRef();
   let {fieldProps, inputProps} = useDateField({...props, inputRef}, state, ref);
 
   return (

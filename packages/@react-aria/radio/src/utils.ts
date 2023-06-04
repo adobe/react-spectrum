@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {MutableRefObject, ReactNode} from 'react';
+import {FormValidationEvent} from '@react-types/shared';
 import {RadioGroupState} from '@react-stately/radio';
+import {ReactNode} from 'react';
 
 interface RadioGroupData {
   name: string,
@@ -20,7 +21,7 @@ interface RadioGroupData {
   isRequired: boolean,
   validationBehavior: 'aria' | 'native',
   errorMessage: ReactNode,
-  inputRef: MutableRefObject<HTMLInputElement>
+  onValidationChange?: (e: FormValidationEvent) => void
 }
 
 export const radioGroupData = new WeakMap<RadioGroupState, RadioGroupData>();

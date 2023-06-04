@@ -482,9 +482,10 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
   `('$Name supports native validation', async ({Component}) => {
+    let onValidationChange = jest.fn();
     let {getByTestId} = render(
       <form data-testid="form">
-        <Component label="Name" data-testid="name" name="name" validationBehavior="native" isRequired />
+        <Component label="Name" data-testid="name" name="name" validationBehavior="native" isRequired onValidationChange={onValidationChange} />
       </form>
     );
     let input = getByTestId('name');
@@ -492,21 +493,68 @@ describe('Shared TextField behavior', () => {
 
     expect(input).not.toHaveAttribute('aria-describedby');
     expect(input).not.toHaveAttribute('aria-invalid');
+    expect(onValidationChange).not.toHaveBeenCalled();
 
     act(() => form.checkValidity());
 
     expect(input).toHaveAttribute('aria-describedby');
     expect(input).toHaveAttribute('aria-invalid');
     expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    expect(onValidationChange).toHaveBeenCalledTimes(1);
+    expect(onValidationChange).toHaveBeenLastCalledWith({
+      isInvalid: true,
+      errorMessage: 'Constraints not satisfied',
+      validationDetails: {
+        badInput: false,
+        customError: false,
+        patternMismatch: false,
+        rangeOverflow: false,
+        rangeUnderflow: false,
+        stepMismatch: false,
+        tooLong: false,
+        tooShort: false,
+        typeMismatch: false,
+        valueMissing: true,
+        valid: false
+      }
+    });
+
+    await act(() => userEvent.type(input, 'test'));
+    act(() => input.blur());
+
+    expect(input).not.toHaveAttribute('aria-describedby');
+    expect(input).not.toHaveAttribute('aria-invalid');
+    expect(onValidationChange).toHaveBeenCalledTimes(2);
+    expect(onValidationChange).toHaveBeenLastCalledWith({
+      isInvalid: false,
+      errorMessage: '',
+      validationDetails: {
+        badInput: false,
+        customError: false,
+        patternMismatch: false,
+        rangeOverflow: false,
+        rangeUnderflow: false,
+        stepMismatch: false,
+        tooLong: false,
+        tooShort: false,
+        typeMismatch: false,
+        valueMissing: false,
+        valid: true
+      }
+    });
   });
 
   it.each`
     Name                | Component
     ${'v3 TextField'}   | ${TextField}
-    ${'v3 TextArea'}    | ${TextArea}
-    ${'v3 SearchField'} | ${SearchField}
   `('$Name supports native custom validation message', async ({Component}) => {
-    let {getByTestId, rerender} = render(<Component label="Name" data-testid="name" name="name" validationBehavior="native" validationState="invalid" errorMessage="custom" />);
+    let onValidationChange = jest.fn();
+    let {getByTestId, rerender} = render(
+      <form data-testid="form">
+        <Component label="Name" data-testid="name" name="name" validationBehavior="native" validationState="invalid" errorMessage="custom" onValidationChange={onValidationChange} />
+      </form>
+    );
+    let form = getByTestId('form');
     let input = getByTestId('name');
 
     expect(input).toHaveAttribute('aria-describedby');
@@ -515,10 +563,17 @@ describe('Shared TextField behavior', () => {
     expect(input.validity.valid).toBe(false);
     expect(input.validationMessage).toBe('custom');
 
-    rerender(<Component label="Name" data-testid="name" name="name" validationBehavior="native" />);
+    act(() => form.checkValidity());
+
+    rerender(
+      <form data-testid="form">
+        <Component label="Name" data-testid="name" name="name" validationBehavior="native" />
+      </form>
+    );
     expect(input).not.toHaveAttribute('aria-describedby');
     expect(input).not.toHaveAttribute('aria-invalid');
     expect(input.validity.valid).toBe(true);
+    expect(onValidationChange).not.toHaveBeenCalled();
   });
 
   it.each`

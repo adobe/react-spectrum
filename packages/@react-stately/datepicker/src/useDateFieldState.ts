@@ -11,7 +11,7 @@
  */
 
 import {Calendar, DateFormatter, getMinimumDayInMonth, getMinimumMonthInYear, GregorianCalendar, toCalendar} from '@internationalized/date';
-import {convertValue, createPlaceholderDate, FieldOptions, getFormatOptions, isInvalid, useDefaultProps} from './utils';
+import {convertValue, createPlaceholderDate, FieldOptions, getFormatOptions, isInvalid, useDefaultProps, validate} from './utils';
 import {DatePickerProps, DateValue, Granularity} from '@react-types/datepicker';
 import {getPlaceholder} from './placeholders';
 import {useControlledState} from '@react-stately/utils';
@@ -144,7 +144,8 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     hideTimeZone,
     isDisabled,
     isReadOnly,
-    isRequired
+    isRequired,
+    onValidationChange
   } = props;
 
   let v: DateValue = (props.value || props.defaultValue || props.placeholderValue);
@@ -166,6 +167,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   );
 
   let calendarValue = useMemo(() => convertValue(value, calendar), [value, calendar]);
+  let isValueInvalid = useMemo(() => isInvalid(value, props.minValue, props.maxValue), [value]);
 
   // We keep track of the placeholder date separately in state so that onChange is not called
   // until all segments are set. If the value === null (not undefined), then assume the component
@@ -239,11 +241,13 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       setDate(null);
       setPlaceholderDate(createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone));
       setValidSegments({});
+      validate(null, props.minValue, props.maxValue, isValueInvalid, onValidationChange);
     } else if (Object.keys(validSegments).length >= Object.keys(allSegments).length) {
       // The display calendar should not have any effect on the emitted value.
       // Emit dates in the same calendar as the original value, if any, otherwise gregorian.
       newValue = toCalendar(newValue, v?.calendar || new GregorianCalendar());
       setDate(newValue);
+      validate(newValue, props.minValue, props.maxValue, isValueInvalid, onValidationChange);
     } else {
       setPlaceholderDate(newValue);
     }
@@ -301,7 +305,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   };
 
   let validationState: ValidationState = props.validationState ||
-    (isInvalid(calendarValue, props.minValue, props.maxValue) ? 'invalid' : null);
+    (isValueInvalid ? 'invalid' : null);
 
   return {
     value: calendarValue,
@@ -368,6 +372,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
 
       setDate(null);
       setValue(value);
+      validate(null, props.minValue, props.maxValue, isValueInvalid, onValidationChange);
     },
     formatValue(fieldOptions: FieldOptions) {
       if (!calendarValue) {

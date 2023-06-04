@@ -297,21 +297,59 @@ describe('Checkbox', function () {
   });
 
   it('supports native validation', async () => {
+    let onValidationChange = jest.fn();
     let {getByTestId, getByRole} = render(
       <form data-testid="form">
-        <Checkbox name="test" validationBehavior="native" isRequired>Checkbox</Checkbox>
+        <Checkbox name="test" validationBehavior="native" isRequired onValidationChange={onValidationChange}>Checkbox</Checkbox>
       </form>
     );
     let input = getByRole('checkbox');
     let form = getByTestId('form');
 
     expect(input).not.toHaveAttribute('aria-invalid');
+    expect(onValidationChange).not.toHaveBeenCalled();
 
     act(() => form.checkValidity());
     expect(input).toHaveAttribute('aria-invalid');
+    expect(onValidationChange).toHaveBeenCalledTimes(1);
+    expect(onValidationChange).toHaveBeenLastCalledWith({
+      isInvalid: true,
+      errorMessage: 'Constraints not satisfied',
+      validationDetails: {
+        badInput: false,
+        customError: false,
+        patternMismatch: false,
+        rangeOverflow: false,
+        rangeUnderflow: false,
+        stepMismatch: false,
+        tooLong: false,
+        tooShort: false,
+        typeMismatch: false,
+        valueMissing: true,
+        valid: false
+      }
+    });
 
     act(() => userEvent.click(input));
     expect(input).not.toHaveAttribute('aria-invalid');
+    expect(onValidationChange).toHaveBeenCalledTimes(2);
+    expect(onValidationChange).toHaveBeenLastCalledWith({
+      isInvalid: false,
+      errorMessage: '',
+      validationDetails: {
+        badInput: false,
+        customError: false,
+        patternMismatch: false,
+        rangeOverflow: false,
+        rangeUnderflow: false,
+        stepMismatch: false,
+        tooLong: false,
+        tooShort: false,
+        typeMismatch: false,
+        valueMissing: false,
+        valid: true
+      }
+    });
   });
 
   it('supports native custom validation message', async () => {

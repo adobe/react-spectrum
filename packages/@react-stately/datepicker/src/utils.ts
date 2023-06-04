@@ -12,6 +12,7 @@
 
 import {Calendar, now, Time, toCalendar, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
 import {DatePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
+import {FormValidationEvent} from '@react-types/shared';
 import {useState} from 'react';
 
 export function isInvalid(value: DateValue, minValue: DateValue, maxValue: DateValue) {
@@ -19,6 +20,37 @@ export function isInvalid(value: DateValue, minValue: DateValue, maxValue: DateV
     (minValue != null && value.compare(minValue) < 0) ||
     (maxValue != null && value.compare(maxValue) > 0)
   );
+}
+
+export function validate(
+  value: DateValue,
+  minValue: DateValue,
+  maxValue: DateValue,
+  wasInvalid: boolean,
+  onValidationChange?: (e: FormValidationEvent
+) => void) {
+  if (onValidationChange) {
+    let isNewValueInvalid = isInvalid(value, minValue, maxValue);
+    if (isNewValueInvalid !== wasInvalid) {
+      onValidationChange({
+        isInvalid: isNewValueInvalid,
+        errorMessage: '',
+        validationDetails: {
+          badInput: false,
+          customError: false,
+          patternMismatch: false,
+          rangeOverflow: isNewValueInvalid && maxValue != null && value.compare(maxValue) > 0,
+          rangeUnderflow: isNewValueInvalid && minValue != null && value.compare(minValue) < 0,
+          stepMismatch: false,
+          tooLong: false,
+          tooShort: false,
+          typeMismatch: false,
+          valueMissing: false,
+          valid: !isNewValueInvalid
+        }
+      });
+    }
+  }
 }
 
 export type FieldOptions = Pick<Intl.DateTimeFormatOptions, 'year' | 'month' | 'day' | 'hour' | 'minute' | 'second'>;

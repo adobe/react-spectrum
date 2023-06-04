@@ -59,7 +59,8 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     formValue = 'text',
     allowsCustomValue,
     isRequired,
-    validationBehavior
+    validationBehavior,
+    onValidationChange
   } = props;
   if (allowsCustomValue) {
     formValue = 'text';
@@ -81,7 +82,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'listbox'}, state, buttonRef);
 
   let inputRef = useRef<HTMLInputElement>(null);
-  let {validationState, errorMessage} = useFormValidation(inputRef, props.validationState, props.errorMessage, validationBehavior);
+  let {validationState, errorMessage} = useFormValidation(inputRef, props.validationState, props.errorMessage, validationBehavior, onValidationChange);
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     labelElementType: 'span',

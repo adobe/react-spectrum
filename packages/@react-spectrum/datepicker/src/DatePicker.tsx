@@ -24,7 +24,7 @@ import {FocusableRef} from '@react-types/shared';
 import {Input} from './Input';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps, useInputValidity} from '@react-aria/utils';
+import {mergeProps} from '@react-aria/utils';
 import React, {ReactElement, useRef} from 'react';
 import '@adobe/spectrum-css-temp/components/textfield/vars.css'; // HACK: must be included BEFORE inputgroup
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
@@ -56,13 +56,18 @@ function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref:
     shouldCloseOnSelect: () => !state.hasTime
   });
 
-  let inputRef = useRef();
-  let {validationState, errorMessage} = useInputValidity(inputRef, state.validationState, props.errorMessage, props.validationBehavior);
-  let {groupProps, labelProps, fieldProps, descriptionProps, errorMessageProps, buttonProps, dialogProps, calendarProps} = useDatePicker({
-    ...props,
+  let {
+    groupProps,
+    labelProps,
+    fieldProps,
+    descriptionProps,
+    errorMessageProps,
+    buttonProps,
+    dialogProps,
+    calendarProps,
     validationState,
     errorMessage
-  }, state, targetRef);
+  } = useDatePicker(props, state, targetRef);
   let {isOpen, setOpen} = state;
   let {direction} = useLocale();
   let domRef = useFocusManagerRef(ref);
@@ -144,8 +149,7 @@ function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref:
           <DatePickerField
             {...fieldProps}
             data-testid="date-field"
-            isQuiet={isQuiet}
-            inputRef={inputRef} />
+            isQuiet={isQuiet} />
         </Input>
         <DialogTrigger
           type="popover"

@@ -110,13 +110,14 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     isDisabled = false,
     isRequired = false,
     validationBehavior = 'aria',
+    onValidationChange,
     isReadOnly = false,
     type = 'text',
     value,
     defaultValue,
     onChange = () => {}
   }: AriaTextFieldOptions<TextFieldIntrinsicElements> = props;
-  let {validationState, errorMessage, validationDetails} = useFormValidation(ref, props.validationState, props.errorMessage, validationBehavior);
+  let {validationState, errorMessage, validationDetails} = useFormValidation(ref, props.validationState, props.errorMessage, validationBehavior, onValidationChange);
   let {focusableProps} = useFocusable(props, ref);
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,

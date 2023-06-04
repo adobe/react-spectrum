@@ -27,7 +27,20 @@ export interface Validation {
    * when a value is missing, or only mark the field as required via ARIA.
    * @default 'aria'
    */
-  validationBehavior?: 'aria' | 'native'
+  validationBehavior?: 'aria' | 'native',
+  /**
+   * Handler that is called when input validation changes.
+   */
+  onValidationChange?: (state: FormValidationEvent) => void
+}
+
+export interface FormValidationEvent {
+  /** Whether the input is invalid. */
+  isInvalid: boolean,
+  /** The current error message for the input if it is invalid, otherwise an empty string. */
+  errorMessage: string,
+  /** The native validation details for the input. */
+  validationDetails: ValidityState
 }
 
 export interface InputBase {
