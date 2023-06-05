@@ -141,4 +141,42 @@ describe('useCalendar', () => {
       await testKeyboard(new CalendarDate(2019, 6, 5), 'June 2 to 15, 2019', 'End', 1, 'Saturday, June 8, 2019', 'June 2 to 15, 2019', {visibleDuration: {weeks: 2}});
     });
   });
+
+  function testPagination(defaultValue, rangeBefore, rangeAfter, rel, count,  visibleDuration, pageBehavior) {
+    let {getByTestId, getByLabelText, unmount} = render(<Example defaultValue={defaultValue} autoFocus visibleDuration={visibleDuration} pageBehavior={pageBehavior} />);
+    let grid = getByTestId('range');
+    expect(grid).toHaveTextContent(rangeBefore);
+
+    let btn = getByLabelText(rel);
+
+    for (let i = 0; i < count; i++) {
+      fireEvent.click(btn);
+    }
+
+    expect(grid).toHaveTextContent(rangeAfter);
+  
+    unmount();
+  }  
+
+  describe('pagination', () => {
+    it.each`
+      Name | defaultValue | rangeBefore | rangeAfter | rel | count | visibleDuration
+      ${'going forward one'} | ${new CalendarDate(2019, 1, 1)} | ${'January to February 2019'} | ${'March to April 2019'} | ${'Next'} | ${1} | ${{months: 2}}
+      ${'going forward two'} | ${new CalendarDate(2019, 1, 1)} | ${'January to February 2019'} | ${'May to June 2019'} | ${'Next'} | ${2} | ${{months: 2}}
+      ${'going backward one'} | ${new CalendarDate(2019, 1, 1)} | ${'January to February 2019'} | ${'November to December 2018'} | ${'Previous'} | ${1} | ${{months: 2}}
+      ${'going backward two'} | ${new CalendarDate(2019, 1, 1)} | ${'January to February 2019'} | ${'September to October 2018'} | ${'Previous'} | ${2} | ${{months: 2}}
+      `('should use visible as default value $Name', ({defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration}) => {
+        testPagination(defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration);
+      });
+      
+    it.each`
+      Name | defaultValue | rangeBefore | rangeAfter | rel | count | visibleDuration | pageBehavior
+      ${'going forward one'} | ${new CalendarDate(2019, 1, 1)} | ${'January to February 2019'} | ${'February to March 2019'} | ${'Next'} | ${1} | ${{months: 2}} | ${'single'}
+      ${'going forward two'} | ${new CalendarDate(2019, 1, 1)} | ${'January to February 2019'} | ${'March to April 2019'} | ${'Next'} | ${2} | ${{months: 2}} | ${'single'}
+      ${'going backward one'} | ${new CalendarDate(2019, 1, 1)} | ${'January to February 2019'} | ${'December 2018 to January 2019'} | ${'Previous'} | ${1} | ${{months: 2}} | ${'single'}
+      ${'going backward two'} | ${new CalendarDate(2019, 1, 1)} | ${'January to February 2019'} | ${'November to December 2018'} | ${'Previous'} | ${2} | ${{months: 2}} | ${'single'}
+      `('should use single $Name', ({defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior}) => {
+        testPagination(defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior);
+      });
+  });
 });

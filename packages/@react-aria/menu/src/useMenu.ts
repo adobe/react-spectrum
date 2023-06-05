@@ -74,6 +74,8 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
   return {
     menuProps: mergeProps(domProps, {
       role: 'menu',
+      // this forces AT to move their cursors into any open sub dialogs, the sub dialogs contain hidden close buttons in order to come back to this level of the menu
+      'aria-hidden': state.expandedKeys.size > 0 ? true : undefined,
       ...listProps,
       onKeyDown: (e) => {
         // don't clear the menu selected keys if the user is presses escape since escape closes the menu

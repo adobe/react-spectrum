@@ -489,7 +489,7 @@ This example wraps `ComboBox` and all of its children together into a single com
 import type {ComboBoxProps, ItemProps} from 'react-aria-components';
 import {Text} from 'react-aria-components';
 
-interface MyComboBoxProps<T extends object> extends ComboBoxProps<T> {
+interface MyComboBoxProps<T extends object> extends Omit<ComboBoxProps<T>, 'children'> {
   label?: string,
   description?: string | null,
   errorMessage?: string | null,

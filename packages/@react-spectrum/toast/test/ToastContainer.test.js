@@ -326,7 +326,14 @@ describe('Toast Provider and Container', function () {
 
       return (
         <Button
-          onPress={() => close ? setClose(close()) : setClose(() => ToastQueue.positive('Toast is done!'))}
+          onPress={() => {
+            if (close) {
+              setClose(close());
+            } else {
+              let close = ToastQueue.positive('Toast is done!');
+              setClose(() => close);
+            }
+          }}
           variant="primary">
           {close ? 'Hide' : 'Show'} Toast
         </Button>
