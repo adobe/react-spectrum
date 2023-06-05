@@ -13,8 +13,7 @@
 import {alignCenter, constrainValue, isInvalid, previousAvailableDate} from './utils';
 import {Calendar, CalendarDate, DateDuration, GregorianCalendar, isEqualDay, maxDate, minDate, toCalendar, toCalendarDate} from '@internationalized/date';
 import {CalendarState, PageBehavior, RangeCalendarState} from './types';
-import {DateRange, DateValue} from '@react-types/calendar';
-import {RangeCalendarProps} from '@react-types/calendar';
+import {DateRange, DateValue, RangeCalendarProps} from '@react-types/calendar';
 import {RangeValue} from '@react-types/shared';
 import {useCalendarState} from './useCalendarState';
 import {useControlledState} from '@react-stately/utils';

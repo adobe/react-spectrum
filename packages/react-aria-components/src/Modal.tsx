@@ -12,9 +12,8 @@
 
 import {AriaModalOverlayProps, DismissButton, Overlay, useModalOverlay} from 'react-aria';
 import {DOMAttributes} from '@react-types/shared';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, mergeRefs, useObjectRef, useViewportSize} from '@react-aria/utils';
 import {forwardRefType, RenderProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
-import {mergeRefs, useObjectRef, useViewportSize} from '@react-aria/utils';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext, useMemo, useRef} from 'react';
 

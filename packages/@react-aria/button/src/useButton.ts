@@ -20,8 +20,7 @@ import {
 } from 'react';
 import {AriaButtonProps} from '@react-types/button';
 import {DOMAttributes} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
-import {mergeProps} from '@react-aria/utils';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
 

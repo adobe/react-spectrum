@@ -14,11 +14,10 @@ import {ButtonContext} from './Button';
 import {CalendarDate, createCalendar, DateDuration, endOfMonth, getWeeksInMonth, isSameDay, isSameMonth} from '@internationalized/date';
 import {CalendarState, RangeCalendarState, useCalendarState, useRangeCalendarState} from 'react-stately';
 import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
-import {createContext, ForwardedRef, forwardRef, ReactElement, useContext} from 'react';
 import {DOMAttributes, FocusableElement} from '@react-types/shared';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {HeadingContext} from './Heading';
-import React from 'react';
+import React, {createContext, ForwardedRef, forwardRef, ReactElement, useContext} from 'react';
 import {TextContext} from './Text';
 
 export interface CalendarProps<T extends DateValue> extends Omit<BaseCalendarProps<T>, 'errorMessage'>, RenderProps<CalendarState>, SlotProps {

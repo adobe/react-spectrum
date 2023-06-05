@@ -1,7 +1,6 @@
 import {DOMAttributes} from '@react-types/shared';
 import {isFocusVisible, useFocus, useFocusVisibleListener, useFocusWithin} from '@react-aria/interactions';
-import {useCallback, useState} from 'react';
-import {useRef} from 'react';
+import {useCallback, useRef, useState} from 'react';
 
 export interface AriaFocusRingProps {
   /**

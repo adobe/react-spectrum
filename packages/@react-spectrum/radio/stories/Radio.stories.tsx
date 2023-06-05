@@ -11,8 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
-import {Flex} from '@adobe/react-spectrum';
+import {Content, ContextualHelp, Flex, Heading} from '@adobe/react-spectrum';
 import {Provider} from '@react-spectrum/provider';
 import {Radio, RadioGroup} from '../src';
 import React, {useState} from 'react';

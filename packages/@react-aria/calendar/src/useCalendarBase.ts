@@ -12,10 +12,9 @@
 
 import {announce} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
-import {AriaLabelingProps, DOMAttributes} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, DOMProps} from '@react-types/shared';
 import {CalendarPropsBase} from '@react-types/calendar';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
-import {DOMProps} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useLabels, useSlotId, useUpdateEffect} from '@react-aria/utils';
 import {hookData, useSelectedDateDescription, useVisibleRangeDescription} from './utils';
 // @ts-ignore

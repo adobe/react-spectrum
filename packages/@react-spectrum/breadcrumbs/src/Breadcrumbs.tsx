@@ -19,9 +19,8 @@ import React, {Key, ReactElement, useCallback, useRef} from 'react';
 import {SpectrumBreadcrumbsProps} from '@react-types/breadcrumbs';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbs} from '@react-aria/breadcrumbs';
-import {useLayoutEffect, useValueEffect} from '@react-aria/utils';
+import {useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useResizeObserver} from '@react-aria/utils';
 
 const MIN_VISIBLE_ITEMS = 1;
 const MAX_VISIBLE_ITEMS = 4;
