@@ -278,7 +278,6 @@ export class TableLayout<T> extends ListLayout<T> {
     let children: LayoutNode[] = [];
     for (let node of this.collection) {
       let rowHeight = (this.rowHeight ?? this.estimatedRowHeight) + 1;
-      console.log('node in collection in layout', node);
       // Skip rows before the valid rectangle unless they are already cached.
       if (y + rowHeight < this.validRect.y && !this.isValid(node, y)) {
         y += rowHeight;
@@ -355,19 +354,22 @@ export class TableLayout<T> extends ListLayout<T> {
     let children: LayoutNode[] = [];
     let height = 0;
     for (let child of getChildNodes(node, this.collection)) {
-      if (x > this.validRect.maxX) {
-        // Adjust existing cached layoutInfo to ensure that it is out of view.
-        // This can happen due to column resizing.
-        let layoutNode = this.layoutNodes.get(child.key);
-        if (layoutNode) {
-          layoutNode.layoutInfo.rect.x = x;
-          x += layoutNode.layoutInfo.rect.width;
+      // TODO: change here: only run the below for children that are cells, skip nested rows
+      if (child.type === 'cell') {
+        if (x > this.validRect.maxX) {
+          // Adjust existing cached layoutInfo to ensure that it is out of view.
+          // This can happen due to column resizing.
+          let layoutNode = this.layoutNodes.get(child.key);
+          if (layoutNode) {
+            layoutNode.layoutInfo.rect.x = x;
+            x += layoutNode.layoutInfo.rect.width;
+          }
+        } else {
+          let layoutNode = this.buildChild(child, x, y);
+          x = layoutNode.layoutInfo.rect.maxX;
+          height = Math.max(height, layoutNode.layoutInfo.rect.height);
+          children.push(layoutNode);
         }
-      } else {
-        let layoutNode = this.buildChild(child, x, y);
-        x = layoutNode.layoutInfo.rect.maxX;
-        height = Math.max(height, layoutNode.layoutInfo.rect.height);
-        children.push(layoutNode);
       }
     }
 

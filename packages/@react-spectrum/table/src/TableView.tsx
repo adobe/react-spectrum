@@ -235,6 +235,8 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   //   selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   // });
 
+  // TODO: make copy of TableView and add treegrid specific changes there. Only do so after finalizing changes, it is useful to see what changes
+  // needed to be made to Table to get it working
   let {collection, expandedKeys, toggleKey} = useTreeGridState({
     ...props,
     showSelectionCheckboxes,
@@ -370,7 +372,6 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     }
 
     if (reusableView.viewType === 'row') {
-      console.log('resusualbe view', reusableView)
       return (
         <TableRow
           key={reusableView.key}
@@ -1187,7 +1188,6 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
   let ref = useRef();
   let {state, layout, dragAndDropHooks, dragState, dropState} = useTableContext();
   let allowsInteraction = state.selectionManager.selectionMode !== 'none' || hasActions;
-  console.log('item', item);
   let isDisabled = !allowsInteraction || state.disabledKeys.has(item.key);
   let isDroppable = isTableDroppable && !isDisabled;
   let isSelected = state.selectionManager.isSelected(item.key);
@@ -1208,6 +1208,7 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
   let {isFocusVisible, focusProps} = useFocusRing();
   let {hoverProps, isHovered} = useHover({isDisabled});
   let isFirstRow = state.collection.rows.find(row => row.level === 1)?.key === item.key;
+  // TODO: will need to update because nested rows can also have nextKey == null. Instead grab last row from collection.rows?
   let isLastRow = item.nextKey == null;
   // Figure out if the TableView content is equal or greater in height to the container. If so, we'll need to round the bottom
   // border corners of the last row when selected.

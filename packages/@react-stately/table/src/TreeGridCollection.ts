@@ -11,7 +11,6 @@
  */
 
 import {buildHeaderRows} from './TableCollection';
-import {getFirstItem, getLastItem} from '@react-stately/collections';
 import {GridNode} from '@react-types/grid';
 import {TableCollection as ITableCollection} from '@react-types/table';
 import {Key} from 'react';
@@ -171,31 +170,17 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
     // work done from Sections table work
 
     let visitNode = (node: GridNode<T>, i?: number) => {
-      // TODO: got rid of childKeys and the remove deleted nodes logic, not sure when that actually ever triggered
-      // TODO: this is the opts.visitNode part, add columns data for cells, maybe add a wrapping if to check that and only do
-      node.column = columns[node.index];
+      // TODO: got rid of childKeys and the remove deleted nodes logic, not sure when that actually ever triggered. Also got rid of the default rowNode props that got setup by
+      // GridCollection, seems to be unneeded here
+      let newProps = {
+        index: i,
+        // TODO: this is the opts.visitNode part, add columns data for cells, maybe add a wrapping if to check that and only do it for cells
+        column: columns[i]
+      };
 
-      // TODO: double check the node values from this
-      if (node.type === 'headerrow' || node.type === 'item' || node.type === 'header') {
-        let defaultProps = {
-          level: 0,
-          key: 'row-' + i,
-          type: 'row',
-          value: undefined,
-          hasChildNodes: true,
-          childNodes: [...node.childNodes],
-          rendered: undefined,
-          textValue: undefined
-        };
-
-        let newProps = {
-          index: i
-        };
-
-        // Use Object.assign instead of spread to preserve object reference for keyMap. Also ensures retrieving nodes
-        // via .childNodes returns the same object as well
-        Object.assign(node, defaultProps, {...node}, newProps);
-      }
+      // Use Object.assign instead of spread to preserve object reference for keyMap. Also ensures retrieving nodes
+      // via .childNodes returns the same object as the one found via keyMap look up
+      Object.assign(node, newProps);
 
       if (node.type === 'item') {
         this.rows.push(node);
@@ -264,9 +249,24 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
 
 
   // TODO: the below funcs will need to change. body.childNodes isn't going to return the nested rows, just top level.
-  // Just yield ...this.rows.
+  // Just yield ...this.rows. If we wanna make something RAC compatible, we would start with the body's children and for each dive down through each level's children (skipping non-row) and yield each row we find
   *[Symbol.iterator]() {
     yield* [...this.rows];
+
+    // let visit = function* (node) {
+    //   if (node.type === 'item') {
+    //     yield node;
+    //     if (node.hasChildNodes) {
+    //       for (let child of node.childNodes) {
+    //         visit(child);
+    //       }
+    //     }
+    //   }
+    // };
+
+    // for (let node of this.body.childNodes) {
+    //   visit(node);
+    // }
   }
 
   get size() {
@@ -278,7 +278,7 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
     return this.keyMap.keys();
   }
 
-  // TODO these key getters will need to change most likely, really anything that
+  // TODO these key getters will need to change most likely. Or keep these as is and modify the keyboardDelegate and layouts
   // TODO fix keyboard interaction
   getKeyBefore(key: Key) {
     let node = this.keyMap.get(key);
@@ -291,11 +291,11 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
   }
 
   getFirstKey() {
-    return getFirstItem(this.body.childNodes)?.key;
+    return this.rows[0]?.key;
   }
 
   getLastKey() {
-    return getLastItem(this.body.childNodes)?.key;
+    return this.rows.at(-1)?.key;
   }
 
   getItem(key: Key) {

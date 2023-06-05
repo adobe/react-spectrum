@@ -29,7 +29,7 @@ export interface TreeGridState<T> {
   toggleKey(key: Key): void
 }
 // TODO what to accept? needs the context stuff and expanded keys + onexpandedchange. I've also pared down the props to the minimum required
-export interface TreeGridStateProps<T> extends Expandable, Omit<CollectionStateBase<T, ITableCollection<T>>, 'disabledKeys'>, Pick<MultipleSelectionStateProps, 'selectionMode'>, Pick<TableStateProps<T>, 'showSelectionCheckboxes' | 'showDragButtons'> {
+export interface TreeGridStateProps<T> extends Expandable, Pick<MultipleSelectionStateProps, 'selectionMode'>, Pick<TableStateProps<T>, 'showSelectionCheckboxes' | 'showDragButtons' | 'children' | 'collection'> {
 }
 
 // TODO: add description. Right now this is meant to be run in tandem with useTableState but maybe we could make it more standalone for
