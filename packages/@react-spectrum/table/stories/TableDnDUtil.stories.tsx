@@ -12,12 +12,11 @@
 
 import {action} from '@storybook/addon-actions';
 import {ComponentMeta} from '@storybook/react';
-import defaultConfig from './Table.stories';
+import defaultConfig, {TableStory} from './Table.stories';
 import {DragBetweenTablesComplex, DragBetweenTablesOverride, DragExampleUtilHandlers, FinderDropUtilHandlers, InsertExampleUtilHandlers, ItemDropExampleUtilHandlers, ReorderExampleUtilHandlers, RootDropExampleUtilHandlers} from './TableDnDUtilExamples';
 import {Droppable} from '@react-aria/dnd/stories/dnd.stories';
 import {Flex} from '@react-spectrum/layout';
 import React from 'react';
-import {TableStory} from './Table.stories';
 import {TableView} from '..';
 
 export default {
