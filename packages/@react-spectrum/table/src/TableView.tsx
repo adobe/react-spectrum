@@ -45,7 +45,7 @@ import {RootDropIndicator} from './RootDropIndicator';
 import {DragPreview as SpectrumDragPreview} from './DragPreview';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
-import {TableColumnLayout, TableState, useTableState, useTreebleState} from '@react-stately/table';
+import {TableColumnLayout, TableState, useTableState, useTreeGridState} from '@react-stately/table';
 import {TableLayout} from '@react-stately/layout';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {useButton} from '@react-aria/button';
@@ -235,7 +235,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   //   selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   // });
 
-  let {collection, expandedKeys, toggleKey} = useTreebleState({
+  let {collection, expandedKeys, toggleKey} = useTreeGridState({
     ...props,
     showSelectionCheckboxes,
     showDragButtons: isTableDraggable

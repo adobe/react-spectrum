@@ -122,17 +122,18 @@ export interface SpectrumColumnProps<T> extends ColumnProps<T> {
   hideHeader?: boolean
 }
 
-export type RowElement = ReactElement<RowProps>;
+export type RowElement<T> = ReactElement<RowProps<T>>;
 export interface TableBodyProps<T> extends Omit<AsyncLoadable, 'isLoading'> {
   /** The contents of the table body. Supports static items or a function for dynamic rendering. */
-  children: RowElement | RowElement[] | ((item: T) => RowElement),
+  children: RowElement<T> | RowElement<T>[] | ((item: T) => RowElement<T>),
   /** A list of row objects in the table body used when dynamically rendering rows. */
   items?: Iterable<T>,
   /** The current loading state of the table. */
   loadingState?: LoadingState
 }
 
-export interface RowProps {
+// TODO: Do we want to make separate types that are only exposed when feature flag for expandedRows is turned on?
+export interface RowProps<T> {
   // TODO: update the props here for treeble
   // treeble case? Unsupported props for now
   /** A list of child item objects used when dynamically rendering row children. */

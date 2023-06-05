@@ -15,11 +15,11 @@ import {TableCollection as ITableCollection} from '@react-types/table';
 import {Key, useCallback, useMemo} from 'react';
 import {MultipleSelectionStateProps} from '@react-stately/selection';
 import {TableStateProps} from './useTableState';
-import {TreebleCollection} from './TreebleCollection';
+import {TreeGridCollection} from './TreeGridCollection';
 import {useCollection} from '@react-stately/collections';
 import {useControlledState} from '@react-stately/utils';
 
-export interface TreebleState<T> {
+export interface TreeGridState<T> {
   // TODO: I believe treeble collection will essentially mirror TableCollection, just with different structure and internals
   /** A collection of rows and columns in the table. */
   collection: ITableCollection<T>,
@@ -29,12 +29,12 @@ export interface TreebleState<T> {
   toggleKey(key: Key): void
 }
 // TODO what to accept? needs the context stuff and expanded keys + onexpandedchange. I've also pared down the props to the minimum required
-export interface TreebleStateProps<T> extends Expandable, Omit<CollectionStateBase<T, ITableCollection<T>>, 'disabledKeys'>, Pick<MultipleSelectionStateProps, 'selectionMode'>, Pick<TableStateProps<T>, 'showSelectionCheckboxes' | 'showDragButtons'> {
+export interface TreeGridStateProps<T> extends Expandable, Omit<CollectionStateBase<T, ITableCollection<T>>, 'disabledKeys'>, Pick<MultipleSelectionStateProps, 'selectionMode'>, Pick<TableStateProps<T>, 'showSelectionCheckboxes' | 'showDragButtons'> {
 }
 
 // TODO: add description. Right now this is meant to be run in tandem with useTableState but maybe we could make it more standalone for
 // aria?
-export function useTreebleState<T extends object>(props: TreebleStateProps<T>): TreebleState<T> {
+export function useTreeGridState<T extends object>(props: TreeGridStateProps<T>): TreeGridState<T> {
   let [expandedKeys, setExpandedKeys] = useControlledState(
     props.expandedKeys ? convertExpanded(props.expandedKeys) : undefined,
     props.defaultExpandedKeys ? convertExpanded(props.defaultExpandedKeys) : new Set(),
@@ -52,12 +52,12 @@ export function useTreebleState<T extends object>(props: TreebleStateProps<T>): 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }), [props.children, showSelectionCheckboxes, selectionMode, showDragButtons]);
 
-  // TODO: since we are providing a collection to useTableState, TreebleCollection will have to do everything TableCollection + GridCollection does since
+  // TODO: since we are providing a collection to useTableState, TreeGridCollection will have to do everything TableCollection + GridCollection does since
   // useTableState's useCollection call will just use the collection directly and not call the builder + factory. This means we will need to rebuild
   // the collection if expandedKeys changes or if the context changes (context copied from useTableState)
   let collection = useCollection<T, ITableCollection<T>>(
     props,
-    useCallback((nodes) => new TreebleCollection(nodes, {...context, expandedKeys}), [context, expandedKeys]),
+    useCallback((nodes) => new TreeGridCollection(nodes, {...context, expandedKeys}), [context, expandedKeys]),
     context
   );
 

@@ -18,7 +18,7 @@ import {Key} from 'react';
 
 
 // TODO: extend from GridCollectionOptions from TableCollection? For now this is a straight copy
-interface TreebleCollectionOptions {
+interface TreeGridCollectionOptions {
   showSelectionCheckboxes?: boolean,
   showDragButtons?: boolean,
   // TODO: grab from types
@@ -36,7 +36,7 @@ while (ROW_HEADER_COLUMN_KEY === ROW_HEADER_COLUMN_KEY_DRAG) {
 // there is expandedKeys logic now in the visit (only add rows whos parent is expanded to the collection), and we need to make the index values
 // set at a individual level basis instead.
 // Discuss if we should just modify TableCollection/GridCollection to have that expandedkeys logic as well
-export class TreebleCollection<T> implements ITableCollection<T> {
+export class TreeGridCollection<T> implements ITableCollection<T> {
   headerRows: GridNode<T>[];
   columns: GridNode<T>[];
   rowHeaderColumnKeys: Set<Key>;
@@ -50,7 +50,7 @@ export class TreebleCollection<T> implements ITableCollection<T> {
   rows: GridNode<T>[];
 
   // TODO: bring in changes from Sections PR made on GridCollection?
-  constructor(nodes: Iterable<GridNode<T>>, opts?: TreebleCollectionOptions) {
+  constructor(nodes: Iterable<GridNode<T>>, opts?: TreeGridCollectionOptions) {
     let {
       expandedKeys = new Set()
     } = opts;
