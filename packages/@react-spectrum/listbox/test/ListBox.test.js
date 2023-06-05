@@ -98,11 +98,15 @@ describe('ListBox', function () {
       expect(section).toHaveAttribute('aria-labelledby');
       let heading = document.getElementById(section.getAttribute('aria-labelledby'));
       expect(heading).toBeTruthy();
-      expect(heading).toHaveAttribute('aria-hidden', 'true');
-    }
+      expect(heading).toHaveAttribute('role', 'presentation');
 
-    let dividers = within(listbox).getAllByRole('separator');
-    expect(dividers.length).toBe(withSection.length - 1);
+      // Separator should render for sections after first section
+      if (section !== sections[0]) {
+        let divider = heading.previousElementSibling;
+        expect(divider).toHaveAttribute('role', 'presentation');
+        expect(divider).toHaveClass('spectrum-Menu-divider');
+      }
+    }
 
     let items = within(listbox).getAllByRole('option');
     expect(items.length).toBe(withSection.reduce((acc, curr) => (acc + curr.children.length), 0));

@@ -1470,9 +1470,9 @@ describe('Picker', function () {
       expect(items[5]).toHaveAttribute('aria-labelledby', within(items[5]).getByText('Floof').id);
       expect(groups[1]).toContainElement(items[5]);
 
-      expect(getByText('Section 1')).toHaveAttribute('aria-hidden', 'true');
+      expect(getByText('Section 1')).toHaveAttribute('role', 'presentation');
       expect(groups[1]).toHaveAttribute('aria-labelledby', getByText('Section 2').id);
-      expect(getByText('Section 2')).toHaveAttribute('aria-hidden', 'true');
+      expect(getByText('Section 2')).toHaveAttribute('role', 'presentation');
 
       expect(document.activeElement).toBe(listbox);
 
