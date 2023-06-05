@@ -267,4 +267,10 @@ describe('Calendar', () => {
     let grid = getByRole('grid');
     expect(grid).toHaveAttribute('data-validation-state', 'invalid');
   });
+
+  it('should support weekdayStyle', () => {
+    let {getAllByRole} = renderCalendar({}, {weekdayStyle: 'short'});
+    let headers = getAllByRole('columnheader', {hidden: true});
+    expect(headers.map(h => h.textContent)).toEqual(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']);
+  });
 });

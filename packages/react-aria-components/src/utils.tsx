@@ -11,8 +11,8 @@
  */
 
 import {AriaLabelingProps, DOMProps as SharedDOMProps} from '@react-types/shared';
-import {filterDOMProps, mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
-import React, {createContext, CSSProperties, ReactNode, RefCallback, RefObject, useCallback, useContext, useEffect, useRef, useState} from 'react';
+import {mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
+import React, {createContext, CSSProperties, ReactNode, RefCallback, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 
 // Override forwardRef types so generics work.
@@ -87,28 +87,47 @@ interface RenderPropsHookOptions<T> extends RenderProps<T>, SharedDOMProps, Aria
   defaultClassName?: string
 }
 
-export function useRenderProps<T>({className, style, children, defaultClassName, defaultChildren, values, ...otherProps}: RenderPropsHookOptions<T>) {
-  if (typeof className === 'function') {
-    className = className(values);
-  }
-
-  if (typeof style === 'function') {
-    style = style(values);
-  }
-
-  if (typeof children === 'function') {
-    children = children(values);
-  } else if (children == null) {
-    children = defaultChildren;
-  }
-
-  delete otherProps.id;
-  return {
-    ...filterDOMProps(otherProps),
-    className: className ?? defaultClassName,
+export function useRenderProps<T>(props: RenderPropsHookOptions<T>) {
+  let {
+    className,
     style,
-    children
-  };
+    children,
+    defaultClassName,
+    defaultChildren,
+    values
+  } = props;
+
+  return useMemo(() => {
+    let computedClassName: string | undefined;
+    let computedStyle: React.CSSProperties | undefined;
+    let computedChildren: React.ReactNode | undefined;
+
+    if (typeof className === 'function') {
+      computedClassName = className(values);
+    } else {
+      computedClassName = className;
+    }
+
+    if (typeof style === 'function') {
+      computedStyle = style(values);
+    } else {
+      computedStyle = style;
+    }
+
+    if (typeof children === 'function') {
+      computedChildren = children(values);
+    } else if (children == null) {
+      computedChildren = defaultChildren;
+    } else {
+      computedChildren = children;
+    }
+
+    return {
+      className: computedClassName ?? defaultClassName,
+      style: computedStyle,
+      children: computedChildren
+    };
+  }, [className, style, children, defaultClassName, defaultChildren, values]);
 }
 
 export type WithRef<T, E> = T & {ref?: React.ForwardedRef<E>};
@@ -132,7 +151,7 @@ export function useContextProps<T, U, E extends Element>(props: T & SlotProps, r
   }
   // @ts-ignore - TS says "Type 'unique symbol' cannot be used as an index type." but not sure why.
   let {ref: contextRef, [slotCallbackSymbol]: callback, ...contextProps} = ctx;
-  let mergedRef = useObjectRef(mergeRefs(ref, contextRef));
+  let mergedRef = useObjectRef(useMemo(() => mergeRefs(ref, contextRef), [ref, contextRef]));
   let mergedProps = mergeProps(contextProps, props) as unknown as T;
 
   // A parent component might need the props from a child, so call slot callback if needed.
@@ -177,25 +196,25 @@ export function useExitAnimation(ref: RefObject<HTMLElement>, isOpen: boolean) {
   // State to trigger a re-render after animation is complete, which causes the element to be removed from the DOM.
   // Ref to track the state we're in, so we don't immediately reset isExiting to true after the animation.
   let [isExiting, setExiting] = useState(false);
-  let exitState = useRef('idle');
+  let [exitState, setExitState] = useState('idle');
 
   // If isOpen becomes false, set isExiting to true.
-  if (!isOpen && ref.current && exitState.current === 'idle') {
+  if (!isOpen && ref.current && exitState === 'idle') {
     isExiting = true;
     setExiting(true);
-    exitState.current = 'exiting';
+    setExitState('exiting');
   }
 
   // If we exited, and the element has been removed, reset exit state to idle.
-  if (!ref.current && exitState.current === 'exited') {
-    exitState.current = 'idle';
+  if (!ref.current && exitState === 'exited') {
+    setExitState('idle');
   }
 
   useAnimation(
     ref,
     isExiting,
     useCallback(() => {
-      exitState.current = 'exited';
+      setExitState('exited');
       setExiting(false);
     }, [])
   );
@@ -206,6 +225,10 @@ export function useExitAnimation(ref: RefObject<HTMLElement>, isOpen: boolean) {
 function useAnimation(ref: RefObject<HTMLElement>, isActive: boolean, onEnd: () => void) {
   let prevAnimation = useRef<string | null>(null);
   if (isActive && ref.current) {
+    // This is ok because we only read it in the layout effect below, immediately after the commit phase.
+    // We could move this to another effect that runs every render, but this would be unnecessarily slow.
+    // We only need the computed style right before the animation becomes active.
+    // eslint-disable-next-line rulesdir/pure-render
     prevAnimation.current = window.getComputedStyle(ref.current).animation;
   }
 

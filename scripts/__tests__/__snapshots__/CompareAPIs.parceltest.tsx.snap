@@ -396,21 +396,11 @@ it changed:
   
 
 
- packages/@react-types/shared/src/collections.d.ts:Collection
+ packages/@react-types/shared/src/selection.d.ts:Selection
   
-#### packages/@react-types/shared/src/collections.d.ts:Collection
--
--interface Collection extends Iterable<T> {
--size: number
--getKeys: () => Iterable<Key>
--getItem: (Key) => T | null
--at: (number) => T | null
--getKeyBefore: (Key) => Key | null
--getKeyAfter: (Key) => Key | null
--getFirstKey: () => Key | null
--getLastKey: () => Key | null
--getChildren: (Key) => Iterable<T>
--getTextValue: (Key) => string
+#### packages/@react-types/shared/src/selection.d.ts:Selection
+-type Selection = {
+-  'all' | Set<Key>
 -}
 it changed:
 - @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
@@ -420,11 +410,11 @@ it changed:
   
 
 
- packages/@react-types/shared/src/locale.d.ts:Direction
+ packages/@react-types/shared/src/selection.d.ts:SelectionBehavior
   
-#### packages/@react-types/shared/src/locale.d.ts:Direction
--type Direction = {
--  'ltr' | 'rtl'
+#### packages/@react-types/shared/src/selection.d.ts:SelectionBehavior
+-type SelectionBehavior = {
+-  'toggle' | 'replace'
 -}
 it changed:
 - @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
@@ -434,20 +424,11 @@ it changed:
   
 
 
- packages/@react-aria/tag/src/TagKeyboardDelegate.ts:TagKeyboardDelegate
+ packages/@react-types/shared/src/selection.d.ts:SelectionMode
   
-#### packages/@react-aria/tag/src/TagKeyboardDelegate.ts:TagKeyboardDelegate
--
--interface TagKeyboardDelegate {
--constructor: (Collection<T>, Direction) => void
--getFirstKey: () => void
--getLastKey: () => void
--getKeyRightOf: (Key) => void
--getKeyLeftOf: (Key) => void
--getKeyBelow: (any) => void
--getKeyAbove: (any) => void
--getKeyPageAbove: (any) => void
--getKeyPageBelow: (any) => void
+#### packages/@react-types/shared/src/selection.d.ts:SelectionMode
+-type SelectionMode = {
+-  'none' | 'single' | 'multiple'
 -}
 it changed:
 - @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
@@ -482,29 +463,35 @@ changed by:
  packages/@react-types/shared/src/collections.d.ts:SectionElement
  packages/@react-types/shared/src/collections.d.ts:CollectionElement
  packages/@react-types/shared/src/collections.d.ts:CollectionChildren
- packages/@react-types/shared/src/collections.d.ts:Collection
- packages/@react-types/shared/src/locale.d.ts:Direction
- packages/@react-aria/tag/src/TagKeyboardDelegate.ts:TagKeyboardDelegate
+ packages/@react-types/shared/src/selection.d.ts:Selection
+ packages/@react-types/shared/src/selection.d.ts:SelectionBehavior
+ packages/@react-types/shared/src/selection.d.ts:SelectionMode
  packages/@react-types/shared/src/inputs.d.ts:ValidationState
 
 +SpectrumTagGroupProps<T> {
 +  actionLabel?: string
-+  allowsRemoving?: boolean
 +  aria-describedby?: string
 +  aria-details?: string
 +  aria-label?: string
 +  aria-labelledby?: string
 +  children: CollectionChildren<T>
++  defaultSelectedKeys?: 'all' | Iterable<Key>
 +  description?: ReactNode
++  disabledKeys?: Iterable<Key>
++  disallowEmptySelection?: boolean
++  disallowSelectAll?: boolean
 +  errorMessage?: ReactNode
 +  id?: string
 +  isDisabled?: boolean
 +  isRequired?: boolean
 +  items?: Iterable<T>
-+  keyboardDelegate?: TagKeyboardDelegate<T>
-+  maxRows?: number
++  label?: ReactNode
 +  onAction?: () => void
-+  onRemove?: (Key) => void
++  onRemove?: (Set<Key>) => void
++  onSelectionChange?: (Selection) => any
++  selectedKeys?: 'all' | Iterable<Key>
++  selectionBehavior?: SelectionBehavior
++  selectionMode?: SelectionMode
 +  validationState?: ValidationState
 +}
 

@@ -19,8 +19,7 @@ import {useListBoxSection} from '@react-aria/listbox';
 import {useLocale} from '@react-aria/i18n';
 
 export function SideNavSection<T>(props: SideNavSectionProps<T>) {
-  let {children, reusableView, header} = props;
-  let item = reusableView.content;
+  let {children, layoutInfo, headerLayoutInfo, virtualizer, item} = props;
   let {headingProps, groupProps} = useListBoxSection({
     heading: item.rendered,
     'aria-label': item['aria-label']
@@ -28,7 +27,8 @@ export function SideNavSection<T>(props: SideNavSectionProps<T>) {
 
   let headerRef = useRef();
   useVirtualizerItem({
-    reusableView: header,
+    layoutInfo: headerLayoutInfo,
+    virtualizer,
     ref: headerRef
   });
 
@@ -36,7 +36,7 @@ export function SideNavSection<T>(props: SideNavSectionProps<T>) {
 
   return (
     <Fragment>
-      <div role="presentation" ref={headerRef} style={layoutInfoToStyle(header.layoutInfo, direction)}>
+      <div role="presentation" ref={headerRef} style={layoutInfoToStyle(headerLayoutInfo, direction)}>
         {item.rendered &&
           <div
             {...headingProps}
@@ -52,7 +52,7 @@ export function SideNavSection<T>(props: SideNavSectionProps<T>) {
       </div>
       <div
         {...groupProps}
-        style={layoutInfoToStyle(reusableView.layoutInfo, direction)}>
+        style={layoutInfoToStyle(layoutInfo, direction)}>
         {children}
       </div>
     </Fragment>

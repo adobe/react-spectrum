@@ -1169,16 +1169,6 @@ exports[`DocsTransformer - API interface merging merges properties when extendin
             "type": "string",
           },
         },
-        "allowsRemoving": {
-          "default": null,
-          "description": "Whether the TagGroup allows removal of tags.",
-          "name": "allowsRemoving",
-          "optional": true,
-          "type": "property",
-          "value": {
-            "type": "boolean",
-          },
-        },
         "aria-describedby": {
           "default": null,
           "description": "Identifies the element (or elements) that describes the object.",
@@ -1240,6 +1230,36 @@ exports[`DocsTransformer - API interface merging merges properties when extendin
             ],
           },
         },
+        "defaultSelectedKeys": {
+          "default": null,
+          "description": "The initial selected keys in the collection (uncontrolled).",
+          "name": "defaultSelectedKeys",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "elements": [
+              {
+                "type": "string",
+                "value": "all",
+              },
+              {
+                "base": {
+                  "id": "/packages/@react-types/shared/src/selection.d.ts:Iterable",
+                  "name": "Iterable",
+                  "type": "identifier",
+                },
+                "type": "application",
+                "typeParameters": [
+                  {
+                    "name": "Key",
+                    "type": "identifier",
+                  },
+                ],
+              },
+            ],
+            "type": "union",
+          },
+        },
         "description": {
           "default": null,
           "description": "A description for the field. Provides a hint such as specific requirements for what to choose.",
@@ -1249,6 +1269,47 @@ exports[`DocsTransformer - API interface merging merges properties when extendin
           "value": {
             "name": "ReactNode",
             "type": "identifier",
+          },
+        },
+        "disabledKeys": {
+          "default": null,
+          "description": "The item keys that are disabled. These items cannot be selected, focused, or otherwise interacted with.",
+          "name": "disabledKeys",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "base": {
+              "id": "/packages/@react-types/shared/src/collections.d.ts:Iterable",
+              "name": "Iterable",
+              "type": "identifier",
+            },
+            "type": "application",
+            "typeParameters": [
+              {
+                "name": "Key",
+                "type": "identifier",
+              },
+            ],
+          },
+        },
+        "disallowEmptySelection": {
+          "default": null,
+          "description": "Whether the collection allows empty selection.",
+          "name": "disallowEmptySelection",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "type": "boolean",
+          },
+        },
+        "disallowSelectAll": {
+          "default": null,
+          "description": "Whether the collection allows the user to select all items via keyboard shortcut.",
+          "name": "disallowSelectAll",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "type": "boolean",
           },
         },
         "errorMessage": {
@@ -1315,36 +1376,15 @@ Often paired with the \`necessityIndicator\` prop to add a visual indicator to t
             ],
           },
         },
-        "keyboardDelegate": {
+        "label": {
           "default": null,
-          "description": "An optional keyboard delegate to handle arrow key navigation,
-to override the default.",
-          "name": "keyboardDelegate",
+          "description": "The content to display as the label.",
+          "name": "label",
           "optional": true,
           "type": "property",
           "value": {
-            "base": {
-              "id": "/packages/@react-aria/tag/src/TagKeyboardDelegate.ts:TagKeyboardDelegate",
-              "type": "link",
-            },
-            "type": "application",
-            "typeParameters": [
-              {
-                "id": "/test/src/index.tsx:T",
-                "name": "T",
-                "type": "identifier",
-              },
-            ],
-          },
-        },
-        "maxRows": {
-          "default": null,
-          "description": "Limit the number of rows initially shown. This will render a button that allows the user to expand to show all tags.",
-          "name": "maxRows",
-          "optional": true,
-          "type": "property",
-          "value": {
-            "type": "number",
+            "name": "ReactNode",
+            "type": "identifier",
           },
         },
         "onAction": {
@@ -1364,7 +1404,7 @@ to override the default.",
         },
         "onRemove": {
           "default": null,
-          "description": "Called when the user removes a tag.",
+          "description": "Handler that is called when a user deletes a tag.",
           "name": "onRemove",
           "optional": true,
           "type": "property",
@@ -1372,12 +1412,22 @@ to override the default.",
             "parameters": [
               {
                 "description": null,
-                "name": "key",
+                "name": "keys",
                 "rest": false,
                 "type": "parameter",
                 "value": {
-                  "name": "Key",
-                  "type": "identifier",
+                  "base": {
+                    "id": "/packages/@react-aria/tag/src/useTagGroup.ts:Set",
+                    "name": "Set",
+                    "type": "identifier",
+                  },
+                  "type": "application",
+                  "typeParameters": [
+                    {
+                      "name": "Key",
+                      "type": "identifier",
+                    },
+                  ],
                 },
               },
             ],
@@ -1387,6 +1437,85 @@ to override the default.",
             },
             "type": "function",
             "typeParameters": [],
+          },
+        },
+        "onSelectionChange": {
+          "default": null,
+          "description": "Handler that is called when the selection changes.",
+          "name": "onSelectionChange",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "parameters": [
+              {
+                "description": null,
+                "name": "keys",
+                "rest": false,
+                "type": "parameter",
+                "value": {
+                  "id": "/packages/@react-types/shared/src/selection.d.ts:Selection",
+                  "type": "link",
+                },
+              },
+            ],
+            "return": {
+              "description": null,
+              "type": "any",
+            },
+            "type": "function",
+            "typeParameters": [],
+          },
+        },
+        "selectedKeys": {
+          "default": null,
+          "description": "The currently selected keys in the collection (controlled).",
+          "name": "selectedKeys",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "elements": [
+              {
+                "type": "string",
+                "value": "all",
+              },
+              {
+                "base": {
+                  "id": "/packages/@react-types/shared/src/selection.d.ts:Iterable",
+                  "name": "Iterable",
+                  "type": "identifier",
+                },
+                "type": "application",
+                "typeParameters": [
+                  {
+                    "name": "Key",
+                    "type": "identifier",
+                  },
+                ],
+              },
+            ],
+            "type": "union",
+          },
+        },
+        "selectionBehavior": {
+          "default": null,
+          "description": "How multiple selection should behave in the collection.",
+          "name": "selectionBehavior",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "id": "/packages/@react-types/shared/src/selection.d.ts:SelectionBehavior",
+            "type": "link",
+          },
+        },
+        "selectionMode": {
+          "default": null,
+          "description": "The type of selection that is allowed in the collection.",
+          "name": "selectionMode",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "id": "/packages/@react-types/shared/src/selection.d.ts:SelectionMode",
+            "type": "link",
           },
         },
         "validationState": {
@@ -1413,596 +1542,6 @@ to override the default.",
     },
   },
   "links": {
-    "/packages/@react-aria/tag/src/TagKeyboardDelegate.ts:TagKeyboardDelegate": {
-      "extends": [],
-      "id": "/packages/@react-aria/tag/src/TagKeyboardDelegate.ts:TagKeyboardDelegate",
-      "name": "TagKeyboardDelegate",
-      "properties": {
-        "collection": {
-          "access": "private",
-          "default": null,
-          "name": "collection",
-          "optional": false,
-          "type": "property",
-          "value": {
-            "base": {
-              "id": "/packages/@react-types/shared/src/collections.d.ts:Collection",
-              "type": "link",
-            },
-            "type": "application",
-            "typeParameters": [
-              {
-                "id": "/packages/@react-aria/tag/src/TagKeyboardDelegate.ts:T",
-                "name": "T",
-                "type": "identifier",
-              },
-            ],
-          },
-        },
-        "constructor": {
-          "default": null,
-          "name": "constructor",
-          "type": "method",
-          "value": {
-            "parameters": [
-              {
-                "description": null,
-                "name": "collection",
-                "rest": false,
-                "type": "parameter",
-                "value": {
-                  "base": {
-                    "id": "/packages/@react-types/shared/src/collections.d.ts:Collection",
-                    "type": "link",
-                  },
-                  "type": "application",
-                  "typeParameters": [
-                    {
-                      "id": "/packages/@react-aria/tag/src/TagKeyboardDelegate.ts:T",
-                      "name": "T",
-                      "type": "identifier",
-                    },
-                  ],
-                },
-              },
-              {
-                "description": null,
-                "name": "direction",
-                "rest": false,
-                "type": "parameter",
-                "value": {
-                  "id": "/packages/@react-types/shared/src/locale.d.ts:Direction",
-                  "type": "link",
-                },
-              },
-            ],
-            "return": {
-              "description": null,
-              "type": "void",
-            },
-            "type": "function",
-            "typeParameters": [],
-          },
-        },
-        "direction": {
-          "access": "private",
-          "default": null,
-          "name": "direction",
-          "optional": false,
-          "type": "property",
-          "value": {
-            "id": "/packages/@react-types/shared/src/locale.d.ts:Direction",
-            "type": "link",
-          },
-        },
-        "getFirstKey": {
-          "default": null,
-          "name": "getFirstKey",
-          "type": "method",
-          "value": {
-            "parameters": [],
-            "return": {
-              "description": null,
-              "type": "void",
-            },
-            "type": "function",
-            "typeParameters": [],
-          },
-        },
-        "getKeyAbove": {
-          "default": null,
-          "name": "getKeyAbove",
-          "type": "method",
-          "value": {
-            "parameters": [
-              {
-                "description": null,
-                "name": "key",
-                "rest": false,
-                "type": "parameter",
-                "value": {
-                  "type": "any",
-                },
-              },
-            ],
-            "return": {
-              "description": null,
-              "type": "void",
-            },
-            "type": "function",
-            "typeParameters": [],
-          },
-        },
-        "getKeyBelow": {
-          "default": null,
-          "name": "getKeyBelow",
-          "type": "method",
-          "value": {
-            "parameters": [
-              {
-                "description": null,
-                "name": "key",
-                "rest": false,
-                "type": "parameter",
-                "value": {
-                  "type": "any",
-                },
-              },
-            ],
-            "return": {
-              "description": null,
-              "type": "void",
-            },
-            "type": "function",
-            "typeParameters": [],
-          },
-        },
-        "getKeyLeftOf": {
-          "default": null,
-          "name": "getKeyLeftOf",
-          "type": "method",
-          "value": {
-            "parameters": [
-              {
-                "description": null,
-                "name": "key",
-                "rest": false,
-                "type": "parameter",
-                "value": {
-                  "name": "Key",
-                  "type": "identifier",
-                },
-              },
-            ],
-            "return": {
-              "description": null,
-              "type": "void",
-            },
-            "type": "function",
-            "typeParameters": [],
-          },
-        },
-        "getKeyPageAbove": {
-          "default": null,
-          "name": "getKeyPageAbove",
-          "type": "method",
-          "value": {
-            "parameters": [
-              {
-                "description": null,
-                "name": "key",
-                "rest": false,
-                "type": "parameter",
-                "value": {
-                  "type": "any",
-                },
-              },
-            ],
-            "return": {
-              "description": null,
-              "type": "void",
-            },
-            "type": "function",
-            "typeParameters": [],
-          },
-        },
-        "getKeyPageBelow": {
-          "default": null,
-          "name": "getKeyPageBelow",
-          "type": "method",
-          "value": {
-            "parameters": [
-              {
-                "description": null,
-                "name": "key",
-                "rest": false,
-                "type": "parameter",
-                "value": {
-                  "type": "any",
-                },
-              },
-            ],
-            "return": {
-              "description": null,
-              "type": "void",
-            },
-            "type": "function",
-            "typeParameters": [],
-          },
-        },
-        "getKeyRightOf": {
-          "default": null,
-          "name": "getKeyRightOf",
-          "type": "method",
-          "value": {
-            "parameters": [
-              {
-                "description": null,
-                "name": "key",
-                "rest": false,
-                "type": "parameter",
-                "value": {
-                  "name": "Key",
-                  "type": "identifier",
-                },
-              },
-            ],
-            "return": {
-              "description": null,
-              "type": "void",
-            },
-            "type": "function",
-            "typeParameters": [],
-          },
-        },
-        "getLastKey": {
-          "default": null,
-          "name": "getLastKey",
-          "type": "method",
-          "value": {
-            "parameters": [],
-            "return": {
-              "description": null,
-              "type": "void",
-            },
-            "type": "function",
-            "typeParameters": [],
-          },
-        },
-      },
-      "type": "interface",
-      "typeParameters": [
-        {
-          "constraint": null,
-          "default": null,
-          "name": "T",
-          "type": "typeParameter",
-        },
-      ],
-    },
-    "/packages/@react-types/shared/src/collections.d.ts:Collection": {
-      "description": "A generic interface to access a readonly sequential
-collection of unique keyed items.",
-      "extends": [
-        {
-          "base": {
-            "id": "/packages/@react-types/shared/src/collections.d.ts:Iterable",
-            "name": "Iterable",
-            "type": "identifier",
-          },
-          "type": "application",
-          "typeParameters": [
-            {
-              "id": "/packages/@react-types/shared/src/collections.d.ts:T",
-              "name": "T",
-              "type": "identifier",
-            },
-          ],
-        },
-      ],
-      "id": "/packages/@react-types/shared/src/collections.d.ts:Collection",
-      "name": "Collection",
-      "properties": {
-        "at": {
-          "default": null,
-          "description": "Get an item by the index of its key.",
-          "name": "at",
-          "type": "method",
-          "value": {
-            "parameters": [
-              {
-                "description": null,
-                "name": "idx",
-                "rest": false,
-                "type": "parameter",
-                "value": {
-                  "type": "number",
-                },
-              },
-            ],
-            "return": {
-              "description": null,
-              "elements": [
-                {
-                  "id": "/packages/@react-types/shared/src/collections.d.ts:T",
-                  "name": "T",
-                  "type": "identifier",
-                },
-                {
-                  "type": "null",
-                },
-              ],
-              "type": "union",
-            },
-            "type": "function",
-            "typeParameters": [],
-          },
-        },
-        "getChildren": {
-          "default": null,
-          "description": "Iterate over the child items of the given key.",
-          "name": "getChildren",
-          "type": "method",
-          "value": {
-            "parameters": [
-              {
-                "description": null,
-                "name": "key",
-                "rest": false,
-                "type": "parameter",
-                "value": {
-                  "name": "Key",
-                  "type": "identifier",
-                },
-              },
-            ],
-            "return": {
-              "base": {
-                "id": "/packages/@react-types/shared/src/collections.d.ts:Iterable",
-                "name": "Iterable",
-                "type": "identifier",
-              },
-              "description": null,
-              "type": "application",
-              "typeParameters": [
-                {
-                  "id": "/packages/@react-types/shared/src/collections.d.ts:T",
-                  "name": "T",
-                  "type": "identifier",
-                },
-              ],
-            },
-            "type": "function",
-            "typeParameters": [],
-          },
-        },
-        "getFirstKey": {
-          "default": null,
-          "description": "Get the first key in the collection.",
-          "name": "getFirstKey",
-          "type": "method",
-          "value": {
-            "parameters": [],
-            "return": {
-              "description": null,
-              "elements": [
-                {
-                  "name": "Key",
-                  "type": "identifier",
-                },
-                {
-                  "type": "null",
-                },
-              ],
-              "type": "union",
-            },
-            "type": "function",
-            "typeParameters": [],
-          },
-        },
-        "getItem": {
-          "default": null,
-          "description": "Get an item by its key.",
-          "name": "getItem",
-          "type": "method",
-          "value": {
-            "parameters": [
-              {
-                "description": null,
-                "name": "key",
-                "rest": false,
-                "type": "parameter",
-                "value": {
-                  "name": "Key",
-                  "type": "identifier",
-                },
-              },
-            ],
-            "return": {
-              "description": null,
-              "elements": [
-                {
-                  "id": "/packages/@react-types/shared/src/collections.d.ts:T",
-                  "name": "T",
-                  "type": "identifier",
-                },
-                {
-                  "type": "null",
-                },
-              ],
-              "type": "union",
-            },
-            "type": "function",
-            "typeParameters": [],
-          },
-        },
-        "getKeyAfter": {
-          "default": null,
-          "description": "Get the key that comes after the given key in the collection.",
-          "name": "getKeyAfter",
-          "type": "method",
-          "value": {
-            "parameters": [
-              {
-                "description": null,
-                "name": "key",
-                "rest": false,
-                "type": "parameter",
-                "value": {
-                  "name": "Key",
-                  "type": "identifier",
-                },
-              },
-            ],
-            "return": {
-              "description": null,
-              "elements": [
-                {
-                  "name": "Key",
-                  "type": "identifier",
-                },
-                {
-                  "type": "null",
-                },
-              ],
-              "type": "union",
-            },
-            "type": "function",
-            "typeParameters": [],
-          },
-        },
-        "getKeyBefore": {
-          "default": null,
-          "description": "Get the key that comes before the given key in the collection.",
-          "name": "getKeyBefore",
-          "type": "method",
-          "value": {
-            "parameters": [
-              {
-                "description": null,
-                "name": "key",
-                "rest": false,
-                "type": "parameter",
-                "value": {
-                  "name": "Key",
-                  "type": "identifier",
-                },
-              },
-            ],
-            "return": {
-              "description": null,
-              "elements": [
-                {
-                  "name": "Key",
-                  "type": "identifier",
-                },
-                {
-                  "type": "null",
-                },
-              ],
-              "type": "union",
-            },
-            "type": "function",
-            "typeParameters": [],
-          },
-        },
-        "getKeys": {
-          "default": null,
-          "description": "Iterate over all keys in the collection.",
-          "name": "getKeys",
-          "type": "method",
-          "value": {
-            "parameters": [],
-            "return": {
-              "base": {
-                "id": "/packages/@react-types/shared/src/collections.d.ts:Iterable",
-                "name": "Iterable",
-                "type": "identifier",
-              },
-              "description": null,
-              "type": "application",
-              "typeParameters": [
-                {
-                  "name": "Key",
-                  "type": "identifier",
-                },
-              ],
-            },
-            "type": "function",
-            "typeParameters": [],
-          },
-        },
-        "getLastKey": {
-          "default": null,
-          "description": "Get the last key in the collection.",
-          "name": "getLastKey",
-          "type": "method",
-          "value": {
-            "parameters": [],
-            "return": {
-              "description": null,
-              "elements": [
-                {
-                  "name": "Key",
-                  "type": "identifier",
-                },
-                {
-                  "type": "null",
-                },
-              ],
-              "type": "union",
-            },
-            "type": "function",
-            "typeParameters": [],
-          },
-        },
-        "getTextValue": {
-          "default": null,
-          "description": "Returns a string representation of the item's contents.",
-          "name": "getTextValue",
-          "type": "method",
-          "value": {
-            "parameters": [
-              {
-                "description": null,
-                "name": "key",
-                "rest": false,
-                "type": "parameter",
-                "value": {
-                  "name": "Key",
-                  "type": "identifier",
-                },
-              },
-            ],
-            "return": {
-              "description": null,
-              "type": "string",
-            },
-            "type": "function",
-            "typeParameters": [],
-          },
-        },
-        "size": {
-          "default": null,
-          "description": "The number of items in the collection.",
-          "name": "size",
-          "optional": false,
-          "type": "property",
-          "value": {
-            "type": "number",
-          },
-        },
-      },
-      "type": "interface",
-      "typeParameters": [
-        {
-          "constraint": null,
-          "default": null,
-          "name": "T",
-          "type": "typeParameter",
-        },
-      ],
-    },
     "/packages/@react-types/shared/src/collections.d.ts:CollectionChildren": {
       "description": null,
       "id": "/packages/@react-types/shared/src/collections.d.ts:CollectionChildren",
@@ -2474,21 +2013,75 @@ collection of unique keyed items.",
         "type": "union",
       },
     },
-    "/packages/@react-types/shared/src/locale.d.ts:Direction": {
+    "/packages/@react-types/shared/src/selection.d.ts:Selection": {
       "description": null,
-      "id": "/packages/@react-types/shared/src/locale.d.ts:Direction",
-      "name": "Direction",
+      "id": "/packages/@react-types/shared/src/selection.d.ts:Selection",
+      "name": "Selection",
       "type": "alias",
       "typeParameters": [],
       "value": {
         "elements": [
           {
             "type": "string",
-            "value": "ltr",
+            "value": "all",
+          },
+          {
+            "base": {
+              "id": "/packages/@react-types/shared/src/selection.d.ts:Set",
+              "name": "Set",
+              "type": "identifier",
+            },
+            "type": "application",
+            "typeParameters": [
+              {
+                "name": "Key",
+                "type": "identifier",
+              },
+            ],
+          },
+        ],
+        "type": "union",
+      },
+    },
+    "/packages/@react-types/shared/src/selection.d.ts:SelectionBehavior": {
+      "description": null,
+      "id": "/packages/@react-types/shared/src/selection.d.ts:SelectionBehavior",
+      "name": "SelectionBehavior",
+      "type": "alias",
+      "typeParameters": [],
+      "value": {
+        "elements": [
+          {
+            "type": "string",
+            "value": "toggle",
           },
           {
             "type": "string",
-            "value": "rtl",
+            "value": "replace",
+          },
+        ],
+        "type": "union",
+      },
+    },
+    "/packages/@react-types/shared/src/selection.d.ts:SelectionMode": {
+      "description": null,
+      "id": "/packages/@react-types/shared/src/selection.d.ts:SelectionMode",
+      "name": "SelectionMode",
+      "type": "alias",
+      "typeParameters": [],
+      "value": {
+        "elements": [
+          {
+            "type": "string",
+            "value": "none",
+          },
+          {
+            "type": "string",
+            "value": "single",
+          },
+          {
+            "type": "string",
+            "value": "multiple",
           },
         ],
         "type": "union",

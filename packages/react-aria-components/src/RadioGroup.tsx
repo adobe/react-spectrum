@@ -11,9 +11,9 @@
  */
 
 import {AriaRadioGroupProps, AriaRadioProps, Orientation, useFocusRing, useHover, usePress, useRadio, useRadioGroup, VisuallyHidden} from 'react-aria';
-import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
 import {LabelContext} from './Label';
-import {mergeProps, useObjectRef} from '@react-aria/utils';
 import {RadioGroupState, useRadioGroupState, ValidationState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, useState} from 'react';
 import {TextContext} from './Text';
@@ -143,7 +143,11 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
 function Radio(props: RadioProps, ref: ForwardedRef<HTMLInputElement>) {
   let state = React.useContext(InternalRadioContext)!;
   let domRef = useObjectRef(ref);
-  let {inputProps, isSelected, isDisabled, isPressed: isPressedKeyboard} = useRadio(props, state, domRef);
+  let {inputProps, isSelected, isDisabled, isPressed: isPressedKeyboard} = useRadio({
+    ...props,
+    // ReactNode type doesn't allow function children.
+    children: typeof props.children === 'function' ? true : props.children
+  }, state, domRef);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let interactionDisabled = isDisabled || state.isReadOnly;
 
@@ -186,9 +190,12 @@ function Radio(props: RadioProps, ref: ForwardedRef<HTMLInputElement>) {
     }
   });
 
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
+
   return (
     <label
-      {...mergeProps(pressProps, hoverProps, renderProps)}
+      {...mergeProps(DOMProps, pressProps, hoverProps, renderProps)}
       data-selected={isSelected || undefined}
       data-pressed={pressed || undefined}
       data-hovered={isHovered || undefined}
@@ -198,7 +205,7 @@ function Radio(props: RadioProps, ref: ForwardedRef<HTMLInputElement>) {
       data-readonly={state.isReadOnly || undefined}
       data-validation-state={state.validationState || undefined}
       data-required={state.isRequired || undefined}>
-      <VisuallyHidden>
+      <VisuallyHidden elementType="span">
         <input {...inputProps} {...focusProps} ref={domRef} />
       </VisuallyHidden>
       {renderProps.children}
@@ -209,11 +216,11 @@ function Radio(props: RadioProps, ref: ForwardedRef<HTMLInputElement>) {
 /**
  * A radio group allows a user to select a single item from a list of mutually exclusive options.
  */
-const _RadioGroup = forwardRef(RadioGroup);
+const _RadioGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(RadioGroup);
 
 /**
  * A radio represents an individual option within a radio group.
  */
-const _Radio = forwardRef(Radio);
+const _Radio = /*#__PURE__*/ (forwardRef as forwardRefType)(Radio);
 
 export {_RadioGroup as RadioGroup, _Radio as Radio};

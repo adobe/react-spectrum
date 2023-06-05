@@ -13,4 +13,4 @@
 export {useToggleState} from './useToggleState';
 
 export type {ToggleProps} from '@react-types/checkbox';
-export type {ToggleState} from './useToggleState';
+export type {ToggleState, ToggleStateOptions} from './useToggleState';

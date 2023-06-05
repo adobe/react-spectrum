@@ -27,7 +27,9 @@ export interface SpectrumMenuDialogTriggerProps<T> extends ItemProps<T> {
 function MenuDialogTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): ReactElement {
   let {isUnavailable} = props;
 
-  let {state: menuState} = useMenuStateContext();
+  let triggerRef = useRef<HTMLLIElement>(null);
+  let popoverRef = useRef(null);
+  let {state: menuState, container, menu} = useMenuStateContext();
   let state = useOverlayTriggerState({isOpen: menuState.expandedKeys.has(props.targetKey), onOpenChange: (val) => {
     if (!val) {
       if (menuState.expandedKeys.has(props.targetKey)) {
@@ -47,7 +49,22 @@ function MenuDialogTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): ReactEl
   let [, content] = props.children as [ReactElement, ReactElement];
 
   let isMobile = useIsMobileDevice();
-  let triggerRef = useRef<HTMLLIElement>(null);
+
+  let onExit = () => {
+    // if focus was already moved back to a menu item, don't need to do anything
+    if (!menu.current.contains(document.activeElement)) {
+      // need to return focus to the trigger because hitting Esc causes focus to go to the subdialog, which is then unmounted
+      // this leads to blur never being fired nor focus on the body
+      triggerRef.current.focus();
+    }
+  };
+  let onBlurWithin = (e) => {
+    if (e.relatedTarget && popoverRef.current && !popoverRef.current?.UNSAFE_getDOMNode().contains(e.relatedTarget)) {
+      if (menuState.expandedKeys.has(props.targetKey)) {
+        menuState.toggleKey(props.targetKey);
+      }
+    }
+  };
   return (
     <>
       <MenuDialogContext.Provider value={{isUnavailable, triggerRef}}>{trigger}</MenuDialogContext.Provider>
@@ -60,7 +77,21 @@ function MenuDialogTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): ReactEl
               <DismissButton onDismiss={state.close} />
             </Modal>
           ) : (
-            <Popover state={state} triggerRef={triggerRef} placement="end top" hideArrow offset={-10} isNonModal shouldContainFocus={false}>{content}</Popover>
+            <Popover
+              onExit={onExit}
+              onBlurWithin={onBlurWithin}
+              container={container.current}
+              state={state}
+              ref={popoverRef}
+              triggerRef={triggerRef}
+              placement="end top"
+              offset={-10}
+              hideArrow
+              isNonModal
+              enableBothDismissButtons
+              disableFocusManagement>
+              {content}
+            </Popover>
           )
         }
       </SlotProvider>

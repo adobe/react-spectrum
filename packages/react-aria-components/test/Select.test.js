@@ -45,9 +45,13 @@ describe('Select', () => {
     expect(select).toHaveAttribute('data-foo', 'bar');
 
     expect(button).toHaveAttribute('aria-labelledby');
-    let label = document.getElementById(button.getAttribute('aria-labelledby').split(' ')[0]);
+    let label = document.getElementById(button.getAttribute('aria-labelledby').split(' ')[1]);
     expect(label).toHaveAttribute('class', 'react-aria-Label');
     expect(label).toHaveTextContent('Favorite Animal');
+
+    let valueOrPlaceholder = document.getElementById(button.getAttribute('aria-labelledby').split(' ')[0]);
+    expect(valueOrPlaceholder).toHaveAttribute('class', 'react-aria-SelectValue');
+    expect(valueOrPlaceholder).toHaveTextContent('Select an item');
 
     expect(button).toHaveAttribute('aria-describedby');
     expect(button.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Description Error');
@@ -145,8 +149,7 @@ describe('Select', () => {
     expect(button).toHaveTextContent('Select an animal');
   });
 
-  // FIXME: not sure why this test hangs
-  it.skip('should support render props', () => {
+  it('should support render props', () => {
     let {getByRole} = render(
       <Select>
         {({isOpen}) => (
@@ -169,7 +172,9 @@ describe('Select', () => {
     );
 
     let button = getByRole('button');
-    expect(button.closest('.react-aria-Select')).toHaveAttribute('slot', 'test');
-    expect(button).toHaveAttribute('aria-label', 'test');
+    expect(button).toHaveTextContent('open');
+
+    userEvent.click(button);
+    expect(button).toHaveTextContent('close');
   });
 });

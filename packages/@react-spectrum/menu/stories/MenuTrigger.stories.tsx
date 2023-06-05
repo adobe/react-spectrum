@@ -26,6 +26,7 @@ import {Item, Menu, MenuDialogTrigger, MenuTrigger, Section} from '../';
 import {Link} from '@react-spectrum/link';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React, {useState} from 'react';
+import {TranslateMenu} from './../chromatic/MenuTriggerLanguages.chromatic';
 
 let iconMap = {
   AlignCenter,
@@ -656,6 +657,12 @@ ControlledIsOpen.story = {
   name: 'controlled isOpen'
 };
 
+export const WithTranslations = () => <TranslateMenu />;
+
+WithTranslations.story = {
+  name: 'with translations'
+};
+
 let customMenuItem = (item) => {
   let Icon = iconMap[item.icon];
   return (
@@ -727,6 +734,13 @@ export let MenuItemUnavailable = {
           <Content>Is it me you're looking for?</Content>
         </Dialog>
       </MenuDialogTrigger>
+      <MenuDialogTrigger isUnavailable>
+        <Item key="baz">Two point five</Item>
+        <Dialog>
+          <Heading>hello</Heading>
+          <Content>Is it me you're looking for?</Content>
+        </Dialog>
+      </MenuDialogTrigger>
       <Item key="3">Three</Item>
       <MenuDialogTrigger isUnavailable>
         <Item key="bar">
@@ -740,6 +754,27 @@ export let MenuItemUnavailable = {
         </Dialog>
       </MenuDialogTrigger>
       <Item key="5">Five</Item>
+    </Menu>
+  )
+};
+
+export let MenuItemUnavailableDynamic = {
+  render: () => render(
+    <Menu items={flatMenu} onAction={action('onAction')}>
+      {(item) => {
+        if (item.name === 'Kangaroo') {
+          return (
+            <MenuDialogTrigger isUnavailable>
+              <Item key={item.name}>{item.name}</Item>
+              <Dialog>
+                <Heading>hello</Heading>
+                <Content>Is it me you're looking for?</Content>
+              </Dialog>
+            </MenuDialogTrigger>
+          );
+        }
+        return <Item key={item.name}>{item.name}</Item>;
+      }}
     </Menu>
   )
 };

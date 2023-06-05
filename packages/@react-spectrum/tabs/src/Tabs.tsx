@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaTabPanelProps, SpectrumTabListProps, SpectrumTabPanelsProps, SpectrumTabsProps} from '@react-types/tabs';
 import {classNames, SlotProvider, unwrapDOMRef, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, DOMRef, Node, Orientation} from '@react-types/shared';
+import {DOMProps, DOMRef, Node, Orientation, StyleProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Item, Picker} from '@react-spectrum/picker';
@@ -21,6 +22,7 @@ import React, {
   Key,
   MutableRefObject,
   ReactElement,
+  ReactNode,
   useCallback,
   useContext,
   useEffect,
@@ -28,7 +30,6 @@ import React, {
   useState
 } from 'react';
 import {SpectrumPickerProps} from '@react-types/select';
-import {SpectrumTabListProps, SpectrumTabPanelsProps, SpectrumTabsProps} from '@react-types/tabs';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
 import {TabListState, useTabListState} from '@react-stately/tabs';
 import {Text} from '@react-spectrum/text';
@@ -348,8 +349,12 @@ export function TabPanels<T>(props: SpectrumTabPanelsProps<T>) {
   );
 }
 
+interface TabPanelProps extends AriaTabPanelProps, StyleProps {
+  children?: ReactNode
+}
+
 // @private
-function TabPanel<T>(props: SpectrumTabPanelsProps<T>) {
+function TabPanel(props: TabPanelProps) {
   const {tabState, tabPanelProps: ctxTabPanelProps} = useContext(TabContext);
   const {tabListState} = tabState;
   let ref = useRef();

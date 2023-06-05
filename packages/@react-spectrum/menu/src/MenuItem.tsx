@@ -13,13 +13,13 @@
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
 import {DOMAttributes, Node} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useSlotId} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, mergeRefs, useObjectRef, useSlotId} from '@react-aria/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {Key, useRef} from 'react';
+import React, {Key, useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/text';
 import {TreeState} from '@react-stately/tree';
@@ -51,7 +51,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   if (isMenuDialogTrigger) {
     isUnavailable = menuDialogContext.isUnavailable;
   }
-  
+
   let domProps = filterDOMProps(item.props);
 
   let {
@@ -67,10 +67,8 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   let isSelected = state.selectionManager.isSelected(key);
   let isDisabled = state.disabledKeys.has(key);
 
-  let ref = useRef<HTMLLIElement>(null);
-  if (triggerRef) {
-    ref = triggerRef;
-  }
+  let itemref = useRef<HTMLLIElement>(null);
+  let ref = useObjectRef(useMemo(() => mergeRefs(itemref, triggerRef), [itemref, triggerRef]));
 
   let {
     menuItemProps,
@@ -96,7 +94,10 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   let endProps: DOMAttributes = {};
   if (endId) {
     endProps.id = endId;
-    menuItemProps['aria-describedby'] = menuItemProps['aria-describedby'] + ' ' + endId;
+    menuItemProps['aria-describedby'] = [menuItemProps['aria-describedby'], endId].filter(Boolean).join(' ');
+  }
+  if (isUnavailable) {
+    menuItemProps['aria-disabled'] = 'true';
   }
 
   let contents = typeof rendered === 'string'

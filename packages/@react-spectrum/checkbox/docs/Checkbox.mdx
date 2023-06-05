@@ -111,7 +111,7 @@ function Example() {
 
 Checkboxes can display a validation state to communicate to the user if the current value is invalid.
 Implement your own validation logic in your app and pass `"invalid"` to the Checkbox via the `validationState` prop.
-
+The invalid state is only communicated via a color change so in order to be accessible the validation error must also be communicated in another way.
 ```tsx example
 <Checkbox validationState="invalid">I accept the terms and conditions</Checkbox>
 ```

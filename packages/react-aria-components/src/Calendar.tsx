@@ -263,7 +263,13 @@ export interface CalendarGridProps extends StyleProps {
    * CalendarGrid should display. Useful when displaying more than one
    * month at a time.
    */
-  offset?: DateDuration
+  offset?: DateDuration,
+  /**
+   * The style of weekday names to display in the calendar grid header,
+   * e.g. single letter, abbreviation, or full day name.
+   * @default "narrow"
+   */
+  weekdayStyle?: 'narrow' | 'short' | 'long'
 }
 
 interface InternalCalendarGridContextValue {
@@ -283,7 +289,8 @@ function CalendarGrid(props: CalendarGridProps, ref: ForwardedRef<HTMLTableEleme
 
   let {gridProps, headerProps, weekDays} = useCalendarGrid({
     startDate,
-    endDate: endOfMonth(startDate)
+    endDate: endOfMonth(startDate),
+    weekdayStyle: props.weekdayStyle
   }, state);
 
   return (
@@ -314,7 +321,7 @@ function CalendarGrid(props: CalendarGridProps, ref: ForwardedRef<HTMLTableEleme
  * A calendar grid displays a single grid of days within a calendar or range calendar which
  * can be keyboard navigated and selected by the user.
  */
-const _CalendarGrid = forwardRef(CalendarGrid);
+const _CalendarGrid = /*#__PURE__*/ (forwardRef as forwardRefType)(CalendarGrid);
 export {_CalendarGrid as CalendarGrid};
 
 export interface CalendarGridHeaderProps extends StyleProps {
@@ -343,7 +350,7 @@ function CalendarGridHeader(props: CalendarGridHeaderProps, ref: ForwardedRef<HT
 /**
  * A calendar grid header displays a row of week day names at the top of a month.
  */
-const CalendarGridHeaderForwardRef = forwardRef(CalendarGridHeader);
+const CalendarGridHeaderForwardRef = /*#__PURE__*/ (forwardRef as forwardRefType)(CalendarGridHeader);
 export {CalendarGridHeaderForwardRef as CalendarGridHeader};
 
 export interface CalendarHeaderCellProps extends DOMProps {}
@@ -401,7 +408,7 @@ function CalendarGridBody(props: CalendarGridBodyProps, ref: ForwardedRef<HTMLTa
 /**
  * A calendar grid body displays a grid of calendar cells within a month.
  */
-const CalendarGridBodyForwardRef = forwardRef(CalendarGridBody);
+const CalendarGridBodyForwardRef = /*#__PURE__*/ (forwardRef as forwardRefType)(CalendarGridBody);
 export {CalendarGridBodyForwardRef as CalendarGridBody};
 
 export interface CalendarCellProps extends RenderProps<CalendarCellRenderProps> {
@@ -459,7 +466,7 @@ function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRe
 
   return (
     <td {...cellProps}>
-      <div {...mergeProps(buttonProps, focusProps, hoverProps, dataAttrs, renderProps)} ref={objectRef} />
+      <div {...mergeProps(filterDOMProps(otherProps as any), buttonProps, focusProps, hoverProps, dataAttrs, renderProps)} ref={objectRef} />
     </td>
   );
 }
@@ -467,5 +474,5 @@ function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRe
 /**
  * A calendar cell displays a date cell within a calendar grid which can be selected by the user.
  */
-const _CalendarCell = forwardRef(CalendarCell);
+const _CalendarCell = /*#__PURE__*/ (forwardRef as forwardRefType)(CalendarCell);
 export {_CalendarCell as CalendarCell};

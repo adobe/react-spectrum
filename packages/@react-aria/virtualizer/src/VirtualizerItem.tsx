@@ -11,29 +11,30 @@
  */
 
 import {Direction} from '@react-types/shared';
-import {LayoutInfo, ReusableView} from '@react-stately/virtualizer';
-import React, {CSSProperties, useRef} from 'react';
+import {LayoutInfo} from '@react-stately/virtualizer';
+import React, {CSSProperties, ReactNode, useRef} from 'react';
 import {useLocale} from '@react-aria/i18n';
-import {useVirtualizerItem} from './useVirtualizerItem';
+import {useVirtualizerItem, VirtualizerItemOptions} from './useVirtualizerItem';
 
-interface VirtualizerItemProps<T extends object, V> {
-  reusableView: ReusableView<T, V>,
-  parent?: ReusableView<T, V>,
-  className?: string
+interface VirtualizerItemProps extends Omit<VirtualizerItemOptions, 'ref'> {
+  parent?: LayoutInfo,
+  className?: string,
+  children: ReactNode
 }
 
-export function VirtualizerItem<T extends object, V>(props: VirtualizerItemProps<T, V>) {
-  let {className, reusableView, parent} = props;
+export function VirtualizerItem(props: VirtualizerItemProps) {
+  let {className, layoutInfo, virtualizer, parent, children} = props;
   let {direction} = useLocale();
   let ref = useRef();
   useVirtualizerItem({
-    reusableView,
+    layoutInfo,
+    virtualizer,
     ref
   });
 
   return (
-    <div role="presentation" ref={ref} className={className} style={layoutInfoToStyle(reusableView.layoutInfo, direction, parent && parent.layoutInfo)}>
-      {reusableView.rendered}
+    <div role="presentation" ref={ref} className={className} style={layoutInfoToStyle(layoutInfo, direction, parent)}>
+      {children}
     </div>
   );
 }
