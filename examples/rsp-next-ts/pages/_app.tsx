@@ -44,7 +44,6 @@ function MyApp({ Component, pageProps }: AppProps) {
             </ActionButton>
           </Flex>
           <View>
-            {/* @ts-ignore */}
             <Component {...pageProps} />
           </View>
         </Grid>
