@@ -26,9 +26,19 @@ export interface BreadcrumbsRenderProps {
   isHovered: boolean,
   /**
    * Whether the breadcrumbs are disabled.
-   * @selector :disabled
+   * @selector [data-disabled]
    */
-  isDisabled: boolean
+  isDisabled: boolean,
+  /**
+   * Whether an element within the breadcrumbs is focused, either via a mouse or keyboard.
+   * @selector :focus-within
+   */
+  isFocusWithin: boolean,
+  /**
+   * Whether an element within the breadcrumbs is keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean
 }
 
 export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys' | 'children'>, Omit<AriaBreadcrumbsProps, 'children'>, SlotProps, RenderProps<BreadcrumbsRenderProps> {
@@ -43,20 +53,24 @@ function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: Forwarde
   let {navProps} = useBreadcrumbs(props);
   let {portal, collection} = useCollection(props as CollectionProps<T>);
   let {hoverProps, isHovered} = useHover(props);
+  let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
   let renderProps = useRenderProps({
     ...props,
-    values: {isHovered, isDisabled: props.isDisabled || false},
+    values: {isHovered, isDisabled: props.isDisabled || false, isFocusWithin: isFocused, isFocusVisible},
     defaultClassName: 'react-aria-Breadcrumbs'
   });
 
   return (
     <nav
+      {...mergeProps(filterDOMProps(props), focusProps, hoverProps)}
       ref={ref}
-      {...filterDOMProps(props)}
       {...navProps}
-      {...hoverProps}
       {...renderProps}
-      slot={props.slot}>
+      slot={props.slot}
+      data-hovered={isHovered || undefined}
+      data-disabled={props.isDisabled || undefined}
+      data-focus-visible={isFocusVisible || undefined}
+      data-focus-within={isFocused || undefined}>
       {/* TODO: cannot style this element directly */}
       <ol>
         {[...collection].map((node, i) => (
@@ -78,7 +92,30 @@ function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: Forwarde
 const _Breadcrumbs = /*#__PURE__*/ (forwardRef as forwardRefType)(Breadcrumbs);
 export {_Breadcrumbs as Breadcrumbs};
 
-interface BreadcrumbItemProps {
+export interface BreadcrumbsItemRenderProps {
+  /**
+   * Whether the breadcrumb item is currently hovered with a mouse.
+   * @selector [data-hovered]
+   */
+  isHovered: boolean,
+  /**
+   * Whether the breadcrumb item is disabled.
+   * @selector :disabled
+   */
+  isDisabled: boolean,
+  /**
+   * Whether the breadcrumb item is focused, either via a mouse or keyboard.
+   * @selector [data-focused]
+   */
+  isFocused: boolean,
+  /**
+   * Whether the breadcrumb item is keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean
+}
+
+interface BreadcrumbItemProps extends RenderProps<BreadcrumbsRenderProps> {
   node: Node<object>,
   isCurrent: boolean,
   isDisabled?: boolean
@@ -103,7 +140,11 @@ function BreadcrumbItem({node, isCurrent, isDisabled}: BreadcrumbItemProps) {
     <li
       {...filterDOMProps(node.props)}
       {...mergeProps(focusProps, hoverProps)}
-      {...renderProps}>
+      {...renderProps}
+      data-hovered={isHovered || undefined}
+      data-disabled={isDisabled || undefined}
+      data-focus-visible={isFocusVisible || undefined}
+      data-focused={isFocused || undefined}>
       <Provider
         values={[
           [LinkContext, linkProps],

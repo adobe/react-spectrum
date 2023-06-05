@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaNumberFieldProps, useLocale, useNumberField} from 'react-aria';
+import {AriaNumberFieldProps, useFocusRing, useHover, useLocale, useNumberField} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
@@ -21,7 +21,32 @@ import {NumberFieldState, useNumberFieldState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
 
-export interface NumberFieldRenderProps extends Omit<NumberFieldState, 'validate' |'increment' | 'incrementToMax' | 'decrement' | 'decrementToMin' | 'setInputValue' | 'commit' > {}
+export interface NumberFieldRenderProps {
+  /**
+   * Whether the number field is focused, either via a mouse or keyboard.
+   * @selector [data-focused]
+   */
+  isFocused: boolean,
+  /**
+   * Whether the number field is keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
+   * Whether the number field is currently hovered with a mouse.
+   * @selector [data-hovered]
+   */
+  isHovered: boolean,
+  /**
+   * Whether the number field is disabled.
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean,
+  /**
+   * State of the number field.
+   */
+  state: NumberFieldState
+}
 
 export interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, RenderProps<NumberFieldRenderProps>, SlotProps {}
 
@@ -33,6 +58,8 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
   let state = useNumberFieldState({...props, locale});
   let inputRef = useRef<HTMLInputElement>(null);
   let [labelRef, label] = useSlot();
+  let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
+  let {hoverProps, isHovered} = useHover(props);
   let {
     labelProps,
     groupProps,
@@ -46,12 +73,11 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
   let renderProps = useRenderProps({
     ...props,
     values: {
-      canIncrement: state.canDecrement,
-      canDecrement: state.canDecrement,
-      minValue: state.minValue,
-      maxValue: state.maxValue,
-      numberValue: state.numberValue,
-      inputValue: state.inputValue
+      state,
+      isFocused,
+      isFocusVisible,
+      isHovered,
+      isDisabled: props.isDisabled || false
     },
     defaultClassName: 'react-aria-NumberField'
   });
@@ -78,7 +104,16 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
           }
         }]
       ]}>
-      <div {...DOMProps} {...renderProps} ref={ref} slot={props.slot} />
+      <div
+        {...mergeProps(focusProps, hoverProps)}
+        {...DOMProps}
+        {...renderProps}
+        ref={ref}
+        slot={props.slot}
+        data-hovered={isHovered || undefined}
+        data-focused={isFocused || undefined}
+        data-focus-visible={isFocusVisible || undefined}
+        data-disabled={props.isDisabled || undefined} />
     </Provider>
   );
 }

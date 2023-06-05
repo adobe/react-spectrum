@@ -78,12 +78,8 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
     isOpen: state.isOpen,
     isHovered,
     isFocused: state.isFocused,
-    isFocusVisible,
-    inputValue: state.inputValue,
-    selectedItem: state.selectedItem,
-    selectedKey: state.selectedKey,
-    disabledKeys: state.disabledKeys
-  }), [state.isOpen, state.isFocused, state.inputValue, state.selectedItem, state.selectedKey, state.disabledKeys, isHovered, isFocusVisible]);
+    isFocusVisible
+  }), [state.isOpen, state.isFocused, isHovered, isFocusVisible]);
   let buttonRef = useRef<HTMLButtonElement>(null);
   let inputRef = useRef<HTMLInputElement>(null);
   let listBoxRef = useRef<HTMLDivElement>(null);

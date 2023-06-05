@@ -96,6 +96,7 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
       slot={props.slot}
       data-pressed={ctx.isPressed || isPressed || undefined}
       data-hovered={isHovered || undefined}
+      data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined} />
   );
 }

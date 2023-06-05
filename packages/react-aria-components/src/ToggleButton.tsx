@@ -22,6 +22,9 @@ export interface ToggleButtonRenderProps extends ButtonRenderProps {
    * @selector [aria-pressed=true]
    */
   isSelected: boolean,
+  /**
+   * State of the toggle button.
+   */
   state: ToggleState
 }
 

@@ -18,8 +18,6 @@ import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, OutputHTMLAttributes, RefObject, useContext, useRef} from 'react';
 import {SliderState, useSliderState} from 'react-stately';
 
-export interface SliderRenderProps extends Omit<SliderState, 'setThumbValue' | 'setThumbPercent' | 'setThumbDragging' | 'setFocusedThumb' | 'setThumbEditable' | 'incrementThumb' | 'decrementThumb'> {}
-
 export interface SliderProps<T = number | number[]> extends AriaSliderProps<T>, RenderProps<SliderRenderProps>, SlotProps {
   /**
    * The display format of the value label.
@@ -31,7 +29,9 @@ interface SliderContextValue {
   state: SliderState,
   trackProps: DOMAttributes,
   outputProps: OutputHTMLAttributes<HTMLOutputElement>,
-  trackRef: RefObject<HTMLDivElement>
+  trackRef: RefObject<HTMLDivElement>,
+  isFocused: boolean,
+  isFocusVisible: boolean
 }
 
 export const SliderContext = createContext<ContextValue<SliderProps, HTMLDivElement>>(null);
@@ -47,7 +47,21 @@ export interface SliderRenderProps {
    * Whether the slider is disabled.
    * @selector [data-disabled]
    */
-  isDisabled: boolean
+  isDisabled: boolean,
+  /**
+   * Whether the slider is focused, either via a mouse or keyboard.
+   * @selector [data-focused]
+   */
+  isFocused: boolean,
+  /**
+   * Whether the slider is keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
+   * State of the slider.
+   */
+  state: SliderState
 }
 
 function Slider<T extends number | number[]>(props: SliderProps<T>, ref: ForwardedRef<HTMLDivElement>) {
@@ -56,6 +70,7 @@ function Slider<T extends number | number[]>(props: SliderProps<T>, ref: Forward
   let numberFormatter = useNumberFormatter(props.formatOptions);
   let state = useSliderState({...props, numberFormatter});
   let [labelRef, label] = useSlot();
+  let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
   let {
     groupProps,
     trackProps,
@@ -66,22 +81,11 @@ function Slider<T extends number | number[]>(props: SliderProps<T>, ref: Forward
   let renderProps = useRenderProps({
     ...props,
     values: {
-      values: state.values,
-      getThumbValue: state.getThumbValue,
-      isThumbDragging: state.isThumbDragging,
-      focusedThumb: state.focusedThumb,
-      getThumbPercent: state.getThumbPercent,
-      getValuePercent: state.getValuePercent,
-      getThumbValueLabel: state.getThumbValueLabel,
-      getFormattedValue: state.getFormattedValue,
-      getThumbMinValue: state.getThumbMinValue,
-      getThumbMaxValue: state.getThumbMaxValue,
-      getPercentValue: state.getPercentValue,
-      isThumbEditable: state.isThumbEditable,
-      step: state.step,
-      pageSize: state.pageSize,
       orientation: state.orientation,
-      isDisabled: state.isDisabled
+      isDisabled: state.isDisabled,
+      isFocused,
+      isFocusVisible,
+      state
     },
     defaultClassName: 'react-aria-Slider'
   });
@@ -92,11 +96,12 @@ function Slider<T extends number | number[]>(props: SliderProps<T>, ref: Forward
   return (
     <Provider
       values={[
-        [InternalSliderContext, {state, trackProps, trackRef, outputProps}],
+        [InternalSliderContext, {state, trackProps, trackRef, outputProps, isFocused, isFocusVisible}],
         [LabelContext, {...labelProps, ref: labelRef}]
       ]}>
       <div
         {...DOMProps}
+        {...focusProps}
         {...groupProps}
         {...renderProps}
         ref={ref}
@@ -116,7 +121,7 @@ export {_Slider as Slider};
 export interface SliderOutputProps extends RenderProps<SliderRenderProps> {}
 
 function SliderOutput({children, style, className, ...otherProps}: SliderOutputProps, ref: ForwardedRef<HTMLOutputElement>) {
-  let {state, outputProps} = useContext(InternalSliderContext)!;
+  let {state, outputProps, isFocused, isFocusVisible} = useContext(InternalSliderContext)!;
   let renderProps = useRenderProps({
     className,
     style,
@@ -124,22 +129,11 @@ function SliderOutput({children, style, className, ...otherProps}: SliderOutputP
     defaultChildren: state.getThumbValueLabel(0),
     defaultClassName: 'react-aria-SliderOutput',
     values: {
-      values: state.values,
-      getThumbValue: state.getThumbValue,
-      isThumbDragging: state.isThumbDragging,
-      focusedThumb: state.focusedThumb,
-      getThumbPercent: state.getThumbPercent,
-      getValuePercent: state.getValuePercent,
-      getThumbValueLabel: state.getThumbValueLabel,
-      getFormattedValue: state.getFormattedValue,
-      getThumbMinValue: state.getThumbMinValue,
-      getThumbMaxValue: state.getThumbMaxValue,
-      getPercentValue: state.getPercentValue,
-      isThumbEditable: state.isThumbEditable,
-      step: state.step,
-      pageSize: state.pageSize,
       orientation: state.orientation,
-      isDisabled: state.isDisabled
+      isDisabled: state.isDisabled,
+      state,
+      isFocused,
+      isFocusVisible
     }
   });
 
@@ -155,28 +149,17 @@ export {_SliderOutput as SliderOutput};
 export interface SliderTrackProps extends RenderProps<SliderRenderProps> {}
 
 function SliderTrack(props: SliderTrackProps, ref: ForwardedRef<HTMLDivElement>) {
-  let {state, trackProps, trackRef} = useContext(InternalSliderContext)!;
+  let {state, trackProps, trackRef, isFocused, isFocusVisible} = useContext(InternalSliderContext)!;
   let domRef = mergeRefs(ref, trackRef);
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-SliderTrack',
     values: {
-      values: state.values,
-      getThumbValue: state.getThumbValue,
-      isThumbDragging: state.isThumbDragging,
-      focusedThumb: state.focusedThumb,
-      getThumbPercent: state.getThumbPercent,
-      getValuePercent: state.getValuePercent,
-      getThumbValueLabel: state.getThumbValueLabel,
-      getFormattedValue: state.getFormattedValue,
-      getThumbMinValue: state.getThumbMinValue,
-      getThumbMaxValue: state.getThumbMaxValue,
-      getPercentValue: state.getPercentValue,
-      isThumbEditable: state.isThumbEditable,
-      step: state.step,
-      pageSize: state.pageSize,
       orientation: state.orientation,
-      isDisabled: state.isDisabled
+      isDisabled: state.isDisabled,
+      isFocused,
+      isFocusVisible,
+      state
     }
   });
 
@@ -190,8 +173,10 @@ const _SliderTrack = forwardRef(SliderTrack);
 export {_SliderTrack as SliderTrack};
 
 export interface SliderThumbRenderProps {
-  /** The slider state object. */
-  state: SliderRenderProps,
+  /**
+   * State of the slider.
+   */
+  state: SliderState,
   /**
    * Whether this thumb is currently being dragged.
    * @selector [data-dragging]
@@ -241,29 +226,13 @@ function SliderThumb(props: SliderThumbProps, ref: ForwardedRef<HTMLDivElement>)
     ...props,
     defaultClassName: 'react-aria-SliderThumb',
     values: {
-      state: {
-        values: state.values,
-        getThumbValue: state.getThumbValue,
-        isThumbDragging: state.isThumbDragging,
-        focusedThumb: state.focusedThumb,
-        getThumbPercent: state.getThumbPercent,
-        getValuePercent: state.getValuePercent,
-        getThumbValueLabel: state.getThumbValueLabel,
-        getFormattedValue: state.getFormattedValue,
-        getThumbMinValue: state.getThumbMinValue,
-        getThumbMaxValue: state.getThumbMaxValue,
-        getPercentValue: state.getPercentValue,
-        isThumbEditable: state.isThumbEditable,
-        step: state.step,
-        pageSize: state.pageSize,
-        orientation: state.orientation,
-        isDisabled: state.isDisabled
-      },
+      state,
       isHovered,
       isDragging,
       isFocused,
       isFocusVisible,
-      isDisabled}
+      isDisabled
+    }
   });
 
   let DOMProps = filterDOMProps(props);

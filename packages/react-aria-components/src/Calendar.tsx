@@ -21,9 +21,39 @@ import {HeadingContext} from './Heading';
 import React from 'react';
 import {TextContext} from './Text';
 
-export interface CalendarRenderProps extends Omit<CalendarState, 'setValue' | 'setFocusedDate' | 'focusNextDay' | 'focusPreviousDay' | 'focusNextRow' | 'focusPreviousRow' | 'focusNextPage' | 'focusPreviousPage' | 'focusSectionStart' | 'focusSectionEnd' | 'focusNextSection' | 'focusPreviousSection' | 'selectFocusedDate' | 'selectDate' | 'setFocused'> {}
+export interface CalendarRenderProps {
+  /**
+   * Whether the calendar is currently hovered with a mouse.
+   * @selector [data-hovered]
+   */
+  isHovered: boolean,
+  /**
+   * Whether an element within the calendar is focused, either via a mouse or keyboard.
+   * @selector :focus-within
+   */
+  isFocusWithin: boolean,
+  /**
+   * Whether an element within the calendar is keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
+   * Whether the calendar is disabled.
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean,
+  /**
+   * State of the calendar.
+   */
+  state: CalendarState
+}
 
-export interface RangeCalendarRenderProps extends Omit<RangeCalendarState, 'setValue' | 'setFocusedDate' | 'focusNextDay' | 'focusPreviousDay' | 'focusNextRow' | 'focusPreviousRow' | 'focusNextPage' | 'focusPreviousPage' | 'focusSectionStart' | 'focusSectionEnd' | 'focusNextSection' | 'focusPreviousSection' | 'selectFocusedDate' | 'selectDate' | 'setFocused' | 'highlightDate' | 'setAnchorDate' | 'setDragging'> {}
+export interface RangeCalendarRenderProps extends Omit<CalendarRenderProps, 'state'> {
+  /**
+   * State of the range calendar.
+   */
+  state: RangeCalendarState
+}
 
 export interface CalendarProps<T extends DateValue> extends Omit<BaseCalendarProps<T>, 'errorMessage'>, RenderProps<CalendarRenderProps>, SlotProps {
   /**
@@ -54,35 +84,33 @@ function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRe
     createCalendar
   });
 
+  let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
+  let {hoverProps, isHovered} = useHover(props);
   let {calendarProps, prevButtonProps, nextButtonProps, errorMessageProps, title} = useCalendar(props, state);
 
   let renderProps = useRenderProps({
     ...props,
     values: {
-      focusedDate: state.focusedDate,
-      getDatesInWeek: state.getDatesInWeek,
-      isCellDisabled: state.isCellDisabled,
-      isCellFocused: state.isCellFocused,
-      isCellUnavailable: state.isCellUnavailable,
-      isDisabled: state.isDisabled,
-      isFocused: state.isFocused,
-      isInvalid: state.isInvalid,
-      isNextVisibleRangeInvalid: state.isNextVisibleRangeInvalid,
-      isPreviousVisibleRangeInvalid: state.isPreviousVisibleRangeInvalid,
-      isReadOnly: state.isReadOnly,
-      isSelected: state.isSelected,
-      maxValue: state.maxValue,
-      minValue: state.minValue,
-      timeZone: state.timeZone,
-      validationState: state.validationState,
-      value: state.value,
-      visibleRange: state.visibleRange
+      state,
+      isFocusWithin: isFocused,
+      isFocusVisible,
+      isDisabled: props.isDisabled || false,
+      isHovered
     },
     defaultClassName: 'react-aria-Calendar'
   });
 
   return (
-    <div {...renderProps} {...calendarProps} ref={ref} slot={props.slot}>
+    <div
+      {...mergeProps(focusProps, hoverProps)}
+      {...renderProps}
+      {...calendarProps}
+      ref={ref}
+      slot={props.slot}
+      data-focus-within={isFocused || undefined}
+      data-focus-visible={isFocused || undefined}
+      data-disabled={props.isDisabled || undefined}
+      data-hovered={isHovered || undefined}>
       <Provider
         values={[
           [ButtonContext, {
@@ -138,6 +166,8 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: F
     createCalendar
   });
 
+  let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
+  let {hoverProps, isHovered} = useHover(props);
   let {calendarProps, prevButtonProps, nextButtonProps, errorMessageProps, title} = useRangeCalendar(
     props,
     state,
@@ -147,33 +177,26 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: F
   let renderProps = useRenderProps({
     ...props,
     values: {
-      focusedDate: state.focusedDate,
-      getDatesInWeek: state.getDatesInWeek,
-      isCellDisabled: state.isCellDisabled,
-      isCellFocused: state.isCellFocused,
-      isCellUnavailable: state.isCellUnavailable,
-      isDisabled: state.isDisabled,
-      isFocused: state.isFocused,
-      isInvalid: state.isInvalid,
-      isNextVisibleRangeInvalid: state.isNextVisibleRangeInvalid,
-      isPreviousVisibleRangeInvalid: state.isPreviousVisibleRangeInvalid,
-      isReadOnly: state.isReadOnly,
-      isSelected: state.isSelected,
-      maxValue: state.maxValue,
-      minValue: state.minValue,
-      timeZone: state.timeZone,
-      validationState: state.validationState,
-      value: state.value,
-      visibleRange: state.visibleRange,
-      anchorDate: state.anchorDate,
-      highlightedRange: state.highlightedRange,
-      isDragging: state.isDragging
+      state,
+      isFocusWithin: isFocused,
+      isFocusVisible,
+      isDisabled: props.isDisabled || false,
+      isHovered
     },
     defaultClassName: 'react-aria-RangeCalendar'
   });
 
   return (
-    <div {...renderProps} {...calendarProps} ref={ref} slot={props.slot}>
+    <div
+      {...mergeProps(focusProps, hoverProps)}
+      {...renderProps}
+      {...calendarProps}
+      ref={ref}
+      slot={props.slot}
+      data-focus-within={isFocused || undefined}
+      data-focus-visible={isFocused || undefined}
+      data-disabled={props.isDisabled || undefined}
+      data-hovered={isHovered || undefined}>
       <Provider
         values={[
           [ButtonContext, {
@@ -229,7 +252,7 @@ export interface CalendarCellRenderProps {
    * Whether the cell is currently hovered with a mouse.
    * @selector [data-hovered]
    */
-   isHovered: boolean,
+  isHovered: boolean,
   /**
    * Whether the cell is currently being pressed.
    * @selector [data-pressed]
@@ -249,7 +272,7 @@ export interface CalendarCellRenderProps {
    * Whether the cell is the last date in a range selection.
    * @selector [data-selection-end]
    */
-   isSelectionEnd: boolean,
+  isSelectionEnd: boolean,
   /**
    * Whether the cell is focused.
    * @selector :focus

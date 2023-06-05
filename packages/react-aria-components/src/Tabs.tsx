@@ -25,7 +25,11 @@ export interface TabsRenderProps {
    * The orientation of the tabs.
    * @selector [data-orientation="horizontal | vertical"]
    */
-  orientation: Orientation
+  orientation: Orientation,
+  /**
+   * State of the tabs.
+   */
+  state: TabListState<unknown>
 }
 
 export interface TabListProps<T> extends StyleRenderProps<TabListRenderProps>, AriaLabelingProps, CollectionProps<T> {}
@@ -115,13 +119,13 @@ const InternalTabsContext = createContext<InternalTabsContextValue | null>(null)
 function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TabsContext);
   let {orientation = 'horizontal'} = props;
-  let values = useMemo(() => ({orientation}), [orientation]);
   let {collection, document} = useCollectionDocument();
   let state = useTabListState({
     ...props,
     collection,
     children: undefined
   });
+  let values = useMemo(() => ({orientation, state}), [orientation, state]);
 
   let renderProps = useRenderProps({
     ...props,

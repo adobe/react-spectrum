@@ -25,7 +25,11 @@ export interface SearchFieldRenderProps extends Omit<SearchFieldState, 'setValue
    * Whether the search field is empty.
    * @selector [data-empty]
    */
-  isEmpty: boolean
+  isEmpty: boolean,
+  /**
+   * State of the search field.
+   */
+  state: SearchFieldState
 }
 
 export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, RenderProps<SearchFieldRenderProps>, SlotProps {}
@@ -46,7 +50,8 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
     ...props,
     values: {
       value: state.value,
-      isEmpty: state.value === ''
+      isEmpty: state.value === '',
+      state
     },
     defaultClassName: 'react-aria-SearchField'
   });

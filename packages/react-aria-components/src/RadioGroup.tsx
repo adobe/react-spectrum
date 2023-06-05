@@ -46,7 +46,11 @@ export interface RadioGroupRenderProps {
    * The validation state of the radio group.
    * @selector [aria-invalid]
    */
-  validationState: ValidationState | null
+  validationState: ValidationState | null,
+  /**
+   * State of the radio group.
+   */
+  state: RadioGroupState
 }
 
 export interface RadioRenderProps {
@@ -54,47 +58,47 @@ export interface RadioRenderProps {
    * Whether the radio is selected.
    * @selector [data-selected]
    */
-   isSelected: boolean,
-   /**
-    * Whether the radio is currently hovered with a mouse.
-    * @selector [data-hovered]
-    */
-   isHovered: boolean,
-   /**
-    * Whether the radio is currently in a pressed state.
-    * @selector [data-pressed]
-    */
-   isPressed: boolean,
-   /**
-    * Whether the radio is focused, either via a mouse or keyboard.
-    * @selector [data-focused]
-    */
-   isFocused: boolean,
-   /**
-    * Whether the radio is keyboard focused.
-    * @selector [data-focus-visible]
-    */
-   isFocusVisible: boolean,
-   /**
-    * Whether the radio is disabled.
-    * @selector [data-disabled]
-    */
-   isDisabled: boolean,
-   /**
-    * Whether the radio is read only.
-    * @selector [data-readonly]
-    */
-   isReadOnly: boolean,
-   /**
-    * Whether the radio is valid or invalid.
-    * @selector [data-validation-state="valid | invalid"]
-    */
-   validationState: ValidationState | null,
-   /**
-    * Whether the checkbox is required.
-    * @selector [data-required]
-    */
-   isRequired: boolean
+  isSelected: boolean,
+  /**
+   * Whether the radio is currently hovered with a mouse.
+   * @selector [data-hovered]
+   */
+  isHovered: boolean,
+  /**
+   * Whether the radio is currently in a pressed state.
+   * @selector [data-pressed]
+   */
+  isPressed: boolean,
+  /**
+   * Whether the radio is focused, either via a mouse or keyboard.
+   * @selector [data-focused]
+   */
+  isFocused: boolean,
+  /**
+   * Whether the radio is keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
+   * Whether the radio is disabled.
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean,
+  /**
+   * Whether the radio is read only.
+   * @selector [data-readonly]
+   */
+  isReadOnly: boolean,
+  /**
+   * Whether the radio is valid or invalid.
+   * @selector [data-validation-state="valid | invalid"]
+   */
+  validationState: ValidationState | null,
+  /**
+   * Whether the checkbox is required.
+   * @selector [data-required]
+   */
+  isRequired: boolean
 }
 
 export const RadioGroupContext = createContext<ContextValue<RadioGroupProps, HTMLDivElement>>(null);
@@ -116,7 +120,8 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
       isDisabled: state.isDisabled,
       isReadOnly: state.isReadOnly,
       isRequired: state.isRequired,
-      validationState: state.validationState
+      validationState: state.validationState,
+      state
     },
     defaultClassName: 'react-aria-RadioGroup'
   });

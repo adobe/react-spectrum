@@ -46,6 +46,9 @@ export interface TooltipRenderProps {
    * @selector [data-open]
    */
   isOpen: boolean,
+  /**
+   * State of the tooltip.
+   */
   state: TooltipTriggerState
 }
 
