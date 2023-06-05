@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Input, Label, Text, TextField, TextFieldContext} from '../';
+import {act, render} from '@react-spectrum/test-utils';
+import {FormError, Input, Label, Text, TextField, TextFieldContext} from '../';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestTextField = (props) => (
@@ -86,5 +86,26 @@ describe('TextField', () => {
     userEvent.tab();
     expect(input).not.toHaveAttribute('data-focus-visible');
     expect(input).not.toHaveClass('focus');
+  });
+
+  it('should support FormError', () => {
+    let {getByRole} = render(
+      <form aria-label="Form">
+        <TextField isRequired>
+          <Label>Test</Label>
+          <Input />
+          <FormError />
+        </TextField>
+      </form>
+    );
+
+    let form = getByRole('form');
+    let input = getByRole('textbox');
+    expect(input).not.toHaveAttribute('aria-describedby');
+
+    act(() => form.checkValidity());
+
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
   });
 });

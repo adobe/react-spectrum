@@ -13,6 +13,7 @@
 import {AriaRadioGroupProps, AriaRadioProps, Orientation, useFocusRing, useHover, usePress, useRadio, useRadioGroup, VisuallyHidden} from 'react-aria';
 import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
+import {FormErrorContext} from './FormError';
 import {LabelContext} from './Label';
 import {RadioGroupState, useRadioGroupState, ValidationState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, useState} from 'react';
@@ -104,9 +105,10 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, RadioGroupContext);
   let state = useRadioGroupState(props);
   let [labelRef, label] = useSlot();
-  let {radioGroupProps, labelProps, descriptionProps, errorMessageProps} = useRadioGroup({
+  let {radioGroupProps, labelProps, descriptionProps, errorMessageProps, ...validationProps} = useRadioGroup({
     ...props,
-    label
+    label,
+    validationBehavior: props.validationBehavior ?? 'native'
   }, state);
 
   let renderProps = useRenderProps({
@@ -132,7 +134,8 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
               description: descriptionProps,
               errorMessage: errorMessageProps
             }
-          }]
+          }],
+          [FormErrorContext, validationProps]
         ]}>
         {renderProps.children}
       </Provider>

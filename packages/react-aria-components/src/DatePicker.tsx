@@ -18,6 +18,7 @@ import {DateInputContext} from './DateField';
 import {DatePickerState, DateRangePickerState, useDateFieldState, useDatePickerState, useDateRangePickerState} from 'react-stately';
 import {DialogContext} from './Dialog';
 import {filterDOMProps} from '@react-aria/utils';
+import {FormErrorContext} from './FormError';
 import {GroupContext} from './Group';
 import {LabelContext} from './Label';
 import {PopoverContext} from './Popover';
@@ -43,8 +44,13 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
     dialogProps,
     calendarProps,
     descriptionProps,
-    errorMessageProps
-  } = useDatePicker({...props, label}, state, groupRef);
+    errorMessageProps,
+    ...validationProps
+  } = useDatePicker({
+    ...props,
+    label,
+    validationBehavior: props.validationBehavior ?? 'native'
+  }, state, groupRef);
 
   let {locale} = useLocale();
   let fieldState = useDateFieldState({
@@ -81,7 +87,8 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
             description: descriptionProps,
             errorMessage: errorMessageProps
           }
-        }]
+        }],
+        [FormErrorContext, validationProps]
       ]}>
       <div {...DOMProps} {...renderProps} ref={ref} slot={props.slot} />
     </Provider>
@@ -108,8 +115,13 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
     dialogProps,
     calendarProps,
     descriptionProps,
-    errorMessageProps
-  } = useDateRangePicker({...props, label}, state, groupRef);
+    errorMessageProps,
+    ...validationProps
+  } = useDateRangePicker({
+    ...props,
+    label,
+    validationBehavior: props.validationBehavior ?? 'native'
+  }, state, groupRef);
 
   let {locale} = useLocale();
   let startFieldState = useDateFieldState({
@@ -173,7 +185,8 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
             description: descriptionProps,
             errorMessage: errorMessageProps
           }
-        }]
+        }],
+        [FormErrorContext, validationProps]
       ]}>
       <div {...DOMProps} {...renderProps} ref={ref} slot={props.slot} />
     </Provider>

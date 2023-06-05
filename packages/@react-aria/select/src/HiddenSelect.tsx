@@ -111,7 +111,7 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
 }
 
 function HiddenSelect<T>(props: HiddenSelectProps<T>, ref: ForwardedRef<HTMLSelectElement>) {
-  let {state, triggerRef, label, name, isDisabled} = props;
+  let {state, triggerRef, label, isDisabled} = props;
   let selectRef = useObjectRef(ref);
   let {containerProps, inputProps, selectProps} = useHiddenSelect({...props, selectRef}, state, triggerRef);
 
@@ -142,12 +142,12 @@ function HiddenSelect<T>(props: HiddenSelectProps<T>, ref: ForwardedRef<HTMLSele
         </label>
       </div>
     );
-  } else if (name) {
+  } else if (selectProps.name) {
     return (
       <input
         type="hidden"
         autoComplete={selectProps.autoComplete}
-        name={name}
+        name={selectProps.name}
         disabled={isDisabled}
         value={state.selectedKey ?? ''} />
     );

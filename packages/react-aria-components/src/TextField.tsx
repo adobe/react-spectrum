@@ -13,6 +13,7 @@
 import {AriaTextFieldProps, useTextField} from 'react-aria';
 import {ContextValue, DOMProps, Provider, SlotProps, useContextProps, useSlot} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
+import {FormErrorContext} from './FormError';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
@@ -26,9 +27,10 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TextFieldContext);
   let inputRef = useRef<HTMLInputElement>(null);
   let [labelRef, label] = useSlot();
-  let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField({
+  let {labelProps, inputProps, descriptionProps, errorMessageProps, ...validationProps} = useTextField({
     ...props,
-    label
+    label,
+    validationBehavior: props.validationBehavior ?? 'native'
   }, inputRef);
 
   return (
@@ -47,7 +49,8 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
               description: descriptionProps,
               errorMessage: errorMessageProps
             }
-          }]
+          }],
+          [FormErrorContext, validationProps]
         ]}>
         {props.children}
       </Provider>

@@ -14,10 +14,11 @@ import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, StyleRen
 import {createCalendar} from '@internationalized/date';
 import {DateFieldState, DateSegmentType, DateSegment as IDateSegment, useDateFieldState, useTimeFieldState} from 'react-stately';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {FormErrorContext} from './FormError';
+import {InputDOMProps} from '@react-types/shared';
 import {LabelContext} from './Label';
 import React, {cloneElement, createContext, ForwardedRef, forwardRef, HTMLAttributes, InputHTMLAttributes, ReactElement, RefObject, useContext, useRef} from 'react';
 import {TextContext} from './Text';
-import { InputDOMProps } from '@react-types/shared';
 
 export interface DateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateFieldState>, SlotProps {}
 export interface TimeFieldProps<T extends TimeValue> extends Omit<AriaTimeFieldProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateFieldState>, SlotProps {}
@@ -45,7 +46,19 @@ function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: Forwarded
   let fieldRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot();
   let inputRef = useRef<HTMLInputElement>(null);
-  let {labelProps, fieldProps, inputProps, descriptionProps, errorMessageProps} = useDateField({...props, label, inputRef}, state, fieldRef);
+  let {
+    labelProps,
+    fieldProps,
+    inputProps,
+    descriptionProps,
+    errorMessageProps,
+    ...validationProps
+  } = useDateField({
+    ...props,
+    label,
+    inputRef,
+    validationBehavior: props.validationBehavior ?? 'native'
+  }, state, fieldRef);
 
   let renderProps = useRenderProps({
     ...props,
@@ -66,7 +79,8 @@ function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: Forwarded
             description: descriptionProps,
             errorMessage: errorMessageProps
           }
-        }]
+        }],
+        [FormErrorContext, validationProps]
       ]}>
       <div {...DOMProps} {...renderProps} ref={ref} slot={props.slot} />
     </Provider>
@@ -91,7 +105,19 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
   let fieldRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot();
   let inputRef = useRef<HTMLInputElement>(null);
-  let {labelProps, fieldProps, inputProps, descriptionProps, errorMessageProps} = useTimeField({...props, label, inputRef}, state, fieldRef);
+  let {
+    labelProps,
+    fieldProps,
+    inputProps,
+    descriptionProps,
+    errorMessageProps,
+    ...validationProps
+  } = useTimeField({
+    ...props,
+    label,
+    inputRef,
+    validationBehavior: props.validationBehavior ?? 'native'
+  }, state, fieldRef);
 
   let renderProps = useRenderProps({
     ...props,
@@ -112,7 +138,8 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
             description: descriptionProps,
             errorMessage: errorMessageProps
           }
-        }]
+        }],
+        [FormErrorContext, validationProps]
       ]}>
       <div {...DOMProps} {...renderProps} ref={ref} slot={props.slot} />
     </Provider>

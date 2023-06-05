@@ -13,6 +13,7 @@ import {AriaComboBoxProps, useComboBox, useFilter} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, forwardRefType, Provider, RenderProps, slotCallbackSymbol, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
+import {FormErrorContext} from './FormError';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListBoxProps} from './ListBox';
@@ -87,7 +88,8 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
     listBoxProps,
     labelProps,
     descriptionProps,
-    errorMessageProps
+    errorMessageProps,
+    ...validationProps
   } = useComboBox({
     ...props,
     label,
@@ -95,7 +97,8 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
     buttonRef,
     listBoxRef,
     popoverRef,
-    name: formValue === 'text' ? name : undefined
+    name: formValue === 'text' ? name : undefined,
+    validationBehavior: props.validationBehavior ?? 'native'
   },
   state);
 
@@ -146,7 +149,8 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
             description: descriptionProps,
             errorMessage: errorMessageProps
           }
-        }]
+        }],
+        [FormErrorContext, validationProps]
       ]}>
       <div
         {...DOMProps}

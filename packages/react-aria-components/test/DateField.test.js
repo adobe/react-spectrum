@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, render, within} from '@react-spectrum/test-utils';
 import {CalendarDate} from '@internationalized/date';
-import {DateField, DateFieldContext, DateInput, DateSegment, Label, Text} from '../';
+import {DateField, DateFieldContext, DateInput, DateSegment, FormError, Label, Text} from '../';
 import React from 'react';
-import {render, within} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 describe('DateField', () => {
@@ -176,5 +176,28 @@ describe('DateField', () => {
     );
     let input = document.querySelector('input[name=birthday]');
     expect(input).toHaveValue('2020-02-03');
+  });
+
+  it('should support FormError', () => {
+    let {getByRole} = render(
+      <form aria-label="Form">
+        <DateField isRequired>
+          <Label>Birth date</Label>
+          <DateInput>
+            {segment => <DateSegment segment={segment} />}
+          </DateInput>
+          <FormError />
+        </DateField>
+      </form>
+    );
+
+    let form = getByRole('form');
+    let input = getByRole('group');
+    expect(input).not.toHaveAttribute('aria-describedby');
+
+    act(() => form.checkValidity());
+
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
   });
 });

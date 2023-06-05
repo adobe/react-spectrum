@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Input, Label, SearchField, SearchFieldContext, Text} from '../';
+import {act, render} from '@react-spectrum/test-utils';
+import {Button, FormError, Input, Label, SearchField, SearchFieldContext, Text} from '../';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils';
 
 let TestSearchField = (props) => (
   <SearchField defaultValue="test" data-foo="bar" {...props}>
@@ -40,7 +40,7 @@ describe('SearchField', () => {
 
     expect(input).toHaveAttribute('aria-describedby');
     expect(input.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Description Error');
-  
+
     let button = getByRole('button');
     expect(button).toHaveAttribute('aria-label', 'Clear search');
   });
@@ -74,5 +74,26 @@ describe('SearchField', () => {
     let searchbox = getByRole('searchbox');
     let description = document.getElementById(searchbox.getAttribute('aria-describedby'));
     expect(description).toHaveTextContent('You are looking for "test"');
+  });
+
+  it('should support FormError', () => {
+    let {getByRole} = render(
+      <form aria-label="Form">
+        <SearchField isRequired>
+          <Label>Test</Label>
+          <Input />
+          <FormError />
+        </SearchField>
+      </form>
+    );
+
+    let form = getByRole('form');
+    let input = getByRole('searchbox');
+    expect(input).not.toHaveAttribute('aria-describedby');
+
+    act(() => form.checkValidity());
+
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
   });
 });

@@ -14,6 +14,7 @@ import {AriaNumberFieldProps, useLocale, useNumberField} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
+import {FormErrorContext} from './FormError';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {InputDOMProps} from '@react-types/shared';
@@ -39,8 +40,13 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
     incrementButtonProps,
     decrementButtonProps,
     descriptionProps,
-    errorMessageProps
-  } = useNumberField({...props, label}, state, inputRef);
+    errorMessageProps,
+    ...validationProps
+  } = useNumberField({
+    ...props,
+    label,
+    validationBehavior: props.validationBehavior ?? 'native'
+  }, state, inputRef);
 
   let renderProps = useRenderProps({
     ...props,
@@ -68,7 +74,8 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
             description: descriptionProps,
             errorMessage: errorMessageProps
           }
-        }]
+        }],
+        [FormErrorContext, validationProps]
       ]}>
       <div {...DOMProps} {...renderProps} ref={ref} slot={props.slot} />
       {props.name && <input type="hidden" name={props.name} value={isNaN(state.numberValue) ? '' : state.numberValue} />}

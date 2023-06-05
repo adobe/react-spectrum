@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {DateInput, DateSegment, Label, Text, TimeField, TimeFieldContext} from '../';
+import {act, render} from '@react-spectrum/test-utils';
+import {DateInput, DateSegment, FormError, Label, Text, TimeField, TimeFieldContext} from '../';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils';
 import {Time} from '@internationalized/date';
 
 describe('TimeField', () => {
@@ -115,5 +115,28 @@ describe('TimeField', () => {
     );
     let input = document.querySelector('input[name=time]');
     expect(input).toHaveValue('08:30:00');
+  });
+
+  it('should support FormError', () => {
+    let {getByRole} = render(
+      <form aria-label="Form">
+        <TimeField isRequired>
+          <Label>Birth date</Label>
+          <DateInput>
+            {segment => <DateSegment segment={segment} />}
+          </DateInput>
+          <FormError />
+        </TimeField>
+      </form>
+    );
+
+    let form = getByRole('form');
+    let input = getByRole('group');
+    expect(input).not.toHaveAttribute('aria-describedby');
+
+    act(() => form.checkValidity());
+
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
   });
 });

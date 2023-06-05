@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Item, Label, ListBox, Popover, Select, SelectContext, SelectValue, Text} from '../';
+import {act, render, within} from '@react-spectrum/test-utils';
+import {Button, FormError, Item, Label, ListBox, Popover, Select, SelectContext, SelectValue, Text} from '../';
 import React from 'react';
-import {render, within} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestSelect = (props) => (
@@ -176,5 +176,35 @@ describe('Select', () => {
 
     userEvent.click(button);
     expect(button).toHaveTextContent('close');
+  });
+
+  it('should support FormError', () => {
+    let {getByRole} = render(
+      <form aria-label="Form">
+        <Select isRequired>
+          <Label>Favorite Animal</Label>
+          <Button>
+            <SelectValue />
+          </Button>
+          <FormError />
+          <Popover>
+            <ListBox>
+              <Item>Cat</Item>
+              <Item>Dog</Item>
+              <Item>Kangaroo</Item>
+            </ListBox>
+          </Popover>
+        </Select>
+      </form>
+    );
+
+    let form = getByRole('form');
+    let button = getByRole('button');
+    expect(button).not.toHaveAttribute('aria-describedby');
+
+    act(() => form.checkValidity());
+
+    expect(button).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
   });
 });

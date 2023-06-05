@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Group, Input, Label, NumberField, NumberFieldContext, Text} from '../';
+import {act, render} from '@react-spectrum/test-utils';
+import {Button, Group, FormError, Input, Label, NumberField, NumberFieldContext, Text} from '../';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestNumberField = (props) => (
@@ -128,5 +128,30 @@ describe('NumberField', () => {
 
     rerender(<TestNumberField name="test" value={null} formatOptions={{style: 'currency', currency: 'USD'}} />)
     expect(input).toHaveValue('');
+  });
+
+  it('should support FormError', () => {
+    let {getByRole} = render(
+      <form aria-label="Form">
+        <NumberField isRequired>
+          <Label>Width</Label>
+          <Group>
+            <Button slot="decrement">-</Button>
+            <Input />
+            <Button slot="increment">+</Button>
+          </Group>
+          <FormError />
+        </NumberField>
+      </form>
+    );
+
+    let form = getByRole('form');
+    let input = getByRole('textbox');
+    expect(input).not.toHaveAttribute('aria-describedby');
+
+    act(() => form.checkValidity());
+
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
   });
 });

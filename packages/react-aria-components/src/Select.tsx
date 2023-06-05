@@ -14,6 +14,7 @@ import {AriaSelectProps, HiddenSelect, useSelect} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, forwardRefType, Provider, RenderProps, slotCallbackSymbol, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {createContext, ForwardedRef, HTMLAttributes, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
+import {FormErrorContext} from './FormError';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {ItemRenderProps, useCollection} from './Collection';
 import {LabelContext} from './Label';
@@ -66,6 +67,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
 
   // Get props for child elements from useSelect
   let buttonRef = useRef<HTMLButtonElement>(null);
+  let hiddenSelectRef = useRef<HTMLSelectElement>(null);
   let [labelRef, label] = useSlot();
   let {
     labelProps,
@@ -73,8 +75,14 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
     valueProps,
     menuProps,
     descriptionProps,
-    errorMessageProps
-  } = useSelect({...props, label}, state, buttonRef);
+    errorMessageProps,
+    ...validationProps
+  } = useSelect({
+    ...props,
+    label,
+    hiddenSelectRef,
+    validationBehavior: props.validationBehavior ?? 'native'
+  }, state, buttonRef);
 
   // Make menu width match input + button
   let [buttonWidth, setButtonWidth] = useState<string | null>(null);
@@ -117,7 +125,8 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
             description: descriptionProps,
             errorMessage: errorMessageProps
           }
-        }]
+        }],
+        [FormErrorContext, validationProps]
       ]}>
       <div
         {...DOMProps}
@@ -130,8 +139,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
       <HiddenSelect
         state={state}
         triggerRef={buttonRef}
-        label={label}
-        name={props.name} />
+        ref={hiddenSelectRef} />
     </Provider>
   );
 }

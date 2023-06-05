@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ComboBox, ComboBoxContext, Header, Input, Item, Label, ListBox, Popover, Section, Text} from '../';
+import {act, render, within} from '@react-spectrum/test-utils';
+import {Button, ComboBox, ComboBoxContext, FormError, Header, Input, Item, Label, ListBox, Popover, Section, Text} from '../';
 import React from 'react';
-import {render, within} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestComboBox = (props) => (
@@ -161,5 +161,34 @@ describe('ComboBox', () => {
     let hiddenInput = document.querySelector('input[type=hidden]');
     expect(hiddenInput).toHaveAttribute('name', 'test');
     expect(hiddenInput).toHaveValue('2');
+  });
+
+  it('should support FormError', () => {
+    let {getByRole} = render(
+      <form aria-label="Form">
+        <ComboBox isRequired>
+          <Label>Favorite Animal</Label>
+          <Input />
+          <Button />
+          <FormError />
+          <Popover>
+            <ListBox>
+              <Item id="1">Cat</Item>
+              <Item id="2">Dog</Item>
+              <Item id="3">Kangaroo</Item>
+            </ListBox>
+          </Popover>
+        </ComboBox>
+      </form>
+    );
+
+    let form = getByRole('form');
+    let input = getByRole('combobox');
+    expect(input).not.toHaveAttribute('aria-describedby');
+
+    act(() => form.checkValidity());
+
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
   });
 });

@@ -13,9 +13,9 @@
 import {AriaButtonProps} from '@react-types/button';
 import {AriaListBoxOptions} from '@react-aria/listbox';
 import {AriaSelectProps} from '@react-types/select';
-import {chain, filterDOMProps, mergeProps, useId} from '@react-aria/utils';
+import {chain, filterDOMProps, FormValidationResult, mergeProps, useFormValidation, useId} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement, KeyboardDelegate} from '@react-types/shared';
-import {FocusEvent, RefObject, useMemo} from 'react';
+import {FocusEvent, RefObject, useMemo, useRef} from 'react';
 import {ListKeyboardDelegate, useTypeSelect} from '@react-aria/selection';
 import {SelectState} from '@react-stately/select';
 import {setInteractionModality} from '@react-aria/interactions';
@@ -29,10 +29,12 @@ export interface AriaSelectOptions<T> extends Omit<AriaSelectProps<T>, 'children
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
    */
-  keyboardDelegate?: KeyboardDelegate
+  keyboardDelegate?: KeyboardDelegate,
+  /** A ref to the hidden `<select>` element. */
+  hiddenSelectRef?: RefObject<HTMLSelectElement>
 }
 
-export interface SelectAria<T> {
+export interface SelectAria<T> extends FormValidationResult {
   /** Props for the label element. */
   labelProps: DOMAttributes,
 
@@ -118,9 +120,12 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     }
   });
 
+  let {validationState, errorMessage, validationDetails} = useFormValidation(props.hiddenSelectRef, props.validationState, props.errorMessage, props.validationBehavior, props.onValidationChange);
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
-    labelElementType: 'span'
+    labelElementType: 'span',
+    validationState,
+    errorMessage
   });
 
   typeSelectProps.onKeyDown = typeSelectProps.onKeyDownCapture;
@@ -137,7 +142,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     name: props.name,
     isDisabled,
     isRequired: props.isRequired,
-    validationBehavior: props.validationBehavior
+    validationBehavior: props.validationBehavior,
   });
 
   return {
@@ -223,6 +228,9 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
       ].filter(Boolean).join(' ')
     },
     descriptionProps,
-    errorMessageProps
+    errorMessageProps,
+    validationState,
+    errorMessage,
+    validationDetails
   };
 }

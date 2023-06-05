@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@react-spectrum/test-utils';
-import {Label, Radio, RadioGroup, RadioGroupContext, Text} from '../';
+import {act, fireEvent, render} from '@react-spectrum/test-utils';
+import {FormError, Label, Radio, RadioGroup, RadioGroupContext, Text} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -275,5 +275,26 @@ describe('RadioGroup', () => {
     let radio = getAllByRole('radio')[0];
     expect(radio).toHaveAttribute('aria-describedby');
     expect(radio.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Error Description');
+  });
+
+  it('should support FormError', () => {
+    let {getByRole} = render(
+      <form aria-label="Form">
+        <RadioGroup isRequired>
+          <Label>Test</Label>
+          <Radio value="a">A</Radio>
+          <FormError />
+        </RadioGroup>
+      </form>
+    );
+
+    let form = getByRole('form');
+    let group = getByRole('radiogroup');
+    expect(group).not.toHaveAttribute('aria-describedby');
+
+    act(() => form.checkValidity());
+
+    expect(group).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
   });
 });

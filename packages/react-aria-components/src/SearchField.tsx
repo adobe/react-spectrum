@@ -14,6 +14,7 @@ import {AriaSearchFieldProps, useSearchField} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
+import {FormErrorContext} from './FormError';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
@@ -37,9 +38,10 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
   let inputRef = useRef<HTMLInputElement>(null);
   let [labelRef, label] = useSlot();
   let state = useSearchFieldState(props);
-  let {labelProps, inputProps, clearButtonProps, descriptionProps, errorMessageProps} = useSearchField({
+  let {labelProps, inputProps, clearButtonProps, descriptionProps, errorMessageProps, ...validationProps} = useSearchField({
     ...props,
-    label
+    label,
+    validationBehavior: props.validationBehavior ?? 'native'
   }, state, inputRef);
 
   let renderProps = useRenderProps({
@@ -68,7 +70,8 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
               description: descriptionProps,
               errorMessage: errorMessageProps
             }
-          }]
+          }],
+          [FormErrorContext, validationProps]
         ]}>
         {renderProps.children}
       </Provider>

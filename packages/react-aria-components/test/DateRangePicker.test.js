@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, CalendarCell, CalendarGrid, DateInput, DateRangePicker, DateRangePickerContext, DateSegment, Dialog, Group, Heading, Label, Popover, RangeCalendar, Text} from 'react-aria-components';
+import {act, render} from '@react-spectrum/test-utils';
+import {Button, CalendarCell, CalendarGrid, DateInput, DateRangePicker, DateRangePickerContext, DateSegment, Dialog, FormError, Group, Heading, Label, Popover, RangeCalendar, Text} from 'react-aria-components';
 import {CalendarDate} from '@internationalized/date';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestDateRangePicker = (props) => (
@@ -152,5 +152,49 @@ describe('DateRangePicker', () => {
     expect(start).toHaveValue('2023-01-10');
     let end = document.querySelector('input[name=end]');
     expect(end).toHaveValue('2023-01-20');
+  });
+
+  it('should support FormError', () => {
+    let {getByRole} = render(
+      <form aria-label="Form">
+        <DateRangePicker isRequired>
+          <Label>Trip dates</Label>
+          <Group>
+            <DateInput slot="start">
+              {(segment) => <DateSegment segment={segment} />}
+            </DateInput>
+            <span aria-hidden="true">–</span>
+            <DateInput slot="end">
+              {(segment) => <DateSegment segment={segment} />}
+            </DateInput>
+            <Button>▼</Button>
+          </Group>
+          <FormError />
+          <Popover>
+            <Dialog>
+              <RangeCalendar>
+                <header>
+                  <Button slot="previous">◀</Button>
+                  <Heading />
+                  <Button slot="next">▶</Button>
+                </header>
+                <CalendarGrid>
+                  {(date) => <CalendarCell date={date} />}
+                </CalendarGrid>
+              </RangeCalendar>
+            </Dialog>
+          </Popover>
+        </DateRangePicker>
+      </form>
+    );
+
+    let form = getByRole('form');
+    let input = getByRole('group');
+    expect(input).not.toHaveAttribute('aria-describedby');
+
+    act(() => form.checkValidity());
+
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
   });
 });
