@@ -44,7 +44,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             </ActionButton>
           </Flex>
           <View>
-            {/* @ts-ignore */}
+            {/* @ts-ignore - https://github.com/vercel/next.js/issues/49610 */}
             <Component {...pageProps} />
           </View>
         </Grid>
