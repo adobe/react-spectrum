@@ -29,7 +29,7 @@ export function useLabels(props: DOMProps & AriaLabelingProps, defaultLabel?: st
   // combine them by pointing to the element itself.
   id = useId(id);
   if (labelledBy && label) {
-    let ids = new Set([...labelledBy.trim().split(/\s+/), id]);
+    let ids = new Set([id, ...labelledBy.trim().split(/\s+/)]);
     labelledBy = [...ids].join(' ');
   } else if (labelledBy) {
     labelledBy = labelledBy.trim().split(/\s+/).join(' ');

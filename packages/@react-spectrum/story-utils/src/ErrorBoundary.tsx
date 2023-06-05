@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {Component} from 'react';
+import React, {Component, ReactNode} from 'react';
 
-export class ErrorBoundary extends Component<{message: string}, {hasError: boolean}> {
+export class ErrorBoundary extends Component<{message: string, children: ReactNode}, {hasError: boolean}> {
   constructor(props) {
     super(props);
     this.state = {hasError: false};

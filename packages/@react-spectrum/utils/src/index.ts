@@ -11,7 +11,6 @@
  */
 
 /// <reference types="css-module-types" />
-/// <reference path="./ResizeObserver.d.ts" />
 
 export type {StyleHandlers} from './styleProps';
 export {shouldKeepSpectrumClassNames, keepSpectrumClassNames, classNames} from './classNames';

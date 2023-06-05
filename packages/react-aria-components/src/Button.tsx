@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 import {AriaButtonProps, mergeProps, useButton, useFocusRing, useHover} from 'react-aria';
-import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, forwardRefType, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 
@@ -103,5 +103,5 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
 /**
  * A button allows a user to perform an action, with mouse, touch, and keyboard interactions.
  */
-const _Button = forwardRef(Button);
+const _Button = /*#__PURE__*/ (forwardRef as forwardRefType)(Button);
 export {_Button as Button};

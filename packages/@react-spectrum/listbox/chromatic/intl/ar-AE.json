@@ -1,0 +1,12 @@
+{
+  "actions": "أجراءات",
+  "selectAction": "اختر فعلا",
+  "addToQueue": "إضافة إلى قائمة الانتظار",
+  "addToCurrentWatchQueue": "أضف إلى قائمة انتظار المشاهدة الحالية.",
+  "addReview": "إضافة مراجعة",
+  "postAReviewForTheEpisode": "أضف مراجعة للحلقة.",
+  "subscribeToSeries": "اشترك في المسلسل",
+  "addSeriesToSubscription": "أضف سلسلة إلى قائمة الاشتراك الخاصة بك وسيتم إعلامك عند بث حلقة جديدة.",
+  "report": "تقرير",
+  "reportAnIssue": "الإبلاغ عن مشكلة / انتهاك."
+}

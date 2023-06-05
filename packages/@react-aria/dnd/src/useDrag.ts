@@ -79,7 +79,7 @@ export function useDrag(options: DragOptions): DragResult {
   }).current;
   state.options = options;
   let isDraggingRef = useRef(false);
-  let [, setDraggingState] = useState(false);
+  let [isDragging, setDraggingState] = useState(false);
   let setDragging = (isDragging) => {
     isDraggingRef.current = isDragging;
     setDraggingState(isDragging);
@@ -265,7 +265,7 @@ export function useDrag(options: DragOptions): DragResult {
   };
 
   let modality = useDragModality();
-  let message = !isDraggingRef.current ? MESSAGES[modality].start : MESSAGES[modality].end;
+  let message = !isDragging ? MESSAGES[modality].start : MESSAGES[modality].end;
 
   let descriptionProps = useDescription(stringFormatter.format(message));
 
@@ -338,6 +338,6 @@ export function useDrag(options: DragOptions): DragResult {
       ...descriptionProps,
       onPress
     },
-    isDragging: isDraggingRef.current
+    isDragging
   };
 }
