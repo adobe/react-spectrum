@@ -175,8 +175,48 @@ describe('useCalendar', () => {
       ${'going forward two'} | ${new CalendarDate(2019, 1, 1)} | ${'January to February 2019'} | ${'March to April 2019'} | ${'Next'} | ${2} | ${{months: 2}} | ${'single'}
       ${'going backward one'} | ${new CalendarDate(2019, 1, 1)} | ${'January to February 2019'} | ${'December 2018 to January 2019'} | ${'Previous'} | ${1} | ${{months: 2}} | ${'single'}
       ${'going backward two'} | ${new CalendarDate(2019, 1, 1)} | ${'January to February 2019'} | ${'November to December 2018'} | ${'Previous'} | ${2} | ${{months: 2}} | ${'single'}
-      `('should use single $Name', ({defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior}) => {
+      `('should use pageBehavior single $Name', ({defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior}) => {
         testPagination(defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior);
       });
+
+    it.each`
+    Name | defaultValue | rangeBefore | rangeAfter | rel | count | visibleDuration
+    ${'week going forward one'} | ${new CalendarDate(2019, 1, 1)} | ${'December 23, 2018 to January 12, 2019'} | ${'January 13 to February 2, 2019'} | ${'Next'} | ${1} | ${{weeks: 3}}
+    ${'week going forward two'} | ${new CalendarDate(2019, 1, 1)} | ${'December 23, 2018 to January 12, 2019'} | ${'February 3 to 23, 2019'} | ${'Next'} | ${2} | ${{weeks: 3}}
+    ${'week going backward one'} | ${new CalendarDate(2019, 1, 1)} | ${'December 23, 2018 to January 12, 2019'} | ${'December 2 to 22, 2018'} | ${'Previous'} | ${1} | ${{weeks: 3}}
+    ${'week going backward two'} | ${new CalendarDate(2019, 1, 1)} | ${'December 23, 2018 to January 12, 2019'} | ${'November 11 to December 1, 2018'} | ${'Previous'} | ${2} | ${{weeks: 3}}
+    `('should use visible as default $Name', ({defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior}) => {
+      testPagination(defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior);
+    });
+
+    it.each`
+    Name | defaultValue | rangeBefore | rangeAfter | rel | count | visibleDuration | pageBehavior
+    ${'week going forward one'} | ${new CalendarDate(2019, 1, 1)} | ${'December 23, 2018 to January 12, 2019'} | ${'December 30, 2018 to January 19, 2019'} | ${'Next'} | ${1} | ${{weeks: 3}} | ${'single'}
+    ${'week going forward four'} | ${new CalendarDate(2019, 1, 1)} | ${'December 23, 2018 to January 12, 2019'} | ${'January 20 to February 9, 2019'} | ${'Next'} | ${4} | ${{weeks: 3}} | ${'single'}
+    ${'week going backward one'} | ${new CalendarDate(2019, 1, 1)} | ${'December 23, 2018 to January 12, 2019'} | ${'December 16, 2018 to January 5, 2019'} | ${'Previous'} | ${1} | ${{weeks: 3}} | ${'single'}
+    ${'week going backward four'} | ${new CalendarDate(2019, 1, 1)} | ${'December 23, 2018 to January 12, 2019'} | ${'November 25 to December 15, 2018'} | ${'Previous'} | ${4} | ${{weeks: 3}} | ${'single'}
+    `('should use pageBehavior single $Name', ({defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior}) => {
+      testPagination(defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior);
+    });
+
+    it.each`
+    Name | defaultValue | rangeBefore | rangeAfter | rel | count | visibleDuration
+    ${'day going forward one'} | ${new CalendarDate(2019, 1, 1)} | ${'December 30, 2018 to January 3, 2019'} | ${'January 4 to 8, 2019'} | ${'Next'} | ${1} | ${{days: 5}}
+    ${'day going forward two'} | ${new CalendarDate(2019, 1, 1)} | ${'December 30, 2018 to January 3, 2019'} | ${'January 9 to 13, 2019'} | ${'Next'} | ${2} | ${{days: 5}}
+    ${'day going backward one'} | ${new CalendarDate(2019, 1, 1)} | ${'December 30, 2018 to January 3, 2019'} | ${'December 25 to 29, 2018'} | ${'Previous'} | ${1} | ${{days: 5}}
+    ${'day going backward two'} | ${new CalendarDate(2019, 1, 1)} | ${'December 30, 2018 to January 3, 2019'} | ${'December 20 to 24, 2018'} | ${'Previous'} | ${2} | ${{days: 5}}
+    `('should use visible as default $Name', ({defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior}) => {
+      testPagination(defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior);
+    });
+
+    it.each`
+    Name | defaultValue | rangeBefore | rangeAfter | rel | count | visibleDuration | pageBehavior
+    ${'day going forward one'} | ${new CalendarDate(2019, 1, 1)} | ${'December 30, 2018 to January 3, 2019'} | ${'December 31, 2018 to January 4, 2019'} | ${'Next'} | ${1} | ${{days: 5}} | ${'single'}
+    ${'day going forward five'} | ${new CalendarDate(2019, 1, 1)} | ${'December 30, 2018 to January 3, 2019'} | ${'January 3 to 7, 2019'} | ${'Next'} | ${4} | ${{days: 5}} | ${'single'}
+    ${'day going backward one'} | ${new CalendarDate(2019, 1, 1)} | ${'December 30, 2018 to January 3, 2019'} | ${'December 29, 2018 to January 2, 2019'} | ${'Previous'} | ${1} | ${{days: 5}} | ${'single'}
+    ${'day going backward five'} | ${new CalendarDate(2019, 1, 1)} | ${'December 30, 2018 to January 3, 2019'} | ${'December 26 to 30, 2018'} | ${'Previous'} | ${4} | ${{days: 5}} | ${'single'}
+    `('should use pageBehavior single $Name', ({defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior}) => {
+      testPagination(defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior);
+    });
   });
 });
