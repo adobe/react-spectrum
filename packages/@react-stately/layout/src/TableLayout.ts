@@ -287,6 +287,11 @@ export class TableLayout<T> extends ListLayout<T> {
       }
 
       let layoutNode = this.buildChild(node, 0, y);
+      // TODO: ideally we would want the nested rows to render at the same level as their parent rows
+      // but do we also want the parent child relation to remain when calculating persisted keys
+      // (i.e. if a nested row is rendered and persisted, should its parents all the way up be persisted as well?)
+      // the below code change actually makes the child rows render within the row which we don't want.
+      // layoutNode.layoutInfo.parentKey = node.level > 1 ? node.parentKey : 'body';
       layoutNode.layoutInfo.parentKey = 'body';
       y = layoutNode.layoutInfo.rect.maxY;
       width = Math.max(width, layoutNode.layoutInfo.rect.width);
@@ -554,6 +559,8 @@ export class TableLayout<T> extends ListLayout<T> {
         }
 
         let index = collectionNode.index;
+        // TODO: Perhaps make a conditional that doesn't offset by the headerRows length if the collection is the TreeGridCollection?
+        // Or make it so index (or something) on the collectionNode returns the nested row's absolute row index rather than its relative one
         if (layoutInfo.parentKey === 'body') {
           index -= this.collection.headerRows.length;
         }

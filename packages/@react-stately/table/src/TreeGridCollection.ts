@@ -195,7 +195,11 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
       // Index for any non child row element
       let index = 0;
       // Index for nested rows, should be counted separately from sibiling cells. TODO: maybe store these values separately in node.index and into node.posinset maybe?
-      let rowIndex = 0;
+      // TODO: Turns out Table layout makes an assumption in buildPersistedIndicies that the body's children (aka rows) should be
+      // offset by the headerRows length, aka it is assuming the index value of the body's rows are calculated as if the header rows are
+      // the same level of row nodes under a single parent. For aria-posinset, we don't need to calculate the index in such a way...
+      // This actually affects the persisted row layout stuff since we've flattened the collection by returning this.rows from the collection iteration and thus
+      let rowIndex = 1;
       for (let child of node.childNodes) {
         // TODO: Right now this means if the parent key is not included in expandedKeys but a childKey is, we will ignore it completely since the parent hasn't been expanded
         if (!(child.type === 'item' && expandedKeys !== 'all' && !expandedKeys.has(node.key))) {
@@ -214,7 +218,8 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
           // TODO: this makes the nested rows and cell nodes have separate index counters (e.g. a row with 2 nested rows and 3 cells will have 1,2 index for the nested rows and 0,1,2 for the cells)
           // If we want the index to strictly stay as the nodes's index within its parent regardless of type, we will have to have some way to
           // know the cell's index w/ respect to the other child cells so we can set the proper column data and we will need a way to calculate the aria-posinset for the nested row. Will need to adjust any instances of
-          // direct .index usage in the keyboard delegates and stuff. Perhaps can introduce some new Node properties like cellIndex and posIndSet?
+          // direct .index usage in the keyboard delegates and stuff. Perhaps can introduce some new Node properties like cellIndex and posInSet and have index still calculated as an absolute row index value?
+          // Would simplify things a lot
           if (child.type === 'item') {
             visitNode(child, rowIndex++);
           } else {
@@ -236,7 +241,10 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
     topLevelRows.forEach((node: GridNode<T>, i) => {
       // TODO: should the index of the top level rows be affected by the column header? don't think it should but need to test
       // For aria-posinset, we don't need to account for column header rows when calculating their values
-      // TODO: needs to be +1 here or TableLayout breaks, figure out why
+      // TODO: Turns out Table layout makes an assumption in buildPersistedIndicies that the body's children (aka rows) should be
+      // offset by the headerRows length, aka it is assuming the index value of the body's rows are calculated as if the header rows are
+      // the same level of row nodes under a single parent. For aria-posinset, we don't need to calculate the index in such a way...
+      // This will be problematic for the nested row case as well
       let index = node.type === 'headerrow' ? i : (i - headerRows.length + 1);
       visitNode(node as GridNode<T>, index);
 
