@@ -46,10 +46,9 @@ import {TextFieldBase} from '@react-spectrum/textfield';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useComboBox} from '@react-aria/combobox';
 import {useComboBoxState} from '@react-stately/combobox';
-import {useFilter} from '@react-aria/i18n';
+import {useFilter, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useFormProps} from '@react-spectrum/form';
 import {useLayoutEffect} from '@react-aria/utils';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: FocusableRef<HTMLElement>) {

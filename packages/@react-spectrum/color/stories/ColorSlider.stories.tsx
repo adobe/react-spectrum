@@ -16,10 +16,9 @@ import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Flex} from '@react-spectrum/layout';
-import {Heading} from '@react-spectrum/text';
+import {Heading, Text} from '@react-spectrum/text';
 import {parseColor} from '@react-stately/color';
 import React, {useState} from 'react';
-import {Text} from '@react-spectrum/text';
 
 export type ColorSliderStory = ComponentStoryObj<typeof ColorSlider>;
 

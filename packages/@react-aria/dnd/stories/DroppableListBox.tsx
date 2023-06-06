@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {chain} from '@react-aria/utils';
+import {chain, mergeProps} from '@react-aria/utils';
 import {classNames} from '@react-spectrum/utils';
 import dndStyles from './dnd.css';
 import dropIndicatorStyles from '@adobe/spectrum-css-temp/components/dropindicator/vars.css';
@@ -21,7 +21,6 @@ import Folder from '@spectrum-icons/workflow/Folder';
 import {Item} from '@react-stately/collections';
 import {ListDropTargetDelegate} from '@react-aria/dnd';
 import {ListKeyboardDelegate} from '@react-aria/selection';
-import {mergeProps} from '@react-aria/utils';
 import React from 'react';
 import {useDropIndicator, useDroppableCollection, useDroppableItem} from '..';
 import {useDroppableCollectionState} from '@react-stately/dnd';

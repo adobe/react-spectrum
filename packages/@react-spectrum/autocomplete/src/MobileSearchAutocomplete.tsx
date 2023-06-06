@@ -13,14 +13,13 @@
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {AriaButtonProps} from '@react-types/button';
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
-import {classNames} from '@react-spectrum/utils';
+import {classNames, useFocusableRef} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import {ComboBoxState, useComboBoxState} from '@react-stately/combobox';
-import {DismissButton} from '@react-aria/overlays';
+import {DismissButton, useOverlayTrigger} from '@react-aria/overlays';
 import {Field} from '@react-spectrum/label';
 import {FocusableRef, ValidationState} from '@react-types/shared';
-import {focusSafely} from '@react-aria/focus';
-import {FocusScope, useFocusRing} from '@react-aria/focus';
+import {focusSafely, FocusScope, useFocusRing} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
@@ -47,9 +46,7 @@ import {Tray} from '@react-spectrum/overlays';
 import {useButton} from '@react-aria/button';
 import {useDialog} from '@react-aria/dialog';
 import {useFilter, useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useFocusableRef} from '@react-spectrum/utils';
 import {useLabel} from '@react-aria/label';
-import {useOverlayTrigger} from '@react-aria/overlays';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSearchAutocomplete} from '@react-aria/autocomplete';
 
