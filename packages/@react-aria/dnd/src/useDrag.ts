@@ -149,6 +149,7 @@ export function useDrag(options: DragOptions): DragResult {
 
     // Enforce that drops are handled by useDrop.
     addGlobalListener(window, 'drop', e => {
+      console.log(e.target);
       if (!DragManager.isValidDropTarget(e.target as Element)) {
         e.preventDefault();
         e.stopPropagation();

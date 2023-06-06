@@ -12,10 +12,10 @@
 
 import {AriaLabelingProps} from '@react-types/shared';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {DropOptions, mergeProps, useClipboard, useDrop, useFocusRing, useHover, useId, VisuallyHidden} from 'react-aria';
+import {DropOptions, mergeProps, useButton, useClipboard, useDrop, useFocusRing, useHover, useId, VisuallyHidden} from 'react-aria';
 import {FileTriggerContext} from './FileTrigger';
 import {filterDOMProps} from '@react-aria/utils';
-import React, {createContext, ForwardedRef, forwardRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
 import {useLabels} from '@react-aria/utils';
 
@@ -42,17 +42,20 @@ export interface DropZoneRenderProps {
   isDropTarget: boolean
 }
 // note: possibly add isDisabled prop in the future
-export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'onInsert' | 'onRootDrop' | 'onItemDrop' | 'onReorder'>, RenderProps<DropZoneRenderProps>, SlotProps, AriaLabelingProps {}
+export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'onInsert' | 'onRootDrop' | 'onItemDrop' | 'onReorder'>, RenderProps<DropZoneRenderProps>, SlotProps, AriaLabelingProps {
+  onClick?: React.MouseEventHandler<HTMLButtonElement>
+}
 
 export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDivElement>>(null);
 
 function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DropZoneContext);
-  let {dropProps, isDropTarget} = useDrop({...props, ref});
+  let buttonRef = useRef<HTMLButtonElement>(null);
+  let {dropProps, dropButtonProps, isDropTarget} = useDrop({...props, ref: buttonRef, hasDropButton: true});
   let {hoverProps, isHovered} = useHover({});
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let [fileTriggerRef, hasFileTrigger] = useSlot(); 
-
+  
   let textId = useId();
   let labelProps = useLabels({'aria-labelledby': textId});
 
@@ -97,6 +100,13 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
       );
     }
   };
+
+  // will need to update useDrop hook
+  // create something like hasDropButton to check if there is a button to trigger the drop
+  // if there is a button, we need to return something like DropButtonProps
+  // otherwise, if there is no button, then nothing should be returned by DropButtonProps
+  // pass dropProps to div, pass dropButtonProps to button 
+  // if there is a button, make sure to pass buttonRef to useDrop
   
   return (
     <Provider
@@ -105,20 +115,20 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
         [TextContext, {id: textId, slot: 'heading'}]
       ]}>
       <div
-        {...mergeProps(dropProps, hoverProps, DOMProps, clipboardProps)} 
+        {...mergeProps(dropProps, hoverProps, DOMProps)} 
         {...renderProps}
-        ref={ref}
-        slot={props.slot}
-        tabIndex={-1}
+        ref={buttonRef}
+        slot={props.slot} 
+        // tabIndex={-1}
         data-hovered={isHovered || undefined}
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-drop-target={isDropTarget || undefined} >
-        {!hasFileTrigger &&
-          <VisuallyHidden>
-            <button
-              {...mergeProps(focusProps, clipboardProps, labelProps)} />   
-          </VisuallyHidden>}
+        <VisuallyHidden>
+          <button
+            {...mergeProps(dropButtonProps, focusProps, clipboardProps, labelProps)}
+            ref={buttonRef} />   
+        </VisuallyHidden>
         {renderProps.children}
       </div>
     </Provider>

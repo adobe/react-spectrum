@@ -26,9 +26,13 @@ export interface FileTriggerProps extends SlotProps, DOMProps, AriaLabelingProps
   /**
    * Whether multiple files can be selected.
    */
-  multiple?: boolean,
+  allowsMultiple?: boolean,
   /**
-   * Handler that is called on submission.
+   * Specifies the use of a media capture mechanism to capture the media on the spot.
+   */
+  capture?: 'user' | 'environment',
+  /**
+   * Handler when a user selects a file.
    */
   onChange?: React.ChangeEventHandler<HTMLInputElement>
 }
@@ -37,21 +41,21 @@ export const FileTriggerContext = createContext<ContextValue<FileTriggerProps, H
 
 function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, FileTriggerContext);
-  let {onChange, accept, className, multiple, ...otherProps} = props;
+  let {onChange, accept, className, allowsMultiple, ...otherProps} = props;
   let inputRef = useRef<HTMLInputElement>(null);
 
   return (
     <Provider
       values={[
-        [LinkContext, {slot: 'file', onPress: () => inputRef.current?.click()}],  
-        [ButtonContext, {slot: 'file', onPress: () => inputRef.current?.click()}]
+        [LinkContext, {onPress: () => inputRef.current?.click()}],  
+        [ButtonContext, {onPress: () => inputRef.current?.click()}]
       ]}>
       <div
         className={className || 'react-aria-FileTrigger'}
         {...filterDOMProps(otherProps)}
         ref={ref}
         slot={props.slot}>
-        <Input type="file" style={{display: 'none'}} ref={inputRef} accept={accept} onChange={onChange} multiple={multiple} /> 
+        <Input type="file" style={{display: 'none'}} ref={inputRef} accept={accept} onChange={onChange} multiple={allowsMultiple} /> 
         {props.children}
       </div>
     </Provider>
