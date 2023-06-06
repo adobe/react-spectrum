@@ -25,11 +25,7 @@ export interface TabsRenderProps {
    * The orientation of the tabs.
    * @selector [data-orientation="horizontal | vertical"]
    */
-  orientation: Orientation,
-  /**
-   * State of the tabs.
-   */
-  state: TabListState<unknown>
+  orientation: Orientation
 }
 
 export interface TabListProps<T> extends StyleRenderProps<TabListRenderProps>, AriaLabelingProps, CollectionProps<T> {}
@@ -39,7 +35,11 @@ export interface TabListRenderProps {
    * The orientation of the tab list.
    * @selector [aria-orientation="horizontal | vertical"]
    */
-  orientation: Orientation
+  orientation: Orientation,
+  /**
+   * State of the tab list.
+   */
+  state: TabListState<unknown>
 }
 
 export interface TabProps extends RenderProps<TabRenderProps>, AriaLabelingProps {
@@ -125,7 +125,7 @@ function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
     collection,
     children: undefined
   });
-  let values = useMemo(() => ({orientation, state}), [orientation, state]);
+  let values = useMemo(() => ({orientation}), [orientation]);
 
   let renderProps = useRenderProps({
     ...props,
@@ -168,7 +168,8 @@ function TabList<T extends object>(props: TabListProps<T>, ref: ForwardedRef<HTM
     children: null,
     defaultClassName: 'react-aria-TabList',
     values: {
-      orientation
+      orientation,
+      state
     }
   });
 
