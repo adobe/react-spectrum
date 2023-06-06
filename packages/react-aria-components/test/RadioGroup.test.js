@@ -292,7 +292,7 @@ describe('RadioGroup', () => {
     let group = getByRole('radiogroup');
     expect(group).not.toHaveAttribute('aria-describedby');
 
-    act(() => form.checkValidity());
+    act(() => {form.checkValidity();});
 
     expect(group).toHaveAttribute('aria-describedby');
     expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');

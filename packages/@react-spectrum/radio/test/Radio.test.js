@@ -499,7 +499,7 @@ describe('Radios', function () {
     expect(group).not.toHaveAttribute('aria-invalid');
     expect(onValidationChange).not.toHaveBeenCalled();
 
-    act(() => form.checkValidity());
+    act(() => {form.checkValidity();});
     expect(onValidationChange).toHaveBeenCalledTimes(1);
     expect(onValidationChange).toHaveBeenLastCalledWith({
       isInvalid: true,
@@ -524,6 +524,7 @@ describe('Radios', function () {
     expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
 
     act(() => userEvent.click(radios[1]));
+    fireEvent.change(radios[1]); // old user-event in React 16 tests doesn't fire change event.
     expect(group).not.toHaveAttribute('aria-describedby');
     expect(group).not.toHaveAttribute('aria-invalid');
     expect(onValidationChange).toHaveBeenCalledTimes(2);

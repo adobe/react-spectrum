@@ -2264,7 +2264,7 @@ describe('NumberField', function () {
     expect(input).not.toHaveAttribute('aria-describedby');
     expect(input).not.toHaveAttribute('aria-invalid');
 
-    act(() => form.checkValidity());
+    act(() => {form.checkValidity();});
 
     expect(input).toHaveAttribute('aria-describedby');
     expect(input).toHaveAttribute('aria-invalid');

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render} from '@react-spectrum/test-utils';
+import {act, fireEvent, render} from '@react-spectrum/test-utils';
 import {Checkbox} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -309,7 +309,7 @@ describe('Checkbox', function () {
     expect(input).not.toHaveAttribute('aria-invalid');
     expect(onValidationChange).not.toHaveBeenCalled();
 
-    act(() => form.checkValidity());
+    act(() => {form.checkValidity();});
     expect(input).toHaveAttribute('aria-invalid');
     expect(onValidationChange).toHaveBeenCalledTimes(1);
     expect(onValidationChange).toHaveBeenLastCalledWith({
@@ -331,6 +331,7 @@ describe('Checkbox', function () {
     });
 
     act(() => userEvent.click(input));
+    fireEvent.change(input); // old user-event in React 16 tests doesn't fire change event.
     expect(input).not.toHaveAttribute('aria-invalid');
     expect(onValidationChange).toHaveBeenCalledTimes(2);
     expect(onValidationChange).toHaveBeenLastCalledWith({

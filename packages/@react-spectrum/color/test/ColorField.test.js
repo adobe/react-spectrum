@@ -391,7 +391,8 @@ describe('ColorField', function () {
     let input = getByTestId('input');
 
     expect(input).toHaveValue('#AABBCC');
-    await act(() => userEvent.type(input, '{selectall}def'));
+    await act(() => userEvent.type(input, '{selectall}'));
+    typeText(input, 'def');
     act(() => input.blur());
     expect(input).toHaveValue('#DDEEFF');
 
@@ -415,7 +416,7 @@ describe('ColorField', function () {
     expect(input).not.toHaveAttribute('aria-describedby');
     expect(input).not.toHaveAttribute('aria-invalid');
 
-    act(() => form.checkValidity());
+    act(() => {form.checkValidity();});
 
     expect(input).toHaveAttribute('aria-describedby');
     expect(input).toHaveAttribute('aria-invalid');

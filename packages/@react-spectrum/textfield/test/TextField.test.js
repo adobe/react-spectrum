@@ -453,7 +453,7 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
-  `('$Name supports form reset', async ({Component}) => {
+  `('$Name supports form reset', ({Component}) => {
     function Test() {
       let [value, setValue] = React.useState('Devon');
       return (
@@ -468,7 +468,7 @@ describe('Shared TextField behavior', () => {
     let input = getByTestId('name');
 
     expect(input).toHaveValue('Devon');
-    await act(() => userEvent.type(input, ' test'));
+    typeText(input, ' test');
     expect(input).toHaveValue('Devon test');
 
     let button = getByTestId('reset');
@@ -481,7 +481,7 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
-  `('$Name supports native validation', async ({Component}) => {
+  `('$Name supports native validation', ({Component}) => {
     let onValidationChange = jest.fn();
     let {getByTestId} = render(
       <form data-testid="form">
@@ -495,7 +495,7 @@ describe('Shared TextField behavior', () => {
     expect(input).not.toHaveAttribute('aria-invalid');
     expect(onValidationChange).not.toHaveBeenCalled();
 
-    act(() => form.checkValidity());
+    act(() => {form.checkValidity();});
 
     expect(input).toHaveAttribute('aria-describedby');
     expect(input).toHaveAttribute('aria-invalid');
@@ -519,7 +519,7 @@ describe('Shared TextField behavior', () => {
       }
     });
 
-    await act(() => userEvent.type(input, 'test'));
+    typeText(input, 'test');
     act(() => input.blur());
 
     expect(input).not.toHaveAttribute('aria-describedby');
@@ -547,7 +547,7 @@ describe('Shared TextField behavior', () => {
   it.each`
     Name                | Component
     ${'v3 TextField'}   | ${TextField}
-  `('$Name supports native custom validation message', async ({Component}) => {
+  `('$Name supports native custom validation message', ({Component}) => {
     let onValidationChange = jest.fn();
     let {getByTestId, rerender} = render(
       <form data-testid="form">
@@ -563,7 +563,7 @@ describe('Shared TextField behavior', () => {
     expect(input.validity.valid).toBe(false);
     expect(input.validationMessage).toBe('custom');
 
-    act(() => form.checkValidity());
+    act(() => {form.checkValidity();});
 
     rerender(
       <form data-testid="form">
@@ -581,7 +581,7 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
-  `('$Name should not set native validation message when validationBehavior=aria', async ({Component}) => {
+  `('$Name should not set native validation message when validationBehavior=aria', ({Component}) => {
     let {getByTestId} = render(<Component label="Name" data-testid="name" name="name" validationState="invalid" errorMessage="custom" />);
     let input = getByTestId('name');
 

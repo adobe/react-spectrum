@@ -226,7 +226,7 @@ describe('TimeField', function () {
       expect(group).not.toHaveAttribute('aria-describedby');
       expect(spinbuttons[0]).not.toHaveAttribute('aria-invalid');
 
-      act(() => form.checkValidity());
+      act(() => {form.checkValidity();});
 
       expect(group).toHaveAttribute('aria-describedby');
       expect(spinbuttons[0]).toHaveAttribute('aria-invalid');

@@ -202,7 +202,7 @@ describe('Select', () => {
     let button = getByRole('button');
     expect(button).not.toHaveAttribute('aria-describedby');
 
-    act(() => form.checkValidity());
+    act(() => {form.checkValidity();});
 
     expect(button).toHaveAttribute('aria-describedby');
     expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');

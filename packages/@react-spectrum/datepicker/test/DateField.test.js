@@ -363,7 +363,7 @@ describe('DateField', function () {
       expect(spinbuttons[0]).not.toHaveAttribute('aria-invalid');
       expect(onValidationChange).not.toHaveBeenCalled();
 
-      act(() => form.checkValidity());
+      act(() => {form.checkValidity();});
       expect(onValidationChange).toHaveBeenCalledTimes(1);
       expect(onValidationChange).toHaveBeenLastCalledWith({
         isInvalid: true,

@@ -149,7 +149,7 @@ describe('NumberField', () => {
     let input = getByRole('textbox');
     expect(input).not.toHaveAttribute('aria-describedby');
 
-    act(() => form.checkValidity());
+    act(() => {form.checkValidity();});
 
     expect(input).toHaveAttribute('aria-describedby');
     expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');

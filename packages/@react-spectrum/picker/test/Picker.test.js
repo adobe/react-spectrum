@@ -2261,7 +2261,7 @@ describe('Picker', function () {
       expect(picker).not.toHaveAttribute('aria-describedby');
       expect(onValidationChange).not.toHaveBeenCalled();
 
-      act(() => form.checkValidity());
+      act(() => {form.checkValidity();});
       expect(onValidationChange).toHaveBeenCalledTimes(1);
       expect(onValidationChange).toHaveBeenLastCalledWith({
         isInvalid: true,

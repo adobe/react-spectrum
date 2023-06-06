@@ -5239,7 +5239,7 @@ describe('ComboBox', function () {
         expect(input).not.toHaveAttribute('aria-invalid');
         expect(onValidationChange).not.toHaveBeenCalled();
 
-        act(() => form.checkValidity());
+        act(() => {form.checkValidity();});
         expect(onValidationChange).toHaveBeenCalledTimes(1);
         expect(onValidationChange).toHaveBeenLastCalledWith({
           isInvalid: true,
@@ -5417,7 +5417,7 @@ describe('ComboBox', function () {
         expect(button).not.toHaveAttribute('aria-describedby');
         expect(onValidationChange).not.toHaveBeenCalled();
 
-        act(() => form.checkValidity());
+        act(() => {form.checkValidity();});
         expect(onValidationChange).toHaveBeenCalledTimes(1);
         expect(onValidationChange).toHaveBeenLastCalledWith({
           isInvalid: true,
