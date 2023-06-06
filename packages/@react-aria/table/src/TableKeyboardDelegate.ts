@@ -22,6 +22,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
     return node.type === 'cell' || node.type === 'rowheader' || node.type === 'column';
   }
 
+  // TODO: replace instances of getChildNodes with this.getChildNodes
   getKeyBelow(key: Key) {
     let startItem = this.collection.getItem(key);
     if (!startItem) {
@@ -42,7 +43,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
       }
 
       let firstItem = this.collection.getItem(firstKey);
-      return getNthItem(getChildNodes(firstItem, this.collection), startItem.index).key;
+      return getNthItem(this.getChildNodes(firstItem, this.isCell), startItem.index).key;
     }
 
     return super.getKeyBelow(key);

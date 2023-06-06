@@ -207,8 +207,8 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
 
           // TODO: this makes the nested rows and cell nodes have separate index counters (e.g. a row with 2 nested rows and 3 cells will have 1,2 index for the nested rows and 0,1,2 for the cells)
           // If we want the index to strictly stay as the nodes's index within its parent regardless of type, we will have to have some way to
-          // know the cell's index w/ respect to the other child cells so we can set the proper column data and we will need a way to calculate the aria-posinset for the nested row.
-          // Perhaps can introduce some new Node properties like cellIndex and posIndSet?
+          // know the cell's index w/ respect to the other child cells so we can set the proper column data and we will need a way to calculate the aria-posinset for the nested row. Will need to adjust any instances of
+          // direct .index usage in the keyboard delegates and stuff. Perhaps can introduce some new Node properties like cellIndex and posIndSet?
           if (child.type === 'item') {
             visitNode(child, rowIndex++);
           } else {
@@ -279,16 +279,62 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
     return this.keyMap.keys();
   }
 
-  // TODO these key getters will need to change most likely. Or keep these as is and modify the keyboardDelegate and layouts
-  // TODO fix keyboard interaction
+  // TODO these key getters will need to change most likely. Or keep these as is and modify the keyboardDelegate and layouts?
+  // This also gets used by drop hooks (useDropIndicator, useDroppableCollection), dnd stories, layout, etc for getting the row's next/prev row
+  // Do we want to special case the results this returns such that it doesn't return the actual .next/prevKey but instead returns the next/prev row if
+  // the key item is a row and returns the next/prev cell if the key item is a cell? If we don't, then we will have to update the logic in all the other places instead
+  // Maybe add a getRowBefore/getCellBefore instead?
   getKeyBefore(key: Key) {
     let node = this.keyMap.get(key);
-    return node ? node.prevKey : null;
+    if (node.type !== 'item' && node.type !== 'cell') {
+      return node ? node.prevKey : null;
+    } else if (node.type === 'cell') {
+      while (node != null) {
+        node = this.keyMap.get(node.prevKey);
+        if (node.type === 'cell') {
+          return node.key;
+        }
+      }
+
+      return null;
+    } else if (node.type === 'item') {
+      // I think this should be fine in RAC since RAC table will have "get rows()"?
+      // alternatively if we don't want to rely on  if node type is row, order of row to return:
+      // 1. go through previous keys and return first key that is a row, skipping cell nodes (aka get previous sibling rows)
+      // 2. if has a parent row, return parent row
+      // 3. if doesn't have parent row, return previous key (make this first check)
+
+      let index = this.rows.findIndex(row => row.key === node.key);
+      return this.rows[index - 1]?.key;
+    }
   }
 
   getKeyAfter(key: Key) {
     let node = this.keyMap.get(key);
-    return node ? node.nextKey : null;
+
+    // if not a cell or a row just do old code
+    if (node.type !== 'item' && node.type !== 'cell') {
+      return node ? node.nextKey : null;
+    } else if (node.type === 'cell') {
+      while (node != null) {
+        node = this.keyMap.get(node.nextKey);
+        if (node.type === 'cell') {
+          return node.key;
+        }
+      }
+
+      return null;
+    } else if (node.type === 'item') {
+      // I think this should be fine in RAC since RAC table will have "get rows()"?
+      // alternatively if we don't want to rely on  if node type is row, order of row to return:
+      // if node type is row, order of row to return:
+      // 1. if row is expanded, grab first childrow if any
+      // 2. if row is not expanded or doesn't have children, grab next sibling row (aka go through next key and skip any cells but use their nextKey)
+      // 3. if none, move one level up and find the parent's next sibling row
+
+      let index = this.rows.findIndex(row => row.key === node.key);
+      return this.rows[index + 1]?.key;
+    }
   }
 
   getFirstKey() {

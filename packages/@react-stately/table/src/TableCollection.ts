@@ -261,7 +261,6 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
     let headerRows = buildHeaderRows(columnKeyMap, columns) as GridNode<T>[];
     headerRows.forEach((row, i) => rows.splice(i, 0, row));
 
-    console.log('rows before', rows);
     super({
       columnCount: columns.length,
       items: rows,

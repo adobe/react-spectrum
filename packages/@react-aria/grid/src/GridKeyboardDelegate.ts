@@ -53,6 +53,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     return node.type === 'row' || node.type === 'item';
   }
 
+  // TODO: replace instances of getChildNodes with this.getChildNodes
   // TODO: perhaps just modify getChildNodes so that it supports this filter directly instead of wrapping this
   // I imagine we will probably run into the same use case in other keyboard delegates? Maybe not since those only have a single cell and rely on
   // treewalker to navigate through the items within the row
@@ -101,13 +102,14 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
       key = startItem.parentKey;
     }
 
+    // TODO: the assumption made here is that this.findNextKey will return the next row
     // Find the next item
     key = this.findNextKey(key);
     if (key != null) {
       // If focus was on a cell, focus the cell with the same index in the next row.
       if (this.isCell(startItem)) {
         let item = this.collection.getItem(key);
-        return getNthItem(getChildNodes(item, this.collection), startItem.index).key;
+        return getNthItem(this.getChildNodes(item, this.isCell), startItem.index).key;
       }
 
       // Otherwise, focus the next row
@@ -134,7 +136,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
       // If focus was on a cell, focus the cell with the same index in the previous row.
       if (this.isCell(startItem)) {
         let item = this.collection.getItem(key);
-        return getNthItem(getChildNodes(item, this.collection), startItem.index).key;
+        return getNthItem(this.getChildNodes(item, this.isCell), startItem.index).key;
       }
 
       // Otherwise, focus the previous row
