@@ -29,8 +29,6 @@ export function useCollection<T extends object, C extends Collection<Node<T>> = 
       return collection;
     }
     let nodes = builder.build({children, items}, context);
-    // console.log('nodes in useCollection', [...nodes], [...[...nodes][3].childNodes])
-    // debugger
     return factory(nodes);
   }, [builder, children, items, collection, context, factory]);
   return result;

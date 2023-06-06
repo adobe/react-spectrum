@@ -51,7 +51,6 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps<T>, conte
       }
 
       if (typeof children === 'function') {
-        // TODO: will have yield rows and not just cells. Use childRows props? Should Rows and Cells be differentiated or should it be childItems as a catch all instead?
         for (let column of context.columns) {
           yield {
             type: 'cell',
@@ -62,27 +61,15 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps<T>, conte
 
         if (childItems) {
           for (let child of childItems) {
-            // Note: in order to reuse he render function of TableBody, we just need to yield a type and a value here. CollectionBuilder will then look up
+            // Note: in order to reuse the render function of TableBody for our child rows, we just need to yield a type and a value here. CollectionBuilder will then look up
             // the parent renderer and use that to build the full node of this child row, using the value provided here to generate the cells
             yield {
               type: 'item',
-
               value: child
-              // hasChildNodes: true,
-              // TODO: maybe don't need value here
-              // *childNodes() {
-
-              // },
-              // renderer: children,
-              // TODO: would need to include more props? How would the user define a aria-label or a key for the nested row?
-              // This problem exists for dynamic nested columns too I believe
-              // props: {childRows: child.childRows}
             };
           }
         }
       } else {
-        // TODO: this method preserves the order in which the cell and nested row elements are set by the user
-        // Note that this approach currently has a rendering bug for the static case if a nested row is placed inbetween cells
         let nodes: PartialNode<T>[] = [];
         React.Children.forEach(children, node => {
           if (node.type === Row) {
@@ -105,6 +92,8 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps<T>, conte
 
         yield* nodes;
 
+        // TODO: below is an alternative where we yield all cells first and then rows. Can simplify the index calculation for the cell in the collection
+        // but at the cost of losing the user's original structure/order
         // let cells: PartialNode<T>[] = [];
         // let childRows: PartialNode<T>[] = [];
         // React.Children.forEach(children, node => {

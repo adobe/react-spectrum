@@ -83,8 +83,6 @@ export class GridCollection<T> implements IGridCollection<T> {
       }
     };
 
-    // TODO think about cherrypicking the change from https://github.com/adobe/react-spectrum/pull/4210/commits/ca029a9e517876169b23042faf416492a48fda53#diff-02aef09d221646fed1ffcb88c0bed8d1229c6b8e6d74a413eccdd8ecfa0f2695L105
-    // here so that we preserve the same object reference for keymap node vs nodes from node.childNodes
     let last: GridNode<T>;
     opts.items.forEach((node, i) => {
       let rowNode = {

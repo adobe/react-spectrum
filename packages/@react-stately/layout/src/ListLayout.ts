@@ -203,7 +203,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
         skipped++;
         continue;
       }
-      console.log('node in listlayout', node)
+
       let layoutNode = this.buildChild(node, 0, y);
       y = layoutNode.layoutInfo.rect.maxY;
       nodes.push(layoutNode);

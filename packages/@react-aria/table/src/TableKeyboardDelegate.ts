@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {getChildNodes, getFirstItem, getNthItem} from '@react-stately/collections';
+import {getFirstItem, getNthItem} from '@react-stately/collections';
 import {GridKeyboardDelegate} from '@react-aria/grid';
 import {Key} from 'react';
 import {Node} from '@react-types/shared';
@@ -22,7 +22,6 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
     return node.type === 'cell' || node.type === 'rowheader' || node.type === 'column';
   }
 
-  // TODO: replace instances of getChildNodes with this.getChildNodes
   getKeyBelow(key: Key) {
     let startItem = this.collection.getItem(key);
     if (!startItem) {

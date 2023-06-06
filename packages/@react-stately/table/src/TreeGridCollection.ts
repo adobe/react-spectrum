@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Adobe. All rights reserved.
+ * Copyright 2023 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -48,7 +48,6 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
   columnCount: number;
   rows: GridNode<T>[];
 
-  // TODO: bring in changes from Sections PR made on GridCollection?
   constructor(nodes: Iterable<GridNode<T>>, opts?: TreeGridCollectionOptions) {
     let {
       expandedKeys = new Set()
@@ -229,6 +228,7 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
     let last: GridNode<T>;
     topLevelRows.forEach((node: GridNode<T>, i) => {
       // TODO: should the index of the top level rows be affected by the column header? don't think it should but need to test
+      // For aria-posinset, we don't need to account for column header rows when calculating their values
       let index = node.type === 'column' ? i + 1 : (i - headerRows.length + 1);
       visitNode(node as GridNode<T>, index);
 
@@ -271,7 +271,7 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
   }
 
   get size() {
-    // TODO: change from TableCollection, can't use body.childNodes
+    // TODO: A change from TableCollection, can't use body.childNodes
     return [...this.rows].length;
   }
 
@@ -369,14 +369,16 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
     let rowHeaderColumnKeys = this.rowHeaderColumnKeys;
     if (rowHeaderColumnKeys) {
       let text = [];
-      for (let cell of row.childNodes) {
-        let column = this.columns[cell.index];
-        if (rowHeaderColumnKeys.has(column.key) && cell.textValue) {
-          text.push(cell.textValue);
-        }
+      for (let node of row.childNodes) {
+        if (node.type === 'cell') {
+          let column = this.columns[node.index];
+          if (rowHeaderColumnKeys.has(column.key) && node.textValue) {
+            text.push(node.textValue);
+          }
 
-        if (text.length === rowHeaderColumnKeys.size) {
-          break;
+          if (text.length === rowHeaderColumnKeys.size) {
+            break;
+          }
         }
       }
 

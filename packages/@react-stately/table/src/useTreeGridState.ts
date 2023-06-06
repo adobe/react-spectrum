@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionStateBase, Expandable} from '@react-types/shared';
+import {Expandable} from '@react-types/shared';
 import {TableCollection as ITableCollection} from '@react-types/table';
 import {Key, useCallback, useMemo} from 'react';
 import {MultipleSelectionStateProps} from '@react-stately/selection';

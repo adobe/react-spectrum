@@ -243,11 +243,8 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
           }
           break;
         case 'item':
-          console.log('row node', {...node}, [...node.childNodes])
           rows.push(node);
-          // TODO: removing this return will mean we can properly extract the child rows and add them to the rows array (static case for now)
-          // Will need to update the information contained by each node reflect a flattened structure
-          // return; // do not go into childNodes
+          return; // do not go into childNodes
       }
       for (let child of node.childNodes) {
         visit(child);

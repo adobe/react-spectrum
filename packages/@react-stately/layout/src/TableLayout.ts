@@ -278,6 +278,7 @@ export class TableLayout<T> extends ListLayout<T> {
     let children: LayoutNode[] = [];
     for (let node of this.collection) {
       let rowHeight = (this.rowHeight ?? this.estimatedRowHeight) + 1;
+
       // Skip rows before the valid rectangle unless they are already cached.
       if (y + rowHeight < this.validRect.y && !this.isValid(node, y)) {
         y += rowHeight;
