@@ -22,9 +22,9 @@ import React, {ReactElement, useRef} from 'react';
 import {useDateField} from '@react-aria/datepicker';
 import {useDateFieldState} from '@react-stately/datepicker';
 import {useFocusManagerRef, useFormatHelpText} from './utils';
+import {useFormProps} from '@react-spectrum/form';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
-import { useFormProps } from '@react-spectrum/form';
 
 function DateField<T extends DateValue>(props: SpectrumDateFieldProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);

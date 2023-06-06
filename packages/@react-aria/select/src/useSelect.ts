@@ -11,18 +11,18 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
+import {AriaHiddenSelectProps} from './HiddenSelect';
 import {AriaListBoxOptions} from '@react-aria/listbox';
 import {AriaSelectProps} from '@react-types/select';
 import {chain, filterDOMProps, FormValidationResult, mergeProps, useFormValidation, useId} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement, KeyboardDelegate} from '@react-types/shared';
-import {FocusEvent, RefObject, useMemo, useRef} from 'react';
+import {FocusEvent, RefObject, useMemo} from 'react';
 import {ListKeyboardDelegate, useTypeSelect} from '@react-aria/selection';
 import {SelectState} from '@react-stately/select';
 import {setInteractionModality} from '@react-aria/interactions';
 import {useCollator} from '@react-aria/i18n';
 import {useField} from '@react-aria/label';
 import {useMenuTrigger} from '@react-aria/menu';
-import { AriaHiddenSelectProps } from './HiddenSelect';
 
 export interface AriaSelectOptions<T> extends Omit<AriaSelectProps<T>, 'children'> {
   /**
@@ -142,7 +142,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     name: props.name,
     isDisabled,
     isRequired: props.isRequired,
-    validationBehavior: props.validationBehavior,
+    validationBehavior: props.validationBehavior
   });
 
   return {

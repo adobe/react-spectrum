@@ -12,6 +12,7 @@
 
 import {AriaColorFieldProps} from '@react-types/color';
 import {ColorFieldState} from '@react-stately/color';
+import {FormValidationResult, mergeProps, useId} from '@react-aria/utils';
 import {
   HTMLAttributes,
   LabelHTMLAttributes,
@@ -19,7 +20,6 @@ import {
   useCallback,
   useState
 } from 'react';
-import {FormValidationResult, mergeProps, useId} from '@react-aria/utils';
 import {useFocusWithin, useScrollWheel} from '@react-aria/interactions';
 import {useFormattedTextField} from '@react-aria/textfield';
 import {useSpinButton} from '@react-aria/spinbutton';

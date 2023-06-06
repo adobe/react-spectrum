@@ -13,8 +13,7 @@
 import {AriaButtonProps} from '@react-types/button';
 import {AriaNumberFieldProps} from '@react-types/numberfield';
 import {DOMAttributes, TextInputDOMProps} from '@react-types/shared';
-import {filterDOMProps, isAndroid, isIOS, isIPhone, mergeProps, useFormReset, useId} from '@react-aria/utils';
-import {FormValidationResult} from '@react-aria/utils';
+import {filterDOMProps, FormValidationResult, isAndroid, isIOS, isIPhone, mergeProps, useFormReset, useId} from '@react-aria/utils';
 import {
   InputHTMLAttributes,
   LabelHTMLAttributes,

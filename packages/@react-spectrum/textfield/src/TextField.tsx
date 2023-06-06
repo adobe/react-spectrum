@@ -13,9 +13,9 @@
 import React, {forwardRef, Ref, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import {TextFieldBase} from './TextFieldBase';
+import {useFormProps} from '@react-spectrum/form';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTextField} from '@react-aria/textfield';
-import { useFormProps } from '@react-spectrum/form';
 
 function TextField(props: SpectrumTextFieldProps, ref: Ref<TextFieldRef>) {
   props = useProviderProps(props);

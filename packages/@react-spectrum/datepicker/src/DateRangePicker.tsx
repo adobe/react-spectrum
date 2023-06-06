@@ -47,7 +47,7 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
     isReadOnly,
     autoFocus,
     placeholderValue,
-    maxVisibleMonths = 1,
+    maxVisibleMonths = 1
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let targetRef = useRef<HTMLDivElement>();

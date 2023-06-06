@@ -12,14 +12,14 @@
 
 import {AriaRadioGroupProps} from '@react-types/radio';
 import {DOMAttributes, FormValidationEvent} from '@react-types/shared';
-import {chain, filterDOMProps, FormValidationResult, mergeProps, useFormValidationState, useId} from '@react-aria/utils';
+import {filterDOMProps, FormValidationResult, mergeProps, useFormValidationState, useId} from '@react-aria/utils';
 import {getFocusableTreeWalker} from '@react-aria/focus';
 import {radioGroupData} from './utils';
 import {RadioGroupState} from '@react-stately/radio';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
-import { useRef } from 'react';
+import {useRef} from 'react';
 
 export interface RadioGroupAria extends FormValidationResult {
   /** Props for the radio group wrapper element. */

@@ -33,7 +33,7 @@ interface SlottedValue<T> {
 export type ContextValue<T extends SlotProps, E extends Element> = SlottedValue<WithRef<T, E>> | WithRef<T, E> | null | undefined;
 
 type ProviderValue<T> = [React.Context<T>, T];
-type ProviderValues<A, B, C, D, E, F, G, H> =
+type ProviderValues<A, B, C, D, E, F, G, H, I> =
   | [ProviderValue<A>]
   | [ProviderValue<A>, ProviderValue<B>]
   | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>]
@@ -41,14 +41,15 @@ type ProviderValues<A, B, C, D, E, F, G, H> =
   | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>]
   | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>]
   | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>]
-  | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>, ProviderValue<H>];
+  | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>, ProviderValue<H>]
+  | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>, ProviderValue<H>, ProviderValue<I>];
 
-interface ProviderProps<A, B, C, D, E, F, G, H> {
-  values: ProviderValues<A, B, C, D, E, F, G, H>,
+interface ProviderProps<A, B, C, D, E, F, G, H, I> {
+  values: ProviderValues<A, B, C, D, E, F, G, H, I>,
   children: React.ReactNode
 }
 
-export function Provider<A, B, C, D, E, F, G, H>({values, children}: ProviderProps<A, B, C, D, E, F, G, H>): JSX.Element {
+export function Provider<A, B, C, D, E, F, G, H, I>({values, children}: ProviderProps<A, B, C, D, E, F, G, H, I>): JSX.Element {
   for (let [Context, value] of values) {
     // @ts-ignore
     children = <Context.Provider value={value}>{children}</Context.Provider>;

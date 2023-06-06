@@ -46,6 +46,7 @@
     "@react-spectrum/button": "^3.12.2",
     "@react-spectrum/calendar": "^3.2.2",
     "@react-spectrum/dialog": "^3.7.2",
+    "@react-spectrum/form": "^3.6.2",
     "@react-spectrum/label": "^3.12.1",
     "@react-spectrum/layout": "^3.5.2",
     "@react-spectrum/utils": "^3.9.2",

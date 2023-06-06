@@ -167,7 +167,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   );
 
   let calendarValue = useMemo(() => convertValue(value, calendar), [value, calendar]);
-  let isValueInvalid = useMemo(() => isInvalid(value, props.minValue, props.maxValue), [value]);
+  let isValueInvalid = useMemo(() => isInvalid(value, props.minValue, props.maxValue), [value, props.minValue, props.maxValue]);
 
   // We keep track of the placeholder date separately in state so that onChange is not called
   // until all segments are set. If the value === null (not undefined), then assume the component

@@ -26,10 +26,11 @@ export function useFormReset<T>(
   });
 
   useEffect(() => {
-    ref?.current?.form?.addEventListener('reset', handleReset);
+    let form = ref?.current?.form;
+    form?.addEventListener('reset', handleReset);
     return () => {
-      ref?.current?.form?.removeEventListener('reset', handleReset);
-    }
+      form?.removeEventListener('reset', handleReset);
+    };
   }, [ref, handleReset]);
 }
 
@@ -51,12 +52,13 @@ export function useFormValidation(
       // Use the provided error message if available, otherwise use a default string.
       // This is usually not shown to the user because there is often a custom UI for error messages,
       // but it is required to mark the input as invalid and prevent form submission.
-      let error = validationState === 'invalid'
-        ? (typeof errorMessage === 'string' && errorMessage ? errorMessage : 'Invalid value.')
-        : '';
+      let error = '';
+      if (validationState === 'invalid') {
+        error = typeof errorMessage === 'string' && errorMessage ? errorMessage : 'Invalid value.';
+      }
       ref.current?.setCustomValidity(error);
     }
-  }, [validationBehavior, validationState, errorMessage]);
+  }, [validationBehavior, validationState, errorMessage, ref]);
 
   let [result, setValidity] = useFormValidationState(validationState, errorMessage);
   useInputValidity(validationBehavior === 'native' ? ref : null, (validity) => {
@@ -150,7 +152,7 @@ function useInputValidity(
   });
 
   useEffect(() => {
-    if (!inputRef) return;
+    if (!inputRef) {return;}
 
     let input = inputRef.current;
     let form = input.form;

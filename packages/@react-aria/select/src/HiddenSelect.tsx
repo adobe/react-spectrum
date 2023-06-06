@@ -12,8 +12,8 @@
 
 import {FocusableElement} from '@react-types/shared';
 import React, {ForwardedRef, forwardRef, ReactNode, RefObject} from 'react';
-import {SelectState} from '@react-stately/select';
 import {selectData} from './useSelect';
+import {SelectState} from '@react-stately/select';
 import {useFormReset, useObjectRef, useUpdateEffect} from '@react-aria/utils';
 import {useInteractionModality} from '@react-aria/interactions';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';

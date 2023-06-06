@@ -11,7 +11,7 @@
  */
 
 import {act, render} from '@react-spectrum/test-utils';
-import {Button, Group, FormError, Input, Label, NumberField, NumberFieldContext, Text} from '../';
+import {Button, FormError, Group, Input, Label, NumberField, NumberFieldContext, Text} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -126,7 +126,7 @@ describe('NumberField', () => {
     let input = document.querySelector('input[name=test]');
     expect(input).toHaveValue('25');
 
-    rerender(<TestNumberField name="test" value={null} formatOptions={{style: 'currency', currency: 'USD'}} />)
+    rerender(<TestNumberField name="test" value={null} formatOptions={{style: 'currency', currency: 'USD'}} />);
     expect(input).toHaveValue('');
   });
 
