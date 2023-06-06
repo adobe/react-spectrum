@@ -21,8 +21,7 @@ import {Node} from '@react-types/shared';
 import {RefObject, useMemo} from 'react';
 import {TableKeyboardDelegate} from './TableKeyboardDelegate';
 import {TableState} from '@react-stately/table';
-import {useCollator, useLocale} from '@react-aria/i18n';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useCollator, useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface AriaTableProps<T> extends GridProps {
   /** The layout object for the table. Computes what content is visible and how to position and style them. */
