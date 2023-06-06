@@ -11,7 +11,7 @@
  */
 
 import {AriaTextFieldProps, useFocusRing, useHover, useTextField} from 'react-aria';
-import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
@@ -41,7 +41,7 @@ export interface TextFieldRenderProps {
   isDisabled: boolean
 }
 
-export interface TextFieldProps extends Omit<AriaTextFieldProps, 'children' | 'label' | 'placeholder' | 'description' | 'errorMessage'>, Omit<DOMProps, 'style' | 'className' | 'children'>, SlotProps, RenderProps<TextFieldRenderProps> {}
+export interface TextFieldProps extends Omit<AriaTextFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, Omit<DOMProps, 'style' | 'className' | 'children'>, SlotProps, RenderProps<TextFieldRenderProps> {}
 
 export const TextFieldContext = createContext<ContextValue<TextFieldProps, HTMLDivElement>>(null);
 
@@ -94,5 +94,5 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
 /**
  * A text field allows a user to enter a plain text value with a keyboard.
  */
-const _TextField = forwardRef(TextField);
+const _TextField = (forwardRef as forwardRefType)(TextField);
 export {_TextField as TextField};
