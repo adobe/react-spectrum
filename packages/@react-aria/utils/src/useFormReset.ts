@@ -35,8 +35,11 @@ export function useFormReset<T>(
 }
 
 export interface FormValidationResult {
+  /** The validation state of the input. */
   validationState: ValidationState,
+  /** The form validation error message for the input. */
   errorMessage: ReactNode,
+  /** The native form validation details for the input element. */
   validationDetails: ValidityState
 }
 
@@ -75,7 +78,7 @@ export function useFormValidation(
   return result;
 }
 
-export interface InputValidity {
+interface InputValidity {
   validationDetails: ValidityState,
   errorMessage: string
 }
