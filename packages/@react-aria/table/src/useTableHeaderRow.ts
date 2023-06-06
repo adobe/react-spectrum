@@ -35,7 +35,7 @@ export function useTableHeaderRow<T>(props: GridRowProps<T>, state: TableState<T
   if (isVirtualized) {
     rowProps['aria-rowindex'] = node.index + 1; // aria-rowindex is 1 based
   }
-  console.log('node in usetableheader row', node)
+
   return {
     rowProps
   };

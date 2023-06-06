@@ -118,7 +118,6 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
           }
           break;
         case 'item':
-          // console.log('row node', {...node}, [...node.childNodes])
           topLevelRows.push(node);
           return;
       }
@@ -127,15 +126,13 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
         visit(child);
       }
     };
-    console.log('nodes top level', [...nodes]);
+
     for (let node of nodes) {
       visit(node);
     }
 
     let headerRows = buildHeaderRows(columnKeyMap, columns) as GridNode<T>[];
     headerRows.forEach((row, i) => topLevelRows.splice(i, 0, row));
-
-    console.log('rows before', topLevelRows);
 
     this.columnCount = columns.length;
     this.columns = columns;
@@ -208,6 +205,10 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
             child.prevKey = null;
           }
 
+          // TODO: this makes the nested rows and cell nodes have separate index counters (e.g. a row with 2 nested rows and 3 cells will have 1,2 index for the nested rows and 0,1,2 for the cells)
+          // If we want the index to strictly stay as the nodes's index within its parent regardless of type, we will have to have some way to
+          // know the cell's index w/ respect to the other child cells so we can set the proper column data and we will need a way to calculate the aria-posinset for the nested row.
+          // Perhaps can introduce some new Node properties like cellIndex and posIndSet?
           if (child.type === 'item') {
             visitNode(child, rowIndex++);
           } else {

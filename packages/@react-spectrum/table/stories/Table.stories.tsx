@@ -321,14 +321,14 @@ export const StaticExpandableRows = {
     height: 200
   },
   render: (args) => (
-    <TableView {...args} expandedKeys="all">
+    <TableView {...args} expandedKeys={['test']}>
       <TableHeader>
         <Column key="foo">Foo</Column>
         <Column key="bar">Bar</Column>
         <Column key="baz">Baz</Column>
       </TableHeader>
       <TableBody>
-        <Row>
+        <Row key="test">
           <Cell>Lvl 1 Foo 1</Cell>
           <Cell>Lvl 1 Bar 1</Cell>
           <Row>

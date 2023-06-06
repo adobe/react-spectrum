@@ -169,6 +169,8 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
 
       // Check each of the row header cells in this row for a match
       for (let cell of getChildNodes(item, this.collection)) {
+        // TODO: wrap the below code block with a if (cell.type === 'cell') since childNodes of a row could contain nested rows
+        // will need to double check
         let column = collection.columns[cell.index];
         if (collection.rowHeaderColumnKeys.has(column.key) && cell.textValue) {
           let substring = cell.textValue.slice(0, search.length);
