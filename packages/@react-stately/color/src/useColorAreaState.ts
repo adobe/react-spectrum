@@ -85,13 +85,16 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
     defaultValue = DEFAULT_COLOR;
   }
 
-  let [color, setColor] = useControlledState(value && normalizeColor(value), defaultValue && normalizeColor(defaultValue), onChange);
+  let [color, setColorState] = useControlledState(value && normalizeColor(value), defaultValue && normalizeColor(defaultValue), onChange);
   let valueRef = useRef(color);
-  valueRef.current = color;
+  let setColor = (color: Color) => {
+    valueRef.current = color;
+    setColorState(color);
+  };
 
   let channels = useMemo(() =>
-    valueRef.current.getColorSpaceAxes({xChannel, yChannel}),
-    [xChannel, yChannel]
+    color.getColorSpaceAxes({xChannel, yChannel}),
+    [color, xChannel, yChannel]
   );
 
   let xChannelRange = color.getChannelRange(channels.xChannel);
@@ -100,7 +103,7 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
   let {minValue: minValueY, maxValue: maxValueY, step: stepY, pageSize: pageSizeY} = yChannelRange;
 
   let [isDragging, setDragging] = useState(false);
-  let isDraggingRef = useRef(false).current;
+  let isDraggingRef = useRef(false);
 
   let xValue = color.getChannelValue(channels.xChannel);
   let yValue = color.getChannelValue(channels.yChannel);
@@ -108,15 +111,15 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
     if (v === xValue) {
       return;
     }
-    valueRef.current = color.withChannelValue(channels.xChannel, v);
-    setColor(valueRef.current);
+    let newColor = color.withChannelValue(channels.xChannel, v);
+    setColor(newColor);
   };
   let setYValue = (v: number) => {
     if (v === yValue) {
       return;
     }
-    valueRef.current = color.withChannelValue(channels.yChannel, v);
-    setColor(valueRef.current);
+    let newColor = color.withChannelValue(channels.yChannel, v);
+    setColor(newColor);
   };
 
   return {
@@ -127,9 +130,7 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
     yChannelPageStep: pageSizeY,
     value: color,
     setValue(value) {
-      let c = normalizeColor(value);
-      valueRef.current = c;
-      setColor(c);
+      setColor(normalizeColor(value));
     },
     xValue,
     setXValue,
@@ -171,8 +172,8 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
       setYValue(snapValueToStep(yValue - stepSize, minValueY, maxValueY, stepY));
     },
     setDragging(isDragging) {
-      let wasDragging = isDraggingRef;
-      isDraggingRef = isDragging;
+      let wasDragging = isDraggingRef.current;
+      isDraggingRef.current = isDragging;
 
       if (onChangeEnd && !isDragging && wasDragging) {
         onChangeEnd(valueRef.current);

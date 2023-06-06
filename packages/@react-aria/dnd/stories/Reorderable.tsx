@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {chain} from '@react-aria/utils';
+import {chain, mergeProps, useId} from '@react-aria/utils';
 import {classNames} from '@react-spectrum/utils';
 import dndStyles from './dnd.css';
 import {DragPreview} from '../src';
@@ -23,14 +23,12 @@ import {Item} from '@react-stately/collections';
 import {ItemDropTarget} from '@react-types/shared';
 import {ListDropTargetDelegate} from '@react-aria/dnd';
 import {ListKeyboardDelegate} from '@react-aria/selection';
-import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {useButton} from '@react-aria/button';
 import {useDraggableCollection, useDraggableItem, useDropIndicator, useDroppableCollection} from '..';
 import {useDraggableCollectionState, useDroppableCollectionState} from '@react-stately/dnd';
 import {useGrid, useGridCell, useGridRow} from '@react-aria/grid';
-import {useId} from '@react-aria/utils';
 import {useListData} from '@react-stately/data';
 import {useListState} from '@react-stately/list';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';

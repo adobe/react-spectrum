@@ -131,6 +131,10 @@ function preventScrollMobileSafari() {
     let scrollTop = scrollable.scrollTop;
     let bottom = scrollable.scrollHeight - scrollable.clientHeight;
 
+    if (bottom === 0) {
+      return;
+    }
+
     if ((scrollTop <= 0 && y > lastY) || (scrollTop >= bottom && y < lastY)) {
       e.preventDefault();
     }

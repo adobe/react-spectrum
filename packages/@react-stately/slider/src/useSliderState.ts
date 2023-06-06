@@ -182,19 +182,26 @@ export function useSliderState<T extends number | number[]>(props: SliderStateOp
   let onChange = createOnChange(props.value, props.defaultValue, props.onChange);
   let onChangeEnd = createOnChange(props.value, props.defaultValue, props.onChangeEnd);
 
-  const [values, setValues] = useControlledState<number[]>(
+  const [values, setValuesState] = useControlledState<number[]>(
     value,
     defaultValue,
     onChange
   );
-  const [isDraggings, setDraggings] = useState<boolean[]>(new Array(values.length).fill(false));
+  const [isDraggings, setDraggingsState] = useState<boolean[]>(new Array(values.length).fill(false));
   const isEditablesRef = useRef<boolean[]>(new Array(values.length).fill(true));
   const [focusedIndex, setFocusedIndex] = useState<number | undefined>(undefined);
 
-  const valuesRef = useRef<number[]>(null);
-  valuesRef.current = values;
-  const isDraggingsRef = useRef<boolean[]>(null);
-  isDraggingsRef.current = isDraggings;
+  const valuesRef = useRef<number[]>(values);
+  const isDraggingsRef = useRef<boolean[]>(isDraggings);
+  let setValues = (values: number[]) => {
+    valuesRef.current = values;
+    setValuesState(values);
+  };
+
+  let setDraggings = (draggings: boolean[]) => {
+    isDraggingsRef.current = draggings;
+    setDraggingsState(draggings);
+  };
 
   function getValuePercent(value: number) {
     return (value - minValue) / (maxValue - minValue);
@@ -224,8 +231,8 @@ export function useSliderState<T extends number | number[]>(props: SliderStateOp
 
     // Round value to multiple of step, clamp value between min and max
     value = snapValueToStep(value, thisMin, thisMax, step);
-    valuesRef.current = replaceIndex(valuesRef.current, index, value);
-    setValues(valuesRef.current);
+    let newValues = replaceIndex(values, index, value);
+    setValues(newValues);
   }
 
   function updateDragging(index: number, dragging: boolean) {

@@ -56,9 +56,6 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
     }
   }, [inputRef]);
 
-  let stateRef = useRef<ColorWheelState>(null);
-  stateRef.current = state;
-
   let currentPosition = useRef<{x: number, y: number}>(null);
 
   let {keyboardProps} = useKeyboard({
@@ -71,18 +68,18 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
       // same handling as useMove, don't need to stop propagation, useKeyboard will do that for us
       e.preventDefault();
       // remember to set this and unset it so that onChangeEnd is fired
-      stateRef.current.setDragging(true);
+      state.setDragging(true);
       switch (e.key) {
         case 'PageUp':
           e.preventDefault();
-          state.increment(stateRef.current.pageStep);
+          state.increment(state.pageStep);
           break;
         case 'PageDown':
           e.preventDefault();
-          state.decrement(stateRef.current.pageStep);
+          state.decrement(state.pageStep);
           break;
       }
-      stateRef.current.setDragging(false);
+      state.setDragging(false);
     }
   });
 
@@ -93,18 +90,18 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
     },
     onMove({deltaX, deltaY, pointerType, shiftKey}) {
       if (currentPosition.current == null) {
-        currentPosition.current = stateRef.current.getThumbPosition(thumbRadius);
+        currentPosition.current = state.getThumbPosition(thumbRadius);
       }
       currentPosition.current.x += deltaX;
       currentPosition.current.y += deltaY;
       if (pointerType === 'keyboard') {
         if (deltaX > 0 || deltaY < 0) {
-          state.increment(shiftKey ? stateRef.current.pageStep : stateRef.current.step);
+          state.increment(shiftKey ? state.pageStep : state.step);
         } else if (deltaX < 0 || deltaY > 0) {
-          state.decrement(shiftKey ? stateRef.current.pageStep : stateRef.current.step);
+          state.decrement(shiftKey ? state.pageStep : state.step);
         }
       } else {
-        stateRef.current.setHueFromPoint(currentPosition.current.x, currentPosition.current.y, thumbRadius);
+        state.setHueFromPoint(currentPosition.current.x, currentPosition.current.y, thumbRadius);
       }
     },
     onMoveEnd() {
@@ -175,7 +172,7 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
     if (innerRadius < radius && radius < outerRadius && !state.isDragging && currentPointer.current === undefined) {
       isOnTrack.current = true;
       currentPointer.current = id;
-      stateRef.current.setHueFromPoint(x, y, radius);
+      state.setHueFromPoint(x, y, radius);
 
       focusInput();
       state.setDragging(true);

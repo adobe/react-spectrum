@@ -28,7 +28,7 @@ export interface TabsRenderProps {
   orientation: Orientation
 }
 
-export interface TabListProps<T> extends StyleRenderProps<TabListRenderProps>, AriaLabelingProps, CollectionProps<T> {}
+export interface TabListProps<T> extends StyleRenderProps<TabListRenderProps>, AriaLabelingProps, Omit<CollectionProps<T>, 'disabledKeys'> {}
 
 export interface TabListRenderProps {
   /**
@@ -106,7 +106,8 @@ export interface TabPanelRenderProps {
 interface InternalTabsContextValue {
   state: TabListState<object>,
   document: Document<any, BaseCollection<any>>,
-  orientation: Orientation
+  orientation: Orientation,
+  keyboardActivation: 'automatic' | 'manual'
 }
 
 export const TabsContext = createContext<ContextValue<TabsProps, HTMLDivElement>>(null);
@@ -114,7 +115,7 @@ const InternalTabsContext = createContext<InternalTabsContextValue | null>(null)
 
 function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TabsContext);
-  let {orientation = 'horizontal'} = props;
+  let {orientation = 'horizontal', keyboardActivation = 'automatic'} = props;
   let values = useMemo(() => ({orientation}), [orientation]);
   let {collection, document} = useCollectionDocument();
   let state = useTabListState({
@@ -136,7 +137,7 @@ function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
       ref={ref}
       slot={props.slot}
       data-orientation={orientation}>
-      <InternalTabsContext.Provider value={{state, document, orientation}}>
+      <InternalTabsContext.Provider value={{state, document, orientation, keyboardActivation}}>
         {renderProps.children}
       </InternalTabsContext.Provider>
     </div>
@@ -146,17 +147,18 @@ function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
 /**
  * Tabs organize content into multiple sections and allow users to navigate between them.
  */
-const _Tabs = forwardRef(Tabs);
+const _Tabs = /*#__PURE__*/ (forwardRef as forwardRefType)(Tabs);
 export {_Tabs as Tabs};
 
 function TabList<T extends object>(props: TabListProps<T>, ref: ForwardedRef<HTMLDivElement>) {
-  let {state, document, orientation} = useContext(InternalTabsContext)!;
+  let {state, document, orientation, keyboardActivation} = useContext(InternalTabsContext)!;
   let objectRef = useObjectRef(ref);
 
   let portal = useCollectionPortal(props, document);
   let {tabListProps} = useTabList({
     ...props,
-    orientation
+    orientation,
+    keyboardActivation
   }, state, objectRef);
 
   let renderProps = useRenderProps({
@@ -201,7 +203,7 @@ function Tab(props: TabProps, ref: ForwardedRef<HTMLDivElement>) {
 /**
  * A Tab provides a title for an individual item within a TabList.
  */
-const _Tab = forwardRef(Tab);
+const _Tab = /*#__PURE__*/ (forwardRef as forwardRefType)(Tab);
 export {_Tab as Tab};
 
 function TabInner({item, state}: {item: Node<object>, state: TabListState<object>}) {
@@ -281,5 +283,5 @@ function TabPanel(props: TabPanelProps, forwardedRef: ForwardedRef<HTMLDivElemen
 /**
  * A TabPanel provides the content for a tab.
  */
-const _TabPanel = forwardRef(TabPanel);
+const _TabPanel = /*#__PURE__*/ (forwardRef as forwardRefType)(TabPanel);
 export {_TabPanel as TabPanel};

@@ -25,13 +25,12 @@ import {
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {NumberFieldState} from '@react-stately/numberfield';
-import {useFocus, useFocusWithin} from '@react-aria/interactions';
+import {useFocus, useFocusWithin, useScrollWheel} from '@react-aria/interactions';
 import {useFormattedTextField} from '@react-aria/textfield';
 import {
   useLocalizedStringFormatter,
   useNumberFormatter
 } from '@react-aria/i18n';
-import {useScrollWheel} from '@react-aria/interactions';
 import {useSpinButton} from '@react-aria/spinbutton';
 
 export interface NumberFieldAria {

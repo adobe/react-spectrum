@@ -26,6 +26,7 @@ import {Label} from '@react-spectrum/label';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React, {useRef, useState} from 'react';
 import {Text} from '@react-spectrum/text';
+import {TranslateListBox} from './../chromatic/ListBoxLanguages.chromatic';
 import {useAsyncList, useTreeData} from '@react-stately/data';
 
 let iconMap = {
@@ -667,36 +668,38 @@ export const WithSemanticElementsStatic = {
       flexGrow={1}
       aria-labelledby="label"
       selectionMode="multiple"
+      disabledKeys={['paste', 'floof']}
       onSelectionChange={action('onSelectionChange')}>
       <Section title="Section 1">
-        <Item textValue="Copy">
+        <Item key="copy" textValue="Copy">
           <Copy size="S" />
           <Text>Copy</Text>
         </Item>
-        <Item textValue="Cut">
+        <Item key="cut" textValue="Cut">
           <Cut size="S" />
           <Text>Cut</Text>
         </Item>
-        <Item textValue="Paste">
+        <Item key="paste" textValue="Paste">
           <Paste size="S" />
           <Text>Paste</Text>
         </Item>
       </Section>
       <Section title="Section 2">
-        <Item textValue="Puppy">
+        <Item key="puppy" textValue="Puppy">
           <AlignLeft size="S" />
           <Text>Puppy</Text>
           <Text slot="description">Puppy description super long as well geez</Text>
         </Item>
-        <Item textValue="Doggo with really really really long long long text">
+        <Item key="floof" textValue="Floof">
+          <AlignRight size="S" />
+          <Text>Floof</Text>
+          <Text slot="description">Floof medium description</Text>
+        </Item>
+        <Item key="doggo" textValue="Doggo with really really really long long long text">
           <AlignCenter size="S" />
           <Text>Doggo with really really really long long long text</Text>
         </Item>
-        <Item textValue="Floof">
-          <AlignRight size="S" />
-          <Text>Floof</Text>
-        </Item>
-        <Item>Basic Item</Item>
+        <Item key="basic">Basic Item</Item>
       </Section>
     </ListBox>
   ),
@@ -800,6 +803,11 @@ export const RestoreFocusExample = {
   name: 'restore focus after deleting selected items'
 };
 
+export const WithTranslations = {
+  render: () => <TranslateListBox />,
+  decorators: null,
+  name: 'with translations'
+};
 
 let customOption = (item) => {
   let Icon = iconMap[item.icon];

@@ -82,8 +82,6 @@ export function useSliderThumb(
     }
   }, [isFocused, focusInput]);
 
-  const stateRef = useRef<SliderState>(null);
-  stateRef.current = state;
   let reverseX = direction === 'rtl';
   let currentPosition = useRef<number>(null);
 
@@ -97,7 +95,7 @@ export function useSliderThumb(
         setThumbValue,
         setThumbDragging,
         pageSize
-      } = stateRef.current;
+      } = state;
       // these are the cases that useMove or useSlider don't handle
       if (!/^(PageUp|PageDown|Home|End)$/.test(e.key)) {
         e.continuePropagation();
@@ -128,7 +126,7 @@ export function useSliderThumb(
   let {moveProps} = useMove({
     onMoveStart() {
       currentPosition.current = null;
-      stateRef.current.setThumbDragging(index, true);
+      state.setThumbDragging(index, true);
     },
     onMove({deltaX, deltaY, pointerType, shiftKey}) {
       const {
@@ -138,7 +136,7 @@ export function useSliderThumb(
         incrementThumb,
         step,
         pageSize
-      } = stateRef.current;
+      } = state;
       let {width, height} = trackRef.current.getBoundingClientRect();
       let size = isVertical ? height : width;
 
@@ -162,7 +160,7 @@ export function useSliderThumb(
       }
     },
     onMoveEnd() {
-      stateRef.current.setThumbDragging(index, false);
+      state.setThumbDragging(index, false);
     }
   });
 
@@ -244,7 +242,7 @@ export function useSliderThumb(
       'aria-invalid': validationState === 'invalid' || undefined,
       'aria-errormessage': opts['aria-errormessage'],
       onChange: (e: ChangeEvent<HTMLInputElement>) => {
-        stateRef.current.setThumbValue(index, parseFloat(e.target.value));
+        state.setThumbValue(index, parseFloat(e.target.value));
       }
     }),
     thumbProps: {

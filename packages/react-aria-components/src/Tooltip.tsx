@@ -12,11 +12,11 @@
 
 import {AriaLabelingProps, DOMAttributes, FocusableElement} from '@react-types/shared';
 import {FocusableProvider} from '@react-aria/focus';
+import {forwardRefType, RenderProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
 import {mergeProps, OverlayContainer, PlacementAxis, PositionProps, useOverlayPosition, useTooltip, useTooltipTrigger} from 'react-aria';
 import {mergeRefs, useObjectRef} from '@react-aria/utils';
 import {OverlayArrowContext} from './OverlayArrow';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
-import {RenderProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
 import {TooltipTriggerProps, TooltipTriggerState, useTooltipTriggerState} from 'react-stately';
 
 export interface TooltipTriggerComponentProps extends TooltipTriggerProps {
@@ -88,7 +88,7 @@ function Tooltip(props: TooltipProps, ref: ForwardedRef<HTMLDivElement>) {
 /**
  * A tooltip displays a description of an element on hover or focus.
  */
-const _Tooltip = forwardRef(Tooltip);
+const _Tooltip = /*#__PURE__*/ (forwardRef as forwardRefType)(Tooltip);
 export {_Tooltip as Tooltip};
 
 function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: ForwardedRef<HTMLDivElement>}) {
