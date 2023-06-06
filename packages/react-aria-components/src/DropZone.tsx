@@ -14,10 +14,9 @@ import {AriaLabelingProps} from '@react-types/shared';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DropOptions, mergeProps, useButton, useClipboard, useDrop, useFocusRing, useHover, useId, VisuallyHidden} from 'react-aria';
 import {FileTriggerContext} from './FileTrigger';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps, useLabels} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
-import {useLabels} from '@react-aria/utils';
 
 export interface DropZoneRenderProps {
   /**
@@ -50,7 +49,7 @@ export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDiv
 
 function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DropZoneContext);
-  let buttonRef = useRef<HTMLButtonElement>(null);
+  let buttonRef = useRef<HTMLButtonElement>();
   let {dropProps, dropButtonProps, isDropTarget} = useDrop({...props, ref: buttonRef, hasDropButton: true});
   let {hoverProps, isHovered} = useHover({});
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
@@ -107,6 +106,8 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   // otherwise, if there is no button, then nothing should be returned by DropButtonProps
   // pass dropProps to div, pass dropButtonProps to button 
   // if there is a button, make sure to pass buttonRef to useDrop
+
+  // onClick for clipboard props? 
   
   return (
     <Provider
@@ -117,7 +118,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
       <div
         {...mergeProps(dropProps, hoverProps, DOMProps)} 
         {...renderProps}
-        ref={buttonRef}
+        ref={ref}
         slot={props.slot} 
         // tabIndex={-1}
         data-hovered={isHovered || undefined}

@@ -311,6 +311,7 @@ export function useDrop(options: DropOptions): DropResult {
   });
 
   let {ref} = options;
+  console.log(ref.current);
   useLayoutEffect(() => DragManager.registerDropTarget({
     element: ref.current,
     getDropOperation: getDropOperationKeyboard,
