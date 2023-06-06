@@ -12,7 +12,7 @@
 import {CalendarProps as BaseCalendarProps, RangeCalendarProps as BaseRangeCalendarProps, DateValue, mergeProps, useCalendar, useCalendarCell, useCalendarGrid, useFocusRing, useHover, useLocale, useRangeCalendar, VisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CalendarDate, createCalendar, DateDuration, endOfMonth, getWeeksInMonth, isSameDay, isSameMonth} from '@internationalized/date';
-import {CalendarState, RangeCalendarState, useCalendarState, useRangeCalendarState} from 'react-stately';
+import {CalendarState, RangeCalendarState, useCalendarState, useRangeCalendarState, ValidationState} from 'react-stately';
 import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
 import {createContext, ForwardedRef, forwardRef, ReactElement, useContext} from 'react';
 import {DOMAttributes, FocusableElement} from '@react-types/shared';
@@ -45,7 +45,12 @@ export interface CalendarRenderProps {
   /**
    * State of the calendar.
    */
-  state: CalendarState
+  state: CalendarState,
+  /**
+   * Validation state of the date field.
+   * @selector [data-validation-state]
+   */
+  validationState: ValidationState
 }
 
 export interface RangeCalendarRenderProps extends Omit<CalendarRenderProps, 'state'> {
@@ -95,7 +100,8 @@ function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRe
       isFocusWithin: isFocused,
       isFocusVisible,
       isDisabled: props.isDisabled || false,
-      isHovered
+      isHovered,
+      validationState: state.validationState
     },
     defaultClassName: 'react-aria-Calendar'
   });
@@ -110,7 +116,8 @@ function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRe
       data-focus-within={isFocused || undefined}
       data-focus-visible={isFocused || undefined}
       data-disabled={props.isDisabled || undefined}
-      data-hovered={isHovered || undefined}>
+      data-hovered={isHovered || undefined}
+      data-validation-state={state.validationState || undefined}>
       <Provider
         values={[
           [ButtonContext, {
@@ -181,7 +188,8 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: F
       isFocusWithin: isFocused,
       isFocusVisible,
       isDisabled: props.isDisabled || false,
-      isHovered
+      isHovered,
+      validationState: state.validationState
     },
     defaultClassName: 'react-aria-RangeCalendar'
   });
@@ -196,7 +204,8 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: F
       data-focus-within={isFocused || undefined}
       data-focus-visible={isFocused || undefined}
       data-disabled={props.isDisabled || undefined}
-      data-hovered={isHovered || undefined}>
+      data-hovered={isHovered || undefined}
+      data-validation-state={state.validationState || undefined}>
       <Provider
         values={[
           [ButtonContext, {

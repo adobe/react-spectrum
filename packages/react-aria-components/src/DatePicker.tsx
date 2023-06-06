@@ -15,7 +15,7 @@ import {CalendarContext, RangeCalendarContext} from './Calendar';
 import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {createCalendar} from '@internationalized/date';
 import {DateInputContext} from './DateField';
-import {DatePickerState, DateRangePickerState, useDateFieldState, useDatePickerState, useDateRangePickerState} from 'react-stately';
+import {DatePickerState, DateRangePickerState, useDateFieldState, useDatePickerState, useDateRangePickerState, ValidationState} from 'react-stately';
 import {DialogContext} from './Dialog';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {GroupContext} from './Group';
@@ -48,7 +48,12 @@ export interface DatePickerRenderProps {
   /**
    * State of the date picker.
    */
-  state: DatePickerState
+  state: DatePickerState,
+  /**
+   * Validation state of the date picker.
+   * @selector [data-validation-state]
+   */
+  validationState: ValidationState
 }
 export interface DateRangePickerRenderProps extends Omit<DatePickerRenderProps, 'state'> {
   /**
@@ -98,7 +103,8 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
       isFocusWithin: isFocused,
       isFocusVisible,
       isDisabled: props.isDisabled || false,
-      isHovered
+      isHovered,
+      validationState: state.validationState
     },
     defaultClassName: 'react-aria-DatePicker'
   });
@@ -123,7 +129,13 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
           }
         }]
       ]}>
-      <div {...mergeProps(focusProps, hoverProps)} {...DOMProps} {...renderProps} ref={ref} slot={props.slot} />
+      <div
+        {...mergeProps(focusProps, hoverProps)}
+        {...DOMProps}
+        {...renderProps}
+        ref={ref}
+        slot={props.slot}
+        data-validation-state={state.validationState || undefined} />
     </Provider>
   );
 }
@@ -179,7 +191,8 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
       isFocusWithin: isFocused,
       isFocusVisible,
       isDisabled: props.isDisabled || false,
-      isHovered
+      isHovered,
+      validationState: state.validationState
     },
     defaultClassName: 'react-aria-DateRangePicker'
   });
