@@ -41,7 +41,7 @@ export interface TextFieldRenderProps {
   isDisabled: boolean
 }
 
-export interface TextFieldProps extends Omit<AriaTextFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, Omit<DOMProps, 'style' | 'className' | 'children'>, SlotProps, RenderProps<TextFieldRenderProps> {}
+export interface TextFieldProps extends Omit<AriaTextFieldProps, 'children' | 'label' | 'placeholder' | 'description' | 'errorMessage'>, Omit<DOMProps, 'style' | 'className' | 'children'>, SlotProps, RenderProps<TextFieldRenderProps> {}
 
 export const TextFieldContext = createContext<ContextValue<TextFieldProps, HTMLDivElement>>(null);
 
