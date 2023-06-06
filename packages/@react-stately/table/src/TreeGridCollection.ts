@@ -168,11 +168,18 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
     let visitNode = (node: GridNode<T>, i?: number) => {
       // TODO: got rid of childKeys and the remove deleted nodes logic, not sure when that actually ever triggered. Also got rid of the default rowNode props that got setup by
       // GridCollection, seems to be unneeded here
-      let newProps = {
-        index: i,
-        // TODO: this is the opts.visitNode part, add columns data for cells, maybe add a wrapping if to check that and only do it for cells
-        column: columns[i]
-      };
+
+      let newProps = {};
+      // TODO: it seems like we only really need the column prop on cells and columns, before we were adding it to every node but that
+      // doesn't really make any sense
+      if (node.type === 'cell' || node.type === 'column') {
+        newProps['column'] = columns[i];
+      }
+
+      // TODO: placeholder and column indicies are already calculated via buildHeaderRows
+      if (node.type !== 'placeholder' && node.type !== 'column') {
+        newProps['index'] = i;
+      }
 
       // Use Object.assign instead of spread to preserve object reference for keyMap. Also ensures retrieving nodes
       // via .childNodes returns the same object as the one found via keyMap look up
@@ -187,8 +194,8 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
       let lastNode: GridNode<T>;
       // Index for any non child row element
       let index = 0;
-      // Index for nested rows, should be counted separately from adjacent cells. TODO: maybe store these values separately in node.index and into node.posinset maybe?
-      let rowIndex = 1;
+      // Index for nested rows, should be counted separately from sibiling cells. TODO: maybe store these values separately in node.index and into node.posinset maybe?
+      let rowIndex = 0;
       for (let child of node.childNodes) {
         // TODO: Right now this means if the parent key is not included in expandedKeys but a childKey is, we will ignore it completely since the parent hasn't been expanded
         if (!(child.type === 'item' && expandedKeys !== 'all' && !expandedKeys.has(node.key))) {
@@ -229,7 +236,8 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
     topLevelRows.forEach((node: GridNode<T>, i) => {
       // TODO: should the index of the top level rows be affected by the column header? don't think it should but need to test
       // For aria-posinset, we don't need to account for column header rows when calculating their values
-      let index = node.type === 'column' ? i + 1 : (i - headerRows.length + 1);
+      // TODO: needs to be +1 here or TableLayout breaks, figure out why
+      let index = node.type === 'headerrow' ? i : (i - headerRows.length + 1);
       visitNode(node as GridNode<T>, index);
 
       if (last) {
