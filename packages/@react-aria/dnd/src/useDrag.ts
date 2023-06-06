@@ -92,7 +92,7 @@ export function useDrag(options: DragOptions): DragResult {
       return;
     }
 
-    // Prevent the drag event from popagating to any parent draggables
+    // Prevent the drag event from propagating to any parent draggables
     e.stopPropagation();
 
     // If this drag was initiated by a mobile screen reader (e.g. VoiceOver or TalkBack), enter virtual dragging mode.
