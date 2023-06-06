@@ -85,7 +85,7 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
             }
           }]
         ]}>
-        {props.children}
+        {renderProps.children}
       </Provider>
     </div>
   );
