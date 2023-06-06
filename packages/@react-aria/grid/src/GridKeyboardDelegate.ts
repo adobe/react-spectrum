@@ -53,11 +53,10 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     return node.type === 'row' || node.type === 'item';
   }
 
-  // TODO: replace instances of getChildNodes with this.getChildNodes
   // TODO: perhaps just modify getChildNodes so that it supports this filter directly instead of wrapping this
   // I imagine we will probably run into the same use case in other keyboard delegates? Maybe not since those only have a single cell and rely on
   // treewalker to navigate through the items within the row
-  protected getChildNodes(node: Node<T>, pred?: (item: Node<T>) => boolean) {
+  protected getChildNodes(node: Node<T>, pred: (item: Node<T>) => boolean = () => true) {
     return [...getChildNodes(node, this.collection)].filter(child => pred(child));
   }
 
@@ -103,6 +102,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
 
     // TODO: the assumption made here is that this.findNextKey will return the next row
+    // For now, I've made TreeGridCollection handle the cases of nested rows and cells w/ direct sibiling rows in its getKeyBefore/After
     // Find the next item
     key = this.findNextKey(key);
     if (key != null) {
@@ -374,7 +374,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
         let substring = item.textValue.slice(0, search.length);
         if (this.collator.compare(substring, search) === 0) {
           if (this.isRow(item) && this.focusMode === 'cell') {
-            return getFirstItem(getChildNodes(item, this.collection)).key;
+            return getFirstItem(this.getChildNodes(item, this.isCell)).key;
           }
 
           return item.key;
