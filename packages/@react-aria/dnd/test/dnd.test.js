@@ -356,6 +356,7 @@ describe('useDrag and useDrop', function () {
           let tree = renderNestedDrag();
           let draggableChild = tree.getByText('Drag me child');
 
+          let dataTransfer = new DataTransfer();
           fireEvent(draggableChild, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
           expect(onDragMoveParent).not.toHaveBeenCalled();
           expect(onDragMoveChild).toHaveBeenCalledTimes(1);
