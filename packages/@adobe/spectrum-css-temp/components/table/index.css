@@ -269,7 +269,7 @@ svg.spectrum-Table-sortedIcon {
     outline: none;
   }
 
-  &:focus-ring,
+  &:focus-visible,
   &.is-focused {
     outline: none;
 
@@ -325,7 +325,7 @@ svg.spectrum-Table-sortedIcon {
 
 .spectrum-Table-headCell,
 .spectrum-Table-headCellButton {
-  &:focus-ring,
+  &:focus-visible,
   &.is-focused {
     &::before {
       top: var(--spectrum-table-border-size);
@@ -350,7 +350,7 @@ svg.spectrum-Table-sortedIcon {
   }
 
   /* The focus ring should be sticky so it is visible at all horizontal scroll positions. */
-  &:focus-ring {
+  &:focus-visible {
     &:before {
       display: inline-block;
       content: '';
@@ -417,8 +417,8 @@ svg.spectrum-Table-sortedIcon {
   }
 }
 
-/* the CSS logical properties postcss plugin doesn't seem to work with :focus-ring. */
-[dir="rtl"] .spectrum-Table-row:focus-ring:before {
+/* the CSS logical properties postcss plugin doesn't seem to work with :focus-visible. */
+[dir="rtl"] .spectrum-Table-row:focus-visible:before {
   right: 0;
 }
 
@@ -492,7 +492,7 @@ svg.spectrum-Table-sortedIcon {
 
 @media (forced-colors: active) {
   .spectrum-Table-row {
-    &:focus-ring {
+    &:focus-visible {
       /* Adds a full outline style to the focused row to better distinguish between
       the selected, not selected, selected + focused and selected + not focused
       states without using a background color on the row in forced-colors: active mode. */

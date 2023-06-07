@@ -79,7 +79,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  &:focus-ring {
+  &:focus-visible {
     background-color: var(--spectrum-clearbutton-medium-background-color-key-focus);
     color: var(--spectrum-clearbutton-medium-icon-color-key-focus);
 
@@ -133,7 +133,7 @@ governing permissions and limitations under the License.
       color: xvar(--spectrum-high-contrast-button-face, var(--spectrum-button-text-color-hover));
     }
 
-    &:focus-ring {
+    &:focus-visible {
       background-color: xvar(--spectrum-high-contrast-highlight, var(--spectrum-button-color-key-focus));
       color: xvar(--spectrum-high-contrast-button-face, var(--spectrum-button-text-color-key-focus));
     }
@@ -168,7 +168,7 @@ governing permissions and limitations under the License.
       color: xvar(--spectrum-high-contrast-button-text, var(--spectrum-button-text-color-hover));
     }
 
-    &:focus-ring {
+    &:focus-visible {
       background-color: xvar(--spectrum-high-contrast-transparent, var(--spectrum-button-background-color-key-focus));
       border-color: xvar(--spectrum-high-contrast-highlight, var(--spectrum-button-color-key-focus));
       color: xvar(--spectrum-high-contrast-button-text, var(--spectrum-button-text-color-key-focus));
@@ -447,7 +447,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  &:focus-ring {
+  &:focus-visible {
     background-color: xvar(--spectrum-high-contrast-button-face, var(--spectrum-actionbutton-background-color-key-focus));
     border-color: xvar(--spectrum-high-contrast-highlight, var(--spectrum-actionbutton-border-color-hover));
     color: xvar(--spectrum-high-contrast-button-text, var(--spectrum-actionbutton-text-color-key-focus));
@@ -505,7 +505,7 @@ governing permissions and limitations under the License.
       }
     }
 
-    &:focus-ring {
+    &:focus-visible {
       background-color: xvar(--spectrum-high-contrast-highlight, var(--spectrum-actionbutton-background-color-selected-key-focus));
       border-color: xvar(--spectrum-high-contrast-highlight-text, var(--spectrum-actionbutton-border-color-selected-key-focus));
       color: xvar(--spectrum-high-contrast-highlight-text, var(--spectrum-actionbutton-text-color-selected-key-focus));
@@ -549,7 +549,7 @@ governing permissions and limitations under the License.
       fill: xvar(--spectrum-high-contrast-highlight-text, var(--spectrum-actionbutton-emphasized-icon-color-selected));
     }
 
-    &:focus-ring {
+    &:focus-visible {
       background-color: xvar(--spectrum-high-contrast-highlight, var(--spectrum-actionbutton-emphasized-background-color-selected-key-focus));
       border-color: xvar(--spectrum-high-contrast-highlight-text, var(--spectrum-actionbutton-emphasized-border-color-selected-hover));
       color: xvar(--spectrum-high-contrast-highlight-text, var(--spectrum-actionbutton-emphasized-text-color-selected-key-focus));
@@ -603,7 +603,7 @@ governing permissions and limitations under the License.
     color: xvar(--spectrum-high-contrast-button-text, var(--spectrum-actionbutton-quiet-text-color-hover));
   }
 
-  &:focus-ring {
+  &:focus-visible {
     background-color: xvar(--spectrum-high-contrast-button-face, var(--spectrum-actionbutton-quiet-background-color-key-focus));
     border-color: xvar(--spectrum-high-contrast-highlight, var(--spectrum-actionbutton-quiet-border-color-hover));
     color: xvar(--spectrum-high-contrast-button-text, var(--spectrum-actionbutton-quiet-text-color-key-focus));
@@ -705,7 +705,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  &:focus-ring {
+  &:focus-visible {
     background-color: var(--spectrum-actionbutton-static-background-color-focus);
     border-color: var(--spectrum-actionbutton-static-border-color-focus);
     box-shadow: none;
@@ -763,7 +763,7 @@ governing permissions and limitations under the License.
       fill: var(--spectrum-actionbutton-static-color-selected);
     }
 
-    &:focus-ring {
+    &:focus-visible {
       background-color: var(--spectrum-actionbutton-static-background-color-selected-focus);
       border-color: var(--spectrum-actionbutton-static-background-color-selected-focus);
       color: var(--spectrum-actionbutton-static-color-selected);
@@ -886,7 +886,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  &:focus-ring,
+  &:focus-visible,
   &.is-focused {
     background-color: var(--spectrum-fieldbutton-background-color-key-focus);
     border-color: var(--spectrum-fieldbutton-border-color-key-focus);
@@ -913,7 +913,7 @@ governing permissions and limitations under the License.
       border-color: var(--spectrum-fieldbutton-border-color-error-down);
     }
 
-    &:focus-ring,
+    &:focus-visible,
     &.is-focused {
       border-color: var(--spectrum-fieldbutton-border-color-error-key-focus);
     }
@@ -940,7 +940,7 @@ governing permissions and limitations under the License.
     color: var(--spectrum-fieldbutton-text-color-hover);
   }
 
-  &:focus-ring,
+  &:focus-visible,
   &.is-focused {
     background-color: var(--spectrum-fieldbutton-quiet-background-color-key-focus);
 
@@ -954,7 +954,7 @@ governing permissions and limitations under the License.
     background-color: var(--spectrum-fieldbutton-quiet-background-color-down);
     border-color: var(--spectrum-fieldbutton-quiet-border-color-down);
 
-    &:focus-ring,
+    &:focus-visible,
     &.is-focused {
       background-color: var(--spectrum-fieldbutton-quiet-background-color-key-focus);
     }

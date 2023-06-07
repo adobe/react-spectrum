@@ -84,7 +84,7 @@ governing permissions and limitations under the License.
   &:focus {
     outline: none;
   }
-  &:focus-ring {
+  &:focus-visible {
     z-index: 3;
   }
 
@@ -326,7 +326,7 @@ a.spectrum-ActionButton {
   --spectrum-focus-ring-size: var(--spectrum-alias-focus-ring-size);
   &:disabled,
   &.is-disabled {
-    &:focus-ring {
+    &:focus-visible {
       box-shadow: none;
     }
   }
