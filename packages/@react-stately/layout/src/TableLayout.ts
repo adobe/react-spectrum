@@ -559,7 +559,10 @@ export class TableLayout<T> extends ListLayout<T> {
         }
 
         let index = collectionNode.index;
-        // TODO: Perhaps make a conditional that doesn't offset by the headerRows length if the collection is the TreeGridCollection?
+        // TODO: Perhaps make a conditional that doesn't offset by the headerRows length if the collection is the TreeGridCollection (can't rely on node information since
+        // we could have only nodes that arent expandable nor nested and thus can't tell if it belongs to a treegrid)? Actually this would still be problematic
+        // since the index we want to store is the row's index with respect to the body post flattening. A nested row that has a index that represents its position
+        // within the parent would return "1" when in reality it is rendered as the 5th row in the Table due to the flattened DOM structure
         // Or make it so index (or something) on the collectionNode returns the nested row's absolute row index rather than its relative one
         if (layoutInfo.parentKey === 'body') {
           index -= this.collection.headerRows.length;
