@@ -28,7 +28,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-InputGroup {
-  @inherit: %spectrum-FocusRing;
+  composes: spectrum-FocusRing;
 
   position: relative;
   display: inline-flex;
@@ -105,7 +105,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-InputGroup--quiet {
-  @inherit: %spectrum-FocusRing--quiet;
+  composes: spectrum-FocusRing--quiet;
 
   border-radius: var(--spectrum-combobox-quiet-fieldbutton-border-radius);
   min-width: calc(2 * var(--spectrum-dropdown-height));

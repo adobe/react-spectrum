@@ -163,7 +163,7 @@ svg.spectrum-Table-sortedIcon {
 }
 
 /* Helper for shared drop target overlay */
-%drop-target {
+.is-drop-target {
   &::before {
     content: '';
     position: absolute;
@@ -186,9 +186,6 @@ svg.spectrum-Table-sortedIcon {
   /* Fix scrollbars on iOS with sticky row headers */
   transform: translate3d(0, 0, 0);
 
-  &.is-drop-target {
-    @inherit: %drop-target;
-  }
   &.spectrum-Table-body--resizerAtTableEdge {
     border-start-end-radius: 0;
   }
@@ -369,10 +366,6 @@ svg.spectrum-Table-sortedIcon {
       display: inline-block;
       vertical-align: top;
     }
-  }
-
-  &.is-drop-target {
-    @inherit: %drop-target;
   }
 }
 

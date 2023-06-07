@@ -1,5 +1,5 @@
 diff --git a/node_modules/@spectrum-css/component-builder/css/processors.js b/node_modules/@spectrum-css/component-builder/css/processors.js
-index 9556e04..27c9a78 100644
+index 9556e04..18a5131 100644
 --- a/node_modules/@spectrum-css/component-builder/css/processors.js
 +++ b/node_modules/@spectrum-css/component-builder/css/processors.js
 @@ -15,106 +15,106 @@ const postcssReal = require('postcss');
@@ -73,6 +73,7 @@ index 9556e04..27c9a78 100644
 -      }
 -    }),
 -    require('postcss-nested'),
+-    require('postcss-inherit'),
 +    // require('postcss-mixins')({
 +    //   mixins: {
 +    //     typography: function(mixin, name, tokenName, textTransformIgnore) {
@@ -140,7 +141,7 @@ index 9556e04..27c9a78 100644
 +    //   }
 +    // }),
 +    // require('postcss-nested'),
-     require('postcss-inherit'),
++    // require('postcss-inherit'),
      require('postcss-custom-properties')({
        noValueNotifications: 'error',
        warnings: !keepVars
@@ -149,7 +150,8 @@ index 9556e04..27c9a78 100644
 -    require('postcss-calc'),
 +    // require('postcss-calc'),
      keepVars ? require('./plugins/postcss-custom-properties-mapping') : null,
-     notNested ? require('./plugins/postcss-notnested')({ replace: '.spectrum' }) : null,
+-    notNested ? require('./plugins/postcss-notnested')({ replace: '.spectrum' }) : null,
++    // notNested ? require('./plugins/postcss-notnested')({ replace: '.spectrum' }) : null,
      require('postcss-svg'),
 -    require('postcss-functions')({
 -      functions: {
@@ -173,8 +175,8 @@ index 9556e04..27c9a78 100644
 +    // }),
      require('./plugins/postcss-strip-comments')({ preserveTopdoc: false }),
      require('postcss-focus-ring'),
-     secondNotNested ? require('./plugins/postcss-notnested')() : null, // Second one to catch all stray &
-     require('postcss-discard-empty'),
+-    secondNotNested ? require('./plugins/postcss-notnested')() : null, // Second one to catch all stray &
+-    require('postcss-discard-empty'),
 -    require('autoprefixer')({
 -      'browsers': [
 -        'IE >= 10',
@@ -184,6 +186,8 @@ index 9556e04..27c9a78 100644
 -        'last 2 iOS versions'
 -      ]
 -    })
++    // secondNotNested ? require('./plugins/postcss-notnested')() : null, // Second one to catch all stray &
++    // require('postcss-discard-empty'),
 +    // require('autoprefixer')({
 +    //   'browsers': [
 +    //     'IE >= 10',
