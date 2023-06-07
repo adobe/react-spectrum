@@ -11,11 +11,10 @@
  */
 
 import {AriaLabelingProps} from '@react-types/shared';
-import {ButtonContext} from './Button';
-import {ContextValue, DOMProps, Provider, SlotProps, useContextProps} from './utils';
+import {ContextValue, DOMProps, SlotProps, useContextProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {Input} from './Input';
-import {LinkContext} from './Link';
+import {PressResponder} from '@react-aria/interactions';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 
 export interface FileTriggerProps extends SlotProps, DOMProps, AriaLabelingProps {
@@ -41,24 +40,20 @@ export const FileTriggerContext = createContext<ContextValue<FileTriggerProps, H
 
 function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, FileTriggerContext);
-  let {onChange, accept, className, allowsMultiple, ...otherProps} = props;
+  let {onChange, accept, className, allowsMultiple, children, ...otherProps} = props;
   let inputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <Provider
-      values={[
-        [LinkContext, {onPress: () => inputRef.current?.click()}],  
-        [ButtonContext, {onPress: () => inputRef.current?.click()}]
-      ]}>
-      <div
-        className={className || 'react-aria-FileTrigger'}
-        {...filterDOMProps(otherProps)}
-        ref={ref}
-        slot={props.slot}>
-        <Input type="file" style={{display: 'none'}} ref={inputRef} accept={accept} onChange={onChange} multiple={allowsMultiple} /> 
-        {props.children}
-      </div>
-    </Provider>
+    <div
+      className={className || 'react-aria-FileTrigger'}
+      {...filterDOMProps(otherProps)}
+      ref={ref}
+      slot={props.slot}>
+      <PressResponder onPress={() => inputRef.current?.click()}>
+        {children}
+      </PressResponder>
+      <Input type="file" style={{display: 'none'}} ref={inputRef} accept={accept} onChange={onChange} multiple={allowsMultiple} /> 
+    </div>
   );
 }
 

@@ -15,45 +15,49 @@ import {render} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 describe('FileTrigger', () => {
-  it('should render a FileTrigger', () => {
-    let {getByTestId} = render(
-      <FileTrigger data-testid="foo" />
-    );
-    let fileTrigger = getByTestId('foo');
-    expect(fileTrigger).toHaveAttribute('class', 'react-aria-FileTrigger');
-  });
-
-  it('should render a FileTrigger with a custom class', () => {
-    let {getByTestId} = render(
-      <FileTrigger data-testid="foo" className="test" />
-    );
-    let fileTrigger = getByTestId('foo');
-    expect(fileTrigger).toHaveClass('test');
-  });
-
   it('should render a FileTrigger with Link', () => {
-    let {getByRole} = render(
+    let {getByTestId, getByRole} = render(
       <FileTrigger data-testid="foo">
         <Link>Upload</Link>
       </FileTrigger>
     );
+    let fileTrigger = getByTestId('foo');
+    expect(fileTrigger).toHaveAttribute('class', 'react-aria-FileTrigger');
+
     let link = getByRole('link');
     expect(link).toHaveAttribute('class', 'react-aria-Link');
   });
 
   it('should render a FileTrigger with Button', () => {
-    let {getByRole} = render(
+    let {getByTestId, getByRole} = render(
       <FileTrigger data-testid="foo">
         <Button>Upload</Button>
       </FileTrigger>
     );
+    let fileTrigger = getByTestId('foo');
+    expect(fileTrigger).toHaveAttribute('class', 'react-aria-FileTrigger');
+    
     let button = getByRole('button');
     expect(button).toHaveAttribute('class', 'react-aria-Button');
   });
 
+  it('should render a FileTrigger with a custom class', () => {
+    let {getByTestId} = render(
+      <FileTrigger data-testid="foo" className="test" >
+        <Button>Upload</Button>
+      </FileTrigger>
+    );
+    let fileTrigger = getByTestId('foo');
+    expect(fileTrigger).toHaveClass('test');
+  });
+
   it('should support DOM props', () => {
     let {getByTestId} = render(
-      <FileTrigger data-testid="foo" data-foo="bar" />);
+      <FileTrigger data-testid="foo" data-foo="bar" >
+        <Link>Upload</Link>
+      </FileTrigger>
+
+    );
     let fileTrigger = getByTestId('foo');
     expect(fileTrigger).toHaveAttribute('data-foo', 'bar');
   });
@@ -61,7 +65,9 @@ describe('FileTrigger', () => {
   it('should support slot', () => {
     let {getByTestId} = render(
       <FileTriggerContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
-        <FileTrigger data-testid="foo" slot="test" />
+        <FileTrigger data-testid="foo" slot="test" >
+          <Button>Upload</Button>
+        </FileTrigger>
       </FileTriggerContext.Provider>
     );
 
@@ -74,7 +80,7 @@ describe('FileTrigger', () => {
     let file = new File(['hello'], 'hello.png', {type: 'image/png'});
     let {getByRole} = render(
       <FileTrigger>
-        <Button />
+        <Button>Upload</Button>
       </FileTrigger>
     );
     let button = getByRole('button');

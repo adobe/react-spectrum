@@ -22,6 +22,8 @@ import {useVirtualDrop} from './useVirtualDrop';
 export interface DropOptions {
   /** A ref for the droppable element. */
   ref: RefObject<HTMLElement>,
+  /** A ref for the drop button. */
+  buttonRef?: RefObject<HTMLElement>,
   /**
    * A function returning the drop operation to be performed when items matching the given types are dropped
    * on the drop target.
@@ -45,7 +47,7 @@ export interface DropOptions {
   onDrop?: (e: DropEvent) => void,
   /**
    * Whether the item has an explicit focusable drop affordance to initiate accessible drag and drop mode.
-   * If true, the dropProps will omit these event handlers, and they will be applied to dragButtonProps instead.
+   * If true, the dropProps will omit these event handlers, and they will be applied to dropButtonProps instead.
    */
   hasDropButton?: boolean
 }
@@ -56,7 +58,7 @@ export interface DropResult {
   /** Whether the drop target is currently focused or hovered. */
   isDropTarget: boolean,
   /** Props for the explicit drop button affordance, if any. */
-  dropButtonProps: AriaButtonProps
+  dropButtonProps?: AriaButtonProps
   
 }
 
@@ -310,10 +312,10 @@ export function useDrop(options: DropOptions): DropResult {
     return allowedOperations[0];
   });
 
-  let {ref} = options;
-  console.log(ref.current);
+  let {ref, buttonRef} = options;
   useLayoutEffect(() => DragManager.registerDropTarget({
     element: ref.current,
+    focusElement: buttonRef?.current,
     getDropOperation: getDropOperationKeyboard,
     onDropEnter(e) {
       setDropTarget(true);
@@ -325,7 +327,7 @@ export function useDrop(options: DropOptions): DropResult {
     },
     onDrop: onKeyboardDrop,
     onDropActivate
-  }), [ref, getDropOperationKeyboard, onDropEnter, onDropExit, onKeyboardDrop, onDropActivate]);
+  }), [ref, buttonRef, getDropOperationKeyboard, onDropEnter, onDropExit, onKeyboardDrop, onDropActivate]);
 
   let {dropProps} = useVirtualDrop();
   
@@ -338,7 +340,6 @@ export function useDrop(options: DropOptions): DropResult {
       onDrop
     },
     dropButtonProps: {...(hasDropButton && dropProps)},
-    // ...(hasDropButton) && {dropButtonProps: dropProps},
     isDropTarget
   };
 }

@@ -11,9 +11,9 @@
  */
 
 import {act, fireEvent, render} from '@react-spectrum/test-utils';
+import {Button, DropZone, DropZoneContext, FileTrigger, Text} from '../';
 import {ClipboardEvent, DataTransfer, DataTransferItem, DragEvent} from '@react-aria/dnd/test/mocks';
 import {Draggable} from '@react-aria/dnd/test/examples';
-import {DropZone, DropZoneContext, FileTrigger, Text} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -132,7 +132,9 @@ describe('DropZone', () => {
   it('should render FileTrigger as a child', () => {
     let {getByTestId} = render(
       <DropZone>
-        <FileTrigger data-testid="foo" />
+        <FileTrigger data-testid="foo">
+          <Button>Upload</Button>
+        </FileTrigger>
       </DropZone>
     );
       
@@ -284,6 +286,7 @@ describe('DropZone', () => {
         );
 
         let dropzone = tree.getByTestId('foo');
+        let button = tree.getAllByRole('button')[1];
         let draggable = tree.getByText('Drag me');
         
         expect(dropzone).toHaveClass('react-aria-DropZone');       
@@ -301,7 +304,7 @@ describe('DropZone', () => {
         });
 
         act(() => jest.runAllTimers());
-        expect(document.activeElement).toBe(dropzone);
+        expect(document.activeElement).toBe(button);
         fireEvent.keyDown(dropzone, {key: 'Enter'});
         fireEvent.keyUp(dropzone, {key: 'Enter'});
 

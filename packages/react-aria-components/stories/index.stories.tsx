@@ -801,7 +801,7 @@ export const DropzoneExampleWithFileTriggerLink = (props) => (
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
-      <FileTrigger>
+      <FileTrigger onChange={action('onChange')}>
         <Link>Upload</Link>
       </FileTrigger>
     </DropZone>
@@ -816,7 +816,7 @@ export const DropzoneExampleWithFileTriggerButton = (props) => (
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
-      <FileTrigger>
+      <FileTrigger onChange={action('onChange')} >
         <Button>Upload</Button>
       </FileTrigger>
     </DropZone>
@@ -832,7 +832,7 @@ export const DropzoneExampleWithDraggableAndFileTrigger = (props) => (
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
-      <FileTrigger>
+      <FileTrigger onChange={action('onChange')} >
         <Button>Browse</Button>
       </FileTrigger>
       Or drag into here
@@ -850,7 +850,7 @@ export const DropZoneOnlyAcceptPNGWithFileTrigger = (props) => (
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')} >
-      <FileTrigger accept="image/png">
+      <FileTrigger onChange={action('onChange')} accept="image/png">
         <Button>Upload</Button>
       </FileTrigger>
     </DropZone>
