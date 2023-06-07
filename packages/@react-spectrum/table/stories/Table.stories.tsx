@@ -363,6 +363,34 @@ let nestedItems = [
   ]}
 ];
 
+function DynamicExpandableRows(props: SpectrumTableProps<unknown>) {
+  let [expandedKeys, setExpandedKeys] = useState(new Set([]));
+
+  return (
+    <Flex direction="column">
+      <ActionButton onPress={() => setExpandedKeys('all')}>Expand all</ActionButton>
+      <ActionButton onPress={() => setExpandedKeys(new Set([]))}>Collapse all</ActionButton>
+      <ActionButton onPress={() => setExpandedKeys(new Set(['Lvl 1 Foo 1']))}>Expand subset</ActionButton>
+      <TableView {...props} expandedKeys={expandedKeys} onExpandedChange={action('onExpandedChange')}>
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={nestedItems}>
+          {item =>
+            (<Row key={item.foo} childItems={item.childRows}>
+              {(key) => {
+                // Note: The "item" here will reflect the child Row's values from nestedItems
+                return <Cell>{item[key]}</Cell>;
+              }}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    </Flex>
+
+  );
+}
+
 export const DyanmicExpandableRows = {
   args: {
     'aria-label': 'TableView with dynamic expandable rows',
@@ -370,22 +398,7 @@ export const DyanmicExpandableRows = {
     height: 200
   },
   render: (args) => (
-    <TableView {...args} expandedKeys={new Set(['Lvl 1 Foo 1'])}>
-    {/* <TableView {...args} expandedKeys="all"> */}
-      <TableHeader columns={columns}>
-        {column => <Column>{column.name}</Column>}
-      </TableHeader>
-      <TableBody items={nestedItems}>
-        {item =>
-          (<Row key={item.foo} childItems={item.childRows}>
-            {(key) => {
-              // Note: The "item" here will reflect the child Row's values from nestedItems
-              return <Cell>{item[key]}</Cell>;
-            }}
-          </Row>)
-        }
-      </TableBody>
-    </TableView>
+    <DynamicExpandableRows {...args} />
   ),
   name: 'dynamic with expandable rows'
 };
