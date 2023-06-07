@@ -1,0 +1,12 @@
+{
+  "actions": "行動",
+  "selectAction": "アクションの選択",
+  "addToQueue": "キューに追加する",
+  "addToCurrentWatchQueue": "現在の監視キューに追加します。",
+  "addReview": "レビューを追加",
+  "postAReviewForTheEpisode": "エピソードのレビューを投稿します。",
+  "subscribeToSeries": "シリーズを購読する",
+  "addSeriesToSubscription": "シリーズを購読リストに追加すると、新しいエピソードが放送されたときに通知が届きます。",
+  "report": "報告",
+  "reportAnIssue": "問題/違反を報告します。"
+}

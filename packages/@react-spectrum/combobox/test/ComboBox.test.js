@@ -21,9 +21,8 @@ import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 import {SSRProvider} from '@react-aria/ssr';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
-import {useAsyncList} from '@react-stately/data';
+import {useAsyncList, useListData} from '@react-stately/data';
 import {useFilter} from '@react-aria/i18n';
-import {useListData} from '@react-stately/data';
 import userEvent from '@testing-library/user-event';
 
 let theme = {
@@ -207,11 +206,11 @@ function testComboBoxOpen(combobox, button, listbox, focusedItemIndex) {
 
   expect(listbox).toBeVisible();
   expect(listbox).toHaveAttribute('aria-label', 'Suggestions');
-  expect(listbox).toHaveAttribute('aria-labelledby', `${comboboxLabelledBy} ${listbox.id}`);
+  expect(listbox).toHaveAttribute('aria-labelledby', `${listbox.id} ${comboboxLabelledBy}`);
   expect(button).toHaveAttribute('aria-expanded', 'true');
   expect(button).toHaveAttribute('aria-controls', listbox.id);
   expect(button).toHaveAttribute('aria-label', 'Show suggestions');
-  expect(button).toHaveAttribute('aria-labelledby', `${comboboxLabelledBy} ${buttonId}`);
+  expect(button).toHaveAttribute('aria-labelledby', `${buttonId} ${comboboxLabelledBy}`);
   expect(combobox).toHaveAttribute('aria-controls', listbox.id);
   expect(combobox).toHaveAttribute('aria-expanded', 'true');
 
@@ -2022,7 +2021,13 @@ describe('ComboBox', function () {
     let scrollHeightSpy;
     beforeEach(() => {
       // clientHeight is needed for ScrollView's updateSize()
-      clientHeightSpy = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementationOnce(() => 0).mockImplementation(() => 40);
+      clientHeightSpy = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementationOnce(() => 0).mockImplementation(function () {
+        if (this.getAttribute('role') === 'listbox') {
+          return 100;
+        }
+
+        return 40;
+      });
       // scrollHeight is for useVirutalizerItem to mock its getSize()
       scrollHeightSpy = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 32);
     });
@@ -2055,7 +2060,6 @@ describe('ComboBox', function () {
       });
       let listbox = getByRole('listbox');
       expect(listbox).toBeVisible();
-      jest.spyOn(listbox, 'clientHeight', 'get').mockImplementation(() => 100);
       // update size, virtualizer raf kicks in
       act(() => {jest.advanceTimersToNextTimer();});
       // onLoadMore queued by previous timer, run it now
@@ -2094,10 +2098,6 @@ describe('ComboBox', function () {
       expect(onOpenChange).toHaveBeenCalledTimes(0);
       expect(onLoadMore).toHaveBeenCalledTimes(0);
 
-      // this call and the one below are more correct for how the code should
-      // behave, the initial call would have a height of zero and after that a measureable height
-      clientHeightSpy.mockRestore();
-      clientHeightSpy = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementationOnce(() => 0).mockImplementation(() => 40);
       // open menu
       triggerPress(button);
       // use async act to resolve initial load
@@ -2107,7 +2107,6 @@ describe('ComboBox', function () {
       });
       let listbox = getByRole('listbox');
       expect(listbox).toBeVisible();
-      jest.spyOn(listbox, 'clientHeight', 'get').mockImplementation(() => 100);
       // update size, virtualizer raf kicks in
       act(() => {jest.advanceTimersToNextTimer();});
       // onLoadMore queued by previous timer, run it now
@@ -2153,11 +2152,7 @@ describe('ComboBox', function () {
 
       expect(onOpenChange).toHaveBeenCalledTimes(3);
       expect(onOpenChange).toHaveBeenLastCalledWith(true, 'manual');
-      // Please test this in storybook.
-      // In virtualizer.tsx the onVisibleRectChange() causes this to be called twice
-      // because the browser limits the popover height via calculatePosition(),
-      // while the test doesn't, causing virtualizer to try to load more
-      expect(onLoadMore).toHaveBeenCalledTimes(2);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
       expect(load).toHaveBeenCalledTimes(1);
 
       // close menu
@@ -3180,9 +3175,9 @@ describe('ComboBox', function () {
       expect(items).toHaveLength(6);
       expect(groups).toHaveLength(2);
       expect(groups[0]).toHaveAttribute('aria-labelledby', getByText('Section One').id);
-      expect(getByText('Section One')).toHaveAttribute('aria-hidden', 'true');
+      expect(getByText('Section One')).toHaveAttribute('role', 'presentation');
       expect(groups[1]).toHaveAttribute('aria-labelledby', getByText('Section Two').id);
-      expect(getByText('Section Two')).toHaveAttribute('aria-hidden', 'true');
+      expect(getByText('Section Two')).toHaveAttribute('role', 'presentation');
       expect(document.activeElement).toBe(combobox);
       expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
 
@@ -3689,7 +3684,7 @@ describe('ComboBox', function () {
       let {getByRole, getByText} = renderComboBox({selectedKey: '2', 'aria-labelledby': 'label-id'});
       let button = getByRole('button');
 
-      expect(button).toHaveAttribute('aria-labelledby', `label-id ${getByText('Test').id} ${getByText('Two').id}`);
+      expect(button).toHaveAttribute('aria-labelledby', `${getByText('Test').id} label-id ${getByText('Two').id}`);
     });
 
     it('readonly combobox should not open on press', function () {
@@ -4161,7 +4156,7 @@ describe('ComboBox', function () {
       expect(tray).toBeVisible();
       let listbox = getByRole('listbox');
       expect(listbox).toHaveAttribute('aria-label', 'Suggestions');
-      expect(listbox).toHaveAttribute('aria-labelledby', `${label.id} ${listbox.id}`);
+      expect(listbox).toHaveAttribute('aria-labelledby', `${listbox.id} ${label.id}`);
       let trayInput = within(tray).getByRole('searchbox');
       expect(trayInput).toHaveAttribute('aria-labelledby', label.id);
     });

@@ -12,7 +12,7 @@
 
 import {ActionButton} from '@react-spectrum/button';
 import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableView} from '../';
-import {Content} from '@react-spectrum/view';
+import {Content, View} from '@react-spectrum/view';
 import Delete from '@spectrum-icons/workflow/Delete';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
@@ -20,7 +20,6 @@ import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Meta} from '@storybook/react';
 import React from 'react';
-import {View} from '@react-spectrum/view';
 
 let states = [
   {isQuiet: true},

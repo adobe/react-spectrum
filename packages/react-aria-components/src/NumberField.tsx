@@ -12,7 +12,7 @@
 
 import {AriaNumberFieldProps, useLocale, useNumberField} from 'react-aria';
 import {ButtonContext} from './Button';
-import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
@@ -77,5 +77,5 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
 /**
  * A number field allows a user to enter a number, and increment or decrement the value using stepper buttons.
  */
-const _NumberField = forwardRef(NumberField);
+const _NumberField = /*#__PURE__*/ (forwardRef as forwardRefType)(NumberField);
 export {_NumberField as NumberField};

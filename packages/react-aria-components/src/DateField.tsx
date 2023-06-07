@@ -184,7 +184,7 @@ function DateInput({children, slot, ...otherProps}: DateInputProps, ref: Forward
 /**
  * A date input groups the editable date segments within a date field.
  */
-const _DateInput = forwardRef(DateInput);
+const _DateInput = /*#__PURE__*/ (forwardRef as forwardRefType)(DateInput);
 export {_DateInput as DateInput};
 
 export interface DateSegmentRenderProps extends Omit<IDateSegment, 'isEditable'> {
@@ -242,5 +242,5 @@ function DateSegment({segment, ...otherProps}: DateSegmentProps, ref: ForwardedR
  * A date segment displays an individual unit of a date and time, and allows users to edit
  * the value by typing or using the arrow keys to increment and decrement.
  */
-const _DateSegment = forwardRef(DateSegment);
+const _DateSegment = /*#__PURE__*/ (forwardRef as forwardRefType)(DateSegment);
 export {_DateSegment as DateSegment};

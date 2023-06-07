@@ -4052,7 +4052,7 @@ describe('TableView', function () {
       fireEvent.scroll(scrollView);
       act(() => {jest.runAllTimers();});
 
-      expect(onLoadMore).toHaveBeenCalledTimes(3);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
 
     it('should automatically fire onLoadMore if there aren\'t enough items to fill the Table', function () {
@@ -4077,8 +4077,7 @@ describe('TableView', function () {
 
       render(<TableMock items={items} />);
       act(() => jest.runAllTimers());
-      // first loadMore triggered by onVisibleRectChange, other 2 by useLayoutEffect
-      expect(onLoadMoreSpy).toHaveBeenCalledTimes(3);
+      expect(onLoadMoreSpy).toHaveBeenCalledTimes(1);
     });
   });
 
