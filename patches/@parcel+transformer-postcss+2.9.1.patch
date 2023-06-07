@@ -1,5 +1,5 @@
 diff --git a/node_modules/@parcel/transformer-postcss/lib/PostCSSTransformer.js b/node_modules/@parcel/transformer-postcss/lib/PostCSSTransformer.js
-index 3a35814..6ddd82c 100644
+index 3a35814..ee06412 100644
 --- a/node_modules/@parcel/transformer-postcss/lib/PostCSSTransformer.js
 +++ b/node_modules/@parcel/transformer-postcss/lib/PostCSSTransformer.js
 @@ -96,10 +96,10 @@ var _default = new (_plugin().Transformer)({
@@ -75,7 +75,7 @@ index 3a35814..6ddd82c 100644
      });
      return {
 diff --git a/node_modules/@parcel/transformer-postcss/lib/constants.js b/node_modules/@parcel/transformer-postcss/lib/constants.js
-index a16ee4c..0d16383 100644
+index a16ee4c..995a367 100644
 --- a/node_modules/@parcel/transformer-postcss/lib/constants.js
 +++ b/node_modules/@parcel/transformer-postcss/lib/constants.js
 @@ -4,5 +4,5 @@ Object.defineProperty(exports, "__esModule", {
@@ -85,3 +85,4 @@ index a16ee4c..0d16383 100644
 -const POSTCSS_RANGE = '^8.2.1';
 +const POSTCSS_RANGE = '^7.0.0';
  exports.POSTCSS_RANGE = POSTCSS_RANGE;
+\ No newline at end of file

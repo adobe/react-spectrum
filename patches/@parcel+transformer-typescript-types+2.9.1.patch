@@ -1,5 +1,5 @@
 diff --git a/node_modules/@parcel/transformer-typescript-types/lib/TSModuleGraph.js b/node_modules/@parcel/transformer-typescript-types/lib/TSModuleGraph.js
-index ba4f7d6..0a28954 100644
+index ba4f7d6..1f66e3d 100644
 --- a/node_modules/@parcel/transformer-typescript-types/lib/TSModuleGraph.js
 +++ b/node_modules/@parcel/transformer-typescript-types/lib/TSModuleGraph.js
 @@ -137,7 +137,7 @@ class TSModuleGraph {

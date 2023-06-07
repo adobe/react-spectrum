@@ -1,5 +1,5 @@
 diff --git a/node_modules/@parcel/packager-js/lib/ScopeHoistingPackager.js b/node_modules/@parcel/packager-js/lib/ScopeHoistingPackager.js
-index f8ef750..1b80486 100644
+index f8ef750..c0e3086 100644
 --- a/node_modules/@parcel/packager-js/lib/ScopeHoistingPackager.js
 +++ b/node_modules/@parcel/packager-js/lib/ScopeHoistingPackager.js
 @@ -364,7 +364,7 @@ class ScopeHoistingPackager {
