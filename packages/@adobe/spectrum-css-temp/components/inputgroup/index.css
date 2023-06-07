@@ -192,7 +192,7 @@ governing permissions and limitations under the License.
       padding-inline-end: var(--spectrum-padding);
     }
 
-    svg {
+    & svg {
       display: none;
     }
   }

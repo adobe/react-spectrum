@@ -54,7 +54,7 @@ governing permissions and limitations under the License.
   /* Font smoothing for Firefox */
   -moz-osx-font-smoothing: grayscale;
 
-  button& {
+  &button {
     /* Correct the inability to style clickable types in iOS and Safari. */
     -webkit-appearance: button;
   }

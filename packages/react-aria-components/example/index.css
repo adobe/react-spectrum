@@ -37,7 +37,7 @@ html {
     font-size: small;
   }
 
-  kbd {
+  & kbd {
     grid-area: kbd;
     place-self: center end;
   }

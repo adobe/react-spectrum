@@ -305,7 +305,7 @@ tbody.spectrum-Table-body {
     }
   }
 
-  tbody.spectrum-Table-body {
+  & tbody.spectrum-Table-body {
     .spectrum-Table-row .spectrum-Table-cell:first-child,
     .spectrum-Table-row .spectrum-Table-cell:last-child {
       border-left: none;
@@ -334,12 +334,12 @@ tbody.spectrum-Table-body {
   }
 }
 .spectrum-Table-colResizeNubbin {
-  svg {
-    g[fill][stroke] {
+  & svg {
+    & g[fill][stroke] {
       fill: var(--spectrum-table-col-resize-nubbin-background-color);
       stroke: var(--spectrum-table-col-resize-nubbin-background-color);
     }
-    path[fill][stroke] {
+    & path[fill][stroke] {
       fill: var(--spectrum-table-col-resize-nubbin-icon-color);
       stroke: var(--spectrum-table-col-resize-nubbin-icon-color);
     }

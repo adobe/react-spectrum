@@ -54,7 +54,7 @@ governing permissions and limitations under the License.
     user-select: none;
   }
 
-  p {
+  & p {
     margin: 0;
   }
 }
