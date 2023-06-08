@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Adobe. All rights reserved.
+ * Copyright 2023 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, DOMRef, DropTarget, FocusableElement, FocusableRef, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, DOMRef, DropTarget, Expandable, FocusableElement, FocusableRef, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {chain, mergeProps, scrollIntoView, scrollIntoViewport} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
@@ -45,7 +45,7 @@ import {RootDropIndicator} from './RootDropIndicator';
 import {DragPreview as SpectrumDragPreview} from './DragPreview';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
-import {TableColumnLayout, TableState, useTableState} from '@react-stately/table';
+import {TableColumnLayout, TableState, useTableState, useTreeGridState} from '@react-stately/table';
 import {TableLayout} from '@react-stately/layout';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {useButton} from '@react-aria/button';
@@ -129,7 +129,8 @@ export function useVirtualizerContext() {
   return useContext(VirtualizerContext);
 }
 
-export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionProps, DOMProps, AriaLabelingProps, StyleProps {
+// TODO: discuss the addition of Expandable interface, namely onExpandedChange naming
+export interface SpectrumTreeGridProps<T> extends TableProps<T>, SpectrumSelectionProps, DOMProps, AriaLabelingProps, StyleProps, Expandable {
   /**
    * Sets the amount of vertical padding within each cell.
    * @default 'regular'
@@ -168,7 +169,8 @@ export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionP
   dragAndDropHooks?: DragAndDropHooks['dragAndDropHooks']
 }
 
-function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
+// TODO: minimize the copied changes by seeing what components aren't modified and just import them from TableView
+function TableView<T extends object>(props: SpectrumTreeGridProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let {
     isQuiet,
@@ -225,12 +227,21 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   // entering resizing/exiting resizing doesn't trigger a render
   // with table layout, so we need to track it here
   let [, setIsResizing] = useState(false);
-  let state = useTableState({
+  let {collection, expandedKeys, toggleKey} = useTreeGridState({
     ...props,
+    showSelectionCheckboxes,
+    showDragButtons: isTableDraggable
+  });
+
+  let tableState = useTableState({
+    ...props,
+    collection,
     showSelectionCheckboxes,
     showDragButtons: isTableDraggable,
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
+
+  let state = useMemo(() => ({expandedKeys, toggleKey, ...tableState}), [expandedKeys, toggleKey, tableState]);
 
   // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
   let shouldShowCheckboxes = state.selectionManager.selectionBehavior !== 'replace';
@@ -525,7 +536,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     focusProps,
     dragAndDropHooks?.isVirtualDragging() && {tabIndex: null}
   );
-
+  // console.log('collection', state.collection)
   return (
     <TableContext.Provider value={{state, dragState, dropState, dragAndDropHooks, isTableDraggable, isTableDroppable, layout, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, headerMenuOpen, setHeaderMenuOpen, shouldShowCheckboxes}}>
       <TableVirtualizer
@@ -1187,6 +1198,7 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
   let {isFocusVisible, focusProps} = useFocusRing();
   let {hoverProps, isHovered} = useHover({isDisabled});
   let isFirstRow = state.collection.rows.find(row => row.level === 1)?.key === item.key;
+  // TODO: will need to update because nested rows can also have nextKey == null. Instead grab last row from collection.rows?
   let isLastRow = item.nextKey == null;
   // Figure out if the TableView content is equal or greater in height to the container. If so, we'll need to round the bottom
   // border corners of the last row when selected.
@@ -1450,4 +1462,4 @@ function CenteredWrapper({children}) {
  */
 const _TableView = React.forwardRef(TableView) as <T>(props: SpectrumTableProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 
-export {_TableView as BaseTableView};
+export {_TableView as TreeGridTableView};
