@@ -161,6 +161,7 @@ export class TableLayout<T> extends ListLayout<T> {
       layoutNode.layoutInfo.parentKey = 'header';
       y = layoutNode.layoutInfo.rect.maxY;
       width = Math.max(width, layoutNode.layoutInfo.rect.width);
+      layoutNode.index = children.length;
       children.push(layoutNode);
     }
 
@@ -187,6 +188,7 @@ export class TableLayout<T> extends ListLayout<T> {
       layoutNode.layoutInfo.parentKey = row.key;
       x = layoutNode.layoutInfo.rect.maxX;
       height = Math.max(height, layoutNode.layoutInfo.rect.height);
+      layoutNode.index = columns.length;
       columns.push(layoutNode);
     }
     for (let [i, layout] of columns.entries()) {
@@ -554,6 +556,7 @@ export class TableLayout<T> extends ListLayout<T> {
           this.persistedIndices.set(layoutInfo.parentKey, indices);
         }
 
+        // TODO: perhaps fallback to collectionNode.index
         let index = this.layoutNodes.get(layoutInfo.key).index;
 
         if (!indices.includes(index)) {
