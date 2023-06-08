@@ -1460,6 +1460,6 @@ function CenteredWrapper({children}) {
 /**
  * Tables are containers for displaying information. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
  */
-const _TableView = React.forwardRef(TableView) as <T>(props: SpectrumTableProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
+const _TableView = React.forwardRef(TableView) as <T>(props: SpectrumTreeGridProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 
 export {_TableView as TreeGridTableView};

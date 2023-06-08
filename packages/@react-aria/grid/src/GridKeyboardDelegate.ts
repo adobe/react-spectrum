@@ -109,8 +109,10 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
       // If focus was on a cell, focus the cell with the same index in the next row.
       if (this.isCell(startItem)) {
         let item = this.collection.getItem(key);
-        // TODO: now that we enfore cells be before nested rows, maybe don't need to do the extra filtering
-        return getNthItem(this.getChildNodes(item, this.isCell), startItem.index).key;
+        // TODO: For this call and others like it (aka dealing with cells), now that we enforce cells be before nested rows the item index is equivalent to index
+        // and we technically no longer need to filter the child nodes and can just use the index. indexOfType it isn't defined for TableCollection nodes (don't need it for posinset there)
+        // so only use it if it exists. Feels safer to use it if it does exist since we won't rely on the cell/nested row placement
+        return getNthItem(this.getChildNodes(item, this.isCell), startItem.indexOfType ?? startItem.index).key;
       }
 
       // Otherwise, focus the next row
@@ -137,7 +139,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
       // If focus was on a cell, focus the cell with the same index in the previous row.
       if (this.isCell(startItem)) {
         let item = this.collection.getItem(key);
-        return getNthItem(this.getChildNodes(item, this.isCell), startItem.index).key;
+        return getNthItem(this.getChildNodes(item, this.isCell), startItem.indexOfType ?? startItem.index).key;
       }
 
       // Otherwise, focus the previous row
@@ -166,12 +168,10 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     // otherwise focus the parent row.
     if (this.isCell(item)) {
       let parent = this.collection.getItem(item.parentKey);
-      // TODO: again, alternative is to make getNthItem accept a pred/filter arg. Also this relies on the cell's item.index
-      // being calculated with respect to the cell's cell siblings only rather including sibiling nested rows as well
       let children = this.getChildNodes(parent, this.isCell);
       let next = this.direction === 'rtl'
-        ? getNthItem(children, item.index - 1)
-        : getNthItem(children, item.index + 1);
+        ? getNthItem(children, (item.indexOfType ?? item.index) - 1)
+        : getNthItem(children, (item.indexOfType ?? item.index) + 1);
 
       if (next) {
         return next.key;
@@ -194,7 +194,6 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
 
     // If focus is on a row, focus the last child cell.
     if (this.isRow(item)) {
-      // TODO: same alternative mentioned in getKeyRightOf applies here as well
       let children = this.getChildNodes(item, this.isCell);
       return this.direction === 'rtl'
         ? getFirstItem(children).key
@@ -207,8 +206,8 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
       let parent = this.collection.getItem(item.parentKey);
       let children = this.getChildNodes(parent, this.isCell);
       let prev = this.direction === 'rtl'
-        ? getNthItem(children, item.index + 1)
-        : getNthItem(children, item.index - 1);
+        ? getNthItem(children, (item.indexOfType ?? item.index) + 1)
+        : getNthItem(children, (item.indexOfType ?? item.index) - 1);
 
       if (prev) {
         return prev.key;

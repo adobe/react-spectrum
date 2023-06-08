@@ -23,7 +23,6 @@ type CollectionFactory<T, C extends Collection<Node<T>>> = (node: Iterable<Node<
 export function useCollection<T extends object, C extends Collection<Node<T>> = Collection<Node<T>>>(props: CollectionOptions<T, C>, factory: CollectionFactory<T, C>, context?: unknown): C {
   let builder = useMemo(() => new CollectionBuilder<T>(), []);
   let {children, items, collection} = props;
-
   let result = useMemo(() => {
     if (collection) {
       return collection;

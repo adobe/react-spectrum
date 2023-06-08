@@ -12,6 +12,7 @@
 
 import {getFirstItem, getNthItem} from '@react-stately/collections';
 import {GridKeyboardDelegate} from '@react-aria/grid';
+import {GridNode} from '@react-types/grid';
 import {Key} from 'react';
 import {Node} from '@react-types/shared';
 import {TableCollection} from '@react-types/table';
@@ -42,7 +43,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
       }
 
       let firstItem = this.collection.getItem(firstKey);
-      return getNthItem(this.getChildNodes(firstItem, this.isCell), startItem.index).key;
+      return getNthItem(this.getChildNodes(firstItem, this.isCell), startItem.indexOfType ?? startItem.index).key;
     }
 
     return super.getKeyBelow(key);
@@ -73,7 +74,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
     // If no item was found, and focus was on a cell, then focus the
     // corresponding column header.
     if (this.isCell(startItem)) {
-      return this.collection.columns[startItem.index].key;
+      return this.collection.columns[startItem.indexOfType ?? startItem.index].key;
     }
 
     // If focus was on a row, then focus the first column header.
@@ -165,8 +166,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
 
       // Check each of the row header cells in this row for a match
       for (let cell of this.getChildNodes(item, this.isCell)) {
-        // TODO: this is dependent on index value of cell only counting sibiling cells and not sibling nested rows
-        let column = collection.columns[cell.index];
+        let column = (cell as GridNode<T>).column;
         if (collection.rowHeaderColumnKeys.has(column.key) && cell.textValue) {
           let substring = cell.textValue.slice(0, search.length);
           if (this.collator.compare(substring, search) === 0) {

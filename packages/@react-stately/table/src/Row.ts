@@ -70,8 +70,6 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps<T>, conte
           }
         }
       } else {
-        // TODO: below is an alternative where we yield all cells first and then rows. Can simplify the index calculation for the cell in the collection
-        // but at the cost of losing the user's original structure/order
         let cells: PartialNode<T>[] = [];
         let childRows: PartialNode<T>[] = [];
         React.Children.forEach(children, node => {
@@ -117,5 +115,5 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps<T>, conte
  * based on the columns defined in the TableHeader.
  */
 // We don't want getCollectionNode to show up in the type definition
-let _Row = Row as (props: RowProps) => JSX.Element;
+let _Row = Row as <T>(props: RowProps<T>) => JSX.Element;
 export {_Row as Row};
