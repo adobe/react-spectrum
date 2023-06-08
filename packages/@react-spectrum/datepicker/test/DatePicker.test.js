@@ -470,7 +470,7 @@ describe('DatePicker', function () {
       expect(getTextValue(combobox)).toBe('2/4/2019, 9:45 AM');
     });
 
-    it.only('should not throw error when deleting values from time field when CalendarDateTime value is used', function () {
+    it('should not throw error when deleting values from time field when CalendarDateTime value is used', function () {
       let onChange = jest.fn();
       let {getByRole, getAllByRole, getAllByLabelText} = render(
         <Provider theme={theme}>
