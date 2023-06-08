@@ -86,7 +86,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
       validationState={validationState}
       isDisabled={isDisabled}
       showErrorIcon={showErrorIcon}
-      gridArea="helpText" />
+      gridArea={labelStyles.helpText} />
     );
 
   let renderChildren = () => {
