@@ -109,6 +109,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
       // If focus was on a cell, focus the cell with the same index in the next row.
       if (this.isCell(startItem)) {
         let item = this.collection.getItem(key);
+        // TODO: now that we enfore cells be before nested rows, maybe don't need to do the extra filtering
         return getNthItem(this.getChildNodes(item, this.isCell), startItem.index).key;
       }
 

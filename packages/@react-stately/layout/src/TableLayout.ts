@@ -276,7 +276,7 @@ export class TableLayout<T> extends ListLayout<T> {
     let skipped = 0;
     let width = 0;
     let children: LayoutNode[] = [];
-    for (let node of this.collection) {
+    for (let [i, node] of [...this.collection].entries()) {
       let rowHeight = (this.rowHeight ?? this.estimatedRowHeight) + 1;
 
       // Skip rows before the valid rectangle unless they are already cached.
@@ -287,12 +287,8 @@ export class TableLayout<T> extends ListLayout<T> {
       }
 
       let layoutNode = this.buildChild(node, 0, y);
-      // TODO: ideally we would want the nested rows to render at the same level as their parent rows
-      // but do we also want the parent child relation to remain when calculating persisted keys
-      // (i.e. if a nested row is rendered and persisted, should its parents all the way up be persisted as well?)
-      // the below code change actually makes the child rows render within the row which we don't want.
-      // layoutNode.layoutInfo.parentKey = node.level > 1 ? node.parentKey : 'body';
       layoutNode.layoutInfo.parentKey = 'body';
+      layoutNode.index = i;
       y = layoutNode.layoutInfo.rect.maxY;
       width = Math.max(width, layoutNode.layoutInfo.rect.width);
       children.push(layoutNode);
@@ -359,8 +355,7 @@ export class TableLayout<T> extends ListLayout<T> {
 
     let children: LayoutNode[] = [];
     let height = 0;
-    for (let child of getChildNodes(node, this.collection)) {
-      // TODO: change here: only run the below for children that are cells, skip nested rows
+    for (let [i, child] of [...getChildNodes(node, this.collection)].entries()) {
       if (child.type === 'cell') {
         if (x > this.validRect.maxX) {
           // Adjust existing cached layoutInfo to ensure that it is out of view.
@@ -374,6 +369,7 @@ export class TableLayout<T> extends ListLayout<T> {
           let layoutNode = this.buildChild(child, x, y);
           x = layoutNode.layoutInfo.rect.maxX;
           height = Math.max(height, layoutNode.layoutInfo.rect.height);
+          layoutNode.index = i;
           children.push(layoutNode);
         }
       }
@@ -384,7 +380,6 @@ export class TableLayout<T> extends ListLayout<T> {
     rect.width = this.layoutInfos.get('header').rect.width;
     rect.height = height + 1; // +1 for bottom border
 
-    // TODO: store row's position in body in this obj, use for persistedKeys
     return {
       layoutInfo,
       children,
@@ -559,17 +554,7 @@ export class TableLayout<T> extends ListLayout<T> {
           this.persistedIndices.set(layoutInfo.parentKey, indices);
         }
 
-
-        // TODO: use layoutNode's index instead of collectionNode.index
-        let index = collectionNode.index;
-        // TODO: Perhaps make a conditional that doesn't offset by the headerRows length if the collection is the TreeGridCollection (can't rely on node information since
-        // we could have only nodes that arent expandable nor nested and thus can't tell if it belongs to a treegrid)? Actually this would still be problematic
-        // since the index we want to store is the row's index with respect to the body post flattening. A nested row that has a index that represents its position
-        // within the parent would return "1" when in reality it is rendered as the 5th row in the Table due to the flattened DOM structure
-        // Or make it so index (or something) on the collectionNode returns the nested row's absolute row index rather than its relative one
-        if (layoutInfo.parentKey === 'body') {
-          index -= this.collection.headerRows.length;
-        }
+        let index = this.layoutNodes.get(layoutInfo.key).index;
 
         if (!indices.includes(index)) {
           indices.push(index);

@@ -23,8 +23,13 @@ import {TableState} from '@react-stately/table';
  * @param state - State of the table, as returned by `useTableState`.
  */
 export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T>, ref: RefObject<FocusableElement>): GridRowAria {
-  let {node} = props;
+  let {node, isVirtualized} = props;
   let {rowProps, ...states} = useGridRow<T, TableCollection<T>, TableState<T>>(props, state, ref);
+
+  if (isVirtualized) {
+    rowProps['aria-rowindex'] = node.index + 1 + state.collection.headerRows.length; // aria-rowindex is 1 based
+  }
+
   return {
     rowProps: {
       ...rowProps,

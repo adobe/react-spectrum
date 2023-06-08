@@ -178,7 +178,7 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
 
       // TODO: placeholder and column indicies are already calculated via buildHeaderRows
       if (node.type !== 'placeholder' && node.type !== 'column') {
-        newProps['index'] = i;
+        newProps['indexOfType'] = i;
       }
 
       // Use Object.assign instead of spread to preserve object reference for keyMap. Also ensures retrieving nodes
@@ -192,8 +192,6 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
       this.keyMap.set(node.key, node);
 
       let lastNode: GridNode<T>;
-      // Index for any non child row element
-      let index = 0;
       // Index for nested rows, should be counted separately from sibiling cells. TODO: maybe store these values separately in node.index and into node.posinset maybe?
       // TODO: Turns out Table layout makes an assumption in buildPersistedIndicies that the body's children (aka rows) should be
       // offset by the headerRows length, aka it is assuming the index value of the body's rows are calculated as if the header rows are
@@ -202,7 +200,7 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
       // the index on a nested row doesn't line up with its flattened position in the rows array. The TableLayout has all rows as a direct child of body and thus
       // relies on the abosolute row index position to grab it from the body's children when persisting keys.
       // Ideally make rowIndex here 0 index and store some other info for TableLayout to use for absolute row index value
-      let rowIndex = 1;
+      let rowIndex = 0;
       for (let child of node.childNodes) {
         // TODO: Right now this means if the parent key is not included in expandedKeys but a childKey is, we will ignore it completely since the parent hasn't been expanded
         if (!(child.type === 'item' && expandedKeys !== 'all' && !expandedKeys.has(node.key))) {
@@ -229,7 +227,8 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
           if (child.type === 'item') {
             visitNode(child, rowIndex++);
           } else {
-            visitNode(child, index++);
+            // We enforce that the cells come before rows so can just reuse cell index
+            visitNode(child, child.index);
           }
 
           lastNode = child;
@@ -252,7 +251,7 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
       // the same level of row nodes under a single parent. For aria-posinset, we don't need to calculate the index in such a way...
       // This will be problematic for the nested row case as well
       // Ideally wouldn't have the +1 here, only needed to have the table not break with the persistedIndicies code. Get rid of it and make index 0 index when that is fixed)
-      let index = node.type === 'headerrow' ? i : (i - headerRows.length + 1);
+      let index = node.type === 'headerrow' ? i : (i - headerRows.length);
       visitNode(node as GridNode<T>, index);
 
       if (last) {

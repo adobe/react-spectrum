@@ -94,11 +94,7 @@ export class GridCollection<T> implements IGridCollection<T> {
         childNodes: [...node.childNodes],
         rendered: undefined,
         textValue: undefined,
-        ...node,
-        // TODO: update this GridCollection logic to have index values with respect to the immediate parent/level?
-        // If we want to change to use treegrid for table always, the index calculation here will need to match the index
-        // calculation regardless if the tree has any nested rows or not.
-        index: i
+        ...node
       } as GridNode<T>;
 
       if (last) {

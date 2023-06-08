@@ -228,30 +228,30 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   let [, setIsResizing] = useState(false);
 
   // TODO: Uncomment below if testing base case
-  // let state = useTableState({
-  //   ...props,
-  //   showSelectionCheckboxes,
-  //   showDragButtons: isTableDraggable,
-  //   selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
-  // });
-
-  // TODO: make copy of TableView and add treegrid specific changes there. Only do so after finalizing changes, it is useful to see what changes
-  // needed to be made to Table to get it working
-  let {collection, expandedKeys, toggleKey} = useTreeGridState({
+  let state = useTableState({
     ...props,
-    showSelectionCheckboxes,
-    showDragButtons: isTableDraggable
-  });
-
-  let tableState = useTableState({
-    ...props,
-    collection,
     showSelectionCheckboxes,
     showDragButtons: isTableDraggable,
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
 
-  let state = useMemo(() => ({expandedKeys, toggleKey, ...tableState}), [expandedKeys, toggleKey, tableState]);
+  // TODO: make copy of TableView and add treegrid specific changes there. Only do so after finalizing changes, it is useful to see what changes
+  // needed to be made to Table to get it working
+  // let {collection, expandedKeys, toggleKey} = useTreeGridState({
+  //   ...props,
+  //   showSelectionCheckboxes,
+  //   showDragButtons: isTableDraggable
+  // });
+
+  // let tableState = useTableState({
+  //   ...props,
+  //   collection,
+  //   showSelectionCheckboxes,
+  //   showDragButtons: isTableDraggable,
+  //   selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
+  // });
+
+  // let state = useMemo(() => ({expandedKeys, toggleKey, ...tableState}), [expandedKeys, toggleKey, tableState]);
 
   // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
   let shouldShowCheckboxes = state.selectionManager.selectionBehavior !== 'replace';
@@ -546,7 +546,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     focusProps,
     dragAndDropHooks?.isVirtualDragging() && {tabIndex: null}
   );
-  console.log('collection', state.collection)
+  // console.log('collection', state.collection)
   return (
     <TableContext.Provider value={{state, dragState, dropState, dragAndDropHooks, isTableDraggable, isTableDroppable, layout, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, headerMenuOpen, setHeaderMenuOpen, shouldShowCheckboxes}}>
       <TableVirtualizer
