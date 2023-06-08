@@ -69,12 +69,19 @@ export interface AriaCalendarProps<T extends DateValue> extends CalendarProps<T>
 
 export interface AriaRangeCalendarProps<T extends DateValue> extends RangeCalendarProps<T>, DOMProps, AriaLabelingProps {}
 
+export type PageBehavior = 'single' | 'visible';
+
 export interface SpectrumCalendarProps<T extends DateValue> extends AriaCalendarProps<T>, StyleProps {
   /**
    * The number of months to display at once. Up to 3 months are supported.
    * @default 1
    */
-  visibleMonths?: number
+  visibleMonths?: number,
+  /**
+   * Controls the behavior of paging. Pagination either works by advancing the visible page by visibleDuration (default) or one unit of visibleDuration.
+   * @default visible
+   */
+  pageBehavior?: PageBehavior
 }
 
 export interface SpectrumRangeCalendarProps<T extends DateValue> extends AriaRangeCalendarProps<T>, StyleProps {
@@ -82,5 +89,10 @@ export interface SpectrumRangeCalendarProps<T extends DateValue> extends AriaRan
    * The number of months to display at once. Up to 3 months are supported.
    * @default 1
    */
-  visibleMonths?: number
+  visibleMonths?: number,
+  /**
+   * Controls the behavior of paging. Pagination either works by advancing the visible page by visibleDuration (default) or one unit of visibleDuration.
+   * @default visible
+   */
+  pageBehavior?: PageBehavior
 }
