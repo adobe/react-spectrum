@@ -384,6 +384,7 @@ export class TableLayout<T> extends ListLayout<T> {
     rect.width = this.layoutInfos.get('header').rect.width;
     rect.height = height + 1; // +1 for bottom border
 
+    // TODO: store row's position in body in this obj, use for persistedKeys
     return {
       layoutInfo,
       children,
@@ -558,6 +559,8 @@ export class TableLayout<T> extends ListLayout<T> {
           this.persistedIndices.set(layoutInfo.parentKey, indices);
         }
 
+
+        // TODO: use layoutNode's index instead of collectionNode.index
         let index = collectionNode.index;
         // TODO: Perhaps make a conditional that doesn't offset by the headerRows length if the collection is the TreeGridCollection (can't rely on node information since
         // we could have only nodes that arent expandable nor nested and thus can't tell if it belongs to a treegrid)? Actually this would still be problematic

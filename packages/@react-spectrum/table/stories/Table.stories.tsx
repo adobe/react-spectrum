@@ -331,6 +331,7 @@ export const StaticExpandableRows = {
         <Row key="test">
           <Cell>Lvl 1 Foo 1</Cell>
           <Cell>Lvl 1 Bar 1</Cell>
+          <Cell>Lvl 1 Baz 1</Cell>
           <Row>
             <Cell>Lvl 2 Foo 1</Cell>
             <Cell>Lvl 2 Bar 1</Cell>
@@ -346,7 +347,6 @@ export const StaticExpandableRows = {
             <Cell>Lvl 2 Bar 2</Cell>
             <Cell>Lvl 2 Baz 2</Cell>
           </Row>
-          <Cell>Lvl 1 Baz 1</Cell>
         </Row>
       </TableBody>
     </TableView>

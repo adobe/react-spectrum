@@ -70,53 +70,34 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps<T>, conte
           }
         }
       } else {
-        let nodes: PartialNode<T>[] = [];
+        // TODO: below is an alternative where we yield all cells first and then rows. Can simplify the index calculation for the cell in the collection
+        // but at the cost of losing the user's original structure/order
+        let cells: PartialNode<T>[] = [];
+        let childRows: PartialNode<T>[] = [];
         React.Children.forEach(children, node => {
           if (node.type === Row) {
-            nodes.push({
+            if (cells.length < context.columns.length) {
+              throw new Error('All of a Row\'s child Cells must be positioned before any child Rows.');
+            }
+
+            childRows.push({
               type: 'item',
               element: node
             });
           } else {
-            nodes.push({
+            cells.push({
               type: 'cell',
               element: node
             });
           }
         });
 
-        let numCells = nodes.filter(node => node.type !== 'item').length;
-        if (numCells !== context.columns.length) {
-          throw new Error(`Cell count must match column count. Found ${numCells} cells and ${context.columns.length} columns.`);
+        if (cells.length !== context.columns.length) {
+          throw new Error(`Cell count must match column count. Found ${cells.length} cells and ${context.columns.length} columns.`);
         }
 
-        yield* nodes;
-
-        // TODO: below is an alternative where we yield all cells first and then rows. Can simplify the index calculation for the cell in the collection
-        // but at the cost of losing the user's original structure/order
-        // let cells: PartialNode<T>[] = [];
-        // let childRows: PartialNode<T>[] = [];
-        // React.Children.forEach(children, node => {
-        //   if (node.type === Row) {
-        //     // childRows.push({
-        //     //   type: 'item',
-        //     //   element: node
-        //     // });
-        //   } else {
-        //     // cells.push({
-        //     //   type: 'cell',
-        //     //   element: node
-        //     // });
-        //   }
-        // });
-
-        // if (cells.length !== context.columns.length) {
-        //   throw new Error(`Cell count must match column count. Found ${cells.length} cells and ${context.columns.length} columns.`);
-        // }
-
-        // // TODO: this makes childRows always appear at the end after all the cells
-        // yield* cells;
-        // yield* childRows;
+        yield* cells;
+        yield* childRows;
       }
     },
     shouldInvalidate(newContext: CollectionBuilderContext<T>) {
