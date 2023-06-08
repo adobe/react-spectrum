@@ -1056,7 +1056,7 @@ function DroppableTableViewFolder(props: DndTableViewProps) {
             {columnKey => (
               <Cell>
                 {item[columnKey]}
-                {columnKey === 'type' && item[columnKey] === 'folder' && item.childNodes.length > 0 && 
+                {columnKey === 'type' && item[columnKey] === 'folder' && item.childNodes.length > 0 &&
                  ` (${item.childNodes?.length} dropped item(s)`
                 }
               </Cell>
@@ -1163,7 +1163,6 @@ function ReorderableTable() {
     <TableView
       aria-label="Reorderable TableView"
       selectionMode="multiple"
-      width="size-5000"
       height="size-3600"
       dragAndDropHooks={dragAndDropHooks}>
       <TableHeader columns={columns}>
@@ -1519,7 +1518,7 @@ Use the `renderPreview` prop to provide a custom drag preview. `keys` and `dragg
 
 ```tsx example export=true render=false
 import {View} from '@react-spectrum/view';
-  
+
 function CustomDragPreviewExample() {
   let columns = [
     {name: 'Name', id: 'name'},
@@ -1559,7 +1558,6 @@ function CustomDragPreviewExample() {
     <TableView
       aria-label="Draggable TableView example with custom drag preview"
       selectionMode="multiple"
-      width="size-5000"
       height="size-3600"
       dragAndDropHooks={dragAndDropHooks}>
       <TableHeader columns={columns}>
