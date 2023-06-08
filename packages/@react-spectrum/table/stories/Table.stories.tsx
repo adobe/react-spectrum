@@ -41,6 +41,7 @@ import {useFilter} from '@react-aria/i18n';
 
 export default {
   title: 'TableView',
+  excludeStories: ['columns'],
   component: TableView,
   args: {
     onAction: action('onAction'),
