@@ -47,10 +47,10 @@ index 41ae55b..f506479 100644
 -});
 +};
 diff --git a/node_modules/@spectrum-css/component-builder/css/processors.js b/node_modules/@spectrum-css/component-builder/css/processors.js
-index 9556e04..eb43b80 100644
+index 9556e04..1dae6eb 100644
 --- a/node_modules/@spectrum-css/component-builder/css/processors.js
 +++ b/node_modules/@spectrum-css/component-builder/css/processors.js
-@@ -15,106 +15,106 @@ const postcssReal = require('postcss');
+@@ -15,106 +15,115 @@ const postcssReal = require('postcss');
  function getProcessors(keepVars = false, notNested = true, secondNotNested = true) {
    return [
      require('postcss-import'),
@@ -192,9 +192,11 @@ index 9556e04..eb43b80 100644
 +    // require('postcss-inherit'),
      require('postcss-custom-properties')({
        noValueNotifications: 'error',
-       warnings: !keepVars
+-      warnings: !keepVars
++      warnings: !keepVars,
++      preserve: false
      }),
-     require('./plugins/postcss-custom-properties-passthrough')(),
+-    require('./plugins/postcss-custom-properties-passthrough')(),
 -    require('postcss-calc'),
 -    keepVars ? require('./plugins/postcss-custom-properties-mapping') : null,
 -    notNested ? require('./plugins/postcss-notnested')({ replace: '.spectrum' }) : null,
@@ -206,7 +208,12 @@ index 9556e04..eb43b80 100644
 -        },
 -        percent: function(value) {
 -          return parseInt(value, 10) / 100;
--        }
++    (root) => {
++      // postcss-custom-properties used to do this but now doesn't
++      root.walkRules(rule => {
++        if (rule.selector === ':root') {
++          rule.remove();
+         }
 -      }
 -    }),
 -    require('./plugins/postcss-strip-comments')({ preserveTopdoc: false }),
@@ -222,6 +229,9 @@ index 9556e04..eb43b80 100644
 -        'last 2 iOS versions'
 -      ]
 -    })
++      });
++    },
++    require('./plugins/postcss-custom-properties-passthrough')(),
 +    // require('postcss-calc'),
 +    keepVars ? require('./plugins/postcss-custom-properties-mapping')() : null,
 +    // notNested ? require('./plugins/postcss-notnested')({ replace: '.spectrum' }) : null,
