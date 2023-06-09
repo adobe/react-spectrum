@@ -28,6 +28,7 @@ import type {DragAndDropHooks} from '@react-spectrum/dnd';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
 import type {DraggableItemResult, DropIndicatorAria, DroppableCollectionResult, DroppableItemResult} from '@react-aria/dnd';
 import {FocusRing, FocusScope, useFocusRing} from '@react-aria/focus';
+import {getChildNodes} from '@react-stately/collections';
 import {getInteractionModality, useHover, usePress} from '@react-aria/interactions';
 import {GridNode} from '@react-types/grid';
 import {InsertionIndicator} from './InsertionIndicator';
@@ -45,7 +46,7 @@ import {RootDropIndicator} from './RootDropIndicator';
 import {DragPreview as SpectrumDragPreview} from './DragPreview';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
-import {TableColumnLayout, TableState, useTableState, useTreeGridState} from '@react-stately/table';
+import {TableColumnLayout, TableState, useTreeGridState} from '@react-stately/table';
 import {TableLayout} from '@react-stately/layout';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {useButton} from '@react-aria/button';
@@ -227,21 +228,12 @@ function TableView<T extends object>(props: SpectrumTreeGridProps<T>, ref: DOMRe
   // entering resizing/exiting resizing doesn't trigger a render
   // with table layout, so we need to track it here
   let [, setIsResizing] = useState(false);
-  let {collection, expandedKeys, toggleKey} = useTreeGridState({
+  let state = useTreeGridState({
     ...props,
-    showSelectionCheckboxes,
-    showDragButtons: isTableDraggable
-  });
-
-  let tableState = useTableState({
-    ...props,
-    collection,
     showSelectionCheckboxes,
     showDragButtons: isTableDraggable,
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
-
-  let state = useMemo(() => ({expandedKeys, toggleKey, ...tableState}), [expandedKeys, toggleKey, tableState]);
 
   // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
   let shouldShowCheckboxes = state.selectionManager.selectionBehavior !== 'replace';
@@ -1445,10 +1437,15 @@ function TableCell({cell}) {
 
 function CenteredWrapper({children}) {
   let {state} = useTableContext();
+  let topLevelRowCount = [...getChildNodes(state.collection.body, state.collection)].length;
   return (
     <div
       role="row"
-      aria-rowindex={state.collection.headerRows.length + state.collection.size + 1}
+      aria-level={1}
+      aria-posinset={topLevelRowCount + 1}
+      aria-setsize={topLevelRowCount + 1}
+      // TODO: re-add when testing if we need row index
+      // aria-rowindex={state.collection.headerRows.length + state.collection.size + 1}
       className={classNames(stylesOverrides, 'react-spectrum-Table-centeredWrapper')}>
       <div role="rowheader" aria-colspan={state.collection.columns.length}>
         {children}
