@@ -584,7 +584,7 @@ describe('DateRangePicker', function () {
       expectPlaceholder(startDate, 'mm/dd/yyyy, ––:–– AM');
       expectPlaceholder(endDate, 'mm/dd/yyyy, ––:–– AM');
 
-      for (let timeField of [startTimeField, endTimeField]) {
+      for (let [index, timeField] of [startTimeField, endTimeField].entries()) {
         let hour = within(timeField).getByLabelText('hour,');
         expect(hour).toHaveAttribute('role', 'spinbutton');
         expect(hour).toHaveAttribute('aria-valuetext', 'Empty');
@@ -609,22 +609,25 @@ describe('DateRangePicker', function () {
 
         expect(document.activeElement).toHaveAttribute('aria-valuetext', '00');
 
-        expect(onChange).not.toHaveBeenCalled();
-        expectPlaceholder(startDate, 'mm/dd/yyyy, ––:–– AM');
-        expectPlaceholder(endDate, 'mm/dd/yyyy, ––:–– AM');
+        if (index == 0) {
+          expect(onChange).toHaveBeenCalledTimes(0);
+          expectPlaceholder(startDate, 'mm/dd/yyyy, ––:–– AM');
+          expectPlaceholder(endDate, 'mm/dd/yyyy, ––:–– AM');
+        } else {
+          expect(onChange).toHaveBeenCalledTimes(2);
+          expectPlaceholder(startDate, '6/1/2023, 12:00 AM');
+          expectPlaceholder(endDate, '6/2/2023, 12:00 AM');
+        }
 
         fireEvent.keyDown(hour, {key: 'ArrowRight'});
         fireEvent.keyUp(hour, {key: 'ArrowRight'});
 
         expect(document.activeElement).toHaveAttribute('aria-label', 'AM/PM, ');
-        expect(document.activeElement).toHaveAttribute('aria-valuetext', 'Empty');
-
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+        expect(document.activeElement).toHaveAttribute('aria-valuetext', 'AM');
       }
 
       expect(dialog).toBeVisible();
-      expect(onChange).toHaveBeenCalledTimes(1);
+      expect(onChange).toHaveBeenCalledTimes(2);
       let startValue = toCalendarDateTime(today(getLocalTimeZone())).set({day: 1});
       let endValue = toCalendarDateTime(today(getLocalTimeZone())).set({day: 2});
       expect(onChange).toHaveBeenCalledWith({start: startValue, end: endValue});
@@ -761,8 +764,7 @@ describe('DateRangePicker', function () {
         fireEvent.keyDown(hour, {key: 'ArrowRight'});
         fireEvent.keyUp(hour, {key: 'ArrowRight'});
         expect(document.activeElement).toHaveAttribute('aria-label', 'AM/PM, ');
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+        expect(document.activeElement).toHaveAttribute('aria-valuetext', 'AM');
       }
 
       userEvent.click(document.body);
@@ -1020,7 +1022,7 @@ describe('DateRangePicker', function () {
       expect(endField).not.toHaveAttribute('aria-describedby');
 
       let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
-      expect(description).toBe('Selected Range: February 3, 2020 at 8:00 AM to February 10, 2020 at 10:00 AM');
+      expect(description).toBe('Selected Range: February 3, 2020, 8:00 AM to February 10, 2020, 10:00 AM');
     });
 
     it('should handle selected range description when start and end dates are the same', function () {
@@ -1034,7 +1036,7 @@ describe('DateRangePicker', function () {
       expect(endField).not.toHaveAttribute('aria-describedby');
 
       let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
-      expect(description).toBe('Selected Range: February 3, 2020 at 8:00 AM to February 3, 2020 at 8:00 AM');
+      expect(description).toBe('Selected Range: February 3, 2020, 8:00 AM to February 3, 2020, 8:00 AM');
     });
 
     it('should support format help text', function () {

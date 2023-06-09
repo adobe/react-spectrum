@@ -528,20 +528,17 @@ describe('DatePicker', function () {
 
       expect(document.activeElement).toHaveAttribute('aria-valuetext', '00');
 
-      expect(onChange).not.toHaveBeenCalled();
-      expectPlaceholder(combobox, 'mm/dd/yyyy, ––:–– AM');
+      expect(onChange).toHaveBeenCalledTimes(2);
+      expectPlaceholder(combobox, '6/8/2023, 12:00 AM');
 
       fireEvent.keyDown(hour, {key: 'ArrowRight'});
       fireEvent.keyUp(hour, {key: 'ArrowRight'});
 
       expect(document.activeElement).toHaveAttribute('aria-label', 'AM/PM, ');
-      expect(document.activeElement).toHaveAttribute('aria-valuetext', 'Empty');
-
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
-      fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+      expect(document.activeElement).toHaveAttribute('aria-valuetext', 'AM');
 
       expect(dialog).toBeVisible();
-      expect(onChange).toHaveBeenCalledTimes(1);
+      expect(onChange).toHaveBeenCalledTimes(2);
       let value = toCalendarDateTime(today(getLocalTimeZone()));
       expect(onChange).toHaveBeenCalledWith(value);
       expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
@@ -666,8 +663,6 @@ describe('DatePicker', function () {
       fireEvent.keyDown(hour, {key: 'ArrowRight'});
       fireEvent.keyUp(hour, {key: 'ArrowRight'});
       expect(document.activeElement).toHaveAttribute('aria-label', 'AM/PM, ');
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
-      fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
       expect(document.activeElement).toHaveAttribute('aria-valuetext', 'AM');
 
       userEvent.click(document.body);

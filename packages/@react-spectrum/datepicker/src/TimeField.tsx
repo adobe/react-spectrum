@@ -16,7 +16,7 @@ import datepickerStyles from './styles.css';
 import {Field} from '@react-spectrum/label';
 import {FocusableRef} from '@react-types/shared';
 import {Input} from './Input';
-import React, {ReactElement, useRef} from 'react';
+import React, {ReactElement, useRef, useEffect} from 'react';
 import {SpectrumTimeFieldProps, TimeValue} from '@react-types/datepicker';
 import {useFocusManagerRef} from './utils';
 import {useLocale} from '@react-aria/i18n';
@@ -43,6 +43,17 @@ function TimeField<T extends TimeValue>(props: SpectrumTimeFieldProps<T>, ref: F
 
   let inputRef = useRef(null);
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useTimeField(props, state, inputRef);
+
+  /**
+   * When a TimeField is in a Picker, the Picker can close without triggering
+   * a TimeField onBlur which is sometimes used to persist valid dates. This
+   * persists the value the second it is valid.
+   */
+  useEffect(() => {
+    return () => {
+      state.confirmPlaceholder();
+    };
+  }, [state]);
 
   return (
     <Field
