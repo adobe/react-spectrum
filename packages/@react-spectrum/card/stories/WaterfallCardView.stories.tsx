@@ -31,11 +31,10 @@ import {
 } from './GridCardView.stories';
 import {CardView, WaterfallLayout} from '../';
 import {ComponentStoryObj} from '@storybook/react';
-import React from 'react';
+import React, {useMemo} from 'react';
 import {Size} from '@react-stately/virtualizer';
 import {SpectrumCardViewProps} from '@react-types/card';
 import {useCollator} from '@react-aria/i18n';
-import {useMemo} from 'react';
 import {WaterfallLayoutOptions} from '../src/WaterfallLayout';
 
 let itemsNoSize = [

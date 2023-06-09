@@ -136,7 +136,7 @@ export interface SlotProps {
   slot?: string
 }
 
-export function useContextProps<T, U, E extends Element>(props: T & SlotProps, ref: React.ForwardedRef<E>, context: React.Context<ContextValue<U, E>>): [T, React.RefObject<E>] {
+export function useContextProps<T, U extends SlotProps, E extends Element>(props: T & SlotProps, ref: React.ForwardedRef<E>, context: React.Context<ContextValue<U, E>>): [T, React.RefObject<E>] {
   let ctx = useContext(context) || {};
   if ('slots' in ctx && ctx.slots) {
     if (!props.slot && !ctx.slots[defaultSlot]) {
