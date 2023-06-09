@@ -76,21 +76,21 @@ export function useTreeGridState<T extends object>(props: TreeGridStateProps<T>)
 }
 
 // TODO: copied from useTreeState, perhaps make this accept multiple keys?
-function toggleKey<T>(set: 'all' | Set<Key>, key: Key, collection: ITableCollection<T>): Set<Key> {
-  let res;
-  if (set === 'all') {
-    res = new Set(collection.rows.filter(row => row.props.hasChildItems || row.props.children.length > collection.columnCount));
-    res.delete(key);
+function toggleKey<T>(currentExpandedKeys: 'all' | Set<Key>, key: Key, collection: ITableCollection<T>): Set<Key> {
+  let updatedExpandedKeys: Set<Key>;
+  if (currentExpandedKeys === 'all') {
+    updatedExpandedKeys = new Set(collection.rows.filter(row => row.props.hasChildItems || row.props.children.length > collection.columnCount).map(row => row.key));
+    updatedExpandedKeys.delete(key);
   } else {
-    res = new Set(set);
-    if (res.has(key)) {
-      res.delete(key);
+    updatedExpandedKeys = new Set(currentExpandedKeys);
+    if (updatedExpandedKeys.has(key)) {
+      updatedExpandedKeys.delete(key);
     } else {
-      res.add(key);
+      updatedExpandedKeys.add(key);
     }
   }
 
-  return res;
+  return updatedExpandedKeys;
 }
 
 // TODO: based off convertedSelected

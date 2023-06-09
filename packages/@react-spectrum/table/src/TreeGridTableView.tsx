@@ -10,11 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionButton} from '@react-spectrum/button';
 import {AriaLabelingProps, DOMProps, DOMRef, DropTarget, Expandable, FocusableElement, FocusableRef, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {chain, mergeProps, scrollIntoView, scrollIntoViewport} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {
   classNames,
   useDOMRef,
@@ -436,7 +438,7 @@ function TableView<T extends object>(props: SpectrumTreeGridProps<T>, ref: DOMRe
           return <TableDragCell cell={item} />;
         }
 
-        return <TableCell cell={item} />;
+        return <TableCell cell={item} toggleKey={toggleKey} />;
       }
       case 'placeholder':
         // TODO: move to react-aria?
@@ -1249,6 +1251,7 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
 
   let dropProps = isDroppable ? droppableItem?.dropProps : {'aria-hidden': droppableItem?.dropProps['aria-hidden']};
   let {visuallyHiddenProps} = useVisuallyHidden();
+  // console.log(item.props.childItems);
 
   return (
     <TableRowContext.Provider value={{dragButtonProps, dragButtonRef, isFocusVisibleWithin}}>
@@ -1394,7 +1397,7 @@ function TableCheckboxCell({cell}) {
   );
 }
 
-function TableCell({cell}) {
+function TableCell({cell, toggleKey}) {
   let {state} = useTableContext();
   let ref = useRef();
   let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
@@ -1403,7 +1406,7 @@ function TableCell({cell}) {
     node: cell,
     isVirtualized: true
   }, state, ref);
-
+  let showExpandCollapseButton = cell.index === 0 && state.collection.getItem(cell.parentKey)?.props.childItems?.length > 0;
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
@@ -1436,6 +1439,10 @@ function TableCell({cell}) {
               'spectrum-Table-cellContents'
             )
         }>
+          {showExpandCollapseButton &&
+            <ActionButton onPress={() => toggleKey(cell.key)} isQuiet>
+              <ChevronRight />
+            </ActionButton>}
           {cell.rendered}
         </span>
       </div>
