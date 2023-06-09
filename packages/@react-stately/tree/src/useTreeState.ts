@@ -31,6 +31,9 @@ export interface TreeState<T> {
   /** Toggles the expanded state for an item by its key. */
   toggleKey(key: Key): void,
 
+  /** Replaces the set of expanded keys. */
+  setExpandedKeys(keys: Set<Key>): void,
+
   /** A selection manager to read and update multiple selection state. */
   readonly selectionManager: SelectionManager
 }
@@ -70,6 +73,7 @@ export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T
     expandedKeys,
     disabledKeys,
     toggleKey: onToggle,
+    setExpandedKeys,
     selectionManager: new SelectionManager(tree, selectionState)
   };
 }

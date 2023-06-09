@@ -12,6 +12,7 @@
 
 import {Example} from './Example';
 import React from 'react';
+import {today} from '@internationalized/date';
 
 export default {
   title: 'Date and Time/useCalendar'
@@ -35,4 +36,24 @@ export const Weeks2 = {
 export const Months1 = {
   render: () => <Example visibleDuration={{months: 1}} />,
   name: 'months: 1'
+};
+
+export const Months2 = {
+  render: () => <Example visibleDuration={{months: 2}} />,
+  name: 'months: 2'
+};
+
+export const Days7SingleToday = {
+  render: () => <Example defaultValue={today} visibleDuration={{days: 7}} pageBehavior="single" />,
+  name: 'days: 7, pageBehavior: single, defaultValue: today'
+};
+
+export const Weeks5SingleToday = {
+  render: () => <Example defaultValue={today} visibleDuration={{weeks: 5}} pageBehavior="single" />,
+  name: 'weeks: 5, pageBehavior: single, defaultValue: today'
+};
+
+export const Months2PageBehaviorSingle = {
+  render: () => <Example visibleDuration={{months: 2}} pageBehavior="single" />,
+  name: 'months: 2, pageBehavior: single'
 };

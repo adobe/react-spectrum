@@ -18,11 +18,10 @@ import {Grid} from '@react-spectrum/layout';
 import {isFocusVisible, useHover} from '@react-aria/interactions';
 import {ListBoxContext} from './ListBoxContext';
 import {Node} from '@react-types/shared';
-import React, {useContext} from 'react';
+import React, {useContext, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/text';
 import {useOption} from '@react-aria/listbox';
-import {useRef} from 'react';
 
 interface OptionProps<T> {
   item: Node<T>,

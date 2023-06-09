@@ -808,7 +808,7 @@ describe('Picker', function () {
       let value = getByText('Select an option…');
       expect(label).toHaveAttribute('id');
       expect(value).toHaveAttribute('id');
-      expect(picker).toHaveAttribute('aria-labelledby', `${label.id} ${value.id}`);
+      expect(picker).toHaveAttribute('aria-labelledby', `${value.id} ${label.id}`);
 
       triggerPress(picker);
       act(() => jest.runAllTimers());
@@ -834,7 +834,7 @@ describe('Picker', function () {
       expect(picker).toHaveAttribute('id');
       expect(value).toHaveAttribute('id');
       expect(picker).toHaveAttribute('aria-label', 'Test');
-      expect(picker).toHaveAttribute('aria-labelledby', `${picker.id} ${value.id}`);
+      expect(picker).toHaveAttribute('aria-labelledby', `${value.id} ${picker.id}`);
 
       triggerPress(picker);
       act(() => jest.runAllTimers());
@@ -859,7 +859,7 @@ describe('Picker', function () {
       let value = getByText('Select an option…');
       expect(picker).toHaveAttribute('id');
       expect(value).toHaveAttribute('id');
-      expect(picker).toHaveAttribute('aria-labelledby', `foo ${value.id}`);
+      expect(picker).toHaveAttribute('aria-labelledby', `${value.id} foo`);
 
       triggerPress(picker);
       act(() => jest.runAllTimers());
@@ -885,14 +885,14 @@ describe('Picker', function () {
       expect(picker).toHaveAttribute('id');
       expect(value).toHaveAttribute('id');
       expect(picker).toHaveAttribute('aria-label', 'Test');
-      expect(picker).toHaveAttribute('aria-labelledby', `foo ${picker.id} ${value.id}`);
+      expect(picker).toHaveAttribute('aria-labelledby', `${value.id} ${picker.id} foo`);
 
       triggerPress(picker);
       act(() => jest.runAllTimers());
 
       let listbox = getByRole('listbox');
       expect(listbox).toBeVisible();
-      expect(listbox).toHaveAttribute('aria-labelledby', `foo ${picker.id}`);
+      expect(listbox).toHaveAttribute('aria-labelledby', `${picker.id} foo`);
     });
 
     describe('isRequired', function () {
@@ -918,7 +918,7 @@ describe('Picker', function () {
         let value = getByText('Select an option…');
         expect(label).toHaveAttribute('id');
         expect(value).toHaveAttribute('id');
-        expect(picker).toHaveAttribute('aria-labelledby', `${label.id} ${value.id}`);
+        expect(picker).toHaveAttribute('aria-labelledby', `${value.id} ${label.id}`);
 
         triggerPress(picker);
         act(() => jest.runAllTimers());
@@ -1470,9 +1470,9 @@ describe('Picker', function () {
       expect(items[5]).toHaveAttribute('aria-labelledby', within(items[5]).getByText('Floof').id);
       expect(groups[1]).toContainElement(items[5]);
 
-      expect(getByText('Section 1')).toHaveAttribute('aria-hidden', 'true');
+      expect(getByText('Section 1')).toHaveAttribute('role', 'presentation');
       expect(groups[1]).toHaveAttribute('aria-labelledby', getByText('Section 2').id);
-      expect(getByText('Section 2')).toHaveAttribute('aria-hidden', 'true');
+      expect(getByText('Section 2')).toHaveAttribute('role', 'presentation');
 
       expect(document.activeElement).toBe(listbox);
 
@@ -1831,7 +1831,7 @@ describe('Picker', function () {
 
   describe('async loading', function () {
     it('should display a spinner while loading', function () {
-      let {getByRole, rerender} = render(
+      let {getByRole, getByText, rerender} = render(
         <Provider theme={theme}>
           <Picker label="Test" items={[]} isLoading>
             {item => <Item>{item.name}</Item>}
@@ -1843,6 +1843,7 @@ describe('Picker', function () {
       let progressbar = within(picker).getByRole('progressbar');
       expect(progressbar).toHaveAttribute('aria-label', 'Loading…');
       expect(progressbar).not.toHaveAttribute('aria-valuenow');
+      expect(picker).toHaveAttribute('aria-describedby', `${progressbar.id}`);
 
       rerender(
         <Provider theme={theme}>
@@ -1853,6 +1854,30 @@ describe('Picker', function () {
       );
 
       expect(progressbar).not.toBeInTheDocument();
+      expect(picker).not.toHaveAttribute('aria-describedby');
+
+      rerender(
+        <Provider theme={theme}>
+          <Picker label="Test" description="Please select an item." items={[]} isLoading>
+            {item => <Item>{item.name}</Item>}
+          </Picker>
+        </Provider>
+      );
+
+      let description = getByText('Please select an item.');
+      expect(description).toHaveAttribute('id');
+      expect(picker).toHaveAttribute('aria-describedby', `${description.id} ${progressbar.id}`);
+
+      rerender(
+        <Provider theme={theme}>
+          <Picker label="Test" description="Please select an item." items={[]}>
+            {item => <Item>{item.name}</Item>}
+          </Picker>
+        </Provider>
+      );
+
+      expect(progressbar).not.toBeInTheDocument();
+      expect(picker).toHaveAttribute('aria-describedby', `${description.id}`);
     });
 
     it('should display a spinner inside the listbox when loading more', function () {

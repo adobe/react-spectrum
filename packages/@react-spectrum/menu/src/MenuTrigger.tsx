@@ -58,6 +58,7 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
   let isMobile = useIsMobileDevice();
   let menuContext = {
     ...menuProps,
+    state,
     ref: menuRef,
     onClose: state.close,
     closeOnSelect,
@@ -80,6 +81,7 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
   } else {
     overlay = (
       <Popover
+        UNSAFE_style={{clipPath: 'unset'}}
         state={state}
         triggerRef={menuTriggerRef}
         scrollRef={menuRef}

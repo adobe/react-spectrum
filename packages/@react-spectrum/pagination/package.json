@@ -46,7 +46,7 @@
     "@react-types/pagination": "3.0.0-alpha.1",
     "@react-types/shared": "^3.1.0",
     "@spectrum-icons/ui": "^3.1.0",
-    "@swc/helpers": "^0.4.14"
+    "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1"
