@@ -37,15 +37,14 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
   }
 
   let treeGridRowProps = {};
-  if ('expandedKeys' in state) {
-    // console.log('node', node)
+  if ('expandedKeys' in state && state.collection.getItem(node.key)) {
     treeGridRowProps = {
       'aria-expanded': state.expandedKeys === 'all' || state.expandedKeys.has(node.key),
       'aria-level': node.level,
       'aria-posinset': node.indexOfType,
       'aria-setsize': node.level > 1 ?
-        [...getChildNodes(state.collection.getItem(node?.parentKey), state.collection)]?.filter(node => node.type === 'item')?.length :
-        [...getChildNodes(state.collection.body, state.collection)]?.length
+        [...getChildNodes(state.collection.getItem(node?.parentKey), state.collection)].filter(node => node.type === 'item').length :
+        [...getChildNodes(state.collection.body, state.collection)].length
     };
   }
 
