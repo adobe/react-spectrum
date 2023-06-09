@@ -16,7 +16,7 @@ import datepickerStyles from './styles.css';
 import {Field} from '@react-spectrum/label';
 import {FocusableRef} from '@react-types/shared';
 import {Input} from './Input';
-import React, {ReactElement, useRef, useEffect} from 'react';
+import React, {ReactElement, useEffect, useRef} from 'react';
 import {SpectrumTimeFieldProps, TimeValue} from '@react-types/datepicker';
 import {useFocusManagerRef} from './utils';
 import {useLocale} from '@react-aria/i18n';

@@ -529,7 +529,7 @@ describe('DatePicker', function () {
       expect(document.activeElement).toHaveAttribute('aria-valuetext', '00');
 
       expect(onChange).toHaveBeenCalledTimes(2);
-      expectPlaceholder(combobox, '6/8/2023, 12:00 AM');
+      expectPlaceholder(combobox, '6/9/2023, 12:00 AM');
 
       fireEvent.keyDown(hour, {key: 'ArrowRight'});
       fireEvent.keyUp(hour, {key: 'ArrowRight'});
