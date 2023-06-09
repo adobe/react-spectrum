@@ -81,4 +81,27 @@ describe('Popover', () => {
     let dialog = getByRole('dialog');
     expect(dialog).toHaveTextContent('Popover at bottom');
   });
+
+  it('should support custom portalContainer', async () => {
+    let portalRoot = document.createElement('div');
+    document.body.appendChild(portalRoot);
+
+    let {getByRole} = render(
+      <DialogTrigger>
+        <Button />
+        <Popover portalContainer={portalRoot}>
+          <Dialog>Popover not in body</Dialog>
+        </Popover>
+      </DialogTrigger>
+    );
+
+    let button = getByRole('button');
+    userEvent.click(button);
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toHaveTextContent('Popover not in body');
+
+    expect(portalRoot.parentElement).toStrictEqual(document.body);
+    expect(portalRoot).toContainElement(dialog);
+  });
 });
