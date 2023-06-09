@@ -20,7 +20,7 @@ import {mergeProps, useDescription, useId, useUpdateEffect} from '@react-aria/ut
 import {Node} from '@react-types/shared';
 import {RefObject, useMemo} from 'react';
 import {TableKeyboardDelegate} from './TableKeyboardDelegate';
-import {TableState} from '@react-stately/table';
+import {TableState, TreeGridState} from '@react-stately/table';
 import {useCollator, useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface AriaTableProps<T> extends GridProps {
@@ -36,7 +36,7 @@ export interface AriaTableProps<T> extends GridProps {
  * @param state - State for the table, as returned by `useTableState`.
  * @param ref - The ref attached to the table element.
  */
-export function useTable<T>(props: AriaTableProps<T>, state: TableState<T>, ref: RefObject<HTMLElement>): GridAria {
+export function useTable<T>(props: AriaTableProps<T>, state: TableState<T> | TreeGridState<T>, ref: RefObject<HTMLElement>): GridAria {
   let {
     keyboardDelegate,
     isVirtualized,
@@ -68,6 +68,12 @@ export function useTable<T>(props: AriaTableProps<T>, state: TableState<T>, ref:
   // Override to include header rows
   if (isVirtualized) {
     gridProps['aria-rowcount'] = state.collection.size + state.collection.headerRows.length;
+  }
+
+  // TODO: Opted to put tree grid specific aria in table hooks level, not grid hook level. If it turns out that we will
+  // have other components that only call the grid hooks and need treegrid aria, then we can refactor
+  if ('expandedKey' in state) {
+    gridProps.role = 'treegrid';
   }
 
   let {column, direction: sortDirection} = state.sortDescriptor || {};
