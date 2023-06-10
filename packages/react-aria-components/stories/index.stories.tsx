@@ -850,7 +850,24 @@ export const DropZoneOnlyAcceptPNGWithFileTrigger = (props) => (
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')} >
-      <FileTrigger onChange={action('onChange')} accept="image/png">
+      <FileTrigger onChange={action('onChange')} acceptedFileTypes={['image/png']}>
+        <Button>Upload</Button>
+      </FileTrigger>
+    </DropZone>
+  </div>
+);
+
+export const DropZoneOnlyWithCapture = (props) => (
+  <div>
+    <DropZone
+      {...props}
+      getDropOperation={(types) =>  types.has('image/png') ? 'copy' : 'cancel'}
+      className={styles.dropzone}
+      onPress={action('OnPress')}
+      onDrop={action('OnDrop')}
+      onDropEnter={action('OnDropEnter')}
+      onDropExit={action('OnDropExit')} >
+      <FileTrigger onChange={action('onChange')} defaultCamera="environment">
         <Button>Upload</Button>
       </FileTrigger>
     </DropZone>
@@ -923,11 +940,11 @@ export const FileTriggerButton = (props) => (
   </FileTrigger>
 );
 
-export const FileTriggerLink = (props) => (
+export const FileTriggerLinkAllowsMultiple = (props) => (
   <FileTrigger 
     {...props} 
     onChange={action('OnChange')}
-    multiple >
+    allowsMultiple >
     <Link>Select a file</Link>
   </FileTrigger>
 );

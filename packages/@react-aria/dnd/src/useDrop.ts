@@ -22,8 +22,6 @@ import {useVirtualDrop} from './useVirtualDrop';
 export interface DropOptions {
   /** A ref for the droppable element. */
   ref: RefObject<HTMLElement>,
-  /** A ref for the drop button. */
-  buttonRef?: RefObject<HTMLElement>,
   /**
    * A function returning the drop operation to be performed when items matching the given types are dropped
    * on the drop target.
@@ -312,10 +310,9 @@ export function useDrop(options: DropOptions): DropResult {
     return allowedOperations[0];
   });
 
-  let {ref, buttonRef} = options;
+  let {ref} = options;
   useLayoutEffect(() => DragManager.registerDropTarget({
     element: ref.current,
-    focusElement: buttonRef?.current,
     getDropOperation: getDropOperationKeyboard,
     onDropEnter(e) {
       setDropTarget(true);
@@ -327,7 +324,7 @@ export function useDrop(options: DropOptions): DropResult {
     },
     onDrop: onKeyboardDrop,
     onDropActivate
-  }), [ref, buttonRef, getDropOperationKeyboard, onDropEnter, onDropExit, onKeyboardDrop, onDropActivate]);
+  }), [ref, getDropOperationKeyboard, onDropEnter, onDropExit, onKeyboardDrop, onDropActivate]);
 
   let {dropProps} = useVirtualDrop();
   

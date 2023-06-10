@@ -26,7 +26,6 @@ let subscriptions = new Set<() => void>();
 
 interface DropTarget {
   element: FocusableElement,
-  focusElement?: FocusableElement,
   getDropOperation?: (types: Set<string>, allowedOperations: DropOperation[]) => DropOperation,
   onDropEnter?: (e: DropEnterEvent, dragTarget: DragTarget) => void,
   onDropExit?: (e: DropExitEvent) => void,
@@ -472,11 +471,8 @@ class DragSession {
             y: rect.top + (rect.height / 2)
           }, this.dragTarget);
         }
-        
-        // Moves focus to the drop button if it exists
-        if (!item && dropTarget.focusElement) {
-          dropTarget?.focusElement.focus();
-        } else if (!item) {
+
+        if (!item) {
           dropTarget?.element.focus();
         }
       }
@@ -524,18 +520,9 @@ class DragSession {
       }
       // Re-focus the focusedKey upon reorder. This requires a React rerender between blurring and focusing.
       flushSync(() => {
-        if (this.currentDropTarget.focusElement) {
-          this.currentDropTarget.focusElement.blur();
-        } else {
-          this.currentDropTarget.element.blur();
-        }
+        this.currentDropTarget.element.blur();
       });
-
-      if (this.currentDropTarget.focusElement) {
-        this.currentDropTarget.focusElement.focus();
-      } else {
-        this.currentDropTarget.element.focus();
-      }
+      this.currentDropTarget.element.focus();
     }
 
     this.setCurrentDropTarget(null);

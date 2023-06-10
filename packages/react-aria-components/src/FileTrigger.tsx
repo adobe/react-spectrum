@@ -19,9 +19,9 @@ import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 
 export interface FileTriggerProps extends SlotProps, DOMProps, AriaLabelingProps {
   /**
-   * Specifies what file types are allowed.
+   * Specifies what mime type of files are allowed.
    */
-  accept?: string,
+  acceptedFileTypes?: Array<string>,
   /**
    * Whether multiple files can be selected.
    */
@@ -29,7 +29,7 @@ export interface FileTriggerProps extends SlotProps, DOMProps, AriaLabelingProps
   /**
    * Specifies the use of a media capture mechanism to capture the media on the spot.
    */
-  capture?: 'user' | 'environment',
+  defaultCamera?: 'user' | 'environment',
   /**
    * Handler when a user selects a file.
    */
@@ -40,7 +40,7 @@ export const FileTriggerContext = createContext<ContextValue<FileTriggerProps, H
 
 function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, FileTriggerContext);
-  let {onChange, accept, className, allowsMultiple, children, ...otherProps} = props;
+  let {onChange, acceptedFileTypes, className, allowsMultiple, defaultCamera, children, ...otherProps} = props;
   let inputRef = useRef<HTMLInputElement>(null);
 
   return (
@@ -52,7 +52,7 @@ function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLDivElement>)
       <PressResponder onPress={() => inputRef.current?.click()}>
         {children}
       </PressResponder>
-      <Input type="file" style={{display: 'none'}} ref={inputRef} accept={accept} onChange={onChange} multiple={allowsMultiple} /> 
+      <Input type="file" style={{display: 'none'}} ref={inputRef} accept={acceptedFileTypes?.toString()} onChange={onChange} capture={defaultCamera} multiple={allowsMultiple} /> 
     </div>
   );
 }

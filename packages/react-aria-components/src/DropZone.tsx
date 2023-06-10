@@ -26,7 +26,7 @@ export interface DropZoneRenderProps {
   isHovered: boolean,
   /**
    * Whether the dropzone is focused, either via a mouse or keyboard.
-   * @selector :focus
+   * @selector [data-focused]
    */
   isFocused: boolean,
   /**
@@ -41,14 +41,14 @@ export interface DropZoneRenderProps {
   isDropTarget: boolean
 }
 // note: possibly add isDisabled prop in the future
-export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'onInsert' | 'onRootDrop' | 'onItemDrop' | 'onReorder'>, RenderProps<DropZoneRenderProps>, SlotProps, AriaLabelingProps {}
+export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint'>, RenderProps<DropZoneRenderProps>, SlotProps, AriaLabelingProps {}
 
 export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDivElement>>(null);
 
 function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DropZoneContext);
   let buttonRef = useRef<HTMLButtonElement>(null);
-  let {dropProps, dropButtonProps, isDropTarget} = useDrop({...props, ref, buttonRef, hasDropButton: true});
+  let {dropProps, dropButtonProps, isDropTarget} = useDrop({...props, ref: buttonRef, hasDropButton: true});
   let {hoverProps, isHovered} = useHover({});
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let [fileTriggerRef] = useSlot(); 
@@ -80,12 +80,12 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
         [FileTriggerContext, {ref: fileTriggerRef}],
         [TextContext, {id: textId, slot: 'heading'}]
       ]}>
+      {/* eslint-disable-next-line */}
       <div
         {...mergeProps(dropProps, hoverProps, DOMProps)} 
         {...renderProps}
-        ref={ref}
-        slot={props.slot} 
-        // onClick={() => buttonRef.current?.focus()}
+        slot={props.slot}
+        onClick={() => buttonRef.current?.focus()}
         data-hovered={isHovered || undefined}
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
@@ -102,7 +102,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
 }
 
 /**
- * A drop zone is an area into which an object can be dragged and dropped.
+ * A dropzone is an area into which one or multiple objects can be dragged and dropped.
  */
 const _DropZone = forwardRef(DropZone);
 export {_DropZone as DropZone};
