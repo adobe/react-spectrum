@@ -65,6 +65,7 @@ import {
   useTableSelectionCheckbox
 } from '@react-aria/table';
 import {useVisuallyHidden, VisuallyHidden} from '@react-aria/visually-hidden';
+import {ActionButton} from '@react-spectrum/button';
 
 const DEFAULT_HEADER_HEIGHT = {
   medium: 34,
