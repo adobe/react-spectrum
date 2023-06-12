@@ -66,6 +66,7 @@ import {
 } from '@react-aria/table';
 import {useVisuallyHidden, VisuallyHidden} from '@react-aria/visually-hidden';
 import {ActionButton} from '@react-spectrum/button';
+import ChevronDown from '@spectrum-icons/workflow/ChevronDown';
 
 const DEFAULT_HEADER_HEIGHT = {
   medium: 34,
@@ -431,7 +432,7 @@ function TableView<T extends object>(props: SpectrumTreeGridProps<T>, ref: DOMRe
           return <TableDragCell cell={item} />;
         }
 
-        return <TableCell cell={item} toggleKey={toggleKey} />;
+        return <TableCell cell={item} toggleKey={state.toggleKey} isExpanded={state.expandedKeys === 'all' || state.expandedKeys.has(item.parentKey)} />;
       }
       case 'placeholder':
         // TODO: move to react-aria?
@@ -1390,7 +1391,7 @@ function TableCheckboxCell({cell}) {
   );
 }
 
-function TableCell({cell, toggleKey}) {
+function TableCell({cell, toggleKey, isExpanded}) {
   let {state} = useTableContext();
   let ref = useRef();
   let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
@@ -1431,10 +1432,11 @@ function TableCell({cell, toggleKey}) {
               styles,
               'spectrum-Table-cellContents'
             )
-        }>
+          }
+          style={{paddingInlineStart: (cell.level - 2) * 16 + 4}}>
           {showExpandCollapseButton &&
             <ActionButton onPress={() => toggleKey(cell.key)} isQuiet>
-              <ChevronRight />
+              {isExpanded ? <ChevronDown /> : <ChevronRight />}
             </ActionButton>}
           {cell.rendered}
         </span>
