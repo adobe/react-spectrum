@@ -15,7 +15,7 @@ import Alert from '@spectrum-icons/workflow/Alert';
 import Bell from '@spectrum-icons/workflow/Bell';
 import Draw from '@spectrum-icons/workflow/Draw';
 // @ts-ignore
-import intlMessages from './intl/*.json';
+import intlMessages from './intlMessages.json';
 import {Item, ListBox, Section} from '..';
 import {Label} from '@react-spectrum/label';
 import {Provider} from '@react-spectrum/provider';
