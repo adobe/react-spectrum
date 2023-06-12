@@ -33,12 +33,7 @@ export interface RangeCalendarStateOptions<T extends DateValue = DateValue> exte
    * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
    */
-  visibleDuration?: DateDuration,
-  /**
-   * Controls the behavior of paging. Pagination either works by advancing the visible page by visibleDuration (default) or one unit of visibleDuration.
-   * @default visible
-   */
-  pageBehavior?: PageBehavior
+  visibleDuration?: DateDuration
 }
 
 /**

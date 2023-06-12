@@ -26,12 +26,7 @@ export interface CalendarProps<T extends DateValue> extends Omit<BaseCalendarPro
    * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
    */
-  visibleDuration?: DateDuration,
-  /**
-   * Controls the behavior of paging. Pagination either works by advancing the visible page by visibleDuration (default) or one unit of visibleDuration.
-   * @default visible
-   */
-  pageBehavior?: PageBehavior
+  visibleDuration?: DateDuration
 }
 
 export interface RangeCalendarProps<T extends DateValue> extends Omit<BaseRangeCalendarProps<T>, 'errorMessage'>, RenderProps<RangeCalendarState>, SlotProps {
@@ -39,12 +34,7 @@ export interface RangeCalendarProps<T extends DateValue> extends Omit<BaseRangeC
    * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
    */
-  visibleDuration?: DateDuration,
-  /**
-   * Controls the behavior of paging. Pagination either works by advancing the visible page by visibleDuration (default) or one unit of visibleDuration.
-   * @default visible
-   */
-  pageBehavior?: PageBehavior
+  visibleDuration?: DateDuration
 }
 
 export const CalendarContext = createContext<ContextValue<CalendarProps<any>, HTMLDivElement>>({});
