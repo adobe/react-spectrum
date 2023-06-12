@@ -34,7 +34,7 @@ export const StaticExpandableRows: TableStory = {
     height: 200
   },
   render: (args) => (
-    <TableView {...args} expandedKeys={['test']} hasExpandableRows>
+    <TableView expandedKeys={['test']} hasExpandableRows {...args}>
       <TableHeader>
         <Column key="foo">Foo</Column>
         <Column key="bar">Bar</Column>
@@ -169,3 +169,6 @@ export const ManyExpandableRowsStory: TableStory = {
   ),
   name: 'many expandable rows'
 };
+
+
+// TODO: make sorting example? empty state table, nested columns
