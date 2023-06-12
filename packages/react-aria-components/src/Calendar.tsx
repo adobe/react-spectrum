@@ -17,7 +17,6 @@ import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps
 import {DOMAttributes, FocusableElement} from '@react-types/shared';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {HeadingContext} from './Heading';
-import {PageBehavior} from '@react-types/calendar';
 import React, {createContext, ForwardedRef, forwardRef, ReactElement, useContext} from 'react';
 import {TextContext} from './Text';
 

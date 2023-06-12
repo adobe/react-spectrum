@@ -27,7 +27,7 @@ import {
   toCalendarDate,
   today
 } from '@internationalized/date';
-import {CalendarProps, DateValue, PageBehavior} from '@react-types/calendar';
+import {CalendarProps, DateValue} from '@react-types/calendar';
 import {CalendarState} from './types';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo, useState} from 'react';
