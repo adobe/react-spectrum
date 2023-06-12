@@ -1401,6 +1401,7 @@ function TableCell({cell, toggleKey, isExpanded}) {
     isVirtualized: true
   }, state, ref);
   let showExpandCollapseButton = cell.index === 0 && state.collection.getItem(cell.parentKey)?.props.childItems?.length > 0;
+  let expandButtonOffset = (cell.level - (showExpandCollapseButton ? 1 : 2)) * 16 + 4 + 32;
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
@@ -1433,9 +1434,9 @@ function TableCell({cell, toggleKey, isExpanded}) {
               'spectrum-Table-cellContents'
             )
           }
-          style={{paddingInlineStart: (cell.level - 2) * 16 + 4}}>
+          style={{paddingInlineStart: expandButtonOffset}}>
           {showExpandCollapseButton &&
-            <ActionButton onPress={() => toggleKey(cell.key)} isQuiet>
+            <ActionButton UNSAFE_style={{position: 'absolute', left: expandButtonOffset - 36, top: 0, bottom: 0, height: '100%'}} onPress={() => toggleKey(cell.key)} isQuiet>
               {isExpanded ? <ChevronDown /> : <ChevronRight />}
             </ActionButton>}
           {cell.rendered}
