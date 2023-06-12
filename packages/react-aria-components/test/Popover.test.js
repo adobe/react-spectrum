@@ -81,4 +81,22 @@ describe('Popover', () => {
     let dialog = getByRole('dialog');
     expect(dialog).toHaveTextContent('Popover at bottom');
   });
+
+  it('should support being used standalone', async () => {
+    let triggerRef = React.createRef();
+    let onOpenChange = jest.fn();
+    let {getByRole} = render(<>
+      <span ref={triggerRef}>Trigger</span>
+      <Popover isOpen triggerRef={triggerRef} onOpenChange={onOpenChange}>
+        <Dialog>A popover</Dialog>
+      </Popover>
+    </>);
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toHaveTextContent('A popover');
+
+    userEvent.click(document.body);
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+  });
 });
