@@ -12,9 +12,9 @@
 
 import {BaseTableView} from './TableView';
 import {DOMRef} from '@react-types/shared';
+import {getTableNestedRows} from '@react-stately/flags';
 import React, {ReactElement} from 'react';
 import {SpectrumTreeGridProps, TreeGridTableView} from './TreeGridTableView';
-import {tableNestedRows} from '@react-stately/flags';
 
 export interface SpectrumTableProps<T> extends SpectrumTreeGridProps<T> {
   /** Whether the TableView should support expandable rows.  */
@@ -23,7 +23,7 @@ export interface SpectrumTableProps<T> extends SpectrumTreeGridProps<T> {
 
 function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {hasExpandableRows, ...otherProps} = props;
-  if (tableNestedRows && hasExpandableRows) {
+  if (getTableNestedRows() && hasExpandableRows) {
     return <TreeGridTableView {...otherProps} ref={ref} />;
   } else {
     return <BaseTableView {...otherProps} ref={ref} />;

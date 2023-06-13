@@ -27,8 +27,6 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
   let {node, isVirtualized} = props;
   let {rowProps, ...states} = useGridRow<T, TableCollection<T>, TableState<T>>(props, state, ref);
 
-  // TODO: aria spec: https://www.w3.org/WAI/ARIA/apg/patterns/treegrid/ says to include aria-rowindex still even in treegrid, but James raised a concern that this might be too much info to announce for screenreaders
-  // Need to test with and without
   // To calculate the row index for nested row, can walk up the parent rows and sum the node.indexOfType
   if (isVirtualized && !('expandedKeys' in state)) {
     rowProps['aria-rowindex'] = node.index + 1 + state.collection.headerRows.length; // aria-rowindex is 1 based
@@ -39,7 +37,7 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
   let treeGridRowProps = {};
   if ('expandedKeys' in state && state.collection.getItem(node.key)) {
     treeGridRowProps = {
-      'aria-expanded': node.props.hasChildItems || node.props.children.length > state.collection.columnCount ? state.expandedKeys === 'all' || state.expandedKeys.has(node.key) : undefined,
+      'aria-expanded': node.props.childItems || node.props.children.length > state.collection.columnCount ? state.expandedKeys === 'all' || state.expandedKeys.has(node.key) : undefined,
       'aria-level': node.level,
       'aria-posinset': node.indexOfType + 1,
       'aria-setsize': node.level > 1 ?
