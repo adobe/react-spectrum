@@ -609,7 +609,7 @@ describe('DateRangePicker', function () {
 
         expect(document.activeElement).toHaveAttribute('aria-valuetext', '00');
 
-        expect(onChange).toHaveBeenCalledTimes(0);
+        expect(onChange).not.toHaveBeenCalled();
         expectPlaceholder(startDate, 'mm/dd/yyyy, ––:–– AM');
         expectPlaceholder(endDate, 'mm/dd/yyyy, ––:–– AM');
 
