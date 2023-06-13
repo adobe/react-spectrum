@@ -470,7 +470,7 @@ describe('DatePicker', function () {
       expect(getTextValue(combobox)).toBe('2/4/2019, 9:45 AM');
     });
 
-    it('should not fire onChange until both date and time are selected', function () {
+    it('should fire onChange until both date and time are selected', function () {
       let onChange = jest.fn();
       let {getByRole, getAllByRole, getAllByLabelText} = render(
         <Provider theme={theme}>
@@ -528,17 +528,18 @@ describe('DatePicker', function () {
 
       expect(document.activeElement).toHaveAttribute('aria-valuetext', '00');
 
-      expect(onChange).not.toHaveBeenCalled();
-      expectPlaceholder(combobox, 'mm/dd/yyyy, ––:–– AM');
+      expect(onChange).toHaveBeenCalledTimes(1);
+      let parts = formatter.formatToParts(today(getLocalTimeZone()).toDate(getLocalTimeZone()));
+      let month = parts.find(p => p.type === 'month').value;
+      let day = parts.find(p => p.type === 'day').value;
+      let year = parts.find(p => p.type === 'year').value;
+      expectPlaceholder(combobox, `${month}/${day}/${year}, 12:00 AM`);
 
       fireEvent.keyDown(hour, {key: 'ArrowRight'});
       fireEvent.keyUp(hour, {key: 'ArrowRight'});
 
       expect(document.activeElement).toHaveAttribute('aria-label', 'AM/PM, ');
-      expect(document.activeElement).toHaveAttribute('aria-valuetext', 'Empty');
-
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
-      fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+      expect(document.activeElement).toHaveAttribute('aria-valuetext', 'AM');
 
       expect(dialog).toBeVisible();
       expect(onChange).toHaveBeenCalledTimes(1);
@@ -674,7 +675,7 @@ describe('DatePicker', function () {
       act(() => jest.runAllTimers());
 
       expect(dialog).not.toBeInTheDocument();
-      expect(onChange).toHaveBeenCalledTimes(1);
+      expect(onChange).toHaveBeenCalledTimes(2);
       let formatter = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'numeric', day: 'numeric'});
       let parts = formatter.formatToParts(today(getLocalTimeZone()).toDate(getLocalTimeZone()));
       let month = parts.find(p => p.type === 'month').value;
@@ -728,8 +729,6 @@ describe('DatePicker', function () {
       fireEvent.keyDown(hour, {key: 'ArrowRight'});
       fireEvent.keyUp(hour, {key: 'ArrowRight'});
       expect(document.activeElement).toHaveAttribute('aria-label', 'AM/PM, ');
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
-      fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
       expect(document.activeElement).toHaveAttribute('aria-valuetext', 'AM');
 
       userEvent.click(document.body);
