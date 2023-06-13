@@ -18,7 +18,7 @@ import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Form} from '@react-spectrum/form';
 import {Heading} from '@react-spectrum/text';
 // @ts-ignore
-import intlMessages from './intl/*.json';
+import intlMessages from './intlMessages.json';
 import {Item, Picker} from '@react-spectrum/picker';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
