@@ -857,7 +857,7 @@ export const DropZoneOnlyAcceptPNGWithFileTrigger = (props) => (
   </div>
 );
 
-export const DropZoneOnlyWithCapture = (props) => (
+export const DropZoneWithCaptureMobileOnly = (props) => (
   <div>
     <DropZone
       {...props}

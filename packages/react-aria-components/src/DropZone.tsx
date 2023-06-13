@@ -57,7 +57,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   let labelProps = useLabels({'aria-labelledby': textId});
 
   let {clipboardProps} = useClipboard({
-    onPaste: (items) => props.onDrop?.({  
+    onPaste: (items) => props.onDrop?.({
       type: 'drop',
       items,
       x: 0,
@@ -93,6 +93,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
         <VisuallyHidden>
           <button
             {...mergeProps(dropButtonProps, focusProps, clipboardProps, labelProps)}
+            aria-label="DropZone" // will need to update with string formatter
             ref={buttonRef} />   
         </VisuallyHidden>
         {renderProps.children}

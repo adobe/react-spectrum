@@ -15,7 +15,7 @@ import {ContextValue, DOMProps, SlotProps, useContextProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {Input} from './Input';
 import {PressResponder} from '@react-aria/interactions';
-import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
+import React, {ChangeEvent, createContext, ForwardedRef, forwardRef, useRef} from 'react';
 
 export interface FileTriggerProps extends SlotProps, DOMProps, AriaLabelingProps {
   /**
@@ -33,14 +33,14 @@ export interface FileTriggerProps extends SlotProps, DOMProps, AriaLabelingProps
   /**
    * Handler when a user selects a file.
    */
-  onChange?: React.ChangeEventHandler<HTMLInputElement>
+  onChange?: (value: FileList) => void
 }
 
 export const FileTriggerContext = createContext<ContextValue<FileTriggerProps, HTMLDivElement>>(null);
 
 function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, FileTriggerContext);
-  let {onChange, acceptedFileTypes, className, allowsMultiple, defaultCamera, children, ...otherProps} = props;
+  let {onChange = () => {}, acceptedFileTypes, className, allowsMultiple, defaultCamera, children, ...otherProps} = props;
   let inputRef = useRef<HTMLInputElement>(null);
 
   return (
@@ -52,7 +52,14 @@ function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLDivElement>)
       <PressResponder onPress={() => inputRef.current?.click()}>
         {children}
       </PressResponder>
-      <Input type="file" style={{display: 'none'}} ref={inputRef} accept={acceptedFileTypes?.toString()} onChange={onChange} capture={defaultCamera} multiple={allowsMultiple} /> 
+      <Input 
+        type="file" 
+        style={{display: 'none'}} 
+        ref={inputRef} 
+        accept={acceptedFileTypes?.toString()} 
+        onChange={(e: ChangeEvent<HTMLInputElement>) => e.target.files && onChange(e.target.files)} 
+        capture={defaultCamera} 
+        multiple={allowsMultiple} /> 
     </div>
   );
 }
