@@ -254,6 +254,15 @@ svg.spectrum-Table-sortedIcon {
   margin: -4px;
 }
 
+.spectrum-Table-expandButton {
+  position: absolute;
+  height: 32px;
+  width: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .spectrum-Table-cell--hideHeader {
   padding: 0;
   justify-content: center;

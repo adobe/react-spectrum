@@ -10,13 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton} from '@react-spectrum/button';
 import {AriaLabelingProps, DOMProps, DOMRef, DropTarget, Expandable, FocusableElement, FocusableRef, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {chain, mergeProps, scrollIntoView, scrollIntoViewport} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
-import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {
   classNames,
   useDOMRef,
@@ -65,9 +64,6 @@ import {
   useTableSelectionCheckbox
 } from '@react-aria/table';
 import {useVisuallyHidden, VisuallyHidden} from '@react-aria/visually-hidden';
-import {ActionButton} from '@react-spectrum/button';
-import ChevronDown from '@spectrum-icons/workflow/ChevronDown';
-import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 
 const DEFAULT_HEADER_HEIGHT = {
   medium: 34,
@@ -1443,13 +1439,15 @@ function TableCell({cell, toggleKey, isExpanded, density, scale}) {
             <span
               {...pressProps}
               aria-label={isExpanded ? 'Collapse' : 'Expand'}
+              className={
+                classNames(
+                  styles,
+                  'spectrum-Table-expandButton'
+                )
+              }
               style={{
-                position: 'absolute',
                 left: levelOffset - 20,
-                top: (ROW_HEIGHTS[density][scale] - 32) / 2,
-                height: 32, width: 32, display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center'
+                top: (ROW_HEIGHTS[density][scale] - 32) / 2
               }}>
               {isExpanded ? <ChevronDownMedium /> : <ChevronRightMedium />}
             </span>}
