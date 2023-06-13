@@ -528,17 +528,20 @@ describe('DatePicker', function () {
 
       expect(document.activeElement).toHaveAttribute('aria-valuetext', '00');
 
-      expect(onChange).toHaveBeenCalledTimes(2);
-      expectPlaceholder(combobox, '6/9/2023, 12:00 AM');
+      expect(onChange).not.toHaveBeenCalled();
+      expectPlaceholder(combobox, 'mm/dd/yyyy, ––:–– AM');
 
       fireEvent.keyDown(hour, {key: 'ArrowRight'});
       fireEvent.keyUp(hour, {key: 'ArrowRight'});
 
       expect(document.activeElement).toHaveAttribute('aria-label', 'AM/PM, ');
-      expect(document.activeElement).toHaveAttribute('aria-valuetext', 'AM');
+      expect(document.activeElement).toHaveAttribute('aria-valuetext', 'Empty');
+
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
 
       expect(dialog).toBeVisible();
-      expect(onChange).toHaveBeenCalledTimes(2);
+      expect(onChange).toHaveBeenCalledTimes(1);
       let value = toCalendarDateTime(today(getLocalTimeZone()));
       expect(onChange).toHaveBeenCalledWith(value);
       expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
@@ -618,6 +621,68 @@ describe('DatePicker', function () {
       expect(onChange).not.toHaveBeenCalled();
     });
 
+    it('should confirm valid date time on dialog close', function () {
+      let onChange = jest.fn();
+      let {getByRole, getAllByRole, getAllByLabelText} = render(
+        <Provider theme={theme}>
+          <DatePicker label="Date" granularity="minute" onChange={onChange} />
+        </Provider>
+      );
+
+      let combobox = getAllByRole('group')[0];
+      expectPlaceholder(combobox, 'mm/dd/yyyy, ––:–– AM');
+
+      let button = getByRole('button');
+      triggerPress(button);
+      act(() => jest.runAllTimers());
+
+      let dialog = getByRole('dialog');
+      expect(dialog).toBeVisible();
+
+      let cells = getAllByRole('gridcell');
+      let todayCell = cells.find(cell => cell.firstChild.getAttribute('aria-label')?.startsWith('Today'));
+      triggerPress(todayCell.firstChild);
+      expect(todayCell).toHaveAttribute('aria-selected', 'true');
+      expect(onChange).not.toHaveBeenCalled();
+
+      let timeField = getAllByLabelText('Time')[0];
+      expectPlaceholder(timeField, '––:–– AM');
+
+      let hour = within(timeField).getByLabelText('hour,');
+      expect(hour).toHaveAttribute('role', 'spinbutton');
+      expect(hour).toHaveAttribute('aria-valuetext', 'Empty');
+
+      act(() => hour.focus());
+      fireEvent.keyDown(hour, {key: 'ArrowUp'});
+      fireEvent.keyUp(hour, {key: 'ArrowUp'});
+
+      expect(hour).toHaveAttribute('aria-valuetext', '12 AM');
+
+      let minute = within(timeField).getByLabelText('minute,');
+      expect(minute).toHaveAttribute('role', 'spinbutton');
+      expect(minute).toHaveAttribute('aria-valuetext', 'Empty');
+
+      act(() => minute.focus());
+      fireEvent.keyDown(minute, {key: 'ArrowUp'});
+      fireEvent.keyUp(minute, {key: 'ArrowUp'});
+      fireEvent.keyDown(minute, {key: 'ArrowUp'});
+      fireEvent.keyUp(minute, {key: 'ArrowUp'});
+
+      expect(minute).toHaveAttribute('aria-valuetext', '01');
+
+      userEvent.click(document.body);
+      act(() => jest.runAllTimers());
+
+      expect(dialog).not.toBeInTheDocument();
+      expect(onChange).toHaveBeenCalledTimes(1);
+      let formatter = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'numeric', day: 'numeric'});
+      let parts = formatter.formatToParts(today(getLocalTimeZone()).toDate(getLocalTimeZone()));
+      let month = parts.find(p => p.type === 'month').value;
+      let day = parts.find(p => p.type === 'day').value;
+      let year = parts.find(p => p.type === 'year').value;
+      expectPlaceholder(combobox, `${month}/${day}/${year}, 12:01 AM`);
+    });
+
     it('should clear date and time when controlled value is set to null', function () {
       function ControlledDatePicker() {
         let [value, setValue] = React.useState(null);
@@ -663,6 +728,8 @@ describe('DatePicker', function () {
       fireEvent.keyDown(hour, {key: 'ArrowRight'});
       fireEvent.keyUp(hour, {key: 'ArrowRight'});
       expect(document.activeElement).toHaveAttribute('aria-label', 'AM/PM, ');
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
       expect(document.activeElement).toHaveAttribute('aria-valuetext', 'AM');
 
       userEvent.click(document.body);
