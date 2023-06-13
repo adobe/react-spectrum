@@ -67,6 +67,7 @@ import {
 import {useVisuallyHidden, VisuallyHidden} from '@react-aria/visually-hidden';
 import {ActionButton} from '@react-spectrum/button';
 import ChevronDown from '@spectrum-icons/workflow/ChevronDown';
+import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 
 const DEFAULT_HEADER_HEIGHT = {
   medium: 34,
@@ -432,7 +433,7 @@ function TableView<T extends object>(props: SpectrumTreeGridProps<T>, ref: DOMRe
           return <TableDragCell cell={item} />;
         }
 
-        return <TableCell cell={item} toggleKey={state.toggleKey} isExpanded={state.expandedKeys === 'all' || state.expandedKeys.has(item.parentKey)} />;
+        return <TableCell cell={item} toggleKey={state.toggleKey} isExpanded={state.expandedKeys === 'all' || state.expandedKeys.has(item.parentKey)} density={density} scale={scale} />;
       }
       case 'placeholder':
         // TODO: move to react-aria?
@@ -1391,7 +1392,7 @@ function TableCheckboxCell({cell}) {
   );
 }
 
-function TableCell({cell, toggleKey, isExpanded}) {
+function TableCell({cell, toggleKey, isExpanded, density, scale}) {
   let {state} = useTableContext();
   let ref = useRef();
   let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
@@ -1402,6 +1403,9 @@ function TableCell({cell, toggleKey, isExpanded}) {
   }, state, ref);
   let showExpandCollapseButton = cell.index === 0 && state.collection.getItem(cell.parentKey)?.props.childItems?.length > 0;
   let levelOffset = (cell.level - (showExpandCollapseButton ? 1 : 2)) * 16 + 4;
+  let {pressProps} = usePress({
+    onPress: () => toggleKey(cell.parentKey)
+  });
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
@@ -1436,9 +1440,19 @@ function TableCell({cell, toggleKey, isExpanded}) {
           }
           style={{paddingInlineStart: levelOffset}}>
           {showExpandCollapseButton &&
-            <ActionButton UNSAFE_style={{position: 'absolute', left: levelOffset - 20, top: 0, bottom: 0, height: '100%', width: 32}} onPress={() => toggleKey(cell.key)} isQuiet>
-              {isExpanded ? <ChevronDown /> : <ChevronRight />}
-            </ActionButton>}
+            <span
+              {...pressProps}
+              aria-label={isExpanded ? 'Collapse' : 'Expand'}
+              style={{
+                position: 'absolute',
+                left: levelOffset - 20,
+                top: (ROW_HEIGHTS[density][scale] - 32) / 2,
+                height: 32, width: 32, display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}>
+              {isExpanded ? <ChevronDownMedium /> : <ChevronRightMedium />}
+            </span>}
           {cell.rendered}
         </span>
       </div>
