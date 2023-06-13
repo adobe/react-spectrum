@@ -44,7 +44,7 @@
     "@react-types/inlinealert": "^3.0.0-alpha.1",
     "@react-types/shared": "^3.0.0",
     "@spectrum-icons/ui": "^3.5.1",
-    "@swc/helpers": "^0.4.14"
+    "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1"

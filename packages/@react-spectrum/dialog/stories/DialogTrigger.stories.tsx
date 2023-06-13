@@ -472,7 +472,8 @@ WithTooltip.story = {
 export const WithTranslations = () => <TranslateDialog />;
 
 WithTranslations.story = {
-  name: 'with translations'
+  name: 'with translations',
+  parameters: {description: {data: 'Translations included for: Arabic, English, Hebrew, Japanese, Korean, Simplified Chinese, and Traditional Chinese.'}}
 };
 
 function render(props) {
