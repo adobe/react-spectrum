@@ -16,6 +16,7 @@ import {composeStories} from '@storybook/testing-react';
 import {enableTableNestedRows} from '@react-stately/flags';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {Scale} from '@react-types/provider';
 import * as stories from '../stories/TreeGridTable.stories';
 import {theme} from '@react-spectrum/theme-default';
 
@@ -52,14 +53,14 @@ let getCell = (tree, text) => {
   return el;
 };
 
-let render = (children, scale = 'medium') => {
+let render = (children, scale = 'medium' as Scale, locale = 'en-US') => {
   enableTableNestedRows();
   let tree = renderComponent(
-    <Provider theme={theme} scale={scale}>
+    <Provider theme={theme} scale={scale} locale={locale}>
       {children}
     </Provider>
   );
-  // account for table column resizing to do initial pass due to relayout from useTableColumnResizeState render
+
   act(() => {jest.runAllTimers();});
   return tree;
 };
@@ -93,7 +94,7 @@ describe('TableView with expandable rows', function () {
     act(() => {jest.runAllTimers();});
   });
 
-  describe.each`
+  it.each`
     Name                 | Component
     ${'static'}          | ${StaticExpandableTable}
     ${'dynamic'}         | ${DynamicExpandableTable}
@@ -103,7 +104,7 @@ describe('TableView with expandable rows', function () {
     let treegrid = getByRole('treegrid');
     expect(treegrid).toBeVisible();
 
-    expect(treegrid).toHaveAttribute('aria-rowcount', '4');
+    expect(treegrid).toHaveAttribute('aria-rowcount', '5');
     expect(treegrid).toHaveAttribute('aria-colcount', '3');
 
     let rowgroups = within(treegrid).getAllByRole('rowgroup');
@@ -132,10 +133,10 @@ describe('TableView with expandable rows', function () {
     let rows = within(rowgroups[1]).getAllByRole('row');
     expect(rows).toHaveLength(4);
     let row = rows[0];
-    expect(row).toHaveAttribute('aria-expanded', true);
-    expect(row).toHaveAttribute('aria-level', 1);
-    expect(row).toHaveAttribute('aria-posinset', 1);
-    expect(row).toHaveAttribute('aria-setsize', 1);
+    expect(row).toHaveAttribute('aria-expanded', 'true');
+    expect(row).toHaveAttribute('aria-level', '1');
+    expect(row).toHaveAttribute('aria-posinset', '1');
+    expect(row).toHaveAttribute('aria-setsize', '1');
     expect(row).not.toHaveAttribute('aria-rowindex');
 
     let rowheader = within(row).getByRole('rowheader');
@@ -149,11 +150,11 @@ describe('TableView with expandable rows', function () {
     expect(cells[1]).toHaveAttribute('aria-colindex', '3');
 
     // first child Row
-    row = row[1];
-    expect(row).toHaveAttribute('aria-expanded', true);
-    expect(row).toHaveAttribute('aria-level', 2);
-    expect(row).toHaveAttribute('aria-posinset', 1);
-    expect(row).toHaveAttribute('aria-setsize', 2);
+    row = rows[1];
+    expect(row).toHaveAttribute('aria-expanded', 'true');
+    expect(row).toHaveAttribute('aria-level', '2');
+    expect(row).toHaveAttribute('aria-posinset', '1');
+    expect(row).toHaveAttribute('aria-setsize', '2');
     expect(row).not.toHaveAttribute('aria-rowindex');
 
     rowheader = within(row).getByRole('rowheader');
@@ -167,11 +168,11 @@ describe('TableView with expandable rows', function () {
     expect(cells[1]).toHaveAttribute('aria-colindex', '3');
 
     // child of child Row
-    row = row[2];
+    row = rows[2];
     expect(row).not.toHaveAttribute('aria-expanded');
-    expect(row).toHaveAttribute('aria-level', 3);
-    expect(row).toHaveAttribute('aria-posinset', 1);
-    expect(row).toHaveAttribute('aria-setsize', 1);
+    expect(row).toHaveAttribute('aria-level', '3');
+    expect(row).toHaveAttribute('aria-posinset', '1');
+    expect(row).toHaveAttribute('aria-setsize', '1');
     expect(row).not.toHaveAttribute('aria-rowindex');
 
     rowheader = within(row).getByRole('rowheader');
@@ -185,11 +186,11 @@ describe('TableView with expandable rows', function () {
     expect(cells[1]).toHaveAttribute('aria-colindex', '3');
 
     // 2nd child Row of original top level row
-    row = row[3];
+    row = rows[3];
     expect(row).not.toHaveAttribute('aria-expanded');
-    expect(row).toHaveAttribute('aria-level', 2);
-    expect(row).toHaveAttribute('aria-posinset', 2);
-    expect(row).toHaveAttribute('aria-setsize', 2);
+    expect(row).toHaveAttribute('aria-level', '2');
+    expect(row).toHaveAttribute('aria-posinset', '2');
+    expect(row).toHaveAttribute('aria-setsize', '2');
     expect(row).not.toHaveAttribute('aria-rowindex');
 
     rowheader = within(row).getByRole('rowheader');
@@ -203,6 +204,94 @@ describe('TableView with expandable rows', function () {
     expect(cells[1]).toHaveAttribute('aria-colindex', '3');
   });
 
+  it.each`
+    Name                 | Component
+    ${'static'}          | ${StaticExpandableTable}
+    ${'dynamic'}         | ${DynamicExpandableTable}
+  `('renders a $Name expandable rows table with selection', ({Component}) => {
+    let {getByRole} = render(<Component expandedKeys="all" selectionMode="multiple" />);
+
+    let treegrid = getByRole('treegrid');
+    expect(treegrid).toHaveAttribute('aria-multiselectable', 'true');
+    expect(treegrid).toHaveAttribute('aria-colcount', '4');
+
+    let rowgroups = within(treegrid).getAllByRole('rowgroup');
+    expect(rowgroups).toHaveLength(2);
+
+    let headers = within(treegrid).getAllByRole('columnheader');
+    expect(headers).toHaveLength(4);
+    expect(headers[0]).toHaveAttribute('aria-colindex', '1');
+    expect(headers[1]).toHaveAttribute('aria-colindex', '2');
+    expect(headers[2]).toHaveAttribute('aria-colindex', '3');
+    expect(headers[3]).toHaveAttribute('aria-colindex', '4');
+
+    let checkbox = within(headers[0]).getByRole('checkbox');
+    expect(checkbox).toHaveAttribute('aria-label', 'Select All');
+
+    // First row
+    let rows = within(rowgroups[1]).getAllByRole('row');
+    expect(rows).toHaveLength(4);
+    let row = rows[0];
+
+    let rowheader = within(row).getByRole('rowheader');
+    expect(rowheader).toHaveTextContent('Lvl 1 Foo 1');
+    expect(rowheader).toHaveAttribute('aria-colindex', '2');
+    expect(row).toHaveAttribute('aria-labelledby', rowheader.id);
+
+    checkbox = within(row).getByRole('checkbox');
+    expect(checkbox).toHaveAttribute('aria-label', 'Select');
+    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${rowheader.id}`);
+
+    let cells = within(row).getAllByRole('gridcell');
+    expect(cells).toHaveLength(3);
+    expect(cells[0]).toHaveAttribute('aria-colindex', '1');
+    expect(cells[1]).toHaveAttribute('aria-colindex', '3');
+    expect(cells[2]).toHaveAttribute('aria-colindex', '4');
+
+    // first child Row
+    row = rows[1];
+    rowheader = within(row).getByRole('rowheader');
+    expect(rowheader).toHaveTextContent('Lvl 2 Foo 1');
+    expect(rowheader).toHaveAttribute('aria-colindex', '2');
+    expect(row).toHaveAttribute('aria-labelledby', rowheader.id);
+
+    checkbox = within(row).getByRole('checkbox');
+    expect(checkbox).toHaveAttribute('aria-label', 'Select');
+    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${rowheader.id}`);
+
+    cells = within(row).getAllByRole('gridcell');
+    expect(cells).toHaveLength(3);
+    expect(cells[0]).toHaveAttribute('aria-colindex', '1');
+    expect(cells[1]).toHaveAttribute('aria-colindex', '3');
+    expect(cells[2]).toHaveAttribute('aria-colindex', '4');
+
+    // child of child Row
+    row = rows[2];
+    rowheader = within(row).getByRole('rowheader');
+    expect(rowheader).toHaveTextContent('Lvl 3 Foo 1');
+    expect(rowheader).toHaveAttribute('aria-colindex', '2');
+    expect(row).toHaveAttribute('aria-labelledby', rowheader.id);
+
+    cells = within(row).getAllByRole('gridcell');
+    expect(cells).toHaveLength(3);
+    expect(cells[0]).toHaveAttribute('aria-colindex', '1');
+    expect(cells[1]).toHaveAttribute('aria-colindex', '3');
+    expect(cells[2]).toHaveAttribute('aria-colindex', '4');
+
+    // 2nd child Row of original top level row
+    row = rows[3];
+    rowheader = within(row).getByRole('rowheader');
+    expect(rowheader).toHaveTextContent('Lvl 2 Foo 2');
+    expect(rowheader).toHaveAttribute('aria-colindex', '2');
+    expect(row).toHaveAttribute('aria-labelledby', rowheader.id);
+
+    cells = within(row).getAllByRole('gridcell');
+    expect(cells).toHaveLength(3);
+    expect(cells[0]).toHaveAttribute('aria-colindex', '1');
+    expect(cells[1]).toHaveAttribute('aria-colindex', '3');
+    expect(cells[2]).toHaveAttribute('aria-colindex', '4');
+  });
+
   describe('keyboard focus', function () {
     // TODO: bring the same tests that table.test already has
     let focusCell = (tree, text) => act(() => getCell(tree, text).focus());
@@ -211,8 +300,25 @@ describe('TableView with expandable rows', function () {
       fireEvent.keyUp(document.activeElement, {key, ...opts});
     };
 
+    // TODO: for arrow down/up check that it lands on column header as well
+    // Also check that it skips collapsed rows
     describe('ArrowDown', function () {
-      it('should move focus down through nested rows', function () {
+      it('should move focus to the nested row\'s below', function () {
+        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />);
+        let rows = treegrid.getAllByRole('row');
+        act(() => {rows[1].focus();});
+        moveFocus('ArrowDown');
+        expect(document.activeElement).toBe(rows[2]);
+        expect(document.activeElement).toContainElement(getCell(treegrid, 'Row 1, Lvl 2, Foo'));
+        moveFocus('ArrowDown');
+        expect(document.activeElement).toBe(rows[3]);
+        expect(document.activeElement).toContainElement(getCell(treegrid, 'Row 1, Lvl 3, Foo'));
+        moveFocus('ArrowDown');
+        expect(document.activeElement).toBe(rows[4]);
+        expect(document.activeElement).toContainElement(getCell(treegrid, 'Row 2, Lvl 1, Foo'));
+      });
+
+      it('should move focus to the nested row\'s cell below', function () {
         let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />);
         focusCell(treegrid, 'Row 1, Lvl 1, Foo');
         moveFocus('ArrowDown');
@@ -223,12 +329,108 @@ describe('TableView with expandable rows', function () {
         expect(document.activeElement).toBe(getCell(treegrid, 'Row 2, Lvl 1, Foo'));
       });
     });
+
+    describe('ArrowUp', function () {
+      it('should move focus to the nested row\'s above', function () {
+        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />);
+        let rows = treegrid.getAllByRole('row');
+        act(() => {rows[4].focus();});
+        moveFocus('ArrowUp');
+        expect(document.activeElement).toBe(rows[3]);
+        expect(document.activeElement).toContainElement(getCell(treegrid, 'Row 1, Lvl 3, Foo'));
+        moveFocus('ArrowUp');
+        expect(document.activeElement).toBe(rows[2]);
+        expect(document.activeElement).toContainElement(getCell(treegrid, 'Row 1, Lvl 2, Foo'));
+        moveFocus('ArrowUp');
+        expect(document.activeElement).toBe(rows[1]);
+        expect(document.activeElement).toContainElement(getCell(treegrid, 'Row 1, Lvl 1, Foo'));
+      });
+
+      it('should move focus to the nested row\'s cell above', function () {
+        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />);
+        focusCell(treegrid, 'Row 2, Lvl 1, Foo');
+        moveFocus('ArrowUp');
+        expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 3, Foo'));
+        moveFocus('ArrowUp');
+        expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 2, Foo'));
+        moveFocus('ArrowUp');
+        expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 1, Foo'));
+      });
+    });
+
+    // TODO for right and left, check that wrapping still works
+    describe('ArrowRight', function () {
+      it('should properly wrap focus with ArrowRight', function () {
+        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />);
+        let row = treegrid.getAllByRole('row')[2];
+        focusCell(treegrid, 'Row 1, Lvl 2, Foo');
+        moveFocus('ArrowRight');
+        expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 2, Bar'));
+        moveFocus('ArrowRight');
+        expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 2, Baz'));
+        moveFocus('ArrowRight');
+        expect(document.activeElement).toBe(row);
+        expect(row).toContainElement(getCell(treegrid, 'Row 1, Lvl 2, Foo'));
+        moveFocus('ArrowRight');
+        expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 2, Foo'));
+      });
+
+      it('should properly wrap focus with ArrowRight (RTL)', function () {
+        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />, undefined, 'ar-AE');
+        let row = treegrid.getAllByRole('row')[2];
+        focusCell(treegrid, 'Row 1, Lvl 2, Foo');
+        moveFocus('ArrowRight');
+        expect(document.activeElement).toBe(row);
+        expect(row).toContainElement(getCell(treegrid, 'Row 1, Lvl 2, Foo'));
+        moveFocus('ArrowRight');
+        expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 2, Baz'));
+        moveFocus('ArrowRight');
+        expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 2, Bar'));
+        moveFocus('ArrowRight');
+        expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 2, Foo'));
+      });
+    });
+
+    describe('ArrowLeft', function () {
+      it('should properly wrap focus with ArrowLeft', function () {
+        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />);
+        let row = treegrid.getAllByRole('row')[2];
+        focusCell(treegrid, 'Row 1, Lvl 2, Foo');
+        moveFocus('ArrowLeft');
+        expect(document.activeElement).toBe(row);
+        expect(row).toContainElement(getCell(treegrid, 'Row 1, Lvl 2, Foo'));
+        moveFocus('ArrowLeft');
+        expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 2, Baz'));
+        moveFocus('ArrowLeft');
+        expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 2, Bar'));
+        moveFocus('ArrowLeft');
+        expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 2, Foo'));
+      });
+
+      it('should properly wrap focus with ArrowRight (RTL)', function () {
+        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />, undefined, 'ar-AE');
+        let row = treegrid.getAllByRole('row')[2];
+        focusCell(treegrid, 'Row 1, Lvl 2, Foo');
+        moveFocus('ArrowLeft');
+        expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 2, Bar'));
+        moveFocus('ArrowLeft');
+        expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 2, Baz'));
+        moveFocus('ArrowLeft');
+        expect(document.activeElement).toBe(row);
+        expect(row).toContainElement(getCell(treegrid, 'Row 1, Lvl 2, Foo'));
+        moveFocus('ArrowLeft');
+        expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 2, Foo'));
+      });
+    });
+    // TODO add End/Home/PageUp/Down and check that it can land on a nested row
+
+    // Test that type to select works with nested rows
   });
 
   // TODO: write tests for the following
   // static table
   // dynamic table
-  // selection
+  // selection (nested rows are selected on click, selected when all selection checkbox is pressed, multiple range selection including nested keys, test standard keyboard selection still works with expanded keyboard interactions)
   // expanding/collapsing table (pointer/touch)
   // persisted keys
   // keyboard interaction (arrow keys, page up/down, home, end, expanding/closing via right/left arrow, skipping over the chevron button)

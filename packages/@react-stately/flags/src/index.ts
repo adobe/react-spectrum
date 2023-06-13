@@ -20,3 +20,10 @@ export function enableUnavailableMenuItems() {
 export function enableTableNestedRows() {
   tableNestedRows = true;
 }
+
+// TODO: for some reason calling enableTableNested in the test/global setup doesn't make' TableView's imported tableNestedRows var true...
+// Not entirely sure why, works perfectly fine in the stories when calling enableTableNestedRows there and accesing the same imported var. For
+// now use a getter
+export function getTableNestedRows() {
+  return tableNestedRows;
+}

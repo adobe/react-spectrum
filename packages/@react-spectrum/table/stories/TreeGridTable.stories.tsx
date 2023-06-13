@@ -77,7 +77,7 @@ let nestedItems = [
 ];
 
 function DynamicExpandableRows(props: SpectrumTableProps<unknown>) {
-  let [expandedKeys, setExpandedKeys] = useState<'all' | Set<Key>>(new Set([]));
+  let [expandedKeys, setExpandedKeys] = useState<'all' | Set<Key>>('all');
 
   return (
     <Flex direction="column">
