@@ -68,11 +68,11 @@ export const StaticExpandableRows: TableStory = {
 };
 
 let nestedItems = [
-  {test: 'Lvl 1 Test 1', foo: 'Lvl 1 Foo 1', bar: 'Lvl 1 Bar 1', yay: 'Lvl 1 Yay 1', baz: 'Lvl 1 Baz 1', childRows: [
-    {test: 'Lvl 2 Test 1', foo: 'Lvl 2 Foo 1', bar: 'Lvl 2 Bar 1', yay: 'Lvl 2 Yay 1', baz: 'Lvl 2 Baz 1', childRows: [
-      {test: 'Lvl 3 Test 1', foo: 'Lvl 3 Foo 1', bar: 'Lvl 3 Bar 1', yay: 'Lvl 3 Yay 1', baz: 'Lvl 3 Baz 1'}
+  {foo: 'Lvl 1 Foo 1', bar: 'Lvl 1 Bar 1', baz: 'Lvl 1 Baz 1', childRows: [
+    {foo: 'Lvl 2 Foo 1', bar: 'Lvl 2 Bar 1', baz: 'Lvl 2 Baz 1', childRows: [
+      {foo: 'Lvl 3 Foo 1', bar: 'Lvl 3 Bar 1', baz: 'Lvl 3 Baz 1'}
     ]},
-    {test: 'Lvl 2 Test 2', foo: 'Lvl 2 Foo 2', bar: 'Lvl 2 Bar 2', yay: 'Lvl 2 Yay 2', baz: 'Lvl 2 Baz 2'}
+    {foo: 'Lvl 2 Foo 2', bar: 'Lvl 2 Bar 2', baz: 'Lvl 2 Baz 2'}
   ]}
 ];
 
@@ -84,7 +84,7 @@ function DynamicExpandableRows(props: SpectrumTableProps<unknown>) {
       <ActionButton onPress={() => setExpandedKeys('all')}>Expand all</ActionButton>
       <ActionButton onPress={() => setExpandedKeys(new Set([]))}>Collapse all</ActionButton>
       <ActionButton onPress={() => setExpandedKeys(new Set(['Lvl 1 Foo 1']))}>Expand subset</ActionButton>
-      <TableView {...props} expandedKeys={expandedKeys} onExpandedChange={action('onExpandedChange')} hasExpandableRows>
+      <TableView expandedKeys={expandedKeys} onExpandedChange={action('onExpandedChange')} hasExpandableRows {...props}>
         <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
         </TableHeader>
@@ -140,7 +140,7 @@ function ManyExpandableRows(props: SpectrumTableProps<unknown>) {
       <ActionButton onPress={() => setExpandedKeys('all')}>Expand all</ActionButton>
       <ActionButton onPress={() => setExpandedKeys(new Set([]))}>Collapse all</ActionButton>
       <ActionButton onPress={() => setExpandedKeys(new Set(['Lvl 1 Foo 1']))}>Expand subset</ActionButton>
-      <TableView {...props} expandedKeys={expandedKeys} onExpandedChange={action('onExpandedChange')} hasExpandableRows>
+      <TableView expandedKeys={expandedKeys} onExpandedChange={action('onExpandedChange')} hasExpandableRows disabledKeys={['Row 1 Lvl 2']} {...props}>
         <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
         </TableHeader>
