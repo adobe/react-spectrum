@@ -17,6 +17,18 @@ import {GridRowAria, GridRowProps, useGridRow} from '@react-aria/grid';
 import {HTMLAttributes, RefObject} from 'react';
 import {TableCollection} from '@react-types/table';
 import {TableState, TreeGridState} from '@react-stately/table';
+import {useLocale} from '@react-aria/i18n';
+
+const EXPANSION_TRIGGERS = {
+  expand: {
+    ltr: 'ArrowRight',
+    rtl: 'ArrowLeft'
+  },
+  'collapse': {
+    ltr: 'ArrowLeft',
+    rtl: 'ArrowRight'
+  }
+};
 
 /**
  * Provides the behavior and accessibility implementation for a row in a table.
@@ -26,6 +38,7 @@ import {TableState, TreeGridState} from '@react-stately/table';
 export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | TreeGridState<T>, ref: RefObject<FocusableElement>): GridRowAria {
   let {node, isVirtualized} = props;
   let {rowProps, ...states} = useGridRow<T, TableCollection<T>, TableState<T>>(props, state, ref);
+  let {direction} = useLocale();
 
   // To calculate the row index for nested row, can walk up the parent rows and sum the node.indexOfType
   if (isVirtualized && !('expandedKeys' in state)) {
@@ -38,12 +51,26 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
   if ('expandedKeys' in state && state.collection.getItem(node.key)) {
     treeGridRowProps = {
       onKeyDown: (e) => {
-        if ((e.key === 'ArrowRight') && state.selectionManager.focusedKey === node.key && node.props.childItems && state.expandedKeys !== 'all' && !state.expandedKeys.has(node.key)) {
+        if ((e.key === EXPANSION_TRIGGERS['expand'][direction]) && state.selectionManager.focusedKey === node.key && node.props.childItems && state.expandedKeys !== 'all' && !state.expandedKeys.has(node.key)) {
           state.toggleKey(node.key);
           e.stopPropagation();
-        } else if ((e.key === 'ArrowLeft') && state.selectionManager.focusedKey === node.key && node.props.childItems && (state.expandedKeys === 'all' || state.expandedKeys.has(node.key))) {
+          // After some time, if the row was not expanded (via controlled), focus the first cell
+          setTimeout(() => {
+            if (state.expandedKeys !== 'all' && !state.expandedKeys.has(node.key)) {
+              let cells = [...getChildNodes(node, state.collection)].filter(child => child.type === 'cell');
+              state.selectionManager.setFocusedKey(direction === 'ltr' ? cells[0].key : cells[cells.length - 1].key);
+            }
+          }, 10);
+        } else if ((e.key === EXPANSION_TRIGGERS['collapse'][direction]) && state.selectionManager.focusedKey === node.key && node.props.childItems && (state.expandedKeys === 'all' || state.expandedKeys.has(node.key))) {
           state.toggleKey(node.key);
           e.stopPropagation();
+          // After some time, if the row was not expanded (via controlled), focus the last cell
+          setTimeout(() => {
+            if (state.expandedKeys === 'all' || state.expandedKeys.has(node.key)) {
+              let cells = [...getChildNodes(node, state.collection)].filter(child => child.type === 'cell');
+              state.selectionManager.setFocusedKey(direction === 'ltr' ? cells[cells.length - 1].key : cells[0].key);
+            }
+          }, 10);
         }
       },
       'aria-expanded': node.props.childItems || node.props.children.length > state.collection.columnCount ? state.expandedKeys === 'all' || state.expandedKeys.has(node.key) : undefined,
