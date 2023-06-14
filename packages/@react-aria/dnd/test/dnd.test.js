@@ -1992,6 +1992,143 @@ describe('useDrag and useDrop', function () {
         expect(onDropEnter2).toHaveBeenCalledTimes(1);
       });
     });
+
+    it('should support nested drop targets', async () => {
+      let onDragStart = jest.fn();
+      let onDragMove = jest.fn();
+      let onDragEnd = jest.fn();
+      let onDropEnter = jest.fn();
+      let onDropMove = jest.fn();
+      let onDropExit = jest.fn();
+      let onDrop = jest.fn();
+      let onDropEnter2 = jest.fn();
+      let onDropMove2 = jest.fn();
+      let onDropExit2 = jest.fn();
+      let onDrop2 = jest.fn();
+      let tree = render(<>
+        <Draggable onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
+        <Droppable onDropEnter={onDropEnter} onDropMove={onDropMove} onDrop={onDrop} onDropExit={onDropExit}>
+          Drop here 1
+          <Droppable onDropEnter={onDropEnter2} onDropMove={onDropMove2} onDrop={onDrop2} onDropExit={onDropExit2}>Drop here 2</Droppable>
+        </Droppable>
+      </>);
+
+      let buttons = tree.getAllByRole('button');
+      let draggable = buttons[0];
+      let droppable = buttons[1];
+      let droppable2 = buttons[2];
+
+      expect(draggable).toHaveAttribute('data-dragging', 'false');
+      expect(droppable).toHaveAttribute('data-droptarget', 'false');
+      expect(droppable2).toHaveAttribute('data-droptarget', 'false');
+
+      userEvent.tab();
+
+      expect(document.activeElement).toBe(draggable);
+      expect(draggable).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Press Enter to start dragging');
+
+      fireEvent.keyDown(draggable, {key: 'Enter'});
+      fireEvent.keyUp(draggable, {key: 'Enter'});
+
+      expect(draggable).toHaveAttribute('data-dragging', 'true');
+      expect(onDragStart).toHaveBeenCalledTimes(1);
+      expect(onDragStart).toHaveBeenCalledWith({
+        type: 'dragstart',
+        x: 50,
+        y: 25
+      });
+
+      act(() => jest.runAllTimers());
+      expect(document.activeElement).toBe(droppable2);
+      expect(droppable2).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(droppable2.getAttribute('aria-describedby'))).toHaveTextContent('Press Enter to drop');
+      expect(announce).toHaveBeenCalledWith('Started dragging. Press Tab to navigate to a drop target, then press Enter to drop, or press Escape to cancel.');
+
+      expect(onDropEnter2).toHaveBeenCalledTimes(1);
+      expect(onDropEnter).toHaveBeenCalledTimes(0);
+      expect(onDropEnter2).toHaveBeenCalledWith({
+        type: 'dropenter',
+        x: 50,
+        y: 25
+      });
+
+      expect(draggable).toHaveAttribute('data-dragging', 'true');
+      expect(droppable).toHaveAttribute('data-droptarget', 'false');
+      expect(droppable2).toHaveAttribute('data-droptarget', 'true');
+
+      userEvent.tab();
+
+      expect(document.activeElement).toBe(droppable);
+      expect(droppable).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(droppable.getAttribute('aria-describedby'))).toHaveTextContent('Press Enter to drop');
+
+      expect(onDropExit2).toHaveBeenCalledTimes(1);
+      expect(onDropExit).not.toHaveBeenCalled();
+      expect(onDropExit2).toHaveBeenCalledWith({
+        type: 'dropexit',
+        x: 50,
+        y: 25
+      });
+
+      expect(onDropEnter).toHaveBeenCalledTimes(1);
+      expect(onDropEnter2).toHaveBeenCalledTimes(1);
+      expect(onDropEnter).toHaveBeenCalledWith({
+        type: 'dropenter',
+        x: 50,
+        y: 25
+      });
+
+      expect(draggable).toHaveAttribute('data-dragging', 'true');
+      expect(droppable).toHaveAttribute('data-droptarget', 'true');
+      expect(droppable2).toHaveAttribute('data-droptarget', 'false');
+
+      fireEvent.keyDown(droppable, {key: 'Enter'});
+      fireEvent.keyUp(droppable, {key: 'Enter'});
+
+      expect(document.activeElement).toBe(droppable);
+      expect(droppable).not.toHaveAttribute('aria-describedby');
+      expect(droppable2).not.toHaveAttribute('aria-describedby');
+
+      expect(onDrop2).not.toHaveBeenCalled();
+      expect(onDrop).toHaveBeenCalledTimes(1);
+      expect(onDrop).toHaveBeenCalledWith({
+        type: 'drop',
+        x: 50,
+        y: 25,
+        dropOperation: 'move',
+        items: [
+          {
+            kind: 'text',
+            types: new Set(['text/plain']),
+            getText: expect.any(Function)
+          }
+        ]
+      });
+
+      expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('hello world');
+      expect(announce).toHaveBeenCalledWith('Drop complete.');
+
+      expect(onDropExit).toHaveBeenCalledTimes(1);
+      expect(onDropExit2).toHaveBeenCalledTimes(1);
+      expect(onDropExit).toHaveBeenCalledWith({
+        type: 'dropexit',
+        x: 50,
+        y: 25
+      });
+
+      expect(onDragEnd).toHaveBeenCalledTimes(1);
+      expect(onDragEnd).toHaveBeenCalledWith({
+        type: 'dragend',
+        x: 50,
+        y: 25,
+        dropOperation: 'move'
+      });
+
+      expect(draggable).toHaveAttribute('data-dragging', 'false');
+      expect(droppable).toHaveAttribute('data-droptarget', 'false');
+      expect(droppable2).toHaveAttribute('data-droptarget', 'false');
+    });
   });
 
   describe('screen reader', () => {

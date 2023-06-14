@@ -14,7 +14,7 @@ import {ActionButton} from '@react-spectrum/button';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
 // @ts-ignore
-import intlMessages from './intl/*.json';
+import intlMessages from './intlMessages.json';
 import {Item, Menu, MenuTrigger} from '../';
 import {Keyboard, Text} from '@react-spectrum/text';
 import Paste from '@spectrum-icons/workflow/Paste';
