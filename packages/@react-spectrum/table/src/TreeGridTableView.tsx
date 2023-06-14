@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, DOMRef, DropTarget, Expandable, FocusableElement, FocusableRef, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, Direction, DOMProps, DOMRef, DropTarget, Expandable, FocusableElement, FocusableRef, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {chain, mergeProps, scrollIntoView, scrollIntoViewport} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
@@ -119,7 +119,8 @@ interface TableContextValue<T> {
   onResizeEnd: (widths: Map<Key, ColumnSize>) => void,
   headerMenuOpen: boolean,
   setHeaderMenuOpen: (val: boolean) => void,
-  toggleKey: (key: Key) => void
+  toggleKey: (key: Key) => void,
+  direction: Direction
 }
 
 const TableContext = React.createContext<TableContextValue<unknown>>(null);
@@ -532,7 +533,7 @@ function TableView<T extends object>(props: SpectrumTreeGridProps<T>, ref: DOMRe
   );
 
   return (
-    <TableContext.Provider value={{state, dragState, dropState, dragAndDropHooks, isTableDraggable, isTableDroppable, layout, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, headerMenuOpen, setHeaderMenuOpen, shouldShowCheckboxes, toggleKey: state.toggleKey}}>
+    <TableContext.Provider value={{state, dragState, dropState, dragAndDropHooks, isTableDraggable, isTableDroppable, layout, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, headerMenuOpen, setHeaderMenuOpen, shouldShowCheckboxes, toggleKey: state.toggleKey, direction}}>
       <TableVirtualizer
         {...mergedProps}
         {...styleProps}
@@ -1390,7 +1391,7 @@ function TableCheckboxCell({cell}) {
 }
 
 function TableCell({cell, density, scale}) {
-  let {state, toggleKey} = useTableContext();
+  let {state, toggleKey, direction} = useTableContext();
   let ref = useRef();
   let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
   let isDisabled = state.disabledKeys.has(cell.parentKey);
@@ -1448,7 +1449,7 @@ function TableCell({cell, density, scale}) {
                 )
               }
               style={{
-                left: levelOffset - 20,
+                [direction === 'ltr' ? 'left' : 'right']: levelOffset - 20,
                 top: (ROW_HEIGHTS[density][scale] - 32) / 2
               }}>
               {isExpanded ? <ChevronDownMedium /> : <ChevronRightMedium />}
