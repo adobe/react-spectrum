@@ -14,7 +14,7 @@ import {FocusableElement} from '@react-types/shared';
 import {getChildNodes} from '@react-stately/collections';
 import {getRowLabelledBy} from './utils';
 import {GridRowAria, GridRowProps, useGridRow} from '@react-aria/grid';
-import {RefObject} from 'react';
+import {HTMLAttributes, RefObject} from 'react';
 import {TableCollection} from '@react-types/table';
 import {TableState, TreeGridState} from '@react-stately/table';
 
@@ -34,7 +34,7 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
     delete rowProps['aria-rowindex'];
   }
 
-  let treeGridRowProps = {};
+  let treeGridRowProps: HTMLAttributes<HTMLElement> = {};
   if ('expandedKeys' in state && state.collection.getItem(node.key)) {
     treeGridRowProps = {
       onKeyDown: (e) => {
