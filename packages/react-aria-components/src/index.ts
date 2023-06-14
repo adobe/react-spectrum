@@ -18,6 +18,8 @@ export {ComboBox, ComboBoxContext} from './ComboBox';
 export {DateField, DateInput, DateSegment, TimeField, DateFieldContext, TimeFieldContext} from './DateField';
 export {DatePicker, DateRangePicker, DatePickerContext, DateRangePickerContext} from './DatePicker';
 export {DialogTrigger, Dialog, DialogContext} from './Dialog';
+export {DropZone, DropZoneContext} from './DropZone';
+export {FileTrigger, FileTriggerContext} from './FileTrigger';
 export {GridList, GridListContext} from './GridList';
 export {Group, GroupContext} from './Group';
 export {Header} from './Header';
