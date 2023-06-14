@@ -3175,9 +3175,9 @@ describe('ComboBox', function () {
       expect(items).toHaveLength(6);
       expect(groups).toHaveLength(2);
       expect(groups[0]).toHaveAttribute('aria-labelledby', getByText('Section One').id);
-      expect(getByText('Section One')).toHaveAttribute('aria-hidden', 'true');
+      expect(getByText('Section One')).toHaveAttribute('role', 'presentation');
       expect(groups[1]).toHaveAttribute('aria-labelledby', getByText('Section Two').id);
-      expect(getByText('Section Two')).toHaveAttribute('aria-hidden', 'true');
+      expect(getByText('Section Two')).toHaveAttribute('role', 'presentation');
       expect(document.activeElement).toBe(combobox);
       expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
 

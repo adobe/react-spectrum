@@ -1,8 +1,8 @@
 diff --git a/node_modules/@parcel/transformer-postcss/lib/PostCSSTransformer.js b/node_modules/@parcel/transformer-postcss/lib/PostCSSTransformer.js
-index 9a49f5a..36e913c 100644
+index 3a35814..ee06412 100644
 --- a/node_modules/@parcel/transformer-postcss/lib/PostCSSTransformer.js
 +++ b/node_modules/@parcel/transformer-postcss/lib/PostCSSTransformer.js
-@@ -129,10 +129,10 @@ var _default = new (_plugin().Transformer)({
+@@ -96,10 +96,10 @@ var _default = new (_plugin().Transformer)({
      const postcss = await loadPostcss(options, asset.filePath);
      return {
        type: 'postcss',
@@ -14,31 +14,30 @@ index 9a49f5a..36e913c 100644
 +      })
      };
    },
- 
-@@ -165,11 +165,11 @@ var _default = new (_plugin().Transformer)({
- 
+   async transform({
+@@ -131,10 +131,10 @@ var _default = new (_plugin().Transformer)({
+     }
      const postcss = await loadPostcss(options, asset.filePath);
      let ast = (0, _nullthrows().default)(await asset.getAST());
 -    let program = postcss.fromJSON(ast.program);
 +    let program = ast.program;
      let plugins = [...config.hydrated.plugins];
      let cssModules = null;
- 
 -    if (config.hydrated.modules) {
 +    if (config.hydrated.modules && asset.meta.type !== 'tag') {
        asset.meta.cssModulesCompiled = 'postcss';
        let code = asset.isASTDirty() ? null : await asset.getCode();
+       if (Object.keys(config.hydrated.modules).length === 0 && code && !isLegacy && !LEGACY_MODULE_RE.test(code)) {
+@@ -198,7 +198,7 @@ var _default = new (_plugin().Transformer)({
  
-@@ -242,7 +242,7 @@ var _default = new (_plugin().Transformer)({
- 
- 
+       // TODO: should this be resolved from the project root?
        let postcssModules = await options.packageManager.require('postcss-modules', asset.filePath, {
 -        range: '^4.3.0',
 +        range: '^3.0.0',
          saveDev: true,
          shouldAutoInstall: options.shouldAutoInstall
        });
-@@ -287,8 +287,8 @@ var _default = new (_plugin().Transformer)({
+@@ -241,8 +241,8 @@ var _default = new (_plugin().Transformer)({
      } = await postcss(plugins).process(program, config.hydrated);
      asset.setAST({
        type: 'postcss',
@@ -47,28 +46,26 @@ index 9a49f5a..36e913c 100644
 +      version: '7.0.0',
 +      program: root
      });
- 
      for (let msg of messages) {
-@@ -329,13 +329,13 @@ var _default = new (_plugin().Transformer)({
+       if (msg.type === 'dependency') {
+@@ -276,11 +276,11 @@ var _default = new (_plugin().Transformer)({
+         // This syntax enables shaking the invidual statements, so that unused classes don't even exist in JS.
          ([className, classNameHashed]) => `module.exports[${JSON.stringify(className)}] = ${JSON.stringify(classNameHashed)};`).join('\n');
        }
- 
 -      asset.symbols.ensure();
-+      // asset.symbols.ensure();
- 
 -      for (let [k, v] of cssModulesList) {
 -        asset.symbols.set(k, v);
 -      }
+-      asset.symbols.set('default', 'default');
++      // asset.symbols.ensure();
 +      // for (let [k, v] of cssModulesList) {
 +      //   asset.symbols.set(k, v);
 +      // }
- 
--      asset.symbols.set('default', 'default');
 +      // asset.symbols.set('default', 'default');
        assets.push({
          type: 'js',
          content: code
-@@ -352,7 +352,7 @@ var _default = new (_plugin().Transformer)({
+@@ -295,7 +295,7 @@ var _default = new (_plugin().Transformer)({
    }) {
      const postcss = await loadPostcss(options, asset.filePath);
      let code = '';

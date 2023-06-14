@@ -258,7 +258,10 @@ class DragSession {
       return;
     }
 
-    let dropTarget = this.validDropTargets.find(target => target.element.contains(e.target as HTMLElement));
+    let dropTarget =
+      this.validDropTargets.find(target => target.element === e.target as HTMLElement) ||
+      this.validDropTargets.find(target => target.element.contains(e.target as HTMLElement));
+
     if (!dropTarget) {
       if (this.currentDropTarget) {
         this.currentDropTarget.element.focus();

@@ -19,7 +19,6 @@ import React, {Fragment, ReactNode, useContext, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useListBoxSection} from '@react-aria/listbox';
 import {useLocale} from '@react-aria/i18n';
-import {useSeparator} from '@react-aria/separator';
 
 interface ListBoxSectionProps<T> extends Omit<VirtualizerItemOptions, 'ref'> {
   headerLayoutInfo: LayoutInfo,
@@ -33,10 +32,6 @@ export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
   let {headingProps, groupProps} = useListBoxSection({
     heading: item.rendered,
     'aria-label': item['aria-label']
-  });
-
-  let {separatorProps} = useSeparator({
-    elementType: 'li'
   });
 
   let headerRef = useRef();
@@ -54,7 +49,7 @@ export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
       <div role="presentation" ref={headerRef} style={layoutInfoToStyle(headerLayoutInfo, direction)}>
         {item.key !== state.collection.getFirstKey() &&
           <div
-            {...separatorProps}
+            role="presentation"
             className={classNames(
               styles,
               'spectrum-Menu-divider'

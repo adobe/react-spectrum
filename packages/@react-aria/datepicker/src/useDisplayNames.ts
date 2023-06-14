@@ -16,7 +16,7 @@ import {LocalizedStringDictionary} from '@internationalized/string';
 import {useLocale} from '@react-aria/i18n';
 import {useMemo} from 'react';
 
-type Field = 'era' | 'year' | 'month' | 'day' | 'hour' | 'minute' | 'second' | 'dayPeriod' | 'timeZoneName' | 'weekday';
+type Field = Intl.DateTimeFormatPartTypes;
 interface DisplayNames {
   of(field: Field): string
 }
