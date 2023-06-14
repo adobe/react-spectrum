@@ -451,7 +451,7 @@ function focusElement(element: FocusableElement | null, scroll = false) {
 
 let isScope = item => {
   return item.previousElementSibling != null && item.parentElement != null;
-}
+};
 
 function focusFirstInScope(scope: Element[], tabbable:boolean = true) {
   let newScope = [...scope];
