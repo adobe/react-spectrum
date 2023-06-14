@@ -108,7 +108,8 @@ export const DynamicExpandableRowsStory: TableStory = {
   args: {
     'aria-label': 'TableView with dynamic expandable rows',
     width: 500,
-    height: 400
+    height: 400,
+    onAction: undefined
   },
   render: (args) => (
     <DynamicExpandableRows {...args} />
