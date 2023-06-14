@@ -26,6 +26,8 @@ import {TreeState} from '@react-stately/tree';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMenuContext, useMenuDialogContext} from './context';
 import {useMenuItem} from '@react-aria/menu';
+import {unavailableMenuItems} from '@react-stately/flags';
+import {useHover} from '@react-aria/interactions';
 
 interface MenuItemProps<T> {
   item: Node<T>,
@@ -42,14 +44,23 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
     isVirtualized,
     onAction
   } = props;
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
-  let menuDialogContext = useMenuDialogContext();
-  let {triggerRef} = menuDialogContext || {};
-  let isMenuDialogTrigger = !!menuDialogContext;
-  let isUnavailable = false;
 
-  if (isMenuDialogTrigger) {
-    isUnavailable = menuDialogContext.isUnavailable;
+  let stringFormatter;
+  let triggerRef;
+  let isUnavailable;
+  let isMenuDialogTrigger
+  if (unavailableMenuItems()) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    stringFormatter = useLocalizedStringFormatter(intlMessages);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    let menuDialogContext = useMenuDialogContext();
+    triggerRef = (menuDialogContext || {}).triggerRef;
+    isMenuDialogTrigger = !!menuDialogContext;
+    isUnavailable = false;
+
+    if (isMenuDialogTrigger) {
+      isUnavailable = menuDialogContext.isUnavailable;
+    }
   }
 
   let domProps = filterDOMProps(item.props);
@@ -85,19 +96,28 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
       closeOnSelect,
       isVirtualized,
       onAction,
-      'aria-haspopup': isMenuDialogTrigger ? 'dialog' : undefined
+      'aria-haspopup': unavailableMenuItems() && isMenuDialogTrigger ? 'dialog' : undefined
     },
     state,
     ref
   );
-  let endId = useSlotId();
+
+  let hoverProps;
+  let isHovered;
   let endProps: DOMAttributes = {};
-  if (endId) {
-    endProps.id = endId;
-    menuItemProps['aria-describedby'] = [menuItemProps['aria-describedby'], endId].filter(Boolean).join(' ');
-  }
-  if (isUnavailable) {
-    menuItemProps['aria-disabled'] = 'true';
+  if (unavailableMenuItems()) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    let endId = useSlotId();
+    if (endId) {
+      endProps.id = endId;
+      menuItemProps['aria-describedby'] = [menuItemProps['aria-describedby'], endId].filter(Boolean).join(' ');
+    }
+    if (isUnavailable) {
+      menuItemProps['aria-disabled'] = 'true';
+    }
+  } else {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    ({hoverProps, isHovered} = useHover({isDisabled}));
   }
 
   let contents = typeof rendered === 'string'
@@ -107,7 +127,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <li
-        {...mergeProps(menuItemProps, domProps)}
+        {...mergeProps(menuItemProps, domProps, hoverProps)}
         ref={ref}
         className={classNames(
           styles,
@@ -116,7 +136,8 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
             'is-disabled': isDisabled,
             'is-selected': isSelected,
             'is-selectable': state.selectionManager.selectionMode !== 'none',
-            'is-open': state.expandedKeys.has(key)
+            'is-hovered': isHovered,
+            'is-open': unavailableMenuItems() && state.expandedKeys.has(key)
           }
         )}>
         <Grid
@@ -130,7 +151,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
             <SlotProvider
               slots={{
                 text: {UNSAFE_className: styles['spectrum-Menu-itemLabel'], ...labelProps},
-                end: {UNSAFE_className: styles['spectrum-Menu-end'], ...endProps},
+                end: {UNSAFE_className: styles['spectrum-Menu-end'], ...(unavailableMenuItems() ? endProps : descriptionProps)},
                 icon: {UNSAFE_className: styles['spectrum-Menu-icon'], size: 'S'},
                 description: {UNSAFE_className: styles['spectrum-Menu-description'], ...descriptionProps},
                 keyboard: {UNSAFE_className: styles['spectrum-Menu-keyboard'], ...keyboardShortcutProps}
@@ -147,7 +168,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
                   } />
               }
               {
-                isUnavailable && <InfoOutline slot="end" size="XS" alignSelf="center" aria-label={stringFormatter.format('unavailable')} />
+                unavailableMenuItems() && isUnavailable && <InfoOutline slot="end" size="XS" alignSelf="center" aria-label={stringFormatter.format('unavailable')} />
               }
             </SlotProvider>
           </ClearSlots>

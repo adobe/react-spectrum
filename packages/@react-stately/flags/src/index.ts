@@ -10,13 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-export let unavailableMenuItems = false;
-export let tableNestedRows = false;
+let _unavailableMenuItems = false;
+let _tableNestedRows = false;
 
 export function enableUnavailableMenuItems() {
-  unavailableMenuItems = true;
+  _unavailableMenuItems = true;
 }
 
 export function enableTableNestedRows() {
-  tableNestedRows = true;
+  _tableNestedRows = true;
+}
+
+export function unavailableMenuItems() {
+  return _unavailableMenuItems;
+}
+
+export function tableNestedRows() {
+  return _tableNestedRows;
 }
