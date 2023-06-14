@@ -806,7 +806,8 @@ export const RestoreFocusExample = {
 export const WithTranslations = {
   render: () => <TranslateListBox />,
   decorators: null,
-  name: 'with translations'
+  name: 'with translations',
+  parameters: {description: {data: 'Translations included for: Arabic, English, Hebrew, Japanese, Korean, Simplified Chinese, and Traditional Chinese.'}}
 };
 
 let customOption = (item) => {

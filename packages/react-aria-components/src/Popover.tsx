@@ -14,10 +14,10 @@ import {AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PositionProps, 
 import {ContextValue, forwardRefType, HiddenContext, RenderProps, SlotProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {OverlayArrowContext} from './OverlayArrow';
-import {OverlayTriggerState} from 'react-stately';
+import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, RefObject} from 'react';
 
-export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef'>, RenderProps<PopoverRenderProps>, SlotProps {
+export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef'>, OverlayTriggerProps, RenderProps<PopoverRenderProps>, SlotProps {
   /**
    * The ref for the element which the popover positions itself with respect to.
    *
@@ -55,7 +55,10 @@ export const PopoverContext = createContext<ContextValue<PopoverContextValue, HT
 
 function Popover(props: PopoverProps, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, PopoverContext);
-  let {preserveChildren, state, triggerRef} = props as PopoverContextValue;
+  let ctx = props as PopoverContextValue;
+  // React components cannot be reparented so if there's context there should always be context.
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  let state = ctx?.state ?? useOverlayTriggerState(props);
   let isExiting = useExitAnimation(ref, state.isOpen);
 
   if (state && !state.isOpen && !isExiting) {
@@ -68,13 +71,13 @@ function Popover(props: PopoverProps, ref: ForwardedRef<HTMLElement>) {
       });
     }
 
-    return preserveChildren ? <HiddenContext.Provider value>{children}</HiddenContext.Provider> : null;
+    return ctx.preserveChildren ? <HiddenContext.Provider value>{children}</HiddenContext.Provider> : null;
   }
 
   return (
     <PopoverInner
       {...props}
-      triggerRef={triggerRef}
+      triggerRef={ctx.triggerRef!}
       state={state}
       popoverRef={ref}
       isExiting={isExiting} />
