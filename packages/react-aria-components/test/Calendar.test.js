@@ -34,7 +34,7 @@ let renderCalendar = (calendarProps, gridProps, cellProps) => render(<TestCalend
 describe('Calendar', () => {
   it('should render with default classes', () => {
     let {getByRole} = renderCalendar();
-    let group = getByRole('group');
+    let group = getByRole('application');
     expect(group).toHaveAttribute('class', 'react-aria-Calendar');
 
     let grid = getByRole('grid');
@@ -55,7 +55,7 @@ describe('Calendar', () => {
 
   it('should render with custom classes', () => {
     let {getByRole} = renderCalendar({className: 'calendar'}, {className: 'grid'}, {className: 'cell'});
-    let group = getByRole('group');
+    let group = getByRole('application');
     expect(group).toHaveAttribute('class', 'calendar');
 
     let grid = getByRole('grid');
@@ -68,7 +68,7 @@ describe('Calendar', () => {
 
   it('should support DOM props', () => {
     let {getByRole} = renderCalendar({'data-foo': 'bar'}, {'data-bar': 'baz'}, {'data-baz': 'foo'});
-    let group = getByRole('group');
+    let group = getByRole('application');
     expect(group).toHaveAttribute('data-foo', 'bar');
 
     let grid = getByRole('grid');
@@ -121,7 +121,7 @@ describe('Calendar', () => {
       </CalendarContext.Provider>
     );
 
-    let group = getByRole('group');
+    let group = getByRole('application');
     expect(group).toHaveAttribute('slot', 'test');
     expect(group).toHaveAttribute('aria-label', expect.stringContaining('test'));
   });
