@@ -15,16 +15,16 @@ import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {Content, Footer} from '@react-spectrum/view';
 import {Dialog} from '@react-spectrum/dialog';
+import {enableUnavailableMenuItems} from '@react-stately/flags';
 import {Heading, Text} from '@react-spectrum/text';
 import {Item, Menu, MenuDialogTrigger, MenuTrigger} from '../';
 import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {tests} from './MenuTrigger.test';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
-import {enableUnavailableMenuItems} from '@react-stately/flags';
-import {tests} from './MenuTrigger.test';
 
 enableUnavailableMenuItems();
 

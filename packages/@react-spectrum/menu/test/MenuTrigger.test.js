@@ -710,7 +710,7 @@ export let tests = () => {
     it('tabs to the next element after the trigger and closes the menu', function () {
       tree = render(
         <Provider theme={theme}>
-          <input data-testid="before-input"/>
+          <input data-testid="before-input" />
           <MenuTrigger onOpenChange={onOpenChange}>
             <Button>
               {triggerText}
@@ -723,7 +723,7 @@ export let tests = () => {
               )}
             </Menu>
           </MenuTrigger>
-          <input data-testid="after-input"/>
+          <input data-testid="after-input" />
         </Provider>
       );
 

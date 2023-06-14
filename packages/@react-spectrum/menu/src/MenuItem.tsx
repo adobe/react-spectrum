@@ -23,11 +23,11 @@ import React, {Key, useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/text';
 import {TreeState} from '@react-stately/tree';
+import {unavailableMenuItems} from '@react-stately/flags';
+import {useHover} from '@react-aria/interactions';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMenuContext, useMenuDialogContext} from './context';
 import {useMenuItem} from '@react-aria/menu';
-import {unavailableMenuItems} from '@react-stately/flags';
-import {useHover} from '@react-aria/interactions';
 
 interface MenuItemProps<T> {
   item: Node<T>,
