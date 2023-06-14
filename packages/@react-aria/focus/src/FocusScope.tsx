@@ -449,15 +449,44 @@ function focusElement(element: FocusableElement | null, scroll = false) {
   }
 }
 
+let isScope = item => {
+  return item.previousElementSibling != null && item.parentElement != null;
+}
+
 function focusFirstInScope(scope: Element[], tabbable:boolean = true) {
-  let sentinel = scope[0].previousElementSibling;
-  let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable}, scope);
+  let newScope = [...scope];
+  if (!isScope(scope[0])) {
+    scope.find(node => {
+      if (isScope(node)) {
+        return true;
+      }
+
+      newScope.shift();
+      return false;
+    });
+
+    // should I clear out the scope above to make the scope only this child
+    // or add the first found child below at the front of the scope?
+    if (newScope.length === 0) {
+      scope.find(node => {
+        let element = Array.from(node.childNodes).find(isScope) as Element;
+        if (element) {
+          newScope.push(element);
+          return true;
+        }
+        return false;
+      });
+    }
+  }
+  let sentinel = newScope[0].previousElementSibling;
+
+  let walker = getFocusableTreeWalker(getScopeRoot(newScope), {tabbable}, newScope);
   walker.currentNode = sentinel;
   let nextNode = walker.nextNode();
 
   // If the scope does not contain a tabbable element, use the first focusable element.
   if (tabbable && !nextNode) {
-    walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable: false}, scope);
+    walker = getFocusableTreeWalker(getScopeRoot(newScope), {tabbable: false}, newScope);
     walker.currentNode = sentinel;
     nextNode = walker.nextNode();
   }
@@ -670,6 +699,10 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
  */
 export function getFocusableTreeWalker(root: Element, opts?: FocusManagerOptions, scope?: Element[]) {
   let selector = opts?.tabbable ? TABBABLE_ELEMENT_SELECTOR : FOCUSABLE_ELEMENT_SELECTOR;
+  if (root === null) {
+    root = document.body;
+  }
+
   let walker = document.createTreeWalker(
     root,
     NodeFilter.SHOW_ELEMENT,
