@@ -119,6 +119,3 @@ export interface RangeCalendarState extends CalendarStateBase {
   /** Sets whether the user is dragging over the calendar. */
   setDragging(isDragging: boolean): void
 }
-
-/** Controls how pagination works. */
-export type PageBehavior = 'single' | 'visible';
