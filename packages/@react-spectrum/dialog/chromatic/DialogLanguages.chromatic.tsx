@@ -18,7 +18,7 @@ import {Dialog, DialogTrigger} from '../';
 import {Divider} from '@react-spectrum/divider';
 import {Heading} from '@react-spectrum/text';
 // @ts-ignore
-import intlMessages from './intl/*.json';
+import intlMessages from './intlMessages.json';
 import {Item, TagGroup} from '@react-spectrum/tag';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
