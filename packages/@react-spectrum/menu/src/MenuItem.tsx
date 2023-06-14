@@ -48,7 +48,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   let stringFormatter;
   let triggerRef;
   let isUnavailable;
-  let isMenuDialogTrigger
+  let isMenuDialogTrigger;
   if (unavailableMenuItems()) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     stringFormatter = useLocalizedStringFormatter(intlMessages);
