@@ -37,6 +37,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
   let displayNames = useDisplayNames();
   let {ariaLabel, ariaLabelledBy, ariaDescribedBy, focusManager} = hookData.get(state);
 
+  // so segment.isPlaceholder is not ever getting set to true within the popover 
   let textValue = segment.isPlaceholder ? '' : segment.text;
   let options = useMemo(() => state.dateFormatter.resolvedOptions(), [state.dateFormatter]);
   let monthDateFormatter = useDateFormatter({month: 'long', timeZone: options.timeZone});
