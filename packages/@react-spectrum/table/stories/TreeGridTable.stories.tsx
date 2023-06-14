@@ -35,7 +35,7 @@ export const StaticExpandableRows: TableStory = {
     height: 200
   },
   render: (args) => (
-    <TableView expandedKeys={['test']} hasExpandableRows {...args}>
+    <TableView defaultExpandedKeys={['test']} hasExpandableRows onExpandedChange={action('onExpandedChange')} {...args}>
       <TableHeader>
         <Column key="foo">Foo</Column>
         <Column key="bar">Bar</Column>
@@ -141,8 +141,7 @@ function ManyExpandableRows(props: SpectrumTableProps<unknown>) {
     <Flex direction="column">
       <ActionButton onPress={() => setExpandedKeys('all')}>Expand all</ActionButton>
       <ActionButton onPress={() => setExpandedKeys(new Set([]))}>Collapse all</ActionButton>
-      <ActionButton onPress={() => setExpandedKeys(new Set(['Lvl 1 Foo 1']))}>Expand subset</ActionButton>
-      <TableView expandedKeys={expandedKeys} onExpandedChange={action('onExpandedChange')} hasExpandableRows disabledKeys={['Row 1 Lvl 2']} {...props}>
+      <TableView expandedKeys={expandedKeys} onExpandedChange={chain(setExpandedKeys, action('onExpandedChange'))} hasExpandableRows disabledKeys={['Row 1 Lvl 2']} {...props}>
         <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
         </TableHeader>

@@ -49,9 +49,10 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
 
   let treeGridRowProps: HTMLAttributes<HTMLElement> = {};
   if ('expandedKeys' in state && state.collection.getItem(node.key)) {
+    let hasChildRows = node.props.childItems || node.props.children.length > state.collection.columnCount;
     treeGridRowProps = {
       onKeyDown: (e) => {
-        if ((e.key === EXPANSION_TRIGGERS['expand'][direction]) && state.selectionManager.focusedKey === node.key && node.props.childItems && state.expandedKeys !== 'all' && !state.expandedKeys.has(node.key)) {
+        if ((e.key === 'ArrowRight') && state.selectionManager.focusedKey === node.key && hasChildRows && state.expandedKeys !== 'all' && !state.expandedKeys.has(node.key)) {
           state.toggleKey(node.key);
           e.stopPropagation();
           // After some time, if the row was not expanded (via controlled), focus the first cell
@@ -61,7 +62,7 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
               state.selectionManager.setFocusedKey(direction === 'ltr' ? cells[0].key : cells[cells.length - 1].key);
             }
           }, 10);
-        } else if ((e.key === EXPANSION_TRIGGERS['collapse'][direction]) && state.selectionManager.focusedKey === node.key && node.props.childItems && (state.expandedKeys === 'all' || state.expandedKeys.has(node.key))) {
+        } else if ((e.key === EXPANSION_TRIGGERS['collapse'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && (state.expandedKeys === 'all' || state.expandedKeys.has(node.key))) {
           state.toggleKey(node.key);
           e.stopPropagation();
           // After some time, if the row was not expanded (via controlled), focus the last cell
@@ -73,7 +74,7 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
           }, 10);
         }
       },
-      'aria-expanded': node.props.childItems || node.props.children.length > state.collection.columnCount ? state.expandedKeys === 'all' || state.expandedKeys.has(node.key) : undefined,
+      'aria-expanded': hasChildRows ? state.expandedKeys === 'all' || state.expandedKeys.has(node.key) : undefined,
       'aria-level': node.level,
       'aria-posinset': node.indexOfType + 1,
       'aria-setsize': node.level > 1 ?
