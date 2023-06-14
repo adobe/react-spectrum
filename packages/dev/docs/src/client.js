@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton} from '@adobe/react-spectrum';
+import {ActionButton, Flex, Link} from '@adobe/react-spectrum';
 import DocSearch from './DocSearch';
 import docsStyle from './docs.css';
+import LinkOut from '@spectrum-icons/workflow/LinkOut';
 import {listen} from 'quicklink';
 import React, {useEffect, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
@@ -186,6 +187,22 @@ ReactDOM.render(<>
   <DocSearch />
   <ThemeSwitcher />
 </>, document.querySelector('.' + docsStyle.pageHeader));
+
+let pathToPage = document.querySelector('[data-github-src]').getAttribute('data-github-src');
+if (pathToPage) {
+  ReactDOM.render(
+    <Link>
+      <a
+        href={encodeURI(`https://github.com/adobe/react-spectrum/tree/main/${encodeURI(pathToPage)}`)}
+        target="_blank">
+        <Flex gap="size-100" alignItems="center">
+          <span>Edit this page</span><LinkOut size="S" />
+        </Flex>
+      </a>
+    </Link>,
+    document.querySelector('#edit-page')
+  );
+}
 
 document.addEventListener('mousedown', (e) => {
   // Prevent focusing on links to other pages with the mouse to avoid flash of focus ring during navigation.
