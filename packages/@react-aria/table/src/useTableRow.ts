@@ -39,13 +39,10 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
     treeGridRowProps = {
       onKeyDown: (e) => {
         if ((e.key === 'ArrowRight') && state.selectionManager.focusedKey === node.key && node.props.childItems && state.expandedKeys !== 'all' && !state.expandedKeys.has(node.key)) {
-          console.log(node);
           state.toggleKey(node.key);
-          e.preventDefault();
           e.stopPropagation();
         } else if ((e.key === 'ArrowLeft') && state.selectionManager.focusedKey === node.key && node.props.childItems && (state.expandedKeys === 'all' || state.expandedKeys.has(node.key))) {
           state.toggleKey(node.key);
-          e.preventDefault();
           e.stopPropagation();
         }
       },

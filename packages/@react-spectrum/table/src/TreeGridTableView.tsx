@@ -530,7 +530,7 @@ function TableView<T extends object>(props: SpectrumTreeGridProps<T>, ref: DOMRe
     focusProps,
     dragAndDropHooks?.isVirtualDragging() && {tabIndex: null}
   );
-  // console.log('collection', state.collection)
+
   return (
     <TableContext.Provider value={{state, dragState, dropState, dragAndDropHooks, isTableDraggable, isTableDroppable, layout, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, headerMenuOpen, setHeaderMenuOpen, shouldShowCheckboxes, toggleKey: state.toggleKey}}>
       <TableVirtualizer
@@ -1243,7 +1243,6 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
 
   let dropProps = isDroppable ? droppableItem?.dropProps : {'aria-hidden': droppableItem?.dropProps['aria-hidden']};
   let {visuallyHiddenProps} = useVisuallyHidden();
-  // console.log(item.props.childItems);
 
   return (
     <TableRowContext.Provider value={{dragButtonProps, dragButtonRef, isFocusVisibleWithin}}>
