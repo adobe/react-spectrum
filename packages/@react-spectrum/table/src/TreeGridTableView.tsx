@@ -1397,7 +1397,7 @@ function TableCell({cell, toggleKey, isExpanded, density, scale}) {
     node: cell,
     isVirtualized: true
   }, state, ref);
-  let showExpandCollapseButton = cell.index === 0 && state.collection.getItem(cell.parentKey)?.props.childItems?.length > 0;
+  let showExpandCollapseButton = cell.index === 0 && (state.collection.getItem(cell.parentKey)?.props.childItems?.length > 0 || state.collection.getItem(cell.parentKey)?.props.children.length > state.collection.columnCount);
   let levelOffset = (cell.level - (showExpandCollapseButton ? 1 : 2)) * 16 + 4;
   let {pressProps} = usePress({
     onPress: () => toggleKey(cell.parentKey)
