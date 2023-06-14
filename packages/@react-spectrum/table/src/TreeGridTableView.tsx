@@ -1192,8 +1192,7 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
   let {isFocusVisible, focusProps} = useFocusRing();
   let {hoverProps, isHovered} = useHover({isDisabled});
   let isFirstRow = state.collection.rows.find(row => row.level === 1)?.key === item.key;
-  // TODO: will need to update because nested rows can also have nextKey == null. Instead grab last row from collection.rows?
-  let isLastRow = item.nextKey == null;
+  let isLastRow = state.collection.rows.at(-1).key === item.key;
   // Figure out if the TableView content is equal or greater in height to the container. If so, we'll need to round the bottom
   // border corners of the last row when selected.
   let isFlushWithContainerBottom = false;
@@ -1243,6 +1242,7 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
 
   let dropProps = isDroppable ? droppableItem?.dropProps : {'aria-hidden': droppableItem?.dropProps['aria-hidden']};
   let {visuallyHiddenProps} = useVisuallyHidden();
+  let nextRowKey = state.collection.getKeyAfter(item.key);
 
   return (
     <TableRowContext.Provider value={{dragButtonProps, dragButtonRef, isFocusVisibleWithin}}>
@@ -1270,7 +1270,8 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
               'is-active': isPressed,
               'is-selected': isSelected,
               'spectrum-Table-row--highlightSelection': state.selectionManager.selectionBehavior === 'replace',
-              'is-next-selected': state.selectionManager.isSelected(item.nextKey),
+              // NOTE: one change from base TableView, next key doesn't refer to the actual next row in the nested case, replaced by looking up nextRow
+              'is-next-selected': state.selectionManager.isSelected(nextRowKey),
               'is-focused': isFocusVisibleWithin,
               'focus-ring': isFocusVisible,
               'is-hovered': isHovered,
