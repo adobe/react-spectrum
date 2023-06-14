@@ -20,7 +20,7 @@ export interface SliderState {
   /**
    * Values managed by the slider by thumb index.
    */
-  readonly values: number[],
+  values: number[],
   /**
    * Get the value for the specified thumb.
    * @param index

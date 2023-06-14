@@ -51,7 +51,7 @@ export const BreadcrumbsContext = createContext<ContextValue<BreadcrumbsProps<an
 function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, BreadcrumbsContext);
   let {navProps} = useBreadcrumbs(props);
-  let {portal, collection} = useCollection(props as CollectionProps<T>);
+  let {portal, collection} = useCollection(props as any);
   let {hoverProps, isHovered} = useHover(props);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
   let renderProps = useRenderProps({
