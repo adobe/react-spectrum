@@ -37,6 +37,17 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
   let treeGridRowProps = {};
   if ('expandedKeys' in state && state.collection.getItem(node.key)) {
     treeGridRowProps = {
+      onKeyDown: (e) => {
+        if ((e.key === 'ArrowRight') && state.selectionManager.focusedKey === node.key && state.expandedKeys !== 'all' && !state.expandedKeys.has(node.key)) {
+          state.toggleKey(node.key);
+          e.preventDefault();
+          e.stopPropagation();
+        } else if ((e.key === 'ArrowLeft') && state.selectionManager.focusedKey === node.key && (state.expandedKeys === 'all' || state.expandedKeys.has(node.key))) {
+          state.toggleKey(node.key);
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      },
       'aria-expanded': node.props.childItems || node.props.children.length > state.collection.columnCount ? state.expandedKeys === 'all' || state.expandedKeys.has(node.key) : undefined,
       'aria-level': node.level,
       'aria-posinset': node.indexOfType + 1,
