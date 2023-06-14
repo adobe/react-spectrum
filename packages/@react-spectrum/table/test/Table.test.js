@@ -1788,13 +1788,15 @@ describe('TableView', function () {
 
         // Ensure we have the correct sticky cells in the right order.
         let row = cell.closest('[role=row]');
-        let cells = within(row).getAllByRole(role => role === 'gridcell' || role === 'rowheader');
-        expect(cells).toHaveLength(18);
+        let cells = within(row).getAllByRole('gridcell');
+        let rowHeaders = within(row).getAllByRole('rowheader');
+        expect(cells).toHaveLength(17);
+        expect(rowHeaders).toHaveLength(1);
         expect(cells[0]).toHaveAttribute('aria-colindex', '1'); // checkbox
-        expect(cells[1]).toHaveAttribute('aria-colindex', '2'); // rowheader
-        expect(cells[2]).toHaveAttribute('aria-colindex', '6'); // persisted
-        expect(cells[2]).toBe(cell);
-        expect(cells[3]).toHaveAttribute('aria-colindex', '14'); // first visible
+        expect(rowHeaders[0]).toHaveAttribute('aria-colindex', '2'); // rowheader
+        expect(cells[1]).toHaveAttribute('aria-colindex', '6'); // persisted
+        expect(cells[1]).toBe(cell);
+        expect(cells[2]).toHaveAttribute('aria-colindex', '14'); // first visible
 
         // Moving focus should scroll the new focused item into view
         moveFocus('ArrowLeft');
@@ -2340,6 +2342,13 @@ describe('TableView', function () {
 
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
+
+        fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: 'a', ctrlKey: true});
+
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        expect(onSelectionChange.mock.calls[0][0]).toEqual('all');
+        checkRowSelection(rows.slice(1), true);
+        checkSelectAll(tree, 'checked');
 
         fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: 'a', ctrlKey: true});
 
@@ -4043,7 +4052,7 @@ describe('TableView', function () {
       fireEvent.scroll(scrollView);
       act(() => {jest.runAllTimers();});
 
-      expect(onLoadMore).toHaveBeenCalledTimes(3);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
 
     it('should automatically fire onLoadMore if there aren\'t enough items to fill the Table', function () {
@@ -4068,8 +4077,7 @@ describe('TableView', function () {
 
       render(<TableMock items={items} />);
       act(() => jest.runAllTimers());
-      // first loadMore triggered by onVisibleRectChange, other 2 by useLayoutEffect
-      expect(onLoadMoreSpy).toHaveBeenCalledTimes(3);
+      expect(onLoadMoreSpy).toHaveBeenCalledTimes(1);
     });
   });
 

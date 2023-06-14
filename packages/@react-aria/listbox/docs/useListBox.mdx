@@ -287,7 +287,6 @@ are correct.
 
 ```tsx example export=true render=false
 import {useListBoxSection} from '@react-aria/listbox';
-import {useSeparator} from '@react-aria/separator';
 
 function ListBoxSection({section, state}) {
   let {itemProps, headingProps, groupProps} = useListBoxSection({
@@ -295,17 +294,13 @@ function ListBoxSection({section, state}) {
     'aria-label': section['aria-label']
   });
 
-  let {separatorProps} = useSeparator({
-    elementType: 'li'
-  });
-
-  // If the section is not the first, add a separator element.
+  // If the section is not the first, add a separator element to provide visual separation.
   // The heading is rendered inside an <li> element, which contains
   // a <ul> with the child items.
   return <>
     {section.key !== state.collection.getFirstKey() &&
       <li
-        {...separatorProps}
+        role="presentation"
         style={{
           borderTop: '1px solid gray',
           margin: '2px 5px'

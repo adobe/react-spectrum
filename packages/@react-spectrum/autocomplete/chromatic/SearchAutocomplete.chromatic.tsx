@@ -14,7 +14,7 @@ import Filter from '@spectrum-icons/workflow/Filter';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
 import {Item, SearchAutocomplete} from '../';
-import {Meta, Story} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import {SpectrumSearchAutocompleteProps} from '@react-types/autocomplete';
 
@@ -59,7 +59,11 @@ function shortName(key, value) {
 const meta: Meta<SpectrumSearchAutocompleteProps<object>> = {
   title: 'SearchAutocomplete',
   parameters: {
-    chromaticProvider: {colorSchemes: ['light', 'dark', 'lightest', 'darkest'], locales: ['en-US'], scales: ['medium', 'large']}
+    chromaticProvider: {
+      colorSchemes: ['light', 'dark', 'lightest', 'darkest'],
+      locales: ['en-US'],
+      scales: ['medium', 'large']
+    }
   }
 };
 
@@ -71,7 +75,7 @@ let items = [
   {name: 'Snake', id: '3'}
 ];
 
-const Template: Story<SpectrumSearchAutocompleteProps<object>> = (args) => (
+const Template: StoryFn<SpectrumSearchAutocompleteProps<object>> = (args) => (
   <Grid columns={repeat(4, '1fr')} autoFlow="row" gap="size-200">
     {combinations.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -89,7 +93,7 @@ const Template: Story<SpectrumSearchAutocompleteProps<object>> = (args) => (
 );
 
 // Chromatic can't handle the size of the side label story so removed some extraneous props that don't matter for side label case.
-const TemplateSideLabel: Story<SpectrumSearchAutocompleteProps<object>> = (args) => (
+const TemplateSideLabel: StoryFn<SpectrumSearchAutocompleteProps<object>> = (args) => (
   <Grid columns={repeat(2, '1fr')} autoFlow="row" gap="size-200" width={800}>
     {combinations.filter(combo => !(combo.isReadOnly || combo.isDisabled)).map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -106,39 +110,56 @@ const TemplateSideLabel: Story<SpectrumSearchAutocompleteProps<object>> = (args)
   </Grid>
 );
 
-export const PropDefaults = Template.bind({});
-PropDefaults.storyName = 'default';
-PropDefaults.args = {};
+export const PropDefaults = {
+  render: Template,
+  name: 'default',
+  args: {}
+};
 
-export const PropInputValue = Template.bind({});
-PropInputValue.storyName = 'inputValue: Blah';
-PropInputValue.args = {inputValue: 'Blah'};
+export const PropInputValue = {
+  render: Template,
+  name: 'inputValue: Blah',
+  args: {inputValue: 'Blah'}
+};
 
-export const PropAriaLabelled = Template.bind({});
-PropAriaLabelled.storyName = 'aria-label';
-PropAriaLabelled.args = {'aria-label': 'Label'};
+export const PropAriaLabelled = {
+  render: Template,
+  name: 'aria-label',
+  args: {'aria-label': 'Label'}
+};
 
-export const PropLabelEnd = Template.bind({});
-PropLabelEnd.storyName = 'label end';
-PropLabelEnd.args = {...PropDefaults.args, labelAlign: 'end'};
+export const PropLabelEnd = {
+  render: Template,
+  name: 'label end',
+  args: {...PropDefaults.args, labelAlign: 'end'}
+};
 
-export const PropLabelSide = TemplateSideLabel.bind({});
-PropLabelSide.storyName = 'label side';
-PropLabelSide.args = {...PropDefaults.args, labelPosition: 'side'};
+export const PropLabelSide = {
+  render: TemplateSideLabel,
+  name: 'label side',
+  args: {...PropDefaults.args, labelPosition: 'side'}
+};
 
-export const PropCustomWidth = Template.bind({});
-PropCustomWidth.storyName = 'custom width';
-PropCustomWidth.args = {...PropDefaults.args, width: 'size-1600'};
-PropCustomWidth.parameters = {
-  chromaticProvider: {
-    express: false
+export const PropCustomWidth = {
+  render: Template,
+  name: 'custom width',
+  args: {...PropDefaults.args, width: 'size-1600'},
+
+  parameters: {
+    chromaticProvider: {
+      express: false
+    }
   }
 };
 
-export const PropIconFilter = Template.bind({});
-PropIconFilter.storyName = 'icon: Filter';
-PropIconFilter.args = {...PropDefaults.args, icon: <Filter />};
+export const PropIconFilter = {
+  render: Template,
+  name: 'icon: Filter',
+  args: {...PropDefaults.args, icon: <Filter />}
+};
 
-export const PropIconNull = Template.bind({});
-PropIconNull.storyName = 'icon: null';
-PropIconNull.args = {...PropDefaults.args, icon: null};
+export const PropIconNull = {
+  render: Template,
+  name: 'icon: null',
+  args: {...PropDefaults.args, icon: null}
+};

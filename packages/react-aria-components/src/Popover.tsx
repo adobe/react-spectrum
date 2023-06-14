@@ -11,12 +11,13 @@
  */
 
 import {AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PositionProps, usePopover} from 'react-aria';
-import {ContextValue, HiddenContext, RenderProps, SlotProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
+import {ContextValue, forwardRefType, HiddenContext, RenderProps, SlotProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {OverlayArrowContext} from './OverlayArrow';
-import {OverlayTriggerState} from 'react-stately';
+import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, RefObject} from 'react';
 
-export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef'>, RenderProps<PopoverRenderProps>, SlotProps {
+export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef'>, OverlayTriggerProps, RenderProps<PopoverRenderProps>, SlotProps {
   /**
    * The ref for the element which the popover positions itself with respect to.
    *
@@ -54,17 +55,29 @@ export const PopoverContext = createContext<ContextValue<PopoverContextValue, HT
 
 function Popover(props: PopoverProps, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, PopoverContext);
-  let {preserveChildren, state, triggerRef} = props as PopoverContextValue;
+  let ctx = props as PopoverContextValue;
+  // React components cannot be reparented so if there's context there should always be context.
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  let state = ctx?.state ?? useOverlayTriggerState(props);
   let isExiting = useExitAnimation(ref, state.isOpen);
 
   if (state && !state.isOpen && !isExiting) {
-    return preserveChildren ? <HiddenContext.Provider value>{props.children}</HiddenContext.Provider> : null;
+    let children = props.children;
+    if (typeof children === 'function') {
+      children = children({
+        placement: 'bottom',
+        isEntering: false,
+        isExiting: false
+      });
+    }
+
+    return ctx.preserveChildren ? <HiddenContext.Provider value>{children}</HiddenContext.Provider> : null;
   }
 
   return (
     <PopoverInner
       {...props}
-      triggerRef={triggerRef}
+      triggerRef={ctx.triggerRef!}
       state={state}
       popoverRef={ref}
       isExiting={isExiting} />
@@ -74,7 +87,7 @@ function Popover(props: PopoverProps, ref: ForwardedRef<HTMLElement>) {
 /**
  * A popover is an overlay element positioned relative to a trigger.
  */
-const _Popover = forwardRef(Popover);
+const _Popover = /*#__PURE__*/ (forwardRef as forwardRefType)(Popover);
 export {_Popover as Popover};
 
 interface PopoverInnerProps extends AriaPopoverProps, RenderProps<PopoverRenderProps>, SlotProps {
@@ -82,7 +95,7 @@ interface PopoverInnerProps extends AriaPopoverProps, RenderProps<PopoverRenderP
   isExiting: boolean
 }
 
-function PopoverInner({children, state, isExiting, ...props}: PopoverInnerProps) {
+function PopoverInner({state, isExiting, ...props}: PopoverInnerProps) {
   let {popoverProps, underlayProps, arrowProps, placement} = usePopover({
     ...props,
     offset: props.offset ?? 8
@@ -106,7 +119,7 @@ function PopoverInner({children, state, isExiting, ...props}: PopoverInnerProps)
     <Overlay>
       {!props.isNonModal && <div {...underlayProps} style={{position: 'fixed', inset: 0}} />}
       <div
-        {...popoverProps}
+        {...mergeProps(filterDOMProps(props as any), popoverProps)}
         {...renderProps}
         ref={ref}
         slot={props.slot}
@@ -116,7 +129,7 @@ function PopoverInner({children, state, isExiting, ...props}: PopoverInnerProps)
         data-exiting={isExiting || undefined}>
         {!props.isNonModal && <DismissButton onDismiss={state.close} />}
         <OverlayArrowContext.Provider value={{arrowProps, placement}}>
-          {children}
+          {renderProps.children}
         </OverlayArrowContext.Provider>
         <DismissButton onDismiss={state.close} />
       </div>

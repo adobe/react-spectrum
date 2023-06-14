@@ -242,3 +242,13 @@ By default, a `RangeCalendar` displays a single month. The `visibleMonths` prop 
   <RangeCalendar aria-label="Trip dates" visibleMonths={3} />
 </div>
 ```
+
+### Page behavior
+
+By default, when pressing the next or previous buttons, pagination will advance by the `visibleMonths` value. This behavior can be changed to page by single months instead, by setting `pageBehavior` to `single`.
+
+```tsx example
+<div style={{maxWidth: '100%', overflow: 'auto'}}>
+  <RangeCalendar aria-label="Trip dates" visibleMonths={3} pageBehavior="single" />
+</div>
+```

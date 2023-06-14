@@ -131,6 +131,7 @@ module.exports = {
     'no-nested-ternary': ERROR,
     'no-multiple-empty-lines': ERROR,
     'no-unneeded-ternary': ERROR,
+    'no-duplicate-imports': ERROR,
 
     // Below are rules that are needed for linter functionality when using React
     'react/display-name': OFF,
@@ -169,6 +170,7 @@ module.exports = {
     'rulesdir/sort-imports': [ERROR],
     'rulesdir/imports': [ERROR],
     'rulesdir/useLayoutEffectRule': [ERROR],
+    'rulesdir/pure-render': [ERROR],
 
     // jsx-a11y rules
     'jsx-a11y/accessible-emoji': ERROR,

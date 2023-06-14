@@ -54,6 +54,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
   } = useContext(ListViewContext);
   let {direction} = useLocale();
   let rowRef = useRef<HTMLDivElement>();
+  let checkboxWrapperRef = useRef<HTMLDivElement>();
   let {
     isFocusVisible: isFocusVisibleWithin,
     focusProps: focusWithinProps
@@ -249,8 +250,9 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
               exit: listStyles['react-spectrum-ListViewItem-checkbox--exit'],
               exitActive: listStyles['react-spectrum-ListViewItem-checkbox--exitActive']
             }}
-            timeout={160} >
-            <div className={listStyles['react-spectrum-ListViewItem-checkboxWrapper']}>
+            timeout={160}
+            nodeRef={checkboxWrapperRef} >
+            <div ref={checkboxWrapperRef} className={listStyles['react-spectrum-ListViewItem-checkboxWrapper']}>
               <Checkbox
                 {...checkboxProps}
                 UNSAFE_className={listStyles['react-spectrum-ListViewItem-checkbox']}

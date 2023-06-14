@@ -13,8 +13,8 @@
 import {AriaSliderProps, AriaSliderThumbProps, mergeProps, Orientation, useFocusRing, useHover, useNumberFormatter, useSlider, useSliderThumb, VisuallyHidden} from 'react-aria';
 import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DOMAttributes} from '@react-types/shared';
+import {filterDOMProps, mergeRefs} from '@react-aria/utils';
 import {LabelContext} from './Label';
-import {mergeRefs} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, OutputHTMLAttributes, RefObject, useContext, useRef} from 'react';
 import {SliderState, useSliderState} from 'react-stately';
 
@@ -67,6 +67,9 @@ function Slider<T extends number | number[]>(props: SliderProps<T>, ref: Forward
     defaultClassName: 'react-aria-Slider'
   });
 
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
+
   return (
     <Provider
       values={[
@@ -74,6 +77,7 @@ function Slider<T extends number | number[]>(props: SliderProps<T>, ref: Forward
         [LabelContext, {...labelProps, ref: labelRef}]
       ]}>
       <div
+        {...DOMProps}
         {...groupProps}
         {...renderProps}
         ref={ref}
@@ -92,7 +96,7 @@ export {_Slider as Slider};
 
 export interface SliderOutputProps extends RenderProps<SliderState> {}
 
-function SliderOutput({children, style, className}: SliderOutputProps, ref: ForwardedRef<HTMLOutputElement>) {
+function SliderOutput({children, style, className, ...otherProps}: SliderOutputProps, ref: ForwardedRef<HTMLOutputElement>) {
   let {state, outputProps} = useContext(InternalSliderContext)!;
   let renderProps = useRenderProps({
     className,
@@ -103,13 +107,13 @@ function SliderOutput({children, style, className}: SliderOutputProps, ref: Forw
     values: state
   });
 
-  return <output {...outputProps} {...renderProps} ref={ref} />;
+  return <output {...mergeProps(filterDOMProps(otherProps as any), outputProps)} {...renderProps} ref={ref} />;
 }
 
 /**
  * A slider output displays the current value of a slider as text.
  */
-const _SliderOutput = forwardRef(SliderOutput);
+const _SliderOutput = /*#__PURE__*/ (forwardRef as forwardRefType)(SliderOutput);
 export {_SliderOutput as SliderOutput};
 
 export interface SliderTrackProps extends RenderProps<SliderState> {}
@@ -123,13 +127,13 @@ function SliderTrack(props: SliderTrackProps, ref: ForwardedRef<HTMLDivElement>)
     values: state
   });
 
-  return <div {...trackProps} {...renderProps} ref={domRef} />;
+  return <div {...mergeProps(filterDOMProps(props as any), trackProps)} {...renderProps} ref={domRef} />;
 }
 
 /**
  * A slider track is a container for one or more slider thumbs.
  */
-const _SliderTrack = forwardRef(SliderTrack);
+const _SliderTrack = /*#__PURE__*/ (forwardRef as forwardRefType)(SliderTrack);
 export {_SliderTrack as SliderTrack};
 
 export interface SliderThumbRenderProps {
@@ -186,9 +190,12 @@ function SliderThumb(props: SliderThumbProps, ref: ForwardedRef<HTMLDivElement>)
     values: {state, isHovered, isDragging, isFocused, isFocusVisible, isDisabled}
   });
 
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
+
   return (
     <div
-      {...mergeProps(thumbProps, hoverProps)}
+      {...mergeProps(DOMProps, thumbProps, hoverProps)}
       {...renderProps}
       ref={ref}
       style={{...thumbProps.style, ...renderProps.style}}
@@ -213,5 +220,5 @@ function SliderThumb(props: SliderThumbProps, ref: ForwardedRef<HTMLDivElement>)
 /**
  * A slider thumb represents an individual value that the user can adjust within a slider track.
  */
-const _SliderThumb = forwardRef(SliderThumb);
+const _SliderThumb = /*#__PURE__*/ (forwardRef as forwardRefType)(SliderThumb);
 export {_SliderThumb as SliderThumb};

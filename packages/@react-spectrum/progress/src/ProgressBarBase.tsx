@@ -13,9 +13,8 @@
 import {clamp} from '@react-aria/utils';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {ProgressBarProps} from '@react-types/progress';
+import {ProgressBarProps, SpectrumProgressBarBaseProps} from '@react-types/progress';
 import React, {CSSProperties, HTMLAttributes} from 'react';
-import {SpectrumProgressBarBaseProps} from '@react-types/progress';
 import styles from '@adobe/spectrum-css-temp/components/barloader/vars.css';
 
 interface ProgressBarBaseProps extends SpectrumProgressBarBaseProps, ProgressBarProps {

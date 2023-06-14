@@ -68,7 +68,7 @@ set by the drag source as a guideline.
   <figcaption style={{fontStyle: 'italic'}}>The "root", "on", and "between" drop positions.</figcaption>
 </figure>
 
-Collection components, such as ListView, support multiple **drop positions**. The component may support a `"root"` drop position, allowing items to be dropped on the collection as a whole.
+Collection components, such as ListView and TableView, support multiple **drop positions**. The component may support a `"root"` drop position, allowing items to be dropped on the collection as a whole.
 It may also support `"on"` drop positions, such as when dropping into a folder in a list. If the collection allows reordering of its items, it could support `"between"` drop positions, allowing the
 user to insert or move items between other items. Any number of these drop positions can be allowed at the same time and the component can use the types of the dragged items to selectively allow or disallow certain positions.
 
@@ -508,3 +508,4 @@ to your draggable collection's `onDragEnd` handler, letting the draggable collec
 
 The following list shows which components currently support drag and drop. Common drag and drop implementations are included in each component's documentation so definitely take a look!
 -  [ListView](ListView.html#drag-and-drop)
+-  [TableView](TableView.html#drag-and-drop)

@@ -258,7 +258,10 @@ class DragSession {
       return;
     }
 
-    let dropTarget = this.validDropTargets.find(target => target.element.contains(e.target as HTMLElement));
+    let dropTarget =
+      this.validDropTargets.find(target => target.element === e.target as HTMLElement) ||
+      this.validDropTargets.find(target => target.element.contains(e.target as HTMLElement));
+
     if (!dropTarget) {
       if (this.currentDropTarget) {
         this.currentDropTarget.element.focus();
@@ -498,6 +501,7 @@ class DragSession {
 
   end() {
     this.teardown();
+    endDragging();
 
     if (typeof this.dragTarget.onDragEnd === 'function') {
       let target = this.currentDropTarget && this.dropOperation !== 'cancel' ? this.currentDropTarget : this.dragTarget;
@@ -526,10 +530,10 @@ class DragSession {
     }
 
     this.setCurrentDropTarget(null);
-    endDragging();
   }
 
   cancel() {
+    this.setCurrentDropTarget(null);
     this.end();
     if (!this.dragTarget.element.closest('[aria-hidden="true"]')) {
       this.dragTarget.element.focus();
