@@ -47,7 +47,7 @@ import {RootDropIndicator} from './RootDropIndicator';
 import {DragPreview as SpectrumDragPreview} from './DragPreview';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
-import {TableColumnLayout, TableState, useTreeGridState} from '@react-stately/table';
+import {TableColumnLayout, TreeGridState, useTreeGridState} from '@react-stately/table';
 import {TableLayout} from '@react-stately/layout';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {useButton} from '@react-aria/button';
@@ -101,14 +101,14 @@ const DRAG_BUTTON_CELL_DEFAULT_WIDTH = {
 };
 
 interface TableContextValue<T> {
-  state: TableState<T>,
+  state: TreeGridState<T>,
   dragState: DraggableCollectionState,
   dropState: DroppableCollectionState,
   dragAndDropHooks: DragAndDropHooks['dragAndDropHooks'],
   isTableDraggable: boolean,
   isTableDroppable: boolean,
   shouldShowCheckboxes: boolean,
-  layout: TableLayout<T> & {tableState: TableState<T>},
+  layout: TableLayout<T> & {tableState: TreeGridState<T>},
   headerRowHovered: boolean,
   isInResizeMode: boolean,
   setIsInResizeMode: (val: boolean) => void,
@@ -118,7 +118,8 @@ interface TableContextValue<T> {
   onResize: (widths: Map<Key, ColumnSize>) => void,
   onResizeEnd: (widths: Map<Key, ColumnSize>) => void,
   headerMenuOpen: boolean,
-  setHeaderMenuOpen: (val: boolean) => void
+  setHeaderMenuOpen: (val: boolean) => void,
+  toggleKey: (key: Key) => void
 }
 
 const TableContext = React.createContext<TableContextValue<unknown>>(null);
@@ -285,7 +286,7 @@ function TableView<T extends object>(props: SpectrumTreeGridProps<T>, ref: DOMRe
         return prop === 'tableState' ? state : Reflect.get(target, prop, receiver);
       }
     });
-    return proxy as TableLayout<T> & {tableState: TableState<T>};
+    return proxy as TableLayout<T> & {tableState: TreeGridState<T>};
   }, [state, tableLayout]);
 
   let dragState: DraggableCollectionState;
@@ -429,7 +430,7 @@ function TableView<T extends object>(props: SpectrumTreeGridProps<T>, ref: DOMRe
           return <TableDragCell cell={item} />;
         }
 
-        return <TableCell cell={item} toggleKey={state.toggleKey} isExpanded={state.expandedKeys === 'all' || state.expandedKeys.has(item.parentKey)} density={density} scale={scale} />;
+        return <TableCell cell={item} density={density} scale={scale} />;
       }
       case 'placeholder':
         // TODO: move to react-aria?
@@ -531,7 +532,7 @@ function TableView<T extends object>(props: SpectrumTreeGridProps<T>, ref: DOMRe
   );
   // console.log('collection', state.collection)
   return (
-    <TableContext.Provider value={{state, dragState, dropState, dragAndDropHooks, isTableDraggable, isTableDroppable, layout, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, headerMenuOpen, setHeaderMenuOpen, shouldShowCheckboxes}}>
+    <TableContext.Provider value={{state, dragState, dropState, dragAndDropHooks, isTableDraggable, isTableDroppable, layout, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, headerMenuOpen, setHeaderMenuOpen, shouldShowCheckboxes, toggleKey: state.toggleKey}}>
       <TableVirtualizer
         {...mergedProps}
         {...styleProps}
@@ -1388,8 +1389,8 @@ function TableCheckboxCell({cell}) {
   );
 }
 
-function TableCell({cell, toggleKey, isExpanded, density, scale}) {
-  let {state} = useTableContext();
+function TableCell({cell, density, scale}) {
+  let {state, toggleKey} = useTableContext();
   let ref = useRef();
   let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
   let isDisabled = state.disabledKeys.has(cell.parentKey);
@@ -1398,6 +1399,7 @@ function TableCell({cell, toggleKey, isExpanded, density, scale}) {
     isVirtualized: true
   }, state, ref);
   let showExpandCollapseButton = cell.index === 0 && (state.collection.getItem(cell.parentKey)?.props.childItems?.length > 0 || state.collection.getItem(cell.parentKey)?.props.children.length > state.collection.columnCount);
+  let isExpanded = showExpandCollapseButton && (state.expandedKeys === 'all' || state.expandedKeys.has(cell.parentKey));
   let levelOffset = (cell.level - (showExpandCollapseButton ? 1 : 2)) * 16 + 4;
   let {pressProps} = usePress({
     onPress: () => toggleKey(cell.parentKey)
