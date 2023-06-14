@@ -193,7 +193,7 @@ A `<TagList>` is a list of tags within a `<TagGroup>`.
 
 ### Tag
 
-An `<Tag>` defines a single item within a `<TagList>`.
+An `<Tag>` defines a single item within a `<TagList>`. If the children are not plain text, then the `textValue` prop must also be set to a plain text representation for accessibility.
 
 <PropTable component={docs.exports.Tag} links={docs.links} />
 
@@ -311,11 +311,12 @@ function MyTagGroup<T extends object>({label, description, errorMessage, items, 
   );
 }
 
-function MyTag(props: TagProps) {
+function MyTag({children, ...props}: TagProps) {
+  let textValue = typeof children === 'string' ? children : undefined;
   return (
-    <Tag {...props}>
+    <Tag textValue={textValue} {...props}>
       {({allowsRemoving}) => (<>
-        {props.children}
+        {children}
         {allowsRemoving && <Button slot="remove">ⓧ</Button>}
       </>)}
     </Tag>

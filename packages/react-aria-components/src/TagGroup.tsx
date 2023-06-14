@@ -17,7 +17,7 @@ import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps
 import {filterDOMProps, mergeProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {LabelContext} from './Label';
 import {ListState, Node, useListState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, Key, ReactNode, RefObject, useContext, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, Key, ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface TagGroupProps extends Omit<AriaTagGroupProps<unknown>, 'children' | 'items' | 'label' | 'description' | 'errorMessage' | 'keyboardDelegate'>, DOMProps, SlotProps {}
@@ -171,7 +171,13 @@ export interface TagRenderProps extends Omit<ItemRenderProps, 'allowsDragging' |
 }
 
 export interface TagProps extends RenderProps<TagRenderProps> {
-  id?: Key
+  /** A unique id for the tag. */
+  id?: Key,
+  /**
+   * A string representation of the tags's contents, used for accessibility.
+   * Required if children is not a plain text string.
+   */
+  textValue?: string
 }
 
 function Tag(props: TagProps, ref: ForwardedRef<HTMLDivElement>) {
@@ -209,6 +215,12 @@ function TagItem({item}) {
       selectionBehavior: state.selectionManager.selectionBehavior
     }
   });
+
+  useEffect(() => {
+    if (!item.textValue) {
+      console.warn('A `textValue` prop is required for <Tag> elements with non-plain text children for accessibility.');
+    }
+  }, [item.textValue]);
 
   return (
     <div

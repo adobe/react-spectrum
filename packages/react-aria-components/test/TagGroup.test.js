@@ -29,7 +29,7 @@ let TestTagGroup = ({tagGroupProps, tagListProps, itemProps}) => (
 );
 
 let RemovableTag = (props) => (
-  <Tag {...props}>
+  <Tag textValue={props.children} {...props}>
     {({allowsRemoving}) => (
       <>
         {props.children}
