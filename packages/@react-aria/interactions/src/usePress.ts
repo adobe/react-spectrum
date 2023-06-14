@@ -16,11 +16,10 @@
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
 import {disableTextSelection, restoreTextSelection} from './textSelection';
-import {focusWithoutScrolling, mergeProps, useGlobalListeners, useSyncRef} from '@react-aria/utils';
-import {HTMLAttributes, RefObject, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {isVirtualClick} from './utils';
-import {PointerType, PressEvents} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, PointerType, PressEvents} from '@react-types/shared';
+import {focusWithoutScrolling, isVirtualClick, isVirtualPointerEvent, mergeProps, useEffectEvent, useGlobalListeners, useSyncRef} from '@react-aria/utils';
 import {PressResponderContext} from './context';
+import {RefObject, useContext, useEffect, useMemo, useRef, useState} from 'react';
 
 export interface PressProps extends PressEvents {
   /** Whether the target is in a controlled press state (e.g. an overlay it triggers is open). */
@@ -42,7 +41,7 @@ export interface PressProps extends PressEvents {
 
 export interface PressHookProps extends PressProps {
   /** A ref to the target element. */
-  ref?: RefObject<HTMLElement>
+  ref?: RefObject<Element>
 }
 
 interface PressState {
@@ -51,7 +50,7 @@ interface PressState {
   ignoreClickAfterPress: boolean,
   didFirePressStart: boolean,
   activePointerId: any,
-  target: HTMLElement | null,
+  target: FocusableElement | null,
   isOverTarget: boolean,
   pointerType: PointerType,
   userSelect?: string
@@ -69,7 +68,7 @@ export interface PressResult {
   /** Whether the target is currently pressed. */
   isPressed: boolean,
   /** Props to spread on the target element. */
-  pressProps: HTMLAttributes<HTMLElement>
+  pressProps: DOMAttributes
 }
 
 function usePressResponderContext(props: PressHookProps): PressHookProps {
@@ -103,11 +102,9 @@ export function usePress(props: PressHookProps): PressResult {
     shouldCancelOnPointerExit,
     allowTextSelectionOnPress,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    ref: _, // Removing `ref` from `domProps` because TypeScript is dumb,
+    ref: _, // Removing `ref` from `domProps` because TypeScript is dumb
     ...domProps
   } = usePressResponderContext(props);
-  let propsRef = useRef<PressHookProps>(null);
-  propsRef.current = {onPress, onPressChange, onPressStart, onPressEnd, onPressUp, isDisabled, shouldCancelOnPointerExit};
 
   let [isPressed, setPressed] = useState(false);
   let ref = useRef<PressState>({
@@ -123,120 +120,128 @@ export function usePress(props: PressHookProps): PressResult {
 
   let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
 
+  let triggerPressStart = useEffectEvent((originalEvent: EventBase, pointerType: PointerType) => {
+    let state = ref.current;
+    if (isDisabled || state.didFirePressStart) {
+      return;
+    }
+
+    if (onPressStart) {
+      onPressStart({
+        type: 'pressstart',
+        pointerType,
+        target: originalEvent.currentTarget as Element,
+        shiftKey: originalEvent.shiftKey,
+        metaKey: originalEvent.metaKey,
+        ctrlKey: originalEvent.ctrlKey,
+        altKey: originalEvent.altKey
+      });
+    }
+
+    if (onPressChange) {
+      onPressChange(true);
+    }
+
+    state.didFirePressStart = true;
+    setPressed(true);
+  });
+
+  let triggerPressEnd = useEffectEvent((originalEvent: EventBase, pointerType: PointerType, wasPressed = true) => {
+    let state = ref.current;
+    if (!state.didFirePressStart) {
+      return;
+    }
+
+    state.ignoreClickAfterPress = true;
+    state.didFirePressStart = false;
+
+    if (onPressEnd) {
+      onPressEnd({
+        type: 'pressend',
+        pointerType,
+        target: originalEvent.currentTarget as Element,
+        shiftKey: originalEvent.shiftKey,
+        metaKey: originalEvent.metaKey,
+        ctrlKey: originalEvent.ctrlKey,
+        altKey: originalEvent.altKey
+      });
+    }
+
+    if (onPressChange) {
+      onPressChange(false);
+    }
+
+    setPressed(false);
+
+    if (onPress && wasPressed && !isDisabled) {
+      onPress({
+        type: 'press',
+        pointerType,
+        target: originalEvent.currentTarget as Element,
+        shiftKey: originalEvent.shiftKey,
+        metaKey: originalEvent.metaKey,
+        ctrlKey: originalEvent.ctrlKey,
+        altKey: originalEvent.altKey
+      });
+    }
+  });
+
+  let triggerPressUp = useEffectEvent((originalEvent: EventBase, pointerType: PointerType) => {
+    if (isDisabled) {
+      return;
+    }
+
+    if (onPressUp) {
+      onPressUp({
+        type: 'pressup',
+        pointerType,
+        target: originalEvent.currentTarget as Element,
+        shiftKey: originalEvent.shiftKey,
+        metaKey: originalEvent.metaKey,
+        ctrlKey: originalEvent.ctrlKey,
+        altKey: originalEvent.altKey
+      });
+    }
+  });
+
+  let cancel = useEffectEvent((e: EventBase) => {
+    let state = ref.current;
+    if (state.isPressed) {
+      if (state.isOverTarget) {
+        triggerPressEnd(createEvent(state.target, e), state.pointerType, false);
+      }
+      state.isPressed = false;
+      state.isOverTarget = false;
+      state.activePointerId = null;
+      state.pointerType = null;
+      removeAllGlobalListeners();
+      if (!allowTextSelectionOnPress) {
+        restoreTextSelection(state.target);
+      }
+    }
+  });
+
+  let cancelOnPointerExit = useEffectEvent((e: EventBase) => {
+    if (shouldCancelOnPointerExit) {
+      cancel(e);
+    }
+  });
+
   let pressProps = useMemo(() => {
     let state = ref.current;
-    let triggerPressStart = (originalEvent: EventBase, pointerType: PointerType) => {
-      let {onPressStart, onPressChange, isDisabled} = propsRef.current;
-      if (isDisabled || state.didFirePressStart) {
-        return;
-      }
-
-      if (onPressStart) {
-        onPressStart({
-          type: 'pressstart',
-          pointerType,
-          target: originalEvent.currentTarget as HTMLElement,
-          shiftKey: originalEvent.shiftKey,
-          metaKey: originalEvent.metaKey,
-          ctrlKey: originalEvent.ctrlKey,
-          altKey: originalEvent.altKey
-        });
-      }
-
-      if (onPressChange) {
-        onPressChange(true);
-      }
-
-      state.didFirePressStart = true;
-      setPressed(true);
-    };
-
-    let triggerPressEnd = (originalEvent: EventBase, pointerType: PointerType, wasPressed = true) => {
-      let {onPressEnd, onPressChange, onPress, isDisabled} = propsRef.current;
-      if (!state.didFirePressStart) {
-        return;
-      }
-
-      state.ignoreClickAfterPress = true;
-      state.didFirePressStart = false;
-
-      if (onPressEnd) {
-        onPressEnd({
-          type: 'pressend',
-          pointerType,
-          target: originalEvent.currentTarget as HTMLElement,
-          shiftKey: originalEvent.shiftKey,
-          metaKey: originalEvent.metaKey,
-          ctrlKey: originalEvent.ctrlKey,
-          altKey: originalEvent.altKey
-        });
-      }
-
-      if (onPressChange) {
-        onPressChange(false);
-      }
-
-      setPressed(false);
-
-      if (onPress && wasPressed && !isDisabled) {
-        onPress({
-          type: 'press',
-          pointerType,
-          target: originalEvent.currentTarget as HTMLElement,
-          shiftKey: originalEvent.shiftKey,
-          metaKey: originalEvent.metaKey,
-          ctrlKey: originalEvent.ctrlKey,
-          altKey: originalEvent.altKey
-        });
-      }
-    };
-
-    let triggerPressUp = (originalEvent: EventBase, pointerType: PointerType) => {
-      let {onPressUp, isDisabled} = propsRef.current;
-      if (isDisabled) {
-        return;
-      }
-
-      if (onPressUp) {
-        onPressUp({
-          type: 'pressup',
-          pointerType,
-          target: originalEvent.currentTarget as HTMLElement,
-          shiftKey: originalEvent.shiftKey,
-          metaKey: originalEvent.metaKey,
-          ctrlKey: originalEvent.ctrlKey,
-          altKey: originalEvent.altKey
-        });
-      }
-    };
-
-    let cancel = (e: EventBase) => {
-      if (state.isPressed) {
-        if (state.isOverTarget) {
-          triggerPressEnd(createEvent(state.target, e), state.pointerType, false);
-        }
-        state.isPressed = false;
-        state.isOverTarget = false;
-        state.activePointerId = null;
-        state.pointerType = null;
-        removeAllGlobalListeners();
-        if (!allowTextSelectionOnPress) {
-          restoreTextSelection(state.target);
-        }
-      }
-    };
-
-    let pressProps: HTMLAttributes<HTMLElement> = {
+    let pressProps: DOMAttributes = {
       onKeyDown(e) {
-        if (isValidKeyboardEvent(e.nativeEvent) && e.currentTarget.contains(e.target as HTMLElement)) {
-          e.preventDefault();
+        if (isValidKeyboardEvent(e.nativeEvent, e.currentTarget) && e.currentTarget.contains(e.target as Element)) {
+          if (shouldPreventDefaultKeyboard(e.target as Element, e.key)) {
+            e.preventDefault();
+          }
           e.stopPropagation();
 
           // If the event is repeating, it may have started on a different element
           // after which focus moved to the current element. Ignore these events and
           // only handle the first key down event.
           if (!state.isPressed && !e.repeat) {
-            state.target = e.currentTarget as HTMLElement;
+            state.target = e.currentTarget;
             state.isPressed = true;
             triggerPressStart(e, 'keyboard');
 
@@ -244,15 +249,20 @@ export function usePress(props: PressHookProps): PressResult {
             // instead of the same element where the key down event occurred.
             addGlobalListener(document, 'keyup', onKeyUp, false);
           }
+        } else if (e.key === 'Enter' && isHTMLAnchorLink(e.currentTarget)) {
+          // If the target is a link, we won't have handled this above because we want the default
+          // browser behavior to open the link when pressing Enter. But we still need to prevent
+          // default so that elements above do not also handle it (e.g. table row).
+          e.stopPropagation();
         }
       },
       onKeyUp(e) {
-        if (isValidKeyboardEvent(e.nativeEvent) && !e.repeat && e.currentTarget.contains(e.target as HTMLElement)) {
+        if (isValidKeyboardEvent(e.nativeEvent, e.currentTarget) && !e.repeat && e.currentTarget.contains(e.target as Element)) {
           triggerPressUp(createEvent(state.target, e), 'keyboard');
         }
       },
       onClick(e) {
-        if (e && !e.currentTarget.contains(e.target as HTMLElement)) {
+        if (e && !e.currentTarget.contains(e.target as Element)) {
           return;
         }
 
@@ -282,18 +292,20 @@ export function usePress(props: PressHookProps): PressResult {
     };
 
     let onKeyUp = (e: KeyboardEvent) => {
-      if (state.isPressed && isValidKeyboardEvent(e)) {
-        e.preventDefault();
+      if (state.isPressed && isValidKeyboardEvent(e, state.target)) {
+        if (shouldPreventDefaultKeyboard(e.target as Element, e.key)) {
+          e.preventDefault();
+        }
         e.stopPropagation();
 
         state.isPressed = false;
-        let target = e.target as HTMLElement;
+        let target = e.target as Element;
         triggerPressEnd(createEvent(state.target, e), 'keyboard', state.target.contains(target));
         removeAllGlobalListeners();
 
         // If the target is a link, trigger the click method to open the URL,
         // but defer triggering pressEnd until onClick event handler.
-        if (state.target.contains(target) && isHTMLAnchorLink(state.target) || state.target.getAttribute('role') === 'link') {
+        if (state.target instanceof HTMLElement && state.target.contains(target) && (isHTMLAnchorLink(state.target) || state.target.getAttribute('role') === 'link')) {
           state.target.click();
         }
       }
@@ -302,7 +314,7 @@ export function usePress(props: PressHookProps): PressResult {
     if (typeof PointerEvent !== 'undefined') {
       pressProps.onPointerDown = (e) => {
         // Only handle left clicks, and ignore events that bubbled through portals.
-        if (e.button !== 0 || !e.currentTarget.contains(e.target as HTMLElement)) {
+        if (e.button !== 0 || !e.currentTarget.contains(e.target as Element)) {
           return;
         }
 
@@ -317,7 +329,7 @@ export function usePress(props: PressHookProps): PressResult {
 
         // Due to browser inconsistencies, especially on mobile browsers, we prevent
         // default on pointer down and handle focusing the pressable element ourselves.
-        if (shouldPreventDefault(e.target as Element)) {
+        if (shouldPreventDefault(e.currentTarget as Element)) {
           e.preventDefault();
         }
 
@@ -347,7 +359,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onMouseDown = (e) => {
-        if (!e.currentTarget.contains(e.target as HTMLElement)) {
+        if (!e.currentTarget.contains(e.target as Element)) {
           return;
         }
 
@@ -355,7 +367,7 @@ export function usePress(props: PressHookProps): PressResult {
           // Chrome and Firefox on touch Windows devices require mouse down events
           // to be canceled in addition to pointer events, or an extra asynchronous
           // focus event will be fired.
-          if (shouldPreventDefault(e.target as Element)) {
+          if (shouldPreventDefault(e.currentTarget as Element)) {
             e.preventDefault();
           }
 
@@ -365,7 +377,7 @@ export function usePress(props: PressHookProps): PressResult {
 
       pressProps.onPointerUp = (e) => {
         // iOS fires pointerup with zero width and height, so check the pointerType recorded during pointerdown.
-        if (!e.currentTarget.contains(e.target as HTMLElement) || state.pointerType === 'virtual') {
+        if (!e.currentTarget.contains(e.target as Element) || state.pointerType === 'virtual') {
           return;
         }
 
@@ -393,9 +405,7 @@ export function usePress(props: PressHookProps): PressResult {
         } else if (state.isOverTarget) {
           state.isOverTarget = false;
           triggerPressEnd(createEvent(state.target, e), state.pointerType, false);
-          if (propsRef.current.shouldCancelOnPointerExit) {
-            cancel(e);
-          }
+          cancelOnPointerExit(e);
         }
       };
 
@@ -423,7 +433,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onDragStart = (e) => {
-        if (!e.currentTarget.contains(e.target as HTMLElement)) {
+        if (!e.currentTarget.contains(e.target as Element)) {
           return;
         }
 
@@ -433,13 +443,13 @@ export function usePress(props: PressHookProps): PressResult {
     } else {
       pressProps.onMouseDown = (e) => {
         // Only handle left clicks
-        if (e.button !== 0 || !e.currentTarget.contains(e.target as HTMLElement)) {
+        if (e.button !== 0 || !e.currentTarget.contains(e.target as Element)) {
           return;
         }
 
         // Due to browser inconsistencies, especially on mobile browsers, we prevent
         // default on mouse down and handle focusing the pressable element ourselves.
-        if (shouldPreventDefault(e.target as Element)) {
+        if (shouldPreventDefault(e.currentTarget)) {
           e.preventDefault();
         }
 
@@ -463,7 +473,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onMouseEnter = (e) => {
-        if (!e.currentTarget.contains(e.target as HTMLElement)) {
+        if (!e.currentTarget.contains(e.target as Element)) {
           return;
         }
 
@@ -475,7 +485,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onMouseLeave = (e) => {
-        if (!e.currentTarget.contains(e.target as HTMLElement)) {
+        if (!e.currentTarget.contains(e.target as Element)) {
           return;
         }
 
@@ -483,14 +493,12 @@ export function usePress(props: PressHookProps): PressResult {
         if (state.isPressed && !state.ignoreEmulatedMouseEvents) {
           state.isOverTarget = false;
           triggerPressEnd(e, state.pointerType, false);
-          if (propsRef.current.shouldCancelOnPointerExit) {
-            cancel(e);
-          }
+          cancelOnPointerExit(e);
         }
       };
 
       pressProps.onMouseUp = (e) => {
-        if (!e.currentTarget.contains(e.target as HTMLElement)) {
+        if (!e.currentTarget.contains(e.target as Element)) {
           return;
         }
 
@@ -523,7 +531,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onTouchStart = (e) => {
-        if (!e.currentTarget.contains(e.target as HTMLElement)) {
+        if (!e.currentTarget.contains(e.target as Element)) {
           return;
         }
 
@@ -555,7 +563,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onTouchMove = (e) => {
-        if (!e.currentTarget.contains(e.target as HTMLElement)) {
+        if (!e.currentTarget.contains(e.target as Element)) {
           return;
         }
 
@@ -573,14 +581,12 @@ export function usePress(props: PressHookProps): PressResult {
         } else if (state.isOverTarget) {
           state.isOverTarget = false;
           triggerPressEnd(e, state.pointerType, false);
-          if (propsRef.current.shouldCancelOnPointerExit) {
-            cancel(e);
-          }
+          cancelOnPointerExit(e);
         }
       };
 
       pressProps.onTouchEnd = (e) => {
-        if (!e.currentTarget.contains(e.target as HTMLElement)) {
+        if (!e.currentTarget.contains(e.target as Element)) {
           return;
         }
 
@@ -608,7 +614,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onTouchCancel = (e) => {
-        if (!e.currentTarget.contains(e.target as HTMLElement)) {
+        if (!e.currentTarget.contains(e.target as Element)) {
           return;
         }
 
@@ -619,7 +625,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       let onScroll = (e: Event) => {
-        if (state.isPressed && (e.target as HTMLElement).contains(state.target)) {
+        if (state.isPressed && (e.target as Element).contains(state.target)) {
           cancel({
             currentTarget: state.target,
             shiftKey: false,
@@ -631,7 +637,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onDragStart = (e) => {
-        if (!e.currentTarget.contains(e.target as HTMLElement)) {
+        if (!e.currentTarget.contains(e.target as Element)) {
           return;
         }
 
@@ -640,13 +646,25 @@ export function usePress(props: PressHookProps): PressResult {
     }
 
     return pressProps;
-  }, [addGlobalListener, isDisabled, preventFocusOnPress, removeAllGlobalListeners, allowTextSelectionOnPress]);
+  }, [
+    addGlobalListener,
+    isDisabled,
+    preventFocusOnPress,
+    removeAllGlobalListeners,
+    allowTextSelectionOnPress,
+    cancel,
+    cancelOnPointerExit,
+    triggerPressEnd,
+    triggerPressStart,
+    triggerPressUp
+  ]);
 
   // Remove user-select: none in case component unmounts immediately after pressStart
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
     return () => {
       if (!allowTextSelectionOnPress) {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         restoreTextSelection(ref.current.target);
       }
     };
@@ -658,22 +676,21 @@ export function usePress(props: PressHookProps): PressResult {
   };
 }
 
-function isHTMLAnchorLink(target: HTMLElement): boolean {
+function isHTMLAnchorLink(target: Element): boolean {
   return target.tagName === 'A' && target.hasAttribute('href');
 }
 
-function isValidKeyboardEvent(event: KeyboardEvent): boolean {
-  const {key, code, target} = event;
-  const element = target as HTMLElement;
-  const {tagName, isContentEditable} = element;
+function isValidKeyboardEvent(event: KeyboardEvent, currentTarget: Element): boolean {
+  const {key, code} = event;
+  const element = currentTarget as HTMLElement;
   const role = element.getAttribute('role');
   // Accessibility for keyboards. Space and Enter only.
   // "Spacebar" is for IE 11
   return (
     (key === 'Enter' || key === ' ' || key === 'Spacebar' || code === 'Space') &&
-    (tagName !== 'INPUT' &&
-      tagName !== 'TEXTAREA' &&
-      isContentEditable !== true) &&
+    !((element instanceof HTMLInputElement && !isValidInputKey(element, key)) ||
+      element instanceof HTMLTextAreaElement ||
+      element.isContentEditable) &&
     // A link with a valid href should be handled natively,
     // unless it also has role='button' and was triggered using Space.
     (!isHTMLAnchorLink(element) || (role === 'button' && key !== 'Enter')) &&
@@ -704,7 +721,7 @@ function getTouchById(
   return null;
 }
 
-function createEvent(target: HTMLElement, e: EventBase): EventBase {
+function createEvent(target: FocusableElement, e: EventBase): EventBase {
   return {
     currentTarget: target,
     shiftKey: e.shiftKey,
@@ -754,29 +771,44 @@ function areRectanglesOverlapping(a: Rect, b: Rect) {
   return true;
 }
 
-function isOverTarget(point: EventPoint, target: HTMLElement) {
+function isOverTarget(point: EventPoint, target: Element) {
   let rect = target.getBoundingClientRect();
   let pointRect = getPointClientRect(point);
   return areRectanglesOverlapping(rect, pointRect);
 }
 
 function shouldPreventDefault(target: Element) {
-  // We cannot prevent default if the target is inside a draggable element.
-  return !target.closest('[draggable="true"]');
+  // We cannot prevent default if the target is a draggable element.
+  return !(target instanceof HTMLElement) || !target.draggable;
 }
 
-function isVirtualPointerEvent(event: PointerEvent) {
-  // If the pointer size is zero, then we assume it's from a screen reader.
-  // Android TalkBack double tap will sometimes return a event with width and height of 1
-  // and pointerType === 'mouse' so we need to check for a specific combination of event attributes.
-  // Cannot use "event.pressure === 0" as the sole check due to Safari pointer events always returning pressure === 0
-  // instead of .5, see https://bugs.webkit.org/show_bug.cgi?id=206216
-  return (
-    (event.width === 0 && event.height === 0) ||
-    (event.width === 1 &&
-      event.height === 1 &&
-      event.pressure === 0 &&
-      event.detail === 0
-    )
-  );
+function shouldPreventDefaultKeyboard(target: Element, key: string) {
+  if (target instanceof HTMLInputElement) {
+    return !isValidInputKey(target, key);
+  }
+
+  if (target instanceof HTMLButtonElement) {
+    return target.type !== 'submit';
+  }
+
+  return true;
+}
+
+const nonTextInputTypes = new Set([
+  'checkbox',
+  'radio',
+  'range',
+  'color',
+  'file',
+  'image',
+  'button',
+  'submit',
+  'reset'
+]);
+
+function isValidInputKey(target: HTMLInputElement, key: string) {
+  // Only space should toggle checkboxes and radios, not enter.
+  return target.type === 'checkbox' || target.type === 'radio'
+    ? key === ' '
+    : nonTextInputTypes.has(target.type);
 }

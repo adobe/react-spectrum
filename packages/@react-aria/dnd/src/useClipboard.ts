@@ -10,21 +10,26 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain} from '@react-aria/utils';
-import {DragItem, DropItem} from '@react-types/shared';
-import {HTMLAttributes, useEffect, useRef} from 'react';
+import {chain, useEffectEvent} from '@react-aria/utils';
+import {DOMAttributes, DragItem, DropItem} from '@react-types/shared';
 import {readFromDataTransfer, writeToDataTransfer} from './utils';
+import {useEffect, useRef} from 'react';
 import {useFocus} from '@react-aria/interactions';
 
-interface ClipboardProps {
+export interface ClipboardProps {
+  /** A function that returns the items to copy. */
   getItems?: () => DragItem[],
+  /** Handler that is called when the user triggers a copy interaction. */
   onCopy?: () => void,
+  /** Handler that is called when the user triggers a cut interaction. */
   onCut?: () => void,
+  /** Handler that is called when the user triggers a paste interaction. */
   onPaste?: (items: DropItem[]) => void
 }
 
-interface ClipboardResult {
-  clipboardProps: HTMLAttributes<HTMLElement>
+export interface ClipboardResult {
+  /** Props for the element that will handle clipboard events. */
+  clipboardProps: DOMAttributes
 }
 
 const globalEvents = new Map();
@@ -54,10 +59,11 @@ function addGlobalEventListener(event, fn) {
   };
 }
 
+/**
+ * Handles clipboard interactions for a focusable element. Supports items of multiple
+ * data types, and integrates with the operating system native clipboard.
+ */
 export function useClipboard(options: ClipboardProps): ClipboardResult {
-  let ref = useRef(options);
-  ref.current = options;
-
   let isFocusedRef = useRef(false);
   let {focusProps} = useFocus({
     onFocusChange: (isFocused) => {
@@ -65,64 +71,58 @@ export function useClipboard(options: ClipboardProps): ClipboardResult {
     }
   });
 
+  let onBeforeCopy = useEffectEvent((e: ClipboardEvent) => {
+    // Enable the "Copy" menu item in Safari if this element is focused and copying is supported.
+    if (isFocusedRef.current && options.getItems) {
+      e.preventDefault();
+    }
+  });
+
+  let onCopy = useEffectEvent((e: ClipboardEvent) => {
+    if (!isFocusedRef.current || !options.getItems) {
+      return;
+    }
+
+    e.preventDefault();
+    writeToDataTransfer(e.clipboardData, options.getItems());
+    options.onCopy?.();
+  });
+
+  let onBeforeCut = useEffectEvent((e: ClipboardEvent) => {
+    if (isFocusedRef.current && options.onCut && options.getItems) {
+      e.preventDefault();
+    }
+  });
+
+  let onCut = useEffectEvent((e: ClipboardEvent) => {
+    if (!isFocusedRef.current || !options.onCut || !options.getItems) {
+      return;
+    }
+
+    e.preventDefault();
+    writeToDataTransfer(e.clipboardData, options.getItems());
+    options.onCut();
+  });
+
+  let onBeforePaste = useEffectEvent((e: ClipboardEvent) => {
+    // Unfortunately, e.clipboardData.types is not available in this event so we always
+    // have to enable the Paste menu item even if the type of data is unsupported.
+    if (isFocusedRef.current && options.onPaste) {
+      e.preventDefault();
+    }
+  });
+
+  let onPaste = useEffectEvent((e: ClipboardEvent) => {
+    if (!isFocusedRef.current || !options.onPaste) {
+      return;
+    }
+
+    e.preventDefault();
+    let items = readFromDataTransfer(e.clipboardData);
+    options.onPaste(items);
+  });
+
   useEffect(() => {
-    let onBeforeCopy = (e: ClipboardEvent) => {
-      // Enable the "Copy" menu item in Safari if this element is focused and copying is supported.
-      let options = ref.current;
-      if (isFocusedRef.current && options.getItems) {
-        e.preventDefault();
-      }
-    };
-
-    let onCopy = (e: ClipboardEvent) => {
-      let options = ref.current;
-      if (!isFocusedRef.current || !options.getItems) {
-        return;
-      }
-
-      e.preventDefault();
-      writeToDataTransfer(e.clipboardData, options.getItems());
-      options.onCopy?.();
-    };
-
-    let onBeforeCut = (e: ClipboardEvent) => {
-      let options = ref.current;
-      if (isFocusedRef.current && options.onCut && options.getItems) {
-        e.preventDefault();
-      }
-    };
-
-    let onCut = (e: ClipboardEvent) => {
-      let options = ref.current;
-      if (!isFocusedRef.current || !options.onCut || !options.getItems) {
-        return;
-      }
-
-      e.preventDefault();
-      writeToDataTransfer(e.clipboardData, options.getItems());
-      options.onCut();
-    };
-
-    let onBeforePaste = (e: ClipboardEvent) => {
-      let options = ref.current;
-      // Unfortunately, e.clipboardData.types is not available in this event so we always
-      // have to enable the Paste menu item even if the type of data is unsupported.
-      if (isFocusedRef.current && options.onPaste) {
-        e.preventDefault();
-      }
-    };
-
-    let onPaste = (e: ClipboardEvent) => {
-      let options = ref.current;
-      if (!isFocusedRef.current || !options.onPaste) {
-        return;
-      }
-
-      e.preventDefault();
-      let items = readFromDataTransfer(e.clipboardData);
-      options.onPaste(items);
-    };
-
     return chain(
       addGlobalEventListener('beforecopy', onBeforeCopy),
       addGlobalEventListener('copy', onCopy),
@@ -131,7 +131,7 @@ export function useClipboard(options: ClipboardProps): ClipboardResult {
       addGlobalEventListener('beforepaste', onBeforePaste),
       addGlobalEventListener('paste', onPaste)
     );
-  }, []);
+  }, [onBeforeCopy, onCopy, onBeforeCut, onCut, onBeforePaste, onPaste]);
 
   return {
     clipboardProps: focusProps

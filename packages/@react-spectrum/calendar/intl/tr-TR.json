@@ -1,0 +1,3 @@
+{
+  "invalidSelection": "Seçilen {selectedCount, plural, one {tarih} other {tarihler}} müsait değil."
+}

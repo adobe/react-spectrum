@@ -1,9 +1,5 @@
 {
   "calendar": "Calendrier",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "{start, date, long} au {end, date, long}",
-  "date": "Date",
-  "dateRange": "Plage de dates",
   "day": "jour",
   "dayPeriod": "cadran",
   "endDate": "Date de fin",
@@ -12,8 +8,11 @@
   "minute": "minute",
   "month": "mois",
   "second": "seconde",
+  "selectedDateDescription": "Date sélectionnée : {date}",
+  "selectedRangeDescription": "Plage sélectionnée : {startDate} au {endDate}",
+  "selectedTimeDescription": "Heure choisie : {time}",
   "startDate": "Date de début",
-  "year": "année",
+  "timeZoneName": "fuseau horaire",
   "weekday": "jour de la semaine",
-  "timeZoneName": "fuseau horaire"
+  "year": "année"
 }

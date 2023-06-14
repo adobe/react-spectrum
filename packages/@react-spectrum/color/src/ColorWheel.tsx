@@ -34,7 +34,7 @@ function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivEle
   let inputRef = useRef(null);
   let containerRef = useFocusableRef(ref, inputRef);
 
-  let [wheelRadius, setWheelRadius] = useState<number | null>(null);
+  let [wheelRadius, setWheelRadius] = useState<number>(0);
   let [wheelThickness, setWheelThickness] = useState(WHEEL_THICKNESS);
 
   let resizeHandler = useCallback(() => {
@@ -50,7 +50,7 @@ function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivEle
 
   useEffect(() => {
     // the size observer's fallback to the window resize event doesn't fire on mount
-    if (wheelRadius == null) {
+    if (wheelRadius === 0) {
       resizeHandler();
     }
   }, [wheelRadius, resizeHandler]);

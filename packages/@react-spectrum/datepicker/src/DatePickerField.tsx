@@ -13,11 +13,11 @@
 import {classNames} from '@react-spectrum/utils';
 import {createCalendar} from '@internationalized/date';
 import {DatePickerSegment} from './DatePickerSegment';
-import datepickerStyles from './index.css';
+import datepickerStyles from './styles.css';
 import {DateValue, SpectrumDatePickerProps} from '@react-types/datepicker';
 import React, {useRef} from 'react';
 import {useDateField} from '@react-aria/datepicker';
-import {useDatePickerFieldState} from '@react-stately/datepicker';
+import {useDateFieldState} from '@react-stately/datepicker';
 import {useLocale} from '@react-aria/i18n';
 
 interface DatePickerFieldProps<T extends DateValue> extends SpectrumDatePickerProps<T> {
@@ -35,7 +35,7 @@ export function DatePickerField<T extends DateValue>(props: DatePickerFieldProps
   } = props;
   let ref = useRef();
   let {locale} = useLocale();
-  let state = useDatePickerFieldState({
+  let state = useDateFieldState({
     ...props,
     locale,
     createCalendar
@@ -44,7 +44,7 @@ export function DatePickerField<T extends DateValue>(props: DatePickerFieldProps
   let {fieldProps} = useDateField(props, state, ref);
 
   return (
-    <div {...fieldProps} className={classNames(datepickerStyles, 'react-spectrum-Datepicker-segments', inputClassName)} ref={ref}>
+    <div {...fieldProps} data-testid={props['data-testid']} className={classNames(datepickerStyles, 'react-spectrum-Datepicker-segments', inputClassName)} ref={ref}>
       {state.segments.map((segment, i) =>
         (<DatePickerSegment
           key={i}

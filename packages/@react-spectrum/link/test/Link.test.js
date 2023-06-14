@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@react-spectrum/test-utils';
 import {Link} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -31,10 +31,6 @@ describe('Link', function () {
 
   beforeAll(() => {
     jest.useFakeTimers();
-  });
-
-  afterAll(() => {
-    jest.useRealTimers();
   });
 
   afterEach(() => {
@@ -73,14 +69,16 @@ describe('Link', function () {
   });
 
   it('Wraps custom child element', () => {
+    let ref = React.createRef();
     let {getByRole} = render(
       <Link UNSAFE_className="test-class" onPress={onPressSpy} >
-        <a href="#only-hash-in-jsdom" >Click me </a>
+        <a href="#only-hash-in-jsdom" ref={ref}>Click me </a>
       </Link>
     );
     let link = getByRole('link');
     expect(link).toBeDefined();
     expect(link.nodeName).toBe('A');
+    expect(ref.current).toBe(link);
     expect(link).toHaveAttribute('class', expect.stringContaining('test-class'));
     expect(link).toHaveAttribute('href', '#only-hash-in-jsdom');
     triggerPress(link);
@@ -103,10 +101,12 @@ describe('Link', function () {
   });
 
   it('supports autofocus', () => {
+    jest.useFakeTimers();
     let {getByRole} = render(<Link autoFocus>Click me</Link>);
-
+    act(() => {jest.runAllTimers();});
     let link = getByRole('link');
     expect(document.activeElement).toBe(link);
+    jest.useRealTimers();
   });
 
   it('supports a wrapping tooltip trigger', () => {

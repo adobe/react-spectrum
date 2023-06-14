@@ -9,6 +9,7 @@
   cursor: pointer;
   text-decoration: none;
   margin-right: 16px;
+  margin-bottom: 16px;
 
   &:hover {
     box-shadow: 0 0 0 1px var(--spectrum-global-color-gray-400);
@@ -24,11 +25,17 @@
     max-width: 100%;
     height: 150px;
     object-fit: contain;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
     background: white;
   }
 
-  .cardTitle {
+  svg {
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--anatomy-gray-200);
+  }
+
+  /* override specificity of spectrum-Body3 */
+  .cardTitle.cardTitle {
     font-weight: 700;
     margin: 0 12px;
   }

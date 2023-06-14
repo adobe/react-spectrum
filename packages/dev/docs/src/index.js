@@ -22,3 +22,5 @@ export * from './FunctionAPI';
 export * from './TypeLink';
 export * from './ClassAPI';
 export * from './PostListing';
+export * from './PageDescription';
+export * from './StateTable';

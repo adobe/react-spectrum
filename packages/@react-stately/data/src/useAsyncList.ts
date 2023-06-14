@@ -11,7 +11,7 @@
  */
 
 import {createListActions, ListData, ListState} from './useListData';
-import {Key, Reducer, useEffect, useReducer} from 'react';
+import {Key, Reducer, useEffect, useReducer, useRef} from 'react';
 import {LoadingState, Selection, SortDescriptor} from '@react-types/shared';
 
 export interface AsyncListOptions<T, C> {
@@ -32,7 +32,8 @@ export interface AsyncListOptions<T, C> {
   sort?: AsyncListLoadFunction<T, C>
 }
 
-type AsyncListLoadFunction<T, C> = (state: AsyncListLoadOptions<T, C>) => Promise<AsyncListStateUpdate<T, C>>;
+type AsyncListLoadFunction<T, C> = (state: AsyncListLoadOptions<T, C>) => AsyncListStateUpdate<T, C> | Promise<AsyncListStateUpdate<T, C>>;
+
 interface AsyncListLoadOptions<T, C> {
   /** The items currently in the list. */
   items: T[],
@@ -89,7 +90,7 @@ interface Action<T, C> {
   filterText?: string
 }
 
-interface AsyncListData<T> extends ListData<T> {
+export interface AsyncListData<T> extends ListData<T> {
   /** Whether data is currently being loaded. */
   isLoading: boolean,
   /** If loading data failed, then this contains the error that occurred. */
@@ -312,8 +313,12 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     }
   };
 
+  let didDispatchInitialFetch = useRef(false);
   useEffect(() => {
-    dispatchFetch({type: 'loading'}, load);
+    if (!didDispatchInitialFetch.current) {
+      dispatchFetch({type: 'loading'}, load);
+      didDispatchInitialFetch.current = true;
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

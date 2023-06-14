@@ -19,3 +19,11 @@ governing permissions and limitations under the License.
     opacity: var(--spectrum-avatar-small-opacity-disabled);
   }
 }
+@media (forced-colors: active) {
+  .spectrum-Avatar {
+    &.is-disabled {
+      opacity: 1;
+      border: 2px solid GrayText;
+    }
+  }
+}

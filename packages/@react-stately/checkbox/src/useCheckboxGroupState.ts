@@ -12,6 +12,7 @@
 
 import {CheckboxGroupProps} from '@react-types/checkbox';
 import {useControlledState} from '@react-stately/utils';
+import {ValidationState} from '@react-types/shared';
 
 export interface CheckboxGroupState {
   /** Current selected values. */
@@ -36,7 +37,10 @@ export interface CheckboxGroupState {
   removeValue(value: string): void,
 
   /** Toggles a value in the set of selected values. */
-  toggleValue(value: string): void
+  toggleValue(value: string): void,
+
+  /** The current validation state of the checkbox group. */
+  validationState: ValidationState
 }
 
 /**
@@ -64,35 +68,29 @@ export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxG
       if (props.isReadOnly || props.isDisabled) {
         return;
       }
-      setValue(values => {
-        if (!values.includes(value)) {
-          return values.concat(value);
-        }
-        return values;
-      });
+      if (!selectedValues.includes(value)) {
+        setValue(selectedValues.concat(value));
+      }
     },
     removeValue(value) {
       if (props.isReadOnly || props.isDisabled) {
         return;
       }
-      setValue(values => {
-        if (values.includes(value)) {
-          return values.filter(existingValue => existingValue !== value);
-        }
-        return values;
-      });
+      if (selectedValues.includes(value)) {
+        setValue(selectedValues.filter(existingValue => existingValue !== value));
+      }
     },
     toggleValue(value) {
       if (props.isReadOnly || props.isDisabled) {
         return;
       }
-      setValue(values => {
-        if (values.includes(value)) {
-          return values.filter(existingValue => existingValue !== value);
-        }
-        return values.concat(value);
-      });
-    }
+      if (selectedValues.includes(value)) {
+        setValue(selectedValues.filter(existingValue => existingValue !== value));
+      } else {
+        setValue(selectedValues.concat(value));
+      }
+    },
+    validationState: props.validationState
   };
 
   return state;

@@ -1,17 +1,17 @@
-<!-- Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. -->
+governing permissions and limitations under the License. */}
 
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/numberfield';
-import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/numberfield/package.json';
 
 ```jsx import
@@ -26,12 +26,13 @@ keywords: [number field, input]
 
 # NumberField
 
-<p>{docs.exports.NumberField.description}</p>
+<PageDescription>{docs.exports.NumberField.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
   componentNames={['NumberField']}
-  sourceData={[]} />
+  sourceData={[]}
+  since="3.10.0" />
 
 ## Example
 
@@ -235,7 +236,7 @@ For a full list of supported events, see the [Props](#props) table below.
 The example below uses `onChange` to update a separate `pre` element with the same values entered into the NumberField.
 ```tsx example
 function Example() {
-  let [value, setValue] = React.useState();
+  let [value, setValue] = React.useState(null);
 
   return (
     <Flex direction="column" gap="size-150">
@@ -299,7 +300,7 @@ NumberField stepper buttons are optional.
 
 ### Read only
 
-The `isReadOnly` boolean prop makes the NumberField's text content immutable. Unlike `isDisabled` the NumberField remains focusable
+The `isReadOnly` boolean prop makes the NumberField's text content immutable. Unlike `isDisabled`, the NumberField remains focusable
 and the contents can still be copied. See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
 
 ```tsx example
@@ -323,11 +324,11 @@ Both a description and an error message can be supplied to a NumberField. The de
 ```tsx example
 function Example() {
   let [value, setValue] = React.useState(1);
-  let isValid = React.useMemo(() => value > 0 || value === NaN, [value]);
+  let isValid = React.useMemo(() => value > 0 || Number.isNaN(value), [value]);
 
   return (
     <NumberField
-      validationState={value === NaN ? undefined : (isValid ? 'valid' : 'invalid')}
+      validationState={Number.isNaN(value) ? undefined : (isValid ? 'valid' : 'invalid')}
       value={value}
       onChange={setValue}
       label="Positive numbers only"
@@ -336,6 +337,29 @@ function Example() {
     />
   );
 }
+```
+
+### Contextual help
+
+A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a NumberField.
+
+```tsx example
+import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
+
+<NumberField
+  label="Exposure"
+  formatOptions={{
+    signDisplay: 'exceptZero',
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 2
+  }}
+  defaultValue={0}
+  contextualHelp={
+    <ContextualHelp>
+      <Heading>What is exposure?</Heading>
+      <Content>Exposure adjusts how bright the image is.</Content>
+    </ContextualHelp>
+  } />
 ```
 
 ### Custom width

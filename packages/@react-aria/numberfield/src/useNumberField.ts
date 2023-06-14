@@ -12,9 +12,9 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaNumberFieldProps} from '@react-types/numberfield';
+import {DOMAttributes, TextInputDOMProps} from '@react-types/shared';
 import {filterDOMProps, isAndroid, isIOS, isIPhone, mergeProps, useId} from '@react-aria/utils';
 import {
-  HTMLAttributes,
   InputHTMLAttributes,
   LabelHTMLAttributes,
   RefObject,
@@ -25,21 +25,19 @@ import {
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {NumberFieldState} from '@react-stately/numberfield';
-import {TextInputDOMProps} from '@react-types/shared';
-import {useFocus, useFocusWithin} from '@react-aria/interactions';
+import {useFocus, useFocusWithin, useScrollWheel} from '@react-aria/interactions';
 import {useFormattedTextField} from '@react-aria/textfield';
 import {
-  useMessageFormatter,
+  useLocalizedStringFormatter,
   useNumberFormatter
 } from '@react-aria/i18n';
-import {useScrollWheel} from '@react-aria/interactions';
 import {useSpinButton} from '@react-aria/spinbutton';
 
-interface NumberFieldAria {
+export interface NumberFieldAria {
   /** Props for the label element. */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   /** Props for the group wrapper around the input and stepper buttons. */
-  groupProps: HTMLAttributes<HTMLElement>,
+  groupProps: DOMAttributes,
   /** Props for the input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Props for the increment button, to be passed to [useButton](useButton.html). */
@@ -47,9 +45,9 @@ interface NumberFieldAria {
   /** Props for the decrement button, to be passed to [useButton](useButton.html). */
   decrementButtonProps: AriaButtonProps,
   /** Props for the number field's description element, if any. */
-  descriptionProps: HTMLAttributes<HTMLElement>,
+  descriptionProps: DOMAttributes,
   /** Props for the number field's error message element, if any. */
-  errorMessageProps: HTMLAttributes<HTMLElement>
+  errorMessageProps: DOMAttributes
 }
 
 /**
@@ -70,13 +68,14 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     validationState,
     label,
     formatOptions,
-    onBlur,
+    onBlur = () => {},
     onFocus,
     onFocusChange,
     onKeyDown,
     onKeyUp,
     description,
-    errorMessage
+    errorMessage,
+    ...otherProps
   } = props;
 
   let {
@@ -85,10 +84,11 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     decrement,
     decrementToMin,
     numberValue,
+    inputValue,
     commit
   } = state;
 
-  const formatMessage = useMessageFormatter(intlMessages);
+  const stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   let inputId = useId(id);
 
@@ -98,6 +98,14 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
       commit();
     }
   });
+
+  let numberFormatter = useNumberFormatter(formatOptions);
+  let intlOptions = useMemo(() => numberFormatter.resolvedOptions(), [numberFormatter]);
+
+  // Replace negative textValue formatted using currencySign: 'accounting'
+  // with a textValue that can be announced using a minus sign.
+  let textValueFormatter = useNumberFormatter({...formatOptions, currencySign: undefined});
+  let textValue = useMemo(() => isNaN(numberValue) ? '' : textValueFormatter.format(numberValue), [textValueFormatter, numberValue]);
 
   let {
     spinButtonProps,
@@ -115,7 +123,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
       onDecrement: decrement,
       onDecrementToMin: decrementToMin,
       value: numberValue,
-      textValue: state.inputValue
+      textValue
     }
   );
 
@@ -144,8 +152,6 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   // Browsers and operating systems are quite inconsistent about what keys are available, however.
   // We choose between numeric and decimal based on whether we allow negative and fractional numbers,
   // and based on testing on various devices to determine what keys are available in each inputMode.
-  let numberFormatter = useNumberFormatter(formatOptions);
-  let intlOptions = useMemo(() => numberFormatter.resolvedOptions(), [numberFormatter]);
   let hasDecimals = intlOptions.maximumFractionDigits > 0;
   let hasNegative = isNaN(state.minValue) || state.minValue < 0;
   let inputMode: TextInputDOMProps['inputMode'] = 'numeric';
@@ -169,12 +175,15 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   }
 
   let onChange = value => {
-    state.setInputValue(value);
+    if (state.validate(value)) {
+      state.setInputValue(value);
+    }
   };
 
   let domProps = filterDOMProps(props);
 
   let {labelProps, inputProps: textFieldProps, descriptionProps, errorMessageProps} = useFormattedTextField({
+    ...otherProps,
     ...domProps,
     label,
     autoFocus,
@@ -182,7 +191,8 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     isReadOnly,
     isRequired,
     validationState,
-    value: state.inputValue,
+    value: inputValue,
+    defaultValue: undefined, // defaultValue already used to populate state.inputValue, unneeded here
     autoComplete: 'off',
     'aria-label': props['aria-label'] || null,
     'aria-labelledby': props['aria-labelledby'] || null,
@@ -201,13 +211,13 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
 
   let inputProps = mergeProps(
     spinButtonProps,
-    textFieldProps,
     focusProps,
+    textFieldProps,
     {
       // override the spinbutton role, we can't focus a spin button with VO
       role: null,
       // ignore aria-roledescription on iOS so that required state will announce when it is present
-      'aria-roledescription': (!isIOS() ? formatMessage('numberField') : null),
+      'aria-roledescription': (!isIOS() ? stringFormatter.format('numberField') : null),
       'aria-valuemax': null,
       'aria-valuemin': null,
       'aria-valuenow': null,
@@ -254,23 +264,25 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   let decrementId = useId();
 
   let incrementButtonProps: AriaButtonProps = mergeProps(incButtonProps, {
-    'aria-label': incrementAriaLabel || formatMessage('increase', {fieldLabel}).trim(),
+    'aria-label': incrementAriaLabel || stringFormatter.format('increase', {fieldLabel}).trim(),
     id: ariaLabelledby && !incrementAriaLabel ? incrementId : null,
     'aria-labelledby': ariaLabelledby && !incrementAriaLabel ? `${incrementId} ${ariaLabelledby}` : null,
     'aria-controls': inputId,
     excludeFromTabOrder: true,
     preventFocusOnPress: true,
+    allowFocusWhenDisabled: true,
     isDisabled: !state.canIncrement,
     onPressStart: onButtonPressStart
   });
 
   let decrementButtonProps: AriaButtonProps = mergeProps(decButtonProps, {
-    'aria-label': decrementAriaLabel || formatMessage('decrease', {fieldLabel}).trim(),
+    'aria-label': decrementAriaLabel || stringFormatter.format('decrease', {fieldLabel}).trim(),
     id: ariaLabelledby && !decrementAriaLabel ? decrementId : null,
     'aria-labelledby': ariaLabelledby && !decrementAriaLabel ? `${decrementId} ${ariaLabelledby}` : null,
     'aria-controls': inputId,
     excludeFromTabOrder: true,
     preventFocusOnPress: true,
+    allowFocusWhenDisabled: true,
     isDisabled: !state.canDecrement,
     onPressStart: onButtonPressStart
   });

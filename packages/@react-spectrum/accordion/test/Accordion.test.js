@@ -11,7 +11,7 @@
  */
 
 import {Accordion, Item} from '../src';
-import {act, fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, render, within} from '@react-spectrum/test-utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';

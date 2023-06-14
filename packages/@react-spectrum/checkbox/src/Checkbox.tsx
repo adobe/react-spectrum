@@ -51,7 +51,8 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
     ? useCheckboxGroupItem({
       ...props,
       // Value is optional for standalone checkboxes, but required for CheckboxGroup items;
-      // it's passed explicitly here to avoid typescript error (requires strictNullChecks disabled).
+      // it's passed explicitly here to avoid typescript error (requires ignore).
+      // @ts-ignore
       value: props.value,
       // Only pass isRequired and validationState to react-aria if they came from
       // the props for this individual checkbox, and not from the group via context.

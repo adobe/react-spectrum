@@ -13,14 +13,14 @@
 import Alert from '@spectrum-icons/ui/AlertMedium';
 import Checkmark from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, useValueEffect} from '@react-spectrum/utils';
-import datepickerStyles from './index.css';
-import {FocusRing, FocusScope} from '@react-aria/focus';
-import {mergeProps, useEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import datepickerStyles from './styles.css';
+import {mergeProps, mergeRefs, useEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import React, {useCallback, useRef} from 'react';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
+import {useFocusRing} from '@react-aria/focus';
 
-export function Input(props) {
-  let defaultRef = useRef();
+function Input(props, ref) {
+  let inputRef = useRef(null);
   let {
     isDisabled,
     isQuiet,
@@ -28,10 +28,9 @@ export function Input(props) {
     validationState,
     children,
     fieldProps,
-    inputRef = defaultRef,
     className,
-    autoFocus,
-    style
+    style,
+    disableFocusRing
   } = props;
 
   // Reserve padding for the error icon when the width of the input is unconstrained.
@@ -39,29 +38,32 @@ export function Input(props) {
   // not cause a layout shift.
   let [reservePadding, setReservePadding] = useValueEffect(false);
   let onResize = useCallback(() => setReservePadding(function *(reservePadding) {
-    if (reservePadding) {
-      // Try to collapse padding if the content is clipped.
-      if (inputRef.current.scrollWidth > inputRef.current.offsetWidth) {
-        let width = inputRef.current.parentElement.offsetWidth;
-        yield false;
-
-        // If removing padding causes a layout shift, add it back.
-        if (inputRef.current.parentElement.offsetWidth !== width) {
-          yield true;
-        }
-      }
-    } else {
-      // Try to add padding if the content is not clipped.
-      if (inputRef.current.offsetWidth >= inputRef.current.scrollWidth) {
-        let width = inputRef.current.parentElement.offsetWidth;
-        yield true;
-
-        // If adding padding does not change the width (i.e. width is constrained), remove it again.
-        if (inputRef.current.parentElement.offsetWidth === width) {
+    if (inputRef.current) {
+      if (reservePadding) {
+        // Try to collapse padding if the content is clipped.
+        if (inputRef.current.scrollWidth > inputRef.current.offsetWidth) {
+          let width = inputRef.current.parentElement.offsetWidth;
           yield false;
+
+          // If removing padding causes a layout shift, add it back.
+          if (inputRef.current.parentElement.offsetWidth !== width) {
+            yield true;
+          }
+        }
+      } else {
+        // Try to add padding if the content is not clipped.
+        if (inputRef.current.offsetWidth >= inputRef.current.scrollWidth) {
+          let width = inputRef.current.parentElement.offsetWidth;
+          yield true;
+
+          // If adding padding does not change the width (i.e. width is constrained), remove it again.
+          if (inputRef.current.parentElement.offsetWidth === width) {
+            yield false;
+          }
         }
       }
     }
+
   }), [inputRef, setReservePadding]);
 
   useLayoutEffect(onResize, [onResize]);
@@ -74,16 +76,22 @@ export function Input(props) {
   // when there is enough space for the padding to be re-added. Ideally we'd
   // use a resize observer on a parent element, but it's hard to know _what_
   // parent element.
-  useEvent(useRef(window), 'resize', onResize);
+  useEvent(useRef(typeof window !== 'undefined' ? window : null), 'resize', onResize);
 
-  let isInvalid = validationState === 'invalid';
+  let {focusProps, isFocusVisible, isFocused} = useFocusRing({
+    isTextInput: true,
+    within: true
+  });
+
+  let isInvalid = validationState === 'invalid' && !isDisabled;
   let textfieldClass = classNames(
     textfieldStyles,
     'spectrum-Textfield',
     {
       'spectrum-Textfield--invalid': isInvalid,
-      'spectrum-Textfield--valid': validationState === 'valid',
-      'spectrum-Textfield--quiet': isQuiet
+      'spectrum-Textfield--valid': validationState === 'valid' && !isDisabled,
+      'spectrum-Textfield--quiet': isQuiet,
+      'focus-ring': isFocusVisible && !disableFocusRing
     },
     classNames(datepickerStyles, 'react-spectrum-Datepicker-field'),
     className
@@ -94,7 +102,8 @@ export function Input(props) {
     'spectrum-Textfield-input',
     {
       'is-disabled': isDisabled,
-      'is-invalid': isInvalid
+      'is-invalid': isInvalid,
+      'is-focused': isFocused
     },
     reservePadding && classNames(datepickerStyles, 'react-spectrum-Datepicker-input'),
     inputClassName
@@ -106,24 +115,23 @@ export function Input(props) {
   );
 
   let validationIcon = null;
-  if (validationState === 'invalid') {
+  if (validationState === 'invalid' && !isDisabled) {
     validationIcon = <Alert data-testid="invalid-icon" UNSAFE_className={iconClass} />;
-  } else if (validationState === 'valid') {
+  } else if (validationState === 'valid' && !isDisabled) {
     validationIcon = <Checkmark data-testid="valid-icon" UNSAFE_className={iconClass} />;
   }
 
   return (
-    <div {...mergeProps(fieldProps)} className={textfieldClass} style={style}>
-      <FocusRing focusClass={classNames(textfieldStyles, 'is-focused')} focusRingClass={classNames(textfieldStyles, 'focus-ring')} isTextInput within>
-        <div role="presentation" className={inputClass}>
-          <div role="presentation" className={classNames(datepickerStyles, 'react-spectrum-Datepicker-inputContents')} ref={inputRef}>
-            <FocusScope autoFocus={autoFocus}>
-              {children}
-            </FocusScope>
-          </div>
+    <div role="presentation" {...mergeProps(fieldProps, focusProps)} className={textfieldClass} style={style}>
+      <div role="presentation" className={inputClass}>
+        <div role="presentation" className={classNames(datepickerStyles, 'react-spectrum-Datepicker-inputContents')} ref={mergeRefs(ref, inputRef)}>
+          {children}
         </div>
-      </FocusRing>
+      </div>
       {validationIcon}
     </div>
   );
 }
+
+const _Input = React.forwardRef(Input);
+export {_Input as Input};

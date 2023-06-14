@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, screen, within} from '@testing-library/react';
+import {act, fireEvent, render, screen, triggerPress, within} from '@react-spectrum/test-utils';
 import {ActionGroup} from '../';
 import {Button} from '@react-spectrum/button';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
@@ -21,7 +21,6 @@ import React from 'react';
 import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
-import {triggerPress} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 // Describes the tabIndex values of button 1 (column 1), 2, and 3 as focus is moved forward or back.
@@ -514,6 +513,19 @@ describe('ActionGroup', function () {
     expect(button1).toHaveAttribute('data-testid', 'test');
   });
 
+  it('ActionGroup Item allows custom props', function () {
+    let {getAllByRole} = render(
+      <Provider theme={theme} locale="de-DE">
+        <ActionGroup>
+          <Item data-testid="test">Click me</Item>
+        </ActionGroup>
+      </Provider>
+    );
+
+    let item = getAllByRole('button')[0];
+    expect(item).toHaveAttribute('data-testid', 'test');
+  });
+
   it('fires onAction when a button is pressed', function () {
     let onAction = jest.fn();
     let tree = render(
@@ -717,6 +729,7 @@ describe('ActionGroup', function () {
       expect(buttons[0]).toHaveTextContent('One');
       expect(buttons[1]).toHaveAttribute('aria-label', '…');
       expect(buttons[1]).toHaveAttribute('aria-haspopup', 'true');
+      expect(buttons[1]).not.toHaveAttribute('aria-checked');
 
       triggerPress(buttons[1]);
 
@@ -729,6 +742,29 @@ describe('ActionGroup', function () {
 
       triggerPress(items[1]);
       expect(onAction).toHaveBeenCalledWith('three');
+    });
+
+    it('collapsed menu items can have DOM attributes passed to them', function () {
+      let onAction = jest.fn();
+      let tree = render(
+        <Provider theme={theme}>
+          <ActionGroup overflowMode="collapse" onAction={onAction}>
+            <Item key="one">One</Item>
+            <Item key="two" data-element="two">Two</Item>
+            <Item key="three">Three</Item>
+            <Item key="four">Four</Item>
+          </ActionGroup>
+        </Provider>
+      );
+
+      let actiongroup = tree.getByRole('toolbar');
+      let buttons = within(actiongroup).getAllByRole('button');
+
+      triggerPress(buttons[1]);
+
+      let menu = tree.getByRole('menu');
+      let items = within(menu).getAllByRole('menuitem');
+      expect(items[0]).toHaveAttribute('data-element', 'two');
     });
 
     it('handles keyboard focus management properly', function () {
@@ -759,6 +795,41 @@ describe('ActionGroup', function () {
       expect(buttons[1]).toHaveAttribute('tabIndex', '0');
     });
 
+    it('moves focus if the focused button was removed', function () {
+      let onAction = jest.fn();
+      let tree = render(
+        <Provider theme={theme}>
+          <ActionGroup onAction={onAction}>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
+            <Item key="four">Four</Item>
+          </ActionGroup>
+        </Provider>
+      );
+
+      let actiongroup = tree.getByRole('toolbar');
+      let buttons = within(actiongroup).getAllByRole('button');
+      expect(buttons[0]).toHaveAttribute('tabIndex', '0');
+      expect(buttons[1]).toHaveAttribute('tabIndex', '0');
+
+      act(() => buttons[2].focus());
+      tree.rerender(
+        <Provider theme={theme}>
+          <ActionGroup onAction={onAction}>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="four">Four</Item>
+          </ActionGroup>
+        </Provider>
+      );
+      actiongroup = tree.getByRole('toolbar');
+      buttons = within(actiongroup).getAllByRole('button');
+      expect(buttons[0]).toHaveAttribute('tabIndex', '0');
+      expect(buttons[1]).toHaveAttribute('tabIndex', '0');
+      expect(buttons[2]).toHaveAttribute('tabIndex', '0');
+    });
+
     it('passes aria labeling props through to menu button if it is the only child', function () {
       jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () {
         if (this instanceof HTMLButtonElement) {
@@ -784,6 +855,7 @@ describe('ActionGroup', function () {
       let button = tree.getByRole('button');
       expect(button).toHaveAttribute('aria-label', 'Test');
       expect(button).toHaveAttribute('aria-haspopup', 'true');
+      expect(button).not.toHaveAttribute('aria-checked');
 
       triggerPress(button);
 
@@ -817,6 +889,7 @@ describe('ActionGroup', function () {
       let button = tree.getByRole('button');
       expect(button).toHaveAttribute('aria-label', '…');
       expect(button).toHaveAttribute('aria-haspopup', 'true');
+      expect(button).not.toHaveAttribute('aria-checked');
 
       triggerPress(button);
 
@@ -859,6 +932,7 @@ describe('ActionGroup', function () {
       let button = tree.getByRole('button');
       expect(button).toHaveAttribute('aria-label', '…');
       expect(button).toHaveAttribute('aria-haspopup', 'true');
+      expect(button).not.toHaveAttribute('aria-checked');
 
       triggerPress(button);
 
@@ -903,6 +977,7 @@ describe('ActionGroup', function () {
       expect(buttons[0]).toBeDisabled();
       expect(buttons[1]).toHaveAttribute('aria-label', '…');
       expect(buttons[1]).toHaveAttribute('aria-haspopup', 'true');
+      expect(buttons[1]).not.toHaveAttribute('aria-checked');
       expect(buttons[1]).toBeDisabled();
     });
 
@@ -925,6 +1000,7 @@ describe('ActionGroup', function () {
       expect(within(actionGroup).getByRole('button', {name: 'One'})).toBeVisible();
 
       const moreButton = within(actionGroup).getByRole('button', {name: '…'});
+      expect(moreButton).not.toHaveAttribute('aria-checked');
       expect(moreButton).toBeVisible();
 
       triggerPress(moreButton);
@@ -938,7 +1014,7 @@ describe('ActionGroup', function () {
 
       const itemThree = within(menu).getByRole('menuitem', {name: 'Three'});
       expect(itemThree).toBeVisible();
-      expect(itemThree).toHaveAttribute('aria-disabled', 'false');
+      expect(itemThree).not.toHaveAttribute('aria-disabled');
 
       const itemFour = within(menu).getByRole('menuitem', {name: 'Four'});
       expect(itemFour).toBeVisible();

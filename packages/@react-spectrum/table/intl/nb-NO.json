@@ -1,4 +1,9 @@
 {
+  "columnResizer": "Størrelsesendring av kolonne",
+  "drag": "Dra",
   "loading": "Laster inn ...",
-  "loadingMore": "Laster inn flere ..."
+  "loadingMore": "Laster inn flere ...",
+  "resizeColumn": "Endre størrelse på kolonne",
+  "sortAscending": "Sorter stigende",
+  "sortDescending": "Sorter synkende"
 }

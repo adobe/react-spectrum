@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, waitFor, within} from '@testing-library/react';
+import {act, fireEvent, render, waitFor, within} from '@react-spectrum/test-utils';
 import {DataTransfer, DragEvent} from './mocks';
 import {Draggable} from './examples';
 import {DroppableGridExample} from '../stories/DroppableGrid';
@@ -19,7 +19,6 @@ import userEvent from '@testing-library/user-event';
 
 describe('useDroppableCollection', () => {
   beforeEach(() => {
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
     jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
       let y = 0;
       let height = 50;
@@ -143,7 +142,7 @@ describe('useDroppableCollection', () => {
         type: 'dropenter',
         x: 0,
         y: 0,
-        target: {type: 'item', key: '1', dropPosition: 'after'}
+        target: {type: 'item', key: '2', dropPosition: 'before'}
       });
 
       allCells = within(grid).getAllByRole('gridcell', {hidden: true});
@@ -157,31 +156,10 @@ describe('useDroppableCollection', () => {
         type: 'dropexit',
         x: 0,
         y: 0,
-        target: {type: 'item', key: '1', dropPosition: 'after'}
+        target: {type: 'item', key: '2', dropPosition: 'before'}
       });
 
       expect(onDropEnter).toHaveBeenCalledTimes(4);
-      expect(onDropEnter).toHaveBeenLastCalledWith({
-        type: 'dropenter',
-        x: 0,
-        y: 0,
-        target: {type: 'root'}
-      });
-
-      allCells = within(grid).getAllByRole('gridcell', {hidden: true});
-      expect(allCells).toHaveLength(3);
-      expect(grid).toHaveAttribute('data-droptarget', 'true');
-
-      fireEvent(cells[2], new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 100}));
-      expect(onDragExit).toHaveBeenCalledTimes(4);
-      expect(onDragExit).toHaveBeenLastCalledWith({
-        type: 'dropexit',
-        x: 0,
-        y: 0,
-        target: {type: 'root'}
-      });
-
-      expect(onDropEnter).toHaveBeenCalledTimes(5);
       expect(onDropEnter).toHaveBeenLastCalledWith({
         type: 'dropenter',
         x: 0,
@@ -245,35 +223,35 @@ describe('useDroppableCollection', () => {
 
       let dataTransfer = new DataTransfer();
       fireEvent(draggable, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
-      act(() => jest.runAllTimers());
+      act(() => jest.advanceTimersToNextTimer());
       expect(draggable).toHaveAttribute('data-dragging', 'true');
 
       fireEvent(cells[0], new DragEvent('dragenter', {dataTransfer, clientX: 30, clientY: 30}));
-      act(() => jest.runOnlyPendingTimers());
+      act(() => jest.advanceTimersToNextTimer());
       expect(scrollTop).not.toHaveBeenCalled();
 
       fireEvent(cells[2], new DragEvent('dragover', {dataTransfer, clientX: 30, clientY: 100}));
-      act(() => jest.runOnlyPendingTimers());
+      act(() => jest.advanceTimersToNextTimer());
       expect(scrollTop).not.toHaveBeenCalled();
 
       fireEvent(cells[4], new DragEvent('dragover', {dataTransfer, clientX: 30, clientY: 135}));
-      act(() => jest.runOnlyPendingTimers());
+      act(() => jest.advanceTimersToNextTimer());
       expect(scrollTop).toHaveBeenCalledTimes(1);
-      act(() => jest.runOnlyPendingTimers());
+      act(() => jest.advanceTimersToNextTimer());
       expect(scrollTop).toHaveBeenCalledTimes(2);
       jest.clearAllTimers();
 
       fireEvent(cells[2], new DragEvent('dragover', {dataTransfer, clientX: 30, clientY: 100}));
-      act(() => jest.runAllTimers());
+      act(() => jest.advanceTimersToNextTimer());
       expect(scrollTop).toHaveBeenCalledTimes(2);
 
       fireEvent(cells[2], new DragEvent('dragover', {dataTransfer, clientX: 30, clientY: 15}));
-      act(() => jest.runOnlyPendingTimers());
+      act(() => jest.advanceTimersToNextTimer());
       expect(scrollTop).toHaveBeenCalledTimes(3);
       jest.clearAllTimers();
 
       fireEvent(cells[2], new DragEvent('dragover', {dataTransfer, clientX: 30, clientY: 30}));
-      act(() => jest.runAllTimers());
+      act(() => jest.advanceTimersToNextTimer());
       expect(scrollTop).toHaveBeenCalledTimes(3);
     });
 
@@ -597,7 +575,7 @@ describe('useDroppableCollection', () => {
       }
       let tree = render(<>
         <Draggable />
-        <DroppableGridExample items={items} onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
+        <DroppableGridExample style={{overflow: 'auto'}} items={items} onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
       </>);
 
       let draggable = tree.getByText('Drag me');
@@ -681,7 +659,7 @@ describe('useDroppableCollection', () => {
       let getDropOperation = (target) => target.type === 'item' && target.dropPosition === 'on' && target.key !== '4' && target.key !== '1' ? 'move' : 'cancel';
       let tree = render(<>
         <Draggable />
-        <DroppableGridExample items={items} getDropOperation={getDropOperation} onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
+        <DroppableGridExample style={{overflow: 'auto'}} items={items} getDropOperation={getDropOperation} onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
       </>);
 
       let draggable = tree.getByText('Drag me');
@@ -764,7 +742,7 @@ describe('useDroppableCollection', () => {
       let getDropOperation = (target) => target.type === 'item' && target.dropPosition === 'on' && target.key !== '0' && target.key !== '5' ? 'move' : 'cancel';
       let tree = render(<>
         <Draggable />
-        <DroppableGridExample items={items} getDropOperation={getDropOperation} onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
+        <DroppableGridExample style={{overflow: 'auto'}} items={items} getDropOperation={getDropOperation} onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
       </>);
 
       let draggable = tree.getByText('Drag me');

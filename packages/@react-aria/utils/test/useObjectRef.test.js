@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {useEffect, useLayoutEffect} from 'react';
-import {render, screen} from '@testing-library/react';
-import {renderHook} from '@testing-library/react-hooks';
-import {useObjectRef} from '../';
+import React, {useEffect} from 'react';
+import {render, renderHook, screen} from '@react-spectrum/test-utils';
+// eslint-disable-next-line rulesdir/useLayoutEffectRule
+import {useLayoutEffect, useObjectRef} from '../';
 
 describe('useObjectRef', () => {
   it('returns an empty object ref by default', () => {
@@ -50,6 +50,17 @@ describe('useObjectRef', () => {
     render(<TextField placeholder="Foo" ref={el => inputElem = el} />);
 
     expect(inputElem.placeholder).toBe('Foo');
+  });
+
+  it('should only be called once', () => {
+    const TextField = React.forwardRef((props, forwardedRef) => {
+      const ref = useObjectRef(forwardedRef);
+      return <input {...props} ref={ref} />;
+    });
+
+    let ref = jest.fn();
+    render(<TextField ref={ref} />);
+    expect(ref).toHaveBeenCalledTimes(1);
   });
 
   /**

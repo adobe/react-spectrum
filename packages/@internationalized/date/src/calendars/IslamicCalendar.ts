@@ -42,6 +42,13 @@ function isLeapYear(year: number): boolean {
   return (14 + 11 * year) % 30 < 11;
 }
 
+/**
+ * The Islamic calendar, also known as the "Hijri" calendar, is used throughout much of the Arab world.
+ * The civil variant uses simple arithmetic rules rather than astronomical calculations to approximate
+ * the traditional calendar, which is based on sighting of the crescent moon. It uses Friday, July 16 622 CE (Julian) as the epoch.
+ * Each year has 12 months, with either 354 or 355 days depending on whether it is a leap year.
+ * Learn more about the available Islamic calendars [here](https://cldr.unicode.org/development/development-process/design-proposals/islamic-calendar-types).
+ */
 export class IslamicCivilCalendar implements Calendar {
   identifier = 'islamic-civil';
 
@@ -71,7 +78,8 @@ export class IslamicCivilCalendar implements Calendar {
   }
 
   getYearsInEra(): number {
-    return 9999;
+    // 9999 gregorian
+    return 9665;
   }
 
   getEras() {
@@ -79,6 +87,13 @@ export class IslamicCivilCalendar implements Calendar {
   }
 }
 
+/**
+ * The Islamic calendar, also known as the "Hijri" calendar, is used throughout much of the Arab world.
+ * The tabular variant uses simple arithmetic rules rather than astronomical calculations to approximate
+ * the traditional calendar, which is based on sighting of the crescent moon. It uses Thursday, July 15 622 CE (Julian) as the epoch.
+ * Each year has 12 months, with either 354 or 355 days depending on whether it is a leap year.
+ * Learn more about the available Islamic calendars [here](https://cldr.unicode.org/development/development-process/design-proposals/islamic-calendar-types).
+ */
 export class IslamicTabularCalendar extends IslamicCivilCalendar {
   identifier = 'islamic-tbla';
 
@@ -122,6 +137,13 @@ function umalquraYearLength(year: number): number {
   return UMALQURA_YEAR_START_TABLE[year + 1 - UMALQURA_YEAR_START] - UMALQURA_YEAR_START_TABLE[year - UMALQURA_YEAR_START];
 }
 
+/**
+ * The Islamic calendar, also known as the "Hijri" calendar, is used throughout much of the Arab world.
+ * The Umalqura variant is primarily used in Saudi Arabia. It is a lunar calendar, based on astronomical
+ * calculations that predict the sighting of a crescent moon. Month and year lengths vary between years
+ * depending on these calculations.
+ * Learn more about the available Islamic calendars [here](https://cldr.unicode.org/development/development-process/design-proposals/islamic-calendar-types).
+ */
 export class IslamicUmalquraCalendar extends IslamicCivilCalendar {
   identifier = 'islamic-umalqura';
 

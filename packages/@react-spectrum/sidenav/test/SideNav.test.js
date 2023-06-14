@@ -10,11 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, waitFor} from '@testing-library/react';
+import {act, fireEvent, render, triggerPress, waitFor} from '@react-spectrum/test-utils';
 import {Item, Section} from '@react-spectrum/tree';
 import React from 'react';
 import {SideNav} from '../src';
-import {triggerPress} from '@react-spectrum/test-utils';
 
 let flatItems = [
   {name: 'Foo'},
@@ -84,13 +83,12 @@ describe.skip('SideNav', function () {
   let scrollHeight;
 
   beforeAll(function () {
-    jest.useFakeTimers('modern');
+    jest.useFakeTimers();
     scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 48);
     stub1 = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 200);
     stub2 = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 400);
   });
   afterAll(function () {
-    jest.useRealTimers();
     stub1.mockReset();
     stub2.mockReset();
     scrollHeight.mockReset();

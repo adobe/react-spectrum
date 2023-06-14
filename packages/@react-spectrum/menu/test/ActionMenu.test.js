@@ -10,19 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
 import {ActionMenu, Item} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
-import {triggerPress} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let CLOSE_TIME = 350;
 
 describe('ActionMenu', function () {
   let onActionSpy = jest.fn();
+  let onOpenChange = jest.fn();
 
   beforeAll(function () {
     jest.useFakeTimers();
@@ -30,6 +30,7 @@ describe('ActionMenu', function () {
 
   afterEach(() => {
     onActionSpy.mockClear();
+    onOpenChange.mockClear();
     act(() => {
       jest.runAllTimers();
     });
@@ -105,6 +106,59 @@ describe('ActionMenu', function () {
 
     let button = tree.getByRole('button');
     expect(document.activeElement).toBe(button);
+  });
+
+  it('supports a controlled open state ', function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <ActionMenu onOpenChange={onOpenChange} isOpen>
+          <Item>Foo</Item>
+          <Item>Bar</Item>
+          <Item>Baz</Item>
+        </ActionMenu>
+      </Provider>
+    );
+
+    act(() => {jest.runAllTimers();});
+    expect(onOpenChange).toBeCalledTimes(0);
+
+    let menu = tree.getByRole('menu');
+    expect(menu).toBeTruthy();
+
+    let triggerButton = tree.getByLabelText('More actions');
+    triggerPress(triggerButton);
+    act(() => {jest.runAllTimers();});
+
+    menu = tree.getByRole('menu');
+    expect(menu).toBeTruthy();
+    expect(onOpenChange).toBeCalledTimes(1);
+    expect(triggerButton).toHaveAttribute('aria-expanded', 'true');
+  });
+
+  it('supports an uncontrolled default open state ', function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <ActionMenu onOpenChange={onOpenChange} defaultOpen>
+          <Item>Foo</Item>
+          <Item>Bar</Item>
+          <Item>Baz</Item>
+        </ActionMenu>
+      </Provider>
+    );
+
+    act(() => {jest.runAllTimers();});
+    expect(onOpenChange).toBeCalledTimes(0);
+
+    let menu = tree.getByRole('menu');
+    expect(menu).toBeTruthy();
+
+    let triggerButton = tree.getByLabelText('More actions');
+    triggerPress(triggerButton);
+    act(() => {jest.runAllTimers();});
+
+    expect(menu).not.toBeInTheDocument();
+    expect(onOpenChange).toBeCalledTimes(1);
+    expect(triggerButton).toHaveAttribute('aria-expanded', 'false');
   });
 
   describe('with tooltips', function () {

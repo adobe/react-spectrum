@@ -11,9 +11,8 @@
  */
 
 import React from 'react';
-import {render} from '@testing-library/react';
+import {render, triggerPress} from '@react-spectrum/test-utils';
 import {ToggleButton} from '../';
-import {triggerPress} from '@react-spectrum/test-utils';
 
 describe('ToggleButton', function () {
   it('handles defaults', function () {

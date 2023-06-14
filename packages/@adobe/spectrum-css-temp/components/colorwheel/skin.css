@@ -27,3 +27,13 @@
     border-color: var(--spectrum-colorwheel-border-color);
   }
 }
+
+@media (forced-colors: active) {
+  .spectrum-ColorWheel {
+    forced-color-adjust: none;
+    --spectrum-colorwheel-fill-color-disabled: GrayText;
+    --spectrum-colorwheel-border-color-disabled: GrayText;
+    --spectrum-colorwheel-border-color: ButtonText;
+    --spectrum-colorarea-border-color: ButtonText;
+  }
+}

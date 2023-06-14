@@ -10,24 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, waitFor, within} from '@testing-library/react';
+import {act, fireEvent, mockImplementation, render, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
 import {Item, TabList, TabPanels, Tabs} from '../src';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
-let items = [
+let defaultItems = [
   {name: 'Tab 1', children: 'Tab 1 body'},
   {name: '', children: 'Tab 2 body'},
   {name: 'Tab 3', children: 'Tab 3 body'}
 ];
 
-function renderComponent(props, itemProps) {
+function renderComponent(props = {}, itemProps) {
+  let {items = defaultItems} = props;
   return render(
     <Provider theme={theme}>
-      <Tabs {...props} items={items}>
+      <Tabs aria-label="Tab Sample" {...props} items={items}>
         <TabList>
           {item => (
             <Item {...itemProps} key={item.name} title={item.name || item.children} />
@@ -49,15 +49,18 @@ describe('Tabs', function () {
   let onSelectionChange = jest.fn();
 
   beforeAll(function () {
+    jest.useFakeTimers();
+  });
+
+  beforeEach(() => {
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
-    jest.useFakeTimers();
   });
 
   afterEach(() => {
     jest.clearAllMocks();
+    jest.restoreAllMocks();
     act(() => jest.runAllTimers());
   });
 
@@ -85,7 +88,7 @@ describe('Tabs', function () {
         expect(tabpanel).toBeTruthy();
         expect(tabpanel).toHaveAttribute('aria-labelledby', tab.id);
         expect(tabpanel).toHaveAttribute('role', 'tabpanel');
-        expect(tabpanel).toHaveTextContent(items[0].children);
+        expect(tabpanel).toHaveTextContent(defaultItems[0].children);
       }
     }
   });
@@ -179,7 +182,7 @@ describe('Tabs', function () {
   });
 
   it('not select via left / right keys if keyboardActivation is manual, select on enter / spacebar', function () {
-    let container = renderComponent({keyboardActivation: 'manual', defaultSelectedKey: items[0].name, onSelectionChange});
+    let container = renderComponent({keyboardActivation: 'manual', defaultSelectedKey: defaultItems[0].name, onSelectionChange});
     let tablist = container.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     let firstItem = tabs[0];
@@ -188,12 +191,15 @@ describe('Tabs', function () {
     act(() => {firstItem.focus();});
     expect(firstItem).toHaveAttribute('aria-selected', 'true');
     fireEvent.keyDown(firstItem, {key: 'ArrowRight', code: 39, charCode: 39});
+    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight', code: 39, charCode: 39});
     expect(secondItem).toHaveAttribute('aria-selected', 'false');
     expect(document.activeElement).toBe(secondItem);
     fireEvent.keyDown(secondItem, {key: 'ArrowRight', code: 39, charCode: 39});
+    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight', code: 39, charCode: 39});
     expect(thirdItem).toHaveAttribute('aria-selected', 'false');
     expect(document.activeElement).toBe(thirdItem);
     fireEvent.keyDown(thirdItem, {key: 'Enter', code: 13, charCode: 13});
+    fireEvent.keyUp(document.activeElement, {key: 'Enter', code: 13, charCode: 13});
     expect(firstItem).toHaveAttribute('aria-selected', 'false');
     expect(secondItem).toHaveAttribute('aria-selected', 'false');
     expect(thirdItem).toHaveAttribute('aria-selected', 'true');
@@ -202,7 +208,7 @@ describe('Tabs', function () {
   });
 
   it('supports using click to change tab', function () {
-    let container = renderComponent({keyboardActivation: 'manual', defaultSelectedKey: items[0].name, onSelectionChange});
+    let container = renderComponent({keyboardActivation: 'manual', defaultSelectedKey: defaultItems[0].name, onSelectionChange});
     let tablist = container.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     let firstItem = tabs[0];
@@ -216,35 +222,35 @@ describe('Tabs', function () {
     expect(tabpanel).toBeTruthy();
     expect(tabpanel).toHaveAttribute('aria-labelledby', secondItem.id);
     expect(tabpanel).toHaveAttribute('role', 'tabpanel');
-    expect(tabpanel).toHaveTextContent(items[1].children);
+    expect(tabpanel).toHaveTextContent(defaultItems[1].children);
     expect(onSelectionChange).toBeCalledTimes(1);
   });
 
   it('does not generate conflicting ids between multiple tabs instances', function () {
     let tree = render(
       <Provider theme={theme}>
-        <Tabs>
+        <Tabs aria-label="Tab Sample">
           <TabList>
-            {items.map(item => (
+            {defaultItems.map(item => (
               <Item key={item.name} title={item.name || item.children} />
             ))}
           </TabList>
           <TabPanels>
-            {items.map(item => (
+            {defaultItems.map(item => (
               <Item key={item.name}>
                 {item.children}
               </Item>
             ))}
           </TabPanels>
         </Tabs>
-        <Tabs>
+        <Tabs aria-label="Tab Sample 2">
           <TabList>
-            {items.map(item => (
+            {defaultItems.map(item => (
               <Item key={item.name} title={item.name || item.children} />
             ))}
           </TabList>
           <TabPanels>
-            {items.map(item => (
+            {defaultItems.map(item => (
               <Item key={item.name}>
                 {item.children}
               </Item>
@@ -264,7 +270,7 @@ describe('Tabs', function () {
   });
 
   it('should focus the selected tab when tabbing in for the first time', function () {
-    let tree = renderComponent({defaultSelectedKey: items[1].name});
+    let tree = renderComponent({defaultSelectedKey: defaultItems[1].name});
     userEvent.tab();
 
     let tablist = tree.getByRole('tablist');
@@ -273,7 +279,7 @@ describe('Tabs', function () {
   });
 
   it('should not focus any tabs when isDisabled tabbing in for the first time', function () {
-    let tree = renderComponent({defaultSelectedKey: items[1].name, isDisabled: true});
+    let tree = renderComponent({defaultSelectedKey: defaultItems[1].name, isDisabled: true});
     userEvent.tab();
 
     let tabpanel = tree.getByRole('tabpanel');
@@ -281,7 +287,7 @@ describe('Tabs', function () {
   });
 
   it('disabled tabs cannot be keyboard navigated to', function () {
-    let tree = renderComponent({defaultSelectedKey: items[0].name, disabledKeys: [items[1].name], onSelectionChange});
+    let tree = renderComponent({defaultSelectedKey: defaultItems[0].name, disabledKeys: [defaultItems[1].name], onSelectionChange});
     userEvent.tab();
 
     let tablist = tree.getByRole('tablist');
@@ -289,11 +295,11 @@ describe('Tabs', function () {
     expect(document.activeElement).toBe(tabs[0]);
     fireEvent.keyDown(tabs[1], {key: 'ArrowRight'});
     fireEvent.keyUp(tabs[1], {key: 'ArrowRight'});
-    expect(onSelectionChange).toBeCalledWith(items[2].name);
+    expect(onSelectionChange).toBeCalledWith(defaultItems[2].name);
   });
 
   it('disabled tabs cannot be pressed', function () {
-    let tree = renderComponent({defaultSelectedKey: items[0].name, disabledKeys: [items[1].name], onSelectionChange});
+    let tree = renderComponent({defaultSelectedKey: defaultItems[0].name, disabledKeys: [defaultItems[1].name], onSelectionChange});
     userEvent.tab();
 
     let tablist = tree.getByRole('tablist');
@@ -303,37 +309,96 @@ describe('Tabs', function () {
     expect(onSelectionChange).not.toBeCalled();
   });
 
+  it('finds the first non-disabled tab if the currently selected one is removed', function () {
+    let tree = renderComponent({disabledKeys: [defaultItems[0].name], onSelectionChange, items: defaultItems});
+    userEvent.tab();
+
+    let tablist = tree.getByRole('tablist');
+    let tabs = within(tablist).getAllByRole('tab');
+    expect(document.activeElement).toBe(tabs[1]);
+    fireEvent.keyDown(tabs[1], {key: 'ArrowRight'});
+    fireEvent.keyUp(tabs[1], {key: 'ArrowRight'});
+    expect(onSelectionChange).toBeCalledWith(defaultItems[2].name);
+
+    tree.rerender(
+      <Provider theme={theme}>
+        <Tabs aria-label="Tab Example" disabledKeys={[defaultItems[0].name]} onSelectionChange={onSelectionChange} items={defaultItems.slice(0, 1)}>
+          <TabList>
+            {item => (
+              <Item key={item.name} title={item.name || item.children} />
+            )}
+          </TabList>
+          <TabPanels>
+            {item => (
+              <Item key={item.name} title={item.name}>
+                {item.children}
+              </Item>
+            )}
+          </TabPanels>
+        </Tabs>
+      </Provider>
+    );
+    expect(onSelectionChange).toBeCalledWith(defaultItems[1].name);
+  });
+
+  it('selects first tab if all tabs are disabled', function () {
+    let tree = renderComponent({disabledKeys: defaultItems.map(item => item.name), onSelectionChange, items: defaultItems});
+    userEvent.tab();
+
+    let tablist = tree.getByRole('tablist');
+    let tabs = within(tablist).getAllByRole('tab');
+    let tabpanel = tree.getByRole('tabpanel');
+    expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
+    expect(onSelectionChange).toBeCalledWith(defaultItems[0].name);
+    expect(document.activeElement).toBe(tabpanel);
+  });
+
   it('collapses when it can\'t render all the tabs horizontally', function () {
-    jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementationOnce(function () {
-      if (this instanceof HTMLDivElement) {
+    let target = [HTMLDivElement.prototype, 'getBoundingClientRect'];
+    let mockCalls = [
+      function () {
+        return {
+          left: 0,
+          right: 100
+        };
+      },
+      function () {
+        return {
+          left: 100,
+          right: 400
+        };
+      },
+      function () {
+        return {
+          left: 400,
+          right: 700
+        };
+      },
+      function () {
         return {
           right: 500
         };
       }
-    }).mockImplementationOnce(function () {
-      if (this instanceof HTMLDivElement) {
-        return {
-          right: 700
-        };
-      }
-    });
+    ];
+
+    mockImplementation(target, mockCalls, false);
 
     let {getByRole, queryByRole} = renderComponent({
       'aria-label': 'Test Tabs',
       'aria-labelledby': 'external label',
       onSelectionChange,
-      defaultSelectedKey: items[0].name
+      defaultSelectedKey: defaultItems[0].name
     });
 
     expect(queryByRole('tablist')).toBeNull();
     let tabpanel = getByRole('tabpanel');
     expect(tabpanel).toBeTruthy();
-    expect(tabpanel).toHaveTextContent(items[0].children);
+    expect(tabpanel).toHaveTextContent(defaultItems[0].children);
 
     let picker = getByRole('button');
     let pickerLabel = within(picker).getByText('Tab 1');
     expect(picker).toHaveAttribute('aria-label', 'Test Tabs');
-    expect(picker).toHaveAttribute('aria-labelledby', `external label ${picker.id} ${pickerLabel.id}`);
+    expect(picker).toHaveAttribute('aria-labelledby', `${pickerLabel.id} ${picker.id} external label`);
 
     triggerPress(picker);
     act(() => jest.runAllTimers());
@@ -346,23 +411,19 @@ describe('Tabs', function () {
     expect(onSelectionChange).toHaveBeenCalledWith('Tab 3');
 
     tabpanel = getByRole('tabpanel');
-    expect(tabpanel).toHaveTextContent(items[2].children);
+    expect(tabpanel).toHaveTextContent(defaultItems[2].children);
     expect(tabpanel).toHaveAttribute('aria-labelledby', `${picker.id}`);
   });
 
   it('doesn\'t collapse when it can render all the tabs horizontally', function () {
-    jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementationOnce(function () {
-      if (this instanceof HTMLDivElement) {
-        return {
-          right: 500
-        };
-      }
+    jest.spyOn(HTMLDivElement.prototype, 'getBoundingClientRect').mockImplementationOnce(function () {
+      return {
+        right: 500
+      };
     }).mockImplementationOnce(function () {
-      if (this instanceof HTMLDivElement) {
-        return {
-          right: 400
-        };
-      }
+      return {
+        right: 400
+      };
     });
 
     let {getByRole, queryByRole} = renderComponent();
@@ -372,24 +433,38 @@ describe('Tabs', function () {
   });
 
   it('dynamically collapses and expands on tab addition/subtraction', function () {
-
-    let spy = jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementationOnce(function () {
-      if (this instanceof HTMLDivElement) {
+    let target = [HTMLDivElement.prototype, 'getBoundingClientRect'];
+    let mockCalls = [
+      function () {
+        return {
+          left: 0,
+          right: 200
+        };
+      },
+      function () {
+        return {
+          left: 200,
+          right: 300
+        };
+      },
+      function () {
+        return {
+          left: 300,
+          right: 400
+        };
+      },
+      function () {
         return {
           right: 500
         };
       }
-    }).mockImplementationOnce(function () {
-      if (this instanceof HTMLDivElement) {
-        return {
-          right: 400
-        };
-      }
-    });
+    ];
+
+    let spy = mockImplementation(target, mockCalls, false);
 
     let {getByRole, queryByRole, rerender} = render(
       <Provider theme={theme}>
-        <Tabs aria-label="Test Tabs" items={items}>
+        <Tabs aria-label="Test Tabs" items={defaultItems}>
           <TabList>
             {item => (
               <Item key={item.name} title={item.name || item.children} />
@@ -410,20 +485,32 @@ describe('Tabs', function () {
     expect(queryByRole('button')).toBeNull();
 
     spy.mockImplementationOnce(function () {
-      if (this instanceof HTMLDivElement) {
-        return {
-          right: 500
-        };
-      }
+      return {
+        left: 0,
+        right: 200
+      };
     }).mockImplementationOnce(function () {
-      if (this instanceof HTMLDivElement) {
-        return {
-          right: 700
-        };
-      }
+      return {
+        left: 200,
+        right: 300
+      };
+    }).mockImplementationOnce(function () {
+      return {
+        left: 300,
+        right: 400
+      };
+    }).mockImplementationOnce(function () {
+      return {
+        left: 400,
+        right: 700
+      };
+    }).mockImplementationOnce(function () {
+      return {
+        right: 500
+      };
     });
 
-    let newItems = [...items];
+    let newItems = [...defaultItems];
     newItems.push({name: 'Tab 4', children: 'Tab 4 body'});
     rerender(
       <Provider theme={theme}>
@@ -447,15 +534,41 @@ describe('Tabs', function () {
     expect(queryByRole('tablist')).toBeNull();
     let tabpanel = getByRole('tabpanel');
     expect(tabpanel).toBeTruthy();
-    expect(tabpanel).toHaveTextContent(items[0].children);
+    expect(tabpanel).toHaveTextContent(defaultItems[0].children);
 
     let picker = getByRole('button');
     expect(picker).toBeTruthy();
     expect(tabpanel).toHaveAttribute('aria-labelledby', `${picker.id}`);
 
+    spy.mockImplementationOnce(function () {
+      return {
+        left: 0,
+        right: 200
+      };
+    }).mockImplementationOnce(function () {
+      return {
+        left: 200,
+        right: 300
+      };
+    }).mockImplementationOnce(function () {
+      return {
+        left: 300,
+        right: 400
+      };
+    }).mockImplementationOnce(function () {
+      return {
+        left: 400,
+        right: 700
+      };
+    }).mockImplementationOnce(function () {
+      return {
+        right: 500
+      };
+    });
+
     rerender(
       <Provider theme={theme}>
-        <Tabs items={newItems} orientation="vertical">
+        <Tabs aria-label="Tab Example" items={newItems} orientation="vertical">
           <TabList>
             {item => (
               <Item key={item.name} title={item.name || item.children} />
@@ -478,24 +591,31 @@ describe('Tabs', function () {
 
     tabpanel = getByRole('tabpanel');
     expect(tabpanel).toBeTruthy();
-    expect(tabpanel).toHaveTextContent(items[0].children);
-    expect(tabpanel).toHaveAttribute('aria-labelledby', items[0].id);
+    expect(tabpanel).toHaveTextContent(defaultItems[0].children);
+    expect(tabpanel).toHaveAttribute('aria-labelledby', defaultItems[0].id);
 
     spy.mockImplementationOnce(function () {
-      if (this instanceof HTMLDivElement) {
-        return {
-          right: 500
-        };
-      }
+      return {
+        left: 0,
+        right: 200
+      };
     }).mockImplementationOnce(function () {
-      if (this instanceof HTMLDivElement) {
-        return {
-          right: 400
-        };
-      }
+      return {
+        left: 200,
+        right: 300
+      };
+    }).mockImplementationOnce(function () {
+      return {
+        left: 300,
+        right: 400
+      };
+    }).mockImplementationOnce(function () {
+      return {
+        right: 500
+      };
     });
 
-    newItems = [...items];
+    newItems = [...defaultItems];
     newItems.splice(0, 1);
     rerender(
       <Provider theme={theme}>
@@ -518,40 +638,56 @@ describe('Tabs', function () {
 
     tabpanel = getByRole('tabpanel');
     expect(tabpanel).toBeTruthy();
-    expect(tabpanel).toHaveTextContent(items[1].children);
-    expect(tabpanel).toHaveAttribute('aria-labelledby', items[1].id);
+    expect(tabpanel).toHaveTextContent(defaultItems[1].children);
+    expect(tabpanel).toHaveAttribute('aria-labelledby', defaultItems[1].id);
 
     tablist = getByRole('tablist');
     expect(tablist).toBeTruthy();
     expect(queryByRole('button')).toBeNull();
+
   });
 
   it('disabled tabs cannot be selected via collapse picker', function () {
-    jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementationOnce(function () {
-      if (this instanceof HTMLDivElement) {
+    let target = [HTMLDivElement.prototype, 'getBoundingClientRect'];
+    let mockCalls = [
+      function () {
+        return {
+          left: 0,
+          right: 100
+        };
+      },
+      function () {
+        return {
+          left: 100,
+          right: 400
+        };
+      },
+      function () {
+        return {
+          left: 400,
+          right: 700
+        };
+      },
+      function () {
         return {
           right: 500
         };
       }
-    }).mockImplementationOnce(function () {
-      if (this instanceof HTMLDivElement) {
-        return {
-          right: 700
-        };
-      }
-    });
+    ];
+
+    mockImplementation(target, mockCalls);
 
     let {getByRole, queryByRole} = renderComponent({
       'aria-label': 'Test Tabs',
       onSelectionChange,
-      defaultSelectedKey: items[0].name,
+      defaultSelectedKey: defaultItems[0].name,
       disabledKeys: ['Tab 3']
     });
 
     expect(queryByRole('tablist')).toBeNull();
     let tabpanel = getByRole('tabpanel');
     expect(tabpanel).toBeTruthy();
-    expect(tabpanel).toHaveTextContent(items[0].children);
+    expect(tabpanel).toHaveTextContent(defaultItems[0].children);
 
     let picker = getByRole('button');
 
@@ -568,13 +704,13 @@ describe('Tabs', function () {
     act(() => jest.runAllTimers());
     expect(onSelectionChange).toHaveBeenCalledWith('');
     tabpanel = getByRole('tabpanel');
-    expect(tabpanel).toHaveTextContent(items[1].children);
+    expect(tabpanel).toHaveTextContent(defaultItems[1].children);
   });
 
   it('tabpanel should have tabIndex=0 only when there are no focusable elements', async function () {
     let {getByRole, getAllByRole} = render(
       <Provider theme={theme}>
-        <Tabs maxWidth={500}>
+        <Tabs aria-label="Tab Example" maxWidth={500}>
           <TabList>
             <Item>Tab 1</Item>
             <Item>Tab 2</Item>
@@ -609,7 +745,7 @@ describe('Tabs', function () {
   it('TabPanel children do not share values between panels', () => {
     let {getByDisplayValue, getAllByRole, getByTestId} = render(
       <Provider theme={theme}>
-        <Tabs maxWidth={500}>
+        <Tabs aria-label="Tab Example" maxWidth={500}>
           <TabList>
             <Item>Tab 1</Item>
             <Item>Tab 2</Item>
@@ -660,7 +796,7 @@ describe('Tabs', function () {
   });
 
   it('fires onSelectionChange when clicking on the current tab', function () {
-    let container = renderComponent({defaultSelectedKey: items[0].name, onSelectionChange});
+    let container = renderComponent({defaultSelectedKey: defaultItems[0].name, onSelectionChange});
     let tablist = container.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     let firstItem = tabs[0];
@@ -668,6 +804,39 @@ describe('Tabs', function () {
 
     triggerPress(firstItem);
     expect(onSelectionChange).toBeCalledTimes(1);
-    expect(onSelectionChange).toHaveBeenCalledWith(items[0].name);
+    expect(onSelectionChange).toHaveBeenCalledWith(defaultItems[0].name);
+  });
+
+  it('updates the tab index of the selected tab if programatically changed', function () {
+    let Example = (props) => (
+      <Provider theme={theme}>
+        <Tabs aria-label="Test Tabs" items={defaultItems} selectedKey={props.selectedKey}>
+          <TabList>
+            {item => (
+              <Item key={item.name} title={item.name || item.children} />
+            )}
+          </TabList>
+          <TabPanels>
+            {item => (
+              <Item key={item.name}>
+                {item.children}
+              </Item>
+            )}
+          </TabPanels>
+        </Tabs>
+      </Provider>
+    );
+    let {getAllByRole, rerender} = render(<Example selectedKey="Tab 3" />);
+
+    let tabs = getAllByRole('tab');
+    expect(tabs[0]).toHaveAttribute('tabindex', '-1');
+    expect(tabs[1]).toHaveAttribute('tabindex', '-1');
+    expect(tabs[2]).toHaveAttribute('tabindex', '0');
+
+    rerender(<Example selectedKey="Tab 1" />);
+    tabs = getAllByRole('tab');
+    expect(tabs[0]).toHaveAttribute('tabindex', '0');
+    expect(tabs[1]).toHaveAttribute('tabindex', '-1');
+    expect(tabs[2]).toHaveAttribute('tabindex', '-1');
   });
 });

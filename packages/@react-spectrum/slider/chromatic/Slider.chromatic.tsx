@@ -10,7 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Meta, Story} from '@storybook/react';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
+import {Heading} from '@react-spectrum/text';
+import {Meta} from '@storybook/react';
 import React from 'react';
 import {Slider} from '../';
 import {SpectrumSliderProps} from '@react-types/slider';
@@ -22,40 +25,50 @@ const meta: Meta<SpectrumSliderProps> = {
 
 export default meta;
 
+export const Default = {
+  args: {label: 'Slider label'}
+};
 
-const Template = (): Story<SpectrumSliderProps> => (args) => (
-  <Slider {...args} />
+export const Disabled = {
+  args: {...Default.args, isDisabled: true}
+};
+
+export const LabelPositionSide = {
+  args: {...Default.args, labelPosition: 'side'}
+};
+
+export const Value50 = {
+  args: {...Default.args, defaultValue: 50}
+};
+
+export const Filled = {
+  args: {...Value50.args, isFilled: true}
+};
+
+export const FillOffset = {
+  args: {...Filled.args, defaultValue: 80, fillOffset: 50}
+};
+
+export const TrackGradient = {
+  args: {
+    ...Default.args,
+    isFilled: true,
+    defaultValue: 30,
+    trackGradient: ['white', 'rgba(177,141,32,1)']
+  }
+};
+
+let contextualHelp = (
+  <ContextualHelp>
+    <Heading>What is a segment?</Heading>
+    <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+  </ContextualHelp>
 );
 
+export const _ContextualHelp = {
+  args: {label: 'Slider label', contextualHelp}
+};
 
-export const Default = Template().bind({});
-Default.args = {label: 'Slider label'};
-
-export const Disabled = Template().bind({});
-Disabled.args = {...Default.args, isDisabled: true};
-/*
-Doesn't exist yet
-export const Vertical = Template().bind({});
-Vertical.args = {...Default.args, orientation: 'vertical'};
-*/
-
-export const LabelPositionSide = Template().bind({});
-LabelPositionSide.args = {...Default.args, labelPosition: 'side'};
-
-/*
-Not supported but prop exists
-export const LabelAlignEnd = Template().bind({});
-LabelAlignEnd.args = {...Default.args, labelAlign: 'end', showValueLabel: false};
-*/
-
-export const Value50 = Template().bind({});
-Value50.args = {...Default.args, defaultValue: 50};
-
-export const Filled = Template().bind({});
-Filled.args = {...Value50.args, isFilled: true};
-
-export const FillOffset = Template().bind({});
-FillOffset.args = {...Filled.args, defaultValue: 80, fillOffset: 50};
-
-export const TrackGradient = Template().bind({});
-TrackGradient.args = {...Default.args, isFilled: true, defaultValue: 30, trackGradient: ['white', 'rgba(177,141,32,1)']};
+export const ContextualHelpSideLabel = {
+  args: {label: 'Slider label', contextualHelp, labelPosition: 'side'}
+};

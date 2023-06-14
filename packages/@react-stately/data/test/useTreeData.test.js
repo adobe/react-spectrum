@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, renderHook} from '@testing-library/react-hooks';
+import {actHook as act, renderHook} from '@react-spectrum/test-utils';
 import React from 'react';
 import {useTreeData} from '../src/useTreeData';
 
@@ -31,7 +31,7 @@ const initial = [
 ];
 
 let getKey = (item) => item.name;
-let getChildren = (item) => item.children || [];
+let getChildren = (item) => item.children;
 
 describe('useTreeData', function () {
   it('should construct a tree using initial data', function () {

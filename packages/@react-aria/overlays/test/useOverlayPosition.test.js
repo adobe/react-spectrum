@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@testing-library/react';
+import {fireEvent, render} from '@react-spectrum/test-utils';
 import React, {useRef} from 'react';
 import {useOverlayPosition} from '../';
 
@@ -18,7 +18,7 @@ function Example({triggerTop = 250, ...props}) {
   let targetRef = useRef();
   let containerRef = useRef();
   let overlayRef = useRef();
-  let {overlayProps, placement, arrowProps} = useOverlayPosition({targetRef, containerRef, overlayRef, ...props});
+  let {overlayProps, placement, arrowProps} = useOverlayPosition({targetRef, containerRef, overlayRef, arrowSize: 8, ...props});
   let style = {width: 300, height: 200, ...overlayProps.style};
   return (
     <React.Fragment>
@@ -62,6 +62,7 @@ describe('useOverlayPosition', function () {
     `);
 
     expect(overlay).toHaveTextContent('placement: bottom');
+    // Arrow should be placed in the center of the button aka trigger left + trigger width / 2 - overlay left.
     expect(arrow).toHaveStyle(`
       left: 48px;
     `);
@@ -126,6 +127,25 @@ describe('useOverlayPosition', function () {
       left: 12px;
       top: 370px;
       max-height: 386px;
+    `);
+  });
+
+  it('should update the overlay\'s maxHeight by the given one if it\'s smaller than available viewport height.', function () {
+    let res = render(<Example maxHeight={450} />);
+    let overlay = res.getByTestId('overlay');
+
+    expect(overlay).toHaveStyle(`
+      left: 12px;
+      top: 350px;
+      max-height: 406px;
+    `);
+
+    res.rerender(<Example maxHeight={150} />);
+
+    expect(overlay).toHaveStyle(`
+      left: 12px;
+      top: 350px;
+      max-height: 150px;
     `);
   });
 

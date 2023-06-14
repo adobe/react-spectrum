@@ -18,8 +18,11 @@ interface Props {
   [key: string]: any
 }
 
+type PropsArg = Props | null | undefined;
+
 // taken from: https://stackoverflow.com/questions/51603250/typescript-3-parameter-list-intersection-type/51604379#51604379
-type TupleTypes<T> = { [P in keyof T]: T[P] } extends { [key: number]: infer V } ? V : never;
+type TupleTypes<T> = { [P in keyof T]: T[P] } extends { [key: number]: infer V } ? NullToObject<V> : never;
+type NullToObject<T> = T extends (null | undefined) ? {} : T;
 // eslint-disable-next-line no-undef, @typescript-eslint/no-unused-vars
 type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never;
 
@@ -30,7 +33,7 @@ type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
  * For all other props, the last prop object overrides all previous ones.
  * @param args - Multiple sets of props to merge together.
  */
-export function mergeProps<T extends Props[]>(...args: T): UnionToIntersection<TupleTypes<T>> {
+export function mergeProps<T extends PropsArg[]>(...args: T): UnionToIntersection<TupleTypes<T>> {
   // Start with a base clone of the first argument. This is a lot faster than starting
   // with an empty object and adding properties as we go.
   let result: Props = {...args[0]};

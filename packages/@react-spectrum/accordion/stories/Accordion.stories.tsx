@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Story as _Story, Meta} from '@storybook/react';
 import {Accordion, Item} from '../src';
-import React from 'react';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import React, {useState} from 'react';
 import {SpectrumAccordionProps} from '@react-types/accordion';
 
 type ItemType = {
@@ -20,59 +20,67 @@ type ItemType = {
   title: string
 };
 
-/**
- * Helper type so `bind` returns the actual Story type.
- */
-interface Story<T> extends _Story<T> {
-  bind: (this: ThisParameterType<typeof Function.bind>, thisArg: Parameters<typeof Function.bind>[0], ...argArray: Parameters<typeof Function.bind>[1][]) => _Story<T>
-}
-
 export default {
   title: 'Accordion',
-  component: Accordion
-} as Meta<SpectrumAccordionProps<ItemType>>;
+  component: Accordion,
+  argTypes: {}
+} as ComponentMeta<typeof Accordion>;
 
-const AccordionRenderPropsTemplate: Story<SpectrumAccordionProps<ItemType>> = (args) => (
-  <Accordion {...args}>
-    {item => <Item key={item.key} title={item.title}>{item.key}</Item>}
-  </Accordion>
-);
+export type AccordionStory = ComponentStoryObj<typeof Accordion>;
 
-export const Default = AccordionRenderPropsTemplate.bind({});
-Default.storyName = 'default';
-Default.args = {
-  items: [
-    {key: 'files', title: 'Your files'},
-    {key: 'shared', title: 'Shared with you'},
-    {key: 'last', title: 'Last item'}
-  ]
+export const Default: AccordionStory = {
+  args: {
+    items: [
+      {key: 'files', title: 'Your files'},
+      {key: 'shared', title: 'Shared with you'},
+      {key: 'last', title: 'Last item'}
+    ]
+  },
+  render: (args) => (
+    <Accordion {...args}>
+      {(item) => <Item key={(item as ItemType).key} title={(item as ItemType).title}>{(item as ItemType).key}</Item>}
+    </Accordion>
+  )
 };
 
-const AccordionTemplate: Story<SpectrumAccordionProps<ItemType>> = (args) => (
-  <Accordion {...args} >
-    <Item key="files" title="Your files">
-      files
-    </Item>
-    <Item key="shared" title="Shared with you">
-      shared
-    </Item>
-    <Item key="last" title="Last item">
-      last
-    </Item>
-  </Accordion>
-);
-
-export const DefaultExpandedKeys = AccordionTemplate.bind({});
-DefaultExpandedKeys.storyName = 'defaultExpandedKeys: files';
-DefaultExpandedKeys.args = {defaultExpandedKeys: ['files']};
-
-export const DisabledKeys = AccordionTemplate.bind({});
-DisabledKeys.storyName = 'disabledKeys: files, shared';
-DisabledKeys.args = {disabledKeys: ['files', 'shared']};
-
-export const DisabledDefaultExpandedKeys =  AccordionTemplate.bind({});
-DisabledDefaultExpandedKeys.storyName = 'defaultExpandedKeys: files, disabledKeys: files, shared';
-DisabledDefaultExpandedKeys.args = {
-  defaultExpandedKeys: ['files'],
-  disabledKeys: ['files', 'shared']
+export const DefaultExpandedKeys: AccordionStory = {
+  args: {...Default.args, defaultExpandedKeys: ['files']},
+  render: Default.render,
+  name: 'defaultExpandedKeys: files'
 };
+
+export const DisabledKeys: AccordionStory = {
+  args: {...Default.args, disabledKeys: ['files', 'shared']},
+  render: Default.render,
+  name: 'disabledKeys: files, shared'
+};
+
+export const DisabledDefaultExpandedKeys: AccordionStory = {
+  args: {...Default.args, defaultExpandedKeys: ['files'], disabledKeys: ['files', 'shared']},
+  render: Default.render,
+  name: 'defaultExpandedKeys: files, disabledKeys: files, shared'
+};
+
+export const ControlledExpandedKeys: AccordionStory = {
+  args: {...Default.args, defaultExpandedKeys: ['files']},
+  render: (args) => <ControlledAccordion {...args} />,
+  name: 'controlled ExpandedKeys'
+};
+
+
+function ControlledAccordion<T>(props: SpectrumAccordionProps<T>) {
+  let [openKeys, setOpenKeys] = useState<Set<React.Key>>(new Set(['files']));
+  return (
+    <Accordion {...props} expandedKeys={openKeys} onExpandedChange={setOpenKeys} >
+      <Item key="files" title="Your files">
+        files
+      </Item>
+      <Item key="shared" title="Shared with you">
+        shared
+      </Item>
+      <Item key="last" title="Last item">
+        last
+      </Item>
+    </Accordion>
+  );
+}

@@ -12,7 +12,7 @@
 
 import {parseColor} from '@react-stately/color';
 import React from 'react';
-import {renderHook} from '@testing-library/react-hooks';
+import {renderHook} from '@react-spectrum/test-utils';
 import {useColorField} from '../';
 
 describe('useColorField', function () {

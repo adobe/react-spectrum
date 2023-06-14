@@ -19,7 +19,9 @@ import {
 // Event bubbling can be problematic in real-world applications, so the default for React Spectrum components
 // is not to propagate. This can be overridden by calling continuePropagation() on the event.
 export type BaseEvent<T extends SyntheticEvent> = T & {
-  /** @deprecated Use continuePropagation. */
+  /**
+   * Use continuePropagation.
+   * @deprecated */
   stopPropagation(): void,
   continuePropagation(): void
 }
@@ -34,7 +36,7 @@ export interface PressEvent {
   /** The pointer type that triggered the press event. */
   pointerType: PointerType,
   /** The target element of the press event. */
-  target: HTMLElement,
+  target: Element,
   /** Whether the shift keyboard modifier was held during the press event. */
   shiftKey: boolean,
   /** Whether the ctrl keyboard modifier was held during the press event. */
@@ -66,11 +68,11 @@ export interface KeyboardEvents {
   onKeyUp?: (e: KeyboardEvent) => void
 }
 
-export interface FocusEvents {
+export interface FocusEvents<Target = Element> {
   /** Handler that is called when the element receives focus. */
-  onFocus?: (e: FocusEvent) => void,
+  onFocus?: (e: FocusEvent<Target>) => void,
   /** Handler that is called when the element loses focus. */
-  onBlur?: (e: FocusEvent) => void,
+  onBlur?: (e: FocusEvent<Target>) => void,
   /** Handler that is called when the element's focus status changes. */
   onFocusChange?: (isFocused: boolean) => void
 }
@@ -103,14 +105,22 @@ export interface PressEvents {
   onPressUp?: (e: PressEvent) => void
 }
 
-export interface FocusableProps extends FocusEvents, KeyboardEvents {
+export interface FocusableProps<Target = Element> extends FocusEvents<Target>, KeyboardEvents {
   /** Whether the element should receive focus on render. */
   autoFocus?: boolean
 }
 
 interface BaseMoveEvent {
   /** The pointer type that triggered the move event. */
-  pointerType: PointerType
+  pointerType: PointerType,
+  /** Whether the shift keyboard modifier was held during the move event. */
+  shiftKey: boolean,
+  /** Whether the ctrl keyboard modifier was held during the move event. */
+  ctrlKey: boolean,
+  /** Whether the meta keyboard modifier was held during the move event. */
+  metaKey: boolean,
+  /** Whether the alt keyboard modifier was held during the move event. */
+  altKey: boolean
 }
 
 export interface MoveStartEvent extends BaseMoveEvent {
@@ -125,6 +135,7 @@ export interface MoveMoveEvent extends BaseMoveEvent {
   deltaX: number,
   /** The amount moved in the Y direction since the last event. */
   deltaY: number
+
 }
 
 export interface MoveEndEvent extends BaseMoveEvent {

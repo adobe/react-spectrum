@@ -22,4 +22,4 @@ const meta: Meta = {
 
 export default meta;
 
-export {PropDefaults, PropInputValue, PropAriaLabelled, PropLabelEnd, PropLabelSide, PropCustomWidth} from './SearchAutocomplete.chromatic';
+export {PropDefaults, PropInputValue, PropAriaLabelled, PropLabelEnd, PropLabelSide, PropCustomWidth, PropIconFilter, PropIconNull} from './SearchAutocomplete.chromatic';

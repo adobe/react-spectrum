@@ -65,6 +65,9 @@ icons: packages/@spectrum-icons/workflow/src packages/@spectrum-icons/color/src 
 storybook:
 	NODE_ENV=production yarn build:storybook
 
+storybook-16:
+	yarn build:storybook-16
+
 storybook-17:
 	yarn build:storybook-17
 
@@ -79,7 +82,13 @@ publish-nightly: build
 	yarn publish:nightly
 
 build:
-	parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/*/ --no-minify
+	parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/{message,string,date,number}/ packages/react-aria-components --no-optimize
+	yarn lerna run prepublishOnly
+	for pkg in packages/@react-{spectrum,aria,stately}/*/  packages/@internationalized/{message,string,date,number}/ packages/@adobe/react-spectrum/ packages/react-aria/ packages/react-stately/ packages/react-aria-components/; \
+		do cp $$pkg/dist/module.js $$pkg/dist/import.mjs; \
+	done
+	sed -i.bak s/\.js/\.mjs/ packages/@react-aria/i18n/dist/import.mjs
+	rm packages/@react-aria/i18n/dist/import.mjs.bak
 
 website:
 	yarn build:docs --public-url /reactspectrum/$$(git rev-parse HEAD)/docs --dist-dir dist/$$(git rev-parse HEAD)/docs
@@ -87,4 +96,7 @@ website:
 website-production:
 	node scripts/buildWebsite.js
 	cp packages/dev/docs/pages/robots.txt dist/production/docs/robots.txt
-	node scripts/brotli.js
+
+check-examples:
+	node scripts/extractExamples.mjs
+	yarn tsc --project dist/docs-examples/tsconfig.json

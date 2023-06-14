@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
-import {installPointerEvent} from '@react-spectrum/test-utils';
+import {act, fireEvent, installPointerEvent, render} from '@react-spectrum/test-utils';
 import {mergeProps} from '@react-aria/utils';
 import React from 'react';
 import {useLongPress, usePress} from '../';
@@ -32,12 +31,6 @@ function ExampleWithPress(props) {
 describe('useLongPress', function () {
   beforeAll(() => {
     jest.useFakeTimers();
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
-  });
-
-  afterAll(() => {
-    jest.useRealTimers();
-    window.requestAnimationFrame.mockRestore();
   });
 
   afterEach(() => {

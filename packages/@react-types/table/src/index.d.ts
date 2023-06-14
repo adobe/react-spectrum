@@ -10,9 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, CollectionChildren, DOMProps, LoadingState, MultipleSelection, Sortable, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, AsyncLoadable, DOMProps, LoadingState, MultipleSelection, Sortable, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {Key, ReactElement, ReactNode} from 'react';
+
+/** Widths that result in a constant pixel value for the same Table width. */
+export type ColumnStaticSize = number | `${number}` | `${number}%`; // match regex: /^(\d+)(?=%$)/
+/**
+ * Widths that change size in relation to the remaining space and in ratio to other dynamic columns.
+ * All numbers must be integers and greater than 0.
+ * FR units take up remaining, if any, space in the table.
+ */
+export type ColumnDynamicSize = `${number}fr`; // match regex: /^(\d+)(?=fr$)/
+/** All possible sizes a column can be assigned. */
+export type ColumnSize = ColumnStaticSize | ColumnDynamicSize;
 
 export interface TableProps<T> extends MultipleSelection, Sortable {
   /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
@@ -21,6 +32,9 @@ export interface TableProps<T> extends MultipleSelection, Sortable {
   disabledKeys?: Iterable<Key>
 }
 
+/**
+ * @deprecated - use SpectrumTableProps from '@adobe/react-spectrum' instead.
+ */
 export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionProps, DOMProps, AriaLabelingProps, StyleProps {
   /**
    * Sets the amount of vertical padding within each cell.
@@ -37,7 +51,22 @@ export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionP
   /** Sets what the TableView should render when there is no content to display. */
   renderEmptyState?: () => JSX.Element,
   /** Handler that is called when a user performs an action on a row. */
-  onAction?: (key: Key) => void
+  onAction?: (key: Key) => void,
+  /**
+   * Handler that is called when a user starts a column resize.
+   */
+  onResizeStart?: (widths: Map<Key, ColumnSize>) => void,
+  /**
+   * Handler that is called when a user performs a column resize.
+   * Can be used with the width property on columns to put the column widths into
+   * a controlled state.
+   */
+  onResize?: (widths: Map<Key, ColumnSize>) => void,
+  /**
+   * Handler that is called after a user performs a column resize.
+   * Can be used to store the widths of columns for another future session.
+   */
+  onResizeEnd?: (widths: Map<Key, ColumnSize>) => void
 }
 
 export interface TableHeaderProps<T> {
@@ -57,12 +86,15 @@ export interface ColumnProps<T> {
   /** A list of child columns used when dynamically rendering nested child columns. */
   childColumns?: T[],
   /** The width of the column. */
-  width?: number | string,
+  width?: ColumnSize | null,
   /** The minimum width of the column. */
-  minWidth?: number | string,
+  minWidth?: ColumnStaticSize | null,
   /** The maximum width of the column. */
-  maxWidth?: number | string,
-  // defaultWidth?: number | string
+  maxWidth?: ColumnStaticSize | null,
+  /** The default width of the column. */
+  defaultWidth?: ColumnSize | null,
+  /** Whether the column allows resizing. */
+  allowsResizing?: boolean,
   /** Whether the column allows sorting. */
   allowsSorting?: boolean,
   /** Whether a column is a [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) and should be announced by assistive technology during row navigation. */
@@ -90,9 +122,10 @@ export interface SpectrumColumnProps<T> extends ColumnProps<T> {
   hideHeader?: boolean
 }
 
+export type RowElement = ReactElement<RowProps>;
 export interface TableBodyProps<T> extends Omit<AsyncLoadable, 'isLoading'> {
   /** The contents of the table body. Supports static items or a function for dynamic rendering. */
-  children: CollectionChildren<T>,
+  children: RowElement | RowElement[] | ((item: T) => RowElement),
   /** A list of row objects in the table body used when dynamically rendering rows. */
   items?: Iterable<T>,
   /** The current loading state of the table. */
@@ -122,7 +155,7 @@ export type CellElement = ReactElement<CellProps>;
 export type CellRenderer = (columnKey: Key) => CellElement;
 
 export interface TableCollection<T> extends GridCollection<T> {
-  // TODO perhaps elaborate on this? maybe not clear enought, essentially returns the table header rows (e.g. in a tiered headers table, will return the nodes containing the top tier column, next tier, etc)
+  // TODO perhaps elaborate on this? maybe not clear enough, essentially returns the table header rows (e.g. in a tiered headers table, will return the nodes containing the top tier column, next tier, etc)
   /** A list of header row nodes in the table. */
   headerRows: GridNode<T>[],
   /** A list of column nodes in the table. */

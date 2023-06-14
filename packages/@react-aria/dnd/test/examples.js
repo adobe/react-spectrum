@@ -10,31 +10,39 @@
  * governing permissions and limitations under the License.
  */
 
+import {DragPreview} from '../src';
 import {mergeProps} from '@react-aria/utils';
-import React from 'react';
+import React, {useRef} from 'react';
 import {useButton} from '@react-aria/button';
 import {useDrag, useDrop} from '../';
 
 export function Draggable(props) {
-  let {dragProps, dragButtonProps, isDragging} = useDrag({
+  let preview = useRef(null);
+  let {dragProps, isDragging} = useDrag({
     getItems() {
       return [{
         'text/plain': 'hello world'
       }];
     },
+    preview,
     ...props
   });
 
-  let ref = React.useRef();
-  let {buttonProps} = useButton({...dragButtonProps, elementType: 'div'}, ref);
-
   return (
-    <div
-      ref={ref}
-      {...mergeProps(dragProps, buttonProps)}
-      data-dragging={isDragging}>
-      {props.children || 'Drag me'}
-    </div>
+    <>
+      <div
+        {...dragProps}
+        role="button"
+        tabIndex={0}
+        data-dragging={isDragging}>
+        {props.children || 'Drag me'}
+      </div>
+      {props.renderPreview &&
+        <DragPreview ref={preview}>
+          {props.renderPreview}
+        </DragPreview>
+      }
+    </>
   );
 }
 

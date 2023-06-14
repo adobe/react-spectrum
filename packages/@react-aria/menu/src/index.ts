@@ -10,7 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useMenuTrigger';
-export * from './useMenu';
-export * from './useMenuItem';
-export * from './useMenuSection';
+export {useMenuTrigger} from './useMenuTrigger';
+export {useMenu} from './useMenu';
+export {useMenuItem} from './useMenuItem';
+export {useMenuSection} from './useMenuSection';
+
+export type {AriaMenuProps} from '@react-types/menu';
+export type {AriaMenuTriggerProps, MenuTriggerAria} from './useMenuTrigger';
+export type {AriaMenuOptions, MenuAria} from './useMenu';
+export type {AriaMenuItemProps, MenuItemAria} from './useMenuItem';
+export type {AriaMenuSectionProps, MenuSectionAria} from './useMenuSection';

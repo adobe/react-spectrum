@@ -9,5 +9,6 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
-export * from './useSearchAutocomplete';
+export {useSearchAutocomplete} from './useSearchAutocomplete';
+export type {AriaSearchAutocompleteOptions, SearchAutocompleteAria} from './useSearchAutocomplete';
+export type {AriaSearchAutocompleteProps} from '@react-types/autocomplete';

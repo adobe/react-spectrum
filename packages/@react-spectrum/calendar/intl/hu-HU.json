@@ -1,0 +1,3 @@
+{
+  "invalidSelection": "A kijelölt {selectedCount, plural, one {dátum nem érhető el} other {dátumok nem érhetőek el}}."
+}

@@ -24,14 +24,14 @@ const CURRENCY_SIGN_REGEX = new RegExp('^.*\\(.*\\).*$');
 const NUMBERING_SYSTEMS = ['latn', 'arab', 'hanidec'];
 
 /**
- * A NumberParser can be used perform locale aware parsing of numbers from Unicode strings,
- * as well as validation of partial user input. Automatically detects the numbering system
+ * A NumberParser can be used to perform locale-aware parsing of numbers from Unicode strings,
+ * as well as validation of partial user input. It automatically detects the numbering system
  * used in the input, and supports parsing decimals, percentages, currency values, and units
  * according to the locale.
  */
 export class NumberParser {
-  locale: string;
-  options: Intl.NumberFormatOptions;
+  private locale: string;
+  private options: Intl.NumberFormatOptions;
 
   constructor(locale: string, options: Intl.NumberFormatOptions = {}) {
     this.locale = locale;
@@ -215,7 +215,9 @@ function getSymbols(formatter: Intl.NumberFormat, intlOptions: Intl.ResolvedNumb
   let pluralLiterals = allParts.filter(p => !nonLiteralParts.has(p.type)).map(p => escapeRegex(p.value));
   let singularLiterals = singularParts.filter(p => !nonLiteralParts.has(p.type)).map(p => escapeRegex(p.value));
   let sortedLiterals = [...new Set([...singularLiterals, ...pluralLiterals])].sort((a, b) => b.length - a.length);
-  let literals = new RegExp(`${sortedLiterals.join('|')}|[\\p{White_Space}]`, 'gu');
+  let literals = sortedLiterals.length === 0 ? 
+      new RegExp('[\\p{White_Space}]', 'gu') :
+      new RegExp(`${sortedLiterals.join('|')}|[\\p{White_Space}]`, 'gu');
 
   // These are for replacing non-latn characters with the latn equivalent
   let numerals = [...new Intl.NumberFormat(intlOptions.locale, {useGrouping: false}).format(9876543210)].reverse();

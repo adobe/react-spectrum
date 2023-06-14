@@ -10,8 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './Virtualizer';
-export * from './useVirtualizerItem';
-export * from './VirtualizerItem';
-export * from './ScrollView';
-export * from './utils';
+export type {RTLOffsetType} from './utils';
+export type {VirtualizerItemOptions} from './useVirtualizerItem';
+export {useVirtualizer, Virtualizer} from './Virtualizer';
+export {useVirtualizerItem} from './useVirtualizerItem';
+export {VirtualizerItem, layoutInfoToStyle} from './VirtualizerItem';
+export {ScrollView} from './ScrollView';
+export {getRTLOffsetType, getScrollLeft, setScrollLeft} from './utils';

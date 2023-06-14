@@ -1,9 +1,5 @@
 {
   "calendar": "Kalendář",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "{start, date, long} až {end, date, long}",
-  "date": "Datum",
-  "dateRange": "Rozsah dat",
   "day": "den",
   "dayPeriod": "část dne",
   "endDate": "Konečné datum",
@@ -12,8 +8,11 @@
   "minute": "minuta",
   "month": "měsíc",
   "second": "sekunda",
+  "selectedDateDescription": "Vybrané datum: {date}",
+  "selectedRangeDescription": "Vybrané období: {startDate} až {endDate}",
+  "selectedTimeDescription": "Vybraný čas: {time}",
   "startDate": "Počáteční datum",
-  "year": "rok",
+  "timeZoneName": "časové pásmo",
   "weekday": "den v týdnu",
-  "timeZoneName": "časové pásmo"
+  "year": "rok"
 }

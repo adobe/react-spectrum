@@ -1,0 +1,6 @@
+{
+  "colorInputLabel": "{label}, {channelLabel}",
+  "colorNameAndValue": "{name}: {value}",
+  "colorPicker": "Színválasztó",
+  "twoDimensionalSlider": "2D-csúszka"
+}

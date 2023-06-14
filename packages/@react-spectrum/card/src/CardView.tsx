@@ -17,12 +17,13 @@ import {DOMRef, DOMRefValue, Node} from '@react-types/shared';
 import {GridCollection, useGridState} from '@react-stately/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {mergeProps} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {ReactElement, useCallback, useMemo, useRef} from 'react';
+import React, {ReactElement, ReactNode, useCallback, useMemo, useRef} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
 import {SpectrumCardViewProps} from '@react-types/card';
 import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
-import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useCollator, useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useGrid, useGridCell, useGridRow} from '@react-aria/grid';
 import {useListState} from '@react-stately/list';
 import {useProvider} from '@react-spectrum/provider';
@@ -46,7 +47,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   let cardViewLayout = useMemo(() => typeof layout === 'function' ? new layout({collator, cardOrientation, scale}) : layout, [layout, collator, cardOrientation, scale]);
   let layoutType = cardViewLayout.layoutType;
 
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {direction} = useLocale();
   let {collection} = useListState(props);
 
@@ -87,12 +88,15 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     keyboardDelegate: cardViewLayout
   }, state, domRef);
 
-  type View = ReusableView<Node<T>, unknown>;
+  type View = ReusableView<Node<T>, ReactNode>;
   let renderWrapper = (parent: View, reusableView: View) => (
     <VirtualizerItem
       key={reusableView.key}
-      reusableView={reusableView}
-      parent={parent} />
+      layoutInfo={reusableView.layoutInfo}
+      virtualizer={reusableView.virtualizer}
+      parent={parent?.layoutInfo}>
+      {reusableView.rendered}
+    </VirtualizerItem>
   );
 
   let focusedKey = state.selectionManager.focusedKey;
@@ -137,7 +141,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
               <CenteredWrapper>
                 <ProgressCircle
                   isIndeterminate
-                  aria-label={state.collection.size > 0 ? formatMessage('loadingMore') : formatMessage('loading')} />
+                  aria-label={state.collection.size > 0 ? stringFormatter.format('loadingMore') : stringFormatter.format('loading')} />
               </CenteredWrapper>
             );
           } else if (type === 'placeholder') {
@@ -185,7 +189,7 @@ function InternalCard(props) {
   let cellRef = useRef<DOMRefValue<HTMLDivElement>>();
   let unwrappedRef = useUnwrapDOMRef(cellRef);
 
-  let {rowProps} = useGridRow({
+  let {rowProps: gridRowProps} = useGridRow({
     node: item,
     isVirtualized: true
   }, state, rowRef);
@@ -195,6 +199,20 @@ function InternalCard(props) {
     focusMode: 'cell'
   }, state, unwrappedRef);
 
+  // Prevent space key from scrolling the CardView if triggered on a disabled item or on a Card in a selectionMode="none" CardView.
+  let allowsInteraction = state.selectionManager.selectionMode !== 'none';
+  let isDisabled = !allowsInteraction || state.disabledKeys.has(item.key);
+
+  let onKeyDown = (e) => {
+    if (e.key === ' ' && isDisabled) {
+      e.preventDefault();
+    }
+  };
+
+  let rowProps = mergeProps(
+    gridRowProps,
+    {onKeyDown}
+  );
 
   if (layoutType === 'grid' || layoutType === 'gallery') {
     isQuiet = true;
@@ -204,6 +222,10 @@ function InternalCard(props) {
     cardOrientation = 'vertical';
   }
 
+  // We don't want to focus the checkbox (or any other focusable elements) within the Card
+  // when pressing the arrow keys so we delete the key down handler here. Arrow key navigation between
+  // the cards in the CardView is handled by useGrid => useSelectableCollection instead.
+  delete gridCellProps.onKeyDownCapture;
   return (
     <div {...rowProps} ref={rowRef} className={classNames(styles, 'spectrum-CardView-row')}>
       <CardBase

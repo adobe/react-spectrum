@@ -54,7 +54,7 @@ interface AccordionItemProps<T> {
 
 function AccordionItem<T>(props: AccordionItemProps<T>) {
   props = useProviderProps(props);
-  let ref = useRef<HTMLButtonElement>();
+  let ref = useRef<HTMLButtonElement>(null);
   let {state, item} = props;
   let {buttonProps, regionProps} = useAccordionItem<T>(props, state, ref);
   let isOpen = state.expandedKeys.has(item.key);

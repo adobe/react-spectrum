@@ -18,7 +18,7 @@
     font-family: myriad-arabic, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
 .spectrum:lang(he) {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: myraid-hebrew, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
 .spectrum:lang(zh-Hans) {
     font-family: adobe-clean-han-japanese, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;

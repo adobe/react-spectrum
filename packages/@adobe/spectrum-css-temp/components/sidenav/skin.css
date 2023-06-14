@@ -62,3 +62,23 @@ governing permissions and limitations under the License.
 .spectrum-SideNav-heading {
   color: var(--spectrum-sidenav-header-text-color);
 }
+
+@media (forced-colors: active) {
+  .spectrum-SideNav-item {
+    forced-color-adjust: none;
+    --spectrum-sidenav-item-text-color-selected: HighlightText;
+    --spectrum-sidenav-item-background-color-selected: Highlight;
+    --spectrum-sidenav-item-background-color-down: Highlight;
+    --spectrum-sidenav-item-background-color-disabled: ButtonFace;
+    --spectrum-sidenav-item-text-color-disabled: GrayText;
+    --spectrum-sidenav-item-background-color: ButtonFace;
+    --spectrum-sidenav-item-text-color: ButtonText;
+    --spectrum-sidenav-item-background-color-hover: ButtonFace;
+    --spectrum-sidenav-item-text-color-hover: ButtonText;
+    --spectrum-sidenav-item-background-color-down: ButtonFace;
+    --spectrum-sidenav-item-background-color-key-focus: ButtonFace;
+    --spectrum-sidenav-item-text-color-key-focus: ButtonText;
+    --spectrum-sidenav-item-border-color-key-focus: ButtonText;
+    --spectrum-sidenav-header-text-color: ButtonText;
+  }
+}

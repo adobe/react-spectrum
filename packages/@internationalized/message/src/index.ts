@@ -10,5 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './MessageDictionary';
-export * from './MessageFormatter';
+export type {LocalizedStrings} from './MessageDictionary';
+export {MessageDictionary} from './MessageDictionary';
+export {MessageFormatter} from './MessageFormatter';

@@ -1,9 +1,5 @@
 {
   "calendar": "Kalender",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "{start, date, long} t/m {end, date, long}",
-  "date": "Datum",
-  "dateRange": "Datumbereik",
   "day": "dag",
   "dayPeriod": "a.m./p.m.",
   "endDate": "Einddatum",
@@ -12,8 +8,11 @@
   "minute": "minuut",
   "month": "maand",
   "second": "seconde",
+  "selectedDateDescription": "Geselecteerde datum: {date}",
+  "selectedRangeDescription": "Geselecteerd bereik: {startDate} tot {endDate}",
+  "selectedTimeDescription": "Geselecteerde tijd: {time}",
   "startDate": "Startdatum",
-  "year": "jaar",
+  "timeZoneName": "tijdzone",
   "weekday": "dag van de week",
-  "timeZoneName": "tijdzone"
+  "year": "jaar"
 }

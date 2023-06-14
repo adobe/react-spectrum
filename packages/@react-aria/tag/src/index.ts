@@ -10,5 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useTag';
-export * from './useTagGroup';
+export {useTag} from './useTag';
+export {useTagGroup} from './useTagGroup';
+
+export type {TagGroupAria, AriaTagGroupProps} from './useTagGroup';
+export type {AriaTagProps, TagAria} from './useTag';

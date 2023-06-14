@@ -46,6 +46,22 @@ softAssert.equal = function (val, val2, message) {
   }
 };
 
+// Checks if a dependency is actually being imported somewhere
+function isDepUsed(dep, src) {
+  let depRegex = new RegExp(`import .* from '${dep}'`);
+  let files = glob.sync(src, {
+    ignore: ['**/node_modules/**', '**/dist/**']
+  });
+
+  for (let file of files) {
+    let contents = fs.readFileSync(file, 'utf8');
+    if (depRegex.test(contents)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 let pkgNames = {};
 for (let pkg of packages) {
   let json = JSON.parse(fs.readFileSync(pkg));
@@ -56,6 +72,8 @@ for (let pkg of packages) {
     softAssert(json.main.endsWith('.js'), `${pkg}#main should be a .js file but got "${json.main}"`);
     softAssert(json.module, `${pkg} did not have "module"`);
     softAssert(json.module.endsWith('.js'), `${pkg}#module should be a .js file but got "${json.module}"`);
+    softAssert(json.exports.require.endsWith('.js'), `${pkg}#exports#require should be a .js file but got "${json.exports.require}"`);
+    softAssert(json.exports.import.endsWith('.mjs'), `${pkg}#exports#import should be a .mjs file but got "${json.exports.import}"`);
     softAssert(json.source, `${pkg} did not have "source"`);
     softAssert.equal(json.source, 'src/index.ts', `${pkg} did not match "src/index.ts"`);
     softAssert.deepEqual(json.files, ['dist', 'src'], `${pkg} did not match "files"`);
@@ -65,9 +83,17 @@ for (let pkg of packages) {
       softAssert.equal(json.sideEffects, false, `${pkg} is missing sideEffects: false`);
     }
     softAssert(!json.dependencies || !json.dependencies['@adobe/spectrum-css-temp'], `${pkg} has @adobe/spectrum-css-temp in dependencies instead of devDependencies`);
-    softAssert(json.dependencies && json.dependencies['@babel/runtime'], `${pkg} is missing a dependency on @babel/runtime`);
+    softAssert(json.dependencies && json.dependencies['@swc/helpers'], `${pkg} is missing a dependency on @swc/helpers`);
     softAssert(!json.dependencies || !json.dependencies['@react-spectrum/test-utils'], '@react-spectrum/test-utils should be a devDependency');
     softAssert(!json.dependencies || !json.dependencies['react'], `${pkg} has react as a dependency, but it should be a peerDependency`);
+
+    if (json.peerDependencies?.react) {
+      softAssert.equal(json.peerDependencies.react, '^16.8.0 || ^17.0.0-rc.1 || ^18.0.0', `${pkg} has wrong react peer dep`);
+    }
+
+    if (json.peerDependencies?.['react-dom']) {
+      softAssert.equal(json.peerDependencies['react-dom'], '^16.8.0 || ^17.0.0-rc.1 || ^18.0.0', `${pkg} has wrong react-dom peer dep`);
+    }
 
     if (json.name.startsWith('@react-spectrum') && json.devDependencies && json.devDependencies['@adobe/spectrum-css-temp']) {
       softAssert.deepEqual(json.targets, {
@@ -106,29 +132,27 @@ for (let pkg of packages) {
 
 
 for (let pkg of packages) {
+  let globSrc = pkg.replace('package.json', '**/*.{js,ts,tsx}');
   let json = JSON.parse(fs.readFileSync(pkg));
   let [scope, basename] = json.name.split('/');
 
   if (basename.includes('utils') || basename.includes('layout')) {
     continue;
   }
-  if (scope === '@react-spectrum') {
-    let aria = `@react-aria/${basename}`;
-    let stately = `@react-stately/${basename}`;
-    let types = `@react-types/${basename}`;
 
+  let aria = `@react-aria/${basename}`;
+  let stately = `@react-stately/${basename}`;
+  let types = `@react-types/${basename}`;
+
+  if (scope === '@react-spectrum' && isDepUsed(aria, globSrc)) {
     softAssert(!pkgNames[aria] || json.dependencies[aria], `${pkg} is missing a dependency on ${aria}`);
-    softAssert(!pkgNames[stately] || json.dependencies[stately], `${pkg} is missing a dependency on ${stately}`);
-    softAssert(!pkgNames[types] || json.dependencies[types], `${pkg} is missing a dependency on ${types}`);
-  } else if (scope === '@react-aria') {
-    let stately = `@react-stately/${basename}`;
-    let types = `@react-types/${basename}`;
+  }
 
+  if ((scope === '@react-aria' || scope === '@react-spectrum') && isDepUsed(stately, globSrc)) {
     softAssert(!pkgNames[stately] || json.dependencies[stately], `${pkg} is missing a dependency on ${stately}`);
-    softAssert(!pkgNames[types] || json.dependencies[types], `${pkg} is missing a dependency on ${types}`);
-  } else if (scope === '@react-stately') {
-    let types = `@react-types/${basename}`;
+  }
 
+  if ((scope === '@react-aria' || scope === '@react-spectrum' || scope === '@react-stately') && isDepUsed(types, globSrc)) {
     softAssert(!pkgNames[types] || json.dependencies[types], `${pkg} is missing a dependency on ${types}`);
   }
 }
@@ -138,3 +162,4 @@ if (errors) {
 }
 
 require('./checkPublishedDependencies');
+require('./findCircularDeps');

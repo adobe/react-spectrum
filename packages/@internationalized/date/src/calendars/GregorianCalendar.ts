@@ -18,7 +18,9 @@ import {CalendarDate} from '../CalendarDate';
 import {mod, Mutable} from '../utils';
 
 const EPOCH = 1721426; // 001/01/03 Julian C.E.
-export function gregorianToJulianDay(year: number, month: number, day: number): number {
+export function gregorianToJulianDay(era: string, year: number, month: number, day: number): number {
+  year = getExtendedYear(era, year);
+
   let y1 = year - 1;
   let monthOffset = -2;
   if (month <= 2) {
@@ -42,11 +44,29 @@ export function isLeapYear(year: number): boolean {
   return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
 }
 
+export function getExtendedYear(era: string, year: number): number {
+  return era === 'BC' ? 1 - year : year;
+}
+
+export function fromExtendedYear(year: number): [string, number] {
+  let era = 'AD';
+  if (year <= 0) {
+    era = 'BC';
+    year = 1 - year;
+  }
+
+  return [era, year];
+}
+
 const daysInMonth = {
   standard: [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
   leapyear: [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 };
 
+/**
+ * The Gregorian calendar is the most commonly used calendar system in the world. It supports two eras: BC, and AD.
+ * Years always contain 12 months, and 365 or 366 days depending on whether it is a leap year.
+ */
 export class GregorianCalendar implements Calendar {
   identifier = 'gregory';
 
@@ -61,22 +81,23 @@ export class GregorianCalendar implements Calendar {
     let dquad = mod(dcent, 1461);
     let yindex = Math.floor(dquad / 365);
 
-    let year = quadricent * 400 + cent * 100 + quad * 4 + yindex + (cent !== 4 && yindex !== 4 ? 1 : 0);
-    let yearDay = jd0 - gregorianToJulianDay(year, 1, 1);
+    let extendedYear = quadricent * 400 + cent * 100 + quad * 4 + yindex + (cent !== 4 && yindex !== 4 ? 1 : 0);
+    let [era, year] = fromExtendedYear(extendedYear);
+    let yearDay = jd0 - gregorianToJulianDay(era, year, 1, 1);
     let leapAdj = 2;
-    if (jd0 < gregorianToJulianDay(year, 3, 1)) {
+    if (jd0 < gregorianToJulianDay(era, year, 3, 1)) {
       leapAdj = 0;
     } else if (isLeapYear(year)) {
       leapAdj = 1;
     }
     let month = Math.floor(((yearDay + leapAdj) * 12 + 373) / 367);
-    let day = jd0 - gregorianToJulianDay(year, month, 1) + 1;
+    let day = jd0 - gregorianToJulianDay(era, year, month, 1) + 1;
 
-    return new CalendarDate(this, year, month, day);
+    return new CalendarDate(era, year, month, day);
   }
 
   toJulianDay(date: AnyCalendarDate): number {
-    return gregorianToJulianDay(date.year, date.month, date.day);
+    return gregorianToJulianDay(date.era, date.year, date.month, date.day);
   }
 
   getDaysInMonth(date: AnyCalendarDate): number {
@@ -101,8 +122,8 @@ export class GregorianCalendar implements Calendar {
     return ['BC', 'AD'];
   }
 
-  getYearsToAdd(date: Mutable<AnyCalendarDate>, years: number) {
-    return date.era === 'BC' ? -years : years;
+  isInverseEra(date: AnyCalendarDate): boolean {
+    return date.era === 'BC';
   }
 
   balanceDate(date: Mutable<AnyCalendarDate>) {

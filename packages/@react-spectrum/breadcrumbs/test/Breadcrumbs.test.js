@@ -10,13 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render, within} from '@testing-library/react';
+import {act, render, triggerPress, within} from '@react-spectrum/test-utils';
 import {Breadcrumbs} from '../';
 import {Item} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
 import React, {useRef} from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress} from '@react-spectrum/test-utils';
 
 describe('Breadcrumbs', function () {
   beforeAll(() => {
@@ -32,7 +31,6 @@ describe('Breadcrumbs', function () {
     });
 
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
   });
 
   afterEach(() => {
@@ -78,6 +76,17 @@ describe('Breadcrumbs', function () {
     let item3 = getByText('Folder 3');
     expect(item3.tabIndex).toBe(-1);
     expect(item3).toHaveAttribute('aria-current', 'page');
+  });
+
+  it('Handles single item and showRoot', () => {
+    let {getByText} = render(
+      <Breadcrumbs showRoot>
+        <Item key="Folder-1">Folder 1</Item>
+      </Breadcrumbs>
+    );
+    let item = getByText('Folder 1');
+    expect(item).toBeTruthy();
+    expect(item.tabIndex).toBe(-1);
   });
 
   it('Should handle forward ref', function () {

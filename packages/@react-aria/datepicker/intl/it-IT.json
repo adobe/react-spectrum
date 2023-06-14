@@ -1,9 +1,5 @@
 {
   "calendar": "Calendario",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "Da {start, date, long} a {end, date, long}",
-  "date": "Data",
-  "dateRange": "Intervallo date",
   "day": "giorno",
   "dayPeriod": "AM/PM",
   "endDate": "Data finale",
@@ -12,8 +8,11 @@
   "minute": "minuto",
   "month": "mese",
   "second": "secondo",
+  "selectedDateDescription": "Data selezionata: {date}",
+  "selectedRangeDescription": "Intervallo selezionato: da {startDate} a {endDate}",
+  "selectedTimeDescription": "Ora selezionata: {time}",
   "startDate": "Data iniziale",
-  "year": "anno",
+  "timeZoneName": "fuso orario",
   "weekday": "giorno della settimana",
-  "timeZoneName": "fuso orario"
+  "year": "anno"
 }
