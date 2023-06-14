@@ -321,7 +321,7 @@ function TableView<T extends object>(props: SpectrumTreeGridProps<T>, ref: DOMRe
     ...props,
     isVirtualized: true,
     layout,
-    onRowAction: onAction || state.toggleKey
+    onRowAction: onAction
   }, state, domRef);
   let [headerMenuOpen, setHeaderMenuOpen] = useState(false);
   let [headerRowHovered, setHeaderRowHovered] = useState(false);
