@@ -1418,7 +1418,8 @@ function TableCell({cell, scale}) {
     node: cell,
     isVirtualized: true
   }, state, ref);
-  let showExpandCollapseButton = isFirstRowHeader(cell.column.key) && isRowExpandable(cell.parentKey);
+  let isFirstRowHeaderCell = isFirstRowHeader(cell.column.key);
+  let showExpandCollapseButton = isFirstRowHeaderCell && isRowExpandable(cell.parentKey);
   let isExpanded = showExpandCollapseButton && (state.expandedKeys === 'all' || state.expandedKeys.has(cell.parentKey));
   // Offset based on level, and add additional offset if there is no expand/collapse button on a row
   let levelOffset = (cell.level - 2) * LEVEL_OFFSET_WIDTH[scale] + (!showExpandCollapseButton ? LEVEL_OFFSET_WIDTH[scale] * 2 : 0);
@@ -1438,7 +1439,7 @@ function TableCell({cell, scale}) {
       <div
         {...gridCellProps}
         ref={ref}
-        style={isFirstRowHeader ? {paddingInlineStart: levelOffset} : {}}
+        style={isFirstRowHeaderCell ? {paddingInlineStart: levelOffset} : {}}
         className={
           classNames(
             styles,
