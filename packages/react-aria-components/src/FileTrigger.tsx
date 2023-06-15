@@ -53,7 +53,8 @@ function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLDivElement>)
       <PressResponder onPress={() => inputRef.current?.click()}>
         {children}
       </PressResponder>
-      <VisuallyHidden>
+      {/* so bc of this visually hidden, we are actually able to focus onn the input even tho it is hidden...is this what we want? */}
+      <VisuallyHidden> 
         <Input 
           type="file" 
           ref={inputRef} 
