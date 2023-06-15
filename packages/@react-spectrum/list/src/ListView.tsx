@@ -26,7 +26,7 @@ import {ListState, useListState} from '@react-stately/list';
 import listStyles from './styles.css';
 import {ListViewItem} from './ListViewItem';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {Key, ReactElement, useContext, useMemo, useRef, useState} from 'react';
+import React, {Key, ReactElement, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import RootDropIndicator from './RootDropIndicator';
 import {DragPreview as SpectrumDragPreview} from './DragPreview';
 import {useCollator, useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -124,12 +124,15 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
   let isListDroppable = !!dragAndDropHooks?.useDroppableCollectionState;
   let dragHooksProvided = useRef(isListDraggable);
   let dropHooksProvided = useRef(isListDroppable);
-  if (dragHooksProvided.current !== isListDraggable) {
-    console.warn('Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
-  }
-  if (dropHooksProvided.current !== isListDroppable) {
-    console.warn('Drop hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
-  }
+  useEffect(() => {
+    if (dragHooksProvided.current !== isListDraggable) {
+      console.warn('Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
+    }
+    if (dropHooksProvided.current !== isListDroppable) {
+      console.warn('Drop hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
+    }
+  }, [isListDraggable, isListDroppable]);
+
   let domRef = useDOMRef(ref);
   let state = useListState({
     ...props,

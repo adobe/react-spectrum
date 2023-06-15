@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@react-types/provider": "^3.6.2",
-    "@swc/helpers": "^0.4.14"
+    "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1"

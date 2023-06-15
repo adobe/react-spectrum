@@ -46,7 +46,7 @@
     "@react-types/button": "^3.7.3",
     "@react-types/shared": "^3.18.1",
     "@spectrum-icons/ui": "^3.5.2",
-    "@swc/helpers": "^0.4.14"
+    "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1",

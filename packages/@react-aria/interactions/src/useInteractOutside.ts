@@ -16,6 +16,7 @@
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
 import {RefObject, SyntheticEvent, useEffect, useRef} from 'react';
+import {useEffectEvent} from '@react-aria/utils';
 
 export interface InteractOutsideProps {
   ref: RefObject<Element>,
@@ -33,33 +34,35 @@ export function useInteractOutside(props: InteractOutsideProps) {
   let {ref, onInteractOutside, isDisabled, onInteractOutsideStart} = props;
   let stateRef = useRef({
     isPointerDown: false,
-    ignoreEmulatedMouseEvents: false,
-    onInteractOutside,
-    onInteractOutsideStart
+    ignoreEmulatedMouseEvents: false
   });
-  let state = stateRef.current;
-  state.onInteractOutside = onInteractOutside;
-  state.onInteractOutsideStart = onInteractOutsideStart;
+
+  let onPointerDown = useEffectEvent((e: SyntheticEvent) => {
+    if (onInteractOutside && isValidEvent(e, ref)) {
+      if (onInteractOutsideStart) {
+        onInteractOutsideStart(e);
+      }
+      stateRef.current.isPointerDown = true;
+    }
+  });
+
+  let triggerInteractOutside = useEffectEvent((e: SyntheticEvent) => {
+    if (onInteractOutside) {
+      onInteractOutside(e);
+    }
+  });
 
   useEffect(() => {
+    let state = stateRef.current;
     if (isDisabled) {
       return;
     }
 
-    let onPointerDown = (e) => {
-      if (isValidEvent(e, ref) && state.onInteractOutside) {
-        if (state.onInteractOutsideStart) {
-          state.onInteractOutsideStart(e);
-        }
-        state.isPointerDown = true;
-      }
-    };
-
     // Use pointer events if available. Otherwise, fall back to mouse and touch events.
     if (typeof PointerEvent !== 'undefined') {
       let onPointerUp = (e) => {
-        if (state.isPointerDown && state.onInteractOutside && isValidEvent(e, ref)) {
-          state.onInteractOutside(e);
+        if (state.isPointerDown && isValidEvent(e, ref)) {
+          triggerInteractOutside(e);
         }
         state.isPointerDown = false;
       };
@@ -76,16 +79,16 @@ export function useInteractOutside(props: InteractOutsideProps) {
       let onMouseUp = (e) => {
         if (state.ignoreEmulatedMouseEvents) {
           state.ignoreEmulatedMouseEvents = false;
-        } else if (state.isPointerDown && state.onInteractOutside && isValidEvent(e, ref)) {
-          state.onInteractOutside(e);
+        } else if (state.isPointerDown && isValidEvent(e, ref)) {
+          triggerInteractOutside(e);
         }
         state.isPointerDown = false;
       };
 
       let onTouchEnd = (e) => {
         state.ignoreEmulatedMouseEvents = true;
-        if (state.onInteractOutside && state.isPointerDown && isValidEvent(e, ref)) {
-          state.onInteractOutside(e);
+        if (state.isPointerDown && isValidEvent(e, ref)) {
+          triggerInteractOutside(e);
         }
         state.isPointerDown = false;
       };
@@ -102,7 +105,7 @@ export function useInteractOutside(props: InteractOutsideProps) {
         document.removeEventListener('touchend', onTouchEnd, true);
       };
     }
-  }, [ref, state, isDisabled]);
+  }, [ref, isDisabled, onPointerDown, triggerInteractOutside]);
 }
 
 function isValidEvent(event, ref) {

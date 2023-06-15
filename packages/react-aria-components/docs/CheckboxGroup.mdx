@@ -343,7 +343,8 @@ This example wraps `CheckboxGroup` and all of its children together into a singl
 import type {CheckboxGroupProps, CheckboxProps} from 'react-aria-components';
 import {Text} from 'react-aria-components';
 
-interface MyCheckboxGroupProps extends CheckboxGroupProps {
+interface MyCheckboxGroupProps extends Omit<CheckboxGroupProps, 'children'> {
+  children?: React.ReactNode,
   label?: string,
   description?: string,
   errorMessage?: string
@@ -366,7 +367,11 @@ function MyCheckboxGroup({
   );
 }
 
-function MyCheckbox({children, ...props}: CheckboxProps) {
+interface MyCheckboxProps extends Omit<CheckboxProps, 'children'> {
+  children?: React.ReactNode
+}
+
+function MyCheckbox({children, ...props}: MyCheckboxProps) {
   return (
     <Checkbox {...props}>
       <div className="checkbox" aria-hidden="true">

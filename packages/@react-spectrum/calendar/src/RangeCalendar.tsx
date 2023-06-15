@@ -24,6 +24,7 @@ import {useRangeCalendarState} from '@react-stately/calendar';
 function RangeCalendar<T extends DateValue>(props: SpectrumRangeCalendarProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   let {visibleMonths = 1} = props;
+  visibleMonths = Math.max(visibleMonths, 1);
   let visibleDuration = useMemo(() => ({months: visibleMonths}), [visibleMonths]);
   let {locale} = useLocale();
   let state = useRangeCalendarState({
@@ -46,6 +47,7 @@ function RangeCalendar<T extends DateValue>(props: SpectrumRangeCalendarProps<T>
   return (
     <CalendarBase
       {...props}
+      visibleMonths={visibleMonths}
       state={state}
       calendarRef={domRef}
       calendarProps={calendarProps}

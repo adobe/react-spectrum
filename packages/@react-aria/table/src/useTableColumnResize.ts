@@ -65,7 +65,8 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
   let {column: item, triggerRef, isDisabled, onResizeStart, onResize, onResizeEnd, 'aria-label': ariaLabel} = props;
   const stringFormatter = useLocalizedStringFormatter(intlMessages);
   let id = useId();
-  let isResizing = useRef(false);
+  let isResizing = state.resizingColumn === item.key;
+  let isResizingRef = useRef(isResizing);
   let lastSize = useRef(null);
   let editModeEnabled = state.tableState.isKeyboardNavigationDisabled;
 
@@ -97,13 +98,13 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
   });
 
   let startResize = useCallback((item) => {
-    if (!isResizing.current) {
+    if (!isResizingRef.current) {
       lastSize.current = state.updateResizedColumns(item.key, state.getColumnWidth(item.key));
       state.startResize(item.key);
       onResizeStart?.(lastSize.current);
     }
-    isResizing.current = true;
-  }, [isResizing, onResizeStart, state]);
+    isResizingRef.current = true;
+  }, [isResizingRef, onResizeStart, state]);
 
   let resize = useCallback((item, newWidth) => {
     let sizes = state.updateResizedColumns(item.key, newWidth);
@@ -112,7 +113,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
   }, [onResize, state]);
 
   let endResize = useCallback((item) => {
-    if (isResizing.current) {
+    if (isResizingRef.current) {
       if (lastSize.current == null) {
         lastSize.current = state.updateResizedColumns(item.key, state.getColumnWidth(item.key));
       }
@@ -120,9 +121,9 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       state.endResize();
       onResizeEnd?.(lastSize.current);
     }
-    isResizing.current = false;
+    isResizingRef.current = false;
     lastSize.current = null;
-  }, [isResizing, onResizeEnd, state]);
+  }, [isResizingRef, onResizeEnd, state]);
 
   const columnResizeWidthRef = useRef<number>(0);
   const {moveProps} = useMove({
@@ -174,7 +175,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
   if (modality === 'virtual' &&  (typeof window !== 'undefined' && 'ontouchstart' in window)) {
     modality = 'touch';
   }
-  let description = triggerRef?.current == null && (modality === 'keyboard' || modality === 'virtual') && !isResizing.current ? stringFormatter.format('resizerDescription') : undefined;
+  let description = triggerRef?.current == null && (modality === 'keyboard' || modality === 'virtual') && !isResizing ? stringFormatter.format('resizerDescription') : undefined;
   let descriptionProps = useDescription(description);
   let ariaProps = {
     'aria-label': ariaLabel,
@@ -267,6 +268,6 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       },
       ariaProps
     ),
-    isResizing: state.resizingColumn === item.key
+    isResizing
   };
 }

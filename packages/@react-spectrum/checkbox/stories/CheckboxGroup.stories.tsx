@@ -13,8 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {Checkbox, CheckboxGroup} from '../';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
-import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
-import {Flex} from '@adobe/react-spectrum';
+import {Content, ContextualHelp, Flex, Heading} from '@adobe/react-spectrum';
 import React, {useState} from 'react';
 import {SpectrumCheckboxGroupProps} from '@react-types/checkbox';
 

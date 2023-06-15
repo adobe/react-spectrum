@@ -19,7 +19,7 @@ import {useListState} from '@react-stately/list';
 
 function ListBox<T extends object>(props: SpectrumListBoxProps<T>, ref: DOMRef<HTMLDivElement>) {
   let state = useListState(props);
-  let layout = useListBoxLayout(state);
+  let layout = useListBoxLayout(state, props.isLoading);
   let domRef = useDOMRef(ref);
 
   return (

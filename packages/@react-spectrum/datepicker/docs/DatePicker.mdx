@@ -355,6 +355,14 @@ By default, the calendar popover displays a single month. The `maxVisibleMonths`
 <DatePicker label="Appointment date" maxVisibleMonths={3} />
 ```
 
+### Page behavior
+
+By default, when pressing the next or previous buttons, pagination will advance by the `maxVisibleMonths` value. This behavior can be changed to page by single months instead, by setting `pageBehavior` to `single`.
+
+```tsx example
+<DatePicker label="Appointment date" maxVisibleMonths={3} pageBehavior="single" />
+```
+
 ### Hide time zone
 
 When a `ZonedDateTime` object is provided as the value of a `DatePicker`, the time zone abbreviation is displayed by default. However, if this is displayed elsewhere or implicit based on the usecase, it can be hidden using the `hideTimeZone` option.
