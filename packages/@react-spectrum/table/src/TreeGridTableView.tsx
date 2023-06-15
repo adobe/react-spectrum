@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, Direction, DOMProps, DOMRef, DropTarget, Expandable, FocusableElement, FocusableRef, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
-import {chain, mergeProps, scrollIntoView, scrollIntoViewport} from '@react-aria/utils';
+import {chain, isAndroid, mergeProps, scrollIntoView, scrollIntoViewport} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
@@ -1393,6 +1393,7 @@ function TableCheckboxCell({cell}) {
 function TableCell({cell, density, scale}) {
   let {state, toggleKey, direction} = useTableContext();
   let ref = useRef();
+  let expandButtonRef = useRef();
   let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
   let isDisabled = state.disabledKeys.has(cell.parentKey);
   let {gridCellProps} = useTableCell({
@@ -1404,9 +1405,15 @@ function TableCell({cell, density, scale}) {
   let isExpanded = showExpandCollapseButton && (state.expandedKeys === 'all' || state.expandedKeys.has(cell.parentKey));
   // TODO: would be good to adjust these numbers by scale if it matters
   let levelOffset = (cell.level - (showExpandCollapseButton ? 1 : 2)) * 16 + 4 + (isFirstRowHeader && !showExpandCollapseButton ? 16 : 0);
-  let {pressProps} = usePress({
-    onPress: () => toggleKey(cell.parentKey)
-  });
+
+  // TODO: move some/all of the chevron button setup into a separate hook?
+  let {buttonProps} = useButton({
+    // Desktop and mobile both toggle expansion of a native expandable row on mouse/touch up
+    onPress: () => toggleKey(cell.parentKey),
+    elementType: 'div',
+    // TODO: will need translations.
+    'aria-label': isExpanded ? 'Collapse' : 'Expand'
+  }, expandButtonRef);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
@@ -1442,11 +1449,13 @@ function TableCell({cell, density, scale}) {
           }
           style={{paddingInlineStart: levelOffset}}>
           {showExpandCollapseButton &&
-            // TODO: double check the accessibility and announcement of this. See if mobile screen readers can access it
-            <span
-              {...pressProps}
-              // TODO: will need translations, also see if it announces the row info along side it. Since it isn't keyboard focusable do we need any annoucements?
-              aria-label={isExpanded ? 'Collapse' : 'Expand'}
+            // TODO: Since the chevron is part of the row header, the "Collapse"/"Expand" is included in the row announcement and the cell announcement which is kinda confusing...
+            // We also want to make it skipped by the keyboard
+            <div
+              {...buttonProps}
+              ref={expandButtonRef}
+              // Override tabindex so that grid keyboard nav skips over it. Needs -1 so android talkback can actually "focus" it
+              tabIndex={isAndroid() ? -1 : undefined}
               className={
                 classNames(
                   styles,
@@ -1458,7 +1467,7 @@ function TableCell({cell, density, scale}) {
                 top: (ROW_HEIGHTS[density][scale] - 32) / 2
               }}>
               {isExpanded ? <ChevronDownMedium /> : <ChevronRightMedium />}
-            </span>}
+            </div>}
           {cell.rendered}
         </span>
       </div>
