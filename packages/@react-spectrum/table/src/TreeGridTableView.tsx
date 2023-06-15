@@ -100,6 +100,11 @@ const DRAG_BUTTON_CELL_DEFAULT_WIDTH = {
   large: 20
 };
 
+const LEVEL_OFFSET_WIDTH = {
+  medium: 16,
+  large: 20
+};
+
 interface TableContextValue<T> {
   state: TreeGridState<T>,
   dragState: DraggableCollectionState,
@@ -1415,14 +1420,14 @@ function TableCell({cell, density, scale}) {
   let showExpandCollapseButton = isFirstRowHeader(cell.column.key) && isRowExpandable(cell.parentKey);
   let isExpanded = showExpandCollapseButton && (state.expandedKeys === 'all' || state.expandedKeys.has(cell.parentKey));
   // TODO: would be good to adjust these numbers by scale if it matters
-  let levelOffset = (cell.level - (showExpandCollapseButton ? 1 : 2)) * 16 + 4 + (isFirstRowHeader && !showExpandCollapseButton ? 16 : 0);
+  let levelOffset = (cell.level - 2) * LEVEL_OFFSET_WIDTH[scale] + (!showExpandCollapseButton ? LEVEL_OFFSET_WIDTH[scale] * 2 : 0);
 
   // TODO: move some/all of the chevron button setup into a separate hook?
   // Will need to keep the chevron as a button for iOS VO at all times since VO doesn't focus the cell. Also keep as button if cellAction is defined by the user in the future
   let {buttonProps} = useButton({
     // Desktop and mobile both toggle expansion of a native expandable row on mouse/touch up
     onPress: () => toggleRowExpansion(cell.key),
-    elementType: 'div',
+    elementType: 'span',
     // TODO: will need translations.
     'aria-label': isExpanded ? 'Collapse' : 'Expand'
   }, expandButtonRef);
@@ -1432,6 +1437,7 @@ function TableCell({cell, density, scale}) {
       <div
         {...gridCellProps}
         ref={ref}
+        style={cell.index === 0 ? {paddingInlineStart: levelOffset} : {}}
         className={
           classNames(
             styles,
@@ -1458,12 +1464,11 @@ function TableCell({cell, density, scale}) {
               styles,
               'spectrum-Table-cellContents'
             )
-          }
-          style={{paddingInlineStart: levelOffset}}>
+          }>
           {showExpandCollapseButton &&
             // TODO: Since the chevron is part of the row header, the "Collapse"/"Expand" is included in the row announcement and the cell announcement which is kinda confusing...
             // We also want to make it skipped by the keyboard
-            <div
+            <span
               {...buttonProps}
               ref={expandButtonRef}
               // Override tabindex so that grid keyboard nav skips over it. Needs -1 so android talkback can actually "focus" it
@@ -1474,13 +1479,9 @@ function TableCell({cell, density, scale}) {
                   styles,
                   'spectrum-Table-expandButton'
                 )
-              }
-              style={{
-                [direction === 'ltr' ? 'left' : 'right']: levelOffset - 20,
-                top: (ROW_HEIGHTS[density][scale] - 32) / 2
-              }}>
+              }>
               {isExpanded ? <ChevronDownMedium /> : <ChevronRightMedium />}
-            </div>}
+            </span>}
           {cell.rendered}
         </span>
       </div>
