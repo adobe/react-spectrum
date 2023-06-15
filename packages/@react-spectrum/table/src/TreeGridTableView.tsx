@@ -1419,7 +1419,7 @@ function TableCell({cell, density, scale}) {
   }, state, ref);
   let showExpandCollapseButton = isFirstRowHeader(cell.column.key) && isRowExpandable(cell.parentKey);
   let isExpanded = showExpandCollapseButton && (state.expandedKeys === 'all' || state.expandedKeys.has(cell.parentKey));
-  // TODO: would be good to adjust these numbers by scale if it matters
+  // Offset based on level, and add additional offset if there is no expand/collapse button on a row
   let levelOffset = (cell.level - 2) * LEVEL_OFFSET_WIDTH[scale] + (!showExpandCollapseButton ? LEVEL_OFFSET_WIDTH[scale] * 2 : 0);
 
   // TODO: move some/all of the chevron button setup into a separate hook?
@@ -1437,7 +1437,7 @@ function TableCell({cell, density, scale}) {
       <div
         {...gridCellProps}
         ref={ref}
-        style={cell.index === 0 ? {paddingInlineStart: levelOffset} : {}}
+        style={isFirstRowHeader ? {paddingInlineStart: levelOffset} : {}}
         className={
           classNames(
             styles,
