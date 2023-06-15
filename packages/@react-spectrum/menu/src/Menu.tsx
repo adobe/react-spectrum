@@ -22,7 +22,6 @@ import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useMenu} from '@react-aria/menu';
 import {useTreeState} from '@react-stately/tree';
-import {unavailableMenuItems} from '@react-stately/flags';
 
 function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLUListElement>) {
   let contextProps = useContext(MenuContext);
@@ -37,93 +36,51 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
   let {styleProps} = useStyleProps(completeProps);
   useSyncRef(contextProps, domRef);
 
-  if (unavailableMenuItems()) {
-    return (
-      <MenuStateContext.Provider value={{state, container: scopedRef, menu: domRef}}>
-        <FocusScope contain={state.expandedKeys.size > 0}>
-          <div ref={scopedRef} style={{display: 'inline-flex', overflow: 'hidden'}}>
-            <ul
-              {...menuProps}
-              {...styleProps}
-              ref={domRef}
-              className={
-                classNames(
-                  styles,
-                  'spectrum-Menu',
-                  styleProps.className
-                )
-              }>
-              {[...state.collection].map(item => {
-                if (item.type === 'section') {
-                  return (
-                    <MenuSection
-                      key={item.key}
-                      item={item}
-                      state={state}
-                      onAction={completeProps.onAction} />
-                  );
-                }
-
-                let menuItem = (
-                  <MenuItem
+  return (
+    <MenuStateContext.Provider value={{state, container: scopedRef, menu: domRef}}>
+      <FocusScope contain={state.expandedKeys.size > 0}>
+        <div ref={scopedRef} style={{display: 'inline-flex', overflow: 'hidden'}}>
+          <ul
+            {...menuProps}
+            {...styleProps}
+            ref={domRef}
+            className={
+              classNames(
+                styles,
+                'spectrum-Menu',
+                styleProps.className
+              )
+            }>
+            {[...state.collection].map(item => {
+              if (item.type === 'section') {
+                return (
+                  <MenuSection
                     key={item.key}
                     item={item}
                     state={state}
                     onAction={completeProps.onAction} />
                 );
+              }
 
-                if (item.wrapper) {
-                  menuItem = item.wrapper(menuItem);
-                }
+              let menuItem = (
+                <MenuItem
+                  key={item.key}
+                  item={item}
+                  state={state}
+                  onAction={completeProps.onAction} />
+              );
 
-                return menuItem;
-              })}
-            </ul>
-          </div>
-        </FocusScope>
-      </MenuStateContext.Provider>
-    );
-  } else {
-    return (
-      <ul
-        {...menuProps}
-        {...styleProps}
-        ref={domRef}
-        className={
-          classNames(
-            styles,
-            'spectrum-Menu',
-            styleProps.className
-          )
-        }>
-        {[...state.collection].map(item => {
-          if (item.type === 'section') {
-            return (
-              <MenuSection
-                key={item.key}
-                item={item}
-                state={state}
-                onAction={completeProps.onAction} />
-            );
-          }
+              if (item.wrapper) {
+                menuItem = item.wrapper(menuItem);
+              }
 
-          let menuItem = (
-            <MenuItem
-              key={item.key}
-              item={item}
-              state={state}
-              onAction={completeProps.onAction} />
-          );
-
-          if (item.wrapper) {
-            menuItem = item.wrapper(menuItem);
-          }
-
-          return menuItem;
-        })}
-      </ul>
-    );
-  }
+              return menuItem;
+            })}
+          </ul>
+        </div>
+      </FocusScope>
+    </MenuStateContext.Provider>
+  );
 }
 
 /**

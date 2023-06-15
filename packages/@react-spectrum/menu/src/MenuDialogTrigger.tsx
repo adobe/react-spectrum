@@ -17,7 +17,6 @@ import {ItemProps} from '@react-types/shared';
 import {MenuDialogContext, useMenuStateContext} from './context';
 import {Modal, Popover} from '@react-spectrum/overlays';
 import React, {Key, ReactElement, useRef} from 'react';
-import {unavailableMenuItems} from '@react-stately/flags';
 import {useOverlayTriggerState} from '@react-stately/overlays';
 
 export interface SpectrumMenuDialogTriggerProps<T> extends ItemProps<T> {
@@ -66,9 +65,6 @@ function MenuDialogTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): ReactEl
       }
     }
   };
-  if (!unavailableMenuItems()) {
-    return null;
-  }
   return (
     <>
       <MenuDialogContext.Provider value={{isUnavailable, triggerRef}}>{trigger}</MenuDialogContext.Provider>
@@ -107,19 +103,15 @@ MenuDialogTrigger.getCollectionNode = function* getCollectionNode<T>(props: Item
   let [trigger] = React.Children.toArray(props.children) as ReactElement[];
   let [, content] = props.children as [ReactElement, ReactElement];
 
-  if (unavailableMenuItems()) {
-    yield {
-      element: React.cloneElement(trigger, {...trigger.props, hasChildItems: true}),
-      wrapper: (element) => (
-        <MenuDialogTrigger key={element.key} targetKey={element.key} {...props}>
-          {element}
-          {content}
-        </MenuDialogTrigger>
-      )
-    };
-  } else {
-    yield null;
-  }
+  yield {
+    element: React.cloneElement(trigger, {...trigger.props, hasChildItems: true}),
+    wrapper: (element) => (
+      <MenuDialogTrigger key={element.key} targetKey={element.key} {...props}>
+        {element}
+        {content}
+      </MenuDialogTrigger>
+    )
+  };
 };
 
 let _Item = MenuDialogTrigger as <T>(props: ItemProps<T> & {isUnavailable?: boolean}) => JSX.Element;

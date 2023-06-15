@@ -53,7 +53,6 @@
     "@react-spectrum/text": "^3.4.2",
     "@react-spectrum/utils": "^3.9.2",
     "@react-stately/collections": "^3.8.0",
-    "@react-stately/flags": "3.0.0-alpha.1",
     "@react-stately/menu": "^3.5.2",
     "@react-stately/overlays": "^3.5.2",
     "@react-stately/tree": "^3.6.1",
