@@ -20,9 +20,9 @@ import {mergeProps, useSyncRef} from '@react-aria/utils';
 import React, {ReactElement, useContext, useRef} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import {unavailableMenuItems} from '@react-stately/flags';
 import {useMenu} from '@react-aria/menu';
 import {useTreeState} from '@react-stately/tree';
+import {unavailableMenuItems} from '@react-stately/flags';
 
 function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLUListElement>) {
   let contextProps = useContext(MenuContext);
