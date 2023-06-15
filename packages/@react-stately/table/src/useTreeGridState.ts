@@ -73,7 +73,7 @@ export function useTreeGridState<T extends object>(props: TreeGridStateProps<T>)
 function toggleKey<T>(currentExpandedKeys: 'all' | Set<Key>, key: Key, collection: ITableCollection<T>): Set<Key> {
   let updatedExpandedKeys: Set<Key>;
   if (currentExpandedKeys === 'all') {
-    updatedExpandedKeys = new Set(collection.rows.filter(row => row.props.childItems?.length > 0 || row.props.children.length > collection.columnCount).map(row => row.key));
+    updatedExpandedKeys = new Set(collection.rows.filter(row => row.props.childItems || row.props.children.length > collection.columnCount).map(row => row.key));
     updatedExpandedKeys.delete(key);
   } else {
     updatedExpandedKeys = new Set(currentExpandedKeys);

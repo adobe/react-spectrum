@@ -1400,7 +1400,7 @@ function TableCell({cell, density, scale}) {
     isVirtualized: true
   }, state, ref);
   let isFirstRowHeader = state.collection.rowHeaderColumnKeys.keys().next().value === cell.column.key;
-  let showExpandCollapseButton = isFirstRowHeader && (state.collection.getItem(cell.parentKey)?.props.childItems?.length > 0 || state.collection.getItem(cell.parentKey)?.props.children.length > state.collection.columnCount);
+  let showExpandCollapseButton = isFirstRowHeader && (state.collection.getItem(cell.parentKey)?.props.childItems || state.collection.getItem(cell.parentKey)?.props.children.length > state.collection.columnCount);
   let isExpanded = showExpandCollapseButton && (state.expandedKeys === 'all' || state.expandedKeys.has(cell.parentKey));
   // TODO: would be good to adjust these numbers by scale if it matters
   let levelOffset = (cell.level - (showExpandCollapseButton ? 1 : 2)) * 16 + 4 + (isFirstRowHeader && !showExpandCollapseButton ? 16 : 0);
