@@ -9,39 +9,16 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaBreadcrumbsProps, mergeProps, useBreadcrumbs, useFocusRing, useHover} from 'react-aria';
+import {AriaBreadcrumbsProps, useBreadcrumbs} from 'react-aria';
 import {CollectionProps, useCollection} from './Collection';
-import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, forwardRefType, Provider, SlotProps, StyleProps, useContextProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {HeadingContext} from './Heading';
 import {LinkContext} from './Link';
 import {Node} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
 
-export interface BreadcrumbsRenderProps {
-  /**
-   * Whether the breadcrumbs are currently hovered with a mouse.
-   * @selector [data-hovered]
-   */
-  isHovered: boolean,
-  /**
-   * Whether the breadcrumbs are disabled.
-   * @selector [data-disabled]
-   */
-  isDisabled: boolean,
-  /**
-   * Whether an element within the breadcrumbs is focused, either via a mouse or keyboard.
-   * @selector :focus-within
-   */
-  isFocusWithin: boolean,
-  /**
-   * Whether an element within the breadcrumbs is keyboard focused.
-   * @selector [data-focus-visible]
-   */
-  isFocusVisible: boolean
-}
-
-export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys' | 'children'>, Omit<AriaBreadcrumbsProps, 'children'>, SlotProps, RenderProps<BreadcrumbsRenderProps> {
+export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, Omit<AriaBreadcrumbsProps, 'children'>, StyleProps, SlotProps {
   /** Whether the breadcrumbs are disabled. */
   isDisabled?: boolean
 }
@@ -51,26 +28,16 @@ export const BreadcrumbsContext = createContext<ContextValue<BreadcrumbsProps<an
 function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, BreadcrumbsContext);
   let {navProps} = useBreadcrumbs(props);
-  let {portal, collection} = useCollection(props as CollectionProps<T>);
-  let {hoverProps, isHovered} = useHover(props);
-  let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
-  let renderProps = useRenderProps({
-    ...props,
-    values: {isHovered, isDisabled: props.isDisabled || false, isFocusWithin: isFocused, isFocusVisible},
-    defaultClassName: 'react-aria-Breadcrumbs'
-  });
+  let {portal, collection} = useCollection(props);
 
   return (
     <nav
-      {...mergeProps(filterDOMProps(props), focusProps, hoverProps)}
       ref={ref}
+      {...filterDOMProps(props)}
       {...navProps}
-      {...renderProps}
       slot={props.slot}
-      data-hovered={isHovered || undefined}
-      data-disabled={props.isDisabled || undefined}
-      data-focus-visible={isFocusVisible || undefined}
-      data-focus-within={isFocused || undefined}>
+      style={props.style}
+      className={props.className ?? 'react-aria-Breadcrumbs'}>
       {/* TODO: cannot style this element directly */}
       <ol>
         {[...collection].map((node, i) => (
