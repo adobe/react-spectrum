@@ -382,8 +382,9 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain: boolean) {
     };
   }, [scopeRef, contain]);
 
+  // Changed useEffect to useLayoutEffect to prevent an exception with onBlur and focusFirstInScope where scope changes on an unmount
   // eslint-disable-next-line arrow-body-style
-  useEffect(() => {
+  useLayoutEffect(() => {
     return () => {
       if (raf.current) {
         cancelAnimationFrame(raf.current);

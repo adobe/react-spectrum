@@ -118,8 +118,10 @@ export function useSyntheticBlurEvent<Target = Element>(onBlur: (e: ReactFocusEv
       stateRef.current.observer = new MutationObserver(() => {
         if (stateRef.current.isFocused && target.disabled) {
           stateRef.current.observer.disconnect();
-          target.dispatchEvent(new FocusEvent('blur'));
-          target.dispatchEvent(new FocusEvent('focusout', {bubbles: true}));
+          // added `relatedTarget: document.activeElement` to keep focus on activeElment for Firefox DatePicker closing popover with minValue
+          let relatedTarget = target === document.activeElement ? null : {relatedTarget: document.activeElement};
+          target.dispatchEvent(new FocusEvent('blur', relatedTarget));
+          target.dispatchEvent(new FocusEvent('focusout', {bubbles: true, ...relatedTarget}));
         }
       });
 
