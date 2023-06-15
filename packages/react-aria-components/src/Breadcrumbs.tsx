@@ -51,7 +51,7 @@ export const BreadcrumbsContext = createContext<ContextValue<BreadcrumbsProps<an
 function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, BreadcrumbsContext);
   let {navProps} = useBreadcrumbs(props);
-  let {portal, collection} = useCollection(props as any);
+  let {portal, collection} = useCollection(props as CollectionProps<T>);
   let {hoverProps, isHovered} = useHover(props);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
   let renderProps = useRenderProps({
@@ -92,30 +92,7 @@ function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: Forwarde
 const _Breadcrumbs = /*#__PURE__*/ (forwardRef as forwardRefType)(Breadcrumbs);
 export {_Breadcrumbs as Breadcrumbs};
 
-export interface BreadcrumbsItemRenderProps {
-  /**
-   * Whether the breadcrumb item is currently hovered with a mouse.
-   * @selector [data-hovered]
-   */
-  isHovered: boolean,
-  /**
-   * Whether the breadcrumb item is disabled.
-   * @selector :disabled
-   */
-  isDisabled: boolean,
-  /**
-   * Whether the breadcrumb item is focused, either via a mouse or keyboard.
-   * @selector [data-focused]
-   */
-  isFocused: boolean,
-  /**
-   * Whether the breadcrumb item is keyboard focused.
-   * @selector [data-focus-visible]
-   */
-  isFocusVisible: boolean
-}
-
-interface BreadcrumbItemProps extends RenderProps<BreadcrumbsRenderProps> {
+interface BreadcrumbItemProps {
   node: Node<object>,
   isCurrent: boolean,
   isDisabled?: boolean
@@ -128,23 +105,12 @@ function BreadcrumbItem({node, isCurrent, isDisabled}: BreadcrumbItemProps) {
     'aria-current': isCurrent ? 'page' : null,
     isDisabled: isDisabled || isCurrent
   };
-  let {focusProps, isFocused, isFocusVisible} = useFocusRing(node.props);
-  let {hoverProps, isHovered} = useHover(node.props);
-  let renderProps = useRenderProps({
-    ...node.props,
-    values: {isHovered, isFocused, isFocusVisible, isCurrent, isDisabled},
-    defaultClassName: 'react-aria-Item'
-  });
 
   return (
     <li
       {...filterDOMProps(node.props)}
-      {...mergeProps(focusProps, hoverProps)}
-      {...renderProps}
-      data-hovered={isHovered || undefined}
-      data-disabled={isDisabled || undefined}
-      data-focus-visible={isFocusVisible || undefined}
-      data-focused={isFocused || undefined}>
+      style={node.props.style}
+      className={node.props.className ?? 'react-aria-Item'}>
       <Provider
         values={[
           [LinkContext, linkProps],
