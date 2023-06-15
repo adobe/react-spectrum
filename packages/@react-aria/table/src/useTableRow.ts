@@ -19,7 +19,7 @@ import {TableCollection} from '@react-types/table';
 import {TableState, TreeGridState} from '@react-stately/table';
 import {useLocale} from '@react-aria/i18n';
 
-const EXPANSION_TRIGGERS = {
+const EXPANSION_KEYS = {
   expand: {
     ltr: 'ArrowRight',
     rtl: 'ArrowLeft'
@@ -52,26 +52,12 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
     let hasChildRows = node.props.childItems || node.props.children.length > state.collection.columnCount;
     treeGridRowProps = {
       onKeyDown: (e) => {
-        if ((e.key === EXPANSION_TRIGGERS['expand'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && state.expandedKeys !== 'all' && !state.expandedKeys.has(node.key)) {
+        if ((e.key === EXPANSION_KEYS['expand'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && state.expandedKeys !== 'all' && !state.expandedKeys.has(node.key)) {
           state.toggleKey(node.key);
           e.stopPropagation();
-          // After some time, if the row was not expanded (via controlled), focus the first cell
-          setTimeout(() => {
-            if (state.expandedKeys !== 'all' && !state.expandedKeys.has(node.key)) {
-              let cells = [...getChildNodes(node, state.collection)].filter(child => child.type === 'cell');
-              state.selectionManager.setFocusedKey(direction === 'ltr' ? cells[0].key : cells[cells.length - 1].key);
-            }
-          }, 10);
-        } else if ((e.key === EXPANSION_TRIGGERS['collapse'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && (state.expandedKeys === 'all' || state.expandedKeys.has(node.key))) {
+        } else if ((e.key === EXPANSION_KEYS['collapse'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && (state.expandedKeys === 'all' || state.expandedKeys.has(node.key))) {
           state.toggleKey(node.key);
           e.stopPropagation();
-          // After some time, if the row was not expanded (via controlled), focus the last cell
-          setTimeout(() => {
-            if (state.expandedKeys === 'all' || state.expandedKeys.has(node.key)) {
-              let cells = [...getChildNodes(node, state.collection)].filter(child => child.type === 'cell');
-              state.selectionManager.setFocusedKey(direction === 'ltr' ? cells[cells.length - 1].key : cells[0].key);
-            }
-          }, 10);
         }
       },
       'aria-expanded': hasChildRows ? state.expandedKeys === 'all' || state.expandedKeys.has(node.key) : undefined,
