@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, Direction, DOMProps, DOMRef, DropTarget, Expandable, FocusableElement, FocusableRef, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
-import {chain, mergeProps, scrollIntoView, scrollIntoViewport} from '@react-aria/utils';
+import {chain, isAndroid, mergeProps, scrollIntoView, scrollIntoViewport} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
@@ -119,7 +119,9 @@ interface TableContextValue<T> {
   onResizeEnd: (widths: Map<Key, ColumnSize>) => void,
   headerMenuOpen: boolean,
   setHeaderMenuOpen: (val: boolean) => void,
-  toggleKey: (key: Key) => void,
+  isFirstRowHeader: (key: Key) => boolean,
+  isRowExpandable: (key: Key) => boolean,
+  toggleRowExpansion: (key: Key) => void,
   direction: Direction
 }
 
@@ -318,11 +320,21 @@ function TableView<T extends object>(props: SpectrumTreeGridProps<T>, ref: DOMRe
     isRootDropTarget = dropState.isDropTarget({type: 'root'});
   }
 
+  let isFirstRowHeader = (key) => state.collection.rowHeaderColumnKeys.keys().next().value === key;
+  let isRowExpandable = (key) => state.collection.getItem(key)?.props.childItems?.length > 0 || state.collection.getItem(key)?.props.children.length > state.collection.columnCount;
+  let toggleRowExpansion = (key) => {
+    let cell = state.collection.getItem(key);
+    cell && isFirstRowHeader(cell.column.key) && isRowExpandable(cell.parentKey) && state.toggleKey(cell.parentKey);
+  };
+
   let {gridProps} = useTable({
     ...props,
     isVirtualized: true,
     layout,
-    onRowAction: onAction
+    onRowAction: onAction,
+    // TODO: Note: only do this if there isn't a cell action, cell action not currently supported in tableview but note this for the future
+    // TODO: this seems to interfere with row actions, investigate
+    onCellAction: toggleRowExpansion
   }, state, domRef);
   let [headerMenuOpen, setHeaderMenuOpen] = useState(false);
   let [headerRowHovered, setHeaderRowHovered] = useState(false);
@@ -533,7 +545,7 @@ function TableView<T extends object>(props: SpectrumTreeGridProps<T>, ref: DOMRe
   );
 
   return (
-    <TableContext.Provider value={{state, dragState, dropState, dragAndDropHooks, isTableDraggable, isTableDroppable, layout, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, headerMenuOpen, setHeaderMenuOpen, shouldShowCheckboxes, toggleKey: state.toggleKey, direction}}>
+    <TableContext.Provider value={{state, dragState, dropState, dragAndDropHooks, isTableDraggable, isTableDroppable, layout, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, headerMenuOpen, setHeaderMenuOpen, shouldShowCheckboxes, isFirstRowHeader, isRowExpandable, toggleRowExpansion, direction}}>
       <TableVirtualizer
         {...mergedProps}
         {...styleProps}
@@ -1391,22 +1403,29 @@ function TableCheckboxCell({cell}) {
 }
 
 function TableCell({cell, density, scale}) {
-  let {state, toggleKey, direction} = useTableContext();
+  let {state, isFirstRowHeader, isRowExpandable, toggleRowExpansion, direction} = useTableContext();
   let ref = useRef();
+  let expandButtonRef = useRef();
   let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
   let isDisabled = state.disabledKeys.has(cell.parentKey);
   let {gridCellProps} = useTableCell({
     node: cell,
     isVirtualized: true
   }, state, ref);
-  let isFirstRowHeader = state.collection.rowHeaderColumnKeys.keys().next().value === cell.column.key;
-  let showExpandCollapseButton = isFirstRowHeader && (state.collection.getItem(cell.parentKey)?.props.childItems || state.collection.getItem(cell.parentKey)?.props.children.length > state.collection.columnCount);
+  let showExpandCollapseButton = isFirstRowHeader(cell.column.key) && isRowExpandable(cell.parentKey);
   let isExpanded = showExpandCollapseButton && (state.expandedKeys === 'all' || state.expandedKeys.has(cell.parentKey));
   // TODO: would be good to adjust these numbers by scale if it matters
   let levelOffset = (cell.level - (showExpandCollapseButton ? 1 : 2)) * 16 + 4 + (isFirstRowHeader && !showExpandCollapseButton ? 16 : 0);
-  let {pressProps} = usePress({
-    onPress: () => toggleKey(cell.parentKey)
-  });
+
+  // TODO: move some/all of the chevron button setup into a separate hook?
+  // Will need to keep the chevron as a button for iOS VO at all times since VO doesn't focus the cell. Also keep as button if cellAction is defined by the user in the future
+  let {buttonProps} = useButton({
+    // Desktop and mobile both toggle expansion of a native expandable row on mouse/touch up
+    onPress: () => toggleRowExpansion(cell.key),
+    elementType: 'div',
+    // TODO: will need translations.
+    'aria-label': isExpanded ? 'Collapse' : 'Expand'
+  }, expandButtonRef);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
@@ -1442,11 +1461,14 @@ function TableCell({cell, density, scale}) {
           }
           style={{paddingInlineStart: levelOffset}}>
           {showExpandCollapseButton &&
-            // TODO: double check the accessibility and announcement of this. See if mobile screen readers can access it
-            <span
-              {...pressProps}
-              // TODO: will need translations, also see if it announces the row info along side it. Since it isn't keyboard focusable do we need any annoucements?
-              aria-label={isExpanded ? 'Collapse' : 'Expand'}
+            // TODO: Since the chevron is part of the row header, the "Collapse"/"Expand" is included in the row announcement and the cell announcement which is kinda confusing...
+            // We also want to make it skipped by the keyboard
+            <div
+              {...buttonProps}
+              ref={expandButtonRef}
+              // Override tabindex so that grid keyboard nav skips over it. Needs -1 so android talkback can actually "focus" it
+              // TODO: For Talkback perhaps can make the chevron completely unfocusable by making tabIndex =-1 if cellAction is undefined by user and thus pressing on the chevron cell will expand the row?
+              tabIndex={isAndroid() ? -1 : undefined}
               className={
                 classNames(
                   styles,
@@ -1458,7 +1480,7 @@ function TableCell({cell, density, scale}) {
                 top: (ROW_HEIGHTS[density][scale] - 32) / 2
               }}>
               {isExpanded ? <ChevronDownMedium /> : <ChevronRightMedium />}
-            </span>}
+            </div>}
           {cell.rendered}
         </span>
       </div>
