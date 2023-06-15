@@ -1399,12 +1399,15 @@ function TableCell({cell, density, scale}) {
     node: cell,
     isVirtualized: true
   }, state, ref);
-  let showExpandCollapseButton = cell.index === 0 && (state.collection.getItem(cell.parentKey)?.props.childItems?.length > 0 || state.collection.getItem(cell.parentKey)?.props.children.length > state.collection.columnCount);
+  let isFirstRowHeader = state.collection.rowHeaderColumnKeys.keys().next().value === cell.column.key;
+  let showExpandCollapseButton = isFirstRowHeader && (state.collection.getItem(cell.parentKey)?.props.childItems?.length > 0 || state.collection.getItem(cell.parentKey)?.props.children.length > state.collection.columnCount);
   let isExpanded = showExpandCollapseButton && (state.expandedKeys === 'all' || state.expandedKeys.has(cell.parentKey));
-  let levelOffset = (cell.level - (showExpandCollapseButton ? 1 : 2)) * 16 + 4;
+  // TODO: would be good to adjust these numbers by scale if it matters
+  let levelOffset = (cell.level - (showExpandCollapseButton ? 1 : 2)) * 16 + 4 + (isFirstRowHeader && !showExpandCollapseButton ? 16 : 0);
   let {pressProps} = usePress({
     onPress: () => toggleKey(cell.parentKey)
   });
+
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
@@ -1439,8 +1442,10 @@ function TableCell({cell, density, scale}) {
           }
           style={{paddingInlineStart: levelOffset}}>
           {showExpandCollapseButton &&
+            // TODO: double check the accessibility and announcement of this. See if mobile screen readers can access it
             <span
               {...pressProps}
+              // TODO: will need translations, also see if it announces the row info along side it. Since it isn't keyboard focusable do we need any annoucements?
               aria-label={isExpanded ? 'Collapse' : 'Expand'}
               className={
                 classNames(

@@ -159,6 +159,51 @@ function ManyExpandableRows(props: SpectrumTableProps<unknown>) {
   );
 }
 
+export const UserSetRowHeader: TableStory = {
+  args: {
+    'aria-label': 'TableView with expandable rows and multiple row headers',
+    width: 500,
+    height: 400
+  },
+  render: (args) => (
+    <TableView hasExpandableRows onExpandedChange={action('onExpandedChange')} {...args}>
+      <TableHeader>
+        <Column key="foo">Foo</Column>
+        <Column isRowHeader key="bar">Bar</Column>
+        <Column isRowHeader key="baz">Baz</Column>
+      </TableHeader>
+      <TableBody>
+        <Row key="test">
+          <Cell>Lvl 1 Foo 1</Cell>
+          <Cell>Lvl 1 Bar 1</Cell>
+          <Cell>Lvl 1 Baz 1</Cell>
+          <Row>
+            <Cell>Lvl 2 Foo 1</Cell>
+            <Cell>Lvl 2 Bar 1</Cell>
+            <Cell>Lvl 2 Baz 1</Cell>
+            <Row>
+              <Cell>Lvl 3 Foo 1</Cell>
+              <Cell>Lvl 3 Bar 1</Cell>
+              <Cell>Lvl 3 Baz 1</Cell>
+            </Row>
+          </Row>
+          <Row>
+            <Cell>Lvl 2 Foo 2</Cell>
+            <Cell>Lvl 2 Bar 2</Cell>
+            <Cell>Lvl 2 Baz 2</Cell>
+          </Row>
+        </Row>
+      </TableBody>
+    </TableView>
+  ),
+  name: 'multiple user set row headers',
+  parameters: {
+    description: {
+      data: 'Row headers are Bar and Baz column cells, chevron'
+    }
+  }
+};
+
 export const ManyExpandableRowsStory: TableStory = {
   args: {
     'aria-label': 'TableView with many dynamic expandable rows',
@@ -172,4 +217,4 @@ export const ManyExpandableRowsStory: TableStory = {
 };
 
 
-// TODO: make sorting example? empty state table, nested columns
+// TODO: make sorting example? empty state table, nested columns, icons in cells, resizeable column headers, loading story, dividers
