@@ -52,7 +52,7 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
     let hasChildRows = node.props.childItems || node.props.children.length > state.collection.columnCount;
     treeGridRowProps = {
       onKeyDown: (e) => {
-        if ((e.key === 'ArrowRight') && state.selectionManager.focusedKey === node.key && hasChildRows && state.expandedKeys !== 'all' && !state.expandedKeys.has(node.key)) {
+        if ((e.key === EXPANSION_TRIGGERS['expand'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && state.expandedKeys !== 'all' && !state.expandedKeys.has(node.key)) {
           state.toggleKey(node.key);
           e.stopPropagation();
           // After some time, if the row was not expanded (via controlled), focus the first cell
