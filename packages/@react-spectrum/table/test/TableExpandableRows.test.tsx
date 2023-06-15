@@ -443,7 +443,7 @@ describe('TableView with expandable rows', function () {
 
     describe('ArrowRight', function () {
       it('should properly wrap focus with ArrowRight', function () {
-        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />);
+        let treegrid = render(<ManyRowsExpandableTable />);
         let row = treegrid.getAllByRole('row')[2];
         focusCell(treegrid, 'Row 1, Lvl 2, Foo');
         moveFocus('ArrowRight');
@@ -458,12 +458,15 @@ describe('TableView with expandable rows', function () {
       });
 
       it('should properly wrap focus with ArrowRight (RTL)', function () {
-        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />, undefined, 'ar-AE');
+        let treegrid = render(<ManyRowsExpandableTable />, undefined, 'ar-AE');
         let row = treegrid.getAllByRole('row')[2];
         focusCell(treegrid, 'Row 1, Lvl 2, Foo');
         moveFocus('ArrowRight');
         expect(document.activeElement).toBe(row);
         expect(row).toContainElement(getCell(treegrid, 'Row 1, Lvl 2, Foo'));
+        // Focus doesn't move because Arrow Right on the row will collapse it
+        moveFocus('ArrowRight');
+        expect(document.activeElement).toBe(row);
         moveFocus('ArrowRight');
         expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 2, Baz'));
         moveFocus('ArrowRight');
@@ -474,14 +477,16 @@ describe('TableView with expandable rows', function () {
     });
 
     describe('ArrowLeft', function () {
-      // TODO: Unksip, handle case of moving focus if collapse doesn't occur
-      it.skip('should properly wrap focus with ArrowLeft', function () {
-        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />);
+      it('should properly wrap focus with ArrowLeft', function () {
+        let treegrid = render(<ManyRowsExpandableTable />);
         let row = treegrid.getAllByRole('row')[2];
         focusCell(treegrid, 'Row 1, Lvl 2, Foo');
         moveFocus('ArrowLeft');
         expect(document.activeElement).toBe(row);
         expect(row).toContainElement(getCell(treegrid, 'Row 1, Lvl 2, Foo'));
+        // Focus doesn't move because Arrow Left on the row will collapse it here
+        moveFocus('ArrowLeft');
+        expect(document.activeElement).toBe(row);
         moveFocus('ArrowLeft');
         expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 2, Baz'));
         moveFocus('ArrowLeft');
@@ -490,9 +495,8 @@ describe('TableView with expandable rows', function () {
         expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 2, Foo'));
       });
 
-      // TODO: Unksip, handle case of moving focus if collapse doesn't occur
-      it.skip('should properly wrap focus with ArrowRight (RTL)', function () {
-        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />, undefined, 'ar-AE');
+      it('should properly wrap focus with ArrowLeft (RTL)', function () {
+        let treegrid = render(<ManyRowsExpandableTable />, undefined, 'ar-AE');
         let row = treegrid.getAllByRole('row')[2];
         focusCell(treegrid, 'Row 1, Lvl 2, Foo');
         moveFocus('ArrowLeft');

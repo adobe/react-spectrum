@@ -314,7 +314,7 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
       } else if (node.type === 'cell') {
         while (node != null) {
           node = this.keyMap.get(node.prevKey);
-          if (node.type === 'cell') {
+          if (node?.type === 'cell') {
             return node.key;
           }
         }
@@ -335,7 +335,6 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
 
   getKeyAfter(key: Key) {
     let node = this.keyMap.get(key);
-
     if (node) {
       // if not a cell or a row just do old code
       if (node.type !== 'item' && node.type !== 'cell') {
@@ -343,7 +342,7 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
       } else if (node.type === 'cell') {
         while (node != null) {
           node = this.keyMap.get(node.nextKey);
-          if (node.type === 'cell') {
+          if (node?.type === 'cell') {
             return node.key;
           }
         }

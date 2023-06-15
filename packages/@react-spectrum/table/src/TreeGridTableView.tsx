@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, Direction, DOMProps, DOMRef, DropTarget, Expandable, FocusableElement, FocusableRef, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, DOMRef, DropTarget, Expandable, FocusableElement, FocusableRef, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {chain, isAndroid, mergeProps, scrollIntoView, scrollIntoViewport} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
@@ -126,8 +126,7 @@ interface TableContextValue<T> {
   setHeaderMenuOpen: (val: boolean) => void,
   isFirstRowHeader: (key: Key) => boolean,
   isRowExpandable: (key: Key) => boolean,
-  toggleRowExpansion: (key: Key) => void,
-  direction: Direction
+  toggleRowExpansion: (key: Key) => void
 }
 
 const TableContext = React.createContext<TableContextValue<unknown>>(null);
@@ -440,6 +439,8 @@ function TableView<T extends object>(props: SpectrumTreeGridProps<T>, ref: DOMRe
       case 'headerrow':
         return null;
       case 'cell': {
+        // TODO: seems like this sometimes renders a "item" (aka a row) for the static case where a explicit key isn't defined for each row
+
         if (item.props.isSelectionCell) {
           return <TableCheckboxCell cell={item} />;
         }
@@ -448,7 +449,7 @@ function TableView<T extends object>(props: SpectrumTreeGridProps<T>, ref: DOMRe
           return <TableDragCell cell={item} />;
         }
 
-        return <TableCell cell={item} density={density} scale={scale} />;
+        return <TableCell cell={item} scale={scale} />;
       }
       case 'placeholder':
         // TODO: move to react-aria?
@@ -550,7 +551,7 @@ function TableView<T extends object>(props: SpectrumTreeGridProps<T>, ref: DOMRe
   );
 
   return (
-    <TableContext.Provider value={{state, dragState, dropState, dragAndDropHooks, isTableDraggable, isTableDroppable, layout, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, headerMenuOpen, setHeaderMenuOpen, shouldShowCheckboxes, isFirstRowHeader, isRowExpandable, toggleRowExpansion, direction}}>
+    <TableContext.Provider value={{state, dragState, dropState, dragAndDropHooks, isTableDraggable, isTableDroppable, layout, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, headerMenuOpen, setHeaderMenuOpen, shouldShowCheckboxes, isFirstRowHeader, isRowExpandable, toggleRowExpansion}}>
       <TableVirtualizer
         {...mergedProps}
         {...styleProps}
@@ -1407,8 +1408,8 @@ function TableCheckboxCell({cell}) {
   );
 }
 
-function TableCell({cell, density, scale}) {
-  let {state, isFirstRowHeader, isRowExpandable, toggleRowExpansion, direction} = useTableContext();
+function TableCell({cell, scale}) {
+  let {state, isFirstRowHeader, isRowExpandable, toggleRowExpansion} = useTableContext();
   let ref = useRef();
   let expandButtonRef = useRef();
   let columnProps = cell.column.props as SpectrumColumnProps<unknown>;

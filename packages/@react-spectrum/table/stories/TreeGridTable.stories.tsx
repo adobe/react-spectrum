@@ -35,28 +35,28 @@ export const StaticExpandableRows: TableStory = {
     height: 200
   },
   render: (args) => (
-    <TableView defaultExpandedKeys={['test']} hasExpandableRows onExpandedChange={action('onExpandedChange')} {...args}>
+    <TableView defaultExpandedKeys={['row 1']} hasExpandableRows onExpandedChange={action('onExpandedChange')} {...args}>
       <TableHeader>
         <Column key="foo">Foo</Column>
         <Column key="bar">Bar</Column>
         <Column key="baz">Baz</Column>
       </TableHeader>
       <TableBody>
-        <Row key="test">
+        <Row key="row 1">
           <Cell>Lvl 1 Foo 1</Cell>
           <Cell>Lvl 1 Bar 1</Cell>
-          <Cell>Lvl 1 Baz 1</Cell>
-          <Row>
+          <Cell> Lvl 1 Baz 1</Cell>
+          <Row key="child row 1 level 2">
             <Cell>Lvl 2 Foo 1</Cell>
             <Cell>Lvl 2 Bar 1</Cell>
             <Cell>Lvl 2 Baz 1</Cell>
-            <Row>
+            <Row key="child row 1 level 3">
               <Cell>Lvl 3 Foo 1</Cell>
               <Cell>Lvl 3 Bar 1</Cell>
               <Cell>Lvl 3 Baz 1</Cell>
             </Row>
           </Row>
-          <Row>
+          <Row key="child row 2 level 2">
             <Cell>Lvl 2 Foo 2</Cell>
             <Cell>Lvl 2 Bar 2</Cell>
             <Cell>Lvl 2 Baz 2</Cell>
