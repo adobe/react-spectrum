@@ -36,5 +36,5 @@ export {clamp, snapValueToStep} from '@react-stately/utils';
 export {isVirtualClick, isVirtualPointerEvent} from './isVirtualEvent';
 export {useEffectEvent} from './useEffectEvent';
 export {useDeepMemo} from './useDeepMemo';
-export {useFormReset, useFormValidation, useFormValidationState, mergeValidity} from './useFormReset';
+export {useFormReset, useFormValidation, useFormValidationState, useValidationState, mergeValidity} from './useFormReset';
 export type {FormValidationResult} from './useFormReset';

@@ -134,6 +134,53 @@ function Example() {
 }
 ```
 
+```tsx example
+import {Form, Button, ButtonGroup} from '@adobe/react-spectrum';
+
+<Form validationBehavior="native">
+  <TextField label="Email" name="email" type="email" isRequired />
+  <ButtonGroup>
+    <Button type="submit">Submit</Button>
+    <Button type="reset">Reset</Button>
+  </ButtonGroup>
+</Form>
+```
+
+```tsx example
+<Form validationBehavior="native">
+  <TextField label="Tracking number" validationState={value => value.length === 8 ? 'valid' : 'invalid'} errorMessage="Please enter an 8-digit tracking number." />
+  <ButtonGroup>
+    <Button type="submit">Submit</Button>
+  </ButtonGroup>
+</Form>
+```
+
+```tsx example
+import {useValidationState} from '@react-aria/utils';
+
+function Example() {
+  let validationState = useValidationState(value =>
+    value.length === 8
+      ? null
+      : 'Please enter an 8-digit tracking number.'
+  );
+
+  let onSubmit = e => {
+    e.preventDefault();
+    validationState.setError('Invalid tracking number.');
+  };
+
+  return (
+    <Form validationBehavior="native" onSubmit={onSubmit}>
+      <TextField label="Tracking number" validationState={validationState} />
+      <ButtonGroup>
+        <Button type="submit">Submit</Button>
+      </ButtonGroup>
+    </Form>
+  );
+}
+```
+
 ## Props
 
 <PropTable component={docs.exports.TextField} links={docs.links} />

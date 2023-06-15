@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {FormValidationEvent, ValidationState, ValidationStateProp} from '@react-types/shared';
+import {ExternalValidationState, FormValidationEvent, ValidationState, ValidationStateProp} from '@react-types/shared';
 import {ReactNode, RefObject, useEffect, useMemo, useRef, useState} from 'react';
 import {useEffectEvent} from './useEffectEvent';
 
@@ -51,19 +51,28 @@ export function useFormValidation<T>(
   value: T,
   onValidationChange?: (value: FormValidationEvent) => void
 ): FormValidationResult {
-  let currentValidationState = useMemo(() => typeof validationState === 'function' ? validationState(value) : validationState, [validationState, value]);
+  let [currentValidationState, currentErrorMessage] = useMemo(() => {
+    if (typeof validationState === 'function') {
+      return [validationState(value), errorMessage];
+    } else if (typeof validationState === 'object') {
+      let error = validationState.validate(value);
+      return [error ? 'invalid' : undefined, error];
+    } else {
+      return [validationState, errorMessage];
+    }
+  }, [validationState, value, errorMessage]);
   useEffect(() => {
     if (validationBehavior === 'native') {
       // Use the provided error message if available, otherwise use a default string.
       // This is usually not shown to the user because there is often a custom UI for error messages,
       // but it is required to mark the input as invalid and prevent form submission.
       let error = '';
-      if (validationState === 'invalid') {
-        error = typeof errorMessage === 'string' && errorMessage ? errorMessage : 'Invalid value.';
+      if (currentValidationState === 'invalid') {
+        error = typeof currentErrorMessage === 'string' && currentErrorMessage ? currentErrorMessage : 'Invalid value.';
       }
       ref.current?.setCustomValidity(error);
     }
-  }, [validationBehavior, validationState, errorMessage, ref]);
+  }, [validationBehavior, currentValidationState, currentErrorMessage, ref]);
 
   let [result, setValidity] = useFormValidationState(validationState, errorMessage, validationBehavior, value);
   useInputValidity(validationBehavior === 'native' ? ref : null, (validity) => {
@@ -170,7 +179,7 @@ function useInputValidity(
     };
 
     let onChange = () => {
-      if (input.validity.valid) {
+      if (input.validity.valid || !validation.current.validationDetails.valid) {
         updateValidation({
           validationDetails: getValidity(input),
           errorMessage: input.validationMessage
@@ -207,28 +216,28 @@ function getValidationResult<T>(validity: InputValidity, validationState: Valida
   // when a custom validationState/errorMessage are provided as well. These props can be set by the
   // developer in real-time for ease of implementation, but only shown to the user on submit.
   if (validationBehavior === 'native') {
-    if (validity.validationDetails.valid) {
-      // If the native input is valid, keep the validation state as "valid" to show green checkmark
-      // if it is passed in as a prop, otherwise delay showing validation state.
-      validationState = validationState === 'valid' ? 'valid' : undefined;
-      errorMessage = undefined;
-    } else {
-      validationState = 'invalid';
-      if (!validity.validationDetails.customError && !errorMessage) {
-        // Use native error message if a custom one is not provided.
-        errorMessage = validity.errorMessage;
-      }
-    }
+    // if (validity.validationDetails.valid) {
+    //   // If the native input is valid, keep the validation state as "valid" to show green checkmark
+    //   // if it is passed in as a prop, otherwise delay showing validation state.
+    //   validationState = validationState === 'valid' ? 'valid' : undefined;
+    //   errorMessage = undefined;
+    // } else {
+    //   validationState = 'invalid';
+    //   if (!validity.validationDetails.customError && !errorMessage) {
+    //     // Use native error message if a custom one is not provided.
+    //     errorMessage = validity.errorMessage;
+    //   }
+    // }
     // if (typeof validationState !== 'string' && !validity.validationDetails.valid) {
     //   validationState = 'invalid';
     //   errorMessage = validity.errorMessage;
     // }
-    // if (typeof validationState === 'function' || !validationState) {
-    //   validationState = validity.validationDetails.valid ? undefined : 'invalid';
-    //   if (!validity.validationDetails.customError && !errorMessage) {
-    //     errorMessage = validity.errorMessage;
-    //   }
-    // }
+    if (typeof validationState === 'function' || !validationState) {
+      validationState = validity.validationDetails.valid ? undefined : 'invalid';
+      if (!validity.validationDetails.customError && !errorMessage) {
+        errorMessage = validity.errorMessage;
+      }
+    }
   } else if (typeof validationState === 'function') {
     validationState = validationState(value);
   }
@@ -248,7 +257,58 @@ function getValidationResult<T>(validity: InputValidity, validationState: Valida
 
 export function useFormValidationState<T>(validationState: ValidationStateProp<T>, errorMessage: ReactNode, validationBehavior: 'aria' | 'native', value: T): [FormValidationResult, (validity: InputValidity) => void] {
   let [validation, setValidation] = useState<InputValidity>(DEFAULT_VALIDITY);
+
+  if (typeof validationState === 'object') {
+    return [validationState, validationState.setValidity]
+  }
+
   return [getValidationResult(validation, validationState, errorMessage, validationBehavior, value), setValidation];
+}
+
+export function useValidationState<T>(validate: (value: T) => string): ExternalValidationState<T> {
+  let [{validationState, errorMessage, validationDetails}, setValidation] = useState({
+    validationState: undefined,
+    errorMessage: '',
+    validationDetails: DEFAULT_VALIDITY.validationDetails
+  });
+  return {
+    validate,
+    validationState,
+    errorMessage,
+    validationDetails,
+    setValidity(validity: InputValidity) {
+      let validationState;
+      let errorMessage = '';
+      if (!validity.validationDetails.valid) {
+        validationState = 'invalid';
+        errorMessage = validity.errorMessage;
+      }
+
+      setValidation({
+        validationState,
+        errorMessage,
+        validationDetails: validity.validationDetails
+      });
+    },
+    setError(errorMessage) {
+      setValidation({
+        validationState: 'invalid',
+        errorMessage,
+        validationDetails: {
+          ...DEFAULT_VALIDITY.validationDetails,
+          customError: true,
+          valid: false
+        }
+      });
+    },
+    clear() {
+      setValidation({
+        validationState: undefined,
+        errorMessage: '',
+        validationDetails: DEFAULT_VALIDITY.validationDetails
+      });
+    }
+  }
 }
 
 export function mergeValidity(a: ValidityState, b: ValidityState) {

@@ -14,11 +14,10 @@ import {AriaButtonProps} from '@react-types/button';
 import {AriaDatePickerProps, DateValue} from '@react-types/datepicker';
 import {AriaDialogProps} from '@react-types/dialog';
 import {CalendarProps} from '@react-types/calendar';
-import {chain, filterDOMProps, FormValidationResult, mergeProps, useDescription, useFormValidationState, useId} from '@react-aria/utils';
+import {chain, filterDOMProps, FormValidationResult, mergeProps, useDescription, useFormValidationState, useId, mergeValidity} from '@react-aria/utils';
 import {createFocusManager} from '@react-aria/focus';
 import {DatePickerState} from '@react-stately/datepicker';
 import {DOMAttributes, KeyboardEvent} from '@react-types/shared';
-import {filterDOMProps, FormValidationResult, mergeProps, useDescription, useId, useFormValidationState, chain, mergeValidity} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {RefObject, useMemo} from 'react';

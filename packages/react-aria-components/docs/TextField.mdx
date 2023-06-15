@@ -308,7 +308,7 @@ The `description` slot can be used to associate additional help text with a text
 
 ### Form validation
 
-TextField supports the `name` prop for integration with HTML forms, and can be marked as required using the `isRequired` prop. In addition, attributes such as `type`, `pattern`, `inputMode`, and others are passed through to the underlying `<input>` element.
+TextField supports the `name` prop for integration with HTML forms, and can be marked as required using the `isRequired` prop. In addition, attributes such as `type`, `pattern`, `minLength`, `maxLength`, and others are passed through to the underlying `<input>` element.
 
 To display validation errors, add a `<FormError>` element as a child of the TextField. This intercepts the browser's default validation UI and allows you to render error messages with custom styles. The error message may also be customized by providing a function to `FormError` to receive validation details. See the [FormError](FormError.html) docs for more details.
 
@@ -390,6 +390,33 @@ The `validationState` prop can be used to manually mark a text field as invalid 
   </TextField>
   <Button type="submit">Submit</Button>
 </form>
+```
+
+```tsx example
+import {useValidationState} from '@react-aria/utils';
+function Example() {
+  let validationState = useValidationState(value =>
+    value.length === 8
+      ? null
+      : 'Please enter an 8-digit tracking number.'
+  );
+
+  let onSubmit = e => {
+    e.preventDefault();
+    validationState.setError('Invalid tracking number.');
+  };
+
+  return (
+    <form onSubmit={onSubmit}>
+      <TextField validationState={validationState}>
+        <Label>Tracking number</Label>
+        <Input />
+        <FormError />
+      </TextField>
+      <Button type="submit">Submit</Button>
+    </form>
+  );
+}
 ```
 
 ### Disabled

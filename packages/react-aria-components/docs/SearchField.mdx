@@ -522,31 +522,34 @@ function Example() {
 ```
 
 ```tsx example
+import {useValidationState} from '@react-aria/utils';
 function Example() {
-  let [value, setValue] = React.useState('');
-  let [isServerInvalid, setServerInvalid] = React.useState(false);
-  let validationState = value.length === 8 && !isServerInvalid ? 'valid' : 'invalid';
+  // let [value, setValue] = React.useState('');
+  // let [isServerInvalid, setServerInvalid] = React.useState(false);
+  // let validationState = value.length === 8 && !isServerInvalid ? 'valid' : 'invalid';
+  let validationState = useValidationState(value => value.length === 8 ? null : 'invalid');
 
   let formRef = React.useRef();
   let onSubmit = e => {
     console.log('submit')
     e.preventDefault();
-    setServerInvalid(true);
+    // setServerInvalid(true);
+    validationState.setError('Invalid tracking number.');
   };
 
-  React.useEffect(() => {
-    if (isServerInvalid) {
-      formRef.current.checkValidity();
-    }
-  }, [isServerInvalid]);
+  // React.useEffect(() => {
+  //   if (isServerInvalid) {
+  //     formRef.current.checkValidity();
+  //   }
+  // }, [isServerInvalid]);
 
   return (
     <form onSubmit={onSubmit} ref={formRef}>
-      <SearchField value={value} onChange={v => {setValue(v); setServerInvalid(false)}} validationState={validationState}>
+      <SearchField validationState={validationState}>
         <Label>Tracking number</Label>
         <Input />
         <Button>✕</Button>
-        <FormError>{isServerInvalid ? 'Invalid tracking number.' : 'Please enter an 8-digit tracking number.'}</FormError>
+        <FormError>{validationState.errorMessage || 'Please enter an 8-digit tracking number.'}</FormError>
       </SearchField>
       <Button type="submit">Submit</Button>
     </form>

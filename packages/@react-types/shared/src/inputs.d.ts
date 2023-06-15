@@ -13,7 +13,16 @@
 import {ReactNode} from 'react';
 
 export type ValidationState = 'valid' | 'invalid';
-export type ValidationStateProp<T> = ValidationState | ((value: T) => ValidationState);
+export type ValidationStateProp<T> = ValidationState | ((value: T) => ValidationState) | ExternalValidationState<T>;
+
+export interface ExternalValidationState<T> {
+  validationState: ValidationState,
+  errorMessage: string,
+  validationDetails: ValidityState,
+  validate: ((value: T) => ValidationState),
+  setError(errorMessage: string): void,
+  clear(): void
+}
 
 export interface Validation<T> {
   /** Whether the input should display its "valid" or "invalid" visual styling. */
