@@ -118,7 +118,7 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
       isDisabled: state.isDisabled,
       isReadOnly: state.isReadOnly,
       isRequired: state.isRequired,
-      validationState: state.validationState
+      validationState: validationProps.validationState
     },
     defaultClassName: 'react-aria-RadioGroup'
   });
@@ -146,7 +146,7 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
 function Radio(props: RadioProps, ref: ForwardedRef<HTMLInputElement>) {
   let state = React.useContext(InternalRadioContext)!;
   let domRef = useObjectRef(ref);
-  let {inputProps, isSelected, isDisabled, isPressed: isPressedKeyboard} = useRadio({
+  let {inputProps, isSelected, isDisabled, isPressed: isPressedKeyboard, validationState} = useRadio({
     ...props,
     // ReactNode type doesn't allow function children.
     children: typeof props.children === 'function' ? true : props.children
@@ -188,7 +188,7 @@ function Radio(props: RadioProps, ref: ForwardedRef<HTMLInputElement>) {
       isFocusVisible,
       isDisabled,
       isReadOnly: state.isReadOnly,
-      validationState: state.validationState,
+      validationState,
       isRequired: state.isRequired
     }
   });
@@ -206,7 +206,7 @@ function Radio(props: RadioProps, ref: ForwardedRef<HTMLInputElement>) {
       data-focus-visible={isFocusVisible || undefined}
       data-disabled={isDisabled || undefined}
       data-readonly={state.isReadOnly || undefined}
-      data-validation-state={state.validationState || undefined}
+      data-validation-state={validationState || undefined}
       data-required={state.isRequired || undefined}>
       <VisuallyHidden elementType="span">
         <input {...inputProps} {...focusProps} ref={domRef} />

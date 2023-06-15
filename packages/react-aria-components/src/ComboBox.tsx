@@ -42,9 +42,9 @@ export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<
   /**
    * Whether the text or key of the selected item is submitted as part of an HTML form.
    * When `allowsCustomValue` is `true`, this option does not apply and the text is always submitted.
-   * @default 'text'
+   * @default 'key'
    */
-  formValue?: 'text' | 'key'
+  formValue?: 'key' | 'text'
 }
 
 export const ComboBoxContext = createContext<ContextValue<ComboBoxProps<any>, HTMLDivElement>>(null);
@@ -54,7 +54,7 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
   let [propsFromListBox, setListBoxProps] = useState<ListBoxProps<T>>({children: []});
   let {
     name,
-    formValue = 'text',
+    formValue = 'key',
     allowsCustomValue
   } = props;
   if (allowsCustomValue) {

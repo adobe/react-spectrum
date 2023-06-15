@@ -47,7 +47,8 @@ export function useCheckboxGroupItem(props: AriaCheckboxGroupItemProps, state: C
     isReadOnly: props.isReadOnly || state.isReadOnly,
     isDisabled: props.isDisabled || state.isDisabled,
     name: props.name || name,
-    validationBehavior: props.validationBehavior || validationBehavior
+    validationBehavior: props.validationBehavior || validationBehavior,
+    validationState: state.validationState
   }, toggleState, inputRef);
 
   return {

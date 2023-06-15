@@ -13,7 +13,7 @@
 import {ActionButton} from '@react-spectrum/button';
 import {AriaTagGroupProps, useTagGroup} from '@react-aria/tag';
 import {classNames, useDOMRef} from '@react-spectrum/utils';
-import {DOMRef, SpectrumLabelableProps, StyleProps, Validation} from '@react-types/shared';
+import {DOMRef, SpectrumLabelableProps, StyleProps, ValidationState} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
 import {FocusRing, FocusScope} from '@react-aria/focus';
 // @ts-ignore
@@ -39,7 +39,7 @@ const TAG_STYLES = {
   }
 };
 
-export interface SpectrumTagGroupProps<T> extends Omit<AriaTagGroupProps<T>, 'selectionMode' | 'disallowEmptySelection' | 'selectedKeys' | 'defaultSelectedKeys' | 'onSelectionChange' | 'selectionBehavior' | 'disabledKeys'>, StyleProps, Omit<SpectrumLabelableProps, 'isRequired' | 'necessityIndicator'>, Omit<Validation, 'isRequired'> {
+export interface SpectrumTagGroupProps<T> extends Omit<AriaTagGroupProps<T>, 'selectionMode' | 'disallowEmptySelection' | 'selectedKeys' | 'defaultSelectedKeys' | 'onSelectionChange' | 'selectionBehavior' | 'disabledKeys'>, StyleProps, Omit<SpectrumLabelableProps, 'isRequired' | 'necessityIndicator'> {
   /** The label to display on the action button.  */
   actionLabel?: string,
   /** Handler that is called when the action button is pressed. */
@@ -47,7 +47,9 @@ export interface SpectrumTagGroupProps<T> extends Omit<AriaTagGroupProps<T>, 'se
   /** Sets what the TagGroup should render when there are no tags to display. */
   renderEmptyState?: () => JSX.Element,
   /** Limit the number of rows initially shown. This will render a button that allows the user to expand to show all tags. */
-  maxRows?: number
+  maxRows?: number,
+  /** Whether the tag group should display its "valid" or "invalid" visual styling. */
+  validationState?: ValidationState,
 }
 
 function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {

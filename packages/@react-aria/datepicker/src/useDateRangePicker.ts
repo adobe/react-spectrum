@@ -55,8 +55,8 @@ export interface DateRangePickerAria extends FormValidationResult {
  */
 export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePickerProps<T>, state: DateRangePickerState, ref: RefObject<Element>): DateRangePickerAria {
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
-  let [startValidation, setStartValidation] = useFormValidationState(state.validationState, props.errorMessage);
-  let [endValidation, setEndValidation] = useFormValidationState(state.validationState, props.errorMessage);
+  let [startValidation, setStartValidation] = useFormValidationState(state.validationState, props.errorMessage, props.validationBehavior);
+  let [endValidation, setEndValidation] = useFormValidationState(state.validationState, props.errorMessage, props.validationBehavior);
   let validationState = startValidation.validationState || endValidation.validationState;
   let errorMessage = startValidation.errorMessage || endValidation.errorMessage;
   let validationDetails = mergeValidity(startValidation.validationDetails, endValidation.validationDetails);
@@ -227,7 +227,7 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
     },
     validationState,
     errorMessage,
-    validationDetails
+    validationDetails: mergeValidity(state.validationDetails, validationDetails)
   };
 }
 

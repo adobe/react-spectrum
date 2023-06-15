@@ -11,10 +11,18 @@
  */
 
 import {AriaLabelingProps, AsyncLoadable, CollectionBase, DOMProps, FocusableProps, HelpTextProps, InputBase, InputDOMProps, LabelableProps, LoadingState, SingleSelection, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps, TextInputBase, Validation} from '@react-types/shared';
+import {Key} from 'react';
 
 export type MenuTriggerAction = 'focus' | 'input' | 'manual';
 
-export interface ComboBoxProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'disallowEmptySelection'>, InputBase, TextInputBase, Validation, FocusableProps<HTMLInputElement>, LabelableProps, HelpTextProps {
+interface ComboBoxValidationOptions {
+  /** The value of the ComboBox input. */
+  inputValue: string,
+  /** The selected key of the ComboBox. */
+  selectedKey: Key | null
+}
+
+export interface ComboBoxProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'disallowEmptySelection'>, InputBase, TextInputBase, Validation<ComboBoxValidationOptions>, FocusableProps<HTMLInputElement>, LabelableProps, HelpTextProps {
   /** The list of ComboBox items (uncontrolled). */
   defaultItems?: Iterable<T>,
   /** The list of ComboBox items (controlled). */

@@ -12,10 +12,11 @@
 
 import {CalendarDate, DateFormatter, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
 import {DatePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
-import {FieldOptions, getFormatOptions, getPlaceholderTime, isInvalid, useDefaultProps} from './utils';
+import {FieldOptions, getFormatOptions, getPlaceholderTime, getValidationDetails, useDefaultProps} from './utils';
+import {isInvalid} from './utils';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {useControlledState} from '@react-stately/utils';
-import {useState} from 'react';
+import {useMemo, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 
 export interface DatePickerStateOptions<T extends DateValue> extends DatePickerProps<T> {
@@ -120,9 +121,17 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
     }
   };
 
+  let validationDetails = useMemo(() => {
+    let details = getValidationDetails(value, props.minValue, props.maxValue);
+    if (value && props.isDateUnavailable?.(value)) {
+      details.valid = false;
+      details.customError = true;
+    }
+    return details
+  }, [value, props.minValue, props.maxValue, props.isDateUnavailable]);
+
   let validationState: ValidationState = props.validationState ||
-    (isInvalid(value, props.minValue, props.maxValue) ? 'invalid' : null) ||
-    (value && props.isDateUnavailable?.(value) ? 'invalid' : null);
+    (!validationDetails.valid ? 'invalid' : null);
 
   return {
     value,
@@ -145,6 +154,7 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
       overlayState.setOpen(isOpen);
     },
     validationState,
+    validationDetails,
     formatValue(locale, fieldOptions) {
       if (!dateValue) {
         return '';

@@ -574,7 +574,7 @@ function MySelect<T extends object>({label, description, errorMessage, children,
         <span aria-hidden="true">▼</span>
       </Button>
       {description && <Text slot="description">{description}</Text>}
-      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
+      <FormError>{errorMessage}</FormError>
       <Popover>
         <ListBox>
           {children}
@@ -902,42 +902,157 @@ function Example() {
 }
 ```
 
-### Help text
+### Description
 
-The `description` slot can be used to associate additional help text with a Select. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `validationState` prop to semantically mark the Select as invalid for assistive technologies.
+The `description` slot can be used to associate additional help text with a Select.
+
+```tsx example
+<Select>
+  <Label>Favorite Animal</Label>
+  <Button>
+    <SelectValue />
+    <span aria-hidden="true">▼</span>
+  </Button>
+  {/*- begin highlight -*/}
+  <Text slot="description">Select an animal.</Text>
+  {/*- end highlight -*/}
+  <Popover>
+    <ListBox>
+      <Item>Cat</Item>
+      <Item>Dog</Item>
+      <Item>Kangaroo</Item>
+    </ListBox>
+  </Popover>
+</Select>
+```
+
+### Form validation
+
+Select supports the `name` prop for integration with HTML forms, and can be marked as required using the `isRequired` prop. When a form is submitted, the `id` of the selected `<Item>` is sent to the server.
+
+To display validation errors, add a `<FormError>` element as a child of the Select. This intercepts the browser's default validation UI and allows you to render error messages with custom styles. The error message may also be customized by providing a function to `FormError` to receive validation details. See the [FormError](FormError.html) docs for more details.
+
+```tsx example
+import {FormError, Button} from 'react-aria-components';
+
+<form>
+  {/*- begin highlight -*/}
+  <Select name="animal" isRequired>
+  {/*- end highlight -*/}
+    <Label>Favorite Animal</Label>
+    <Button>
+      <SelectValue />
+      <span aria-hidden="true">▼</span>
+    </Button>
+    {/*- begin highlight -*/}
+    <FormError />
+    {/*- end highlight -*/}
+    <Popover>
+      <ListBox>
+        <Item id="cat">Cat</Item>
+        <Item id="dog">Dog</Item>
+        <Item id="kangaroo">Kangaroo</Item>
+      </ListBox>
+    </Popover>
+  </Select>
+  <Button type="submit">Submit</Button>
+  <Button type="reset">Reset</Button>
+</form>
+```
+
+```css code=false
+.react-aria-Button[type=submit],
+.react-aria-Button[type=reset] {
+  --border-color: var(--spectrum-alias-border-color);
+  --border-color-pressed: var(--spectrum-alias-border-color-down);
+  --border-color-disabled: var(--spectrum-alias-border-color-disabled);
+  --background-color: var(--spectrum-global-color-gray-50);
+  --background-color-pressed: var(--spectrum-global-color-gray-100);
+  --text-color: var(--spectrum-alias-text-color);
+  --focus-ring-color: slateblue;
+
+  color: var(--text-color);
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  appearance: none;
+  vertical-align: middle;
+  font-size: 1rem;
+  text-align: center;
+  font-weight: normal;
+  outline: none;
+  padding: 4px 12px;
+  margin: 8px 8px 0 0;
+
+  &[data-pressed] {
+    box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
+    background: var(--background-color-pressed);
+    border-color: var(--border-color-pressed);
+  }
+
+  &[data-focus-visible] {
+    border-color: var(--focus-ring-color);
+    box-shadow: 0 0 0 1px var(--focus-ring-color);
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Button {
+    forced-color-adjust: none;
+    --border-color: ButtonBorder;
+    --border-color-pressed: ButtonBorder;
+    --border-color-disabled: GrayText;
+    --background-color: ButtonFace;
+    --background-color-pressed: ButtonFace;
+    --text-color: ButtonText;
+    --focus-ring-color: Highlight;
+  }
+}
+```
+
+For more advanced use cases, the `onValidationChange` event may also be used to implement custom logic when the select's validation state changes. You can also disable native HTML form validation entirely by setting `validationBehavior="aria"`. This will use ARIA attributes to mark the input as required and invalid rather than blocking form submission.
+
+### Custom errors
+
+The `validationState` prop can be used to manually mark a Select as invalid according to custom business logic. This prevents the user from being able to submit a form until the error is fixed. Use the `<FormError>` component to display a custom error message, which is automatically associated with the select.
 
 ```tsx example
 function Example() {
-  let [animalId, setAnimalId] = React.useState<React.Key | null>(null);
-  let options = [
-    { id: 1, name: 'Aardvark' },
-    { id: 2, name: 'Cat' },
-    { id: 3, name: 'Dog' },
-    { id: 4, name: 'Kangaroo' },
-    { id: 5, name: 'Koala' },
-    { id: 6, name: 'Penguin' },
-    { id: 7, name: 'Snake' },
-    { id: 8, name: 'Turtle' },
-    { id: 9, name: 'Wombat' }
-  ];
-  let isValid = React.useMemo(() => animalId !== 2 && animalId !== 7, [
-    animalId
-  ]);
+  let [animal, setAnimal] = React.useState<React.Key | null>(null);
+  let isValid = animal !== 'cat' && animal !== 'snake';
 
   return (
-    <MySelect
+    <Select
+      selectedKey={animal}
+      onSelectionChange={setAnimal}
+      /*- begin highlight -*/
       validationState={isValid ? 'valid' : 'invalid'}
-      label="Favorite animal"
-      description={isValid ? 'Pick your favorite animal, you will be judged.' : undefined}
-      errorMessage={isValid ? undefined : animalId === 2
-        ? 'The author of this example is a dog person.'
-        : "Oh no it's a snake! Choose anything else."}
-      items={options}
-      selectedKey={animalId}
-      onSelectionChange={(selected) => setAnimalId(selected)}
+      /*- end highlight -*/
     >
-      {(item) => <Item>{item.name}</Item>}
-    </MySelect>
+      <Label>Favorite animal</Label>
+      <Button>
+        <SelectValue />
+        <span aria-hidden="true">▼</span>
+      </Button>
+      {/*- begin highlight -*/}
+      {isValid && <Text slot="description">Pick your favorite animal, you will be judged.</Text>}
+      {!isValid && (
+        <FormError>
+          {animal === 'cat'
+            ? 'The author of this example is a dog person.'
+            : "Oh no it's a snake! Choose anything else."}
+        </FormError>
+      )}
+      {/*- end highlight -*/}
+      <Popover>
+        <ListBox>
+          <Item id="cat">Cat</Item>
+          <Item id="dog">Dog</Item>
+          <Item id="kangaroo">Kangaroo</Item>
+          <Item id="snake">Snake</Item>
+        </ListBox>
+      </Popover>
+    </Select>
   );
 }
 ```

@@ -134,6 +134,11 @@ module.exports = new Transformer({
               return responsiveCode(node);
             }
 
+            let highlighted = [];
+            if (!node.meta || !node.meta.includes('code=false')) {
+              highlighted = responsiveCode(node);
+            }
+
             let transformed = lightningcss.transform({
               filename: asset.filePath,
               code: Buffer.from(node.value),
@@ -148,7 +153,7 @@ module.exports = new Transformer({
             });
             let css = transformed.code.toString();
             return [
-              ...responsiveCode(node),
+              ...highlighted,
               {
                 type: 'mdxJsxFlowElement',
                 name: 'style',

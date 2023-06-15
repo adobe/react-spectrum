@@ -13,18 +13,20 @@
 import {ReactNode} from 'react';
 
 export type ValidationState = 'valid' | 'invalid';
+export type ValidationStateProp<T> = ValidationState | ((value: T) => ValidationState);
 
-export interface Validation {
+export interface Validation<T> {
   /** Whether the input should display its "valid" or "invalid" visual styling. */
-  validationState?: ValidationState,
+  validationState?: ValidationStateProp<T>,
   /**
    * Whether user input is required on the input before form submission.
    * Often paired with the `necessityIndicator` prop to add a visual indicator to the input.
    */
   isRequired?: boolean,
   /**
-   * Whether `isRequired` should use native HTML form validation to prevent form submission
-   * when a value is missing, or only mark the field as required via ARIA.
+   * Whether to use native HTML form validation to prevent form submission
+   * when the value is missing or invalid, or mark the field as required
+   * or invalid via ARIA.
    * @default 'aria'
    */
   validationBehavior?: 'aria' | 'native',
@@ -97,9 +99,16 @@ export interface HelpTextProps {
 }
 
 // Spectrum specific types. Extends `Validation` so that the `validationState` prop is available.
-export interface SpectrumHelpTextProps extends HelpTextProps, Validation {
+export interface SpectrumHelpTextProps extends HelpTextProps {
   /** Whether the description is displayed with lighter text. */
   isDisabled?: boolean,
   /** Whether an error icon is rendered. */
-  showErrorIcon?: boolean
+  showErrorIcon?: boolean,
+  /** Whether the input should display its "valid" or "invalid" visual styling. */
+  validationState?: ValidationState,
+  /**
+   * Whether user input is required on the input before form submission.
+   * Often paired with the `necessityIndicator` prop to add a visual indicator to the input.
+   */
+  isRequired?: boolean,
 }

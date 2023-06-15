@@ -21,6 +21,15 @@ export const FormErrorContext = createContext<FormValidationResult | null>(null)
 
 function FormError(props: FormErrorProps, ref: ForwardedRef<HTMLElement>) {
   let validation = useContext(FormErrorContext)!;
+  if (validation.validationState !== 'invalid') {
+    return null;
+  }
+
+  return <FormErrorInner {...props} ref={ref} />;
+}
+
+const FormErrorInner = forwardRef((props: FormErrorProps, ref: ForwardedRef<HTMLElement>) => {
+  let validation = useContext(FormErrorContext)!;
   let renderProps = useRenderProps({
     ...props,
     defaultChildren: validation.errorMessage,
@@ -32,10 +41,8 @@ function FormError(props: FormErrorProps, ref: ForwardedRef<HTMLElement>) {
     return null;
   }
 
-  return (
-    <Text {...renderProps} ref={ref} slot="errorMessage" />
-  );
-}
+  return <Text {...renderProps} ref={ref} slot="errorMessage" />;
+});
 
 /**
  * Displays a validation error message for an input within a form.

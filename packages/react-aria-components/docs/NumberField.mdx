@@ -516,9 +516,99 @@ The difference is that `isReadOnly` still allows the input to be focused, while 
 <MyNumberField label="Read only" isReadOnly value={32} />
 ```
 
-### Help text
+### Description
 
-The `description` slot can be used to associate additional help text with a number field. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `validationState` prop to semantically mark the number field as invalid for assistive technologies.
+The `description` slot can be used to associate additional help text with a number field.
+
+```tsx example
+<NumberField>
+  <Label>Width</Label>
+  <Group>
+    <Button slot="decrement">-</Button>
+    <Input />
+    <Button slot="increment">+</Button>
+  </Group>
+  <Text slot="description">Enter a width in pixels.</Text>
+</NumberField>
+```
+
+### Form validation
+
+NumberField supports the `name` prop for integration with HTML forms, and can be marked as required using the `isRequired` prop. When a form is submitted, the numeric value is sent to the server rather than the formatted string shown in the input.
+
+To display validation errors, add a `<FormError>` element as a child of the NumberField. This intercepts the browser's default validation UI and allows you to render error messages with custom styles. The error message may also be customized by providing a function to `FormError` to receive validation details. See the [FormError](FormError.html) docs for more details.
+
+```tsx example
+import {FormError, Button} from 'react-aria-components';
+
+<form>
+  <NumberField name="width" isRequired>
+    <Label>Width</Label>
+    <Group>
+      <Button slot="decrement">-</Button>
+      <Input />
+      <Button slot="increment">+</Button>
+    </Group>
+    <FormError />
+  </NumberField>
+  <Button type="submit">Submit</Button>
+  <Button type="reset">Reset</Button>
+</form>
+```
+
+```css code=false
+.react-aria-Button[type=submit],
+.react-aria-Button[type=reset] {
+  --border-color: var(--spectrum-alias-border-color);
+  --border-color-pressed: var(--spectrum-alias-border-color-down);
+  --border-color-disabled: var(--spectrum-alias-border-color-disabled);
+  --background-color: var(--spectrum-global-color-gray-50);
+  --background-color-pressed: var(--spectrum-global-color-gray-100);
+  --text-color: var(--spectrum-alias-text-color);
+  --focus-ring-color: slateblue;
+
+  color: var(--text-color);
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  appearance: none;
+  vertical-align: middle;
+  font-size: 1rem;
+  text-align: center;
+  font-weight: normal;
+  outline: none;
+  padding: 4px 12px;
+  margin: 8px 8px 0 0;
+
+  &[data-pressed] {
+    box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
+    background: var(--background-color-pressed);
+    border-color: var(--border-color-pressed);
+  }
+
+  &[data-focus-visible] {
+    border-color: var(--focus-ring-color);
+    box-shadow: 0 0 0 1px var(--focus-ring-color);
+  }
+
+  @media (forced-colors: active) {
+    forced-color-adjust: none;
+    --border-color: ButtonBorder;
+    --border-color-pressed: ButtonBorder;
+    --border-color-disabled: GrayText;
+    --background-color: ButtonFace;
+    --background-color-pressed: ButtonFace;
+    --text-color: ButtonText;
+    --focus-ring-color: Highlight;
+  }
+}
+```
+
+For more advanced use cases, the `onValidationChange` event may also be used to implement custom logic when the number field's validation state changes. You can also disable native HTML form validation entirely by setting `validationBehavior="aria"`. This will use ARIA attributes to mark the input as required and invalid rather than blocking form submission.
+
+### Custom errors
+
+The `validationState` prop can be used to manually mark a number field as invalid according to custom business logic. This prevents the user from being able to submit a form until the error is fixed. Use the `<FormError>` component to display a custom error message, which is automatically associated with the field.
 
 ```tsx example
 function Example() {
@@ -526,17 +616,22 @@ function Example() {
   let isValid = React.useMemo(() => value > 0 || Number.isNaN(value), [value]);
 
   return (
-    <MyNumberField
+    <NumberField
       validationState={Number.isNaN(value) ? undefined : (isValid ? 'valid' : 'invalid')}
       value={value}
-      onChange={setValue}
-      label="Positive numbers only"
-      description={isValid ? 'Enter a positive number.' : undefined}
-      errorMessage={isValid ? undefined : value === 0 ? 'Is zero positive?' : 'Positive numbers are bigger than 0.'} />
+      onChange={setValue}>
+      <Label>Positive numbers only</Label>
+      <Group>
+        <Button slot="decrement">-</Button>
+        <Input />
+        <Button slot="increment">+</Button>
+      </Group>
+      {isValid && <Text slot="description">Enter a positive number.</Text>}
+      {!isValid && <FormError>{value === 0 ? 'Is zero positive?' : 'Positive numbers are bigger than 0.'}</FormError>}
+    </NumberField>
   );
 }
 ```
-
 
 ## Advanced customization
 

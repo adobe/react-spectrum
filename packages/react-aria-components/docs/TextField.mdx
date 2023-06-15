@@ -299,21 +299,97 @@ function Example() {
 The `description` slot can be used to associate additional help text with a text field.
 
 ```tsx example
-<MyTextField
-  label="Email"
-  description="Enter an email for us to contact you about your order." />
+<TextField>
+  <Label>Email</Label>
+  <Input />
+  <Text slot="description">Enter an email for us to contact you about your order.</Text>
+</TextField>
 ```
 
-### Error message
+### Form validation
 
-The `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `validationState` prop to
-semantically mark the input element as invalid for assistive technologies.
+TextField supports the `name` prop for integration with HTML forms, and can be marked as required using the `isRequired` prop. In addition, attributes such as `type`, `pattern`, `inputMode`, and others are passed through to the underlying `<input>` element.
+
+To display validation errors, add a `<FormError>` element as a child of the TextField. This intercepts the browser's default validation UI and allows you to render error messages with custom styles. The error message may also be customized by providing a function to `FormError` to receive validation details. See the [FormError](FormError.html) docs for more details.
 
 ```tsx example
-<MyTextField
-  label="Email"
-  validationState="invalid"
-  errorMessage="Please enter a valid email address." />
+import {FormError, Button} from 'react-aria-components';
+
+<form>
+  <TextField name="email" type="email" isRequired>
+    <Label>Email</Label>
+    <Input />
+    <FormError />
+  </TextField>
+  <Button type="submit">Submit</Button>
+  <Button type="reset">Reset</Button>
+</form>
+```
+
+```css code=false
+.react-aria-Button {
+  --border-color: var(--spectrum-alias-border-color);
+  --border-color-pressed: var(--spectrum-alias-border-color-down);
+  --border-color-disabled: var(--spectrum-alias-border-color-disabled);
+  --background-color: var(--spectrum-global-color-gray-50);
+  --background-color-pressed: var(--spectrum-global-color-gray-100);
+  --text-color: var(--spectrum-alias-text-color);
+  --focus-ring-color: slateblue;
+
+  color: var(--text-color);
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  appearance: none;
+  vertical-align: middle;
+  font-size: 1rem;
+  text-align: center;
+  font-weight: normal;
+  outline: none;
+  padding: 4px 12px;
+  margin: 8px 8px 0 0;
+
+  &[data-pressed] {
+    box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
+    background: var(--background-color-pressed);
+    border-color: var(--border-color-pressed);
+  }
+
+  &[data-focus-visible] {
+    border-color: var(--focus-ring-color);
+    box-shadow: 0 0 0 1px var(--focus-ring-color);
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Button {
+    forced-color-adjust: none;
+    --border-color: ButtonBorder;
+    --border-color-pressed: ButtonBorder;
+    --border-color-disabled: GrayText;
+    --background-color: ButtonFace;
+    --background-color-pressed: ButtonFace;
+    --text-color: ButtonText;
+    --focus-ring-color: Highlight;
+  }
+}
+```
+
+For more advanced use cases, the `onValidationChange` event may also be used to implement custom logic when the text field's validation state changes. You can also disable native HTML form validation entirely by setting `validationBehavior="aria"`. This will use ARIA attributes to mark the input as required and invalid rather than blocking form submission.
+
+### Custom errors
+
+The `validationState` prop can be used to manually mark a text field as invalid according to custom business logic. This prevents the user from being able to submit a form until the error is fixed. Use the `<FormError>` component to display a custom error message when the field is invalid.
+
+```tsx example
+<form>
+  <TextField validationState={value => value.length === 8 ? 'valid' : 'invalid'}>
+    <Label>Tracking number</Label>
+    <Input />
+    <FormError>Please enter an 8-digit tracking number.</FormError>
+  </TextField>
+  <Button type="submit">Submit</Button>
+</form>
 ```
 
 ### Disabled
@@ -331,22 +407,6 @@ and the contents can still be copied. See [the MDN docs](https://developer.mozil
 
 ```tsx example
 <MyTextField label="Email" defaultValue="abc@adobe.com" isReadOnly />
-```
-
-### Required
-
-A TextField can be marked as required using the `isRequired` prop. This is exposed to assistive technologies by React Aria. It's your responsibility to add additional visual styling if needed.
-
-```tsx example
-<MyTextField label="Email" isRequired />
-```
-
-### HTML forms
-
-TextField supports the `name` prop for integration with HTML forms. In addition, attributes such as `type`, `pattern`, `inputMode`, and others are passed through to the underlying `<input>` element.
-
-```tsx example
-<MyTextField label="Email" name="email" type="email" />
 ```
 
 ## Advanced customization

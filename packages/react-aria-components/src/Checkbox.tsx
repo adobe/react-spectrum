@@ -150,7 +150,7 @@ export const CheckboxContext = createContext<ContextValue<CheckboxProps, HTMLInp
 function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
   [props, ref] = useContextProps(props, ref, CheckboxContext);
   let groupState = useContext(InternalCheckboxGroupContext);
-  let {inputProps, isSelected, isDisabled, isReadOnly, isPressed: isPressedKeyboard} = groupState
+  let {inputProps, isSelected, isDisabled, isReadOnly, isPressed: isPressedKeyboard, validationState} = groupState
     // eslint-disable-next-line react-hooks/rules-of-hooks
     ? useCheckboxGroupItem({
       ...props,
@@ -159,10 +159,11 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
       // @ts-ignore
       value: props.value,
       // ReactNode type doesn't allow function children.
-      children: typeof props.children === 'function' ? true : props.children
+      children: typeof props.children === 'function' ? true : props.children,
+      validationBehavior: props.validationBehavior ?? 'native'
     }, groupState, ref)
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    : useCheckbox({...props, children: typeof props.children === 'function' ? true : props.children}, useToggleState(props), ref);
+    : useCheckbox({...props, children: typeof props.children === 'function' ? true : props.children, validationBehavior: props.validationBehavior ?? 'native'}, useToggleState(props), ref);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let isInteractionDisabled = isDisabled || isReadOnly;
 
@@ -202,7 +203,7 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
       isFocusVisible,
       isDisabled,
       isReadOnly,
-      validationState: props.validationState || groupState?.validationState,
+      validationState,
       isRequired: props.isRequired || false
     }
   });
@@ -222,7 +223,7 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
       data-focus-visible={isFocusVisible || undefined}
       data-disabled={isDisabled || undefined}
       data-readonly={isReadOnly || undefined}
-      data-validation-state={props.validationState || groupState?.validationState || undefined}
+      data-validation-state={validationState || undefined}
       data-required={props.isRequired || undefined}>
       <VisuallyHidden elementType="span">
         <input {...inputProps} {...focusProps} ref={ref} />

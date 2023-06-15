@@ -23,6 +23,7 @@ import {DOMAttributes} from '@react-types/shared';
 import {filterDOMProps, FormValidationResult, mergeProps, useFormReset, useFormValidation} from '@react-aria/utils';
 import {useField} from '@react-aria/label';
 import {useFocusable} from '@react-aria/focus';
+import { useControlledState } from '@react-stately/utils';
 
 /**
  * A map of HTML element names and their interface types.
@@ -113,11 +114,10 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     onValidationChange,
     isReadOnly = false,
     type = 'text',
-    value,
     defaultValue,
-    onChange = () => {}
   }: AriaTextFieldOptions<TextFieldIntrinsicElements> = props;
-  let {validationState, errorMessage, validationDetails} = useFormValidation(ref, props.validationState, props.errorMessage, validationBehavior, onValidationChange);
+  let [value, onChange] = useControlledState(props.value, props.defaultValue || '', props.onChange);
+  let {validationState, errorMessage, validationDetails} = useFormValidation(ref, props.validationState, props.errorMessage, validationBehavior, value, onValidationChange);
   let {focusableProps} = useFocusable(props, ref);
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,

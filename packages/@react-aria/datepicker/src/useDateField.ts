@@ -14,7 +14,7 @@ import {AriaDateFieldProps as AriaDateFieldPropsBase, AriaTimeFieldProps, DateVa
 import {createFocusManager, FocusManager} from '@react-aria/focus';
 import {DateFieldState, TimeFieldState} from '@react-stately/datepicker';
 import {DOMAttributes, KeyboardEvent, ValidationState} from '@react-types/shared';
-import {filterDOMProps, FormValidationResult, mergeProps, useDescription, useFormReset, useFormValidation} from '@react-aria/utils';
+import {filterDOMProps, FormValidationResult, mergeProps, mergeValidity, useDescription, useFormReset, useFormValidation} from '@react-aria/utils';
 import {FocusEvent, InputHTMLAttributes, RefObject, useEffect, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -177,7 +177,7 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
     errorMessageProps,
     validationState,
     errorMessage,
-    validationDetails
+    validationDetails: mergeValidity(state.validationDetails, validationDetails)
   };
 }
 

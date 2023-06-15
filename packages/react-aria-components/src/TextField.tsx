@@ -11,7 +11,7 @@
  */
 
 import {AriaTextFieldProps, useTextField} from 'react-aria';
-import {ContextValue, DOMProps, Provider, SlotProps, useContextProps, useSlot} from './utils';
+import {ContextValue, DOMProps, Provider, SlotProps, useContextProps, useSlot, ValidationProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {FormErrorContext} from './FormError';
 import {InputContext} from './Input';
@@ -19,7 +19,7 @@ import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
 
-export interface TextFieldProps extends Omit<AriaTextFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, DOMProps, SlotProps {}
+export interface TextFieldProps extends Omit<AriaTextFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationBehavior'>, ValidationProps, DOMProps, SlotProps {}
 
 export const TextFieldContext = createContext<ContextValue<TextFieldProps, HTMLDivElement>>(null);
 

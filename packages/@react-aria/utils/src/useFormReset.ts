@@ -9,8 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {FormValidationEvent, ValidationState} from '@react-types/shared';
-import {ReactNode, RefObject, useEffect, useRef, useState} from 'react';
+import {FormValidationEvent, ValidationState, ValidationStateProp} from '@react-types/shared';
+import {ReactNode, RefObject, useEffect, useMemo, useRef, useState} from 'react';
 import {useEffectEvent} from './useEffectEvent';
 
 export function useFormReset<T>(
@@ -43,13 +43,15 @@ export interface FormValidationResult {
   validationDetails: ValidityState
 }
 
-export function useFormValidation(
+export function useFormValidation<T>(
   ref: RefObject<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
-  validationState: ValidationState,
+  validationState: ValidationStateProp<T>,
   errorMessage: ReactNode,
   validationBehavior: 'native' | 'aria',
+  value: T,
   onValidationChange?: (value: FormValidationEvent) => void
 ): FormValidationResult {
+  let currentValidationState = useMemo(() => typeof validationState === 'function' ? validationState(value) : validationState, [validationState, value]);
   useEffect(() => {
     if (validationBehavior === 'native') {
       // Use the provided error message if available, otherwise use a default string.
@@ -63,7 +65,7 @@ export function useFormValidation(
     }
   }, [validationBehavior, validationState, errorMessage, ref]);
 
-  let [result, setValidity] = useFormValidationState(validationState, errorMessage);
+  let [result, setValidity] = useFormValidationState(validationState, errorMessage, validationBehavior, value);
   useInputValidity(validationBehavior === 'native' ? ref : null, (validity) => {
     setValidity(validity);
     if (onValidationChange) {
@@ -136,9 +138,9 @@ function useInputValidity(
   let validation = useRef(DEFAULT_VALIDITY);
   let updateValidation = useEffectEvent((newValidation: InputValidity) => {
     // Ignore custom errors. We don't want events for these.
-    if (newValidation.validationDetails.customError) {
-      return;
-    }
+    // if (newValidation.validationDetails.customError) {
+    //   return;
+    // }
 
     // Ignore duplicate events.
     if (
@@ -193,12 +195,49 @@ function useInputValidity(
   }, [inputRef, updateValidation]);
 }
 
-function getValidationResult(validity: InputValidity, validationState: ValidationState, errorMessage: ReactNode) {
-  if (!validationState && !validity.validationDetails.valid && !validity.validationDetails.customError) {
-    // Use native error unless a custom one is provided.
-    validationState = 'invalid';
-    errorMessage = validity.errorMessage;
+function getValidationResult<T>(validity: InputValidity, validationState: ValidationStateProp<T>, errorMessage: ReactNode, validationBehavior: 'aria' | 'native', value: T): FormValidationResult {
+  // if (!validationState && !validity.validationDetails.valid && !validity.validationDetails.customError) {
+  //   // Use native error unless a custom one is provided.
+  //   validationState = 'invalid';
+  //   errorMessage = validity.errorMessage;
+  // }
+
+  // If using native validation behavior, only show validation state once the user submits a form
+  // rather than in real-time. This is the default behavior for native validation, and we emulate it
+  // when a custom validationState/errorMessage are provided as well. These props can be set by the
+  // developer in real-time for ease of implementation, but only shown to the user on submit.
+  if (validationBehavior === 'native') {
+    if (validity.validationDetails.valid) {
+      // If the native input is valid, keep the validation state as "valid" to show green checkmark
+      // if it is passed in as a prop, otherwise delay showing validation state.
+      validationState = validationState === 'valid' ? 'valid' : undefined;
+      errorMessage = undefined;
+    } else {
+      validationState = 'invalid';
+      if (!validity.validationDetails.customError && !errorMessage) {
+        // Use native error message if a custom one is not provided.
+        errorMessage = validity.errorMessage;
+      }
+    }
+    // if (typeof validationState !== 'string' && !validity.validationDetails.valid) {
+    //   validationState = 'invalid';
+    //   errorMessage = validity.errorMessage;
+    // }
+    // if (typeof validationState === 'function' || !validationState) {
+    //   validationState = validity.validationDetails.valid ? undefined : 'invalid';
+    //   if (!validity.validationDetails.customError && !errorMessage) {
+    //     errorMessage = validity.errorMessage;
+    //   }
+    // }
+  } else if (typeof validationState === 'function') {
+    validationState = validationState(value);
   }
+
+  // if (validity.validationDetails.valid) {
+  //   validationState = undefined;
+  // } else if (!errorMessage) {
+  //   errorMessage = validity.errorMessage;
+  // }
 
   return {
     validationState,
@@ -207,9 +246,9 @@ function getValidationResult(validity: InputValidity, validationState: Validatio
   };
 }
 
-export function useFormValidationState(validationState: ValidationState, errorMessage: ReactNode): [FormValidationResult, (validity: InputValidity) => void] {
+export function useFormValidationState<T>(validationState: ValidationStateProp<T>, errorMessage: ReactNode, validationBehavior: 'aria' | 'native', value: T): [FormValidationResult, (validity: InputValidity) => void] {
   let [validation, setValidation] = useState<InputValidity>(DEFAULT_VALIDITY);
-  return [getValidationResult(validation, validationState, errorMessage), setValidation];
+  return [getValidationResult(validation, validationState, errorMessage, validationBehavior, value), setValidation];
 }
 
 export function mergeValidity(a: ValidityState, b: ValidityState) {

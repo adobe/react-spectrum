@@ -18,6 +18,7 @@ import {chain, filterDOMProps, FormValidationResult, mergeProps, useDescription,
 import {createFocusManager} from '@react-aria/focus';
 import {DatePickerState} from '@react-stately/datepicker';
 import {DOMAttributes, KeyboardEvent} from '@react-types/shared';
+import {filterDOMProps, FormValidationResult, mergeProps, useDescription, useId, useFormValidationState, chain, mergeValidity} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {RefObject, useMemo} from 'react';
@@ -56,7 +57,7 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
   let fieldId = useId();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
-  let [{validationState, errorMessage, validationDetails}, setFormValidationState] = useFormValidationState(state.validationState, props.errorMessage);
+  let [{validationState, errorMessage, validationDetails}, setFormValidationState] = useFormValidationState(state.validationState, props.errorMessage, props.validationBehavior);
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     labelElementType: 'span',
@@ -169,6 +170,6 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
     },
     validationState,
     errorMessage,
-    validationDetails
+    validationDetails: mergeValidity(state.validationDetails, validationDetails)
   };
 }

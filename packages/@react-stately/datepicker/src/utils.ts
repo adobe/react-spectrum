@@ -22,6 +22,24 @@ export function isInvalid(value: DateValue, minValue: DateValue, maxValue: DateV
   );
 }
 
+export function getValidationDetails(value: DateValue, minValue: DateValue, maxValue: DateValue) {
+  let rangeOverflow = value != null && maxValue != null && value.compare(maxValue) > 0;
+  let rangeUnderflow = value != null && minValue != null && value.compare(minValue) < 0;
+  return {
+    badInput: false,
+    customError: false,
+    patternMismatch: false,
+    rangeOverflow,
+    rangeUnderflow,
+    stepMismatch: false,
+    tooLong: false,
+    tooShort: false,
+    typeMismatch: false,
+    valueMissing: false,
+    valid: !rangeOverflow && !rangeUnderflow
+  }
+}
+
 export function validate(
   value: DateValue,
   minValue: DateValue,
@@ -30,24 +48,13 @@ export function validate(
   onValidationChange?: (e: FormValidationEvent
 ) => void) {
   if (onValidationChange) {
-    let isNewValueInvalid = isInvalid(value, minValue, maxValue);
+    let validationDetails = getValidationDetails(value, minValue, maxValue);
+    let isNewValueInvalid = !validationDetails.valid;
     if (isNewValueInvalid !== wasInvalid) {
       onValidationChange({
         isInvalid: isNewValueInvalid,
         errorMessage: '',
-        validationDetails: {
-          badInput: false,
-          customError: false,
-          patternMismatch: false,
-          rangeOverflow: isNewValueInvalid && maxValue != null && value.compare(maxValue) > 0,
-          rangeUnderflow: isNewValueInvalid && minValue != null && value.compare(minValue) < 0,
-          stepMismatch: false,
-          tooLong: false,
-          tooShort: false,
-          typeMismatch: false,
-          valueMissing: false,
-          valid: !isNewValueInvalid
-        }
+        validationDetails
       });
     }
   }

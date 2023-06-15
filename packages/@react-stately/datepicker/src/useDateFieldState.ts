@@ -11,7 +11,7 @@
  */
 
 import {Calendar, DateFormatter, getMinimumDayInMonth, getMinimumMonthInYear, GregorianCalendar, toCalendar} from '@internationalized/date';
-import {convertValue, createPlaceholderDate, FieldOptions, getFormatOptions, isInvalid, useDefaultProps, validate} from './utils';
+import {convertValue, createPlaceholderDate, FieldOptions, getFormatOptions, getValidationDetails, isInvalid, useDefaultProps, validate} from './utils';
 import {DatePickerProps, DateValue, Granularity} from '@react-types/datepicker';
 import {getPlaceholder} from './placeholders';
 import {useControlledState} from '@react-stately/utils';
@@ -167,7 +167,8 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   );
 
   let calendarValue = useMemo(() => convertValue(value, calendar), [value, calendar]);
-  let isValueInvalid = useMemo(() => isInvalid(value, props.minValue, props.maxValue), [value, props.minValue, props.maxValue]);
+  let validationDetails = useMemo(() => getValidationDetails(value, props.minValue, props.maxValue), [value, props.minValue, props.maxValue]);
+  let isValueInvalid = !validationDetails.valid;
 
   // We keep track of the placeholder date separately in state so that onChange is not called
   // until all segments are set. If the value === null (not undefined), then assume the component
@@ -315,6 +316,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     segments,
     dateFormatter,
     validationState,
+    validationDetails,
     granularity,
     maxGranularity: props.maxGranularity ?? 'year',
     isDisabled,

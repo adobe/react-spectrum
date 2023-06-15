@@ -70,6 +70,17 @@ export interface DOMProps extends StyleProps {
   children?: ReactNode
 }
 
+// An override of validationBehavior in shared types to change the @default.
+export interface ValidationProps {
+  /**
+   * Whether to use native HTML form validation to prevent form submission
+   * when the value is missing or invalid, or mark the field as required
+   * or invalid via ARIA.
+   * @default 'native'
+   */
+  validationBehavior?: 'native' | 'aria',
+}
+
 export interface StyleRenderProps<T> {
   /** The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state. */
   className?: string | ((values: T) => string),
