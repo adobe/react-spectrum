@@ -50,7 +50,7 @@ describe('useCheckboxGroup', () => {
         ]} />
     );
 
-    let checkboxGroup = getByRole('group', {exact: true});
+    let checkboxGroup = getByRole('group');
     let checkboxes = getAllByRole('checkbox') as HTMLInputElement[];
     expect(checkboxGroup).toBeInTheDocument();
     expect(checkboxes.length).toBe(3);
@@ -119,7 +119,7 @@ describe('useCheckboxGroup', () => {
           {value: 'dragons', children: 'Dragons'}
         ]} />
     );
-    let checkboxGroup = getByRole('group', {exact: true});
+    let checkboxGroup = getByRole('group');
 
     let labelId = checkboxGroup.getAttribute('aria-labelledby');
     expect(labelId).toBeDefined();
@@ -137,7 +137,7 @@ describe('useCheckboxGroup', () => {
           {value: 'dragons', children: 'Dragons'}
         ]} />
     );
-    let checkboxGroup = getByRole('group', {exact: true});
+    let checkboxGroup = getByRole('group');
 
     expect(checkboxGroup).toHaveAttribute('aria-label', 'My Favorite Pet');
   });
@@ -153,7 +153,7 @@ describe('useCheckboxGroup', () => {
           {value: 'dragons', children: 'Dragons'}
         ]} />
     );
-    let checkboxGroup = getByRole('group', {exact: true});
+    let checkboxGroup = getByRole('group');
 
     expect(checkboxGroup).toHaveAttribute('data-testid', 'favorite-pet');
   });
@@ -171,7 +171,7 @@ describe('useCheckboxGroup', () => {
         ]} />
     );
 
-    let checkboxGroup = getByRole('group', {exact: true});
+    let checkboxGroup = getByRole('group');
     expect(checkboxGroup).toHaveAttribute('aria-disabled', 'true');
 
     let checkboxes = getAllByRole('checkbox') as HTMLInputElement[];
@@ -198,7 +198,7 @@ describe('useCheckboxGroup', () => {
         ]} />
     );
 
-    let checkboxGroup = getByRole('group', {exact: true});
+    let checkboxGroup = getByRole('group');
     expect(checkboxGroup).not.toHaveAttribute('aria-disabled');
 
     let checkboxes = getAllByRole('checkbox') as HTMLInputElement[];
@@ -218,7 +218,7 @@ describe('useCheckboxGroup', () => {
         ]} />
     );
 
-    let checkboxGroup = getByRole('group', {exact: true});
+    let checkboxGroup = getByRole('group');
     expect(checkboxGroup).not.toHaveAttribute('aria-disabled');
 
     let checkboxes = getAllByRole('checkbox') as HTMLInputElement[];

@@ -66,8 +66,6 @@ export function useSlider<T extends number | number[]>(
   // It is set onMouseDown/onTouchDown; see trackProps below.
   const realTimeTrackDraggingIndex = useRef<number | null>(null);
 
-  const stateRef = useRef<SliderState>(null);
-  stateRef.current = state;
   const reverseX = direction === 'rtl';
   const currentPosition = useRef<number>(null);
   const {moveProps} = useMove({
@@ -79,7 +77,7 @@ export function useSlider<T extends number | number[]>(
       let size = isVertical ? height : width;
 
       if (currentPosition.current == null) {
-        currentPosition.current = stateRef.current.getThumbPercent(realTimeTrackDraggingIndex.current) * size;
+        currentPosition.current = state.getThumbPercent(realTimeTrackDraggingIndex.current) * size;
       }
 
       let delta = isVertical ? deltaY : deltaX;
@@ -91,12 +89,12 @@ export function useSlider<T extends number | number[]>(
 
       if (realTimeTrackDraggingIndex.current != null && trackRef.current) {
         const percent = clamp(currentPosition.current / size, 0, 1);
-        stateRef.current.setThumbPercent(realTimeTrackDraggingIndex.current, percent);
+        state.setThumbPercent(realTimeTrackDraggingIndex.current, percent);
       }
     },
     onMoveEnd() {
       if (realTimeTrackDraggingIndex.current != null) {
-        stateRef.current.setThumbDragging(realTimeTrackDraggingIndex.current, false);
+        state.setThumbDragging(realTimeTrackDraggingIndex.current, false);
         realTimeTrackDraggingIndex.current = null;
       }
     }

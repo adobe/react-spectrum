@@ -13,8 +13,7 @@
 import {alignCenter, constrainValue, isInvalid, previousAvailableDate} from './utils';
 import {Calendar, CalendarDate, DateDuration, GregorianCalendar, isEqualDay, maxDate, minDate, toCalendar, toCalendarDate} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from './types';
-import {DateRange, DateValue} from '@react-types/calendar';
-import {RangeCalendarProps} from '@react-types/calendar';
+import {DateRange, DateValue, RangeCalendarProps} from '@react-types/calendar';
 import {RangeValue} from '@react-types/shared';
 import {useCalendarState} from './useCalendarState';
 import {useControlledState} from '@react-stately/utils';
@@ -91,10 +90,10 @@ export function useRangeCalendarState<T extends DateValue = DateValue>(props: Ra
   };
 
   // If the visible range changes, we need to update the available range.
-  let lastVisibleRange = useRef(calendar.visibleRange);
-  if (!isEqualDay(calendar.visibleRange.start, lastVisibleRange.current.start) || !isEqualDay(calendar.visibleRange.end, lastVisibleRange.current.end)) {
+  let [lastVisibleRange, setLastVisibleRange] = useState(calendar.visibleRange);
+  if (!isEqualDay(calendar.visibleRange.start, lastVisibleRange.start) || !isEqualDay(calendar.visibleRange.end, lastVisibleRange.end)) {
     updateAvailableRange(anchorDate);
-    lastVisibleRange.current = calendar.visibleRange;
+    setLastVisibleRange(calendar.visibleRange);
   }
 
   let setAnchorDate = (date: CalendarDate) => {

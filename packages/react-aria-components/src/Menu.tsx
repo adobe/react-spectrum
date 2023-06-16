@@ -16,7 +16,7 @@ import {BaseCollection, CollectionProps, ItemProps, ItemRenderProps, useCachedCh
 import {MenuTriggerProps as BaseMenuTriggerProps, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
 import {ButtonContext} from './Button';
 import {ContextValue, forwardRefType, Provider, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {filterDOMProps, mergeRefs} from '@react-aria/utils';
+import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {Header} from './Header';
 import {KeyboardContext} from './Keyboard';
 import {PopoverContext} from './Popover';
@@ -162,7 +162,8 @@ function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionP
       {...filterDOMProps(otherProps)}
       {...groupProps}
       className={className || section.props?.className || 'react-aria-Section'}
-      style={style || section.props?.style}>
+      style={style || section.props?.style}
+      ref={section.props.ref}>
       {children}
     </section>
   );
@@ -182,7 +183,7 @@ interface MenuItemProps<T> {
 
 function MenuItem<T>({item}: MenuItemProps<T>) {
   let state = useContext(InternalMenuContext)!;
-  let ref = useRef<HTMLDivElement>(null);
+  let ref = useObjectRef<HTMLDivElement>(item.props.ref);
   let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({key: item.key}, state, ref);
 
   let props: ItemProps<T> = item.props;
@@ -201,9 +202,12 @@ function MenuItem<T>({item}: MenuItemProps<T>) {
     }
   });
 
+  let DOMProps = filterDOMProps(props as any);
+  delete DOMProps.id;
+
   return (
     <div
-      {...mergeProps(menuItemProps, focusProps)}
+      {...mergeProps(DOMProps, menuItemProps, focusProps)}
       {...renderProps}
       ref={ref}
       data-hovered={states.isFocused || undefined}

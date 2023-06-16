@@ -972,10 +972,12 @@ describe('MenuTrigger', function () {
   describe('sub dialogs', function () {
     let tree;
     afterEach(() => {
+      act(() => {jest.runAllTimers();});
       if (tree) {
         tree.unmount();
       }
       tree = null;
+      act(() => {jest.runAllTimers();});
     });
 
     describe('unavailable item', function () {

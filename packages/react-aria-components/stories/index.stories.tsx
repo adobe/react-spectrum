@@ -10,10 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, TabPanels, Tabs, TabsProps, Text, TimeField, Tooltip, TooltipTrigger} from 'react-aria-components';
+import {action} from '@storybook/addon-actions';
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Text, TimeField, Tooltip, TooltipTrigger} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
-import React, {useState} from 'react';
+import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
+import React, {useRef, useState} from 'react';
 import styles from '../example/index.css';
 import {useListData} from 'react-stately';
 
@@ -40,7 +42,13 @@ export const ComboBoxExample = () => (
   </ComboBox>
 );
 
-export const ComboBoxRenderProps = () => (
+interface ComboBoxItem {
+  id: string,
+  name: string
+}
+
+let items: ComboBoxItem[] = [{id: '1', name: 'Foo'}, {id: '2', name: 'Bar'}, {id: '3', name: 'Baz'}];
+export const ComboBoxRenderPropsStatic = () => (
   <ComboBox>
     {({isOpen}) => (
       <>
@@ -56,6 +64,76 @@ export const ComboBoxRenderProps = () => (
             <MyItem>Foo</MyItem>
             <MyItem>Bar</MyItem>
             <MyItem>Baz</MyItem>
+          </ListBox>
+        </Popover>
+      </>
+    )}
+  </ComboBox>
+);
+
+export const ComboBoxRenderPropsDefaultItems = () => (
+  <ComboBox defaultItems={items}>
+    {({isOpen}) => (
+      <>
+        <Label style={{display: 'block'}}>Test</Label>
+        <div style={{display: 'flex'}}>
+          <Input />
+          <Button>
+            <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
+          </Button>
+        </div>
+        <Popover placement="bottom end">
+          <ListBox className={styles.menu}>
+            {(item: ComboBoxItem) => <MyItem key={item.id}>{item.name}</MyItem>}
+          </ListBox>
+        </Popover>
+      </>
+    )}
+  </ComboBox>
+);
+
+export const ComboBoxRenderPropsItems = {
+  render: () => (
+    <ComboBox items={items}>
+      {({isOpen}) => (
+        <>
+          <Label style={{display: 'block'}}>Test</Label>
+          <div style={{display: 'flex'}}>
+            <Input />
+            <Button>
+              <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
+            </Button>
+          </div>
+          <Popover placement="bottom end">
+            <ListBox className={styles.menu}>
+              {(item: ComboBoxItem) => <MyItem key={item.id}>{item.name}</MyItem>}
+            </ListBox>
+          </Popover>
+        </>
+      )}
+    </ComboBox>
+  ),
+  parameters: {
+    description: {
+      data: 'Note this won\'t filter the items in the listbox because it is fully controlled'
+    }
+  }
+};
+
+export const ComboBoxRenderPropsListBoxDynamic = () => (
+  <ComboBox>
+    {({isOpen}) => (
+      <>
+        <Label style={{display: 'block'}}>Test</Label>
+        <div style={{display: 'flex'}}>
+          <Input />
+          <Button>
+            <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
+          </Button>
+        </div>
+        <Popover placement="bottom end">
+          <ListBox className={styles.menu} items={items}>
+            {item => <MyItem key={item.id}>{item.name}</MyItem>}
           </ListBox>
         </Popover>
       </>
@@ -509,17 +587,15 @@ export const TabsExample = () => (
       <CustomTab id="MaR">Monarchy and Republic</CustomTab>
       <CustomTab id="Emp">Empire</CustomTab>
     </TabList>
-    <TabPanels>
-      <TabPanel id="FoR">
-        Arma virumque cano, Troiae qui primus ab oris.
-      </TabPanel>
-      <TabPanel id="MaR">
-        Senatus Populusque Romanus.
-      </TabPanel>
-      <TabPanel id="Emp">
-        Alea jacta est.
-      </TabPanel>
-    </TabPanels>
+    <TabPanel id="FoR">
+      Arma virumque cano, Troiae qui primus ab oris.
+    </TabPanel>
+    <TabPanel id="MaR">
+      Senatus Populusque Romanus.
+    </TabPanel>
+    <TabPanel id="Emp">
+      Alea jacta est.
+    </TabPanel>
   </Tabs>
 );
 
@@ -542,17 +618,15 @@ export const TabsRenderProps = () => {
                 <CustomTab id="MaR">Monarchy and Republic</CustomTab>
                 <CustomTab id="Emp">Empire</CustomTab>
               </TabList>
-              <TabPanels>
-                <TabPanel id="FoR">
-                  Arma virumque cano, Troiae qui primus ab oris.
-                </TabPanel>
-                <TabPanel id="MaR">
-                  Senatus Populusque Romanus.
-                </TabPanel>
-                <TabPanel id="Emp">
-                  Alea jacta est.
-                </TabPanel>
-              </TabPanels>
+              <TabPanel id="FoR">
+                Arma virumque cano, Troiae qui primus ab oris.
+              </TabPanel>
+              <TabPanel id="MaR">
+                Senatus Populusque Romanus.
+              </TabPanel>
+              <TabPanel id="Emp">
+                Alea jacta est.
+              </TabPanel>
             </div>
           </div>
         )}
@@ -674,3 +748,203 @@ function CustomTab(props) {
       })} />
   );
 }
+
+function Draggable() {
+  let buttonRef = useRef(null);
+  let {dragProps, isDragging} = useDrag({
+    getItems() {
+      return [{
+        'text/plain': 'hello world'}];
+    }
+  });
+  let {buttonProps} = useButton({elementType: 'div'}, buttonRef);
+
+  return (
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+      <div
+        {...mergeProps(buttonProps, dragProps)}
+        ref={buttonRef}
+        className={classNames(styles, 'draggable', {['dragging']: isDragging})}>
+        Drag me
+      </div>
+    </FocusRing>
+  );
+}
+
+function Copyable() {
+  let {clipboardProps} = useClipboard({
+    getItems() {
+      return [{
+        'text/plain': 'hello world'
+      }];
+    }
+  });
+
+  return (
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+      <div 
+        {...clipboardProps}
+        role="textbox" 
+        tabIndex={0}
+        className={styles.copyable}>
+        Copy me 
+      </div>
+    </FocusRing>
+  );
+}
+
+export const DropzoneExampleWithFileTriggerLink = (props) => (
+  <div>
+    <DropZone
+      {...props}
+      className={styles.dropzone}
+      onDrop={action('OnDrop')}
+      onDropEnter={action('OnDropEnter')}
+      onDropExit={action('OnDropExit')}>
+      <FileTrigger onChange={action('onChange')}>
+        <Link>Upload</Link>
+      </FileTrigger>
+    </DropZone>
+  </div>
+);
+
+export const DropzoneExampleWithFileTriggerButton = (props) => (
+  <div>
+    <DropZone
+      {...props}
+      className={styles.dropzone}
+      onDrop={action('OnDrop')}
+      onDropEnter={action('OnDropEnter')}
+      onDropExit={action('OnDropExit')}>
+      <FileTrigger onChange={action('onChange')} >
+        <Button>Upload</Button>
+      </FileTrigger>
+    </DropZone>
+  </div>
+);
+
+export const DropzoneExampleWithDraggableAndFileTrigger = (props) => (
+  <div>
+    <Draggable />
+    <DropZone
+      {...props}
+      className={styles.dropzone}
+      onDrop={action('OnDrop')}
+      onDropEnter={action('OnDropEnter')}
+      onDropExit={action('OnDropExit')}>
+      <FileTrigger onChange={action('onChange')} >
+        <Button>Browse</Button>
+      </FileTrigger>
+      Or drag into here
+    </DropZone>
+  </div>
+);
+
+export const DropZoneOnlyAcceptPNGWithFileTrigger = (props) => (
+  <div>
+    <DropZone
+      {...props}
+      getDropOperation={(types) =>  types.has('image/png') ? 'copy' : 'cancel'}
+      className={styles.dropzone}
+      onPress={action('OnPress')}
+      onDrop={action('OnDrop')}
+      onDropEnter={action('OnDropEnter')}
+      onDropExit={action('OnDropExit')} >
+      <FileTrigger onChange={action('onChange')} acceptedFileTypes={['image/png']}>
+        <Button>Upload</Button>
+      </FileTrigger>
+    </DropZone>
+  </div>
+);
+
+export const DropZoneWithCaptureMobileOnly = (props) => (
+  <div>
+    <DropZone
+      {...props}
+      getDropOperation={(types) =>  types.has('image/png') ? 'copy' : 'cancel'}
+      className={styles.dropzone}
+      onPress={action('OnPress')}
+      onDrop={action('OnDrop')}
+      onDropEnter={action('OnDropEnter')}
+      onDropExit={action('OnDropExit')} >
+      <FileTrigger onChange={action('onChange')} defaultCamera="environment">
+        <Button>Upload</Button>
+      </FileTrigger>
+    </DropZone>
+  </div>
+);
+
+export const DropzoneExampleWithDraggableObject = (props) => (
+  <div>
+    <Draggable />
+    <DropZone
+      {...props}
+      className={styles.dropzone}
+      onDrop={action('OnDrop')}
+      onDropEnter={action('OnDropEnter')}
+      onDropExit={action('OnDropExit')} >
+      <Text slot="heading">
+        DropZone Area
+      </Text>
+    </DropZone>
+  </div>
+);
+
+export const DropzoneExampleWithCopyableObject = (props) => (
+  <div>
+    <Copyable />
+    <DropZone
+      {...props}
+      className={styles.dropzone}
+      onDrop={action('OnDrop')}
+      onDropEnter={action('OnDropEnter')}
+      onDropExit={action('OnDropExit')}>
+      <Text slot="heading">
+        DropZone Area
+      </Text>
+    </DropZone>
+  </div>
+);
+
+export const DropzoneWithRenderProps = (props) => (
+  <div>
+    <Draggable />
+    <Copyable />
+    <DropZone
+      {...props}
+      className={styles.dropzone}
+      onPress={action('OnPress')}
+      onDrop={action('OnDrop')}
+      onDropEnter={action('OnDropEnter')}
+      onDropExit={action('OnDropExit')}>
+      {({isHovered, isFocused, isFocusVisible, isDropTarget}) => (
+        <div>
+          <Text slot="heading">
+            DropzoneArea
+          </Text>
+          <div>isHovered: {isHovered ? 'true' : 'false'}</div>
+          <div>isFocused: {isFocused ? 'true' : 'false'}</div>
+          <div>isFocusVisible: {isFocusVisible ? 'true' : 'false'}</div>
+          <div>isDropTarget: {isDropTarget ? 'true' : 'false'}</div>
+        </div>
+      )}
+    </DropZone>
+  </div>
+);
+
+export const FileTriggerButton = (props) => (
+  <FileTrigger 
+    {...props} 
+    onChange={action('OnChange')} >
+    <Button>Upload</Button>
+  </FileTrigger>
+);
+
+export const FileTriggerLinkAllowsMultiple = (props) => (
+  <FileTrigger 
+    {...props} 
+    onChange={action('OnChange')}
+    allowsMultiple >
+    <Link>Select a file</Link>
+  </FileTrigger>
+);

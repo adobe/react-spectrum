@@ -59,8 +59,7 @@ describe('Menu', function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -88,7 +87,7 @@ describe('Menu', function () {
       expect(section).toHaveAttribute('aria-labelledby');
       let heading = document.getElementById(section.getAttribute('aria-labelledby'));
       expect(heading).toBeTruthy();
-      expect(heading).toHaveAttribute('aria-hidden', 'true');
+      expect(heading).toHaveAttribute('role', 'presentation');
     }
 
     let dividers = within(menu).getAllByRole('separator');

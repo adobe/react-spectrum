@@ -171,6 +171,7 @@ governing permissions and limitations under the License.
 }
 @media (forced-colors: active) {
   .spectrum-Textfield-input {
+    --spectrum-textfield-border-color: CanvasText;
     --spectrum-textfield-text-color-disabled: GrayText;
     --spectrum-textfield-border-color-disabled: GrayText;
     --spectrum-textfield-quiet-border-color-disabled: GrayText;

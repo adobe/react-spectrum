@@ -70,6 +70,10 @@ export default {
     visibleMonths: {
       control: 'number'
     },
+    pageBehavior: {
+      control: 'select',
+      options: [null, 'single', 'visible']
+    },
     validationState: {
       control: 'select',
       options: [null, 'valid', 'invalid']

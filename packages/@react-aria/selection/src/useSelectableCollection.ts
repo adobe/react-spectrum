@@ -165,6 +165,9 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         if (delegate.getKeyLeftOf) {
           e.preventDefault();
           let nextKey = delegate.getKeyLeftOf(manager.focusedKey);
+          if (nextKey == null && shouldFocusWrap) {
+            nextKey = direction === 'rtl' ? delegate.getFirstKey?.(manager.focusedKey) : delegate.getLastKey?.(manager.focusedKey);
+          }
           navigateToKey(nextKey, direction === 'rtl' ? 'first' : 'last');
         }
         break;
@@ -173,6 +176,9 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         if (delegate.getKeyRightOf) {
           e.preventDefault();
           let nextKey = delegate.getKeyRightOf(manager.focusedKey);
+          if (nextKey == null && shouldFocusWrap) {
+            nextKey = direction === 'rtl' ? delegate.getLastKey?.(manager.focusedKey) : delegate.getFirstKey?.(manager.focusedKey);
+          }
           navigateToKey(nextKey, direction === 'rtl' ? 'last' : 'first');
         }
         break;
@@ -358,17 +364,27 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
   // If not virtualized, scroll the focused element into view when the focusedKey changes.
   // When virtualized, Virtualizer handles this internally.
+  let lastFocusedKey = useRef(manager.focusedKey);
   useEffect(() => {
     let modality = getInteractionModality();
-    if (!isVirtualized && manager.isFocused && manager.focusedKey != null && scrollRef?.current) {
+    if (manager.isFocused && manager.focusedKey != null && scrollRef?.current) {
       let element = scrollRef.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
       if (element) {
-        scrollIntoView(scrollRef.current, element);
+        if (!isVirtualized) {
+          scrollIntoView(scrollRef.current, element);
+        }
         if (modality === 'keyboard') {
           scrollIntoViewport(element, {containingElement: ref.current});
         }
       }
     }
+
+    // If the focused key becomes null (e.g. the last item is deleted), focus the whole collection.
+    if (manager.isFocused && manager.focusedKey == null && lastFocusedKey.current != null) {
+      focusSafely(ref.current);
+    }
+
+    lastFocusedKey.current = manager.focusedKey;
   }, [isVirtualized, scrollRef, manager.focusedKey, manager.isFocused, ref]);
 
   let handlers = {
