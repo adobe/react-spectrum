@@ -14,7 +14,7 @@ import {AriaDateFieldProps as AriaDateFieldPropsBase, AriaTimeFieldProps, DateVa
 import {createFocusManager, FocusManager} from '@react-aria/focus';
 import {DateFieldState, TimeFieldState} from '@react-stately/datepicker';
 import {DOMAttributes, KeyboardEvent, ValidationState} from '@react-types/shared';
-import {filterDOMProps, FormValidationResult, mergeProps, mergeValidity, useDescription, useFormReset, useFormValidation} from '@react-aria/utils';
+import {filterDOMProps, FormValidationResult, mapValidate, mergeProps, useDescription, useFormReset, useFormValidation} from '@react-aria/utils';
 import {FocusEvent, InputHTMLAttributes, RefObject, useEffect, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -64,7 +64,21 @@ export const focusManagerSymbol = '__focusManager_' + Date.now();
  * Each part of a date value is displayed in an individually editable segment.
  */
 export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>, state: DateFieldState, ref: RefObject<Element>): DateFieldAria {
-  let {validationState, errorMessage, validationDetails} = useFormValidation(props.inputRef, state.validationState, props.errorMessage, props.validationBehavior, props.onValidationChange);
+  let {validationState, errorMessage, validationDetails} = useFormValidation(props.inputRef, {
+    ...props,
+    fallbackValidity: {
+      validationDetails: state.validationDetails,
+      errorMessage: useMemo(() => {
+        if (state.validationDetails.rangeUnderflow) {
+          return `Value must be on or after ${state.dateFormatter.format(state.minValue.toDate(state.dateFormatter.resolvedOptions().timeZone))}`;
+        }
+
+        if (state.validationDetails.rangeOverflow) {
+          return `Value must be on or before ${state.dateFormatter.format(state.maxValue.toDate(state.dateFormatter.resolvedOptions().timeZone))}`;
+        }
+      }, [state.validationDetails])
+    }
+  }, state.value);
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     validationState,
@@ -177,7 +191,7 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
     errorMessageProps,
     validationState,
     errorMessage,
-    validationDetails: mergeValidity(state.validationDetails, validationDetails)
+    validationDetails
   };
 }
 
@@ -192,7 +206,10 @@ export interface AriaTimeFieldOptions<T extends TimeValue> extends AriaTimeField
  * Each part of a time value is displayed in an individually editable segment.
  */
 export function useTimeField<T extends TimeValue>(props: AriaTimeFieldOptions<T>, state: TimeFieldState, ref: RefObject<Element>): DateFieldAria {
-  let res = useDateField(props, state, ref);
+  let res = useDateField({
+    ...props,
+    validate: mapValidate(props.validate, () => state.timeValue)
+  }, state, ref);
   res.inputProps.value = state.timeValue?.toString() || '';
   return res;
 }

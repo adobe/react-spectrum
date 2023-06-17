@@ -11,8 +11,8 @@
  */
 
 import {AriaColorFieldProps} from '@react-types/color';
+import {chain, FormValidationResult, mapValidate, mergeProps, useId, useUpdateEffect} from '@react-aria/utils';
 import {ColorFieldState} from '@react-stately/color';
-import {FormValidationResult, mergeProps, useId} from '@react-aria/utils';
 import {
   HTMLAttributes,
   LabelHTMLAttributes,
@@ -96,15 +96,21 @@ export function useColorField(
     }
   };
 
-  let {inputProps, ...otherFieldProps} = useFormattedTextField(
-    mergeProps(props, {
-      id: inputId,
-      value: inputValue,
-      defaultValue: undefined,
-      type: 'text',
-      autoComplete: 'off',
-      onChange
-    }), state, ref);
+  let {inputProps, ...otherFieldProps} = useFormattedTextField({
+    ...props,
+    id: inputId,
+    value: inputValue,
+    defaultValue: undefined,
+    type: 'text',
+    autoComplete: 'off',
+    onChange,
+    validate: mapValidate(props.validate, () => state.colorValue)
+  }, state, ref);
+
+  useUpdateEffect(() => {
+    // When the value changes, emit an event for form validation to pick up.
+    ref?.current?.dispatchEvent(new Event('change', {bubbles: true}));
+  }, [state.colorValue]);
 
   return {
     inputProps: mergeProps(inputProps, spinButtonProps, focusWithinProps, {

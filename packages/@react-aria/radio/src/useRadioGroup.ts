@@ -49,7 +49,7 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
   } = props;
   let {direction} = useLocale();
 
-  let [{validationState, errorMessage, validationDetails}, setValidity] = useFormValidationState(props.validationState, props.errorMessage, props.validationBehavior);
+  let [{validationState, errorMessage, validationDetails}, setValidity] = useFormValidationState(props, state.selectedValue);
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     // Radio group is not an HTML input element so it

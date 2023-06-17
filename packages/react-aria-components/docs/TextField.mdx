@@ -383,10 +383,10 @@ The `validationState` prop can be used to manually mark a text field as invalid 
 
 ```tsx example
 <form>
-  <TextField validationState={value => value.length === 8 ? 'valid' : 'invalid'}>
+  <TextField validate={value => value.length === 8 || 'Please enter an 8-digit tracking number.'}>
     <Label>Tracking number</Label>
     <Input />
-    <FormError>Please enter an 8-digit tracking number.</FormError>
+    <FormError />
   </TextField>
   <Button type="submit">Submit</Button>
 </form>
@@ -396,9 +396,7 @@ The `validationState` prop can be used to manually mark a text field as invalid 
 import {useValidationState} from '@react-aria/utils';
 function Example() {
   let validationState = useValidationState(value =>
-    value.length === 8
-      ? null
-      : 'Please enter an 8-digit tracking number.'
+    value.length === 8 || 'Please enter an 8-digit tracking number.'
   );
 
   let onSubmit = e => {
@@ -408,7 +406,7 @@ function Example() {
 
   return (
     <form onSubmit={onSubmit}>
-      <TextField validationState={validationState}>
+      <TextField validate={validationState}>
         <Label>Tracking number</Label>
         <Input />
         <FormError />

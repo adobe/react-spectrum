@@ -111,13 +111,12 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     isDisabled = false,
     isRequired = false,
     validationBehavior = 'aria',
-    onValidationChange,
     isReadOnly = false,
     type = 'text',
     defaultValue,
   }: AriaTextFieldOptions<TextFieldIntrinsicElements> = props;
   let [value, onChange] = useControlledState(props.value, props.defaultValue || '', props.onChange);
-  let {validationState, errorMessage, validationDetails} = useFormValidation(ref, props.validationState, props.errorMessage, validationBehavior, value, onValidationChange);
+  let {validationState, errorMessage, validationDetails} = useFormValidation(ref, props, value);
   let {focusableProps} = useFocusable(props, ref);
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
@@ -131,7 +130,7 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     pattern: props.pattern
   };
 
-  useFormReset(ref, value ?? defaultValue ?? '', onChange);
+  useFormReset(ref, value, onChange);
 
   return {
     labelProps,
@@ -148,8 +147,8 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
         'aria-activedescendant': props['aria-activedescendant'],
         'aria-autocomplete': props['aria-autocomplete'],
         'aria-haspopup': props['aria-haspopup'],
-        value: props.value,
-        defaultValue: props.value ? undefined : props.defaultValue,
+        value,
+        // defaultValue: props.value ? undefined : props.defaultValue,
         onChange: (e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value),
         autoComplete: props.autoComplete,
         maxLength: props.maxLength,

@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {ExternalValidationState, FormValidationEvent, ValidationState, ValidationStateProp} from '@react-types/shared';
+import {ExternalValidationState, Validation, ValidationFunction, ValidationState} from '@react-types/shared';
 import {ReactNode, RefObject, useEffect, useMemo, useRef, useState} from 'react';
 import {useEffectEvent} from './useEffectEvent';
 
@@ -43,39 +43,88 @@ export interface FormValidationResult {
   validationDetails: ValidityState
 }
 
+interface FormValidationProps<T> extends Validation<T> {
+  errorMessage?: ReactNode,
+  fallbackValidity?: InputValidity
+}
+
 export function useFormValidation<T>(
   ref: RefObject<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
-  validationState: ValidationStateProp<T>,
-  errorMessage: ReactNode,
-  validationBehavior: 'native' | 'aria',
-  value: T,
-  onValidationChange?: (value: FormValidationEvent) => void
+  props: FormValidationProps<T>,
+  value: T
 ): FormValidationResult {
-  let [currentValidationState, currentErrorMessage] = useMemo(() => {
-    if (typeof validationState === 'function') {
-      return [validationState(value), errorMessage];
-    } else if (typeof validationState === 'object') {
-      let error = validationState.validate(value);
-      return [error ? 'invalid' : undefined, error];
-    } else {
-      return [validationState, errorMessage];
-    }
-  }, [validationState, value, errorMessage]);
-  useEffect(() => {
-    if (validationBehavior === 'native') {
+  let {validationState, errorMessage, validate, validationBehavior, onValidationChange, fallbackValidity} = props;
+  let [currentErrorMessage, validationReason] = useMemo(() => {
+    // If a validationState prop is defined, it always takes precedence.
+    if (validationState) {
       // Use the provided error message if available, otherwise use a default string.
       // This is usually not shown to the user because there is often a custom UI for error messages,
       // but it is required to mark the input as invalid and prevent form submission.
       let error = '';
-      if (currentValidationState === 'invalid') {
-        error = typeof currentErrorMessage === 'string' && currentErrorMessage ? currentErrorMessage : 'Invalid value.';
+      if (validationState === 'invalid') {
+        error = typeof errorMessage === 'string' && errorMessage ? errorMessage : 'Invalid value.';
       }
-      ref.current?.setCustomValidity(error);
+      return [error, 'validationState'];
     }
-  }, [validationBehavior, currentValidationState, currentErrorMessage, ref]);
 
-  let [result, setValidity] = useFormValidationState(validationState, errorMessage, validationBehavior, value);
+    // Next, try a custom validation function.
+    let error: string | true | null | undefined = '';
+    if (typeof validate === 'function') {
+      error = validate(value);
+    } else if (typeof validate === 'object' && validate) {
+      error = validate.validate(value);
+    }
+
+    if (error && typeof error === 'string') {
+      return [error, 'validate'];
+    }
+
+    // If a component provided builtin validation beyond what the native input supports, use that.
+    if (fallbackValidity && !fallbackValidity.validationDetails.valid) {
+      return [fallbackValidity.errorMessage || '', 'fallback'];
+    }
+
+    // Valid.
+    return ['', undefined];
+  }, [validationState, value, errorMessage, validate]);
+
+  let externalError = typeof validate === 'object' ? validate.errorMessage : '';
+  let lastError = useRef('');
+  let lastExternalError = useRef('');
+  let lastValue = useRef(null);
+  useEffect(() => {
+    if (validationBehavior === 'native') {
+      // If the value changed, use the latest client error message.
+      // Otherwise, use the external error message (e.g. server error) if it changed.
+      // The input should always have the latest validation error, even before it is shown to the user.
+      if (value !== lastValue.current || currentErrorMessage !== lastError.current) {
+        ref.current?.setCustomValidity(currentErrorMessage);
+        lastValue.current = value;
+        lastError.current = currentErrorMessage;
+      } else if (externalError !== lastExternalError.current) {
+        ref.current?.setCustomValidity(externalError);
+        ref.current?.reportValidity();
+        lastExternalError.current = externalError;
+      }
+    }
+  });
+
+  let [result, setValidity] = useFormValidationState(props, value);
   useInputValidity(validationBehavior === 'native' ? ref : null, (validity) => {
+    // Ignore events for controlled validation.
+    if (validationReason === 'validationState') {
+      return;
+    }
+
+    // If the native input has a custom error, but we have the original validation details, use that instead.
+    if (validity.validationDetails.customError && validationReason === 'fallback' && !props.fallbackValidity.validationDetails.valid) {
+      validity.validationDetails = props.fallbackValidity.validationDetails;
+    }
+
+    if (typeof validate === 'object') {
+      lastExternalError.current = validity.errorMessage;
+    }
+
     setValidity(validity);
     if (onValidationChange) {
       onValidationChange({
@@ -146,11 +195,6 @@ function useInputValidity(
 ) {
   let validation = useRef(DEFAULT_VALIDITY);
   let updateValidation = useEffectEvent((newValidation: InputValidity) => {
-    // Ignore custom errors. We don't want events for these.
-    // if (newValidation.validationDetails.customError) {
-    //   return;
-    // }
-
     // Ignore duplicate events.
     if (
       validation.current.errorMessage === newValidation.errorMessage &&
@@ -166,7 +210,9 @@ function useInputValidity(
   });
 
   useEffect(() => {
-    if (!inputRef) {return;}
+    if (!inputRef) {
+      return;
+    }
 
     let input = inputRef.current;
     let form = input.form;
@@ -178,7 +224,7 @@ function useInputValidity(
       });
     };
 
-    let onChange = () => {
+    let onChange = (e) => {
       if (input.validity.valid || !validation.current.validationDetails.valid) {
         updateValidation({
           validationDetails: getValidity(input),
@@ -193,7 +239,7 @@ function useInputValidity(
 
     input.addEventListener('invalid', onInvalid);
     form?.addEventListener('change', onChange);
-    form?.addEventListener('focusout', onChange);
+    // form?.addEventListener('focusout', onChange);
     form?.addEventListener('reset', onReset);
     return () => {
       input.removeEventListener('invalid', onInvalid);
@@ -204,95 +250,55 @@ function useInputValidity(
   }, [inputRef, updateValidation]);
 }
 
-function getValidationResult<T>(validity: InputValidity, validationState: ValidationStateProp<T>, errorMessage: ReactNode, validationBehavior: 'aria' | 'native', value: T): FormValidationResult {
-  // if (!validationState && !validity.validationDetails.valid && !validity.validationDetails.customError) {
-  //   // Use native error unless a custom one is provided.
-  //   validationState = 'invalid';
-  //   errorMessage = validity.errorMessage;
-  // }
+export function useFormValidationState<T>(props: FormValidationProps<T>, value: T): [FormValidationResult, (validity: InputValidity) => void] {
+  let {validationBehavior, validationState, errorMessage, validate} = props;
+  let [validity, setValidation] = useState(DEFAULT_VALIDITY);
+  let validationDetails = validity.validationDetails;
 
-  // If using native validation behavior, only show validation state once the user submits a form
-  // rather than in real-time. This is the default behavior for native validation, and we emulate it
-  // when a custom validationState/errorMessage are provided as well. These props can be set by the
-  // developer in real-time for ease of implementation, but only shown to the user on submit.
-  if (validationBehavior === 'native') {
-    // if (validity.validationDetails.valid) {
-    //   // If the native input is valid, keep the validation state as "valid" to show green checkmark
-    //   // if it is passed in as a prop, otherwise delay showing validation state.
-    //   validationState = validationState === 'valid' ? 'valid' : undefined;
-    //   errorMessage = undefined;
-    // } else {
-    //   validationState = 'invalid';
-    //   if (!validity.validationDetails.customError && !errorMessage) {
-    //     // Use native error message if a custom one is not provided.
-    //     errorMessage = validity.errorMessage;
-    //   }
-    // }
-    // if (typeof validationState !== 'string' && !validity.validationDetails.valid) {
-    //   validationState = 'invalid';
-    //   errorMessage = validity.errorMessage;
-    // }
-    if (typeof validationState === 'function' || !validationState) {
-      validationState = validity.validationDetails.valid ? undefined : 'invalid';
-      if (!validity.validationDetails.customError && !errorMessage) {
-        errorMessage = validity.errorMessage;
-      }
+  // If an external validation state is provided, use that unless validationState overrides it.
+  if (!validationState && typeof validate === 'object') {
+    let state = validate;
+    validationState = state.validationDetails.valid ? undefined : 'invalid';
+    errorMessage = state.errorMessage;
+    validationDetails = state.validationDetails;
+    setValidation = (validity: InputValidity) => {
+      state.setValidationDetails(validity.validationDetails, validity.errorMessage);
+    };
+  } else if (validationBehavior === 'native') {
+    // If the validationState prop is provided, it overrides the native input validity.
+    if (!validationState && !validity.validationDetails.valid) {
+      validationState = 'invalid';
+      errorMessage = validity.errorMessage;
     }
-  } else if (typeof validationState === 'function') {
-    validationState = validationState(value);
+  } else if (typeof validate === 'function' && !validationState) {
+    errorMessage = validate(value);
+    validationState = errorMessage ? 'invalid' : undefined;
   }
 
-  // if (validity.validationDetails.valid) {
-  //   validationState = undefined;
-  // } else if (!errorMessage) {
-  //   errorMessage = validity.errorMessage;
-  // }
-
-  return {
+  let result = {
     validationState,
     errorMessage,
-    validationDetails: validity.validationDetails
+    validationDetails
   };
-}
 
-export function useFormValidationState<T>(validationState: ValidationStateProp<T>, errorMessage: ReactNode, validationBehavior: 'aria' | 'native', value: T): [FormValidationResult, (validity: InputValidity) => void] {
-  let [validation, setValidation] = useState<InputValidity>(DEFAULT_VALIDITY);
-
-  if (typeof validationState === 'object') {
-    return [validationState, validationState.setValidity]
-  }
-
-  return [getValidationResult(validation, validationState, errorMessage, validationBehavior, value), setValidation];
+  return [result, setValidation];
 }
 
 export function useValidationState<T>(validate: (value: T) => string): ExternalValidationState<T> {
-  let [{validationState, errorMessage, validationDetails}, setValidation] = useState({
-    validationState: undefined,
-    errorMessage: '',
-    validationDetails: DEFAULT_VALIDITY.validationDetails
-  });
+  let [{errorMessage, validationDetails}, setValidation] = useState(DEFAULT_VALIDITY);
+
   return {
     validate,
-    validationState,
     errorMessage,
     validationDetails,
-    setValidity(validity: InputValidity) {
-      let validationState;
-      let errorMessage = '';
-      if (!validity.validationDetails.valid) {
-        validationState = 'invalid';
-        errorMessage = validity.errorMessage;
-      }
-
+    setValidationDetails(validationDetails, errorMessage) {
       setValidation({
-        validationState,
         errorMessage,
-        validationDetails: validity.validationDetails
+        validationDetails
       });
     },
     setError(errorMessage) {
       setValidation({
-        validationState: 'invalid',
         errorMessage,
         validationDetails: {
           ...DEFAULT_VALIDITY.validationDetails,
@@ -302,12 +308,49 @@ export function useValidationState<T>(validate: (value: T) => string): ExternalV
       });
     },
     clear() {
-      setValidation({
-        validationState: undefined,
-        errorMessage: '',
-        validationDetails: DEFAULT_VALIDITY.validationDetails
-      });
+      setValidation(DEFAULT_VALIDITY);
     }
+  }
+}
+
+export function composeValidate<T>(
+  validate: ValidationFunction<T> | ExternalValidationState<T>,
+  other: ValidationFunction<T>
+): ValidationFunction<T> | ExternalValidationState<T> {
+  if (typeof validate === 'function') {
+    return composeValidationFunction(validate, other);
+  } else if (validate && typeof validate === 'object') {
+    return {
+      ...validate,
+      validate: composeValidationFunction(validate.validate, other)
+    };
+  } else {
+    return other;
+  }
+}
+
+function composeValidationFunction<T>(a: ValidationFunction<T>, b: ValidationFunction<T>): ValidationFunction<T> {
+  return (value) => {
+    let error = a(value);
+    if (error && typeof error === 'string') {
+      return error;
+    }
+
+    return b(value);
+  };
+}
+
+export function mapValidate<T, U>(
+  validate: ValidationFunction<U> | ExternalValidationState<U>,
+  map: (value: T) => U
+): ValidationFunction<T> | ExternalValidationState<T> {
+  if (typeof validate === 'function') {
+    return (value) => validate(map(value))
+  } else if (validate && typeof validate === 'object') {
+    return {
+      ...validate,
+      validate: (value) => validate.validate(map(value))
+    };
   }
 }
 

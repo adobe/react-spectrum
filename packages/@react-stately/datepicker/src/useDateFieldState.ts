@@ -47,12 +47,18 @@ export interface DateFieldState {
   calendar: Calendar,
   /** Sets the field's value. */
   setValue(value: DateValue): void,
+  /** The minimum value of the field. */
+  minValue: DateValue,
+  /** The maximum value of the field. */
+  maxValue: DateValue,
   /** A list of segments for the current value. */
   segments: DateSegment[],
   /** A date formatter configured for the current locale and format. */
   dateFormatter: DateFormatter,
   /** The current validation state of the date field, based on the `validationState`, `minValue`, and `maxValue` props. */
   validationState: ValidationState,
+  /** Details about why a value is invalid. */
+  validationDetails: ValidityState,
   /** The granularity for the field, based on the `granularity` prop and current value. */
   granularity: Granularity,
   /** The maximum date or time unit that is displayed in the field. */
@@ -242,13 +248,11 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       setDate(null);
       setPlaceholderDate(createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone));
       setValidSegments({});
-      validate(null, props.minValue, props.maxValue, isValueInvalid, onValidationChange);
     } else if (Object.keys(validSegments).length >= Object.keys(allSegments).length) {
       // The display calendar should not have any effect on the emitted value.
       // Emit dates in the same calendar as the original value, if any, otherwise gregorian.
       newValue = toCalendar(newValue, v?.calendar || new GregorianCalendar());
       setDate(newValue);
-      validate(newValue, props.minValue, props.maxValue, isValueInvalid, onValidationChange);
     } else {
       setPlaceholderDate(newValue);
     }
@@ -313,6 +317,8 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     dateValue,
     calendar,
     setValue,
+    minValue: props.minValue,
+    maxValue: props.maxValue,
     segments,
     dateFormatter,
     validationState,
@@ -374,7 +380,6 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
 
       setDate(null);
       setValue(value);
-      validate(null, props.minValue, props.maxValue, isValueInvalid, onValidationChange);
     },
     formatValue(fieldOptions: FieldOptions) {
       if (!calendarValue) {

@@ -29,7 +29,7 @@ import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {mergeProps, useFormReset, useFormValidation, useId, useUpdateEffect} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {HTMLAttributes, InputHTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useEffect, useRef, useState} from 'react';
+import React, {HTMLAttributes, InputHTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {setInteractionModality, useHover} from '@react-aria/interactions';
 import {SpectrumComboBoxProps} from '@react-types/combobox';
@@ -55,8 +55,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     formValue = 'text',
     allowsCustomValue,
     isRequired,
-    validationBehavior,
-    onValidationChange
+    validationBehavior
   } = props;
   if (allowsCustomValue) {
     formValue = 'text';
@@ -78,7 +77,8 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'listbox'}, state, buttonRef);
 
   let inputRef = useRef<HTMLInputElement>(null);
-  let {validationState, errorMessage} = useFormValidation(inputRef, props.validationState, props.errorMessage, validationBehavior, onValidationChange);
+  let validationValue = useMemo(() => ({selectedKey: state.selectedKey, inputValue: state.inputValue}), [state.selectedKey, state.inputValue]);
+  let {validationState, errorMessage} = useFormValidation(inputRef, props, validationValue);
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     labelElementType: 'span',

@@ -121,17 +121,9 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
     }
   };
 
-  let validationDetails = useMemo(() => {
-    let details = getValidationDetails(value, props.minValue, props.maxValue);
-    if (value && props.isDateUnavailable?.(value)) {
-      details.valid = false;
-      details.customError = true;
-    }
-    return details
-  }, [value, props.minValue, props.maxValue, props.isDateUnavailable]);
-
   let validationState: ValidationState = props.validationState ||
-    (!validationDetails.valid ? 'invalid' : null);
+    (isInvalid(value, props.minValue, props.maxValue) ? 'invalid' : null) ||
+    (value && props.isDateUnavailable?.(value) ? 'invalid' : null);
 
   return {
     value,
@@ -154,7 +146,6 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
       overlayState.setOpen(isOpen);
     },
     validationState,
-    validationDetails,
     formatValue(locale, fieldOptions) {
       if (!dateValue) {
         return '';

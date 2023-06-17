@@ -14,7 +14,7 @@ import {AriaButtonProps} from '@react-types/button';
 import {AriaDatePickerProps, DateValue} from '@react-types/datepicker';
 import {AriaDialogProps} from '@react-types/dialog';
 import {CalendarProps} from '@react-types/calendar';
-import {chain, filterDOMProps, FormValidationResult, mergeProps, useDescription, useFormValidationState, useId, mergeValidity} from '@react-aria/utils';
+import {chain, filterDOMProps, FormValidationResult, mergeProps, useDescription, useFormValidationState, useId, composeValidate} from '@react-aria/utils';
 import {createFocusManager} from '@react-aria/focus';
 import {DatePickerState} from '@react-stately/datepicker';
 import {DOMAttributes, KeyboardEvent} from '@react-types/shared';
@@ -56,7 +56,7 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
   let fieldId = useId();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
-  let [{validationState, errorMessage, validationDetails}, setFormValidationState] = useFormValidationState(state.validationState, props.errorMessage, props.validationBehavior);
+  let [{validationState, errorMessage, validationDetails}, setFormValidationState] = useFormValidationState(props, state.value);
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     labelElementType: 'span',
@@ -132,9 +132,14 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       isReadOnly: props.isReadOnly,
       isRequired: props.isRequired,
       validationBehavior: props.validationBehavior,
-      validationState: state.validationState,
+      validationState: props.validationState,
       errorMessage: props.errorMessage,
       onValidationChange: chain(setFormValidationState, props.onValidationChange),
+      validate: composeValidate(props.validate, value => {
+        if (value && props.isDateUnavailable?.(value)) {
+          return 'Selected date unavailable';
+        }
+      }),
       autoFocus: props.autoFocus,
       name: props.name
     },
@@ -169,6 +174,6 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
     },
     validationState,
     errorMessage,
-    validationDetails: mergeValidity(state.validationDetails, validationDetails)
+    validationDetails
   };
 }

@@ -13,7 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
-import {CalendarDate, getLocalTimeZone, today} from '@internationalized/date';
+import {CalendarDate, Time, getLocalTimeZone, isWeekend, today} from '@internationalized/date';
 import {chain} from '@react-aria/utils';
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
 import {ColorField} from '@react-spectrum/color';
@@ -21,7 +21,7 @@ import {ComboBox} from '@react-spectrum/combobox';
 import {Content, Header} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {countries, states} from './data';
-import {DateField, DatePicker, DateRangePicker} from '@react-spectrum/datepicker';
+import {DateField, DatePicker, DateRangePicker, TimeField} from '@react-spectrum/datepicker';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '../';
 import {FormTranslatedText} from './../chromatic/FormLanguages.chromatic';
@@ -519,8 +519,9 @@ function FormWithControls(props: any = {}) {
       </ComboBox>
       <DateField name="date-uncontrolled" label="Birth date (uncontrolled)" minValue={new CalendarDate(2023, 2, 3)} />
       <DateField name="date-controlled" label="Birth date (controlled)" value={birthday} onChange={setBirthday} />
-      <DateRangePicker startName="trip-start" endName="trip-end" label="Trip dates (uncontrolled)" />
-      <DatePicker name="date-picker" label="Appointment date (uncontrolled)" minValue={today(getLocalTimeZone())} />
+      <DateRangePicker startName="trip-start" endName="trip-end" label="Trip dates (uncontrolled)" isDateUnavailable={date => isWeekend(date, 'en-US')} />
+      <DatePicker name="date-picker" label="Appointment date (uncontrolled)" minValue={today(getLocalTimeZone())} isDateUnavailable={date => isWeekend(date, 'en-US')} />
+      <TimeField name="time" label="Appointment time (uncontrolled)" minValue={new Time(8)} />
       <Slider name="cookies" label="Cookies (uncontrolled)" defaultValue={50} />
       <ColorField name="color" label="Color (uncontrolled)" />
       <ButtonGroup>

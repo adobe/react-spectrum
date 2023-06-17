@@ -24,7 +24,7 @@ import {
   ValueBase
 } from '@react-types/shared';
 
-export interface NumberFieldProps extends InputBase, Validation, FocusableProps, TextInputBase, ValueBase<number>, RangeInputBase<number>, LabelableProps, HelpTextProps {
+export interface NumberFieldProps extends InputBase, Validation<number>, FocusableProps, TextInputBase, ValueBase<number>, RangeInputBase<number>, LabelableProps, HelpTextProps {
   /**
    * Formatting options for the value displayed in the number field.
    * This also affects what characters are allowed to be typed by the user.

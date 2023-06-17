@@ -14,7 +14,7 @@ jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, render, triggerPress, typeText, within} from '@react-spectrum/test-utils';
 import {announce} from '@react-aria/live-announcer';
 import {Button} from '@react-spectrum/button';
-import {chain} from '@react-aria/utils';
+import {chain, useValidationState} from '@react-aria/utils';
 import messages from '../../../@react-aria/numberfield/intl/*';
 import {NumberField} from '../';
 import {Provider} from '@react-spectrum/provider';
@@ -2290,6 +2290,102 @@ describe('NumberField', function () {
     expect(input.validationMessage).toBe('custom');
 
     rerender(tree(undefined, undefined));
+    expect(input).not.toHaveAttribute('aria-describedby');
+    expect(input).not.toHaveAttribute('aria-invalid');
+    expect(input.validity.valid).toBe(true);
+  });
+
+  it('supports custom validate function on submit', async () => {
+    let onValidationChange = jest.fn();
+    let {getByTestId} = render(
+      <Provider theme={theme}>
+        <form data-testid="form">
+          <NumberField label="Number" data-testid="input" name="value" validationBehavior="native" defaultValue={0} validate={value => value === 0 && 'custom'} onValidationChange={onValidationChange} />
+        </form>
+      </Provider>
+    );
+    let form = getByTestId('form');
+    let input = getByTestId('input');
+
+    // Validation state is on the native input, but not shown to the user before submit.
+    expect(input).not.toHaveAttribute('aria-describedby');
+    expect(input).not.toHaveAttribute('aria-invalid');
+    expect(input.validity.valid).toBe(false);
+    expect(input.validationMessage).toBe('custom');
+
+    act(() => {form.checkValidity();});
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(input).toHaveAttribute('aria-invalid');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('custom');
+    expect(input.validity.valid).toBe(false);
+    expect(input.validationMessage).toBe('custom');
+    expect(onValidationChange).toHaveBeenCalledTimes(1);
+
+    await act(() => userEvent.type(input, '{selectall}'));
+    typeText(input, '1');
+    act(() => input.blur());
+
+    expect(input).not.toHaveAttribute('aria-describedby');
+    expect(input).not.toHaveAttribute('aria-invalid');
+    expect(input.validity.valid).toBe(true);
+    expect(onValidationChange).toHaveBeenCalledTimes(2);
+  });
+
+  it('supports external server validation', async () => {
+    function Test() {
+      let validate = useValidationState(value => value === 0 && 'Client error');
+      let onSubmit = e => {
+        e.preventDefault();
+        validate.setError('Client error');
+      };
+
+      return (
+        <Provider theme={theme}>
+          <form data-testid="form" onSubmit={onSubmit}>
+            <NumberField label="Number" data-testid="input" name="value" validationBehavior="native" defaultValue={0} validate={validate} />
+          </form>
+        </Provider>
+      );
+    }
+
+    let {getByTestId} = render(<Test />);
+    let form = getByTestId('form');
+    let input = getByTestId('input');
+
+    // Validation state is on the native input, but not shown to the user before submit.
+    expect(input).not.toHaveAttribute('aria-describedby');
+    expect(input).not.toHaveAttribute('aria-invalid');
+    expect(input.validity.valid).toBe(false);
+    expect(input.validationMessage).toBe('Client error');
+
+    // Show the client error if client validation fails.
+    act(() => {form.checkValidity();});
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(input).toHaveAttribute('aria-invalid');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Client error');
+    expect(input.validity.valid).toBe(false);
+    expect(input.validationMessage).toBe('Client error');
+
+    // Update the value, and client error goes away.
+    await act(() => userEvent.type(input, '{selectall}'));
+    typeText(input, '1');
+    act(() => input.blur());
+    expect(input).not.toHaveAttribute('aria-describedby');
+    expect(input).not.toHaveAttribute('aria-invalid');
+    expect(input.validity.valid).toBe(true);
+
+    // Submit again, show server validation message.
+    act(() => {form.submit();});
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(input).toHaveAttribute('aria-invalid');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Client error');
+    expect(input.validity.valid).toBe(false);
+    expect(input.validationMessage).toBe('Client error');
+
+    // Update the value, and server error goes away.
+    await act(() => userEvent.type(input, '{selectall}'));
+    typeText(input, '2');
+    act(() => input.blur());
     expect(input).not.toHaveAttribute('aria-describedby');
     expect(input).not.toHaveAttribute('aria-invalid');
     expect(input.validity.valid).toBe(true);

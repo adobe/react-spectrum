@@ -13,7 +13,7 @@
 import {AriaButtonProps} from '@react-types/button';
 import {AriaNumberFieldProps} from '@react-types/numberfield';
 import {DOMAttributes, TextInputDOMProps} from '@react-types/shared';
-import {filterDOMProps, FormValidationResult, isAndroid, isIOS, isIPhone, mergeProps, useFormReset, useId} from '@react-aria/utils';
+import {filterDOMProps, FormValidationResult, isAndroid, isIOS, isIPhone, mapValidate, mergeProps, useFormReset, useId} from '@react-aria/utils';
 import {
   InputHTMLAttributes,
   LabelHTMLAttributes,
@@ -192,6 +192,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     isReadOnly,
     isRequired,
     validationState,
+    validate: mapValidate(props.validate, () => state.numberValue),
     value: inputValue,
     defaultValue: undefined, // defaultValue already used to populate state.inputValue, unneeded here
     autoComplete: 'off',

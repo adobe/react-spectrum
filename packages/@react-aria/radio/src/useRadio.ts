@@ -77,7 +77,12 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
   }
 
   let {name, descriptionId, errorMessageId, isRequired, validationBehavior, errorMessage, onValidationChange} = radioGroupData.get(state)!;
-  let {validationState} = useFormValidation(ref, state.validationState, errorMessage, validationBehavior, onValidationChange);
+  let {validationState} = useFormValidation(ref, {
+    validationState: state.validationState,
+    errorMessage,
+    validationBehavior,
+    onValidationChange
+  }, state.selectedValue);
   useFormReset(ref, state.selectedValue, state.setSelectedValue);
 
   return {

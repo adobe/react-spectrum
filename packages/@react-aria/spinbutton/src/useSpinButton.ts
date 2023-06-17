@@ -20,7 +20,7 @@ import {useEffectEvent, useGlobalListeners} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 
-export interface SpinButtonProps extends InputBase, Validation, ValueBase<number>, RangeInputBase<number> {
+export interface SpinButtonProps extends InputBase, Validation<number>, ValueBase<number>, RangeInputBase<number> {
   textValue?: string,
   onIncrement?: () => void,
   onIncrementPage?: () => void,

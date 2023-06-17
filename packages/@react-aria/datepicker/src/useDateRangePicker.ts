@@ -16,7 +16,7 @@ import {AriaDialogProps} from '@react-types/dialog';
 import {createFocusManager} from '@react-aria/focus';
 import {DateRangePickerState} from '@react-stately/datepicker';
 import {DOMAttributes, FormValidationEvent, KeyboardEvent} from '@react-types/shared';
-import {filterDOMProps, FormValidationResult, mergeProps, mergeValidity, useDescription, useFormValidationState, useId} from '@react-aria/utils';
+import {composeValidate, filterDOMProps, FormValidationResult, mergeProps, mergeValidity, mapValidate, useDescription, useFormValidationState, useId} from '@react-aria/utils';
 import {focusManagerSymbol, roleSymbol} from './useDateField';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -55,8 +55,8 @@ export interface DateRangePickerAria extends FormValidationResult {
  */
 export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePickerProps<T>, state: DateRangePickerState, ref: RefObject<Element>): DateRangePickerAria {
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
-  let [startValidation, setStartValidation] = useFormValidationState(state.validationState, props.errorMessage, props.validationBehavior);
-  let [endValidation, setEndValidation] = useFormValidationState(state.validationState, props.errorMessage, props.validationBehavior);
+  let [startValidation, setStartValidation] = useFormValidationState(props, state.value);
+  let [endValidation, setEndValidation] = useFormValidationState(props, state.value);
   let validationState = startValidation.validationState || endValidation.validationState;
   let errorMessage = startValidation.errorMessage || endValidation.errorMessage;
   let validationDetails = mergeValidity(startValidation.validationDetails, endValidation.validationDetails);
@@ -109,8 +109,18 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
     isReadOnly: props.isReadOnly,
     isRequired: props.isRequired,
     validationBehavior: props.validationBehavior,
-    validationState: state.validationState,
-    errorMessage: props.errorMessage
+    validationState: props.validationState,
+    errorMessage: props.errorMessage,
+    validate: composeValidate(mapValidate(props.validate, () => state.value), () => {
+      let value = state.value;
+      if ((value.start && props.isDateUnavailable?.(value.start)) || (value.end && props.isDateUnavailable?.(value.end))) {
+        return 'Selected dates unavailable';
+      }
+
+      if (value.end != null && value.start != null && value.end.compare(value.start) < 0) {
+        return 'End date must be after start date';
+      }
+    }),
   };
 
   let domProps = filterDOMProps(props);
@@ -227,7 +237,7 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
     },
     validationState,
     errorMessage,
-    validationDetails: mergeValidity(state.validationDetails, validationDetails)
+    validationDetails
   };
 }
 

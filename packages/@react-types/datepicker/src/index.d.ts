@@ -35,13 +35,11 @@ type MappedDateValue<T> =
   never;
 
 export type Granularity = 'day' | 'hour' | 'minute' | 'second';
-interface DateFieldBase<T extends DateValue> extends InputBase, Validation, FocusableProps, LabelableProps, HelpTextProps, OverlayTriggerProps {
+interface DateFieldBase<T extends DateValue> extends InputBase, Validation<T>, FocusableProps, LabelableProps, HelpTextProps, OverlayTriggerProps {
   /** The minimum allowed date that a user may select. */
   minValue?: DateValue,
   /** The maximum allowed date that a user may select. */
   maxValue?: DateValue,
-  /** Callback that is called for each date of the calendar. If it returns true, then the date is unavailable. */
-  isDateUnavailable?: (date: DateValue) => boolean,
   /** A placeholder date that influences the format of the placeholder shown when no value is selected. Defaults to today's date at midnight. */
   placeholderValue?: T,
   /** Whether to display the time in 12 or 24 hour format. By default, this is determined by the user's locale. */
@@ -59,14 +57,18 @@ interface AriaDateFieldBaseProps<T extends DateValue> extends DateFieldBase<T>, 
 export interface DateFieldProps<T extends DateValue> extends DateFieldBase<T>, ValueBase<T | null, MappedDateValue<T>> {}
 export interface AriaDateFieldProps<T extends DateValue> extends DateFieldProps<T>, AriaDateFieldBaseProps<T>, InputDOMProps {}
 
-interface DatePickerBase<T extends DateValue> extends DateFieldBase<T>, OverlayTriggerProps {}
+interface DatePickerBase<T extends DateValue> extends DateFieldBase<T>, OverlayTriggerProps {
+  /** Callback that is called for each date of the calendar. If it returns true, then the date is unavailable. */
+  isDateUnavailable?: (date: DateValue) => boolean,
+}
+
 export interface AriaDatePickerBaseProps<T extends DateValue> extends DatePickerBase<T>, AriaLabelingProps, DOMProps {}
 
 export interface DatePickerProps<T extends DateValue> extends DatePickerBase<T>, ValueBase<T | null, MappedDateValue<T>> {}
 export interface AriaDatePickerProps<T extends DateValue> extends DatePickerProps<T>, AriaDatePickerBaseProps<T>, InputDOMProps {}
 
 export type DateRange = RangeValue<DateValue>;
-export interface DateRangePickerProps<T extends DateValue> extends DatePickerBase<T>, ValueBase<RangeValue<T> | null, RangeValue<MappedDateValue<T>>> {
+export interface DateRangePickerProps<T extends DateValue> extends Omit<DatePickerBase<T>, 'validate'>, ValueBase<RangeValue<T> | null, RangeValue<MappedDateValue<T>>>, Validation<RangeValue<T>> {
   /**
    * When combined with `isDateUnavailable`, determines whether non-contiguous ranges,
    * i.e. ranges containing unavailable dates, may be selected.
@@ -74,7 +76,7 @@ export interface DateRangePickerProps<T extends DateValue> extends DatePickerBas
   allowsNonContiguousRanges?: boolean
 }
 
-export interface AriaDateRangePickerProps<T extends DateValue> extends AriaDatePickerBaseProps<T>, DateRangePickerProps<T> {
+export interface AriaDateRangePickerProps<T extends DateValue> extends Omit<AriaDatePickerBaseProps<T>, 'validate'>, DateRangePickerProps<T> {
   /**
    * The name of the start date input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
@@ -122,7 +124,7 @@ type MappedTimeValue<T> =
   T extends Time ? Time :
   never;
 
-export interface TimePickerProps<T extends TimeValue> extends InputBase, Validation, FocusableProps, LabelableProps, HelpTextProps, ValueBase<T | null, MappedTimeValue<T>> {
+export interface TimePickerProps<T extends TimeValue> extends InputBase, Validation<Time>, FocusableProps, LabelableProps, HelpTextProps, ValueBase<T | null, MappedTimeValue<T>> {
   /** Whether to display the time in 12 or 24 hour format. By default, this is determined by the user's locale. */
   hourCycle?: 12 | 24,
   /**
@@ -143,7 +145,7 @@ export interface TimePickerProps<T extends TimeValue> extends InputBase, Validat
   maxValue?: TimeValue
 }
 
-export interface AriaTimeFieldProps<T extends TimeValue> extends TimePickerProps<T>, AriaLabelingProps, DOMProps {}
+export interface AriaTimeFieldProps<T extends TimeValue> extends TimePickerProps<T>, AriaLabelingProps, DOMProps, InputDOMProps {}
 
 export interface SpectrumTimeFieldProps<T extends TimeValue> extends AriaTimeFieldProps<T>, SpectrumLabelableProps, StyleProps {
   /**

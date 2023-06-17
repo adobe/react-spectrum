@@ -16,7 +16,7 @@ import {AriaComboBoxProps} from '@react-types/combobox';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
 import {BaseEvent, DOMAttributes, KeyboardDelegate, PressEvent} from '@react-types/shared';
-import {chain, FormValidationResult, isAppleDevice, mergeProps, useLabels} from '@react-aria/utils';
+import {chain, FormValidationResult, isAppleDevice, mapValidate, mergeProps, useLabels} from '@react-aria/utils';
 import {ComboBoxState} from '@react-stately/combobox';
 import {FocusEvent, InputHTMLAttributes, KeyboardEvent, RefObject, TouchEvent, useEffect, useMemo, useRef} from 'react';
 import {getChildNodes, getItemCount} from '@react-stately/collections';
@@ -173,7 +173,8 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     onBlur,
     value: state.inputValue,
     onFocus,
-    autoComplete: 'off'
+    autoComplete: 'off',
+    validate: mapValidate(props.validate, inputValue => ({inputValue, selectedKey: state.selectedKey}))
   }, inputRef);
 
   // Press handlers for the ComboBox button

@@ -120,7 +120,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     }
   });
 
-  let {validationState, errorMessage, validationDetails} = useFormValidation(props.hiddenSelectRef, props.validationState, props.errorMessage, props.validationBehavior, props.onValidationChange);
+  let {validationState, errorMessage, validationDetails} = useFormValidation(props.hiddenSelectRef, props, state.selectedKey);
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     labelElementType: 'span',

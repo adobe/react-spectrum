@@ -149,23 +149,14 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
     }
   };
 
-  let validationDetails = useMemo(() => {
-      let startDetails = getValidationDetails(value.start, props.minValue, props.maxValue);
-      let endDetails = getValidationDetails(value.end, props.minValue, props.maxValue);
-      let details = mergeValidity(startDetails, endDetails);
-      let isCustomInvalid =
-        (value.end != null && value.start != null && value.end.compare(value.start) < 0) ||
-        (value?.start && props.isDateUnavailable?.(value.start)) ||
-        (value?.end && props.isDateUnavailable?.(value.end));
-      if (isCustomInvalid) {
-        details.valid = false;
-        details.customError = true;
-      }
-      return details
-    }, [value, props.minValue, props.maxValue, props.isDateUnavailable]);
-
   let validationState: ValidationState = props.validationState
-    || (!validationDetails.valid ? 'invalid' : null);
+    || (value != null && (
+      isInvalid(value.start, props.minValue, props.maxValue) ||
+      isInvalid(value.end, props.minValue, props.maxValue) ||
+      (value.end != null && value.start != null && value.end.compare(value.start) < 0) ||
+      (value?.start && props.isDateUnavailable?.(value.start)) ||
+      (value?.end && props.isDateUnavailable?.(value.end))
+    ) ? 'invalid' : null);
 
   return {
     value,
@@ -200,7 +191,6 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
       overlayState.setOpen(isOpen);
     },
     validationState,
-    validationDetails,
     formatValue(locale, fieldOptions) {
       if (!value || !value.start || !value.end) {
         return null;

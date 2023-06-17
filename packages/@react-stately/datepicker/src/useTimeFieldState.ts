@@ -68,7 +68,8 @@ export function useTimeFieldState<T extends TimeValue = TimeValue>(props: TimeFi
     maxGranularity: 'hour',
     placeholderValue: placeholderDate,
     // Calendar should not matter for time fields.
-    createCalendar: () => new GregorianCalendar()
+    createCalendar: () => new GregorianCalendar(),
+    validate: undefined
   });
 
   return {

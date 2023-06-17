@@ -15,21 +15,42 @@ import {ReactNode} from 'react';
 export type ValidationState = 'valid' | 'invalid';
 export type ValidationStateProp<T> = ValidationState | ((value: T) => ValidationState) | ExternalValidationState<T>;
 
+export type ValidationFunction<T> = ((value: T) => string | true | null | undefined);
 export interface ExternalValidationState<T> {
-  validationState: ValidationState,
-  errorMessage: string,
-  validationDetails: ValidityState,
-  validate: ((value: T) => ValidationState),
+  /** The current error message shown to the user. */
+  readonly errorMessage: string,
+  /** The current validation details describing why an error occurred. */
+  readonly validationDetails: ValidityState,
+  /** The original validate function passed to `useValidationState`. */
+  readonly validate: ValidationFunction<T>,
+  /** Sets a custom error message for the field, e.g. as a result of server side validation.  */
   setError(errorMessage: string): void,
+  /**
+   * Sets the validation details and error message for the field.
+   * Typically this is called internally, and is not used by application code.
+   */
+  setValidationDetails(validationDetails: ValidityState, errorMessage: string): void,
+  /** Clears all validation errors. */
   clear(): void
 }
 
 export interface Validation<T> {
-  /** Whether the input should display its "valid" or "invalid" visual styling. */
-  validationState?: ValidationStateProp<T>,
+  /**
+   * Whether the input should display its "valid" or "invalid" visual styling.
+   * This overrides the `validate` prop, and the validation state is shown to the user immediately.
+   */
+  validationState?: ValidationState,
+  /**
+   * A function that returns an error message if a given value is invalid,
+   * or an external validation state created with `useValidationState`.
+   * Validation errors are displayed to the user when the form is submitted
+   * if `validationBehavior="native"`. For realtime validation, use `validationState`.
+   */
+  validate?: ValidationFunction<T> | ExternalValidationState<T>,
   /**
    * Whether user input is required on the input before form submission.
-   * Often paired with the `necessityIndicator` prop to add a visual indicator to the input.
+   * This may block native HTML form submission or mark the input as invalid
+   * via ARIA depending on the `validationBehavior` prop.
    */
   isRequired?: boolean,
   /**
