@@ -236,7 +236,7 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
         {...renderProps}
         ref={ref}
         slot={props.slot}
-        data-validation-state={state.validationState || undefined} /> />
+        data-validation-state={state.validationState || undefined} />
     </Provider>
   );
 }
