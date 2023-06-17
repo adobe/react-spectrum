@@ -69,6 +69,14 @@ It would also be great to expose this as `clearButtonProps` from `useTextField`,
   <TextField label="Email" />;
 ```
 
+### Supported features
+
+- Localized `aria-label`
+- Excluded from tab order `tabindex: -1`
+- Clicking the clear button moves focus to input
+- Reachable by screen reader
+- Escape key clears input as well as space/enter (when focused)
+
 <!--
    This is the bulk of the RFC.
 
