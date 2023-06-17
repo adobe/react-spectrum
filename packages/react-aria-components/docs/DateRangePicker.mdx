@@ -153,6 +153,17 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
     font-size: 12px;
     color: var(--text-color-invalid);
   }
+
+  &[data-validation-state=invalid] {
+    [slot=end]:after {
+      content: '🚫' / '';
+      content: '🚫';
+      alt: ' ';
+      flex: 1;
+      text-align: end;
+      margin-right: -2rem;
+    }
+  }
 }
 
 .react-aria-DateInput {
