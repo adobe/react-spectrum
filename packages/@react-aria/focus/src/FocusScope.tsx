@@ -382,7 +382,7 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain: boolean) {
     };
   }, [scopeRef, contain]);
 
-  // Changed useEffect to useLayoutEffect to prevent an exception with onBlur and focusFirstInScope where scope changes on an unmount
+  // Changed useEffect to useLayoutEffect so this is guaranteed to run before our async synthetic blur
   // eslint-disable-next-line arrow-body-style
   useLayoutEffect(() => {
     return () => {
