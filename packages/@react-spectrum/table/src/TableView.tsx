@@ -891,7 +891,6 @@ function ResizableTableColumnHeader(props) {
       case 'resize':
         layout.startResize(column.key);
         setIsInResizeMode(true);
-        state.setKeyboardNavigationDisabled(true);
         break;
     }
   };

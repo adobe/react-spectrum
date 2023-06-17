@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Text, TimeField, Tooltip, TooltipTrigger} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Text, TimeField, Tooltip, TooltipTrigger} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
@@ -646,14 +646,13 @@ export const TableExample = () => {
   });
 
   return (
-    <Table
-      aria-label="Example table"
-      style={{height: '210px', maxWidth: '400px'}}>
+    <div style={{width: 300, overflow: 'auto'}}>
+    <Table aria-label="Example table">
       <TableHeader>
-        <Column isRowHeader>Name</Column>
-        <Column>Type</Column>
-        <Column>Date Modified</Column>
-        <Column>Actions</Column>
+        <MyColumn isRowHeader defaultWidth="50%">Name</MyColumn>
+        <MyColumn>Type</MyColumn>
+        <MyColumn>Date Modified</MyColumn>
+        <MyColumn>Actions</MyColumn>
       </TableHeader>
       <TableBody items={list.items}>
         {item => (
@@ -706,8 +705,30 @@ export const TableExample = () => {
         )}
       </TableBody>
     </Table>
+    </div>
   );
 };
+
+function MyColumn(props) {
+  return (
+    <Column {...props}>
+      {({startResize}) => (
+        <div style={{display: 'flex'}}>
+          {/* <div tabIndex={-1} role="button" style={{flex: 1, textAlign: 'left', outline: 'none'}}>{props.children}</div> */}
+          <MenuTrigger>
+            <Button style={{flex: 1, textAlign: 'left'}}>{props.children}</Button>
+            <Popover>
+              <Menu className={styles.menu} onAction={() => startResize()}>
+                <MyItem id="resize">Resize</MyItem>
+              </Menu>
+            </Popover>
+          </MenuTrigger>
+          <ColumnResizer />
+        </div>
+      )}
+    </Column>
+  )
+}
 
 function MyItem(props) {
   return (
@@ -782,12 +803,12 @@ function Copyable() {
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      <div 
+      <div
         {...clipboardProps}
-        role="textbox" 
+        role="textbox"
         tabIndex={0}
         className={styles.copyable}>
-        Copy me 
+        Copy me
       </div>
     </FocusRing>
   );
@@ -933,16 +954,16 @@ export const DropzoneWithRenderProps = (props) => (
 );
 
 export const FileTriggerButton = (props) => (
-  <FileTrigger 
-    {...props} 
+  <FileTrigger
+    {...props}
     onChange={action('OnChange')} >
     <Button>Upload</Button>
   </FileTrigger>
 );
 
 export const FileTriggerLinkAllowsMultiple = (props) => (
-  <FileTrigger 
-    {...props} 
+  <FileTrigger
+    {...props}
     onChange={action('OnChange')}
     allowsMultiple >
     <Link>Select a file</Link>

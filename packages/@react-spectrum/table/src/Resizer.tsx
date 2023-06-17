@@ -78,8 +78,7 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
   let {inputProps, resizerProps} = useTableColumnResize<unknown>(
     mergeProps(props, {
       'aria-label': stringFormatter.format('columnResizer'),
-      isDisabled: isEmpty,
-      shouldResizeOnFocus: true
+      isDisabled: isEmpty
     }), layout, ref);
 
   let isEResizable = layout.getColumnMinWidth(column.key) >= layout.getColumnWidth(column.key);

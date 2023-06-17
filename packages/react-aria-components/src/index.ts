@@ -44,7 +44,7 @@ export {Select, SelectValue, SelectContext} from './Select';
 export {Separator, SeparatorContext} from './Separator';
 export {Slider, SliderOutput, SliderTrack, SliderThumb, SliderContext} from './Slider';
 export {Switch, SwitchContext} from './Switch';
-export {Table, Row, Cell, Column, TableHeader, TableBody, TableContext, useTableOptions} from './Table';
+export {Table, Row, Cell, Column, ColumnResizer, TableHeader, TableBody, TableContext, useTableOptions} from './Table';
 export {Tabs, TabList, TabPanel, Tab, TabsContext} from './Tabs';
 export {TagGroup, TagGroupContext, TagList, Tag} from './TagGroup';
 export {Text, TextContext} from './Text';

@@ -4,13 +4,13 @@ import {buildHeaderRows} from '@react-stately/table';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
 import {ContextValue, defaultSlot, forwardRefType, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
-import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useTableState} from 'react-stately';
+import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useTableColumnResizeState, useTableState} from 'react-stately';
 import {DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
-import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
+import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 import {TableCollection as ITableCollection, TableProps as SharedTableProps} from '@react-types/table';
-import React, {createContext, ForwardedRef, forwardRef, Key, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, Key, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 
 class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {
   headerRows: GridNode<T>[] = [];
@@ -293,6 +293,11 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
     isRootDropTarget = dropState.isDropTarget({type: 'root'});
   }
 
+  let layoutState = useTableColumnResizeState({
+    // Matches the width of the table itself
+    tableWidth: 300
+  }, state);
+
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let renderProps = useRenderProps({
     className: props.className,
@@ -317,7 +322,7 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
     <>
       <Provider
         values={[
-          [InternalTableContext, {state, dragAndDropHooks, dragState, dropState}],
+          [InternalTableContext, {state, dragAndDropHooks, dragState, dropState, layoutState}],
           [DropIndicatorContext, {render: TableDropIndicatorWrapper}]
         ]}>
         <FocusScope>
@@ -679,6 +684,8 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
   );
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
 
+  let {layoutState} = useContext(InternalTableContext)!;
+
   let props: ColumnProps<unknown> = column.props;
   let renderProps = useRenderProps({
     ...props,
@@ -691,7 +698,13 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
       allowsSorting: column.props.allowsSorting,
       sortDirection: state.sortDescriptor?.column === column.key
         ? state.sortDescriptor.direction
-        : undefined
+        : undefined,
+      startResize: () => {
+        layoutState.startResize(column.key);
+      },
+      sort: (direction) => {
+        state.sort(column.key, direction);
+      }
     }
   });
 
@@ -700,13 +713,90 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
       {...mergeProps(filterDOMProps(props as any), columnHeaderProps, focusProps)}
       {...renderProps}
       colSpan={column.colspan}
+      style={{ width: layoutState.getColumnWidth(column.key) }}
       ref={ref}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}>
-      {renderProps.children}
+      <ColumnResizerContext.Provider value={{column}}>
+        {renderProps.children}
+      </ColumnResizerContext.Provider>
     </th>
   );
 }
+
+const ColumnResizerContext = createContext(null);
+
+import ReactDOM from 'react-dom';
+function ColumnResizer(props, ref: ForwardedRef<HTMLDivElement>) {
+  let {layoutState} = useContext(InternalTableContext)!;
+  let {column} = useContext(ColumnResizerContext)!;
+  let inputRef = useRef<HTMLInputElement>(null);
+  let { resizerProps, inputProps, isResizing } = useTableColumnResize(
+    {
+      column,
+      'aria-label': 'Resizer',
+      // onResizeStart,
+      // onResize,
+      // onResizeEnd
+    },
+    layoutState,
+    inputRef
+  );
+  let {focusProps, isFocused, isFocusVisible} = useFocusRing();
+  let {hoverProps, isHovered} = useHover({});
+
+  let isEResizable = layoutState.getColumnMinWidth(column.key) >= layoutState.getColumnWidth(column.key);
+  let isWResizable = layoutState.getColumnMaxWidth(column.key) <= layoutState.getColumnWidth(column.key);
+  let {direction} = useLocale();
+  let resizableDirection = '';
+  if (isEResizable) {
+    resizableDirection = direction === 'rtl' ? 'right' : 'left';
+  } else if (isWResizable) {
+    resizableDirection = direction === 'rtl' ? 'left' : 'right';
+  } else {
+    resizableDirection = 'both';
+  }
+
+  let objectRef = useObjectRef(ref);
+  let [cursor, setCursor] = useState('');
+  useEffect(() => {
+    let style = window.getComputedStyle(objectRef.current);
+    setCursor(style.cursor);
+  }, [resizableDirection]);
+
+  let renderProps = useRenderProps({
+    ...props,
+    defaultClassName: 'react-aria-ColumnResizer',
+    values: {
+      isFocused,
+      isFocusVisible,
+      isResizing,
+      isHovered,
+      resizableDirection
+    }
+  });
+
+  return (
+    <div
+      ref={objectRef}
+      role="presentation"
+      {...renderProps}
+      {...resizerProps}
+      data-hovered={isHovered || undefined}
+      data-focused={isFocused || undefined}
+      data-focus-visible={isFocusVisible || undefined}
+      data-resizing={isResizing || undefined}
+      data-resizable-direction={resizableDirection}>
+      <input
+        ref={inputRef}
+        {...mergeProps(inputProps, focusProps, hoverProps)} />
+      {isResizing && ReactDOM.createPortal(<div style={{position: 'fixed', top: 0, left: 0, bottom: 0, right: 0, cursor}} />, document.body)}
+    </div>
+  );
+}
+
+const _ColumnResizer = forwardRef(ColumnResizer);
+export {_ColumnResizer as ColumnResizer};
 
 function TableRow<T>({item}: {item: GridNode<T>}) {
   let ref = useObjectRef<HTMLTableRowElement>(item.props.ref);

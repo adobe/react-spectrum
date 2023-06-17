@@ -87,6 +87,7 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
 
   let startResize = useCallback((key: Key) => {
     setResizingColumn(key);
+    state.setKeyboardNavigationDisabled(true);
   }, [setResizingColumn]);
 
   let updateResizedColumns = useCallback((key: Key, width: number): Map<Key, ColumnSize> => {
@@ -101,6 +102,7 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
 
   let endResize = useCallback(() => {
     setResizingColumn(null);
+    state.setKeyboardNavigationDisabled(false);
   }, [setResizingColumn]);
 
   useMemo(() =>

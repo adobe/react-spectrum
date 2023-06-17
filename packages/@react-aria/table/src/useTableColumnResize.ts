@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ChangeEvent, Key, RefObject, useCallback, useRef} from 'react';
+import {ChangeEvent, Key, RefObject, useCallback, useEffect, useRef} from 'react';
 import {DOMAttributes, FocusableElement} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
 import {focusWithoutScrolling, mergeProps, useDescription, useId} from '@react-aria/utils';
@@ -53,7 +53,7 @@ export interface AriaTableColumnResizeProps<T> {
   onResizeEnd?: (widths: Map<Key, number | string>) => void
 }
 
-export interface AriaTableColumnResizeState<T> extends Omit<TableColumnResizeState<T>, 'widths'> {}
+// export interface AriaTableColumnResizeState<T> extends Omit<TableColumnResizeState<T>, 'widths'> {}
 
 /**
  * Provides the behavior and accessibility implementation for a table column resizer element.
@@ -61,7 +61,7 @@ export interface AriaTableColumnResizeState<T> extends Omit<TableColumnResizeSta
  * @param state - State for the table's resizable columns, as returned by `useTableColumnResizeState`.
  * @param ref - The ref attached to the resizer's visually hidden input element.
  */
-export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, state: AriaTableColumnResizeState<T>, ref: RefObject<HTMLInputElement>): TableColumnResizeAria {
+export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, state: TableColumnResizeState<T>, ref: RefObject<HTMLInputElement>): TableColumnResizeAria {
   let {column: item, triggerRef, isDisabled, onResizeStart, onResize, onResizeEnd, 'aria-label': ariaLabel} = props;
   const stringFormatter = useLocalizedStringFormatter(intlMessages);
   let id = useId();
@@ -82,7 +82,6 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
             focusSafely(triggerRef.current);
           } else {
             endResize(item);
-            state.tableState.setKeyboardNavigationDisabled(false);
           }
         }
       } else if (!resizeOnFocus) {
@@ -91,7 +90,6 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
 
         if (e.key === 'Enter') {
           startResize(item);
-          state.tableState.setKeyboardNavigationDisabled(true);
         }
       }
     }
@@ -195,6 +193,34 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
     }
   }, [ref]);
 
+  let resizingColumn = state.resizingColumn;
+  let prevResizingColumn = useRef(null);
+  let timeout = useRef(null);
+  useEffect(() => {
+    if (prevResizingColumn.current !== resizingColumn && resizingColumn != null && resizingColumn === item.key) {
+      if (timeout.current) {
+        clearTimeout(timeout.current);
+      }
+      // focusSafely won't actually focus because the focus moves from the menuitem to the body during the after transition wait
+      // without the immediate timeout, Android Chrome doesn't move focus to the resizer
+      let focusResizer = () => {
+        focusInput();
+        timeout.current = null;
+      };
+      // if (isMobile) {
+      //   timeout.current = setTimeout(focusResizer, 400);
+      //   return;
+      // }
+      timeout.current = setTimeout(focusResizer, 40);
+    }
+    prevResizingColumn.current = resizingColumn;
+  }, [resizingColumn, item.key, focusInput]);
+
+  // eslint-disable-next-line arrow-body-style
+  useEffect(() => {
+    return () => clearTimeout(timeout.current);
+  }, []);
+
   let onChange = (e: ChangeEvent<HTMLInputElement>) => {
     let currentWidth = state.getColumnWidth(item.key);
     let nextValue = parseFloat(e.target.value);
@@ -256,12 +282,10 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
             // useMove calls onMoveStart for every keypress, but we want resize start to only be called when we start resize mode
             // call instead during focus and blur
             startResize(item);
-            state.tableState.setKeyboardNavigationDisabled(true);
           }
         },
         onBlur: () => {
           endResize(item);
-          state.tableState.setKeyboardNavigationDisabled(false);
         },
         onChange,
         disabled: isDisabled
