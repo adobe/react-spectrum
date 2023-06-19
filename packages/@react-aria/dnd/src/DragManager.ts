@@ -481,7 +481,6 @@ class DragSession {
       }
     }
 
-
     if (item !== this.currentDropItem) {
       if (item && typeof this.currentDropTarget.onDropTargetEnter === 'function') {
         this.currentDropTarget.onDropTargetEnter(item?.target);
@@ -490,7 +489,7 @@ class DragSession {
       item?.element.focus();
       this.currentDropItem = item;
 
-      // Annouce first drop target after drag start announcement finishes.
+      // Announce first drop target after drag start announcement finishes.
       // Otherwise, it will never get announced because drag start announcement is assertive.
       if (!this.initialFocused) {
         announce(item?.element.getAttribute('aria-label'), 'polite');

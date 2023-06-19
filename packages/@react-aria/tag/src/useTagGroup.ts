@@ -54,7 +54,7 @@ export const hookData = new WeakMap<ListState<any>, HookData>();
 
 /**
  * Provides the behavior and accessibility implementation for a tag group component.
- * A tag group is a focusable list of labels, categories, keywords, or other items, with support for keyboard navigation and removal.
+ * A tag group is a focusable list of labels, categories, keywords, filters, or other items, with support for keyboard navigation, selection, and removal.
  * @param props - Props to be applied to the tag group.
  * @param state - State for the tag group, as returned by `useListState`.
  * @param ref - A ref to a DOM element for the tag group.
@@ -68,7 +68,10 @@ export function useTagGroup<T>(props: AriaTagGroupOptions<T>, state: ListState<T
     direction,
     disabledKeys: state.disabledKeys
   });
-  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField(props);
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
+    ...props,
+    labelElementType: 'span'
+  });
   let {gridProps} = useGridList({
     ...props,
     ...fieldProps,
