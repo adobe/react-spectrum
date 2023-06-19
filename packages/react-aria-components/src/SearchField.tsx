@@ -20,7 +20,11 @@ import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {SearchFieldState, useSearchFieldState} from 'react-stately';
 import {TextContext} from './Text';
 
-export interface SearchFieldRenderProps extends Omit<SearchFieldState, 'setValue'> {
+export interface SearchFieldRenderProps {
+  /**
+   * The current value of the search field.
+   */
+  value: string,
   /**
    * Whether the search field is empty.
    * @selector [data-empty]
