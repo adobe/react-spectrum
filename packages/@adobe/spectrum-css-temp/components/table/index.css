@@ -240,6 +240,7 @@ svg.spectrum-Table-sortedIcon {
 }
 
 .spectrum-Table-cellContents {
+  grid-area: contents;
   flex: 1 1 0%;
   /* To ensure the flex child only takes up available width, see https://makandracards.com/makandra/66994-css-flex-and-min-width */
   min-width: 0px;
@@ -255,7 +256,10 @@ svg.spectrum-Table-sortedIcon {
 }
 
 .spectrum-Table-expandButton {
-  padding: calc(calc(var(--spectrum-global-dimension-size-400) - var(--spectrum-icon-chevron-down-medium-width)) / 2);
+  grid-area: expand-button;
+  padding: var(--spectrum-global-dimension-size-50) var(--spectrum-global-dimension-size-100);
+  display: flex;
+  justify-content: center;
 }
 
 .spectrum-Table-cell--hideHeader {

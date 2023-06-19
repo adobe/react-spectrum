@@ -1443,11 +1443,29 @@ function TableCell({cell, scale}) {
               {
                 'react-spectrum-Table-cell--alignStart': columnProps.align === 'start',
                 'react-spectrum-Table-cell--alignCenter': columnProps.align === 'center',
-                'react-spectrum-Table-cell--alignEnd': columnProps.align === 'end'
+                'react-spectrum-Table-cell--alignEnd': columnProps.align === 'end',
+                'react-spectrum-Table-cell--hasExpandCollapseButton': showExpandCollapseButton
               }
             )
           )
         }>
+        {showExpandCollapseButton &&
+        // TODO: Since the chevron is part of the row header, the "Collapse"/"Expand" is included in the row announcement and the cell announcement which is kinda confusing...
+        // We also want to make it skipped by the keyboard
+        <span
+          {...buttonProps}
+          ref={expandButtonRef}
+          // Override tabindex so that grid keyboard nav skips over it. Needs -1 so android talkback can actually "focus" it
+          // TODO: For Talkback perhaps can make the chevron completely unfocusable by making tabIndex =-1 if cellAction is undefined by user and thus pressing on the chevron cell will expand the row?
+          tabIndex={isAndroid() ? -1 : undefined}
+          className={
+            classNames(
+              styles,
+              'spectrum-Table-expandButton'
+            )
+          }>
+          {isExpanded ? <ChevronDownMedium /> : <ChevronRightMedium />}
+        </span>}
         <span
           className={
             classNames(
@@ -1455,23 +1473,6 @@ function TableCell({cell, scale}) {
               'spectrum-Table-cellContents'
             )
           }>
-          {showExpandCollapseButton &&
-            // TODO: Since the chevron is part of the row header, the "Collapse"/"Expand" is included in the row announcement and the cell announcement which is kinda confusing...
-            // We also want to make it skipped by the keyboard
-            <span
-              {...buttonProps}
-              ref={expandButtonRef}
-              // Override tabindex so that grid keyboard nav skips over it. Needs -1 so android talkback can actually "focus" it
-              // TODO: For Talkback perhaps can make the chevron completely unfocusable by making tabIndex =-1 if cellAction is undefined by user and thus pressing on the chevron cell will expand the row?
-              tabIndex={isAndroid() ? -1 : undefined}
-              className={
-                classNames(
-                  styles,
-                  'spectrum-Table-expandButton'
-                )
-              }>
-              {isExpanded ? <ChevronDownMedium /> : <ChevronRightMedium />}
-            </span>}
           {cell.rendered}
         </span>
       </div>
