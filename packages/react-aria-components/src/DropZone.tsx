@@ -52,9 +52,12 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   let {hoverProps, isHovered} = useHover({});
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let [fileTriggerRef] = useSlot(); 
-  
+
   let textId = useId();
   let labelProps = useLabels({'aria-labelledby': textId});
+  
+  let divId = useId();
+  let divProps = useLabels({'aria-labelledby': divId});
 
   let {clipboardProps} = useClipboard({
     onPaste: (items) => props.onDrop?.({
@@ -82,9 +85,10 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
       ]}>
       {/* eslint-disable-next-line */}
       <div
-        {...mergeProps(dropProps, hoverProps, DOMProps)} 
+        {...mergeProps(dropProps, hoverProps, DOMProps, divProps)} 
         {...renderProps}
         slot={props.slot}
+        id={divId}
         onClick={() => buttonRef.current?.focus()}
         data-hovered={isHovered || undefined}
         data-focused={isFocused || undefined}
@@ -93,7 +97,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
         <VisuallyHidden>
           <button
             {...mergeProps(dropButtonProps, focusProps, clipboardProps, labelProps)}
-            aria-label="DropZone" // will need to update with string formatter
+            // aria-label="DropZone" // will need to update with string formatter
             ref={buttonRef} />   
         </VisuallyHidden>
         {renderProps.children}
