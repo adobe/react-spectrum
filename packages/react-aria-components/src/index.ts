@@ -46,6 +46,7 @@ export {Slider, SliderOutput, SliderTrack, SliderThumb, SliderContext} from './S
 export {Switch, SwitchContext} from './Switch';
 export {Table, Row, Cell, Column, TableHeader, TableBody, TableContext, useTableOptions} from './Table';
 export {Tabs, TabList, TabPanel, Tab, TabsContext} from './Tabs';
+export {TagGroup, TagGroupContext, TagList, Tag} from './TagGroup';
 export {Text, TextContext} from './Text';
 export {TextField, TextFieldContext} from './TextField';
 export {ToggleButton, ToggleButtonContext} from './ToggleButton';
@@ -85,6 +86,7 @@ export type {SliderOutputProps, SliderProps, SliderRenderProps, SliderThumbProps
 export type {SwitchProps, SwitchRenderProps} from './Switch';
 export type {TableProps, TableRenderProps, TableHeaderProps, TableBodyProps, ColumnProps, ColumnRenderProps, RowProps, RowRenderProps, CellProps, CellRenderProps} from './Table';
 export type {TabListProps, TabListRenderProps, TabPanelProps, TabPanelRenderProps, TabProps, TabsProps, TabRenderProps, TabsRenderProps} from './Tabs';
+export type {TagGroupProps, TagListProps, TagListRenderProps, TagProps, TagRenderProps} from './TagGroup';
 export type {TextFieldProps} from './TextField';
 export type {TextProps} from './Text';
 export type {ToggleButtonProps, ToggleButtonRenderProps} from './ToggleButton';
