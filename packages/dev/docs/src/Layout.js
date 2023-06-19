@@ -109,7 +109,7 @@ function isBlogSection(section) {
   return section === 'blog' || section === 'releases';
 }
 
-function Page({children, currentPage, publicUrl, styles, scripts}) {
+function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
   let parts = currentPage.name.split('/');
   let isBlog = isBlogSection(parts[0]);
   let isSubpage = parts.length > 1 && !INDEX_RE.test(currentPage.name);
@@ -198,6 +198,7 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
         <meta property="og:image" content={heroUrl} />
         <meta property="og:description" content={description} />
         <meta property="og:locale" content="en_US" />
+        <meta data-github-src={pathToPage} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{__html: JSON.stringify(
@@ -365,7 +366,6 @@ function Nav({currentPageName, pages}) {
       </li>
     );
   }
-
   let isActive = (pageMap) => {
     for (let key in pageMap) {
       if (pageMap[key].some(p => p.name === currentPageName)) {
@@ -482,11 +482,11 @@ function Footer() {
     </footer>
   );
 }
-
 export const PageContext = React.createContext();
 export function BaseLayout({scripts, styles, pages, currentPage, publicUrl, children, toc}) {
+  let pathToPage = currentPage.filePath.substring(currentPage.filePath.indexOf('packages/'), currentPage.filePath.length);
   return (
-    <Page scripts={scripts} styles={styles} publicUrl={publicUrl} currentPage={currentPage}>
+    <Page scripts={scripts} styles={styles} publicUrl={publicUrl} currentPage={currentPage} pathToPage={pathToPage}>
       <div style={{isolation: 'isolate'}}>
         <header className={docStyles.pageHeader} />
         <Nav currentPageName={currentPage.name} pages={pages} />
@@ -503,6 +503,7 @@ export function BaseLayout({scripts, styles, pages, currentPage, publicUrl, chil
             </ImageContext.Provider>
           </MDXProvider>
           {toc.length ? <ToC toc={toc} /> : null}
+          {!pathToPage.includes('index.mdx') && <div id="edit-page" className={docStyles.editPageContainer} />}
           <Footer />
         </main>
       </div>
