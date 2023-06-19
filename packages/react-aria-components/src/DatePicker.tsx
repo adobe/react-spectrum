@@ -233,7 +233,16 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
           }
         }]
       ]}>
-      <div {...mergeProps(focusProps, hoverProps)} {...DOMProps} {...renderProps} ref={ref} slot={props.slot} />
+      <div
+        {...mergeProps(focusProps, hoverProps)}
+        {...DOMProps}
+        {...renderProps}
+        ref={ref}
+        slot={props.slot}
+        data-validation-state={state.validationState || undefined}
+        data-hovered={isHovered || undefined}
+        data-focus-visible={isFocusVisible || undefined}
+        data-disabled={props.isDisabled || undefined} />
     </Provider>
   );
 }
