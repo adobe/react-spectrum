@@ -135,7 +135,10 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
         {...renderProps}
         ref={ref}
         slot={props.slot}
-        data-validation-state={state.validationState || undefined} />
+        data-validation-state={state.validationState || undefined}
+        data-hovered={isHovered || undefined}
+        data-focus-visible={isFocusVisible || undefined}
+        data-disabled={props.isDisabled || undefined} />
     </Provider>
   );
 }
