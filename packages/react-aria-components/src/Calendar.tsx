@@ -112,7 +112,6 @@ function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRe
       {...calendarProps}
       ref={ref}
       slot={props.slot}
-      data-focus-within={isFocused || undefined}
       data-focus-visible={isFocused || undefined}
       data-disabled={props.isDisabled || undefined}
       data-hovered={isHovered || undefined}
@@ -200,7 +199,6 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: F
       {...calendarProps}
       ref={ref}
       slot={props.slot}
-      data-focus-within={isFocused || undefined}
       data-focus-visible={isFocused || undefined}
       data-disabled={props.isDisabled || undefined}
       data-hovered={isHovered || undefined}

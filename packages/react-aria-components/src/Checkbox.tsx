@@ -156,8 +156,7 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivEleme
       data-validation-state={state.validationState || undefined}
       data-hovered={isHovered || undefined}
       data-disabled={props.isDisabled || undefined}
-      data-focus-visible={isFocusVisible || undefined}
-      data-focus-within={isFocused || undefined}>
+      data-focus-visible={isFocusVisible || undefined}>
       <Provider
         values={[
           [InternalCheckboxGroupContext, state],
