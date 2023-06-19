@@ -15,6 +15,7 @@ import {getChildNodes} from '@react-stately/collections';
 import {getRowLabelledBy} from './utils';
 import {GridRowAria, GridRowProps, useGridRow} from '@react-aria/grid';
 import {HTMLAttributes, RefObject} from 'react';
+import {mergeProps} from '@react-aria/utils';
 import {TableCollection} from '@react-types/table';
 import {TableState, TreeGridState} from '@react-stately/table';
 import {useLocale} from '@react-aria/i18n';
@@ -71,8 +72,7 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
 
   return {
     rowProps: {
-      ...rowProps,
-      ...treeGridRowProps,
+      ...mergeProps(rowProps, treeGridRowProps),
       'aria-labelledby': getRowLabelledBy(state, node.key)
     },
     ...states

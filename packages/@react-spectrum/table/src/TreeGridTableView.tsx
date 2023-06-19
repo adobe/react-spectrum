@@ -123,10 +123,7 @@ interface TableContextValue<T> {
   onResize: (widths: Map<Key, ColumnSize>) => void,
   onResizeEnd: (widths: Map<Key, ColumnSize>) => void,
   headerMenuOpen: boolean,
-  setHeaderMenuOpen: (val: boolean) => void,
-  isFirstRowHeader: (key: Key) => boolean,
-  isRowExpandable: (key: Key) => boolean,
-  toggleRowExpansion: (key: Key) => void
+  setHeaderMenuOpen: (val: boolean) => void
 }
 
 const TableContext = React.createContext<TableContextValue<unknown>>(null);
@@ -324,21 +321,11 @@ function TableView<T extends object>(props: SpectrumTreeGridProps<T>, ref: DOMRe
     isRootDropTarget = dropState.isDropTarget({type: 'root'});
   }
 
-  let isFirstRowHeader = (key) => state.collection.rowHeaderColumnKeys.keys().next().value === key;
-  let isRowExpandable = (key) => state.collection.getItem(key)?.props.childItems?.length > 0 || state.collection.getItem(key)?.props.children.length > state.collection.columnCount;
-  let toggleRowExpansion = (key) => {
-    let cell = state.collection.getItem(key);
-    cell && isFirstRowHeader(cell.column.key) && isRowExpandable(cell.parentKey) && state.toggleKey(cell.parentKey);
-  };
-
   let {gridProps} = useTable({
     ...props,
     isVirtualized: true,
     layout,
-    onRowAction: onAction,
-    // TODO: Note: only do this if there isn't a cell action, cell action not currently supported in tableview but note this for the future
-    // TODO: this seems to interfere with row actions, investigate
-    onCellAction: toggleRowExpansion
+    onRowAction: onAction
   }, state, domRef);
   let [headerMenuOpen, setHeaderMenuOpen] = useState(false);
   let [headerRowHovered, setHeaderRowHovered] = useState(false);
@@ -551,7 +538,7 @@ function TableView<T extends object>(props: SpectrumTreeGridProps<T>, ref: DOMRe
   );
 
   return (
-    <TableContext.Provider value={{state, dragState, dropState, dragAndDropHooks, isTableDraggable, isTableDroppable, layout, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, headerMenuOpen, setHeaderMenuOpen, shouldShowCheckboxes, isFirstRowHeader, isRowExpandable, toggleRowExpansion}}>
+    <TableContext.Provider value={{state, dragState, dropState, dragAndDropHooks, isTableDraggable, isTableDroppable, layout, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, headerMenuOpen, setHeaderMenuOpen, shouldShowCheckboxes}}>
       <TableVirtualizer
         {...mergedProps}
         {...styleProps}
@@ -1409,7 +1396,7 @@ function TableCheckboxCell({cell}) {
 }
 
 function TableCell({cell, scale}) {
-  let {state, isFirstRowHeader, isRowExpandable, toggleRowExpansion} = useTableContext();
+  let {state} = useTableContext();
   let ref = useRef();
   let expandButtonRef = useRef();
   let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
@@ -1418,8 +1405,9 @@ function TableCell({cell, scale}) {
     node: cell,
     isVirtualized: true
   }, state, ref);
-  let isFirstRowHeaderCell = isFirstRowHeader(cell.column.key);
-  let showExpandCollapseButton = isFirstRowHeaderCell && isRowExpandable(cell.parentKey);
+  let isFirstRowHeaderCell = state.collection.rowHeaderColumnKeys.keys().next().value === cell.column.key;
+  let isRowExpandable = state.collection.getItem(cell.parentKey)?.props.childItems?.length > 0 || state.collection.getItem(cell.parentKey)?.props.children.length > state.collection.columnCount;
+  let showExpandCollapseButton = isFirstRowHeaderCell && isRowExpandable;
   let isExpanded = showExpandCollapseButton && (state.expandedKeys === 'all' || state.expandedKeys.has(cell.parentKey));
   // Offset based on level, and add additional offset if there is no expand/collapse button on a row
   let levelOffset = (cell.level - 2) * LEVEL_OFFSET_WIDTH[scale] + (!showExpandCollapseButton ? LEVEL_OFFSET_WIDTH[scale] * 2 : 0);
@@ -1428,7 +1416,7 @@ function TableCell({cell, scale}) {
   // Will need to keep the chevron as a button for iOS VO at all times since VO doesn't focus the cell. Also keep as button if cellAction is defined by the user in the future
   let {buttonProps} = useButton({
     // Desktop and mobile both toggle expansion of a native expandable row on mouse/touch up
-    onPress: () => toggleRowExpansion(cell.key),
+    onPress: () => showExpandCollapseButton && state.toggleKey(cell.parentKey),
     elementType: 'span',
     // TODO: will need translations.
     'aria-label': isExpanded ? 'Collapse' : 'Expand'
