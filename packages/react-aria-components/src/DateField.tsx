@@ -27,7 +27,27 @@ export interface DateFieldRenderProps {
    * Validation state of the date field.
    * @selector [data-validation-state]
    */
-  validationState: ValidationState
+  validationState: ValidationState,
+  /**
+   * Whether the date field is currently hovered with a mouse.
+   * @selector [data-hovered]
+   */
+  isHovered: boolean,
+  /**
+   * Whether the date field is focused, either via a mouse or keyboard.
+   * @selector [data-focused]
+   */
+  isFocused: boolean,
+  /**
+   * Whether the date field is keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
+   * Whether the date field is disabled.
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean
 }
 export interface DateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateFieldRenderProps>, SlotProps {}
 export interface TimeFieldProps<T extends TimeValue> extends Omit<AriaTimeFieldProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateFieldRenderProps>, SlotProps {}
@@ -52,13 +72,19 @@ function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: Forwarded
 
   let fieldRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot();
+  let {hoverProps, isHovered} = useHover(props);
+  let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useDateField({...props, label}, state, fieldRef);
 
   let renderProps = useRenderProps({
     ...props,
     values: {
       state,
-      validationState: state.validationState
+      validationState: state.validationState,
+      isHovered,
+      isFocused,
+      isFocusVisible,
+      isDisabled: state.isDisabled
     },
     defaultClassName: 'react-aria-DateField'
   });
@@ -78,7 +104,7 @@ function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: Forwarded
           }
         }]
       ]}>
-      <div {...DOMProps} {...renderProps} ref={ref} slot={props.slot} data-validation-date={state.validationState || undefined} />
+      <div {...mergeProps(hoverProps, focusProps)} {...DOMProps} {...renderProps} ref={ref} slot={props.slot} data-validation-date={state.validationState || undefined} />
     </Provider>
   );
 }
@@ -100,13 +126,19 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
 
   let fieldRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot();
+  let {hoverProps, isHovered} = useHover(props);
+  let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useTimeField({...props, label}, state, fieldRef);
 
   let renderProps = useRenderProps({
     ...props,
     values: {
       state,
-      validationState: state.validationState
+      validationState: state.validationState,
+      isHovered,
+      isFocused,
+      isFocusVisible,
+      isDisabled: state.isDisabled
     },
     defaultClassName: 'react-aria-TimeField'
   });
@@ -126,7 +158,7 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
           }
         }]
       ]}>
-      <div {...DOMProps} {...renderProps} ref={ref} slot={props.slot} data-validation-date={state.validationState || undefined} />
+      <div {...mergeProps(hoverProps, focusProps)} {...DOMProps} {...renderProps} ref={ref} slot={props.slot} data-validation-date={state.validationState || undefined} />
     </Provider>
   );
 }
