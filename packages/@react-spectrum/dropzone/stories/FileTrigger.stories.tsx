@@ -9,4 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export * from './src';
+
+import {ComponentStoryObj} from '@storybook/react';
+import {FileTrigger} from 'react-aria-components';
+
+export type FileTriggerStory = ComponentStoryObj<typeof FileTrigger>;
