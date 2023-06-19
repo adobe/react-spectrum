@@ -1411,7 +1411,6 @@ function TableCell({cell, scale}) {
   let isExpanded = showExpandCollapseButton && (state.expandedKeys === 'all' || state.expandedKeys.has(cell.parentKey));
   // Offset based on level, and add additional offset if there is no expand/collapse button on a row
   let levelOffset = (cell.level - 2) * LEVEL_OFFSET_WIDTH[scale] + (!showExpandCollapseButton ? LEVEL_OFFSET_WIDTH[scale] * 2 : 0);
-
   // TODO: move some/all of the chevron button setup into a separate hook?
   // Will need to keep the chevron as a button for iOS VO at all times since VO doesn't focus the cell. Also keep as button if cellAction is defined by the user in the future
   let {buttonProps} = useButton({
@@ -1422,10 +1421,12 @@ function TableCell({cell, scale}) {
     'aria-label': isExpanded ? 'Collapse' : 'Expand'
   }, expandButtonRef);
 
+  // TODO: Extract the row header id so it is on the cell contents span instead. This way the row's announcement won't include the chevron's label.
+  let {id, ...otherGridCellProps} = gridCellProps;
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
-        {...gridCellProps}
+        {...otherGridCellProps}
         ref={ref}
         style={isFirstRowHeaderCell ? {paddingInlineStart: levelOffset} : {}}
         className={
@@ -1467,6 +1468,7 @@ function TableCell({cell, scale}) {
           {isExpanded ? <ChevronDownMedium /> : <ChevronRightMedium />}
         </span>}
         <span
+          id={id}
           className={
             classNames(
               styles,
