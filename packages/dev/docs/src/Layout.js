@@ -507,7 +507,7 @@ export function BaseLayout({scripts, styles, pages, currentPage, publicUrl, chil
             pathToPage.includes('index.mdx') ||
             pathToPage.includes('/blog/') ||
             pathToPage.includes('/releases/') ||
-            pathToPage.includes('react-aria-components.html')
+            pathToPage.includes('react-aria-components.mdx')
           ) && <div id="edit-page" className={docStyles.editPageContainer} />}
           <Footer />
         </main>
