@@ -51,10 +51,6 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   let {dropProps, dropButtonProps, isDropTarget} = useDrop({...props, ref: buttonRef, hasDropButton: true});
   let {hoverProps, isHovered} = useHover({});
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
-
-  // about adding VO stuff to dropzone, we are able to read out the contents of the dropzone if they provide a <Text> 
-  // and say that there is not content in the dropzone, what will we read in that case? i think we'll need some default anyway
-  // and i guess that begs the question of whether we want to include a TextContext anyway? 
   
   let textId = useId();
   let labelProps = useLabels({'aria-labelledby': textId});
