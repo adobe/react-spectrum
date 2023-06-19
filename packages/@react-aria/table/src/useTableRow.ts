@@ -50,7 +50,7 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
 
   let treeGridRowProps: HTMLAttributes<HTMLElement> = {};
   if ('expandedKeys' in state && state.collection.getItem(node.key)) {
-    let hasChildRows = node.props.childItems || node.props.children.length > state.collection.columnCount;
+    let hasChildRows = node.props?.childItems || node.props?.children?.length > state.collection.userColumnCount;
     treeGridRowProps = {
       onKeyDown: (e) => {
         if ((e.key === EXPANSION_KEYS['expand'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && state.expandedKeys !== 'all' && !state.expandedKeys.has(node.key)) {

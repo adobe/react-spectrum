@@ -1406,7 +1406,7 @@ function TableCell({cell, scale}) {
     isVirtualized: true
   }, state, ref);
   let isFirstRowHeaderCell = state.collection.rowHeaderColumnKeys.keys().next().value === cell.column.key;
-  let isRowExpandable = state.collection.getItem(cell.parentKey)?.props.childItems?.length > 0 || state.collection.getItem(cell.parentKey)?.props.children.length > state.collection.columnCount;
+  let isRowExpandable = state.collection.getItem(cell.parentKey)?.props.childItems?.length > 0 || state.collection.getItem(cell.parentKey)?.props?.children?.length > state.collection.userColumnCount;
   let showExpandCollapseButton = isFirstRowHeaderCell && isRowExpandable;
   let isExpanded = showExpandCollapseButton && (state.expandedKeys === 'all' || state.expandedKeys.has(cell.parentKey));
   // Offset based on level, and add additional offset if there is no expand/collapse button on a row

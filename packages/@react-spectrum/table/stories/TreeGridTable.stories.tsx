@@ -84,7 +84,7 @@ function DynamicExpandableRows(props: SpectrumTableProps<unknown>) {
     <Flex direction="column">
       <ActionButton onPress={() => setExpandedKeys('all')}>Expand all</ActionButton>
       <ActionButton onPress={() => setExpandedKeys(new Set([]))}>Collapse all</ActionButton>
-      <ActionButton onPress={() => setExpandedKeys(new Set(['Lvl 1 Foo 1']))}>Expand subset</ActionButton>
+      <ActionButton onPress={() => setExpandedKeys(new Set(['Lvl 1 Foo 1']))}>Set expanded to Lvl 1 Foo 1</ActionButton>
       <TableView expandedKeys={expandedKeys} onExpandedChange={chain(setExpandedKeys, action('onExpandedChange'))} hasExpandableRows {...props}>
         <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}

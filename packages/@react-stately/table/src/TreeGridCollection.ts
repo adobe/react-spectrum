@@ -15,13 +15,18 @@ import {GridNode} from '@react-types/grid';
 import {TableCollection as ITableCollection} from '@react-types/table';
 import {Key} from 'react';
 
-
 // TODO: extend from GridCollectionOptions from TableCollection? For now this is a straight copy
 interface TreeGridCollectionOptions {
   showSelectionCheckboxes?: boolean,
   showDragButtons?: boolean,
   // TODO: grab from types
   expandedKeys: 'all' | Set<Key>
+}
+
+// TODO move to types and rename to TreeGridCollection?
+export interface ITreeGridCollection<T> extends ITableCollection<T> {
+  /** The number of user defined columns in the grid (e.g. omits selection and drag handle columns). */
+  userColumnCount: number
 }
 
 // TODO: Copied from TableCollection
@@ -35,7 +40,7 @@ while (ROW_HEADER_COLUMN_KEY === ROW_HEADER_COLUMN_KEY_DRAG) {
 // there is expandedKeys logic now in the visit (only add rows whos parent is expanded to the collection), and we need to make the index values
 // set at a individual level basis instead.
 // Discuss if we should just modify TableCollection/GridCollection to have that expandedkeys logic as well
-export class TreeGridCollection<T> implements ITableCollection<T> {
+export class TreeGridCollection<T> implements ITreeGridCollection<T> {
   headerRows: GridNode<T>[];
   columns: GridNode<T>[];
   rowHeaderColumnKeys: Set<Key>;
@@ -46,6 +51,7 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
   // since it is in the ITableCollection interface
   keyMap: Map<Key, GridNode<T>> = new Map();
   columnCount: number;
+  userColumnCount: number;
   rows: GridNode<T>[];
 
   constructor(nodes: Iterable<GridNode<T>>, opts?: TreeGridCollectionOptions) {
@@ -56,6 +62,7 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
     let body: GridNode<T>;
     let columns: GridNode<T>[] = [];
     this.rows = [];
+    this.userColumnCount = 0;
 
     // Add cell for selection checkboxes if needed.
     if (opts?.showSelectionCheckboxes) {
@@ -110,7 +117,7 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
           columnKeyMap.set(node.key, node);
           if (!node.hasChildNodes) {
             columns.push(node);
-
+            this.userColumnCount++;
             if (node.props.isRowHeader) {
               rowHeaderColumnKeys.add(node.key);
             }

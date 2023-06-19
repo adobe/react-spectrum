@@ -256,6 +256,7 @@ svg.spectrum-Table-sortedIcon {
 
 .spectrum-Table-expandButton {
   padding: calc(calc(var(--spectrum-global-dimension-size-400) - var(--spectrum-icon-chevron-down-medium-width)) / 2);
+  outline: none;
 }
 
 .spectrum-Table-cell--hideHeader {

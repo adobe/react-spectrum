@@ -12,9 +12,9 @@
 
 import {Expandable} from '@react-types/shared';
 import {TableCollection as ITableCollection} from '@react-types/table';
+import {ITreeGridCollection, TreeGridCollection} from './TreeGridCollection';
 import {Key, useCallback, useMemo} from 'react';
 import {TableState, TableStateProps, useTableState} from './useTableState';
-import {TreeGridCollection} from './TreeGridCollection';
 import {useCollection} from '@react-stately/collections';
 import {useControlledState} from '@react-stately/utils';
 
@@ -22,10 +22,13 @@ export interface TreeGridState<T> extends TableState<T> {
   /** A set of keys for items that are expanded. */
   expandedKeys: 'all' | Set<Key>,
   /** Toggles the expanded state for a row by its key. */
-  toggleKey(key: Key): void
+  toggleKey(key: Key): void,
+  collection: ITreeGridCollection<T>
 }
 
-export interface TreeGridStateProps<T> extends Expandable, TableStateProps<T> {}
+export interface TreeGridStateProps<T> extends Expandable, TableStateProps<T> {
+  collection?: ITreeGridCollection<T>
+}
 
 /**
  * Provides state management for a tree grid component. Handles building a collection
@@ -47,7 +50,7 @@ export function useTreeGridState<T extends object>(props: TreeGridStateProps<T>)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }), [props.children, showSelectionCheckboxes, selectionMode, showDragButtons]);
 
-  let collection = useCollection<T, ITableCollection<T>>(
+  let collection = useCollection<T, ITreeGridCollection<T>>(
     props,
     useCallback((nodes) => new TreeGridCollection(nodes, {...context, expandedKeys}), [context, expandedKeys]),
     context
