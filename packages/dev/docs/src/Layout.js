@@ -504,7 +504,7 @@ export function BaseLayout({scripts, styles, pages, currentPage, publicUrl, chil
           </MDXProvider>
           {toc.length ? <ToC toc={toc} /> : null}
           {!(
-            pathToPage.includes('index.mdx') || 
+            pathToPage.includes('index.mdx') ||
             pathToPage.includes('/blog/') ||
             pathToPage.includes('/releases/') ||
             pathToPage.includes('react-aria-components.html')
