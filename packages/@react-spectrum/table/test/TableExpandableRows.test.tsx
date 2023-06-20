@@ -140,9 +140,10 @@ describe('TableView with expandable rows', function () {
     expect(row).not.toHaveAttribute('aria-rowindex');
 
     let rowheader = within(row).getByRole('rowheader');
+    let cellSpan = within(rowheader).getByText('Lvl 1 Foo 1');
     expect(rowheader).toHaveTextContent('Lvl 1 Foo 1');
     expect(rowheader).toHaveAttribute('aria-colindex', '1');
-    expect(row).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(row).toHaveAttribute('aria-labelledby', cellSpan.id);
 
     let cells = within(row).getAllByRole('gridcell');
     expect(cells).toHaveLength(2);
@@ -158,9 +159,10 @@ describe('TableView with expandable rows', function () {
     expect(row).not.toHaveAttribute('aria-rowindex');
 
     rowheader = within(row).getByRole('rowheader');
+    cellSpan = within(rowheader).getByText('Lvl 2 Foo 1');
     expect(rowheader).toHaveTextContent('Lvl 2 Foo 1');
     expect(rowheader).toHaveAttribute('aria-colindex', '1');
-    expect(row).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(row).toHaveAttribute('aria-labelledby', cellSpan.id);
 
     cells = within(row).getAllByRole('gridcell');
     expect(cells).toHaveLength(2);
@@ -176,9 +178,10 @@ describe('TableView with expandable rows', function () {
     expect(row).not.toHaveAttribute('aria-rowindex');
 
     rowheader = within(row).getByRole('rowheader');
+    cellSpan = within(rowheader).getByText('Lvl 3 Foo 1');
     expect(rowheader).toHaveTextContent('Lvl 3 Foo 1');
     expect(rowheader).toHaveAttribute('aria-colindex', '1');
-    expect(row).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(row).toHaveAttribute('aria-labelledby', cellSpan.id);
 
     cells = within(row).getAllByRole('gridcell');
     expect(cells).toHaveLength(2);
@@ -194,9 +197,10 @@ describe('TableView with expandable rows', function () {
     expect(row).not.toHaveAttribute('aria-rowindex');
 
     rowheader = within(row).getByRole('rowheader');
+    cellSpan = within(rowheader).getByText('Lvl 2 Foo 2');
     expect(rowheader).toHaveTextContent('Lvl 2 Foo 2');
     expect(rowheader).toHaveAttribute('aria-colindex', '1');
-    expect(row).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(row).toHaveAttribute('aria-labelledby', cellSpan.id);
 
     cells = within(row).getAllByRole('gridcell');
     expect(cells).toHaveLength(2);
@@ -234,13 +238,14 @@ describe('TableView with expandable rows', function () {
     let row = rows[0];
 
     let rowheader = within(row).getByRole('rowheader');
+    let cellSpan = within(rowheader).getByText('Lvl 1 Foo 1');
     expect(rowheader).toHaveTextContent('Lvl 1 Foo 1');
     expect(rowheader).toHaveAttribute('aria-colindex', '2');
-    expect(row).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(row).toHaveAttribute('aria-labelledby', cellSpan.id);
 
     checkbox = within(row).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
-    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${rowheader.id}`);
+    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${cellSpan.id}`);
 
     let cells = within(row).getAllByRole('gridcell');
     expect(cells).toHaveLength(3);
@@ -251,13 +256,14 @@ describe('TableView with expandable rows', function () {
     // first child Row
     row = rows[1];
     rowheader = within(row).getByRole('rowheader');
+    cellSpan = within(rowheader).getByText('Lvl 2 Foo 1');
     expect(rowheader).toHaveTextContent('Lvl 2 Foo 1');
     expect(rowheader).toHaveAttribute('aria-colindex', '2');
-    expect(row).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(row).toHaveAttribute('aria-labelledby', cellSpan.id);
 
     checkbox = within(row).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
-    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${rowheader.id}`);
+    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${cellSpan.id}`);
 
     cells = within(row).getAllByRole('gridcell');
     expect(cells).toHaveLength(3);
@@ -268,9 +274,10 @@ describe('TableView with expandable rows', function () {
     // child of child Row
     row = rows[2];
     rowheader = within(row).getByRole('rowheader');
+    cellSpan = within(rowheader).getByText('Lvl 3 Foo 1');
     expect(rowheader).toHaveTextContent('Lvl 3 Foo 1');
     expect(rowheader).toHaveAttribute('aria-colindex', '2');
-    expect(row).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(row).toHaveAttribute('aria-labelledby', cellSpan.id);
 
     cells = within(row).getAllByRole('gridcell');
     expect(cells).toHaveLength(3);
@@ -281,9 +288,10 @@ describe('TableView with expandable rows', function () {
     // 2nd child Row of original top level row
     row = rows[3];
     rowheader = within(row).getByRole('rowheader');
+    cellSpan = within(rowheader).getByText('Lvl 2 Foo 2');
     expect(rowheader).toHaveTextContent('Lvl 2 Foo 2');
     expect(rowheader).toHaveAttribute('aria-colindex', '2');
-    expect(row).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(row).toHaveAttribute('aria-labelledby', cellSpan.id);
 
     cells = within(row).getAllByRole('gridcell');
     expect(cells).toHaveLength(3);
