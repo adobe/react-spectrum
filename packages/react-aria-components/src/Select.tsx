@@ -34,6 +34,11 @@ export interface SelectRenderProps {
    */
   isFocusVisible: boolean,
   /**
+   * Whether the select is disabled.
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean,
+  /**
    * Whether the select is currently open.
    * @selector [data-open]
    */
@@ -68,7 +73,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
   let {isFocusVisible, focusProps} = useFocusRing({within: true});
 
   // Only expose a subset of state to renderProps function to avoid infinite render loop
-  let renderPropsState = useMemo(() => ({isOpen: state.isOpen, isFocused: state.isFocused, isFocusVisible}), [isFocusVisible, state.isFocused, state.isOpen]);
+  let renderPropsState = useMemo(() => ({isOpen: state.isOpen, isFocused: state.isFocused, isFocusVisible, isDisabled: props.isDisabled}), [isFocusVisible, props.isDisabled, state.isFocused, state.isOpen]);
 
   // Get props for child elements from useSelect
   let buttonRef = useRef<HTMLButtonElement>(null);
@@ -133,7 +138,8 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
         slot={props.slot}
         data-focused={state.isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
-        data-open={state.isOpen || undefined} />
+        data-open={state.isOpen || undefined}
+        data-disabled={props.isDisabled || undefined} />
       {portal}
       <HiddenSelect
         state={state}
