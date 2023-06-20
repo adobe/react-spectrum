@@ -36,7 +36,9 @@ export interface TableCellAria {
   /** Props for the table cell element. */
   gridCellProps: DOMAttributes,
   /** Whether the cell is currently in a pressed state. */
-  isPressed: boolean
+  isPressed: boolean,
+  /** Whether the cell is currently in edit mode. */
+  isEditing: boolean
 }
 
 /**
@@ -46,7 +48,7 @@ export interface TableCellAria {
  * @param ref - The ref attached to the cell element.
  */
 export function useTableCell<T>(props: AriaTableCellProps, state: TableState<T>, ref: RefObject<FocusableElement>): TableCellAria {
-  let {gridCellProps, isPressed} = useGridCell(props, state, ref);
+  let {gridCellProps, isPressed, isEditing} = useGridCell(props, state, ref);
 
   let columnKey = props.node.column.key;
   if (state.collection.rowHeaderColumnKeys.has(columnKey)) {
@@ -56,6 +58,7 @@ export function useTableCell<T>(props: AriaTableCellProps, state: TableState<T>,
 
   return {
     gridCellProps,
-    isPressed
+    isPressed,
+    isEditing
   };
 }

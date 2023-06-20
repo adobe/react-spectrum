@@ -11,13 +11,14 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Text, TimeField, Tooltip, TooltipTrigger} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Checkbox, Collection, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Text, TimeField, Tooltip, TooltipTrigger, useTableOptions} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
 import React, {useRef, useState} from 'react';
 import styles from '../example/index.css';
 import {useListData} from 'react-stately';
+import {getLocalTimeZone, parseDate} from '@internationalized/date';
 
 export default {
   title: 'React Aria Components'
@@ -635,32 +636,33 @@ export const TabsRenderProps = () => {
   );
 };
 
-export const TableExample = () => {
+export const TableExample = (props) => {
   let list = useListData({
     initialItems: [
-      {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
-      {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
-      {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
-      {id: 4, name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
+      {id: 1, name: 'Games', date: '2020-06-07', type: 'File folder'},
+      {id: 2, name: 'Program Files', date: '2021-04-07', type: 'File folder'},
+      {id: 3, name: 'bootmgr', date: '2010-11-20', type: 'System file'},
+      {id: 4, name: 'log.txt', date: '2016-01-18', type: 'Text Document'}
     ]
   });
 
   return (
     <Table
+      {...props}
       aria-label="Example table"
-      style={{height: '210px', maxWidth: '400px'}}>
-      <TableHeader>
+      style={{width: '400px', tableLayout: 'fixed'}}>
+      <MyTableHeader>
         <Column isRowHeader>Name</Column>
         <Column>Type</Column>
         <Column>Date Modified</Column>
         <Column>Actions</Column>
-      </TableHeader>
+      </MyTableHeader>
       <TableBody items={list.items}>
         {item => (
-          <Row>
-            <Cell>{item.name}</Cell>
-            <Cell>{item.type}</Cell>
-            <Cell>{item.date}</Cell>
+          <MyRow>
+            <EditableCell value={item.name} onEdit={value => list.update(item.id, {...item, name: value})} />
+            <EditableCell value={item.type} onEdit={value => list.update(item.id, {...item, type: value})} />
+            <DateCell value={item.date} onEdit={value => list.update(item.id, {...item, date: value})} />
             <Cell>
               <DialogTrigger>
                 <Button>Delete</Button>
@@ -702,12 +704,121 @@ export const TableExample = () => {
                 </ModalOverlay>
               </DialogTrigger>
             </Cell>
-          </Row>
+          </MyRow>
         )}
       </TableBody>
     </Table>
   );
 };
+
+TableExample.args = {
+  selectionBehavior: 'toggle',
+  selectionMode: 'multiple'
+};
+
+TableExample.argTypes = {
+  selectionBehavior: {
+    control: {
+      type: 'inline-radio',
+      options: ['toggle', 'replace']
+    }
+  },
+  selectionMode: {
+    control: {
+      type: 'inline-radio',
+      options: ['none', 'single', 'multiple']
+    }
+  }
+};
+
+function MyTableHeader(props) {
+  let {selectionBehavior} = useTableOptions();
+  return (
+    <TableHeader>
+      {selectionBehavior === 'toggle' && (
+        <Column><MyCheckbox slot="selection" /></Column>
+      )}
+      {props.children}
+    </TableHeader>
+  )
+}
+
+function MyRow(props) {
+  let {selectionBehavior} = useTableOptions();
+
+  return (
+    <Row id={props.id}>
+      {selectionBehavior === 'toggle' && (
+        <Cell><MyCheckbox slot="selection" /></Cell>
+      )}
+      {props.children}
+    </Row>
+  );
+}
+
+function MyCheckbox() {
+  return (
+    <Checkbox slot="selection" style={{border: '2px solid gray', borderRadius: 4, display: 'flex', width: 16, height: 16, alignItems: 'center', justifyContent: 'center'}}>
+      {({ isIndeterminate, isSelected }) => (
+        <svg viewBox="0 0 18 18" aria-hidden="true" width={12} height={12} fill="none" stroke="currentColor" strokeWidth={3} style={{visibility: !isSelected && !isIndeterminate ? 'hidden' : 'visible'}}>
+          {isIndeterminate
+            ? <rect x={1} y={7.5} width={15} height={1} />
+            : <polyline points="1 9 7 14 15 4" />}
+        </svg>
+      )}
+    </Checkbox>
+  );
+}
+
+function EditableCell(props) {
+  return (
+    <Cell {...props} textValue={props.value} allowsEditing>
+      {({isEditing, endEditing}) => (
+        isEditing
+          ? <input defaultValue={props.value} onBlur={e => {
+            props.onEdit(e.currentTarget.value);
+          }} onKeyDown={e => {
+            if (e.key === 'Enter') {
+              props.onEdit(e.currentTarget.value);
+              endEditing();
+            }
+          }} />
+          : props.value
+      )}
+    </Cell>
+  );
+}
+
+function DateCell(props) {
+  let value = parseDate(props.value).toDate(getLocalTimeZone()).toLocaleDateString();
+  return (
+    <Cell {...props} textValue={value} allowsEditing>
+      {({isEditing, endEditing}) => (
+        isEditing
+          ? <SubmittableDateField value={props.value} onEdit={value => {
+            props.onEdit(value);
+            endEditing();
+          }} />
+          : value
+      )}
+    </Cell>
+  );
+}
+
+function SubmittableDateField(props) {
+  let [value, setValue] = React.useState(() => parseDate(props.value));
+  return (
+    <DateField value={value} onChange={setValue} onKeyDown={e => {
+      if (e.key === 'Enter') {
+        props.onEdit(value.toString());
+      }
+    }}>
+      <DateInput className={styles.field} style={{border: 'none', padding: '2px 0'}}>
+        {segment => <DateSegment segment={segment} style={{lineHeight: '1em'}} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
+      </DateInput>
+    </DateField>
+  );
+}
 
 function MyItem(props) {
   return (
@@ -782,12 +893,12 @@ function Copyable() {
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      <div 
+      <div
         {...clipboardProps}
-        role="textbox" 
+        role="textbox"
         tabIndex={0}
         className={styles.copyable}>
-        Copy me 
+        Copy me
       </div>
     </FocusRing>
   );
@@ -933,16 +1044,16 @@ export const DropzoneWithRenderProps = (props) => (
 );
 
 export const FileTriggerButton = (props) => (
-  <FileTrigger 
-    {...props} 
+  <FileTrigger
+    {...props}
     onChange={action('OnChange')} >
     <Button>Upload</Button>
   </FileTrigger>
 );
 
 export const FileTriggerLinkAllowsMultiple = (props) => (
-  <FileTrigger 
-    {...props} 
+  <FileTrigger
+    {...props}
     onChange={action('OnChange')}
     allowsMultiple >
     <Link>Select a file</Link>

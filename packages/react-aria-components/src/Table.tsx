@@ -538,7 +538,12 @@ export interface CellRenderProps {
    * Whether the cell is currently keyboard focused.
    * @selector [data-focus-visible]
    */
-  isFocusVisible: boolean
+  isFocusVisible: boolean,
+  /**
+   * Whether the cell is currently in edit mode.
+   * @selector [data-editing]
+   */
+  isEditing: boolean
 }
 
 export interface CellProps extends RenderProps<CellRenderProps> {
@@ -546,7 +551,9 @@ export interface CellProps extends RenderProps<CellRenderProps> {
   /** The contents of the cell. */
   children: ReactNode,
   /** A string representation of the cell's contents, used for features like typeahead. */
-  textValue?: string
+  textValue?: string,
+  /** Whether the cell allows inline editing. */
+  allowsEditing?: boolean
 }
 
 function Cell(props: CellProps, ref: ForwardedRef<HTMLTableCellElement>): JSX.Element {
@@ -841,7 +848,7 @@ function TableCell<T>({cell}: {cell: GridNode<T>}) {
   // @ts-ignore
   cell.column = state.collection.columns[cell.index];
 
-  let {gridCellProps, isPressed} = useTableCell({
+  let {gridCellProps, isPressed, isEditing} = useTableCell({
     node: cell,
     shouldSelectOnPressUp: !!dragState
   }, state, ref);
@@ -855,7 +862,14 @@ function TableCell<T>({cell}: {cell: GridNode<T>}) {
     values: {
       isFocused,
       isFocusVisible,
-      isPressed
+      isPressed,
+      isEditing,
+      startEditing() {
+        state.startEditing(cell.key);
+      },
+      endEditing() {
+        state.endEditing();
+      }
     }
   });
 
@@ -866,7 +880,8 @@ function TableCell<T>({cell}: {cell: GridNode<T>}) {
       ref={ref}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
-      data-pressed={isPressed || undefined}>
+      data-pressed={isPressed || undefined}
+      data-editing={isEditing || undefined}>
       {renderProps.children}
     </td>
   );
