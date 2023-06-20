@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps} from '@react-types/shared';
-import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {DropOptions, mergeProps, useClipboard, useDrop, useFocusRing, useHover, useId, VisuallyHidden} from 'react-aria';
 import {FileTriggerContext} from './FileTrigger';
 import {filterDOMProps, useLabels} from '@react-aria/utils';
@@ -40,7 +40,7 @@ export interface DropZoneRenderProps {
    */
   isDropTarget: boolean
 }
-// note: possibly add isDisabled prop in the future
+
 export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint'>, RenderProps<DropZoneRenderProps>, SlotProps, AriaLabelingProps {}
 
 export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDivElement>>(null);
@@ -51,7 +51,6 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   let {dropProps, dropButtonProps, isDropTarget} = useDrop({...props, ref: buttonRef, hasDropButton: true});
   let {hoverProps, isHovered} = useHover({});
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
-  let [fileTriggerRef] = useSlot(); 
   
   let textId = useId();
   let labelProps = useLabels({'aria-labelledby': textId});
@@ -77,7 +76,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   return (
     <Provider
       values={[
-        [FileTriggerContext, {ref: fileTriggerRef}],
+        [FileTriggerContext, {}],
         [TextContext, {id: textId, slot: 'heading'}]
       ]}>
       {/* eslint-disable-next-line */}
