@@ -833,9 +833,8 @@ export const DropzoneExampleWithDraggableAndFileTrigger = (props) => (
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
       <FileTrigger onChange={action('onChange')} >
-        <Button>Browse</Button>
+        <Button>Browse</Button>Or drag into here
       </FileTrigger>
-      Or drag into here
     </DropZone>
   </div>
 );
