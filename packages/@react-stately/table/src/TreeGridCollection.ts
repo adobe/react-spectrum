@@ -15,13 +15,18 @@ import {GridNode} from '@react-types/grid';
 import {TableCollection as ITableCollection} from '@react-types/table';
 import {Key} from 'react';
 
-
 // TODO: extend from GridCollectionOptions from TableCollection? For now this is a straight copy
 interface TreeGridCollectionOptions {
   showSelectionCheckboxes?: boolean,
   showDragButtons?: boolean,
   // TODO: grab from types
   expandedKeys: 'all' | Set<Key>
+}
+
+// TODO move to types and rename to TreeGridCollection?
+export interface ITreeGridCollection<T> extends ITableCollection<T> {
+  /** The number of user defined columns in the grid (e.g. omits selection and drag handle columns). */
+  userColumnCount: number
 }
 
 // TODO: Copied from TableCollection
@@ -35,7 +40,7 @@ while (ROW_HEADER_COLUMN_KEY === ROW_HEADER_COLUMN_KEY_DRAG) {
 // there is expandedKeys logic now in the visit (only add rows whos parent is expanded to the collection), and we need to make the index values
 // set at a individual level basis instead.
 // Discuss if we should just modify TableCollection/GridCollection to have that expandedkeys logic as well
-export class TreeGridCollection<T> implements ITableCollection<T> {
+export class TreeGridCollection<T> implements ITreeGridCollection<T> {
   headerRows: GridNode<T>[];
   columns: GridNode<T>[];
   rowHeaderColumnKeys: Set<Key>;
@@ -46,6 +51,7 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
   // since it is in the ITableCollection interface
   keyMap: Map<Key, GridNode<T>> = new Map();
   columnCount: number;
+  userColumnCount: number;
   rows: GridNode<T>[];
 
   constructor(nodes: Iterable<GridNode<T>>, opts?: TreeGridCollectionOptions) {
@@ -56,6 +62,7 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
     let body: GridNode<T>;
     let columns: GridNode<T>[] = [];
     this.rows = [];
+    this.userColumnCount = 0;
 
     // Add cell for selection checkboxes if needed.
     if (opts?.showSelectionCheckboxes) {
@@ -110,7 +117,7 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
           columnKeyMap.set(node.key, node);
           if (!node.hasChildNodes) {
             columns.push(node);
-
+            this.userColumnCount++;
             if (node.props.isRowHeader) {
               rowHeaderColumnKeys.add(node.key);
             }
@@ -308,55 +315,60 @@ export class TreeGridCollection<T> implements ITableCollection<T> {
   // Maybe add a getRowBefore/getCellBefore instead?
   getKeyBefore(key: Key) {
     let node = this.keyMap.get(key);
-    if (node.type !== 'item' && node.type !== 'cell') {
-      return node ? node.prevKey : null;
-    } else if (node.type === 'cell') {
-      while (node != null) {
-        node = this.keyMap.get(node.prevKey);
-        if (node.type === 'cell') {
-          return node.key;
+    if (node) {
+      if (node.type !== 'item' && node.type !== 'cell') {
+        return node ? node.prevKey : null;
+      } else if (node.type === 'cell') {
+        while (node != null) {
+          node = this.keyMap.get(node.prevKey);
+          if (node?.type === 'cell') {
+            return node.key;
+          }
         }
+
+        return null;
+      } else if (node.type === 'item') {
+        // I think this should be fine in RAC since RAC table will have "get rows()"?
+        // alternatively if we don't want to rely on  if node type is row, order of row to return:
+        // 1. go through previous keys and return first key that is a row, skipping cell nodes (aka get previous sibling rows)
+        // 2. if has a parent row, return parent row
+        // 3. if doesn't have parent row, return previous key (make this first check)
+
+        let index = this.rows.findIndex(row => row.key === node.key);
+        return this.rows[index - 1]?.key;
       }
-
-      return null;
-    } else if (node.type === 'item') {
-      // I think this should be fine in RAC since RAC table will have "get rows()"?
-      // alternatively if we don't want to rely on  if node type is row, order of row to return:
-      // 1. go through previous keys and return first key that is a row, skipping cell nodes (aka get previous sibling rows)
-      // 2. if has a parent row, return parent row
-      // 3. if doesn't have parent row, return previous key (make this first check)
-
-      let index = this.rows.findIndex(row => row.key === node.key);
-      return this.rows[index - 1]?.key;
     }
   }
 
   getKeyAfter(key: Key) {
     let node = this.keyMap.get(key);
-
-    // if not a cell or a row just do old code
-    if (node.type !== 'item' && node.type !== 'cell') {
-      return node ? node.nextKey : null;
-    } else if (node.type === 'cell') {
-      while (node != null) {
-        node = this.keyMap.get(node.nextKey);
-        if (node.type === 'cell') {
-          return node.key;
+    if (node) {
+      // if not a cell or a row just do old code
+      if (node.type !== 'item' && node.type !== 'cell') {
+        return node ? node.nextKey : null;
+      } else if (node.type === 'cell') {
+        while (node != null) {
+          node = this.keyMap.get(node.nextKey);
+          if (node?.type === 'cell') {
+            return node.key;
+          }
         }
+
+        return null;
+      } else if (node.type === 'item') {
+        // I think this should be fine in RAC since RAC table will have "get rows()"?
+        // alternatively if we don't want to rely on  if node type is row, order of row to return:
+        // if node type is row, order of row to return:
+        // 1. if row is expanded, grab first childrow if any
+        // 2. if row is not expanded or doesn't have children, grab next sibling row (aka go through next key and skip any cells but use their nextKey)
+        // 3. if none, move one level up and find the parent's next sibling row
+
+        let index = this.rows.findIndex(row => row.key === node.key);
+        return this.rows[index + 1]?.key;
       }
-
-      return null;
-    } else if (node.type === 'item') {
-      // I think this should be fine in RAC since RAC table will have "get rows()"?
-      // alternatively if we don't want to rely on  if node type is row, order of row to return:
-      // if node type is row, order of row to return:
-      // 1. if row is expanded, grab first childrow if any
-      // 2. if row is not expanded or doesn't have children, grab next sibling row (aka go through next key and skip any cells but use their nextKey)
-      // 3. if none, move one level up and find the parent's next sibling row
-
-      let index = this.rows.findIndex(row => row.key === node.key);
-      return this.rows[index + 1]?.key;
     }
+
+    return null;
   }
 
   getFirstKey() {

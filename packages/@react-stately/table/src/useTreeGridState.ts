@@ -12,9 +12,9 @@
 
 import {Expandable} from '@react-types/shared';
 import {TableCollection as ITableCollection} from '@react-types/table';
+import {ITreeGridCollection, TreeGridCollection} from './TreeGridCollection';
 import {Key, useCallback, useMemo} from 'react';
 import {TableState, TableStateProps, useTableState} from './useTableState';
-import {TreeGridCollection} from './TreeGridCollection';
 import {useCollection} from '@react-stately/collections';
 import {useControlledState} from '@react-stately/utils';
 
@@ -22,10 +22,13 @@ export interface TreeGridState<T> extends TableState<T> {
   /** A set of keys for items that are expanded. */
   expandedKeys: 'all' | Set<Key>,
   /** Toggles the expanded state for a row by its key. */
-  toggleKey(key: Key): void
+  toggleKey(key: Key): void,
+  collection: ITreeGridCollection<T>
 }
 
-export interface TreeGridStateProps<T> extends Expandable, TableStateProps<T> {}
+export interface TreeGridStateProps<T> extends Expandable, TableStateProps<T> {
+  collection?: ITreeGridCollection<T>
+}
 
 /**
  * Provides state management for a tree grid component. Handles building a collection
@@ -47,7 +50,7 @@ export function useTreeGridState<T extends object>(props: TreeGridStateProps<T>)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }), [props.children, showSelectionCheckboxes, selectionMode, showDragButtons]);
 
-  let collection = useCollection<T, ITableCollection<T>>(
+  let collection = useCollection<T, ITreeGridCollection<T>>(
     props,
     useCallback((nodes) => new TreeGridCollection(nodes, {...context, expandedKeys}), [context, expandedKeys]),
     context
@@ -70,21 +73,21 @@ export function useTreeGridState<T extends object>(props: TreeGridStateProps<T>)
 }
 
 // TODO: copied from useTreeState, perhaps make this accept multiple keys?
-function toggleKey<T>(set: 'all' | Set<Key>, key: Key, collection: ITableCollection<T>): Set<Key> {
-  let res;
-  if (set === 'all') {
-    res = new Set(collection.rows.filter(row => row.props.hasChildItems || row.props.children.length > collection.columnCount));
-    res.delete(key);
+function toggleKey<T>(currentExpandedKeys: 'all' | Set<Key>, key: Key, collection: ITableCollection<T>): Set<Key> {
+  let updatedExpandedKeys: Set<Key>;
+  if (currentExpandedKeys === 'all') {
+    updatedExpandedKeys = new Set(collection.rows.filter(row => row.props.childItems || row.props.children.length > collection.columnCount).map(row => row.key));
+    updatedExpandedKeys.delete(key);
   } else {
-    res = new Set(set);
-    if (res.has(key)) {
-      res.delete(key);
+    updatedExpandedKeys = new Set(currentExpandedKeys);
+    if (updatedExpandedKeys.has(key)) {
+      updatedExpandedKeys.delete(key);
     } else {
-      res.add(key);
+      updatedExpandedKeys.add(key);
     }
   }
 
-  return res;
+  return updatedExpandedKeys;
 }
 
 // TODO: based off convertedSelected

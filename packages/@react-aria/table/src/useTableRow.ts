@@ -14,9 +14,22 @@ import {FocusableElement} from '@react-types/shared';
 import {getChildNodes} from '@react-stately/collections';
 import {getRowLabelledBy} from './utils';
 import {GridRowAria, GridRowProps, useGridRow} from '@react-aria/grid';
-import {RefObject} from 'react';
+import {HTMLAttributes, RefObject} from 'react';
+import {mergeProps} from '@react-aria/utils';
 import {TableCollection} from '@react-types/table';
 import {TableState, TreeGridState} from '@react-stately/table';
+import {useLocale} from '@react-aria/i18n';
+
+const EXPANSION_KEYS = {
+  expand: {
+    ltr: 'ArrowRight',
+    rtl: 'ArrowLeft'
+  },
+  'collapse': {
+    ltr: 'ArrowLeft',
+    rtl: 'ArrowRight'
+  }
+};
 
 /**
  * Provides the behavior and accessibility implementation for a row in a table.
@@ -26,6 +39,7 @@ import {TableState, TreeGridState} from '@react-stately/table';
 export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | TreeGridState<T>, ref: RefObject<FocusableElement>): GridRowAria {
   let {node, isVirtualized} = props;
   let {rowProps, ...states} = useGridRow<T, TableCollection<T>, TableState<T>>(props, state, ref);
+  let {direction} = useLocale();
 
   // To calculate the row index for nested row, can walk up the parent rows and sum the node.indexOfType
   if (isVirtualized && !('expandedKeys' in state)) {
@@ -34,10 +48,20 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
     delete rowProps['aria-rowindex'];
   }
 
-  let treeGridRowProps = {};
+  let treeGridRowProps: HTMLAttributes<HTMLElement> = {};
   if ('expandedKeys' in state && state.collection.getItem(node.key)) {
+    let hasChildRows = node.props?.childItems || node.props?.children?.length > state.collection.userColumnCount;
     treeGridRowProps = {
-      'aria-expanded': node.props.childItems || node.props.children.length > state.collection.columnCount ? state.expandedKeys === 'all' || state.expandedKeys.has(node.key) : undefined,
+      onKeyDown: (e) => {
+        if ((e.key === EXPANSION_KEYS['expand'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && state.expandedKeys !== 'all' && !state.expandedKeys.has(node.key)) {
+          state.toggleKey(node.key);
+          e.stopPropagation();
+        } else if ((e.key === EXPANSION_KEYS['collapse'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && (state.expandedKeys === 'all' || state.expandedKeys.has(node.key))) {
+          state.toggleKey(node.key);
+          e.stopPropagation();
+        }
+      },
+      'aria-expanded': hasChildRows ? state.expandedKeys === 'all' || state.expandedKeys.has(node.key) : undefined,
       'aria-level': node.level,
       'aria-posinset': node.indexOfType + 1,
       'aria-setsize': node.level > 1 ?
@@ -48,8 +72,7 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
 
   return {
     rowProps: {
-      ...rowProps,
-      ...treeGridRowProps,
+      ...mergeProps(rowProps, treeGridRowProps),
       'aria-labelledby': getRowLabelledBy(state, node.key)
     },
     ...states

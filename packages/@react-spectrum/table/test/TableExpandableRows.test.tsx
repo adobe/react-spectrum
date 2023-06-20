@@ -11,7 +11,7 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, render as renderComponent, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, render as renderComponent, triggerPress, within} from '@react-spectrum/test-utils';
 import {composeStories} from '@storybook/testing-react';
 import {enableTableNestedRows} from '@react-stately/flags';
 import {Provider} from '@react-spectrum/provider';
@@ -28,6 +28,8 @@ let {
   DynamicExpandableRowsStory: DynamicExpandableTable,
   ManyExpandableRowsStory: ManyRowsExpandableTable
 } = composeStories(stories);
+
+let onSelectionChange = jest.fn();
 
 // function pointerEvent(type, opts) {
 //   let evt = new Event(type, {bubbles: true, cancelable: true});
@@ -76,22 +78,20 @@ let rerender = (tree, children, scale = 'medium' as Scale) => {
 };
 
 describe('TableView with expandable rows', function () {
-  let offsetWidth, offsetHeight;
-
   beforeAll(function () {
     enableTableNestedRows();
-    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
-    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
+    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     jest.useFakeTimers();
   });
 
-  afterAll(function () {
-    offsetWidth.mockReset();
-    offsetHeight.mockReset();
+  afterEach(() => {
+    jest.clearAllMocks();
+    act(() => {jest.runAllTimers();});
   });
 
-  afterEach(() => {
-    act(() => {jest.runAllTimers();});
+  afterAll(function () {
+    jest.restoreAllMocks();
   });
 
   it.each`
@@ -140,9 +140,10 @@ describe('TableView with expandable rows', function () {
     expect(row).not.toHaveAttribute('aria-rowindex');
 
     let rowheader = within(row).getByRole('rowheader');
+    let cellSpan = within(rowheader).getByText('Lvl 1 Foo 1');
     expect(rowheader).toHaveTextContent('Lvl 1 Foo 1');
     expect(rowheader).toHaveAttribute('aria-colindex', '1');
-    expect(row).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(row).toHaveAttribute('aria-labelledby', cellSpan.id);
 
     let cells = within(row).getAllByRole('gridcell');
     expect(cells).toHaveLength(2);
@@ -158,9 +159,10 @@ describe('TableView with expandable rows', function () {
     expect(row).not.toHaveAttribute('aria-rowindex');
 
     rowheader = within(row).getByRole('rowheader');
+    cellSpan = within(rowheader).getByText('Lvl 2 Foo 1');
     expect(rowheader).toHaveTextContent('Lvl 2 Foo 1');
     expect(rowheader).toHaveAttribute('aria-colindex', '1');
-    expect(row).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(row).toHaveAttribute('aria-labelledby', cellSpan.id);
 
     cells = within(row).getAllByRole('gridcell');
     expect(cells).toHaveLength(2);
@@ -176,9 +178,10 @@ describe('TableView with expandable rows', function () {
     expect(row).not.toHaveAttribute('aria-rowindex');
 
     rowheader = within(row).getByRole('rowheader');
+    cellSpan = within(rowheader).getByText('Lvl 3 Foo 1');
     expect(rowheader).toHaveTextContent('Lvl 3 Foo 1');
     expect(rowheader).toHaveAttribute('aria-colindex', '1');
-    expect(row).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(row).toHaveAttribute('aria-labelledby', cellSpan.id);
 
     cells = within(row).getAllByRole('gridcell');
     expect(cells).toHaveLength(2);
@@ -194,9 +197,10 @@ describe('TableView with expandable rows', function () {
     expect(row).not.toHaveAttribute('aria-rowindex');
 
     rowheader = within(row).getByRole('rowheader');
+    cellSpan = within(rowheader).getByText('Lvl 2 Foo 2');
     expect(rowheader).toHaveTextContent('Lvl 2 Foo 2');
     expect(rowheader).toHaveAttribute('aria-colindex', '1');
-    expect(row).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(row).toHaveAttribute('aria-labelledby', cellSpan.id);
 
     cells = within(row).getAllByRole('gridcell');
     expect(cells).toHaveLength(2);
@@ -234,13 +238,14 @@ describe('TableView with expandable rows', function () {
     let row = rows[0];
 
     let rowheader = within(row).getByRole('rowheader');
+    let cellSpan = within(rowheader).getByText('Lvl 1 Foo 1');
     expect(rowheader).toHaveTextContent('Lvl 1 Foo 1');
     expect(rowheader).toHaveAttribute('aria-colindex', '2');
-    expect(row).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(row).toHaveAttribute('aria-labelledby', cellSpan.id);
 
     checkbox = within(row).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
-    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${rowheader.id}`);
+    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${cellSpan.id}`);
 
     let cells = within(row).getAllByRole('gridcell');
     expect(cells).toHaveLength(3);
@@ -251,13 +256,14 @@ describe('TableView with expandable rows', function () {
     // first child Row
     row = rows[1];
     rowheader = within(row).getByRole('rowheader');
+    cellSpan = within(rowheader).getByText('Lvl 2 Foo 1');
     expect(rowheader).toHaveTextContent('Lvl 2 Foo 1');
     expect(rowheader).toHaveAttribute('aria-colindex', '2');
-    expect(row).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(row).toHaveAttribute('aria-labelledby', cellSpan.id);
 
     checkbox = within(row).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
-    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${rowheader.id}`);
+    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${cellSpan.id}`);
 
     cells = within(row).getAllByRole('gridcell');
     expect(cells).toHaveLength(3);
@@ -268,9 +274,10 @@ describe('TableView with expandable rows', function () {
     // child of child Row
     row = rows[2];
     rowheader = within(row).getByRole('rowheader');
+    cellSpan = within(rowheader).getByText('Lvl 3 Foo 1');
     expect(rowheader).toHaveTextContent('Lvl 3 Foo 1');
     expect(rowheader).toHaveAttribute('aria-colindex', '2');
-    expect(row).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(row).toHaveAttribute('aria-labelledby', cellSpan.id);
 
     cells = within(row).getAllByRole('gridcell');
     expect(cells).toHaveLength(3);
@@ -281,9 +288,10 @@ describe('TableView with expandable rows', function () {
     // 2nd child Row of original top level row
     row = rows[3];
     rowheader = within(row).getByRole('rowheader');
+    cellSpan = within(rowheader).getByText('Lvl 2 Foo 2');
     expect(rowheader).toHaveTextContent('Lvl 2 Foo 2');
     expect(rowheader).toHaveAttribute('aria-colindex', '2');
-    expect(row).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(row).toHaveAttribute('aria-labelledby', cellSpan.id);
 
     cells = within(row).getAllByRole('gridcell');
     expect(cells).toHaveLength(3);
@@ -443,7 +451,7 @@ describe('TableView with expandable rows', function () {
 
     describe('ArrowRight', function () {
       it('should properly wrap focus with ArrowRight', function () {
-        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />);
+        let treegrid = render(<ManyRowsExpandableTable />);
         let row = treegrid.getAllByRole('row')[2];
         focusCell(treegrid, 'Row 1, Lvl 2, Foo');
         moveFocus('ArrowRight');
@@ -458,12 +466,15 @@ describe('TableView with expandable rows', function () {
       });
 
       it('should properly wrap focus with ArrowRight (RTL)', function () {
-        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />, undefined, 'ar-AE');
+        let treegrid = render(<ManyRowsExpandableTable />, undefined, 'ar-AE');
         let row = treegrid.getAllByRole('row')[2];
         focusCell(treegrid, 'Row 1, Lvl 2, Foo');
         moveFocus('ArrowRight');
         expect(document.activeElement).toBe(row);
         expect(row).toContainElement(getCell(treegrid, 'Row 1, Lvl 2, Foo'));
+        // Focus doesn't move because Arrow Right on the row will collapse it
+        moveFocus('ArrowRight');
+        expect(document.activeElement).toBe(row);
         moveFocus('ArrowRight');
         expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 2, Baz'));
         moveFocus('ArrowRight');
@@ -475,12 +486,15 @@ describe('TableView with expandable rows', function () {
 
     describe('ArrowLeft', function () {
       it('should properly wrap focus with ArrowLeft', function () {
-        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />);
+        let treegrid = render(<ManyRowsExpandableTable />);
         let row = treegrid.getAllByRole('row')[2];
         focusCell(treegrid, 'Row 1, Lvl 2, Foo');
         moveFocus('ArrowLeft');
         expect(document.activeElement).toBe(row);
         expect(row).toContainElement(getCell(treegrid, 'Row 1, Lvl 2, Foo'));
+        // Focus doesn't move because Arrow Left on the row will collapse it here
+        moveFocus('ArrowLeft');
+        expect(document.activeElement).toBe(row);
         moveFocus('ArrowLeft');
         expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 2, Baz'));
         moveFocus('ArrowLeft');
@@ -489,8 +503,8 @@ describe('TableView with expandable rows', function () {
         expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 2, Foo'));
       });
 
-      it('should properly wrap focus with ArrowRight (RTL)', function () {
-        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />, undefined, 'ar-AE');
+      it('should properly wrap focus with ArrowLeft (RTL)', function () {
+        let treegrid = render(<ManyRowsExpandableTable />, undefined, 'ar-AE');
         let row = treegrid.getAllByRole('row')[2];
         focusCell(treegrid, 'Row 1, Lvl 2, Foo');
         moveFocus('ArrowLeft');
@@ -507,6 +521,287 @@ describe('TableView with expandable rows', function () {
     // TODO add End/Home/PageUp/Down and check that it can land on a nested row
 
     // Test that type to select works with nested rows
+  });
+
+  describe('selection', function () {
+    let checkSelection = (onSelectionChange, selectedKeys) => {
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(selectedKeys));
+    };
+
+    // let checkSelectAll = (tree, state = 'indeterminate') => {
+    //   let checkbox = tree.getByLabelText('Select All');
+    //   if (state === 'indeterminate') {
+    //     expect(checkbox.indeterminate).toBe(true);
+    //   } else {
+    //     expect(checkbox.checked).toBe(state === 'checked');
+    //   }
+    // };
+
+    let checkRowSelection = (rows, selected) => {
+      for (let row of rows) {
+        expect(row).toHaveAttribute('aria-selected', '' + selected);
+      }
+    };
+
+    let pressWithKeyboard = (element, key = ' ') => {
+      fireEvent.keyDown(element, {key});
+      act(() => {element.focus();});
+      fireEvent.keyUp(element, {key});
+    };
+
+    describe('row selection', function () {
+      // TODO: highlight selection and click on row to select should still work
+    });
+
+    describe.only('range selection', function () {
+      describe('with pointer', function () {
+        it('should support selecting a range from a top level row to a nested row', function () {
+          let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={null} onAction={null} />);
+          let rowgroups = treegrid.getAllByRole('rowgroup');
+          let rows = within(rowgroups[1]).getAllByRole('row');
+
+          checkRowSelection(rows, false);
+          triggerPress(getCell(treegrid, 'Row 1, Lvl 1, Foo'));
+          onSelectionChange.mockReset();
+
+          triggerPress(getCell(treegrid, 'Row 2, Lvl 3, Foo'), {shiftKey: true});
+          checkSelection(onSelectionChange, [
+            'Row 1 Lvl 1', 'Row 1 Lvl 2', 'Row 1 Lvl 3', 'Row 2 Lvl 1', 'Row 2 Lvl 2', 'Row 2 Lvl 3'
+          ]);
+          checkRowSelection(rows.slice(0, 6), true);
+          checkRowSelection(rows.slice(6), false);
+        });
+
+        it('should support selecting a range from a nested row to a top level row', function () {
+          let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={null} onAction={null} />);
+          let rowgroups = treegrid.getAllByRole('rowgroup');
+          let rows = within(rowgroups[1]).getAllByRole('row');
+
+          checkRowSelection(rows, false);
+          triggerPress(getCell(treegrid, 'Row 2, Lvl 3, Foo'));
+          onSelectionChange.mockReset();
+
+          triggerPress(getCell(treegrid, 'Row 1, Lvl 1, Foo'), {shiftKey: true});
+          checkSelection(onSelectionChange, [
+            'Row 1 Lvl 1', 'Row 1 Lvl 2', 'Row 1 Lvl 3', 'Row 2 Lvl 1', 'Row 2 Lvl 2', 'Row 2 Lvl 3'
+          ]);
+          checkRowSelection(rows.slice(0, 6), true);
+          checkRowSelection(rows.slice(6), false);
+        });
+
+        it('should support selecting a range from a top level row to a descendent child row', function () {
+          let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={null} onAction={null} />);
+          let rowgroups = treegrid.getAllByRole('rowgroup');
+          let rows = within(rowgroups[1]).getAllByRole('row');
+
+          checkRowSelection(rows, false);
+          triggerPress(getCell(treegrid, 'Row 1, Lvl 1, Foo'));
+          onSelectionChange.mockReset();
+
+          triggerPress(getCell(treegrid, 'Row 1, Lvl 3, Foo'), {shiftKey: true});
+          checkSelection(onSelectionChange, [
+            'Row 1 Lvl 1', 'Row 1 Lvl 2', 'Row 1 Lvl 3'
+          ]);
+          checkRowSelection(rows.slice(0, 3), true);
+          checkRowSelection(rows.slice(3), false);
+        });
+
+        it('should support selecting a range from a nested child row to its top level row ancestor', function () {
+          let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={null} onAction={null} />);
+          let rowgroups = treegrid.getAllByRole('rowgroup');
+          let rows = within(rowgroups[1]).getAllByRole('row');
+
+          checkRowSelection(rows, false);
+          triggerPress(getCell(treegrid, 'Row 1, Lvl 3, Foo'));
+          onSelectionChange.mockReset();
+
+          triggerPress(getCell(treegrid, 'Row 1, Lvl 1, Foo'), {shiftKey: true});
+          checkSelection(onSelectionChange, [
+            'Row 1 Lvl 1', 'Row 1 Lvl 2', 'Row 1 Lvl 3'
+          ]);
+          checkRowSelection(rows.slice(0, 3), true);
+          checkRowSelection(rows.slice(3), false);
+        });
+
+        it('should not include disabled rows', function () {
+          let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={['Row 1 Lvl 2']} onAction={null} />);
+          let rowgroups = treegrid.getAllByRole('rowgroup');
+          let rows = within(rowgroups[1]).getAllByRole('row');
+
+          checkRowSelection(rows, false);
+          triggerPress(getCell(treegrid, 'Row 1, Lvl 1, Foo'));
+          onSelectionChange.mockReset();
+
+          triggerPress(getCell(treegrid, 'Row 2, Lvl 3, Foo'), {shiftKey: true});
+          checkSelection(onSelectionChange, [
+            'Row 1 Lvl 1', 'Row 1 Lvl 3', 'Row 2 Lvl 1', 'Row 2 Lvl 2', 'Row 2 Lvl 3'
+          ]);
+          checkRowSelection(rows.slice(0, 1), true);
+          checkRowSelection(rows.slice(1, 2), false);
+          checkRowSelection(rows.slice(2, 6), true);
+        });
+      });
+
+      describe('with keyboard', function () {
+        it('should extend a selection with Shift + ArrowDown through nested keys', function () {
+          let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={null} onAction={null} />);
+          let rowgroups = treegrid.getAllByRole('rowgroup');
+          let rows = within(rowgroups[1]).getAllByRole('row');
+
+          checkRowSelection(rows, false);
+          pressWithKeyboard(getCell(treegrid, 'Row 1, Lvl 1, Foo'));
+          onSelectionChange.mockReset();
+
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', shiftKey: true});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', shiftKey: true});
+          checkSelection(onSelectionChange, [
+            'Row 1 Lvl 1', 'Row 1 Lvl 2'
+          ]);
+
+          onSelectionChange.mockReset();
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', shiftKey: true});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', shiftKey: true});
+          checkSelection(onSelectionChange, [
+            'Row 1 Lvl 1', 'Row 1 Lvl 2', 'Row 1 Lvl 3'
+          ]);
+
+          onSelectionChange.mockReset();
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', shiftKey: true});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', shiftKey: true});
+          checkSelection(onSelectionChange, [
+            'Row 1 Lvl 1', 'Row 1 Lvl 2', 'Row 1 Lvl 3', 'Row 2 Lvl 1'
+          ]);
+
+          checkRowSelection(rows.slice(0, 4), true);
+          checkRowSelection(rows.slice(4), false);
+        });
+
+        it('should extend a selection with Shift + ArrowUp through nested keys', function () {
+          let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={null} onAction={null} />);
+          let rowgroups = treegrid.getAllByRole('rowgroup');
+          let rows = within(rowgroups[1]).getAllByRole('row');
+
+          checkRowSelection(rows, false);
+          pressWithKeyboard(getCell(treegrid, 'Row 2, Lvl 1, Foo'));
+          onSelectionChange.mockReset();
+
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowUp', shiftKey: true});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowUp', shiftKey: true});
+          checkSelection(onSelectionChange, [
+            'Row 2 Lvl 1', 'Row 1 Lvl 3'
+          ]);
+
+          onSelectionChange.mockReset();
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowUp', shiftKey: true});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowUp', shiftKey: true});
+          checkSelection(onSelectionChange, [
+            'Row 2 Lvl 1', 'Row 1 Lvl 3', 'Row 1 Lvl 2'
+          ]);
+
+          onSelectionChange.mockReset();
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowUp', shiftKey: true});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowUp', shiftKey: true});
+          checkSelection(onSelectionChange, [
+            'Row 2 Lvl 1', 'Row 1 Lvl 3', 'Row 1 Lvl 2', 'Row 1 Lvl 1'
+          ]);
+
+          checkRowSelection(rows.slice(0, 4), true);
+          checkRowSelection(rows.slice(4), false);
+        });
+
+        it('should extend a selection with Ctrl + Shift + Home', function () {
+          let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={null} onAction={null} />);
+          let rowgroups = treegrid.getAllByRole('rowgroup');
+          let rows = within(rowgroups[1]).getAllByRole('row');
+
+          checkRowSelection(rows, false);
+          pressWithKeyboard(getCell(treegrid, 'Row 3, Lvl 1, Foo'));
+          onSelectionChange.mockReset();
+
+          fireEvent.keyDown(document.activeElement, {key: 'Home', shiftKey: true, ctrlKey: true});
+
+          checkSelection(onSelectionChange, [
+            'Row 1 Lvl 1', 'Row 1 Lvl 2', 'Row 1 Lvl 3', 'Row 2 Lvl 1', 'Row 2 Lvl 2', 'Row 2 Lvl 3', 'Row 3 Lvl 1'
+          ]);
+
+          checkRowSelection(rows.slice(0, 7), true);
+          checkRowSelection(rows.slice(7), false);
+        });
+
+        it('should extend a selection with Ctrl + Shift + End', function () {
+          let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={null} onAction={null} />);
+          let rowgroups = treegrid.getAllByRole('rowgroup');
+          let rows = within(rowgroups[1]).getAllByRole('row');
+
+          checkRowSelection(rows, false);
+          pressWithKeyboard(getCell(treegrid, 'Row 3, Lvl 1, Foo'));
+          onSelectionChange.mockReset();
+
+          fireEvent.keyDown(document.activeElement, {key: 'End', shiftKey: true, ctrlKey: true});
+
+          checkRowSelection(rows.slice(6), true);
+        });
+
+        it('should extend a selection with Shift + PageDown', function () {
+          let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={null} onAction={null} />);
+          let rowgroups = treegrid.getAllByRole('rowgroup');
+          let rows = within(rowgroups[1]).getAllByRole('row');
+
+          checkRowSelection(rows, false);
+          pressWithKeyboard(getCell(treegrid, 'Row 3, Lvl 1, Foo'));
+          onSelectionChange.mockReset();
+
+          fireEvent.keyDown(document.activeElement, {key: 'PageDown', shiftKey: true});
+
+          checkSelection(onSelectionChange, [
+            'Row 3 Lvl 1', 'Row 3 Lvl 2', 'Row 3 Lvl 3', 'Row 4 Lvl 1', 'Row 4 Lvl 2', 'Row 4 Lvl 3',
+            'Row 5 Lvl 1', 'Row 5 Lvl 2', 'Row 5 Lvl 3', 'Row 6 Lvl 1', 'Row 6 Lvl 2', 'Row 6 Lvl 3',
+            'Row 7 Lvl 1', 'Row 7 Lvl 2', 'Row 7 Lvl 3', 'Row 8 Lvl 1', 'Row 8 Lvl 2', 'Row 8 Lvl 3',
+            'Row 9 Lvl 1', 'Row 9 Lvl 2', 'Row 9 Lvl 3', 'Row 10 Lvl 1', 'Row 10 Lvl 2', 'Row 10 Lvl 3',
+            'Row 11 Lvl 1'
+          ]);
+        });
+
+        it('should extend a selection with Shift + PageUp', function () {
+          let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={null} onAction={null} />);
+          let rowgroups = treegrid.getAllByRole('rowgroup');
+          let rows = within(rowgroups[1]).getAllByRole('row');
+
+          checkRowSelection(rows, false);
+          pressWithKeyboard(getCell(treegrid, 'Row 3, Lvl 1, Foo'));
+          onSelectionChange.mockReset();
+
+          fireEvent.keyDown(document.activeElement, {key: 'PageUp', shiftKey: true});
+
+          checkSelection(onSelectionChange, [
+            'Row 1 Lvl 1', 'Row 1 Lvl 2', 'Row 1 Lvl 3', 'Row 2 Lvl 1', 'Row 2 Lvl 2', 'Row 2 Lvl 3', 'Row 3 Lvl 1'
+          ]);
+        });
+
+        it('should not include disabled rows', function () {
+          let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={['Row 1 Lvl 2']} onAction={null} />);
+          let rowgroups = treegrid.getAllByRole('rowgroup');
+          let rows = within(rowgroups[1]).getAllByRole('row');
+
+          checkRowSelection(rows, false);
+          pressWithKeyboard(getCell(treegrid, 'Row 1, Lvl 1, Foo'));
+          onSelectionChange.mockReset();
+
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', shiftKey: true});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', shiftKey: true});
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', shiftKey: true});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', shiftKey: true});
+          checkSelection(onSelectionChange, [
+            'Row 1 Lvl 1', 'Row 1 Lvl 3'
+          ]);
+
+          checkRowSelection(rows.slice(0, 1), true);
+          checkRowSelection(rows.slice(1, 2), false);
+          checkRowSelection(rows.slice(2, 3), true);
+        });
+      });
+    });
   });
 
   // TODO: write tests for the following

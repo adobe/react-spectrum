@@ -13,6 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableView} from '../';
+import {chain} from '@react-aria/utils';
 import {ComponentMeta} from '@storybook/react';
 import defaultConfig, {columns, TableStory} from './Table.stories';
 import {enableTableNestedRows} from '@react-stately/flags';
@@ -34,28 +35,28 @@ export const StaticExpandableRows: TableStory = {
     height: 200
   },
   render: (args) => (
-    <TableView expandedKeys={['test']} hasExpandableRows {...args}>
+    <TableView defaultExpandedKeys={['row 1']} hasExpandableRows onExpandedChange={action('onExpandedChange')} {...args}>
       <TableHeader>
         <Column key="foo">Foo</Column>
         <Column key="bar">Bar</Column>
         <Column key="baz">Baz</Column>
       </TableHeader>
       <TableBody>
-        <Row key="test">
+        <Row key="row 1">
           <Cell>Lvl 1 Foo 1</Cell>
           <Cell>Lvl 1 Bar 1</Cell>
-          <Cell>Lvl 1 Baz 1</Cell>
-          <Row>
+          <Cell> Lvl 1 Baz 1</Cell>
+          <Row key="child row 1 level 2">
             <Cell>Lvl 2 Foo 1</Cell>
             <Cell>Lvl 2 Bar 1</Cell>
             <Cell>Lvl 2 Baz 1</Cell>
-            <Row>
+            <Row key="child row 1 level 3">
               <Cell>Lvl 3 Foo 1</Cell>
               <Cell>Lvl 3 Bar 1</Cell>
               <Cell>Lvl 3 Baz 1</Cell>
             </Row>
           </Row>
-          <Row>
+          <Row key="child row 2 level 2">
             <Cell>Lvl 2 Foo 2</Cell>
             <Cell>Lvl 2 Bar 2</Cell>
             <Cell>Lvl 2 Baz 2</Cell>
@@ -83,8 +84,8 @@ function DynamicExpandableRows(props: SpectrumTableProps<unknown>) {
     <Flex direction="column">
       <ActionButton onPress={() => setExpandedKeys('all')}>Expand all</ActionButton>
       <ActionButton onPress={() => setExpandedKeys(new Set([]))}>Collapse all</ActionButton>
-      <ActionButton onPress={() => setExpandedKeys(new Set(['Lvl 1 Foo 1']))}>Expand subset</ActionButton>
-      <TableView expandedKeys={expandedKeys} onExpandedChange={action('onExpandedChange')} hasExpandableRows {...props}>
+      <ActionButton onPress={() => setExpandedKeys(new Set(['Lvl 1 Foo 1']))}>Set expanded to Lvl 1 Foo 1</ActionButton>
+      <TableView expandedKeys={expandedKeys} onExpandedChange={chain(setExpandedKeys, action('onExpandedChange'))} hasExpandableRows {...props}>
         <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
         </TableHeader>
@@ -115,6 +116,51 @@ export const DynamicExpandableRowsStory: TableStory = {
   name: 'dynamic with expandable rows'
 };
 
+export const UserSetRowHeader: TableStory = {
+  args: {
+    'aria-label': 'TableView with expandable rows and multiple row headers',
+    width: 500,
+    height: 400
+  },
+  render: (args) => (
+    <TableView hasExpandableRows onExpandedChange={action('onExpandedChange')} {...args}>
+      <TableHeader>
+        <Column key="foo">Foo</Column>
+        <Column isRowHeader key="bar">Bar</Column>
+        <Column isRowHeader key="baz">Baz</Column>
+      </TableHeader>
+      <TableBody>
+        <Row key="test">
+          <Cell>Lvl 1 Foo 1</Cell>
+          <Cell>Lvl 1 Bar 1</Cell>
+          <Cell>Lvl 1 Baz 1</Cell>
+          <Row>
+            <Cell>Lvl 2 Foo 1</Cell>
+            <Cell>Lvl 2 Bar 1</Cell>
+            <Cell>Lvl 2 Baz 1</Cell>
+            <Row>
+              <Cell>Lvl 3 Foo 1</Cell>
+              <Cell>Lvl 3 Bar 1</Cell>
+              <Cell>Lvl 3 Baz 1</Cell>
+            </Row>
+          </Row>
+          <Row>
+            <Cell>Lvl 2 Foo 2</Cell>
+            <Cell>Lvl 2 Bar 2</Cell>
+            <Cell>Lvl 2 Baz 2</Cell>
+          </Row>
+        </Row>
+      </TableBody>
+    </TableView>
+  ),
+  name: 'multiple user set row headers',
+  parameters: {
+    description: {
+      data: 'Row headers are Bar and Baz column cells, chevron'
+    }
+  }
+};
+
 let manyRows = [];
 function generateRow(lvlIndex, lvlLimit, rowIndex) {
   let row = {key: `Row ${rowIndex} Lvl ${lvlIndex}`};
@@ -139,8 +185,7 @@ function ManyExpandableRows(props: SpectrumTableProps<unknown>) {
     <Flex direction="column">
       <ActionButton onPress={() => setExpandedKeys('all')}>Expand all</ActionButton>
       <ActionButton onPress={() => setExpandedKeys(new Set([]))}>Collapse all</ActionButton>
-      <ActionButton onPress={() => setExpandedKeys(new Set(['Lvl 1 Foo 1']))}>Expand subset</ActionButton>
-      <TableView expandedKeys={expandedKeys} onExpandedChange={action('onExpandedChange')} hasExpandableRows disabledKeys={['Row 1 Lvl 2']} {...props}>
+      <TableView expandedKeys={expandedKeys} onExpandedChange={chain(setExpandedKeys, action('onExpandedChange'))} hasExpandableRows disabledKeys={['Row 1 Lvl 2']} {...props}>
         <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
         </TableHeader>
@@ -157,7 +202,6 @@ function ManyExpandableRows(props: SpectrumTableProps<unknown>) {
     </Flex>
   );
 }
-
 export const ManyExpandableRowsStory: TableStory = {
   args: {
     'aria-label': 'TableView with many dynamic expandable rows',
@@ -171,4 +215,4 @@ export const ManyExpandableRowsStory: TableStory = {
 };
 
 
-// TODO: make sorting example? empty state table, nested columns
+// TODO: make sorting example? empty state table, nested columns, icons in cells, resizeable column headers, loading story, dividers
