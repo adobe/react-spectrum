@@ -797,6 +797,7 @@ export const DropzoneExampleWithFileTriggerLink = (props) => (
   <div>
     <DropZone
       {...props}
+      aria-label={'testing aria-label'}
       className={styles.dropzone}
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
@@ -833,8 +834,9 @@ export const DropzoneExampleWithDraggableAndFileTrigger = (props) => (
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
       <FileTrigger onChange={action('onChange')} >
-        <Button>Browse</Button>Or drag into here
+        <Button>Browse</Button>
       </FileTrigger>
+      Or drag into here
     </DropZone>
   </div>
 );
