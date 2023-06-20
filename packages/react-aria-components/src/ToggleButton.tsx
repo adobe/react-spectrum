@@ -52,10 +52,7 @@ function ToggleButton(props: ToggleButtonProps, ref: ForwardedRef<HTMLButtonElem
       slot={props.slot}
       data-pressed={isPressed || undefined}
       data-hovered={isHovered || undefined}
-      data-focused={isFocused || undefined}
-      data-focus-visible={isFocusVisible || undefined}
-      data-selected={state.isSelected || undefined}
-      data-disabled={props.isDisabled || undefined} />
+      data-focus-visible={isFocusVisible || undefined} />
   );
 }
 
