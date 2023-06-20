@@ -116,48 +116,6 @@ export const DynamicExpandableRowsStory: TableStory = {
   name: 'dynamic with expandable rows'
 };
 
-let manyRows = [];
-function generateRow(lvlIndex, lvlLimit, rowIndex) {
-  let row = {key: `Row ${rowIndex} Lvl ${lvlIndex}`};
-  for (let col of columns) {
-    row[col.key] = `Row ${rowIndex}, Lvl ${lvlIndex}, ${col.name}`;
-  }
-
-  if (lvlIndex < lvlLimit) {
-    row['childRows'] = [generateRow(++lvlIndex, lvlLimit, rowIndex)];
-  }
-  return row;
-}
-
-for (let i = 1; i < 20; i++) {
-  let row = generateRow(1, 3, i);
-  manyRows.push(row);
-}
-
-function ManyExpandableRows(props: SpectrumTableProps<unknown>) {
-  let [expandedKeys, setExpandedKeys] = useState<'all' | Set<Key>>('all');
-  return (
-    <Flex direction="column">
-      <ActionButton onPress={() => setExpandedKeys('all')}>Expand all</ActionButton>
-      <ActionButton onPress={() => setExpandedKeys(new Set([]))}>Collapse all</ActionButton>
-      <TableView expandedKeys={expandedKeys} onExpandedChange={chain(setExpandedKeys, action('onExpandedChange'))} hasExpandableRows disabledKeys={['Row 1 Lvl 2']} {...props}>
-        <TableHeader columns={columns}>
-          {column => <Column>{column.name}</Column>}
-        </TableHeader>
-        <TableBody items={manyRows}>
-          {item =>
-            (<Row key={item.key} childItems={item.childRows}>
-              {(key) => {
-                return <Cell>{item[key]}</Cell>;
-              }}
-            </Row>)
-          }
-        </TableBody>
-      </TableView>
-    </Flex>
-  );
-}
-
 export const UserSetRowHeader: TableStory = {
   args: {
     'aria-label': 'TableView with expandable rows and multiple row headers',
@@ -203,6 +161,47 @@ export const UserSetRowHeader: TableStory = {
   }
 };
 
+let manyRows = [];
+function generateRow(lvlIndex, lvlLimit, rowIndex) {
+  let row = {key: `Row ${rowIndex} Lvl ${lvlIndex}`};
+  for (let col of columns) {
+    row[col.key] = `Row ${rowIndex}, Lvl ${lvlIndex}, ${col.name}`;
+  }
+
+  if (lvlIndex < lvlLimit) {
+    row['childRows'] = [generateRow(++lvlIndex, lvlLimit, rowIndex)];
+  }
+  return row;
+}
+
+for (let i = 1; i < 20; i++) {
+  let row = generateRow(1, 3, i);
+  manyRows.push(row);
+}
+
+function ManyExpandableRows(props: SpectrumTableProps<unknown>) {
+  let [expandedKeys, setExpandedKeys] = useState<'all' | Set<Key>>('all');
+  return (
+    <Flex direction="column">
+      <ActionButton onPress={() => setExpandedKeys('all')}>Expand all</ActionButton>
+      <ActionButton onPress={() => setExpandedKeys(new Set([]))}>Collapse all</ActionButton>
+      <TableView expandedKeys={expandedKeys} onExpandedChange={chain(setExpandedKeys, action('onExpandedChange'))} hasExpandableRows disabledKeys={['Row 1 Lvl 2']} {...props}>
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={manyRows}>
+          {item =>
+            (<Row key={item.key} childItems={item.childRows}>
+              {(key) => {
+                return <Cell>{item[key]}</Cell>;
+              }}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    </Flex>
+  );
+}
 export const ManyExpandableRowsStory: TableStory = {
   args: {
     'aria-label': 'TableView with many dynamic expandable rows',
