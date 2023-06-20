@@ -58,6 +58,16 @@ import {TagGroup, TagList, Tag, Label} from 'react-aria-components';
 
 ```css
 .react-aria-TagGroup {
+  --border-color: var(--spectrum-gray-600);
+  --border-color-hovered: var(--spectrum-gray-900);
+  --background-selected: var(--spectrum-gray-900);
+  --text-color: var(--spectrum-gray-800);
+  --text-color-selected: var(--spectrum-gray-50);
+  --remove-button-color: var(--spectrum-gray-700);
+  --remove-button-color-hovered: var(--spectrum-gray-900);
+  --focus-ring-color: slateblue;
+  --invalid-color: var(--spectrum-global-color-red-600);
+
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -69,7 +79,7 @@ import {TagGroup, TagList, Tag, Label} from 'react-aria-components';
 
   [slot=errorMessage] {
     font-size: 12px;
-    color: var(--spectrum-global-color-red-600);
+    color: var(--invalid-color);
   }
 }
 
@@ -79,7 +89,8 @@ import {TagGroup, TagList, Tag, Label} from 'react-aria-components';
   gap: 4px;
 
   .react-aria-Tag {
-    border: 1px solid var(--spectrum-gray-600);;
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     padding: 2px 8px;
     font-size: 0.929rem;
@@ -90,18 +101,18 @@ import {TagGroup, TagList, Tag, Label} from 'react-aria-components';
     transition: border-color 200ms;
 
     &[data-hovered] {
-      border-color: var(--spectrum-gray-900);
+      border-color: var(--border-color-hovered);
     }
 
     &[data-focus-visible] {
-      outline: 2px solid slateblue;
+      outline: 2px solid var(--focus-ring-color);
       outline-offset: 2px;
     }
 
     &[aria-selected=true] {
-      border-color: var(--spectrum-gray-900);
-      background: var(--spectrum-gray-900);
-      color: var(--spectrum-gray-50);
+      border-color: var(--background-selected);
+      background: var(--background-selected);
+      color: var(--text-color-selected);
     }
 
     &[aria-disabled] {
@@ -113,14 +124,36 @@ import {TagGroup, TagList, Tag, Label} from 'react-aria-components';
       border: none;
       padding: 0;
       margin-left: 8px;
-      color: var(--spectrum-gray-700);
+      color: var(--remove-button-color);
       transition: color 200ms;
       outline: none;
       font-size: 0.95em;
 
       &[data-hovered] {
-        color: var(--spectrum-gray-900);
+        color: var(--remove-button-color-hovered);
       }
+    }
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-TagGroup {
+    forced-color-adjust: none;
+    --border-color: ButtonBorder;
+    --border-color-hovered: ButtonBorder;
+    --background-selected: Highlight;
+    --text-color: ButtonText;
+    --text-color-selected: HighlightText;
+    --remove-button-color: ButtonText;
+    --remove-button-color-hovered: Highlight;
+    --focus-ring-color: Highlight;
+    --invalid-color: LinkText;
+
+    .react-aria-Tag[aria-disabled] {
+      opacity: 1;
+      --border-color: GrayText;
+      --border-color-hovered: GrayText;
+      --text-color: GrayText;
     }
   }
 }
