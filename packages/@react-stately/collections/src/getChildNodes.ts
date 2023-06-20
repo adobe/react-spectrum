@@ -70,10 +70,10 @@ export function compareNodeOrder<T>(collection: Collection<Node<T>>, a: Node<T>,
   }
 
   // If there isn't a non matching ancestor, we might be in a case where one of the nodes is the ancestor of the other.
-  if (aAncestors.findIndex(node => node === b) <= 0) {
-    return -1;
-  } else if (bAncestors.findIndex(node => node  === a)) {
+  if (aAncestors.findIndex(node => node === b) >= 0) {
     return 1;
+  } else if (bAncestors.findIndex(node => node === a) >= 0) {
+    return -1;
   }
 
   // 🤷
