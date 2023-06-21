@@ -21,6 +21,7 @@ export interface SpectrumDropZoneProps extends Omit<DropOptions, 'getDropOperati
   children: ReactNode
 }
 
+// what ref do we need?
 function DropZone(props: SpectrumDropZoneProps) {
   let {children, ...otherProps} = props;
   let buttonRef = useRef<HTMLButtonElement>(null);

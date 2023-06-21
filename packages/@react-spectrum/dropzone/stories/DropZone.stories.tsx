@@ -10,7 +10,39 @@
  * governing permissions and limitations under the License.
  */
 
-import {ComponentStoryObj} from '@storybook/react';
+import {Content} from '@react-spectrum/view';
 import {DropZone} from '../';
+import {FileTrigger} from 'react-aria-components';
+import {Heading} from '@react-spectrum/text';
+import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
+import {Link} from '@react-spectrum/link';
+import {Meta} from '@storybook/react';
+import React from 'react';
+import {SpectrumDropZoneProps} from '../src/DropZone';
+import Upload from '@spectrum-icons/illustrations/Upload';
 
-export type DropZoneStory = ComponentStoryObj<typeof DropZone>;
+type StoryArgs = SpectrumDropZoneProps;
+
+const meta: Meta<StoryArgs> = {
+  title: 'DropZone',
+  component: DropZone
+};
+
+export default meta;
+
+export const Default = {
+  render: (args) => (
+    <DropZone {...args} >
+      <IllustratedMessage>
+        <Upload />
+        <Heading>Drag and Drop your file</Heading>
+        <Content>
+          <FileTrigger>
+            <Link>Select a File</Link> from your computer
+          </FileTrigger>
+        </Content>
+      </IllustratedMessage>
+    </DropZone>
+  )
+};
+

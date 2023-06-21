@@ -10,7 +10,34 @@
  * governing permissions and limitations under the License.
  */
 
-import {ComponentStoryObj} from '@storybook/react';
+import {Button} from '@react-spectrum/button';
 import {FileTrigger} from 'react-aria-components';
+import {FileTriggerProps} from 'react-aria-components/src/FileTrigger';
+import {Link} from '@react-spectrum/link';
+import {Meta} from '@storybook/react';
+import React from 'react';
 
-export type FileTriggerStory = ComponentStoryObj<typeof FileTrigger>;
+type StoryArgs = FileTriggerProps;
+
+const meta: Meta<StoryArgs> = {
+  title: 'FileTrigger',
+  component: FileTrigger
+};
+
+export default meta;
+
+export const DefaultWithButton = {
+  render: (args) => (
+    <FileTrigger {...args} >
+      <Button variant={'accent'}>Upload</Button>
+    </FileTrigger>
+  )
+};
+
+export const DefaultWithLink = {
+  render: (args) => (
+    <FileTrigger {...args} >
+      <Link>Upload</Link>
+    </FileTrigger>
+  )
+};
