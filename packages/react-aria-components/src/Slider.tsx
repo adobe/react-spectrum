@@ -22,7 +22,7 @@ export interface SliderProps<T = number | number[]> extends AriaSliderProps<T>, 
   /**
    * The display format of the value label.
    */
-   formatOptions?: Intl.NumberFormatOptions
+  formatOptions?: Intl.NumberFormatOptions
 }
 
 interface SliderContextValue {
@@ -146,10 +146,19 @@ function SliderOutput({children, style, className, ...otherProps}: SliderOutputP
 const _SliderOutput = /*#__PURE__*/ (forwardRef as forwardRefType)(SliderOutput);
 export {_SliderOutput as SliderOutput};
 
-export interface SliderTrackProps extends RenderProps<SliderRenderProps> {}
+export interface SliderTrackRenderProps extends SliderRenderProps {
+  /**
+   * Whether the slider track is currently hovered with a mouse.
+   * @selector [data-hovered]
+   */
+  isHovered: boolean
+}
+
+export interface SliderTrackProps extends RenderProps<SliderTrackRenderProps> {}
 
 function SliderTrack(props: SliderTrackProps, ref: ForwardedRef<HTMLDivElement>) {
   let {state, trackProps, trackRef, isFocused, isFocusVisible} = useContext(InternalSliderContext)!;
+  let {hoverProps, isHovered} = useHover({});
   let domRef = mergeRefs(ref, trackRef);
   let renderProps = useRenderProps({
     ...props,
@@ -158,12 +167,19 @@ function SliderTrack(props: SliderTrackProps, ref: ForwardedRef<HTMLDivElement>)
       orientation: state.orientation,
       isDisabled: state.isDisabled,
       isFocused,
+      isHovered,
       isFocusVisible,
       state
     }
   });
 
-  return <div {...mergeProps(filterDOMProps(props as any), trackProps)} {...renderProps} ref={domRef} />;
+  return (
+    <div
+      {...mergeProps(filterDOMProps(props as any), hoverProps, trackProps)}
+      {...renderProps}
+      data-hovered={isHovered || undefined}
+      ref={domRef} />
+  );
 }
 
 /**
