@@ -120,7 +120,8 @@ const InternalTabsContext = createContext<InternalTabsContextValue | null>(null)
 function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TabsContext);
   let {orientation = 'horizontal', keyboardActivation = 'automatic'} = props;
-  let values = useMemo(() => ({orientation}), [orientation]);
+  let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
+  let values = useMemo(() => ({orientation, isFocusWithin: isFocused, isFocusVisible}), [isFocusVisible, isFocused, orientation]);
   let {collection, document} = useCollectionDocument();
   let state = useTabListState({
     ...props,
@@ -137,10 +138,12 @@ function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
   return (
     <div
       {...filterDOMProps(props as any)}
+      {...focusProps}
       {...renderProps}
       ref={ref}
       slot={props.slot}
-      data-orientation={orientation}>
+      data-orientation={orientation}
+      data-focus-visible={isFocusVisible || undefined}>
       <InternalTabsContext.Provider value={{state, document, orientation, keyboardActivation}}>
         {renderProps.children}
       </InternalTabsContext.Provider>
