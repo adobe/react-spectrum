@@ -421,10 +421,8 @@ The error message element within a `Calendar` can be targeted with the `[slot=er
 
 Multiple `CalendarGrid` elements can be rendered to show multiple months at once. The `visibleDuration` prop should be provided to the `Calendar` component to specify how many months are visible, and each `CalendarGrid` accepts an `offset` prop to specify its starting date relative to the first visible date.
 
-The `pageBehavior` prop allows you to control how the calendar navigates between months. By default, the calendar will navigate by `visibleDuration`, but by setting `pageBehavior` to `single`, pagination will be by one month.
-
 ```tsx example
-<Calendar aria-label="Appointment date" visibleDuration={{months: 2}} pageBehavior="single">
+<Calendar aria-label="Appointment date" visibleDuration={{months: 2}}>
   <header>
     <Button slot="previous">◀</Button>
     <Heading />
@@ -435,6 +433,31 @@ The `pageBehavior` prop allows you to control how the calendar navigates between
       {date => <CalendarCell date={date} />}
     </CalendarGrid>
     <CalendarGrid offset={{months: 1}}>
+      {date => <CalendarCell date={date} />}
+    </CalendarGrid>
+  </div>
+</Calendar>
+```
+
+### Page behavior
+
+The `pageBehavior` prop allows you to control how the calendar navigates between months. By default, the calendar will navigate by `visibleDuration`, but by setting `pageBehavior` to `single`, pagination will be by one month.
+
+```tsx example
+<Calendar aria-label="Appointment date" visibleDuration={{months: 3}} pageBehavior="single">
+  <header>
+    <Button slot="previous">◀</Button>
+    <Heading />
+    <Button slot="next">▶</Button>
+  </header>
+  <div style={{display: 'flex', gap: 30, overflow: 'auto'}}>
+    <CalendarGrid>
+      {date => <CalendarCell date={date} />}
+    </CalendarGrid>
+    <CalendarGrid offset={{months: 1}}>
+      {date => <CalendarCell date={date} />}
+    </CalendarGrid>
+    <CalendarGrid offset={{months: 2}}>
       {date => <CalendarCell date={date} />}
     </CalendarGrid>
   </div>
