@@ -395,6 +395,29 @@ The example below will maintain at least 50px between the popover and the edge o
 </DialogTrigger>
 ```
 
+### Controlled open state
+
+The above examples have shown `Popover` used within a `<DialogTrigger>`, which handles opening the popover when a button is clicked, and positioning relative to the trigger. This is convenient, but there are cases where you want to show a popover programmatically rather than as a result of a user action, or render the `<Popover>` in a different part of the JSX tree.
+
+To do this, you can manage the popover's `isOpen` state yourself and provide it as a prop to the `<Popover>` element. The `onOpenChange` prop will be called when the user closes the popover, and should be used to update your state. In addition, the `triggerRef` prop must be set to the element that the popover should be positioned relative to.
+
+```tsx example
+function Example() {
+  let [isOpen, setOpen] = React.useState(false);
+  let triggerRef = React.useRef(null);
+
+  return (
+    <>
+      <Button onPress={() => setOpen(true)}>Trigger</Button>
+      <span ref={triggerRef} style={{paddingLeft: 12}}>Popover will be positioned relative to me</span>
+      <MyPopover triggerRef={triggerRef} isOpen={isOpen} onOpenChange={setOpen}>
+        This is a popover.
+      </MyPopover>
+    </>
+  );
+}
+```
+
 ## Advanced customization
 
 ### Hooks

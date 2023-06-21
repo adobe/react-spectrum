@@ -28,7 +28,7 @@ import {
   today
 } from '@internationalized/date';
 import {CalendarProps, DateValue} from '@react-types/calendar';
-import {CalendarState, PageBehavior} from './types';
+import {CalendarState} from './types';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo, useState} from 'react';
 
@@ -47,11 +47,6 @@ export interface CalendarStateOptions<T extends DateValue = DateValue> extends C
    * @default {months: 1}
    */
   visibleDuration?: DateDuration,
-  /**
-   * Controls the behavior of paging. Pagination either works by advancing the visible page by visibleDuration (default) or one unit of visibleDuration.
-   * @default visible
-   */
-  pageBehavior?: PageBehavior,
   /** Determines how to align the initial selection relative to the visible date range. */
   selectionAlignment?: 'start' | 'center' | 'end'
 }

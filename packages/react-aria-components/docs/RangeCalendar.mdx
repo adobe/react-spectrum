@@ -461,6 +461,31 @@ Multiple `CalendarGrid` elements can be rendered to show multiple months at once
 </RangeCalendar>
 ```
 
+### Page behavior
+
+The `pageBehavior` prop allows you to control how the calendar navigates between months. By default, the calendar will navigate by `visibleDuration`, but by setting `pageBehavior` to `single`, pagination will be by one month.
+
+```tsx example
+<RangeCalendar aria-label="Trip dates" visibleDuration={{months: 3}} pageBehavior="single">
+  <header>
+    <Button slot="previous">◀</Button>
+    <Heading />
+    <Button slot="next">▶</Button>
+  </header>
+  <div style={{display: 'flex', gap: 30, overflow: 'auto'}}>
+    <CalendarGrid>
+      {date => <CalendarCell date={date} />}
+    </CalendarGrid>
+    <CalendarGrid offset={{months: 1}}>
+      {date => <CalendarCell date={date} />}
+    </CalendarGrid>
+    <CalendarGrid offset={{months: 2}}>
+      {date => <CalendarCell date={date} />}
+    </CalendarGrid>
+  </div>
+</RangeCalendar>
+```
+
 ## Reusable wrappers
 
 If you will use a RangeCalendar in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.

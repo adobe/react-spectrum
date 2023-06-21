@@ -470,6 +470,55 @@ describe('DatePicker', function () {
       expect(getTextValue(combobox)).toBe('2/4/2019, 9:45 AM');
     });
 
+    it('should not throw error when deleting values from time field when CalendarDateTime value is used', function () {
+      let onChange = jest.fn();
+      let {getByRole, getAllByRole, getAllByLabelText} = render(
+        <Provider theme={theme}>
+          <DatePicker label="Date" defaultValue={new CalendarDateTime(2019, 2, 3, 10, 45)} onChange={onChange} />
+        </Provider>
+      );
+
+      let combobox = getAllByRole('group')[0];
+      expect(getTextValue(combobox)).toBe('2/3/2019, 10:45 AM');
+
+      let button = getByRole('button');
+      triggerPress(button);
+
+      let dialog = getByRole('dialog');
+      expect(dialog).toBeVisible();
+
+      let cells = getAllByRole('gridcell');
+      let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
+      expect(selected.children[0]).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected');
+
+      let timeField = getAllByLabelText('Time')[0];
+      expect(getTextValue(timeField)).toBe('10:45 AM');
+
+      // selecting a date should not close the popover
+      triggerPress(selected.nextSibling.children[0]);
+
+      expect(dialog).toBeVisible();
+      expect(onChange).toHaveBeenCalledTimes(1);
+      expect(onChange).toHaveBeenCalledWith(new CalendarDateTime(2019, 2, 4, 10, 45));
+      expect(getTextValue(combobox)).toBe('2/4/2019, 10:45 AM');
+
+      let hour = within(timeField).getByLabelText('hour,');
+      expect(hour).toHaveAttribute('role', 'spinbutton');
+      expect(hour).toHaveAttribute('aria-valuetext', '10 AM');
+
+      act(() => hour.focus());
+      fireEvent.keyDown(hour, {key: 'Backspace'});
+      expect(hour).toHaveAttribute('aria-valuetext', '1 AM');
+
+      fireEvent.keyDown(hour, {key: 'Backspace'});
+      expect(hour).toHaveAttribute('aria-valuetext', '1 AM');
+
+      expect(dialog).toBeVisible();
+      expect(onChange).toHaveBeenCalledTimes(2);
+      expect(onChange).toHaveBeenCalledWith(new CalendarDateTime(2019, 2, 4, 1, 45));
+      expect(getTextValue(combobox)).toBe('2/4/2019, 1:45 AM');
+    });
+
     it('should not fire onChange until both date and time are selected', function () {
       let onChange = jest.fn();
       let {getByRole, getAllByRole, getAllByLabelText} = render(
