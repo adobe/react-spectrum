@@ -48,6 +48,21 @@ export interface RadioGroupRenderProps {
    */
   validationState: ValidationState | null,
   /**
+   * Whether the radio group is currently hovered with a mouse.
+   * @selector [data-hovered]
+   */
+  isHovered: boolean,
+  /**
+   * Whether an element within the radio group is focused, either via a mouse or keyboard.
+   * @selector :focus-within
+   */
+  isFocusWithin: boolean,
+  /**
+   * Whether an element within the radio group is keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
    * State of the radio group.
    */
   state: RadioGroupState
@@ -108,6 +123,8 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, RadioGroupContext);
   let state = useRadioGroupState(props);
   let [labelRef, label] = useSlot();
+  let {hoverProps, isHovered} = useHover(props);
+  let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
   let {radioGroupProps, labelProps, descriptionProps, errorMessageProps} = useRadioGroup({
     ...props,
     label
@@ -121,13 +138,21 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
       isReadOnly: state.isReadOnly,
       isRequired: state.isRequired,
       validationState: state.validationState,
+      isHovered,
+      isFocusWithin: isFocused,
+      isFocusVisible,
       state
     },
     defaultClassName: 'react-aria-RadioGroup'
   });
 
   return (
-    <div {...radioGroupProps} {...renderProps} ref={ref} slot={props.slot}>
+    <div
+      {...mergeProps(hoverProps, focusProps)}
+      {...radioGroupProps}
+      {...renderProps}
+      ref={ref}
+      slot={props.slot}>
       <Provider
         values={[
           [InternalRadioContext, state],
@@ -156,7 +181,7 @@ function Radio(props: RadioProps, ref: ForwardedRef<HTMLInputElement>) {
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let interactionDisabled = isDisabled || state.isReadOnly;
 
-  // Handle press state for full label. Keyboard press state is returned by useCheckbox
+  // Handle press state for full label. Keyboard press state is returned by useRadio
   // since it is handled on the <input> element itself.
   let [isPressed, setPressed] = useState(false);
   let {pressProps} = usePress({
