@@ -9,12 +9,12 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
-import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
-import {useStyleProps\ from '@react-spectrum/utils';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, StyleProps} from '@react-types/shared';
-import React, {ReactNode, useRef, useState} from 'react';
 import {DropOptions, mergeProps, useClipboard, useDrop, VisuallyHidden} from 'react-aria';
+// import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
+import React, {ReactNode, useRef, useState} from 'react';
+import styles from '@adobe/spectrum-css-temp/components/dropzone/vars.css';
 
 export interface SpectrumDropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint'>, DOMProps, StyleProps {
   // for the illustrated message?
@@ -44,7 +44,13 @@ function DropZone(props: SpectrumDropZoneProps) {
     <div
       {...styleProps}
       {...mergeProps(dropProps)}
-      data-drop-target={isDropTarget || undefined}>
+      data-drop-target={isDropTarget || undefined}
+      className={
+        classNames(
+          styles,
+          'spectrum-DropZone'
+        )
+      }>
       <VisuallyHidden>
         <button 
           {...mergeProps(dropButtonProps, clipboardProps)}
