@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from '@storybook/addon-actions';
 import {Content} from '@react-spectrum/view';
 import {DropZone} from '../';
 import {FileTrigger} from 'react-aria-components';
@@ -32,12 +33,17 @@ export default meta;
 
 export const Default = {
   render: (args) => (
-    <DropZone {...args} >
+    <DropZone 
+      {...args} 
+      onDrop={action('onDrop')}
+      onDropEnter={action('onDropEnter')}
+      onDropExit={action('onDropExit')} >
       <IllustratedMessage>
         <Upload />
         <Heading>Drag and Drop your file</Heading>
         <Content>
-          <FileTrigger>
+          <FileTrigger
+            onChange={action('onChange')}>
             <Link>Select a File</Link> from your computer
           </FileTrigger>
         </Content>

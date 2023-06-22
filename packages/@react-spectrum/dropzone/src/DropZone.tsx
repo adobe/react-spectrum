@@ -9,10 +9,9 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {classNames, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, StyleProps} from '@react-types/shared';
+import {SlotProvider, classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
 import {DropOptions, mergeProps, useClipboard, useDrop, VisuallyHidden} from 'react-aria';
-// import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import React, {ReactNode, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/dropzone/vars.css';
 
@@ -21,10 +20,11 @@ export interface SpectrumDropZoneProps extends Omit<DropOptions, 'getDropOperati
   children: ReactNode
 }
 
-// what ref do we need?
-function DropZone(props: SpectrumDropZoneProps) {
+// what ref do we need? i just put a temp one for now...
+function DropZone(props: SpectrumDropZoneProps, ref: DOMRef<HTMLDivElement>) {
   let {children, ...otherProps} = props;
   let buttonRef = useRef<HTMLButtonElement>(null);
+  let domRef = useDOMRef(ref); // again not sure if this is what i wanna do but it looks similar to what is done in Menu
   let styleProps = useStyleProps(otherProps); // will probably take something like otherProps but just for now this is what it is 
   let {dropProps, dropButtonProps, isDropTarget} = useDrop({...props, ref: buttonRef, hasDropButton: true});
 
@@ -41,6 +41,7 @@ function DropZone(props: SpectrumDropZoneProps) {
     })
   });
 
+  // we're gonna need that banner thing to appear when it is a droptarget... 
   return (
     <div
       {...styleProps}
@@ -49,16 +50,20 @@ function DropZone(props: SpectrumDropZoneProps) {
       className={
         classNames(
           styles,
-          'spectrum-DropZone'
+          'spectrum-DropZone',
+          styleProps.styleProps.className // why is it doing this?? this doesn't seem right...
         )
-      }>
+      }
+      ref={domRef}>
       <VisuallyHidden>
         <button 
           {...mergeProps(dropButtonProps, clipboardProps)}
           ref={buttonRef} />
       </VisuallyHidden>
-      {/* will need to render children (specifically IllustratedMessage) here */}
-      {children}
+      <SlotProvider
+        slots={{illustration: {UNSAFE_className: classNames(styles, 'spectrum-IllustratedMessage')}}}>
+        {children}
+      </SlotProvider>
     </div>
   );
 }
