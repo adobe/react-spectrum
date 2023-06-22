@@ -19,7 +19,7 @@ clean:
 clean_all:
 	$(MAKE) clean
 	$(MAKE) clean_node_modules
-	$(MAKE) dist
+	$(MAKE) clean_dist
 
 clean_node_modules:
 	rm -rf node_modules
