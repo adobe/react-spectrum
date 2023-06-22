@@ -8,8 +8,7 @@
     "build": "next build",
     "export": "next export",
     "start": "next start",
-    "lint": "next lint",
-    "install-17": "yarn add -W react@^17 react-dom@^17 next@^12"
+    "lint": "next lint"
   },
   "type": "module",
   "dependencies": {
@@ -19,7 +18,6 @@
     "@spectrum-icons/illustrations": "^3.5.0",
     "@spectrum-icons/workflow": "^4.0.3",
     "next": "^13.4.1",
-    "next-transpile-modules": "^10.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

@@ -1,16 +1,12 @@
-import ReactDOM from 'react-dom';
-import {App} from './App';
+import { createRoot } from "react-dom/client";
+import { App } from './App';
 
-if (ReactDOM.version.startsWith('18')) {
-  let ReactDOMClient = require('react-dom/client');
-  const root = ReactDOMClient.createRoot(
-    document.getElementById('root')
-  );
-  root.render(
-    <App />
-  );
-} else {
-  ReactDOM.render(
-    <App />, document.getElementById("root")
-  )
-}
+let root = createRoot(document.getElementById('root'));
+root.render(<App />);
+
+// TODO: check on react-dom's version didn't work, figure out later
+// The below is for when react 17 is installed
+// import ReactDOM from 'react-dom';
+// ReactDOM.render(
+//   <App />, document.getElementById("root")
+// )
