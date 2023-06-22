@@ -600,7 +600,7 @@ workflows:
       - docs-verdaccio:
           filters:
             branches:
-              only: main
+              only: test_app_release_testing
           requires:
             - install
       - deploy:
