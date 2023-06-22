@@ -15,7 +15,7 @@ import {DropOptions, mergeProps, useClipboard, useDrop, useFocusRing, useHover, 
 import React, {ReactNode, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/dropzone/vars.css';
 import {filterDOMProps} from '@react-aria/utils';
-import { DropZone as RACDropZone} from 'react-aria-components';
+import {DropZone as RACDropZone} from 'react-aria-components';
 export interface SpectrumDropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint'>, DOMProps, StyleProps, AriaLabelingProps {
   children: ReactNode
 }
