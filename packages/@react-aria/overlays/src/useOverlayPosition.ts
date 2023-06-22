@@ -82,7 +82,7 @@ let visualViewport = typeof window !== 'undefined' && window.visualViewport;
  */
 export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   let {direction} = useLocale();
-  let ownerDocument = useDocument()
+  let ownerDocument = useDocument();
   let {
     arrowSize = 0,
     targetRef,
@@ -230,12 +230,14 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
 }
 
 function useResize(onResize) {
+  let ownerDocument = useDocument();
+
   useLayoutEffect(() => {
-    window.addEventListener('resize', onResize, false);
+    ownerDocument.defaultView.addEventListener('resize', onResize, false);
     return () => {
-      window.removeEventListener('resize', onResize, false);
+      ownerDocument.defaultView.removeEventListener('resize', onResize, false);
     };
-  }, [onResize]);
+  }, [onResize, ownerDocument]);
 }
 
 function translateRTL(position, direction) {

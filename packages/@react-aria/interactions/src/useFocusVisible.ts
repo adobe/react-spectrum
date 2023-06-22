@@ -181,19 +181,25 @@ function removeGlobalFocusEvents() {
   ownerDocument.removeEventListener('mouseup', handlePointerEvent, true);
 }
 
+let domContentLoadedCallback: () => void;
+
 export function initGlobalFocusEvents(ownerDocument = document) {
   if (typeof ownerDocument !== 'undefined') {
     if (ownerDocument.readyState !== 'loading') {
       setupGlobalFocusEvents(ownerDocument);
     } else {
-      ownerDocument.addEventListener('DOMContentLoaded', () => setupGlobalFocusEvents());
+      if (domContentLoadedCallback) {
+        _document.removeEventListener('DOMContentLoaded', domContentLoadedCallback);
+      }
+      domContentLoadedCallback = () => setupGlobalFocusEvents(ownerDocument);
+      ownerDocument.addEventListener('DOMContentLoaded', domContentLoadedCallback);
     }
   }
 }
 
 initGlobalFocusEvents();
 
-export function reInitGlobalFocusEvents(ownerDocument: Document) {
+export function resetGlobalFocusEvents(ownerDocument: Document) {
   if (hasSetupGlobalListeners && _document) {
     removeGlobalFocusEvents();
   }

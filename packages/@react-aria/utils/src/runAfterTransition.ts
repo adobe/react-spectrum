@@ -21,12 +21,15 @@ let transitionsByElement = new Map<EventTarget, Set<string>>();
 // A list of callbacks to call once there are no transitioning elements.
 let transitionCallbacks = new Set<() => void>();
 
-function setupGlobalEvents() {
-  if (typeof window === 'undefined') {
+let _document, onTransitionStart, onTransitionEnd;
+
+function setupGlobalEvents(ownerDocument = document) {
+  _document = ownerDocument;
+  if (typeof ownerDocument.defaultView === 'undefined') {
     return;
   }
 
-  let onTransitionStart = (e: TransitionEvent) => {
+  onTransitionStart = (e: TransitionEvent) => {
     // Add the transitioning property to the list for this element.
     let transitions = transitionsByElement.get(e.target);
     if (!transitions) {
@@ -42,7 +45,7 @@ function setupGlobalEvents() {
     transitions.add(e.propertyName);
   };
 
-  let onTransitionEnd = (e: TransitionEvent) => {
+  onTransitionEnd = (e: TransitionEvent) => {
     // Remove property from list of transitioning properties.
     let properties = transitionsByElement.get(e.target);
     if (!properties) {
@@ -67,16 +70,44 @@ function setupGlobalEvents() {
     }
   };
 
-  document.body.addEventListener('transitionrun', onTransitionStart);
-  document.body.addEventListener('transitionend', onTransitionEnd);
+  ownerDocument.body.addEventListener('transitionrun', onTransitionStart);
+  ownerDocument.body.addEventListener('transitionend', onTransitionEnd);
 }
 
-if (typeof document !== 'undefined') {
-  if (document.readyState !== 'loading') {
-    setupGlobalEvents();
-  } else {
-    document.addEventListener('DOMContentLoaded', setupGlobalEvents);
+function removeGlobalEvents() {
+  if (!_document) {
+    return;
   }
+
+  _document.body.removeEventListener('transitionrun', onTransitionStart);
+  _document.body.removeEventListener('transitionend', onTransitionEnd);
+}
+
+let domContentLoadedCallback: () => void;
+
+function initGlobalEvents(ownerDocument = document) {
+  if (typeof ownerDocument !== 'undefined') {
+    if (ownerDocument.readyState !== 'loading') {
+      setupGlobalEvents(ownerDocument);
+    } else {
+      if (domContentLoadedCallback && _document) {
+        _document.removeEventListener('DOMContentLoaded', domContentLoadedCallback);
+      }
+      domContentLoadedCallback = () => setupGlobalEvents(ownerDocument);
+      ownerDocument.addEventListener('DOMContentLoaded', domContentLoadedCallback);
+    }
+  }
+}
+
+initGlobalEvents();
+
+export function resetGlobalEvents(ownerDocument = document) {
+  if (_document) {
+    removeGlobalEvents();
+  }
+  transitionsByElement = new Map();
+  transitionCallbacks = new Set();
+  initGlobalEvents(ownerDocument);
 }
 
 export function runAfterTransition(fn: () => void) {

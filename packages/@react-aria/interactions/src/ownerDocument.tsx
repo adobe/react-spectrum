@@ -11,9 +11,10 @@
  */
 
 import React, {createContext, ReactNode} from 'react';
-import {reInitGlobalFocusEvents} from './useFocusVisible';
+import {resetGlobalFocusEvents} from './useFocusVisible';
 import {useIsSSR} from '@react-aria/ssr';
 import {useLayoutEffect} from '@react-aria/utils';
+import {resetGlobalEvents} from "@react-aria/utils/src/runAfterTransition";
 
 export interface DocumentProviderProps {
   /** Contents that should use the owner document. */
@@ -29,7 +30,8 @@ export function DocumentProvider(props: DocumentProviderProps) {
 
   useLayoutEffect(() => {
     if (ownerDocument) {
-      reInitGlobalFocusEvents(ownerDocument);
+      resetGlobalFocusEvents(ownerDocument);
+      resetGlobalEvents(ownerDocument);
     }
   }, [ownerDocument]);
 

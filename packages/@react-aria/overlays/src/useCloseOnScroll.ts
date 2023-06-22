@@ -11,7 +11,7 @@
  */
 
 import {RefObject, useEffect} from 'react';
-import {getOwnerWindow} from '@react-aria/utils';
+import {useDocument} from "@react-aria/interactions";
 
 // This behavior moved from useOverlayTrigger to useOverlayPosition.
 // For backward compatibility, where useOverlayTrigger handled hiding the popover on close,
@@ -29,7 +29,7 @@ interface CloseOnScrollOptions {
 /** @private */
 export function useCloseOnScroll(opts: CloseOnScrollOptions) {
   let {triggerRef, isOpen, onClose} = opts;
-  let ownerWindow = getOwnerWindow(triggerRef.current);
+  let ownerWindow = useDocument().defaultView;
 
   useEffect(() => {
     if (!isOpen || onClose === null) {
