@@ -29,7 +29,7 @@ export {useMove} from './useMove';
 export {usePress} from './usePress';
 export {useScrollWheel} from './useScrollWheel';
 export {useLongPress} from './useLongPress';
-export {useDocument} from './ownerDocument'
+export {useDocument} from './ownerDocument';
 
 export type {FocusProps, FocusResult} from './useFocus';
 export type {FocusVisibleHandler, FocusVisibleProps, FocusVisibleResult, Modality} from './useFocusVisible';

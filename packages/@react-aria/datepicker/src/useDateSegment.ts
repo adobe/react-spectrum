@@ -19,8 +19,8 @@ import {NumberParser} from '@internationalized/number';
 import React, {RefObject, useMemo, useRef} from 'react';
 import {useDateFormatter, useFilter, useLocale} from '@react-aria/i18n';
 import {useDisplayNames} from './useDisplayNames';
+import {useDocument} from '@react-aria/interactions';
 import {useSpinButton} from '@react-aria/spinbutton';
-import {useDocument} from "@react-aria/interactions/src/ownerDocument";
 
 export interface DateSegmentAria {
   /** Props for the segment element. */

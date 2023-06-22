@@ -228,7 +228,7 @@ export function useMove(props: MoveEvents): MoveResult {
     };
 
     return moveProps;
-  }, [state, addGlobalListener, removeGlobalListener, move, end, ownerWindow]);
+  }, [state, addGlobalListener, removeGlobalListener, move, end, ownerDocument, ownerWindow]);
 
   return {moveProps};
 }

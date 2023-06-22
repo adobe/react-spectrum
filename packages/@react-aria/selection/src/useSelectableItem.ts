@@ -109,7 +109,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     onAction,
     allowsDifferentPressOrigin
   } = options;
-  let ownerDocument = useDocument()
+  let ownerDocument = useDocument();
 
   let onSelect = (e: PressEvent | LongPressEvent | PointerEvent) => {
     if (e.pointerType === 'keyboard' && isNonContiguousSelectionModifier(e)) {

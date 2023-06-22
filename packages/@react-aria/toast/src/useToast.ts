@@ -16,9 +16,9 @@ import {AriaLabelingProps, DOMAttributes, FocusableElement} from '@react-types/s
 import intlMessages from '../intl/*.json';
 import {QueuedToast, ToastState} from '@react-stately/toast';
 import {RefObject, useEffect, useRef} from 'react';
+import {useDocument} from '@react-aria/interactions';
 import {useId, useLayoutEffect, useSlotId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useDocument} from "@react-aria/interactions";
 
 export interface AriaToastProps<T> extends AriaLabelingProps {
   /** The toast object. */

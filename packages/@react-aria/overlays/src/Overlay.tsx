@@ -13,9 +13,9 @@
 import {FocusScope} from '@react-aria/focus';
 import React, {ReactNode, useContext, useMemo, useState} from 'react';
 import ReactDOM from 'react-dom';
+import {useDocument} from '@react-aria/interactions';
 import {useIsSSR} from '@react-aria/ssr';
 import {useLayoutEffect} from '@react-aria/utils';
-import {useDocument} from "@react-aria/interactions";
 
 export interface OverlayProps {
   /**

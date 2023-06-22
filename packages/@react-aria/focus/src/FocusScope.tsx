@@ -12,9 +12,9 @@
 
 import {FocusableElement} from '@react-types/shared';
 import {focusSafely} from './focusSafely';
+import {getOwnerDocument, useLayoutEffect} from '@react-aria/utils';
 import {isElementVisible} from './isElementVisible';
 import React, {ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
-import {getOwnerDocument, useLayoutEffect} from '@react-aria/utils';
 import {useDocument} from '@react-aria/interactions';
 
 

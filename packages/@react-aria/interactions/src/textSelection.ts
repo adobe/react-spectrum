@@ -49,7 +49,7 @@ export function disableTextSelection(ownerDocument = document, target?: Element)
   }
 }
 
-export function restoreTextSelection(ownerDocument=document,target?: Element) {
+export function restoreTextSelection(ownerDocument = document, target?: Element) {
   if (isIOS()) {
     // If the state is already default, there's nothing to do.
     // If it is restoring, then there's no need to queue a second restore.

@@ -13,8 +13,8 @@
 import {DOMAttributes} from '@react-types/shared';
 import React, {AriaAttributes, ReactNode, useContext, useEffect, useMemo, useState} from 'react';
 import ReactDOM from 'react-dom';
+import {useDocument} from '@react-aria/interactions';
 import {useIsSSR} from '@react-aria/ssr';
-import {useDocument} from "@react-aria/interactions";
 
 export interface ModalProviderProps extends DOMAttributes {
   children: ReactNode

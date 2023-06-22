@@ -13,8 +13,8 @@
 import {chain, useEffectEvent} from '@react-aria/utils';
 import {DOMAttributes, DragItem, DropItem} from '@react-types/shared';
 import {readFromDataTransfer, writeToDataTransfer} from './utils';
-import {useEffect, useRef} from 'react';
 import {useDocument, useFocus} from '@react-aria/interactions';
+import {useEffect, useRef} from 'react';
 
 export interface ClipboardProps {
   /** A function that returns the items to copy. */

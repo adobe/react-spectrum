@@ -16,7 +16,7 @@ export {mergeRefs} from './mergeRefs';
 export {filterDOMProps} from './filterDOMProps';
 export {focusWithoutScrolling} from './focusWithoutScrolling';
 export {getOffset} from './getOffset';
-export {runAfterTransition} from './runAfterTransition';
+export {runAfterTransition, resetGlobalEvents} from './runAfterTransition';
 export {useDrag1D} from './useDrag1D';
 export {useGlobalListeners} from './useGlobalListeners';
 export {useLabels} from './useLabels';

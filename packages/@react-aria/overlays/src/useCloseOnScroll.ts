@@ -11,7 +11,7 @@
  */
 
 import {RefObject, useEffect} from 'react';
-import {useDocument} from "@react-aria/interactions";
+import {useDocument} from '@react-aria/interactions';
 
 // This behavior moved from useOverlayTrigger to useOverlayPosition.
 // For backward compatibility, where useOverlayTrigger handled hiding the popover on close,

@@ -11,10 +11,9 @@
  */
 
 import React, {createContext, ReactNode} from 'react';
+import {resetGlobalEvents, useLayoutEffect} from '@react-aria/utils';
 import {resetGlobalFocusEvents} from './useFocusVisible';
 import {useIsSSR} from '@react-aria/ssr';
-import {useLayoutEffect} from '@react-aria/utils';
-import {resetGlobalEvents} from "@react-aria/utils/src/runAfterTransition";
 
 export interface DocumentProviderProps {
   /** Contents that should use the owner document. */
