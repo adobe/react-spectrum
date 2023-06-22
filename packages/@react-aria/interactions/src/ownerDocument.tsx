@@ -22,7 +22,7 @@ export interface DocumentProviderProps {
   document: Document
 }
 
-const DocumentContext = createContext<Document>(document);
+const DocumentContext = createContext<Document>(typeof document !== 'undefined' ? document : undefined);
 
 export function DocumentProvider(props: DocumentProviderProps) {
   let {children, document: ownerDocument} = props;
@@ -40,5 +40,5 @@ export function DocumentProvider(props: DocumentProviderProps) {
 export function useDocument() {
   let isSSR = useIsSSR();
   let context = React.useContext(DocumentContext);
-  return isSSR ? null : context || document;
+  return isSSR ? undefined : context || document;
 }

@@ -63,7 +63,7 @@ export function useLongPress(props: LongPressProps): LongPressResult {
     threshold = DEFAULT_THRESHOLD,
     accessibilityDescription
   } = props;
-  let ownerWindow = useDocument().defaultView;
+  let ownerWindow = useDocument()?.defaultView;
 
   const timeRef = useRef(null);
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();

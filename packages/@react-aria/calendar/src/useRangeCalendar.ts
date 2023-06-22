@@ -33,7 +33,7 @@ export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarPr
   // We need to match that here otherwise this will fire before the press event in
   // useCalendarCell, causing range selection to not work properly.
   let isVirtualClick = useRef(false);
-  let windowRef = useRef(typeof ownerDocument.defaultView !== 'undefined' ? ownerDocument.defaultView : null);
+  let windowRef = useRef(typeof ownerDocument?.defaultView !== 'undefined' ? ownerDocument.defaultView : null);
   useEvent(windowRef, 'pointerdown', e => {
     isVirtualClick.current = e.width === 0 && e.height === 0;
   });

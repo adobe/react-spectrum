@@ -134,7 +134,7 @@ export function FocusScope(props: FocusScopeProps) {
   // this layout effect needs to run last so that focusScopeTree cleanup happens at the last moment possible
   useEffect(() => {
     if (scopeRef) {
-      let activeElement = ownerDocument.activeElement;
+      let activeElement = ownerDocument?.activeElement;
       let scope = null;
       // In strict mode, active scope is incorrectly updated since cleanup will run even though scope hasn't unmounted.
       // To fix this, we need to update the actual activeScope here
@@ -194,9 +194,10 @@ export function useFocusManager(): FocusManager {
   return useContext(FocusContext)?.focusManager;
 }
 
-function createFocusManagerForScope(scopeRef: React.RefObject<Element[]>, ownerDocument = document): FocusManager {
+function createFocusManagerForScope(scopeRef: React.RefObject<Element[]>, ownerDocument?:Document): FocusManager {
   return {
     focusNext(opts: FocusManagerOptions = {}) {
+      ownerDocument = ownerDocument || document;
       let scope = scopeRef.current;
       let {from, tabbable, wrap, accept} = opts;
       let node = from || ownerDocument.activeElement;
@@ -214,6 +215,7 @@ function createFocusManagerForScope(scopeRef: React.RefObject<Element[]>, ownerD
       return nextNode;
     },
     focusPrevious(opts: FocusManagerOptions = {}) {
+      ownerDocument = ownerDocument || document;
       let scope = scopeRef.current;
       let {from, tabbable, wrap, accept} = opts;
       let node = from || ownerDocument.activeElement;
@@ -502,10 +504,10 @@ function useActiveScopeTracker(scopeRef: RefObject<Element[]>, restore: boolean,
       }
     };
 
-    ownerDocument.addEventListener('focusin', onFocus, false);
+    ownerDocument?.addEventListener('focusin', onFocus, false);
     scope.forEach(element => element.addEventListener('focusin', onFocus, false));
     return () => {
-      ownerDocument.removeEventListener('focusin', onFocus, false);
+      ownerDocument?.removeEventListener('focusin', onFocus, false);
       scope.forEach(element => element.removeEventListener('focusin', onFocus, false));
     };
   }, [scopeRef, restore, contain, ownerDocument]);
@@ -527,7 +529,7 @@ function shouldRestoreFocus(scopeRef: ScopeRef) {
 function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, contain: boolean) {
   // create a ref during render instead of useLayoutEffect so the active element is saved before a child with autoFocus=true mounts.
   const ownerDocument = useDocument();
-  const nodeToRestoreRef = useRef(typeof ownerDocument !== 'undefined' ? ownerDocument.activeElement as FocusableElement : null);
+  const nodeToRestoreRef = useRef(typeof ownerDocument !== 'undefined' ? ownerDocument?.activeElement as FocusableElement : null);
 
   // restoring scopes should all track if they are active regardless of contain, but contain already tracks it plus logic to contain the focus
   // restoring-non-containing scopes should only care if they become active so they can perform the restore

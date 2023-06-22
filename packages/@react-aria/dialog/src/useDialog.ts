@@ -40,7 +40,7 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElemen
 
   // Focus the dialog itself on mount, unless a child element is already focused.
   useEffect(() => {
-    if (ref.current && !ref.current.contains(ownerDocument.activeElement)) {
+    if (ref.current && !ref.current.contains(ownerDocument?.activeElement)) {
       focusSafely(ref.current);
 
       // Safari on iOS does not move the VoiceOver cursor to the dialog

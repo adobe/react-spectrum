@@ -119,13 +119,15 @@ let _document: Document;
 /**
  * Setup global event listeners to control when keyboard focus style should be visible.
  */
-function setupGlobalFocusEvents(ownerDocument = document) {
+function setupGlobalFocusEvents(ownerDocument?: Document) {
   _document = ownerDocument;
-  const ownerWindow = ownerDocument.defaultView;
 
-  if (typeof ownerWindow === 'undefined' || hasSetupGlobalListeners) {
+  if (typeof document === 'undefined' || hasSetupGlobalListeners) {
     return;
   }
+
+  ownerDocument = ownerDocument || document;
+  const ownerWindow = ownerDocument?.defaultView;
 
   // Programmatic focus() calls shouldn't affect the current input modality.
   // However, we need to detect other cases when a focus event occurs without
@@ -183,8 +185,9 @@ function removeGlobalFocusEvents() {
 
 let domContentLoadedCallback: () => void;
 
-export function initGlobalFocusEvents(ownerDocument = document) {
+export function initGlobalFocusEvents(ownerDocument?: Document) {
   if (typeof ownerDocument !== 'undefined') {
+    ownerDocument = ownerDocument || document;
     if (ownerDocument.readyState !== 'loading') {
       setupGlobalFocusEvents(ownerDocument);
     } else {

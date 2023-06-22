@@ -28,9 +28,9 @@ export function useEvent<K extends keyof GlobalEventHandlersEventMap>(
     }
 
     let element = ref.current;
-    element.addEventListener(event, handleEvent, options);
+    element?.addEventListener(event, handleEvent, options);
     return () => {
-      element.removeEventListener(event, handleEvent, options);
+      element?.removeEventListener(event, handleEvent, options);
     };
   }, [ref, event, options, isDisabled, handleEvent]);
 }

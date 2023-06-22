@@ -316,7 +316,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     let element = ref.current;
     return () => {
       // If the focused segment is removed, focus the previous one, or the next one if there was no previous one.
-      if (ownerDocument.activeElement === element) {
+      if (ownerDocument?.activeElement === element) {
         let prev = focusManager.focusPrevious();
         if (!prev) {
           focusManager.focusNext();

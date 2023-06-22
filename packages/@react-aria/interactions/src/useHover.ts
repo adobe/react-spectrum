@@ -54,10 +54,12 @@ function handleGlobalPointerEvent(e) {
   }
 }
 
-function setupGlobalTouchEvents(ownerDocument = document) {
-  if (typeof ownerDocument === 'undefined') {
+function setupGlobalTouchEvents(ownerDocument: Document) {
+  if (typeof document === 'undefined') {
     return;
   }
+
+  ownerDocument = ownerDocument || document;
 
   if (typeof PointerEvent !== 'undefined') {
     ownerDocument.addEventListener('pointerup', handleGlobalPointerEvent);
