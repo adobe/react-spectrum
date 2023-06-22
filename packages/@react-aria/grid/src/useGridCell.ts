@@ -16,7 +16,7 @@ import {getScrollParent, mergeProps, scrollIntoViewport} from '@react-aria/utils
 import {GridCollection, GridNode} from '@react-types/grid';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
-import {isFocusVisible} from '@react-aria/interactions';
+import {isFocusVisible, useDocument} from '@react-aria/interactions';
 import {KeyboardEvent as ReactKeyboardEvent, RefObject, useRef} from 'react';
 import {useLocale} from '@react-aria/i18n';
 import {useSelectableItem} from '@react-aria/selection';
@@ -58,6 +58,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     shouldSelectOnPressUp,
     onAction
   } = props;
+  let ownerDocument = useDocument();
 
   let {direction} = useLocale();
   let {keyboardDelegate, actions: {onCellAction}} = gridMap.get(state);
@@ -72,7 +73,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     let treeWalker = getFocusableTreeWalker(ref.current);
     if (focusMode === 'child') {
       // If focus is already on a focusable child within the cell, early return so we don't shift focus
-      if (ref.current.contains(document.activeElement) && ref.current !== document.activeElement) {
+      if (ref.current.contains(ownerDocument.activeElement) && ref.current !== ownerDocument.activeElement) {
         return;
       }
 
@@ -87,7 +88,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
     if (
       (keyWhenFocused.current != null && node.key !== keyWhenFocused.current) ||
-      !ref.current.contains(document.activeElement)
+      !ref.current.contains(ownerDocument.activeElement)
     ) {
       focusSafely(ref.current);
     }
@@ -110,7 +111,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     }
 
     let walker = getFocusableTreeWalker(ref.current);
-    walker.currentNode = document.activeElement;
+    walker.currentNode = ownerDocument.activeElement;
 
     switch (e.key) {
       case 'ArrowLeft': {
@@ -232,7 +233,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     // If the cell itself is focused, wait a frame so that focus finishes propagatating
     // up to the tree, and move focus to a focusable child if possible.
     requestAnimationFrame(() => {
-      if (focusMode === 'child' && document.activeElement === ref.current) {
+      if (focusMode === 'child' && ownerDocument.activeElement === ref.current) {
         focus();
       }
     });

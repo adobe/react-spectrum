@@ -11,7 +11,15 @@
  */
 
 import {DOMAttributes, FocusableElement, FocusEvents} from '@react-types/shared';
-import {getInteractionModality, HoverProps, isFocusVisible, PressProps, useHover, usePress} from '@react-aria/interactions';
+import {
+  getInteractionModality,
+  HoverProps,
+  isFocusVisible,
+  PressProps,
+  useDocument,
+  useHover,
+  usePress
+} from '@react-aria/interactions';
 import {mergeProps, useId} from '@react-aria/utils';
 import {RefObject, useEffect, useRef} from 'react';
 import {TooltipTriggerProps} from '@react-types/tooltip';
@@ -39,6 +47,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
     isDisabled,
     trigger
   } = props;
+  let ownerDocument = useDocument();
 
   let tooltipId = useId();
 
@@ -69,12 +78,12 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
       }
     };
     if (state.isOpen) {
-      document.addEventListener('keydown', onKeyDown, true);
+      ownerDocument.addEventListener('keydown', onKeyDown, true);
       return () => {
-        document.removeEventListener('keydown', onKeyDown, true);
+        ownerDocument.removeEventListener('keydown', onKeyDown, true);
       };
     }
-  }, [ref, state]);
+  }, [ref, state, ownerDocument]);
 
   let onHoverStart = () => {
     if (trigger === 'focus') {

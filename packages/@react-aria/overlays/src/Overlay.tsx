@@ -15,6 +15,7 @@ import React, {ReactNode, useContext, useMemo, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {useIsSSR} from '@react-aria/ssr';
 import {useLayoutEffect} from '@react-aria/utils';
+import {useDocument} from "@react-aria/interactions";
 
 export interface OverlayProps {
   /**
@@ -40,7 +41,8 @@ export const OverlayContext = React.createContext(null);
  */
 export function Overlay(props: OverlayProps) {
   let isSSR = useIsSSR();
-  let {portalContainer = isSSR ? null : document.body} = props;
+  let ownerDocument = useDocument();
+  let {portalContainer = isSSR ? null : ownerDocument.body} = props;
   let [contain, setContain] = useState(false);
   let contextValue = useMemo(() => ({contain, setContain}), [contain, setContain]);
 

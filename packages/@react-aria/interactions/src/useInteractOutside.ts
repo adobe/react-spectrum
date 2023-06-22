@@ -16,6 +16,7 @@
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
 import {RefObject, SyntheticEvent, useEffect, useRef} from 'react';
+import {useDocument} from './ownerDocument';
 import {useEffectEvent} from '@react-aria/utils';
 
 export interface InteractOutsideProps {
@@ -36,6 +37,7 @@ export function useInteractOutside(props: InteractOutsideProps) {
     isPointerDown: false,
     ignoreEmulatedMouseEvents: false
   });
+  let ownerDocument = useDocument();
 
   let onPointerDown = useEffectEvent((e: SyntheticEvent) => {
     if (onInteractOutside && isValidEvent(e, ref)) {
@@ -68,12 +70,12 @@ export function useInteractOutside(props: InteractOutsideProps) {
       };
 
       // changing these to capture phase fixed combobox
-      document.addEventListener('pointerdown', onPointerDown, true);
-      document.addEventListener('pointerup', onPointerUp, true);
+      ownerDocument.addEventListener('pointerdown', onPointerDown, true);
+      ownerDocument.addEventListener('pointerup', onPointerUp, true);
 
       return () => {
-        document.removeEventListener('pointerdown', onPointerDown, true);
-        document.removeEventListener('pointerup', onPointerUp, true);
+        ownerDocument.removeEventListener('pointerdown', onPointerDown, true);
+        ownerDocument.removeEventListener('pointerup', onPointerUp, true);
       };
     } else {
       let onMouseUp = (e) => {
@@ -93,19 +95,19 @@ export function useInteractOutside(props: InteractOutsideProps) {
         state.isPointerDown = false;
       };
 
-      document.addEventListener('mousedown', onPointerDown, true);
-      document.addEventListener('mouseup', onMouseUp, true);
-      document.addEventListener('touchstart', onPointerDown, true);
-      document.addEventListener('touchend', onTouchEnd, true);
+      ownerDocument.addEventListener('mousedown', onPointerDown, true);
+      ownerDocument.addEventListener('mouseup', onMouseUp, true);
+      ownerDocument.addEventListener('touchstart', onPointerDown, true);
+      ownerDocument.addEventListener('touchend', onTouchEnd, true);
 
       return () => {
-        document.removeEventListener('mousedown', onPointerDown, true);
-        document.removeEventListener('mouseup', onMouseUp, true);
-        document.removeEventListener('touchstart', onPointerDown, true);
-        document.removeEventListener('touchend', onTouchEnd, true);
+        ownerDocument.removeEventListener('mousedown', onPointerDown, true);
+        ownerDocument.removeEventListener('mouseup', onMouseUp, true);
+        ownerDocument.removeEventListener('touchstart', onPointerDown, true);
+        ownerDocument.removeEventListener('touchend', onTouchEnd, true);
       };
     }
-  }, [ref, isDisabled, onPointerDown, triggerInteractOutside]);
+  }, [ref, isDisabled, onPointerDown, triggerInteractOutside, ownerDocument]);
 }
 
 function isValidEvent(event, ref) {

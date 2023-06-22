@@ -18,6 +18,7 @@ import {QueuedToast, ToastState} from '@react-stately/toast';
 import {RefObject, useEffect, useRef} from 'react';
 import {useId, useLayoutEffect, useSlotId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useDocument} from "@react-aria/interactions";
 
 export interface AriaToastProps<T> extends AriaLabelingProps {
   /** The toast object. */
@@ -46,6 +47,7 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
     timeout,
     animation
   } = props.toast;
+  let ownerDocument = useDocument();
 
   useEffect(() => {
     if (!timer) {
@@ -66,13 +68,13 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
   useLayoutEffect(() => {
     let container = ref.current.closest('[role=region]') as HTMLElement;
     return () => {
-      if (container && container.contains(document.activeElement)) {
+      if (container && container.contains(ownerDocument.activeElement)) {
         // Focus must be delayed for focus ring to appear, but we can't wait
         // until useEffect cleanup to check if focus was inside the container.
         focusOnUnmount.current = container;
       }
     };
-  }, [ref]);
+  }, [ref, ownerDocument]);
 
   // eslint-disable-next-line
   useEffect(() => {

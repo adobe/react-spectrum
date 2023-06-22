@@ -17,6 +17,7 @@ import {RefObject, useCallback, useRef, useState} from 'react';
 import {useCloseOnScroll} from './useCloseOnScroll';
 import {useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
+import {useDocument} from "@react-aria/interactions";
 
 export interface AriaPositionProps extends PositionProps {
   /**
@@ -81,6 +82,7 @@ let visualViewport = typeof window !== 'undefined' && window.visualViewport;
  */
 export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   let {direction} = useLocale();
+  let ownerDocument = useDocument()
   let {
     arrowSize = 0,
     targetRef,
@@ -89,7 +91,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     placement = 'bottom' as Placement,
     containerPadding = 12,
     shouldFlip = true,
-    boundaryElement = typeof document !== 'undefined' ? document.body : null,
+    boundaryElement = typeof ownerDocument !== 'undefined' ? ownerDocument.body : null,
     offset = 0,
     crossOffset = 0,
     shouldUpdatePosition = true,
@@ -98,6 +100,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     maxHeight,
     arrowBoundaryOffset = 0
   } = props;
+
   let [position, setPosition] = useState<PositionResult>({
     position: {},
     arrowOffsetLeft: undefined,

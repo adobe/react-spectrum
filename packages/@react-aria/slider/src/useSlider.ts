@@ -15,7 +15,7 @@ import {clamp, mergeProps, useGlobalListeners} from '@react-aria/utils';
 import {DOMAttributes} from '@react-types/shared';
 import {getSliderThumbId, sliderIds} from './utils';
 import React, {LabelHTMLAttributes, OutputHTMLAttributes, RefObject, useRef} from 'react';
-import {setInteractionModality, useMove} from '@react-aria/interactions';
+import {setInteractionModality, useDocument, useMove} from '@react-aria/interactions';
 import {SliderState} from '@react-stately/slider';
 import {useLabel} from '@react-aria/label';
 import {useLocale} from '@react-aria/i18n';
@@ -50,6 +50,8 @@ export function useSlider<T extends number | number[]>(
   trackRef: RefObject<Element>
 ): SliderAria {
   let {labelProps, fieldProps} = useLabel(props);
+  let ownerDocument = useDocument();
+  let ownerWindow = ownerDocument.defaultView;
 
   let isVertical = props.orientation === 'vertical';
 
@@ -146,9 +148,9 @@ export function useSlider<T extends number | number[]>(
         state.setThumbDragging(realTimeTrackDraggingIndex.current, true);
         state.setThumbValue(closestThumb, value);
 
-        addGlobalListener(window, 'mouseup', onUpTrack, false);
-        addGlobalListener(window, 'touchend', onUpTrack, false);
-        addGlobalListener(window, 'pointerup', onUpTrack, false);
+        addGlobalListener(ownerWindow, 'mouseup', onUpTrack, false);
+        addGlobalListener(ownerWindow, 'touchend', onUpTrack, false);
+        addGlobalListener(ownerWindow, 'pointerup', onUpTrack, false);
       } else {
         realTimeTrackDraggingIndex.current = null;
       }
@@ -163,9 +165,9 @@ export function useSlider<T extends number | number[]>(
         realTimeTrackDraggingIndex.current = null;
       }
 
-      removeGlobalListener(window, 'mouseup', onUpTrack, false);
-      removeGlobalListener(window, 'touchend', onUpTrack, false);
-      removeGlobalListener(window, 'pointerup', onUpTrack, false);
+      removeGlobalListener(ownerWindow, 'mouseup', onUpTrack, false);
+      removeGlobalListener(ownerWindow, 'touchend', onUpTrack, false);
+      removeGlobalListener(ownerWindow, 'pointerup', onUpTrack, false);
     }
   };
 
@@ -178,7 +180,7 @@ export function useSlider<T extends number | number[]>(
     labelProps.onClick = () => {
       // Safari does not focus <input type="range"> elements when clicking on an associated <label>,
       // so do it manually. In addition, make sure we show the focus ring.
-      document.getElementById(getSliderThumbId(state, 0))?.focus();
+      ownerDocument.getElementById(getSliderThumbId(state, 0))?.focus();
       setInteractionModality('keyboard');
     };
   }

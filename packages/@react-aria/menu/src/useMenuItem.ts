@@ -13,7 +13,7 @@
 import {DOMAttributes, FocusableElement, PressEvent} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
 import {getItemCount} from '@react-stately/collections';
-import {isFocusVisible, useHover, useKeyboard, usePress} from '@react-aria/interactions';
+import {isFocusVisible, useDocument, useHover, useKeyboard, usePress} from '@react-aria/interactions';
 import {Key, RefObject, useCallback, useRef} from 'react';
 import {menuData} from './useMenu';
 import {mergeProps, useEffectEvent, useLayoutEffect, useSlotId} from '@react-aria/utils';
@@ -102,6 +102,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     'aria-haspopup': hasPopup
   } = props;
   let {direction} = useLocale();
+  let ownerDocument = useDocument();
 
   let isMenuDialogTrigger = state.collection.getItem(key).hasChildNodes;
   let isOpen = state.expandedKeys.has(key);
@@ -205,7 +206,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
         state.selectionManager.setFocusedKey(key);
         // focus immediately so that a focus scope opened on hover has the correct restore node
         let isFocused = key === state.selectionManager.focusedKey;
-        if (isFocused && state.selectionManager.isFocused && document.activeElement !== ref.current) {
+        if (isFocused && state.selectionManager.isFocused && ownerDocument.activeElement !== ref.current) {
           focusSafely(ref.current);
         }
       }

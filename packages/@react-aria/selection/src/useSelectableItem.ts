@@ -16,7 +16,7 @@ import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
 import {Key, RefObject, useEffect, useRef} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
-import {PressProps, useLongPress, usePress} from '@react-aria/interactions';
+import {PressProps, useDocument, useLongPress, usePress} from '@react-aria/interactions';
 
 export interface SelectableItemOptions {
   /**
@@ -109,6 +109,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     onAction,
     allowsDifferentPressOrigin
   } = options;
+  let ownerDocument = useDocument()
 
   let onSelect = (e: PressEvent | LongPressEvent | PointerEvent) => {
     if (e.pointerType === 'keyboard' && isNonContiguousSelectionModifier(e)) {
@@ -141,12 +142,12 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     if (isFocused && manager.isFocused && !shouldUseVirtualFocus) {
       if (focus) {
         focus();
-      } else if (document.activeElement !== ref.current) {
+      } else if (ownerDocument.activeElement !== ref.current) {
         focusSafely(ref.current);
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ref, key, manager.focusedKey, manager.childFocusStrategy, manager.isFocused, shouldUseVirtualFocus]);
+  }, [ref, key, manager.focusedKey, manager.childFocusStrategy, manager.isFocused, shouldUseVirtualFocus, ownerDocument]);
 
   isDisabled = isDisabled || manager.isDisabled(key);
   // Set tabIndex to 0 if the element is focused, or -1 otherwise so that only the last focused
@@ -200,7 +201,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     itemPressProps.onPressStart = (e) => {
       modality.current = e.pointerType;
       longPressEnabledOnPressStart.current = longPressEnabled;
-      if (e.pointerType === 'keyboard' && (!hasAction || isSelectionKey())) {
+      if (e.pointerType === 'keyboard' && (!hasAction || isSelectionKey(ownerDocument.defaultView))) {
         onSelect(e);
       }
     };
@@ -210,7 +211,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     if (!allowsDifferentPressOrigin) {
       itemPressProps.onPress = (e) => {
         if (hasPrimaryAction || (hasSecondaryAction && e.pointerType !== 'mouse')) {
-          if (e.pointerType === 'keyboard' && !isActionKey()) {
+          if (e.pointerType === 'keyboard' && !isActionKey(ownerDocument.defaultView)) {
             return;
           }
 
@@ -239,7 +240,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       // and the Enter key performs onAction on key up.
       if (
         (e.pointerType === 'mouse' && !hasPrimaryAction) ||
-        (e.pointerType === 'keyboard' && (!onAction || isSelectionKey()))
+        (e.pointerType === 'keyboard' && (!onAction || isSelectionKey(ownerDocument.defaultView)))
       ) {
         onSelect(e);
       }
@@ -317,12 +318,12 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   };
 }
 
-function isActionKey() {
-  let event = window.event as KeyboardEvent;
+function isActionKey(ownerWindow = window) {
+  let event = ownerWindow.event as KeyboardEvent;
   return event?.key === 'Enter';
 }
 
-function isSelectionKey() {
-  let event = window.event as KeyboardEvent;
+function isSelectionKey(ownerWindow = window) {
+  let event = ownerWindow.event as KeyboardEvent;
   return event?.key === ' ' || event?.code === 'Space';
 }

@@ -15,7 +15,8 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {isMac, isVirtualClick} from '@react-aria/utils';
+import {getOwnerDocument, isMac, isVirtualClick} from '@react-aria/utils';
+import {useDocument} from './ownerDocument';
 import {useEffect, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
 
@@ -86,10 +87,12 @@ function handleClickEvent(e: MouseEvent) {
 }
 
 function handleFocusEvent(e: FocusEvent) {
+  const ownerDocument = getOwnerDocument(e.target as Element);
+  const ownerWindow = ownerDocument.defaultView;
   // Firefox fires two extra focus events when the user first clicks into an iframe:
   // first on the window, then on the document. We ignore these events so they don't
   // cause keyboard focus rings to appear.
-  if (e.target === window || e.target === document) {
+  if (e.target === ownerWindow || e.target === ownerDocument) {
     return;
   }
 
@@ -114,8 +117,10 @@ function handleWindowBlur() {
 /**
  * Setup global event listeners to control when keyboard focus style should be visible.
  */
-function setupGlobalFocusEvents() {
-  if (typeof window === 'undefined' || hasSetupGlobalListeners) {
+function setupGlobalFocusEvents(ownerDocument = document) {
+  const ownerWindow = ownerDocument.defaultView;
+
+  if (typeof ownerWindow === 'undefined' || hasSetupGlobalListeners) {
     return;
   }
 
@@ -123,41 +128,45 @@ function setupGlobalFocusEvents() {
   // However, we need to detect other cases when a focus event occurs without
   // a preceding user event (e.g. screen reader focus). Overriding the focus
   // method on HTMLElement.prototype is a bit hacky, but works.
-  let focus = HTMLElement.prototype.focus;
-  HTMLElement.prototype.focus = function () {
+  let focus = ownerWindow.HTMLElement.prototype.focus;
+  ownerWindow.HTMLElement.prototype.focus = function () {
     hasEventBeforeFocus = true;
     focus.apply(this, arguments);
   };
 
-  document.addEventListener('keydown', handleKeyboardEvent, true);
-  document.addEventListener('keyup', handleKeyboardEvent, true);
-  document.addEventListener('click', handleClickEvent, true);
+  ownerDocument.addEventListener('keydown', handleKeyboardEvent, true);
+  ownerDocument.addEventListener('keyup', handleKeyboardEvent, true);
+  ownerDocument.addEventListener('click', handleClickEvent, true);
 
   // Register focus events on the window so they are sure to happen
   // before React's event listeners (registered on the document).
-  window.addEventListener('focus', handleFocusEvent, true);
-  window.addEventListener('blur', handleWindowBlur, false);
+  ownerWindow.addEventListener('focus', handleFocusEvent, true);
+  ownerWindow.addEventListener('blur', handleWindowBlur, false);
 
   if (typeof PointerEvent !== 'undefined') {
-    document.addEventListener('pointerdown', handlePointerEvent, true);
-    document.addEventListener('pointermove', handlePointerEvent, true);
-    document.addEventListener('pointerup', handlePointerEvent, true);
+    ownerDocument.addEventListener('pointerdown', handlePointerEvent, true);
+    ownerDocument.addEventListener('pointermove', handlePointerEvent, true);
+    ownerDocument.addEventListener('pointerup', handlePointerEvent, true);
   } else {
-    document.addEventListener('mousedown', handlePointerEvent, true);
-    document.addEventListener('mousemove', handlePointerEvent, true);
-    document.addEventListener('mouseup', handlePointerEvent, true);
+    ownerDocument.addEventListener('mousedown', handlePointerEvent, true);
+    ownerDocument.addEventListener('mousemove', handlePointerEvent, true);
+    ownerDocument.addEventListener('mouseup', handlePointerEvent, true);
   }
 
   hasSetupGlobalListeners = true;
 }
 
-if (typeof document !== 'undefined') {
-  if (document.readyState !== 'loading') {
-    setupGlobalFocusEvents();
-  } else {
-    document.addEventListener('DOMContentLoaded', setupGlobalFocusEvents);
+export function initGlobalFocusEvents(ownerDocument = document) {
+  if (typeof ownerDocument !== 'undefined') {
+    if (ownerDocument.readyState !== 'loading') {
+      setupGlobalFocusEvents();
+    } else {
+      ownerDocument.addEventListener('DOMContentLoaded', () => setupGlobalFocusEvents());
+    }
   }
 }
+
+initGlobalFocusEvents();
 
 /**
  * If true, keyboard focus is visible.
@@ -221,7 +230,8 @@ export function useFocusVisible(props: FocusVisibleProps = {}): FocusVisibleResu
  * Listens for trigger change and reports if focus is visible (i.e., modality is not pointer).
  */
 export function useFocusVisibleListener(fn: FocusVisibleHandler, deps: ReadonlyArray<any>, opts?: {isTextInput?: boolean}): void {
-  setupGlobalFocusEvents();
+  let ownerDocument = useDocument();
+  setupGlobalFocusEvents(ownerDocument);
 
   useEffect(() => {
     let handler = (modality: Modality, e: HandlerEvent) => {

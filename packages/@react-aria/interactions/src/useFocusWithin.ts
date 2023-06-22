@@ -17,6 +17,7 @@
 
 import {DOMAttributes} from '@react-types/shared';
 import {FocusEvent, useCallback, useRef} from 'react';
+import {useDocument} from './ownerDocument';
 import {useSyntheticBlurEvent} from './utils';
 
 export interface FocusWithinProps {
@@ -48,6 +49,7 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
   let state = useRef({
     isFocusWithin: false
   });
+  let ownerDocument = useDocument();
 
   let onBlur = useCallback((e: FocusEvent) => {
     // We don't want to trigger onBlurWithin and then immediately onFocusWithin again
@@ -68,9 +70,9 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
 
   let onSyntheticFocus = useSyntheticBlurEvent(onBlur);
   let onFocus = useCallback((e: FocusEvent) => {
-    // Double check that document.activeElement actually matches e.target in case a previously chained
+    // Double check that ownerDocument.activeElement actually matches e.target in case a previously chained
     // focus handler already moved focus somewhere else.
-    if (!state.current.isFocusWithin && document.activeElement === e.target) {
+    if (!state.current.isFocusWithin && ownerDocument.activeElement === e.target) {
       if (onFocusWithin) {
         onFocusWithin(e);
       }
@@ -82,7 +84,7 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
       state.current.isFocusWithin = true;
       onSyntheticFocus(e);
     }
-  }, [onFocusWithin, onFocusWithinChange, onSyntheticFocus]);
+  }, [onFocusWithin, onFocusWithinChange, onSyntheticFocus, ownerDocument]);
 
   if (isDisabled) {
     return {

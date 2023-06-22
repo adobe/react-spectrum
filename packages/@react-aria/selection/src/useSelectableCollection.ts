@@ -14,7 +14,7 @@ import {DOMAttributes, FocusableElement, FocusStrategy, KeyboardDelegate} from '
 import {FocusEvent, Key, KeyboardEvent, RefObject, useEffect, useRef} from 'react';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {focusWithoutScrolling, mergeProps, scrollIntoView, scrollIntoViewport, useEvent} from '@react-aria/utils';
-import {getInteractionModality} from '@react-aria/interactions';
+import {getInteractionModality, useDocument} from '@react-aria/interactions';
 import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useLocale} from '@react-aria/i18n';
@@ -107,6 +107,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     // If no scrollRef is provided, assume the collection ref is the scrollable region
     scrollRef = ref
   } = options;
+  let ownerDocument = useDocument();
   let {direction} = useLocale();
 
 
@@ -254,7 +255,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
               }
             } while (last);
 
-            if (next && !next.contains(document.activeElement)) {
+            if (next && !next.contains(ownerDocument.activeElement)) {
               focusWithoutScrolling(next);
             }
           }

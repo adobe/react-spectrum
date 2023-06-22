@@ -14,7 +14,7 @@ import {DOMAttributes, FocusableElement, Node as RSNode} from '@react-types/shar
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getRowId, listMap} from './utils';
 import {getScrollParent, mergeProps, scrollIntoViewport, useSlotId} from '@react-aria/utils';
-import {isFocusVisible} from '@react-aria/interactions';
+import {isFocusVisible, useDocument} from '@react-aria/interactions';
 import type {ListState} from '@react-stately/list';
 import {KeyboardEvent as ReactKeyboardEvent, RefObject, useRef} from 'react';
 import {SelectableItemStates, useSelectableItem} from '@react-aria/selection';
@@ -51,6 +51,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     isVirtualized,
     shouldSelectOnPressUp
   } = props;
+  let ownerDocument = useDocument();
 
   let {direction} = useLocale();
   let {onAction} = listMap.get(state);
@@ -64,7 +65,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     // (e.g. clicking on a row button)
     if (
       (keyWhenFocused.current != null && node.key !== keyWhenFocused.current) ||
-      !ref.current.contains(document.activeElement)
+      !ref.current.contains(ownerDocument.activeElement)
     ) {
       focusSafely(ref.current);
     }
@@ -86,7 +87,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     }
 
     let walker = getFocusableTreeWalker(ref.current);
-    walker.currentNode = document.activeElement;
+    walker.currentNode = ownerDocument.activeElement;
 
     switch (e.key) {
       case 'ArrowLeft': {

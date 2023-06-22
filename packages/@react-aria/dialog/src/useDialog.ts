@@ -16,6 +16,7 @@ import {filterDOMProps, useSlotId} from '@react-aria/utils';
 import {focusSafely} from '@react-aria/focus';
 import {RefObject, useEffect, useRef} from 'react';
 import {useOverlayFocusContain} from '@react-aria/overlays';
+import {useDocument} from '@react-aria/interactions';
 
 export interface DialogAria {
   /** Props for the dialog container element. */
@@ -33,19 +34,20 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElemen
   let {role = 'dialog'} = props;
   let titleId = useSlotId();
   titleId = props['aria-label'] ? undefined : titleId;
+  let ownerDocument = useDocument();
 
   let isRefocusing = useRef(false);
 
   // Focus the dialog itself on mount, unless a child element is already focused.
   useEffect(() => {
-    if (ref.current && !ref.current.contains(document.activeElement)) {
+    if (ref.current && !ref.current.contains(ownerDocument.activeElement)) {
       focusSafely(ref.current);
 
       // Safari on iOS does not move the VoiceOver cursor to the dialog
       // or announce that it has opened until it has rendered. A workaround
       // is to wait for half a second, then blur and re-focus the dialog.
       let timeout = setTimeout(() => {
-        if (document.activeElement === ref.current) {
+        if (ownerDocument.activeElement === ref.current) {
           isRefocusing.current = true;
           ref.current.blur();
           focusSafely(ref.current);
@@ -57,7 +59,7 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElemen
         clearTimeout(timeout);
       };
     }
-  }, [ref]);
+  }, [ref, ownerDocument]);
 
   useOverlayFocusContain();
 

@@ -230,7 +230,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   let onButtonPressStart = (e) => {
     // If focus is already on the input, keep it there so we don't hide the
     // software keyboard when tapping the increment/decrement buttons.
-    if (document.activeElement === inputRef.current) {
+    if (inputRef.current.ownerDocument.activeElement === inputRef.current) {
       return;
     }
 

@@ -17,6 +17,7 @@
 
 import {DOMAttributes, FocusableElement, FocusEvents} from '@react-types/shared';
 import {FocusEvent, useCallback} from 'react';
+import {useDocument} from './ownerDocument';
 import {useSyntheticBlurEvent} from './utils';
 
 export interface FocusProps<Target = FocusableElement> extends FocusEvents<Target> {
@@ -40,6 +41,7 @@ export function useFocus<Target extends FocusableElement = FocusableElement>(pro
     onBlur: onBlurProp,
     onFocusChange
   } = props;
+  let ownerDocument = useDocument();
 
   const onBlur: FocusProps<Target>['onBlur'] = useCallback((e: FocusEvent<Target>) => {
     if (e.target === e.currentTarget) {
@@ -59,9 +61,9 @@ export function useFocus<Target extends FocusableElement = FocusableElement>(pro
   const onSyntheticFocus = useSyntheticBlurEvent<Target>(onBlur);
 
   const onFocus: FocusProps<Target>['onFocus'] = useCallback((e: FocusEvent<Target>) => {
-    // Double check that document.activeElement actually matches e.target in case a previously chained
+    // Double check that ownerDocument.activeElement actually matches e.target in case a previously chained
     // focus handler already moved focus somewhere else.
-    if (e.target === e.currentTarget && document.activeElement === e.target) {
+    if (e.target === e.currentTarget && ownerDocument.activeElement === e.target) {
       if (onFocusProp) {
         onFocusProp(e);
       }
@@ -72,7 +74,7 @@ export function useFocus<Target extends FocusableElement = FocusableElement>(pro
 
       onSyntheticFocus(e);
     }
-  }, [onFocusChange, onFocusProp, onSyntheticFocus]);
+  }, [onFocusChange, onFocusProp, onSyntheticFocus, ownerDocument]);
 
   return {
     focusProps: {

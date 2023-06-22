@@ -16,6 +16,7 @@
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
 import {DOMAttributes, HoverEvents} from '@react-types/shared';
+import {useDocument} from './ownerDocument';
 import {useEffect, useMemo, useRef, useState} from 'react';
 
 export interface HoverProps extends HoverEvents {
@@ -53,15 +54,15 @@ function handleGlobalPointerEvent(e) {
   }
 }
 
-function setupGlobalTouchEvents() {
-  if (typeof document === 'undefined') {
+function setupGlobalTouchEvents(ownerDocument = document) {
+  if (typeof ownerDocument === 'undefined') {
     return;
   }
 
   if (typeof PointerEvent !== 'undefined') {
-    document.addEventListener('pointerup', handleGlobalPointerEvent);
+    ownerDocument.addEventListener('pointerup', handleGlobalPointerEvent);
   } else {
-    document.addEventListener('touchend', setGlobalIgnoreEmulatedMouseEvents);
+    ownerDocument.addEventListener('touchend', setGlobalIgnoreEmulatedMouseEvents);
   }
 
   hoverCount++;
@@ -72,9 +73,9 @@ function setupGlobalTouchEvents() {
     }
 
     if (typeof PointerEvent !== 'undefined') {
-      document.removeEventListener('pointerup', handleGlobalPointerEvent);
+      ownerDocument.removeEventListener('pointerup', handleGlobalPointerEvent);
     } else {
-      document.removeEventListener('touchend', setGlobalIgnoreEmulatedMouseEvents);
+      ownerDocument.removeEventListener('touchend', setGlobalIgnoreEmulatedMouseEvents);
     }
   };
 }
@@ -98,8 +99,9 @@ export function useHover(props: HoverProps): HoverResult {
     pointerType: '',
     target: null
   }).current;
+  let ownerDocument = useDocument();
 
-  useEffect(setupGlobalTouchEvents, []);
+  useEffect(() => setupGlobalTouchEvents(ownerDocument), [ownerDocument]);
 
   let {hoverProps, triggerHoverEnd} = useMemo(() => {
     let triggerHoverStart = (event, pointerType) => {

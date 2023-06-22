@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, getScrollParent, isIOS, useLayoutEffect} from '@react-aria/utils';
+import {chain, getOwnerDocument, getScrollParent, isIOS, useLayoutEffect} from '@react-aria/utils';
+import {useDocument} from '@react-aria/interactions';
 
 interface PreventScrollOptions {
   /** Whether the scroll lock is disabled. */
@@ -44,6 +45,7 @@ let restore;
  */
 export function usePreventScroll(options: PreventScrollOptions = {}) {
   let {isDisabled} = options;
+  let ownerDocument = useDocument();
 
   useLayoutEffect(() => {
     if (isDisabled) {
@@ -53,9 +55,9 @@ export function usePreventScroll(options: PreventScrollOptions = {}) {
     preventScrollCount++;
     if (preventScrollCount === 1) {
       if (isIOS()) {
-        restore = preventScrollMobileSafari();
+        restore = preventScrollMobileSafari(ownerDocument);
       } else {
-        restore = preventScrollStandard();
+        restore = preventScrollStandard(ownerDocument);
       }
     }
 
@@ -65,15 +67,15 @@ export function usePreventScroll(options: PreventScrollOptions = {}) {
         restore();
       }
     };
-  }, [isDisabled]);
+  }, [isDisabled, ownerDocument]);
 }
 
 // For most browsers, all we need to do is set `overflow: hidden` on the root element, and
 // add some padding to prevent the page from shifting when the scrollbar is hidden.
-function preventScrollStandard() {
+function preventScrollStandard(ownerDocument = document) {
   return chain(
-    setStyle(document.documentElement, 'paddingRight', `${window.innerWidth - document.documentElement.clientWidth}px`),
-    setStyle(document.documentElement, 'overflow', 'hidden')
+    setStyle(ownerDocument.documentElement, 'paddingRight', `${window.innerWidth - ownerDocument.documentElement.clientWidth}px`),
+    setStyle(ownerDocument.documentElement, 'overflow', 'hidden')
   );
 }
 
@@ -103,13 +105,15 @@ function preventScrollStandard() {
 //    above work or Safari will still try to scroll the page when focusing an input.
 // 6. As a last resort, handle window scroll events, and scroll back to the top. This can happen when attempting
 //    to navigate to an input with the next/previous buttons that's outside a modal.
-function preventScrollMobileSafari() {
+function preventScrollMobileSafari(ownerDocument = document) {
+  let ownerWindow = ownerDocument.defaultView;
+
   let scrollable: Element;
   let lastY = 0;
   let onTouchStart = (e: TouchEvent) => {
     // Store the nearest scrollable parent element from the element that the user touched.
     scrollable = getScrollParent(e.target as Element);
-    if (scrollable === document.documentElement && scrollable === document.body) {
+    if (scrollable === getOwnerDocument(e.target as Element).documentElement && scrollable === ownerDocument.body) {
       return;
     }
 
@@ -118,7 +122,7 @@ function preventScrollMobileSafari() {
 
   let onTouchMove = (e: TouchEvent) => {
     // Prevent scrolling the window.
-    if (!scrollable || scrollable === document.documentElement || scrollable === document.body) {
+    if (!scrollable || scrollable === ownerDocument.documentElement || scrollable === ownerDocument.body) {
       e.preventDefault();
       return;
     }
@@ -146,7 +150,7 @@ function preventScrollMobileSafari() {
     let target = e.target as HTMLElement;
 
     // Apply this change if we're not already focused on the target element
-    if (willOpenKeyboard(target) && target !== document.activeElement) {
+    if (willOpenKeyboard(target) && target !== ownerDocument.activeElement) {
       e.preventDefault();
 
       // Apply a transform to trick Safari into thinking the input is at the top of the page
@@ -174,7 +178,7 @@ function preventScrollMobileSafari() {
         // This will have prevented the browser from scrolling the focused element into view,
         // so we need to do this ourselves in a way that doesn't cause the whole page to scroll.
         if (visualViewport) {
-          if (visualViewport.height < window.innerHeight) {
+          if (visualViewport.height < ownerWindow.innerHeight) {
             // If the keyboard is already visible, do this after one additional frame
             // to wait for the transform to be removed.
             requestAnimationFrame(() => {
@@ -193,37 +197,37 @@ function preventScrollMobileSafari() {
   let onWindowScroll = () => {
     // Last resort. If the window scrolled, scroll it back to the top.
     // It should always be at the top because the body will have a negative margin (see below).
-    window.scrollTo(0, 0);
+    ownerWindow.scrollTo(0, 0);
   };
 
   // Record the original scroll position so we can restore it.
   // Then apply a negative margin to the body to offset it by the scroll position. This will
   // enable us to scroll the window to the top, which is required for the rest of this to work.
-  let scrollX = window.pageXOffset;
-  let scrollY = window.pageYOffset;
+  let scrollX = ownerWindow.pageXOffset;
+  let scrollY = ownerWindow.pageYOffset;
 
   let restoreStyles = chain(
-    setStyle(document.documentElement, 'paddingRight', `${window.innerWidth - document.documentElement.clientWidth}px`),
-    setStyle(document.documentElement, 'overflow', 'hidden'),
-    setStyle(document.body, 'marginTop', `-${scrollY}px`)
+    setStyle(ownerDocument.documentElement, 'paddingRight', `${ownerWindow.innerWidth - ownerDocument.documentElement.clientWidth}px`),
+    setStyle(ownerDocument.documentElement, 'overflow', 'hidden'),
+    setStyle(ownerDocument.body, 'marginTop', `-${scrollY}px`)
   );
 
   // Scroll to the top. The negative margin on the body will make this appear the same.
-  window.scrollTo(0, 0);
+  ownerWindow.scrollTo(0, 0);
 
   let removeEvents = chain(
-    addEvent(document, 'touchstart', onTouchStart, {passive: false, capture: true}),
-    addEvent(document, 'touchmove', onTouchMove, {passive: false, capture: true}),
-    addEvent(document, 'touchend', onTouchEnd, {passive: false, capture: true}),
-    addEvent(document, 'focus', onFocus, true),
-    addEvent(window, 'scroll', onWindowScroll)
+    addEvent(ownerDocument, 'touchstart', onTouchStart, {passive: false, capture: true}),
+    addEvent(ownerDocument, 'touchmove', onTouchMove, {passive: false, capture: true}),
+    addEvent(ownerDocument, 'touchend', onTouchEnd, {passive: false, capture: true}),
+    addEvent(ownerDocument, 'focus', onFocus, true),
+    addEvent(ownerWindow, 'scroll', onWindowScroll)
   );
 
   return () => {
     // Restore styles and scroll the page back to where it was.
     restoreStyles();
     removeEvents();
-    window.scrollTo(scrollX, scrollY);
+    ownerWindow.scrollTo(scrollX, scrollY);
   };
 }
 
@@ -251,11 +255,12 @@ function addEvent<K extends keyof GlobalEventHandlersEventMap>(
 }
 
 function scrollIntoView(target: Element) {
-  let root = document.scrollingElement || document.documentElement;
+  let ownerDocument = getOwnerDocument(target);
+  let root = ownerDocument.scrollingElement || ownerDocument.documentElement;
   while (target && target !== root) {
     // Find the parent scrollable element and adjust the scroll position if the target is not already in view.
     let scrollable = getScrollParent(target);
-    if (scrollable !== document.documentElement && scrollable !== document.body && scrollable !== target) {
+    if (scrollable !== ownerDocument.documentElement && scrollable !== ownerDocument.body && scrollable !== target) {
       let scrollableTop = scrollable.getBoundingClientRect().top;
       let targetTop = target.getBoundingClientRect().top;
       if (targetTop > scrollableTop + target.clientHeight) {

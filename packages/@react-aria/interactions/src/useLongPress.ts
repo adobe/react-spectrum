@@ -12,6 +12,7 @@
 
 import {DOMAttributes, LongPressEvent} from '@react-types/shared';
 import {mergeProps, useDescription, useGlobalListeners} from '@react-aria/utils';
+import {useDocument} from './ownerDocument';
 import {usePress} from './usePress';
 import {useRef} from 'react';
 
@@ -62,6 +63,7 @@ export function useLongPress(props: LongPressProps): LongPressResult {
     threshold = DEFAULT_THRESHOLD,
     accessibilityDescription
   } = props;
+  let ownerWindow = useDocument().defaultView;
 
   const timeRef = useRef(null);
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
@@ -96,7 +98,7 @@ export function useLongPress(props: LongPressProps): LongPressResult {
           };
 
           addGlobalListener(e.target, 'contextmenu', onContextMenu, {once: true});
-          addGlobalListener(window, 'pointerup', () => {
+          addGlobalListener(ownerWindow, 'pointerup', () => {
             // If no contextmenu event is fired quickly after pointerup, remove the handler
             // so future context menu events outside a long press are not prevented.
             setTimeout(() => {

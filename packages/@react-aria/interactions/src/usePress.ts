@@ -20,6 +20,7 @@ import {DOMAttributes, FocusableElement, PointerType, PressEvents} from '@react-
 import {focusWithoutScrolling, isVirtualClick, isVirtualPointerEvent, mergeProps, useEffectEvent, useGlobalListeners, useSyncRef} from '@react-aria/utils';
 import {PressResponderContext} from './context';
 import {RefObject, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {useDocument} from './ownerDocument';
 
 export interface PressProps extends PressEvents {
   /** Whether the target is in a controlled press state (e.g. an overlay it triggers is open). */
@@ -105,6 +106,7 @@ export function usePress(props: PressHookProps): PressResult {
     ref: _, // Removing `ref` from `domProps` because TypeScript is dumb
     ...domProps
   } = usePressResponderContext(props);
+  let ownerDocument = useDocument();
 
   let [isPressed, setPressed] = useState(false);
   let ref = useRef<PressState>({
@@ -216,7 +218,7 @@ export function usePress(props: PressHookProps): PressResult {
       state.pointerType = null;
       removeAllGlobalListeners();
       if (!allowTextSelectionOnPress) {
-        restoreTextSelection(state.target);
+        restoreTextSelection(ownerDocument, state.target);
       }
     }
   });
@@ -247,7 +249,7 @@ export function usePress(props: PressHookProps): PressResult {
 
             // Focus may move before the key up event, so register the event on the document
             // instead of the same element where the key down event occurred.
-            addGlobalListener(document, 'keyup', onKeyUp, false);
+            addGlobalListener(ownerDocument, 'keyup', onKeyUp, false);
           }
         } else if (e.key === 'Enter' && isHTMLAnchorLink(e.currentTarget)) {
           // If the target is a link, we won't have handled this above because we want the default
@@ -347,14 +349,14 @@ export function usePress(props: PressHookProps): PressResult {
           }
 
           if (!allowTextSelectionOnPress) {
-            disableTextSelection(state.target);
+            disableTextSelection(ownerDocument, state.target);
           }
 
           triggerPressStart(e, state.pointerType);
 
-          addGlobalListener(document, 'pointermove', onPointerMove, false);
-          addGlobalListener(document, 'pointerup', onPointerUp, false);
-          addGlobalListener(document, 'pointercancel', onPointerCancel, false);
+          addGlobalListener(ownerDocument, 'pointermove', onPointerMove, false);
+          addGlobalListener(ownerDocument, 'pointerup', onPointerUp, false);
+          addGlobalListener(ownerDocument, 'pointercancel', onPointerCancel, false);
         }
       };
 
@@ -423,7 +425,7 @@ export function usePress(props: PressHookProps): PressResult {
           state.pointerType = null;
           removeAllGlobalListeners();
           if (!allowTextSelectionOnPress) {
-            restoreTextSelection(state.target);
+            restoreTextSelection(ownerDocument, state.target);
           }
         }
       };
@@ -469,7 +471,7 @@ export function usePress(props: PressHookProps): PressResult {
 
         triggerPressStart(e, state.pointerType);
 
-        addGlobalListener(document, 'mouseup', onMouseUp, false);
+        addGlobalListener(ownerDocument, 'mouseup', onMouseUp, false);
       };
 
       pressProps.onMouseEnter = (e) => {
@@ -554,12 +556,12 @@ export function usePress(props: PressHookProps): PressResult {
         }
 
         if (!allowTextSelectionOnPress) {
-          disableTextSelection(state.target);
+          disableTextSelection(ownerDocument, state.target);
         }
 
         triggerPressStart(e, state.pointerType);
 
-        addGlobalListener(window, 'scroll', onScroll, true);
+        addGlobalListener(ownerDocument.defaultView, 'scroll', onScroll, true);
       };
 
       pressProps.onTouchMove = (e) => {
@@ -608,7 +610,7 @@ export function usePress(props: PressHookProps): PressResult {
         state.isOverTarget = false;
         state.ignoreEmulatedMouseEvents = true;
         if (!allowTextSelectionOnPress) {
-          restoreTextSelection(state.target);
+          restoreTextSelection(ownerDocument, state.target);
         }
         removeAllGlobalListeners();
       };
@@ -656,7 +658,8 @@ export function usePress(props: PressHookProps): PressResult {
     cancelOnPointerExit,
     triggerPressEnd,
     triggerPressStart,
-    triggerPressUp
+    triggerPressUp,
+    ownerDocument
   ]);
 
   // Remove user-select: none in case component unmounts immediately after pressStart
@@ -665,10 +668,10 @@ export function usePress(props: PressHookProps): PressResult {
     return () => {
       if (!allowTextSelectionOnPress) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        restoreTextSelection(ref.current.target);
+        restoreTextSelection(ownerDocument, ref.current.target);
       }
     };
-  }, [allowTextSelectionOnPress]);
+  }, [allowTextSelectionOnPress, ownerDocument]);
 
   return {
     isPressed: isPressedProp || isPressed,

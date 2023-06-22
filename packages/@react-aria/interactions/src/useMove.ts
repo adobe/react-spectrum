@@ -13,6 +13,7 @@
 import {disableTextSelection, restoreTextSelection}  from './textSelection';
 import {DOMAttributes, MoveEvents, PointerType} from '@react-types/shared';
 import React, {useMemo, useRef} from 'react';
+import {useDocument} from './ownerDocument';
 import {useEffectEvent, useGlobalListeners} from '@react-aria/utils';
 
 export interface MoveResult {
@@ -40,6 +41,8 @@ export function useMove(props: MoveEvents): MoveResult {
     lastPosition: {pageX: number, pageY: number} | null,
     id: number | null
   }>({didMove: false, lastPosition: null, id: null});
+  let ownerDocument = useDocument();
+  let ownerWindow = ownerDocument.defaultView;
 
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
@@ -72,7 +75,7 @@ export function useMove(props: MoveEvents): MoveResult {
   });
 
   let end = useEffectEvent((originalEvent: EventBase, pointerType: PointerType) => {
-    restoreTextSelection();
+    restoreTextSelection(ownerDocument);
     if (state.current.didMove) {
       onMoveEnd?.({
         type: 'moveend',
@@ -89,7 +92,7 @@ export function useMove(props: MoveEvents): MoveResult {
     let moveProps: DOMAttributes = {};
 
     let start = () => {
-      disableTextSelection();
+      disableTextSelection(ownerDocument);
       state.current.didMove = false;
     };
 
@@ -103,8 +106,8 @@ export function useMove(props: MoveEvents): MoveResult {
       let onMouseUp = (e: MouseEvent) => {
         if (e.button === 0) {
           end(e, 'mouse');
-          removeGlobalListener(window, 'mousemove', onMouseMove, false);
-          removeGlobalListener(window, 'mouseup', onMouseUp, false);
+          removeGlobalListener(ownerWindow, 'mousemove', onMouseMove, false);
+          removeGlobalListener(ownerWindow, 'mouseup', onMouseUp, false);
         }
       };
       moveProps.onMouseDown = (e: React.MouseEvent) => {
@@ -113,8 +116,8 @@ export function useMove(props: MoveEvents): MoveResult {
           e.stopPropagation();
           e.preventDefault();
           state.current.lastPosition = {pageX: e.pageX, pageY: e.pageY};
-          addGlobalListener(window, 'mousemove', onMouseMove, false);
-          addGlobalListener(window, 'mouseup', onMouseUp, false);
+          addGlobalListener(ownerWindow, 'mousemove', onMouseMove, false);
+          addGlobalListener(ownerWindow, 'mouseup', onMouseUp, false);
         }
       };
 
@@ -131,9 +134,9 @@ export function useMove(props: MoveEvents): MoveResult {
         if (touch >= 0) {
           end(e, 'touch');
           state.current.id = null;
-          removeGlobalListener(window, 'touchmove', onTouchMove);
-          removeGlobalListener(window, 'touchend', onTouchEnd);
-          removeGlobalListener(window, 'touchcancel', onTouchEnd);
+          removeGlobalListener(ownerWindow, 'touchmove', onTouchMove);
+          removeGlobalListener(ownerWindow, 'touchend', onTouchEnd);
+          removeGlobalListener(ownerWindow, 'touchcancel', onTouchEnd);
         }
       };
       moveProps.onTouchStart = (e: React.TouchEvent) => {
@@ -147,9 +150,9 @@ export function useMove(props: MoveEvents): MoveResult {
         e.preventDefault();
         state.current.lastPosition = {pageX, pageY};
         state.current.id = identifier;
-        addGlobalListener(window, 'touchmove', onTouchMove, false);
-        addGlobalListener(window, 'touchend', onTouchEnd, false);
-        addGlobalListener(window, 'touchcancel', onTouchEnd, false);
+        addGlobalListener(ownerWindow, 'touchmove', onTouchMove, false);
+        addGlobalListener(ownerWindow, 'touchend', onTouchEnd, false);
+        addGlobalListener(ownerWindow, 'touchcancel', onTouchEnd, false);
       };
     } else {
       let onPointerMove = (e: PointerEvent) => {
@@ -169,9 +172,9 @@ export function useMove(props: MoveEvents): MoveResult {
           let pointerType = (e.pointerType || 'mouse') as PointerType;
           end(e, pointerType);
           state.current.id = null;
-          removeGlobalListener(window, 'pointermove', onPointerMove, false);
-          removeGlobalListener(window, 'pointerup', onPointerUp, false);
-          removeGlobalListener(window, 'pointercancel', onPointerUp, false);
+          removeGlobalListener(ownerWindow, 'pointermove', onPointerMove, false);
+          removeGlobalListener(ownerWindow, 'pointerup', onPointerUp, false);
+          removeGlobalListener(ownerWindow, 'pointercancel', onPointerUp, false);
         }
       };
 
@@ -182,9 +185,9 @@ export function useMove(props: MoveEvents): MoveResult {
           e.preventDefault();
           state.current.lastPosition = {pageX: e.pageX, pageY: e.pageY};
           state.current.id = e.pointerId;
-          addGlobalListener(window, 'pointermove', onPointerMove, false);
-          addGlobalListener(window, 'pointerup', onPointerUp, false);
-          addGlobalListener(window, 'pointercancel', onPointerUp, false);
+          addGlobalListener(ownerWindow, 'pointermove', onPointerMove, false);
+          addGlobalListener(ownerWindow, 'pointerup', onPointerUp, false);
+          addGlobalListener(ownerWindow, 'pointercancel', onPointerUp, false);
         }
       };
     }
@@ -225,7 +228,7 @@ export function useMove(props: MoveEvents): MoveResult {
     };
 
     return moveProps;
-  }, [state, addGlobalListener, removeGlobalListener, move, end]);
+  }, [state, addGlobalListener, removeGlobalListener, move, end, ownerWindow]);
 
   return {moveProps};
 }

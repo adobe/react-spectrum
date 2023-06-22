@@ -16,6 +16,7 @@ import {FocusableElement} from '@react-types/shared';
 import {RangeCalendarState} from '@react-stately/calendar';
 import {RefObject, useRef} from 'react';
 import {useEvent} from '@react-aria/utils';
+import {useDocument} from "@react-aria/interactions/src/ownerDocument";
 
 /**
  * Provides the behavior and accessibility implementation for a range calendar component.
@@ -23,6 +24,7 @@ import {useEvent} from '@react-aria/utils';
  */
 export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarProps<T>, state: RangeCalendarState, ref: RefObject<FocusableElement>): CalendarAria {
   let res = useCalendarBase(props, state);
+  let ownerDocument = useDocument();
 
   // We need to ignore virtual pointer events from VoiceOver due to these bugs.
   // https://bugs.webkit.org/show_bug.cgi?id=222627
@@ -31,7 +33,7 @@ export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarPr
   // We need to match that here otherwise this will fire before the press event in
   // useCalendarCell, causing range selection to not work properly.
   let isVirtualClick = useRef(false);
-  let windowRef = useRef(typeof window !== 'undefined' ? window : null);
+  let windowRef = useRef(typeof ownerDocument.defaultView !== 'undefined' ? ownerDocument.defaultView : null);
   useEvent(windowRef, 'pointerdown', e => {
     isVirtualClick.current = e.width === 0 && e.height === 0;
   });
@@ -50,10 +52,10 @@ export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarPr
     }
 
     let target = e.target as Element;
-    let body = document.getElementById(res.calendarProps.id);
+    let body = ownerDocument.getElementById(res.calendarProps.id);
     if (
       body &&
-      body.contains(document.activeElement) &&
+      body.contains(ownerDocument.activeElement) &&
       (!body.contains(target) || !target.closest('button, [role="button"]'))
     ) {
       state.selectFocusedDate();
