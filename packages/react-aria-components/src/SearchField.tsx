@@ -13,7 +13,7 @@
 import {AriaSearchFieldProps, useFocusRing, useHover, useSearchField} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
@@ -92,8 +92,7 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
   return (
     <div
       {...DOMProps}
-      {...focusProps}
-      {...hoverProps}
+      {...mergeProps(hoverProps, focusProps)}
       {...renderProps}
       ref={ref}
       slot={props.slot}

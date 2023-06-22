@@ -12,7 +12,7 @@
 
 import {AriaTextFieldProps, useFocusRing, useHover, useTextField} from 'react-aria';
 import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
@@ -65,8 +65,7 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   return (
     <div
       {...filterDOMProps(props)}
-      {...focusProps}
-      {...hoverProps}
+      {...mergeProps(hoverProps, focusProps)}
       {...renderProps}
       ref={ref}
       slot={props.slot}

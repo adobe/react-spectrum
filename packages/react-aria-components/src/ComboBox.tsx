@@ -12,7 +12,7 @@
 import {AriaComboBoxProps, useComboBox, useFilter, useFocusRing, useHover} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, forwardRefType, Provider, RenderProps, slotCallbackSymbol, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useResizeObserver} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListBoxProps} from './ListBox';
@@ -154,8 +154,7 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
       <div
         {...DOMProps}
         {...renderProps}
-        {...focusProps}
-        {...hoverProps}
+        {...mergeProps(hoverProps, focusProps)}
         ref={ref}
         slot={props.slot}
         data-focused={state.isFocused || undefined}
