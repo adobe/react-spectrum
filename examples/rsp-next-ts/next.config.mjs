@@ -72,9 +72,6 @@ if (ReactDOM.version.startsWith('18')) {
     ...baseConfig
   };
 } else {
-  // let yah = import('next-transpile-modules');
-  let withTM = require('next-transpile-modules');
-  // import withTM from 'next-transpile-modules';
   fullConfig = withTM(
     transpilePackages
   )(baseConfig);
