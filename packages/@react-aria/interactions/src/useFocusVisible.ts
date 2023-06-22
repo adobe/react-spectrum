@@ -114,10 +114,13 @@ function handleWindowBlur() {
   hasBlurredWindowRecently = true;
 }
 
+let _document: Document;
+
 /**
  * Setup global event listeners to control when keyboard focus style should be visible.
  */
 function setupGlobalFocusEvents(ownerDocument = document) {
+  _document = ownerDocument;
   const ownerWindow = ownerDocument.defaultView;
 
   if (typeof ownerWindow === 'undefined' || hasSetupGlobalListeners) {
@@ -156,10 +159,32 @@ function setupGlobalFocusEvents(ownerDocument = document) {
   hasSetupGlobalListeners = true;
 }
 
+function removeGlobalFocusEvents() {
+  if (!_document) {return;}
+
+  const ownerDocument = _document;
+  const ownerWindow = _document.defaultView;
+  ownerDocument.removeEventListener('keydown', handleKeyboardEvent, true);
+  ownerDocument.removeEventListener('keyup', handleKeyboardEvent, true);
+  ownerDocument.removeEventListener('click', handleClickEvent, true);
+
+  // Register focus events on the window so they are sure to happen
+  // before React's event listeners (registered on the document).
+  ownerWindow.removeEventListener('focus', handleFocusEvent, true);
+  ownerWindow.removeEventListener('blur', handleWindowBlur, false);
+
+  ownerDocument.removeEventListener('pointerdown', handlePointerEvent, true);
+  ownerDocument.removeEventListener('pointermove', handlePointerEvent, true);
+  ownerDocument.removeEventListener('pointerup', handlePointerEvent, true);
+  ownerDocument.removeEventListener('mousedown', handlePointerEvent, true);
+  ownerDocument.removeEventListener('mousemove', handlePointerEvent, true);
+  ownerDocument.removeEventListener('mouseup', handlePointerEvent, true);
+}
+
 export function initGlobalFocusEvents(ownerDocument = document) {
   if (typeof ownerDocument !== 'undefined') {
     if (ownerDocument.readyState !== 'loading') {
-      setupGlobalFocusEvents();
+      setupGlobalFocusEvents(ownerDocument);
     } else {
       ownerDocument.addEventListener('DOMContentLoaded', () => setupGlobalFocusEvents());
     }
@@ -167,6 +192,15 @@ export function initGlobalFocusEvents(ownerDocument = document) {
 }
 
 initGlobalFocusEvents();
+
+export function reInitGlobalFocusEvents(ownerDocument: Document) {
+  if (hasSetupGlobalListeners && _document) {
+    removeGlobalFocusEvents();
+  }
+
+  hasSetupGlobalListeners = false;
+  initGlobalFocusEvents(ownerDocument);
+}
 
 /**
  * If true, keyboard focus is visible.

@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {createContext, ReactNode, useEffect} from 'react';
-import {initGlobalFocusEvents} from "./useFocusVisible"
-import {useIsSSR} from "@react-aria/ssr";
+import React, {createContext, ReactNode} from 'react';
+import {reInitGlobalFocusEvents} from './useFocusVisible';
+import {useIsSSR} from '@react-aria/ssr';
+import {useLayoutEffect} from '@react-aria/utils';
 
 export interface DocumentProviderProps {
   /** Contents that should use the owner document. */
@@ -26,9 +27,9 @@ const DocumentContext = createContext<Document>(document);
 export function DocumentProvider(props: DocumentProviderProps) {
   let {children, document: ownerDocument} = props;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (ownerDocument) {
-      initGlobalFocusEvents(ownerDocument);
+      reInitGlobalFocusEvents(ownerDocument);
     }
   }, [ownerDocument]);
 

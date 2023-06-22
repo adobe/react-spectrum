@@ -154,6 +154,7 @@ const MESSAGES = {
 
 class DragSession {
   dragTarget: DragTarget;
+  ownerDocument: Document;
   validDropTargets: DropTarget[];
   currentDropTarget: DropTarget;
   currentDropItem: DroppableItem;
@@ -167,6 +168,7 @@ class DragSession {
   constructor(target: DragTarget, stringFormatter: LocalizedStringFormatter) {
     this.dragTarget = target;
     this.stringFormatter = stringFormatter;
+    this.ownerDocument = target.element.ownerDocument;
 
     this.onKeyDown = this.onKeyDown.bind(this);
     this.onKeyUp = this.onKeyUp.bind(this);
@@ -179,15 +181,15 @@ class DragSession {
   }
 
   setup() {
-    document.addEventListener('keydown', this.onKeyDown, true);
-    document.addEventListener('keyup', this.onKeyUp, true);
-    window.addEventListener('focus', this.onFocus, true);
-    window.addEventListener('blur', this.onBlur, true);
-    document.addEventListener('click', this.onClick, true);
-    document.addEventListener('pointerdown', this.onPointerDown, true);
+    this.ownerDocument.addEventListener('keydown', this.onKeyDown, true);
+    this.ownerDocument.addEventListener('keyup', this.onKeyUp, true);
+    this.ownerDocument.defaultView.addEventListener('focus', this.onFocus, true);
+    this.ownerDocument.defaultView.addEventListener('blur', this.onBlur, true);
+    this.ownerDocument.addEventListener('click', this.onClick, true);
+    this.ownerDocument.addEventListener('pointerdown', this.onPointerDown, true);
 
     for (let event of CANCELED_EVENTS) {
-      document.addEventListener(event, this.cancelEvent, true);
+      this.ownerDocument.addEventListener(event, this.cancelEvent, true);
     }
 
     this.mutationObserver = new MutationObserver(() =>
@@ -199,15 +201,15 @@ class DragSession {
   }
 
   teardown() {
-    document.removeEventListener('keydown', this.onKeyDown, true);
-    document.removeEventListener('keyup', this.onKeyUp, true);
-    window.removeEventListener('focus', this.onFocus, true);
-    window.removeEventListener('blur', this.onBlur, true);
-    document.removeEventListener('click', this.onClick, true);
-    document.removeEventListener('pointerdown', this.onPointerDown, true);
+    this.ownerDocument.removeEventListener('keydown', this.onKeyDown, true);
+    this.ownerDocument.removeEventListener('keyup', this.onKeyUp, true);
+    this.ownerDocument.defaultView.removeEventListener('focus', this.onFocus, true);
+    this.ownerDocument.defaultView.removeEventListener('blur', this.onBlur, true);
+    this.ownerDocument.removeEventListener('click', this.onClick, true);
+    this.ownerDocument.removeEventListener('pointerdown', this.onPointerDown, true);
 
     for (let event of CANCELED_EVENTS) {
-      document.removeEventListener(event, this.cancelEvent, true);
+      this.ownerDocument.removeEventListener(event, this.cancelEvent, true);
     }
 
     this.mutationObserver.disconnect();
@@ -377,7 +379,7 @@ class DragSession {
       ...visibleDropTargets.map(target => target.element)
     ]);
 
-    this.mutationObserver.observe(document.body, {subtree: true, attributes: true, attributeFilter: ['aria-hidden']});
+    this.mutationObserver.observe(this.ownerDocument.body, {subtree: true, attributes: true, attributeFilter: ['aria-hidden']});
   }
 
   next() {

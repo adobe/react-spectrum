@@ -10,6 +10,7 @@ import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isWebKit, mergeProps} from '@react-aria/utils';
+import {useDocument} from '@react-aria/interactions';
 import React, {Key, RefObject, useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
@@ -48,6 +49,7 @@ const CURSORS = {
 function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
   let {column, showResizer} = props;
   let {isEmpty, layout} = useTableContext();
+  let ownerDocument = useDocument();
   // Virtualizer re-renders, but these components are all cached
   // in order to get around that and cause a rerender here, we use context
   // but we don't actually need any value, they are available on the layout object
@@ -67,13 +69,13 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
         setIsPointerDown(false);
       }
     };
-    document.addEventListener('pointerdown', setDown, {capture: true});
-    document.addEventListener('pointerup', setUp, {capture: true});
+    ownerDocument.addEventListener('pointerdown', setDown, {capture: true});
+    ownerDocument.addEventListener('pointerup', setUp, {capture: true});
     return () => {
-      document.removeEventListener('pointerdown', setDown, {capture: true});
-      document.removeEventListener('pointerup', setUp, {capture: true});
+      ownerDocument.removeEventListener('pointerdown', setDown, {capture: true});
+      ownerDocument.removeEventListener('pointerup', setUp, {capture: true});
     };
-  }, []);
+  }, [ownerDocument]);
 
   let {inputProps, resizerProps} = useTableColumnResize<unknown>(
     mergeProps(props, {
@@ -128,7 +130,8 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
 
 function CursorOverlay(props) {
   let {show, children} = props;
-  return show ? ReactDOM.createPortal(children, document.body) : null;
+  let ownerDocument = useDocument();
+  return show ? ReactDOM.createPortal(children, ownerDocument.body) : null;
 }
 
 const _Resizer = React.forwardRef(Resizer);

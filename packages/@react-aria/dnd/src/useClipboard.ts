@@ -14,7 +14,7 @@ import {chain, useEffectEvent} from '@react-aria/utils';
 import {DOMAttributes, DragItem, DropItem} from '@react-types/shared';
 import {readFromDataTransfer, writeToDataTransfer} from './utils';
 import {useEffect, useRef} from 'react';
-import {useFocus} from '@react-aria/interactions';
+import {useDocument, useFocus} from '@react-aria/interactions';
 
 export interface ClipboardProps {
   /** A function that returns the items to copy. */
@@ -33,7 +33,7 @@ export interface ClipboardResult {
 }
 
 const globalEvents = new Map();
-function addGlobalEventListener(event, fn) {
+function addGlobalEventListener(event, fn, ownerDocument = document) {
   let eventData = globalEvents.get(event);
   if (!eventData) {
     let handlers = new Set<(e: Event) => void>();
@@ -46,14 +46,14 @@ function addGlobalEventListener(event, fn) {
     eventData = {listener, handlers};
     globalEvents.set(event, eventData);
 
-    document.addEventListener(event, listener);
+    ownerDocument.addEventListener(event, listener);
   }
 
   eventData.handlers.add(fn);
   return () => {
     eventData.handlers.delete(fn);
     if (eventData.handlers.size === 0) {
-      document.removeEventListener(event, eventData.listener);
+      ownerDocument.removeEventListener(event, eventData.listener);
       globalEvents.delete(event);
     }
   };
@@ -70,6 +70,7 @@ export function useClipboard(options: ClipboardProps): ClipboardResult {
       isFocusedRef.current = isFocused;
     }
   });
+  let ownerDocument = useDocument();
 
   let onBeforeCopy = useEffectEvent((e: ClipboardEvent) => {
     // Enable the "Copy" menu item in Safari if this element is focused and copying is supported.
@@ -124,14 +125,14 @@ export function useClipboard(options: ClipboardProps): ClipboardResult {
 
   useEffect(() => {
     return chain(
-      addGlobalEventListener('beforecopy', onBeforeCopy),
-      addGlobalEventListener('copy', onCopy),
-      addGlobalEventListener('beforecut', onBeforeCut),
-      addGlobalEventListener('cut', onCut),
-      addGlobalEventListener('beforepaste', onBeforePaste),
-      addGlobalEventListener('paste', onPaste)
+      addGlobalEventListener('beforecopy', onBeforeCopy, ownerDocument),
+      addGlobalEventListener('copy', onCopy, ownerDocument),
+      addGlobalEventListener('beforecut', onBeforeCut, ownerDocument),
+      addGlobalEventListener('cut', onCut, ownerDocument),
+      addGlobalEventListener('beforepaste', onBeforePaste, ownerDocument),
+      addGlobalEventListener('paste', onPaste, ownerDocument)
     );
-  }, [onBeforeCopy, onCopy, onBeforeCut, onCut, onBeforePaste, onPaste]);
+  }, [onBeforeCopy, onCopy, onBeforeCut, onCut, onBeforePaste, onPaste, ownerDocument]);
 
   return {
     clipboardProps: focusProps
