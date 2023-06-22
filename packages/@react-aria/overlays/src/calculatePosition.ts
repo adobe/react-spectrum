@@ -101,7 +101,7 @@ const TOTAL_SIZE = {
 const PARSED_PLACEMENT_CACHE = {};
 
 // @ts-ignore
-let visualViewport = typeof window !== 'undefined' && window.visualViewport;
+let visualViewport = typeof document !== 'undefined' && window.visualViewport;
 
 function getContainerDimensions(containerNode: Element): Dimensions {
   let width = 0, height = 0, totalWidth = 0, totalHeight = 0, top = 0, left = 0;
