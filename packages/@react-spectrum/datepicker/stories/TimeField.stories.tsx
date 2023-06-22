@@ -83,6 +83,12 @@ HideTimeZone.story = {
   name: 'hideTimeZone'
 };
 
+export const ForceLeadingZeros = () => render({defaultValue: parseTime('08:00'), shouldForceLeadingZeros: true});
+
+ForceLeadingZeros.story = {
+  name: 'shouldForceLeadingZeros'
+};
+
 export const IsDisabled = () => render({isDisabled: true, value: new Time(2, 35)});
 
 IsDisabled.story = {

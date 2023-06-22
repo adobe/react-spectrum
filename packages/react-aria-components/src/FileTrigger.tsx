@@ -16,7 +16,6 @@ import {filterDOMProps} from '@react-aria/utils';
 import {Input} from './Input';
 import {PressResponder} from '@react-aria/interactions';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
-import {VisuallyHidden} from 'react-aria';
 
 export interface FileTriggerProps extends SlotProps, DOMProps, AriaLabelingProps {
   /**
@@ -53,15 +52,14 @@ function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLDivElement>)
       <PressResponder onPress={() => inputRef.current?.click()}>
         {children}
       </PressResponder>
-      <VisuallyHidden>
-        <Input 
-          type="file" 
-          ref={inputRef} 
-          accept={acceptedFileTypes?.toString()} 
-          onChange={(e) => onChange?.(e.target.files)} 
-          capture={defaultCamera} 
-          multiple={allowsMultiple} /> 
-      </VisuallyHidden>
+      <Input 
+        type="file" 
+        ref={inputRef}
+        style={{display: 'none'}}
+        accept={acceptedFileTypes?.toString()} 
+        onChange={(e) => onChange?.(e.target.files)} 
+        capture={defaultCamera} 
+        multiple={allowsMultiple} /> 
     </div>
   );
 }
