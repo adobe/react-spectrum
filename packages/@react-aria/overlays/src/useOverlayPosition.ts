@@ -73,7 +73,7 @@ export interface PositionAria {
 }
 
 // @ts-ignore
-let visualViewport = typeof window !== 'undefined' && window.visualViewport;
+let visualViewport = typeof document !== 'undefined' && window.visualViewport;
 
 /**
  * Handles positioning overlays like popovers and menus relative to a trigger

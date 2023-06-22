@@ -60,7 +60,7 @@ function LegacySSRProvider(props: SSRProviderProps): JSX.Element {
 
   // If on the client, and the component was initially server rendered,
   // then schedule a layout effect to update the component after hydration.
-  if (typeof window !== 'undefined') {
+  if (typeof document !== 'undefined') {
     // This if statement technically breaks the rules of hooks, but is safe
     // because the condition never changes after mounting.
     // eslint-disable-next-line react-hooks/rules-of-hooks
