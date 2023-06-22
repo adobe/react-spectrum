@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom';
-import App from './App';
+import {App} from './App';
 
 if (ReactDOM.version.startsWith('18')) {
   let ReactDOMClient = require('react-dom/client');
@@ -7,7 +7,7 @@ if (ReactDOM.version.startsWith('18')) {
     document.getElementById('root')
   );
   root.render(
-      <App />
+    <App />
   );
 } else {
   ReactDOM.render(
