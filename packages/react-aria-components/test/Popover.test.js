@@ -99,4 +99,23 @@ describe('Popover', () => {
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
+
+  it('isOpen and defaultOpen should override state from context', async () => {
+    let onOpenChange = jest.fn();
+    let {getByRole} = render(<>
+      <DialogTrigger>
+        <Button />
+        <Popover isOpen onOpenChange={onOpenChange}>
+          <Dialog>A popover</Dialog>
+        </Popover>
+      </DialogTrigger>
+    </>);
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toHaveTextContent('A popover');
+
+    userEvent.click(document.body);
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+  });
 });

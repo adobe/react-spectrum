@@ -56,9 +56,8 @@ export const PopoverContext = createContext<ContextValue<PopoverContextValue, HT
 function Popover(props: PopoverProps, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, PopoverContext);
   let ctx = props as PopoverContextValue;
-  // React components cannot be reparented so if there's context there should always be context.
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  let state = ctx?.state ?? useOverlayTriggerState(props);
+  let localState = useOverlayTriggerState(props);
+  let state = props.isOpen != null || props.defaultOpen != null || !ctx?.state ? localState : ctx.state;
   let isExiting = useExitAnimation(ref, state.isOpen);
 
   if (state && !state.isOpen && !isExiting) {
