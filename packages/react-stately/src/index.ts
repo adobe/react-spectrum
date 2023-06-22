@@ -25,7 +25,7 @@ export type {SelectProps, SelectState, SelectStateOptions} from '@react-stately/
 export type {SliderState, SliderStateOptions} from '@react-stately/slider';
 export type {MultipleSelectionManager, MultipleSelectionState, SingleSelectionState} from '@react-stately/selection';
 export type {NumberFieldState, NumberFieldStateOptions} from '@react-stately/numberfield';
-export type {TableState, TableStateProps, TableHeaderProps, TableBodyProps, ColumnProps, RowProps, CellProps} from '@react-stately/table';
+export type {TableState, TableStateProps, TableHeaderProps, TableBodyProps, ColumnProps, RowProps, CellProps, TableColumnResizeState, TableColumnResizeStateProps} from '@react-stately/table';
 export type {TabListProps, TabListState} from '@react-stately/tabs';
 export type {ToggleProps, ToggleState} from '@react-stately/toggle';
 export type {TooltipTriggerProps, TooltipTriggerState} from '@react-stately/tooltip';
@@ -48,7 +48,7 @@ export {useSearchFieldState} from '@react-stately/searchfield';
 export {useSelectState} from '@react-stately/select';
 export {useSliderState} from '@react-stately/slider';
 export {useMultipleSelectionState} from '@react-stately/selection';
-export {useTableState, TableHeader, TableBody, Column, Row, Cell} from '@react-stately/table';
+export {useTableState, TableHeader, TableBody, Column, Row, Cell, useTableColumnResizeState} from '@react-stately/table';
 export {useTabListState} from '@react-stately/tabs';
 export {useToggleState} from '@react-stately/toggle';
 export {useTooltipTriggerState} from '@react-stately/tooltip';
