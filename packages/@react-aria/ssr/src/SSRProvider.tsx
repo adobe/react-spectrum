@@ -144,7 +144,6 @@ function useCounter(isDisabled = false) {
 
 function useLegacySSRSafeId(defaultId?: string): string {
   let ctx = useContext(SSRContext);
-  console.log('using legacy')
 
   // If we are rendering in a non-DOM environment, and there's no SSRProvider,
   // provide a warning to hint to the developer to add one.
@@ -157,7 +156,6 @@ function useLegacySSRSafeId(defaultId?: string): string {
 }
 
 function useModernSSRSafeId(defaultId?: string): string {
-  console.log('using modern')
   // @ts-ignore
   let id = React.useId();
   let [didSSR] = useState(useIsSSR());
