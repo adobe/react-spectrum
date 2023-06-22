@@ -73,7 +73,12 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
   let {isFocusVisible, focusProps} = useFocusRing({within: true});
 
   // Only expose a subset of state to renderProps function to avoid infinite render loop
-  let renderPropsState = useMemo(() => ({isOpen: state.isOpen, isFocused: state.isFocused, isFocusVisible, isDisabled: props.isDisabled || false}), [isFocusVisible, props.isDisabled, state.isFocused, state.isOpen]);
+  let renderPropsState = useMemo(() => ({
+    isOpen: state.isOpen,
+    isFocused: state.isFocused,
+    isFocusVisible,
+    isDisabled: props.isDisabled || false
+  }), [isFocusVisible, props.isDisabled, state.isFocused, state.isOpen]);
 
   // Get props for child elements from useSelect
   let buttonRef = useRef<HTMLButtonElement>(null);

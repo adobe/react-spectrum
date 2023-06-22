@@ -104,7 +104,13 @@ function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: Forwarded
           }
         }]
       ]}>
-      <div {...mergeProps(hoverProps, focusProps)} {...DOMProps} {...renderProps} ref={ref} slot={props.slot} data-validation-date={state.validationState || undefined} />
+      <div
+        {...mergeProps(hoverProps, focusProps)}
+        {...DOMProps}
+        {...renderProps}
+        ref={ref}
+        slot={props.slot}
+        data-validation-date={state.validationState || undefined} />
     </Provider>
   );
 }
