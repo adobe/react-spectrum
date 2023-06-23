@@ -18,14 +18,15 @@ import AlignRight from '@spectrum-icons/workflow/AlignRight';
 import Blower from '@spectrum-icons/workflow/Blower';
 import Book from '@spectrum-icons/workflow/Book';
 import {Content, Footer} from '@react-spectrum/view';
+import {ContextualHelpTrigger, Item, Menu, MenuTrigger, Section} from '../';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
 import {Dialog} from '@react-spectrum/dialog';
 import {Heading, Keyboard, Text} from '@react-spectrum/text';
-import {Item, Menu, MenuDialogTrigger, MenuTrigger, Section} from '../';
 import {Link} from '@react-spectrum/link';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React, {useState} from 'react';
+import {ToggleButton} from '@adobe/react-spectrum';
 import {TranslateMenu} from './../chromatic/MenuTriggerLanguages.chromatic';
 
 let iconMap = {
@@ -728,22 +729,22 @@ export let MenuItemUnavailable = {
   render: () => render(
     <Menu onAction={action('onAction')}>
       <Item key="1">One</Item>
-      <MenuDialogTrigger isUnavailable>
+      <ContextualHelpTrigger isUnavailable>
         <Item key="foo">Two</Item>
         <Dialog>
           <Heading>hello</Heading>
           <Content>Is it me you're looking for?</Content>
         </Dialog>
-      </MenuDialogTrigger>
-      <MenuDialogTrigger isUnavailable>
+      </ContextualHelpTrigger>
+      <ContextualHelpTrigger isUnavailable>
         <Item key="baz">Two point five</Item>
         <Dialog>
           <Heading>hello</Heading>
           <Content>Is it me you're looking for?</Content>
         </Dialog>
-      </MenuDialogTrigger>
+      </ContextualHelpTrigger>
       <Item key="3">Three</Item>
-      <MenuDialogTrigger isUnavailable>
+      <ContextualHelpTrigger isUnavailable>
         <Item key="bar">
           <Text>Four</Text>
           <Text slot={'description'}>Shut the door</Text>
@@ -753,7 +754,7 @@ export let MenuItemUnavailable = {
           <Content>Is it me you're looking for?</Content>
           <Footer><Link>Learn more</Link></Footer>
         </Dialog>
-      </MenuDialogTrigger>
+      </ContextualHelpTrigger>
       <Item key="5">Five</Item>
     </Menu>
   )
@@ -765,13 +766,13 @@ export let MenuItemUnavailableDynamic = {
       {(item) => {
         if (item.name === 'Kangaroo') {
           return (
-            <MenuDialogTrigger isUnavailable>
+            <ContextualHelpTrigger isUnavailable>
               <Item key={item.name}>{item.name}</Item>
               <Dialog>
                 <Heading>hello</Heading>
                 <Content>Is it me you're looking for?</Content>
               </Dialog>
-            </MenuDialogTrigger>
+            </ContextualHelpTrigger>
           );
         }
         return <Item key={item.name}>{item.name}</Item>;
@@ -779,3 +780,53 @@ export let MenuItemUnavailableDynamic = {
     </Menu>
   )
 };
+
+export let MenuItemUnavailableToggling = {
+  render: () => <MenuWithUnavailableSometimes />
+};
+
+function MenuWithUnavailableSometimes(props) {
+  let [isUnavailable, setIsUnavailable] = useState(false);
+  return (
+    <>
+      <ToggleButton isSelected={isUnavailable} onChange={setIsUnavailable}>Toggle item 2</ToggleButton>
+      <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
+        <MenuTrigger onOpenChange={action('onOpenChange')} {...props}>
+          <ActionButton>
+            Menu Button
+          </ActionButton>
+          <Menu onAction={action('onAction')}>
+            <Item key="1">One</Item>
+            <ContextualHelpTrigger isUnavailable={isUnavailable}>
+              <Item key="foo">Two</Item>
+              <Dialog>
+                <Heading>hello</Heading>
+                <Content>Is it me you're looking for?</Content>
+              </Dialog>
+            </ContextualHelpTrigger>
+            <ContextualHelpTrigger isUnavailable>
+              <Item key="baz">Two point five</Item>
+              <Dialog>
+                <Heading>hello</Heading>
+                <Content>Is it me you're looking for?</Content>
+              </Dialog>
+            </ContextualHelpTrigger>
+            <Item key="3">Three</Item>
+            <ContextualHelpTrigger isUnavailable>
+              <Item key="bar">
+                <Text>Four</Text>
+                <Text slot={'description'}>Shut the door</Text>
+              </Item>
+              <Dialog>
+                <Heading>hello</Heading>
+                <Content>Is it me you're looking for?</Content>
+                <Footer><Link>Learn more</Link></Footer>
+              </Dialog>
+            </ContextualHelpTrigger>
+            <Item key="5">Five</Item>
+          </Menu>
+        </MenuTrigger>
+      </div>
+    </>
+  );
+}
