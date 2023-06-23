@@ -1378,16 +1378,18 @@ function TableCell({cell, scale}) {
     isVirtualized: true
   }, state, ref);
   let isFirstRowHeaderCell = state.collection.rowHeaderColumnKeys.keys().next().value === cell.column.key;
-  let isRowExpandable = state.collection.getItem(cell.parentKey)?.props.childItems?.length > 0 || state.collection.getItem(cell.parentKey)?.props?.children?.length > state.collection.userColumnCount;
+  // TODO: figure out why it can't infer the state's correct type here. Don't really want to have to cast it. applies to other casts below
+  let isRowExpandable = state.collection.getItem(cell.parentKey)?.props.childItems?.length > 0 || state.collection.getItem(cell.parentKey)?.props?.children?.length > (state as TreeGridState<unknown>).collection.userColumnCount;
   let showExpandCollapseButton = isFirstRowHeaderCell && isRowExpandable;
-  let isExpanded = showExpandCollapseButton && (state.expandedKeys === 'all' || state.expandedKeys.has(cell.parentKey));
+  // @ts-ignore
+  let isExpanded = showExpandCollapseButton && ((state as TreeGridState<unknown>).expandedKeys === 'all' || (state as TreeGridState<unknown>).expandedKeys.has(cell.parentKey));
   // Offset based on level, and add additional offset if there is no expand/collapse button on a row
   let levelOffset = (cell.level - 2) * LEVEL_OFFSET_WIDTH[scale] + (!showExpandCollapseButton ? LEVEL_OFFSET_WIDTH[scale] * 2 : 0);
   // TODO: move some/all of the chevron button setup into a separate hook?
   // Will need to keep the chevron as a button for iOS VO at all times since VO doesn't focus the cell. Also keep as button if cellAction is defined by the user in the future
   let {buttonProps} = useButton({
     // Desktop and mobile both toggle expansion of a native expandable row on mouse/touch up
-    onPress: () => showExpandCollapseButton && state.toggleKey(cell.parentKey),
+    onPress: () => showExpandCollapseButton && (state as TreeGridState<unknown>).toggleKey(cell.parentKey),
     elementType: 'span',
     // TODO: will need translations.
     'aria-label': isExpanded ? 'Collapse' : 'Expand'

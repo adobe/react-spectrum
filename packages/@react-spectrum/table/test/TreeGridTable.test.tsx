@@ -28,7 +28,7 @@ let {
   StaticExpandableRows: StaticExpandableTable,
   DynamicExpandableRowsStory: DynamicExpandableTable,
   ManyExpandableRowsStory: ManyRowsExpandableTable,
-  EmptyTreeGridStory: EmptyStateTable,
+  EmptyTreeGridStory: EmptyStateTable
 } = composeStories(stories);
 
 let onSelectionChange = jest.fn();

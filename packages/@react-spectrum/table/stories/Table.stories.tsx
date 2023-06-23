@@ -888,7 +888,7 @@ export function EmptyStateTable(props) {
       <ActionButton width="100px" onPress={() => setShow(show => !show)}>Toggle items</ActionButton>
       <TableView aria-label="TableView with empty state" width={700} height={400} {...otherProps} renderEmptyState={renderEmptyState} selectionMode="multiple" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor}>
         <TableHeader columns={columns ?? manyColunns}>
-          {column =>
+          {(column: any) =>
             <Column allowsResizing allowsSorting minWidth={100}>{column.name}</Column>
           }
         </TableHeader>

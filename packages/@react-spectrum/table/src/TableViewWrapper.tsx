@@ -26,6 +26,7 @@ export interface SpectrumTableProps<T> extends SpectrumTreeGridProps<T> {
   hasExpandableRows?: boolean
 }
 
+// TODO: figure out how to properly define the state here so that TableView and TreeGridTableView get the specific state type
 export interface TableContextValue<T> {
   state: TableState<T> | TreeGridState<T>,
   dragState: DraggableCollectionState,
