@@ -15,7 +15,7 @@ import {ActionButton} from '@react-spectrum/button';
 import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableView} from '../';
 import {chain} from '@react-aria/utils';
 import {ComponentMeta} from '@storybook/react';
-import defaultConfig, {columns, TableStory} from './Table.stories';
+import defaultConfig, {columns, EmptyStateTable, TableStory} from './Table.stories';
 import {enableTableNestedRows} from '@react-stately/flags';
 import {Flex} from '@react-spectrum/layout';
 import React, {Key, useState} from 'react';
@@ -212,6 +212,23 @@ export const ManyExpandableRowsStory: TableStory = {
     <ManyExpandableRows {...args} />
   ),
   name: 'many expandable rows'
+};
+
+export const EmptyTreeGridStory: TableStory = {
+  args: {
+    'aria-label': 'TableView with many dynamic expandable rows',
+    width: 500,
+    height: 400
+  },
+  render: (args) => (
+    <EmptyStateTable hasExpandableRows columns={columns} items={manyRows} {...args} />
+  ),
+  name: 'empty state',
+  parameters: {
+    description: {
+      data: 'Note that sorting doesn\t work, functionality todo in original story'
+    }
+  }
 };
 
 

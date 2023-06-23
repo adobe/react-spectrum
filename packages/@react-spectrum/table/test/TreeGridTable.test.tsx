@@ -22,11 +22,13 @@ import {theme} from '@react-spectrum/theme-default';
 
 // Importing this stuff made Table test run along side this test even when only this test suite is targeted
 // import {getCell, render, rerender} from './Table.test';
+// TODO run along Table test suite with the flag turned on to make sure nothing breaks, see unavailable menu items test
 
 let {
   StaticExpandableRows: StaticExpandableTable,
   DynamicExpandableRowsStory: DynamicExpandableTable,
-  ManyExpandableRowsStory: ManyRowsExpandableTable
+  ManyExpandableRowsStory: ManyRowsExpandableTable,
+  EmptyTreeGridStory: EmptyStateTable,
 } = composeStories(stories);
 
 let onSelectionChange = jest.fn();
@@ -554,7 +556,7 @@ describe('TableView with expandable rows', function () {
       // TODO: highlight selection and click on row to select should still work
     });
 
-    describe.only('range selection', function () {
+    describe('range selection', function () {
       describe('with pointer', function () {
         it('should support selecting a range from a top level row to a nested row', function () {
           let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={null} onAction={null} />);
@@ -801,6 +803,35 @@ describe('TableView with expandable rows', function () {
           checkRowSelection(rows.slice(2, 3), true);
         });
       });
+    });
+  });
+
+  describe('empty state', function () {
+    it('should display an empty state with the proper aria attributes', async function () {
+      let treegrid = render(<EmptyStateTable />);
+      await act(() => Promise.resolve()); // wait for MutationObserver in useHasTabbableChild or we get act warnings
+      let rowgroups = treegrid.getAllByRole('rowgroup');
+      let rows = within(rowgroups[1]).getAllByRole('row');
+      expect(rows).toHaveLength(1);
+      let row = rows[0];
+      expect(row).not.toHaveAttribute('aria-expanded');
+      expect(row).toHaveAttribute('aria-level', '1');
+      expect(row).toHaveAttribute('aria-posinset', '1');
+      expect(row).toHaveAttribute('aria-setsize', '1');
+
+      let cell = within(rows[0]).getByRole('rowheader');
+      expect(cell).toHaveAttribute('aria-colspan', '4');
+
+      let heading = within(cell).getByRole('heading');
+      expect(heading).toBeVisible();
+      expect(heading).toHaveTextContent('No results');
+
+      let showItemsButton = treegrid.getAllByRole('button')[0];
+      triggerPress(showItemsButton);
+      act(() => jest.runAllTimers());
+      rowgroups = treegrid.getAllByRole('rowgroup');
+      rows = within(rowgroups[1]).getAllByRole('row');
+      expect(rows).toHaveLength(19);
     });
   });
 

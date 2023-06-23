@@ -41,7 +41,7 @@ import {useFilter} from '@react-aria/i18n';
 
 export default {
   title: 'TableView',
-  excludeStories: ['columns'],
+  excludeStories: ['columns', 'renderEmptyState', 'EmptyStateTable'],
   component: TableView,
   args: {
     onAction: action('onAction'),
@@ -879,21 +879,22 @@ function renderEmptyState() {
   );
 }
 
-function EmptyStateTable(props) {
+export function EmptyStateTable(props) {
+  let {items, columns, ...otherProps} = props;
   let [show, setShow] = useState(false);
   let [sortDescriptor, setSortDescriptor] = useState({});
   return (
     <Flex direction="column">
       <ActionButton width="100px" onPress={() => setShow(show => !show)}>Toggle items</ActionButton>
-      <TableView aria-label="TableView with empty state" width={700} height={400} {...props} renderEmptyState={renderEmptyState} selectionMode="multiple" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor}>
-        <TableHeader columns={manyColunns}>
+      <TableView aria-label="TableView with empty state" width={700} height={400} {...otherProps} renderEmptyState={renderEmptyState} selectionMode="multiple" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor}>
+        <TableHeader columns={columns ?? manyColunns}>
           {column =>
             <Column allowsResizing allowsSorting minWidth={100}>{column.name}</Column>
           }
         </TableHeader>
-        <TableBody items={show ? manyRows : []}>
-          {item =>
-            (<Row key={item.foo}>
+        <TableBody items={show ? items ?? manyRows : []}>
+          {(item: any) =>
+            (<Row key={item.foo} childItems={item.childRows}>
               {key => <Cell>{item[key]}</Cell>}
             </Row>)
           }

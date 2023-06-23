@@ -11,14 +11,50 @@
  */
 
 import {BaseTableView} from './TableView';
+import {ColumnSize} from '@react-types/table';
 import {DOMRef} from '@react-types/shared';
+import type {DragAndDropHooks} from '@react-spectrum/dnd';
+import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
 import {getTableNestedRows} from '@react-stately/flags';
-import React, {ReactElement} from 'react';
+import React, {Key, ReactElement, useContext} from 'react';
 import {SpectrumTreeGridProps, TreeGridTableView} from './TreeGridTableView';
+import {TableLayout} from '@react-stately/layout';
+import type {TableState, TreeGridState} from '@react-stately/table';
 
 export interface SpectrumTableProps<T> extends SpectrumTreeGridProps<T> {
   /** Whether the TableView should support expandable rows.  */
   hasExpandableRows?: boolean
+}
+
+export interface TableContextValue<T> {
+  state: TableState<T> | TreeGridState<T>,
+  dragState: DraggableCollectionState,
+  dropState: DroppableCollectionState,
+  dragAndDropHooks: DragAndDropHooks['dragAndDropHooks'],
+  isTableDraggable: boolean,
+  isTableDroppable: boolean,
+  shouldShowCheckboxes: boolean,
+  layout: TableLayout<T> & {tableState: TableState<T> | TreeGridState<T>},
+  headerRowHovered: boolean,
+  isInResizeMode: boolean,
+  setIsInResizeMode: (val: boolean) => void,
+  isEmpty: boolean,
+  onFocusedResizer: () => void,
+  onResizeStart: (widths: Map<Key, ColumnSize>) => void,
+  onResize: (widths: Map<Key, ColumnSize>) => void,
+  onResizeEnd: (widths: Map<Key, ColumnSize>) => void,
+  headerMenuOpen: boolean,
+  setHeaderMenuOpen: (val: boolean) => void
+}
+
+export const TableContext = React.createContext<TableContextValue<unknown>>(null);
+export function useTableContext() {
+  return useContext(TableContext);
+}
+
+export const VirtualizerContext = React.createContext(null);
+export function useVirtualizerContext() {
+  return useContext(VirtualizerContext);
 }
 
 function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {

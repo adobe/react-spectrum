@@ -46,6 +46,7 @@ import {DragPreview as SpectrumDragPreview} from './DragPreview';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
 import {TableColumnLayout, TableState, useTableState} from '@react-stately/table';
+import {TableContext, useTableContext, VirtualizerContext} from './TableViewWrapper';
 import {TableLayout} from '@react-stately/layout';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {useButton} from '@react-aria/button';
@@ -97,37 +98,6 @@ const DRAG_BUTTON_CELL_DEFAULT_WIDTH = {
   medium: 16,
   large: 20
 };
-
-interface TableContextValue<T> {
-  state: TableState<T>,
-  dragState: DraggableCollectionState,
-  dropState: DroppableCollectionState,
-  dragAndDropHooks: DragAndDropHooks['dragAndDropHooks'],
-  isTableDraggable: boolean,
-  isTableDroppable: boolean,
-  shouldShowCheckboxes: boolean,
-  layout: TableLayout<T> & {tableState: TableState<T>},
-  headerRowHovered: boolean,
-  isInResizeMode: boolean,
-  setIsInResizeMode: (val: boolean) => void,
-  isEmpty: boolean,
-  onFocusedResizer: () => void,
-  onResizeStart: (widths: Map<Key, ColumnSize>) => void,
-  onResize: (widths: Map<Key, ColumnSize>) => void,
-  onResizeEnd: (widths: Map<Key, ColumnSize>) => void,
-  headerMenuOpen: boolean,
-  setHeaderMenuOpen: (val: boolean) => void
-}
-
-const TableContext = React.createContext<TableContextValue<unknown>>(null);
-export function useTableContext() {
-  return useContext(TableContext);
-}
-
-const VirtualizerContext = React.createContext(null);
-export function useVirtualizerContext() {
-  return useContext(VirtualizerContext);
-}
 
 export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionProps, DOMProps, AriaLabelingProps, StyleProps {
   /**

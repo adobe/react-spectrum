@@ -48,6 +48,7 @@ import {DragPreview as SpectrumDragPreview} from './DragPreview';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
 import {TableColumnLayout, TreeGridState, useTreeGridState} from '@react-stately/table';
+import {TableContext, useTableContext, VirtualizerContext} from './TableViewWrapper';
 import {TableLayout} from '@react-stately/layout';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {useButton} from '@react-aria/button';
@@ -64,6 +65,8 @@ import {
   useTableSelectionCheckbox
 } from '@react-aria/table';
 import {useVisuallyHidden, VisuallyHidden} from '@react-aria/visually-hidden';
+
+// TODO: diff this versus TableView and import stuff that we haven't changed instead of duplicating it
 
 const DEFAULT_HEADER_HEIGHT = {
   medium: 34,
@@ -104,37 +107,6 @@ const LEVEL_OFFSET_WIDTH = {
   medium: 16,
   large: 20
 };
-
-interface TableContextValue<T> {
-  state: TreeGridState<T>,
-  dragState: DraggableCollectionState,
-  dropState: DroppableCollectionState,
-  dragAndDropHooks: DragAndDropHooks['dragAndDropHooks'],
-  isTableDraggable: boolean,
-  isTableDroppable: boolean,
-  shouldShowCheckboxes: boolean,
-  layout: TableLayout<T> & {tableState: TreeGridState<T>},
-  headerRowHovered: boolean,
-  isInResizeMode: boolean,
-  setIsInResizeMode: (val: boolean) => void,
-  isEmpty: boolean,
-  onFocusedResizer: () => void,
-  onResizeStart: (widths: Map<Key, ColumnSize>) => void,
-  onResize: (widths: Map<Key, ColumnSize>) => void,
-  onResizeEnd: (widths: Map<Key, ColumnSize>) => void,
-  headerMenuOpen: boolean,
-  setHeaderMenuOpen: (val: boolean) => void
-}
-
-const TableContext = React.createContext<TableContextValue<unknown>>(null);
-export function useTableContext() {
-  return useContext(TableContext);
-}
-
-const VirtualizerContext = React.createContext(null);
-export function useVirtualizerContext() {
-  return useContext(VirtualizerContext);
-}
 
 // TODO: discuss the addition of Expandable interface, namely onExpandedChange naming
 export interface SpectrumTreeGridProps<T> extends TableProps<T>, SpectrumSelectionProps, DOMProps, AriaLabelingProps, StyleProps, Expandable {
@@ -1198,7 +1170,7 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
   let {isFocusVisible, focusProps} = useFocusRing();
   let {hoverProps, isHovered} = useHover({isDisabled});
   let isFirstRow = state.collection.rows.find(row => row.level === 1)?.key === item.key;
-  let isLastRow = state.collection.rows.at(-1).key === item.key;
+  let isLastRow = state.collection.rows.at(-1)?.key === item.key;
   // Figure out if the TableView content is equal or greater in height to the container. If so, we'll need to round the bottom
   // border corners of the last row when selected.
   let isFlushWithContainerBottom = false;
