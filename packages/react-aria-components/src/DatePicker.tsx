@@ -167,7 +167,6 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
 
   let startFieldRef = useRef<HTMLDivElement>(null);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
-  let {hoverProps, isHovered} = useHover(props);
   let {fieldProps: startDateFieldProps} = useDateField({...startFieldProps, label}, startFieldState, startFieldRef);
 
   let endFieldState = useDateFieldState({
@@ -186,7 +185,6 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
       isFocusWithin: isFocused,
       isFocusVisible,
       isDisabled: props.isDisabled || false,
-      isHovered,
       validationState: state.validationState
     },
     defaultClassName: 'react-aria-DateRangePicker'
@@ -226,13 +224,12 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
         }]
       ]}>
       <div
-        {...mergeProps(focusProps, hoverProps)}
+        {...focusProps}
         {...DOMProps}
         {...renderProps}
         ref={ref}
         slot={props.slot}
         data-validation-state={state.validationState || undefined}
-        data-hovered={isHovered || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-disabled={props.isDisabled || undefined} />
     </Provider>

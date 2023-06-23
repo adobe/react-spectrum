@@ -164,7 +164,6 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: F
   });
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
-  let {hoverProps, isHovered} = useHover(props);
   let {calendarProps, prevButtonProps, nextButtonProps, errorMessageProps, title} = useRangeCalendar(
     props,
     state,
@@ -178,7 +177,6 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: F
       isFocusWithin: isFocused,
       isFocusVisible,
       isDisabled: props.isDisabled || false,
-      isHovered,
       validationState: state.validationState
     },
     defaultClassName: 'react-aria-RangeCalendar'
@@ -186,14 +184,13 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: F
 
   return (
     <div
-      {...mergeProps(focusProps, hoverProps)}
+      {...focusProps}
       {...renderProps}
       {...calendarProps}
       ref={ref}
       slot={props.slot}
       data-focus-visible={isFocused || undefined}
       data-disabled={props.isDisabled || undefined}
-      data-hovered={isHovered || undefined}
       data-validation-state={state.validationState || undefined}>
       <Provider
         values={[
