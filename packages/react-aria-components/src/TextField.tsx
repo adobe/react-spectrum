@@ -17,6 +17,7 @@ import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
+import {ValidationState} from '@react-types/shared';
 
 export interface TextFieldRenderProps {
   /**
@@ -38,7 +39,12 @@ export interface TextFieldRenderProps {
    * Whether the text field is disabled.
    * @selector [data-disabled]
    */
-  isDisabled: boolean
+  isDisabled: boolean,
+  /**
+   * Validation state of the text field.
+   * @selector [data-validation-state]
+   */
+  validationState: ValidationState
 }
 
 export interface TextFieldProps extends Omit<AriaTextFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, Omit<DOMProps, 'style' | 'className' | 'children'>, SlotProps, RenderProps<TextFieldRenderProps> {}
@@ -58,7 +64,13 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   let {hoverProps, isHovered} = useHover(props);
   let renderProps = useRenderProps({
     ...props,
-    values: {isHovered, isFocused, isFocusVisible, isDisabled: props.isDisabled || false},
+    values: {
+      isHovered,
+      isFocused,
+      isFocusVisible,
+      isDisabled: props.isDisabled || false,
+      validationState: props.validationState
+    },
     defaultClassName: 'react-aria-TextField'
   });
 
@@ -72,7 +84,8 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
       data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
-      data-disabled={props.isDisabled || undefined}>
+      data-disabled={props.isDisabled || undefined}
+      data-validation-state={props.validationState || undefined}>
       <Provider
         values={[
           [LabelContext, {...labelProps, ref: labelRef}],
