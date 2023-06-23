@@ -568,9 +568,11 @@ import {Text} from 'react-aria-components';
 </ListBox>
 ```
 
-### Horizontal layout
+### Layouts
 
-By default, ListBox expects items to be arranged in a vertical stack, and implements keyboard navigation and drag and drop accordingly. The `layout` and `orientation` props can be used to change this behavior, allowing you to build horizontal stack, grid, and column layouts.
+By default, ListBox expects items to be arranged in a vertical stack, and implements keyboard navigation and drag and drop accordingly. The `layout` and `orientation` props can be used to change this behavior, allowing you to build horizontal and vertical stacks and grids.
+
+#### Horizontal stack
 
 This example displays a horizontal list of cards. The left and right arrow keys can be used to navigate between the items.
 
@@ -698,7 +700,7 @@ let albums = [
 
 </details>
 
-### Grid layout
+#### Vertical grid
 
 The `layout` prop can be set to `"grid"` to enable two-dimensional keyboard navigation. By default, the grid scrolls vertically. The left, right, up, and down arrow keys can be used to navigate between the cards in this example.
 
@@ -733,7 +735,7 @@ The `layout` prop can be set to `"grid"` to enable two-dimensional keyboard navi
 
 </details>
 
-### Column layout
+#### Horizontal grid
 
 The `layout="grid"` and `orientation="horizontal"` props can be combined to build a two dimensional grid where the items are grouped into columns, and the grid scrolls horizontally.
 
