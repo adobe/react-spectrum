@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaSearchFieldProps, useFocusRing, useHover, useSearchField} from 'react-aria';
+import {AriaSearchFieldProps, useFocusRing, useSearchField} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
@@ -41,11 +41,6 @@ export interface SearchFieldRenderProps {
    */
   isFocusVisible: boolean,
   /**
-   * Whether the search field is currently hovered with a mouse.
-   * @selector [data-hovered]
-   */
-  isHovered: boolean,
-  /**
    * Whether the search field is disabled.
    * @selector [data-disabled]
    */
@@ -66,7 +61,6 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
   let [labelRef, label] = useSlot();
   let state = useSearchFieldState(props);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
-  let {hoverProps, isHovered} = useHover(props);
   let {labelProps, inputProps, clearButtonProps, descriptionProps, errorMessageProps} = useSearchField({
     ...props,
     label
@@ -77,7 +71,6 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
     values: {
       value: state.value,
       isEmpty: state.value === '',
-      isHovered,
       isFocused,
       isFocusVisible,
       isDisabled: props.isDisabled || false,
@@ -92,12 +85,11 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
   return (
     <div
       {...DOMProps}
-      {...mergeProps(hoverProps, focusProps)}
+      {...focusProps}
       {...renderProps}
       ref={ref}
       slot={props.slot}
       data-empty={state.value === '' || undefined}
-      data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-disabled={props.isDisabled || undefined}>

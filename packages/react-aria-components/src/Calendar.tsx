@@ -22,11 +22,6 @@ import {TextContext} from './Text';
 
 export interface CalendarRenderProps {
   /**
-   * Whether the calendar is currently hovered with a mouse.
-   * @selector [data-hovered]
-   */
-  isHovered: boolean,
-  /**
    * Whether an element within the calendar is focused, either via a mouse or keyboard.
    * @selector :focus-within
    */
@@ -89,7 +84,6 @@ function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRe
   });
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
-  let {hoverProps, isHovered} = useHover(props);
   let {calendarProps, prevButtonProps, nextButtonProps, errorMessageProps, title} = useCalendar(props, state);
 
   let renderProps = useRenderProps({
@@ -99,7 +93,6 @@ function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRe
       isFocusWithin: isFocused,
       isFocusVisible,
       isDisabled: props.isDisabled || false,
-      isHovered,
       validationState: state.validationState
     },
     defaultClassName: 'react-aria-Calendar'
@@ -107,14 +100,13 @@ function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRe
 
   return (
     <div
-      {...mergeProps(focusProps, hoverProps)}
+      {...focusProps}
       {...renderProps}
       {...calendarProps}
       ref={ref}
       slot={props.slot}
       data-focus-visible={isFocused || undefined}
       data-disabled={props.isDisabled || undefined}
-      data-hovered={isHovered || undefined}
       data-validation-state={state.validationState || undefined}>
       <Provider
         values={[

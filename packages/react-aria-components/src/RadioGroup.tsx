@@ -48,11 +48,6 @@ export interface RadioGroupRenderProps {
    */
   validationState: ValidationState | null,
   /**
-   * Whether the radio group is currently hovered with a mouse.
-   * @selector [data-hovered]
-   */
-  isHovered: boolean,
-  /**
    * Whether an element within the radio group is focused, either via a mouse or keyboard.
    * @selector :focus-within
    */
@@ -123,7 +118,6 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, RadioGroupContext);
   let state = useRadioGroupState(props);
   let [labelRef, label] = useSlot();
-  let {hoverProps, isHovered} = useHover(props);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
   let {radioGroupProps, labelProps, descriptionProps, errorMessageProps} = useRadioGroup({
     ...props,
@@ -138,7 +132,6 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
       isReadOnly: state.isReadOnly,
       isRequired: state.isRequired,
       validationState: state.validationState,
-      isHovered,
       isFocusWithin: isFocused,
       isFocusVisible,
       state
@@ -148,7 +141,7 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
 
   return (
     <div
-      {...mergeProps(hoverProps, focusProps)}
+      {...focusProps}
       {...radioGroupProps}
       {...renderProps}
       ref={ref}

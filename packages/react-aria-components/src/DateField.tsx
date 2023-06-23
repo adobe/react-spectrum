@@ -29,11 +29,6 @@ export interface DateFieldRenderProps {
    */
   validationState: ValidationState,
   /**
-   * Whether the date field is currently hovered with a mouse.
-   * @selector [data-hovered]
-   */
-  isHovered: boolean,
-  /**
    * Whether the date field is focused, either via a mouse or keyboard.
    * @selector [data-focused]
    */
@@ -72,7 +67,6 @@ function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: Forwarded
 
   let fieldRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot();
-  let {hoverProps, isHovered} = useHover(props);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useDateField({...props, label}, state, fieldRef);
 
@@ -81,7 +75,6 @@ function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: Forwarded
     values: {
       state,
       validationState: state.validationState,
-      isHovered,
       isFocused,
       isFocusVisible,
       isDisabled: state.isDisabled
@@ -105,7 +98,7 @@ function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: Forwarded
         }]
       ]}>
       <div
-        {...mergeProps(hoverProps, focusProps)}
+        {...focusProps}
         {...DOMProps}
         {...renderProps}
         ref={ref}
@@ -132,7 +125,6 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
 
   let fieldRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot();
-  let {hoverProps, isHovered} = useHover(props);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useTimeField({...props, label}, state, fieldRef);
 
@@ -141,7 +133,6 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
     values: {
       state,
       validationState: state.validationState,
-      isHovered,
       isFocused,
       isFocusVisible,
       isDisabled: state.isDisabled
@@ -164,7 +155,7 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
           }
         }]
       ]}>
-      <div {...mergeProps(hoverProps, focusProps)} {...DOMProps} {...renderProps} ref={ref} slot={props.slot} data-validation-date={state.validationState || undefined} />
+      <div {...focusProps} {...DOMProps} {...renderProps} ref={ref} slot={props.slot} data-validation-date={state.validationState || undefined} />
     </Provider>
   );
 }

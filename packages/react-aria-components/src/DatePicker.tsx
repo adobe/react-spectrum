@@ -26,11 +26,6 @@ import {TextContext} from './Text';
 
 export interface DatePickerRenderProps {
   /**
-   * Whether the date picker is currently hovered with a mouse.
-   * @selector [data-hovered]
-   */
-  isHovered: boolean,
-  /**
    * Whether an element within the date picker is focused, either via a mouse or keyboard.
    * @selector :focus-within
    */
@@ -93,7 +88,6 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
 
   let fieldRef = useRef<HTMLDivElement>(null);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
-  let {hoverProps, isHovered} = useHover(props);
   let {fieldProps: dateFieldProps} = useDateField({...fieldProps, label}, fieldState, fieldRef);
 
   let renderProps = useRenderProps({
@@ -103,7 +97,6 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
       isFocusWithin: isFocused,
       isFocusVisible,
       isDisabled: props.isDisabled || false,
-      isHovered,
       validationState: state.validationState
     },
     defaultClassName: 'react-aria-DatePicker'
@@ -130,13 +123,12 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
         }]
       ]}>
       <div
-        {...mergeProps(focusProps, hoverProps)}
+        {...focusProps}
         {...DOMProps}
         {...renderProps}
         ref={ref}
         slot={props.slot}
         data-validation-state={state.validationState || undefined}
-        data-hovered={isHovered || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-disabled={props.isDisabled || undefined} />
     </Provider>

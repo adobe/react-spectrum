@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTextFieldProps, useFocusRing, useHover, useTextField} from 'react-aria';
+import {AriaTextFieldProps, useFocusRing, useTextField} from 'react-aria';
 import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
@@ -30,11 +30,6 @@ export interface TextFieldRenderProps {
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean,
-  /**
-   * Whether the text field is currently hovered with a mouse.
-   * @selector [data-hovered]
-   */
-  isHovered: boolean,
   /**
    * Whether the text field is disabled.
    * @selector [data-disabled]
@@ -61,11 +56,9 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   }, inputRef);
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
-  let {hoverProps, isHovered} = useHover(props);
   let renderProps = useRenderProps({
     ...props,
     values: {
-      isHovered,
       isFocused,
       isFocusVisible,
       isDisabled: props.isDisabled || false,
@@ -77,11 +70,10 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   return (
     <div
       {...filterDOMProps(props)}
-      {...mergeProps(hoverProps, focusProps)}
+      {...focusProps}
       {...renderProps}
       ref={ref}
       slot={props.slot}
-      data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-disabled={props.isDisabled || undefined}

@@ -42,11 +42,6 @@ export interface CheckboxGroupRenderProps {
    */
   validationState: ValidationState,
   /**
-   * Whether the checkbox group is currently hovered with a mouse.
-   * @selector [data-hovered]
-   */
-  isHovered: boolean,
-  /**
    * Whether an element within the checkbox group is focused, either via a mouse or keyboard.
    * @selector :focus-within
    */
@@ -122,7 +117,6 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivEleme
   [props, ref] = useContextProps(props, ref, CheckboxGroupContext);
   let state = useCheckboxGroupState(props);
   let [labelRef, label] = useSlot();
-  let {hoverProps, isHovered} = useHover(props);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
   let {groupProps, labelProps, descriptionProps, errorMessageProps} = useCheckboxGroup({
     ...props,
@@ -136,7 +130,6 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivEleme
       isReadOnly: state.isReadOnly,
       isRequired: props.isRequired || false,
       validationState: state.validationState,
-      isHovered,
       isFocusWithin: isFocused,
       isFocusVisible,
       state
@@ -146,7 +139,7 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivEleme
 
   return (
     <div
-      {...mergeProps(hoverProps, focusProps)}
+      {...focusProps}
       {...groupProps}
       {...renderProps}
       ref={ref}
@@ -154,7 +147,6 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivEleme
       data-readonly={state.isReadOnly || undefined}
       data-required={props.isRequired || undefined}
       data-validation-state={state.validationState || undefined}
-      data-hovered={isHovered || undefined}
       data-disabled={props.isDisabled || undefined}
       data-focus-visible={isFocusVisible || undefined}>
       <Provider

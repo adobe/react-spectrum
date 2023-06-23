@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaNumberFieldProps, useFocusRing, useHover, useLocale, useNumberField} from 'react-aria';
+import {AriaNumberFieldProps, useFocusRing, useLocale, useNumberField} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria/utils';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
@@ -32,11 +32,6 @@ export interface NumberFieldRenderProps {
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean,
-  /**
-   * Whether the number field is currently hovered with a mouse.
-   * @selector [data-hovered]
-   */
-  isHovered: boolean,
   /**
    * Whether the number field is disabled.
    * @selector [data-disabled]
@@ -59,7 +54,6 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
   let inputRef = useRef<HTMLInputElement>(null);
   let [labelRef, label] = useSlot();
   let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
-  let {hoverProps, isHovered} = useHover(props);
   let {
     labelProps,
     groupProps,
@@ -76,7 +70,6 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
       state,
       isFocused,
       isFocusVisible,
-      isHovered,
       isDisabled: props.isDisabled || false
     },
     defaultClassName: 'react-aria-NumberField'
@@ -105,12 +98,11 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
         }]
       ]}>
       <div
-        {...mergeProps(focusProps, hoverProps)}
+        {...focusProps}
         {...DOMProps}
         {...renderProps}
         ref={ref}
         slot={props.slot}
-        data-hovered={isHovered || undefined}
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-disabled={props.isDisabled || undefined} />

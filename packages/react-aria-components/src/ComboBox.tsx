@@ -9,10 +9,10 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaComboBoxProps, useComboBox, useFilter, useFocusRing, useHover} from 'react-aria';
+import {AriaComboBoxProps, useComboBox, useFilter, useFocusRing} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, forwardRefType, Provider, RenderProps, slotCallbackSymbol, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {filterDOMProps, mergeProps, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListBoxProps} from './ListBox';
@@ -33,11 +33,6 @@ export interface ComboBoxRenderProps {
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean,
-  /**
-   * Whether the combobox is currently hovered with a mouse.
-   * @selector [data-hovered]
-   */
-  isHovered: boolean,
   /**
    * Whether the combobox is currently open.
    * @selector [data-open]
@@ -71,15 +66,13 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
   });
 
   let {isFocusVisible, focusProps} = useFocusRing({within: true});
-  let {isHovered, hoverProps} = useHover({isDisabled: props.isDisabled});
 
   // Only expose a subset of state to renderProps function to avoid infinite render loop
   let renderPropsState = useMemo(() => ({
     isOpen: state.isOpen,
-    isHovered,
     isFocused: state.isFocused,
     isFocusVisible
-  }), [state.isOpen, state.isFocused, isHovered, isFocusVisible]);
+  }), [state.isOpen, state.isFocused, isFocusVisible]);
   let buttonRef = useRef<HTMLButtonElement>(null);
   let inputRef = useRef<HTMLInputElement>(null);
   let listBoxRef = useRef<HTMLDivElement>(null);
@@ -154,12 +147,11 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
       <div
         {...DOMProps}
         {...renderProps}
-        {...mergeProps(hoverProps, focusProps)}
+        {...focusProps}
         ref={ref}
         slot={props.slot}
         data-focused={state.isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
-        data-hovered={isHovered || undefined}
         data-open={state.isOpen || undefined} />
       {portal}
     </Provider>
