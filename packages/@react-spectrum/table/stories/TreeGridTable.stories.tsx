@@ -125,9 +125,9 @@ export const UserSetRowHeader: TableStory = {
   render: (args) => (
     <TableView hasExpandableRows onExpandedChange={action('onExpandedChange')} {...args}>
       <TableHeader>
-        <Column key="foo">Foo</Column>
-        <Column isRowHeader key="bar">Bar</Column>
-        <Column isRowHeader key="baz">Baz</Column>
+        <Column key="foo" allowsResizing>Foo</Column>
+        <Column isRowHeader allowsResizing key="bar">Bar</Column>
+        <Column isRowHeader key="baz" allowsResizing>Baz</Column>
       </TableHeader>
       <TableBody>
         <Row key="test">
@@ -179,15 +179,22 @@ for (let i = 1; i < 20; i++) {
   manyRows.push(row);
 }
 
-function ManyExpandableRows(props: SpectrumTableProps<unknown>) {
+interface ManyExpandableRowsProps extends SpectrumTableProps<unknown> {
+  allowsResizing?: boolean,
+  showDivider?: boolean
+}
+
+function ManyExpandableRows(props: ManyExpandableRowsProps) {
+  let {allowsResizing, showDivider, ...otherProps} = props;
   let [expandedKeys, setExpandedKeys] = useState<'all' | Set<Key>>('all');
+
   return (
     <Flex direction="column">
       <ActionButton onPress={() => setExpandedKeys('all')}>Expand all</ActionButton>
       <ActionButton onPress={() => setExpandedKeys(new Set([]))}>Collapse all</ActionButton>
-      <TableView expandedKeys={expandedKeys} onExpandedChange={chain(setExpandedKeys, action('onExpandedChange'))} hasExpandableRows disabledKeys={['Row 1 Lvl 2']} {...props}>
+      <TableView expandedKeys={expandedKeys} onExpandedChange={chain(setExpandedKeys, action('onExpandedChange'))} hasExpandableRows disabledKeys={['Row 1 Lvl 2']} {...otherProps}>
         <TableHeader columns={columns}>
-          {column => <Column>{column.name}</Column>}
+          {column => <Column showDivider={showDivider} allowsResizing={allowsResizing}>{column.name}</Column>}
         </TableHeader>
         <TableBody items={manyRows}>
           {item =>
@@ -202,6 +209,7 @@ function ManyExpandableRows(props: SpectrumTableProps<unknown>) {
     </Flex>
   );
 }
+
 export const ManyExpandableRowsStory: TableStory = {
   args: {
     'aria-label': 'TableView with many dynamic expandable rows',
@@ -216,7 +224,7 @@ export const ManyExpandableRowsStory: TableStory = {
 
 export const EmptyTreeGridStory: TableStory = {
   args: {
-    'aria-label': 'TableView with many dynamic expandable rows',
+    'aria-label': 'TableView with empty state',
     width: 500,
     height: 400
   },
@@ -231,5 +239,97 @@ export const EmptyTreeGridStory: TableStory = {
   }
 };
 
+function LoadingStateTable(props) {
+  let [show, setShow] = useState(false);
 
-// TODO: make sorting example? empty state table, nested columns, icons in cells, resizeable column headers, loading story, dividers
+  return (
+    <Flex direction="column">
+      <ActionButton width="100px" onPress={() => setShow(show => !show)}>Toggle items</ActionButton>
+      <TableView hasExpandableRows aria-label="TableView with empty state" {...props}>
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={show ? manyRows : []} loadingState="loadingMore">
+          {item =>
+            (<Row key={item.key} childItems={item.childRows}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    </Flex>
+  );
+}
+
+export const LoadingTreeGridStory: TableStory = {
+  args: {
+    'aria-label': 'TableView with loading',
+    width: 500,
+    height: 400
+  },
+  render: (args) => (
+    <LoadingStateTable {...args} />
+  ),
+  name: 'isLoading'
+};
+
+export const NestedColumnsStory: TableStory = {
+  args: {
+    'aria-label': 'TableView with nested columns',
+    width: 500,
+    height: 400
+  },
+  render: (args) => (
+    <TableView hasExpandableRows {...args}>
+      <TableHeader>
+        <Column title="Blah">
+          <Column title="Group 1">
+            <Column key="foo">Foo</Column>
+            <Column key="bar">Bar</Column>
+          </Column>
+          <Column title="Group 2">
+            <Column key="baz">Baz</Column>
+          </Column>
+        </Column>
+      </TableHeader>
+      <TableBody>
+        <Row key="row 1">
+          <Cell>Lvl 1 Foo 1</Cell>
+          <Cell>Lvl 1 Bar 1</Cell>
+          <Cell> Lvl 1 Baz 1</Cell>
+          <Row key="child row 1 level 2">
+            <Cell>Lvl 2 Foo 1</Cell>
+            <Cell>Lvl 2 Bar 1</Cell>
+            <Cell>Lvl 2 Baz 1</Cell>
+            <Row key="child row 1 level 3">
+              <Cell>Lvl 3 Foo 1</Cell>
+              <Cell>Lvl 3 Bar 1</Cell>
+              <Cell>Lvl 3 Baz 1</Cell>
+            </Row>
+          </Row>
+          <Row key="child row 2 level 2">
+            <Cell>Lvl 2 Foo 2</Cell>
+            <Cell>Lvl 2 Bar 2</Cell>
+            <Cell>Lvl 2 Baz 2</Cell>
+          </Row>
+        </Row>
+      </TableBody>
+    </TableView>
+  ),
+  name: 'with nested columns'
+};
+
+export const ResizableColumnsStory: TableStory = {
+  args: {
+    'aria-label': 'TableView with many dynamic expandable rows and resizable columns',
+    width: 500,
+    height: 400
+  },
+  render: (args) => (
+    <ManyExpandableRows allowsResizing showDivider {...args} />
+  ),
+  name: 'resizable columns'
+};
+
+
+// TODO: make sorting example? icons in cells
