@@ -78,6 +78,12 @@ HourCycle24.story = {
   name: 'hourCycle: 24'
 };
 
+export const ForceLeadingZeros = () => render({defaultValue: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}, shouldForceLeadingZeros: true});
+
+ForceLeadingZeros.story = {
+  name: 'shouldForceLeadingZeros'
+};
+
 export const IsDisabled = () => render({isDisabled: true, value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}});
 
 IsDisabled.story = {

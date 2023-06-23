@@ -28,7 +28,8 @@ interface FormatterOptions {
   granularity?: DatePickerProps<any>['granularity'],
   maxGranularity?: 'year' | 'month' | DatePickerProps<any>['granularity'],
   hourCycle?: 12 | 24,
-  showEra?: boolean
+  showEra?: boolean,
+  shouldForceLeadingZeros?: boolean
 }
 
 const DEFAULT_FIELD_OPTIONS: FieldOptions = {
@@ -40,11 +41,21 @@ const DEFAULT_FIELD_OPTIONS: FieldOptions = {
   second: '2-digit'
 };
 
+const TWO_DIGIT_FIELD_OPTIONS: FieldOptions = {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit'
+};
+
 export function getFormatOptions(
   fieldOptions: FieldOptions,
   options: FormatterOptions
 ): Intl.DateTimeFormatOptions {
-  fieldOptions = {...DEFAULT_FIELD_OPTIONS, ...fieldOptions};
+  let defaultFieldOptions = options.shouldForceLeadingZeros ? TWO_DIGIT_FIELD_OPTIONS : DEFAULT_FIELD_OPTIONS;
+  fieldOptions = {...defaultFieldOptions, ...fieldOptions};
   let granularity = options.granularity || 'minute';
   let keys = Object.keys(fieldOptions);
   let startIdx = keys.indexOf(options.maxGranularity ?? 'year');

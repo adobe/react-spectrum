@@ -52,7 +52,12 @@ interface DateFieldBase<T extends DateValue> extends InputBase, Validation, Focu
    * Whether to hide the time zone abbreviation.
    * @default false
    */
-  hideTimeZone?: boolean
+  hideTimeZone?: boolean,
+  /**
+   * Whether to always show leading zeros in the month, day, and hour fields.
+   * By default, this is determined by the user's locale.
+   */
+  shouldForceLeadingZeros?: boolean
 }
 
 interface AriaDateFieldBaseProps<T extends DateValue> extends DateFieldBase<T>, AriaLabelingProps, DOMProps {}
@@ -129,6 +134,11 @@ export interface TimePickerProps<T extends TimeValue> extends InputBase, Validat
   granularity?: 'hour' | 'minute' | 'second',
   /** Whether to hide the time zone abbreviation. */
   hideTimeZone?: boolean,
+  /**
+   * Whether to always show leading zeros in the hour field.
+   * By default, this is determined by the user's locale.
+   */
+  shouldForceLeadingZeros?: boolean,
   /**
    * A placeholder time that influences the format of the placeholder shown when no value is selected.
    * Defaults to 12:00 AM or 00:00 depending on the hour cycle.
