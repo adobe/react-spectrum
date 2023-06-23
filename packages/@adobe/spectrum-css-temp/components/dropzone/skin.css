@@ -18,19 +18,22 @@ governing permissions and limitations under the License.
 .spectrum-Dropzone {
   border-color: var(--spectrum-dropzone-border-color);
 
-  &.is-dragged {
+  &[data-focus-visible][data-focused]{
+    border-color: var(--spectrum-dropzone-border-color-selected-hover);
+  }
+
+  &[data-focused] {
+    border-color: var(--spectrum-dropzone-border-color-selected-hover);
+  }
+
+  &[data-drop-target] {
     border-color: var(--spectrum-dropzone-border-color-selected-hover);
     background-color: var(--spectrum-dropzone-background-color-selected-hover);
-
-    /* i dont think this does anything... */
-    .spectrum-IllustratedMessage-illustration {
-      color: var(--spectrum-dropzone-illustratedmessage-illustration-color-selected);
-    }
-  }
 
   &.focus-ring {
     border-color: var(--spectrum-dropzone-border-color-selected-hover);
   }
+}
 /* 
   &:focus:not(.is-dragged) {
     border-color: var(--spectrum-dropzone-border-color);
@@ -48,12 +51,12 @@ governing permissions and limitations under the License.
   } */
 }
 
-/* .spectrum-IllustratedMessage{
+.spectrum-IllustratedMessage{
   
   svg {
     color: var(--spectrum-dropzone-illustratedmessage-illustration-color-selected);
   }
-} */
+}
 
 @media (forced-colors: active) {
   .spectrum-Dropzone {
