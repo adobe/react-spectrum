@@ -62,6 +62,8 @@ export type {ComboBoxProps, ComboBoxRenderProps} from './ComboBox';
 export type {DateFieldProps, DateInputProps, DateInputRenderProps, DateSegmentProps, DateSegmentRenderProps, TimeFieldProps} from './DateField';
 export type {DatePickerProps, DateRangePickerProps} from './DatePicker';
 export type {DialogProps, DialogTriggerProps} from './Dialog';
+export type {DropZoneProps, DropZoneRenderProps} from './DropZone';
+export type {FileTriggerProps} from './FileTrigger';
 export type {GridListProps, GridListRenderProps} from './GridList';
 export type {GroupProps, GroupRenderProps} from './Group';
 export type {HeadingProps} from './Heading';
