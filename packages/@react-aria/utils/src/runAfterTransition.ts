@@ -86,9 +86,11 @@ function removeGlobalEvents() {
 let domContentLoadedCallback: () => void;
 
 function initGlobalEvents(ownerDocument?: Document) {
-  if (typeof ownerDocument !== 'undefined') {
-    ownerDocument = ownerDocument || document;
+  if (!ownerDocument && typeof document !== 'undefined') {
+    ownerDocument = document;
+  }
 
+  if (typeof ownerDocument !== 'undefined') {
     if (ownerDocument.readyState !== 'loading') {
       setupGlobalEvents(ownerDocument);
     } else {

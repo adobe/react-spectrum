@@ -122,7 +122,7 @@ let _document: Document;
 function setupGlobalFocusEvents(ownerDocument?: Document) {
   _document = ownerDocument;
 
-  if (typeof document === 'undefined' || hasSetupGlobalListeners) {
+  if (typeof ownerDocument === 'undefined' || hasSetupGlobalListeners) {
     return;
   }
 
@@ -133,8 +133,8 @@ function setupGlobalFocusEvents(ownerDocument?: Document) {
   // However, we need to detect other cases when a focus event occurs without
   // a preceding user event (e.g. screen reader focus). Overriding the focus
   // method on HTMLElement.prototype is a bit hacky, but works.
-  let focus = ownerWindow.HTMLElement.prototype.focus;
-  ownerWindow.HTMLElement.prototype.focus = function () {
+  let focus = HTMLElement.prototype.focus;
+  HTMLElement.prototype.focus = function () {
     hasEventBeforeFocus = true;
     focus.apply(this, arguments);
   };
@@ -186,8 +186,10 @@ function removeGlobalFocusEvents() {
 let domContentLoadedCallback: () => void;
 
 export function initGlobalFocusEvents(ownerDocument?: Document) {
+  if (!ownerDocument && typeof document !== 'undefined') {
+    ownerDocument = document;
+  }
   if (typeof ownerDocument !== 'undefined') {
-    ownerDocument = ownerDocument || document;
     if (ownerDocument.readyState !== 'loading') {
       setupGlobalFocusEvents(ownerDocument);
     } else {

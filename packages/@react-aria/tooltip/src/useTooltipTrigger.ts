@@ -48,7 +48,6 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
     trigger
   } = props;
   let ownerDocument = useDocument();
-
   let tooltipId = useId();
 
   let isHovered = useRef(false);
