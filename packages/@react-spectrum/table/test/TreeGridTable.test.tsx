@@ -11,7 +11,7 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, render as renderComponent, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, installPointerEvent, render as renderComponent, triggerPress, within} from '@react-spectrum/test-utils';
 import {composeStories} from '@storybook/testing-react';
 import {enableTableNestedRows} from '@react-stately/flags';
 import {Provider} from '@react-spectrum/provider';
@@ -19,6 +19,7 @@ import React from 'react';
 import {Scale} from '@react-types/provider';
 import * as stories from '../stories/TreeGridTable.stories';
 import {theme} from '@react-spectrum/theme-default';
+import userEvent from '@testing-library/user-event';
 
 // Importing this stuff made Table test run along side this test even when only this test suite is targeted
 // import {getCell, render, rerender} from './Table.test';
@@ -32,6 +33,7 @@ let {
 } = composeStories(stories);
 
 let onSelectionChange = jest.fn();
+let onAction = jest.fn();
 
 // function pointerEvent(type, opts) {
 //   let evt = new Event(type, {bubbles: true, cancelable: true});
@@ -531,14 +533,14 @@ describe('TableView with expandable rows', function () {
       expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(selectedKeys));
     };
 
-    // let checkSelectAll = (tree, state = 'indeterminate') => {
-    //   let checkbox = tree.getByLabelText('Select All');
-    //   if (state === 'indeterminate') {
-    //     expect(checkbox.indeterminate).toBe(true);
-    //   } else {
-    //     expect(checkbox.checked).toBe(state === 'checked');
-    //   }
-    // };
+    let checkSelectAll = (tree, state = 'indeterminate') => {
+      let checkbox = tree.getByLabelText('Select All');
+      if (state === 'indeterminate') {
+        expect(checkbox.indeterminate).toBe(true);
+      } else {
+        expect(checkbox.checked).toBe(state === 'checked');
+      }
+    };
 
     let checkRowSelection = (rows, selected) => {
       for (let row of rows) {
@@ -553,7 +555,104 @@ describe('TableView with expandable rows', function () {
     };
 
     describe('row selection', function () {
-      // TODO: highlight selection and click on row to select should still work
+      describe('with pointer', function () {
+        it('should select a row when clicking on the chevron cell', function () {
+          let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={null} onAction={null} />);
+          let rowgroups = treegrid.getAllByRole('rowgroup');
+          let rows = within(rowgroups[1]).getAllByRole('row');
+          let chevronCell = getCell(treegrid, 'Row 1, Lvl 1, Foo');
+          let chevron = within(chevronCell).getByRole('button');
+          expect(chevron).toHaveAttribute('aria-label', 'Collapse');
+
+          checkRowSelection(rows, false);
+          triggerPress(chevronCell);
+          checkSelection(onSelectionChange, [
+            'Row 1 Lvl 1'
+          ]);
+          checkRowSelection(rows.slice(0, 1), true);
+
+          onSelectionChange.mockReset();
+          triggerPress(chevron);
+          expect(onSelectionChange).not.toHaveBeenCalled();
+          checkRowSelection(rows.slice(0, 1), true);
+        });
+
+        it('should select a nested row on click', function () {
+          let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={null} onAction={null} />);
+          let rowgroups = treegrid.getAllByRole('rowgroup');
+          let rows = within(rowgroups[1]).getAllByRole('row');
+          let cell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
+
+          checkRowSelection(rows, false);
+          triggerPress(cell);
+          checkSelection(onSelectionChange, [
+            'Row 1 Lvl 3'
+          ]);
+          checkRowSelection(rows.slice(2, 3), true);
+        });
+      });
+
+      describe('with keyboard', function () {
+        it('should select a nested row by pressing the Enter key on a row', function () {
+          let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={null} onAction={null} />);
+          let rowgroups = treegrid.getAllByRole('rowgroup');
+          let rows = within(rowgroups[1]).getAllByRole('row');
+
+          checkRowSelection(rows, false);
+          pressWithKeyboard(rows[1], 'Enter');
+          checkSelection(onSelectionChange, [
+            'Row 1 Lvl 2'
+          ]);
+          checkRowSelection(rows.slice(1, 2), true);
+          checkSelectAll(treegrid);
+        });
+
+        it('should select a nested row by pressing the Space key on a row', function () {
+          let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={null} onAction={null} />);
+          let rowgroups = treegrid.getAllByRole('rowgroup');
+          let rows = within(rowgroups[1]).getAllByRole('row');
+
+          checkRowSelection(rows, false);
+          pressWithKeyboard(rows[1]);
+          checkSelection(onSelectionChange, [
+            'Row 1 Lvl 2'
+          ]);
+          checkRowSelection(rows.slice(1, 2), true);
+          checkSelectAll(treegrid);
+        });
+
+        it('should select a row by pressing the Enter key on a chevron cell', function () {
+          let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={null} onAction={null} />);
+          let rowgroups = treegrid.getAllByRole('rowgroup');
+          let rows = within(rowgroups[1]).getAllByRole('row');
+          let cell = getCell(treegrid, 'Row 1, Lvl 1, Foo');
+
+
+          checkRowSelection(rows, false);
+          pressWithKeyboard(cell, 'Enter');
+          checkSelection(onSelectionChange, [
+            'Row 1 Lvl 1'
+          ]);
+          checkRowSelection(rows.slice(0, 1), true);
+          checkSelectAll(treegrid);
+        });
+
+        it('should select a row by pressing the Space key on a chevron cell', function () {
+          let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={null} onAction={null} />);
+          let rowgroups = treegrid.getAllByRole('rowgroup');
+          let rows = within(rowgroups[1]).getAllByRole('row');
+          let cell = getCell(treegrid, 'Row 1, Lvl 1, Foo');
+
+
+          checkRowSelection(rows, false);
+          pressWithKeyboard(cell);
+          checkSelection(onSelectionChange, [
+            'Row 1 Lvl 1'
+          ]);
+          checkRowSelection(rows.slice(0, 1), true);
+          checkSelectAll(treegrid);
+        });
+      });
     });
 
     describe('range selection', function () {
@@ -803,6 +902,39 @@ describe('TableView with expandable rows', function () {
           checkRowSelection(rows.slice(2, 3), true);
         });
       });
+    });
+
+    describe('onAction', function () {
+      installPointerEvent();
+
+      // TODO add onAction tests
+      it.only('should trigger onAction when clicking nested rows with the mouse', function () {
+        let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={null} onAction={onAction} />);
+        let rowgroups = treegrid.getAllByRole('rowgroup');
+        let rows = within(rowgroups[1]).getAllByRole('row');
+        let cell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
+        // TODO: Not sure why this is complaining about the type...
+        // @ts-ignore
+        userEvent.click(cell, {pointerType: 'mouse'});
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenLastCalledWith('Row 1 Lvl 3');
+        checkRowSelection(rows.slice(0), false);
+
+        let checkbox = within(rows[0]).getByRole('checkbox');
+        userEvent.click(checkbox);
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        checkRowSelection([rows[0]], true);
+
+        // @ts-ignore
+        userEvent.click(cell, {pointerType: 'mouse'});
+        expect(onSelectionChange).toHaveBeenCalledTimes(2);
+        checkRowSelection([rows[0], rows[2]], true);
+      });
+    });
+
+    describe('selectionStyle highlight', function () {
+      // TODO: highlight selection click on row should select
     });
   });
 
