@@ -39,7 +39,7 @@ export interface TextFieldRenderProps {
    * Validation state of the text field.
    * @selector [data-validation-state]
    */
-  validationState: ValidationState
+  validationState?: ValidationState
 }
 
 export interface TextFieldProps extends Omit<AriaTextFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, Omit<DOMProps, 'style' | 'className' | 'children'>, SlotProps, RenderProps<TextFieldRenderProps> {}
