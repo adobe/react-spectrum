@@ -20,20 +20,32 @@ governing permissions and limitations under the License.
 
   &[data-focus-visible][data-focused]{
     border-color: var(--spectrum-dropzone-border-color-selected-hover);
+
+    svg {
+      color: var(--spectrum-dropzone-illustratedmessage-illustration-color-key-focus);
+    }
   }
 
   &[data-focused] {
     border-color: var(--spectrum-dropzone-border-color-selected-hover);
+
+    svg {
+      color: var(--spectrum-dropzone-illustratedmessage-illustration-color-key-focus);
+    }
   }
 
   &[data-drop-target] {
     border-color: var(--spectrum-dropzone-border-color-selected-hover);
     background-color: var(--spectrum-dropzone-background-color-selected-hover);
 
-  &.focus-ring {
-    border-color: var(--spectrum-dropzone-border-color-selected-hover);
+    &.focus-ring {
+      border-color: var(--spectrum-dropzone-border-color-selected-hover);
+    }
+
+    svg {
+      color: var(--spectrum-dropzone-illustratedmessage-illustration-color-selected);
+    }
   }
-}
 /* 
   &:focus:not(.is-dragged) {
     border-color: var(--spectrum-dropzone-border-color);
@@ -50,13 +62,13 @@ governing permissions and limitations under the License.
     }
   } */
 }
-
+/* 
 .spectrum-IllustratedMessage{
   
   svg {
     color: var(--spectrum-dropzone-illustratedmessage-illustration-color-selected);
   }
-}
+} */
 
 @media (forced-colors: active) {
   .spectrum-Dropzone {

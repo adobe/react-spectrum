@@ -9,14 +9,15 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {classNames, createFocusableRef, SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {AriaLabelingProps, DOMProps, DOMRef, FocusableRefValue, StyleProps} from '@react-types/shared';
-import {DropOptions, mergeProps, useClipboard, useDrop, useFocusRing, useHover, VisuallyHidden} from 'react-aria';
-import React, {ReactNode, Ref, useImperativeHandle, useRef, useState} from 'react';
-import styles from '@adobe/spectrum-css-temp/components/dropzone/vars.css';
+
+import {AriaLabelingProps, DOMProps, FocusableRefValue, StyleProps} from '@react-types/shared';
+import {classNames, createFocusableRef, SlotProvider, useStyleProps} from '@react-spectrum/utils';
+import {DropOptions, mergeProps} from 'react-aria';
 import {filterDOMProps} from '@react-aria/utils';
 import {DropZone as RACDropZone} from 'react-aria-components';
-export interface SpectrumDropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint'>, DOMProps, StyleProps, AriaLabelingProps {
+import React, {ReactNode, Ref, useEffect, useImperativeHandle, useRef, useState} from 'react';
+import styles from '@adobe/spectrum-css-temp/components/dropzone/vars.css';
+export interface SpectrumDropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'ref' | 'hasDropButton'>, DOMProps, StyleProps, AriaLabelingProps {
   children: ReactNode
 }
 
@@ -35,10 +36,10 @@ function DropZone(props: SpectrumDropZoneProps, ref: Ref<DropZoneRef>) {
   let [isFilled, setIsFilled] = useState(false); // what can we use to determine if dropzone is filled? onDrop? onChange? how will this work... look into useEffect for this?
 
   // do we need to filterDOMProps?
-  let domProps = filterDOMProps(props);
+  let domProps = filterDOMProps(props, {labelable: true});
   delete domProps.id;
 
-    // Expose imperative interface for ref
+  // Expose imperative interface for ref
   useImperativeHandle(ref, () => ({
     ...createFocusableRef(domRef, inputRef),
     getInputElement() {
@@ -46,24 +47,29 @@ function DropZone(props: SpectrumDropZoneProps, ref: Ref<DropZoneRef>) {
     }
   }));
 
-  // we're gonna need that banner thing to appear when it is a droptarget... 
+  console.log('isFilled', isFilled);
+
+  // we're gonna need that banner thing to appear when it is a droptarget...but how will we get isDropTarget?
   // that will appear when isDropTarget is true? what animations do we want to do? what should that banner even be?
   // does that banner only appear when the drop target isFilled?
   // what should the screen reader experience be? (should read off)
 
   // isDisabled? validation states? errorMessage? (let's ask design)
-  // should the illustration also turn blue when the dropzone is focused on? (yes)
   
   return (
     <RACDropZone
-      {...otherProps}
+      {...mergeProps(otherProps, domProps)}
+      // {...styleProps} // not really sure what to do about this (an error keeps popping up)
       className={
       classNames(
         styles,
         'spectrum-Dropzone',
         styleProps.className 
-      )
-    } >
+      )} 
+      ref={domRef}>
+      {isFilled && <div>
+        Drop file to replace
+      </div>}
       <SlotProvider
         slots={{illustration: {UNSAFE_className: classNames(styles, 'spectrum-IllustratedMessage')}}}> 
         {children}
