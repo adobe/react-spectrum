@@ -67,6 +67,18 @@ describe('ZonedDateTime', function () {
         expect(zoned.subtract({days: 1})).toEqual(expected);
       });
 
+      it('should add weeks and adjust hours', function () {
+        let zoned = toZoned(new CalendarDateTime(2021, 3, 13, 2), 'America/Los_Angeles');
+        let expected = toZoned(new CalendarDateTime(2021, 3, 20, 3), 'America/Los_Angeles');
+        expect(zoned.add({weeks: 1})).toEqual(expected);
+      });
+
+      it('should subtract weeks and adjust hours', function () {
+        let zoned = toZoned(new CalendarDateTime(2021, 3, 15, 2), 'America/Los_Angeles');
+        let expected = toZoned(new CalendarDateTime(2021, 3, 8, 3), 'America/Los_Angeles');
+        expect(zoned.subtract({weeks: 1})).toEqual(expected);
+      });
+
       it('should add months and adjust hours', function () {
         let zoned = toZoned(new CalendarDateTime(2021, 2, 14, 2), 'America/Los_Angeles');
         let expected = toZoned(new CalendarDateTime(2021, 3, 14, 3), 'America/Los_Angeles');
