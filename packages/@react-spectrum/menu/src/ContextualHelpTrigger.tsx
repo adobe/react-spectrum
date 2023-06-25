@@ -24,7 +24,7 @@ export interface SpectrumMenuDialogTriggerProps<T> extends ItemProps<T> {
   targetKey: Key
 }
 
-function MenuDialogTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): ReactElement {
+function ContextualHelpTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): ReactElement {
   let {isUnavailable} = props;
 
   let triggerRef = useRef<HTMLLIElement>(null);
@@ -99,20 +99,20 @@ function MenuDialogTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): ReactEl
   );
 }
 
-MenuDialogTrigger.getCollectionNode = function* getCollectionNode<T>(props: ItemProps<T>) {
+ContextualHelpTrigger.getCollectionNode = function* getCollectionNode<T>(props: ItemProps<T>) {
   let [trigger] = React.Children.toArray(props.children) as ReactElement[];
   let [, content] = props.children as [ReactElement, ReactElement];
 
   yield {
     element: React.cloneElement(trigger, {...trigger.props, hasChildItems: true}),
     wrapper: (element) => (
-      <MenuDialogTrigger key={element.key} targetKey={element.key} {...props}>
+      <ContextualHelpTrigger key={element.key} targetKey={element.key} {...props}>
         {element}
         {content}
-      </MenuDialogTrigger>
+      </ContextualHelpTrigger>
     )
   };
 };
 
-let _Item = MenuDialogTrigger as <T>(props: ItemProps<T> & {isUnavailable?: boolean}) => JSX.Element;
-export {_Item as MenuDialogTrigger};
+let _Item = ContextualHelpTrigger as <T>(props: ItemProps<T> & {isUnavailable?: boolean}) => JSX.Element;
+export {_Item as ContextualHelpTrigger};
