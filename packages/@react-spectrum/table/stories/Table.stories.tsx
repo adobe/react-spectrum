@@ -880,16 +880,16 @@ function renderEmptyState() {
 }
 
 export function EmptyStateTable(props) {
-  let {items, columns, ...otherProps} = props;
+  let {items, columns, allowsSorting, ...otherProps} = props;
   let [show, setShow] = useState(false);
   let [sortDescriptor, setSortDescriptor] = useState({});
   return (
     <Flex direction="column">
       <ActionButton width="100px" onPress={() => setShow(show => !show)}>Toggle items</ActionButton>
-      <TableView aria-label="TableView with empty state" width={700} height={400} {...otherProps} renderEmptyState={renderEmptyState} selectionMode="multiple" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor}>
+      <TableView aria-label="TableView with empty state" width={700} height={400} renderEmptyState={renderEmptyState} selectionMode="multiple" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor} {...otherProps}>
         <TableHeader columns={columns ?? manyColunns}>
           {(column: any) =>
-            <Column allowsResizing allowsSorting minWidth={100}>{column.name}</Column>
+            <Column allowsResizing allowsSorting={allowsSorting} minWidth={100}>{column.name}</Column>
           }
         </TableHeader>
         <TableBody items={show ? items ?? manyRows : []}>

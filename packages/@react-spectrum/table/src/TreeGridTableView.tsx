@@ -65,6 +65,7 @@ import {
   useTableSelectionCheckbox
 } from '@react-aria/table';
 import {useVisuallyHidden, VisuallyHidden} from '@react-aria/visually-hidden';
+import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 
 // TODO: diff this versus TableView and import stuff that we haven't changed instead of duplicating it
 
@@ -1368,6 +1369,7 @@ function TableCheckboxCell({cell}) {
 }
 
 function TableCell({cell, scale}) {
+  let {direction} = useLocale();
   let {state} = useTableContext();
   let ref = useRef();
   let expandButtonRef = useRef();
@@ -1436,10 +1438,13 @@ function TableCell({cell, scale}) {
           className={
             classNames(
               styles,
-              'spectrum-Table-expandButton'
+              'spectrum-Table-expandButton',
+              {
+                'is-open': isExpanded
+              }
             )
           }>
-          {isExpanded ? <ChevronDownMedium /> : <ChevronRightMedium />}
+          {direction === 'ltr' ? <ChevronRightMedium /> : <ChevronLeftMedium />}
         </span>}
         <span
           id={id}

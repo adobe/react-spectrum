@@ -229,7 +229,7 @@ export const EmptyTreeGridStory: TableStory = {
     height: 400
   },
   render: (args) => (
-    <EmptyStateTable hasExpandableRows columns={columns} items={manyRows} {...args} />
+    <EmptyStateTable hasExpandableRows columns={columns} items={manyRows} allowsSorting={false} onSortChange={null} sortDescriptor={null} {...args} />
   ),
   name: 'empty state',
   parameters: {

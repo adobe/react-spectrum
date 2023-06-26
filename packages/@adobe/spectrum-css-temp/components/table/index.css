@@ -219,24 +219,25 @@ svg.spectrum-Table-sortedIcon {
   }
 }
 
+.spectrum-Table--regular {
+  --spectrum-table-cell-padding-y: var(--spectrum-table-cell-regular-padding-y);
+}
+
+.spectrum-Table--compact .spectrum-Table-cell {
+  --spectrum-table-cell-padding-y: var(--spectrum-table-cell-compact-padding-y);
+}
+
+.spectrum-Table--spacious .spectrum-Table-cell {
+  --spectrum-table-cell-padding-y: var(--spectrum-table-cell-spacious-padding-y);
+}
+
 .spectrum-Table-cell {
   box-sizing: border-box;
   font-size: var(--spectrum-table-cell-text-size);
   font-weight: var(--spectrum-table-cell-text-font-weight);
   /* need to subtract 1px here because 14px * 1.5 + 14px + 14px = 49px, and we want 48px */
   line-height: calc(calc(var(--spectrum-table-cell-text-size) * var(--spectrum-table-cell-text-line-height)) - 1px);
-  padding: var(--spectrum-table-cell-regular-padding-y) var(--spectrum-table-cell-padding-x);
-}
-.spectrum-Table--regular {}
-
-.spectrum-Table--compact .spectrum-Table-cell {
-  padding-top: var(--spectrum-table-cell-compact-padding-y);
-  padding-bottom: var(--spectrum-table-cell-compact-padding-y);
-}
-
-.spectrum-Table--spacious .spectrum-Table-cell {
-  padding-top: var(--spectrum-table-cell-spacious-padding-y);
-  padding-bottom: var(--spectrum-table-cell-spacious-padding-y);
+  padding: var(--spectrum-table-cell-padding-y) var(--spectrum-table-cell-padding-x);
 }
 
 .spectrum-Table-cellContents {
@@ -257,10 +258,23 @@ svg.spectrum-Table-sortedIcon {
 
 .spectrum-Table-expandButton {
   grid-area: expand-button;
-  padding: var(--spectrum-global-dimension-size-50) var(--spectrum-global-dimension-size-100);
+  height: 100%;
+  padding: var(--spectrum-table-cell-padding-y) var(--spectrum-global-dimension-size-100);
+  margin: calc(var(--spectrum-table-cell-padding-y) * -1) 0;
   display: flex;
+  flex-wrap: wrap;
+  align-content: center;
   justify-content: center;
   outline: none;
+  transition: transform ease var(--spectrum-global-animation-duration-100);
+  &.is-open {
+    [dir='ltr'] & {
+      transform: rotate(90deg);
+    }
+    [dir='rtl'] & {
+      transform: rotate(-90deg);
+    }
+  }
 }
 
 .spectrum-Table-cell--hideHeader {

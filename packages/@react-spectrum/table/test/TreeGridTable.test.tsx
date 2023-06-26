@@ -908,7 +908,7 @@ describe('TableView with expandable rows', function () {
       installPointerEvent();
 
       // TODO add onAction tests
-      it.only('should trigger onAction when clicking nested rows with the mouse', function () {
+      it('should trigger onAction when clicking nested rows with the mouse', function () {
         let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={null} onAction={onAction} />);
         let rowgroups = treegrid.getAllByRole('rowgroup');
         let rows = within(rowgroups[1]).getAllByRole('row');
