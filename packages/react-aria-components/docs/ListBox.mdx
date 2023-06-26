@@ -647,8 +647,8 @@ let albums = [
 
     & img {
       object-fit: cover;
-      width: 150px;
-      height: 150px;
+      aspect-ratio: 1/1;
+      max-width: 150px;
       margin-bottom: 4px;
       border-radius: 4px;
       transition: box-shadow 200ms;
@@ -728,8 +728,8 @@ The `layout` prop can be set to `"grid"` to enable two-dimensional keyboard navi
 ```css
 .react-aria-ListBox[data-layout=grid] {
   display: grid;
-  grid-template-columns: repeat(auto-fit, 158px);
-  max-width: 400px;
+  grid-template-columns: 1fr 1fr;
+  scrollbar-gutter: stable;
 }
 ```
 
