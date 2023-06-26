@@ -1395,12 +1395,12 @@ function TableCell({cell, scale}) {
     'aria-label': isExpanded ? 'Collapse' : 'Expand'
   }, expandButtonRef);
 
-  // TODO: Extract the row header id so it is on the cell contents span instead. This way the row's announcement won't include the chevron's label.
   let {id, ...otherGridCellProps} = gridCellProps;
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
         {...otherGridCellProps}
+        aria-labelledby={id}
         ref={ref}
         style={isFirstRowHeaderCell ? {paddingInlineStart: levelOffset} : {}}
         className={
