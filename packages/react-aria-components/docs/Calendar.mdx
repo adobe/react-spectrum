@@ -435,6 +435,9 @@ Multiple `CalendarGrid` elements can be rendered to show multiple months at once
     <CalendarGrid offset={{months: 1}}>
       {date => <CalendarCell date={date} />}
     </CalendarGrid>
+    <CalendarGrid offset={{months: 2}}>
+      {date => <CalendarCell date={date} />}
+    </CalendarGrid>
   </div>
 </Calendar>
 ```
