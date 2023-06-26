@@ -382,8 +382,9 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain: boolean) {
     };
   }, [scopeRef, contain]);
 
+  // This is a useLayoutEffect so it is guaranteed to run before our async synthetic blur
   // eslint-disable-next-line arrow-body-style
-  useEffect(() => {
+  useLayoutEffect(() => {
     return () => {
       if (raf.current) {
         cancelAnimationFrame(raf.current);

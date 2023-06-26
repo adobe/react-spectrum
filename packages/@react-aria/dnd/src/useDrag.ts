@@ -149,13 +149,10 @@ export function useDrag(options: DragOptions): DragResult {
 
     // Enforce that drops are handled by useDrop.
     addGlobalListener(window, 'drop', e => {
-      if (!DragManager.isValidDropTarget(e.target as Element)) {
-        e.preventDefault();
-        e.stopPropagation();
-        throw new Error('Drags initiated from the React Aria useDrag hook may only be dropped on a target created with useDrop. This ensures that a keyboard and screen reader accessible alternative is available.');
-      }
-    }, {capture: true, once: true});
-
+      e.preventDefault();
+      e.stopPropagation();
+      console.warn('Drags initiated from the React Aria useDrag hook may only be dropped on a target created with useDrop. This ensures that a keyboard and screen reader accessible alternative is available.');
+    }, {once: true});
     state.x = e.clientX;
     state.y = e.clientY;
 

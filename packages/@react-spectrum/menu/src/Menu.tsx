@@ -39,45 +39,44 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
   return (
     <MenuStateContext.Provider value={{state, container: scopedRef, menu: domRef}}>
       <FocusScope contain={state.expandedKeys.size > 0}>
-        <div ref={scopedRef} style={{display: 'inline-flex', overflow: 'hidden'}}>
-          <ul
-            {...menuProps}
-            {...styleProps}
-            ref={domRef}
-            className={
-              classNames(
-                styles,
-                'spectrum-Menu',
-                styleProps.className
-              )
-            }>
-            {[...state.collection].map(item => {
-              if (item.type === 'section') {
-                return (
-                  <MenuSection
-                    key={item.key}
-                    item={item}
-                    state={state}
-                    onAction={completeProps.onAction} />
-                );
-              }
-
-              let menuItem = (
-                <MenuItem
+        <ul
+          {...menuProps}
+          {...styleProps}
+          ref={domRef}
+          className={
+            classNames(
+              styles,
+              'spectrum-Menu',
+              styleProps.className
+            )
+          }>
+          {[...state.collection].map(item => {
+            if (item.type === 'section') {
+              return (
+                <MenuSection
                   key={item.key}
                   item={item}
                   state={state}
                   onAction={completeProps.onAction} />
               );
+            }
 
-              if (item.wrapper) {
-                menuItem = item.wrapper(menuItem);
-              }
+            let menuItem = (
+              <MenuItem
+                key={item.key}
+                item={item}
+                state={state}
+                onAction={completeProps.onAction} />
+            );
 
-              return menuItem;
-            })}
-          </ul>
-        </div>
+            if (item.wrapper) {
+              menuItem = item.wrapper(menuItem);
+            }
+
+            return menuItem;
+          })}
+        </ul>
+        <div ref={scopedRef} />
       </FocusScope>
     </MenuStateContext.Provider>
   );

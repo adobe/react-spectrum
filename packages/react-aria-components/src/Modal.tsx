@@ -93,8 +93,8 @@ export {_Modal as Modal};
 
 function ModalOverlayWithForwardRef(props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) {
   let ctx = useContext(ModalContext);
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  let state = ctx?.state ?? useOverlayTriggerState(props);
+  let localState = useOverlayTriggerState(props);
+  let state = props.isOpen != null || props.defaultOpen != null || !ctx?.state ? localState : ctx.state;
 
   let objectRef = useObjectRef(ref);
   let modalRef = useRef<HTMLDivElement>(null);
