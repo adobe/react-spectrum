@@ -37,7 +37,7 @@
   width: auto;
 }
 
-.react-spectrum-DateField .react-spectrum-DateField-Input {
+.react-spectrum-Datepicker-field .react-spectrum-DateField-Input {
   line-height: var(--spectrum-body-4-text-line-height);
 }
 
