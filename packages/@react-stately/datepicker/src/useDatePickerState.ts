@@ -113,8 +113,14 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
   };
 
   let selectTime = (newValue: TimeValue) => {
-    if (selectedDate && newValue) {
-      commitValue(selectedDate, newValue);
+    if (selectedDate) {
+      if (newValue) {
+        commitValue(selectedDate, newValue);
+      } else {
+        setValue(null);
+        setSelectedTime(null);
+        setSelectedDate(selectedDate);
+      }
     } else {
       setSelectedTime(newValue);
     }
