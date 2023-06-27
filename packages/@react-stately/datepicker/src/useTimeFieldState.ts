@@ -12,7 +12,7 @@
 
 import {DateFieldState, useDateFieldState} from '.';
 import {DateValue, TimePickerProps, TimeValue} from '@react-types/datepicker';
-import {getLocalTimeZone, GregorianCalendar, Time, toCalendarDateTime, today, toTime} from '@internationalized/date';
+import {getLocalTimeZone, GregorianCalendar, Time, toCalendarDateTime, today, toTime, toZoned} from '@internationalized/date';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo} from 'react';
 
@@ -42,7 +42,13 @@ export function useTimeFieldState<T extends TimeValue = TimeValue>(props: TimeFi
 
   let v = value || placeholderValue;
   let day = v && 'day' in v ? v : undefined;
-  let placeholderDate = useMemo(() => convertValue(placeholderValue), [placeholderValue]);
+  let placeholderDate = useMemo(() => {
+    let valueTimeZone = v && 'timeZone' in v ? v.timeZone : undefined;
+    let defaultValueTimeZone = props.defaultValue && 'timeZone' in props.defaultValue ? props.defaultValue.timeZone : undefined;
+
+    //console.log('placeholder', valueTimeZone || defaultValueTimeZone ? toZoned(convertValue(placeholderValue), valueTimeZone || defaultValueTimeZone) : convertValue(placeholderValue));
+    return valueTimeZone || defaultValueTimeZone ? toZoned(convertValue(placeholderValue), valueTimeZone || defaultValueTimeZone) : convertValue(placeholderValue);
+  }, [placeholderValue]);
   let minDate = useMemo(() => convertValue(minValue, day), [minValue, day]);
   let maxDate = useMemo(() => convertValue(maxValue, day), [maxValue, day]);
 
@@ -54,7 +60,7 @@ export function useTimeFieldState<T extends TimeValue = TimeValue>(props: TimeFi
   return useDateFieldState({
     ...props,
     value: dateTime,
-    defaultValue: undefined,
+    defaultValue: convertValue(props.defaultValue),
     minValue: minDate,
     maxValue: maxDate,
     onChange,
