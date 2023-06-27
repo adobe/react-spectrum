@@ -444,7 +444,7 @@ The error message element within a `RangeCalendar` can be targeted with the `[sl
 Multiple `CalendarGrid` elements can be rendered to show multiple months at once. The `visibleDuration` prop should be provided to the `RangeCalendar` component to specify how many months are visible, and each `CalendarGrid` accepts an `offset` prop to specify its starting date relative to the first visible date.
 
 ```tsx example
-<RangeCalendar aria-label="Trip dates" visibleDuration={{months: 2}}>
+<RangeCalendar aria-label="Trip dates" visibleDuration={{months: 3}}>
   <header>
     <Button slot="previous">◀</Button>
     <Heading />
@@ -455,6 +455,9 @@ Multiple `CalendarGrid` elements can be rendered to show multiple months at once
       {date => <CalendarCell date={date} />}
     </CalendarGrid>
     <CalendarGrid offset={{months: 1}}>
+      {date => <CalendarCell date={date} />}
+    </CalendarGrid>
+    <CalendarGrid offset={{months: 2}}>
       {date => <CalendarCell date={date} />}
     </CalendarGrid>
   </div>

@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/theme-light",
-  "version": "3.4.2",
+  "version": "3.4.3",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
