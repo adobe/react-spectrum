@@ -31,6 +31,7 @@ export function useControlledState<T>(
 
   let currentValue = isControlled ? value : stateValue;
   let setValue = useCallback((value, ...args) => {
+    console.log('setValue: value???', Object.assign({}, value), value);
     let onChangeCaller = (value, ...onChangeArgs) => {
       if (onChange) {
         if (!Object.is(currentValue, value)) {
@@ -38,6 +39,7 @@ export function useControlledState<T>(
         }
       }
       if (!isControlled) {
+        console.log('setValue: currentValue, value', currentValue, value);
         // If uncontrolled, mutate the currentValue local variable so that
         // calling setState multiple times with the same value only emits onChange once.
         // We do not use a ref for this because we specifically _do_ want the value to
@@ -65,10 +67,12 @@ export function useControlledState<T>(
       setStateValue(updateFunction);
     } else {
       if (!isControlled) {
+        console.log('setValue: setting state clone and value', Object.assign({}, value), value);
         setStateValue(value);
       }
       onChangeCaller(value, ...args);
     }
+    console.log('did I end up here?', isControlled, Object.assign({}, value));
   }, [isControlled, currentValue, onChange]);
 
   return [currentValue, setValue];
