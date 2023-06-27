@@ -19,9 +19,9 @@ describe('DocsTransformer - API', () => {
       name: '@adobe/parcel-transformer-test-app',
       version: '0.0.2',
       private: true,
-      'docs-json': './dist/api.json',
+      'apiCheck': './dist/api.json',
       targets: {
-        'docs-json': {
+        'apiCheck': {
           source: './src/index.tsx'
         }
       },
@@ -44,7 +44,7 @@ describe('DocsTransformer - API', () => {
     new Parcel({
       config: join(rootPath, '.parcelrc'),
       entries: [workingDir],
-      targets: ['docs-json'],
+      targets: ['apiCheck'],
       inputFS,
       outputFS,
       workerFarm,

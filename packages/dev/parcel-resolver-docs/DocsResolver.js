@@ -16,7 +16,7 @@ const path = require('path');
 
 module.exports = new Resolver({
   async resolve({dependency, options, specifier}) {
-    if (dependency.specifier.startsWith('docs:') || dependency.pipeline === 'docs' || dependency.pipeline === 'docs-json') {
+    if (dependency.specifier.startsWith('docs:') || dependency.specifier.startsWith('apiCheck:') || dependency.pipeline === 'docs' || dependency.pipeline === 'docs-json' || dependency.pipeline === 'apiCheck') {
       const resolver = new NodeResolver({
         fs: options.inputFS,
         projectRoot: options.projectRoot,

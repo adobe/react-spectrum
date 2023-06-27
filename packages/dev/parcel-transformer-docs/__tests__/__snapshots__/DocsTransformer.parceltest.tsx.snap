@@ -1302,16 +1302,6 @@ exports[`DocsTransformer - API interface merging merges properties when extendin
             "type": "boolean",
           },
         },
-        "disallowSelectAll": {
-          "default": null,
-          "description": "Whether the collection allows the user to select all items via keyboard shortcut.",
-          "name": "disallowSelectAll",
-          "optional": true,
-          "type": "property",
-          "value": {
-            "type": "boolean",
-          },
-        },
         "errorMessage": {
           "default": null,
           "description": "An error message for the field.",

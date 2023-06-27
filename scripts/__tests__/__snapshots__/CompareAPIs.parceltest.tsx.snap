@@ -479,7 +479,6 @@ changed by:
 +  description?: ReactNode
 +  disabledKeys?: Iterable<Key>
 +  disallowEmptySelection?: boolean
-+  disallowSelectAll?: boolean
 +  errorMessage?: ReactNode
 +  id?: string
 +  isDisabled?: boolean

@@ -31,7 +31,9 @@ build().catch(err => {
 });
 
 /**
- * Building this will run the docs builder using the docs-json pipeline in .parcelrc
+ * Building this will run the docs builder using the apiCheck pipeline in .parcelrc.
+ * We must use two pipelines, one for entry points, and one for processing dependencies. If we try to use the same pipeline for both, parcel
+ * will get confused and fail.
  * This will generate json containing the visible (API/exposed) type definitions for each package
  * This is run against a downloaded copy of the last published version of each package into a temporary directory and build there
  */
@@ -172,9 +174,9 @@ async function build() {
       delete json.main;
       delete json.module;
       delete json.devDependencies;
-      json['docs-json'] = 'dist/api.json';
+      json['apiCheck'] = 'dist/api.json';
       json.targets = {
-        'docs-json': {}
+        'apiCheck': {}
       };
       fs.writeFileSync(path.join(dir, 'packages', p), JSON.stringify(json, false, 2));
     }
@@ -188,7 +190,7 @@ async function build() {
 
   // Build the website
   console.log('building api files');
-  await run('yarn', ['parcel', 'build', 'packages/@react-{spectrum,aria,stately}/*/', 'packages/@internationalized/{message,string,date,number}', '--target', 'docs-json'], {cwd: dir, stdio: 'inherit'});
+  await run('yarn', ['parcel', 'build', 'packages/@react-{spectrum,aria,stately}/*/', 'packages/@internationalized/{message,string,date,number}', '--target', 'apiCheck'], {cwd: dir, stdio: 'inherit'});
 
   // Copy the build back into dist, and delete the temp dir.
   // dev/docs/node_modules has some react spectrum components, we don't want those, and i couldn't figure out how to not build them
