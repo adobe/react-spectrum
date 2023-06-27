@@ -14,6 +14,7 @@ import {Expandable} from '@react-types/shared';
 import {TableCollection as ITableCollection} from '@react-types/table';
 import {ITreeGridCollection, TreeGridCollection} from './TreeGridCollection';
 import {Key, useCallback, useMemo} from 'react';
+import {TableCollection} from './TableCollection';
 import {TableState, TableStateProps, useTableState} from './useTableState';
 import {useCollection} from '@react-stately/collections';
 import {useControlledState} from '@react-stately/utils';
@@ -23,7 +24,7 @@ export interface TreeGridState<T> extends TableState<T> {
   expandedKeys: 'all' | Set<Key>,
   /** Toggles the expanded state for a row by its key. */
   toggleKey(key: Key): void,
-  collection: ITreeGridCollection<T>
+  treeCollection: ITreeGridCollection<T>
 }
 
 export interface TreeGridStateProps<T> extends Expandable, TableStateProps<T> {
@@ -50,23 +51,35 @@ export function useTreeGridState<T extends object>(props: TreeGridStateProps<T>)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }), [props.children, showSelectionCheckboxes, selectionMode, showDragButtons]);
 
-  let collection = useCollection<T, ITreeGridCollection<T>>(
+  let treeCollection = useCollection<T, ITreeGridCollection<T>>(
     props,
     useCallback((nodes) => new TreeGridCollection(nodes, {...context, expandedKeys}), [context, expandedKeys]),
     context
   );
-
+  // debugger
   // TODO: support 'all'? Will we have a interaction to expand all
   // TODO: memo
   let onToggle = (key: Key) => {
-    setExpandedKeys(toggleKey(expandedKeys, key, collection));
+    setExpandedKeys(toggleKey(expandedKeys, key, treeCollection));
   };
 
-  let tableState = useTableState({...props, collection});
 
+
+  // TODO: instead of using useTableState with the collection from TreeGridCollection, perhaps we call new TableCollection with the column nodes + row nodes
+  // then pass it to useTableState?
+  // TODO: note that the last cell in each row will still point to the nested row key, may need to modify that in Table/GridCollection
+  let collection = useMemo(() => {
+    let modifiedBody = {...treeCollection.body, childNodes: treeCollection.rows};
+    return new TableCollection([...treeCollection.originalColumns, modifiedBody], null, context);
+  }, [context, treeCollection.rows, treeCollection.body, treeCollection.originalColumns])
+  console.log('table collection vs treegrid collection', collection, treeCollection)
+
+  // TODO: pass tcollection to useTableState
+  let tableState = useTableState({...props, collection});
+  // TODO: return collection as tCollection and the treegrid collection as something separate
   return {
     ...tableState,
-    collection,
+    treeCollection,
     expandedKeys,
     toggleKey: onToggle
   };

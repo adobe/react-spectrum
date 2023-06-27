@@ -26,7 +26,8 @@ interface TreeGridCollectionOptions {
 // TODO move to types and rename to TreeGridCollection?
 export interface ITreeGridCollection<T> extends ITableCollection<T> {
   /** The number of user defined columns in the grid (e.g. omits selection and drag handle columns). */
-  userColumnCount: number
+  userColumnCount: number,
+  originalColumns: GridNode<T>[]
 }
 
 // TODO: Copied from TableCollection
@@ -35,6 +36,8 @@ let ROW_HEADER_COLUMN_KEY_DRAG = 'row-header-column-' + Math.random().toString(3
 while (ROW_HEADER_COLUMN_KEY === ROW_HEADER_COLUMN_KEY_DRAG) {
   ROW_HEADER_COLUMN_KEY_DRAG = 'row-header-column-' + Math.random().toString(36).slice(2);
 }
+
+// TODO refactor this even further, get rid of this collection since we don't really need that much (no need for key getters)
 
 // TODO: can I extend from TableCollection and just modify the class methods? Don't think so since
 // there is expandedKeys logic now in the visit (only add rows whos parent is expanded to the collection), and we need to make the index values
@@ -45,6 +48,8 @@ export class TreeGridCollection<T> implements ITreeGridCollection<T> {
   columns: GridNode<T>[];
   rowHeaderColumnKeys: Set<Key>;
   body: GridNode<T>;
+  // TODO: might be able to get rid of this and just go with columns since TableCollection only needs the original columns
+  originalColumns: GridNode<T>[];
 
   // TODO: GridCollection stuff, figure out later if we can extend from GridCollection
   // Don't really need columnCount here at the moment if we don't extend from GridCollection, but keeping it for now for parity
@@ -63,6 +68,7 @@ export class TreeGridCollection<T> implements ITreeGridCollection<T> {
     let columns: GridNode<T>[] = [];
     this.rows = [];
     this.userColumnCount = 0;
+    this.originalColumns = [];
 
     // Add cell for selection checkboxes if needed.
     if (opts?.showSelectionCheckboxes) {
@@ -114,6 +120,7 @@ export class TreeGridCollection<T> implements ITreeGridCollection<T> {
           body = node;
           break;
         case 'column':
+          this.originalColumns.push(node);
           columnKeyMap.set(node.key, node);
           if (!node.hasChildNodes) {
             columns.push(node);
@@ -137,6 +144,7 @@ export class TreeGridCollection<T> implements ITreeGridCollection<T> {
       visit(node);
     }
 
+    // TODO: can I get rid of buildHeaderRows entirely since it will be handled by TableCollection now? We would only need to know the index
     let headerRows = buildHeaderRows(columnKeyMap, columns) as GridNode<T>[];
     headerRows.forEach((row, i) => topLevelRows.splice(i, 0, row));
 
@@ -172,9 +180,30 @@ export class TreeGridCollection<T> implements ITreeGridCollection<T> {
     // TODO: refactor later, the below is basically taken from GridCollection but modified. Also borrows from some
     // work done from Sections table work
 
+    let globalRowCount = 0;
     let visitNode = (node: GridNode<T>, i?: number) => {
       // TODO: got rid of childKeys and the remove deleted nodes logic, not sure when that actually ever triggered. Also got rid of the default rowNode props that got setup by
       // GridCollection, seems to be unneeded here
+
+      // TODO: make a copy of node before modifications for TableCollection. this.rows will be the flattened set of rows but without any extra stuff. Will need to overwrite some properties though
+      if (node.type === 'item') {
+        // TODO: Overwrite the parentKey, index, level with the flattened values
+        // Problem is that the cells of the rows still share the same reference... I could make visitNode here clone each node of childNodes as well
+        let childNodes = [];
+        for (let child of node.childNodes) {
+          if (child.type === 'cell') {
+            let cellClone = {...child};
+            cellClone.level = 2;
+            if (cellClone.index + 1 === this.columnCount) {
+              cellClone.nextKey = null;
+            }
+            childNodes.push({...cellClone});
+          }
+        }
+        let clone = {...node, childNodes: childNodes, parentKey: this.body.key, level: 1, index: globalRowCount++};
+
+        this.rows.push(clone);
+      }
 
       let newProps = {};
       // TODO: it seems like we only really need the column prop on cells and columns, before we were adding it to every node but that
@@ -192,10 +221,6 @@ export class TreeGridCollection<T> implements ITreeGridCollection<T> {
       // via .childNodes returns the same object as the one found via keyMap look up
       Object.assign(node, newProps);
 
-      if (node.type === 'item') {
-        this.rows.push(node);
-      }
-
       this.keyMap.set(node.key, node);
 
       let lastNode: GridNode<T>;
@@ -209,6 +234,24 @@ export class TreeGridCollection<T> implements ITreeGridCollection<T> {
       // Ideally make rowIndex here 0 index and store some other info for TableLayout to use for absolute row index value
       let rowIndex = 0;
       for (let child of node.childNodes) {
+        // TODO: make clone of child that recieves the node modifications? That would make the TableCollection cell node not have the extra TreeGrid specific info (indexOfType) and
+        // would potentially fix the problem where the last cell has the nested row as the next key? However that would mean that grabbing the childNodes from the treegrid rows wouldn't reflect the new info?
+        // Also still need to change the cell level so it is 2.
+        // let child = {...blah};
+        // if (blah.type === 'cell') {
+        //   blah.level = 2;
+        //   console.log('index', blah.index + 1, this.columnCount)
+        //   if (blah.index + 1 === this.columnCount) {
+        //     console.log('in if', blah.index, this.columnCount)
+        //     blah.nextKey = null;
+        //   }
+        // }
+
+        // console.log('clone vs old', child, blah)
+        // // debugger
+
+
+
         // TODO: Right now this means if the parent key is not included in expandedKeys but a childKey is, we will ignore it completely since the parent hasn't been expanded
         if (!(child.type === 'item' && expandedKeys !== 'all' && !expandedKeys.has(node.key))) {
           if (child.parentKey == null) {
@@ -274,7 +317,6 @@ export class TreeGridCollection<T> implements ITreeGridCollection<T> {
     if (last) {
       last.nextKey = null;
     }
-
   }
 
 
