@@ -15,7 +15,7 @@ import {classNames, createFocusableRef, SlotProvider, useStyleProps} from '@reac
 import {DropOptions, mergeProps} from 'react-aria';
 import {filterDOMProps} from '@react-aria/utils';
 import {DropZone as RACDropZone} from 'react-aria-components';
-import React, {ReactNode, Ref, useEffect, useImperativeHandle, useRef, useState} from 'react';
+import React, {ReactNode, Ref, useImperativeHandle, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/dropzone/vars.css';
 export interface SpectrumDropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'ref' | 'hasDropButton'>, DOMProps, StyleProps, AriaLabelingProps {
   children: ReactNode
@@ -25,7 +25,7 @@ export interface DropZoneRef extends FocusableRefValue<HTMLInputElement, HTMLDiv
   getInputElement(): HTMLInputElement | HTMLTextAreaElement | null
 }
 
-// what ref do we need? i just put a temp one for now... (follow TextField)
+// what ref do we need? (follow TextField)
 function DropZone(props: SpectrumDropZoneProps, ref: Ref<DropZoneRef>) {
   let {children, ...otherProps} = props;
   let {styleProps} = useStyleProps(otherProps);
@@ -35,7 +35,6 @@ function DropZone(props: SpectrumDropZoneProps, ref: Ref<DropZoneRef>) {
   // will need to think about this a bit more but i think this is a state we will need to track for styling purposes
   let [isFilled, setIsFilled] = useState(false); // what can we use to determine if dropzone is filled? onDrop? onChange? how will this work... look into useEffect for this?
 
-  // do we need to filterDOMProps?
   let domProps = filterDOMProps(props, {labelable: true});
   delete domProps.id;
 
@@ -60,16 +59,18 @@ function DropZone(props: SpectrumDropZoneProps, ref: Ref<DropZoneRef>) {
     <RACDropZone
       {...mergeProps(otherProps, domProps)}
       // {...styleProps} // not really sure what to do about this (an error keeps popping up)
+      onDrop={() => setIsFilled(true)} // is this the right way to do this? (will need to look into this) in what conditions would it be set to false?
       className={
       classNames(
         styles,
         'spectrum-Dropzone',
-        styleProps.className 
+        styleProps.className
       )} 
       ref={domRef}>
-      {isFilled && <div>
-        Drop file to replace
-      </div>}
+      {isFilled && 
+        <div>
+          Drop file to replace
+        </div>}
       <SlotProvider
         slots={{illustration: {UNSAFE_className: classNames(styles, 'spectrum-IllustratedMessage')}}}> 
         {children}
