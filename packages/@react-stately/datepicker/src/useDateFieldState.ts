@@ -147,7 +147,6 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     isRequired
   } = props;
 
-  //console.log('props.defaultValue', props.value, props.defaultValue, props.placeholderValue);
   let v: DateValue = (props.value || props.defaultValue || props.placeholderValue);
   let [granularity, defaultTimeZone] = useDefaultProps(v, props.granularity);
   let timeZone = defaultTimeZone || 'UTC';
@@ -157,27 +156,16 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     throw new Error('Invalid granularity ' + granularity + ' for value ' + v.toString());
   }
 
-  let [value, setDate2] = useControlledState<DateValue>(
+  let defaultFormatter = useMemo(() => new DateFormatter(locale), [locale]);
+  let calendar = useMemo(() => createCalendar(defaultFormatter.resolvedOptions().calendar), [createCalendar, defaultFormatter]);
+
+  let [value, setDate] = useControlledState<DateValue>(
     props.value,
     props.defaultValue,
     props.onChange
   );
 
-  let setDate = (v) => {
-    console.log('wrappingSetDate: clone, v', Object.assign({}, v), v);
-    setDate2(v);
-  }
-
-  let defaultFormatter = useMemo(() => new DateFormatter(locale), [locale]);
-  let calendar = useMemo(() => {
-    console.log('useMemo: defaultFormatter.resolvedOptions(), value', defaultFormatter.resolvedOptions());
-    return createCalendar(defaultFormatter.resolvedOptions().calendar);
-  }, [createCalendar, defaultFormatter]);
-
-  let calendarValue = useMemo(() => {
-    console.log('useMemo: value, calendar, convert', value, calendar, convertValue(value, calendar));
-    return convertValue(value, calendar);
-  }, [value, calendar]);
+  let calendarValue = useMemo(() => convertValue(value, calendar), [value, calendar]);
 
   // We keep track of the placeholder date separately in state so that onChange is not called
   // until all segments are set. If the value === null (not undefined), then assume the component
@@ -218,9 +206,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   // Reset placeholder when calendar changes
   let lastCalendarIdentifier = useRef(calendar.identifier);
   useEffect(() => {
-    console.log('useEffect reset calendar to placeholder?');
     if (calendar.identifier !== lastCalendarIdentifier.current) {
-      console.log('useEffect: yes');
       lastCalendarIdentifier.current = calendar.identifier;
       setPlaceholderDate(placeholder =>
         Object.keys(validSegments).length > 0
@@ -251,14 +237,11 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     }
 
     if (Object.keys(validSegments).length >= Object.keys(allSegments).length) {
-      console.log('setValue', v?.calendar);
       // The display calendar should not have any effect on the emitted value.
       // Emit dates in the same calendar as the original value, if any, otherwise gregorian.
       newValue = toCalendar(newValue, v?.calendar || new GregorianCalendar());
-      console.log('newValue', newValue);
       setDate(newValue);
     } else {
-      console.log('setPlaceholder');
       setPlaceholderDate(newValue);
     }
   };
@@ -304,7 +287,6 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   };
 
   let adjustSegment = (type: Intl.DateTimeFormatPartTypes, amount: number) => {
-    console.log('who is calling adjustSegment?');
     if (!validSegments[type]) {
       markValid(type);
       if (Object.keys(validSegments).length >= Object.keys(allSegments).length) {
@@ -344,9 +326,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       adjustSegment(part, -(PAGE_STEP[part] || 1));
     },
     setSegment(part, v) {
-      console.log('setSegment', displayValue, part, v, resolvedOptions);
       markValid(part);
-      console.log('setSegment value: ', setSegment(displayValue, part, v, resolvedOptions));
       setValue(setSegment(displayValue, part, v, resolvedOptions));
     },
     confirmPlaceholder() {
@@ -383,7 +363,6 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
         value = displayValue.set({[part]: placeholder[part]});
       }
 
-      console.log('clearSegment: value', value);
       setDate(null);
       setValue(value);
     },
@@ -498,7 +477,6 @@ function addSegment(value: DateValue, part: string, amount: number, options: Int
 }
 
 function setSegment(value: DateValue, part: string, segmentValue: number, options: Intl.ResolvedDateTimeFormatOptions) {
-  console.log('this.setSegment: value, part, segmentValue', value, part, segmentValue);
   switch (part) {
     case 'day':
     case 'month':
