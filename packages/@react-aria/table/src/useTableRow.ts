@@ -41,7 +41,6 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
   let {rowProps, ...states} = useGridRow<T, TableCollection<T>, TableState<T>>(props, state, ref);
   let {direction} = useLocale();
 
-  // To calculate the row index for nested row, can walk up the parent rows and sum the node.indexOfType
   if (isVirtualized && !('expandedKeys' in state)) {
     rowProps['aria-rowindex'] = node.index + 1 + state.collection.headerRows.length; // aria-rowindex is 1 based
   } else {
@@ -49,25 +48,28 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
   }
 
   let treeGridRowProps: HTMLAttributes<HTMLElement> = {};
-  if ('expandedKeys' in state && state.collection.getItem(node.key)) {
-    let hasChildRows = node.props?.childItems || node.props?.children?.length > state.collection.userColumnCount;
-    treeGridRowProps = {
-      onKeyDown: (e) => {
-        if ((e.key === EXPANSION_KEYS['expand'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && state.expandedKeys !== 'all' && !state.expandedKeys.has(node.key)) {
-          state.toggleKey(node.key);
-          e.stopPropagation();
-        } else if ((e.key === EXPANSION_KEYS['collapse'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && (state.expandedKeys === 'all' || state.expandedKeys.has(node.key))) {
-          state.toggleKey(node.key);
-          e.stopPropagation();
-        }
-      },
-      'aria-expanded': hasChildRows ? state.expandedKeys === 'all' || state.expandedKeys.has(node.key) : undefined,
-      'aria-level': node.level,
-      'aria-posinset': node.indexOfType + 1,
-      'aria-setsize': node.level > 1 ?
-        [...getChildNodes(state.collection.getItem(node?.parentKey), state.collection)].filter(node => node.type === 'item').length :
-        [...getChildNodes(state.collection.body, state.collection)].length
-    };
+  if ('expandedKeys' in state) {
+    let treeNode = state.treeCollection.getItem(node.key);
+    if (treeNode != null) {
+      let hasChildRows = treeNode.props?.childItems || treeNode.props?.children?.length > state.treeCollection.userColumnCount;
+      treeGridRowProps = {
+        onKeyDown: (e) => {
+          if ((e.key === EXPANSION_KEYS['expand'][direction]) && state.selectionManager.focusedKey === treeNode.key && hasChildRows && state.expandedKeys !== 'all' && !state.expandedKeys.has(treeNode.key)) {
+            state.toggleKey(treeNode.key);
+            e.stopPropagation();
+          } else if ((e.key === EXPANSION_KEYS['collapse'][direction]) && state.selectionManager.focusedKey === treeNode.key && hasChildRows && (state.expandedKeys === 'all' || state.expandedKeys.has(treeNode.key))) {
+            state.toggleKey(treeNode.key);
+            e.stopPropagation();
+          }
+        },
+        'aria-expanded': hasChildRows ? state.expandedKeys === 'all' || state.expandedKeys.has(node.key) : undefined,
+        'aria-level': treeNode.level,
+        'aria-posinset': treeNode.indexOfType + 1,
+        'aria-setsize': treeNode.level > 1 ?
+          [...getChildNodes(state.treeCollection.getItem(treeNode?.parentKey), state.treeCollection)].filter(node => node.type === 'item').length :
+          [...getChildNodes(state.treeCollection.body, state.treeCollection)].length
+      };
+    }
   }
 
   return {

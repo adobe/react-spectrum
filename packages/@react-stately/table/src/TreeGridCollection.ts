@@ -193,7 +193,8 @@ export class TreeGridCollection<T> implements ITreeGridCollection<T> {
         for (let child of node.childNodes) {
           if (child.type === 'cell') {
             let cellClone = {...child};
-            cellClone.level = 2;
+            // TODO: preserve the tree cell level so that we can preserve the padding offset of rows that are being collapsed
+            // cellClone.level = 2;
             if (cellClone.index + 1 === this.columnCount) {
               cellClone.nextKey = null;
             }
@@ -234,25 +235,6 @@ export class TreeGridCollection<T> implements ITreeGridCollection<T> {
       // Ideally make rowIndex here 0 index and store some other info for TableLayout to use for absolute row index value
       let rowIndex = 0;
       for (let child of node.childNodes) {
-        // TODO: make clone of child that recieves the node modifications? That would make the TableCollection cell node not have the extra TreeGrid specific info (indexOfType) and
-        // would potentially fix the problem where the last cell has the nested row as the next key? However that would mean that grabbing the childNodes from the treegrid rows wouldn't reflect the new info?
-        // Also still need to change the cell level so it is 2.
-        // let child = {...blah};
-        // if (blah.type === 'cell') {
-        //   blah.level = 2;
-        //   console.log('index', blah.index + 1, this.columnCount)
-        //   if (blah.index + 1 === this.columnCount) {
-        //     console.log('in if', blah.index, this.columnCount)
-        //     blah.nextKey = null;
-        //   }
-        // }
-
-        // console.log('clone vs old', child, blah)
-        // // debugger
-
-
-
-        // TODO: Right now this means if the parent key is not included in expandedKeys but a childKey is, we will ignore it completely since the parent hasn't been expanded
         if (!(child.type === 'item' && expandedKeys !== 'all' && !expandedKeys.has(node.key))) {
           if (child.parentKey == null) {
             // if child is a cell/expanded row/column and the parent key isn't already established by the collection, match child node to parent row
@@ -266,14 +248,6 @@ export class TreeGridCollection<T> implements ITreeGridCollection<T> {
             child.prevKey = null;
           }
 
-          // TODO: this makes the nested rows and cell nodes have separate index counters (e.g. a row with 2 nested rows and 3 cells will have 1,2 index for the nested rows and 0,1,2 for the cells)
-          // If we want the index to strictly stay as the nodes's index within its parent regardless of type, we will have to have some way to
-          // know the cell's index w/ respect to the other child cells so we can set the proper column data and we will need a way to calculate the aria-posinset for the nested row. Will need to adjust any instances of
-          // direct .index usage in the keyboard delegates and stuff. Perhaps can introduce some new Node properties like cellIndex and posInSet and have index still calculated as an absolute row index value?
-          // Would simplify things a lot since we rely on cell index being calculated with regards to sibling cells only for GridKeyboardDelegate left/right and rely on
-          // row index being with respect to the all rows for persisted keys.
-
-          // TODO: maybe just index and relativeIndex?
           if (child.type === 'item') {
             visitNode(child, rowIndex++);
           } else {

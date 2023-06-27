@@ -56,27 +56,19 @@ export function useTreeGridState<T extends object>(props: TreeGridStateProps<T>)
     useCallback((nodes) => new TreeGridCollection(nodes, {...context, expandedKeys}), [context, expandedKeys]),
     context
   );
-  // debugger
+
   // TODO: support 'all'? Will we have a interaction to expand all
   // TODO: memo
   let onToggle = (key: Key) => {
     setExpandedKeys(toggleKey(expandedKeys, key, treeCollection));
   };
 
-
-
-  // TODO: instead of using useTableState with the collection from TreeGridCollection, perhaps we call new TableCollection with the column nodes + row nodes
-  // then pass it to useTableState?
-  // TODO: note that the last cell in each row will still point to the nested row key, may need to modify that in Table/GridCollection
   let collection = useMemo(() => {
     let modifiedBody = {...treeCollection.body, childNodes: treeCollection.rows};
     return new TableCollection([...treeCollection.originalColumns, modifiedBody], null, context);
-  }, [context, treeCollection.rows, treeCollection.body, treeCollection.originalColumns])
-  console.log('table collection vs treegrid collection', collection, treeCollection)
+  }, [context, treeCollection.rows, treeCollection.body, treeCollection.originalColumns]);
 
-  // TODO: pass tcollection to useTableState
   let tableState = useTableState({...props, collection});
-  // TODO: return collection as tCollection and the treegrid collection as something separate
   return {
     ...tableState,
     treeCollection,

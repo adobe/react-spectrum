@@ -15,6 +15,7 @@ import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {chain, isAndroid, mergeProps, scrollIntoView, scrollIntoViewport} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
+import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {
   classNames,
@@ -65,7 +66,7 @@ import {
   useTableSelectionCheckbox
 } from '@react-aria/table';
 import {useVisuallyHidden, VisuallyHidden} from '@react-aria/visually-hidden';
-import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
+
 
 // TODO: diff this versus TableView and import stuff that we haven't changed instead of duplicating it
 
@@ -1171,7 +1172,7 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
   let {isFocusVisible, focusProps} = useFocusRing();
   let {hoverProps, isHovered} = useHover({isDisabled});
   let isFirstRow = state.collection.rows.find(row => row.level === 1)?.key === item.key;
-  let isLastRow = state.collection.rows.at(-1)?.key === item.key;
+  let isLastRow = item.nextKey == null;
   // Figure out if the TableView content is equal or greater in height to the container. If so, we'll need to round the bottom
   // border corners of the last row when selected.
   let isFlushWithContainerBottom = false;
@@ -1221,7 +1222,6 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
 
   let dropProps = isDroppable ? droppableItem?.dropProps : {'aria-hidden': droppableItem?.dropProps['aria-hidden']};
   let {visuallyHiddenProps} = useVisuallyHidden();
-  let nextRowKey = state.collection.getKeyAfter(item.key);
 
   return (
     <TableRowContext.Provider value={{dragButtonProps, dragButtonRef, isFocusVisibleWithin}}>
@@ -1250,7 +1250,7 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
               'is-selected': isSelected,
               'spectrum-Table-row--highlightSelection': state.selectionManager.selectionBehavior === 'replace',
               // NOTE: one change from base TableView, next key doesn't refer to the actual next row in the nested case, replaced by looking up nextRow
-              'is-next-selected': state.selectionManager.isSelected(nextRowKey),
+              'is-next-selected': state.selectionManager.isSelected(item.nextKey),
               'is-focused': isFocusVisibleWithin,
               'focus-ring': isFocusVisible,
               'is-hovered': isHovered,
@@ -1381,7 +1381,7 @@ function TableCell({cell, scale}) {
   }, state, ref);
   let isFirstRowHeaderCell = state.collection.rowHeaderColumnKeys.keys().next().value === cell.column.key;
   // TODO: figure out why it can't infer the state's correct type here. Don't really want to have to cast it. applies to other casts below
-  let isRowExpandable = state.collection.getItem(cell.parentKey)?.props.childItems?.length > 0 || state.collection.getItem(cell.parentKey)?.props?.children?.length > (state as TreeGridState<unknown>).collection.userColumnCount;
+  let isRowExpandable = (state as TreeGridState<unknown>).treeCollection.getItem(cell.parentKey)?.props.childItems?.length > 0 || (state as TreeGridState<unknown>).treeCollection.getItem(cell.parentKey)?.props?.children?.length > (state as TreeGridState<unknown>).treeCollection.userColumnCount;
   let showExpandCollapseButton = isFirstRowHeaderCell && isRowExpandable;
   // @ts-ignore
   let isExpanded = showExpandCollapseButton && ((state as TreeGridState<unknown>).expandedKeys === 'all' || (state as TreeGridState<unknown>).expandedKeys.has(cell.parentKey));
@@ -1463,7 +1463,7 @@ function TableCell({cell, scale}) {
 
 function CenteredWrapper({children}) {
   let {state} = useTableContext();
-  let topLevelRowCount = [...getChildNodes(state.collection.body, state.collection)].length;
+  let topLevelRowCount = [...getChildNodes((state as TreeGridState<unknown>).treeCollection.body, (state as TreeGridState<unknown>).treeCollection)].length;
   return (
     <div
       role="row"
