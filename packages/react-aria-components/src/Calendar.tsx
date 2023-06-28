@@ -105,7 +105,7 @@ function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRe
       {...calendarProps}
       ref={ref}
       slot={props.slot}
-      data-focus-visible={isFocused || undefined}
+      data-focus-visible={isFocusVisible || undefined}
       data-disabled={props.isDisabled || undefined}
       data-validation-state={state.validationState || undefined}>
       <Provider
@@ -189,7 +189,7 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: F
       {...calendarProps}
       ref={ref}
       slot={props.slot}
-      data-focus-visible={isFocused || undefined}
+      data-focus-visible={isFocusVisible || undefined}
       data-disabled={props.isDisabled || undefined}
       data-validation-state={state.validationState || undefined}>
       <Provider
