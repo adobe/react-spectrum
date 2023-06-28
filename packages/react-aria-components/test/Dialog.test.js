@@ -186,4 +186,39 @@ describe('Dialog', () => {
 
     expect(dialog).not.toBeInTheDocument();
   });
+
+  it('should support Modal being used standalone', async () => {
+    let onOpenChange = jest.fn();
+    let {getByRole} = render(
+      <Modal isDismissable isOpen onOpenChange={onOpenChange}>
+        <Dialog>A modal</Dialog>
+      </Modal>
+    );
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toHaveTextContent('A modal');
+
+    userEvent.click(document.body);
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+  });
+
+  it('isOpen and defaultOpen should override state from context', async () => {
+    let onOpenChange = jest.fn();
+    let {getByRole} = render(<>
+      <DialogTrigger>
+        <Button />
+        <Modal isDismissable isOpen onOpenChange={onOpenChange}>
+          <Dialog>A modal</Dialog>
+        </Modal>
+      </DialogTrigger>
+    </>);
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toHaveTextContent('A modal');
+
+    userEvent.click(document.body);
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+  });
 });
