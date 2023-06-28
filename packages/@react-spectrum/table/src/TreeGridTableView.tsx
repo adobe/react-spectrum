@@ -30,7 +30,6 @@ import type {DragAndDropHooks} from '@react-spectrum/dnd';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
 import type {DraggableItemResult, DropIndicatorAria, DroppableCollectionResult, DroppableItemResult} from '@react-aria/dnd';
 import {FocusRing, FocusScope, useFocusRing} from '@react-aria/focus';
-import {getChildNodes} from '@react-stately/collections';
 import {getInteractionModality, useHover, usePress} from '@react-aria/interactions';
 import {GridNode} from '@react-types/grid';
 import {InsertionIndicator} from './InsertionIndicator';
@@ -1381,7 +1380,7 @@ function TableCell({cell, scale}) {
   }, state, ref);
   let isFirstRowHeaderCell = state.collection.rowHeaderColumnKeys.keys().next().value === cell.column.key;
   // TODO: figure out why it can't infer the state's correct type here. Don't really want to have to cast it. applies to other casts below
-  let isRowExpandable = (state as TreeGridState<unknown>).treeCollection.getItem(cell.parentKey)?.props.childItems?.length > 0 || (state as TreeGridState<unknown>).treeCollection.getItem(cell.parentKey)?.props?.children?.length > (state as TreeGridState<unknown>).treeCollection.userColumnCount;
+  let isRowExpandable = (state as TreeGridState<unknown>).keyMap.get(cell.parentKey)?.props.childItems?.length > 0 || (state as TreeGridState<unknown>).keyMap.get(cell.parentKey)?.props?.children?.length > (state as TreeGridState<unknown>).userColumnCount;
   let showExpandCollapseButton = isFirstRowHeaderCell && isRowExpandable;
   // @ts-ignore
   let isExpanded = showExpandCollapseButton && ((state as TreeGridState<unknown>).expandedKeys === 'all' || (state as TreeGridState<unknown>).expandedKeys.has(cell.parentKey));
@@ -1463,7 +1462,8 @@ function TableCell({cell, scale}) {
 
 function CenteredWrapper({children}) {
   let {state} = useTableContext();
-  let topLevelRowCount = [...getChildNodes((state as TreeGridState<unknown>).treeCollection.body, (state as TreeGridState<unknown>).treeCollection)].length;
+  let topLevelRowCount = [...(state as TreeGridState<unknown>).keyMap.get(state.collection.body.key).childNodes].length;
+
   return (
     <div
       role="row"

@@ -26,5 +26,3 @@ export {Section} from '@react-stately/collections';
 export {TableCollection, buildHeaderRows} from './TableCollection';
 export {TableColumnLayout} from './TableColumnLayout';
 export {useTreeGridState} from './useTreeGridState';
-// TODO: remove this export
-export {TreeGridCollection} from './TreeGridCollection';
