@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useListBox, useListBoxSection, useOption} from 'react-aria';
+import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
 import {CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
 import {ContextValue, forwardRefType, HiddenContext, Provider, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
-import {DraggableCollectionState, DroppableCollectionState, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
+import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, useListState} from 'react-stately';
 import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {Header} from './Header';
-import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
 
@@ -50,7 +50,18 @@ export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children'>, 
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the ListBox. */
   dragAndDropHooks?: DragAndDropHooks,
   /** Provides content to display when there are no items in the list. */
-  renderEmptyState?: () => ReactNode
+  renderEmptyState?: () => ReactNode,
+  /**
+   * Whether the items are arranged in a stack or grid.
+   * @default 'stack'
+   */
+  layout?: 'stack' | 'grid',
+  /**
+   * The primary orientation of the items. Usually this is the
+   * direction that the collection scrolls.
+   * @default 'vertical'
+   */
+  orientation?: Orientation
 }
 
 interface ListBoxContextValue<T> extends ListBoxProps<T> {
@@ -105,13 +116,27 @@ interface ListBoxInnerProps<T> {
 }
 
 function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
-  let {dragAndDropHooks} = props;
+  let {dragAndDropHooks, layout = 'stack', orientation = 'vertical'} = props;
   let {collection, selectionManager} = state;
   let isListDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
   let isListDroppable = !!dragAndDropHooks?.useDroppableCollectionState;
+  let {direction} = useLocale();
+  let {disabledBehavior, disabledKeys} = selectionManager;
+  let keyboardDelegate = useMemo(() => (
+    props.keyboardDelegate || new ListKeyboardDelegate({
+      collection,
+      ref: listBoxRef,
+      disabledKeys: disabledBehavior === 'selection' ? new Set<React.Key>() : disabledKeys,
+      layout,
+      orientation,
+      direction
+    })
+  ), [collection, listBoxRef, disabledBehavior, disabledKeys, orientation, direction, props.keyboardDelegate, layout]);
+
   let {listBoxProps} = useListBox({
     ...props,
-    shouldSelectOnPressUp: isListDraggable || props.shouldSelectOnPressUp
+    shouldSelectOnPressUp: isListDraggable || props.shouldSelectOnPressUp,
+    keyboardDelegate
   }, state, listBoxRef);
 
   let children = useCachedChildren({
@@ -168,12 +193,7 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
       selectionManager
     });
 
-    let keyboardDelegate = props.keyboardDelegate || new ListKeyboardDelegate(
-      collection,
-      selectionManager.disabledBehavior === 'selection' ? new Set() : selectionManager.disabledKeys,
-      listBoxRef
-    );
-    let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(collection, listBoxRef);
+    let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(collection, listBoxRef, {orientation, layout, direction});
     droppableCollection = dragAndDropHooks.useDroppableCollection!({
       keyboardDelegate,
       dropTargetDelegate
@@ -218,7 +238,9 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
         data-drop-target={isRootDropTarget || undefined}
         data-empty={state.collection.size === 0 || undefined}
         data-focused={isFocused || undefined}
-        data-focus-visible={isFocusVisible || undefined}>
+        data-focus-visible={isFocusVisible || undefined}
+        data-layout={props.layout || 'stack'}
+        data-orientation={props.orientation || 'vertical'}>
         <Provider
           values={[
             [InternalListBoxContext, {state, shouldFocusOnHover: props.shouldFocusOnHover, dragAndDropHooks, dragState, dropState}],

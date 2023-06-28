@@ -199,6 +199,14 @@ describe('useOverlayPosition', function () {
     fireEvent.scroll(window);
     expect(onClose).toHaveBeenCalledTimes(1);
   });
+
+  it('arrow should be hidden when using assistive technologies', function () {
+    let res = render(<Example />);
+    let arrow = res.getByTestId('arrow');
+
+    expect(arrow).toHaveAttribute('aria-hidden', 'true');
+    expect(arrow).toHaveAttribute('role', 'presentation');
+  });
 });
 
 describe('useOverlayPosition with positioned container', () => {

@@ -58,11 +58,6 @@ export interface AriaSelectableListOptions {
    */
   disallowEmptySelection?: boolean,
   /**
-   * Whether the collection allows the user to select all items via keyboard shortcut.
-   * @default false
-   */
-  disallowSelectAll?: boolean,
-  /**
    * Whether selection should occur automatically on focus.
    * @default false
    */
@@ -103,7 +98,6 @@ export function useSelectableList(props: AriaSelectableListOptions): SelectableL
     shouldFocusWrap,
     isVirtualized,
     disallowEmptySelection,
-    disallowSelectAll,
     selectOnFocus = selectionManager.selectionBehavior === 'replace',
     disallowTypeAhead,
     shouldUseVirtualFocus,
@@ -125,7 +119,6 @@ export function useSelectableList(props: AriaSelectableListOptions): SelectableL
     autoFocus,
     shouldFocusWrap,
     disallowEmptySelection,
-    disallowSelectAll,
     selectOnFocus,
     disallowTypeAhead,
     shouldUseVirtualFocus,

@@ -73,7 +73,7 @@ export type {SeparatorAria, SeparatorProps} from '@react-aria/separator';
 export type {SSRProviderProps} from '@react-aria/ssr';
 export type {AriaSliderProps, AriaSliderThumbProps, AriaSliderThumbOptions, SliderAria, SliderThumbAria} from '@react-aria/slider';
 export type {AriaSwitchProps, SwitchAria} from '@react-aria/switch';
-export type {AriaTableCellProps, AriaTableColumnHeaderProps, AriaTableColumnResizeProps, TableColumnResizeAria, AriaTableProps, AriaTableSelectionCheckboxProps, GridAria, GridRowAria, GridRowProps, TableCellAria, TableColumnHeaderAria, TableHeaderRowAria, TableSelectAllCheckboxAria, TableSelectionCheckboxAria} from '@react-aria/table';
+export type {AriaTableCellProps, AriaTableColumnHeaderProps, AriaTableColumnResizeProps, AriaTableProps, AriaTableSelectionCheckboxProps, GridAria, GridRowAria, GridRowProps, TableCellAria, TableColumnHeaderAria, TableColumnResizeAria, TableHeaderRowAria, TableSelectAllCheckboxAria, TableSelectionCheckboxAria} from '@react-aria/table';
 export type {AriaTabListProps, AriaTabListOptions, AriaTabPanelProps, AriaTabProps, TabAria, TabListAria, TabPanelAria} from '@react-aria/tabs';
 export type {AriaTagGroupProps, AriaTagProps, TagAria, TagGroupAria} from '@react-aria/tag';
 export type {AriaTextFieldOptions, AriaTextFieldProps, TextFieldAria} from '@react-aria/textfield';

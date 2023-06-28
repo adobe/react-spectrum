@@ -14,10 +14,10 @@ import {act, fireEvent, render, screen, within} from '@testing-library/react';
 import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {Content, Footer} from '@react-spectrum/view';
+import {ContextualHelpTrigger, Item, Menu, MenuTrigger, Section} from '../';
 import {DEFAULT_LONG_PRESS_TIME, installPointerEvent, triggerLongPress, triggerPress, triggerTouch} from '@react-spectrum/test-utils';
 import {Dialog} from '@react-spectrum/dialog';
 import {Heading, Text} from '@react-spectrum/text';
-import {Item, Menu, MenuDialogTrigger, MenuTrigger, Section} from '../';
 import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -982,7 +982,7 @@ describe('MenuTrigger', function () {
 
     describe('unavailable item', function () {
       let renderTree = (options = {}) => {
-        let {providerProps = {}} = options;
+        let {providerProps = {}, isItem2Unavailable = true} = options;
         let {locale = 'en-US'} = providerProps;
         tree = render(
           <Provider theme={theme} locale={locale}>
@@ -990,7 +990,7 @@ describe('MenuTrigger', function () {
               <ActionButton>Menu</ActionButton>
               <Menu onAction={action('onAction')}>
                 <Item key="1">One</Item>
-                <MenuDialogTrigger isUnavailable>
+                <ContextualHelpTrigger isUnavailable={isItem2Unavailable}>
                   <Item key="foo" textValue="Hello">
                     <Text>Hello</Text>
                     <Text slot="description">Is it me you're looking for?</Text>
@@ -999,17 +999,17 @@ describe('MenuTrigger', function () {
                     <Heading>Lionel Richie says:</Heading>
                     <Content>I can see it in your eyes</Content>
                   </Dialog>
-                </MenuDialogTrigger>
+                </ContextualHelpTrigger>
                 <Item key="3">Three</Item>
                 <Item key="5">Five</Item>
-                <MenuDialogTrigger isUnavailable>
+                <ContextualHelpTrigger isUnavailable>
                   <Item key="bar" textValue="Choose a college major">Choose a College Major</Item>
                   <Dialog>
                     <Heading>Choosing a College Major</Heading>
                     <Content>What factors should I consider when choosing a college major?</Content>
                     <Footer>Visit this link before choosing this action. <Link>Learn more</Link></Footer>
                   </Dialog>
-                </MenuDialogTrigger>
+                </ContextualHelpTrigger>
               </Menu>
             </MenuTrigger>
           </Provider>
@@ -1052,6 +1052,25 @@ describe('MenuTrigger', function () {
         expect(menu).toBeVisible();
         expect(dialog).not.toBeInTheDocument();
         expect(document.activeElement).toBe(menuItems[2]);
+      });
+
+      it('can not open a sub dialog with hover if isUnavailable is false', function () {
+        renderTree({isItem2Unavailable: false});
+        let menu = openMenu();
+        let menuItems = within(menu).getAllByRole('menuitem');
+        let availableItem = menuItems[1];
+        expect(availableItem).toBeVisible();
+        expect(within(availableItem).queryByRole('img', {hidden: true})).toBeNull();
+        expect(availableItem).not.toHaveAttribute('aria-haspopup', 'dialog');
+
+        fireEvent.mouseEnter(availableItem);
+        act(() => {jest.runAllTimers();});
+        expect(tree.queryByRole('dialog')).toBeNull();
+
+        expect(document.activeElement).toBe(availableItem);
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+        expect(tree.queryByRole('dialog')).toBeNull();
       });
 
       it('can open a sub dialog with keyboard', function () {

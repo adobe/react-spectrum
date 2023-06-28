@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Text, TimeField, Tooltip, TooltipTrigger} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Text, TimeField, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
@@ -647,64 +647,64 @@ export const TableExample = () => {
 
   return (
     <div style={{width: 300, overflow: 'auto'}}>
-    <Table aria-label="Example table">
-      <TableHeader>
-        <MyColumn isRowHeader defaultWidth="50%">Name</MyColumn>
-        <MyColumn>Type</MyColumn>
-        <MyColumn>Date Modified</MyColumn>
-        <MyColumn>Actions</MyColumn>
-      </TableHeader>
-      <TableBody items={list.items}>
-        {item => (
-          <Row>
-            <Cell>{item.name}</Cell>
-            <Cell>{item.type}</Cell>
-            <Cell>{item.date}</Cell>
-            <Cell>
-              <DialogTrigger>
-                <Button>Delete</Button>
-                <ModalOverlay
-                  style={{
-                    position: 'fixed',
-                    zIndex: 100,
-                    top: 0,
-                    left: 0,
-                    bottom: 0,
-                    right: 0,
-                    background: 'rgba(0, 0, 0, 0.5)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                  <Modal
+      <Table aria-label="Example table">
+        <TableHeader>
+          <MyColumn isRowHeader defaultWidth="50%">Name</MyColumn>
+          <MyColumn>Type</MyColumn>
+          <MyColumn>Date Modified</MyColumn>
+          <MyColumn>Actions</MyColumn>
+        </TableHeader>
+        <TableBody items={list.items}>
+          {item => (
+            <Row>
+              <Cell>{item.name}</Cell>
+              <Cell>{item.type}</Cell>
+              <Cell>{item.date}</Cell>
+              <Cell>
+                <DialogTrigger>
+                  <Button>Delete</Button>
+                  <ModalOverlay
                     style={{
-                      background: 'Canvas',
-                      color: 'CanvasText',
-                      border: '1px solid gray',
-                      padding: 30
+                      position: 'fixed',
+                      zIndex: 100,
+                      top: 0,
+                      left: 0,
+                      bottom: 0,
+                      right: 0,
+                      background: 'rgba(0, 0, 0, 0.5)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
                     }}>
-                    <Dialog>
-                      {({close}) => (<>
-                        <Heading>Delete item</Heading>
-                        <p>Are you sure?</p>
-                        <Button onPress={close}>Cancel</Button>
-                        <Button
-                          onPress={() => {
-                            close();
-                            list.remove(item.id);
-                          }}>
-                          Delete
-                        </Button>
-                      </>)}
-                    </Dialog>
-                  </Modal>
-                </ModalOverlay>
-              </DialogTrigger>
-            </Cell>
-          </Row>
-        )}
-      </TableBody>
-    </Table>
+                    <Modal
+                      style={{
+                        background: 'Canvas',
+                        color: 'CanvasText',
+                        border: '1px solid gray',
+                        padding: 30
+                      }}>
+                      <Dialog>
+                        {({close}) => (<>
+                          <Heading>Delete item</Heading>
+                          <p>Are you sure?</p>
+                          <Button onPress={close}>Cancel</Button>
+                          <Button
+                            onPress={() => {
+                              close();
+                              list.remove(item.id);
+                            }}>
+                            Delete
+                          </Button>
+                        </>)}
+                      </Dialog>
+                    </Modal>
+                  </ModalOverlay>
+                </DialogTrigger>
+              </Cell>
+            </Row>
+          )}
+        </TableBody>
+      </Table>
     </div>
   );
 };
@@ -727,7 +727,7 @@ function MyColumn(props) {
         </div>
       )}
     </Column>
-  )
+  );
 }
 
 function MyItem(props) {
@@ -969,3 +969,87 @@ export const FileTriggerLinkAllowsMultiple = (props) => (
     <Link>Select a file</Link>
   </FileTrigger>
 );
+
+let albums = [
+  {
+    id: 1,
+    image: 'https://images.unsplash.com/photo-1593958812614-2db6a598c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8ZGlzY298ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=900&q=60',
+    title: 'Euphoric Echoes',
+    artist: 'Luna Solstice'
+  },
+  {
+    id: 2,
+    image: 'https://images.unsplash.com/photo-1601042879364-f3947d3f9c16?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bmVvbnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=900&q=60',
+    title: 'Neon Dreamscape',
+    artist: 'Electra Skyline'
+  },
+  {
+    id: 3,
+    image: 'https://images.unsplash.com/photo-1528722828814-77b9b83aafb2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHNwYWNlfGVufDB8fDB8fHww&auto=format&fit=crop&w=900&q=60',
+    title: 'Cosmic Serenade',
+    artist: 'Orion\'s Symphony'
+  },
+  {
+    id: 4,
+    image: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bXVzaWN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=900&q=60',
+    title: 'Melancholy Melodies',
+    artist: 'Violet Mistral'
+  },
+  {
+    id: 5,
+    image: 'https://images.unsplash.com/photo-1608433319511-dfe8ea4cbd3c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGJlYXR8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=900&q=60',
+    title: 'Rhythmic Illusions',
+    artist: 'Mirage Beats'
+  }
+];
+
+export const ListBoxDnd = (props: ListBoxProps<typeof albums[0]>) => {
+  let list = useListData({
+    initialItems: albums
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key).title})),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    }
+  });
+
+  return (
+    <ListBox
+      {...props}
+      aria-label="Albums"
+      items={list.items}
+      selectionMode="multiple"
+      dragAndDropHooks={dragAndDropHooks}>
+      {item => (
+        <Item>
+          <img src={item.image} alt="" />
+          <Text slot="label">{item.title}</Text>
+          <Text slot="description">{item.artist}</Text>
+        </Item>
+      )}
+    </ListBox>
+  );
+};
+
+ListBoxDnd.story = {
+  args: {
+    layout: 'stack',
+    orientation: 'horizontal'
+  },
+  argTypes: {
+    layout: {
+      control: 'radio',
+      options: ['stack', 'grid']
+    },
+    orientation: {
+      control: 'radio',
+      options: ['horizontal', 'vertical']
+    }
+  }
+};
