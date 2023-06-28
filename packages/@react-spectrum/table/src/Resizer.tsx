@@ -47,7 +47,7 @@ const CURSORS = {
 
 function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
   let {column, showResizer} = props;
-  let {isEmpty, layout} = useTableContext();
+  let {isEmpty, layout, onFocusedResizer} = useTableContext();
   // Virtualizer re-renders, but these components are all cached
   // in order to get around that and cause a rerender here, we use context
   // but we don't actually need any value, they are available on the layout object
@@ -110,7 +110,7 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
           {...resizerProps}>
           <input
             ref={ref}
-            {...inputProps} />
+            {...mergeProps(inputProps, {onFocus: onFocusedResizer})} />
         </div>
       </FocusRing>
       {/* Placeholder so that the title doesn't intersect with space reserved by the resizer when it appears. */}

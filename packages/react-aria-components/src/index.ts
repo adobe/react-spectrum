@@ -44,7 +44,7 @@ export {Select, SelectValue, SelectContext} from './Select';
 export {Separator, SeparatorContext} from './Separator';
 export {Slider, SliderOutput, SliderTrack, SliderThumb, SliderContext} from './Slider';
 export {Switch, SwitchContext} from './Switch';
-export {Table, Row, Cell, Column, ColumnResizer, TableHeader, TableBody, TableContext, useTableOptions} from './Table';
+export {Table, Row, Cell, Column, ColumnResizer, TableHeader, TableBody, TableContext, TableContainer, useTableOptions} from './Table';
 export {Tabs, TabList, TabPanel, Tab, TabsContext} from './Tabs';
 export {TagGroup, TagGroupContext, TagList, Tag} from './TagGroup';
 export {Text, TextContext} from './Text';
@@ -86,7 +86,7 @@ export type {SelectProps, SelectValueProps, SelectValueRenderProps, SelectRender
 export type {SeparatorProps} from './Separator';
 export type {SliderOutputProps, SliderProps, SliderRenderProps, SliderThumbProps, SliderTrackProps, SliderThumbRenderProps} from './Slider';
 export type {SwitchProps, SwitchRenderProps} from './Switch';
-export type {TableProps, TableRenderProps, TableHeaderProps, TableBodyProps, ColumnProps, ColumnRenderProps, RowProps, RowRenderProps, CellProps, CellRenderProps} from './Table';
+export type {TableProps, TableRenderProps, TableHeaderProps, TableBodyProps, TableContainerProps, ColumnProps, ColumnRenderProps, RowProps, RowRenderProps, CellProps, CellRenderProps} from './Table';
 export type {TabListProps, TabListRenderProps, TabPanelProps, TabPanelRenderProps, TabProps, TabsProps, TabRenderProps, TabsRenderProps} from './Tabs';
 export type {TagGroupProps, TagListProps, TagListRenderProps, TagProps, TagRenderProps} from './TagGroup';
 export type {TextFieldProps} from './TextField';

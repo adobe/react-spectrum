@@ -207,8 +207,6 @@
 
 :global(.react-aria-Table) {
   border-collapse: collapse;
-  table-layout: fixed;
-  width: fit-content;
 }
 
 :global(.react-aria-Cell) {
