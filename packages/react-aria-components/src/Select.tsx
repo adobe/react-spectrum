@@ -43,6 +43,9 @@ export interface SelectRenderProps {
    * @selector [data-open]
    */
   isOpen: boolean,
+  /**
+   * State of the select.
+   */
   state: Omit<SelectState<unknown>, 'open' | 'toggle' | 'collection' | 'disabledKeys' | 'selectionManager' | 'setSelectedKey'>
 }
 

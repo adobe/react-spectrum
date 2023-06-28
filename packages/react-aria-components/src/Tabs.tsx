@@ -26,6 +26,9 @@ export interface TabsRenderProps {
    * @selector [data-orientation="horizontal | vertical"]
    */
   orientation: Orientation,
+  /**
+   * State of the tab list.
+   */
   state: Omit<TabListState<unknown>, 'selectionManager' | 'selectedItem' | 'collection'> 
 }
 
@@ -106,6 +109,9 @@ export interface TabPanelRenderProps {
    * @selector [inert]
    */
   isInert: boolean,
+  /**
+   * State of the tab list.
+   */
   state: TabListState<unknown>
 }
 

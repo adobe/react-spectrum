@@ -38,6 +38,9 @@ export interface ComboBoxRenderProps {
    * @selector [data-open]
    */
   isOpen: boolean,
+  /**
+   * State of the combobox.
+   */
   state: Omit<ComboBoxState<unknown>, 'children' | 'setOpen' | 'toggle' | 'open' | 'close' | 'selectionManager' | 'setSelectedKey' | 'setFocused' | 'collection' | 'commit' | 'revert'>
 }
 
