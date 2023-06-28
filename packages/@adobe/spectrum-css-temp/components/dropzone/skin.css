@@ -18,7 +18,7 @@ governing permissions and limitations under the License.
 .spectrum-Dropzone {
   border-color: var(--spectrum-dropzone-border-color);
 
-  &[data-focus-visible][data-focused]{
+  &[data-focus-visible]{
     border-color: var(--spectrum-dropzone-border-color-selected-hover);
 
     svg {
@@ -35,6 +35,7 @@ governing permissions and limitations under the License.
   }
 
   &[data-drop-target] {
+    border-style: solid;
     border-color: var(--spectrum-dropzone-border-color-selected-hover);
     background-color: var(--spectrum-dropzone-background-color-selected-hover);
 
