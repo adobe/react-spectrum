@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {buildHeaderRows} from './TableCollection';
 import {GridNode} from '@react-types/grid';
 import {TableCollection as ITableCollection} from '@react-types/table';
 import {Key} from 'react';
@@ -27,43 +26,38 @@ interface TreeGridCollectionOptions {
 export interface ITreeGridCollection<T> extends ITableCollection<T> {
   /** The number of user defined columns in the grid (e.g. omits selection and drag handle columns). */
   userColumnCount: number,
+  /** The original column nodes provided to the collection. Preserved so it can be passed to other collections. */
   originalColumns: GridNode<T>[]
 }
 
-// TODO: Copied from TableCollection
-const ROW_HEADER_COLUMN_KEY = 'row-header-column-' + Math.random().toString(36).slice(2);
-let ROW_HEADER_COLUMN_KEY_DRAG = 'row-header-column-' + Math.random().toString(36).slice(2);
-while (ROW_HEADER_COLUMN_KEY === ROW_HEADER_COLUMN_KEY_DRAG) {
-  ROW_HEADER_COLUMN_KEY_DRAG = 'row-header-column-' + Math.random().toString(36).slice(2);
-}
+// TODO: Copied from TableCollection, technically not needed since TableCollection has the correct key
+const ROW_HEADER_COLUMN_KEY = 'row-header-column-checkbox-' + Math.random().toString(36).slice(2);
+const ROW_HEADER_COLUMN_KEY_DRAG = 'row-header-column-drag-' + Math.random().toString(36).slice(2);
 
 // TODO refactor this even further, get rid of this collection since we don't really need that much (no need for key getters)
-
-// TODO: can I extend from TableCollection and just modify the class methods? Don't think so since
-// there is expandedKeys logic now in the visit (only add rows whos parent is expanded to the collection), and we need to make the index values
-// set at a individual level basis instead.
-// Discuss if we should just modify TableCollection/GridCollection to have that expandedkeys logic as well
 export class TreeGridCollection<T> implements ITreeGridCollection<T> {
-  headerRows: GridNode<T>[];
+  // TODO: columns doesn't need to be exposed, but needed internally for determining cell index + column association
   columns: GridNode<T>[];
-  rowHeaderColumnKeys: Set<Key>;
+  // TODO: needed as passthrough to TableCollection. Preserves the body node from useCollection's CollectionBuilder call
   body: GridNode<T>;
-  // TODO: might be able to get rid of this and just go with columns since TableCollection only needs the original columns
+  // TODO: need originalColumns because the column nodes comes from useCollection's call of CollectionBuilder which we want to pass through to TableCollection intact
+  // along with the body with flattened rows. This approach simulates the nodes BaseTableView would provide to TableCollection normally
   originalColumns: GridNode<T>[];
-
-  // TODO: GridCollection stuff, figure out later if we can extend from GridCollection
-  // Don't really need columnCount here at the moment if we don't extend from GridCollection, but keeping it for now for parity
-  // since it is in the ITableCollection interface
+  // TODO: Needed. Should be exposed and accessed by table hooks for aria-posinset and other aria properties. Filled with nodes with values reflecting the treegrid structure of the nodes
+  // Doesn't have the columns in it since TableCollection handles that
   keyMap: Map<Key, GridNode<T>> = new Map();
+  // TODO: not really needed but is part of TableCollection
   columnCount: number;
+  // TODO: needed so we can easily determine the amount of columns excluding the selection and drag handle columns. Used by the useTableRow hook and the TreeGridTableView
+  // to determine if a row has child rows, specifically the static row case. The useTableRow hook can't handle this logic since that hook doesn't know about DnD
   userColumnCount: number;
+  // TODO: Needed. Specifically used to store a flattened array of row nodes for TableCollection to consume
   rows: GridNode<T>[];
 
   constructor(nodes: Iterable<GridNode<T>>, opts?: TreeGridCollectionOptions) {
     let {
       expandedKeys = new Set()
     } = opts;
-    let rowHeaderColumnKeys: Set<Key> = new Set();
     let body: GridNode<T>;
     let columns: GridNode<T>[] = [];
     this.rows = [];
@@ -113,21 +107,15 @@ export class TreeGridCollection<T> implements ITreeGridCollection<T> {
     // TODO: highlevel, we will loop through each row and its children, pushing the child rows only if the current row is expanded
     // TODO: note change from TableCollection, only grabbing body top level nodes, will dive into the children later
     let topLevelRows = [];
-    let columnKeyMap = new Map();
     let visit = (node: GridNode<T>) => {
       switch (node.type) {
         case 'body':
           body = node;
           break;
         case 'column':
-          this.originalColumns.push(node);
-          columnKeyMap.set(node.key, node);
           if (!node.hasChildNodes) {
             columns.push(node);
             this.userColumnCount++;
-            if (node.props.isRowHeader) {
-              rowHeaderColumnKeys.add(node.key);
-            }
           }
           break;
         case 'item':
@@ -141,79 +129,44 @@ export class TreeGridCollection<T> implements ITreeGridCollection<T> {
     };
 
     for (let node of nodes) {
+      if (node.type === 'column') {
+        this.originalColumns.push(node);
+      }
       visit(node);
     }
 
-    // TODO: can I get rid of buildHeaderRows entirely since it will be handled by TableCollection now? We would only need to know the index
-    let headerRows = buildHeaderRows(columnKeyMap, columns) as GridNode<T>[];
-    headerRows.forEach((row, i) => topLevelRows.splice(i, 0, row));
-
     this.columnCount = columns.length;
     this.columns = columns;
-    this.rowHeaderColumnKeys = rowHeaderColumnKeys;
     this.body = body;
-    this.headerRows = headerRows;
 
-    // Default row header column to the first one.
-    if (this.rowHeaderColumnKeys.size === 0) {
-      if (opts?.showSelectionCheckboxes) {
-        if (opts?.showDragButtons) {
-          this.rowHeaderColumnKeys.add(this.columns[2].key);
-        } else {
-          this.rowHeaderColumnKeys.add(this.columns[1].key);
-        }
-      } else {
-        this.rowHeaderColumnKeys.add(this.columns[0].key);
-      }
-    }
-
-    // TODO This GridCollection call returns our keymap and column count + getChildren
-    // Collection end result should have nodes as follows:
-    // - collection should only have rows that are "available", aka nested rows should only be in the collection if their parent is expanded
-    // - the nested row shouldn't have a column value (at least in the rows array, looks like the keymap node)
-    // - the index of each row should be scoped by the level. Note that the index value should be set such that the
-    // hooks will calculate the same aria-posinset regardless if we are in a table with or without rows. For now try and make index directly equal to desired aria-posinset
-    // - parentkey of a nested row should be the parent row
-    // - prev/nextkey of top level row should point to other top level rows. Will have to update keyboardelegate/layout so it we properly look
-    // at child rows before moving to the next top level row
-    // - prev/nextkey of nested row should be scoped to the parent row. this means it
-    // TODO: refactor later, the below is basically taken from GridCollection but modified. Also borrows from some
-    // work done from Sections table work
-
+    // Update each grid node in the treegrid table with values specific to a treegrid structure. Also store a set of flattened row nodes for TableCollection to consume
     let globalRowCount = 0;
     let visitNode = (node: GridNode<T>, i?: number) => {
-      // TODO: got rid of childKeys and the remove deleted nodes logic, not sure when that actually ever triggered. Also got rid of the default rowNode props that got setup by
-      // GridCollection, seems to be unneeded here
-
-      // TODO: make a copy of node before modifications for TableCollection. this.rows will be the flattened set of rows but without any extra stuff. Will need to overwrite some properties though
+      // Clone row node and its children so modifications to the node for treegrid specific values aren't applied on the nodes provided
+      // to TableCollection. Index, level, and parent keys are all changed to reflect a flattened row structure rather than the treegrid structure
+      // values automatically calculated via CollectionBuilder
       if (node.type === 'item') {
-        // TODO: Overwrite the parentKey, index, level with the flattened values
-        // Problem is that the cells of the rows still share the same reference... I could make visitNode here clone each node of childNodes as well
         let childNodes = [];
         for (let child of node.childNodes) {
           if (child.type === 'cell') {
             let cellClone = {...child};
-            // TODO: preserve the tree cell level so that we can preserve the padding offset of rows that are being collapsed
-            // cellClone.level = 2;
-            if (cellClone.index + 1 === this.columnCount) {
+            if (cellClone.index + 1 === columns.length) {
               cellClone.nextKey = null;
             }
             childNodes.push({...cellClone});
           }
         }
         let clone = {...node, childNodes: childNodes, parentKey: this.body.key, level: 1, index: globalRowCount++};
-
         this.rows.push(clone);
       }
 
       let newProps = {};
-      // TODO: it seems like we only really need the column prop on cells and columns, before we were adding it to every node but that
-      // doesn't really make any sense
+      // Associate the parent column node to the cell/column cell.
       if (node.type === 'cell' || node.type === 'column') {
         newProps['column'] = columns[i];
       }
 
-      // TODO: placeholder and column indicies are already calculated via buildHeaderRows
+      // Assign indexOfType to cells and rows for aria-posinset
       if (node.type !== 'placeholder' && node.type !== 'column') {
         newProps['indexOfType'] = i;
       }
@@ -221,18 +174,9 @@ export class TreeGridCollection<T> implements ITreeGridCollection<T> {
       // Use Object.assign instead of spread to preserve object reference for keyMap. Also ensures retrieving nodes
       // via .childNodes returns the same object as the one found via keyMap look up
       Object.assign(node, newProps);
-
       this.keyMap.set(node.key, node);
 
       let lastNode: GridNode<T>;
-      // Index for nested rows, should be counted separately from sibiling cells. TODO: maybe store these values separately in node.index and into node.posinset maybe?
-      // TODO: Turns out Table layout makes an assumption in buildPersistedIndicies that the body's children (aka rows) should be
-      // offset by the headerRows length, aka it is assuming the index value of the body's rows are calculated as if the header rows are
-      // the same level of row nodes under a single parent. For aria-posinset, we don't need to calculate the index in such a way...
-      // This actually affects the persisted row layout stuff since we've flattened the collection by returning this.rows from the collection iteration and thus
-      // the index on a nested row doesn't line up with its flattened position in the rows array. The TableLayout has all rows as a direct child of body and thus
-      // relies on the abosolute row index position to grab it from the body's children when persisting keys.
-      // Ideally make rowIndex here 0 index and store some other info for TableLayout to use for absolute row index value
       let rowIndex = 0;
       for (let child of node.childNodes) {
         if (!(child.type === 'item' && expandedKeys !== 'all' && !expandedKeys.has(node.key))) {
@@ -265,18 +209,9 @@ export class TreeGridCollection<T> implements ITreeGridCollection<T> {
     };
 
     this.keyMap = new Map();
-    // This is the last top level node tracker (aka header row or top level rows)
     let last: GridNode<T>;
     topLevelRows.forEach((node: GridNode<T>, i) => {
-      // TODO: should the index of the top level rows be affected by the column header? don't think it should but need to test
-      // For aria-posinset, we don't need to account for column header rows when calculating their values
-      // TODO: Turns out Table layout makes an assumption in buildPersistedIndicies that the body's children (aka rows) should be
-      // offset by the headerRows length, aka it is assuming the index value of the body's rows are calculated as if the header rows are
-      // the same level of row nodes under a single parent. For aria-posinset, we don't need to calculate the index in such a way...
-      // This will be problematic for the nested row case as well
-      // Ideally wouldn't have the +1 here, only needed to have the table not break with the persistedIndicies code. Get rid of it and make index 0 index when that is fixed)
-      let index = node.type === 'headerrow' ? i : (i - headerRows.length);
-      visitNode(node as GridNode<T>, index);
+      visitNode(node as GridNode<T>, i);
 
       if (last) {
         last.nextKey = node.key;
@@ -293,148 +228,7 @@ export class TreeGridCollection<T> implements ITreeGridCollection<T> {
     }
   }
 
-
-  // TODO: the below funcs will need to change. body.childNodes isn't going to return the nested rows, just top level.
-  // Just yield ...this.rows. If we wanna make something RAC compatible, we would start with the body's children and for each dive down through each level's children (skipping non-row) and yield each row we find
-  *[Symbol.iterator]() {
-    yield* [...this.rows];
-
-    // let visit = function* (node) {
-    //   if (node.type === 'item') {
-    //     yield node;
-    //     if (node.hasChildNodes) {
-    //       for (let child of node.childNodes) {
-    //         visit(child);
-    //       }
-    //     }
-    //   }
-    // };
-
-    // for (let node of this.body.childNodes) {
-    //   visit(node);
-    // }
-  }
-
-  get size() {
-    // TODO: A change from TableCollection, can't use body.childNodes
-    return [...this.rows].length;
-  }
-
-  getKeys() {
-    return this.keyMap.keys();
-  }
-
-  // TODO these key getters will need to change most likely. Or keep these as is and modify the keyboardDelegate and layouts?
-  // This also gets used by drop hooks (useDropIndicator, useDroppableCollection), dnd stories, layout, etc for getting the row's next/prev row
-  // Do we want to special case the results this returns such that it doesn't return the actual .next/prevKey but instead returns the next/prev row if
-  // the key item is a row and returns the next/prev cell if the key item is a cell? If we don't, then we will have to update the logic in all the other places instead
-  // Maybe add a getRowBefore/getCellBefore instead?
-  getKeyBefore(key: Key) {
-    let node = this.keyMap.get(key);
-    if (node) {
-      if (node.type !== 'item' && node.type !== 'cell') {
-        return node ? node.prevKey : null;
-      } else if (node.type === 'cell') {
-        while (node != null) {
-          node = this.keyMap.get(node.prevKey);
-          if (node?.type === 'cell') {
-            return node.key;
-          }
-        }
-
-        return null;
-      } else if (node.type === 'item') {
-        // I think this should be fine in RAC since RAC table will have "get rows()"?
-        // alternatively if we don't want to rely on  if node type is row, order of row to return:
-        // 1. go through previous keys and return first key that is a row, skipping cell nodes (aka get previous sibling rows)
-        // 2. if has a parent row, return parent row
-        // 3. if doesn't have parent row, return previous key (make this first check)
-
-        let index = this.rows.findIndex(row => row.key === node.key);
-        return this.rows[index - 1]?.key;
-      }
-    }
-  }
-
-  getKeyAfter(key: Key) {
-    let node = this.keyMap.get(key);
-    if (node) {
-      // if not a cell or a row just do old code
-      if (node.type !== 'item' && node.type !== 'cell') {
-        return node ? node.nextKey : null;
-      } else if (node.type === 'cell') {
-        while (node != null) {
-          node = this.keyMap.get(node.nextKey);
-          if (node?.type === 'cell') {
-            return node.key;
-          }
-        }
-
-        return null;
-      } else if (node.type === 'item') {
-        // I think this should be fine in RAC since RAC table will have "get rows()"?
-        // alternatively if we don't want to rely on  if node type is row, order of row to return:
-        // if node type is row, order of row to return:
-        // 1. if row is expanded, grab first childrow if any
-        // 2. if row is not expanded or doesn't have children, grab next sibling row (aka go through next key and skip any cells but use their nextKey)
-        // 3. if none, move one level up and find the parent's next sibling row
-
-        let index = this.rows.findIndex(row => row.key === node.key);
-        return this.rows[index + 1]?.key;
-      }
-    }
-
-    return null;
-  }
-
-  getFirstKey() {
-    return this.rows[0]?.key;
-  }
-
-  getLastKey() {
-    return this.rows.at(-1)?.key;
-  }
-
   getItem(key: Key) {
     return this.keyMap.get(key);
-  }
-
-  at(idx: number) {
-    const keys = [...this.getKeys()];
-    return this.getItem(keys[idx]);
-  }
-
-  getTextValue(key: Key): string {
-    let row = this.getItem(key);
-    if (!row) {
-      return '';
-    }
-
-    // If the row has a textValue, use that.
-    if (row.textValue) {
-      return row.textValue;
-    }
-
-    // Otherwise combine the text of each of the row header columns.
-    let rowHeaderColumnKeys = this.rowHeaderColumnKeys;
-    if (rowHeaderColumnKeys) {
-      let text = [];
-      for (let node of row.childNodes) {
-        if (node.type === 'cell') {
-          let column = this.columns[node.index];
-          if (rowHeaderColumnKeys.has(column.key) && node.textValue) {
-            text.push(node.textValue);
-          }
-
-          if (text.length === rowHeaderColumnKeys.size) {
-            break;
-          }
-        }
-      }
-
-      return text.join(' ');
-    }
-
-    return '';
   }
 }

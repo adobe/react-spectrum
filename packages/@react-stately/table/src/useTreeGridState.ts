@@ -51,6 +51,8 @@ export function useTreeGridState<T extends object>(props: TreeGridStateProps<T>)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }), [props.children, showSelectionCheckboxes, selectionMode, showDragButtons]);
 
+  // TODO: TreeGridCollection doesn't need all the stuff defined by Collection, but it is required by the Collection type in useCollection
+  // Perhaps we can
   let treeCollection = useCollection<T, ITreeGridCollection<T>>(
     props,
     useCallback((nodes) => new TreeGridCollection(nodes, {...context, expandedKeys}), [context, expandedKeys]),
@@ -62,13 +64,14 @@ export function useTreeGridState<T extends object>(props: TreeGridStateProps<T>)
   let onToggle = (key: Key) => {
     setExpandedKeys(toggleKey(expandedKeys, key, treeCollection));
   };
-
+  // console.log('treecollection', treeCollection.originalColumns)
   let collection = useMemo(() => {
     let modifiedBody = {...treeCollection.body, childNodes: treeCollection.rows};
     return new TableCollection([...treeCollection.originalColumns, modifiedBody], null, context);
   }, [context, treeCollection.rows, treeCollection.body, treeCollection.originalColumns]);
 
   let tableState = useTableState({...props, collection});
+  // console.log('table collection vs treecollection', tableState.collection, treeCollection);
   return {
     ...tableState,
     treeCollection,
