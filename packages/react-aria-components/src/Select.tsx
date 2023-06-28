@@ -42,7 +42,8 @@ export interface SelectRenderProps {
    * Whether the select is currently open.
    * @selector [data-open]
    */
-  isOpen: boolean
+  isOpen: boolean,
+  state: Omit<SelectState<unknown>, 'open' | 'toggle' | 'collection' | 'disabledKeys' | 'selectionManager' | 'setSelectedKey'>
 }
 
 export interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<SelectRenderProps>, SlotProps {}
@@ -77,8 +78,18 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
     isOpen: state.isOpen,
     isFocused: state.isFocused,
     isFocusVisible,
-    isDisabled: props.isDisabled || false
-  }), [isFocusVisible, props.isDisabled, state.isFocused, state.isOpen]);
+    isDisabled: props.isDisabled || false,
+    state: {
+      isFocused: state.isFocused,
+      setFocused: state.setFocused,
+      focusStrategy: state.focusStrategy,
+      isOpen: state.isOpen,
+      setOpen: state.setOpen,
+      selectedKey: state.selectedKey,
+      selectedItem: state.selectedItem,
+      close: state.close
+    }
+  }), [state.isOpen, state.isFocused, state.setFocused, state.focusStrategy, state.setOpen, state.selectedKey, state.selectedItem, state.close, isFocusVisible, props.isDisabled]);
 
   // Get props for child elements from useSelect
   let buttonRef = useRef<HTMLButtonElement>(null);

@@ -25,7 +25,8 @@ export interface TabsRenderProps {
    * The orientation of the tabs.
    * @selector [data-orientation="horizontal | vertical"]
    */
-  orientation: Orientation
+  orientation: Orientation,
+  state: Omit<TabListState<unknown>, 'selectionManager' | 'selectedItem' | 'collection'> 
 }
 
 export interface TabListProps<T> extends StyleRenderProps<TabListRenderProps>, AriaLabelingProps, Omit<CollectionProps<T>, 'disabledKeys'> {}
@@ -104,7 +105,8 @@ export interface TabPanelRenderProps {
    * `shouldForceMount` prop is true, and the corresponding tab is not selected.
    * @selector [inert]
    */
-  isInert: boolean
+  isInert: boolean,
+  state: TabListState<unknown>
 }
 
 interface InternalTabsContextValue {
@@ -121,13 +123,23 @@ function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TabsContext);
   let {orientation = 'horizontal', keyboardActivation = 'automatic'} = props;
   let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
-  let values = useMemo(() => ({orientation, isFocusWithin: isFocused, isFocusVisible}), [isFocusVisible, isFocused, orientation]);
   let {collection, document} = useCollectionDocument();
   let state = useTabListState({
     ...props,
     collection,
     children: undefined
   });
+  let values = useMemo(() => ({
+    orientation,
+    isFocusWithin: isFocused,
+    isFocusVisible,
+    state: {
+      disabledKeys: state.disabledKeys,
+      selectedKey: state.selectedKey,
+      setSelectedKey: state.setSelectedKey,
+      isDisabled: state.isDisabled
+    }
+  }), [orientation, isFocused, isFocusVisible, state.disabledKeys, state.selectedKey, state.setSelectedKey, state.isDisabled]);
 
   let renderProps = useRenderProps({
     ...props,
@@ -233,7 +245,8 @@ function TabInner({item, state}: {item: Node<object>, state: TabListState<object
       isFocused,
       isFocusVisible,
       isPressed,
-      isHovered
+      isHovered,
+      state
     }
   });
 
@@ -263,7 +276,8 @@ function TabPanel(props: TabPanelProps, forwardedRef: ForwardedRef<HTMLDivElemen
     values: {
       isFocused,
       isFocusVisible,
-      isInert: !isSelected
+      isInert: !isSelected,
+      state
     }
   });
 
