@@ -217,6 +217,8 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     },
     placement: position.placement,
     arrowProps: {
+      'aria-hidden': 'true',
+      role: 'presentation',
       style: {
         left: position.arrowOffsetLeft,
         top: position.arrowOffsetTop
