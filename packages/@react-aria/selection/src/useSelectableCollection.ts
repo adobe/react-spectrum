@@ -320,7 +320,11 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       if (element) {
         // This prevents a flash of focus on the first/last element in the collection, or the collection itself.
         focusWithoutScrolling(element);
-        scrollIntoView(scrollRef.current, element);
+
+        let modality = getInteractionModality();
+        if (modality === 'keyboard') {
+          scrollIntoViewport(element, {containingElement: ref.current});
+        }
       }
     }
   };
@@ -369,13 +373,11 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     let modality = getInteractionModality();
     if (manager.isFocused && manager.focusedKey != null && scrollRef?.current) {
       let element = scrollRef.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
-      if (element) {
+      if (element && modality === 'keyboard') {
         if (!isVirtualized) {
           scrollIntoView(scrollRef.current, element);
         }
-        if (modality === 'keyboard') {
-          scrollIntoViewport(element, {containingElement: ref.current});
-        }
+        scrollIntoViewport(element, {containingElement: ref.current});
       }
     }
 
