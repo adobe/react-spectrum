@@ -292,7 +292,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
       // Reset inputValue and close menu
       commitSelection();
     }
-    closeMenu();
   };
 
   let commit = () => {
@@ -337,7 +336,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     ...triggerState,
     toggle,
     open,
-    close: commit,
+    close: commitValue,
     selectionManager,
     selectedKey,
     setSelectedKey,
