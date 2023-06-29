@@ -355,10 +355,10 @@ function MySlider<T extends number | number[]>({label, thumbLabels, ...props}: M
     <Slider {...props}>
       <Label>{label}</Label>
       <SliderOutput>
-        {state => state.values.map((_, i) => state.getThumbValueLabel(i)).join(' – ')}
+        {({state}) => state.values.map((_, i) => state.getThumbValueLabel(i)).join(' – ')}
       </SliderOutput>
       <SliderTrack>
-        {state => state.values.map((_, i) => (
+        {({state}) => state.values.map((_, i) => (
           <SliderThumb key={i} index={i} aria-label={thumbLabels?.[i]} />
         ))}
       </SliderTrack>

@@ -14,7 +14,7 @@ import {AriaSwitchProps, mergeProps, useFocusRing, useHover, usePress, useSwitch
 import {ContextValue, forwardRefType, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, useState} from 'react';
-import {useToggleState} from 'react-stately';
+import {ToggleState, useToggleState} from 'react-stately';
 
 export interface SwitchProps extends Omit<AriaSwitchProps, 'children'>, RenderProps<SwitchRenderProps>, SlotProps {}
 
@@ -53,7 +53,11 @@ export interface SwitchRenderProps {
    * Whether the switch is read only.
    * @selector [data-readonly]
    */
-  isReadOnly: boolean
+  isReadOnly: boolean,
+  /**
+   * State of the switch.
+   */
+  state: ToggleState
 }
 
 export const SwitchContext = createContext<ContextValue<SwitchProps, HTMLInputElement>>(null);
@@ -102,7 +106,8 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLInputElement>) {
       isFocused,
       isFocusVisible,
       isDisabled,
-      isReadOnly
+      isReadOnly,
+      state
     }
   });
 
