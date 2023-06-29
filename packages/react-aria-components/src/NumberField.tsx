@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaNumberFieldProps, useLocale, useNumberField} from 'react-aria';
+import {AriaNumberFieldProps, useFocusRing, useLocale, useNumberField} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
@@ -21,7 +21,29 @@ import {NumberFieldState, useNumberFieldState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
 
-export interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, RenderProps<NumberFieldState>, SlotProps {}
+export interface NumberFieldRenderProps {
+  /**
+   * Whether the number field is focused, either via a mouse or keyboard.
+   * @selector [data-focused]
+   */
+  isFocused: boolean,
+  /**
+   * Whether the number field is keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
+   * Whether the number field is disabled.
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean,
+  /**
+   * State of the number field.
+   */
+  state: NumberFieldState
+}
+
+export interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, RenderProps<NumberFieldRenderProps>, SlotProps {}
 
 export const NumberFieldContext = createContext<ContextValue<NumberFieldProps, HTMLDivElement>>(null);
 
@@ -31,6 +53,7 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
   let state = useNumberFieldState({...props, locale});
   let inputRef = useRef<HTMLInputElement>(null);
   let [labelRef, label] = useSlot();
+  let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
   let {
     labelProps,
     groupProps,
@@ -43,7 +66,12 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
 
   let renderProps = useRenderProps({
     ...props,
-    values: state,
+    values: {
+      state,
+      isFocused,
+      isFocusVisible,
+      isDisabled: props.isDisabled || false
+    },
     defaultClassName: 'react-aria-NumberField'
   });
 
@@ -69,7 +97,15 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
           }
         }]
       ]}>
-      <div {...DOMProps} {...renderProps} ref={ref} slot={props.slot} />
+      <div
+        {...focusProps}
+        {...DOMProps}
+        {...renderProps}
+        ref={ref}
+        slot={props.slot}
+        data-focused={isFocused || undefined}
+        data-focus-visible={isFocusVisible || undefined}
+        data-disabled={props.isDisabled || undefined} />
     </Provider>
   );
 }

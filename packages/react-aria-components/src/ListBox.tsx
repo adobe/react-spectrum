@@ -41,7 +41,11 @@ export interface ListBoxRenderProps {
    * Whether the listbox is currently the active drop target.
    * @selector [data-drop-target]
    */
-  isDropTarget: boolean
+  isDropTarget: boolean,
+  /**
+   * State of the listbox.
+   */
+  state: ListState<unknown>
 }
 
 export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<ListBoxRenderProps>, SlotProps {
@@ -211,7 +215,8 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
       isDropTarget: isRootDropTarget,
       isEmpty: state.collection.size === 0,
       isFocused,
-      isFocusVisible
+      isFocusVisible,
+      state
     }
   });
 

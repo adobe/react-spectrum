@@ -10,15 +10,39 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTextFieldProps, useTextField} from 'react-aria';
-import {ContextValue, DOMProps, Provider, SlotProps, useContextProps, useSlot} from './utils';
+import {AriaTextFieldProps, useFocusRing, useTextField} from 'react-aria';
+import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
+import {ValidationState} from '@react-types/shared';
 
-export interface TextFieldProps extends Omit<AriaTextFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, DOMProps, SlotProps {}
+export interface TextFieldRenderProps {
+  /**
+   * Whether the text field is focused, either via a mouse or keyboard.
+   * @selector [data-focused]
+   */
+  isFocused: boolean,
+  /**
+   * Whether the text field is keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
+   * Whether the text field is disabled.
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean,
+  /**
+   * Validation state of the text field.
+   * @selector [data-validation-state]
+   */
+  validationState?: ValidationState
+}
+
+export interface TextFieldProps extends Omit<AriaTextFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, Omit<DOMProps, 'style' | 'className' | 'children'>, SlotProps, RenderProps<TextFieldRenderProps> {}
 
 export const TextFieldContext = createContext<ContextValue<TextFieldProps, HTMLDivElement>>(null);
 
@@ -31,13 +55,29 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
     label
   }, inputRef);
 
+  let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
+  let renderProps = useRenderProps({
+    ...props,
+    values: {
+      isFocused,
+      isFocusVisible,
+      isDisabled: props.isDisabled || false,
+      validationState: props.validationState
+    },
+    defaultClassName: 'react-aria-TextField'
+  });
+
   return (
     <div
       {...filterDOMProps(props)}
+      {...focusProps}
+      {...renderProps}
       ref={ref}
       slot={props.slot}
-      className={props.className ?? 'react-aria-TextField'}
-      style={props.style}>
+      data-focused={isFocused || undefined}
+      data-focus-visible={isFocusVisible || undefined}
+      data-disabled={props.isDisabled || undefined}
+      data-validation-state={props.validationState || undefined}>
       <Provider
         values={[
           [LabelContext, {...labelProps, ref: labelRef}],
@@ -49,7 +89,7 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
             }
           }]
         ]}>
-        {props.children}
+        {renderProps.children}
       </Provider>
     </div>
   );
@@ -58,5 +98,5 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
 /**
  * A text field allows a user to enter a plain text value with a keyboard.
  */
-const _TextField = forwardRef(TextField);
+const _TextField = (forwardRef as forwardRefType)(TextField);
 export {_TextField as TextField};

@@ -21,6 +21,7 @@
     "*.html": "@parcel/packager-js"
   },
   "optimizers": {
-    "*.html": ["parcel-optimizer-ssg", "..."]
+    "*.html": ["parcel-optimizer-ssg", "..."],
+    "*.js": ["@parcel/optimizer-terser"]
   }
 }
