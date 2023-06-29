@@ -12,7 +12,7 @@
 import {CalendarProps as BaseCalendarProps, RangeCalendarProps as BaseRangeCalendarProps, DateValue, mergeProps, useCalendar, useCalendarCell, useCalendarGrid, useFocusRing, useHover, useLocale, useRangeCalendar, VisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CalendarDate, createCalendar, DateDuration, endOfMonth, getWeeksInMonth, isSameDay, isSameMonth} from '@internationalized/date';
-import {CalendarState, RangeCalendarState, useCalendarState, useRangeCalendarState} from 'react-stately';
+import {CalendarState, RangeCalendarState, useCalendarState, useRangeCalendarState, ValidationState} from 'react-stately';
 import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
 import {DOMAttributes, FocusableElement} from '@react-types/shared';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
@@ -20,7 +20,41 @@ import {HeadingContext} from './Heading';
 import React, {createContext, ForwardedRef, forwardRef, ReactElement, useContext} from 'react';
 import {TextContext} from './Text';
 
-export interface CalendarProps<T extends DateValue> extends Omit<BaseCalendarProps<T>, 'errorMessage'>, RenderProps<CalendarState>, SlotProps {
+export interface CalendarRenderProps {
+  /**
+   * Whether an element within the calendar is focused, either via a mouse or keyboard.
+   * @selector :focus-within
+   */
+  isFocusWithin: boolean,
+  /**
+   * Whether an element within the calendar is keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
+   * Whether the calendar is disabled.
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean,
+  /**
+   * State of the calendar.
+   */
+  state: CalendarState,
+  /**
+   * Validation state of the date field.
+   * @selector [data-validation-state]
+   */
+  validationState: ValidationState
+}
+
+export interface RangeCalendarRenderProps extends Omit<CalendarRenderProps, 'state'> {
+  /**
+   * State of the range calendar.
+   */
+  state: RangeCalendarState
+}
+
+export interface CalendarProps<T extends DateValue> extends Omit<BaseCalendarProps<T>, 'errorMessage'>, RenderProps<CalendarRenderProps>, SlotProps {
   /**
    * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
@@ -28,7 +62,7 @@ export interface CalendarProps<T extends DateValue> extends Omit<BaseCalendarPro
   visibleDuration?: DateDuration
 }
 
-export interface RangeCalendarProps<T extends DateValue> extends Omit<BaseRangeCalendarProps<T>, 'errorMessage'>, RenderProps<RangeCalendarState>, SlotProps {
+export interface RangeCalendarProps<T extends DateValue> extends Omit<BaseRangeCalendarProps<T>, 'errorMessage'>, RenderProps<RangeCalendarRenderProps>, SlotProps {
   /**
    * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
@@ -49,16 +83,31 @@ function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRe
     createCalendar
   });
 
+  let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
   let {calendarProps, prevButtonProps, nextButtonProps, errorMessageProps, title} = useCalendar(props, state);
 
   let renderProps = useRenderProps({
     ...props,
-    values: state,
+    values: {
+      state,
+      isFocusWithin: isFocused,
+      isFocusVisible,
+      isDisabled: props.isDisabled || false,
+      validationState: state.validationState
+    },
     defaultClassName: 'react-aria-Calendar'
   });
 
   return (
-    <div {...renderProps} {...calendarProps} ref={ref} slot={props.slot}>
+    <div
+      {...focusProps}
+      {...renderProps}
+      {...calendarProps}
+      ref={ref}
+      slot={props.slot}
+      data-focus-visible={isFocusVisible || undefined}
+      data-disabled={props.isDisabled || undefined}
+      data-validation-state={state.validationState || undefined}>
       <Provider
         values={[
           [ButtonContext, {
@@ -114,6 +163,7 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: F
     createCalendar
   });
 
+  let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
   let {calendarProps, prevButtonProps, nextButtonProps, errorMessageProps, title} = useRangeCalendar(
     props,
     state,
@@ -122,12 +172,26 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: F
 
   let renderProps = useRenderProps({
     ...props,
-    values: state,
+    values: {
+      state,
+      isFocusWithin: isFocused,
+      isFocusVisible,
+      isDisabled: props.isDisabled || false,
+      validationState: state.validationState
+    },
     defaultClassName: 'react-aria-RangeCalendar'
   });
 
   return (
-    <div {...renderProps} {...calendarProps} ref={ref} slot={props.slot}>
+    <div
+      {...focusProps}
+      {...renderProps}
+      {...calendarProps}
+      ref={ref}
+      slot={props.slot}
+      data-focus-visible={isFocusVisible || undefined}
+      data-disabled={props.isDisabled || undefined}
+      data-validation-state={state.validationState || undefined}>
       <Provider
         values={[
           [ButtonContext, {
@@ -183,7 +247,7 @@ export interface CalendarCellRenderProps {
    * Whether the cell is currently hovered with a mouse.
    * @selector [data-hovered]
    */
-   isHovered: boolean,
+  isHovered: boolean,
   /**
    * Whether the cell is currently being pressed.
    * @selector [data-pressed]
@@ -203,7 +267,7 @@ export interface CalendarCellRenderProps {
    * Whether the cell is the last date in a range selection.
    * @selector [data-selection-end]
    */
-   isSelectionEnd: boolean,
+  isSelectionEnd: boolean,
   /**
    * Whether the cell is focused.
    * @selector :focus
