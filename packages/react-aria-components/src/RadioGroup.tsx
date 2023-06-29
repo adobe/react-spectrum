@@ -46,7 +46,21 @@ export interface RadioGroupRenderProps {
    * The validation state of the radio group.
    * @selector [aria-invalid]
    */
-  validationState: ValidationState | null
+  validationState: ValidationState | null,
+  /**
+   * Whether an element within the radio group is focused, either via a mouse or keyboard.
+   * @selector :focus-within
+   */
+  isFocusWithin: boolean,
+  /**
+   * Whether an element within the radio group is keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
+   * State of the radio group.
+   */
+  state: RadioGroupState
 }
 
 export interface RadioRenderProps {
@@ -54,47 +68,47 @@ export interface RadioRenderProps {
    * Whether the radio is selected.
    * @selector [data-selected]
    */
-   isSelected: boolean,
-   /**
-    * Whether the radio is currently hovered with a mouse.
-    * @selector [data-hovered]
-    */
-   isHovered: boolean,
-   /**
-    * Whether the radio is currently in a pressed state.
-    * @selector [data-pressed]
-    */
-   isPressed: boolean,
-   /**
-    * Whether the radio is focused, either via a mouse or keyboard.
-    * @selector [data-focused]
-    */
-   isFocused: boolean,
-   /**
-    * Whether the radio is keyboard focused.
-    * @selector [data-focus-visible]
-    */
-   isFocusVisible: boolean,
-   /**
-    * Whether the radio is disabled.
-    * @selector [data-disabled]
-    */
-   isDisabled: boolean,
-   /**
-    * Whether the radio is read only.
-    * @selector [data-readonly]
-    */
-   isReadOnly: boolean,
-   /**
-    * Whether the radio is valid or invalid.
-    * @selector [data-validation-state="valid | invalid"]
-    */
-   validationState: ValidationState | null,
-   /**
-    * Whether the checkbox is required.
-    * @selector [data-required]
-    */
-   isRequired: boolean
+  isSelected: boolean,
+  /**
+   * Whether the radio is currently hovered with a mouse.
+   * @selector [data-hovered]
+   */
+  isHovered: boolean,
+  /**
+   * Whether the radio is currently in a pressed state.
+   * @selector [data-pressed]
+   */
+  isPressed: boolean,
+  /**
+   * Whether the radio is focused, either via a mouse or keyboard.
+   * @selector [data-focused]
+   */
+  isFocused: boolean,
+  /**
+   * Whether the radio is keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
+   * Whether the radio is disabled.
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean,
+  /**
+   * Whether the radio is read only.
+   * @selector [data-readonly]
+   */
+  isReadOnly: boolean,
+  /**
+   * Whether the radio is valid or invalid.
+   * @selector [data-validation-state="valid | invalid"]
+   */
+  validationState: ValidationState | null,
+  /**
+   * Whether the checkbox is required.
+   * @selector [data-required]
+   */
+  isRequired: boolean
 }
 
 export const RadioGroupContext = createContext<ContextValue<RadioGroupProps, HTMLDivElement>>(null);
@@ -104,6 +118,7 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, RadioGroupContext);
   let state = useRadioGroupState(props);
   let [labelRef, label] = useSlot();
+  let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
   let {radioGroupProps, labelProps, descriptionProps, errorMessageProps} = useRadioGroup({
     ...props,
     label
@@ -116,13 +131,21 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
       isDisabled: state.isDisabled,
       isReadOnly: state.isReadOnly,
       isRequired: state.isRequired,
-      validationState: state.validationState
+      validationState: state.validationState,
+      isFocusWithin: isFocused,
+      isFocusVisible,
+      state
     },
     defaultClassName: 'react-aria-RadioGroup'
   });
 
   return (
-    <div {...radioGroupProps} {...renderProps} ref={ref} slot={props.slot}>
+    <div
+      {...focusProps}
+      {...radioGroupProps}
+      {...renderProps}
+      ref={ref}
+      slot={props.slot}>
       <Provider
         values={[
           [InternalRadioContext, state],
@@ -151,7 +174,7 @@ function Radio(props: RadioProps, ref: ForwardedRef<HTMLInputElement>) {
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let interactionDisabled = isDisabled || state.isReadOnly;
 
-  // Handle press state for full label. Keyboard press state is returned by useCheckbox
+  // Handle press state for full label. Keyboard press state is returned by useRadio
   // since it is handled on the <input> element itself.
   let [isPressed, setPressed] = useState(false);
   let {pressProps} = usePress({

@@ -103,9 +103,9 @@ describe('NumberField', () => {
   it('should support render props', () => {
     let {getByRole} = render(
       <NumberField defaultValue={1024} minValue={300} maxValue={1400}>
-        {({minValue, maxValue}) => (
+        {({state}) => (
           <>
-            <Label>Width (min: {minValue}, max: {maxValue})</Label>
+            <Label>Width (min: {state.minValue}, max: {state.maxValue})</Label>
             <Group>
               <Button slot="decrement">-</Button>
               <Input />

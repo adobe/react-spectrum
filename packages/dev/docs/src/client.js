@@ -189,7 +189,8 @@ ReactDOM.render(<>
 </>, document.querySelector('.' + docsStyle.pageHeader));
 
 let pathToPage = document.querySelector('[data-github-src]').getAttribute('data-github-src');
-if (pathToPage) {
+let editPage = document.querySelector('#edit-page');
+if (pathToPage && editPage) {
   ReactDOM.render(
     <Link>
       <a
@@ -200,7 +201,7 @@ if (pathToPage) {
         </Flex>
       </a>
     </Link>,
-    document.querySelector('#edit-page')
+    editPage
   );
 }
 
