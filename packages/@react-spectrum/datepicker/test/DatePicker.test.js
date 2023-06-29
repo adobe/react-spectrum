@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render as render_, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, render as render_, triggerPress, typeText, waitFor, within} from '@react-spectrum/test-utils';
 import {CalendarDate, CalendarDateTime, EthiopicCalendar, getLocalTimeZone, JapaneseCalendar, toCalendarDateTime, today} from '@internationalized/date';
 import {DatePicker} from '../';
 import {Provider} from '@react-spectrum/provider';
@@ -1003,6 +1003,44 @@ describe('DatePicker', function () {
       rerender(<div />);
       expect(era).not.toBeInTheDocument();
       expect(document.activeElement).toBe(document.body);
+    });
+
+    it.only('moves focus to the next segment when the current segment is filled', function () {
+      let {getAllByRole} = render(<DatePicker label="Date" />);
+      let segments = getAllByRole('spinbutton');
+
+      userEvent.tab();
+      expect(segments[0]).toHaveFocus();
+      beforeInput(document.activeElement, '12');
+      expect(segments[1]).toHaveFocus();
+    });
+
+    it.only('when month is unknown, allows 31 as the day', function () {
+      let {getAllByRole} = render(<DatePicker label="Date" />);
+      let segments = getAllByRole('spinbutton');
+
+      userEvent.tab();
+      expect(segments[0]).toHaveFocus();
+      userEvent.tab();
+      expect(segments[1]).toHaveFocus();
+      beforeInput(document.activeElement, '3');
+      beforeInput(document.activeElement, '1');
+      expect(segments[2]).toHaveFocus();
+      expect(segments[1]).toHaveAttribute('aria-valuemax', '31');
+    });
+
+    it.only('when month is known, still allows 31 as the day so that dd/mm/yyyy can be edited in order', function () {
+      let {getAllByRole} = render(<DatePicker label="Date" defaultValue={new CalendarDate('AD', 2020, 2, 1)} />);
+      let segments = getAllByRole('spinbutton');
+
+      userEvent.tab();
+      expect(segments[0]).toHaveFocus();
+      userEvent.tab();
+      expect(segments[1]).toHaveFocus();
+      beforeInput(document.activeElement, '3');
+      beforeInput(document.activeElement, '1');
+      expect(segments[2]).toHaveFocus();
+      expect(segments[1]).toHaveAttribute('aria-valuemax', '31');
     });
   });
 
