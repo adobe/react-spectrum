@@ -11,6 +11,7 @@
  */
 
 import {ChangeEvent, Key, RefObject, useCallback, useEffect, useRef} from 'react';
+import {ColumnSize} from '@react-types/table';
 import {DOMAttributes, FocusableElement} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
 import {getColumnHeaderId} from './utils';
@@ -46,14 +47,12 @@ export interface AriaTableColumnResizeProps<T> {
   /** If resizing is disabled. */
   isDisabled?: boolean,
   /** Called when resizing starts. */
-  onResizeStart?: (widths: Map<Key, number | string>) => void,
+  onResizeStart?: (widths: Map<Key, ColumnSize>) => void,
   /** Called for every resize event that results in new column sizes. */
-  onResize?: (widths: Map<Key, number | string>) => void,
+  onResize?: (widths: Map<Key, ColumnSize>) => void,
   /** Called when resizing ends. */
-  onResizeEnd?: (widths: Map<Key, number | string>) => void
+  onResizeEnd?: (widths: Map<Key, ColumnSize>) => void
 }
-
-// export interface AriaTableColumnResizeState<T> extends Omit<TableColumnResizeState<T>, 'widths'> {}
 
 /**
  * Provides the behavior and accessibility implementation for a table column resizer element.

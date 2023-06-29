@@ -774,6 +774,13 @@ function TableHeaderRow<T>({item}: {item: GridNode<T>}) {
   );
 }
 
+interface ColumnResizerContextValue {
+  column: GridNode<unknown>,
+  triggerRef: RefObject<HTMLDivElement>
+}
+
+const ColumnResizerContext = createContext<ColumnResizerContextValue | null>(null);
+
 function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
   let ref = useObjectRef<HTMLTableHeaderCellElement>(column.props.ref);
   let {state} = useContext(InternalTableContext)!;
@@ -872,8 +879,6 @@ export interface ColumnResizerProps extends RenderProps<ColumnResizerRenderProps
   'aria-label'?: string
 }
 
-const ColumnResizerContext = createContext(null);
-
 function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivElement>) {
   let {layoutState} = useContext(InternalTableContext)!;
   if (!layoutState) {
@@ -902,7 +907,7 @@ function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivEleme
   let isEResizable = layoutState.getColumnMinWidth(column.key) >= layoutState.getColumnWidth(column.key);
   let isWResizable = layoutState.getColumnMaxWidth(column.key) <= layoutState.getColumnWidth(column.key);
   let {direction} = useLocale();
-  let resizableDirection = '';
+  let resizableDirection: ColumnResizerRenderProps['resizableDirection'] = 'both';
   if (isEResizable) {
     resizableDirection = direction === 'rtl' ? 'right' : 'left';
   } else if (isWResizable) {
