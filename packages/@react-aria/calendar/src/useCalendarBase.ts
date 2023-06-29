@@ -92,7 +92,7 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps & AriaLabeli
 
   return {
     calendarProps: mergeProps(domProps, labelProps, {
-      role: 'group',
+      role: 'application',
       'aria-describedby': props['aria-describedby'] || undefined
     }),
     nextButtonProps: {
