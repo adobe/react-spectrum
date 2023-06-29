@@ -12,7 +12,12 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
+:root {
+  --spectrum-dropzone-padding-y: var(--spectrum-global-dimension-size-125);
+}
+
 .spectrum-Dropzone {
+  position: relative;
   text-align: center;
   border-width: var(--spectrum-dropzone-border-width);
   border-radius: var(--spectrum-dropzone-border-radius);
@@ -30,4 +35,14 @@ governing permissions and limitations under the License.
   &.is-dragged {
     border-style: solid;
   }
+}
+
+.spectrum-Dropzone-banner {
+  position: absolute;
+  background-color: var(--spectrum-dropzone-border-color-selected-hover);
+  z-index: 1;
+  top: 0px;
+  right: 0;
+  width: 100%;
+  padding: var(--spectrum-dropzone-padding-y) 0;
 }

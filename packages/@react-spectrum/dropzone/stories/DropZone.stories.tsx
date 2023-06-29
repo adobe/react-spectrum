@@ -11,14 +11,16 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {Button} from '@react-spectrum/button';
 import {Content} from '@react-spectrum/view';
 import {DropZone} from '../';
+import {FileDropItem} from 'react-aria';
 import {FileTrigger} from 'react-aria-components';
 import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Link} from '@react-spectrum/link';
 import {Meta} from '@storybook/react';
-import React from 'react';
+import React, {useState} from 'react';
 import {SpectrumDropZoneProps} from '../src/DropZone';
 import Upload from '@spectrum-icons/illustrations/Upload';
 
@@ -52,3 +54,75 @@ export const Default = {
   )
 };
 
+export const DefaultWithButton = {
+  render: (args) => (
+    <DropZone 
+      {...args} 
+      onDrop={action('onDrop')}
+      onDropEnter={action('onDropEnter')}
+      onDropExit={action('onDropExit')} >
+      <IllustratedMessage>
+        <Upload />
+        <Heading>Drag a file here</Heading>
+        <Content>
+          <FileTrigger
+            onChange={action('onChange')}>
+            <Button variant={'accent'}>Browse</Button>
+          </FileTrigger>
+        </Content>
+      </IllustratedMessage>
+    </DropZone>
+  )
+};
+
+export const DefaultTest = {
+  render: (args) => (
+    <Example {...args} />
+  )
+};
+
+
+function Example(props) {
+  let [filledSrc, setFilledSrc] = useState(null);
+
+  let isFilled = filledSrc !== null;
+  
+  return (
+    <DropZone 
+      {...props}
+      filledSrc={filledSrc}
+
+      // this will handle a single file
+      // onDrop={async (e) => { 
+      //   let item = e.items.find((item) => item.kind === 'file') as FileDropItem;
+      //   if (item) {
+      //     setFilledSrc(URL.createObjectURL(await item.getFile()));
+      //   }
+      // }}
+
+      // this will handle multiple files
+      onDrop={async (e) => { 
+        let items = e.items.filter((item) => item.kind === 'file') as FileDropItem[];
+        items.map(item => console.log(item.type));
+        if (items) {
+          const urls = await Promise.all(items.map(async (item) => URL.createObjectURL(await item.getFile())));
+          const stringUrls = urls.map((url) => url.toString());
+          setFilledSrc(stringUrls);
+        }
+      }}
+      onDropEnter={action('onDropEnter')}
+      onDropExit={action('onDropExit')} >
+      <IllustratedMessage>
+        <Upload />
+        <Heading>Drag a file here</Heading>
+        <Content>
+          <FileTrigger
+            onChange={action('onChange')}>
+            <Button variant={'accent'}>Browse</Button>
+          </FileTrigger>
+        </Content>
+      </IllustratedMessage>
+      {isFilled && <img alt="test" style={{width: '100px', position: 'absolute'}} src={filledSrc[0]} />}
+    </DropZone>
+  );
+}

@@ -12,27 +12,26 @@
 
 import {AriaLabelingProps, DOMProps, FocusableRefValue, StyleProps} from '@react-types/shared';
 import {classNames, createFocusableRef, SlotProvider, useStyleProps} from '@react-spectrum/utils';
-import {DropOptions, mergeProps, useDrop} from 'react-aria';
+import {DropOptions, mergeProps} from 'react-aria';
 import {filterDOMProps} from '@react-aria/utils';
 import {DropZone as RACDropZone} from 'react-aria-components';
-import React, {ReactNode, Ref, useEffect, useImperativeHandle, useRef, useState} from 'react';
+import React, {ReactNode, Ref, useImperativeHandle, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/dropzone/vars.css';
 export interface SpectrumDropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'ref' | 'hasDropButton'>, DOMProps, StyleProps, AriaLabelingProps {
-  children: ReactNode
+  children: ReactNode,
+  filledSrc: string[]
 }
 
 export interface DropZoneRef extends FocusableRefValue<HTMLInputElement, HTMLDivElement> {
-  getInputElement(): HTMLInputElement | HTMLTextAreaElement | null
+  getInputElement(): HTMLInputElement | HTMLDivElement | null
 }
 
-// what ref do we need? (follow TextField)
 function DropZone(props: SpectrumDropZoneProps, ref: Ref<DropZoneRef>) {
-  let {children, ...otherProps} = props;
+  let {children, filledSrc, ...otherProps} = props;
   let {styleProps} = useStyleProps(otherProps);
   let domRef = useRef<HTMLDivElement>(null);
   let inputRef = useRef<HTMLInputElement>(null);
-
-  let [isFilled, setIsFilled] = useState(false);
+  let isFilled = !(filledSrc === null || filledSrc === undefined); // look over this bc it's very strange
 
   let domProps = filterDOMProps(props, {labelable: true});
   delete domProps.id;
@@ -44,11 +43,13 @@ function DropZone(props: SpectrumDropZoneProps, ref: Ref<DropZoneRef>) {
       return inputRef.current;
     }
   }));
-  
+
+  // console.log(isFilled ? filledSrc[0] : '');
+
   return (
     <RACDropZone
       {...mergeProps(otherProps, domProps)}
-      {...styleProps} // not really sure what to do about this
+      // {...styleProps} // not really sure what to do about this
       className={
       classNames(
         styles,
@@ -56,23 +57,28 @@ function DropZone(props: SpectrumDropZoneProps, ref: Ref<DropZoneRef>) {
         styleProps.className
       )} 
       ref={domRef}>
-      {isFilled && // isDropTarget (but this idk how to get this value...)
-        <div
-          className={
-            classNames(
-              styles,
-              'spectrum-Dropzone-banner'
-            )
-          }>
-          Drop file to replace
-        </div>}
-      <SlotProvider
-        slots={{
-          illustration: {UNSAFE_className: classNames(styles, 'spectrum-IllustratedMessage')}, 
-          // content: {UNSAFE_className: classNames(styles, 'spectrum-IllustratedMessage-description'), onChange: () => setIsFilled(true)}
-        }}> 
-        {children}
-      </SlotProvider>
+      {({isDropTarget}) => (
+        <div>
+          {isFilled && isDropTarget && 
+            <div
+              className={
+                classNames(
+                  styles,
+                  'spectrum-Dropzone-banner',
+                  styleProps.className
+                )
+              }>
+              Drop file to replace
+            </div>}
+          <SlotProvider
+            slots={{
+              illustration: {UNSAFE_className: classNames(styles, 'spectrum-IllustratedMessage')}, 
+              content: {UNSAFE_className: classNames(styles, 'spectrum-IllustratedMessage-description'), ref: {inputRef}} // not sure if this is right but i'd like to get the ref from the FileTrigger
+            }}> 
+            {children}
+          </SlotProvider>
+        </div>
+      )}
     </RACDropZone>
   );
 }
