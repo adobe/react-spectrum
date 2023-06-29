@@ -12,6 +12,7 @@
 
 jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, installPointerEvent, render as renderComponent, triggerPress, within} from '@react-spectrum/test-utils';
+import {announce} from '@react-aria/live-announcer';
 import {composeStories} from '@storybook/testing-react';
 import {enableTableNestedRows} from '@react-stately/flags';
 import {Provider} from '@react-spectrum/provider';
@@ -29,7 +30,8 @@ let {
   StaticExpandableRows: StaticExpandableTable,
   DynamicExpandableRowsStory: DynamicExpandableTable,
   ManyExpandableRowsStory: ManyRowsExpandableTable,
-  EmptyTreeGridStory: EmptyStateTable
+  EmptyTreeGridStory: EmptyStateTable,
+  LoadingTreeGridStory: LoadingTable
 } = composeStories(stories);
 
 let onSelectionChange = jest.fn();
@@ -317,15 +319,12 @@ describe('TableView with expandable rows', function () {
   });
 
   describe('keyboard focus', function () {
-    // TODO: bring the same tests that table.test already has
     let focusCell = (tree, text) => act(() => getCell(tree, text).focus());
     let moveFocus = (key, opts = {}) => {
       fireEvent.keyDown(document.activeElement, {key, ...opts});
       fireEvent.keyUp(document.activeElement, {key, ...opts});
     };
 
-    // TODO: for arrow down/up check that it lands on column header as well
-    // Also check that it skips collapsed rows
     describe('ArrowDown', function () {
       it('should move focus to the nested row\'s below', function () {
         let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />);
@@ -907,34 +906,190 @@ describe('TableView with expandable rows', function () {
     describe('onAction', function () {
       installPointerEvent();
 
-      // TODO add onAction tests
-      it('should trigger onAction when clicking nested rows with the mouse', function () {
+      it.each`
+        Name
+        ${'mouse'}
+        ${'touch'}
+      `('should trigger onAction when clicking nested rows with $Name', ({Name}) => {
         let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={null} onAction={onAction} />);
         let rowgroups = treegrid.getAllByRole('rowgroup');
         let rows = within(rowgroups[1]).getAllByRole('row');
         let cell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
         // TODO: Not sure why this is complaining about the type...
         // @ts-ignore
-        userEvent.click(cell, {pointerType: 'mouse'});
+        userEvent.click(cell, {pointerType: Name});
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).toHaveBeenCalledTimes(1);
         expect(onAction).toHaveBeenLastCalledWith('Row 1 Lvl 3');
-        checkRowSelection(rows.slice(0), false);
+        checkRowSelection([rows[2]], false);
 
         let checkbox = within(rows[0]).getByRole('checkbox');
         userEvent.click(checkbox);
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        checkSelection(onSelectionChange, ['Row 1 Lvl 1']);
         checkRowSelection([rows[0]], true);
+        onSelectionChange.mockReset();
 
         // @ts-ignore
-        userEvent.click(cell, {pointerType: 'mouse'});
-        expect(onSelectionChange).toHaveBeenCalledTimes(2);
+        userEvent.click(cell, {pointerType: Name});
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        checkSelection(onSelectionChange, ['Row 1 Lvl 1', 'Row 1 Lvl 3']);
         checkRowSelection([rows[0], rows[2]], true);
+      });
+
+      it('should trigger onAction when pressing Enter', function () {
+        let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={null} onAction={onAction} />);
+        let rowgroups = treegrid.getAllByRole('rowgroup');
+        let rows = within(rowgroups[1]).getAllByRole('row');
+        let cell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
+
+        fireEvent.keyDown(cell, {key: 'Enter'});
+        fireEvent.keyUp(cell, {key: 'Enter'});
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenLastCalledWith('Row 1 Lvl 3');
+        checkRowSelection(rows, false);
+
+        onAction.mockReset();
+        fireEvent.keyDown(cell, {key: ' '});
+        fireEvent.keyUp(cell, {key: ' '});
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        expect(onAction).not.toHaveBeenCalled();
+        checkRowSelection([rows[2]], true);
       });
     });
 
     describe('selectionStyle highlight', function () {
-      // TODO: highlight selection click on row should select
+      installPointerEvent();
+
+      it('should toggle selection with mouse', function () {
+        let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="highlight" disabledKeys={null} onAction={null} />);
+        expect(treegrid.queryByLabelText('Select All')).toBeNull();
+
+        let rowgroups = treegrid.getAllByRole('rowgroup');
+        let rows = within(rowgroups[1]).getAllByRole('row');
+        let cell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
+
+        checkRowSelection(rows, false);
+        // @ts-ignore
+        userEvent.click(cell, {pointerType: 'mouse'});
+        expect(announce).toHaveBeenLastCalledWith('Row 1, Lvl 3, Foo selected.');
+        expect(announce).toHaveBeenCalledTimes(1);
+        checkSelection(onSelectionChange, ['Row 1 Lvl 3']);
+        checkRowSelection([rows[2]], true);
+        onSelectionChange.mockReset();
+
+        cell = getCell(treegrid, 'Row 1, Lvl 1, Foo');
+        // @ts-ignore
+        userEvent.click(cell, {pointerType: 'mouse'});
+        expect(announce).toHaveBeenLastCalledWith('Row 1, Lvl 1, Foo selected.');
+        expect(announce).toHaveBeenCalledTimes(2);
+        checkSelection(onSelectionChange, ['Row 1 Lvl 1']);
+        checkRowSelection([rows[0]], true);
+        checkRowSelection(rows.slice(1), false);
+      });
+
+      it('should toggle selection with touch', function () {
+        let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="highlight" disabledKeys={null} onAction={null} />);
+        expect(treegrid.queryByLabelText('Select All')).toBeNull();
+
+        let rowgroups = treegrid.getAllByRole('rowgroup');
+        let rows = within(rowgroups[1]).getAllByRole('row');
+        let cell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
+
+        checkRowSelection(rows, false);
+        // @ts-ignore
+        userEvent.click(cell, {pointerType: 'touch'});
+        expect(announce).toHaveBeenLastCalledWith('Row 1, Lvl 3, Foo selected.');
+        expect(announce).toHaveBeenCalledTimes(1);
+        checkSelection(onSelectionChange, ['Row 1 Lvl 3']);
+        checkRowSelection([rows[2]], true);
+        onSelectionChange.mockReset();
+
+        cell = getCell(treegrid, 'Row 1, Lvl 1, Foo');
+        // @ts-ignore
+        userEvent.click(cell, {pointerType: 'touch'});
+        expect(announce).toHaveBeenLastCalledWith('Row 1, Lvl 1, Foo selected. 2 items selected.');
+        expect(announce).toHaveBeenCalledTimes(2);
+        checkSelection(onSelectionChange, ['Row 1 Lvl 1', 'Row 1 Lvl 3']);
+        checkRowSelection([rows[0], rows[2]], true);
+      });
+
+      it('should support long press to enter selection mode on touch', function () {
+        let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="highlight" disabledKeys={null} onAction={onAction} />);
+        userEvent.click(document.body);
+        let rowgroups = treegrid.getAllByRole('rowgroup');
+        let rows = within(rowgroups[1]).getAllByRole('row');
+        let firstCell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
+        let secondCell = getCell(treegrid, 'Row 1, Lvl 1, Foo');
+
+        fireEvent.pointerDown(firstCell, {pointerType: 'touch'});
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).not.toHaveBeenCalled();
+
+        act(() => jest.advanceTimersByTime(800));
+
+        checkSelection(onSelectionChange, ['Row 1 Lvl 3']);
+        checkRowSelection([rows[2]], true);
+        expect(onAction).not.toHaveBeenCalled();
+
+        fireEvent.pointerUp(firstCell, {pointerType: 'touch'});
+        onSelectionChange.mockReset();
+
+        // @ts-ignore
+        userEvent.click(secondCell, {pointerType: 'touch'});
+        checkSelection(onSelectionChange, ['Row 1 Lvl 1', 'Row 1 Lvl 3']);
+        checkRowSelection([rows[0], rows[2]], true);
+
+        // Deselect all to exit selection mode
+        // @ts-ignore
+        userEvent.click(firstCell, {pointerType: 'touch'});
+        onSelectionChange.mockReset();
+        // @ts-ignore
+        userEvent.click(secondCell, {pointerType: 'touch'});
+
+        act(() => jest.runAllTimers());
+        checkSelection(onSelectionChange, []);
+        expect(onAction).not.toHaveBeenCalled();
+        checkRowSelection(rows, false);
+      });
+
+      it('should support double click to perform onAction with mouse', function () {
+        let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="highlight" disabledKeys={null} onAction={onAction} />);
+        expect(treegrid.queryByLabelText('Select All')).toBeNull();
+
+        let rowgroups = treegrid.getAllByRole('rowgroup');
+        let rows = within(rowgroups[1]).getAllByRole('row');
+        let cell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
+
+        checkRowSelection(rows, false);
+        // @ts-ignore
+        userEvent.click(cell, {pointerType: 'mouse'});
+        expect(announce).toHaveBeenLastCalledWith('Row 1, Lvl 3, Foo selected.');
+        expect(announce).toHaveBeenCalledTimes(1);
+        checkSelection(onSelectionChange, ['Row 1 Lvl 3']);
+        expect(onAction).not.toHaveBeenCalled();
+        onSelectionChange.mockReset();
+        // @ts-ignore
+        userEvent.dblClick(cell, {pointerType: 'mouse'});
+        expect(announce).toHaveBeenCalledTimes(1);
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenCalledWith('Row 1 Lvl 3');
+      });
+
+      it('should support single tap to perform onAction with touch', function () {
+        let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="highlight" disabledKeys={null} onAction={onAction} />);
+        expect(treegrid.queryByLabelText('Select All')).toBeNull();
+        let cell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
+
+        // @ts-ignore
+        userEvent.click(cell, {pointerType: 'touch'});
+        expect(announce).not.toHaveBeenCalled();
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenCalledWith('Row 1 Lvl 3');
+      });
     });
   });
 
@@ -952,7 +1107,7 @@ describe('TableView with expandable rows', function () {
       expect(row).toHaveAttribute('aria-setsize', '1');
 
       let cell = within(rows[0]).getByRole('rowheader');
-      expect(cell).toHaveAttribute('aria-colspan', '4');
+      expect(cell).toHaveAttribute('aria-colspan', '3');
 
       let heading = within(cell).getByRole('heading');
       expect(heading).toBeVisible();
@@ -964,15 +1119,51 @@ describe('TableView with expandable rows', function () {
       rowgroups = treegrid.getAllByRole('rowgroup');
       rows = within(rowgroups[1]).getAllByRole('row');
       expect(rows).toHaveLength(19);
+      expect(heading).not.toBeInTheDocument();
+    });
+  });
+
+  describe('loading state', function () {
+    it('should render a spinner row with the proper attributes when loading', async function () {
+      let treegrid = render(<LoadingTable />);
+      await act(() => Promise.resolve()); // wait for MutationObserver in useHasTabbableChild or we get act warnings
+      let rowgroups = treegrid.getAllByRole('rowgroup');
+      let rows = within(rowgroups[1]).getAllByRole('row');
+      expect(rows).toHaveLength(1);
+      let row = rows[0];
+      expect(row).not.toHaveAttribute('aria-expanded');
+      expect(row).toHaveAttribute('aria-level', '1');
+      expect(row).toHaveAttribute('aria-posinset', '1');
+      expect(row).toHaveAttribute('aria-setsize', '1');
+
+      let cell = within(rows[0]).getByRole('rowheader');
+      expect(cell).toHaveAttribute('aria-colspan', '3');
+
+      let spinner = within(cell).getByRole('progressbar');
+      expect(spinner).toHaveAttribute('aria-label', 'Loading…');
+      expect(spinner).not.toHaveAttribute('aria-valuenow');
+
+      let showItemsButton = treegrid.getAllByRole('button')[0];
+      triggerPress(showItemsButton);
+      act(() => jest.runAllTimers());
+      rowgroups = treegrid.getAllByRole('rowgroup');
+      rows = within(rowgroups[1]).getAllByRole('row');
+      expect(rows).toHaveLength(20);
+
+      row = rows[19];
+      expect(row).not.toHaveAttribute('aria-expanded');
+      expect(row).toHaveAttribute('aria-level', '1');
+      expect(row).toHaveAttribute('aria-posinset', '20');
+      expect(row).toHaveAttribute('aria-setsize', '20');
+      spinner = within(row).getByRole('progressbar');
+      expect(spinner).toBeTruthy();
     });
   });
 
   // TODO: write tests for the following
-  // selection (nested rows are selected on click, selected when all selection checkbox is pressed, multiple range selection including nested keys, test standard keyboard selection still works with expanded keyboard interactions)
+  // selection (selected when all selection checkbox is pressed)
   // expanding/collapsing table (pointer/touch), check the aria values set (wait for interactions to be finalized to make testing that easier)
   // persisted keys
-  // keyboard interaction (arrow keys, page up/down, home, end, expanding/closing via right/left arrow, skipping over the chevron button)
-  // empty state renders with treegrid props
-  // loading state renders with treegrid props
+  // keyboard interaction (page up/down, home, end)
   // calculated aria attributes update when rows are expanded/collapsed
 });

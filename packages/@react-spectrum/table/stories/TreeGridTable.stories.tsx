@@ -229,14 +229,9 @@ export const EmptyTreeGridStory: TableStory = {
     height: 400
   },
   render: (args) => (
-    <EmptyStateTable hasExpandableRows columns={columns} items={manyRows} allowsSorting={false} onSortChange={null} sortDescriptor={null} {...args} />
+    <EmptyStateTable hasExpandableRows selectionMode="none" columns={columns} items={manyRows} allowsSorting={false} onSortChange={null} sortDescriptor={null} {...args} />
   ),
-  name: 'empty state',
-  parameters: {
-    description: {
-      data: 'Note that sorting doesn\t work, functionality todo in original story'
-    }
-  }
+  name: 'empty state'
 };
 
 function LoadingStateTable(props) {
