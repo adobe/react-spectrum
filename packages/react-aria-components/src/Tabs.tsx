@@ -25,7 +25,11 @@ export interface TabsRenderProps {
    * The orientation of the tabs.
    * @selector [data-orientation="horizontal | vertical"]
    */
-  orientation: Orientation
+  orientation: Orientation,
+  /**
+   * State of the tab list.
+   */
+  state: Omit<TabListState<unknown>, 'selectionManager' | 'selectedItem' | 'collection'> 
 }
 
 export interface TabListProps<T> extends StyleRenderProps<TabListRenderProps>, AriaLabelingProps, Omit<CollectionProps<T>, 'disabledKeys'> {}
@@ -35,7 +39,11 @@ export interface TabListRenderProps {
    * The orientation of the tab list.
    * @selector [aria-orientation="horizontal | vertical"]
    */
-  orientation: Orientation
+  orientation: Orientation,
+  /**
+   * State of the tab list.
+   */
+  state: TabListState<unknown>
 }
 
 export interface TabProps extends RenderProps<TabRenderProps>, AriaLabelingProps {
@@ -100,7 +108,11 @@ export interface TabPanelRenderProps {
    * `shouldForceMount` prop is true, and the corresponding tab is not selected.
    * @selector [inert]
    */
-  isInert: boolean
+  isInert: boolean,
+  /**
+   * State of the tab list.
+   */
+  state: TabListState<unknown>
 }
 
 interface InternalTabsContextValue {
@@ -116,13 +128,24 @@ const InternalTabsContext = createContext<InternalTabsContextValue | null>(null)
 function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TabsContext);
   let {orientation = 'horizontal', keyboardActivation = 'automatic'} = props;
-  let values = useMemo(() => ({orientation}), [orientation]);
+  let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
   let {collection, document} = useCollectionDocument();
   let state = useTabListState({
     ...props,
     collection,
     children: undefined
   });
+  let values = useMemo(() => ({
+    orientation,
+    isFocusWithin: isFocused,
+    isFocusVisible,
+    state: {
+      disabledKeys: state.disabledKeys,
+      selectedKey: state.selectedKey,
+      setSelectedKey: state.setSelectedKey,
+      isDisabled: state.isDisabled
+    }
+  }), [orientation, isFocused, isFocusVisible, state.disabledKeys, state.selectedKey, state.setSelectedKey, state.isDisabled]);
 
   let renderProps = useRenderProps({
     ...props,
@@ -133,10 +156,12 @@ function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
   return (
     <div
       {...filterDOMProps(props as any)}
+      {...focusProps}
       {...renderProps}
       ref={ref}
       slot={props.slot}
-      data-orientation={orientation}>
+      data-orientation={orientation}
+      data-focus-visible={isFocusVisible || undefined}>
       <InternalTabsContext.Provider value={{state, document, orientation, keyboardActivation}}>
         {renderProps.children}
       </InternalTabsContext.Provider>
@@ -166,7 +191,8 @@ function TabList<T extends object>(props: TabListProps<T>, ref: ForwardedRef<HTM
     children: null,
     defaultClassName: 'react-aria-TabList',
     values: {
-      orientation
+      orientation,
+      state
     }
   });
 
@@ -225,7 +251,8 @@ function TabInner({item, state}: {item: Node<object>, state: TabListState<object
       isFocused,
       isFocusVisible,
       isPressed,
-      isHovered
+      isHovered,
+      state
     }
   });
 
@@ -255,7 +282,8 @@ function TabPanel(props: TabPanelProps, forwardedRef: ForwardedRef<HTMLDivElemen
     values: {
       isFocused,
       isFocusVisible,
-      isInert: !isSelected
+      isInert: !isSelected,
+      state
     }
   });
 

@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/virtualizer",
-  "version": "3.5.2",
+  "version": "3.6.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -22,7 +22,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/utils": "^3.17.0",
+    "@react-aria/utils": "^3.18.0",
     "@react-types/shared": "^3.18.1",
     "@swc/helpers": "^0.5.0"
   },
