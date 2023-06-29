@@ -19,7 +19,6 @@ import {
   classNames,
   useDOMRef,
   useFocusableRef,
-  useIsMobileDevice,
   useStyleProps,
   useUnwrapDOMRef
 } from '@react-spectrum/utils';

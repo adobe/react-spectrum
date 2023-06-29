@@ -180,12 +180,31 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
 interface TableContainerContextValue {
   tableWidth: number,
   // Dependency inject useTableColumnResizeState so it doesn't affect bundle size unless you're using TableContainer.
-  useTableColumnResizeState: typeof useTableColumnResizeState
+  useTableColumnResizeState: typeof useTableColumnResizeState,
+  onResizeStart?: (widths: Map<Key, ColumnSize>) => void,
+  onResize?: (widths: Map<Key, ColumnSize>) => void,
+  onResizeEnd?: (widths: Map<Key, ColumnSize>) => void
 }
 
 const TableContainerContext = createContext<TableContainerContextValue | null>(null);
 
-export interface TableContainerProps extends DOMProps {}
+export interface TableContainerProps extends DOMProps {
+  /**
+   * Handler that is called when a user starts a column resize.
+   */
+  onResizeStart?: (widths: Map<Key, ColumnSize>) => void,
+  /**
+   * Handler that is called when a user performs a column resize.
+   * Can be used with the width property on columns to put the column widths into
+   * a controlled state.
+   */
+  onResize?: (widths: Map<Key, ColumnSize>) => void,
+  /**
+   * Handler that is called after a user performs a column resize.
+   * Can be used to store the widths of columns for another future session.
+   */
+  onResizeEnd?: (widths: Map<Key, ColumnSize>) => void
+}
 
 function TableContainer(props: TableContainerProps, ref: ForwardedRef<HTMLDivElement>) {
   let objectRef = useObjectRef(ref);
@@ -203,8 +222,11 @@ function TableContainer(props: TableContainerProps, ref: ForwardedRef<HTMLDivEle
 
   let ctx = useMemo(() => ({
     tableWidth: width,
-    useTableColumnResizeState
-  }), [width]);
+    useTableColumnResizeState,
+    onResizeStart: props.onResizeStart,
+    onResize: props.onResize,
+    onResizeEnd: props.onResizeEnd
+  }), [width, props.onResizeStart, props.onResize, props.onResizeEnd]);
 
   return (
     <div
@@ -482,6 +504,11 @@ export interface ColumnRenderProps {
    */
   sortDirection?: SortDirection,
   /**
+   * Whether the column is currently being resized.
+   * @selector [data-resizing]
+   */
+  isResizing: boolean,
+  /**
    * Triggers sorting for this column in the given direction.
    */
   sort(direction: SortDirection): void,
@@ -758,6 +785,10 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
 
   let {layoutState} = useContext(InternalTableContext)!;
+  let isResizing = false;
+  if (layoutState) {
+    isResizing = layoutState.resizingColumn === column.key;
+  }
 
   let props: ColumnProps<unknown> = column.props;
   let renderProps = useRenderProps({
@@ -772,9 +803,11 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
       sortDirection: state.sortDescriptor?.column === column.key
         ? state.sortDescriptor.direction
         : undefined,
+      isResizing,
       startResize: () => {
         if (layoutState) {
           layoutState.startResize(column.key);
+          state.setKeyboardNavigationDisabled(true);
         } else {
           throw new Error('Wrap your <Table> in a <TableContainer> to enable column resizing');
         }
@@ -798,8 +831,9 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
       colSpan={column.colspan}
       ref={ref}
       data-focused={isFocused || undefined}
-      data-focus-visible={isFocusVisible || undefined}>
-      <ColumnResizerContext.Provider value={{column}}>
+      data-focus-visible={isFocusVisible || undefined}
+      data-resizing={isResizing || undefined}>
+      <ColumnResizerContext.Provider value={{column, triggerRef: ref}}>
         {renderProps.children}
       </ColumnResizerContext.Provider>
     </th>
@@ -846,16 +880,18 @@ function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivEleme
     throw new Error('Wrap your <Table> in a <TableContainer> to enable column resizing');
   }
 
-  let {column} = useContext(ColumnResizerContext)!;
+  let {onResizeStart, onResize, onResizeEnd} = useContext(TableContainerContext)!;
+  let {column, triggerRef} = useContext(ColumnResizerContext)!;
   let inputRef = useRef<HTMLInputElement>(null);
   let {resizerProps, inputProps, isResizing} = useTableColumnResize(
     {
       column,
       // TODO: translate
       'aria-label': props['aria-label'] || 'Resizer',
-      // onResizeStart,
-      // onResize,
-      // onResizeEnd
+      onResizeStart,
+      onResize,
+      onResizeEnd,
+      triggerRef
     },
     layoutState,
     inputRef
@@ -894,12 +930,23 @@ function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivEleme
     }
   });
 
+  let [isMouseDown, setMouseDown] = useState(false);
+  let onPointerDown = (e: PointerEvent) => {
+    if (e.pointerType === 'mouse') {
+      setMouseDown(true);
+    }
+  };
+
+  if (!isResizing && isMouseDown) {
+    setMouseDown(false);
+  }
+
   return (
     <div
       ref={objectRef}
       role="presentation"
       {...renderProps}
-      {...resizerProps}
+      {...mergeProps(resizerProps, {onPointerDown})}
       data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
@@ -908,7 +955,7 @@ function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivEleme
       <input
         ref={inputRef}
         {...mergeProps(inputProps, focusProps, hoverProps)} />
-      {isResizing && ReactDOM.createPortal(<div style={{position: 'fixed', top: 0, left: 0, bottom: 0, right: 0, cursor}} />, document.body)}
+      {isResizing && isMouseDown && ReactDOM.createPortal(<div style={{position: 'fixed', top: 0, left: 0, bottom: 0, right: 0, cursor}} />, document.body)}
     </div>
   );
 }

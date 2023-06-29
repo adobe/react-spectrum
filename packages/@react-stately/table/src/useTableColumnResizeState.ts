@@ -87,8 +87,7 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
 
   let startResize = useCallback((key: Key) => {
     setResizingColumn(key);
-    state.setKeyboardNavigationDisabled(true);
-  }, [state, setResizingColumn]);
+  }, [setResizingColumn]);
 
   let updateResizedColumns = useCallback((key: Key, width: number): Map<Key, ColumnSize> => {
     let newControlled = new Map(Array.from(controlledColumns).map(([key, entry]) => [key, entry.props.width]));
@@ -102,8 +101,7 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
 
   let endResize = useCallback(() => {
     setResizingColumn(null);
-    state.setKeyboardNavigationDisabled(false);
-  }, [state, setResizingColumn]);
+  }, [setResizingColumn]);
 
   useMemo(() =>
     columnLayout.buildColumnWidths(tableWidth, state.collection, colWidths)

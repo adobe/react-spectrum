@@ -714,7 +714,6 @@ function MyColumn(props) {
     <Column {...props}>
       {({startResize}) => (
         <div style={{display: 'flex'}}>
-          {/* <div tabIndex={-1} role="button" style={{flex: 1, textAlign: 'left', outline: 'none'}}>{props.children}</div> */}
           <MenuTrigger>
             <Button style={{flex: 1, textAlign: 'left'}}>{props.children}</Button>
             <Popover>

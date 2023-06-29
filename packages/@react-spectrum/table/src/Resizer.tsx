@@ -94,9 +94,9 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
   }
 
   let style = {
+    ...resizerProps.style,
     height: '100%',
     display: showResizer ? undefined : 'none',
-    touchAction: 'none',
     cursor
   };
 
@@ -104,10 +104,10 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
     <>
       <FocusRing within focusRingClass={classNames(styles, 'focus-ring')}>
         <div
+          {...resizerProps}
           role="presentation"
           style={style}
-          className={classNames(styles, 'spectrum-Table-columnResizer')}
-          {...resizerProps}>
+          className={classNames(styles, 'spectrum-Table-columnResizer')}>
           <input
             ref={ref}
             {...mergeProps(inputProps, {onFocus: onFocusedResizer})} />
