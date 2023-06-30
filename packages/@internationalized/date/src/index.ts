@@ -47,7 +47,7 @@ export {
   toTimeZone,
   toLocalTimeZone,
   fromDate,
-  fromAbsolute as fromEpoch
+  fromAbsolute
 } from './conversion';
 export {
   isSameDay,
