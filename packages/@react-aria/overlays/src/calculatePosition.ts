@@ -393,7 +393,7 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
     offset,
     crossOffset,
     maxHeight,
-    arrowSize,
+    arrowSize = 0,
     arrowBoundaryOffset = 0
   } = opts;
 
