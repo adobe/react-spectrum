@@ -66,7 +66,6 @@ import {
 } from '@react-aria/table';
 import {useVisuallyHidden, VisuallyHidden} from '@react-aria/visually-hidden';
 
-
 // TODO: diff this versus TableView and import stuff that we haven't changed instead of duplicating it
 
 const DEFAULT_HEADER_HEIGHT = {

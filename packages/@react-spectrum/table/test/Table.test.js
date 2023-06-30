@@ -135,7 +135,7 @@ function pointerEvent(type, opts) {
   return evt;
 }
 
-describe('TableView', function () {
+export let tableTests = () => {
   let offsetWidth, offsetHeight;
 
   beforeAll(function () {
@@ -4503,4 +4503,6 @@ describe('TableView', function () {
       expect(table).toHaveAttribute('tabIndex', '0');
     });
   });
-});
+};
+
+describe('TableView', tableTests);

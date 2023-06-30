@@ -12,42 +12,29 @@
 
 jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, installPointerEvent, render as renderComponent, triggerPress, within} from '@react-spectrum/test-utils';
+import {announce} from '@react-aria/live-announcer';
 import {composeStories} from '@storybook/testing-react';
 import {enableTableNestedRows} from '@react-stately/flags';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {Scale} from '@react-types/provider';
 import * as stories from '../stories/TreeGridTable.stories';
+import {tableTests} from './Table.test';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
-
-// Importing this stuff made Table test run along side this test even when only this test suite is targeted
-// import {getCell, render, rerender} from './Table.test';
-// TODO run along Table test suite with the flag turned on to make sure nothing breaks, see unavailable menu items test
 
 let {
   StaticExpandableRows: StaticExpandableTable,
   DynamicExpandableRowsStory: DynamicExpandableTable,
   ManyExpandableRowsStory: ManyRowsExpandableTable,
-  EmptyTreeGridStory: EmptyStateTable
+  EmptyTreeGridStory: EmptyStateTable,
+  LoadingTreeGridStory: LoadingTable,
+  UserSetRowHeader: UserSetRowHeaderTable
 } = composeStories(stories);
 
 let onSelectionChange = jest.fn();
+let onExpandedChange = jest.fn();
 let onAction = jest.fn();
-
-// function pointerEvent(type, opts) {
-//   let evt = new Event(type, {bubbles: true, cancelable: true});
-//   Object.assign(evt, {
-//     ctrlKey: false,
-//     metaKey: false,
-//     shiftKey: false,
-//     altKey: false,
-//     button: opts.button || 0,
-//     width: 1,
-//     height: 1
-//   }, opts);
-//   return evt;
-// }
 
 let getCell = (tree, text) => {
   // Find by text, then go up to the element with the cell role.
@@ -59,8 +46,13 @@ let getCell = (tree, text) => {
   return el;
 };
 
+let focusCell = (tree, text) => act(() => getCell(tree, text).focus());
+let moveFocus = (key, opts = {}) => {
+  fireEvent.keyDown(document.activeElement, {key, ...opts});
+  fireEvent.keyUp(document.activeElement, {key, ...opts});
+};
+
 let render = (children, scale = 'medium' as Scale, locale = 'en-US') => {
-  enableTableNestedRows();
   let tree = renderComponent(
     <Provider theme={theme} scale={scale} locale={locale}>
       {children}
@@ -81,9 +73,12 @@ let rerender = (tree, children, scale = 'medium' as Scale) => {
   return newTree;
 };
 
+enableTableNestedRows();
+
+describe('TableView tests with expandable rows flag on', tableTests);
+
 describe('TableView with expandable rows', function () {
   beforeAll(function () {
-    enableTableNestedRows();
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     jest.useFakeTimers();
@@ -316,16 +311,204 @@ describe('TableView with expandable rows', function () {
     expect(rows).toHaveLength(4);
   });
 
-  describe('keyboard focus', function () {
-    // TODO: bring the same tests that table.test already has
-    let focusCell = (tree, text) => act(() => getCell(tree, text).focus());
-    let moveFocus = (key, opts = {}) => {
-      fireEvent.keyDown(document.activeElement, {key, ...opts});
-      fireEvent.keyUp(document.activeElement, {key, ...opts});
-    };
+  it('should place the chevron cell on the first row header', function () {
+    let treegrid = render(<UserSetRowHeaderTable expandedKeys="all" />);
+    let rowgroups = treegrid.getAllByRole('rowgroup');
+    let rows = within(rowgroups[1]).getAllByRole('row');
+    for (let i = 0; i < 2; i++) {
+      let row = rows[i];
+      let rowheaders =  within(row).getAllByRole('rowheader');
+      expect(rowheaders).toHaveLength(2);
+      let rowheader = rowheaders[0];
+      let chevron = within(rowheader).getByRole('button');
+      expect(chevron).toBeTruthy();
+      expect(chevron).toHaveAttribute('aria-label', 'Collapse');
+      expect(rowheader).toHaveAttribute('aria-colindex', '2');
+    }
+  });
 
-    // TODO: for arrow down/up check that it lands on column header as well
-    // Also check that it skips collapsed rows
+  describe('collapsing and expanding rows', function () {
+    describe('with press', function () {
+      it('should expand a row when pressing the chevron', function () {
+        let treegrid = render(<StaticExpandableTable onSelectionChange={onSelectionChange} onExpandedChange={onExpandedChange} />);
+        let rowgroups = treegrid.getAllByRole('rowgroup');
+        let rows = within(rowgroups[1]).getAllByRole('row');
+        expect(rows).toHaveLength(3);
+        let thirdRow = rows[2];
+        expect(thirdRow).toHaveAttribute('aria-level', '2');
+        expect(thirdRow).toHaveAttribute('aria-posinset', '2');
+        expect(thirdRow).toHaveAttribute('aria-setsize', '2');
+        expect(thirdRow).toHaveTextContent('Lvl 2 Foo 2');
+
+        let rowToExpand = rows[1];
+        expect(rowToExpand).toHaveAttribute('aria-expanded', 'false');
+        let chevron = within(rowToExpand).getByRole('button');
+        expect(chevron).toBeTruthy();
+        expect(chevron).toHaveAttribute('aria-label', 'Expand');
+        triggerPress(chevron);
+        act(() => jest.runAllTimers());
+
+        expect(onExpandedChange).toHaveBeenCalledTimes(1);
+        expect(new Set(onExpandedChange.mock.calls[0][0])).toEqual(new Set(['child row 1 level 2', 'row 1']));
+        rowgroups = treegrid.getAllByRole('rowgroup');
+        rows = within(rowgroups[1]).getAllByRole('row');
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(chevron).toHaveAttribute('aria-label', 'Collapse');
+        expect(rows).toHaveLength(4);
+        rowToExpand = rows[1];
+        expect(rowToExpand).toHaveAttribute('aria-expanded', 'true');
+
+        thirdRow = rows[2];
+        expect(thirdRow).toHaveAttribute('aria-level', '3');
+        expect(thirdRow).toHaveAttribute('aria-posinset', '1');
+        expect(thirdRow).toHaveAttribute('aria-setsize', '1');
+        expect(thirdRow).toHaveTextContent('Lvl 3 Foo 1');
+
+        let fourthRow = rows[3];
+        expect(fourthRow).toHaveAttribute('aria-level', '2');
+        expect(fourthRow).toHaveAttribute('aria-posinset', '2');
+        expect(fourthRow).toHaveAttribute('aria-setsize', '2');
+        expect(fourthRow).toHaveTextContent('Lvl 2 Foo 2');
+      });
+
+      it('should collapse a row when pressing the chevron', function () {
+        let treegrid = render(<StaticExpandableTable onSelectionChange={onSelectionChange} onExpandedChange={onExpandedChange} />);
+        let rowgroups = treegrid.getAllByRole('rowgroup');
+        let rows = within(rowgroups[1]).getAllByRole('row');
+        expect(rows).toHaveLength(3);
+
+        let rowToCollapse = rows[0];
+        expect(rowToCollapse).toHaveAttribute('aria-level', '1');
+        expect(rowToCollapse).toHaveAttribute('aria-posinset', '1');
+        expect(rowToCollapse).toHaveAttribute('aria-setsize', '1');
+        expect(rowToCollapse).toHaveTextContent('Lvl 1 Foo 1');
+        expect(rowToCollapse).toHaveAttribute('aria-expanded', 'true');
+        let chevron = within(rowToCollapse).getByRole('button');
+        expect(chevron).toBeTruthy();
+        expect(chevron).toHaveAttribute('aria-label', 'Collapse');
+        triggerPress(chevron);
+        act(() => jest.runAllTimers());
+
+        expect(onExpandedChange).toHaveBeenCalledTimes(1);
+        expect(new Set(onExpandedChange.mock.calls[0][0])).toEqual(new Set());
+        rowgroups = treegrid.getAllByRole('rowgroup');
+        rows = within(rowgroups[1]).getAllByRole('row');
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(chevron).toHaveAttribute('aria-label', 'Expand');
+        expect(rows).toHaveLength(1);
+        rowToCollapse = rows[0];
+        expect(rowToCollapse).toHaveAttribute('aria-level', '1');
+        expect(rowToCollapse).toHaveAttribute('aria-posinset', '1');
+        expect(rowToCollapse).toHaveAttribute('aria-setsize', '1');
+        expect(rowToCollapse).toHaveTextContent('Lvl 1 Foo 1');
+        expect(rowToCollapse).toHaveAttribute('aria-expanded', 'false');
+      });
+    });
+
+    describe('with keyboard', function () {
+      it.each`
+        Arrow                 | Locale
+        ${'ArrowRight'}       | ${'en-US'}
+        ${'ArrowLeft'}        | ${'ar-AE'}
+      `('should expand a row via $Arrow if focus is on the row ($Locale)', ({Arrow, Locale}) => {
+        let treegrid = render(<StaticExpandableTable onSelectionChange={onSelectionChange} onExpandedChange={onExpandedChange} />, undefined, Locale);
+        let rowgroups = treegrid.getAllByRole('rowgroup');
+        let rows = within(rowgroups[1]).getAllByRole('row');
+        expect(rows).toHaveLength(3);
+        let thirdRow = rows[2];
+        expect(thirdRow).toHaveAttribute('aria-level', '2');
+        expect(thirdRow).toHaveAttribute('aria-posinset', '2');
+        expect(thirdRow).toHaveAttribute('aria-setsize', '2');
+        expect(thirdRow).toHaveTextContent('Lvl 2 Foo 2');
+
+        let rowToExpand = rows[1];
+        expect(rowToExpand).toHaveAttribute('aria-expanded', 'false');
+        let chevron = within(rowToExpand).getByRole('button');
+        expect(chevron).toBeTruthy();
+        expect(chevron).toHaveAttribute('aria-label', 'Expand');
+
+        focusCell(treegrid, 'Lvl 2 Foo 1');
+        moveFocus(Arrow);
+        act(() => jest.runAllTimers());
+        expect(onExpandedChange).not.toHaveBeenCalled();
+
+        act(() => {rowToExpand.focus();});
+        moveFocus(Arrow);
+        act(() => jest.runAllTimers());
+
+        expect(document.activeElement).toBe(rowToExpand);
+        expect(onExpandedChange).toHaveBeenCalledTimes(1);
+        expect(new Set(onExpandedChange.mock.calls[0][0])).toEqual(new Set(['child row 1 level 2', 'row 1']));
+        rowgroups = treegrid.getAllByRole('rowgroup');
+        rows = within(rowgroups[1]).getAllByRole('row');
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(chevron).toHaveAttribute('aria-label', 'Collapse');
+        expect(rows).toHaveLength(4);
+        rowToExpand = rows[1];
+        expect(rowToExpand).toHaveAttribute('aria-expanded', 'true');
+
+        thirdRow = rows[2];
+        expect(thirdRow).toHaveAttribute('aria-level', '3');
+        expect(thirdRow).toHaveAttribute('aria-posinset', '1');
+        expect(thirdRow).toHaveAttribute('aria-setsize', '1');
+        expect(thirdRow).toHaveTextContent('Lvl 3 Foo 1');
+
+        let fourthRow = rows[3];
+        expect(fourthRow).toHaveAttribute('aria-level', '2');
+        expect(fourthRow).toHaveAttribute('aria-posinset', '2');
+        expect(fourthRow).toHaveAttribute('aria-setsize', '2');
+        expect(fourthRow).toHaveTextContent('Lvl 2 Foo 2');
+      });
+
+      it.each`
+        Arrow                | Locale
+        ${'ArrowLeft'}       | ${'en-US'}
+        ${'ArrowRight'}      | ${'ar-AE'}
+      `('should collapse a row via $Arrow if focus is on the row ($Locale)', ({Arrow, Locale}) => {
+        let treegrid = render(<StaticExpandableTable onSelectionChange={onSelectionChange} onExpandedChange={onExpandedChange} />, undefined, Locale);
+        let rowgroups = treegrid.getAllByRole('rowgroup');
+        let rows = within(rowgroups[1]).getAllByRole('row');
+        expect(rows).toHaveLength(3);
+
+        let rowToCollapse = rows[0];
+        expect(rowToCollapse).toHaveAttribute('aria-level', '1');
+        expect(rowToCollapse).toHaveAttribute('aria-posinset', '1');
+        expect(rowToCollapse).toHaveAttribute('aria-setsize', '1');
+        expect(rowToCollapse).toHaveTextContent('Lvl 1 Foo 1');
+        expect(rowToCollapse).toHaveAttribute('aria-expanded', 'true');
+        let chevron = within(rowToCollapse).getByRole('button');
+        expect(chevron).toBeTruthy();
+        expect(chevron).toHaveAttribute('aria-label', 'Collapse');
+
+
+        focusCell(treegrid, 'Lvl 1 Foo 1');
+        moveFocus(Arrow);
+        act(() => jest.runAllTimers());
+        expect(onExpandedChange).not.toHaveBeenCalled();
+
+        act(() => {rowToCollapse.focus();});
+        moveFocus(Arrow);
+        act(() => jest.runAllTimers());
+
+        expect(document.activeElement).toBe(rowToCollapse);
+        expect(onExpandedChange).toHaveBeenCalledTimes(1);
+        expect(new Set(onExpandedChange.mock.calls[0][0])).toEqual(new Set());
+        rowgroups = treegrid.getAllByRole('rowgroup');
+        rows = within(rowgroups[1]).getAllByRole('row');
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(chevron).toHaveAttribute('aria-label', 'Expand');
+        expect(rows).toHaveLength(1);
+        rowToCollapse = rows[0];
+        expect(rowToCollapse).toHaveAttribute('aria-level', '1');
+        expect(rowToCollapse).toHaveAttribute('aria-posinset', '1');
+        expect(rowToCollapse).toHaveAttribute('aria-setsize', '1');
+        expect(rowToCollapse).toHaveTextContent('Lvl 1 Foo 1');
+        expect(rowToCollapse).toHaveAttribute('aria-expanded', 'false');
+      });
+    });
+  });
+
+  describe('keyboard focus', function () {
     describe('ArrowDown', function () {
       it('should move focus to the nested row\'s below', function () {
         let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />);
@@ -522,9 +705,126 @@ describe('TableView with expandable rows', function () {
         expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 2, Foo'));
       });
     });
-    // TODO add End/Home/PageUp/Down and check that it can land on a nested row
 
-    // Test that type to select works with nested rows
+    describe('End', function () {
+      it('should focus the last nested row with End', function () {
+        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />);
+        let rows = treegrid.getAllByRole('row');
+        act(() => {rows[1].focus();});
+        moveFocus('End');
+        rows = treegrid.getAllByRole('row');
+        expect(document.activeElement).toBe(rows.at(-1));
+        expect(document.activeElement).toHaveTextContent('Row 19, Lvl 3, Foo');
+      });
+    });
+
+    describe('Home', function () {
+      it('should focus the first row from a nested row with Home', function () {
+        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />);
+        let rows = treegrid.getAllByRole('row');
+        act(() => {rows[15].focus();});
+        expect(document.activeElement).toHaveTextContent('Row 5, Lvl 3, Foo');
+        moveFocus('Home');
+        expect(document.activeElement).toBe(rows[1]);
+        expect(document.activeElement).toHaveTextContent('Row 1, Lvl 1, Foo');
+      });
+    });
+
+    describe('PageDown', function () {
+      it('should focus a nested row a page below', function () {
+        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />);
+        let rows = treegrid.getAllByRole('row');
+        act(() => {rows[2].focus();});
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(treegrid.getByRole('row', {name: 'Row 9, Lvl 2, Foo'}));
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(treegrid.getByRole('row', {name: 'Row 17, Lvl 2, Foo'}));
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(treegrid.getByRole('row', {name: 'Row 19, Lvl 3, Foo'}));
+      });
+    });
+
+    describe('PageUp', function () {
+      it('should focus a nested row a page above', function () {
+        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />);
+        let rows = treegrid.getAllByRole('row');
+        act(() => {rows[1].focus();});
+        moveFocus('End');
+        moveFocus('PageUp');
+        expect(document.activeElement).toBe(treegrid.getByRole('row', {name: 'Row 11, Lvl 3, Foo'}));
+        moveFocus('PageUp');
+        expect(document.activeElement).toBe(treegrid.getByRole('row', {name: 'Row 3, Lvl 3, Foo'}));
+        moveFocus('PageUp');
+        expect(document.activeElement).toBe(treegrid.getByRole('row', {name: 'Row 1, Lvl 1, Foo'}));
+      });
+    });
+
+    describe('type to select', function () {
+      it('should focus a nested row', function () {
+        let treegrid = render(<StaticExpandableTable expandedKeys="all" />);
+        let rows = treegrid.getAllByRole('row');
+        act(() => {rows[1].focus();});
+        moveFocus('L');
+        moveFocus('v');
+        moveFocus('l');
+        moveFocus(' ');
+        moveFocus('2');
+        expect(document.activeElement).toBe(treegrid.getByRole('row', {name: 'Lvl 2 Foo 1'}));
+      });
+    });
+
+    describe('scrolling', function () {
+      it('should scroll to a cell when it is focused', function () {
+        let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} disabledKeys={null} />);
+        let body = (treegrid.getByRole('treegrid').childNodes[1] as HTMLElement);
+        expect(body.scrollTop).toBe(0);
+
+        focusCell(treegrid, 'Row 9, Lvl 1, Foo');
+        expect(body.scrollTop).toBe(24);
+      });
+
+      it('should scroll to a nested row cell when it is focused off screen', function () {
+        let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={null} />);
+        let body = (treegrid.getByRole('treegrid').childNodes[1] as HTMLElement);
+        let cell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
+        act(() => cell.focus());
+        expect(document.activeElement).toBe(cell);
+        expect(body.scrollTop).toBe(0);
+
+        // When scrolling the focused item out of view, focus should remain on the item,
+        // virtualizer keeps focused items from being reused
+        body.scrollTop = 1000;
+        body.scrollLeft = 1000;
+        fireEvent.scroll(body);
+
+        expect(body.scrollTop).toBe(1000);
+        expect(document.activeElement).toBe(cell);
+
+        // Ensure we have the correct sticky cells in the right order.
+        let row = cell.closest('[role=row]');
+        let cells = within(row).getAllByRole('gridcell');
+        let rowHeaders = within(row).getAllByRole('rowheader');
+        expect(cells).toHaveLength(3);
+        expect(rowHeaders).toHaveLength(1);
+        expect(cells[0]).toHaveAttribute('aria-colindex', '1'); // checkbox
+        expect(rowHeaders[0]).toHaveAttribute('aria-colindex', '2'); // rowheader
+        expect(rowHeaders[0]).toBe(cell);
+        expect(cells[1]).toHaveAttribute('aria-colindex', '3');
+        expect(cells[1]).toHaveTextContent('Row 1, Lvl 3, Bar');
+        expect(cells[2]).toHaveAttribute('aria-colindex', '4');
+        expect(cells[2]).toHaveTextContent('Row 1, Lvl 3, Baz');
+
+        let rowgroups = treegrid.getAllByRole('rowgroup');
+        let rows = within(rowgroups[1]).getAllByRole('row');
+        expect(within(rows[0]).getByRole('rowheader')).toHaveTextContent('Row 1, Lvl 3, Foo');
+        expect(within(rows[1]).getByRole('rowheader')).toHaveTextContent('Row 9, Lvl 1, Foo');
+
+        // Moving focus should scroll the new focused item into view
+        moveFocus('ArrowRight');
+        expect(body.scrollTop).toBe(82);
+        expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 3, Bar'));
+      });
+    });
   });
 
   describe('selection', function () {
@@ -552,6 +852,7 @@ describe('TableView with expandable rows', function () {
       fireEvent.keyDown(element, {key});
       act(() => {element.focus();});
       fireEvent.keyUp(element, {key});
+      act(() => jest.runAllTimers());
     };
 
     describe('row selection', function () {
@@ -643,7 +944,6 @@ describe('TableView with expandable rows', function () {
           let rows = within(rowgroups[1]).getAllByRole('row');
           let cell = getCell(treegrid, 'Row 1, Lvl 1, Foo');
 
-
           checkRowSelection(rows, false);
           pressWithKeyboard(cell);
           checkSelection(onSelectionChange, [
@@ -652,6 +952,33 @@ describe('TableView with expandable rows', function () {
           checkRowSelection(rows.slice(0, 1), true);
           checkSelectAll(treegrid);
         });
+      });
+
+      it('should select nested rows if select all checkbox is pressed', function () {
+        let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={null} onAction={null} />);
+        let checkbox = treegrid.getByLabelText('Select All');
+        let rowgroups = treegrid.getAllByRole('rowgroup');
+        let rows = within(rowgroups[1]).getAllByRole('row');
+        triggerPress(checkbox);
+        checkRowSelection(rows, true);
+        checkSelectAll(treegrid, 'checked');
+      });
+
+      it('should not allow selection of disabled nested rows', function () {
+        let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={['Row 1 Lvl 2']} onAction={null} />);
+        let rowgroups = treegrid.getAllByRole('rowgroup');
+        let rows = within(rowgroups[1]).getAllByRole('row');
+        let cell = getCell(treegrid, 'Row 1, Lvl 2, Foo');
+
+        triggerPress(cell);
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        checkRowSelection(rows, false);
+
+        let checkbox = treegrid.getByLabelText('Select All');
+        triggerPress(checkbox);
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        expect(new Set(onSelectionChange.mock.calls[0][0]).has('Row 1 Lvl 2')).toBeFalsy();
+        checkRowSelection([rows[1]], false);
       });
     });
 
@@ -756,6 +1083,7 @@ describe('TableView with expandable rows', function () {
 
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', shiftKey: true});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', shiftKey: true});
+          act(() => jest.runAllTimers());
           checkSelection(onSelectionChange, [
             'Row 1 Lvl 1', 'Row 1 Lvl 2'
           ]);
@@ -763,6 +1091,7 @@ describe('TableView with expandable rows', function () {
           onSelectionChange.mockReset();
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', shiftKey: true});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', shiftKey: true});
+          act(() => jest.runAllTimers());
           checkSelection(onSelectionChange, [
             'Row 1 Lvl 1', 'Row 1 Lvl 2', 'Row 1 Lvl 3'
           ]);
@@ -770,6 +1099,7 @@ describe('TableView with expandable rows', function () {
           onSelectionChange.mockReset();
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', shiftKey: true});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', shiftKey: true});
+          act(() => jest.runAllTimers());
           checkSelection(onSelectionChange, [
             'Row 1 Lvl 1', 'Row 1 Lvl 2', 'Row 1 Lvl 3', 'Row 2 Lvl 1'
           ]);
@@ -789,6 +1119,7 @@ describe('TableView with expandable rows', function () {
 
           fireEvent.keyDown(document.activeElement, {key: 'ArrowUp', shiftKey: true});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowUp', shiftKey: true});
+          act(() => jest.runAllTimers());
           checkSelection(onSelectionChange, [
             'Row 2 Lvl 1', 'Row 1 Lvl 3'
           ]);
@@ -796,6 +1127,7 @@ describe('TableView with expandable rows', function () {
           onSelectionChange.mockReset();
           fireEvent.keyDown(document.activeElement, {key: 'ArrowUp', shiftKey: true});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowUp', shiftKey: true});
+          act(() => jest.runAllTimers());
           checkSelection(onSelectionChange, [
             'Row 2 Lvl 1', 'Row 1 Lvl 3', 'Row 1 Lvl 2'
           ]);
@@ -803,6 +1135,7 @@ describe('TableView with expandable rows', function () {
           onSelectionChange.mockReset();
           fireEvent.keyDown(document.activeElement, {key: 'ArrowUp', shiftKey: true});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowUp', shiftKey: true});
+          act(() => jest.runAllTimers());
           checkSelection(onSelectionChange, [
             'Row 2 Lvl 1', 'Row 1 Lvl 3', 'Row 1 Lvl 2', 'Row 1 Lvl 1'
           ]);
@@ -821,6 +1154,8 @@ describe('TableView with expandable rows', function () {
           onSelectionChange.mockReset();
 
           fireEvent.keyDown(document.activeElement, {key: 'Home', shiftKey: true, ctrlKey: true});
+          fireEvent.keyUp(document.activeElement, {key: 'Home', shiftKey: true, ctrlKey: true});
+          act(() => jest.runAllTimers());
 
           checkSelection(onSelectionChange, [
             'Row 1 Lvl 1', 'Row 1 Lvl 2', 'Row 1 Lvl 3', 'Row 2 Lvl 1', 'Row 2 Lvl 2', 'Row 2 Lvl 3', 'Row 3 Lvl 1'
@@ -840,6 +1175,8 @@ describe('TableView with expandable rows', function () {
           onSelectionChange.mockReset();
 
           fireEvent.keyDown(document.activeElement, {key: 'End', shiftKey: true, ctrlKey: true});
+          fireEvent.keyUp(document.activeElement, {key: 'End', shiftKey: true, ctrlKey: true});
+          act(() => jest.runAllTimers());
 
           checkRowSelection(rows.slice(6), true);
         });
@@ -854,6 +1191,8 @@ describe('TableView with expandable rows', function () {
           onSelectionChange.mockReset();
 
           fireEvent.keyDown(document.activeElement, {key: 'PageDown', shiftKey: true});
+          fireEvent.keyUp(document.activeElement, {key: 'PageDown', shiftKey: true});
+          act(() => jest.runAllTimers());
 
           checkSelection(onSelectionChange, [
             'Row 3 Lvl 1', 'Row 3 Lvl 2', 'Row 3 Lvl 3', 'Row 4 Lvl 1', 'Row 4 Lvl 2', 'Row 4 Lvl 3',
@@ -874,6 +1213,8 @@ describe('TableView with expandable rows', function () {
           onSelectionChange.mockReset();
 
           fireEvent.keyDown(document.activeElement, {key: 'PageUp', shiftKey: true});
+          fireEvent.keyUp(document.activeElement, {key: 'PageUp', shiftKey: true});
+          act(() => jest.runAllTimers());
 
           checkSelection(onSelectionChange, [
             'Row 1 Lvl 1', 'Row 1 Lvl 2', 'Row 1 Lvl 3', 'Row 2 Lvl 1', 'Row 2 Lvl 2', 'Row 2 Lvl 3', 'Row 3 Lvl 1'
@@ -891,8 +1232,10 @@ describe('TableView with expandable rows', function () {
 
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', shiftKey: true});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', shiftKey: true});
+          act(() => jest.runAllTimers());
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', shiftKey: true});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', shiftKey: true});
+          act(() => jest.runAllTimers());
           checkSelection(onSelectionChange, [
             'Row 1 Lvl 1', 'Row 1 Lvl 3'
           ]);
@@ -907,34 +1250,202 @@ describe('TableView with expandable rows', function () {
     describe('onAction', function () {
       installPointerEvent();
 
-      // TODO add onAction tests
-      it('should trigger onAction when clicking nested rows with the mouse', function () {
+      it.each`
+        Name
+        ${'mouse'}
+        ${'touch'}
+      `('should trigger onAction when clicking nested rows with $Name', ({Name}) => {
         let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={null} onAction={onAction} />);
         let rowgroups = treegrid.getAllByRole('rowgroup');
         let rows = within(rowgroups[1]).getAllByRole('row');
         let cell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
-        // TODO: Not sure why this is complaining about the type...
-        // @ts-ignore
-        userEvent.click(cell, {pointerType: 'mouse'});
+        fireEvent.pointerDown(cell, {pointerType: Name, pointerId: 1});
+        fireEvent.pointerUp(cell, {pointerType: Name, pointerId: 1});
+        act(() => jest.runAllTimers());
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).toHaveBeenCalledTimes(1);
         expect(onAction).toHaveBeenLastCalledWith('Row 1 Lvl 3');
-        checkRowSelection(rows.slice(0), false);
+        checkRowSelection([rows[2]], false);
 
         let checkbox = within(rows[0]).getByRole('checkbox');
         userEvent.click(checkbox);
+        act(() => jest.runAllTimers());
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        checkSelection(onSelectionChange, ['Row 1 Lvl 1']);
         checkRowSelection([rows[0]], true);
+        onSelectionChange.mockReset();
 
-        // @ts-ignore
-        userEvent.click(cell, {pointerType: 'mouse'});
-        expect(onSelectionChange).toHaveBeenCalledTimes(2);
+        fireEvent.pointerDown(cell, {pointerType: Name, pointerId: 1});
+        fireEvent.pointerUp(cell, {pointerType: Name, pointerId: 1});
+        act(() => jest.runAllTimers());
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        checkSelection(onSelectionChange, ['Row 1 Lvl 1', 'Row 1 Lvl 3']);
         checkRowSelection([rows[0], rows[2]], true);
+      });
+
+      it('should trigger onAction when pressing Enter', function () {
+        let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={null} onAction={onAction} />);
+        let rowgroups = treegrid.getAllByRole('rowgroup');
+        let rows = within(rowgroups[1]).getAllByRole('row');
+        let cell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
+
+        fireEvent.keyDown(cell, {key: 'Enter'});
+        fireEvent.keyUp(cell, {key: 'Enter'});
+        act(() => jest.runAllTimers());
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenLastCalledWith('Row 1 Lvl 3');
+        checkRowSelection(rows, false);
+
+        onAction.mockReset();
+        fireEvent.keyDown(cell, {key: ' '});
+        fireEvent.keyUp(cell, {key: ' '});
+        act(() => jest.runAllTimers());
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        expect(onAction).not.toHaveBeenCalled();
+        checkRowSelection([rows[2]], true);
       });
     });
 
     describe('selectionStyle highlight', function () {
-      // TODO: highlight selection click on row should select
+      installPointerEvent();
+
+      it('should toggle selection with mouse', function () {
+        let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="highlight" disabledKeys={null} onAction={null} />);
+        expect(treegrid.queryByLabelText('Select All')).toBeNull();
+
+        let rowgroups = treegrid.getAllByRole('rowgroup');
+        let rows = within(rowgroups[1]).getAllByRole('row');
+        let cell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
+
+        checkRowSelection(rows, false);
+        fireEvent.pointerDown(cell, {pointerType: 'mouse', pointerId: 1});
+        fireEvent.pointerUp(cell, {pointerType: 'mouse', pointerId: 1});
+        act(() => jest.runAllTimers());
+        expect(announce).toHaveBeenLastCalledWith('Row 1, Lvl 3, Foo selected.');
+        expect(announce).toHaveBeenCalledTimes(1);
+        checkSelection(onSelectionChange, ['Row 1 Lvl 3']);
+        checkRowSelection([rows[2]], true);
+        onSelectionChange.mockReset();
+
+        cell = getCell(treegrid, 'Row 1, Lvl 1, Foo');
+        fireEvent.pointerDown(cell, {pointerType: 'mouse', pointerId: 1});
+        fireEvent.pointerUp(cell, {pointerType: 'mouse', pointerId: 1});
+        act(() => jest.runAllTimers());
+        expect(announce).toHaveBeenLastCalledWith('Row 1, Lvl 1, Foo selected.');
+        expect(announce).toHaveBeenCalledTimes(2);
+        checkSelection(onSelectionChange, ['Row 1 Lvl 1']);
+        checkRowSelection([rows[0]], true);
+        checkRowSelection(rows.slice(1), false);
+      });
+
+      it('should toggle selection with touch', function () {
+        let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="highlight" disabledKeys={null} onAction={null} />);
+        expect(treegrid.queryByLabelText('Select All')).toBeNull();
+
+        let rowgroups = treegrid.getAllByRole('rowgroup');
+        let rows = within(rowgroups[1]).getAllByRole('row');
+        let cell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
+
+        checkRowSelection(rows, false);
+        fireEvent.pointerDown(cell, {pointerType: 'touch', pointerId: 1});
+        fireEvent.pointerUp(cell, {pointerType: 'touch', pointerId: 1});
+        act(() => jest.runAllTimers());
+        expect(announce).toHaveBeenLastCalledWith('Row 1, Lvl 3, Foo selected.');
+        expect(announce).toHaveBeenCalledTimes(1);
+        checkSelection(onSelectionChange, ['Row 1 Lvl 3']);
+        checkRowSelection([rows[2]], true);
+        onSelectionChange.mockReset();
+
+        cell = getCell(treegrid, 'Row 1, Lvl 1, Foo');
+        fireEvent.pointerDown(cell, {pointerType: 'touch', pointerId: 1});
+        fireEvent.pointerUp(cell, {pointerType: 'touch', pointerId: 1});
+        act(() => jest.runAllTimers());
+        expect(announce).toHaveBeenLastCalledWith('Row 1, Lvl 1, Foo selected. 2 items selected.');
+        expect(announce).toHaveBeenCalledTimes(2);
+        checkSelection(onSelectionChange, ['Row 1 Lvl 1', 'Row 1 Lvl 3']);
+        checkRowSelection([rows[0], rows[2]], true);
+      });
+
+      it('should support long press to enter selection mode on touch', function () {
+        let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="highlight" disabledKeys={null} onAction={onAction} />);
+        userEvent.click(document.body);
+        let rowgroups = treegrid.getAllByRole('rowgroup');
+        let rows = within(rowgroups[1]).getAllByRole('row');
+        let firstCell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
+        let secondCell = getCell(treegrid, 'Row 1, Lvl 1, Foo');
+
+        fireEvent.pointerDown(firstCell, {pointerType: 'touch'});
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).not.toHaveBeenCalled();
+
+        act(() => jest.advanceTimersByTime(800));
+
+        checkSelection(onSelectionChange, ['Row 1 Lvl 3']);
+        checkRowSelection([rows[2]], true);
+        expect(onAction).not.toHaveBeenCalled();
+
+        fireEvent.pointerUp(firstCell, {pointerType: 'touch'});
+        onSelectionChange.mockReset();
+
+        fireEvent.pointerDown(secondCell, {pointerType: 'touch', pointerId: 1});
+        fireEvent.pointerUp(secondCell, {pointerType: 'touch', pointerId: 1});
+        act(() => jest.runAllTimers());
+        checkSelection(onSelectionChange, ['Row 1 Lvl 1', 'Row 1 Lvl 3']);
+        checkRowSelection([rows[0], rows[2]], true);
+
+        // Deselect all to exit selection mode
+        fireEvent.pointerDown(firstCell, {pointerType: 'touch', pointerId: 1});
+        fireEvent.pointerUp(firstCell, {pointerType: 'touch', pointerId: 1});
+        act(() => jest.runAllTimers());
+        onSelectionChange.mockReset();
+        fireEvent.pointerDown(secondCell, {pointerType: 'touch', pointerId: 1});
+        fireEvent.pointerUp(secondCell, {pointerType: 'touch', pointerId: 1});
+        act(() => jest.runAllTimers());
+        checkSelection(onSelectionChange, []);
+        expect(onAction).not.toHaveBeenCalled();
+        checkRowSelection(rows, false);
+      });
+
+      it('should support double click to perform onAction with mouse', function () {
+        let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="highlight" disabledKeys={null} onAction={onAction} />);
+        expect(treegrid.queryByLabelText('Select All')).toBeNull();
+
+        let rowgroups = treegrid.getAllByRole('rowgroup');
+        let rows = within(rowgroups[1]).getAllByRole('row');
+        let cell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
+
+        checkRowSelection(rows, false);
+        fireEvent.pointerDown(cell, {pointerType: 'mouse', pointerId: 1});
+        fireEvent.pointerUp(cell, {pointerType: 'mouse', pointerId: 1});
+        act(() => jest.runAllTimers());
+        expect(announce).toHaveBeenLastCalledWith('Row 1, Lvl 3, Foo selected.');
+        expect(announce).toHaveBeenCalledTimes(1);
+        checkSelection(onSelectionChange, ['Row 1 Lvl 3']);
+        expect(onAction).not.toHaveBeenCalled();
+        onSelectionChange.mockReset();
+        // @ts-ignore
+        userEvent.dblClick(cell, {pointerType: 'mouse'});
+        act(() => jest.runAllTimers());
+        expect(announce).toHaveBeenCalledTimes(1);
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenCalledWith('Row 1 Lvl 3');
+      });
+
+      it('should support single tap to perform onAction with touch', function () {
+        let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="highlight" disabledKeys={null} onAction={onAction} />);
+        expect(treegrid.queryByLabelText('Select All')).toBeNull();
+        let cell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
+
+        fireEvent.pointerDown(cell, {pointerType: 'touch', pointerId: 1});
+        fireEvent.pointerUp(cell, {pointerType: 'touch', pointerId: 1});
+        act(() => jest.runAllTimers());
+        expect(announce).not.toHaveBeenCalled();
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenCalledWith('Row 1 Lvl 3');
+      });
     });
   });
 
@@ -952,7 +1463,7 @@ describe('TableView with expandable rows', function () {
       expect(row).toHaveAttribute('aria-setsize', '1');
 
       let cell = within(rows[0]).getByRole('rowheader');
-      expect(cell).toHaveAttribute('aria-colspan', '4');
+      expect(cell).toHaveAttribute('aria-colspan', '3');
 
       let heading = within(cell).getByRole('heading');
       expect(heading).toBeVisible();
@@ -964,15 +1475,44 @@ describe('TableView with expandable rows', function () {
       rowgroups = treegrid.getAllByRole('rowgroup');
       rows = within(rowgroups[1]).getAllByRole('row');
       expect(rows).toHaveLength(19);
+      expect(heading).not.toBeInTheDocument();
     });
   });
 
-  // TODO: write tests for the following
-  // selection (nested rows are selected on click, selected when all selection checkbox is pressed, multiple range selection including nested keys, test standard keyboard selection still works with expanded keyboard interactions)
-  // expanding/collapsing table (pointer/touch), check the aria values set (wait for interactions to be finalized to make testing that easier)
-  // persisted keys
-  // keyboard interaction (arrow keys, page up/down, home, end, expanding/closing via right/left arrow, skipping over the chevron button)
-  // empty state renders with treegrid props
-  // loading state renders with treegrid props
-  // calculated aria attributes update when rows are expanded/collapsed
+  describe('loading state', function () {
+    it('should render a spinner row with the proper attributes when loading', async function () {
+      let treegrid = render(<LoadingTable />);
+      await act(() => Promise.resolve()); // wait for MutationObserver in useHasTabbableChild or we get act warnings
+      let rowgroups = treegrid.getAllByRole('rowgroup');
+      let rows = within(rowgroups[1]).getAllByRole('row');
+      expect(rows).toHaveLength(1);
+      let row = rows[0];
+      expect(row).not.toHaveAttribute('aria-expanded');
+      expect(row).toHaveAttribute('aria-level', '1');
+      expect(row).toHaveAttribute('aria-posinset', '1');
+      expect(row).toHaveAttribute('aria-setsize', '1');
+
+      let cell = within(rows[0]).getByRole('rowheader');
+      expect(cell).toHaveAttribute('aria-colspan', '3');
+
+      let spinner = within(cell).getByRole('progressbar');
+      expect(spinner).toHaveAttribute('aria-label', 'Loading…');
+      expect(spinner).not.toHaveAttribute('aria-valuenow');
+
+      let showItemsButton = treegrid.getAllByRole('button')[0];
+      triggerPress(showItemsButton);
+      act(() => jest.runAllTimers());
+      rowgroups = treegrid.getAllByRole('rowgroup');
+      rows = within(rowgroups[1]).getAllByRole('row');
+      expect(rows).toHaveLength(20);
+
+      row = rows[19];
+      expect(row).not.toHaveAttribute('aria-expanded');
+      expect(row).toHaveAttribute('aria-level', '1');
+      expect(row).toHaveAttribute('aria-posinset', '20');
+      expect(row).toHaveAttribute('aria-setsize', '20');
+      spinner = within(row).getByRole('progressbar');
+      expect(spinner).toBeTruthy();
+    });
+  });
 });

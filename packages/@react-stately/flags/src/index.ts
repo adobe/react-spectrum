@@ -10,15 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-export let tableNestedRows = false;
+let _tableNestedRows = false;
 
 export function enableTableNestedRows() {
-  tableNestedRows = true;
+  _tableNestedRows = true;
 }
 
-// TODO: for some reason calling enableTableNested in the test/global setup doesn't make' TableView's imported tableNestedRows var true...
-// Not entirely sure why, works perfectly fine in the stories when calling enableTableNestedRows there and accesing the same imported var. For
-// now use a getter
-export function getTableNestedRows() {
-  return tableNestedRows;
+export function tableNestedRows() {
+  return _tableNestedRows;
 }

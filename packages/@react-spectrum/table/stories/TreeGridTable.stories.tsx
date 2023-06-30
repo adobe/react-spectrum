@@ -27,7 +27,6 @@ export default {
   title: 'TableView/Expandable rows'
 } as ComponentMeta<typeof TableView>;
 
-// TODO: add stories with variable expandedKeys (will need to wait for toggle functionality)
 export const StaticExpandableRows: TableStory = {
   args: {
     'aria-label': 'TableView with static expandable rows',
@@ -229,14 +228,9 @@ export const EmptyTreeGridStory: TableStory = {
     height: 400
   },
   render: (args) => (
-    <EmptyStateTable hasExpandableRows columns={columns} items={manyRows} allowsSorting={false} onSortChange={null} sortDescriptor={null} {...args} />
+    <EmptyStateTable hasExpandableRows selectionMode="none" columns={columns} items={manyRows} allowsSorting={false} onSortChange={null} sortDescriptor={null} {...args} />
   ),
-  name: 'empty state',
-  parameters: {
-    description: {
-      data: 'Note that sorting doesn\t work, functionality todo in original story'
-    }
-  }
+  name: 'empty state'
 };
 
 function LoadingStateTable(props) {
@@ -330,6 +324,3 @@ export const ResizableColumnsStory: TableStory = {
   ),
   name: 'resizable columns'
 };
-
-
-// TODO: make sorting example? icons in cells
