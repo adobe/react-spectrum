@@ -174,7 +174,7 @@ export function toDate(dateTime: CalendarDate | CalendarDateTime, timeZone: stri
 }
 
 /**
- * Takes an Unix epoch (milliseconds since 1970) and convert it to the provided time zone.
+ * Takes a Unix epoch (milliseconds since 1970) and converts it to the provided time zone.
  */
 export function fromAbsolute(ms: number, timeZone: string): ZonedDateTime {
   let offset = getTimeZoneOffset(ms, timeZone);
