@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {BaseTableView} from './TableView';
 import {DOMRef} from '@react-types/shared';
 import React, {ReactElement, useState} from 'react';
 import {SpectrumTableProps} from './TableViewWrapper';
+import {TableViewBase} from './TableViewBase';
 import {useTreeGridState} from '@react-stately/table';
 
 export interface TreeGridTableProps<T> extends Omit<SpectrumTableProps<T>, 'hasExpandableRows'> {}
@@ -39,7 +39,7 @@ function TreeGridTableView<T extends object>(props: TreeGridTableProps<T>, ref: 
   }
 
   return (
-    <BaseTableView {...props} state={state} ref={ref} />
+    <TableViewBase {...props} state={state} ref={ref} />
   );
 }
 

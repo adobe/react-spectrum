@@ -15,7 +15,7 @@ import type {ColumnSize, TableProps} from '@react-types/table';
 import type {DragAndDropHooks} from '@react-spectrum/dnd';
 import React, {Key, ReactElement} from 'react';
 import {tableNestedRows} from '@react-stately/flags';
-import {TableViewBlah} from './TableViewBlah';
+import {TableView} from './TableView';
 import {TreeGridTableView} from './TreeGridTableView';
 
 export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionProps, DOMProps, AriaLabelingProps, StyleProps, Expandable {
@@ -59,18 +59,18 @@ export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionP
   hasExpandableRows?: boolean
 }
 
-function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
+function TableViewWrapper<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {hasExpandableRows, ...otherProps} = props;
   if (tableNestedRows() && hasExpandableRows) {
     return <TreeGridTableView {...otherProps} ref={ref} />;
   } else {
-    return <TableViewBlah {...otherProps} ref={ref} />;
+    return <TableView {...otherProps} ref={ref} />;
   }
 }
 
 /**
  * Tables are containers for displaying information. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
  */
-const _TableView = React.forwardRef(TableView) as <T>(props: SpectrumTableProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
+const _TableViewWrapper = React.forwardRef(TableViewWrapper) as <T>(props: SpectrumTableProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 
-export {_TableView as TableView};
+export {_TableViewWrapper as TableView};
