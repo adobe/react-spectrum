@@ -15,10 +15,10 @@ import {ColumnSize} from '@react-types/table';
 import {DOMRef} from '@react-types/shared';
 import type {DragAndDropHooks} from '@react-spectrum/dnd';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
-import {getTableNestedRows} from '@react-stately/flags';
 import React, {Key, ReactElement, useContext} from 'react';
 import {SpectrumTreeGridProps, TreeGridTableView} from './TreeGridTableView';
 import {TableLayout} from '@react-stately/layout';
+import {tableNestedRows} from '@react-stately/flags';
 import type {TableState, TreeGridState} from '@react-stately/table';
 
 export interface SpectrumTableProps<T> extends SpectrumTreeGridProps<T> {
@@ -60,7 +60,7 @@ export function useVirtualizerContext() {
 
 function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {hasExpandableRows, ...otherProps} = props;
-  if (getTableNestedRows() && hasExpandableRows) {
+  if (tableNestedRows() && hasExpandableRows) {
     return <TreeGridTableView {...otherProps} ref={ref} />;
   } else {
     return <BaseTableView {...otherProps} ref={ref} />;

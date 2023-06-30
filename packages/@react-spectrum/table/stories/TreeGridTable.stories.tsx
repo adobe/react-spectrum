@@ -27,7 +27,6 @@ export default {
   title: 'TableView/Expandable rows'
 } as ComponentMeta<typeof TableView>;
 
-// TODO: add stories with variable expandedKeys (will need to wait for toggle functionality)
 export const StaticExpandableRows: TableStory = {
   args: {
     'aria-label': 'TableView with static expandable rows',
@@ -325,6 +324,3 @@ export const ResizableColumnsStory: TableStory = {
   ),
   name: 'resizable columns'
 };
-
-
-// TODO: make sorting example? icons in cells
