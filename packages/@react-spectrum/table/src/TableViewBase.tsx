@@ -113,7 +113,6 @@ export interface TableContextValue<T> {
   dragAndDropHooks: DragAndDropHooks['dragAndDropHooks'],
   isTableDraggable: boolean,
   isTableDroppable: boolean,
-  shouldShowCheckboxes: boolean,
   layout: TableLayout<T> & {tableState: TableState<T> | TreeGridState<T>},
   headerRowHovered: boolean,
   isInResizeMode: boolean,
@@ -164,8 +163,6 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
     }
   }, [isTableDraggable, isTableDroppable]);
   let {styleProps} = useStyleProps(props);
-
-  let [showSelectionCheckboxes, setShowSelectionCheckboxes] = useState(props.selectionStyle !== 'highlight');
   let {direction} = useLocale();
   let {scale} = useProvider();
 
@@ -199,12 +196,6 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
   // entering resizing/exiting resizing doesn't trigger a render
   // with table layout, so we need to track it here
   let [, setIsResizing] = useState(false);
-
-  // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
-  let shouldShowCheckboxes = state.selectionManager.selectionBehavior !== 'replace';
-  if (shouldShowCheckboxes !== showSelectionCheckboxes) {
-    setShowSelectionCheckboxes(shouldShowCheckboxes);
-  }
 
   let domRef = useDOMRef(ref);
   let headerRef = useRef<HTMLDivElement>();
@@ -495,7 +486,7 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
   );
 
   return (
-    <TableContext.Provider value={{state, dragState, dropState, dragAndDropHooks, isTableDraggable, isTableDroppable, layout, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, headerMenuOpen, setHeaderMenuOpen, shouldShowCheckboxes}}>
+    <TableContext.Provider value={{state, dragState, dropState, dragAndDropHooks, isTableDraggable, isTableDroppable, layout, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, headerMenuOpen, setHeaderMenuOpen}}>
       <TableVirtualizer
         {...mergedProps}
         {...styleProps}

@@ -32,7 +32,6 @@ function TableView<T extends object>(props: TableProps<T>, ref: DOMRef<HTMLDivEl
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
 
-  // TODO figure out where exactly I need this shouldShowCheckboxes, right now it is in multiple places
   // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
   let shouldShowCheckboxes = state.selectionManager.selectionBehavior !== 'replace';
   if (shouldShowCheckboxes !== showSelectionCheckboxes) {
