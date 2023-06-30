@@ -38,7 +38,17 @@ export {IslamicCivilCalendar, IslamicTabularCalendar, IslamicUmalquraCalendar} f
 export {HebrewCalendar} from './calendars/HebrewCalendar';
 export {EthiopicCalendar, EthiopicAmeteAlemCalendar, CopticCalendar} from './calendars/EthiopicCalendar';
 export {createCalendar} from './createCalendar';
-export {toCalendarDate, toCalendarDateTime, toTime, toCalendar, toZoned, toTimeZone, toLocalTimeZone} from './conversion';
+export {
+  toCalendarDate,
+  toCalendarDateTime,
+  toTime,
+  toCalendar,
+  toZoned,
+  toTimeZone,
+  toLocalTimeZone,
+  fromDate,
+  fromAbsolute
+} from './conversion';
 export {
   isSameDay,
   isSameMonth,
