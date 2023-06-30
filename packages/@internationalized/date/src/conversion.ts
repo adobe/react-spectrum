@@ -191,7 +191,7 @@ export function fromAbsolute(ms: number, timeZone: string): ZonedDateTime {
 }
 
 /**
- * Takes `Date` object and convert it to the provided time zone.
+ * Takes a `Date` object and converts it to the provided time zone.
  */
 export function fromDate(date: Date, timeZone: string): ZonedDateTime {
   return fromAbsolute(date.getTime(), timeZone);
