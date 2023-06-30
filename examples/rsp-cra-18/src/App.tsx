@@ -1,9 +1,8 @@
 import './App.css';
-import {Provider, defaultTheme, Item} from '@adobe/react-spectrum'
+import {Provider, defaultTheme, Item, TagGroup} from '@adobe/react-spectrum'
 import Lighting from './Lighting';
 import {useState} from 'react'
 import BodyContent from './BodyContent';
-import {TagGroup} from '@react-spectrum/tag';
 
 function App() {
   let [selected, setSelection] = useState(false);

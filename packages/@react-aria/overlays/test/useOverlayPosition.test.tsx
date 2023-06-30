@@ -18,7 +18,7 @@ function Example({triggerTop = 250, ...props}) {
   let targetRef = useRef();
   let containerRef = useRef();
   let overlayRef = useRef();
-  let {overlayProps, placement, arrowProps} = useOverlayPosition({targetRef, containerRef, overlayRef, arrowSize: 8, ...props});
+  let {overlayProps, placement, arrowProps} = useOverlayPosition({targetRef, overlayRef, arrowSize: 8, ...props});
   let style = {width: 300, height: 200, ...overlayProps.style};
   return (
     <React.Fragment>
@@ -33,12 +33,15 @@ function Example({triggerTop = 250, ...props}) {
   );
 }
 
+// @ts-ignore
 HTMLElement.prototype.getBoundingClientRect = function () {
   return {
     left: parseInt(this.style.left, 10) || 0,
     top: parseInt(this.style.top, 10) || 0,
+    right: parseInt(this.style.right, 10) || 0,
+    bottom: parseInt(this.style.bottom, 10) || 0,
     width: parseInt(this.style.width, 10) || 0,
-    height: parseInt(this.style.width, 10) || 0
+    height: parseInt(this.style.height, 10) || 0
   };
 };
 

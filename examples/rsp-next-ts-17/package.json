@@ -10,16 +10,16 @@
     "start": "next start",
     "lint": "next lint"
   },
-  "type": "module",
   "dependencies": {
     "@adobe/react-spectrum": "^3.26.0",
     "@react-spectrum/color": "^3.0.0-beta.16",
     "@react-spectrum/toast": "^3.0.0-alpha.0",
     "@spectrum-icons/illustrations": "^3.5.0",
     "@spectrum-icons/workflow": "^4.0.3",
-    "next": "^13.4.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "next": "^12",
+    "next-transpile-modules": "^10.0.0",
+    "react": "^17",
+    "react-dom": "^17"
   },
   "devDependencies": {
     "@types/node": "^18.8.2",
