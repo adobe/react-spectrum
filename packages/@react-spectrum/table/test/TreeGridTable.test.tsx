@@ -521,9 +521,126 @@ describe('TableView with expandable rows', function () {
         expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 2, Foo'));
       });
     });
-    // TODO add End/Home/PageUp/Down and check that it can land on a nested row
 
-    // Test that type to select works with nested rows
+    describe('End', function () {
+      it('should focus the last nested row with End', function () {
+        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />);
+        let rows = treegrid.getAllByRole('row');
+        act(() => {rows[1].focus();});
+        moveFocus('End');
+        rows = treegrid.getAllByRole('row');
+        expect(document.activeElement).toBe(rows.at(-1));
+        expect(document.activeElement).toHaveTextContent('Row 19, Lvl 3, Foo');
+      });
+    });
+
+    describe('Home', function () {
+      it('should focus the first row from a nested row with Home', function () {
+        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />);
+        let rows = treegrid.getAllByRole('row');
+        act(() => {rows[15].focus();});
+        expect(document.activeElement).toHaveTextContent('Row 5, Lvl 3, Foo');
+        moveFocus('Home');
+        expect(document.activeElement).toBe(rows[1]);
+        expect(document.activeElement).toHaveTextContent('Row 1, Lvl 1, Foo');
+      });
+    });
+
+    describe('PageDown', function () {
+      it('should focus a nested row a page below', function () {
+        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />);
+        let rows = treegrid.getAllByRole('row');
+        act(() => {rows[2].focus();});
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(treegrid.getByRole('row', {name: 'Row 9, Lvl 2, Foo'}));
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(treegrid.getByRole('row', {name: 'Row 17, Lvl 2, Foo'}));
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(treegrid.getByRole('row', {name: 'Row 19, Lvl 3, Foo'}));
+      });
+    });
+
+    describe('PageUp', function () {
+      it('should focus a nested row a page above', function () {
+        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />);
+        let rows = treegrid.getAllByRole('row');
+        act(() => {rows[1].focus();});
+        moveFocus('End');
+        moveFocus('PageUp');
+        expect(document.activeElement).toBe(treegrid.getByRole('row', {name: 'Row 11, Lvl 3, Foo'}));
+        moveFocus('PageUp');
+        expect(document.activeElement).toBe(treegrid.getByRole('row', {name: 'Row 3, Lvl 3, Foo'}));
+        moveFocus('PageUp');
+        expect(document.activeElement).toBe(treegrid.getByRole('row', {name: 'Row 1, Lvl 1, Foo'}));
+      });
+    });
+
+    describe('type to select', function () {
+      it('should focus a nested row', function () {
+        let treegrid = render(<StaticExpandableTable expandedKeys="all" />);
+        let rows = treegrid.getAllByRole('row');
+        act(() => {rows[1].focus();});
+        moveFocus('L');
+        moveFocus('v');
+        moveFocus('l');
+        moveFocus(' ');
+        moveFocus('2');
+        expect(document.activeElement).toBe(treegrid.getByRole('row', {name: 'Lvl 2 Foo 1'}));
+      });
+    });
+
+    describe('scrolling', function () {
+      it('should scroll to a cell when it is focused', function () {
+        let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} disabledKeys={null} />);
+        let body = (treegrid.getByRole('treegrid').childNodes[1] as HTMLElement);
+        expect(body.scrollTop).toBe(0);
+
+        focusCell(treegrid, 'Row 9, Lvl 1, Foo');
+        expect(body.scrollTop).toBe(24);
+      });
+
+      it('should scroll to a nested row cell when it is focused off screen', function () {
+        let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={null} />);
+        let body = (treegrid.getByRole('treegrid').childNodes[1] as HTMLElement);
+        let cell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
+        act(() => cell.focus());
+        expect(document.activeElement).toBe(cell);
+        expect(body.scrollTop).toBe(0);
+
+        // When scrolling the focused item out of view, focus should remain on the item,
+        // virtualizer keeps focused items from being reused
+        body.scrollTop = 1000;
+        body.scrollLeft = 1000;
+        fireEvent.scroll(body);
+
+        expect(body.scrollTop).toBe(1000);
+        expect(document.activeElement).toBe(cell);
+
+        // Ensure we have the correct sticky cells in the right order.
+        let row = cell.closest('[role=row]');
+        let cells = within(row).getAllByRole('gridcell');
+        let rowHeaders = within(row).getAllByRole('rowheader');
+        expect(cells).toHaveLength(3);
+        expect(rowHeaders).toHaveLength(1);
+        expect(cells[0]).toHaveAttribute('aria-colindex', '1'); // checkbox
+        expect(rowHeaders[0]).toHaveAttribute('aria-colindex', '2'); // rowheader
+        expect(rowHeaders[0]).toBe(cell);
+        expect(cells[1]).toHaveAttribute('aria-colindex', '3');
+        expect(cells[1]).toHaveTextContent('Row 1, Lvl 3, Bar');
+        expect(cells[2]).toHaveAttribute('aria-colindex', '4');
+        expect(cells[2]).toHaveTextContent('Row 1, Lvl 3, Baz');
+
+        let rowgroups = treegrid.getAllByRole('rowgroup');
+        let rows = within(rowgroups[1]).getAllByRole('row');
+        expect(within(rows[0]).getByRole('rowheader')).toHaveTextContent('Row 1, Lvl 3, Foo');
+        expect(within(rows[1]).getByRole('rowheader')).toHaveTextContent('Row 9, Lvl 1, Foo');
+
+        // Moving focus should scroll the new focused item into view
+        moveFocus('ArrowRight');
+        expect(body.scrollTop).toBe(82);
+        expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 3, Bar'));
+      });
+    });
   });
 
   describe('selection', function () {
@@ -642,7 +759,6 @@ describe('TableView with expandable rows', function () {
           let rows = within(rowgroups[1]).getAllByRole('row');
           let cell = getCell(treegrid, 'Row 1, Lvl 1, Foo');
 
-
           checkRowSelection(rows, false);
           pressWithKeyboard(cell);
           checkSelection(onSelectionChange, [
@@ -651,6 +767,33 @@ describe('TableView with expandable rows', function () {
           checkRowSelection(rows.slice(0, 1), true);
           checkSelectAll(treegrid);
         });
+      });
+
+      it('should select nested rows if select all checkbox is pressed', function () {
+        let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={null} onAction={null} />);
+        let checkbox = treegrid.getByLabelText('Select All');
+        let rowgroups = treegrid.getAllByRole('rowgroup');
+        let rows = within(rowgroups[1]).getAllByRole('row');
+        triggerPress(checkbox);
+        checkRowSelection(rows, true);
+        checkSelectAll(treegrid, 'checked');
+      });
+
+      it('should not allow selection of disabled nested rows', function () {
+        let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={['Row 1 Lvl 2']} onAction={null} />);
+        let rowgroups = treegrid.getAllByRole('rowgroup');
+        let rows = within(rowgroups[1]).getAllByRole('row');
+        let cell = getCell(treegrid, 'Row 1, Lvl 2, Foo');
+
+        triggerPress(cell);
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        checkRowSelection(rows, false);
+
+        let checkbox = treegrid.getByLabelText('Select All');
+        triggerPress(checkbox);
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        expect(new Set(onSelectionChange.mock.calls[0][0]).has('Row 1 Lvl 2')).toBeFalsy();
+        checkRowSelection([rows[1]], false);
       });
     });
 
@@ -915,9 +1058,8 @@ describe('TableView with expandable rows', function () {
         let rowgroups = treegrid.getAllByRole('rowgroup');
         let rows = within(rowgroups[1]).getAllByRole('row');
         let cell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
-        // TODO: Not sure why this is complaining about the type...
-        // @ts-ignore
-        userEvent.click(cell, {pointerType: Name});
+        fireEvent.pointerDown(cell, {pointerType: Name, pointerId: 1});
+        fireEvent.pointerUp(cell, {pointerType: Name, pointerId: 1});
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).toHaveBeenCalledTimes(1);
         expect(onAction).toHaveBeenLastCalledWith('Row 1 Lvl 3');
@@ -930,8 +1072,8 @@ describe('TableView with expandable rows', function () {
         checkRowSelection([rows[0]], true);
         onSelectionChange.mockReset();
 
-        // @ts-ignore
-        userEvent.click(cell, {pointerType: Name});
+        fireEvent.pointerDown(cell, {pointerType: Name, pointerId: 1});
+        fireEvent.pointerUp(cell, {pointerType: Name, pointerId: 1});
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['Row 1 Lvl 1', 'Row 1 Lvl 3']);
         checkRowSelection([rows[0], rows[2]], true);
@@ -971,8 +1113,8 @@ describe('TableView with expandable rows', function () {
         let cell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
 
         checkRowSelection(rows, false);
-        // @ts-ignore
-        userEvent.click(cell, {pointerType: 'mouse'});
+        fireEvent.pointerDown(cell, {pointerType: 'mouse', pointerId: 1});
+        fireEvent.pointerUp(cell, {pointerType: 'mouse', pointerId: 1});
         expect(announce).toHaveBeenLastCalledWith('Row 1, Lvl 3, Foo selected.');
         expect(announce).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['Row 1 Lvl 3']);
@@ -980,8 +1122,8 @@ describe('TableView with expandable rows', function () {
         onSelectionChange.mockReset();
 
         cell = getCell(treegrid, 'Row 1, Lvl 1, Foo');
-        // @ts-ignore
-        userEvent.click(cell, {pointerType: 'mouse'});
+        fireEvent.pointerDown(cell, {pointerType: 'mouse', pointerId: 1});
+        fireEvent.pointerUp(cell, {pointerType: 'mouse', pointerId: 1});
         expect(announce).toHaveBeenLastCalledWith('Row 1, Lvl 1, Foo selected.');
         expect(announce).toHaveBeenCalledTimes(2);
         checkSelection(onSelectionChange, ['Row 1 Lvl 1']);
@@ -998,8 +1140,8 @@ describe('TableView with expandable rows', function () {
         let cell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
 
         checkRowSelection(rows, false);
-        // @ts-ignore
-        userEvent.click(cell, {pointerType: 'touch'});
+        fireEvent.pointerDown(cell, {pointerType: 'touch', pointerId: 1});
+        fireEvent.pointerUp(cell, {pointerType: 'touch', pointerId: 1});
         expect(announce).toHaveBeenLastCalledWith('Row 1, Lvl 3, Foo selected.');
         expect(announce).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['Row 1 Lvl 3']);
@@ -1007,8 +1149,8 @@ describe('TableView with expandable rows', function () {
         onSelectionChange.mockReset();
 
         cell = getCell(treegrid, 'Row 1, Lvl 1, Foo');
-        // @ts-ignore
-        userEvent.click(cell, {pointerType: 'touch'});
+        fireEvent.pointerDown(cell, {pointerType: 'touch', pointerId: 1});
+        fireEvent.pointerUp(cell, {pointerType: 'touch', pointerId: 1});
         expect(announce).toHaveBeenLastCalledWith('Row 1, Lvl 1, Foo selected. 2 items selected.');
         expect(announce).toHaveBeenCalledTimes(2);
         checkSelection(onSelectionChange, ['Row 1 Lvl 1', 'Row 1 Lvl 3']);
@@ -1036,17 +1178,17 @@ describe('TableView with expandable rows', function () {
         fireEvent.pointerUp(firstCell, {pointerType: 'touch'});
         onSelectionChange.mockReset();
 
-        // @ts-ignore
-        userEvent.click(secondCell, {pointerType: 'touch'});
+        fireEvent.pointerDown(secondCell, {pointerType: 'touch', pointerId: 1});
+        fireEvent.pointerUp(secondCell, {pointerType: 'touch', pointerId: 1});
         checkSelection(onSelectionChange, ['Row 1 Lvl 1', 'Row 1 Lvl 3']);
         checkRowSelection([rows[0], rows[2]], true);
 
         // Deselect all to exit selection mode
-        // @ts-ignore
-        userEvent.click(firstCell, {pointerType: 'touch'});
+        fireEvent.pointerDown(firstCell, {pointerType: 'touch', pointerId: 1});
+        fireEvent.pointerUp(firstCell, {pointerType: 'touch', pointerId: 1});
         onSelectionChange.mockReset();
-        // @ts-ignore
-        userEvent.click(secondCell, {pointerType: 'touch'});
+        fireEvent.pointerDown(secondCell, {pointerType: 'touch', pointerId: 1});
+        fireEvent.pointerUp(secondCell, {pointerType: 'touch', pointerId: 1});
 
         act(() => jest.runAllTimers());
         checkSelection(onSelectionChange, []);
@@ -1063,8 +1205,8 @@ describe('TableView with expandable rows', function () {
         let cell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
 
         checkRowSelection(rows, false);
-        // @ts-ignore
-        userEvent.click(cell, {pointerType: 'mouse'});
+        fireEvent.pointerDown(cell, {pointerType: 'mouse', pointerId: 1});
+        fireEvent.pointerUp(cell, {pointerType: 'mouse', pointerId: 1});
         expect(announce).toHaveBeenLastCalledWith('Row 1, Lvl 3, Foo selected.');
         expect(announce).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['Row 1 Lvl 3']);
@@ -1083,8 +1225,8 @@ describe('TableView with expandable rows', function () {
         expect(treegrid.queryByLabelText('Select All')).toBeNull();
         let cell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
 
-        // @ts-ignore
-        userEvent.click(cell, {pointerType: 'touch'});
+        fireEvent.pointerDown(cell, {pointerType: 'touch', pointerId: 1});
+        fireEvent.pointerUp(cell, {pointerType: 'touch', pointerId: 1});
         expect(announce).not.toHaveBeenCalled();
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).toHaveBeenCalledTimes(1);
@@ -1161,9 +1303,5 @@ describe('TableView with expandable rows', function () {
   });
 
   // TODO: write tests for the following
-  // selection (selected when all selection checkbox is pressed)
   // expanding/collapsing table (pointer/touch), check the aria values set (wait for interactions to be finalized to make testing that easier)
-  // persisted keys
-  // keyboard interaction (page up/down, home, end)
-  // calculated aria attributes update when rows are expanded/collapsed
 });

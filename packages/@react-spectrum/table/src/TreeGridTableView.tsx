@@ -15,6 +15,7 @@ import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {chain, isAndroid, mergeProps, scrollIntoView, scrollIntoViewport} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
+import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {
   classNames,
@@ -65,7 +66,6 @@ import {
   useTableSelectionCheckbox
 } from '@react-aria/table';
 import {useVisuallyHidden, VisuallyHidden} from '@react-aria/visually-hidden';
-import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 
 // TODO: diff this versus TableView and import stuff that we haven't changed instead of duplicating it
 
