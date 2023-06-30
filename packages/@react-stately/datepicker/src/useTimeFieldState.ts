@@ -47,7 +47,7 @@ export function useTimeFieldState<T extends TimeValue = TimeValue>(props: TimeFi
     let valueTimeZone = v && 'timeZone' in v ? v.timeZone : undefined;
 
     return (valueTimeZone || defaultValueTimeZone) && placeholderValue ? toZoned(convertValue(placeholderValue), valueTimeZone || defaultValueTimeZone) : convertValue(placeholderValue);
-  }, [placeholderValue]);
+  }, [placeholderValue, v, defaultValueTimeZone]);
   let minDate = useMemo(() => convertValue(minValue, day), [minValue, day]);
   let maxDate = useMemo(() => convertValue(maxValue, day), [maxValue, day]);
 
