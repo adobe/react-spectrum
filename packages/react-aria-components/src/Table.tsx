@@ -177,18 +177,18 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
   }
 }
 
-interface TableContainerContextValue {
+interface ResizableTableContainerContextValue {
   tableWidth: number,
-  // Dependency inject useTableColumnResizeState so it doesn't affect bundle size unless you're using TableContainer.
+  // Dependency inject useTableColumnResizeState so it doesn't affect bundle size unless you're using ResizableTableContainer.
   useTableColumnResizeState: typeof useTableColumnResizeState,
   onResizeStart?: (widths: Map<Key, ColumnSize>) => void,
   onResize?: (widths: Map<Key, ColumnSize>) => void,
   onResizeEnd?: (widths: Map<Key, ColumnSize>) => void
 }
 
-const TableContainerContext = createContext<TableContainerContextValue | null>(null);
+const ResizableTableContainerContext = createContext<ResizableTableContainerContextValue | null>(null);
 
-export interface TableContainerProps extends DOMProps {
+export interface ResizableTableContainerProps extends DOMProps {
   /**
    * Handler that is called when a user starts a column resize.
    */
@@ -206,7 +206,7 @@ export interface TableContainerProps extends DOMProps {
   onResizeEnd?: (widths: Map<Key, ColumnSize>) => void
 }
 
-function TableContainer(props: TableContainerProps, ref: ForwardedRef<HTMLDivElement>) {
+function ResizableTableContainer(props: ResizableTableContainerProps, ref: ForwardedRef<HTMLDivElement>) {
   let objectRef = useObjectRef(ref);
   let [width, setWidth] = useState(0);
   useResizeObserver({
@@ -232,17 +232,17 @@ function TableContainer(props: TableContainerProps, ref: ForwardedRef<HTMLDivEle
     <div
       {...filterDOMProps(props as any)}
       ref={objectRef}
-      className={props.className || 'react-aria-TableContainer'}
+      className={props.className || 'react-aria-ResizableTableContainer'}
       style={props.style}>
-      <TableContainerContext.Provider value={ctx}>
+      <ResizableTableContainerContext.Provider value={ctx}>
         {props.children}
-      </TableContainerContext.Provider>
+      </ResizableTableContainerContext.Provider>
     </div>
   );
 }
 
-const _TableContainer = forwardRef(TableContainer);
-export {_TableContainer as TableContainer};
+const _ResizableTableContainer = forwardRef(ResizableTableContainer);
+export {_ResizableTableContainer as ResizableTableContainer};
 
 interface InternalTableContextValue {
   state: TableState<unknown>,
@@ -383,7 +383,7 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
   }), [selectionBehavior, selectionMode, disallowEmptySelection, isListDraggable]);
 
   let style = renderProps.style;
-  let tableContainerContext = useContext(TableContainerContext);
+  let tableContainerContext = useContext(ResizableTableContainerContext);
   let layoutState: TableColumnResizeState<unknown> | undefined = undefined;
   if (tableContainerContext) {
     layoutState = tableContainerContext.useTableColumnResizeState({
@@ -513,7 +513,7 @@ export interface ColumnRenderProps {
    */
   sort(direction: SortDirection): void,
   /**
-   * Starts column resizing if the table is contained in a `<TableContainer>` element.
+   * Starts column resizing if the table is contained in a `<ResizableTableContainer>` element.
    */
   startResize(): void
 }
@@ -816,7 +816,7 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
           layoutState.startResize(column.key);
           state.setKeyboardNavigationDisabled(true);
         } else {
-          throw new Error('Wrap your <Table> in a <TableContainer> to enable column resizing');
+          throw new Error('Wrap your <Table> in a <ResizableTableContainer> to enable column resizing');
         }
       },
       sort: (direction) => {
@@ -882,10 +882,10 @@ export interface ColumnResizerProps extends RenderProps<ColumnResizerRenderProps
 function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivElement>) {
   let {layoutState} = useContext(InternalTableContext)!;
   if (!layoutState) {
-    throw new Error('Wrap your <Table> in a <TableContainer> to enable column resizing');
+    throw new Error('Wrap your <Table> in a <ResizableTableContainer> to enable column resizing');
   }
 
-  let {onResizeStart, onResize, onResizeEnd} = useContext(TableContainerContext)!;
+  let {onResizeStart, onResize, onResizeEnd} = useContext(ResizableTableContainerContext)!;
   let {column, triggerRef} = useContext(ColumnResizerContext)!;
   let inputRef = useRef<HTMLInputElement>(null);
   let {resizerProps, inputProps, isResizing} = useTableColumnResize(
