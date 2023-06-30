@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, DOMRef, DropTarget, FocusableElement, FocusableRef, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
-import {chain, mergeProps, scrollIntoView, scrollIntoViewport} from '@react-aria/utils';
+import {chain, isAndroid, mergeProps, scrollIntoView, scrollIntoViewport} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
+import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
+import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {
   classNames,
   useDOMRef,
@@ -23,7 +24,8 @@ import {
   useStyleProps,
   useUnwrapDOMRef
 } from '@react-spectrum/utils';
-import {ColumnSize, SpectrumColumnProps, TableProps} from '@react-types/table';
+import {ColumnSize, SpectrumColumnProps} from '@react-types/table';
+import {DOMRef, DropTarget, FocusableElement, FocusableRef} from '@react-types/shared';
 import type {DragAndDropHooks} from '@react-spectrum/dnd';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
 import type {DraggableItemResult, DropIndicatorAria, DroppableCollectionResult, DroppableItemResult} from '@react-aria/dnd';
@@ -43,10 +45,10 @@ import {Resizer} from './Resizer';
 import {ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
 import {RootDropIndicator} from './RootDropIndicator';
 import {DragPreview as SpectrumDragPreview} from './DragPreview';
+import {SpectrumTableProps} from './TableViewWrapper';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
-import {TableColumnLayout, TableState, useTableState} from '@react-stately/table';
-import {TableContext, useTableContext, VirtualizerContext} from './TableViewWrapper';
+import {TableColumnLayout, TableState, TreeGridState} from '@react-stately/table';
 import {TableLayout} from '@react-stately/layout';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {useButton} from '@react-aria/button';
@@ -99,53 +101,55 @@ const DRAG_BUTTON_CELL_DEFAULT_WIDTH = {
   large: 20
 };
 
-export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionProps, DOMProps, AriaLabelingProps, StyleProps {
-  /**
-   * Sets the amount of vertical padding within each cell.
-   * @default 'regular'
-   */
-  density?: 'compact' | 'regular' | 'spacious',
-  /**
-   * Sets the overflow behavior for the cell contents.
-   * @default 'truncate'
-   */
-  overflowMode?: 'wrap' | 'truncate',
-  /** Whether the TableView should be displayed with a quiet style. */
-  isQuiet?: boolean,
-  /** Sets what the TableView should render when there is no content to display. */
-  renderEmptyState?: () => JSX.Element,
-  /** Handler that is called when a user performs an action on a row. */
-  onAction?: (key: Key) => void,
-  /**
-   * Handler that is called when a user starts a column resize.
-   */
-  onResizeStart?: (widths: Map<Key, ColumnSize>) => void,
-  /**
-   * Handler that is called when a user performs a column resize.
-   * Can be used with the width property on columns to put the column widths into
-   * a controlled state.
-   */
-  onResize?: (widths: Map<Key, ColumnSize>) => void,
-  /**
-   * Handler that is called after a user performs a column resize.
-   * Can be used to store the widths of columns for another future session.
-   */
-  onResizeEnd?: (widths: Map<Key, ColumnSize>) => void,
-  /**
-   * The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the TableView.
-   * @version alpha
-   */
-  dragAndDropHooks?: DragAndDropHooks['dragAndDropHooks']
+const LEVEL_OFFSET_WIDTH = {
+  medium: 16,
+  large: 20
+};
+
+export interface TableContextValue<T> {
+  state: TableState<T> | TreeGridState<T>,
+  dragState: DraggableCollectionState,
+  dropState: DroppableCollectionState,
+  dragAndDropHooks: DragAndDropHooks['dragAndDropHooks'],
+  isTableDraggable: boolean,
+  isTableDroppable: boolean,
+  shouldShowCheckboxes: boolean,
+  layout: TableLayout<T> & {tableState: TableState<T> | TreeGridState<T>},
+  headerRowHovered: boolean,
+  isInResizeMode: boolean,
+  setIsInResizeMode: (val: boolean) => void,
+  isEmpty: boolean,
+  onFocusedResizer: () => void,
+  onResizeStart: (widths: Map<Key, ColumnSize>) => void,
+  onResize: (widths: Map<Key, ColumnSize>) => void,
+  onResizeEnd: (widths: Map<Key, ColumnSize>) => void,
+  headerMenuOpen: boolean,
+  setHeaderMenuOpen: (val: boolean) => void
 }
 
-function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const TableContext = React.createContext<TableContextValue<unknown>>(null);
+export function useTableContext() {
+  return useContext(TableContext);
+}
+
+export const VirtualizerContext = React.createContext(null);
+export function useVirtualizerContext() {
+  return useContext(VirtualizerContext);
+}
+
+interface TableBaseProps<T> extends SpectrumTableProps<T> {
+  state: TableState<T> | TreeGridState<T>
+}
+
+function TableView<T extends object>(props: TableBaseProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let {
     isQuiet,
     onAction,
     onResizeStart: propsOnResizeStart,
     onResizeEnd: propsOnResizeEnd,
-    dragAndDropHooks
+    dragAndDropHooks,
+    state
   } = props;
   let isTableDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
   let isTableDroppable = !!dragAndDropHooks?.useDroppableCollectionState;
@@ -195,12 +199,6 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   // entering resizing/exiting resizing doesn't trigger a render
   // with table layout, so we need to track it here
   let [, setIsResizing] = useState(false);
-  let state = useTableState({
-    ...props,
-    showSelectionCheckboxes,
-    showDragButtons: isTableDraggable,
-    selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
-  });
 
   // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
   let shouldShowCheckboxes = state.selectionManager.selectionBehavior !== 'replace';
@@ -251,7 +249,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         return prop === 'tableState' ? state : Reflect.get(target, prop, receiver);
       }
     });
-    return proxy as TableLayout<T> & {tableState: TableState<T>};
+    return proxy as TableLayout<T> & {tableState: TableState<T> | TreeGridState<T>};
   }, [state, tableLayout]);
 
   let dragState: DraggableCollectionState;
@@ -395,7 +393,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
           return <TableDragCell cell={item} />;
         }
 
-        return <TableCell cell={item} />;
+        return <TableCell cell={item} scale={scale} />;
       }
       case 'placeholder':
         // TODO: move to react-aria?
@@ -1352,8 +1350,9 @@ function TableCheckboxCell({cell}) {
   );
 }
 
-function TableCell({cell}) {
+function TableCell({cell, scale}) {
   let {state} = useTableContext();
+  let isExpandableTable = 'expandedKeys' in state;
   let ref = useRef();
   let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
   let isDisabled = state.disabledKeys.has(cell.parentKey);
@@ -1361,12 +1360,26 @@ function TableCell({cell}) {
     node: cell,
     isVirtualized: true
   }, state, ref);
+  let {id, ...otherGridCellProps} = gridCellProps;
+  let isFirstRowHeaderCell = state.collection.rowHeaderColumnKeys.keys().next().value === cell.column.key;
+  let isRowExpandable = false;
+  let showExpandCollapseButton = false;
+  let levelOffset = 0;
+
+  if ('expandedKeys' in state) {
+    isRowExpandable = state.keyMap.get(cell.parentKey)?.props.childItems?.length > 0 || state.keyMap.get(cell.parentKey)?.props?.children?.length > state.userColumnCount;
+    showExpandCollapseButton = isFirstRowHeaderCell && isRowExpandable;
+    // Offset based on level, and add additional offset if there is no expand/collapse button on a row
+    levelOffset = (cell.level - 2) * LEVEL_OFFSET_WIDTH[scale] + (!showExpandCollapseButton ? LEVEL_OFFSET_WIDTH[scale] * 2 : 0);
+  }
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
-        {...gridCellProps}
+        {...otherGridCellProps}
+        aria-labelledby={id}
         ref={ref}
+        style={isExpandableTable && isFirstRowHeaderCell ? {paddingInlineStart: levelOffset} : {}}
         className={
           classNames(
             styles,
@@ -1382,12 +1395,15 @@ function TableCell({cell}) {
               {
                 'react-spectrum-Table-cell--alignStart': columnProps.align === 'start',
                 'react-spectrum-Table-cell--alignCenter': columnProps.align === 'center',
-                'react-spectrum-Table-cell--alignEnd': columnProps.align === 'end'
+                'react-spectrum-Table-cell--alignEnd': columnProps.align === 'end',
+                'react-spectrum-Table-cell--hasExpandCollapseButton': showExpandCollapseButton
               }
             )
           )
         }>
+        {showExpandCollapseButton && <ExpandableRowChevron cell={cell} />}
         <span
+          id={id}
           className={
             classNames(
               styles,
@@ -1401,12 +1417,68 @@ function TableCell({cell}) {
   );
 }
 
+function ExpandableRowChevron({cell}) {
+   // TODO: move some/all of the chevron button setup into a separate hook?
+  let {direction} = useLocale();
+  let {state} = useTableContext();
+  let expandButtonRef = useRef();
+  let isExpanded;
+
+  if ('expandedKeys' in state) {
+    isExpanded = state.expandedKeys === 'all' || state.expandedKeys.has(cell.parentKey);
+  }
+
+  // Will need to keep the chevron as a button for iOS VO at all times since VO doesn't focus the cell. Also keep as button if cellAction is defined by the user in the future
+  let {buttonProps} = useButton({
+    // Desktop and mobile both toggle expansion of a native expandable row on mouse/touch up
+    onPress: () => (state as TreeGridState<unknown>).toggleKey(cell.parentKey),
+    elementType: 'span',
+    // TODO: will need translations.
+    'aria-label': isExpanded ? 'Collapse' : 'Expand'
+  }, expandButtonRef);
+
+  return (
+    <span
+      {...buttonProps}
+      ref={expandButtonRef}
+      // Override tabindex so that grid keyboard nav skips over it. Needs -1 so android talkback can actually "focus" it
+      // TODO: For Talkback perhaps can make the chevron completely unfocusable by making tabIndex =-1 if cellAction is undefined by user and thus pressing on the chevron cell will expand the row?
+      tabIndex={isAndroid() ? -1 : undefined}
+      className={
+        classNames(
+          styles,
+          'spectrum-Table-expandButton',
+          {
+            'is-open': isExpanded
+          }
+        )
+      }>
+      {direction === 'ltr' ? <ChevronRightMedium /> : <ChevronLeftMedium />}
+    </span>
+  );
+}
+
 function CenteredWrapper({children}) {
   let {state} = useTableContext();
+  let rowProps;
+
+  if ('expandedKeys' in state) {
+    let topLevelRowCount = [...state.keyMap.get(state.collection.body.key).childNodes].length;
+    rowProps = {
+      'aria-level': 1,
+      'aria-posinset': topLevelRowCount + 1,
+      'aria-setsize': topLevelRowCount + 1
+    };
+  } else {
+    rowProps = {
+      'aria-rowindex': state.collection.headerRows.length + state.collection.size + 1
+    };
+  }
+
   return (
     <div
       role="row"
-      aria-rowindex={state.collection.headerRows.length + state.collection.size + 1}
+      {...rowProps}
       className={classNames(stylesOverrides, 'react-spectrum-Table-centeredWrapper')}>
       <div role="rowheader" aria-colspan={state.collection.columns.length}>
         {children}
@@ -1418,6 +1490,6 @@ function CenteredWrapper({children}) {
 /**
  * Tables are containers for displaying information. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
  */
-const _TableView = React.forwardRef(TableView) as <T>(props: SpectrumTableProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
+const _TableView = React.forwardRef(TableView) as <T>(props: TableBaseProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 
 export {_TableView as BaseTableView};

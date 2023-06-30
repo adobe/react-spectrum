@@ -11,7 +11,7 @@
  */
 
 import React, {useRef} from 'react';
-import {useTableContext} from './TableViewWrapper';
+import {useTableContext} from './TableView';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
 export function RootDropIndicator() {

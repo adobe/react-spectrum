@@ -10,52 +10,53 @@
  * governing permissions and limitations under the License.
  */
 
-import {BaseTableView} from './TableView';
-import {ColumnSize} from '@react-types/table';
-import {DOMRef} from '@react-types/shared';
+import type {AriaLabelingProps, DOMProps, DOMRef, Expandable, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import type {ColumnSize, TableProps} from '@react-types/table';
 import type {DragAndDropHooks} from '@react-spectrum/dnd';
-import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
-import React, {Key, ReactElement, useContext} from 'react';
-import {SpectrumTreeGridProps, TreeGridTableView} from './TreeGridTableView';
-import {TableLayout} from '@react-stately/layout';
+import React, {Key, ReactElement} from 'react';
 import {tableNestedRows} from '@react-stately/flags';
-import type {TableState, TreeGridState} from '@react-stately/table';
+import {TableViewBlah} from './TableViewBlah';
+import {TreeGridTableView} from './TreeGridTableView';
 
-export interface SpectrumTableProps<T> extends SpectrumTreeGridProps<T> {
+export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionProps, DOMProps, AriaLabelingProps, StyleProps, Expandable {
+  /**
+   * Sets the amount of vertical padding within each cell.
+   * @default 'regular'
+   */
+  density?: 'compact' | 'regular' | 'spacious',
+  /**
+   * Sets the overflow behavior for the cell contents.
+   * @default 'truncate'
+   */
+  overflowMode?: 'wrap' | 'truncate',
+  /** Whether the TableView should be displayed with a quiet style. */
+  isQuiet?: boolean,
+  /** Sets what the TableView should render when there is no content to display. */
+  renderEmptyState?: () => JSX.Element,
+  /** Handler that is called when a user performs an action on a row. */
+  onAction?: (key: Key) => void,
+  /**
+   * Handler that is called when a user starts a column resize.
+   */
+  onResizeStart?: (widths: Map<Key, ColumnSize>) => void,
+  /**
+   * Handler that is called when a user performs a column resize.
+   * Can be used with the width property on columns to put the column widths into
+   * a controlled state.
+   */
+  onResize?: (widths: Map<Key, ColumnSize>) => void,
+  /**
+   * Handler that is called after a user performs a column resize.
+   * Can be used to store the widths of columns for another future session.
+   */
+  onResizeEnd?: (widths: Map<Key, ColumnSize>) => void,
+  /**
+   * The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the TableView.
+   * @version alpha
+   */
+  dragAndDropHooks?: DragAndDropHooks['dragAndDropHooks'],
   /** Whether the TableView should support expandable rows.  */
   hasExpandableRows?: boolean
-}
-
-// TODO: figure out how to properly define the state here so that TableView and TreeGridTableView get the specific state type
-export interface TableContextValue<T> {
-  state: TableState<T> | TreeGridState<T>,
-  dragState: DraggableCollectionState,
-  dropState: DroppableCollectionState,
-  dragAndDropHooks: DragAndDropHooks['dragAndDropHooks'],
-  isTableDraggable: boolean,
-  isTableDroppable: boolean,
-  shouldShowCheckboxes: boolean,
-  layout: TableLayout<T> & {tableState: TableState<T> | TreeGridState<T>},
-  headerRowHovered: boolean,
-  isInResizeMode: boolean,
-  setIsInResizeMode: (val: boolean) => void,
-  isEmpty: boolean,
-  onFocusedResizer: () => void,
-  onResizeStart: (widths: Map<Key, ColumnSize>) => void,
-  onResize: (widths: Map<Key, ColumnSize>) => void,
-  onResizeEnd: (widths: Map<Key, ColumnSize>) => void,
-  headerMenuOpen: boolean,
-  setHeaderMenuOpen: (val: boolean) => void
-}
-
-export const TableContext = React.createContext<TableContextValue<unknown>>(null);
-export function useTableContext() {
-  return useContext(TableContext);
-}
-
-export const VirtualizerContext = React.createContext(null);
-export function useVirtualizerContext() {
-  return useContext(VirtualizerContext);
 }
 
 function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
@@ -63,7 +64,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   if (tableNestedRows() && hasExpandableRows) {
     return <TreeGridTableView {...otherProps} ref={ref} />;
   } else {
-    return <BaseTableView {...otherProps} ref={ref} />;
+    return <TableViewBlah {...otherProps} ref={ref} />;
   }
 }
 

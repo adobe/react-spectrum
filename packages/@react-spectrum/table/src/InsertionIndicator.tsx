@@ -14,7 +14,7 @@ import {classNames} from '@react-spectrum/utils';
 import {FocusableElement, ItemDropTarget} from '@react-types/shared';
 import React, {DOMAttributes, HTMLAttributes, useRef} from 'react';
 import styles from './table.css';
-import {useTableContext} from './TableViewWrapper';
+import {useTableContext} from './TableView';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
 interface InsertionIndicatorProps {

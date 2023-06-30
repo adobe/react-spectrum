@@ -14,24 +14,25 @@ import {BaseTableView} from './TableView';
 import {DOMRef} from '@react-types/shared';
 import React, {ReactElement, useState} from 'react';
 import {SpectrumTableProps} from './TableViewWrapper';
-import {useTreeGridState} from '@react-stately/table';
+import {useTableState} from '@react-stately/table';
 
-export interface TreeGridTableProps<T> extends Omit<SpectrumTableProps<T>, 'hasExpandableRows'> {}
+interface TableProps<T> extends Omit<SpectrumTableProps<T>, 'hasExpandableRows'> {}
 
-function TreeGridTableView<T extends object>(props: TreeGridTableProps<T>, ref: DOMRef<HTMLDivElement>) {
+function TableView<T extends object>(props: TableProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {
     selectionStyle,
     dragAndDropHooks
   } = props;
   let [showSelectionCheckboxes, setShowSelectionCheckboxes] = useState(selectionStyle !== 'highlight');
   let isTableDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
-  let state = useTreeGridState({
+  let state = useTableState({
     ...props,
     showSelectionCheckboxes,
     showDragButtons: isTableDraggable,
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
 
+  // TODO figure out where exactly I need this shouldShowCheckboxes, right now it is in multiple places
   // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
   let shouldShowCheckboxes = state.selectionManager.selectionBehavior !== 'replace';
   if (shouldShowCheckboxes !== showSelectionCheckboxes) {
@@ -43,5 +44,5 @@ function TreeGridTableView<T extends object>(props: TreeGridTableProps<T>, ref: 
   );
 }
 
-const _TreeGridTableView = React.forwardRef(TreeGridTableView) as <T>(props: TreeGridTableProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
-export {_TreeGridTableView as TreeGridTableView};
+const _TableView = React.forwardRef(TableView) as <T>(props: TableProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
+export {_TableView as TableViewBlah};
