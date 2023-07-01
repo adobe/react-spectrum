@@ -75,9 +75,9 @@ let rerender = (tree, children, scale = 'medium' as Scale) => {
 
 enableTableNestedRows();
 
-describe('TableView tests with expandable rows flag on', tableTests);
+describe.only('TableView tests with expandable rows flag on', tableTests);
 
-describe('TableView with expandable rows', function () {
+describe.only('TableView with expandable rows', function () {
   beforeAll(function () {
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
