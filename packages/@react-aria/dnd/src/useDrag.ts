@@ -170,6 +170,9 @@ export function useDrag(options: DragOptions): DragResult {
   };
 
   let onDrag = (e: DragEvent) => {
+    // Prevent the drag event from propagating to any parent draggables
+    e.stopPropagation();
+
     if (e.clientX === state.x && e.clientY === state.y) {
       return;
     }
@@ -187,6 +190,9 @@ export function useDrag(options: DragOptions): DragResult {
   };
 
   let onDragEnd = (e: DragEvent) => {
+    // Prevent the drag event from propagating to any parent draggables
+    e.stopPropagation();
+
     if (typeof options.onDragEnd === 'function') {
       let event: DragEndEvent = {
         type: 'dragend',
