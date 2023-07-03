@@ -38,6 +38,25 @@ describe('SSRProvider', function () {
     }
   });
 
+  it('it should generate valid id', function () {
+    let tree = render(
+      <SSRProvider>
+        <Test />
+        <Test />
+      </SSRProvider>
+    );
+
+    let divs = tree.getAllByTestId('test');
+
+    // CSS selector regex
+    // This will match strings composed of letters, digits, dashes, underscores, colons, periods, hash symbols,
+    // commas, spaces, >, *, and square brackets.
+    // Invalid characters that aren't properly escaped with two backslashes will fail the test.
+    var regex = /^(\\.|[\w-]|[^0-9a-z])*$/i;
+
+    expect(regex.test(divs[0].id)).toBe(true);
+  });
+
   it('it should generate consistent unique ids with nested SSR providers', function () {
     let tree = render(
       <SSRProvider>
