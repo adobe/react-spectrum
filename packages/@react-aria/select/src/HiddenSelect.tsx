@@ -30,6 +30,11 @@ export interface AriaHiddenSelectProps {
 
   /** Sets the disabled state of the select and input. */
   isDisabled?: boolean
+
+  /** Adds an arbitrary data attribute data-rsp-a11Ignore.
+   * Useful for ignore false positive a11y issues with tools such as pa11y
+   * */
+  hasA11yIgnoreDataAttr?: boolean
 }
 
 export interface HiddenSelectProps<T> extends AriaHiddenSelectProps {
@@ -135,6 +140,7 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
         name={name}
         disabled={isDisabled}
         value={state.selectedKey ?? ''} />
+        data-rsp-a11Ignore={props.hasA11yIgnoreDataAttr}
     );
   }
 
