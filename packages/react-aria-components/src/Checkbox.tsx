@@ -40,7 +40,21 @@ export interface CheckboxGroupRenderProps {
    * The validation state of the checkbox group.
    * @selector [data-validation-state="invalid" | "valid"]
    */
-  validationState: ValidationState
+  validationState: ValidationState,
+  /**
+   * Whether an element within the checkbox group is focused, either via a mouse or keyboard.
+   * @selector :focus-within
+   */
+  isFocusWithin: boolean,
+  /**
+   * Whether an element within the checkbox group is keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
+   * State of the checkbox group.
+   */
+  state: CheckboxGroupState
 }
 
 export interface CheckboxRenderProps {
@@ -103,6 +117,7 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivEleme
   [props, ref] = useContextProps(props, ref, CheckboxGroupContext);
   let state = useCheckboxGroupState(props);
   let [labelRef, label] = useSlot();
+  let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
   let {groupProps, labelProps, descriptionProps, errorMessageProps} = useCheckboxGroup({
     ...props,
     label
@@ -114,20 +129,26 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivEleme
       isDisabled: state.isDisabled,
       isReadOnly: state.isReadOnly,
       isRequired: props.isRequired || false,
-      validationState: state.validationState
+      validationState: state.validationState,
+      isFocusWithin: isFocused,
+      isFocusVisible,
+      state
     },
     defaultClassName: 'react-aria-CheckboxGroup'
   });
 
   return (
     <div
+      {...focusProps}
       {...groupProps}
       {...renderProps}
       ref={ref}
       slot={props.slot}
       data-readonly={state.isReadOnly || undefined}
       data-required={props.isRequired || undefined}
-      data-validation-state={state.validationState || undefined}>
+      data-validation-state={state.validationState || undefined}
+      data-disabled={props.isDisabled || undefined}
+      data-focus-visible={isFocusVisible || undefined}>
       <Provider
         values={[
           [InternalCheckboxGroupContext, state],

@@ -428,7 +428,7 @@ export const SliderExample = () => (
     <div style={{display: 'flex', alignSelf: 'stretch'}}>
       <Label>Test</Label>
       <SliderOutput style={{flex: '1 0 auto', textAlign: 'end'}}>
-        {state => `${state.getThumbValueLabel(0)} - ${state.getThumbValueLabel(1)}`}
+        {({state}) => `${state.getThumbValueLabel(0)} - ${state.getThumbValueLabel(1)}`}
       </SliderOutput>
     </div>
     <SliderTrack

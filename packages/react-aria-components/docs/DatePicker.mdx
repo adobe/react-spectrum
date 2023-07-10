@@ -113,6 +113,16 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
     font-size: 12px;
     color: var(--text-color-invalid);
   }
+
+  &[data-validation-state=invalid] {
+    .react-aria-DateInput:after {
+      content: '🚫' / '';
+      content: '🚫';
+      alt: ' ';
+      flex: 1;
+      text-align: end;
+    }
+  }
 }
 
 .react-aria-DateInput {
