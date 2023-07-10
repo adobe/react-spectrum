@@ -15,10 +15,10 @@ import {getColumnHeaderId} from './utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isAndroid, mergeProps, useDescription} from '@react-aria/utils';
-import {RefObject} from 'react';
+import {isAndroid, mergeProps, useDescription, useLayoutEffect} from '@react-aria/utils';
+import {RefObject, useState} from 'react';
 import {TableState} from '@react-stately/table';
-import {useFocusable} from '@react-aria/focus';
+import {useFocusable, useFocusManager} from '@react-aria/focus';
 import {useGridCell} from '@react-aria/grid';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
@@ -80,13 +80,29 @@ export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, st
 
   let descriptionProps = useDescription(sortDescription);
 
+  let shouldDisableFocus = (state.collection.size === 0 &&
+    state.collection.body.props.loadingState !== 'loading' &&
+    state.collection.body.props.loadingState !== 'loadingMore');
+  // delay disabling focus so we get a blur event on the cell to clean up the focus ring
+  let [disableFocus, setDisableFocus]  = useState(shouldDisableFocus);
+  let focusManager = useFocusManager();
+
+  useLayoutEffect(() => {
+    if (shouldDisableFocus && !disableFocus && ref.current === document.activeElement) {
+      focusManager.focusFirst();
+    }
+    setDisableFocus(shouldDisableFocus);
+  }, [shouldDisableFocus, disableFocus, ref]);
+
   return {
     columnHeaderProps: {
       ...mergeProps(
         gridCellProps,
         pressProps,
         focusableProps,
-        descriptionProps
+        descriptionProps,
+        // If the table is empty, make all column headers untabbable or programmatically focusable
+        shouldDisableFocus && disableFocus && {tabIndex: null}
       ),
       role: 'columnheader',
       id: getColumnHeaderId(state, node.key),
