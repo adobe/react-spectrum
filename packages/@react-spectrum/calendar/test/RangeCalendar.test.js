@@ -31,9 +31,12 @@ describe('RangeCalendar', () => {
   let user;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
-  });
-  beforeEach(() => {
     jest.useFakeTimers();
+  });
+  afterEach(() => {
+    act(() => {
+      jest.runAllTimers();
+    });
   });
 
   describe('basics', () => {
@@ -114,7 +117,6 @@ describe('RangeCalendar', () => {
       expect(grid).not.toHaveAttribute('aria-activedescendant');
     });
 
-    // v2 doesn't pass this test - it starts by showing the end date instead of the start date.
     it('should show selected dates across multiple months', async () => {
       let {getByRole, getByLabelText, getAllByLabelText, getAllByRole} = render(<RangeCalendar value={{start: new CalendarDate(2019, 6, 20), end: new CalendarDate(2019, 7, 10)}} />);
 
@@ -666,13 +668,20 @@ describe('RangeCalendar', () => {
         expect(onChange).toHaveBeenCalledTimes(0);
 
         // Can click to select range
-        await user.click(getByText('15'));
+        let cell15 = getByText('15');
+        // TODO: fix that this doesn't work with await user.click()
+        fireEvent.pointerDown(cell15, {detail: 1, pointerType: 'mouse'});
+        fireEvent.pointerUp(cell15, {detail: 1, pointerType: 'mouse'});
+        fireEvent.click(cell15, {detail: 1, pointerType: 'mouse'});
         selectedDates = getAllByLabelText('selected', {exact: false});
         expect(selectedDates[0].textContent).toBe('15');
         expect(selectedDates[selectedDates.length - 1].textContent).toBe('15');
         expect(onChange).toHaveBeenCalledTimes(0);
 
-        await user.click(getByText('20'));
+        let cell20 = getByText('20');
+        fireEvent.pointerDown(cell20, {detail: 1, pointerType: 'mouse'});
+        fireEvent.pointerUp(cell20, {detail: 1, pointerType: 'mouse'});
+        fireEvent.click(cell20, {detail: 1, pointerType: 'mouse'});
         selectedDates = getAllByLabelText('selected', {exact: false});
         expect(selectedDates[0].textContent).toBe('15');
         expect(selectedDates[selectedDates.length - 1].textContent).toBe('20');

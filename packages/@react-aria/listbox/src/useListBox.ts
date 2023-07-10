@@ -12,12 +12,11 @@
 
 import {AriaListBoxProps} from '@react-types/listbox';
 import {DOMAttributes, KeyboardDelegate} from '@react-types/shared';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {listData} from './utils';
 import {ListState} from '@react-stately/list';
 import {RefObject} from 'react';
 import {useFocusWithin} from '@react-aria/interactions';
-import {useId} from '@react-aria/utils';
 import {useLabel} from '@react-aria/label';
 import {useSelectableList} from '@react-aria/selection';
 

@@ -39,6 +39,13 @@ describe('Button', () => {
     expect(button).toHaveAttribute('data-foo', 'bar');
   });
 
+  it('should support form props', () => {
+    let {getByRole} = render(<form id="foo"><Button form="foo" formMethod="post">Test</Button></form>);
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('form', 'foo');
+    expect(button).toHaveAttribute('formMethod', 'post');
+  });
+
   it('should support slot', () => {
     let {getByRole} = render(
       <ButtonContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>

@@ -73,6 +73,22 @@ describe('Menu', () => {
     expect(menu).toHaveAttribute('aria-label', 'test');
   });
 
+  it('should support refs', () => {
+    let listBoxRef = React.createRef();
+    let sectionRef = React.createRef();
+    let itemRef = React.createRef();
+    render(
+      <Menu aria-label="Test" ref={listBoxRef}>
+        <Section ref={sectionRef}>
+          <Item ref={itemRef}>Cat</Item>
+        </Section>
+      </Menu>
+    );
+    expect(listBoxRef.current).toBeInstanceOf(HTMLElement);
+    expect(sectionRef.current).toBeInstanceOf(HTMLElement);
+    expect(itemRef.current).toBeInstanceOf(HTMLElement);
+  });
+
   it('should support slots', () => {
     let {getByRole} = render(
       <Menu aria-label="Actions">

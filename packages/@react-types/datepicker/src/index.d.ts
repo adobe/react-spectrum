@@ -25,6 +25,7 @@ import {
 } from '@react-types/shared';
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from '@internationalized/date';
 import {OverlayTriggerProps} from '@react-types/overlays';
+import {PageBehavior} from '@react-types/calendar';
 
 export type DateValue = CalendarDate | CalendarDateTime | ZonedDateTime;
 type MappedDateValue<T> =
@@ -51,14 +52,25 @@ interface DateFieldBase<T extends DateValue> extends InputBase, Validation, Focu
    * Whether to hide the time zone abbreviation.
    * @default false
    */
-  hideTimeZone?: boolean
+  hideTimeZone?: boolean,
+  /**
+   * Whether to always show leading zeros in the month, day, and hour fields.
+   * By default, this is determined by the user's locale.
+   */
+  shouldForceLeadingZeros?: boolean
 }
 
 interface AriaDateFieldBaseProps<T extends DateValue> extends DateFieldBase<T>, AriaLabelingProps, DOMProps {}
 export interface DateFieldProps<T extends DateValue> extends DateFieldBase<T>, ValueBase<T | null, MappedDateValue<T>> {}
 export interface AriaDateFieldProps<T extends DateValue> extends DateFieldProps<T>, AriaDateFieldBaseProps<T> {}
 
-interface DatePickerBase<T extends DateValue> extends DateFieldBase<T>, OverlayTriggerProps {}
+interface DatePickerBase<T extends DateValue> extends DateFieldBase<T>, OverlayTriggerProps {
+  /**
+   * Controls the behavior of paging. Pagination either works by advancing the visible page by visibleDuration (default) or one unit of visibleDuration.
+   * @default visible
+   */
+  pageBehavior?: PageBehavior
+}
 export interface AriaDatePickerBaseProps<T extends DateValue> extends DatePickerBase<T>, AriaLabelingProps, DOMProps {}
 
 export interface DatePickerProps<T extends DateValue> extends DatePickerBase<T>, ValueBase<T | null, MappedDateValue<T>> {}
@@ -122,6 +134,11 @@ export interface TimePickerProps<T extends TimeValue> extends InputBase, Validat
   granularity?: 'hour' | 'minute' | 'second',
   /** Whether to hide the time zone abbreviation. */
   hideTimeZone?: boolean,
+  /**
+   * Whether to always show leading zeros in the hour field.
+   * By default, this is determined by the user's locale.
+   */
+  shouldForceLeadingZeros?: boolean,
   /**
    * A placeholder time that influences the format of the placeholder shown when no value is selected.
    * Defaults to 12:00 AM or 00:00 depending on the hour cycle.

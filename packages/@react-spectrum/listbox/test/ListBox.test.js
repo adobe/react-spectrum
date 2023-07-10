@@ -98,11 +98,15 @@ describe('ListBox', function () {
       expect(section).toHaveAttribute('aria-labelledby');
       let heading = document.getElementById(section.getAttribute('aria-labelledby'));
       expect(heading).toBeTruthy();
-      expect(heading).toHaveAttribute('aria-hidden', 'true');
-    }
+      expect(heading).toHaveAttribute('role', 'presentation');
 
-    let dividers = within(listbox).getAllByRole('separator');
-    expect(dividers.length).toBe(withSection.length - 1);
+      // Separator should render for sections after first section
+      if (section !== sections[0]) {
+        let divider = heading.previousElementSibling;
+        expect(divider).toHaveAttribute('role', 'presentation');
+        expect(divider).toHaveClass('spectrum-Menu-divider');
+      }
+    }
 
     let items = within(listbox).getAllByRole('option');
     expect(items.length).toBe(withSection.reduce((acc, curr) => (acc + curr.children.length), 0));
@@ -853,7 +857,7 @@ describe('ListBox', function () {
       fireEvent.scroll(listbox);
       act(() => jest.runAllTimers());
 
-      expect(onLoadMore).toHaveBeenCalledTimes(2);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
 
     it('should fire onLoadMore if there aren\'t enough items to fill the ListBox ', async function () {
@@ -880,9 +884,7 @@ describe('ListBox', function () {
       let listbox = getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
       expect(options.length).toBe(5);
-      // onLoadMore called twice from onVisibleRectChange due to ListBox sizeToFit
-      // onLoadMore called twice from useLayoutEffect in React < 18
-      expect(onLoadMore).toHaveBeenCalledTimes(parseInt(React.version, 10) >= 18 ? 3 : 4);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
   });
 

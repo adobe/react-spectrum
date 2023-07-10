@@ -14,10 +14,11 @@ jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, installPointerEvent, pointerMap, render as renderComponent, triggerPress, within} from '@react-spectrum/test-utils';
 import {ActionButton} from '@react-spectrum/button';
 import {announce} from '@react-aria/live-announcer';
-import {FocusExample, renderEmptyState} from '../stories/ListView.stories';
+import {FocusExample} from '../stories/ListViewActions.stories';
 import {Item, ListView} from '../src';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {renderEmptyState} from '../stories/ListView.stories';
 import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
@@ -914,13 +915,17 @@ describe('ListView', function () {
           fireEvent.pointerUp(rows[1], {pointerType: 'touch'});
           onSelectionChange.mockReset();
 
-          await user.pointer({target: rows[2], keys: '[TouchA]'});
+          fireEvent.pointerDown(rows[2], {pointerType: 'touch'});
+          fireEvent.pointerUp(rows[2], {pointerType: 'touch'});
+
           checkSelection(onSelectionChange, ['bar', 'baz']);
 
           // Deselect all to exit selection mode
-          await user.pointer({target: rows[2], keys: '[TouchA]'});
+          fireEvent.pointerDown(rows[2], {pointerType: 'touch'});
+          fireEvent.pointerUp(rows[2], {pointerType: 'touch'});
           onSelectionChange.mockReset();
-          await user.pointer({target: rows[1], keys: '[TouchA]'});
+          fireEvent.pointerDown(rows[1], {pointerType: 'touch'});
+          fireEvent.pointerUp(rows[1], {pointerType: 'touch'});
 
           act(() => jest.runAllTimers());
           checkSelection(onSelectionChange, []);
@@ -1026,7 +1031,9 @@ describe('ListView', function () {
 
         onSelectionChange.mockClear();
         await user.keyboard('[ControlLeft>]');
-        await user.click(getRow(tree, 'Baz'), {pointerType: 'mouse', ctrlKey: true});
+        fireEvent.pointerDown(rows[2], {pointerType: 'mouse', ctrlKey: true});
+        fireEvent.pointerUp(rows[2], {pointerType: 'mouse', ctrlKey: true});
+        fireEvent.click(rows[2], {ctrlKey: true});
         await user.keyboard('[/ControlLeft]');
         checkSelection(onSelectionChange, ['baz']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
@@ -1076,7 +1083,9 @@ describe('ListView', function () {
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
         expect(rows[2]).toHaveAttribute('aria-selected', 'false');
         await user.keyboard('[MetaLeft>]');
-        await user.click(getRow(tree, 'Bar'));
+        fireEvent.pointerDown(getRow(tree, 'Bar'), {pointerType: 'mouse', metaKey: true});
+        fireEvent.pointerUp(getRow(tree, 'Bar'), {pointerType: 'mouse', metaKey: true});
+        fireEvent.click(getRow(tree, 'Bar'), {metaKey: true});
         await user.keyboard('[/MetaLeft]');
 
         checkSelection(onSelectionChange, ['bar']);
@@ -1086,7 +1095,9 @@ describe('ListView', function () {
 
         onSelectionChange.mockClear();
         await user.keyboard('[MetaLeft>]');
-        await user.click(getRow(tree, 'Baz'));
+        fireEvent.pointerDown(getRow(tree, 'Baz'), {pointerType: 'mouse', metaKey: true});
+        fireEvent.pointerUp(getRow(tree, 'Baz'), {pointerType: 'mouse', metaKey: true});
+        fireEvent.click(getRow(tree, 'Baz'), {metaKey: true});
         await user.keyboard('[/MetaLeft]');
         checkSelection(onSelectionChange, ['baz']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
@@ -1162,7 +1173,9 @@ describe('ListView', function () {
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
         await user.keyboard('[ControlLeft>]');
-        await user.click(getRow(tree, 'Bar'));
+        fireEvent.pointerDown(getRow(tree, 'Bar'), {pointerType: 'mouse', ctrlKey: true});
+        fireEvent.pointerUp(getRow(tree, 'Bar'), {pointerType: 'mouse', ctrlKey: true});
+        fireEvent.click(getRow(tree, 'Bar'), {ctrlKey: true});
         await user.keyboard('[/ControlLeft]');
 
         checkSelection(onSelectionChange, ['bar']);
@@ -1290,7 +1303,9 @@ describe('ListView', function () {
         let tree = renderSelectionList({onSelectionChange, selectionStyle: 'highlight', onAction, selectionMode: 'multiple'});
 
         let rows = tree.getAllByRole('row');
-        await user.click(rows[0]);
+        fireEvent.pointerDown(rows[0], {pointerType: 'mouse'});
+        fireEvent.pointerUp(rows[0], {pointerType: 'mouse'});
+        fireEvent.click(rows[0], {pointerType: 'mouse'});
         checkSelection(onSelectionChange, ['foo']);
         onSelectionChange.mockClear();
         expect(announce).toHaveBeenLastCalledWith('Foo selected.');
@@ -1352,12 +1367,16 @@ describe('ListView', function () {
         onSelectionChange.mockClear();
 
         // Deselect all to exit selection mode
-        await user.pointer({target: rows[0], keys: '[TouchA]'});
+        fireEvent.pointerDown(rows[0], {pointerType: 'touch'});
+        fireEvent.pointerUp(rows[0], {pointerType: 'touch'});
+        fireEvent.click(rows[0], {pointerType: 'touch'});
         expect(announce).toHaveBeenLastCalledWith('Foo not selected. 1 item selected.');
         expect(announce).toHaveBeenCalledTimes(3);
         checkSelection(onSelectionChange, ['bar']);
         onSelectionChange.mockClear();
-        await user.pointer({target: rows[1], keys: '[TouchA]'});
+        fireEvent.pointerDown(rows[1], {pointerType: 'touch'});
+        fireEvent.pointerUp(rows[1], {pointerType: 'touch'});
+        fireEvent.click(rows[1], {pointerType: 'touch'});
         expect(announce).toHaveBeenLastCalledWith('Bar not selected.');
         expect(announce).toHaveBeenCalledTimes(4);
 
@@ -1445,10 +1464,10 @@ describe('ListView', function () {
       });
       expect(grid.scrollTop).toBe(0);
 
-      focusRow(tree, 'Item 10');
-      expect(document.activeElement).toBe(getRow(tree, 'Item 10'));
+      focusRow(tree, 'Item 1');
+      expect(document.activeElement).toBe(getRow(tree, 'Item 1'));
 
-      expect(grid.scrollTop).toBe(380);
+      expect(grid.scrollTop).toBe(20);
     });
 
     it('should scroll to a row when it is focused off screen', function () {

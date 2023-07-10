@@ -12,16 +12,20 @@
 
 import {AriaToggleButtonProps, mergeProps, useFocusRing, useHover, useToggleButton} from 'react-aria';
 import {ButtonRenderProps} from './Button';
-import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, forwardRefType, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
-import {useToggleState} from 'react-stately';
+import {ToggleState, useToggleState} from 'react-stately';
 
 export interface ToggleButtonRenderProps extends ButtonRenderProps {
   /**
    * Whether the button is currently selected.
    * @selector [aria-pressed=true]
    */
-  isSelected: boolean
+  isSelected: boolean,
+  /**
+   * State of the toggle button.
+   */
+  state: ToggleState
 }
 
 export interface ToggleButtonProps extends Omit<AriaToggleButtonProps, 'children' | 'elementType'>, SlotProps, RenderProps<ToggleButtonRenderProps> {}
@@ -36,7 +40,7 @@ function ToggleButton(props: ToggleButtonProps, ref: ForwardedRef<HTMLButtonElem
   let {hoverProps, isHovered} = useHover(props);
   let renderProps = useRenderProps({
     ...props,
-    values: {isHovered, isPressed, isFocused, isSelected: state.isSelected, isFocusVisible, isDisabled: props.isDisabled || false},
+    values: {isHovered, isPressed, isFocused, isSelected: state.isSelected, isFocusVisible, isDisabled: props.isDisabled || false, state},
     defaultClassName: 'react-aria-ToggleButton'
   });
 
@@ -55,5 +59,5 @@ function ToggleButton(props: ToggleButtonProps, ref: ForwardedRef<HTMLButtonElem
 /**
  * A toggle button allows a user to toggle a selection on or off, for example switching between two states or modes.
  */
-const _ToggleButton = forwardRef(ToggleButton);
+const _ToggleButton = /*#__PURE__*/ (forwardRef as forwardRefType)(ToggleButton);
 export {_ToggleButton as ToggleButton};

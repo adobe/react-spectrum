@@ -12,7 +12,6 @@
 
 import {ProgressBar} from '../';
 import React, {CSSProperties} from 'react';
-import {storiesOf} from '@storybook/react';
 
 const formatOptions = {
   style: 'currency',
@@ -28,165 +27,227 @@ const grayedBoxStyle: CSSProperties = {
   justifyContent: 'center'
 };
 
-storiesOf('Progress/ProgressBar', module)
-  .addParameters({
-    providerSwitcher: {status: 'positive'},
-    args: {value: 32},
-    argTypes: {
-      value: {
-        control: {
-          type: 'range',
-          min: 0,
-          max: 100
-        }
+export default {
+  title: 'Progress/ProgressBar',
+  providerSwitcher: {status: 'positive'},
+  args: {value: 32},
+  argTypes: {
+    value: {
+      control: {
+        type: 'range',
+        min: 0,
+        max: 100
       }
     }
-  })
-  .add(
-    'Default',
-    (args) => render(args)
-  )
-  .add(
-    'value: 50',
-    () => render({value: 50})
-  )
-  .add(
-    'value: 100',
-    () => render({value: 100})
-  )
-  .add(
-    'size: S',
-    args => render({size: 'S', ...args})
-  )
-  .add(
-    'showValueLabel: true',
-    args =>  render({showValueLabel: true, ...args})
-  )
-  .add(
-    'showValueLabel: false',
-    args => render({showValueLabel: false, ...args})
-  )
-  .add(
-    'valueLabel: 1 of 4',
-    () => render({value: 25, valueLabel: '1 of 4'})
-  )
-  .add(
-    'Using number formatOptions with currency style',
-    args => render({
-      ...args,
-      showValueLabel: true,
-      formatOptions
-    })
-  )
-  .add(
-    'no visible label',
-    args => render({label: null, 'aria-label': 'Loading…', ...args})
-  )
-  .add(
-    'labelPosition: side',
-    args => render({labelPosition: 'side', ...args})
-  )
-  .add(
-    'labelPosition: top',
-    args => render({labelPosition: 'top', ...args})
-  )
-  .add(
-    'long label',
-    args => render({label: 'Super long progress bar label. Sample label copy. Loading...', ...args})
-  )
-  .add(
-    'long label, labelPosition: side',
-    args => render({labelPosition: 'side', label: 'Super long progress bar label. Sample label copy. Loading...', ...args})
-  )
-  .add(
-    'isIndeterminate: true',
-    args => render({isIndeterminate: true, ...args})
-  )
-  .add(
-    'isIndeterminate: true, size: S',
-    () => render({isIndeterminate: true, size: 'S'})
-  )
-  .add(
-    'variant: overBackground',
-    args => (
-      <div style={grayedBoxStyle}>
-        {render({variant: 'overBackground', ...args})}
-      </div>
-    )
-  )
-  .add(
-    'parent width 100%',
-    () => (
-      <span style={{width: '100%'}}>
-        {render()}
-      </span>
-    )
-  )
-  .add(
-    'parent width 100px',
-    () => (
-      <span style={{width: '100px'}}>
-        {render()}
-      </span>
-    )
-  )
-  .add(
-    'width: 300px',
-    () => render({width: '300px', value: 100})
-  )
-  .add(
-    'width: 300px, isIndeterminate: true',
-    () => render({width: '300px', isIndeterminate: true})
-  )
-  .add(
-    'width: 300px, labelPosition: side',
-    () => render({width: '300px', labelPosition: 'side'})
-  )
-  .add(
-    'width: 300px, labelPosition: side, isIndeterminate: true',
-    () => render({width: '300px', labelPosition: 'side', isIndeterminate: true})
-  )
-  .add(
-    'width: 30px',
-    () => render({width: '30px'})
-  )
-  .add(
-    'width: 30px, size: S',
-    () => render({width: '30px', size: 'S'})
-  )
-  .add(
-    'width: 30px, labelPosition: side, long label',
-    () => render({width: '30px', labelPosition: 'side', label: 'Super long progress bar label. Sample label copy. Loading...'})
-  )
-  .add(
-    'width: 30px, labelPosition: side, isIndeterminate: true, long label, button on right',
-    () => (
-      <>
-        {render({width: '30px', labelPosition: 'side', isIndeterminate: true, label: 'Super long progress bar label. Sample label copy. Loading...'})}
-        <button>Confirm</button>
-      </>
-    )
-  )
-  .add(
-    'Using raw values for minValue, maxValue, and value',
-    () => render({
-      showValueLabel: true,
-      labelPosition: 'top',
-      maxValue: 2147483648,
-      value: 715827883
-    })
-  )
-  .add(
-    'Using raw values with number formatter',
-    () => render({
-      showValueLabel: true,
-      labelPosition: 'top',
-      maxValue: 2147483648,
-      value: 715827883,
-      formatOptions
-    })
-  );
+  }
+};
+
+export const Default = (args) => render(args);
+export const Value50 = () => render({value: 50});
+
+Value50.story = {
+  name: 'value: 50'
+};
+
+export const Value100 = () => render({value: 100});
+
+Value100.story = {
+  name: 'value: 100'
+};
+
+export const SizeS = (args) => render({size: 'S', ...args});
+
+SizeS.story = {
+  name: 'size: S'
+};
+
+export const ShowValueLabelTrue = (args) => render({showValueLabel: true, ...args});
+
+ShowValueLabelTrue.story = {
+  name: 'showValueLabel: true'
+};
+
+export const ShowValueLabelFalse = (args) => render({showValueLabel: false, ...args});
+
+ShowValueLabelFalse.story = {
+  name: 'showValueLabel: false'
+};
+
+export const ValueLabel1Of4 = () => render({value: 25, valueLabel: '1 of 4'});
+
+ValueLabel1Of4.story = {
+  name: 'valueLabel: 1 of 4'
+};
+
+export const UsingNumberFormatOptionsWithCurrencyStyle = (args) =>
+  render({
+    ...args,
+    showValueLabel: true,
+    formatOptions
+  });
+
+UsingNumberFormatOptionsWithCurrencyStyle.story = {
+  name: 'Using number formatOptions with currency style'
+};
+
+export const NoVisibleLabel = (args) => render({label: null, 'aria-label': 'Loading…', ...args});
+
+NoVisibleLabel.story = {
+  name: 'no visible label'
+};
+
+export const LabelPositionSide = (args) => render({labelPosition: 'side', ...args});
+
+LabelPositionSide.story = {
+  name: 'labelPosition: side'
+};
+
+export const LabelPositionTop = (args) => render({labelPosition: 'top', ...args});
+
+LabelPositionTop.story = {
+  name: 'labelPosition: top'
+};
+
+export const LongLabel = (args) =>
+  render({label: 'Super long progress bar label. Sample label copy. Loading...', ...args});
+
+LongLabel.story = {
+  name: 'long label'
+};
+
+export const LongLabelLabelPositionSide = (args) =>
+  render({
+    labelPosition: 'side',
+    label: 'Super long progress bar label. Sample label copy. Loading...',
+    ...args
+  });
+
+LongLabelLabelPositionSide.story = {
+  name: 'long label, labelPosition: side'
+};
+
+export const IsIndeterminateTrue = (args) => render({isIndeterminate: true, ...args});
+
+IsIndeterminateTrue.story = {
+  name: 'isIndeterminate: true'
+};
+
+export const IsIndeterminateTrueSizeS = () => render({isIndeterminate: true, size: 'S'});
+
+IsIndeterminateTrueSizeS.story = {
+  name: 'isIndeterminate: true, size: S'
+};
+
+export const VariantOverBackground = (args) => (
+  <div style={grayedBoxStyle}>{render({variant: 'overBackground', ...args})}</div>
+);
+
+VariantOverBackground.story = {
+  name: 'variant: overBackground'
+};
+
+export const ParentWidth100 = () => <span style={{width: '100%'}}>{render()}</span>;
+
+ParentWidth100.story = {
+  name: 'parent width 100%'
+};
+
+export const ParentWidth100Px = () => <span style={{width: '100px'}}>{render()}</span>;
+
+ParentWidth100Px.story = {
+  name: 'parent width 100px'
+};
+
+export const Width300Px = () => render({width: '300px', value: 100});
+
+Width300Px.story = {
+  name: 'width: 300px'
+};
+
+export const Width300PxIsIndeterminateTrue = () =>
+  render({width: '300px', isIndeterminate: true});
+
+Width300PxIsIndeterminateTrue.story = {
+  name: 'width: 300px, isIndeterminate: true'
+};
+
+export const Width300PxLabelPositionSide = () => render({width: '300px', labelPosition: 'side'});
+
+Width300PxLabelPositionSide.story = {
+  name: 'width: 300px, labelPosition: side'
+};
+
+export const Width300PxLabelPositionSideIsIndeterminateTrue = () =>
+  render({width: '300px', labelPosition: 'side', isIndeterminate: true});
+
+Width300PxLabelPositionSideIsIndeterminateTrue.story = {
+  name: 'width: 300px, labelPosition: side, isIndeterminate: true'
+};
+
+export const Width30Px = () => render({width: '30px'});
+
+Width30Px.story = {
+  name: 'width: 30px'
+};
+
+export const Width30PxSizeS = () => render({width: '30px', size: 'S'});
+
+Width30PxSizeS.story = {
+  name: 'width: 30px, size: S'
+};
+
+export const Width30PxLabelPositionSideLongLabel = () =>
+  render({
+    width: '30px',
+    labelPosition: 'side',
+    label: 'Super long progress bar label. Sample label copy. Loading...'
+  });
+
+Width30PxLabelPositionSideLongLabel.story = {
+  name: 'width: 30px, labelPosition: side, long label'
+};
+
+export const Width30PxLabelPositionSideIsIndeterminateTrueLongLabelButtonOnRight = () => (
+  <>
+    {render({
+      width: '30px',
+      labelPosition: 'side',
+      isIndeterminate: true,
+      label: 'Super long progress bar label. Sample label copy. Loading...'
+    })}
+    <button>Confirm</button>
+  </>
+);
+
+Width30PxLabelPositionSideIsIndeterminateTrueLongLabelButtonOnRight.story = {
+  name: 'width: 30px, labelPosition: side, isIndeterminate: true, long label, button on right'
+};
+
+export const UsingRawValuesForMinValueMaxValueAndValue = () =>
+  render({
+    showValueLabel: true,
+    labelPosition: 'top',
+    maxValue: 2147483648,
+    value: 715827883
+  });
+
+UsingRawValuesForMinValueMaxValueAndValue.story = {
+  name: 'Using raw values for minValue, maxValue, and value'
+};
+
+export const UsingRawValuesWithNumberFormatter = () =>
+  render({
+    showValueLabel: true,
+    labelPosition: 'top',
+    maxValue: 2147483648,
+    value: 715827883,
+    formatOptions
+  });
+
+UsingRawValuesWithNumberFormatter.story = {
+  name: 'Using raw values with number formatter'
+};
 
 function render(props: any = {}) {
-  return (<ProgressBar label="Loading…" {...props} />);
+  return <ProgressBar label="Loading…" {...props} />;
 }

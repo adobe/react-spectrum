@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
 import React from 'react';
-import {Tab, TabList, TabPanel, TabPanels, Tabs} from '../';
+import {Tab, TabList, TabPanel, Tabs} from '../';
 import userEvent from '@testing-library/user-event';
 
 let renderTabs = (tabsProps, tablistProps, tabProps, tabpanelProps) => render(
@@ -22,11 +22,9 @@ let renderTabs = (tabsProps, tablistProps, tabProps, tabpanelProps) => render(
       <Tab {...tabProps} id="b">B</Tab>
       <Tab {...tabProps} id="c">C</Tab>
     </TabList>
-    <TabPanels>
-      <TabPanel {...tabpanelProps} id="a">A</TabPanel>
-      <TabPanel {...tabpanelProps} id="b">B</TabPanel>
-      <TabPanel {...tabpanelProps} id="c">C</TabPanel>
-    </TabPanels>
+    <TabPanel {...tabpanelProps} id="a">A</TabPanel>
+    <TabPanel {...tabpanelProps} id="b">B</TabPanel>
+    <TabPanel {...tabpanelProps} id="c">C</TabPanel>
   </Tabs>
 );
 
@@ -80,8 +78,7 @@ describe('Tabs', () => {
     expect(tabpanel).toHaveAttribute('data-test', 'tabpanel');
   });
 
-  // FIXME: not sure why this test hangs
-  it.skip('should support render props', () => {
+  it('should support render props', () => {
     let {getByRole} = render(
       <Tabs orientation="horizontal">
         {({orientation}) => (
@@ -91,17 +88,15 @@ describe('Tabs', () => {
               <Tab id="b">B</Tab>
               <Tab id="c">C</Tab>
             </TabList>
-            <TabPanels>
-              <TabPanel id="a">A</TabPanel>
-              <TabPanel id="b">B</TabPanel>
-              <TabPanel id="c">C</TabPanel>
-            </TabPanels>
+            <TabPanel id="a">A</TabPanel>
+            <TabPanel id="b">B</TabPanel>
+            <TabPanel id="c">C</TabPanel>
           </>
         )}
       </Tabs>
     );
     let tablist = getByRole('tablist');
-    expect(tablist).toHaveAttribute('aria-label', 'Test horizonal');
+    expect(tablist).toHaveAttribute('aria-label', 'Test horizontal');
   });
 
   it('should support hover', async () => {
@@ -154,7 +149,7 @@ describe('Tabs', () => {
   });
 
   it('should support disabled state on all tabs', () => {
-    let {getAllByRole} = renderTabs({}, {isDisabled: true}, {className: ({isDisabled}) => isDisabled ? 'disabled' : ''});
+    let {getAllByRole} = renderTabs({isDisabled: true}, {}, {className: ({isDisabled}) => isDisabled ? 'disabled' : ''});
     let tab = getAllByRole('tab')[0];
 
     expect(tab).toHaveAttribute('aria-disabled', 'true');
@@ -163,7 +158,7 @@ describe('Tabs', () => {
 
   it('should support disabled state on tab', () => {
     let className = ({isDisabled}) => isDisabled ? 'disabled' : '';
-    let {getAllByRole} = renderTabs({}, {disabledKeys: ['a'], className}, {className});
+    let {getAllByRole} = renderTabs({disabledKeys: ['a']}, {className}, {className});
     let tab = getAllByRole('tab')[0];
 
     expect(tab).toHaveAttribute('aria-disabled', 'true');
@@ -172,7 +167,7 @@ describe('Tabs', () => {
 
   it('should support selected state', async () => {
     let onSelectionChange = jest.fn();
-    let {getAllByRole} = renderTabs({}, {onSelectionChange}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
+    let {getAllByRole} = renderTabs({onSelectionChange}, {}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
     let tabs = getAllByRole('tab');
 
     expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
@@ -202,5 +197,72 @@ describe('Tabs', () => {
 
     expect(tabs).toHaveAttribute('data-orientation', 'vertical');
     expect(tabs).toHaveClass('vertical');
+  });
+
+  it('should support refs', () => {
+    let tabsRef = React.createRef();
+    let tabListRef = React.createRef();
+    let tabRef = React.createRef();
+    let tabPanelRef = React.createRef();
+    render(
+      <Tabs ref={tabsRef}>
+        <TabList ref={tabListRef}>
+          <Tab id="a" ref={tabRef}>A</Tab>
+          <Tab id="b">B</Tab>
+          <Tab id="c">C</Tab>
+        </TabList>
+        <TabPanel id="a" ref={tabPanelRef}>A</TabPanel>
+        <TabPanel id="b">B</TabPanel>
+        <TabPanel id="c">C</TabPanel>
+      </Tabs>
+    );
+    expect(tabsRef.current).toBeInstanceOf(HTMLElement);
+    expect(tabListRef.current).toBeInstanceOf(HTMLElement);
+    expect(tabRef.current).toBeInstanceOf(HTMLElement);
+    expect(tabPanelRef.current).toBeInstanceOf(HTMLElement);
+  });
+
+  it('should support shouldForceMount', async () => {
+    let {getAllByRole} = renderTabs({}, {}, {}, {shouldForceMount: true});
+    let tabpanels = document.querySelectorAll('.react-aria-TabPanel');
+    expect(tabpanels).toHaveLength(3);
+    expect(tabpanels[0]).not.toHaveAttribute('inert');
+    expect(tabpanels[1]).toHaveAttribute('inert');
+    expect(tabpanels[2]).toHaveAttribute('inert');
+
+    let tabs = getAllByRole('tab');
+    await user.click(tabs[1]);
+
+    expect(tabpanels[0]).toHaveAttribute('inert');
+    expect(tabpanels[1]).not.toHaveAttribute('inert');
+    expect(tabpanels[2]).toHaveAttribute('inert');
+  });
+
+  it('should support keyboardActivation=manual', () => {
+    let onSelectionChange = jest.fn();
+    let {getByRole} = renderTabs({keyboardActivation: 'manual', onSelectionChange, defaultSelectedKey: 'a'});
+
+    let tablist = getByRole('tablist');
+    let tabs = within(tablist).getAllByRole('tab');
+    let firstItem = tabs[0];
+    let secondItem = tabs[1];
+    let thirdItem = tabs[2];
+    act(() => {firstItem.focus();});
+    expect(firstItem).toHaveAttribute('aria-selected', 'true');
+    fireEvent.keyDown(firstItem, {key: 'ArrowRight', code: 39, charCode: 39});
+    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight', code: 39, charCode: 39});
+    expect(secondItem).toHaveAttribute('aria-selected', 'false');
+    expect(document.activeElement).toBe(secondItem);
+    fireEvent.keyDown(secondItem, {key: 'ArrowRight', code: 39, charCode: 39});
+    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight', code: 39, charCode: 39});
+    expect(thirdItem).toHaveAttribute('aria-selected', 'false');
+    expect(document.activeElement).toBe(thirdItem);
+    fireEvent.keyDown(thirdItem, {key: 'Enter', code: 13, charCode: 13});
+    fireEvent.keyUp(document.activeElement, {key: 'Enter', code: 13, charCode: 13});
+    expect(firstItem).toHaveAttribute('aria-selected', 'false');
+    expect(secondItem).toHaveAttribute('aria-selected', 'false');
+    expect(thirdItem).toHaveAttribute('aria-selected', 'true');
+
+    expect(onSelectionChange).toBeCalledTimes(1);
   });
 });

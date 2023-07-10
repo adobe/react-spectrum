@@ -40,7 +40,11 @@ export interface GridListRenderProps {
    * Whether the grid list is currently the active drop target.
    * @selector [data-drop-target]
    */
-  isDropTarget: boolean
+  isDropTarget: boolean,
+  /**
+   * State of the grid list.
+   */
+  state: ListState<unknown>
 }
 
 export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<GridListRenderProps>, SlotProps {
@@ -91,12 +95,14 @@ function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<H
   let isListDroppable = !!dragAndDropHooks?.useDroppableCollectionState;
   let dragHooksProvided = useRef(isListDraggable);
   let dropHooksProvided = useRef(isListDroppable);
-  if (dragHooksProvided.current !== isListDraggable) {
-    console.warn('Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
-  }
-  if (dropHooksProvided.current !== isListDroppable) {
-    console.warn('Drop hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
-  }
+  useEffect(() => {
+    if (dragHooksProvided.current !== isListDraggable) {
+      console.warn('Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
+    }
+    if (dropHooksProvided.current !== isListDroppable) {
+      console.warn('Drop hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
+    }
+  }, [isListDraggable, isListDroppable]);
 
   let dragState: DraggableCollectionState | undefined = undefined;
   let dropState: DroppableCollectionState | undefined = undefined;
@@ -148,7 +154,8 @@ function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<H
       isDropTarget: isRootDropTarget,
       isEmpty: state.collection.size === 0,
       isFocused,
-      isFocusVisible
+      isFocusVisible,
+      state
     }
   });
 
@@ -205,7 +212,7 @@ function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<H
         <Provider
           values={[
             [InternalGridListContext, {state, dragAndDropHooks, dragState, dropState}],
-            [DropIndicatorContext, {render: GridListDropIndicator}]
+            [DropIndicatorContext, {render: GridListDropIndicatorWrapper}]
           ]}>
           {isListDroppable && <RootDropIndicator />}
           {children}
@@ -227,7 +234,7 @@ export {_GridList as GridList};
 
 function GridListItem({item}) {
   let {state, dragAndDropHooks, dragState, dropState} = useContext(InternalGridListContext)!;
-  let ref = React.useRef<HTMLDivElement>(null);
+  let ref = useObjectRef<HTMLDivElement>(item.props.ref);
   let {rowProps, gridCellProps, descriptionProps, ...states} = useGridListItem(
     {
       node: item,
@@ -308,7 +315,7 @@ function GridListItem({item}) {
         </div>
       }
       <div
-        {...mergeProps(rowProps, focusProps, hoverProps, draggableItem?.dragProps)}
+        {...mergeProps(filterDOMProps(props as any), rowProps, focusProps, hoverProps, draggableItem?.dragProps)}
         {...renderProps}
         ref={ref}
         data-hovered={isHovered || undefined}
@@ -350,7 +357,7 @@ function GridListItem({item}) {
   );
 }
 
-function GridListDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
+function GridListDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
   ref = useObjectRef(ref);
   let {dragAndDropHooks, dropState} = useContext(InternalGridListContext)!;
   let buttonRef = useRef<HTMLDivElement>(null);
@@ -360,15 +367,32 @@ function GridListDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTML
     buttonRef
   );
 
-  let {visuallyHiddenProps} = useVisuallyHidden();
-
   if (isHidden) {
     return null;
   }
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+  return (
+    <GridListDropIndicatorForwardRef {...props} dropIndicatorProps={dropIndicatorProps} isDropTarget={isDropTarget} buttonRef={buttonRef} ref={ref} />
+  );
+}
+
+interface GridListDropIndicatorProps extends DropIndicatorProps {
+  dropIndicatorProps: React.HTMLAttributes<HTMLElement>,
+  isDropTarget: boolean,
+  buttonRef: RefObject<HTMLDivElement>
+}
+
+function GridListDropIndicator(props: GridListDropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
+  let {
+    dropIndicatorProps,
+    isDropTarget,
+    buttonRef,
+    ...otherProps
+  } = props;
+
+  let {visuallyHiddenProps} = useVisuallyHidden();
   let renderProps = useRenderProps({
-    ...props,
+    ...otherProps,
     defaultClassName: 'react-aria-DropIndicator',
     values: {
       isDropTarget
@@ -387,6 +411,8 @@ function GridListDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTML
     </div>
   );
 }
+
+const GridListDropIndicatorForwardRef = forwardRef(GridListDropIndicator);
 
 function RootDropIndicator() {
   let {dragAndDropHooks, dropState} = useContext(InternalGridListContext)!;

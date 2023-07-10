@@ -12,11 +12,11 @@
 
 import {AriaLabelingProps, DOMAttributes, FocusableElement} from '@react-types/shared';
 import {FocusableProvider} from '@react-aria/focus';
+import {forwardRefType, RenderProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
 import {mergeProps, OverlayContainer, PlacementAxis, PositionProps, useOverlayPosition, useTooltip, useTooltipTrigger} from 'react-aria';
 import {mergeRefs, useObjectRef} from '@react-aria/utils';
 import {OverlayArrowContext} from './OverlayArrow';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
-import {RenderProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
 import {TooltipTriggerProps, TooltipTriggerState, useTooltipTriggerState} from 'react-stately';
 
 export interface TooltipTriggerComponentProps extends TooltipTriggerProps {
@@ -40,7 +40,16 @@ export interface TooltipRenderProps {
    * Whether the tooltip is currently exiting. Use this to apply animations.
    * @selector [data-exiting]
    */
-  isExiting: boolean
+  isExiting: boolean,
+  /**
+   * Whether the tooltip is currently open.
+   * @selector [data-open]
+   */
+  isOpen: boolean,
+  /**
+   * State of the tooltip.
+   */
+  state: TooltipTriggerState
 }
 
 interface TooltipContextValue {
@@ -88,7 +97,7 @@ function Tooltip(props: TooltipProps, ref: ForwardedRef<HTMLDivElement>) {
 /**
  * A tooltip displays a description of an element on hover or focus.
  */
-const _Tooltip = forwardRef(Tooltip);
+const _Tooltip = /*#__PURE__*/ (forwardRef as forwardRefType)(Tooltip);
 export {_Tooltip as Tooltip};
 
 function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: ForwardedRef<HTMLDivElement>}) {
@@ -111,7 +120,9 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: For
     values: {
       placement,
       isEntering,
-      isExiting: props.isExiting
+      isExiting: props.isExiting,
+      isOpen: state.isOpen,
+      state
     }
   });
 
@@ -126,7 +137,8 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: For
       style={{...renderProps.style, ...overlayProps.style}}
       data-placement={placement}
       data-entering={isEntering || undefined}
-      data-exiting={props.isExiting || undefined}>
+      data-exiting={props.isExiting || undefined}
+      data-open={state.isOpen || undefined}>
       <OverlayArrowContext.Provider value={{arrowProps, placement}}>
         {renderProps.children}
       </OverlayArrowContext.Provider>

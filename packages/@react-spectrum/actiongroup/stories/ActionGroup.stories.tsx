@@ -162,7 +162,7 @@ export const StaticColorWhite: ActionGroupStory = {
       {render(args)}
     </View>
   ),
-  storyName: 'staticColor=white'
+  name: 'staticColor=white'
 };
 
 export const StaticColorBlack: ActionGroupStory = {
@@ -172,7 +172,7 @@ export const StaticColorBlack: ActionGroupStory = {
       {render(args)}
     </View>
   ),
-  storyName: 'staticColor=black'
+  name: 'staticColor=black'
 };
 
 export const WithTooltips: ActionGroupStory = {
@@ -183,13 +183,13 @@ export const WithTooltips: ActionGroupStory = {
 export const Overflow: ActionGroupStory = {
   args: {disabledKeys: ['1', '5']},
   render: (args) => renderOverflow(args),
-  storyName: 'overflowMode'
+  name: 'overflowMode'
 };
 
 export const SummaryIcon: ActionGroupStory = {
   ...Overflow,
   args: {disabledKeys: ['1', '5'], summaryIcon: <TextIcon />},
-  storyName: 'summary icon overflow'
+  name: 'summary icon overflow'
 };
 
 export const VerticalOverflow: ActionGroupStory = {
@@ -201,7 +201,7 @@ export const VerticalOverflow: ActionGroupStory = {
       </div>
     </Flex>
   ),
-  storyName: 'special vertical overflow case'
+  name: 'special vertical overflow case'
 };
 
 
@@ -276,23 +276,23 @@ function renderOverflow(props) {
   return (
     <div style={{padding: '10px', resize: 'both', overflow: 'auto', width: 250, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
       <ActionGroup {...props} summaryIcon={<TextIcon />} maxHeight="100%">
-        <Item key="1">
+        <Item key="1" data-testid="edit">
           <DrawIcon />
           <Text>Edit</Text>
         </Item>
-        <Item key="2">
+        <Item key="2" data-testid="copy">
           <CopyIcon />
           <Text>Copy</Text>
         </Item>
-        <Item key="3">
+        <Item key="3" data-testid="delete">
           <DeleteIcon />
           <Text>Delete</Text>
         </Item>
-        <Item key="4">
+        <Item key="4" data-testid="move">
           <MoveIcon />
           <Text>Move</Text>
         </Item>
-        <Item key="5">
+        <Item key="5" data-testid="duplicate">
           <DuplicateIcon />
           <Text>Duplicate</Text>
         </Item>

@@ -52,7 +52,12 @@ export interface CalendarPropsBase {
   /** Whether the current selection is valid or invalid according to application logic. */
   validationState?: ValidationState,
   /** An error message to display when the selected value is invalid. */
-  errorMessage?: ReactNode
+  errorMessage?: ReactNode,
+  /**
+   * Controls the behavior of paging. Pagination either works by advancing the visible page by visibleDuration (default) or one unit of visibleDuration.
+   * @default visible
+   */
+  pageBehavior?: PageBehavior
 }
 
 export type DateRange = RangeValue<DateValue>;
@@ -68,6 +73,8 @@ export interface RangeCalendarProps<T extends DateValue> extends CalendarPropsBa
 export interface AriaCalendarProps<T extends DateValue> extends CalendarProps<T>, DOMProps, AriaLabelingProps {}
 
 export interface AriaRangeCalendarProps<T extends DateValue> extends RangeCalendarProps<T>, DOMProps, AriaLabelingProps {}
+
+export type PageBehavior = 'single' | 'visible';
 
 export interface SpectrumCalendarProps<T extends DateValue> extends AriaCalendarProps<T>, StyleProps {
   /**

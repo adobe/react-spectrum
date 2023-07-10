@@ -19,9 +19,8 @@ import React, {Key, ReactElement, useCallback, useRef} from 'react';
 import {SpectrumBreadcrumbsProps} from '@react-types/breadcrumbs';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbs} from '@react-aria/breadcrumbs';
-import {useLayoutEffect, useValueEffect} from '@react-aria/utils';
+import {useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useResizeObserver} from '@react-aria/utils';
 
 const MIN_VISIBLE_ITEMS = 1;
 const MAX_VISIBLE_ITEMS = 4;
@@ -134,8 +133,13 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
 
   useResizeObserver({ref: domRef, onResize: updateOverflow});
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useLayoutEffect(updateOverflow, [children]);
+  let lastChildren = useRef<typeof children | null>(null);
+  useLayoutEffect(() => {
+    if (children !== lastChildren.current) {
+      lastChildren.current = children;
+      updateOverflow();
+    }
+  });
 
   let contents = childArray;
   if (childArray.length > visibleItems) {

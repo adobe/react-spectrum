@@ -12,7 +12,7 @@
 
 import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
 import {Header, Item, ListBox, ListBoxContext, Section, Text, useDragAndDrop} from '../';
-import React from 'react';
+import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';
 
 let TestListBox = ({listBoxProps, itemProps}) => (
@@ -30,7 +30,7 @@ let DraggableListBox = (props) => {
   });
 
   return (
-    <ListBox aria-label="Test" dragAndDropHooks={dragAndDropHooks}>
+    <ListBox aria-label="Test" dragAndDropHooks={dragAndDropHooks} {...props}>
       <Item id="cat">Cat</Item>
       <Item id="dog">Dog</Item>
       <Item id="kangaroo">Kangaroo</Item>
@@ -39,6 +39,10 @@ let DraggableListBox = (props) => {
 };
 
 let renderListbox = (listBoxProps, itemProps) => render(<TestListBox {...{listBoxProps, itemProps}} />);
+let keyPress = (key) => {
+  fireEvent.keyDown(document.activeElement, {key});
+  fireEvent.keyUp(document.activeElement, {key});
+};
 
 describe('ListBox', () => {
   let user;
@@ -49,6 +53,7 @@ describe('ListBox', () => {
 
   afterEach(() => {
     act(() => {jest.runAllTimers();});
+    jest.restoreAllMocks();
   });
 
   it('should render with default classes', () => {
@@ -91,6 +96,22 @@ describe('ListBox', () => {
     let listbox = getByRole('listbox');
     expect(listbox).toHaveAttribute('slot', 'test');
     expect(listbox).toHaveAttribute('aria-label', 'test');
+  });
+
+  it('should support refs', () => {
+    let listBoxRef = React.createRef();
+    let sectionRef = React.createRef();
+    let itemRef = React.createRef();
+    render(
+      <ListBox aria-label="Test" ref={listBoxRef}>
+        <Section ref={sectionRef}>
+          <Item ref={itemRef}>Cat</Item>
+        </Section>
+      </ListBox>
+    );
+    expect(listBoxRef.current).toBeInstanceOf(HTMLElement);
+    expect(sectionRef.current).toBeInstanceOf(HTMLElement);
+    expect(itemRef.current).toBeInstanceOf(HTMLElement);
   });
 
   it('should support slots', () => {
@@ -221,6 +242,40 @@ describe('ListBox', () => {
     expect(getAllByRole('option').map(o => o.textContent)).toEqual(['Cat', 'Kangaroo', 'Mouse']);
   });
 
+  it('should update collection when descendants update', () => {
+    let setShowTwo;
+    let setItemText;
+    function Child() {
+      let [showTwo, _setShowTwo] = useState(false);
+      setShowTwo = _setShowTwo;
+      let [itemText, _setItemText] = useState('One');
+      setItemText = _setItemText;
+      return (
+        <>
+          <Item id={1}>{itemText}</Item>
+          {showTwo && <Item id={2}>Two</Item>}
+        </>
+      );
+    }
+
+    let {getAllByRole} = render(
+      <ListBox aria-label="Example">
+        <Child />
+      </ListBox>
+    );
+
+    expect(getAllByRole('option').map(o => o.textContent)).toEqual(['One']);
+
+    act(() => setShowTwo(true));
+    expect(getAllByRole('option').map(o => o.textContent)).toEqual(['One', 'Two']);
+
+    act(() => setShowTwo(false));
+    expect(getAllByRole('option').map(o => o.textContent)).toEqual(['One']);
+
+    act(() => setItemText('Hi'));
+    expect(getAllByRole('option').map(o => o.textContent)).toEqual(['Hi']);
+  });
+
   it('should support hover', async () => {
     let {getAllByRole} = renderListbox({selectionMode: 'multiple'}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
     let option = getAllByRole('option')[0];
@@ -336,6 +391,81 @@ describe('ListBox', () => {
     expect(option).toHaveTextContent('No results');
   });
 
+  it('should support horizontal orientation', async () => {
+    let {getAllByRole} = renderListbox({orientation: 'horizontal'});
+    let options = getAllByRole('option');
+
+    await user.tab();
+    expect(document.activeElement).toBe(options[0]);
+
+    keyPress('ArrowRight');
+    expect(document.activeElement).toBe(options[1]);
+
+    keyPress('ArrowRight');
+    expect(document.activeElement).toBe(options[2]);
+
+    keyPress('ArrowLeft');
+    expect(document.activeElement).toBe(options[1]);
+  });
+
+  it('should support grid layout', async () => {
+    let {getAllByRole} = renderListbox({layout: 'grid'});
+    let options = getAllByRole('option');
+
+    jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+      if (this.getAttribute('role') === 'listbox') {
+        return {top: 0, left: 0, bottom: 200, right: 200, width: 200, height: 200};
+      } else {
+        let index = [...this.parentElement.children].indexOf(this);
+        return {top: Math.floor(index / 2) * 40, left: index % 2 ? 100 : 0, bottom: Math.floor(index / 2) * 40 + 40, right: index % 2 ? 200 : 100, width: 100, height: 40};
+      }
+    });
+
+    await user.tab();
+    expect(document.activeElement).toBe(options[0]);
+
+    keyPress('ArrowDown');
+    expect(document.activeElement).toBe(options[2]);
+
+    keyPress('ArrowLeft');
+    expect(document.activeElement).toBe(options[1]);
+
+    keyPress('ArrowLeft');
+    expect(document.activeElement).toBe(options[0]);
+
+    keyPress('ArrowRight');
+    expect(document.activeElement).toBe(options[1]);
+  });
+
+  it('should support horizontal grid layout', async () => {
+    let {getAllByRole} = renderListbox({layout: 'grid', orientation: 'horizontal'});
+    let options = getAllByRole('option');
+
+    jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+      if (this.getAttribute('role') === 'listbox') {
+        return {top: 0, left: 0, bottom: 200, right: 200, width: 200, height: 200};
+      } else {
+        let index = [...this.parentElement.children].indexOf(this);
+        return {top: (index % 2) * 40, left: index < 2 ? 0 : 100, bottom: (index % 2) * 40 + 40, right: index < 2 ? 100 : 200, width: 100, height: 40};
+      }
+    });
+
+    await user.tab();
+    expect(document.activeElement).toBe(options[0]);
+
+    keyPress('ArrowRight');
+    expect(document.activeElement).toBe(options[2]);
+
+    keyPress('ArrowUp');
+    expect(document.activeElement).toBe(options[1]);
+
+    keyPress('ArrowUp');
+    expect(document.activeElement).toBe(options[0]);
+
+    keyPress('ArrowDown');
+    expect(document.activeElement).toBe(options[1]);
+  });
+
   describe('drag and drop', () => {
     it('should support draggable items', () => {
       let {getAllByRole} = render(<DraggableListBox />);
@@ -429,6 +559,84 @@ describe('ListBox', () => {
       act(() => jest.runAllTimers());
 
       expect(onRootDrop).toHaveBeenCalledTimes(1);
+    });
+
+    it('should support horizontal orientation', async () => {
+      let onReorder = jest.fn();
+      let {getAllByRole} = render(<DraggableListBox onReorder={onReorder} orientation="horizontal" />);
+      let options = getAllByRole('option');
+
+      await user.tab();
+      expect(document.activeElement).toBe(options[0]);
+      keyPress('Enter');
+      act(() => jest.runAllTimers());
+
+      options = getAllByRole('option');
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Cat and Dog');
+
+      keyPress('ArrowRight');
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Dog and Kangaroo');
+
+      keyPress('Escape');
+      act(() => jest.runAllTimers());
+    });
+
+    it('should support grid layout', async () => {
+      let onReorder = jest.fn();
+      let {getAllByRole} = render(<DraggableListBox onReorder={onReorder} layout="grid" />);
+      let options = getAllByRole('option');
+
+      jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+        if (this.getAttribute('role') === 'listbox') {
+          return {top: 0, left: 0, bottom: 200, right: 200, width: 200, height: 200};
+        } else {
+          let index = [...this.parentElement.children].filter(c => c.hasAttribute('data-key')).indexOf(this);
+          return {top: Math.floor(index / 2) * 40, left: index % 2 ? 100 : 0, bottom: Math.floor(index / 2) * 40 + 40, right: index % 2 ? 200 : 100, width: 100, height: 40};
+        }
+      });
+
+      await user.tab();
+      expect(document.activeElement).toBe(options[0]);
+      keyPress('Enter');
+      act(() => jest.runAllTimers());
+
+      options = getAllByRole('option');
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Cat and Dog');
+
+      keyPress('ArrowDown');
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Kangaroo');
+
+      keyPress('Escape');
+      act(() => jest.runAllTimers());
+    });
+
+    it('should support horizontal grid layout', async () => {
+      let onReorder = jest.fn();
+      let {getAllByRole} = render(<DraggableListBox onReorder={onReorder} layout="grid" orientation="horizontal" />);
+      let options = getAllByRole('option');
+
+      jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+        if (this.getAttribute('role') === 'listbox') {
+          return {top: 0, left: 0, bottom: 200, right: 200, width: 200, height: 200};
+        } else {
+          let index = [...this.parentElement.children].filter(c => c.hasAttribute('data-key')).indexOf(this);
+          return {top: (index % 2) * 40, left: index < 2 ? 0 : 100, bottom: (index % 2) * 40 + 40, right: index < 2 ? 100 : 200, width: 100, height: 40};
+        }
+      });
+
+      await user.tab();
+      expect(document.activeElement).toBe(options[0]);
+      keyPress('Enter');
+      act(() => jest.runAllTimers());
+
+      options = getAllByRole('option');
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Cat and Dog');
+
+      keyPress('ArrowRight');
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Kangaroo');
+
+      keyPress('Escape');
+      act(() => jest.runAllTimers());
     });
   });
 });

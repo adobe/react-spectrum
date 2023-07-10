@@ -21,7 +21,7 @@ import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import Anatomy from './anatomy.svg';
 
 ---
-category: Status
+category: Collections
 keywords: [tag, aria]
 ---
 
@@ -63,7 +63,7 @@ onto the appropriate element:
   <InterfaceType properties={docs.links[docs.exports.useTagGroup.return.id].properties} />
 </TypeContext.Provider>
 
-`useTag` returns props for an individual tag:
+`useTag` returns props for an individual tag, along with states that you can use for styling:
 
 <TypeContext.Provider value={docs.links}>
   <InterfaceType properties={docs.links[docs.exports.useTag.return.id].properties} />
@@ -76,6 +76,8 @@ Each individual tag should use `rowProps` on its outer container, and use `gridC
 ## Example
 
 ```tsx example export=true
+import type {AriaTagGroupProps, AriaTagProps} from '@react-aria/tag';
+import type {ListState} from '@react-stately/list';
 import {useTag, useTagGroup} from '@react-aria/tag';
 import {useListState} from '@react-stately/list';
 import {Item} from '@react-stately/collections';
@@ -84,8 +86,8 @@ import {useFocusRing} from '@react-aria/focus';
 // Reuse the Button from your component library. See below for details.
 import {Button} from 'your-component-library';
 
-function TagGroup(props) {
-  let { label, description, errorMessage, validationState, allowsRemoving, onRemove } = props;
+function TagGroup<T extends object>(props: AriaTagGroupProps<T>) {
+  let { label, description, errorMessage } = props;
   let ref = React.useRef(null);
 
   let state = useListState(props);
@@ -97,20 +99,14 @@ function TagGroup(props) {
   } = useTagGroup(props, state, ref);
 
   return (
-    <div ref={ref} className="tag-group">
+    <div className="tag-group">
       <div {...labelProps}>{label}</div>
-      <div {...gridProps}>
+      <div {...gridProps} ref={ref}>
         {[...state.collection].map((item) => (
           <Tag
-            {...item.props}
             key={item.key}
             item={item}
-            state={state}
-            allowsRemoving={allowsRemoving}
-            onRemove={onRemove}
-          >
-            {item.rendered}
-          </Tag>
+            state={state} />
         ))}
       </div>
       {description && (
@@ -118,7 +114,7 @@ function TagGroup(props) {
           {description}
         </div>
       )}
-      {errorMessage && validationState === "invalid" && (
+      {errorMessage && (
         <div {...errorMessageProps} className="error-message">
           {errorMessage}
         </div>
@@ -127,29 +123,23 @@ function TagGroup(props) {
   );
 }
 
-function Tag(props) {
-  let { item, state, allowsRemoving, onRemove } = props;
-  let ref = React.useRef(null);
-  let {focusProps} = useFocusRing({within: true});
+interface TagProps<T> extends AriaTagProps<T> {
+  state: ListState<T>
+}
 
-  let { rowProps, gridCellProps, labelProps, removeButtonProps } = useTag({
-    ...props,
-    item,
-    allowsRemoving,
-    onRemove
-  }, state, ref);
+function Tag<T>(props: TagProps<T>) {
+  let {item, state} = props;
+  let ref = React.useRef(null);
+  let {focusProps, isFocusVisible} = useFocusRing({within: true});
+  let {rowProps, gridCellProps, removeButtonProps, allowsRemoving} = useTag(props, state, ref);
 
   return (
-    <span
-      ref={ref}
-      {...rowProps}
-      {...focusProps}
-    >
+    <div ref={ref} {...rowProps} {...focusProps} data-focus-visible={isFocusVisible}>
       <div {...gridCellProps}>
-        <span {...labelProps}>{item.rendered}</span>
+        {item.rendered}
         {allowsRemoving && <Button {...removeButtonProps}>❎</Button>}
       </div>
-    </span>
+    </div>
   );
 }
 
@@ -165,19 +155,16 @@ function Tag(props) {
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-/* css */
 .tag-group {
   display: flex;
   flex-direction: column;
-}
-
-.tag-group div {
-  margin: 5px 0;
+  gap: 4px;
 }
 
 .tag-group [role="grid"] {
   display: flex;
   flex-wrap: wrap;
+  gap: 4px;
 }
 
 .tag-group [role="row"] {
@@ -186,7 +173,23 @@ function Tag(props) {
   border: 1px solid gray;
   border-radius: 4px;
   padding: 2px 5px;
-  margin: 2px;
+  cursor: default;
+  outline: none;
+
+  &[data-focus-visible=true] {
+    outline: 2px solid slateblue;
+    outline-offset: 2px;
+  }
+
+  &[aria-selected=true] {
+    background: var(--spectrum-gray-900);
+    border-color: var(--spectrum-gray-900);
+    color: var(--spectrum-gray-50);
+  }
+
+  &[aria-disabled] {
+    opacity: 0.4;
+  }
 }
 
 .tag-group [role="gridcell"] {
@@ -243,7 +246,7 @@ function Button(props) {
 
 ### Remove tags
 
-The `onRemove` handler and `allowsRemoving` props can be used to include a remove button which can be used to remove a tag. This allows the user to press the remove button, or press the backspace key while the tag is focused to remove the tag from the group.
+The `onRemove` prop can be used to include a remove button which can be used to remove a tag. This allows the user to press the remove button, or press the backspace key while the tag is focused to remove the tag from the group. Additionally, when [selection](#selection) is enabled, all selected items will be deleted when pressing the backspace key on a selected tag.
 
 ```tsx example
 import {useListData} from '@react-stately/data';
@@ -262,12 +265,56 @@ function Example() {
     <TagGroup
       label="Categories"
       items={list.items}
-      onRemove={list.remove}
-      allowsRemoving>
+      onRemove={(keys) => list.remove(...keys)}>
       {(item) => <Item>{item.name}</Item>}
     </TagGroup>
   );
 }
+```
+
+### Selection
+
+TagGroup supports multiple selection modes. By default, selection is disabled, however this can be changed using the `selectionMode` prop.
+Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `key` prop of the items.
+See the `react-stately` [Selection docs](../react-stately/selection.html) for more details.
+
+```tsx example
+import type {Selection} from 'react-stately';
+
+function Example() {
+  let [selected, setSelected] = React.useState<Selection>(new Set(['parking']));
+
+  return (
+    <>
+      <TagGroup label="Amenities" selectionMode="multiple" selectedKeys={selected} onSelectionChange={setSelected}>
+        <Item key="laundry">Laundry</Item>
+        <Item key="fitness">Fitness center</Item>
+        <Item key="parking">Parking</Item>
+        <Item key="pool">Swimming pool</Item>
+        <Item key="breakfast">Breakfast</Item>
+      </TagGroup>
+      <p>Current selection (controlled): {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
+    </>
+  );
+}
+```
+
+### Disabled tags
+
+TagGroup supports marking items as disabled using the `disabledKeys` prop. Each key in this list
+corresponds with the `key` prop passed to the `Item` component, or automatically derived from the values passed
+to the `items` prop. Disabled items are not focusable, selectable, or keyboard navigable.
+See [Collections](../react-stately/collections.html) for more details.
+
+```tsx example
+<TagGroup label="Sandwich contents" selectionMode="multiple" disabledKeys={['tuna']}>
+  <Item key="lettuce">Lettuce</Item>
+  <Item key="tomato">Tomato</Item>
+  <Item key="cheese">Cheese</Item>
+  <Item key="tuna">Tuna Salad</Item>
+  <Item key="egg">Egg Salad</Item>
+  <Item key="ham">Ham</Item>
+</TagGroup>
 ```
 
 ### Description
@@ -285,10 +332,10 @@ The `description` prop can be used to associate additional help text with a tag 
 
 ### Error message
 
-The `errorMessage` prop can be used to help the user fix a validation error. It should be combined with the `validationState` prop.
+The `errorMessage` prop can be used to help the user fix a validation error.
 
 ```tsx example
-<TagGroup label="Categories" errorMessage="Invalid set of categories." validationState="invalid">
+<TagGroup label="Categories" errorMessage="Invalid set of categories.">
   <Item key="news">News</Item>
   <Item key="travel">Travel</Item>
   <Item key="gaming">Gaming</Item>

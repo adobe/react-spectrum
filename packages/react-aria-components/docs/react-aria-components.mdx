@@ -44,6 +44,7 @@ import DateField from '@react-spectrum/docs/pages/assets/component-illustrations
 import TimeField from '@react-spectrum/docs/pages/assets/component-illustrations/TimeField.svg';
 import DatePicker from '@react-spectrum/docs/pages/assets/component-illustrations/DatePicker.svg';
 import DateRangePicker from '@react-spectrum/docs/pages/assets/component-illustrations/DateRangePicker.svg';
+import TagGroup from '@react-spectrum/docs/pages/assets/component-illustrations/TagGroup.svg';
 
 ---
 category: Concepts
@@ -323,8 +324,6 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
 
 </details>
 
-If you're using SSR via a framework like Next.js or Remix, you'll also need to wrap your application in an `<SSRProvider>`. See the [Server Side Rendering](ssr.html) docs for more details.
-
 ## Styling
 
 React Aria Components do not include any styles by default, allowing you to build custom designs to fit your application or design system. Each component accepts the standard `className` and `style` props which enable using vanilla CSS, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc.
@@ -496,6 +495,13 @@ The documentation for each component includes many examples styled using vanilla
   title="Table"
   description="A table displays data in rows and columns, with row selection and sorting.">
   <Table />
+</ExampleCard>
+
+<ExampleCard
+  url="TagGroup.html"
+  title="TagGroup"
+  description="A tag group displays a list of items, with support for keyboard navigation, selection, and removal.">
+  <TagGroup />
 </ExampleCard>
 
 </section>

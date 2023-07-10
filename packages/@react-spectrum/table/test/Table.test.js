@@ -2781,8 +2781,8 @@ describe('TableView', function () {
           await user.pointer({target: document.body, keys: '[TouchA]'});
 
           let cellBaz5 = getCell(tree, 'Foo 5');
-          await user.pointer({target: cellBaz5, keys: '[TouchA>]'});
-          // fireEvent.pointerDown(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
+
+          fireEvent.pointerDown(cellBaz5, {pointerType: 'touch'});
           expect(onSelectionChange).not.toHaveBeenCalled();
           expect(onAction).not.toHaveBeenCalled();
 
@@ -2791,7 +2791,8 @@ describe('TableView', function () {
           checkSelection(onSelectionChange, ['Foo 5']);
           expect(onAction).not.toHaveBeenCalled();
 
-          await user.pointer({target: cellBaz5, keys: '[/TouchA]'});
+          fireEvent.pointerUp(cellBaz5, {pointerType: 'touch'});
+          fireEvent.click(cellBaz5, {pointerType: 'touch'});
           onSelectionChange.mockReset();
 
           await user.pointer({target: getCell(tree, 'Foo 10'), keys: '[TouchA]'});
@@ -3115,7 +3116,9 @@ describe('TableView', function () {
             expect(announce).toHaveBeenCalledTimes(3);
             onSelectionChange.mockReset();
 
-            await user.click(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
+            fireEvent.pointerDown(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
+            fireEvent.pointerUp(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
+            fireEvent.click(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
             act(() => {
               jest.runAllTimers();
             });
@@ -4141,7 +4144,7 @@ describe('TableView', function () {
       fireEvent.scroll(scrollView);
       act(() => {jest.runAllTimers();});
 
-      expect(onLoadMore).toHaveBeenCalledTimes(3);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
 
     it('should automatically fire onLoadMore if there aren\'t enough items to fill the Table', function () {
@@ -4166,8 +4169,7 @@ describe('TableView', function () {
 
       render(<TableMock items={items} />);
       act(() => jest.runAllTimers());
-      // first loadMore triggered by onVisibleRectChange, other 2 by useLayoutEffect
-      expect(onLoadMoreSpy).toHaveBeenCalledTimes(3);
+      expect(onLoadMoreSpy).toHaveBeenCalledTimes(1);
     });
   });
 

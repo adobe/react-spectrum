@@ -722,7 +722,7 @@ describe('CardView', function () {
           });
         }
 
-        expect(document.activeElement).toEqual(pageDownElement);
+        expect(document.activeElement).toHaveTextContent(pageDownElement.textContent);
       });
     });
   });
@@ -1198,6 +1198,11 @@ describe('CardView', function () {
 
       fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
       fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
+
+      act(() => {
+        grid.scrollTop += 100;
+        fireEvent.scroll(grid);
+      });
 
       act(() => {
         jest.runAllTimers();

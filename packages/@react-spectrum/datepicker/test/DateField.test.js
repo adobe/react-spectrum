@@ -53,7 +53,7 @@ describe('DateField', function () {
       for (let segment of segments) {
         expect(segment).toHaveAttribute('id');
         let segmentId = segment.getAttribute('id');
-        expect(segment).toHaveAttribute('aria-labelledby', `${label.id} ${segmentId}`);
+        expect(segment).toHaveAttribute('aria-labelledby', `${segmentId} ${label.id}`);
       }
     });
 
@@ -67,7 +67,7 @@ describe('DateField', function () {
       let segments = getAllByRole('spinbutton');
       for (let segment of segments) {
         expect(segment).toHaveAttribute('id');
-        expect(segment.getAttribute('aria-label').startsWith('Birth date ')).toBe(true);
+        expect(segment.getAttribute('aria-label').endsWith(' Birth date')).toBe(true);
         expect(segment).not.toHaveAttribute('aria-labelledby');
       }
     });
@@ -83,7 +83,7 @@ describe('DateField', function () {
       for (let segment of segments) {
         expect(segment).toHaveAttribute('id');
         let segmentId = segment.getAttribute('id');
-        expect(segment).toHaveAttribute('aria-labelledby', `foo ${segmentId}`);
+        expect(segment).toHaveAttribute('aria-labelledby', `${segmentId} foo`);
       }
     });
 

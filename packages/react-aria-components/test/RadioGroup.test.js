@@ -84,6 +84,26 @@ describe('RadioGroup', () => {
     expect(label).toHaveAttribute('data-required', 'true');
   });
 
+  it('should support Radio render props', async () => {
+    let {getAllByRole} = render(
+      <RadioGroup defaultValue="a">
+        <Label>Test</Label>
+        <Radio value="a">
+          {({isSelected}) => isSelected ? 'A (selected)' : 'A'}
+        </Radio>
+        <Radio value="b">
+          {({isSelected}) => isSelected ? 'B (selected)' : 'B'}
+        </Radio>
+      </RadioGroup>
+    );
+    let radios = getAllByRole('radio');
+    expect(radios[0].closest('label')).toHaveTextContent('A (selected)');
+    expect(radios[1].closest('label')).toHaveTextContent('B');
+    await user.click(radios[1]);
+    expect(radios[0].closest('label')).toHaveTextContent('A');
+    expect(radios[1].closest('label')).toHaveTextContent('B (selected)');
+  });
+
   it('should support slot', () => {
     let {getByRole} = render(
       <RadioGroupContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>

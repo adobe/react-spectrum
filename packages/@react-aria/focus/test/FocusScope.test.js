@@ -16,7 +16,7 @@ import {DialogContainer} from '@react-spectrum/dialog';
 import {FocusScope, useFocusManager} from '../';
 import {focusScopeTree} from '../src/FocusScope';
 import {Provider} from '@react-spectrum/provider';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {Example as StorybookExample} from '../stories/FocusScope.stories';
 import userEvent from '@testing-library/user-event';
@@ -698,6 +698,70 @@ describe('FocusScope', function () {
         expect(item2).not.toBeInTheDocument();
         await waitFor(() => expect(document.activeElement).toBe(focusable));
       });
+    });
+
+    it('should not not restore focus when active element is outside the scope', async function () {
+      function Test() {
+        const [display, setDisplay] = useState(false);
+        useEffect(() => {
+          let handleKeyDown = (e) => {
+            if (e.key === 'Escape') {
+              setDisplay(false);
+            }
+          };
+          document.body.addEventListener('keyup', handleKeyDown);
+          return () => {
+            document.body.removeEventListener('keyup', handleKeyDown);
+          };
+        }, []);
+
+        return (
+          <div>
+            <button
+              data-testid="button1"
+              type="button"
+              onClick={() => setDisplay((state) => !state)}>
+              {display ? 'Close dialog' : 'Open dialog'}
+            </button>
+            <button
+              data-testid="button2"
+              type="button"
+              onClick={() => setDisplay((state) => !state)}>
+              {display ? 'Close dialog' : 'Open dialog'}
+            </button>{' '}
+            {display && (
+              <FocusScope restoreFocus>
+                <input data-testid="input1" />
+              </FocusScope>
+            )}
+          </div>
+        );
+      }
+
+      let {getByTestId} = render(<Test />);
+      let button1 = getByTestId('button1');
+      let button2 = getByTestId('button2');
+      await user.click(button1);
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(button1);
+      let input1 = getByTestId('input1');
+      expect(input1).toBeVisible();
+
+      await user.click(button2);
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(button2);
+      expect(input1).not.toBeInTheDocument();
+
+      await user.click(button1);
+      act(() => {jest.runAllTimers();});
+      input1 = getByTestId('input1');
+      expect(input1).toBeVisible();
+      await user.tab();
+      fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+      fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(button2);
+      expect(input1).not.toBeInTheDocument();
     });
   });
 
