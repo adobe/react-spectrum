@@ -79,6 +79,26 @@ describe('RadioGroup', () => {
     expect(label).toHaveAttribute('data-required', 'true');
   });
 
+  it('should support Radio render props', () => {
+    let {getAllByRole} = render(
+      <RadioGroup defaultValue="a">
+        <Label>Test</Label>
+        <Radio value="a">
+          {({isSelected}) => isSelected ? 'A (selected)' : 'A'}
+        </Radio>
+        <Radio value="b">
+          {({isSelected}) => isSelected ? 'B (selected)' : 'B'}
+        </Radio>
+      </RadioGroup>
+    );
+    let radios = getAllByRole('radio');
+    expect(radios[0].closest('label')).toHaveTextContent('A (selected)');
+    expect(radios[1].closest('label')).toHaveTextContent('B');
+    userEvent.click(radios[1]);
+    expect(radios[0].closest('label')).toHaveTextContent('A');
+    expect(radios[1].closest('label')).toHaveTextContent('B (selected)');
+  });
+
   it('should support slot', () => {
     let {getByRole} = render(
       <RadioGroupContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
@@ -111,7 +131,7 @@ describe('RadioGroup', () => {
     let {getAllByRole} = renderGroup({}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
     let radio = getAllByRole('radio')[0];
     let label = radio.closest('label');
-    
+
     expect(label).not.toHaveAttribute('data-focus-visible');
     expect(label).not.toHaveClass('focus');
 

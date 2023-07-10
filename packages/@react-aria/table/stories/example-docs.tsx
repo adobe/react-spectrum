@@ -13,10 +13,9 @@
 import ariaStyles from './docs-example.css';
 import {classNames} from '@react-spectrum/utils';
 import {mergeProps} from '@react-aria/utils';
-import React, {useCallback} from 'react';
+import React, {useCallback, useRef} from 'react';
 import {useButton} from 'react-aria';
 import {useFocusRing} from '@react-aria/focus';
-import {useRef} from 'react';
 import {useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup} from '@react-aria/table';
 import {useTableColumnResizeState, useTableState} from '@react-stately/table';
 

@@ -46,9 +46,8 @@ import {TextFieldBase} from '@react-spectrum/textfield';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useComboBox} from '@react-aria/combobox';
 import {useComboBoxState} from '@react-stately/combobox';
-import {useFilter} from '@react-aria/i18n';
+import {useFilter, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useLayoutEffect} from '@react-aria/utils';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: FocusableRef<HTMLElement>) {
@@ -95,7 +94,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
       allowsEmptyCollection: isAsync
     }
   );
-  let layout = useListBoxLayout(state);
+  let layout = useListBoxLayout(state, loadingState === 'loadingMore');
 
   let {buttonProps, inputProps, listBoxProps, labelProps, descriptionProps, errorMessageProps} = useComboBox(
     {
@@ -172,7 +171,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
           layout={layout}
           state={state}
           shouldUseVirtualFocus
-          isLoading={loadingState === 'loadingMore'}
+          isLoading={loadingState === 'loading' || loadingState === 'loadingMore'}
           onLoadMore={onLoadMore}
           renderEmptyState={() => isAsync && (
             <span className={classNames(comboboxStyles, 'no-results')}>

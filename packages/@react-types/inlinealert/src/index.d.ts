@@ -15,12 +15,12 @@ import {ReactNode} from 'react';
 
 export interface SpectrumInlineAlertProps extends DOMProps, StyleProps {
   /**
-   * The [visual style](https://spectrum.adobe.com/page/in-line-alert/#Options) of the In-line Alert.
+   * The [visual style](https://spectrum.adobe.com/page/in-line-alert/#Options) of the Inline Alert.
    * @default 'neutral'
    */
   variant?: 'neutral' | 'info' | 'positive' | 'notice' | 'negative',
   /**
-   * The contents of the In-line Alert.
+   * The contents of the Inline Alert.
    */
   children: ReactNode
 }

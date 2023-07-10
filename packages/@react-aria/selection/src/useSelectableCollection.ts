@@ -320,7 +320,11 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       if (element) {
         // This prevents a flash of focus on the first/last element in the collection, or the collection itself.
         focusWithoutScrolling(element);
-        scrollIntoView(scrollRef.current, element);
+
+        let modality = getInteractionModality();
+        if (modality === 'keyboard') {
+          scrollIntoViewport(element, {containingElement: ref.current});
+        }
       }
     }
   };
@@ -364,17 +368,25 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
   // If not virtualized, scroll the focused element into view when the focusedKey changes.
   // When virtualized, Virtualizer handles this internally.
+  let lastFocusedKey = useRef(manager.focusedKey);
   useEffect(() => {
     let modality = getInteractionModality();
-    if (!isVirtualized && manager.isFocused && manager.focusedKey != null && scrollRef?.current) {
+    if (manager.isFocused && manager.focusedKey != null && scrollRef?.current) {
       let element = scrollRef.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
-      if (element) {
-        scrollIntoView(scrollRef.current, element);
-        if (modality === 'keyboard') {
-          scrollIntoViewport(element, {containingElement: ref.current});
+      if (element && modality === 'keyboard') {
+        if (!isVirtualized) {
+          scrollIntoView(scrollRef.current, element);
         }
+        scrollIntoViewport(element, {containingElement: ref.current});
       }
     }
+
+    // If the focused key becomes null (e.g. the last item is deleted), focus the whole collection.
+    if (manager.isFocused && manager.focusedKey == null && lastFocusedKey.current != null) {
+      focusSafely(ref.current);
+    }
+
+    lastFocusedKey.current = manager.focusedKey;
   }, [isVirtualized, scrollRef, manager.focusedKey, manager.isFocused, ref]);
 
   let handlers = {

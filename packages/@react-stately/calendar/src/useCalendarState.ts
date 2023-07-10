@@ -30,7 +30,7 @@ import {
 import {CalendarProps, DateValue} from '@react-types/calendar';
 import {CalendarState} from './types';
 import {useControlledState} from '@react-stately/utils';
-import {useMemo, useRef, useState} from 'react';
+import {useMemo, useState} from 'react';
 
 export interface CalendarStateOptions<T extends DateValue = DateValue> extends CalendarProps<T> {
   /** The locale to display and edit the value according to. */
@@ -65,9 +65,9 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
     minValue,
     maxValue,
     selectionAlignment,
-    isDateUnavailable
+    isDateUnavailable,
+    pageBehavior = 'visible'
   } = props;
-
   let calendar = useMemo(() => createCalendar(resolvedOptions.calendar), [createCalendar, resolvedOptions.calendar]);
 
   let [value, setControlledValue] = useControlledState<DateValue>(props.value, props.defaultValue, props.onChange);
@@ -112,12 +112,12 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
   }, [startDate, visibleDuration]);
 
   // Reset focused date and visible range when calendar changes.
-  let lastCalendarIdentifier = useRef(calendar.identifier);
-  if (calendar.identifier !== lastCalendarIdentifier.current) {
+  let [lastCalendarIdentifier, setLastCalendarIdentifier] = useState(calendar.identifier);
+  if (calendar.identifier !== lastCalendarIdentifier) {
     let newFocusedDate = toCalendar(focusedDate, calendar);
     setStartDate(alignCenter(newFocusedDate, visibleDuration, locale, minValue, maxValue));
     setFocusedDate(newFocusedDate);
-    lastCalendarIdentifier.current = calendar.identifier;
+    setLastCalendarIdentifier(calendar.identifier);
   }
 
   if (isInvalid(focusedDate, minValue, maxValue)) {
@@ -169,6 +169,14 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
   }, [calendarDateValue, isDateUnavailable, minValue, maxValue]);
   let validationState = props.validationState || (isUnavailable ? 'invalid' : null);
 
+  let pageDuration = useMemo(() => {
+    if (pageBehavior === 'visible') {
+      return visibleDuration;
+    }
+
+    return unitDuration(visibleDuration);
+  }, [pageBehavior, visibleDuration]);
+
   return {
     isDisabled: props.isDisabled,
     isReadOnly: props.isReadOnly,
@@ -208,23 +216,23 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
       }
     },
     focusNextPage() {
-      let start = startDate.add(visibleDuration);
-      setFocusedDate(constrainValue(focusedDate.add(visibleDuration), minValue, maxValue));
+      let start = startDate.add(pageDuration);
+      setFocusedDate(constrainValue(focusedDate.add(pageDuration), minValue, maxValue));
       setStartDate(
         alignStart(
-          constrainStart(focusedDate, start, visibleDuration, locale, minValue, maxValue),
-          visibleDuration,
+          constrainStart(focusedDate, start, pageDuration, locale, minValue, maxValue),
+          pageDuration,
           locale
         )
       );
     },
     focusPreviousPage() {
-      let start = startDate.subtract(visibleDuration);
-      setFocusedDate(constrainValue(focusedDate.subtract(visibleDuration), minValue, maxValue));
+      let start = startDate.subtract(pageDuration);
+      setFocusedDate(constrainValue(focusedDate.subtract(pageDuration), minValue, maxValue));
       setStartDate(
         alignStart(
-          constrainStart(focusedDate, start, visibleDuration, locale, minValue, maxValue),
-          visibleDuration,
+          constrainStart(focusedDate, start, pageDuration, locale, minValue, maxValue),
+          pageDuration,
           locale
         )
       );

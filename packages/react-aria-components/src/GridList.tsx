@@ -40,7 +40,11 @@ export interface GridListRenderProps {
    * Whether the grid list is currently the active drop target.
    * @selector [data-drop-target]
    */
-  isDropTarget: boolean
+  isDropTarget: boolean,
+  /**
+   * State of the grid list.
+   */
+  state: ListState<unknown>
 }
 
 export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<GridListRenderProps>, SlotProps {
@@ -91,12 +95,14 @@ function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<H
   let isListDroppable = !!dragAndDropHooks?.useDroppableCollectionState;
   let dragHooksProvided = useRef(isListDraggable);
   let dropHooksProvided = useRef(isListDroppable);
-  if (dragHooksProvided.current !== isListDraggable) {
-    console.warn('Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
-  }
-  if (dropHooksProvided.current !== isListDroppable) {
-    console.warn('Drop hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
-  }
+  useEffect(() => {
+    if (dragHooksProvided.current !== isListDraggable) {
+      console.warn('Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
+    }
+    if (dropHooksProvided.current !== isListDroppable) {
+      console.warn('Drop hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
+    }
+  }, [isListDraggable, isListDroppable]);
 
   let dragState: DraggableCollectionState | undefined = undefined;
   let dropState: DroppableCollectionState | undefined = undefined;
@@ -148,7 +154,8 @@ function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<H
       isDropTarget: isRootDropTarget,
       isEmpty: state.collection.size === 0,
       isFocused,
-      isFocusVisible
+      isFocusVisible,
+      state
     }
   });
 

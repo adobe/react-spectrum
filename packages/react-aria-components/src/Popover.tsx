@@ -11,13 +11,13 @@
  */
 
 import {AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PositionProps, usePopover} from 'react-aria';
-import {ContextValue, HiddenContext, RenderProps, SlotProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
+import {ContextValue, forwardRefType, HiddenContext, RenderProps, SlotProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {OverlayArrowContext} from './OverlayArrow';
-import {OverlayTriggerState} from 'react-stately';
+import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, RefObject} from 'react';
 
-export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef'>, RenderProps<PopoverRenderProps>, SlotProps {
+export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef'>, OverlayTriggerProps, RenderProps<PopoverRenderProps>, SlotProps {
   /**
    * The ref for the element which the popover positions itself with respect to.
    *
@@ -55,17 +55,28 @@ export const PopoverContext = createContext<ContextValue<PopoverContextValue, HT
 
 function Popover(props: PopoverProps, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, PopoverContext);
-  let {preserveChildren, state, triggerRef} = props as PopoverContextValue;
+  let ctx = props as PopoverContextValue;
+  let localState = useOverlayTriggerState(props);
+  let state = props.isOpen != null || props.defaultOpen != null || !ctx?.state ? localState : ctx.state;
   let isExiting = useExitAnimation(ref, state.isOpen);
 
   if (state && !state.isOpen && !isExiting) {
-    return preserveChildren ? <HiddenContext.Provider value>{props.children}</HiddenContext.Provider> : null;
+    let children = props.children;
+    if (typeof children === 'function') {
+      children = children({
+        placement: 'bottom',
+        isEntering: false,
+        isExiting: false
+      });
+    }
+
+    return ctx.preserveChildren ? <HiddenContext.Provider value>{children}</HiddenContext.Provider> : null;
   }
 
   return (
     <PopoverInner
       {...props}
-      triggerRef={triggerRef}
+      triggerRef={ctx.triggerRef!}
       state={state}
       popoverRef={ref}
       isExiting={isExiting} />
@@ -75,7 +86,7 @@ function Popover(props: PopoverProps, ref: ForwardedRef<HTMLElement>) {
 /**
  * A popover is an overlay element positioned relative to a trigger.
  */
-const _Popover = forwardRef(Popover);
+const _Popover = /*#__PURE__*/ (forwardRef as forwardRefType)(Popover);
 export {_Popover as Popover};
 
 interface PopoverInnerProps extends AriaPopoverProps, RenderProps<PopoverRenderProps>, SlotProps {

@@ -11,10 +11,10 @@
  */
 
 import {AriaSwitchProps, mergeProps, useFocusRing, useHover, usePress, useSwitch, VisuallyHidden} from 'react-aria';
-import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, forwardRefType, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, useState} from 'react';
-import {useToggleState} from 'react-stately';
+import {ToggleState, useToggleState} from 'react-stately';
 
 export interface SwitchProps extends Omit<AriaSwitchProps, 'children'>, RenderProps<SwitchRenderProps>, SlotProps {}
 
@@ -53,7 +53,11 @@ export interface SwitchRenderProps {
    * Whether the switch is read only.
    * @selector [data-readonly]
    */
-  isReadOnly: boolean
+  isReadOnly: boolean,
+  /**
+   * State of the switch.
+   */
+  state: ToggleState
 }
 
 export const SwitchContext = createContext<ContextValue<SwitchProps, HTMLInputElement>>(null);
@@ -61,7 +65,11 @@ export const SwitchContext = createContext<ContextValue<SwitchProps, HTMLInputEl
 function Switch(props: SwitchProps, ref: ForwardedRef<HTMLInputElement>) {
   [props, ref] = useContextProps(props, ref, SwitchContext);
   let state = useToggleState(props);
-  let {inputProps, isSelected, isDisabled, isReadOnly, isPressed: isPressedKeyboard} = useSwitch(props, state, ref);
+  let {inputProps, isSelected, isDisabled, isReadOnly, isPressed: isPressedKeyboard} = useSwitch({
+    ...props,
+    // ReactNode type doesn't allow function children.
+    children: typeof props.children === 'function' ? true : props.children
+  }, state, ref);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let isInteractionDisabled = props.isDisabled || props.isReadOnly;
 
@@ -98,7 +106,8 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLInputElement>) {
       isFocused,
       isFocusVisible,
       isDisabled,
-      isReadOnly
+      isReadOnly,
+      state
     }
   });
 
@@ -127,5 +136,5 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLInputElement>) {
 /**
  * A switch allows a user to turn a setting on or off.
  */
-const _Switch = forwardRef(Switch);
+const _Switch = /*#__PURE__*/ (forwardRef as forwardRefType)(Switch);
 export {_Switch as Switch};

@@ -38,10 +38,9 @@ const containerDimensions = {
 };
 
 // Reset JSDom's default margin on the body
-document.body.style.margin = 0;
+document.body.style.margin = '0';
 
-function createElementWithDimensions(elemName, dimensions, margins) {
-  margins = margins || {};
+function createElementWithDimensions(elemName, dimensions, margins = {}) {
   let elem = document.createElement(elemName);
 
   Object.assign(elem.style, {
@@ -103,7 +102,7 @@ describe('calculatePosition', function () {
     const placementAxis = placement.split(' ')[0];
 
     // The tests are all based on top/left positioning. Convert to bottom/right positioning if needed.
-    let pos = {};
+    let pos: {right?: number, top?: number, left?: number, bottom?: number} = {};
     if ((placementAxis === 'left' && !flip) || (placementAxis === 'right' && flip)) {
       pos.right = boundaryDimensions.width - (expected[0] + overlaySize.width);
       pos.top = expected[1];
@@ -164,7 +163,7 @@ describe('calculatePosition', function () {
     });
   }
 
-  function checkPosition(placement, targetDimension, expected, offset = 0, crossOffset = 0, flip = false, providerOffset, arrowSize, arrowBoundaryOffset) {
+  function checkPosition(placement, targetDimension, expected, offset = 0, crossOffset = 0, flip = false, providerOffset = undefined, arrowSize = undefined, arrowBoundaryOffset = undefined) {
     checkPositionCommon(
       'Should calculate the correct position',
       expected,
@@ -396,7 +395,7 @@ describe('calculatePosition', function () {
       const overlayNode = document.createElement('div');
       const container = document.createElement('div');
 
-      target.style = 'margin:20px';
+      target.style.margin = '20px';
       document.body.appendChild(target);
 
       let {position: {top: positionTop}} = calculatePosition({
@@ -408,7 +407,8 @@ describe('calculatePosition', function () {
         shouldFlip: false,
         boundaryElement: container,
         offset: 0,
-        crossOffset: 0
+        crossOffset: 0,
+        arrowSize: 0
       });
       expect(positionTop).toBe(0);
 

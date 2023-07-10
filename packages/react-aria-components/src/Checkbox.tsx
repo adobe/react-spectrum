@@ -11,7 +11,7 @@
  */
 import {AriaCheckboxGroupProps, AriaCheckboxProps, mergeProps, useCheckbox, useCheckboxGroup, useCheckboxGroupItem, useFocusRing, useHover, usePress, VisuallyHidden} from 'react-aria';
 import {CheckboxGroupState, useCheckboxGroupState, useToggleState, ValidationState} from 'react-stately';
-import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, useContext, useState} from 'react';
@@ -40,7 +40,21 @@ export interface CheckboxGroupRenderProps {
    * The validation state of the checkbox group.
    * @selector [data-validation-state="invalid" | "valid"]
    */
-  validationState: ValidationState
+  validationState: ValidationState,
+  /**
+   * Whether an element within the checkbox group is focused, either via a mouse or keyboard.
+   * @selector :focus-within
+   */
+  isFocusWithin: boolean,
+  /**
+   * Whether an element within the checkbox group is keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
+   * State of the checkbox group.
+   */
+  state: CheckboxGroupState
 }
 
 export interface CheckboxRenderProps {
@@ -103,6 +117,7 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivEleme
   [props, ref] = useContextProps(props, ref, CheckboxGroupContext);
   let state = useCheckboxGroupState(props);
   let [labelRef, label] = useSlot();
+  let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
   let {groupProps, labelProps, descriptionProps, errorMessageProps} = useCheckboxGroup({
     ...props,
     label
@@ -114,20 +129,26 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivEleme
       isDisabled: state.isDisabled,
       isReadOnly: state.isReadOnly,
       isRequired: props.isRequired || false,
-      validationState: state.validationState
+      validationState: state.validationState,
+      isFocusWithin: isFocused,
+      isFocusVisible,
+      state
     },
     defaultClassName: 'react-aria-CheckboxGroup'
   });
 
   return (
     <div
+      {...focusProps}
       {...groupProps}
       {...renderProps}
       ref={ref}
       slot={props.slot}
       data-readonly={state.isReadOnly || undefined}
       data-required={props.isRequired || undefined}
-      data-validation-state={state.validationState || undefined}>
+      data-validation-state={state.validationState || undefined}
+      data-disabled={props.isDisabled || undefined}
+      data-focus-visible={isFocusVisible || undefined}>
       <Provider
         values={[
           [InternalCheckboxGroupContext, state],
@@ -157,10 +178,12 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
       // Value is optional for standalone checkboxes, but required for CheckboxGroup items;
       // it's passed explicitly here to avoid typescript error (requires ignore).
       // @ts-ignore
-      value: props.value
+      value: props.value,
+      // ReactNode type doesn't allow function children.
+      children: typeof props.children === 'function' ? true : props.children
     }, groupState, ref)
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    : useCheckbox(props, useToggleState(props), ref);
+    : useCheckbox({...props, children: typeof props.children === 'function' ? true : props.children}, useToggleState(props), ref);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let isInteractionDisabled = isDisabled || isReadOnly;
 
@@ -234,11 +257,11 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
  * A checkbox allows a user to select multiple items from a list of individual items, or
  * to mark one individual item as selected.
  */
-const _Checkbox = forwardRef(Checkbox);
+const _Checkbox = /*#__PURE__*/ (forwardRef as forwardRefType)(Checkbox);
 
 /**
  * A checkbox group allows a user to select multiple items from a list of options.
  */
-const _CheckboxGroup = forwardRef(CheckboxGroup);
+const _CheckboxGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(CheckboxGroup);
 
 export {_Checkbox as Checkbox, _CheckboxGroup as CheckboxGroup};

@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@react-aria/ssr": "^3.0.0",
-    "@swc/helpers": "^0.4.14",
+    "@swc/helpers": "^0.5.0",
     "resolve": "^1.17.0"
   },
   "peerDependencies": {

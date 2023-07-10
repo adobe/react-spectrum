@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {useCallback, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 
 export function useControlledState<T>(
   value: T,
@@ -18,26 +18,32 @@ export function useControlledState<T>(
   onChange: (value: T, ...args: any[]) => void
 ): [T, (value: T, ...args: any[]) => void]  {
   let [stateValue, setStateValue] = useState(value || defaultValue);
-  let ref = useRef(value !== undefined);
-  let wasControlled = ref.current;
+
+  let isControlledRef = useRef(value !== undefined);
   let isControlled = value !== undefined;
-  // Internal state reference for useCallback
-  let stateRef = useRef(stateValue);
-  if (wasControlled !== isControlled) {
-    console.warn(`WARN: A component changed from ${wasControlled ? 'controlled' : 'uncontrolled'} to ${isControlled ? 'controlled' : 'uncontrolled'}.`);
-  }
+  useEffect(() => {
+    let wasControlled = isControlledRef.current;
+    if (wasControlled !== isControlled) {
+      console.warn(`WARN: A component changed from ${wasControlled ? 'controlled' : 'uncontrolled'} to ${isControlled ? 'controlled' : 'uncontrolled'}.`);
+    }
+    isControlledRef.current = isControlled;
+  }, [isControlled]);
 
-  ref.current = isControlled;
-
+  let currentValue = isControlled ? value : stateValue;
   let setValue = useCallback((value, ...args) => {
     let onChangeCaller = (value, ...onChangeArgs) => {
       if (onChange) {
-        if (!Object.is(stateRef.current, value)) {
+        if (!Object.is(currentValue, value)) {
           onChange(value, ...onChangeArgs);
         }
       }
       if (!isControlled) {
-        stateRef.current = value;
+        // If uncontrolled, mutate the currentValue local variable so that
+        // calling setState multiple times with the same value only emits onChange once.
+        // We do not use a ref for this because we specifically _do_ want the value to
+        // reset every render, and assigning to a ref in render breaks aborted suspended renders.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        currentValue = value;
       }
     };
 
@@ -49,7 +55,7 @@ export function useControlledState<T>(
       // if we're in an uncontrolled state, then we also return the value of myFunc which to setState looks as though it was just called with myFunc from the beginning
       // otherwise we just return the controlled value, which won't cause a rerender because React knows to bail out when the value is the same
       let updateFunction = (oldValue, ...functionArgs) => {
-        let interceptedValue = value(isControlled ? stateRef.current : oldValue, ...functionArgs);
+        let interceptedValue = value(isControlled ? currentValue : oldValue, ...functionArgs);
         onChangeCaller(interceptedValue, ...args);
         if (!isControlled) {
           return interceptedValue;
@@ -63,14 +69,7 @@ export function useControlledState<T>(
       }
       onChangeCaller(value, ...args);
     }
-  }, [isControlled, onChange]);
+  }, [isControlled, currentValue, onChange]);
 
-  // If a controlled component's value prop changes, we need to update stateRef
-  if (isControlled) {
-    stateRef.current = value;
-  } else {
-    value = stateValue;
-  }
-
-  return [value, setValue];
+  return [currentValue, setValue];
 }

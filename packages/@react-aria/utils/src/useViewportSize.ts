@@ -18,7 +18,7 @@ interface ViewportSize {
 }
 
 // @ts-ignore
-let visualViewport = typeof window !== 'undefined' && window.visualViewport;
+let visualViewport = typeof document !== 'undefined' && window.visualViewport;
 
 export function useViewportSize(): ViewportSize {
   let [size, setSize] = useState(() => getViewportSize());

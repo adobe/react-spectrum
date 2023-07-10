@@ -12,11 +12,10 @@
 
 import {AriaModalOverlayProps, DismissButton, Overlay, useModalOverlay} from 'react-aria';
 import {DOMAttributes} from '@react-types/shared';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {mergeRefs, useObjectRef, useViewportSize} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, mergeRefs, useObjectRef, useViewportSize} from '@react-aria/utils';
+import {forwardRefType, RenderProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext, useMemo, useRef} from 'react';
-import {RenderProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
 
 export interface ModalOverlayProps extends AriaModalOverlayProps, OverlayTriggerProps, RenderProps<ModalRenderProps> {}
 
@@ -45,7 +44,11 @@ export interface ModalRenderProps {
    * Whether the modal is currently exiting. Use this to apply animations.
    * @selector [data-exiting]
    */
-  isExiting: boolean
+  isExiting: boolean,
+  /**
+   * State of the modal.
+   */
+  state: OverlayTriggerState
 }
 
 function Modal(props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) {
@@ -89,16 +92,13 @@ interface ModalOverlayInnerProps extends ModalOverlayProps {
 /**
  * A modal is an overlay element which blocks interaction with elements outside it.
  */
-const _Modal = forwardRef(Modal);
+const _Modal = /*#__PURE__*/ (forwardRef as forwardRefType)(Modal);
 export {_Modal as Modal};
 
-/**
- * A ModalOverlay is a wrapper for a Modal which allows customizing the backdrop element.
- */
-export const ModalOverlay = forwardRef((props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) => {
+function ModalOverlayWithForwardRef(props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) {
   let ctx = useContext(ModalContext);
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  let state = ctx?.state ?? useOverlayTriggerState(props);
+  let localState = useOverlayTriggerState(props);
+  let state = props.isOpen != null || props.defaultOpen != null || !ctx?.state ? localState : ctx.state;
 
   let objectRef = useObjectRef(ref);
   let modalRef = useRef<HTMLDivElement>(null);
@@ -118,7 +118,12 @@ export const ModalOverlay = forwardRef((props: ModalOverlayProps, ref: Forwarded
       overlayRef={objectRef}
       modalRef={modalRef} />
   );
-});
+}
+
+/**
+ * A ModalOverlay is a wrapper for a Modal which allows customizing the backdrop element.
+ */
+export const ModalOverlay = /*#__PURE__*/ (forwardRef as forwardRefType)(ModalOverlayWithForwardRef);
 
 function ModalOverlayInner(props: ModalOverlayInnerProps) {
   let modalRef = props.modalRef;
@@ -131,7 +136,8 @@ function ModalOverlayInner(props: ModalOverlayInnerProps) {
     defaultClassName: 'react-aria-ModalOverlay',
     values: {
       isEntering: entering,
-      isExiting: props.isExiting
+      isExiting: props.isExiting,
+      state
     }
   });
 
@@ -173,7 +179,8 @@ function ModalContent(props: ModalContentProps) {
     defaultClassName: 'react-aria-Modal',
     values: {
       isEntering: entering,
-      isExiting
+      isExiting,
+      state
     }
   });
 
