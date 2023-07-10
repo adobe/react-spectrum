@@ -1,5 +1,6 @@
 {
   "actions": "Toimingud",
   "hideButtonLabel": "Kuva vähem",
-  "showAllButtonLabel": "Kuva kõik ({tagCount})"
+  "noTags": "Puudub",
+  "showAllButtonLabel": "Kuva kõik ({tagCount, number})"
 }

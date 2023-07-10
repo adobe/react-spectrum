@@ -111,7 +111,7 @@ interface ToastRegionProps<T> extends AriaToastRegionProps {
   state: ToastState<T>
 }
 
-function ToastRegion<T>({state, ...props}: ToastRegionProps<T>) {
+function ToastRegion<T extends React.ReactNode>({state, ...props}: ToastRegionProps<T>) {
   let ref = React.useRef(null);
   let {regionProps} = useToastRegion(props, state, ref);
 
@@ -138,7 +138,7 @@ interface ToastProps<T> extends AriaToastProps<T> {
   state: ToastState<T>
 }
 
-function Toast<T>({state, ...props}: ToastProps<T>) {
+function Toast<T extends React.ReactNode>({state, ...props}: ToastProps<T>) {
   let ref = React.useRef(null);
   let {toastProps, titleProps, closeButtonProps} = useToast(props, state, ref);
 

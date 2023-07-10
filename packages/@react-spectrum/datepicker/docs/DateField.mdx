@@ -205,7 +205,7 @@ function Example() {
   return (
     <>
       <DateField label="Birth date" value={date} onChange={setDate} />
-      <p>Selected date: {formatter.format(date.toDate(getLocalTimeZone()))}</p>
+      <p>Selected date: {date ? formatter.format(date.toDate(getLocalTimeZone())): '--'}</p>
     </>
   );
 }

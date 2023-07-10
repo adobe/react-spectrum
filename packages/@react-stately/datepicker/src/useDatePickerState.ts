@@ -12,8 +12,7 @@
 
 import {CalendarDate, DateFormatter, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
 import {DatePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
-import {FieldOptions, getFormatOptions, getPlaceholderTime, useDefaultProps} from './utils';
-import {isInvalid} from './utils';
+import {FieldOptions, getFormatOptions, getPlaceholderTime, isInvalid, useDefaultProps} from './utils';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {useControlledState} from '@react-stately/utils';
 import {useState} from 'react';
@@ -91,6 +90,8 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
 
   let commitValue = (date: DateValue, time: TimeValue) => {
     setValue('timeZone' in time ? time.set(toCalendarDate(date)) : toCalendarDateTime(date, time));
+    setSelectedDate(null);
+    setSelectedTime(null);
   };
 
   // Intercept setValue to make sure the Time section is not changed by date selection in Calendar
@@ -112,7 +113,7 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
   };
 
   let selectTime = (newValue: TimeValue) => {
-    if (selectedDate) {
+    if (selectedDate && newValue) {
       commitValue(selectedDate, newValue);
     } else {
       setSelectedTime(newValue);

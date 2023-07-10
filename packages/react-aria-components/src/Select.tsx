@@ -10,24 +10,51 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaSelectProps, HiddenSelect, useSelect} from 'react-aria';
+import {AriaSelectProps, HiddenSelect, useFocusRing, useSelect} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, forwardRefType, Provider, RenderProps, slotCallbackSymbol, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {createContext, ForwardedRef, HTMLAttributes, ReactNode, useCallback, useContext, useRef, useState} from 'react';
+import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
+import {ItemRenderProps, useCollection} from './Collection';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListBoxProps} from './ListBox';
 import {PopoverContext} from './Popover';
-import React, {forwardRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {SelectState, useSelectState} from 'react-stately';
 import {TextContext} from './Text';
-import {useCollection} from './Collection';
-import {useResizeObserver} from '@react-aria/utils';
 
-export interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<SelectState<T>>, SlotProps {}
+export interface SelectRenderProps {
+  /**
+   * Whether the select is focused, either via a mouse or keyboard.
+   * @selector [data-focused]
+   */
+  isFocused: boolean,
+  /**
+   * Whether the select is keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
+   * Whether the select is disabled.
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean,
+  /**
+   * Whether the select is currently open.
+   * @selector [data-open]
+   */
+  isOpen: boolean,
+  /**
+   * State of the select.
+   */
+  state: Omit<SelectState<unknown>, 'open' | 'toggle' | 'collection' | 'disabledKeys' | 'selectionManager' | 'setSelectedKey'>
+}
+
+export interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<SelectRenderProps>, SlotProps {}
 
 interface SelectValueContext {
   state: SelectState<unknown>,
-  valueProps: HTMLAttributes<HTMLElement>
+  valueProps: HTMLAttributes<HTMLElement>,
+  placeholder?: string
 }
 
 export const SelectContext = createContext<ContextValue<SelectProps<any>, HTMLDivElement>>(null);
@@ -46,6 +73,26 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
     collection,
     children: undefined
   });
+
+  let {isFocusVisible, focusProps} = useFocusRing({within: true});
+
+  // Only expose a subset of state to renderProps function to avoid infinite render loop
+  let renderPropsState = useMemo(() => ({
+    isOpen: state.isOpen,
+    isFocused: state.isFocused,
+    isFocusVisible,
+    isDisabled: props.isDisabled || false,
+    state: {
+      isFocused: state.isFocused,
+      setFocused: state.setFocused,
+      focusStrategy: state.focusStrategy,
+      isOpen: state.isOpen,
+      setOpen: state.setOpen,
+      selectedKey: state.selectedKey,
+      selectedItem: state.selectedItem,
+      close: state.close
+    }
+  }), [state.isOpen, state.isFocused, state.setFocused, state.focusStrategy, state.setOpen, state.selectedKey, state.selectedItem, state.close, isFocusVisible, props.isDisabled]);
 
   // Get props for child elements from useSelect
   let buttonRef = useRef<HTMLButtonElement>(null);
@@ -74,14 +121,17 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
 
   let renderProps = useRenderProps({
     ...props,
-    values: state,
+    values: renderPropsState,
     defaultClassName: 'react-aria-Select'
   });
+
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
 
   return (
     <Provider
       values={[
-        [InternalSelectContext, {state, valueProps}],
+        [InternalSelectContext, {state, valueProps, placeholder: props.placeholder}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen}],
         [PopoverContext, {
@@ -99,9 +149,16 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
           }
         }]
       ]}>
-      <div {...renderProps} ref={ref} slot={props.slot}>
-        {props.children}
-      </div>
+      <div
+        {...DOMProps}
+        {...renderProps}
+        {...focusProps}
+        ref={ref}
+        slot={props.slot}
+        data-focused={state.isFocused || undefined}
+        data-focus-visible={isFocusVisible || undefined}
+        data-open={state.isOpen || undefined}
+        data-disabled={props.isDisabled || undefined} />
       {portal}
       <HiddenSelect
         state={state}
@@ -115,35 +172,58 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
 /**
  * A select displays a collapsible list of options and allows a user to select one of them.
  */
-const _Select = (forwardRef as forwardRefType)(Select);
+const _Select = /*#__PURE__*/ (forwardRef as forwardRefType)(Select);
 export {_Select as Select};
 
-export interface SelectValueRenderProps {
+export interface SelectValueRenderProps<T> {
   /**
    * Whether the value is a placeholder.
    * @selector [data-placeholder]
    */
   isPlaceholder: boolean,
-  /** The rendered value of the currently selected item. */
-  selectedItem: ReactNode
+  /** The object value of the currently selected item. */
+  selectedItem: T | null,
+  /** The textValue of the currently selected item. */
+  selectedText: string | null
 }
 
-export interface SelectValueProps extends Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>, RenderProps<SelectValueRenderProps> {}
+export interface SelectValueProps<T extends object> extends Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>, RenderProps<SelectValueRenderProps<T>> {}
 
-function SelectValue(props: SelectValueProps, ref: ForwardedRef<HTMLSpanElement>) {
-  let {state, valueProps} = useContext(InternalSelectContext)!;
+function SelectValue<T extends object>(props: SelectValueProps<T>, ref: ForwardedRef<HTMLSpanElement>) {
+  let {state, valueProps, placeholder} = useContext(InternalSelectContext)!;
+  let rendered = state.selectedItem?.rendered;
+  if (typeof rendered === 'function') {
+    // If the selected item has a function as a child, we need to call it to render to JSX.
+    let fn = rendered as (s: ItemRenderProps) => ReactNode;
+    rendered = fn({
+      isHovered: false,
+      isPressed: false,
+      isSelected: false,
+      isFocused: false,
+      isFocusVisible: false,
+      isDisabled: false,
+      selectionMode: 'single',
+      selectionBehavior: 'toggle'
+    });
+  }
+
   let renderProps = useRenderProps({
     ...props,
-    defaultChildren: state.selectedItem?.rendered || 'Select an item',
+    // TODO: localize this.
+    defaultChildren: rendered || placeholder || 'Select an item',
     defaultClassName: 'react-aria-SelectValue',
     values: {
-      selectedItem: state.selectedItem?.rendered,
+      selectedItem: state.selectedItem?.value as T ?? null,
+      selectedText: state.selectedItem?.textValue ?? null,
       isPlaceholder: !state.selectedItem
     }
   });
 
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
+
   return (
-    <span ref={ref} {...valueProps} {...renderProps} data-placeholder={!state.selectedItem || undefined}>
+    <span ref={ref} {...DOMProps} {...valueProps} {...renderProps} data-placeholder={!state.selectedItem || undefined}>
       {/* clear description and error message slots */}
       <TextContext.Provider value={undefined}>
         {renderProps.children}
@@ -156,5 +236,5 @@ function SelectValue(props: SelectValueProps, ref: ForwardedRef<HTMLSpanElement>
  * SelectValue renders the current value of a Select, or a placeholder if no value is selected.
  * It is usually placed within the button element.
  */
-const _SelectValue = forwardRef(SelectValue);
+const _SelectValue = /*#__PURE__*/ (forwardRef as forwardRefType)(SelectValue);
 export {_SelectValue as SelectValue};

@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {forwardRefType, RenderProps, useRenderProps} from './utils';
 import {mergeProps} from '@react-aria/utils';
 import {PlacementAxis} from 'react-aria';
 import React, {createContext, CSSProperties, ForwardedRef, forwardRef, HTMLAttributes, useContext} from 'react';
-import {RenderProps, useRenderProps} from './utils';
 
 interface OverlayArrowContextValue {
   arrowProps: HTMLAttributes<HTMLElement>,
@@ -66,5 +66,5 @@ function OverlayArrow(props: OverlayArrowProps, ref: ForwardedRef<HTMLDivElement
  * An OverlayArrow renders a custom arrow element relative to an overlay element
  * such as a popover or tooltip such that it aligns with a trigger element.
  */
-const _OverlayArrow = forwardRef(OverlayArrow);
+const _OverlayArrow = /*#__PURE__*/ (forwardRef as forwardRefType)(OverlayArrow);
 export {_OverlayArrow as OverlayArrow};

@@ -64,6 +64,7 @@ governing permissions and limitations under the License.
  * and this causes both the label and inner field to resize as well. */
 .spectrum-Field {
   --spectrum-field-default-width: var(--spectrum-component-single-line-width);
+  height: max-content; /* don't stretch in a flex layout */
 
   .spectrum-Field-contextualHelp {
     grid-area: contextualHelp;
@@ -147,7 +148,7 @@ governing permissions and limitations under the License.
 .spectrum-Form {
   /* With labelPosition=side, we override field layout to use a CSS table
    * so that all the labels and fields line up automatically. */
-  &:where(.spectrum-Form--positionSide) {
+  &.spectrum-Form--positionSide {
     display: table;
     border-collapse: separate;
     border-spacing: var(--spectrum-tableform-border-spacing);

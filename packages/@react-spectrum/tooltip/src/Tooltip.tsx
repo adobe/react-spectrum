@@ -29,7 +29,7 @@ let iconMap = {
 };
 
 function Tooltip(props: SpectrumTooltipProps, ref: DOMRef) {
-  let {ref: overlayRef, arrowProps, state, ...tooltipProviderProps} = useContext(TooltipContext);
+  let {ref: overlayRef, arrowProps, state, arrowRef, ...tooltipProviderProps} = useContext(TooltipContext);
   let defaultRef = useRef();
   overlayRef = overlayRef || defaultRef;
   props = mergeProps(props, tooltipProviderProps);
@@ -69,7 +69,7 @@ function Tooltip(props: SpectrumTooltipProps, ref: DOMRef) {
           {props.children}
         </span>
       )}
-      <span {...arrowProps} className={classNames(styles, 'spectrum-Tooltip-tip')} />
+      <span {...arrowProps} ref={arrowRef} className={classNames(styles, 'spectrum-Tooltip-tip')} />
     </div>
   );
 }

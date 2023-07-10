@@ -175,3 +175,34 @@ html {
     }
   }
 }
+
+.dropzone {
+  border: 2px solid white;
+  margin: 20px;
+  padding: 20px;
+  outline: none;
+
+  &[data-focus-visible][data-focused] {
+    border: 2px dashed blue;
+  }
+
+  &[data-drop-target]{
+    border: 2px dashed orange;
+  }
+}
+
+.draggable {
+  outline: none;
+  
+  &.focus-ring{
+    border: 2px solid blue;
+  }
+}
+
+.copyable {
+  outline: none;
+
+  &.focus-ring{
+    border: 2px solid blue;
+  }
+}

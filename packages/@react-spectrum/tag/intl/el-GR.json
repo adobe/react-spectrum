@@ -1,5 +1,6 @@
 {
   "actions": "Ενέργειες",
   "hideButtonLabel": "Εμφάνιση λιγότερων",
-  "showAllButtonLabel": "Εμφάνιση όλων ({tagCount})"
+  "noTags": "Κανένα",
+  "showAllButtonLabel": "Εμφάνιση όλων ({tagCount, number})"
 }

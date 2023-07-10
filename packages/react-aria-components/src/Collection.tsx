@@ -11,11 +11,10 @@
  */
 import {CollectionBase} from '@react-types/shared';
 import {createPortal} from 'react-dom';
-import {DOMProps, RenderProps} from './utils';
+import {forwardRefType, RenderProps, StyleProps} from './utils';
 import {Collection as ICollection, Node, SelectionBehavior, SelectionMode, ItemProps as SharedItemProps, SectionProps as SharedSectionProps} from 'react-stately';
-import {mergeProps} from 'react-aria';
-import React, {cloneElement, createContext, Key, ReactElement, ReactNode, ReactPortal, useCallback, useContext, useMemo} from 'react';
-import {useLayoutEffect} from '@react-aria/utils';
+import {mergeProps, useIsSSR} from 'react-aria';
+import React, {cloneElement, createContext, ForwardedRef, forwardRef, Key, ReactElement, ReactNode, ReactPortal, useCallback, useContext, useMemo} from 'react';
 import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
 
 // This Collection implementation is perhaps a little unusual. It works by rendering the React tree into a
@@ -112,7 +111,7 @@ class BaseNode<T> {
 
   set firstChild(firstChild) {
     this._firstChild = firstChild;
-    this.ownerDocument.dirtyNodes.add(this);
+    this.ownerDocument.markDirty(this);
   }
 
   get lastChild() {
@@ -121,7 +120,7 @@ class BaseNode<T> {
 
   set lastChild(lastChild) {
     this._lastChild = lastChild;
-    this.ownerDocument.dirtyNodes.add(this);
+    this.ownerDocument.markDirty(this);
   }
 
   get previousSibling() {
@@ -130,7 +129,7 @@ class BaseNode<T> {
 
   set previousSibling(previousSibling) {
     this._previousSibling = previousSibling;
-    this.ownerDocument.dirtyNodes.add(this);
+    this.ownerDocument.markDirty(this);
   }
 
   get nextSibling() {
@@ -139,7 +138,7 @@ class BaseNode<T> {
 
   set nextSibling(nextSibling) {
     this._nextSibling = nextSibling;
-    this.ownerDocument.dirtyNodes.add(this);
+    this.ownerDocument.markDirty(this);
   }
 
   get parentNode() {
@@ -148,10 +147,11 @@ class BaseNode<T> {
 
   set parentNode(parentNode) {
     this._parentNode = parentNode;
-    this.ownerDocument.dirtyNodes.add(this);
+    this.ownerDocument.markDirty(this);
   }
 
   appendChild(child: ElementNode<T>) {
+    this.ownerDocument.startTransaction();
     if (child.parentNode) {
       child.parentNode.removeChild(child);
     }
@@ -173,8 +173,15 @@ class BaseNode<T> {
     child.nextSibling = null;
     this.lastChild = child;
 
-    this.ownerDocument.dirtyNodes.add(this);
-    this.ownerDocument.addNode(child);
+    this.ownerDocument.markDirty(this);
+    if (child.hasSetProps) {
+      // Only add the node to the collection if we already received props for it.
+      // Otherwise wait until then so we have the correct id for the node.
+      this.ownerDocument.addNode(child);
+    }
+
+    this.ownerDocument.endTransaction();
+    this.ownerDocument.queueUpdate();
   }
 
   insertBefore(newNode: ElementNode<T>, referenceNode: ElementNode<T>) {
@@ -182,6 +189,7 @@ class BaseNode<T> {
       return this.appendChild(newNode);
     }
 
+    this.ownerDocument.startTransaction();
     if (newNode.parentNode) {
       newNode.parentNode.removeChild(newNode);
     }
@@ -205,7 +213,12 @@ class BaseNode<T> {
       node = node.nextSibling;
     }
 
-    this.ownerDocument.addNode(newNode);
+    if (newNode.hasSetProps) {
+      this.ownerDocument.addNode(newNode);
+    }
+
+    this.ownerDocument.endTransaction();
+    this.ownerDocument.queueUpdate();
   }
 
   removeChild(child: ElementNode<T>) {
@@ -213,6 +226,7 @@ class BaseNode<T> {
       return;
     }
 
+    this.ownerDocument.startTransaction();
     let node = child.nextSibling;
     while (node) {
       node.index--;
@@ -241,6 +255,8 @@ class BaseNode<T> {
     child.index = 0;
 
     this.ownerDocument.removeNode(child);
+    this.ownerDocument.endTransaction();
+    this.ownerDocument.queueUpdate();
   }
 
   addEventListener() {}
@@ -248,11 +264,6 @@ class BaseNode<T> {
 }
 
 let id = 0;
-const TYPE_MAP = {
-  hr: 'separator',
-  optgroup: 'section',
-  option: 'item'
-};
 
 /**
  * A mutable element node in the fake DOM tree. It owns an immutable
@@ -262,10 +273,15 @@ export class ElementNode<T> extends BaseNode<T> {
   nodeType = 8; // COMMENT_NODE (we'd use ELEMENT_NODE but React DevTools will fail to get its dimensions)
   node: NodeValue<T>;
   private _index: number = 0;
+  hasSetProps = false;
 
   constructor(type: string, ownerDocument: Document<T, any>) {
     super(ownerDocument);
-    this.node = new NodeValue(TYPE_MAP[type] || type, ++id);
+    this.node = new NodeValue(type, `react-aria-${++id}`);
+    // Start a transaction so that no updates are emitted from the collection
+    // until the props for this node are set. We don't know the real id for the
+    // node until then, so we need to avoid emitting collections in an inconsistent state.
+    this.ownerDocument.startTransaction();
   }
 
   get index() {
@@ -274,7 +290,7 @@ export class ElementNode<T> extends BaseNode<T> {
 
   set index(index) {
     this._index = index;
-    this.ownerDocument.dirtyNodes.add(this);
+    this.ownerDocument.markDirty(this);
   }
 
   get level(): number {
@@ -297,38 +313,38 @@ export class ElementNode<T> extends BaseNode<T> {
     node.lastChildKey = this.lastChild?.node.key ?? null;
   }
 
-  // Special property that React passes through as an object rather than a string via setAttribute.
-  // See below for details.
-  set multiple(value: any) {
+  setProps(obj: any, ref: ForwardedRef<Element>, rendered?: ReactNode) {
     let node = this.ownerDocument.getMutableNode(this);
-    node.props = value;
-    node.rendered = value.rendered;
-    node.value = value.value;
-    node.textValue = value.textValue || (typeof value.rendered === 'string' ? value.rendered : '') || value['aria-label'] || '';
-    if (value.id != null && value.id !== node.key) {
-      if (this.parentNode) {
+    let {value, textValue, id, ...props} = obj;
+    props.ref = ref;
+    node.props = props;
+    node.rendered = rendered;
+    node.value = value;
+    node.textValue = textValue || (typeof rendered === 'string' ? rendered : '') || obj['aria-label'] || '';
+    if (id != null && id !== node.key) {
+      if (this.hasSetProps) {
         throw new Error('Cannot change the id of an item');
       }
-      node.key = value.id;
+      node.key = id;
     }
+
+    // If this is the first time props have been set, end the transaction started in the constructor
+    // so this node can be emitted.
+    if (!this.hasSetProps) {
+      this.ownerDocument.addNode(this);
+      this.ownerDocument.endTransaction();
+      this.hasSetProps = true;
+    }
+
+    this.ownerDocument.queueUpdate();
   }
 
   get style() {
-    let node = this.ownerDocument.getMutableNode(this);
-    if (!node.props.style) {
-      node.props.style = {};
-    }
-    return node.props.style;
+    return {};
   }
 
   hasAttribute() {}
-  setAttribute(key: string, value: string) {
-    let node = this.ownerDocument.getMutableNode(this);
-    if (key in node) {
-      node[key] = value;
-    }
-  }
-
+  setAttribute() {}
   setAttributeNS() {}
   removeAttribute() {}
 }
@@ -481,7 +497,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
  * A mutable Document in the fake DOM. It owns an immutable Collection instance,
  * which is lazily copied on write during updates.
  */
-export class Document<T, C extends BaseCollection<T>> extends BaseNode<T> {
+export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extends BaseNode<T> {
   nodeType = 11; // DOCUMENT_FRAGMENT_NODE
   ownerDocument = this;
   dirtyNodes: Set<BaseNode<T>> = new Set();
@@ -489,6 +505,7 @@ export class Document<T, C extends BaseCollection<T>> extends BaseNode<T> {
   private collectionMutated: boolean;
   private mutatedNodes: Set<ElementNode<T>> = new Set();
   private subscriptions: Set<() => void> = new Set();
+  private transactionCount = 0;
 
   constructor(collection: C) {
     // @ts-ignore
@@ -512,7 +529,7 @@ export class Document<T, C extends BaseCollection<T>> extends BaseNode<T> {
       this.mutatedNodes.add(element);
       element.node = node;
     }
-    this.dirtyNodes.add(element);
+    this.markDirty(element);
     return node;
   }
 
@@ -525,6 +542,18 @@ export class Document<T, C extends BaseCollection<T>> extends BaseNode<T> {
     return this.collection;
   }
 
+  markDirty(node: BaseNode<T>) {
+    this.dirtyNodes.add(node);
+  }
+
+  startTransaction() {
+    this.transactionCount++;
+  }
+
+  endTransaction() {
+    this.transactionCount--;
+  }
+
   addNode(element: ElementNode<T>) {
     let collection = this.getMutableCollection();
     if (!collection.getItem(element.node.key)) {
@@ -535,21 +564,26 @@ export class Document<T, C extends BaseCollection<T>> extends BaseNode<T> {
       }
     }
 
-    this.dirtyNodes.add(element);
+    this.markDirty(element);
   }
 
   removeNode(node: ElementNode<T>) {
     for (let child of node) {
+      child.parentNode = null;
       this.removeNode(child);
     }
 
     let collection = this.getMutableCollection();
     collection.removeNode(node.node.key);
-    this.dirtyNodes.add(node);
+    this.markDirty(node);
   }
 
   /** Finalizes the collection update, updating all nodes and freezing the collection. */
   getCollection(): C {
+    if (this.transactionCount > 0) {
+      return this.collection;
+    }
+
     for (let element of this.dirtyNodes) {
       if (element instanceof ElementNode && element.parentNode) {
         element.updateNode();
@@ -575,6 +609,12 @@ export class Document<T, C extends BaseCollection<T>> extends BaseNode<T> {
   }
 
   queueUpdate() {
+    // Don't emit any updates if there is a transaction in progress.
+    // queueUpdate should be called again after the transaction.
+    if (this.dirtyNodes.size === 0 || this.transactionCount > 0) {
+      return;
+    }
+
     for (let fn of this.subscriptions) {
       fn();
     }
@@ -588,15 +628,16 @@ export class Document<T, C extends BaseCollection<T>> extends BaseNode<T> {
 
 export interface CollectionProps<T> extends Omit<CollectionBase<T>, 'children'> {
   /** The contents of the collection. */
-  children?: ReactNode | ((item: T) => ReactElement)
+  children?: ReactNode | ((item: T) => ReactNode)
 }
 
 interface CachedChildrenOptions<T> extends CollectionProps<T> {
-  idScope?: Key
+  idScope?: Key,
+  addIdAndValue?: boolean
 }
 
-export function useCachedChildren<T extends object>(props: CachedChildrenOptions<T>) {
-  let {children, items, idScope} = props;
+export function useCachedChildren<T extends object>(props: CachedChildrenOptions<T>): ReactNode {
+  let {children, items, idScope, addIdAndValue} = props;
   let cache = useMemo(() => new WeakMap(), []);
   return useMemo(() => {
     if (items && typeof children === 'function') {
@@ -617,41 +658,74 @@ export function useCachedChildren<T extends object>(props: CachedChildrenOptions
               key = idScope + ':' + key;
             }
             // TODO: only works if wrapped Item passes through id...
-            rendered = cloneElement(rendered, {key, id: key});
+            rendered = cloneElement(
+              rendered,
+              addIdAndValue ? {key, id: key, value: item} : {key}
+            );
           }
           cache.set(item, rendered);
         }
         res.push(rendered);
       }
       return res;
-    } else {
+    } else if (typeof children !== 'function') {
       return children;
     }
-  }, [children, items, cache, idScope]);
+  }, [children, items, cache, idScope, addIdAndValue]);
 }
 
+export function useCollectionChildren<T extends object>(props: CachedChildrenOptions<T>) {
+  return useCachedChildren({...props, addIdAndValue: true});
+}
+
+const ShallowRenderContext = createContext(false);
+
 interface CollectionResult<C> {
-  portal: ReactPortal,
+  portal: ReactPortal | null,
   collection: C
 }
 
 export function useCollection<T extends object, C extends BaseCollection<T>>(props: CollectionProps<T>, initialCollection?: C): CollectionResult<C> {
+  let {collection, document} = useCollectionDocument<T, C>(initialCollection);
+  let portal = useCollectionPortal<T, C>(props, document);
+  return {portal, collection};
+}
+
+interface CollectionDocumentResult<T, C extends BaseCollection<T>> {
+  collection: C,
+  document: Document<T, C>
+}
+
+export function useCollectionDocument<T extends object, C extends BaseCollection<T>>(initialCollection?: C): CollectionDocumentResult<T, C> {
   // The document instance is mutable, and should never change between renders.
   // useSyncExternalStore is used to subscribe to updates, which vends immutable Collection objects.
   let document = useMemo(() => new Document<T, C>(initialCollection || new BaseCollection() as C), [initialCollection]);
   let subscribe = useCallback((fn: () => void) => document.subscribe(fn), [document]);
   let getSnapshot = useCallback(() => document.getCollection(), [document]);
   let collection = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
-  let children = useCachedChildren(props);
-  let portal = createPortal(children, document as unknown as Element);
+  return {collection, document};
+}
 
-  useLayoutEffect(() => {
-    if (document.dirtyNodes.size > 0) {
-      document.queueUpdate();
-    }
-  });
+export function useCollectionPortal<T extends object, C extends BaseCollection<T>>(props: CollectionProps<T>, document: Document<T, C>): ReactPortal | null {
+  let children = useCollectionChildren(props);
+  let wrappedChildren = useMemo(() => (
+    <ShallowRenderContext.Provider value>
+      {children}
+    </ShallowRenderContext.Provider>
+  ), [children]);
+  return useIsSSR() ? null : createPortal(wrappedChildren, document as unknown as Element);
+}
 
-  return {portal, collection};
+/** Renders a DOM element (e.g. separator or header) shallowly when inside a collection. */
+export function useShallowRender<T extends Element>(Element: string, props: React.HTMLAttributes<T>, ref: ForwardedRef<T>): ReactElement | null {
+  let isShallow = useContext(ShallowRenderContext);
+  ref = useCollectionItemRef(props, ref, props.children);
+  if (isShallow) {
+    // @ts-ignore
+    return <Element ref={ref} />;
+  }
+
+  return null;
 }
 
 export interface ItemRenderProps {
@@ -710,43 +784,57 @@ export interface ItemRenderProps {
   isDropTarget?: boolean
 }
 
+export function useCollectionItemRef<T extends Element>(props: any, ref: ForwardedRef<T>, rendered?: ReactNode) {
+  // Return a callback ref that sets the props object on the fake DOM node.
+  return useCallback((element) => {
+    element?.setProps(props, ref, rendered);
+  }, [props, ref, rendered]);
+}
+
 export interface ItemProps<T = object> extends Omit<SharedItemProps<T>, 'children'>, RenderProps<ItemRenderProps> {
-  id?: Key
-}
-
-export function Item<T extends object>(props: ItemProps<T>): JSX.Element {
-  // HACK: the `multiple` prop is special in that React will pass it through as a property rather
-  // than converting to a string and using setAttribute. This allows our custom fake DOM to receive
-  // the props as an object. Once React supports custom elements, we can switch to that instead.
-  // https://github.com/facebook/react/issues/11347
-  // https://github.com/facebook/react/blob/82c64e1a49239158c0daa7f0d603d2ad2ee667a9/packages/react-dom/src/shared/DOMProperty.js#L386
-  // @ts-ignore
-  return <item multiple={{...props, rendered: props.children}} />;
-}
-
-export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children'>, DOMProps {
+  /** The unique id of the item. */
   id?: Key,
+  /** The object value that this item represents. When using dynamic collections, this is set automatically. */
+  value?: T
+}
+
+function Item<T extends object>(props: ItemProps<T>, ref: ForwardedRef<HTMLElement>): JSX.Element {
+  // @ts-ignore
+  return <item ref={useCollectionItemRef(props, ref, props.children)} />;
+}
+
+const _Item = /*#__PURE__*/ (forwardRef as forwardRefType)(Item);
+export {_Item as Item};
+
+export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children' | 'title'>, StyleProps {
+  /** The unique id of the section. */
+  id?: Key,
+  /** The object value that this section represents. When using dynamic collections, this is set automatically. */
+  value?: T,
   /** Static child items or a function to render children. */
   children?: ReactNode | ((item: T) => ReactElement)
 }
 
-export function Section<T extends object>(props: SectionProps<T>): JSX.Element {
-  let children = useCachedChildren(props);
-
+function Section<T extends object>(props: SectionProps<T>, ref: ForwardedRef<HTMLElement>): JSX.Element {
+  let children = useCollectionChildren(props);
   // @ts-ignore
-  return <section multiple={{...props, rendered: props.title}}>{children}</section>;
+  return <section ref={useCollectionItemRef(props, ref)}>{children}</section>;
 }
 
-export const CollectionContext = createContext<CachedChildrenOptions<unknown> | null>(null);
-export const CollectionRendererContext = createContext<CollectionProps<unknown>['children']>(null);
+const _Section = /*#__PURE__*/ (forwardRef as forwardRefType)(Section);
+export {_Section as Section};
 
+export const CollectionContext = createContext<CachedChildrenOptions<unknown> | null>(null);
+export const CollectionRendererContext = createContext<CollectionProps<any>['children']>(null);
+
+/** A Collection renders a list of items, automatically managing caching and keys. */
 export function Collection<T extends object>(props: CollectionProps<T>): JSX.Element {
   let ctx = useContext(CollectionContext)!;
   props = mergeProps(ctx, props);
   let renderer = typeof props.children === 'function' ? props.children : null;
   return (
     <CollectionRendererContext.Provider value={renderer}>
-      {useCachedChildren(props)}
+      {useCollectionChildren(props)}
     </CollectionRendererContext.Provider>
   );
 }

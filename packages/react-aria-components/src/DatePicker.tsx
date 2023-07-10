@@ -9,22 +9,56 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaDatePickerProps, AriaDateRangePickerProps, DateValue, useDateField, useDatePicker, useDateRangePicker, useLocale} from 'react-aria';
+import {AriaDatePickerProps, AriaDateRangePickerProps, DateValue, useDateField, useDatePicker, useDateRangePicker, useFocusRing, useLocale} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CalendarContext, RangeCalendarContext} from './Calendar';
 import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {createCalendar} from '@internationalized/date';
 import {DateInputContext} from './DateField';
-import {DatePickerState, DateRangePickerState, useDateFieldState, useDatePickerState, useDateRangePickerState} from 'react-stately';
+import {DatePickerState, DateRangePickerState, useDateFieldState, useDatePickerState, useDateRangePickerState, ValidationState} from 'react-stately';
 import {DialogContext} from './Dialog';
+import {filterDOMProps} from '@react-aria/utils';
 import {GroupContext} from './Group';
 import {LabelContext} from './Label';
 import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
 
-export interface DatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DatePickerState>, SlotProps {}
-export interface DateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateRangePickerState>, SlotProps {}
+export interface DatePickerRenderProps {
+  /**
+   * Whether an element within the date picker is focused, either via a mouse or keyboard.
+   * @selector :focus-within
+   */
+  isFocusWithin: boolean,
+  /**
+   * Whether an element within the date picker is keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
+   * Whether the date picker is disabled.
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean,
+  /**
+   * State of the date picker.
+   */
+  state: DatePickerState,
+  /**
+   * Validation state of the date picker.
+   * @selector [data-validation-state]
+   */
+  validationState: ValidationState
+}
+export interface DateRangePickerRenderProps extends Omit<DatePickerRenderProps, 'state'> {
+  /**
+   * State of the date range picker.
+   */
+  state: DateRangePickerState
+}
+
+export interface DatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DatePickerRenderProps>, SlotProps {}
+export interface DateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateRangePickerRenderProps>, SlotProps {}
 
 export const DatePickerContext = createContext<ContextValue<DatePickerProps<any>, HTMLDivElement>>(null);
 export const DateRangePickerContext = createContext<ContextValue<DateRangePickerProps<any>, HTMLDivElement>>(null);
@@ -53,20 +87,30 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
   });
 
   let fieldRef = useRef<HTMLDivElement>(null);
+  let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
   let {fieldProps: dateFieldProps} = useDateField({...fieldProps, label}, fieldState, fieldRef);
 
   let renderProps = useRenderProps({
     ...props,
-    values: state,
+    values: {
+      state,
+      isFocusWithin: isFocused,
+      isFocusVisible,
+      isDisabled: props.isDisabled || false,
+      validationState: state.validationState
+    },
     defaultClassName: 'react-aria-DatePicker'
   });
+
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
 
   return (
     <Provider
       values={[
         [GroupContext, {...groupProps, ref: groupRef}],
         [DateInputContext, {state: fieldState, fieldProps: dateFieldProps, ref: fieldRef}],
-        [ButtonContext, buttonProps],
+        [ButtonContext, {...buttonProps, isPressed: state.isOpen}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [CalendarContext, calendarProps],
         [PopoverContext, {state, triggerRef: groupRef, placement: 'bottom start'}],
@@ -78,9 +122,15 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
           }
         }]
       ]}>
-      <div {...renderProps} ref={ref} slot={props.slot}>
-        {props.children}
-      </div>
+      <div
+        {...focusProps}
+        {...DOMProps}
+        {...renderProps}
+        ref={ref}
+        slot={props.slot}
+        data-validation-state={state.validationState || undefined}
+        data-focus-visible={isFocusVisible || undefined}
+        data-disabled={props.isDisabled || undefined} />
     </Provider>
   );
 }
@@ -88,7 +138,7 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
 /**
  * A date picker combines a DateField and a Calendar popover to allow users to enter or select a date and time value.
  */
-const _DatePicker = (forwardRef as forwardRefType)(DatePicker);
+const _DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(DatePicker);
 export {_DatePicker as DatePicker};
 
 function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, ref: ForwardedRef<HTMLDivElement>) {
@@ -116,6 +166,7 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
   });
 
   let startFieldRef = useRef<HTMLDivElement>(null);
+  let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
   let {fieldProps: startDateFieldProps} = useDateField({...startFieldProps, label}, startFieldState, startFieldRef);
 
   let endFieldState = useDateFieldState({
@@ -129,15 +180,24 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
 
   let renderProps = useRenderProps({
     ...props,
-    values: state,
+    values: {
+      state,
+      isFocusWithin: isFocused,
+      isFocusVisible,
+      isDisabled: props.isDisabled || false,
+      validationState: state.validationState
+    },
     defaultClassName: 'react-aria-DateRangePicker'
   });
+
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
 
   return (
     <Provider
       values={[
         [GroupContext, {...groupProps, ref: groupRef}],
-        [ButtonContext, buttonProps],
+        [ButtonContext, {...buttonProps, isPressed: state.isOpen}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [RangeCalendarContext, calendarProps],
         [PopoverContext, {state, triggerRef: groupRef, placement: 'bottom start'}],
@@ -163,9 +223,15 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
           }
         }]
       ]}>
-      <div {...renderProps} ref={ref} slot={props.slot}>
-        {props.children}
-      </div>
+      <div
+        {...focusProps}
+        {...DOMProps}
+        {...renderProps}
+        ref={ref}
+        slot={props.slot}
+        data-validation-state={state.validationState || undefined}
+        data-focus-visible={isFocusVisible || undefined}
+        data-disabled={props.isDisabled || undefined} />
     </Provider>
   );
 }
@@ -174,5 +240,5 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
  * A date range picker combines two DateFields and a RangeCalendar popover to allow
  * users to enter or select a date and time range.
  */
-const _DateRangePicker = (forwardRef as forwardRefType)(DateRangePicker);
+const _DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(DateRangePicker);
 export {_DateRangePicker as DateRangePicker};

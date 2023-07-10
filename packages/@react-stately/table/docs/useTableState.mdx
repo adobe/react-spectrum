@@ -25,11 +25,12 @@ keywords: [table, state, grid]
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['useTableState']} />
+  componentNames={['useTableState', 'useTableColumnResizeState']} />
 
 ## API
 
 <FunctionAPI function={docs.exports.useTableState} links={docs.links} />
+<FunctionAPI function={docs.exports.useTableColumnResizeState} links={docs.links} />
 <FunctionAPI function={docs.exports.Cell} links={docs.links} />
 <FunctionAPI function={docs.exports.Column} links={docs.links} />
 <FunctionAPI function={docs.exports.Row} links={docs.links} />
@@ -38,9 +39,15 @@ keywords: [table, state, grid]
 
 ## Interface
 
+### useTableState
+
 <ClassAPI links={docs.links} class={docs.links[docs.exports.useTableState.return.base.id]} />
+
+### useTableColumnResizeState
+
+<ClassAPI links={docs.links} class={docs.links[docs.exports.useTableColumnResizeState.return.base.id]} />
 
 ## Example
 
-See the docs for [useTable](/react-aria/useTable.html) in react-aria for an example of `useTableState`, `Cell`, `Column`,
+See the docs for [useTable](/react-aria/useTable.html) in react-aria for an example of `useTableState`, `useTableColumnResizeState`, `Cell`, `Column`,
 `Row`, `TableBody`, and `TableHeader`.

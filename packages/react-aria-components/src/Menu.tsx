@@ -15,8 +15,9 @@ import {AriaMenuProps, mergeProps, useFocusRing, useMenu, useMenuItem, useMenuSe
 import {BaseCollection, CollectionProps, ItemProps, ItemRenderProps, useCachedChildren, useCollection} from './Collection';
 import {MenuTriggerProps as BaseMenuTriggerProps, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
 import {ButtonContext} from './Button';
-import {ContextValue, forwardRefType, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
-import {filterDOMProps} from '@react-aria/utils';
+import {ContextValue, forwardRefType, Provider, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
+import {Header} from './Header';
 import {KeyboardContext} from './Keyboard';
 import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
@@ -118,7 +119,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
 /**
  * A menu displays a list of actions or options that a user can choose.
  */
-const _Menu = (forwardRef as forwardRefType)(Menu);
+const _Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(Menu);
 export {_Menu as Menu};
 
 interface MenuSectionProps<T> extends StyleProps {
@@ -127,19 +128,32 @@ interface MenuSectionProps<T> extends StyleProps {
 
 function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionProps<T>) {
   let state = useContext(InternalMenuContext)!;
+  let [headingRef, heading] = useSlot();
   let {headingProps, groupProps} = useMenuSection({
-    heading: section.rendered,
+    heading,
     'aria-label': section['aria-label'] ?? undefined
   });
 
   let children = useCachedChildren({
     items: state.collection.getChildren!(section.key),
     children: item => {
-      if (item.type !== 'item') {
-        throw new Error('Only items are allowed within a section');
+      switch (item.type) {
+        case 'header': {
+          let {ref, ...otherProps} = item.props;
+          return (
+            <Header
+              {...headingProps}
+              {...otherProps}
+              ref={mergeRefs(headingRef, ref)}>
+              {item.rendered}
+            </Header>
+          );
+        }
+        case 'item':
+          return <MenuItem item={item} />;
+        default:
+          throw new Error('Unsupported element type in Section: ' + item.type);
       }
-
-      return <MenuItem item={item} />;
     }
   });
 
@@ -148,12 +162,8 @@ function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionP
       {...filterDOMProps(otherProps)}
       {...groupProps}
       className={className || section.props?.className || 'react-aria-Section'}
-      style={style || section.props?.style}>
-      {section.rendered &&
-        <header {...headingProps}>
-          {section.rendered}
-        </header>
-      }
+      style={style || section.props?.style}
+      ref={section.props.ref}>
       {children}
     </section>
   );
@@ -173,7 +183,7 @@ interface MenuItemProps<T> {
 
 function MenuItem<T>({item}: MenuItemProps<T>) {
   let state = useContext(InternalMenuContext)!;
-  let ref = useRef<HTMLDivElement>(null);
+  let ref = useObjectRef<HTMLDivElement>(item.props.ref);
   let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({key: item.key}, state, ref);
 
   let props: ItemProps<T> = item.props;
@@ -192,9 +202,12 @@ function MenuItem<T>({item}: MenuItemProps<T>) {
     }
   });
 
+  let DOMProps = filterDOMProps(props as any);
+  delete DOMProps.id;
+
   return (
     <div
-      {...mergeProps(menuItemProps, focusProps)}
+      {...mergeProps(DOMProps, menuItemProps, focusProps)}
       {...renderProps}
       ref={ref}
       data-hovered={states.isFocused || undefined}

@@ -13,15 +13,17 @@ import {AriaButtonProps} from '@react-types/button';
 import {classNames} from '@react-spectrum/utils';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef, useState} from 'react';
-import {storiesOf} from '@storybook/react';
 import {useButton} from '@react-aria/button';
 import {useHover} from '../';
 
-storiesOf('useHover', module)
-  .add(
-    'hover disabling',
-    () => <App />
-  );
+export default {
+  title: 'useHover'
+};
+
+export const HoverDisabling = {
+  render: () => <App />,
+  name: 'hover disabling'
+};
 
 function Button(props: AriaButtonProps) {
   let {children, isDisabled} = props;

@@ -28,15 +28,14 @@ import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {ListState, useListState} from '@react-stately/list';
 import More from '@spectrum-icons/workflow/More';
 import {PressResponder, useHover} from '@react-aria/interactions';
-import {Provider} from '@react-spectrum/provider';
+import {Provider, useProviderProps} from '@react-spectrum/provider';
 import React, {forwardRef, Key, ReactElement, ReactNode, useCallback, useMemo, useRef, useState} from 'react';
 import {SpectrumActionGroupProps} from '@react-types/actiongroup';
 import styles from '@adobe/spectrum-css-temp/components/actiongroup/vars.css';
 import {Text} from '@react-spectrum/text';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
-import {useActionGroup} from '@react-aria/actiongroup';
-import {useActionGroupItem} from '@react-aria/actiongroup';
-import {useProviderProps} from '@react-spectrum/provider';
+import {useActionGroup, useActionGroupItem} from '@react-aria/actiongroup';
+
 
 function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
@@ -474,7 +473,7 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
         disallowEmptySelection={state.selectionManager.disallowEmptySelection}
         onSelectionChange={(keys) => state.selectionManager.setSelectedKeys(keys)}
         onAction={onAction}>
-        {node => <Item textValue={node.textValue}>{node.rendered}</Item>}
+        {node => <Item textValue={node.textValue} {...filterDOMProps(node.props)}>{node.rendered}</Item>}
       </Menu>
     </MenuTrigger>
   );

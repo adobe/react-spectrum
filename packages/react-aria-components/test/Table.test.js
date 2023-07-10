@@ -548,6 +548,91 @@ describe('Table', () => {
     expect(cell).toHaveTextContent('No results');
   });
 
+  it('supports removing rows', () => {
+    let {getAllByRole, rerender} = render(<DynamicTable tableBodyProps={{rows}} />);
+
+    userEvent.tab();
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+    fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+
+    let body = getAllByRole('rowgroup')[1];
+    let gridRows = within(body).getAllByRole('row');
+    expect(gridRows).toHaveLength(4);
+    let cell = within(gridRows[1]).getAllByRole('rowheader')[0];
+    expect(cell).toHaveTextContent('Program Files');
+    expect(document.activeElement).toBe(cell);
+
+    rerender(<DynamicTable tableBodyProps={{items: [rows[0], ...rows.slice(2)]}} />);
+
+    gridRows = within(body).getAllByRole('row');
+    expect(gridRows).toHaveLength(3);
+    cell = within(gridRows[1]).getAllByRole('rowheader')[0];
+    expect(cell).toHaveTextContent('bootmgr');
+    expect(document.activeElement).toBe(cell);
+  });
+
+  it('should support refs', () => {
+    let tableRef = React.createRef();
+    let headerRef = React.createRef();
+    let columnRef = React.createRef();
+    let bodyRef = React.createRef();
+    let rowRef = React.createRef();
+    let cellRef = React.createRef();
+    render(
+      <Table aria-label="Search results" ref={tableRef}>
+        <TableHeader ref={headerRef}>
+          <Column isRowHeader ref={columnRef}>Name</Column>
+          <Column>Type</Column>
+        </TableHeader>
+        <TableBody ref={bodyRef}>
+          <Row ref={rowRef}>
+            <Cell ref={cellRef}>Foo</Cell>
+            <Cell>Bar</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    );
+    expect(tableRef.current).toBeInstanceOf(HTMLTableElement);
+    expect(headerRef.current).toBeInstanceOf(HTMLTableSectionElement);
+    expect(columnRef.current).toBeInstanceOf(HTMLTableCellElement);
+    expect(bodyRef.current).toBeInstanceOf(HTMLTableSectionElement);
+    expect(rowRef.current).toBeInstanceOf(HTMLTableRowElement);
+    expect(cellRef.current).toBeInstanceOf(HTMLTableCellElement);
+  });
+
+  it('should support cell render props', () => {
+    let {getAllByRole} = render(
+      <Table aria-label="Search results">
+        <TableHeader>
+          <Column isRowHeader>
+            {({isFocused}) => `Name${isFocused ? ' (focused)' : ''}`}
+          </Column>
+          <Column>Type</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>
+              {({isFocused}) => `Foo${isFocused ? ' (focused)' : ''}`}
+            </Cell>
+            <Cell>Bar</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    );
+
+    let headers = getAllByRole('columnheader');
+    expect(headers[0]).toHaveTextContent('Name');
+    act(() => headers[0].focus());
+    expect(headers[0]).toHaveTextContent('Name (focused)');
+
+    let cells = getAllByRole('rowheader');
+    expect(cells[0]).toHaveTextContent('Foo');
+    act(() => cells[0].focus());
+    expect(cells[0]).toHaveTextContent('Foo (focused)');
+  });
+
   describe('drag and drop', () => {
     it('should support drag button slot', () => {
       let {getAllByRole} = render(<DraggableTable />);

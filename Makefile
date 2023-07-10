@@ -19,10 +19,16 @@ clean:
 clean_all:
 	$(MAKE) clean
 	$(MAKE) clean_node_modules
+	$(MAKE) clean_dist
 
 clean_node_modules:
 	rm -rf node_modules
 	rm -rf packages/*/*/node_modules
+	rm -rf examples/*/node_modules
+
+clean_dist:
+	rm -rf packages/*/*/dist
+	rm -rf packages/{react-aria,react-aria-components,react-stately}/dist
 
 packages/@spectrum-icons/workflow/src: packages/@spectrum-icons/workflow/package.json
 	yarn workspace @spectrum-icons/workflow make-icons
@@ -84,7 +90,7 @@ publish-nightly: build
 build:
 	parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/{message,string,date,number}/ packages/react-aria-components --no-optimize
 	yarn lerna run prepublishOnly
-	for pkg in packages/@react-{spectrum,aria,stately}/*/  packages/@internationalized/{message,string,date,number}/ packages/@adobe/react-spectrum/ packages/react-aria/ packages/react-stately/; \
+	for pkg in packages/@react-{spectrum,aria,stately}/*/  packages/@internationalized/{message,string,date,number}/ packages/@adobe/react-spectrum/ packages/react-aria/ packages/react-stately/ packages/react-aria-components/; \
 		do cp $$pkg/dist/module.js $$pkg/dist/import.mjs; \
 	done
 	sed -i.bak s/\.js/\.mjs/ packages/@react-aria/i18n/dist/import.mjs

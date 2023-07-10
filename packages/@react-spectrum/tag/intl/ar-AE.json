@@ -1,5 +1,6 @@
 {
   "actions": "الإجراءات",
   "hideButtonLabel": "إظهار أقل",
-  "showAllButtonLabel": "إظهار الكل ({tagCount})"
+  "noTags": "بدون",
+  "showAllButtonLabel": "عرض الكل ({tagCount, number})"
 }

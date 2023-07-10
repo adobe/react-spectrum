@@ -11,8 +11,8 @@
  */
 
 import {act, fireEvent, render, within} from '@react-spectrum/test-utils';
-import {Button, Calendar, CalendarCell, CalendarContext, CalendarGrid, Heading} from 'react-aria-components';
-import {getLocalTimeZone, startOfMonth, startOfWeek, today} from '@internationalized/date';
+import {Button, Calendar, CalendarCell, CalendarContext, CalendarGrid, CalendarGridBody, CalendarGridHeader, CalendarHeaderCell, Heading} from 'react-aria-components';
+import {CalendarDate, getLocalTimeZone, startOfMonth, startOfWeek, today} from '@internationalized/date';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -34,11 +34,19 @@ let renderCalendar = (calendarProps, gridProps, cellProps) => render(<TestCalend
 describe('Calendar', () => {
   it('should render with default classes', () => {
     let {getByRole} = renderCalendar();
-    let group = getByRole('group');
+    let group = getByRole('application');
     expect(group).toHaveAttribute('class', 'react-aria-Calendar');
 
     let grid = getByRole('grid');
     expect(grid).toHaveAttribute('class', 'react-aria-CalendarGrid');
+
+    let rowgroups = within(grid).getAllByRole('rowgroup', {hidden: true});
+    expect(rowgroups[0]).toHaveAttribute('class', 'react-aria-CalendarGridHeader');
+    expect(rowgroups[1]).toHaveAttribute('class', 'react-aria-CalendarGridBody');
+
+    for (let cell of within(rowgroups[0]).getAllByRole('columnheader', {hidden: true})) {
+      expect(cell).toHaveAttribute('class', 'react-aria-CalendarHeaderCell');
+    }
 
     for (let cell of within(grid).getAllByRole('button')) {
       expect(cell).toHaveAttribute('class', 'react-aria-CalendarCell');
@@ -47,7 +55,7 @@ describe('Calendar', () => {
 
   it('should render with custom classes', () => {
     let {getByRole} = renderCalendar({className: 'calendar'}, {className: 'grid'}, {className: 'cell'});
-    let group = getByRole('group');
+    let group = getByRole('application');
     expect(group).toHaveAttribute('class', 'calendar');
 
     let grid = getByRole('grid');
@@ -60,7 +68,7 @@ describe('Calendar', () => {
 
   it('should support DOM props', () => {
     let {getByRole} = renderCalendar({'data-foo': 'bar'}, {'data-bar': 'baz'}, {'data-baz': 'foo'});
-    let group = getByRole('group');
+    let group = getByRole('application');
     expect(group).toHaveAttribute('data-foo', 'bar');
 
     let grid = getByRole('grid');
@@ -71,6 +79,41 @@ describe('Calendar', () => {
     }
   });
 
+  it('should support custom CalendarGridHeader', () => {
+    let {getByRole} = render(
+      <Calendar aria-label="Appointment date">
+        <header>
+          <Button slot="previous">◀</Button>
+          <Heading />
+          <Button slot="next">▶</Button>
+        </header>
+        <CalendarGrid>
+          <CalendarGridHeader className="grid-header">
+            {(day) => (
+              <CalendarHeaderCell className="header-cell">
+                {day}
+              </CalendarHeaderCell>
+            )}
+          </CalendarGridHeader>
+          <CalendarGridBody className="grid-body">
+            {(date) => <CalendarCell date={date} />}
+          </CalendarGridBody>
+        </CalendarGrid>
+      </Calendar>
+    );
+
+    let grid = getByRole('grid');
+    expect(grid).toHaveAttribute('class', 'react-aria-CalendarGrid');
+
+    let rowgroups = within(grid).getAllByRole('rowgroup', {hidden: true});
+    expect(rowgroups[0]).toHaveAttribute('class', 'grid-header');
+    expect(rowgroups[1]).toHaveAttribute('class', 'grid-body');
+
+    for (let cell of within(rowgroups[0]).getAllByRole('columnheader', {hidden: true})) {
+      expect(cell).toHaveAttribute('class', 'header-cell');
+    }
+  });
+
   it('should support slot', () => {
     let {getByRole} = render(
       <CalendarContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
@@ -78,7 +121,7 @@ describe('Calendar', () => {
       </CalendarContext.Provider>
     );
 
-    let group = getByRole('group');
+    let group = getByRole('application');
     expect(group).toHaveAttribute('slot', 'test');
     expect(group).toHaveAttribute('aria-label', expect.stringContaining('test'));
   });
@@ -131,7 +174,7 @@ describe('Calendar', () => {
     let {getByRole} = renderCalendar({}, {}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
     let grid = getByRole('grid');
     let cell = within(grid).getAllByRole('button')[7];
-    
+
     expect(cell).not.toHaveAttribute('data-focus-visible');
     expect(cell).not.toHaveClass('focus');
 
@@ -201,5 +244,33 @@ describe('Calendar', () => {
 
     expect(cell).toHaveAttribute('aria-invalid', 'true');
     expect(cell).toHaveClass('invalid');
+  });
+
+  it('should support render props', () => {
+    let {getByRole} = render(
+      <Calendar minValue={new CalendarDate(2023, 1, 1)} defaultValue={new CalendarDate(2020, 2, 3)}>
+        {({validationState}) => (
+          <>
+            <header>
+              <Button slot="previous">◀</Button>
+              <Heading />
+              <Button slot="next">▶</Button>
+            </header>
+            <CalendarGrid data-validation-state={validationState}>
+              {(date) => <CalendarCell date={date} />}
+            </CalendarGrid>
+          </>
+        )}
+      </Calendar>
+    );
+
+    let grid = getByRole('grid');
+    expect(grid).toHaveAttribute('data-validation-state', 'invalid');
+  });
+
+  it('should support weekdayStyle', () => {
+    let {getAllByRole} = renderCalendar({}, {weekdayStyle: 'short'});
+    let headers = getAllByRole('columnheader', {hidden: true});
+    expect(headers.map(h => h.textContent)).toEqual(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']);
   });
 });

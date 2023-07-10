@@ -11,7 +11,6 @@
  */
 
 import {announce} from '@react-aria/live-announcer';
-import {getChildNodes} from '@react-stately/collections';
 import {GridAria, GridProps, useGrid} from '@react-aria/grid';
 import {gridIds} from './utils';
 // @ts-ignore
@@ -22,8 +21,7 @@ import {Node} from '@react-types/shared';
 import {RefObject, useMemo} from 'react';
 import {TableKeyboardDelegate} from './TableKeyboardDelegate';
 import {TableState} from '@react-stately/table';
-import {useCollator, useLocale} from '@react-aria/i18n';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useCollator, useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface AriaTableProps<T> extends GridProps {
   /** The layout object for the table. Computes what content is visible and how to position and style them. */
@@ -64,38 +62,7 @@ export function useTable<T>(props: AriaTableProps<T>, state: TableState<T>, ref:
   let {gridProps} = useGrid({
     ...props,
     id,
-    keyboardDelegate: delegate,
-    getRowText(key): string {
-      let added = state.collection.getItem(key);
-      if (!added) {
-        return '';
-      }
-
-      // If the row has a textValue, use that.
-      if (added.textValue != null) {
-        return added.textValue;
-      }
-
-      // Otherwise combine the text of each of the row header columns.
-      let rowHeaderColumnKeys = state.collection.rowHeaderColumnKeys;
-      if (rowHeaderColumnKeys) {
-        let text = [];
-        for (let cell of getChildNodes(added, state.collection)) {
-          let column = state.collection.columns[cell.index];
-          if (rowHeaderColumnKeys.has(column.key) && cell.textValue) {
-            text.push(cell.textValue);
-          }
-
-          if (text.length === rowHeaderColumnKeys.size) {
-            break;
-          }
-        }
-
-        return text.join(' ');
-      }
-
-      return '';
-    }
+    keyboardDelegate: delegate
   }, state, ref);
 
   // Override to include header rows
@@ -122,8 +89,6 @@ export function useTable<T>(props: AriaTableProps<T>, state: TableState<T>, ref:
     gridProps: mergeProps(
       gridProps,
       descriptionProps,
-      // If table is empty, make sure the table is tabbable
-      state.collection.size === 0 && {tabIndex: 0},
       {
         // merge sort description with long press information
         'aria-describedby': [descriptionProps['aria-describedby'], gridProps['aria-describedby']].filter(Boolean).join(' ')

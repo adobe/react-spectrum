@@ -15,7 +15,7 @@ import sharedDocs from 'docs:@react-types/shared';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
-import Anatomy from '/packages/@react-aria/listbox/docs/anatomy.svg';
+import Anatomy from '@react-aria/listbox/docs/anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
@@ -25,7 +25,6 @@ import {Keyboard} from '@react-spectrum/text';
 category: Collections
 keywords: [listbox, aria]
 type: component
-after_version: 1.0.0
 ---
 
 # ListBox
@@ -86,11 +85,16 @@ import {ListBox, Item} from 'react-aria-components';
     font-style: italic;
   }
 
+  &[data-focus-visible] {
+    border-color: var(--highlight-background);
+    box-shadow: 0 0 0 1px var(--highlight-background);
+  }
+
   .react-aria-Section:not(:first-child) {
     margin-top: 12px;
   }
 
-  .react-aria-Section header {
+  .react-aria-Header {
     font-size: 1.143rem;
     font-weight: bold;
     padding: 0 0.714rem;
@@ -189,7 +193,7 @@ Users can select one or more options by clicking, tapping, or navigating with th
 
 ### Section
 
-A `<Section>` defines the child items, and optional title for a section within a `<ListBox>`.
+A `<Section>` defines the child items for a section within a `<ListBox>`. It may also contain an optional `<Header>` element. If there is no header, then an `aria-label` must be provided to identify the section to assistive technologies.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
@@ -197,6 +201,10 @@ A `<Section>` defines the child items, and optional title for a section within a
 <PropTable component={docs.exports.Section} links={docs.links} />
 
 </details>
+
+### Header
+
+A `<Header>` defines the title for a `<Section>`. It accepts all DOM attributes.
 
 ### Item
 
@@ -264,11 +272,17 @@ The states and selectors for each component used in a `ListBox` are documented b
 
 ### ListBox
 
-A `ListBox` can be targeted with the `.react-aria-ListBox` CSS selector, or by overriding with a custom `className`.
+A `ListBox` can be targeted with the `.react-aria-ListBox` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.ListBoxRenderProps.properties} />
 
 ### Section
 
-A `Section` can be targeted with the `.react-aria-Section` CSS selector, or by overriding with a custom `className`. The section title can be targeted with the `header` selector. The `title` prop also allows JSX elements and not just strings, which can enable custom formatting. However, keep in mind that interactive elements within a listbox are not allowed. See [sections](#sections) for examples.
+A `Section` can be targeted with the `.react-aria-Section` CSS selector, or by overriding with a custom `className`. See [sections](#sections) for examples.
+
+### Header
+
+A `Header` within a `Section` can be targeted with the `.react-aria-Header` CSS selector, or by overriding with a custom `className`. See [sections](#sections) for examples.
 
 ### Item
 
@@ -450,25 +464,28 @@ These selection behaviors are defined in [Aria Practices](https://w3c.github.io/
 
 ### Sections
 
-ListBox supports sections in order to group options. Sections can be used by wrapping groups of items in a `Section` element. Each `Section` takes a `title` prop.
+ListBox supports sections in order to group options. Sections can be used by wrapping groups of items in a `Section` element. A `<Header>` element may also be included to label the section.
 
 #### Static items
 
 ```tsx example
-import {Section} from 'react-aria-components';
+import {Section, Header} from 'react-aria-components';
 
 <ListBox aria-label="Sandwich contents" selectionMode="multiple">
-  <Section title="Veggies">
+  <Section>
+    <Header>Veggies</Header>
     <Item id="lettuce">Lettuce</Item>
     <Item id="tomato">Tomato</Item>
     <Item id="onion">Onion</Item>
   </Section>
-  <Section title="Protein">
+  <Section>
+    <Header>Protein</Header>
     <Item id="ham">Ham</Item>
     <Item id="tuna">Tuna</Item>
     <Item id="tofu">Tofu</Item>
   </Section>
-  <Section title="Condiments">
+  <Section>
+    <Header>Condiments</Header>
     <Item id="mayo">Mayonaise</Item>
     <Item id="mustard">Mustard</Item>
     <Item id="ranch">Ranch</Item>
@@ -479,10 +496,12 @@ import {Section} from 'react-aria-components';
 #### Dynamic items
 
 The above example shows sections with static items. Sections can also be populated from a heirarchical data structure.
-Similarly to the props on ListBox, `<Section>` takes an array of data using the `items` prop.
+Similarly to the props on ListBox, `<Section>` takes an array of data using the `items` prop. If the section also has a header,
+the <TypeLink links={docs.links} type={docs.exports.Collection} /> component can be used to render the child items.
 
 ```tsx example
 import type {Selection} from 'react-aria-components';
+import {Collection} from 'react-aria-components';
 
 function Example() {
   let options = [
@@ -506,9 +525,12 @@ function Example() {
       selectedKeys={selected}
       selectionMode="single"
       onSelectionChange={setSelected}>
-      {item => (
-        <Section id={item.name} items={item.children} title={item.name}>
-          {item => <Item>{item.name}</Item>}
+      {section => (
+        <Section id={section.name}>
+          <Header>{section.name}</Header>
+          <Collection items={section.children}>
+            {item => <Item>{item.name}</Item>}
+          </Collection>
         </Section>
       )}
     </ListBox>
@@ -545,6 +567,241 @@ import {Text} from 'react-aria-components';
   </Item>
 </ListBox>
 ```
+
+### Layouts
+
+By default, ListBox expects items to be arranged in a vertical stack, and implements keyboard navigation and drag and drop accordingly. The `layout` and `orientation` props can be used to change this behavior, allowing you to build horizontal and vertical stacks and grids.
+
+#### Horizontal stack
+
+This example displays a horizontal list of cards. The left and right arrow keys can be used to navigate between the items.
+
+```tsx import
+let albums = [
+  {
+    id: 1,
+    image: 'https://images.unsplash.com/photo-1593958812614-2db6a598c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8ZGlzY298ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=900&q=60',
+    title: 'Euphoric Echoes',
+    artist: 'Luna Solstice'
+  },
+  {
+    id: 2,
+    image: 'https://images.unsplash.com/photo-1601042879364-f3947d3f9c16?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bmVvbnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=900&q=60',
+    title: 'Neon Dreamscape',
+    artist: 'Electra Skyline'
+  },
+  {
+    id: 3,
+    image: 'https://images.unsplash.com/photo-1528722828814-77b9b83aafb2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHNwYWNlfGVufDB8fDB8fHww&auto=format&fit=crop&w=900&q=60',
+    title: 'Cosmic Serenade',
+    artist: 'Orion\'s Symphony'
+  },
+  {
+    id: 4,
+    image: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bXVzaWN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=900&q=60',
+    title: 'Melancholy Melodies',
+    artist: 'Violet Mistral'
+  },
+  {
+    id: 5,
+    image: 'https://images.unsplash.com/photo-1608433319511-dfe8ea4cbd3c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGJlYXR8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=900&q=60',
+    title: 'Rhythmic Illusions',
+    artist: 'Mirage Beats'
+  }
+];
+```
+
+```tsx example
+<ListBox
+  aria-label="Albums"
+  ///- begin highlight -///
+  orientation="horizontal"
+  ///- end highlight -///
+  items={albums}
+  selectionMode="multiple">
+  {item => (
+    <Item>
+      <img src={item.image} alt="" />
+      <Text slot="label">{item.title}</Text>
+      <Text slot="description">{item.artist}</Text>
+    </Item>
+  )}
+</ListBox>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ListBox[data-orientation=horizontal],
+.react-aria-ListBox[data-layout=grid] {
+  flex-direction: row;
+  width: fit-content;
+  max-width: 100%;
+  padding: 4px;
+
+  .react-aria-Item {
+    position: relative;
+    margin: 0;
+    padding: 4px;
+
+    & img {
+      object-fit: cover;
+      aspect-ratio: 1/1;
+      max-width: 150px;
+      margin-bottom: 4px;
+      border-radius: 4px;
+      transition: box-shadow 200ms;
+    }
+
+    &[data-hovered] {
+      & img {
+        box-shadow: 0 0 8px rgb(from slateblue r g b / 0.5);
+      }
+    }
+
+    &[aria-selected=true] {
+      background: none;
+      color: inherit;
+
+      & img {
+        box-shadow: 0 0 12px rgb(from slateblue r g b / 0.8);
+      }
+
+      &:after {
+        content: '✓';
+        content: '✓' / '';
+        alt: ' ';
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: slateblue;
+        border: 2px solid white;
+        color: white;
+        width: 22px;
+        height: 22px;
+        border-radius: 22px;
+        box-sizing: border-box;
+        font-size: 14px;
+        line-height: 1em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 8px rgb(0 0 0 / .5);
+      }
+
+      &[data-focus-visible] {
+        box-shadow: inset 0 0 0 2px var(--highlight-background);
+      }
+    }
+  }
+}
+```
+
+</details>
+
+#### Vertical grid
+
+The `layout` prop can be set to `"grid"` to enable two-dimensional keyboard navigation. By default, the grid scrolls vertically. The left, right, up, and down arrow keys can be used to navigate between the cards in this example.
+
+```tsx example
+<ListBox
+  aria-label="Albums"
+  ///- begin highlight -///
+  layout="grid"
+  ///- end highlight -///
+  items={albums}
+  selectionMode="multiple">
+  {item => (
+    <Item>
+      <img src={item.image} alt="" />
+      <Text slot="label">{item.title}</Text>
+      <Text slot="description">{item.artist}</Text>
+    </Item>
+  )}
+</ListBox>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ListBox[data-layout=grid] {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  scrollbar-gutter: stable;
+}
+```
+
+</details>
+
+#### Horizontal grid
+
+The `layout="grid"` and `orientation="horizontal"` props can be combined to build a two dimensional grid where the items are grouped into columns, and the grid scrolls horizontally.
+
+```tsx example
+<ListBox
+  aria-label="Albums"
+  ///- begin highlight -///
+  layout="grid"
+  orientation="horizontal"
+  ///- end highlight -///
+  items={albums}
+  selectionMode="multiple">
+  {item => (
+    <Item>
+      <img src={item.image} alt="" />
+      <Text slot="label">{item.title}</Text>
+      <Text slot="description">{item.artist}</Text>
+    </Item>
+  )}
+</ListBox>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ListBox[data-layout=grid][data-orientation=horizontal] {
+  width: 100%;
+  max-width: none;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: 58px 58px;
+  grid-template-columns: none;
+  grid-auto-columns: 250px;
+  max-height: 200px;
+  gap: 8px;
+
+  .react-aria-Item {
+    display: grid;
+    grid-template-areas: "image ."
+                         "image title"
+                         "image description"
+                         "image .";
+    grid-template-columns: auto 1fr;
+    grid-template-rows: 1fr auto auto 1fr;
+    column-gap: 8px;
+
+    & img {
+      width: 50px;
+      height: 50px;
+      grid-area: image;
+      margin-bottom: 0;
+    }
+
+    [slot=label] {
+      grid-area: title;
+    }
+
+    [slot=description] {
+      grid-area: description;
+    }
+  }
+}
+```
+
+</details>
 
 ### Asynchronous loading
 
@@ -674,23 +931,6 @@ function Example() {
   &[data-dragging] {
     opacity: 0.6;
   }
-
-  [slot=drag] {
-    all: unset;
-    width: 15px;
-    text-align: center;
-
-    &[data-focus-visible] {
-      border-radius: 4px;
-      box-shadow: 0 0 0 2px var(--highlight-background);
-    }
-  }
-
-  &[aria-selected=true] {
-    [slot=drag][data-focus-visible] {
-      box-shadow: 0 0 0 2px var(--highlight-foreground);
-    }
-  }
 }
 
 .react-aria-DropIndicator[data-drop-target] {
@@ -764,7 +1004,9 @@ function Example() {
   width: 150px;
   padding: 4px 8px;
   display: flex;
+  align-items: center;
   justify-content: space-between;
+  gap: 4px;
   background: slateblue;
   color: white;
   border-radius: 4px;
@@ -825,7 +1067,7 @@ function DraggableListBox() {
 
   return (
     <ListBox aria-label="Draggable list" selectionMode="multiple" items={items} dragAndDropHooks={dragAndDropHooks}>
-      {([id, item]) => <Item id={id} textValue={item.name}>{React.createElement(item.style, null, item.name)}</Item>}
+      {([id, item]) => <Item id={id} textValue={item.name}>{React.createElement(item.style || 'span', null, item.name)}</Item>}
     </ListBox>
   );
 }
@@ -1089,7 +1331,7 @@ function DroppableListBox() {
 
   return (
     <ListBox aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop items here"}>
-      {item => <Item>{React.createElement(item.style, null, item.name)}</Item>}
+      {item => <Item textValue={item.name}>{React.createElement(item.style || 'span', null, item.name)}</Item>}
     </ListBox>
   );
 }
@@ -1138,7 +1380,7 @@ function Example() {
   return (
     <ListBox aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop items here"}>
       {item => (
-        <Item>
+        <Item textValue={item.name}>
           <div className="image-item">
             <img src={item.url} />
             <span>{item.name}</span>
@@ -1220,7 +1462,7 @@ function Example() {
   return (
     <ListBox aria-label="Droppable list" items={files} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop items here"}>
       {item => (
-        <Item id={item.name}>
+        <Item id={item.name} textValue={item.name}>
           <div className="dir-item">
             {item.kind === 'directory' ? <Folder /> : <File />}
             <span>{item.name}</span>
@@ -1423,7 +1665,7 @@ function Example() {
   return (
     <ListBox aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop items here"}>
       {item => (
-        <Item>
+        <Item textValue={item.name}>
           <div className="image-item">
             <img src={item.url} />
             <span>{item.name}</span>

@@ -11,14 +11,13 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {clearGlobalDnDState, isInternalDropOperation, setDraggingKeys} from './utils';
+import {clearGlobalDnDState, isInternalDropOperation, setDraggingKeys, useDragModality} from './utils';
 import {DraggableCollectionState} from '@react-stately/dnd';
 import {HTMLAttributes, Key} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useDescription} from '@react-aria/utils';
 import {useDrag} from './useDrag';
-import {useDragModality} from './utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface DraggableItemProps {
@@ -116,7 +115,8 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
     if (isSelected) {
       dragButtonLabel = stringFormatter.format('dragSelectedItems', {count: numKeysForDrag});
     } else {
-      dragButtonLabel = stringFormatter.format('dragItem', {itemText: item?.textValue ?? ''});
+      let itemText = state.collection.getTextValue?.(props.key) ?? item?.textValue ?? '';
+      dragButtonLabel = stringFormatter.format('dragItem', {itemText});
     }
   }
 
