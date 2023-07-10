@@ -75,22 +75,28 @@ export const DefaultWithButton = {
   )
 };
 
+export const DefaulWithCustomBannerMessage = {
+  render: (args) => (
+    <Example 
+      {...args}
+      bannerMessage="This is a custom message" />
+  )
+};
+
 export const DefaultTest = {
   render: (args) => (
     <Example {...args} />
   )
 };
 
-
 function Example(props) {
+  let [isFilled, setIsFilled] = useState(false);
   let [filledSrc, setFilledSrc] = useState(null);
-
-  let isFilled = filledSrc !== null;
   
   return (
     <DropZone 
       {...props}
-      filledSrc={filledSrc}
+      isFilled={isFilled}
 
       // this will handle a single file
       // onDrop={async (e) => { 
@@ -103,26 +109,41 @@ function Example(props) {
       // this will handle multiple files
       onDrop={async (e) => { 
         let items = e.items.filter((item) => item.kind === 'file') as FileDropItem[];
-        items.map(item => console.log(item.type));
         if (items) {
           const urls = await Promise.all(items.map(async (item) => URL.createObjectURL(await item.getFile())));
           const stringUrls = urls.map((url) => url.toString());
           setFilledSrc(stringUrls);
+          setIsFilled(true);
         }
       }}
       onDropEnter={action('onDropEnter')}
-      onDropExit={action('onDropExit')} >
+      onDropExit={action('onDropExit')} 
+      onPaste={async (e) => { 
+        let items = e.items.filter((item) => item.kind === 'file') as FileDropItem[];
+        if (items) {
+          const urls = await Promise.all(items.map(async (item) => URL.createObjectURL(await item.getFile())));
+          const stringUrls = urls.map((url) => url.toString());
+          setFilledSrc(stringUrls);
+          setIsFilled(true);
+        }
+      }}>
       <IllustratedMessage>
         <Upload />
         <Heading>Drag a file here</Heading>
         <Content>
           <FileTrigger
-            onChange={action('onChange')}>
+            allowsMultiple
+            onChange={(e) => {
+              let files = Array.from(e);
+              let urls = files.map(file => URL.createObjectURL(file));
+              setFilledSrc(urls);
+              setIsFilled(true);
+            }}>
             <Button variant={'accent'}>Browse</Button>
           </FileTrigger>
         </Content>
       </IllustratedMessage>
-      {isFilled && <img alt="test" style={{width: '100px', position: 'absolute'}} src={filledSrc[0]} />}
+      {/* {isFilled && <img alt="test" style={{width: '100px', position: 'absolute'}} src={filledSrc[0]} />} */}
     </DropZone>
   );
 }

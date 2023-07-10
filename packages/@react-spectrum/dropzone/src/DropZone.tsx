@@ -19,7 +19,8 @@ import React, {ReactNode, Ref, useImperativeHandle, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/dropzone/vars.css';
 export interface SpectrumDropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'ref' | 'hasDropButton'>, DOMProps, StyleProps, AriaLabelingProps {
   children: ReactNode,
-  filledSrc: string[]
+  isFilled: boolean, 
+  bannerMessage: string
 }
 
 export interface DropZoneRef extends FocusableRefValue<HTMLInputElement, HTMLDivElement> {
@@ -27,11 +28,10 @@ export interface DropZoneRef extends FocusableRefValue<HTMLInputElement, HTMLDiv
 }
 
 function DropZone(props: SpectrumDropZoneProps, ref: Ref<DropZoneRef>) {
-  let {children, filledSrc, ...otherProps} = props;
+  let {children, isFilled, bannerMessage, ...otherProps} = props;
   let {styleProps} = useStyleProps(otherProps);
   let domRef = useRef<HTMLDivElement>(null);
   let inputRef = useRef<HTMLInputElement>(null);
-  let isFilled = !(filledSrc === null || filledSrc === undefined); // look over this bc it's very strange
 
   let domProps = filterDOMProps(props, {labelable: true});
   delete domProps.id;
@@ -43,8 +43,6 @@ function DropZone(props: SpectrumDropZoneProps, ref: Ref<DropZoneRef>) {
       return inputRef.current;
     }
   }));
-
-  // console.log(isFilled ? filledSrc[0] : '');
 
   return (
     <RACDropZone
@@ -68,7 +66,7 @@ function DropZone(props: SpectrumDropZoneProps, ref: Ref<DropZoneRef>) {
                   styleProps.className
                 )
               }>
-              Drop file to replace
+              {bannerMessage ? bannerMessage : 'Drop file to replace'} {/* this will need translations */}
             </div>}
           <SlotProvider
             slots={{

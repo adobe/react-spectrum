@@ -21,17 +21,13 @@ governing permissions and limitations under the License.
   &[data-focus-visible]{
     border-color: var(--spectrum-dropzone-border-color-selected-hover);
 
-    /* svg {
+    svg {
       color: var(--spectrum-dropzone-illustratedmessage-illustration-color-key-focus);
-    } */
+    }
   }
 
   &[data-focused] {
     border-color: var(--spectrum-dropzone-border-color-selected-hover);
-
-    /* svg {
-      color: var(--spectrum-dropzone-illustratedmessage-illustration-color-key-focus);
-    } */
   }
 
   &[data-drop-target] {
