@@ -1863,7 +1863,7 @@ function LoadingTable() {
     setItems([]);
     setLoadingState('loading');
     setTimeout(() => {
-      setItems([...items.slice(0, 1)]);
+      setItems(items.length > 1 ? [...items.slice(0, 1)] : []);
       setLoadingState(undefined);
     }, 1000);
   };
