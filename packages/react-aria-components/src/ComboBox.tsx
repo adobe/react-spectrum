@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaComboBoxProps, useComboBox, useFilter, useFocusRing} from 'react-aria';
+import {AriaComboBoxProps, useComboBox, useFilter} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ComboBoxState, useComboBoxState, ValidationState} from 'react-stately';
 import {ContextValue, forwardRefType, Provider, RenderProps, slotCallbackSymbol, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
@@ -23,16 +23,6 @@ import {TextContext} from './Text';
 import {useCollection} from './Collection';
 
 export interface ComboBoxRenderProps {
-  /**
-   * Whether the combobox is focused, either via a mouse or keyboard.
-   * @selector [data-focused]
-   */
-  isFocused: boolean,
-  /**
-   * Whether the combobox is keyboard focused.
-   * @selector [data-focus-visible]
-   */
-  isFocusVisible: boolean,
   /**
    * Whether the combobox is currently open.
    * @selector [data-open]
@@ -84,13 +74,9 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
     collection
   });
 
-  let {isFocusVisible, focusProps} = useFocusRing({within: true});
-
   // Only expose a subset of state to renderProps function to avoid infinite render loop
   let renderPropsState = useMemo(() => ({
     isOpen: state.isOpen,
-    isFocused: state.isFocused,
-    isFocusVisible,
     isDisabled: props.isDisabled || false,
     validationState: props.validationState,
     isRequired: props.isRequired || false,
@@ -104,7 +90,7 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
       inputValue: state.inputValue,
       setInputValue: state.setInputValue
     }
-  }), [state.isOpen, state.isFocused, state.focusStrategy, state.selectedKey, state.disabledKeys, state.selectedItem, state.inputValue, state.setInputValue, isFocusVisible, props.isDisabled, props.validationState, props.isRequired]);
+  }), [state.isOpen, state.isFocused, state.focusStrategy, state.selectedKey, state.disabledKeys, state.selectedItem, state.inputValue, state.setInputValue, props.isDisabled, props.validationState, props.isRequired]);
   let buttonRef = useRef<HTMLButtonElement>(null);
   let inputRef = useRef<HTMLInputElement>(null);
   let listBoxRef = useRef<HTMLDivElement>(null);
@@ -179,11 +165,9 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
       <div
         {...DOMProps}
         {...renderProps}
-        {...focusProps}
         ref={ref}
         slot={props.slot}
         data-focused={state.isFocused || undefined}
-        data-focus-visible={isFocusVisible || undefined}
         data-open={state.isOpen || undefined}
         data-disabled={props.isDisabled || undefined}
         data-validation-state={props.validationState || undefined}
