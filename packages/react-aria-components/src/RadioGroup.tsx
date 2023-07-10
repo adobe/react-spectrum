@@ -44,7 +44,7 @@ export interface RadioGroupRenderProps {
   isRequired: boolean,
   /**
    * The validation state of the radio group.
-   * @selector [aria-invalid]
+   * @selector [data-validation-state]
    */
   validationState: ValidationState | null,
   /**

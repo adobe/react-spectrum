@@ -137,7 +137,16 @@ function SliderOutput({children, style, className, ...otherProps}: SliderOutputP
     }
   });
 
-  return <output {...mergeProps(filterDOMProps(otherProps as any), outputProps)} {...renderProps} ref={ref} />;
+  return (
+    <output
+      {...mergeProps(filterDOMProps(otherProps as any), outputProps)}
+      {...renderProps}
+      ref={ref}
+      data-orientation={state.orientation || undefined}
+      data-disabled={state.isDisabled || undefined}
+      data-focused={isFocused || undefined}
+      data-focus-visible={isFocusVisible || undefined} />
+  );
 }
 
 /**
@@ -177,8 +186,12 @@ function SliderTrack(props: SliderTrackProps, ref: ForwardedRef<HTMLDivElement>)
     <div
       {...mergeProps(filterDOMProps(props as any), hoverProps, trackProps)}
       {...renderProps}
+      ref={domRef}
       data-hovered={isHovered || undefined}
-      ref={domRef} />
+      data-orientation={state.orientation || undefined}
+      data-disabled={state.isDisabled || undefined}
+      data-focused={isFocused || undefined}
+      data-focus-visible={isFocusVisible || undefined} />
   );
 }
 

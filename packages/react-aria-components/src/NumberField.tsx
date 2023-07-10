@@ -17,7 +17,7 @@ import {filterDOMProps} from '@react-aria/utils';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
-import {NumberFieldState, useNumberFieldState} from 'react-stately';
+import {NumberFieldState, useNumberFieldState, ValidationState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
 
@@ -37,6 +37,11 @@ export interface NumberFieldRenderProps {
    * @selector [data-disabled]
    */
   isDisabled: boolean,
+  /**
+   * Validation state of the number field.
+   * @selector [data-validation-state]
+   */
+  validationState?: ValidationState,
   /**
    * State of the number field.
    */
@@ -70,7 +75,8 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
       state,
       isFocused,
       isFocusVisible,
-      isDisabled: props.isDisabled || false
+      isDisabled: props.isDisabled || false,
+      validationState: props.validationState
     },
     defaultClassName: 'react-aria-NumberField'
   });
@@ -105,7 +111,8 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
         slot={props.slot}
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
-        data-disabled={props.isDisabled || undefined} />
+        data-disabled={props.isDisabled || undefined}
+        data-validation-state={props.validationState || undefined} />
     </Provider>
   );
 }
