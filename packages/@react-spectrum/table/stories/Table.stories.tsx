@@ -1800,6 +1800,7 @@ let typeAheadRows = [
   ...Array.from({length: 100}, (v, i) => ({id: i, firstname: 'Aubrey', lastname: 'Sheppard', birthday: 'May 7'})),
   {id: 101, firstname: 'John', lastname: 'Doe', birthday: 'May 7'}
 ];
+
 export const TypeaheadWithDialog: TableStory = {
   render: (args) => (
     <div style={{height: '90vh'}}>
