@@ -495,23 +495,7 @@ function TableBody<T extends object>(props: TableBodyProps<T>, ref: ForwardedRef
 const _TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(TableBody);
 export {_TableBody as TableBody};
 
-export interface RowRenderProps extends ItemRenderProps {
-  /**
-   * Whether the row allows dragging.
-   * @selector [draggable]
-   */
-  allowsDragging: boolean,
-  /**
-   * Whether the row is currently being dragged.
-   * @selector [data-dragging]
-   */
-  isDragging: boolean,
-  /**
-   * Whether the row is currently an active drop target.
-   * @selector [data-drop-target]
-   */
-  isDropTarget: boolean
-}
+export interface RowRenderProps extends ItemRenderProps {}
 
 export interface RowProps<T> extends StyleRenderProps<RowRenderProps> {
   id?: Key,
