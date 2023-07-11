@@ -23,8 +23,6 @@ import {ActionButton} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
 import {Cell, Column, Row, TableView, TableBody, TableHeader} from '@react-spectrum/table';
 import {Flex} from '@react-spectrum/layout';
-import {enableTableNestedRows} from '@react-stately/flags';
-enableTableNestedRows();
 ```
 
 ---
@@ -1911,6 +1909,14 @@ let rows = [
 
 By default, TableView doesn't allow expandable rows, but this can be enabled using the `hasExpandableRows` prop.
 Use `defaultExpandedKeys` to provide a default set of expanded rows. Note that the value of the expanded keys must match the `key` prop of the Row.
+
+You'll first need to enable a feature flag in your app to use this feature.
+
+```tsx example
+import {enableTableNestedRows} from '@react-stately/flags';
+
+enableTableNestedRows();
+```
 
 The example below enables expandable rows, and uses `defaultSelectedKeys` to expand rows with keys "1" and "2".
 
