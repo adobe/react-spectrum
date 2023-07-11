@@ -1607,7 +1607,7 @@ A expandable row can be statically defined by including one or more Rows as chil
 The example below enables expandable rows, and uses `defaultSelectedKeys` to expand rows with keys "1" and "2".
 
 ```tsx example
-<TableView aria-label="Example table with expandable rows" hasExpandableRows defaultExpandedKeys={['1', '2']} height="size-3000">
+<TableView aria-label="Example table with expandable rows" hasExpandableRows defaultExpandedKeys={['1', '2']} height="size-4600">
   <TableHeader>
     <Column>Name</Column>
     <Column>Capital</Column>
@@ -1678,7 +1678,7 @@ function TableExample(props) {
   let [expandedKeys, setExpandedKeys] = React.useState<'all' | Set<React.Key>>('all');
 
   return (
-    <TableView aria-label="Example table with controlled expandable rows" hasExpandableRows expandedKeys={expandedKeys} onExpandedChange={setExpandedKeys} height="size-3000">
+    <TableView aria-label="Example table with controlled expandable rows" hasExpandableRows expandedKeys={expandedKeys} onExpandedChange={setExpandedKeys} height="size-4600">
       <TableHeader columns={columns}>
         {column => (
           <Column align={column.key === 'population' ? 'end' : 'start'}>
