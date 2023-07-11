@@ -23,6 +23,8 @@ import {ActionButton} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
 import {Cell, Column, Row, TableView, TableBody, TableHeader} from '@react-spectrum/table';
 import {Flex} from '@react-spectrum/layout';
+import {enableTableNestedRows} from '@react-stately/flags';
+enableTableNestedRows();
 ```
 
 ---
@@ -1903,4 +1905,95 @@ let rows = [
     )}
   </TableBody>
 </TableView>
+```
+
+## Expandable Rows <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+
+By default, TableView doesn't allow expandable rows, but this can be enabled using the `hasExpandableRows` prop.
+Use `defaultExpandedKeys` to provide a default set of expanded rows. Note that the value of the expanded keys must match the `key` prop of the Row.
+
+The example below enables expandable rows, and uses `defaultSelectedKeys` to expand rows with keys "1" and "2".
+
+```tsx example
+<TableView aria-label="Example table with expandable rows" hasExpandableRows defaultExpandedKeys={['1', '2']} height="size-3000">
+  <TableHeader>
+    <Column>Name</Column>
+    <Column>Type</Column>
+    <Column align="end">Level</Column>
+  </TableHeader>
+  <TableBody>
+    <Row key="1">
+      <Cell>Charizard</Cell>
+      <Cell>Fire, Flying</Cell>
+      <Cell>67</Cell>
+      <Row key="2">
+        <Cell>Blastoise</Cell>
+        <Cell>Water</Cell>
+        <Cell>56</Cell>
+        <Row key="3">
+          <Cell>Venusaur</Cell>
+          <Cell>Grass, Poison</Cell>
+          <Cell>83</Cell>
+        </Row>
+      </Row>
+    <Row key="4">
+      <Cell>Pikachu</Cell>
+      <Cell>Electric</Cell>
+      <Cell>100</Cell>
+    </Row>
+  </Row>
+  </TableBody>
+</TableView>
+```
+
+### Controlled expandable rows
+
+To programmatically control row expansion, use the `expandedKeys` prop paired with the `onExpandedChange` callback. The `key` prop from the expanded rows will
+be passed into the callback when the row's expand button is pressed, allowing you to update state accordingly.
+
+Here is how you would control expanded rows for the above example.
+
+```tsx example
+interface ColumnDefinition {
+  name: string,
+  key: string,
+}
+
+function TableExample(props) {
+  let columns: ColumnDefinition[] = [
+    {name: 'Name', key: 'name'},
+    {name: 'Type', key: 'type'},
+    {name: 'Level', key: 'level'}
+  ];
+
+  let nestedRows = [
+    {key: '1', name: 'Charizard', type: 'Fire, Flying', level: '67', childRows: [
+      {key: '2', name: 'Blastoise', type: 'Water', level: '56', childRows: [
+        {key: '3', name: 'Venusaur', type: 'Grass, Poison', level: '83'}
+      ]},
+      {key: '4', name: 'Pikachu', type: 'Electric', level: '100'}
+    ]}
+  ];
+
+  let [expandedKeys, setExpandedKeys] = React.useState<'all' | Set<Key>>('all');
+
+  return (
+    <TableView aria-label="Example table with controlled expandable rows" hasExpandableRows expandedKeys={expandedKeys} onExpandedChange={setExpandedKeys} height="size-3000">
+      <TableHeader columns={columns}>
+        {column => (
+          <Column isRowHeader={column.isRowHeader} childColumns={column.children}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={nestedRows}>
+        {item => (
+          <Row key={item.key} childItems={item.childRows}>
+            {(key) => <Cell>{item[key]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
 ```
