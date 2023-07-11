@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaSearchFieldProps, useSearchField} from 'react-aria';
+import {AriaSearchFieldProps, useFocusRing, useSearchField} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
@@ -20,15 +20,38 @@ import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {SearchFieldState, useSearchFieldState} from 'react-stately';
 import {TextContext} from './Text';
 
-export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, RenderProps<SearchFieldState>, SlotProps {}
-
 export interface SearchFieldRenderProps {
+  /**
+   * The current value of the search field.
+   */
+  value: string,
   /**
    * Whether the search field is empty.
    * @selector [data-empty]
    */
-  isEmpty: boolean
+  isEmpty: boolean,
+  /**
+   * Whether the search field is focused, either via a mouse or keyboard.
+   * @selector [data-focused]
+   */
+  isFocused: boolean,
+  /**
+   * Whether the search field is keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
+   * Whether the search field is disabled.
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean,
+  /**
+   * State of the search field.
+   */
+  state: SearchFieldState
 }
+
+export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, RenderProps<SearchFieldRenderProps>, SlotProps {}
 
 export const SearchFieldContext = createContext<ContextValue<SearchFieldProps, HTMLDivElement>>(null);
 
@@ -37,6 +60,7 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
   let inputRef = useRef<HTMLInputElement>(null);
   let [labelRef, label] = useSlot();
   let state = useSearchFieldState(props);
+  let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
   let {labelProps, inputProps, clearButtonProps, descriptionProps, errorMessageProps} = useSearchField({
     ...props,
     label
@@ -44,7 +68,14 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
 
   let renderProps = useRenderProps({
     ...props,
-    values: state,
+    values: {
+      value: state.value,
+      isEmpty: state.value === '',
+      isFocused,
+      isFocusVisible,
+      isDisabled: props.isDisabled || false,
+      state
+    },
     defaultClassName: 'react-aria-SearchField'
   });
 
@@ -54,10 +85,14 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
   return (
     <div
       {...DOMProps}
+      {...focusProps}
       {...renderProps}
       ref={ref}
       slot={props.slot}
-      data-empty={state.value === '' || undefined}>
+      data-empty={state.value === '' || undefined}
+      data-focused={isFocused || undefined}
+      data-focus-visible={isFocusVisible || undefined}
+      data-disabled={props.isDisabled || undefined}>
       <Provider
         values={[
           [LabelContext, {...labelProps, ref: labelRef}],

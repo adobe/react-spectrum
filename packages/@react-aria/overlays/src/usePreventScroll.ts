@@ -18,7 +18,7 @@ interface PreventScrollOptions {
 }
 
 // @ts-ignore
-const visualViewport = typeof window !== 'undefined' && window.visualViewport;
+const visualViewport = typeof document !== 'undefined' && window.visualViewport;
 
 // HTML input types that do not cause the software keyboard to appear.
 const nonTextInputTypes = new Set([
