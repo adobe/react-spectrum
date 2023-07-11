@@ -134,7 +134,7 @@ export interface TableBodyProps<T> extends Omit<AsyncLoadable, 'isLoading'> {
 
 export interface RowProps<T> {
   /**
-   * A list of child item objects used when dynamically rendering row children.
+   * A list of child item objects used when dynamically rendering row children. Requires the feature flag to be enabled first, see https://react-spectrum.adobe.com/react-spectrum/TableView.html#expandable-rows.
    * @version alpha
    */
   childItems?: Iterable<T>,
