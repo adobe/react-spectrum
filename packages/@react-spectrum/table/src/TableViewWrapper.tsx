@@ -55,7 +55,10 @@ export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionP
    * @version alpha
    */
   dragAndDropHooks?: DragAndDropHooks['dragAndDropHooks'],
-  /** Whether the TableView should support expandable rows.  */
+  /**
+   * Whether the TableView should support expandable rows.
+   * @version alpha
+   */
   hasExpandableRows?: boolean
 }
 
