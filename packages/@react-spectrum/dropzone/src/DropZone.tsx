@@ -46,8 +46,8 @@ function DropZone(props: SpectrumDropZoneProps, ref: Ref<DropZoneRef>) {
 
   return (
     <RACDropZone
+      // {...styleProps} working on getting this to work...
       {...mergeProps(otherProps, domProps)}
-      // {...styleProps} // not really sure what to do about this
       className={
       classNames(
         styles,
@@ -66,7 +66,7 @@ function DropZone(props: SpectrumDropZoneProps, ref: Ref<DropZoneRef>) {
                   styleProps.className
                 )
               }>
-              {bannerMessage ? bannerMessage : 'Drop file to replace'} {/* this will need translations */}
+              {bannerMessage ? bannerMessage : 'Drop file to replace'}
             </div>}
           <SlotProvider
             slots={{

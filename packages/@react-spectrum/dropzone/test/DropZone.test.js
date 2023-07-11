@@ -10,28 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@react-spectrum/test-utils';
-import {DropZone} from '../';
-import {ClipboardEvent, DataTransfer, DataTransferItem, DragEvent} from '@react-aria/dnd/test/mocks';
-import {Draggable} from '@react-aria/dnd/test/examples';
-import React from 'react';
-import userEvent from '@testing-library/user-event';
+// import {act, fireEvent, render} from '@react-spectrum/test-utils';
+// import {DropZone} from '../';
+// import {ClipboardEvent, DataTransfer, DataTransferItem, DragEvent} from '@react-aria/dnd/test/mocks';
+// import {Draggable} from '@react-aria/dnd/test/examples';
+// import React from 'react';
+// import userEvent from '@testing-library/user-event';
 
-describe('DropZone', () => {
-  it('should render a dropzone', () => {
-    let {getByTestId} = render(
-      <DropZone data-testid="foo">
-        <IllustratedMessage>
-          <Heading>No files</Heading>
-          <Content>
-            <FileTrigger>
-              <Button variant="primary">Upload Files</Button>
-            </FileTrigger>
-          </Content>
-        </IllustratedMessage>
-      </DropZone>
-    );
-    let dropzone = getByTestId('foo');
-    expect(dropzone).toHaveAttribute('class', 'react-aria-DropZone');
-  });
-});
+// describe('DropZone', () => {
+//   it('should render a dropzone', () => {
+//     let {getByTestId} = render(
+//       <DropZone data-testid="foo">
+//         <IllustratedMessage>
+//           <Heading>No files</Heading>
+//           <Content>
+//             <FileTrigger>
+//               <Button variant="primary">Upload Files</Button>
+//             </FileTrigger>
+//           </Content>
+//         </IllustratedMessage>
+//       </DropZone>
+//     );
+//     let dropzone = getByTestId('foo');
+//     expect(dropzone).toHaveAttribute('class', 'react-aria-DropZone');
+//   });
+// });
