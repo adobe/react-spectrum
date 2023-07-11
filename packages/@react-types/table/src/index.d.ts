@@ -132,12 +132,13 @@ export interface TableBodyProps<T> extends Omit<AsyncLoadable, 'isLoading'> {
   loadingState?: LoadingState
 }
 
-// TODO: Do we want to make separate types that are only exposed when feature flag for expandedRows is turned on?
 export interface RowProps<T> {
-  // TODO: update the props here for treeble
-  // treeble case? Unsupported props for now
-  /** A list of child item objects used when dynamically rendering row children. */
+  /**
+   * A list of child item objects used when dynamically rendering row children. Requires the feature flag to be enabled first, see https://react-spectrum.adobe.com/react-spectrum/TableView.html#expandable-rows.
+   * @version alpha
+   */
   childItems?: Iterable<T>,
+  // TODO: update when async loading is supported for expandable rows
   // /** Whether this row has children, even if not loaded yet. */
   // hasChildItems?: boolean,
   /** Rendered contents of the row or row child items. */

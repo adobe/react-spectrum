@@ -1433,7 +1433,6 @@ function ExpandableRowChevron({cell}) {
       {...buttonProps}
       ref={expandButtonRef}
       // Override tabindex so that grid keyboard nav skips over it. Needs -1 so android talkback can actually "focus" it
-      // TODO: For Talkback perhaps can make the chevron completely unfocusable by making tabIndex =-1 if cellAction is undefined by user and thus pressing on the chevron cell will expand the row?
       tabIndex={isAndroid() ? -1 : undefined}
       className={
         classNames(

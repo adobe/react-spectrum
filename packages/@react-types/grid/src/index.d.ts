@@ -13,8 +13,6 @@
 import {Collection, Node} from '@react-types/shared';
 import {Key} from 'react';
 
-// TODO: perhaps make this Collection<GridNode<T>>. Will need to figure out how to
-// make other places return GridNode instead of Node
 export interface GridCollection<T> extends Collection<GridNode<T>> {
   /** The number of columns in the grid. */
   columnCount: number,
