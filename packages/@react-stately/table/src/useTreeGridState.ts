@@ -29,9 +29,6 @@ export interface TreeGridState<T> extends TableState<T> {
   userColumnCount: number
 }
 
-// TODO: For now I am omitting collection since this is a bit of a special case where are still using TableCollection but include
-// extra information for the tree grid in the state. That means the user can't really provide their own collection. Perhaps it would
-// be good to still have a TreeGridCollection implementation in that case?
 export interface TreeGridStateProps<T> extends Expandable, Omit<TableStateProps<T>, 'collection'> {}
 
 /**
@@ -64,14 +61,12 @@ export function useTreeGridState<T extends object>(props: TreeGridStateProps<T>)
   }), [children, showSelectionCheckboxes, selectionMode, showDragButtons]);
 
   let builder = useMemo(() => new CollectionBuilder<T>(), []);
-  // TODO: figure out this ts issue
   // @ts-ignore
   let nodes = useMemo(() => builder.build({children}, context), [builder, children, context]);
   let treeGridCollection = useMemo(() => {
     return generateTreeGridCollection<T>(nodes, {showSelectionCheckboxes, showDragButtons, expandedKeys});
   }, [nodes, showSelectionCheckboxes, showDragButtons, expandedKeys]);
 
-  // TODO: support 'all'? Will we have a interaction to expand all
   let onToggle = (key: Key) => {
     setExpandedKeys(toggleKey(expandedKeys, key, treeGridCollection));
   };
@@ -90,7 +85,6 @@ export function useTreeGridState<T extends object>(props: TreeGridStateProps<T>)
   };
 }
 
-// TODO: copied from useTreeState, perhaps make this accept multiple keys?
 function toggleKey<T>(currentExpandedKeys: 'all' | Set<Key>, key: Key, collection: TreeGridCollection<T>): Set<Key> {
   let updatedExpandedKeys: Set<Key>;
   if (currentExpandedKeys === 'all') {
@@ -108,7 +102,6 @@ function toggleKey<T>(currentExpandedKeys: 'all' | Set<Key>, key: Key, collectio
   return updatedExpandedKeys;
 }
 
-// TODO: based off convertedSelected
 function convertExpanded(expanded: 'all' | Iterable<Key>): 'all' | Set<Key> {
   if (!expanded) {
     return new Set<Key>();
@@ -118,7 +111,6 @@ function convertExpanded(expanded: 'all' | Iterable<Key>): 'all' | Set<Key> {
     ? 'all'
     : new Set(expanded);
 }
-
 
 interface TreeGridCollectionOptions {
   showSelectionCheckboxes?: boolean,
@@ -136,7 +128,6 @@ interface TreeGridCollection<T> {
 const ROW_HEADER_COLUMN_KEY = 'row-header-column-checkbox-' + Math.random().toString(36).slice(2);
 const ROW_HEADER_COLUMN_KEY_DRAG = 'row-header-column-drag-' + Math.random().toString(36).slice(2);
 
-// TODO: naming?
 function generateTreeGridCollection<T>(nodes, opts: TreeGridCollectionOptions): TreeGridCollection<T> {
   let {
     expandedKeys = new Set()

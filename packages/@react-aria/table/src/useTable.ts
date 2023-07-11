@@ -70,8 +70,6 @@ export function useTable<T>(props: AriaTableProps<T>, state: TableState<T> | Tre
     gridProps['aria-rowcount'] = state.collection.size + state.collection.headerRows.length;
   }
 
-  // TODO: Opted to put tree grid specific aria in table hooks level, not grid hook level. If it turns out that we will
-  // have other components that only call the grid hooks and need treegrid aria, then we can refactor
   if ('expandedKeys' in state) {
     gridProps.role = 'treegrid';
   }

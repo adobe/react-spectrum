@@ -132,9 +132,7 @@ export interface TableBodyProps<T> extends Omit<AsyncLoadable, 'isLoading'> {
   loadingState?: LoadingState
 }
 
-// TODO: Do we want to make separate types that are only exposed when feature flag for expandedRows is turned on?
 export interface RowProps<T> {
-  // TODO: update the props here for treeble
   // treeble case? Unsupported props for now
   /** A list of child item objects used when dynamically rendering row children. */
   childItems?: Iterable<T>,
