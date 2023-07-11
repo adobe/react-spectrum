@@ -1981,13 +1981,13 @@ function TableExample(props) {
     ]}
   ];
 
-  let [expandedKeys, setExpandedKeys] = React.useState<'all' | Set<Key>>('all');
+  let [expandedKeys, setExpandedKeys] = React.useState<'all' | Set<React.Key>>('all');
 
   return (
     <TableView aria-label="Example table with controlled expandable rows" hasExpandableRows expandedKeys={expandedKeys} onExpandedChange={setExpandedKeys} height="size-3000">
       <TableHeader columns={columns}>
         {column => (
-          <Column childColumns={column.children} align={column.key === 'population' ? 'end' : 'start'}>
+          <Column align={column.key === 'population' ? 'end' : 'start'}>
             {column.name}
           </Column>
         )}
