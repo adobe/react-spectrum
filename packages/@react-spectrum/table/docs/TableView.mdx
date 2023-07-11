@@ -1918,28 +1918,28 @@ The example below enables expandable rows, and uses `defaultSelectedKeys` to exp
 <TableView aria-label="Example table with expandable rows" hasExpandableRows defaultExpandedKeys={['1', '2']} height="size-3000">
   <TableHeader>
     <Column>Name</Column>
-    <Column>Type</Column>
-    <Column align="end">Level</Column>
+    <Column>Capital</Column>
+    <Column align="end">Population</Column>
   </TableHeader>
   <TableBody>
     <Row key="1">
-      <Cell>Charizard</Cell>
-      <Cell>Fire, Flying</Cell>
-      <Cell>67</Cell>
+      <Cell>United States</Cell>
+      <Cell>Washington, D.C.</Cell>
+      <Cell>331.9 million</Cell>
       <Row key="2">
-        <Cell>Blastoise</Cell>
-        <Cell>Water</Cell>
-        <Cell>56</Cell>
+        <Cell>California</Cell>
+        <Cell>Sacramento</Cell>
+        <Cell>39.24 million</Cell>
         <Row key="3">
-          <Cell>Venusaur</Cell>
-          <Cell>Grass, Poison</Cell>
-          <Cell>83</Cell>
+          <Cell>San Jose</Cell>
+          <Cell>-</Cell>
+          <Cell>983.4 thousand</Cell>
         </Row>
       </Row>
     <Row key="4">
-      <Cell>Pikachu</Cell>
-      <Cell>Electric</Cell>
-      <Cell>100</Cell>
+      <Cell>Texas</Cell>
+      <Cell>Austin</Cell>
+      <Cell>29.53 million</Cell>
     </Row>
   </Row>
   </TableBody>
@@ -1962,16 +1962,16 @@ interface ColumnDefinition {
 function TableExample(props) {
   let columns: ColumnDefinition[] = [
     {name: 'Name', key: 'name'},
-    {name: 'Type', key: 'type'},
-    {name: 'Level', key: 'level'}
+    {name: 'Capital', key: 'capital'},
+    {name: 'Population', key: 'population'}
   ];
 
   let nestedRows = [
-    {key: '1', name: 'Charizard', type: 'Fire, Flying', level: '67', childRows: [
-      {key: '2', name: 'Blastoise', type: 'Water', level: '56', childRows: [
-        {key: '3', name: 'Venusaur', type: 'Grass, Poison', level: '83'}
+    {key: '1', name: 'United States', capital: 'Washington, D.C.', population: '331.9 million', childRows: [
+      {key: '2', name: 'California', capital: 'Sacramento', population: '39.24 million', childRows: [
+        {key: '3', name: 'San Jose', capital: '-', population: '983.4 thousand'}
       ]},
-      {key: '4', name: 'Pikachu', type: 'Electric', level: '100'}
+      {key: '4', name: 'Texas', capital: 'Austin', population: '29.53 million'}
     ]}
   ];
 
@@ -1981,7 +1981,7 @@ function TableExample(props) {
     <TableView aria-label="Example table with controlled expandable rows" hasExpandableRows expandedKeys={expandedKeys} onExpandedChange={setExpandedKeys} height="size-3000">
       <TableHeader columns={columns}>
         {column => (
-          <Column isRowHeader={column.isRowHeader} childColumns={column.children}>
+          <Column childColumns={column.children} align={column.key === 'population' ? 'end' : 'start'}>
             {column.name}
           </Column>
         )}
