@@ -60,4 +60,12 @@ describe('<HiddenSelect />', () => {
     userEvent.selectOptions(select, '5');
     expect(onSelectionChange).toBeCalledWith('5');
   });
+
+  it('should add a data attribute data-rsp-a11y-ignore when specified in the props', () => {
+    render(
+      <HiddenSelectExample items={makeItems(5)} hiddenProps={{ hasA11yIgnoreDataAttr: true }} />
+    );
+
+    expect(screen.getByRole('listbox', { hidden: true }).dataset.rspA11yIgnore).toBeTruthy()
+  })
 });

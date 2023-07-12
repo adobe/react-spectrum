@@ -32,8 +32,7 @@ export interface AriaHiddenSelectProps {
   isDisabled?: boolean
 
   /** Adds an arbitrary data attribute data-rsp-a11Ignore.
-   * Useful for ignore false positive a11y issues with tools such as pa11y
-   * */
+   * Useful for ignore false positive a11y issues with tools such as pa11y */
   hasA11yIgnoreDataAttr?: boolean
 }
 
@@ -93,6 +92,7 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectProps, state: SelectSt
       size: state.collection.size,
       value: state.selectedKey ?? '',
       onChange: (e: React.ChangeEvent<HTMLSelectElement>) => state.setSelectedKey(e.target.value)
+      ['data-rsp-a11y-ignore']: props.hasA11yIgnoreDataAttr,
     }
   };
 }
@@ -139,8 +139,9 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
         autoComplete={selectProps.autoComplete}
         name={name}
         disabled={isDisabled}
-        value={state.selectedKey ?? ''} />
-        data-rsp-a11Ignore={props.hasA11yIgnoreDataAttr}
+        value={state.selectedKey ?? ''}
+        data-rsp-a11y-ignore={selectProps['data-rsp-a11y-ignore']}
+      />
     );
   }
 
