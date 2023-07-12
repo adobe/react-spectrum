@@ -14,6 +14,7 @@ governing permissions and limitations under the License.
 
 :root {
   --spectrum-dropzone-padding-y: var(--spectrum-global-dimension-size-125);
+  --spectrum-dropzone-banner-text-color: var(--spectrum-global-color-static-white);
 }
 
 .spectrum-Dropzone {
@@ -37,8 +38,9 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-Dropzone-banner {
+.spectrum-Dropzone--banner {
   position: absolute;
+  color: var(--spectrum-textfield-text-color);
   background-color: var(--spectrum-dropzone-border-color-selected-hover);
   z-index: 1;
   top: 0px;

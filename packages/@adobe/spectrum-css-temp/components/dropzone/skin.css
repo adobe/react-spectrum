@@ -20,10 +20,6 @@ governing permissions and limitations under the License.
 
   &[data-focus-visible]{
     border-color: var(--spectrum-dropzone-border-color-selected-hover);
-
-    svg {
-      color: var(--spectrum-dropzone-illustratedmessage-illustration-color-key-focus);
-    }
   }
 
   &[data-focused] {
@@ -38,40 +34,29 @@ governing permissions and limitations under the License.
     &.focus-ring {
       border-color: var(--spectrum-dropzone-border-color-selected-hover);
     }
-
-    svg {
-      color: var(--spectrum-dropzone-illustratedmessage-illustration-color-selected);
-    }
   }
+}
 
-/* 
-  &:focus:not(.is-dragged) {
-    border-color: var(--spectrum-dropzone-border-color);
-    .spectrum-IllustratedMessage-illustration {
+.spectrum-Dropzone--illustratedMessage {
+  
+  &.is-drop-target {
+    svg{
       color: var(--spectrum-dropzone-illustratedmessage-illustration-color-key-focus);
     }
-    &.focus-ring {
-      border-color: var(--spectrum-dropzone-border-color-selected-hover);
-    }
-    &.is-dragged.focus-ring {
-      .spectrum-IllustratedMessage-illustration {
-        color: var(--spectrum-dropzone-illustratedmessage-illustration-color-selected);
-      }
-    }
-  } */
-}
+  }
 
-.spectrum-Dropzone-banner {
-  &[data-drop-target] {
+  &.is-focused {
+    svg{
+      color: var(--spectrum-dropzone-illustratedmessage-illustration-color-key-focus);
+    }
+  }
+
+  &.is-focused-visible {
+    svg{
+      color: var(--spectrum-dropzone-illustratedmessage-illustration-color-key-focus);
+    }
   }
 }
-/* 
-.spectrum-IllustratedMessage{
-  
-  svg {
-    color: var(--spectrum-dropzone-illustratedmessage-illustration-color-selected);
-  }
-} */
 
 @media (forced-colors: active) {
   .spectrum-Dropzone {

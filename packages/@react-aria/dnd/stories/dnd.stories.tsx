@@ -243,7 +243,7 @@ export const MultipleCollectionDropTargets = {
 
 export const Reorderable = () => <ReorderableGridExample />;
 
-function Draggable() {
+export function Draggable() {
   let {dragProps, isDragging} = useDrag({
     getItems() {
       return [{

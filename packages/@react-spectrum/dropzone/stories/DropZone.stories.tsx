@@ -12,18 +12,16 @@
 
 import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
-import {classNames} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
-import dndStyles from '@react-aria/dnd/stories/dnd.css';
+import {Draggable} from '@react-aria/dnd/stories/dnd.stories';
 import {DropZone} from '../';
-import {FileDropItem, FocusRing, mergeProps, TextDropItem, useButton, useClipboard, useDrag} from 'react-aria';
+import {FileDropItem, TextDropItem} from 'react-aria';
 import {FileTrigger} from 'react-aria-components';
 import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Link} from '@react-spectrum/link';
 import {Meta} from '@storybook/react';
 import React, {useState} from 'react';
-import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {SpectrumDropZoneProps} from '../src/DropZone';
 import Upload from '@spectrum-icons/illustrations/Upload';
 
@@ -219,41 +217,3 @@ function DropZoneWithButton(props) {
   );
 }
 
-function Draggable() {
-  let {dragProps, isDragging} = useDrag({
-    getItems() {
-      return [{
-        'text/plain': 'hello world'
-      }];
-    },
-    getAllowedDropOperations() {
-      return ['copy'];
-    },
-    onDragStart: action('onDragStart'),
-    // onDragMove: action('onDragMove'),
-    onDragEnd: action('onDragEnd')
-  });
-
-  let {clipboardProps} = useClipboard({
-    getItems() {
-      return [{
-        'text/plain': 'hello world'
-      }];
-    }
-  });
-
-  let ref = React.useRef();
-  let {buttonProps} = useButton({elementType: 'div'}, ref);
-
-  return (
-    <FocusRing focusRingClass={classNames(dndStyles, 'focus-ring')}>
-      <div
-        ref={ref}
-        {...mergeProps(dragProps, buttonProps, clipboardProps)}
-        className={classNames(dndStyles, 'draggable', {'is-dragging': isDragging})}>
-        <ShowMenu size="XS" />
-        <span>Drag me</span>
-      </div>
-    </FocusRing>
-  );
-}
