@@ -76,7 +76,7 @@ keywords: [table, grid]
 ```
 
 ## Content
-TableView is a complex [collection component](../react-stately/collections.html) that is built up from many child elements including columns, rows, and cells. Columns are defined within a TableHeader element and rows are defined within a TableBody element. Rows contain Cell elements that correspond to each column. Cells can contain any element, allowing you to have focusable children within the TableView.
+TableView is a complex [collection component](../react-stately/collections.html) that is built up from many child elements including columns, rows, and cells. Columns are defined within a TableHeader element and rows are defined within a TableBody element. Rows contain `Cell` elements that correspond to each column. Cells can contain any element, allowing you to have focusable children within the TableView.
 
 Basic usage of TableView, seen in the example above, shows the use of a static collection where the contents of the TableView is hard coded. Dynamic collections, as shown below, can be used when the options come from an external data source such as an API, or update over time. Providing the data in this way allows TableView to automatically cache the rendering of each item, which dramatically improves performance.
 
@@ -367,7 +367,7 @@ function AsyncTable() {
 ## Selection
 
 By default, TableView doesn't allow row selection but this can be enabled using the `selectionMode` prop.
-Use `defaultSelectedKeys` to provide a default set of selected rows. Note that the value of the selected keys must match the `key` prop of the Row.
+Use `defaultSelectedKeys` to provide a default set of selected rows. Note that the value of the selected keys must match the `key` prop of the `Row`.
 
 The example below enables multiple selection mode, and uses `defaultSelectedKeys` to select the rows with keys "2" and "4".
 
@@ -1599,10 +1599,10 @@ enableTableNestedRows();
 ```
 <br />
 
-Use `defaultExpandedKeys` to provide a default set of expanded rows. Note that the value of the expanded keys must match the `key` prop of the Row and that a
+Use `defaultExpandedKeys` to provide a default set of expanded rows. Note that the value of the expanded keys must match the `key` prop of the `Row` and that an
 expanded child row will only be visible if its parent row key is also included within the expanded key set.
 
-A expandable row can be statically defined by including one or more Rows as children. Note that all child Rows must be placed after the last Cell within the Row.
+An expandable row can be statically defined by including one or more `Rows` as children. Note that all child `Rows` must be placed after the last `Cell` within the parent `Row`.
 
 The example below enables expandable rows, and uses `defaultSelectedKeys` to expand rows with keys "1" and "2".
 
@@ -1649,7 +1649,7 @@ To programmatically control row expansion, use the `expandedKeys` prop paired wi
 be passed into the callback when the row's expand button is pressed, allowing you to update state accordingly.
 
 Here is how you would control expanded rows for the above example. Additionally, note how expandable rows can be dynamically defined by providing the child rows data to the
-parent Row's `childRows` prop.
+parent `Row`'s `childRows` prop.
 
 ```tsx example
 interface ColumnDefinition {
