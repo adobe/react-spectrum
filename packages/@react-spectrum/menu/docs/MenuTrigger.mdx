@@ -11,7 +11,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/menu';
-import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, PageDescription, VersionBadge} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/menu/package.json';
 import {Keyboard} from '@react-spectrum/text';
 
@@ -117,6 +117,64 @@ import {Text} from '@react-spectrum/text';
       <CloneStamp />
       <Text>Clone Stamp</Text>
     </Item>
+  </Menu>
+</MenuTrigger>
+```
+
+## Unavilalbe Menu Item <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+
+ContextualHelpTrigger shows a user extra information about the state of an unavilalbe Menu Item.
+It provides context for the state and may point users to more information elsewhere.
+
+ContextualHelpTrigger serves as a wrapper around a Dialog and an Item which is its associated trigger,
+linking the Dialog's open state with the trigger's press state. The ContextualHelpTrigger accepts exactly
+two children: the Item which triggers opening of the Dialog and the Dialog itself. The trigger must be
+the first child passed into the ContextualHelpTrigger and should be an Item. Similar to
+ContextualHelp, the layout of the Dialog is very diliberate. See [ContextualHelp](ContextualHelp.html#content) for further explanation.
+
+By default, a ContextualHelpTrigger's Dialog is opened by hovering or pressing the trigger element or activating
+it via the <Keyboard>Space</Keyboard>, <Keyboard>Enter</Keyboard>, or <Keyboard>Right Arrow</Keyboard> keys.
+Hovering another item or pressing the <Keyboard>Esc</Keyboard> key will close the Dialog and leave the Menu open.
+
+When a ContextualHelpTrigger is used to make Menu Items unavailabe, the Menu `onAction` and `onSelectionChange`
+callbacks will not occur.
+
+A ContextualHelpTrigger disables a Menu Item when you can set `isUnavailable` on the ContextualHelpTrigger.
+
+The example below illustrates how one would setup a MenuTrigger to use ContextualHelpTrigger.
+
+```tsx example
+import {ContextualHelpTrigger} from '@react-spectrum/menu';
+import {Dialog} from '@react-spectrum/dialog';
+import {Heading} from '@react-spectrum/text';
+import {Content} from '@react-spectrum/view';
+
+<MenuTrigger>
+  <ActionButton>Edit</ActionButton>
+  <Menu>
+    <Item key="undo">Undo</Item>
+    <Item key="redo">Redo</Item>
+    <ContextualHelpTrigger isUnavailable>
+      <Item key="cut">Cut</Item>
+      <Dialog>
+        <Heading>Cut</Heading>
+        <Content>Please select text for 'Cut' to be enabled.</Content>
+      </Dialog>
+    </ContextualHelpTrigger>
+    <ContextualHelpTrigger isUnavailable>
+      <Item key="copy">Copy</Item>
+      <Dialog>
+        <Heading>Copy</Heading>
+        <Content>Please select text for 'Copy' to be enabled.</Content>
+      </Dialog>
+    </ContextualHelpTrigger>
+    <ContextualHelpTrigger>
+      <Item key="paste">Paste</Item>
+      <Dialog>
+        <Heading>Paste</Heading>
+        <Content>You have nothing to 'Paste'.</Content>
+      </Dialog>
+    </ContextualHelpTrigger>
   </Menu>
 </MenuTrigger>
 ```
