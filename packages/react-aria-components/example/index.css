@@ -281,7 +281,7 @@ html {
   }
 
   &[data-focus-visible]:before {
-    box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--selected-color);
+    box-shadow: 0 0 0 2px canvas, 0 0 0 4px var(--selected-color);
   }
 
   &[data-disabled] {
