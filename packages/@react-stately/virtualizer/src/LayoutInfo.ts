@@ -73,11 +73,6 @@ export class LayoutInfo {
   allowOverflow: boolean;
 
   /**
-   * A CSS transition string to apply to the view. `null` by default.
-   */
-  transition: string | null;
-
-  /**
    * @param type A string representing the view type. Should be `'item'` for item views.
                             Other types are used by supplementary views.
    * @param key The unique key for this view.
@@ -94,7 +89,6 @@ export class LayoutInfo {
     this.transform = null;
     this.zIndex = 0;
     this.allowOverflow = false;
-    this.transition = null;
   }
 
   /**
@@ -109,7 +103,6 @@ export class LayoutInfo {
     res.isSticky = this.isSticky;
     res.zIndex = this.zIndex;
     res.allowOverflow = this.allowOverflow;
-    res.transition = this.transition;
     return res;
   }
 }

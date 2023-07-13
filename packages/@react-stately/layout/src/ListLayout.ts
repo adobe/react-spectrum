@@ -544,22 +544,13 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
 
   getInitialLayoutInfo(layoutInfo: LayoutInfo) {
     layoutInfo.opacity = 0;
-    // layoutInfo.transform = 'scale3d(0.8, 0.8, 0.8)';
-    // layoutInfo.transform = 'scaleY(0)';
-    // console.log('layoutInfo', {...layoutInfo});
-
-    layoutInfo.transition = 'height 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms';
-    layoutInfo.rect.height = 0;
-    layoutInfo.allowOverflow = false;
+    layoutInfo.transform = 'scale3d(0.8, 0.8, 0.8)';
     return layoutInfo;
   }
 
   getFinalLayoutInfo(layoutInfo: LayoutInfo) {
     layoutInfo.opacity = 0;
     layoutInfo.transform = 'scale3d(0.8, 0.8, 0.8)';
-    // layoutInfo.transition = 'height 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms';
-    layoutInfo.allowOverflow = true;
-    // layoutInfo.rect.height = 0;
     return layoutInfo;
   }
 

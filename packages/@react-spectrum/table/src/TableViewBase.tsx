@@ -284,13 +284,7 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
   type View = ReusableView<GridNode<T>, ReactNode>;
   let renderWrapper = (parent: View, reusableView: View, children: View[], renderChildren: (views: View[]) => ReactElement[]) => {
     let style = layoutInfoToStyle(reusableView.layoutInfo, direction, parent && parent.layoutInfo);
-    if (style.overflow === 'hidden' && reusableView.viewType !== 'row') {
-      // TODO: we need to make the row have overflow: hidden for the transition but that means sticky checkboxes will break
-      // What we need is to be able to specify several states:
-      // - initial layout info when transitioning in (done via getIntiialLayoutInfo)
-      // - layout info while transition is happening (we don't have this, needed to set overflow: hidden for the row at this point)
-      // - layout info when transition finishes (this is the layoutInfo set up by the table layout)
-      // - layout info when transitioning out/removed from view (done via getFinalLayoutInfo)
+    if (style.overflow === 'hidden') {
       style.overflow = 'visible'; // needed to support position: sticky
     }
 
