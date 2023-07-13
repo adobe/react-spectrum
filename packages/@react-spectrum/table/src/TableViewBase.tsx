@@ -25,6 +25,7 @@ import {
   useUnwrapDOMRef
 } from '@react-spectrum/utils';
 import {ColumnSize, SpectrumColumnProps} from '@react-types/table';
+import {CSSTransition} from 'react-transition-group';
 import {DOMRef, DropTarget, FocusableElement, FocusableRef} from '@react-types/shared';
 import type {DragAndDropHooks} from '@react-spectrum/dnd';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
@@ -310,11 +311,14 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
     }
 
     if (reusableView.viewType === 'row') {
+
       return (
         <TableRow
           key={reusableView.key}
           item={reusableView.content}
-          style={style}
+          // style={style}
+          // TODO: duration needs to be set here, otherwise CSSTransition won't work
+          style={{...style, WebkitTransitionDuration: '10s', transitionDuration: '10s'}}
           hasActions={onAction}
           isTableDroppable={isTableDroppable}
           isTableDraggable={isTableDraggable}>
@@ -1196,7 +1200,12 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
 
   let dropProps = isDroppable ? droppableItem?.dropProps : {'aria-hidden': droppableItem?.dropProps['aria-hidden']};
   let {visuallyHiddenProps} = useVisuallyHidden();
+  let blah = useRef();
 
+
+  // TODO: don't think we can use the CSSTransition here since it uses classes but we need inline styles overridden?
+  // Or maybe can do max height? Also the class applied by CSSTransition gets erased when hovering the row
+  console.log('gaweg', stylesOverrides['react-spectrum-Table-row--enter'])
   return (
     <TableRowContext.Provider value={{dragButtonProps, dragButtonRef, isFocusVisibleWithin}}>
       {isTableDroppable && isFirstRow &&
@@ -1212,35 +1221,86 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
           </div>
         </div>
       }
-      <div
-        {...mergeProps(props, dropProps)}
-        ref={ref}
-        className={
-          classNames(
-            styles,
-            'spectrum-Table-row',
-            {
-              'is-active': isPressed,
-              'is-selected': isSelected,
-              'spectrum-Table-row--highlightSelection': state.selectionManager.selectionBehavior === 'replace',
-              'is-next-selected': state.selectionManager.isSelected(item.nextKey),
-              'is-focused': isFocusVisibleWithin,
-              'focus-ring': isFocusVisible,
-              'is-hovered': isHovered,
-              'is-disabled': isDisabled,
-              'spectrum-Table-row--firstRow': isFirstRow,
-              'spectrum-Table-row--lastRow': isLastRow,
-              'spectrum-Table-row--isFlushBottom': isFlushWithContainerBottom
-            },
+      <CSSTransition
+        in
+        appear
+        unmountOnExit
+        // onEnter={() => console.log('entering')}
+        // onExit={() => console.log('exiting')}
+        classNames={{
+          appear: stylesOverrides['react-spectrum-Table-row--appear'],
+          appearActive: stylesOverrides['react-spectrum-Table-row--appearActive'],
+          appearDone: stylesOverrides['react-spectrum-Table-row--appearDone']
+          // enter: stylesOverrides['react-spectrum-Table-row--enter'],
+          // enterActive: stylesOverrides['react-spectrum-Table-row--enterActive'],
+          // // enter: 'gawlenglkawenglkawenglkaweng',
+          // // enterActive: 'TLENLTINWELITNWELITNLWEINTLWIENTLIWNT',
+          // exit: stylesOverrides['react-spectrum-Table-row--exit'],
+          // exitActive: stylesOverrides['react-spectrum-Table-row--exitActive']
+        }}
+        // classNames="gawegaweg"
+        timeout={10000}
+        nodeRef={ref}>
+        <div
+          {...mergeProps(props, dropProps)}
+          ref={ref}
+          className={
             classNames(
-              stylesOverrides,
-              'react-spectrum-Table-row',
-              {'react-spectrum-Table-row--dropTarget': isDropTarget}
+              styles,
+              'spectrum-Table-row',
+              {
+                'is-active': isPressed,
+                'is-selected': isSelected,
+                'spectrum-Table-row--highlightSelection': state.selectionManager.selectionBehavior === 'replace',
+                'is-next-selected': state.selectionManager.isSelected(item.nextKey),
+                'is-focused': isFocusVisibleWithin,
+                'focus-ring': isFocusVisible,
+                'is-hovered': isHovered,
+                'is-disabled': isDisabled,
+                'spectrum-Table-row--firstRow': isFirstRow,
+                'spectrum-Table-row--lastRow': isLastRow,
+                'spectrum-Table-row--isFlushBottom': isFlushWithContainerBottom
+              },
+              classNames(
+                stylesOverrides,
+                'react-spectrum-Table-row',
+                {'react-spectrum-Table-row--dropTarget': isDropTarget}
+              )
             )
-          )
-        }>
-        {children}
-      </div>
+          }>
+          {children}
+          {/* <CSSTransition
+            in
+            appear
+            unmountOnExit
+            onEnter={() => console.log('entering')}
+            onExit={() => console.log('exiting')}
+            // classNames="hahahah"
+            classNames={{
+              appear: stylesOverrides['react-spectrum-Table-row--appear'],
+              appearActive: stylesOverrides['react-spectrum-Table-row--appearActive'],
+              appearDone: stylesOverrides['react-spectrum-Table-row--appearDone']
+              // enter: 'gawlenglkawenglkawenglkaweng',
+              // enterActive: 'TLENLTINWELITNWELITNLWEINTLWIENTLIWNT',
+              // exit: stylesOverrides['react-spectrum-Table-row--exit'],
+              // exitActive: stylesOverrides['react-spectrum-Table-row--exitActive']
+              // appear: 'my-appear',
+              // appearActive: 'my-active-appear',
+              // appearDone: 'my-done-appear',
+              // enter: 'my-enter',
+              // enterActive: 'my-active-enter',
+              // enterDone: 'my-done-enter',
+              // exit: 'my-exit',
+              // exitActive: 'my-active-exit',
+              // exitDone: 'my-done-exit',
+            }}
+            timeout={10000}
+            nodeRef={blah}>
+            <div
+              ref={blah}>gawegaweg</div>
+          </CSSTransition> */}
+        </div>
+      </CSSTransition>
       {isTableDroppable &&
         <InsertionIndicator
           rowProps={props}

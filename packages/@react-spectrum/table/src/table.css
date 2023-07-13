@@ -228,6 +228,32 @@
   }
 }
 
+.react-spectrum-Table-row--appear {
+  opacity: 0.01;
+  max-height: 0px;
+  background-color: red;
+}
+.react-spectrum-Table-row--appearActive {
+  opacity: 1;
+  max-height: 80px;
+  background-color: blue;
+  transition: all 5000ms;
+}
+
+.react-spectrum-Table-row--appearDone {
+  opacity: 1;
+  max-height: 80px;
+  background-color: blue;
+}
+.react-spectrum-Table-row--exit {
+  opacity: 1;
+  max-height: 80px;
+}
+.react-spectrum-Table-row--exitActive {
+  opacity: 0.01;
+  max-height: 0px;
+}
+
 @media (forced-colors: active) {
   .react-spectrum-Table,
   .react-spectrum-Table-row {
