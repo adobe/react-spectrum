@@ -229,7 +229,7 @@ function Radio(props: RadioProps, ref: ForwardedRef<HTMLInputElement>) {
       data-validation-state={state.validationState || undefined}
       data-required={state.isRequired || undefined}>
       <VisuallyHidden elementType="span">
-        <input {...inputProps} {...focusProps} ref={domRef} />
+        <input {...mergeProps(inputProps, focusProps)} ref={domRef} />
       </VisuallyHidden>
       {renderProps.children}
     </label>
