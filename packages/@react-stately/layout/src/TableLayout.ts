@@ -381,7 +381,8 @@ export class TableLayout<T> extends ListLayout<T> {
 
     rect.width = this.layoutInfos.get('header').rect.width;
     rect.height = height + 1; // +1 for bottom border
-
+    layoutInfo.transition = 'height 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms';
+    layoutInfo.allowOverflow = false;
     return {
       layoutInfo,
       children,
@@ -397,7 +398,8 @@ export class TableLayout<T> extends ListLayout<T> {
     layoutInfo.isSticky = !this.disableSticky && (node.props?.isDragButtonCell || node.props?.isSelectionCell);
     layoutInfo.zIndex = layoutInfo.isSticky ? 2 : 1;
     layoutInfo.estimatedSize = isEstimated;
-
+    // layoutInfo.transition = 'height 1000ms cubic-bezier(0.4, 0, 0.2, 1) 0ms';
+    // layoutInfo.allowOverflow = false;
     return {
       layoutInfo,
       validRect: rect
