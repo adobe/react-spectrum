@@ -66,6 +66,6 @@ describe('<HiddenSelect />', () => {
       <HiddenSelectExample items={makeItems(5)} />
     );
 
-    expect(screen.getByRole('listbox', {hidden: true})).toHaveAttribute('data-rsp-a11y-ignore');
+    expect(screen.getByTestId('hidden-select-container')).toHaveAttribute('data-rsp-a11y-ignore');
   });
 });
