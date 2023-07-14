@@ -30,10 +30,6 @@ export interface AriaHiddenSelectProps {
 
   /** Sets the disabled state of the select and input. */
   isDisabled?: boolean
-
-  /** Adds an arbitrary data attribute data-rsp-a11y-ignore.
-   * Useful to ignore false positives a11y issues with tools such as pa11y */
-  hasA11yIgnoreDataAttr?: boolean
 }
 
 export interface HiddenSelectProps<T> extends AriaHiddenSelectProps {
@@ -91,8 +87,8 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectProps, state: SelectSt
       name,
       size: state.collection.size,
       value: state.selectedKey ?? '',
-      onChange: (e: React.ChangeEvent<HTMLSelectElement>) => state.setSelectedKey(e.target.value)
-      ['data-rsp-a11y-ignore']: props.hasA11yIgnoreDataAttr,
+      onChange: (e: React.ChangeEvent<HTMLSelectElement>) => state.setSelectedKey(e.target.value),
+      ['data-rsp-a11y-ignore']: true
     }
   };
 }
@@ -110,7 +106,7 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
   // autofill will work. Otherwise, use an <input type="hidden">.
   if (state.collection.size <= 300) {
     return (
-      <div {...containerProps}>
+      <div {...containerProps} data-rsp-a11y-ignore>
         <input {...inputProps} />
         <label>
           {label}
@@ -140,8 +136,7 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
         name={name}
         disabled={isDisabled}
         value={state.selectedKey ?? ''}
-        data-rsp-a11y-ignore={selectProps['data-rsp-a11y-ignore']}
-      />
+        data-rsp-a11y-ignore />
     );
   }
 
