@@ -524,5 +524,5 @@ flip. Ensure that your CSS accounts for this.
 ### False positive on `<HiddenSelect />` in accessibility tools
 
 When using &lt;<TypeLink links={docs.links} type={docs.exports.HiddenSelect} />&gt; some accessibility tools such as AXE or pa11y might give a false positive.
-The option `hasA11yIgnoreDataAttr` exposes a data attribute `data-rsp-a11y-ignore` on the hidden select element that can be used to ignore the false positives.
+The data attribute `data-rsp-a11y-ignore` is included on the hidden select element and can be used to ignore the false positives in these tools.
 
