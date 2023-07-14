@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Text, TimeField, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Text, TimeField, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
@@ -1031,4 +1031,65 @@ ListBoxDnd.story = {
       options: ['horizontal', 'vertical']
     }
   }
+};
+
+export const RadioGroupExample = () => {
+  return (
+    <RadioGroup
+      className={styles.radiogroup}>
+      <Label>Favorite pet</Label>
+      <Radio className={styles.radio} value="dogs">Dog</Radio>
+      <Radio className={styles.radio} value="cats">Cat</Radio>
+      <Radio className={styles.radio} value="dragon">Dragon</Radio>
+    </RadioGroup>
+  );
+};
+
+export const RadioGroupInDialogExample = () => {
+  return (
+    <DialogTrigger>      
+      <Button>Open dialog</Button>
+      <ModalOverlay
+        style={{
+          position: 'fixed',
+          zIndex: 100,
+          top: 0,
+          left: 0,
+          bottom: 0,
+          right: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+        <Modal
+          style={{
+            background: 'Canvas',
+            color: 'CanvasText',
+            border: '1px solid gray',
+            padding: 30
+          }}>
+          <Dialog
+            style={{
+              outline: '2px solid transparent',
+              outlineOffset: '2px',
+              position: 'relative'
+            }}>
+            {({close}) => (              
+              <>
+                <div>
+                  <RadioGroupExample />
+                </div>
+                <div>
+                  <Button onPress={close} style={{marginTop: 10}}>
+                    Close
+                  </Button>
+                </div>
+              </>
+            )}
+          </Dialog>
+        </Modal>
+      </ModalOverlay>
+    </DialogTrigger>
+  );
 };
