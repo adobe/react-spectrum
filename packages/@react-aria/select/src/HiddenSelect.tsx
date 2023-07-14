@@ -87,8 +87,7 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectProps, state: SelectSt
       name,
       size: state.collection.size,
       value: state.selectedKey ?? '',
-      onChange: (e: React.ChangeEvent<HTMLSelectElement>) => state.setSelectedKey(e.target.value),
-      ['data-rsp-a11y-ignore']: true
+      onChange: (e: React.ChangeEvent<HTMLSelectElement>) => state.setSelectedKey(e.target.value)
     }
   };
 }
