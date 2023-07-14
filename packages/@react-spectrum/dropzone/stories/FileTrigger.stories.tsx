@@ -11,8 +11,7 @@
  */
 
 import {Button} from '@react-spectrum/button';
-import {FileTrigger} from 'react-aria-components';
-import {FileTriggerProps} from 'react-aria-components/src/FileTrigger';
+import {FileTrigger, FileTriggerProps} from 'react-aria-components';
 import {Link} from '@react-spectrum/link';
 import {Meta} from '@storybook/react';
 import React from 'react';
