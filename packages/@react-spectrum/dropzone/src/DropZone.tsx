@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, DOMProps, FocusableRefValue, StyleProps} from '@react-types/shared';
 import {classNames, createFocusableRef, SlotProvider, useStyleProps} from '@react-spectrum/utils';
-import {DropZoneProps, DropZone as RACDropZone} from 'react-aria-components';
+import {DropZoneProps, FileTriggerContext, Provider, DropZone as RACDropZone} from 'react-aria-components';
 import {mergeProps} from '@react-aria/utils';
 import React, {ReactNode, Ref, useImperativeHandle, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/dropzone/vars.css';
@@ -41,47 +41,51 @@ function DropZone(props: SpectrumDropZoneProps, ref: Ref<DropZoneRef>) {
   }));
 
   return (
-    <RACDropZone
-      {...mergeProps(otherProps)}
-      {...styleProps as Omit<React.HTMLAttributes<HTMLElement>, 'onDrop'>}
-      className={
-      classNames(
-        styles,
-        'spectrum-Dropzone',
-        styleProps.className
-      )} 
-      ref={domRef}>
-      {({isFocused, isFocusVisible, isDropTarget}) => (
-        <>
-          {isFilled && isDropTarget && 
-            <div
-              className={
-                classNames(
-                  styles,
-                  'spectrum-Dropzone--banner',
-                  styleProps.className
-                )
-              }>
-              {bannerMessage ? bannerMessage : 'Drop file to replace'}
-            </div>}
-          <SlotProvider
-            slots={{
-              illustration: {UNSAFE_className: classNames(
-                styles, 
-                'spectrum-Dropzone--illustratedMessage', 
-                {
-                  'is-drop-target': isDropTarget,
-                  'is-focused': isFocused,
-                  'is-focus-visible': isFocusVisible
-                }
-                )}
-              // content: {UNSAFE_className: classNames(styles, 'spectrum-IllustratedMessage-description'), ref: {inputRef}} // not sure if this is right but i'd like to get the ref from the FileTrigger
-            }}> 
-            {children}
-          </SlotProvider>
-        </>
-      )}
-    </RACDropZone>
+    <Provider
+      values={[
+        [FileTriggerContext, {inputRef: inputRef}]
+      ]}>
+      <RACDropZone
+        {...mergeProps(otherProps)}
+        {...styleProps as Omit<React.HTMLAttributes<HTMLElement>, 'onDrop'>}
+        className={
+        classNames(
+          styles,
+          'spectrum-Dropzone',
+          styleProps.className
+        )} 
+        ref={domRef}>
+        {({isFocused, isFocusVisible, isDropTarget}) => (
+          <>
+            {isFilled && isDropTarget && 
+              <div
+                className={
+                  classNames(
+                    styles,
+                    'spectrum-Dropzone--banner',
+                    styleProps.className
+                  )
+                }>
+                {bannerMessage ? bannerMessage : 'Drop file to replace'}
+              </div>}
+            <SlotProvider
+              slots={{
+                illustration: {UNSAFE_className: classNames(
+                  styles, 
+                  'spectrum-Dropzone--illustratedMessage', 
+                  {
+                    'is-drop-target': isDropTarget,
+                    'is-focused': isFocused,
+                    'is-focus-visible': isFocusVisible
+                  }
+                  )}
+              }}> 
+              {children}
+            </SlotProvider>
+          </>
+        )}
+      </RACDropZone>
+    </Provider>
   );
 }
 

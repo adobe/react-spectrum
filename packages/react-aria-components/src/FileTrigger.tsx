@@ -15,7 +15,7 @@ import {ContextValue, DOMProps, SlotProps, useContextProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {Input} from './Input';
 import {PressResponder} from '@react-aria/interactions';
-import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, RefObject, useRef} from 'react';
 
 export interface FileTriggerProps extends SlotProps, DOMProps, AriaLabelingProps {
   /**
@@ -36,13 +36,21 @@ export interface FileTriggerProps extends SlotProps, DOMProps, AriaLabelingProps
   onChange?: (files: FileList | null) => void
 }
 
-export const FileTriggerContext = createContext<ContextValue<FileTriggerProps, HTMLDivElement>>(null);
+interface FileTriggerContextValue extends FileTriggerProps {
+  inputRef?: RefObject<HTMLInputElement>
+}
+
+export const FileTriggerContext = createContext<ContextValue<FileTriggerContextValue, HTMLDivElement>>(null);
 
 function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, FileTriggerContext);
   let {onChange, acceptedFileTypes, className, allowsMultiple, defaultCamera, children, ...otherProps} = props;
-  let inputRef = useRef<HTMLInputElement>(null);
 
+  let ctx = props as FileTriggerContextValue;
+  let userInputRef = ctx.inputRef;
+  let defaultInputRef = useRef<HTMLInputElement>(null);
+
+  let inputRef = userInputRef || defaultInputRef;
   return (
     <div
       className={className || 'react-aria-FileTrigger'}

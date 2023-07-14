@@ -13,7 +13,6 @@
 import {AriaLabelingProps} from '@react-types/shared';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {DropOptions, mergeProps, useClipboard, useDrop, useFocusRing, useHover, useId, VisuallyHidden} from 'react-aria';
-import {FileTriggerContext} from './FileTrigger';
 import {filterDOMProps, useLabels} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
@@ -76,7 +75,6 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   return (
     <Provider
       values={[
-        [FileTriggerContext, {}],
         [TextContext, {id: textId, slot: 'heading'}]
       ]}>
       {/* eslint-disable-next-line */}
@@ -84,6 +82,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
         {...mergeProps(dropProps, hoverProps, DOMProps)} 
         {...renderProps}
         slot={props.slot}
+        ref={ref}
         onClick={() => buttonRef.current?.focus()}
         data-hovered={isHovered || undefined}
         data-focused={isFocused || undefined}
