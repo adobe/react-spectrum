@@ -45,12 +45,11 @@ export const FileTriggerContext = createContext<ContextValue<FileTriggerContextV
 function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, FileTriggerContext);
   let {onChange, acceptedFileTypes, className, allowsMultiple, defaultCamera, children, ...otherProps} = props;
-
   let ctx = props as FileTriggerContextValue;
   let userInputRef = ctx.inputRef;
   let defaultInputRef = useRef<HTMLInputElement>(null);
-
   let inputRef = userInputRef || defaultInputRef;
+  
   return (
     <div
       className={className || 'react-aria-FileTrigger'}

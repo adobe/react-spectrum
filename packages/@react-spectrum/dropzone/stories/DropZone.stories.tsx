@@ -106,7 +106,7 @@ function Example(props) {
               setFilledSrc(urls);
               setIsFilled(true);
             }}>
-            <Button variant={'accent'}>Browse</Button>
+            <Link>Select a file</Link> from your computer
           </FileTrigger>
         </Content>
       </IllustratedMessage>
@@ -127,8 +127,10 @@ function DropZoneWithDraggable(props) {
         isFilled={isFilled}
         onDrop={async (e) => {
           let items = await Promise.all(e.items.filter((item) => item.kind === 'text' && item.types.has('text/plain')).map((item: TextDropItem) => item.getText('text/plain')));
-          setIsFilled(!!items);
-          setFilledSrc(items.join('\n'));
+          if (items) {
+            setIsFilled(true);
+            setFilledSrc(items.join('\n'));
+          }
         }}
         onDropEnter={action('onDropEnter')}
         onDropExit={action('onDropExit')} 
@@ -155,6 +157,7 @@ function DropZoneWithLink(props) {
         let item = e.items.find((item) => item.kind === 'file') as FileDropItem;
         if (item) {
           setFilledSrc(URL.createObjectURL(await item.getFile()));
+          setIsFilled(true);
         }
       }}
       onDropEnter={action('onDropEnter')}
@@ -192,6 +195,7 @@ function DropZoneWithButton(props) {
         let item = e.items.find((item) => item.kind === 'file') as FileDropItem;
         if (item) {
           setFilledSrc(URL.createObjectURL(await item.getFile()));
+          setIsFilled(true);
         }
       }}
       onDropEnter={action('onDropEnter')}
@@ -205,8 +209,10 @@ function DropZoneWithButton(props) {
             onChange={(e) => {
               let files = Array.from(e);
               let urls = files.map(file => URL.createObjectURL(file));
-              setFilledSrc(urls[0]);
-              setIsFilled(true);
+              if (urls) {
+                setFilledSrc(urls[0]);
+                setIsFilled(true);
+              }
             }}>
             <Button variant={'accent'}>Browse</Button>
           </FileTrigger>
