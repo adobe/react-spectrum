@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@react-spectrum/test-utils';
-import {Label, Radio, RadioGroup, RadioGroupContext, Text} from '../';
+import {Button, Dialog, DialogTrigger, Label, Modal, Radio, RadioGroup, RadioGroupContext, Text} from '../';
+import {fireEvent, render, within} from '@react-spectrum/test-utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -275,5 +275,91 @@ describe('RadioGroup', () => {
     let radio = getAllByRole('radio')[0];
     expect(radio).toHaveAttribute('aria-describedby');
     expect(radio.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Error Description');
+  });
+
+  it('should not navigate within the group using Tab', () => {
+    let {getAllByRole} = renderGroup({}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
+    let radios = getAllByRole('radio');
+    let labelA = radios[0].closest('label');
+    let labelB = radios[1].closest('label');
+    let labelC = radios[2].closest('label');
+    
+    const expectNotFocused = (...labels) => {
+      labels.forEach((label) => {
+        expect(label).not.toHaveAttribute('data-focus-visible');
+        expect(label).not.toHaveClass('focus');
+      });
+    };
+
+    expectNotFocused(labelA, labelB, labelC);
+    
+    userEvent.tab();
+    expect(document.activeElement).toBe(radios[0]);
+    expect(labelA).toHaveAttribute('data-focus-visible', 'true');
+    expect(labelA).toHaveClass('focus');
+    expectNotFocused(labelB, labelC);
+
+    userEvent.tab();
+    expectNotFocused(labelA, labelB, labelC);
+
+    userEvent.tab({shift: true});
+    expect(document.activeElement).toBe(radios[2]);
+    expect(labelC).toHaveAttribute('data-focus-visible', 'true');
+    expect(labelC).toHaveClass('focus');
+    expectNotFocused(labelA, labelB);
+  });
+
+  it('should not navigate within the group using Tab in Dialog', () => {
+    let {getByRole} = render(
+      <DialogTrigger>
+        <Button>Trigger</Button>
+        <Modal data-test="modal">
+          <Dialog role="alertdialog" data-test="dialog">
+            {({close}) => (
+              <>                
+                <TestRadioGroup radioProps={{className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''}} />
+                <Button onPress={close}>Close</Button>
+              </>
+            )}
+          </Dialog>
+        </Modal>
+      </DialogTrigger>
+    );
+
+    let trigger = getByRole('button');
+    userEvent.click(trigger);
+
+    let dialog = getByRole('alertdialog');
+    
+    let radios = within(dialog).getAllByRole('radio');
+    let labelA = radios[0].closest('label');
+    let labelB = radios[1].closest('label');
+    let labelC = radios[2].closest('label');
+
+    const expectNotFocused = (...labels) => {
+      labels.forEach((label) => {
+        expect(label).not.toHaveAttribute('data-focus-visible');
+        expect(label).not.toHaveClass('focus');
+      });
+    };
+
+    expectNotFocused(labelA, labelB, labelC);
+    
+    userEvent.tab();
+    expect(document.activeElement).toBe(radios[0]);
+    expect(labelA).toHaveAttribute('data-focus-visible', 'true');    
+    expect(labelA).toHaveClass('focus');
+    expectNotFocused(labelB, labelC);
+
+    userEvent.tab();
+    let close = within(dialog).getByRole('button');
+    expect(document.activeElement).toBe(close);
+    expectNotFocused(labelA, labelB, labelC);
+
+    userEvent.tab({shift: true});
+    expect(document.activeElement).toBe(radios[2]);
+    expect(labelC).toHaveAttribute('data-focus-visible', 'true');
+    expect(labelC).toHaveClass('focus');
+    expectNotFocused(labelA, labelB);
   });
 });
