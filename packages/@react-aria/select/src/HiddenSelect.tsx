@@ -135,8 +135,7 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
         autoComplete={selectProps.autoComplete}
         name={name}
         disabled={isDisabled}
-        value={state.selectedKey ?? ''}
-        data-rsp-a11y-ignore />
+        value={state.selectedKey ?? ''} />
     );
   }
 
