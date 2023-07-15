@@ -135,10 +135,10 @@ By default, a ContextualHelpTrigger's Dialog is opened by hovering, pressing the
 it via the <Keyboard>Space</Keyboard>, <Keyboard>Enter</Keyboard>, or <Keyboard>Right Arrow</Keyboard> keys.
 Hovering another item or pressing the <Keyboard>Esc</Keyboard> key will close the Dialog and leave the Menu open.
 
-When Menu Items are unavailable via a ContextualHelpTrigger, the Menu `onAction` and `onSelectionChange`
-callbacks will not occur.
+Setting the `isUnavailable` prop on the ContextualHelpTrigger makes a Menu Item unavailable and enables the Dialog with contextual help, allowing for programmatic control.
 
-Setting the `isUnavailable` prop on the ContextualHelpTrigger disables a Menu Item and enables the Dialog with contextual help, allowing for programmatic control.
+Note that the Menu's `onAction` and `onSelectionChange`
+callbacks will not fire for items made unavailable by a ContextualHelpTrigger.
 
 The example below illustrates how one would setup a MenuTrigger to use ContextualHelpTrigger.
 
