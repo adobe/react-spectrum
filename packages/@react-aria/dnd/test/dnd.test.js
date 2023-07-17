@@ -334,6 +334,40 @@ describe('useDrag and useDrop', function () {
         expect(onDropExit).toHaveBeenCalledTimes(1);
       });
 
+      describe('nested drag targets', () => {
+        let onDragStartParent = jest.fn();
+        let onDragMoveParent = jest.fn();
+        let onDragEndParent = jest.fn();
+        let onDragStartChild = jest.fn();
+        let onDragMoveChild = jest.fn();
+        let onDragEndChild = jest.fn();
+
+        function renderNestedDrag() {
+          return render(
+            <Draggable onDragStart={onDragStartParent} onDragMove={onDragMoveParent} onDragEnd={onDragEndParent}>
+              <Draggable onDragStart={onDragStartChild} onDragMove={onDragMoveChild} onDragEnd={onDragEndChild}>
+                Drag me child
+              </Draggable>
+            </Draggable>
+          );
+        }
+
+        it('does not trigger parent drag when dragging child', () => {
+          let tree = renderNestedDrag();
+          let draggableChild = tree.getByText('Drag me child');
+
+          let dataTransfer = new DataTransfer();
+          fireEvent(draggableChild, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
+          expect(onDragMoveParent).not.toHaveBeenCalled();
+          expect(onDragMoveChild).toHaveBeenCalledTimes(1);
+          expect(onDragMoveChild).toHaveBeenCalledWith({
+            type: 'dragmove',
+            x: 1,
+            y: 1
+          });
+        });
+      });
+
       describe('nested drop targets', () => {
         let onDropParent = jest.fn();
         let onDropEnterParent = jest.fn();

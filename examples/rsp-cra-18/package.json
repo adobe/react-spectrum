@@ -5,7 +5,6 @@
   "homepage": ".",
   "dependencies": {
     "@adobe/react-spectrum": "latest",
-    "@react-spectrum/tag": "^3.0.0-rc.0",
     "@spectrum-icons/workflow": "latest",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
@@ -24,7 +23,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "install-17": "yarn add -W react@^17 react-dom@^17"
   },
   "eslintConfig": {
     "extends": [

@@ -270,7 +270,11 @@ export interface TableRenderProps {
    * Whether the table is currently the active drop target.
    * @selector [data-drop-target]
    */
-  isDropTarget: boolean
+  isDropTarget: boolean,
+  /**
+   * State of the table.
+   */
+  state: TableState<unknown>
 }
 
 export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, StyleRenderProps<TableRenderProps>, SlotProps, AriaLabelingProps {
@@ -370,7 +374,8 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
     values: {
       isDropTarget: isRootDropTarget,
       isFocused,
-      isFocusVisible
+      isFocusVisible,
+      state
     }
   });
 
