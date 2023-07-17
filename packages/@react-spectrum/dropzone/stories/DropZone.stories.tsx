@@ -16,7 +16,7 @@ import {Content} from '@react-spectrum/view';
 import {Draggable} from '@react-aria/dnd/stories/dnd.stories';
 import {DropZone} from '../';
 import {FileDropItem, TextDropItem} from 'react-aria';
-import {FileTrigger} from 'react-aria-components';
+import {FileTrigger, Text} from 'react-aria-components';
 import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Link} from '@react-spectrum/link';
@@ -96,7 +96,11 @@ function Example(props) {
       }}>
       <IllustratedMessage>
         <Upload />
-        <Heading>Drag a file here</Heading>
+        <Heading>
+          <Text slot="heading">
+            Drag a file here
+          </Text>
+        </Heading>
         <Content>
           <FileTrigger
             allowsMultiple
