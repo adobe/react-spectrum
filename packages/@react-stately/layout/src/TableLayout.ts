@@ -574,20 +574,13 @@ export class TableLayout<T> extends ListLayout<T> {
 
   getInitialLayoutInfo(layoutInfo: LayoutInfo) {
     let res = super.getInitialLayoutInfo(layoutInfo);
-
-    // If this insert was the result of async loading, remove the zoom effect and just keep the fade in.
-    // if (this.wasLoading) {
     res.transform = null;
-    // }
-
     return res;
   }
 
   getFinalLayoutInfo(layoutInfo: LayoutInfo) {
     let res = super.getFinalLayoutInfo(layoutInfo);
-
     res.transform = null;
-
     return res;
   }
 
