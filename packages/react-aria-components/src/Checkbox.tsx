@@ -54,7 +54,7 @@ export interface CheckboxRenderProps {
    */
   isSelected: boolean,
   /**
-   * Whether the checkbox is selected.
+   * Whether the checkbox is indeterminate.
    * @selector [data-indeterminate]
    */
   isIndeterminate: boolean,
