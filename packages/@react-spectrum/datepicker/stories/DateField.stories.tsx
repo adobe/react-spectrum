@@ -109,6 +109,9 @@ export default {
     hideTimeZone: {
       control: 'boolean'
     },
+    shouldForceLeadingZeros: {
+      control: 'boolean'
+    },
     isDisabled: {
       control: 'boolean'
     },

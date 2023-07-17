@@ -568,6 +568,241 @@ import {Text} from 'react-aria-components';
 </ListBox>
 ```
 
+### Layouts
+
+By default, ListBox expects items to be arranged in a vertical stack, and implements keyboard navigation and drag and drop accordingly. The `layout` and `orientation` props can be used to change this behavior, allowing you to build horizontal and vertical stacks and grids.
+
+#### Horizontal stack
+
+This example displays a horizontal list of cards. The left and right arrow keys can be used to navigate between the items.
+
+```tsx import
+let albums = [
+  {
+    id: 1,
+    image: 'https://images.unsplash.com/photo-1593958812614-2db6a598c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8ZGlzY298ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=900&q=60',
+    title: 'Euphoric Echoes',
+    artist: 'Luna Solstice'
+  },
+  {
+    id: 2,
+    image: 'https://images.unsplash.com/photo-1601042879364-f3947d3f9c16?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bmVvbnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=900&q=60',
+    title: 'Neon Dreamscape',
+    artist: 'Electra Skyline'
+  },
+  {
+    id: 3,
+    image: 'https://images.unsplash.com/photo-1528722828814-77b9b83aafb2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHNwYWNlfGVufDB8fDB8fHww&auto=format&fit=crop&w=900&q=60',
+    title: 'Cosmic Serenade',
+    artist: 'Orion\'s Symphony'
+  },
+  {
+    id: 4,
+    image: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bXVzaWN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=900&q=60',
+    title: 'Melancholy Melodies',
+    artist: 'Violet Mistral'
+  },
+  {
+    id: 5,
+    image: 'https://images.unsplash.com/photo-1608433319511-dfe8ea4cbd3c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGJlYXR8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=900&q=60',
+    title: 'Rhythmic Illusions',
+    artist: 'Mirage Beats'
+  }
+];
+```
+
+```tsx example
+<ListBox
+  aria-label="Albums"
+  ///- begin highlight -///
+  orientation="horizontal"
+  ///- end highlight -///
+  items={albums}
+  selectionMode="multiple">
+  {item => (
+    <Item>
+      <img src={item.image} alt="" />
+      <Text slot="label">{item.title}</Text>
+      <Text slot="description">{item.artist}</Text>
+    </Item>
+  )}
+</ListBox>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ListBox[data-orientation=horizontal],
+.react-aria-ListBox[data-layout=grid] {
+  flex-direction: row;
+  width: fit-content;
+  max-width: 100%;
+  padding: 4px;
+
+  .react-aria-Item {
+    position: relative;
+    margin: 0;
+    padding: 4px;
+
+    & img {
+      object-fit: cover;
+      aspect-ratio: 1/1;
+      max-width: 150px;
+      margin-bottom: 4px;
+      border-radius: 4px;
+      transition: box-shadow 200ms;
+    }
+
+    &[data-hovered] {
+      & img {
+        box-shadow: 0 0 8px rgb(from slateblue r g b / 0.5);
+      }
+    }
+
+    &[aria-selected=true] {
+      background: none;
+      color: inherit;
+
+      & img {
+        box-shadow: 0 0 12px rgb(from slateblue r g b / 0.8);
+      }
+
+      &:after {
+        content: '✓';
+        content: '✓' / '';
+        alt: ' ';
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: slateblue;
+        border: 2px solid white;
+        color: white;
+        width: 22px;
+        height: 22px;
+        border-radius: 22px;
+        box-sizing: border-box;
+        font-size: 14px;
+        line-height: 1em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 8px rgb(0 0 0 / .5);
+      }
+
+      &[data-focus-visible] {
+        box-shadow: inset 0 0 0 2px var(--highlight-background);
+      }
+    }
+  }
+}
+```
+
+</details>
+
+#### Vertical grid
+
+The `layout` prop can be set to `"grid"` to enable two-dimensional keyboard navigation. By default, the grid scrolls vertically. The left, right, up, and down arrow keys can be used to navigate between the cards in this example.
+
+```tsx example
+<ListBox
+  aria-label="Albums"
+  ///- begin highlight -///
+  layout="grid"
+  ///- end highlight -///
+  items={albums}
+  selectionMode="multiple">
+  {item => (
+    <Item>
+      <img src={item.image} alt="" />
+      <Text slot="label">{item.title}</Text>
+      <Text slot="description">{item.artist}</Text>
+    </Item>
+  )}
+</ListBox>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ListBox[data-layout=grid] {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  scrollbar-gutter: stable;
+}
+```
+
+</details>
+
+#### Horizontal grid
+
+The `layout="grid"` and `orientation="horizontal"` props can be combined to build a two dimensional grid where the items are grouped into columns, and the grid scrolls horizontally.
+
+```tsx example
+<ListBox
+  aria-label="Albums"
+  ///- begin highlight -///
+  layout="grid"
+  orientation="horizontal"
+  ///- end highlight -///
+  items={albums}
+  selectionMode="multiple">
+  {item => (
+    <Item>
+      <img src={item.image} alt="" />
+      <Text slot="label">{item.title}</Text>
+      <Text slot="description">{item.artist}</Text>
+    </Item>
+  )}
+</ListBox>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ListBox[data-layout=grid][data-orientation=horizontal] {
+  width: 100%;
+  max-width: none;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: 58px 58px;
+  grid-template-columns: none;
+  grid-auto-columns: 250px;
+  max-height: 200px;
+  gap: 8px;
+
+  .react-aria-Item {
+    display: grid;
+    grid-template-areas: "image ."
+                         "image title"
+                         "image description"
+                         "image .";
+    grid-template-columns: auto 1fr;
+    grid-template-rows: 1fr auto auto 1fr;
+    column-gap: 8px;
+
+    & img {
+      width: 50px;
+      height: 50px;
+      grid-area: image;
+      margin-bottom: 0;
+    }
+
+    [slot=label] {
+      grid-area: title;
+    }
+
+    [slot=description] {
+      grid-area: description;
+    }
+  }
+}
+```
+
+</details>
+
 ### Asynchronous loading
 
 This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading
@@ -695,23 +930,6 @@ function Example() {
 .react-aria-Item {
   &[data-dragging] {
     opacity: 0.6;
-  }
-
-  [slot=drag] {
-    all: unset;
-    width: 15px;
-    text-align: center;
-
-    &[data-focus-visible] {
-      border-radius: 4px;
-      box-shadow: 0 0 0 2px var(--highlight-background);
-    }
-  }
-
-  &[aria-selected=true] {
-    [slot=drag][data-focus-visible] {
-      box-shadow: 0 0 0 2px var(--highlight-foreground);
-    }
   }
 }
 

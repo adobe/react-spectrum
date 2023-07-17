@@ -41,7 +41,7 @@ export interface DropZoneRenderProps {
   isDropTarget: boolean
 }
 
-export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint'>, RenderProps<DropZoneRenderProps>, SlotProps, AriaLabelingProps {}
+export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'ref' | 'hasDropButton'>, RenderProps<DropZoneRenderProps>, SlotProps, AriaLabelingProps {}
 
 export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDivElement>>(null);
 

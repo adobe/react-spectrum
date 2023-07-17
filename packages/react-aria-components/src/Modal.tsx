@@ -44,7 +44,11 @@ export interface ModalRenderProps {
    * Whether the modal is currently exiting. Use this to apply animations.
    * @selector [data-exiting]
    */
-  isExiting: boolean
+  isExiting: boolean,
+  /**
+   * State of the modal.
+   */
+  state: OverlayTriggerState
 }
 
 function Modal(props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) {
@@ -93,8 +97,8 @@ export {_Modal as Modal};
 
 function ModalOverlayWithForwardRef(props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) {
   let ctx = useContext(ModalContext);
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  let state = ctx?.state ?? useOverlayTriggerState(props);
+  let localState = useOverlayTriggerState(props);
+  let state = props.isOpen != null || props.defaultOpen != null || !ctx?.state ? localState : ctx.state;
 
   let objectRef = useObjectRef(ref);
   let modalRef = useRef<HTMLDivElement>(null);
@@ -132,7 +136,8 @@ function ModalOverlayInner(props: ModalOverlayInnerProps) {
     defaultClassName: 'react-aria-ModalOverlay',
     values: {
       isEntering: entering,
-      isExiting: props.isExiting
+      isExiting: props.isExiting,
+      state
     }
   });
 
@@ -174,7 +179,8 @@ function ModalContent(props: ModalContentProps) {
     defaultClassName: 'react-aria-Modal',
     values: {
       isEntering: entering,
-      isExiting
+      isExiting,
+      state
     }
   });
 
