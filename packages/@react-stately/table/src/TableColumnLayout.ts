@@ -35,7 +35,7 @@ export class TableColumnLayout<T> {
 
   constructor(options: TableColumnLayoutOptions<T>) {
     this.getDefaultWidth = options?.getDefaultWidth ?? (() => '1fr');
-    this.getDefaultMinWidth = options?.getDefaultMinWidth ?? (() => 80);
+    this.getDefaultMinWidth = options?.getDefaultMinWidth ?? (() => 75);
   }
 
   /** Takes an array of columns and splits it into 2 maps of columns with controlled and columns with uncontrolled widths. */

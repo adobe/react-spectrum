@@ -212,12 +212,12 @@ function ResizableTableContainer(props: ResizableTableContainerProps, ref: Forwa
   useResizeObserver({
     ref: objectRef,
     onResize() {
-      setWidth(objectRef.current?.getBoundingClientRect().width);
+      setWidth(objectRef.current?.clientWidth);
     }
   });
 
   useLayoutEffect(() => {
-    setWidth(objectRef.current?.getBoundingClientRect().width);
+    setWidth(objectRef.current?.clientWidth);
   }, [objectRef]);
 
   let ctx = useMemo(() => ({
