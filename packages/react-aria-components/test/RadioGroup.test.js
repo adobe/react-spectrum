@@ -283,7 +283,7 @@ describe('RadioGroup', () => {
     let labelA = radios[0].closest('label');
     let labelB = radios[1].closest('label');
     let labelC = radios[2].closest('label');
-    
+
     const expectNotFocused = (...labels) => {
       labels.forEach((label) => {
         expect(label).not.toHaveAttribute('data-focus-visible');
@@ -292,7 +292,7 @@ describe('RadioGroup', () => {
     };
 
     expectNotFocused(labelA, labelB, labelC);
-    
+
     userEvent.tab();
     expect(document.activeElement).toBe(radios[0]);
     expect(labelA).toHaveAttribute('data-focus-visible', 'true');
@@ -316,7 +316,7 @@ describe('RadioGroup', () => {
         <Modal data-test="modal">
           <Dialog role="alertdialog" data-test="dialog">
             {({close}) => (
-              <>                
+              <>
                 <TestRadioGroup radioProps={{className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''}} />
                 <Button onPress={close}>Close</Button>
               </>
@@ -330,7 +330,7 @@ describe('RadioGroup', () => {
     userEvent.click(trigger);
 
     let dialog = getByRole('alertdialog');
-    
+
     let radios = within(dialog).getAllByRole('radio');
     let labelA = radios[0].closest('label');
     let labelB = radios[1].closest('label');
@@ -344,10 +344,10 @@ describe('RadioGroup', () => {
     };
 
     expectNotFocused(labelA, labelB, labelC);
-    
+
     userEvent.tab();
     expect(document.activeElement).toBe(radios[0]);
-    expect(labelA).toHaveAttribute('data-focus-visible', 'true');    
+    expect(labelA).toHaveAttribute('data-focus-visible', 'true');
     expect(labelA).toHaveClass('focus');
     expectNotFocused(labelB, labelC);
 
@@ -361,5 +361,13 @@ describe('RadioGroup', () => {
     expect(labelC).toHaveAttribute('data-focus-visible', 'true');
     expect(labelC).toHaveClass('focus');
     expectNotFocused(labelA, labelB);
+  });
+
+  it('should support aria-describedby on a radio', () => {
+    let {getAllByRole} = renderGroup({}, {'aria-describedby': 'test'});
+    let radios = getAllByRole('radio');
+    for (let radio of radios) {
+      expect(radio).toHaveAttribute('aria-describedby', 'test');
+    }
   });
 });
