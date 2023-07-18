@@ -53,7 +53,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
 
   let textId = useSlotId();
-  let labelProps = useLabels({'aria-label': props['aria-label'] || 'DropZone', 'aria-labelledby': textId});
+  let labelProps = useLabels({'aria-labelledby': textId});
 
   let {clipboardProps} = useClipboard({
     onPaste: (items) => props.onDrop?.({
@@ -70,7 +70,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
     values: {isHovered, isFocused, isFocusVisible, isDropTarget},
     defaultClassName: 'react-aria-DropZone'
   });
-  let DOMProps = filterDOMProps(props, {labelable: true});
+  let DOMProps = filterDOMProps(props);
   delete DOMProps.id;
   
   return (
@@ -92,6 +92,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
         <VisuallyHidden>
           <button
             {...mergeProps(dropButtonProps, focusProps, clipboardProps, labelProps)}
+            aria-label={props['aria-label'] || 'DropZone'}
             ref={buttonRef} />
         </VisuallyHidden>
         {renderProps.children}
