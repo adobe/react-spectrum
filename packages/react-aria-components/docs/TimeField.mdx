@@ -404,7 +404,7 @@ function Example() {
   return (
     <>
       <MyTimeField label="Time" value={date} onChange={setDate} />
-      <p>Selected date and time: {date && formatter.format(date.toDate())}</p>
+      <p>Selected date and time: {(date?.toDate && formatter.format(date.toDate())) || (date && date.toString()) || '--'}</p>
     </>
   );
 }

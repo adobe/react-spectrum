@@ -230,7 +230,7 @@ function Example() {
       label="Appointment date"
       value={date}
       onChange={setDate}
-      validationState={isWeekend(date, locale) ? 'invalid' : 'valid'}
+      validationState={date && isWeekend(date, locale) ? 'invalid' : 'valid'}
       description="Select a weekday"
       errorMessage="We are closed on weekends" />
   );
