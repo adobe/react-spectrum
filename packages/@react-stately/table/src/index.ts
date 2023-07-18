@@ -25,4 +25,4 @@ export {Cell} from './Cell';
 export {Section} from '@react-stately/collections';
 export {TableCollection, buildHeaderRows} from './TableCollection';
 export {TableColumnLayout} from './TableColumnLayout';
-export {useTreeGridState} from './useTreeGridState';
+export {UNSTABLE_useTreeGridState} from './useTreeGridState';

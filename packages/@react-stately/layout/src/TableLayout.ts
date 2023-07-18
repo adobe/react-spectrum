@@ -556,7 +556,6 @@ export class TableLayout<T> extends ListLayout<T> {
           this.persistedIndices.set(layoutInfo.parentKey, indices);
         }
 
-        // TODO: perhaps fallback to collectionNode.index
         let index = this.layoutNodes.get(layoutInfo.key).index;
 
         if (!indices.includes(index)) {
@@ -574,12 +573,13 @@ export class TableLayout<T> extends ListLayout<T> {
 
   getInitialLayoutInfo(layoutInfo: LayoutInfo) {
     let res = super.getInitialLayoutInfo(layoutInfo);
+    res.transform = null;
+    return res;
+  }
 
-    // If this insert was the result of async loading, remove the zoom effect and just keep the fade in.
-    if (this.wasLoading) {
-      res.transform = null;
-    }
-
+  getFinalLayoutInfo(layoutInfo: LayoutInfo) {
+    let res = super.getFinalLayoutInfo(layoutInfo);
+    res.transform = null;
     return res;
   }
 

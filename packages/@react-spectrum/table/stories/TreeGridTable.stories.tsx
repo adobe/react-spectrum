@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Adobe. All rights reserved.
+ * Copyright 2023 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -34,7 +34,7 @@ export const StaticExpandableRows: TableStory = {
     height: 200
   },
   render: (args) => (
-    <TableView defaultExpandedKeys={['row 1']} hasExpandableRows onExpandedChange={action('onExpandedChange')} {...args}>
+    <TableView defaultExpandedKeys={['row 1']} UNSTABLE_hasExpandableRows onExpandedChange={action('onExpandedChange')} {...args}>
       <TableHeader>
         <Column key="foo">Foo</Column>
         <Column key="bar">Bar</Column>
@@ -84,7 +84,7 @@ function DynamicExpandableRows(props: SpectrumTableProps<unknown>) {
       <ActionButton onPress={() => setExpandedKeys('all')}>Expand all</ActionButton>
       <ActionButton onPress={() => setExpandedKeys(new Set([]))}>Collapse all</ActionButton>
       <ActionButton onPress={() => setExpandedKeys(new Set(['Lvl 1 Foo 1']))}>Set expanded to Lvl 1 Foo 1</ActionButton>
-      <TableView expandedKeys={expandedKeys} onExpandedChange={chain(setExpandedKeys, action('onExpandedChange'))} hasExpandableRows {...props}>
+      <TableView expandedKeys={expandedKeys} onExpandedChange={chain(setExpandedKeys, action('onExpandedChange'))} UNSTABLE_hasExpandableRows {...props}>
         <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
         </TableHeader>
@@ -122,7 +122,7 @@ export const UserSetRowHeader: TableStory = {
     height: 400
   },
   render: (args) => (
-    <TableView hasExpandableRows onExpandedChange={action('onExpandedChange')} {...args}>
+    <TableView UNSTABLE_hasExpandableRows onExpandedChange={action('onExpandedChange')} {...args}>
       <TableHeader>
         <Column key="foo" allowsResizing>Foo</Column>
         <Column isRowHeader allowsResizing key="bar">Bar</Column>
@@ -191,7 +191,7 @@ function ManyExpandableRows(props: ManyExpandableRowsProps) {
     <Flex direction="column">
       <ActionButton onPress={() => setExpandedKeys('all')}>Expand all</ActionButton>
       <ActionButton onPress={() => setExpandedKeys(new Set([]))}>Collapse all</ActionButton>
-      <TableView expandedKeys={expandedKeys} onExpandedChange={chain(setExpandedKeys, action('onExpandedChange'))} hasExpandableRows disabledKeys={['Row 1 Lvl 2']} {...otherProps}>
+      <TableView expandedKeys={expandedKeys} onExpandedChange={chain(setExpandedKeys, action('onExpandedChange'))} UNSTABLE_hasExpandableRows disabledKeys={['Row 1 Lvl 2']} {...otherProps}>
         <TableHeader columns={columns}>
           {column => <Column showDivider={showDivider} allowsResizing={allowsResizing}>{column.name}</Column>}
         </TableHeader>
@@ -228,7 +228,7 @@ export const EmptyTreeGridStory: TableStory = {
     height: 400
   },
   render: (args) => (
-    <EmptyStateTable hasExpandableRows selectionMode="none" columns={columns} items={manyRows} allowsSorting={false} onSortChange={null} sortDescriptor={null} {...args} />
+    <EmptyStateTable UNSTABLE_hasExpandableRows selectionMode="none" columns={columns} items={manyRows} allowsSorting={false} onSortChange={null} sortDescriptor={null} {...args} />
   ),
   name: 'empty state'
 };
@@ -239,7 +239,7 @@ function LoadingStateTable(props) {
   return (
     <Flex direction="column">
       <ActionButton width="100px" onPress={() => setShow(show => !show)}>Toggle items</ActionButton>
-      <TableView hasExpandableRows aria-label="TableView with empty state" {...props}>
+      <TableView UNSTABLE_hasExpandableRows aria-label="TableView with empty state" {...props}>
         <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
         </TableHeader>
@@ -274,7 +274,7 @@ export const NestedColumnsStory: TableStory = {
     height: 400
   },
   render: (args) => (
-    <TableView hasExpandableRows {...args}>
+    <TableView UNSTABLE_hasExpandableRows {...args}>
       <TableHeader>
         <Column title="Blah">
           <Column title="Group 1">

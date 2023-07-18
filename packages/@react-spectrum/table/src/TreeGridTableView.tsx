@@ -14,9 +14,9 @@ import {DOMRef} from '@react-types/shared';
 import React, {ReactElement, useState} from 'react';
 import {SpectrumTableProps} from './TableViewWrapper';
 import {TableViewBase} from './TableViewBase';
-import {useTreeGridState} from '@react-stately/table';
+import {UNSTABLE_useTreeGridState} from '@react-stately/table';
 
-export interface TreeGridTableProps<T> extends Omit<SpectrumTableProps<T>, 'hasExpandableRows'> {}
+export interface TreeGridTableProps<T> extends Omit<SpectrumTableProps<T>, 'UNSTABLE_hasExpandableRows'> {}
 
 function TreeGridTableView<T extends object>(props: TreeGridTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {
@@ -25,7 +25,7 @@ function TreeGridTableView<T extends object>(props: TreeGridTableProps<T>, ref: 
   } = props;
   let [showSelectionCheckboxes, setShowSelectionCheckboxes] = useState(selectionStyle !== 'highlight');
   let isTableDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
-  let state = useTreeGridState({
+  let state = UNSTABLE_useTreeGridState({
     ...props,
     showSelectionCheckboxes,
     showDragButtons: isTableDraggable,

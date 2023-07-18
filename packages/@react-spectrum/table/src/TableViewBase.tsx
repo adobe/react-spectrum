@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Adobe. All rights reserved.
+ * Copyright 2023 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -1413,6 +1413,7 @@ function ExpandableRowChevron({cell}) {
   let {direction} = useLocale();
   let {state} = useTableContext();
   let expandButtonRef = useRef();
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let isExpanded;
 
   if ('expandedKeys' in state) {
@@ -1424,8 +1425,7 @@ function ExpandableRowChevron({cell}) {
     // Desktop and mobile both toggle expansion of a native expandable row on mouse/touch up
     onPress: () => (state as TreeGridState<unknown>).toggleKey(cell.parentKey),
     elementType: 'span',
-    // TODO: will need translations.
-    'aria-label': isExpanded ? 'Collapse' : 'Expand'
+    'aria-label': isExpanded ? stringFormatter.format('collapse') : stringFormatter.format('expand')
   }, expandButtonRef);
 
   return (
