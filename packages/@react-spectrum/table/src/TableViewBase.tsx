@@ -1413,6 +1413,7 @@ function ExpandableRowChevron({cell}) {
   let {direction} = useLocale();
   let {state} = useTableContext();
   let expandButtonRef = useRef();
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let isExpanded;
 
   if ('expandedKeys' in state) {
@@ -1424,8 +1425,7 @@ function ExpandableRowChevron({cell}) {
     // Desktop and mobile both toggle expansion of a native expandable row on mouse/touch up
     onPress: () => (state as TreeGridState<unknown>).toggleKey(cell.parentKey),
     elementType: 'span',
-    // TODO: will need translations.
-    'aria-label': isExpanded ? 'Collapse' : 'Expand'
+    'aria-label': isExpanded ? stringFormatter.format('collapse') : stringFormatter.format('expand')
   }, expandButtonRef);
 
   return (
