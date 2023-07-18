@@ -29,16 +29,6 @@ export interface DateFieldRenderProps {
    */
   validationState: ValidationState,
   /**
-   * Whether the date field is focused, either via a mouse or keyboard.
-   * @selector [data-focused]
-   */
-  isFocused: boolean,
-  /**
-   * Whether the date field is keyboard focused.
-   * @selector [data-focus-visible]
-   */
-  isFocusVisible: boolean,
-  /**
    * Whether the date field is disabled.
    * @selector [data-disabled]
    */
@@ -67,7 +57,6 @@ function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: Forwarded
 
   let fieldRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot();
-  let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useDateField({...props, label}, state, fieldRef);
 
   let renderProps = useRenderProps({
@@ -75,8 +64,6 @@ function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: Forwarded
     values: {
       state,
       validationState: state.validationState,
-      isFocused,
-      isFocusVisible,
       isDisabled: state.isDisabled
     },
     defaultClassName: 'react-aria-DateField'
@@ -98,7 +85,6 @@ function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: Forwarded
         }]
       ]}>
       <div
-        {...focusProps}
         {...DOMProps}
         {...renderProps}
         ref={ref}
@@ -125,7 +111,6 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
 
   let fieldRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot();
-  let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useTimeField({...props, label}, state, fieldRef);
 
   let renderProps = useRenderProps({
@@ -133,8 +118,6 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
     values: {
       state,
       validationState: state.validationState,
-      isFocused,
-      isFocusVisible,
       isDisabled: state.isDisabled
     },
     defaultClassName: 'react-aria-TimeField'
@@ -155,7 +138,12 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
           }
         }]
       ]}>
-      <div {...focusProps} {...DOMProps} {...renderProps} ref={ref} slot={props.slot} data-validation-date={state.validationState || undefined} />
+      <div
+        {...DOMProps}
+        {...renderProps}
+        ref={ref}
+        slot={props.slot}
+        data-validation-date={state.validationState || undefined} />
     </Provider>
   );
 }
