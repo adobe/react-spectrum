@@ -535,14 +535,14 @@ export interface ColumnProps<T = object> extends RenderProps<ColumnRenderProps> 
   isRowHeader?: boolean,
   /** A string representation of the column's contents, used for accessibility announcements. */
   textValue?: string,
-  /** The width of the column. */
+  /** The width of the column. This prop only applies when the `<Table>` is wrapped in a `<ResizableTableContainer>`. */
   width?: ColumnSize | null,
-  /** The minimum width of the column. */
+  /** The default width of the column. This prop only applies when the `<Table>` is wrapped in a `<ResizableTableContainer>`. */
+  defaultWidth?: ColumnSize | null,
+  /** The minimum width of the column. This prop only applies when the `<Table>` is wrapped in a `<ResizableTableContainer>`. */
   minWidth?: ColumnStaticSize | null,
-  /** The maximum width of the column. */
-  maxWidth?: ColumnStaticSize | null,
-  /** The default width of the column. */
-  defaultWidth?: ColumnSize | null
+  /** The maximum width of the column. This prop only applies when the `<Table>` is wrapped in a `<ResizableTableContainer>`. */
+  maxWidth?: ColumnStaticSize | null
 }
 
 function Column<T extends object>(props: ColumnProps<T>, ref: ForwardedRef<HTMLTableCellElement>): JSX.Element {
@@ -800,6 +800,12 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
   let isResizing = false;
   if (layoutState) {
     isResizing = layoutState.resizingColumn === column.key;
+  } else {
+    for (let prop in ['width', 'defaultWidth', 'minWidth', 'maxWidth']) {
+      if (prop in column.props) {
+        console.warn(`The ${prop} prop on a <Column> only applies when a <Table> is wrapped in a <ResizableTableContainer>. If you aren't using column resizing, you can set the width of a column with CSS.`);
+      }
+    }
   }
 
   let props: ColumnProps<unknown> = column.props;
@@ -875,6 +881,7 @@ export interface ColumnResizerRenderProps {
   isResizing: boolean,
   /**
    * The direction that the column is currently resizable.
+   * @selector [data-resizable-direction="right | left | both"]
    */
   resizableDirection: 'right' | 'left' | 'both'
 }
