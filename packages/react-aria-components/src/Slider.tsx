@@ -29,9 +29,7 @@ interface SliderContextValue {
   state: SliderState,
   trackProps: DOMAttributes,
   outputProps: OutputHTMLAttributes<HTMLOutputElement>,
-  trackRef: RefObject<HTMLDivElement>,
-  isFocused: boolean,
-  isFocusVisible: boolean
+  trackRef: RefObject<HTMLDivElement>
 }
 
 export const SliderContext = createContext<ContextValue<SliderProps, HTMLDivElement>>(null);
@@ -49,16 +47,6 @@ export interface SliderRenderProps {
    */
   isDisabled: boolean,
   /**
-   * Whether the slider is focused, either via a mouse or keyboard.
-   * @selector [data-focused]
-   */
-  isFocused: boolean,
-  /**
-   * Whether the slider is keyboard focused.
-   * @selector [data-focus-visible]
-   */
-  isFocusVisible: boolean,
-  /**
    * State of the slider.
    */
   state: SliderState
@@ -70,7 +58,6 @@ function Slider<T extends number | number[]>(props: SliderProps<T>, ref: Forward
   let numberFormatter = useNumberFormatter(props.formatOptions);
   let state = useSliderState({...props, numberFormatter});
   let [labelRef, label] = useSlot();
-  let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
   let {
     groupProps,
     trackProps,
@@ -83,8 +70,6 @@ function Slider<T extends number | number[]>(props: SliderProps<T>, ref: Forward
     values: {
       orientation: state.orientation,
       isDisabled: state.isDisabled,
-      isFocused,
-      isFocusVisible,
       state
     },
     defaultClassName: 'react-aria-Slider'
@@ -96,12 +81,11 @@ function Slider<T extends number | number[]>(props: SliderProps<T>, ref: Forward
   return (
     <Provider
       values={[
-        [InternalSliderContext, {state, trackProps, trackRef, outputProps, isFocused, isFocusVisible}],
+        [InternalSliderContext, {state, trackProps, trackRef, outputProps}],
         [LabelContext, {...labelProps, ref: labelRef}]
       ]}>
       <div
         {...DOMProps}
-        {...focusProps}
         {...groupProps}
         {...renderProps}
         ref={ref}
@@ -121,7 +105,7 @@ export {_Slider as Slider};
 export interface SliderOutputProps extends RenderProps<SliderRenderProps> {}
 
 function SliderOutput({children, style, className, ...otherProps}: SliderOutputProps, ref: ForwardedRef<HTMLOutputElement>) {
-  let {state, outputProps, isFocused, isFocusVisible} = useContext(InternalSliderContext)!;
+  let {state, outputProps} = useContext(InternalSliderContext)!;
   let renderProps = useRenderProps({
     className,
     style,
@@ -131,13 +115,18 @@ function SliderOutput({children, style, className, ...otherProps}: SliderOutputP
     values: {
       orientation: state.orientation,
       isDisabled: state.isDisabled,
-      state,
-      isFocused,
-      isFocusVisible
+      state
     }
   });
 
-  return <output {...mergeProps(filterDOMProps(otherProps as any), outputProps)} {...renderProps} ref={ref} />;
+  return (
+    <output
+      {...mergeProps(filterDOMProps(otherProps as any), outputProps)}
+      {...renderProps}
+      ref={ref}
+      data-orientation={state.orientation || undefined}
+      data-disabled={state.isDisabled || undefined} />
+  );
 }
 
 /**
@@ -157,7 +146,7 @@ export interface SliderTrackRenderProps extends SliderRenderProps {
 export interface SliderTrackProps extends RenderProps<SliderTrackRenderProps> {}
 
 function SliderTrack(props: SliderTrackProps, ref: ForwardedRef<HTMLDivElement>) {
-  let {state, trackProps, trackRef, isFocused, isFocusVisible} = useContext(InternalSliderContext)!;
+  let {state, trackProps, trackRef} = useContext(InternalSliderContext)!;
   let {hoverProps, isHovered} = useHover({});
   let domRef = mergeRefs(ref, trackRef);
   let renderProps = useRenderProps({
@@ -166,9 +155,7 @@ function SliderTrack(props: SliderTrackProps, ref: ForwardedRef<HTMLDivElement>)
     values: {
       orientation: state.orientation,
       isDisabled: state.isDisabled,
-      isFocused,
       isHovered,
-      isFocusVisible,
       state
     }
   });
@@ -177,8 +164,10 @@ function SliderTrack(props: SliderTrackProps, ref: ForwardedRef<HTMLDivElement>)
     <div
       {...mergeProps(filterDOMProps(props as any), hoverProps, trackProps)}
       {...renderProps}
+      ref={domRef}
       data-hovered={isHovered || undefined}
-      ref={domRef} />
+      data-orientation={state.orientation || undefined}
+      data-disabled={state.isDisabled || undefined} />
   );
 }
 
