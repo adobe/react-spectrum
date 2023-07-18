@@ -112,7 +112,7 @@ describe('DropZone', () => {
       </DropZone>);
     let text = getByText('Test');
     let button = getByRole('button');
-    expect(button).toHaveAttribute('aria-labelledby', `${text.id}`);
+    expect(button).toHaveAttribute('aria-labelledby', `${button.id} ${text.id}`);
   });
 
   it('should apply default aria-label', () => {
