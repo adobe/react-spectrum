@@ -15,6 +15,7 @@ import {Expandable} from '@react-types/shared';
 import {GridNode} from '@react-types/grid';
 import {Key, useMemo} from 'react';
 import {TableCollection} from './TableCollection';
+import {tableNestedRows} from '@react-stately/flags';
 import {TableState, TableStateProps, useTableState} from './useTableState';
 import {useControlledState} from '@react-stately/utils';
 
@@ -35,7 +36,7 @@ export interface TreeGridStateProps<T> extends Expandable, Omit<TableStateProps<
  * Provides state management for a tree grid component. Handles building a collection
  * of columns and rows from props. In addition, it tracks and manages expanded rows, row selection, and sort order changes.
  */
-export function useTreeGridState<T extends object>(props: TreeGridStateProps<T>): TreeGridState<T> {
+export function UNSTABLE_useTreeGridState<T extends object>(props: TreeGridStateProps<T>): TreeGridState<T> {
   let {
     selectionMode = 'none',
     showSelectionCheckboxes,
@@ -45,6 +46,10 @@ export function useTreeGridState<T extends object>(props: TreeGridStateProps<T>)
     onExpandedChange,
     children
   } = props;
+
+  if (!tableNestedRows()) {
+    throw new Error('Feature flag for table nested rows must be enabled to use useTreeGridState.');
+  }
 
   let [expandedKeys, setExpandedKeys] = useControlledState(
     propExpandedKeys ? convertExpanded(propExpandedKeys) : undefined,

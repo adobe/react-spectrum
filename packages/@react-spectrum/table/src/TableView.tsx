@@ -16,7 +16,7 @@ import {SpectrumTableProps} from './TableViewWrapper';
 import {TableViewBase} from './TableViewBase';
 import {useTableState} from '@react-stately/table';
 
-interface TableProps<T> extends Omit<SpectrumTableProps<T>, 'hasExpandableRows'> {}
+interface TableProps<T> extends Omit<SpectrumTableProps<T>, 'UNSTABLE_hasExpandableRows'> {}
 
 function TableView<T extends object>(props: TableProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {

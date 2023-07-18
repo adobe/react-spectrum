@@ -125,7 +125,7 @@ const Template = ({columns, items, ...args}) => (
       }
       return (
         <View flexGrow={1} maxWidth="size-5000" maxHeight={700}>
-          <TableView {...args} {...c} width="100%" height="100%" key={key} aria-label={key} selectedKeys={['Foo 3', 'Foo 1']} disabledKeys={['Foo 2', 'Foo 4']} hasExpandableRows>
+          <TableView {...args} {...c} width="100%" height="100%" key={key} aria-label={key} selectedKeys={['Foo 3', 'Foo 1']} disabledKeys={['Foo 2', 'Foo 4']} UNSTABLE_hasExpandableRows>
             <TableHeader columns={columns}>
               {(column: any) => (
                 <Column key={column.key} width={column.width} showDivider={column.showDivider} align={column.align} hideHeader={column.hideHeader} childColumns={column.children}>
@@ -164,7 +164,7 @@ function renderEmptyState() {
 
 const EmptyTemplate = (args) =>
   (
-    <TableView {...args} maxWidth={700} height={400} renderEmptyState={renderEmptyState} hasExpandableRows>
+    <TableView {...args} maxWidth={700} height={400} renderEmptyState={renderEmptyState} UNSTABLE_hasExpandableRows>
       <TableHeader columns={columns}>
         {(column: any) => (
           <Column
@@ -217,7 +217,7 @@ export const NestedColumns = {
 };
 
 export const MaxHeight = () => (
-  <TableView maxHeight="size-1200" hasExpandableRows>
+  <TableView maxHeight="size-1200" UNSTABLE_hasExpandableRows>
     <TableHeader columns={columns}>
       {(column: any) => <Column key={column.key}>{column.name}</Column>}
     </TableHeader>

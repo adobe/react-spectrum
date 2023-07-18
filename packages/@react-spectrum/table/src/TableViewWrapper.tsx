@@ -52,19 +52,19 @@ export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionP
   onResizeEnd?: (widths: Map<Key, ColumnSize>) => void,
   /**
    * The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the TableView.
-   * @version alpha
+   * @version beta
    */
   dragAndDropHooks?: DragAndDropHooks['dragAndDropHooks'],
   /**
    * Whether the TableView should support expandable rows. Requires the feature flag to be enabled first, see https://react-spectrum.adobe.com/react-spectrum/TableView.html#expandable-rows.
    * @version alpha
    */
-  hasExpandableRows?: boolean
+  UNSTABLE_hasExpandableRows?: boolean
 }
 
 function TableViewWrapper<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
-  let {hasExpandableRows, ...otherProps} = props;
-  if (tableNestedRows() && hasExpandableRows) {
+  let {UNSTABLE_hasExpandableRows, ...otherProps} = props;
+  if (tableNestedRows() && UNSTABLE_hasExpandableRows) {
     return <TreeGridTableView {...otherProps} ref={ref} />;
   } else {
     return <TableView {...otherProps} ref={ref} />;
