@@ -9,8 +9,9 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaComboBoxProps, useComboBox, useFilter} from 'react-aria';
+import {AriaComboBoxProps, useComboBox, useFilter, useFocusRing} from 'react-aria';
 import {ButtonContext} from './Button';
+import {ComboBoxState, useComboBoxState} from 'react-stately';
 import {ContextValue, forwardRefType, Provider, RenderProps, slotCallbackSymbol, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {InputContext} from './Input';
@@ -20,7 +21,6 @@ import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, useCallback, useMemo, useRef, useState} from 'react';
 import {TextContext} from './Text';
 import {useCollection} from './Collection';
-import {useComboBoxState} from 'react-stately';
 
 export interface ComboBoxRenderProps {
   /**
@@ -29,10 +29,19 @@ export interface ComboBoxRenderProps {
    */
   isFocused: boolean,
   /**
+   * Whether the combobox is keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
    * Whether the combobox is currently open.
    * @selector [data-open]
    */
-  isOpen: boolean
+  isOpen: boolean,
+  /**
+   * State of the combobox.
+   */
+  state: Omit<ComboBoxState<unknown>, 'children' | 'setOpen' | 'toggle' | 'open' | 'close' | 'selectionManager' | 'setSelectedKey' | 'setFocused' | 'collection' | 'commit' | 'revert'>
 }
 
 export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children' | 'placeholder' | 'name' | 'label' | 'description' | 'errorMessage'>, RenderProps<ComboBoxRenderProps>, SlotProps {
@@ -60,8 +69,24 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
     collection
   });
 
+  let {isFocusVisible, focusProps} = useFocusRing({within: true});
+
   // Only expose a subset of state to renderProps function to avoid infinite render loop
-  let renderPropsState = useMemo(() => ({isOpen: state.isOpen, isFocused: state.isFocused}), [state.isOpen, state.isFocused]);
+  let renderPropsState = useMemo(() => ({
+    isOpen: state.isOpen,
+    isFocused: state.isFocused,
+    isFocusVisible,
+    state: {
+      focusStrategy: state.focusStrategy,
+      isOpen: state.isOpen,
+      selectedKey: state.selectedKey,
+      disabledKeys: state.disabledKeys,
+      isFocused: state.isFocused,
+      selectedItem: state.selectedItem,
+      inputValue: state.inputValue,
+      setInputValue: state.setInputValue
+    }
+  }), [state.isOpen, state.isFocused, state.focusStrategy, state.selectedKey, state.disabledKeys, state.selectedItem, state.inputValue, state.setInputValue, isFocusVisible]);
   let buttonRef = useRef<HTMLButtonElement>(null);
   let inputRef = useRef<HTMLInputElement>(null);
   let listBoxRef = useRef<HTMLDivElement>(null);
@@ -136,9 +161,11 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
       <div
         {...DOMProps}
         {...renderProps}
+        {...focusProps}
         ref={ref}
         slot={props.slot}
         data-focused={state.isFocused || undefined}
+        data-focus-visible={isFocusVisible || undefined}
         data-open={state.isOpen || undefined} />
       {portal}
     </Provider>
