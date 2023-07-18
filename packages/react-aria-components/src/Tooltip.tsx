@@ -42,11 +42,6 @@ export interface TooltipRenderProps {
    */
   isExiting: boolean,
   /**
-   * Whether the tooltip is currently open.
-   * @selector [data-open]
-   */
-  isOpen: boolean,
-  /**
    * State of the tooltip.
    */
   state: TooltipTriggerState
@@ -121,7 +116,6 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: For
       placement,
       isEntering,
       isExiting: props.isExiting,
-      isOpen: state.isOpen,
       state
     }
   });
@@ -137,8 +131,7 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: For
       style={{...renderProps.style, ...overlayProps.style}}
       data-placement={placement}
       data-entering={isEntering || undefined}
-      data-exiting={props.isExiting || undefined}
-      data-open={state.isOpen || undefined}>
+      data-exiting={props.isExiting || undefined}>
       <OverlayArrowContext.Provider value={{arrowProps, placement}}>
         {renderProps.children}
       </OverlayArrowContext.Provider>

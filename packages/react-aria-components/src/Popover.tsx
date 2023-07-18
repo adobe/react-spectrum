@@ -29,7 +29,7 @@ export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPo
 
 export interface PopoverRenderProps {
   /**
-   * The placement of the tooltip relative to the trigger.
+   * The placement of the popover relative to the trigger.
    * @selector [data-placement="left | right | top | bottom"]
    */
   placement: PlacementAxis,

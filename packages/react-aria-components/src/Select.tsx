@@ -19,7 +19,7 @@ import {LabelContext} from './Label';
 import {ListBoxContext, ListBoxProps} from './ListBox';
 import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
-import {SelectState, useSelectState} from 'react-stately';
+import {SelectState, useSelectState, ValidationState} from 'react-stately';
 import {TextContext} from './Text';
 
 export interface SelectRenderProps {
@@ -43,6 +43,16 @@ export interface SelectRenderProps {
    * @selector [data-open]
    */
   isOpen: boolean,
+  /**
+   * Validation state of the select.
+   * @selector [data-validation-state]
+   */
+  validationState?: ValidationState,
+  /**
+   * Whether the select is required.
+   * @selector [data-required]
+   */
+  isRequired: boolean,
   /**
    * State of the select.
    */
@@ -82,6 +92,8 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
     isFocused: state.isFocused,
     isFocusVisible,
     isDisabled: props.isDisabled || false,
+    validationState: props.validationState,
+    isRequired: props.isRequired || false,
     state: {
       isFocused: state.isFocused,
       setFocused: state.setFocused,
@@ -92,7 +104,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
       selectedItem: state.selectedItem,
       close: state.close
     }
-  }), [state.isOpen, state.isFocused, state.setFocused, state.focusStrategy, state.setOpen, state.selectedKey, state.selectedItem, state.close, isFocusVisible, props.isDisabled]);
+  }), [state.isOpen, state.isFocused, state.setFocused, state.focusStrategy, state.setOpen, state.selectedKey, state.selectedItem, state.close, isFocusVisible, props.isDisabled, props.validationState, props.isRequired]);
 
   // Get props for child elements from useSelect
   let buttonRef = useRef<HTMLButtonElement>(null);
@@ -158,7 +170,9 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
         data-focused={state.isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-open={state.isOpen || undefined}
-        data-disabled={props.isDisabled || undefined} />
+        data-disabled={props.isDisabled || undefined}
+        data-validation-state={props.validationState || undefined}
+        data-required={props.isRequired || undefined} />
       {portal}
       <HiddenSelect
         state={state}

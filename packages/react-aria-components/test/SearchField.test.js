@@ -60,12 +60,12 @@ describe('SearchField', () => {
   it('should support render props', () => {
     let {getByRole} = render(
       <SearchField defaultValue="test">
-        {({value}) => (
+        {({state}) => (
           <>
             <Label>Test</Label>
             <Input />
             <Button>x</Button>
-            <Text slot="description">You are looking for "{value}"</Text>
+            <Text slot="description">You are looking for "{state.value}"</Text>
           </>
         )}
       </SearchField>

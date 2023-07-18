@@ -44,19 +44,9 @@ export interface RadioGroupRenderProps {
   isRequired: boolean,
   /**
    * The validation state of the radio group.
-   * @selector [aria-invalid]
+   * @selector [data-validation-state]
    */
   validationState: ValidationState | null,
-  /**
-   * Whether an element within the radio group is focused, either via a mouse or keyboard.
-   * @selector :focus-within
-   */
-  isFocusWithin: boolean,
-  /**
-   * Whether an element within the radio group is keyboard focused.
-   * @selector [data-focus-visible]
-   */
-  isFocusVisible: boolean,
   /**
    * State of the radio group.
    */
@@ -118,7 +108,6 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, RadioGroupContext);
   let state = useRadioGroupState(props);
   let [labelRef, label] = useSlot();
-  let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
   let {radioGroupProps, labelProps, descriptionProps, errorMessageProps} = useRadioGroup({
     ...props,
     label
@@ -132,8 +121,6 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
       isReadOnly: state.isReadOnly,
       isRequired: state.isRequired,
       validationState: state.validationState,
-      isFocusWithin: isFocused,
-      isFocusVisible,
       state
     },
     defaultClassName: 'react-aria-RadioGroup'
@@ -141,7 +128,6 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
 
   return (
     <div
-      {...focusProps}
       {...radioGroupProps}
       {...renderProps}
       ref={ref}
