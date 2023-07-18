@@ -170,7 +170,7 @@ function Example() {
       label="Meeting time"
       value={time}
       onChange={setTime}
-      validationState={time.minute % 15 ? 'invalid' : 'valid'}
+      validationState={time?.minute % 15 ? 'invalid' : 'valid'}
       description="Select a meeting time"
       errorMessage="Meetings start every 15 minutes." />
   );
