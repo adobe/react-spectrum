@@ -1218,7 +1218,11 @@ This example shows how to create a reusable component that wraps `<Column>` to i
 ```tsx example export=true render=false
 import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
 
-function ResizableTableColumn<T extends object>(props: ColumnProps<T>) {
+interface ResizableTableColumnProps<T> extends Omit<ColumnProps<T>, 'children'> {
+  children: React.ReactNode
+}
+
+function ResizableTableColumn<T extends object>(props: ResizableTableColumnProps<T>) {
   return (
     <Column {...props}>
       {({startResize, sort, allowsSorting, sortDirection}) => (
@@ -1257,8 +1261,10 @@ function ResizableTableColumn<T extends object>(props: ColumnProps<T>) {
 We can now use this component in place of `<Column>` to render a table with support for both resizing and sorting columns using a dropdown menu.
 
 ```tsx example
+import type {SortDescriptor} from 'react-aria-components';
+
 function Example() {
-  let [sortDescriptor, setSortDescriptor] = React.useState({
+  let [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
     column: 'file',
     direction: 'ascending'
   });
