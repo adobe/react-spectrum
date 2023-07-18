@@ -16,8 +16,9 @@
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
 import {RefObject, SyntheticEvent, useEffect, useRef} from 'react';
+import {useEffectEvent} from '@react-aria/utils';
 
-interface InteractOutsideProps {
+export interface InteractOutsideProps {
   ref: RefObject<Element>,
   onInteractOutside?: (e: SyntheticEvent) => void,
   onInteractOutsideStart?: (e: SyntheticEvent) => void,
@@ -35,31 +36,35 @@ export function useInteractOutside(props: InteractOutsideProps) {
     isPointerDown: false,
     ignoreEmulatedMouseEvents: false
   });
-  let state = stateRef.current;
+
+  let onPointerDown = useEffectEvent((e: SyntheticEvent) => {
+    if (onInteractOutside && isValidEvent(e, ref)) {
+      if (onInteractOutsideStart) {
+        onInteractOutsideStart(e);
+      }
+      stateRef.current.isPointerDown = true;
+    }
+  });
+
+  let triggerInteractOutside = useEffectEvent((e: SyntheticEvent) => {
+    if (onInteractOutside) {
+      onInteractOutside(e);
+    }
+  });
 
   useEffect(() => {
-    let onPointerDown = (e) => {
-      if (isDisabled) {
-        return;
-      }
-      if (isValidEvent(e, ref) && onInteractOutside) {
-        if (onInteractOutsideStart) {
-          onInteractOutsideStart(e);
-        }
-        state.isPointerDown = true;
-      }
-    };
+    let state = stateRef.current;
+    if (isDisabled) {
+      return;
+    }
 
     // Use pointer events if available. Otherwise, fall back to mouse and touch events.
     if (typeof PointerEvent !== 'undefined') {
       let onPointerUp = (e) => {
-        if (isDisabled) {
-          return;
+        if (state.isPointerDown && isValidEvent(e, ref)) {
+          triggerInteractOutside(e);
         }
-        if (state.isPointerDown && onInteractOutside && isValidEvent(e, ref)) {
-          state.isPointerDown = false;
-          onInteractOutside(e);
-        }
+        state.isPointerDown = false;
       };
 
       // changing these to capture phase fixed combobox
@@ -72,26 +77,20 @@ export function useInteractOutside(props: InteractOutsideProps) {
       };
     } else {
       let onMouseUp = (e) => {
-        if (isDisabled) {
-          return;
-        }
         if (state.ignoreEmulatedMouseEvents) {
           state.ignoreEmulatedMouseEvents = false;
-        } else if (state.isPointerDown && onInteractOutside && isValidEvent(e, ref)) {
-          state.isPointerDown = false;
-          onInteractOutside(e);
+        } else if (state.isPointerDown && isValidEvent(e, ref)) {
+          triggerInteractOutside(e);
         }
+        state.isPointerDown = false;
       };
 
       let onTouchEnd = (e) => {
-        if (isDisabled) {
-          return;
-        }
         state.ignoreEmulatedMouseEvents = true;
-        if (onInteractOutside && state.isPointerDown && isValidEvent(e, ref)) {
-          state.isPointerDown = false;
-          onInteractOutside(e);
+        if (state.isPointerDown && isValidEvent(e, ref)) {
+          triggerInteractOutside(e);
         }
+        state.isPointerDown = false;
       };
 
       document.addEventListener('mousedown', onPointerDown, true);
@@ -106,7 +105,7 @@ export function useInteractOutside(props: InteractOutsideProps) {
         document.removeEventListener('touchend', onTouchEnd, true);
       };
     }
-  }, [onInteractOutside, ref, state.ignoreEmulatedMouseEvents, state.isPointerDown, isDisabled]);
+  }, [ref, isDisabled, onPointerDown, triggerInteractOutside]);
 }
 
 function isValidEvent(event, ref) {
@@ -114,10 +113,15 @@ function isValidEvent(event, ref) {
     return false;
   }
 
-  // if the event target is no longer in the document
   if (event.target) {
+    // if the event target is no longer in the document, ignore
     const ownerDocument = event.target.ownerDocument;
     if (!ownerDocument || !ownerDocument.documentElement.contains(event.target)) {
+      return false;
+    }
+
+    // If the target is within a top layer element (e.g. toasts), ignore.
+    if (event.target.closest('[data-react-aria-top-layer]')) {
       return false;
     }
   }

@@ -10,16 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
+import {DOMAttributes} from '@react-types/shared';
 import {mergeProps, useSyncRef} from '@react-aria/utils';
-import React, {HTMLAttributes, MutableRefObject, RefObject, useContext} from 'react';
+import React, {MutableRefObject, RefObject, useContext} from 'react';
 
-interface DOMPropsResponderProps extends HTMLAttributes<HTMLElement> {
-  ref?: RefObject<HTMLElement>
+interface DOMPropsResponderProps extends DOMAttributes {
+  ref?: RefObject<Element>
 }
 
-interface IDOMPropsResponderContext extends HTMLAttributes<HTMLElement> {
+interface IDOMPropsResponderContext extends DOMAttributes {
   register(): void,
-  ref?: MutableRefObject<HTMLElement>
+  ref?: MutableRefObject<Element>
 }
 
 export const DOMPropsResponderContext = React.createContext<IDOMPropsResponderContext>(null);

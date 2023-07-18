@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, getWrappedElement, useStyleProps} from '@react-spectrum/utils';
+import {classNames, getWrappedElement, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, mergeRefs} from '@react-aria/utils';
 import React, {useRef} from 'react';
 import {SpectrumLinkProps} from '@react-types/link';
 import styles from '@adobe/spectrum-css-temp/components/link/vars.css';
@@ -26,6 +26,7 @@ import {useProviderProps} from '@react-spectrum/provider';
  */
 export function Link(props: SpectrumLinkProps) {
   props = useProviderProps(props);
+  props = useSlotProps(props, 'link');
   let {
     variant = 'primary',
     isQuiet,
@@ -46,14 +47,17 @@ export function Link(props: SpectrumLinkProps) {
     elementType: typeof children === 'string' ? 'span' : 'a'
   }, ref);
 
+  let wrappedChild = getWrappedElement(children);
+
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       {React.cloneElement(
-        getWrappedElement(children),
+        wrappedChild,
         {
           ...styleProps,
-          ...mergeProps(linkProps, hoverProps),
-          ref,
+          ...mergeProps(wrappedChild.props, linkProps, hoverProps),
+          // @ts-ignore https://github.com/facebook/react/issues/8873
+          ref: wrappedChild.ref ? mergeRefs(ref, wrappedChild.ref) : ref,
           className: classNames(
             styles,
             'spectrum-Link',

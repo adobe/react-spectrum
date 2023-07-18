@@ -9,3 +9,11 @@
 .spectrum-ColorLoupe-inner-checker {
   fill: var(--spectrum-global-color-static-gray-500);
 }
+
+@media (forced-colors: active) {
+  .spectrum-ColorLoupe {
+    forced-color-adjust: none;
+    --spectrum-colorloupe-inner-border-color: ButtonText;
+    --spectrum-colorloupe-outer-border-color: ButtonFace;
+  }
+}

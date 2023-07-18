@@ -10,17 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
+import {announce} from '@react-aria/live-announcer';
 import {GridAria, GridProps, useGrid} from '@react-aria/grid';
 import {gridIds} from './utils';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {Layout} from '@react-stately/virtualizer';
+import {mergeProps, useDescription, useId, useUpdateEffect} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
 import {RefObject, useMemo} from 'react';
 import {TableKeyboardDelegate} from './TableKeyboardDelegate';
 import {TableState} from '@react-stately/table';
-import {useCollator, useLocale} from '@react-aria/i18n';
-import {useId} from '@react-aria/utils';
+import {useCollator, useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
-interface TableProps<T> extends GridProps {
+export interface AriaTableProps<T> extends GridProps {
   /** The layout object for the table. Computes what content is visible and how to position and style them. */
   layout?: Layout<Node<T>>
 }
@@ -33,7 +36,7 @@ interface TableProps<T> extends GridProps {
  * @param state - State for the table, as returned by `useTableState`.
  * @param ref - The ref attached to the table element.
  */
-export function useTable<T>(props: TableProps<T>, state: TableState<T>, ref: RefObject<HTMLElement>): GridAria {
+export function useTable<T>(props: AriaTableProps<T>, state: TableState<T>, ref: RefObject<HTMLElement>): GridAria {
   let {
     keyboardDelegate,
     isVirtualized,
@@ -44,50 +47,22 @@ export function useTable<T>(props: TableProps<T>, state: TableState<T>, ref: Ref
   // When virtualized, the layout object will be passed in as a prop and override this.
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let {direction} = useLocale();
+  let disabledBehavior = state.selectionManager.disabledBehavior;
   let delegate = useMemo(() => keyboardDelegate || new TableKeyboardDelegate({
     collection: state.collection,
-    disabledKeys: state.disabledKeys,
+    disabledKeys: disabledBehavior === 'selection' ? new Set() : state.disabledKeys,
     ref,
     direction,
     collator,
     layout
-  }), [keyboardDelegate, state.collection, state.disabledKeys, ref, direction, collator, layout]);
-
-  let id = useId();
+  }), [keyboardDelegate, state.collection, state.disabledKeys, disabledBehavior, ref, direction, collator, layout]);
+  let id = useId(props.id);
   gridIds.set(state, id);
 
   let {gridProps} = useGrid({
     ...props,
     id,
-    keyboardDelegate: delegate,
-    getRowText(key) {
-      let added = state.collection.getItem(key);
-
-      // If the row has a textValue, use that.
-      if (added.textValue != null) {
-        return added.textValue;
-      }
-
-      // Otherwise combine the text of each of the row header columns.
-      let rowHeaderColumnKeys = state.collection.rowHeaderColumnKeys;
-      if (rowHeaderColumnKeys) {
-        let text = [];
-        for (let cell of added.childNodes) {
-          let column = state.collection.columns[cell.index];
-          if (rowHeaderColumnKeys.has(column.key) && cell.textValue) {
-            text.push(cell.textValue);
-          }
-
-          if (text.length === rowHeaderColumnKeys.size) {
-            break;
-          }
-        }
-
-        return text.join(' ');
-      }
-
-      return '';
-    }
+    keyboardDelegate: delegate
   }, state, ref);
 
   // Override to include header rows
@@ -95,7 +70,29 @@ export function useTable<T>(props: TableProps<T>, state: TableState<T>, ref: Ref
     gridProps['aria-rowcount'] = state.collection.size + state.collection.headerRows.length;
   }
 
+  let {column, direction: sortDirection} = state.sortDescriptor || {};
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let sortDescription = useMemo(() => {
+    let columnName = state.collection.columns.find(c => c.key === column)?.textValue;
+    return sortDirection && column ? stringFormatter.format(`${sortDirection}Sort`, {columnName}) : undefined;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortDirection, column, state.collection.columns]);
+
+  let descriptionProps = useDescription(sortDescription);
+
+  // Only announce after initial render, tabbing to the table will tell you the initial sort info already
+  useUpdateEffect(() => {
+    announce(sortDescription, 'assertive', 500);
+  }, [sortDescription]);
+
   return {
-    gridProps
+    gridProps: mergeProps(
+      gridProps,
+      descriptionProps,
+      {
+        // merge sort description with long press information
+        'aria-describedby': [descriptionProps['aria-describedby'], gridProps['aria-describedby']].filter(Boolean).join(' ')
+      }
+    )
   };
 }

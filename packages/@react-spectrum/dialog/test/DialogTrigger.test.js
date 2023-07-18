@@ -10,49 +10,53 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, waitFor, within} from '@testing-library/react';
+import {act, fireEvent, render, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Content} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '../';
+import {Heading} from '@react-spectrum/text';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
-import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 
 describe('DialogTrigger', function () {
-  let matchMedia;
+  let warnMock;
+  let windowSpy;
   beforeAll(() => {
     jest.useFakeTimers();
   });
   afterAll(() => {
-    jest.useRealTimers();
+    jest.clearAllMocks();
   });
 
   beforeEach(() => {
-    matchMedia = new MatchMediaMock();
-    // this needs to be a setTimeout so that the dialog can be removed from the dom before the callback is invoked
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(() => cb(), 0));
+    windowSpy = jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+    if (process.env.STRICT_MODE) {
+      warnMock = jest.spyOn(global.console, 'warn').mockImplementation();
+    }
   });
 
   afterEach(() => {
     // Ensure we close any dialogs before unmounting to avoid warning.
     let dialog = document.querySelector('[role="dialog"]');
     if (dialog) {
+      fireEvent.keyDown(dialog, {key: 'Escape'});
+      fireEvent.keyUp(dialog, {key: 'Escape'});
       act(() => {
-        fireEvent.keyDown(dialog, {key: 'Escape'});
-        fireEvent.keyUp(dialog, {key: 'Escape'});
         jest.runAllTimers();
       });
     }
 
-    matchMedia.clear();
-    window.requestAnimationFrame.mockRestore();
+    if (process.env.STRICT_MODE && warnMock.mock.calls.length > 0) {
+      expect(warnMock).toHaveBeenCalledTimes(1);
+      expect(warnMock).toHaveBeenCalledWith('A DialogTrigger unmounted while open. This is likely due to being placed within a trigger that unmounts or inside a conditional. Consider using a DialogContainer instead.');
+      warnMock.mockRestore();
+    }
   });
 
   it('should trigger a modal by default', function () {
@@ -82,7 +86,7 @@ describe('DialogTrigger', function () {
   });
 
   it('should trigger a tray', function () {
-    let {getByRole, getByTestId} = render(
+    let {getByRole, queryByRole, getByTestId} = render(
       <Provider theme={theme}>
         <DialogTrigger type="tray">
           <ActionButton>Trigger</ActionButton>
@@ -91,9 +95,7 @@ describe('DialogTrigger', function () {
       </Provider>
     );
 
-    expect(() => {
-      getByRole('dialog');
-    }).toThrow();
+    expect(queryByRole('dialog')).toBeNull();
 
     let button = getByRole('button');
     triggerPress(button);
@@ -110,7 +112,7 @@ describe('DialogTrigger', function () {
   });
 
   it('should trigger a popover', function () {
-    let {getByRole, getByTestId} = render(
+    let {getByRole, queryByRole, getByTestId} = render(
       <Provider theme={theme}>
         <DialogTrigger type="popover">
           <ActionButton>Trigger</ActionButton>
@@ -119,9 +121,7 @@ describe('DialogTrigger', function () {
       </Provider>
     );
 
-    expect(() => {
-      getByRole('dialog');
-    }).toThrow();
+    expect(queryByRole('dialog')).toBeNull();
 
     let button = getByRole('button');
     triggerPress(button);
@@ -179,8 +179,8 @@ describe('DialogTrigger', function () {
   });
 
   it('should trigger a modal instead of a popover on mobile', function () {
-    matchMedia.useMediaQuery('(max-width: 700px)');
-    let {getByRole, getByTestId} = render(
+    windowSpy.mockImplementation(() => 700);
+    let {getByRole, queryByRole, getByTestId} = render(
       <Provider theme={theme}>
         <DialogTrigger type="popover">
           <ActionButton>Trigger</ActionButton>
@@ -189,9 +189,7 @@ describe('DialogTrigger', function () {
       </Provider>
     );
 
-    expect(() => {
-      getByRole('dialog');
-    }).toThrow();
+    expect(queryByRole('dialog')).toBeNull();
 
     let button = getByRole('button');
     triggerPress(button);
@@ -208,8 +206,8 @@ describe('DialogTrigger', function () {
   });
 
   it('should trigger a tray instead of a popover on mobile if mobileType="tray"', function () {
-    matchMedia.useMediaQuery('(max-width: 700px)');
-    let {getByRole, getByTestId} = render(
+    windowSpy.mockImplementation(() => 700);
+    let {getByRole, queryByRole, getByTestId} = render(
       <Provider theme={theme}>
         <DialogTrigger type="popover" mobileType="tray">
           <ActionButton>Trigger</ActionButton>
@@ -218,9 +216,7 @@ describe('DialogTrigger', function () {
       </Provider>
     );
 
-    expect(() => {
-      getByRole('dialog');
-    }).toThrow();
+    expect(queryByRole('dialog')).toBeNull();
 
     let button = getByRole('button');
     triggerPress(button);
@@ -234,6 +230,41 @@ describe('DialogTrigger', function () {
 
     let tray = getByTestId('tray');
     expect(tray).toBeVisible();
+  });
+
+  it.each(['modal', 'popover', 'tray'])('contains focus within the dialog when rendered as a %s', function (type) {
+    let {getByRole, getByTestId} = render(
+      <Provider theme={theme}>
+        <DialogTrigger type={type}>
+          <ActionButton>Trigger</ActionButton>
+          <Dialog>
+            <input data-testid="input1" />
+            <input data-testid="input2" />
+          </Dialog>
+        </DialogTrigger>
+      </Provider>
+    );
+
+    let button = getByRole('button');
+    triggerPress(button);
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    let dialog = getByRole('dialog');
+    let input1 = getByTestId('input1');
+    let input2 = getByTestId('input2');
+    expect(document.activeElement).toBe(dialog);
+
+    fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+    expect(document.activeElement).toBe(input1);
+
+    fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+    expect(document.activeElement).toBe(input2);
+
+    fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+    expect(document.activeElement).toBe(input1);
   });
 
   it('should restore focus to the trigger when the dialog is closed', async function () {
@@ -283,7 +314,7 @@ describe('DialogTrigger', function () {
   });
 
   it('should restore focus to the trigger when the dialog is closed from a hidden dismiss button', async function () {
-    let {getByRole} = render(
+    let {getByRole, getAllByRole} = render(
       <Provider theme={theme}>
         <DialogTrigger type="popover">
           <ActionButton>Trigger</ActionButton>
@@ -307,7 +338,7 @@ describe('DialogTrigger', function () {
 
     expect(document.activeElement).toBe(dialog);
 
-    let dismiss = within(dialog).getByRole('button');
+    let dismiss = getAllByRole('button')[0];
     triggerPress(dismiss);
 
     act(() => {
@@ -317,6 +348,11 @@ describe('DialogTrigger', function () {
     await waitFor(() => {
       expect(dialog).not.toBeInTheDocument();
     }); // wait for animation
+
+    // now that it's been unmounted, run the raf callback
+    act(() => {
+      jest.runAllTimers();
+    });
 
     expect(document.activeElement).toBe(button);
   });
@@ -358,6 +394,11 @@ describe('DialogTrigger', function () {
       expect(dialog).not.toBeInTheDocument();
     }); // wait for animation
 
+    // now that it's been unmounted, run the raf callback
+    act(() => {
+      jest.runAllTimers();
+    });
+
     expect(document.activeElement).toBe(button);
     expect(onOpenChange).toHaveBeenCalledTimes(2);
   });
@@ -373,7 +414,7 @@ describe('DialogTrigger', function () {
       </Provider>
     );
 
-    expect(rootProviderRef.current.UNSAFE_getDOMNode()).not.toHaveAttribute('aria-hidden');
+    expect(rootProviderRef.current.UNSAFE_getDOMNode().closest('[aria-hidden=true]')).not.toBeInTheDocument();
 
     let button = getByRole('button');
     triggerPress(button);
@@ -386,7 +427,7 @@ describe('DialogTrigger', function () {
       expect(getByRole('dialog')).toBeVisible();
     }); // wait for animation
 
-    expect(rootProviderRef.current.UNSAFE_getDOMNode()).toHaveAttribute('aria-hidden', 'true');
+    expect(rootProviderRef.current.UNSAFE_getDOMNode().closest('[aria-hidden=true]')).toBeInTheDocument();
 
     let dialog = getByRole('dialog');
     fireEvent.keyDown(dialog, {key: 'Escape'});
@@ -399,7 +440,7 @@ describe('DialogTrigger', function () {
       expect(dialog).not.toBeInTheDocument();
     }); // wait for animation
 
-    expect(rootProviderRef.current.UNSAFE_getDOMNode()).not.toHaveAttribute('aria-hidden');
+    expect(rootProviderRef.current.UNSAFE_getDOMNode().closest('[aria-hidden=true]')).not.toBeInTheDocument();
   });
 
   it('can be controlled', async function () {
@@ -415,11 +456,9 @@ describe('DialogTrigger', function () {
     }
 
     let onOpenChange = jest.fn();
-    let {getByRole, rerender} = render(<Test isOpen={false} onOpenChange={onOpenChange} />);
+    let {getByRole, queryByRole, rerender} = render(<Test isOpen={false} onOpenChange={onOpenChange} />);
 
-    expect(() => {
-      getByRole('dialog');
-    }).toThrow();
+    expect(queryByRole('dialog')).toBeNull();
 
     let button = getByRole('button');
     triggerPress(button);
@@ -428,9 +467,7 @@ describe('DialogTrigger', function () {
       jest.runAllTimers();
     });
 
-    expect(() => {
-      getByRole('dialog');
-    }).toThrow();
+    expect(queryByRole('dialog')).toBeNull();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(true);
 
@@ -651,7 +688,7 @@ describe('DialogTrigger', function () {
   });
 
   it('mobile type modals should be closable by clicking outside the modal', async function () {
-    matchMedia.useMediaQuery('(max-width: 700px)');
+    windowSpy.mockImplementation(() => 700);
     function Test({defaultOpen, onOpenChange}) {
       return (
         <Provider theme={theme}>
@@ -728,7 +765,7 @@ describe('DialogTrigger', function () {
   });
 
   it('disable closing dialog via escape key', async function () {
-    let {getByRole} = render(
+    let {queryByRole, getByRole} = render(
       <Provider theme={theme}>
         <DialogTrigger isKeyboardDismissDisabled>
           <ActionButton>Trigger</ActionButton>
@@ -767,17 +804,17 @@ describe('DialogTrigger', function () {
 
     // Close the dialog by clicking the button inside
     button = within(dialog).getByRole('button');
+    triggerPress(button);
     act(() => {
-      triggerPress(button);
       jest.runAllTimers();
     });
 
-    expect(() => getByRole('dialog')).toThrow();
+    expect(queryByRole('dialog')).toBeNull();
   });
 
   it('should warn when unmounting a dialog trigger while a modal is open', function () {
     let warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-    let {getByRole} = render(
+    let {getByRole, queryByRole} = render(
       <Provider theme={theme}>
         <MenuTrigger>
           <ActionButton>Trigger</ActionButton>
@@ -793,22 +830,22 @@ describe('DialogTrigger', function () {
 
     let button = getByRole('button');
 
+    triggerPress(button);
     act(() => {
-      triggerPress(button);
       jest.runAllTimers();
     });
 
     let menu = getByRole('menu');
     let menuitem = within(menu).getByRole('menuitem');
 
+    triggerPress(menuitem);
     act(() => {
-      triggerPress(menuitem);
       jest.runAllTimers();
     });
 
-    expect(() => getByRole('menu')).toThrow();
-    expect(() => getByRole('menuitem')).toThrow();
-    expect(() => getByRole('dialog')).toThrow();
+    expect(queryByRole('menu')).toBeNull();
+    expect(queryByRole('menuitem')).toBeNull();
+    expect(queryByRole('dialog')).toBeNull();
 
     expect(warn).toHaveBeenCalledTimes(1);
     expect(warn).toHaveBeenCalledWith('A DialogTrigger unmounted while open. This is likely due to being placed within a trigger that unmounts or inside a conditional. Consider using a DialogContainer instead.');
@@ -939,4 +976,55 @@ describe('DialogTrigger', function () {
 
     expect(document.activeElement).toBe(innerInput);
   });
+
+  it('will not lose focus to body', async () => {
+    let {getByRole, getByTestId} = render(
+      <Provider theme={theme}>
+        <DialogTrigger type="popover">
+          <ActionButton>Trigger</ActionButton>
+          <Dialog>
+            <Heading>The Heading</Heading>
+            <Content>
+              <MenuTrigger>
+                <ActionButton data-testid="innerButton">Test</ActionButton>
+                <Menu autoFocus="first">
+                  <Item>Item 1</Item>
+                  <Item>Item 2</Item>
+                  <Item>Item 3</Item>
+                </Menu>
+              </MenuTrigger>
+            </Content>
+          </Dialog>
+        </DialogTrigger>
+      </Provider>
+    );
+    let button = getByRole('button');
+    triggerPress(button);
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    let outerDialog = getByRole('dialog');
+
+    await waitFor(() => {
+      expect(outerDialog).toBeVisible();
+    }); // wait for animation
+    let innerButton = getByTestId('innerButton');
+    // Focus manually - userEvent.tab is buggy when starting from an element with tabIndex="-1"
+    act(() => innerButton.focus());
+    fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+    fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+    act(() => {
+      jest.runAllTimers();
+    });
+    userEvent.tab();
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    expect(document.activeElement).toBe(innerButton);
+  });
+
 });

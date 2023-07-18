@@ -19,10 +19,11 @@ interface SlotProps {
 
 let SlotContext = React.createContext(null);
 
-export function useSlotProps<T>(props: T, defaultSlot?: string): T {
+export function useSlotProps<T>(props: T & {id?: string}, defaultSlot?: string): T {
   let slot = (props as SlotProps).slot || defaultSlot;
   let {[slot]: slotProps = {}} = useContext(SlotContext) || {};
-  return mergeProps(slotProps, props);
+
+  return mergeProps(props, mergeProps(slotProps, {id: props.id}));
 }
 
 export function cssModuleToSlots(cssModule) {
@@ -33,11 +34,12 @@ export function cssModuleToSlots(cssModule) {
 }
 
 export function SlotProvider(props) {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   let parentSlots = useContext(SlotContext) || {};
   let {slots = {}, children} = props;
 
   // Merge props for each slot from parent context and props
-  let value = useMemo(() => 
+  let value = useMemo(() =>
     Object.keys(parentSlots)
       .concat(Object.keys(slots))
       .reduce((o, p) => ({

@@ -18,7 +18,6 @@ import React, {RefObject, useRef} from 'react';
 import {SliderState} from '@react-stately/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
 import {useHover} from '@react-aria/interactions';
-import {useLocale} from '@react-aria/i18n';
 import {useSliderThumb} from '@react-aria/slider';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
@@ -30,21 +29,18 @@ interface SliderThumbProps extends AriaSliderThumbProps {
 
 export function SliderThumb(props: SliderThumbProps) {
   let {
-    index,
     inputRef,
     state
   } = props;
   let backupRef = useRef<HTMLInputElement>();
   inputRef = inputRef || backupRef;
 
-  let {thumbProps, inputProps} = useSliderThumb({
+  let {thumbProps, inputProps, isDragging, isFocused} = useSliderThumb({
     ...props,
     inputRef
   }, state);
 
   let {hoverProps, isHovered} = useHover({});
-  let {direction} = useLocale();
-  let cssDirection = direction === 'rtl' ? 'right' : 'left';
 
   return (
     <FocusRing within focusRingClass={classNames(styles, 'is-focused')}>
@@ -55,12 +51,11 @@ export function SliderThumb(props: SliderThumbProps) {
             'spectrum-Slider-handle',
             {
               'is-hovered': isHovered,
-              'is-dragged': state.isThumbDragging(index),
-              'is-tophandle': state.focusedThumb === index
+              'is-dragged': isDragging,
+              'is-tophandle': isFocused
             }
           )
         }
-        style={{[cssDirection]: `${state.getThumbPercent(index) * 100}%`}}
         {...mergeProps(thumbProps, hoverProps)}
         role="presentation">
         <VisuallyHidden>

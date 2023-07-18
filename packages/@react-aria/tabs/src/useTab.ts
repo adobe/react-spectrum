@@ -11,15 +11,21 @@
  */
 
 import {AriaTabProps} from '@react-types/tabs';
+import {DOMAttributes, FocusableElement} from '@react-types/shared';
 import {generateId} from './utils';
-import {HTMLAttributes, RefObject} from 'react';
+import {RefObject} from 'react';
 import {TabListState} from '@react-stately/tabs';
-import {usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
 
-interface TabAria {
+export interface TabAria {
   /** Props for the tab element. */
-  tabProps: HTMLAttributes<HTMLElement>
+  tabProps: DOMAttributes,
+  /** Whether the tab is currently selected. */
+  isSelected: boolean,
+  /** Whether the tab is disabled. */
+  isDisabled: boolean,
+  /** Whether the tab is currently in a pressed state. */
+  isPressed: boolean
 }
 
 /**
@@ -29,35 +35,38 @@ interface TabAria {
 export function useTab<T>(
   props: AriaTabProps,
   state: TabListState<T>,
-  ref: RefObject<HTMLElement>
+  ref: RefObject<FocusableElement>
 ): TabAria {
-  let {key, isDisabled: propsDisabled} = props;
+  let {key, isDisabled: propsDisabled, shouldSelectOnPressUp} = props;
   let {selectionManager: manager, selectedKey} = state;
 
   let isSelected = key === selectedKey;
 
-  let {itemProps} = useSelectableItem({
+  let isDisabled = propsDisabled || state.isDisabled || state.disabledKeys.has(key);
+  let {itemProps, isPressed} = useSelectableItem({
     selectionManager: manager,
     key,
-    ref
+    ref,
+    isDisabled,
+    shouldSelectOnPressUp
   });
-  let isDisabled = propsDisabled || state.disabledKeys.has(key);
 
-  let {pressProps} = usePress({...itemProps, isDisabled});
   let tabId = generateId(state, key, 'tab');
   let tabPanelId = generateId(state, key, 'tabpanel');
-  let {tabIndex} = pressProps;
+  let {tabIndex} = itemProps;
 
   return {
     tabProps: {
-      ...pressProps,
+      ...itemProps,
       id: tabId,
       'aria-selected': isSelected,
       'aria-disabled': isDisabled || undefined,
       'aria-controls': isSelected ? tabPanelId : undefined,
       tabIndex: isDisabled ? undefined : tabIndex,
       role: 'tab'
-    }
+    },
+    isSelected,
+    isDisabled,
+    isPressed
   };
 }
-

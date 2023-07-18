@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, renderHook} from '@testing-library/react-hooks';
-import {act as actDOM, render} from '@testing-library/react';
+import {actHook as act, act as actDOM, render, renderHook} from '@react-spectrum/test-utils';
 import React, {useEffect, useState} from 'react';
 import {useControlledState} from '../src';
 import userEvent from '@testing-library/user-event';
@@ -68,6 +67,7 @@ describe('useControlledState tests', function () {
 
   it('can handle callback setValue behavior', () => {
     let onChangeSpy = jest.fn();
+    let consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {result} = renderHook(() => useControlledState(undefined, 'defaultValue', onChangeSpy));
     let [value, setValue] = result.current;
     expect(value).toBe('defaultValue');
@@ -79,6 +79,7 @@ describe('useControlledState tests', function () {
     [value, setValue] = result.current;
     expect(value).toBe('newValue');
     expect(onChangeSpy).toHaveBeenLastCalledWith('newValue');
+    expect(consoleWarnSpy).toHaveBeenLastCalledWith('We can not support a function callback. See Github Issues for details https://github.com/adobe/react-spectrum/issues/2320');
   });
 
   it('does not trigger too many renders', () => {
@@ -87,7 +88,7 @@ describe('useControlledState tests', function () {
     let TestComponent = (props) => {
       let [state, setState] = useControlledState(props.value, props.defaultValue, props.onChange);
       useEffect(() => renderSpy(), [state]);
-      return <button onClick={() => setState((prev) => prev + 1)} data-testid={state} />;
+      return <button onClick={() => setState(state + 1)} data-testid={state} />;
     };
 
     let TestComponentWrapper = (props) => {
@@ -98,12 +99,16 @@ describe('useControlledState tests', function () {
     let {getByRole, getByTestId} = render(<TestComponentWrapper defaultValue={5} />);
     let button = getByRole('button');
     getByTestId('5');
-    expect(renderSpy).toBeCalledTimes(1);
+    if (!process.env.STRICT_MODE) {
+      expect(renderSpy).toBeCalledTimes(1);
+    }
     actDOM(() =>
       userEvent.click(button)
     );
     getByTestId('6');
-    expect(renderSpy).toBeCalledTimes(2);
+    if (!process.env.STRICT_MODE) {
+      expect(renderSpy).toBeCalledTimes(2);
+    }
   });
 
   it('can handle controlled setValue behavior', () => {
@@ -128,6 +133,7 @@ describe('useControlledState tests', function () {
 
   it('can handle controlled callback setValue behavior', () => {
     let onChangeSpy = jest.fn();
+    let consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {result} = renderHook(() => useControlledState('controlledValue', 'defaultValue', onChangeSpy));
     let [value, setValue] = result.current;
     expect(value).toBe('controlledValue');
@@ -150,11 +156,13 @@ describe('useControlledState tests', function () {
     [value, setValue] = result.current;
     expect(value).toBe('controlledValue');
     expect(onChangeSpy).not.toHaveBeenCalled();
+    expect(consoleWarnSpy).toHaveBeenLastCalledWith('We can not support a function callback. See Github Issues for details https://github.com/adobe/react-spectrum/issues/2320');
   });
 
   it('can handle controlled callback setValue behavior after prop change', () => {
     let onChangeSpy = jest.fn();
     let propValue = 'controlledValue';
+    let consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {result, rerender} = renderHook(() => useControlledState(propValue, 'defaultValue', onChangeSpy));
     let [value, setValue] = result.current;
     expect(value).toBe('controlledValue');
@@ -162,6 +170,7 @@ describe('useControlledState tests', function () {
 
     propValue = 'updated';
     rerender();
+    [value, setValue] = result.current;
 
     act(() => setValue((prevValue) => {
       expect(prevValue).toBe('updated');
@@ -180,6 +189,9 @@ describe('useControlledState tests', function () {
     [value, setValue] = result.current;
     expect(value).toBe('updated');
     expect(onChangeSpy).not.toHaveBeenCalled();
+    expect(consoleWarnSpy).toHaveBeenCalledTimes(2);
+    expect(consoleWarnSpy).toHaveBeenLastCalledWith('We can not support a function callback. See Github Issues for details https://github.com/adobe/react-spectrum/issues/2320');
+
   });
 
   it('will console warn if the programmer tries to switch from controlled to uncontrolled', () => {
@@ -220,5 +232,148 @@ describe('useControlledState tests', function () {
     expect(onChangeSpy).not.toHaveBeenCalled();
     rerender({value: 'controlledValue', defaultValue: 'defaultValue', onChange: onChangeSpy});
     expect(consoleWarnSpy).toHaveBeenLastCalledWith('WARN: A component changed from uncontrolled to controlled.');
+  });
+
+  it('should work with suspense when controlled', () => {
+    if (parseInt(React.version, 10) < 18) {
+      return;
+    }
+
+    const AsyncChild = React.lazy(() => new Promise(() => {}));
+    function Test(props) {
+      let [value, setValue] = useState(1);
+      let [showChild, setShowChild] = useState(false);
+
+      return (
+        <>
+          <TransitionButton
+            onClick={() => {
+              setValue(3);
+              setShowChild(true);
+            }} />
+          <Child
+            value={value}
+            onChange={(v) => {
+              setValue(v);
+              props.onChange(v);
+            }} />
+          {showChild && <AsyncChild />}
+        </>
+      );
+    }
+
+    function Child(props) {
+      let [value, setValue] = useControlledState(props.value, props.defaultValue, props.onChange);
+      return (
+        <button data-testid="value" onClick={() => setValue(value + 1)}>{value}</button>
+      );
+    }
+
+    function TransitionButton({onClick}) {
+      let [isPending, startTransition] = React.useTransition();
+      return (
+        <button
+          data-testid="show"
+          onClick={() => {
+            startTransition(() => {
+              onClick();
+            });
+          }}>
+          {isPending ? 'Loading' : 'Show'}
+        </button>
+      );
+    }
+
+    let onChange = jest.fn();
+    let tree = render(<Test onChange={onChange} />);
+    let value = tree.getByTestId('value');
+    let show = tree.getByTestId('show');
+
+    expect(value).toHaveTextContent('1');
+    userEvent.click(value);
+
+    // Clicking the button should update the value as normal.
+    expect(value).toHaveTextContent('2');
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenLastCalledWith(2);
+
+    // Clicking the show button starts a transition. The new value of 3
+    // will be thrown away by React since the component suspended.
+    expect(show).toHaveTextContent('Show');
+    userEvent.click(show);
+    expect(show).toHaveTextContent('Loading');
+    expect(value).toHaveTextContent('2');
+
+    // Since the previous render was thrown away, the current value shown
+    // to the user is still 2. Clicking the button should bump it to 3 again.
+    userEvent.click(value);
+    expect(value).toHaveTextContent('3');
+    expect(onChange).toHaveBeenCalledTimes(2);
+    expect(onChange).toHaveBeenLastCalledWith(3);
+  });
+
+  it('should work with suspense when uncontrolled', async () => {
+    if (parseInt(React.version, 10) < 18) {
+      return;
+    }
+
+    let resolve;
+    const AsyncChild = React.lazy(() => new Promise((r) => {resolve = r;}));
+    function Test(props) {
+      let [value, setValue] = useControlledState(undefined, 1, props.onChange);
+      let [showChild, setShowChild] = useState(false);
+      let [isPending, startTransition] = React.useTransition();
+
+      return (
+        <>
+          <button
+            data-testid="value"
+            onClick={() => {
+              startTransition(() => {
+                setValue(value + 1);
+                setShowChild(true);
+              });
+            }}>
+            {value}
+            {isPending ? ' (Loading)' : ''}
+          </button>
+          {showChild && <AsyncChild />}
+        </>
+      );
+    }
+
+    function LoadedComponent() {
+      return <div>Hello</div>;
+    }
+
+    let onChange = jest.fn();
+    let tree = render(<Test onChange={onChange} />);
+    let value = tree.getByTestId('value');
+
+    expect(value).toHaveTextContent('1');
+    userEvent.click(value);
+
+    // React aborts the render, so the value stays at 1.
+    expect(value).toHaveTextContent('1 (Loading)');
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenLastCalledWith(2);
+
+    // Attempting to change the value will be aborted again.
+    userEvent.click(value);
+    expect(value).toHaveTextContent('1 (Loading)');
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenLastCalledWith(2);
+
+    // Now resolve the suspended component.
+    // Value should now update to the latest one.
+    resolve({default: LoadedComponent});
+    await act(() => Promise.resolve());
+    expect(value).toHaveTextContent('2');
+
+    // Now incrementing works again.
+    userEvent.click(value);
+    expect(value).toHaveTextContent('3');
+    expect(onChange).toHaveBeenCalledTimes(2);
+    expect(onChange).toHaveBeenLastCalledWith(3);
   });
 });

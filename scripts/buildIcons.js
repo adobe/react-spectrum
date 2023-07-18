@@ -10,11 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import spawn from 'cross-spawn';
-import glob from 'fast-glob';
-import {promises as fs} from 'fs';
-import path from 'path';
 import concurrently from 'concurrently';
+import glob from 'fast-glob';
+import path from 'path';
+import fs from 'fs';
 
 const PACKAGES = {
   ui: path.dirname(require.resolve('@adobe/react-spectrum-ui/dist/')),
@@ -24,7 +23,8 @@ const PACKAGES = {
   color: path.dirname(
     require.resolve('@adobe/react-spectrum-workflow-color/dist/')
   ),
-  illustrations: path.join(getIconPackageFolder('illustrations'), 'src')
+  illustrations: path.join(getIconPackageFolder('illustrations'), 'src'),
+  express: path.join(path.dirname(require.resolve('@adobe/spectrum-css-ccx-workflow-icons')), '18')
 };
 
 (async function () {
@@ -33,7 +33,7 @@ const PACKAGES = {
   for (let [pkg, srcFolder] of Object.entries(PACKAGES)) {
     let distFolder = getIconPackageFolder(pkg);
     for (let srcFile of await glob([
-      path.join(srcFolder, '*.{js,tsx}').replace(/\\/g, '/')
+      path.join(srcFolder, '*.{js,tsx,svg}').replace(/\\/g, '/')
     ])) {
       let filename = path.basename(srcFile);
       if (filename === 'index.js' || filename === 'util.js') {
@@ -69,14 +69,14 @@ function getIconPackageFolder(name) {
 }
 
 async function isNewerThan(a, b) {
-  let a_mtime = (await fs.stat(a)).mtime;
-  let b_mtime = (await fs.stat(b)).mtime;
+  let a_mtime = (await fs.promises.stat(a)).mtime;
+  let b_mtime = (await fs.promises.stat(b)).mtime;
   return a_mtime > b_mtime;
 }
 
 async function exists(f) {
   try {
-    await fs.access(f);
+    await fs.promises.access(f);
     return true;
   } catch (e) {
     if (e.code === 'ENOENT') return false;

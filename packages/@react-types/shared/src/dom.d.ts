@@ -10,7 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {ClipboardEventHandler, CompositionEventHandler, FormEventHandler, ReactEventHandler} from 'react';
+import {
+  AriaAttributes,
+  AriaRole,
+  ClipboardEventHandler,
+  CompositionEventHandler,
+  CSSProperties,
+  FormEventHandler,
+  DOMAttributes as ReactDOMAttributes,
+  ReactEventHandler
+} from 'react';
 
 export interface AriaLabelingProps {
   /**
@@ -61,9 +70,60 @@ export interface FocusableDOMProps extends DOMProps {
   excludeFromTabOrder?: boolean
 }
 
+
+export interface TextInputDOMEvents {
+  // Clipboard events
+  /**
+   * Handler that is called when the user copies text. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/oncopy).
+   */
+   onCopy?: ClipboardEventHandler<HTMLInputElement>,
+
+   /**
+    * Handler that is called when the user cuts text. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/oncut).
+    */
+   onCut?: ClipboardEventHandler<HTMLInputElement>,
+
+   /**
+    * Handler that is called when the user pastes text. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/onpaste).
+    */
+   onPaste?: ClipboardEventHandler<HTMLInputElement>,
+
+   // Composition events
+   /**
+    * Handler that is called when a text composition system starts a new text composition session. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionstart_event).
+    */
+   onCompositionStart?: CompositionEventHandler<HTMLInputElement>,
+
+   /**
+    * Handler that is called when a text composition system completes or cancels the current text composition session. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionend_event).
+    */
+   onCompositionEnd?: CompositionEventHandler<HTMLInputElement>,
+
+   /**
+    * Handler that is called when a new character is received in the current text composition session. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionupdate_event).
+    */
+   onCompositionUpdate?: CompositionEventHandler<HTMLInputElement>,
+
+   // Selection events
+   /**
+    * Handler that is called when text in the input is selected. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/select_event).
+    */
+   onSelect?: ReactEventHandler<HTMLInputElement>,
+
+   // Input events
+   /**
+    * Handler that is called when the input value is about to be modified. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/beforeinput_event).
+    */
+   onBeforeInput?: FormEventHandler<HTMLInputElement>,
+   /**
+    * Handler that is called when the input value is modified. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/input_event).
+    */
+   onInput?: FormEventHandler<HTMLInputElement>
+}
+
 // DOM props that apply to all text inputs
 // Ensure this is synced with useTextField
-export interface TextInputDOMProps extends DOMProps {
+export interface TextInputDOMProps extends DOMProps, TextInputDOMEvents {
   /**
    * Describes the type of autocomplete functionality the input should provide if any. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
    */
@@ -97,58 +157,22 @@ export interface TextInputDOMProps extends DOMProps {
   /**
    * The type of input to render. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdeftype).
    */
-  type?: 'text' | 'search' | 'url' | 'tel' | 'email' | 'password' | string,
+  type?: 'text' | 'search' | 'url' | 'tel' | 'email' | 'password' | (string & {}),
 
   /**
    * Hints at the type of data that might be entered by the user while editing the element or its contents. See [MDN](https://html.spec.whatwg.org/multipage/interaction.html#input-modalities:-the-inputmode-attribute).
    */
-  inputMode?: 'none' | 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search',
+  inputMode?: 'none' | 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search'
+}
 
-  // Clipboard events
-  /**
-   * Handler that is called when the user copies text. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/oncopy).
-   */
-  onCopy?: ClipboardEventHandler<HTMLInputElement>,
+/** Any focusable element, including both HTML and SVG elements. */
+export interface FocusableElement extends Element, HTMLOrSVGElement {}
 
-  /**
-   * Handler that is called when the user cuts text. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/oncut).
-   */
-  onCut?: ClipboardEventHandler<HTMLInputElement>,
-
-  /**
-   * Handler that is called when the user pastes text. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/onpaste).
-   */
-  onPaste?: ClipboardEventHandler<HTMLInputElement>,
-
-  // Composition events
-  /**
-   * Handler that is called when a text composition system starts a new text composition session. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionstart_event).
-   */
-  onCompositionStart?: CompositionEventHandler<HTMLInputElement>,
-  
-  /**
-   * Handler that is called when a text composition system completes or cancels the current text composition session. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionend_event).
-   */
-  onCompositionEnd?: CompositionEventHandler<HTMLInputElement>,
-
-  /**
-   * Handler that is called when a new character is received in the current text composition session. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionupdate_event).
-   */
-  onCompositionUpdate?: CompositionEventHandler<HTMLInputElement>,
-
-  // Selection events
-  /**
-   * Handler that is called when text in the input is selected. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/select_event).
-   */
-  onSelect?: ReactEventHandler<HTMLInputElement>,
-
-  // Input events
-  /**
-   * Handler that is called when the input value is about to be modified. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/beforeinput_event).
-   */
-  onBeforeInput?: FormEventHandler<HTMLInputElement>,
-  /**
-   * Handler that is called when the input value is modified. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/input_event).
-   */
-  onInput?: FormEventHandler<HTMLInputElement>
+/** All DOM attributes supported across both HTML and SVG elements. */
+export interface DOMAttributes<T = FocusableElement> extends AriaAttributes, ReactDOMAttributes<T> {
+  id?: string | undefined,
+  role?: AriaRole | undefined,
+  tabIndex?: number | undefined,
+  style?: CSSProperties | undefined,
+  className?: string | undefined
 }

@@ -1,0 +1,7 @@
+{
+  "actions": "الإجراءات",
+  "actionsAvailable": "الإجراءات المتاحة.",
+  "clearSelection": "إزالة التحديد",
+  "selected": "{count, plural, =0 {غير محدد} other {# محدد}}",
+  "selectedAll": "تم تحديد الكل"
+}

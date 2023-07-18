@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './Item';
-export * from './Section';
-export * from './SelectionGroup';
-export * from './types';
-export * from './useCollection';
-export * from './getItemCount';
+export type {PartialNode} from './types';
+export {Item} from './Item';
+export {Section} from './Section';
+export {SelectionGroup} from './SelectionGroup';
+export {useCollection} from './useCollection';
+export {getItemCount} from './getItemCount';
+export {getChildNodes, getFirstItem, getLastItem, getNthItem, compareNodeOrder} from './getChildNodes';

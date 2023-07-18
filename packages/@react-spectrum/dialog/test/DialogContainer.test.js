@@ -10,40 +10,30 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@testing-library/react';
-import {DialogContainerExample, MenuExample} from '../stories/DialogContainerExamples';
+import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
+import {DialogContainerExample, MenuExample, NestedDialogContainerExample} from '../stories/DialogContainerExamples';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress} from '@react-spectrum/test-utils';
 
 describe('DialogContainer', function () {
   beforeAll(() => {
     jest.useFakeTimers();
   });
 
-  afterAll(() => {
-    jest.useRealTimers();
-  });
-
-  beforeEach(() => {
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
-  });
-
   afterEach(() => {
-    jest.runAllTimers();
-    window.requestAnimationFrame.mockRestore();
+    act(() => {jest.runAllTimers();});
   });
 
   it('should open and close a dialog based on controlled state', function () {
-    let {getByRole} = render(
+    let {getByRole, queryByRole} = render(
       <Provider theme={theme}>
         <DialogContainerExample />
       </Provider>
     );
 
     let button = getByRole('button');
-    expect(() => getByRole('dialog')).toThrow();
+    expect(queryByRole('dialog')).toBeNull();
 
     triggerPress(button);
     act(() => {jest.runAllTimers();});
@@ -56,18 +46,18 @@ describe('DialogContainer', function () {
     triggerPress(button);
     act(() => {jest.runAllTimers();});
 
-    expect(() => getByRole('dialog')).toThrow();
+    expect(queryByRole('dialog')).toBeNull();
   });
 
   it('should support closing a dialog via the Escape key', function () {
-    let {getByRole} = render(
+    let {getByRole, queryByRole} = render(
       <Provider theme={theme}>
         <DialogContainerExample />
       </Provider>
     );
 
     let button = getByRole('button');
-    expect(() => getByRole('dialog')).toThrow();
+    expect(queryByRole('dialog')).toBeNull();
 
     triggerPress(button);
     act(() => {jest.runAllTimers();});
@@ -79,18 +69,18 @@ describe('DialogContainer', function () {
     fireEvent.keyUp(dialog, {key: 'Escape'});
     act(() => {jest.runAllTimers();});
 
-    expect(() => getByRole('dialog')).toThrow();
+    expect(queryByRole('dialog')).toBeNull();
   });
 
   it('should not close a dialog via the Escape key if isKeyboardDismissDisabled', function () {
-    let {getByRole} = render(
+    let {getByRole, queryByRole} = render(
       <Provider theme={theme}>
         <DialogContainerExample isKeyboardDismissDisabled />
       </Provider>
     );
 
     let button = getByRole('button');
-    expect(() => getByRole('dialog')).toThrow();
+    expect(queryByRole('dialog')).toBeNull();
 
     triggerPress(button);
     act(() => {jest.runAllTimers();});
@@ -106,14 +96,14 @@ describe('DialogContainer', function () {
   });
 
   it('should not close when clicking outside the dialog by default', function () {
-    let {getByRole} = render(
+    let {getByRole, queryByRole} = render(
       <Provider theme={theme}>
         <DialogContainerExample />
       </Provider>
     );
 
     let button = getByRole('button');
-    expect(() => getByRole('dialog')).toThrow();
+    expect(queryByRole('dialog')).toBeNull();
 
     triggerPress(button);
     act(() => {jest.runAllTimers();});
@@ -127,14 +117,14 @@ describe('DialogContainer', function () {
   });
 
   it('should close when clicking outside the dialog when isDismissible', function () {
-    let {getByRole} = render(
+    let {getByRole, queryByRole} = render(
       <Provider theme={theme}>
         <DialogContainerExample isDismissable />
       </Provider>
     );
 
     let button = getByRole('button');
-    expect(() => getByRole('dialog')).toThrow();
+    expect(queryByRole('dialog')).toBeNull();
 
     triggerPress(button);
     act(() => {jest.runAllTimers();});
@@ -144,23 +134,23 @@ describe('DialogContainer', function () {
     triggerPress(document.body);
     act(() => {jest.runAllTimers();});
 
-    expect(() => getByRole('dialog')).toThrow();
+    expect(queryByRole('dialog')).toBeNull();
   });
 
   it('should not close the dialog when a trigger unmounts', function () {
-    let {getByRole} = render(
+    let {getByRole, queryByRole} = render(
       <Provider theme={theme}>
         <MenuExample />
       </Provider>
     );
 
     let button = getByRole('button');
-    expect(() => getByRole('dialog')).toThrow();
+    expect(queryByRole('dialog')).toBeNull();
 
     triggerPress(button);
     act(() => {jest.runAllTimers();});
 
-    expect(() => getByRole('dialog')).toThrow();
+    expect(queryByRole('dialog')).toBeNull();
 
     let menu = getByRole('menu');
     let menuitem = within(menu).getByRole('menuitem');
@@ -168,15 +158,53 @@ describe('DialogContainer', function () {
     triggerPress(menuitem);
     act(() => {jest.runAllTimers();});
 
-    expect(() => getByRole('menu')).toThrow();
-    expect(() => getByRole('menuitem')).toThrow();
+    expect(queryByRole('menu')).toBeNull();
+    expect(queryByRole('menuitem')).toBeNull();
 
     let dialog = getByRole('dialog');
     button = within(dialog).getByText('Confirm');
 
     triggerPress(button);
     act(() => {jest.runAllTimers();});
+    act(() => {jest.runAllTimers();});
 
-    expect(() => getByRole('dialog')).toThrow();
+    expect(queryByRole('dialog')).toBeNull();
+  });
+
+  it('should be able to have dialogs open dialogs and still restore focus', function () {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <NestedDialogContainerExample />
+      </Provider>
+    );
+
+    let button = getByRole('button');
+    triggerPress(button);
+    act(() => {jest.runAllTimers();});
+
+    let menu = getByRole('menu');
+    let menuitem = within(menu).getAllByRole('menuitem')[0];
+
+    triggerPress(menuitem);
+    act(() => {jest.runAllTimers();});
+
+    let dialog = getByRole('dialog');
+    let confirmButton = within(dialog).getByText('Do that');
+
+    triggerPress(confirmButton);
+    act(() => {jest.runAllTimers();});
+
+    dialog = getByRole('dialog');
+    confirmButton = within(dialog).getByRole('button', {name: 'Do this'});
+
+    expect(document.activeElement).toBe(confirmButton);
+
+    let closeButton = getByRole('button', {name: 'Dismiss'});
+
+    triggerPress(closeButton);
+    act(() => {jest.runAllTimers();});
+    act(() => {jest.runAllTimers();});
+
+    expect(document.activeElement).toBe(button);
   });
 });

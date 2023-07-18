@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+import {FocusableElement} from '@react-types/shared';
 import {PressProps} from './usePress';
 import React, {MutableRefObject} from 'react';
 
 interface IPressResponderContext extends PressProps {
   register(): void,
-  ref?: MutableRefObject<HTMLElement>
+  ref?: MutableRefObject<FocusableElement>
 }
 
 export const PressResponderContext = React.createContext<IPressResponderContext>(null);

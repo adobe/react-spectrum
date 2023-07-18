@@ -13,7 +13,7 @@
 import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {ListLayout} from '@react-stately/layout';
 import {Node} from '@react-types/shared';
-import React, {ReactElement, useMemo, useRef} from 'react';
+import React, {ReactElement, ReactNode, useMemo, useRef} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
 import {SideNavContext} from './SideNavContext';
 import {SideNavItem} from './SideNavItem';
@@ -38,14 +38,16 @@ export function SideNav<T extends object>(props: SpectrumSideNavProps<T>) {
 
   // This overrides collection view's renderWrapper to support heirarchy of items in sections.
   // The header is extracted from the children so it can receive ARIA labeling properties.
-  type View = ReusableView<Node<T>, unknown>;
+  type View = ReusableView<Node<T>, ReactNode>;
   let renderWrapper = (parent: View, reusableView: View, children: View[], renderChildren: (views: View[]) => ReactElement[]) => {
     if (reusableView.viewType === 'section') {
       return (
         <SideNavSection
           key={reusableView.key}
-          reusableView={reusableView}
-          header={children.find(c => c.viewType === 'header')}>
+          item={reusableView.content}
+          layoutInfo={reusableView.layoutInfo}
+          virtualizer={reusableView.virtualizer}
+          headerLayoutInfo={children.find(c => c.viewType === 'header').layoutInfo}>
           {renderChildren(children.filter(c => c.viewType === 'item'))}
         </SideNavSection>
       );
@@ -54,8 +56,11 @@ export function SideNav<T extends object>(props: SpectrumSideNavProps<T>) {
     return (
       <VirtualizerItem
         key={reusableView.key}
-        reusableView={reusableView}
-        parent={parent} />
+        layoutInfo={reusableView.layoutInfo}
+        virtualizer={reusableView.virtualizer}
+        parent={parent?.layoutInfo}>
+        {reusableView.rendered}
+      </VirtualizerItem>
     );
   };
 

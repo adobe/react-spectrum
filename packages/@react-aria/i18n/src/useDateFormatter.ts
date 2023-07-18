@@ -10,24 +10,43 @@
  * governing permissions and limitations under the License.
  */
 
+import {DateFormatter} from '@internationalized/date';
+import {useDeepMemo} from '@react-aria/utils';
 import {useLocale} from './context';
+import {useMemo} from 'react';
 
-let formatterCache = new Map<string, Intl.DateTimeFormat>();
+export interface DateFormatterOptions extends Intl.DateTimeFormatOptions {
+  calendar?: string
+}
 
 /**
  * Provides localized date formatting for the current locale. Automatically updates when the locale changes,
  * and handles caching of the date formatter for performance.
  * @param options - Formatting options.
  */
-export function useDateFormatter(options?: Intl.DateTimeFormatOptions): Intl.DateTimeFormat {
+export function useDateFormatter(options?: DateFormatterOptions): DateFormatter {
+  // Reuse last options object if it is shallowly equal, which allows the useMemo result to also be reused.
+  options = useDeepMemo(options, isEqual);
   let {locale} = useLocale();
+  return useMemo(() => new DateFormatter(locale, options), [locale, options]);
+}
 
-  let cacheKey = locale + (options ? Object.entries(options).sort((a, b) => a[0] < b[0] ? -1 : 1).join() : '');
-  if (formatterCache.has(cacheKey)) {
-    return formatterCache.get(cacheKey);
+function isEqual(a: DateFormatterOptions, b: DateFormatterOptions) {
+  if (a === b) {
+    return true;
   }
 
-  let formatter = new Intl.DateTimeFormat(locale, options);
-  formatterCache.set(cacheKey, formatter);
-  return formatter;
+  let aKeys = Object.keys(a);
+  let bKeys = Object.keys(b);
+  if (aKeys.length !== bKeys.length) {
+    return false;
+  }
+
+  for (let key of aKeys) {
+    if (b[key] !== a[key]) {
+      return false;
+    }
+  }
+
+  return true;
 }

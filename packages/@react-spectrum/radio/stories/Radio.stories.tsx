@@ -11,97 +11,158 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {Content, ContextualHelp, Flex, Heading} from '@adobe/react-spectrum';
 import {Provider} from '@react-spectrum/provider';
 import {Radio, RadioGroup} from '../src';
-import React from 'react';
-import {storiesOf} from '@storybook/react';
+import React, {useState} from 'react';
 
-storiesOf('RadioGroup', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
-  .add(
-    'default',
-    () => render({})
-  )
-  .add(
-    'defaultValue: dragons',
-    () => render({defaultValue: 'dragons'})
-  )
-  .add(
-    'controlled: dragons',
-    () => render({value: 'dragons'})
-  )
-  .add(
-    'labelPosition: side',
-    () => render({labelPosition: 'side'})
-  )
-  .add(
-    'labelAlign: end',
-    () => render({labelAlign: 'end'})
-  )
-  .add(
-    'horizontal',
-    () => render({orientation: 'horizontal'})
-  )
-  .add(
-    'horizontal, labelPosition: side',
-    () => render({orientation: 'horizontal', labelPosition: 'side'})
-  )
-  .add(
-    'horizontal, labelAlign: end',
-    () => render({orientation: 'horizontal', labelAlign: 'end'})
-  )
-  .add(
-    'isDisabled',
-    () => render({isDisabled: true})
-  )
-  .add(
-    'isDisabled on one radio',
-    () => render({}, [{}, {isDisabled: true}, {}])
-  )
-  .add(
-    'isDisabled on one radio horizontal',
-    () => render({orientation: 'horizontal'}, [{}, {isDisabled: true}, {}])
-  )
-  .add(
-    'isRequired',
-    () => render({isRequired: true})
-  )
-  .add(
-    'isRequired, necessityIndicator: label',
-    () => render({isRequired: true, necessityIndicator: 'label'})
-  )
-  .add(
-    'necessityIndicator: label, labelPosition: side',
-    () => render({necessityIndicator: 'label', labelPosition: 'side'})
-  )
-  .add(
-    'isReadOnly',
-    () => render({isReadOnly: true})
-  )
-  .add(
-    'isEmphasized',
-    () => render({isEmphasized: true})
-  )
-  .add(
-    'validationState: "invalid"',
-    () => render({validationState: 'invalid'})
-  )
-  .add(
-    'no visible label',
-    () => render({label: null, 'aria-label': 'Favorite pet'})
-  )
-  .add(
-    'long radio label',
-    () => renderLongLabel({})
-  )
-  .add(
-    'provider control: isDisabled',
-    () => renderFormControl()
-  )
-  .add(
-    'autoFocus on one radio',
-    () => render({}, [{}, {autoFocus: true}, {}])
-  );
+export default {
+  title: 'RadioGroup',
+  providerSwitcher: {status: 'positive'},
+  args: {
+    label: 'Favorite pet',
+    isEmphasized: false,
+    isDisabled: false,
+    isReadOnly: false,
+    isRequired: false,
+    necessityIndicator: 'icon',
+    labelPosition: 'top',
+    labelAlign: 'start',
+    validationState: null,
+    orientation: 'vertical'
+  },
+  argTypes: {
+    labelPosition: {
+      control: {
+        type: 'radio',
+        options: ['top', 'side']
+      }
+    },
+    necessityIndicator: {
+      control: {
+        type: 'radio',
+        options: ['icon', 'label']
+      }
+    },
+    labelAlign: {
+      control: {
+        type: 'radio',
+        options: ['start', 'end']
+      }
+    },
+    validationState: {
+      control: {
+        type: 'radio',
+        options: [null, 'valid', 'invalid']
+      }
+    },
+    orientation: {
+      control: {
+        type: 'radio',
+        options: ['horizontal', 'vertical']
+      }
+    }
+  }
+};
+
+export const Default = (args) => render(args);
+
+Default.story = {
+  name: 'default'
+};
+
+export const DefaultValueDragons = (args) => render({...args, defaultValue: 'dragons'});
+
+DefaultValueDragons.story = {
+  name: 'defaultValue: dragons'
+};
+
+export const ControlledDragons = (args) => render({...args, value: 'dragons'});
+
+ControlledDragons.story = {
+  name: 'controlled: dragons'
+};
+
+export const IsDisabledOnOneRadio = (args) => render(args, [{}, {isDisabled: true}, {}]);
+
+IsDisabledOnOneRadio.story = {
+  name: 'isDisabled on one radio'
+};
+
+export const WithDescription = (args) => render({...args, description: 'Please select a pet.'});
+
+WithDescription.story = {
+  name: 'with description'
+};
+
+export const WithErrorMessage = (args) =>
+  render({...args, errorMessage: 'Please select a pet.', validationState: 'invalid'});
+
+WithErrorMessage.story = {
+  name: 'with error message'
+};
+
+export const WithErrorMessageAndErrorIcon = (args) =>
+  render({
+    ...args,
+    errorMessage: 'Please select a pet.',
+    validationState: 'invalid',
+    showErrorIcon: true
+  });
+
+WithErrorMessageAndErrorIcon.story = {
+  name: 'with error message and error icon'
+};
+
+export const WithDescriptionErrorMessageAndValidationFixedWidth = (args) =>
+  renderWithDescriptionErrorMessageAndValidation(args);
+
+WithDescriptionErrorMessageAndValidationFixedWidth.story = {
+  name: 'with description, error message and validation, fixed width'
+};
+
+export const _ContextualHelp = (args) =>
+  render({
+    ...args,
+    contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>
+          Segments identify who your visitors are, what devices and services they use, where they
+          navigated from, and much more.
+        </Content>
+      </ContextualHelp>
+    )
+  });
+
+_ContextualHelp.story = {
+  name: 'contextual help'
+};
+
+export const NoVisibleLabel = (args) =>
+  render({...args, label: null, 'aria-label': 'Favorite pet'});
+
+NoVisibleLabel.story = {
+  name: 'no visible label'
+};
+
+export const LongRadioLabel = (args) => renderLongLabel(args);
+
+LongRadioLabel.story = {
+  name: 'long radio label'
+};
+
+export const ProviderControlIsDisabled = () => renderFormControl();
+
+ProviderControlIsDisabled.story = {
+  name: 'provider control: isDisabled'
+};
+
+export const AutoFocusOnOneRadio = (args) => render(args, [{}, {autoFocus: true}, {}]);
+
+AutoFocusOnOneRadio.story = {
+  name: 'autoFocus on one radio'
+};
 
 function render(props, radioProps = [{}, {}, {}]) {
   return (
@@ -162,4 +223,39 @@ function renderFormControl() {
       </RadioGroup>
     </Provider>
   );
+}
+
+function renderWithDescriptionErrorMessageAndValidation(props) {
+  function Example() {
+    let [selected, setSelected] = useState('dogs');
+    let isValid = selected === 'dogs';
+
+    return (
+      <Flex width="480px">
+        <RadioGroup
+          {...props}
+          aria-label="Favorite pet"
+          onChange={setSelected}
+          validationState={isValid ? 'valid' : 'invalid'}
+          description="Please select a pet."
+          errorMessage={
+          selected === 'cats'
+            ? 'No cats allowed.'
+            : 'Please select dogs.'
+        }>
+          <Radio value="dogs">
+            Dogs
+          </Radio>
+          <Radio value="cats">
+            Cats
+          </Radio>
+          <Radio value="dragons">
+            Dragons
+          </Radio>
+        </RadioGroup>
+      </Flex>
+    );
+  }
+
+  return <Example />;
 }

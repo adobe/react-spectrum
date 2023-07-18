@@ -1,0 +1,11 @@
+{
+  "ascending": "висхідний",
+  "ascendingSort": "відсортовано за стовпцем {columnName} у висхідному порядку",
+  "columnSize": "{value} пікс.",
+  "descending": "низхідний",
+  "descendingSort": "відсортовано за стовпцем {columnName} у низхідному порядку",
+  "resizerDescription": "Натисніть Enter, щоб почати зміну розміру",
+  "select": "Вибрати",
+  "selectAll": "Вибрати все",
+  "sortable": "сортувальний стовпець"
+}

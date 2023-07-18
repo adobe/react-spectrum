@@ -1,11 +1,11 @@
-<!-- Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. -->
+governing permissions and limitations under the License. */}
 
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
@@ -13,6 +13,7 @@ export default Layout;
 import docs from 'docs:@react-stately/selection';
 import dataDocs from 'docs:@react-stately/data';
 import {HeaderInfo, PropTable, TypeLink} from '@react-spectrum/docs';
+import {Keyboard} from '@react-spectrum/text';
 
 ---
 category: Selection
@@ -157,7 +158,7 @@ For more information, see [useListData](useListData.html) and [useTreeData](useT
 
 ## Select All
 
-Some components support a checkbox to select all items in the collection, or a keyboard shortcut like <kbd>⌘ Cmd</kbd> + <kbd>A</kbd>.
+Some components support a checkbox to select all items in the collection, or a keyboard shortcut like <Keyboard>⌘ Cmd</Keyboard> + <Keyboard>A</Keyboard>.
 This represents a selection of all items in the collection, regardless of whether or not all items have been loaded from the network.
 For example, when using a component with infinite scrolling support, the user will be unaware that all items are not yet loaded because
 it loads more transparently to them as they scroll down. For this reason, it makes sense for select all to represent all items, not just

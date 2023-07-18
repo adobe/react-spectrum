@@ -12,104 +12,151 @@
 
 import Bell from '@spectrum-icons/workflow/Bell';
 import {Button} from '../';
-import {Flex} from '@react-spectrum/layout';
+import {classNames} from '@react-spectrum/utils';
+import {Flex, Grid, repeat} from '@react-spectrum/layout';
+import {generatePowerset} from '@react-spectrum/story-utils';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
+import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {Text} from '@react-spectrum/text';
+import {View} from '@react-spectrum/view';
 
-storiesOf('Button', module)
-  .add(
-    'variant: cta',
-    () => render({variant: 'cta'})
-  )
-  .add(
-    'with icon',
-    () => (
-      <Flex gap="size-200">
-        <Button variant="primary">
-          <Bell />
-          <Text>Default</Text>
-        </Button>
-        <Button
-          isDisabled
-          variant="primary">
-          <Text>Disabled</Text>
-          <Bell />
-        </Button>
-        <Button
-          isQuiet
-          variant="primary">
-          <Bell />
-          <Text>Quiet</Text>
-        </Button>
-      </Flex>
-    )
-  )
-  .add(
-    'double text node',
-    () => (
-      <Flex gap="size-200">
-        <Button
-          variant="primary">
-          {0} Dogs
-        </Button>
-        <Button
-          isDisabled
-          variant="primary">
-          {0} Dogs
-        </Button>
-        <Button
-          isQuiet
-          variant="primary">
-          {0} Dogs
-        </Button>
-      </Flex>
-    )
-  )
-  .add(
-    'variant: overBackground',
-    () => (
-      <div style={{backgroundColor: 'rgb(15, 121, 125)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
-        {render({variant: 'overBackground'})}
-      </div>
-    )
-  )
-  .add(
-    'variant: primary',
-    () => render({variant: 'primary'})
-  )
-  .add(
-    'variant: secondary',
-    () => render({variant: 'secondary'})
-  )
-  .add(
-    'variant: negative',
-    () => render({variant: 'negative'})
-  )
-  .add(
-    'element: a',
-    () => render({elementType: 'a', variant: 'primary'})
-  );
+let states = [
+  {UNSAFE_className: classNames(styles, 'is-hovered'), 'data-hover': true},
+  {UNSAFE_className: classNames(styles, 'is-active'), 'data-active': true},
+  {UNSAFE_className: classNames(styles, 'focus-ring'), 'data-focus': true},
+  {style: 'fill'},
+  {style: 'outline'},
+  {staticColor: 'white'},
+  {staticColor: 'black'},
+  {isDisabled: true}
+];
+
+let combinations = generatePowerset(states, v => (v.UNSAFE_className && v.isDisabled) || (v['data-focus'] && (v['data-hover'] || v['data-active'])) || (v['data-hover'] && v['data-active']));
+
+export default {
+  title: 'Button',
+  parameters: {
+    chromaticProvider: {locales: ['en-US']}
+  }
+};
+
+export const VariantAccent = () => render({variant: 'accent'});
+
+VariantAccent.story = {
+  name: 'variant: accent'
+};
+
+export const VariantPrimary = () => render({variant: 'primary'});
+
+VariantPrimary.story = {
+  name: 'variant: primary'
+};
+
+export const VariantSecondary = () => render({variant: 'secondary'});
+
+VariantSecondary.story = {
+  name: 'variant: secondary'
+};
+
+export const VariantNegative = () => render({variant: 'negative'});
+
+VariantNegative.story = {
+  name: 'variant: negative'
+};
+
+export const ElementA = () => render({elementType: 'a', variant: 'primary'});
+
+ElementA.story = {
+  name: 'element: a'
+};
+
+export const WithIcon = () => (
+  <Flex gap="size-200">
+    <Button variant="primary">
+      <Bell />
+      <Text>Default</Text>
+    </Button>
+    <Button
+      isDisabled
+      variant="primary">
+      <Text>Disabled</Text>
+      <Bell />
+    </Button>
+  </Flex>
+);
+
+WithIcon.story = {
+  name: 'with icon',
+  parameters: {chromaticProvider: {locales: ['en-US', 'ar-AE']}}
+};
+
+export const IconOnly = () => (
+  <Flex gap="size-200">
+    <Button variant="primary" aria-label="Notifications">
+      <Bell />
+    </Button>
+    <Button
+      isDisabled
+      variant="primary"
+      aria-label="Notifications">
+      <Bell />
+    </Button>
+  </Flex>
+);
+
+IconOnly.story = {
+  name: 'icon only',
+  parameters: {chromaticProvider: {locales: ['en-US', 'ar-AE']}}
+};
+
+export const DoubleTextNode = () => (
+  <Flex gap="size-200">
+    <Button
+      variant="primary">
+      {0} Dogs
+    </Button>
+    <Button
+      isDisabled
+      variant="primary">
+      {0} Dogs
+    </Button>
+  </Flex>
+);
+
+DoubleTextNode.story = {
+  name: 'double text node'
+};
 
 function render(props: any = {}) {
   return (
-    <Flex gap="size-200">
-      <Button
-        {...props}>
-        Default
-      </Button>
-      <Button
-        isDisabled
-        {...props}>
-        Disabled
-      </Button>
-      {props.variant !== 'cta' && (
-      <Button
-        isQuiet
-        {...props}>
-        Quiet
-      </Button>
-      )}
-    </Flex>
+    <Grid columns={repeat(4, '1fr')} autoFlow="row" justifyItems="start" gap="size-300">
+      {combinations.map(c => {
+        let key = Object.keys(c).map(k => {
+          if (k === 'UNSAFE_className') {
+            return '';
+          }
+          return typeof c[k] === 'boolean' ? k.replace(/^data-/, '') : `${k}: ${c[k]}`;
+        }).filter(Boolean).reverse().join(', ');
+        if (!key) {
+          key = 'default';
+        }
+        let button = <Button key={key} {...props} {...c}>{key}</Button>;
+        if (props.variant === 'overBackground' || c.staticColor === 'white') {
+          return (
+            <View backgroundColor="static-blue-700" UNSAFE_style={{padding: '15px 20px', display: 'inline-block'}}>
+              {button}
+            </View>
+          );
+        }
+        if (c.staticColor === 'black') {
+          return (
+            <div style={{backgroundColor: 'rgb(206, 247, 243)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
+              {button}
+            </div>
+          );
+        }
+        return button;
+      })}
+    </Grid>
   );
 }

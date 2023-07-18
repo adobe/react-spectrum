@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@react-spectrum/test-utils';
 import React from 'react';
 import {useInteractionModality} from '@react-aria/interactions';
 import {useTooltip, useTooltipTrigger} from '../';
@@ -21,7 +21,7 @@ describe('useTooltip', function () {
     jest.useRealTimers();
   });
   it('opens tooltip on hover after delay', function () {
-    jest.useFakeTimers('modern');
+    jest.useFakeTimers();
 
     function Test() {
       useInteractionModality();
@@ -76,7 +76,7 @@ describe('useTooltip', function () {
   });
 
   it('hides tooltip when hover leaves the trigger', function () {
-    jest.useFakeTimers('modern');
+    jest.useFakeTimers();
 
     function Test() {
       useInteractionModality();
@@ -108,7 +108,7 @@ describe('useTooltip', function () {
   });
 
   it('keeps tooltip open when it gets hovered', function () {
-    jest.useFakeTimers('modern');
+    jest.useFakeTimers();
 
     function Test() {
       useInteractionModality();
@@ -142,7 +142,7 @@ describe('useTooltip', function () {
   });
 
   it('hides tooltip when hover leaves', function () {
-    jest.useFakeTimers('modern');
+    jest.useFakeTimers();
 
     function Test() {
       useInteractionModality();
@@ -177,7 +177,7 @@ describe('useTooltip', function () {
   });
 
   it('keeps tooltip open when hover returns to trigger from the tooltip', function () {
-    jest.useFakeTimers('modern');
+    jest.useFakeTimers();
 
     function Test() {
       useInteractionModality();

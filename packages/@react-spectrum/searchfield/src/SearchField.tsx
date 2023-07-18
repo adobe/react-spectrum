@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames} from '@react-spectrum/utils';
+import {classNames, useSlotProps} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import Magnifier from '@spectrum-icons/ui/Magnifier';
 import React, {forwardRef, RefObject, useRef} from 'react';
@@ -23,6 +23,7 @@ import {useSearchField} from '@react-aria/searchfield';
 import {useSearchFieldState} from '@react-stately/searchfield';
 
 function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRef>) {
+  props = useSlotProps(props, 'searchfield');
   props = useProviderProps(props);
   let defaultIcon = (
     <Magnifier data-testid="searchicon" />
@@ -32,12 +33,17 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
     icon = defaultIcon,
     isDisabled,
     UNSAFE_className,
+    placeholder,
     ...otherProps
   } = props;
 
+  if (placeholder) {
+    console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/SearchField.html#help-text');
+  }
+
   let state = useSearchFieldState(props);
-  let inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>();
-  let {labelProps, inputProps, clearButtonProps} = useSearchField(props, state, inputRef);
+  let inputRef = useRef<HTMLInputElement>();
+  let {labelProps, inputProps, clearButtonProps, descriptionProps, errorMessageProps} = useSearchField(props, state, inputRef);
 
   let clearButton = (
     <ClearButton
@@ -57,6 +63,8 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
       {...otherProps}
       labelProps={labelProps}
       inputProps={inputProps}
+      descriptionProps={descriptionProps}
+      errorMessageProps={errorMessageProps}
       UNSAFE_className={
         classNames(
           styles,
@@ -65,8 +73,8 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
           {
             'is-disabled': isDisabled,
             'is-quiet': props.isQuiet,
-            'spectrum-Search--invalid': props.validationState === 'invalid',
-            'spectrum-Search--valid': props.validationState === 'valid'
+            'spectrum-Search--invalid': props.validationState === 'invalid' && !isDisabled,
+            'spectrum-Search--valid': props.validationState === 'valid' && !isDisabled
           },
           UNSAFE_className
         )

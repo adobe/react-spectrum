@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, FocusStrategy, KeyboardDelegate, Node} from '@react-types/shared';
-import {HTMLAttributes, Key, RefObject, useEffect, useMemo} from 'react';
+import {Collection, DOMAttributes, FocusStrategy, KeyboardDelegate, Node} from '@react-types/shared';
+import {Key, RefObject, useMemo} from 'react';
 import {ListKeyboardDelegate} from './ListKeyboardDelegate';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useCollator} from '@react-aria/i18n';
 import {useSelectableCollection} from './useSelectableCollection';
 
-interface SelectableListOptions {
+export interface AriaSelectableListOptions {
   /**
    * An interface for reading and updating multiple selection state.
    */
@@ -77,17 +77,17 @@ interface SelectableListOptions {
   allowsTabNavigation?: boolean
 }
 
-interface SelectableListAria {
+export interface SelectableListAria {
   /**
    * Props for the option element.
    */
-  listProps: HTMLAttributes<HTMLElement>
+  listProps: DOMAttributes
 }
 
 /**
  * Handles interactions with a selectable list.
  */
-export function useSelectableList(props: SelectableListOptions): SelectableListAria {
+export function useSelectableList(props: AriaSelectableListOptions): SelectableListAria {
   let {
     selectionManager,
     collection,
@@ -98,7 +98,7 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
     shouldFocusWrap,
     isVirtualized,
     disallowEmptySelection,
-    selectOnFocus = false,
+    selectOnFocus = selectionManager.selectionBehavior === 'replace',
     disallowTypeAhead,
     shouldUseVirtualFocus,
     allowsTabNavigation
@@ -107,18 +107,10 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
   // When virtualized, the layout object will be passed in as a prop and override this.
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
-  let delegate = useMemo(() => keyboardDelegate || new ListKeyboardDelegate(collection, disabledKeys, ref, collator), [keyboardDelegate, collection, disabledKeys, ref, collator]);
-
-  // If not virtualized, scroll the focused element into view when the focusedKey changes.
-  // When virtualized, Virtualizer handles this internally.
-  useEffect(() => {
-    if (!isVirtualized && selectionManager.focusedKey && ref?.current) {
-      let element = ref.current.querySelector(`[data-key="${selectionManager.focusedKey}"]`) as HTMLElement;
-      if (element) {
-        scrollIntoView(ref.current, element);
-      }
-    }
-  }, [isVirtualized, ref, selectionManager.focusedKey]);
+  let disabledBehavior = selectionManager.disabledBehavior;
+  let delegate = useMemo(() => (
+    keyboardDelegate || new ListKeyboardDelegate(collection, disabledBehavior === 'selection' ? new Set() : disabledKeys, ref, collator)
+  ), [keyboardDelegate, collection, disabledKeys, ref, collator, disabledBehavior]);
 
   let {collectionProps} = useSelectableCollection({
     ref,
@@ -130,64 +122,12 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
     selectOnFocus,
     disallowTypeAhead,
     shouldUseVirtualFocus,
-    allowsTabNavigation
+    allowsTabNavigation,
+    isVirtualized,
+    scrollRef: ref
   });
 
   return {
     listProps: collectionProps
   };
-}
-
-/**
- * Scrolls `scrollView` so that `element` is visible.
- * Similar to `element.scrollIntoView({block: 'nearest'})` (not supported in Edge),
- * but doesn't affect parents above `scrollView`.
- */
-function scrollIntoView(scrollView: HTMLElement, element: HTMLElement) {
-  let offsetX = relativeOffset(scrollView, element, 'left');
-  let offsetY = relativeOffset(scrollView, element, 'top');
-  let width = element.offsetWidth;
-  let height = element.offsetHeight;
-  let x = scrollView.scrollLeft;
-  let y = scrollView.scrollTop;
-  let maxX = x + scrollView.offsetWidth;
-  let maxY = y + scrollView.offsetHeight;
-
-  if (offsetX <= x) {
-    x = offsetX;
-  } else if (offsetX + width > maxX) {
-    x += offsetX + width - maxX;
-  }
-  if (offsetY <= y) {
-    y = offsetY;
-  } else if (offsetY + height > maxY) {
-    y += offsetY + height - maxY;
-  }
-
-  scrollView.scrollLeft = x;
-  scrollView.scrollTop = y;
-}
-
-/**
- * Computes the offset left or top from child to ancestor by accumulating
- * offsetLeft or offsetTop through intervening offsetParents.
- */
-function relativeOffset(ancestor: HTMLElement, child: HTMLElement, axis: 'left'|'top') {
-  const prop = axis === 'left' ? 'offsetLeft' : 'offsetTop';
-  let sum = 0;
-  while (child.offsetParent) {
-    sum += child[prop];
-    if (child.offsetParent === ancestor) {
-      // Stop once we have found the ancestor we are interested in.
-      break;
-    } else if (child.offsetParent.contains(ancestor)) {
-      // If the ancestor is not `position:relative`, then we stop at 
-      // _its_ offset parent, and we subtract off _its_ offset, so that
-      // we end up with the proper offset from child to ancestor.
-      sum -= ancestor[prop];
-      break;
-    }
-    child = child.offsetParent as HTMLElement;
-  }
-  return sum;
 }

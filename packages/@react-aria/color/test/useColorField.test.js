@@ -12,7 +12,7 @@
 
 import {parseColor} from '@react-stately/color';
 import React from 'react';
-import {renderHook} from '@testing-library/react-hooks';
+import {renderHook} from '@react-spectrum/test-utils';
 import {useColorField} from '../';
 
 describe('useColorField', function () {
@@ -50,6 +50,7 @@ describe('useColorField', function () {
     expect(inputProps['aria-invalid']).toBeUndefined();
     expect(inputProps.disabled).toBe(false);
     expect(inputProps.readOnly).toBe(false);
+    expect(inputProps.spellCheck).toBe('false');
   });
 
   it('should return props for colorValue provided', function () {

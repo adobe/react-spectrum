@@ -1,0 +1,65 @@
+<svg style="max-height:200px;background:var(--anatomy-gray-100);padding:32px;margin-bottom:16px;width:calc(100% - 64px);border-radius:4px" viewBox="0 0 415 220">
+  <g id="Tag" transform="translate(67.653 85.595)">
+    <rect id="Placement_Area" data-name="Placement Area" width="148.873" height="45.807" transform="translate(0 0)" fill="red" opacity="0"/>
+    <g id="Background" transform="translate(0 0)" fill="var(--anatomy-gray-75)" stroke="var(--anatomy-gray-600)" stroke-width="1">
+      <rect width="148.873" height="45.807" rx="4" stroke="none"/>
+      <rect x="0.5" y="0.5" width="147.873" height="44.807" rx="3.5" fill="none"/>
+    </g>
+    <text id="Traveling" transform="translate(19.086 28.635)" fill="var(--anatomy-gray-700)" font-size="21" font-family="Adobe-Clean"><tspan x="0" y="0">Traveling</tspan></text>
+    <g id="Close" transform="translate(118.335 15.269)">
+      <rect id="Frame" width="15.269" height="15.269" fill="var(--anatomy-gray-600)" opacity="0"/>
+      <path id="Shape" d="M13.511,11.824,8.867,7.18l4.644-4.644A1.193,1.193,0,0,0,11.824.849L7.18,5.493,2.537.849A1.193,1.193,0,1,0,.849,2.537L5.493,7.18.849,11.824a1.193,1.193,0,0,0,1.687,1.687L7.18,8.867l4.644,4.644a1.193,1.193,0,0,0,1.687-1.687Z" transform="translate(0.454 0.454)" fill="var(--anatomy-gray-600)"/>
+    </g>
+    <line id="Line_6" data-name="Line 6" x1="19" y2="0.467" transform="translate(-19.048 12.497)" fill="none" stroke="var(--anatomy-gray-600)" stroke-width="1"/>
+    <g id="Ellipse_3" data-name="Ellipse 3" transform="translate(-2.655 15.36) rotate(-90)" fill="var(--anatomy-gray-600)" stroke="var(--anatomy-gray-600)" stroke-width="1">
+      <ellipse cx="2.863" cy="2.863" rx="2.863" ry="2.863" stroke="none"/>
+      <ellipse cx="2.863" cy="2.863" rx="2.363" ry="2.363" fill="none"/>
+    </g>
+    <text id="Close_icon" data-name="Close icon" transform="translate(-67.653 15.285)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="0" y="0">Grid row</tspan></text>
+    <line id="Line_7" data-name="Line 7" x1="32.129" y2="0.33" transform="translate(-19.048 30.635)" fill="none" stroke="var(--anatomy-gray-600)" stroke-width="1"/>
+    <g id="Ellipse_4" data-name="Ellipse 4" transform="translate(7.508 33.497) rotate(-90)" fill="var(--anatomy-gray-600)" stroke="var(--anatomy-gray-600)" stroke-width="1">
+      <ellipse cx="2.863" cy="2.863" rx="2.863" ry="2.863" stroke="none"/>
+      <ellipse cx="2.863" cy="2.863" rx="2.363" ry="2.363" fill="none"/>
+    </g>
+    <text id="Close_icon-2" data-name="Close icon" transform="translate(-63.9 35.634)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="0" y="0">Grid cell</tspan></text>
+    <text id="Text" transform="translate(34.086 73.549)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="0" y="0">Tag label</tspan></text>
+    <line id="Line_1" data-name="Line 1" y1="26.721" transform="translate(57.086 33.828)" fill="none" stroke="var(--anatomy-gray-600)" stroke-width="1"/>
+    <g id="Ellipse_1" data-name="Ellipse 1" transform="translate(54.223 30.965)" fill="var(--anatomy-gray-600)" stroke="var(--anatomy-gray-600)" stroke-width="1">
+      <ellipse cx="2.863" cy="2.863" rx="2.863" ry="2.863" stroke="none"/>
+      <ellipse cx="2.863" cy="2.863" rx="2.363" ry="2.363" fill="none"/>
+    </g>
+  </g>
+  <g id="Tag-2" data-name="Tag" transform="translate(220.343 53)">
+    <rect id="Placement_Area-2" data-name="Placement Area" width="148.873" height="45.807" transform="translate(0 32.595)" fill="red" opacity="0"/>
+    <g id="Background-2" data-name="Background" transform="translate(0 32.595)" fill="var(--anatomy-gray-75)" stroke="var(--anatomy-gray-600)" stroke-width="1">
+      <rect width="124.061" height="45.807" rx="4" stroke="none"/>
+      <rect x="0.5" y="0.5" width="123.061" height="44.807" rx="3.5" fill="none"/>
+    </g>
+    <text id="Hiking" transform="translate(19.086 61.23)" fill="var(--anatomy-gray-700)" font-size="21" font-family="Adobe-Clean"><tspan x="0" y="0">Hiking</tspan></text>
+    <g id="Close-2" data-name="Close" transform="translate(93.523 47.864)">
+      <rect id="Frame-2" data-name="Frame" width="15.269" height="15.269" transform="translate(0)" fill="var(--anatomy-gray-600)" opacity="0"/>
+      <path id="Shape-2" data-name="Shape" d="M13.511,11.824,8.867,7.18l4.644-4.644A1.193,1.193,0,0,0,11.824.849L7.18,5.493,2.537.849A1.193,1.193,0,1,0,.849,2.537L5.493,7.18.849,11.824a1.193,1.193,0,0,0,1.687,1.687L7.18,8.867l4.644,4.644a1.193,1.193,0,0,0,1.687-1.687Z" transform="translate(0.044 0.454)" fill="var(--anatomy-gray-600)"/>
+    </g>
+    <line id="Line_3" data-name="Line 3" y1="26" transform="translate(100.651 17.509)" fill="none" stroke="var(--anatomy-gray-600)" stroke-width="1"/>
+    <g id="Ellipse_2" data-name="Ellipse 2" transform="translate(97.788 42.138)" fill="var(--anatomy-gray-600)" stroke="var(--anatomy-gray-600)" stroke-width="1">
+      <ellipse cx="2.863" cy="2.863" rx="2.863" ry="2.863" stroke="none"/>
+      <ellipse cx="2.863" cy="2.863" rx="2.363" ry="2.363" fill="none"/>
+    </g>
+    <text id="Close_icon-3" data-name="Close icon" transform="translate(62 13)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="0" y="0">Remove button</tspan></text>
+  </g>
+  <g id="Group_1" data-name="Group 1" transform="translate(-104.895 -47.94)">
+    <line id="Line_2" data-name="Line 2" x1="320.222" transform="translate(153.889 237.767)" fill="none" stroke="var(--anatomy-gray-600)" stroke-width="1"/>
+    <line id="Line_4" data-name="Line 4" y2="11.461" transform="translate(474.111 226.307)" fill="none" stroke="var(--anatomy-gray-600)" stroke-width="1"/>
+    <line id="Line_5" data-name="Line 5" y2="11.461" transform="translate(153.889 226.307)" fill="none" stroke="var(--anatomy-gray-600)" stroke-width="1"/>
+    <text id="Tag_group" data-name="Tag group" transform="translate(295.421 260.06)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="0" y="0">Tag group</tspan></text>
+  </g>
+  <g id="Group_2" data-name="Group 2" transform="translate(-105.895 -47.94)">
+    <text id="Categories" transform="translate(172.658 112.312)" fill="var(--anatomy-gray-700)" font-size="21" font-family="Adobe-Clean"><tspan x="0" y="0">Categories</tspan></text>
+    <line id="Line_8" data-name="Line 8" y1="26" transform="translate(216.652 66.449)" fill="none" stroke="var(--anatomy-gray-600)" stroke-width="1"/>
+    <g id="Ellipse_5" data-name="Ellipse 5" transform="translate(213.789 91.078)" fill="var(--anatomy-gray-600)" stroke="var(--anatomy-gray-600)" stroke-width="1">
+      <ellipse cx="2.863" cy="2.863" rx="2.863" ry="2.863" stroke="none"/>
+      <ellipse cx="2.863" cy="2.863" rx="2.363" ry="2.363" fill="none"/>
+    </g>
+    <text id="Close_icon-4" data-name="Close icon" transform="translate(186.652 60.94)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="0" y="0">Group label</tspan></text>
+  </g>
+</svg>

@@ -30,7 +30,9 @@
   --spectrum-global-dimension-size-200: 20px;
   --spectrum-global-dimension-size-225: 22px;
   --spectrum-global-dimension-size-250: 25px;
+  --spectrum-global-dimension-size-275: 28px;
   --spectrum-global-dimension-size-300: 30px;
+  --spectrum-global-dimension-size-325: 32px;
   --spectrum-global-dimension-size-350: 35px;
   --spectrum-global-dimension-size-400: 40px;
   --spectrum-global-dimension-size-450: 45px;
@@ -71,6 +73,9 @@
   --spectrum-global-dimension-font-size-1100: 55px;
   --spectrum-global-dimension-font-size-1200: 62px;
   --spectrum-global-dimension-font-size-1300: 70px;
+  --spectrum-alias-avatar-size-100: 26px;
+  --spectrum-alias-avatar-size-400: 36px;
+  --spectrum-alias-avatar-size-600: 46px;
   --spectrum-actionbutton-touch-hit-x: var(--spectrum-global-dimension-static-size-50);
   --spectrum-actionbutton-touch-hit-y: var(--spectrum-global-dimension-static-size-50);
   --spectrum-actionbutton-emphasized-touch-hit-x: var(--spectrum-global-dimension-static-size-50);

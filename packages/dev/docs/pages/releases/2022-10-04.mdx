@@ -1,0 +1,283 @@
+{/* Copyright 2022 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+description: We have been busy this month with new components and plenty of drag and drop updates. Drag and drop has moved into RC status in this release, and includes many API improvements to make common experiences even easier to build. We have also added new Badge and LabeledValue components, HelpText support to CheckBoxGroup and RadioGroup, and ContextualHelp support to all form components.
+date: 2022-10-04
+---
+
+# October 4, 2022 Release
+We have been busy this month with new components and plenty of drag and drop updates. Drag and drop has moved into RC status in this release, and includes many API improvements to make common experiences even easier to build. See [below](#drag-and-drop-updates) for more information. We have also added [Badge](https://react-spectrum.adobe.com/react-spectrum/Badge.html) and [LabeledValue](https://react-spectrum.adobe.com/react-spectrum/LabeledValue.html) in this release. Badges are handy for showing a small amount of color-categorized metadata and LabeledValue is for displaying non-editable values with a label such as in a properties panel. It also formats numbers, dates, times, and lists according to the user's locale. [CheckBoxGroup](https://react-spectrum.adobe.com/react-spectrum/CheckboxGroup.html#help-text) and [RadioGroup](https://react-spectrum.adobe.com/react-spectrum/RadioGroup.html#help-text) have also been updated to include HelpText and [ContextualHelp](https://react-spectrum.adobe.com/react-spectrum/TextField.html#contextual-help) support has been added to all form components.
+
+
+
+## New Components
+  Badge
+    - `@react-spectrum/badge` - [Docs](https://react-spectrum.adobe.com/react-spectrum/Badge.html)
+
+  LabeledValue
+    - `@react-spectrum/labeledvalue` - [Docs](https://react-spectrum.adobe.com/react-spectrum/LabeledValue.html)
+
+## New Features
+* Add icon-only variant for `Button` - [@jluyau](https://github.com/jluyau) - [PR](https://github.com/adobe/react-spectrum/pull/3460)
+* Add HelpText to `CheckboxGroup` and `RadioGroup` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3527)
+* Add `ContextualHelp` support to all form fields - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3521)
+* Support nested focusable elements in `VisuallyHidden` with `isFocusable` option - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3572)
+* Update typography of `TableView` headings and `Section` headings in `Menu`, `Picker`, `ComboBox`, and `ListBox` to match Spectrum's new design - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3530)
+
+
+## Fixes
+* Disabling TableView/ListView keyboard navigation and press interactions if collection is empty - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3422)
+* Focus first element in scope if `nodeToRestore` does not exist - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3385)
+* Fix `ActionGroup` more icon not rendering - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3501)
+* Drag and drop translation update, and fix on `Picker` for Spanish - [@rgeraghty](https://github.com/rgeraghty) - [PR](https://github.com/adobe/react-spectrum/pull/3540)
+* Ensure checkboxes without explicit values render no `value` attribute in the DOM - [@brandonpittman](https://github.com/brandonpittman) - [PR](https://github.com/adobe/react-spectrum/pull/3554)
+* Fix `DatePicker` aria-live not announcing new months - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/3564)
+* `ContextualHelp` style props - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3542)
+* Fix `TableView` infinite resize issue - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3474)
+* Remove extra tabstop for `TableView` when using overflow: auto in Firefox - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/3474)
+* Section and header style improvements for `TableView` and `Menu` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3560)
+* Fix wrapping of field label in Safari - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3566)
+* Confine `TableView` sticky column issue to Chrome version 105 only - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/3475)
+* `Provider` props should not disable elements inside a `Dialog` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3587)
+
+
+## Docs
+* Update `TextArea` docs to remove old resizing info - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3485)
+* Update mentions of illustration support in `ListView` docs - [@jluyau](https://github.com/jluyau) - [PR](https://github.com/adobe/react-spectrum/pull/3486)
+* Add missing styled example to `useMenu` docs - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3541)
+
+## Under construction
+Fixes to pre-released components are listed below. Please feel free to try them out, and report any issues you encounter.
+
+* Adding utility handlers to DnD hooks to simplify implementation experience - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3266)
+* Skip row contents when cycling through droppable `ListView` rows via TalkBack - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3401)
+* Fix focus behavior after dropping `ListView` item - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3369)
+* Handle drag and drop modifier keys more consistently across browsers - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3479)
+* Support `onAction` and drag and drop in `ListBox` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3421)
+* Fix `ListView` drag preview density - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3493)
+* Hide dragging `ListView` row from Talkback during virtual drag - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3492)
+* Fix sticky drop indicator when exiting list - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3497)
+* Fix text truncation in mobile SearchAutocomplete - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3507)
+* Increase Column resize hit area - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3414)
+* Update Spectrum DnD docs and rename Spectrum DnD hook - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3548)
+* Add documentation for drag and drop in React Aria - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3423)
+* Handle dragging with NVDA/JAWS in browse mode - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3524)
+* Fix root drop indicator so iOS VO can target it via swiping - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3569)
+* Update simplified DnD handler api and memoize useDnDHooks - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3533)
+* Focus an item after it has been dropped on - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3549)
+
+## Drag and Drop Updates
+
+We have enhanced the drag and drop API in React Spectrum and React Aria in this release, and it is now entering RC status. This includes a few breaking changes.
+
+For React Spectrum:
+
+* useDragHooks and useDropHooks were merged into a single hook: useDragAndDrop which combines all options together, along with some new ones (see below).
+* The corresponding dragHooks and dropHooks props of ListView have been merged into the new dragAndDropHooks prop.
+
+For both React Spectrum and React Aria, we have added a new higher level API for drag and drop that makes it easier to build common experiences such as reordering, inserting items, dropping on folders, etc. The new options are:
+
+* onReorder
+* onInsert
+* onItemDrop
+* onRootDrop
+* acceptedDragTypes
+* shouldAcceptItemDrop
+
+The previous low level API is also still available, and useful for building more custom experiences.
+
+Check out the new drag and drop documentation for [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/dnd.html) and [React Aria](https://react-spectrum.adobe.com/react-aria/dnd.html) to learn more.
+
+## Released packages
+
+```
+- @adobe/react-spectrum@3.22.0
+- @react-aria/accordion@3.0.0-alpha.12
+- @react-aria/actiongroup@3.4.2
+- @react-aria/aria-modal-polyfill@3.6.0
+- @react-aria/autocomplete@3.0.0-alpha.11
+- @react-aria/breadcrumbs@3.3.2
+- @react-aria/button@3.6.2
+- @react-aria/calendar@3.0.3
+- @react-aria/checkbox@3.6.0
+- @react-aria/color@3.0.0-beta.16
+- @react-aria/combobox@3.4.2
+- @react-aria/datepicker@3.1.2
+- @react-aria/dialog@3.4.0
+- @react-aria/dnd@3.0.0-rc.0
+- @react-aria/focus@3.9.0
+- @react-aria/grid@3.5.0
+- @react-aria/gridlist@3.1.0
+- @react-aria/i18n@3.6.1
+- @react-aria/interactions@3.12.0
+- @react-aria/label@3.4.2
+- @react-aria/landmark@3.0.0-alpha.3
+- @react-aria/link@3.3.4
+- @react-aria/listbox@3.7.0
+- @react-aria/menu@3.6.2
+- @react-aria/meter@3.3.2
+- @react-aria/numberfield@3.3.2
+- @react-aria/overlays@3.11.0
+- @react-aria/progress@3.3.2
+- @react-aria/radio@3.4.0
+- @react-aria/searchfield@3.4.2
+- @react-aria/select@3.8.2
+- @react-aria/selection@3.11.0
+- @react-aria/separator@3.2.4
+- @react-aria/slider@3.2.2
+- @react-aria/spinbutton@3.1.4
+- @react-aria/switch@3.2.4
+- @react-aria/table@3.5.0
+- @react-aria/tabs@3.3.2
+- @react-aria/tag@3.0.0-alpha.10
+- @react-aria/textfield@3.7.2
+- @react-aria/toggle@3.4.0
+- @react-aria/tooltip@3.3.2
+- @react-aria/utils@3.14.0
+- @react-aria/virtualizer@3.5.1
+- @react-aria/visually-hidden@3.5.0
+- @react-spectrum/accordion@3.0.0-alpha.13
+- @react-spectrum/actionbar@3.0.0-alpha.13
+- @react-spectrum/actiongroup@3.7.0
+- @react-spectrum/autocomplete@3.0.0-alpha.11
+- @react-spectrum/avatar@3.0.0-alpha.10
+- @react-spectrum/badge@3.0.0
+- @react-spectrum/breadcrumbs@3.5.2
+- @react-spectrum/button@3.10.0
+- @react-spectrum/buttongroup@3.4.2
+- @react-spectrum/calendar@3.1.2
+- @react-spectrum/card@3.0.0-alpha.12
+- @react-spectrum/checkbox@3.6.0
+- @react-spectrum/color@3.0.0-beta.16
+- @react-spectrum/combobox@3.6.0
+- @react-spectrum/contextualhelp@3.3.0
+- @react-spectrum/datepicker@3.2.0
+- @react-spectrum/dialog@3.5.2
+- @react-spectrum/divider@3.4.2
+- @react-spectrum/dnd@3.0.0-rc.0
+- @react-spectrum/form@3.5.0
+- @react-spectrum/icon@3.6.1
+- @react-spectrum/illustratedmessage@3.3.2
+- @react-spectrum/image@3.3.2
+- @react-spectrum/label@3.8.0
+- @react-spectrum/labeledvalue@3.0.0
+- @react-spectrum/layout@3.4.2
+- @react-spectrum/link@3.4.2
+- @react-spectrum/list@3.1.0
+- @react-spectrum/listbox@3.8.0
+- @react-spectrum/menu@3.8.2
+- @react-spectrum/meter@3.3.2
+- @react-spectrum/numberfield@3.4.2
+- @react-spectrum/overlays@3.8.0
+- @react-spectrum/picker@3.8.0
+- @react-spectrum/progress@3.3.2
+- @react-spectrum/provider@3.5.2
+- @react-spectrum/radio@3.4.0
+- @react-spectrum/searchfield@3.5.2
+- @react-spectrum/searchwithin@3.0.0-alpha.11
+- @react-spectrum/slider@3.3.0
+- @react-spectrum/statuslight@3.4.2
+- @react-spectrum/switch@3.3.2
+- @react-spectrum/table@3.4.0
+- @react-spectrum/tabs@3.3.2
+- @react-spectrum/tag@3.0.0-alpha.10
+- @react-spectrum/text@3.3.2
+- @react-spectrum/textfield@3.8.0
+- @react-spectrum/theme-dark@3.3.4
+- @react-spectrum/theme-default@3.3.4
+- @react-spectrum/theme-light@3.2.4
+- @react-spectrum/tooltip@3.3.2
+- @react-spectrum/utils@3.7.4
+- @react-spectrum/view@3.3.2
+- @react-spectrum/well@3.3.2
+- @react-stately/calendar@3.0.3
+- @react-stately/checkbox@3.3.0
+- @react-stately/collections@3.4.4
+- @react-stately/color@3.2.0
+- @react-stately/combobox@3.2.2
+- @react-stately/data@3.7.0
+- @react-stately/datepicker@3.1.0
+- @react-stately/dnd@3.0.0-rc.0
+- @react-stately/grid@3.4.0
+- @react-stately/layout@3.8.0
+- @react-stately/list@3.5.4
+- @react-stately/menu@3.4.2
+- @react-stately/numberfield@3.2.2
+- @react-stately/overlays@3.4.2
+- @react-stately/radio@3.6.0
+- @react-stately/searchfield@3.3.2
+- @react-stately/select@3.3.2
+- @react-stately/selection@3.11.0
+- @react-stately/slider@3.2.2
+- @react-stately/table@3.5.0
+- @react-stately/tabs@3.2.2
+- @react-stately/toggle@3.4.2
+- @react-stately/tooltip@3.2.2
+- @react-stately/tree@3.3.4
+- @react-stately/virtualizer@3.3.1
+- @react-types/accordion@3.0.0-alpha.10
+- @react-types/actionbar@3.0.0-alpha.10
+- @react-types/actiongroup@3.3.4
+- @react-types/autocomplete@3.0.0-alpha.9
+- @react-types/avatar@3.0.0-alpha.9
+- @react-types/badge@3.0.0
+- @react-types/breadcrumbs@3.4.4
+- @react-types/button@3.6.2
+- @react-types/buttongroup@3.2.4
+- @react-types/calendar@3.0.3
+- @react-types/card@3.0.0-alpha.10
+- @react-types/checkbox@3.4.0
+- @react-types/color@3.0.0-beta.13
+- @react-types/combobox@3.5.4
+- @react-types/contextualhelp@3.1.4
+- @react-types/datepicker@3.1.2
+- @react-types/dialog@3.4.4
+- @react-types/divider@3.2.4
+- @react-types/form@3.4.0
+- @react-types/grid@3.1.4
+- @react-types/illustratedmessage@3.2.4
+- @react-types/image@3.2.4
+- @react-types/label@3.7.0
+- @react-types/layout@3.3.4
+- @react-types/link@3.3.4
+- @react-types/list@3.1.0
+- @react-types/listbox@3.3.4
+- @react-types/menu@3.7.2
+- @react-types/meter@3.2.4
+- @react-types/numberfield@3.3.4
+- @react-types/overlays@3.6.4
+- @react-types/progress@3.2.4
+- @react-types/provider@3.5.4
+- @react-types/radio@3.3.0
+- @react-types/searchfield@3.3.4
+- @react-types/searchwithin@3.0.0-alpha.9
+- @react-types/select@3.6.4
+- @react-types/shared@3.15.0
+- @react-types/slider@3.3.0
+- @react-types/statuslight@3.2.4
+- @react-types/switch@3.2.4
+- @react-types/table@3.3.2
+- @react-types/tabs@3.1.4
+- @react-types/tag@3.0.0-alpha.8
+- @react-types/text@3.2.4
+- @react-types/textfield@3.6.0
+- @react-types/tooltip@3.2.4
+- @react-types/view@3.2.4
+- @react-types/well@3.2.4
+- @spectrum-icons/color@3.4.3
+- @spectrum-icons/illustrations@3.5.0
+- @spectrum-icons/ui@3.3.3
+- @spectrum-icons/workflow@4.0.3
+- react-aria@3.20.0
+- react-stately@3.18.0
+```

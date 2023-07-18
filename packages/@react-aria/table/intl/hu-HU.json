@@ -1,0 +1,11 @@
+{
+  "ascending": "növekvő",
+  "ascendingSort": "rendezve a(z) {columnName} oszlop szerint, növekvő sorrendben",
+  "columnSize": "{value} képpont",
+  "descending": "csökkenő",
+  "descendingSort": "rendezve a(z) {columnName} oszlop szerint, csökkenő sorrendben",
+  "resizerDescription": "Nyomja le az Enter billentyűt az átméretezés megkezdéséhez",
+  "select": "Kijelölés",
+  "selectAll": "Összes kijelölése",
+  "sortable": "rendezendő oszlop"
+}

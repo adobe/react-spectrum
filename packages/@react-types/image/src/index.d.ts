@@ -20,7 +20,7 @@ export interface ImageProps {
   /**
    * Text description of the image.
    */
-  alt: string,
+  alt?: string,
   /**
    * Sets the Image [object-fit](https://developer.mozilla.org/en-US/docs/Web/CSS/object-fit) style.
    */

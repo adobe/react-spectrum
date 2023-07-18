@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
 import {ReactNode} from 'react';
 
-export interface SpectrumStatusLightProps extends DOMProps, StyleProps {
+export interface SpectrumStatusLightProps extends DOMProps, StyleProps, AriaLabelingProps {
   /** The content to display as the label. */
   children?: ReactNode,
   /**

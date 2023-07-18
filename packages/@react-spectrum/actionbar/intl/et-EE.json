@@ -1,0 +1,7 @@
+{
+  "actions": "Toimingud",
+  "actionsAvailable": "Toimingud saadaval.",
+  "clearSelection": "Puhasta valik",
+  "selected": "{count, plural, =0 {Pole valitud} other {# valitud}}",
+  "selectedAll": "Kõik valitud"
+}

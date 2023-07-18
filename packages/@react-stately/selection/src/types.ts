@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusStrategy, PressEvent, Selection, SelectionMode} from '@react-types/shared';
+import {DisabledBehavior, FocusStrategy, LongPressEvent, PressEvent, Selection, SelectionBehavior, SelectionMode} from '@react-types/shared';
 import {Key} from 'react';
 
 export interface FocusState {
@@ -38,19 +38,27 @@ export interface SingleSelectionState extends FocusState {
 export interface MultipleSelectionState extends FocusState {
   /** The type of selection that is allowed in the collection. */
   readonly selectionMode: SelectionMode,
+  /** The selection behavior for the collection. */
+  readonly selectionBehavior: SelectionBehavior,
+  /** Sets the selection behavior for the collection. */
+  setSelectionBehavior(selectionBehavior: SelectionBehavior): void,
   /** Whether the collection allows empty selection. */
   readonly disallowEmptySelection: boolean,
   /** The currently selected keys in the collection. */
   readonly selectedKeys: Selection,
   /** Sets the selected keys in the collection. */
-  setSelectedKeys(keys: Selection | ((v: Selection) => Selection)): void,
+  setSelectedKeys(keys: Selection): void,
   /** The currently disabled keys in the collection. */
-  readonly disabledKeys: Set<Key>
+  readonly disabledKeys: Set<Key>,
+  /** Whether `disabledKeys` applies to selection, actions, or both. */
+  readonly disabledBehavior: DisabledBehavior
 }
 
 export interface MultipleSelectionManager extends FocusState {
   /** The type of selection that is allowed in the collection. */
   readonly selectionMode: SelectionMode,
+  /** The selection behavior for the collection. */
+  readonly selectionBehavior: SelectionBehavior,
   /** Whether the collection allows empty selection. */
   readonly disallowEmptySelection?: boolean,
   /** The currently selected keys in the collection. */
@@ -63,6 +71,10 @@ export interface MultipleSelectionManager extends FocusState {
   readonly firstSelectedKey: Key | null,
   /** The last selected key in the collection. */
   readonly lastSelectedKey: Key | null,
+  /** The currently disabled keys in the collection. */
+  readonly disabledKeys: Set<Key>,
+  /** Whether `disabledKeys` applies to selection, actions, or both. */
+  readonly disabledBehavior: DisabledBehavior,
   /** Returns whether a key is selected. */
   isSelected(key: Key): boolean,
   /** Returns whether the current selection is equal to the given selection. */
@@ -85,5 +97,11 @@ export interface MultipleSelectionManager extends FocusState {
    * Toggles, replaces, or extends selection to the given key depending
    * on the pointer event and collection's selection mode.
    */
-  select(key: Key, e?: PressEvent | PointerEvent): void
+  select(key: Key, e?: PressEvent | LongPressEvent | PointerEvent): void,
+  /** Returns whether the given key can be selected. */
+  canSelectItem(key: Key): boolean,
+  /** Returns whether the given key is non-interactive, i.e. both selection and actions are disabled. */
+  isDisabled(key: Key): boolean,
+  /** Sets the selection behavior for the collection. */
+  setSelectionBehavior(selectionBehavior: SelectionBehavior): void
 }

@@ -12,9 +12,7 @@
 
 import {ActionButton} from '../';
 import React from 'react';
-import {render} from '@testing-library/react';
-import {triggerPress} from '@react-spectrum/test-utils';
-import V2Button from '@react/react-spectrum/Button';
+import {render, triggerPress} from '@react-spectrum/test-utils';
 
 describe('ActionButton', function () {
   let onPressSpy = jest.fn();
@@ -26,7 +24,6 @@ describe('ActionButton', function () {
   it.each`
     Name              | Component        | props
     ${'ActionButton'} | ${ActionButton}  | ${{onPress: onPressSpy}}
-    ${'V2Button'}     | ${V2Button}      | ${{variant: 'action', onClick: onPressSpy}}
   `('$Name handles defaults', function ({Component, props}) {
     let {getByRole} = render(<Component {...props}>Click Me</Component>);
 
@@ -40,7 +37,6 @@ describe('ActionButton', function () {
   it.each`
     Name              | Component        | props
     ${'ActionButton'} | ${ActionButton}  | ${{}}
-    ${'V2Button'}     | ${V2Button}      | ${{variant: 'action'}}
   `('$Name allows custom props to be passed through to the button', function ({Component, props}) {
     let {getByRole} = render(<Component {...props} data-foo="bar">Click Me</Component>);
 

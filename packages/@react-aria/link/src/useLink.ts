@@ -11,8 +11,10 @@
  */
 
 import {AriaLinkProps} from '@react-types/link';
+import {DOMAttributes, FocusableElement} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {HTMLAttributes, RefObject} from 'react';
+import {RefObject} from 'react';
+import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
 
 export interface AriaLinkOptions extends AriaLinkProps {
@@ -27,7 +29,7 @@ export interface AriaLinkOptions extends AriaLinkProps {
 
 export interface LinkAria {
   /** Props for the link element. */
-  linkProps: HTMLAttributes<HTMLElement>,
+  linkProps: DOMAttributes,
   /** Whether the link is currently pressed. */
   isPressed: boolean
 }
@@ -37,7 +39,7 @@ export interface LinkAria {
  * A link allows a user to navigate to another page or resource within a web page
  * or application.
  */
-export function useLink(props: AriaLinkOptions, ref: RefObject<HTMLElement>): LinkAria {
+export function useLink(props: AriaLinkOptions, ref: RefObject<FocusableElement>): LinkAria {
   let {
     elementType = 'a',
     onPress,
@@ -49,25 +51,27 @@ export function useLink(props: AriaLinkOptions, ref: RefObject<HTMLElement>): Li
     ...otherProps
   } = props;
 
-  let linkProps: HTMLAttributes<HTMLElement>;
+  let linkProps: DOMAttributes = {};
   if (elementType !== 'a') {
     linkProps = {
       role: 'link',
       tabIndex: !isDisabled ? 0 : undefined
     };
   }
-
+  let {focusableProps} = useFocusable(props, ref);
   let {pressProps, isPressed} = usePress({onPress, onPressStart, onPressEnd, isDisabled, ref});
   let domProps = filterDOMProps(otherProps, {labelable: true});
+  let interactionHandlers = mergeProps(focusableProps, pressProps);
 
   return {
     isPressed, // Used to indicate press state for visual
     linkProps: mergeProps(domProps, {
-      ...pressProps,
+      ...interactionHandlers,
       ...linkProps,
       'aria-disabled': isDisabled || undefined,
+      'aria-current': props['aria-current'],
       onClick: (e) => {
-        pressProps.onClick(e);
+        pressProps.onClick?.(e);
         if (deprecatedOnClick) {
           deprecatedOnClick(e);
           console.warn('onClick is deprecated, please use onPress');

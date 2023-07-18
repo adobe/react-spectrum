@@ -1,4 +1,9 @@
 {
-  "loading": "جار التحميل...",
-  "loadingMore": "جار تحميل المزيد..."
+  "columnResizer": "أداة تغيير حجم العمود",
+  "drag": "سحب",
+  "loading": "جارٍ التحميل...",
+  "loadingMore": "جارٍ تحميل المزيد...",
+  "resizeColumn": "تغيير حجم العمود",
+  "sortAscending": "فرز بترتيب تصاعدي",
+  "sortDescending": "فرز بترتيب تنازلي"
 }

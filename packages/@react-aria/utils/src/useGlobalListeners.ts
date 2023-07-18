@@ -23,11 +23,17 @@ interface GlobalListeners {
 export function useGlobalListeners(): GlobalListeners {
   let globalListeners = useRef(new Map());
   let addGlobalListener = useCallback((eventTarget, type, listener, options) => {
-    globalListeners.current.set(listener, {type, eventTarget, options});
+    // Make sure we remove the listener after it is called with the `once` option.
+    let fn = options?.once ? (...args) => {
+      globalListeners.current.delete(listener);
+      listener(...args);
+    } : listener;
+    globalListeners.current.set(listener, {type, eventTarget, fn, options});
     eventTarget.addEventListener(type, listener, options);
   }, []);
   let removeGlobalListener = useCallback((eventTarget, type, listener, options) => {
-    eventTarget.removeEventListener(type, listener, options);
+    let fn = globalListeners.current.get(listener)?.fn || listener;
+    eventTarget.removeEventListener(type, fn, options);
     globalListeners.current.delete(listener);
   }, []);
   let removeAllGlobalListeners = useCallback(() => {

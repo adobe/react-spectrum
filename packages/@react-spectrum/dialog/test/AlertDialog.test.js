@@ -13,9 +13,8 @@
 import {AlertDialog} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {render} from '@testing-library/react';
+import {render, triggerPress} from '@react-spectrum/test-utils';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress} from '@react-spectrum/test-utils';
 
 describe('AlertDialog', function () {
   it('renders alert dialog with onPrimaryAction', function () {

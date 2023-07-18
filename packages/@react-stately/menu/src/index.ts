@@ -10,4 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useMenuTriggerState';
+export {useMenuTriggerState} from './useMenuTriggerState';
+
+export type {MenuTriggerProps} from '@react-types/menu';
+export type {MenuTriggerState} from './useMenuTriggerState';

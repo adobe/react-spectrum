@@ -10,17 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton} from '@react-spectrum/button';
+import {ActionButton, Flex, Link} from '@adobe/react-spectrum';
+import DocSearch from './DocSearch';
 import docsStyle from './docs.css';
+import LinkOut from '@spectrum-icons/workflow/LinkOut';
 import {listen} from 'quicklink';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {ThemeSwitcher} from './ThemeSwitcher';
-import {watchModals} from '@react-aria/aria-modal-polyfill';
 
-window.addEventListener('load', () => listen());
-window.addEventListener('load', () => watchModals());
+if (process.env.NODE_ENV === 'production') {
+  window.addEventListener('load', () => listen());
+}
 
 let title = document.querySelector('h1');
 
@@ -64,11 +66,13 @@ if (typeof ResizeObserver !== 'undefined') {
 
 function Hamburger() {
   let [isPressed, setIsPressed] = useState(false);
+  let hamburgerRef = useRef(null);
+  let hamburgerButtonRef = useRef(null);
 
   let onPress = (event) => {
-    let nav = document.querySelector('.' + docsStyle.nav);
+    let nav = document.querySelector(`.${docsStyle.nav}`);
     let main = document.querySelector('main');
-    let themeSwitcher = event.target.parentElement.nextElementSibling;
+    let themeSwitcher = document.querySelector(`header.${docsStyle.pageHeader} > div:last-of-type`);
 
     nav.classList.toggle(docsStyle.visible);
 
@@ -90,14 +94,13 @@ function Hamburger() {
 
   useEffect(() => {
     let mediaQueryList = window.matchMedia('(max-width: 1020px)');
-    let nav = document.querySelector('.' + docsStyle.nav);
+    let nav = document.querySelector(`.${docsStyle.nav}`);
     let main = document.querySelector('main');
-    let hamburgerButton = document.querySelector('.' + docsStyle.hamburgerButton);
-    let themeSwitcher = hamburgerButton.nextElementSibling;
+    let hamburgerButton = hamburgerButtonRef.current;
+    let themeSwitcher = document.querySelector(`header.${docsStyle.pageHeader} > div:last-of-type`);
 
-    /* remove visible className and aria-attributes that make nav behave as a modal */
     let removeVisible = (isNotResponsive = false) => {
-      hamburgerButton.setAttribute('aria-pressed', 'false');
+      setIsPressed(false);
 
       if (nav.contains(document.activeElement) && !isNotResponsive) {
         hamburgerButton.focus();
@@ -166,11 +169,13 @@ function Hamburger() {
         mediaQueryList.removeListener(mediaQueryTest);
       }
     };
-  }, []);
+  }, [setIsPressed, hamburgerRef, hamburgerButtonRef]);
+
+  let hamburgerButtonLabel = `${isPressed ? 'Close' : 'Open'} navigation panel`;
 
   return (
-    <div className={docsStyle.hamburgerButton} title="Open navigation panel" role="presentation">
-      <ActionButton onPress={onPress} aria-label="Open navigation panel" aria-pressed={isPressed ? isPressed : undefined}>
+    <div ref={hamburgerRef} className={docsStyle.hamburgerButton} title={hamburgerButtonLabel} role="presentation">
+      <ActionButton ref={hamburgerButtonRef} onPress={onPress} aria-label={hamburgerButtonLabel} aria-pressed={isPressed ? isPressed : undefined}>
         <ShowMenu />
       </ActionButton>
     </div>
@@ -179,8 +184,26 @@ function Hamburger() {
 
 ReactDOM.render(<>
   <Hamburger />
+  <DocSearch />
   <ThemeSwitcher />
 </>, document.querySelector('.' + docsStyle.pageHeader));
+
+let pathToPage = document.querySelector('[data-github-src]').getAttribute('data-github-src');
+let editPage = document.querySelector('#edit-page');
+if (pathToPage && editPage) {
+  ReactDOM.render(
+    <Link>
+      <a
+        href={encodeURI(`https://github.com/adobe/react-spectrum/tree/main/${encodeURI(pathToPage)}`)}
+        target="_blank">
+        <Flex gap="size-100" alignItems="center">
+          <span>Edit this page</span><LinkOut size="S" />
+        </Flex>
+      </a>
+    </Link>,
+    editPage
+  );
+}
 
 document.addEventListener('mousedown', (e) => {
   // Prevent focusing on links to other pages with the mouse to avoid flash of focus ring during navigation.
@@ -217,3 +240,43 @@ window.addEventListener('pagehide', () => {
   sessionStorage.setItem('sidebarSelectedItem', location.pathname);
   sessionStorage.setItem('sidebarScrollPosition', sidebar.scrollTop);
 });
+
+// Disable autoplay for videos when the prefers-reduced-motion media query is enabled.
+function reducedMotionCheck(e) {
+  let videos = document.querySelectorAll('video[autoplay]');
+  if (e.matches) {
+    for (let v of videos) {
+      v.pause();
+      v.controls = true;
+      v.removeAttribute('tabindex');
+      v.onclick = undefined;
+      v.onkeydown = undefined;
+    }
+  } else {
+    for (let v of videos) {
+      let toggle = () => {
+        if (v.paused) {
+          v.play();
+        } else {
+          v.pause();
+        }
+      };
+      if (v.paused) {
+        v.play();
+      }
+      v.tabIndex = 0;
+      v.controls = false;
+      v.onclick = toggle;
+      v.onkeydown = e => {
+        if (e.key === ' ' || e.key === 'Enter') {
+          e.preventDefault();
+          toggle();
+        }
+      };
+    }
+  }
+}
+
+let prefersReducedMotion = matchMedia('(prefers-reduced-motion)');
+reducedMotionCheck(prefersReducedMotion);
+prefersReducedMotion.addEventListener('change', reducedMotionCheck);

@@ -1,0 +1,208 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+.react-spectrum-Datepicker-fieldWrapper.react-spectrum-Datepicker-fieldWrapper.react-spectrum-Datepicker-fieldWrapper {
+   width: auto;
+   min-width: var(--spectrum-global-dimension-size-2000);
+   max-width: 100%;
+ }
+
+.react-spectrum-Datepicker-startField {
+  width: auto;
+  padding-inline-end: var(--spectrum-global-dimension-size-100);
+}
+
+.react-spectrum-Datepicker-endField {
+  width: auto;
+  flex: 1;
+  padding-inline-start: var(--spectrum-global-dimension-size-100);
+}
+
+.react-spectrum-Datepicker-field ~ .react-spectrum-Datepicker-endField > .react-spectrum-Datepicker-input {
+  border-inline-start-width: 0;
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+}
+
+.react-spectrum-Datepicker-field.react-spectrum-Datepicker-field {
+  width: auto;
+}
+
+.react-spectrum-Datepicker-field .react-spectrum-DateField-Input {
+  line-height: var(--spectrum-body-4-text-line-height);
+}
+
+/* specificity war with .spectrum-Field--positionSide etc. */
+.react-spectrum-DateField.react-spectrum-DateField.react-spectrum-DateField.react-spectrum-DateField {
+  min-width: var(--spectrum-global-dimension-size-2000);
+}
+
+.react-spectrum-TimeField.react-spectrum-TimeField.react-spectrum-TimeField.react-spectrum-TimeField {
+  min-width: var(--spectrum-global-dimension-size-1250);
+}
+
+.react-spectrum-TimeField-fieldWrapper.react-spectrum-TimeField-fieldWrapper.react-spectrum-TimeField-fieldWrapper {
+  width: auto;
+  min-width: var(--spectrum-global-dimension-size-1250);
+}
+
+.react-spectrum-Datepicker-input.react-spectrum-Datepicker-input.react-spectrum-Datepicker-input {
+  /* always reserve space for the validation icon */
+  padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
+  cursor: text;
+}
+
+.react-spectrum-Datepicker-inputContents {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+
+  &::-webkit-scrollbar { /* WebKit */
+    width: 0;
+    height: 0;
+    display: none;
+  }
+}
+
+.react-spectrum-Datepicker-rangeDash {
+  &:before {
+    content: '–';
+  }
+}
+
+.react-spectrum-Datepicker-segments {
+  display: flex;
+  align-items: center;
+}
+
+.react-spectrum-Datepicker-literal {
+  white-space: pre;
+  user-select: none;
+  color: var(--spectrum-textfield-text-color);
+}
+
+.react-spectrum-DatePicker-cell {
+  border: none;
+  background: none;
+  padding: 0 2px;
+  border-radius: var(--spectrum-alias-border-radius-small);
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+  box-sizing: content-box;
+  white-space: nowrap;
+  color: var(--spectrum-textfield-text-color);
+
+  &::selection {
+    /* hide the selection because there is no way to fully prevent it in Firefox */
+    /* https://bugzilla.mozilla.org/show_bug.cgi?id=1742153 */
+    background: transparent;
+  }
+}
+
+.react-spectrum-DatePicker-placeholder {
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-style: italic;
+  visibility: hidden;
+  height: 0;
+  pointer-events: none;
+}
+
+.react-spectrum-DatePicker-cell.is-placeholder {
+  color: var(--react-spectrum-datepicker-placeholder-color);
+
+  .react-spectrum-DatePicker-placeholder {
+    visibility: visible;
+    height: auto;
+  }
+}
+
+.react-spectrum-DatePicker-cell.is-placeholder ~ .react-spectrum-Datepicker-literal {
+  color: var(--spectrum-textfield-placeholder-text-color, var(--spectrum-global-color-gray-600));
+}
+
+.react-spectrum-DatePicker-cell.is-read-only {
+  color: var(--spectrum-global-color-gray-700);
+}
+
+.react-spectrum-DatePicker-cell:focus {
+  background-color: var(--spectrum-accent-background-color-default);
+  color: white;
+  caret-color: transparent;
+  outline: none;
+}
+
+.react-spectrum-Datepicker-dialog.react-spectrum-Datepicker-dialog {
+  width: auto;
+}
+
+.react-spectrum-Datepicker-dialogContent {
+  display: flex;
+  flex-direction: column;
+
+  .react-spectrum-Datepicker-calendar.is-invalid {
+    /* Only apply display: contents when the calendar is invalid, which allows us to move the
+     * error message below the time fields. Otherwise, don't do this because it breaks dragging
+     * the selected range on Android. */
+    display: contents;
+  }
+
+  /* Push the help text within the calendar down to the bottom of the dialog, below the time fields. */
+  :global(.spectrum-Calendar-helpText) {
+    order: 10;
+    margin: var(--spectrum-global-dimension-size-200) var(--spectrum-calendar-day-padding) 0 var(--spectrum-calendar-day-padding);
+  }
+}
+
+/* when displayed in a tray, reduce the padding of the dialog */
+@media (max-width: 700px) {
+  .react-spectrum-Datepicker-dialog {
+    --spectrum-dialog-padding-x: 8px;
+
+    .react-spectrum-Datepicker-dialogContent {
+      margin: 0 auto;
+      max-width: calc((var(--spectrum-calendar-day-width) * 7) + (var(--spectrum-calendar-day-padding) * 12));
+    }
+  }
+}
+
+.react-spectrum-Datepicker-timeFields {
+  width: 100%;
+  min-width: calc(var(--spectrum-calendar-day-width) * 7);
+  max-width: calc((var(--spectrum-calendar-day-width) * 7) + (var(--spectrum-calendar-day-padding) * 12));
+  padding: 0 var(--spectrum-calendar-day-padding);
+  box-sizing: border-box;
+}
+
+@media (forced-colors:active) {
+  .react-spectrum-DatePicker-cell:focus {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+  .react-spectrum-DatePicker-cell.is-read-only {
+    color: ButtonText;
+    &:focus {
+      color: HighlightText;
+    }
+  }
+  .react-spectrum-DatePicker-cell.is-placeholder {
+    color: ButtonText;
+    &:focus {
+      color: HighlightText;
+    }
+  }
+}

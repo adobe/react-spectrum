@@ -15,6 +15,7 @@ const React = require('react');
 const ReactDOMServer = require('react-dom/server');
 const requireFromString = require('require-from-string');
 const {blobToString, urlJoin} = require('@parcel/utils');
+const path = require('path');
 
 module.exports = new Optimizer({
   async optimize({bundle, bundleGraph, contents, map}) {
@@ -24,18 +25,22 @@ module.exports = new Optimizer({
     }
 
     let js = await blobToString(contents);
+    let parcelRequireName = Object.keys(global).find(name => name.startsWith('parcelRequire'));
+    if (parcelRequireName) {
+      delete global[parcelRequireName];
+    }
     let Component = requireFromString(js, mainAsset.filePath).default;
-    let bundles = bundleGraph.getSiblingBundles(bundle).filter(b => !b.isInline).reverse();
+    let bundles = bundleGraph.getReferencedBundles(bundle).reverse();
 
     let pages = [];
     bundleGraph.traverseBundles(b => {
       let mainAsset = b.getMainEntry();
-      if (mainAsset && mainAsset.meta.isMDX) {
+      if (mainAsset && mainAsset.meta.isMDX && !mainAsset.meta.hidden) {
         let meta = mainAsset.meta;
         pages.push({
           url: urlJoin(b.target.publicUrl, rename(b)),
           name: rename(b),
-          title: meta.title,
+          title: meta.navigationTitle ?? meta.title,
           category: meta.category,
           description: meta.description,
           keywords: meta.keywords,
@@ -43,15 +48,16 @@ module.exports = new Optimizer({
           author: meta.author,
           image: getImageURL(meta.image, bundleGraph, b),
           order: meta.order,
-          preRelease: meta.preRelease
+          preRelease: meta.preRelease,
+          type: meta.type
         });
       }
-    });
+    }, null);
 
     let name = rename(bundle);
     let code = ReactDOMServer.renderToStaticMarkup(
       React.createElement(Component, {
-        scripts: bundles.filter(b => b.type === 'js' && !b.isInline).map(b => ({
+        scripts: bundles.filter(b => b.type === 'js').map(b => ({
           type: b.env.outputFormat === 'esmodule' ? 'module' : undefined,
           url: urlJoin(b.target.publicUrl, b.name)
         })),
@@ -60,6 +66,7 @@ module.exports = new Optimizer({
         })),
         pages,
         currentPage: {
+          filePath: mainAsset.filePath,
           category: mainAsset.meta.category,
           name,
           title: mainAsset.meta.title,
@@ -70,7 +77,8 @@ module.exports = new Optimizer({
           author: mainAsset.meta.author,
           image: getImageURL(mainAsset.meta.image, bundleGraph, bundle),
           order: mainAsset.meta.order,
-          preRelease: mainAsset.meta.preRelease
+          preRelease: mainAsset.meta.preRelease,
+          type: mainAsset.meta.type
         },
         toc: mainAsset.meta.toc,
         publicUrl: bundle.target.publicUrl
@@ -85,7 +93,7 @@ module.exports = new Optimizer({
 });
 
 function rename(bundle) {
-  return bundle.name.slice(0, -bundle.type.length) + 'html';
+  return bundle.name.slice(0, -path.extname(bundle.name).length) + '.html';
 }
 
 function getImageURL(image, bundleGraph, bundle) {

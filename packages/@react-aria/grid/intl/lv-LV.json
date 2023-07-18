@@ -1,0 +1,8 @@
+{
+  "deselectedItem": "Vienums {item} nav atlasīts.",
+  "longPressToSelect": "Ilgi turiet nospiestu. lai ieslēgtu atlases režīmu.",
+  "select": "Atlasīt",
+  "selectedAll": "Atlasīti visi vienumi.",
+  "selectedCount": "{count, plural, =0 {Nav atlasīts neviens vienums} one {Atlasīto vienumu skaits: #} other {Atlasīto vienumu skaits: #}}.",
+  "selectedItem": "Atlasīts vienums {item}."
+}

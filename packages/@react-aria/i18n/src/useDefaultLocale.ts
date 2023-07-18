@@ -28,6 +28,12 @@ export interface Locale {
 export function getDefaultLocale(): Locale {
   // @ts-ignore
   let locale = (typeof navigator !== 'undefined' && (navigator.language || navigator.userLanguage)) || 'en-US';
+  try {
+    // @ts-ignore
+    Intl.DateTimeFormat.supportedLocalesOf([locale]);
+  } catch (_err) {
+    locale = 'en-US';
+  }
   return {
     locale,
     direction: isRTL(locale) ? 'rtl' : 'ltr'

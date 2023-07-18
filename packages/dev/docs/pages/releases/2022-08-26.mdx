@@ -1,0 +1,244 @@
+{/* Copyright 2022 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+description: We are excited to announce the release of our ListView component! A ListView displays a list of interactive items, and allows a user to navigate, select, or perform an action. It supports interactive elements within items, multi-selection, row actions, arrow key navigation, disabled items, async loading, infinite scrolling, and more.  Also included in this release is an update to our `FocusScope`, improving how we restore focus when a trigger no longer exists. Thanks to all our contributors for helping with this release!
+date: 2022-08-26
+---
+
+# August 26, 2022 Release
+
+🚀 We are excited to announce the release of our ListView component!  A ListView displays a list of interactive items, and allows a user to navigate, select, or perform an action. It supports interactive elements within items, multi-selection, row actions, arrow key navigation, disabled items, async loading, infinite scrolling, and more.  Also included in this release is an update to our `FocusScope`, improving how we restore focus when a trigger no longer exists.
+
+Thanks to all our contributors for helping with this release!
+
+
+## New Components
+  ListView
+    - `@react-spectrum/list` - [Docs](https://react-spectrum.adobe.com/react-spectrum/ListView.html)
+    - `@react-aria/gridlist` - [Docs](https://react-spectrum.adobe.com/react-aria/useGridList.html)
+
+## Fixes
+* Use id when provided in `useTable` and `useGrid` - [@moelmaghraby](https://github.com/moelmaghraby) - [PR](https://github.com/adobe/react-spectrum/pull/3367)
+* FocusScope to restore to first focusable element when no tabbable element in scope - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/2763)
+* Escape key should continue propagation to close `Overlay` in `useComboBox` - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/3307)
+* Stop propagation when pressing Enter on a native link - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3380)
+* Add AriaLabelingProps to `ComboBox`, `Calendar`, `RangeCalendar`, `Tabs`, and `StatusLight` - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/3378)
+* Add `FocusRing` to `ListView` - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/3168)
+* Update `FocusScope` to restore correctly for overlays - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3323)
+* Fix focus style on invalid inputs - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3384)
+* Refactor virtualizer persisted keys - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3394)
+* Remove extraneous getKeyLeftOf/getKeyRightOf from `ListLayout` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3415)
+* Add className to DOMAttributes interface - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3409)
+* Prevent resize error when `DatePicker` input ref is undefined - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3413)
+* Make default `TextArea` grow based on text content unless there is an explicit height - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3379)
+* removing getRowText prop from useGridList - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3431)
+* Remove millisecond granularity from types for date/time pickers - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3435)
+* Fix Firefox `TextArea` autoscroll - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3432)
+* Fix `usePress` with HTML input elements - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3446)
+* Update translations for `Table` - [@naeohmi](https://github.com/naeohmi) - [PR](https://github.com/adobe/react-spectrum/pull/3359)
+* Add missing time string translations in `DatePicker` - [@rgeraghty](https://github.com/rgeraghty) - [PR](https://github.com/adobe/react-spectrum/pull/3455)
+
+## Docs
+* Update Folder icon in ListView docs - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3363)
+* Add component index to home pages - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3334)
+* Update `useGridList` examples and images - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3428)
+
+## Under construction
+Fixes to pre-released components are listed below. Please feel free to try them out, and report any issues you encounter.
+
+* Add ColorArea and useColorArea docs - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/3268)
+* Add custom icon support for `SearchAutocomplete` - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/3300)
+* Update `useColorArea` docs with example components - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/3382)
+* Update drop target logic and fix modifiers in dnd - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3391)
+* Add Illustration wrapper and File/Folder illustrations - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3420)
+
+## Released packages
+
+```
+- @adobe/react-spectrum@3.21.0
+- @react-aria/accordion@3.0.0-alpha.11
+- @react-aria/actiongroup@3.4.1
+- @react-aria/aria-modal-polyfill@3.5.3
+- @react-aria/autocomplete@3.0.0-alpha.10
+- @react-aria/breadcrumbs@3.3.1
+- @react-aria/button@3.6.1
+- @react-aria/calendar@3.0.2
+- @react-aria/checkbox@3.5.1
+- @react-aria/color@3.0.0-beta.15
+- @react-aria/combobox@3.4.1
+- @react-aria/datepicker@3.1.1
+- @react-aria/dialog@3.3.1
+- @react-aria/dnd@3.0.0-alpha.12
+- @react-aria/focus@3.8.0
+- @react-aria/grid@3.4.1
+- @react-aria/gridlist@3.0.0
+- @react-aria/i18n@3.6.0
+- @react-aria/interactions@3.11.0
+- @react-aria/label@3.4.1
+- @react-aria/landmark@3.0.0-alpha.2
+- @react-aria/link@3.3.3
+- @react-aria/listbox@3.6.1
+- @react-aria/menu@3.6.1
+- @react-aria/meter@3.3.1
+- @react-aria/numberfield@3.3.1
+- @react-aria/overlays@3.10.1
+- @react-aria/progress@3.3.1
+- @react-aria/radio@3.3.1
+- @react-aria/searchfield@3.4.1
+- @react-aria/select@3.8.1
+- @react-aria/selection@3.10.1
+- @react-aria/separator@3.2.3
+- @react-aria/slider@3.2.1
+- @react-aria/spinbutton@3.1.3
+- @react-aria/switch@3.2.3
+- @react-aria/table@3.4.1
+- @react-aria/tabs@3.3.1
+- @react-aria/tag@3.0.0-alpha.9
+- @react-aria/textfield@3.7.1
+- @react-aria/toggle@3.3.3
+- @react-aria/tooltip@3.3.1
+- @react-aria/utils@3.13.3
+- @react-aria/virtualizer@3.5.0
+- @react-aria/visually-hidden@3.4.1
+- @react-spectrum/accordion@3.0.0-alpha.12
+- @react-spectrum/actionbar@3.0.0-alpha.12
+- @react-spectrum/actiongroup@3.6.1
+- @react-spectrum/autocomplete@3.0.0-alpha.10
+- @react-spectrum/avatar@3.0.0-alpha.9
+- @react-spectrum/breadcrumbs@3.5.1
+- @react-spectrum/button@3.9.1
+- @react-spectrum/buttongroup@3.4.1
+- @react-spectrum/calendar@3.1.1
+- @react-spectrum/card@3.0.0-alpha.11
+- @react-spectrum/checkbox@3.5.1
+- @react-spectrum/color@3.0.0-beta.15
+- @react-spectrum/combobox@3.5.1
+- @react-spectrum/contextualhelp@3.2.1
+- @react-spectrum/datepicker@3.1.1
+- @react-spectrum/dialog@3.5.1
+- @react-spectrum/divider@3.4.1
+- @react-spectrum/dnd@3.0.0-alpha.6
+- @react-spectrum/form@3.4.1
+- @react-spectrum/icon@3.6.0
+- @react-spectrum/illustratedmessage@3.3.1
+- @react-spectrum/image@3.3.1
+- @react-spectrum/label@3.7.1
+- @react-spectrum/layout@3.4.1
+- @react-spectrum/link@3.4.1
+- @react-spectrum/list@3.0.0
+- @react-spectrum/listbox@3.7.1
+- @react-spectrum/menu@3.8.1
+- @react-spectrum/meter@3.3.1
+- @react-spectrum/numberfield@3.4.1
+- @react-spectrum/overlays@3.7.1
+- @react-spectrum/picker@3.7.1
+- @react-spectrum/progress@3.3.1
+- @react-spectrum/provider@3.5.1
+- @react-spectrum/radio@3.3.1
+- @react-spectrum/searchfield@3.5.1
+- @react-spectrum/searchwithin@3.0.0-alpha.10
+- @react-spectrum/slider@3.2.1
+- @react-spectrum/statuslight@3.4.1
+- @react-spectrum/switch@3.3.1
+- @react-spectrum/table@3.3.1
+- @react-spectrum/tabs@3.3.1
+- @react-spectrum/tag@3.0.0-alpha.9
+- @react-spectrum/text@3.3.1
+- @react-spectrum/textfield@3.7.0
+- @react-spectrum/theme-dark@3.3.3
+- @react-spectrum/theme-default@3.3.3
+- @react-spectrum/theme-light@3.2.3
+- @react-spectrum/tooltip@3.3.1
+- @react-spectrum/utils@3.7.3
+- @react-spectrum/view@3.3.1
+- @react-spectrum/well@3.3.1
+- @react-stately/calendar@3.0.2
+- @react-stately/checkbox@3.2.1
+- @react-stately/collections@3.4.3
+- @react-stately/color@3.1.1
+- @react-stately/combobox@3.2.1
+- @react-stately/data@3.6.1
+- @react-stately/datepicker@3.0.2
+- @react-stately/dnd@3.0.0-alpha.10
+- @react-stately/grid@3.3.1
+- @react-stately/layout@3.7.0
+- @react-stately/list@3.5.3
+- @react-stately/menu@3.4.1
+- @react-stately/numberfield@3.2.1
+- @react-stately/overlays@3.4.1
+- @react-stately/radio@3.5.1
+- @react-stately/searchfield@3.3.1
+- @react-stately/select@3.3.1
+- @react-stately/selection@3.10.3
+- @react-stately/slider@3.2.1
+- @react-stately/table@3.4.0
+- @react-stately/tabs@3.2.1
+- @react-stately/toggle@3.4.1
+- @react-stately/tooltip@3.2.1
+- @react-stately/tree@3.3.3
+- @react-stately/virtualizer@3.3.0
+- @react-types/accordion@3.0.0-alpha.9
+- @react-types/actionbar@3.0.0-alpha.9
+- @react-types/actiongroup@3.3.3
+- @react-types/autocomplete@3.0.0-alpha.8
+- @react-types/avatar@3.0.0-alpha.8
+- @react-types/breadcrumbs@3.4.3
+- @react-types/button@3.6.1
+- @react-types/buttongroup@3.2.3
+- @react-types/calendar@3.0.2
+- @react-types/card@3.0.0-alpha.9
+- @react-types/checkbox@3.3.3
+- @react-types/color@3.0.0-beta.12
+- @react-types/combobox@3.5.3
+- @react-types/contextualhelp@3.1.3
+- @react-types/datepicker@3.1.1
+- @react-types/dialog@3.4.3
+- @react-types/divider@3.2.3
+- @react-types/form@3.3.3
+- @react-types/grid@3.1.3
+- @react-types/illustratedmessage@3.2.3
+- @react-types/image@3.2.3
+- @react-types/label@3.6.3
+- @react-types/layout@3.3.3
+- @react-types/link@3.3.3
+- @react-types/list@3.0.0
+- @react-types/listbox@3.3.3
+- @react-types/menu@3.7.1
+- @react-types/meter@3.2.3
+- @react-types/numberfield@3.3.3
+- @react-types/overlays@3.6.3
+- @react-types/progress@3.2.3
+- @react-types/provider@3.5.3
+- @react-types/radio@3.2.3
+- @react-types/searchfield@3.3.3
+- @react-types/searchwithin@3.0.0-alpha.8
+- @react-types/select@3.6.3
+- @react-types/shared@3.14.1
+- @react-types/slider@3.2.1
+- @react-types/statuslight@3.2.3
+- @react-types/switch@3.2.3
+- @react-types/table@3.3.1
+- @react-types/tabs@3.1.3
+- @react-types/tag@3.0.0-alpha.7
+- @react-types/text@3.2.3
+- @react-types/textfield@3.5.3
+- @react-types/tooltip@3.2.3
+- @react-types/view@3.2.3
+- @react-types/well@3.2.3
+- @spectrum-icons/color@3.4.2
+- @spectrum-icons/illustrations@3.4.0
+- @spectrum-icons/ui@3.3.2
+- @spectrum-icons/workflow@4.0.2
+- react-aria@3.19.0
+- react-stately@3.17.0
+```

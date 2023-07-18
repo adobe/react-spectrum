@@ -12,6 +12,10 @@
 
 /// <reference types="css-module-types" />
 
-export * from './MenuTrigger';
-export * from './Menu';
+export {MenuTrigger} from './MenuTrigger';
+export {Menu} from './Menu';
+export {ActionMenu} from './ActionMenu';
+export {ContextualHelpTrigger} from './ContextualHelpTrigger';
 export {Item, Section, SelectionGroup} from '@react-stately/collections';
+export type {SpectrumActionMenuProps, SpectrumMenuProps, SpectrumMenuTriggerProps} from '@react-types/menu';
+export type {SpectrumMenuDialogTriggerProps} from './ContextualHelpTrigger';

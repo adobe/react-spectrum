@@ -1,23 +1,21 @@
-<!-- Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. -->
+governing permissions and limitations under the License. */}
 
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-aria/meter';
-import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType} from '@react-spectrum/docs';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-aria/meter/package.json';
 import Anatomy from './anatomy.svg';
-
-```jsx import
-import {useMeter} from '@react-aria/meter';
-```
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import circularPreview from 'url:./circular-example.png';
 
 ---
 category: Status
@@ -26,13 +24,13 @@ keywords: [meter, progressbar, aria]
 
 # useMeter
 
-<p>{docs.exports.useMeter.description}</p>
+<PageDescription>{docs.exports.useMeter.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
   componentNames={['useMeter']}
   sourceData={[
-    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-1.2/#meter'}
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/meter/'}
   ]} />
 
 ## API
@@ -60,7 +58,7 @@ See the [useProgressBar](useProgressBar.html) hook for more details about progre
 Meters consist of a track element showing the full value in a range,
 a fill element showing the current value, a label, and an optional value label. The track and bar elements
 represent the value visually, while a wrapper element represents the meter to
-assistive technology using the [meter](https://www.w3.org/TR/wai-aria-1.2/#meter)
+assistive technology using the [meter](https://www.w3.org/WAI/ARIA/apg/patterns/meter/)
 ARIA role.
 
 `useMeter` returns two sets of props that you should spread onto the appropriate element:
@@ -74,7 +72,9 @@ to identify the element to screen readers.
 
 ## Example
 
-```tsx example
+```tsx example export=true
+import {useMeter} from '@react-aria/meter';
+
 function Meter(props) {
   let {
     label,
@@ -106,7 +106,7 @@ function Meter(props) {
           </span>
         }
       </div>
-      <div style={{height: 10, background: 'gray'}}>
+      <div style={{height: 10, background: 'lightgray'}}>
         <div style={{width: barWidth, height: 10, background: 'green'}} />
       </div>
     </div>
@@ -115,8 +115,54 @@ function Meter(props) {
 
 <Meter
   label="Storage space"
-  value={250}
-  maxValue={1000} />
+  value={25} />
+```
+
+## Styled examples
+
+<ExampleCard
+  url="https://codesandbox.io/s/lucid-jackson-xj8pok?file=/src/App.js"
+  preview={circularPreview}
+  title="Circular Gauge"
+  description="A circular meter built with SVG." />
+
+## Usage
+
+The following examples show how to use the `Meter` component created in the above example.
+
+### Custom value scale
+
+By default, the `value` prop represents the current percentage of progress, as the minimum and maximum values default to 0 and 100, respectively. Alternatively, a different scale can be used by setting the `minValue` and `maxValue` props.
+
+```tsx example
+<Meter
+  label="Widgets Used"
+  minValue={50}
+  maxValue={150}
+  value={100} />
+```
+
+### Value formatting
+
+Values are formatted as a percentage by default, but this can be modified by using the `formatOptions` prop to specify a different format.
+`formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied based on the current locale.
+
+```tsx example
+<Meter
+  label="Currency"
+  formatOptions={{style: 'currency', currency: 'JPY'}}
+  value={60} />
+```
+
+### Custom value label
+
+The `valueLabel` prop allows the formatted value to be replaced with a custom string.
+
+```tsx example
+<Meter
+  label="Space used"
+  valueLabel="54 of 60GB"
+  value={90} />
 ```
 
 ## Internationalization

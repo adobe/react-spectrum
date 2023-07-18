@@ -1,17 +1,17 @@
-<!-- Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. -->
+governing permissions and limitations under the License. */}
 
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-stately/data';
-import {HeaderInfo, TypeContext, ClassAPI, FunctionAPI, TypeLink} from '@react-spectrum/docs';
+import {HeaderInfo, TypeContext, ClassAPI, FunctionAPI, TypeLink, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-stately/data/package.json';
 
 ---
@@ -21,7 +21,7 @@ keywords: [lists, async loading, infinite loading, state]
 
 # useAsyncList
 
-<p>{docs.exports.useAsyncList.description}</p>
+<PageDescription>{docs.exports.useAsyncList.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
@@ -129,6 +129,8 @@ This example shows how to implement client side sorting by passing a `sort` func
 items array.
 
 ```tsx
+let collator = useCollator();
+
 let list = useAsyncList({
   async load({signal}) {
     // Same load function as before
@@ -137,7 +139,7 @@ let list = useAsyncList({
     return {
       items: items.sort((a, b) => {
         // Compare the items by the sorted column
-        let cmp = a[sortDescriptor.column] < b[sortDescriptor.column] ? -1 : 1;
+        let cmp = collator.compare(a[sortDescriptor.column], b[sortDescriptor.column]);
 
         // Flip the direction if descending order is specified.
         if (sortDescriptor.direction === 'descending') {
@@ -190,7 +192,7 @@ The `loadingState` prop is also used to show the appropriate loading indicator d
 ```tsx
 let list = useAsyncList({
   async load({signal, filterText}) {
-    let res = await fetch(`https://swapi.dev/api/people/?search=${filterText}`, {signal});
+    let res = await fetch(`https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
     let json = await res.json();
 
     return {

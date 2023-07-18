@@ -11,21 +11,20 @@
  */
 
 import {AriaListBoxProps} from '@react-types/listbox';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {HTMLAttributes, ReactNode, RefObject} from 'react';
-import {KeyboardDelegate} from '@react-types/shared';
+import {DOMAttributes, KeyboardDelegate} from '@react-types/shared';
+import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {listData} from './utils';
 import {ListState} from '@react-stately/list';
+import {RefObject} from 'react';
 import {useFocusWithin} from '@react-aria/interactions';
-import {useId} from '@react-aria/utils';
 import {useLabel} from '@react-aria/label';
 import {useSelectableList} from '@react-aria/selection';
 
-interface ListBoxAria {
+export interface ListBoxAria {
   /** Props for the listbox element. */
-  listBoxProps: HTMLAttributes<HTMLElement>,
+  listBoxProps: DOMAttributes,
   /** Props for the listbox's visual label element (if any). */
-  labelProps: HTMLAttributes<HTMLElement>
+  labelProps: DOMAttributes
 }
 
 export interface AriaListBoxOptions<T> extends Omit<AriaListBoxProps<T>, 'children'> {
@@ -47,12 +46,7 @@ export interface AriaListBoxOptions<T> extends Omit<AriaListBoxProps<T>, 'childr
   shouldSelectOnPressUp?: boolean,
 
   /** Whether options should be focused when the user hovers over them. */
-  shouldFocusOnHover?: boolean,
-
-  /**
-   * An optional visual label for the listbox.
-   */
-  label?: ReactNode
+  shouldFocusOnHover?: boolean
 }
 
 /**
@@ -84,7 +78,8 @@ export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>,
     shouldUseVirtualFocus: props.shouldUseVirtualFocus,
     shouldSelectOnPressUp: props.shouldSelectOnPressUp,
     shouldFocusOnHover: props.shouldFocusOnHover,
-    isVirtualized: props.isVirtualized
+    isVirtualized: props.isVirtualized,
+    onAction: props.onAction
   });
 
   let {labelProps, fieldProps} = useLabel({

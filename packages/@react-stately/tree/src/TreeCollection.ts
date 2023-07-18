@@ -95,4 +95,9 @@ export class TreeCollection<T> implements Collection<Node<T>> {
   getItem(key: Key) {
     return this.keyMap.get(key);
   }
+
+  at(idx: number) {
+    const keys = [...this.getKeys()];
+    return this.getItem(keys[idx]);
+  }
 }

@@ -10,15 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@testing-library/react';
+jest.mock('@react-aria/live-announcer');
+import {act, fireEvent, render, triggerPress, typeText, within} from '@react-spectrum/test-utils';
+import {announce} from '@react-aria/live-announcer';
+import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
 import messages from '../../../@react-aria/numberfield/intl/*';
 import {NumberField} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress} from '@react-spectrum/test-utils';
-import {typeText} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 // for some reason hu-HU isn't supported in jsdom/node
@@ -37,16 +38,12 @@ describe('NumberField', function () {
     jest.useFakeTimers();
   });
 
-  afterAll(() => {
-    jest.useRealTimers();
-  });
-
-
   afterEach(() => {
     onChangeSpy.mockClear();
     onBlurSpy.mockClear();
     onKeyDownSpy.mockClear();
     onKeyUpSpy.mockClear();
+    announce.mockClear();
     // there's an announcer, make sure to run through it
     // make sure only to run the pending timers, spin button can cause an infinite loop if we run all
     act(() => {jest.runOnlyPendingTimers();});
@@ -58,11 +55,10 @@ describe('NumberField', function () {
 
     let root = props.label ? container.firstChild.firstChild : undefined;
     container = within(container).queryByRole('group');
-    let textField = container.firstChild;
+    let textField = within(container).queryByRole('textbox');
     let buttons = within(container).queryAllByRole('button');
     let incrementButton = buttons[0];
     let decrementButton = buttons[1];
-    textField = textField.firstChild;
     return {
       root,
       container,
@@ -101,7 +97,7 @@ describe('NumberField', function () {
     let ref = React.createRef();
     let {container, textField} = renderNumberField({ref});
 
-    expect(ref.current.UNSAFE_getDOMNode()).toBe(container);
+    expect(ref.current.UNSAFE_getDOMNode()).toBe(container.parentElement);
     act(() => {
       ref.current.focus();
     });
@@ -185,8 +181,7 @@ describe('NumberField', function () {
     expect(onChangeSpy).toHaveBeenCalledWith(52);
   });
 
-  // TODO: this doesn't work in Node 12 but it does in 13, once we can move to that in circle ci this can be un-skipped
-  it.skip.each`
+  it.each`
     Name
     ${'NumberField'}
   `('$Name switches to numeric for percentages', () => {
@@ -284,6 +279,17 @@ describe('NumberField', function () {
     expect(onChangeSpy).toHaveBeenLastCalledWith(10);
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onBlurSpy).toHaveBeenCalledTimes(2); // blur spy is called after each blur
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('$Name fires state change then blur', () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, onBlur: onBlurSpy, step: 5});
+    act(() => {textField.focus();});
+    typeText(textField, '3');
+    userEvent.tab();
+    expect(onChangeSpy.mock.invocationCallOrder[0]).toBeLessThan(onBlurSpy.mock.invocationCallOrder[0]);
   });
 
   it.each`
@@ -864,12 +870,18 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', '($9.00)');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(-9);
+    expect(announce).toHaveBeenCalledTimes(1);
+    expect(announce).toHaveBeenLastCalledWith('−$9.00', 'assertive');
 
     act(() => {textField.focus();});
     textField.setSelectionRange(2, 3);
     userEvent.type(textField, '{backspace}');
+    expect(announce).toHaveBeenCalledTimes(2);
+    expect(announce).toHaveBeenLastCalledWith('−$0.00', 'assertive');
     textField.setSelectionRange(2, 2);
     typeText(textField, '1');
+    expect(announce).toHaveBeenCalledTimes(3);
+    expect(announce).toHaveBeenLastCalledWith('−$1.00', 'assertive');
     textField.setSelectionRange(3, 3);
     typeText(textField, '8');
     expect(textField).toHaveAttribute('value', '($18.00)');
@@ -877,11 +889,15 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', '($18.00)');
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
     expect(onChangeSpy).toHaveBeenLastCalledWith(-18);
+    expect(announce).toHaveBeenCalledTimes(4);
+    expect(announce).toHaveBeenLastCalledWith('−$18.00', 'assertive');
 
     act(() => {textField.focus();});
     textField.setSelectionRange(7, 8);
     userEvent.type(textField, '{backspace}');
     expect(textField).toHaveAttribute('value', '($18.00');
+    expect(announce).toHaveBeenCalledTimes(5);
+    expect(announce).toHaveBeenLastCalledWith('$18.00', 'assertive');
     act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', '$18.00');
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
@@ -889,8 +905,12 @@ describe('NumberField', function () {
 
     act(() => {textField.focus();});
     userEvent.clear(textField);
+    expect(announce).toHaveBeenCalledTimes(6);
+    expect(announce).toHaveBeenLastCalledWith('Empty', 'assertive');
     typeText(textField, '($32)');
     expect(textField).toHaveAttribute('value', '($32)');
+    expect(announce).toHaveBeenCalledTimes(9);
+    expect(announce).toHaveBeenLastCalledWith('−$32.00', 'assertive');
     act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', '($32.00)');
     expect(onChangeSpy).toHaveBeenCalledTimes(4);
@@ -906,6 +926,8 @@ describe('NumberField', function () {
     act(() => {textField.focus();});
     userEvent.type(textField, '(10)');
     expect(textField).toHaveAttribute('value', '(10)');
+    expect(announce).toHaveBeenCalledTimes(3);
+    expect(announce).toHaveBeenLastCalledWith('‎−US$ 10.00', 'assertive');
     act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', '(US$10.00)');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
@@ -927,17 +949,25 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', '-9,00 $');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(-9);
+    expect(announce).toHaveBeenCalledTimes(1);
+    expect(announce).toHaveBeenLastCalledWith('−9,00 $', 'assertive');
 
     act(() => {
       textField.focus();
     });
     textField.setSelectionRange(1, 2);
     userEvent.type(textField, '{backspace}');
+    expect(announce).toHaveBeenCalledTimes(2);
+    expect(announce).toHaveBeenLastCalledWith('−0,00 $', 'assertive');
     textField.setSelectionRange(1, 1);
     typeText(textField, '1');
+    expect(announce).toHaveBeenCalledTimes(3);
+    expect(announce).toHaveBeenLastCalledWith('−1,00 $', 'assertive');
     textField.setSelectionRange(2, 2);
     typeText(textField, '8');
     expect(textField).toHaveAttribute('value', '-18,00 $');
+    expect(announce).toHaveBeenCalledTimes(4);
+    expect(announce).toHaveBeenLastCalledWith('−18,00 $', 'assertive');
     act(() => {
       textField.blur();
     });
@@ -949,7 +979,7 @@ describe('NumberField', function () {
   it.each`
     Name              | props                                                    | locale     | expected
     ${'US Euros'}     | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'en-US'} | ${'€10.00'}
-    ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${'١٠٫٠٠ €'}
+    ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${'€ 10.00'}
     ${'French Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${'10,00 €'}
     ${'US JPY'}       | ${{formatOptions: {style: 'currency', currency: 'JPY'}}} | ${'en-US'} | ${'¥10'}
   `('$Name keeps formatted value on focus', ({props, locale, expected}) => {
@@ -966,10 +996,10 @@ describe('NumberField', function () {
     Name                       | props                                                                       | locale     | expected
     ${'US Euros'}              | ${{defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}}}  | ${'en-US'} | ${['€10.00', '€11.00', '€9.00']}
     ${'French Euros'}          | ${{defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}}}  | ${'fr-FR'} | ${['10,00 €', '11,00 €', '9,00 €']}
-    ${'Arabic Euros'}          | ${{defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}}}  | ${'ar-AE'} | ${['١٠٫٠٠ €', '١١٫٠٠ €', '٩٫٠٠ €']}
+    ${'Arabic Euros'}          | ${{defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}}}  | ${'ar-AE'} | ${['€ 10.00', '€ 11.00', '€ 9.00']}
     ${'US Euros negative'}     | ${{defaultValue: -10, formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'en-US'} | ${['-€10.00', '-€9.00', '-€11.00']}
     ${'French Euros negative'} | ${{defaultValue: -10, formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['-10,00 €', '-9,00 €', '-11,00 €']}
-    ${'Arabic Euros negative'} | ${{defaultValue: -10, formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['\u061C-\u0661\u0660\u066B\u0660\u0660\xA0\u20AC', '\u061C-\u0669\u066B\u0660\u0660\xA0\u20AC', '\u061C-\u0661\u0661\u066B\u0660\u0660\xA0\u20AC']}
+    ${'Arabic Euros negative'} | ${{defaultValue: -10, formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['‎-€ 10.00', '‎-€ 9.00', '‎-€ 11.00']}
   `('$Name pressing increment & decrement keeps formatting', ({props, locale, expected}) => {
     let {textField, incrementButton, decrementButton} = renderNumberField({minValue: -15, ...props}, {locale});
 
@@ -985,7 +1015,7 @@ describe('NumberField', function () {
     Name              | props                                                    | locale     | expected
     ${'US Euros'}     | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'en-US'} | ${['€10.00', '€11.00', '€9.00', '€9.00']}
     ${'French Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['10,00 €', '11,00 €', '9,00 €', '9,00 €']}
-    ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['١٠٫٠٠ €', '١١٫٠٠ €', '٩٫٠٠ €', '٩٫٠٠ €']}
+    ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['€ 10.00', '€ 11.00', '€ 9.00', '€ 9.00']}
   `('$Name pressing up arrow & down arrow keeps focus state formatting', ({props, locale, expected}) => {
     let {textField} = renderNumberField({defaultValue: 10, onKeyDown: onKeyDownSpy, onKeyUp: onKeyUpSpy, ...props}, {locale});
 
@@ -1260,7 +1290,9 @@ describe('NumberField', function () {
     act(() => {jest.advanceTimersByTime(60);});
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onChangeSpy).toHaveBeenCalledWith(13);
-    act(() => {jest.advanceTimersByTime(3 * 60);});
+    act(() => {jest.advanceTimersByTime(60);});
+    act(() => {jest.advanceTimersByTime(60);});
+    act(() => {jest.advanceTimersByTime(60);});
     expect(onChangeSpy).toHaveBeenCalledTimes(6);
     expect(onChangeSpy).toHaveBeenNthCalledWith(4, 14);
     expect(onChangeSpy).toHaveBeenNthCalledWith(5, 15);
@@ -1278,7 +1310,9 @@ describe('NumberField', function () {
     act(() => {jest.advanceTimersByTime(60);});
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onChangeSpy).toHaveBeenCalledWith(13);
-    act(() => {jest.advanceTimersByTime(3 * 60);});
+    act(() => {jest.advanceTimersByTime(60);});
+    act(() => {jest.advanceTimersByTime(60);});
+    act(() => {jest.advanceTimersByTime(60);});
     expect(onChangeSpy).toHaveBeenCalledTimes(6);
     expect(onChangeSpy).toHaveBeenNthCalledWith(4, 12);
     expect(onChangeSpy).toHaveBeenNthCalledWith(5, 11);
@@ -1293,7 +1327,10 @@ describe('NumberField', function () {
     fireEvent.mouseDown(incrementButton);
     // to get to 20, it'll take 11 (0ms), 12 (400ms), 13 (60ms) ... 20 (540ms) 22 (660ms)
     // we should never get to 21 or 22 though, but lets advance the time there to make sure
-    act(() => {jest.advanceTimersByTime(400 + (10 * 60));});
+    act(() => {jest.advanceTimersByTime(400);});
+    for (let i = 0; i < 10; i += 1) {
+      act(() => {jest.advanceTimersByTime(60);});
+    }
     expect(onChangeSpy).toHaveBeenCalledTimes(10);
     expect(onChangeSpy).toHaveBeenLastCalledWith(20);
     fireEvent.mouseUp(incrementButton);
@@ -1301,7 +1338,10 @@ describe('NumberField', function () {
     onChangeSpy.mockReset();
 
     fireEvent.mouseDown(decrementButton);
-    act(() => {jest.advanceTimersByTime(400 + (20 * 60));});
+    act(() => {jest.advanceTimersByTime(400);});
+    for (let i = 0; i < 20; i += 1) {
+      act(() => {jest.advanceTimersByTime(60);});
+    }
     expect(onChangeSpy).toHaveBeenCalledTimes(20);
     expect(onChangeSpy).toHaveBeenLastCalledWith(0);
     fireEvent.mouseUp(decrementButton);
@@ -1313,7 +1353,8 @@ describe('NumberField', function () {
     act(() => {textField.focus();});
     fireEvent.mouseDown(incrementButton);
     // it should start at 0
-    act(() => {jest.advanceTimersByTime(400 + 60);});
+    act(() => {jest.advanceTimersByTime(400);});
+    act(() => {jest.advanceTimersByTime(60);});
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onChangeSpy).toHaveBeenLastCalledWith(2);
     fireEvent.mouseUp(incrementButton);
@@ -1324,7 +1365,8 @@ describe('NumberField', function () {
 
     act(() => {textField.focus();});
     fireEvent.mouseDown(incrementButton);
-    act(() => {jest.advanceTimersByTime(400 + 60);});
+    act(() => {jest.advanceTimersByTime(400);});
+    act(() => {jest.advanceTimersByTime(60);});
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onChangeSpy).toHaveBeenLastCalledWith(22);
     fireEvent.mouseUp(incrementButton);
@@ -1336,7 +1378,8 @@ describe('NumberField', function () {
     act(() => {textField.focus();});
     fireEvent.mouseDown(decrementButton);
     // it should start at 0
-    act(() => {jest.advanceTimersByTime(400 + 60);});
+    act(() => {jest.advanceTimersByTime(400);});
+    act(() => {jest.advanceTimersByTime(60);});
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onChangeSpy).toHaveBeenLastCalledWith(-2);
     fireEvent.mouseUp(decrementButton);
@@ -1614,6 +1657,27 @@ describe('NumberField', function () {
       expect(decrementButton).not.toHaveAttribute('id');
       expect(decrementButton).not.toHaveAttribute('aria-labelledby');
     });
+
+    it('error message', () => {
+      let {textField, root} = renderNumberField({
+        label: 'Width',
+        errorMessage: 'This is a error.',
+        validationState: 'invalid'
+      });
+
+      let errorText = within(root).getByText('This is a error.');
+      expect(textField).toHaveAttribute('aria-describedby', errorText.id);
+    });
+
+    it('description', () => {
+      let {textField, root} = renderNumberField({
+        label: 'Width',
+        description: 'This is a description.'
+      });
+
+      let description = within(root).getByText('This is a description.');
+      expect(textField).toHaveAttribute('aria-describedby', description.id);
+    });
   });
 
   it.each`
@@ -1668,13 +1732,12 @@ describe('NumberField', function () {
         </Provider>
       );
     }
-    let {container} = render(<NumberFieldControlled onChange={onChangeSpy} />);
+    let {container, getByRole} = render(<NumberFieldControlled onChange={onChangeSpy} />);
     container = within(container).queryByRole('group');
-    let textField = container.firstChild;
+    let textField = getByRole('textbox');
     let buttons = within(container).queryAllByRole('button');
     let incrementButton = buttons[0];
     let decrementButton = buttons[1];
-    textField = textField.firstChild;
     expect(textField).toHaveAttribute('value', '€10.00');
     triggerPress(incrementButton);
     expect(textField).toHaveAttribute('value', '€11.00');
@@ -1934,9 +1997,7 @@ describe('NumberField', function () {
       act(() => {textField.focus();});
       textField.setSelectionRange(0, 3);
 
-      // JSDOM doesn't support the beforeinput event
-      let e = new InputEvent('beforeinput', {cancelable: true});
-      e.inputType = inputType;
+      let e = new InputEvent('beforeinput', {cancelable: true, inputType});
       let proceed = fireEvent(textField, e);
 
       expect(proceed).toBe(true);
@@ -1954,9 +2015,7 @@ describe('NumberField', function () {
       act(() => {textField.focus();});
       textField.setSelectionRange(1, 3);
 
-      // JSDOM doesn't support the beforeinput event
-      let e = new InputEvent('beforeinput', {cancelable: true});
-      e.inputType = inputType;
+      let e = new InputEvent('beforeinput', {cancelable: true, inputType});
       let proceed = fireEvent(textField, e);
 
       expect(proceed).toBe(false);
@@ -1974,9 +2033,7 @@ describe('NumberField', function () {
       act(() => {textField.focus();});
       textField.setSelectionRange(1, 1);
 
-      // JSDOM doesn't support the beforeinput event
-      let e = new InputEvent('beforeinput', {cancelable: true});
-      e.inputType = inputType;
+      let e = new InputEvent('beforeinput', {cancelable: true, inputType});
       let proceed = fireEvent(textField, e);
 
       expect(proceed).toBe(false);
@@ -1994,9 +2051,7 @@ describe('NumberField', function () {
       act(() => {textField.focus();});
       textField.setSelectionRange(5, 5);
 
-      // JSDOM doesn't support the beforeinput event
-      let e = new InputEvent('beforeinput', {cancelable: true, data: '2'});
-      e.inputType = inputType;
+      let e = new InputEvent('beforeinput', {cancelable: true, data: '2', inputType});
       let proceed = fireEvent(textField, e);
 
       expect(proceed).toBe(true);
@@ -2014,9 +2069,7 @@ describe('NumberField', function () {
       act(() => {textField.focus();});
       textField.setSelectionRange(4, 10);
 
-      // JSDOM doesn't support the beforeinput event
-      let e = new InputEvent('beforeinput', {cancelable: true, data: '2'});
-      e.inputType = inputType;
+      let e = new InputEvent('beforeinput', {cancelable: true, data: '2', inputType});
       let proceed = fireEvent(textField, e);
 
       expect(proceed).toBe(true);
@@ -2034,9 +2087,7 @@ describe('NumberField', function () {
       act(() => {textField.focus();});
       textField.setSelectionRange(1, 1);
 
-      // JSDOM doesn't support the beforeinput event
-      let e = new InputEvent('beforeinput', {cancelable: true, data: '2'});
-      e.inputType = inputType;
+      let e = new InputEvent('beforeinput', {cancelable: true, data: '2', inputType});
       let proceed = fireEvent(textField, e);
 
       expect(proceed).toBe(false);
@@ -2054,9 +2105,7 @@ describe('NumberField', function () {
       act(() => {textField.focus();});
       textField.setSelectionRange(2, 2);
 
-      // JSDOM doesn't support the beforeinput event
-      let e = new InputEvent('beforeinput', {cancelable: true});
-      e.inputType = inputType;
+      let e = new InputEvent('beforeinput', {cancelable: true, inputType});
       let proceed = fireEvent(textField, e);
 
       expect(proceed).toBe(true);
@@ -2074,9 +2123,7 @@ describe('NumberField', function () {
       act(() => {textField.focus();});
       textField.setSelectionRange(0, 0);
 
-      // JSDOM doesn't support the beforeinput event
-      let e = new InputEvent('beforeinput', {cancelable: true});
-      e.inputType = inputType;
+      let e = new InputEvent('beforeinput', {cancelable: true, inputType});
       let proceed = fireEvent(textField, e);
 
       expect(proceed).toBe(true);
@@ -2092,8 +2139,7 @@ describe('NumberField', function () {
 
     // fire compositionstart and beforeinput
     fireEvent.compositionStart(textField);
-    let e = new InputEvent('beforeinput', {cancelable: false, data: 'ü'});
-    e.inputType = 'insertCompositionText';
+    let e = new InputEvent('beforeinput', {cancelable: false, data: 'ü', inputType: 'insertCompositionText'});
     let proceed = fireEvent(textField, e);
     expect(proceed).toBe(true);
 
@@ -2113,6 +2159,12 @@ describe('NumberField', function () {
     expect(textField.selectionEnd).toBe(1);
   });
 
+  it('adds data attributes to textField', () => {
+    let {textField} = renderNumberField({'data-testid': '123'});
+
+    expect(textField).toHaveAttribute('data-testid', '123');
+  });
+
   describe('locale specific', () => {
     describe('spanish (spain)', () => {
       it('can determine the group symbol', () => {
@@ -2124,5 +2176,31 @@ describe('NumberField', function () {
         expect(textField).toHaveAttribute('value', '123.456.789');
       });
     });
+  });
+
+  it('can be reset to blank using null', () => {
+    function NumberFieldControlled(props) {
+      let {onChange} = props;
+      let [value, setValue] = useState(10);
+      return (
+        <Provider theme={theme} scale="medium" locale="en-US">
+          <NumberField {...props} label="reset to blank using null" value={value} onChange={value => setValue(value)} />
+          <Button
+            variant={'primary'}
+            onPress={() => chain(setValue(null), onChange())}>
+            Reset
+          </Button>
+        </Provider>
+      );
+    }
+    let resetSpy = jest.fn();
+    let {getByText, getByRole} = render(<NumberFieldControlled onChange={resetSpy} />);
+    let textField = getByRole('textbox');
+    let resetButton = getByText('Reset');
+
+    expect(textField).toHaveAttribute('value', '10');
+    triggerPress(resetButton);
+    expect(resetSpy).toHaveBeenCalledTimes(1);
+    expect(textField).toHaveAttribute('value', '');
   });
 });

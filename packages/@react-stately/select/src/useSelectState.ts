@@ -10,10 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+import {CollectionStateBase} from '@react-types/shared';
 import {MenuTriggerState, useMenuTriggerState} from '@react-stately/menu';
 import {SelectProps} from '@react-types/select';
 import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
 import {useState} from 'react';
+
+export interface SelectStateOptions<T> extends Omit<SelectProps<T>, 'children'>, CollectionStateBase<T> {}
 
 export interface SelectState<T> extends SingleSelectListState<T>, MenuTriggerState {
   /** Whether the select is currently focused. */
@@ -28,7 +31,7 @@ export interface SelectState<T> extends SingleSelectListState<T>, MenuTriggerSta
  * of items from props, handles the open state for the popup menu, and manages
  * multiple selection state.
  */
-export function useSelectState<T extends object>(props: SelectProps<T>): SelectState<T>  {
+export function useSelectState<T extends object>(props: SelectStateOptions<T>): SelectState<T>  {
   let triggerState = useMenuTriggerState(props);
   let listState = useSingleSelectListState({
     ...props,

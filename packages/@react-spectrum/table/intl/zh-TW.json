@@ -1,4 +1,9 @@
 {
+  "columnResizer": "欄大小調整器",
+  "drag": "拖曳",
   "loading": "正在載入",
-  "loadingMore": "正在載入更多…"
+  "loadingMore": "正在載入更多…",
+  "resizeColumn": "調整欄大小",
+  "sortAscending": "升序排序",
+  "sortDescending": "降序排序"
 }

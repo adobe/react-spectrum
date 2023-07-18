@@ -1,0 +1,48 @@
+.exampleCard {
+  width: 260px;
+  box-shadow: 0 0 0 1px var(--spectrum-global-color-gray-300);
+  transition: 125ms ease-in-out;
+  display: inline-flex;
+  flex-direction: column;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  text-decoration: none;
+  margin-right: 16px;
+  margin-bottom: 16px;
+
+  &:hover {
+    box-shadow: 0 0 0 1px var(--spectrum-global-color-gray-400);
+    transition: 125ms ease-in-out;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--spectrum-alias-border-color-focus);
+  }
+
+  img {
+    max-width: 100%;
+    height: 150px;
+    object-fit: contain;
+    margin-bottom: 12px;
+    background: white;
+  }
+
+  svg {
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--anatomy-gray-200);
+  }
+
+  /* override specificity of spectrum-Body3 */
+  .cardTitle.cardTitle {
+    font-weight: 700;
+    margin: 0 12px;
+  }
+
+  .cardDescription {
+    color: var(--spectrum-global-color-gray-700);
+    margin: 0 12px;
+    margin-bottom: 12px;
+  }
+}

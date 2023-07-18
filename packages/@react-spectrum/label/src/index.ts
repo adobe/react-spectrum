@@ -12,5 +12,6 @@
 
 /// <reference types="css-module-types" />
 
-export * from './Label';
-export * from './Field';
+export {Field} from './Field';
+export {Label} from './Label';
+export {HelpText} from './HelpText';

@@ -1,0 +1,7 @@
+{
+  "actions": "Akce",
+  "actionsAvailable": "Dostupné akce.",
+  "clearSelection": "Vymazat výběr",
+  "selected": "{count, plural, =0 {Nic není vybráno} other {Vybráno #}}",
+  "selectedAll": "Vybráno vše"
+}

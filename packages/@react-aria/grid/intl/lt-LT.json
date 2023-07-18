@@ -1,0 +1,8 @@
+{
+  "deselectedItem": "{item} nepasirinkta.",
+  "longPressToSelect": "Norėdami įjungti pasirinkimo režimą, paspauskite ir palaikykite.",
+  "select": "Pasirinkti",
+  "selectedAll": "Pasirinkti visi elementai.",
+  "selectedCount": "{count, plural, =0 {Nepasirinktas nė vienas elementas} one {Pasirinktas # elementas} other {Pasirinkta elementų: #}}.",
+  "selectedItem": "Pasirinkta: {item}."
+}

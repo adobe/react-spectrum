@@ -9,33 +9,24 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
-import {Button} from '@react-spectrum/button';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 import {View} from '../';
 
-storiesOf('View', module)
-  .add(
-    'name me',
-    () => (
-      <div style={{display: 'flex'}}>
-        <View 
-          backgroundColor="negative"
-          width="single-line-width"
-          height="size-500"
-          elementType="span" />
-        <View 
-          backgroundColor="positive"
-          width="size-500"
-          height="size-500"
-          marginStart="size-250"
-          borderColor="default"
-          borderWidth="thin" />
-        <Button variant="primary" marginStart="size-250">Test</Button>
-      </div>
-    )
-  )
-  .add('dimension functions', () => (
-    <View width="calc(100px + size-250)" height="single-line-height" backgroundColor="blue-400" />
-  ));
+let meta = {
+  title: 'View',
+  component: View,
+  args: {
+    colorVersion: 5,
+    backgroundColor: 'blue-400'
+  }
+};
+
+export default meta;
+
+export const Default = args => (
+  <View
+    {...args}
+    width="single-line-width"
+    height="size-500"
+    elementType="span" />
+);
