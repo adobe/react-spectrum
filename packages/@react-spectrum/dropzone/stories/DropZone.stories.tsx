@@ -11,7 +11,6 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button} from '@react-spectrum/button';
 import {Content} from '@react-spectrum/view';
 import {Draggable} from '@react-aria/dnd/stories/dnd.stories';
 import {DropZone} from '../';
@@ -43,12 +42,6 @@ export const withDraggable = {
 export const withLink = {
   render: (args) => (
     <DropZoneWithLink {...args} />
-  )
-};
-
-export const withButton = {
-  render: (args) => (
-    <DropZoneWithButton {...args} />
   )
 };
 
@@ -186,44 +179,3 @@ function DropZoneWithLink(props) {
     </DropZone>
   );
 }
-
-function DropZoneWithButton(props) {
-  let [isFilled, setIsFilled] = useState(false);
-  let [filledSrc, setFilledSrc] = useState(null);
-
-  return (
-    <DropZone 
-      {...props}
-      isFilled={isFilled}
-      onDrop={async (e) => { 
-        let item = e.items.find((item) => item.kind === 'file') as FileDropItem;
-        if (item) {
-          setFilledSrc(URL.createObjectURL(await item.getFile()));
-          setIsFilled(true);
-        }
-      }}
-      onDropEnter={action('onDropEnter')}
-      onDropExit={action('onDropExit')} 
-      onPaste={action('onPaste')}>
-      <IllustratedMessage>
-        <Upload />
-        <Heading>Drag and Drop here</Heading>
-        <Content>
-          <FileTrigger
-            onChange={(e) => {
-              let files = Array.from(e);
-              let urls = files.map(file => URL.createObjectURL(file));
-              if (urls) {
-                setFilledSrc(urls[0]);
-                setIsFilled(true);
-              }
-            }}>
-            <Button variant={'accent'}>Browse</Button>
-          </FileTrigger>
-        </Content>
-      </IllustratedMessage>
-      {isFilled && <img style={{width: '100px', position: 'absolute'}} src={filledSrc} alt="test" />}
-    </DropZone>
-  );
-}
-

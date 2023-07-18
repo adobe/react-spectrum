@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button} from '@react-spectrum/button';
 // import {ClipboardEvent, DataTransfer, DataTransferItem, DragEvent} from '@react-aria/dnd/test/mocks';
 import {Content} from '@react-spectrum/view';
 // import {Draggable} from '@react-aria/dnd/test/examples';
@@ -18,6 +17,7 @@ import {DropZone} from '../';
 import {FileTrigger} from 'react-aria-components';
 import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
+import {Link} from '@react-spectrum/Link';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils';
 // import userEvent from '@testing-library/user-event';
@@ -30,7 +30,7 @@ describe('DropZone', () => {
           <Heading>No files</Heading>
           <Content>
             <FileTrigger>
-              <Button variant="primary">Upload Files</Button>
+              <Link>Select a file</Link>from your computer
             </FileTrigger>
           </Content>
         </IllustratedMessage>
@@ -38,5 +38,81 @@ describe('DropZone', () => {
     );
     let dropzone = getByTestId('foo');
     expect(dropzone).toHaveAttribute('class', 'spectrum-Dropzone');
+  });
+
+  it('should render an illustrated message as a child', () => {
+    let {getByTestId} = render(
+      <DropZone>
+        <IllustratedMessage>
+          <Heading data-testid="foo">No files</Heading>
+          <Content data-testid="bar">
+            <FileTrigger>
+              <Link>Select a file</Link>from your computer
+            </FileTrigger>
+          </Content>
+        </IllustratedMessage>
+      </DropZone>
+    );
+
+    let heading = getByTestId('foo');
+    let content = getByTestId('bar');
+    expect(heading).toHaveAttribute('class', 'spectrum-IllustratedMessage-heading');
+    expect(content).toHaveAttribute('class', 'spectrum-IllustratedMessage-description');
+  });
+
+  it('should render a file trigger within content', () => {
+    let {getByTestId} = render(
+      <DropZone>
+        <IllustratedMessage>
+          <Heading>No files</Heading>
+          <Content>
+            <FileTrigger data-testid="foo">
+              <Link>Select a file</Link>from your computer
+            </FileTrigger>
+          </Content>
+        </IllustratedMessage>
+      </DropZone>
+    );
+
+    let fileTrigger = getByTestId('foo');
+    expect(fileTrigger).toHaveAttribute('class', 'react-aria-FileTrigger');
+  });
+
+  it('should attach a ref to the input field if provided as a prop', () => {
+    let ref = React.createRef(); 
+    let {getByTestId} = render(
+      <DropZone ref={ref}>
+        <IllustratedMessage>
+          <Heading>No files</Heading>
+          <Content>
+            <FileTrigger data-testid="foo">
+              <Link>Select a file</Link>from your computer
+            </FileTrigger>
+          </Content>
+        </IllustratedMessage>
+      </DropZone>
+    );
+
+    let input = getByTestId('foo').querySelector('input');
+    expect(ref.current.getInputElement()).toEqual(input);
+  });
+
+  it('should attach a ref to the dropzone if provided as a prop', () => {
+    let ref = React.createRef(); 
+    let {getByTestId} = render(
+      <DropZone data-testid="foo" ref={ref}>
+        <IllustratedMessage>
+          <Heading>No files</Heading>
+          <Content>
+            <FileTrigger>
+              <Link>Select a file</Link>from your computer
+            </FileTrigger>
+          </Content>
+        </IllustratedMessage>
+      </DropZone>
+    );
+
+    let dropzone = getByTestId('foo');
+    expect(ref.current.UNSAFE_getDOMNode()).toEqual(dropzone);
   });
 });
