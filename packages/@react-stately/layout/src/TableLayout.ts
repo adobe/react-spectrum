@@ -556,7 +556,6 @@ export class TableLayout<T> extends ListLayout<T> {
           this.persistedIndices.set(layoutInfo.parentKey, indices);
         }
 
-        // TODO: perhaps fallback to collectionNode.index
         let index = this.layoutNodes.get(layoutInfo.key).index;
 
         if (!indices.includes(index)) {
