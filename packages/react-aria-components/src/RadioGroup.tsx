@@ -149,7 +149,7 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
       <Provider
         values={[
           [InternalRadioContext, state],
-          [LabelContext, {...labelProps, ref: labelRef}],
+          [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
           [TextContext, {
             slots: {
               description: descriptionProps,
