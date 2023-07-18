@@ -38,7 +38,7 @@ export {OverlayArrow} from './OverlayArrow';
 export {Popover, PopoverContext} from './Popover';
 export {ProgressBar, ProgressBarContext} from './ProgressBar';
 export {Provider, useContextProps} from './utils';
-export {RadioGroup, Radio, RadioGroupContext} from './RadioGroup';
+export {RadioGroup, Radio, RadioGroupContext, RadioContext} from './RadioGroup';
 export {SearchField, SearchFieldContext} from './SearchField';
 export {Select, SelectValue, SelectContext} from './Select';
 export {Separator, SeparatorContext} from './Separator';
