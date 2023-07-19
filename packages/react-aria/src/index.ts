@@ -47,7 +47,7 @@ export {chain, mergeProps, useId} from '@react-aria/utils';
 export {VisuallyHidden, useVisuallyHidden} from '@react-aria/visually-hidden';
 
 export type {AriaBreadcrumbItemProps, AriaBreadcrumbsProps, BreadcrumbItemAria, BreadcrumbsAria} from '@react-aria/breadcrumbs';
-export type {AriaButtonProps, AriaToggleButtonProps, ButtonAria} from '@react-aria/button';
+export type {AriaButtonOptions, AriaButtonProps, AriaToggleButtonProps, ButtonAria} from '@react-aria/button';
 export type {AriaCalendarCellProps, AriaCalendarGridProps, AriaCalendarProps, AriaRangeCalendarProps, CalendarAria, CalendarCellAria, CalendarGridAria, CalendarProps, RangeCalendarProps} from '@react-aria/calendar';
 export type {AriaCheckboxGroupItemProps, AriaCheckboxGroupProps, AriaCheckboxProps, CheckboxAria, CheckboxGroupAria} from '@react-aria/checkbox';
 export type {AriaComboBoxOptions, AriaComboBoxProps, ComboBoxAria} from '@react-aria/combobox';
