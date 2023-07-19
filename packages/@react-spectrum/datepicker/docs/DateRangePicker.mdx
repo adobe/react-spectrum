@@ -224,7 +224,7 @@ function Example() {
   return (
     <>
       <DateRangePicker label="Date range" value={range} onChange={setRange} />
-      <p>Selected date: {formatter.formatRange(range.start.toDate(getLocalTimeZone()), range.end.toDate(getLocalTimeZone()))}</p>
+      <p>Selected date: {range ? formatter.formatRange(range.start.toDate(getLocalTimeZone()), range.end.toDate(getLocalTimeZone())) : '--'}</p>
     </>
   );
 }
@@ -250,7 +250,7 @@ function Example() {
       label="Date range"
       value={range}
       onChange={setRange}
-      validationState={isSameMonth(range.start, range.end) ? 'valid' : 'invalid'}
+      validationState={range && !isSameMonth(range.start, range.end) ? 'invalid' : 'valid'}
       description="Select a range within the same month"
       errorMessage="Start and end dates must be in the same month" />
   );

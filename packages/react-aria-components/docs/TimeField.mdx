@@ -406,7 +406,7 @@ function Example() {
   return (
     <>
       <MyTimeField label="Time" value={date} onChange={setDate} />
-      <p>Selected date and time: {formatter.format(date.toDate())}</p>
+      <p>Selected date and time: {(date?.toDate && formatter.format(date.toDate())) || (date && date.toString()) || '--'}</p>
     </>
   );
 }
@@ -446,7 +446,7 @@ This example validates that the selected time is on a 15 minute increment.
 ```tsx example
 function Example() {
   let [time, setTime] = React.useState(new Time(9, 15));
-  let isInvalid = time.minute % 15;
+  let isInvalid = time?.minute % 15;
 
   return (
     <MyTimeField
