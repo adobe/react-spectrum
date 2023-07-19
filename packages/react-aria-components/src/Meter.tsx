@@ -26,7 +26,7 @@ export interface MeterRenderProps {
    * A formatted version of the value.
    * @selector [aria-valuetext]
    */
-  valueText?: string
+  valueText: string | undefined
 }
 
 export const MeterContext = createContext<ContextValue<MeterProps, HTMLDivElement>>(null);

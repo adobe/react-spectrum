@@ -46,7 +46,7 @@ export interface DatePickerRenderProps {
   state: DatePickerState,
   /**
    * Validation state of the date picker.
-   * @selector [data-validation-state]
+   * @selector [data-validation-state="valid | invalid"]
    */
   validationState: ValidationState
 }

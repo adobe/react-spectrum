@@ -28,9 +28,9 @@ export interface TextFieldRenderProps {
   isDisabled: boolean,
   /**
    * Validation state of the text field.
-   * @selector [data-validation-state]
+   * @selector [data-validation-state="valid | invalid"]
    */
-  validationState?: ValidationState
+  validationState: ValidationState | undefined
 }
 
 export interface TextFieldProps extends Omit<AriaTextFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, Omit<DOMProps, 'style' | 'className' | 'children'>, SlotProps, RenderProps<TextFieldRenderProps> {}
