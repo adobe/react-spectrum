@@ -18,7 +18,7 @@ import {DropZone} from '../';
 import {FileTrigger} from 'react-aria-components';
 import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
-import {Link} from '@react-spectrum/Link';
+import {Link} from '@react-spectrum/link';
 import React from 'react';
 
 describe('DropZone', () => {
