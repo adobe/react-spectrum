@@ -22,16 +22,6 @@ import {TextContext} from './Text';
 
 export interface CalendarRenderProps {
   /**
-   * Whether an element within the calendar is focused, either via a mouse or keyboard.
-   * @selector :focus-within
-   */
-  isFocusWithin: boolean,
-  /**
-   * Whether an element within the calendar is keyboard focused.
-   * @selector [data-focus-visible]
-   */
-  isFocusVisible: boolean,
-  /**
    * Whether the calendar is disabled.
    * @selector [data-disabled]
    */
@@ -83,15 +73,12 @@ function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRe
     createCalendar
   });
 
-  let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
   let {calendarProps, prevButtonProps, nextButtonProps, errorMessageProps, title} = useCalendar(props, state);
 
   let renderProps = useRenderProps({
     ...props,
     values: {
       state,
-      isFocusWithin: isFocused,
-      isFocusVisible,
       isDisabled: props.isDisabled || false,
       validationState: state.validationState
     },
@@ -100,12 +87,10 @@ function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRe
 
   return (
     <div
-      {...focusProps}
       {...renderProps}
       {...calendarProps}
       ref={ref}
       slot={props.slot}
-      data-focus-visible={isFocusVisible || undefined}
       data-disabled={props.isDisabled || undefined}
       data-validation-state={state.validationState || undefined}>
       <Provider
@@ -163,7 +148,6 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: F
     createCalendar
   });
 
-  let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
   let {calendarProps, prevButtonProps, nextButtonProps, errorMessageProps, title} = useRangeCalendar(
     props,
     state,
@@ -174,8 +158,6 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: F
     ...props,
     values: {
       state,
-      isFocusWithin: isFocused,
-      isFocusVisible,
       isDisabled: props.isDisabled || false,
       validationState: state.validationState
     },
@@ -184,12 +166,10 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: F
 
   return (
     <div
-      {...focusProps}
       {...renderProps}
       {...calendarProps}
       ref={ref}
       slot={props.slot}
-      data-focus-visible={isFocusVisible || undefined}
       data-disabled={props.isDisabled || undefined}
       data-validation-state={state.validationState || undefined}>
       <Provider
