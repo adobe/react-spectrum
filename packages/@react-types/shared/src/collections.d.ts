@@ -50,7 +50,7 @@ export interface SectionProps<T> {
   items?: Iterable<T>
 }
 
-export interface SelectionGroupProps<T> extends Omit<CollectionBase<T>, 'disabledKeys'>, Omit<MultipleSelection, "disabledKeys"> {}
+export interface SelectionGroupProps<T> extends Omit<CollectionBase<T>, 'disabledKeys'>, Omit<MultipleSelection, 'disabledKeys'> {}
 
 export type SectionElement<T> = ReactElement<SectionProps<T>>;
 

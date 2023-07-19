@@ -1,17 +1,17 @@
-import { Node, SelectionGroupProps } from "@react-types/shared";
+import {MenuItem} from './MenuItem';
+import {Node, SelectionGroupProps} from '@react-types/shared';
+import React, {Key, useEffect, useMemo} from 'react';
 import {
   SelectionManager,
-  useMultipleSelectionState,
-} from "@react-stately/selection";
-import { TreeState } from "@react-stately/tree";
-import React, { useMemo, Key, useEffect } from "react";
-import { MenuItem } from "./MenuItem";
+  useMultipleSelectionState
+} from '@react-stately/selection';
+import {TreeState} from '@react-stately/tree';
 
 interface MenuSelectionGroupProps<T>
   extends SelectionGroupProps<T> {
-  item: Node<T>;
-  state: TreeState<T>;
-  onAction?: (key: Key) => void;
+  item: Node<T>,
+  state: TreeState<T>,
+  onAction?: (key: Key) => void
 }
 
 export function MenuSelectionGroup<T extends object>(
@@ -19,7 +19,7 @@ export function MenuSelectionGroup<T extends object>(
 ) {
   const {
     collection: tree,
-    selectionManager: menuSelectionManager,
+    selectionManager: menuSelectionManager
   } = props.state;
 
   let selectionState = useMultipleSelectionState(props);
@@ -31,16 +31,13 @@ export function MenuSelectionGroup<T extends object>(
 
   const newState = {
     ...props.state,
-    selectionManager,
+    selectionManager
   };
 
   useEffect(() => {
     selectionManager.setFocusedKey(menuSelectionManager.focusedKey);
-  }, [menuSelectionManager.focusedKey]);
-
-  useEffect(() => {
     selectionManager.setFocused(menuSelectionManager.isFocused);
-  }, [menuSelectionManager.isFocused]);
+  }, [menuSelectionManager.focusedKey, menuSelectionManager.isFocused, selectionManager]);
 
   return (
     <>
@@ -50,8 +47,7 @@ export function MenuSelectionGroup<T extends object>(
             key={node.key}
             item={node}
             state={newState}
-            onAction={props.onAction}
-          />
+            onAction={props.onAction} />
         );
 
         if (node.wrapper) {

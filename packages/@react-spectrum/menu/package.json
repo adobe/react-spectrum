@@ -55,6 +55,7 @@
     "@react-stately/collections": "^3.9.0",
     "@react-stately/menu": "^3.5.3",
     "@react-stately/overlays": "^3.6.0",
+    "@react-stately/selection": "^3.13.2",
     "@react-stately/tree": "^3.7.0",
     "@react-stately/utils": "^3.7.0",
     "@react-types/menu": "^3.9.2",

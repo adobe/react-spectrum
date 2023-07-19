@@ -43,11 +43,11 @@ Section.getCollectionNode = function* getCollectionNode<T>(props: SectionProps<T
         let items: PartialNode<T>[] = [];
         React.Children.forEach(children, child => {
           // @ts-ignore - Todo: find a better approach to conditionally check the type
-          let type = child.type.__name === "SelectionGroup" ? "selectionGroup" : 'item'
+          let type = child.type.__name === 'SelectionGroup' ? 'selectionGroup' : 'item';
           items.push({
             type: type,
             element: child
-          });  
+          });
         });
         yield* items;
       }

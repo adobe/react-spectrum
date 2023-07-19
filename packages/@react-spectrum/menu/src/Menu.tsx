@@ -16,13 +16,13 @@ import {FocusScope} from '@react-aria/focus';
 import {MenuContext, MenuStateContext} from './context';
 import {MenuItem} from './MenuItem';
 import {MenuSection} from './MenuSection';
+import {MenuSelectionGroup} from './MenuSelectionGroup';
 import {mergeProps, useSyncRef} from '@react-aria/utils';
 import React, {ReactElement, useContext, useRef} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useMenu} from '@react-aria/menu';
 import {useTreeState} from '@react-stately/tree';
-import {MenuSelectionGroup} from './MenuSelectionGroup';
 
 function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLUListElement>) {
   let contextProps = useContext(MenuContext);
@@ -53,7 +53,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
           }>
           {[...state.collection].map(item => {
             if (item.type === 'selectionGroup') {
-              return <MenuSelectionGroup item={item} state={state} {...item.props} />
+              return <MenuSelectionGroup item={item} state={state} {...item.props} />;
             }
 
             if (item.type === 'section') {

@@ -831,10 +831,10 @@ function MenuWithUnavailableSometimes(props) {
     </>
   );
 }
-  
+
 export let WithSelectionGroupStatic = {
   render: () => render(
-    <Menu onAction={action('onAction')} disabledKeys={["8"]}>
+    <Menu onAction={action('onAction')} disabledKeys={['8']}>
       <Section title="Single selection">
         <SelectionGroup selectionMode="single">
           <Item key="1">
