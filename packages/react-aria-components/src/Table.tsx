@@ -488,6 +488,11 @@ const _TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(TableHeader);
 export {_TableHeader as TableHeader};
 
 export interface ColumnRenderProps {
+  /* 
+   * Whether the item is currently hovered with a mouse.
+   * @selector [data-hovered]
+   */
+  isHovered: boolean,
   /**
    * Whether the item is currently focused.
    * @selector [data-focused]
@@ -648,7 +653,12 @@ export interface CellRenderProps {
    * Whether the cell is currently keyboard focused.
    * @selector [data-focus-visible]
    */
-  isFocusVisible: boolean
+  isFocusVisible: boolean,
+  /**
+   * Whether the cell is currently hovered with a mouse.
+   * @selector [data-hovered]
+   */
+  isHovered: boolean
 }
 
 export interface CellProps extends RenderProps<CellRenderProps> {
@@ -795,6 +805,7 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
     ref
   );
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
+  let {hoverProps, isHovered} = useHover({});
 
   let {layoutState} = useContext(InternalTableContext)!;
   let isResizing = false;
@@ -815,6 +826,7 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
     children: column.rendered,
     defaultClassName: 'react-aria-Column',
     values: {
+      isHovered,
       isFocused,
       isFocusVisible,
       allowsSorting: column.props.allowsSorting,
@@ -843,7 +855,7 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
 
   return (
     <th
-      {...mergeProps(filterDOMProps(props as any), columnHeaderProps, focusProps)}
+      {...mergeProps(filterDOMProps(props as any), columnHeaderProps, focusProps, hoverProps)}
       {...renderProps}
       style={style}
       colSpan={column.colspan}
@@ -1118,6 +1130,7 @@ function TableCell<T>({cell}: {cell: GridNode<T>}) {
     shouldSelectOnPressUp: !!dragState
   }, state, ref);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
+  let {hoverProps, isHovered} = useHover({});
 
   let props: CellProps = cell.props;
   let renderProps = useRenderProps({
@@ -1127,13 +1140,14 @@ function TableCell<T>({cell}: {cell: GridNode<T>}) {
     values: {
       isFocused,
       isFocusVisible,
-      isPressed
+      isPressed,
+      isHovered
     }
   });
 
   return (
     <td
-      {...mergeProps(filterDOMProps(props as any), gridCellProps, focusProps)}
+      {...mergeProps(filterDOMProps(props as any), gridCellProps, focusProps, hoverProps)}
       {...renderProps}
       ref={ref}
       data-focused={isFocused || undefined}
