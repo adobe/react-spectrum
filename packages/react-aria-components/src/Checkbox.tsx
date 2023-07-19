@@ -137,7 +137,7 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivEleme
       <Provider
         values={[
           [InternalCheckboxGroupContext, state],
-          [LabelContext, {...labelProps, ref: labelRef}],
+          [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
           [TextContext, {
             slots: {
               description: descriptionProps,

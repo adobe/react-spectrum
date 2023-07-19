@@ -204,7 +204,7 @@ function Example() {
   return (
     <>
       <DatePicker label="Birth date" value={date} onChange={setDate} />
-      <p>Selected date: {formatter.format(date.toDate(getLocalTimeZone()))}</p>
+      <p>Selected date: {date ? formatter.format(date.toDate(getLocalTimeZone())) : '--'}</p>
     </>
   );
 }
@@ -229,7 +229,7 @@ function Example() {
       label="Appointment date"
       value={date}
       onChange={setDate}
-      validationState={isWeekend(date, locale) ? 'invalid' : 'valid'}
+      validationState={date && isWeekend(date, locale) ? 'invalid' : 'valid'}
       description="Select a weekday"
       errorMessage="We are closed on weekends" />
   );

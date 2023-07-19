@@ -865,7 +865,7 @@ function Example() {
   return (
     <>
       <MyDateRangePicker label="Date range" value={range} onChange={setRange} />
-      <p>Selected date: {formatter.formatRange(range.start.toDate(getLocalTimeZone()), range.end.toDate(getLocalTimeZone()))}</p>
+      <p>Selected date: {range ? formatter.formatRange(range.start.toDate(getLocalTimeZone()), range.end.toDate(getLocalTimeZone())) : '--'}</p>
     </>
   );
 }
@@ -1060,7 +1060,7 @@ function Example() {
     start: today(getLocalTimeZone()),
     end: today(getLocalTimeZone()).add({ weeks: 1, days: 3 })
   });
-  let isInvalid = range.end.compare(range.start) > 7;
+  let isInvalid = range?.end.compare(range.start) > 7;
 
   return (
     <MyDateRangePicker
