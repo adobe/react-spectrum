@@ -35,9 +35,9 @@ export interface ComboBoxRenderProps {
   isDisabled: boolean,
   /**
    * Validation state of the combobox.
-   * @selector [data-validation-state]
+   * @selector [data-validation-state="valid | invalid"]
    */
-  validationState?: ValidationState,
+  validationState: ValidationState | undefined,
   /**
    * Whether the combobox is required.
    * @selector [data-required]

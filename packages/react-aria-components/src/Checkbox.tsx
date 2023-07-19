@@ -92,7 +92,7 @@ export interface CheckboxRenderProps {
    * Whether the checkbox is valid or invalid.
    * @selector [data-validation-state="valid | invalid"]
    */
-  validationState?: ValidationState,
+  validationState: ValidationState | undefined,
   /**
    * Whether the checkbox is required.
    * @selector [data-required]

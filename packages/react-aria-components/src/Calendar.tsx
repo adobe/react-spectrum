@@ -32,7 +32,7 @@ export interface CalendarRenderProps {
   state: CalendarState,
   /**
    * Validation state of the date field.
-   * @selector [data-validation-state]
+   * @selector [data-validation-state="valid | invalid"]
    */
   validationState: ValidationState
 }
