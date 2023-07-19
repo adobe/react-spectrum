@@ -797,6 +797,7 @@ export const DropzoneExampleWithFileTriggerLink = (props) => (
   <div>
     <DropZone
       {...props}
+      aria-label={'testing aria-label'}
       className={styles.dropzone}
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
