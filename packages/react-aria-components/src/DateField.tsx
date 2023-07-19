@@ -12,14 +12,30 @@
 import {AriaDateFieldProps, AriaTimeFieldProps, DateValue, mergeProps, TimeValue, useDateField, useDateSegment, useFocusRing, useHover, useLocale, useTimeField} from 'react-aria';
 import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {createCalendar} from '@internationalized/date';
-import {DateFieldState, DateSegmentType, DateSegment as IDateSegment, useDateFieldState, useTimeFieldState} from 'react-stately';
+import {DateFieldState, DateSegmentType, DateSegment as IDateSegment, useDateFieldState, useTimeFieldState, ValidationState} from 'react-stately';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {LabelContext} from './Label';
 import React, {cloneElement, createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactElement, useContext, useRef} from 'react';
 import {TextContext} from './Text';
 
-export interface DateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateFieldState>, SlotProps {}
-export interface TimeFieldProps<T extends TimeValue> extends Omit<AriaTimeFieldProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateFieldState>, SlotProps {}
+export interface DateFieldRenderProps {
+  /**
+   * State of the date field.
+   */
+  state: DateFieldState,
+  /**
+   * Validation state of the date field.
+   * @selector [data-validation-state]
+   */
+  validationState: ValidationState,
+  /**
+   * Whether the date field is disabled.
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean
+}
+export interface DateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateFieldRenderProps>, SlotProps {}
+export interface TimeFieldProps<T extends TimeValue> extends Omit<AriaTimeFieldProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateFieldRenderProps>, SlotProps {}
 
 interface DateInputContextValue extends SlotProps {
   state: DateFieldState,
@@ -45,7 +61,11 @@ function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: Forwarded
 
   let renderProps = useRenderProps({
     ...props,
-    values: state,
+    values: {
+      state,
+      validationState: state.validationState,
+      isDisabled: state.isDisabled
+    },
     defaultClassName: 'react-aria-DateField'
   });
 
@@ -64,7 +84,12 @@ function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: Forwarded
           }
         }]
       ]}>
-      <div {...DOMProps} {...renderProps} ref={ref} slot={props.slot} />
+      <div
+        {...DOMProps}
+        {...renderProps}
+        ref={ref}
+        slot={props.slot}
+        data-validation-date={state.validationState || undefined} />
     </Provider>
   );
 }
@@ -90,7 +115,11 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
 
   let renderProps = useRenderProps({
     ...props,
-    values: state,
+    values: {
+      state,
+      validationState: state.validationState,
+      isDisabled: state.isDisabled
+    },
     defaultClassName: 'react-aria-TimeField'
   });
 
@@ -109,7 +138,12 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
           }
         }]
       ]}>
-      <div {...DOMProps} {...renderProps} ref={ref} slot={props.slot} />
+      <div
+        {...DOMProps}
+        {...renderProps}
+        ref={ref}
+        slot={props.slot}
+        data-validation-date={state.validationState || undefined} />
     </Provider>
   );
 }
