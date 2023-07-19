@@ -60,9 +60,12 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     scrollTimeout: null,
     width: 0,
     height: 0,
-    isScrolling: false
+    isScrolling: false,
+    // Track the last two visible rect sizes
+    lastTwoRects: [],
+    // Number of times the newest visible rect size has matched the last two sizes
+    sameSizeCounter: 0
   }).current;
-  let lastTwoSizes = useRef({first: null, second: null, counter: null});
 
   let {direction} = useLocale();
 
@@ -145,30 +148,21 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
       state.height = h;
       let newRect = new Rect(state.scrollLeft, state.scrollTop, w, h);
 
-      // TODO replace with pop and push and an array?
-      // TODO consider where to place this
-      if (lastTwoSizes.current.first && lastTwoSizes.current.second) {
-        // console.log('in if, size', newRect, lastTwoSizes.current);
-        if (newRect.equals(lastTwoSizes.current.first) || newRect.equals(lastTwoSizes.current.second)) {
-          lastTwoSizes.current.counter++;
-          console.log('adding to counter', lastTwoSizes.current.first, lastTwoSizes.current.second, newRect);
+      // TODO consider where to place this logic, maybe somewhere in virtualizer as well
+      if (state.lastTwoRects.length > 1) {
+        if (state.lastTwoRects.some(rect => newRect.equals(rect))) {
+          ++state.sameSizeCounter;
+          if (state.sameSizeCounter > 5) {
+            return;
+          }
         } else {
-          lastTwoSizes.current.counter = 0;
-          console.log('resetting');
+          state.sameSizeCounter = 0;
         }
 
-        lastTwoSizes.current.first = lastTwoSizes.current.second.copy();
-        lastTwoSizes.current.second = newRect.copy();
-
-        if (lastTwoSizes.current.counter > 5) {
-          return;
-        }
+        state.lastTwoRects.shift();
+        state.lastTwoRects.push(newRect);
       } else {
-        if (lastTwoSizes.current.first == null) {
-          lastTwoSizes.current.first = newRect.copy();
-        } else if (lastTwoSizes.current.second == null) {
-          lastTwoSizes.current.second = newRect.copy();
-        }
+        state.lastTwoRects.push(newRect);
       }
 
       onVisibleRectChange(new Rect(state.scrollLeft, state.scrollTop, w, h));
