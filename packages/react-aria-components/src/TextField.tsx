@@ -10,26 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTextFieldProps, useFocusRing, useTextField} from 'react-aria';
+import {AriaTextFieldProps, useTextField} from 'react-aria';
 import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
-import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useCallback, useRef, useState} from 'react';
+import {TextAreaContext} from './TextArea';
 import {TextContext} from './Text';
 import {ValidationState} from '@react-types/shared';
 
 export interface TextFieldRenderProps {
-  /**
-   * Whether the text field is focused, either via a mouse or keyboard.
-   * @selector [data-focused]
-   */
-  isFocused: boolean,
-  /**
-   * Whether the text field is keyboard focused.
-   * @selector [data-focus-visible]
-   */
-  isFocusVisible: boolean,
   /**
    * Whether the text field is disabled.
    * @selector [data-disabled]
@@ -48,19 +39,27 @@ export const TextFieldContext = createContext<ContextValue<TextFieldProps, HTMLD
 
 function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TextFieldContext);
-  let inputRef = useRef<HTMLInputElement>(null);
+  let inputRef = useRef(null);
   let [labelRef, label] = useSlot();
-  let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField({
+  let [inputElementType, setInputElementType] = useState('input');
+  let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField<any>({
     ...props,
+    inputElementType,
     label
   }, inputRef);
 
-  let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
+  // Intercept setting the input ref so we can determine what kind of element we have.
+  // useTextField uses this to determine what props to include.
+  let inputOrTextAreaRef = useCallback((el) => {
+    inputRef.current = el;
+    if (el) {
+      setInputElementType(el instanceof HTMLTextAreaElement ? 'textarea' : 'input');
+    }
+  }, []);
+
   let renderProps = useRenderProps({
     ...props,
     values: {
-      isFocused,
-      isFocusVisible,
       isDisabled: props.isDisabled || false,
       validationState: props.validationState
     },
@@ -70,18 +69,16 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   return (
     <div
       {...filterDOMProps(props)}
-      {...focusProps}
       {...renderProps}
       ref={ref}
       slot={props.slot}
-      data-focused={isFocused || undefined}
-      data-focus-visible={isFocusVisible || undefined}
       data-disabled={props.isDisabled || undefined}
       data-validation-state={props.validationState || undefined}>
       <Provider
         values={[
           [LabelContext, {...labelProps, ref: labelRef}],
-          [InputContext, {...inputProps, ref: inputRef}],
+          [InputContext, {...inputProps, ref: inputOrTextAreaRef}],
+          [TextAreaContext, {...inputProps, ref: inputOrTextAreaRef}],
           [TextContext, {
             slots: {
               description: descriptionProps,

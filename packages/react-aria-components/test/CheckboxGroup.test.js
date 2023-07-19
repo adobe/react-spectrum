@@ -193,4 +193,12 @@ describe('CheckboxGroup', () => {
     let label = document.getElementById(group.getAttribute('aria-labelledby'));
     expect(label).toHaveAttribute('data-required', 'true');
   });
+
+  it('should support aria-describedby on a checkbox', () => {
+    let {getAllByRole} = renderGroup({}, {'aria-describedby': 'test'});
+    let checkboxes = getAllByRole('checkbox');
+    for (let checkbox of checkboxes) {
+      expect(checkbox).toHaveAttribute('aria-describedby', 'test');
+    }
+  });
 });
