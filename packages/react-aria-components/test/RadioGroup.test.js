@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Dialog, DialogTrigger, Label, Modal, Radio, RadioGroup, RadioGroupContext, Text} from '../';
+import {Button, Dialog, DialogTrigger, Label, Modal, Radio, RadioContext, RadioGroup, RadioGroupContext, Text} from '../';
 import {fireEvent, render, within} from '@react-spectrum/test-utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -100,15 +100,22 @@ describe('RadioGroup', () => {
   });
 
   it('should support slot', () => {
-    let {getByRole} = render(
+    let {getByRole, getAllByRole} = render(
       <RadioGroupContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
-        <TestRadioGroup groupProps={{slot: 'test'}} />
+        <RadioContext.Provider value={{'data-test': 'test'}}>
+          <TestRadioGroup groupProps={{slot: 'test'}} />
+        </RadioContext.Provider>
       </RadioGroupContext.Provider>
     );
 
     let group = getByRole('radiogroup');
     expect(group).toHaveAttribute('slot', 'test');
     expect(group).toHaveAttribute('aria-label', 'test');
+
+    let radios = getAllByRole('radio');
+    for (let radio of radios) {
+      expect(radio).toHaveAttribute('data-test', 'test');
+    }
   });
 
   it('should support hover', () => {

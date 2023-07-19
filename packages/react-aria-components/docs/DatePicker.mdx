@@ -817,7 +817,7 @@ function Example() {
   return (
     <>
       <MyDatePicker label="Birth date" value={date} onChange={setDate} />
-      <p>Selected date: {formatter.format(date.toDate(getLocalTimeZone()))}</p>
+      <p>Selected date: {date ? formatter.format(date.toDate(getLocalTimeZone())) : '--'}</p>
     </>
   );
 }
@@ -968,7 +968,7 @@ import {useLocale} from 'react-aria';
 function Example() {
   let [date, setDate] = React.useState(today(getLocalTimeZone()));
   let {locale} = useLocale();
-  let isInvalid = isWeekend(date, locale);
+  let isInvalid = date && isWeekend(date, locale);
 
   return (
     <MyDatePicker
