@@ -53,6 +53,7 @@ export function useCheckboxGroupItem(props: AriaCheckboxGroupItemProps, state: C
     inputProps: {
       ...res.inputProps,
       'aria-describedby': [
+        props['aria-describedby'],
         state.validationState === 'invalid' ? checkboxGroupErrorMessageIds.get(state) : null,
         checkboxGroupDescriptionIds.get(state)
       ].filter(Boolean).join(' ') || undefined

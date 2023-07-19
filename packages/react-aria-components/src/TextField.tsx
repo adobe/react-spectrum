@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTextFieldProps, useFocusRing, useTextField} from 'react-aria';
+import {AriaTextFieldProps, useTextField} from 'react-aria';
 import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {InputContext} from './Input';
@@ -20,16 +20,6 @@ import {TextContext} from './Text';
 import {ValidationState} from '@react-types/shared';
 
 export interface TextFieldRenderProps {
-  /**
-   * Whether the text field is focused, either via a mouse or keyboard.
-   * @selector [data-focused]
-   */
-  isFocused: boolean,
-  /**
-   * Whether the text field is keyboard focused.
-   * @selector [data-focus-visible]
-   */
-  isFocusVisible: boolean,
   /**
    * Whether the text field is disabled.
    * @selector [data-disabled]
@@ -55,12 +45,9 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
     label
   }, inputRef);
 
-  let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
   let renderProps = useRenderProps({
     ...props,
     values: {
-      isFocused,
-      isFocusVisible,
       isDisabled: props.isDisabled || false,
       validationState: props.validationState
     },
@@ -70,12 +57,9 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   return (
     <div
       {...filterDOMProps(props)}
-      {...focusProps}
       {...renderProps}
       ref={ref}
       slot={props.slot}
-      data-focused={isFocused || undefined}
-      data-focus-visible={isFocusVisible || undefined}
       data-disabled={props.isDisabled || undefined}
       data-validation-state={props.validationState || undefined}>
       <Provider

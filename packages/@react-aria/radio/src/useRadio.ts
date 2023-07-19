@@ -84,6 +84,7 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
       value,
       onChange,
       'aria-describedby': [
+        props['aria-describedby'],
         state.validationState === 'invalid' ? radioGroupErrorMessageIds.get(state) : null,
         radioGroupDescriptionIds.get(state)
       ].filter(Boolean).join(' ') || undefined
