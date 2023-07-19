@@ -45,10 +45,11 @@ Section.getCollectionNode = function* getCollectionNode<T>(props: SectionProps<T
           // @ts-ignore - Todo: find a better approach to conditionally check the type
           let type = child.type.__name === 'SelectionGroup' ? 'selectionGroup' : 'item';
           items.push({
-            type: type,
+            type,
             element: child
           });
         });
+
         yield* items;
       }
     }

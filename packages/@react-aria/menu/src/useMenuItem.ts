@@ -127,13 +127,13 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   }, [cancelOpenTimeout]);
 
   let data = menuData.get(state);
-  let onClose = props.onClose || data.onClose;
+  let onClose = props.onClose || data?.onClose;
   let onActionMenuDialogTrigger = useCallback(() => {
     onSubmenuOpen();
     // will need to disable this lint rule when using useEffectEvent https://react.dev/learn/separating-events-from-effects#logic-inside-effects-is-reactive
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  let onAction = isTrigger ? onActionMenuDialogTrigger : props.onAction || data.onAction;
+  let onAction = isTrigger ? onActionMenuDialogTrigger : props?.onAction || data?.onAction;
 
   let role = 'menuitem';
   if (state.selectionManager.selectionMode === 'single') {
