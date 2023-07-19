@@ -48,6 +48,7 @@ export {Table, Row, Cell, Column, TableHeader, TableBody, TableContext, useTable
 export {Tabs, TabList, TabPanel, Tab, TabsContext} from './Tabs';
 export {TagGroup, TagGroupContext, TagList, Tag} from './TagGroup';
 export {Text, TextContext} from './Text';
+export {TextArea, TextAreaContext} from './TextArea';
 export {TextField, TextFieldContext} from './TextField';
 export {ToggleButton, ToggleButtonContext} from './ToggleButton';
 export {TooltipTrigger, Tooltip} from './Tooltip';
@@ -89,6 +90,7 @@ export type {SwitchProps, SwitchRenderProps} from './Switch';
 export type {TableProps, TableRenderProps, TableHeaderProps, TableBodyProps, TableBodyRenderProps, ColumnProps, ColumnRenderProps, RowProps, RowRenderProps, CellProps, CellRenderProps} from './Table';
 export type {TabListProps, TabListRenderProps, TabPanelProps, TabPanelRenderProps, TabProps, TabsProps, TabRenderProps, TabsRenderProps} from './Tabs';
 export type {TagGroupProps, TagListProps, TagListRenderProps, TagProps, TagRenderProps} from './TagGroup';
+export type {TextAreaProps} from './TextArea';
 export type {TextFieldProps, TextFieldRenderProps} from './TextField';
 export type {TextProps} from './Text';
 export type {ToggleButtonProps, ToggleButtonRenderProps} from './ToggleButton';

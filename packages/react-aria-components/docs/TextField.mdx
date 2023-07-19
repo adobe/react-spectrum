@@ -66,7 +66,8 @@ import {TextField, Label, Input} from 'react-aria-components';
   flex-direction: column;
   width: fit-content;
 
-  .react-aria-Input {
+  .react-aria-Input,
+  .react-aria-TextArea {
     padding: 0.286rem;
     margin: 0;
     border: 1px solid var(--field-border);
@@ -231,6 +232,10 @@ An `Input` can be targeted with the `.react-aria-Input` CSS selector, or by over
 
 <StateTable properties={docs.exports.InputRenderProps.properties} />
 
+### TextArea
+
+An `TextArea` can be targeted with the `.react-aria-TextArea` CSS selector, or by overriding with a custom `className`. It supports the same states as `Input` described above.
+
 ### Text
 
 The help text elements within a `TextField` can be targeted with the `[slot=description]` and `[slot=errorMessage]` CSS selectors, or by adding a custom `className`.
@@ -349,6 +354,19 @@ TextField supports the `name` prop for integration with HTML forms. In addition,
 
 ```tsx example
 <MyTextField label="Email" name="email" type="email" />
+```
+
+### Multi-line
+
+TextField supports using the `TextArea` component in place of `Input` for multi-line text input.
+
+```tsx example
+import {TextField, Label, TextArea} from 'react-aria-components';
+
+<TextField>
+  <Label>Comment</Label>
+  <TextArea />
+</TextField>
 ```
 
 ## Advanced customization
