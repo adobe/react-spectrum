@@ -101,6 +101,7 @@ export class Virtualizer<T extends object, V, W> {
   private _transaction: Transaction<T, V> | null;
   private _nextTransaction: Transaction<T, V> | null;
   private _transactionQueue: Transaction<T, V>[];
+  private _lastTwoSizes;
 
   constructor(options: VirtualizerOptions<T, V, W> = {}) {
     this._contentSize = new Size;
@@ -123,6 +124,7 @@ export class Virtualizer<T extends object, V, W> {
     this._transaction = null;
     this._nextTransaction = null;
     this._transactionQueue = [];
+    this._lastTwoSizes = {first: null, second: null, counter: 0};
 
     // Set options from passed object if given
     this.transitionDuration = options.transitionDuration ?? 500;

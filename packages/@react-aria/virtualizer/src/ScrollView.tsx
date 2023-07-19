@@ -62,6 +62,8 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     height: 0,
     isScrolling: false
   }).current;
+  let lastTwoSizes = useRef({first: null, second: null, counter: null});
+
   let {direction} = useLocale();
 
   let [isScrolling, setScrolling] = useState(false);
@@ -141,6 +143,34 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     if (state.width !== w || state.height !== h) {
       state.width = w;
       state.height = h;
+      let newRect = new Rect(state.scrollLeft, state.scrollTop, w, h);
+
+      // TODO replace with pop and push and an array?
+      // TODO consider where to place this
+      if (lastTwoSizes.current.first && lastTwoSizes.current.second) {
+        // console.log('in if, size', newRect, lastTwoSizes.current);
+        if (newRect.equals(lastTwoSizes.current.first) || newRect.equals(lastTwoSizes.current.second)) {
+          lastTwoSizes.current.counter++;
+          console.log('adding to counter', lastTwoSizes.current.first, lastTwoSizes.current.second, newRect);
+        } else {
+          lastTwoSizes.current.counter = 0;
+          console.log('resetting');
+        }
+
+        lastTwoSizes.current.first = lastTwoSizes.current.second.copy();
+        lastTwoSizes.current.second = newRect.copy();
+
+        if (lastTwoSizes.current.counter > 5) {
+          return;
+        }
+      } else {
+        if (lastTwoSizes.current.first == null) {
+          lastTwoSizes.current.first = newRect.copy();
+        } else if (lastTwoSizes.current.second == null) {
+          lastTwoSizes.current.second = newRect.copy();
+        }
+      }
+
       onVisibleRectChange(new Rect(state.scrollLeft, state.scrollTop, w, h));
     }
   }, [onVisibleRectChange, ref, state, sizeToFit, contentSize]);
