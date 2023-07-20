@@ -668,5 +668,5 @@ describe('ColorArea', () => {
       expect(inputs[0]).toHaveValue('100');
       expect(inputs[1]).toHaveValue('200');
     });
-  })
+  });
 });

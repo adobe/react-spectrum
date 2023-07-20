@@ -54,9 +54,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     isReadOnly,
     name,
     formValue = 'text',
-    allowsCustomValue,
-    isRequired,
-    requiredBehavior
+    allowsCustomValue
   } = props;
   if (allowsCustomValue) {
     formValue = 'text';
@@ -95,16 +93,6 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     name,
     value: formValue === 'text' ? state.inputValue : state.selectedKey
   };
-
-  if (isRequired && requiredBehavior === 'native') {
-    // Use a hidden <input type="text"> rather than <input type="hidden">
-    // so that an empty value blocks HTML form submission when the field is required.
-    inputProps.type = 'text';
-    inputProps.hidden = true;
-    inputProps.required = true;
-    // Ignore react warning.
-    inputProps.onChange = () => {};
-  }
 
   let inputRef = useRef<HTMLInputElement>(null);
   useFormReset(inputRef, inputProps.value, formValue === 'text' ? state.setInputValue : state.setSelectedKey);

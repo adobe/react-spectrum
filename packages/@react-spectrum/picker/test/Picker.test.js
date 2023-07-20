@@ -2229,6 +2229,6 @@ describe('Picker', function () {
       let button = getByTestId('reset');
       act(() => userEvent.click(button));
       expect(input).toHaveValue('one');
-    })
+    });
   });
 });

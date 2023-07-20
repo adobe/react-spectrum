@@ -151,15 +151,14 @@ describe('ComboBox', () => {
   it('should support formValue', () => {
     let {getByRole, rerender} = render(<TestComboBox name="test" selectedKey="2" />);
     let input = getByRole('combobox');
-    expect(input).toHaveAttribute('name', 'test');
-    expect(input).toHaveValue('Dog');
-    expect(document.querySelector('input[type=hidden]')).toBeNull();
-
-    rerender(<TestComboBox name="test" formValue="key" selectedKey="2" />);
     expect(input).not.toHaveAttribute('name');
-
+    expect(input).toHaveValue('Dog');
     let hiddenInput = document.querySelector('input[type=hidden]');
     expect(hiddenInput).toHaveAttribute('name', 'test');
     expect(hiddenInput).toHaveValue('2');
+
+    rerender(<TestComboBox name="test" formValue="text" selectedKey="2" />);
+    expect(input).toHaveAttribute('name', 'test');
+    expect(document.querySelector('input[type=hidden]')).toBeNull();
   });
 });

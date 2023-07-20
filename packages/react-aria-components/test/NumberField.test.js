@@ -126,7 +126,7 @@ describe('NumberField', () => {
     let input = document.querySelector('input[name=test]');
     expect(input).toHaveValue('25');
 
-    rerender(<TestNumberField name="test" value={null} formatOptions={{style: 'currency', currency: 'USD'}} />)
+    rerender(<TestNumberField name="test" value={null} formatOptions={{style: 'currency', currency: 'USD'}} />);
     expect(input).toHaveValue('');
   });
 });

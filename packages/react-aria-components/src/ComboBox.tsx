@@ -67,7 +67,7 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
   let [propsFromListBox, setListBoxProps] = useState<ListBoxProps<T>>({children: []});
   let {
     name,
-    formValue = 'text',
+    formValue = 'key',
     allowsCustomValue
   } = props;
   if (allowsCustomValue) {

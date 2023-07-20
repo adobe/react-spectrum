@@ -5169,17 +5169,6 @@ describe('ComboBox', function () {
         jest.clearAllMocks();
       });
 
-      it('should support requiredBehavior', () => {
-        let {getByRole, rerender} = render(<ExampleComboBox isRequired />);
-        let input = getByRole('combobox');
-        expect(input).toHaveAttribute('aria-required', 'true');
-        expect(input).not.toHaveAttribute('required');
-
-        rerender(<ExampleComboBox isRequired requiredBehavior="native" />);
-        expect(input).not.toHaveAttribute('aria-required', 'true');
-        expect(input).toHaveAttribute('required');
-      });
-
       it('should support form reset', () => {
         let {getByRole, getByTestId} = render(
           <form>
@@ -5234,18 +5223,6 @@ describe('ComboBox', function () {
       afterEach(() => {
         act(() => jest.runAllTimers());
         jest.clearAllMocks();
-      });
-
-      it('should support requiredBehavior', () => {
-        let {rerender} = render(<ExampleComboBox name="test" isRequired />);
-        let input = document.querySelector('input[name=test]');
-        expect(input).not.toHaveAttribute('required');
-        expect(input).toHaveAttribute('type', 'hidden');
-
-        rerender(<ExampleComboBox name="test" isRequired requiredBehavior="native" />);
-        expect(input).toHaveAttribute('required');
-        expect(input).toHaveAttribute('type', 'text');
-        expect(input).toHaveAttribute('hidden');
       });
 
       it('should support form reset', () => {

@@ -14,10 +14,10 @@ import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, StyleRen
 import {createCalendar} from '@internationalized/date';
 import {DateFieldState, DateSegmentType, DateSegment as IDateSegment, useDateFieldState, useTimeFieldState, ValidationState} from 'react-stately';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {InputDOMProps} from '@react-types/shared';
 import {LabelContext} from './Label';
 import React, {cloneElement, createContext, ForwardedRef, forwardRef, HTMLAttributes, InputHTMLAttributes, ReactElement, RefObject, useContext, useRef} from 'react';
 import {TextContext} from './Text';
-import { InputDOMProps } from '@react-types/shared';
 
 export interface DateFieldRenderProps {
   /**

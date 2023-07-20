@@ -155,7 +155,7 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
     inputProps: {
       type: 'hidden',
       name: props.name,
-      value: state.value?.toString() || '',
+      value: state.value?.toString() || ''
     },
     descriptionProps,
     errorMessageProps

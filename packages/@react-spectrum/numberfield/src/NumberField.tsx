@@ -16,6 +16,7 @@ import {Field} from '@react-spectrum/label';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
+import {NumberFieldState, useNumberFieldState} from '@react-stately/numberfield';
 import React, {HTMLAttributes, InputHTMLAttributes, RefObject, useRef} from 'react';
 import {SpectrumNumberFieldProps} from '@react-types/numberfield';
 import {StepButton} from './StepButton';
@@ -24,7 +25,6 @@ import {TextFieldBase} from '@react-spectrum/textfield';
 import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useNumberField} from '@react-aria/numberfield';
-import {NumberFieldState, useNumberFieldState} from '@react-stately/numberfield';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElement>) {
@@ -111,7 +111,7 @@ interface NumberFieldInputProps extends SpectrumNumberFieldProps {
   decrementProps: AriaButtonProps,
   className?: string,
   style?: React.CSSProperties,
-  state: NumberFieldState,
+  state: NumberFieldState
 }
 
 const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: NumberFieldInputProps, ref: RefObject<HTMLElement>) {

@@ -25,9 +25,10 @@ export function useFormReset<T>(
   });
 
   useEffect(() => {
-    ref?.current?.form?.addEventListener('reset', handleReset);
+    let form = ref?.current?.form;
+    form?.addEventListener('reset', handleReset);
     return () => {
-      ref?.current?.form?.removeEventListener('reset', handleReset);
-    }
+      form?.removeEventListener('reset', handleReset);
+    };
   }, [ref, handleReset]);
 }
