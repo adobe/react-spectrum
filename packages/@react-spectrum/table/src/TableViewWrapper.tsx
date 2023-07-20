@@ -58,24 +58,28 @@ export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionP
   /**
    * Whether the TableView should support expandable rows. Requires the feature flag to be enabled first, see https://react-spectrum.adobe.com/react-spectrum/TableView.html#expandable-rows.
    * @version alpha
+   * @private
    */
   UNSTABLE_allowsExpandableRows?: boolean,
   /**
    * The currently expanded keys in the collection (controlled). Requires the feature flag to be
    * enabled along with UNSTABLE_allowsExpandableRows, see https://react-spectrum.adobe.com/react-spectrum/TableView.html#expandable-rows.
    * @version alpha
+   * @private
    */
   UNSTABLE_expandedKeys?: 'all' | Iterable<Key>,
   /**
    * The initial expanded keys in the collection (uncontrolled). Requires the feature flag to be
    * enabled along with UNSTABLE_allowsExpandableRows, see https://react-spectrum.adobe.com/react-spectrum/TableView.html#expandable-rows.
    * @version alpha
+   * @private
    */
   UNSTABLE_defaultExpandedKeys?: 'all' | Iterable<Key>,
   /**
    * Handler that is called when items are expanded or collapsed. Requires the feature flag to be
    * enabled along with UNSTABLE_allowsExpandableRows, see https://react-spectrum.adobe.com/react-spectrum/TableView.html#expandable-rows.
    * @version alpha
+   * @private
    */
   UNSTABLE_onExpandedChange?: (keys: Set<Key>) => any
 }
