@@ -123,7 +123,11 @@ function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
   let title = currentPage.title + (!INDEX_RE.test(currentPage.name) || isBlog ? ` – ${pageSection}` : '');
   let hero = (parts.length > 1 ? HERO[parts[0]] : '') || heroImageHome;
   let heroUrl = `https://${TLD}/${currentPage.image || path.basename(hero)}`;
-  let githubLink = pathToPage.startsWith('/tmp/') ? pathToPage.replace('/tmp/', '').substring(pathToPage.indexOf('/')) : pathToPage;
+  let githubLink = pathToPage;
+  if (pathToPage.startsWith('/tmp/')) {
+    pathToPage = pathToPage.replace('/tmp/', '');
+    pathToPage = pathToPage.substring(pathToPage.indexOf('/'));
+  }
 
   return (
     <html
