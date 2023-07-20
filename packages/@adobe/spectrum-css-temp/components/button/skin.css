@@ -1044,7 +1044,7 @@ governing permissions and limitations under the License.
     --spectrum-actionbutton-static-background-color-selected-focus: Highlight;
     --spectrum-actionbutton-static-background-color-selected-active: Highlight;
     --spectrum-actionbutton-static-border-color: ButtonText;
-    --spectrum-actionbutton-static-border-color-hover: ButtonText;
+    --spectrum-actionbutton-static-border-color-hover: Highlight;
     --spectrum-actionbutton-static-border-color-active: ButtonText;
     --spectrum-actionbutton-static-border-color-focus: CanvasText;
     --spectrum-actionbutton-static-border-disabled: GrayText;
