@@ -436,7 +436,7 @@ governing permissions and limitations under the License.
   &:hover {
     background-color: xvar(--spectrum-high-contrast-button-face, var(--spectrum-actionbutton-background-color-hover));
     border-color: xvar(--spectrum-high-contrast-highlight, var(--spectrum-actionbutton-border-color-hover));
-    color: var(--spectrum-actionbutton-text-color-hover);
+    color: xvar(--spectrum-high-contrast-button-text, var(--spectrum-actionbutton-text-color-hover));
 
     .spectrum-Icon {
       fill: xvar(--spectrum-high-contrast-button-text, var(--spectrum-actionbutton-icon-color-hover));
