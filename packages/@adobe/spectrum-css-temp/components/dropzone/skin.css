@@ -22,10 +22,6 @@ governing permissions and limitations under the License.
     border-color: var(--spectrum-dropzone-border-color-selected-hover);
   }
 
-  &[data-focused] {
-    border-color: var(--spectrum-dropzone-border-color-selected-hover);
-  }
-
   &[data-drop-target] {
     border-style: solid;
     border-color: var(--spectrum-dropzone-border-color-selected-hover);
@@ -45,13 +41,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  &.is-focused {
-    svg{
-      color: var(--spectrum-dropzone-illustratedmessage-illustration-color-key-focus);
-    }
-  }
-
-  &.is-focused-visible {
+  &.is-focus-visible {
     svg{
       color: var(--spectrum-dropzone-illustratedmessage-illustration-color-key-focus);
     }

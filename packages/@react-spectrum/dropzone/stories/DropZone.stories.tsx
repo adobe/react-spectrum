@@ -69,7 +69,7 @@ function Example(props) {
       isFilled={isFilled}
       onDrop={async (e) => { 
         let items = e.items.filter((item) => item.kind === 'file') as FileDropItem[];
-        if (items) {
+        if (items.length > 0) {
           const urls = await Promise.all(items.map(async (item) => URL.createObjectURL(await item.getFile())));
           const stringUrls = urls.map((url) => url.toString());
           setFilledSrc(stringUrls);
@@ -80,7 +80,7 @@ function Example(props) {
       onDropExit={action('onDropExit')} 
       onPaste={async (e) => { 
         let items = e.items.filter((item) => item.kind === 'file') as FileDropItem[];
-        if (items) {
+        if (items.length > 0) {
           const urls = await Promise.all(items.map(async (item) => URL.createObjectURL(await item.getFile())));
           const stringUrls = urls.map((url) => url.toString());
           setFilledSrc(stringUrls);
@@ -124,7 +124,7 @@ function DropZoneWithDraggable(props) {
         isFilled={isFilled}
         onDrop={async (e) => {
           let items = await Promise.all(e.items.filter((item) => item.kind === 'text' && item.types.has('text/plain')).map((item: TextDropItem) => item.getText('text/plain')));
-          if (items) {
+          if (items.length > 0) {
             setIsFilled(true);
             setFilledSrc(items.join('\n'));
           }
