@@ -16,7 +16,7 @@ import {SpectrumTableProps} from './TableViewWrapper';
 import {TableViewBase} from './TableViewBase';
 import {UNSTABLE_useTreeGridState} from '@react-stately/table';
 
-export interface TreeGridTableProps<T> extends Omit<SpectrumTableProps<T>, 'UNSTABLE_hasExpandableRows'> {}
+export interface TreeGridTableProps<T> extends Omit<SpectrumTableProps<T>, 'UNSTABLE_allowsExpandableRows'> {}
 
 function TreeGridTableView<T extends object>(props: TreeGridTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {

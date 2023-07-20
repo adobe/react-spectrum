@@ -894,7 +894,7 @@ export function EmptyStateTable(props) {
         </TableHeader>
         <TableBody items={show ? items ?? manyRows : []}>
           {(item: any) =>
-            (<Row key={item.foo} childItems={item.childRows}>
+            (<Row key={item.foo} UNSTABLE_childItems={item.childRows}>
               {key => <Cell>{item[key]}</Cell>}
             </Row>)
           }

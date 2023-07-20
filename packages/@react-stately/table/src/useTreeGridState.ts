@@ -11,7 +11,6 @@
  */
 
 import {CollectionBuilder} from '@react-stately/collections';
-import {Expandable} from '@react-types/shared';
 import {GridNode} from '@react-types/grid';
 import {Key, useMemo} from 'react';
 import {TableCollection} from './TableCollection';
@@ -30,7 +29,14 @@ export interface TreeGridState<T> extends TableState<T> {
   userColumnCount: number
 }
 
-export interface TreeGridStateProps<T> extends Expandable, Omit<TableStateProps<T>, 'collection'> {}
+export interface TreeGridStateProps<T> extends Omit<TableStateProps<T>, 'collection'> {
+  /** The currently expanded keys in the collection (controlled). */
+  UNSTABLE_expandedKeys?: 'all' | Iterable<Key>,
+  /** The initial expanded keys in the collection (uncontrolled). */
+  UNSTABLE_defaultExpandedKeys?: 'all' | Iterable<Key>,
+  /** Handler that is called when items are expanded or collapsed. */
+  UNSTABLE_onExpandedChange?: (keys: Set<Key>) => any
+}
 
 /**
  * Provides state management for a tree grid component. Handles building a collection
@@ -41,9 +47,9 @@ export function UNSTABLE_useTreeGridState<T extends object>(props: TreeGridState
     selectionMode = 'none',
     showSelectionCheckboxes,
     showDragButtons,
-    expandedKeys: propExpandedKeys,
-    defaultExpandedKeys: propDefaultExpandedKeys,
-    onExpandedChange,
+    UNSTABLE_expandedKeys: propExpandedKeys,
+    UNSTABLE_defaultExpandedKeys: propDefaultExpandedKeys,
+    UNSTABLE_onExpandedChange,
     children
   } = props;
 
@@ -54,7 +60,7 @@ export function UNSTABLE_useTreeGridState<T extends object>(props: TreeGridState
   let [expandedKeys, setExpandedKeys] = useControlledState(
     propExpandedKeys ? convertExpanded(propExpandedKeys) : undefined,
     propDefaultExpandedKeys ? convertExpanded(propDefaultExpandedKeys) : new Set(),
-    onExpandedChange
+    UNSTABLE_onExpandedChange
   );
 
   let context = useMemo(() => ({
@@ -93,7 +99,7 @@ export function UNSTABLE_useTreeGridState<T extends object>(props: TreeGridState
 function toggleKey<T>(currentExpandedKeys: 'all' | Set<Key>, key: Key, collection: TreeGridCollection<T>): Set<Key> {
   let updatedExpandedKeys: Set<Key>;
   if (currentExpandedKeys === 'all') {
-    updatedExpandedKeys = new Set(collection.flattenedRows.filter(row => row.props.childItems || row.props.children.length > collection.userColumnCount).map(row => row.key));
+    updatedExpandedKeys = new Set(collection.flattenedRows.filter(row => row.props.UNSTABLE_childItems || row.props.children.length > collection.userColumnCount).map(row => row.key));
     updatedExpandedKeys.delete(key);
   } else {
     updatedExpandedKeys = new Set(currentExpandedKeys);

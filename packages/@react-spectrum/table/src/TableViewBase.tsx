@@ -161,7 +161,11 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
     if (dropHooksProvided.current !== isTableDroppable) {
       console.warn('Drop hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
     }
-  }, [isTableDraggable, isTableDroppable]);
+    if ('expandedKeys' in state && (isTableDraggable || isTableDroppable)) {
+      console.warn('Drag and drop is not yet fully supported with expandable rows and may produce unexpected results.');
+    }
+  }, [isTableDraggable, isTableDroppable, state]);
+
   let {styleProps} = useStyleProps(props);
   let {direction} = useLocale();
   let {scale} = useProvider();
@@ -384,7 +388,7 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
           return <TableDragCell cell={item} />;
         }
 
-        return <TableCell cell={item} scale={scale} />;
+        return <TableCell cell={item} />;
       }
       case 'placeholder':
         // TODO: move to react-aria?
@@ -1341,7 +1345,8 @@ function TableCheckboxCell({cell}) {
   );
 }
 
-function TableCell({cell, scale}) {
+function TableCell({cell}) {
+  let {scale} = useProvider();
   let {state} = useTableContext();
   let isExpandableTable = 'expandedKeys' in state;
   let ref = useRef();
@@ -1358,7 +1363,7 @@ function TableCell({cell, scale}) {
   let levelOffset = 0;
 
   if ('expandedKeys' in state) {
-    isRowExpandable = state.keyMap.get(cell.parentKey)?.props.childItems?.length > 0 || state.keyMap.get(cell.parentKey)?.props?.children?.length > state.userColumnCount;
+    isRowExpandable = state.keyMap.get(cell.parentKey)?.props.UNSTABLE_childItems?.length > 0 || state.keyMap.get(cell.parentKey)?.props?.children?.length > state.userColumnCount;
     showExpandCollapseButton = isFirstRowHeaderCell && isRowExpandable;
     // Offset based on level, and add additional offset if there is no expand/collapse button on a row
     levelOffset = (cell.level - 2) * LEVEL_OFFSET_WIDTH[scale] + (!showExpandCollapseButton ? LEVEL_OFFSET_WIDTH[scale] * 2 : 0);
