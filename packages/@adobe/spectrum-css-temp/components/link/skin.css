@@ -75,12 +75,12 @@ governing permissions and limitations under the License.
   .spectrum-Link {
     --spectrum-link-text-color: LinkText;
     --spectrum-link-text-color-hover: LinkText;
-    --spectrum-link-text-color-down: CanvasText;
+    --spectrum-link-text-color-down: LinkText;
     --spectrum-link-text-color-key-focus: LinkText;
 
-    /* Make links stay link color when clicked */
-    &:not(.spectrum-Link--secondary, .spectrum-Link--overBackground):active {
-      color: var(--spectrum-link-text-color);
-    }
+    --spectrum-link-over-background-text-color: LinkText;
+    --spectrum-link-over-background-text-color-hover: LinkText;
+    --spectrum-link-over-background-text-color-down: LinkText;
+    --spectrum-link-over-background-text-color-key-focus: LinkText;
   }
 }
