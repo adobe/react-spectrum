@@ -25,7 +25,7 @@ export interface TreeGridState<T> extends TableState<T> {
   toggleKey(key: Key): void,
   /** The key map containing nodes representing the collection's tree grid structure. */
   keyMap: Map<Key, GridNode<T>>,
-  /** The number of columns provided by the user. */
+  /** The number of leaf columns provided by the user. */
   userColumnCount: number
 }
 
@@ -135,59 +135,24 @@ interface TreeGridCollection<T> {
   flattenedRows: GridNode<T>[],
   userColumnCount: number
 }
-
-const ROW_HEADER_COLUMN_KEY = 'row-header-column-checkbox-' + Math.random().toString(36).slice(2);
-const ROW_HEADER_COLUMN_KEY_DRAG = 'row-header-column-drag-' + Math.random().toString(36).slice(2);
-
 function generateTreeGridCollection<T>(nodes, opts: TreeGridCollectionOptions): TreeGridCollection<T> {
   let {
     expandedKeys = new Set()
   } = opts;
 
   let body: GridNode<T>;
-  let columns: GridNode<T>[] = [];
+  let columns: (GridNode<T> | {type: string})[] = [];
   let flattenedRows = [];
   let userColumnCount = 0;
   let originalColumns = [];
   let keyMap = new Map();
 
   if (opts?.showSelectionCheckboxes) {
-    let rowHeaderColumn: GridNode<T> = {
-      type: 'column',
-      key: ROW_HEADER_COLUMN_KEY,
-      value: null,
-      textValue: '',
-      level: 0,
-      index: opts?.showDragButtons ? 1 : 0,
-      hasChildNodes: false,
-      rendered: null,
-      childNodes: [],
-      props: {
-        isSelectionCell: true
-      }
-    };
-
-    columns.unshift(rowHeaderColumn);
+    columns.unshift({type: 'checkboxColumn'});
   }
 
-  // Add cell for drag buttons if needed.
   if (opts?.showDragButtons) {
-    let rowHeaderColumn: GridNode<T> = {
-      type: 'column',
-      key: ROW_HEADER_COLUMN_KEY_DRAG,
-      value: null,
-      textValue: '',
-      level: 0,
-      index: 0,
-      hasChildNodes: false,
-      rendered: null,
-      childNodes: [],
-      props: {
-        isDragButtonCell: true
-      }
-    };
-
-    columns.unshift(rowHeaderColumn);
+    columns.unshift({type: 'dragButtonColumn'});
   }
 
   let topLevelRows = [];
@@ -242,10 +207,6 @@ function generateTreeGridCollection<T>(nodes, opts: TreeGridCollectionOptions): 
     }
 
     let newProps = {};
-    // Associate the parent column node to the cell/column cell.
-    if (node.type === 'cell' || node.type === 'column') {
-      newProps['column'] = columns[i];
-    }
 
     // Assign indexOfType to cells and rows for aria-posinset
     if (node.type !== 'placeholder' && node.type !== 'column') {
