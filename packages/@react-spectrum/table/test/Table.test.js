@@ -1843,6 +1843,10 @@ export let tableTests = () => {
   });
 
   describe('selection', function () {
+    afterEach(() => {
+      act(() => jest.runAllTimers());
+    });
+
     let renderJSX = (props, items = manyItems) => (
       <TableView aria-label="Table" selectionMode="multiple" {...props}>
         <TableHeader columns={columns}>
