@@ -11,9 +11,8 @@
  */
 
 import {CollectionBuilder} from '@react-stately/collections';
-import {Expandable} from '@react-types/shared';
 import {GridNode} from '@react-types/grid';
-import {Key, useMemo} from 'react';
+import {Key, ReactElement, useMemo} from 'react';
 import {TableCollection} from './TableCollection';
 import {tableNestedRows} from '@react-stately/flags';
 import {TableState, TableStateProps, useTableState} from './useTableState';
@@ -26,11 +25,18 @@ export interface TreeGridState<T> extends TableState<T> {
   toggleKey(key: Key): void,
   /** The key map containing nodes representing the collection's tree grid structure. */
   keyMap: Map<Key, GridNode<T>>,
-  /** The number of columns provided by the user. */
+  /** The number of leaf columns provided by the user. */
   userColumnCount: number
 }
 
-export interface TreeGridStateProps<T> extends Expandable, Omit<TableStateProps<T>, 'collection'> {}
+export interface TreeGridStateProps<T> extends Omit<TableStateProps<T>, 'collection'> {
+  /** The currently expanded keys in the collection (controlled). */
+  UNSTABLE_expandedKeys?: 'all' | Iterable<Key>,
+  /** The initial expanded keys in the collection (uncontrolled). */
+  UNSTABLE_defaultExpandedKeys?: 'all' | Iterable<Key>,
+  /** Handler that is called when items are expanded or collapsed. */
+  UNSTABLE_onExpandedChange?: (keys: Set<Key>) => any
+}
 
 /**
  * Provides state management for a tree grid component. Handles building a collection
@@ -41,9 +47,9 @@ export function UNSTABLE_useTreeGridState<T extends object>(props: TreeGridState
     selectionMode = 'none',
     showSelectionCheckboxes,
     showDragButtons,
-    expandedKeys: propExpandedKeys,
-    defaultExpandedKeys: propDefaultExpandedKeys,
-    onExpandedChange,
+    UNSTABLE_expandedKeys: propExpandedKeys,
+    UNSTABLE_defaultExpandedKeys: propDefaultExpandedKeys,
+    UNSTABLE_onExpandedChange,
     children
   } = props;
 
@@ -54,7 +60,7 @@ export function UNSTABLE_useTreeGridState<T extends object>(props: TreeGridState
   let [expandedKeys, setExpandedKeys] = useControlledState(
     propExpandedKeys ? convertExpanded(propExpandedKeys) : undefined,
     propDefaultExpandedKeys ? convertExpanded(propDefaultExpandedKeys) : new Set(),
-    onExpandedChange
+    UNSTABLE_onExpandedChange
   );
 
   let context = useMemo(() => ({
@@ -66,8 +72,7 @@ export function UNSTABLE_useTreeGridState<T extends object>(props: TreeGridState
   }), [children, showSelectionCheckboxes, selectionMode, showDragButtons]);
 
   let builder = useMemo(() => new CollectionBuilder<T>(), []);
-  // @ts-ignore
-  let nodes = useMemo(() => builder.build({children}, context), [builder, children, context]);
+  let nodes = useMemo(() => builder.build({children: children as ReactElement[]}, context), [builder, children, context]);
   let treeGridCollection = useMemo(() => {
     return generateTreeGridCollection<T>(nodes, {showSelectionCheckboxes, showDragButtons, expandedKeys});
   }, [nodes, showSelectionCheckboxes, showDragButtons, expandedKeys]);
@@ -93,7 +98,7 @@ export function UNSTABLE_useTreeGridState<T extends object>(props: TreeGridState
 function toggleKey<T>(currentExpandedKeys: 'all' | Set<Key>, key: Key, collection: TreeGridCollection<T>): Set<Key> {
   let updatedExpandedKeys: Set<Key>;
   if (currentExpandedKeys === 'all') {
-    updatedExpandedKeys = new Set(collection.flattenedRows.filter(row => row.props.childItems || row.props.children.length > collection.userColumnCount).map(row => row.key));
+    updatedExpandedKeys = new Set(collection.flattenedRows.filter(row => row.props.UNSTABLE_childItems || row.props.children.length > collection.userColumnCount).map(row => row.key));
     updatedExpandedKeys.delete(key);
   } else {
     updatedExpandedKeys = new Set(currentExpandedKeys);
@@ -129,59 +134,24 @@ interface TreeGridCollection<T> {
   flattenedRows: GridNode<T>[],
   userColumnCount: number
 }
-
-const ROW_HEADER_COLUMN_KEY = 'row-header-column-checkbox-' + Math.random().toString(36).slice(2);
-const ROW_HEADER_COLUMN_KEY_DRAG = 'row-header-column-drag-' + Math.random().toString(36).slice(2);
-
 function generateTreeGridCollection<T>(nodes, opts: TreeGridCollectionOptions): TreeGridCollection<T> {
   let {
     expandedKeys = new Set()
   } = opts;
 
   let body: GridNode<T>;
-  let columns: GridNode<T>[] = [];
+  let columns: (GridNode<T> | {type: string})[] = [];
   let flattenedRows = [];
   let userColumnCount = 0;
   let originalColumns = [];
   let keyMap = new Map();
 
   if (opts?.showSelectionCheckboxes) {
-    let rowHeaderColumn: GridNode<T> = {
-      type: 'column',
-      key: ROW_HEADER_COLUMN_KEY,
-      value: null,
-      textValue: '',
-      level: 0,
-      index: opts?.showDragButtons ? 1 : 0,
-      hasChildNodes: false,
-      rendered: null,
-      childNodes: [],
-      props: {
-        isSelectionCell: true
-      }
-    };
-
-    columns.unshift(rowHeaderColumn);
+    columns.unshift({type: 'checkboxColumn'});
   }
 
-  // Add cell for drag buttons if needed.
   if (opts?.showDragButtons) {
-    let rowHeaderColumn: GridNode<T> = {
-      type: 'column',
-      key: ROW_HEADER_COLUMN_KEY_DRAG,
-      value: null,
-      textValue: '',
-      level: 0,
-      index: 0,
-      hasChildNodes: false,
-      rendered: null,
-      childNodes: [],
-      props: {
-        isDragButtonCell: true
-      }
-    };
-
-    columns.unshift(rowHeaderColumn);
+    columns.unshift({type: 'dragButtonColumn'});
   }
 
   let topLevelRows = [];
@@ -236,10 +206,6 @@ function generateTreeGridCollection<T>(nodes, opts: TreeGridCollectionOptions): 
     }
 
     let newProps = {};
-    // Associate the parent column node to the cell/column cell.
-    if (node.type === 'cell' || node.type === 'column') {
-      newProps['column'] = columns[i];
-    }
 
     // Assign indexOfType to cells and rows for aria-posinset
     if (node.type !== 'placeholder' && node.type !== 'column') {

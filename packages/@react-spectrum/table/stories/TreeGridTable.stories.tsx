@@ -34,7 +34,7 @@ export const StaticExpandableRows: TableStory = {
     height: 200
   },
   render: (args) => (
-    <TableView defaultExpandedKeys={['row 1']} UNSTABLE_hasExpandableRows onExpandedChange={action('onExpandedChange')} {...args}>
+    <TableView UNSTABLE_defaultExpandedKeys={['row 1']} UNSTABLE_allowsExpandableRows UNSTABLE_onExpandedChange={action('onExpandedChange')} {...args}>
       <TableHeader>
         <Column key="foo">Foo</Column>
         <Column key="bar">Bar</Column>
@@ -84,13 +84,13 @@ function DynamicExpandableRows(props: SpectrumTableProps<unknown>) {
       <ActionButton onPress={() => setExpandedKeys('all')}>Expand all</ActionButton>
       <ActionButton onPress={() => setExpandedKeys(new Set([]))}>Collapse all</ActionButton>
       <ActionButton onPress={() => setExpandedKeys(new Set(['Lvl 1 Foo 1']))}>Set expanded to Lvl 1 Foo 1</ActionButton>
-      <TableView expandedKeys={expandedKeys} onExpandedChange={chain(setExpandedKeys, action('onExpandedChange'))} UNSTABLE_hasExpandableRows {...props}>
+      <TableView UNSTABLE_expandedKeys={expandedKeys} UNSTABLE_onExpandedChange={chain(setExpandedKeys, action('onExpandedChange'))} UNSTABLE_allowsExpandableRows {...props}>
         <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
         </TableHeader>
         <TableBody items={nestedItems}>
           {item =>
-            (<Row key={item.foo} childItems={item.childRows}>
+            (<Row key={item.foo} UNSTABLE_childItems={item.childRows}>
               {(key) => {
                 // Note: The "item" here will reflect the child Row's values from nestedItems
                 return <Cell>{item[key]}</Cell>;
@@ -122,7 +122,7 @@ export const UserSetRowHeader: TableStory = {
     height: 400
   },
   render: (args) => (
-    <TableView UNSTABLE_hasExpandableRows onExpandedChange={action('onExpandedChange')} {...args}>
+    <TableView UNSTABLE_allowsExpandableRows UNSTABLE_onExpandedChange={action('onExpandedChange')} {...args}>
       <TableHeader>
         <Column key="foo" allowsResizing>Foo</Column>
         <Column isRowHeader allowsResizing key="bar">Bar</Column>
@@ -191,13 +191,13 @@ function ManyExpandableRows(props: ManyExpandableRowsProps) {
     <Flex direction="column">
       <ActionButton onPress={() => setExpandedKeys('all')}>Expand all</ActionButton>
       <ActionButton onPress={() => setExpandedKeys(new Set([]))}>Collapse all</ActionButton>
-      <TableView expandedKeys={expandedKeys} onExpandedChange={chain(setExpandedKeys, action('onExpandedChange'))} UNSTABLE_hasExpandableRows disabledKeys={['Row 1 Lvl 2']} {...otherProps}>
+      <TableView UNSTABLE_expandedKeys={expandedKeys} UNSTABLE_onExpandedChange={chain(setExpandedKeys, action('onExpandedChange'))} UNSTABLE_allowsExpandableRows disabledKeys={['Row 1 Lvl 2']} {...otherProps}>
         <TableHeader columns={columns}>
           {column => <Column showDivider={showDivider} allowsResizing={allowsResizing}>{column.name}</Column>}
         </TableHeader>
         <TableBody items={manyRows}>
           {item =>
-            (<Row key={item.key} childItems={item.childRows}>
+            (<Row key={item.key} UNSTABLE_childItems={item.childRows}>
               {(key) => {
                 return <Cell>{item[key]}</Cell>;
               }}
@@ -228,7 +228,7 @@ export const EmptyTreeGridStory: TableStory = {
     height: 400
   },
   render: (args) => (
-    <EmptyStateTable UNSTABLE_hasExpandableRows selectionMode="none" columns={columns} items={manyRows} allowsSorting={false} onSortChange={null} sortDescriptor={null} {...args} />
+    <EmptyStateTable UNSTABLE_allowsExpandableRows selectionMode="none" columns={columns} items={manyRows} allowsSorting={false} onSortChange={null} sortDescriptor={null} {...args} />
   ),
   name: 'empty state'
 };
@@ -239,13 +239,13 @@ function LoadingStateTable(props) {
   return (
     <Flex direction="column">
       <ActionButton width="100px" onPress={() => setShow(show => !show)}>Toggle items</ActionButton>
-      <TableView UNSTABLE_hasExpandableRows aria-label="TableView with empty state" {...props}>
+      <TableView UNSTABLE_allowsExpandableRows aria-label="TableView with empty state" {...props}>
         <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
         </TableHeader>
         <TableBody items={show ? manyRows : []} loadingState="loadingMore">
           {item =>
-            (<Row key={item.key} childItems={item.childRows}>
+            (<Row key={item.key} UNSTABLE_childItems={item.childRows}>
               {key => <Cell>{item[key]}</Cell>}
             </Row>)
           }
@@ -274,7 +274,7 @@ export const NestedColumnsStory: TableStory = {
     height: 400
   },
   render: (args) => (
-    <TableView UNSTABLE_hasExpandableRows {...args}>
+    <TableView UNSTABLE_allowsExpandableRows {...args}>
       <TableHeader>
         <Column title="Blah">
           <Column title="Group 1">

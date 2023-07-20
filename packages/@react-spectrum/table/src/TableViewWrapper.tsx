@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import type {AriaLabelingProps, DOMProps, DOMRef, Expandable, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import type {AriaLabelingProps, DOMProps, DOMRef, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import type {ColumnSize, TableProps} from '@react-types/table';
 import type {DragAndDropHooks} from '@react-spectrum/dnd';
 import React, {Key, ReactElement} from 'react';
@@ -18,7 +18,7 @@ import {tableNestedRows} from '@react-stately/flags';
 import {TableView} from './TableView';
 import {TreeGridTableView} from './TreeGridTableView';
 
-export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionProps, DOMProps, AriaLabelingProps, StyleProps, Expandable {
+export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionProps, DOMProps, AriaLabelingProps, StyleProps {
   /**
    * Sets the amount of vertical padding within each cell.
    * @default 'regular'
@@ -58,13 +58,35 @@ export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionP
   /**
    * Whether the TableView should support expandable rows. Requires the feature flag to be enabled first, see https://react-spectrum.adobe.com/react-spectrum/TableView.html#expandable-rows.
    * @version alpha
+   * @private
    */
-  UNSTABLE_hasExpandableRows?: boolean
+  UNSTABLE_allowsExpandableRows?: boolean,
+  /**
+   * The currently expanded keys in the collection (controlled). Requires the feature flag to be
+   * enabled along with UNSTABLE_allowsExpandableRows, see https://react-spectrum.adobe.com/react-spectrum/TableView.html#expandable-rows.
+   * @version alpha
+   * @private
+   */
+  UNSTABLE_expandedKeys?: 'all' | Iterable<Key>,
+  /**
+   * The initial expanded keys in the collection (uncontrolled). Requires the feature flag to be
+   * enabled along with UNSTABLE_allowsExpandableRows, see https://react-spectrum.adobe.com/react-spectrum/TableView.html#expandable-rows.
+   * @version alpha
+   * @private
+   */
+  UNSTABLE_defaultExpandedKeys?: 'all' | Iterable<Key>,
+  /**
+   * Handler that is called when items are expanded or collapsed. Requires the feature flag to be
+   * enabled along with UNSTABLE_allowsExpandableRows, see https://react-spectrum.adobe.com/react-spectrum/TableView.html#expandable-rows.
+   * @version alpha
+   * @private
+   */
+  UNSTABLE_onExpandedChange?: (keys: Set<Key>) => any
 }
 
 function TableViewWrapper<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
-  let {UNSTABLE_hasExpandableRows, ...otherProps} = props;
-  if (tableNestedRows() && UNSTABLE_hasExpandableRows) {
+  let {UNSTABLE_allowsExpandableRows, ...otherProps} = props;
+  if (tableNestedRows() && UNSTABLE_allowsExpandableRows) {
     return <TreeGridTableView {...otherProps} ref={ref} />;
   } else {
     return <TableView {...otherProps} ref={ref} />;

@@ -19,7 +19,6 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {Scale} from '@react-types/provider';
 import * as stories from '../stories/TreeGridTable.stories';
-import {tableTests} from './Table.test';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
@@ -73,15 +72,12 @@ let rerender = (tree, children, scale = 'medium' as Scale) => {
   return newTree;
 };
 
-enableTableNestedRows();
-
-describe.only('TableView tests with expandable rows flag on', tableTests);
-
-describe.only('TableView with expandable rows', function () {
+describe('TableView with expandable rows', function () {
   beforeAll(function () {
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     jest.useFakeTimers();
+    enableTableNestedRows();
   });
 
   afterEach(() => {
@@ -98,7 +94,7 @@ describe.only('TableView with expandable rows', function () {
     ${'static'}          | ${StaticExpandableTable}
     ${'dynamic'}         | ${DynamicExpandableTable}
   `('renders a $Name expandable rows table', ({Component}) => {
-    let {getByRole} = render(<Component expandedKeys="all" />);
+    let {getByRole} = render(<Component UNSTABLE_expandedKeys="all" />);
 
     let treegrid = getByRole('treegrid');
     expect(treegrid).toBeVisible();
@@ -212,7 +208,7 @@ describe.only('TableView with expandable rows', function () {
     ${'static'}          | ${StaticExpandableTable}
     ${'dynamic'}         | ${DynamicExpandableTable}
   `('renders a $Name expandable rows table with selection', ({Component}) => {
-    let {getByRole} = render(<Component expandedKeys="all" selectionMode="multiple" />);
+    let {getByRole} = render(<Component UNSTABLE_expandedKeys="all" selectionMode="multiple" />);
 
     let treegrid = getByRole('treegrid');
     expect(treegrid).toHaveAttribute('aria-multiselectable', 'true');
@@ -300,19 +296,19 @@ describe.only('TableView with expandable rows', function () {
   });
 
   it('shouldn\'t render a child row if its parent isn\'t included in the expanded keys', function () {
-    let treegrid = render(<DynamicExpandableTable expandedKeys={['Lvl 2 Foo 1']} />);
+    let treegrid = render(<DynamicExpandableTable UNSTABLE_expandedKeys={['Lvl 2 Foo 1']} />);
     let rowgroups = treegrid.getAllByRole('rowgroup');
     let rows = within(rowgroups[1]).getAllByRole('row');
     expect(rows).toHaveLength(1);
     expect(rows[0]).toContainElement(getCell(treegrid, 'Lvl 1 Foo 1'));
-    rerender(treegrid, <DynamicExpandableTable expandedKeys={['Lvl 2 Foo 1', 'Lvl 1 Foo 1']} />);
+    rerender(treegrid, <DynamicExpandableTable UNSTABLE_expandedKeys={['Lvl 2 Foo 1', 'Lvl 1 Foo 1']} />);
     rowgroups = treegrid.getAllByRole('rowgroup');
     rows = within(rowgroups[1]).getAllByRole('row');
     expect(rows).toHaveLength(4);
   });
 
   it('should place the chevron cell on the first row header', function () {
-    let treegrid = render(<UserSetRowHeaderTable expandedKeys="all" />);
+    let treegrid = render(<UserSetRowHeaderTable UNSTABLE_expandedKeys="all" />);
     let rowgroups = treegrid.getAllByRole('rowgroup');
     let rows = within(rowgroups[1]).getAllByRole('row');
     for (let i = 0; i < 2; i++) {
@@ -330,7 +326,7 @@ describe.only('TableView with expandable rows', function () {
   describe('collapsing and expanding rows', function () {
     describe('with press', function () {
       it('should expand a row when pressing the chevron', function () {
-        let treegrid = render(<StaticExpandableTable onSelectionChange={onSelectionChange} onExpandedChange={onExpandedChange} />);
+        let treegrid = render(<StaticExpandableTable onSelectionChange={onSelectionChange} UNSTABLE_onExpandedChange={onExpandedChange} />);
         let rowgroups = treegrid.getAllByRole('rowgroup');
         let rows = within(rowgroups[1]).getAllByRole('row');
         expect(rows).toHaveLength(3);
@@ -372,7 +368,7 @@ describe.only('TableView with expandable rows', function () {
       });
 
       it('should collapse a row when pressing the chevron', function () {
-        let treegrid = render(<StaticExpandableTable onSelectionChange={onSelectionChange} onExpandedChange={onExpandedChange} />);
+        let treegrid = render(<StaticExpandableTable onSelectionChange={onSelectionChange} UNSTABLE_onExpandedChange={onExpandedChange} />);
         let rowgroups = treegrid.getAllByRole('rowgroup');
         let rows = within(rowgroups[1]).getAllByRole('row');
         expect(rows).toHaveLength(3);
@@ -411,7 +407,7 @@ describe.only('TableView with expandable rows', function () {
         ${'ArrowRight'}       | ${'en-US'}
         ${'ArrowLeft'}        | ${'ar-AE'}
       `('should expand a row via $Arrow if focus is on the row ($Locale)', ({Arrow, Locale}) => {
-        let treegrid = render(<StaticExpandableTable onSelectionChange={onSelectionChange} onExpandedChange={onExpandedChange} />, undefined, Locale);
+        let treegrid = render(<StaticExpandableTable onSelectionChange={onSelectionChange} UNSTABLE_onExpandedChange={onExpandedChange} />, undefined, Locale);
         let rowgroups = treegrid.getAllByRole('rowgroup');
         let rows = within(rowgroups[1]).getAllByRole('row');
         expect(rows).toHaveLength(3);
@@ -465,7 +461,7 @@ describe.only('TableView with expandable rows', function () {
         ${'ArrowLeft'}       | ${'en-US'}
         ${'ArrowRight'}      | ${'ar-AE'}
       `('should collapse a row via $Arrow if focus is on the row ($Locale)', ({Arrow, Locale}) => {
-        let treegrid = render(<StaticExpandableTable onSelectionChange={onSelectionChange} onExpandedChange={onExpandedChange} />, undefined, Locale);
+        let treegrid = render(<StaticExpandableTable onSelectionChange={onSelectionChange} UNSTABLE_onExpandedChange={onExpandedChange} />, undefined, Locale);
         let rowgroups = treegrid.getAllByRole('rowgroup');
         let rows = within(rowgroups[1]).getAllByRole('row');
         expect(rows).toHaveLength(3);
@@ -510,7 +506,7 @@ describe.only('TableView with expandable rows', function () {
   describe('keyboard focus', function () {
     describe('ArrowDown', function () {
       it('should move focus to the nested row\'s below', function () {
-        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />);
+        let treegrid = render(<ManyRowsExpandableTable UNSTABLE_expandedKeys="all" />);
         let rows = treegrid.getAllByRole('row');
         act(() => {rows[1].focus();});
         moveFocus('ArrowDown');
@@ -525,7 +521,7 @@ describe.only('TableView with expandable rows', function () {
       });
 
       it('should move focus to the nested row\'s cell below', function () {
-        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />);
+        let treegrid = render(<ManyRowsExpandableTable UNSTABLE_expandedKeys="all" />);
         focusCell(treegrid, 'Row 1, Lvl 1, Foo');
         moveFocus('ArrowDown');
         expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 2, Foo'));
@@ -536,14 +532,14 @@ describe.only('TableView with expandable rows', function () {
       });
 
       it('should move focus to the cell below a column header', function () {
-        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />);
+        let treegrid = render(<ManyRowsExpandableTable UNSTABLE_expandedKeys="all" />);
         focusCell(treegrid, 'Bar');
         moveFocus('ArrowDown');
         expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 1, Bar'));
       });
 
       it('should allow the user to focus disabled nested rows', function () {
-        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" disabledKeys={['Row 1 Lvl 2']} />);
+        let treegrid = render(<ManyRowsExpandableTable UNSTABLE_expandedKeys="all" disabledKeys={['Row 1 Lvl 2']} />);
         focusCell(treegrid, 'Row 1, Lvl 1, Foo');
         moveFocus('ArrowDown');
         expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 2, Foo'));
@@ -551,7 +547,7 @@ describe.only('TableView with expandable rows', function () {
 
       it('should skip child rows of non-expanded parent rows', function () {
         // Only one child level of Row 1 and Row 3 should be exposed, otherwise only the top level rows are rendered
-        let treegrid = render(<ManyRowsExpandableTable expandedKeys={['Row 1 Lvl 1', 'Row 3 Lvl 1']} />);
+        let treegrid = render(<ManyRowsExpandableTable UNSTABLE_expandedKeys={['Row 1 Lvl 1', 'Row 3 Lvl 1']} />);
         let rows = treegrid.getAllByRole('row');
         act(() => {rows[1].focus();});
         moveFocus('ArrowDown');
@@ -571,7 +567,7 @@ describe.only('TableView with expandable rows', function () {
 
     describe('ArrowUp', function () {
       it('should move focus to the nested row\'s above', function () {
-        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />);
+        let treegrid = render(<ManyRowsExpandableTable UNSTABLE_expandedKeys="all" />);
         let rows = treegrid.getAllByRole('row');
         act(() => {rows[4].focus();});
         moveFocus('ArrowUp');
@@ -586,7 +582,7 @@ describe.only('TableView with expandable rows', function () {
       });
 
       it('should move focus to the nested row\'s cell above', function () {
-        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />);
+        let treegrid = render(<ManyRowsExpandableTable UNSTABLE_expandedKeys="all" />);
         focusCell(treegrid, 'Row 2, Lvl 1, Foo');
         moveFocus('ArrowUp');
         expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 3, Foo'));
@@ -597,14 +593,14 @@ describe.only('TableView with expandable rows', function () {
       });
 
       it('should move focus to the column header above a cell in the first row ', function () {
-        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />);
+        let treegrid = render(<ManyRowsExpandableTable UNSTABLE_expandedKeys="all" />);
         focusCell(treegrid, 'Row 1, Lvl 1, Bar');
         moveFocus('ArrowUp');
         expect(document.activeElement).toBe(getCell(treegrid, 'Bar'));
       });
 
       it('should move focus to the column header above the first row', function () {
-        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />);
+        let treegrid = render(<ManyRowsExpandableTable UNSTABLE_expandedKeys="all" />);
         let rows = treegrid.getAllByRole('row');
         act(() => {rows[1].focus();});
         moveFocus('ArrowUp');
@@ -612,7 +608,7 @@ describe.only('TableView with expandable rows', function () {
       });
 
       it('should allow the user to focus disabled nested rows', function () {
-        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" disabledKeys={['Row 1 Lvl 2']} />);
+        let treegrid = render(<ManyRowsExpandableTable UNSTABLE_expandedKeys="all" disabledKeys={['Row 1 Lvl 2']} />);
         focusCell(treegrid, 'Row 1, Lvl 3, Foo');
         moveFocus('ArrowUp');
         expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 2, Foo'));
@@ -620,7 +616,7 @@ describe.only('TableView with expandable rows', function () {
 
       it('should skip child rows of non-expanded parent rows', function () {
         // Only one child level of Row 1 and Row 3 should be exposed, otherwise only the top level rows are rendered
-        let treegrid = render(<ManyRowsExpandableTable expandedKeys={['Row 1 Lvl 1', 'Row 3 Lvl 1']} />);
+        let treegrid = render(<ManyRowsExpandableTable UNSTABLE_expandedKeys={['Row 1 Lvl 1', 'Row 3 Lvl 1']} />);
         let rows = treegrid.getAllByRole('row');
         act(() => {rows[5].focus();});
         moveFocus('ArrowUp');
@@ -707,7 +703,7 @@ describe.only('TableView with expandable rows', function () {
 
     describe('End', function () {
       it('should focus the last nested row with End', function () {
-        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />);
+        let treegrid = render(<ManyRowsExpandableTable UNSTABLE_expandedKeys="all" />);
         let rows = treegrid.getAllByRole('row');
         act(() => {rows[1].focus();});
         moveFocus('End');
@@ -719,7 +715,7 @@ describe.only('TableView with expandable rows', function () {
 
     describe('Home', function () {
       it('should focus the first row from a nested row with Home', function () {
-        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />);
+        let treegrid = render(<ManyRowsExpandableTable UNSTABLE_expandedKeys="all" />);
         let rows = treegrid.getAllByRole('row');
         act(() => {rows[15].focus();});
         expect(document.activeElement).toHaveTextContent('Row 5, Lvl 3, Foo');
@@ -731,7 +727,7 @@ describe.only('TableView with expandable rows', function () {
 
     describe('PageDown', function () {
       it('should focus a nested row a page below', function () {
-        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />);
+        let treegrid = render(<ManyRowsExpandableTable UNSTABLE_expandedKeys="all" />);
         let rows = treegrid.getAllByRole('row');
         act(() => {rows[2].focus();});
         moveFocus('PageDown');
@@ -745,7 +741,7 @@ describe.only('TableView with expandable rows', function () {
 
     describe('PageUp', function () {
       it('should focus a nested row a page above', function () {
-        let treegrid = render(<ManyRowsExpandableTable expandedKeys="all" />);
+        let treegrid = render(<ManyRowsExpandableTable UNSTABLE_expandedKeys="all" />);
         let rows = treegrid.getAllByRole('row');
         act(() => {rows[1].focus();});
         moveFocus('End');
@@ -760,7 +756,7 @@ describe.only('TableView with expandable rows', function () {
 
     describe('type to select', function () {
       it('should focus a nested row', function () {
-        let treegrid = render(<StaticExpandableTable expandedKeys="all" />);
+        let treegrid = render(<StaticExpandableTable UNSTABLE_expandedKeys="all" />);
         let rows = treegrid.getAllByRole('row');
         act(() => {rows[1].focus();});
         moveFocus('L');

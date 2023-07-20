@@ -125,7 +125,7 @@ const Template = ({columns, items, ...args}) => (
       }
       return (
         <View flexGrow={1} maxWidth="size-5000" maxHeight={700}>
-          <TableView {...args} {...c} width="100%" height="100%" key={key} aria-label={key} selectedKeys={['Foo 3', 'Foo 1']} disabledKeys={['Foo 2', 'Foo 4']} UNSTABLE_hasExpandableRows>
+          <TableView {...args} {...c} width="100%" height="100%" key={key} aria-label={key} selectedKeys={['Foo 3', 'Foo 1']} disabledKeys={['Foo 2', 'Foo 4']} UNSTABLE_allowsExpandableRows>
             <TableHeader columns={columns}>
               {(column: any) => (
                 <Column key={column.key} width={column.width} showDivider={column.showDivider} align={column.align} hideHeader={column.hideHeader} childColumns={column.children}>
@@ -135,7 +135,7 @@ const Template = ({columns, items, ...args}) => (
             </TableHeader>
             <TableBody items={items}>
               {(item: any) =>
-                (<Row key={item.foo} childItems={item.childRows}>
+                (<Row key={item.foo} UNSTABLE_childItems={item.childRows}>
                   {key => {
                     let button = <ActionButton isQuiet><Delete /></ActionButton>;
                     return <Cell>{key === 'baz' ? button : item[key]}</Cell>;
@@ -164,7 +164,7 @@ function renderEmptyState() {
 
 const EmptyTemplate = (args) =>
   (
-    <TableView {...args} maxWidth={700} height={400} renderEmptyState={renderEmptyState} UNSTABLE_hasExpandableRows>
+    <TableView {...args} maxWidth={700} height={400} renderEmptyState={renderEmptyState} UNSTABLE_allowsExpandableRows>
       <TableHeader columns={columns}>
         {(column: any) => (
           <Column
@@ -217,12 +217,12 @@ export const NestedColumns = {
 };
 
 export const MaxHeight = () => (
-  <TableView maxHeight="size-1200" UNSTABLE_hasExpandableRows>
+  <TableView maxHeight="size-1200" UNSTABLE_allowsExpandableRows>
     <TableHeader columns={columns}>
       {(column: any) => <Column key={column.key}>{column.name}</Column>}
     </TableHeader>
     <TableBody items={nestedItems}>
-      {(item: any) => <Row key={item.foo} childItems={item.childRows}>{(key) => <Cell>{item[key]}</Cell>}</Row>}
+      {(item: any) => <Row key={item.foo} UNSTABLE_childItems={item.childRows}>{(key) => <Cell>{item[key]}</Cell>}</Row>}
     </TableBody>
   </TableView>
 );

@@ -11,7 +11,9 @@
  */
 
 import {FocusableElement} from '@react-types/shared';
+import {getLastItem} from '@react-stately/collections';
 import {getRowLabelledBy} from './utils';
+import type {GridNode} from '@react-types/grid';
 import {GridRowAria, GridRowProps, useGridRow} from '@react-aria/grid';
 import {HTMLAttributes, RefObject} from 'react';
 import {mergeProps} from '@react-aria/utils';
@@ -50,7 +52,7 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
   if ('expandedKeys' in state) {
     let treeNode = state.keyMap.get(node.key);
     if (treeNode != null) {
-      let hasChildRows = treeNode.props?.childItems || treeNode.props?.children?.length > state.userColumnCount;
+      let hasChildRows = treeNode.props?.UNSTABLE_childItems || treeNode.props?.children?.length > state.userColumnCount;
       treeGridRowProps = {
         onKeyDown: (e) => {
           if ((e.key === EXPANSION_KEYS['expand'][direction]) && state.selectionManager.focusedKey === treeNode.key && hasChildRows && state.expandedKeys !== 'all' && !state.expandedKeys.has(treeNode.key)) {
@@ -65,8 +67,8 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
         'aria-level': treeNode.level,
         'aria-posinset': treeNode.indexOfType + 1,
         'aria-setsize': treeNode.level > 1 ?
-          [...state.keyMap.get(treeNode?.parentKey).childNodes].filter(node => node.type === 'item').length :
-          [...state.keyMap.get(state.collection.body.key).childNodes].length
+          (getLastItem(state.keyMap.get(treeNode?.parentKey).childNodes) as GridNode<T>).indexOfType + 1 :
+          (getLastItem(state.keyMap.get(state.collection.body.key).childNodes) as GridNode<T>).indexOfType + 1
       };
     }
   }
