@@ -137,7 +137,6 @@ export interface RowProps<T> {
    * A list of child item objects used when dynamically rendering row children. Requires the feature flag to be
    * enabled along with UNSTABLE_allowsExpandableRows, see https://react-spectrum.adobe.com/react-spectrum/TableView.html#expandable-rows.
    * @version alpha
-   * @private
    */
   UNSTABLE_childItems?: Iterable<T>,
   // TODO: update when async loading is supported for expandable rows
