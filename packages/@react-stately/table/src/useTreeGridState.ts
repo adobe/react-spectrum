@@ -12,7 +12,7 @@
 
 import {CollectionBuilder} from '@react-stately/collections';
 import {GridNode} from '@react-types/grid';
-import {Key, useMemo} from 'react';
+import {Key, ReactElement, useMemo} from 'react';
 import {TableCollection} from './TableCollection';
 import {tableNestedRows} from '@react-stately/flags';
 import {TableState, TableStateProps, useTableState} from './useTableState';
@@ -72,8 +72,7 @@ export function UNSTABLE_useTreeGridState<T extends object>(props: TreeGridState
   }), [children, showSelectionCheckboxes, selectionMode, showDragButtons]);
 
   let builder = useMemo(() => new CollectionBuilder<T>(), []);
-  // @ts-ignore
-  let nodes = useMemo(() => builder.build({children}, context), [builder, children, context]);
+  let nodes = useMemo(() => builder.build({children: children as ReactElement[]}, context), [builder, children, context]);
   let treeGridCollection = useMemo(() => {
     return generateTreeGridCollection<T>(nodes, {showSelectionCheckboxes, showDragButtons, expandedKeys});
   }, [nodes, showSelectionCheckboxes, showDragButtons, expandedKeys]);

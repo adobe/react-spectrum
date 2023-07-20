@@ -19,7 +19,6 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {Scale} from '@react-types/provider';
 import * as stories from '../stories/TreeGridTable.stories';
-import {tableTests} from './Table.test';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
@@ -73,15 +72,12 @@ let rerender = (tree, children, scale = 'medium' as Scale) => {
   return newTree;
 };
 
-enableTableNestedRows();
-
-describe.only('TableView tests with expandable rows flag on', tableTests);
-
-describe.only('TableView with expandable rows', function () {
+describe('TableView with expandable rows', function () {
   beforeAll(function () {
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     jest.useFakeTimers();
+    enableTableNestedRows();
   });
 
   afterEach(() => {
