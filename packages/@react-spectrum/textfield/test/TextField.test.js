@@ -440,7 +440,7 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
-  `('$Name supports form reset', async ({Component}) => {
+  `('$Name supports form reset', ({Component}) => {
     function Test() {
       let [value, setValue] = React.useState('Devon');
       return (
@@ -455,7 +455,7 @@ describe('Shared TextField behavior', () => {
     let input = getByTestId('name');
 
     expect(input).toHaveValue('Devon');
-    await act(() => userEvent.type(input, ' test'));
+    typeText(input, ' test');
     expect(input).toHaveValue('Devon test');
 
     let button = getByTestId('reset');
