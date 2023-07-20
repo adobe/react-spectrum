@@ -55,7 +55,7 @@ export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<
   /**
    * Whether the text or key of the selected item is submitted as part of an HTML form.
    * When `allowsCustomValue` is `true`, this option does not apply and the text is always submitted.
-   * @default 'text'
+   * @default 'key'
    */
   formValue?: 'text' | 'key'
 }
