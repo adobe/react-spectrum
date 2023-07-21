@@ -851,8 +851,8 @@ governing permissions and limitations under the License.
 
   &:disabled,
   &.is-disabled {
-    background-color: var(--spectrum-button-secondary-background-color-disabled);
-    border-color: var(--spectrum-button-secondary-border-color-disabled);
+    background-color: var(--spectrum-logicbutton-and-background-color-disabled);
+    border-color: var(--spectrum-logicbutton-and-border-color-disabled);
     color: var(--spectrum-logicbutton-and-text-color-disabled);
   }
 }
