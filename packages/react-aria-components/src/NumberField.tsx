@@ -29,9 +29,9 @@ export interface NumberFieldRenderProps {
   isDisabled: boolean,
   /**
    * Validation state of the number field.
-   * @selector [data-validation-state]
+   * @selector [data-validation-state="valid | invalid"]
    */
-  validationState?: ValidationState,
+  validationState: ValidationState | undefined,
   /**
    * State of the number field.
    */

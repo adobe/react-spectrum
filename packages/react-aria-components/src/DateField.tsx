@@ -25,7 +25,7 @@ export interface DateFieldRenderProps {
   state: DateFieldState,
   /**
    * Validation state of the date field.
-   * @selector [data-validation-state]
+   * @selector [data-validation-state="valid | invalid"]
    */
   validationState: ValidationState,
   /**
