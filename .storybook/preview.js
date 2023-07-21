@@ -19,7 +19,7 @@ export const parameters = {
       rules: [
         {
           id: 'aria-hidden-focus',
-          selector: 'body *:not([data-rsp-a11y-ignore])',
+          selector: 'body *:not([data-a11y-ignore="aria-hidden-focus"])',
         }
       ]
     }

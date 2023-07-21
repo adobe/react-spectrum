@@ -72,7 +72,7 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectProps, state: SelectSt
     containerProps: {
       ...visuallyHiddenProps,
       'aria-hidden': true,
-      ['data-rsp-a11y-ignore']: true
+      ['data-a11y-ignore']: 'aria-hidden-focus'
     },
     inputProps: {
       type: 'text',
