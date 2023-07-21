@@ -40,7 +40,11 @@ export interface TooltipRenderProps {
    * Whether the tooltip is currently exiting. Use this to apply animations.
    * @selector [data-exiting]
    */
-  isExiting: boolean
+  isExiting: boolean,
+  /**
+   * State of the tooltip.
+   */
+  state: TooltipTriggerState
 }
 
 interface TooltipContextValue {
@@ -111,7 +115,8 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: For
     values: {
       placement,
       isEntering,
-      isExiting: props.isExiting
+      isExiting: props.isExiting,
+      state
     }
   });
 

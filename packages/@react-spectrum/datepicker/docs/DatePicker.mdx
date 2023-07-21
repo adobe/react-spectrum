@@ -204,7 +204,7 @@ function Example() {
   return (
     <>
       <DatePicker label="Birth date" value={date} onChange={setDate} />
-      <p>Selected date: {formatter.format(date.toDate(getLocalTimeZone()))}</p>
+      <p>Selected date: {date ? formatter.format(date.toDate(getLocalTimeZone())) : '--'}</p>
     </>
   );
 }
@@ -229,7 +229,7 @@ function Example() {
       label="Appointment date"
       value={date}
       onChange={setDate}
-      validationState={isWeekend(date, locale) ? 'invalid' : 'valid'}
+      validationState={date && isWeekend(date, locale) ? 'invalid' : 'valid'}
       description="Select a weekday"
       errorMessage="We are closed on weekends" />
   );
@@ -353,6 +353,14 @@ By default, the calendar popover displays a single month. The `maxVisibleMonths`
 
 ```tsx example
 <DatePicker label="Appointment date" maxVisibleMonths={3} />
+```
+
+### Page behavior
+
+By default, when pressing the next or previous buttons, pagination will advance by the `maxVisibleMonths` value. This behavior can be changed to page by single months instead, by setting `pageBehavior` to `single`.
+
+```tsx example
+<DatePicker label="Appointment date" maxVisibleMonths={3} pageBehavior="single" />
 ```
 
 ### Hide time zone

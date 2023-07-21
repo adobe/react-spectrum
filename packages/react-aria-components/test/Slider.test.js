@@ -162,10 +162,10 @@ describe('Slider', () => {
       <Slider defaultValue={[30, 60]}>
         <Label>Test</Label>
         <SliderOutput>
-          {(state) => state.values.map((_, i) => state.getThumbValueLabel(i)).join(' – ')}
+          {({state}) => state.values.map((_, i) => state.getThumbValueLabel(i)).join(' – ')}
         </SliderOutput>
         <SliderTrack>
-          {(state) => state.values.map((_, i) => <SliderThumb key={i} index={i} />)}
+          {({state}) => state.values.map((_, i) => <SliderThumb key={i} index={i} />)}
         </SliderTrack>
       </Slider>
     );

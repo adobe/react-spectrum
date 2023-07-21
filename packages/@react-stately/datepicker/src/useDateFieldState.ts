@@ -183,8 +183,9 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     timeZone: defaultTimeZone,
     hideTimeZone,
     hourCycle: props.hourCycle,
-    showEra
-  }), [props.maxGranularity, granularity, props.hourCycle, defaultTimeZone, hideTimeZone, showEra]);
+    showEra,
+    shouldForceLeadingZeros: props.shouldForceLeadingZeros
+  }), [props.maxGranularity, granularity, props.hourCycle, props.shouldForceLeadingZeros, defaultTimeZone, hideTimeZone, showEra]);
   let opts = useMemo(() => getFormatOptions({}, formatOpts), [formatOpts]);
 
   let dateFormatter = useMemo(() => new DateFormatter(locale, opts), [locale, opts]);

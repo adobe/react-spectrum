@@ -224,7 +224,7 @@ function Example() {
   return (
     <>
       <DateRangePicker label="Date range" value={range} onChange={setRange} />
-      <p>Selected date: {formatter.formatRange(range.start.toDate(getLocalTimeZone()), range.end.toDate(getLocalTimeZone()))}</p>
+      <p>Selected date: {range ? formatter.formatRange(range.start.toDate(getLocalTimeZone()), range.end.toDate(getLocalTimeZone())) : '--'}</p>
     </>
   );
 }
@@ -250,7 +250,7 @@ function Example() {
       label="Date range"
       value={range}
       onChange={setRange}
-      validationState={isSameMonth(range.start, range.end) ? 'valid' : 'invalid'}
+      validationState={range && !isSameMonth(range.start, range.end) ? 'invalid' : 'valid'}
       description="Select a range within the same month"
       errorMessage="Start and end dates must be in the same month" />
   );
@@ -404,6 +404,14 @@ By default, the calendar popover displays a single month. The `maxVisibleMonths`
 
 ```tsx example
 <DateRangePicker label="Date range" maxVisibleMonths={3} />
+```
+
+### Page behavior
+
+By default, when pressing the next or previous buttons, pagination will advance by the `maxVisibleMonths` value. This behavior can be changed to page by single months instead, by setting `pageBehavior` to `single`.
+
+```tsx example
+<DateRangePicker label="Date range" maxVisibleMonths={3} pageBehavior="single" />
 ```
 
 ### Hide time zone

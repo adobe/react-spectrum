@@ -101,7 +101,7 @@ function Tabs(props) {
     <div className={`tabs ${props.orientation || ''}`}>
       <div {...tabListProps} ref={ref}>
         {[...state.collection].map((item) => (
-          <Tab key={item.key} item={item} state={state} orientation={props.orientation} />
+          <Tab key={item.key} item={item} state={state} />
         ))}
       </div>
       <TabPanel key={state.selectedItem?.key} state={state} />
@@ -109,7 +109,7 @@ function Tabs(props) {
   );
 }
 
-function Tab({item, state, orientation}) {
+function Tab({item, state}) {
   let {key, rendered} = item;
   let ref = React.useRef(null);
   let {tabProps} = useTab({key}, state, ref);

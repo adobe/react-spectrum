@@ -118,8 +118,9 @@ export function useSyntheticBlurEvent<Target = Element>(onBlur: (e: ReactFocusEv
       stateRef.current.observer = new MutationObserver(() => {
         if (stateRef.current.isFocused && target.disabled) {
           stateRef.current.observer.disconnect();
-          target.dispatchEvent(new FocusEvent('blur'));
-          target.dispatchEvent(new FocusEvent('focusout', {bubbles: true}));
+          let relatedTargetEl = target === document.activeElement ? null : document.activeElement;
+          target.dispatchEvent(new FocusEvent('blur', {relatedTarget: relatedTargetEl}));
+          target.dispatchEvent(new FocusEvent('focusout', {bubbles: true, relatedTarget: relatedTargetEl}));
         }
       });
 

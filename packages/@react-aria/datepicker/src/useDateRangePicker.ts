@@ -98,6 +98,7 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
     hideTimeZone: props.hideTimeZone,
     hourCycle: props.hourCycle,
     granularity: props.granularity,
+    shouldForceLeadingZeros: props.shouldForceLeadingZeros,
     isDisabled: props.isDisabled,
     isReadOnly: props.isReadOnly,
     isRequired: props.isRequired,

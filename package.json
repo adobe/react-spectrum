@@ -68,6 +68,7 @@
     "@babel/register": "^7.12.10",
     "@octokit/rest": "*",
     "@parcel/optimizer-data-url": "^2.9.1",
+    "@parcel/optimizer-terser": "2.9.1",
     "@parcel/packager-ts": "^2.9.1",
     "@parcel/resolver-glob": "^2.9.1",
     "@parcel/transformer-inline": "^2.9.1",

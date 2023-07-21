@@ -17,18 +17,32 @@ import {filterDOMProps} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
-import {SearchFieldState, useSearchFieldState} from 'react-stately';
+import {SearchFieldState, useSearchFieldState, ValidationState} from 'react-stately';
 import {TextContext} from './Text';
-
-export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, RenderProps<SearchFieldState>, SlotProps {}
 
 export interface SearchFieldRenderProps {
   /**
    * Whether the search field is empty.
    * @selector [data-empty]
    */
-  isEmpty: boolean
+  isEmpty: boolean,
+  /**
+   * Whether the search field is disabled.
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean,
+  /**
+   * Validation state of the search field.
+   * @selector [data-validation-state="valid | invalid"]
+   */
+  validationState: ValidationState | undefined,
+  /**
+   * State of the search field.
+   */
+  state: SearchFieldState
 }
+
+export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, RenderProps<SearchFieldRenderProps>, SlotProps {}
 
 export const SearchFieldContext = createContext<ContextValue<SearchFieldProps, HTMLDivElement>>(null);
 
@@ -44,7 +58,12 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
 
   let renderProps = useRenderProps({
     ...props,
-    values: state,
+    values: {
+      isEmpty: state.value === '',
+      isDisabled: props.isDisabled || false,
+      validationState: props.validationState,
+      state
+    },
     defaultClassName: 'react-aria-SearchField'
   });
 
@@ -57,7 +76,9 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
       {...renderProps}
       ref={ref}
       slot={props.slot}
-      data-empty={state.value === '' || undefined}>
+      data-empty={state.value === '' || undefined}
+      data-disabled={props.isDisabled || undefined}
+      data-validation-state={props.validationState || undefined}>
       <Provider
         values={[
           [LabelContext, {...labelProps, ref: labelRef}],

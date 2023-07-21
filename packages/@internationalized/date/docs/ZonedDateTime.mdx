@@ -61,6 +61,19 @@ let date = parseAbsolute('2021-11-07T07:45:00Z', 'America/Los_Angeles');
 let date = parseAbsoluteToLocal('2021-11-07T07:45:00Z');
 ```
 
+You can also create a `ZonedDateTime` using a `Date` object or epoch time (milliseconds) using one of the following functions:
+
+* <TypeLink links={docs.links} type={docs.exports.fromDate} /> – This function creates a `ZonedDateTime` from a `Date` object. A time zone identifier, e.g. `America/Los_Angeles`, must be passed, and the result will be converted into that time zone.
+* <TypeLink links={docs.links} type={docs.exports.fromAbsolute} /> – This function creates a `ZonedDateTime` from a Unix epoch (e.g. `1688023843144`, representing milliseconds since 1970). A time zone identifier, e.g. `America/Los_Angeles`, must be provided, and the result will be converted into that time zone.
+
+```tsx
+import {fromDate, fromAbsolute} from '@internationalized/date';
+
+let date = fromDate(new Date(), 'America/Los_Angeles');
+let date = fromAbsolute(1688023843144, 'America/Los_Angeles');
+```
+
+
 The current time can be retrieved using the <TypeLink links={docs.links} type={docs.exports.now} /> function. This requires a time zone identifier to be provided, which is used to determine the local time. The <TypeLink links={docs.links} type={docs.exports.getLocalTimeZone} /> function can be used to retrieve the user's current time zone.
 
 ```tsx

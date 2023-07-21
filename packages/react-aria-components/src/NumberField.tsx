@@ -17,11 +17,28 @@ import {filterDOMProps} from '@react-aria/utils';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
-import {NumberFieldState, useNumberFieldState} from 'react-stately';
+import {NumberFieldState, useNumberFieldState, ValidationState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
 
-export interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, RenderProps<NumberFieldState>, SlotProps {}
+export interface NumberFieldRenderProps {
+  /**
+   * Whether the number field is disabled.
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean,
+  /**
+   * Validation state of the number field.
+   * @selector [data-validation-state="valid | invalid"]
+   */
+  validationState: ValidationState | undefined,
+  /**
+   * State of the number field.
+   */
+  state: NumberFieldState
+}
+
+export interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, RenderProps<NumberFieldRenderProps>, SlotProps {}
 
 export const NumberFieldContext = createContext<ContextValue<NumberFieldProps, HTMLDivElement>>(null);
 
@@ -43,7 +60,11 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
 
   let renderProps = useRenderProps({
     ...props,
-    values: state,
+    values: {
+      state,
+      isDisabled: props.isDisabled || false,
+      validationState: props.validationState
+    },
     defaultClassName: 'react-aria-NumberField'
   });
 
@@ -69,7 +90,13 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
           }
         }]
       ]}>
-      <div {...DOMProps} {...renderProps} ref={ref} slot={props.slot} />
+      <div
+        {...DOMProps}
+        {...renderProps}
+        ref={ref}
+        slot={props.slot}
+        data-disabled={props.isDisabled || undefined}
+        data-validation-state={props.validationState || undefined} />
     </Provider>
   );
 }
