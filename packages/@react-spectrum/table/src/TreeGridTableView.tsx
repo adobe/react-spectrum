@@ -14,18 +14,18 @@ import {DOMRef} from '@react-types/shared';
 import React, {ReactElement, useState} from 'react';
 import {SpectrumTableProps} from './TableViewWrapper';
 import {TableViewBase} from './TableViewBase';
-import {useTableState} from '@react-stately/table';
+import {UNSTABLE_useTreeGridState} from '@react-stately/table';
 
-interface TableProps<T> extends Omit<SpectrumTableProps<T>, 'UNSTABLE_allowsExpandableRows'> {}
+export interface TreeGridTableProps<T> extends Omit<SpectrumTableProps<T>, 'UNSTABLE_allowsExpandableRows'> {}
 
-function TableView<T extends object>(props: TableProps<T>, ref: DOMRef<HTMLDivElement>) {
+function TreeGridTableView<T extends object>(props: TreeGridTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {
     selectionStyle,
     dragAndDropHooks
   } = props;
   let [showSelectionCheckboxes, setShowSelectionCheckboxes] = useState(selectionStyle !== 'highlight');
   let isTableDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
-  let state = useTableState({
+  let state = UNSTABLE_useTreeGridState({
     ...props,
     showSelectionCheckboxes,
     showDragButtons: isTableDraggable,
@@ -43,5 +43,5 @@ function TableView<T extends object>(props: TableProps<T>, ref: DOMRef<HTMLDivEl
   );
 }
 
-const _TableView = React.forwardRef(TableView) as <T>(props: TableProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
-export {_TableView as TableView};
+const _TreeGridTableView = React.forwardRef(TreeGridTableView) as <T>(props: TreeGridTableProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
+export {_TreeGridTableView as TreeGridTableView};

@@ -10,12 +10,26 @@
  * governing permissions and limitations under the License.
  */
 
-let _tableNestedRows = false;
+import {Meta} from '@storybook/react';
 
-export function enableTableNestedRows() {
-  _tableNestedRows = true;
-}
+// Original Table story wasn't performant with so many tables, so split off RTL into its own story
+const meta: Meta = {
+  title: 'TableViewRTL/Expandable rows',
+  parameters: {
+    chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['medium'], disableAnimations: true},
+    // large delay with the layout since there are so many tables
+    chromatic: {delay: 4000}
+  }
+};
 
-export function tableNestedRows() {
-  return _tableNestedRows;
-}
+export default meta;
+
+export {
+  Default,
+  ColumnAlign,
+  ColumnDividers,
+  ColumnWidth,
+  HiddenColumns,
+  NestedColumns,
+  Empty
+} from './TableView.chromatic';
