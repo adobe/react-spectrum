@@ -140,18 +140,18 @@ function generateTreeGridCollection<T>(nodes, opts: TreeGridCollectionOptions): 
   } = opts;
 
   let body: GridNode<T>;
-  let columns: (GridNode<T> | {type: string})[] = [];
   let flattenedRows = [];
+  let columnCount = 0;
   let userColumnCount = 0;
   let originalColumns = [];
   let keyMap = new Map();
 
   if (opts?.showSelectionCheckboxes) {
-    columns.unshift({type: 'checkboxColumn'});
+    columnCount++;
   }
 
   if (opts?.showDragButtons) {
-    columns.unshift({type: 'dragButtonColumn'});
+    columnCount++;
   }
 
   let topLevelRows = [];
@@ -163,7 +163,6 @@ function generateTreeGridCollection<T>(nodes, opts: TreeGridCollectionOptions): 
         break;
       case 'column':
         if (!node.hasChildNodes) {
-          columns.push(node);
           userColumnCount++;
         }
         break;
@@ -183,6 +182,7 @@ function generateTreeGridCollection<T>(nodes, opts: TreeGridCollectionOptions): 
     }
     visit(node);
   }
+  columnCount += userColumnCount;
 
   // Update each grid node in the treegrid table with values specific to a treegrid structure. Also store a set of flattened row nodes for TableCollection to consume
   let globalRowCount = 0;
@@ -195,7 +195,7 @@ function generateTreeGridCollection<T>(nodes, opts: TreeGridCollectionOptions): 
       for (let child of node.childNodes) {
         if (child.type === 'cell') {
           let cellClone = {...child};
-          if (cellClone.index + 1 === columns.length) {
+          if (cellClone.index + 1 === columnCount) {
             cellClone.nextKey = null;
           }
           childNodes.push({...cellClone});
