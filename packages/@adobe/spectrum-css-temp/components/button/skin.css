@@ -436,7 +436,7 @@ governing permissions and limitations under the License.
   &:hover {
     background-color: xvar(--spectrum-high-contrast-button-face, var(--spectrum-actionbutton-background-color-hover));
     border-color: xvar(--spectrum-high-contrast-highlight, var(--spectrum-actionbutton-border-color-hover));
-    color: var(--spectrum-actionbutton-text-color-hover);
+    color: xvar(--spectrum-high-contrast-button-text, var(--spectrum-actionbutton-text-color-hover));
 
     .spectrum-Icon {
       fill: xvar(--spectrum-high-contrast-button-text, var(--spectrum-actionbutton-icon-color-hover));
@@ -1039,7 +1039,7 @@ governing permissions and limitations under the License.
     --spectrum-actionbutton-static-background-color-selected-focus: Highlight;
     --spectrum-actionbutton-static-background-color-selected-active: Highlight;
     --spectrum-actionbutton-static-border-color: ButtonText;
-    --spectrum-actionbutton-static-border-color-hover: ButtonText;
+    --spectrum-actionbutton-static-border-color-hover: Highlight;
     --spectrum-actionbutton-static-border-color-active: ButtonText;
     --spectrum-actionbutton-static-border-color-focus: CanvasText;
     --spectrum-actionbutton-static-border-disabled: GrayText;
