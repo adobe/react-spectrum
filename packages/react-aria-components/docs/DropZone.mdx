@@ -41,7 +41,7 @@ type: component
 ## Example
 
 ```tsx example
-import {Button} from 'react-aria-components';
+import {DropZone} from 'react-aria-components';
 
 <Button onPress={() => alert('Hello world!')}>Press me</Button>
 ```
@@ -49,7 +49,7 @@ import {Button} from 'react-aria-components';
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
-```css
+{/* ```css
 .react-aria-Button {
   --border-color: var(--spectrum-alias-border-color);
   --border-color-pressed: var(--spectrum-alias-border-color-down);
@@ -102,7 +102,7 @@ import {Button} from 'react-aria-components';
     --focus-ring-color: Highlight;
   }
 }
-```
+``` */}
 
 </details>
 
@@ -127,16 +127,19 @@ buttons using the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys.
 If a visual label is not provided (e.g. an icon only button), then an `aria-label` or
 `aria-labelledby` prop must be passed to identify the button to assistive technology.
 
+### Composed Components
+A dropzone can use the following components, which may also be used standalone or reused in other components.
+
 ## Props
 
-<PropTable component={docs.exports.Button} links={docs.links} />
+<PropTable component={docs.exports.DropZone} links={docs.links} />
 
 ## Styling
 
 React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
 
 ```css
-.react-aria-Button {
+.react-aria-DropZone {
   /* ... */
 }
 ```
@@ -205,16 +208,8 @@ function Example() {
 }
 ```
 
-### Disabled
-
-A `Button` can be disabled using the `isDisabled` prop.
-
-```tsx example
-<Button isDisabled>Pin</Button>
-```
-
 ## Advanced customization
 
 ### Hooks
 
-If you need to customize things further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useButton](useButton.html) for more details.
+If you need to customize things further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useDrop](useDrop.html) for more details.
