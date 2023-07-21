@@ -203,7 +203,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     () => props.value || props.defaultValue ? {...allSegments} : {}
   );
 
-  let [clearedSegment, setClearedSegment] = useState<string>();
+  let clearedSegment = useRef<string>();
 
   // Reset placeholder when calendar changes
   let lastCalendarIdentifier = useRef(calendar.identifier);
@@ -241,7 +241,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     let allKeys = Object.keys(allSegments);
 
     // if all the segments are completed or a timefield with everything but am/pm set the time, also ignore when am/pm cleared
-    if (validKeys.length >= allKeys.length || (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod && clearedSegment !== 'dayPeriod')) {
+    if (validKeys.length >= allKeys.length || (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod && clearedSegment.current !== 'dayPeriod')) {
       // The display calendar should not have any effect on the emitted value.
       // Emit dates in the same calendar as the original value, if any, otherwise gregorian.
       newValue = toCalendar(newValue, v?.calendar || new GregorianCalendar());
@@ -249,7 +249,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     } else {
       setPlaceholderDate(newValue);
     }
-    setClearedSegment(null);
+    clearedSegment.current = null;
   };
 
   let dateValue = useMemo(() => displayValue.toDate(timeZone), [displayValue, timeZone]);
@@ -353,8 +353,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     },
     clearSegment(part) {
       delete validSegments[part];
-      clearedSegment = part;
-      setClearedSegment(part);
+      clearedSegment.current = part;
       setValidSegments({...validSegments});
 
       let placeholder = createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone);
