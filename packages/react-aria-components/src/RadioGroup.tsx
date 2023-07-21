@@ -44,7 +44,7 @@ export interface RadioGroupRenderProps {
   isRequired: boolean,
   /**
    * The validation state of the radio group.
-   * @selector [data-validation-state]
+   * @selector [data-validation-state="valid | invalid"]
    */
   validationState: ValidationState | null,
   /**
@@ -102,7 +102,7 @@ export interface RadioRenderProps {
 }
 
 export const RadioGroupContext = createContext<ContextValue<RadioGroupProps, HTMLDivElement>>(null);
-export const RadioContext = createContext<ContextValue<RadioProps, HTMLInputElement>>(null);
+export const RadioContext = createContext<ContextValue<Partial<RadioProps>, HTMLInputElement>>(null);
 let InternalRadioContext = createContext<RadioGroupState | null>(null);
 
 function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
@@ -132,7 +132,8 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
       {...radioGroupProps}
       {...renderProps}
       ref={ref}
-      slot={props.slot}>
+      slot={props.slot}
+      data-validation-state={state.validationState || undefined}>
       <Provider
         values={[
           [InternalRadioContext, state],

@@ -33,9 +33,9 @@ export interface SearchFieldRenderProps {
   isDisabled: boolean,
   /**
    * Validation state of the search field.
-   * @selector [data-validation-state]
+   * @selector [data-validation-state="valid | invalid"]
    */
-  validationState?: ValidationState,
+  validationState: ValidationState | undefined,
   /**
    * State of the search field.
    */

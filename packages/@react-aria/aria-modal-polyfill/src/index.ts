@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {hideOthers} from 'aria-hidden';
+import {suppressOthers} from 'aria-hidden';
 
 type Revert = () => void;
 
@@ -49,7 +49,7 @@ export function watchModals(selector:string = 'body', {document = currentDocumen
           let modal = addNode.querySelector('[aria-modal="true"], [data-ismodal="true"]') as HTMLElement;
           undo?.();
           let others = [modal, ... liveAnnouncer ? [liveAnnouncer as HTMLElement] : []];
-          undo = hideOthers(others);
+          undo = suppressOthers(others);
         }
       } else if (mutation.type === 'childList' && mutation.removedNodes.length > 0) {
         let removedNodes = Array.from(mutation.removedNodes);
@@ -60,7 +60,7 @@ export function watchModals(selector:string = 'body', {document = currentDocumen
           if (modalContainers.length > 0) {
             let modal = modalContainers[modalContainers.length - 1].querySelector('[aria-modal="true"], [data-ismodal="true"]') as HTMLElement;
             let others = [modal, ... liveAnnouncer ? [liveAnnouncer as HTMLElement] : []];
-            undo = hideOthers(others);
+            undo = suppressOthers(others);
           } else {
             undo = undefined;
           }
