@@ -973,11 +973,6 @@ governing permissions and limitations under the License.
   .spectrum-LogicButton,
   .spectrum-FieldButton {
     forced-color-adjust: none;
-    --spectrum-clearbutton-medium-background-color: ButtonFace;
-    --spectrum-clearbutton-medium-background-color-disabled: ButtonFace;
-    --spectrum-clearbutton-medium-background-color-down: ButtonFace;
-    --spectrum-clearbutton-medium-background-color-hover: ButtonFace;
-    --spectrum-clearbutton-medium-background-color-key-focus: ButtonFace;
     --spectrum-clearbutton-medium-icon-color: ButtonText;
     --spectrum-clearbutton-medium-icon-color-disabled: GrayText;
     --spectrum-clearbutton-medium-icon-color-down: Highlight;
