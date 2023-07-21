@@ -30,7 +30,7 @@ import type {DragAndDropHooks} from '@react-spectrum/dnd';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
 import type {DraggableItemResult, DropIndicatorAria, DroppableCollectionResult, DroppableItemResult} from '@react-aria/dnd';
 import {FocusRing, FocusScope, useFocusRing} from '@react-aria/focus';
-import {getInteractionModality, useHover, usePress} from '@react-aria/interactions';
+import {getInteractionModality, isFocusVisible, useHover, usePress} from '@react-aria/interactions';
 import {GridNode} from '@react-types/grid';
 import {InsertionIndicator} from './InsertionIndicator';
 // @ts-ignore
@@ -1428,7 +1428,13 @@ function ExpandableRowChevron({cell}) {
   // Will need to keep the chevron as a button for iOS VO at all times since VO doesn't focus the cell. Also keep as button if cellAction is defined by the user in the future
   let {buttonProps} = useButton({
     // Desktop and mobile both toggle expansion of a native expandable row on mouse/touch up
-    onPress: () => (state as TreeGridState<unknown>).toggleKey(cell.parentKey),
+    onPress: () => {
+      (state as TreeGridState<unknown>).toggleKey(cell.parentKey);
+      if (!isFocusVisible()) {
+        state.selectionManager.setFocused(true);
+        state.selectionManager.setFocusedKey(cell.parentKey);
+      }
+    },
     elementType: 'span',
     'aria-label': isExpanded ? stringFormatter.format('collapse') : stringFormatter.format('expand')
   }, expandButtonRef);
