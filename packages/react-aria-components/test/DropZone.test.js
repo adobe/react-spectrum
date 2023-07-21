@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, render} from '@react-spectrum/test-utils';
-import {Button, DropZone, DropZoneContext, FileTrigger, Text} from '../';
+import {Button, DropZone, DropZoneContext, FileTrigger, Link, Text} from '../';
 import {ClipboardEvent, DataTransfer, DataTransferItem, DragEvent} from '@react-aria/dnd/test/mocks';
 import {Draggable} from '@react-aria/dnd/test/examples';
 import React from 'react';
@@ -112,7 +112,32 @@ describe('DropZone', () => {
       </DropZone>);
     let text = getByText('Test');
     let button = getByRole('button');
-    expect(button).toHaveAttribute('aria-labelledby', `${text.id}`);
+    expect(button).toHaveAttribute('aria-labelledby', `${button.id} ${text.id}`);
+  });
+
+  it('should apply default aria-label', () => {
+    let {getByRole} = render(
+      <DropZone
+        data-testid="foo">
+        <FileTrigger>
+          <Link>Upload</Link>
+        </FileTrigger>
+      </DropZone>);
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('aria-label', 'DropZone');
+  });
+
+  it('should allow custom aria-label', () => {
+    let {getByRole} = render(
+      <DropZone
+        data-testid="foo"
+        aria-label="test aria-label">
+        <FileTrigger>
+          <Link>Upload</Link>
+        </FileTrigger>
+      </DropZone>);
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('aria-label', 'test aria-label');
   });
 
   it('should support render props', () => {
