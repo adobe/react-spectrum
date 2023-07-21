@@ -126,7 +126,7 @@ function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
   let githubLink = pathToPage;
   if (githubLink.startsWith('/tmp/')) {
     githubLink = githubLink.replace('/tmp/', '');
-    githubLink = githubLink.substring(githubLink.indexOf('/'));
+    githubLink = githubLink.substring(githubLink.indexOf('/') + 1);
   }
 
   return (
