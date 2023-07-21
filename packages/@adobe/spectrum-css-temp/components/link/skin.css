@@ -35,19 +35,21 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-Link--secondary{
-  color: inherit;
-
-  &:hover {
+@media (forced-colors: none) {
+  .spectrum-Link--secondary {
     color: inherit;
-  }
 
-  &:active {
-    color: inherit;
-  }
+    &:hover {
+      color: inherit;
+    }
 
-  &:focus {
-    color: inherit;
+    &:active {
+      color: inherit;
+    }
+
+    &:focus {
+      color: inherit;
+    }
   }
 }
 
