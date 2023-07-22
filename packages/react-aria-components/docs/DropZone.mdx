@@ -20,6 +20,7 @@ import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import {Keyboard} from '@react-spectrum/text';
+import {FileTrigger, Text} from 'react-aria-components';
 
 ---
 category: Drag and drop
@@ -29,21 +30,25 @@ type: component
 
 # Dropzone
 
-<PageDescription>{docs.exports.Dropzone.description}</PageDescription>
+<PageDescription>{docs.exports.DropZone.description}</PageDescription>
 
-<HeaderInfo
+{/* <HeaderInfo
   packageData={packageData}
   componentNames={['Button']}
   sourceData={[
     {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/button/'}
-  ]} />
+  ]} /> */}
 
 ## Example
 
 ```tsx example
 import {DropZone} from 'react-aria-components';
 
-<Button onPress={() => alert('Hello world!')}>Press me</Button>
+<DropZone>
+  <Text slot="heading">
+    Drop object here
+  </Text>
+</DropZone>
 ```
 
 <details>
@@ -108,27 +113,27 @@ import {DropZone} from 'react-aria-components';
 
 ## Features
 
-On the surface, building a custom styled button seems simple. However, there are many
-cross browser inconsistencies in interactions and accessibility features to consider.
-`Button` handles all of these interactions for you, so you can focus on the styling.
+There is no native element to implement a dropzone in HTML that is widely supported. `DropZone` helps achieve accessible dropzone components that can be styled as needed. 
 
-* **Styleable** – Hover, press, and keyboard focus states are provided for easy styling. These states only apply when interacting with an appropriate input device, unlike CSS pseudo classes.
-* **Accessible** – Uses a native `<button>` element under the hood, with support for the <Keyboard>Space</Keyboard> and <Keyboard>Enter</Keyboard> keys.
-* **Cross-browser** – Mouse, touch, keyboard, and focus interactions are normalized to ensure consistency across browsers and devices.
-
-Read our [blog post](/blog/building-a-button-part-1.html) about the complexities of building buttons that work well across devices and interaction methods to learn more.
+* **Styleable** – Hover, keyboard focus, and the drop target state is provided for easy styling. These styles only apply when interacting with an appropriate input device, unlike CSS pseudo classes. 
+* **Accessible** – Uses a visually hidden `<button>` under the hood to allow interactions like dropping ojbects with a keyboard. 
 
 ## Anatomy
 
-Buttons consist of a clickable area usually containing a textual label or an icon
-that users can click to perform an action. In addition, keyboard users may activate
-buttons using the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys.
+A dropzone consists of a target element for the dropped objects. Users may drop objects via mouse or keyboard. In addition, a FileTrigger may be passed as a child to allow access to computer's file system. 
 
-If a visual label is not provided (e.g. an icon only button), then an `aria-label` or
+If a visual label is not provided, then an `aria-label` or
 `aria-labelledby` prop must be passed to identify the button to assistive technology.
 
 ### Composed Components
 A dropzone can use the following components, which may also be used standalone or reused in other components.
+
+{/* <ExampleCard
+  url="FileTrigger.html"
+  title="FileTrigger"
+  description="">
+  <FileTrigger />
+</ExampleCard> */}
 
 ## Props
 
@@ -147,15 +152,15 @@ React Aria components can be styled in many ways, including using CSS classes, i
 A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
 
 ```jsx
-<Button className="my-button">
+<DropZone className="my-dropzone">
   {/* ... */}
-</Button>
+</DropZone>
 ```
 
 In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using DOM attributes, which you can target in CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. For example:
 
 ```css
-.react-aria-Button[data-pressed] {
+.react-aria-DropZone[data-drop-target] {
   /* ... */
 }
 ```
@@ -163,33 +168,31 @@ In addition, some components support multiple UI states (e.g. focused, placehold
 The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
 
 ```jsx
-<Button className={({isPressed}) => isPressed ? 'bg-gray-700' : 'bg-gray-600'} />
+<DropZone className={({isDropTarget}) => isDropTarget ? 'bg-gray-700' : 'bg-gray-600'} />
 ```
 
 Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render an extra element when the button is in a pressed state.
 
 ```jsx
-<Button>
-  {({isPressed}) => (
+<DropZone>
+  {({isDropTarget}) => (
     <>
-      {isPressed && <PressHighlight />}
-      Press me
+      {isDropTarget && <DropHighlight/>}
+      Drop item here
     </>
   )}
-</Button>
+</DropZone>
 ```
 
-The states, selectors, and render props for `Button` are documented below.
+The states, selectors, and render props for `DropZone` are documented below.
 
-<StateTable properties={docs.exports.ButtonRenderProps.properties} />
+<StateTable properties={docs.exports.DropZoneRenderProps.properties} />
 
 ## Usage
 
 ### Events
 
-`Button` supports user interactions via mouse, keyboard, and touch. You can handle all of these via the `onPress` prop. This is similar to the standard `onClick` event, but normalized to support all interaction methods equally. In addition, the `onPressStart`, `onPressEnd`, and `onPressChange` events are fired as the user interacts with the button.
-
-Each of these handlers receives a <TypeLink links={typesDocs.links} type={typesDocs.exports.PressEvent} />, which exposes information about the target and the type of event that triggered the interaction. See [usePress](usePress.html) for more details.
+`DropZone` supports user interactions via mouse, keyboard, and touch. You can handle all of these via the `onDrop` prop. In addition, the `onDropEnter` , `onDropMove`, and `onDropExit` events are fired as the user interacts with the dropzone. 
 
 ```tsx example
 function Example() {
