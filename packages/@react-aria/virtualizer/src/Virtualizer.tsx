@@ -181,9 +181,13 @@ export function useVirtualizer<T extends object, V extends ReactNode, W>(props: 
   // Handle scrolling, and call onLoadMore when nearing the bottom.
   let isLoadingRef = useRef(isLoading);
   let prevProps = useRef(props);
+  let rectTracker = useRef({
+    // Track the last two visible rect sizes
+    lastTwoRects: [],
+    // Number of times the newest visible rect size has matched the last two sizes
+    sameSizeCounter: 0
+  }).current;
   let onVisibleRectChange = useCallback((rect: Rect) => {
-    state.setVisibleRect(rect);
-
     if (!isLoadingRef.current && onLoadMore) {
       let scrollOffset = state.virtualizer.contentSize.height - rect.height * 2;
       if (rect.y > scrollOffset) {
@@ -191,7 +195,25 @@ export function useVirtualizer<T extends object, V extends ReactNode, W>(props: 
         onLoadMore();
       }
     }
-  }, [onLoadMore, state]);
+
+    if (rectTracker.lastTwoRects.length > 1) {
+      if (rectTracker.lastTwoRects.some(oldRect => rect.equals(oldRect))) {
+        ++rectTracker.sameSizeCounter;
+        if (rectTracker.sameSizeCounter > 5) {
+          return;
+        }
+      } else {
+        rectTracker.sameSizeCounter = 0;
+      }
+
+      rectTracker.lastTwoRects.shift();
+      rectTracker.lastTwoRects.push(rect);
+    } else {
+      rectTracker.lastTwoRects.push(rect);
+    }
+
+    state.setVisibleRect(rect);
+  }, [onLoadMore, state, rectTracker]);
 
   let lastContentSize = useRef(0);
   useLayoutEffect(() => {

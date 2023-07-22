@@ -60,11 +60,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     scrollTimeout: null,
     width: 0,
     height: 0,
-    isScrolling: false,
-    // Track the last two visible rect sizes
-    lastTwoRects: [],
-    // Number of times the newest visible rect size has matched the last two sizes
-    sameSizeCounter: 0
+    isScrolling: false
   }).current;
 
   let {direction} = useLocale();
@@ -146,24 +142,6 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     if (state.width !== w || state.height !== h) {
       state.width = w;
       state.height = h;
-      let newRect = new Rect(state.scrollLeft, state.scrollTop, w, h);
-
-      // TODO consider where to place this logic, maybe somewhere in virtualizer as well
-      if (state.lastTwoRects.length > 1) {
-        if (state.lastTwoRects.some(rect => newRect.equals(rect))) {
-          ++state.sameSizeCounter;
-          if (state.sameSizeCounter > 5) {
-            return;
-          }
-        } else {
-          state.sameSizeCounter = 0;
-        }
-
-        state.lastTwoRects.shift();
-        state.lastTwoRects.push(newRect);
-      } else {
-        state.lastTwoRects.push(newRect);
-      }
 
       onVisibleRectChange(new Rect(state.scrollLeft, state.scrollTop, w, h));
     }
