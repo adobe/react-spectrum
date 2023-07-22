@@ -138,10 +138,10 @@ export function useDrag(options: DragOptions): DragResult {
         let x = e.clientX - rect.x;
         let y = e.clientY - rect.y;
         if (x > size.width) {
-          x = (x * size.width) / rect.width;
+          x = Math.floor((x * size.width) / rect.width);
         }
         if (y > size.height) {
-          y = (y * size.height) / rect.height;
+          y = Math.floor((y * size.height) / rect.height);
         }
 
         // Rounding height to an even number prevents blurry preview seen on some screens

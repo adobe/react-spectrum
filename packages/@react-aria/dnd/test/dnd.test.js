@@ -1262,7 +1262,7 @@ describe('useDrag and useDrop', function () {
         expect(dataTransfer._dragImage.y).toBe(5);
       });
 
-      it('should center the drag image under the mouse if the size is smaller than the original target', () => {
+      it('should proportionally offset the drag image if its size is smaller than the original target', () => {
         let renderPreview = jest.fn().mockImplementation(() => <div>Drag preview</div>);
         let tree = render(<Draggable renderPreview={renderPreview} />);
 
@@ -1274,7 +1274,7 @@ describe('useDrag and useDrop', function () {
             top: 0,
             x: 0,
             y: 0,
-            width: this.style.position === 'absolute' ? 20 : 100,
+            width: this.style.position === 'absolute' ? 20 : 101,
             height: this.style.position === 'absolute' ? 20 : 50
           };
         });
@@ -1284,8 +1284,8 @@ describe('useDrag and useDrop', function () {
 
         expect(dataTransfer._dragImage.node.tagName).toBe('DIV');
         expect(dataTransfer._dragImage.node.textContent).toBe('Drag preview');
-        expect(dataTransfer._dragImage.x).toBe(10);
-        expect(dataTransfer._dragImage.y).toBe(10);
+        expect(dataTransfer._dragImage.x).toBe(5);
+        expect(dataTransfer._dragImage.y).toBe(12);
       });
     });
   });
