@@ -132,14 +132,16 @@ export function useDrag(options: DragOptions): DragResult {
       options.preview.current(items, node => {
         // Compute the offset that the preview will appear under the mouse.
         // If possible, this is based on the point the user clicked on the target.
-        // If the preview is much smaller, then just use the center point of the preview.
+        // If the preview is smaller, use a valid offset that is proportional to the drag start mouse position.
         let size = node.getBoundingClientRect();
         let rect = e.currentTarget.getBoundingClientRect();
         let x = e.clientX - rect.x;
         let y = e.clientY - rect.y;
-        if (x > size.width || y > size.height) {
-          x = size.width / 2;
-          y = size.height / 2;
+        if (x > size.width) {
+          x = (x * size.width) / rect.width;
+        }
+        if (y > size.height) {
+          y = (y * size.height) / rect.height;
         }
 
         // Rounding height to an even number prevents blurry preview seen on some screens
