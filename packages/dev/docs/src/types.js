@@ -41,7 +41,12 @@ const DOC_LINKS = {
   'Intl.Collator': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator',
   'Intl.CollatorOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator/Collator',
   'AbortSignal': 'https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal',
-  'Key': 'https://reactjs.org/docs/lists-and-keys.html'
+  'Key': 'https://reactjs.org/docs/lists-and-keys.html',
+  'HTMLAttributes': 'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes',
+  'InputHTMLAttributes': 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#attributes',
+  'TextareaHTMLAttributes': 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea#attributes',
+  'LabelHTMLAttributes': 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label#attributes',
+  'OutputHTMLAttributes': 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/output#attributes'
 };
 
 export const TypeContext = React.createContext();
@@ -383,6 +388,9 @@ export function LinkRenderer() {
   return [...links.values()].map(({type, links}) => (
     <section key={type.id} id={type.id} data-title={type.name} hidden>
       {type.description && <Markdown options={{forceBlock: true, overrides: {a: {component: SpectrumLink}}}} className={styles['type-description']}>{type.description}</Markdown>}
+      {type.type === 'interface' && type.extends?.length > 0 &&
+        <p style={{paddingLeft: 'var(--spectrum-global-dimension-size-200)'}}><strong>Extends</strong>: <code className={`${typographyStyles['spectrum-Code4']}`}><JoinList elements={type.extends} joiner=", " /></code></p>
+      }
       <TypeContext.Provider value={links}>
         {type.type === 'interface' || type.type === 'alias' || type.type === 'component'
           ? <Type type={type} />
@@ -479,7 +487,7 @@ export function InterfaceType({description, properties: props, typeParameters, s
                     : null
                   }
                 </td>
-                {!hideType && 
+                {!hideType &&
                   <td className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)} data-column="Type">
                     <code className={typographyStyles['spectrum-Code4']}>
                       <Type type={prop.value} />
