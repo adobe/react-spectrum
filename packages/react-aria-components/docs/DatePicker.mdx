@@ -13,7 +13,7 @@ export default Layout;
 import docs from 'docs:react-aria-components';
 import i18nDocs from 'docs:@internationalized/date';
 import statelyDocs from 'docs:@react-stately/datepicker';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/datepicker/docs/datepicker-anatomy.svg';
@@ -1025,6 +1025,73 @@ function MyDateSegment(props) {
   return <MyDateSegment {...props} className="my-date-segment" />
 }
 ```
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop via context that you could pass to the corresponding component, and refs are supported as well. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+The components in a DatePicker support the following contexts:
+
+<ContextTable components={['DatePicker', 'Label', 'Group', 'Button', 'Popover', 'Dialog', 'Calendar', 'Text']} docs={docs} />
+
+This example shows a `FieldGroup` component that renders a group of date pickers with a title and optional error message. It uses the [useId](useId.html) hook to generate a unique id for the error message. All of the child DatePickers are marked invalid and associated with the error message via the `aria-describedby` attribute passed to the `DatePickerContext` provider.
+
+```tsx example
+import {DatePickerContext} from 'react-aria-components';
+import {useId} from 'react-aria';
+
+interface FieldGroupProps {
+  title?: string,
+  children?: React.ReactNode,
+  errorMessage?: string
+}
+
+function FieldGroup({title, children, errorMessage}: FieldGroupProps) {
+  let errorId = useId();
+  return (
+    <fieldset>
+      <legend>{title}</legend>
+      {/*- begin highlight -*/}
+      <DatePickerContext.Provider value={{
+        validationState: errorMessage ? 'invalid' : undefined,
+        'aria-describedby': errorMessage ? errorId : undefined
+      }}>
+      {/*- end highlight -*/}
+        {children}
+      </DatePickerContext.Provider>
+      {errorMessage && <div id={errorId} className="invalid">{errorMessage}</div>}
+    </fieldset>
+  );
+}
+
+<FieldGroup title="Dates" errorMessage="Tickets must go on sale before event.">
+  <MyDatePicker label="Event date" defaultValue={parseDate('2023-07-12')} />
+  <MyDatePicker label="Ticket sale date" defaultValue={parseDate('2023-08-03')} />
+</FieldGroup>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+fieldset {
+  padding: 1.5em;
+  width: fit-content;
+}
+
+.invalid {
+  color: var(--spectrum-global-color-red-600);
+  margin-top: 1em;
+}
+
+@media (forced-colors: active) {
+  .invalid {
+    color: LinkText;
+  }
+}
+```
+
+</details>
 
 ### Hooks
 

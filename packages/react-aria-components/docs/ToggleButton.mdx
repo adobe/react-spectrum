@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/datepicker/docs/daterangepicker-anatomy.svg';
@@ -229,6 +229,42 @@ A `ToggleButton` can be disabled using the `isDisabled` prop.
 ```
 
 ## Advanced customization
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop via context that you could pass to the corresponding component, and refs are supported as well. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+ToggleButton supports the following context:
+
+<ContextTable components={['ToggleButton']} docs={docs} />
+
+This example shows a `ButtonGroup` component that renders a group of buttons. The entire group can be marked as disabled via the `isDisabled` prop, which is passed to all child buttons via the `ButtonContext` provider.
+
+```tsx example
+import {ToggleButtonContext} from 'react-aria-components';
+
+interface ButtonGroupProps {
+  children?: React.ReactNode,
+  isDisabled?: boolean
+}
+
+function ButtonGroup({title, children, isDisabled}: ButtonGroupProps) {
+  return (
+    <div style={{display: 'flex', gap: 8}}>
+      {/*- begin highlight -*/}
+      <ToggleButtonContext.Provider value={{isDisabled}}>
+      {/*- end highlight -*/}
+        {children}
+      </ToggleButtonContext.Provider>
+    </div>
+  );
+}
+
+<ButtonGroup isDisabled>
+  <ToggleButton isSelected aria-label="Favorite">★</ToggleButton>
+  <ToggleButton aria-label="Flag">⚑</ToggleButton>
+</ButtonGroup>
+```
 
 ### Hooks
 

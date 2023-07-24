@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import statelyDocs from 'docs:@react-stately/slider';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/slider/docs/anatomy.svg';
@@ -504,8 +504,46 @@ If you need to customize one of the components within a `Slider`, such as `Label
 
 ```tsx
 function MySliderOutput(props) {
-  return <MySliderOutput {...props} className="my-slider-output" />
+  return <SliderOutput {...props} className="my-slider-output" />
 }
+```
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop via context that you could pass to the corresponding component, and refs are supported as well. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+Slider supports the following context:
+
+<ContextTable components={['Slider']} docs={docs} />
+
+This example shows a `SliderDescription` component that accepts a slider in its children and renders a description element below it. It uses the [useId](useId.html) hook to generate a unique id for the description, and associates it with the slider via the `aria-describedby` attribute passed to the `SwitchContext` provider.
+
+```tsx example
+import {SliderContext} from 'react-aria-components';
+import {useId} from 'react-aria';
+
+interface SliderDescriptionProps {
+  children?: React.ReactNode,
+  description?: string
+}
+
+function SliderDescription({children, description}: SliderDescriptionProps) {
+  let descriptionId = useId();
+  return (
+    <div>
+      {/*- begin highlight -*/}
+      <SliderContext.Provider value={{'aria-describedby': descriptionId}}>
+      {/*- end highlight -*/}
+        {children}
+      </SliderContext.Provider>
+      <small id={descriptionId}>{description}</small>
+    </div>
+  );
+}
+
+<SliderDescription description="Keeping your display on may shorten its life.">
+  <MySlider label="Turn off display after" minValue={10} maxValue={60} defaultValue={45} formatOptions={{style: 'unit', unit: 'minute'}} />
+</SliderDescription>
 ```
 
 ### Hooks
