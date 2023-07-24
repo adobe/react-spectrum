@@ -65,8 +65,8 @@ function EditableSegment({segment, state}: DatePickerSegmentProps) {
         minWidth: segment.maxValue != null ? String(segment.maxValue).length + 'ch' : null
       }}
       data-testid={segment.type}>
-      {/* TODO: added data-testid to skip placeholder contrast check */}
-      <span data-testid="skipContrastCheck" aria-hidden="true" className={classNames(styles, 'react-spectrum-DatePicker-placeholder')}>{segment.placeholder}</span>
+      {/* TODO: double check this, color contrast issue with quiet placeholder */}
+      <span data-a11y-ignore="color-contrast" aria-hidden="true" className={classNames(styles, 'react-spectrum-DatePicker-placeholder')}>{segment.placeholder}</span>
       {segment.isPlaceholder ? '' : segment.text}
     </div>
   );

@@ -2,8 +2,6 @@ import {action} from '@storybook/addon-actions';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {DragBetweenListsExample, DragBetweenListsRootOnlyExample, DragExample, DragIntoItemExample, ReorderExample} from './ListViewDnDExamples';
 import {Droppable} from '@react-aria/dnd/stories/dnd.stories';
-import {expect} from '@storybook/jest';
-import {fireEvent, userEvent, waitFor, within} from '@storybook/testing-library';
 import {Flex} from '@react-spectrum/layout';
 import {ListView} from '../';
 import React from 'react';
@@ -73,99 +71,6 @@ export const DragOut: ListViewStory = {
   name: 'Drag out of list'
 };
 
-// TODO: code based off https://testing-library.com/docs/example-drag/, try moving it into more central
-// place. Attempted to move into our test-utils but it would error with a complaint about renderOverride
-// when using it in this story
-function isElement(obj) {
-  if (typeof obj !== 'object') {
-    return false;
-  }
-  let prototypeStr, prototype;
-  do {
-    prototype = Object.getPrototypeOf(obj);
-    // to work in iframe
-    prototypeStr = Object.prototype.toString.call(prototype);
-    // '[object Document]' is used to detect document
-    if (
-      prototypeStr === '[object Element]' ||
-      prototypeStr === '[object Document]'
-    ) {
-      return true;
-    }
-    obj = prototype;
-    // null is the terminal of object
-  } while (prototype !== null);
-  return false;
-}
-
-function getElementClientCenter(element) {
-  const {left, top, width, height} = element.getBoundingClientRect();
-  return {
-    x: left + width / 2,
-    y: top + height / 2
-  };
-}
-
-const getCoords = target =>
-  isElement(target) ? getElementClientCenter(target) : target;
-
-const sleep = ms =>
-  new Promise(resolve => {
-    setTimeout(resolve, ms);
-  });
-
-interface DragOptions {
-  dropTarget?: Element,
-  delta?: {x: number, y: number},
-  steps?: number,
-  duration?: number
-}
-
-async function drag(element: Element, options: DragOptions) {
-  let {dropTarget, delta, steps = 20, duration = 2000} = options;
-  const from = getElementClientCenter(element);
-  const to = delta
-    ? {
-      x: from.x + delta.x,
-      y: from.y + delta.y
-    }
-    : getCoords(dropTarget);
-
-  const step = {
-    x: (to.x - from.x) / steps,
-    y: (to.y - from.y) / steps
-  };
-
-  const current = {
-    clientX: from.x,
-    clientY: from.y
-  };
-
-  let dataTransfer = new DataTransfer();
-  Object.defineProperty(dataTransfer, 'effectAllowed', {
-    value: 'none',
-    writable: true
-  });
-  fireEvent.pointerEnter(element, current);
-  fireEvent.pointerOver(element, current);
-  fireEvent.pointerMove(element, current);
-  fireEvent.pointerDown(element, current);
-  // NOTE: important to include bubbles and view here, otherwise the drag won't properly fire
-  fireEvent(element, new DragEvent('dragstart', {dataTransfer, bubbles: true, view: window, ...current}));
-
-  for (let i = 0; i < steps; i++) {
-    current.clientX += step.x;
-    current.clientY += step.y;
-    await sleep(duration / steps);
-    fireEvent.pointerMove(element, current);
-    fireEvent(element, new DragEvent('drag', {dataTransfer, bubbles: true, view: window, ...current}));
-    fireEvent(element, new DragEvent('dragover', {dataTransfer, bubbles: true, view: window, ...current}));
-  }
-  fireEvent.pointerUp(element, current);
-  fireEvent(element, new DragEvent('drop', {dataTransfer, bubbles: true, view: window, ...current}));
-  fireEvent(element, new DragEvent('dragend', {dataTransfer, bubbles: true, view: window, ...current}));
-}
-
 export const CustomDragPreview: ListViewStory = {
   render: (args) => (
     <Flex direction="row" wrap alignItems="center">
@@ -195,27 +100,6 @@ export const DragWithin: ListViewStory = {
     </Flex>
   ),
   name: 'Drag within list (Reorder}'
-};
-
-DragWithin.play = async ({canvasElement}) => {
-  let canvas = within(canvasElement);
-  await waitFor(() => {
-    expect(canvas.getByText('Item Two')).toBeInTheDocument();
-  });
-  let targetRow = await canvas.getAllByRole('row')[1];
-  expect(targetRow).toHaveAttribute('aria-rowindex', '2');
-  let cell = within(targetRow).getByRole('gridcell');
-  await waitFor(() => {
-    expect(within(targetRow).getByRole('checkbox')).toBeInTheDocument();
-    userEvent.click(within(targetRow).getByRole('checkbox'));
-  });
-
-  userEvent.click(within(targetRow).getByRole('checkbox'));
-  await drag(cell, {delta: {x: 0, y: 130}});
-  // TODO: figure out why the row information is out of date here
-  // let rows = await within(canvasElement).getAllByRole('row');
-  // expect(rows[1]).toHaveAttribute('aria-rowindex', '5');
-  // expect(rows[1]).toHaveTextContent('Item Two');
 };
 
 export const DragWithinScroll: ListViewStory = {

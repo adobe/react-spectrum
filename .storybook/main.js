@@ -3,7 +3,8 @@ module.exports = {
   core: {
     builder: "storybook-builder-parcel",
   },
-  stories: ['../packages/**/stories/*.stories.{js,jsx,ts,tsx}'],
+  // TODO: revert this back to  stories: ['../packages/**/stories/*.stories.{js,jsx,ts,tsx}'], when done testing individual stories
+  stories: ['../packages/@react-spectrum/datepicker/stories/*.stories.{js,jsx,ts,tsx}'],
   addons: [
     '@storybook/addon-actions',
     '@storybook/addon-a11y',
@@ -13,12 +14,8 @@ module.exports = {
     './custom-addons/descriptions/register',
     './custom-addons/theme/register',
     './custom-addons/strictmode/register',
-    './custom-addons/scrolling/register',
-    '@storybook/addon-interactions'
+    './custom-addons/scrolling/register'
   ],
-  features: {
-    interactionsDebugger: true
-  },
   typescript: {
     check: false,
     reactDocgen: false

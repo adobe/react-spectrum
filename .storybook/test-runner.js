@@ -22,11 +22,11 @@ module.exports = {
       rules: [
         {
           id: 'color-contrast',
-          selector: 'body main *:not([data-testid="skipContrastCheck"])'
+          selector: 'body *:not([data-a11y-ignore="color-contrast"])'
         },
         {
           id: 'aria-hidden-focus',
-          selector: 'body main *:not([data-testid="hiddenSelect"])'
+          selector: 'body *:not([data-a11y-ignore="aria-hidden-focus"])',
         },
         ...(storyContext.parameters?.a11y?.config?.rules ?? [])
       ]
@@ -39,16 +39,5 @@ module.exports = {
       },
       axeOptions: storyContext.parameters?.a11y?.options,
     });
-
-    // Approach for global axe storybook config, simply merge with the storyContext rules
-    // await configureAxe(page, {
-    //   rules: [
-    //     {
-    //       id: 'aria-hidden-focus',
-    //       // selector: '*:not(#blah)'
-    //       // selector: '.react-spectrum-story *:not(#blah)'
-    //     }
-    //   ]
-    // })
   },
 };

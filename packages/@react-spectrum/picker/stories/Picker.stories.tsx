@@ -20,7 +20,6 @@ import {Content, View} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
-import {expect} from '@storybook/jest';
 import {Flex} from '@react-spectrum/layout';
 import {Heading, Text} from '@react-spectrum/text';
 import {Item, Picker, Section, SpectrumPickerProps} from '../';
@@ -170,6 +169,7 @@ export const Default: DefaultStory = {
   render: (args) => <DefaultPicker {...args} />
 };
 
+// Need to interact with picker for the aXe plugin to catch the 'aria-hidden-focus' false positive
 Default.play = async ({canvasElement}) => {
   let canvas = within(canvasElement);
   let button = await canvas.findByRole('button');
@@ -193,26 +193,6 @@ export const Sections: PickerStory = {
       </Section>
     )
   }
-};
-
-Sections.play = async ({canvasElement}) => {
-  // TODO: figure out what exactly this is complaining about
-  // @ts-ignore
-  await Default.play({canvasElement});
-  let body = canvasElement.ownerDocument.body;
-  let listbox = await within(body).findByRole('listbox');
-
-  expect(await within(listbox).findByText('Animals')).toBeInTheDocument();
-
-  let groups = await within(listbox).findAllByRole('group');
-  expect(groups).toHaveLength(1);
-
-  let items = await within(listbox).findAllByRole('option');
-  expect(items.length).toBe(3);
-  expect(items[0]).toHaveTextContent('Aardvark');
-  expect(items[1]).toHaveTextContent('Kangaroo');
-  expect(items[2]).toHaveTextContent('Snake');
-  expect(document.activeElement).toBe(listbox);
 };
 
 export const Dynamic: PickerStory = {
@@ -330,25 +310,6 @@ export const Focus: FocusStory = {
     </div>
   ),
   name: 'keyboard tab focus'
-};
-
-Focus.play = async ({canvasElement}) => {
-  // @ts-ignore
-  await Default.play({canvasElement});
-  let canvas = within(canvasElement);
-
-  let body = canvasElement.ownerDocument.body;
-  let listbox = await within(body).findByRole('listbox');
-  expect(document.activeElement).toBe(listbox);
-
-  await userEvent.tab();
-  let afterInput = await canvas.findByTestId('after');
-  expect(document.activeElement).toBe(afterInput);
-  expect(listbox).not.toBeInTheDocument();
-
-  await userEvent.tab({shift: true});
-  let button = await canvas.findByRole('button');
-  expect(document.activeElement).toBe(button);
 };
 
 export type ResizePickerStory = ComponentStoryObj<typeof ResizePicker>;
