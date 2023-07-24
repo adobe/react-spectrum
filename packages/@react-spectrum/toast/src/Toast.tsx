@@ -84,6 +84,9 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
     }
   };
 
+  // Disable buttons for toasts behind the first one.
+  let shouldDisableButtons = props.toast.index !== 0 && animation !== 'exiting';
+
   return (
     <div
       {...styleProps}
@@ -121,13 +124,14 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
             onPress={handleAction}
             UNSAFE_className={classNames(styles, 'spectrum-Button')}
             variant="secondary"
-            staticColor="white">
+            staticColor="white"
+            isDisabled={shouldDisableButtons}>
             {actionLabel}
           </Button>
         }
       </div>
       <div className={classNames(styles, 'spectrum-Toast-buttons')}>
-        <ClearButton {...closeButtonProps} variant="overBackground">
+        <ClearButton {...closeButtonProps} variant="overBackground" isDisabled={shouldDisableButtons}>
           <CrossMedium />
         </ClearButton>
       </div>
