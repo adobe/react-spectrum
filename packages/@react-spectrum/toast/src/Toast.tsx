@@ -100,9 +100,10 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
       )}
       style={{
         ...styleProps.style,
-        zIndex: props.toast.priority
+        zIndex: state.visibleToasts.length - props.toast.index
       }}
       data-animation={animation}
+      data-index={props.toast.index}
       onAnimationEnd={() => {
         if (animation === 'exiting') {
           state.remove(key);

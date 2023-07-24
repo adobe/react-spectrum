@@ -215,7 +215,7 @@ describe('Toast Provider and Container', function () {
       );
     }
 
-    let {getByRole, getAllByRole, queryByRole} = renderComponent(<ToastPriorites />);
+    let {getAllByRole, queryByRole} = renderComponent(<ToastPriorites />);
     let buttons = getAllByRole('button');
 
     // show info toast first. error toast should supersede it.
@@ -223,20 +223,20 @@ describe('Toast Provider and Container', function () {
     expect(queryByRole('alert')).toBeNull();
     triggerPress(buttons[0]);
 
-    let alert = getByRole('alert');
+    let alert = getAllByRole('alert')[0];
     expect(alert).toBeVisible();
     expect(alert).toHaveTextContent('Info');
 
     triggerPress(buttons[1]);
     fireAnimationEnd(alert);
 
-    alert = getByRole('alert');
+    alert = getAllByRole('alert')[0];
     expect(alert).toHaveTextContent('Error');
 
     triggerPress(within(alert).getByRole('button'));
     fireAnimationEnd(alert);
 
-    alert = getByRole('alert');
+    alert = getAllByRole('alert')[0];
     expect(alert).toHaveTextContent('Info');
 
     triggerPress(within(alert).getByRole('button'));
@@ -246,17 +246,17 @@ describe('Toast Provider and Container', function () {
     // again, but with error toast first.
 
     triggerPress(buttons[1]);
-    alert = getByRole('alert');
+    alert = getAllByRole('alert')[0];
     expect(alert).toHaveTextContent('Error');
 
     triggerPress(buttons[0]);
-    alert = getByRole('alert');
+    alert = getAllByRole('alert')[0];
     expect(alert).toHaveTextContent('Error');
 
     triggerPress(within(alert).getByRole('button'));
     fireAnimationEnd(alert);
 
-    alert = getByRole('alert');
+    alert = getAllByRole('alert')[0];
     expect(alert).toHaveTextContent('Info');
 
     triggerPress(within(alert).getByRole('button'));
@@ -298,20 +298,20 @@ describe('Toast Provider and Container', function () {
   });
 
   it('should move focus to container when a toast exits and there are more', () => {
-    let {getByRole, queryByRole} = renderComponent(<RenderToastButton />);
+    let {getByRole, getAllByRole, queryByRole} = renderComponent(<RenderToastButton />);
     let button = getByRole('button');
 
     triggerPress(button);
     triggerPress(button);
 
-    let toast = getByRole('alert');
+    let toast = getAllByRole('alert')[0];
     let closeButton = within(toast).getByRole('button');
     triggerPress(closeButton);
     fireAnimationEnd(toast);
 
     expect(document.activeElement).toBe(getByRole('region'));
 
-    toast = getByRole('alert');
+    toast = getAllByRole('alert')[0];
     closeButton = within(toast).getByRole('button');
     triggerPress(closeButton);
     fireAnimationEnd(toast);

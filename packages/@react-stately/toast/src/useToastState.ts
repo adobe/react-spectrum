@@ -39,6 +39,8 @@ export interface QueuedToast<T> extends ToastOptions {
   content: T,
   /** A unique key for the toast. */
   key: string,
+  /** The index of the toast in the toast queue. */
+  index: number,
   /** A timer for the toast, if a timeout was set. */
   timer?: Timer,
   /** The current animation state for the toast. */
@@ -120,6 +122,7 @@ export class ToastQueue<T> {
       ...options,
       content,
       key: toastKey,
+      index: 0,
       timer: options.timeout ? new Timer(() => this.close(toastKey), options.timeout) : null
     };
 
@@ -134,6 +137,7 @@ export class ToastQueue<T> {
       }
     }
 
+    toast.index = low;
     this.queue.splice(low, 0, toast);
 
     toast.animation = low < this.maxVisibleToasts ? 'entering' : 'queued';
@@ -154,6 +158,7 @@ export class ToastQueue<T> {
     let index = this.queue.findIndex(t => t.key === key);
     if (index >= 0) {
       this.queue[index].onClose?.();
+      this.queue[index].index = -1;
       this.queue.splice(index, 1);
     }
 
@@ -167,6 +172,10 @@ export class ToastQueue<T> {
   }
 
   private updateVisibleToasts() {
+    for (let i = 0; i < this.queue.length; i++) {
+      this.queue[i].index = i;
+    }
+
     let toasts = this.queue.slice(0, this.maxVisibleToasts);
     if (this.hasExitAnimation) {
       let prevToasts: QueuedToast<T>[] = this.visibleToasts

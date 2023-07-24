@@ -78,6 +78,15 @@
 }
 
 .spectrum-Toast {
+  --scale: scale(1);
+  --scale-from: var(--scale);
+  --opacity-from: 1;
+  --opacity-to: 1;
+  transform: var(--slide-to) var(--scale);
+  transition: transform 300ms;
+  /* key line so you can distinguish toasts in a stack */
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+
   &[data-animation=entering] {
     animation: slide-in 300ms;
   }
@@ -85,15 +94,46 @@
   &[data-animation=exiting] {
     animation: fade-out 300ms forwards;
   }
+
+  /* scale each successive toast backward so it looks like a stack */
+  &[data-index="1"] {
+    --scale: scale(0.9);
+    --slide-from: translateY(0);
+    --slide-to: translateY(-16px);
+  }
+
+  &[data-index="2"] {
+    --scale: scale(0.8);
+    --slide-from: translateY(0);
+    --slide-to: translateY(-32px);
+  }
+
+  /* extra 4th toast will scale back while fading out */
+  &[data-index="3"] {
+    --scale: scale(0.7);
+    --slide-from: translateY(0);
+    --slide-to: translateY(-44px);
+  }
+
+  /* toasts will have queued animation when entering from queue. they will fade and scale in from the back. */
+  &[data-animation=queued] {
+    --scale-from: scale(0.7);
+    --slide-from: translateY(-44px);
+    --opacity-from: 0;
+    --opacity-to: 1;
+    animation: slide-in 300ms;
+  }
 }
 
 @keyframes slide-in {
   from {
-    transform: var(--slide-from);
+    transform: var(--slide-from) var(--scale-from);
+    opacity: var(--opacity-from);
   }
 
   to {
-    transform: var(--slide-to);
+    transform: var(--slide-to) var(--scale);
+    opacity: var(--opacity-to);
   }
 }
 
