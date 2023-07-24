@@ -4,7 +4,7 @@ module.exports = {
     builder: "storybook-builder-parcel",
   },
   // TODO: revert this back to  stories: ['../packages/**/stories/*.stories.{js,jsx,ts,tsx}'], when done testing individual stories
-  stories: ['../packages/@react-spectrum/toast/stories/*.stories.{js,jsx,ts,tsx}'],
+  stories: ['../packages/@react-spectrum/meter/stories/*.stories.{js,jsx,ts,tsx}'],
   addons: [
     '@storybook/addon-actions',
     '@storybook/addon-a11y',
