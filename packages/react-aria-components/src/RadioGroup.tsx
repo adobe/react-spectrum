@@ -102,7 +102,7 @@ export interface RadioRenderProps {
 }
 
 export const RadioGroupContext = createContext<ContextValue<RadioGroupProps, HTMLDivElement>>(null);
-export const RadioContext = createContext<ContextValue<RadioProps, HTMLInputElement>>(null);
+export const RadioContext = createContext<ContextValue<Partial<RadioProps>, HTMLInputElement>>(null);
 let InternalRadioContext = createContext<RadioGroupState | null>(null);
 
 function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {

@@ -69,9 +69,9 @@ export interface CollectionStateBase<T, C extends Collection<Node<T>> = Collecti
 
 export interface Expandable {
   /** The currently expanded keys in the collection (controlled). */
-  expandedKeys?: Iterable<Key>,
+  expandedKeys?: 'all' | Iterable<Key>,
   /** The initial expanded keys in the collection (uncontrolled). */
-  defaultExpandedKeys?: Iterable<Key>,
+  defaultExpandedKeys?: 'all' | Iterable<Key>,
   /** Handler that is called when items are expanded or collapsed. */
   onExpandedChange?: (keys: Set<Key>) => any
 }
