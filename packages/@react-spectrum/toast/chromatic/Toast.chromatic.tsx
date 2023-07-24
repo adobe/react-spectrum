@@ -16,7 +16,7 @@ import {useToastState} from '@react-stately/toast';
 
 function FakeToast(props) {
   let state = useToastState<any>();
-  return <Toast toast={{content: props, key: 'toast'}} state={state} />;
+  return <Toast toast={{content: props, key: 'toast', index: 0}} state={state} />;
 }
 
 export default {

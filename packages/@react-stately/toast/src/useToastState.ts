@@ -182,7 +182,7 @@ export class ToastQueue<T> {
         .filter(t => !toasts.some(t2 => t.key === t2.key))
         .map(t => ({...t, animation: 'exiting'}));
 
-      this.visibleToasts = prevToasts.concat(toasts).sort((a, b) => b.priority - a.priority);
+      this.visibleToasts = prevToasts.concat(toasts).sort((a, b) => a.index - b.index);
     } else {
       this.visibleToasts = toasts;
     }
