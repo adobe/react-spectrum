@@ -16,7 +16,7 @@ import selectionDocs from 'docs:@react-stately/selection';
 import statelyDocs from 'docs:@react-stately/table';
 import focusDocs from 'docs:@react-aria/focus';
 import checkboxDocs from 'docs:@react-aria/checkbox';
-import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription, VersionBadge} from '@react-spectrum/docs';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/table/package.json';
 import Anatomy from './TableAnatomy.svg';
@@ -825,7 +825,7 @@ let rows = [
 ```
 
 
-## Resizable Columns <VersionBadge version="rc" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+## Resizable Columns
 
 For resizable column support, two additional hooks need to be added to the table implementation above. The <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableColumnResizeState} />
 hook from `@react-stately/table` is responsible for initializing and tracking the widths of every column in your table, returning functions that you can use to

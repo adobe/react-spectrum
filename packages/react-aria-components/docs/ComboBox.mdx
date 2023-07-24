@@ -423,7 +423,9 @@ The states and selectors for each component used in a `ComboBox` are documented 
 
 ### ComboBox
 
-A `ComboBox` can be targeted with the `.react-aria-ComboBox` CSS selector, or by overriding with a custom `className`. It provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.ComboBoxState} /> object to its render props, which can be used to customize the `className`, `style`, or `children`.
+A `ComboBox` can be targeted with the `.react-aria-ComboBox` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.ComboBoxRenderProps.properties} />
 
 ### Label
 
@@ -431,7 +433,9 @@ A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overr
 
 ### Input
 
-An `Input` within a ComboBox can be targeted with the `.react-aria-Input` CSS selector, or by overriding with a custom `className`. It supports standard CSS pseudo classes such as `:focus` for states. See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes#user_action_pseudo-classes) for details.
+An `Input` can be targeted with the `.react-aria-Input` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.InputRenderProps.properties} />
 
 ### Button
 
@@ -487,7 +491,7 @@ This example wraps `ComboBox` and all of its children together into a single com
 import type {ComboBoxProps, ItemProps} from 'react-aria-components';
 import {Text} from 'react-aria-components';
 
-interface MyComboBoxProps<T extends object> extends ComboBoxProps<T> {
+interface MyComboBoxProps<T extends object> extends Omit<ComboBoxProps<T>, 'children'> {
   label?: string,
   description?: string | null,
   errorMessage?: string | null,

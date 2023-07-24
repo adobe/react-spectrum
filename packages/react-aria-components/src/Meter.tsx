@@ -11,7 +11,7 @@
  */
 
 import {AriaMeterProps, useMeter} from 'react-aria';
-import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, forwardRefType, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 
@@ -26,7 +26,7 @@ export interface MeterRenderProps {
    * A formatted version of the value.
    * @selector [aria-valuetext]
    */
-  valueText?: string
+  valueText: string | undefined
 }
 
 export const MeterContext = createContext<ContextValue<MeterProps, HTMLDivElement>>(null);
@@ -69,5 +69,5 @@ function Meter(props: MeterProps, ref: ForwardedRef<HTMLDivElement>) {
 /**
  * A meter represents a quantity within a known range, or a fractional value.
  */
-const _Meter = forwardRef(Meter);
+const _Meter = /*#__PURE__*/ (forwardRef as forwardRefType)(Meter);
 export {_Meter as Meter};

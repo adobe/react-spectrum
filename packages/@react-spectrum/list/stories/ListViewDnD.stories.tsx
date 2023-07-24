@@ -7,6 +7,7 @@ import {fireEvent, userEvent, waitFor, within} from '@storybook/testing-library'
 import {Flex} from '@react-spectrum/layout';
 import {ListView} from '../';
 import React from 'react';
+import {View} from '@react-spectrum/view';
 
 export default {
   title: 'ListView/Drag and Drop',
@@ -164,6 +165,28 @@ async function drag(element: Element, options: DragOptions) {
   fireEvent(element, new DragEvent('drop', {dataTransfer, bubbles: true, view: window, ...current}));
   fireEvent(element, new DragEvent('dragend', {dataTransfer, bubbles: true, view: window, ...current}));
 }
+
+export const CustomDragPreview: ListViewStory = {
+  render: (args) => (
+    <Flex direction="row" wrap alignItems="center">
+      <input />
+      <Droppable />
+      <DragExample
+        dragHookOptions={{
+          onDragStart: action('dragStart'),
+          onDragEnd: action('dragEnd'),
+          renderPreview: (keys, draggedKey) => (
+            <View backgroundColor="gray-50" padding="size-100" borderRadius="medium" borderWidth="thin" borderColor="blue-500">
+              <strong>Custom Preview</strong>
+              <div>Keys: [{[...keys].join(', ')}]</div>
+              <div>Dragged: {draggedKey}</div>
+            </View>
+          )}}
+        listViewProps={args} />
+    </Flex>
+  ),
+  name: 'Custom drag preview'
+};
 
 export const DragWithin: ListViewStory = {
   render: (args) => (

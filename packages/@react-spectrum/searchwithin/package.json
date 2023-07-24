@@ -46,7 +46,7 @@
     "@react-spectrum/utils": "^3.8.1",
     "@react-types/searchwithin": "3.0.0-alpha.10",
     "@react-types/shared": "^3.16.0",
-    "@swc/helpers": "^0.4.14"
+    "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1"

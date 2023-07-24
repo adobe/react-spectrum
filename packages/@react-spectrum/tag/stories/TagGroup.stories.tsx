@@ -18,6 +18,7 @@ import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Heading, Text} from '@react-spectrum/text';
 import {Item, SpectrumTagGroupProps, TagGroup} from '../src';
+import {Link} from '@react-spectrum/link';
 import React, {useState} from 'react';
 
 let manyItems = [];
@@ -236,6 +237,23 @@ export const WithLabelDescriptionContextualHelpAndAction: TagGroupStory = {
   name: 'with label, description, contextual help + action'
 };
 
+export const EmptyState: TagGroupStory = {
+  render: (args) => (
+    <TagGroup label="Tag group with empty state" {...args}>
+      {[]}
+    </TagGroup>
+  ),
+  storyName: 'Empty state'
+};
+
+export const CustomEmptyState: TagGroupStory = {
+  ...EmptyState,
+  args: {
+    renderEmptyState: () => <span>No tags. <Link><a href="//react-spectrum.com">Click here</a></Link> to add some.</span>
+  },
+  storyName: 'Custom empty state'
+};
+
 function OnRemoveExample(props) {
   let {withAvatar, ...otherProps} = props;
   let [items, setItems] = useState([
@@ -247,13 +265,13 @@ function OnRemoveExample(props) {
     {id: 6, label: 'Shy tag'}
   ]);
 
-  let onRemove = (key) => {
-    setItems(prevItems => prevItems.filter((item) => key !== item.id));
-    action('onRemove')(key);
+  let onRemove = (keys) => {
+    setItems(prevItems => prevItems.filter((item) => !keys.has(item.id)));
+    action('onRemove')(keys);
   };
 
   return (
-    <TagGroup allowsRemoving aria-label="Tag group with removable tags" items={items} onRemove={key => onRemove(key)} {...otherProps}>
+    <TagGroup aria-label="Tag group with removable tags" items={items} onRemove={key => onRemove(key)} {...otherProps}>
       {(item: any) => (
         <Item key={item.key} textValue={item.label}>
           {withAvatar && <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />}

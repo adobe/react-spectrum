@@ -17,13 +17,12 @@ import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
-import {Heading} from '@react-spectrum/text';
+import {Heading, Text} from '@react-spectrum/text';
 import {Item, Picker, Section} from '../';
 import {Meta} from '@storybook/react';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React from 'react';
 import {SpectrumPickerProps} from '@react-types/select';
-import {Text} from '@react-spectrum/text';
 
 const meta: Meta<SpectrumPickerProps<object>> = {
   title: 'Picker',

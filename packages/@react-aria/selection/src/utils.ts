@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {isAppleDevice} from '@react-aria/utils';
-import {isMac} from '@react-aria/utils';
+import {isAppleDevice, isMac} from '@react-aria/utils';
 
 interface Event {
   altKey: boolean,

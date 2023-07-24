@@ -9,14 +9,13 @@ import {FocusRing} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isWebKit} from '@react-aria/utils';
-import {mergeProps} from '@react-aria/utils';
+import {isWebKit, mergeProps} from '@react-aria/utils';
 import React, {Key, RefObject, useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useTableColumnResize} from '@react-aria/table';
-import {useTableContext, useVirtualizerContext} from './TableView';
+import {useTableContext, useVirtualizerContext} from './TableViewBase';
 // @ts-ignore
 import wCursor from 'bundle-text:./cursors/Cur_MoveToLeft_9_9.svg';
 

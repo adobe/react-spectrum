@@ -11,8 +11,8 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button} from '@react-spectrum/button';
-import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
+import {ActionButton, Button} from '@react-spectrum/button';
+import {Content, ContextualHelp, Heading, useLocale} from '@adobe/react-spectrum';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
 import Info from '@spectrum-icons/workflow/Info';
@@ -298,3 +298,60 @@ function ValidationExample(props) {
       errorMessage={value === '' ? 'Empty input not allowed.' : 'Single digit numbers are 0-9. Lorem ipsum dolor.'} />
   );
 }
+
+// strings with diacritic marks
+let localeStrings = {
+  'ar-AE': 'عِرِفِتـــانٍ خانٍِ',
+  'bg-BG': 'Азбучен ред',
+  'cs-CZ': 'Abecední řádek',
+  'da-DK': 'Afbryder',
+  'de-DE': 'Abbruch',
+  'el-GR': 'Αλφαβητική γραμμή',
+  'en-US': '123 Main St.',
+  'es-ES': 'Línea alfabética',
+  'et-EE': 'Tähestikuline rida',
+  'fi-FI': 'Aakkosellinen rivi',
+  'fr-FR': 'Ligne alphabétique',
+  'he-IL': 'שורת אלפבית',
+  'hr-HR': 'Abecedni redak',
+  'hu-HU': 'Ábécésor',
+  'it-IT': 'Riga alfabetica',
+  'ja-JP': 'アルファベット順',
+  'ko-KR': '알파벳 순서',
+  'lt-LT': 'Abėcėlinė eilutė',
+  'lv-LV': 'Alfabētiskā rinda',
+  'nb-NO': 'Alfabetisk rekkefølge',
+  'nl-NL': 'Alfabetische volgorde',
+  'pl-PL': 'Alfabetyczny wiersz',
+  'pt-BR': 'Linha alfabética',
+  'ro-RO': 'Rând alfabetic',
+  'ru-RU': 'Алфавитный порядок',
+  'sk-SK': 'Abecedný riadok',
+  'sl-SI': 'Abecedni red',
+  'sr-SP': 'Абецедни ред',
+  'sv-SE': 'Alfabetisk ordning',
+  'tr-TR': 'Alfabetik sıra',
+  'uk-UA': 'Алфавітний порядок',
+  'zh-CN': '字母顺序',
+  'zh-TW': '字母順序'
+};
+// https://lingojam.com/ZalgoText
+let zalgoString = 'i̶͖̊́̃̒̄͆̚͝t̶̢̢̧̺̻̘̖̗͉̟̞̭̀̀͒͂͐̐̄̇́͒̅̆́\'̶̯̳̑͑͛͐͋̈́̆̇̓͝͝s̵͙͇͉̪̉̈́̐̌̌̃̓͝ ̴̙̘̙̏̍̌̀̕͝m̶̰̥͇̄͒̃̊́͋̎́͆̍̓͑̅͜ȩ̵̛̪̜̯͓͈̰̰̱̠͆̾́́̎̊͌̒́͗̚̕͠ͅ,̷̫̱͖̖͊̉̒̎͊͝ ̵̡̧̛̝̳̦͙͚̣̩̜͙̈́̾̃̋͒̃̇̔̀͜ͅi̵̯̰̰͉̺͎̖̐ͅ\'̷͚̊͐͑͗́͒͌́͛̚̕͝m̴̨̧̯̞͇̤͎̥̫̩͔͖̮̖̲̽͆͗̌̈̇͋̍̕͘͠ ̸͚̞̠̦̑̌̍͋̃t̷̘̝̘̣̮͓̠̮̤͍͕̓͛̉h̶̛͔̳̟̩̦͍̤̥̥̦̗͍͖̓͆̐̽̒̈́͝͠ē̷̛͓̫̜͕͈͙̮͕̝͙̆͂̇̿̋̇̓̂̋͒̂͂͝ ̸̨͈̠̟̤͇̟̗̼̲̯̭̓̈̑́̇̈̀͐͌͂͛͌̅͘͜͝ͅp̴̧̧̛̛̺̩̩̘̲̜̰̩͚̻̬̠̎̅́̏̂́̐̾̓̓͌͝r̷̜̱̒̊̒͛̔ơ̷̼̝̥̺͎͚͚͇̝̫̓̈́̽̈̍̈̌̂̀̚͝͝ḇ̵̠̼͔͙̦̝̠̳̤̍͗͐͝l̷̛̰̲̺̫̭̳̹̬̳̤̱͎̋͛ȩ̷͒m̵̳̟͉̪̞̎̐̓̏̒͗,̶̨͍̥̗̺̮̰̬͍̓͋̄̋͛́̄̕͝ ̷̧̡̧̫̯̘̣̠̮͕̪͈̣̹͌̈̃̃̈́̃̍̊͝͝ͅį̸̲̠̤̳͗̽̋͊̍͛͂̊̓̑̅͋̿t̶̛̲͈͇͇͊̋͐̐͌͒̊̿̕͘\'̸̧͍̠̲̤̠̝̩̟̿͌ś̷̳͇̅̇͛͛̈́̅̑̇̔̌͆͝ ̵̛̱̺̙̪͒̇̔͗͘ͅm̶̢̧̤̟͙͉̠̣̺̥̫͙̹͉̬̉̏͑̕͝e̴̪̥̪̠̜̻̪͎͎̱̱̯̜͒́̑̃̕';
+function DefaultLocaleStrings(props) {
+  let locale = useLocale();
+  let [isZalgo, setValue] = React.useState(false);
+  return (
+    <>
+      <TextArea
+        label="Sampling of diacritics"
+        value={isZalgo ? zalgoString : localeStrings[locale.locale]}
+        UNSAFE_className="custom_classname"
+        {...props} />
+      <ActionButton onPress={() => setValue(prev => !prev)}>Toggle Zalgo</ActionButton>
+    </>
+  );
+}
+
+export const WithDifferentLocaleText = {
+  render: (args) => <DefaultLocaleStrings {...args} />
+};

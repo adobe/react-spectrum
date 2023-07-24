@@ -13,9 +13,8 @@
 import Bell from '@spectrum-icons/workflow/Bell';
 import {Button} from '../';
 import {classNames} from '@react-spectrum/utils';
-import {Flex} from '@react-spectrum/layout';
+import {Flex, Grid, repeat} from '@react-spectrum/layout';
 import {generatePowerset} from '@react-spectrum/story-utils';
-import {Grid, repeat} from '@react-spectrum/layout';
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {Text} from '@react-spectrum/text';

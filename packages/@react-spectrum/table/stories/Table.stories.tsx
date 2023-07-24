@@ -17,7 +17,7 @@ import {Breadcrumbs, Item} from '@react-spectrum/breadcrumbs';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableView} from '../';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
-import {Content} from '@react-spectrum/view';
+import {Content, View} from '@react-spectrum/view';
 import {ControllingResize, PokemonColumn} from './ControllingResize';
 import {CRUDExample} from './CRUDExample';
 import Delete from '@spectrum-icons/workflow/Delete';
@@ -38,10 +38,10 @@ import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
 import {useAsyncList, useListData} from '@react-stately/data';
 import {useFilter} from '@react-aria/i18n';
-import {View} from '@react-spectrum/view';
 
 export default {
   title: 'TableView',
+  excludeStories: ['columns', 'renderEmptyState', 'EmptyStateTable'],
   component: TableView,
   args: {
     onAction: action('onAction'),
@@ -153,7 +153,7 @@ export const Static: TableStory = {
   name: 'static'
 };
 
-let columns = [
+export let columns = [
   {name: 'Foo', key: 'foo'},
   {name: 'Bar', key: 'bar'},
   {name: 'Baz', key: 'baz'}
@@ -324,12 +324,14 @@ export const StaticNestedColumns: TableStory = {
     <TableView {...args}>
       <TableHeader>
         <Column key="test">Test</Column>
-        <Column title="Group 1">
-          <Column key="foo">Foo</Column>
-          <Column key="bar">Bar</Column>
-        </Column>
-        <Column title="Group 2">
-          <Column key="baz">Baz</Column>
+        <Column title="Blah">
+          <Column title="Group 1">
+            <Column key="foo">Foo</Column>
+            <Column key="bar">Bar</Column>
+          </Column>
+          <Column title="Group 2">
+            <Column key="baz">Baz</Column>
+          </Column>
         </Column>
       </TableHeader>
       <TableBody>
@@ -375,7 +377,7 @@ export const DynamicNestedColumns: TableStory = {
     <TableView {...args}>
       <TableHeader columns={nestedColumns}>
         {column =>
-          <Column childColumns={column.children}>{column.name}</Column>
+          <Column childColumns={column.children} textValue={column.name}>{column.name}</Column>
         }
       </TableHeader>
       <TableBody items={items}>
@@ -877,21 +879,22 @@ function renderEmptyState() {
   );
 }
 
-function EmptyStateTable(props) {
+export function EmptyStateTable(props) {
+  let {items, columns, allowsSorting, ...otherProps} = props;
   let [show, setShow] = useState(false);
   let [sortDescriptor, setSortDescriptor] = useState({});
   return (
     <Flex direction="column">
       <ActionButton width="100px" onPress={() => setShow(show => !show)}>Toggle items</ActionButton>
-      <TableView aria-label="TableView with empty state" width={700} height={400} {...props} renderEmptyState={renderEmptyState} selectionMode="multiple" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor}>
-        <TableHeader columns={manyColunns}>
-          {column =>
-            <Column allowsResizing allowsSorting minWidth={100}>{column.name}</Column>
+      <TableView aria-label="TableView with empty state" width={700} height={400} renderEmptyState={renderEmptyState} selectionMode="multiple" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor} {...otherProps}>
+        <TableHeader columns={columns ?? manyColunns}>
+          {(column: any) =>
+            <Column allowsResizing allowsSorting={allowsSorting} minWidth={100}>{column.name}</Column>
           }
         </TableHeader>
-        <TableBody items={show ? manyRows : []}>
-          {item =>
-            (<Row key={item.foo}>
+        <TableBody items={show ? items ?? manyRows : []}>
+          {(item: any) =>
+            (<Row key={item.foo} UNSTABLE_childItems={item.childRows}>
               {key => <Cell>{item[key]}</Cell>}
             </Row>)
           }

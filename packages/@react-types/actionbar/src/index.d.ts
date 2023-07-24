@@ -10,10 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBase, DOMProps, StyleProps} from '@react-types/shared';
+import {DOMProps, ItemElement, ItemRenderer, StyleProps} from '@react-types/shared';
 import {Key, ReactNode} from 'react';
 
-export interface ActionBarProps<T> extends CollectionBase<T> {
+export interface ActionBarProps<T> {
+  /** An list of `Item` elements or a function. If the latter, a list of items must be provided using the `items` prop. */
+  children: ItemElement<T> | ItemElement<T>[] | ItemRenderer<T>,
+  /** A list of items to display as children. Must be used with a function as the sole child. */
+  items?: Iterable<T>,
+  /** A list of keys to disable. */
+  disabledKeys?: Iterable<Key>,
   /** The number of selected items that the ActionBar is currently linked to. If 0, the ActionBar is hidden. */
   selectedItemCount: number | 'all',
   /** Handler that is called when the ActionBar clear button is pressed. */

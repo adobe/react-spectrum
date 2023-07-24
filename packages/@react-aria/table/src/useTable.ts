@@ -20,9 +20,8 @@ import {mergeProps, useDescription, useId, useUpdateEffect} from '@react-aria/ut
 import {Node} from '@react-types/shared';
 import {RefObject, useMemo} from 'react';
 import {TableKeyboardDelegate} from './TableKeyboardDelegate';
-import {TableState} from '@react-stately/table';
-import {useCollator, useLocale} from '@react-aria/i18n';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {TableState, TreeGridState} from '@react-stately/table';
+import {useCollator, useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface AriaTableProps<T> extends GridProps {
   /** The layout object for the table. Computes what content is visible and how to position and style them. */
@@ -37,7 +36,7 @@ export interface AriaTableProps<T> extends GridProps {
  * @param state - State for the table, as returned by `useTableState`.
  * @param ref - The ref attached to the table element.
  */
-export function useTable<T>(props: AriaTableProps<T>, state: TableState<T>, ref: RefObject<HTMLElement>): GridAria {
+export function useTable<T>(props: AriaTableProps<T>, state: TableState<T> | TreeGridState<T>, ref: RefObject<HTMLElement>): GridAria {
   let {
     keyboardDelegate,
     isVirtualized,
@@ -69,6 +68,10 @@ export function useTable<T>(props: AriaTableProps<T>, state: TableState<T>, ref:
   // Override to include header rows
   if (isVirtualized) {
     gridProps['aria-rowcount'] = state.collection.size + state.collection.headerRows.length;
+  }
+
+  if ('expandedKeys' in state) {
+    gridProps.role = 'treegrid';
   }
 
   let {column, direction: sortDirection} = state.sortDescriptor || {};

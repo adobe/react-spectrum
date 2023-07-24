@@ -25,13 +25,11 @@ import Copy from '@spectrum-icons/workflow/Copy';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import Draw from '@spectrum-icons/workflow/Draw';
 import {Flex} from '@react-spectrum/layout';
-import {Heading} from '@react-spectrum/text';
+import {Heading, Text} from '@react-spectrum/text';
 import {Link} from '@react-spectrum/link';
 import React, {useRef, useState} from 'react';
-import {Text} from '@react-spectrum/text';
-import {useAsyncList} from '@react-stately/data';
+import {useAsyncList, useListData, useTreeData} from '@react-stately/data';
 import {useFilter} from '@react-aria/i18n';
-import {useListData, useTreeData} from '@react-stately/data';
 
 let items = [
   {name: 'Aardvark', id: '1'},

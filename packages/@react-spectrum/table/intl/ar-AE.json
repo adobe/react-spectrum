@@ -5,5 +5,7 @@
   "loadingMore": "جارٍ تحميل المزيد...",
   "resizeColumn": "تغيير حجم العمود",
   "sortAscending": "فرز بترتيب تصاعدي",
-  "sortDescending": "فرز بترتيب تنازلي"
+  "sortDescending": "فرز بترتيب تنازلي",
+  "expand": "Expand",
+  "collapse": "Collapse"
 }
