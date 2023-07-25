@@ -88,7 +88,11 @@ export interface ProviderProps extends ContextProps, DOMProps, StyleProps {
    * Do not use `base` property.
    * @default {S:380,M:768,L:1024}
    */
-  breakpoints?: Breakpoints
+  breakpoints?: Breakpoints,
+  /**
+   * The HTML container for overlay portals to render into (default is document.body).
+   */
+  portalContainer?: HTMLElement
 }
 
 export interface ProviderContext extends ContextProps {
@@ -111,5 +115,9 @@ export interface ProviderContext extends ContextProps {
   /**
    * The breakpoints of the nearest parent Provider used for styleProps.
    */
-  breakpoints: Breakpoints
+  breakpoints: Breakpoints,
+  /**
+   * The HTML container for overlay portals to render into (default is document.body).
+   */
+  portalContainer?: HTMLElement
 }
