@@ -15,7 +15,6 @@ import {ActionBar} from '../src';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Example} from './Example';
 import React from 'react';
-import {userEvent, waitFor, within} from '@storybook/testing-library';
 import {useViewportSize} from '@react-aria/utils';
 
 export default {
