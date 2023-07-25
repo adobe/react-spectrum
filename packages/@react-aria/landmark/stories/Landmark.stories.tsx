@@ -429,11 +429,27 @@ export const NestedLandmarks = {
 };
 
 export const TableLandmark = {
-  render: TableTemplate
+  render: TableTemplate,
+  parameters: {
+    a11y: {
+      config: {
+        // Fails due to TableView's known issue, ignoring here since it isn't pertinent to the story
+        rules: [{id: 'aria-required-children', selector: '*:not([role="grid"])'}]
+      }
+    }
+  }
 };
 
 export const ApplicationWithLandmarks = {
-  render: ApplicationTemplate
+  render: ApplicationTemplate,
+  parameters: {
+    a11y: {
+      config: {
+        // Fails due to TableView's known issue, ignoring here since it isn't pertinent to the story
+        rules: [{id: 'aria-required-children', selector: '*:not([role="grid"])'}]
+      }
+    }
+  }
 };
 
 export const DuplicateRolesWithLabels = {

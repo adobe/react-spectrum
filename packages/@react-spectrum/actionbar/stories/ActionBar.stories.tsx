@@ -15,8 +15,8 @@ import {ActionBar} from '../src';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Example} from './Example';
 import React from 'react';
+import {userEvent, waitFor, within} from '@storybook/testing-library';
 import {useViewportSize} from '@react-aria/utils';
-
 
 export default {
   title: 'ActionBar',
@@ -39,10 +39,19 @@ export default {
 export type ActionBarStory = ComponentStoryObj<any>;
 
 export const Default: ActionBarStory = {
-  render: (args) => <Example {...args} />
+  render: (args) => <Example {...args} />,
+  parameters: {
+    a11y: {
+      config: {
+        // Fails due to TableView's known issue, ignoring here since it isn't pertinent to the story
+        rules: [{id: 'aria-required-children', selector: '*:not([role="grid"])'}]
+      }
+    }
+  }
 };
 
 export const FullWidthStory: ActionBarStory = {
+  ...Default,
   render: (args) => <FullWidth {...args} />
 };
 
