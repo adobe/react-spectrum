@@ -385,7 +385,7 @@ module.exports = {
     fontWeight: {
       DEFAULT: 'var(--spectrum-global-font-weight-regular)',
       thin: 'var(--spectrum-global-font-weight-thin)',
-      ultraLight: 'var(--spectrum-global-font-weight-ultra-light)',
+      'ultra-light': 'var(--spectrum-global-font-weight-ultra-light)',
       light: 'var(--spectrum-global-font-weight-light)',
       regular: 'var(--spectrum-global-font-weight-regular)',
       medium: 'var(--spectrum-global-font-weight-medium)',
@@ -406,6 +406,29 @@ module.exports = {
       small: 'var(--spectrum-global-font-line-height-small)',
       medium: 'var(--spectrum-global-font-line-height-medium)',
       large: 'var(--spectrum-global-font-line-height-large)',
+    },
+    /** https://spectrum.adobe.com/page/motion/ */
+    transitionTimingFunction: {
+      'ease-in-out': 'cubic-bezier(.45, 0, .40, 1)',
+      'ease-in': 'cubic-bezier(.50, 0, 1, 1)',
+      'ease-out': 'cubic-bezier(0, 0, 0.40, 1)',
+      'linear': 'cubic-bezier(0, 0, 1, 1)',
+    },
+    transitionDuration: {
+      none: 'var(--spectrum-global-animation-duration-0: 0ms)',
+      0: 'var(--spectrum-global-animation-duration-0: 0ms)',
+      100: 'var(--spectrum-global-animation-duration-100: 130ms)',
+      200: 'var(--spectrum-global-animation-duration-200: 160ms)',
+      300: 'var(--spectrum-global-animation-duration-300: 190ms)',
+      400: 'var(--spectrum-global-animation-duration-400: 220ms)',
+      500: 'var(--spectrum-global-animation-duration-500: 250ms)',
+      600: 'var(--spectrum-global-animation-duration-600: 300ms)',
+      700: 'var(--spectrum-global-animation-duration-700: 350ms)',
+      800: 'var(--spectrum-global-animation-duration-800: 400ms)',
+      900: 'var(--spectrum-global-animation-duration-900: 450ms)',
+      1000: 'var(--spectrum-global-animation-duration-1000: 500ms)',
+      2000: 'var(--spectrum-global-animation-duration-2000: 1000ms)',
+      4000: 'var(--spectrum-global-animation-duration-4000: 2000ms)',
     }
   },
   plugins: [
