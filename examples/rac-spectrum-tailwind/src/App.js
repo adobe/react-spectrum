@@ -53,33 +53,33 @@ function RadioBox({ name, icon }) {
 function SentimentRatingGroup() {
   let ratings = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
   return (
-    <RadioGroup className="space-y-2 flex flex-col text-center max-w-lg m-auto" defaultValue={5}>
+    <RadioGroup className="space-y-2 flex flex-col text-center max-w-xl m-auto" defaultValue="5">
       <Label className="text-xl font-semibold">Sentiment Rating</Label>
       <div className="flex justify-between">
         <span>Least Likely</span>
         <span>Most Likely</span>
       </div>
       <div className="flex justify-evenly">
-        {ratings.map((index) => (
-          <SentimentRating key={index} index={index} />
+        {ratings.map((rating) => (
+          <SentimentRating key={rating} rating={rating.toString()} />
         ))}
       </div>
     </RadioGroup>
   );
 }
 
-function SentimentRating({ index }) {
+function SentimentRating({ rating }) {
   return (
-    <Radio value={index} className={({ isFocusVisible, isSelected, isPressed }) => `
-      flex cursor-default rounded-full p-4 m-3 h-4 w-4 focus:outline-none bg-clip-padding border
+    <Radio value={rating} className={({ isFocusVisible, isSelected, isPressed }) => `
+      flex rounded-full p-4 m-3 h-4 w-4 focus:outline-none border
       ${isFocusVisible ? 'ring' : ''}
-      ${isSelected ? 'bg-blue-700 border-blue-700 text-white' : ''}
+      ${isSelected ? 'bg-blue-800 border-blue-800 text-white' : ''}
       ${isPressed && !isSelected ? 'bg-gray-200' : ''}
       ${!isSelected && !isPressed ? 'bg-white' : ''}
     `}>
       {({ isSelected }) => (
         <div className={`flex flex-col w-full h-full items-center justify-center font-semibold ${isSelected ? 'text-white' : 'text-gray-900'}`}>
-          {index}
+          {rating}
         </div>
       )}
     </Radio>
