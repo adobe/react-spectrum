@@ -363,6 +363,7 @@ module.exports = {
       large: "var(--spectrum-alias-border-radius-large)",
       full: "9999px"
     },
+    /** https://spectrum.adobe.com/page/typography/#Font-sizes */
     fontSize: {
       DEFAULT: "var(--spectrum-alias-font-size-default)",
       xs: 'var(--spectrum-global-dimension-font-size-50)',
@@ -380,6 +381,18 @@ module.exports = {
       '9xl': 'var(--spectrum-global-dimension-font-size-1100)',
       '10xl': 'var(--spectrum-global-dimension-font-size-1200)',
       '11xl': 'var(--spectrum-global-dimension-font-size-1300)',
+    },
+    fontWeight: {
+      DEFAULT: 'var(--spectrum-global-font-weight-regular)',
+      thin: 'var(--spectrum-global-font-weight-thin)',
+      ultraLight: 'var(--spectrum-global-font-weight-ultra-light)',
+      light: 'var(--spectrum-global-font-weight-light)',
+      regular: 'var(--spectrum-global-font-weight-regular)',
+      medium: 'var(--spectrum-global-font-weight-medium)',
+      semibold: 'var(--spectrum-global-font-weight-semi-bold)',
+      bold: 'var(--spectrum-global-font-weight-bold)',
+      extraBold: 'var(--spectrum-global-font-weight-extra-bold)',
+      black: 'var(--spectrum-global-font-weight-black)',
     }
   },
   plugins: [
