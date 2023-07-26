@@ -3,6 +3,9 @@ module.exports = {
   content: [
     "./src/**/*.{html,js,ts,jsx,tsx}",
   ],
+  future: {
+    respectDefaultRingColorOpacity: true
+  },
   theme: {
     extend: {
       screens: {
@@ -335,9 +338,18 @@ module.exports = {
           1400: "var(--spectrum-blue-1400)"
         }
       },
-      // ringColor: "var(--spectrum-alias-focus-ring-color)",
-      // ringWidth: "var(--spectrum-alias-focus-ring-size)",
-      // ringOffsetWidth: "var(--spectrum-alias-focusring-gap)",
+      ringColor: {
+        DEFAULT: "var(--spectrum-alias-focus-ring-color)",
+      },
+      ringOpacity: {
+        DEFAULT: "1",
+      },
+      ringWidth: {
+        DEFAULT: "var(--spectrum-alias-focus-ring-size)",
+      },
+      ringOffsetWidth: {
+        DEFAULT: "var(--spectrum-alias-focus-ring-gap)",
+      },
       borderWidth: {
         DEFAULT: 'var(--spectrum-alias-border-size-thin)',
         none: '0',
