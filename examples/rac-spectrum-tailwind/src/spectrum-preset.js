@@ -1,3 +1,51 @@
+
+const sizes = {
+  0: 'var(--spectrum-global-dimension-size-0',
+  10: 'var(--spectrum-global-dimension-size-10',
+  25: 'var(--spectrum-global-dimension-size-25',
+  40: 'var(--spectrum-global-dimension-size-40',
+  50: 'var(--spectrum-global-dimension-size-50',
+  65: 'var(--spectrum-global-dimension-size-65',
+  75: 'var(--spectrum-global-dimension-size-75',
+  85: 'var(--spectrum-global-dimension-size-85',
+  100: 'var(--spectrum-global-dimension-size-100',
+  115: 'var(--spectrum-global-dimension-size-115',
+  125: 'var(--spectrum-global-dimension-size-125',
+  130: 'var(--spectrum-global-dimension-size-130',
+  150: 'var(--spectrum-global-dimension-size-150',
+  160: 'var(--spectrum-global-dimension-size-160',
+  175: 'var(--spectrum-global-dimension-size-175',
+  200: 'var(--spectrum-global-dimension-size-200',
+  225: 'var(--spectrum-global-dimension-size-225',
+  250: 'var(--spectrum-global-dimension-size-250',
+  275: 'var(--spectrum-global-dimension-size-275',
+  300: 'var(--spectrum-global-dimension-size-300',
+  325: 'var(--spectrum-global-dimension-size-325',
+  350: 'var(--spectrum-global-dimension-size-350',
+  400: 'var(--spectrum-global-dimension-size-400',
+  450: 'var(--spectrum-global-dimension-size-450',
+  500: 'var(--spectrum-global-dimension-size-500',
+  550: 'var(--spectrum-global-dimension-size-550',
+  600: 'var(--spectrum-global-dimension-size-600',
+  675: 'var(--spectrum-global-dimension-size-675',
+  700: 'var(--spectrum-global-dimension-size-700',
+  800: 'var(--spectrum-global-dimension-size-800',
+  900: 'var(--spectrum-global-dimension-size-900',
+  1000: 'var(--spectrum-global-dimension-size-1000',
+  1200: 'var(--spectrum-global-dimension-size-1200',
+  1250: 'var(--spectrum-global-dimension-size-1250',
+  1600: 'var(--spectrum-global-dimension-size-1600',
+  1700: 'var(--spectrum-global-dimension-size-1700',
+  2000: 'var(--spectrum-global-dimension-size-2000',
+  2400: 'var(--spectrum-global-dimension-size-2400',
+  3000: 'var(--spectrum-global-dimension-size-3000',
+  3400: 'var(--spectrum-global-dimension-size-3400',
+  3600: 'var( --spectrum-global-dimension-size-3600',
+  4600: 'var(--spectrum-global-dimension-size-4600',
+  5000: 'var(--spectrum-global-dimension-size-5000',
+  6000: 'var(--spectrum-global-dimension-size-6000',
+};
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   future: {
@@ -391,7 +439,7 @@ module.exports = {
       medium: 'var(--spectrum-global-font-weight-medium)',
       semibold: 'var(--spectrum-global-font-weight-semi-bold)',
       bold: 'var(--spectrum-global-font-weight-bold)',
-      extraBold: 'var(--spectrum-global-font-weight-extra-bold)',
+      'extra-bold': 'var(--spectrum-global-font-weight-extra-bold)',
       black: 'var(--spectrum-global-font-weight-black)',
     },
     letterSpacing: {
@@ -429,7 +477,11 @@ module.exports = {
       1000: 'var(--spectrum-global-animation-duration-1000: 500ms)',
       2000: 'var(--spectrum-global-animation-duration-2000: 1000ms)',
       4000: 'var(--spectrum-global-animation-duration-4000: 2000ms)',
-    }
+    },
+    width: sizes,
+    height: sizes,
+    minWidth: sizes,
+    minHeight: sizes,
   },
   plugins: [
     require("tailwindcss-animate")
