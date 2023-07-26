@@ -120,3 +120,7 @@ export function typeText(el: HTMLElement, value: string, opts?: ITypeOpts) {
     skipClick = true;
   }
 }
+
+// TODO: add util for DnD? What about for a click util when close dialogs to address issue where userEvent.click crashes the test
+// since it does all the mouse events all at once without wrapping them each in acts, causing the overlay to close thus focus gets called
+// on a unmounted element in a useEffect

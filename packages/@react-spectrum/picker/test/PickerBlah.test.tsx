@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render, screen, waitFor, waitForElementToBeRemoved, within} from '@react-spectrum/test-utils';
+import {act, render, screen, simulateDesktop, simulateMobile, waitFor, waitForElementToBeRemoved, within} from '@react-spectrum/test-utils';
 import {Item, Picker} from '../src';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {SelectTester} from '@react-aria/test-utils';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
+
 
 // TODO: replace all of these exported utils
 describe('Picker ', function () {
@@ -28,8 +29,7 @@ describe('Picker ', function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
-    // TODO replace with desktop mock util
-    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+    simulateDesktop();
   });
 
   afterAll(function () {
@@ -196,4 +196,27 @@ describe('Picker ', function () {
     });
   });
 
+  describe('test simulateMobile', function () {
+    beforeAll(function () {
+      simulateMobile();
+      jest.useRealTimers();
+    });
+
+    it('check for tray', async function () {
+      render(
+        <Provider theme={theme}>
+          <div role="listbox">blah</div>
+          <Picker label="Test" data-testid="test" onSelectionChange={onSelectionChange} onOpenChange={onOpenChange}>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
+          </Picker>
+        </Provider>
+      );
+
+      let picker = new SelectTester({element: screen.getByTestId('test'), timerType: 'real'});
+      await picker.open();
+      expect(await screen.findByTestId('tray')).toContainElement(picker.listbox);
+    });
+  });
 });
