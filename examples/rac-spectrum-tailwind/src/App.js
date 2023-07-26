@@ -1,8 +1,9 @@
-import { Checkbox, defaultTheme, Provider } from '@adobe/react-spectrum';
-import { Label, Radio, RadioGroup, Tabs, TabList, TabPanel, Tab } from 'react-aria-components';
+import { defaultTheme, Provider } from '@adobe/react-spectrum';
+import { Label, Radio, RadioGroup, ListBox, Item, Text } from 'react-aria-components';
 import User from '@spectrum-icons/workflow/User';
 import UserGroup from '@spectrum-icons/workflow/UserGroup';
 import Building from '@spectrum-icons/workflow/Building';
+import CheckmarkCircle from '@spectrum-icons/workflow/CheckmarkCircle';
 
 
 export function App() {
@@ -42,7 +43,7 @@ function SelectBox({ name, icon, description }) {
     `}>
       {({ isSelected }) => (
         <div className="flex flex-col relative w-full h-full items-center justify-center gap-3 text-black">
-          {isSelected && <div className="absolute top-0 left-0 -mt-3"><Checkbox isReadOnly isEmphasized isSelected={true} /></div>}
+          {isSelected && <div className="absolute top-0 left-0 -mt-3 -ml-2 text-blue-800"><CheckmarkCircle size="S" /></div>}
           {icon && <div className="text-gray-500">{icon}</div>}
           <div>
             <div className={`font-semibold`}>{name}</div>
@@ -87,5 +88,29 @@ function SentimentRating({ rating }) {
         </div>
       )}
     </Radio>
+  );
+}
+
+function ListBoxExample() {
+  return (
+    <ListBox
+      className="bg-white rounded grid grid-cols-2 w-64"
+      aria-label="Albums"
+      layout="grid"
+      selectionMode="single">
+      <MyItem label="None" image="https://images.unsplash.com/photo-1517520267752-34bfde704a0f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=987&q=80" />
+      <MyItem label="Photo" image="https://images.unsplash.com/photo-1517520267752-34bfde704a0f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=987&q=80" />
+      <MyItem label="Graphic" image="https://images.unsplash.com/photo-1517520267752-34bfde704a0f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=987&q=80" />
+      <MyItem label="Art" image="https://images.unsplash.com/photo-1517520267752-34bfde704a0f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=987&q=80" />
+    </ListBox>
+  )
+}
+
+function MyItem({label, image}) {
+  return (
+      <Item textValue={label} className="flex align-middle w-32 h-14">
+        <img src={image} alt={label} className="w-12 h-12 object-cover" />
+        <Text slot="label">{label}</Text>
+      </Item>
   );
 }
