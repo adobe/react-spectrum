@@ -21,17 +21,17 @@ export function App() {
 function SelectBoxExample() {
   return (
     <RadioGroup className="space-y-2 flex flex-col text-center" defaultValue="Team">
-      <Label className="text-xl font-semibold">Radio Group Boxes</Label>
+      <Label className="text-xl font-semibold">Select Boxes</Label>
       <div className="flex justify-center">
-        <SelectBox name="Free" icon={<User size="XL" />} />
-        <SelectBox name="Team" icon={<UserGroup size="XL" />} />
-        <SelectBox name="Enterprise" icon={<Building size="XL" />} />
+        <SelectBox name="Individual" icon={<User size="XL" />} description="For 1 person" />
+        <SelectBox name="Team" icon={<UserGroup size="XL" />} description="For teams of 9 or less" />
+        <SelectBox name="Enterprise" icon={<Building size="XL" />} description="For of 10 or more" />
       </div>
     </RadioGroup>
   );
 }
 
-function SelectBox({ name, icon }) {
+function SelectBox({ name, icon, description }) {
   return (
     <Radio value={name} className={({ isFocusVisible, isSelected, isPressed }) => `
       flex rounded p-4 m-3 h-40 w-40 focus:outline-none border
@@ -43,8 +43,11 @@ function SelectBox({ name, icon }) {
       {({ isSelected }) => (
         <div className="flex flex-col relative w-full h-full items-center justify-center gap-3 text-black">
           {isSelected && <div className="absolute top-0 left-0 -mt-3"><Checkbox isReadOnly isEmphasized isSelected={true} /></div>}
-          {icon && <div className="text-gray-400">{icon}</div>}
-          <div className={`font-semibold`}>{name}</div>
+          {icon && <div className="text-gray-500">{icon}</div>}
+          <div>
+            <div className={`font-semibold`}>{name}</div>
+            {description && <div className="text-gray-800 text-sm">{description}</div>}
+          </div>
         </div>
       )}
     </Radio>
