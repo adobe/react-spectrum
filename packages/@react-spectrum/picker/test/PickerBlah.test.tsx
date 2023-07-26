@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render, waitFor, waitForElementToBeRemoved, within} from '@react-spectrum/test-utils';
+import {act, render, screen, waitFor, waitForElementToBeRemoved, within} from '@react-spectrum/test-utils';
 import {Item, Picker} from '../src';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {SelectTester} from '@react-aria/test-utils';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
-
 
 // TODO: replace all of these exported utils
 describe('Picker ', function () {
@@ -57,7 +57,6 @@ describe('Picker ', function () {
         </Provider>
       );
 
-      // TODO: replace the below with Picker class
       let select = getByRole('textbox', {hidden: true});
       expect(select).not.toBeDisabled();
 
@@ -98,6 +97,23 @@ describe('Picker ', function () {
 
       expect(picker).toHaveTextContent('Three');
     });
+
+    it('basic flow with SelectTester', async function () {
+      render(
+        <Provider theme={theme}>
+          <div role="listbox">blah</div>
+          <Picker label="Test" data-testid="test" onSelectionChange={onSelectionChange} onOpenChange={onOpenChange}>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
+          </Picker>
+        </Provider>
+      );
+
+      let picker = new SelectTester({element: screen.getByTestId('test'), timerType: 'real'});
+      await picker.selectOption('Three');
+      expect(picker.trigger).toHaveTextContent('Three');
+    });
   });
 
   describe('with fake timers', function () {
@@ -121,7 +137,6 @@ describe('Picker ', function () {
         </Provider>
       );
 
-      // TODO: replace the below with Picker class
       let select = getByRole('textbox', {hidden: true});
       expect(select).not.toBeDisabled();
 
@@ -135,7 +150,6 @@ describe('Picker ', function () {
       expect(value).toBeVisible();
 
       userEvent.click(picker);
-      // triggerPress(picker);
       act(() => jest.runAllTimers());
 
       let listbox = getByRole('listbox');
@@ -153,7 +167,6 @@ describe('Picker ', function () {
       expect(document.activeElement).toBe(listbox);
 
       userEvent.click(items[2]);
-      // triggerPress(items[2]);
 
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenLastCalledWith('three');
@@ -164,6 +177,22 @@ describe('Picker ', function () {
       act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Three');
+    });
+
+    it('basic flow with SelectTester', async function () {
+      render(
+        <Provider theme={theme}>
+          <Picker label="Test" data-testid="test" onSelectionChange={onSelectionChange} onOpenChange={onOpenChange}>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
+          </Picker>
+        </Provider>
+      );
+
+      let picker = new SelectTester({element: screen.getByTestId('test')});
+      await picker.selectOption('Three');
+      expect(picker.trigger).toHaveTextContent('Three');
     });
   });
 
