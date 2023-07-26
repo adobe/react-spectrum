@@ -393,6 +393,19 @@ module.exports = {
       bold: 'var(--spectrum-global-font-weight-bold)',
       extraBold: 'var(--spectrum-global-font-weight-extra-bold)',
       black: 'var(--spectrum-global-font-weight-black)',
+    },
+    letterSpacing: {
+      DEFAULT: 'var(--spectrum-global-font-letter-spacing-medium)',
+      none: 'var(--spectrum-global-font-letter-spacing-none)',
+      small: 'var(--spectrum-global-font-letter-spacing-small)',
+      hand: 'var(--spectrum-global-font-letter-spacing-han)',
+      medium: 'var(--spectrum-global-font-letter-spacing-medium)'
+    },
+    lineHeight: {
+      DEFAULT: 'var(--spectrum-global-font-line-height-medium)',
+      small: 'var(--spectrum-global-font-line-height-small)',
+      medium: 'var(--spectrum-global-font-line-height-medium)',
+      large: 'var(--spectrum-global-font-line-height-large)',
     }
   },
   plugins: [
