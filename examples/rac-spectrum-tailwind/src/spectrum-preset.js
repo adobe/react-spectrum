@@ -396,6 +396,9 @@ module.exports = {
     ringOffsetWidth: {
       DEFAULT: "var(--spectrum-alias-focus-ring-gap)",
     },
+    dropShadow: {
+      DEFAULT: "0 var(--spectrum-alias-dropshadow-offset-y) var(--spectrum-alias-dropshadow-blur) var(--spectrum-alias-dropshadow-color)"
+    },
     borderWidth: {
       DEFAULT: 'var(--spectrum-alias-border-size-thin)',
       none: '0',
