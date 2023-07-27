@@ -35,7 +35,7 @@ function SelectBoxExample() {
 function SelectBox({ name, icon, description }) {
   return (
     <Radio value={name} className={({ isFocusVisible, isSelected, isPressed }) => `
-      flex rounded p-4 m-3 h-40 w-40 focus:outline-none border
+      flex justify-center p-4 m-3 h-2000 w-2000 focus:outline-none border rounded
       ${isFocusVisible ? 'ring' : ''}
       ${isSelected ? 'bg-blue-100 border-blue-700' : ''}
       ${isPressed && !isSelected ? 'bg-gray-200' : ''}
@@ -58,7 +58,7 @@ function SelectBox({ name, icon, description }) {
 function SentimentRatingGroup() {
   let ratings = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
   return (
-    <RadioGroup className="space-y-2 flex flex-col text-center max-w-xl m-auto" defaultValue="5">
+    <RadioGroup className="space-y-2 flex flex-col text-center m-auto" defaultValue="5">
       <Label className="text-xl font-semibold">Sentiment Rating</Label>
       <div className="flex justify-between">
         <span>Least Likely</span>
@@ -76,7 +76,7 @@ function SentimentRatingGroup() {
 function SentimentRating({ rating }) {
   return (
     <Radio value={rating} className={({ isFocusVisible, isSelected, isPressed }) => `
-      flex rounded-full p-4 m-3 h-4 w-4 focus:outline-none border
+      flex justify-center rounded-full p-4 m-3 h-100 w-100 focus:outline-none border
       ${isFocusVisible ? 'ring' : ''}
       ${isSelected ? 'bg-blue-800 border-blue-800 text-white' : ''}
       ${isPressed && !isSelected ? 'bg-gray-200' : ''}
