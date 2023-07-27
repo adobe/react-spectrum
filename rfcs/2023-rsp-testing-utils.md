@@ -8,7 +8,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License. -->
 
 - Start Date: 2023/7/27
-- RFC PR: (leave this empty, to be filled in later)
+- RFC PR: exploration PRs: https://github.com/adobe/react-spectrum/pull/4836, https://github.com/adobe/react-spectrum/pull/4837
 - Authors: Daniel Lu
 
 # Improving React Spectrum test writing experience
@@ -102,13 +102,11 @@ Unknown, haven't done research here yet.
 * What should be exposed as a test util vs documented? Since it will take a longer amount of time required to spin up the test util classes, should we expose the interaction util functions we already have even though they will be replaced by the test util classes?
 * Where should these utils live? Exported from the monopackage as well? Or separated into its own test-util package? Re-exported from existing packages (react-aria-components, react-aria, react-spectrum)?
 * Do we have a target version of `user-event` library? Right now we are on 12, but feels like we should move to 14 for broader pointer/keyboard support
+* Feedback for test util classes: https://github.com/adobe/react-spectrum/pull/4836/files#diff-0dc4808158bbefa842fb382ea67f1b9cfa5f35f50496133afca79d908fc49209. Still a WIP as I poke around to get the actual listbox tied to the picker and add examples of other test util classes
 
 ## Help Needed
 
-
-
 ## Frequently Asked Questions
-
 
 ## Related Discussions
 
