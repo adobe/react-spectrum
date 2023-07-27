@@ -63,7 +63,7 @@ function SelectBox({ name, icon, description }) {
 function SentimentRatingGroup() {
   let ratings = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
   return (
-    <RadioGroup className="space-y-2 flex flex-col text-center m-auto">
+    <RadioGroup className="space-y-10 flex flex-col text-center m-auto">
       <Label className="text-xl font-semibold">Sentiment Rating</Label>
       <div className="flex justify-between">
         <span>Least Likely</span>
