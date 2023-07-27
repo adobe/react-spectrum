@@ -374,6 +374,7 @@ module.exports = {
     ringOffsetWidth: {
       DEFAULT: "var(--spectrum-alias-focus-ring-gap)",
     },
+    // TODO: Transparent offset isn't possible?
     // ringOffsetColor: {
     //   DEFAULT: "transparent",
     // },

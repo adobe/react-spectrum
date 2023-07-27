@@ -4,7 +4,7 @@ import { Label, Radio, RadioGroup, ListBox, Item, Text } from 'react-aria-compon
 import User from '@spectrum-icons/workflow/User';
 import UserGroup from '@spectrum-icons/workflow/UserGroup';
 import Building from '@spectrum-icons/workflow/Building';
-import CheckmarkCircle from '@spectrum-icons/workflow/CheckmarkCircle'; 
+import CheckmarkCircle from '@spectrum-icons/workflow/CheckmarkCircle';
 import ThemeSwitcher from './ThemeSwitcher';
 
 export function App() {
@@ -61,9 +61,9 @@ function SelectBox({ name, icon, description }) {
 }
 
 function SentimentRatingGroup() {
-  let ratings = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+  let ratings = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
   return (
-    <RadioGroup className="space-y-2 flex flex-col text-center m-auto" defaultValue="5">
+    <RadioGroup className="space-y-2 flex flex-col text-center m-auto">
       <Label className="text-xl font-semibold">Sentiment Rating</Label>
       <div className="flex justify-between">
         <span>Least Likely</span>
@@ -71,7 +71,7 @@ function SentimentRatingGroup() {
       </div>
       <div className="flex justify-evenly">
         {ratings.map((rating) => (
-          <SentimentRating key={rating} rating={rating.toString()} />
+          <SentimentRating key={rating} rating={rating} />
         ))}
       </div>
     </RadioGroup>
@@ -81,17 +81,13 @@ function SentimentRatingGroup() {
 function SentimentRating({ rating }) {
   return (
     <Radio value={rating} className={({ isFocusVisible, isSelected, isPressed }) => `
-      flex justify-center rounded-full p-4 m-3 h-100 w-100 focus:outline-none border
+      flex justify-center items-center rounded-full p-4 m-2 h-100 w-100 focus:outline-none border
       ${isFocusVisible ? 'ring' : ''}
       ${isSelected ? 'bg-blue-800 border-blue-800 text-white' : ''}
       ${isPressed && !isSelected ? 'bg-gray-200' : ''}
       ${!isSelected && !isPressed ? 'bg-white dark:bg-black' : ''}
     `}>
-      {({ isSelected }) => (
-        <div className={`flex flex-col w-full h-full items-center justify-center font-semibold`}>
-          {rating}
-        </div>
-      )}
+      {rating}
     </Radio>
   );
 }
@@ -111,11 +107,11 @@ function ListBoxExample() {
   )
 }
 
-function MyItem({label, image}) {
+function MyItem({ label, image }) {
   return (
-      <Item textValue={label} className="flex align-middle w-32 h-14">
-        <img src={image} alt={label} className="w-12 h-12 object-cover" />
-        <Text slot="label">{label}</Text>
-      </Item>
+    <Item textValue={label} className="flex align-middle w-32 h-14">
+      <img src={image} alt={label} className="w-12 h-12 object-cover" />
+      <Text slot="label">{label}</Text>
+    </Item>
   );
 }
