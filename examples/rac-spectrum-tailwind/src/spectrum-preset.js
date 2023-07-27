@@ -463,6 +463,25 @@ module.exports = {
       4600: 'var(--spectrum-global-dimension-size-4600)',
       5000: 'var(--spectrum-global-dimension-size-5000)',
       6000: 'var(--spectrum-global-dimension-size-6000)',
+    },
+    opacity: {
+      100: 'var(--spectrum-global-color-opacity-100)',
+      90: 'var(--spectrum-global-color-opacity-90)',
+      80: 'var(--spectrum-global-color-opacity-80)',
+      60: 'var(--spectrum-global-color-opacity-60)',
+      50: 'var(--spectrum-global-color-opacity-50)',
+      42: 'var(--spectrum-global-color-opacity-42)',
+      40: 'var(--spectrum-global-color-opacity-40)',
+      30: 'var(--spectrum-global-color-opacity-30)',
+      25: 'var(--spectrum-global-color-opacity-25)',
+      20: 'var(--spectrum-global-color-opacity-20)',
+      15: 'var(--spectrum-global-color-opacity-15)',
+      10: 'var(--spectrum-global-color-opacity-10)',
+      8: 'var(--spectrum-global-color-opacity-8)',
+      7: 'var(--spectrum-global-color-opacity-7)',
+      6: 'var(--spectrum-global-color-opacity-6)',
+      5: 'var(--spectrum-global-color-opacity-5)',
+      4: 'var(--spectrum-global-color-opacity-4)'
     }
   },
   plugins: [
