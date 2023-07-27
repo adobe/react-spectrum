@@ -113,6 +113,16 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
     font-size: 12px;
     color: var(--text-color-invalid);
   }
+
+  &[data-validation-state=invalid] {
+    .react-aria-DateInput:after {
+      content: '🚫' / '';
+      content: '🚫';
+      alt: ' ';
+      flex: 1;
+      text-align: end;
+    }
+  }
 }
 
 .react-aria-DateInput {
@@ -635,7 +645,9 @@ The states, selectors, and render props for each component used in a `DatePicker
 
 ### DatePicker
 
-A `DatePicker` can be targeted with the `.react-aria-DatePicker` CSS selector, or by overriding with a custom `className`. It provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.DatePickerState} /> object to its render props, which can be used to customize the `className`, `style`, or `children`.
+A `DatePicker` can be targeted with the `.react-aria-DatePicker` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.DatePickerRenderProps.properties} />
 
 ### Label
 
@@ -805,7 +817,7 @@ function Example() {
   return (
     <>
       <MyDatePicker label="Birth date" value={date} onChange={setDate} />
-      <p>Selected date: {formatter.format(date.toDate(getLocalTimeZone()))}</p>
+      <p>Selected date: {date ? formatter.format(date.toDate(getLocalTimeZone())) : '--'}</p>
     </>
   );
 }
@@ -956,7 +968,7 @@ import {useLocale} from 'react-aria';
 function Example() {
   let [date, setDate] = React.useState(today(getLocalTimeZone()));
   let {locale} = useLocale();
-  let isInvalid = isWeekend(date, locale);
+  let isInvalid = date && isWeekend(date, locale);
 
   return (
     <MyDatePicker

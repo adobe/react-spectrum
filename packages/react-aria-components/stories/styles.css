@@ -65,3 +65,141 @@
     transform: translateX(0);
   }
 }
+
+:global(.react-aria-ListBox) {
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  max-width: 100%;
+  padding: 4px;
+  overflow: auto;
+  outline: none;
+
+  &[data-orientation=horizontal] {
+    flex-direction: row;
+  }
+
+  :global(.react-aria-Item) {
+    position: relative;
+    margin: 0;
+    padding: 4px;
+    border-radius: 6px;
+    outline: none;
+    cursor: default;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+
+    & img {
+      object-fit: cover;
+      width: 150px;
+      height: 150px;
+      margin-bottom: 4px;
+      border-radius: 4px;
+      transition: box-shadow 200ms;
+    }
+
+    &[data-hovered] {
+      & img {
+        box-shadow: 0 0 8px rgb(from slateblue r g b / 0.5);
+      }
+    }
+
+    &[data-focus-visible] {
+      box-shadow: inset 0 0 0 2px slateblue;
+    }
+
+    &[aria-selected=true] {
+      background: none;
+      color: inherit;
+
+      & img {
+        box-shadow: 0 0 12px rgb(from slateblue r g b / 0.8);
+      }
+
+      &:after {
+        content: '✓';
+        content: '✓' / '';
+        alt: ' ';
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: slateblue;
+        border: 2px solid white;
+        color: white;
+        width: 22px;
+        height: 22px;
+        border-radius: 22px;
+        box-sizing: border-box;
+        font-size: 14px;
+        line-height: 1em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 8px rgb(0 0 0 / .5);
+      }
+
+      &[data-focus-visible] {
+        box-shadow: inset 0 0 0 2px var(--highlight-background);
+      }
+    }
+
+    &[data-dragging] {
+      opacity: 0.6;
+    }
+
+    [slot=label] {
+      font-weight: bold;
+    }
+
+    [slot=description] {
+      font-size: small;
+    }
+  }
+}
+
+:global(.react-aria-ListBox)[data-layout=grid] {
+  flex-wrap: wrap;
+  flex-direction: row;
+  max-width: 400px;
+}
+
+:global(.react-aria-ListBox)[data-layout=grid][data-orientation=horizontal] {
+  display: flex;
+  flex-direction: column;
+  max-height: 150px;
+  max-width: 100vw;
+  width: 800px;
+
+  :global(.react-aria-Item) {
+    display: grid;
+    grid-template-areas: "image ."
+                         "image title"
+                         "image description"
+                         "image .";
+    grid-template-columns: auto 1fr;
+    grid-template-rows: 1fr auto auto 1fr;
+    column-gap: 8px;
+    width: 250px;
+    margin: 2px 0;
+
+    & img {
+      width: 50px;
+      height: 50px;
+      grid-area: image;
+      margin-bottom: 0;
+    }
+
+    [slot=label] {
+      grid-area: title;
+    }
+
+    [slot=description] {
+      grid-area: description;
+    }
+  }
+}
+
+:global(.react-aria-DropIndicator)[data-drop-target] {
+  outline: 1px solid slateblue;
+}

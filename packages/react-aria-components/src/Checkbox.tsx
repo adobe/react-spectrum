@@ -40,7 +40,11 @@ export interface CheckboxGroupRenderProps {
    * The validation state of the checkbox group.
    * @selector [data-validation-state="invalid" | "valid"]
    */
-  validationState: ValidationState
+  validationState: ValidationState,
+  /**
+   * State of the checkbox group.
+   */
+  state: CheckboxGroupState
 }
 
 export interface CheckboxRenderProps {
@@ -50,7 +54,7 @@ export interface CheckboxRenderProps {
    */
   isSelected: boolean,
   /**
-   * Whether the checkbox is selected.
+   * Whether the checkbox is indeterminate.
    * @selector [data-indeterminate]
    */
   isIndeterminate: boolean,
@@ -88,7 +92,7 @@ export interface CheckboxRenderProps {
    * Whether the checkbox is valid or invalid.
    * @selector [data-validation-state="valid | invalid"]
    */
-  validationState?: ValidationState,
+  validationState: ValidationState | undefined,
   /**
    * Whether the checkbox is required.
    * @selector [data-required]
@@ -114,7 +118,8 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivEleme
       isDisabled: state.isDisabled,
       isReadOnly: state.isReadOnly,
       isRequired: props.isRequired || false,
-      validationState: state.validationState
+      validationState: state.validationState,
+      state
     },
     defaultClassName: 'react-aria-CheckboxGroup'
   });
@@ -127,11 +132,12 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivEleme
       slot={props.slot}
       data-readonly={state.isReadOnly || undefined}
       data-required={props.isRequired || undefined}
-      data-validation-state={state.validationState || undefined}>
+      data-validation-state={state.validationState || undefined}
+      data-disabled={props.isDisabled || undefined}>
       <Provider
         values={[
           [InternalCheckboxGroupContext, state],
-          [LabelContext, {...labelProps, ref: labelRef}],
+          [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
           [TextContext, {
             slots: {
               description: descriptionProps,

@@ -436,7 +436,7 @@ governing permissions and limitations under the License.
   &:hover {
     background-color: xvar(--spectrum-high-contrast-button-face, var(--spectrum-actionbutton-background-color-hover));
     border-color: xvar(--spectrum-high-contrast-highlight, var(--spectrum-actionbutton-border-color-hover));
-    color: var(--spectrum-actionbutton-text-color-hover);
+    color: xvar(--spectrum-high-contrast-button-text, var(--spectrum-actionbutton-text-color-hover));
 
     .spectrum-Icon {
       fill: xvar(--spectrum-high-contrast-button-text, var(--spectrum-actionbutton-icon-color-hover));
@@ -851,8 +851,8 @@ governing permissions and limitations under the License.
 
   &:disabled,
   &.is-disabled {
-    background-color: var(--spectrum-button-secondary-background-color-disabled);
-    border-color: var(--spectrum-button-secondary-border-color-disabled);
+    background-color: var(--spectrum-logicbutton-and-background-color-disabled);
+    border-color: var(--spectrum-logicbutton-and-border-color-disabled);
     color: var(--spectrum-logicbutton-and-text-color-disabled);
   }
 }
@@ -973,11 +973,6 @@ governing permissions and limitations under the License.
   .spectrum-LogicButton,
   .spectrum-FieldButton {
     forced-color-adjust: none;
-    --spectrum-clearbutton-medium-background-color: ButtonFace;
-    --spectrum-clearbutton-medium-background-color-disabled: ButtonFace;
-    --spectrum-clearbutton-medium-background-color-down: ButtonFace;
-    --spectrum-clearbutton-medium-background-color-hover: ButtonFace;
-    --spectrum-clearbutton-medium-background-color-key-focus: ButtonFace;
     --spectrum-clearbutton-medium-icon-color: ButtonText;
     --spectrum-clearbutton-medium-icon-color-disabled: GrayText;
     --spectrum-clearbutton-medium-icon-color-down: Highlight;
@@ -1044,7 +1039,7 @@ governing permissions and limitations under the License.
     --spectrum-actionbutton-static-background-color-selected-focus: Highlight;
     --spectrum-actionbutton-static-background-color-selected-active: Highlight;
     --spectrum-actionbutton-static-border-color: ButtonText;
-    --spectrum-actionbutton-static-border-color-hover: ButtonText;
+    --spectrum-actionbutton-static-border-color-hover: Highlight;
     --spectrum-actionbutton-static-border-color-active: ButtonText;
     --spectrum-actionbutton-static-border-color-focus: CanvasText;
     --spectrum-actionbutton-static-border-disabled: GrayText;
