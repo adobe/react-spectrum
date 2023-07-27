@@ -8,10 +8,11 @@ import CheckmarkCircle from '@spectrum-icons/workflow/CheckmarkCircle';
 import ThemeSwitcher from './ThemeSwitcher';
 
 export function App() {
-  let [colorScheme, setColorScheme] = useState(undefined);
+  let prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  let [colorScheme, setColorScheme] = useState(prefersDark ? 'dark' : 'light');
 
   return (
-    <Provider theme={defaultTheme} colorScheme={colorScheme}>
+    <Provider theme={defaultTheme} colorScheme={colorScheme} UNSAFE_className={colorScheme}>
       <ThemeSwitcher setColorScheme={setColorScheme} />
       <div className="grid gap-4 grid-cols-1 auto-rows-fr justify-center">
         <SelectBoxExample />
@@ -43,10 +44,10 @@ function SelectBox({ name, icon, description }) {
       ${isFocusVisible ? 'ring' : ''}
       ${isSelected ? 'bg-blue-100 border-blue-700' : ''}
       ${isPressed && !isSelected ? 'bg-gray-200' : ''}
-      ${!isSelected && !isPressed ? 'bg-white' : ''}
+      ${!isSelected && !isPressed ? 'bg-white dark:bg-black' : ''}
     `}>
       {({ isSelected }) => (
-        <div className="flex flex-col relative w-full h-full items-center justify-center gap-3 text-black">
+        <div className="flex flex-col relative w-full h-full items-center justify-center gap-3">
           {isSelected && <div className="absolute top-0 left-0 -mt-3 -ml-2 text-blue-800"><CheckmarkCircle size="S" /></div>}
           {icon && <div className="text-gray-500">{icon}</div>}
           <div>
@@ -84,10 +85,10 @@ function SentimentRating({ rating }) {
       ${isFocusVisible ? 'ring' : ''}
       ${isSelected ? 'bg-blue-800 border-blue-800 text-white' : ''}
       ${isPressed && !isSelected ? 'bg-gray-200' : ''}
-      ${!isSelected && !isPressed ? 'bg-white' : ''}
+      ${!isSelected && !isPressed ? 'bg-white dark:bg-black' : ''}
     `}>
       {({ isSelected }) => (
-        <div className={`flex flex-col w-full h-full items-center justify-center font-semibold ${isSelected ? 'text-white' : 'text-gray-900'}`}>
+        <div className={`flex flex-col w-full h-full items-center justify-center font-semibold`}>
           {rating}
         </div>
       )}

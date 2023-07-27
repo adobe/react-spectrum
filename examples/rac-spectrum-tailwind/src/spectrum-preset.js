@@ -51,6 +51,7 @@ module.exports = {
   future: {
     respectDefaultRingColorOpacity: true
   },
+  darkMode: 'class',
   theme: {
     screens: {
       xs: "304px",
@@ -62,30 +63,7 @@ module.exports = {
     colors: {
       white: "var(--spectrum-global-color-static-white)",
       black: "var(--spectrum-global-color-static-black)",
-      transparent: {
-        black: {
-          100: "rgba(0, 0, 0, 0)",
-          200: "rgba(0, 0, 0, 0.1)",
-          300: "rgba(0, 0, 0, 0.25)",
-          400: "rgba(0, 0, 0, 0.4)",
-          500: "rgba(0, 0, 0, 0.55)",
-          600: "rgba(0, 0, 0, 0.7)",
-          700: "rgba(0, 0, 0, 0.8)",
-          800: "rgba(0, 0, 0, 0.9)",
-          900: "rgb(0, 0, 0)",
-        },
-        white: {
-          100: "rgba(255, 255, 255, 0)",
-          200: "rgba(255, 255, 255, 0.1)",
-          300: "rgba(255, 255, 255, 0.25)",
-          400: "rgba(255, 255, 255, 0.4)",
-          500: "rgba(255, 255, 255, 0.55)",
-          600: "rgba(255, 255, 255, 0.7)",
-          700: "rgba(255, 255, 255, 0.8)",
-          800: "rgba(255, 255, 255, 0.9)",
-          900: "rgb(255, 255, 255)",
-        }
-      },
+      transparent: "var(--spectrum-alias-global-color-transparent)",
       gray: {
         50: "var(--spectrum-gray-50)",
         75: "var(--spectrum-gray-75)",
@@ -396,6 +374,9 @@ module.exports = {
     ringOffsetWidth: {
       DEFAULT: "var(--spectrum-alias-focus-ring-gap)",
     },
+    // ringOffsetColor: {
+    //   DEFAULT: "transparent",
+    // },
     dropShadow: {
       DEFAULT: "0 var(--spectrum-alias-dropshadow-offset-y) var(--spectrum-alias-dropshadow-blur) var(--spectrum-alias-dropshadow-color)"
     },
