@@ -1,14 +1,18 @@
+import { useState } from 'react';
 import { defaultTheme, Provider } from '@adobe/react-spectrum';
 import { Label, Radio, RadioGroup, ListBox, Item, Text } from 'react-aria-components';
 import User from '@spectrum-icons/workflow/User';
 import UserGroup from '@spectrum-icons/workflow/UserGroup';
 import Building from '@spectrum-icons/workflow/Building';
-import CheckmarkCircle from '@spectrum-icons/workflow/CheckmarkCircle';
-
+import CheckmarkCircle from '@spectrum-icons/workflow/CheckmarkCircle'; 
+import ThemeSwitcher from './ThemeSwitcher';
 
 export function App() {
+  let [colorScheme, setColorScheme] = useState(undefined);
+
   return (
-    <Provider theme={defaultTheme}>
+    <Provider theme={defaultTheme} colorScheme={colorScheme}>
+      <ThemeSwitcher setColorScheme={setColorScheme} />
       <div className="grid gap-4 grid-cols-1 auto-rows-fr justify-center">
         <SelectBoxExample />
         <SentimentRatingGroup />
