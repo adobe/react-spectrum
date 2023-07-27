@@ -33,12 +33,15 @@ describe('test longpress without installPointerEvents', function () {
   // TODO: turns out this is necessary since we dispatch a pointer event from useLongPress
   // This means we must fire pointer events and can't use mouseDown since if pointerEvent is detected we only listen for
   // pointerEvents
-  // installPointerEvent();
+  // Even with user-event 14, useLongPress's new PointerEvent call errors since it isn't defined. If we call installPointerEvent, the pointer event fired is judged to be virtual
+  // Getting rid of new PointerEvent from useLongPress makes the user-event 14 long press work, presumabably because we hit the mouse part of usePress and
+  // using user-event touch still fails with installPointerEvents because the width and height are 0
+  installPointerEvent();
   let onLongPressStart = jest.fn();
   let onLongPress = jest.fn();
   let onLongPressEnd = jest.fn();
 
-  describe('with real timers', function () {
+  describe.only('with real timers', function () {
     beforeAll(() => {
       jest.useRealTimers();
     });
@@ -48,6 +51,7 @@ describe('test longpress without installPointerEvents', function () {
     });
 
     it('should perform a long press', async function () {
+      let user = userEvent.setup();
       let res = render(
         <Example
           onLongPressStart={onLongPressStart}
@@ -55,9 +59,12 @@ describe('test longpress without installPointerEvents', function () {
           onLongPress={onLongPress} />
       );
       let el = res.getByText('test');
+      // console.log("TEST", window.PointerEvent, global.window.PointerEvent)
       // TODO: try userEvent instead after the upgrade
       // detail: 1 needed to simulate a non-virtual press
-      fireEvent.mouseDown(el, {button: 0, detail: '1'});
+      // fireEvent.mouseDown(el, {button: 0, detail: '1'});
+      // await user.pointer({target: el, keys: '[MouseLeft>]'});
+      await user.pointer({target: el, keys: '[TouchA>]'});
       expect(onLongPressStart).toHaveBeenCalledTimes(1);
       expect(onLongPress).toHaveBeenCalledTimes(0);
       expect(onLongPressEnd).toHaveBeenCalledTimes(0);
@@ -72,14 +79,16 @@ describe('test longpress without installPointerEvents', function () {
       expect(onLongPress).toHaveBeenCalledTimes(1);
       expect(onLongPressEnd).toHaveBeenCalledTimes(0);
 
-      fireEvent.mouseUp(el, {button: 0});
+      // fireEvent.mouseUp(el, {button: 0});
+      // await user.pointer({target: el, keys: '[/MouseLeft]'});
+      await user.pointer({target: el, keys: '[/TouchA]'});
       expect(onLongPressStart).toHaveBeenCalledTimes(1);
       expect(onLongPress).toHaveBeenCalledTimes(1);
       expect(onLongPressEnd).toHaveBeenCalledTimes(1);
     });
   });
 
-  describe.only('with fake timers', function () {
+  describe('with fake timers', function () {
     beforeAll(() => {
       jest.useFakeTimers();
     });
@@ -89,7 +98,8 @@ describe('test longpress without installPointerEvents', function () {
       jest.clearAllMocks();
     });
 
-    it('should perform a long press', function () {
+    it('should perform a long press', async function () {
+      let user = userEvent.setup({advanceTimers: () => jest.advanceTimersByTime(10)});
       let res = render(
         <Example
           onLongPressStart={onLongPressStart}
@@ -97,8 +107,11 @@ describe('test longpress without installPointerEvents', function () {
           onLongPress={onLongPress} />
       );
       let el = res.getByText('test');
-      // detail: 1 needed to simulate a non-virtual press
-      fireEvent.mouseDown(el, {button: 0, detail: '1'});
+
+
+      // await user.pointer({target: el, keys: '[MouseLeft>]'});
+      await user.pointer({target: el, keys: '[TouchA>]'});
+
       expect(onLongPressStart).toHaveBeenCalledTimes(1);
       expect(onLongPress).toHaveBeenCalledTimes(0);
       expect(onLongPressEnd).toHaveBeenCalledTimes(0);
@@ -113,7 +126,8 @@ describe('test longpress without installPointerEvents', function () {
       expect(onLongPress).toHaveBeenCalledTimes(1);
       expect(onLongPressEnd).toHaveBeenCalledTimes(0);
 
-      fireEvent.mouseUp(el, {button: 0});
+      // await user.pointer({target: el, keys: '[/MouseLeft]'});
+      await user.pointer({target: el, keys: '[/TouchA]'});
       expect(onLongPressStart).toHaveBeenCalledTimes(1);
       expect(onLongPress).toHaveBeenCalledTimes(1);
       expect(onLongPressEnd).toHaveBeenCalledTimes(1);
@@ -132,7 +146,7 @@ describe('useLongPress', function () {
 
   installPointerEvent();
 
-  it('should perform a long press', function () {
+  it.only('should perform a long press', function () {
     let events = [];
     let addEvent = (e) => events.push(e);
     let res = render(
