@@ -14,7 +14,7 @@ export function App() {
   return (
     <Provider theme={defaultTheme} colorScheme={colorScheme} UNSAFE_className={colorScheme}>
       <ThemeSwitcher setColorScheme={setColorScheme} />
-      <div className="grid gap-4 grid-cols-1 auto-rows-fr justify-center">
+      <div className="grid gap-160 grid-cols-1 auto-rows-fr justify-center">
         <SelectBoxExample />
         <SentimentRatingGroup />
       </div>
@@ -40,15 +40,15 @@ function SelectBoxExample() {
 function SelectBox({ name, icon, description }) {
   return (
     <Radio value={name} className={({ isFocusVisible, isSelected, isPressed }) => `
-      flex justify-center p-4 m-3 h-2000 w-2000 focus:outline-none border rounded
+      flex justify-center p-160 m-160 h-2000 w-2000 focus:outline-none border rounded
       ${isFocusVisible ? 'ring' : ''}
       ${isSelected ? 'bg-blue-100 border-blue-700' : ''}
       ${isPressed && !isSelected ? 'bg-gray-200' : ''}
       ${!isSelected && !isPressed ? 'bg-white dark:bg-black' : ''}
     `}>
       {({ isSelected }) => (
-        <div className="flex flex-col relative w-full h-full items-center justify-center gap-3">
-          {isSelected && <div className="absolute top-0 left-0 -mt-3 -ml-2 text-blue-800"><CheckmarkCircle size="S" /></div>}
+        <div className="flex flex-col relative w-full h-full items-center justify-center gap-150">
+          {isSelected && <div className="absolute top-0 left-0 -mt-125 -ml-75 text-blue-800"><CheckmarkCircle size="S" /></div>}
           {icon && <div className="text-gray-500">{icon}</div>}
           <div>
             <div className={`font-semibold`}>{name}</div>
@@ -81,7 +81,7 @@ function SentimentRatingGroup() {
 function SentimentRating({ rating }) {
   return (
     <Radio value={rating} className={({ isFocusVisible, isSelected, isPressed }) => `
-      flex justify-center items-center rounded-full p-4 m-2 h-100 w-100 focus:outline-none border
+      flex justify-center items-center rounded-full p-160 m-75 h-100 w-100 focus:outline-none border
       ${isFocusVisible ? 'ring' : ''}
       ${isSelected ? 'bg-blue-800 border-blue-800 text-white' : ''}
       ${isPressed && !isSelected ? 'bg-gray-200' : ''}
