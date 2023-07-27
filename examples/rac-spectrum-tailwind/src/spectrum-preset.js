@@ -30,6 +30,7 @@ module.exports = {
         900: "var(--spectrum-gray-900)",
       },
       blue: {
+        DEFAULT: "var(--spectrum-global-color-static-blue)",
         100: "var(--spectrum-blue-100)",
         200: "var(--spectrum-blue-200)",
         300: "var(--spectrum-blue-300)",
