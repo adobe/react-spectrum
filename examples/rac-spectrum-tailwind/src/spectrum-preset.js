@@ -53,9 +53,11 @@ module.exports = {
   },
   theme: {
     screens: {
-      sm: "480px",
-      md: "640px",
-      lg: "1024px",
+      xs: "304px",
+      sm: "768px",
+      md: "1280px",
+      lg: "1768px",
+      xl: "2160px"
     },
     colors: {
       white: "var(--spectrum-global-color-static-white)",
