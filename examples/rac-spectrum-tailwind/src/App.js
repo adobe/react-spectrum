@@ -80,7 +80,7 @@ function SentimentRatingGroup() {
 
 function SentimentRating({ rating }) {
   return (
-    <Radio value={rating} className="flex justify-center items-center rounded-full p-160 m-75 h-200 w-200 focus:outline-none border focus-visible:ring bg-white dark:bg-black selected:bg-blue-800 selected:border-blue-800 selected:text-white pressed:bg-gray-200 hover:border-gray-300">
+    <Radio value={rating} className="flex justify-center items-center rounded-full p-160 m-75 h-200 w-200 focus:outline-none border focus-visible:ring bg-white dark:bg-black selected:bg-blue-800 selected:border-blue-800 selected:text-white pressed:bg-gray-200 hovered:border-gray-300">
       {rating}
     </Radio>
   );

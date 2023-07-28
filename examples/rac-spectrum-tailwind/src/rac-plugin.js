@@ -43,14 +43,8 @@ module.exports = plugin(({ addVariant, e }) => {
     attributes.boolean[
       attributePrefix
     ].forEach((attributeName) => {
-      let variantName = attributeName;
-      let selector = `${attributePrefix}-${attributeName}`;
-
-      addVariant(`${variantName}`, ({ modifySelectors, separator }) => {
-        modifySelectors(({ className }) => {
-          return `.${e(`${variantName}${separator}${className}`)}[${selector}]`;
-        });
-      });
+      let selector = `&[${attributePrefix}-${attributeName}]`;
+      addVariant(attributeName, selector);
     });
   });
   Object.keys(attributes.enum).forEach((attributePrefix) => {
@@ -61,13 +55,8 @@ module.exports = plugin(({ addVariant, e }) => {
         attributePrefix
       ][attributeName].forEach((attributeValue) => {
         let variantName = `${attributeName}-${attributeValue}`;
-        let selector = `${attributePrefix}-${attributeName}="${attributeValue}"`;
-
-        addVariant(`${variantName}`, ({ modifySelectors, separator }) => {
-          modifySelectors(({ className }) => {
-            return `.${e(`${variantName}${separator}${className}`)}[${selector}]`;
-          });
-        });
+        let selector = `&[${attributePrefix}-${attributeName}]="${attributeValue}"`;
+        addVariant(variantName, selector);
       });
     });
   });
