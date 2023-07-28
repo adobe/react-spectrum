@@ -1,0 +1,13 @@
+{
+  "name": "parcel-resolver-build",
+  "version": "1.0.0",
+  "private": true,
+  "main": "BuildResolver.js",
+  "engines": {
+    "parcel": "^2.9.1"
+  },
+  "dependencies": {
+    "@parcel/plugin": "^2.9.1",
+    "@parcel/node-resolver-core": "^3.0.1"
+  }
+}
