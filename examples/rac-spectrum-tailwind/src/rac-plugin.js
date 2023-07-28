@@ -1,23 +1,35 @@
 import plugin from "tailwindcss/plugin";
 
-/**
- * Map to multiple:
- * isSelected, isPressed ->	[aria-pressed=true], data-pressed
- * isFocused :focus, data-focused
- * isDisabled ->	:disabled, [data-disabled] aria-disabled
- * [data-type="..."] literal, year, month, day, etc.
- * readonly ->	[aria-readonly=true], data-readonly
- */
-
 const attributes = {
   boolean: {
-    data: ["hovered", "pressed", "focus-visible", "focused", "drop-target", "empty", "allows-removing", "placeholder", "selected", "indeterminate", "disabled", "readonly", "required", "entering", "exiting", "open"],
+    data: [
+      "hovered",
+      "focused",
+      "focus-visible",
+      "pressed",
+      "disabled",
+      "drop-target",
+      "dragging",
+      "empty",
+      "allows-removing",
+      "placeholder",
+      "selected",
+      "indeterminate",
+      "readonly",
+      "required",
+      "entering",
+      "exiting",
+      "open",
+      "unavailable"
+    ],
     aria: ["sort", "invalid", "current"],
   },
   enum: {
     data: {
       "validation-state": ["invalid", "valid"],
       "placement": ["left", "right", "top", "bottom"],
+      "type": ["literal", "year", "month", "day"],
+      "layout": ["grid", "stack"]
     },
     aria: {
       "orientation": ["horizontal", "vertical"],
