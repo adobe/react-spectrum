@@ -8,7 +8,7 @@ export default function ThemeSwitcher({ setColorScheme }) {
   let otherScheme = colorScheme === "light" ? "dark" : "light";
 
   return (
-    <div className="float-right m-2">
+    <div className="float-right m-10">
       <ActionButton
         aria-label={label}
         onPress={() => setColorScheme(otherScheme)}>
