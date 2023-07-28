@@ -11,3 +11,4 @@
  */
 
 export * from './SelectTester';
+export * from './TableTester';

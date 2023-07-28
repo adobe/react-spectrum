@@ -11,6 +11,7 @@
  */
 
 import {act, render, screen, simulateDesktop, simulateMobile, waitFor, waitForElementToBeRemoved, within} from '@react-spectrum/test-utils';
+import {Button, Label, ListBox, Popover, Item as RACItem, Select, SelectValue, Text} from 'react-aria-components';
 import {Item, Picker} from '../src';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -18,9 +19,8 @@ import {SelectTester} from '@react-aria/test-utils';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
-
 // TODO: replace all of these exported utils
-describe('Picker ', function () {
+describe('Picker/Select ', function () {
   let offsetWidth, offsetHeight;
   let onSelectionChange = jest.fn();
   let onOpenChange = jest.fn();
@@ -42,7 +42,7 @@ describe('Picker ', function () {
       jest.useRealTimers();
     });
 
-    afterEach(() => {
+    afterEach(function () {
       jest.clearAllMocks();
     });
 
@@ -116,6 +116,33 @@ describe('Picker ', function () {
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenLastCalledWith('three');
     });
+
+    it('works with RAC Select', async function () {
+      render(
+        <Select data-testid="test" onSelectionChange={onSelectionChange}>
+          <Label>Favorite Animal</Label>
+          <Button>
+            <SelectValue />
+          </Button>
+          <Text slot="description">Description</Text>
+          <Text slot="errorMessage">Error</Text>
+          <Popover>
+            <ListBox>
+              <RACItem id="cat">Cat</RACItem>
+              <RACItem id="dog">Dog</RACItem>
+              <RACItem id="kangaroo">Kangaroo</RACItem>
+            </ListBox>
+          </Popover>
+        </Select>
+      );
+
+      // TODO: update RAC select so data-testid doesn't propagate to the button
+      let picker = new SelectTester({element: screen.getAllByTestId('test')[0], timerType: 'real'});
+      await picker.selectOption('Cat');
+      expect(picker.trigger).toHaveTextContent('Cat');
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenLastCalledWith('cat');
+    });
   });
 
   describe('with fake timers', function () {
@@ -123,7 +150,7 @@ describe('Picker ', function () {
       jest.useFakeTimers();
     });
 
-    afterEach(() => {
+    afterEach(function () {
       act(() => jest.runAllTimers());
       jest.clearAllMocks();
     });
@@ -197,6 +224,32 @@ describe('Picker ', function () {
       expect(picker.trigger).toHaveTextContent('Three');
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenLastCalledWith('three');
+    });
+
+    it('works with RAC Select', async function () {
+      render(
+        <Select data-testid="test" onSelectionChange={onSelectionChange}>
+          <Label>Favorite Animal</Label>
+          <Button>
+            <SelectValue />
+          </Button>
+          <Text slot="description">Description</Text>
+          <Text slot="errorMessage">Error</Text>
+          <Popover>
+            <ListBox>
+              <RACItem id="cat">Cat</RACItem>
+              <RACItem id="dog">Dog</RACItem>
+              <RACItem id="kangaroo">Kangaroo</RACItem>
+            </ListBox>
+          </Popover>
+        </Select>
+      );
+
+      let picker = new SelectTester({element: screen.getAllByTestId('test')[0]});
+      await picker.selectOption('Cat');
+      expect(picker.trigger).toHaveTextContent('Cat');
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenLastCalledWith('cat');
     });
   });
 
