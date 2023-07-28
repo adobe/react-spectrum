@@ -193,7 +193,7 @@ export {_Tag as Tag};
 
 function TagItem({item}) {
   let {state} = useContext(InternalTagGroupContext)!;
-  let ref = useObjectRef<HTMLDivElement>(item.props.ref);
+  let ref = useObjectRef<any>(item.props.ref);
   let {focusProps, isFocusVisible} = useFocusRing({within: true});
   let {rowProps, gridCellProps, removeButtonProps, ...states} = useTag({item}, state, ref);
 
@@ -222,11 +222,15 @@ function TagItem({item}) {
     }
   }, [item.textValue]);
 
+  let ElementType: React.ElementType = props.href ? 'a' : 'div';
+  let DOMProps = filterDOMProps(props as any, {isLink: !!props.href});
+  delete DOMProps.id;
+
   return (
-    <div
+    <ElementType
       ref={ref}
       {...renderProps}
-      {...mergeProps(filterDOMProps(props as any), rowProps, focusProps, hoverProps)}
+      {...mergeProps(DOMProps, rowProps, focusProps, hoverProps)}
       data-hovered={isHovered || undefined}
       data-focused={states.isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
@@ -244,6 +248,6 @@ function TagItem({item}) {
           {renderProps.children}
         </Provider>
       </div>
-    </div>
+    </ElementType>
   );
 }

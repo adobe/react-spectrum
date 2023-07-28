@@ -16,7 +16,7 @@ import {getItemCount} from '@react-stately/collections';
 import {isFocusVisible, useHover, useKeyboard, usePress} from '@react-aria/interactions';
 import {Key, RefObject, useCallback, useRef} from 'react';
 import {menuData} from './useMenu';
-import {mergeProps, useEffectEvent, useLayoutEffect, useSlotId} from '@react-aria/utils';
+import {mergeProps, openLink, useEffectEvent, useLayoutEffect, useSlotId} from '@react-aria/utils';
 import {TreeState} from '@react-stately/tree';
 import {useLocale} from '@react-aria/i18n';
 import {useSelectableItem} from '@react-aria/selection';
@@ -134,6 +134,19 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   let onAction = isTrigger ? onActionMenuDialogTrigger : props.onAction || data.onAction;
+  let performAction = (e: PressEvent) => {
+    if (onAction) {
+      onAction(key);
+    }
+
+    // If the menu item is a link, trigger it here so the browser opens it.
+    // The browser default behavior is prevented by usePress.
+    // This ensures that menu item actions always occur consistently regardless
+    // of whether they are links or not.
+    if (e.target instanceof HTMLAnchorElement) {
+      openLink(e.target, e);
+    }
+  };
 
   let role = 'menuitem';
   if (state.selectionManager.selectionMode === 'single') {
@@ -169,16 +182,14 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   }
 
   let onPressStart = (e: PressEvent) => {
-    if (e.pointerType === 'keyboard' && onAction) {
-      onAction(key);
+    if (e.pointerType === 'keyboard') {
+      performAction(e);
     }
   };
 
   let onPressUp = (e: PressEvent) => {
     if (e.pointerType !== 'keyboard') {
-      if (onAction) {
-        onAction(key);
-      }
+      performAction(e);
 
       // Pressing a menu item should close by default in single selection mode but not multiple
       // selection mode, except if overridden by the closeOnSelect prop.
@@ -196,7 +207,12 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     allowsDifferentPressOrigin: true
   });
 
-  let {pressProps, isPressed} = usePress({onPressStart, onPressUp, isDisabled: isDisabled || (isTrigger && state.expandedKeys.has(key))});
+  let {pressProps, isPressed} = usePress({
+    onPressStart,
+    onPressUp,
+    isDisabled: isDisabled || (isTrigger && state.expandedKeys.has(key)),
+    shouldPreventLinkDefault: true
+  });
   let {hoverProps} = useHover({
     isDisabled,
     onHoverStart() {

@@ -51,7 +51,7 @@ interface PressState {
   ignoreEmulatedMouseEvents: boolean,
   ignoreClickAfterPress: boolean,
   didFirePressStart: boolean,
-  isTriggeringPressUp: boolean,
+  isTriggeringEvent: boolean,
   activePointerId: any,
   target: FocusableElement | null,
   isOverTarget: boolean,
@@ -146,7 +146,7 @@ export function usePress(props: PressHookProps): PressResult {
     ignoreEmulatedMouseEvents: false,
     ignoreClickAfterPress: false,
     didFirePressStart: false,
-    isTriggeringPressUp: false,
+    isTriggeringEvent: false,
     activePointerId: null,
     target: null,
     isOverTarget: false,
@@ -162,6 +162,7 @@ export function usePress(props: PressHookProps): PressResult {
     }
 
     let shouldStopPropagation = true;
+    state.isTriggeringEvent = true;
     if (onPressStart) {
       let event = new PressEvent('pressstart', pointerType, originalEvent);
       onPressStart(event);
@@ -172,6 +173,7 @@ export function usePress(props: PressHookProps): PressResult {
       onPressChange(true);
     }
 
+    state.isTriggeringEvent = false;
     state.didFirePressStart = true;
     setPressed(true);
     return shouldStopPropagation;
@@ -185,6 +187,7 @@ export function usePress(props: PressHookProps): PressResult {
 
     state.ignoreClickAfterPress = true;
     state.didFirePressStart = false;
+    state.isTriggeringEvent = true;
 
     let shouldStopPropagation = true;
     if (onPressEnd) {
@@ -205,6 +208,7 @@ export function usePress(props: PressHookProps): PressResult {
       shouldStopPropagation &&= event.shouldStopPropagation;
     }
 
+    state.isTriggeringEvent = false;
     return shouldStopPropagation;
   });
 
@@ -215,10 +219,10 @@ export function usePress(props: PressHookProps): PressResult {
     }
 
     if (onPressUp) {
-      state.isTriggeringPressUp = true;
+      state.isTriggeringEvent = true;
       let event = new PressEvent('pressup', pointerType, originalEvent);
       onPressUp(event);
-      state.isTriggeringPressUp = false;
+      state.isTriggeringEvent = false;
       return event.shouldStopPropagation;
     }
 
@@ -299,7 +303,7 @@ export function usePress(props: PressHookProps): PressResult {
           return;
         }
 
-        if (e && e.button === 0 && !state.isPressed && !state.isTriggeringPressUp) {
+        if (e && e.button === 0 && !state.isTriggeringEvent && !openLink.isOpening) {
           let shouldStopPropagation = true;
           if (isDisabled || (shouldPreventLinkDefault && isHTMLAnchorLink(e.currentTarget))) {
             e.preventDefault();
@@ -307,7 +311,7 @@ export function usePress(props: PressHookProps): PressResult {
 
           // If triggered from a screen reader or by using element.click(),
           // trigger as if it were a keyboard click.
-          if (!state.ignoreClickAfterPress && !state.ignoreEmulatedMouseEvents && (state.pointerType === 'virtual' || isVirtualClick(e.nativeEvent))) {
+          if (!state.ignoreClickAfterPress && !state.ignoreEmulatedMouseEvents && !state.isPressed && (state.pointerType === 'virtual' || isVirtualClick(e.nativeEvent))) {
             // Ensure the element receives focus (VoiceOver on iOS does not do this)
             if (!isDisabled && !preventFocusOnPress) {
               focusWithoutScrolling(e.currentTarget);
@@ -856,7 +860,7 @@ function isOverTarget(point: EventPoint, target: Element) {
 
 function shouldPreventDefault(target: Element) {
   // We cannot prevent default if the target is a draggable element.
-  return !(target instanceof HTMLElement) || !target.draggable;
+  return !(target instanceof HTMLElement) || !target.hasAttribute('draggable');
 }
 
 function shouldPreventDefaultKeyboard(target: Element, key: string) {

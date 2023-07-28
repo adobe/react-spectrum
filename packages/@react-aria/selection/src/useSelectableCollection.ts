@@ -11,9 +11,10 @@
  */
 
 import {DOMAttributes, FocusableElement, FocusStrategy, KeyboardDelegate} from '@react-types/shared';
+import {flushSync} from 'react-dom';
 import {FocusEvent, Key, KeyboardEvent, RefObject, useEffect, useRef} from 'react';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
-import {focusWithoutScrolling, mergeProps, scrollIntoView, scrollIntoViewport, useEvent} from '@react-aria/utils';
+import {focusWithoutScrolling, mergeProps, openLink, scrollIntoView, scrollIntoViewport, useEvent} from '@react-aria/utils';
 import {getInteractionModality} from '@react-aria/interactions';
 import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
@@ -124,6 +125,20 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
     const navigateToKey = (key: Key | undefined, childFocus?: FocusStrategy) => {
       if (key != null) {
+        if (manager.isLink(key) && manager.selectionMode === 'single' && selectOnFocus && !isNonContiguousSelectionModifier(e)) {
+          // Set focused key and re-render synchronously to bring item into view if needed.
+          flushSync(() => {
+            manager.setFocusedKey(key, childFocus);
+          });
+
+          let link = scrollRef.current.querySelector(`[data-key="${key}"]`);
+          if (link instanceof HTMLAnchorElement) {
+            openLink(link, e);
+          }
+
+          return;
+        }
+
         manager.setFocusedKey(key, childFocus);
 
         if (e.shiftKey && manager.selectionMode === 'multiple') {

@@ -234,7 +234,7 @@ export {_GridList as GridList};
 
 function GridListItem({item}) {
   let {state, dragAndDropHooks, dragState, dropState} = useContext(InternalGridListContext)!;
-  let ref = useObjectRef<HTMLDivElement>(item.props.ref);
+  let ref = useObjectRef<any>(item.props.ref);
   let {rowProps, gridCellProps, descriptionProps, ...states} = useGridListItem(
     {
       node: item,
@@ -302,6 +302,10 @@ function GridListItem({item}) {
     }
   }, [item.textValue]);
 
+  let ElementType: React.ElementType = props.href ? 'a' : 'div';
+  let DOMProps = filterDOMProps(props as any, {isLink: !!props.href});
+  delete DOMProps.id;
+
   return (
     <>
       {dragAndDropHooks?.useDropIndicator &&
@@ -314,8 +318,8 @@ function GridListItem({item}) {
           </div>
         </div>
       }
-      <div
-        {...mergeProps(filterDOMProps(props as any), rowProps, focusProps, hoverProps, draggableItem?.dragProps)}
+      <ElementType
+        {...mergeProps(DOMProps, rowProps, focusProps, hoverProps, draggableItem?.dragProps)}
         {...renderProps}
         ref={ref}
         data-hovered={isHovered || undefined}
@@ -349,7 +353,7 @@ function GridListItem({item}) {
             {renderProps.children}
           </Provider>
         </div>
-      </div>
+      </ElementType>
       {dragAndDropHooks?.useDropIndicator && state.collection.getKeyAfter(item.key) == null &&
         renderDropIndicator({type: 'item', key: item.key, dropPosition: 'after'})
       }

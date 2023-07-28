@@ -14,7 +14,7 @@ import {DOMAttributes, FocusableElement, LongPressEvent, PressEvent} from '@reac
 import {focusSafely} from '@react-aria/focus';
 import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
 import {Key, RefObject, useEffect, useRef} from 'react';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, openLink} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {PressProps, useLongPress, usePress} from '@react-aria/interactions';
 
@@ -119,7 +119,9 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       }
 
       if (manager.selectionMode === 'single') {
-        if (manager.isSelected(key) && !manager.disallowEmptySelection) {
+        if (ref.current instanceof HTMLAnchorElement) {
+          openLink(ref.current, e);
+        } else if (manager.isSelected(key) && !manager.disallowEmptySelection) {
           manager.toggleSelection(key);
         } else {
           manager.replaceSelection(key);
@@ -174,7 +176,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // With highlight selection, onAction is secondary, and occurs on double click. Single click selects the row.
   // With touch, onAction occurs on single tap, and long press enters selection mode.
   let allowsSelection = !isDisabled && manager.canSelectItem(key);
-  let allowsActions = onAction && !isDisabled;
+  let allowsActions = (onAction || (manager.isLink(key) && manager.selectionMode !== 'single')) && !isDisabled;
   let hasPrimaryAction = allowsActions && (
     manager.selectionBehavior === 'replace'
       ? !allowsSelection
@@ -187,6 +189,16 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   let longPressEnabled = hasAction && allowsSelection;
   let longPressEnabledOnPressStart = useRef(false);
   let hadPrimaryActionOnPressStart = useRef(false);
+
+  let performAction = (e) => {
+    if (onAction) {
+      onAction();
+    }
+
+    if (manager.selectionMode !== 'single' && ref.current instanceof HTMLAnchorElement && ref.current.href) {
+      openLink(ref.current, e);
+    }
+  };
 
   // By default, selection occurs on pointer down. This can be strange if selecting an
   // item causes the UI to disappear immediately (e.g. menus).
@@ -214,19 +226,19 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
             return;
           }
 
-          onAction();
+          performAction(e);
         } else if (e.pointerType !== 'keyboard') {
           onSelect(e);
         }
       };
     } else {
-      itemPressProps.onPressUp = (e) => {
+      itemPressProps.onPressUp = hasPrimaryAction ? null : (e) => {
         if (e.pointerType !== 'keyboard') {
           onSelect(e);
         }
       };
 
-      itemPressProps.onPress = hasPrimaryAction ? () => onAction() : null;
+      itemPressProps.onPress = hasPrimaryAction ? performAction : null;
     }
   } else {
     itemPressProps.onPressStart = (e) => {
@@ -239,7 +251,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       // and the Enter key performs onAction on key up.
       if (
         (e.pointerType === 'mouse' && !hasPrimaryAction) ||
-        (e.pointerType === 'keyboard' && (!onAction || isSelectionKey()))
+        (e.pointerType === 'keyboard' && (!hasAction || isSelectionKey()))
       ) {
         onSelect(e);
       }
@@ -257,7 +269,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         (e.pointerType === 'mouse' && hadPrimaryActionOnPressStart.current)
       ) {
         if (hasAction) {
-          onAction();
+          performAction(e);
         } else {
           onSelect(e);
         }
@@ -267,6 +279,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
 
   itemProps['data-key'] = key;
   itemPressProps.preventFocusOnPress = shouldUseVirtualFocus;
+  itemPressProps.shouldPreventLinkDefault = true;
   let {pressProps, isPressed} = usePress(itemPressProps);
 
   // Double clicking with a mouse with selectionBehavior = 'replace' performs an action.
@@ -274,7 +287,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     if (modality.current === 'mouse') {
       e.stopPropagation();
       e.preventDefault();
-      onAction();
+      performAction(e);
     }
   } : undefined;
 

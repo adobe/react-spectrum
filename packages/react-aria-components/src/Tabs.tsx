@@ -234,7 +234,7 @@ export {_Tab as Tab};
 
 function TabInner({item, state}: {item: Node<object>, state: TabListState<object>}) {
   let {key} = item;
-  let ref = useObjectRef<HTMLDivElement>(item.props.ref);
+  let ref = useObjectRef<any>(item.props.ref);
   let {tabProps, isSelected, isDisabled, isPressed} = useTab({key}, state, ref);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let {hoverProps, isHovered} = useHover({
@@ -256,11 +256,12 @@ function TabInner({item, state}: {item: Node<object>, state: TabListState<object
     }
   });
 
-  let DOMProps = filterDOMProps(item.props);
+  let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
+  let DOMProps = filterDOMProps(item.props as any, {isLink: !!item.props.href});
   delete DOMProps.id;
 
   return (
-    <div
+    <ElementType
       {...mergeProps(DOMProps, tabProps, focusProps, hoverProps, renderProps)}
       ref={ref}
       data-focus-visible={isFocusVisible || undefined}

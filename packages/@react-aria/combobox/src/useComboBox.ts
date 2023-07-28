@@ -16,7 +16,7 @@ import {AriaComboBoxProps} from '@react-types/combobox';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
 import {BaseEvent, DOMAttributes, KeyboardDelegate, PressEvent} from '@react-types/shared';
-import {chain, isAppleDevice, mergeProps, useLabels} from '@react-aria/utils';
+import {chain, isAppleDevice, mergeProps, openLink, useLabels} from '@react-aria/utils';
 import {ComboBoxState} from '@react-stately/combobox';
 import {FocusEvent, InputHTMLAttributes, KeyboardEvent, RefObject, TouchEvent, useEffect, useMemo, useRef} from 'react';
 import {getChildNodes, getItemCount} from '@react-stately/collections';
@@ -116,7 +116,19 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
           e.preventDefault();
         }
 
-        state.commit();
+        // If the focused item is a link, trigger opening it. Items that are links are not selectable.
+        if (state.isOpen && state.selectionManager.focusedKey != null && state.selectionManager.isLink(state.selectionManager.focusedKey)) {
+          if (e.key === 'Enter') {
+            let item = listBoxRef.current.querySelector(`[data-key="${state.selectionManager.focusedKey}"]`);
+            if (item instanceof HTMLAnchorElement) {
+              openLink(item, e);
+            }
+          }
+
+          state.close();
+        } else {
+          state.commit();
+        }
         break;
       case 'Escape':
         if (

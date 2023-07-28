@@ -27,5 +27,10 @@ export function openLink(target: HTMLAnchorElement, modifiers: Modifiers) {
     // @ts-ignore - keyIdentifier is a non-standard property, but it's what webkit expects
     ? new KeyboardEvent('keydown', {keyIdentifier: 'Enter', metaKey, ctrlKey, altKey, shiftKey})
     : new MouseEvent('click', {metaKey, ctrlKey, altKey, shiftKey, bubbles: true});
+  openLink.isOpening = true;
+  target.focus();
   target.dispatchEvent(event);
+  openLink.isOpening = false;
 }
+
+openLink.isOpening = false;
