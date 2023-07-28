@@ -71,6 +71,7 @@
     "packages"
   ],
   "exclude": [
-    "**/node_modules"
+    "**/node_modules",
+    "packages/dev/optimize-locales-plugin"
   ]
 }
