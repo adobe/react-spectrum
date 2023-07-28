@@ -6,8 +6,7 @@ A Tailwind CSS template for creating React Aria Components using common Spectrum
 
 ### Includes
 
-- `Theme`: uses Spectrum values for colors, scale and more
-- `Presets`: default values that are recommended by Spectrum
+- `Theme`: a preset that includes Spectrum values for colors, scale and more
 - `Plugin`: for easier styling based on React Aria Component's selectors for states
 
 ### When to use this
