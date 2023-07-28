@@ -14,7 +14,6 @@ import {act, fireEvent, installPointerEvent, render} from '@react-spectrum/test-
 import {mergeProps} from '@react-aria/utils';
 import React from 'react';
 import {useLongPress, usePress} from '../';
-import userEvent from '@testing-library/user-event';
 
 function Example(props) {
   let {elementType: ElementType = 'div', ...otherProps} = props;
@@ -28,98 +27,6 @@ function ExampleWithPress(props) {
   let {pressProps} = usePress({onPress, onPressStart, onPressEnd});
   return <ElementType {...mergeProps(longPressProps, pressProps)} tabIndex="0">test</ElementType>;
 }
-
-describe('test longpress without installPointerEvents', function () {
-  // TODO: turns out this is necessary since we dispatch a pointer event from useLongPress
-  // This means we must fire pointer events and can't use mouseDown since if pointerEvent is detected we only listen for
-  // pointerEvents
-  // installPointerEvent();
-  let onLongPressStart = jest.fn();
-  let onLongPress = jest.fn();
-  let onLongPressEnd = jest.fn();
-
-  describe('with real timers', function () {
-    beforeAll(() => {
-      jest.useRealTimers();
-    });
-
-    afterEach(() => {
-      jest.clearAllMocks();
-    });
-
-    it('should perform a long press', async function () {
-      let res = render(
-        <Example
-          onLongPressStart={onLongPressStart}
-          onLongPressEnd={onLongPressEnd}
-          onLongPress={onLongPress} />
-      );
-      let el = res.getByText('test');
-      // TODO: try userEvent instead after the upgrade
-      // detail: 1 needed to simulate a non-virtual press
-      fireEvent.mouseDown(el, {button: 0, detail: '1'});
-      expect(onLongPressStart).toHaveBeenCalledTimes(1);
-      expect(onLongPress).toHaveBeenCalledTimes(0);
-      expect(onLongPressEnd).toHaveBeenCalledTimes(0);
-
-      await act(async () => await new Promise((resolve) => setTimeout(resolve, 400)));
-      expect(onLongPressStart).toHaveBeenCalledTimes(1);
-      expect(onLongPress).toHaveBeenCalledTimes(0);
-      expect(onLongPressEnd).toHaveBeenCalledTimes(0);
-
-      await act(async () => await new Promise((resolve) => setTimeout(resolve, 101)));
-      expect(onLongPressStart).toHaveBeenCalledTimes(1);
-      expect(onLongPress).toHaveBeenCalledTimes(1);
-      expect(onLongPressEnd).toHaveBeenCalledTimes(0);
-
-      fireEvent.mouseUp(el, {button: 0});
-      expect(onLongPressStart).toHaveBeenCalledTimes(1);
-      expect(onLongPress).toHaveBeenCalledTimes(1);
-      expect(onLongPressEnd).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  describe.only('with fake timers', function () {
-    beforeAll(() => {
-      jest.useFakeTimers();
-    });
-
-    afterEach(() => {
-      act(() => jest.runAllTimers());
-      jest.clearAllMocks();
-    });
-
-    it('should perform a long press', function () {
-      let res = render(
-        <Example
-          onLongPressStart={onLongPressStart}
-          onLongPressEnd={onLongPressEnd}
-          onLongPress={onLongPress} />
-      );
-      let el = res.getByText('test');
-      // detail: 1 needed to simulate a non-virtual press
-      fireEvent.mouseDown(el, {button: 0, detail: '1'});
-      expect(onLongPressStart).toHaveBeenCalledTimes(1);
-      expect(onLongPress).toHaveBeenCalledTimes(0);
-      expect(onLongPressEnd).toHaveBeenCalledTimes(0);
-
-      act(() => jest.advanceTimersByTime(400));
-      expect(onLongPressStart).toHaveBeenCalledTimes(1);
-      expect(onLongPress).toHaveBeenCalledTimes(0);
-      expect(onLongPressEnd).toHaveBeenCalledTimes(0);
-
-      act(() => jest.advanceTimersByTime(101));
-      expect(onLongPressStart).toHaveBeenCalledTimes(1);
-      expect(onLongPress).toHaveBeenCalledTimes(1);
-      expect(onLongPressEnd).toHaveBeenCalledTimes(0);
-
-      fireEvent.mouseUp(el, {button: 0});
-      expect(onLongPressStart).toHaveBeenCalledTimes(1);
-      expect(onLongPress).toHaveBeenCalledTimes(1);
-      expect(onLongPressEnd).toHaveBeenCalledTimes(1);
-    });
-  });
-});
 
 describe('useLongPress', function () {
   beforeAll(() => {

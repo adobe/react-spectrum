@@ -33,13 +33,12 @@ describe('Table ', function () {
   let onSelectionChange = jest.fn();
   let onSortChange = jest.fn();
 
-
   let TableExample = (props) => {
     let [sort, setSort] = useState({});
     let setSortDescriptor = (sort) => {
       setSort(sort);
       onSortChange(sort);
-    }
+    };
 
     return (
       <Provider theme={theme}>
@@ -56,8 +55,8 @@ describe('Table ', function () {
           </TableBody>
         </TableView>
       </Provider>
-    )
-  }
+    );
+  };
 
   beforeAll(function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);

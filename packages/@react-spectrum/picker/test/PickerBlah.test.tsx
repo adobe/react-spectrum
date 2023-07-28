@@ -46,7 +46,7 @@ describe('Picker/Select ', function () {
       jest.clearAllMocks();
     });
 
-    it('basic flow', async function () {
+    it('basic flow without test util helpers', async function () {
       let {getAllByText, getByText, getByRole, findByRole, queryByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" data-testid="test" onSelectionChange={onSelectionChange} onOpenChange={onOpenChange}>
@@ -155,7 +155,7 @@ describe('Picker/Select ', function () {
       jest.clearAllMocks();
     });
 
-    it('basic flow', function () {
+    it('basic flow without test util helpers', function () {
       let {getAllByText, getByText, getByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" data-testid="test" onSelectionChange={onSelectionChange} onOpenChange={onOpenChange}>
