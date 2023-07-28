@@ -8,16 +8,12 @@ import CheckmarkCircle from "@spectrum-icons/workflow/CheckmarkCircle";
 import ThemeSwitcher from "./ThemeSwitcher";
 
 export function App() {
-  let prefersDark =
-    window.matchMedia &&
-    window.matchMedia("(prefers-color-scheme: dark)").matches;
-  let [colorScheme, setColorScheme] = useState(prefersDark ? "dark" : "light");
+  let [colorScheme, setColorScheme] = useState(undefined);
 
   return (
     <Provider
       theme={defaultTheme}
       colorScheme={colorScheme}
-      UNSAFE_className={colorScheme}
     >
       <ThemeSwitcher setColorScheme={setColorScheme} />
       <div className="grid gap-160 grid-cols-1 auto-rows-fr justify-center">

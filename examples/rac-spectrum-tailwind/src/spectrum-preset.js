@@ -3,7 +3,7 @@ module.exports = {
   future: {
     respectDefaultRingColorOpacity: true,
   },
-  darkMode: "class",
+  darkMode: ['class', '[style*="color-scheme: dark;"]'],
   theme: {
     screens: {
       xs: "304px",
