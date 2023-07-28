@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, screen, waitFor, within} from '@testing-library/react';
+import {act, waitFor, within} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 interface SelectOptions {
@@ -35,7 +35,7 @@ export class SelectTester {
     this.timerType = timerType;
   }
 
-  // Do we really need a discrete open function or should it all be put into selectOption? Figure the user might want to run assertions
+  // TODO: Do we really need a discrete open function or should it all be put into selectOption? Figure the user might want to run assertions
   // on the open dropdown perhaps
   async open() {
     // Handle case where the wrapper element is provided rather than the Select's button (aka RAC)
@@ -49,15 +49,11 @@ export class SelectTester {
     if (this.timerType === 'fake') {
       act(() => jest.runAllTimers());
     } else {
-      // Wait a flat amount of time so listbox popover can appear and aria-hide all other listboxes
-      // But what if the transition the user uses is greater than 400ms? Should I requery the trigger until it becomes aria-hidden?
-      await act(async () => await new Promise((resolve) => setTimeout(resolve, 400)));
+      await waitFor(() => expect(triggerButton).toHaveAttribute('aria-controls'));
     }
-    // TODO: how to distinguish the picker's listbox from other listboxes? For now I rely on ariaHideOutside to hide all other ones
-    // Perhaps I would wait for aria-controls to appear on the triggerButton and then do a querySelector to find the matching element with that id
-    // Alternatively, I could just wait for the option text to appear/disappear and skip querying for the listbox entirely (feels more brittle)
-    // Another option is that we supply custom data attributes ourselves that will always exist on the components and use those for lookup
-    this.listbox = await screen.findByRole('listbox', {hidden: false});
+    let listBoxId = triggerButton.getAttribute('aria-controls');
+    await waitFor(() => expect(document.getElementById(listBoxId)).toBeInTheDocument());
+    this.listbox = document.getElementById(listBoxId);
   }
 
   async selectOption(optionText) {
@@ -69,9 +65,8 @@ export class SelectTester {
       act(() => jest.runAllTimers());
     }
 
-    await waitFor(() => {
-      expect(document.activeElement).toBe(this.trigger);
-    }, {interval: 100});
+    await waitFor(() => expect(document.activeElement).toBe(this.trigger));
+    expect(this.listbox).not.toBeInTheDocument();
   }
 
   // TODO: add close()

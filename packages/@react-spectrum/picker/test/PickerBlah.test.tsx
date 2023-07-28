@@ -113,6 +113,8 @@ describe('Picker ', function () {
       let picker = new SelectTester({element: screen.getByTestId('test'), timerType: 'real'});
       await picker.selectOption('Three');
       expect(picker.trigger).toHaveTextContent('Three');
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenLastCalledWith('three');
     });
   });
 
@@ -193,6 +195,8 @@ describe('Picker ', function () {
       let picker = new SelectTester({element: screen.getByTestId('test')});
       await picker.selectOption('Three');
       expect(picker.trigger).toHaveTextContent('Three');
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenLastCalledWith('three');
     });
   });
 
