@@ -6,4 +6,7 @@ module.exports = {
   presets: [
     require('./src/spectrum-preset.js')
   ],
+  plugins: [
+    require('./src/rac-plugin.js')
+  ],
 }
