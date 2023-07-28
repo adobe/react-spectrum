@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   future: {
-    respectDefaultRingColorOpacity: true
+    respectDefaultRingColorOpacity: true,
   },
   darkMode: "class",
   theme: {
@@ -10,7 +10,7 @@ module.exports = {
       sm: "768px",
       md: "1280px",
       lg: "1768px",
-      xl: "2160px"
+      xl: "2160px",
     },
     colors: {
       white: "var(--spectrum-global-color-static-white)",
@@ -60,7 +60,7 @@ module.exports = {
         1100: "var(--spectrum-green-1100)",
         1200: "var(--spectrum-green-1200)",
         1300: "var(--spectrum-green-1300)",
-        1400: "var(--spectrum-green-1400)"
+        1400: "var(--spectrum-green-1400)",
       },
       orange: {
         100: "var(--spectrum-orange-100)",
@@ -76,7 +76,7 @@ module.exports = {
         1100: "var(--spectrum-orange-1100)",
         1200: "var(--spectrum-orange-1200)",
         1300: "var(--spectrum-orange-1300)",
-        1400: "var(--spectrum-orange-1400)"
+        1400: "var(--spectrum-orange-1400)",
       },
       red: {
         100: "var(--spectrum-red-100)",
@@ -92,7 +92,7 @@ module.exports = {
         1100: "var(--spectrum-red-1100)",
         1200: "var(--spectrum-red-1200)",
         1300: "var(--spectrum-red-1300)",
-        1400: "var(--spectrum-red-1400)"
+        1400: "var(--spectrum-red-1400)",
       },
       celery: {
         100: "var(--spectrum-celery-100)",
@@ -108,7 +108,7 @@ module.exports = {
         1100: "var(--spectrum-celery-1100)",
         1200: "var(--spectrum-celery-1200)",
         1300: "var(--spectrum-celery-1300)",
-        1400: "var(--spectrum-celery-1400)"
+        1400: "var(--spectrum-celery-1400)",
       },
       chartreuse: {
         100: "var(--spectrum-chartreuse-100)",
@@ -124,7 +124,7 @@ module.exports = {
         1100: "var(--spectrum-chartreuse-1100)",
         1200: "var(--spectrum-chartreuse-1200)",
         1300: "var(--spectrum-chartreuse-1300)",
-        1400: "var(--spectrum-chartreuse-1400)"
+        1400: "var(--spectrum-chartreuse-1400)",
       },
       cyan: {
         100: "var(--spectrum-cyan-100)",
@@ -140,7 +140,7 @@ module.exports = {
         1100: "var(--spectrum-cyan-1100)",
         1200: "var(--spectrum-cyan-1200)",
         1300: "var(--spectrum-cyan-1300)",
-        1400: "var(--spectrum-cyan-1400)"
+        1400: "var(--spectrum-cyan-1400)",
       },
       fuchsia: {
         100: "var(--spectrum-fuchsia-100)",
@@ -156,7 +156,7 @@ module.exports = {
         1100: "var(--spectrum-fuchsia-1100)",
         1200: "var(--spectrum-fuchsia-1200)",
         1300: "var(--spectrum-fuchsia-1300)",
-        1400: "var(--spectrum-fuchsia-1400)"
+        1400: "var(--spectrum-fuchsia-1400)",
       },
       indigo: {
         100: "var(--spectrum-indigo-100)",
@@ -172,7 +172,7 @@ module.exports = {
         1100: "var(--spectrum-indigo-1100)",
         1200: "var(--spectrum-indigo-1200)",
         1300: "var(--spectrum-indigo-1300)",
-        1400: "var(--spectrum-indigo-1400)"
+        1400: "var(--spectrum-indigo-1400)",
       },
       magenta: {
         100: "var(--spectrum-magenta-100)",
@@ -188,7 +188,7 @@ module.exports = {
         1100: "var(--spectrum-magenta-1100)",
         1200: "var(--spectrum-magenta-1200)",
         1300: "var(--spectrum-magenta-1300)",
-        1400: "var(--spectrum-magenta-1400)"
+        1400: "var(--spectrum-magenta-1400)",
       },
       purple: {
         100: "var(--spectrum-purple-100)",
@@ -204,7 +204,7 @@ module.exports = {
         1100: "var(--spectrum-purple-1100)",
         1200: "var(--spectrum-purple-1200)",
         1300: "var(--spectrum-purple-1300)",
-        1400: "var(--spectrum-purple-1400)"
+        1400: "var(--spectrum-purple-1400)",
       },
       seafoam: {
         100: "var(--spectrum-seafoam-100)",
@@ -220,7 +220,7 @@ module.exports = {
         1100: "var(--spectrum-seafoam-1100)",
         1200: "var(--spectrum-seafoam-1200)",
         1300: "var(--spectrum-seafoam-1300)",
-        1400: "var(--spectrum-seafoam-1400)"
+        1400: "var(--spectrum-seafoam-1400)",
       },
       yellow: {
         100: "var(--spectrum-yellow-100)",
@@ -236,7 +236,7 @@ module.exports = {
         1100: "var(--spectrum-yellow-1100)",
         1200: "var(--spectrum-yellow-1200)",
         1300: "var(--spectrum-yellow-1300)",
-        1400: "var(--spectrum-yellow-1400)"
+        1400: "var(--spectrum-yellow-1400)",
       },
       negative: {
         DEFAULT: "var(--spectrum-red-900)",
@@ -296,7 +296,7 @@ module.exports = {
           hover: "var(--spectrum-accent-background-color-hover)",
           down: "var(--spectrum-accent-background-color-down)",
           keyFocus: "var(--spectrum-accent-background-color-key-focus)",
-        }
+        },
       },
       accent: {
         100: "var(--spectrum-blue-100)",
@@ -312,7 +312,7 @@ module.exports = {
         1100: "var(--spectrum-blue-1100)",
         1200: "var(--spectrum-blue-1200)",
         1300: "var(--spectrum-blue-1300)",
-        1400: "var(--spectrum-blue-1400)"
+        1400: "var(--spectrum-blue-1400)",
       },
       background: {
         DEFAULT: "var(--spectrum-alias-background-color-default)",
@@ -342,8 +342,10 @@ module.exports = {
         mid: "var(--spectrum-alias-border-color-mid)",
         dark: "var(--spectrum-alias-border-color-dark)",
         transparent: "var(--spectrum-alias-border-color-transparent)",
-        "translucent-dark": "var(--spectrum-alias-border-color-translucent-dark)",
-        "translucent-darker": "var(--spectrum-alias-border-color-transparent-darker)",
+        "translucent-dark":
+          "var(--spectrum-alias-border-color-translucent-dark)",
+        "translucent-darker":
+          "var(--spectrum-alias-border-color-transparent-darker)",
       },
       focus: {
         DEFAULT: "var(--spectrum-alias-focus-color)",
@@ -364,7 +366,7 @@ module.exports = {
         "selected-down": "var(--spectrum-alias-icon-color-selected-down)",
         "selected-focus": "var(--spectrum-alias-icon-color-selected-focus)",
         error: "var(--spectrum-alias-icon-color-error)",
-      }
+      },
     },
     ringColor: {
       DEFAULT: "var(--spectrum-alias-focus-ring-color)",
@@ -383,7 +385,8 @@ module.exports = {
     //   DEFAULT: "transparent",
     // },
     dropShadow: {
-      DEFAULT: "0 var(--spectrum-alias-dropshadow-offset-y) var(--spectrum-alias-dropshadow-blur) var(--spectrum-alias-dropshadow-color)"
+      DEFAULT:
+        "0 var(--spectrum-alias-dropshadow-offset-y) var(--spectrum-alias-dropshadow-blur) var(--spectrum-alias-dropshadow-color)",
     },
     borderWidth: {
       DEFAULT: "var(--spectrum-alias-border-size-thin)",
@@ -400,7 +403,7 @@ module.exports = {
       regular: "var(--spectrum-alias-border-radius-regular)",
       medium: "var(--spectrum-alias-border-radius-medium)",
       large: "var(--spectrum-alias-border-radius-large)",
-      full: "9999px"
+      full: "9999px",
     },
     /** https://spectrum.adobe.com/page/typography/#Font-sizes */
     fontSize: {
@@ -438,7 +441,7 @@ module.exports = {
       none: "var(--spectrum-global-font-letter-spacing-none)",
       small: "var(--spectrum-global-font-letter-spacing-small)",
       hand: "var(--spectrum-global-font-letter-spacing-han)",
-      medium: "var(--spectrum-global-font-letter-spacing-medium)"
+      medium: "var(--spectrum-global-font-letter-spacing-medium)",
     },
     lineHeight: {
       DEFAULT: "var(--spectrum-global-font-line-height-medium)",
@@ -451,7 +454,7 @@ module.exports = {
       "ease-in-out": "cubic-bezier(.45, 0, .40, 1)",
       "ease-in": "cubic-bezier(.50, 0, 1, 1)",
       "ease-out": "cubic-bezier(0, 0, 0.40, 1)",
-      "linear": "cubic-bezier(0, 0, 1, 1)",
+      linear: "cubic-bezier(0, 0, 1, 1)",
     },
     transitionDuration: {
       none: "var(--spectrum-global-animation-duration-0)",
@@ -532,10 +535,8 @@ module.exports = {
       7: "var(--spectrum-global-color-opacity-7)",
       6: "var(--spectrum-global-color-opacity-6)",
       5: "var(--spectrum-global-color-opacity-5)",
-      4: "var(--spectrum-global-color-opacity-4)"
-    }
+      4: "var(--spectrum-global-color-opacity-4)",
+    },
   },
-  plugins: [
-    require("tailwindcss-animate")
-  ]
-}
+  plugins: [require("tailwindcss-animate")],
+};
