@@ -36,12 +36,9 @@ type: component
 
 <PageDescription>{docs.exports.DropZone.description}</PageDescription>
 
-{/* <HeaderInfo
+<HeaderInfo
   packageData={packageData}
-  componentNames={['Button']}
-  sourceData={[
-    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/button/'}
-  ]} /> */}
+  componentNames={['DropZone']} />
 
 ## Example
 
@@ -49,9 +46,7 @@ type: component
 import {DropZone} from 'react-aria-components';
 
 <DropZone>
-  <Text slot="heading">
-    Drop object here
-  </Text>
+  Drop object here
 </DropZone>
 ```
 
@@ -79,6 +74,7 @@ import {DropZone} from 'react-aria-components';
   outline: none;
   padding: 24px 12px;
   width: 25%;
+  display: inline-block;
 
   &[data-drop-target] {
     box-shadow: 0 0 0 1px var(--focus-ring-color);
@@ -92,19 +88,17 @@ import {DropZone} from 'react-aria-components';
   }
 }
 
-/* @media (forced-colors: active) {
+@media (forced-colors: active) {
   .react-aria-DropZone {
     forced-color-adjust: none;
     --border-color: ButtonBorder;
-    --border-color-pressed: ButtonBorder;
-    --border-color-disabled: GrayText;
+    --border-color-drop-target: ButtonBorder;
     --background-color: ButtonFace;
     --background-color-pressed: ButtonFace;
     --text-color: ButtonText;
-    --text-color-disabled: GrayText;
     --focus-ring-color: Highlight;
   }
-} */
+}
 ```
 
 </details>
@@ -197,41 +191,32 @@ import type {TextDropItem} from '@react-aria/dnd';
 
 function Example() {
   let [dropped, setDropped] = React.useState(null);
-  // let {dropProps, isDropTarget} = useDrop({
-  //   ref,
-  //   async onDrop(e) {
-  //     let items = await Promise.all(
-  //       e.items
-  //         .filter(item => item.kind === 'text' && item.types.has('text/plain'))
-  //         .map((item: TextDropItem) => item.getText('text/plain'))
-  //     );
-  //     setDropped(items.join('\n'));
-  //   }
-  // });
 
-          // onDrop={async (e) => {
-          //   let items = await Promise.all(e.items.filter((item) => item.kind === 'text' && item.types.has('text/plain')).map((item: TextDropItem) => item.getText('text/plain')));
-          //   setDropped(items.join('\n'));
-          // }}>
-
-  // return (
-  //   <>
-  //     <Draggable />
-  //     <DropZone
-  //       onDrop={e => alert('dropped!')}>
-  //       <Text slot="heading">
-  //         {dropped || 'Drop here'}
-  //       </Text>
-  //     <DropZone />
-  //   </>
-  // );
+  return (
+    <>
+      <Draggable />
+      <DropZone
+        onDrop={async(e) => {
+          let items = await Promise.all(
+            e.items
+              .filter(item => item.kind === 'text' && item.types.has('text/plain'))
+              .map((item: TextDropItem) => item.getText('text/plain'))
+          );
+          setDropped(items.join('\n'));
+        }}>
+        <Text slot="heading">
+          {dropped || 'Drop here'}
+        </Text>
+      </ DropZone>
+    </>
+  );
 }
 
 <Example />
 
 ```
 
-### Draggable
+#### Draggable
 
 The `Draggable` component used above is defined below. See [useDrag](useDrag.html) for more details and documentation.
 
@@ -258,7 +243,67 @@ function Draggable() {
   );
 }
 ```
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.draggable {
+  display: inline-block;
+  vertical-align: top;
+  border: 1px solid gray;
+  padding: 10px;
+  margin-right: 20px;
+  border-radius: 4px;
+}
+
+.draggable.dragging {
+  opacity: 0.5;
+}
+```
+
 </details>
+</details>
+
+### Heading
+
+The `heading` slot can be used to announce additional information with a DropZone.
+
+```tsx example
+import {Text} from 'react-aria-components';
+
+<DropZone>
+  <Text slot="heading">
+    Drop item here
+  </Text>
+</DropZone>
+```
+
+### File system
+
+Pass `FileTrigger` as a child to allow DropZone to access the filesystem. 
+
+```tsx example
+import {FileTrigger, Link} from 'react-aria-components';
+
+<DropZone>
+  <FileTrigger>
+    <Link>Select a file</Link> from your computer
+  </FileTrigger>
+</DropZone>
+```
+
+### Filter object types
+
+```tsx example
+import {FileTrigger, Button} from 'react-aria-components';
+
+<DropZone
+  getDropOperation={(types) =>  types.has('image/png') ? 'copy' : 'cancel'} >
+  <FileTrigger acceptedFileTypes={['image/png']}>
+    <Button>Upload</Button>
+  </FileTrigger>
+</DropZone>
+```
 
 ## Advanced customization
 
