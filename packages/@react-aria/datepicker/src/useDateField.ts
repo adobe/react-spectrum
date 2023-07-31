@@ -12,10 +12,10 @@
 
 import {AriaDateFieldProps as AriaDateFieldPropsBase, AriaTimeFieldProps, DateValue, TimeValue} from '@react-types/datepicker';
 import {createFocusManager, FocusManager} from '@react-aria/focus';
-import {DateFieldState} from '@react-stately/datepicker';
+import {DateFieldState, TimeFieldState} from '@react-stately/datepicker';
 import {DOMAttributes, KeyboardEvent} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useDescription} from '@react-aria/utils';
-import {FocusEvent, RefObject, useEffect, useMemo, useRef} from 'react';
+import {filterDOMProps, mergeProps, useDescription, useFormReset} from '@react-aria/utils';
+import {FocusEvent, InputHTMLAttributes, RefObject, useEffect, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useDatePickerGroup} from './useDatePickerGroup';
@@ -24,13 +24,18 @@ import {useFocusWithin} from '@react-aria/interactions';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 // Allows this hook to also be used with TimeField
-export interface AriaDateFieldOptions<T extends DateValue> extends Omit<AriaDateFieldPropsBase<T>, 'value' | 'defaultValue' | 'onChange' | 'minValue' | 'maxValue' | 'placeholderValue'> {}
+export interface AriaDateFieldOptions<T extends DateValue> extends Omit<AriaDateFieldPropsBase<T>, 'value' | 'defaultValue' | 'onChange' | 'minValue' | 'maxValue' | 'placeholderValue'> {
+  /** A ref for the hidden input element for HTML form submission. */
+  inputRef?: RefObject<HTMLInputElement>
+}
 
 export interface DateFieldAria {
    /** Props for the field's visible label element, if any. */
   labelProps: DOMAttributes,
    /** Props for the field grouping element. */
   fieldProps: DOMAttributes,
+  /** Props for the hidden input element for HTML form submission. */
+  inputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Props for the description element, if any. */
   descriptionProps: DOMAttributes,
   /** Props for the error message element, if any. */
@@ -125,6 +130,8 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
     autoFocusRef.current = false;
   }, [focusManager]);
 
+  useFormReset(props.inputRef, state.value, state.setValue);
+
   let domProps = filterDOMProps(props);
   return {
     labelProps: {
@@ -145,9 +152,19 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
         }
       }
     }),
+    inputProps: {
+      type: 'hidden',
+      name: props.name,
+      value: state.value?.toString() || ''
+    },
     descriptionProps,
     errorMessageProps
   };
+}
+
+export interface AriaTimeFieldOptions<T extends TimeValue> extends AriaTimeFieldProps<T> {
+  /** A ref for the hidden input element for HTML form submission. */
+  inputRef?: RefObject<HTMLInputElement>
 }
 
 /**
@@ -155,6 +172,8 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
  * A time field allows users to enter and edit time values using a keyboard.
  * Each part of a time value is displayed in an individually editable segment.
  */
-export function useTimeField<T extends TimeValue>(props: AriaTimeFieldProps<T>, state: DateFieldState, ref: RefObject<Element>): DateFieldAria {
-  return useDateField(props, state, ref);
+export function useTimeField<T extends TimeValue>(props: AriaTimeFieldOptions<T>, state: TimeFieldState, ref: RefObject<Element>): DateFieldAria {
+  let res = useDateField(props, state, ref);
+  res.inputProps.value = state.timeValue?.toString() || '';
+  return res;
 }

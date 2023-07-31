@@ -16,6 +16,7 @@ import {
   FocusableProps,
   HelpTextProps,
   InputBase,
+  InputDOMProps,
   LabelableProps,
   RangeValue,
   SpectrumLabelableProps,
@@ -62,7 +63,7 @@ interface DateFieldBase<T extends DateValue> extends InputBase, Validation, Focu
 
 interface AriaDateFieldBaseProps<T extends DateValue> extends DateFieldBase<T>, AriaLabelingProps, DOMProps {}
 export interface DateFieldProps<T extends DateValue> extends DateFieldBase<T>, ValueBase<T | null, MappedDateValue<T>> {}
-export interface AriaDateFieldProps<T extends DateValue> extends DateFieldProps<T>, AriaDateFieldBaseProps<T> {}
+export interface AriaDateFieldProps<T extends DateValue> extends DateFieldProps<T>, AriaDateFieldBaseProps<T>, InputDOMProps {}
 
 interface DatePickerBase<T extends DateValue> extends DateFieldBase<T>, OverlayTriggerProps {
   /**
@@ -74,7 +75,7 @@ interface DatePickerBase<T extends DateValue> extends DateFieldBase<T>, OverlayT
 export interface AriaDatePickerBaseProps<T extends DateValue> extends DatePickerBase<T>, AriaLabelingProps, DOMProps {}
 
 export interface DatePickerProps<T extends DateValue> extends DatePickerBase<T>, ValueBase<T | null, MappedDateValue<T>> {}
-export interface AriaDatePickerProps<T extends DateValue> extends DatePickerProps<T>, AriaDatePickerBaseProps<T> {}
+export interface AriaDatePickerProps<T extends DateValue> extends DatePickerProps<T>, AriaDatePickerBaseProps<T>, InputDOMProps {}
 
 export type DateRange = RangeValue<DateValue>;
 export interface DateRangePickerProps<T extends DateValue> extends DatePickerBase<T>, ValueBase<RangeValue<T> | null, RangeValue<MappedDateValue<T>>> {
@@ -85,7 +86,16 @@ export interface DateRangePickerProps<T extends DateValue> extends DatePickerBas
   allowsNonContiguousRanges?: boolean
 }
 
-export interface AriaDateRangePickerProps<T extends DateValue> extends AriaDatePickerBaseProps<T>, DateRangePickerProps<T> {}
+export interface AriaDateRangePickerProps<T extends DateValue> extends AriaDatePickerBaseProps<T>, DateRangePickerProps<T> {
+  /**
+   * The name of the start date input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   */
+  startName?: string,
+  /**
+   * The name of the end date input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   */
+  endName?: string
+}
 
 interface SpectrumDateFieldBase extends SpectrumLabelableProps, HelpTextProps, StyleProps {
   /**

@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, render, within} from '@react-spectrum/test-utils';
 import {Checkbox, CheckboxGroup} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {render, within} from '@react-spectrum/test-utils';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
@@ -371,5 +371,40 @@ describe('CheckboxGroup', () => {
 
     let description = document.getElementById(group.getAttribute('aria-describedby'));
     expect(description).toHaveTextContent('Error message');
+  });
+
+  it('supports form reset', () => {
+    function Test() {
+      let [value, setValue] = React.useState(['dogs']);
+      return (
+        <Provider theme={theme}>
+          <form>
+            <CheckboxGroup name="pets" label="Pets" value={value} onChange={setValue}>
+              <Checkbox value="dogs">Dogs</Checkbox>
+              <Checkbox value="cats">Cats</Checkbox>
+              <Checkbox value="dragons">Dragons</Checkbox>
+            </CheckboxGroup>
+            <input type="reset" data-testid="reset" />
+          </form>
+        </Provider>
+      );
+    }
+
+    let {getAllByRole, getByTestId} = render(<Test />);
+    let checkboxes = getAllByRole('checkbox');
+
+    expect(checkboxes[0]).toBeChecked();
+    expect(checkboxes[1]).not.toBeChecked();
+    expect(checkboxes[2]).not.toBeChecked();
+    act(() => userEvent.click(checkboxes[1]));
+    expect(checkboxes[0]).toBeChecked();
+    expect(checkboxes[1]).toBeChecked();
+    expect(checkboxes[2]).not.toBeChecked();
+
+    let button = getByTestId('reset');
+    act(() => userEvent.click(button));
+    expect(checkboxes[0]).toBeChecked();
+    expect(checkboxes[1]).not.toBeChecked();
+    expect(checkboxes[2]).not.toBeChecked();
   });
 });

@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, render} from '@react-spectrum/test-utils';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils';
 import {Switch} from '../';
 import userEvent from '@testing-library/user-event';
 
@@ -178,5 +178,28 @@ describe('Switch', function () {
     userEvent.click(checkbox);
     expect(checkbox.checked).toBeTruthy();
     expect(onChangeSpy).not.toHaveBeenCalled();
+  });
+
+  it('supports form reset', () => {
+    function Test() {
+      let [isSelected, setSelected] = React.useState(false);
+      return (
+        <form>
+          <Switch data-testid="switch" isSelected={isSelected} onChange={setSelected}>Switch</Switch>
+          <input type="reset" data-testid="reset" />
+        </form>
+      );
+    }
+
+    let {getByTestId} = render(<Test />);
+    let input = getByTestId('switch');
+
+    expect(input).not.toBeChecked();
+    act(() => userEvent.click(input));
+    expect(input).toBeChecked();
+
+    let button = getByTestId('reset');
+    act(() => userEvent.click(button));
+    expect(input).not.toBeChecked();
   });
 });

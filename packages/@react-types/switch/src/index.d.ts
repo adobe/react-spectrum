@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, FocusableDOMProps, FocusableProps, InputBase, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, FocusableDOMProps, FocusableProps, InputBase, InputDOMProps, StyleProps} from '@react-types/shared';
 import {ReactNode} from 'react';
 
 interface SwitchBase extends InputBase, FocusableProps {
@@ -33,14 +33,10 @@ interface SwitchBase extends InputBase, FocusableProps {
   /**
    * The value of the input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefvalue).
    */
-  value?: string,
-  /**
-   * The name of the input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
-   */
-  name?: string
+  value?: string
 }
 export interface SwitchProps extends SwitchBase {}
-export interface AriaSwitchBase extends SwitchBase, FocusableDOMProps, AriaLabelingProps {
+export interface AriaSwitchBase extends SwitchBase, FocusableDOMProps, InputDOMProps, AriaLabelingProps {
   /**
    * Identifies the element (or elements) whose contents or presence are controlled by the current element.
    */
