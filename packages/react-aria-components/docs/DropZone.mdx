@@ -108,7 +108,8 @@ import {DropZone} from 'react-aria-components';
 There is no native element to implement a dropzone in HTML that is widely supported. `DropZone` helps achieve accessible dropzone components that can be styled as needed. 
 
 * **Styleable** – Hover, keyboard focus, and the drop target state is provided for easy styling. These styles only apply when interacting with an appropriate input device, unlike CSS pseudo classes. 
-* **Accessible** – Uses a visually hidden `<button>` under the hood to allow interactions like dropping ojbects with a keyboard. 
+* **Accessible** – Uses a visually hidden `<button>` under the hood to allow interactions like dropping objects with a keyboard. 
+* **Flexible** – Can be used standalone or with `FileTrigger` to allow file uploads.
 
 ## Anatomy
 
@@ -118,14 +119,9 @@ If a visual label is not provided, then an `aria-label` or
 `aria-labelledby` prop must be passed to identify the button to assistive technology.
 
 ### Composed Components
-A dropzone can use the following components, which may also be used standalone or reused in other components.
+A dropzone can pass `FileTrigger` as a child, which may also be used standalone or reused in other components.
 
-{/* <ExampleCard
-  url="FileTrigger.html"
-  title="FileTrigger"
-  description="">
-  <FileTrigger />
-</ExampleCard> */}
+{/* TODO: Add an Example Card of FileTrigger */}
 
 ## Props
 
@@ -243,6 +239,8 @@ function Draggable() {
   );
 }
 ```
+</details>
+
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
@@ -262,11 +260,10 @@ function Draggable() {
 ```
 
 </details>
-</details>
 
 ### Heading
 
-The `heading` slot can be used to announce additional information with a DropZone.
+The `heading` slot can be used to announce additional information within a DropZone.
 
 ```tsx example
 import {Text} from 'react-aria-components';
@@ -278,9 +275,9 @@ import {Text} from 'react-aria-components';
 </DropZone>
 ```
 
-### File system
+### File Upload
 
-Pass `FileTrigger` as a child to allow DropZone to access the filesystem. 
+Pass `FileTrigger` as a child to allow a dropzone to upload files.
 
 ```tsx example
 import {FileTrigger, Link} from 'react-aria-components';
@@ -292,16 +289,54 @@ import {FileTrigger, Link} from 'react-aria-components';
 </DropZone>
 ```
 
-### Filter object types
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Link {
+  --focus-ring-color: slateblue;
+  --text-color: var(--spectrum-global-color-blue-600);
+  --text-color-pressed: var(--spectrum-global-color-blue-700);
+  --text-color-disabled: gray;
+
+  color: var(--text-color);
+  font-size: 18px;
+  transition: all 200ms;
+  text-decoration: underline;
+  cursor: pointer;
+  outline: none;
+  position: relative;
+
+  &[data-hovered] {
+    text-decoration-style: wavy;
+  }
+
+  &[data-pressed] {
+    color: var(--text-color-pressed);
+  }
+
+  &[data-focus-visible]:after {
+    content: '';
+    position: absolute;
+    inset: -3px -6px;
+    border-radius: 6px;
+    border: 2px solid var(--focus-ring-color);
+  }
+}
+```
+
+</details>
+
+### Visual feedback
+
+A dropzone can provide visual feedback to the user when a drag hovers over the drop target by passing the getDropOpertation function. If a drop target only supports data of specific types (e.g. images, videos, text, etc.), then it should implement getDropOperation and return 'cancel' for types that aren't supported. This will prevent visual feedback indicating that the drop target accepts the dragged data when this is not true. [Read more about getDropOperation.](https://react-spectrum.adobe.com/react-aria/useDrop.html#getdropoperation)
 
 ```tsx example
 import {FileTrigger, Button} from 'react-aria-components';
 
 <DropZone
   getDropOperation={(types) =>  types.has('image/png') ? 'copy' : 'cancel'} >
-  <FileTrigger acceptedFileTypes={['image/png']}>
-    <Button>Upload</Button>
-  </FileTrigger>
+  Drop files here
 </DropZone>
 ```
 
