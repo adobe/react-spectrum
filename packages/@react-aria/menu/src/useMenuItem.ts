@@ -193,7 +193,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
 
       // Pressing a menu item should close by default in single selection mode but not multiple
       // selection mode, except if overridden by the closeOnSelect prop.
-      if (!isTrigger && onClose && (closeOnSelect ?? state.selectionManager.selectionMode !== 'multiple')) {
+      if (!isTrigger && onClose && (closeOnSelect ?? (state.selectionManager.selectionMode !== 'multiple' || state.selectionManager.isLink(key)))) {
         onClose();
       }
     }
@@ -204,7 +204,10 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     key,
     ref,
     shouldSelectOnPressUp: true,
-    allowsDifferentPressOrigin: true
+    allowsDifferentPressOrigin: true,
+    // Disable default link handling because we handle it ourselves above.
+    // In menus, links behave like an override – link items are not selectable.
+    isLinkDisabled: true
   });
 
   let {pressProps, isPressed} = usePress({

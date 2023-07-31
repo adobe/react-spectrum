@@ -11,6 +11,7 @@
  */
 
 import {isWebKit} from '@react-aria/utils';
+import {LinkDOMProps} from '@react-types/shared';
 
 interface Modifiers {
   metaKey?: boolean,
@@ -26,7 +27,7 @@ export function openLink(target: HTMLAnchorElement, modifiers: Modifiers) {
   let event = isWebKit() && process.env.NODE_ENV !== 'test'
     // @ts-ignore - keyIdentifier is a non-standard property, but it's what webkit expects
     ? new KeyboardEvent('keydown', {keyIdentifier: 'Enter', metaKey, ctrlKey, altKey, shiftKey})
-    : new MouseEvent('click', {metaKey, ctrlKey, altKey, shiftKey, bubbles: true});
+    : new MouseEvent('click', {metaKey, ctrlKey, altKey, shiftKey, bubbles: true, cancelable: true});
   openLink.isOpening = true;
   target.focus();
   target.dispatchEvent(event);
@@ -34,3 +35,41 @@ export function openLink(target: HTMLAnchorElement, modifiers: Modifiers) {
 }
 
 openLink.isOpening = false;
+
+export function openSyntheticLink(target: Element, modifiers: Modifiers) {
+  if (target instanceof HTMLAnchorElement) {
+    openLink(target, modifiers);
+  } else if (target.hasAttribute('data-href')) {
+    let link = document.createElement('a');
+    link.href = target.getAttribute('data-href');
+    if (target.hasAttribute('data-target')) {
+      link.target = target.getAttribute('data-target');
+    }
+    if (target.hasAttribute('data-rel')) {
+      link.rel = target.getAttribute('data-rel');
+    }
+    if (target.hasAttribute('data-download')) {
+      link.download = target.getAttribute('data-download');
+    }
+    if (target.hasAttribute('data-ping')) {
+      link.ping = target.getAttribute('data-ping');
+    }
+    if (target.hasAttribute('data-referrer-policy')) {
+      link.referrerPolicy = target.getAttribute('data-referrer-policy');
+    }
+    target.appendChild(link);
+    openLink(link, modifiers);
+    target.removeChild(link);
+  }
+}
+
+export function getSyntheticLinkProps(props: LinkDOMProps) {
+  return {
+    'data-href': props.href,
+    'data-target': props.target,
+    'data-rel': props.rel,
+    'data-download': props.download,
+    'data-ping': props.ping,
+    'data-referrer-policy': props.referrerPolicy
+  };
+}

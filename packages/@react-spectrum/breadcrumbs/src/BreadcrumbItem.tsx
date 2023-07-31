@@ -12,7 +12,7 @@
 
 import {BreadcrumbItemProps} from '@react-types/breadcrumbs';
 import ChevronRightSmall from '@spectrum-icons/ui/ChevronRightSmall';
-import {classNames, getWrappedElement} from '@react-spectrum/utils';
+import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import React, {Fragment, useRef} from 'react';
@@ -30,33 +30,31 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
 
   let {direction} = useLocale();
   let ref = useRef(null);
+  let ElementType: React.ElementType = props.href ? 'a' : 'span';
   let {itemProps} = useBreadcrumbItem({
     ...props,
-    elementType: typeof children === 'string' ? 'span' : 'a'
+    elementType: ElementType
   }, ref);
   let {hoverProps, isHovered} = useHover(props);
-
-  let element = React.cloneElement(
-    getWrappedElement(children),
-    {
-      ...mergeProps(itemProps, hoverProps),
-      ref,
-      className:
-        classNames(
-          styles,
-          'spectrum-Breadcrumbs-itemLink',
-          {
-            'is-disabled': !isCurrent && isDisabled,
-            'is-hovered': isHovered
-          }
-        )
-    }
-  );
 
   return (
     <Fragment>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-        {element}
+        <ElementType
+          {...mergeProps(itemProps, hoverProps)}
+          ref={ref}
+          className={
+            classNames(
+              styles,
+              'spectrum-Breadcrumbs-itemLink',
+              {
+                'is-disabled': !isCurrent && isDisabled,
+                'is-hovered': isHovered
+              }
+            )
+          }>
+          {children}
+        </ElementType>
       </FocusRing>
       {isCurrent === false &&
         <ChevronRightSmall

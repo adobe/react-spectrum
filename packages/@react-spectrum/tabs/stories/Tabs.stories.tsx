@@ -369,6 +369,48 @@ ChangingSelectionProgramatically.story = {
   name: 'changing selection programatically'
 };
 
+export const Links = (args) => {
+  let [url, setUrl] = useState('/one');
+  React.useEffect(() => {
+    let onClick = e => {
+      if (e.target instanceof HTMLAnchorElement) {
+        e.preventDefault();
+        setUrl(e.target.pathname);
+      }
+    };
+
+    document.addEventListener('click', onClick);
+    return () => {
+      document.removeEventListener('click', onClick);
+    };
+  }, []);
+
+  return (
+    <Tabs selectedKey={url} aria-label="Some tabs" width={args.collapsed ? 200 : 300}>
+      <TabList>
+        <Item key="/one" href="/one">Tab 1</Item>
+        <Item key="/two" href="/two">Tab 2</Item>
+        <Item key="/three" href="/three">Tab 3</Item>
+        <Item key="/four" href="/four">Tab 4</Item>
+        <Item key="/five" href="/five">Tab 5</Item>
+      </TabList>
+      <TabPanels>
+        <Item key="/one">Foo</Item>
+        <Item key="/two">Bar</Item>
+        <Item key="/three">Tab 3</Item>
+        <Item key="/four">Tab 4</Item>
+        <Item key="/five">Tab 5</Item>
+      </TabPanels>
+    </Tabs>
+  );
+};
+
+Links.story = {
+  args: {
+    collapsed: false
+  }
+};
+
 function render(props = {}) {
   return (
     <Tabs

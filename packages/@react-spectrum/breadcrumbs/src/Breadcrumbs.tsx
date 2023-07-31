@@ -201,6 +201,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
           )
         }>
         <BreadcrumbItem
+          {...child.props}
           key={key}
           isCurrent={isCurrent}
           isDisabled={isDisabled}

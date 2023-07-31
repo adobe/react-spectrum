@@ -14,7 +14,7 @@ import {DOMAttributes, FocusableElement, FocusStrategy, KeyboardDelegate} from '
 import {flushSync} from 'react-dom';
 import {FocusEvent, Key, KeyboardEvent, RefObject, useEffect, useRef} from 'react';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
-import {focusWithoutScrolling, mergeProps, openLink, scrollIntoView, scrollIntoViewport, useEvent} from '@react-aria/utils';
+import {focusWithoutScrolling, mergeProps, openSyntheticLink, scrollIntoView, scrollIntoViewport, useEvent} from '@react-aria/utils';
 import {getInteractionModality} from '@react-aria/interactions';
 import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
@@ -131,10 +131,8 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
             manager.setFocusedKey(key, childFocus);
           });
 
-          let link = scrollRef.current.querySelector(`[data-key="${key}"]`);
-          if (link instanceof HTMLAnchorElement) {
-            openLink(link, e);
-          }
+          let item = scrollRef.current.querySelector(`[data-key="${key}"]`);
+          openSyntheticLink(item, e);
 
           return;
         }

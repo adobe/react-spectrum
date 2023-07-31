@@ -13,7 +13,7 @@
 import {DOMAttributes, FocusableElement, Node as RSNode} from '@react-types/shared';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getRowId, listMap} from './utils';
-import {getScrollParent, mergeProps, scrollIntoViewport, useSlotId} from '@react-aria/utils';
+import {getScrollParent, getSyntheticLinkProps, mergeProps, scrollIntoViewport, useSlotId} from '@react-aria/utils';
 import {isFocusVisible} from '@react-aria/interactions';
 import type {ListState} from '@react-stately/list';
 import {KeyboardEvent as ReactKeyboardEvent, RefObject, useRef} from 'react';
@@ -177,7 +177,8 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     }
   };
 
-  let rowProps: DOMAttributes = mergeProps(itemProps, {
+  let linkProps = getSyntheticLinkProps(node.props);
+  let rowProps: DOMAttributes = mergeProps(itemProps, linkProps, {
     role: 'row',
     onKeyDownCapture: onKeyDown,
     onFocus,

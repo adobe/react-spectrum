@@ -1843,3 +1843,58 @@ export const TypeaheadWithDialog: TableStory = {
     </div>
   )
 };
+
+export const Links = (args) => {
+  let [url, setUrl] = useState('https://adobe.com');
+  React.useEffect(() => {
+    if (args.selectionMode !== 'single') {
+      return;
+    }
+
+    let onClick = e => {
+      if (e.target instanceof HTMLAnchorElement && !e.metaKey && !e.ctrlKey) {
+        e.preventDefault();
+        setUrl(e.target.href);
+      }
+    };
+
+    document.addEventListener('click', onClick);
+    return () => {
+      document.removeEventListener('click', onClick);
+    };
+  }, [args.selectionMode]);
+
+  let selectedKeys = args.selectionMode === 'single' ? [url] : undefined;
+
+  return (
+    <TableView {...args} aria-label="Bookmarks table" selectedKeys={selectedKeys} onSelectionChange={action('onSelectionChange')}>
+      <TableHeader>
+        <Column>Name</Column>
+        <Column>URL</Column>
+        <Column>Date added</Column>
+      </TableHeader>
+      <TableBody>
+        <Row key="https://adobe.com/" href="https://adobe.com/">
+          <Cell>Adobe</Cell>
+          <Cell>https://adobe.com/</Cell>
+          <Cell>January 28, 2023</Cell>
+        </Row>
+        <Row key="https://google.com/" href="https://google.com/">
+          <Cell>Google</Cell>
+          <Cell>https://google.com/</Cell>
+          <Cell>April 5, 2023</Cell>
+        </Row>
+        <Row key="https://apple.com/" href="https://apple.com/">
+          <Cell>Apple</Cell>
+          <Cell>https://apple.com/</Cell>
+          <Cell>June 5, 2023</Cell>
+        </Row>
+        <Row key="https://nytimes.com/" href="https://nytimes.com/">
+          <Cell>New York Times</Cell>
+          <Cell>https://nytimes.com/</Cell>
+          <Cell>July 12, 2023</Cell>
+        </Row>
+      </TableBody>
+    </TableView>
+  );
+};

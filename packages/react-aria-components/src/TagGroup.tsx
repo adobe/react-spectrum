@@ -222,12 +222,11 @@ function TagItem({item}) {
     }
   }, [item.textValue]);
 
-  let ElementType: React.ElementType = props.href ? 'a' : 'div';
-  let DOMProps = filterDOMProps(props as any, {isLink: !!props.href});
+  let DOMProps = filterDOMProps(props as any);
   delete DOMProps.id;
 
   return (
-    <ElementType
+    <div
       ref={ref}
       {...renderProps}
       {...mergeProps(DOMProps, rowProps, focusProps, hoverProps)}
@@ -248,6 +247,6 @@ function TagItem({item}) {
           {renderProps.children}
         </Provider>
       </div>
-    </ElementType>
+    </div>
   );
 }

@@ -14,7 +14,7 @@ import {DOMAttributes, FocusableElement, LongPressEvent, PressEvent} from '@reac
 import {focusSafely} from '@react-aria/focus';
 import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
 import {Key, RefObject, useEffect, useRef} from 'react';
-import {mergeProps, openLink} from '@react-aria/utils';
+import {mergeProps, openSyntheticLink} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {PressProps, useLongPress, usePress} from '@react-aria/interactions';
 
@@ -55,6 +55,8 @@ export interface SelectableItemOptions {
   shouldUseVirtualFocus?: boolean,
   /** Whether the item is disabled. */
   isDisabled?: boolean,
+  /** Whether the default link behavior should be disabled. */
+  isLinkDisabled?: boolean,
   /**
    * Handler that is called when a user performs an action on the item. The exact user event depends on
    * the collection's `selectionBehavior` prop and the interaction modality.
@@ -106,6 +108,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     shouldUseVirtualFocus,
     focus,
     isDisabled,
+    isLinkDisabled,
     onAction,
     allowsDifferentPressOrigin
   } = options;
@@ -114,13 +117,14 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     if (e.pointerType === 'keyboard' && isNonContiguousSelectionModifier(e)) {
       manager.toggleSelection(key);
     } else {
-      if (manager.selectionMode === 'none') {
+      if (manager.selectionMode === 'none' || (manager.isLink(key) && isLinkDisabled)) {
         return;
       }
 
       if (manager.selectionMode === 'single') {
-        if (ref.current instanceof HTMLAnchorElement) {
-          openLink(ref.current, e);
+        if (manager.isLink(key)) {
+          openSyntheticLink(ref.current, e);
+          manager.setSelectedKeys(manager.selectedKeys);
         } else if (manager.isSelected(key) && !manager.disallowEmptySelection) {
           manager.toggleSelection(key);
         } else {
@@ -175,8 +179,10 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // Clicking the checkbox enters selection mode, after which clicking anywhere on any row toggles selection for that row.
   // With highlight selection, onAction is secondary, and occurs on double click. Single click selects the row.
   // With touch, onAction occurs on single tap, and long press enters selection mode.
+  // If the item is a link, it behaves as an action when selectionMode is "none" or "multiple".
+  // If selectionMode is "single", it is assumed that links will control the selection instead.
   let allowsSelection = !isDisabled && manager.canSelectItem(key);
-  let allowsActions = (onAction || (manager.isLink(key) && manager.selectionMode !== 'single')) && !isDisabled;
+  let allowsActions = (onAction || (manager.isLink(key) && manager.selectionMode !== 'single' && !isLinkDisabled)) && !isDisabled;
   let hasPrimaryAction = allowsActions && (
     manager.selectionBehavior === 'replace'
       ? !allowsSelection
@@ -195,8 +201,8 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       onAction();
     }
 
-    if (manager.selectionMode !== 'single' && ref.current instanceof HTMLAnchorElement && ref.current.href) {
-      openLink(ref.current, e);
+    if (manager.selectionMode !== 'single' && manager.isLink(key)) {
+      openSyntheticLink(ref.current, e);
     }
   };
 
