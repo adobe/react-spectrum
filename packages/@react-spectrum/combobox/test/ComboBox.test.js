@@ -1592,6 +1592,41 @@ describe('ComboBox', function () {
       expect(onSelectionChange).not.toHaveBeenCalled();
     });
 
+    it('retains selected key on tab', function () {
+      let {getByRole} = renderComboBox({allowsCustomValue: true, selectedKey: '2'});
+
+      let combobox = getByRole('combobox');
+      act(() => {
+        userEvent.click(combobox);
+        jest.runAllTimers();
+      });
+
+      act(() => {
+        userEvent.tab();
+        jest.runAllTimers();
+      });
+
+      expect(onSelectionChange).not.toHaveBeenCalled();
+    });
+
+    it('retains selected key on enter', function () {
+      let {getByRole} = renderComboBox({allowsCustomValue: true, selectedKey: '2'});
+
+      let combobox = getByRole('combobox');
+      act(() => {
+        userEvent.click(combobox);
+        jest.runAllTimers();
+      });
+
+      act(() => {
+        fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
+        fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
+        jest.runAllTimers();
+      });
+
+      expect(onSelectionChange).not.toHaveBeenCalled();
+    });
+
     it('clears the input field if value doesn\'t match a combobox option and no item is focused (menuTrigger=manual case)', function () {
       let {getByRole, queryByRole, getAllByRole} = render(
         <Provider theme={theme}>
