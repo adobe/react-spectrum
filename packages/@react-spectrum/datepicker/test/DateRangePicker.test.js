@@ -1471,4 +1471,43 @@ describe('DateRangePicker', function () {
       expectPlaceholder(endDate, 'mm/dd/yyyy');
     });
   });
+
+  describe('forms', () => {
+    it('supports form reset', () => {
+      function Test() {
+        let [value, setValue] = React.useState({start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2022, 4, 8)});
+        return (
+          <form>
+            <DateRangePicker startName="start" endName="end" label="Value" value={value} onChange={setValue} />
+            <input type="reset" data-testid="reset" />
+          </form>
+        );
+      }
+
+      let {getByTestId, getByRole, getAllByRole} = render(<Test />);
+      let group = getByRole('group');
+      let start = document.querySelector('input[name=start]');
+      let end = document.querySelector('input[name=end]');
+      let segments = getAllByRole('spinbutton');
+
+      let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+      expect(getDescription()).toBe('Selected Range: February 3, 2020 to April 8, 2022');
+
+      expect(start).toHaveValue('2020-02-03');
+      expect(end).toHaveValue('2022-04-08');
+      expect(start).toHaveAttribute('name', 'start');
+      expect(end).toHaveAttribute('name', 'end');
+      fireEvent.keyDown(segments[0], {key: 'ArrowUp'});
+      fireEvent.keyUp(segments[0], {key: 'ArrowUp'});
+      expect(getDescription()).toBe('Selected Range: March 3, 2020 to April 8, 2022');
+      expect(start).toHaveValue('2020-03-03');
+      expect(end).toHaveValue('2022-04-08');
+
+      let button = getByTestId('reset');
+      act(() => userEvent.click(button));
+      expect(getDescription()).toBe('Selected Range: February 3, 2020 to April 8, 2022');
+      expect(start).toHaveValue('2020-02-03');
+      expect(end).toHaveValue('2022-04-08');
+    });
+  });
 });

@@ -32,7 +32,7 @@ export function useTableHeaderRow<T>(props: GridRowProps<T>, state: TableState<T
     role: 'row'
   };
 
-  if (isVirtualized) {
+  if (isVirtualized && !('expandedKeys' in state)) {
     rowProps['aria-rowindex'] = node.index + 1; // aria-rowindex is 1 based
   }
 

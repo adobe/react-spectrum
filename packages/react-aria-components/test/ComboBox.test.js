@@ -24,9 +24,9 @@ let TestComboBox = (props) => (
     <Text slot="errorMessage">Error</Text>
     <Popover>
       <ListBox>
-        <Item>Cat</Item>
-        <Item>Dog</Item>
-        <Item>Kangaroo</Item>
+        <Item id="1">Cat</Item>
+        <Item id="2">Dog</Item>
+        <Item id="3">Kangaroo</Item>
       </ListBox>
     </Popover>
   </ComboBox>
@@ -146,5 +146,19 @@ describe('ComboBox', () => {
 
     userEvent.click(button);
     expect(button).toHaveTextContent('close');
+  });
+
+  it('should support formValue', () => {
+    let {getByRole, rerender} = render(<TestComboBox name="test" selectedKey="2" />);
+    let input = getByRole('combobox');
+    expect(input).not.toHaveAttribute('name');
+    expect(input).toHaveValue('Dog');
+    let hiddenInput = document.querySelector('input[type=hidden]');
+    expect(hiddenInput).toHaveAttribute('name', 'test');
+    expect(hiddenInput).toHaveValue('2');
+
+    rerender(<TestComboBox name="test" formValue="text" selectedKey="2" />);
+    expect(input).toHaveAttribute('name', 'test');
+    expect(document.querySelector('input[type=hidden]')).toBeNull();
   });
 });
