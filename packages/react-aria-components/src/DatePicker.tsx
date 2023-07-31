@@ -58,7 +58,7 @@ export interface DateRangePickerRenderProps extends Omit<DatePickerRenderProps, 
 }
 
 export interface DatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DatePickerRenderProps>, SlotProps {}
-export interface DateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateRangePickerRenderProps>, SlotProps {}
+export interface DateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'label' | 'description' | 'errorMessage' | 'startName' | 'endName'>, RenderProps<DateRangePickerRenderProps>, SlotProps {}
 
 export const DatePickerContext = createContext<ContextValue<DatePickerProps<any>, HTMLDivElement>>(null);
 export const DateRangePickerContext = createContext<ContextValue<DateRangePickerProps<any>, HTMLDivElement>>(null);
@@ -87,8 +87,9 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
   });
 
   let fieldRef = useRef<HTMLDivElement>(null);
+  let inputRef = useRef<HTMLInputElement>(null);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
-  let {fieldProps: dateFieldProps} = useDateField({...fieldProps, label}, fieldState, fieldRef);
+  let {fieldProps: dateFieldProps, inputProps} = useDateField({...fieldProps, label, inputRef}, fieldState, fieldRef);
 
   let renderProps = useRenderProps({
     ...props,
@@ -109,7 +110,7 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
     <Provider
       values={[
         [GroupContext, {...groupProps, ref: groupRef}],
-        [DateInputContext, {state: fieldState, fieldProps: dateFieldProps, ref: fieldRef}],
+        [DateInputContext, {state: fieldState, fieldProps: dateFieldProps, ref: fieldRef, inputProps, inputRef}],
         [ButtonContext, {...buttonProps, isPressed: state.isOpen}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [CalendarContext, calendarProps],
@@ -166,8 +167,9 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
   });
 
   let startFieldRef = useRef<HTMLDivElement>(null);
+  let startInputRef = useRef<HTMLInputElement>(null);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
-  let {fieldProps: startDateFieldProps} = useDateField({...startFieldProps, label}, startFieldState, startFieldRef);
+  let {fieldProps: startDateFieldProps, inputProps: startInputProps} = useDateField({...startFieldProps, label, inputRef: startInputRef}, startFieldState, startFieldRef);
 
   let endFieldState = useDateFieldState({
     ...endFieldProps,
@@ -176,7 +178,8 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
   });
 
   let endFieldRef = useRef<HTMLDivElement>(null);
-  let {fieldProps: endDateFieldProps} = useDateField({...endFieldProps, label}, endFieldState, endFieldRef);
+  let endInputRef = useRef<HTMLInputElement>(null);
+  let {fieldProps: endDateFieldProps, inputProps: endInputProps} = useDateField({...endFieldProps, label, inputRef: endInputRef}, endFieldState, endFieldRef);
 
   let renderProps = useRenderProps({
     ...props,
@@ -207,12 +210,16 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
             start: {
               state: startFieldState,
               fieldProps: startDateFieldProps,
-              ref: startFieldRef
+              ref: startFieldRef,
+              inputRef: startInputRef,
+              inputProps: startInputProps
             },
             end: {
               state: endFieldState,
               fieldProps: endDateFieldProps,
-              ref: endFieldRef
+              ref: endFieldRef,
+              inputRef: endInputRef,
+              inputProps: endInputProps
             }
           }
         }],

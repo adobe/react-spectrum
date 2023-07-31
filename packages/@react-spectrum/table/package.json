@@ -54,6 +54,7 @@
     "@react-spectrum/tooltip": "^3.5.2",
     "@react-spectrum/utils": "^3.10.0",
     "@react-stately/collections": "^3.9.0",
+    "@react-stately/flags": "3.0.0-alpha.0",
     "@react-stately/grid": "^3.7.0",
     "@react-stately/layout": "^3.12.2",
     "@react-stately/table": "^3.10.0",

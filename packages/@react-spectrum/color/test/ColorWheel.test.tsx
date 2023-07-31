@@ -94,6 +94,36 @@ describe('ColorWheel', () => {
     expect(document.activeElement).toBe(buttonA);
   });
 
+  it('supports form name', () => {
+    let {getByRole} = render(<ColorWheel name="hue" />);
+    let input = getByRole('slider');
+    expect(input).toHaveAttribute('name', 'hue');
+    expect(input).toHaveValue('0');
+  });
+
+  it('supports form reset', () => {
+    function Test() {
+      let [value, setValue] = React.useState(parseColor('hsl(15, 100%, 50%)'));
+      return (
+        <form>
+          <ColorWheel value={value} onChange={setValue} />
+          <input type="reset" data-testid="reset" />
+        </form>
+      );
+    }
+
+    let {getByTestId, getByRole} = render(<Test />);
+    let input = getByRole('slider');
+
+    expect(input).toHaveValue('15');
+    fireEvent.change(input, {target: {value: '30'}});
+    expect(input).toHaveValue('30');
+
+    let button = getByTestId('reset');
+    act(() => userEvent.click(button));
+    expect(input).toHaveValue('15');
+  });
+
   describe('labelling', () => {
     it('should support a custom aria-label', () => {
       let {getByRole} = render(<ColorWheel aria-label="Color hue" />);

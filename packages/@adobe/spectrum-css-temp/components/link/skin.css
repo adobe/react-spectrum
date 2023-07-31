@@ -10,14 +10,12 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-:root {
+.spectrum-Link {
   --spectrum-link-text-color: var(--spectrum-accent-color-1000);
   --spectrum-link-text-color-hover: var(--spectrum-accent-color-1000);
   --spectrum-link-text-color-down: var(--spectrum-accent-color-1100);
   --spectrum-link-text-color-key-focus: var(--spectrum-accent-color-1000);
-}
 
-.spectrum-Link {
   color: var(--spectrum-link-text-color);
 
   &:hover {
@@ -37,19 +35,21 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-Link--secondary{
-  color: inherit;
-
-  &:hover {
+@media (forced-colors: none) {
+  .spectrum-Link--secondary {
     color: inherit;
-  }
 
-  &:active {
-    color: inherit;
-  }
+    &:hover {
+      color: inherit;
+    }
 
-  &:focus {
-    color: inherit;
+    &:active {
+      color: inherit;
+    }
+
+    &:focus {
+      color: inherit;
+    }
   }
 }
 
@@ -70,5 +70,19 @@ governing permissions and limitations under the License.
 
   &.is-disabled {
     color: var(--spectrum-link-over-background-text-color-disabled);
+  }
+}
+
+@media (forced-colors: active) {
+  .spectrum-Link {
+    --spectrum-link-text-color: LinkText;
+    --spectrum-link-text-color-hover: LinkText;
+    --spectrum-link-text-color-down: LinkText;
+    --spectrum-link-text-color-key-focus: LinkText;
+
+    --spectrum-link-over-background-text-color: LinkText;
+    --spectrum-link-over-background-text-color-hover: LinkText;
+    --spectrum-link-over-background-text-color-down: LinkText;
+    --spectrum-link-over-background-text-color-key-focus: LinkText;
   }
 }
