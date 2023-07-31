@@ -1,4 +1,4 @@
-{/* Copyright 2024 Adobe. All rights reserved.
+{/* Copyright 2023 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -20,11 +20,6 @@ import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import {Keyboard} from '@react-spectrum/text';
-
-```jsx import
-import {FileTrigger} from 'react-aria-components';
-import {Text} from 'react-aria-components';
-```
 
 ---
 category: Drag and drop
@@ -180,7 +175,7 @@ The states, selectors, and render props for `DropZone` are documented below.
 
 ### Events
 
-`DropZone` supports user interactions via mouse, keyboard, and touch. You can handle all of these via the `onDrop` prop. In addition, the `onDropEnter` , `onDropMove`, and `onDropExit` events are fired as the user interacts with the dropzone. 
+`DropZone` supports user interactions via mouse, keyboard, and touch. You can handle all of these via the `onDrop` prop. In addition, the `onDropEnter`, `onDropMove`, and `onDropExit` events are fired as the user interacts with the dropzone. 
 
 ```tsx example
 import type {TextDropItem} from '@react-aria/dnd';
@@ -263,7 +258,7 @@ function Draggable() {
 
 ### Heading
 
-The `heading` slot can be used to announce additional information within a DropZone.
+The `heading` slot enables the user to reference the text content to define the dropzone's accessible name. 
 
 ```tsx example
 import {Text} from 'react-aria-components';
@@ -277,7 +272,7 @@ import {Text} from 'react-aria-components';
 
 ### File Upload
 
-Pass `FileTrigger` as a child to allow a dropzone to upload files.
+To upload files, pass `FileTrigger` as a child of `DropZone`.
 
 ```tsx example
 import {FileTrigger, Link} from 'react-aria-components';
@@ -332,8 +327,6 @@ import {FileTrigger, Link} from 'react-aria-components';
 A dropzone can provide visual feedback to the user when a drag hovers over the drop target by passing the getDropOpertation function. If a drop target only supports data of specific types (e.g. images, videos, text, etc.), then it should implement getDropOperation and return 'cancel' for types that aren't supported. This will prevent visual feedback indicating that the drop target accepts the dragged data when this is not true. [Read more about getDropOperation.](https://react-spectrum.adobe.com/react-aria/useDrop.html#getdropoperation)
 
 ```tsx example
-import {FileTrigger, Button} from 'react-aria-components';
-
 <DropZone
   getDropOperation={(types) =>  types.has('image/png') ? 'copy' : 'cancel'} >
   Drop files here
