@@ -57,15 +57,23 @@ export function compareNodeOrder<T>(collection: Collection<Node<T>>, a: Node<T>,
   }
 
   // Otherwise, collect all of the ancestors from each node, and find the first one that doesn't match starting from the root.
-  let aAncestors = getAncestors(collection, a);
-  let bAncestors = getAncestors(collection, b);
+  // Include the base nodes in case we are comparing nodes of different levels so that we can compare the higher node to the lower level node's
+  // ancestor of the same level
+  let aAncestors = [...getAncestors(collection, a), a];
+  let bAncestors = [...getAncestors(collection, b), b];
   let firstNonMatchingAncestor = aAncestors.slice(0, bAncestors.length).findIndex((a, i) => a !== bAncestors[i]);
-
   if (firstNonMatchingAncestor !== -1) {
     // Compare the indices of two children within the common ancestor.
     a = aAncestors[firstNonMatchingAncestor];
     b = bAncestors[firstNonMatchingAncestor];
     return a.index - b.index;
+  }
+
+  // If there isn't a non matching ancestor, we might be in a case where one of the nodes is the ancestor of the other.
+  if (aAncestors.findIndex(node => node === b) >= 0) {
+    return 1;
+  } else if (bAncestors.findIndex(node => node === a) >= 0) {
+    return -1;
   }
 
   // 🤷

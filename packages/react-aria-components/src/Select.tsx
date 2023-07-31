@@ -45,9 +45,9 @@ export interface SelectRenderProps {
   isOpen: boolean,
   /**
    * Validation state of the select.
-   * @selector [data-validation-state]
+   * @selector [data-validation-state="valid | invalid"]
    */
-  validationState?: ValidationState,
+  validationState: ValidationState | undefined,
   /**
    * Whether the select is required.
    * @selector [data-required]

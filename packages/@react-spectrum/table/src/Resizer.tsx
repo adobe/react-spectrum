@@ -15,7 +15,7 @@ import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useTableColumnResize} from '@react-aria/table';
-import {useTableContext, useVirtualizerContext} from './TableView';
+import {useTableContext, useVirtualizerContext} from './TableViewBase';
 // @ts-ignore
 import wCursor from 'bundle-text:./cursors/Cur_MoveToLeft_9_9.svg';
 

@@ -16,6 +16,7 @@ import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useConte
 import {filterDOMProps} from '@react-aria/utils';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
+import {InputDOMProps} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {NumberFieldState, useNumberFieldState, ValidationState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
@@ -29,16 +30,16 @@ export interface NumberFieldRenderProps {
   isDisabled: boolean,
   /**
    * Validation state of the number field.
-   * @selector [data-validation-state]
+   * @selector [data-validation-state="valid | invalid"]
    */
-  validationState?: ValidationState,
+  validationState: ValidationState | undefined,
   /**
    * State of the number field.
    */
   state: NumberFieldState
 }
 
-export interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, RenderProps<NumberFieldRenderProps>, SlotProps {}
+export interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, InputDOMProps, RenderProps<NumberFieldRenderProps>, SlotProps {}
 
 export const NumberFieldContext = createContext<ContextValue<NumberFieldProps, HTMLDivElement>>(null);
 
@@ -97,6 +98,7 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
         slot={props.slot}
         data-disabled={props.isDisabled || undefined}
         data-validation-state={props.validationState || undefined} />
+      {props.name && <input type="hidden" name={props.name} value={isNaN(state.numberValue) ? '' : state.numberValue} />}
     </Provider>
   );
 }
