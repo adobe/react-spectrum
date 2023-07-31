@@ -18,6 +18,7 @@ import {
   FocusableProps,
   HelpTextProps,
   InputBase,
+  InputDOMProps,
   LabelableProps,
   Orientation,
   SpectrumHelpTextProps,
@@ -48,14 +49,10 @@ export interface ToggleProps extends InputBase, Validation, FocusableProps {
   /**
    * The value of the input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefvalue).
    */
-  value?: string,
-  /**
-   * The name of the input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
-   */
-  name?: string
+  value?: string
 }
 
-export interface AriaToggleProps extends ToggleProps, FocusableDOMProps, AriaLabelingProps, AriaValidationProps {
+export interface AriaToggleProps extends ToggleProps, FocusableDOMProps, AriaLabelingProps, AriaValidationProps, InputDOMProps {
   /**
    * Identifies the element (or elements) whose contents or presence are controlled by the current element.
    */
@@ -74,12 +71,7 @@ export interface CheckboxProps extends ToggleProps {
 
 export interface AriaCheckboxProps extends CheckboxProps, AriaToggleProps {}
 
-export interface AriaCheckboxGroupProps extends CheckboxGroupProps, DOMProps, AriaLabelingProps, AriaValidationProps {
-  /**
-   * The name of the CheckboxGroup, used when submitting an HTML form.
-   */
-  name?: string
-}
+export interface AriaCheckboxGroupProps extends CheckboxGroupProps, DOMProps, InputDOMProps, AriaLabelingProps, AriaValidationProps {}
 
 export interface AriaCheckboxGroupItemProps extends Omit<AriaCheckboxProps, 'isSelected' | 'defaultSelected'> {
   value: string

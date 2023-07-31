@@ -122,20 +122,25 @@ export interface SpectrumColumnProps<T> extends ColumnProps<T> {
   hideHeader?: boolean
 }
 
-export type RowElement = ReactElement<RowProps>;
+export type RowElement<T> = ReactElement<RowProps<T>>;
 export interface TableBodyProps<T> extends Omit<AsyncLoadable, 'isLoading'> {
   /** The contents of the table body. Supports static items or a function for dynamic rendering. */
-  children: RowElement | RowElement[] | ((item: T) => RowElement),
+  children: RowElement<T> | RowElement<T>[] | ((item: T) => RowElement<T>),
   /** A list of row objects in the table body used when dynamically rendering rows. */
   items?: Iterable<T>,
   /** The current loading state of the table. */
   loadingState?: LoadingState
 }
 
-export interface RowProps {
-  // treeble case? Unsupported props for now
-  // /** A list of child item objects used when dynamically rendering row children. */
-  // childItems?: Iterable<T>,
+export interface RowProps<T> {
+  /**
+   * A list of child item objects used when dynamically rendering row children. Requires the feature flag to be
+   * enabled along with UNSTABLE_allowsExpandableRows, see https://react-spectrum.adobe.com/react-spectrum/TableView.html#expandable-rows.
+   * @version alpha
+   * @private
+   */
+  UNSTABLE_childItems?: Iterable<T>,
+  // TODO: update when async loading is supported for expandable rows
   // /** Whether this row has children, even if not loaded yet. */
   // hasChildItems?: boolean,
   /** Rendered contents of the row or row child items. */

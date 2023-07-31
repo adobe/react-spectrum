@@ -23,8 +23,10 @@
   },
   "dependencies": {
     "@react-stately/collections": "^3.9.0",
+    "@react-stately/flags": "3.0.0-alpha.0",
     "@react-stately/grid": "^3.7.0",
     "@react-stately/selection": "^3.13.2",
+    "@react-stately/utils": "^3.7.0",
     "@react-types/grid": "^3.1.8",
     "@react-types/shared": "^3.18.1",
     "@react-types/table": "^3.7.0",

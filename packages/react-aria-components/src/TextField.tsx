@@ -15,7 +15,8 @@ import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps
 import {filterDOMProps} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
-import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useCallback, useRef, useState} from 'react';
+import {TextAreaContext} from './TextArea';
 import {TextContext} from './Text';
 import {ValidationState} from '@react-types/shared';
 
@@ -27,9 +28,9 @@ export interface TextFieldRenderProps {
   isDisabled: boolean,
   /**
    * Validation state of the text field.
-   * @selector [data-validation-state]
+   * @selector [data-validation-state="valid | invalid"]
    */
-  validationState?: ValidationState
+  validationState: ValidationState | undefined
 }
 
 export interface TextFieldProps extends Omit<AriaTextFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, Omit<DOMProps, 'style' | 'className' | 'children'>, SlotProps, RenderProps<TextFieldRenderProps> {}
@@ -38,12 +39,23 @@ export const TextFieldContext = createContext<ContextValue<TextFieldProps, HTMLD
 
 function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TextFieldContext);
-  let inputRef = useRef<HTMLInputElement>(null);
+  let inputRef = useRef(null);
   let [labelRef, label] = useSlot();
-  let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField({
+  let [inputElementType, setInputElementType] = useState('input');
+  let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField<any>({
     ...props,
+    inputElementType,
     label
   }, inputRef);
+
+  // Intercept setting the input ref so we can determine what kind of element we have.
+  // useTextField uses this to determine what props to include.
+  let inputOrTextAreaRef = useCallback((el) => {
+    inputRef.current = el;
+    if (el) {
+      setInputElementType(el instanceof HTMLTextAreaElement ? 'textarea' : 'input');
+    }
+  }, []);
 
   let renderProps = useRenderProps({
     ...props,
@@ -65,7 +77,8 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
       <Provider
         values={[
           [LabelContext, {...labelProps, ref: labelRef}],
-          [InputContext, {...inputProps, ref: inputRef}],
+          [InputContext, {...inputProps, ref: inputOrTextAreaRef}],
+          [TextAreaContext, {...inputProps, ref: inputOrTextAreaRef}],
           [TextContext, {
             slots: {
               description: descriptionProps,

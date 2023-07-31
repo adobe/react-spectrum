@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, CollectionBase, DOMProps, FocusableProps, HelpTextProps, InputBase, LabelableProps, LoadingState, SingleSelection, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps, TextInputBase, Validation} from '@react-types/shared';
+import {AriaLabelingProps, AsyncLoadable, CollectionBase, DOMProps, FocusableProps, HelpTextProps, InputBase, InputDOMProps, LabelableProps, LoadingState, SingleSelection, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps, TextInputBase, Validation} from '@react-types/shared';
 
 export type MenuTriggerAction = 'focus' | 'input' | 'manual';
 
@@ -38,14 +38,10 @@ export interface ComboBoxProps<T> extends CollectionBase<T>, Omit<SingleSelectio
   * The interaction required to display the ComboBox menu.
   * @default 'input'
   */
-  menuTrigger?: MenuTriggerAction,
-  /**
-   * The name of the input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
-   */
-  name?: string
+  menuTrigger?: MenuTriggerAction
 }
 
-export interface AriaComboBoxProps<T> extends ComboBoxProps<T>, DOMProps, AriaLabelingProps {
+export interface AriaComboBoxProps<T> extends ComboBoxProps<T>, DOMProps, InputDOMProps, AriaLabelingProps {
   /** Whether keyboard navigation is circular. */
   shouldFocusWrap?: boolean
 }
@@ -69,5 +65,11 @@ export interface SpectrumComboBoxProps<T> extends SpectrumTextInputBase, Omit<Ar
    * Whether the menu should automatically flip direction when space is limited.
    * @default true
    */
-  shouldFlip?: boolean
+  shouldFlip?: boolean,
+  /**
+   * Whether the text or key of the selected item is submitted as part of an HTML form.
+   * When `allowsCustomValue` is `true`, this option does not apply and the text is always submitted.
+   * @default 'text'
+   */
+  formValue?: 'text' | 'key'
 }

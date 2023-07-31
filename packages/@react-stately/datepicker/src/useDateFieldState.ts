@@ -236,7 +236,11 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       return;
     }
 
-    if (Object.keys(validSegments).length >= Object.keys(allSegments).length) {
+    if (newValue == null) {
+      setDate(null);
+      setPlaceholderDate(createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone));
+      setValidSegments({});
+    } else if (Object.keys(validSegments).length >= Object.keys(allSegments).length) {
       // The display calendar should not have any effect on the emitted value.
       // Emit dates in the same calendar as the original value, if any, otherwise gregorian.
       newValue = toCalendar(newValue, v?.calendar || new GregorianCalendar());
