@@ -125,8 +125,9 @@ function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
   let heroUrl = `https://${TLD}/${currentPage.image || path.basename(hero)}`;
   let githubLink = pathToPage;
   if (githubLink.startsWith('/tmp/')) {
-    githubLink = githubLink.replace('/tmp/', '');
+    githubLink = githubLink.slice(5);
     githubLink = githubLink.substring(githubLink.indexOf('/') + 1);
+    githubLink = githubLink.replace(/docs/, 'packages');
   }
 
   return (
