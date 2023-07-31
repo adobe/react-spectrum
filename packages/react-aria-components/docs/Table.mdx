@@ -99,6 +99,8 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
   border-spacing: 0;
   min-height: 100px;
   align-self: start;
+  max-width: 100%;
+  word-break: break-word;
 
   &[data-focus-visible] {
     border-color: var(--highlight-background);
@@ -1063,6 +1065,7 @@ import {ResizableTableContainer, ColumnResizer} from 'react-aria-components';
 
   max-width: 400px;
   overflow: auto;
+  position: relative;
   border: 1px solid var(--border-color);
   border-radius: 6px;
   background: var(--background-color);
@@ -1081,6 +1084,7 @@ import {ResizableTableContainer, ColumnResizer} from 'react-aria-components';
     flex: 1;
     font: inherit;
     text-align: start;
+    color: inherit;
 
     &:focus-visible {
       outline: 2px solid slateblue;
