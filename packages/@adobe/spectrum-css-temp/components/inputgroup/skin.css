@@ -279,9 +279,15 @@ governing permissions and limitations under the License.
     .spectrum-InputGroup-input {
       forced-color-adjust: auto;
       --spectrum-textfield-border-color: ButtonText;
+      --spectrum-textfield-background-color-disabled: Canvas;
     }
     .spectrum-FieldButton {
       forced-color-adjust: auto;
+      --spectrum-fieldbutton-background-color: Canvas;
+      --spectrum-fieldbutton-quiet-background-color: Canvas;
+      --spectrum-fieldbutton-background-color-disabled: Canvas;
+      --spectrum-fieldbutton-quiet-background-color-disabled: Canvas;
+      background-clip: unset;
     }
 
     &.is-disabled:not(.spectrum-InputGroup--invalid):not(.spectrum-InputGroup--quiet) .spectrum-FieldButton {
