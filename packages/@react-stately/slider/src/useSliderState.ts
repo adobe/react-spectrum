@@ -231,7 +231,7 @@ export function useSliderState<T extends number | number[]>(props: SliderStateOp
 
     // Round value to multiple of step, clamp value between min and max
     value = snapValueToStep(value, thisMin, thisMax, step);
-    let newValues = replaceIndex(values, index, value);
+    let newValues = replaceIndex(valuesRef.current, index, value);
     setValues(newValues);
   }
 

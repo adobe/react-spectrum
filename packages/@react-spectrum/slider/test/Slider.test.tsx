@@ -166,6 +166,38 @@ describe('Slider', function () {
     expect(slider).toHaveAttribute('aria-valuetext', '55');
   });
 
+  it('supports form name', () => {
+    let {getByRole} = render(<Slider label="Value" value={10} name="cookies" />);
+    let input = getByRole('slider');
+    expect(input).toHaveAttribute('name', 'cookies');
+    expect(input).toHaveValue('10');
+  });
+
+  it('supports form reset', () => {
+    function Test() {
+      let [value, setValue] = React.useState(10);
+      return (
+        <Provider theme={theme}>
+          <form>
+            <Slider label="Value" value={value} onChange={setValue} />
+            <input type="reset" data-testid="reset" />
+          </form>
+        </Provider>
+      );
+    }
+
+    let {getByTestId, getByRole} = render(<Test />);
+    let input = getByRole('slider');
+
+    expect(input).toHaveValue('10');
+    fireEvent.change(input, {target: {value: '55'}});
+    expect(input).toHaveValue('55');
+
+    let button = getByTestId('reset');
+    act(() => userEvent.click(button));
+    expect(input).toHaveValue('10');
+  });
+
   describe('formatOptions', () => {
     it('prefixes the value with a plus sign if needed', function () {
       let {getByRole} = render(

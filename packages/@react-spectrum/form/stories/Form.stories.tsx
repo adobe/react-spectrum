@@ -13,12 +13,14 @@
 import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
+import {CalendarDate} from '@internationalized/date';
 import {chain} from '@react-aria/utils';
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
 import {ComboBox} from '@react-spectrum/combobox';
 import {Content, Header} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {countries, states} from './data';
+import {DateField, DateRangePicker} from '@react-spectrum/datepicker';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '../';
 import {FormTranslatedText} from './../chromatic/FormLanguages.chromatic';
@@ -29,6 +31,7 @@ import {NumberField} from '@react-spectrum/numberfield';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React, {Key, useEffect, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
+import {Slider} from '@react-spectrum/slider';
 import {StatusLight} from '@react-spectrum/statuslight';
 import {Switch} from '@react-spectrum/switch';
 import {TagGroup} from '@react-spectrum/tag';
@@ -458,161 +461,64 @@ function FormWithControls(props: any = {}) {
   let [favoritePet, setFavoritePet] = useState('cats');
   let [favoriteColor, setFavoriteColor] = useState('green' as Key);
   let [howIFeel, setHowIFeel] = useState('I feel good, o I feel so good!');
-  let [firstName2, setFirstName2] = useState('hello');
-  let [isHunter2, setIsHunter2] = useState(true);
-  let [favoritePet2, setFavoritePet2] = useState('cats');
-  let [favoriteColor2, setFavoriteColor2] = useState('green' as Key);
-  let [howIFeel2, setHowIFeel2] = useState('I feel good, o I feel so good!');
-  let [preventDefault, setPreventDefault] = useState(true);
+  let [birthday, setBirthday] = useState(new CalendarDate(1732, 2, 22));
+  let [money, setMoney] = useState(50);
+  let [superSpeed, setSuperSpeed] = useState(true);
 
   return (
-    <Flex>
-      <Checkbox alignSelf="start" isSelected={preventDefault} onChange={setPreventDefault}>Prevent Default onSubmit</Checkbox>
-      <Form
-        onSubmit={e => {
-          action('onSubmit')(e);
-          if (preventDefault) {
-            e.preventDefault();
-          }
-        }}
-        {...props}>
-        <TextField name="first-name" label="First Name controlled" value={firstName} onChange={setFirstName} />
-        <TextField name="last-name" label="Last Name default" defaultValue="world" />
-        <TextField name="street-address" label="Street Address none" />
-        <Picker name="country" label="Country none" items={countries}>
-          {item => <Item key={item.name}>{item.name}</Item>}
-        </Picker>
-        <Checkbox name="is-hunter" isSelected={isHunter} onChange={setIsHunter}>I am a hunter! controlled</Checkbox>
-        <Checkbox name="is-wizard" defaultSelected>I am a wizard! default</Checkbox>
-        <RadioGroup label="Favorite pet controlled" name="favorite-pet-group" value={favoritePet} onChange={setFavoritePet}>
-          <Radio value="dogs">Dogs</Radio>
-          <Radio value="cats">Cats</Radio>
-          <Radio value="dragons">Dragons</Radio>
-        </RadioGroup>
-        <RadioGroup label="Favorite pet none" name="favorite-pet-group2" defaultValue="cats">
-          <Radio value="dogs">Dogs</Radio>
-          <Radio value="cats">Cats</Radio>
-          <Radio value="dragons">Dragons</Radio>
-        </RadioGroup>
-        <Picker name="favorite-color" label="Favorite color controlled" selectedKey={favoriteColor} onSelectionChange={setFavoriteColor}>
-          <Item key="red">Red</Item>
-          <Item key="orange">Orange</Item>
-          <Item key="yellow">Yellow</Item>
-          <Item key="green">Green</Item>
-          <Item key="blue">Blue</Item>
-          <Item key="purple">Purple</Item>
-        </Picker>
-        <TextArea name="comments-controlled" label="Comments" value={howIFeel} onChange={setHowIFeel} />
-        <TextArea name="comments-uncontrolled" label="Comments" defaultValue="hello" />
-        <ComboBox label="Favorite Animal" name="favorite-animal">
-          <Item key="red panda">Red Panda</Item>
-          <Item key="aardvark">Aardvark</Item>
-          <Item key="kangaroo">Kangaroo</Item>
-          <Item key="snake">Snake</Item>
-        </ComboBox>
-        <TagGroup label="Favorite tags">
-          <Item key="1">Cool Tag 1</Item>
-          <Item key="2">Cool Tag 2</Item>
-          <Item key="3">Cool Tag 3</Item>
-          <Item key="4">Cool Tag 4</Item>
-          <Item key="5">Cool Tag 5</Item>
-          <Item key="6">Cool Tag 6</Item>
-        </TagGroup>
-        <ButtonGroup>
-          <Button variant="primary" type="submit">Submit</Button>
-        </ButtonGroup>
-      </Form>
-      <form
-        onSubmit={e => {
-          action('onSubmit')(e);
-          if (preventDefault) {
-            e.preventDefault();
-          }
-        }}
-        {...props}>
-        <Flex direction="column" gap="size-500" marginTop="size-500">
-          <label>
-            First Name controlled
-            <input type="text" value={firstName2} onChange={e => setFirstName2(e.target.value)} />
-          </label>
-          <label>
-            Last Name default
-            <input type="text" defaultValue="world" />
-          </label>
-          <label>
-            Street Address none
-            <input type="text" />
-          </label>
-          <label>
-            Country none
-            <select name="Country">
-              {countries.map(item => <option value={item.name}>{item.name}</option>)}
-            </select>
-          </label>
-          <label>
-            I am a hunter! controlled
-            <input type="checkbox" checked={isHunter2} onChange={e => setIsHunter2(e.target.checked)} />
-          </label>
-          <label>
-            I am a wizard! default
-            <input type="checkbox" defaultChecked />
-          </label>
-          <div style={{display: 'flex', flexDirection: 'column'}}>
-            Favorite Pet controlled
-            <label>
-              Dogs
-              <input type="radio" name="favorit-pet-group3" value="dogs" checked={favoritePet2 === 'dogs'} onChange={e => setFavoritePet2(e.target.value)} />
-            </label>
-            <label>
-              Cats
-              <input type="radio" name="favorit-pet-group3" value="cats" checked={favoritePet2 === 'cats'} onChange={e => setFavoritePet2(e.target.value)} />
-            </label>
-            <label>
-              Dragons
-              <input type="radio" name="favorit-pet-group3" value="dragons" checked={favoritePet2 === 'dragons'} onChange={e => setFavoritePet2(e.target.value)} />
-            </label>
-          </div>
-          <div style={{display: 'flex', flexDirection: 'column'}}>
-            Favorite Pet uncontrolled
-            <label>
-              Dogs
-              <input type="radio" name="favorit-pet-group4" value="dogs" />
-            </label>
-            <label>
-              Cats
-              <input type="radio" name="favorit-pet-group4" value="cats" defaultChecked />
-            </label>
-            <label>
-              Dragons
-              <input type="radio" name="favorit-pet-group4" value="dragons" />
-            </label>
-          </div>
-          <label>
-            Favorite Color controlled
-            <select onChange={e => setFavoriteColor2(e.target.value)}>
-              <option value="red" selected={favoriteColor2 === 'red'}>Red</option>
-              <option value="orange" selected={favoriteColor2 === 'orange'}>Orange</option>
-              <option value="yellow" selected={favoriteColor2 === 'yellow'}>Yellow</option>
-              <option value="green" selected={favoriteColor2 === 'green'}>Green</option>
-              <option value="blue" selected={favoriteColor2 === 'blue'}>Blue</option>
-              <option value="purple" selected={favoriteColor2 === 'purple'}>Purple</option>
-            </select>
-          </label>
-          <label>
-            Comments controlled
-            <textarea value={howIFeel2} onChange={e => setHowIFeel2(e.target.value)} />
-          </label>
-          <label>
-            Comments default
-            <textarea defaultValue="hello" />
-          </label>
-          <ButtonGroup>
-            <Button variant="secondary" type="reset">Reset</Button>
-            <Button variant="primary" type="submit">Submit</Button>
-          </ButtonGroup>
-        </Flex>
-      </form>
-    </Flex>
+    <Form
+      onSubmit={e => {
+        action('onSubmit')(Object.fromEntries(new FormData(e.target as HTMLFormElement).entries()));
+        e.preventDefault();
+      }}
+      {...props}>
+      <TextField name="first-name" label="First Name (controlled)" value={firstName} onChange={setFirstName} />
+      <TextField name="last-name" label="Last Name (uncontrolled)" defaultValue="world" />
+      <TextField name="street-address" label="Street Address (uncontrolled)" />
+      <Picker name="country" label="Country (uncontrolled)" items={countries}>
+        {item => <Item key={item.name}>{item.name}</Item>}
+      </Picker>
+      <NumberField name="age" label="Age (uncontrolled)" />
+      <NumberField name="money" label="Money (controlled)" formatOptions={{style: 'currency', currency: 'USD'}} value={money} onChange={setMoney} />
+      <Picker name="favorite-color" label="Favorite color (controlled)" selectedKey={favoriteColor} onSelectionChange={setFavoriteColor}>
+        <Item key="red">Red</Item>
+        <Item key="orange">Orange</Item>
+        <Item key="yellow">Yellow</Item>
+        <Item key="green">Green</Item>
+        <Item key="blue">Blue</Item>
+        <Item key="purple">Purple</Item>
+      </Picker>
+      <Checkbox name="is-hunter" isSelected={isHunter} onChange={setIsHunter}>I am a hunter! (controlled)</Checkbox>
+      <Checkbox name="is-wizard" defaultSelected>I am a wizard! (uncontrolled)</Checkbox>
+      <Switch name="airplane-mode">Airplane mode (uncontrolled)</Switch>
+      <Switch name="super-speed" isSelected={superSpeed} onChange={setSuperSpeed}>Super speed (controlled)</Switch>
+      <RadioGroup label="Favorite pet (controlled)" name="favorite-pet-group" value={favoritePet} onChange={setFavoritePet}>
+        <Radio value="dogs">Dogs</Radio>
+        <Radio value="cats">Cats</Radio>
+        <Radio value="dragons">Dragons</Radio>
+      </RadioGroup>
+      <RadioGroup label="Favorite pet (uncontrolled)" name="favorite-pet-group2" defaultValue="cats">
+        <Radio value="dogs">Dogs</Radio>
+        <Radio value="cats">Cats</Radio>
+        <Radio value="dragons">Dragons</Radio>
+      </RadioGroup>
+      <TextArea name="comments-controlled" label="Comments (controlled)" value={howIFeel} onChange={setHowIFeel} />
+      <TextArea name="comments-uncontrolled" label="Comments (uncontrolled)" defaultValue="hello" />
+      <ComboBox label="Favorite Animal (uncontrolled)" name="favorite-animal" formValue="key">
+        <Item key="red panda">Red Panda</Item>
+        <Item key="aardvark">Aardvark</Item>
+        <Item key="kangaroo">Kangaroo</Item>
+        <Item key="snake">Snake</Item>
+      </ComboBox>
+      <DateField name="date-uncontrolled" label="Birth date (uncontrolled)" />
+      <DateField name="date-controlled" label="Birth date (controlled)" value={birthday} onChange={setBirthday} />
+      <DateRangePicker startName="trip-start" endName="trip-end" label="Trip dates (uncontrolled)" />
+      <Slider name="cookies" label="Cookies (uncontrolled)" defaultValue={50} />
+      <ButtonGroup>
+        <Button variant="primary" type="submit">Submit</Button>
+        <Button variant="secondary" type="reset">Reset</Button>
+      </ButtonGroup>
+    </Form>
   );
 }
 
