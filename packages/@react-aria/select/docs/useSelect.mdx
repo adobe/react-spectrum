@@ -520,3 +520,9 @@ content that is passed into the select.
 In right-to-left languages, the select should be mirrored. The arrow should be on the left,
 and the selected value should be on the right. In addition, the content of list options should
 flip. Ensure that your CSS accounts for this.
+
+### False positive on `<HiddenSelect />` in accessibility tools
+
+When using &lt;<TypeLink links={docs.links} type={docs.exports.HiddenSelect} />&gt; some accessibility tools such as AXE or pa11y might give a false positive.
+The data attribute `data-rsp-a11y-ignore` is included on the hidden select element and can be used to ignore the false positives in these tools.
+
