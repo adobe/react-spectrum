@@ -16,7 +16,8 @@ import packageData from '@react-spectrum/inlinealert/package.json';
 
 ```jsx import
 import {InlineAlert} from '@react-spectrum/inlinealert';
-import {Header, Content} from '@adobe/react-spectrum';
+import {Content} from '@adobe/react-spectrum';
+import {Heading} from '@react-spectrum/text';
 ```
 
 ---
@@ -39,7 +40,7 @@ keywords: [inline alert, alert]
 
 ```tsx example
 <InlineAlert>
-  <Header>Payment Information</Header>
+  <Heading>Payment Information</Heading>
   <Content>Enter your billing address, shipping address, and payment method to complete your purchase.</Content>
 </InlineAlert>
 ```
@@ -50,7 +51,7 @@ Inline alerts contain a title and body. They also include an icon for non-neutra
 
 ```tsx example
 <InlineAlert variant="positive">
-  <Header>Payment Information</Header>
+  <Heading>Payment Information</Heading>
   <Content>Enter your billing address, shipping address, and payment method to complete your purchase.</Content>
 </InlineAlert>
 ```
@@ -80,7 +81,7 @@ The default variant is neutral, and should be used when the message is neutral i
 
 ```tsx example
 <InlineAlert variant="info">
-  <Header>Accepted Payment Methods</Header>
+  <Heading>Accepted Payment Methods</Heading>
   <Content>Only major credit cards are accepted for payment. Direct debit is currently unavailable.</Content>
 </InlineAlert>
 ```
@@ -89,7 +90,7 @@ The default variant is neutral, and should be used when the message is neutral i
 
 ```tsx example
 <InlineAlert variant="positive">
-  <Header>Purchase completed</Header>
+  <Heading>Purchase completed</Heading>
   <Content>You'll get a confirmation email with your order details shortly.</Content>
 </InlineAlert>
 ```
@@ -98,7 +99,7 @@ The default variant is neutral, and should be used when the message is neutral i
 
 ```tsx example
 <InlineAlert variant="notice">
-  <Header>Update payment information</Header>
+  <Heading>Update payment information</Heading>
   <Content>The saved credit card for your account has expired. Update your payment information to complete the purchase.</Content>
 </InlineAlert>
 ```
@@ -107,7 +108,7 @@ The default variant is neutral, and should be used when the message is neutral i
 
 ```tsx example
 <InlineAlert variant="negative">
-  <Header>Unable to process payment</Header>
+  <Heading>Unable to process payment</Heading>
   <Content>There was an error processing your payment. Please check that your credit card information is correct, then try again.</Content>
 </InlineAlert>
 ```
