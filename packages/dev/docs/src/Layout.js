@@ -123,6 +123,12 @@ function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
   let title = currentPage.title + (!INDEX_RE.test(currentPage.name) || isBlog ? ` – ${pageSection}` : '');
   let hero = (parts.length > 1 ? HERO[parts[0]] : '') || heroImageHome;
   let heroUrl = `https://${TLD}/${currentPage.image || path.basename(hero)}`;
+  let githubLink = pathToPage;
+  if (githubLink.startsWith('/tmp/')) {
+    githubLink = githubLink.slice(5);
+    githubLink = githubLink.substring(githubLink.indexOf('/') + 1);
+    githubLink = githubLink.replace(/docs/, 'packages');
+  }
 
   return (
     <html
@@ -198,7 +204,7 @@ function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
         <meta property="og:image" content={heroUrl} />
         <meta property="og:description" content={description} />
         <meta property="og:locale" content="en_US" />
-        <meta data-github-src={pathToPage} />
+        <meta data-github-src={githubLink} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{__html: JSON.stringify(
