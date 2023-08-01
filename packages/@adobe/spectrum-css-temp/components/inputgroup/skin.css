@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-InputGroup {
+  --spectrum-inputgroup-border-color-focus: var(--spectrum-alias-input-border-color-key-focus);
   background: var(--spectrum-textfield-background-color);
 
   .spectrum-FieldButton {
@@ -78,13 +79,13 @@ governing permissions and limitations under the License.
 .spectrum-InputGroup.is-focused {
   .spectrum-FieldButton:before,
   .spectrum-InputGroup-input {
-    border-color: var(--spectrum-alias-input-border-color-key-focus);
+    border-color: var(--spectrum-inputgroup-border-color-focus);
   }
 
   &.spectrum-InputGroup--invalid {
     .spectrum-FieldButton:before,
     .spectrum-InputGroup-input {
-      border-color: var(--spectrum-alias-input-border-color-key-focus);
+      border-color: var(--spectrum-inputgroup-border-color-focus);
     }
   }
 }
@@ -272,6 +273,7 @@ governing permissions and limitations under the License.
     --spectrum-textfield-quiet-border-color-hover: Highlight;
     --spectrum-textfield-quiet-border-color-key-focus: Highlight;
     --spectrum-textfield-text-color-disabled: GrayText;
+    --spectrum-inputgroup-border-color-focus: Highlight;
 
     forced-color-adjust: none;
     .spectrum-InputGroup-input {
