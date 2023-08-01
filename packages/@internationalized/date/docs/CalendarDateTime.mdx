@@ -239,7 +239,7 @@ Use the <TypeLink links={docs.links} type={docs.exports.toTime} /> function to c
 import {toTime} from '@internationalized/date';
 
 let date = new CalendarDateTime(2022, 2, 3, 9, 45);
-toTime(date); // 09:45
+toTime(date); // 09:45:00
 ```
 
 ### To a ZonedDateTime
@@ -294,7 +294,7 @@ Some time values during daylight saving transitions may be _ambiguous_. For exam
 // A "spring forward" transition
 let date = new CalendarDateTime(2020, 3, 8, 2);
 date.toDate('America/Los_Angeles', 'earlier');
-// => Sun Mar 08 2020 03:00:00 GMT-0800 (Pacific Daylight Time)
+// => Sun Mar 08 2020 01:00:00 GMT-0800 (Pacific Daylight Time)
 ```
 
 ## Queries
@@ -377,7 +377,7 @@ import {getDayOfWeek} from '@internationalized/date';
 let date = new CalendarDateTime(2022, 2, 6, 8, 30); // a Sunday
 
 getDayOfWeek(date, 'en-US'); // 0
-getDayOfWeek(locale, 'fr-FR'); // 6
+getDayOfWeek(date, 'fr-FR'); // 6
 ```
 
 ### Weekdays and weekends
