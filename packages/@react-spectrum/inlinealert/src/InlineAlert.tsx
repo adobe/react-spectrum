@@ -44,7 +44,7 @@ function InlineAlert(props: SpectrumInlineAlertProps, ref: DOMRef<HTMLDivElement
   let domRef = useDOMRef(ref);
 
   let slots = {
-    header: {UNSAFE_className: styles['spectrum-InLineAlert-header']},
+    heading: {UNSAFE_className: styles['spectrum-InLineAlert-heading']},
     content: {UNSAFE_className: styles['spectrum-InLineAlert-content']}
   };
 
