@@ -38,7 +38,6 @@ function pointerEvent(type, opts) {
 }
 
 describe('ListView', function () {
-  let scrollHeight, getComputedStyle;
   let realGetComputedStyle = window.getComputedStyle;
   let onSelectionChange = jest.fn();
   let onAction = jest.fn();
@@ -79,8 +78,7 @@ describe('ListView', function () {
   });
 
   afterAll(function () {
-    getComputedStyle.mockReset();
-    scrollHeight.mockReset();
+    jest.restoreAllMocks();
   });
 
   let render = (children, locale = 'en-US', scale = 'medium') => {

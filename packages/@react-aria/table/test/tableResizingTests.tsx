@@ -43,12 +43,16 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
   describe('Resizing', () => {
     installPointerEvent();
     let onResize;
-    let getComputedStyle;
     let realGetComputedStyle = window.getComputedStyle;
+    let clientWidth;
 
     beforeEach(function () {
-      getComputedStyle = jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
-        if (element.attributes.getNamedItem('data-testid')?.value === 'scrollview') {
+      // For aria Table implementations that need to mock
+      clientWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 900);
+      jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+      // For TableView which needs to mock getComputedStyle in scrollview
+      jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
+        if (element.attributes.getNamedItem('data-rsp-testid')?.value === 'scrollview') {
           const sty = realGetComputedStyle(element);
           sty.width = '900px';
           sty.height = '1000px';
@@ -65,9 +69,12 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
       act(() => {
         jest.runAllTimers();
       });
-      getComputedStyle.mockReset();
-      onResize.mockReset();
+      jest.clearAllMocks();
       onResize = null;
+    });
+
+    afterAll(function () {
+      jest.restoreAllMocks();
     });
 
     describe.each`

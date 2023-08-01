@@ -143,7 +143,6 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     if (state.width !== w || state.height !== h) {
       state.width = w;
       state.height = h;
-
       onVisibleRectChange(new Rect(state.scrollLeft, state.scrollTop, w, h));
     }
   }, [onVisibleRectChange, ref, state, sizeToFit, contentSize]);

@@ -137,10 +137,9 @@ function pointerEvent(type, opts) {
 }
 
 export let tableTests = () => {
-  let offsetHeight, getComputedStyle;
   let realGetComputedStyle = window.getComputedStyle;
   beforeAll(function () {
-    getComputedStyle = jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
+    jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
       if (element.attributes.getNamedItem('data-rsp-testid')?.value === 'scrollview') {
         const sty = realGetComputedStyle(element);
         sty.width = '1000px';
@@ -154,7 +153,7 @@ export let tableTests = () => {
   });
 
   afterAll(function () {
-    getComputedStyle.mockReset();
+    jest.restoreAllMocks();
   });
 
   afterEach(() => {
@@ -1439,6 +1438,7 @@ export let tableTests = () => {
       });
 
       describe('type ahead with dialog triggers', function () {
+        let offsetHeight;
         beforeEach(function () {
           offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
             .mockImplementationOnce(() => 20)

@@ -132,9 +132,18 @@ function DynamicCardView(props) {
 }
 
 describe('CardView', function () {
+  let realGetComputedStyle = window.getComputedStyle;
   beforeAll(function () {
-    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => mockWidth);
-    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => mockHeight);
+    jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
+      if (element.attributes.getNamedItem('data-rsp-testid')?.value === 'scrollview') {
+        const sty = realGetComputedStyle(element);
+        sty.width = `${mockWidth}px`;
+        sty.height = `${mockHeight}px`;
+        return sty;
+      } else {
+        return realGetComputedStyle(element);
+      }
+    });
     jest.useFakeTimers();
   });
 

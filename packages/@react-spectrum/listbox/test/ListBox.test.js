@@ -65,13 +65,11 @@ function renderComponent(props) {
 }
 
 describe('ListBox', function () {
-  let getComputedStyle, scrollHeight;
   let realGetComputedStyle = window.getComputedStyle;
-
   let onSelectionChange = jest.fn();
 
   beforeAll(function () {
-    getComputedStyle = jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
+    jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
       if (element.attributes.getNamedItem('data-rsp-testid')?.value === 'scrollview') {
         const sty = realGetComputedStyle(element);
         sty.width = '1000px';
@@ -81,7 +79,7 @@ describe('ListBox', function () {
         return realGetComputedStyle(element);
       }
     });
-    scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 48);
+    jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 48);
     jest.useFakeTimers();
   });
 
@@ -90,8 +88,7 @@ describe('ListBox', function () {
   });
 
   afterAll(function () {
-    getComputedStyle.mockReset();
-    scrollHeight.mockReset();
+    jest.restoreAllMocks();
   });
 
   it('renders properly', function () {
@@ -829,7 +826,7 @@ describe('ListBox', function () {
     it('should fire onLoadMore when scrolling near the bottom', function () {
       // Mock grid height to match maxHeight prop
       let maxHeight = 200;
-      getComputedStyle = jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
+      jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
         if (element.attributes.getNamedItem('data-rsp-testid')?.value === 'scrollview') {
           const sty = realGetComputedStyle(element);
           sty.width = '1000px';
@@ -881,7 +878,7 @@ describe('ListBox', function () {
     it('should fire onLoadMore if there aren\'t enough items to fill the ListBox ', async function () {
       // Mock grid height to match maxHeight prop
       let maxHeight = 300;
-      getComputedStyle = jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
+      jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
         if (element.attributes.getNamedItem('data-rsp-testid')?.value === 'scrollview') {
           const sty = realGetComputedStyle(element);
           sty.width = '1000px';

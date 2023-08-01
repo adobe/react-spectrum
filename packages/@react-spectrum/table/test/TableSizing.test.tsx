@@ -78,11 +78,10 @@ let rerender = (tree, children, scale: Scale = 'medium') => {
   act(() => {jest.runAllTimers();});
   return newTree;
 };
+let realGetComputedStyle = window.getComputedStyle;
 describe('TableViewSizing', function () {
-  let getComputedStyle;
-  let realGetComputedStyle = window.getComputedStyle;
   beforeAll(function () {
-    getComputedStyle = jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
+    jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
       if (element.attributes.getNamedItem('data-rsp-testid')?.value === 'scrollview') {
         const sty = realGetComputedStyle(element);
         sty.width = '1000px';
@@ -96,7 +95,7 @@ describe('TableViewSizing', function () {
   });
 
   afterAll(function () {
-    getComputedStyle.mockReset();
+    jest.restoreAllMocks();
   });
 
   afterEach(() => {
@@ -1664,9 +1663,17 @@ function resizeCol(tree, col, delta) {
   act(() => {jest.runAllTimers();});
 }
 
-
-function resizeTable(clientWidth, newValue) {
-  clientWidth.mockImplementation(() => newValue);
+function resizeTable(_, width) {
+  jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
+    if (element.attributes.getNamedItem('data-rsp-testid')?.value === 'scrollview') {
+      const sty = realGetComputedStyle(element);
+      sty.width = `${width}px`;
+      sty.height = '1000px';
+      return sty;
+    } else {
+      return realGetComputedStyle(element);
+    }
+  });
   fireEvent(window, new Event('resize'));
   act(() => {jest.runAllTimers();});
 }

@@ -28,11 +28,10 @@ import {Virtualizer} from '../../../@react-stately/virtualizer/src/Virtualizer';
 
 describe('Picker', function () {
   let onSelectionChange = jest.fn();
-  let getComputedStyle;
   let realGetComputedStyle = window.getComputedStyle;
 
   beforeAll(function () {
-    getComputedStyle = jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
+    jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
       if (element.attributes.getNamedItem('data-rsp-testid')?.value === 'scrollview') {
         const sty = realGetComputedStyle(element);
         sty.width = '1000px';
@@ -48,7 +47,7 @@ describe('Picker', function () {
   });
 
   afterAll(function () {
-    getComputedStyle.mockReset();
+    jest.restoreAllMocks();
   });
 
   afterEach(() => {

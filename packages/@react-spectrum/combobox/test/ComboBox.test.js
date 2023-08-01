@@ -243,9 +243,18 @@ function testComboBoxOpen(combobox, button, listbox, focusedItemIndex) {
 }
 
 describe('ComboBox', function () {
+  let realGetComputedStyle = window.getComputedStyle;
   beforeAll(function () {
-    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
-    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+    jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
+      if (element.attributes.getNamedItem('data-rsp-testid')?.value === 'scrollview') {
+        const sty = realGetComputedStyle(element);
+        sty.width = '1000px';
+        sty.height = '1000px';
+        return sty;
+      } else {
+        return realGetComputedStyle(element);
+      }
+    });
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
     jest.useFakeTimers();
@@ -2052,25 +2061,23 @@ describe('ComboBox', function () {
   });
 
   describe('async', function () {
-    let clientHeightSpy;
     let scrollHeightSpy;
     beforeEach(() => {
-      // clientHeight is needed for ScrollView's updateSize()
-      clientHeightSpy = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementationOnce(() => 0).mockImplementation(function () {
-        if (this.getAttribute('role') === 'listbox') {
-          return 100;
+      jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
+        if (element.attributes.getNamedItem('data-rsp-testid')?.value === 'scrollview') {
+          const sty = realGetComputedStyle(element);
+          sty.width = '1000px';
+          sty.height = '100px';
+          return sty;
+        } else {
+          return realGetComputedStyle(element);
         }
-
-        return 40;
       });
-      // scrollHeight is for useVirutalizerItem to mock its getSize()
+
       scrollHeightSpy = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 32);
     });
     afterEach(() => {
-      clientHeightSpy.mockRestore();
       scrollHeightSpy.mockRestore();
-      // This returns this to the value used by all the other tests
-      jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     });
     it('onLoadMore is called on initial open', async () => {
       let {getByRole} = render(
@@ -2169,8 +2176,25 @@ describe('ComboBox', function () {
       expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
       expect(onLoadMore).toHaveBeenCalledTimes(1);
 
-      clientHeightSpy.mockRestore();
-      clientHeightSpy = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementationOnce(() => 0).mockImplementation(() => 40);
+      jest.spyOn(window, 'getComputedStyle').mockImplementationOnce((element) => {
+        if (element.attributes.getNamedItem('data-rsp-testid')?.value === 'scrollview') {
+          const sty = realGetComputedStyle(element);
+          sty.width = '1000px';
+          sty.height = '0px';
+          return sty;
+        } else {
+          return realGetComputedStyle(element);
+        }
+      }).mockImplementation((element) => {
+        if (element.attributes.getNamedItem('data-rsp-testid')?.value === 'scrollview') {
+          const sty = realGetComputedStyle(element);
+          sty.width = '1000px';
+          sty.height = '40px';
+          return sty;
+        } else {
+          return realGetComputedStyle(element);
+        }
+      });
       // reopen menu
       triggerPress(button);
       await act(async () => {
@@ -2179,7 +2203,17 @@ describe('ComboBox', function () {
       });
       listbox = getByRole('listbox');
       expect(listbox).toBeVisible();
-      jest.spyOn(listbox, 'clientHeight', 'get').mockImplementation(() => 100);
+      jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
+        if (element.attributes.getNamedItem('data-rsp-testid')?.value === 'scrollview') {
+          const sty = realGetComputedStyle(element);
+          sty.width = '1000px';
+          sty.height = '100px';
+          return sty;
+        } else {
+          return realGetComputedStyle(element);
+        }
+      });
+
       // update size, virtualizer raf kicks in
       act(() => {jest.advanceTimersToNextTimer();});
       // onLoadMore queued by previous timer, run it now
