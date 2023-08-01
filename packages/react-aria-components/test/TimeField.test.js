@@ -103,4 +103,17 @@ describe('TimeField', () => {
     let group = getByRole('group');
     expect(group).toHaveAttribute('data-validation-state', 'invalid');
   });
+
+  it('should support form value', () => {
+    render(
+      <TimeField name="time" value={new Time(8, 30)}>
+        <Label>Time</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </TimeField>
+    );
+    let input = document.querySelector('input[name=time]');
+    expect(input).toHaveValue('08:30:00');
+  });
 });

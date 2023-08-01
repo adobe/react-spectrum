@@ -20,7 +20,7 @@ import {
   RefObject
 } from 'react';
 import {DOMAttributes} from '@react-types/shared';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useFormReset} from '@react-aria/utils';
 import {useField} from '@react-aria/label';
 import {useFocusable} from '@react-aria/focus';
 
@@ -112,6 +112,8 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     isReadOnly = false,
     validationState,
     type = 'text',
+    value,
+    defaultValue,
     onChange = () => {}
   }: AriaTextFieldOptions<TextFieldIntrinsicElements> = props;
   let {focusableProps} = useFocusable(props, ref);
@@ -122,6 +124,8 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     type,
     pattern: props.pattern
   };
+
+  useFormReset(ref, value ?? defaultValue ?? '', onChange);
 
   return {
     labelProps,
