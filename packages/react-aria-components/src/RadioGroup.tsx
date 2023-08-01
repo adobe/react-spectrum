@@ -19,7 +19,7 @@ import React, {createContext, ForwardedRef, forwardRef, useState} from 'react';
 import {TextContext} from './Text';
 
 export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<RadioGroupRenderProps>, SlotProps {}
-export interface RadioProps extends Omit<AriaRadioProps, 'children'>, RenderProps<RadioRenderProps> {}
+export interface RadioProps extends Omit<AriaRadioProps, 'children'>, RenderProps<RadioRenderProps>, SlotProps {}
 
 export interface RadioGroupRenderProps {
   /**
@@ -44,19 +44,9 @@ export interface RadioGroupRenderProps {
   isRequired: boolean,
   /**
    * The validation state of the radio group.
-   * @selector [aria-invalid]
+   * @selector [data-validation-state="valid | invalid"]
    */
   validationState: ValidationState | null,
-  /**
-   * Whether an element within the radio group is focused, either via a mouse or keyboard.
-   * @selector :focus-within
-   */
-  isFocusWithin: boolean,
-  /**
-   * Whether an element within the radio group is keyboard focused.
-   * @selector [data-focus-visible]
-   */
-  isFocusVisible: boolean,
   /**
    * State of the radio group.
    */
@@ -112,13 +102,13 @@ export interface RadioRenderProps {
 }
 
 export const RadioGroupContext = createContext<ContextValue<RadioGroupProps, HTMLDivElement>>(null);
+export const RadioContext = createContext<ContextValue<Partial<RadioProps>, HTMLInputElement>>(null);
 let InternalRadioContext = createContext<RadioGroupState | null>(null);
 
 function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, RadioGroupContext);
   let state = useRadioGroupState(props);
   let [labelRef, label] = useSlot();
-  let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
   let {radioGroupProps, labelProps, descriptionProps, errorMessageProps} = useRadioGroup({
     ...props,
     label
@@ -132,8 +122,6 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
       isReadOnly: state.isReadOnly,
       isRequired: state.isRequired,
       validationState: state.validationState,
-      isFocusWithin: isFocused,
-      isFocusVisible,
       state
     },
     defaultClassName: 'react-aria-RadioGroup'
@@ -141,15 +129,15 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
 
   return (
     <div
-      {...focusProps}
       {...radioGroupProps}
       {...renderProps}
       ref={ref}
-      slot={props.slot}>
+      slot={props.slot}
+      data-validation-state={state.validationState || undefined}>
       <Provider
         values={[
           [InternalRadioContext, state],
-          [LabelContext, {...labelProps, ref: labelRef}],
+          [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
           [TextContext, {
             slots: {
               description: descriptionProps,
@@ -164,6 +152,7 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
 }
 
 function Radio(props: RadioProps, ref: ForwardedRef<HTMLInputElement>) {
+  [props, ref] = useContextProps(props, ref, RadioContext);
   let state = React.useContext(InternalRadioContext)!;
   let domRef = useObjectRef(ref);
   let {inputProps, isSelected, isDisabled, isPressed: isPressedKeyboard} = useRadio({

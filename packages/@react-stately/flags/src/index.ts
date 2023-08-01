@@ -10,8 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-export let tableNestedRows = false;
+let _tableNestedRows = false;
 
 export function enableTableNestedRows() {
-  tableNestedRows = true;
+  _tableNestedRows = true;
+}
+
+export function tableNestedRows() {
+  return _tableNestedRows;
 }

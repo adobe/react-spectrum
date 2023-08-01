@@ -543,7 +543,7 @@ function Example() {
   return (
     <>
       <DateRangePicker label="Date range" value={range} onChange={setRange} />
-      <p>Selected date: {formatter.formatRange(range.start.toDate(getLocalTimeZone()), range.end.toDate(getLocalTimeZone()))}</p>
+      <p>Selected date: {range ? formatter.formatRange(range.start.toDate(getLocalTimeZone()), range.end.toDate(getLocalTimeZone())) : '--'}</p>
     </>
   );
 }

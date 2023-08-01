@@ -9,9 +9,9 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaComboBoxProps, useComboBox, useFilter, useFocusRing} from 'react-aria';
+import {AriaComboBoxProps, useComboBox, useFilter} from 'react-aria';
 import {ButtonContext} from './Button';
-import {ComboBoxState, useComboBoxState} from 'react-stately';
+import {ComboBoxState, useComboBoxState, ValidationState} from 'react-stately';
 import {ContextValue, forwardRefType, Provider, RenderProps, slotCallbackSymbol, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {InputContext} from './Input';
@@ -24,29 +24,40 @@ import {useCollection} from './Collection';
 
 export interface ComboBoxRenderProps {
   /**
-   * Whether the combobox is focused, either via a mouse or keyboard.
-   * @selector [data-focused]
-   */
-  isFocused: boolean,
-  /**
-   * Whether the combobox is keyboard focused.
-   * @selector [data-focus-visible]
-   */
-  isFocusVisible: boolean,
-  /**
    * Whether the combobox is currently open.
    * @selector [data-open]
    */
   isOpen: boolean,
+  /**
+   * Whether the combobox is disabled.
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean,
+  /**
+   * Validation state of the combobox.
+   * @selector [data-validation-state="valid | invalid"]
+   */
+  validationState: ValidationState | undefined,
+  /**
+   * Whether the combobox is required.
+   * @selector [data-required]
+   */
+  isRequired: boolean,
   /**
    * State of the combobox.
    */
   state: Omit<ComboBoxState<unknown>, 'children' | 'setOpen' | 'toggle' | 'open' | 'close' | 'selectionManager' | 'setSelectedKey' | 'setFocused' | 'collection' | 'commit' | 'revert'>
 }
 
-export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children' | 'placeholder' | 'name' | 'label' | 'description' | 'errorMessage'>, RenderProps<ComboBoxRenderProps>, SlotProps {
+export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children' | 'placeholder' | 'label' | 'description' | 'errorMessage'>, RenderProps<ComboBoxRenderProps>, SlotProps {
   /** The filter function used to determine if a option should be included in the combo box list. */
-  defaultFilter?: (textValue: string, inputValue: string) => boolean
+  defaultFilter?: (textValue: string, inputValue: string) => boolean,
+  /**
+   * Whether the text or key of the selected item is submitted as part of an HTML form.
+   * When `allowsCustomValue` is `true`, this option does not apply and the text is always submitted.
+   * @default 'key'
+   */
+  formValue?: 'text' | 'key'
 }
 
 export const ComboBoxContext = createContext<ContextValue<ComboBoxProps<any>, HTMLDivElement>>(null);
@@ -54,6 +65,14 @@ export const ComboBoxContext = createContext<ContextValue<ComboBoxProps<any>, HT
 function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ComboBoxContext);
   let [propsFromListBox, setListBoxProps] = useState<ListBoxProps<T>>({children: []});
+  let {
+    name,
+    formValue = 'key',
+    allowsCustomValue
+  } = props;
+  if (allowsCustomValue) {
+    formValue = 'text';
+  }
 
   let {contains} = useFilter({sensitivity: 'base'});
   let {portal, collection} = useCollection({
@@ -69,13 +88,12 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
     collection
   });
 
-  let {isFocusVisible, focusProps} = useFocusRing({within: true});
-
   // Only expose a subset of state to renderProps function to avoid infinite render loop
   let renderPropsState = useMemo(() => ({
     isOpen: state.isOpen,
-    isFocused: state.isFocused,
-    isFocusVisible,
+    isDisabled: props.isDisabled || false,
+    validationState: props.validationState,
+    isRequired: props.isRequired || false,
     state: {
       focusStrategy: state.focusStrategy,
       isOpen: state.isOpen,
@@ -86,7 +104,7 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
       inputValue: state.inputValue,
       setInputValue: state.setInputValue
     }
-  }), [state.isOpen, state.isFocused, state.focusStrategy, state.selectedKey, state.disabledKeys, state.selectedItem, state.inputValue, state.setInputValue, isFocusVisible]);
+  }), [state.isOpen, state.isFocused, state.focusStrategy, state.selectedKey, state.disabledKeys, state.selectedItem, state.inputValue, state.setInputValue, props.isDisabled, props.validationState, props.isRequired]);
   let buttonRef = useRef<HTMLButtonElement>(null);
   let inputRef = useRef<HTMLInputElement>(null);
   let listBoxRef = useRef<HTMLDivElement>(null);
@@ -105,7 +123,8 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
     inputRef,
     buttonRef,
     listBoxRef,
-    popoverRef
+    popoverRef,
+    name: formValue === 'text' ? name : undefined
   },
   state);
 
@@ -161,13 +180,15 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
       <div
         {...DOMProps}
         {...renderProps}
-        {...focusProps}
         ref={ref}
         slot={props.slot}
         data-focused={state.isFocused || undefined}
-        data-focus-visible={isFocusVisible || undefined}
-        data-open={state.isOpen || undefined} />
+        data-open={state.isOpen || undefined}
+        data-disabled={props.isDisabled || undefined}
+        data-validation-state={props.validationState || undefined}
+        data-required={props.isRequired || undefined} />
       {portal}
+      {name && formValue === 'key' && <input type="hidden" name={name} value={state.selectedKey} />}
     </Provider>
   );
 }
