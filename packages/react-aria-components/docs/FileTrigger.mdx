@@ -110,15 +110,15 @@ import {Button} from 'react-aria-components';
 
 ## Features
 
-Access to a computer’s file system can be created in HTML with the `<input>` element with a file `type` attribute. `FileTrigger` sets up the configuration between the input element and pressable child for a customizable file upload. 
+Access to a computer’s file system can be created in HTML using an `<input>` with a file `type` attribute. However, file input's on their own are not very useful since they only allow users to select files from their devices. As a result, file inputs are commonly used inside a `<form>` alongside  a `<button>` to submit the form. `FileTrigger` simplifies this by setting up the input element's configuration with reference to a pressable component, such as a button, for a customizable file upload. 
 
-* **Flexible** – Works with any pressable component, meaning that it is compatible with both React Aria Components and React Spectrum Components.
+* **Customizable** – Works with any pressable component meaning that it is compatible with pressable React Aria Components and React Spectrum Components.
 
 ## Anatomy
 
-A `FileTrigger` wraps around an input element and a pressable child, usually a link or button, that allows the user to upload files. The input element is not displayed and has no effect on the layout. 
+A `FileTrigger` wraps around an input element and a pressable child, usually a button or link, that allows the user to upload files. The input element is not displayed and has no effect on the layout. 
 
-If a visual label is not provided (e.g. an icon only button/link, or image only link), then an `aria-label` or `aria-labelledby` prop must be passed to identify the link to assistive technology.
+If a visual label is not provided on the pressable child, then an `aria-label` or `aria-labelledby` prop must be passed to identify the link to assistive technology.
 
 ### Composed Components
 A `FileTrigger` can use the following components, which may also be used standalone or reused in other components.
