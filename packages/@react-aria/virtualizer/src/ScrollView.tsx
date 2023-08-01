@@ -170,7 +170,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
   }
 
   return (
-    <div {...otherProps} style={style} ref={ref} onScroll={onScroll}>
+    <div {...otherProps} style={style} ref={ref} onScroll={onScroll} data-rsp-testid="scrollview" >
       <div role="presentation" style={{width: contentSize.width, height: contentSize.height, pointerEvents: isScrolling ? 'none' : 'auto', position: 'relative', ...innerStyle}}>
         {children}
       </div>

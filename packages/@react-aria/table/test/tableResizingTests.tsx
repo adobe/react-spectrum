@@ -42,12 +42,21 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
 // these tests, or the values will be wrong, if those functions were exposed we could generalize, but seems like a lot just for testing
   describe('Resizing', () => {
     installPointerEvent();
-    let clientWidth, clientHeight;
     let onResize;
+    let getComputedStyle;
+    let realGetComputedStyle = window.getComputedStyle;
 
     beforeEach(function () {
-      clientWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 900);
-      clientHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+      getComputedStyle = jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
+        if (element.attributes.getNamedItem('data-testid')?.value === 'scrollview') {
+          const sty = realGetComputedStyle(element);
+          sty.width = '900px';
+          sty.height = '1000px';
+          return sty;
+        } else {
+          return realGetComputedStyle(element);
+        }
+      });
       jest.useFakeTimers();
       onResize = jest.fn();
     });
@@ -56,8 +65,7 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
       act(() => {
         jest.runAllTimers();
       });
-      clientWidth.mockReset();
-      clientHeight.mockReset();
+      getComputedStyle.mockReset();
       onResize.mockReset();
       onResize = null;
     });

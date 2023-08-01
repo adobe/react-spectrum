@@ -65,12 +65,22 @@ function renderComponent(props) {
 }
 
 describe('ListBox', function () {
-  let offsetWidth, offsetHeight, scrollHeight;
+  let getComputedStyle, scrollHeight;
+  let realGetComputedStyle = window.getComputedStyle;
+
   let onSelectionChange = jest.fn();
 
   beforeAll(function () {
-    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
-    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+    getComputedStyle = jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
+      if (element.attributes.getNamedItem('data-rsp-testid')?.value === 'scrollview') {
+        const sty = realGetComputedStyle(element);
+        sty.width = '1000px';
+        sty.height = '1000px';
+        return sty;
+      } else {
+        return realGetComputedStyle(element);
+      }
+    });
     scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 48);
     jest.useFakeTimers();
   });
@@ -80,8 +90,7 @@ describe('ListBox', function () {
   });
 
   afterAll(function () {
-    offsetWidth.mockReset();
-    offsetHeight.mockReset();
+    getComputedStyle.mockReset();
     scrollHeight.mockReset();
   });
 
@@ -818,9 +827,18 @@ describe('ListBox', function () {
     });
 
     it('should fire onLoadMore when scrolling near the bottom', function () {
-      // Mock clientHeight to match maxHeight prop
+      // Mock grid height to match maxHeight prop
       let maxHeight = 200;
-      jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => maxHeight);
+      getComputedStyle = jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
+        if (element.attributes.getNamedItem('data-rsp-testid')?.value === 'scrollview') {
+          const sty = realGetComputedStyle(element);
+          sty.width = '1000px';
+          sty.height = `${maxHeight}px`;
+          return sty;
+        } else {
+          return realGetComputedStyle(element);
+        }
+      });
 
       let onLoadMore = jest.fn();
       let items = [];
@@ -861,9 +879,18 @@ describe('ListBox', function () {
     });
 
     it('should fire onLoadMore if there aren\'t enough items to fill the ListBox ', async function () {
-      // Mock clientHeight to match maxHeight prop
+      // Mock grid height to match maxHeight prop
       let maxHeight = 300;
-      jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => maxHeight);
+      getComputedStyle = jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
+        if (element.attributes.getNamedItem('data-rsp-testid')?.value === 'scrollview') {
+          const sty = realGetComputedStyle(element);
+          sty.width = '1000px';
+          sty.height = `${maxHeight}px`;
+          return sty;
+        } else {
+          return realGetComputedStyle(element);
+        }
+      });
 
       let onLoadMore = jest.fn();
       let items = [];

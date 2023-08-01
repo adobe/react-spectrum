@@ -137,17 +137,24 @@ function pointerEvent(type, opts) {
 }
 
 export let tableTests = () => {
-  let offsetWidth, offsetHeight;
-
+  let offsetHeight, getComputedStyle;
+  let realGetComputedStyle = window.getComputedStyle;
   beforeAll(function () {
-    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
-    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+    getComputedStyle = jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
+      if (element.attributes.getNamedItem('data-rsp-testid')?.value === 'scrollview') {
+        const sty = realGetComputedStyle(element);
+        sty.width = '1000px';
+        sty.height = '1000px';
+        return sty;
+      } else {
+        return realGetComputedStyle(element);
+      }
+    });
     jest.useFakeTimers();
   });
 
   afterAll(function () {
-    offsetWidth.mockReset();
-    offsetHeight.mockReset();
+    getComputedStyle.mockReset();
   });
 
   afterEach(() => {
@@ -1433,14 +1440,12 @@ export let tableTests = () => {
 
       describe('type ahead with dialog triggers', function () {
         beforeEach(function () {
-          offsetHeight.mockRestore();
           offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
             .mockImplementationOnce(() => 20)
             .mockImplementation(() => 100);
         });
-        afterEach(function () {
-          offsetHeight.mockRestore();
-          offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+        afterAll(function () {
+          offsetHeight.mockReset();
         });
         it('does not pick up typeahead from a dialog', function () {
           offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')

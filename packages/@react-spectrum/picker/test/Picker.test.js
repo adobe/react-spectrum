@@ -27,20 +27,28 @@ import userEvent from '@testing-library/user-event';
 import {Virtualizer} from '../../../@react-stately/virtualizer/src/Virtualizer';
 
 describe('Picker', function () {
-  let offsetWidth, offsetHeight;
   let onSelectionChange = jest.fn();
+  let getComputedStyle;
+  let realGetComputedStyle = window.getComputedStyle;
 
   beforeAll(function () {
-    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
-    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+    getComputedStyle = jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
+      if (element.attributes.getNamedItem('data-rsp-testid')?.value === 'scrollview') {
+        const sty = realGetComputedStyle(element);
+        sty.width = '1000px';
+        sty.height = '1000px';
+        return sty;
+      } else {
+        return realGetComputedStyle(element);
+      }
+    });
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
     jest.useFakeTimers();
   });
 
   afterAll(function () {
-    offsetWidth.mockReset();
-    offsetHeight.mockReset();
+    getComputedStyle.mockReset();
   });
 
   afterEach(() => {

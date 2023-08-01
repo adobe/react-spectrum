@@ -31,7 +31,8 @@ import userEvent from '@testing-library/user-event';
 let isReact18 = parseInt(React.version, 10) >= 18;
 
 describe('TableView', function () {
-  let offsetWidth, offsetHeight, scrollHeight;
+  let scrollHeight, getComputedStyle;
+  let realGetComputedStyle = window.getComputedStyle;
   let onSelectionChange = jest.fn();
   let onDragStart = jest.fn();
   let onDragMove = jest.fn();
@@ -55,8 +56,16 @@ describe('TableView', function () {
   };
 
   beforeAll(function () {
-    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
-    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+    getComputedStyle = jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
+      if (element.attributes.getNamedItem('data-rsp-testid')?.value === 'scrollview') {
+        const sty = realGetComputedStyle(element);
+        sty.width = '1000px';
+        sty.height = '1000px';
+        return sty;
+      } else {
+        return realGetComputedStyle(element);
+      }
+    });
     scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 40);
     jest.useFakeTimers();
   });
@@ -68,8 +77,7 @@ describe('TableView', function () {
   });
 
   afterAll(function () {
-    offsetWidth.mockReset();
-    offsetHeight.mockReset();
+    getComputedStyle.mockReset();
     scrollHeight.mockReset();
   });
 
