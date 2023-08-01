@@ -287,7 +287,8 @@ governing permissions and limitations under the License.
       --spectrum-fieldbutton-quiet-background-color: Canvas;
       --spectrum-fieldbutton-background-color-disabled: Canvas;
       --spectrum-fieldbutton-quiet-background-color-disabled: Canvas;
-      background-clip: unset;
+      --spectrum-fieldbutton-background-color-hover: Canvas;
+      --spectrum-fieldbutton-quiet-background-color-hover: Canvas;
     }
 
     &.is-disabled:not(.spectrum-InputGroup--invalid):not(.spectrum-InputGroup--quiet) .spectrum-FieldButton {
