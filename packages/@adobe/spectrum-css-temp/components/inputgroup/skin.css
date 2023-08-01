@@ -264,9 +264,10 @@ governing permissions and limitations under the License.
     --spectrum-dropdown-border-color-error: Highlight;
     --spectrum-dropdown-border-color-key-focus: Highlight;
     --spectrum-textfield-border-color-error: Highlight;
+    --spectrum-textfield-border-color-error-hover: Highlight;
     --spectrum-textfield-border-color-hover: Highlight;
     --spectrum-textfield-border-color-key-focus: Highlight;
-    --spectrum-textfield-quiet-border-color: CanvasText;
+    --spectrum-textfield-quiet-border-color: ButtonText;
     --spectrum-textfield-quiet-border-color-disabled: GrayText;
     --spectrum-textfield-quiet-border-color-hover: Highlight;
     --spectrum-textfield-quiet-border-color-key-focus: Highlight;
@@ -314,8 +315,8 @@ governing permissions and limitations under the License.
   .spectrum-InputGroup--invalid {
     .spectrum-FieldButton {
       &:before {
-         border-color: Highlight;
-       }
+        border-color: Highlight;
+      }
     }
     &.is-disabled:not(.spectrum-InputGroup--quiet) .spectrum-InputGroup-input {
       border-color: GrayText;
