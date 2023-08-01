@@ -40,7 +40,7 @@ governing permissions and limitations under the License.
 
 .spectrum-Dropzone--banner {
   position: absolute;
-  color: var(--spectrum-textfield-text-color);
+  color: var(--spectrum-global-color-static-whiter);
   background-color: var(--spectrum-dropzone-border-color-selected-hover);
   z-index: 1;
   top: 0px;

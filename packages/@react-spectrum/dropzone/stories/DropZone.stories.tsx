@@ -22,6 +22,7 @@ import {Link} from '@react-spectrum/link';
 import {Meta} from '@storybook/react';
 import React, {useState} from 'react';
 import {SpectrumDropZoneProps} from '../src/DropZone';
+import styles from './styles.css';
 import Upload from '@spectrum-icons/illustrations/Upload';
 
 type StoryArgs = SpectrumDropZoneProps;
@@ -59,6 +60,12 @@ export const acceptsMultiple = {
   )
 };
 
+export const filledDropzone = {
+  render: (args) => (
+    <DropZoneFilled {...args} />
+  )
+};
+
 function Example(props) {
   let [isFilled, setIsFilled] = useState(false);
   let [filledSrc, setFilledSrc] = useState(null);
@@ -78,15 +85,7 @@ function Example(props) {
       }}
       onDropEnter={action('onDropEnter')}
       onDropExit={action('onDropExit')} 
-      onPaste={async (e) => { 
-        let items = e.items.filter((item) => item.kind === 'file') as FileDropItem[];
-        if (items.length > 0) {
-          const urls = await Promise.all(items.map(async (item) => URL.createObjectURL(await item.getFile())));
-          const stringUrls = urls.map((url) => url.toString());
-          setFilledSrc(stringUrls);
-          setIsFilled(true);
-        }
-      }}>
+      onPaste={action('onPaste')}>
       <IllustratedMessage>
         <Upload />
         <Heading>
@@ -176,6 +175,34 @@ function DropZoneWithLink(props) {
         </Content>
       </IllustratedMessage>
       {isFilled && <img style={{width: '100px', position: 'absolute'}} src={filledSrc} alt="test" />}
+    </DropZone>
+  );
+}
+
+function DropZoneFilled(props) {
+  let [isFilled, setIsFilled] = useState(true);
+  let [filledSrc, setFilledSrc] = useState('https://i.imgur.com/DhygPot.jpg');
+
+  console.log(isFilled);
+
+  return (
+    <DropZone
+      {...props}
+      isFilled={isFilled}
+      onDrop={async (e) => { 
+        let item = e.items.find((item) => item.kind === 'file') as FileDropItem;
+        if (item.type === 'image/jpeg') {
+          setFilledSrc(URL.createObjectURL(await item.getFile()));
+          setIsFilled(true);
+        }
+      }}>
+      {!isFilled && 
+        <IllustratedMessage>
+          <Upload />
+          <Heading>Drag and Drop here</Heading>
+        </IllustratedMessage>
+      }
+      <img className={styles.images} alt="a starry sky" src={filledSrc} />
     </DropZone>
   );
 }

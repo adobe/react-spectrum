@@ -13,3 +13,4 @@
 /// <reference types="css-module-types" />
 
 export {DropZone} from './DropZone';
+export type {SpectrumDropZoneProps} from './DropZone';

@@ -17,9 +17,12 @@ import {mergeProps} from '@react-aria/utils';
 import React, {ReactNode, Ref, useImperativeHandle, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/dropzone/vars.css';
 export interface SpectrumDropZoneProps extends DropZoneProps, DOMProps, StyleProps, AriaLabelingProps {
+  /** The content to display in the button. */
   children: ReactNode,
+  /** Whether the dropzone has been filled. */
   isFilled?: boolean, 
-  bannerMessage?: string
+  /** The message to replace the default banner message that is shown when the dropzone is filled. */
+  replaceMessage?: string
 }
 
 export interface DropZoneRef extends FocusableRefValue<HTMLInputElement, HTMLDivElement> {
@@ -27,7 +30,7 @@ export interface DropZoneRef extends FocusableRefValue<HTMLInputElement, HTMLDiv
 }
 
 function DropZone(props: SpectrumDropZoneProps, ref: Ref<DropZoneRef>) {
-  let {children, isFilled, bannerMessage, ...otherProps} = props;
+  let {children, isFilled, replaceMessage, ...otherProps} = props;
   let {styleProps} = useStyleProps(props);
   let domRef = useRef<HTMLDivElement>(null);
   let inputRef = useRef<HTMLInputElement>(null);
@@ -52,6 +55,9 @@ function DropZone(props: SpectrumDropZoneProps, ref: Ref<DropZoneRef>) {
         classNames(
           styles,
           'spectrum-Dropzone',
+          {
+            'is-filled': isFilled
+          },
           styleProps.className
         )} 
         ref={domRef}>
@@ -66,7 +72,7 @@ function DropZone(props: SpectrumDropZoneProps, ref: Ref<DropZoneRef>) {
                     styleProps.className
                   )
                 }>
-                {bannerMessage ? bannerMessage : 'Drop file to replace'}
+                {replaceMessage ? replaceMessage : 'Drop file to replace'}
               </div>}
             <SlotProvider
               slots={{
@@ -89,5 +95,8 @@ function DropZone(props: SpectrumDropZoneProps, ref: Ref<DropZoneRef>) {
   );
 }
 
+/**
+ * A dropzone is an area into which one or multiple objects can be dragged and dropped.
+ */
 let _DropZone = React.forwardRef(DropZone);
 export {_DropZone as DropZone};
