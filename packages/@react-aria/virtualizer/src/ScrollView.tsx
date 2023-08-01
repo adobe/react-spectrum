@@ -129,8 +129,9 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
       return;
     }
 
-    let w = dom.clientWidth;
-    let h = dom.clientHeight;
+    let computedStyles = getComputedStyle(dom);
+    let w = parseFloat(computedStyles.width) + parseFloat(computedStyles.paddingLeft) + parseFloat(computedStyles.paddingRight);
+    let h = parseFloat(computedStyles.height) + parseFloat(computedStyles.paddingTop) + parseFloat(computedStyles.paddingBottom);
     if (sizeToFit && contentSize.width > 0 && contentSize.height > 0) {
       if (sizeToFit === 'width') {
         w = Math.min(w, contentSize.width);
