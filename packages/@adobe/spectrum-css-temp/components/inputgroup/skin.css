@@ -271,9 +271,11 @@ governing permissions and limitations under the License.
     --spectrum-textfield-quiet-border-color-hover: Highlight;
     --spectrum-textfield-quiet-border-color-key-focus: Highlight;
     --spectrum-textfield-text-color-disabled: GrayText;
+
     forced-color-adjust: none;
     .spectrum-InputGroup-input {
       forced-color-adjust: auto;
+      --spectrum-textfield-border-color: ButtonText;
     }
     .spectrum-FieldButton {
       forced-color-adjust: auto;
@@ -347,4 +349,3 @@ governing permissions and limitations under the License.
     }
   }
 }
-
