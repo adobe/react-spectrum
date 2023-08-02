@@ -1,12 +1,12 @@
 {
   "actions": "פעולות",
-  "selectAction": "בחר פעולה",
-  "addToQueue": "הוסף לתור",
-  "addToCurrentWatchQueue": "הוסף לתור הצפייה הנוכחי.",
-  "addReview": "הוסף ביקורת",
-  "postAReviewForTheEpisode": "פרסם ביקורת על הפרק.",
-  "subscribeToSeries": "הירשמו לסדרות",
+  "addReview": "הוספת ביקורת",
   "addSeriesToSubscription": "הוסף סדרות לרשימת המנויים שלך וקבל הודעה כשפרק חדש ישודר.",
-  "report": "להגיש תלונה",
-  "reportAnIssue": "דווח על בעיה/הפרה."
+  "addToCurrentWatchQueue": "הוסף לתור הצפייה הנוכחי.",
+  "addToQueue": "הוספה לתור",
+  "postAReviewForTheEpisode": "פרסם ביקורת על הפרק.",
+  "report": "דיווח",
+  "reportAnIssue": "דווח על בעיה/הפרה.",
+  "selectAction": "בחר פעולה",
+  "subscribeToSeries": "הירשם לסדרות"
 }
