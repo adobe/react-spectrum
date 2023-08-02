@@ -21,11 +21,16 @@ import {useBreadcrumbItem} from '@react-aria/breadcrumbs';
 import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 
-export function BreadcrumbItem(props: BreadcrumbItemProps) {
+interface SpectrumBreadcrumbItemProps extends BreadcrumbItemProps {
+  isMenu?: boolean
+}
+
+export function BreadcrumbItem(props: SpectrumBreadcrumbItemProps) {
   let {
     children,
     isCurrent,
-    isDisabled
+    isDisabled,
+    isMenu
   } = props;
 
   let {direction} = useLocale();
@@ -36,6 +41,11 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
     elementType: ElementType
   }, ref);
   let {hoverProps, isHovered} = useHover(props);
+
+  // If this item contains a menu button, then it shouldn't be a link.
+  if (isMenu) {
+    itemProps = {};
+  }
 
   return (
     <Fragment>
