@@ -129,7 +129,7 @@ const Template = ({combos, columns, items, ...args}) => (
       }
       return (
         <View flexGrow={1} maxWidth="size-5000" maxHeight={700}>
-          <TableView {...args} {...c} width="100%" height="100%" key={key} aria-label={key} selectedKeys={['Foo 3', 'Foo 1']} disabledKeys={['Foo 2', 'Foo 4']} UNSTABLE_allowsExpandableRows>
+          <TableView {...args} {...c} width="100%" height="100%" key={key} aria-label={key} selectedKeys={['Lvl 1 Foo 1', 'Lvl 3 Foo 1']} disabledKeys={['Lvl 2 Foo 1', 'Lvl 2 Foo 2']} UNSTABLE_allowsExpandableRows>
             <TableHeader columns={columns}>
               {(column: any) => (
                 <Column key={column.key} width={column.width} showDivider={column.showDivider} align={column.align} hideHeader={column.hideHeader} childColumns={column.children}>
