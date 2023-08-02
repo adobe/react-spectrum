@@ -1,6 +1,6 @@
 {
-  "negative": "Klaida",
   "info": "Informacija",
-  "positive": "Sėkmingai",
-  "notice": "Įspėjimas"
+  "negative": "Klaida",
+  "notice": "Įspėjimas",
+  "positive": "Sėkmingai"
 }

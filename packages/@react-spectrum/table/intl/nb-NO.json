@@ -1,6 +1,8 @@
 {
+  "collapse": "Skjul",
   "columnResizer": "Størrelsesendring av kolonne",
   "drag": "Dra",
+  "expand": "Utvid",
   "loading": "Laster inn ...",
   "loadingMore": "Laster inn flere ...",
   "resizeColumn": "Endre størrelse på kolonne",
