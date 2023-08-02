@@ -31,6 +31,16 @@ governing permissions and limitations under the License.
       border-color: var(--spectrum-dropzone-border-color-selected-hover);
     }
   }
+
+  &[data-drop-target]::after{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--spectrum-dropzone-background-color-selected-hover);
+  }
 }
 
 .spectrum-Dropzone--illustratedMessage {

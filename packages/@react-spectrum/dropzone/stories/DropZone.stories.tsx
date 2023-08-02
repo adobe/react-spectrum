@@ -11,6 +11,8 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {Button} from '@react-spectrum/button';
+import {classNames} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import {Draggable} from '@react-aria/dnd/stories/dnd.stories';
 import {DropZone} from '../';
@@ -18,12 +20,12 @@ import {FileDropItem, TextDropItem} from 'react-aria';
 import {FileTrigger, Text} from 'react-aria-components';
 import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
-import {Link} from '@react-spectrum/link';
 import {Meta} from '@storybook/react';
 import React, {useState} from 'react';
 import {SpectrumDropZoneProps} from '../src/DropZone';
 import styles from './styles.css';
 import Upload from '@spectrum-icons/illustrations/Upload';
+
 
 type StoryArgs = SpectrumDropZoneProps;
 
@@ -40,9 +42,9 @@ export const withDraggable = {
   )
 };
 
-export const withLink = {
+export const withButton = {
   render: (args) => (
-    <DropZoneWithLink {...args} />
+    <DropZoneWithButton {...args} />
   )
 };
 
@@ -102,7 +104,7 @@ function Example(props) {
               setFilledSrc(urls);
               setIsFilled(true);
             }}>
-            <Link>Select a file</Link> from your computer
+            <Button>Select a file</Button>
           </FileTrigger>
         </Content>
       </IllustratedMessage>
@@ -141,7 +143,7 @@ function DropZoneWithDraggable(props) {
   );
 }
 
-function DropZoneWithLink(props) {
+function DropZoneWithButton(props) {
   let [isFilled, setIsFilled] = useState(false);
   let [filledSrc, setFilledSrc] = useState(null);
 
@@ -170,7 +172,7 @@ function DropZoneWithLink(props) {
               setFilledSrc(urls[0]);
               setIsFilled(true);
             }}>
-            <Link>Select a file</Link> from your computer
+            <Button>Select a file</Button>
           </FileTrigger>
         </Content>
       </IllustratedMessage>
@@ -183,19 +185,23 @@ function DropZoneFilled(props) {
   let [isFilled, setIsFilled] = useState(true);
   let [filledSrc, setFilledSrc] = useState('https://i.imgur.com/DhygPot.jpg');
 
-  console.log(isFilled);
-
   return (
     <DropZone
       {...props}
       isFilled={isFilled}
+      UNSAFE_className={classNames(styles, 'is-filled')}
+      width="size-3000"
+      height="size-2400"
       onDrop={async (e) => { 
         let item = e.items.find((item) => item.kind === 'file') as FileDropItem;
-        if (item.type === 'image/jpeg') {
+        if (item.type === 'image/jpeg' || item.type === 'image/png') {
           setFilledSrc(URL.createObjectURL(await item.getFile()));
           setIsFilled(true);
         }
-      }}>
+      }}
+      onDropEnter={action('onDropEnter')}
+      onDropExit={action('onDropExit')} 
+      onPaste={action('onPaste')}>
       {!isFilled && 
         <IllustratedMessage>
           <Upload />

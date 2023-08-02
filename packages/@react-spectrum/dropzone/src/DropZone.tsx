@@ -55,15 +55,12 @@ function DropZone(props: SpectrumDropZoneProps, ref: Ref<DropZoneRef>) {
         classNames(
           styles,
           'spectrum-Dropzone',
-          {
-            'is-filled': isFilled
-          },
           styleProps.className
         )} 
         ref={domRef}>
         {({isFocused, isFocusVisible, isDropTarget}) => (
           <>
-            {isFilled && isDropTarget && 
+            {isFilled && isDropTarget &&
               <div
                 className={
                   classNames(
