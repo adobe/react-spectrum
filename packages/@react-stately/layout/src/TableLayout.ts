@@ -161,6 +161,7 @@ export class TableLayout<T> extends ListLayout<T> {
       layoutNode.layoutInfo.parentKey = 'header';
       y = layoutNode.layoutInfo.rect.maxY;
       width = Math.max(width, layoutNode.layoutInfo.rect.width);
+      layoutNode.index = children.length;
       children.push(layoutNode);
     }
 
@@ -187,6 +188,7 @@ export class TableLayout<T> extends ListLayout<T> {
       layoutNode.layoutInfo.parentKey = row.key;
       x = layoutNode.layoutInfo.rect.maxX;
       height = Math.max(height, layoutNode.layoutInfo.rect.height);
+      layoutNode.index = columns.length;
       columns.push(layoutNode);
     }
     for (let [i, layout] of columns.entries()) {
@@ -276,7 +278,7 @@ export class TableLayout<T> extends ListLayout<T> {
     let skipped = 0;
     let width = 0;
     let children: LayoutNode[] = [];
-    for (let node of this.collection) {
+    for (let [i, node] of [...this.collection].entries()) {
       let rowHeight = (this.rowHeight ?? this.estimatedRowHeight) + 1;
 
       // Skip rows before the valid rectangle unless they are already cached.
@@ -288,6 +290,7 @@ export class TableLayout<T> extends ListLayout<T> {
 
       let layoutNode = this.buildChild(node, 0, y);
       layoutNode.layoutInfo.parentKey = 'body';
+      layoutNode.index = i;
       y = layoutNode.layoutInfo.rect.maxY;
       width = Math.max(width, layoutNode.layoutInfo.rect.width);
       children.push(layoutNode);
@@ -354,20 +357,23 @@ export class TableLayout<T> extends ListLayout<T> {
 
     let children: LayoutNode[] = [];
     let height = 0;
-    for (let child of getChildNodes(node, this.collection)) {
-      if (x > this.validRect.maxX) {
-        // Adjust existing cached layoutInfo to ensure that it is out of view.
-        // This can happen due to column resizing.
-        let layoutNode = this.layoutNodes.get(child.key);
-        if (layoutNode) {
-          layoutNode.layoutInfo.rect.x = x;
-          x += layoutNode.layoutInfo.rect.width;
+    for (let [i, child] of [...getChildNodes(node, this.collection)].entries()) {
+      if (child.type === 'cell') {
+        if (x > this.validRect.maxX) {
+          // Adjust existing cached layoutInfo to ensure that it is out of view.
+          // This can happen due to column resizing.
+          let layoutNode = this.layoutNodes.get(child.key);
+          if (layoutNode) {
+            layoutNode.layoutInfo.rect.x = x;
+            x += layoutNode.layoutInfo.rect.width;
+          }
+        } else {
+          let layoutNode = this.buildChild(child, x, y);
+          x = layoutNode.layoutInfo.rect.maxX;
+          height = Math.max(height, layoutNode.layoutInfo.rect.height);
+          layoutNode.index = i;
+          children.push(layoutNode);
         }
-      } else {
-        let layoutNode = this.buildChild(child, x, y);
-        x = layoutNode.layoutInfo.rect.maxX;
-        height = Math.max(height, layoutNode.layoutInfo.rect.height);
-        children.push(layoutNode);
       }
     }
 
@@ -550,10 +556,7 @@ export class TableLayout<T> extends ListLayout<T> {
           this.persistedIndices.set(layoutInfo.parentKey, indices);
         }
 
-        let index = collectionNode.index;
-        if (layoutInfo.parentKey === 'body') {
-          index -= this.collection.headerRows.length;
-        }
+        let index = this.layoutNodes.get(layoutInfo.key).index;
 
         if (!indices.includes(index)) {
           indices.push(index);
@@ -570,12 +573,13 @@ export class TableLayout<T> extends ListLayout<T> {
 
   getInitialLayoutInfo(layoutInfo: LayoutInfo) {
     let res = super.getInitialLayoutInfo(layoutInfo);
+    res.transform = null;
+    return res;
+  }
 
-    // If this insert was the result of async loading, remove the zoom effect and just keep the fade in.
-    if (this.wasLoading) {
-      res.transform = null;
-    }
-
+  getFinalLayoutInfo(layoutInfo: LayoutInfo) {
+    let res = super.getFinalLayoutInfo(layoutInfo);
+    res.transform = null;
     return res;
   }
 
@@ -616,7 +620,7 @@ export class TableLayout<T> extends ListLayout<T> {
         key = layoutInfo.key;
       }
     }
-    
+
     if (key == null || this.collection.size === 0) {
       return {type: 'root'};
     }

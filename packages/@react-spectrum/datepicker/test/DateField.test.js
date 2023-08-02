@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, render as render_, within} from '@react-spectrum/test-utils';
-import {CalendarDate} from '@internationalized/date';
+import {CalendarDate, CalendarDateTime, ZonedDateTime} from '@internationalized/date';
 import {DateField} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -260,6 +260,8 @@ describe('DateField', function () {
     it('should call blur when focus leaves', function () {
       let {getAllByRole} = render(<DateField label="Date" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} />);
       let segments = getAllByRole('spinbutton');
+      // workaround bug in userEvent.tab(). hidden inputs aren't focusable.
+      document.querySelector('input[type=hidden]').tabIndex = -1;
 
       expect(onBlurSpy).not.toHaveBeenCalled();
       expect(onFocusChangeSpy).not.toHaveBeenCalled();
@@ -298,6 +300,52 @@ describe('DateField', function () {
       expect(segments[1]).toHaveFocus();
       expect(onKeyDownSpy).toHaveBeenCalledTimes(1);
       expect(onKeyUpSpy).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('forms', () => {
+    it('supports form values', () => {
+      let {rerender} = render(<DateField name="date" label="Date" value={new CalendarDate(2020, 2, 3)} />);
+      let input = document.querySelector('input[name=date]');
+      expect(input).toHaveValue('2020-02-03');
+
+      rerender(<DateField name="date" label="Date" value={new CalendarDateTime(2020, 2, 3, 8, 30)} />);
+      expect(input).toHaveValue('2020-02-03T08:30:00');
+
+      rerender(<DateField name="date" label="Date" value={new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000, 12, 24, 45)} />);
+      expect(input).toHaveValue('2020-02-03T12:24:45-08:00[America/Los_Angeles]');
+    });
+
+    it('supports form reset', () => {
+      function Test() {
+        let [value, setValue] = React.useState(new CalendarDate(2020, 2, 3));
+        return (
+          <form>
+            <DateField name="date" label="Value" value={value} onChange={setValue} />
+            <input type="reset" data-testid="reset" />
+          </form>
+        );
+      }
+
+      let {getByTestId, getByRole, getAllByRole} = render(<Test />);
+      let group = getByRole('group');
+      let input = document.querySelector('input[name=date]');
+      let segments = getAllByRole('spinbutton');
+
+      let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+      expect(getDescription()).toBe('Selected Date: February 3, 2020');
+
+      expect(input).toHaveValue('2020-02-03');
+      expect(input).toHaveAttribute('name', 'date');
+      fireEvent.keyDown(segments[0], {key: 'ArrowUp'});
+      fireEvent.keyUp(segments[0], {key: 'ArrowUp'});
+      expect(getDescription()).toBe('Selected Date: March 3, 2020');
+      expect(input).toHaveValue('2020-03-03');
+
+      let button = getByTestId('reset');
+      act(() => userEvent.click(button));
+      expect(getDescription()).toBe('Selected Date: February 3, 2020');
+      expect(input).toHaveValue('2020-02-03');
     });
   });
 });

@@ -13,7 +13,7 @@
 import {Collection, Node} from '@react-types/shared';
 import {Key} from 'react';
 
-export interface GridCollection<T> extends Collection<Node<T>> {
+export interface GridCollection<T> extends Collection<GridNode<T>> {
   /** The number of columns in the grid. */
   columnCount: number,
   /** A list of rows in the grid. */
@@ -31,5 +31,7 @@ export interface GridNode<T> extends Node<T> {
   /** The number of columns spanned by this cell. */
   colspan?: number,
   /** The column index of this cell, accounting for any colspans. */
-  colIndex?: number
+  colIndex?: number,
+  /** The index of this node within its parent, ignoring sibling nodes that aren't of the same type. */
+  indexOfType?: number
 }

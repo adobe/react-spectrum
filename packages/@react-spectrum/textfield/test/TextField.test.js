@@ -434,4 +434,32 @@ describe('Shared TextField behavior', () => {
     let input = tree.getByTestId(testId);
     expect(input).toHaveAttribute('tabIndex', '-1');
   });
+
+  it.each`
+    Name                | Component
+    ${'v3 TextField'}   | ${TextField}
+    ${'v3 TextArea'}    | ${TextArea}
+    ${'v3 SearchField'} | ${SearchField}
+  `('$Name supports form reset', ({Component}) => {
+    function Test() {
+      let [value, setValue] = React.useState('Devon');
+      return (
+        <form>
+          <Component data-testid="name" label="Name" value={value} onChange={setValue} />
+          <input type="reset" data-testid="reset" />
+        </form>
+      );
+    }
+
+    let {getByTestId} = render(<Test />);
+    let input = getByTestId('name');
+
+    expect(input).toHaveValue('Devon');
+    typeText(input, ' test');
+    expect(input).toHaveValue('Devon test');
+
+    let button = getByTestId('reset');
+    act(() => userEvent.click(button));
+    expect(input).toHaveValue('Devon');
+  });
 });

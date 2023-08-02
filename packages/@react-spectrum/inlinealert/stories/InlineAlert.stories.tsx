@@ -11,7 +11,8 @@
  */
 
 import {Button} from '@react-spectrum/button';
-import {Content, Header} from '@react-spectrum/view';
+import {Content} from '@react-spectrum/view';
+import {Heading} from '@react-spectrum/text';
 import {InlineAlert} from '../';
 import {Meta} from '@storybook/react';
 import React, {useState} from 'react';
@@ -45,7 +46,7 @@ export default meta;
 export const Default = {
   render: (args) => (
     <InlineAlert {...args}>
-      <Header>{args.title}</Header>
+      <Heading>{args.title}</Heading>
       <Content>{args.content}</Content>
     </InlineAlert>
   )
@@ -63,7 +64,7 @@ function DynamicExample(args) {
       <Button variant="primary" onPress={() => setShown(!shown)}>{shown ? 'Hide Alert' : 'Show Alert'}</Button>
       {shown &&
         <InlineAlert {...args}>
-          <Header>{args.title}</Header>
+          <Heading>{args.title}</Heading>
           <Content>{args.content}</Content>
         </InlineAlert>
       }
