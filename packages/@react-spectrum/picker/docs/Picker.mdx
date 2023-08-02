@@ -464,3 +464,12 @@ function Example() {
   );
 }
 ```
+
+## Accessibility
+
+### False positives
+
+Picker may trigger a [known accessibility false positive](https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#picker)
+from automated accessibility testing tools. To facilitate the suppression of this false positive, the
+`data-a11y-ignore="aria-hidden-focus"` data attribute is automatically applied to the problematic element and references the
+relevant `AXE` rule. Please use this data attribute to target the problematic element and exclude it from your automated accessibility tests.
