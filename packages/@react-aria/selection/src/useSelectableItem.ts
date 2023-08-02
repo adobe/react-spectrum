@@ -14,7 +14,7 @@ import {DOMAttributes, FocusableElement, LongPressEvent, PressEvent} from '@reac
 import {focusSafely} from '@react-aria/focus';
 import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
 import {Key, RefObject, useEffect, useRef} from 'react';
-import {mergeProps, openSyntheticLink} from '@react-aria/utils';
+import {mergeProps, openLink, openSyntheticLink} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {PressProps, useLongPress, usePress} from '@react-aria/interactions';
 
@@ -285,7 +285,6 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
 
   itemProps['data-key'] = key;
   itemPressProps.preventFocusOnPress = shouldUseVirtualFocus;
-  itemPressProps.shouldPreventLinkDefault = true;
   let {pressProps, isPressed} = usePress(itemPressProps);
 
   // Double clicking with a mouse with selectionBehavior = 'replace' performs an action.
@@ -320,12 +319,20 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     }
   };
 
+  // Prevent default on link clicks so that we control exactly
+  // when they open (to match selection behavior).
+  let onClick = manager.isLink(key) ? e => {
+    if (!openLink.isOpening) {
+      e.preventDefault();
+    }
+  } : undefined;
+
   return {
     itemProps: mergeProps(
       itemProps,
       allowsSelection || hasPrimaryAction ? pressProps : {},
       longPressEnabled ? longPressProps : {},
-      {onDoubleClick, onDragStartCapture}
+      {onDoubleClick, onDragStartCapture, onClick}
     ),
     isPressed,
     isSelected: manager.isSelected(key),

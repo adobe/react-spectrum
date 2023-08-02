@@ -36,9 +36,7 @@ export interface PressProps extends PressEvents {
    */
   shouldCancelOnPointerExit?: boolean,
   /** Whether text selection should be enabled on the pressable element. */
-  allowTextSelectionOnPress?: boolean,
-  /** Whether to prevent the browser default navigation action when clicking on a link. */
-  shouldPreventLinkDefault?: boolean
+  allowTextSelectionOnPress?: boolean
 }
 
 export interface PressHookProps extends PressProps {
@@ -117,6 +115,8 @@ class PressEvent implements IPressEvent {
   }
 }
 
+const LINK_CLICKED = Symbol('linkClicked');
+
 /**
  * Handles press interactions across mouse, touch, keyboard, and screen readers.
  * It normalizes behavior across browsers and platforms, and handles many nuances
@@ -134,7 +134,6 @@ export function usePress(props: PressHookProps): PressResult {
     preventFocusOnPress,
     shouldCancelOnPointerExit,
     allowTextSelectionOnPress,
-    shouldPreventLinkDefault,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     ref: _, // Removing `ref` from `domProps` because TypeScript is dumb
     ...domProps
@@ -305,7 +304,7 @@ export function usePress(props: PressHookProps): PressResult {
 
         if (e && e.button === 0 && !state.isTriggeringEvent && !openLink.isOpening) {
           let shouldStopPropagation = true;
-          if (isDisabled || (shouldPreventLinkDefault && isHTMLAnchorLink(e.currentTarget))) {
+          if (isDisabled) {
             e.preventDefault();
           }
 
@@ -349,8 +348,11 @@ export function usePress(props: PressHookProps): PressResult {
         // If a link was triggered with a key other than Enter, open the URL ourselves.
         // This means the link has a role override, and the default browser behavior
         // only applies when using the Enter key.
-        if (!shouldPreventLinkDefault && e.key !== 'Enter' && isHTMLAnchorLink(state.target) && state.target.contains(target)) {
-          openLink(state.target, e);
+        if (e.key !== 'Enter' && isHTMLAnchorLink(state.target) && state.target.contains(target) && !e[LINK_CLICKED]) {
+          // Store a hidden property on the event so we only trigger link click once,
+          // even if there are multiple usePress instances attached to the element.
+          e[LINK_CLICKED] = true;
+          openLink(state.target, e, false);
         }
 
         state.isPressed = false;
@@ -735,7 +737,6 @@ export function usePress(props: PressHookProps): PressResult {
     preventFocusOnPress,
     removeAllGlobalListeners,
     allowTextSelectionOnPress,
-    shouldPreventLinkDefault,
     cancel,
     cancelOnPointerExit,
     triggerPressEnd,

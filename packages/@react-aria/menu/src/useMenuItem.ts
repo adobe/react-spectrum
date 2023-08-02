@@ -213,8 +213,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let {pressProps, isPressed} = usePress({
     onPressStart,
     onPressUp,
-    isDisabled: isDisabled || (isTrigger && state.expandedKeys.has(key)),
-    shouldPreventLinkDefault: true
+    isDisabled: isDisabled || (isTrigger && state.expandedKeys.has(key))
   });
   let {hoverProps} = useHover({
     isDisabled,

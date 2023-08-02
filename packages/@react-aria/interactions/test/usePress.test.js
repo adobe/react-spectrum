@@ -2423,19 +2423,6 @@ describe('usePress', function () {
         }
       ]);
     });
-
-    it('should support shouldPreventLinkDefault', function () {
-      let {getByText} = render(
-        <Example
-          elementType="a"
-          href="#"
-          shouldPreventLinkDefault />
-      );
-
-      let el = getByText('test');
-      let shouldPerformDefault = fireEvent.click(el);
-      expect(shouldPerformDefault).toBe(false)
-    });
   });
 
   it('should not focus the target if preventFocusOnPress is true', function () {
