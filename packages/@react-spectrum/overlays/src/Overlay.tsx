@@ -55,7 +55,7 @@ function Overlay(props: OverlayProps, ref: DOMRef<HTMLDivElement>) {
   }
 
   return (
-    <ReactAriaOverlay portalContainer={container} disableFocusManagement={disableFocusManagement}>
+    <ReactAriaOverlay portalContainer={container} disableFocusManagement={disableFocusManagement} isExiting={!isOpen}>
       <Provider ref={ref} UNSAFE_style={{background: 'transparent', isolation: 'isolate'}} isDisabled={false}>
         <OpenTransition
           in={isOpen}

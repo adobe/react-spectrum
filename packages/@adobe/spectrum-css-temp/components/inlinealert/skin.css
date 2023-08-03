@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 @media (forced-colors: active) {
   .spectrum-InLineAlert {
     --highcontrast-inlinealert-background-color: Background;
-    --highcontrast-inlinealert-header-color: CanvasText;
+    --highcontrast-inlinealert-heading-color: CanvasText;
     --highcontrast-inlinealert-content-color: CanvasText;
     --highcontrast-inlinealert-border-and-icon-color: ButtonBorder;
   }
@@ -24,8 +24,8 @@ governing permissions and limitations under the License.
   border-color:var(--highcontrast-inlinealert-border-and-icon-color, var(--spectrum-inlinealert-border-and-icon-color));
 }
 
-.spectrum-InLineAlert-header {
-  color:var(--highcontrast-inlinealert-header-color, var(--spectrum-inlinealert-header-color));
+.spectrum-InLineAlert-heading {
+  color:var(--highcontrast-inlinealert-heading-color, var(--spectrum-inlinealert-heading-color));
 }
 
 .spectrum-InLineAlert-content {
