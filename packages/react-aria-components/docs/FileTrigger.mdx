@@ -110,7 +110,7 @@ import {Button} from 'react-aria-components';
 
 ## Features
 
-A file input can be created with an `<input type=“file”>` element, but this supports limited styling options and may not integrate well with the overall design of a website or application. To overcome this, `FileTrigger` extends the functionality of the standard file input element by working with a pressable child such as a Button to create accessible file inputs that can be style as needed. 
+A file input can be created with an `<input type=“file”>` element, but this supports limited styling options and may not integrate well with the overall design of a website or application. To overcome this, `FileTrigger` extends the functionality of the standard file input element by working with a pressable child such as a `Button` to create accessible file inputs that can be style as needed.
 
 * **Customizable** – Works with any pressable React Aria or React Spectrum component, and custom components built with [usePress](usePress.html).
 
@@ -136,7 +136,7 @@ A `FileTrigger` can use the following components, which may also be used standal
 
 ## Styling
 
-React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. Unlike other React Aria components, `FileTrigger` does not have a builtin `className` attribute following the `react-aria-ComponentName` naming convention. Instead, it is styled by its pressable children, such as `Button`.  
 
 The states and selectors for each component used in a `FileTrigger` are documented below.
 
