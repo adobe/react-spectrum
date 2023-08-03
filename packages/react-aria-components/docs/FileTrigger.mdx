@@ -110,15 +110,15 @@ import {Button} from 'react-aria-components';
 
 ## Features
 
-Access to a computer’s file system can be created in HTML using an `<input>` with a file `type` attribute. However, file input's on their own are not very useful since they only allow users to select files from their devices. As a result, file inputs are commonly used inside a `<form>` alongside  a `<button>` to submit the form. `FileTrigger` simplifies this by setting up the input element's configuration with reference to a pressable component, such as a button, for a customizable file upload. 
+A file input can be created with an `<input type=“file”>` element, but this supports limited styling options and may not integrate well with the overall design of a website or application. To overcome this, `FileTrigger` extends the functionality of the standard file input element by working with a pressable child such as a Button to create accessible file inputs that can be style as needed. 
 
-* **Customizable** – Works with any pressable component meaning that it is compatible with pressable React Aria Components and React Spectrum Components.
+* **Customizable** – Works with any pressable React Aria or React Spectrum component, and custom components built with [usePress](usePress.html).
 
 ## Anatomy
 
-A `FileTrigger` wraps around an input element and a pressable child, usually a button or link, that allows the user to upload files. The input element is not displayed and has no effect on the layout. 
+A `FileTrigger` wraps around a pressable child such as a button, and includes a visually hidden input element that allows the user to select files from their device.
 
-If a visual label is not provided on the pressable child, then an `aria-label` or `aria-labelledby` prop must be passed to identify the link to assistive technology.
+If a visual label is not provided on the pressable child, then an `aria-label` or `aria-labelledby` prop must be passed to identify the file trigger to assistive technology.
 
 ### Composed Components
 A `FileTrigger` can use the following components, which may also be used standalone or reused in other components.
@@ -128,13 +128,6 @@ A `FileTrigger` can use the following components, which may also be used standal
   title="Button"
   description="A button allows a user to perform an action with a mouse, touch, or keyboard.">
   <Button />
-</ExampleCard>
-
-<ExampleCard
-  url="Link.html"
-  title="Link"
-  description="A link allows a user to navigate to another page.">
-  <Link />
 </ExampleCard>
 
 ## Props
@@ -166,12 +159,6 @@ The states and selectors for each component used in a `FileTrigger` are document
 A [Button](Button.html) can be targeted with the `.react-aria-Button` CSS selector, or by overriding with a custom `className`. It supports the following states:
 
 <StateTable properties={docs.exports.ButtonRenderProps.properties} />
-
-### Link
-
-A [Link](Link.html) can be targeted with the `.react-aria-Link` CSS selector, or by overriding with a custom `className`. It supports the following states:
-
-<StateTable properties={docs.exports.LinkRenderProps.properties} />
 
 ## Usage
 

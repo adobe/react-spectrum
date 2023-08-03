@@ -13,7 +13,6 @@
 import {AriaLabelingProps} from '@react-types/shared';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {DropOptions, mergeProps, useClipboard, useDrop, useFocusRing, useHover, VisuallyHidden} from 'react-aria';
-import {FileTriggerContext} from './FileTrigger';
 import {filterDOMProps, useLabels, useSlotId} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
@@ -77,8 +76,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   return (
     <Provider
       values={[
-        [FileTriggerContext, {}],
-        [TextContext, {id: textId, slot: 'heading'}]
+        [TextContext, {id: textId, slot: 'label'}]
       ]}>
       {/* eslint-disable-next-line */}
       <div
