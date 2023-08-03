@@ -39,18 +39,7 @@ function renderSearchWithin(props = {}, searchFieldProps = {}, pickerProps = {})
 }
 
 describe('SearchWithin', function () {
-  let realGetComputedStyle = window.getComputedStyle;
   beforeAll(function () {
-    jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
-      if (element.attributes.getNamedItem('data-rsp-testid')?.value === 'scrollview') {
-        const sty = realGetComputedStyle(element);
-        sty.width = '1000px';
-        sty.height = '1000px';
-        return sty;
-      } else {
-        return realGetComputedStyle(element);
-      }
-    });
     jest.useFakeTimers();
   });
 

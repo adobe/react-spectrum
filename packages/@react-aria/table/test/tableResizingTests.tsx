@@ -42,25 +42,12 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
 // these tests, or the values will be wrong, if those functions were exposed we could generalize, but seems like a lot just for testing
   describe('Resizing', () => {
     installPointerEvent();
+    let clientWidth, clientHeight;
     let onResize;
-    let realGetComputedStyle = window.getComputedStyle;
-    let clientWidth;
 
     beforeEach(function () {
-      // For aria Table implementations that need to mock
       clientWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 900);
-      jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
-      // For TableView which needs to mock getComputedStyle in scrollview
-      jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
-        if (element.attributes.getNamedItem('data-rsp-testid')?.value === 'scrollview') {
-          const sty = realGetComputedStyle(element);
-          sty.width = '900px';
-          sty.height = '1000px';
-          return sty;
-        } else {
-          return realGetComputedStyle(element);
-        }
-      });
+      clientHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
       jest.useFakeTimers();
       onResize = jest.fn();
     });
@@ -69,12 +56,10 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
       act(() => {
         jest.runAllTimers();
       });
-      jest.clearAllMocks();
+      clientWidth.mockReset();
+      clientHeight.mockReset();
+      onResize.mockReset();
       onResize = null;
-    });
-
-    afterAll(function () {
-      jest.restoreAllMocks();
     });
 
     describe.each`

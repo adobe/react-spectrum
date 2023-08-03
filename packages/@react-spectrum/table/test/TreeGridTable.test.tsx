@@ -73,18 +73,9 @@ let rerender = (tree, children, scale = 'medium' as Scale) => {
 };
 
 describe('TableView with expandable rows', function () {
-  let realGetComputedStyle = window.getComputedStyle;
   beforeAll(function () {
-    jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
-      if (element.attributes.getNamedItem('data-rsp-testid')?.value === 'scrollview') {
-        const sty = realGetComputedStyle(element);
-        sty.width = '1000px';
-        sty.height = '1000px';
-        return sty;
-      } else {
-        return realGetComputedStyle(element);
-      }
-    });
+    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
+    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     jest.useFakeTimers();
     enableTableNestedRows();
   });

@@ -38,7 +38,7 @@ function pointerEvent(type, opts) {
 }
 
 describe('ListView', function () {
-  let realGetComputedStyle = window.getComputedStyle;
+  let offsetWidth, offsetHeight, scrollHeight;
   let onSelectionChange = jest.fn();
   let onAction = jest.fn();
   let checkSelection = (onSelectionChange, selectedKeys) => {
@@ -57,17 +57,9 @@ describe('ListView', function () {
   }
 
   beforeAll(function () {
-    jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
-      if (element.attributes.getNamedItem('data-rsp-testid')?.value === 'scrollview') {
-        const sty = realGetComputedStyle(element);
-        sty.width = '1000px';
-        sty.height = '1000px';
-        return sty;
-      } else {
-        return realGetComputedStyle(element);
-      }
-    });
-    jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 40);
+    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
+    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+    scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 40);
     jest.useFakeTimers();
   });
 
@@ -78,7 +70,9 @@ describe('ListView', function () {
   });
 
   afterAll(function () {
-    jest.restoreAllMocks();
+    offsetWidth.mockReset();
+    offsetHeight.mockReset();
+    scrollHeight.mockReset();
   });
 
   let render = (children, locale = 'en-US', scale = 'medium') => {
@@ -1355,16 +1349,6 @@ describe('ListView', function () {
 
   describe('scrolling', function () {
     it('should scroll to a row when it is focused', function () {
-      jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
-        if (element.attributes.getNamedItem('data-rsp-testid')?.value === 'scrollview') {
-          const sty = realGetComputedStyle(element);
-          sty.width = '1000px';
-          sty.height = '60px';
-          return sty;
-        } else {
-          return realGetComputedStyle(element);
-        }
-      });
       let tree = render(
         <ListView
           width="250px"
@@ -1379,6 +1363,15 @@ describe('ListView', function () {
         </ListView>
       );
       let grid = tree.getByRole('grid');
+      Object.defineProperty(grid, 'clientHeight', {
+        get() {
+          return 60;
+        }
+      });
+      // fire resize so the new clientHeight is requested
+      act(() => {
+        fireEvent(window, new Event('resize'));
+      });
       userEvent.tab();
       expect(grid.scrollTop).toBe(0);
 
@@ -1405,16 +1398,6 @@ describe('ListView', function () {
     });
 
     it('should scroll to a row when it is focused', function () {
-      jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
-        if (element.attributes.getNamedItem('data-rsp-testid')?.value === 'scrollview') {
-          const sty = realGetComputedStyle(element);
-          sty.width = '1000px';
-          sty.height = '60px';
-          return sty;
-        } else {
-          return realGetComputedStyle(element);
-        }
-      });
       let tree = render(
         <ListView
           width="250px"
@@ -1429,6 +1412,15 @@ describe('ListView', function () {
         </ListView>
       );
       let grid = tree.getByRole('grid');
+      Object.defineProperty(grid, 'clientHeight', {
+        get() {
+          return 60;
+        }
+      });
+      // fire resize so the new clientHeight is requested
+      act(() => {
+        fireEvent(window, new Event('resize'));
+      });
       expect(grid.scrollTop).toBe(0);
 
       focusRow(tree, 'Item 1');
@@ -1438,16 +1430,6 @@ describe('ListView', function () {
     });
 
     it('should scroll to a row when it is focused off screen', function () {
-      jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
-        if (element.attributes.getNamedItem('data-rsp-testid')?.value === 'scrollview') {
-          const sty = realGetComputedStyle(element);
-          sty.width = '1000px';
-          sty.height = '1000px';
-          return sty;
-        } else {
-          return realGetComputedStyle(element);
-        }
-      });
       let tree = render(
         <ListView
           width="250px"

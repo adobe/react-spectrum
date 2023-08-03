@@ -649,7 +649,6 @@ function TableVirtualizer(props) {
             role="presentation"
             className={classNames(styles, 'spectrum-Table-headWrapper')}
             style={{
-              width: visibleRect.width,
               height: headerHeight,
               overflow: 'hidden',
               position: 'relative',

@@ -79,25 +79,19 @@ function renderComponent(Name, Component, ComponentSection, ComponentItem, props
 }
 
 describe.skip('SideNav', function () {
-  let realGetComputedStyle = window.getComputedStyle;
+  let stub1, stub2;
+  let scrollHeight;
 
   beforeAll(function () {
     jest.useFakeTimers();
-    jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 48);
-    jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
-      if (element.attributes.getNamedItem('data-rsp-testid')?.value === 'scrollview') {
-        const sty = realGetComputedStyle(element);
-        sty.width = '200px';
-        sty.height = '400px';
-        return sty;
-      } else {
-        return realGetComputedStyle(element);
-      }
-    });
+    scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 48);
+    stub1 = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 200);
+    stub2 = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 400);
   });
-
   afterAll(function () {
-    jest.restoreAllMocks();
+    stub1.mockReset();
+    stub2.mockReset();
+    scrollHeight.mockReset();
   });
 
   it.each`

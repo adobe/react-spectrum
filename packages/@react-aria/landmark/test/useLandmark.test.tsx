@@ -72,24 +72,17 @@ function toggleBrowserWindow() {
 
 
 describe('LandmarkManager', function () {
-  let realGetComputedStyle = window.getComputedStyle;
+  let offsetWidth, offsetHeight;
 
   beforeAll(function () {
-    jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
-      if (element.attributes.getNamedItem('data-rsp-testid')?.value === 'scrollview') {
-        const sty = realGetComputedStyle(element);
-        sty.width = '1000px';
-        sty.height = '1000px';
-        return sty;
-      } else {
-        return realGetComputedStyle(element);
-      }
-    });
+    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
+    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     jest.useFakeTimers();
   });
 
   afterAll(function () {
-    jest.restoreAllMocks();
+    offsetWidth.mockRestore();
+    offsetHeight.mockReset();
   });
 
   afterEach(() => {

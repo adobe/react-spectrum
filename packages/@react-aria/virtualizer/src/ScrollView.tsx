@@ -62,7 +62,6 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     height: 0,
     isScrolling: false
   }).current;
-
   let {direction} = useLocale();
 
   let [isScrolling, setScrolling] = useState(false);
@@ -129,9 +128,8 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
       return;
     }
 
-    let computedStyles = getComputedStyle(dom);
-    let w = parseFloat(computedStyles.width) + parseFloat(computedStyles.paddingLeft) + parseFloat(computedStyles.paddingRight) || 0;
-    let h = parseFloat(computedStyles.height) + parseFloat(computedStyles.paddingTop) + parseFloat(computedStyles.paddingBottom) || 0;
+    let w = dom.clientWidth;
+    let h = dom.clientHeight;
     if (sizeToFit && contentSize.width > 0 && contentSize.height > 0) {
       if (sizeToFit === 'width') {
         w = Math.min(w, contentSize.width);
@@ -169,7 +167,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
   }
 
   return (
-    <div {...otherProps} style={style} ref={ref} onScroll={onScroll} data-rsp-testid="scrollview" >
+    <div {...otherProps} style={style} ref={ref} onScroll={onScroll}>
       <div role="presentation" style={{width: contentSize.width, height: contentSize.height, pointerEvents: isScrolling ? 'none' : 'auto', position: 'relative', ...innerStyle}}>
         {children}
       </div>

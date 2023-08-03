@@ -183,6 +183,7 @@ export function useVirtualizer<T extends object, V extends ReactNode, W>(props: 
   let prevProps = useRef(props);
   let onVisibleRectChange = useCallback((rect: Rect) => {
     state.setVisibleRect(rect);
+
     if (!isLoadingRef.current && onLoadMore) {
       let scrollOffset = state.virtualizer.contentSize.height - rect.height * 2;
       if (rect.y > scrollOffset) {
