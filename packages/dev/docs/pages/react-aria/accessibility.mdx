@@ -110,6 +110,48 @@ All React Aria components are tested across a wide variety of devices, browsers,
 There are a number of known accessibility false positives in React Aria and React Spectrum, currently documented here in our [wiki](https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives).
 These are commonly caught by automated accessibility testing tools and can cause unnecessary noise in your own accessibility audits.
 To facilitate the suppression of these false positives, the data attribute `data-a11y-ignore` is included on the problematic elements
-with the relevant `AXE` rule set as its value. See [here](https://github.com/adobe/react-spectrum/blob/9a9327fae5b5a466f7a1394a82669ea19858356d/.storybook/preview.js#L17-L26)
-for an example of how we've configured our own storybook to ignore a known false positive and reference the aforementioned wiki for a list of
-available data attributes.
+with the relevant `AXE` rule set as its value. The example below demonstrates how you could do so for your [automated Storybook test runner](https://storybook.js.org/docs/7.1/react/writing-tests/accessibility-testing#a11y-config-with-the-test-runner).
+A similar config can be setup for the [Storybook a11y addon](https://storybook.js.org/docs/7.1/react/writing-tests/accessibility-testing#global-a11y-configuration) as well.
+
+```tsx
+// .storybook/test-runner.js
+
+const {configureAxe, checkA11y, injectAxe} = require('axe-playwright');
+const {getStoryContext} = require('@storybook/test-runner');
+
+module.exports = {
+  async preRender(page, context) {
+    await injectAxe(page);
+  },
+  async postRender(page, context) {
+    // Get entire context of a story, including parameters, args, argTypes, etc.
+    const storyContext = await getStoryContext(page, context);
+
+    // Do not test a11y for stories that disable a11y
+    if (storyContext.parameters?.a11y?.disable) {
+      return;
+    }
+
+    // Apply global a11y rules on top of story-level a11y rules
+    await configureAxe(page, {
+      rules: [
+        {
+          id: 'aria-hidden-focus',
+          selector: 'body *:not([data-a11y-ignore="aria-hidden-focus"])',
+        },
+        ...(storyContext.parameters?.a11y?.config?.rules ?? [])
+      ]
+    });
+
+    // from Storybook 7.0 onwards, the selector should be #storybook-root
+    await checkA11y(page, '#root', {
+      detailedReport: true,
+      detailedReportOptions: {
+        html: true,
+      },
+      // pass axe options defined in @storybook/addon-a11y
+      axeOptions: storyContext.parameters?.a11y?.options,
+    });
+  }
+};
+```
