@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Text, TimeField, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Text, TimeField, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
@@ -646,68 +646,88 @@ export const TableExample = () => {
   });
 
   return (
-    <Table
-      aria-label="Example table"
-      style={{height: '210px', maxWidth: '400px'}}>
-      <TableHeader>
-        <Column isRowHeader>Name</Column>
-        <Column>Type</Column>
-        <Column>Date Modified</Column>
-        <Column>Actions</Column>
-      </TableHeader>
-      <TableBody items={list.items}>
-        {item => (
-          <Row>
-            <Cell>{item.name}</Cell>
-            <Cell>{item.type}</Cell>
-            <Cell>{item.date}</Cell>
-            <Cell>
-              <DialogTrigger>
-                <Button>Delete</Button>
-                <ModalOverlay
-                  style={{
-                    position: 'fixed',
-                    zIndex: 100,
-                    top: 0,
-                    left: 0,
-                    bottom: 0,
-                    right: 0,
-                    background: 'rgba(0, 0, 0, 0.5)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                  <Modal
+    <ResizableTableContainer style={{width: 300, overflow: 'auto'}}>
+      <Table aria-label="Example table">
+        <TableHeader>
+          <MyColumn isRowHeader defaultWidth="50%">Name</MyColumn>
+          <MyColumn>Type</MyColumn>
+          <MyColumn>Date Modified</MyColumn>
+          <MyColumn>Actions</MyColumn>
+        </TableHeader>
+        <TableBody items={list.items}>
+          {item => (
+            <Row>
+              <Cell>{item.name}</Cell>
+              <Cell>{item.type}</Cell>
+              <Cell>{item.date}</Cell>
+              <Cell>
+                <DialogTrigger>
+                  <Button>Delete</Button>
+                  <ModalOverlay
                     style={{
-                      background: 'Canvas',
-                      color: 'CanvasText',
-                      border: '1px solid gray',
-                      padding: 30
+                      position: 'fixed',
+                      zIndex: 100,
+                      top: 0,
+                      left: 0,
+                      bottom: 0,
+                      right: 0,
+                      background: 'rgba(0, 0, 0, 0.5)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
                     }}>
-                    <Dialog>
-                      {({close}) => (<>
-                        <Heading>Delete item</Heading>
-                        <p>Are you sure?</p>
-                        <Button onPress={close}>Cancel</Button>
-                        <Button
-                          onPress={() => {
-                            close();
-                            list.remove(item.id);
-                          }}>
-                          Delete
-                        </Button>
-                      </>)}
-                    </Dialog>
-                  </Modal>
-                </ModalOverlay>
-              </DialogTrigger>
-            </Cell>
-          </Row>
-        )}
-      </TableBody>
-    </Table>
+                    <Modal
+                      style={{
+                        background: 'Canvas',
+                        color: 'CanvasText',
+                        border: '1px solid gray',
+                        padding: 30
+                      }}>
+                      <Dialog>
+                        {({close}) => (<>
+                          <Heading>Delete item</Heading>
+                          <p>Are you sure?</p>
+                          <Button onPress={close}>Cancel</Button>
+                          <Button
+                            onPress={() => {
+                              close();
+                              list.remove(item.id);
+                            }}>
+                            Delete
+                          </Button>
+                        </>)}
+                      </Dialog>
+                    </Modal>
+                  </ModalOverlay>
+                </DialogTrigger>
+              </Cell>
+            </Row>
+          )}
+        </TableBody>
+      </Table>
+    </ResizableTableContainer>
   );
 };
+
+function MyColumn(props) {
+  return (
+    <Column {...props}>
+      {({startResize}) => (
+        <div style={{display: 'flex'}}>
+          <MenuTrigger>
+            <Button style={{flex: 1, textAlign: 'left'}}>{props.children}</Button>
+            <Popover>
+              <Menu className={styles.menu} onAction={() => startResize()}>
+                <MyItem id="resize">Resize</MyItem>
+              </Menu>
+            </Popover>
+          </MenuTrigger>
+          <ColumnResizer />
+        </div>
+      )}
+    </Column>
+  );
+}
 
 function MyItem(props) {
   return (
@@ -1048,7 +1068,7 @@ export const RadioGroupExample = () => {
 
 export const RadioGroupInDialogExample = () => {
   return (
-    <DialogTrigger>      
+    <DialogTrigger>
       <Button>Open dialog</Button>
       <ModalOverlay
         style={{
@@ -1076,7 +1096,7 @@ export const RadioGroupInDialogExample = () => {
               outlineOffset: '2px',
               position: 'relative'
             }}>
-            {({close}) => (              
+            {({close}) => (
               <>
                 <div>
                   <RadioGroupExample />

@@ -203,3 +203,48 @@
 :global(.react-aria-DropIndicator)[data-drop-target] {
   outline: 1px solid slateblue;
 }
+
+
+:global(.react-aria-Table) {
+  border-collapse: collapse;
+}
+
+:global(.react-aria-Cell) {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+:global(.react-aria-ColumnResizer) {
+  width: 15px;
+  background-color: grey;
+  height: 30px;
+  touch-action: none;
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  border: 5px;
+  border-style: none solid;
+  border-color: transparent;
+  background-clip: content-box;
+
+  &[data-resizable-direction=both] {
+    cursor: ew-resize;
+  }
+
+  &[data-resizable-direction=left] {
+    cursor: e-resize;
+  }
+
+  &[data-resizable-direction=right] {
+    cursor: w-resize;
+  }
+}
+
+:global(.react-aria-ColumnResizer)[data-focus-visible] {
+  background-color: orange;
+}
+
+:global(.react-aria-ColumnResizer)[data-resizing] {
+  border-color: orange;
+  background-color: transparent;
+}
