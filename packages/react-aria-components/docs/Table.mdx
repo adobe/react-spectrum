@@ -99,6 +99,8 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
   border-spacing: 0;
   min-height: 100px;
   align-self: start;
+  max-width: 100%;
+  word-break: break-word;
 
   &[data-focus-visible] {
     border-color: var(--highlight-background);
@@ -1000,6 +1002,475 @@ Use the `renderEmptyState` prop to customize what the `TableBody` will display i
   </TableBody>
 </Table>
 ```
+
+## Column Resizing
+
+Table supports resizable columns, allowing users to dynamically adjust the width of a column. This is enabled by wrapping the `<Table>` with a `<ResizableTableContainer>` element, which serves as a scrollable container for the Table. Then, to make a column resizable, render a `<ColumnResizer>` element inside a `<Column>`. This allows a user to drag a resize handle to change the width of a column. Keyboard users can also resize a column by pressing <Keyboard>Enter</Keyboard> to enter resizing mode and then using the arrow keys to resize. Screen reader users can resize columns by operating the resizer like a slider.
+
+### Width values
+
+By default, a Table relies on the browser's default table layout algorithm to determine column widths. However, when a Table is wrapped in a `<ResizableTableContainer>`, column widths are calculated in JavaScript by React Aria. When no additional props are provided, Table divides the available space evenly among the columns. The `Column` component also supports four different width props that allow you to control column sizing behavior: `defaultWidth`, `width`, `minWidth`, and `maxWidth`.
+
+An initial, uncontrolled width can be provided to a Column using the `defaultWidth` prop. This allows the column width to freely shrink and grow in relation to other column widths. Alternatively, a controlled value can be provided by the `width` prop. These props accept fixed pixel values, percentages of the total table width, or [fractional](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout/Basic_Concepts_of_Grid_Layout#the_fr_unit) values (the `fr` unit), which represent a fraction of the available space. Columns without a defined width are equivalent to `1fr`.
+
+The `minWidth` and `maxWidth` props define constraints on the size of a column, which may be defined either as fixed pixel values or as percentages of the total table width. These are respected when calculating the size of a column, and also provide limits for column resizing.
+
+The example below illustrates how each of the column width props affects their respective column's resize behavior.
+
+```tsx example
+import {ResizableTableContainer, ColumnResizer} from 'react-aria-components';
+
+<ResizableTableContainer>
+  <Table aria-label="Table with resizable columns">
+    <TableHeader>
+      {/*- begin highlight -*/}
+      <Column id="file" isRowHeader maxWidth={500}>
+        <div className="flex-wrapper">
+          <span tabIndex={-1} className="column-name">File Name</span>
+          <ColumnResizer />
+        </div>
+      </Column>
+      <Column id="size" width={80}>Size</Column>
+      <Column id="date" minWidth={100}>
+        <div className="flex-wrapper">
+          <span tabIndex={-1} className="column-name">Date Modified</span>
+          <ColumnResizer />
+        </div>
+      </Column>
+      {/*- end highlight -*/}
+    </TableHeader>
+    <TableBody>
+      <Row>
+        <Cell>2022-Roadmap-Proposal-Revision-012822-Copy(2)</Cell>
+        <Cell>214 KB</Cell>
+        <Cell>November 27, 2022 at 4:56PM</Cell>
+      </Row>
+      <Row>
+        <Cell>62259692_p0_master1200</Cell>
+        <Cell>120 KB</Cell>
+        <Cell>January 27, 2021 at 1:56AM</Cell>
+      </Row>
+    </TableBody>
+  </Table>
+</ResizableTableContainer>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ResizableTableContainer {
+  --border-color: var(--spectrum-global-color-gray-400);
+  --background-color: var(--page-background);
+
+  max-width: 400px;
+  overflow: auto;
+  position: relative;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--background-color);
+
+  .react-aria-Table {
+    border: none;
+  }
+
+  .flex-wrapper {
+    display: flex;
+    align-items: center;
+  }
+
+  .column-name,
+  .react-aria-Button {
+    flex: 1;
+    font: inherit;
+    text-align: start;
+    color: inherit;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &:focus-visible {
+      outline: 2px solid slateblue;
+    }
+  }
+
+  .react-aria-ColumnResizer {
+    width: 15px;
+    background-color: grey;
+    height: 25px;
+    flex: 0 0 auto;
+    touch-action: none;
+    box-sizing: border-box;
+    border: 5px;
+    border-style: none solid;
+    border-color: transparent;
+    background-clip: content-box;
+
+    &[data-resizable-direction=both] {
+      cursor: ew-resize;
+    }
+
+    &[data-resizable-direction=left] {
+      cursor: e-resize;
+    }
+
+    &[data-resizable-direction=right] {
+      cursor: w-resize;
+    }
+
+    &[data-focus-visible] {
+      background-color: slateblue;
+    }
+
+    &[data-resizing] {
+      border-color: slateblue;
+      background-color: transparent;
+    }
+  }
+
+  .react-aria-Column,
+  .react-aria-Cell {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-ResizableTableContainer {
+    --border-color: ButtonBorder;
+    --background-color: ButtonFace;
+  }
+}
+```
+
+</details>
+
+### Resize events
+
+Table accepts an `onResize` prop which is triggered whenever a column resizer is moved by the user. This can be used in combination with the `width` prop to update a Column's width in a controlled fashion. Table also accepts an `onResizeEnd` prop, which is triggered when the user finishes a column resize operation. Both events receive a Map object containing the widths of every column in the Table.
+
+The example below uses `onResize` to update each of the Table's controlled column widths. It also saves the finalized column widths to `localStorage` in `onResizeEnd`, allowing the Table's state to be preserved between page loads and refreshes.
+
+```tsx example
+let initialColumns = [
+  {name: 'File Name', id: 'file', width: '1fr'},
+  {name: 'Size', id: 'size', width: 80},
+  {name: 'Date', id: 'date', width: 100}
+];
+
+function ResizableTable() {
+  /*- begin highlight -*/
+  let [columns, setColumns] = React.useState(() => {
+    let localStorageWidths = localStorage.getItem('table-widths');
+    if (localStorageWidths) {
+      let widths = JSON.parse(localStorageWidths);
+      return initialColumns.map(col => ({...col, width: widths[col.id]}));
+    } else {
+      return initialColumns;
+    }
+  });
+
+  let onResize = (widths) => {
+    setColumns(columns => columns.map(col => ({...col, width: widths.get(col.id)})));
+  };
+
+  let onResizeEnd = (widths) => {
+    localStorage.setItem('table-widths', JSON.stringify(Object.fromEntries(widths)));
+  };
+  /*- end highlight -*/
+
+  return (
+    <ResizableTableContainer
+      /*- begin highlight -*/
+      onResize={onResize}
+      onResizeEnd={onResizeEnd}
+      /*- end highlight -*/
+    >
+      <Table aria-label="Table with controlled, resizable columns saved in local storage">
+        <TableHeader columns={columns}>
+          {(column) => (
+            <Column isRowHeader={column.id === 'file'} width={column.width}>
+              <div className="flex-wrapper">
+                <span tabIndex={-1} className="column-name">{column.name}</span>
+                <ColumnResizer />
+              </div>
+            </Column>
+          )}
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2022-Roadmap-Proposal-Revision-012822-Copy(2)</Cell>
+            <Cell>214 KB</Cell>
+            <Cell>November 27, 2022 at 4:56PM</Cell>
+          </Row>
+          <Row>
+            <Cell>62259692_p0_master1200</Cell>
+            <Cell>120 KB</Cell>
+            <Cell>January 27, 2021 at 1:56AM</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    </ResizableTableContainer>
+  );
+}
+
+<ResizableTable />
+```
+
+### Column header menu
+
+The `Column` component exposes a `startResize` function as part of its render props which allows initiating column resizing programmatically. In addition, sorting can also be performed using the `sort` function. This enables you to create a dropdown menu that the user can use to sort or resize a column, along with any other custom actions you may have. Using a menu to initiate column resizing provides a larger hit area for touch screen users.
+
+This example shows how to create a reusable component that wraps `<Column>` to include a menu with sorting and resizing functionality.
+
+```tsx example export=true render=false
+import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
+
+interface ResizableTableColumnProps<T> extends Omit<ColumnProps<T>, 'children'> {
+  children: React.ReactNode
+}
+
+function ResizableTableColumn<T extends object>(props: ResizableTableColumnProps<T>) {
+  return (
+    <Column {...props}>
+      {({startResize, sort, allowsSorting, sortDirection}) => (
+        <div className="flex-wrapper">
+          <MenuTrigger>
+            <Button>{props.children}</Button>
+            <Popover>
+              <Menu onAction={(action) => {
+                if (action === 'sortAscending') {
+                  sort('ascending');
+                } else if (action === 'sortDescending') {
+                  sort('descending');
+                } else if (action === 'resize') {
+                  startResize();
+                }
+              }}>
+                <Item id="sortAscending">Sort Ascending</Item>
+                <Item id="sortDescending">Sort Descending</Item>
+                <Item id="resize">Resize</Item>
+              </Menu>
+            </Popover>
+          </MenuTrigger>
+          {allowsSorting && (
+            <span aria-hidden="true" className="sort-indicator">
+              {sortDirection === 'ascending' ? '▲' : '▼'}
+            </span>
+          )}
+          <ColumnResizer />
+        </div>
+      )}
+    </Column>
+  );
+}
+```
+
+We can now use this component in place of `<Column>` to render a table with support for both resizing and sorting columns using a dropdown menu.
+
+```tsx example
+import type {SortDescriptor} from 'react-aria-components';
+
+function Example() {
+  let [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
+    column: 'file',
+    direction: 'ascending'
+  });
+
+  let items = [
+    // ...
+    ///- begin collapse -////
+    {
+      id: 1,
+      file: '2022-Roadmap-Proposal-Revision-012822-Copy(2)',
+      size: '214 KB',
+      date: 'November 27, 2022 at 4:56PM'
+    },
+    {
+      id: 2,
+      file: '62259692_p0_master1200',
+      size: '120 KB',
+      date: 'January 27, 2021 at 1:56AM'
+    }
+    ///- end collapse -///
+  ].sort((a, b) => {
+    let d = a[sortDescriptor.column].localeCompare(b[sortDescriptor.column]);
+    return sortDescriptor.direction === 'descending' ? -d : d;
+  });
+
+  return (
+    <ResizableTableContainer>
+      <Table aria-label="Table with resizable columns" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor}>
+        <TableHeader>
+          <ResizableTableColumn id="file" isRowHeader allowsSorting>File Name</ResizableTableColumn>
+          <ResizableTableColumn id="size" allowsSorting>Size</ResizableTableColumn>
+          <ResizableTableColumn id="date" allowsSorting>Date Modified</ResizableTableColumn>
+        </TableHeader>
+        <TableBody items={items}>
+          {item => (
+            <Row>
+              <Cell>{item.file}</Cell>
+              <Cell>{item.size}</Cell>
+              <Cell>{item.date}</Cell>
+            </Row>
+          )}
+        </TableBody>
+      </Table>
+    </ResizableTableContainer>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Menu {
+  --highlight-background: slateblue;
+  --highlight-foreground: white;
+  --separator-color: var(--spectrum-global-color-gray-500);
+  --text-color: var(--spectrum-alias-text-color);
+  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+
+  max-height: inherit;
+  box-sizing: border-box;
+  overflow: auto;
+  padding: 2px;
+  margin: 0;
+  min-width: 150px;
+  box-sizing: border-box;
+  outline: none;
+
+  .react-aria-Section:not(:first-child) {
+    margin-top: 12px;
+  }
+
+  .react-aria-Header {
+    font-size: 1.143rem;
+    font-weight: bold;
+    padding: 0 0.714rem;
+  }
+
+  [role=separator] {
+    height: 1px;
+    background: var(--separator-color);
+    margin: 2px 4px;
+  }
+
+  .react-aria-Item {
+    margin: 2px;
+    padding: 0.286rem 0.571rem;
+    border-radius: 6px;
+    outline: none;
+    cursor: default;
+    color: var(--text-color);
+    font-size: 1.072rem;
+    position: relative;
+    display: grid;
+    grid-template-areas: "label kbd"
+                        "desc  kbd";
+    align-items: center;
+    column-gap: 20px;
+
+    &[data-focused] {
+      background: var(--highlight-background);
+      color: var(--highlight-foreground);
+    }
+
+    &[aria-disabled] {
+      color: var(--text-color-disabled);
+    }
+
+    [slot=label] {
+      font-weight: bold;
+      grid-area: label;
+    }
+
+    [slot=description] {
+      font-size: small;
+      grid-area: desc;
+    }
+
+    & kbd {
+      grid-area: kbd;
+      font-family: monospace;
+      text-align: end;
+    }
+
+    &[aria-checked] {
+      padding-left: 24px;
+
+      &[aria-checked=true]::before {
+        content: '✓';
+        content: '✓' / '';
+        alt: ' ';
+        position: absolute;
+        left: 4px;
+        font-weight: 600;
+      }
+
+      &[role=menuitemradio][aria-checked=true]::before {
+        content: '●';
+        content: '●' / '';
+        transform: scale(0.7)
+      }
+    }
+  }
+}
+
+.react-aria-Popover {
+  --background-color: var(--page-background);
+  --border-color: var(--spectrum-global-color-gray-400);
+
+  border: 1px solid var(--border-color);
+  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
+  border-radius: 6px;
+  background: var(--background-color);
+  outline: none;
+
+  &[data-placement=top] {
+    --origin: translateY(8px);
+  }
+
+  &[data-placement=bottom] {
+    --origin: translateY(-8px);
+  }
+
+  &[data-entering] {
+    animation: slide 200ms;
+  }
+
+  &[data-exiting] {
+    animation: slide 200ms reverse ease-in;
+  }
+}
+
+@keyframes slide {
+  from {
+    transform: var(--origin);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Menu {
+    forced-color-adjust: none;
+
+    --highlight-background: Highlight;
+    --highlight-foreground: HighlightText;
+    --separator-color: ButtonBorder;
+    --text-color: ButtonText;
+    --text-color-disabled: GrayText;
+  }
+}
+```
+
+</details>
 
 ## Drag and drop
 

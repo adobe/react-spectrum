@@ -1,12 +1,12 @@
 {
-  "actions": "动作",
-  "selectAction": "选择动作",
-  "addToQueue": "添加到队列",
-  "addToCurrentWatchQueue": "添加到当前观看队列。",
+  "actions": "操作",
   "addReview": "添加评论",
-  "postAReviewForTheEpisode": "发表对剧集的评论。",
-  "subscribeToSeries": "订阅系列",
   "addSeriesToSubscription": "将系列添加到您的订阅列表，并在新剧集播出时收到通知。",
+  "addToCurrentWatchQueue": "添加到当前观看队列。",
+  "addToQueue": "添加到队列",
+  "postAReviewForTheEpisode": "发布剧集评论。",
   "report": "报告",
-  "reportAnIssue": "报告问题/违规行为。"
+  "reportAnIssue": "报告问题/违规行为。",
+  "selectAction": "选择操作",
+  "subscribeToSeries": "订阅系列"
 }

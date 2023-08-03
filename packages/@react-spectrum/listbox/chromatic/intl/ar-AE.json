@@ -1,12 +1,12 @@
 {
-  "actions": "أجراءات",
-  "selectAction": "اختر فعلا",
-  "addToQueue": "إضافة إلى قائمة الانتظار",
+  "actions": "الإجراءات",
+  "addReview": "إضافة مُراجعة",
+  "addSeriesToSubscription": "أضف المسلسل إلى قائمة الاشتراك الخاصة بك وسيتم إعلامك عند بث حلقة جديدة.",
   "addToCurrentWatchQueue": "أضف إلى قائمة انتظار المشاهدة الحالية.",
-  "addReview": "إضافة مراجعة",
+  "addToQueue": "أضف إلى قائمة الانتظار",
   "postAReviewForTheEpisode": "أضف مراجعة للحلقة.",
-  "subscribeToSeries": "اشترك في المسلسل",
-  "addSeriesToSubscription": "أضف سلسلة إلى قائمة الاشتراك الخاصة بك وسيتم إعلامك عند بث حلقة جديدة.",
-  "report": "تقرير",
-  "reportAnIssue": "الإبلاغ عن مشكلة / انتهاك."
+  "report": "الإبلاغ",
+  "reportAnIssue": "الإبلاغ عن مشكلة / انتهاك.",
+  "selectAction": "اختر عملية",
+  "subscribeToSeries": "اشترك في المسلسل"
 }
