@@ -79,7 +79,8 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
   return {
     containerProps: {
       ...visuallyHiddenProps,
-      'aria-hidden': true
+      'aria-hidden': true,
+      ['data-a11y-ignore']: 'aria-hidden-focus'
     },
     inputProps: {
       type: 'text',
@@ -114,7 +115,7 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
   // autofill will work. Otherwise, use an <input type="hidden">.
   if (state.collection.size <= 300) {
     return (
-      <div {...containerProps}>
+      <div {...containerProps} data-testid="hidden-select-container">
         <input {...inputProps} />
         <label>
           {label}

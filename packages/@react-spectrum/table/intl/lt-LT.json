@@ -1,6 +1,8 @@
 {
+  "collapse": "Sutraukti",
   "columnResizer": "Stulpelio dydžio keitiklis",
   "drag": "Vilkti",
+  "expand": "Išskleisti",
   "loading": "Įkeliama...",
   "loadingMore": "Įkeliama daugiau...",
   "resizeColumn": "Keisti stulpelio dydį",

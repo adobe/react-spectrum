@@ -1,0 +1,12 @@
+{
+  "actions": "Åtgärder",
+  "addReview": "Lägg till recension",
+  "addSeriesToSubscription": "Lägg till serier till din prenumerationslista och få meddelande när ett nytt avsnitt sänds.",
+  "addToCurrentWatchQueue": "Lägg till i aktuell bevakningskö.",
+  "addToQueue": "Lägg till i kö",
+  "postAReviewForTheEpisode": "Skriv en recension om avsnittet.",
+  "report": "Rapportera",
+  "reportAnIssue": "Rapportera ett problem/överträdelse.",
+  "selectAction": "Välj åtgärd",
+  "subscribeToSeries": "Prenumerera på serier"
+}

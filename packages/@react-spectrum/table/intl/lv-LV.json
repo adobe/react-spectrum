@@ -1,6 +1,8 @@
 {
+  "collapse": "Sakļaut",
   "columnResizer": "Kolonnas izmēru mainītājs",
   "drag": "Vilkšana",
+  "expand": "Izvērst",
   "loading": "Notiek ielāde...",
   "loadingMore": "Tiek ielādēts vēl...",
   "resizeColumn": "Mainīt kolonnas lielumu",
