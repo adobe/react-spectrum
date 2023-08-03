@@ -151,3 +151,15 @@ governing permissions and limitations under the License.
     padding-block-end: calc(2 * var(--spectrum-popover-border-size));
   }
 }
+
+@media (forced-colors: active) {
+  .spectrum-Popover {
+    /* With a popover that contains a menu,
+    the menu scrolls. Add overflow: hidden,
+    so the menu's scrollbar doesn't overflow the
+    the popover's border-radius in the corners. */
+    &:has(> [role="menu"], > [role="listbox"]) {
+      overflow: hidden;
+    }
+  }
+}
