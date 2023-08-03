@@ -157,14 +157,14 @@ describe('DropZone', () => {
   it('should render FileTrigger as a child', () => {
     let {getByTestId} = render(
       <DropZone>
-        <FileTrigger data-testid="foo">
-          <Button>Upload</Button>
+        <FileTrigger>
+          <Button data-testid="foo">Upload</Button>
         </FileTrigger>
       </DropZone>
     );
       
-    let fileTrigger = getByTestId('foo');
-    expect(fileTrigger).toHaveClass('react-aria-FileTrigger');
+    let button = getByTestId('foo');
+    expect(button).toHaveClass('react-aria-Button');
   });
 
   describe('drag and drop', function () {
