@@ -35,21 +35,19 @@ governing permissions and limitations under the License.
   }
 }
 
-@media (forced-colors: none) {
-  .spectrum-Link--secondary {
+.spectrum-Link--secondary {
+  color: inherit;
+
+  &:hover {
     color: inherit;
+  }
 
-    &:hover {
-      color: inherit;
-    }
+  &:active {
+    color: inherit;
+  }
 
-    &:active {
-      color: inherit;
-    }
-
-    &:focus {
-      color: inherit;
-    }
+  &:focus {
+    color: inherit;
   }
 }
 
@@ -75,14 +73,18 @@ governing permissions and limitations under the License.
 
 @media (forced-colors: active) {
   .spectrum-Link {
-    --spectrum-link-text-color: LinkText;
-    --spectrum-link-text-color-hover: LinkText;
-    --spectrum-link-text-color-down: LinkText;
-    --spectrum-link-text-color-key-focus: LinkText;
+    color: LinkText;
 
-    --spectrum-link-over-background-text-color: LinkText;
-    --spectrum-link-over-background-text-color-hover: LinkText;
-    --spectrum-link-over-background-text-color-down: LinkText;
-    --spectrum-link-over-background-text-color-key-focus: LinkText;
+    &:hover {
+      color: LinkText;
+    }
+
+    &:active {
+      color: LinkText;
+    }
+
+    &:focus {
+      color: LinkText;
+    }
   }
 }
