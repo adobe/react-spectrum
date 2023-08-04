@@ -113,12 +113,14 @@ To facilitate the suppression of these false positives, the data attribute `data
 with the relevant `AXE` rule set as its value. Below is a list of the currently available data selectors and their equivalent `AXE` rules:
 
 ```tsx
-rules: [
-  {
-    id: 'aria-hidden-focus',
-    selector: 'body *:not([data-a11y-ignore="aria-hidden-focus"])'
-  }
-]
+{
+  rules: [
+    {
+      id: 'aria-hidden-focus',
+      selector: 'body *:not([data-a11y-ignore="aria-hidden-focus"])'
+    }
+  ]
+}
 ```
 
 This set of rules should be included in your accessibility test framework's `AXE` config, such as in the [automated Storybook test runner](https://storybook.js.org/docs/7.1/react/writing-tests/accessibility-testing#a11y-config-with-the-test-runner)
