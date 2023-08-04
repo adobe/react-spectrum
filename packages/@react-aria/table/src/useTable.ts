@@ -20,6 +20,7 @@ import {mergeProps, useDescription, useId, useUpdateEffect} from '@react-aria/ut
 import {Node} from '@react-types/shared';
 import {RefObject, useMemo} from 'react';
 import {TableKeyboardDelegate} from './TableKeyboardDelegate';
+import {tableNestedRows} from '@react-stately/flags';
 import {TableState, TreeGridState} from '@react-stately/table';
 import {useCollator, useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
@@ -70,7 +71,7 @@ export function useTable<T>(props: AriaTableProps<T>, state: TableState<T> | Tre
     gridProps['aria-rowcount'] = state.collection.size + state.collection.headerRows.length;
   }
 
-  if ('expandedKeys' in state) {
+  if (tableNestedRows() && 'expandedKeys' in state) {
     gridProps.role = 'treegrid';
   }
 
