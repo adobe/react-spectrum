@@ -21,7 +21,7 @@ describe('DropZone', () => {
   it('should render a dropzone', () => {
     let {getByTestId} = render(
       <DropZone data-testid="foo">
-        <Text slot="heading">
+        <Text slot="label">
           Test
         </Text>
       </DropZone>
@@ -33,7 +33,7 @@ describe('DropZone', () => {
   it('should render a dropzone with custom class', () => {
     let {getByTestId} = render(
       <DropZone data-testid="foo" className="test">
-        <Text slot="heading">
+        <Text slot="label">
           Test
         </Text>
       </DropZone>);
@@ -44,7 +44,7 @@ describe('DropZone', () => {
   it('should support DOM props', () => {
     let {getByTestId} = render(
       <DropZone data-testid="foo" data-foo="bar">
-        <Text slot="heading">
+        <Text slot="label">
           Test
         </Text>
       </DropZone>);
@@ -83,7 +83,7 @@ describe('DropZone', () => {
   it('should support focus ring', () => {
     let {getByTestId, getByRole} = render(
       <DropZone data-testid="foo" className={({isFocusVisible}) => isFocusVisible ? 'focus' : ''}>
-        <Text slot="heading">
+        <Text slot="label">
           Test
         </Text>
       </DropZone>);
@@ -106,7 +106,7 @@ describe('DropZone', () => {
   it('should apply correct aria-labelledby', () => {
     let {getByRole, getByText} = render(
       <DropZone className="test">
-        <Text slot="heading">
+        <Text slot="label">
           Test
         </Text>
       </DropZone>);
@@ -157,14 +157,14 @@ describe('DropZone', () => {
   it('should render FileTrigger as a child', () => {
     let {getByTestId} = render(
       <DropZone>
-        <FileTrigger data-testid="foo">
-          <Button>Upload</Button>
+        <FileTrigger>
+          <Button data-testid="foo">Upload</Button>
         </FileTrigger>
       </DropZone>
     );
       
-    let fileTrigger = getByTestId('foo');
-    expect(fileTrigger).toHaveClass('react-aria-FileTrigger');
+    let button = getByTestId('foo');
+    expect(button).toHaveClass('react-aria-Button');
   });
 
   describe('drag and drop', function () {
@@ -198,7 +198,7 @@ describe('DropZone', () => {
           <>
             <Draggable onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
             <DropZone data-testid="foo" onDropEnter={onDropEnter} onDrop={onDrop} onDropMove={onDropMove} >
-              <Text slot="heading">
+              <Text slot="label">
                 Test
               </Text>
             </DropZone>
@@ -303,7 +303,7 @@ describe('DropZone', () => {
           <>
             <Draggable onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
             <DropZone data-testid="foo" onDropEnter={onDropEnter} onDrop={onDrop} onDropMove={onDropMove} >
-              <Text slot="heading">
+              <Text slot="label">
                 Test
               </Text>
             </DropZone>
@@ -356,7 +356,7 @@ describe('DropZone', () => {
       let tree = render(
         <>
           <DropZone onDrop={onDrop}>
-            <Text slot="heading">
+            <Text slot="label">
               Test
             </Text>
           </DropZone >
