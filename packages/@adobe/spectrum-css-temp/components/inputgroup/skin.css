@@ -285,6 +285,8 @@ governing permissions and limitations under the License.
       forced-color-adjust: auto;
       --spectrum-fieldbutton-background-color: Canvas;
       --spectrum-fieldbutton-quiet-background-color: Canvas;
+      --spectrum-fieldbutton-background-color-down: Canvas;
+      --spectrum-fieldbutton-quiet-background-color-down: Canvas;
       --spectrum-fieldbutton-background-color-disabled: Canvas;
       --spectrum-fieldbutton-quiet-background-color-disabled: Canvas;
       --spectrum-fieldbutton-background-color-hover: Canvas;
