@@ -101,7 +101,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
 }
 
 /**
- * A dropzone is an area into which one or multiple objects can be dragged and dropped.
+ * A drop zone is an area into which one or multiple objects can be dragged and dropped.
  */
 const _DropZone = forwardRef(DropZone);
 export {_DropZone as DropZone};

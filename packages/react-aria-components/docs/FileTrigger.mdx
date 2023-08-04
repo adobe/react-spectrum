@@ -137,6 +137,8 @@ If a visual label is not provided on the pressable child, then an `aria-label` o
 ### Composed Components
 A `FileTrigger` can use the following components, which may also be used standalone or reused in other components.
 
+<section className={styles.cardGroup} data-size="small">
+
 <ExampleCard
   url="Button.html"
   title="Button"
@@ -144,15 +146,17 @@ A `FileTrigger` can use the following components, which may also be used standal
   <Button />
 </ExampleCard>
 
+</section>
+
 ## Props
 
 <PropTable component={docs.exports.FileTrigger} links={docs.links} />
 
 ## Styling
 
-React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. Unlike other React Aria components, `FileTrigger` does not have a builtin `className` attribute following the `react-aria-ComponentName` naming convention. Instead, it is styled by its pressable children, such as `Button`.  
+### FileTrigger 
 
-The states and selectors for each component used in a `FileTrigger` are documented below.
+The `FileTrigger` component does not render any element of its own so it does not support styling. 
 
 ### Button
 

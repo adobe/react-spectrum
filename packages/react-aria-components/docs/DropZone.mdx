@@ -20,6 +20,7 @@ import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import {Keyboard} from '@react-spectrum/text';
+import FileTrigger from '@react-spectrum/docs/pages/assets/component-illustrations/FileTrigger.svg'
 
 ---
 category: Drag and drop
@@ -48,7 +49,9 @@ function Example() {
       onDrop={() => {
         setDropped(true);
       }}>
-      {dropped ? "You dropped something" : "Drop object here"}
+      <Text slot="label">
+        {dropped ? "You dropped something" : "Drop object here"}
+      </Text>
     </DropZone>
   );
 }
@@ -124,7 +127,16 @@ A visual label should be provided to `DropZone` using a `Text` element with a `l
 ### Composed Components
 A drop zone can include a `FileTrigger` as a child, which may also be used standalone or reused in other components.
 
-{/* TODO: Add an Example Card of FileTrigger */}
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="FileTrigger.html"
+  title="FileTrigger"
+  description="A file trigger allows a user to access the file system with any pressable componet such as a Button.">
+  <FileTrigger />
+</ExampleCard>
+
+</section>
 
 ## Props
 
