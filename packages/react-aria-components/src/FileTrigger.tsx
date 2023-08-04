@@ -64,7 +64,7 @@ function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLInputElement
 }
 
 /**
- * A FileTrigger allows a user to access the file system with either a Button or Link.
+ * A FileTrigger allows a user to access the file system with any pressable React Aria or React Spectrum component, or custom components built with usePress.
  */
 const _FileTrigger = forwardRef(FileTrigger);
 export {_FileTrigger  as FileTrigger};

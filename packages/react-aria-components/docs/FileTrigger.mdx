@@ -43,9 +43,23 @@ type: component
 import {FileTrigger} from 'react-aria-components';
 import {Button} from 'react-aria-components';
 
-<FileTrigger>
-  <Button>Select a file</Button>
-</FileTrigger>
+function Example(){
+  let [file, setFile] = React.useState(null);
+
+  return (
+    <>
+      <FileTrigger
+        onChange={(e) => {
+          let files = Array.from(e);
+          let urls = files.map((file) => file.name);
+          setFile(urls);
+        }}>
+        <Button>Select a file</Button>
+      </FileTrigger>
+      {file && file}
+    </>
+  )
+}
 ```
 
 <details>
