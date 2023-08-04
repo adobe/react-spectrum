@@ -150,6 +150,24 @@ function Example() {
   );
 }
 ```
+
+### HTML forms
+
+Picker supports the `name` prop for integration with HTML forms. The `key` of the selected item will be submitted to the server.
+
+```tsx example
+<Picker
+  label="Favorite Animal"
+  ///- begin highlight -///
+  name="favoriteAnimalId"
+  ///- end highlight -///
+>
+  <Item key="panda">Panda</Item>
+  <Item key="cat">Cat</Item>
+  <Item key="dog">Dog</Item>
+</Picker>
+```
+
 ## Sections
 Picker supports sections in order to group options. Sections can be used by wrapping groups of items in a `Section` element. Each `Section` takes a `title` and `key` prop.
 
