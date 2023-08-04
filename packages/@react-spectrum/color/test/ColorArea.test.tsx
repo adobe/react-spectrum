@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, installMouseEvent, installPointerEvent, render} from '@react-spectrum/test-utils';
 import {ColorArea} from '../';
 import {composeStories} from '@storybook/testing-react';
 import {defaultTheme} from '@adobe/react-spectrum';
-import {fireEvent, installMouseEvent, installPointerEvent, render} from '@react-spectrum/test-utils';
 import {parseColor} from '@react-stately/color';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -629,6 +629,44 @@ describe('ColorArea', () => {
       userEvent.tab({shift: true});
       userEvent.tab({shift: true});
       expect(document.activeElement).toBe(zSlider);
+    });
+  });
+
+  describe('forms', () => {
+    it('supports form name', () => {
+      let {getAllByRole} = render(<ColorArea xName="red" yName="green" />);
+      let inputs = getAllByRole('slider', {hidden: true});
+      expect(inputs[0]).toHaveAttribute('name', 'red');
+      expect(inputs[0]).toHaveValue('255');
+      expect(inputs[1]).toHaveAttribute('name', 'green');
+      expect(inputs[1]).toHaveValue('255');
+    });
+
+    it('supports form reset', () => {
+      function Test() {
+        let [value, setValue] = React.useState(parseColor('rgb(100, 200, 0)'));
+        return (
+          <form>
+            <ColorArea value={value} onChange={setValue} />
+            <input type="reset" data-testid="reset" />
+          </form>
+        );
+      }
+
+      let {getByTestId, getAllByRole} = render(<Test />);
+      let inputs = getAllByRole('slider', {hidden: true});
+
+      expect(inputs[0]).toHaveValue('100');
+      expect(inputs[1]).toHaveValue('200');
+      fireEvent.change(inputs[0], {target: {value: '10'}});
+      fireEvent.change(inputs[1], {target: {value: '20'}});
+      expect(inputs[0]).toHaveValue('10');
+      expect(inputs[1]).toHaveValue('20');
+
+      let button = getByTestId('reset');
+      act(() => userEvent.click(button));
+      expect(inputs[0]).toHaveValue('100');
+      expect(inputs[1]).toHaveValue('200');
     });
   });
 });

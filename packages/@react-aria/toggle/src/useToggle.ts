@@ -11,7 +11,7 @@
  */
 
 import {AriaToggleProps} from '@react-types/checkbox';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useFormReset} from '@react-aria/utils';
 import {InputHTMLAttributes, RefObject} from 'react';
 import {ToggleState} from '@react-stately/toggle';
 import {useFocusable} from '@react-aria/focus';
@@ -69,6 +69,8 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
   let {focusableProps} = useFocusable(props, ref);
   let interactions = mergeProps(pressProps, focusableProps);
   let domProps = filterDOMProps(props, {labelable: true});
+
+  useFormReset(ref, state.isSelected, state.setSelected);
 
   return {
     inputProps: mergeProps(domProps, {

@@ -258,8 +258,7 @@ svg.spectrum-Table-sortedIcon {
 
 .spectrum-Table-expandButton {
   grid-area: expand-button;
-  height: 100%;
-  padding: var(--spectrum-table-cell-padding-y) var(--spectrum-global-dimension-size-100);
+  height: var(--spectrum-global-dimension-size-400);
   margin: calc(var(--spectrum-table-cell-padding-y) * -1) 0;
   display: flex;
   flex-wrap: wrap;

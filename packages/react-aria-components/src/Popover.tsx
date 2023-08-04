@@ -29,7 +29,7 @@ export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPo
 
 export interface PopoverRenderProps {
   /**
-   * The placement of the tooltip relative to the trigger.
+   * The placement of the popover relative to the trigger.
    * @selector [data-placement="left | right | top | bottom"]
    */
   placement: PlacementAxis,
@@ -115,7 +115,7 @@ function PopoverInner({state, isExiting, ...props}: PopoverInnerProps) {
   let style = {...renderProps.style, ...popoverProps.style};
 
   return (
-    <Overlay>
+    <Overlay isExiting={isExiting}>
       {!props.isNonModal && <div {...underlayProps} style={{position: 'fixed', inset: 0}} />}
       <div
         {...mergeProps(filterDOMProps(props as any), popoverProps)}

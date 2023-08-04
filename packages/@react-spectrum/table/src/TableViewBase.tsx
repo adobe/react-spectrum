@@ -20,7 +20,6 @@ import {
   classNames,
   useDOMRef,
   useFocusableRef,
-  useIsMobileDevice,
   useStyleProps,
   useUnwrapDOMRef
 } from '@react-spectrum/utils';
@@ -30,7 +29,7 @@ import type {DragAndDropHooks} from '@react-spectrum/dnd';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
 import type {DraggableItemResult, DropIndicatorAria, DroppableCollectionResult, DroppableItemResult} from '@react-aria/dnd';
 import {FocusRing, FocusScope, useFocusRing} from '@react-aria/focus';
-import {getInteractionModality, useHover, usePress} from '@react-aria/interactions';
+import {getInteractionModality, isFocusVisible, useHover, usePress} from '@react-aria/interactions';
 import {GridNode} from '@react-types/grid';
 import {InsertionIndicator} from './InsertionIndicator';
 // @ts-ignore
@@ -823,7 +822,6 @@ function ResizableTableColumnHeader(props) {
     headerRowHovered,
     setIsInResizeMode,
     isEmpty,
-    onFocusedResizer,
     isInResizeMode,
     headerMenuOpen,
     setHeaderMenuOpen
@@ -877,39 +875,8 @@ function ResizableTableColumnHeader(props) {
     return options;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allowsSorting]);
-  let isMobile = useIsMobileDevice();
 
   let resizingColumn = layout.resizingColumn;
-  let prevResizingColumn = useRef(null);
-  let timeout = useRef(null);
-  useEffect(() => {
-    if (prevResizingColumn.current !== resizingColumn &&
-      resizingColumn != null &&
-      resizingColumn === column.key) {
-      if (timeout.current) {
-        clearTimeout(timeout.current);
-      }
-      // focusSafely won't actually focus because the focus moves from the menuitem to the body during the after transition wait
-      // without the immediate timeout, Android Chrome doesn't move focus to the resizer
-      let focusResizer = () => {
-        resizingRef.current.focus();
-        onFocusedResizer();
-        timeout.current = null;
-      };
-      if (isMobile) {
-        timeout.current = setTimeout(focusResizer, 400);
-        return;
-      }
-      timeout.current = setTimeout(focusResizer, 0);
-    }
-    prevResizingColumn.current = resizingColumn;
-  }, [resizingColumn, column.key, isMobile, onFocusedResizer, resizingRef, prevResizingColumn, timeout]);
-
-  // eslint-disable-next-line arrow-body-style
-  useEffect(() => {
-    return () => clearTimeout(timeout.current);
-  }, []);
-
   let showResizer = !isEmpty && ((headerRowHovered && getInteractionModality() !== 'keyboard') || resizingColumn != null);
   let alignment = 'start';
   let menuAlign = 'start' as 'start' | 'end';
@@ -1428,7 +1395,13 @@ function ExpandableRowChevron({cell}) {
   // Will need to keep the chevron as a button for iOS VO at all times since VO doesn't focus the cell. Also keep as button if cellAction is defined by the user in the future
   let {buttonProps} = useButton({
     // Desktop and mobile both toggle expansion of a native expandable row on mouse/touch up
-    onPress: () => (state as TreeGridState<unknown>).toggleKey(cell.parentKey),
+    onPress: () => {
+      (state as TreeGridState<unknown>).toggleKey(cell.parentKey);
+      if (!isFocusVisible()) {
+        state.selectionManager.setFocused(true);
+        state.selectionManager.setFocusedKey(cell.parentKey);
+      }
+    },
     elementType: 'span',
     'aria-label': isExpanded ? stringFormatter.format('collapse') : stringFormatter.format('expand')
   }, expandButtonRef);

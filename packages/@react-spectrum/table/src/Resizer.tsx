@@ -47,7 +47,7 @@ const CURSORS = {
 
 function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
   let {column, showResizer} = props;
-  let {isEmpty, layout} = useTableContext();
+  let {isEmpty, layout, onFocusedResizer} = useTableContext();
   // Virtualizer re-renders, but these components are all cached
   // in order to get around that and cause a rerender here, we use context
   // but we don't actually need any value, they are available on the layout object
@@ -78,8 +78,7 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
   let {inputProps, resizerProps} = useTableColumnResize<unknown>(
     mergeProps(props, {
       'aria-label': stringFormatter.format('columnResizer'),
-      isDisabled: isEmpty,
-      shouldResizeOnFocus: true
+      isDisabled: isEmpty
     }), layout, ref);
 
   let isEResizable = layout.getColumnMinWidth(column.key) >= layout.getColumnWidth(column.key);
@@ -95,9 +94,9 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
   }
 
   let style = {
+    ...resizerProps.style,
     height: '100%',
     display: showResizer ? undefined : 'none',
-    touchAction: 'none',
     cursor
   };
 
@@ -105,13 +104,13 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
     <>
       <FocusRing within focusRingClass={classNames(styles, 'focus-ring')}>
         <div
+          {...resizerProps}
           role="presentation"
           style={style}
-          className={classNames(styles, 'spectrum-Table-columnResizer')}
-          {...resizerProps}>
+          className={classNames(styles, 'spectrum-Table-columnResizer')}>
           <input
             ref={ref}
-            {...inputProps} />
+            {...mergeProps(inputProps, {onFocus: onFocusedResizer})} />
         </div>
       </FocusRing>
       {/* Placeholder so that the title doesn't intersect with space reserved by the resizer when it appears. */}

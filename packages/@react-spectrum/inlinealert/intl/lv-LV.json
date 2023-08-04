@@ -1,6 +1,6 @@
 {
-  "negative": "Kļūda",
   "info": "Informācija",
-  "positive": "Izdevās",
-  "notice": "Brīdinājums"
+  "negative": "Kļūda",
+  "notice": "Brīdinājums",
+  "positive": "Izdevās"
 }
