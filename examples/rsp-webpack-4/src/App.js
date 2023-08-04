@@ -3,7 +3,6 @@ import {Provider, defaultTheme, Item, TagGroup, Cell, Column, Row, TableBody, Ta
 import Lighting from './Lighting';
 import {useState} from 'react'
 import BodyContent from './BodyContent';
-import {TagGroup} from '@react-spectrum/tag';
 import {enableTableNestedRows} from '@react-stately/flags';
 import {InlineAlert} from '@react-spectrum/inlinealert'
 
