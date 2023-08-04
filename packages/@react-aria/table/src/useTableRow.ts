@@ -18,8 +18,8 @@ import {GridRowAria, GridRowProps, useGridRow} from '@react-aria/grid';
 import {HTMLAttributes, RefObject} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {TableCollection} from '@react-types/table';
-import {TableState, TreeGridState} from '@react-stately/table';
 import {tableNestedRows} from '@react-stately/flags';
+import {TableState, TreeGridState} from '@react-stately/table';
 import {useLocale} from '@react-aria/i18n';
 
 const EXPANSION_KEYS = {
