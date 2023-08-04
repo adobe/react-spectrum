@@ -37,7 +37,7 @@ const attributes = {
   },
 };
 
-module.exports = plugin(({ addVariant, e }) => {
+module.exports = plugin(({ addVariant }) => {
   Object.keys(attributes.boolean).forEach((attributePrefix) => {
     attributes.boolean[attributePrefix].forEach((attributeName) => {
       let selector = `&[${attributePrefix}-${attributeName}]`;

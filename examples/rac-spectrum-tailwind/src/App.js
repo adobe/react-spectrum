@@ -11,12 +11,9 @@ export function App() {
   let [colorScheme, setColorScheme] = useState(undefined);
 
   return (
-    <Provider
-      theme={defaultTheme}
-      colorScheme={colorScheme}
-    >
+    <Provider theme={defaultTheme} colorScheme={colorScheme}>
       <ThemeSwitcher setColorScheme={setColorScheme} />
-      <div className="grid gap-160 grid-cols-1 auto-rows-fr justify-center">
+      <div className="grid justify-center grid-cols-1 gap-160 auto-rows-fr">
         <SelectBoxExample />
         <SentimentRatingGroup />
       </div>
@@ -27,7 +24,7 @@ export function App() {
 function SelectBoxExample() {
   return (
     <RadioGroup
-      className="space-y-2 flex flex-col text-center"
+      className="flex flex-col space-y-2 text-center"
       defaultValue="Team"
     >
       <Label className="text-xl font-semibold">Select Boxes</Label>
@@ -58,25 +55,23 @@ function SelectBox({ name, icon, description }) {
       value={name}
       className={({ isFocusVisible, isSelected, isPressed }) => `
       flex justify-center p-160 m-160 h-2000 w-2000 focus:outline-none border rounded
-      ${isFocusVisible ? "ring" : ""}
-      ${isSelected ? "bg-blue-100 border-blue-700" : ""}
+      ${isFocusVisible ? "ring-half ring-offset-0" : ""}
+      ${isSelected ? "bg-accent-100 border-accent-700" : ""}
       ${isPressed && !isSelected ? "bg-gray-200" : ""}
       ${!isSelected && !isPressed ? "bg-white dark:bg-black" : ""}
     `}
     >
       {({ isSelected }) => (
-        <div className="flex flex-col relative w-full h-full items-center justify-center gap-150">
+        <div className="relative flex flex-col items-center justify-center w-full h-full gap-150">
           {isSelected && (
-            <div className="absolute top-0 left-0 -mt-125 -ml-75 text-blue-800">
+            <div className="absolute top-0 left-0 text-accent-800 -mt-125 -ml-75">
               <CheckmarkCircle size="S" />
             </div>
           )}
           {icon && <div className="text-gray-500">{icon}</div>}
           <div>
             <div className={`font-semibold`}>{name}</div>
-            {description && (
-              <div className="text-gray-800 text-sm">{description}</div>
-            )}
+            {description && <div className="text-sm">{description}</div>}
           </div>
         </div>
       )}
@@ -87,7 +82,7 @@ function SelectBox({ name, icon, description }) {
 function SentimentRatingGroup() {
   let ratings = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
   return (
-    <RadioGroup className="space-y-10 flex flex-col text-center m-auto">
+    <RadioGroup className="flex flex-col m-auto space-y-10 text-center">
       <Label className="text-xl font-semibold">Sentiment Rating</Label>
       <div className="flex justify-between">
         <span>Least Likely</span>
@@ -106,7 +101,7 @@ function SentimentRating({ rating }) {
   return (
     <Radio
       value={rating}
-      className="flex justify-center items-center rounded-full p-160 m-75 h-200 w-200 focus:outline-none border focus-visible:ring bg-white dark:bg-black selected:bg-blue-800 selected:border-blue-800 selected:text-white pressed:bg-gray-200 hovered:border-gray-300"
+      className="flex items-center justify-center bg-white border rounded-full p-160 m-75 h-200 w-200 focus:outline-none focus-visible:ring dark:bg-black selected:bg-accent-800 dark:selected:bg-accent-800 selected:border-accent-800 selected:text-white pressed:bg-gray-200 dark:pressed:bg-gray-200 hovered:border-gray-300"
     >
       {rating}
     </Radio>
