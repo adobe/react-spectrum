@@ -29,10 +29,14 @@ let states = [
   {overflowMode: 'wrap'},
   {selectionMode: ['multiple', 'single']},
   {density: ['compact', 'spacious']},
-  {defaultExpandedKeys: [[], 'all', ['Lvl 1 Foo 1', 'Lvl 2 Foo 1']]}
+  {UNSTABLE_expandedKeys: [['Lvl 1 Foo 1'], 'all']}
 ];
 
 let combinations = generatePowerset(states);
+let chunkSize = Math.ceil(combinations.length / 3);
+let combo1 = combinations.slice(0, chunkSize);
+let combo2 = combinations.slice(chunkSize, chunkSize * 2);
+let combo3 = combinations.slice(chunkSize * 2, chunkSize * 3);
 
 function shortName(key, value) {
   let returnVal = '';
@@ -116,16 +120,16 @@ let nestedItems = [
   ]}
 ];
 
-const Template = ({columns, items, ...args}) => (
+const Template = ({combos, columns, items, ...args}) => (
   <Grid columns={repeat(3, '1fr')} autoFlow="row" gap="size-300">
-    {combinations.map(c => {
+    {combos.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
       if (!key) {
         key = 'empty';
       }
       return (
         <View flexGrow={1} maxWidth="size-5000" maxHeight={700}>
-          <TableView {...args} {...c} width="100%" height="100%" key={key} aria-label={key} selectedKeys={['Foo 3', 'Foo 1']} disabledKeys={['Foo 2', 'Foo 4']} UNSTABLE_allowsExpandableRows>
+          <TableView {...args} {...c} width="100%" height="100%" key={key} aria-label={key} selectedKeys={['Lvl 1 Foo 1', 'Lvl 3 Foo 1']} disabledKeys={['Lvl 2 Foo 1', 'Lvl 2 Foo 2']} UNSTABLE_allowsExpandableRows>
             <TableHeader columns={columns}>
               {(column: any) => (
                 <Column key={column.key} width={column.width} showDivider={column.showDivider} align={column.align} hideHeader={column.hideHeader} childColumns={column.children}>
@@ -182,39 +186,112 @@ const EmptyTemplate = (args) =>
 
 export const Default = {
   render: Template,
-  name: 'default items and columns',
-  args: {columns, items: nestedItems}
+  name: 'default items and columns 1 of 3',
+  args: {combos: combo1, columns, items: nestedItems}
+};
+
+export const DefaultPt2 = {
+  render: Template,
+  name: 'default items and columns 2 of 3',
+  args: {combos: combo2, columns, items: nestedItems}
+};
+
+export const DefaultPt3 = {
+  render: Template,
+  name: 'default items and columns 3 of 3',
+  args: {combos: combo3, columns, items: nestedItems}
 };
 
 export const ColumnAlign = {
   render: Template,
-  name: 'column alignment',
-  args: {columns: alignColumns, items: nestedItems}
+  name: 'column alignment 1 of 3',
+  args: {combos: combo1, columns: alignColumns, items: nestedItems}
+};
+
+export const ColumnAlignPt2 = {
+  render: Template,
+  name: 'column alignment 2 of 3',
+  args: {combos: combo2, columns: alignColumns, items: nestedItems}
+};
+
+export const ColumnAlignPt3 = {
+  render: Template,
+  name: 'column alignment 3 of 3',
+  args: {combos: combo3, columns: alignColumns, items: nestedItems}
 };
 
 export const ColumnDividers = {
   render: Template,
-  name: 'columns dividers',
-  args: {columns: dividerColumns, items: nestedItems}
+  name: 'columns dividers 1 of 3',
+  args: {combos: combo1, columns: dividerColumns, items: nestedItems}
+};
+
+export const ColumnDividersPt2 = {
+  render: Template,
+  name: 'columns dividers 2 of 3',
+  args: {combos: combo2, columns: dividerColumns, items: nestedItems}
+};
+
+export const ColumnDividersPt3 = {
+  render: Template,
+  name: 'columns dividers 3 of 3',
+  args: {combos: combo3, columns: dividerColumns, items: nestedItems}
 };
 
 export const ColumnWidth = {
   render: Template,
-  name: 'columns widths',
-  args: {columns: customWidth, items: nestedItems}
+  name: 'columns widths 1 of 3',
+  args: {combos: combo1, columns: customWidth, items: nestedItems}
+};
+
+export const ColumnWidthPt2 = {
+  render: Template,
+  name: 'columns widths 2 of 3',
+  args: {combos: combo2, columns: customWidth, items: nestedItems}
+};
+
+export const ColumnWidthPt3 = {
+  render: Template,
+  name: 'columns widths 3 of 3',
+  args: {combos: combo3, columns: customWidth, items: nestedItems}
 };
 
 export const HiddenColumns = {
   render: Template,
-  name: 'hidden columns',
-  args: {columns: hiddenColumns, items: nestedItems}
+  name: 'hidden columns 1 of 3',
+  args: {combos: combo1, columns: hiddenColumns, items: nestedItems}
+};
+
+export const HiddenColumnsPt2 = {
+  render: Template,
+  name: 'hidden columns 2 of 3',
+  args: {combos: combo2, columns: hiddenColumns, items: nestedItems}
+};
+
+export const HiddenColumnsPt3 = {
+  render: Template,
+  name: 'hidden columns 3 of 3',
+  args: {combos: combo3, columns: hiddenColumns, items: nestedItems}
 };
 
 export const NestedColumns = {
   render: Template,
-  name: 'nested columns',
-  args: {columns: nestedColumns, items: nestedItems}
+  name: 'nested columns 1 of 3',
+  args: {combos: combo1, columns: nestedColumns, items: nestedItems}
 };
+
+export const NestedColumnsPt2 = {
+  render: Template,
+  name: 'nested columns 2 of 3',
+  args: {combos: combo2, columns: nestedColumns, items: nestedItems}
+};
+
+export const NestedColumnsPt3 = {
+  render: Template,
+  name: 'nested columns 3 of 3',
+  args: {combos: combo3, columns: nestedColumns, items: nestedItems}
+};
+
 
 export const MaxHeight = () => (
   <TableView maxHeight="size-1200" UNSTABLE_allowsExpandableRows>
