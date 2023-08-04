@@ -148,7 +148,7 @@ function ModalOverlayInner(props: ModalOverlayInnerProps) {
   };
 
   return (
-    <Overlay>
+    <Overlay isExiting={props.isExiting}>
       <div
         {...mergeProps(filterDOMProps(props as any), underlayProps)}
         {...renderProps}

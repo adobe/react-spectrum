@@ -319,7 +319,9 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       let element = scrollRef.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
       if (element) {
         // This prevents a flash of focus on the first/last element in the collection, or the collection itself.
-        focusWithoutScrolling(element);
+        if (!element.contains(document.activeElement)) {
+          focusWithoutScrolling(element);
+        }
 
         let modality = getInteractionModality();
         if (modality === 'keyboard') {

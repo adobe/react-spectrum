@@ -1,12 +1,12 @@
 {
   "actions": "動作",
-  "selectAction": "選擇動作",
-  "addToQueue": "添加到隊列",
-  "addToCurrentWatchQueue": "添加到當前觀看隊列。",
-  "addReview": "添加評論",
-  "postAReviewForTheEpisode": "發表對劇集的評論。",
-  "subscribeToSeries": "訂閱系列",
-  "addSeriesToSubscription": "將系列添加到您的訂閱列表，並在新劇集播出時收到通知。",
-  "report": "報告",
-  "reportAnIssue": "報告問題/違規行為。"
+  "addReview": "新增評論",
+  "addSeriesToSubscription": "將影集新增至您的訂閱清單，並在新集數播出時收到通知。",
+  "addToCurrentWatchQueue": "新增至目前的觀看佇列。",
+  "addToQueue": "新增至佇列",
+  "postAReviewForTheEpisode": "發表對此集數的評論。",
+  "report": "舉報",
+  "reportAnIssue": "舉報問題/違規。",
+  "selectAction": "選取動作",
+  "subscribeToSeries": "訂閱影集"
 }
