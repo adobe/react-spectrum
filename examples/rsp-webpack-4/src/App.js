@@ -38,7 +38,7 @@ function App() {
           <Item>Shopping</Item>
         </TagGroup>
         <BodyContent />
-        <TableView  UNSTABLE_allowsExpandableRows width={500} height={500} >
+        <TableView  UNSTABLE_allowsExpandableRows width={500} height={200} >
           <TableHeader columns={columns}>
             {column => <Column>{column.name}</Column>}
           </TableHeader>
