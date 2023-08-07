@@ -1,6 +1,8 @@
 {
+  "collapse": "Reduzieren",
   "columnResizer": "Spaltenanpassung",
   "drag": "Ziehen",
+  "expand": "Erweitern",
   "loading": "Laden...",
   "loadingMore": "Mehr laden ...",
   "resizeColumn": "Spaltengröße ändern",

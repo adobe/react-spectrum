@@ -26,10 +26,22 @@ export default meta;
 
 export {
   Default,
+  DefaultPt2,
+  DefaultPt3,
   ColumnAlign,
+  ColumnAlignPt2,
+  ColumnAlignPt3,
   ColumnDividers,
+  ColumnDividersPt2,
+  ColumnDividersPt3,
   ColumnWidth,
+  ColumnWidthPt2,
+  ColumnWidthPt3,
   HiddenColumns,
+  HiddenColumnsPt2,
+  HiddenColumnsPt3,
   NestedColumns,
+  NestedColumnsPt2,
+  NestedColumnsPt3,
   Empty
-} from './TableView.chromatic';
+} from './TreeGridTable.chromatic';

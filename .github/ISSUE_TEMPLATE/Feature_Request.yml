@@ -1,6 +1,5 @@
 name: 🙋 Feature Request
 description: Want to add a feature to react-spectrum?
-labels: ["enhancement"]
 body:
   - type: markdown
     attributes:
