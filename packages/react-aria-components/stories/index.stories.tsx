@@ -904,7 +904,7 @@ export const DropzoneExampleWithDraggableObject = (props) => (
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')} >
-      <Text slot="heading">
+      <Text slot="label">
         DropZone Area
       </Text>
     </DropZone>
@@ -920,7 +920,7 @@ export const DropzoneExampleWithCopyableObject = (props) => (
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
-      <Text slot="heading">
+      <Text slot="label">
         DropZone Area
       </Text>
     </DropZone>
@@ -940,7 +940,7 @@ export const DropzoneWithRenderProps = (props) => (
       onDropExit={action('OnDropExit')}>
       {({isHovered, isFocused, isFocusVisible, isDropTarget}) => (
         <div>
-          <Text slot="heading">
+          <Text slot="label">
             DropzoneArea
           </Text>
           <div>isHovered: {isHovered ? 'true' : 'false'}</div>
