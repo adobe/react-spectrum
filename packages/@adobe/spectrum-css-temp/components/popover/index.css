@@ -48,10 +48,15 @@ governing permissions and limitations under the License.
 
   outline: none; /* Hide focus outline */
   box-sizing: border-box;
+  overflow: hidden;
 
   &.is-open {
     @inherit: %spectrum-overlay--open;
   }
+}
+
+.spectrum-Popover--withTip {
+  overflow: visible;
 }
 
 .spectrum-Popover-tip {
@@ -142,24 +147,5 @@ governing permissions and limitations under the License.
   .spectrum-Popover-tip {
     left: 50%;
     margin-left: calc(var(--spectrum-global-dimension-size-150) * -1);
-  }
-}
-
-@media screen and (max-height: 400px) {
-  .spectrum-Popover [role="dialog"] {
-    /* Account for border-size so that the scrolling .spectrum-Dialog-grid does not overflow the .spectrum-Popover. */
-    padding-block-end: calc(2 * var(--spectrum-popover-border-size));
-  }
-}
-
-@media (forced-colors: active) {
-  .spectrum-Popover {
-    /* With a popover that contains a menu,
-    the menu scrolls. Add overflow: hidden,
-    so the menu's scrollbar doesn't overflow the
-    the popover's border-radius in the corners. */
-    &:has(> [role="menu"], > [role="listbox"]) {
-      overflow: hidden;
-    }
   }
 }

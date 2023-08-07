@@ -59,7 +59,7 @@ governing permissions and limitations under the License.
   max-width: 100%;
 
   max-height: inherit;
-
+  overflow: hidden;
   outline: none;
 
   --spectrum-dialog-padding-x: var(--spectrum-dialog-padding);

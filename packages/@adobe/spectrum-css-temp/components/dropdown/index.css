@@ -170,7 +170,3 @@ governing permissions and limitations under the License.
     flex-direction: row;
   }
 }
-
-.spectrum-Dropdown-popover {
-  overflow: hidden;
-}
