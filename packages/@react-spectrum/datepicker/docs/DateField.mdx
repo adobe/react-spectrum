@@ -166,6 +166,14 @@ function Example() {
 }
 ```
 
+### HTML forms
+
+DateField supports the `name` prop for integration with HTML forms. The value will be submitted to the server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted string according to the granularity of the value. For example, if the date field allows selecting only a date then a string such as `"2023-02-03"` will be submitted, and if it allows selecting a time then a string such as `"2023-02-03T08:45:00"` will be submitted. See the [Value](#value) section above for more details about the supported value types.
+
+```tsx example
+<DateField label="Birth date" name="birthday" />
+```
+
 ## Labeling
 
 A visual label should be provided for the `DateField` using the `label` prop. If the `DateField` is required, the `isRequired` and `necessityIndicator` props can be used to show a required state.
