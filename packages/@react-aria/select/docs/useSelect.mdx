@@ -521,8 +521,16 @@ In right-to-left languages, the select should be mirrored. The arrow should be o
 and the selected value should be on the right. In addition, the content of list options should
 flip. Ensure that your CSS accounts for this.
 
-### False positive on `<HiddenSelect />` in accessibility tools
+## Accessibility
 
-When using &lt;<TypeLink links={docs.links} type={docs.exports.HiddenSelect} />&gt; some accessibility tools such as AXE or pa11y might give a false positive.
-The data attribute `data-rsp-a11y-ignore` is included on the hidden select element and can be used to ignore the false positives in these tools.
+### False positives
 
+The HiddenSelect may trigger a [known accessibility false positive](https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#picker)
+from automated accessibility testing tools. This is because the HiddenSelect is included to specifically aid with browser form autocomplete
+and is hidden from screen readers via `aria-hidden` since users don't need to interact with it. We manage focus internally
+so that focusing this hidden select element will always shift focus to the Select's trigger button instead. Automated accessibility testing tools have no way of
+knowing that we manage the focus in this way and thus throw this false positive.
+
+To facilitate the suppression of this false positive, the `data-a11y-ignore="aria-hidden-focus"` data attribute is automatically applied to the
+problematic element and references the relevant `AXE` rule. Please use this data attribute to target the problematic element and exclude it
+from your automated accessibility tests as shown [here](./accessibility.html#false-positives).

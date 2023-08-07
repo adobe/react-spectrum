@@ -1,0 +1,199 @@
+{/* Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import packageData from 'react-aria-components/package.json';
+import Anatomy from '@react-aria/datepicker/docs/daterangepicker-anatomy.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {Divider} from '@react-spectrum/divider';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {Keyboard} from '@react-spectrum/text';
+import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
+import Link from '@react-spectrum/docs/pages/assets/component-illustrations/Link.svg';
+
+---
+category: Forms
+keywords: [filetrigger, input, aria]
+type: component
+---
+
+# FileTrigger
+
+<PageDescription>{docs.exports.FileTrigger.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['FileTrigger']} />
+
+## Example
+
+```tsx example
+import {FileTrigger} from 'react-aria-components';
+import {Button} from 'react-aria-components';
+
+function Example(){
+  let [file, setFile] = React.useState(null);
+
+  return (
+    <>
+      <FileTrigger
+        onChange={(e) => {
+          let files = Array.from(e);
+          let urls = files.map((file) => file.name);
+          setFile(urls);
+        }}>
+        <Button>Select a file</Button>
+      </FileTrigger>
+      {file && file}
+    </>
+  )
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Button {
+  --border-color: var(--spectrum-alias-border-color);
+  --border-color-pressed: var(--spectrum-alias-border-color-down);
+  --border-color-disabled: var(--spectrum-alias-border-color-disabled);
+  --background-color: var(--spectrum-global-color-gray-50);
+  --background-color-pressed: var(--spectrum-global-color-gray-100);
+  --text-color: var(--spectrum-alias-text-color);
+  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+  --focus-ring-color: slateblue;
+
+  color: var(--text-color);
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  appearance: none;
+  vertical-align: middle;
+  font-size: 1.2rem;
+  text-align: center;
+  margin: 0;
+  outline: none;
+  padding: 4px 12px;
+
+  &[data-pressed] {
+    box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
+    background: var(--background-color-pressed);
+    border-color: var(--border-color-pressed);
+  }
+
+  &[data-focus-visible] {
+    border-color: var(--focus-ring-color);
+    box-shadow: 0 0 0 1px var(--focus-ring-color);
+  }
+
+  &:disabled {
+    border-color: var(--border-color-disabled);
+    color: var(--text-color-disabled);
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Button {
+    forced-color-adjust: none;
+    --border-color: ButtonBorder;
+    --border-color-pressed: ButtonBorder;
+    --border-color-disabled: GrayText;
+    --background-color: ButtonFace;
+    --background-color-pressed: ButtonFace;
+    --text-color: ButtonText;
+    --text-color-disabled: GrayText;
+    --focus-ring-color: Highlight;
+  }
+}
+```
+
+</details>
+
+## Features
+
+A file input can be created with an `<input type=“file”>` element, but this supports limited styling options and may not integrate well with the overall design of a website or application. To overcome this, `FileTrigger` extends the functionality of the standard file input element by working with a pressable child such as a `Button` to create accessible file inputs that can be style as needed.
+
+* **Customizable** – Works with any pressable React Aria or React Spectrum component, and custom components built with [usePress](usePress.html).
+
+## Anatomy
+
+A `FileTrigger` wraps around a pressable child such as a button, and includes a visually hidden input element that allows the user to select files from their device.
+
+If a visual label is not provided on the pressable child, then an `aria-label` or `aria-labelledby` prop must be passed to identify the file trigger to assistive technology.
+
+### Composed Components
+A `FileTrigger` can use the following components, which may also be used standalone or reused in other components.
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="Button.html"
+  title="Button"
+  description="A button allows a user to perform an action with a mouse, touch, or keyboard.">
+  <Button />
+</ExampleCard>
+
+</section>
+
+## Props
+
+<PropTable component={docs.exports.FileTrigger} links={docs.links} />
+
+## Styling
+
+### FileTrigger 
+
+The `FileTrigger` component does not render any element of its own so it does not support styling. 
+
+### Button
+
+A [Button](Button.html) can be targeted with the `.react-aria-Button` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.ButtonRenderProps.properties} />
+
+## Usage
+
+### Accepted file types
+
+By default, the file trigger will accept any file type. To support only certain file types, pass an array of the [mime type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) of files via the `acceptedFileTypes` prop.
+
+```tsx example
+<FileTrigger acceptedFileTypes={['image/png']}>
+  <Button>Select files</Button>
+</FileTrigger>
+```
+
+### Multiple files
+
+A file trigger can accept multiple files by passsing the `allowsMultiple` property.
+
+```tsx example
+<FileTrigger allowsMultiple>
+  <Button>Upload your files</Button>
+</FileTrigger>
+```
+
+### Capture
+
+To specify the media capture mechanism to capture media on the spot, pass `user` for the user-facing camera or `environment` for the outward-facing camera via the `defaultCamera` prop.
+
+This behavior only works on mobile devices. On desktop devices, it will open the file system like normal. [Read more about about capture](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/capture).
+
+```tsx example
+<FileTrigger defaultCamera="environment">
+  <Button>Open Camera</Button>
+</FileTrigger>
+````
