@@ -204,7 +204,7 @@ export default function Home() {
                 </Row>
               </TableBody>
             </TableView>
-            <TableView  UNSTABLE_allowsExpandableRows width={500} height={200} >
+            <TableView aria-label="example table with nested rows" UNSTABLE_allowsExpandableRows width={500} height={200} >
               <TableHeader columns={columns}>
                 {column => <Column>{column.name}</Column>}
               </TableHeader>

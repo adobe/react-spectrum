@@ -1,7 +1,6 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import {
-  SSRProvider,
   Provider,
   lightTheme,
   ActionButton,
@@ -24,34 +23,32 @@ function MyApp({ Component, pageProps }: AppProps) {
   enableTableNestedRows();
 
   return (
-    <SSRProvider>
-      <Provider theme={lightTheme} colorScheme={theme}>
-        <Grid
-          areas={["header", "content"]}
-          columns={["1fr"]}
-          rows={["size-200", "auto"]}
+    <Provider theme={lightTheme} colorScheme={theme}>
+      <Grid
+        areas={["header", "content"]}
+        columns={["1fr"]}
+        rows={["size-200", "auto"]}
+        gap="size-100"
+      >
+        <Flex
+          direction="row"
           gap="size-100"
+          justifyContent="end"
+          margin="size-100"
         >
-          <Flex
-            direction="row"
-            gap="size-100"
-            justifyContent="end"
-            margin="size-100"
+          <ActionButton
+            aria-label={`Switch to ${otherTheme} mode.`}
+            onPress={() => setTheme(otherTheme)}
           >
-            <ActionButton
-              aria-label={`Switch to ${otherTheme} mode.`}
-              onPress={() => setTheme(otherTheme)}
-            >
-              {themeIcons[otherTheme]}
-            </ActionButton>
-          </Flex>
-          <View>
-            <Component {...pageProps} />
-          </View>
-        </Grid>
-        <ToastContainer />
-      </Provider>
-    </SSRProvider>
+            {themeIcons[otherTheme]}
+          </ActionButton>
+        </Flex>
+        <View>
+          <Component {...pageProps} />
+        </View>
+      </Grid>
+      <ToastContainer />
+    </Provider>
   );
 }
 export default MyApp;
