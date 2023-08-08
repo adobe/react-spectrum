@@ -2470,6 +2470,7 @@ describe('useDrag and useDrop', function () {
       await act(async () => {
         await tree.rerender(<Test showInput2 />);
       });
+      act(() => jest.runAllTimers());
       expect(() => tree.getAllByRole('textbox')).toThrow();
 
       fireEvent.click(draggable);

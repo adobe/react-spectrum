@@ -2919,7 +2919,7 @@ describe('TableView', function () {
       });
       onSelectionChange.mockClear();
       onDragStart.mockClear();
-
+      act(() => jest.runAllTimers());
 
       grid = getByRole('grid');
       rowgroups = within(grid).getAllByRole('rowgroup');
