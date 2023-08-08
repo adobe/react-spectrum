@@ -89,6 +89,11 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
     }
 
     if (refCount === 0) {
+      // Blur before inert is added.
+      // Fixes an issue in Firefox where the focus ring of the trigger element remained visible when a popover opened.
+      if (node.contains(document.activeElement)) {
+        (document.activeElement as HTMLElement).blur();
+      }
       supportsInert && node instanceof HTMLElement ?
       node.inert = true :
       node.setAttribute('aria-hidden', 'true');
