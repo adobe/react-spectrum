@@ -20,11 +20,11 @@ let TestDateRangePicker = (props) => (
   <DateRangePicker data-foo="bar" {...props}>
     <Label>Trip dates</Label>
     <Group>
-      <DateInput slot="start" {...props.startInputProps}>
+      <DateInput slot="start">
         {(segment) => <DateSegment segment={segment} />}
       </DateInput>
       <span aria-hidden="true">–</span>
-      <DateInput slot="end" {...props.endInputProps}>
+      <DateInput slot="end">
         {(segment) => <DateSegment segment={segment} />}
       </DateInput>
       <Button>▼</Button>
@@ -147,7 +147,7 @@ describe('DateRangePicker', () => {
   });
 
   it('should support form value', () => {
-    render(<TestDateRangePicker startInputProps={{name: 'start'}} endInputProps={{name: 'end'}} value={{start: new CalendarDate(2023, 1, 10), end: new CalendarDate(2023, 1, 20)}} />);
+    render(<TestDateRangePicker startName="start" endName="end" value={{start: new CalendarDate(2023, 1, 10), end: new CalendarDate(2023, 1, 20)}} />);
     let start = document.querySelector('input[name=start]');
     expect(start).toHaveValue('2023-01-10');
     let end = document.querySelector('input[name=end]');

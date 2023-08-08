@@ -489,6 +489,14 @@ By default, `TimeField` displays times in either 12 or 24 hour hour format depen
   hourCycle={24} />
 ```
 
+### HTML forms
+
+TimeField supports the `name` prop for integration with HTML forms. The value will be submitted to the server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted string, e.g. `"08:45:00"`.
+
+```tsx example
+<MyTimeField label="Meeting time" name="meetingTime" />
+```
+
 ## Advanced customization
 
 ### Composition
