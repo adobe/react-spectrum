@@ -179,6 +179,38 @@ function Example() {
 }
 ```
 
+### HTML forms
+
+ComboBox supports the `name` prop for integration with HTML forms. By default, the text in the input field will be submitted to the server. If the `formValue` prop is set to `"key"`, the `key` of the selected item will be submitted instead.
+
+```tsx example
+<Flex gap="size-200" wrap>
+  <ComboBox
+    label="Ice cream flavor"
+    ///- begin highlight -///
+    name="iceCream"
+    allowsCustomValue
+    ///- end highlight -///
+  >
+    <Item>Chocolate</Item>
+    <Item>Mint</Item>
+    <Item>Strawberry</Item>
+    <Item>Vanilla</Item>
+  </ComboBox>
+  <ComboBox
+    label="Favorite Animal"
+    ///- begin highlight -///
+    name="favoriteAnimalId"
+    formValue="key"
+    ///- end highlight -///
+  >
+    <Item key="panda">Panda</Item>
+    <Item key="cat">Cat</Item>
+    <Item key="dog">Dog</Item>
+  </ComboBox>
+</Flex>
+```
+
 ## Labeling
 ComboBox can be labeled using the `label` prop. If the ComboBox is a required field, the `isRequired` and `necessityIndicator` props can be used to show a required state.
 

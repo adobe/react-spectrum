@@ -1014,6 +1014,14 @@ By default, `DatePicker` displays times in either 12 or 24 hour hour format depe
   hourCycle={24} />
 ```
 
+### HTML forms
+
+DatePicker supports the `name` prop for integration with HTML forms. The value will be submitted to the server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted string according to the granularity of the value. For example, if the date picker allows selecting only a date then a string such as `"2023-02-03"` will be submitted, and if it allows selecting a time then a string such as `"2023-02-03T08:45:00"` will be submitted. See the [Value](#value) section above for more details about the supported value types.
+
+```tsx example
+<MyDatePicker label="Birth date" name="birthday" />
+```
+
 ## Advanced customization
 
 ### Composition

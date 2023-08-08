@@ -428,7 +428,11 @@ If the table supports row selection, each row can optionally include a selection
 
 ### Cell
 
-<PropTable component={docs.exports.Cell} links={docs.links} />
+<PropTable component={docs.exports.Cell} links={docs.links} style={{marginBottom: '40px'}} />
+
+### ResizableTableContainer
+
+<PropTable component={docs.exports.ResizableTableContainer} links={docs.links} />
 
 ## Styling
 
@@ -516,6 +520,10 @@ A `Row` can be targeted with the `.react-aria-Row` CSS selector, or by overridin
 A `Cell` can be targeted with the `.react-aria-Cell` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
 
 <StateTable properties={docs.exports.CellRenderProps.properties} />
+
+### ResizableTableContainer
+
+A `ResizableTableContainer` can be targeted with the `.react-aria-ResizableTableContainer` CSS selector, or by overriding with a custom `className`.
 
 ## Reusable wrappers
 
@@ -1015,7 +1023,7 @@ An initial, uncontrolled width can be provided to a Column using the `defaultWid
 
 The `minWidth` and `maxWidth` props define constraints on the size of a column, which may be defined either as fixed pixel values or as percentages of the total table width. These are respected when calculating the size of a column, and also provide limits for column resizing.
 
-The example below illustrates how each of the column width props affects their respective column's resize behavior.
+The example below illustrates how each of the column width props affects their respective column's resize behavior. Note that the column names are wrapped in a `<span tabIndex={-1}>` so that they can be focused with the keyboard in addition to the `<ColumnResizer>`.
 
 ```tsx example
 import {ResizableTableContainer, ColumnResizer} from 'react-aria-components';
