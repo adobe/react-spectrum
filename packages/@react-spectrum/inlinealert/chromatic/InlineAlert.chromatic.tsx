@@ -12,10 +12,9 @@
 
 import {Content} from '@react-spectrum/view';
 import {Heading} from '@react-spectrum/text';
-import {InlineAlert} from '../';
+import {InlineAlert, SpectrumInlineAlertProps} from '../';
 import {Meta} from '@storybook/react';
 import React from 'react';
-import {SpectrumInlineAlertProps} from '@react-types/inlinealert';
 
 const meta: Meta<SpectrumInlineAlertProps> = {
   title: 'InlineAlert',
