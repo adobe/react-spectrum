@@ -284,6 +284,16 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     }
   };
 
+  const commitValue = () => {
+    if (allowsCustomValue) {
+      const itemText = collection.getItem(selectedKey)?.textValue ?? '';
+      (inputValue === itemText) ? commitSelection() : commitCustomValue();
+    } else {
+      // Reset inputValue and close menu
+      commitSelection();
+    }
+  };
+
   let commit = () => {
     if (triggerState.isOpen && selectionManager.focusedKey != null) {
       // Reset inputValue and close menu here if the selected key is already the focused key. Otherwise
@@ -293,22 +303,9 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
       } else {
         setSelectedKey(selectionManager.focusedKey);
       }
-    } else if (allowsCustomValue) {
-      commitCustomValue();
     } else {
-      // Reset inputValue and close menu if no item is focused but user triggers a commit
-      commitSelection();
+      commitValue();
     }
-  };
-
-  let close = () => {
-    let itemText = collection.getItem(selectedKey)?.textValue ?? '';
-    if (allowsCustomValue && inputValue !== itemText) {
-      commitCustomValue();
-    } else {
-      commitSelection();
-    }
-    closeMenu();
   };
 
   let setFocused = (isFocused: boolean) => {
@@ -317,7 +314,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
         open(null, 'focus');
       }
     } else if (shouldCloseOnBlur) {
-      close();
+      commitValue();
     }
 
     setFocusedState(isFocused);
@@ -339,7 +336,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     ...triggerState,
     toggle,
     open,
-    close,
+    close: commitValue,
     selectionManager,
     selectedKey,
     setSelectedKey,

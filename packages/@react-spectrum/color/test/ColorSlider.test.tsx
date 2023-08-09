@@ -259,6 +259,36 @@ describe('ColorSlider', () => {
     expect(document.activeElement).toBe(buttonA);
   });
 
+  it('supports form name', () => {
+    let {getByRole} = render(<ColorSlider defaultValue="#7f0000" channel="red" name="redColor" />);
+    let input = getByRole('slider');
+    expect(input).toHaveAttribute('name', 'redColor');
+    expect(input).toHaveValue('127');
+  });
+
+  it('supports form reset', () => {
+    function Test() {
+      let [value, setValue] = React.useState(parseColor('#7f0000'));
+      return (
+        <form>
+          <ColorSlider channel="red" value={value} onChange={setValue} />
+          <input type="reset" data-testid="reset" />
+        </form>
+      );
+    }
+
+    let {getByTestId, getByRole} = render(<Test />);
+    let input = getByRole('slider');
+
+    expect(input).toHaveValue('127');
+    fireEvent.change(input, {target: {value: '255'}});
+    expect(input).toHaveValue('255');
+
+    let button = getByTestId('reset');
+    act(() => userEvent.click(button));
+    expect(input).toHaveValue('127');
+  });
+
   describe('keyboard events', () => {
     it('works', () => {
       let defaultColor = parseColor('#000000');

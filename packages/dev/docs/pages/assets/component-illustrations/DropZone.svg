@@ -1,0 +1,6 @@
+<svg style="background:var(--anatomy-gray-100);padding:10px;box-sizing:border-box;max-height:152px" height="229" viewBox="0 0 480 229" aria-hidden="true">
+  <rect width="250" height="200" rx="16" fill="var(--anatomy-gray-100)" stroke-dasharray="5" stroke-width="3" stroke="var(--anatomy-gray-900)" transform="translate(108 18)"></rect>
+  <text transform="translate(167 106)" fill="var(--anatomy-gray-800)" font-size="22" font-family="Adobe-Clean" font-weight="500">
+    <tspan x="0" y="18">Drop files here</tspan>
+  </text>
+</svg>

@@ -1,0 +1,106 @@
+name: 🐛 Bug Report
+description: File a bug report
+body:
+  - type: markdown
+    attributes:
+      value: "### Thanks for filing an issue! Before you submit, search open/closed issues before submitting since someone might have asked the same thing before!"
+  - type: markdown
+    attributes:
+      value: "# 🐛 Bug Report "
+  - type: textarea
+    id: general-summary
+    attributes:
+      label: Provide a general summary of the issue here
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: 🤔 Expected Behavior?
+      description: Tell us what should happen
+    validations:
+      required: true
+  - type: textarea
+    id: current-behavior
+    attributes:
+      label: 😯 Current Behavior
+      description: | 
+        Tell us what happens instead of the expected behavior. Please include a link to the storybook if possible.
+        If you are seeing an error, please include the full error message and stack trace.
+    validations:
+      required: true
+  - type: textarea
+    id: possible-solution
+    attributes:
+      label: 💁 Possible Solution
+      description: Suggest a fix/reason for the bug
+    validations:
+      required: false
+  - type: textarea
+    id: context
+    attributes:
+      label: 🔦 Context
+      description: | 
+        Providing context helps us come up with a solution that is most useful in the real world.
+        How has this issue affected you? What are you trying to accomplish?
+    validations:
+      required: false
+  - type: textarea
+    id: base-reproduction
+    attributes:
+      label: 🖥️ Steps to Reproduce 
+      description: | 
+        Provide a minimal test case that can reproduce the problem. Include a CodeSandBox, link to sample repos, or specific doc examples to help us test your issue more easily. 
+
+        To get started, you can use the following CodeSandBox templates:
+        For React Spectrum: https://codesandbox.io/s/react-spectrum-template-syueo
+        For React Aria: https://codesandbox.io/s/react-aria-template-389r79
+        For React Aria Components: https://codesandbox.io/s/react-aria-components-template-g7wmmk
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: "## 🌍 Your Environment"
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: What version of react-spectrum are you running?
+    validations:
+      required: true
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: What browsers are you seeing the problem on?
+      multiple: true
+      options:
+        - Firefox
+        - Chrome
+        - Safari
+        - Microsoft Edge
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: other
+    attributes:
+      label: If other, please specify.
+  - type: input
+    id: operating-system
+    attributes:
+      label: What operating system are you using?
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: "## 🦄 Other"
+  - type: input
+    id: company-team
+    attributes:
+      label: 🧢 Your Company/Team
+      description: Which product team is this bug impacting? (i.e. Adobe/Photoshop)
+  - type: textarea
+    id: tracking-issue
+    attributes:
+      label: 🕷 Tracking Issue
+      description: Link to the issue in your system, if publicly available

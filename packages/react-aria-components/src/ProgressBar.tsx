@@ -26,7 +26,7 @@ export interface ProgressBarRenderProps {
    * A formatted version of the value.
    * @selector [aria-valuetext]
    */
-  valueText?: string,
+  valueText: string | undefined,
   /**
    * Whether the progress bar is indeterminate.
    * @selector :not([aria-valuenow])

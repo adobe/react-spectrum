@@ -29,5 +29,16 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "engines": {
+    "node": ">= 12"
+  },
+  "targets": {
+    "main": {
+      "context": "node"
+    },
+    "module": {
+      "context": "node"
+    }
   }
 }

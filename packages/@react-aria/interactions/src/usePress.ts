@@ -838,7 +838,7 @@ function shouldPreventDefaultKeyboard(target: Element, key: string) {
   }
 
   if (target instanceof HTMLButtonElement) {
-    return target.type !== 'submit';
+    return target.type !== 'submit' && target.type !== 'reset';
   }
 
   return true;
