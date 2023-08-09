@@ -37,6 +37,7 @@ Item.getCollectionNode = function* getCollectionNode<T>(props: ItemProps<T>, con
     'aria-label': props['aria-label'],
     hasChildNodes: hasChildItems(props),
     *childNodes() {
+      // TODO handle sections below
       if (childItems) {
         for (let child of childItems) {
           yield {

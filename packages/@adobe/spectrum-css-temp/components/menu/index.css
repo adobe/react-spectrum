@@ -158,17 +158,17 @@ governing permissions and limitations under the License.
 
 .spectrum-Menu-itemGrid {
   display: grid;
-  grid-template-columns: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-selectlist-border-size-key-focus)) auto 1fr auto auto auto var(--spectrum-selectlist-option-padding);
+  grid-template-columns: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-selectlist-border-size-key-focus)) auto 1fr auto auto auto auto var(--spectrum-selectlist-option-padding);
   /*
     Renamed from padding-y to padding-height to fix docs issue where fallback var replaced this value
     (due to old spectrum-css postcss-custom-properties-custom-mapping plugin).
   */
   grid-template-rows: var(--spectrum-selectlist-option-padding-height) 1fr auto var(--spectrum-selectlist-option-padding-height);
   grid-template-areas:
-    ". .    .            .         .     .            ."
-    ". icon text         checkmark end   keyboard     ."
-    ". icon description  checkmark end   keyboard     ."
-    ". .    .            .         .     .            .";
+    ". .    .            .         .     .         .        ."
+    ". icon text         checkmark end   keyboard  chevron  ."
+    ". icon description  checkmark end   keyboard  chevron  ."
+    ". .    .            .         .     .         .        .";
 }
 
 .spectrum-Menu-item.is-selectable {
@@ -202,4 +202,13 @@ governing permissions and limitations under the License.
   /* override default browser styling. */
   /* keyboard shortcuts are always ASCII, so use base font */
   font-family: var(--spectrum-font-family-base);
+}
+/* TODO: confirm the spacing between longest text and chevron. XD differs from what we have for unavailable menu item and feels too wide*/
+/* TODO: also confirm the spacing when in large scale */
+.spectrum-Menu-chevron {
+  margin-inline-end: calc(var(--spectrum-global-dimension-size-50) * -1);
+  grid-area: chevron;
+  justify-self: end;
+  align-self: center;
+  padding-inline-start: var(--spectrum-global-dimension-size-300);
 }

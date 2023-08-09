@@ -11,6 +11,8 @@
  */
 
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
+import ChevronLeft from '@spectrum-icons/workflow/ChevronLeft';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
 import {DOMAttributes, Node} from '@react-types/shared';
 import {filterDOMProps, mergeProps, mergeRefs, useObjectRef, useSlotId} from '@react-aria/utils';
@@ -23,7 +25,7 @@ import React, {Key, useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/text';
 import {TreeState} from '@react-stately/tree';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMenuContext, useMenuDialogContext} from './context';
 import {useMenuItem} from '@react-aria/menu';
 
@@ -44,6 +46,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   } = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let menuDialogContext = useMenuDialogContext();
+  let {direction} = useLocale();
   let {triggerRef} = menuDialogContext || {};
   let isMenuDialogTrigger = !!menuDialogContext;
   let isUnavailable = false;
@@ -61,15 +64,17 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
 
   let {
     rendered,
-    key
+    key,
+    hasChildNodes
   } = item;
+
+  console.log('item', item.key, item.hasChildNodes);
 
   let isSelected = state.selectionManager.isSelected(key);
   let isDisabled = state.disabledKeys.has(key);
 
   let itemref = useRef<HTMLLIElement>(null);
   let ref = useObjectRef(useMemo(() => mergeRefs(itemref, triggerRef), [itemref, triggerRef]));
-
   let {
     menuItemProps,
     labelProps,
@@ -133,7 +138,8 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
                 end: {UNSAFE_className: styles['spectrum-Menu-end'], ...endProps},
                 icon: {UNSAFE_className: styles['spectrum-Menu-icon'], size: 'S'},
                 description: {UNSAFE_className: styles['spectrum-Menu-description'], ...descriptionProps},
-                keyboard: {UNSAFE_className: styles['spectrum-Menu-keyboard'], ...keyboardShortcutProps}
+                keyboard: {UNSAFE_className: styles['spectrum-Menu-keyboard'], ...keyboardShortcutProps},
+                chevron: {UNSAFE_className: styles['spectrum-Menu-chevron'], size: 'S'}
               }}>
               {contents}
               {isSelected &&
@@ -148,6 +154,12 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
               }
               {
                 isUnavailable && <InfoOutline slot="end" size="XS" alignSelf="center" aria-label={stringFormatter.format('unavailable')} />
+              }
+              {
+                // TODO: labeling for chevron
+                // TODO: need to push the chevron a bit to the right some more still since the svg is 18x18 and has extra whitespace to the right of the chevron tip.
+                // Maybe make its own slot and add a negative margin and increase the padding-inline-start by an equal amount?
+                !isUnavailable && hasChildNodes && (direction === 'rtl' ? <ChevronLeft slot="chevron" /> : <ChevronRight slot="chevron" />)
               }
             </SlotProvider>
           </ClearSlots>
