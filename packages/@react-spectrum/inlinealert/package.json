@@ -40,7 +40,6 @@
     "@react-aria/utils": "^3.19.0",
     "@react-spectrum/layout": "^3.5.4",
     "@react-spectrum/utils": "^3.10.1",
-    "@react-types/inlinealert": "3.0.0-rc.1",
     "@react-types/shared": "^3.19.0",
     "@spectrum-icons/ui": "^3.5.4",
     "@swc/helpers": "^0.5.0"
