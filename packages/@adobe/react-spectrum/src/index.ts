@@ -28,6 +28,7 @@ export {Form} from '@react-spectrum/form';
 export {Icon} from '@react-spectrum/icon';
 export {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 export {Image} from '@react-spectrum/image';
+export {InlineAlert} from '@react-spectrum/inlinealert';
 export {Flex, Grid, fitContent, minmax, repeat} from '@react-spectrum/layout';
 export {LabeledValue} from '@react-spectrum/labeledvalue';
 export {Link} from '@react-spectrum/link';
