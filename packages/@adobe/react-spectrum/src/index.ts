@@ -80,6 +80,7 @@ export type {SpectrumDividerProps} from '@react-spectrum/divider';
 export type {SpectrumFormProps} from '@react-spectrum/form';
 export type {IconProps, IllustrationProps} from '@react-spectrum/icon';
 export type {SpectrumIllustratedMessageProps} from '@react-spectrum/illustratedmessage';
+export type {SpectrumInlineAlertProps} from '@react-spectrum/inlinealert';
 export type {SpectrumImageProps} from '@react-spectrum/image';
 export type {DimensionValue, FlexProps, GridProps} from '@react-spectrum/layout';
 export type {SpectrumLabeledValueProps} from '@react-spectrum/labeledvalue';
