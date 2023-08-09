@@ -12,18 +12,29 @@
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {Grid} from '@react-spectrum/layout';
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React from 'react';
-import {SpectrumInlineAlertProps} from '@react-types/inlinealert';
+import React, {ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/inlinealert/vars.css';
 import SuccessMedium from '@spectrum-icons/ui/SuccessMedium';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
+
+export interface SpectrumInlineAlertProps extends DOMProps, StyleProps {
+  /**
+   * The [visual style](https://spectrum.adobe.com/page/in-line-alert/#Options) of the Inline Alert.
+   * @default 'neutral'
+   */
+  variant?: 'neutral' | 'info' | 'positive' | 'notice' | 'negative',
+  /**
+   * The contents of the Inline Alert.
+   */
+  children: ReactNode
+}
 
 let ICONS = {
   info: InfoMedium,

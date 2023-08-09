@@ -20,6 +20,7 @@ const withTM = require("next-transpile-modules")([
   '@react-spectrum/icon',
   '@react-spectrum/illustratedmessage',
   '@react-spectrum/image',
+  '@react-spectrum/inlinealert',
   '@react-spectrum/label',
   '@react-spectrum/labeledvalue',
   '@react-spectrum/layout',
