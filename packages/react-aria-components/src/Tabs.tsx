@@ -37,7 +37,7 @@ export interface TabListProps<T> extends StyleRenderProps<TabListRenderProps>, A
 export interface TabListRenderProps {
   /**
    * The orientation of the tab list.
-   * @selector [aria-orientation="horizontal | vertical"]
+   * @selector [aria-orientation="horizontal | vertical"], [data-orientation="horizontal | vertical"]
    */
   orientation: Orientation,
   /**
@@ -63,7 +63,7 @@ export interface TabRenderProps {
   isPressed: boolean,
   /**
    * Whether the tab is currently selected.
-   * @selector [aria-selected=true]
+   * @selector [aria-selected=true], [data-selected=true]
    */
   isSelected: boolean,
   /**
@@ -78,7 +78,7 @@ export interface TabRenderProps {
   isFocusVisible: boolean,
   /**
    * Whether the tab is disabled.
-   * @selector [aria-disabled]
+   * @selector [aria-disabled], [data-disabled]
    */
   isDisabled: boolean
 }
@@ -161,7 +161,8 @@ function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
       ref={ref}
       slot={props.slot}
       data-orientation={orientation}
-      data-focus-visible={isFocusVisible || undefined}>
+      data-focus-visible={isFocusVisible || undefined}
+      data-disabled={state.isDisabled || undefined}>
       <InternalTabsContext.Provider value={{state, document, orientation, keyboardActivation}}>
         {renderProps.children}
       </InternalTabsContext.Provider>
@@ -201,7 +202,12 @@ function TabList<T extends object>(props: TabListProps<T>, ref: ForwardedRef<HTM
 
   return (
     <>
-      <div {...DOMProps} {...tabListProps} ref={objectRef} {...renderProps}>
+      <div 
+        {...DOMProps} 
+        {...tabListProps} 
+        ref={objectRef} 
+        {...renderProps}
+        data-orientation={orientation || undefined}>
         {[...state.collection].map((item) => (
           <TabInner
             key={item.key}
@@ -263,6 +269,7 @@ function TabInner({item, state}: {item: Node<object>, state: TabListState<object
     <div
       {...mergeProps(DOMProps, tabProps, focusProps, hoverProps, renderProps)}
       ref={ref}
+      data-selected={isSelected || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={isPressed || undefined}
       data-hovered={isHovered || undefined} />

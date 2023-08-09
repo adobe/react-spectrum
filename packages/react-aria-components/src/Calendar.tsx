@@ -289,7 +289,7 @@ export interface CalendarCellRenderProps {
   isUnavailable: boolean,
   /**
    * Whether the cell is part of an invalid selection.
-   * @selector [aria-invalid]
+   * @selector [aria-invalid], [data-invalid]
    */
   isInvalid: boolean
 }
@@ -504,7 +504,8 @@ function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRe
     'data-outside-month': isOutsideMonth || undefined,
     'data-selected': states.isSelected || undefined,
     'data-selection-start': isSelectionStart || undefined,
-    'data-selection-end': isSelectionEnd || undefined
+    'data-selection-end': isSelectionEnd || undefined,
+    'data-invalid': states.isInvalid || undefined
   };
 
   return (

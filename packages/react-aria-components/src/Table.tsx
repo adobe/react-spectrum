@@ -505,7 +505,7 @@ export interface ColumnRenderProps {
   isFocusVisible: boolean,
   /**
    * Whether the column allows sorting.
-   * @selector [aria-sort]
+   * @selector [aria-sort], [data-sort]
    */
   allowsSorting: boolean,
   /**
@@ -862,7 +862,8 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
       ref={ref}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
-      data-resizing={isResizing || undefined}>
+      data-resizing={isResizing || undefined}
+      data-sorting={column.props.allowsSorting || undefined}>
       <ColumnResizerContext.Provider value={{column, triggerRef: ref}}>
         {renderProps.children}
       </ColumnResizerContext.Provider>

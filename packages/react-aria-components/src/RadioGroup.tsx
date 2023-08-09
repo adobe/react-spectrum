@@ -29,17 +29,17 @@ export interface RadioGroupRenderProps {
   orientation: Orientation,
   /**
    * Whether the radio group is disabled.
-   * @selector [aria-disabled]
+   * @selector [aria-disabled], [data-disabled]
    */
   isDisabled: boolean,
   /**
    * Whether the radio group is read only.
-   * @selector [aria-readonly]
+   * @selector [aria-readonly], [data-readonly]
    */
   isReadOnly: boolean,
   /**
    * Whether the radio group is required.
-   * @selector [aria-required]
+   * @selector [aria-required], [data-required]
    */
   isRequired: boolean,
   /**
@@ -133,7 +133,10 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
       {...renderProps}
       ref={ref}
       slot={props.slot}
-      data-validation-state={state.validationState || undefined}>
+      data-validation-state={state.validationState || undefined}
+      data-disabled={state.isDisabled || undefined}
+      data-readonly={state.isReadOnly || undefined}
+      data-required={state.isRequired || undefined}>
       <Provider
         values={[
           [InternalRadioContext, state],

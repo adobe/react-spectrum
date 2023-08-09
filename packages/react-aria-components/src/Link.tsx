@@ -20,7 +20,7 @@ export interface LinkProps extends Omit<AriaLinkOptions, 'elementType'>, RenderP
 export interface LinkRenderProps {
   /**
    * Whether the link is the current item within a list.
-   * @selector [aria-current]
+   * @selector [aria-current], [data-current]
    */
   isCurrent: boolean,
   /**
@@ -45,7 +45,7 @@ export interface LinkRenderProps {
   isFocusVisible: boolean,
   /**
    * Whether the link is disabled.
-   * @selector [aria-disabled]
+   * @selector [aria-disabled], [data-disabled]
    */
   isDisabled: boolean
 }
@@ -88,7 +88,9 @@ function Link(props: LinkProps, ref: ForwardedRef<HTMLAnchorElement>) {
       children: element.props.children,
       'data-hovered': isHovered || undefined,
       'data-pressed': isPressed || undefined,
-      'data-focus-visible': isFocusVisible || undefined
+      'data-focus-visible': isFocusVisible || undefined,
+      'data-current': !!props['aria-current'] || undefined,
+      'data-disabled': props.isDisabled  || undefined
     }, element.props)
   });
 }

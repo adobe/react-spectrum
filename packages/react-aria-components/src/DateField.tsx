@@ -234,12 +234,12 @@ export interface DateSegmentRenderProps extends Omit<IDateSegment, 'isEditable'>
   isPlaceholder: boolean,
   /**
    * Whether the segment is read only.
-   * @selector [aria-readonly]
+   * @selector [aria-readonly], [data-readonly]
    */
   isReadOnly: boolean,
   /**
    * Whether the date field is in an invalid state.
-   * @selector [aria-invalid]
+   * @selector [aria-invalid], [data-invalid]
    */
   isInvalid: boolean,
   /**
@@ -273,6 +273,8 @@ function DateSegment({segment, ...otherProps}: DateSegmentProps, ref: ForwardedR
       {...mergeProps(filterDOMProps(otherProps as any), segmentProps)}
       {...renderProps}
       ref={domRef}
+      data-invalid={state.validationState === 'invalid' || undefined}
+      data-readonly={!segment.isEditable || undefined}
       data-type={segment.type} />
   );
 }
