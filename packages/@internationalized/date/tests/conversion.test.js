@@ -140,7 +140,6 @@ describe('CalendarDate conversion', function () {
 
   describe('setTimeZoneOffset', () => {
     it('should support old dates in local timezone with second offsets', () => {
-      let resolvedOptions = Intl.DateTimeFormat.prototype.resolvedOptions;
       const testCases = [
         ['America/New_York', '1800-01-01T00:00:00Z', -17_762_000],
         ['Europe/London', '1800-01-01T00:00:00Z', -75_000],
@@ -148,16 +147,8 @@ describe('CalendarDate conversion', function () {
         ['Europe/Rome', '1800-01-01T00:00:00Z', 2_996_000]
       ];
       for (let [timezone, date, expectedOffset] of testCases) {
-        jest.spyOn(Intl.DateTimeFormat.prototype, 'resolvedOptions').mockImplementation(function () {
-          let s = resolvedOptions.call(this);
-          s.timeZone = timezone;
-          return s;
-        });
-
         const tzOffset = getTimeZoneOffset(new Date(date).getTime(), timezone);
         expect(tzOffset).toBe(expectedOffset);
-
-        jest.clearAllMocks();
       }
     });
   });
