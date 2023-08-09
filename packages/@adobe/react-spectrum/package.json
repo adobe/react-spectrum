@@ -46,6 +46,7 @@
     "@react-spectrum/icon": "^3.7.4",
     "@react-spectrum/illustratedmessage": "^3.4.4",
     "@react-spectrum/image": "^3.4.4",
+    "@react-spectrum/inlinealert": "^3.0.0",
     "@react-spectrum/labeledvalue": "^3.1.4",
     "@react-spectrum/layout": "^3.5.4",
     "@react-spectrum/link": "^3.5.4",
