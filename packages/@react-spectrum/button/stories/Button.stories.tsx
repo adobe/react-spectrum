@@ -15,7 +15,7 @@ import Bell from '@spectrum-icons/workflow/Bell';
 import {Button} from '../';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Flex} from '@react-spectrum/layout';
-import React, {ElementType} from 'react';
+import React, {ElementType, useEffect, useRef, useState} from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
 import {Text} from '@react-spectrum/text';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
@@ -100,6 +100,11 @@ export const UserSelect: ButtonStory = {
       data: 'Pressing and holding on either buttons shouldn\'t trigger text selection on the button labels (wait for buttons to turn red).'
     }
   }
+};
+
+export const IsPending: ButtonStory = {
+  name: 'Pending spinner',
+  render: (args) => <Pending {...args} />
 };
 
 function render<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> = {variant: 'primary'}) {
@@ -222,5 +227,52 @@ function Example() {
         Press and hold (no overwrite)
       </Button>
     </Flex>
+  );
+}
+
+function Pending(props) {
+  let timeout = useRef<ReturnType<typeof setTimeout>>();
+  let [isPending, setPending] = useState(false);
+
+  let handlePress = (e) => {
+    action('press')(e);
+    setPending(true);
+    timeout.current = setTimeout(() => {
+      setPending(false);
+    }, 13000);
+  };
+
+  useEffect(() => () => clearTimeout(timeout.current), []);
+
+  let variants = ['cta', 'accent', 'primary', 'secondary', 'negative', 'overBackground'];
+
+  return (
+    <>
+      {
+        variants.map(variant => {
+
+          return (
+            <View backgroundColor={variant === 'overBackground' ? 'static-blue-700' : null} padding={16}>
+              <Button
+                {...props}
+                isPending={isPending}
+                onPress={handlePress}
+                variant={variant}>
+                Click me!
+              </Button>
+            </View>
+          );
+        })
+      }
+      <View backgroundColor={props.variant === 'overBackground' ? 'static-blue-700' : null} padding={16}>
+        <Button
+          isPending={isPending}
+          onPress={handlePress}
+          variant={props.variant}>
+          <Bell />
+          <Text>I have an icon</Text>
+        </Button>
+      </View>
+    </>
   );
 }

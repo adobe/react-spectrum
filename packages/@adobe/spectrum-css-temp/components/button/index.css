@@ -157,6 +157,20 @@ governing permissions and limitations under the License.
     min-inline-size: unset;
     padding: var(--spectrum-global-dimension-size-65);
   }
+
+  &.is-pending {
+    pointer-events: none;
+
+    .spectrum-CircleLoader {
+      position: absolute;
+      margin-top: var(--spectrum-global-dimension-size-25);
+    }
+
+    .spectrum-Button-label,
+    .spectrum-Icon {
+      opacity: 0;
+    }
+  }
 }
 
 a.spectrum-Button,

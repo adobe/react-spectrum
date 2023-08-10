@@ -20,13 +20,18 @@ import {
 } from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
-import React, {ElementType, ReactElement} from 'react';
+import {ProgressCircle} from '@react-spectrum/progress';
+import React, {ElementType, ReactElement, useEffect, useRef, useState} from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
+import {SpectrumProgressCircleProps} from '@react-types/progress';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {Text} from '@react-spectrum/text';
 import {useButton} from '@react-aria/button';
 import {useHover} from '@react-aria/interactions';
+import {useLocalizedStringFormatter} from 'react-aria';
 import {useProviderProps} from '@react-spectrum/provider';
 
 function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>, ref: FocusableRef<HTMLElement>) {
@@ -39,15 +44,46 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
     style = variant === 'accent' || variant === 'cta' ? 'fill' : 'outline',
     staticColor,
     isDisabled,
+    isPending,
     autoFocus,
     ...otherProps
   } = props;
   let domRef = useFocusableRef(ref);
   let {buttonProps, isPressed} = useButton(props, domRef);
   let {hoverProps, isHovered} = useHover({isDisabled});
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {styleProps} = useStyleProps(otherProps);
+  let progressCircleProps: SpectrumProgressCircleProps = {
+    'aria-label': stringFormatter.format('loading'),
+    isIndeterminate: true,
+    size: 'S',
+    ...(
+      (variant === 'overBackground' && style !== 'fill') ||
+      ((variant === 'cta' || variant === 'accent') && style !== 'outline')
+    ) && {variant: 'overBackground'}
+  };
   let hasLabel = useHasChild(`.${styles['spectrum-Button-label']}`, domRef);
   let hasIcon = useHasChild(`.${styles['spectrum-Icon']}`, domRef);
+  let timeout = useRef<ReturnType<typeof setTimeout>>();
+  let [showLoader, setShowLoader] = useState(false);
+
+  useEffect(() => {
+    if (isPending) {
+      // Start timer when isPending is set to true.
+      timeout.current = setTimeout(() => {
+        setShowLoader(true);
+        timeout.current = null;
+      }, 1000);
+    } else {
+      // Exit loading state when isPending is set to false. */
+      setShowLoader(false);
+    }
+    return () => {
+      // Clean up on unmount or when user removes isPending prop before entering loading state.
+      clearTimeout(timeout.current);
+      timeout.current = null;
+    };
+  }, [isPending]);
 
   if (variant === 'cta') {
     variant = 'accent';
@@ -65,6 +101,7 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
         data-variant={variant}
         data-style={style}
         data-static-color={staticColor || undefined}
+        aria-disabled={isPending}
         className={
           classNames(
             styles,
@@ -73,7 +110,8 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
               'spectrum-Button--iconOnly': hasIcon && !hasLabel,
               'is-disabled': isDisabled,
               'is-active': isPressed,
-              'is-hovered': isHovered
+              'is-hovered': isHovered,
+              'is-pending': showLoader
             },
             styleProps.className
           )
@@ -88,6 +126,9 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
               UNSAFE_className: classNames(styles, 'spectrum-Button-label')
             }
           }}>
+          {showLoader && <ProgressCircle
+            UNSAFE_className={classNames(styles, 'spectrum-CircleLoader')}
+            {...progressCircleProps} />}
           {typeof children === 'string'
             ? <Text>{children}</Text>
             : children}

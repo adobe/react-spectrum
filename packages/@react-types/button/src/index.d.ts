@@ -74,6 +74,8 @@ export interface SpectrumButtonProps<T extends ElementType = 'button'> extends A
   style?: 'fill' | 'outline',
   /** The static color style to apply. Useful when the button appears over a color background. */
   staticColor?: 'white' | 'black',
+  /** Whether to disable clicks and display a loading spinner. */
+  isPending?: boolean,
   /**
    * Whether the button should be displayed with a quiet style.
    * @deprecated
