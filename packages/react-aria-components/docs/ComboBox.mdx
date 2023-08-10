@@ -988,6 +988,38 @@ function Example() {
 }
 ```
 
+### HTML forms
+
+ComboBox supports the `name` prop for integration with HTML forms. By default, the `id` of the selected item will be submitted to the server. If the `formValue` prop is set to `"text"` or the `allowsCustomValue` prop is true, the text in the input field will be submitted instead.
+
+```tsx example
+<div style={{display: 'flex', gap: 16, flexWrap: 'wrap'}}>
+  <MyComboBox
+    label="Favorite Animal"
+    ///- begin highlight -///
+    name="favoriteAnimalId"
+    ///- end highlight -///
+  >
+    <Item id="panda">Panda</Item>
+    <Item id="cat">Cat</Item>
+    <Item id="dog">Dog</Item>
+  </MyComboBox>
+  <MyComboBox
+    label="Ice cream flavor"
+    ///- begin highlight -///
+    name="iceCream"
+    formValue="text"
+    allowsCustomValue
+    ///- end highlight -///
+  >
+    <Item>Chocolate</Item>
+    <Item>Mint</Item>
+    <Item>Strawberry</Item>
+    <Item>Vanilla</Item>
+  </MyComboBox>
+</div>
+```
+
 ## Advanced customization
 
 ### Composition

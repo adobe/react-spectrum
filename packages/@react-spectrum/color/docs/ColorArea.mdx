@@ -88,6 +88,14 @@ function Example() {
 }
 ```
 
+### HTML forms
+
+ColorArea supports the `xName` and `yName` props for integration with HTML forms. The values will be submitted as numbers between the minimum and maximum value for the corresponding channel in the X and Y direction.
+
+```tsx example
+<ColorArea xName="red" yName="green" />
+```
+
 ## Labeling
 
 By default, ColorArea uses an `aria-label` for the localized string "Color Picker",
