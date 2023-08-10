@@ -74,8 +74,8 @@ export interface SpectrumButtonProps<T extends ElementType = 'button'> extends A
   style?: 'fill' | 'outline',
   /** The static color style to apply. Useful when the button appears over a color background. */
   staticColor?: 'white' | 'black',
-  /** 
-   * Whether to disable events immediately and display a loading spinner after a 1 second delay. 
+  /**
+   * Whether to disable events immediately and display a loading spinner after a 1 second delay.
    * @private
    */
   UNSTABLE_isPending?: boolean,
