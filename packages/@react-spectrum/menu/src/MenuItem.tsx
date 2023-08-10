@@ -68,9 +68,12 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
     hasChildNodes
   } = item;
 
-  if (item.hasChildNodes) {
-    console.log('item child nodes', item, [...item.childNodes])
-  }
+  // if (item.hasChildNodes) {
+  //   console.log('item child nodes', item, [...item.childNodes])
+  //   for (let blah of [...item.childNodes]) {
+  //     console.log('child of child', [...blah.childNodes])
+  //   }
+  // }
 
   let isSelected = state.selectionManager.isSelected(key);
   let isDisabled = state.disabledKeys.has(key);

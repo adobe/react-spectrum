@@ -139,4 +139,76 @@ export const SubMenuDynamicSections = {
   name: 'dynamic submenu items with sections'
 };
 
+let subMenuNoSection = [
+  {name: 'Section 1', isSection: true, children: [
+    {name: 'Sec 1 Lvl 1 Item 1'},
+    {name: 'Sec 1 Lvl 1 Item 2', children: [
+      {name: 'Sec 1 Lvl 2 Item 1'},
+      {name: 'Sec 1 Lvl 2 Item 2'},
+      {name: 'Sec 1 Lvl 2 Item 3'}
+    ]},
+    {name: 'Sec 1 Lvl 1 Item 3'}
+  ]}
+];
+
+export const MainSectionsSubNoSections = {
+  render: () => (
+    renderMenuTrigger(
+      <Menu items={subMenuNoSection} onAction={action('onAction')}>
+        {(item) => {
+          console.log('item', item);
+          if (item.isSection) {
+            return (
+              <Section key={item.name} items={item.children} title={item.name}>
+                {(item) => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
+              </Section>
+            );
+          } else {
+            return (
+              <Item key={item.name} childItems={item.children}>{item.name}</Item>
+            );
+          }
+        }}
+      </Menu>
+    )
+  ),
+  name: 'dynamic, main menu w/ sections, sub menu no sections'
+};
+
+let subMenuSections = [
+  {name: 'Lvl 1 Item 1'},
+  {name: 'Lvl 1 Item 2', children: [
+    {name: 'Section 1', isSection: true, children: [
+      {name: 'Lvl 2 Sec 1 Item 1'},
+      {name: 'Lvl 2 Sec 1 Item 2'},
+      {name: 'Lvl 2 Sec 1 Item 3'}
+    ]}
+  ]},
+  {name: 'Lvl 1 Item 3'}
+];
+
+export const MainNoSectionsSubSections = {
+  render: () => (
+    renderMenuTrigger(
+      <Menu items={subMenuSections} onAction={action('onAction')}>
+        {(item) => {
+          console.log('item', item);
+          if (item?.isSection) {
+            return (
+              <Section key={item.name} items={item.children} title={item.name}>
+                {(item) => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
+              </Section>
+            );
+          } else {
+            return (
+              <Item key={item.name} childItems={item.children}>{item.name}</Item>
+            );
+          }
+        }}
+      </Menu>
+    )
+  ),
+  name: 'dynamic, main menu no sections, sub menu w/ sections'
+};
+
 // TODO add mix of sub menus with sections and without section

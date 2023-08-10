@@ -68,9 +68,12 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
               // different interactions (aka hover/keyboard for opening the submenu) and thus update expandedkeys
               // Perhaps make a generic version of ContextualHelpTrigger and then wrap the MenuItem below in it,
               // "content" becomes a Menu element that has the submenu's contents. How to get this content though?
-              // Think I can just pass "item" to it?
+              // Think I can just pass "item" to it? Also perhaps make SubMenu which is like Menu but doesn't need to setup its own state
               // Start by doing a dialog container or something and rendering it
-              // useMenuItem already handles hover to open the submenu
+              // useMenuItem already handles hover to open the submenu, just need to pass hasPopup
+              // Things to write:
+              // SubMenu -> equivalent to Menu but doesn't need to setup its own state, just uses the parent Menu state?
+              // SubMenuTrigger -> equivalent to ContextualHelpTrigger but renders a SubMenu. Doesn't need to have getCollectionNode either
             }
 
             let menuItem = (
@@ -78,7 +81,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
                 key={item.key}
                 item={item}
                 state={state}
-                // TODO if a MenuItem triggers a submenu, it doesn't support onAction right
+                // TODO if a MenuItem triggers a submenu, it doesn't support onAction right?
                 onAction={completeProps.onAction} />
             );
 
