@@ -35,7 +35,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
   let {menuProps} = useMenu(completeProps, state, domRef);
   let {styleProps} = useStyleProps(completeProps);
   useSyncRef(contextProps, domRef);
-  console.log('state collection', [...state.collection]);
+  console.log('state collection', [...state.collection], state.expandedKeys);
   return (
     <MenuStateContext.Provider value={{state, container: scopedRef, menu: domRef}}>
       <FocusScope contain={state.expandedKeys.size > 0}>
@@ -61,11 +61,24 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
               );
             }
 
+            if (item.hasChildNodes) {
+              // console.log('this is a sub menutrigger', item);
+              // TODO: how to make it a trigger? Look at unavailable menu item
+              // Will need to render something different from MenuItem? It will need to handle
+              // different interactions (aka hover/keyboard for opening the submenu) and thus update expandedkeys
+              // Perhaps make a generic version of ContextualHelpTrigger and then wrap the MenuItem below in it,
+              // "content" becomes a Menu element that has the submenu's contents. How to get this content though?
+              // Think I can just pass "item" to it?
+              // Start by doing a dialog container or something and rendering it
+              // useMenuItem already handles hover to open the submenu
+            }
+
             let menuItem = (
               <MenuItem
                 key={item.key}
                 item={item}
                 state={state}
+                // TODO if a MenuItem triggers a submenu, it doesn't support onAction right
                 onAction={completeProps.onAction} />
             );
 

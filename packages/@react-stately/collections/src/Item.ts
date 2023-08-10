@@ -37,7 +37,7 @@ Item.getCollectionNode = function* getCollectionNode<T>(props: ItemProps<T>, con
     'aria-label': props['aria-label'],
     hasChildNodes: hasChildItems(props),
     *childNodes() {
-      // TODO handle sections below
+      // TODO: handle sections here
       if (childItems) {
         for (let child of childItems) {
           yield {
@@ -48,6 +48,7 @@ Item.getCollectionNode = function* getCollectionNode<T>(props: ItemProps<T>, con
       } else if (title) {
         let items: PartialNode<T>[] = [];
         React.Children.forEach(children, child => {
+          // TODO: handle sections here
           items.push({
             type: 'item',
             element: child as ItemElement<T>

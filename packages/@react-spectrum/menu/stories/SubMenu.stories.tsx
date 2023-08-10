@@ -29,7 +29,11 @@ export const SubMenuStatic = {
         <Item title="Lvl 1 Item 2">
           <Item>Lvl 2 Item 1</Item>
           <Item>Lvl 2 Item 2</Item>
-          <Item>Lvl 2 Item 3</Item>
+          <Item title="Lvl 2 Item 3">
+            <Item>Lvl 3 Item 1</Item>
+            <Item>Lvl 3 Item 2</Item>
+            <Item>Lvl 3 Item 3</Item>
+          </Item>
         </Item>
         <Item>Lvl 1 Item 3</Item>
       </Menu>
@@ -43,7 +47,11 @@ let dynamicSubMenu = [
   {name: 'Lvl 1 Item 2', children: [
     {name: 'Lvl 2 Item 1'},
     {name: 'Lvl 2 Item 2'},
-    {name: 'Lvl 2 Item 3'}
+    {name: 'Lvl 2 Item 3', children: [
+      {name: 'Lvl 3 Item 1'},
+      {name: 'Lvl 3 Item 2'},
+      {name: 'Lvl 3 Item 3'}
+    ]}
   ]},
   {name: 'Lvl 1 Item 3'}
 ];
@@ -58,7 +66,6 @@ export const SubMenuDynamic = {
   ),
   name: 'dynamic submenu items'
 };
-
 
 export const SubMenuStaticSections = {
   render: () => (
@@ -89,7 +96,7 @@ export const SubMenuStaticSections = {
       </Menu>
     )
   ),
-  name: 'static submenu items'
+  name: 'static submenu items with sections'
 };
 
 let dynamicSubMenuSections = [
@@ -122,14 +129,14 @@ export const SubMenuDynamicSections = {
     renderMenuTrigger(
       <Menu items={dynamicSubMenuSections} onAction={action('onAction')}>
         {(item) => (
-          <Section key={item.name} items={item.children} aria-label={item.name}>
+          <Section key={item.name} items={item.children} title={item.name}>
             {(item) => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
           </Section>
         )}
       </Menu>
     )
   ),
-  name: 'dynamic submenu items'
+  name: 'dynamic submenu items with sections'
 };
 
 // TODO add mix of sub menus with sections and without section
