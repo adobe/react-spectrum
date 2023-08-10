@@ -21,6 +21,7 @@ export default {
     '@react-spectrum/icon',
     '@react-spectrum/illustratedmessage',
     '@react-spectrum/image',
+    '@react-spectrum/inlinealert',
     '@react-spectrum/label',
     '@react-spectrum/labeledvalue',
     '@react-spectrum/layout',

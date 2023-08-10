@@ -407,6 +407,16 @@ describe('TableView with expandable rows', function () {
         ${'ArrowRight'}       | ${'en-US'}
         ${'ArrowLeft'}        | ${'ar-AE'}
       `('should expand a row via $Arrow if focus is on the row ($Locale)', ({Arrow, Locale}) => {
+        let labels = {
+          'en-US': {
+            'expand': 'Expand',
+            'collapse': 'Collapse'
+          },
+          'ar-AE': {
+            'expand': 'مد',
+            'collapse': 'طي'
+          }
+        };
         let treegrid = render(<StaticExpandableTable onSelectionChange={onSelectionChange} UNSTABLE_onExpandedChange={onExpandedChange} />, undefined, Locale);
         let rowgroups = treegrid.getAllByRole('rowgroup');
         let rows = within(rowgroups[1]).getAllByRole('row');
@@ -421,7 +431,7 @@ describe('TableView with expandable rows', function () {
         expect(rowToExpand).toHaveAttribute('aria-expanded', 'false');
         let chevron = within(rowToExpand).getByRole('button');
         expect(chevron).toBeTruthy();
-        expect(chevron).toHaveAttribute('aria-label', 'Expand');
+        expect(chevron).toHaveAttribute('aria-label', labels[Locale]['expand']);
 
         focusCell(treegrid, 'Lvl 2 Foo 1');
         moveFocus(Arrow);
@@ -438,7 +448,7 @@ describe('TableView with expandable rows', function () {
         rowgroups = treegrid.getAllByRole('rowgroup');
         rows = within(rowgroups[1]).getAllByRole('row');
         expect(onSelectionChange).not.toHaveBeenCalled();
-        expect(chevron).toHaveAttribute('aria-label', 'Collapse');
+        expect(chevron).toHaveAttribute('aria-label', labels[Locale]['collapse']);
         expect(rows).toHaveLength(4);
         rowToExpand = rows[1];
         expect(rowToExpand).toHaveAttribute('aria-expanded', 'true');
@@ -461,6 +471,16 @@ describe('TableView with expandable rows', function () {
         ${'ArrowLeft'}       | ${'en-US'}
         ${'ArrowRight'}      | ${'ar-AE'}
       `('should collapse a row via $Arrow if focus is on the row ($Locale)', ({Arrow, Locale}) => {
+        let labels = {
+          'en-US': {
+            'expand': 'Expand',
+            'collapse': 'Collapse'
+          },
+          'ar-AE': {
+            'expand': 'مد',
+            'collapse': 'طي'
+          }
+        };
         let treegrid = render(<StaticExpandableTable onSelectionChange={onSelectionChange} UNSTABLE_onExpandedChange={onExpandedChange} />, undefined, Locale);
         let rowgroups = treegrid.getAllByRole('rowgroup');
         let rows = within(rowgroups[1]).getAllByRole('row');
@@ -474,7 +494,7 @@ describe('TableView with expandable rows', function () {
         expect(rowToCollapse).toHaveAttribute('aria-expanded', 'true');
         let chevron = within(rowToCollapse).getByRole('button');
         expect(chevron).toBeTruthy();
-        expect(chevron).toHaveAttribute('aria-label', 'Collapse');
+        expect(chevron).toHaveAttribute('aria-label', labels[Locale]['collapse']);
 
         focusCell(treegrid, 'Lvl 1 Foo 1');
         moveFocus(Arrow);
@@ -491,7 +511,7 @@ describe('TableView with expandable rows', function () {
         rowgroups = treegrid.getAllByRole('rowgroup');
         rows = within(rowgroups[1]).getAllByRole('row');
         expect(onSelectionChange).not.toHaveBeenCalled();
-        expect(chevron).toHaveAttribute('aria-label', 'Expand');
+        expect(chevron).toHaveAttribute('aria-label', labels[Locale]['expand']);
         expect(rows).toHaveLength(1);
         rowToCollapse = rows[0];
         expect(rowToCollapse).toHaveAttribute('aria-level', '1');

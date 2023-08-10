@@ -1,6 +1,6 @@
 {
-  "negative": "Napaka",
   "info": "Informacije",
-  "positive": "Uspešno",
-  "notice": "Opozorilo"
+  "negative": "Napaka",
+  "notice": "Opozorilo",
+  "positive": "Uspešno"
 }

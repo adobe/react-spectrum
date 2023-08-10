@@ -13,10 +13,9 @@
 import {Button} from '@react-spectrum/button';
 import {Content} from '@react-spectrum/view';
 import {Heading} from '@react-spectrum/text';
-import {InlineAlert} from '../';
+import {InlineAlert, SpectrumInlineAlertProps} from '../';
 import {Meta} from '@storybook/react';
 import React, {useState} from 'react';
-import {SpectrumInlineAlertProps} from '@react-types/inlinealert';
 
 type StoryArgs = SpectrumInlineAlertProps & {title: string, content: string};
 
