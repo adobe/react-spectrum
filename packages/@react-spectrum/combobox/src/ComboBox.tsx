@@ -73,8 +73,14 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     direction = 'bottom',
     isQuiet,
     loadingState,
-    onLoadMore
+    onLoadMore,
+    allowsCustomValue,
+    name,
+    formValue = 'text'
   } = props;
+  if (allowsCustomValue) {
+    formValue = 'text';
+  }
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let isAsync = loadingState != null;
@@ -104,7 +110,8 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
       popoverRef: unwrappedPopoverRef,
       listBoxRef,
       inputRef: inputRef,
-      menuTrigger
+      menuTrigger,
+      name: formValue === 'text' ? name : undefined
     },
     state
   );
@@ -150,6 +157,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
           triggerProps={buttonProps}
           triggerRef={buttonRef} />
       </Field>
+      {name && formValue === 'key' && <input type="hidden" name={name} value={state.selectedKey} />}
       <Popover
         state={state}
         UNSAFE_style={style}

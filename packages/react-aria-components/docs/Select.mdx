@@ -316,8 +316,8 @@ prop must be passed instead to identify it to assistive technology.
 
 `Select` makes use of the following concepts:
 
-* [Collections](../react-stately/Collections.html)
-* [Selection](../react-stately/Selection.html)
+- [Collections](../react-stately/collections.html)
+- [Selection](../react-stately/selection.html)
 
 ### Composed components
 
@@ -942,6 +942,23 @@ function Example() {
 }
 ```
 
+### HTML forms
+
+Select supports the `name` prop for integration with HTML forms. The `id` of the selected item will be submitted to the server.
+
+```tsx example
+<MySelect
+  label="Favorite Animal"
+  ///- begin highlight -///
+  name="favoriteAnimalId"
+  ///- end highlight -///
+>
+  <Item id="panda">Panda</Item>
+  <Item id="cat">Cat</Item>
+  <Item id="dog">Dog</Item>
+</MySelect>
+```
+
 ## Advanced customization
 
 ### Composition
@@ -1017,3 +1034,17 @@ function MySelect(props) {
   );
 }
 ```
+
+## Accessibility
+
+### False positives
+
+Select may trigger a [known accessibility false positive](https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#picker)
+from automated accessibility testing tools. This is because we include a visually hidden select element alongside the Select to specifically aid with browser form autocomplete
+and hide it from screen readers via `aria-hidden` since users don't need to interact with the hidden select. We manage focus internally
+so that focusing this hidden select will always shift focus to the Select's trigger button instead. Automated accessibility testing tools have no way of
+knowing that we manage the focus in this way and thus throw this false positive.
+
+To facilitate the suppression of this false positive, the `data-a11y-ignore="aria-hidden-focus"` data attribute is automatically applied to the
+problematic element and references the relevant `AXE` rule. Please use this data attribute to target the problematic element and exclude it
+from your automated accessibility tests as shown [here](./accessibility.html#false-positives).

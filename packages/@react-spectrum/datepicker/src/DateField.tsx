@@ -43,8 +43,12 @@ function DateField<T extends DateValue>(props: SpectrumDateFieldProps<T>, ref: F
     createCalendar
   });
 
+  let fieldRef = useRef(null);
   let inputRef = useRef(null);
-  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useDateField(props, state, inputRef);
+  let {labelProps, fieldProps, inputProps, descriptionProps, errorMessageProps} = useDateField({
+    ...props,
+    inputRef
+  }, state, fieldRef);
 
   // Note: this description is intentionally not passed to useDatePicker.
   // The format help text is unnecessary for screen reader users because each segment already has a label.
@@ -65,7 +69,7 @@ function DateField<T extends DateValue>(props: SpectrumDateFieldProps<T>, ref: F
       validationState={state.validationState}
       wrapperClassName={classNames(datepickerStyles, 'react-spectrum-Datepicker-fieldWrapper')}>
       <Input
-        ref={inputRef}
+        ref={fieldRef}
         fieldProps={fieldProps}
         isDisabled={isDisabled}
         isQuiet={isQuiet}
@@ -81,6 +85,7 @@ function DateField<T extends DateValue>(props: SpectrumDateFieldProps<T>, ref: F
             isReadOnly={isReadOnly}
             isRequired={isRequired} />)
         )}
+        <input {...inputProps} ref={inputRef} />
       </Input>
     </Field>
   );
