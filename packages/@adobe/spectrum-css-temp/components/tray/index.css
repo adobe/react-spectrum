@@ -63,6 +63,9 @@
   display: flex;
   flex-direction: column;
 
+  overflow-x: hidden;
+  overflow-y: auto;
+
   border-radius: var(--spectrum-tray-full-width-border-radius) var(--spectrum-tray-full-width-border-radius) var(--spectrum-tray-border-radius) var(--spectrum-tray-border-radius);
 
   /* Start offset by the animation distance */
@@ -92,5 +95,12 @@
 @media (max-width: 450px) {
   .spectrum-Tray {
     border-radius: var(--spectrum-tray-border-radius);
+  }
+}
+
+@media (forced-colors: active) {
+  .spectrum-Tray {
+    border-width: var(--spectrum-alias-border-size-thin);
+    border-style: solid solid none;
   }
 }
