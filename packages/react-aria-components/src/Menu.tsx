@@ -172,7 +172,7 @@ function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionP
 export interface MenuItemRenderProps extends ItemRenderProps {
   /**
    * Whether the item is currently selected.
-   * @selector [aria-checked=true], [data-selected=true]
+   * @selector [data-selected=true]
    */
    isSelected: boolean
 }

@@ -37,7 +37,7 @@ export interface TabListProps<T> extends StyleRenderProps<TabListRenderProps>, A
 export interface TabListRenderProps {
   /**
    * The orientation of the tab list.
-   * @selector [aria-orientation="horizontal | vertical"], [data-orientation="horizontal | vertical"]
+   * @selector [data-orientation="horizontal | vertical"]
    */
   orientation: Orientation,
   /**
@@ -63,7 +63,7 @@ export interface TabRenderProps {
   isPressed: boolean,
   /**
    * Whether the tab is currently selected.
-   * @selector [aria-selected=true], [data-selected=true]
+   * @selector [data-selected=true]
    */
   isSelected: boolean,
   /**
@@ -78,7 +78,7 @@ export interface TabRenderProps {
   isFocusVisible: boolean,
   /**
    * Whether the tab is disabled.
-   * @selector [aria-disabled], [data-disabled]
+   * @selector [data-disabled]
    */
   isDisabled: boolean
 }
@@ -270,6 +270,7 @@ function TabInner({item, state}: {item: Node<object>, state: TabListState<object
       {...mergeProps(DOMProps, tabProps, focusProps, hoverProps, renderProps)}
       ref={ref}
       data-selected={isSelected || undefined}
+      data-disabled={isDisabled || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={isPressed || undefined}
       data-hovered={isHovered || undefined} />

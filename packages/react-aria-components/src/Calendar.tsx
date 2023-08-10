@@ -289,7 +289,7 @@ export interface CalendarCellRenderProps {
   isUnavailable: boolean,
   /**
    * Whether the cell is part of an invalid selection.
-   * @selector [aria-invalid], [data-invalid]
+   * @selector [data-invalid]
    */
   isInvalid: boolean
 }

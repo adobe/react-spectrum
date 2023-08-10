@@ -234,12 +234,12 @@ export interface DateSegmentRenderProps extends Omit<IDateSegment, 'isEditable'>
   isPlaceholder: boolean,
   /**
    * Whether the segment is read only.
-   * @selector [aria-readonly], [data-readonly]
+   * @selector [data-readonly]
    */
   isReadOnly: boolean,
   /**
    * Whether the date field is in an invalid state.
-   * @selector [aria-invalid], [data-invalid]
+   * @selector [data-invalid]
    */
   isInvalid: boolean,
   /**

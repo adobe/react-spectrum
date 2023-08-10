@@ -20,7 +20,7 @@ export interface LinkProps extends Omit<AriaLinkOptions, 'elementType'>, RenderP
 export interface LinkRenderProps {
   /**
    * Whether the link is the current item within a list.
-   * @selector [aria-current], [data-current]
+   * @selector [data-current]
    */
   isCurrent: boolean,
   /**
@@ -45,7 +45,7 @@ export interface LinkRenderProps {
   isFocusVisible: boolean,
   /**
    * Whether the link is disabled.
-   * @selector [aria-disabled], [data-disabled]
+   * @selector [data-disabled]
    */
   isDisabled: boolean
 }

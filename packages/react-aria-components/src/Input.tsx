@@ -61,6 +61,8 @@ function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
       {...mergeProps(props, focusProps, hoverProps)}
       {...renderProps}
       ref={ref}
+      data-readonly={props.readOnly || undefined}
+      data-invalid={!!props['aria-invalid'] || undefined}
       data-hovered={isHovered || undefined}
       data-focus-visible={isFocusVisible || undefined} />
   );

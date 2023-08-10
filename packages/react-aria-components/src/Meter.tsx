@@ -24,7 +24,7 @@ export interface MeterRenderProps {
   percentage: number,
   /**
    * A formatted version of the value.
-   * @selector [aria-valuetext], [data-valuetext]
+   * @selector [data-valuetext]
    */
   valueText: string | undefined
 }
