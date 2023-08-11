@@ -19,19 +19,27 @@ import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {TreeState} from '@react-stately/tree';
 import {useMenuSection} from '@react-aria/menu';
 import {useSeparator} from '@react-aria/separator';
+// TODO: get rid of these imports when I make SubMenu and SubMenuTrigger
+import { ContextualHelpTrigger } from './ContextualHelpTrigger';
+import { Content } from '@react-spectrum/view';
+import { Dialog } from '@react-spectrum/dialog';
+import { Heading } from '@react-spectrum/text';
+import { ListBox } from '@react-spectrum/listbox';
+import { CollectionElement } from '@react-types/shared';
 
 interface MenuSectionProps<T> {
   item: Node<T>,
   state: TreeState<T>,
-  onAction?: (key: Key) => void
+  onAction?: (key: Key) => void,
+  menuRenderer?: (item: T) => CollectionElement<T>
 }
 
 /** @private */
 export function MenuSection<T>(props: MenuSectionProps<T>) {
-  let {item, state, onAction} = props;
+  let {item: section, state, onAction, menuRenderer} = props;
   let {itemProps, headingProps, groupProps} = useMenuSection({
-    heading: item.rendered,
-    'aria-label': item['aria-label']
+    heading: section.rendered,
+    'aria-label': section['aria-label']
   });
 
   let {separatorProps} = useSeparator({
@@ -40,7 +48,7 @@ export function MenuSection<T>(props: MenuSectionProps<T>) {
 
   return (
     <Fragment>
-      {item.key !== state.collection.getFirstKey() &&
+      {section.key !== state.collection.getFirstKey() &&
         <li
           {...separatorProps}
           className={classNames(
@@ -49,7 +57,7 @@ export function MenuSection<T>(props: MenuSectionProps<T>) {
           )} />
       }
       <li {...itemProps}>
-        {item.rendered &&
+        {section.rendered &&
           <span
             {...headingProps}
             className={
@@ -58,7 +66,7 @@ export function MenuSection<T>(props: MenuSectionProps<T>) {
                 'spectrum-Menu-sectionHeading'
               )
             }>
-            {item.rendered}
+            {section.rendered}
           </span>
         }
         <ul
@@ -69,8 +77,8 @@ export function MenuSection<T>(props: MenuSectionProps<T>) {
               'spectrum-Menu'
             )
           }>
-          {[...getChildNodes(item, state.collection)].map(node => {
-            let item = (
+          {[...getChildNodes(section, state.collection)].map(node => {
+            let menuItem = (
               <MenuItem
                 key={node.key}
                 item={node}
@@ -78,11 +86,39 @@ export function MenuSection<T>(props: MenuSectionProps<T>) {
                 onAction={onAction} />
             );
 
-            if (node.wrapper) {
-              item = node.wrapper(item);
+            // TODO: need to make a MenuItem with childItems have a trigger here too
+            if (node.hasChildNodes) {
+              console.log('section and trigger item', section, node)
+              menuItem = (
+                // This would be SubMenuTrigger?
+                <ContextualHelpTrigger isSubMenu targetKey={node.key}>
+                  {menuItem}
+                  {/* SubMenu or Menu call would go here */}
+
+                  <Dialog>
+                    <Heading>blah</Heading>
+                    <Content>
+                      {/* TODO need the Menu's original renderer so the SubMenu use the MenuItem's childItems to render the desired content */}
+                      <ListBox items={node.props.childItems}>
+                        {menuRenderer ? menuRenderer : node.props.children}
+                      </ListBox>
+                    </Content>
+                  </Dialog>
+
+                  {/* TODO: below fails, try using SubMenu when that is created */}
+                  {/* <Menu items={item.props.childItems}>
+                    {typeof children === 'function' ? children : item.props.children}
+                  </Menu> */}
+
+                </ContextualHelpTrigger>
+              );
             }
 
-            return item;
+            if (node.wrapper) {
+              menuItem = node.wrapper(menuItem);
+            }
+
+            return menuItem;
           })}
         </ul>
       </li>

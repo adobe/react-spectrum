@@ -21,15 +21,17 @@ import {useOverlayTriggerState} from '@react-stately/overlays';
 
 export interface SpectrumMenuDialogTriggerProps<T> extends ItemProps<T> {
   isUnavailable?: boolean,
-  targetKey: Key
+  targetKey: Key,
+  isSubMenu?: boolean
 }
 
 function ContextualHelpTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): ReactElement {
-  let {isUnavailable} = props;
+  let {isUnavailable, isSubMenu} = props;
 
   let triggerRef = useRef<HTMLLIElement>(null);
   let popoverRef = useRef(null);
   let {state: menuState, container, menu} = useMenuStateContext();
+  // console.log('menuState.expandedKeys.has(props.targetKey)', menuState.expandedKeys.has(props.targetKey))
   let state = useOverlayTriggerState({isOpen: menuState.expandedKeys.has(props.targetKey), onOpenChange: (val) => {
     if (!val) {
       if (menuState.expandedKeys.has(props.targetKey)) {
@@ -38,7 +40,7 @@ function ContextualHelpTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): Rea
     }
   }});
   let slots = {};
-  if (isUnavailable) {
+  if (isUnavailable || isSubMenu) {
     slots = {
       dialog: {UNSAFE_className: classNames(helpStyles, 'react-spectrum-ContextualHelp-dialog')},
       content: {UNSAFE_className: helpStyles['react-spectrum-ContextualHelp-content']},
@@ -67,7 +69,7 @@ function ContextualHelpTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): Rea
   };
   return (
     <>
-      <MenuDialogContext.Provider value={{isUnavailable, triggerRef}}>{trigger}</MenuDialogContext.Provider>
+      <MenuDialogContext.Provider value={{isUnavailable, isSubMenu, triggerRef}}>{trigger}</MenuDialogContext.Provider>
       <SlotProvider slots={slots}>
         {
           isMobile ? (

@@ -50,9 +50,11 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   let {triggerRef} = menuDialogContext || {};
   let isMenuDialogTrigger = !!menuDialogContext;
   let isUnavailable = false;
+  let isSubMenu = false;
 
   if (isMenuDialogTrigger) {
     isUnavailable = menuDialogContext.isUnavailable;
+    isSubMenu = menuDialogContext.isSubMenu;
   }
 
   let domProps = filterDOMProps(item.props);
@@ -95,7 +97,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
       closeOnSelect,
       isVirtualized,
       onAction,
-      'aria-haspopup': isMenuDialogTrigger && isUnavailable ? 'dialog' : undefined
+      'aria-haspopup': isMenuDialogTrigger && isUnavailable || isMenuDialogTrigger && isSubMenu ? 'dialog' : undefined
     },
     state,
     ref

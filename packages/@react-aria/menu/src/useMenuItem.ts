@@ -120,6 +120,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let onSubmenuOpen = useEffectEvent(() => {
     cancelOpenTimeout();
     state.setExpandedKeys(new Set([key]));
+    console.log('opening submenu', key)
   });
 
   useLayoutEffect(() => {
