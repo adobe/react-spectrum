@@ -138,7 +138,7 @@ import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
       color: var(--highlight-foreground);
     }
 
-    &[aria-disabled] {
+    &[data-disabled] {
       color: var(--text-color-disabled);
     }
 
@@ -158,10 +158,10 @@ import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
       text-align: end;
     }
 
-    &[aria-checked] {
+    &[data-checked] {
       padding-left: 24px;
 
-      &[aria-checked=true]::before {
+      &[data-checked=true]::before {
         content: '✓';
         content: '✓' / '';
         alt: ' ';
@@ -170,7 +170,7 @@ import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
         font-weight: 600;
       }
 
-      &[role=menuitemradio][aria-checked=true]::before {
+      &[role=menuitemradio][data-checked=true]::before {
         content: '●';
         content: '●' / '';
         transform: scale(0.7)

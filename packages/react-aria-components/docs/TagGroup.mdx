@@ -109,13 +109,13 @@ import {TagGroup, TagList, Tag, Label} from 'react-aria-components';
       outline-offset: 2px;
     }
 
-    &[aria-selected=true] {
+    &[data-selected=true] {
       border-color: var(--background-selected);
       background: var(--background-selected);
       color: var(--text-color-selected);
     }
 
-    &[aria-disabled] {
+    &[data-disabled] {
       opacity: 0.4;
     }
 
@@ -149,7 +149,7 @@ import {TagGroup, TagList, Tag, Label} from 'react-aria-components';
     --focus-ring-color: Highlight;
     --invalid-color: LinkText;
 
-    .react-aria-Tag[aria-disabled] {
+    .react-aria-Tag[data-disabled] {
       opacity: 1;
       --border-color: GrayText;
       --border-color-hovered: GrayText;

@@ -173,7 +173,7 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
     caret-color: transparent;
   }
 
-  &[aria-invalid] {
+  &[data-invalid] {
     color: var(--text-color-invalid);
 
     &:focus {
@@ -274,7 +274,7 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
       color: var(--unavailable-color);
     }
 
-    &[aria-invalid] {
+    &[data-invalid] {
       background: var(--invalid-color);
       color: var(--highlight-foreground);
     }

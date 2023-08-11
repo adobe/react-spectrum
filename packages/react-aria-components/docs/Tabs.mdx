@@ -86,7 +86,7 @@ import {Tabs, TabList, Tab, TabPanel} from 'react-aria-components';
 .react-aria-TabList {
   display: flex;
 
-  &[aria-orientation=horizontal] {
+  &[data-orientation=horizontal] {
     border-bottom: 1px solid gray;
 
     .react-aria-Tab {
@@ -94,7 +94,7 @@ import {Tabs, TabList, Tab, TabPanel} from 'react-aria-components';
     }
   }
 
-  &[aria-orientation=vertical] {
+  &[data-orientation=vertical] {
     flex-direction: column;
     border-right: 1px solid gray;
 
@@ -117,14 +117,14 @@ import {Tabs, TabList, Tab, TabPanel} from 'react-aria-components';
     color: var(--text-color-hover);
   }
 
-  &[aria-selected=true] {
+  &[data-selected=true] {
     --border-color: var(--highlight-color);
     color: var(--text-color-selected);
   }
 
-  &[aria-disabled] {
+  &[data-disabled] {
     color: var(--text-color-disabled);
-    &[aria-selected=true] {
+    &[data-selected=true] {
       --border-color: var(--text-color-disabled);
     }
   }

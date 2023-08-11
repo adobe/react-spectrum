@@ -78,7 +78,7 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
     padding: 0.286rem 2rem 0.286rem 0.571rem;
     vertical-align: middle;
 
-    &[aria-invalid] {
+    &[data-invalid] {
       border-color: var(--spectrum-global-color-red-600);
     }
 
@@ -148,7 +148,7 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
     display: flex;
     flex-direction: column;
 
-    &[aria-selected=true] {
+    &[data-selected=true] {
       font-weight: 600;
 
       &::before {
@@ -167,7 +167,7 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
       color: var(--highlight-foreground);
     }
 
-    &[aria-disabled] {
+    &[data-disabled] {
       color: var(--text-color-disabled);
     }
 

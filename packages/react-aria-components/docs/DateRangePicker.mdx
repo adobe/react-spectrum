@@ -192,7 +192,7 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
     caret-color: transparent;
   }
 
-  &[aria-invalid] {
+  &[data-invalid] {
     color: var(--text-color-invalid);
 
     &:focus {
@@ -314,7 +314,7 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
       color: var(--unavailable-color);
     }
 
-    &[aria-invalid] {
+    &[data-invalid] {
       background: var(--invalid-color);
       color: var(--highlight-foreground);
     }

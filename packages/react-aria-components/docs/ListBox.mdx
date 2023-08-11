@@ -116,7 +116,7 @@ import {ListBox, Item} from 'react-aria-components';
       box-shadow: inset 0 0 0 2px var(--highlight-background);
     }
 
-    &[aria-selected=true] {
+    &[data-selected=true] {
       background: var(--highlight-background);
       color: var(--highlight-foreground);
 
@@ -125,7 +125,7 @@ import {ListBox, Item} from 'react-aria-components';
       }
     }
 
-    &[aria-disabled] {
+    &[data-disabled] {
       color: var(--text-color-disabled);
     }
 
@@ -660,7 +660,7 @@ let albums = [
       }
     }
 
-    &[aria-selected=true] {
+    &[data-selected=true] {
       background: none;
       color: inherit;
 

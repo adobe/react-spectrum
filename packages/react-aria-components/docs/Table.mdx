@@ -129,7 +129,7 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
       padding: 0 2px;
     }
 
-    &[aria-sort=none] .sort-indicator {
+    &[data-sort=none] .sort-indicator {
       visibility: hidden;
     }
   }
@@ -159,7 +159,7 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
       background: var(--spectrum-global-color-gray-200);
     }
 
-    &[aria-selected=true] {
+    &[data-selected=true] {
       .react-aria-Cell {
         background: var(--highlight-background);
         color: var(--highlight-foreground);
@@ -179,7 +179,7 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
       }
     }
 
-    &[aria-disabled] {
+    &[data-disabled] {
       color: var(--text-color-disabled);
     }
   }
@@ -210,14 +210,14 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
 
   /* join selected items if :has selector is supported */
   @supports selector(:has(.foo)) {
-    .react-aria-Row[aria-selected=true]:has(+ [aria-selected=true]) .react-aria-Cell,
-    .react-aria-Row[aria-selected=true]:has(+ .react-aria-DropIndicator + [aria-selected=true]) .react-aria-Cell {
+    .react-aria-Row[data-selected=true]:has(+ [data-selected=true]) .react-aria-Cell,
+    .react-aria-Row[data-selected=true]:has(+ .react-aria-DropIndicator + [data-selected=true]) .react-aria-Cell {
       border-end-start-radius: 0;
       border-end-end-radius: 0;
     }
 
-    .react-aria-Row[aria-selected=true] + [aria-selected=true] .react-aria-Cell,
-    .react-aria-Row[aria-selected=true] + .react-aria-DropIndicator + [aria-selected=true] .react-aria-Cell {
+    .react-aria-Row[data-selected=true] + [data-selected=true] .react-aria-Cell,
+    .react-aria-Row[data-selected=true] + .react-aria-DropIndicator + [data-selected=true] .react-aria-Cell {
       border-start-start-radius: 0;
       border-start-end-radius: 0;
     }
@@ -1385,7 +1385,7 @@ function Example() {
       color: var(--highlight-foreground);
     }
 
-    &[aria-disabled] {
+    &[data-disabled] {
       color: var(--text-color-disabled);
     }
 
@@ -1405,10 +1405,10 @@ function Example() {
       text-align: end;
     }
 
-    &[aria-checked] {
+    &[data-checked] {
       padding-left: 24px;
 
-      &[aria-checked=true]::before {
+      &[data-checked=true]::before {
         content: '✓';
         content: '✓' / '';
         alt: ' ';
@@ -1417,7 +1417,7 @@ function Example() {
         font-weight: 600;
       }
 
-      &[role=menuitemradio][aria-checked=true]::before {
+      &[role=menuitemradio][data-checked=true]::before {
         content: '●';
         content: '●' / '';
         transform: scale(0.7)
@@ -1579,7 +1579,7 @@ function Example() {
     }
   }
 
-  &[aria-selected=true] {
+  &[data-selected=true] {
     [slot=drag][data-focus-visible] {
       box-shadow: 0 0 0 2px var(--highlight-foreground);
     }

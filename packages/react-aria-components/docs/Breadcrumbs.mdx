@@ -94,7 +94,7 @@ import {Breadcrumbs, Item, Link} from 'react-aria-components';
     text-decoration: underline;
   }
 
-  &[aria-current] {
+  &[data-current] {
     color: var(--text-color-current);
     font-weight: bold;
   }
@@ -107,10 +107,10 @@ import {Breadcrumbs, Item, Link} from 'react-aria-components';
     border: 2px solid var(--focus-ring-color);
   }
 
-  &[aria-disabled] {
+  &[data-disabled] {
     cursor: default;
 
-    &:not([aria-current]) {
+    &:not([data-current]) {
       color: var(--text-color-disabled);
     }
   }

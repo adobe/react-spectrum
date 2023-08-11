@@ -210,6 +210,7 @@ function MenuItem<T>({item}: MenuItemProps<T>) {
       {...mergeProps(DOMProps, menuItemProps, focusProps)}
       {...renderProps}
       ref={ref}
+      data-disabled={states.isDisabled || undefined}
       data-hovered={states.isFocused || undefined}
       data-focused={states.isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}

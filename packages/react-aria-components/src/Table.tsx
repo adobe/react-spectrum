@@ -1084,6 +1084,7 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
         {...mergeProps(filterDOMProps(props as any), rowProps, focusProps, hoverProps, draggableItem?.dragProps)}
         {...renderProps}
         ref={ref}
+        data-disabled={states.isDisabled || undefined}
         data-selected={states.isSelected || undefined}
         data-hovered={isHovered || undefined}
         data-focused={states.isFocused || undefined}

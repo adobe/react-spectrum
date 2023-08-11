@@ -123,7 +123,7 @@ import {GridList, Item, Button} from 'react-aria-components';
       background: var(--spectrum-global-color-gray-200);
     }
 
-    &[aria-selected=true] {
+    &[data-selected=true] {
       background: var(--highlight-background);
       color: var(--highlight-foreground);
 
@@ -139,7 +139,7 @@ import {GridList, Item, Button} from 'react-aria-components';
       }
     }
 
-    &[aria-disabled] {
+    &[data-disabled] {
       color: var(--text-color-disabled);
     }
 
@@ -159,14 +159,14 @@ import {GridList, Item, Button} from 'react-aria-components';
   @supports selector(:has(.foo)) {
     gap: 0;
 
-    .react-aria-Item[aria-selected=true]:has(+ [aria-selected=true]),
-    .react-aria-Item[aria-selected=true]:has(+ .react-aria-DropIndicator + [aria-selected=true]) {
+    .react-aria-Item[data-selected=true]:has(+ [data-selected=true]),
+    .react-aria-Item[data-selected=true]:has(+ .react-aria-DropIndicator + [data-selected=true]) {
       border-end-start-radius: 0;
       border-end-end-radius: 0;
     }
 
-    .react-aria-Item[aria-selected=true] + [aria-selected=true],
-    .react-aria-Item[aria-selected=true] + .react-aria-DropIndicator + [aria-selected=true] {
+    .react-aria-Item[data-selected=true] + [data-selected=true],
+    .react-aria-Item[data-selected=true] + .react-aria-DropIndicator + [data-selected=true] {
       border-start-start-radius: 0;
       border-start-end-radius: 0;
     }
@@ -730,7 +730,7 @@ function Example() {
     }
   }
 
-  &[aria-selected=true] {
+  &[data-selected=true] {
     [slot=drag][data-focus-visible] {
       box-shadow: 0 0 0 2px var(--highlight-foreground);
     }
