@@ -14,6 +14,7 @@ import {action} from '@storybook/addon-actions';
 import defaultConfig, {render as renderMenuTrigger} from './MenuTrigger.stories';
 import {Item, Menu, Section} from '../';
 import React from 'react';
+import {Heading, Keyboard, Text} from '@react-spectrum/text';
 
 
 export default {
@@ -67,6 +68,12 @@ export const SubMenuDynamic = {
   name: 'dynamic submenu items'
 };
 
+// TODO: try having a user defined SubMenu and SubMenuTrigger instead of nested Items and Sections
+
+// TODO: think about title, it can accept JSX content, but kinda non-intuitive. Ponder a rename or a new collection element called ItemContent or something
+// TODO: think about if we should split out state so each sub menu has its own. To be solved with section group selection mode
+// TODO: TreeState might be too much/not a good fit since expandedKeys should only support one (can't have multiple sub menus at a time), something to keep in mind
+
 export const SubMenuStaticSections = {
   render: () => (
     renderMenuTrigger(
@@ -99,8 +106,35 @@ export const SubMenuStaticSections = {
   name: 'static submenu items with sections'
 };
 
+// TODO: Figure out why this blows up when adding isSection
+// let dynamicSubMenuSections = [
+//   {name: 'Section 1', isSection: true,  children: [
+//     {name: 'Sec 1 Lvl 1 Item 1'},
+//     {name: 'Sec 1 Lvl 1 Item 2', children: [
+//       {name: 'Sub Section 1', isSection: true, children: [
+//         {name: 'Sec 1 SubSec 1 Lvl 2 Item 1'},
+//         {name: 'Sec 1 SubSec 1 Lvl 2 Item 2'},
+//         {name: 'Sec 1 SubSec 1 Lvl 2 Item 3'}
+//       ]}
+//     ]},
+//     {name: 'Sec 1 Lvl 1 Item 3'}
+//   ]},
+//   {name: 'Section 2', isSection: true, children: [
+//     {name: 'Sec 2 Lvl 1 Item 1'},
+//     {name: 'Sec 2 Lvl 1 Item 2', children: [
+//       {name: 'Sub Section 1', isSection: true, children: [
+//         {name: 'Sec 2 SubSec 1 Lvl 2 Item 1'},
+//         {name: 'Sec 2 SubSec 1 Lvl 2 Item 2'},
+//         {name: 'Sec 2 SubSec 1 Lvl 2 Item 3'}
+//       ]}
+//     ]},
+//     {name: 'Sec 2 Lvl 1 Item 3'}
+//   ]}
+// ];
+
+
 let dynamicSubMenuSections = [
-  {name: 'Section 1', children: [
+  {name: 'Section 1',  children: [
     {name: 'Sec 1 Lvl 1 Item 1'},
     {name: 'Sec 1 Lvl 1 Item 2', children: [
       {name: 'Sub Section 1', children: [
@@ -130,7 +164,12 @@ export const SubMenuDynamicSections = {
       <Menu items={dynamicSubMenuSections} onAction={action('onAction')}>
         {(item) => (
           <Section key={item.name} items={item.children} title={item.name}>
-            {(item) => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
+            {(item) => (
+              <Item key={item.name} childItems={item.children}>
+                <Text>{item.name}</Text>
+                {/* <Keyboard>⌘C</Keyboard> */}
+              </Item>
+            )}
           </Section>
         )}
       </Menu>

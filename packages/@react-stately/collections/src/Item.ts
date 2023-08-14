@@ -42,7 +42,7 @@ Item.getCollectionNode = function* getCollectionNode<T>(props: ItemProps<T>, con
     *childNodes() {
       if (childItems) {
         for (let child of childItems) {
-          // console.log('child dynamic', child)
+          console.log('child dynamic', child)
           // TODO: how to distiguish a item from a section? Perhaps add another prop called childSection (similar to childItem)?
           // For now I am relying on a value provided in the item's object from the user data
           // Also can we assume that a menu will always have either sections or not? Or will we support a menu having sections and sectionless items?

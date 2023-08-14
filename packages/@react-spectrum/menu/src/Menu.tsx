@@ -89,9 +89,13 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
               // Start by doing a dialog container or something and rendering it
               // useMenuItem already handles hover to open the submenu, just need to pass hasPopup
               // Things to write:
-              // SubMenu -> equivalent to Menu but doesn't need to setup its own state, just uses the parent Menu state?
-              // SubMenuTrigger -> equivalent to ContextualHelpTrigger but renders a SubMenu. Doesn't need to have getCollectionNode either
-              console.log('item', item, children === 'function' ? children : item.props.children)
+              // - SubMenu -> equivalent to Menu but doesn't need to setup its own state, just uses the parent Menu state?
+              // Submenu wouldn't need the render function or anything, just needs the parent item's node and extract the childNodes + map over it and render MenuSections or MenuItems
+              // - SubMenuTrigger -> equivalent to ContextualHelpTrigger but renders a SubMenu. Doesn't need to have getCollectionNode either
+
+
+              // console.log('item', item, children === 'function' ? children : item.props.children,)
+              console.log('item childNodes', [...item.childNodes])
               menuItem = (
                 // This would be SubMenuTrigger?
                 <ContextualHelpTrigger isSubMenu targetKey={item.key}>

@@ -31,6 +31,8 @@ interface MenuSectionProps<T> {
   item: Node<T>,
   state: TreeState<T>,
   onAction?: (key: Key) => void,
+  // TODO: Note this prop, basically sends the Menu's user provided render function to MenuSection so that the
+  // SubMenu knows what to render. Maybe don't need it, perhaps we just use each item's childNodes and render sections + items accordingly like Menu does it?
   menuRenderer?: (item: T) => CollectionElement<T>
 }
 
@@ -88,7 +90,8 @@ export function MenuSection<T>(props: MenuSectionProps<T>) {
 
             // TODO: need to make a MenuItem with childItems have a trigger here too
             if (node.hasChildNodes) {
-              console.log('section and trigger item', section, node)
+              // console.log('section and trigger item', section, node)
+              console.log('item childNodes', [...node.childNodes], node)
               menuItem = (
                 // This would be SubMenuTrigger?
                 <ContextualHelpTrigger isSubMenu targetKey={node.key}>
@@ -99,6 +102,7 @@ export function MenuSection<T>(props: MenuSectionProps<T>) {
                     <Heading>blah</Heading>
                     <Content>
                       {/* TODO need the Menu's original renderer so the SubMenu use the MenuItem's childItems to render the desired content */}
+                      {/* Actually maybe don't because we could just pass the node to the SubMenu and have it use the child nodes to render the proper stuff */}
                       <ListBox items={node.props.childItems}>
                         {menuRenderer ? menuRenderer : node.props.children}
                       </ListBox>
