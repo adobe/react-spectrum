@@ -741,7 +741,7 @@ export interface ItemRenderProps {
   isPressed: boolean,
   /**
    * Whether the item is currently selected.
-   * @selector [data-selected=true]
+   * @selector [data-selected]
    */
   isSelected: boolean,
   /**

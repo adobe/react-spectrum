@@ -109,7 +109,7 @@ import {TagGroup, TagList, Tag, Label} from 'react-aria-components';
       outline-offset: 2px;
     }
 
-    &[data-selected=true] {
+    &[data-selected] {
       border-color: var(--background-selected);
       background: var(--background-selected);
       color: var(--text-color-selected);
@@ -256,10 +256,10 @@ A custom `className` can also be specified on any component. This overrides the 
 </TagGroup>
 ```
 
-In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using DOM attributes, which you can target in CSS selectors. These are data attributes wherever possible. For example:
+In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
 
 ```css
-.react-aria-Tag[data-selected=true] {
+.react-aria-Tag[data-selected] {
   /* ... */
 }
 

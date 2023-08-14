@@ -78,7 +78,7 @@ import {ToggleButton} from 'react-aria-components';
     border-color: var(--deselected-border-color-pressed);
   }
 
-  &[data-selected=true] {
+  &[data-selected] {
     background: var(--selected-color);
     border-color: var(--selected-color);
     color: var(--text-color-selected);
@@ -167,10 +167,10 @@ A custom `className` can also be specified on any component. This overrides the 
 </ToggleButton>
 ```
 
-In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using DOM attributes, which you can target in CSS selectors. These are data attributes wherever possible. For example:
+In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
 
 ```css
-.react-aria-ToggleButton[data-pressed=true] {
+.react-aria-ToggleButton[data-selected] {
   /* ... */
 }
 ```

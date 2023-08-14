@@ -182,7 +182,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
     display: flex;
     flex-direction: column;
 
-    &[data-selected=true] {
+    &[data-selected] {
       font-weight: 600;
 
       &::before {
@@ -453,10 +453,10 @@ A custom `className` can also be specified on any component. This overrides the 
 </Select>
 ```
 
-In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using DOM attributes, which you can target in CSS selectors. These are data attributes wherever possible. For example:
+In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
 
 ```css
-.react-aria-Item[data-selected=true] {
+.react-aria-Item[data-selected] {
   /* ... */
 }
 

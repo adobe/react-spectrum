@@ -117,14 +117,14 @@ import {Tabs, TabList, Tab, TabPanel} from 'react-aria-components';
     color: var(--text-color-hover);
   }
 
-  &[data-selected=true] {
+  &[data-selected] {
     --border-color: var(--highlight-color);
     color: var(--text-color-selected);
   }
 
   &[data-disabled] {
     color: var(--text-color-disabled);
-    &[data-selected=true] {
+    &[data-selected] {
       --border-color: var(--text-color-disabled);
     }
   }
@@ -224,10 +224,10 @@ A custom `className` can also be specified on any component. This overrides the 
 </Tabs>
 ```
 
-In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using DOM attributes, which you can target in CSS selectors. These are data attributes wherever possible. For example:
+In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
 
 ```css
-.react-aria-Tab[data-selected=true] {
+.react-aria-Tab[data-selected] {
   /* ... */
 }
 

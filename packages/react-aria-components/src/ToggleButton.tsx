@@ -19,7 +19,7 @@ import {ToggleState, useToggleState} from 'react-stately';
 export interface ToggleButtonRenderProps extends ButtonRenderProps {
   /**
    * Whether the button is currently selected.
-   * @selector [data-selected=true]
+   * @selector [data-selected]
    */
   isSelected: boolean,
   /**
