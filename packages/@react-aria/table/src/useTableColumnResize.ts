@@ -199,10 +199,14 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
     if (prevResizingColumn.current !== resizingColumn && resizingColumn != null && resizingColumn === item.key) {
       wasFocusedOnResizeStart.current = document.activeElement === ref.current;
       startResize(item);
-      focusInput();
+      // Delay focusing input until Android Chrome's delayed click after touchend happens: https://bugs.chromium.org/p/chromium/issues/detail?id=1150073
+      let timeout = setTimeout(() => focusInput(), 0);
       // VoiceOver on iOS has problems focusing the input from a menu.
-      let timeout = setTimeout(focusInput, 400);
-      return () => clearTimeout(timeout);
+      let VOTimeout = setTimeout(focusInput, 400);
+      return () => {
+        clearTimeout(timeout);
+        clearTimeout(VOTimeout);
+      };
     }
     prevResizingColumn.current = resizingColumn;
   }, [resizingColumn, item, focusInput, ref, startResize]);
