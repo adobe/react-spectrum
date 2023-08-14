@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/searchfield",
-  "version": "3.7.3",
+  "version": "3.7.4",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -36,14 +36,14 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/searchfield": "^3.5.3",
-    "@react-spectrum/button": "^3.12.3",
-    "@react-spectrum/textfield": "^3.10.3",
-    "@react-spectrum/utils": "^3.10.0",
-    "@react-stately/searchfield": "^3.4.3",
-    "@react-types/searchfield": "^3.4.2",
-    "@react-types/textfield": "^3.7.2",
-    "@spectrum-icons/ui": "^3.5.3",
+    "@react-aria/searchfield": "^3.5.4",
+    "@react-spectrum/button": "^3.12.4",
+    "@react-spectrum/textfield": "^3.10.4",
+    "@react-spectrum/utils": "^3.10.1",
+    "@react-stately/searchfield": "^3.4.4",
+    "@react-types/searchfield": "^3.4.3",
+    "@react-types/textfield": "^3.7.3",
+    "@spectrum-icons/ui": "^3.5.4",
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {
