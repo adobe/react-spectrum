@@ -54,7 +54,8 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
 
   if (isMenuDialogTrigger) {
     isUnavailable = menuDialogContext.isUnavailable;
-    isSubMenu = menuDialogContext.isSubMenu;
+    // TODO: grab from submenuDialogContext
+    // isSubMenu = menuDialogContext.isSubMenu;
   }
 
   let domProps = filterDOMProps(item.props);
@@ -66,16 +67,8 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
 
   let {
     rendered,
-    key,
-    hasChildNodes
+    key
   } = item;
-
-  // if (item.hasChildNodes) {
-  //   console.log('item child nodes', item, [...item.childNodes])
-  //   for (let blah of [...item.childNodes]) {
-  //     console.log('child of child', [...blah.childNodes])
-  //   }
-  // }
 
   let isSelected = state.selectionManager.isSelected(key);
   let isDisabled = state.disabledKeys.has(key);
@@ -166,7 +159,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
                 // TODO: labeling for chevron
                 // TODO: need to push the chevron a bit to the right some more still since the svg is 18x18 and has extra whitespace to the right of the chevron tip.
                 // Maybe make its own slot and add a negative margin and increase the padding-inline-start by an equal amount?
-                !isUnavailable && hasChildNodes && (direction === 'rtl' ? <ChevronLeft slot="chevron" /> : <ChevronRight slot="chevron" />)
+                !isUnavailable && isSubMenu && (direction === 'rtl' ? <ChevronLeft slot="chevron" /> : <ChevronRight slot="chevron" />)
               }
             </SlotProvider>
           </ClearSlots>

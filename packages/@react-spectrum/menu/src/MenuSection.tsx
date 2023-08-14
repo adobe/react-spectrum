@@ -19,29 +19,19 @@ import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {TreeState} from '@react-stately/tree';
 import {useMenuSection} from '@react-aria/menu';
 import {useSeparator} from '@react-aria/separator';
-// TODO: get rid of these imports when I make SubMenu and SubMenuTrigger
-import { ContextualHelpTrigger } from './ContextualHelpTrigger';
-import { Content } from '@react-spectrum/view';
-import { Dialog } from '@react-spectrum/dialog';
-import { Heading } from '@react-spectrum/text';
-import { ListBox } from '@react-spectrum/listbox';
-import { CollectionElement } from '@react-types/shared';
 
 interface MenuSectionProps<T> {
   item: Node<T>,
   state: TreeState<T>,
-  onAction?: (key: Key) => void,
-  // TODO: Note this prop, basically sends the Menu's user provided render function to MenuSection so that the
-  // SubMenu knows what to render. Maybe don't need it, perhaps we just use each item's childNodes and render sections + items accordingly like Menu does it?
-  menuRenderer?: (item: T) => CollectionElement<T>
+  onAction?: (key: Key) => void
 }
 
 /** @private */
 export function MenuSection<T>(props: MenuSectionProps<T>) {
-  let {item: section, state, onAction, menuRenderer} = props;
+  let {item, state, onAction} = props;
   let {itemProps, headingProps, groupProps} = useMenuSection({
-    heading: section.rendered,
-    'aria-label': section['aria-label']
+    heading: item.rendered,
+    'aria-label': item['aria-label']
   });
 
   let {separatorProps} = useSeparator({
@@ -50,7 +40,7 @@ export function MenuSection<T>(props: MenuSectionProps<T>) {
 
   return (
     <Fragment>
-      {section.key !== state.collection.getFirstKey() &&
+      {item.key !== state.collection.getFirstKey() &&
         <li
           {...separatorProps}
           className={classNames(
@@ -59,7 +49,7 @@ export function MenuSection<T>(props: MenuSectionProps<T>) {
           )} />
       }
       <li {...itemProps}>
-        {section.rendered &&
+        {item.rendered &&
           <span
             {...headingProps}
             className={
@@ -68,7 +58,7 @@ export function MenuSection<T>(props: MenuSectionProps<T>) {
                 'spectrum-Menu-sectionHeading'
               )
             }>
-            {section.rendered}
+            {item.rendered}
           </span>
         }
         <ul
@@ -79,8 +69,8 @@ export function MenuSection<T>(props: MenuSectionProps<T>) {
               'spectrum-Menu'
             )
           }>
-          {[...getChildNodes(section, state.collection)].map(node => {
-            let menuItem = (
+          {[...getChildNodes(item, state.collection)].map(node => {
+            let item = (
               <MenuItem
                 key={node.key}
                 item={node}
@@ -88,41 +78,11 @@ export function MenuSection<T>(props: MenuSectionProps<T>) {
                 onAction={onAction} />
             );
 
-            // TODO: need to make a MenuItem with childItems have a trigger here too
-            if (node.hasChildNodes) {
-              // console.log('section and trigger item', section, node)
-              console.log('item childNodes', [...node.childNodes], node)
-              menuItem = (
-                // This would be SubMenuTrigger?
-                <ContextualHelpTrigger isSubMenu targetKey={node.key}>
-                  {menuItem}
-                  {/* SubMenu or Menu call would go here */}
-
-                  <Dialog>
-                    <Heading>blah</Heading>
-                    <Content>
-                      {/* TODO need the Menu's original renderer so the SubMenu use the MenuItem's childItems to render the desired content */}
-                      {/* Actually maybe don't because we could just pass the node to the SubMenu and have it use the child nodes to render the proper stuff */}
-                      <ListBox items={node.props.childItems}>
-                        {menuRenderer ? menuRenderer : node.props.children}
-                      </ListBox>
-                    </Content>
-                  </Dialog>
-
-                  {/* TODO: below fails, try using SubMenu when that is created */}
-                  {/* <Menu items={item.props.childItems}>
-                    {typeof children === 'function' ? children : item.props.children}
-                  </Menu> */}
-
-                </ContextualHelpTrigger>
-              );
-            }
-
             if (node.wrapper) {
-              menuItem = node.wrapper(menuItem);
+              item = node.wrapper(item);
             }
 
-            return menuItem;
+            return item;
           })}
         </ul>
       </li>

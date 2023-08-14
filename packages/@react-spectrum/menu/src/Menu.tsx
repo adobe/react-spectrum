@@ -22,15 +22,8 @@ import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useMenu} from '@react-aria/menu';
 import {useTreeState} from '@react-stately/tree';
-// TODO: get rid of these imports when I make SubMenu and SubMenuTrigger
-import { ContextualHelpTrigger } from './ContextualHelpTrigger';
-import { Content } from '@react-spectrum/view';
-import { Dialog } from '@react-spectrum/dialog';
-import { Heading } from '@react-spectrum/text';
-import { ListBox } from '@react-spectrum/listbox';
 
 function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLUListElement>) {
-  let {children} = props;
   let contextProps = useContext(MenuContext);
   let completeProps = {
     ...mergeProps(contextProps, props)
@@ -42,7 +35,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
   let {menuProps} = useMenu(completeProps, state, domRef);
   let {styleProps} = useStyleProps(completeProps);
   useSyncRef(contextProps, domRef);
-  // console.log('state collection', [...state.collection], state.expandedKeys);
+
   return (
     <MenuStateContext.Provider value={{state, container: scopedRef, menu: domRef}}>
       <FocusScope contain={state.expandedKeys.size > 0}>
@@ -61,7 +54,6 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
             if (item.type === 'section') {
               return (
                 <MenuSection
-                  menuRenderer={typeof children === 'function' && children}
                   key={item.key}
                   item={item}
                   state={state}
@@ -74,54 +66,9 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
                 key={item.key}
                 item={item}
                 state={state}
-                // TODO if a MenuItem triggers a submenu, it doesn't support onAction right?
                 onAction={completeProps.onAction} />
             );
 
-            if (item.hasChildNodes) {
-              // console.log('this is a sub menutrigger', item);
-              // TODO: how to make it a trigger? Look at unavailable menu item
-              // Will need to render something different from MenuItem? It will need to handle
-              // different interactions (aka hover/keyboard for opening the submenu) and thus update expandedkeys
-              // Perhaps make a generic version of ContextualHelpTrigger and then wrap the MenuItem below in it,
-              // "content" becomes a Menu element that has the submenu's contents. How to get this content though?
-              // Think I can just pass "item" to it? Also perhaps make SubMenu which is like Menu but doesn't need to setup its own state
-              // Start by doing a dialog container or something and rendering it
-              // useMenuItem already handles hover to open the submenu, just need to pass hasPopup
-              // Things to write:
-              // - SubMenu -> equivalent to Menu but doesn't need to setup its own state, just uses the parent Menu state?
-              // Submenu wouldn't need the render function or anything, just needs the parent item's node and extract the childNodes + map over it and render MenuSections or MenuItems
-              // - SubMenuTrigger -> equivalent to ContextualHelpTrigger but renders a SubMenu. Doesn't need to have getCollectionNode either
-
-
-              // console.log('item', item, children === 'function' ? children : item.props.children,)
-              console.log('item childNodes', [...item.childNodes])
-              menuItem = (
-                // This would be SubMenuTrigger?
-                <ContextualHelpTrigger isSubMenu targetKey={item.key}>
-                  {menuItem}
-                  {/* SubMenu or Menu call would go here */}
-
-                  <Dialog>
-                    <Heading>blah</Heading>
-                    <Content>
-                      {/* {[...item.childNodes].map(node => node.rendered)} */}
-                      <ListBox items={item.props.childItems}>
-                        {typeof children === 'function' ? children : item.props.children}
-                      </ListBox>
-                    </Content>
-                  </Dialog>
-
-                  {/* TODO: below fails, try using SubMenu when that is created */}
-                  {/* <Menu items={item.props.childItems}>
-                    {typeof children === 'function' ? children : item.props.children}
-                  </Menu> */}
-
-                </ContextualHelpTrigger>
-              )
-            }
-
-            // TODO: would be nice if ContextualHelp behaved the same way as submenu/shared code
             if (item.wrapper) {
               menuItem = item.wrapper(menuItem);
             }
