@@ -72,7 +72,6 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
       // Start timer when isPending is set to true.
       timeout.current = setTimeout(() => {
         setShowLoader(true);
-        timeout.current = null;
       }, 1000);
     } else {
       // Exit loading state when isPending is set to false. */
@@ -81,7 +80,6 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
     return () => {
       // Clean up on unmount or when user removes isPending prop before entering loading state.
       clearTimeout(timeout.current);
-      timeout.current = null;
     };
   }, [isPending]);
 

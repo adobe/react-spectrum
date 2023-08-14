@@ -239,7 +239,7 @@ function Pending(props) {
     setPending(true);
     timeout.current = setTimeout(() => {
       setPending(false);
-    }, 13000);
+    }, 3000);
   };
 
   useEffect(() => () => clearTimeout(timeout.current), []);
@@ -252,7 +252,7 @@ function Pending(props) {
         variants.map(variant => {
 
           return (
-            <View backgroundColor={variant === 'overBackground' ? 'static-blue-700' : null} padding={16}>
+            <View backgroundColor={variant === 'overBackground' ? 'static-blue-700' : undefined} padding={16}>
               <Button
                 {...props}
                 isPending={isPending}
@@ -264,7 +264,7 @@ function Pending(props) {
           );
         })
       }
-      <View backgroundColor={props.variant === 'overBackground' ? 'static-blue-700' : null} padding={16}>
+      <View backgroundColor={props.variant === 'overBackground' ? 'static-blue-700' : undefined} padding={16}>
         <Button
           isPending={isPending}
           onPress={handlePress}
