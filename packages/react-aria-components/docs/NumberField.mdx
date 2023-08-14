@@ -105,7 +105,7 @@ import {NumberField, Label, Group, Input, Button} from 'react-aria-components';
       background: var(--spectrum-global-color-gray-75);
     }
 
-    &:disabled {
+    &[data-disabled] {
       border-color: var(--field-border-disabled);
       color: var(--text-color-disabled);
     }
@@ -124,7 +124,7 @@ import {NumberField, Label, Group, Input, Button} from 'react-aria-components';
     width: 6rem;
     flex: 1;
 
-    &:disabled {
+    &[data-disabled] {
       border-color: var(--field-border-disabled);
     }
   }

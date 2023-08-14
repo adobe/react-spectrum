@@ -80,13 +80,13 @@ import {TextField, Label, Input} from 'react-aria-components';
       border-color: var(--invalid-color);
     }
 
-    &:focus {
+    &[data-focused] {
       outline: none;
       border-color: var(--focus-ring-color);
       box-shadow: 0 0 0 1px var(--focus-ring-color);
     }
 
-    &:disabled {
+    &[data-disabled] {
       border-color: var(--field-border-disabled);
       color: var(--text-color-disabled);
     }

@@ -250,7 +250,7 @@ export interface CalendarCellRenderProps {
   isSelectionEnd: boolean,
   /**
    * Whether the cell is focused.
-   * @selector :focus
+   * @selector [data-focused]
    */
   isFocused: boolean,
   /**
@@ -495,6 +495,7 @@ function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRe
   });
 
   let dataAttrs = {
+    'data-focused': states.isFocused || undefined,
     'data-hovered': isHovered || undefined,
     'data-pressed': states.isPressed || undefined,
     'data-unavailable': states.isUnavailable || undefined,

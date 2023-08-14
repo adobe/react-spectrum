@@ -169,7 +169,7 @@ export interface DateInputRenderProps {
   isHovered: boolean,
   /**
    * Whether an element within the date input is focused, either via a mouse or keyboard.
-   * @selector :focus-within
+   * @selector [data-focus-within]
    */
   isFocusWithin: boolean,
   /**
@@ -210,6 +210,7 @@ function DateInput({children, slot, ...otherProps}: DateInputProps, ref: Forward
         {...renderProps}
         ref={fieldRef}
         slot={slot}
+        data-focus-within={isFocused || undefined}
         data-hovered={isHovered || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-disabled={state.isDisabled || undefined}>

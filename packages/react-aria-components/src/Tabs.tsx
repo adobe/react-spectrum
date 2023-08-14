@@ -68,7 +68,7 @@ export interface TabRenderProps {
   isSelected: boolean,
   /**
    * Whether the tab is currently focused.
-   * @selector :focus
+   * @selector [data-focused]
    */
   isFocused: boolean,
   /**
@@ -95,7 +95,7 @@ export interface TabPanelProps extends AriaTabPanelProps, RenderProps<TabPanelRe
 export interface TabPanelRenderProps {
   /**
    * Whether the tab panel is currently focused.
-   * @selector :focus
+   * @selector [data-focused]
    */
   isFocused: boolean,
   /**
@@ -160,6 +160,7 @@ function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
       {...renderProps}
       ref={ref}
       slot={props.slot}
+      data-focused={isFocused || undefined}
       data-orientation={orientation}
       data-focus-visible={isFocusVisible || undefined}
       data-disabled={state.isDisabled || undefined}>
@@ -310,6 +311,7 @@ function TabPanel(props: TabPanelProps, forwardedRef: ForwardedRef<HTMLDivElemen
     <div
       {...domProps}
       ref={ref}
+      data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       // @ts-ignore
       inert={!isSelected ? 'true' : undefined} />

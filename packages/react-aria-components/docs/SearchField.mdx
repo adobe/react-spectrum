@@ -94,7 +94,7 @@ import {SearchField, Label, Input, Button} from 'react-aria-components';
       box-shadow: 0 0 0 1px var(--focus-ring-color);
     }
 
-    &:disabled {
+    &[data-disabled] {
       border-color: var(--field-border-disabled);
       color: var(--text-color-disabled);
     }
@@ -130,7 +130,7 @@ import {SearchField, Label, Input, Button} from 'react-aria-components';
       background: dimgray;
     }
 
-    &:disabled {
+    &[data-disabled] {
       opacity: 0.4;
     }
   }
@@ -151,7 +151,7 @@ import {SearchField, Label, Input, Button} from 'react-aria-components';
     --invalid-color: LinkText;
 
     .react-aria-Button {
-      &:disabled {
+      &[data-disabled] {
         opacity: 1;
       }
     }
