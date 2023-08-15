@@ -104,7 +104,7 @@ function Example(props) {
               setFilledSrc(urls);
               setIsFilled(true);
             }}>
-            <Button>Select a file</Button>
+            <Button variant="primary">Select a file</Button>
           </FileTrigger>
         </Content>
       </IllustratedMessage>
@@ -172,7 +172,7 @@ function DropZoneWithButton(props) {
               setFilledSrc(urls[0]);
               setIsFilled(true);
             }}>
-            <Button>Select a file</Button>
+            <Button variant="primary">Select a file</Button>
           </FileTrigger>
         </Content>
       </IllustratedMessage>
@@ -192,6 +192,7 @@ function DropZoneFilled(props) {
       UNSAFE_className={classNames(styles, 'is-filled')}
       width="size-3000"
       height="size-2400"
+      getDropOperation={(types) =>  (types.has('image/png') || types.has('image/jpeg')) ? 'copy' : 'cancel'}
       onDrop={async (e) => { 
         let item = e.items.find((item) => item.kind === 'file') as FileDropItem;
         if (item.type === 'image/jpeg' || item.type === 'image/png') {
