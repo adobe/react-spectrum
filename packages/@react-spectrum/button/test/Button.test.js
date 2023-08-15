@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, render, triggerPress} from '@react-spectrum/test-utils';
 import {ActionButton, Button, ClearButton, LogicButton} from '../';
 import {Checkbox, defaultTheme} from '@adobe/react-spectrum';
-import {fireEvent, render, triggerPress} from '@react-spectrum/test-utils';
 import {Form} from '@react-spectrum/form';
 import {Provider} from '@react-spectrum/provider';
-import React from 'react';
+import React, {useState} from 'react';
 
 /**
  * Logic Button has no tests outside of this file because functionally it is identical
@@ -271,6 +271,32 @@ describe('Button', function () {
     fireEvent.keyDown(button, {key: 'Enter'});
     fireEvent.keyUp(button, {key: 'Enter'});
     expect(eventDown.defaultPrevented).toBeFalsy();
+  });
+
+  // is pending state
+  it('displays a spinner after a short delay when isPending prop is true', function () {
+    jest.useFakeTimers();
+
+    function TestComponent() {
+      let [pending, setPending] = useState(false);
+      return (
+        <Button onPress={(pending) => setPending(!!pending)} isPending={pending}>
+          Click Me
+        </Button>
+      );
+    }
+    let {getByRole} = render(<TestComponent />);
+    let button = getByRole('button');
+
+    expect(button).toHaveAttribute('aria-disabled', 'false');
+    fireEvent.click(button);
+    act(jest.runAllTimers);
+    let spinner = getByRole('progressbar');
+    expect(button).toHaveAttribute('aria-disabled', 'true');
+    expect(spinner).toBeVisible();
+    expect(spinner).toHaveAttribute('aria-label', 'Loading…');
+
+    jest.useRealTimers();
   });
 
 
