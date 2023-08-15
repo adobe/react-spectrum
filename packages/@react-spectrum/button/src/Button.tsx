@@ -24,7 +24,7 @@ import {FocusRing} from '@react-aria/focus';
 import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {ElementType, ReactElement, useEffect, useRef, useState} from 'react';
+import React, {ElementType, ReactElement, useEffect, useState} from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
 import {SpectrumProgressCircleProps} from '@react-types/progress';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
@@ -64,13 +64,14 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
   };
   let hasLabel = useHasChild(`.${styles['spectrum-Button-label']}`, domRef);
   let hasIcon = useHasChild(`.${styles['spectrum-Icon']}`, domRef);
-  let timeout = useRef<ReturnType<typeof setTimeout>>();
   let [showLoader, setShowLoader] = useState(false);
 
   useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout>;
+
     if (isPending) {
       // Start timer when isPending is set to true.
-      timeout.current = setTimeout(() => {
+      timeout = setTimeout(() => {
         setShowLoader(true);
       }, 1000);
     } else {
@@ -79,7 +80,7 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
     }
     return () => {
       // Clean up on unmount or when user removes isPending prop before entering loading state.
-      clearTimeout(timeout.current);
+      clearTimeout(timeout);
     };
   }, [isPending]);
 
