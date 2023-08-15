@@ -20,16 +20,23 @@ import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useMenuTriggerState} from '@react-stately/menu';
 
 // TODO: Change from MenuTrigger, omit 'trigger' since we don't want to support long press on a submenu
-interface SpectrumSubMenuTriggerProps extends Omit<SpectrumMenuTriggerProps, 'trigger' | 'isOpen' | 'defaultOpen'> {
+interface SubMenuTriggerProps extends Omit<SpectrumMenuTriggerProps, 'trigger' | 'isOpen' | 'defaultOpen'> {
   targetKey: Key
 }
 
+// TODO: User doesn't need to provide target key, we handle that
+export interface SpectrumSubMenuTriggerProps extends Omit<SubMenuTriggerProps, 'targetKey'> {}
+
 // TODO: for now, copies MenuTrigger and pulls some stuff from ContextualHelpTrigger. After getting stuff rendering
-// evaluate if we could instead just modify MenuTrigger and reuse it
+// evaluate if we could instead just modify MenuTrigger and reuse it. At the moment we don't want all the stuff from useMenuTrigger for a
+// sub menu item trigger (aka keydown down arrow opens/long press handling)
+
 // TODO: Think about if it should reuse the same state MenuTrigger uses or use its own
-// how to control it so that only one submenu can be open at once
+// How to control it so that only one submenu can be open at once. At the moment we actually handle this via useMenuItem since it calls setExpandedKey with a single key on open
+// and we don't allow isOpen/defaultOpen on SubMenus
+
 // TODO: got rid of user provided ref support since it doesn't really make sense for submenus IMO
-function SubMenuTrigger(props: SpectrumSubMenuTriggerProps) {
+function SubMenuTrigger(props: SubMenuTriggerProps) {
   let triggerRef = useRef<HTMLLIElement>();
   let menuRef = useRef<HTMLUListElement>();
   let {
@@ -44,8 +51,9 @@ function SubMenuTrigger(props: SpectrumSubMenuTriggerProps) {
   // TODO: maybe don't need useMenuTriggerState and borrow what ContextualHelpTrigger does
   // If we have each SubMenuTrigger create its own open/close state, then how do we make sure only one menu is open at a single time
   // For now grab the tree state from the parent, decide later if we instead want each level of MenuTrigger to have a state tracking the
-  // expanded state of its immediate children and thus enfore that only a single one is open at a time. Each MenuTrigger would then have its own open state
+  // expanded state of its immediate children and thus enforce that only a single one is open at a time. Each MenuTrigger would then have its own open state
   // enforced by the expandedKeys state of its parent trigger.
+  // Actually we already have each menu/submenu tracking its own tree state for its only level only, at least for the static case.
 
   // TODO: Change from MenuTrigger, will need to disable the SubMenuTrigger if disabledKey includes the wrapped item? Test in story
   // Actually already handled in useMenuItem for submenus?
@@ -136,10 +144,9 @@ function SubMenuTrigger(props: SpectrumSubMenuTriggerProps) {
         // TODO add onBlurWithin and popoverRef once I figure out what it is for
          // ref={popoverRef}
         container={container.current}
-
         // TODO: for now placement is customizable by user as per discussion, may still need offset
-        // placement="end top"
-        // offset={-10}
+        placement="end top"
+        offset={-10}
         isNonModal
         enableBothDismissButtons
         disableFocusManagement
@@ -149,7 +156,7 @@ function SubMenuTrigger(props: SpectrumSubMenuTriggerProps) {
         state={state}
         triggerRef={triggerRef}
         scrollRef={menuRef}
-        placement={initialPlacement}
+        // placement={initialPlacement}
         hideArrow
         shouldFlip={shouldFlip}>
         {menu}

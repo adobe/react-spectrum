@@ -12,7 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import defaultConfig, {render as renderMenuTrigger} from './MenuTrigger.stories';
-import {Item, Menu, Section} from '../';
+import {Item, Menu, Section, SubMenuTrigger} from '../';
 import React from 'react';
 import {Heading, Keyboard, Text} from '@react-spectrum/text';
 
@@ -22,20 +22,29 @@ export default {
   title: 'MenuTrigger/SubMenu'
 };
 
+// TODO: update stories
+// See if I need to make SubMenu or can get away with reusing Menu
+// Looks like I can, each Menu will establish its own treeState that tracks only its own items expanded state
 export const SubMenuStatic = {
   render: () => (
     renderMenuTrigger(
-      <Menu onAction={action('onAction')}>
+      <Menu blah="lvl1" onAction={action('onAction')}>
         <Item>Lvl 1 Item 1</Item>
-        <Item title="Lvl 1 Item 2">
-          <Item>Lvl 2 Item 1</Item>
-          <Item>Lvl 2 Item 2</Item>
-          <Item title="Lvl 2 Item 3">
-            <Item>Lvl 3 Item 1</Item>
-            <Item>Lvl 3 Item 2</Item>
-            <Item>Lvl 3 Item 3</Item>
-          </Item>
-        </Item>
+        <SubMenuTrigger>
+          <Item>Lvl 1 Item 2</Item>
+          <Menu blah="lvl2">
+            <Item>Lvl 2 Item 1</Item>
+            <Item>Lvl 2 Item 2</Item>
+            <SubMenuTrigger>
+              <Item>Lvl 2 Item 3</Item>
+              <Menu blah="lvl3">
+                <Item>Lvl 3 Item 1</Item>
+                <Item>Lvl 3 Item 2</Item>
+                <Item>Lvl 3 Item 3</Item>
+              </Menu>
+            </SubMenuTrigger>
+          </Menu>
+        </SubMenuTrigger>
         <Item>Lvl 1 Item 3</Item>
       </Menu>
     )
@@ -57,11 +66,35 @@ let dynamicSubMenu = [
   {name: 'Lvl 1 Item 3'}
 ];
 
+let MySubMenuTrigger = ({item}) => {
+  return (
+    <SubMenuTrigger>
+      <Item>{item.name}</Item>
+      <Menu items={item.children}>
+        {(item: any) => {
+          if (item.children) {
+            return <MySubMenuTrigger item={item} />;
+          } else {
+            return <Item>{item.name}</Item>
+          }
+        }}
+      </Menu>
+    </SubMenuTrigger>
+  )
+}
+
+// TODO: how to render dynamic case?
 export const SubMenuDynamic = {
   render: () => (
     renderMenuTrigger(
       <Menu items={dynamicSubMenu} onAction={action('onAction')}>
-        {(item) => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
+        {(item) => {
+          if (item.children) {
+            return <MySubMenuTrigger item={item} />
+          } else {
+            return <Item key={item.name}>{item.name}</Item>
+          }
+        }}
       </Menu>
     )
   ),

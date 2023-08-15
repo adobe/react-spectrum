@@ -50,13 +50,16 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   let {triggerRef} = menuDialogContext || {};
   let isMenuDialogTrigger = !!menuDialogContext;
   let isUnavailable = false;
-  let isSubMenu = false;
+  let popupType;
 
   if (isMenuDialogTrigger) {
+    popupType = 'menu';
     isUnavailable = menuDialogContext.isUnavailable;
-    // TODO: grab from submenuDialogContext
-    // isSubMenu = menuDialogContext.isSubMenu;
+    if (isUnavailable) {
+      popupType = 'dialog';
+    }
   }
+
 
   let domProps = filterDOMProps(item.props);
 
@@ -90,7 +93,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
       closeOnSelect,
       isVirtualized,
       onAction,
-      'aria-haspopup': isMenuDialogTrigger && isUnavailable || isMenuDialogTrigger && isSubMenu ? 'dialog' : undefined
+      'aria-haspopup': popupType
     },
     state,
     ref
@@ -156,7 +159,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
                 // TODO: labeling for chevron
                 // TODO: need to push the chevron a bit to the right some more still since the svg is 18x18 and has extra whitespace to the right of the chevron tip.
                 // Maybe make its own slot and add a negative margin and increase the padding-inline-start by an equal amount?
-                !isUnavailable && isSubMenu && (direction === 'rtl' ? <ChevronLeft slot="chevron" /> : <ChevronRight slot="chevron" />)
+                !isUnavailable && isMenuDialogTrigger && (direction === 'rtl' ? <ChevronLeft slot="chevron" /> : <ChevronRight slot="chevron" />)
               }
             </SlotProvider>
           </ClearSlots>
