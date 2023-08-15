@@ -11,7 +11,7 @@
  */
 
 import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
-import {CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
+import {CollectionProps, Document, ItemProps, useCachedChildren, useCollection, useCollectionPortal} from './Collection';
 import {ContextValue, forwardRefType, HiddenContext, Provider, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, useListState} from 'react-stately';
@@ -69,7 +69,8 @@ export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children'>, 
 }
 
 interface ListBoxContextValue<T> extends ListBoxProps<T> {
-  state?: ListState<T>
+  state?: ListState<T>,
+  document?: Document<any, any>
 }
 
 interface InternalListBoxContextValue {
@@ -85,17 +86,27 @@ const InternalListBoxContext = createContext<InternalListBoxContextValue | null>
 
 function ListBox<T>(props: ListBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ListBoxContext);
-  let state = (props as ListBoxContextValue<T>).state;
+  let ctx = props as ListBoxContextValue<T>;
   let isHidden = useContext(HiddenContext);
 
-  if (state) {
-    return isHidden ? null : <ListBoxInner state={state} props={props} listBoxRef={ref} />;
+  // The structure of ListBox is a bit strange because it needs to work inside other components like ComboBox and Select.
+  // Those components render two copies of their children so that the collection can be built even when the popover is closed.
+  // The first copy sends a collection document via context which we render the collection portal into.
+  // The second copy sends a ListState object via context which we use to render the ListBox without rebuilding the state.
+  // Otherwise, we have a standalone ListBox, so we need to create a collection and state ourselves.
+
+  if (ctx.document) {
+    return <ListBoxPortal {...props} />;
   }
 
-  return <ListBoxPortal props={props} listBoxRef={ref} />;
+  if (ctx.state) {
+    return isHidden ? null : <ListBoxInner state={ctx.state} props={props} listBoxRef={ref} />;
+  }
+
+  return <StandaloneListBox props={props} listBoxRef={ref} />;
 }
 
-function ListBoxPortal({props, listBoxRef}) {
+function StandaloneListBox({props, listBoxRef}) {
   let {portal, collection} = useCollection(props);
   props = {...props, collection, children: null, items: null};
   let state = useListState(props);
@@ -105,6 +116,10 @@ function ListBoxPortal({props, listBoxRef}) {
       <ListBoxInner state={state} props={props} listBoxRef={listBoxRef} />
     </>
   );
+}
+
+function ListBoxPortal(props) {
+  return <>{useCollectionPortal(props, props.document)}</>;
 }
 
 /**
@@ -278,14 +293,11 @@ function ListBoxSection<T>({section, className, style}: ListBoxSectionProps<T>) 
     children: item => {
       switch (item.type) {
         case 'header': {
-          let {ref, ...otherProps} = item.props;
           return (
-            <Header
-              {...headingProps}
-              {...otherProps}
-              ref={mergeRefs(headingRef, ref)}>
-              {item.rendered}
-            </Header>
+            <SectionHeader
+              item={item}
+              headingProps={headingProps}
+              headingRef={headingRef} />
           );
         }
         case 'item':
@@ -305,6 +317,19 @@ function ListBoxSection<T>({section, className, style}: ListBoxSectionProps<T>) 
       ref={section.props.ref}>
       {children}
     </section>
+  );
+}
+
+// This is a separate component so that headingProps.id doesn't override the item key in useCachedChildren.
+function SectionHeader({item, headingProps, headingRef}) {
+  let {ref, ...otherProps} = item.props;
+  return (
+    <Header
+      {...headingProps}
+      {...otherProps}
+      ref={mergeRefs(headingRef, ref)}>
+      {item.rendered}
+    </Header>
   );
 }
 

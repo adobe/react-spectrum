@@ -11,7 +11,7 @@
  */
 
 import {AriaTagGroupProps, useFocusRing, useHover, useTag, useTagGroup} from 'react-aria';
-import {BaseCollection, CollectionProps, Document, Item, ItemProps, ItemRenderProps, useCachedChildren, useCollectionDocument, useCollectionPortal} from './Collection';
+import {BaseCollection, CollectionProps, Document, ItemProps, ItemRenderProps, useCachedChildren, useCollectionDocument, useCollectionPortal, useSSRCollectionNode} from './Collection';
 import {ButtonContext} from './Button';
 import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, mergeProps, mergeRefs, useObjectRef} from '@react-aria/utils';
@@ -111,8 +111,24 @@ const _TagGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(TagGroup);
 export {_TagGroup as TagGroup};
 
 function TagList<T extends object>(props: TagListProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>) {
-  let {state, document, gridProps, tagListRef} = useContext(InternalTagGroupContext)!;
+  // Render the portal first so that we have the collection by the time we render the DOM in SSR.
+  let {document} = useContext(InternalTagGroupContext)!;
   let portal = useCollectionPortal(props, document);
+  return (
+    <>
+      {portal}
+      <TagListInner props={props} forwardedRef={forwardedRef} />
+    </>
+  );
+}
+
+interface TagListInnerProps<T> {
+  props: TagListProps<T>,
+  forwardedRef: ForwardedRef<HTMLDivElement>
+}
+
+function TagListInner<T extends object>({props, forwardedRef}: TagListInnerProps<T>) {
+  let {state, gridProps, tagListRef} = useContext(InternalTagGroupContext)!;
   let ref = mergeRefs(tagListRef, forwardedRef);
 
   let children = useCachedChildren({
@@ -140,19 +156,16 @@ function TagList<T extends object>(props: TagListProps<T>, forwardedRef: Forward
   });
 
   return (
-    <>
-      <div
-        {...mergeProps(gridProps, focusProps)}
-        {...renderProps}
-        {...filterDOMProps(props as any)}
-        ref={ref}
-        data-empty={state.collection.size === 0 || undefined}
-        data-focused={isFocused || undefined}
-        data-focus-visible={isFocusVisible || undefined}>
-        {state.collection.size === 0 && props.renderEmptyState ? props.renderEmptyState() : children}
-      </div>
-      {portal}
-    </>
+    <div
+      {...mergeProps(gridProps, focusProps)}
+      {...renderProps}
+      {...filterDOMProps(props as any)}
+      ref={ref}
+      data-empty={state.collection.size === 0 || undefined}
+      data-focused={isFocused || undefined}
+      data-focus-visible={isFocusVisible || undefined}>
+      {state.collection.size === 0 && props.renderEmptyState ? props.renderEmptyState() : children}
+    </div>
   );
 }
 
@@ -180,9 +193,8 @@ export interface TagProps extends RenderProps<TagRenderProps> {
   textValue?: string
 }
 
-function Tag(props: TagProps, ref: ForwardedRef<HTMLDivElement>) {
-  // @ts-ignore
-  return <Item {...props} ref={ref} />;
+function Tag(props: TagProps, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
+  return useSSRCollectionNode('item', props, ref, props.children);
 }
 
 /**
