@@ -59,13 +59,14 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
   // Actually already handled in useMenuItem for submenus?
   // let {menuTriggerProps, menuProps} = useMenuTrigger({isDisabled: false}, state, menuTriggerRef);
 
-  let {state: menuState, container, menu: parentMenu} = useMenuStateContext();
+  let {state: parentMenuState, container, menu: parentMenu} = useMenuStateContext();
   // TODO where does targetKey get set even? Check ContextualHelpTrigger
   // call useMenuTriggerState in place of useOverlayTriggerState since they are basically the same except for focusStrategy
-  let state = useMenuTriggerState({isOpen: menuState.expandedKeys.has(props.targetKey), onOpenChange: (val) => {
+  let subMenuState = useMenuTriggerState({isOpen: parentMenuState.expandedKeys.has(props.targetKey), onOpenChange: (val) => {
     if (!val) {
-      if (menuState.expandedKeys.has(props.targetKey)) {
-        menuState.toggleKey(props.targetKey);
+      if (parentMenuState.expandedKeys.has(props.targetKey)) {
+        // TODO: hides menu, currenly triggered since hovering away causes focus to move out of the sub menu and triggers a close via useOverlay
+        parentMenuState.toggleKey(props.targetKey);
       }
     }
   }});
@@ -79,11 +80,16 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
       triggerRef.current.focus();
     }
   };
+
+  // TODO maybe call useMenuTrigger and extract the press props/other stuff? Right now most of that stuff is handled in useMenuItem
+  // but I could add a prop to useMenuTrigger to classify a menu as a subMenu and change the behavior accordingly. This will also allow me to get the proper id + aria-labelledb pairing
+  // for the submenu item trigger and the submenu itself
+
   // TODO: figure out what this is for
   // let onBlurWithin = (e) => {
   //   if (e.relatedTarget && popoverRef.current && !popoverRef.current?.UNSAFE_getDOMNode().contains(e.relatedTarget)) {
-  //     if (menuState.expandedKeys.has(props.targetKey)) {
-  //       menuState.toggleKey(props.targetKey);
+  //     if (parentMenuState.expandedKeys.has(props.targetKey)) {
+  //       parentMenu.toggleKey(props.targetKey);
   //     }
   //   }
   // };
@@ -110,21 +116,22 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
   // TODO: figure out what exactly we need to propagate down
   let menuContext = {
     // TODO: doesn't have menuProps from useMenuTrigger, does it need any? Perhaps autoFocus and aria-labelledBy?
-    state,
+    state: subMenuState,
     ref: menuRef,
-    // TODO: don't think we need onClose right now
-    // onClose: state.close,
+    // TODO: need onClose to close submenu on submenu item select/arrowleft
+    onClose: subMenuState.close,
     closeOnSelect,
     // TODO: we don't call useMenuTrigger so need an autofocus value for when the submenu is opened by keyboard/hover/press
     // useMenuItem currently handles opening the submenu, perhaps copy over the pressProps/some of the keydown stuff from useMenuTrigger's implementation
     // and move it to a useSubMenuTrigger hook or modify useMenuTrigger so it can distingush between the typical menuTrigger stuff. Then pass that stuff
     // via context to useMenuItem or have useMenuItem have that logic baked in?
-    // autoFocus: state.focusStrategy || true,
+    autoFocus: subMenuState.focusStrategy || true,
     UNSAFE_style: isMobile ? {
       width: '100%',
       maxHeight: 'inherit'
     } : undefined,
-    UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile})
+    UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile}),
+    isSubMenu: true
   };
 
 
@@ -132,7 +139,7 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
   // TODO: handle tray experience later
   if (isMobile) {
     overlay = (
-      <Tray state={state}>
+      <Tray state={subMenuState}>
         {menu}
       </Tray>
     );
@@ -153,7 +160,7 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
 
         // Props from MenuTriggerImplementation
         UNSAFE_style={{clipPath: 'unset'}}
-        state={state}
+        state={subMenuState}
         triggerRef={triggerRef}
         scrollRef={menuRef}
         // placement={initialPlacement}
@@ -164,10 +171,16 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
     );
   }
 
+  let openSubMenu = (focusStrategy) => {
+    // TODO: call setExpandedKeys here or just do it in useMenuItem?
+    // parentMenuState.setExpandedKeys()
+    subMenuState.open(focusStrategy);
+  };
+
   return (
     <>
       {/* TODO rename MenuDialogContext to something more generic */}
-      <MenuDialogContext.Provider value={{triggerRef}}>{menuTrigger}</MenuDialogContext.Provider>
+      <MenuDialogContext.Provider value={{triggerRef, openSubMenu}}>{menuTrigger}</MenuDialogContext.Provider>
 
       <MenuContext.Provider value={menuContext}>
         {overlay}
@@ -180,7 +193,7 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
 SubMenuTrigger.getCollectionNode = function* (props: SpectrumSubMenuTriggerProps) {
   let [trigger] = React.Children.toArray(props.children) as ReactElement[];
   let [, content] = props.children as [ReactElement, ReactElement];
-  console.log('trigger content', trigger, content);
+  // console.log('trigger content', trigger, content);
   yield {
     element: React.cloneElement(trigger, {...trigger.props, hasChildItems: true}),
     wrapper: (element) => (

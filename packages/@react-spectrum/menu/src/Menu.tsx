@@ -32,7 +32,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
   let domRef = useDOMRef(ref);
   let scopedRef = useRef(null);
   let state = useTreeState(completeProps);
-  console.log('state', props.blah, state.collection)
+  // console.log('state', props.blah, state.collection)
   let {menuProps} = useMenu(completeProps, state, domRef);
   let {styleProps} = useStyleProps(completeProps);
   useSyncRef(contextProps, domRef);

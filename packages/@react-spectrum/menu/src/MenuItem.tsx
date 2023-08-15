@@ -60,7 +60,6 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
     }
   }
 
-
   let domProps = filterDOMProps(item.props);
 
   let {
@@ -93,7 +92,8 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
       closeOnSelect,
       isVirtualized,
       onAction,
-      'aria-haspopup': popupType
+      'aria-haspopup': popupType,
+      onOpen: menuDialogContext?.openSubMenu
     },
     state,
     ref

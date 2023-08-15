@@ -35,7 +35,8 @@ export interface AriaMenuOptions<T> extends Omit<AriaMenuProps<T>, 'children'> {
 
 interface MenuData {
   onClose?: () => void,
-  onAction?: (key: Key) => void
+  onAction?: (key: Key) => void,
+  isSubMenu?: boolean
 }
 
 export const menuData = new WeakMap<TreeState<unknown>, MenuData>();
@@ -67,6 +68,7 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
   });
 
   menuData.set(state, {
+    isSubMenu: props.isSubMenu,
     onClose: props.onClose,
     onAction: props.onAction
   });
