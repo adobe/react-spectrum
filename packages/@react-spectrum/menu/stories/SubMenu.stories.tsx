@@ -66,35 +66,27 @@ let dynamicSubMenu = [
   {name: 'Lvl 1 Item 3'}
 ];
 
-let MySubMenuTrigger = ({item}) => {
-  return (
-    <SubMenuTrigger>
-      <Item>{item.name}</Item>
-      <Menu items={item.children}>
-        {(item: any) => {
-          if (item.children) {
-            return <MySubMenuTrigger item={item} />;
-          } else {
-            return <Item>{item.name}</Item>
-          }
-        }}
-      </Menu>
-    </SubMenuTrigger>
-  )
+let dynamicRenderFunc = (item) => {
+  if (item.children) {
+    return (
+      <SubMenuTrigger>
+        <Item key={item.name}>{item.name}</Item>
+        <Menu items={item.children}>
+          {(item) => dynamicRenderFunc(item)}
+        </Menu>
+      </SubMenuTrigger>
+    )
+  } else {
+    return <Item key={item.name}>{item.name}</Item>
+  }
 }
 
-// TODO: how to render dynamic case?
+// TODO: how to render dynamic case? Using MySubMenuTrigger won't work
 export const SubMenuDynamic = {
   render: () => (
     renderMenuTrigger(
       <Menu items={dynamicSubMenu} onAction={action('onAction')}>
-        {(item) => {
-          if (item.children) {
-            return <MySubMenuTrigger item={item} />
-          } else {
-            return <Item key={item.name}>{item.name}</Item>
-          }
-        }}
+        {(item) => dynamicRenderFunc(item)}
       </Menu>
     )
   ),
@@ -138,34 +130,6 @@ export const SubMenuStaticSections = {
   ),
   name: 'static submenu items with sections'
 };
-
-// TODO: Figure out why this blows up when adding isSection
-// let dynamicSubMenuSections = [
-//   {name: 'Section 1', isSection: true,  children: [
-//     {name: 'Sec 1 Lvl 1 Item 1'},
-//     {name: 'Sec 1 Lvl 1 Item 2', children: [
-//       {name: 'Sub Section 1', isSection: true, children: [
-//         {name: 'Sec 1 SubSec 1 Lvl 2 Item 1'},
-//         {name: 'Sec 1 SubSec 1 Lvl 2 Item 2'},
-//         {name: 'Sec 1 SubSec 1 Lvl 2 Item 3'}
-//       ]}
-//     ]},
-//     {name: 'Sec 1 Lvl 1 Item 3'}
-//   ]},
-//   {name: 'Section 2', isSection: true, children: [
-//     {name: 'Sec 2 Lvl 1 Item 1'},
-//     {name: 'Sec 2 Lvl 1 Item 2', children: [
-//       {name: 'Sub Section 1', isSection: true, children: [
-//         {name: 'Sec 2 SubSec 1 Lvl 2 Item 1'},
-//         {name: 'Sec 2 SubSec 1 Lvl 2 Item 2'},
-//         {name: 'Sec 2 SubSec 1 Lvl 2 Item 3'}
-//       ]}
-//     ]},
-//     {name: 'Sec 2 Lvl 1 Item 3'}
-//   ]}
-// ];
-
-
 let dynamicSubMenuSections = [
   {name: 'Section 1',  children: [
     {name: 'Sec 1 Lvl 1 Item 1'},
