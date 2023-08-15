@@ -24,7 +24,7 @@ export interface MeterRenderProps {
   percentage: number,
   /**
    * A formatted version of the value.
-   * @selector [data-valuetext]
+   * @selector [aria-valuetext]
    */
   valueText: string | undefined
 }
@@ -62,8 +62,7 @@ function Meter(props: MeterProps, ref: ForwardedRef<HTMLDivElement>) {
       {...meterProps} 
       {...renderProps} 
       ref={ref} 
-      slot={props.slot}
-      data-valuetext={meterProps['aria-valuetext']}>
+      slot={props.slot}>
       <LabelContext.Provider value={{...labelProps, ref: labelRef, elementType: 'span'}}>
         {renderProps.children}
       </LabelContext.Provider>
