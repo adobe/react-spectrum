@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, FocusableRefValue, StyleProps} from '@react-types/shared';
-import {classNames, createFocusableRef, SlotProvider, useStyleProps} from '@react-spectrum/utils';
-import {DropZoneProps, FileTriggerContext, Provider, DropZone as RACDropZone} from 'react-aria-components';
+import {AriaLabelingProps, DOMProps, DOMRef, StyleProps} from '@react-types/shared';
+import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {DropZoneProps, DropZone as RACDropZone} from 'react-aria-components';
 import {mergeProps} from '@react-aria/utils';
-import React, {ReactNode, Ref, useImperativeHandle, useRef} from 'react';
+import React, {ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/dropzone/vars.css';
 export interface SpectrumDropZoneProps extends DropZoneProps, DOMProps, StyleProps, AriaLabelingProps {
   /** The content to display in the button. */
@@ -25,70 +25,52 @@ export interface SpectrumDropZoneProps extends DropZoneProps, DOMProps, StylePro
   replaceMessage?: string
 }
 
-export interface DropZoneRef extends FocusableRefValue<HTMLInputElement, HTMLDivElement> {
-  getInputElement(): HTMLInputElement | HTMLDivElement | null
-}
-
-function DropZone(props: SpectrumDropZoneProps, ref: Ref<DropZoneRef>) {
+function DropZone(props: SpectrumDropZoneProps, ref: DOMRef<HTMLDivElement>) {
   let {children, isFilled, replaceMessage, ...otherProps} = props;
   let {styleProps} = useStyleProps(props);
-  let domRef = useRef<HTMLDivElement>(null);
-  let inputRef = useRef<HTMLInputElement>(null);
-
-  // Expose imperative interface for ref
-  useImperativeHandle(ref, () => ({
-    ...createFocusableRef(domRef, inputRef),
-    getInputElement() {
-      return inputRef.current;
-    }
-  }));
+  let domRef = useDOMRef(ref);
 
   return (
-    <Provider
-      values={[
-        [FileTriggerContext, {inputRef: inputRef}]
-      ]}>
-      <RACDropZone
-        {...mergeProps(otherProps)}
-        {...styleProps as Omit<React.HTMLAttributes<HTMLElement>, 'onDrop'>}
-        className={
-        classNames(
-          styles,
-          'spectrum-Dropzone',
-          styleProps.className
-        )} 
-        ref={domRef}>
-        {({isFocused, isFocusVisible, isDropTarget}) => (
-          <>
-            {isFilled && isDropTarget &&
-              <div
-                className={
-                  classNames(
-                    styles,
-                    'spectrum-Dropzone--banner',
-                    styleProps.className
-                  )
-                }>
-                {replaceMessage ? replaceMessage : 'Drop file to replace'}
-              </div>}
-            <SlotProvider
-              slots={{
-                illustration: {UNSAFE_className: classNames(
-                  styles, 
-                  'spectrum-Dropzone--illustratedMessage', 
-                  {
-                    'is-drop-target': isDropTarget,
-                    'is-focused': isFocused,
-                    'is-focus-visible': isFocusVisible
-                  }
-                  )}
-              }}> 
-              {children}
-            </SlotProvider>
-          </>
-        )}
-      </RACDropZone>
-    </Provider>
+    <RACDropZone
+      {...mergeProps(otherProps)}
+      {...styleProps as Omit<React.HTMLAttributes<HTMLElement>, 'onDrop'>}
+      className={
+      classNames(
+        styles,
+        'spectrum-Dropzone',
+        styleProps.className
+      )} 
+      ref={domRef}>
+      {({isFocused, isFocusVisible, isDropTarget}) => (
+        <>
+          {isFilled && isDropTarget &&
+            <div
+              className={
+                classNames(
+                  styles,
+                  'spectrum-Dropzone--banner',
+                  styleProps.className
+                )
+              }>
+              {replaceMessage ? replaceMessage : 'Drop file to replace'}
+            </div>}
+          <SlotProvider
+            slots={{
+              illustration: {UNSAFE_className: classNames(
+                styles, 
+                'spectrum-Dropzone--illustratedMessage', 
+                {
+                  'is-drop-target': isDropTarget,
+                  'is-focused': isFocused,
+                  'is-focus-visible': isFocusVisible
+                }
+                )}
+            }}> 
+            {children}
+          </SlotProvider>
+        </>
+      )}
+    </RACDropZone>
   );
 }
 
