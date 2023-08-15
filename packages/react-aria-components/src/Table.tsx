@@ -865,7 +865,7 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
       data-focus-visible={isFocusVisible || undefined}
       data-resizing={isResizing || undefined}
       data-allows-sorting={column.props.allowsSorting || undefined}
-      data-sort-direction={state.sortDescriptor?.column === column.key ? state.sortDescriptor.direction : undefined}>
+      data-sort-direction={state.sortDescriptor?.column === column.key ? state.sortDescriptor.direction : 'none'}>
       <ColumnResizerContext.Provider value={{column, triggerRef: ref}}>
         {renderProps.children}
       </ColumnResizerContext.Provider>
