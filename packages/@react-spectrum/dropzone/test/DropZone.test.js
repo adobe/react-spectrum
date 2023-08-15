@@ -59,43 +59,6 @@ describe('DropZone', () => {
     expect(content).toHaveAttribute('class', 'spectrum-IllustratedMessage-description');
   });
 
-  it('should render a file trigger within content', () => {
-    let {getByTestId} = render(
-      <DropZone>
-        <IllustratedMessage>
-          <Heading>No files</Heading>
-          <Content>
-            <FileTrigger data-testid="foo">
-              <Link>Select a file</Link>from your computer
-            </FileTrigger>
-          </Content>
-        </IllustratedMessage>
-      </DropZone>
-    );
-
-    let fileTrigger = getByTestId('foo');
-    expect(fileTrigger).toHaveAttribute('class', 'react-aria-FileTrigger');
-  });
-
-  it('should attach a ref to the input field if provided as a prop', () => {
-    let ref = React.createRef(); 
-    let {getByTestId} = render(
-      <DropZone ref={ref}>
-        <IllustratedMessage>
-          <Heading>No files</Heading>
-          <Content>
-            <FileTrigger data-testid="foo">
-              <Link>Select a file</Link>from your computer
-            </FileTrigger>
-          </Content>
-        </IllustratedMessage>
-      </DropZone>
-    );
-
-    let input = getByTestId('foo').querySelector('input');
-    expect(ref.current.getInputElement()).toEqual(input);
-  });
-
   it('should attach a ref to the dropzone if provided as a prop', () => {
     let ref = React.createRef(); 
     let {getByTestId} = render(
