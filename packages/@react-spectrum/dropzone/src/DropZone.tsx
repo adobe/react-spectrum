@@ -21,7 +21,7 @@ export interface SpectrumDropZoneProps extends DropZoneProps, DOMProps, StylePro
   children: ReactNode,
   /** Whether the dropzone has been filled. */
   isFilled?: boolean, 
-  /** The message to replace the default banner message that is shown when the dropzone is filled. */
+  /** The message to replace the default banner message that is shown when the drop zone is filled. */
   replaceMessage?: string
 }
 
