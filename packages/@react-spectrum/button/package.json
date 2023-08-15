@@ -38,6 +38,7 @@
   "dependencies": {
     "@react-aria/button": "^3.8.1",
     "@react-aria/focus": "^3.14.0",
+    "@react-aria/i18n": "^3.8.1",
     "@react-aria/interactions": "^3.17.0",
     "@react-aria/utils": "^3.19.0",
     "@react-spectrum/progress": "^3.6.1",

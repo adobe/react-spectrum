@@ -31,7 +31,7 @@ import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {Text} from '@react-spectrum/text';
 import {useButton} from '@react-aria/button';
 import {useHover} from '@react-aria/interactions';
-import {useLocalizedStringFormatter} from 'react-aria';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
 function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>, ref: FocusableRef<HTMLElement>) {
