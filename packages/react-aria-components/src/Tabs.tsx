@@ -106,7 +106,7 @@ export interface TabPanelRenderProps {
   /**
    * Whether the tab panel is currently non-interactive. This occurs when the
    * `shouldForceMount` prop is true, and the corresponding tab is not selected.
-   * @selector [inert]
+   * @selector [data-inert]
    */
   isInert: boolean,
   /**
@@ -314,7 +314,7 @@ function TabPanel(props: TabPanelProps, forwardedRef: ForwardedRef<HTMLDivElemen
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       // @ts-ignore
-      inert={!isSelected ? 'true' : undefined} />
+      data-inert={!isSelected ? 'true' : undefined} />
   );
 }
 

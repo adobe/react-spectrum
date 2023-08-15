@@ -416,6 +416,7 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
             style={style}
             ref={ref}
             slot={props.slot}
+            data-allows-dragging={isListDraggable || undefined}
             data-drop-target={isRootDropTarget || undefined}
             data-focused={isFocused || undefined}
             data-focus-visible={isFocusVisible || undefined}>

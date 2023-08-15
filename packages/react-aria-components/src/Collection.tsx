@@ -767,7 +767,7 @@ export interface ItemRenderProps {
   /**
    * Whether the item allows dragging.
    * @note This property is only available in collection components that support drag and drop.
-   * @selector [draggable]
+   * @selector [data-allows-dragging]
    */
   allowsDragging?: boolean,
   /**

@@ -324,6 +324,7 @@ function GridListItem({item}) {
         data-focused={states.isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-pressed={states.isPressed || undefined}
+        data-allows-dragging={!!dragState || undefined}
         data-dragging={isDragging || undefined}
         data-drop-target={dropIndicator?.isDropTarget || undefined}>
         <div {...gridCellProps}>
