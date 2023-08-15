@@ -712,7 +712,7 @@ interface CollectionDocumentResult<T, C extends BaseCollection<T>> {
 
 // React 16 and 17 don't support useSyncExternalStore natively, and the shim provided by React does not support getServerSnapshot.
 // This wrapper uses the shim, but additionally calls getServerSnapshot during SSR (according to SSRProvider).
-function useSyncExternalStoreFallback<C>(subscribe: (onStoreChange: () => void) => () => void, getSnapshot: () => C, getServerSnapshot?: () => C): C {
+function useSyncExternalStoreFallback<C>(subscribe: (onStoreChange: () => void) => () => void, getSnapshot: () => C, getServerSnapshot: () => C): C {
   let isSSR = useIsSSR();
   let isSSRRef = useRef(isSSR);
   // This is read immediately inside the wrapper, which also runs during render.
