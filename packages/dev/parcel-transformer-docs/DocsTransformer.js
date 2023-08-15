@@ -701,7 +701,7 @@ module.exports = new Transformer({
         t.isTSTypeReference(returnType) &&
         t.isTSQualifiedName(returnType.typeName) &&
         t.isIdentifier(returnType.typeName.left, {name: 'JSX'}) &&
-        t.isIdentifier(returnType.typeName.right, {name: 'Element'})
+        t.isIdentifier(returnType.typeName.right, {name: 'Element'});
     }
 
     function getJSDocs(path) {

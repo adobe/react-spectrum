@@ -14,8 +14,8 @@ import {createPortal} from 'react-dom';
 import {forwardRefType, RenderProps, StyleProps} from './utils';
 import {Collection as ICollection, Node, SelectionBehavior, SelectionMode, ItemProps as SharedItemProps, SectionProps as SharedSectionProps} from 'react-stately';
 import {mergeProps, useIsSSR} from 'react-aria';
-import React, {cloneElement, createContext, ForwardedRef, forwardRef, Key, ReactElement, ReactNode, useCallback, useContext, useMemo} from 'react';
-import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
+import React, {cloneElement, createContext, ForwardedRef, forwardRef, Key, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef} from 'react';
+import {useSyncExternalStore as useSyncExternalStoreShim} from 'use-sync-external-store/shim/index.js';
 
 // This Collection implementation is perhaps a little unusual. It works by rendering the React tree into a
 // Portal to a fake DOM implementation. This gives us efficient access to the tree of rendered objects, and
@@ -709,6 +709,27 @@ interface CollectionDocumentResult<T, C extends BaseCollection<T>> {
   collection: C,
   document: Document<T, C>
 }
+
+// React 16 and 17 don't support useSyncExternalStore natively, and the shim provided by React does not support getServerSnapshot.
+// This wrapper uses the shim, but additionally calls getServerSnapshot during SSR (according to SSRProvider).
+function useSyncExternalStoreFallback<C>(subscribe: (onStoreChange: () => void) => () => void, getSnapshot: () => C, getServerSnapshot?: () => C): C {
+  let isSSR = useIsSSR();
+  let isSSRRef = useRef(isSSR);
+  // This is read immediately inside the wrapper, which also runs during render.
+  // We just need a ref to avoid invalidating the callback itself, which
+  // would cause React to re-run the callback more than necessary.
+  // eslint-disable-next-line rulesdir/pure-render
+  isSSRRef.current = isSSR;
+
+  let getSnapshotWrapper = useCallback(() => {
+    return isSSRRef.current ? getServerSnapshot() : getSnapshot();
+  }, [getSnapshot, getServerSnapshot]);
+  return useSyncExternalStoreShim(subscribe, getSnapshotWrapper);
+}
+
+const useSyncExternalStore = typeof React['useSyncExternalStore'] === 'function'
+  ? React['useSyncExternalStore']
+  : useSyncExternalStoreFallback;
 
 export function useCollectionDocument<T extends object, C extends BaseCollection<T>>(initialCollection?: C): CollectionDocumentResult<T, C> {
   // The document instance is mutable, and should never change between renders.

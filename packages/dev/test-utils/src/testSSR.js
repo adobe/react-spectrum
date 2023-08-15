@@ -69,7 +69,7 @@ export async function testSSR(filename, source, runAfterServer) {
           if (ReactDOMClient) {
             act(() => ReactDOMClient.hydrateRoot(container, <SSRProvider>{element}</SSRProvider>));
           } else {
-            ReactDOM.hydrate(<SSRProvider>{element}</SSRProvider>, container);
+            act(() => {ReactDOM.hydrate(<SSRProvider>{element}</SSRProvider>, container);});
           }
         } catch (err) {
           errors.push(err.stack);
