@@ -141,19 +141,20 @@ function Slider(props) {
       }
       {/* The track element holds the visible track line and the thumb. */}
       <div {...trackProps} ref={trackRef} className={`track ${state.isDisabled ? 'disabled' : ''}`}>
-        <Thumb index={0} state={state} trackRef={trackRef} />
+        <Thumb index={0} state={state} trackRef={trackRef} name={props.name} />
       </div>
     </div>
   );
 }
 
 function Thumb(props) {
-  let {state, trackRef, index} = props;
+  let {state, trackRef, index, name} = props;
   let inputRef = React.useRef(null);
   let {thumbProps, inputProps, isDragging} = useSliderThumb({
     index,
     trackRef,
-    inputRef
+    inputRef,
+    name
   }, state);
 
   let {focusProps, isFocusVisible} = useFocusRing();
@@ -420,6 +421,16 @@ A slider can be disabled using the `isDisabled` prop.
   label="Cookies to share"
   defaultValue={25}
   isDisabled />
+```
+### HTML forms
+
+useSliderThumb supports the `name` prop for integration with HTML forms.
+
+```tsx example
+<Slider
+  label="Opacity"
+  defaultValue={50}
+  name="opacity" />
 ```
 
 ## Internationalization
