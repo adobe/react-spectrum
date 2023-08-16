@@ -124,7 +124,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let onSubmenuOpen = useEffectEvent((focusStrategy?: FocusStrategy) => {
     cancelOpenTimeout();
     state.setExpandedKeys(new Set([key]));
-    onOpen(focusStrategy)
+    onOpen && onOpen(focusStrategy)
   });
 
   useLayoutEffect(() => {
@@ -243,6 +243,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     }
   });
 
+  // TODO: there is an issue where focus doesn't seem to move into the newly opened submenu when opening it via keyboard
   let {keyboardProps} = useKeyboard({
     onKeyDown: (e) => {
       // Ignore repeating events, which may have started on the menu trigger before moving

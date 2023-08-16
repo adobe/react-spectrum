@@ -43,7 +43,7 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
     children,
     align = 'start',
     shouldFlip = true,
-    direction = 'bottom',
+    direction = 'end top',
     closeOnSelect
   } = props;
 
@@ -57,7 +57,6 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
 
   // TODO: Change from MenuTrigger, will need to disable the SubMenuTrigger if disabledKey includes the wrapped item? Test in story
   // Actually already handled in useMenuItem for submenus?
-  // let {menuTriggerProps, menuProps} = useMenuTrigger({isDisabled: false}, state, menuTriggerRef);
 
   let {state: parentMenuState, container, menu: parentMenu} = useMenuStateContext();
   // TODO where does targetKey get set even? Check ContextualHelpTrigger
@@ -83,20 +82,7 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
 
   // TODO maybe call useMenuTrigger and extract the press props/other stuff? Right now most of that stuff is handled in useMenuItem
   // but I could add a prop to useMenuTrigger to classify a menu as a subMenu and change the behavior accordingly. This will also allow me to get the proper id + aria-labelledb pairing
-  // for the submenu item trigger and the submenu itself
-
-  // TODO: figure out what this is for
-  // let onBlurWithin = (e) => {
-  //   if (e.relatedTarget && popoverRef.current && !popoverRef.current?.UNSAFE_getDOMNode().contains(e.relatedTarget)) {
-  //     if (parentMenuState.expandedKeys.has(props.targetKey)) {
-  //       parentMenu.toggleKey(props.targetKey);
-  //     }
-  //   }
-  // };
-
-  // TODO: Not calling useMenuTriggerState and useMenuTrigger because we have the submenu open state from the parent menu's expandedKeys
-  // and useMenuTrigger introduces some extra keydown handlers that we don't want (arrow down) and useMenuItem will handle that stuff for us
-
+  // for the submenu item trigger and the submenu itself and the other aria attributes (aria-controls)
 
   let initialPlacement: Placement;
   switch (direction) {
@@ -148,11 +134,10 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
       <Popover
         // Props from ContextualHelpTrigger implementation
         onExit={onExit}
-        // TODO add onBlurWithin and popoverRef once I figure out what it is for
-         // ref={popoverRef}
+        // TODO Omitted onBlurWithin, doesn't seem like it was necessary?
         container={container.current}
-        // TODO: for now placement is customizable by user as per discussion, may still need offset
-        placement="end top"
+        // TODO: for now placement is customizable by user as per discussion, still need offset
+        // will need to test all the combinations
         offset={-10}
         isNonModal
         enableBothDismissButtons
@@ -163,7 +148,7 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
         state={subMenuState}
         triggerRef={triggerRef}
         scrollRef={menuRef}
-        // placement={initialPlacement}
+        placement={initialPlacement}
         hideArrow
         shouldFlip={shouldFlip}>
         {menu}

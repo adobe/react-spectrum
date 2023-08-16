@@ -25,6 +25,7 @@ export default {
 // TODO: update stories
 // See if I need to make SubMenu or can get away with reusing Menu
 // Looks like I can, each Menu will establish its own treeState that tracks only its own items expanded state
+// TODO: add menu item actions, multiple triggers in a sub menu, complex items, controls for submenu orientation/placement
 export const SubMenuStatic = {
   render: () => (
     renderMenuTrigger(
