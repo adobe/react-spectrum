@@ -63,8 +63,6 @@ function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
       ref={ref}
       data-focused={isFocused || undefined}
       data-disabled={props.disabled || undefined}
-      data-readonly={props.readOnly || undefined}
-      data-invalid={!!props['aria-invalid'] || undefined}
       data-hovered={isHovered || undefined}
       data-focus-visible={isFocusVisible || undefined} />
   );

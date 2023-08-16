@@ -513,7 +513,7 @@ export interface ColumnRenderProps {
    * The current sort direction.
    * @selector [data-sort-direction="ascending | descending"]
    */
-  sortDirection?: SortDirection,
+  sortDirection: SortDirection | undefined,
   /**
    * Whether the column is currently being resized.
    * @selector [data-resizing]
@@ -865,7 +865,7 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
       data-focus-visible={isFocusVisible || undefined}
       data-resizing={isResizing || undefined}
       data-allows-sorting={column.props.allowsSorting || undefined}
-      data-sort-direction={state.sortDescriptor?.column === column.key ? state.sortDescriptor.direction : 'none'}>
+      data-sort-direction={state.sortDescriptor?.column === column.key ? state.sortDescriptor.direction : undefined}>
       <ColumnResizerContext.Provider value={{column, triggerRef: ref}}>
         {renderProps.children}
       </ColumnResizerContext.Provider>

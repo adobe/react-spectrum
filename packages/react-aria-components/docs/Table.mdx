@@ -129,7 +129,7 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
       padding: 0 2px;
     }
 
-    &[data-sort-direction=none] .sort-indicator {
+    &:not([data-sort-direction]) .sort-indicator {
       visibility: hidden;
     }
   }

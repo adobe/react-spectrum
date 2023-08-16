@@ -314,6 +314,7 @@ function TabPanel(props: TabPanelProps, forwardedRef: ForwardedRef<HTMLDivElemen
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       // @ts-ignore
+      inert={!isSelected ? 'true' : undefined}
       data-inert={!isSelected ? 'true' : undefined} />
   );
 }

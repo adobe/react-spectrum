@@ -158,10 +158,10 @@ import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
       text-align: end;
     }
 
-    &[data-checked] {
+    &[data-selected] {
       padding-left: 24px;
 
-      &[data-checked=true]::before {
+      &[data-selected]::before {
         content: '✓';
         content: '✓' / '';
         alt: ' ';
@@ -170,7 +170,7 @@ import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
         font-weight: 600;
       }
 
-      &[role=menuitemradio][data-checked=true]::before {
+      &[role=menuitemradio][data-selected]::before {
         content: '●';
         content: '●' / '';
         transform: scale(0.7)

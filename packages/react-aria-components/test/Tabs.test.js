@@ -249,16 +249,16 @@ describe('Tabs', () => {
     let {getAllByRole} = renderTabs({}, {}, {}, {shouldForceMount: true});
     let tabpanels = document.querySelectorAll('.react-aria-TabPanel');
     expect(tabpanels).toHaveLength(3);
-    expect(tabpanels[0]).not.toHaveAttribute('data-inert');
-    expect(tabpanels[1]).toHaveAttribute('data-inert');
-    expect(tabpanels[2]).toHaveAttribute('data-inert');
+    expect(tabpanels[0]).not.toHaveAttribute('inert');
+    expect(tabpanels[1]).toHaveAttribute('inert');
+    expect(tabpanels[2]).toHaveAttribute('inert');
 
     let tabs = getAllByRole('tab');
     userEvent.click(tabs[1]);
 
-    expect(tabpanels[0]).toHaveAttribute('data-inert');
-    expect(tabpanels[1]).not.toHaveAttribute('data-inert');
-    expect(tabpanels[2]).toHaveAttribute('data-inert');
+    expect(tabpanels[0]).toHaveAttribute('inert');
+    expect(tabpanels[1]).not.toHaveAttribute('inert');
+    expect(tabpanels[2]).toHaveAttribute('inert');
   });
 
   it('should support keyboardActivation=manual', () => {

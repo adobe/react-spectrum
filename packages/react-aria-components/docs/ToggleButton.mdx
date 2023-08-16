@@ -94,7 +94,7 @@ import {ToggleButton} from 'react-aria-components';
     box-shadow: 0 0 0 1px var(--selected-color);
   }
 
-  &:disabled {
+  &[data-disabled] {
     opacity: 0.4;
   }
 }
@@ -112,7 +112,7 @@ import {ToggleButton} from 'react-aria-components';
     --text-color: ButtonText;
     --text-color-selected: HighlightText;
 
-    &:disabled {
+    &[data-disabled] {
       opacity: 1;
       --deselected-border-color: GrayText;
       --selected-color: GrayText;

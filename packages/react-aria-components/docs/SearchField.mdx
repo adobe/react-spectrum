@@ -88,7 +88,7 @@ import {SearchField, Label, Input, Button} from 'react-aria-components';
       -webkit-appearance: none;
     }
 
-    &:focus {
+    &[data-focused] {
       outline: none;
       border-color: var(--focus-ring-color);
       box-shadow: 0 0 0 1px var(--focus-ring-color);
@@ -265,11 +265,11 @@ A custom `className` can also be specified on any component. This overrides the 
 In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
 
 ```css
-input[data-invalid] {
+input[data-hovered] {
   /* ... */
 }
 
-input[data-readonly] {
+input[data-disabled] {
   /* ... */
 }
 ```
