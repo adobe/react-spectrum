@@ -1,6 +1,6 @@
 {
-  "negative": "错误",
   "info": "信息",
-  "positive": "成功",
-  "notice": "警告"
+  "negative": "错误",
+  "notice": "警告",
+  "positive": "成功"
 }

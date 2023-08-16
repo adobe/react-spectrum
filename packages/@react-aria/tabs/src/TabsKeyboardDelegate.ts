@@ -17,49 +17,33 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
   private collection: Collection<T>;
   private flipDirection: boolean;
   private disabledKeys: Set<Key>;
-  private orientation: Orientation;
 
   constructor(collection: Collection<T>, direction: Direction, orientation: Orientation, disabledKeys: Set<Key> = new Set()) {
     this.collection = collection;
-    this.flipDirection = direction === 'rtl' && orientation === 'horizontal';
-    this.orientation = orientation;
+    this.flipDirection = direction === 'rtl' && orientation === 'horizontal';    
     this.disabledKeys = disabledKeys;
   }
 
   getKeyLeftOf(key: Key) {
     if (this.flipDirection) {
       return this.getNextKey(key);
-    } else {
-      if (this.orientation === 'horizontal') {
-        return this.getPreviousKey(key);
-      }
-      return null;
     }
+    return this.getPreviousKey(key);
   }
 
   getKeyRightOf(key: Key) {
     if (this.flipDirection) {
       return this.getPreviousKey(key);
-    } else {
-      if (this.orientation === 'horizontal') {
-        return this.getNextKey(key);
-      }
-      return null;
-    }
+    } 
+    return this.getNextKey(key);
   }
 
   getKeyAbove(key: Key) {
-    if (this.orientation === 'vertical') {
-      return this.getPreviousKey(key);
-    }
-    return null;
+    return this.getPreviousKey(key);
   }
 
   getKeyBelow(key: Key) {
-    if (this.orientation === 'vertical') {
-      return this.getNextKey(key);
-    }
-    return null;
+    return this.getNextKey(key);
   }
 
   getFirstKey() {

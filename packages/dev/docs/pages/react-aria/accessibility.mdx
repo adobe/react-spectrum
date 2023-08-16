@@ -104,3 +104,24 @@ All React Aria components are tested across a wide variety of devices, browsers,
 * [NVDA](https://www.nvaccess.org) on Windows in Firefox and Chrome
 * [VoiceOver on iOS](https://www.apple.com/accessibility/iphone/vision/)
 * [TalkBack](https://www.android.com/accessibility/) on Android in Chrome
+
+### False positives
+
+There are a number of known accessibility false positives in React Aria and React Spectrum, currently documented here in our [wiki](https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives).
+These are commonly caught by automated accessibility testing tools and can cause unnecessary noise in your own accessibility audits.
+To facilitate the suppression of these false positives, the data attribute `data-a11y-ignore` is included on the problematic elements
+with the relevant `AXE` rule set as its value. Below is a list of the currently available data selectors and their equivalent `AXE` rules:
+
+```tsx
+{
+  rules: [
+    {
+      id: 'aria-hidden-focus',
+      selector: 'body *:not([data-a11y-ignore="aria-hidden-focus"])'
+    }
+  ]
+}
+```
+
+This set of rules should be included in your accessibility test framework's `AXE` config, such as in the [automated Storybook test runner](https://storybook.js.org/docs/7.1/react/writing-tests/accessibility-testing#a11y-config-with-the-test-runner)
+or for the [Storybook a11y addon](https://storybook.js.org/docs/7.1/react/writing-tests/accessibility-testing#global-a11y-configuration).

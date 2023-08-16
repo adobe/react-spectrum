@@ -27,9 +27,9 @@ import {FocusRing, focusSafely, FocusScope} from '@react-aria/focus';
 import intlMessages from '../intl/*.json';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
-import {mergeProps, useId} from '@react-aria/utils';
+import {mergeProps, useFormReset, useId} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useEffect, useRef, useState} from 'react';
+import React, {HTMLAttributes, InputHTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useEffect, useRef, useState} from 'react';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {setInteractionModality, useHover} from '@react-aria/interactions';
 import {SpectrumComboBoxProps} from '@react-types/combobox';
@@ -51,8 +51,14 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     isQuiet,
     isDisabled,
     validationState,
-    isReadOnly
+    isReadOnly,
+    name,
+    formValue = 'text',
+    allowsCustomValue
   } = props;
+  if (allowsCustomValue) {
+    formValue = 'text';
+  }
 
   let {contains} = useFilter({sensitivity: 'base'});
   let state = useComboBoxState({
@@ -82,6 +88,15 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     }
   };
 
+  let inputProps: InputHTMLAttributes<HTMLInputElement> = {
+    type: 'hidden',
+    name,
+    value: formValue === 'text' ? state.inputValue : state.selectedKey
+  };
+
+  let inputRef = useRef<HTMLInputElement>(null);
+  useFormReset(inputRef, inputProps.value, formValue === 'text' ? state.setInputValue : state.setSelectedKey);
+
   return (
     <>
       <Field
@@ -101,6 +116,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
           {state.inputValue || props.placeholder || ''}
         </ComboBoxButton>
       </Field>
+      {name && <input {...inputProps} ref={inputRef} />}
       <Tray state={state} isFixedHeight {...overlayProps}>
         <ComboBoxTray
           {...props}
@@ -301,7 +317,9 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
       buttonRef: unwrapDOMRef(buttonRef),
       popoverRef: popoverRef,
       listBoxRef,
-      inputRef
+      inputRef,
+      // Handled outside the tray.
+      name: undefined
     },
     state
   );

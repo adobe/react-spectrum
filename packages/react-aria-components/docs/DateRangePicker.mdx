@@ -1109,6 +1109,14 @@ By default, `DateRangePicker` displays times in either 12 or 24 hour hour format
   hourCycle={24} />
 ```
 
+### HTML forms
+
+DateRangePicker supports the `startName` and `endName` props for integration with HTML forms. The values will be submitted to the server as [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted strings according to the granularity of the value. For example, if the date range picker allows selecting only dates then strings such as `"2023-02-03"` will be submitted, and if it allows selecting times then strings such as `"2023-02-03T08:45:00"` will be submitted. See the [Value](#value) section above for more details about the supported value types.
+
+```tsx example
+<MyDateRangePicker label="Trip dates" startName="startDate" endName="endDate" />
+```
+
 ## Advanced customization
 
 ### Composition

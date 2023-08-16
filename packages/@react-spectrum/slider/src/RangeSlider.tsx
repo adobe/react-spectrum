@@ -58,7 +58,8 @@ function RangeSlider(props: SpectrumRangeSliderProps, ref: FocusableRef<HTMLDivE
               isDisabled={props.isDisabled}
               trackRef={trackRef}
               inputRef={inputRef}
-              state={state} />
+              state={state}
+              name={props.startName} />
             <div
               className={classNames(styles, 'spectrum-Slider-track')}
               style={{
@@ -70,7 +71,8 @@ function RangeSlider(props: SpectrumRangeSliderProps, ref: FocusableRef<HTMLDivE
               aria-label={stringFormatter.format('maximum')}
               isDisabled={props.isDisabled}
               trackRef={trackRef}
-              state={state} />
+              state={state}
+              name={props.endName} />
             <div
               className={classNames(styles, 'spectrum-Slider-track')}
               style={{

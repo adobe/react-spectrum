@@ -496,6 +496,22 @@ A slider can be disabled using the `isDisabled` prop.
   isDisabled />
 ```
 
+### HTML forms
+
+Each SliderThumb supports the `name` prop for integration with HTML forms.
+
+```tsx example
+<Slider defaultValue={50}>
+  <Label>Opacity</Label>
+  <SliderOutput />
+  <SliderTrack>
+    {/*- begin highlight -*/}
+    <SliderThumb name="opacity" />
+    {/*- end highlight -*/}
+  </SliderTrack>
+</Slider>
+```
+
 ## Advanced customization
 
 ### Composition
