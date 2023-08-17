@@ -12,7 +12,7 @@
 
 import React, {MutableRefObject, ReactElement, useEffect, useState} from 'react';
 
-export interface AriaSafeAreaOptions {
+interface SafeTriangleProps {
   /** Ref for the submenu. */
   subMenuRef: MutableRefObject<any>,
   /** Ref for the submenu's trigger element. */
@@ -20,19 +20,16 @@ export interface AriaSafeAreaOptions {
 }
 
 /**
- * Utility for rendering a safe area for a sub-menu.
- * This allows the user to mouse to the sub-menu without it closing.
- * @param props
+ * Allows the user to move their pointer to the sub-menu without it closing
+ * due to the mouse leaving the trigger element.
  */
-export function SafeTriangle(props: AriaSafeAreaOptions): ReactElement {
+export function SafeTriangle(props: SafeTriangleProps): ReactElement {
   let {
     subMenuRef,
     triggerRef
   } = props;
-
   let [mousePosition, setMousePosition] = useState<{mouseX: number, mouseY: number}>({mouseX: null, mouseY: null});
   let {mouseX, mouseY} = mousePosition;
-
   let updateMousePosition = (e: MouseEvent) => {
     setMousePosition({mouseX: e.clientX, mouseY: e.clientY});
   };
@@ -58,28 +55,25 @@ export function SafeTriangle(props: AriaSafeAreaOptions): ReactElement {
     direction = x > triggerRef.current?.getBoundingClientRect().left ? 'right' : 'left';
   }
 
-  let offset = triggerRef.current?.getBoundingClientRect().width;
-  let clipPath = mouseX > x ? undefined : `polygon(100% 0%, 0% ${(100 * (mouseY - y)) / height}%, 100% 100%)`;
-  let right = mouseX > x ? -1 * (mouseX - (x + height)) : undefined;
-  let left =  mouseX > x ? undefined : -1 * (x - mouseX) + offset - 5;
-  let top = triggerRef.current?.getBoundingClientRect().top - triggerRef.current?.parentElement.getBoundingClientRect().top;
-
   if (direction === 'right' && mouseX > x) {
     return null;
   } else if (direction === 'left' && mouseX < x) {
     return null;
   }
 
+  let offset = triggerRef.current?.getBoundingClientRect().width;
+  let top = triggerRef.current?.getBoundingClientRect().top - triggerRef.current?.parentElement.getBoundingClientRect().top;
+  let left = -1 * (x - mouseX) + offset - 7;
+  let clipPath = `polygon(100% 0%, 0% ${(100 * (mouseY - y)) / height}%, 100% 100%)`;
+
   return (
     <div
       style={{
-        // TODO: Increment above submenu's z-index
         zIndex: 1,
         position: 'absolute',
-        top,
         // TODO: make transparent
         backgroundColor: 'red',
-        right,
+        top,
         left,
         height,
         width,
