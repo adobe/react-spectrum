@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {isAndroid} from './platform';
+import {isAndroid, isIOS} from './platform';
 
 // Original licensing for the following method can be found in the
 // NOTICE file in the root directory of this source tree.
@@ -47,7 +47,7 @@ export function isVirtualPointerEvent(event: PointerEvent) {
   // instead of .5, see https://bugs.webkit.org/show_bug.cgi?id=206216. event.pointerType === 'mouse' is to distingush
   // Talkback double tap from Windows Firefox touch screen press
   return (
-    (event.width === 0 && event.height === 0) ||
+    (isIOS() && event.width === 0 && event.height === 0) ||
     (event.width === 1 &&
       event.height === 1 &&
       event.pressure === 0 &&
