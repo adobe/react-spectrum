@@ -17,6 +17,8 @@ import {ItemProps} from '@react-types/shared';
 import {MenuDialogContext, useMenuStateContext} from './context';
 import {Modal, Popover} from '@react-spectrum/overlays';
 import React, {Key, ReactElement, useRef} from 'react';
+import {SafeTriangle} from './SafeTriangle';
+import {useInteractionModality} from '@react-aria/interactions';
 import {useOverlayTriggerState} from '@react-stately/overlays';
 
 export interface SpectrumMenuDialogTriggerProps<T> extends ItemProps<T> {
@@ -65,6 +67,9 @@ function ContextualHelpTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): Rea
       }
     }
   };
+
+  let modality = useInteractionModality();
+
   return (
     <>
       <MenuDialogContext.Provider value={{isUnavailable, triggerRef}}>{trigger}</MenuDialogContext.Provider>
@@ -77,21 +82,24 @@ function ContextualHelpTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): Rea
               <DismissButton onDismiss={state.close} />
             </Modal>
           ) : (
-            <Popover
-              onExit={onExit}
-              onBlurWithin={onBlurWithin}
-              container={container.current}
-              state={state}
-              ref={popoverRef}
-              triggerRef={triggerRef}
-              placement="end top"
-              offset={-10}
-              hideArrow
-              isNonModal
-              enableBothDismissButtons
-              disableFocusManagement>
-              {content}
-            </Popover>
+            <>
+              <Popover
+                onExit={onExit}
+                onBlurWithin={onBlurWithin}
+                container={container.current}
+                state={state}
+                ref={popoverRef}
+                triggerRef={triggerRef}
+                placement="end top"
+                offset={-10}
+                hideArrow
+                isNonModal
+                enableBothDismissButtons
+                disableFocusManagement>
+                {content}
+              </Popover>
+              {state.isOpen && modality === 'pointer' && <SafeTriangle subMenuRef={popoverRef} triggerRef={triggerRef} />}
+            </>
           )
         }
       </SlotProvider>
