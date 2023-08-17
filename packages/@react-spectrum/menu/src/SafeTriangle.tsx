@@ -53,6 +53,8 @@ export function SafeTriangle(props: SafeTriangleProps): ReactElement {
     width = mouseX > x ? 0 : x - mouseX + 5;
     height = rect.height;
     direction = x > triggerRef.current?.getBoundingClientRect().left ? 'right' : 'left';
+  } else {
+    return null;
   }
 
   if (direction === 'right' && mouseX > x) {
