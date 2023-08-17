@@ -43,7 +43,7 @@ export const DoubleMenuFiresOnInteractOutside = {
         <Item key="cut">Cut</Item>
         <Item key="paste">Paste</Item>
       </MenuButton>
-      <input />
+      <input aria-label="input after" />
     </div>
   ),
   name: 'double menu fires onInteractOutside'

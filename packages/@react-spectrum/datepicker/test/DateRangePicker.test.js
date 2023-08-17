@@ -589,7 +589,7 @@ describe('DateRangePicker', function () {
       expectPlaceholder(startDate, 'mm/dd/yyyy, ––:–– AM');
       expectPlaceholder(endDate, 'mm/dd/yyyy, ––:–– AM');
 
-      for (let timeField of [startTimeField, endTimeField]) {
+      for (let [index, timeField] of [startTimeField, endTimeField].entries()) {
         let hour = within(timeField).getByLabelText('hour,');
         expect(hour).toHaveAttribute('role', 'spinbutton');
         expect(hour).toHaveAttribute('aria-valuetext', 'Empty');
@@ -614,18 +614,22 @@ describe('DateRangePicker', function () {
 
         expect(document.activeElement).toHaveAttribute('aria-valuetext', '00');
 
-        expect(onChange).not.toHaveBeenCalled();
-        expectPlaceholder(startDate, 'mm/dd/yyyy, ––:–– AM');
-        expectPlaceholder(endDate, 'mm/dd/yyyy, ––:–– AM');
+        if (index === 0) {
+          expect(onChange).toHaveBeenCalledTimes(0);
+          expectPlaceholder(startDate, 'mm/dd/yyyy, ––:–– AM');
+          expectPlaceholder(endDate, 'mm/dd/yyyy, ––:–– AM');
+        } else {
+          let localTime = today(getLocalTimeZone());
+          expect(onChange).toHaveBeenCalledTimes(1);
+          expectPlaceholder(startDate, `${localTime.month}/1/${localTime.year}, 12:00 AM`);
+          expectPlaceholder(endDate, `${localTime.month}/2/${localTime.year}, 12:00 AM`);
+        }
 
-        fireEvent.keyDown(hour, {key: 'ArrowRight'});
-        fireEvent.keyUp(hour, {key: 'ArrowRight'});
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
 
         expect(document.activeElement).toHaveAttribute('aria-label', 'AM/PM, ');
-        expect(document.activeElement).toHaveAttribute('aria-valuetext', 'Empty');
-
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+        expect(document.activeElement).toHaveAttribute('aria-valuetext', 'AM');
       }
 
       expect(dialog).toBeVisible();
@@ -766,8 +770,6 @@ describe('DateRangePicker', function () {
         fireEvent.keyDown(hour, {key: 'ArrowRight'});
         fireEvent.keyUp(hour, {key: 'ArrowRight'});
         expect(document.activeElement).toHaveAttribute('aria-label', 'AM/PM, ');
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
       }
 
       await user.click(document.body);
@@ -1474,6 +1476,45 @@ describe('DateRangePicker', function () {
 
       expectPlaceholder(startDate, 'mm/dd/yyyy');
       expectPlaceholder(endDate, 'mm/dd/yyyy');
+    });
+  });
+
+  describe('forms', () => {
+    it('supports form reset', async () => {
+      function Test() {
+        let [value, setValue] = React.useState({start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2022, 4, 8)});
+        return (
+          <form>
+            <DateRangePicker startName="start" endName="end" label="Value" value={value} onChange={setValue} />
+            <input type="reset" data-testid="reset" />
+          </form>
+        );
+      }
+
+      let {getByTestId, getByRole, getAllByRole} = render(<Test />);
+      let group = getByRole('group');
+      let start = document.querySelector('input[name=start]');
+      let end = document.querySelector('input[name=end]');
+      let segments = getAllByRole('spinbutton');
+
+      let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+      expect(getDescription()).toBe('Selected Range: February 3, 2020 to April 8, 2022');
+
+      expect(start).toHaveValue('2020-02-03');
+      expect(end).toHaveValue('2022-04-08');
+      expect(start).toHaveAttribute('name', 'start');
+      expect(end).toHaveAttribute('name', 'end');
+      fireEvent.keyDown(segments[0], {key: 'ArrowUp'});
+      fireEvent.keyUp(segments[0], {key: 'ArrowUp'});
+      expect(getDescription()).toBe('Selected Range: March 3, 2020 to April 8, 2022');
+      expect(start).toHaveValue('2020-03-03');
+      expect(end).toHaveValue('2022-04-08');
+
+      let button = getByTestId('reset');
+      await user.click(button);
+      expect(getDescription()).toBe('Selected Range: February 3, 2020 to April 8, 2022');
+      expect(start).toHaveValue('2020-02-03');
+      expect(end).toHaveValue('2022-04-08');
     });
   });
 });

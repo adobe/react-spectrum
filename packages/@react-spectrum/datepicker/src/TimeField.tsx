@@ -41,8 +41,12 @@ function TimeField<T extends TimeValue>(props: SpectrumTimeFieldProps<T>, ref: F
     locale
   });
 
+  let fieldRef = useRef(null);
   let inputRef = useRef(null);
-  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useTimeField(props, state, inputRef);
+  let {labelProps, fieldProps, inputProps, descriptionProps, errorMessageProps} = useTimeField({
+    ...props,
+    inputRef
+  }, state, fieldRef);
 
   return (
     <Field
@@ -55,7 +59,7 @@ function TimeField<T extends TimeValue>(props: SpectrumTimeFieldProps<T>, ref: F
       validationState={state.validationState}
       wrapperClassName={classNames(datepickerStyles, 'react-spectrum-TimeField-fieldWrapper')}>
       <Input
-        ref={inputRef}
+        ref={fieldRef}
         fieldProps={fieldProps}
         isDisabled={isDisabled}
         isQuiet={isQuiet}
@@ -71,6 +75,7 @@ function TimeField<T extends TimeValue>(props: SpectrumTimeFieldProps<T>, ref: F
             isReadOnly={isReadOnly}
             isRequired={isRequired} />)
         )}
+        <input {...inputProps} ref={inputRef} />
       </Input>
     </Field>
   );

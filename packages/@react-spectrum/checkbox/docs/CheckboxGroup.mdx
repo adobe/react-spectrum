@@ -80,6 +80,18 @@ function Example() {
 }
 ```
 
+### HTML forms
+
+CheckboxGroup supports the `name` prop, paired with the Checkbox `value` prop, for integration with HTML forms.
+
+```tsx example
+<CheckboxGroup label="Condiments" name="condiments">
+  <Checkbox value="mayo">Mayo</Checkbox>
+  <Checkbox value="mustart">Mustard</Checkbox>
+  <Checkbox value="ketchup">Ketchup</Checkbox>
+</CheckboxGroup>
+```
+
 ## Labeling
 A visual label should be provided for the CheckboxGroup using the `label` prop. If the CheckboxGroup requires an option to be selected by the user,
 the `isRequired` and `necessityIndicator` props can be used to show a required state.

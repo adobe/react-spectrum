@@ -96,9 +96,6 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
     endProps.id = endId;
     menuItemProps['aria-describedby'] = [menuItemProps['aria-describedby'], endId].filter(Boolean).join(' ');
   }
-  if (isUnavailable) {
-    menuItemProps['aria-disabled'] = 'true';
-  }
 
   let contents = typeof rendered === 'string'
     ? <Text>{rendered}</Text>

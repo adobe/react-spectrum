@@ -285,7 +285,9 @@ The states, selectors, and render props for each component used in a `NumberFiel
 
 ### NumberField
 
-A `NumberField` can be targeted with the `.react-aria-NumberField` CSS selector, or by overriding with a custom `className`. It provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.NumberFieldState} /> object to its render props, which can be used to customize the `className`, `style`, or `children`.
+A `NumberField` can be targeted with the `.react-aria-NumberField` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.NumberFieldRenderProps.properties} />
 
 ### Label
 
@@ -537,6 +539,20 @@ function Example() {
 }
 ```
 
+### HTML forms
+
+NumberField supports the `name` prop for integration with HTML forms. The value will be submitted to the server as a raw number (e.g. `45`), not as a locale-dependent formatted string (e.g. `"$45.00"`).
+
+```tsx example
+<MyNumberField
+  label="Transaction amount"
+  name="amount"
+  defaultValue={45}
+  formatOptions={{
+    style: 'currency',
+    currency: 'USD'
+  }} />
+```
 
 ## Advanced customization
 

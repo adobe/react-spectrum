@@ -14,12 +14,14 @@ import { useState } from "react";
 import Moon from "@spectrum-icons/workflow/Moon";
 import Light from "@spectrum-icons/workflow/Light";
 import { ToastContainer } from "@react-spectrum/toast";
+import {enableTableNestedRows} from '@react-stately/flags';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [theme, setTheme] = useState<ColorScheme>("light");
 
   let themeIcons = { dark: <Moon />, light: <Light /> };
   let otherTheme: ColorScheme = theme === "light" ? "dark" : "light";
+  enableTableNestedRows();
 
   return (
     <SSRProvider>

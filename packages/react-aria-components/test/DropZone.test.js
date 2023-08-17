@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, render} from '@react-spectrum/test-utils';
-import {Button, DropZone, DropZoneContext, FileTrigger, Text} from '../';
+import {Button, DropZone, DropZoneContext, FileTrigger, Link, Text} from '../';
 import {ClipboardEvent, DataTransfer, DataTransferItem, DragEvent} from '@react-aria/dnd/test/mocks';
 import {Draggable} from '@react-aria/dnd/test/examples';
 import React from 'react';
@@ -26,7 +26,7 @@ describe('DropZone', () => {
   it('should render a dropzone', () => {
     let {getByTestId} = render(
       <DropZone data-testid="foo">
-        <Text slot="heading">
+        <Text slot="label">
           Test
         </Text>
       </DropZone>
@@ -38,7 +38,7 @@ describe('DropZone', () => {
   it('should render a dropzone with custom class', () => {
     let {getByTestId} = render(
       <DropZone data-testid="foo" className="test">
-        <Text slot="heading">
+        <Text slot="label">
           Test
         </Text>
       </DropZone>);
@@ -49,7 +49,7 @@ describe('DropZone', () => {
   it('should support DOM props', () => {
     let {getByTestId} = render(
       <DropZone data-testid="foo" data-foo="bar">
-        <Text slot="heading">
+        <Text slot="label">
           Test
         </Text>
       </DropZone>);
@@ -88,7 +88,7 @@ describe('DropZone', () => {
   it('should support focus ring', async () => {
     let {getByTestId, getByRole} = render(
       <DropZone data-testid="foo" className={({isFocusVisible}) => isFocusVisible ? 'focus' : ''}>
-        <Text slot="heading">
+        <Text slot="label">
           Test
         </Text>
       </DropZone>);
@@ -111,13 +111,38 @@ describe('DropZone', () => {
   it('should apply correct aria-labelledby', () => {
     let {getByRole, getByText} = render(
       <DropZone className="test">
-        <Text slot="heading">
+        <Text slot="label">
           Test
         </Text>
       </DropZone>);
     let text = getByText('Test');
     let button = getByRole('button');
-    expect(button).toHaveAttribute('aria-labelledby', `${text.id}`);
+    expect(button).toHaveAttribute('aria-labelledby', `${button.id} ${text.id}`);
+  });
+
+  it('should apply default aria-label', () => {
+    let {getByRole} = render(
+      <DropZone
+        data-testid="foo">
+        <FileTrigger>
+          <Link>Upload</Link>
+        </FileTrigger>
+      </DropZone>);
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('aria-label', 'DropZone');
+  });
+
+  it('should allow custom aria-label', () => {
+    let {getByRole} = render(
+      <DropZone
+        data-testid="foo"
+        aria-label="test aria-label">
+        <FileTrigger>
+          <Link>Upload</Link>
+        </FileTrigger>
+      </DropZone>);
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('aria-label', 'test aria-label');
   });
 
   it('should support render props', async () => {
@@ -137,14 +162,14 @@ describe('DropZone', () => {
   it('should render FileTrigger as a child', () => {
     let {getByTestId} = render(
       <DropZone>
-        <FileTrigger data-testid="foo">
-          <Button>Upload</Button>
+        <FileTrigger>
+          <Button data-testid="foo">Upload</Button>
         </FileTrigger>
       </DropZone>
     );
 
-    let fileTrigger = getByTestId('foo');
-    expect(fileTrigger).toHaveClass('react-aria-FileTrigger');
+    let button = getByTestId('foo');
+    expect(button).toHaveClass('react-aria-Button');
   });
 
   describe('drag and drop', function () {
@@ -178,7 +203,7 @@ describe('DropZone', () => {
           <>
             <Draggable onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
             <DropZone data-testid="foo" onDropEnter={onDropEnter} onDrop={onDrop} onDropMove={onDropMove} >
-              <Text slot="heading">
+              <Text slot="label">
                 Test
               </Text>
             </DropZone>
@@ -283,7 +308,7 @@ describe('DropZone', () => {
           <>
             <Draggable onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
             <DropZone data-testid="foo" onDropEnter={onDropEnter} onDrop={onDrop} onDropMove={onDropMove} >
-              <Text slot="heading">
+              <Text slot="label">
                 Test
               </Text>
             </DropZone>
@@ -336,7 +361,7 @@ describe('DropZone', () => {
       let tree = render(
         <>
           <DropZone onDrop={onDrop}>
-            <Text slot="heading">
+            <Text slot="label">
               Test
             </Text>
           </DropZone >

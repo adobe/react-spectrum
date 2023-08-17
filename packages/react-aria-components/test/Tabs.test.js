@@ -186,6 +186,34 @@ describe('Tabs', () => {
     expect(tabs[0]).toHaveClass('selected');
   });
 
+  it('should update TabPanel ID when current tab is changed', async () => {
+    let onSelectionChange = jest.fn();
+    let {getByRole, getAllByRole} = render(
+      <Tabs onSelectionChange={onSelectionChange}>
+        <TabList>
+          <Tab id="first-element">First</Tab>
+          <Tab id="second-element">Second</Tab>
+          <Tab id="third-element">Third</Tab>
+        </TabList>
+        <TabPanel id="first-element">First</TabPanel>
+        <TabPanel id="second-element">Second</TabPanel>
+        <TabPanel id="third-element">Third</TabPanel>
+      </Tabs>
+    );
+
+    expect(getByRole('tabpanel').getAttribute('id')).toContain('first-element');
+    let tabs = getAllByRole('tab');
+
+    await user.click(tabs[1]);
+    expect(onSelectionChange).toHaveBeenCalled();
+    expect(getByRole('tabpanel').getAttribute('id')).toContain('second-element');
+
+    await user.click(tabs[2]);
+    expect(onSelectionChange).toHaveBeenCalled();
+    expect(getByRole('tabpanel').getAttribute('id')).toContain('third-element');
+
+  });
+
   it('should support orientation', () => {
     let className = ({orientation}) => orientation;
     let {getByRole} = renderTabs({orientation: 'vertical', className}, {className});

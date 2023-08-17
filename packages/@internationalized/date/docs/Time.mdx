@@ -113,12 +113,12 @@ The `cycle` method allows incrementing or decrementing a single field. It is sim
 
 ```tsx
 let time = new Time(23, 59);
-date.cycle('hour', 1); // 00:59
-date.cycle('minute', 1); // 23:00
+time.cycle('hour', 1); // 00:59
+time.cycle('minute', 1); // 23:00
 
 let time = new Time(0, 0);
-date.cycle('hour', -1); // 23:00
-date.cycle('minute', -1); // 00:59
+time.cycle('hour', -1); // 23:00
+time.cycle('minute', -1); // 00:59
 ```
 
 The `round` option may also be passed, which causes the value to be rounded to increments of the given amount. For example, you could round the minute to increments of 15.

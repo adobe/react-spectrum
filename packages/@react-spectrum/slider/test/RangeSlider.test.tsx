@@ -188,6 +188,44 @@ describe('RangeSlider', function () {
     expect(sliderRight).toHaveAttribute('aria-valuetext', '60');
   });
 
+  it('supports form name', () => {
+    let {getAllByRole} = render(<RangeSlider label="Value" value={{start: 10, end: 40}} startName="minCookies" endName="maxCookies" />);
+    let inputs = getAllByRole('slider');
+    expect(inputs[0]).toHaveAttribute('name', 'minCookies');
+    expect(inputs[0]).toHaveValue('10');
+    expect(inputs[1]).toHaveAttribute('name', 'maxCookies');
+    expect(inputs[1]).toHaveValue('40');
+  });
+
+  it('supports form reset', async () => {
+    function Test() {
+      let [value, setValue] = React.useState({start: 10, end: 40});
+      return (
+        <Provider theme={theme}>
+          <form>
+            <RangeSlider label="Value" value={value} onChange={setValue} />
+            <input type="reset" data-testid="reset" />
+          </form>
+        </Provider>
+      );
+    }
+
+    let {getByTestId, getAllByRole} = render(<Test />);
+    let inputs = getAllByRole('slider');
+
+    expect(inputs[0]).toHaveValue('10');
+    expect(inputs[1]).toHaveValue('40');
+    fireEvent.change(inputs[0], {target: {value: '30'}});
+    fireEvent.change(inputs[1], {target: {value: '60'}});
+    expect(inputs[0]).toHaveValue('30');
+    expect(inputs[1]).toHaveValue('60');
+
+    let button = getByTestId('reset');
+    await user.click(button);
+    expect(inputs[0]).toHaveValue('10');
+    expect(inputs[1]).toHaveValue('40');
+  });
+
   describe('formatOptions', () => {
     it('prefixes the value with a plus sign if needed', function () {
       let {getAllByRole, getByRole} = render(

@@ -277,7 +277,9 @@ The states, selectors, and render props for each component used in a `TimeField`
 
 ### TimeField
 
-A `TimeField` can be targeted with the `.react-aria-TimeField` CSS selector, or by overriding with a custom `className`. It provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.DateFieldState} /> object to its render props, which can be used to customize the `className`, `style`, or `children`.
+A `TimeField` can be targeted with the `.react-aria-TimeField` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.DateFieldRenderProps.properties} />
 
 ### Label
 
@@ -404,7 +406,7 @@ function Example() {
   return (
     <>
       <MyTimeField label="Time" value={date} onChange={setDate} />
-      <p>Selected date and time: {formatter.format(date.toDate())}</p>
+      <p>Selected date and time: {(date?.toDate && formatter.format(date.toDate())) || (date && date.toString()) || '--'}</p>
     </>
   );
 }
@@ -444,7 +446,7 @@ This example validates that the selected time is on a 15 minute increment.
 ```tsx example
 function Example() {
   let [time, setTime] = React.useState(new Time(9, 15));
-  let isInvalid = time.minute % 15;
+  let isInvalid = time?.minute % 15;
 
   return (
     <MyTimeField
@@ -485,6 +487,14 @@ By default, `TimeField` displays times in either 12 or 24 hour hour format depen
 <MyTimeField
   label="Appointment time"
   hourCycle={24} />
+```
+
+### HTML forms
+
+TimeField supports the `name` prop for integration with HTML forms. The value will be submitted to the server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted string, e.g. `"08:45:00"`.
+
+```tsx example
+<MyTimeField label="Meeting time" name="meetingTime" />
 ```
 
 ## Advanced customization

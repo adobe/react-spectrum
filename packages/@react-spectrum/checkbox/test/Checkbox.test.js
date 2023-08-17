@@ -263,4 +263,27 @@ describe('Checkbox', function () {
     expect(checkbox.checked).toBeFalsy();
     expect(onChangeSpy).not.toHaveBeenCalled();
   });
+
+  it('supports form reset', async () => {
+    function Test() {
+      let [isSelected, setSelected] = React.useState(false);
+      return (
+        <form>
+          <Checkbox data-testid="checkbox" isSelected={isSelected} onChange={setSelected}>Checkbox</Checkbox>
+          <input type="reset" data-testid="reset" />
+        </form>
+      );
+    }
+
+    let {getByTestId} = render(<Test />);
+    let input = getByTestId('checkbox');
+
+    expect(input).not.toBeChecked();
+    await user.click(input);
+    expect(input).toBeChecked();
+
+    let button = getByTestId('reset');
+    await user.click(button);
+    expect(input).not.toBeChecked();
+  });
 });

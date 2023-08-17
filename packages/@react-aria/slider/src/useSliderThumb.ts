@@ -1,5 +1,5 @@
 import {AriaSliderThumbProps} from '@react-types/slider';
-import {clamp, focusWithoutScrolling, mergeProps, useGlobalListeners} from '@react-aria/utils';
+import {clamp, focusWithoutScrolling, mergeProps, useFormReset, useGlobalListeners} from '@react-aria/utils';
 import {DOMAttributes} from '@react-types/shared';
 import {getSliderThumbId, sliderIds} from './utils';
 import React, {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, RefObject, useCallback, useEffect, useRef} from 'react';
@@ -50,7 +50,8 @@ export function useSliderThumb(
     validationState,
     trackRef,
     inputRef,
-    orientation = state.orientation
+    orientation = state.orientation,
+    name
   } = opts;
 
   let isDisabled = opts.isDisabled || state.isDisabled;
@@ -223,6 +224,10 @@ export function useSliderThumb(
     }
   ) : {};
 
+  useFormReset(inputRef, value, (v) => {
+    state.setThumbValue(index, v);
+  });
+
   // We install mouse handlers for the drag motion on the thumb div, but
   // not the key handler for moving the thumb with the slider.  Instead,
   // we focus the range input, and let the browser handle the keyboard
@@ -235,6 +240,7 @@ export function useSliderThumb(
       max: state.getThumbMaxValue(index),
       step: state.step,
       value: value,
+      name,
       disabled: isDisabled,
       'aria-orientation': orientation,
       'aria-valuetext': state.getThumbValueLabel(index),

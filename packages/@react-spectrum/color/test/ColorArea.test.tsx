@@ -633,4 +633,42 @@ describe('ColorArea', () => {
       expect(document.activeElement).toBe(zSlider);
     });
   });
+
+  describe('forms', () => {
+    it('supports form name', () => {
+      let {getAllByRole} = render(<ColorArea xName="red" yName="green" />);
+      let inputs = getAllByRole('slider', {hidden: true});
+      expect(inputs[0]).toHaveAttribute('name', 'red');
+      expect(inputs[0]).toHaveValue('255');
+      expect(inputs[1]).toHaveAttribute('name', 'green');
+      expect(inputs[1]).toHaveValue('255');
+    });
+
+    it('supports form reset', async () => {
+      function Test() {
+        let [value, setValue] = React.useState(parseColor('rgb(100, 200, 0)'));
+        return (
+          <form>
+            <ColorArea value={value} onChange={setValue} />
+            <input type="reset" data-testid="reset" />
+          </form>
+        );
+      }
+
+      let {getByTestId, getAllByRole} = render(<Test />);
+      let inputs = getAllByRole('slider', {hidden: true});
+
+      expect(inputs[0]).toHaveValue('100');
+      expect(inputs[1]).toHaveValue('200');
+      fireEvent.change(inputs[0], {target: {value: '10'}});
+      fireEvent.change(inputs[1], {target: {value: '20'}});
+      expect(inputs[0]).toHaveValue('10');
+      expect(inputs[1]).toHaveValue('20');
+
+      let button = getByTestId('reset');
+      await user.click(button);
+      expect(inputs[0]).toHaveValue('100');
+      expect(inputs[1]).toHaveValue('200');
+    });
+  });
 });

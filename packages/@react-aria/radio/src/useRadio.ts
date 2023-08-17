@@ -11,7 +11,7 @@
  */
 
 import {AriaRadioProps} from '@react-types/radio';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useFormReset} from '@react-aria/utils';
 import {InputHTMLAttributes, RefObject} from 'react';
 import {radioGroupDescriptionIds, radioGroupErrorMessageIds, radioGroupNames} from './utils';
 import {RadioGroupState} from '@react-stately/radio';
@@ -73,6 +73,8 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
     tabIndex = undefined;
   }
 
+  useFormReset(ref, state.selectedValue, state.setSelectedValue);
+
   return {
     inputProps: mergeProps(domProps, {
       ...interactions,
@@ -84,6 +86,7 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
       value,
       onChange,
       'aria-describedby': [
+        props['aria-describedby'],
         state.validationState === 'invalid' ? radioGroupErrorMessageIds.get(state) : null,
         radioGroupDescriptionIds.get(state)
       ].filter(Boolean).join(' ') || undefined
