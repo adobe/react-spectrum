@@ -125,7 +125,17 @@ const options = [
 ];
 
 export default {
-  title: 'useSelectableList'
+  title: 'useSelectableList',
+  parameters: {
+    a11y: {
+      config: {
+        rules: [
+          // Ignore landmark accessibility failure since the list is to test for selection/scrolling only
+          {id: 'list', enabled: false}
+        ]
+      }
+    }
+  }
 };
 
 export const StaticUlStaticSubUl = () => (

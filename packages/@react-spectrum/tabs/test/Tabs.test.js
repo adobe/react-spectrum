@@ -101,12 +101,11 @@ describe('Tabs', function () {
     expect(ref.current.UNSAFE_getDOMNode()).toBe(tablist.parentElement.parentElement);
   });
 
-  it('allows user to change tab item select via left/right arrow keys with horizontal tabs', function () {
+  it('allows user to change tab item select via arrow keys with horizontal tabs', function () {
     let container = renderComponent({orientation: 'horizontal'});
     let tablist = container.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     let selectedItem = tabs[0];
-
     expect(tablist).toHaveAttribute('aria-orientation', 'horizontal');
 
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
@@ -117,14 +116,15 @@ describe('Tabs', function () {
     fireEvent.keyDown(nextSelectedItem, {key: 'ArrowLeft', code: 37, charCode: 37});
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
 
-    /** Doesn't change selection because it's horizontal tabs. */
+    /** Changes selection regardless if it's horizontal tabs. */
     fireEvent.keyDown(selectedItem, {key: 'ArrowUp', code: 38, charCode: 38});
-    expect(selectedItem).toHaveAttribute('aria-selected', 'true');
+    nextSelectedItem = tabs[2];
+    expect(nextSelectedItem).toHaveAttribute('aria-selected', 'true');
     fireEvent.keyDown(selectedItem, {key: 'ArrowDown', code: 40, charCode: 40});
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
   });
 
-  it('allows user to change tab item select via up/down arrow keys with vertical tabs', function () {
+  it('allows user to change tab item select via arrow keys with vertical tabs', function () {
     let container = renderComponent({orientation: 'vertical'});
     let tablist = container.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
@@ -133,17 +133,18 @@ describe('Tabs', function () {
 
     expect(tablist).toHaveAttribute('aria-orientation', 'vertical');
 
-    /** Doesn't change selection because it's vertical tabs. */
-    expect(selectedItem).toHaveAttribute('aria-selected', 'true');
-    fireEvent.keyDown(selectedItem, {key: 'ArrowRight', code: 39, charCode: 39});
-    expect(selectedItem).toHaveAttribute('aria-selected', 'true');
-    fireEvent.keyDown(selectedItem, {key: 'ArrowLeft', code: 37, charCode: 37});
-    expect(selectedItem).toHaveAttribute('aria-selected', 'true');
-
     let nextSelectedItem = tabs[1];
+    expect(selectedItem).toHaveAttribute('aria-selected', 'true');
     fireEvent.keyDown(selectedItem, {key: 'ArrowDown', code: 40, charCode: 40});
     expect(nextSelectedItem).toHaveAttribute('aria-selected', 'true');
     fireEvent.keyDown(nextSelectedItem, {key: 'ArrowUp', code: 38, charCode: 38});
+    expect(selectedItem).toHaveAttribute('aria-selected', 'true');
+
+    /** Changes selection regardless if it's vertical tabs. */
+    fireEvent.keyDown(selectedItem, {key: 'ArrowLeft', code: 37, charCode: 37});
+    nextSelectedItem = tabs[2];
+    expect(nextSelectedItem).toHaveAttribute('aria-selected', 'true');
+    fireEvent.keyDown(selectedItem, {key: 'ArrowRight', code: 39, charCode: 39});
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
   });
 
