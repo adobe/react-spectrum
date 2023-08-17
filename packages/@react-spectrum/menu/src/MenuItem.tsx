@@ -51,26 +51,26 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   let isMenuDialogTrigger = !!menuDialogContext;
   let isUnavailable = false;
   let popupType;
-
-  if (isMenuDialogTrigger) {
-    popupType = 'menu';
-    isUnavailable = menuDialogContext.isUnavailable;
-    if (isUnavailable) {
-      popupType = 'dialog';
-    }
-  }
-
-  let domProps = filterDOMProps(item.props);
-
   let {
     onClose,
     closeOnSelect
   } = useMenuContext();
 
+  let domProps = filterDOMProps(item.props);
+
   let {
     rendered,
     key
   } = item;
+
+  if (isMenuDialogTrigger) {
+    popupType = 'menu';
+    isUnavailable = menuDialogContext.isUnavailable;
+    domProps.id = menuDialogContext.id;
+    if (isUnavailable) {
+      popupType = 'dialog';
+    }
+  }
 
   let isSelected = state.selectionManager.isSelected(key);
   let isDisabled = state.disabledKeys.has(key);

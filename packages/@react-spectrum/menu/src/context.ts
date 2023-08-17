@@ -33,7 +33,8 @@ export function useMenuContext(): MenuContextValue {
 export interface MenuDialogContextValue {
   isUnavailable?: boolean,
   openSubMenu?: (val?: FocusStrategy) => void,
-  triggerRef?: MutableRefObject<HTMLLIElement>
+  triggerRef?: MutableRefObject<HTMLLIElement>,
+  id?: string
 }
 
 export const MenuDialogContext = React.createContext<MenuDialogContextValue | undefined>(undefined);
