@@ -59,7 +59,7 @@ export type ListViewStory = ComponentStoryObj<typeof ListView>;
 export const DragOut: ListViewStory = {
   render: (args) => (
     <Flex direction="row" wrap alignItems="center">
-      <input aria-label="input before" />
+      <input />
       <Droppable />
       <DragExampleUtilHandlers listViewProps={args} dndOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
     </Flex>

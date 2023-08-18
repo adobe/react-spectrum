@@ -45,8 +45,6 @@ export function PaginationInput(props: PaginationBase) {
       </ActionButton>
       <TextField
         {...textProps}
-        // This is a filler for now to fix accessibility tests, will revisit when we pick Pagination back up
-        aria-label="pagination input"
         value={state.value}
         onChange={state.onChange}
         UNSAFE_className={classNames(styles, 'spectrum-Pagination-input')} />

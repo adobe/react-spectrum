@@ -106,28 +106,12 @@ export const ScrollTesting = {
 
 export const ActionTesting = {
   render: Template,
-  args: {selectionBehavior: 'replace', selectionStyle: 'highlight', onAction: action('onAction')},
-  parameters: {
-    a11y: {
-      config: {
-        // False positive, tabbing into the table is handled by us and will focus the row
-        rules: [{id: 'scrollable-region-focusable', enabled: false}]
-      }
-    }
-  }
+  args: {selectionBehavior: 'replace', selectionStyle: 'highlight', onAction: action('onAction')}
 };
 
 export const BackwardCompatActionTesting = {
   render: TemplateBackwardsCompat,
-  args: {selectionBehavior: 'replace', selectionStyle: 'highlight', onAction: action('onAction')},
-  parameters: {
-    a11y: {
-      config: {
-        // False positive, tabbing into the table is handled by us and will focus the row
-        rules: [{id: 'scrollable-region-focusable', enabled: false}]
-      }
-    }
-  }
+  args: {selectionBehavior: 'replace', selectionStyle: 'highlight', onAction: action('onAction')}
 };
 
 export const TableWithResizingNoProps = {

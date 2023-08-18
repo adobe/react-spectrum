@@ -48,40 +48,12 @@ export default {
 };
 
 export const Default = (args) => <RenderProvider {...args} />;
-Default.story = {
-  parameters: {
-    a11y: {
-      config: {
-        rules: [
-          // Ignore landmark accessibility failures since the extra main is just for testing purposes
-          // and not a explicit part of the Toast component
-          {id: 'landmark-main-is-top-level', enabled: false},
-          {id: 'landmark-no-duplicate-main', enabled: false},
-          {id: 'landmark-unique', enabled: false}
-        ]
-      }
-    }
-  }
-};
-
-
 export const WithAction = (args) => (
   <RenderProvider {...args} actionLabel="Action" onAction={action('onAction')} />
 );
 
 WithAction.story = {
-  name: 'With action',
-  parameters: {
-    a11y: {
-      config: {
-        rules: [
-          {id: 'landmark-main-is-top-level', enabled: false},
-          {id: 'landmark-no-duplicate-main', enabled: false},
-          {id: 'landmark-unique', enabled: false}
-        ]
-      }
-    }
-  }
+  name: 'With action'
 };
 
 export const WithDialog = (args) => (
@@ -97,71 +69,26 @@ export const WithDialog = (args) => (
 );
 
 WithDialog.story = {
-  name: 'With dialog',
-  parameters: {
-    a11y: {
-      config: {
-        rules: [
-          {id: 'landmark-main-is-top-level', enabled: false},
-          {id: 'landmark-no-duplicate-main', enabled: false},
-          {id: 'landmark-unique', enabled: false}
-        ]
-      }
-    }
-  }
+  name: 'With dialog'
 };
 
 export const MultipleToastContainers = (args) => <Multiple {...args} />;
 
 MultipleToastContainers.story = {
   name: 'multiple ToastContainers',
-  parameters: {
-    disableToastContainer: true,
-    a11y: {
-      config: {
-        rules: [
-          {id: 'landmark-main-is-top-level', enabled: false},
-          {id: 'landmark-no-duplicate-main', enabled: false},
-          {id: 'landmark-unique', enabled: false}
-        ]
-      }
-    }
-  }
+  parameters: {disableToastContainer: true}
 };
 
 export const ProgrammaticallyClosing = (args) => <ToastToggle {...args} />;
 
 ProgrammaticallyClosing.story = {
-  name: 'programmatically closing',
-  parameters: {
-    a11y: {
-      config: {
-        rules: [
-          {id: 'landmark-main-is-top-level', enabled: false},
-          {id: 'landmark-no-duplicate-main', enabled: false},
-          {id: 'landmark-unique', enabled: false}
-        ]
-      }
-    }
-  }
+  name: 'programmatically closing'
 };
 
 export const WithIframe = () => <IframeExample />;
 
 WithIframe.story = {
-  name: 'with iframe',
-  parameters: {
-    a11y: {
-      config: {
-        rules: [
-          {id: 'aria-allowed-role', selector: '*:not(iframe[role="main"])'},
-          {id: 'landmark-main-is-top-level', enabled: false},
-          {id: 'landmark-no-duplicate-main', enabled: false},
-          {id: 'landmark-unique', enabled: false}
-        ]
-      }
-    }
-  }
+  name: 'with iframe'
 };
 
 function RenderProvider(options: SpectrumToastOptions) {

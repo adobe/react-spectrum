@@ -97,11 +97,11 @@ StaticSections.story = {
 
 export const LongList = () => (
   <div>
-    <input aria-label="input before" />
+    <input />
     <Tree items={longList}>
       {(item) => <Item key={item.name}>{item.name}</Item>}
     </Tree>
-    <input aria-label="input after" />
+    <input />
   </div>
 );
 

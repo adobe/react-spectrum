@@ -17,6 +17,7 @@ import {Example} from './Example';
 import React from 'react';
 import {useViewportSize} from '@react-aria/utils';
 
+
 export default {
   title: 'ActionBar',
   component: ActionBar,
@@ -38,19 +39,10 @@ export default {
 export type ActionBarStory = ComponentStoryObj<any>;
 
 export const Default: ActionBarStory = {
-  render: (args) => <Example {...args} />,
-  parameters: {
-    a11y: {
-      config: {
-        // Fails due to TableView's known issue, ignoring here since it isn't pertinent to the story
-        rules: [{id: 'aria-required-children', selector: '*:not([role="grid"])'}]
-      }
-    }
-  }
+  render: (args) => <Example {...args} />
 };
 
 export const FullWidthStory: ActionBarStory = {
-  ...Default,
   render: (args) => <FullWidth {...args} />
 };
 

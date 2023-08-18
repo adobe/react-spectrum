@@ -219,7 +219,6 @@ function NestedExample() {
   );
 }
 
-// TODO: known accessiblity failure https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#tableview
 function TableExample() {
   return (
     <div>
@@ -429,27 +428,11 @@ export const NestedLandmarks = {
 };
 
 export const TableLandmark = {
-  render: TableTemplate,
-  parameters: {
-    a11y: {
-      config: {
-        // Fails due to TableView's known issue, ignoring here since it isn't pertinent to the story
-        rules: [{id: 'aria-required-children', selector: '*:not([role="grid"])'}]
-      }
-    }
-  }
+  render: TableTemplate
 };
 
 export const ApplicationWithLandmarks = {
-  render: ApplicationTemplate,
-  parameters: {
-    a11y: {
-      config: {
-        // Fails due to TableView's known issue, ignoring here since it isn't pertinent to the story
-        rules: [{id: 'aria-required-children', selector: '*:not([role="grid"])'}]
-      }
-    }
-  }
+  render: ApplicationTemplate
 };
 
 export const DuplicateRolesWithLabels = {
@@ -457,25 +440,11 @@ export const DuplicateRolesWithLabels = {
 };
 
 export const DuplicateRolesWithNoLabels = {
-  render: DuplicateRolesWithNoLabelsTemplate,
-  parameters: {
-    a11y: {
-      config: {
-        rules: [{id: 'landmark-unique', enabled: false}]
-      }
-    }
-  }
+  render: DuplicateRolesWithNoLabelsTemplate
 };
 
 export const DuplicateRolesWithSameLabels = {
-  render: DuplicateRolesWithSameLabelsTemplate,
-  parameters: {
-    a11y: {
-      config: {
-        rules: [{id: 'landmark-unique', enabled: false}]
-      }
-    }
-  }
+  render: DuplicateRolesWithSameLabelsTemplate
 };
 
 export const OneWithNoFocusableChildren = {
@@ -486,14 +455,4 @@ export const AllWithNoFocusableChildren = {
   render: AllWithNoFocusableChildrenExampleTemplate
 };
 
-export const IframeExampleStory = {
-  render: IframeExample,
-  parameters: {
-    a11y: {
-      config: {
-        rules: [{id: 'aria-allowed-role', enabled: false}]
-      }
-    }
-  },
-  name: 'iframe example'
-};
+export {IframeExample};

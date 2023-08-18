@@ -39,15 +39,7 @@ export default {
 
 export const SearchTableview = {
   render: () => <SearchExample />,
-  name: 'search + tableview',
-  parameters: {
-    a11y: {
-      config: {
-        // Fails due to TableView's known issue, ignoring here since it isn't pertinent to the story
-        rules: [{id: 'aria-required-children', selector: '*:not([role="grid"])'}]
-      }
-    }
-  }
+  name: 'search + tableview'
 };
 
 function SearchExample() {
@@ -56,7 +48,6 @@ function SearchExample() {
   return (
     <div>
       <SearchField
-        aria-label="table searchfield"
         onChange={(value) => {
           const newItems = manyRows.filter((item) =>
             item['C0'].toLowerCase().includes(value.toLowerCase())

@@ -142,17 +142,15 @@ export const ComboBoxRenderPropsListBoxDynamic = () => (
 );
 
 export const ListBoxExample = () => (
-  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace" aria-label="test listbox">
+  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace">
     <MyItem>Foo</MyItem>
     <MyItem>Bar</MyItem>
     <MyItem>Baz</MyItem>
   </ListBox>
 );
 
-// Known accessibility false positive: https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#listbox
-// also has a aXe landmark error, not sure what it means
 export const ListBoxSections = () => (
-  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace" aria-label="test listbox with section">
+  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace">
     <Section className={styles.group}>
       <Header style={{fontSize: '1.2em'}}>Section 1</Header>
       <MyItem>Foo</MyItem>
@@ -170,7 +168,7 @@ export const ListBoxSections = () => (
 );
 
 export const ListBoxComplex = () => (
-  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace" aria-label="listbox complex">
+  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace">
     <MyItem>
       <Text slot="label">Item 1</Text>
       <Text slot="description">Description</Text>
@@ -582,7 +580,6 @@ export const ModalExample = () => (
   </DialogTrigger>
 );
 
-// Has error with invalid aria-controls, bug documented here: https://github.com/adobe/react-spectrum/issues/4781#issuecomment-1641057070
 export const TabsExample = () => (
   <Tabs>
     <TabList aria-label="History of Ancient Rome" style={{display: 'flex', gap: 8}}>
@@ -602,7 +599,6 @@ export const TabsExample = () => (
   </Tabs>
 );
 
-// Has error with invalid aria-controls, bug documented here: https://github.com/adobe/react-spectrum/issues/4781#issuecomment-1641057070
 export const TabsRenderProps = () => {
   const [tabOrientation, setTabOrientation] = useState<TabsProps['orientation']>('vertical');
 
@@ -809,7 +805,6 @@ function Copyable() {
       <div
         {...clipboardProps}
         role="textbox"
-        aria-label="copyable element"
         tabIndex={0}
         className={styles.copyable}>
         Copy me
