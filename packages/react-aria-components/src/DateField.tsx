@@ -14,7 +14,6 @@ import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, StyleRen
 import {createCalendar} from '@internationalized/date';
 import {DateFieldState, DateSegmentType, DateSegment as IDateSegment, useDateFieldState, useTimeFieldState, ValidationState} from 'react-stately';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
-import {InputDOMProps} from '@react-types/shared';
 import {LabelContext} from './Label';
 import React, {cloneElement, createContext, ForwardedRef, forwardRef, HTMLAttributes, InputHTMLAttributes, ReactElement, RefObject, useContext, useRef} from 'react';
 import {TextContext} from './Text';
@@ -170,7 +169,7 @@ export interface DateInputRenderProps {
   isHovered: boolean,
   /**
    * Whether an element within the date input is focused, either via a mouse or keyboard.
-   * @selector :focus-within
+   * @selector [data-focus-within]
    */
   isFocusWithin: boolean,
   /**
@@ -185,11 +184,11 @@ export interface DateInputRenderProps {
   isDisabled: boolean
 }
 
-export interface DateInputProps extends InputDOMProps, SlotProps, StyleRenderProps<DateInputRenderProps> {
+export interface DateInputProps extends SlotProps, StyleRenderProps<DateInputRenderProps> {
   children: (segment: IDateSegment) => ReactElement
 }
 
-function DateInput({children, slot, name, ...otherProps}: DateInputProps, ref: ForwardedRef<HTMLDivElement>) {
+function DateInput({children, slot, ...otherProps}: DateInputProps, ref: ForwardedRef<HTMLDivElement>) {
   let [{state, fieldProps, inputProps, inputRef}, fieldRef] = useContextProps({slot} as DateInputProps & DateInputContextValue, ref, DateInputContext);
 
   let {hoverProps, isHovered} = useHover({});
@@ -211,12 +210,13 @@ function DateInput({children, slot, name, ...otherProps}: DateInputProps, ref: F
         {...renderProps}
         ref={fieldRef}
         slot={slot}
+        data-focus-within={isFocused || undefined}
         data-hovered={isHovered || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-disabled={state.isDisabled || undefined}>
         {state.segments.map((segment, i) => cloneElement(children(segment), {key: i}))}
       </div>
-      <input {...inputProps} ref={inputRef} name={name ?? inputProps.name} />
+      <input {...inputProps} ref={inputRef} />
     </InternalDateInputContext.Provider>
   );
 }
@@ -235,12 +235,12 @@ export interface DateSegmentRenderProps extends Omit<IDateSegment, 'isEditable'>
   isPlaceholder: boolean,
   /**
    * Whether the segment is read only.
-   * @selector [aria-readonly]
+   * @selector [data-readonly]
    */
   isReadOnly: boolean,
   /**
    * Whether the date field is in an invalid state.
-   * @selector [aria-invalid]
+   * @selector [data-invalid]
    */
   isInvalid: boolean,
   /**
@@ -274,6 +274,8 @@ function DateSegment({segment, ...otherProps}: DateSegmentProps, ref: ForwardedR
       {...mergeProps(filterDOMProps(otherProps as any), segmentProps)}
       {...renderProps}
       ref={domRef}
+      data-invalid={state.validationState === 'invalid' || undefined}
+      data-readonly={!segment.isEditable || undefined}
       data-type={segment.type} />
   );
 }

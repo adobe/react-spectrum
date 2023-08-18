@@ -473,6 +473,7 @@ function NumberFieldControlledStateReset() {
   return (
     <>
       <NumberField
+        aria-label="numberfield to reset"
         value={controlledValue}
         onChange={(value) => setControlledValue(value)} />
       <Button

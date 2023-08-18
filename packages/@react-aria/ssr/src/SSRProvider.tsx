@@ -152,14 +152,15 @@ function useLegacySSRSafeId(defaultId?: string): string {
   }
 
   let counter = useCounter(!!defaultId);
-  return defaultId || `react-aria${ctx.prefix}-${counter}`;
+  let prefix = ctx === defaultContext && process.env.NODE_ENV === 'test' ? 'react-aria' : `react-aria${ctx.prefix}`;
+  return defaultId || `${prefix}-${counter}`;
 }
 
 function useModernSSRSafeId(defaultId?: string): string {
   // @ts-ignore
   let id = React.useId();
   let [didSSR] = useState(useIsSSR());
-  let prefix = didSSR ? 'react-aria' : `react-aria${defaultContext.prefix}`;
+  let prefix = didSSR || process.env.NODE_ENV === 'test' ? 'react-aria' : `react-aria${defaultContext.prefix}`;
   return defaultId || `${prefix}-${id}`;
 }
 

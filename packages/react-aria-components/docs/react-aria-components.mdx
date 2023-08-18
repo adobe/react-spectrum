@@ -45,6 +45,8 @@ import TimeField from '@react-spectrum/docs/pages/assets/component-illustrations
 import DatePicker from '@react-spectrum/docs/pages/assets/component-illustrations/DatePicker.svg';
 import DateRangePicker from '@react-spectrum/docs/pages/assets/component-illustrations/DateRangePicker.svg';
 import TagGroup from '@react-spectrum/docs/pages/assets/component-illustrations/TagGroup.svg';
+import FileTrigger from '@react-spectrum/docs/pages/assets/component-illustrations/FileTrigger.svg'
+import DropZone from '@react-spectrum/docs/pages/assets/component-illustrations/DropZone.svg'
 
 ---
 category: Concepts
@@ -140,7 +142,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
       background: var(--spectrum-global-color-gray-150);
     }
 
-    &:disabled {
+    &[data-disabled] {
       border-color: var(--border-color-disabled);
       color: var(--text-color-disabled);
       & span[aria-hidden] {
@@ -221,7 +223,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
     display: flex;
     flex-direction: column;
 
-    &[aria-selected=true] {
+    &[data-selected] {
       font-weight: 600;
 
       &::before {
@@ -240,7 +242,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
       color: var(--highlight-foreground);
     }
 
-    &[aria-disabled] {
+    &[data-disabled] {
       color: var(--text-color-disabled);
     }
 
@@ -304,7 +306,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
     --text-color-disabled: GrayText;
     --focus-ring-color: Highlight;
 
-    .react-aria-Button:disabled span[aria-hidden] {
+    .react-aria-Button[data-disabled] span[aria-hidden] {
       background: transparent;
     }
   }
@@ -341,7 +343,7 @@ When a custom `className` is not provided, each component includes a default cla
 Some components support multiple UI states (e.g. pressed, hovered, selected, etc.). React Aria Components exposes states using DOM attributes, which can be targeted by CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. They can be thought of like custom CSS pseudo classes. For example:
 
 ```css render=false
-.react-aria-Item[aria-selected=true] {
+.react-aria-Item[data-selected] {
   /* ... */
 }
 
@@ -641,6 +643,13 @@ The documentation for each component includes many examples styled using vanilla
   <Slider />
 </ExampleCard>
 
+<ExampleCard
+  url="FileTrigger.html"
+  title="FileTrigger"
+  description="A file trigger allows a user to access the file system with a Button.">
+  <FileTrigger />
+</ExampleCard>
+
 </section>
 
 ### Navigation
@@ -686,6 +695,19 @@ The documentation for each component includes many examples styled using vanilla
   title="Meter"
   description="A meter represents a quantity within a known range, or a fractional value.">
   <Meter />
+</ExampleCard>
+
+</section>
+
+### Drag and Drop
+
+<section className={styles.cardGroup}>
+
+<ExampleCard
+  url="DropZone.html"
+  title="DropZone"
+  description="A drop zone is an area into which one or multiple objects can be dragged and dropped.">
+  <DropZone />
 </ExampleCard>
 
 </section>

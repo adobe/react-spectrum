@@ -115,7 +115,7 @@ function renderCustomLabel(props = {}) {
 
 function renderNoLabel(props = {}) {
   return (
-    <Checkbox {...props} />
+    <Checkbox aria-label="checkbox with no visible label" {...props} />
   );
 }
 

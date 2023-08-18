@@ -22,7 +22,7 @@ export interface InputRenderProps {
   isHovered: boolean,
   /**
    * Whether the input is focused, either via a mouse or keyboard.
-   * @selector :focus
+   * @selector [data-focused]
    */
   isFocused: boolean,
   /**
@@ -32,7 +32,7 @@ export interface InputRenderProps {
   isFocusVisible: boolean,
   /**
    * Whether the input is disabled.
-   * @selector :disabled
+   * @selector [data-disabled]
    */
   isDisabled: boolean
 }
@@ -61,6 +61,8 @@ function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
       {...mergeProps(props, focusProps, hoverProps)}
       {...renderProps}
       ref={ref}
+      data-focused={isFocused || undefined}
+      data-disabled={props.disabled || undefined}
       data-hovered={isHovered || undefined}
       data-focus-visible={isFocusVisible || undefined} />
   );

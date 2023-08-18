@@ -26,6 +26,7 @@ import {Item, Picker, Section, SpectrumPickerProps} from '../';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React,  {useState} from 'react';
 import {useAsyncList} from '@react-stately/data';
+import {userEvent, within} from '@storybook/testing-library';
 
 let flatOptions = [
   {id: 1, name: 'Aardvark'},
@@ -166,6 +167,15 @@ export default {
 export type DefaultStory = ComponentStoryObj<typeof DefaultPicker>;
 export const Default: DefaultStory = {
   render: (args) => <DefaultPicker {...args} />
+};
+
+// Need to interact with picker for the aXe plugin to catch the 'aria-hidden-focus' false positive
+Default.play = async ({canvasElement}) => {
+  let canvas = within(canvasElement);
+  let button = await canvas.findByRole('button');
+  await userEvent.click(button);
+  let body = canvasElement.ownerDocument.body;
+  await within(body).findByRole('listbox');
 };
 
 export const Disabled: DefaultStory = {
