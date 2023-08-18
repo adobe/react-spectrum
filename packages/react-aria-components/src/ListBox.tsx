@@ -265,7 +265,7 @@ interface ListBoxSectionProps<T> extends StyleProps {
   section: Node<T>
 }
 
-function ListBoxSection<T>({section, className, style, ...otherProps}: ListBoxSectionProps<T>) {
+function ListBoxSection<T>({section, className, style}: ListBoxSectionProps<T>) {
   let {state} = useContext(InternalListBoxContext)!;
   let [headingRef, heading] = useSlot();
   let {headingProps, groupProps} = useListBoxSection({
@@ -298,7 +298,7 @@ function ListBoxSection<T>({section, className, style, ...otherProps}: ListBoxSe
 
   return (
     <section
-      {...filterDOMProps(otherProps)}
+      {...filterDOMProps(section.props)}
       {...groupProps}
       className={className || section.props?.className || 'react-aria-Section'}
       style={style || section.props?.style}
@@ -377,6 +377,9 @@ function Option<T>({item}: OptionProps<T>) {
         {...mergeProps(filterDOMProps(props as any), optionProps, hoverProps, draggableItem?.dragProps, droppableItem?.dropProps)}
         {...renderProps}
         ref={ref}
+        data-allows-dragging={!!dragState || undefined}
+        data-selected={states.isSelected || undefined}
+        data-disabled={states.isDisabled || undefined}
         data-hovered={isHovered || undefined}
         data-focused={states.isFocused || undefined}
         data-focus-visible={states.isFocusVisible || undefined}

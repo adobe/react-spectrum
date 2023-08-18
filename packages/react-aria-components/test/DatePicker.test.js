@@ -132,8 +132,14 @@ describe('DatePicker', () => {
         )}
       </DatePicker>
     );
-    
+
     let group = getByRole('group');
     expect(group).toHaveAttribute('data-validation-state', 'invalid');
+  });
+
+  it('should support form value', () => {
+    render(<TestDatePicker name="birthday" value={new CalendarDate(2020, 2, 3)} />);
+    let input = document.querySelector('input[name=birthday]');
+    expect(input).toHaveValue('2020-02-03');
   });
 });

@@ -66,6 +66,21 @@ function Example() {
 }
 ```
 
+### HTML forms
+
+NumberField supports the `name` prop for integration with HTML forms. The value will be submitted to the server as a raw number (e.g. `45`), not as a locale-dependent formatted string (e.g. `"$45.00"`).
+
+```tsx example
+<NumberField
+  label="Transaction amount"
+  name="amount"
+  defaultValue={45}
+  formatOptions={{
+    style: 'currency',
+    currency: 'USD'
+  }} />
+```
+
 ## Labeling
 
 A visual label should be provided for the NumberField using the `label` prop. If the NumberField is required, the `isRequired` and

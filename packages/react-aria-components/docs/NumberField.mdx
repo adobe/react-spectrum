@@ -105,7 +105,7 @@ import {NumberField, Label, Group, Input, Button} from 'react-aria-components';
       background: var(--spectrum-global-color-gray-75);
     }
 
-    &:disabled {
+    &[data-disabled] {
       border-color: var(--field-border-disabled);
       color: var(--text-color-disabled);
     }
@@ -124,7 +124,7 @@ import {NumberField, Label, Group, Input, Button} from 'react-aria-components';
     width: 6rem;
     flex: 1;
 
-    &:disabled {
+    &[data-disabled] {
       border-color: var(--field-border-disabled);
     }
   }
@@ -267,7 +267,7 @@ A custom `className` can also be specified on any component. This overrides the 
 </NumberField>
 ```
 
-In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using DOM attributes, which you can target in CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. For example:
+In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
 
 ```css
 .react-aria-Button[data-pressed] {
@@ -285,7 +285,9 @@ The states, selectors, and render props for each component used in a `NumberFiel
 
 ### NumberField
 
-A `NumberField` can be targeted with the `.react-aria-NumberField` CSS selector, or by overriding with a custom `className`. It provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.NumberFieldState} /> object to its render props, which can be used to customize the `className`, `style`, or `children`.
+A `NumberField` can be targeted with the `.react-aria-NumberField` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.NumberFieldRenderProps.properties} />
 
 ### Label
 
@@ -537,6 +539,20 @@ function Example() {
 }
 ```
 
+### HTML forms
+
+NumberField supports the `name` prop for integration with HTML forms. The value will be submitted to the server as a raw number (e.g. `45`), not as a locale-dependent formatted string (e.g. `"$45.00"`).
+
+```tsx example
+<MyNumberField
+  label="Transaction amount"
+  name="amount"
+  defaultValue={45}
+  formatOptions={{
+    style: 'currency',
+    currency: 'USD'
+  }} />
+```
 
 ## Advanced customization
 

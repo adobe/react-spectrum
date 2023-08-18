@@ -27,7 +27,7 @@ import {TextContext} from './Text';
 export interface DatePickerRenderProps {
   /**
    * Whether an element within the date picker is focused, either via a mouse or keyboard.
-   * @selector :focus-within
+   * @selector [data-focus-within]
    */
   isFocusWithin: boolean,
   /**
@@ -46,7 +46,7 @@ export interface DatePickerRenderProps {
   state: DatePickerState,
   /**
    * Validation state of the date picker.
-   * @selector [data-validation-state]
+   * @selector [data-validation-state="valid | invalid"]
    */
   validationState: ValidationState
 }
@@ -87,8 +87,9 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
   });
 
   let fieldRef = useRef<HTMLDivElement>(null);
+  let inputRef = useRef<HTMLInputElement>(null);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
-  let {fieldProps: dateFieldProps} = useDateField({...fieldProps, label}, fieldState, fieldRef);
+  let {fieldProps: dateFieldProps, inputProps} = useDateField({...fieldProps, label, inputRef}, fieldState, fieldRef);
 
   let renderProps = useRenderProps({
     ...props,
@@ -109,7 +110,7 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
     <Provider
       values={[
         [GroupContext, {...groupProps, ref: groupRef}],
-        [DateInputContext, {state: fieldState, fieldProps: dateFieldProps, ref: fieldRef}],
+        [DateInputContext, {state: fieldState, fieldProps: dateFieldProps, ref: fieldRef, inputProps, inputRef}],
         [ButtonContext, {...buttonProps, isPressed: state.isOpen}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [CalendarContext, calendarProps],
@@ -128,6 +129,7 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
         {...renderProps}
         ref={ref}
         slot={props.slot}
+        data-focus-within={isFocused || undefined}
         data-validation-state={state.validationState || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-disabled={props.isDisabled || undefined} />
@@ -166,8 +168,9 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
   });
 
   let startFieldRef = useRef<HTMLDivElement>(null);
+  let startInputRef = useRef<HTMLInputElement>(null);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
-  let {fieldProps: startDateFieldProps} = useDateField({...startFieldProps, label}, startFieldState, startFieldRef);
+  let {fieldProps: startDateFieldProps, inputProps: startInputProps} = useDateField({...startFieldProps, label, inputRef: startInputRef}, startFieldState, startFieldRef);
 
   let endFieldState = useDateFieldState({
     ...endFieldProps,
@@ -176,7 +179,8 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
   });
 
   let endFieldRef = useRef<HTMLDivElement>(null);
-  let {fieldProps: endDateFieldProps} = useDateField({...endFieldProps, label}, endFieldState, endFieldRef);
+  let endInputRef = useRef<HTMLInputElement>(null);
+  let {fieldProps: endDateFieldProps, inputProps: endInputProps} = useDateField({...endFieldProps, label, inputRef: endInputRef}, endFieldState, endFieldRef);
 
   let renderProps = useRenderProps({
     ...props,
@@ -207,12 +211,16 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
             start: {
               state: startFieldState,
               fieldProps: startDateFieldProps,
-              ref: startFieldRef
+              ref: startFieldRef,
+              inputRef: startInputRef,
+              inputProps: startInputProps
             },
             end: {
               state: endFieldState,
               fieldProps: endDateFieldProps,
-              ref: endFieldRef
+              ref: endFieldRef,
+              inputRef: endInputRef,
+              inputProps: endInputProps
             }
           }
         }],
@@ -229,6 +237,7 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
         {...renderProps}
         ref={ref}
         slot={props.slot}
+        data-focus-within={isFocused || undefined}
         data-validation-state={state.validationState || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-disabled={props.isDisabled || undefined} />

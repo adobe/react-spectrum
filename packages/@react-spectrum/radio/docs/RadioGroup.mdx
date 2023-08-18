@@ -77,6 +77,17 @@ function Example() {
 }
 ```
 
+### HTML forms
+
+RadioGroup supports the `name` prop, paired with the Radio `value` prop, for integration with HTML forms.
+
+```tsx example
+<RadioGroup label="Favorite pet" name="pet">
+  <Radio value="dogs">Dogs</Radio>
+  <Radio value="cats">Cats</Radio>
+</RadioGroup>
+```
+
 ## Labeling
 A visual label should be provided for the RadioGroup using the `label` prop. If the RadioGroup is required, the `isRequired` and
 `necessityIndicator` props can be used to show a required state.

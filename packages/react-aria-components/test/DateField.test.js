@@ -164,4 +164,17 @@ describe('DateField', () => {
     let group = getByRole('group');
     expect(group).toHaveAttribute('data-validation-state', 'invalid');
   });
+
+  it('should support form value', () => {
+    render(
+      <DateField name="birthday" value={new CalendarDate(2020, 2, 3)}>
+        <Label>Birth date</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </DateField>
+    );
+    let input = document.querySelector('input[name=birthday]');
+    expect(input).toHaveValue('2020-02-03');
+  });
 });

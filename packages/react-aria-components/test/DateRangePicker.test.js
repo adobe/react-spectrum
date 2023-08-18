@@ -141,8 +141,16 @@ describe('DateRangePicker', () => {
         )}
       </DateRangePicker>
     );
-    
+
     let group = getByRole('group');
     expect(group).toHaveAttribute('data-validation-state', 'invalid');
+  });
+
+  it('should support form value', () => {
+    render(<TestDateRangePicker startName="start" endName="end" value={{start: new CalendarDate(2023, 1, 10), end: new CalendarDate(2023, 1, 20)}} />);
+    let start = document.querySelector('input[name=start]');
+    expect(start).toHaveValue('2023-01-10');
+    let end = document.querySelector('input[name=end]');
+    expect(end).toHaveValue('2023-01-20');
   });
 });

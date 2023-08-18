@@ -122,6 +122,12 @@ then
   yarn build --public-url ./
   mv dist ../../$verdaccio_path/rac-tailwind
 
+  # Install/build RAC + Spectrum + Tailwind app
+  cd ../../examples/rac-spectrum-tailwind
+  yarn install
+  yarn build --public-url ./
+  mv dist ../../$verdaccio_path/rac-spectrum-tailwind
+
   cd ../..
 
   # Get the tarball size of each published package.
