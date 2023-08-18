@@ -33,18 +33,20 @@ const attributes = {
   }
 };
 
-module.exports = plugin(({addVariant}) => {
+module.exports = plugin.withOptions((options) => (({addVariant}) => {
+  let prefix = options?.prefix ? `${options.prefix}-` : '';
   attributes.boolean.forEach((attributeName) => {
+    let variantName = `${prefix}${attributeName}`;
     let selector = `&[data-${attributeName}]`;
-    addVariant(attributeName, selector);
+    addVariant(variantName, selector);
   });
   Object.keys(attributes.enum).forEach((attributeName) => {
     attributes.enum[attributeName].forEach(
         (attributeValue) => {
-          let variantName = `${attributeName}-${attributeValue}`;
+          let variantName = `${prefix}${attributeName}-${attributeValue}`;
           let selector = `&[data-${attributeName}]="${attributeValue}"`;
           addVariant(variantName, selector);
         }
       );
   });
-});
+}));
