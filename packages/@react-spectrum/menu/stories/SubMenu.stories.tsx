@@ -159,12 +159,11 @@ let dynamicSubMenuSections = [
   ]}
 ];
 
-// TODO: debug why this doesn't work
 let dynamicRenderFuncSections = (item) => {
   if (item.children) {
     if (item.isSection) {
       return (
-        <Section title={item.name} items={item.children}>
+        <Section key={item.name} title={item.name} items={item.children}>
           {(item) => {
             if (item.children) {
               return (
@@ -206,25 +205,6 @@ export const SubMenuDynamicSections = {
   name: 'dynamic submenu items with sections'
 };
 
-// export const SubMenuDynamicSections = {
-//   render: () => (
-//     renderMenuTrigger(
-//       <Menu items={dynamicSubMenuSections} onAction={action('onAction')}>
-//         {(item) => (
-//           <Section key={item.name} items={item.children} title={item.name}>
-//             {(item) => (
-//               <Item key={item.name} childItems={item.children}>
-//                 <Text>{item.name}</Text>
-//                 {/* <Keyboard>⌘C</Keyboard> */}
-//               </Item>
-//             )}
-//           </Section>
-//         )}
-//       </Menu>
-//     )
-//   ),
-//   name: 'dynamic submenu items with sections'
-// };
 
 let subMenuNoSection = [
   {name: 'Section 1', isSection: true, children: [
