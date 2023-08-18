@@ -416,6 +416,7 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
             style={style}
             ref={ref}
             slot={props.slot}
+            data-allows-dragging={isListDraggable || undefined}
             data-drop-target={isRootDropTarget || undefined}
             data-focused={isFocused || undefined}
             data-focus-visible={isFocusVisible || undefined}>
@@ -488,7 +489,7 @@ const _TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(TableHeader);
 export {_TableHeader as TableHeader};
 
 export interface ColumnRenderProps {
-  /* 
+  /**
    * Whether the item is currently hovered with a mouse.
    * @selector [data-hovered]
    */
@@ -505,14 +506,14 @@ export interface ColumnRenderProps {
   isFocusVisible: boolean,
   /**
    * Whether the column allows sorting.
-   * @selector [aria-sort]
+   * @selector [data-allows-sorting]
    */
   allowsSorting: boolean,
   /**
    * The current sort direction.
-   * @selector [aria-sort="ascending | descending"]
+   * @selector [data-sort-direction="ascending | descending"]
    */
-  sortDirection?: SortDirection,
+  sortDirection: SortDirection | undefined,
   /**
    * Whether the column is currently being resized.
    * @selector [data-resizing]
@@ -862,7 +863,9 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
       ref={ref}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
-      data-resizing={isResizing || undefined}>
+      data-resizing={isResizing || undefined}
+      data-allows-sorting={column.props.allowsSorting || undefined}
+      data-sort-direction={state.sortDescriptor?.column === column.key ? state.sortDescriptor.direction : undefined}>
       <ColumnResizerContext.Provider value={{column, triggerRef: ref}}>
         {renderProps.children}
       </ColumnResizerContext.Provider>
@@ -1082,6 +1085,8 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
         {...mergeProps(filterDOMProps(props as any), rowProps, focusProps, hoverProps, draggableItem?.dragProps)}
         {...renderProps}
         ref={ref}
+        data-disabled={states.isDisabled || undefined}
+        data-selected={states.isSelected || undefined}
         data-hovered={isHovered || undefined}
         data-focused={states.isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}

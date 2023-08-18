@@ -27,6 +27,8 @@ function TextArea(props: TextAreaProps, ref: ForwardedRef<HTMLTextAreaElement>) 
       {...mergeProps(props, focusProps, hoverProps)}
       {...renderProps}
       ref={ref}
+      data-focused={isFocused || undefined}
+      data-disabled={props.disabled || undefined}
       data-hovered={isHovered || undefined}
       data-focus-visible={isFocusVisible || undefined} />
   );
