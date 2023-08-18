@@ -62,6 +62,7 @@ let itemsNoSize = [
   {src: 'https://i.imgur.com/zzwWogn.jpg', title: 'Bob 8'}
 ];
 
+// TODO: accessibility failures regarding article element with role="gridcell", will need to double check when we pick CardView back up
 export default {
   title: 'CardView/Waterfall layout',
   component: CardView,

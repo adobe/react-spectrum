@@ -219,6 +219,7 @@ function NestedExample() {
   );
 }
 
+// TODO: known accessiblity failure https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#tableview
 function TableExample() {
   return (
     <div>
@@ -428,11 +429,27 @@ export const NestedLandmarks = {
 };
 
 export const TableLandmark = {
-  render: TableTemplate
+  render: TableTemplate,
+  parameters: {
+    a11y: {
+      config: {
+        // Fails due to TableView's known issue, ignoring here since it isn't pertinent to the story
+        rules: [{id: 'aria-required-children', selector: '*:not([role="grid"])'}]
+      }
+    }
+  }
 };
 
 export const ApplicationWithLandmarks = {
-  render: ApplicationTemplate
+  render: ApplicationTemplate,
+  parameters: {
+    a11y: {
+      config: {
+        // Fails due to TableView's known issue, ignoring here since it isn't pertinent to the story
+        rules: [{id: 'aria-required-children', selector: '*:not([role="grid"])'}]
+      }
+    }
+  }
 };
 
 export const DuplicateRolesWithLabels = {
@@ -440,11 +457,25 @@ export const DuplicateRolesWithLabels = {
 };
 
 export const DuplicateRolesWithNoLabels = {
-  render: DuplicateRolesWithNoLabelsTemplate
+  render: DuplicateRolesWithNoLabelsTemplate,
+  parameters: {
+    a11y: {
+      config: {
+        rules: [{id: 'landmark-unique', enabled: false}]
+      }
+    }
+  }
 };
 
 export const DuplicateRolesWithSameLabels = {
-  render: DuplicateRolesWithSameLabelsTemplate
+  render: DuplicateRolesWithSameLabelsTemplate,
+  parameters: {
+    a11y: {
+      config: {
+        rules: [{id: 'landmark-unique', enabled: false}]
+      }
+    }
+  }
 };
 
 export const OneWithNoFocusableChildren = {
@@ -455,4 +486,14 @@ export const AllWithNoFocusableChildren = {
   render: AllWithNoFocusableChildrenExampleTemplate
 };
 
-export {IframeExample};
+export const IframeExampleStory = {
+  render: IframeExample,
+  parameters: {
+    a11y: {
+      config: {
+        rules: [{id: 'aria-allowed-role', enabled: false}]
+      }
+    }
+  },
+  name: 'iframe example'
+};

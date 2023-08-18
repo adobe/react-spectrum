@@ -861,8 +861,8 @@ function App() {
       <Button variant="primary" onPress={toggleSize}> Toggle Size</Button>
       <div style={{display: 'flex', height: size, overflow: 'hidden'}}>
         <Flex maxHeight="300px">
-          <Text>Max-Height: 300px</Text>
-          <ListBox width="150px" items={itemsForDemo}>
+          <Text id="label1">Max-Height: 300px</Text>
+          <ListBox width="150px" items={itemsForDemo} aria-labelledby="label1">
             { item => (
               <Item textValue={String(item.index)} key={item.index}>
                 <Text>IDX: {item.index}</Text>
@@ -871,8 +871,8 @@ function App() {
           </ListBox>
         </Flex>
         <Flex>
-          <Text>None</Text>
-          <ListBox width="150px" items={itemsForDemo}>
+          <Text id="label2">None</Text>
+          <ListBox width="150px" items={itemsForDemo} aria-labelledby="label2">
             { item => (
               <Item textValue={String(item.index)} key={item.index}>
                 <Text>IDX: {item.index}</Text>
@@ -881,8 +881,8 @@ function App() {
           </ListBox>
         </Flex>
         <Flex maxHeight="700px">
-          <Text>Max-Height: 700px</Text>
-          <ListBox width="150px" items={itemsForDemo}>
+          <Text id="label3">Max-Height: 700px</Text>
+          <ListBox width="150px" items={itemsForDemo} aria-labelledby="label3">
             { item => (
               <Item textValue={String(item.index)} key={item.index}>
                 <Text>IDX: {item.index}</Text>
@@ -891,8 +891,8 @@ function App() {
           </ListBox>
         </Flex>
         <Flex maxHeight="100%">
-          <Text>MaxHeight: 100%</Text>
-          <ListBox width="150px" items={itemsForDemo}>
+          <Text id="label4">MaxHeight: 100%</Text>
+          <ListBox width="150px" items={itemsForDemo} aria-labelledby="label4">
             { item => (
               <Item textValue={String(item.index)} key={item.index}>
                 <Text>IDX: {item.index}</Text>
@@ -901,8 +901,8 @@ function App() {
           </ListBox>
         </Flex>
         <Flex maxHeight="50%">
-          <Text>MaxHeight: 50%</Text>
-          <ListBox width="150px" items={itemsForDemo}>
+          <Text id="label5">MaxHeight: 50%</Text>
+          <ListBox width="150px" items={itemsForDemo} aria-labelledby="label5">
             { item => (
               <Item textValue={String(item.index)} key={item.index}>
                 <Text>IDX: {item.index}</Text>
@@ -911,8 +911,8 @@ function App() {
           </ListBox>
         </Flex>
         <Flex height="700px">
-          <Text>Height: 700px</Text>
-          <ListBox width="150px" items={itemsForDemo}>
+          <Text id="label6">Height: 700px</Text>
+          <ListBox width="150px" items={itemsForDemo} aria-labelledby="label6">
             { item => (
               <Item textValue={String(item.index)} key={item.index}>
                 <Text>IDX: {item.index}</Text>
@@ -921,8 +921,8 @@ function App() {
           </ListBox>
         </Flex>
         <Flex height="100%">
-          <Text>Height: 100%</Text>
-          <ListBox width="150px" items={itemsForDemo}>
+          <Text id="label7">Height: 100%</Text>
+          <ListBox width="150px" items={itemsForDemo} aria-labelledby="label7">
             { item => (
               <Item textValue={String(item.index)} key={item.index}>
                 <Text>IDX: {item.index}</Text>
