@@ -74,6 +74,7 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
   // but to be discussed/revisited. The main issue is that useMenuItem doesn't accept press props or DOMProps so it makes moving the submenu trigger interactions code into useMenuTrigger awkward since
   // useMenuTrigger assumes something like useButton will consume the props it provides and thus only provides the press props for usePress consumption.
   // TODO: also can grab aria-controls from useMenu, but unsure if needed (don't need subMenuId either if so). Test with and without it
+  // Doesn't seem to have a noticeable effect on the announcements
   let {menuTriggerProps, menuProps} = useMenuTrigger({trigger: 'press', isDisabled: parentMenuState.disabledKeys.has(props.targetKey)}, subMenuState, triggerRef);
   let {id: subMenuTriggerId} = menuTriggerProps;
   let {id: subMenuId} = menuProps;

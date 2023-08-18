@@ -13,7 +13,7 @@
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
-import {MenuContext, MenuStateContext} from './context';
+import {MenuContext, MenuStateContext, useMenuStateContext} from './context';
 import {MenuItem} from './MenuItem';
 import {MenuSection} from './MenuSection';
 import {mergeProps, useSyncRef} from '@react-aria/utils';
@@ -25,20 +25,20 @@ import {useTreeState} from '@react-stately/tree';
 
 function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLUListElement>) {
   let contextProps = useContext(MenuContext);
+  let {onAction: contextAction} = useMenuStateContext();
   let completeProps = {
-    ...mergeProps(contextProps, props)
+    ...mergeProps(contextProps, {onAction: contextAction, ...props})
   };
 
   let domRef = useDOMRef(ref);
   let scopedRef = useRef(null);
   let state = useTreeState(completeProps);
-  // console.log('state', props.blah, state.collection)
   let {menuProps} = useMenu(completeProps, state, domRef);
   let {styleProps} = useStyleProps(completeProps);
   useSyncRef(contextProps, domRef);
-
   return (
-    <MenuStateContext.Provider value={{state, container: scopedRef, menu: domRef}}>
+    // TODO: always provide the first onAction from the original menu as a fallback? Or should the nearest onAction take precedent? Or should the user always provide an onAction for each submenu?
+    <MenuStateContext.Provider value={{state, container: scopedRef, menu: domRef, onAction: contextAction ?? completeProps.onAction}}>
       <FocusScope contain={state.expandedKeys.size > 0}>
         <ul
           {...menuProps}
