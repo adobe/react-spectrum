@@ -439,7 +439,7 @@ yarn add tailwindcss-react-aria-components
 
 Then add the plugin to your `tailwind.config.js` file:
 
-```js
+```jsx
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   plugins: [
@@ -447,6 +447,8 @@ module.exports = {
   ],
 }
 ```
+
+You can optionally specify a prefix using `require('tailwindcss-react-aria-components')({prefix: 'rac'})`. This will allow you to use `rac-selected:` instead of `selected:`.
 
 ### Boolean states
 
