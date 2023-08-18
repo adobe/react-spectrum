@@ -64,6 +64,11 @@ let dynamicSubMenu = [
   {name: 'Lvl 1 Item 3'}
 ];
 
+// TODO: is this really the only way to define the dynamic render func? Kinda annoying that we have
+// to define this func separately and recursively call it, but I don't think we can do the same approach as
+// collapsible rows tableview since Menu isn't a collection component nor are we making the parent Menu tree collection
+// track the full "tree" of menu items (we aren't making Item take other items/sections as children and are relying on each submenu having its own
+// tree state + collection tracking its own level of items).
 let dynamicRenderFunc = (item) => {
   if (item.children) {
     return (
@@ -79,7 +84,6 @@ let dynamicRenderFunc = (item) => {
   }
 };
 
-// TODO: how to render dynamic case? Using MySubMenuTrigger won't work
 export const SubMenuDynamic = {
   render: () => (
     renderMenuTrigger(
@@ -91,9 +95,6 @@ export const SubMenuDynamic = {
   name: 'dynamic submenu items'
 };
 
-// TODO: try having a user defined SubMenu and SubMenuTrigger instead of nested Items and Sections
-
-// TODO: think about title, it can accept JSX content, but kinda non-intuitive. Ponder a rename or a new collection element called ItemContent or something
 // TODO: TreeState might be too much/not a good fit since expandedKeys should only support one (can't have multiple sub menus at a time), something to keep in mind
 
 export const SubMenuStaticSections = {
@@ -141,7 +142,13 @@ let dynamicSubMenuSections = [
       {name: 'Sub Section 1', isSection: true, children: [
         {name: 'Sec 1 SubSec 1 Lvl 2 Item 1'},
         {name: 'Sec 1 SubSec 1 Lvl 2 Item 2'},
-        {name: 'Sec 1 SubSec 1 Lvl 2 Item 3'}
+        {name: 'Sec 1 SubSec 1 Lvl 2 Item 3', children: [
+          {name: 'Sub Section 1.1', isSection: true,  children: [
+            {name: 'Sec 1 SubSec 1.1 Lvl 3 Item 1'},
+            {name: 'Sec 1 SubSec 1 Lvl 3 Item 2'},
+            {name: 'Sec 1 SubSec 1 Lvl 3 Item 3'}
+          ]}
+        ]}
       ]}
     ]},
     {name: 'Sec 1 Lvl 1 Item 3'}
@@ -159,7 +166,13 @@ let dynamicSubMenuSections = [
   ]}
 ];
 
-let dynamicRenderFuncSections = (item) => {
+interface ItemNode {
+  name: string,
+  isSection?: boolean,
+  children?: ItemNode[]
+}
+
+let dynamicRenderFuncSections = (item: ItemNode) => {
   if (item.children) {
     if (item.isSection) {
       return (
@@ -190,9 +203,10 @@ let dynamicRenderFuncSections = (item) => {
         </SubMenuTrigger>
       );
     }
+  } else {
+    return <Item key={item.name}>{item.name}</Item>;
   }
 };
-
 
 export const SubMenuDynamicSections = {
   render: () => (
@@ -204,7 +218,6 @@ export const SubMenuDynamicSections = {
   ),
   name: 'dynamic submenu items with sections'
 };
-
 
 let subMenuNoSection = [
   {name: 'Section 1', isSection: true, children: [
@@ -222,20 +235,7 @@ export const MainSectionsSubNoSections = {
   render: () => (
     renderMenuTrigger(
       <Menu items={subMenuNoSection} onAction={action('onAction')}>
-        {(item) => {
-          console.log('item', item);
-          if (item.isSection) {
-            return (
-              <Section key={item.name} items={item.children} title={item.name}>
-                {(item) => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
-              </Section>
-            );
-          } else {
-            return (
-              <Item key={item.name} childItems={item.children}>{item.name}</Item>
-            );
-          }
-        }}
+        {(item) => dynamicRenderFuncSections(item)}
       </Menu>
     )
   ),
@@ -258,25 +258,14 @@ export const MainNoSectionsSubSections = {
   render: () => (
     renderMenuTrigger(
       <Menu items={subMenuSections} onAction={action('onAction')}>
-        {(item) => {
-          console.log('item', item);
-          if (item?.isSection) {
-            return (
-              <Section key={item.name} items={item.children} title={item.name}>
-                {(item) => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
-              </Section>
-            );
-          } else {
-            return (
-              <Item key={item.name} childItems={item.children}>{item.name}</Item>
-            );
-          }
-        }}
+        {(item) => dynamicRenderFuncSections(item)}
       </Menu>
     )
   ),
   name: 'dynamic, main menu no sections, sub menu w/ sections'
 };
+
+// TODO: add the complex one here: aka with icons, multiple submenus per menu, some with sections, some without
 
 export const ActionOverride = {
   render: () => renderMenuTrigger(
