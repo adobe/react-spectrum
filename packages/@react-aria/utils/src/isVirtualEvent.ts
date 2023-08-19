@@ -46,8 +46,6 @@ export function isVirtualPointerEvent(event: PointerEvent) {
   // Cannot use "event.pressure === 0" as the sole check due to Safari pointer events always returning pressure === 0
   // instead of .5, see https://bugs.webkit.org/show_bug.cgi?id=206216. event.pointerType === 'mouse' is to distingush
   // Talkback double tap from Windows Firefox touch screen press
-
-
   return (
     (!isAndroid() && event.width === 0 && event.height === 0) ||
     (event.width === 1 &&
