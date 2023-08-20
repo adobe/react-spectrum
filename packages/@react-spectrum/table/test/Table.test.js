@@ -4449,14 +4449,9 @@ export let tableTests = () => {
       await act(() => Promise.resolve());
       let table = tree.getByRole('grid');
       let header = within(table).getAllByRole('columnheader')[2];
-      expect(header).not.toHaveAttribute('tabindex');
+      expect(header).toHaveAttribute('tabindex', '-1');
       let headerButton = within(header).getByRole('button');
       expect(headerButton).toHaveAttribute('aria-disabled', 'true');
-      // Can't progamatically focus the column headers since they have no tab index when table is empty
-      act(() => {
-        header.focus();
-      });
-      expect(document.activeElement).toBe(document.body);
     });
 
     it('should disable press interactions with the column headers', async function () {
