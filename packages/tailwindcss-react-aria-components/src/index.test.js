@@ -23,7 +23,7 @@ function run({options, content}) {
 }
 
 test('variants', async () => {
-  let content = html`<div className="hovered:bg-red focused:bg-red focus-visible:bg-red pressed:bg-red disabled:bg-red drop-target:bg-red dragging:bg-red empty:bg-red allows-removing:bg-red allows-sorting:bg-red placeholder:bg-red selected:bg-red indeterminate:bg-red readonly:bg-red required:bg-red entering:bg-red exiting:bg-red open:bg-red unavailable:bg-red current:bg-red invalid:bg-red validation-state-invalid:bg-red validation-state-valid:bg-red placement-left:bg-red placement-right:bg-red placement-top:bg-red placement-bottom:bg-red type-literal:bg-red type-year:bg-red type-month:bg-red type-day:bg-red layout-grid:bg-red layout-stack:bg-red orientation-horizontal:bg-red orientation-vertical:bg-red"></div>`;
+  let content = html`<div data-rac className="hovered:bg-red focused:bg-red focus-visible:bg-red pressed:bg-red disabled:bg-red drop-target:bg-red dragging:bg-red empty:bg-red allows-removing:bg-red allows-sorting:bg-red placeholder:bg-red selected:bg-red indeterminate:bg-red readonly:bg-red required:bg-red entering:bg-red exiting:bg-red open:bg-red unavailable:bg-red current:bg-red invalid:bg-red validation-state-invalid:bg-red validation-state-valid:bg-red placement-left:bg-red placement-right:bg-red placement-top:bg-red placement-bottom:bg-red type-literal:bg-red type-year:bg-red type-month:bg-red type-day:bg-red layout-grid:bg-red layout-stack:bg-red orientation-horizontal:bg-red orientation-vertical:bg-red"></div>`;
   return run({content}).then((result) => {
     expect(result.css).toContain(css`
 .hovered\:bg-red[data-hovered] {
@@ -34,7 +34,7 @@ test('variants', async () => {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.focus-visible\:bg-red[data-focus-visible] {
+.focus-visible\:bg-red[data-rac][data-focus-visible] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
@@ -42,7 +42,7 @@ test('variants', async () => {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.disabled\:bg-red[data-disabled] {
+.disabled\:bg-red[data-rac][data-disabled] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
@@ -54,7 +54,7 @@ test('variants', async () => {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.empty\:bg-red[data-empty] {
+.empty\:bg-red[data-rac][data-empty] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
@@ -74,7 +74,7 @@ test('variants', async () => {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.indeterminate\:bg-red[data-indeterminate] {
+.indeterminate\:bg-red[data-rac][data-indeterminate] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
@@ -82,7 +82,7 @@ test('variants', async () => {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.required\:bg-red[data-required] {
+.required\:bg-red[data-rac][data-required] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
@@ -94,7 +94,7 @@ test('variants', async () => {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.open\:bg-red[data-open] {
+.open\:bg-red[data-rac][data-open] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
@@ -106,63 +106,63 @@ test('variants', async () => {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.invalid\:bg-red[data-invalid] {
+.invalid\:bg-red[data-rac][data-invalid] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.validation-state-invalid\:bg-red[data-validation-state]="invalid" {
+.validation-state-invalid\:bg-red[data-validation-state="invalid"] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.validation-state-valid\:bg-red[data-validation-state]="valid" {
+.validation-state-valid\:bg-red[data-validation-state="valid"] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.placement-left\:bg-red[data-placement]="left" {
+.placement-left\:bg-red[data-placement="left"] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.placement-right\:bg-red[data-placement]="right" {
+.placement-right\:bg-red[data-placement="right"] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.placement-top\:bg-red[data-placement]="top" {
+.placement-top\:bg-red[data-placement="top"] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.placement-bottom\:bg-red[data-placement]="bottom" {
+.placement-bottom\:bg-red[data-placement="bottom"] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.type-literal\:bg-red[data-type]="literal" {
+.type-literal\:bg-red[data-type="literal"] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.type-year\:bg-red[data-type]="year" {
+.type-year\:bg-red[data-type="year"] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.type-month\:bg-red[data-type]="month" {
+.type-month\:bg-red[data-type="month"] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.type-day\:bg-red[data-type]="day" {
+.type-day\:bg-red[data-type="day"] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.layout-grid\:bg-red[data-layout]="grid" {
+.layout-grid\:bg-red[data-layout="grid"] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.layout-stack\:bg-red[data-layout]="stack" {
+.layout-stack\:bg-red[data-layout="stack"] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.orientation-horizontal\:bg-red[data-orientation]="horizontal" {
+.orientation-horizontal\:bg-red[data-orientation="horizontal"] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.orientation-vertical\:bg-red[data-orientation]="vertical" {
+.orientation-vertical\:bg-red[data-orientation="vertical"] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }`
@@ -171,7 +171,7 @@ test('variants', async () => {
 });
 
 test('variants with prefix', async () => {
-  let content = html`<div className="rac-hovered:bg-red rac-focused:bg-red rac-focus-visible:bg-red rac-pressed:bg-red rac-disabled:bg-red rac-drop-target:bg-red rac-dragging:bg-red rac-empty:bg-red rac-allows-removing:bg-red rac-allows-sorting:bg-red rac-placeholder:bg-red rac-selected:bg-red rac-indeterminate:bg-red rac-readonly:bg-red rac-required:bg-red rac-entering:bg-red rac-exiting:bg-red rac-open:bg-red rac-unavailable:bg-red rac-current:bg-red rac-invalid:bg-red rac-validation-state-invalid:bg-red rac-validation-state-valid:bg-red rac-placement-left:bg-red rac-placement-right:bg-red rac-placement-top:bg-red rac-placement-bottom:bg-red rac-type-literal:bg-red rac-type-year:bg-red rac-type-month:bg-red rac-type-day:bg-red rac-layout-grid:bg-red rac-layout-stack:bg-red rac-orientation-horizontal:bg-red rac-orientation-vertical:bg-red"></div>`;
+  let content = html`<div data-rac className="rac-hovered:bg-red rac-focused:bg-red rac-focus-visible:bg-red rac-pressed:bg-red rac-disabled:bg-red rac-drop-target:bg-red rac-dragging:bg-red rac-empty:bg-red rac-allows-removing:bg-red rac-allows-sorting:bg-red rac-placeholder:bg-red rac-selected:bg-red rac-indeterminate:bg-red rac-readonly:bg-red rac-required:bg-red rac-entering:bg-red rac-exiting:bg-red rac-open:bg-red rac-unavailable:bg-red rac-current:bg-red rac-invalid:bg-red rac-validation-state-invalid:bg-red rac-validation-state-valid:bg-red rac-placement-left:bg-red rac-placement-right:bg-red rac-placement-top:bg-red rac-placement-bottom:bg-red rac-type-literal:bg-red rac-type-year:bg-red rac-type-month:bg-red rac-type-day:bg-red rac-layout-grid:bg-red rac-layout-stack:bg-red rac-orientation-horizontal:bg-red rac-orientation-vertical:bg-red"></div>`;
   return run({content, options: {prefix: 'rac'}}).then((result) => {
     expect(result.css).toContain(css`
 .rac-hovered\:bg-red[data-hovered] {
@@ -258,59 +258,59 @@ test('variants with prefix', async () => {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.rac-validation-state-invalid\:bg-red[data-validation-state]="invalid" {
+.rac-validation-state-invalid\:bg-red[data-validation-state="invalid"] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.rac-validation-state-valid\:bg-red[data-validation-state]="valid" {
+.rac-validation-state-valid\:bg-red[data-validation-state="valid"] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.rac-placement-left\:bg-red[data-placement]="left" {
+.rac-placement-left\:bg-red[data-placement="left"] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.rac-placement-right\:bg-red[data-placement]="right" {
+.rac-placement-right\:bg-red[data-placement="right"] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.rac-placement-top\:bg-red[data-placement]="top" {
+.rac-placement-top\:bg-red[data-placement="top"] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.rac-placement-bottom\:bg-red[data-placement]="bottom" {
+.rac-placement-bottom\:bg-red[data-placement="bottom"] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.rac-type-literal\:bg-red[data-type]="literal" {
+.rac-type-literal\:bg-red[data-type="literal"] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.rac-type-year\:bg-red[data-type]="year" {
+.rac-type-year\:bg-red[data-type="year"] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.rac-type-month\:bg-red[data-type]="month" {
+.rac-type-month\:bg-red[data-type="month"] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.rac-type-day\:bg-red[data-type]="day" {
+.rac-type-day\:bg-red[data-type="day"] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.rac-layout-grid\:bg-red[data-layout]="grid" {
+.rac-layout-grid\:bg-red[data-layout="grid"] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.rac-layout-stack\:bg-red[data-layout]="stack" {
+.rac-layout-stack\:bg-red[data-layout="stack"] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.rac-orientation-horizontal\:bg-red[data-orientation]="horizontal" {
+.rac-orientation-horizontal\:bg-red[data-orientation="horizontal"] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.rac-orientation-vertical\:bg-red[data-orientation]="vertical" {
+.rac-orientation-vertical\:bg-red[data-orientation="vertical"] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }`
