@@ -15,7 +15,7 @@ governing permissions and limitations under the License.
 :root {
   --spectrum-dropzone-padding-x: var(--spectrum-global-dimension-size-150);
   --spectrum-dropzone-padding-y: var(--spectrum-global-dimension-size-115);
-  --spectrum-dropzone-banner-text-color: var(--spectrum-global-color-static-white);
+  --spectrum-dropzone-banner-text-color: var(--spectrum-gray-50);
   --spectrum-dropzone-banner-background-color: var(--spectrum-global-color-blue-500);
   --spectrum-dropzone-banner-border-color: var(--spectrum-dropzone-banner-background-color);
 }
