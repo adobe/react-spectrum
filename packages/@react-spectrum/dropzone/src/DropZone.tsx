@@ -16,8 +16,9 @@ import {DropZoneProps, DropZone as RACDropZone} from 'react-aria-components';
 import {mergeProps} from '@react-aria/utils';
 import React, {ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/dropzone/vars.css';
+
 export interface SpectrumDropZoneProps extends DropZoneProps, DOMProps, StyleProps, AriaLabelingProps {
-  /** The content to display in the button. */
+  /** The content to display in the drop zone. */
   children: ReactNode,
   /** Whether the dropzone has been filled. */
   isFilled?: boolean, 

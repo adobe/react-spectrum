@@ -16,7 +16,7 @@ import {classNames} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import {Draggable} from '@react-aria/dnd/stories/dnd.stories';
 import {DropZone} from '../';
-import {FileDropItem, TextDropItem} from 'react-aria';
+import {FileDropItem, TextDropItem, useDrag} from 'react-aria';
 import {FileTrigger, Text} from 'react-aria-components';
 import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
@@ -52,7 +52,7 @@ export const customBannerMessage = {
   render: (args) => (
     <Example 
       {...args}
-      bannerMessage="This is a custom message" />
+      replaceMessage="This is a custom message" />
   )
 };
 
@@ -186,30 +186,66 @@ function DropZoneFilled(props) {
   let [filledSrc, setFilledSrc] = useState('https://i.imgur.com/DhygPot.jpg');
 
   return (
-    <DropZone
-      {...props}
-      isFilled={isFilled}
-      UNSAFE_className={classNames(styles, 'is-filled')}
-      width="size-3000"
-      height="size-2400"
-      getDropOperation={(types) =>  (types.has('image/png') || types.has('image/jpeg')) ? 'copy' : 'cancel'}
-      onDrop={async (e) => { 
-        let item = e.items.find((item) => item.kind === 'file') as FileDropItem;
-        if (item.type === 'image/jpeg' || item.type === 'image/png') {
-          setFilledSrc(URL.createObjectURL(await item.getFile()));
-          setIsFilled(true);
+    <>
+      <DraggableImage />
+      <DropZone
+        {...props}
+        isFilled={isFilled}
+        UNSAFE_className={classNames(styles, 'is-filled')}
+        width="size-3000"
+        height="size-2400"
+        getDropOperation={(types) =>  (types.has('image/png') || types.has('image/jpeg')) ? 'copy' : 'cancel'}
+        onDrop={async (e) => {
+          e.items.find(async (item) => {
+            if (item.kind === 'file') {
+              if (item.type === 'image/jpeg' || item.type === 'image/png') {
+                setFilledSrc(URL.createObjectURL(await item.getFile()));
+                setIsFilled(true);
+              }
+            } else if (item.kind === 'text') {
+              setFilledSrc(await item.getText('image/jpeg'));
+              setIsFilled(true);
+            }
+          });
+        }}
+        onDropEnter={action('onDropEnter')}
+        onDropExit={action('onDropExit')} 
+        onPaste={action('onPaste')}>
+        {!isFilled && 
+          <IllustratedMessage>
+            <Upload />
+            <Heading>Drag and Drop here</Heading>
+          </IllustratedMessage>
         }
-      }}
-      onDropEnter={action('onDropEnter')}
-      onDropExit={action('onDropExit')} 
-      onPaste={action('onPaste')}>
-      {!isFilled && 
-        <IllustratedMessage>
-          <Upload />
-          <Heading>Drag and Drop here</Heading>
-        </IllustratedMessage>
-      }
-      <img className={styles.images} alt="a starry sky" src={filledSrc} />
-    </DropZone>
+        <img className={styles.images} alt="a starry sky" src={filledSrc} />
+      </DropZone>
+    </>
+  );
+}
+
+function DraggableImage() {
+  let {dragProps, isDragging} = useDrag({
+    getItems() {
+      return [
+        {
+          'image/jpeg': 'https://i.imgur.com/Z7AzH2c.jpg'
+        }
+      ];
+    }
+  });
+
+  return (
+    <div
+      {...dragProps}
+      role="button"
+      tabIndex={0}
+      style={{margin: '20px'}}>
+      <img
+        width="150px"
+        height="100px"
+        alt="traditional roof"
+        src="https://i.imgur.com/Z7AzH2c.jpg"
+        className={`draggable ${isDragging ? 'dragging' : ''}`} />
+    </div>
   );
 }
