@@ -23,6 +23,7 @@ export default {
 };
 
 // TODO: add menu item actions (with action override), multiple triggers in a sub menu, complex items, controls for submenu orientation/placement
+// TODO: add chromatic stories
 export const SubMenuStatic = {
   render: () => (
     renderMenuTrigger(

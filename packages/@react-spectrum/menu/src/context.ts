@@ -47,10 +47,11 @@ export interface MenuStateContextValue<T> {
   state?: TreeState<T>,
   container?: RefObject<HTMLElement>,
   menu?: RefObject<HTMLUListElement>,
-  onAction?: (key: Key) => void
+  topLevelonAction?: (key: Key) => void,
+  topLevelMenuState?: MenuTriggerState
 }
 
-export const MenuStateContext = React.createContext<MenuStateContextValue<any>>({});
+export const MenuStateContext = React.createContext<MenuStateContextValue<any>>(undefined);
 
 export function useMenuStateContext<T>(): MenuStateContextValue<T> {
   return useContext(MenuStateContext);

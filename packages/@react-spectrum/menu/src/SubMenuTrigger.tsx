@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {chain} from '@react-aria/utils';
 import {classNames, useIsMobileDevice} from '@react-spectrum/utils';
 import {MenuContext, MenuDialogContext, useMenuStateContext} from './context';
 import {Placement} from '@react-types/overlays';
@@ -57,7 +58,7 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
   // TODO: Grab the tree state from the parent, each level of SubMenuTrigger has its own state tracking the
   // expanded state of its immediate children (aka each Menu has its own tree state) and thus enforce that only a single key on its level is open at a time.
   // Each SubMenuTrigger has its own open state enforced by the expandedKeys state of its parent trigger.
-  let {state: parentMenuState, container, menu: parentMenu} = useMenuStateContext();
+  let {state: parentMenuState, container, menu: parentMenu, topLevelMenuState} = useMenuStateContext();
 
   // TODO: call useMenuTriggerState in place of useOverlayTriggerState since they are basically the same except for focusStrategy which we need for SubMenu autofocus
   let subMenuState = useMenuTriggerState({isOpen: parentMenuState.expandedKeys.has(props.targetKey), onOpenChange: (val) => {
@@ -109,8 +110,8 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
     'aria-labelledby': subMenuTriggerId,
     state: subMenuState,
     ref: menuRef,
-    // TODO: need onClose to close submenu on submenu item select/arrowleft
-    onClose: subMenuState.close,
+    // TODO: need onClose to close submenu on submenu item select. Needs to also close the top most menu
+    onClose: chain(subMenuState.close, topLevelMenuState.close),
     closeOnSelect,
     // TODO: we don't call useMenuTrigger so need an autofocus value for when the submenu is opened by keyboard/hover/press
     // useMenuItem currently handles opening the submenu, perhaps copy over the pressProps/some of the keydown stuff from useMenuTrigger's implementation

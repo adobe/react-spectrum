@@ -85,7 +85,7 @@ export interface AriaMenuItemProps {
   onAction?: (key: Key) => void,
 
   /** What kind of popup the item opens. */
-  'aria-haspopup'?: 'menu' | 'dialog'
+  'aria-haspopup'?: 'menu' | 'dialog',
 
   // TODO: best way to pass this in? We need a way to infor the SubMenuTrigger what the focus strategy is so we can auto focus the right submenu item
   onOpen?: (val?: FocusStrategy) => void
@@ -124,7 +124,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let onSubmenuOpen = useEffectEvent((focusStrategy?: FocusStrategy) => {
     cancelOpenTimeout();
     state.setExpandedKeys(new Set([key]));
-    onOpen && onOpen(focusStrategy)
+    onOpen && onOpen(focusStrategy);
   });
 
   useLayoutEffect(() => {
@@ -273,6 +273,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
           if (isTrigger && direction === 'ltr') {
             onSubmenuOpen('first');
           } else if (direction === 'rtl' && data.isSubMenu) {
+            // TODO: this shouldn't be onClose() since it should only close the submenu. onClose() should close all menus
             onClose();
           } else {
             e.continuePropagation();
@@ -282,6 +283,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
           if (isTrigger && direction === 'rtl') {
             onSubmenuOpen('first');
           } else if (direction === 'ltr' && data.isSubMenu) {
+             // TODO: this shouldn't be onClose() since it should only close the submenu. onClose() should close all menus
             onClose();
           } else {
             e.continuePropagation();

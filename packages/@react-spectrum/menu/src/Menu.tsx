@@ -25,9 +25,15 @@ import {useTreeState} from '@react-stately/tree';
 
 function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLUListElement>) {
   let contextProps = useContext(MenuContext);
-  let {onAction: contextAction} = useMenuStateContext();
+  let menuStateContext = useMenuStateContext();
+  let isSubMenu = !!menuStateContext;
+  let {topLevelonAction, topLevelMenuState} = menuStateContext || {};
+  if (!isSubMenu) {
+    topLevelonAction = props.onAction;
+    topLevelMenuState = contextProps.state;
+  }
   let completeProps = {
-    ...mergeProps(contextProps, {onAction: contextAction, ...props})
+    ...mergeProps(contextProps, {onAction: topLevelonAction, ...props})
   };
 
   let domRef = useDOMRef(ref);
@@ -38,7 +44,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
   useSyncRef(contextProps, domRef);
   return (
     // TODO: always provide the first onAction from the original menu as a fallback? Or should the nearest onAction take precedent? Or should the user always provide an onAction for each submenu?
-    <MenuStateContext.Provider value={{state, container: scopedRef, menu: domRef, onAction: contextAction ?? completeProps.onAction}}>
+    <MenuStateContext.Provider value={{state, container: scopedRef, menu: domRef, topLevelonAction, topLevelMenuState}}>
       <FocusScope contain={state.expandedKeys.size > 0}>
         <ul
           {...menuProps}
