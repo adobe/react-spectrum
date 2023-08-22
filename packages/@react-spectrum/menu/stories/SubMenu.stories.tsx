@@ -270,16 +270,16 @@ export const MainNoSectionsSubSections = {
 
 export const ActionOverride = {
   render: () => renderMenuTrigger(
-    <Menu onAction={action('onAction')}>
+    <Menu onAction={action('onAction')} onClose={action('onClose menu 1')}>
       <Item key="Lvl 1 Item 1">Lvl 1 Item 1</Item>
       <SubMenuTrigger>
         <Item key="Lvl 1 Item 2">Lvl 1 Item 2</Item>
-        <Menu onAction={action('onAction submenu 2')}>
+        <Menu onAction={action('onAction submenu 2')} onClose={action('onClose menu 2')}>
           <Item key="Lvl 2 Item 1">Lvl 2 Item 1</Item>
           <Item key="Lvl 1 Item 2">Lvl 2 Item 2</Item>
           <SubMenuTrigger>
             <Item key="Lvl 2 Item 3">Lvl 2 Item 3</Item>
-            <Menu>
+            <Menu onClose={action('onClose menu 3')}>
               <Item key="Lvl 3 Item 1">Lvl 3 Item 1</Item>
               <Item key="Lvl 3 Item 2">Lvl 3 Item 2</Item>
               <Item key="Lvl 3 Item 3">Lvl 3 Item 3</Item>
@@ -290,8 +290,8 @@ export const ActionOverride = {
       <Item key="Lvl 1 Item 3">Lvl 1 Item 3</Item>
     </Menu>
   ),
-  name: 'sub menu onaction override',
-  parameters: {description: {data: 'Lvl 1 and Lv3 menu items share the same onAction via inheritance. Lvl2 menu item has its own onAction override'}}
+  name: 'submenu onAction override with onClose',
+  parameters: {description: {data: 'Lvl 1 and Lv3 menu items share the same onAction via inheritance. Lvl2 menu item has its own onAction override. Each menu should have its own onClose triggered only if its direct menu option was acted upon.'}}
 };
 
 // TODO add mix of sub menus with sections and without section

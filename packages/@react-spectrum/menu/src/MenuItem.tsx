@@ -48,11 +48,11 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   let menuDialogContext = useMenuDialogContext();
   let {direction} = useLocale();
   let {triggerRef} = menuDialogContext || {};
-  let isMenuDialogTrigger = !!menuDialogContext;
-  let isUnavailable = false;
+  // If menuDialogContext.isUnavailable is explicitly false, then disable all submenu behavior
+  let isMenuDialogTrigger = !!menuDialogContext && menuDialogContext.isUnavailable !== false;
+  let isUnavailable;
   let popupType;
   let {
-    onClose,
     closeOnSelect
   } = useMenuContext();
 
@@ -88,7 +88,6 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
       isDisabled,
       'aria-label': item['aria-label'],
       key,
-      onClose,
       closeOnSelect,
       isVirtualized,
       onAction,
