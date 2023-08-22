@@ -23,14 +23,14 @@ function run({options, content}) {
 }
 
 test('variants', async () => {
-  let content = html`<div data-rac className="hovered:bg-red focused:bg-red focus-visible:bg-red pressed:bg-red disabled:bg-red drop-target:bg-red dragging:bg-red empty:bg-red allows-removing:bg-red allows-sorting:bg-red placeholder:bg-red selected:bg-red indeterminate:bg-red readonly:bg-red required:bg-red entering:bg-red exiting:bg-red open:bg-red unavailable:bg-red current:bg-red invalid:bg-red validation-state-invalid:bg-red validation-state-valid:bg-red placement-left:bg-red placement-right:bg-red placement-top:bg-red placement-bottom:bg-red type-literal:bg-red type-year:bg-red type-month:bg-red type-day:bg-red layout-grid:bg-red layout-stack:bg-red orientation-horizontal:bg-red orientation-vertical:bg-red"></div>`;
+  let content = html`<div data-rac className="hover:bg-red focus:bg-red focus-visible:bg-red pressed:bg-red disabled:bg-red drop-target:bg-red dragging:bg-red empty:bg-red allows-removing:bg-red allows-sorting:bg-red placeholder:bg-red selected:bg-red indeterminate:bg-red readonly:bg-red required:bg-red entering:bg-red exiting:bg-red open:bg-red unavailable:bg-red current:bg-red invalid:bg-red validation-state-invalid:bg-red validation-state-valid:bg-red placement-left:bg-red placement-right:bg-red placement-top:bg-red placement-bottom:bg-red type-literal:bg-red type-year:bg-red type-month:bg-red type-day:bg-red layout-grid:bg-red layout-stack:bg-red orientation-horizontal:bg-red orientation-vertical:bg-red"></div>`;
   return run({content}).then((result) => {
     expect(result.css).toContain(css`
-.hovered\:bg-red[data-hovered] {
+.hover\:bg-red[data-rac][data-hovered] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.focused\:bg-red[data-focused] {
+.focus\:bg-red[data-rac][data-focused] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
@@ -171,14 +171,14 @@ test('variants', async () => {
 });
 
 test('variants with prefix', async () => {
-  let content = html`<div data-rac className="rac-hovered:bg-red rac-focused:bg-red rac-focus-visible:bg-red rac-pressed:bg-red rac-disabled:bg-red rac-drop-target:bg-red rac-dragging:bg-red rac-empty:bg-red rac-allows-removing:bg-red rac-allows-sorting:bg-red rac-placeholder:bg-red rac-selected:bg-red rac-indeterminate:bg-red rac-readonly:bg-red rac-required:bg-red rac-entering:bg-red rac-exiting:bg-red rac-open:bg-red rac-unavailable:bg-red rac-current:bg-red rac-invalid:bg-red rac-validation-state-invalid:bg-red rac-validation-state-valid:bg-red rac-placement-left:bg-red rac-placement-right:bg-red rac-placement-top:bg-red rac-placement-bottom:bg-red rac-type-literal:bg-red rac-type-year:bg-red rac-type-month:bg-red rac-type-day:bg-red rac-layout-grid:bg-red rac-layout-stack:bg-red rac-orientation-horizontal:bg-red rac-orientation-vertical:bg-red"></div>`;
+  let content = html`<div data-rac className="rac-hover:bg-red rac-focus:bg-red rac-focus-visible:bg-red rac-pressed:bg-red rac-disabled:bg-red rac-drop-target:bg-red rac-dragging:bg-red rac-empty:bg-red rac-allows-removing:bg-red rac-allows-sorting:bg-red rac-placeholder:bg-red rac-selected:bg-red rac-indeterminate:bg-red rac-readonly:bg-red rac-required:bg-red rac-entering:bg-red rac-exiting:bg-red rac-open:bg-red rac-unavailable:bg-red rac-current:bg-red rac-invalid:bg-red rac-validation-state-invalid:bg-red rac-validation-state-valid:bg-red rac-placement-left:bg-red rac-placement-right:bg-red rac-placement-top:bg-red rac-placement-bottom:bg-red rac-type-literal:bg-red rac-type-year:bg-red rac-type-month:bg-red rac-type-day:bg-red rac-layout-grid:bg-red rac-layout-stack:bg-red rac-orientation-horizontal:bg-red rac-orientation-vertical:bg-red"></div>`;
   return run({content, options: {prefix: 'rac'}}).then((result) => {
     expect(result.css).toContain(css`
-.rac-hovered\:bg-red[data-hovered] {
+.rac-hover\:bg-red[data-hovered] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.rac-focused\:bg-red[data-focused] {
+.rac-focus\:bg-red[data-focused] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
