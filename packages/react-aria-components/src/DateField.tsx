@@ -169,7 +169,7 @@ export interface DateInputRenderProps {
   isHovered: boolean,
   /**
    * Whether an element within the date input is focused, either via a mouse or keyboard.
-   * @selector :focus-within
+   * @selector [data-focus-within]
    */
   isFocusWithin: boolean,
   /**
@@ -210,6 +210,7 @@ function DateInput({children, slot, ...otherProps}: DateInputProps, ref: Forward
         {...renderProps}
         ref={fieldRef}
         slot={slot}
+        data-focus-within={isFocused || undefined}
         data-hovered={isHovered || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-disabled={state.isDisabled || undefined}>
@@ -234,12 +235,12 @@ export interface DateSegmentRenderProps extends Omit<IDateSegment, 'isEditable'>
   isPlaceholder: boolean,
   /**
    * Whether the segment is read only.
-   * @selector [aria-readonly]
+   * @selector [data-readonly]
    */
   isReadOnly: boolean,
   /**
    * Whether the date field is in an invalid state.
-   * @selector [aria-invalid]
+   * @selector [data-invalid]
    */
   isInvalid: boolean,
   /**
@@ -273,6 +274,8 @@ function DateSegment({segment, ...otherProps}: DateSegmentProps, ref: ForwardedR
       {...mergeProps(filterDOMProps(otherProps as any), segmentProps)}
       {...renderProps}
       ref={domRef}
+      data-invalid={state.validationState === 'invalid' || undefined}
+      data-readonly={!segment.isEditable || undefined}
       data-type={segment.type} />
   );
 }

@@ -172,7 +172,7 @@ function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionP
 export interface MenuItemRenderProps extends ItemRenderProps {
   /**
    * Whether the item is currently selected.
-   * @selector [aria-checked=true]
+   * @selector [data-selected]
    */
    isSelected: boolean
 }
@@ -210,10 +210,12 @@ function MenuItem<T>({item}: MenuItemProps<T>) {
       {...mergeProps(DOMProps, menuItemProps, focusProps)}
       {...renderProps}
       ref={ref}
+      data-disabled={states.isDisabled || undefined}
       data-hovered={states.isFocused || undefined}
       data-focused={states.isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
-      data-pressed={states.isPressed || undefined}>
+      data-pressed={states.isPressed || undefined}
+      data-selected={states.isSelected || undefined}>
       <Provider
         values={[
           [TextContext, {
