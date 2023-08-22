@@ -55,7 +55,6 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   let domProps = filterDOMProps(item.props);
 
   let {
-    onClose,
     closeOnSelect
   } = useMenuContext();
 
@@ -81,7 +80,6 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
       isDisabled,
       'aria-label': item['aria-label'],
       key,
-      onClose,
       closeOnSelect,
       isVirtualized,
       onAction,
