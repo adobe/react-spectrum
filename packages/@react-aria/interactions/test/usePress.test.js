@@ -607,10 +607,7 @@ describe('usePress', function () {
       let el = res.getByText('test');
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', width: 0, height: 0}));
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', width: 0, height: 0, clientX: 0, clientY: 0}));
-
-      expect(events).not.toEqual([]);
-
-      fireEvent.click(el);
+      
       expect(events).toEqual([
         {
           type: 'pressstart',
