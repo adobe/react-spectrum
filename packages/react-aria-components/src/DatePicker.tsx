@@ -27,7 +27,7 @@ import {TextContext} from './Text';
 export interface DatePickerRenderProps {
   /**
    * Whether an element within the date picker is focused, either via a mouse or keyboard.
-   * @selector :focus-within
+   * @selector [data-focus-within]
    */
   isFocusWithin: boolean,
   /**
@@ -129,6 +129,7 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
         {...renderProps}
         ref={ref}
         slot={props.slot}
+        data-focus-within={isFocused || undefined}
         data-validation-state={state.validationState || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-disabled={props.isDisabled || undefined} />
@@ -236,6 +237,7 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
         {...renderProps}
         ref={ref}
         slot={props.slot}
+        data-focus-within={isFocused || undefined}
         data-validation-state={state.validationState || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-disabled={props.isDisabled || undefined} />
