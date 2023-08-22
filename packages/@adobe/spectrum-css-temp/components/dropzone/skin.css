@@ -11,7 +11,6 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Dropzone {
-  --spectrum-dropzone-illustratedmessage-illustration-color-selected: var(--spectrum-global-color-blue-400);
   --spectrum-dropzone-illustratedmessage-illustration-color-key-focus: var(--spectrum-global-color-blue-500);
 }
 
@@ -61,13 +60,16 @@ governing permissions and limitations under the License.
 @media (forced-colors: active) {
   .spectrum-Dropzone {
     --spectrum-dropzone-border-color: CanvasText;
-    --spectrum-dropzone-illustratedmessage-illustration-color-selected: Highlight;
     --spectrum-dropzone-border-color-selected-hover: Highlight;
     --spectrum-dropzone-background-color-selected-hover: Canvas;
 
     &.is-dragged {
       forced-color-adjust: none;
     }
+  }
+
+  .spectrum-Dropzone--banner {
+    --spectrum-dropzone-banner-border-color: CanvasText;
   }
 
   .spectrum-Dropzone--illustratedMessage {

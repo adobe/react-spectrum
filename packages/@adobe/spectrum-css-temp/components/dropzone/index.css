@@ -13,8 +13,11 @@ governing permissions and limitations under the License.
 @import '../commons/index.css';
 
 :root {
-  --spectrum-dropzone-padding-y: var(--spectrum-global-dimension-size-125);
+  --spectrum-dropzone-padding-x: var(--spectrum-global-dimension-size-150);
+  --spectrum-dropzone-padding-y: var(--spectrum-global-dimension-size-115);
   --spectrum-dropzone-banner-text-color: var(--spectrum-global-color-static-white);
+  --spectrum-dropzone-banner-background-color: var(--spectrum-global-color-blue-500);
+  --spectrum-dropzone-banner-border-color: var(--spectrum-dropzone-banner-background-color);
 }
 
 .spectrum-Dropzone {
@@ -40,11 +43,17 @@ governing permissions and limitations under the License.
 
 .spectrum-Dropzone--banner {
   position: absolute;
-  color: var(--spectrum-global-color-static-white);
-  background-color: var(--spectrum-dropzone-border-color-selected-hover);
+  color: var(--spectrum-dropzone-banner-text-color);
+  background-color: var(--spectrum-dropzone-banner-background-color);
   z-index: 1;
-  top: 0px;
+  left: 0;
   right: 0;
-  width: 100%;
-  padding: var(--spectrum-dropzone-padding-y) 0;
+  bottom: 0;
+  top: 0;
+  margin: auto;
+  height: fit-content;
+  width: fit-content;
+  padding: var(--spectrum-dropzone-padding-y) var(--spectrum-dropzone-padding-x);
+  border-radius: var(--spectrum-dropzone-border-radius);
+  border: 1px solid var(--spectrum-dropzone-banner-border-color);
 }
