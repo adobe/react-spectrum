@@ -1519,7 +1519,19 @@ describe('ComboBox', function () {
       });
       fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
       fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
-      await user.tab();
+      // something about the implementation of await user.tab() fails to trigger an extra render like on web
+      // on the browser, it triggers a resetInput, the old implementation of userEvent.tab though looked like this and matched
+      // what we saw in the browser. I suspect it's because of when focus is called + the act around the focus forcing a render flush
+      // note, the new user.tab works in React 18, this is a 16/17 fix
+      // TODO: determine if we can address this
+      act(() => {
+        fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+        act(() => {
+          secondaryButton.focus();
+        });
+        fireEvent.keyUp(document.activeElement, {key: 'Tab'});
+      });
+
       act(() => {
         jest.runAllTimers();
       });
@@ -1836,7 +1848,18 @@ describe('ComboBox', function () {
       expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
       expect(items[0]).toHaveTextContent('Bulbasaur');
 
-      await user.tab();
+      // something about the implementation of await user.tab() fails to trigger an extra render like on web
+      // on the browser, it triggers a resetInput, the old implementation of userEvent.tab though looked like this and matched
+      // what we saw in the browser. I suspect it's because of when focus is called + the act around the focus forcing a render flush
+      // note, the new user.tab works in React 18, this is a 16/17 fix
+      // TODO: determine if we can address this
+      act(() => {
+        fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+        act(() => {
+          tabButton.focus();
+        });
+        fireEvent.keyUp(document.activeElement, {key: 'Tab'});
+      });
       act(() => {
         jest.runAllTimers();
       });

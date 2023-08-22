@@ -11,7 +11,15 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, installPointerEvent, render as renderComponent, triggerPress, within} from '@react-spectrum/test-utils';
+import {
+  act,
+  fireEvent,
+  installPointerEvent,
+  pointerMap,
+  render as renderComponent,
+  triggerPress,
+  within
+} from '@react-spectrum/test-utils';
 import {announce} from '@react-aria/live-announcer';
 import {composeStories} from '@storybook/testing-react';
 import {enableTableNestedRows} from '@react-stately/flags';
@@ -78,7 +86,7 @@ describe('TableView with expandable rows', function () {
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     jest.useFakeTimers();
-    user = userEvent.setup({delay: null});
+    user = userEvent.setup({delay: null, pointerMap});
     enableTableNestedRows();
   });
 

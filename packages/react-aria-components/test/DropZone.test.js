@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import {Button, DropZone, DropZoneContext, FileTrigger, Link, Text} from '../';
 import {ClipboardEvent, DataTransfer, DataTransferItem, DragEvent} from '@react-aria/dnd/test/mocks';
 import {Draggable} from '@react-aria/dnd/test/examples';
@@ -20,7 +20,7 @@ import userEvent from '@testing-library/user-event';
 describe('DropZone', () => {
   let user;
   beforeAll(() => {
-    user = userEvent.setup({delay: null});
+    user = userEvent.setup({delay: null, pointerMap});
   });
 
   it('should render a dropzone', () => {

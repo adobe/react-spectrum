@@ -15,7 +15,14 @@ import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {Content, Footer} from '@react-spectrum/view';
 import {ContextualHelpTrigger, Item, Menu, MenuTrigger, Section} from '../';
-import {DEFAULT_LONG_PRESS_TIME, installPointerEvent, triggerLongPress, triggerPress, triggerTouch} from '@react-spectrum/test-utils';
+import {
+  DEFAULT_LONG_PRESS_TIME,
+  installPointerEvent,
+  pointerMap,
+  triggerLongPress,
+  triggerPress,
+  triggerTouch
+} from '@react-spectrum/test-utils';
 import {Dialog} from '@react-spectrum/dialog';
 import {Heading, Text} from '@react-spectrum/text';
 import {Link} from '@react-spectrum/link';
@@ -65,7 +72,7 @@ describe('MenuTrigger', function () {
   let user;
 
   beforeAll(function () {
-    user = userEvent.setup({delay: null});
+    user = userEvent.setup({delay: null, pointerMap});
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();

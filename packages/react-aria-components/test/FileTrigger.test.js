@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 import {Button, FileTrigger, Link} from '../';
+import {pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 describe('FileTrigger', () => {
   let user;
   beforeAll(() => {
-    user = userEvent.setup();
+    user = userEvent.setup({delay: null, pointerMap});
   });
   it('should render a FileTrigger with Link', () => {
     let {getByRole} = render(

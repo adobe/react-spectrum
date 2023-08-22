@@ -11,7 +11,7 @@
  */
 
 import {Button, Label, Tag, TagGroup, TagList, Text} from '../';
-import {fireEvent, render} from '@react-spectrum/test-utils';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -44,7 +44,7 @@ let renderTagGroup = (tagGroupProps, tagListProps, itemProps) => render(<TestTag
 describe('TagGroup', () => {
   let user;
   beforeAll(() => {
-    user = userEvent.setup({delay: null});
+    user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
   });
 

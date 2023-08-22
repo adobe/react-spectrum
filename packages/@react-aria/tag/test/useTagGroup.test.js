@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render, within} from '@react-spectrum/test-utils';
+import {fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
 import {Item} from '@react-stately/collections';
 import React from 'react';
 import {useButton} from '@react-aria/button';
@@ -63,7 +63,7 @@ function Button(props) {
 describe('useTagGroup', function () {
   let user;
   beforeAll(() => {
-    user = userEvent.setup({delay: null});
+    user = userEvent.setup({delay: null, pointerMap});
   });
   it('should support selection', async () => {
     let onRemove = jest.fn();
