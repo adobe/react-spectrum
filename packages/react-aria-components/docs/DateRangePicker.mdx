@@ -106,7 +106,7 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
     background: var(--field-background);
     white-space: nowrap;
 
-    &:focus-within {
+    &[data-focus-within] {
       border-color: var(--highlight-background);
       box-shadow: 0 0 0 1px var(--highlight-background);
     }
@@ -192,7 +192,7 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
     caret-color: transparent;
   }
 
-  &[aria-invalid] {
+  &[data-invalid] {
     color: var(--text-color-invalid);
 
     &:focus {
@@ -314,7 +314,7 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
       color: var(--unavailable-color);
     }
 
-    &[aria-invalid] {
+    &[data-invalid] {
       background: var(--invalid-color);
       color: var(--highlight-foreground);
     }
@@ -646,14 +646,14 @@ A custom `className` can also be specified on any component. This overrides the 
 </DateInput>
 ```
 
-In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using DOM attributes, which you can target in CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. For example:
+In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
 
 ```css
 .react-aria-DateSegment[data-placeholder] {
   /* ... */
 }
 
-.react-aria-DateSegment[aria-readonly] {
+.react-aria-DateSegment[data-readonly] {
   /* ... */
 }
 ```

@@ -318,10 +318,13 @@ function GridListItem({item}) {
         {...mergeProps(filterDOMProps(props as any), rowProps, focusProps, hoverProps, draggableItem?.dragProps)}
         {...renderProps}
         ref={ref}
+        data-selected={states.isSelected || undefined}
+        data-disabled={states.isDisabled || undefined}
         data-hovered={isHovered || undefined}
         data-focused={states.isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-pressed={states.isPressed || undefined}
+        data-allows-dragging={!!dragState || undefined}
         data-dragging={isDragging || undefined}
         data-drop-target={dropIndicator?.isDropTarget || undefined}>
         <div {...gridCellProps}>

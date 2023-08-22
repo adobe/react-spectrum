@@ -377,6 +377,9 @@ function Option<T>({item}: OptionProps<T>) {
         {...mergeProps(filterDOMProps(props as any), optionProps, hoverProps, draggableItem?.dragProps, droppableItem?.dropProps)}
         {...renderProps}
         ref={ref}
+        data-allows-dragging={!!dragState || undefined}
+        data-selected={states.isSelected || undefined}
+        data-disabled={states.isDisabled || undefined}
         data-hovered={isHovered || undefined}
         data-focused={states.isFocused || undefined}
         data-focus-visible={states.isFocusVisible || undefined}
