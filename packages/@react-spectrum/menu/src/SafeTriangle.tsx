@@ -67,7 +67,7 @@ export function SafeTriangle(props: SafeTriangleProps): ReactElement {
 
   return (
     <div
-      aria-hidden="false"
+      aria-hidden="true"
       style={{
         zIndex: 1,
         position: 'absolute',
