@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {MutableRefObject, ReactElement, useEffect, useState} from 'react';
+import React, {MutableRefObject, ReactElement, useCallback, useEffect, useState} from 'react';
 
 interface SafeTriangleProps {
   /** Ref for the submenu. */
@@ -28,21 +28,11 @@ export function SafeTriangle(props: SafeTriangleProps): ReactElement {
     subMenuRef,
     triggerRef
   } = props;
-  let [mousePosition, setMousePosition] = useState<{mouseX: number, mouseY: number}>({mouseX: null, mouseY: null});
-  let {mouseX, mouseY} = mousePosition;
   let [style, setStyle] = useState<React.CSSProperties>({height: 0, width: 0});
 
-  let updateMousePosition = (e: MouseEvent) => {
-    setMousePosition({mouseX: e.clientX, mouseY: e.clientY});
-  };
-
-  useEffect(() => {
-    window.addEventListener('mousemove', updateMousePosition);
-
-    return () => window.removeEventListener('mousemove', updateMousePosition);
-  }, []);
-
-  useEffect(() => {
+  let onMouseMove = useCallback((e: MouseEvent) => {
+    let mouseX = e.clientX;
+    let mouseY = e.clientY;
     if (subMenuRef.current && triggerRef.current && mouseY !== null) {
       let {left, right, top, height} = (subMenuRef.current?.UNSAFE_getDOMNode() as HTMLElement).getBoundingClientRect();
       let offset = triggerRef.current?.getBoundingClientRect().width;
@@ -52,7 +42,7 @@ export function SafeTriangle(props: SafeTriangleProps): ReactElement {
 
       setStyle(isVisible ? {
         top: triggerRef.current?.getBoundingClientRect().top - triggerRef.current?.parentElement.getBoundingClientRect().top,
-        left: direction === 'right' ? -1 * (left - mouseX) + offset : undefined,
+        left: direction === 'right' ? mouseX - left + offset : undefined,
         height,
         width: direction === 'right' ? left - mouseX : mouseX - right,
         clipPath: direction === 'right' ? `polygon(100% 0%, 0% ${(100 * (mouseY - top)) / height}%, 100% 100%)` : `polygon(0% 0%, 100% ${(100 * (mouseY - top)) / height}%, 0% 100%)`
@@ -62,8 +52,14 @@ export function SafeTriangle(props: SafeTriangleProps): ReactElement {
         display: 'none'
       });
     }
+    
+  }, [subMenuRef, triggerRef]);
 
-  }, [mouseX, mouseY, subMenuRef, triggerRef]);
+  useEffect(() => {
+    window.addEventListener('mousemove', onMouseMove);
+
+    return () => window.removeEventListener('mousemove', onMouseMove);
+  }, [onMouseMove]);
 
   return (
     <div
