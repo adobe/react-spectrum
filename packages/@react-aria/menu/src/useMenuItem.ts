@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, FocusStrategy, FocusableElement, PressEvent} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, FocusStrategy, PressEvent} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
 import {getItemCount} from '@react-stately/collections';
 import {isFocusVisible, useHover, useKeyboard, usePress} from '@react-aria/interactions';
@@ -273,8 +273,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
           if (isTrigger && direction === 'ltr') {
             onSubmenuOpen('first');
           } else if (direction === 'rtl' && data.isSubMenu) {
-            // TODO: this shouldn't be onClose() since it should only close the submenu. onClose() should close all menus
-            onClose();
+            data.menuTriggerState.close();
           } else {
             e.continuePropagation();
           }
@@ -283,8 +282,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
           if (isTrigger && direction === 'rtl') {
             onSubmenuOpen('first');
           } else if (direction === 'ltr' && data.isSubMenu) {
-             // TODO: this shouldn't be onClose() since it should only close the submenu. onClose() should close all menus
-            onClose();
+            data.menuTriggerState.close();
           } else {
             e.continuePropagation();
           }

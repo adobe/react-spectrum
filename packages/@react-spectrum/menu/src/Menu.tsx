@@ -25,20 +25,22 @@ import {useTreeState} from '@react-stately/tree';
 
 function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLUListElement>) {
   let contextProps = useContext(MenuContext);
-  let menuStateContext = useMenuStateContext();
-  let isSubMenu = !!menuStateContext;
-  let {topLevelonAction, topLevelMenuState} = menuStateContext || {};
+  let parentMenuContext = useMenuStateContext();
+  let isSubMenu = !!parentMenuContext;
+  let {topLevelonAction, topLevelMenuState} = parentMenuContext || {};
   if (!isSubMenu) {
     topLevelonAction = props.onAction;
     topLevelMenuState = contextProps.state;
   }
   let completeProps = {
-    ...mergeProps(contextProps, {onAction: topLevelonAction, ...props})
+    ...mergeProps(contextProps, {onAction: topLevelonAction, ...props}, {menuTriggerState: contextProps.state, isSubMenu})
   };
 
   let domRef = useDOMRef(ref);
   let scopedRef = useRef(null);
   let state = useTreeState(completeProps);
+  // TODO: feels a bit awkward passing the menu's trigger state via props since we already are passing the menu's tree state as state.
+  // Perhaps we should combine TreeState and the trigger state together? Alternatively I could add a 2nd kind of onClose handler to useMenu
   let {menuProps} = useMenu(completeProps, state, domRef);
   let {styleProps} = useStyleProps(completeProps);
   useSyncRef(contextProps, domRef);

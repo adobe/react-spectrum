@@ -14,6 +14,7 @@ import {AriaMenuProps} from '@react-types/menu';
 import {DOMAttributes, KeyboardDelegate} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {Key, RefObject} from 'react';
+import {MenuTriggerState} from '@react-stately/menu';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableList} from '@react-aria/selection';
 
@@ -36,7 +37,8 @@ export interface AriaMenuOptions<T> extends Omit<AriaMenuProps<T>, 'children'> {
 interface MenuData {
   onClose?: () => void,
   onAction?: (key: Key) => void,
-  isSubMenu?: boolean
+  isSubMenu?: boolean,
+  menuTriggerState?: MenuTriggerState
 }
 
 export const menuData = new WeakMap<TreeState<unknown>, MenuData>();
@@ -69,6 +71,7 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
 
   menuData.set(state, {
     isSubMenu: props.isSubMenu,
+    menuTriggerState: props.menuTriggerState,
     onClose: props.onClose,
     onAction: props.onAction
   });

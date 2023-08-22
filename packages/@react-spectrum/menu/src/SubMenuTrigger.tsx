@@ -124,8 +124,7 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
       width: '100%',
       maxHeight: 'inherit'
     } : undefined,
-    UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile}),
-    isSubMenu: true
+    UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile})
   };
 
 
