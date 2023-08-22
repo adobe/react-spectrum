@@ -591,7 +591,7 @@ describe('usePress', function () {
       ]);
     });
 
-    it.only('should not ignore virtual pointer events on android ', function () {
+    it('should not ignore virtual pointer events on android ', function () {
       let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Android');
 
       let events = [];
