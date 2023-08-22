@@ -43,22 +43,23 @@ export function SafeTriangle(props: SafeTriangleProps): ReactElement {
   }, []);
 
   useEffect(() => {
-    if (subMenuRef.current && triggerRef.current) {
-      let {left: x, top: y, height} = (subMenuRef.current?.UNSAFE_getDOMNode() as HTMLElement).getBoundingClientRect();
+    if (subMenuRef.current && triggerRef.current && mouseY !== null) {
+      let {left, right, top, height} = (subMenuRef.current?.UNSAFE_getDOMNode() as HTMLElement).getBoundingClientRect();
       let offset = triggerRef.current?.getBoundingClientRect().width;
-      let direction = x > triggerRef.current?.getBoundingClientRect().left ? 'right' : 'left';
+      let direction = left > triggerRef.current?.getBoundingClientRect().left ? 'right' : 'left';
 
-      let isVisible = (direction === 'right' && mouseX < x) || (direction === 'left' && mouseX > x);
+      let isVisible = (direction === 'right' && mouseX < left) || (direction === 'left' && mouseX > right);
 
       setStyle(isVisible ? {
         top: triggerRef.current?.getBoundingClientRect().top - triggerRef.current?.parentElement.getBoundingClientRect().top,
-        left: -1 * (x - mouseX) + offset - 7,
+        left: direction === 'right' ? -1 * (left - mouseX) + offset : undefined,
         height,
-        width: mouseX > x ? 0 : x - mouseX + 5,
-        clipPath: `polygon(100% 0%, 0% ${(100 * (mouseY - y)) / height}%, 100% 100%)`
+        width: direction === 'right' ? left - mouseX : mouseX - right,
+        clipPath: direction === 'right' ? `polygon(100% 0%, 0% ${(100 * (mouseY - top)) / height}%, 100% 100%)` : `polygon(0% 0%, 100% ${(100 * (mouseY - top)) / height}%, 0% 100%)`
       } : {
         height: 0,
-        width: 0
+        width: 0,
+        display: 'none'
       });
     }
 
