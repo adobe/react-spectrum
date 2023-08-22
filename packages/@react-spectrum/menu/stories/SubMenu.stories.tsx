@@ -11,18 +11,22 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
+import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
+import AlignRight from '@spectrum-icons/workflow/AlignRight';
+import AnnotatePen from '@spectrum-icons/workflow/AnnotatePen';
 import defaultConfig, {render as renderMenuTrigger} from './MenuTrigger.stories';
 import {Item, Menu, Section, SubMenuTrigger} from '../';
+import {Keyboard, Text} from '@react-spectrum/text';
 import React from 'react';
-import {Heading, Keyboard, Text} from '@react-spectrum/text';
-
+import TextIndentIncrease from '@spectrum-icons/workflow/TextIndentIncrease';
+import TextItalics from '@spectrum-icons/workflow/TextItalic';
 
 export default {
   ...defaultConfig,
   title: 'MenuTrigger/SubMenu'
 };
 
-// TODO: add menu item actions (with action override), multiple triggers in a sub menu, complex items, controls for submenu orientation/placement
 // TODO: add chromatic stories
 export const SubMenuStatic = {
   render: () => (
@@ -168,44 +172,64 @@ let dynamicSubMenuSections = [
 ];
 
 interface ItemNode {
-  name: string,
+  name?: string,
+  icon?: string,
+  shortcut?: string,
+  textValue?: string,
   isSection?: boolean,
   children?: ItemNode[]
 }
 
+let iconMap = {
+  AlignCenter,
+  AlignLeft,
+  AlignRight,
+  AnnotatePen,
+  TextIndentIncrease,
+  TextItalics
+};
+
+let dynamicRenderTrigger = (item: ItemNode, Icon) => (
+  <SubMenuTrigger>
+    <Item key={item.name} textValue={item.name}>
+      {item.icon && <Icon size="S" />}
+      <Text>{item.name}</Text>
+    </Item>
+    <Menu items={item.children}>
+      {(item) => dynamicRenderFuncSections(item)}
+    </Menu>
+  </SubMenuTrigger>
+);
+
+let dynamicRenderItem = (item, Icon) => (
+  <Item key={item.name} textValue={item.name}>
+    {item.icon && <Icon size="S" />}
+    <Text>{item.name}</Text>
+    {item.shortcut && <Keyboard>{item.shortcut}</Keyboard>}
+  </Item>
+);
+
 let dynamicRenderFuncSections = (item: ItemNode) => {
+  let Icon = iconMap[item.icon];
   if (item.children) {
     if (item.isSection) {
+      let key = item.name ?? item.textValue;
       return (
-        <Section key={item.name} title={item.name} items={item.children}>
+        <Section key={key} title={item?.name} aria-label={item?.textValue} items={item.children}>
           {(item) => {
             if (item.children) {
-              return (
-                <SubMenuTrigger>
-                  <Item key={item.name}>{item.name}</Item>
-                  <Menu items={item.children}>
-                    {(item) => dynamicRenderFuncSections(item)}
-                  </Menu>
-                </SubMenuTrigger>
-              );
+              return dynamicRenderTrigger(item, Icon);
             } else {
-              return <Item key={item.name}>{item.name}</Item>;
+              return dynamicRenderItem(item, Icon);
             }
           }}
         </Section>
       );
     } else {
-      return (
-        <SubMenuTrigger>
-          <Item key={item.name}>{item.name}</Item>
-          <Menu items={item.children}>
-            {(item) => dynamicRenderFuncSections(item)}
-          </Menu>
-        </SubMenuTrigger>
-      );
+      return dynamicRenderTrigger(item, Icon);
     }
   } else {
-    return <Item key={item.name}>{item.name}</Item>;
+    return dynamicRenderItem(item, Icon);
   }
 };
 
@@ -226,7 +250,11 @@ let subMenuNoSection = [
     {name: 'Sec 1 Lvl 1 Item 2', children: [
       {name: 'Sec 1 Lvl 2 Item 1'},
       {name: 'Sec 1 Lvl 2 Item 2'},
-      {name: 'Sec 1 Lvl 2 Item 3'}
+      {name: 'Sec 1 Lvl 2 Item 3', children: [
+        {name: 'Sec 1 Lvl 3 Item 1'},
+        {name: 'Sec 1 Lvl 3 Item 2'},
+        {name: 'Sec 1 Lvl 3 Item 3'}
+      ]}
     ]},
     {name: 'Sec 1 Lvl 1 Item 3'}
   ]}
@@ -247,9 +275,15 @@ let subMenuSections = [
   {name: 'Lvl 1 Item 1'},
   {name: 'Lvl 1 Item 2', children: [
     {name: 'Section 1', isSection: true, children: [
-      {name: 'Lvl 2 Sec 1 Item 1'},
-      {name: 'Lvl 2 Sec 1 Item 2'},
-      {name: 'Lvl 2 Sec 1 Item 3'}
+      {name: 'Sec 1 Lvl 2 Item 1'},
+      {name: 'Sec 1 Lvl 2 Item 2'},
+      {name: 'Sec 1 Lvl 2 Item 3', children: [
+        {name: 'Section 1.1', isSection: true, children: [
+          {name: 'Sec 1.1 Lvl 3 Item 1'},
+          {name: 'Sec 1.1 Lvl 3 Item 2'},
+          {name: 'Sec 1.1 Lvl 3 Item 3'}
+        ]}
+      ]}
     ]}
   ]},
   {name: 'Lvl 1 Item 3'}
@@ -266,7 +300,83 @@ export const MainNoSectionsSubSections = {
   name: 'dynamic, main menu no sections, sub menu w/ sections'
 };
 
-// TODO: add the complex one here: aka with icons, multiple submenus per menu, some with sections, some without
+let mixedSectionsAndNonSections = [
+  {name: 'Lvl 1 Item 1'},
+  {name: 'Lvl 1 Item 2', children: [
+    {name: 'Section 1', isSection: true, children: [
+      {name: 'Sec 1 Lvl 2 Item 1'},
+      {name: 'Sec 1 Lvl 2 Item 2'},
+      {name: 'Sec 1 Lvl 2 Item 3', children: [
+        {name: 'Sec 1 Lvl 3 Item 1', children: [
+          {name: 'Section 1.1', isSection: true, children: [
+            {name: 'Sec 1.1 Lvl 4 Item 1'},
+            {name: 'Sec 1.1 Lvl 4 Item 2'},
+            {name: 'Sec 1.1 Lvl 4 Item 3'}
+          ]}
+        ]},
+        {name: 'Sec 1 Lvl 3 Item 2'},
+        {name: 'Sec 1 Lvl 3 Item 3'}
+      ]}
+    ]}
+  ]},
+  {name: 'Lvl 1 Item 3'}
+];
+
+export const MixedSections = {
+  render: () => (
+    renderMenuTrigger(
+      <Menu items={mixedSectionsAndNonSections} onAction={action('onAction')}>
+        {(item) => dynamicRenderFuncSections(item)}
+      </Menu>
+    )
+  ),
+  name: 'dynamic, mix of menus w/ sections and w/o sections'
+};
+
+let complex = [
+  {name: 'Font', icon: 'AnnotatePen', children: [
+    {textValue: 'Font styles', isSection: true, children: [
+      {name: 'Show Fonts', shortcut: '⌘T'},
+      {name: 'Bold', shortcut: '⌘B'},
+      {name: 'Italics', shortcut: '⌘I'},
+      {name: 'Underline', shortcut: '⌘U'},
+      {name: 'Strikethrough'}
+    ]},
+    {textValue: 'Font size', isSection: true, children: [
+      {name: 'Bigger', shortcut: '⌘+'},
+      {name: 'Smaller', shortcut: '⌘-'}
+    ]},
+    {textValue: 'Baseline section', isSection: true, children: [
+      {name: 'Baseline', children: [
+        {name: 'Use default'},
+        {name: 'Superscript'},
+        {name: 'Subscript'}
+      ]}
+    ]}
+  ]},
+  {name: 'Text', icon: 'TextItalics', children: [
+    {name: 'Align Left', icon: 'AlignLeft', shortcut: '⌘{'},
+    {name: 'Center', icon: 'AlignCenter', shortcut: '⌘|'},
+    {name: 'Justify'},
+    {name: 'Align Right', icon: 'AlignRight', shortcut: '⌘}'},
+  ]},
+  {name: 'Indentation', icon: 'TextIndentIncrease', children: [
+    {name: 'Increase', shortcut: '⌘]'},
+    {name: 'Decrease', shortcut: '⌘['}
+  ]}
+];
+
+
+export const Complex = {
+  render: () => (
+    renderMenuTrigger(
+      <Menu items={complex} onAction={action('onAction')}>
+        {(item) => dynamicRenderFuncSections(item)}
+      </Menu>
+    )
+  ),
+  name: 'complex'
+};
 
 export const ActionOverride = {
   render: () => renderMenuTrigger(
@@ -294,4 +404,52 @@ export const ActionOverride = {
   parameters: {description: {data: 'Lvl 1 and Lv3 menu items share the same onAction via inheritance. Lvl2 menu item has its own onAction override. Each menu should have its own onClose triggered only if its direct menu option was acted upon.'}}
 };
 
-// TODO add mix of sub menus with sections and without section
+export const Posititioning = {
+  render: (args) => (
+    renderMenuTrigger(
+      <Menu onAction={action('onAction')}>
+        <Item key="Lvl 1 Item 1">Lvl 1 Item 1</Item>
+        <SubMenuTrigger {...args}>
+          <Item key="Lvl 1 Item 2">Lvl 1 Item 2</Item>
+          <Menu>
+            <Item key="Lvl 2 Item 1">Lvl 2 Item 1</Item>
+            <Item key="Lvl 2 Item 2">Lvl 2 Item 2</Item>
+            <Item key="Lvl 2 Item 3">Lvl 2 Item 3</Item>
+            <Item key="Lvl 2 Item 4">Lvl 2 Item 4</Item>
+            <Item key="Lvl 2 Item 5">Lvl 2 Item 5</Item>
+            <Item key="Lvl 2 Item 6">Lvl 2 Item 6</Item>
+            <Item key="Lvl 2 Item 7">Lvl 2 Item 7</Item>
+            <Item key="Lvl 2 Item 8">Lvl 2 Item 8</Item>
+          </Menu>
+        </SubMenuTrigger>
+        <Item key="Lvl 1 Item 3">Lvl 1 Item 3</Item>
+      </Menu>
+    )
+  ),
+  name: 'submenu positioning',
+  argTypes: {
+    align: {
+      type: 'select',
+      defaultValue: 'start',
+      options: [
+        'start',
+        'end'
+      ]
+    },
+    direction: {
+      type: 'select',
+      defaultValue: 'end',
+      options: [
+        'bottom',
+        'top',
+        'left',
+        'right',
+        'start',
+        'end'
+      ]
+    },
+    shouldFlip: {
+      control: {type: 'boolean'}
+    }
+  },
+};

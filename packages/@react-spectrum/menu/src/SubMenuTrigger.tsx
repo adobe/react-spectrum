@@ -45,7 +45,7 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
     children,
     align = 'start',
     shouldFlip = true,
-    direction = 'end top',
+    direction = 'end',
     closeOnSelect
   } = props;
 
