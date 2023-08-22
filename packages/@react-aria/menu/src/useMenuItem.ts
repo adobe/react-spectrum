@@ -192,7 +192,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     if (e.pointerType === 'touch' && !isDisabled) {
       onSubmenuOpen();
     }
-  }
+  };
 
   let onPressUp = (e: PressEvent) => {
     if (e.pointerType !== 'keyboard') {

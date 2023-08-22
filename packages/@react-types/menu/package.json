@@ -9,7 +9,6 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-stately/menu": "^3.5.4",
     "@react-types/overlays": "^3.8.1",
     "@react-types/shared": "^3.19.0"
   },

@@ -358,7 +358,7 @@ let complex = [
     {name: 'Align Left', icon: 'AlignLeft', shortcut: '⌘{'},
     {name: 'Center', icon: 'AlignCenter', shortcut: '⌘|'},
     {name: 'Justify'},
-    {name: 'Align Right', icon: 'AlignRight', shortcut: '⌘}'},
+    {name: 'Align Right', icon: 'AlignRight', shortcut: '⌘}'}
   ]},
   {name: 'Indentation', icon: 'TextIndentIncrease', children: [
     {name: 'Increase', shortcut: '⌘]'},
@@ -451,5 +451,5 @@ export const Posititioning = {
     shouldFlip: {
       control: {type: 'boolean'}
     }
-  },
+  }
 };

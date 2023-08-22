@@ -12,7 +12,6 @@
 
 import {Alignment, AriaLabelingProps, CollectionBase, DOMProps, FocusStrategy, MultipleSelection, StyleProps} from '@react-types/shared';
 import {Key, ReactElement} from 'react';
-import {MenuTriggerState} from '@react-stately/menu';
 import {OverlayTriggerProps} from '@react-types/overlays';
 
 export type MenuTriggerType = 'press' | 'longPress';
@@ -60,11 +59,7 @@ export interface MenuProps<T> extends CollectionBase<T>, MultipleSelection {
   /** Handler that is called when an item is selected. */
   onAction?: (key: Key) => void,
   /** Handler that is called when the menu should close after selecting an item. */
-  onClose?: () => void,
-  // TODO: figure out if there is an alternative way to figure out if a menu is a submenu
-  isSubMenu?: boolean,
-  // TODO: figure out if there is a better way to communicate a menu's trigger state to the menu items
-  menuTriggerState?: MenuTriggerState
+  onClose?: () => void
 }
 
 export interface AriaMenuProps<T> extends MenuProps<T>, DOMProps, AriaLabelingProps {}

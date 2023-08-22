@@ -31,7 +31,13 @@ export interface AriaMenuOptions<T> extends Omit<AriaMenuProps<T>, 'children'> {
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
    */
-  keyboardDelegate?: KeyboardDelegate
+  keyboardDelegate?: KeyboardDelegate,
+
+  // TODO: figure out if there is an alternative way to figure out if a menu is a submenu
+  isSubMenu?: boolean,
+
+  // TODO: figure out if there is a better way to communicate a menu's trigger state to the menu items
+  menuTriggerState?: MenuTriggerState
 }
 
 interface MenuData {
