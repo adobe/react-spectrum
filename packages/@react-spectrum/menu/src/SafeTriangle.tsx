@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {MutableRefObject, ReactElement, useCallback, useEffect, useState} from 'react';
+import React, {MutableRefObject, ReactElement, useEffect, useState} from 'react';
 
 interface SafeTriangleProps {
   /** Ref for the submenu. */
@@ -20,8 +20,8 @@ interface SafeTriangleProps {
 }
 
 /**
- * Allows the user to move their pointer to the sub-menu without it closing
- * due to the mouse leaving the trigger element.
+ * Allows the user to move their pointer to the sub-menu without it closing when their mouse leaves the trigger element.
+ * Renders an invisible triangle from the mouse position to the inside corners of the sub-menu.
  */
 export function SafeTriangle(props: SafeTriangleProps): ReactElement {
   let {
@@ -30,36 +30,34 @@ export function SafeTriangle(props: SafeTriangleProps): ReactElement {
   } = props;
   let [style, setStyle] = useState<React.CSSProperties>({height: 0, width: 0});
 
-  let onMouseMove = useCallback((e: MouseEvent) => {
-    let mouseX = e.clientX;
-    let mouseY = e.clientY;
-    if (subMenuRef.current && triggerRef.current && mouseY !== null) {
-      let {left, right, top, height} = (subMenuRef.current?.UNSAFE_getDOMNode() as HTMLElement).getBoundingClientRect();
-      let offset = triggerRef.current?.getBoundingClientRect().width;
-      let direction = left > triggerRef.current?.getBoundingClientRect().left ? 'right' : 'left';
-
-      let isVisible = (direction === 'right' && mouseX < left) || (direction === 'left' && mouseX > right);
-
-      setStyle(isVisible ? {
-        top: triggerRef.current?.getBoundingClientRect().top - triggerRef.current?.parentElement.getBoundingClientRect().top,
-        left: direction === 'right' ? mouseX - left + offset : undefined,
-        height,
-        width: direction === 'right' ? left - mouseX : mouseX - right,
-        clipPath: direction === 'right' ? `polygon(100% 0%, 0% ${(100 * (mouseY - top)) / height}%, 100% 100%)` : `polygon(0% 0%, 100% ${(100 * (mouseY - top)) / height}%, 0% 100%)`
-      } : {
-        height: 0,
-        width: 0,
-        display: 'none'
-      });
-    }
-    
-  }, [subMenuRef, triggerRef]);
-
   useEffect(() => {
+    let onMouseMove = (e: MouseEvent) => {
+      let mouseX = e.clientX;
+      let mouseY = e.clientY;
+      if (subMenuRef.current && triggerRef.current) {
+        let {left, right, top, height} = (subMenuRef.current?.UNSAFE_getDOMNode() as HTMLElement).getBoundingClientRect();
+        let offset = triggerRef.current?.getBoundingClientRect().width;
+        let direction = left > triggerRef.current?.getBoundingClientRect().left ? 'right' : 'left';
+
+        let isHidden = (direction === 'right' && mouseX > left) || (direction === 'left' && mouseX < right);
+
+        setStyle(isHidden ? {
+          height: 0,
+          width: 0
+        } : {
+          top: triggerRef.current?.getBoundingClientRect().top - triggerRef.current?.parentElement.getBoundingClientRect().top,
+          left: direction === 'right' ? mouseX - left + offset : undefined,
+          height,
+          width: direction === 'right' ? left - mouseX : mouseX - right,
+          clipPath: direction === 'right' ? `polygon(100% 0%, 0% ${(100 * (mouseY - top)) / height}%, 100% 100%)` : `polygon(0% 0%, 100% ${(100 * (mouseY - top)) / height}%, 0% 100%)`
+        });
+      }
+    };
+  
     window.addEventListener('mousemove', onMouseMove);
 
     return () => window.removeEventListener('mousemove', onMouseMove);
-  }, [onMouseMove]);
+  }, [subMenuRef, triggerRef]);
 
   return (
     <div
