@@ -270,7 +270,7 @@ function Pending(props) {
     </div>
   );
 }
-
+let timerValue = 5000;
 function PendingButtonComponent(props) {
   let [isPending, setPending] = useState(false);
 
@@ -279,7 +279,7 @@ function PendingButtonComponent(props) {
     setPending(true);
     setTimeout(() => {
       setPending(false);
-    }, 3000);
+    }, timerValue);
   };
 
   return (
@@ -300,7 +300,7 @@ function PendingButtonOnClickComponent(props) {
     setPending(true);
     setTimeout(() => {
       setPending(false);
-    }, 3000);
+    }, timerValue);
   };
 
   return (
