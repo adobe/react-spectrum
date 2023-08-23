@@ -132,6 +132,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   }, [cancelOpenTimeout]);
 
   let data = menuData.get(state);
+  let isSubMenuItem = !!data.onSubMenuClose;
   let onClose = props.onClose || data.onClose;
   let onActionMenuDialogTrigger = useCallback(() => {
     if (hasPopup === 'dialog') {
@@ -272,8 +273,8 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
         case 'ArrowRight':
           if (isTrigger && direction === 'ltr') {
             onSubmenuOpen('first');
-          } else if (direction === 'rtl' && data.isSubMenu) {
-            data.menuTriggerState.close();
+          } else if (direction === 'rtl' && isSubMenuItem) {
+            data.onSubMenuClose();
           } else {
             e.continuePropagation();
           }
@@ -281,8 +282,8 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
         case 'ArrowLeft':
           if (isTrigger && direction === 'rtl') {
             onSubmenuOpen('first');
-          } else if (direction === 'ltr' && data.isSubMenu) {
-            data.menuTriggerState.close();
+          } else if (direction === 'ltr' && isSubMenuItem) {
+            data.onSubMenuClose();
           } else {
             e.continuePropagation();
           }

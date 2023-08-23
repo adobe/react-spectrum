@@ -26,14 +26,13 @@ import {useTreeState} from '@react-stately/tree';
 function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLUListElement>) {
   let contextProps = useContext(MenuContext);
   let parentMenuContext = useMenuStateContext();
-  let isSubMenu = !!parentMenuContext;
   let {topLevelonAction, topLevelMenuState} = parentMenuContext || {};
-  if (!isSubMenu) {
+  if (!parentMenuContext) {
     topLevelonAction = props.onAction;
     topLevelMenuState = contextProps.state;
   }
   let completeProps = {
-    ...mergeProps(contextProps, {onAction: topLevelonAction, ...props}, {menuTriggerState: contextProps.state, isSubMenu})
+    ...mergeProps(contextProps, {onAction: topLevelonAction, ...props})
   };
 
   let domRef = useDOMRef(ref);
