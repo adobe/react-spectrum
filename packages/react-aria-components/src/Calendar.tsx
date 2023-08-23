@@ -250,7 +250,7 @@ export interface CalendarCellRenderProps {
   isSelectionEnd: boolean,
   /**
    * Whether the cell is focused.
-   * @selector :focus
+   * @selector [data-focused]
    */
   isFocused: boolean,
   /**
@@ -289,7 +289,7 @@ export interface CalendarCellRenderProps {
   isUnavailable: boolean,
   /**
    * Whether the cell is part of an invalid selection.
-   * @selector [aria-invalid]
+   * @selector [data-invalid]
    */
   isInvalid: boolean
 }
@@ -495,6 +495,7 @@ function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRe
   });
 
   let dataAttrs = {
+    'data-focused': states.isFocused || undefined,
     'data-hovered': isHovered || undefined,
     'data-pressed': states.isPressed || undefined,
     'data-unavailable': states.isUnavailable || undefined,
@@ -504,7 +505,8 @@ function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRe
     'data-outside-month': isOutsideMonth || undefined,
     'data-selected': states.isSelected || undefined,
     'data-selection-start': isSelectionStart || undefined,
-    'data-selection-end': isSelectionEnd || undefined
+    'data-selection-end': isSelectionEnd || undefined,
+    'data-invalid': states.isInvalid || undefined
   };
 
   return (

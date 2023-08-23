@@ -12,6 +12,10 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
 
   // Open the popover on alt + arrow down
   let onKeyDown = (e: KeyboardEvent) => {
+    if (!e.currentTarget.contains(e.target)) {
+      return;
+    }
+    
     if (e.altKey && (e.key === 'ArrowDown' || e.key === 'ArrowUp') && 'setOpen' in state) {
       e.preventDefault();
       e.stopPropagation();
