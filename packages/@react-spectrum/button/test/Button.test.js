@@ -280,7 +280,7 @@ describe('Button', function () {
     function TestComponent() {
       let [pending, setPending] = useState(false);
       return (
-        <Button onPress={(pending) => setPending(!!pending)} isPending={pending}>
+        <Button onPress={(pending) => setPending(true)} isPending={pending}>
           Click Me
         </Button>
       );
@@ -298,7 +298,6 @@ describe('Button', function () {
 
     jest.useRealTimers();
   });
-
 
   // 'implicit submission' can't be tested https://github.com/testing-library/react-testing-library/issues/487
 });
