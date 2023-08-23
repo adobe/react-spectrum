@@ -159,8 +159,6 @@ governing permissions and limitations under the License.
   }
 
   &.is-pending {
-    pointer-events: none;
-
     .spectrum-CircleLoader {
       position: absolute;
       margin-top: var(--spectrum-global-dimension-size-25);
