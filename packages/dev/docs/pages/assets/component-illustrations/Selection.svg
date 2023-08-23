@@ -8,7 +8,7 @@
       <rect width="231" height="50" rx="6" stroke="none"/>
       <rect x="0.5" y="0.5" width="230" height="49" rx="5.5" fill="none"/>
     </g>
-    <g id="Checkbox" transform="translate(1622 1755)">
+    <g id="Checkbox" transform="translate(1622 1754)">
       <rect id="Placement_Area" data-name="Placement Area" width="14" height="32" fill="red" opacity="0"/>
       <rect id="Box" width="14" height="14" rx="2" transform="translate(0 9)" fill="var(--anatomy-gray-800)"/>
       <g id="Checkmark">
