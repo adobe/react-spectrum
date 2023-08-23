@@ -235,6 +235,43 @@ function Example() {
 }
 
 function Pending(props) {
+  let variants = ['cta', 'accent', 'primary', 'secondary', 'negative', 'overBackground'];
+
+  return (
+    <div>
+      {
+        variants.map(variant => (
+          <View backgroundColor={variant === 'overBackground' ? 'static-blue-700' : undefined} padding={16}>
+            <PendingButtonComponent {...props} variant={variant}>click me!</PendingButtonComponent>
+          </View>
+        ))
+      }
+
+      <View backgroundColor={props.variant === 'overBackground' ? 'static-blue-700' : undefined} padding={16}>
+        <PendingButtonComponent
+          variant={props.variant}>
+          <Bell />
+          <Text>I have an icon</Text>
+        </PendingButtonComponent>
+      </View>
+
+      <View padding={16}>
+        <PendingButtonOnClickComponent
+          variant={props.variant}>
+          <Text>with onClick</Text>
+        </PendingButtonOnClickComponent>
+      </View>
+
+      <View padding={16}>
+        <Button variant="primary" isPending={props.isPending} onPress={() => {window.alert('use storybook control to change this button isPending prop');}}>
+          <Text>Controlled pending</Text>
+        </Button>
+      </View>
+    </div>
+  );
+}
+
+function PendingButtonComponent (props) {
   let [isPending, setPending] = useState(false);
 
   let handlePress = (e) => {
@@ -245,50 +282,33 @@ function Pending(props) {
     }, 3000);
   };
 
-  let variants = ['cta', 'accent', 'primary', 'secondary', 'negative', 'overBackground'];
+  return (
+    <Button
+      {...props}
+      isPending={isPending}
+      onPress={handlePress}>
+      {props.children}
+    </Button>
+  );
+}
+
+function PendingButtonOnClickComponent (props) {
+  let [isPending, setPending] = useState(false);
+
+  let handlePress = (e) => {
+    action('press')(e);
+    setPending(true);
+    setTimeout(() => {
+      setPending(false);
+    }, 3000);
+  };
 
   return (
-    <div>
-      {
-        variants.map(variant => {
-
-          return (
-            <View backgroundColor={variant === 'overBackground' ? 'static-blue-700' : undefined} padding={16}>
-              <Button
-                {...props}
-                isPending={isPending}
-                onPress={handlePress}
-                variant={variant}>
-                Click me!
-              </Button>
-            </View>
-          );
-        })
-      }
-      <View backgroundColor={props.variant === 'overBackground' ? 'static-blue-700' : undefined} padding={16}>
-        <Button
-          isPending={isPending}
-          onPress={handlePress}
-          variant={props.variant}>
-          <Bell />
-          <Text>I have an icon</Text>
-        </Button>
-      </View>
-      <View padding={16}>
-        <Button
-          isPending={isPending}
-          // @ts-expect-error
-          onClick={handlePress}
-          variant={props.variant}
-          onClicks={handlePress}>
-          <Text>with onClick</Text>
-        </Button>
-      </View>
-      <View padding={16}>
-        <Button variant="primary" isPending={props.isPending} onPress={() => {window.alert('use storybook control to change this button isPending prop');}}>
-          <Text>Controlled pending</Text>
-        </Button>
-      </View>
-    </div>
+    <Button
+      {...props}
+      isPending={isPending}
+      onClick={handlePress}>
+      {props.children}
+    </Button>
   );
 }
