@@ -276,27 +276,36 @@ describe('Button', function () {
   // is pending state
   it('displays a spinner after a short delay when isPending prop is true', function () {
     jest.useFakeTimers();
-
+    let onPressSpy = jest.fn();
     function TestComponent() {
       let [pending, setPending] = useState(false);
       return (
-        <Button onPress={(pending) => setPending(true)} isPending={pending}>
+        <Button onPress={(pending) => { setPending(true); onPressSpy(); }} isPending={pending}>
           Click Me
         </Button>
       );
     }
     let {getByRole} = render(<TestComponent />);
     let button = getByRole('button');
-
     expect(button).toHaveAttribute('aria-disabled', 'false');
+    fireEvent.click(button);
+    expect(button).toHaveAttribute('aria-disabled', 'true');
+    // Multiple clicks shouldn't call onPressSpy
     fireEvent.click(button);
     act(jest.runAllTimers);
     let spinner = getByRole('progressbar');
     expect(button).toHaveAttribute('aria-disabled', 'true');
     expect(spinner).toBeVisible();
     expect(spinner).toHaveAttribute('aria-label', 'Loading…');
-
+    expect(onPressSpy).toHaveBeenCalledTimes(1);
     jest.useRealTimers();
+  });
+
+  // isPending anchor element
+  it('removes href attribute from anchor element when isPending is true', () => {
+    let {getByRole} = render(<Button elementType="a" href="//example.com" isPending>Click Me</Button>);
+    let button = getByRole('button');
+    expect(button).not.toHaveAttribute('href');
   });
 
   // 'implicit submission' can't be tested https://github.com/testing-library/react-testing-library/issues/487
