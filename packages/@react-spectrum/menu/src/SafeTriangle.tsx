@@ -34,7 +34,7 @@ export function SafeTriangle(props: SafeTriangleProps): ReactElement {
   let timeout = useRef<ReturnType<typeof setTimeout> | undefined>();
 
   useEffect(() => {
-    let onMouseMove = (e: MouseEvent) => {
+    let onPointerMove = (e: MouseEvent) => {
       if (subMenuRef.current && triggerRef.current) {
         let {clientX: mouseX, clientY: mouseY} = e;
         let {left, right, top, height} = (subMenuRef.current.UNSAFE_getDOMNode() as HTMLElement).getBoundingClientRect();
@@ -68,10 +68,10 @@ export function SafeTriangle(props: SafeTriangleProps): ReactElement {
       }
     };
   
-    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('pointermove', onPointerMove);
 
     return () => {
-      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('pointermove', onPointerMove);
       clearTimeout(timeout.current);
     };
   }, [subMenuRef, triggerRef]);
