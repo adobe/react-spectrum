@@ -34,9 +34,21 @@ import {useHover} from '@react-aria/interactions';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
+function usePendingProps(props) {
+  if (props.isPending) {
+    props.onPress = undefined;
+    props.onPressStart = undefined;
+    props.onPressEnd = undefined;
+    props.onClick = undefined;
+    // Are there any other events to filter out?
+  }
+  return props;
+}
+
 function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   props = useSlotProps(props, 'button');
+  props = usePendingProps(props);
   let {
     elementType: ElementType = 'button',
     children,
@@ -57,14 +69,11 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
     'aria-label': stringFormatter.format('loading'),
     isIndeterminate: true,
     size: 'S',
-    ...(
-      (variant === 'overBackground' && style !== 'fill') ||
-      ((variant === 'cta' || variant === 'accent') && style !== 'outline')
-    ) && {variant: 'overBackground'}
+    ...(variant === 'overBackground' && {variant: 'overBackground'})
   };
   let hasLabel = useHasChild(`.${styles['spectrum-Button-label']}`, domRef);
   let hasIcon = useHasChild(`.${styles['spectrum-Icon']}`, domRef);
-  let [showLoader, setShowLoader] = useState(false);
+  let [isProgressVisible, setIsProgressVisible] = useState(false);
 
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout>;
@@ -72,11 +81,11 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
     if (isPending) {
       // Start timer when isPending is set to true.
       timeout = setTimeout(() => {
-        setShowLoader(true);
+        setIsProgressVisible(true);
       }, 1000);
     } else {
       // Exit loading state when isPending is set to false. */
-      setShowLoader(false);
+      setIsProgressVisible(false);
     }
     return () => {
       // Clean up on unmount or when user removes isPending prop before entering loading state.
@@ -107,10 +116,10 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
             'spectrum-Button',
             {
               'spectrum-Button--iconOnly': hasIcon && !hasLabel,
-              'is-disabled': isDisabled,
+              'is-disabled': isDisabled || isProgressVisible,
               'is-active': isPressed,
               'is-hovered': isHovered,
-              'is-pending': showLoader
+              'is-pending': isProgressVisible
             },
             styleProps.className
           )
@@ -125,7 +134,7 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
               UNSAFE_className: classNames(styles, 'spectrum-Button-label')
             }
           }}>
-          {showLoader && <ProgressCircle
+          {isProgressVisible && <ProgressCircle
             UNSAFE_className={classNames(styles, 'spectrum-CircleLoader')}
             {...progressCircleProps} />}
           {typeof children === 'string'
