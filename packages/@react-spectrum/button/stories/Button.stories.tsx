@@ -271,7 +271,7 @@ function Pending(props) {
   );
 }
 
-function PendingButtonComponent (props) {
+function PendingButtonComponent(props) {
   let [isPending, setPending] = useState(false);
 
   let handlePress = (e) => {
@@ -292,7 +292,7 @@ function PendingButtonComponent (props) {
   );
 }
 
-function PendingButtonOnClickComponent (props) {
+function PendingButtonOnClickComponent(props) {
   let [isPending, setPending] = useState(false);
 
   let handlePress = (e) => {
