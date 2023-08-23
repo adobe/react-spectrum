@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {MutableRefObject, ReactElement, useEffect, useState} from 'react';
+import React, {MutableRefObject, ReactElement, useEffect, useRef, useState} from 'react';
 
 interface SafeTriangleProps {
   /** Ref for the submenu. */
@@ -31,6 +31,7 @@ export function SafeTriangle(props: SafeTriangleProps): ReactElement {
     triggerRef
   } = props;
   let [style, setStyle] = useState<React.CSSProperties>({height: 0, width: 0});
+  let timeout = useRef<ReturnType<typeof setTimeout> | undefined>();
 
   useEffect(() => {
     let onMouseMove = (e: MouseEvent) => {
@@ -38,16 +39,29 @@ export function SafeTriangle(props: SafeTriangleProps): ReactElement {
       let mouseY = e.clientY;
       if (subMenuRef.current && triggerRef.current) {
         let {left, right, top, height} = (subMenuRef.current?.UNSAFE_getDOMNode() as HTMLElement).getBoundingClientRect();
-        let offset = triggerRef.current?.getBoundingClientRect().width;
-        let direction = left > triggerRef.current?.getBoundingClientRect().left ? 'right' : 'left';
+        let triggerRect = triggerRef.current?.getBoundingClientRect();
+        let offset = triggerRect.width;
+        let direction = left > triggerRect.left ? 'right' : 'left';
 
         let isHidden = (direction === 'right' && mouseX > left) || (direction === 'left' && mouseX < right);
+
+        // If mouse is outside of the trigger element, start a timer. If mouse doesn't return to the trigger element before the timer ends, close the menu.
+        let isMouseOutsideTriggerElement = mouseY < triggerRect.top || mouseY > triggerRect.bottom;
+        if (isMouseOutsideTriggerElement) {
+          if (timeout.current) {
+            clearTimeout(timeout.current);
+          }
+          timeout.current = setTimeout(() => setStyle({height: 0, width: 0}), 1000);
+        } else {
+          clearTimeout(timeout.current);
+          timeout.current = undefined;
+        }
 
         setStyle(isHidden ? {
           height: 0,
           width: 0
         } : {
-          top: triggerRef.current?.getBoundingClientRect().top - triggerRef.current?.parentElement.getBoundingClientRect().top,
+          top: triggerRect.top - triggerRef.current?.parentElement.getBoundingClientRect().top,
           left: direction === 'right' ? mouseX - left + offset - TOLERANCE : -TOLERANCE,
           height,
           width: direction === 'right' ? left - mouseX + TOLERANCE : mouseX - right + TOLERANCE,
