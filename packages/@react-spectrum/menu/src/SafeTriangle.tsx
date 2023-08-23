@@ -35,19 +35,17 @@ export function SafeTriangle(props: SafeTriangleProps): ReactElement {
 
   useEffect(() => {
     let onMouseMove = (e: MouseEvent) => {
-      let mouseX = e.clientX;
-      let mouseY = e.clientY;
       if (subMenuRef.current && triggerRef.current) {
-        let {left, right, top, height} = (subMenuRef.current?.UNSAFE_getDOMNode() as HTMLElement).getBoundingClientRect();
-        let triggerRect = triggerRef.current?.getBoundingClientRect();
-        let offset = triggerRect.width;
+        let {clientX: mouseX, clientY: mouseY} = e;
+        let {left, right, top, height} = (subMenuRef.current.UNSAFE_getDOMNode() as HTMLElement).getBoundingClientRect();
+        let triggerRect = triggerRef.current.getBoundingClientRect();
         let direction = left > triggerRect.left ? 'right' : 'left';
 
-        let isHidden = (direction === 'right' && mouseX > left) || (direction === 'left' && mouseX < right);
+        let shouldHide = (direction === 'right' && (mouseX > left || mouseX < triggerRect.left)) || (direction === 'left' && (mouseX < right || mouseX > triggerRect.right));
 
         // If mouse is outside of the trigger element, start a timer. If mouse doesn't return to the trigger element before the timer ends, close the menu.
         let isMouseOutsideTriggerElement = mouseY < triggerRect.top || mouseY > triggerRect.bottom;
-        if (isMouseOutsideTriggerElement) {
+        if (isMouseOutsideTriggerElement && !shouldHide) {
           if (timeout.current) {
             clearTimeout(timeout.current);
           }
@@ -57,12 +55,12 @@ export function SafeTriangle(props: SafeTriangleProps): ReactElement {
           timeout.current = undefined;
         }
 
-        setStyle(isHidden ? {
+        setStyle(shouldHide ? {
           height: 0,
           width: 0
         } : {
-          top: triggerRect.top - triggerRef.current?.parentElement.getBoundingClientRect().top,
-          left: direction === 'right' ? mouseX - left + offset - TOLERANCE : -TOLERANCE,
+          top: triggerRect.top - triggerRef.current.parentElement.getBoundingClientRect().top,
+          left: direction === 'right' ? mouseX - left + triggerRect.width - TOLERANCE : -TOLERANCE,
           height,
           width: direction === 'right' ? left - mouseX + TOLERANCE : mouseX - right + TOLERANCE,
           clipPath: direction === 'right' ? `polygon(100% 0%, 0% ${(100 * (mouseY - top)) / height}%, 100% 100%)` : `polygon(0% 0%, 100% ${(100 * (mouseY - top)) / height}%, 0% 100%)`
@@ -72,7 +70,10 @@ export function SafeTriangle(props: SafeTriangleProps): ReactElement {
   
     window.addEventListener('mousemove', onMouseMove);
 
-    return () => window.removeEventListener('mousemove', onMouseMove);
+    return () => {
+      window.removeEventListener('mousemove', onMouseMove);
+      clearTimeout(timeout.current);
+    };
   }, [subMenuRef, triggerRef]);
 
   return (
