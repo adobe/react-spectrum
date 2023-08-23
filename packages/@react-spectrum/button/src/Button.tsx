@@ -40,7 +40,7 @@ function usePendingProps(props) {
     props.onPressStart = undefined;
     props.onPressEnd = undefined;
     props.onClick = undefined;
-    // Are there any other events to filter out?
+    props.href = undefined;
   }
   return props;
 }
