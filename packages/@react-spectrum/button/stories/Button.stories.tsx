@@ -255,7 +255,7 @@ function Pending(props) {
         </PendingButtonComponent>
       </View>
 
-      <View padding={16}>
+      <View backgroundColor={props.variant === 'overBackground' ? 'static-blue-700' : undefined} padding={16}>
         <PendingButtonOnClickComponent
           variant={props.variant}>
           <Text>with onClick</Text>
