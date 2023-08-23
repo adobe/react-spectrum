@@ -15,7 +15,7 @@ import Bell from '@spectrum-icons/workflow/Bell';
 import {Button} from '../';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Flex} from '@react-spectrum/layout';
-import React, {ElementType, useEffect, useRef, useState} from 'react';
+import React, {ElementType, useState} from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
 import {Text} from '@react-spectrum/text';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
@@ -62,6 +62,10 @@ export default {
     staticColor: {
       control: 'select',
       options: ['white', 'black']
+    },
+    isPending: {
+      control: 'boolean',
+      defaultValue: false
     }
   }
 } as ComponentMeta<typeof Button>;
@@ -231,23 +235,20 @@ function Example() {
 }
 
 function Pending(props) {
-  let timeout = useRef<ReturnType<typeof setTimeout>>();
   let [isPending, setPending] = useState(false);
 
   let handlePress = (e) => {
     action('press')(e);
     setPending(true);
-    timeout.current = setTimeout(() => {
+    setTimeout(() => {
       setPending(false);
     }, 3000);
   };
 
-  useEffect(() => () => clearTimeout(timeout.current), []);
-
   let variants = ['cta', 'accent', 'primary', 'secondary', 'negative', 'overBackground'];
 
   return (
-    <>
+    <div>
       {
         variants.map(variant => {
 
@@ -273,6 +274,21 @@ function Pending(props) {
           <Text>I have an icon</Text>
         </Button>
       </View>
-    </>
+      <View padding={16}>
+        <Button
+          isPending={isPending}
+          // @ts-expect-error
+          onClick={handlePress}
+          variant={props.variant}
+          onClicks={handlePress}>
+          <Text>with onClick</Text>
+        </Button>
+      </View>
+      <View padding={16}>
+        <Button variant="primary" isPending={props.isPending} onPress={() => {window.alert('use storybook control to change this button isPending prop');}}>
+          <Text>Controlled pending</Text>
+        </Button>
+      </View>
+    </div>
   );
 }
