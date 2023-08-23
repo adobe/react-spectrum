@@ -24,6 +24,7 @@ import Button from '@react-spectrum/docs/pages/assets/component-illustrations/Ac
 import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Label.svg';
 import Popover from '@react-spectrum/docs/pages/assets/component-illustrations/Popover.svg';
 import ListBox from '@react-spectrum/docs/pages/assets/component-illustrations/ListBox.svg';
+import InternationalizedDate from '@react-spectrum/docs/pages/assets/component-illustrations/InternationalizedDate.svg';
 
 ---
 category: Date and Time
@@ -170,6 +171,19 @@ A date field consists of a label, and a group of segments representing each unit
 
 `DateField` also supports optional description and error message elements, which can be used to provide more context about the field, and any validation messages. These are linked with the input via the `aria-describedby` attribute.
 
+```tsx
+import {DateField, Label, DateInput, DateSegment, Text} from 'react-aria-components';
+
+<DateField>
+  <Label />
+  <DateInput>
+    {segment => <DateSegment segment={segment} />}
+  </DateInput>
+  <Text slot="description" />
+  <Text slot="errorMessage" />
+</DateField>
+```
+
 If the date field does not have a visible label, an `aria-label` or `aria-labelledby` prop must be passed instead to identify it to assistive technology.
 
 Note that most of this anatomy is shared with [TimeField](TimeField.html), so you can reuse many components between them if you have both.
@@ -178,7 +192,16 @@ Note that most of this anatomy is shared with [TimeField](TimeField.html), so yo
 
 `DateField` makes use of the following concepts:
 
-* [@internationalized/date](../internationalized/date/index.html)
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="../internationalized/date/index.html"
+  title="@internationalized/date"
+  description="Represent and manipulate dates and times in a locale-aware manner.">
+  <InternationalizedDate />
+</ExampleCard>
+
+</section>
 
 ### Composed components
 
@@ -194,115 +217,6 @@ A `DateField` uses the following components, which may also be used standalone o
 </ExampleCard>
 
 </section>
-
-## Props
-
-### DateField
-
-<PropTable component={docs.exports.DateField} links={docs.links} />
-
-### Label
-
-A `<Label>` accepts all HTML attributes.
-
-### DateInput
-
-The `<DateInput>` component renders a group of date segments. It accepts a function as its `children`, which is called to render a `<DateSegment>` for each segment.
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
-
-<PropTable component={docs.exports.DateInput} links={docs.links} />
-
-</details>
-
-### DateSegment
-
-The `<DateSegment>` component renders an individual segment.
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
-
-<PropTable component={docs.exports.DateSegment} links={docs.links} />
-
-</details>
-
-## Styling
-
-React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
-
-```css
-.react-aria-DateField {
-  /* ... */
-}
-```
-
-A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
-
-```jsx
-<DateInput className="my-date-input">
-  {/* ... */}
-</DateInput>
-```
-
-In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
-
-```css
-.react-aria-DateSegment[data-placeholder] {
-  /* ... */
-}
-
-.react-aria-DateSegment[data-readonly] {
-  /* ... */
-}
-```
-
-The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
-
-```jsx
-<DateSegment className={({isPlaceholder}) => isPlaceholder ? 'bg-gray-300' : 'bg-gray-600'} />
-```
-
-Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render the placeholder as a separate element to always reserve space for it.
-
-```jsx
-<DateSegment>
-  {({text, placeholder, isPlaceholder}) => (
-    <>
-      <span style={{visibility: isPlaceholder ? 'visible' : 'hidden'}}>{placeholder}</span>
-      {isPlaceholder ? '' : text}
-    </>
-  )}
-</DateSegment>
-```
-
-The states, selectors, and render props for each component used in a `DateField` are documented below.
-
-### DateField
-
-A `DateField` can be targeted with the `.react-aria-DateField` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
-
-<StateTable properties={docs.exports.DateFieldRenderProps.properties} />
-
-### Label
-
-A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overriding with a custom `className`.
-
-### DateInput
-
-A `DateInput` can be targeted with the `.react-aria-DateInput` CSS selector, or by overriding with a custom `className`. It supports the following states:
-
-<StateTable properties={docs.exports.DateInputRenderProps.properties} />
-
-### DateSegment
-
-A `DateSegment` can be targeted with the `.react-aria-DateSegment` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
-
-<StateTable properties={docs.exports.DateSegmentRenderProps.properties} />
-
-### Text
-
-The help text elements within a `DateField` can be targeted with the `[slot=description]` and `[slot=errorMessage]` CSS selectors, or by adding a custom `className`.
 
 ## Reusable wrappers
 
@@ -565,6 +479,115 @@ DateField supports the `name` prop for integration with HTML forms. The value wi
 ```tsx example
 <MyDateField label="Birth date" name="birthday" />
 ```
+
+## Props
+
+### DateField
+
+<PropTable component={docs.exports.DateField} links={docs.links} />
+
+### Label
+
+A `<Label>` accepts all HTML attributes.
+
+### DateInput
+
+The `<DateInput>` component renders a group of date segments. It accepts a function as its `children`, which is called to render a `<DateSegment>` for each segment.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.DateInput} links={docs.links} />
+
+</details>
+
+### DateSegment
+
+The `<DateSegment>` component renders an individual segment.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.DateSegment} links={docs.links} />
+
+</details>
+
+## Styling
+
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-DateField {
+  /* ... */
+}
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<DateInput className="my-date-input">
+  {/* ... */}
+</DateInput>
+```
+
+In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
+
+```css
+.react-aria-DateSegment[data-placeholder] {
+  /* ... */
+}
+
+.react-aria-DateSegment[data-readonly] {
+  /* ... */
+}
+```
+
+The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
+
+```jsx
+<DateSegment className={({isPlaceholder}) => isPlaceholder ? 'bg-gray-300' : 'bg-gray-600'} />
+```
+
+Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render the placeholder as a separate element to always reserve space for it.
+
+```jsx
+<DateSegment>
+  {({text, placeholder, isPlaceholder}) => (
+    <>
+      <span style={{visibility: isPlaceholder ? 'visible' : 'hidden'}}>{placeholder}</span>
+      {isPlaceholder ? '' : text}
+    </>
+  )}
+</DateSegment>
+```
+
+The states, selectors, and render props for each component used in a `DateField` are documented below.
+
+### DateField
+
+A `DateField` can be targeted with the `.react-aria-DateField` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.DateFieldRenderProps.properties} />
+
+### Label
+
+A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overriding with a custom `className`.
+
+### DateInput
+
+A `DateInput` can be targeted with the `.react-aria-DateInput` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.DateInputRenderProps.properties} />
+
+### DateSegment
+
+A `DateSegment` can be targeted with the `.react-aria-DateSegment` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.DateSegmentRenderProps.properties} />
+
+### Text
+
+The help text elements within a `DateField` can be targeted with the `[slot=description]` and `[slot=errorMessage]` CSS selectors, or by adding a custom `className`.
 
 ## Advanced customization
 

@@ -127,6 +127,39 @@ buttons using the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys.
 If a visual label is not provided (e.g. an icon only button), then an `aria-label` or
 `aria-labelledby` prop must be passed to identify the button to assistive technology.
 
+## Usage
+
+### Events
+
+`Button` supports user interactions via mouse, keyboard, and touch. You can handle all of these via the `onPress` prop. This is similar to the standard `onClick` event, but normalized to support all interaction methods equally. In addition, the `onPressStart`, `onPressEnd`, and `onPressChange` events are fired as the user interacts with the button.
+
+Each of these handlers receives a <TypeLink links={typesDocs.links} type={typesDocs.exports.PressEvent} />, which exposes information about the target and the type of event that triggered the interaction. See [usePress](usePress.html) for more details.
+
+```tsx example
+function Example() {
+  let [pointerType, setPointerType] = React.useState('');
+
+  return (
+    <>
+      <Button
+        onPressStart={e => setPointerType(e.pointerType)}
+        onPressEnd={() => setPointerType('')}>
+        Press me
+      </Button>
+      <p>{pointerType ? `You are pressing the button with a ${pointerType}!` : 'Ready to be pressed.'}</p>
+    </>
+  )
+}
+```
+
+### Disabled
+
+A `Button` can be disabled using the `isDisabled` prop.
+
+```tsx example
+<Button isDisabled>Pin</Button>
+```
+
 ## Props
 
 <PropTable component={docs.exports.Button} links={docs.links} />

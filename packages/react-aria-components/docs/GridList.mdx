@@ -20,6 +20,10 @@ import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import {Keyboard} from '@react-spectrum/text';
+import Collections from '@react-spectrum/docs/pages/assets/component-illustrations/Collections.svg';
+import Selection from '@react-spectrum/docs/pages/assets/component-illustrations/Selection.svg';
+import Checkbox from '@react-spectrum/docs/pages/assets/component-illustrations/Checkbox.svg';
+import Button from '@react-spectrum/docs/pages/assets/component-illustrations/Button.svg';
 
 ---
 category: Collections
@@ -325,94 +329,60 @@ HTML lists are meant for static content, rather than lists with rich interaction
 A grid list consists of a container element, with rows of data inside. The rows within a list may contain focusable elements or plain text content.
 If the list supports row selection, each row can optionally include a selection checkbox.
 
+```tsx
+import {GridList, Item, Checkbox, Button} from 'react-aria-components';
+
+<GridList>
+  <Item>
+    <Button slot="drag" />
+    <Checkbox slot="selection" />
+  </Item>
+</GridList>
+```
+
 ### Concepts
 
 `GridList` makes use of the following concepts:
 
-- [Collections](../react-stately/collections.html)
-- [Selection](../react-stately/selection.html)
+<section className={styles.cardGroup} data-size="small">
 
-## Props
+<ExampleCard
+  url="../react-stately/collections.html"
+  title="Collections"
+  description="Defining collections of items, async loading, and updating items over time.">
+  <Collections />
+</ExampleCard>
 
-### GridList
+<ExampleCard
+  url="../react-stately/selection.html"
+  title="Selection"
+  description="Interactions and data structures to represent selection.">
+  <Selection />
+</ExampleCard>
 
-<PropTable component={docs.exports.GridList} links={docs.links} />
+</section>
 
-### Item
+### Composed components
 
-An `<Item>` defines a single option within a `<GridList>`. If the `children` are not plain text, then the `textValue` prop must also be set to a plain text representation, which will be used for typeahead in the GridList.
+A `GridList` uses the following components, which may also be used standalone or reused in other components.
 
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+<section className={styles.cardGroup} data-size="small">
 
-<PropTable component={docs.exports.Item} links={docs.links} />
+<ExampleCard
+  url="Checkbox.html"
+  title="Checkbox"
+  description="A checkbox allows a user to select an individual option.">
+  <Checkbox />
+</ExampleCard>
 
-</details>
+<ExampleCard
+  url="Button.html"
+  title="Button"
+  description="A button allows a user to perform an action.">
+  <Button />
+</ExampleCard>
 
-## Styling
-
-React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
-
-```css
-.react-aria-GridList {
-  /* ... */
-}
-```
-
-A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
-
-```jsx
-<GridList className="my-gridlist">
-  {/* ... */}
-</GridList>
-```
-
-In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
-
-```css
-.react-aria-Item[data-selected] {
-  /* ... */
-}
-
-.react-aria-Item[data-focused] {
-  /* ... */
-}
-```
-
-The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
-
-```jsx
-<Item className={({isSelected}) => isSelected ? 'bg-blue-400' : 'bg-gray-100'}>
-  Item
-</Item>
-```
-
-Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render a checkbox only when selection is enabled.
-
-```jsx
-<Item>
-  {({selectionMode}) => (
-    <>
-      {selectionMode !== 'none' && <Checkbox />}
-      Item
-    </>
-  )}
-</Item>
-```
-
-The states and selectors for each component used in a `GridList` are documented below.
-
-### GridList
-
-A `GridList` can be targeted with the `.react-aria-GridList` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
-
-<StateTable properties={docs.exports.GridListRenderProps.properties} />
-
-### Item
-
-An `Item` can be targeted with the `.react-aria-Item` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
-
-<StateTable properties={docs.exports.ItemRenderProps.properties} showOptional />
+</section>
 
 ## Reusable wrappers
 
@@ -1660,6 +1630,88 @@ function DndGridList(props: DndGridListProps) {
   />
 </div>
 ```
+
+## Props
+
+### GridList
+
+<PropTable component={docs.exports.GridList} links={docs.links} />
+
+### Item
+
+An `<Item>` defines a single option within a `<GridList>`. If the `children` are not plain text, then the `textValue` prop must also be set to a plain text representation, which will be used for typeahead in the GridList.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.Item} links={docs.links} />
+
+</details>
+
+## Styling
+
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-GridList {
+  /* ... */
+}
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<GridList className="my-gridlist">
+  {/* ... */}
+</GridList>
+```
+
+In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
+
+```css
+.react-aria-Item[data-selected] {
+  /* ... */
+}
+
+.react-aria-Item[data-focused] {
+  /* ... */
+}
+```
+
+The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
+
+```jsx
+<Item className={({isSelected}) => isSelected ? 'bg-blue-400' : 'bg-gray-100'}>
+  Item
+</Item>
+```
+
+Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render a checkbox only when selection is enabled.
+
+```jsx
+<Item>
+  {({selectionMode}) => (
+    <>
+      {selectionMode !== 'none' && <Checkbox />}
+      Item
+    </>
+  )}
+</Item>
+```
+
+The states and selectors for each component used in a `GridList` are documented below.
+
+### GridList
+
+A `GridList` can be targeted with the `.react-aria-GridList` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.GridListRenderProps.properties} />
+
+### Item
+
+An `Item` can be targeted with the `.react-aria-Item` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.ItemRenderProps.properties} showOptional />
 
 ## Advanced customization
 

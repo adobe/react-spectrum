@@ -112,17 +112,25 @@ function Example() {
 
 ## Features
 
-There is no native element to implement a drop zone in HTML. `DropZone` helps achieve accessible dropzone components that can be styled as needed. 
+There is no native element to implement a drop zone in HTML. `DropZone` helps achieve accessible dropzone components that can be styled as needed.
 
-* **Styleable** – Hover, keyboard focus, and the drop target states are provided for easy styling. These styles only apply when interacting with an appropriate input device, unlike CSS pseudo classes. 
+* **Styleable** – Hover, keyboard focus, and the drop target states are provided for easy styling. These styles only apply when interacting with an appropriate input device, unlike CSS pseudo classes.
 * **Accessible** – Support for native drag and drop via mouse and touch, as well as keyboard and screen reader interactions. Copy and paste is also supported as a keyboard accessible alternative.
 * **Flexible** – Files, directories, and custom data types can be dropped, and the contents of the drop zone can be fully customized.
 
 ## Anatomy
 
-A drop zone consists of a target element for the dropped objects. Users may drop objects via mouse, keyboard, or touch. `DropZone` accepts any content as its children, which may change when the user drops content. A [FileTrigger](FileTrigger.html) is commonly paired with a DropZone to allow a user to choose files from their device. 
+A drop zone consists of a target element for the dropped objects. Users may drop objects via mouse, keyboard, or touch. `DropZone` accepts any content as its children, which may change when the user drops content. A [FileTrigger](FileTrigger.html) is commonly paired with a DropZone to allow a user to choose files from their device.
 
-A visual label should be provided to `DropZone` using a `Text` element with a `label` slot. If it is not provided, then an `aria-label` or `aria-labelledby` prop must be passed to identify the visually hidden button to assistive technology. 
+A visual label should be provided to `DropZone` using a `Text` element with a `label` slot. If it is not provided, then an `aria-label` or `aria-labelledby` prop must be passed to identify the visually hidden button to assistive technology.
+
+```tsx
+import {DropZone, Text} from 'react-aria-components';
+
+<DropZone>
+  <Text slot="label" />
+</DropZone>
+```
 
 ### Composed Components
 A drop zone can include a `FileTrigger` as a child, which may also be used standalone or reused in other components.
@@ -138,64 +146,11 @@ A drop zone can include a `FileTrigger` as a child, which may also be used stand
 
 </section>
 
-## Props
-
-<PropTable component={docs.exports.DropZone} links={docs.links} />
-
-## Styling
-
-React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
-
-```css
-.react-aria-DropZone {
-  /* ... */
-}
-```
-
-A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
-
-```jsx
-<DropZone className="my-dropzone">
-  {/* ... */}
-</DropZone>
-```
-
-In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
-
-```css
-.react-aria-DropZone[data-drop-target] {
-  /* ... */
-}
-```
-
-The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
-
-```jsx
-<DropZone className={({isDropTarget}) => isDropTarget ? 'bg-gray-700' : 'bg-gray-600'} />
-```
-
-Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render an extra element when the drop target is in an active state.
-
-```jsx
-<DropZone>
-  {({isDropTarget}) => (
-    <>
-      {isDropTarget && <DropHighlight/>}
-      Drop item here
-    </>
-  )}
-</DropZone>
-```
-
-The states, selectors, and render props for `DropZone` are documented below.
-
-<StateTable properties={docs.exports.DropZoneRenderProps.properties} />
-
 ## Usage
 
 ### Events
 
-`DropZone` supports user interactions via mouse, keyboard, and touch. You can handle all of these via the `onDrop` prop. In addition, the `onDropEnter`, `onDropMove`, and `onDropExit` events are fired as the user interacts with the dropzone. 
+`DropZone` supports user interactions via mouse, keyboard, and touch. You can handle all of these via the `onDrop` prop. In addition, the `onDropEnter`, `onDropMove`, and `onDropExit` events are fired as the user interacts with the dropzone.
 
 ```tsx example
 import type {TextDropItem} from '@react-aria/dnd';
@@ -278,7 +233,7 @@ function Draggable() {
 
 ### Labeling
 
-The `label` slot enables the user to reference the text content to define the dropzone's accessible name. 
+The `label` slot enables the user to reference the text content to define the dropzone's accessible name.
 
 ```tsx example
 import {Text} from 'react-aria-components';
@@ -401,6 +356,59 @@ function Example() {
   );
 }
 ```
+
+## Props
+
+<PropTable component={docs.exports.DropZone} links={docs.links} />
+
+## Styling
+
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-DropZone {
+  /* ... */
+}
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<DropZone className="my-dropzone">
+  {/* ... */}
+</DropZone>
+```
+
+In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
+
+```css
+.react-aria-DropZone[data-drop-target] {
+  /* ... */
+}
+```
+
+The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
+
+```jsx
+<DropZone className={({isDropTarget}) => isDropTarget ? 'bg-gray-700' : 'bg-gray-600'} />
+```
+
+Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render an extra element when the drop target is in an active state.
+
+```jsx
+<DropZone>
+  {({isDropTarget}) => (
+    <>
+      {isDropTarget && <DropHighlight/>}
+      Drop item here
+    </>
+  )}
+</DropZone>
+```
+
+The states, selectors, and render props for `DropZone` are documented below.
+
+<StateTable properties={docs.exports.DropZoneRenderProps.properties} />
 
 ## Advanced customization
 

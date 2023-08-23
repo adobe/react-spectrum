@@ -141,6 +141,17 @@ and the `aria-labelledby` attribute on the `<input>` element.
 to provide more context about the field, and any validation messages. These are linked with the
 input via the `aria-describedby` attribute.
 
+```tsx
+import {TextField, Label, Input, Button, Text} from 'react-aria-components';
+
+<TextField>
+  <Label />
+  <Input />
+  <Text slot="description" />
+  <Text slot="errorMessage" />
+</TextField>
+```
+
 If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead
 to identify the element to screen readers.
 
@@ -165,80 +176,6 @@ A `TextField` uses the following components, which may also be used standalone o
 </ExampleCard>
 
 </section>
-
-## Props
-
-### TextField
-
-<PropTable component={docs.exports.TextField} links={docs.links} />
-
-### Label
-
-A `<Label>` accepts all HTML attributes.
-
-### Input
-
-An `<Input>` accepts all HTML attributes.
-
-### Text
-
-`<Text>` accepts all HTML attributes.
-
-## Styling
-
-React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
-
-```css
-.react-aria-TextField {
-  /* ... */
-}
-```
-
-A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
-
-```jsx
-<TextField className="my-textfield">
-  {/* ... */}
-</TextField>
-```
-
-In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
-
-```css
-input[data-hovered] {
-  /* ... */
-}
-
-input[data-disabled] {
-  /* ... */
-}
-```
-
-The states, selectors, and render props for each component used in a `TextField` are documented below.
-
-### TextField
-
-A `TextField` can be targeted with the `.react-aria-TextField` CSS selector, or by overriding with a custom `className`. It supports the following states:
-
-<StateTable properties={docs.exports.TextFieldRenderProps.properties} />
-
-### Label
-
-A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overriding with a custom `className`.
-
-### Input
-
-An `Input` can be targeted with the `.react-aria-Input` CSS selector, or by overriding with a custom `className`. It supports the following states:
-
-<StateTable properties={docs.exports.InputRenderProps.properties} />
-
-### TextArea
-
-An `TextArea` can be targeted with the `.react-aria-TextArea` CSS selector, or by overriding with a custom `className`. It supports the same states as `Input` described above.
-
-### Text
-
-The help text elements within a `TextField` can be targeted with the `[slot=description]` and `[slot=errorMessage]` CSS selectors, or by adding a custom `className`.
 
 ## Reusable wrappers
 
@@ -368,6 +305,80 @@ import {TextField, Label, TextArea} from 'react-aria-components';
   <TextArea />
 </TextField>
 ```
+
+## Props
+
+### TextField
+
+<PropTable component={docs.exports.TextField} links={docs.links} />
+
+### Label
+
+A `<Label>` accepts all HTML attributes.
+
+### Input
+
+An `<Input>` accepts all HTML attributes.
+
+### Text
+
+`<Text>` accepts all HTML attributes.
+
+## Styling
+
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-TextField {
+  /* ... */
+}
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<TextField className="my-textfield">
+  {/* ... */}
+</TextField>
+```
+
+In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
+
+```css
+input[data-hovered] {
+  /* ... */
+}
+
+input[data-disabled] {
+  /* ... */
+}
+```
+
+The states, selectors, and render props for each component used in a `TextField` are documented below.
+
+### TextField
+
+A `TextField` can be targeted with the `.react-aria-TextField` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.TextFieldRenderProps.properties} />
+
+### Label
+
+A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overriding with a custom `className`.
+
+### Input
+
+An `Input` can be targeted with the `.react-aria-Input` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.InputRenderProps.properties} />
+
+### TextArea
+
+An `TextArea` can be targeted with the `.react-aria-TextArea` CSS selector, or by overriding with a custom `className`. It supports the same states as `Input` described above.
+
+### Text
+
+The help text elements within a `TextField` can be targeted with the `[slot=description]` and `[slot=errorMessage]` CSS selectors, or by adding a custom `className`.
 
 ## Advanced customization
 

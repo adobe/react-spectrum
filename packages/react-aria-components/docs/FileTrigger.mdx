@@ -40,8 +40,7 @@ type: component
 ## Example
 
 ```tsx example
-import {FileTrigger} from 'react-aria-components';
-import {Button} from 'react-aria-components';
+import {FileTrigger, Button} from 'react-aria-components';
 
 function Example(){
   let [file, setFile] = React.useState(null);
@@ -132,6 +131,14 @@ A file input can be created with an `<input type=“file”>` element, but this 
 
 A `FileTrigger` wraps around a pressable child such as a button, and includes a visually hidden input element that allows the user to select files from their device.
 
+```tsx
+import {FileTrigger, Button} from 'react-aria-components';
+
+<FileTrigger>
+  <Button />
+</FileTrigger>
+```
+
 If a visual label is not provided on the pressable child, then an `aria-label` or `aria-labelledby` prop must be passed to identify the file trigger to assistive technology.
 
 ### Composed Components
@@ -147,22 +154,6 @@ A `FileTrigger` can use the following components, which may also be used standal
 </ExampleCard>
 
 </section>
-
-## Props
-
-<PropTable component={docs.exports.FileTrigger} links={docs.links} />
-
-## Styling
-
-### FileTrigger 
-
-The `FileTrigger` component does not render any element of its own so it does not support styling. 
-
-### Button
-
-A [Button](Button.html) can be targeted with the `.react-aria-Button` CSS selector, or by overriding with a custom `className`. It supports the following states:
-
-<StateTable properties={docs.exports.ButtonRenderProps.properties} />
 
 ## Usage
 
@@ -197,3 +188,19 @@ This behavior only works on mobile devices. On desktop devices, it will open the
   <Button>Open Camera</Button>
 </FileTrigger>
 ````
+
+## Props
+
+<PropTable component={docs.exports.FileTrigger} links={docs.links} />
+
+## Styling
+
+### FileTrigger
+
+The `FileTrigger` component does not render any element of its own so it does not support styling.
+
+### Button
+
+A [Button](Button.html) can be targeted with the `.react-aria-Button` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.ButtonRenderProps.properties} />

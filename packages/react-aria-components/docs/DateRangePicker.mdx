@@ -26,6 +26,7 @@ import Popover from '@react-spectrum/docs/pages/assets/component-illustrations/P
 import DateField from '@react-spectrum/docs/pages/assets/component-illustrations/DateField.svg';
 import RangeCalendar from '@react-spectrum/docs/pages/assets/component-illustrations/RangeCalendar.svg';
 import Dialog from '@react-spectrum/docs/pages/assets/component-illustrations/Dialog.svg';
+import InternationalizedDate from '@react-spectrum/docs/pages/assets/component-illustrations/InternationalizedDate.svg';
 
 ---
 category: Date and Time
@@ -433,6 +434,40 @@ A date range picker consists of a label, and group containing two [date fields](
 
 `DateRangePicker` also supports optional description and error message elements, which can be used to provide more context about the field, and any validation messages. These are linked with the input via the `aria-describedby` attribute.
 
+```tsx
+import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarGrid, CalendarGrid, CalendarGridHeader, CalendarHeaderCell, CalendarGridBody, CalendarCell, Button, Heading, DateInput, DateSegment, Text} from 'react-aria-components';
+
+<DateRangePicker>
+  <Label />
+  <Group>
+    <DateInput>
+      {segment => <DateSegment segment={segment} />}
+    </DateInput>
+    <Button />
+  </Group>
+  <Text slot="description" />
+  <Text slot="errorMessage" />
+  <Popover>
+    <Dialog>
+      <RangeCalendar>
+        <Button slot="previous" />
+        <Heading />
+        <Button slot="next" />
+        <CalendarGrid>
+          <CalendarGridHeader>
+            {day => <CalendarHeaderCell />}
+          </CalendarGridHeader>
+          <CalendarGridBody>
+            {date => <CalendarCell date={date} />}
+          </CalendarGridBody>
+        </CalendarGrid>
+        <Text slot="errorMessage" />
+      </RangeCalendar>
+    </Dialog>
+  </Popover>
+</DateRangePicker>
+```
+
 If the date range picker does not have a visible label, an `aria-label` or `aria-labelledby` prop must be passed instead to identify it to assistive technology.
 
 Note that most of this anatomy is shared with [DatePicker](DatePicker.html), so you can reuse many components between them if you have both.
@@ -441,7 +476,16 @@ Note that most of this anatomy is shared with [DatePicker](DatePicker.html), so 
 
 `DateRangePicker` makes use of the following concepts:
 
-* [@internationalized/date](../internationalized/date/index.html)
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="../internationalized/date/index.html"
+  title="@internationalized/date"
+  description="Represent and manipulate dates and times in a locale-aware manner.">
+  <InternationalizedDate />
+</ExampleCard>
+
+</section>
 
 ### Composed components
 
@@ -492,266 +536,6 @@ A `DateRangePicker` uses the following components, which may also be used standa
 </ExampleCard>
 
 </section>
-
-## Props
-
-### DateRangePicker
-
-<PropTable component={docs.exports.DateRangePicker} links={docs.links} />
-
-### Label
-
-A `<Label>` accepts all HTML attributes.
-
-### Group
-
-A `<Group>` accepts all HTML attributes.
-
-### DateInput
-
-The `<DateInput>` component renders a group of date segments. It accepts a function as its `children`, which is called to render a `<DateSegment>` for each segment. The `slot="start"` and `slot="end"` props distinguish the two instances within a `DateRangePicker`.
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
-
-<PropTable component={docs.exports.DateInput} links={docs.links} />
-
-</details>
-
-### DateSegment
-
-The `<DateSegment>` component renders an individual segment.
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
-
-<PropTable component={docs.exports.DateSegment} links={docs.links} />
-
-</details>
-
-### Button
-
-A `<Button>` accepts its contents as `children`. Other props such as `onPress` and `isDisabled` will be set by the `DateRangePicker` or `RangeCalendar`.
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
-
-<PropTable component={docs.exports.Button} links={docs.links} />
-
-</details>
-
-### Popover
-
-A `<Popover>` is an overlay to hold the `<Calendar>`, positioned relative to the `<Group>`. By default, it has a `placement` of `bottom start` within a `<DateRangePicker>`, but this and other positioning properties may be customized.
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
-
-<PropTable component={docs.exports.Popover} links={docs.links} />
-
-</details>
-
-### Dialog
-
-A `<Dialog>` is placed within a `<Popover>` to hold the `<Calendar>` for a DateRangePicker.
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
-
-<PropTable component={docs.exports.Dialog} links={docs.links} />
-
-</details>
-
-### RangeCalendar
-
-A `<RangeCalendar>` accepts one or more month grids as chilren, along with previous and next buttons to navigate forward and backward.
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
-
-<PropTable component={docs.exports.Calendar} links={docs.links} />
-
-</details>
-
-### CalendarGrid
-
-A `<CalendarGrid>` renders an individual month within a `<RangeCalendar>`. It accepts a function as its `children`, which is called to render a `<CalendarCell>` for each date. This renders a default `<CalendarGridHeader>`, which displays the weekday names in the column headers. This can be customized by providing a `<CalendarGridHeader>` and `<CalendarGridBody>` as children instead of a function.
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
-
-<PropTable component={docs.exports.CalendarGrid} links={docs.links} />
-
-</details>
-
-### CalendarGridHeader
-
-A `<CalendarGridHeader>` renders the header within a `<CalendarGrid>`, displaying a list of weekday names. It accepts a function as its `children`, which is called with a day name abbreviation to render a `<CalendarHeaderCell>` for each column header.
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
-
-<PropTable component={docs.exports.CalendarGridHeader} links={docs.links} />
-
-</details>
-
-### CalendarHeaderCell
-
-A `<CalendarHeaderCell>` renders a column header within a `<CalendarGridHeader>`. It typically displays a weekday name.
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
-
-<PropTable component={docs.exports.CalendarHeaderCell} links={docs.links} />
-
-</details>
-
-### CalendarGridBody
-
-A `<CalendarGridBody>` renders the body within a `<CalendarGrid>`. It accepts a function as its `children`, which is called to render a `<CalendarCell>` for each date.
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
-
-<PropTable component={docs.exports.CalendarGridBody} links={docs.links} />
-
-</details>
-
-### CalendarCell
-
-A `<CalendarCell>` renders an individual date within a `<CalendarGrid>`.
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
-
-<PropTable component={docs.exports.CalendarCell} links={docs.links} />
-
-</details>
-
-## Styling
-
-React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
-
-```css
-.react-aria-DateRangePicker {
-  /* ... */
-}
-```
-
-A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
-
-```jsx
-<DateInput className="my-date-input">
-  {/* ... */}
-</DateInput>
-```
-
-In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
-
-```css
-.react-aria-DateSegment[data-placeholder] {
-  /* ... */
-}
-
-.react-aria-DateSegment[data-readonly] {
-  /* ... */
-}
-```
-
-The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
-
-```jsx
-<DateSegment className={({isPlaceholder}) => isPlaceholder ? 'bg-gray-300' : 'bg-gray-600'} />
-```
-
-Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render the placeholder as a separate element to always reserve space for it.
-
-```jsx
-<DateSegment>
-  {({text, placeholder, isPlaceholder}) => (
-    <>
-      <span style={{visibility: isPlaceholder ? 'visible' : 'hidden'}}>{placeholder}</span>
-      {isPlaceholder ? '' : text}
-    </>
-  )}
-</DateSegment>
-```
-
-The states, selectors, and render props for each component used in a `DateRangePicker` are documented below.
-
-### DateRangePicker
-
-A `DateRangePicker` can be targeted with the `.react-aria-DateRangePicker` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
-
-<StateTable properties={docs.exports.DateRangePickerRenderProps.properties} />
-
-### Label
-
-A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overriding with a custom `className`.
-
-### Group
-
-A `Group` can be targeted with the `.react-aria-Group` selector, or by overriding with a custom `className`. It supports the following states:
-
-<StateTable properties={docs.exports.GroupRenderProps.properties} />
-
-### DateInput
-
-A `DateInput` can be targeted with the `.react-aria-DateInput` CSS selector, or by overriding with a custom `className`. It supports the following states:
-
-<StateTable properties={docs.exports.DateInputRenderProps.properties} />
-
-### DateSegment
-
-A `DateSegment` can be targeted with the `.react-aria-DateSegment` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
-
-<StateTable properties={docs.exports.DateSegmentRenderProps.properties} />
-
-### Button
-
-A [Button](Button.html) can be targeted with the `.react-aria-Button` CSS selector, or by overriding with a custom `className`. The next and previous buttons within a range calendar can be targeted specifically with the `[slot=previous]` and `[slot=next]` selectors. Buttons support the following states:
-
-<StateTable properties={docs.exports.ButtonRenderProps.properties} />
-
-### Popover
-
-The [Popover](Popover.html) component can be targeted with the `.react-aria-Popover` CSS selector, or by overriding with a custom `className`. Note that it renders in a [React Portal](https://reactjs.org/docs/portals.html), so it will not appear as a descendant of the DateRangePicker in the DOM. It supports the following states and render props:
-
-<StateTable properties={docs.exports.PopoverRenderProps.properties} />
-
-### Dialog
-
-A [Dialog](Dialog.html) can be targeted with the `.react-aria-Dialog` CSS selector, or by overriding with a custom `className`.
-
-### RangeCalendar
-
-A [RangeCalendar](RangeCalendar.html) can be targeted with the `.react-aria-RangeCalendar` CSS selector, or by overriding with a custom `className`.
-
-### CalendarGrid
-
-A `CalendarGrid` can be targeted with the `.react-aria-CalendarGrid` CSS selector, or by overriding with a custom `className`. When a function is provided as children, a default `<CalendarGridHeader>` and `<CalendarGridBody>` are rendered. If you need to customize the styling of the header cells, you can render them yourself. See the [RangeCalendar](RangeCalendar.html#calendargrid-1) docs for an example.
-
-### CalendarGridHeader
-
-A `CalendarGridHeader` can be targeted with the `.react-aria-CalendarGridHeader` CSS selector, or by overriding with a custom `className`.
-
-### CalendarHeaderCell
-
-A `CalendarHeaderCell` can be targeted with the `.react-aria-CalendarHeaderCell` CSS selector, or by overriding with a custom `className`.
-
-### CalendarGridBody
-
-A `CalendarGridBody` can be targeted with the `.react-aria-CalendarGridBody` CSS selector, or by overriding with a custom `className`.
-
-### CalendarCell
-
-A `CalendarCell` can be targeted with the `.react-aria-CalendarCell` CSS selector, or by overriding with a custom `className`. It supports the following states:
-
-<StateTable properties={docs.exports.CalendarCellRenderProps.properties} />
-
-### Text
-
-The help text elements within a `DateRangePicker` can be targeted with the `[slot=description]` and `[slot=errorMessage]` CSS selectors, or by adding a custom `className`.
 
 ## Reusable wrappers
 
@@ -1116,6 +900,266 @@ DateRangePicker supports the `startName` and `endName` props for integration wit
 ```tsx example
 <MyDateRangePicker label="Trip dates" startName="startDate" endName="endDate" />
 ```
+
+## Props
+
+### DateRangePicker
+
+<PropTable component={docs.exports.DateRangePicker} links={docs.links} />
+
+### Label
+
+A `<Label>` accepts all HTML attributes.
+
+### Group
+
+A `<Group>` accepts all HTML attributes.
+
+### DateInput
+
+The `<DateInput>` component renders a group of date segments. It accepts a function as its `children`, which is called to render a `<DateSegment>` for each segment. The `slot="start"` and `slot="end"` props distinguish the two instances within a `DateRangePicker`.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.DateInput} links={docs.links} />
+
+</details>
+
+### DateSegment
+
+The `<DateSegment>` component renders an individual segment.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.DateSegment} links={docs.links} />
+
+</details>
+
+### Button
+
+A `<Button>` accepts its contents as `children`. Other props such as `onPress` and `isDisabled` will be set by the `DateRangePicker` or `RangeCalendar`.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.Button} links={docs.links} />
+
+</details>
+
+### Popover
+
+A `<Popover>` is an overlay to hold the `<Calendar>`, positioned relative to the `<Group>`. By default, it has a `placement` of `bottom start` within a `<DateRangePicker>`, but this and other positioning properties may be customized.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.Popover} links={docs.links} />
+
+</details>
+
+### Dialog
+
+A `<Dialog>` is placed within a `<Popover>` to hold the `<Calendar>` for a DateRangePicker.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.Dialog} links={docs.links} />
+
+</details>
+
+### RangeCalendar
+
+A `<RangeCalendar>` accepts one or more month grids as chilren, along with previous and next buttons to navigate forward and backward.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.Calendar} links={docs.links} />
+
+</details>
+
+### CalendarGrid
+
+A `<CalendarGrid>` renders an individual month within a `<RangeCalendar>`. It accepts a function as its `children`, which is called to render a `<CalendarCell>` for each date. This renders a default `<CalendarGridHeader>`, which displays the weekday names in the column headers. This can be customized by providing a `<CalendarGridHeader>` and `<CalendarGridBody>` as children instead of a function.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.CalendarGrid} links={docs.links} />
+
+</details>
+
+### CalendarGridHeader
+
+A `<CalendarGridHeader>` renders the header within a `<CalendarGrid>`, displaying a list of weekday names. It accepts a function as its `children`, which is called with a day name abbreviation to render a `<CalendarHeaderCell>` for each column header.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.CalendarGridHeader} links={docs.links} />
+
+</details>
+
+### CalendarHeaderCell
+
+A `<CalendarHeaderCell>` renders a column header within a `<CalendarGridHeader>`. It typically displays a weekday name.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.CalendarHeaderCell} links={docs.links} />
+
+</details>
+
+### CalendarGridBody
+
+A `<CalendarGridBody>` renders the body within a `<CalendarGrid>`. It accepts a function as its `children`, which is called to render a `<CalendarCell>` for each date.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.CalendarGridBody} links={docs.links} />
+
+</details>
+
+### CalendarCell
+
+A `<CalendarCell>` renders an individual date within a `<CalendarGrid>`.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.CalendarCell} links={docs.links} />
+
+</details>
+
+## Styling
+
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-DateRangePicker {
+  /* ... */
+}
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<DateInput className="my-date-input">
+  {/* ... */}
+</DateInput>
+```
+
+In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
+
+```css
+.react-aria-DateSegment[data-placeholder] {
+  /* ... */
+}
+
+.react-aria-DateSegment[data-readonly] {
+  /* ... */
+}
+```
+
+The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
+
+```jsx
+<DateSegment className={({isPlaceholder}) => isPlaceholder ? 'bg-gray-300' : 'bg-gray-600'} />
+```
+
+Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render the placeholder as a separate element to always reserve space for it.
+
+```jsx
+<DateSegment>
+  {({text, placeholder, isPlaceholder}) => (
+    <>
+      <span style={{visibility: isPlaceholder ? 'visible' : 'hidden'}}>{placeholder}</span>
+      {isPlaceholder ? '' : text}
+    </>
+  )}
+</DateSegment>
+```
+
+The states, selectors, and render props for each component used in a `DateRangePicker` are documented below.
+
+### DateRangePicker
+
+A `DateRangePicker` can be targeted with the `.react-aria-DateRangePicker` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.DateRangePickerRenderProps.properties} />
+
+### Label
+
+A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overriding with a custom `className`.
+
+### Group
+
+A `Group` can be targeted with the `.react-aria-Group` selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.GroupRenderProps.properties} />
+
+### DateInput
+
+A `DateInput` can be targeted with the `.react-aria-DateInput` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.DateInputRenderProps.properties} />
+
+### DateSegment
+
+A `DateSegment` can be targeted with the `.react-aria-DateSegment` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.DateSegmentRenderProps.properties} />
+
+### Button
+
+A [Button](Button.html) can be targeted with the `.react-aria-Button` CSS selector, or by overriding with a custom `className`. The next and previous buttons within a range calendar can be targeted specifically with the `[slot=previous]` and `[slot=next]` selectors. Buttons support the following states:
+
+<StateTable properties={docs.exports.ButtonRenderProps.properties} />
+
+### Popover
+
+The [Popover](Popover.html) component can be targeted with the `.react-aria-Popover` CSS selector, or by overriding with a custom `className`. Note that it renders in a [React Portal](https://reactjs.org/docs/portals.html), so it will not appear as a descendant of the DateRangePicker in the DOM. It supports the following states and render props:
+
+<StateTable properties={docs.exports.PopoverRenderProps.properties} />
+
+### Dialog
+
+A [Dialog](Dialog.html) can be targeted with the `.react-aria-Dialog` CSS selector, or by overriding with a custom `className`.
+
+### RangeCalendar
+
+A [RangeCalendar](RangeCalendar.html) can be targeted with the `.react-aria-RangeCalendar` CSS selector, or by overriding with a custom `className`.
+
+### CalendarGrid
+
+A `CalendarGrid` can be targeted with the `.react-aria-CalendarGrid` CSS selector, or by overriding with a custom `className`. When a function is provided as children, a default `<CalendarGridHeader>` and `<CalendarGridBody>` are rendered. If you need to customize the styling of the header cells, you can render them yourself. See the [RangeCalendar](RangeCalendar.html#calendargrid-1) docs for an example.
+
+### CalendarGridHeader
+
+A `CalendarGridHeader` can be targeted with the `.react-aria-CalendarGridHeader` CSS selector, or by overriding with a custom `className`.
+
+### CalendarHeaderCell
+
+A `CalendarHeaderCell` can be targeted with the `.react-aria-CalendarHeaderCell` CSS selector, or by overriding with a custom `className`.
+
+### CalendarGridBody
+
+A `CalendarGridBody` can be targeted with the `.react-aria-CalendarGridBody` CSS selector, or by overriding with a custom `className`.
+
+### CalendarCell
+
+A `CalendarCell` can be targeted with the `.react-aria-CalendarCell` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.CalendarCellRenderProps.properties} />
+
+### Text
+
+The help text elements within a `DateRangePicker` can be targeted with the `[slot=description]` and `[slot=errorMessage]` CSS selectors, or by adding a custom `className`.
 
 ## Advanced customization
 
