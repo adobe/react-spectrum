@@ -55,10 +55,8 @@ export function SafeTriangle(props: SafeTriangleProps): ReactElement {
           timeout.current = undefined;
         }
 
-        setStyle(shouldHide ? {
-          height: 0,
-          width: 0
-        } : {
+        setStyle({
+          display: shouldHide ? 'none' : undefined,
           top: triggerRect.top - triggerRef.current.parentElement.getBoundingClientRect().top,
           left: direction === 'right' ? mouseX - left + triggerRect.width - TOLERANCE : -TOLERANCE,
           height,
