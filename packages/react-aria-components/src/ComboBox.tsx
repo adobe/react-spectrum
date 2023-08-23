@@ -78,7 +78,7 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
       {/* Render a hidden copy of the children so that we can build the collection even when the popover is not open.
         * This should always come before the real DOM content so we have built the collection by the time it renders during SSR. */}
       <Hidden>
-        <ListBoxContext.Provider value={{document}}>
+        <ListBoxContext.Provider value={{document, items: props.items ?? props.defaultItems}}>
           {children}
         </ListBoxContext.Provider>
       </Hidden>
