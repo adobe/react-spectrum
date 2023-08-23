@@ -19,6 +19,8 @@ interface SafeTriangleProps {
   triggerRef: MutableRefObject<HTMLLIElement>
 }
 
+const TOLERANCE = 5;
+
 /**
  * Allows the user to move their pointer to the sub-menu without it closing when their mouse leaves the trigger element.
  * Renders an invisible triangle from the mouse position to the inside corners of the sub-menu.
@@ -46,9 +48,9 @@ export function SafeTriangle(props: SafeTriangleProps): ReactElement {
           width: 0
         } : {
           top: triggerRef.current?.getBoundingClientRect().top - triggerRef.current?.parentElement.getBoundingClientRect().top,
-          left: direction === 'right' ? mouseX - left + offset : undefined,
+          left: direction === 'right' ? mouseX - left + offset - TOLERANCE : -TOLERANCE,
           height,
-          width: direction === 'right' ? left - mouseX : mouseX - right,
+          width: direction === 'right' ? left - mouseX + TOLERANCE : mouseX - right + TOLERANCE,
           clipPath: direction === 'right' ? `polygon(100% 0%, 0% ${(100 * (mouseY - top)) / height}%, 100% 100%)` : `polygon(0% 0%, 100% ${(100 * (mouseY - top)) / height}%, 0% 100%)`
         });
       }
