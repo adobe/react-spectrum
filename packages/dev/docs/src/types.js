@@ -466,13 +466,13 @@ export function InterfaceType({description, properties: props, typeParameters, s
         <h3 className={typographyStyles['spectrum-Heading4']}>Properties</h3>
       }
       {properties.length > 0 &&
-        <table className={`${tableStyles['spectrum-Table']} ${tableStyles['spectrum-Table--quiet']} ${styles.propTable}`}>
+        <table className={`${tableStyles['spectrum-Table']} ${styles.propTable}`}>
           <thead>
             <tr>
               <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>Name</td>
               {!hideType && <td role="columnheader" className={tableStyles['spectrum-Table-headCell']} style={{'width': '30%'}}>Type</td>}
               {showDefault && <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>Default</td>}
-              <td role="columnheader" className={tableStyles['spectrum-Table-headCell']} style={!hideType ? {'width': '40%'} : undefined}>Description</td>
+              <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>Description</td>
             </tr>
           </thead>
           <tbody className={tableStyles['spectrum-Table-body']}>
@@ -512,7 +512,7 @@ export function InterfaceType({description, properties: props, typeParameters, s
         <h3 className={typographyStyles['spectrum-Heading4']}>Methods</h3>
       }
       {methods.length > 0 &&
-        <table className={`${tableStyles['spectrum-Table']} ${tableStyles['spectrum-Table--quiet']} ${styles.propTable} ${styles.methodTable}`}>
+        <table className={`${tableStyles['spectrum-Table']} ${styles.propTable} ${styles.methodTable}`}>
           <thead>
             <tr>
               <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>Method</td>

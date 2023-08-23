@@ -16,11 +16,13 @@ import {filterDOMProps} from '@react-aria/utils';
 import {HeadingContext} from './Heading';
 import {LinkContext} from './Link';
 import {Node} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, Key} from 'react';
 
 export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, Omit<AriaBreadcrumbsProps, 'children'>, StyleProps, SlotProps {
   /** Whether the breadcrumbs are disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  /** Handler that is called when a breadcrumb is clicked. */
+  onAction?: (key: Key) => void
 }
 
 export const BreadcrumbsContext = createContext<ContextValue<BreadcrumbsProps<any>, HTMLElement>>(null);
@@ -45,7 +47,8 @@ function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: Forwarde
             key={node.key}
             node={node}
             isCurrent={i === collection.size - 1}
-            isDisabled={props.isDisabled} />
+            isDisabled={props.isDisabled}
+            onAction={props.onAction} />
         ))}
       </ol>
       {portal}
@@ -62,15 +65,17 @@ export {_Breadcrumbs as Breadcrumbs};
 interface BreadcrumbItemProps {
   node: Node<object>,
   isCurrent: boolean,
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  onAction?: (key: Key) => void
 }
 
-function BreadcrumbItem({node, isCurrent, isDisabled}: BreadcrumbItemProps) {
+function BreadcrumbItem({node, isCurrent, isDisabled, onAction}: BreadcrumbItemProps) {
   // Recreating useBreadcrumbItem because we want to use composition instead of having the link builtin.
   let headingProps: HTMLAttributes<HTMLHeadingElement> | null = isCurrent ? {'aria-current': 'page'} : null;
   let linkProps = {
     'aria-current': isCurrent ? 'page' : null,
-    isDisabled: isDisabled || isCurrent
+    isDisabled: isDisabled || isCurrent,
+    onPress: () => onAction?.(node.key)
   };
 
   return (

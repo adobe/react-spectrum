@@ -136,19 +136,25 @@ export interface SlotProps {
   slot?: string
 }
 
-export function useContextProps<T, U extends SlotProps, E extends Element>(props: T & SlotProps, ref: React.ForwardedRef<E>, context: React.Context<ContextValue<U, E>>): [T, React.RefObject<E>] {
-  let ctx = useContext(context) || {};
-  if ('slots' in ctx && ctx.slots) {
-    if (!props.slot && !ctx.slots[defaultSlot]) {
+export function useSlottedContext<U extends SlotProps, E extends Element>(context: React.Context<ContextValue<U, E>>, slot?: string): WithRef<U, E> | null | undefined {
+  let ctx = useContext(context);
+  if (ctx && 'slots' in ctx && ctx.slots) {
+    if (!slot && !ctx.slots[defaultSlot]) {
       throw new Error('A slot prop is required');
     }
-    let slot = props.slot || defaultSlot;
-    if (!ctx.slots[slot]) {
+    let slotKey = slot || defaultSlot;
+    if (!ctx.slots[slotKey]) {
       // @ts-ignore
-      throw new Error(`Invalid slot "${props.slot}". Valid slot names are ` + new Intl.ListFormat().format(Object.keys(ctx.slots).map(p => `"${p}"`)) + '.');
+      throw new Error(`Invalid slot "${slot}". Valid slot names are ` + new Intl.ListFormat().format(Object.keys(ctx.slots).map(p => `"${p}"`)) + '.');
     }
-    ctx = ctx.slots[slot];
+    return ctx.slots[slotKey];
   }
+  // @ts-ignore
+  return ctx;
+}
+
+export function useContextProps<T, U extends SlotProps, E extends Element>(props: T & SlotProps, ref: React.ForwardedRef<E>, context: React.Context<ContextValue<U, E>>): [T, React.RefObject<E>] {
+  let ctx = useSlottedContext(context, props.slot) || {};
   // @ts-ignore - TS says "Type 'unique symbol' cannot be used as an index type." but not sure why.
   let {ref: contextRef, [slotCallbackSymbol]: callback, ...contextProps} = ctx;
   let mergedRef = useObjectRef(useMemo(() => mergeRefs(ref, contextRef), [ref, contextRef]));

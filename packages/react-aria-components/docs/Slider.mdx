@@ -528,8 +528,6 @@ function MySliderOutput(props) {
 
 All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop via context that you could pass to the corresponding component, and refs are supported as well. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
 
-Slider supports the following context:
-
 <ContextTable components={['Slider']} docs={docs} />
 
 This example shows a `SliderDescription` component that accepts a slider in its children and renders a description element below it. It uses the [useId](useId.html) hook to generate a unique id for the description, and associates it with the slider via the `aria-describedby` attribute passed to the `SwitchContext` provider.
@@ -560,6 +558,42 @@ function SliderDescription({children, description}: SliderDescriptionProps) {
 <SliderDescription description="Keeping your display on may shorten its life.">
   <MySlider label="Turn off display after" minValue={10} maxValue={60} defaultValue={45} formatOptions={{style: 'unit', unit: 'minute'}} />
 </SliderDescription>
+```
+
+### Custom children
+
+Slider passes props to its child components, such as the label, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
+
+<ContextTable components={['Label']} docs={docs} />
+
+This example consumes from `LabelContext` in an existing styled label component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by Slider.
+
+```tsx
+import type {LabelProps} from 'react-aria-components';
+import {LabelContext, useContextProps} from 'react-aria-components';
+
+const MyCustomLabel = React.forwardRef((props: LabelProps, ref: React.ForwardedRef<HTMLLabelElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, LabelContext);
+  ///- end highlight -///
+
+  // ... your existing Label component
+  return <label {...props} ref={ref} />;
+});
+```
+
+Now you can use `MyCustomLabel` within a `Slider`, in place of the builtin React Aria Components `Label`.
+
+```tsx
+<Slider>
+  {/*- begin highlight -*/}
+  <MyCustomLabel>Opacity</MyCustomLabel>
+  {/*- end highlight -*/}
+  <SliderTrack>
+    <SliderThumb />
+  </SliderTrack>
+</Slider>
 ```
 
 ### Hooks

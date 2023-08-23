@@ -20,7 +20,7 @@ import typographyStyles from '@adobe/spectrum-css-temp/components/typography/var
 
 export function ContextTable({components, docs}) {
   return (
-    <table className={`${tableStyles['spectrum-Table']} ${tableStyles['spectrum-Table--quiet']} ${styles.propTable}`}>
+    <table className={`${tableStyles['spectrum-Table']} ${styles.propTable}`}>
       <thead>
         <tr>
           <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>Component</td>

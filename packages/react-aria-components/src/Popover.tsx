@@ -46,7 +46,7 @@ export interface PopoverRenderProps {
 }
 
 interface PopoverContextValue extends PopoverProps {
-  state: OverlayTriggerState,
+  state?: OverlayTriggerState,
   preserveChildren?: boolean,
   triggerRef: RefObject<Element>
 }

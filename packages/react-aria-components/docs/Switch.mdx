@@ -309,8 +309,6 @@ Switch supports the `name` and `value` props for integration with HTML forms.
 
 All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop via context that you could pass to the corresponding component, and refs are supported as well. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
 
-Switch supports the following context:
-
 <ContextTable components={['Switch']} docs={docs} />
 
 This example shows a `SwitchDescription` component that accepts a switch in its children and renders a description element below it. It uses the [useId](useId.html) hook to generate a unique id for the description, and associates it with the switch via the `aria-describedby` attribute passed to the `SwitchContext` provider.

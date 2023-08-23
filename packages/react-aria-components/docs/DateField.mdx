@@ -584,7 +584,7 @@ All React Aria Components export a corresponding context that can be used to sen
 
 The components in a DateField support the following contexts:
 
-<ContextTable components={['DateField', 'Label', 'Text']} docs={docs} />
+<ContextTable components={['DateField']} docs={docs} />
 
 This example shows a `FieldGroup` component that renders a group of date fields with a title and optional error message. It uses the [useId](useId.html) hook to generate a unique id for the error message. All of the child DateFields are marked invalid and associated with the error message via the `aria-describedby` attribute passed to the `DateFieldContext` provider.
 
@@ -611,7 +611,7 @@ function FieldGroup({title, children, errorMessage}: FieldGroupProps) {
       {/*- end highlight -*/}
         {children}
       </DateFieldContext.Provider>
-      {errorMessage && <div id={errorId} className="invalid">{errorMessage}</div>}
+      {errorMessage && <small id={errorId} className="invalid">{errorMessage}</small>}
     </fieldset>
   );
 }
@@ -634,6 +634,7 @@ fieldset {
 .invalid {
   color: var(--spectrum-global-color-red-600);
   margin-top: 1em;
+  display: block;
 }
 
 @media (forced-colors: active) {
@@ -644,6 +645,42 @@ fieldset {
 ```
 
 </details>
+
+### Custom children
+
+DateField passes props to its child components, such as the label, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
+
+<ContextTable components={['Label', 'Text']} docs={docs} />
+
+This example consumes from `LabelContext` in an existing styled label component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by DateField.
+
+```tsx
+import type {LabelProps} from 'react-aria-components';
+import {LabelContext, useContextProps} from 'react-aria-components';
+
+const MyCustomLabel = React.forwardRef((props: LabelProps, ref: React.ForwardedRef<HTMLLabelElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, LabelContext);
+  ///- end highlight -///
+
+  // ... your existing Label component
+  return <label {...props} ref={ref} />;
+});
+```
+
+Now you can use `MyCustomLabel` within a `DateField`, in place of the builtin React Aria Components `Label`.
+
+```tsx
+<DateField>
+  {/*- begin highlight -*/}
+  <MyCustomLabel>Name</MyCustomLabel>
+  {/*- end highlight -*/}
+  <DateInput>
+    {segment => <DateSegment segment={segment} />}
+  </DateInput>
+</DateField>
+```
 
 ### Hooks
 
