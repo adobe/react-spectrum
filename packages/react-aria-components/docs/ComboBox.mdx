@@ -82,7 +82,7 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
       border-color: var(--spectrum-global-color-red-600);
     }
 
-    &:focus {
+    &[data-focused] {
       outline: none;
       border-color: slateblue;
       box-shadow: 0 0 0 1px slateblue;
@@ -148,7 +148,7 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
     display: flex;
     flex-direction: column;
 
-    &[aria-selected=true] {
+    &[data-selected] {
       font-weight: 600;
 
       &::before {
@@ -167,7 +167,7 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
       color: var(--highlight-foreground);
     }
 
-    &[aria-disabled] {
+    &[data-disabled] {
       color: var(--text-color-disabled);
     }
 
@@ -386,10 +386,10 @@ A custom `className` can also be specified on any component. This overrides the 
 </ComboBox>
 ```
 
-In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using DOM attributes, which you can target in CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. For example:
+In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
 
 ```css
-.react-aria-Item[aria-selected=true] {
+.react-aria-Item[data-selected] {
   /* ... */
 }
 

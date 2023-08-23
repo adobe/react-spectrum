@@ -37,7 +37,7 @@ export interface TabListProps<T> extends StyleRenderProps<TabListRenderProps>, A
 export interface TabListRenderProps {
   /**
    * The orientation of the tab list.
-   * @selector [aria-orientation="horizontal | vertical"]
+   * @selector [data-orientation="horizontal | vertical"]
    */
   orientation: Orientation,
   /**
@@ -63,12 +63,12 @@ export interface TabRenderProps {
   isPressed: boolean,
   /**
    * Whether the tab is currently selected.
-   * @selector [aria-selected=true]
+   * @selector [data-selected]
    */
   isSelected: boolean,
   /**
    * Whether the tab is currently focused.
-   * @selector :focus
+   * @selector [data-focused]
    */
   isFocused: boolean,
   /**
@@ -78,7 +78,7 @@ export interface TabRenderProps {
   isFocusVisible: boolean,
   /**
    * Whether the tab is disabled.
-   * @selector [aria-disabled]
+   * @selector [data-disabled]
    */
   isDisabled: boolean
 }
@@ -95,7 +95,7 @@ export interface TabPanelProps extends AriaTabPanelProps, RenderProps<TabPanelRe
 export interface TabPanelRenderProps {
   /**
    * Whether the tab panel is currently focused.
-   * @selector :focus
+   * @selector [data-focused]
    */
   isFocused: boolean,
   /**
@@ -106,7 +106,7 @@ export interface TabPanelRenderProps {
   /**
    * Whether the tab panel is currently non-interactive. This occurs when the
    * `shouldForceMount` prop is true, and the corresponding tab is not selected.
-   * @selector [inert]
+   * @selector [data-inert]
    */
   isInert: boolean,
   /**
@@ -160,8 +160,10 @@ function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
       {...renderProps}
       ref={ref}
       slot={props.slot}
+      data-focused={isFocused || undefined}
       data-orientation={orientation}
-      data-focus-visible={isFocusVisible || undefined}>
+      data-focus-visible={isFocusVisible || undefined}
+      data-disabled={state.isDisabled || undefined}>
       <InternalTabsContext.Provider value={{state, document, orientation, keyboardActivation}}>
         {renderProps.children}
       </InternalTabsContext.Provider>
@@ -201,7 +203,12 @@ function TabList<T extends object>(props: TabListProps<T>, ref: ForwardedRef<HTM
 
   return (
     <>
-      <div {...DOMProps} {...tabListProps} ref={objectRef} {...renderProps}>
+      <div 
+        {...DOMProps} 
+        {...tabListProps} 
+        ref={objectRef} 
+        {...renderProps}
+        data-orientation={orientation || undefined}>
         {[...state.collection].map((item) => (
           <TabInner
             key={item.key}
@@ -263,6 +270,8 @@ function TabInner({item, state}: {item: Node<object>, state: TabListState<object
     <div
       {...mergeProps(DOMProps, tabProps, focusProps, hoverProps, renderProps)}
       ref={ref}
+      data-selected={isSelected || undefined}
+      data-disabled={isDisabled || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={isPressed || undefined}
       data-hovered={isHovered || undefined} />
@@ -302,9 +311,11 @@ function TabPanel(props: TabPanelProps, forwardedRef: ForwardedRef<HTMLDivElemen
     <div
       {...domProps}
       ref={ref}
+      data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       // @ts-ignore
-      inert={!isSelected ? 'true' : undefined} />
+      inert={!isSelected ? 'true' : undefined}
+      data-inert={!isSelected ? 'true' : undefined} />
   );
 }
 

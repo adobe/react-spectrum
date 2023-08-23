@@ -27,7 +27,7 @@ export interface ButtonRenderProps {
   isPressed: boolean,
   /**
    * Whether the button is focused, either via a mouse or keyboard.
-   * @selector :focus
+   * @selector [data-focused]
    */
   isFocused: boolean,
   /**
@@ -37,7 +37,7 @@ export interface ButtonRenderProps {
   isFocusVisible: boolean,
   /**
    * Whether the button is disabled.
-   * @selector :disabled
+   * @selector [data-disabled]
    */
   isDisabled: boolean
 }
@@ -94,6 +94,7 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
       {...renderProps}
       ref={ref}
       slot={props.slot}
+      data-disabled={props.isDisabled || undefined}
       data-pressed={ctx.isPressed || isPressed || undefined}
       data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
