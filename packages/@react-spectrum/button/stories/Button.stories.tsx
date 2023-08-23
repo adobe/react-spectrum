@@ -235,21 +235,16 @@ function Example() {
 }
 
 function Pending(props) {
-  let variants = ['cta', 'accent', 'primary', 'secondary', 'negative', 'overBackground'];
 
   return (
-    <div>
-      {
-        variants.map(variant => (
-          <View backgroundColor={variant === 'overBackground' ? 'static-blue-700' : undefined} padding={16}>
-            <PendingButtonComponent {...props} variant={variant}>click me!</PendingButtonComponent>
-          </View>
-        ))
-      }
+    <>
+      <View backgroundColor={props.variant === 'overBackground' ? 'static-blue-700' : undefined} padding={16}>
+        <PendingButtonComponent {...props}>click me!</PendingButtonComponent>
+      </View>
 
       <View backgroundColor={props.variant === 'overBackground' ? 'static-blue-700' : undefined} padding={16}>
         <PendingButtonComponent
-          variant={props.variant}>
+          {...props}>
           <Bell />
           <Text>I have an icon</Text>
         </PendingButtonComponent>
@@ -257,7 +252,7 @@ function Pending(props) {
 
       <View backgroundColor={props.variant === 'overBackground' ? 'static-blue-700' : undefined} padding={16}>
         <PendingButtonOnClickComponent
-          variant={props.variant}>
+          {...props}>
           <Text>with onClick</Text>
         </PendingButtonOnClickComponent>
       </View>
@@ -267,7 +262,7 @@ function Pending(props) {
           <Text>Controlled pending</Text>
         </Button>
       </View>
-    </div>
+    </>
   );
 }
 let timerValue = 5000;
