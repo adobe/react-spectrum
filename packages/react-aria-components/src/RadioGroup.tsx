@@ -24,22 +24,22 @@ export interface RadioProps extends Omit<AriaRadioProps, 'children'>, RenderProp
 export interface RadioGroupRenderProps {
   /**
    * The orientation of the radio group.
-   * @selector [aria-orientation="horizontal | vertical"]
+   * @selector [data-orientation="horizontal | vertical"]
    */
   orientation: Orientation,
   /**
    * Whether the radio group is disabled.
-   * @selector [aria-disabled]
+   * @selector [data-disabled]
    */
   isDisabled: boolean,
   /**
    * Whether the radio group is read only.
-   * @selector [aria-readonly]
+   * @selector [data-readonly]
    */
   isReadOnly: boolean,
   /**
    * Whether the radio group is required.
-   * @selector [aria-required]
+   * @selector [data-required]
    */
   isRequired: boolean,
   /**
@@ -133,7 +133,11 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
       {...renderProps}
       ref={ref}
       slot={props.slot}
-      data-validation-state={state.validationState || undefined}>
+      data-orientation={props.orientation || 'vertical'}
+      data-validation-state={state.validationState || undefined}
+      data-disabled={state.isDisabled || undefined}
+      data-readonly={state.isReadOnly || undefined}
+      data-required={state.isRequired || undefined}>
       <Provider
         values={[
           [InternalRadioContext, state],

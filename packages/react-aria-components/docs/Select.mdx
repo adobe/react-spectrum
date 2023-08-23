@@ -101,7 +101,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
       background: var(--spectrum-global-color-gray-150);
     }
 
-    &:disabled {
+    &[data-disabled] {
       border-color: var(--border-color-disabled);
       color: var(--text-color-disabled);
       & span[aria-hidden] {
@@ -182,7 +182,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
     display: flex;
     flex-direction: column;
 
-    &[aria-selected=true] {
+    &[data-selected] {
       font-weight: 600;
 
       &::before {
@@ -201,7 +201,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
       color: var(--highlight-foreground);
     }
 
-    &[aria-disabled] {
+    &[data-disabled] {
       color: var(--text-color-disabled);
     }
 
@@ -453,10 +453,10 @@ A custom `className` can also be specified on any component. This overrides the 
 </Select>
 ```
 
-In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using DOM attributes, which you can target in CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. For example:
+In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
 
 ```css
-.react-aria-Item[aria-selected=true] {
+.react-aria-Item[data-selected] {
   /* ... */
 }
 
