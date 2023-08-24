@@ -61,11 +61,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
 
   let [showAllItems, setShowAllItems] = useState(false);
   let [isFocused, setFocusedState] = useState(false);
-  let [inputValue, setInputValue] = useControlledState(
-    props.inputValue,
-    props.defaultInputValue ?? '',
-    props.onInputChange
-  );
 
   let onSelectionChange = (key) => {
     if (props.onSelectionChange) {
@@ -85,6 +80,12 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     onSelectionChange,
     items: props.items ?? props.defaultItems
   });
+
+  let [inputValue, setInputValue] = useControlledState(
+    props.inputValue,
+    props.defaultInputValue ?? collection.getItem(selectedKey)?.textValue ?? '',
+    props.onInputChange
+  );
 
   // Preserve original collection so we can show all items on demand
   let originalCollection = collection;
@@ -170,7 +171,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     setInputValue(itemText);
   };
 
-  let isInitialRender = useRef(true);
   let lastSelectedKey = useRef(props.selectedKey ?? props.defaultSelectedKey ?? null);
   let lastSelectedKeyText = useRef(collection.getItem(selectedKey)?.textValue ?? '');
   // intentional omit dependency array, want this to happen on every render
@@ -219,11 +219,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
       }
     }
 
-    // If it is the intial render and inputValue isn't controlled nor has an intial value, set input to match current selected key if any
-    if (isInitialRender.current && (props.inputValue === undefined && props.defaultInputValue === undefined)) {
-      resetInputValue();
-    }
-
     // If the selectedKey changed, update the input value.
     // Do nothing if both inputValue and selectedKey are controlled.
     // In this case, it's the user's responsibility to update inputValue in onSelectionChange.
@@ -248,7 +243,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
       }
     }
 
-    isInitialRender.current = false;
     lastSelectedKey.current = selectedKey;
     lastSelectedKeyText.current = selectedItemText;
   });

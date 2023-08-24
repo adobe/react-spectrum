@@ -23,8 +23,7 @@ import React, {ReactNode, useContext, useLayoutEffect, useMemo, useRef, useState
 // consistent ids regardless of the loading order.
 interface SSRContextValue {
   prefix: string,
-  current: number,
-  isSSR: boolean
+  current: number
 }
 
 // Default context value to use in case there is no SSRProvider. This is fine for
@@ -34,11 +33,11 @@ interface SSRContextValue {
 // SSR case multiple copies of React Aria is not supported.
 const defaultContext: SSRContextValue = {
   prefix: String(Math.round(Math.random() * 10000000000)),
-  current: 0,
-  isSSR: false
+  current: 0
 };
 
 const SSRContext = React.createContext<SSRContextValue>(defaultContext);
+const IsSSRContext = React.createContext(false);
 
 export interface SSRProviderProps {
   /** Your application here. */
@@ -54,9 +53,8 @@ function LegacySSRProvider(props: SSRProviderProps): JSX.Element {
     // If this is the first SSRProvider, start with an empty string prefix, otherwise
     // append and increment the counter.
     prefix: cur === defaultContext ? '' : `${cur.prefix}-${counter}`,
-    current: 0,
-    isSSR
-  }), [cur, counter, isSSR]);
+    current: 0
+  }), [cur, counter]);
 
   // If on the client, and the component was initially server rendered,
   // then schedule a layout effect to update the component after hydration.
@@ -71,7 +69,9 @@ function LegacySSRProvider(props: SSRProviderProps): JSX.Element {
 
   return (
     <SSRContext.Provider value={value}>
-      {props.children}
+      <IsSSRContext.Provider value={isSSR}>
+        {props.children}
+      </IsSSRContext.Provider>
     </SSRContext.Provider>
   );
 }
@@ -194,6 +194,5 @@ export function useIsSSR(): boolean {
   }
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  let cur = useContext(SSRContext);
-  return cur.isSSR;
+  return useContext(IsSSRContext);
 }
