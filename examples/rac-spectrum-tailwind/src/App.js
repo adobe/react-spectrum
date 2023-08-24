@@ -24,6 +24,7 @@ export function App() {
 function SelectBoxExample() {
   return (
     <RadioGroup
+      data-rac
       className="flex flex-col space-y-2 text-center"
       defaultValue="Team"
     >
@@ -52,6 +53,7 @@ function SelectBoxExample() {
 function SelectBox({ name, icon, description }) {
   return (
     <Radio
+      data-rac
       value={name}
       className={({ isFocusVisible, isSelected, isPressed }) => `
       flex justify-center p-160 m-160 h-2000 w-2000 focus:outline-none border rounded
@@ -100,8 +102,9 @@ function SentimentRatingGroup() {
 function SentimentRating({ rating }) {
   return (
     <Radio
+      data-rac
       value={rating}
-      className="flex items-center justify-center bg-white border rounded-full p-160 m-75 h-200 w-200 focus:outline-none focus-visible:ring dark:bg-black selected:bg-accent-800 dark:selected:bg-accent-800 selected:border-accent-800 selected:text-white pressed:bg-gray-200 dark:pressed:bg-gray-200 hovered:border-gray-300"
+      className="flex items-center justify-center bg-white border rounded-full p-160 m-75 h-200 w-200 focus:outline-none focus-visible:ring dark:bg-black selected:bg-accent-800 dark:selected:bg-accent-800 selected:border-accent-800 selected:text-white pressed:bg-gray-200 dark:pressed:bg-gray-200 hover:border-gray-300"
     >
       {rating}
     </Radio>
