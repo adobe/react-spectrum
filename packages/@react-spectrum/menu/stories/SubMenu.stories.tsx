@@ -28,16 +28,19 @@ export default {
 };
 
 // TODO: add chromatic stories
+// TODO: should it inherit onClose from parent menu? what about onSelectionChange and selection mode? Will need to also fix it so a submenutrigger item can't be selected if selectionmode is on
+// Perhaps skip the selection mode change for now until selection groups is supported
+// TODO: add action for submenu opening
 export const SubMenuStatic = {
-  render: () => (
+  render: (args) => (
     renderMenuTrigger(
-      <Menu onAction={action('onAction')}>
+      <Menu onAction={action('onAction')} {...args}>
         <Item key="Lvl 1 Item 1">Lvl 1 Item 1</Item>
         <SubMenuTrigger>
           <Item key="Lvl 1 Item 2">Lvl 1 Item 2</Item>
           <Menu>
             <Item key="Lvl 2 Item 1">Lvl 2 Item 1</Item>
-            <Item key="Lvl 1 Item 2">Lvl 2 Item 2</Item>
+            <Item key="Lvl 2 Item 2">Lvl 2 Item 2</Item>
             <SubMenuTrigger>
               <Item key="Lvl 2 Item 3">Lvl 2 Item 3</Item>
               <Menu>
@@ -90,9 +93,9 @@ let dynamicRenderFunc = (item) => {
 };
 
 export const SubMenuDynamic = {
-  render: () => (
+  render: (args) => (
     renderMenuTrigger(
-      <Menu items={dynamicSubMenu} onAction={action('onAction')}>
+      <Menu items={dynamicSubMenu} onAction={action('onAction')} {...args}>
         {(item) => dynamicRenderFunc(item)}
       </Menu>
     )
@@ -379,8 +382,8 @@ export const Complex = {
 };
 
 export const ActionOverride = {
-  render: () => renderMenuTrigger(
-    <Menu onAction={action('onAction')} onClose={action('onClose menu 1')}>
+  render: (args) => renderMenuTrigger(
+    <Menu onAction={action('onAction')} onClose={action('onClose menu 1')} {...args}>
       <Item key="Lvl 1 Item 1">Lvl 1 Item 1</Item>
       <SubMenuTrigger>
         <Item key="Lvl 1 Item 2">Lvl 1 Item 2</Item>
@@ -404,6 +407,7 @@ export const ActionOverride = {
   parameters: {description: {data: 'Lvl 1 and Lv3 menu items share the same onAction via inheritance. Lvl2 menu item has its own onAction override. Each menu should have its own onClose triggered only if its direct menu option was acted upon.'}}
 };
 
+// TODO: finalize what should be supported here
 export const Posititioning = {
   render: (args) => (
     renderMenuTrigger(

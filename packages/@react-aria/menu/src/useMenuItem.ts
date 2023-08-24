@@ -209,6 +209,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     }
   };
 
+  // TODO: for sub menu trigger items, will need to add a onAction perhaps to prevent selection operations?
   let {itemProps, isFocused} = useSelectableItem({
     selectionManager: state.selectionManager,
     key,

@@ -22,6 +22,7 @@ import {useMenuTrigger} from '@react-aria/menu';
 import {useMenuTriggerState} from '@react-stately/menu';
 
 // TODO: Change from MenuTrigger, omit 'trigger' since we don't want to support long press on a submenu
+// Also check if we are ok not having isOpen and defaultOpen.
 interface SubMenuTriggerProps extends Omit<SpectrumMenuTriggerProps, 'trigger' | 'isOpen' | 'defaultOpen'> {
   targetKey: Key
 }
