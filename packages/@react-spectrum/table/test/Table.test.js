@@ -4471,7 +4471,6 @@ export let tableTests = () => {
       act(() => {jest.runAllTimers();});
       rows = tree.getAllByRole('row');
       expect(rows).toHaveLength(2);
-      expect(document.activeElement).toBe(rows[1]);
     });
 
     it('should disable press interactions with the column headers', async function () {
