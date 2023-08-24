@@ -7,6 +7,6 @@ module.exports = {
     require('./src/spectrum-preset.js')
   ],
   plugins: [
-    require('./src/rac-plugin.js')
+    require('../../packages/tailwindcss-react-aria-components/src/index.js')
   ],
 }
