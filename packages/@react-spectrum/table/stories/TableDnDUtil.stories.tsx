@@ -24,6 +24,7 @@ export default {
   title: 'TableView/Drag and Drop/Util Handlers'
 } as ComponentMeta<typeof TableView>;
 
+// Known accessibility issue that will be caught by aXe: https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#tableview
 export const DragOutOfTable: TableStory = {
   args: {
     disabledKeys: ['2']

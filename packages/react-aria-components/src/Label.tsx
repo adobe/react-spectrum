@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextValue, useContextProps} from './utils';
-import React, {createContext, ForwardedRef, forwardRef, LabelHTMLAttributes} from 'react';
+import {ContextValue, createHideableComponent, useContextProps} from './utils';
+import React, {createContext, ForwardedRef, LabelHTMLAttributes} from 'react';
 
 export interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
   elementType?: string
@@ -26,5 +26,5 @@ function Label(props: LabelProps, ref: ForwardedRef<HTMLLabelElement>) {
   return <ElementType className="react-aria-Label" {...labelProps} ref={ref} />;
 }
 
-const _Label = forwardRef(Label);
+const _Label = /*#__PURE__*/ createHideableComponent(Label);
 export {_Label as Label};

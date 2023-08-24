@@ -23,7 +23,7 @@ export interface CheckboxProps extends Omit<AriaCheckboxProps, 'children'>, Rend
 export interface CheckboxGroupRenderProps {
   /**
    * Whether the checkbox group is disabled.
-   * @selector [aria-disabled]
+   * @selector [data-disabled]
    */
   isDisabled: boolean,
   /**
