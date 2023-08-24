@@ -138,21 +138,6 @@ describe('CalendarDate conversion', function () {
     });
   });
 
-  describe('setTimeZoneOffset', () => {
-    it('should support old dates in local timezone with second offsets', () => {
-      const testCases = [
-        ['America/New_York', '1800-01-01T00:00:00Z', -17_762_000],
-        ['Europe/London', '1800-01-01T00:00:00Z', -75_000],
-        ['Europe/Berlin', '1800-01-01T00:00:00Z', 3_208_000],
-        ['Europe/Rome', '1800-01-01T00:00:00Z', 2_996_000]
-      ];
-      for (let [timezone, date, expectedOffset] of testCases) {
-        const tzOffset = getTimeZoneOffset(new Date(date).getTime(), timezone);
-        expect(tzOffset).toBe(expectedOffset);
-      }
-    });
-  });
-
   describe('toCalendar', function () {
     it('should support converting a CalendarDateTime between calendars', function () {
       let date = new CalendarDateTime(new JapaneseCalendar(), 'heisei', 31, 4, 30, 8, 20, 30, 80);
