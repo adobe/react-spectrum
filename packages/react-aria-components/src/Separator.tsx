@@ -20,8 +20,8 @@ export interface SeparatorProps extends AriaSeparatorProps, StyleProps, SlotProp
 
 export const SeparatorContext = createContext<ContextValue<SeparatorProps, Element>>({});
 
-function Separator(props: SeparatorProps, ref: ForwardedRef<Element>) {
-  [props, ref] = useContextProps(props, ref, SeparatorContext);
+function Separator(originalProps: SeparatorProps, originalRef: ForwardedRef<Element>) {
+  let [props, ref] = useContextProps(originalProps, originalRef, SeparatorContext);
   let {elementType, orientation, style, className} = props;
   let Element = (elementType as ElementType) || 'hr';
   if (Element === 'hr' && orientation === 'vertical') {
@@ -33,7 +33,7 @@ function Separator(props: SeparatorProps, ref: ForwardedRef<Element>) {
     orientation
   });
 
-  let shallow = useShallowRender('separator', props, ref);
+  let shallow = useShallowRender('separator', originalProps, originalRef);
   if (shallow) {
     return shallow;
   }

@@ -562,10 +562,11 @@ interface MySelectProps<T extends object> extends Omit<SelectProps<T>, 'children
   label?: string,
   description?: string,
   errorMessage?: string,
+  items?: Iterable<T>,
   children: React.ReactNode | ((item: T) => React.ReactNode)
 }
 
-function MySelect<T extends object>({label, description, errorMessage, children, ...props}: MySelectProps<T>) {
+function MySelect<T extends object>({label, description, errorMessage, children, items, ...props}: MySelectProps<T>) {
   return (
     <Select {...props}>
       <Label>{label}</Label>
@@ -576,7 +577,7 @@ function MySelect<T extends object>({label, description, errorMessage, children,
       {description && <Text slot="description">{description}</Text>}
       {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
       <Popover>
-        <ListBox>
+        <ListBox items={items}>
           {children}
         </ListBox>
       </Popover>
