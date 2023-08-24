@@ -741,7 +741,7 @@ export interface ItemRenderProps {
   isPressed: boolean,
   /**
    * Whether the item is currently selected.
-   * @selector [aria-selected=true]
+   * @selector [data-selected]
    */
   isSelected: boolean,
   /**
@@ -757,7 +757,7 @@ export interface ItemRenderProps {
   /**
    * Whether the item is non-interactive, i.e. both selection and actions are disabled and the item may
    * not be focused. Dependent on `disabledKeys` and `disabledBehavior`.
-   * @selector [aria-disabled]
+   * @selector [data-disabled]
    */
   isDisabled: boolean,
   /** The type of selection that is allowed in the collection. */
@@ -767,7 +767,7 @@ export interface ItemRenderProps {
   /**
    * Whether the item allows dragging.
    * @note This property is only available in collection components that support drag and drop.
-   * @selector [draggable]
+   * @selector [data-allows-dragging]
    */
   allowsDragging?: boolean,
   /**

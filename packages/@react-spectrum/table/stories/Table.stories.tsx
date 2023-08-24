@@ -123,6 +123,7 @@ export default {
 export type TableStory = ComponentStoryObj<typeof TableView>;
 
 
+// Known accessibility issue that will be caught by aXe: https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#tableview
 export const Static: TableStory = {
   args: {
     'aria-label': 'TableView with static contents',

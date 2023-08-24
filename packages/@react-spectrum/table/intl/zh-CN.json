@@ -1,6 +1,8 @@
 {
+  "collapse": "折叠",
   "columnResizer": "列尺寸调整器",
   "drag": "拖动",
+  "expand": "扩展",
   "loading": "正在加载...",
   "loadingMore": "正在加载更多...",
   "resizeColumn": "调整列大小",

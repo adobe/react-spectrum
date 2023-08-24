@@ -60,4 +60,12 @@ describe('<HiddenSelect />', () => {
     userEvent.selectOptions(select, '5');
     expect(onSelectionChange).toBeCalledWith('5');
   });
+
+  it('should always add a data attribute data-a11y-ignore="aria-hidden-focus"', () => {
+    render(
+      <HiddenSelectExample items={makeItems(5)} />
+    );
+
+    expect(screen.getByTestId('hidden-select-container')).toHaveAttribute('data-a11y-ignore', 'aria-hidden-focus');
+  });
 });

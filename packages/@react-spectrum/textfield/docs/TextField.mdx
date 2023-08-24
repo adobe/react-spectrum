@@ -66,6 +66,14 @@ function Example() {
 }
 ```
 
+### HTML forms
+
+TextField supports the `name` prop for integration with HTML forms. In addition, attributes such as `type`, `pattern`, `inputMode`, and others are passed through to the underlying `<input>` element.
+
+```tsx example
+<TextField label="Email" name="email" type="email" />
+```
+
 ## Labeling
 
 A visual label should be provided for the TextField using the `label` prop. If the TextField is required, the `isRequired` and

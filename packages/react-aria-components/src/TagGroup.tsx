@@ -230,6 +230,8 @@ function TagItem({item}) {
       ref={ref}
       {...renderProps}
       {...mergeProps(DOMProps, rowProps, focusProps, hoverProps)}
+      data-selected={states.isSelected || undefined}
+      data-disabled={states.isDisabled || undefined}
       data-hovered={isHovered || undefined}
       data-focused={states.isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}

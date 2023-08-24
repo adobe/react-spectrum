@@ -56,7 +56,6 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   let domProps = filterDOMProps(item.props, {isLink: !!item.props.href});
 
   let {
-    onClose,
     closeOnSelect
   } = useMenuContext();
 
@@ -82,7 +81,6 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
       isDisabled,
       'aria-label': item['aria-label'],
       key,
-      onClose,
       closeOnSelect,
       isVirtualized,
       onAction,
@@ -96,9 +94,6 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   if (endId) {
     endProps.id = endId;
     menuItemProps['aria-describedby'] = [menuItemProps['aria-describedby'], endId].filter(Boolean).join(' ');
-  }
-  if (isUnavailable) {
-    menuItemProps['aria-disabled'] = 'true';
   }
 
   let contents = typeof rendered === 'string'

@@ -584,7 +584,7 @@ describe('DateRangePicker', function () {
       expectPlaceholder(startDate, 'mm/dd/yyyy, ––:–– AM');
       expectPlaceholder(endDate, 'mm/dd/yyyy, ––:–– AM');
 
-      for (let timeField of [startTimeField, endTimeField]) {
+      for (let [index, timeField] of [startTimeField, endTimeField].entries()) {
         let hour = within(timeField).getByLabelText('hour,');
         expect(hour).toHaveAttribute('role', 'spinbutton');
         expect(hour).toHaveAttribute('aria-valuetext', 'Empty');
@@ -609,18 +609,22 @@ describe('DateRangePicker', function () {
 
         expect(document.activeElement).toHaveAttribute('aria-valuetext', '00');
 
-        expect(onChange).not.toHaveBeenCalled();
-        expectPlaceholder(startDate, 'mm/dd/yyyy, ––:–– AM');
-        expectPlaceholder(endDate, 'mm/dd/yyyy, ––:–– AM');
+        if (index === 0) {
+          expect(onChange).toHaveBeenCalledTimes(0);
+          expectPlaceholder(startDate, 'mm/dd/yyyy, ––:–– AM');
+          expectPlaceholder(endDate, 'mm/dd/yyyy, ––:–– AM');
+        } else {
+          let localTime = today(getLocalTimeZone());
+          expect(onChange).toHaveBeenCalledTimes(1);
+          expectPlaceholder(startDate, `${localTime.month}/1/${localTime.year}, 12:00 AM`);
+          expectPlaceholder(endDate, `${localTime.month}/2/${localTime.year}, 12:00 AM`);
+        }
 
-        fireEvent.keyDown(hour, {key: 'ArrowRight'});
-        fireEvent.keyUp(hour, {key: 'ArrowRight'});
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
 
         expect(document.activeElement).toHaveAttribute('aria-label', 'AM/PM, ');
-        expect(document.activeElement).toHaveAttribute('aria-valuetext', 'Empty');
-
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+        expect(document.activeElement).toHaveAttribute('aria-valuetext', 'AM');
       }
 
       expect(dialog).toBeVisible();
@@ -761,8 +765,6 @@ describe('DateRangePicker', function () {
         fireEvent.keyDown(hour, {key: 'ArrowRight'});
         fireEvent.keyUp(hour, {key: 'ArrowRight'});
         expect(document.activeElement).toHaveAttribute('aria-label', 'AM/PM, ');
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
       }
 
       userEvent.click(document.body);

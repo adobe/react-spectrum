@@ -77,6 +77,14 @@ function Example() {
 }
 ```
 
+### HTML forms
+
+SearchField supports the `name` prop for integration with HTML forms. In addition, attributes such as `type`, `pattern`, `inputMode`, and others are passed through to the underlying `<input>` element.
+
+```tsx example
+<SearchField label="Email" name="email" type="email" />
+```
+
 ## Labeling
 
 A visual label should be provided for the SearchField using the `label` prop. If the SearchField is required, the `isRequired` and `necessityIndicator` props can be used to show a required state.

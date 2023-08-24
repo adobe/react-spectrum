@@ -1,6 +1,5 @@
 name: 📚 Documentation
 description: Have an issue or improvement for the react-spectrum documentation?
-labels: ["documentation"]
 body:
   - type: markdown
     attributes:

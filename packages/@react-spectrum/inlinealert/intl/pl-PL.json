@@ -1,6 +1,6 @@
 {
-  "negative": "Błąd",
   "info": "Informacja",
-  "positive": "Powodzenie",
-  "notice": "Ostrzeżenie"
+  "negative": "Błąd",
+  "notice": "Ostrzeżenie",
+  "positive": "Powodzenie"
 }
