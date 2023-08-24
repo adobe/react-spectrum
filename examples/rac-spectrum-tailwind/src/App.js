@@ -16,6 +16,13 @@ export function App() {
       <div className="grid justify-center grid-cols-1 gap-160 auto-rows-fr">
         <SelectBoxExample />
         <SentimentRatingGroup />
+        <div className="flex justify-center">
+          <div className="flex flex-col max-w-sm">
+            <label for="test-input">Native input</label>
+            <input id="test-input" className="border focus:bg-gray-200 focus:outline-none focus:border-blue-600 hover:border-blue-300" />
+            <p>For the purpose of ensuring Tailwind's default selectors still work for non-RAC elements when using the plugin.</p>
+          </div>
+        </div>
       </div>
     </Provider>
   );
