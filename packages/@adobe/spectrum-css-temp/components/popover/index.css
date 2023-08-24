@@ -48,6 +48,7 @@ governing permissions and limitations under the License.
 
   outline: none; /* Hide focus outline */
   box-sizing: border-box;
+  overflow: hidden;
 
   &.is-open {
     @inherit: %spectrum-overlay--open;
