@@ -169,7 +169,8 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
           state={state}
           triggerRef={buttonRef}
           label={label}
-          name={props.name} />
+          name={props.name}
+          isDisabled={props.isDisabled} />
       </Provider>
     </>
   );
