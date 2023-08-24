@@ -562,6 +562,7 @@ interface MySelectProps<T extends object> extends Omit<SelectProps<T>, 'children
   label?: string,
   description?: string,
   errorMessage?: string,
+  items?: Iterable<T>,
   children: React.ReactNode | ((item: T) => React.ReactNode)
 }
 
