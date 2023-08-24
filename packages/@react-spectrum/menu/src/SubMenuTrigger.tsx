@@ -111,10 +111,15 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
     'aria-labelledby': subMenuTriggerId,
     state: subMenuState,
     ref: menuRef,
+    // TODO: split out into another func for close top level menu separate from onClose so that the user supplied call back doesn't fire
+    // on Esc. This does feel like a lot
     // Selecting a menu item in a sub menu should also close ALL menus, so we close the root menu as well
     onClose: chain(subMenuState.close, topLevelMenuState.close),
     // Separate handler for useMenuItem, used to close just the submenu when the user presses ArrowLeft in a submenu
     onSubMenuClose: subMenuState.close,
+    // TODO: Handler for closing the top level menu to close all menus, required for Escape handling from submenu. Separate from onClose since will be merged with
+    // user provided onClose, consider just saving onClose before the merge happens?
+    onCloseAllMenus: topLevelMenuState.close,
     closeOnSelect,
     // TODO: we don't call useMenuTrigger so need an autofocus value for when the submenu is opened by keyboard/hover/press
     // useMenuItem currently handles opening the submenu, perhaps copy over the pressProps/some of the keydown stuff from useMenuTrigger's implementation

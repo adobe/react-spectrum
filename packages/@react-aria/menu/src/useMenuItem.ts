@@ -289,6 +289,11 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
             e.continuePropagation();
           }
           break;
+        case 'Escape':
+          if (isSubMenuItem) {
+            data.onCloseAllMenus();
+          }
+          // fallthrough for Escape handling for non submenus
         default:
           e.continuePropagation();
           break;
