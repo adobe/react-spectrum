@@ -641,7 +641,7 @@ module.exports = new Transformer({
     }
 
     function isReactForwardRef(path) {
-      return isReactCall(path, 'forwardRef');
+      return isReactCall(path, 'forwardRef') || (path.isCallExpression() && path.get('callee').isIdentifier({name: 'createHideableComponent'}));
     }
 
     function isReactCall(path, name, module = 'react') {
@@ -669,13 +669,12 @@ module.exports = new Transformer({
 
     function isReactComponent(path) {
       if (path.isFunction()) {
-        if (
-          path.node.returnType &&
-          t.isTSTypeReference(path.node.returnType.typeAnnotation) &&
-          t.isTSQualifiedName(path.node.returnType.typeAnnotation.typeName) &&
-          t.isIdentifier(path.node.returnType.typeAnnotation.typeName.left, {name: 'JSX'}) &&
-          t.isIdentifier(path.node.returnType.typeAnnotation.typeName.right, {name: 'Element'})
-        ) {
+        let returnType = path.node.returnType?.typeAnnotation;
+        if (isJSXElementType(returnType)) {
+          return true;
+        }
+
+        if (returnType && t.isTSUnionType(returnType) && returnType.types.some(isJSXElementType)) {
           return true;
         }
 
@@ -695,6 +694,14 @@ module.exports = new Transformer({
       // TODO: classes
 
       return false;
+    }
+
+    function isJSXElementType(returnType) {
+      return returnType &&
+        t.isTSTypeReference(returnType) &&
+        t.isTSQualifiedName(returnType.typeName) &&
+        t.isIdentifier(returnType.typeName.left, {name: 'JSX'}) &&
+        t.isIdentifier(returnType.typeName.right, {name: 'Element'});
     }
 
     function getJSDocs(path) {
