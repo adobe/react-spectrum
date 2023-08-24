@@ -425,6 +425,51 @@ If you are using Tailwind CSS, we recommend using the [tailwindcss-animate](http
 
 The documentation for each component includes many examples styled using vanilla CSS and the default class names. We also have an example of many of the components using Tailwind CSS. You can find the [code](https://github.com/adobe/react-spectrum/blob/main/examples/rac-tailwind/src/App.js) in the repo, as well as a [live demo](https://reactspectrum.blob.core.windows.net/reactspectrum/f239d0b1a96c3e6119135fe6bbf1994dc9984257/verdaccio/rac-tailwind/index.html).
 
+## Tailwind CSS Plugin
+
+There is a Tailwind CSS plugin available which makes styling different [states](#states) easier.
+
+This allows an element with the `data-selected` attribute to be styled in Tailwind with `selected:` instead of `data-[selected]:`. Non-boolean data attributes follow the `{name}-{value}` pattern, so you can style an element with `data-orientation="horizontal"` using `orientation-horizontal:`.
+
+To install:
+
+```
+yarn add tailwindcss-react-aria-components
+```
+
+Then add the plugin to your `tailwind.config.js` file:
+
+```jsx
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  plugins: [
+    require('tailwindcss-react-aria-components')
+  ],
+}
+```
+
+You can optionally specify a prefix using `require('tailwindcss-react-aria-components')({prefix: 'rac'})`. This will allow you to use `rac-selected:` instead of `selected:`.
+
+### Boolean states
+
+The `data-selected` state can be styled with `selected:` like this:
+
+```jsx
+<Button className="selected:bg-blue">
+  {/* ... */}
+</Button>
+```
+
+### Non-boolean states
+
+The `data-orientation="vertical"` state can be styled with `orientation-vertical:` like this:
+
+```jsx
+<Tabs className="orientation-vertical:flex-row">
+  {/* ... */}
+</Tabs>
+```
+
 ## Components
 
 ### Buttons
