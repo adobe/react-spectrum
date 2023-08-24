@@ -12,10 +12,10 @@
 import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useGridList, useGridListItem, useGridListSelectionCheckbox, useHover, useVisuallyHidden, VisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
+import {Collection, DraggableCollectionState, DroppableCollectionState, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
 import {CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
 import {ContextValue, defaultSlot, forwardRefType, Provider, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
-import {DraggableCollectionState, DroppableCollectionState, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
 import {filterDOMProps, isIOS, isWebKit, useObjectRef} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
 import {TextContext} from './Text';
@@ -67,9 +67,25 @@ export const GridListContext = createContext<ContextValue<GridListProps<any>, HT
 const InternalGridListContext = createContext<InternalGridListContextValue | null>(null);
 
 function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+  // Render the portal first so that we have the collection by the time we render the DOM in SSR.
   [props, ref] = useContextProps(props, ref, GridListContext);
+  let {collection, portal} = useCollection(props);
+  return (
+    <>
+      {portal}
+      <GridListInner props={props} collection={collection} gridListRef={ref} />
+    </>
+  );
+}
+
+interface GridListInnerProps<T extends object> {
+  props: GridListProps<T>,
+  collection: Collection<Node<T>>,
+  gridListRef: RefObject<HTMLDivElement>
+}
+
+function GridListInner<T extends object>({props, collection, gridListRef: ref}: GridListInnerProps<T>) {
   let {dragAndDropHooks} = props;
-  let {portal, collection} = useCollection(props);
   let state = useListState({
     ...props,
     collection,
@@ -219,7 +235,6 @@ function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<H
         </Provider>
         {emptyState}
         {dragPreview}
-        {portal}
       </div>
     </FocusScope>
   );
