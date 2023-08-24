@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/dropzone",
-  "version": "3.12.2-alpha.0",
+  "version": "3.0.0-alpha.0",
   "private": true,
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
