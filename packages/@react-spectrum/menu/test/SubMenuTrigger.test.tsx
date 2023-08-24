@@ -62,6 +62,8 @@ describe('SubMenu', function () {
   let onAction = jest.fn();
   let subMenuOnAction = jest.fn();
   // TODO add tests for onSelectionChange and onClose
+  // Add tests for disabledKeys and making the trigger disabled via disabledKeys
+  // Also make sure onSelectionChange doesn't fire when submenutrigger is pressed and that submenutrigger doesn't get a checkmark even if specified in selectedkeys
   // let onSelectionChange = jest.fn();
   // let onClose = jest.fn();
 
@@ -241,7 +243,9 @@ describe('SubMenu', function () {
   });
 
   describe('user provided callbacks', function () {
-    // TODO: should it also inherit onClose from parent menu? what about selectionChange and selection mode?
+    // TODO: after discussion, onAction/onClose/onSelectionChange should all be individually set on each menu. Needs to be done like this since
+    // keys can actually be duplicated since each menu has its own treestate
+    // update the tests to reflect this
     it('inherits onAction from top level menu if not specified on submenu', function () {
       let tree = render(
         <MenuTrigger>

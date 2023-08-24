@@ -31,10 +31,11 @@ export default {
 // TODO: should it inherit onClose from parent menu? what about onSelectionChange and selection mode? Will need to also fix it so a submenutrigger item can't be selected if selectionmode is on
 // Perhaps skip the selection mode change for now until selection groups is supported
 // TODO: add action for submenu opening
+// TODO: add stories where selection mode is applied to each menu/submenu (via controls?). Also add story where the trigger is disabled
 export const SubMenuStatic = {
   render: (args) => (
     renderMenuTrigger(
-      <Menu onAction={action('onAction')} {...args}>
+      <Menu selectionMode="multiple" onSelectionChange={action('onSelectionChange')} {...args}>
         <Item key="Lvl 1 Item 1">Lvl 1 Item 1</Item>
         <SubMenuTrigger>
           <Item key="Lvl 1 Item 2">Lvl 1 Item 2</Item>
@@ -381,6 +382,7 @@ export const Complex = {
   name: 'complex'
 };
 
+// TODO: update this story after refactroring it so we don't inherit onaction
 export const ActionOverride = {
   render: (args) => renderMenuTrigger(
     <Menu onAction={action('onAction')} onClose={action('onClose menu 1')} {...args}>

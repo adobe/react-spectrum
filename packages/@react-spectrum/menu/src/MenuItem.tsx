@@ -48,6 +48,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   let menuDialogContext = useMenuDialogContext();
   let {direction} = useLocale();
   let {triggerRef} = menuDialogContext || {};
+  // TODO rename all instances of menuDialogTrigger to something more generic to submenus
   // If menuDialogContext.isUnavailable is explicitly false, then disable all submenu behavior
   let isMenuDialogTrigger = !!menuDialogContext && menuDialogContext.isUnavailable !== false;
   let isUnavailable;
@@ -72,8 +73,9 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
     }
   }
 
-  let isSelected = state.selectionManager.isSelected(key);
   let isDisabled = state.disabledKeys.has(key);
+  let isSelectable = !isMenuDialogTrigger && state.selectionManager.selectionMode !== 'none';
+  let isSelected = isSelectable && state.selectionManager.isSelected(key);
 
   let itemref = useRef<HTMLLIElement>(null);
   let ref = useObjectRef(useMemo(() => mergeRefs(itemref, triggerRef), [itemref, triggerRef]));
@@ -119,7 +121,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
           {
             'is-disabled': isDisabled,
             'is-selected': isSelected,
-            'is-selectable': state.selectionManager.selectionMode !== 'none',
+            'is-selectable': isSelectable,
             'is-open': state.expandedKeys.has(key)
           }
         )}>

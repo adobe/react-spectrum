@@ -481,7 +481,7 @@ export class SelectionManager implements MultipleSelectionManager {
     }
 
     let item = this.collection.getItem(key);
-    if (!item || (item.type === 'cell' && !this.allowsCellSelection)) {
+    if (!item || (item.type === 'cell' && !this.allowsCellSelection) || (item.type === 'item' && item.props.isTrigger)) {
       return false;
     }
 

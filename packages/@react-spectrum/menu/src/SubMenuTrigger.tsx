@@ -186,8 +186,9 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
 SubMenuTrigger.getCollectionNode = function* (props: SpectrumSubMenuTriggerProps) {
   let [trigger] = React.Children.toArray(props.children) as ReactElement[];
   let [, content] = props.children as [ReactElement, ReactElement];
+
   yield {
-    element: React.cloneElement(trigger, {...trigger.props, hasChildItems: true}),
+    element: React.cloneElement(trigger, {...trigger.props, hasChildItems: true, isTrigger: true}),
     wrapper: (element) => (
       <SubMenuTrigger key={element.key} targetKey={element.key} {...props}>
         {element}
