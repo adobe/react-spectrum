@@ -16,7 +16,7 @@ import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isAndroid, mergeProps, useDescription} from '@react-aria/utils';
-import {RefObject, useEffect, useRef} from 'react';
+import {RefObject, useEffect} from 'react';
 import {TableState} from '@react-stately/table';
 import {useFocusable} from '@react-aria/focus';
 import {useGridCell} from '@react-aria/grid';
@@ -81,16 +81,11 @@ export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, st
   let descriptionProps = useDescription(sortDescription);
 
   let shouldDisableFocus = state.collection.size === 0;
-  let prevDisabledFocus = useRef(shouldDisableFocus);
   useEffect(() => {
     if (shouldDisableFocus && state.selectionManager.focusedKey === node.key) {
       state.selectionManager.setFocusedKey(null);
     }
-    if (prevDisabledFocus.current && state.collection.size > 0 && state.selectionManager.isFocused) {
-      state.selectionManager.setFocusedKey(state.collection.getFirstKey());
-    }
-    prevDisabledFocus.current = shouldDisableFocus;
-  }, [shouldDisableFocus, state.selectionManager, node.key, state.collection]);
+  }, [shouldDisableFocus, state.selectionManager, node.key]);
 
   return {
     columnHeaderProps: {
