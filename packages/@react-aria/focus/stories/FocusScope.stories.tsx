@@ -94,12 +94,11 @@ export function Example({isPortaled, contain}: StoryProps) {
 
   return (
     <div>
-      <input />
-
+      <input aria-label="input before" />
       <button type="button" onClick={() => setOpen(true)}>
         Open dialog
       </button>
-      <input />
+      <input aria-label="input after" />
       {open && <NestedDialog onClose={() => setOpen(false)} isPortaled={isPortaled} contain={contain} />}
 
       <div id={dialogsRoot} />

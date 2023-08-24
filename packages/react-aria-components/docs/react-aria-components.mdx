@@ -142,7 +142,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
       background: var(--spectrum-global-color-gray-150);
     }
 
-    &:disabled {
+    &[data-disabled] {
       border-color: var(--border-color-disabled);
       color: var(--text-color-disabled);
       & span[aria-hidden] {
@@ -223,7 +223,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
     display: flex;
     flex-direction: column;
 
-    &[aria-selected=true] {
+    &[data-selected] {
       font-weight: 600;
 
       &::before {
@@ -242,7 +242,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
       color: var(--highlight-foreground);
     }
 
-    &[aria-disabled] {
+    &[data-disabled] {
       color: var(--text-color-disabled);
     }
 
@@ -306,7 +306,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
     --text-color-disabled: GrayText;
     --focus-ring-color: Highlight;
 
-    .react-aria-Button:disabled span[aria-hidden] {
+    .react-aria-Button[data-disabled] span[aria-hidden] {
       background: transparent;
     }
   }
@@ -343,7 +343,7 @@ When a custom `className` is not provided, each component includes a default cla
 Some components support multiple UI states (e.g. pressed, hovered, selected, etc.). React Aria Components exposes states using DOM attributes, which can be targeted by CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. They can be thought of like custom CSS pseudo classes. For example:
 
 ```css render=false
-.react-aria-Item[aria-selected=true] {
+.react-aria-Item[data-selected] {
   /* ... */
 }
 
