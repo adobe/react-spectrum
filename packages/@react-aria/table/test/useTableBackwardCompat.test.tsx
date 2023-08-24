@@ -124,15 +124,13 @@ describe('useTable', () => {
         </Table>
       );
 
-      // @ts-ignore
-      await user.click(getCell(tree, 'Squirtle'), {pointerType: 'mouse'});
+      await user.click(getCell(tree, 'Squirtle'));
       expect(mockAnnounce).toHaveBeenLastCalledWith('Squirtle selected.');
       expect(mockAnnounce).toHaveBeenCalledTimes(1);
       expect(onAction).not.toHaveBeenCalled();
 
       mockAnnounce.mockReset();
-      // @ts-ignore
-      await user.dblClick(getCell(tree, 'Squirtle'), {pointerType: 'mouse'});
+      await user.dblClick(getCell(tree, 'Squirtle'));
       expect(mockAnnounce).not.toHaveBeenCalled();
       expect(onAction).toHaveBeenCalledTimes(1);
       expect(onAction).toHaveBeenCalledWith(2);
