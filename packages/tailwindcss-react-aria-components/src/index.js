@@ -42,7 +42,7 @@ const nativeVariantSelectors = new Map([...nativeVariants.map((variant) => [vari
 let getSelector = (prefix, attributeName, attributeValue) => {
   let baseSelector = attributeValue ? `[data-${attributeName}="${attributeValue}"]` : `[data-${attributeName}]`;
   if (prefix === '' && nativeVariantSelectors.has(attributeName)) {
-    return `&[data-rac]${baseSelector}, &:not([data-rac])${nativeVariantSelectors.get(attributeName)}`;
+    return `&:is([data-rac]${baseSelector}, :not([data-rac])${nativeVariantSelectors.get(attributeName)})`;
   } else {
     return `&${baseSelector}`;
   }
