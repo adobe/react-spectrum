@@ -55,7 +55,7 @@ export interface SelectRenderProps {
   isRequired: boolean
 }
 
-export interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<SelectRenderProps>, SlotProps {}
+export interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage' | 'items'>, RenderProps<SelectRenderProps>, SlotProps {}
 
 interface SelectValueContext {
   state: SelectState<unknown>,
