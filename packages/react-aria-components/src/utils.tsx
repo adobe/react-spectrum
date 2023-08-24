@@ -126,7 +126,8 @@ export function useRenderProps<T>(props: RenderPropsHookOptions<T>) {
     return {
       className: computedClassName ?? defaultClassName,
       style: computedStyle,
-      children: computedChildren
+      children: computedChildren,
+      'data-rac': ''
     };
   }, [className, style, children, defaultClassName, defaultChildren, values]);
 }
