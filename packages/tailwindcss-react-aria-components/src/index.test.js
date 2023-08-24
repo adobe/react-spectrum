@@ -26,15 +26,15 @@ test('variants', async () => {
   let content = html`<div data-rac className="hover:bg-red focus:bg-red focus-visible:bg-red pressed:bg-red disabled:bg-red drop-target:bg-red dragging:bg-red empty:bg-red allows-removing:bg-red allows-sorting:bg-red placeholder:bg-red selected:bg-red indeterminate:bg-red readonly:bg-red required:bg-red entering:bg-red exiting:bg-red open:bg-red unavailable:bg-red current:bg-red invalid:bg-red validation-state-invalid:bg-red validation-state-valid:bg-red placement-left:bg-red placement-right:bg-red placement-top:bg-red placement-bottom:bg-red type-literal:bg-red type-year:bg-red type-month:bg-red type-day:bg-red layout-grid:bg-red layout-stack:bg-red orientation-horizontal:bg-red orientation-vertical:bg-red"></div>`;
   return run({content}).then((result) => {
     expect(result.css).toContain(css`
-.hover\:bg-red[data-rac][data-hovered] {
+.hover\:bg-red:is([data-rac][data-hovered], :not([data-rac]):hover) {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.focus\:bg-red[data-rac][data-focused] {
+.focus\:bg-red:is([data-rac][data-focused], :not([data-rac]):focus) {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.focus-visible\:bg-red[data-rac][data-focus-visible] {
+.focus-visible\:bg-red:is([data-rac][data-focus-visible], :not([data-rac]):focus-visible) {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
@@ -42,7 +42,7 @@ test('variants', async () => {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.disabled\:bg-red[data-rac][data-disabled] {
+.disabled\:bg-red:is([data-rac][data-disabled], :not([data-rac]):disabled) {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
@@ -54,7 +54,7 @@ test('variants', async () => {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.empty\:bg-red[data-rac][data-empty] {
+.empty\:bg-red:is([data-rac][data-empty], :not([data-rac]):empty) {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
@@ -74,7 +74,7 @@ test('variants', async () => {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.indeterminate\:bg-red[data-rac][data-indeterminate] {
+.indeterminate\:bg-red:is([data-rac][data-indeterminate], :not([data-rac]):indeterminate) {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
@@ -82,7 +82,7 @@ test('variants', async () => {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.required\:bg-red[data-rac][data-required] {
+.required\:bg-red:is([data-rac][data-required], :not([data-rac]):required) {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
@@ -94,7 +94,7 @@ test('variants', async () => {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.open\:bg-red[data-rac][data-open] {
+.open\:bg-red:is([data-rac][data-open], :not([data-rac])[open]) {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
@@ -106,7 +106,7 @@ test('variants', async () => {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.invalid\:bg-red[data-rac][data-invalid] {
+.invalid\:bg-red:is([data-rac][data-invalid], :not([data-rac]):invalid) {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
