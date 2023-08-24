@@ -591,6 +591,65 @@ describe('usePress', function () {
       ]);
     });
 
+    it('should not ignore virtual pointer events on android ', function () {
+      let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Android');
+
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPress={addEvent}
+          onPressUp={addEvent} />
+      );
+
+      let el = res.getByText('test');
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', width: 0, height: 0}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', width: 0, height: 0, clientX: 0, clientY: 0}));
+      
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'press',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        }
+      ]);
+
+      uaMock.mockRestore();
+    });
+
     it('should detect Android TalkBack double tap', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
