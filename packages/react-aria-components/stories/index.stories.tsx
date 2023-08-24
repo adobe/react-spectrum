@@ -194,6 +194,9 @@ export const SelectExample = () => (
       <span aria-hidden="true" style={{paddingLeft: 5}}>▼</span>
     </Button>
     <Popover>
+      <OverlayArrow>
+        <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
+      </OverlayArrow>
       <ListBox className={styles.menu}>
         <MyItem>Foo</MyItem>
         <MyItem>Bar</MyItem>

@@ -129,7 +129,7 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
       padding: 0 2px;
     }
 
-    &[aria-sort=none] .sort-indicator {
+    &:not([data-sort-direction]) .sort-indicator {
       visibility: hidden;
     }
   }
@@ -159,7 +159,7 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
       background: var(--spectrum-global-color-gray-200);
     }
 
-    &[aria-selected=true] {
+    &[data-selected] {
       .react-aria-Cell {
         background: var(--highlight-background);
         color: var(--highlight-foreground);
@@ -179,7 +179,7 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
       }
     }
 
-    &[aria-disabled] {
+    &[data-disabled] {
       color: var(--text-color-disabled);
     }
   }
@@ -210,14 +210,14 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
 
   /* join selected items if :has selector is supported */
   @supports selector(:has(.foo)) {
-    .react-aria-Row[aria-selected=true]:has(+ [aria-selected=true]) .react-aria-Cell,
-    .react-aria-Row[aria-selected=true]:has(+ .react-aria-DropIndicator + [aria-selected=true]) .react-aria-Cell {
+    .react-aria-Row[data-selected]:has(+ [data-selected]) .react-aria-Cell,
+    .react-aria-Row[data-selected]:has(+ .react-aria-DropIndicator + [data-selected]) .react-aria-Cell {
       border-end-start-radius: 0;
       border-end-end-radius: 0;
     }
 
-    .react-aria-Row[aria-selected=true] + [aria-selected=true] .react-aria-Cell,
-    .react-aria-Row[aria-selected=true] + .react-aria-DropIndicator + [aria-selected=true] .react-aria-Cell {
+    .react-aria-Row[data-selected] + [data-selected] .react-aria-Cell,
+    .react-aria-Row[data-selected] + .react-aria-DropIndicator + [data-selected] .react-aria-Cell {
       border-start-start-radius: 0;
       border-start-end-radius: 0;
     }
@@ -452,10 +452,10 @@ A custom `className` can also be specified on any component. This overrides the 
 </Table>
 ```
 
-In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using DOM attributes, which you can target in CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. For example:
+In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
 
 ```css
-.react-aria-Row[aria-selected=true] {
+.react-aria-Row[data-selected] {
   /* ... */
 }
 
@@ -1385,7 +1385,7 @@ function Example() {
       color: var(--highlight-foreground);
     }
 
-    &[aria-disabled] {
+    &[data-disabled] {
       color: var(--text-color-disabled);
     }
 
@@ -1405,10 +1405,10 @@ function Example() {
       text-align: end;
     }
 
-    &[aria-checked] {
+    &[data-checked] {
       padding-left: 24px;
 
-      &[aria-checked=true]::before {
+      &[data-checked=true]::before {
         content: '✓';
         content: '✓' / '';
         alt: ' ';
@@ -1417,7 +1417,7 @@ function Example() {
         font-weight: 600;
       }
 
-      &[role=menuitemradio][aria-checked=true]::before {
+      &[role=menuitemradio][data-checked=true]::before {
         content: '●';
         content: '●' / '';
         transform: scale(0.7)
@@ -1579,7 +1579,7 @@ function Example() {
     }
   }
 
-  &[aria-selected=true] {
+  &[data-selected] {
     [slot=drag][data-focus-visible] {
       box-shadow: 0 0 0 2px var(--highlight-foreground);
     }

@@ -72,7 +72,7 @@ import {TimeField, Label, DateInput, DateSegment} from 'react-aria-components';
   min-width: 150px;
   white-space: nowrap;
 
-  &:focus-within {
+  &[data-focus-within] {
     border-color: var(--highlight-background);
     box-shadow: 0 0 0 1px var(--highlight-background);
   }
@@ -101,7 +101,7 @@ import {TimeField, Label, DateInput, DateSegment} from 'react-aria-components';
     caret-color: transparent;
   }
 
-  &[aria-invalid] {
+  &[data-invalid] {
     color: var(--text-color-invalid);
 
     &:focus {
@@ -242,14 +242,14 @@ A custom `className` can also be specified on any component. This overrides the 
 </DateInput>
 ```
 
-In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using DOM attributes, which you can target in CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. For example:
+In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
 
 ```css
 .react-aria-DateSegment[data-placeholder] {
   /* ... */
 }
 
-.react-aria-DateSegment[aria-readonly] {
+.react-aria-DateSegment[data-readonly] {
   /* ... */
 }
 ```
