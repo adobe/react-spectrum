@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain} from '@react-aria/utils';
 import {classNames, useIsMobileDevice} from '@react-spectrum/utils';
 import {MenuContext, MenuDialogContext, useMenuStateContext} from './context';
 import {Placement} from '@react-types/overlays';
@@ -47,7 +46,8 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
     align = 'start',
     shouldFlip = true,
     direction = 'end',
-    closeOnSelect
+    closeOnSelect,
+    onOpenChange
   } = props;
 
   let [menuTrigger, menu] = React.Children.toArray(children);
@@ -63,6 +63,7 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
 
   // TODO: call useMenuTriggerState in place of useOverlayTriggerState since they are basically the same except for focusStrategy which we need for SubMenu autofocus
   let subMenuState = useMenuTriggerState({isOpen: parentMenuState.expandedKeys.has(props.targetKey), onOpenChange: (val) => {
+    onOpenChange && onOpenChange(val);
     if (!val) {
       if (parentMenuState.expandedKeys.has(props.targetKey)) {
         // TODO: hides menu, currenly triggered since hovering away causes focus to move out of the sub menu and triggers a close via useOverlay
@@ -112,6 +113,8 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
     state: subMenuState,
     ref: menuRef,
     // Selecting a menu item in a sub menu should also close ALL menus, so we close the root menu
+    // TODO: onOpenChange for submenus won't trigger when onClose here is called since we are only closing the root menu, should
+    // we chain calls for all the submenus as well? Not even sure of the use case for having onOpenChange or onOpen for submenus
     onClose: topLevelMenuState.close,
     // Separate handler for useMenuItem, used to close just the submenu when the user presses ArrowLeft in a submenu
     onSubMenuClose: subMenuState.close,

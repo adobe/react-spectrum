@@ -11,9 +11,7 @@
  */
 
 import {act, fireEvent, render as renderComponent, triggerPress, within} from '@react-spectrum/test-utils';
-import {ActionButton} from '@react-spectrum/button';
 import {composeStories} from '@storybook/testing-react';
-import {Item, Menu, MenuTrigger, SubMenuTrigger} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import type {Scale} from '@react-types/provider';
@@ -23,8 +21,7 @@ import {theme} from '@react-spectrum/theme-default';
 let {
   SubMenuStatic,
   SubMenuDynamic,
-  Complex,
-  SubMenuActions
+  Complex
 } = composeStories(stories);
 
 let render = (children, scale = 'medium' as Scale, locale = 'en-US') => {
@@ -44,8 +41,18 @@ function pressArrowRight() {
 }
 
 function pressArrowLeft() {
-  fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft', code: 38, charCode: 38});
-  fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft', code: 38, charCode: 38});
+  fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
+  fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
+}
+
+function pressArrowDown(el?: Element) {
+  fireEvent.keyDown(el ?? document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
+  fireEvent.keyUp(el ?? document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
+}
+
+function pressArrowUp(el?: Element) {
+  fireEvent.keyDown(el ?? document.activeElement, {key: 'ArrowUp', code: 38, charCode: 38});
+  fireEvent.keyUp(el ?? document.activeElement, {key: 'ArrowUp', code: 38, charCode: 38});
 }
 
 function pressEnter() {
@@ -58,13 +65,19 @@ function pressEsc() {
   fireEvent.keyUp(document.activeElement, {key: 'Escape'});
 }
 
+function pressSpace() {
+  fireEvent.keyDown(document.activeElement, {key: ' '});
+  fireEvent.keyUp(document.activeElement, {key: ' '});
+}
+
+// TODO: Add tests for disabledKeys and making the trigger disabled via disabledKeys
 describe('SubMenu', function () {
   let onAction = jest.fn();
   let subMenuOnAction = jest.fn();
-  // TODO add tests for onSelectionChange and onClose
-  // Add tests for disabledKeys and making the trigger disabled via disabledKeys
-  // Also make sure onSelectionChange doesn't fire when submenutrigger is pressed and that submenutrigger doesn't get a checkmark even if specified in selectedkeys
-  // let onSelectionChange = jest.fn();
+  let onOpenChange = jest.fn();
+  let subMenuOnOpenChange = jest.fn();
+  let onSelectionChange = jest.fn();
+  let subMenuOnSelectionChange = jest.fn();
   let onClose = jest.fn();
   let subMenuOnClose = jest.fn();
 
@@ -141,7 +154,7 @@ describe('SubMenu', function () {
   });
 
   it('submenu closes when hover leaves the submenu trigger', function () {
-    let tree = render(<SubMenuStatic />);
+    let tree = render(<SubMenuStatic menuTriggerProps={{onOpenChange}} subMenuTrigger1Props={{onOpenChange: subMenuOnOpenChange}} />);
     let triggerButton = tree.getByRole('button');
     triggerPress(triggerButton);
     act(() => {jest.runAllTimers();});
@@ -149,6 +162,9 @@ describe('SubMenu', function () {
     let menu = tree.getByRole('menu');
     expect(menu).toBeTruthy();
     expect(document.activeElement).toBe(menu);
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+    expect(onOpenChange).toHaveBeenLastCalledWith(true);
+    expect(subMenuOnOpenChange).not.toHaveBeenCalled;
     let menuItems = within(menu).getAllByRole('menuitem');
     let subMenuTrigger1 = menuItems[1];
     expect(subMenuTrigger1).toHaveAttribute('aria-haspopup', 'menu');
@@ -159,6 +175,9 @@ describe('SubMenu', function () {
     let menus = tree.getAllByRole('menu', {hidden: true});
     expect(menus).toHaveLength(2);
     expect(subMenuTrigger1).toHaveAttribute('aria-expanded', 'true');
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+    expect(subMenuOnOpenChange).toHaveBeenCalledTimes(1);
+    expect(subMenuOnOpenChange).toHaveBeenLastCalledWith(true);
 
     fireEvent.mouseLeave(subMenuTrigger1);
     fireEvent.mouseEnter(menuItems[0]);
@@ -166,6 +185,9 @@ describe('SubMenu', function () {
     menus = tree.getAllByRole('menu', {hidden: true});
     expect(menus).toHaveLength(1);
     expect(subMenuTrigger1).toHaveAttribute('aria-expanded', 'false');
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+    expect(subMenuOnOpenChange).toHaveBeenCalledTimes(2);
+    expect(subMenuOnOpenChange).toHaveBeenLastCalledWith(false);
   });
 
   it('only allows one submenu open at a time', function () {
@@ -210,18 +232,19 @@ describe('SubMenu', function () {
       ${'rtl, ArrowKeys'} | ${'ar-AE'}  | ${[() => pressArrowLeft(), () => pressArrowRight()]}
       ${'ltr, Enter/Esc'} | ${'en-US'}  | ${[() => pressEnter(), () => pressEsc()]}
     `('opens/closes the submenu via keyboard ($Name)', function ({Name, locale, actions}) {
-      let tree = render(<SubMenuStatic />, 'medium', locale);
+      let tree = render(<SubMenuStatic menuTriggerProps={{onOpenChange}} subMenuTrigger1Props={{onOpenChange: subMenuOnOpenChange}} />, 'medium', locale);
       let triggerButton = tree.getByRole('button');
-      fireEvent.keyDown(triggerButton, {key: 'ArrowDown', code: 40, charCode: 40});
-      fireEvent.keyUp(triggerButton, {key: 'ArrowDown', code: 40, charCode: 40});
+      pressArrowDown(triggerButton);
       act(() => {jest.runAllTimers();});
+      expect(onOpenChange).toHaveBeenCalledTimes(1);
+      expect(onOpenChange).toHaveBeenLastCalledWith(true);
+      expect(subMenuOnOpenChange).not.toHaveBeenCalled;
 
       let menu = tree.getByRole('menu');
       expect(menu).toBeTruthy();
       let menuItems = within(menu).getAllByRole('menuitem');
       expect(document.activeElement).toBe(menuItems[0]);
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
-      fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
+      pressArrowDown();
       let subMenuTrigger1 = menuItems[1];
       expect(document.activeElement).toBe(subMenuTrigger1);
       actions[0]();
@@ -230,6 +253,10 @@ describe('SubMenu', function () {
       let menus = tree.getAllByRole('menu', {hidden: true});
       expect(menus).toHaveLength(2);
       expect(subMenuTrigger1).toHaveAttribute('aria-expanded', 'true');
+      expect(onOpenChange).toHaveBeenCalledTimes(1);
+      expect(subMenuOnOpenChange).toHaveBeenCalledTimes(1);
+      expect(subMenuOnOpenChange).toHaveBeenLastCalledWith(true);
+
       let subMenu1Items = within(menus[1]).getAllByRole('menuitem');
       expect(document.activeElement).toBe(subMenu1Items[0]);
       actions[1]();
@@ -239,14 +266,20 @@ describe('SubMenu', function () {
         // Closes all submenus + menu via Esc
         menus = tree.queryAllByRole('menu', {hidden: true});
         expect(menus).toHaveLength(0);
-        expect(subMenuTrigger1).toHaveAttribute('aria-expanded', 'false');
         expect(triggerButton).toHaveAttribute('aria-expanded', 'false');
+        expect(onOpenChange).toHaveBeenCalledTimes(2);
+        expect(onOpenChange).toHaveBeenLastCalledWith(false);
+        // TODO: update the below depending on discussion of onOpenChange
+        expect(subMenuOnOpenChange).toHaveBeenCalledTimes(1);
       } else {
         // Only closes the current submenu via Arrow keys
         menus = tree.getAllByRole('menu', {hidden: true});
         expect(menus).toHaveLength(1);
         expect(subMenuTrigger1).toHaveAttribute('aria-expanded', 'false');
         expect(document.activeElement).toBe(subMenuTrigger1);
+        expect(onOpenChange).toHaveBeenCalledTimes(1);
+        expect(subMenuOnOpenChange).toHaveBeenCalledTimes(2);
+        expect(subMenuOnOpenChange).toHaveBeenLastCalledWith(false);
       }
     });
   });
@@ -254,32 +287,19 @@ describe('SubMenu', function () {
   describe('user provided callbacks', function () {
     it('calls user provided submenu onAction and onClose when submenu option is pressed', function () {
       let tree = render(
-        <MenuTrigger>
-          <ActionButton>Menu Button</ActionButton>
-          <Menu onAction={onAction} onClose={onClose}>
-            <Item key="Lvl 1 Item 1">Lvl 1 Item 1</Item>
-            <SubMenuTrigger>
-              <Item key="Lvl 1 Item 2">Lvl 1 Item 2</Item>
-              <Menu onAction={subMenuOnAction} onClose={subMenuOnClose}>
-                <Item key="Lvl 2 Item 1">Lvl 2 Item 1</Item>
-                <Item key="Lvl 2 Item 2">Lvl 2 Item 2</Item>
-                <SubMenuTrigger>
-                  <Item key="Lvl 2 Item 3">Lvl 2 Item 3</Item>
-                  <Menu>
-                    <Item key="Lvl 3 Item 1">Lvl 3 Item 1</Item>
-                    <Item key="Lvl 3 Item 2">Lvl 3 Item 2</Item>
-                    <Item key="Lvl 3 Item 3">Lvl 3 Item 3</Item>
-                  </Menu>
-                </SubMenuTrigger>
-              </Menu>
-            </SubMenuTrigger>
-            <Item key="Lvl 1 Item 3">Lvl 1 Item 3</Item>
-          </Menu>
-        </MenuTrigger>
-      );
+        <SubMenuStatic
+          onAction={onAction}
+          onClose={onClose}
+          menuTriggerProps={{onOpenChange}}
+          subMenuTrigger1Props={{onOpenChange: subMenuOnOpenChange}}
+          subMenu1Props={{onAction: subMenuOnAction, onClose: subMenuOnClose}} />
+        );
       let triggerButton = tree.getByRole('button');
       triggerPress(triggerButton);
       act(() => {jest.runAllTimers();});
+      expect(onOpenChange).toHaveBeenCalledTimes(1);
+      expect(onOpenChange).toHaveBeenLastCalledWith(true);
+      expect(subMenuOnOpenChange).not.toHaveBeenCalled;
 
       // Click on the 3rd level SubMenu item
       let menu = tree.getByRole('menu');
@@ -288,6 +308,9 @@ describe('SubMenu', function () {
       let subMenuTrigger1 = menuItems[1];
       fireEvent.mouseEnter(subMenuTrigger1);
       act(() => {jest.runAllTimers();});
+      expect(onOpenChange).toHaveBeenCalledTimes(1);
+      expect(subMenuOnOpenChange).toHaveBeenCalledTimes(1);
+      expect(subMenuOnOpenChange).toHaveBeenLastCalledWith(true);
       let menus = tree.getAllByRole('menu', {hidden: true});
       expect(menus).toHaveLength(2);
       let submenu1 = menus[1];
@@ -312,6 +335,10 @@ describe('SubMenu', function () {
       expect(onClose).not.toHaveBeenCalled();
       expect(subMenuOnAction).not.toHaveBeenCalled();
       expect(subMenuOnClose).not.toHaveBeenCalled();
+      expect(onOpenChange).toHaveBeenCalledTimes(2);
+      expect(onOpenChange).toHaveBeenLastCalledWith(false);
+      // TODO: update the below depending on discussion of onOpenChange
+      expect(subMenuOnOpenChange).toHaveBeenCalledTimes(1);
 
       // Click on the 2rd level SubMenu item which has its own onAction defined
       triggerPress(triggerButton);
@@ -336,26 +363,18 @@ describe('SubMenu', function () {
       expect(subMenuOnAction).toHaveBeenCalledTimes(1);
       expect(subMenuOnAction).toHaveBeenLastCalledWith('Lvl 2 Item 2');
       expect(subMenuOnClose).toHaveBeenCalledTimes(1);
+      expect(onOpenChange).toHaveBeenCalledTimes(4);
+      expect(onOpenChange).toHaveBeenLastCalledWith(false);
+      // TODO: update the below depending on discussion of onOpenChange
+      expect(subMenuOnOpenChange).toHaveBeenCalledTimes(2);
     });
 
-    it('should not trigger onAction when closing the submenu with Esc', function () {
+    it('should not trigger onClose when closing the submenu with Esc', function () {
       let tree = render(
-        <MenuTrigger>
-          <ActionButton>Menu Button</ActionButton>
-          <Menu onAction={onAction} onClose={onClose}>
-            <Item key="Lvl 1 Item 1">Lvl 1 Item 1</Item>
-            <SubMenuTrigger>
-              <Item key="Lvl 1 Item 2">Lvl 1 Item 2</Item>
-              <Menu onAction={subMenuOnAction} onClose={subMenuOnClose}>
-                <Item key="Lvl 2 Item 1">Lvl 2 Item 1</Item>
-                <Item key="Lvl 2 Item 2">Lvl 2 Item 2</Item>
-                <Item key="Lvl 2 Item 3">Lvl 2 Item 3</Item>
-              </Menu>
-            </SubMenuTrigger>
-            <Item key="Lvl 1 Item 3">Lvl 1 Item 3</Item>
-          </Menu>
-        </MenuTrigger>
-      );
+        <SubMenuStatic
+          onClose={onClose}
+          subMenu1Props={{onClose: subMenuOnClose}} />
+        );
       let triggerButton = tree.getByRole('button');
       triggerPress(triggerButton);
       act(() => {jest.runAllTimers();});
@@ -377,8 +396,8 @@ describe('SubMenu', function () {
       expect(subMenuOnClose).not.toHaveBeenCalled();
     });
 
-    it('should not trigger onAction when pressing on a submenu trigger item', function () {
-      let tree = render(<SubMenuActions onAction={onAction} />);
+    it('should not trigger root menu\' onAction when pressing on a submenu trigger item', function () {
+      let tree = render(<SubMenuStatic onAction={onAction} />);
       let triggerButton = tree.getByRole('button');
       triggerPress(triggerButton);
       act(() => {jest.runAllTimers();});
@@ -403,14 +422,97 @@ describe('SubMenu', function () {
       expect(onAction).toHaveBeenLastCalledWith('Lvl 1 Item 1');
     });
 
-    // TODO add selection change tests here (pressing on trigger doesn't fire, onSelectionChange fires normally)
+    it('supports selectionMode and onSelectionChange on submenus', function () {
+      let tree = render(
+        <SubMenuStatic
+          onSelectionChange={onSelectionChange}
+          onClose={onClose}
+          selectionMode="multiple"
+          subMenu1Props={{onSelectionChange: subMenuOnSelectionChange, onClose: subMenuOnClose, selectionMode: 'single'}} />
+        );
+      let triggerButton = tree.getByRole('button');
+      pressArrowDown(triggerButton);
+      act(() => {jest.runAllTimers();});
+      let menu = tree.getByRole('menu');
+      expect(menu).toBeTruthy();
+      let menuItems = within(menu).getAllByRole('menuitemcheckbox');
+      expect(document.activeElement).toBe(menuItems[0]);
+      pressSpace();
+      expect(onSelectionChange).toBeCalledTimes(1);
+      expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Lvl 1 Item 1']));
+      pressArrowDown();
+      pressArrowDown();
+      pressSpace();
+      expect(onSelectionChange).toBeCalledTimes(2);
+      expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Lvl 1 Item 1', 'Lvl 1 Item 3']));
+      pressArrowUp();
+      let subMenuTrigger = menuItems[1];
+      expect(subMenuTrigger).toHaveAttribute('aria-expanded', 'false');
+      expect(document.activeElement).toBe(subMenuTrigger);
+      pressEnter();
+      act(() => {jest.runAllTimers();});
 
-    it('does not trigger selection when clicking/pressing on a submenu trigger', function () {
-
+      expect(onSelectionChange).toBeCalledTimes(2);
+      let menus = tree.getAllByRole('menu', {hidden: true});
+      let subMenu1Items = within(menus[1]).getAllByRole('menuitemradio');
+      expect(document.activeElement).toBe(subMenu1Items[0]);
+      pressSpace();
+      expect(onSelectionChange).toBeCalledTimes(2);
+      expect(subMenuOnSelectionChange).toBeCalledTimes(1);
+      expect(new Set(subMenuOnSelectionChange.mock.calls[0][0])).toEqual(new Set(['Lvl 2 Item 1']));
+      pressArrowDown();
+      pressSpace();
+      expect(subMenuOnSelectionChange).toBeCalledTimes(2);
+      expect(new Set(subMenuOnSelectionChange.mock.calls[1][0])).toEqual(new Set(['Lvl 2 Item 2']));
     });
 
-    it('supports selectionMode and onSelectionChange on submenus', function () {
+    it('does not trigger selection when clicking/pressing on a submenu trigger', function () {
+      let tree = render(
+        <SubMenuStatic
+          onSelectionChange={onSelectionChange}
+          selectionMode="multiple"
+          subMenu1Props={{onSelectionChange: subMenuOnSelectionChange, onClose: subMenuOnClose, selectionMode: 'single'}} />
+        );
+      let triggerButton = tree.getByRole('button');
+      pressArrowDown(triggerButton);
+      act(() => {jest.runAllTimers();});
+      let menu = tree.getByRole('menu');
+      expect(menu).toBeTruthy();
+      let menuItems = within(menu).getAllByRole('menuitemcheckbox');
+      expect(document.activeElement).toBe(menuItems[0]);
+      pressArrowDown();
+      let subMenuTrigger = menuItems[1];
+      expect(subMenuTrigger).toHaveAttribute('aria-expanded', 'false');
+      expect(document.activeElement).toBe(subMenuTrigger);
 
+      // Click on the menu's submenu trigger
+      triggerPress(document.activeElement);
+      expect(onSelectionChange).not.toHaveBeenCalled();
+      pressEnter();
+      act(() => {jest.runAllTimers();});
+      expect(onSelectionChange).not.toHaveBeenCalled();
+      let menus = tree.getAllByRole('menu', {hidden: true});
+      let subMenu1Items = within(menus[1]).getAllByRole('menuitemradio');
+      expect(document.activeElement).toBe(subMenu1Items[0]);
+      pressArrowDown();
+      pressArrowDown();
+
+      // Click on the submenu's submenu trigger
+      let subMenuTrigger2 = subMenu1Items[2];
+      expect(subMenuTrigger2).toHaveAttribute('aria-expanded', 'false');
+      expect(document.activeElement).toBe(subMenuTrigger2);
+      triggerPress(document.activeElement);
+      expect(subMenuOnSelectionChange).not.toHaveBeenCalled();
+      pressEnter();
+      act(() => {jest.runAllTimers();});
+      expect(subMenuOnSelectionChange).not.toHaveBeenCalled();
+      expect(onSelectionChange).not.toHaveBeenCalled();
+      menus = tree.getAllByRole('menu', {hidden: true});
+      expect(menus).toHaveLength(3);
+    });
+
+    it('doesnt select a submenu trigger even if its key is specified in selectedKeys', function () {
+      // TODO: need to debug why the trigger's key gets mutated before writing this test
     });
   });
 });

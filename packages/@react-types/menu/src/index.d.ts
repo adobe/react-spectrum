@@ -59,9 +59,7 @@ export interface MenuProps<T> extends CollectionBase<T>, MultipleSelection {
   /** Handler that is called when an item is selected. */
   onAction?: (key: Key) => void,
   /** Handler that is called when the menu should close after selecting an item. */
-  onClose?: () => void,
-  /** Handler that is called when the submenu should close upon specific user actions. Should be provided alongside onClose if the menu is a submenu. */
-  onSubMenuClose?: () => void
+  onClose?: () => void
 }
 
 export interface AriaMenuProps<T> extends MenuProps<T>, DOMProps, AriaLabelingProps {}
