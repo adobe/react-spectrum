@@ -77,6 +77,7 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
     'aria-label': stringFormatter.format('loading'),
     isIndeterminate: true,
     size: 'S',
+    UNSAFE_className: classNames(styles, 'spectrum-Button-circleLoader'),
     ...((variant === 'overBackground' || staticColor) && {variant: 'overBackground'})
   };
   let hasLabel = useHasChild(`.${styles['spectrum-Button-label']}`, domRef);
@@ -127,7 +128,7 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
               'is-disabled': isDisabled || isProgressVisible,
               'is-active': isPressed,
               'is-hovered': isHovered,
-              'is-pending': isProgressVisible
+              'spectrum-Button--pending': isProgressVisible
             },
             styleProps.className
           )
@@ -143,7 +144,6 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
             }
           }}>
           {isProgressVisible && <ProgressCircle
-            UNSAFE_className={classNames(styles, 'spectrum-CircleLoader')}
             {...progressCircleProps} />}
           {typeof children === 'string'
             ? <Text>{children}</Text>
