@@ -136,7 +136,7 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
           onClick={() => state.focusNextPage()}
           tabIndex={-1} />
       </VisuallyHidden>
-      {state.isInvalid &&
+      {state.isValueInvalid &&
         <HelpText
           showErrorIcon
           errorMessage={props.errorMessage || stringFormatter.format('invalidSelection', {selectedCount: 'highlightedRange' in state ? 2 : 1})}
