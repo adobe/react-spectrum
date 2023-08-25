@@ -183,14 +183,14 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
       onAction(key);
     }
 
-    if (e.pointerType === 'virtual' && !isDisabled) {
+    if (isTrigger && e.pointerType === 'virtual' && !isDisabled) {
       // If opened with a screen reader, auto focus the first submenu item.
       onSubmenuOpen('first');
     }
   };
 
   let onPress = (e: PressEvent) => {
-    if (e.pointerType === 'touch' && !isDisabled) {
+    if (isTrigger && e.pointerType === 'touch' && !isDisabled) {
       onSubmenuOpen();
     }
   };
