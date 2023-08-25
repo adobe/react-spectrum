@@ -34,7 +34,8 @@ import {useHover} from '@react-aria/interactions';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
-function usePendingProps(props) {
+function disablePendingProps(props) {
+  // Don't allow interaction while isPending is true
   if (props.isPending) {
     props.onPress = undefined;
     props.onPressStart = undefined;
@@ -55,7 +56,7 @@ function usePendingProps(props) {
 function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   props = useSlotProps(props, 'button');
-  props = usePendingProps(props);
+  props = disablePendingProps(props);
   let {
     elementType: ElementType = 'button',
     children,
