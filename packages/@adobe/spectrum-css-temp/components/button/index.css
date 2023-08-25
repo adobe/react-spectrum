@@ -161,6 +161,9 @@ governing permissions and limitations under the License.
   &.is-pending {
     .spectrum-CircleLoader {
       position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
     }
 
     .spectrum-Button-label,
