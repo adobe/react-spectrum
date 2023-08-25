@@ -28,14 +28,13 @@ export default {
 };
 
 // TODO: add chromatic stories
-// TODO: should it inherit onClose from parent menu? what about onSelectionChange and selection mode? Will need to also fix it so a submenutrigger item can't be selected if selectionmode is on
-// Perhaps skip the selection mode change for now until selection groups is supported
 // TODO: add action for submenu opening
-// TODO: add stories where selection mode is applied to each menu/submenu (via controls?). Also add story where the trigger is disabled
+// TODO: add stories where selection mode is applied to each menu/submenu (via controls?).
+// Also add story where the submenu trigger is disabled
 export const SubMenuStatic = {
   render: (args) => (
     renderMenuTrigger(
-      <Menu selectionMode="multiple" onSelectionChange={action('onSelectionChange')} {...args}>
+      <Menu {...args}>
         <Item key="Lvl 1 Item 1">Lvl 1 Item 1</Item>
         <SubMenuTrigger>
           <Item key="Lvl 1 Item 2">Lvl 1 Item 2</Item>
@@ -370,7 +369,6 @@ let complex = [
   ]}
 ];
 
-
 export const Complex = {
   render: () => (
     renderMenuTrigger(
@@ -382,19 +380,18 @@ export const Complex = {
   name: 'complex'
 };
 
-// TODO: update this story after refactroring it so we don't inherit onaction
-export const ActionOverride = {
+export const SubMenuActions = {
   render: (args) => renderMenuTrigger(
-    <Menu onAction={action('onAction')} onClose={action('onClose menu 1')} {...args}>
+    <Menu onAction={action('onAction lvl 1 menu')} onClose={action('onClose lvl 1 menu')} onSel {...args}>
       <Item key="Lvl 1 Item 1">Lvl 1 Item 1</Item>
       <SubMenuTrigger>
         <Item key="Lvl 1 Item 2">Lvl 1 Item 2</Item>
-        <Menu onAction={action('onAction submenu 2')} onClose={action('onClose menu 2')}>
+        <Menu onAction={action('onAction lvl 2 menu')} onClose={action('onClose menu 2')}>
           <Item key="Lvl 2 Item 1">Lvl 2 Item 1</Item>
           <Item key="Lvl 1 Item 2">Lvl 2 Item 2</Item>
           <SubMenuTrigger>
             <Item key="Lvl 2 Item 3">Lvl 2 Item 3</Item>
-            <Menu onClose={action('onClose menu 3')}>
+            <Menu onAction={action('onAction lvl 3 menu')} onClose={action('onClose menu 3')}>
               <Item key="Lvl 3 Item 1">Lvl 3 Item 1</Item>
               <Item key="Lvl 3 Item 2">Lvl 3 Item 2</Item>
               <Item key="Lvl 3 Item 3">Lvl 3 Item 3</Item>
@@ -405,8 +402,34 @@ export const ActionOverride = {
       <Item key="Lvl 1 Item 3">Lvl 1 Item 3</Item>
     </Menu>
   ),
-  name: 'submenu onAction override with onClose',
-  parameters: {description: {data: 'Lvl 1 and Lv3 menu items share the same onAction via inheritance. Lvl2 menu item has its own onAction override. Each menu should have its own onClose triggered only if its direct menu option was acted upon.'}}
+  name: 'submenu onAction and onClose',
+  parameters: {description: {data: 'Each menu has its own onAction and onClose that are triggered only if its direct menu option was acted upon.'}}
+};
+
+export const SubMenuSelection = {
+  render: (args) => renderMenuTrigger(
+    <Menu onSelectionChange={action('onSelectionChange lvl 1 menu')} selectionMode="multiple" {...args}>
+      <Item key="Lvl 1 Item 1">Lvl 1 Item 1</Item>
+      <SubMenuTrigger>
+        <Item key="Lvl 1 Item 2">Lvl 1 Item 2</Item>
+        <Menu onSelectionChange={action('onSelectionChange lvl 2 menu')} selectionMode="single">
+          <Item key="Lvl 2 Item 1">Lvl 2 Item 1</Item>
+          <Item key="Lvl 1 Item 2">Lvl 2 Item 2</Item>
+          <SubMenuTrigger>
+            <Item key="Lvl 2 Item 3">Lvl 2 Item 3</Item>
+            <Menu onSelectionChange={action('onSelectionChange lvl 3 menu')} selectionMode="multiple">
+              <Item key="Lvl 3 Item 1">Lvl 3 Item 1</Item>
+              <Item key="Lvl 3 Item 2">Lvl 3 Item 2</Item>
+              <Item key="Lvl 3 Item 3">Lvl 3 Item 3</Item>
+            </Menu>
+          </SubMenuTrigger>
+        </Menu>
+      </SubMenuTrigger>
+      <Item key="Lvl 1 Item 3">Lvl 1 Item 3</Item>
+    </Menu>
+  ),
+  name: 'submenu selectionMode and onSelectionChange',
+  parameters: {description: {data: 'Lvl 1 and Lvl 3 menus have multiple selection, Lvl 2 menu has single selection'}}
 };
 
 // TODO: finalize what should be supported here

@@ -36,8 +36,7 @@ export interface AriaMenuOptions<T> extends Omit<AriaMenuProps<T>, 'children'> {
 interface MenuData {
   onClose?: () => void,
   onAction?: (key: Key) => void,
-  onSubMenuClose?: () => void,
-  onCloseAllMenus?: () => void
+  onSubMenuClose?: () => void
 }
 
 export const menuData = new WeakMap<TreeState<unknown>, MenuData>();
@@ -51,6 +50,8 @@ export const menuData = new WeakMap<TreeState<unknown>, MenuData>();
 export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: RefObject<HTMLElement>): MenuAria {
   let {
     shouldFocusWrap = true,
+    // @ts-ignore (private), only for Esc key handling in submenus
+    onCloseAllMenus,
     ...otherProps
   } = props;
 
@@ -71,8 +72,7 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
   menuData.set(state, {
     onClose: props.onClose,
     onAction: props.onAction,
-    onSubMenuClose: props.onSubMenuClose,
-    onCloseAllMenus: props.onCloseAllMenus
+    onSubMenuClose: props.onSubMenuClose
   });
 
   return {
@@ -85,6 +85,8 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
         // don't clear the menu selected keys if the user is presses escape since escape closes the menu
         if (e.key !== 'Escape') {
           listProps.onKeyDown(e);
+        } else {
+          onCloseAllMenus && onCloseAllMenus();
         }
       }
     })

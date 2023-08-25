@@ -25,27 +25,26 @@ import {useTreeState} from '@react-stately/tree';
 
 function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLUListElement>) {
   let contextProps = useContext(MenuContext);
+  let {onClose} = contextProps;
   let parentMenuContext = useMenuStateContext();
-  let {topLevelonAction, topLevelMenuState} = parentMenuContext || {};
+  let {topLevelMenuState} = parentMenuContext || {};
   if (!parentMenuContext) {
-    topLevelonAction = props.onAction;
     topLevelMenuState = contextProps.state;
   }
   let completeProps = {
-    ...mergeProps(contextProps, {onAction: topLevelonAction, ...props})
+    ...mergeProps(contextProps, {onCloseAllMenus: onClose}, props)
   };
 
   let domRef = useDOMRef(ref);
   let scopedRef = useRef(null);
   let state = useTreeState(completeProps);
   // TODO: feels a bit awkward passing the menu's trigger state via props since we already are passing the menu's tree state as state.
-  // Perhaps we should combine TreeState and the trigger state together? Alternatively I could add a 2nd kind of onClose handler to useMenu
+  // Perhaps we should combine TreeState and the trigger state together? Alternatively I could add a 2nd kind of onClose handler to useMenu (opted for this one)
   let {menuProps} = useMenu(completeProps, state, domRef);
   let {styleProps} = useStyleProps(completeProps);
   useSyncRef(contextProps, domRef);
   return (
-    // TODO: always provide the first onAction from the original menu as a fallback? Or should the nearest onAction take precedent? Or should the user always provide an onAction for each submenu?
-    <MenuStateContext.Provider value={{state, container: scopedRef, menu: domRef, topLevelonAction, topLevelMenuState}}>
+    <MenuStateContext.Provider value={{state, container: scopedRef, menu: domRef, topLevelMenuState}}>
       <FocusScope contain={state.expandedKeys.size > 0}>
         <ul
           {...menuProps}

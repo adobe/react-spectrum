@@ -48,7 +48,6 @@ export interface MenuStateContextValue<T> {
   state?: TreeState<T>,
   container?: RefObject<HTMLElement>,
   menu?: RefObject<HTMLUListElement>,
-  topLevelonAction?: (key: Key) => void,
   topLevelMenuState?: MenuTriggerState
 }
 
