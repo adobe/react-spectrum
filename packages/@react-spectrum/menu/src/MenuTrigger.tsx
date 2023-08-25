@@ -16,7 +16,7 @@ import {MenuContext} from './context';
 import {Placement} from '@react-types/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
 import {PressResponder} from '@react-aria/interactions';
-import React, {forwardRef, Fragment, useRef, useState} from 'react';
+import React, {forwardRef, Fragment, useRef} from 'react';
 import {SpectrumMenuTriggerProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useMenuTrigger} from '@react-aria/menu';
@@ -55,8 +55,6 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
       initialPlacement = `${direction} ${align}` as Placement;
   }
 
-  let [hasOpenSubmenu, setHasOpenSubmenu] = useState(false);
-
   let isMobile = useIsMobileDevice();
   let menuContext = {
     ...menuProps,
@@ -69,8 +67,7 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
       width: '100%',
       maxHeight: 'inherit'
     } : undefined,
-    UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile}),
-    setHasOpenSubmenu
+    UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile})
   };
 
   // On small screen devices, the menu is rendered in a tray, otherwise a popover.
@@ -84,7 +81,7 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
   } else {
     overlay = (
       <Popover
-        UNSAFE_style={{clipPath: 'unset', overflow: hasOpenSubmenu ? 'visible' : undefined}}
+        UNSAFE_style={{clipPath: 'unset'}}
         state={state}
         triggerRef={menuTriggerRef}
         scrollRef={menuRef}

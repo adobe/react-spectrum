@@ -14,9 +14,9 @@ import {classNames, SlotProvider, useIsMobileDevice} from '@react-spectrum/utils
 import {DismissButton} from '@react-aria/overlays';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
 import {ItemProps} from '@react-types/shared';
-import {MenuDialogContext, useMenuContext, useMenuStateContext} from './context';
+import {MenuDialogContext, useMenuStateContext} from './context';
 import {Modal, Popover} from '@react-spectrum/overlays';
-import React, {Key, ReactElement, useEffect, useRef} from 'react';
+import React, {Key, ReactElement, useRef} from 'react';
 import {useOverlayTriggerState} from '@react-stately/overlays';
 
 export interface SpectrumMenuDialogTriggerProps<T> extends ItemProps<T> {
@@ -30,7 +30,6 @@ function ContextualHelpTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): Rea
   let triggerRef = useRef<HTMLLIElement>(null);
   let popoverRef = useRef(null);
   let {state: menuState, container, menu} = useMenuStateContext();
-  let {setHasOpenSubmenu} = useMenuContext();
   let state = useOverlayTriggerState({isOpen: menuState.expandedKeys.has(props.targetKey), onOpenChange: (val) => {
     if (!val) {
       if (menuState.expandedKeys.has(props.targetKey)) {
@@ -50,10 +49,6 @@ function ContextualHelpTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): Rea
   let [, content] = props.children as [ReactElement, ReactElement];
 
   let isMobile = useIsMobileDevice();
-
-  useEffect(() => {
-    setHasOpenSubmenu(menuState.expandedKeys.size > 0);
-  }, [menuState.expandedKeys, setHasOpenSubmenu]);
 
   let onExit = () => {
     // if focus was already moved back to a menu item, don't need to do anything
