@@ -21,8 +21,7 @@ export interface MenuContextValue extends Omit<HTMLAttributes<HTMLElement>, 'aut
   shouldFocusWrap?: boolean,
   autoFocus?: boolean | FocusStrategy,
   ref?: MutableRefObject<HTMLUListElement>,
-  state?: MenuTriggerState,
-  setHasOpenSubmenu?: (hasOpenSubmenu: boolean) => void
+  state?: MenuTriggerState
 }
 
 export const MenuContext = React.createContext<MenuContextValue>({});
