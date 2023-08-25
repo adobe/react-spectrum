@@ -12,7 +12,7 @@
 
 import {FocusStrategy} from '@react-types/shared';
 import {MenuTriggerState} from '@react-stately/menu';
-import React, {HTMLAttributes, Key, MutableRefObject, RefObject, useContext} from 'react';
+import React, {HTMLAttributes, MutableRefObject, RefObject, useContext} from 'react';
 import {TreeState} from '@react-stately/tree';
 
 export interface MenuContextValue extends Omit<HTMLAttributes<HTMLElement>, 'autoFocus'> {
