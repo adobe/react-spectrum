@@ -106,8 +106,7 @@ export const UserSelect: ButtonStory = {
   }
 };
 
-export const IsPending: ButtonStory = {
-  name: 'Pending spinner',
+export const PendingSpinner: ButtonStory = {
   render: (args) => <Pending {...args} />
 };
 
