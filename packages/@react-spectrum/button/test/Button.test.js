@@ -26,6 +26,14 @@ import React, {useState} from 'react';
 describe('Button', function () {
   let onPressSpy = jest.fn();
 
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+  });
+
   afterEach(() => {
     onPressSpy.mockClear();
   });
@@ -273,9 +281,9 @@ describe('Button', function () {
     expect(eventDown.defaultPrevented).toBeFalsy();
   });
 
-  // is pending state
+  // iPending state
   it('displays a spinner after a short delay when isPending prop is true', function () {
-    jest.useFakeTimers();
+    let spinnerVisibilityDelay = 1000;
     let onPressSpy = jest.fn();
     function TestComponent() {
       let [pending, setPending] = useState(false);
@@ -287,18 +295,20 @@ describe('Button', function () {
     }
     let {getByRole} = render(<TestComponent />);
     let button = getByRole('button');
-    expect(button).toHaveAttribute('aria-disabled', 'false');
-    fireEvent.click(button);
+    expect(button).not.toHaveAttribute('aria-disabled');
+    triggerPress(button);
+    // Button is disabled immediately, but spinner visibility is delayed
     expect(button).toHaveAttribute('aria-disabled', 'true');
     // Multiple clicks shouldn't call onPressSpy
-    fireEvent.click(button);
-    act(jest.runAllTimers);
+    triggerPress(button);
+    act(() => {
+      jest.advanceTimersByTime(spinnerVisibilityDelay);
+    });
     let spinner = getByRole('progressbar');
     expect(button).toHaveAttribute('aria-disabled', 'true');
     expect(spinner).toBeVisible();
     expect(spinner).toHaveAttribute('aria-label', 'Loading…');
     expect(onPressSpy).toHaveBeenCalledTimes(1);
-    jest.useRealTimers();
   });
 
   // isPending anchor element
