@@ -14,8 +14,8 @@ import {createPortal} from 'react-dom';
 import {forwardRefType, RenderProps, StyleProps} from './utils';
 import {Collection as ICollection, Node, SelectionBehavior, SelectionMode, ItemProps as SharedItemProps, SectionProps as SharedSectionProps} from 'react-stately';
 import {mergeProps, useIsSSR} from 'react-aria';
-import React, {cloneElement, createContext, ForwardedRef, forwardRef, Key, ReactElement, ReactNode, ReactPortal, useCallback, useContext, useMemo} from 'react';
-import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
+import React, {cloneElement, createContext, ForwardedRef, forwardRef, Key, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef} from 'react';
+import {useSyncExternalStore as useSyncExternalStoreShim} from 'use-sync-external-store/shim/index.js';
 
 // This Collection implementation is perhaps a little unusual. It works by rendering the React tree into a
 // Portal to a fake DOM implementation. This gives us efficient access to the tree of rendered objects, and
@@ -263,8 +263,6 @@ class BaseNode<T> {
   removeEventListener() {}
 }
 
-let id = 0;
-
 /**
  * A mutable element node in the fake DOM tree. It owns an immutable
  * Collection Node which is copied on write.
@@ -277,7 +275,7 @@ export class ElementNode<T> extends BaseNode<T> {
 
   constructor(type: string, ownerDocument: Document<T, any>) {
     super(ownerDocument);
-    this.node = new NodeValue(type, `react-aria-${++id}`);
+    this.node = new NodeValue(type, `react-aria-${++ownerDocument.nodeId}`);
     // Start a transaction so that no updates are emitted from the collection
     // until the props for this node are set. We don't know the real id for the
     // node until then, so we need to avoid emitting collections in an inconsistent state.
@@ -313,7 +311,7 @@ export class ElementNode<T> extends BaseNode<T> {
     node.lastChildKey = this.lastChild?.node.key ?? null;
   }
 
-  setProps(obj: any, ref: ForwardedRef<Element>, rendered?: ReactNode) {
+  setProps<T extends Element>(obj: any, ref: ForwardedRef<T>, rendered?: any) {
     let node = this.ownerDocument.getMutableNode(this);
     let {value, textValue, id, ...props} = obj;
     props.ref = ref;
@@ -482,14 +480,14 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     this.keyMap.delete(key);
   }
 
-  commit(firstKey: Key | null, lastKey: Key | null) {
+  commit(firstKey: Key | null, lastKey: Key | null, isSSR = false) {
     if (this.frozen) {
       throw new Error('Cannot commit a frozen collection');
     }
 
     this.firstKey = firstKey;
     this.lastKey = lastKey;
-    this.frozen = true;
+    this.frozen = !isSSR;
   }
 }
 
@@ -501,6 +499,9 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   nodeType = 11; // DOCUMENT_FRAGMENT_NODE
   ownerDocument = this;
   dirtyNodes: Set<BaseNode<T>> = new Set();
+  isSSR = false;
+  nodeId = 0;
+  nodesByProps = new WeakMap<object, ElementNode<T>>();
   private collection: C;
   private collectionMutated: boolean;
   private mutatedNodes: Set<ElementNode<T>> = new Set();
@@ -534,7 +535,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   }
 
   private getMutableCollection() {
-    if (!this.collectionMutated) {
+    if (!this.isSSR && !this.collectionMutated) {
       this.collection = this.collection.clone();
       this.collectionMutated = true;
     }
@@ -584,6 +585,11 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
       return this.collection;
     }
 
+    this.updateCollection();
+    return this.collection;
+  }
+
+  updateCollection() {
     for (let element of this.dirtyNodes) {
       if (element instanceof ElementNode && element.parentNode) {
         element.updateNode();
@@ -600,12 +606,11 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
         }
       }
 
-      collection.commit(this.firstChild?.node.key ?? null, this.lastChild?.node.key ?? null);
+      collection.commit(this.firstChild?.node.key ?? null, this.lastChild?.node.key ?? null, this.isSSR);
       this.mutatedNodes.clear();
     }
 
     this.collectionMutated = false;
-    return this.collection;
   }
 
   queueUpdate() {
@@ -623,6 +628,15 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   subscribe(fn: () => void) {
     this.subscriptions.add(fn);
     return () => this.subscriptions.delete(fn);
+  }
+
+  resetAfterSSR() {
+    if (this.isSSR) {
+      this.isSSR = false;
+      this.firstChild = null;
+      this.lastChild = null;
+      this.nodeId = 0;
+    }
   }
 }
 
@@ -681,7 +695,7 @@ export function useCollectionChildren<T extends object>(props: CachedChildrenOpt
 const ShallowRenderContext = createContext(false);
 
 interface CollectionResult<C> {
-  portal: ReactPortal | null,
+  portal: ReactNode,
   collection: C
 }
 
@@ -696,33 +710,73 @@ interface CollectionDocumentResult<T, C extends BaseCollection<T>> {
   document: Document<T, C>
 }
 
+// React 16 and 17 don't support useSyncExternalStore natively, and the shim provided by React does not support getServerSnapshot.
+// This wrapper uses the shim, but additionally calls getServerSnapshot during SSR (according to SSRProvider).
+function useSyncExternalStoreFallback<C>(subscribe: (onStoreChange: () => void) => () => void, getSnapshot: () => C, getServerSnapshot: () => C): C {
+  let isSSR = useIsSSR();
+  let isSSRRef = useRef(isSSR);
+  // This is read immediately inside the wrapper, which also runs during render.
+  // We just need a ref to avoid invalidating the callback itself, which
+  // would cause React to re-run the callback more than necessary.
+  // eslint-disable-next-line rulesdir/pure-render
+  isSSRRef.current = isSSR;
+
+  let getSnapshotWrapper = useCallback(() => {
+    return isSSRRef.current ? getServerSnapshot() : getSnapshot();
+  }, [getSnapshot, getServerSnapshot]);
+  return useSyncExternalStoreShim(subscribe, getSnapshotWrapper);
+}
+
+const useSyncExternalStore = typeof React['useSyncExternalStore'] === 'function'
+  ? React['useSyncExternalStore']
+  : useSyncExternalStoreFallback;
+
 export function useCollectionDocument<T extends object, C extends BaseCollection<T>>(initialCollection?: C): CollectionDocumentResult<T, C> {
   // The document instance is mutable, and should never change between renders.
   // useSyncExternalStore is used to subscribe to updates, which vends immutable Collection objects.
   let document = useMemo(() => new Document<T, C>(initialCollection || new BaseCollection() as C), [initialCollection]);
   let subscribe = useCallback((fn: () => void) => document.subscribe(fn), [document]);
-  let getSnapshot = useCallback(() => document.getCollection(), [document]);
-  let collection = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  let getSnapshot = useCallback(() => {
+    let collection = document.getCollection();
+    if (document.isSSR) {
+      // After SSR is complete, reset the document to empty so it is ready for React to render the portal into.
+      // We do this _after_ getting the collection above so that the collection still has content in it from SSR
+      // during the current render, before React has finished the client render.
+      document.resetAfterSSR();
+    }
+    return collection;
+  }, [document]);
+  let getServerSnapshot = useCallback(() => {
+    document.isSSR = true;
+    return document.getCollection();
+  }, [document]);
+  let collection = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   return {collection, document};
 }
 
-export function useCollectionPortal<T extends object, C extends BaseCollection<T>>(props: CollectionProps<T>, document: Document<T, C>): ReactPortal | null {
+const SSRContext = createContext<BaseNode<any> | null>(null);
+
+export function useCollectionPortal<T extends object, C extends BaseCollection<T>>(props: CollectionProps<T>, document: Document<T, C>): ReactNode {
   let children = useCollectionChildren(props);
   let wrappedChildren = useMemo(() => (
     <ShallowRenderContext.Provider value>
       {children}
     </ShallowRenderContext.Provider>
   ), [children]);
-  return useIsSSR() ? null : createPortal(wrappedChildren, document as unknown as Element);
+  // During SSR, we render the content directly, and append nodes to the document during render.
+  // The collection children return null so that nothing is actually rendered into the HTML.
+  return useIsSSR()
+    ? <SSRContext.Provider value={document}>{wrappedChildren}</SSRContext.Provider>
+    : createPortal(wrappedChildren, document as unknown as Element);
 }
 
 /** Renders a DOM element (e.g. separator or header) shallowly when inside a collection. */
 export function useShallowRender<T extends Element>(Element: string, props: React.HTMLAttributes<T>, ref: ForwardedRef<T>): ReactElement | null {
   let isShallow = useContext(ShallowRenderContext);
-  ref = useCollectionItemRef(props, ref, props.children);
   if (isShallow) {
-    // @ts-ignore
-    return <Element ref={ref} />;
+    // Elements cannot be re-parented, so the context will always be there.
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    return useSSRCollectionNode(Element, props, ref, props.children) ?? <></>;
   }
 
   return null;
@@ -784,11 +838,39 @@ export interface ItemRenderProps {
   isDropTarget?: boolean
 }
 
-export function useCollectionItemRef<T extends Element>(props: any, ref: ForwardedRef<T>, rendered?: ReactNode) {
+export function useCollectionItemRef<T extends Element>(props: any, ref: ForwardedRef<T>, rendered?: any) {
   // Return a callback ref that sets the props object on the fake DOM node.
   return useCallback((element) => {
     element?.setProps(props, ref, rendered);
   }, [props, ref, rendered]);
+}
+
+export function useSSRCollectionNode<T extends Element>(Type: string, props: object, ref: ForwardedRef<T>, rendered?: any, children?: ReactNode) {
+  // During SSR, portals are not supported, so the collection children will be wrapped in an SSRContext.
+  // Since SSR occurs only once, we assume that the elements are rendered in order and never re-render.
+  // Therefore we can create elements in our collection document during render so that they are in the
+  // collection by the time we need to use the collection to render to the real DOM.
+  // After hydration, we switch to client rendering using the portal.
+  let itemRef = useCollectionItemRef(props, ref, rendered);
+  let parentNode = useContext(SSRContext);
+  if (parentNode) {
+    // Guard against double rendering in strict mode.
+    let element = parentNode.ownerDocument.nodesByProps.get(props);
+    if (!element) {
+      element = parentNode.ownerDocument.createElement(Type);
+      element.setProps(props, ref, rendered);
+      parentNode.appendChild(element);
+      parentNode.ownerDocument.updateCollection();
+      parentNode.ownerDocument.nodesByProps.set(props, element);
+    }
+
+    return children
+      ? <SSRContext.Provider value={element}>{children}</SSRContext.Provider>
+      : null;
+  }
+
+  // @ts-ignore
+  return <Type ref={itemRef}>{children}</Type>;
 }
 
 export interface ItemProps<T = object> extends Omit<SharedItemProps<T>, 'children'>, RenderProps<ItemRenderProps> {
@@ -798,9 +880,8 @@ export interface ItemProps<T = object> extends Omit<SharedItemProps<T>, 'childre
   value?: T
 }
 
-function Item<T extends object>(props: ItemProps<T>, ref: ForwardedRef<HTMLElement>): JSX.Element {
-  // @ts-ignore
-  return <item ref={useCollectionItemRef(props, ref, props.children)} />;
+function Item<T extends object>(props: ItemProps<T>, ref: ForwardedRef<HTMLElement>): JSX.Element | null {
+  return useSSRCollectionNode('item', props, ref, props.children);
 }
 
 const _Item = /*#__PURE__*/ (forwardRef as forwardRefType)(Item);
@@ -815,10 +896,9 @@ export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children' 
   children?: ReactNode | ((item: T) => ReactElement)
 }
 
-function Section<T extends object>(props: SectionProps<T>, ref: ForwardedRef<HTMLElement>): JSX.Element {
+function Section<T extends object>(props: SectionProps<T>, ref: ForwardedRef<HTMLElement>): JSX.Element | null {
   let children = useCollectionChildren(props);
-  // @ts-ignore
-  return <section ref={useCollectionItemRef(props, ref)}>{children}</section>;
+  return useSSRCollectionNode('section', props, ref, null, children);
 }
 
 const _Section = /*#__PURE__*/ (forwardRef as forwardRefType)(Section);
