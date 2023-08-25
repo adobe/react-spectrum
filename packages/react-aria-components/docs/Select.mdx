@@ -401,7 +401,7 @@ A `Select` uses the following components, which may also be used standalone or r
 
 If you will use a Select in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
-This example wraps `Select` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)). The `Item` component is also wrapped to apply class names based on the current state, as described [above](#styling).
+This example wraps `Select` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)). The `Item` component is also wrapped to apply class names based on the current state, as described in the [styling](#styling) section.
 
 ```tsx example export=true
 import type {SelectProps, ItemProps} from 'react-aria-components';
@@ -489,11 +489,7 @@ function MyItem(props: ItemProps) {
 
 </details>
 
-## Usage
-
-The following examples show how to use the `MySelect` component created in the above example.
-
-### Dynamic collections
+## Dynamic collections
 
 `Select` follows the [Collection Components API](../react-stately/collections.html), accepting both static and dynamic collections.
 The examples above show static collections, which can be used when the full list of options is known ahead of time. Dynamic collections,
@@ -518,20 +514,18 @@ function Example() {
   ];
 
   return (
-    <>
-      <MySelect label="Pick an engineering major" items={options}>
-        {(item) => <Item>{item.name}</Item>}
-      </MySelect>
-    </>
+    <MySelect label="Pick an engineering major" items={options}>
+      {(item) => <Item>{item.name}</Item>}
+    </MySelect>
   );
 }
 ```
 
-### Sections
+## Sections
 
 Select supports sections in order to group options. Sections can be used by wrapping groups of items in a `Section` element. A `<Header>` element may also be included to label the section.
 
-#### Static items
+### Static items
 
 ```tsx example
 import {Section, Header} from 'react-aria-components';
@@ -562,7 +556,7 @@ import {Section, Header} from 'react-aria-components';
 </MySelect>
 ```
 
-#### Dynamic items
+### Dynamic items
 
 Sections used with dynamic items are populated from a hierarchical data structure. Similarly to the props on Select, `<Section>` takes an array of data using the `items` prop. If the section also has a header,
 the <TypeLink links={docs.links} type={docs.exports.Collection} /> component can be used to render the child items.
@@ -609,10 +603,11 @@ function Example() {
 }
 ```
 
-### Complex items
+## Text slots
 
-Items within Select also allow for additional content used to better communicate options. Icons and descriptions can be added to the `children` of `Item` as shown in the example below.
-If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements.
+By default, items in a Select are labeled by their text contents for accessibility. Items also support the "label" and "description" slots to separate primary and secondary content, which improves screen reader announcements and can also be used for styling purposes.
+
+**Note**: The ARIA spec prohibits listbox items from including interactive content such as buttons, checkboxes, etc.
 
 ```tsx example
 import {Text} from 'react-aria-components';
@@ -633,10 +628,10 @@ import {Text} from 'react-aria-components';
 </MySelect>
 ```
 
-### Controlled selection
+## Selection
 
 Setting a selected option can be done by using the `defaultSelectedKey` or `selectedKey` prop. The selected key corresponds to the `id` prop of an item.
-When `Select` is used with a dynamic collection as described above, the key of each item is derived from the data.
+When `Select` is used with a dynamic collection as described above, the id of each item is derived from the data.
 See the `react-stately` [Selection docs](../react-stately/selection.html) for more details.
 
 ```tsx example
@@ -663,11 +658,28 @@ function Example() {
 }
 ```
 
-### Asynchronous loading
+### HTML forms
+
+Select supports the `name` prop for integration with HTML forms. The `id` of the selected item will be submitted to the server.
+
+```tsx example
+<MySelect
+  label="Favorite Animal"
+  ///- begin highlight -///
+  name="favoriteAnimalId"
+  ///- end highlight -///
+>
+  <Item id="panda">Panda</Item>
+  <Item id="cat">Cat</Item>
+  <Item id="dog">Dog</Item>
+</MySelect>
+```
+
+## Asynchronous loading
 
 This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading
 of data from a server. You may additionally want to display a spinner to indicate the loading
-state to the user, or support features like infinite scroll to load more data.
+state to the user.
 
 ```tsx example
 import {useAsyncList} from '@react-stately/data';
@@ -699,7 +711,7 @@ function AsyncLoadingExample() {
 }
 ```
 
-### Disabled
+## Disabled
 
 A Select can be fully disabled using the `isDisabled` prop.
 
@@ -731,28 +743,7 @@ Disabled items are not focusable, selectable, or keyboard navigable. The `isDisa
 </MySelect>
 ```
 
-### Controlled open state
-
-The open state of the select can be controlled via the `defaultOpen` and `isOpen` props
-
-```tsx example
-function Example() {
-  let [open, setOpen] = React.useState(false);
-
-  return (
-    <>
-      <p>Select is {open ? 'open' : 'closed'}</p>
-      <MySelect label="Choose frequency" isOpen={open} onOpenChange={setOpen}>
-        <Item id="rarely">Rarely</Item>
-        <Item id="sometimes">Sometimes</Item>
-        <Item id="always">Always</Item>
-      </MySelect>
-    </>
-  );
-}
-```
-
-### Help text
+## Help text
 
 The `description` slot can be used to associate additional help text with a Select. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to semantically mark the Select as invalid for assistive technologies.
 
@@ -775,38 +766,47 @@ function Example() {
   ]);
 
   return (
-    <MySelect
-      isInvalid={!isValid}
-      label="Favorite animal"
-      description={isValid ? 'Pick your favorite animal, you will be judged.' : undefined}
-      errorMessage={isValid ? undefined : animalId === 2
+    <Select selectedKey={animalId} onSelectionChange={setAnimalId} isInvalid={!isValid}>
+      <Label>Favorite Animal</Label>
+      <Button>
+        <SelectValue />
+        <span aria-hidden="true">▼</span>
+      </Button>
+      {/*- begin highlight -*/}
+      {isValid && <Text slot="description">Pick your favorite animal, you will be judged.</Text>}
+      {!isValid && <Text slot="errorMessage">{animalId === 2
         ? 'The author of this example is a dog person.'
-        : "Oh no it's a snake! Choose anything else."}
-      items={options}
-      selectedKey={animalId}
-      onSelectionChange={(selected) => setAnimalId(selected)}
-    >
-      {(item) => <Item>{item.name}</Item>}
-    </MySelect>
+        : "Oh no it's a snake! Choose anything else."}</Text>}
+      {/*- end highlight -*/}
+      <Popover>
+        <ListBox items={options}>
+          {item => <Item>{item.name}</Item>}
+        </ListBox>
+      </Popover>
+    </Select>
   );
 }
 ```
 
-### HTML forms
+## Controlled open state
 
-Select supports the `name` prop for integration with HTML forms. The `id` of the selected item will be submitted to the server.
+The open state of the select can be controlled via the `defaultOpen` and `isOpen` props
 
 ```tsx example
-<MySelect
-  label="Favorite Animal"
-  ///- begin highlight -///
-  name="favoriteAnimalId"
-  ///- end highlight -///
->
-  <Item id="panda">Panda</Item>
-  <Item id="cat">Cat</Item>
-  <Item id="dog">Dog</Item>
-</MySelect>
+function Example() {
+  let [open, setOpen] = React.useState(false);
+
+  return (
+    <>
+      <p>Select is {open ? 'open' : 'closed'}</p>
+      <MySelect label="Choose frequency" isOpen={open} onOpenChange={setOpen}>
+        <Item id="rarely">Rarely</Item>
+        <Item id="sometimes">Sometimes</Item>
+        <Item id="always">Always</Item>
+      </MySelect>
+    </>
+  );
+}
 ```
 
 ## Props
