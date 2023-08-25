@@ -117,7 +117,7 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
         data-variant={variant}
         data-style={style}
         data-static-color={staticColor || undefined}
-        aria-disabled={isPending}
+        aria-disabled={isPending || undefined}
         className={
           classNames(
             styles,
