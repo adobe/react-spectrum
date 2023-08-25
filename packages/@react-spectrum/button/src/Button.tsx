@@ -39,6 +39,13 @@ function usePendingProps(props) {
     props.onPress = undefined;
     props.onPressStart = undefined;
     props.onPressEnd = undefined;
+    props.onPressChange = undefined;
+    props.onPressUp = undefined;
+    props.onFocus = undefined;
+    props.onBlur = undefined;
+    props.onFocusChange = undefined;
+    props.onKeyDown = undefined;
+    props.onKeyUp = undefined;
     props.onClick = undefined;
     props.href = undefined;
   }
