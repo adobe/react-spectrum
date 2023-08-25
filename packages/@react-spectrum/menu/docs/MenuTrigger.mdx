@@ -42,41 +42,14 @@ keywords: [menu, dropdown, action menu]
 ## Example
 
 ```tsx example
-/**
- * Temporary, for testing submenu positioning in docs
- * TODO: Remove before merging into main.
- */
-import {ContextualHelpTrigger} from '@react-spectrum/menu';
-import {Dialog} from '@react-spectrum/dialog';
-import {Heading} from '@react-spectrum/text';
-import {Content} from '@react-spectrum/view';
-
 <MenuTrigger>
-  <ActionButton>Edit</ActionButton>
+  <ActionButton>
+    Edit
+  </ActionButton>
   <Menu>
-    <Item key="undo">Undo</Item>
-    <Item key="redo">Redo</Item>
-    <ContextualHelpTrigger isUnavailable>
-      <Item key="cut">Cut</Item>
-      <Dialog>
-        <Heading>Cut</Heading>
-        <Content>Please select text for 'Cut' to be enabled.</Content>
-      </Dialog>
-    </ContextualHelpTrigger>
-    <ContextualHelpTrigger isUnavailable>
-      <Item key="copy">Copy</Item>
-      <Dialog>
-        <Heading>Copy</Heading>
-        <Content>Please select text for 'Copy' to be enabled.</Content>
-      </Dialog>
-    </ContextualHelpTrigger>
-    <ContextualHelpTrigger>
-      <Item key="paste">Paste</Item>
-      <Dialog>
-        <Heading>Paste</Heading>
-        <Content>You have nothing to 'Paste'.</Content>
-      </Dialog>
-    </ContextualHelpTrigger>
+    <Item>Cut</Item>
+    <Item>Copy</Item>
+    <Item>Paste</Item>
   </Menu>
 </MenuTrigger>
 ```
