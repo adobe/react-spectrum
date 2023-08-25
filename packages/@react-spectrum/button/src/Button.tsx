@@ -69,7 +69,7 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
     'aria-label': stringFormatter.format('loading'),
     isIndeterminate: true,
     size: 'S',
-    ...(variant === 'overBackground' && {variant: 'overBackground'})
+    ...((variant === 'overBackground' || staticColor) && {variant: 'overBackground'})
   };
   let hasLabel = useHasChild(`.${styles['spectrum-Button-label']}`, domRef);
   let hasIcon = useHasChild(`.${styles['spectrum-Icon']}`, domRef);
