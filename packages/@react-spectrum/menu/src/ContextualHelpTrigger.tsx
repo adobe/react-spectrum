@@ -18,6 +18,7 @@ import {MenuDialogContext, useMenuStateContext} from './context';
 import {Modal, Popover} from '@react-spectrum/overlays';
 import React, {Key, ReactElement, useRef} from 'react';
 import {useOverlayTriggerState} from '@react-stately/overlays';
+import {useSafelyMouseToSubmenu} from './useSafelyMouseToSubmenu';
 
 export interface SpectrumMenuDialogTriggerProps<T> extends ItemProps<T> {
   isUnavailable?: boolean,
@@ -65,6 +66,14 @@ function ContextualHelpTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): Rea
       }
     }
   };
+
+  useSafelyMouseToSubmenu({
+    menuRef: menu,
+    submenuRef: popoverRef,
+    triggerRef: triggerRef,
+    isOpen: menuState.expandedKeys.has(props.targetKey)
+  });
+  
   return (
     <>
       <MenuDialogContext.Provider value={{isUnavailable, triggerRef}}>{trigger}</MenuDialogContext.Provider>
