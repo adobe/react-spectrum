@@ -48,6 +48,7 @@ export function useSliderThumb(
     index = 0,
     isRequired,
     validationState,
+    isInvalid,
     trackRef,
     inputRef,
     orientation = state.orientation,
@@ -245,7 +246,7 @@ export function useSliderThumb(
       'aria-orientation': orientation,
       'aria-valuetext': state.getThumbValueLabel(index),
       'aria-required': isRequired || undefined,
-      'aria-invalid': validationState === 'invalid' || undefined,
+      'aria-invalid': isInvalid || validationState === 'invalid' || undefined,
       'aria-errormessage': opts['aria-errormessage'],
       onChange: (e: ChangeEvent<HTMLInputElement>) => {
         state.setThumbValue(index, parseFloat(e.target.value));

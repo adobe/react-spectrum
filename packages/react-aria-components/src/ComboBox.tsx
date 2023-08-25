@@ -11,7 +11,7 @@
  */
 import {AriaComboBoxProps, useComboBox, useFilter} from 'react-aria';
 import {ButtonContext} from './Button';
-import {Collection, Node, useComboBoxState, ValidationState} from 'react-stately';
+import {Collection, Node, useComboBoxState} from 'react-stately';
 import {ContextValue, forwardRefType, Hidden, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {InputContext} from './Input';
@@ -34,10 +34,10 @@ export interface ComboBoxRenderProps {
    */
   isDisabled: boolean,
   /**
-   * Validation state of the combobox.
-   * @selector [data-validation-state="valid | invalid"]
+   * Whether the combobox is invalid.
+   * @selector [data-invalid]
    */
-  validationState: ValidationState | undefined,
+  isInvalid: boolean,
   /**
    * Whether the combobox is required.
    * @selector [data-required]
@@ -45,7 +45,7 @@ export interface ComboBoxRenderProps {
   isRequired: boolean
 }
 
-export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children' | 'placeholder' | 'label' | 'description' | 'errorMessage'>, RenderProps<ComboBoxRenderProps>, SlotProps {
+export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children' | 'placeholder' | 'label' | 'description' | 'errorMessage' | 'validationState'>, RenderProps<ComboBoxRenderProps>, SlotProps {
   /** The filter function used to determine if a option should be included in the combo box list. */
   defaultFilter?: (textValue: string, inputValue: string) => boolean,
   /**
@@ -61,17 +61,17 @@ export const ComboBoxContext = createContext<ContextValue<ComboBoxProps<any>, HT
 function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ComboBoxContext);
   let {collection, document} = useCollectionDocument();
-  let {children, isDisabled = false, validationState, isRequired = false} = props;
+  let {children, isDisabled = false, isInvalid = false, isRequired = false} = props;
   children = useMemo(() => (
     typeof children === 'function'
       ? children({
         isOpen: false,
         isDisabled,
-        validationState,
+        isInvalid,
         isRequired
       })
       : children
-  ), [children, isDisabled, validationState, isRequired]);
+  ), [children, isDisabled, isInvalid, isRequired]);
 
   return (
     <>
@@ -117,9 +117,9 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
   let renderPropsState = useMemo(() => ({
     isOpen: state.isOpen,
     isDisabled: props.isDisabled || false,
-    validationState: props.validationState,
+    isInvalid: props.isInvalid || false,
     isRequired: props.isRequired || false
-  }), [state.isOpen, props.isDisabled, props.validationState, props.isRequired]);
+  }), [state.isOpen, props.isDisabled, props.isInvalid, props.isRequired]);
   let buttonRef = useRef<HTMLButtonElement>(null);
   let inputRef = useRef<HTMLInputElement>(null);
   let listBoxRef = useRef<HTMLDivElement>(null);
@@ -199,7 +199,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
         data-focused={state.isFocused || undefined}
         data-open={state.isOpen || undefined}
         data-disabled={props.isDisabled || undefined}
-        data-validation-state={props.validationState || undefined}
+        data-invalid={props.isInvalid || undefined}
         data-required={props.isRequired || undefined} />
       {name && formValue === 'key' && <input type="hidden" name={name} value={state.selectedKey} />}
     </Provider>

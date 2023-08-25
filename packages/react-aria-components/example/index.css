@@ -193,7 +193,7 @@ html {
 
 .draggable {
   outline: none;
-  
+
   &.focus-ring{
     border: 2px solid blue;
   }
@@ -270,7 +270,7 @@ html {
     }
   }
 
-  &[data-validation-state=invalid] {
+  &[data-invalid] {
     &:before {
       border-color: var(--invalid-color);
     }

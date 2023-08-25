@@ -370,7 +370,7 @@ By default, the label is positioned above the Picker. The `labelPosition` prop c
 ### Help text
 [View guidelines](https://spectrum.adobe.com/page/picker/#Help-text-(description-and-error-message))
 
-Both a description and an error message can be supplied to a Picker. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
+Both a description and an error message can be supplied to a Picker. The description is always visible unless `isInvalid` is true and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
 
 ```tsx example
 function Example() {
@@ -390,7 +390,7 @@ function Example() {
 
   return (
     <Picker
-      validationState={isValid ? 'valid' : 'invalid'}
+      isInvalid={!isValid}
       label="Favorite animal"
       description="Pick your favorite animal, you will be judged."
       errorMessage={animalId === 2 ? 'The author of this example is a dog person.' : 'Oh no it\'s a snake! Choose anything else.'}

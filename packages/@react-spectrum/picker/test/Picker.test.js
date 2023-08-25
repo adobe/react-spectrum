@@ -950,7 +950,7 @@ describe('Picker', function () {
       it('supports error message', function () {
         let {getByText, getByRole} = render(
           <Provider theme={theme}>
-            <Picker label="Test" errorMessage="Please select a valid item." validationState="invalid" onSelectionChange={onSelectionChange}>
+            <Picker label="Test" errorMessage="Please select a valid item." isInvalid onSelectionChange={onSelectionChange}>
               <Item>One</Item>
               <Item>Two</Item>
               <Item>Three</Item>

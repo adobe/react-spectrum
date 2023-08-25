@@ -905,7 +905,7 @@ function Example() {
 
 ### Help text
 
-The `description` slot can be used to associate additional help text with a Select. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `validationState` prop to semantically mark the Select as invalid for assistive technologies.
+The `description` slot can be used to associate additional help text with a Select. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to semantically mark the Select as invalid for assistive technologies.
 
 ```tsx example
 function Example() {
@@ -927,7 +927,7 @@ function Example() {
 
   return (
     <MySelect
-      validationState={isValid ? 'valid' : 'invalid'}
+      isInvalid={!isValid}
       label="Favorite animal"
       description={isValid ? 'Pick your favorite animal, you will be judged.' : undefined}
       errorMessage={isValid ? undefined : animalId === 2

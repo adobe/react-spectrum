@@ -238,7 +238,7 @@ describe('Calendar', () => {
   });
 
   it('should support invalid state', () => {
-    let {getByRole} = renderCalendar({validationState: 'invalid', value: startOfWeek(startOfMonth(today(getLocalTimeZone())), 'en-US').add({days: 7})}, {}, {className: ({isInvalid}) => isInvalid ? 'invalid' : ''});
+    let {getByRole} = renderCalendar({isInvalid: true, value: startOfWeek(startOfMonth(today(getLocalTimeZone())), 'en-US').add({days: 7})}, {}, {className: ({isInvalid}) => isInvalid ? 'invalid' : ''});
     let grid = getByRole('grid');
     let cell = within(grid).getAllByRole('button')[7];
 
@@ -249,14 +249,14 @@ describe('Calendar', () => {
   it('should support render props', () => {
     let {getByRole} = render(
       <Calendar minValue={new CalendarDate(2023, 1, 1)} defaultValue={new CalendarDate(2020, 2, 3)}>
-        {({validationState}) => (
+        {({isInvalid}) => (
           <>
             <header>
               <Button slot="previous">◀</Button>
               <Heading />
               <Button slot="next">▶</Button>
             </header>
-            <CalendarGrid data-validation-state={validationState}>
+            <CalendarGrid data-validation-state={isInvalid ? 'invalid' : null}>
               {(date) => <CalendarCell date={date} />}
             </CalendarGrid>
           </>
