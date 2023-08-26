@@ -454,7 +454,7 @@ export const DisabledSubMenuTrigger = {
   ),
   name: 'disabled submenu trigger',
   parameters: {description: {data: 'Lvl 2 submenu trigger is disabled'}}
-}
+};
 
 // TODO: finalize what should be supported here
 export const Posititioning = {

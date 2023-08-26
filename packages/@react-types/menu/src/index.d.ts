@@ -59,7 +59,14 @@ export interface MenuProps<T> extends CollectionBase<T>, MultipleSelection {
   /** Handler that is called when an item is selected. */
   onAction?: (key: Key) => void,
   /** Handler that is called when the menu should close after selecting an item. */
-  onClose?: () => void
+  onClose?: () => void,
+  // TODO: the below two props feel a bit awkward, don't think they should really be differentiated from onClose. onClose for a sub menu is just like onCloseAllMenus
+  // but onClose's definition is already established to be just for after selecting an item
+  /** Handler that is called when the submenu should close upon specific user actions. Should be provided alongside onClose if the menu is a submenu. */
+  onSubMenuClose?: () => void,
+  // TODO: should this be differentiated from onClose? onClose is specifically when the menu is closed from a user selecting an item where this callback is for when they hit Escape instead
+  /** Handler that is called when a menu and all of its open submenus should close. Should be provided alongside onClose if the menu is a submenu. */
+  onCloseAllMenus?: () => void
 }
 
 export interface AriaMenuProps<T> extends MenuProps<T>, DOMProps, AriaLabelingProps {}

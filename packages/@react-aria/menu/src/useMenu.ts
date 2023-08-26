@@ -50,9 +50,9 @@ export const menuData = new WeakMap<TreeState<unknown>, MenuData>();
 export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: RefObject<HTMLElement>): MenuAria {
   let {
     shouldFocusWrap = true,
-    // @ts-ignore (private), only to close the submenu on ArrowLeft press
+    // TODO: only to close the submenu on ArrowLeft press
     onSubMenuClose,
-    // @ts-ignore (private), only for Esc key handling in submenus
+    // TODO: only for Esc key handling in submenus
     onCloseAllMenus,
     ...otherProps
   } = props;

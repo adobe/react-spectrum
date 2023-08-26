@@ -80,7 +80,6 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
   // Doesn't seem to have a noticeable effect on the announcements
   let {menuTriggerProps, menuProps} = useMenuTrigger({trigger: 'press', isDisabled: parentMenuState.disabledKeys.has(props.targetKey)}, subMenuState, triggerRef);
   let {id: subMenuTriggerId} = menuTriggerProps;
-  let {id: subMenuId} = menuProps;
 
   let onExit = () => {
     // if focus was already moved back to a menu item, don't need to do anything
@@ -108,24 +107,21 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
   let isMobile = useIsMobileDevice();
   // TODO: figure out what exactly we need to propagate down
   let menuContext = {
-    id: subMenuId,
-    'aria-labelledby': subMenuTriggerId,
-    state: subMenuState,
+    ...menuProps,
     ref: menuRef,
-    // Selecting a menu item in a sub menu should also close ALL menus, so we close the root menu
+    // Selecting a menu item in a sub menu should also close ALL menus, so we close the root menu instead of just the submenu.
+    // Overrides menuProps.onClose
     // TODO: onOpenChange for submenus won't trigger when onClose here is called since we are only closing the root menu, should
     // we chain calls for all the submenus as well? Not even sure of the use case for having onOpenChange or onOpen for submenus
     onClose: topLevelMenuState.close,
     // Separate handler for useMenuItem, used to close just the submenu when the user presses ArrowLeft in a submenu
-    onSubMenuClose: subMenuState.close,
+    onSubMenuClose: menuProps.onClose,
     closeOnSelect,
-    // TODO: we don't call useMenuTrigger so need an autofocus value for when the submenu is opened by keyboard/hover/press
-    // useMenuItem currently handles opening the submenu, perhaps copy over the pressProps/some of the keydown stuff from useMenuTrigger's implementation
+    // TODO:useMenuItem currently handles opening the submenu, perhaps copy over the pressProps/some of the keydown stuff from useMenuTrigger's implementation
     // and move it to a useSubMenuTrigger hook or modify useMenuTrigger so it can distingush between the typical menuTrigger stuff. Problem is that useMenuItem doesn't
     // accept pressProps or dom attributes...
     // For now pass it into the hook via contexts and weak maps, but ideally I think useMenuTrigger should handle creating the bulk of the interaction handlers + aria attributes and
     // that stuff would get provided to useMenuItem to be processed?
-    autoFocus: subMenuState.focusStrategy || true,
     UNSAFE_style: isMobile ? {
       width: '100%',
       maxHeight: 'inherit'
