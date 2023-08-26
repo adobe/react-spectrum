@@ -33,7 +33,7 @@ export const SubMenuStatic = {
   render: (args) => (
     renderMenuTrigger(
       <Menu {...args}>
-        {/* <Item key="Lvl 1 Item 1">Lvl 1 Item 1</Item> */}
+        <Item key="Lvl 1 Item 1">Lvl 1 Item 1</Item>
         <SubMenuTrigger onOpenChange={action('Lvl 1 Item 2 onOpenChange')} {...args.subMenuTrigger1Props}>
           <Item key="Lvl 1 Item 2">Lvl 1 Item 2</Item>
           <Menu {...args.subMenu1Props}>
@@ -49,7 +49,7 @@ export const SubMenuStatic = {
             </SubMenuTrigger>
           </Menu>
         </SubMenuTrigger>
-        {/* <Item key="Lvl 1 Item 3">Lvl 1 Item 3</Item> */}
+        <Item key="Lvl 1 Item 3">Lvl 1 Item 3</Item>
       </Menu>
     , args.menuTriggerProps)
   ),
