@@ -187,11 +187,18 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
 }
 
 SubMenuTrigger.getCollectionNode = function* (props: SpectrumSubMenuTriggerProps) {
-  let [trigger] = React.Children.toArray(props.children) as ReactElement[];
-  let [, content] = props.children as [ReactElement, ReactElement];
+  // React.Children.toArray mutates the Item's key which is problematic for user provided keys
+  // TODO: perhaps make this same change in ContextualHelpTrigger too
+  let childArray: ReactElement[] = [];
+  React.Children.forEach(props.children, child => {
+    if (React.isValidElement(child)) {
+      childArray.push(child);
+    }
+  });
+  let [trigger, content] = childArray;
 
   yield {
-    element: React.cloneElement(trigger, {...trigger.props, hasChildItems: true, isTrigger: true}),
+    element: React.cloneElement(trigger, {...trigger.props, hasChildItems: true, isTrigger: true, key: trigger.key}),
     wrapper: (element) => (
       <SubMenuTrigger key={element.key} targetKey={element.key} {...props}>
         {element}
