@@ -35,24 +35,15 @@ governing permissions and limitations under the License.
       border-style: solid;
     }
   }
-
-  &.is-dragged {
-    border-style: solid;
-  }
 }
 
-.spectrum-Dropzone--banner {
+.spectrum-Dropzone-banner {
   position: absolute;
   color: var(--spectrum-dropzone-banner-text-color);
   background-color: var(--spectrum-dropzone-banner-background-color);
-  z-index: 1;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  top: 0;
-  margin: auto;
-  height: fit-content;
-  width: fit-content;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   padding: var(--spectrum-dropzone-padding-y) var(--spectrum-dropzone-padding-x);
   border-radius: var(--spectrum-dropzone-border-radius);
   border: 1px solid var(--spectrum-dropzone-banner-border-color);

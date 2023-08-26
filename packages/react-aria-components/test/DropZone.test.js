@@ -166,6 +166,20 @@ describe('DropZone', () => {
     let button = getByTestId('foo');
     expect(button).toHaveClass('react-aria-Button');
   });
+  
+  it('should attach a ref to the dropzone if provided as a prop', () => {
+    let ref = React.createRef(); 
+    let {getByTestId} = render(
+      <DropZone data-testid="foo" ref={ref}>
+        <FileTrigger>
+          <Button>Upload</Button>
+        </FileTrigger>
+      </DropZone>
+    );
+
+    let dropzone = getByTestId('foo');
+    expect(ref.current).toEqual(dropzone);
+  });
 
   describe('drag and drop', function () {
     beforeEach(() => {

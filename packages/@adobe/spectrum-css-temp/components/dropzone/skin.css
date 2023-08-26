@@ -26,6 +26,12 @@ governing permissions and limitations under the License.
     border-color: var(--spectrum-dropzone-border-color-selected-hover);
     background-color: var(--spectrum-dropzone-background-color-selected-hover);
 
+    .spectrum-Dropzone-illustratedMessage {
+      svg {
+        color: var(--spectrum-dropzone-illustratedmessage-illustration-color-key-focus);
+      }
+    }
+
     &.focus-ring {
       border-color: var(--spectrum-dropzone-border-color-selected-hover);
     }
@@ -42,15 +48,9 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-Dropzone--illustratedMessage {
-  
-  &.is-drop-target {
-    svg{
-      color: var(--spectrum-dropzone-illustratedmessage-illustration-color-key-focus);
-    }
-  }
+.spectrum-Dropzone-illustratedMessage {
 
-  &.is-focus-visible {
+  &.focus-visible {
     svg{
       color: var(--spectrum-dropzone-illustratedmessage-illustration-color-key-focus);
     }
@@ -62,17 +62,13 @@ governing permissions and limitations under the License.
     --spectrum-dropzone-border-color: CanvasText;
     --spectrum-dropzone-border-color-selected-hover: Highlight;
     --spectrum-dropzone-background-color-selected-hover: Canvas;
-
-    &.is-dragged {
-      forced-color-adjust: none;
-    }
   }
 
-  .spectrum-Dropzone--banner {
+  .spectrum-Dropzone-banner {
     --spectrum-dropzone-banner-border-color: CanvasText;
   }
 
-  .spectrum-Dropzone--illustratedMessage {
+  .spectrum-Dropzone-illustratedMessage {
     --spectrum-dropzone-illustratedmessage-illustration-color-key-focus: Highlight;
   }
 }

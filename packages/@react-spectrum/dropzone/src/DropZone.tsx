@@ -14,7 +14,7 @@ import {AriaLabelingProps, DOMProps, DOMRef, StyleProps} from '@react-types/shar
 import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DropZoneProps, DropZone as RACDropZone} from 'react-aria-components';
 import {mergeProps} from '@react-aria/utils';
-import React, {ReactNode} from 'react';
+import React, {ReactNode, useId} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/dropzone/vars.css';
 
 export interface SpectrumDropZoneProps extends DropZoneProps, DOMProps, StyleProps, AriaLabelingProps {
@@ -30,11 +30,13 @@ function DropZone(props: SpectrumDropZoneProps, ref: DOMRef<HTMLDivElement>) {
   let {children, isFilled, replaceMessage, ...otherProps} = props;
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
+  let messageId = useId();
 
   return (
     <RACDropZone
       {...mergeProps(otherProps)}
       {...styleProps as Omit<React.HTMLAttributes<HTMLElement>, 'onDrop'>}
+      aria-labelledby={isFilled ? messageId : null}
       className={
       classNames(
         styles,
@@ -42,33 +44,29 @@ function DropZone(props: SpectrumDropZoneProps, ref: DOMRef<HTMLDivElement>) {
         styleProps.className
       )} 
       ref={domRef}>
-      {({isFocused, isFocusVisible, isDropTarget}) => (
+      {({isDropTarget}) => (
         <>
+          <SlotProvider
+            slots={{
+              illustration: {UNSAFE_className: classNames(
+                styles, 
+                'spectrum-Dropzone-illustratedMessage'
+                )}
+            }}> 
+            {children}
+          </SlotProvider>
           {isFilled && isDropTarget &&
             <div
+              id={messageId}
               className={
                 classNames(
                   styles,
-                  'spectrum-Dropzone--banner',
+                  'spectrum-Dropzone-banner',
                   styleProps.className
                 )
               }>
               {replaceMessage ? replaceMessage : 'Drop file to replace'}
             </div>}
-          <SlotProvider
-            slots={{
-              illustration: {UNSAFE_className: classNames(
-                styles, 
-                'spectrum-Dropzone--illustratedMessage', 
-                {
-                  'is-drop-target': isDropTarget,
-                  'is-focused': isFocused,
-                  'is-focus-visible': isFocusVisible
-                }
-                )}
-            }}> 
-            {children}
-          </SlotProvider>
         </>
       )}
     </RACDropZone>

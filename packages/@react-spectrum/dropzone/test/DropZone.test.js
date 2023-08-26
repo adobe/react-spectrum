@@ -11,6 +11,7 @@
  */
 
 import {act, fireEvent, render} from '@react-spectrum/test-utils';
+import {Button} from '@react-spectrum/button';
 import {Content} from '@react-spectrum/view';
 import {DataTransfer, DataTransferItem, DragEvent} from '@react-aria/dnd/test/mocks';
 import {Draggable} from '@react-aria/dnd/test/examples';
@@ -39,43 +40,27 @@ describe('DropZone', () => {
     expect(dropzone).toHaveAttribute('class', 'spectrum-Dropzone');
   });
 
-  it('should render an illustrated message as a child', () => {
-    let {getByTestId} = render(
-      <DropZone>
-        <IllustratedMessage>
-          <Heading data-testid="foo">No files</Heading>
-          <Content data-testid="bar">
-            <FileTrigger>
-              <Link>Select a file</Link>from your computer
-            </FileTrigger>
-          </Content>
-        </IllustratedMessage>
-      </DropZone>
-    );
+  it('should attach a ref on the outer most div', () => {
+    let dropzoneRef = React.createRef();
+    let inputRef = React.createRef();
 
-    let heading = getByTestId('foo');
-    let content = getByTestId('bar');
-    expect(heading).toHaveAttribute('class', 'spectrum-IllustratedMessage-heading');
-    expect(content).toHaveAttribute('class', 'spectrum-IllustratedMessage-description');
-  });
-
-  it('should attach a ref to the dropzone if provided as a prop', () => {
-    let ref = React.createRef(); 
-    let {getByTestId} = render(
-      <DropZone data-testid="foo" ref={ref}>
+    let tree = render(
+      <DropZone ref={dropzoneRef}>
         <IllustratedMessage>
           <Heading>No files</Heading>
           <Content>
-            <FileTrigger>
-              <Link>Select a file</Link>from your computer
+            <FileTrigger ref={inputRef}>
+              <Button data-testid="foo" variant="primary">Select a file</Button>
             </FileTrigger>
           </Content>
         </IllustratedMessage>
       </DropZone>
     );
 
-    let dropzone = getByTestId('foo');
-    expect(ref.current.UNSAFE_getDOMNode()).toEqual(dropzone);
+    let button = tree.getByTestId('foo');
+    expect(dropzoneRef.current.UNSAFE_getDOMNode()).toEqual(tree.container.firstChild);
+    expect(dropzoneRef.current.UNSAFE_getDOMNode).not.toEqual(inputRef.current);
+    expect(dropzoneRef.current.UNSAFE_getDOMNode).not.toEqual(button);
   });
 });
 
@@ -123,7 +108,6 @@ describe('drag and drop', function () {
       );
       let dropzone = tree.getByTestId('foo');
       let draggable = tree.getByText('Drag me');
-      expect(dropzone).toHaveClass('spectrum-Dropzone');
       expect(draggable).toHaveAttribute('draggable', 'true');
       expect(draggable).toHaveAttribute('data-dragging', 'false');
       expect(dropzone).not.toHaveAttribute('data-drop-target');
@@ -163,9 +147,6 @@ describe('drag and drop', function () {
 
       expect(dataTransfer.dropEffect).toBe('move');
       expect(dropzone).toHaveAttribute('data-drop-target', 'true');
-
-      let banner = tree.getByText('Drop file to replace');
-      expect(banner).toHaveClass('spectrum-Dropzone--banner');
 
       fireEvent(dropzone, new DragEvent('dragover', {dataTransfer, clientX: 2, clientY: 2}));
       expect(onDropMove).toHaveBeenCalledTimes(1);

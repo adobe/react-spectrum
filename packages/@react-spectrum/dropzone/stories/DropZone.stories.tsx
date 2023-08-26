@@ -12,20 +12,22 @@
 
 import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
+import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
 import {classNames} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import {Draggable} from '@react-aria/dnd/stories/dnd.stories';
 import {DropZone} from '../';
+import File from '@spectrum-icons/illustrations/File';
 import {FileDropItem, TextDropItem, useDrag} from 'react-aria';
 import {FileTrigger, Text} from 'react-aria-components';
 import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Meta} from '@storybook/react';
+import NotFound from '@spectrum-icons/illustrations/NotFound';
 import React, {useState} from 'react';
 import {SpectrumDropZoneProps} from '../src/DropZone';
 import styles from './styles.css';
 import Upload from '@spectrum-icons/illustrations/Upload';
-
 
 type StoryArgs = SpectrumDropZoneProps;
 
@@ -39,6 +41,20 @@ export default meta;
 export const withDraggable = {
   render: (args) => (
     <DropZoneWithDraggable {...args} />
+  )
+};
+
+export const withDraggableTextContext = {
+  render: (args) => (
+    <DropZoneWithDraggableText {...args} />
+  )
+};
+
+export const withDraggableCustomAriaLabel = {
+  render: (args) => (
+    <DropZoneWithDraggableText 
+      {...args} 
+      aria-label="custom label" />
   )
 };
 
@@ -68,48 +84,89 @@ export const filledDropzone = {
   )
 };
 
+function renderEmptyState() {
+  return (
+    <IllustratedMessage>
+      <NotFound />
+      <Heading>No files</Heading>
+      <Content>No files selected</Content>
+    </IllustratedMessage>
+  );
+}
+
 function Example(props) {
+  let columns = [
+    {name: 'Name', uid: 'name'},
+    {name: 'Type', uid: 'type'}
+  ];
+
   let [isFilled, setIsFilled] = useState(false);
   let [filledSrc, setFilledSrc] = useState(null);
   
   return (
-    <DropZone 
-      {...props}
-      isFilled={isFilled}
-      onDrop={async (e) => { 
-        let items = e.items.filter((item) => item.kind === 'file') as FileDropItem[];
-        if (items.length > 0) {
-          const urls = await Promise.all(items.map(async (item) => URL.createObjectURL(await item.getFile())));
-          const stringUrls = urls.map((url) => url.toString());
-          setFilledSrc(stringUrls);
-          setIsFilled(true);
+    <>
+      <DropZone 
+        {...props}
+        width="size-3000"
+        height="size-3000"
+        isFilled={isFilled}
+        onDrop={async (e) => { 
+          let items = e.items.filter((item) => item.kind === 'file') as FileDropItem[];
+          if (items.length > 0) {
+            const rows = items.map((item, index) => ({name: item.name, type: item.type, id: index}));
+            setFilledSrc(rows);
+            setIsFilled(true);
+          }
+        }}
+        onDropEnter={action('onDropEnter')}
+        onDropExit={action('onDropExit')} 
+        onPaste={action('onPaste')}>
+        <IllustratedMessage>
+          <Upload />
+          <Heading>
+            <Text slot="heading">
+              Drag a file here
+            </Text>
+          </Heading>
+          <Content>
+            <FileTrigger
+              allowsMultiple
+              onChange={(e) => {
+                let files = Array.from(e);
+                let rows = files.map((file, index) => ({name: file.name, type: file.type, id: index}));
+                setFilledSrc(rows);
+                setIsFilled(true);
+              }}>
+              <Button variant="primary">Select a file</Button>
+            </FileTrigger>
+          </Content>
+        </IllustratedMessage>
+      </DropZone>
+      <TableView
+        renderEmptyState={renderEmptyState}
+        height="size-3000"
+        minWidth="size-3000">
+        <TableHeader columns={columns}>
+          {column => (
+            <Column
+              key={column.uid}>
+              {column.name}
+            </Column>)}
+        </TableHeader>
+        {isFilled ? 
+          <TableBody items={filledSrc}>
+            {item => (
+              <Row>
+                {columnKey => <Cell>{item[columnKey]}</Cell>}
+              </Row>
+            )}
+          </TableBody> :
+          <TableBody>
+            {[]}
+          </TableBody>
         }
-      }}
-      onDropEnter={action('onDropEnter')}
-      onDropExit={action('onDropExit')} 
-      onPaste={action('onPaste')}>
-      <IllustratedMessage>
-        <Upload />
-        <Heading>
-          <Text slot="heading">
-            Drag a file here
-          </Text>
-        </Heading>
-        <Content>
-          <FileTrigger
-            allowsMultiple
-            onChange={(e) => {
-              let files = Array.from(e);
-              let urls = files.map(file => URL.createObjectURL(file));
-              setFilledSrc(urls);
-              setIsFilled(true);
-            }}>
-            <Button variant="primary">Select a file</Button>
-          </FileTrigger>
-        </Content>
-      </IllustratedMessage>
-      {isFilled && <img alt="test" style={{width: '100px', position: 'absolute'}} src={filledSrc[0]} />}
-    </DropZone>
+      </TableView>
+    </>
   );
 }
 
@@ -135,9 +192,11 @@ function DropZoneWithDraggable(props) {
         onPaste={action('onPaste')}>
         <IllustratedMessage>
           <Upload />
-          <Heading>Drag and Drop here</Heading>
+          <Heading>
+            Drag and Drop here
+          </Heading>
         </IllustratedMessage>
-        {isFilled && <div style={{width: '100px', position: 'absolute'}}>{filledSrc}</div>}
+        {filledSrc}
       </DropZone>
     </>
   );
@@ -148,36 +207,53 @@ function DropZoneWithButton(props) {
   let [filledSrc, setFilledSrc] = useState(null);
 
   return (
-    <DropZone 
-      {...props}
-      isFilled={isFilled}
-      onDrop={async (e) => { 
-        let item = e.items.find((item) => item.kind === 'file') as FileDropItem;
-        if (item) {
-          setFilledSrc(URL.createObjectURL(await item.getFile()));
-          setIsFilled(true);
-        }
-      }}
-      onDropEnter={action('onDropEnter')}
-      onDropExit={action('onDropExit')} 
-      onPaste={action('onPaste')}>
-      <IllustratedMessage>
-        <Upload />
-        <Heading>Drag and Drop here</Heading>
-        <Content>
-          <FileTrigger
-            onChange={(e) => {
-              let files = Array.from(e);
-              let urls = files.map(file => URL.createObjectURL(file));
-              setFilledSrc(urls[0]);
-              setIsFilled(true);
-            }}>
-            <Button variant="primary">Select a file</Button>
-          </FileTrigger>
-        </Content>
-      </IllustratedMessage>
-      {isFilled && <img style={{width: '100px', position: 'absolute'}} src={filledSrc} alt="test" />}
-    </DropZone>
+    <>
+      <DropZone 
+        {...props}
+        width="size-3000"
+        height="size-3000"
+        isFilled={isFilled}
+        UNSAFE_className={classNames(styles, isFilled && 'is-filled')}
+        onDrop={async (e) => { 
+          let item = e.items.find((item) => item.kind === 'file') as FileDropItem;
+          if (item) {
+            setFilledSrc({
+              src: URL.createObjectURL(await item.getFile()), 
+              type: item.type,
+              name: item.name});
+            setIsFilled(true);
+          }
+        }}
+        onDropEnter={action('onDropEnter')}
+        onDropExit={action('onDropExit')} 
+        onPaste={action('onPaste')}>
+        <IllustratedMessage>
+          <Upload />
+          <Heading>Drag and Drop here</Heading>
+          <Content>
+            <FileTrigger
+              onChange={(e) => {
+                let files = Array.from(e);
+                let src = files.map(file => URL.createObjectURL(file));
+                let type = files.map(file => file.type);
+                let name = files.map(file => file.name);
+                setFilledSrc({
+                  src: src[0],
+                  type: type[0],
+                  name: name[0]});
+                setIsFilled(true);
+              }}>
+              <Button variant="primary">Select a file</Button>
+            </FileTrigger>
+          </Content>
+        </IllustratedMessage>
+      </DropZone>
+      {isFilled && 
+        <div className={styles.files}>
+          <File />
+          {filledSrc.name}
+        </div>}
+    </>
   );
 }
 
@@ -211,12 +287,6 @@ function DropZoneFilled(props) {
         onDropEnter={action('onDropEnter')}
         onDropExit={action('onDropExit')} 
         onPaste={action('onPaste')}>
-        {!isFilled && 
-          <IllustratedMessage>
-            <Upload />
-            <Heading>Drag and Drop here</Heading>
-          </IllustratedMessage>
-        }
         <img className={styles.images} alt="a starry sky" src={filledSrc} />
       </DropZone>
     </>
@@ -247,5 +317,39 @@ function DraggableImage() {
         src="https://i.imgur.com/Z7AzH2c.jpg"
         className={`draggable ${isDragging ? 'dragging' : ''}`} />
     </div>
+  );
+}
+
+function DropZoneWithDraggableText(props) {
+  let [isFilled, setIsFilled] = useState(false);
+  let [filledSrc, setFilledSrc] = useState(null);
+
+  return (
+    <>
+      <Draggable />
+      <DropZone 
+        {...props}
+        isFilled={isFilled}
+        onDrop={async (e) => {
+          let items = await Promise.all(e.items.filter((item) => item.kind === 'text' && item.types.has('text/plain')).map((item: TextDropItem) => item.getText('text/plain')));
+          if (items.length > 0) {
+            setIsFilled(true);
+            setFilledSrc(items.join('\n'));
+          }
+        }}
+        onDropEnter={action('onDropEnter')}
+        onDropExit={action('onDropExit')} 
+        onPaste={action('onPaste')}>
+        <IllustratedMessage>
+          <Upload />
+          <Heading>
+            <Text>
+              Drag and Drop here
+            </Text>
+          </Heading>
+        </IllustratedMessage>
+        {filledSrc}
+      </DropZone>
+    </>
   );
 }
