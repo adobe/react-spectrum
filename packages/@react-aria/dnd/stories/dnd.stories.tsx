@@ -58,9 +58,9 @@ export const Default = () => (
   <Flex direction="column" gap="size-200" alignItems="center">
     <Draggable />
     <Droppable />
-    <input />
+    <input aria-label="test input 1" />
     <Droppable type="text/html" />
-    <input />
+    <input aria-label="test input 2" />
     <Droppable />
   </Flex>
 );
@@ -74,7 +74,14 @@ export const NestedDropRegions = {
       </Droppable>
     </Flex>
   ),
-  name: 'nested drop regions'
+  name: 'nested drop regions',
+  parameters: {
+    a11y: {
+      config: {
+        rules: [{id: 'nested-interactive', enabled: false}]
+      }
+    }
+  }
 };
 
 export const DraggableListbox = {

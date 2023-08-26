@@ -13,10 +13,10 @@
 import {ariaHideOutside} from './ariaHideOutside';
 import {AriaPositionProps, useOverlayPosition} from './useOverlayPosition';
 import {DOMAttributes} from '@react-types/shared';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import {PlacementAxis} from '@react-types/overlays';
-import {RefObject, useEffect} from 'react';
+import {RefObject} from 'react';
 import {useOverlay} from './useOverlay';
 import {usePreventScroll} from './usePreventScroll';
 
@@ -96,7 +96,7 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     isDisabled: isNonModal
   });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (state.isOpen && !isNonModal && popoverRef.current) {
       return ariaHideOutside([popoverRef.current]);
     }

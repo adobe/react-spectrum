@@ -41,7 +41,7 @@ export default {
 } as ComponentMeta<typeof Card>;
 
 export const CardGrid: CardStory = {
-  render: (args, context) => <Card {...args} {...context} />,
+  render: (args, context) => <Card {...args} {...context} id={null} />,
   args: {...Horizontal.args, layout: 'grid'},
   decorators: [(Story, context) => (
     <CardGridDecorator
@@ -81,7 +81,7 @@ const CardGridDecorator = (props) => {
 };
 
 export const CardFloat: CardStory = {
-  render: (args, context) => <Card {...args} {...context} />,
+  render: (args, context) => <Card {...args} {...context} id={null} />,
   args: {...Horizontal.args},
   decorators: [(Story, context) => (
     <CardFloatDecorator
@@ -119,7 +119,7 @@ const CardFloatDecorator = (props) => {
 };
 
 export const CardGridTall: CardStory = {
-  render: (args, context) => <Card {...args} {...context} />,
+  render: (args, context) => <Card {...args} {...context} id={null} />,
   args: {...Horizontal.args, layout: 'grid'},
   decorators: [(Story, context) => (
     <CardGridTallDecorator
