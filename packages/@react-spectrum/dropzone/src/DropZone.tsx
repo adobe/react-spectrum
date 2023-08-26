@@ -13,8 +13,8 @@
 import {AriaLabelingProps, DOMProps, DOMRef, StyleProps} from '@react-types/shared';
 import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DropZoneProps, DropZone as RACDropZone} from 'react-aria-components';
-import {mergeProps} from '@react-aria/utils';
-import React, {ReactNode, useId} from 'react';
+import {mergeProps, useId} from '@react-aria/utils';
+import React, {ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/dropzone/vars.css';
 
 export interface SpectrumDropZoneProps extends DropZoneProps, DOMProps, StyleProps, AriaLabelingProps {
