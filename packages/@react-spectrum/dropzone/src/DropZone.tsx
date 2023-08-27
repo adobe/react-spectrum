@@ -21,7 +21,7 @@ export interface SpectrumDropZoneProps extends DropZoneProps, DOMProps, StylePro
   /** The content to display in the drop zone. */
   children: ReactNode,
   /** Whether the dropzone has been filled. */
-  isFilled?: boolean, 
+  isFilled?: boolean,
   /** The message to replace the default banner message that is shown when the drop zone is filled. */
   replaceMessage?: string
 }
@@ -41,34 +41,30 @@ function DropZone(props: SpectrumDropZoneProps, ref: DOMRef<HTMLDivElement>) {
       classNames(
         styles,
         'spectrum-Dropzone',
-        styleProps.className
-      )} 
-      ref={domRef}>
-      {({isDropTarget}) => (
-        <>
-          <SlotProvider
-            slots={{
-              illustration: {UNSAFE_className: classNames(
-                styles, 
-                'spectrum-Dropzone-illustratedMessage'
-                )}
-            }}> 
-            {children}
-          </SlotProvider>
-          {isFilled && isDropTarget &&
-            <div
-              id={messageId}
-              className={
-                classNames(
-                  styles,
-                  'spectrum-Dropzone-banner',
-                  styleProps.className
-                )
-              }>
-              {replaceMessage ? replaceMessage : 'Drop file to replace'}
-            </div>}
-        </>
+        styleProps.className,
+        {'spectrum-Dropzone--filled': isFilled}
       )}
+      ref={domRef}>
+        <SlotProvider
+          slots={{
+            illustration: {UNSAFE_className: classNames(
+              styles,
+              'spectrum-Dropzone-illustratedMessage'
+              )}
+          }}>
+          {children}
+        </SlotProvider>
+        <div
+          id={messageId}
+          className={
+            classNames(
+              styles,
+              'spectrum-Dropzone-banner',
+              styleProps.className
+            )
+          }>
+          {replaceMessage ? replaceMessage : 'Drop file to replace'}
+        </div>
     </RACDropZone>
   );
 }

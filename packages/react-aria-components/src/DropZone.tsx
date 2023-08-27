@@ -54,7 +54,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   let textId = useSlotId();
   let ariaLabel = props['aria-label'] || 'DropZone';
   let messageId = (isDropTarget && props['aria-labelledby']) ? props['aria-labelledby'] : null;
-  let ariaLabelledby = [textId, messageId].filter(str => str !== null && str !== undefined).join(' ');
+  let ariaLabelledby = [textId, messageId].filter(Boolean).join(' ');
   let labelProps = useLabels({'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledby});
 
   let {clipboardProps} = useClipboard({
@@ -67,14 +67,14 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
     })
   });
 
-  let renderProps = useRenderProps({ 
+  let renderProps = useRenderProps({
     ...props,
     values: {isHovered, isFocused, isFocusVisible, isDropTarget},
     defaultClassName: 'react-aria-DropZone'
   });
   let DOMProps = filterDOMProps(props);
   delete DOMProps.id;
-  
+
   return (
     <Provider
       values={[
@@ -82,7 +82,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
       ]}>
       {/* eslint-disable-next-line */}
       <div
-        {...mergeProps(dropProps, hoverProps, DOMProps)} 
+        {...mergeProps(dropProps, hoverProps, DOMProps)}
         {...renderProps}
         slot={props.slot}
         ref={ref}
