@@ -55,5 +55,8 @@ governing permissions and limitations under the License.
     --spectrum-dropzone-background-color-selected-hover: Canvas;
     --spectrum-dropzone-banner-border-color: CanvasText;
     --spectrum-dropzone-illustratedmessage-illustration-color-key-focus: Highlight;
+    &[data-drop-target]::after {
+      display: none;
+    }
   }
 }
