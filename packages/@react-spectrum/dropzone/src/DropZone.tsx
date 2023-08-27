@@ -45,26 +45,26 @@ function DropZone(props: SpectrumDropZoneProps, ref: DOMRef<HTMLDivElement>) {
         {'spectrum-Dropzone--filled': isFilled}
       )}
       ref={domRef}>
-        <SlotProvider
-          slots={{
-            illustration: {UNSAFE_className: classNames(
-              styles,
-              'spectrum-Dropzone-illustratedMessage'
-              )}
-          }}>
-          {children}
-        </SlotProvider>
-        <div
-          id={messageId}
-          className={
-            classNames(
-              styles,
-              'spectrum-Dropzone-banner',
-              styleProps.className
-            )
-          }>
-          {replaceMessage ? replaceMessage : 'Drop file to replace'}
-        </div>
+      <SlotProvider
+        slots={{
+          illustration: {UNSAFE_className: classNames(
+            styles,
+            'spectrum-Dropzone-illustratedMessage'
+            )}
+        }}>
+        {children}
+      </SlotProvider>
+      <div
+        id={messageId}
+        className={
+          classNames(
+            styles,
+            'spectrum-Dropzone-banner',
+            styleProps.className
+          )
+        }>
+        {replaceMessage ? replaceMessage : 'Drop file to replace'}
+      </div>
     </RACDropZone>
   );
 }
