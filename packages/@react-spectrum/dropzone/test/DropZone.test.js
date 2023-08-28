@@ -23,33 +23,15 @@ import {Link} from '@react-spectrum/link';
 import React from 'react';
 
 describe('DropZone', () => {
-  it('should render a dropzone', () => {
-    let {getByTestId} = render(
-      <DropZone data-testid="foo">
+  it('should attach a ref on the outer most div', () => {
+    let dropzoneRef = React.createRef();
+
+    let tree = render(
+      <DropZone ref={dropzoneRef} data-testid="bar">
         <IllustratedMessage>
           <Heading>No files</Heading>
           <Content>
             <FileTrigger>
-              <Link>Select a file</Link>from your computer
-            </FileTrigger>
-          </Content>
-        </IllustratedMessage>
-      </DropZone>
-    );
-    let dropzone = getByTestId('foo');
-    expect(dropzone).toHaveAttribute('class', 'spectrum-Dropzone');
-  });
-
-  it('should attach a ref on the outer most div', () => {
-    let dropzoneRef = React.createRef();
-    let inputRef = React.createRef();
-
-    let tree = render(
-      <DropZone ref={dropzoneRef}>
-        <IllustratedMessage>
-          <Heading>No files</Heading>
-          <Content>
-            <FileTrigger ref={inputRef}>
               <Button data-testid="foo" variant="primary">Select a file</Button>
             </FileTrigger>
           </Content>
@@ -57,10 +39,11 @@ describe('DropZone', () => {
       </DropZone>
     );
 
+    let dropzone = tree.getByTestId('bar');
     let button = tree.getByTestId('foo');
-    expect(dropzoneRef.current.UNSAFE_getDOMNode()).toEqual(tree.container.firstChild);
-    expect(dropzoneRef.current.UNSAFE_getDOMNode).not.toEqual(inputRef.current);
-    expect(dropzoneRef.current.UNSAFE_getDOMNode).not.toEqual(button);
+    expect(dropzone).toBe(tree.container.firstChild);
+    expect(dropzoneRef.current.UNSAFE_getDOMNode()).toBe(dropzone);
+    expect(dropzone).not.toBe(button);
   });
 });
 
