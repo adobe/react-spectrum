@@ -44,15 +44,9 @@ export const withDraggable = {
   )
 };
 
-export const withDraggableTextContext = {
+export const customAriaLabel = {
   render: (args) => (
-    <DropZoneWithDraggableText {...args} />
-  )
-};
-
-export const withDraggableCustomAriaLabel = {
-  render: (args) => (
-    <DropZoneWithDraggableText 
+    <DropZoneWithDraggable 
       {...args} 
       aria-label="custom label" />
   )
@@ -124,7 +118,7 @@ function Example(props) {
         <IllustratedMessage>
           <Upload />
           <Heading>
-            <Text slot="heading">
+            <Text slot="label">
               Drag a file here
             </Text>
           </Heading>
@@ -193,7 +187,9 @@ function DropZoneWithDraggable(props) {
         <IllustratedMessage>
           <Upload />
           <Heading>
-            Drag and Drop here
+            <Text slot="label">
+              Drag and Drop here
+            </Text>
           </Heading>
         </IllustratedMessage>
         {filledSrc}
@@ -229,7 +225,11 @@ function DropZoneWithButton(props) {
         onPaste={action('onPaste')}>
         <IllustratedMessage>
           <Upload />
-          <Heading>Drag and Drop here</Heading>
+          <Heading>
+            <Text slot="label">
+              Drag and Drop here
+            </Text>
+          </Heading>
           <Content>
             <FileTrigger
               onChange={(e) => {
@@ -317,39 +317,5 @@ function DraggableImage() {
         src="https://i.imgur.com/Z7AzH2c.jpg"
         className={`draggable ${isDragging ? 'dragging' : ''}`} />
     </div>
-  );
-}
-
-function DropZoneWithDraggableText(props) {
-  let [isFilled, setIsFilled] = useState(false);
-  let [filledSrc, setFilledSrc] = useState(null);
-
-  return (
-    <>
-      <Draggable />
-      <DropZone 
-        {...props}
-        isFilled={isFilled}
-        onDrop={async (e) => {
-          let items = await Promise.all(e.items.filter((item) => item.kind === 'text' && item.types.has('text/plain')).map((item: TextDropItem) => item.getText('text/plain')));
-          if (items.length > 0) {
-            setIsFilled(true);
-            setFilledSrc(items.join('\n'));
-          }
-        }}
-        onDropEnter={action('onDropEnter')}
-        onDropExit={action('onDropExit')} 
-        onPaste={action('onPaste')}>
-        <IllustratedMessage>
-          <Upload />
-          <Heading>
-            <Text>
-              Drag and Drop here
-            </Text>
-          </Heading>
-        </IllustratedMessage>
-        {filledSrc}
-      </DropZone>
-    </>
   );
 }
