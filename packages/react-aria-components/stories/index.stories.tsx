@@ -10,10 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, TabPanels, Tabs, Text, TimeField, Tooltip, TooltipTrigger} from 'react-aria-components';
+import {action} from '@storybook/addon-actions';
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Text, TimeField, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
-import React from 'react';
+import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
+import React, {useRef, useState} from 'react';
 import styles from '../example/index.css';
 import {useListData} from 'react-stately';
 
@@ -40,16 +42,117 @@ export const ComboBoxExample = () => (
   </ComboBox>
 );
 
+interface ComboBoxItem {
+  id: string,
+  name: string
+}
+
+let items: ComboBoxItem[] = [{id: '1', name: 'Foo'}, {id: '2', name: 'Bar'}, {id: '3', name: 'Baz'}];
+export const ComboBoxRenderPropsStatic = () => (
+  <ComboBox>
+    {({isOpen}) => (
+      <>
+        <Label style={{display: 'block'}}>Test</Label>
+        <div style={{display: 'flex'}}>
+          <Input />
+          <Button>
+            <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
+          </Button>
+        </div>
+        <Popover placement="bottom end">
+          <ListBox className={styles.menu}>
+            <MyItem>Foo</MyItem>
+            <MyItem>Bar</MyItem>
+            <MyItem>Baz</MyItem>
+          </ListBox>
+        </Popover>
+      </>
+    )}
+  </ComboBox>
+);
+
+export const ComboBoxRenderPropsDefaultItems = () => (
+  <ComboBox defaultItems={items}>
+    {({isOpen}) => (
+      <>
+        <Label style={{display: 'block'}}>Test</Label>
+        <div style={{display: 'flex'}}>
+          <Input />
+          <Button>
+            <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
+          </Button>
+        </div>
+        <Popover placement="bottom end">
+          <ListBox className={styles.menu}>
+            {(item: ComboBoxItem) => <MyItem key={item.id}>{item.name}</MyItem>}
+          </ListBox>
+        </Popover>
+      </>
+    )}
+  </ComboBox>
+);
+
+export const ComboBoxRenderPropsItems = {
+  render: () => (
+    <ComboBox items={items}>
+      {({isOpen}) => (
+        <>
+          <Label style={{display: 'block'}}>Test</Label>
+          <div style={{display: 'flex'}}>
+            <Input />
+            <Button>
+              <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
+            </Button>
+          </div>
+          <Popover placement="bottom end">
+            <ListBox className={styles.menu}>
+              {(item: ComboBoxItem) => <MyItem key={item.id}>{item.name}</MyItem>}
+            </ListBox>
+          </Popover>
+        </>
+      )}
+    </ComboBox>
+  ),
+  parameters: {
+    description: {
+      data: 'Note this won\'t filter the items in the listbox because it is fully controlled'
+    }
+  }
+};
+
+export const ComboBoxRenderPropsListBoxDynamic = () => (
+  <ComboBox>
+    {({isOpen}) => (
+      <>
+        <Label style={{display: 'block'}}>Test</Label>
+        <div style={{display: 'flex'}}>
+          <Input />
+          <Button>
+            <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
+          </Button>
+        </div>
+        <Popover placement="bottom end">
+          <ListBox className={styles.menu} items={items}>
+            {item => <MyItem key={item.id}>{item.name}</MyItem>}
+          </ListBox>
+        </Popover>
+      </>
+    )}
+  </ComboBox>
+);
+
 export const ListBoxExample = () => (
-  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace">
+  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace" aria-label="test listbox">
     <MyItem>Foo</MyItem>
     <MyItem>Bar</MyItem>
     <MyItem>Baz</MyItem>
   </ListBox>
 );
 
+// Known accessibility false positive: https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#listbox
+// also has a aXe landmark error, not sure what it means
 export const ListBoxSections = () => (
-  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace">
+  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace" aria-label="test listbox with section">
     <Section className={styles.group}>
       <Header style={{fontSize: '1.2em'}}>Section 1</Header>
       <MyItem>Foo</MyItem>
@@ -67,7 +170,7 @@ export const ListBoxSections = () => (
 );
 
 export const ListBoxComplex = () => (
-  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace">
+  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace" aria-label="listbox complex">
     <MyItem>
       <Text slot="label">Item 1</Text>
       <Text slot="description">Description</Text>
@@ -91,12 +194,36 @@ export const SelectExample = () => (
       <span aria-hidden="true" style={{paddingLeft: 5}}>▼</span>
     </Button>
     <Popover>
+      <OverlayArrow>
+        <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
+      </OverlayArrow>
       <ListBox className={styles.menu}>
         <MyItem>Foo</MyItem>
         <MyItem>Bar</MyItem>
         <MyItem>Baz</MyItem>
       </ListBox>
     </Popover>
+  </Select>
+);
+
+export const SelectRenderProps = () => (
+  <Select>
+    {({isOpen}) => (
+      <>
+        <Label style={{display: 'block'}}>Test</Label>
+        <Button>
+          <SelectValue />
+          <span aria-hidden="true" style={{paddingLeft: 5}}>{isOpen ? '▲' : '▼'}</span>
+        </Button>
+        <Popover>
+          <ListBox className={styles.menu}>
+            <MyItem>Foo</MyItem>
+            <MyItem>Bar</MyItem>
+            <MyItem>Baz</MyItem>
+          </ListBox>
+        </Popover>
+      </>
+    )}
   </Select>
 );
 
@@ -306,7 +433,7 @@ export const SliderExample = () => (
     <div style={{display: 'flex', alignSelf: 'stretch'}}>
       <Label>Test</Label>
       <SliderOutput style={{flex: '1 0 auto', textAlign: 'end'}}>
-        {state => `${state.getThumbValueLabel(0)} - ${state.getThumbValueLabel(1)}`}
+        {({state}) => `${state.getThumbValueLabel(0)} - ${state.getThumbValueLabel(1)}`}
       </SliderOutput>
     </div>
     <SliderTrack
@@ -458,6 +585,7 @@ export const ModalExample = () => (
   </DialogTrigger>
 );
 
+// Has error with invalid aria-controls, bug documented here: https://github.com/adobe/react-spectrum/issues/4781#issuecomment-1641057070
 export const TabsExample = () => (
   <Tabs>
     <TabList aria-label="History of Ancient Rome" style={{display: 'flex', gap: 8}}>
@@ -465,19 +593,54 @@ export const TabsExample = () => (
       <CustomTab id="MaR">Monarchy and Republic</CustomTab>
       <CustomTab id="Emp">Empire</CustomTab>
     </TabList>
-    <TabPanels>
-      <TabPanel id="FoR">
-        Arma virumque cano, Troiae qui primus ab oris.
-      </TabPanel>
-      <TabPanel id="MaR">
-        Senatus Populusque Romanus.
-      </TabPanel>
-      <TabPanel id="Emp">
-        Alea jacta est.
-      </TabPanel>
-    </TabPanels>
+    <TabPanel id="FoR">
+      Arma virumque cano, Troiae qui primus ab oris.
+    </TabPanel>
+    <TabPanel id="MaR">
+      Senatus Populusque Romanus.
+    </TabPanel>
+    <TabPanel id="Emp">
+      Alea jacta est.
+    </TabPanel>
   </Tabs>
 );
+
+// Has error with invalid aria-controls, bug documented here: https://github.com/adobe/react-spectrum/issues/4781#issuecomment-1641057070
+export const TabsRenderProps = () => {
+  const [tabOrientation, setTabOrientation] = useState<TabsProps['orientation']>('vertical');
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'row', gap: 8}}>
+      <Button onPress={() => setTabOrientation((current) => current === 'vertical' ? 'horizontal' : 'vertical')}>
+        Change Orientation
+      </Button>
+      <Tabs orientation={tabOrientation}>
+        {({orientation}) => (
+          <div>
+            <div style={{display: 'flex', flexDirection: orientation === 'vertical' ? 'row' : 'column', gap: 8}}>
+              <TabList
+                aria-label="History of Ancient Rome"
+                style={{display: 'flex', flexDirection: orientation === 'vertical' ? 'column' : 'row', gap: 8}}>
+                <CustomTab id="FoR">Founding of Rome</CustomTab>
+                <CustomTab id="MaR">Monarchy and Republic</CustomTab>
+                <CustomTab id="Emp">Empire</CustomTab>
+              </TabList>
+              <TabPanel id="FoR">
+                Arma virumque cano, Troiae qui primus ab oris.
+              </TabPanel>
+              <TabPanel id="MaR">
+                Senatus Populusque Romanus.
+              </TabPanel>
+              <TabPanel id="Emp">
+                Alea jacta est.
+              </TabPanel>
+            </div>
+          </div>
+        )}
+      </Tabs>
+    </div>
+  );
+};
 
 export const TableExample = () => {
   let list = useListData({
@@ -490,68 +653,88 @@ export const TableExample = () => {
   });
 
   return (
-    <Table
-      aria-label="Example table"
-      style={{height: '210px', maxWidth: '400px'}}>
-      <TableHeader>
-        <Column isRowHeader>Name</Column>
-        <Column>Type</Column>
-        <Column>Date Modified</Column>
-        <Column>Actions</Column>
-      </TableHeader>
-      <TableBody items={list.items}>
-        {item => (
-          <Row>
-            <Cell>{item.name}</Cell>
-            <Cell>{item.type}</Cell>
-            <Cell>{item.date}</Cell>
-            <Cell>
-              <DialogTrigger>
-                <Button>Delete</Button>
-                <ModalOverlay
-                  style={{
-                    position: 'fixed',
-                    zIndex: 100,
-                    top: 0,
-                    left: 0,
-                    bottom: 0,
-                    right: 0,
-                    background: 'rgba(0, 0, 0, 0.5)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                  <Modal
+    <ResizableTableContainer style={{width: 300, overflow: 'auto'}}>
+      <Table aria-label="Example table">
+        <TableHeader>
+          <MyColumn isRowHeader defaultWidth="50%">Name</MyColumn>
+          <MyColumn>Type</MyColumn>
+          <MyColumn>Date Modified</MyColumn>
+          <MyColumn>Actions</MyColumn>
+        </TableHeader>
+        <TableBody items={list.items}>
+          {item => (
+            <Row>
+              <Cell>{item.name}</Cell>
+              <Cell>{item.type}</Cell>
+              <Cell>{item.date}</Cell>
+              <Cell>
+                <DialogTrigger>
+                  <Button>Delete</Button>
+                  <ModalOverlay
                     style={{
-                      background: 'Canvas',
-                      color: 'CanvasText',
-                      border: '1px solid gray',
-                      padding: 30
+                      position: 'fixed',
+                      zIndex: 100,
+                      top: 0,
+                      left: 0,
+                      bottom: 0,
+                      right: 0,
+                      background: 'rgba(0, 0, 0, 0.5)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
                     }}>
-                    <Dialog>
-                      {({close}) => (<>
-                        <Heading>Delete item</Heading>
-                        <p>Are you sure?</p>
-                        <Button onPress={close}>Cancel</Button>
-                        <Button
-                          onPress={() => {
-                            close();
-                            list.remove(item.id);
-                          }}>
-                          Delete
-                        </Button>
-                      </>)}
-                    </Dialog>
-                  </Modal>
-                </ModalOverlay>
-              </DialogTrigger>
-            </Cell>
-          </Row>
-        )}
-      </TableBody>
-    </Table>
+                    <Modal
+                      style={{
+                        background: 'Canvas',
+                        color: 'CanvasText',
+                        border: '1px solid gray',
+                        padding: 30
+                      }}>
+                      <Dialog>
+                        {({close}) => (<>
+                          <Heading>Delete item</Heading>
+                          <p>Are you sure?</p>
+                          <Button onPress={close}>Cancel</Button>
+                          <Button
+                            onPress={() => {
+                              close();
+                              list.remove(item.id);
+                            }}>
+                            Delete
+                          </Button>
+                        </>)}
+                      </Dialog>
+                    </Modal>
+                  </ModalOverlay>
+                </DialogTrigger>
+              </Cell>
+            </Row>
+          )}
+        </TableBody>
+      </Table>
+    </ResizableTableContainer>
   );
 };
+
+function MyColumn(props) {
+  return (
+    <Column {...props}>
+      {({startResize}) => (
+        <div style={{display: 'flex'}}>
+          <MenuTrigger>
+            <Button style={{flex: 1, textAlign: 'left'}}>{props.children}</Button>
+            <Popover>
+              <Menu className={styles.menu} onAction={() => startResize()}>
+                <MyItem id="resize">Resize</MyItem>
+              </Menu>
+            </Popover>
+          </MenuTrigger>
+          <ColumnResizer />
+        </div>
+      )}
+    </Column>
+  );
+}
 
 function MyItem(props) {
   return (
@@ -592,3 +775,350 @@ function CustomTab(props) {
       })} />
   );
 }
+
+function Draggable() {
+  let buttonRef = useRef(null);
+  let {dragProps, isDragging} = useDrag({
+    getItems() {
+      return [{
+        'text/plain': 'hello world'}];
+    }
+  });
+  let {buttonProps} = useButton({elementType: 'div'}, buttonRef);
+
+  return (
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+      <div
+        {...mergeProps(buttonProps, dragProps)}
+        ref={buttonRef}
+        className={classNames(styles, 'draggable', {['dragging']: isDragging})}>
+        Drag me
+      </div>
+    </FocusRing>
+  );
+}
+
+function Copyable() {
+  let {clipboardProps} = useClipboard({
+    getItems() {
+      return [{
+        'text/plain': 'hello world'
+      }];
+    }
+  });
+
+  return (
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+      <div
+        {...clipboardProps}
+        role="textbox"
+        aria-label="copyable element"
+        tabIndex={0}
+        className={styles.copyable}>
+        Copy me
+      </div>
+    </FocusRing>
+  );
+}
+
+export const DropzoneExampleWithFileTriggerLink = (props) => (
+  <div>
+    <DropZone
+      {...props}
+      aria-label={'testing aria-label'}
+      className={styles.dropzone}
+      onDrop={action('OnDrop')}
+      onDropEnter={action('OnDropEnter')}
+      onDropExit={action('OnDropExit')}>
+      <FileTrigger onChange={action('onChange')}>
+        <Link>Upload</Link>
+      </FileTrigger>
+    </DropZone>
+  </div>
+);
+
+export const DropzoneExampleWithFileTriggerButton = (props) => (
+  <div>
+    <DropZone
+      {...props}
+      className={styles.dropzone}
+      onDrop={action('OnDrop')}
+      onDropEnter={action('OnDropEnter')}
+      onDropExit={action('OnDropExit')}>
+      <FileTrigger onChange={action('onChange')} >
+        <Button>Upload</Button>
+      </FileTrigger>
+    </DropZone>
+  </div>
+);
+
+export const DropzoneExampleWithDraggableAndFileTrigger = (props) => (
+  <div>
+    <Draggable />
+    <DropZone
+      {...props}
+      className={styles.dropzone}
+      onDrop={action('OnDrop')}
+      onDropEnter={action('OnDropEnter')}
+      onDropExit={action('OnDropExit')}>
+      <FileTrigger onChange={action('onChange')} >
+        <Button>Browse</Button>
+      </FileTrigger>
+      Or drag into here
+    </DropZone>
+  </div>
+);
+
+export const DropZoneOnlyAcceptPNGWithFileTrigger = (props) => (
+  <div>
+    <DropZone
+      {...props}
+      getDropOperation={(types) =>  types.has('image/png') ? 'copy' : 'cancel'}
+      className={styles.dropzone}
+      onPress={action('OnPress')}
+      onDrop={action('OnDrop')}
+      onDropEnter={action('OnDropEnter')}
+      onDropExit={action('OnDropExit')} >
+      <FileTrigger onChange={action('onChange')} acceptedFileTypes={['image/png']}>
+        <Button>Upload</Button>
+      </FileTrigger>
+    </DropZone>
+  </div>
+);
+
+export const DropZoneWithCaptureMobileOnly = (props) => (
+  <div>
+    <DropZone
+      {...props}
+      getDropOperation={(types) =>  types.has('image/png') ? 'copy' : 'cancel'}
+      className={styles.dropzone}
+      onPress={action('OnPress')}
+      onDrop={action('OnDrop')}
+      onDropEnter={action('OnDropEnter')}
+      onDropExit={action('OnDropExit')} >
+      <FileTrigger onChange={action('onChange')} defaultCamera="environment">
+        <Button>Upload</Button>
+      </FileTrigger>
+    </DropZone>
+  </div>
+);
+
+export const DropzoneExampleWithDraggableObject = (props) => (
+  <div>
+    <Draggable />
+    <DropZone
+      {...props}
+      className={styles.dropzone}
+      onDrop={action('OnDrop')}
+      onDropEnter={action('OnDropEnter')}
+      onDropExit={action('OnDropExit')} >
+      <Text slot="label">
+        DropZone Area
+      </Text>
+    </DropZone>
+  </div>
+);
+
+export const DropzoneExampleWithCopyableObject = (props) => (
+  <div>
+    <Copyable />
+    <DropZone
+      {...props}
+      className={styles.dropzone}
+      onDrop={action('OnDrop')}
+      onDropEnter={action('OnDropEnter')}
+      onDropExit={action('OnDropExit')}>
+      <Text slot="label">
+        DropZone Area
+      </Text>
+    </DropZone>
+  </div>
+);
+
+export const DropzoneWithRenderProps = (props) => (
+  <div>
+    <Draggable />
+    <Copyable />
+    <DropZone
+      {...props}
+      className={styles.dropzone}
+      onPress={action('OnPress')}
+      onDrop={action('OnDrop')}
+      onDropEnter={action('OnDropEnter')}
+      onDropExit={action('OnDropExit')}>
+      {({isHovered, isFocused, isFocusVisible, isDropTarget}) => (
+        <div>
+          <Text slot="label">
+            DropzoneArea
+          </Text>
+          <div>isHovered: {isHovered ? 'true' : 'false'}</div>
+          <div>isFocused: {isFocused ? 'true' : 'false'}</div>
+          <div>isFocusVisible: {isFocusVisible ? 'true' : 'false'}</div>
+          <div>isDropTarget: {isDropTarget ? 'true' : 'false'}</div>
+        </div>
+      )}
+    </DropZone>
+  </div>
+);
+
+export const FileTriggerButton = (props) => (
+  <FileTrigger
+    {...props}
+    onChange={action('OnChange')} >
+    <Button>Upload</Button>
+  </FileTrigger>
+);
+
+export const FileTriggerLinkAllowsMultiple = (props) => (
+  <FileTrigger
+    {...props}
+    onChange={action('OnChange')}
+    allowsMultiple >
+    <Link>Select a file</Link>
+  </FileTrigger>
+);
+
+let albums = [
+  {
+    id: 1,
+    image: 'https://images.unsplash.com/photo-1593958812614-2db6a598c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8ZGlzY298ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=900&q=60',
+    title: 'Euphoric Echoes',
+    artist: 'Luna Solstice'
+  },
+  {
+    id: 2,
+    image: 'https://images.unsplash.com/photo-1601042879364-f3947d3f9c16?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bmVvbnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=900&q=60',
+    title: 'Neon Dreamscape',
+    artist: 'Electra Skyline'
+  },
+  {
+    id: 3,
+    image: 'https://images.unsplash.com/photo-1528722828814-77b9b83aafb2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHNwYWNlfGVufDB8fDB8fHww&auto=format&fit=crop&w=900&q=60',
+    title: 'Cosmic Serenade',
+    artist: 'Orion\'s Symphony'
+  },
+  {
+    id: 4,
+    image: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bXVzaWN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=900&q=60',
+    title: 'Melancholy Melodies',
+    artist: 'Violet Mistral'
+  },
+  {
+    id: 5,
+    image: 'https://images.unsplash.com/photo-1608433319511-dfe8ea4cbd3c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGJlYXR8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=900&q=60',
+    title: 'Rhythmic Illusions',
+    artist: 'Mirage Beats'
+  }
+];
+
+export const ListBoxDnd = (props: ListBoxProps<typeof albums[0]>) => {
+  let list = useListData({
+    initialItems: albums
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key).title})),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    }
+  });
+
+  return (
+    <ListBox
+      {...props}
+      aria-label="Albums"
+      items={list.items}
+      selectionMode="multiple"
+      dragAndDropHooks={dragAndDropHooks}>
+      {item => (
+        <Item>
+          <img src={item.image} alt="" />
+          <Text slot="label">{item.title}</Text>
+          <Text slot="description">{item.artist}</Text>
+        </Item>
+      )}
+    </ListBox>
+  );
+};
+
+ListBoxDnd.story = {
+  args: {
+    layout: 'stack',
+    orientation: 'horizontal'
+  },
+  argTypes: {
+    layout: {
+      control: 'radio',
+      options: ['stack', 'grid']
+    },
+    orientation: {
+      control: 'radio',
+      options: ['horizontal', 'vertical']
+    }
+  }
+};
+
+export const RadioGroupExample = () => {
+  return (
+    <RadioGroup
+      className={styles.radiogroup}>
+      <Label>Favorite pet</Label>
+      <Radio className={styles.radio} value="dogs">Dog</Radio>
+      <Radio className={styles.radio} value="cats">Cat</Radio>
+      <Radio className={styles.radio} value="dragon">Dragon</Radio>
+    </RadioGroup>
+  );
+};
+
+export const RadioGroupInDialogExample = () => {
+  return (
+    <DialogTrigger>
+      <Button>Open dialog</Button>
+      <ModalOverlay
+        style={{
+          position: 'fixed',
+          zIndex: 100,
+          top: 0,
+          left: 0,
+          bottom: 0,
+          right: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+        <Modal
+          style={{
+            background: 'Canvas',
+            color: 'CanvasText',
+            border: '1px solid gray',
+            padding: 30
+          }}>
+          <Dialog
+            style={{
+              outline: '2px solid transparent',
+              outlineOffset: '2px',
+              position: 'relative'
+            }}>
+            {({close}) => (
+              <>
+                <div>
+                  <RadioGroupExample />
+                </div>
+                <div>
+                  <Button onPress={close} style={{marginTop: 10}}>
+                    Close
+                  </Button>
+                </div>
+              </>
+            )}
+          </Dialog>
+        </Modal>
+      </ModalOverlay>
+    </DialogTrigger>
+  );
+};

@@ -13,7 +13,7 @@
 import {act, fireEvent, installMouseEvent, render} from '@react-spectrum/test-utils';
 import {press, testKeypresses} from './utils';
 import {Provider} from '@adobe/react-spectrum';
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {Slider} from '../';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
@@ -119,11 +119,14 @@ describe('Slider', function () {
   });
 
   it('can be controlled', function () {
-    let renders = [];
+    let setValues = [];
 
     function Test() {
-      let [value, setValue] = useState(50);
-      renders.push(value);
+      let [value, _setValue] = useState(50);
+      let setValue = useCallback((val) => {
+        setValues.push(val);
+        _setValue(val);
+      }, [_setValue]);
 
       return (<Slider label="The Label" value={value} onChange={setValue} />);
     }
@@ -141,7 +144,7 @@ describe('Slider', function () {
     expect(slider).toHaveAttribute('aria-valuetext', '55');
     expect(output).toHaveTextContent('55');
 
-    expect(renders).toStrictEqual([50, 55]);
+    expect(setValues).toStrictEqual([55]);
   });
 
   it('supports a custom getValueLabel', function () {
@@ -161,6 +164,38 @@ describe('Slider', function () {
     fireEvent.change(slider, {target: {value: '55'}});
     expect(output).toHaveTextContent('A55B');
     expect(slider).toHaveAttribute('aria-valuetext', '55');
+  });
+
+  it('supports form name', () => {
+    let {getByRole} = render(<Slider label="Value" value={10} name="cookies" />);
+    let input = getByRole('slider');
+    expect(input).toHaveAttribute('name', 'cookies');
+    expect(input).toHaveValue('10');
+  });
+
+  it('supports form reset', () => {
+    function Test() {
+      let [value, setValue] = React.useState(10);
+      return (
+        <Provider theme={theme}>
+          <form>
+            <Slider label="Value" value={value} onChange={setValue} />
+            <input type="reset" data-testid="reset" />
+          </form>
+        </Provider>
+      );
+    }
+
+    let {getByTestId, getByRole} = render(<Test />);
+    let input = getByRole('slider');
+
+    expect(input).toHaveValue('10');
+    fireEvent.change(input, {target: {value: '55'}});
+    expect(input).toHaveValue('55');
+
+    let button = getByTestId('reset');
+    act(() => userEvent.click(button));
+    expect(input).toHaveValue('10');
   });
 
   describe('formatOptions', () => {

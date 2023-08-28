@@ -23,7 +23,18 @@ export interface OverlayProps {
    */
   portalContainer?: Element,
   /** The overlay to render in the portal. */
-  children: ReactNode
+  children: ReactNode,
+  /**
+   * Disables default focus management for the overlay, including containment and restoration.
+   * This option should be used very carefully. When focus management is disabled, you must
+   * implement focus containment and restoration to ensure the overlay is keyboard accessible.
+   */
+  disableFocusManagement?: boolean,
+  /**
+   * Whether the overlay is currently performing an exit animation. When true,
+   * focus is allowed to move outside.
+   */
+  isExiting?: boolean
 }
 
 export const OverlayContext = React.createContext(null);
@@ -34,7 +45,7 @@ export const OverlayContext = React.createContext(null);
  */
 export function Overlay(props: OverlayProps) {
   let isSSR = useIsSSR();
-  let {portalContainer = isSSR ? null : document.body} = props;
+  let {portalContainer = isSSR ? null : document.body, isExiting} = props;
   let [contain, setContain] = useState(false);
   let contextValue = useMemo(() => ({contain, setContain}), [contain, setContain]);
 
@@ -42,13 +53,22 @@ export function Overlay(props: OverlayProps) {
     return null;
   }
 
-  let contents = (
-    <OverlayContext.Provider value={contextValue}>
-      <FocusScope restoreFocus contain={contain}>
+  let contents;
+  if (!props.disableFocusManagement) {
+    contents = (
+      <OverlayContext.Provider value={contextValue}>
+        <FocusScope restoreFocus contain={contain && !isExiting}>
+          {props.children}
+        </FocusScope>
+      </OverlayContext.Provider>
+    );
+  } else {
+    contents = (
+      <OverlayContext.Provider value={contextValue}>
         {props.children}
-      </FocusScope>
-    </OverlayContext.Provider>
-  );
+      </OverlayContext.Provider>
+    );
+  }
 
   return ReactDOM.createPortal(contents, portalContainer);
 }

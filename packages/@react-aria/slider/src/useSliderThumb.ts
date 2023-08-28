@@ -1,5 +1,5 @@
 import {AriaSliderThumbProps} from '@react-types/slider';
-import {clamp, focusWithoutScrolling, mergeProps, useGlobalListeners} from '@react-aria/utils';
+import {clamp, focusWithoutScrolling, mergeProps, useFormReset, useGlobalListeners} from '@react-aria/utils';
 import {DOMAttributes} from '@react-types/shared';
 import {getSliderThumbId, sliderIds} from './utils';
 import React, {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, RefObject, useCallback, useEffect, useRef} from 'react';
@@ -50,7 +50,8 @@ export function useSliderThumb(
     validationState,
     trackRef,
     inputRef,
-    orientation = state.orientation
+    orientation = state.orientation,
+    name
   } = opts;
 
   let isDisabled = opts.isDisabled || state.isDisabled;
@@ -82,8 +83,6 @@ export function useSliderThumb(
     }
   }, [isFocused, focusInput]);
 
-  const stateRef = useRef<SliderState>(null);
-  stateRef.current = state;
   let reverseX = direction === 'rtl';
   let currentPosition = useRef<number>(null);
 
@@ -97,7 +96,7 @@ export function useSliderThumb(
         setThumbValue,
         setThumbDragging,
         pageSize
-      } = stateRef.current;
+      } = state;
       // these are the cases that useMove or useSlider don't handle
       if (!/^(PageUp|PageDown|Home|End)$/.test(e.key)) {
         e.continuePropagation();
@@ -128,7 +127,7 @@ export function useSliderThumb(
   let {moveProps} = useMove({
     onMoveStart() {
       currentPosition.current = null;
-      stateRef.current.setThumbDragging(index, true);
+      state.setThumbDragging(index, true);
     },
     onMove({deltaX, deltaY, pointerType, shiftKey}) {
       const {
@@ -138,7 +137,7 @@ export function useSliderThumb(
         incrementThumb,
         step,
         pageSize
-      } = stateRef.current;
+      } = state;
       let {width, height} = trackRef.current.getBoundingClientRect();
       let size = isVertical ? height : width;
 
@@ -162,7 +161,7 @@ export function useSliderThumb(
       }
     },
     onMoveEnd() {
-      stateRef.current.setThumbDragging(index, false);
+      state.setThumbDragging(index, false);
     }
   });
 
@@ -225,6 +224,10 @@ export function useSliderThumb(
     }
   ) : {};
 
+  useFormReset(inputRef, value, (v) => {
+    state.setThumbValue(index, v);
+  });
+
   // We install mouse handlers for the drag motion on the thumb div, but
   // not the key handler for moving the thumb with the slider.  Instead,
   // we focus the range input, and let the browser handle the keyboard
@@ -237,6 +240,7 @@ export function useSliderThumb(
       max: state.getThumbMaxValue(index),
       step: state.step,
       value: value,
+      name,
       disabled: isDisabled,
       'aria-orientation': orientation,
       'aria-valuetext': state.getThumbValueLabel(index),
@@ -244,7 +248,7 @@ export function useSliderThumb(
       'aria-invalid': validationState === 'invalid' || undefined,
       'aria-errormessage': opts['aria-errormessage'],
       onChange: (e: ChangeEvent<HTMLInputElement>) => {
-        stateRef.current.setThumbValue(index, parseFloat(e.target.value));
+        state.setThumbValue(index, parseFloat(e.target.value));
       }
     }),
     thumbProps: {

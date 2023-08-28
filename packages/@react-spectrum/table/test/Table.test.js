@@ -22,6 +22,7 @@ import {Content} from '@react-spectrum/view';
 import {CRUDExample} from '../stories/CRUDExample';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
+import {enableTableNestedRows} from '@react-stately/flags';
 import {getFocusableTreeWalker} from '@react-aria/focus';
 import {Heading} from '@react-spectrum/text';
 import {Link} from '@react-spectrum/link';
@@ -37,7 +38,8 @@ let {
   InlineDeleteButtons: DeletableRowsTable,
   EmptyStateStory: EmptyStateTable,
   WithBreadcrumbNavigation: TableWithBreadcrumbs,
-  TypeaheadWithDialog: TypeaheadWithDialog
+  TypeaheadWithDialog: TypeaheadWithDialog,
+  ColumnHeaderFocusRingTable
 } = composeStories(stories);
 
 
@@ -135,7 +137,7 @@ function pointerEvent(type, opts) {
   return evt;
 }
 
-describe('TableView', function () {
+export let tableTests = () => {
   let offsetWidth, offsetHeight;
 
   beforeAll(function () {
@@ -183,6 +185,9 @@ describe('TableView', function () {
 
     return el;
   };
+
+  let focusCell = (tree, text) => act(() => getCell(tree, text).focus());
+  let moveFocus = (key, opts = {}) => {fireEvent.keyDown(document.activeElement, {key, ...opts});};
 
   it('renders a static table', function () {
     let {getByRole} = render(
@@ -243,17 +248,19 @@ describe('TableView', function () {
     expect(rows[1]).toHaveAttribute('aria-rowindex', '3');
 
     let rowheader = within(rows[0]).getByRole('rowheader');
+    let cellSpan = within(rowheader).getByText('Foo 1');
     expect(rowheader).toHaveTextContent('Foo 1');
     expect(rowheader).toHaveAttribute('aria-colindex', '1');
 
-    expect(rows[0]).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(rows[0]).toHaveAttribute('aria-labelledby', cellSpan.id);
 
     rowheader = within(rows[1]).getByRole('rowheader');
+    cellSpan = within(rowheader).getByText('Foo 2');
     expect(rowheader).toHaveTextContent('Foo 2');
     expect(rowheader).toHaveAttribute('aria-colindex', '1');
 
     expect(rows[1]).not.toHaveAttribute('aria-selected');
-    expect(rows[1]).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(rows[1]).toHaveAttribute('aria-labelledby', cellSpan.id);
 
 
     let cells = within(rowgroups[1]).getAllByRole('gridcell');
@@ -328,27 +335,29 @@ describe('TableView', function () {
     expect(rows[1]).toHaveAttribute('aria-rowindex', '3');
 
     let rowheader = within(rows[0]).getByRole('rowheader');
+    let cellSpan = within(rowheader).getByText('Foo 1');
     expect(rowheader).toHaveTextContent('Foo 1');
     expect(rowheader).toHaveAttribute('aria-colindex', '2');
 
     expect(rows[0]).toHaveAttribute('aria-selected', 'false');
-    expect(rows[0]).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(rows[0]).toHaveAttribute('aria-labelledby', cellSpan.id);
 
     checkbox = within(rows[0]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
-    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${rowheader.id}`);
+    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${cellSpan.id}`);
 
     rowheader = within(rows[1]).getByRole('rowheader');
+    cellSpan = within(rowheader).getByText('Foo 2');
     expect(rowheader).toHaveTextContent('Foo 2');
     expect(rowheader).toHaveAttribute('aria-colindex', '2');
 
     expect(rows[1]).toHaveAttribute('aria-selected', 'false');
-    expect(rows[1]).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(rows[1]).toHaveAttribute('aria-labelledby', cellSpan.id);
 
 
     checkbox = within(rows[1]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
-    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${rowheader.id}`);
+    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${cellSpan.id}`);
 
     let cells = within(rowgroups[1]).getAllByRole('gridcell');
     expect(cells).toHaveLength(6);
@@ -430,17 +439,19 @@ describe('TableView', function () {
     expect(rows).toHaveLength(2);
 
     let rowheader = within(rows[0]).getByRole('rowheader');
+    let cellSpan = within(rowheader).getByText('Foo 1');
     expect(rowheader).toHaveTextContent('Foo 1');
     expect(rowheader).toHaveAttribute('aria-colindex', '1');
 
-    expect(rows[0]).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(rows[0]).toHaveAttribute('aria-labelledby', cellSpan.id);
 
     rowheader = within(rows[1]).getByRole('rowheader');
+    cellSpan = within(rowheader).getByText('Foo 2');
     expect(rowheader).toHaveTextContent('Foo 2');
     expect(rowheader).toHaveAttribute('aria-colindex', '1');
 
     expect(rows[1]).not.toHaveAttribute('aria-selected');
-    expect(rows[1]).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(rows[1]).toHaveAttribute('aria-labelledby', cellSpan.id);
 
     let cells = within(rowgroups[1]).getAllByRole('gridcell');
     expect(cells).toHaveLength(4);
@@ -498,27 +509,29 @@ describe('TableView', function () {
     expect(rows).toHaveLength(2);
 
     let rowheader = within(rows[0]).getByRole('rowheader');
+    let cellSpan = within(rowheader).getByText('Foo 1');
     expect(rowheader).toHaveTextContent('Foo 1');
     expect(rowheader).toHaveAttribute('aria-colindex', '2');
 
     expect(rows[0]).toHaveAttribute('aria-selected', 'false');
-    expect(rows[0]).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(rows[0]).toHaveAttribute('aria-labelledby', cellSpan.id);
 
     checkbox = within(rows[0]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
-    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${rowheader.id}`);
+    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${cellSpan.id}`);
 
     rowheader = within(rows[1]).getByRole('rowheader');
+    cellSpan = within(rowheader).getByText('Foo 2');
     expect(rowheader).toHaveTextContent('Foo 2');
     expect(rowheader).toHaveAttribute('aria-colindex', '2');
 
     expect(rows[1]).toHaveAttribute('aria-selected', 'false');
-    expect(rows[1]).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(rows[1]).toHaveAttribute('aria-labelledby', cellSpan.id);
 
 
     checkbox = within(rows[1]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
-    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${rowheader.id}`);
+    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${cellSpan.id}`);
 
     let cells = within(rowgroups[1]).getAllByRole('gridcell');
     expect(cells).toHaveLength(6);
@@ -649,27 +662,29 @@ describe('TableView', function () {
     expect(rows).toHaveLength(2);
 
     let rowheader = within(rows[0]).getByRole('rowheader');
+    let cellSpan = within(rowheader).getByText('Test 1');
     expect(rowheader).toHaveTextContent('Test 1');
 
     expect(rows[0]).toHaveAttribute('aria-selected', 'false');
-    expect(rows[0]).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(rows[0]).toHaveAttribute('aria-labelledby', cellSpan.id);
     expect(rows[0]).toHaveAttribute('aria-rowindex', '3');
 
     checkbox = within(rows[0]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
-    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${rowheader.id}`);
+    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${cellSpan.id}`);
 
     rowheader = within(rows[1]).getByRole('rowheader');
+    cellSpan = within(rowheader).getByText('Test 2');
     expect(rowheader).toHaveTextContent('Test 2');
 
     expect(rows[1]).toHaveAttribute('aria-selected', 'false');
-    expect(rows[1]).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(rows[1]).toHaveAttribute('aria-labelledby', cellSpan.id);
     expect(rows[1]).toHaveAttribute('aria-rowindex', '4');
 
 
     checkbox = within(rows[1]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
-    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${rowheader.id}`);
+    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${cellSpan.id}`);
 
     let cells = within(rowgroups[1]).getAllByRole('gridcell');
     expect(cells).toHaveLength(8);
@@ -752,27 +767,29 @@ describe('TableView', function () {
     expect(rows).toHaveLength(2);
 
     let rowheader = within(rows[0]).getByRole('rowheader');
+    let cellSpan = within(rowheader).getByText('Test 1');
     expect(rowheader).toHaveTextContent('Test 1');
 
     expect(rows[0]).toHaveAttribute('aria-selected', 'false');
-    expect(rows[0]).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(rows[0]).toHaveAttribute('aria-labelledby', cellSpan.id);
     expect(rows[0]).toHaveAttribute('aria-rowindex', '4');
 
     checkbox = within(rows[0]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
-    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${rowheader.id}`);
+    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${cellSpan.id}`);
 
     rowheader = within(rows[1]).getByRole('rowheader');
+    cellSpan = within(rowheader).getByText('Test 2');
     expect(rowheader).toHaveTextContent('Test 2');
 
     expect(rows[1]).toHaveAttribute('aria-selected', 'false');
-    expect(rows[1]).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(rows[1]).toHaveAttribute('aria-labelledby', cellSpan.id);
     expect(rows[1]).toHaveAttribute('aria-rowindex', '5');
 
 
     checkbox = within(rows[1]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
-    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${rowheader.id}`);
+    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${cellSpan.id}`);
 
     let cells = within(rowgroups[1]).getAllByRole('gridcell');
     expect(cells).toHaveLength(10);
@@ -809,23 +826,27 @@ describe('TableView', function () {
     expect(rowheaders).toHaveLength(2);
     expect(rowheaders[0]).toHaveTextContent('Sam');
     expect(rowheaders[1]).toHaveTextContent('Smith');
+    let firstCellSpan = within(rowheaders[0]).getByText('Sam');
+    let secondCellSpan = within(rowheaders[1]).getByText('Smith');
 
-    expect(rows[0]).toHaveAttribute('aria-labelledby', `${rowheaders[0].id} ${rowheaders[1].id}`);
+    expect(rows[0]).toHaveAttribute('aria-labelledby', `${firstCellSpan.id} ${secondCellSpan.id}`);
 
     let checkbox = within(rows[0]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
-    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${rowheaders[0].id} ${rowheaders[1].id}`);
+    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${firstCellSpan.id} ${secondCellSpan.id}`);
 
     rowheaders = within(rows[1]).getAllByRole('rowheader');
     expect(rowheaders).toHaveLength(2);
     expect(rowheaders[0]).toHaveTextContent('Julia');
     expect(rowheaders[1]).toHaveTextContent('Jones');
+    firstCellSpan = within(rowheaders[0]).getByText('Julia');
+    secondCellSpan = within(rowheaders[1]).getByText('Jones');
 
-    expect(rows[1]).toHaveAttribute('aria-labelledby', `${rowheaders[0].id} ${rowheaders[1].id}`);
+    expect(rows[1]).toHaveAttribute('aria-labelledby', `${firstCellSpan.id} ${secondCellSpan.id}`);
 
     checkbox = within(rows[1]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
-    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${rowheaders[0].id} ${rowheaders[1].id}`);
+    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${firstCellSpan.id} ${secondCellSpan.id}`);
   });
 
   describe('keyboard focus', function () {
@@ -908,9 +929,6 @@ describe('TableView', function () {
         </TableBody>
       </TableView>
     );
-
-    let focusCell = (tree, text) => act(() => getCell(tree, text).focus());
-    let moveFocus = (key, opts = {}) => {fireEvent.keyDown(document.activeElement, {key, ...opts});};
 
     describe('ArrowRight', function () {
       it('should move focus to the next cell in a row with ArrowRight', function () {
@@ -1788,13 +1806,15 @@ describe('TableView', function () {
 
         // Ensure we have the correct sticky cells in the right order.
         let row = cell.closest('[role=row]');
-        let cells = within(row).getAllByRole(role => role === 'gridcell' || role === 'rowheader');
-        expect(cells).toHaveLength(18);
+        let cells = within(row).getAllByRole('gridcell');
+        let rowHeaders = within(row).getAllByRole('rowheader');
+        expect(cells).toHaveLength(17);
+        expect(rowHeaders).toHaveLength(1);
         expect(cells[0]).toHaveAttribute('aria-colindex', '1'); // checkbox
-        expect(cells[1]).toHaveAttribute('aria-colindex', '2'); // rowheader
-        expect(cells[2]).toHaveAttribute('aria-colindex', '6'); // persisted
-        expect(cells[2]).toBe(cell);
-        expect(cells[3]).toHaveAttribute('aria-colindex', '14'); // first visible
+        expect(rowHeaders[0]).toHaveAttribute('aria-colindex', '2'); // rowheader
+        expect(cells[1]).toHaveAttribute('aria-colindex', '6'); // persisted
+        expect(cells[1]).toBe(cell);
+        expect(cells[2]).toHaveAttribute('aria-colindex', '14'); // first visible
 
         // Moving focus should scroll the new focused item into view
         moveFocus('ArrowLeft');
@@ -1824,6 +1844,10 @@ describe('TableView', function () {
   });
 
   describe('selection', function () {
+    afterEach(() => {
+      act(() => jest.runAllTimers());
+    });
+
     let renderJSX = (props, items = manyItems) => (
       <TableView aria-label="Table" selectionMode="multiple" {...props}>
         <TableHeader columns={columns}>
@@ -2340,6 +2364,13 @@ describe('TableView', function () {
 
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
+
+        fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: 'a', ctrlKey: true});
+
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        expect(onSelectionChange.mock.calls[0][0]).toEqual('all');
+        checkRowSelection(rows.slice(1), true);
+        checkSelectAll(tree, 'checked');
 
         fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: 'a', ctrlKey: true});
 
@@ -4043,7 +4074,7 @@ describe('TableView', function () {
       fireEvent.scroll(scrollView);
       act(() => {jest.runAllTimers();});
 
-      expect(onLoadMore).toHaveBeenCalledTimes(3);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
 
     it('should automatically fire onLoadMore if there aren\'t enough items to fill the Table', function () {
@@ -4068,8 +4099,7 @@ describe('TableView', function () {
 
       render(<TableMock items={items} />);
       act(() => jest.runAllTimers());
-      // first loadMore triggered by onVisibleRectChange, other 2 by useLayoutEffect
-      expect(onLoadMoreSpy).toHaveBeenCalledTimes(3);
+      expect(onLoadMoreSpy).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -4420,14 +4450,27 @@ describe('TableView', function () {
       await act(() => Promise.resolve());
       let table = tree.getByRole('grid');
       let header = within(table).getAllByRole('columnheader')[2];
-      expect(header).not.toHaveAttribute('tabindex');
+      expect(header).toHaveAttribute('tabindex', '-1');
       let headerButton = within(header).getByRole('button');
       expect(headerButton).toHaveAttribute('aria-disabled', 'true');
-      // Can't progamatically focus the column headers since they have no tab index when table is empty
-      act(() => {
-        header.focus();
-      });
-      expect(document.activeElement).toBe(document.body);
+    });
+
+    it('should shift focus to the table if table becomes empty via column sort', function () {
+      let tree = render(<ColumnHeaderFocusRingTable />);
+      let rows = tree.getAllByRole('row');
+      expect(rows).toHaveLength(3);
+      focusCell(tree, 'Height');
+      expect(document.activeElement).toHaveTextContent('Height');
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      act(() => jest.advanceTimersByTime(500));
+      let table = tree.getByRole('grid');
+      expect(document.activeElement).toBe(table);
+      // Run the rest of the timeout and run the transitions
+      act(() => {jest.runAllTimers();});
+      act(() => {jest.runAllTimers();});
+      rows = tree.getAllByRole('row');
+      expect(rows).toHaveLength(2);
     });
 
     it('should disable press interactions with the column headers', async function () {
@@ -4495,4 +4538,14 @@ describe('TableView', function () {
       expect(table).toHaveAttribute('tabIndex', '0');
     });
   });
+};
+
+describe('TableView', tableTests);
+
+describe('TableView with expandable rows flag on', function () {
+  beforeAll(() => {
+    enableTableNestedRows();
+  });
+
+  tableTests();
 });

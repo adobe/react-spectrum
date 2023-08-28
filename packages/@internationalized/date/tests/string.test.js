@@ -224,6 +224,18 @@ describe('string conversion', function () {
       let date = parseZonedDateTime('2020-02-03T12:24:45-08:00[America/Los_Angeles]');
       let expected = new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000, 12, 24, 45);
       expect(date).toEqual(expected);
+
+      date = parseZonedDateTime('2020-02-03T12:24:45-0800[America/Los_Angeles]');
+      expected = new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000, 12, 24, 45);
+      expect(date).toEqual(expected);
+
+      date = parseZonedDateTime('2020-02-03T12:24:45-08[America/Los_Angeles]');
+      expected = new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000, 12, 24, 45);
+      expect(date).toEqual(expected);
+
+      date = parseZonedDateTime('2020-02-03T12:24:45+0000[UTC]');
+      expected = new ZonedDateTime(2020, 2, 3, 'UTC', 0, 12, 24, 45);
+      expect(date).toEqual(expected);
     });
 
     it('should parse a date with a time with milliseconds and an offset', function () {
@@ -329,6 +341,18 @@ describe('string conversion', function () {
       date = parseAbsolute('2021-11-07T01:00-08:00', 'America/Los_Angeles');
       expected = new ZonedDateTime(2021, 11, 7, 'America/Los_Angeles', -28800000, 1, 0, 0);
       expect(date).toEqual(expected);
+
+      date = parseAbsolute('2021-11-07T01:00-0800', 'America/Los_Angeles');
+      expected = new ZonedDateTime(2021, 11, 7, 'America/Los_Angeles', -28800000, 1, 0, 0);
+      expect(date).toEqual(expected);
+
+      date = parseAbsolute('2021-11-07T01:00-08', 'America/Los_Angeles');
+      expected = new ZonedDateTime(2021, 11, 7, 'America/Los_Angeles', -28800000, 1, 0, 0);
+      expect(date).toEqual(expected);
+
+      date = parseAbsolute('2021-11-07T01:00+0000', 'America/Los_Angeles');
+      expected = new ZonedDateTime(2021, 11, 6, 'America/Los_Angeles', -25200000, 18, 0, 0);
+      expect(date).toEqual(expected);
     });
 
     it('should error if missing offset or Z', function () {
@@ -366,7 +390,7 @@ describe('string conversion', function () {
         seconds: 5
       });
     });
-  
+
     it('parses an ISO 8601 duration string that contains years, months, weeks, days, hours, minutes, and fractional values for seconds expressed with a period and returns a DateTimeDuration object', function () {
       const duration = parseDuration('P3Y6M6W4DT12H30M5.5S');
       expect(duration).toStrictEqual({
@@ -379,7 +403,7 @@ describe('string conversion', function () {
         seconds: 5.5
       });
     });
-  
+
     it('parses an ISO 8601 duration string that contains years, months, weeks, days, hours, minutes, and fractional values for seconds expressed with a comma and returns a DateTimeDuration object', function () {
       const duration = parseDuration('P3Y6M6W4DT12H30M5,5S');
       expect(duration).toStrictEqual({
@@ -444,7 +468,7 @@ describe('string conversion', function () {
         seconds: 0
       });
     });
-  
+
     it('parses a negative ISO 8601 duration string that contains years, months, weeks, days, hours, minutes, and seconds and returns a DateTimeDuration object', function () {
       const duration = parseDuration('-P3Y6M6W4DT12H30M5S');
       expect(duration).toStrictEqual({
@@ -457,7 +481,7 @@ describe('string conversion', function () {
         seconds: -5
       });
     });
-  
+
     it('parses an ISO 8601 duration string that contains years, months, weeks, days, hours, minutes, and seconds with a preceding + sign and returns a DateTimeDuration object', function () {
       const duration = parseDuration('+P3Y6M6W4DT12H30M5S');
       expect(duration).toStrictEqual({
@@ -483,7 +507,7 @@ describe('string conversion', function () {
         seconds: 15
       });
     });
-  
+
     it('parses an ISO 8601 duration string that contains years, months, weeks, and days and returns a DateTimeDuration object', function () {
       const duration = parseDuration('P7Y8M14W6D');
       expect(duration).toStrictEqual({
@@ -496,7 +520,7 @@ describe('string conversion', function () {
         seconds: 0
       });
     });
-  
+
     it('parses an ISO 8601 duration string that contains years, months, hours, and seconds and returns a DateTimeDuration object', function () {
       const duration = parseDuration('P18Y7MT20H15S');
       expect(duration).toStrictEqual({
@@ -509,7 +533,7 @@ describe('string conversion', function () {
         seconds: 15
       });
     });
-  
+
     it('throws an error when passed an improperly formatted ISO 8601 duration string', function () {
       expect(() => {
         parseDuration('+-P18Y7MT20H15S');

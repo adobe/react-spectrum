@@ -13,7 +13,7 @@
 import {AriaButtonProps} from '@react-types/button';
 import {AriaNumberFieldProps} from '@react-types/numberfield';
 import {DOMAttributes, TextInputDOMProps} from '@react-types/shared';
-import {filterDOMProps, isAndroid, isIOS, isIPhone, mergeProps, useId} from '@react-aria/utils';
+import {filterDOMProps, isAndroid, isIOS, isIPhone, mergeProps, useFormReset, useId} from '@react-aria/utils';
 import {
   InputHTMLAttributes,
   LabelHTMLAttributes,
@@ -25,13 +25,12 @@ import {
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {NumberFieldState} from '@react-stately/numberfield';
-import {useFocus, useFocusWithin} from '@react-aria/interactions';
+import {useFocus, useFocusWithin, useScrollWheel} from '@react-aria/interactions';
 import {useFormattedTextField} from '@react-aria/textfield';
 import {
   useLocalizedStringFormatter,
   useNumberFormatter
 } from '@react-aria/i18n';
-import {useScrollWheel} from '@react-aria/interactions';
 import {useSpinButton} from '@react-aria/spinbutton';
 
 export interface NumberFieldAria {
@@ -186,6 +185,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   let {labelProps, inputProps: textFieldProps, descriptionProps, errorMessageProps} = useFormattedTextField({
     ...otherProps,
     ...domProps,
+    name: undefined,
     label,
     autoFocus,
     isDisabled,
@@ -209,6 +209,8 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     description,
     errorMessage
   }, state, inputRef);
+
+  useFormReset(inputRef, state.numberValue, state.setNumberValue);
 
   let inputProps = mergeProps(
     spinButtonProps,

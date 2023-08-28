@@ -99,4 +99,34 @@ describe('NumberField', () => {
     expect(group).not.toHaveAttribute('data-focus-visible');
     expect(group).not.toHaveClass('focus');
   });
+
+  it('should support render props', () => {
+    let {getByRole} = render(
+      <NumberField defaultValue={1024} minValue={300} maxValue={1400}>
+        {({state}) => (
+          <>
+            <Label>Width (min: {state.minValue}, max: {state.maxValue})</Label>
+            <Group>
+              <Button slot="decrement">-</Button>
+              <Input />
+              <Button slot="increment">+</Button>
+            </Group>
+          </>
+        )}
+      </NumberField>
+    );
+
+    let input = getByRole('textbox');
+    let label = document.getElementById(input.getAttribute('aria-labelledby'));
+    expect(label).toHaveTextContent('Width (min: 300, max: 1400)');
+  });
+
+  it('should support form value', () => {
+    let {rerender} = render(<TestNumberField name="test" value={25} formatOptions={{style: 'currency', currency: 'USD'}} />);
+    let input = document.querySelector('input[name=test]');
+    expect(input).toHaveValue('25');
+
+    rerender(<TestNumberField name="test" value={null} formatOptions={{style: 'currency', currency: 'USD'}} />);
+    expect(input).toHaveValue('');
+  });
 });

@@ -58,10 +58,6 @@ describe('useTooltipTriggerState', function () {
     jest.useFakeTimers();
   });
 
-  afterAll(() => {
-    jest.useRealTimers();
-  });
-
   afterEach(() => {
     onOpenChange.mockClear();
     // there's global state, so we need to make sure to run out the cooldown for every test
@@ -71,7 +67,7 @@ describe('useTooltipTriggerState', function () {
   describe('custom close delay', () => {
     it('closes with a custom close delay less than the default', () => {
       let closeDelay = 100;
-  
+
       let {getByRole, queryByRole, getByLabelText} = render(
         <TooltipTrigger onOpenChange={onOpenChange} closeDelay={closeDelay} tooltip="Helpful information">
           Trigger

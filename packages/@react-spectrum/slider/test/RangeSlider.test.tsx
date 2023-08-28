@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@react-spectrum/test-utils';
+import {act, fireEvent, render} from '@react-spectrum/test-utils';
 import {press, testKeypresses} from './utils';
 import {Provider} from '@adobe/react-spectrum';
 import {RangeSlider} from '../';
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
@@ -38,8 +38,8 @@ describe('RangeSlider', function () {
     let [leftSlider, rightSlider] = getAllByRole('slider');
     expect(leftSlider.getAttribute('aria-label')).toBe('Minimum');
     expect(rightSlider.getAttribute('aria-label')).toBe('Maximum');
-    expect(leftSlider.getAttribute('aria-labelledby')).toBe(`${labelId} ${leftSlider.id}`);
-    expect(rightSlider.getAttribute('aria-labelledby')).toBe(`${labelId} ${rightSlider.id}`);
+    expect(leftSlider.getAttribute('aria-labelledby')).toBe(`${leftSlider.id} ${labelId}`);
+    expect(rightSlider.getAttribute('aria-labelledby')).toBe(`${rightSlider.id} ${labelId}`);
 
     let label = document.getElementById(labelId);
     expect(label).toHaveTextContent('The Label');
@@ -126,11 +126,14 @@ describe('RangeSlider', function () {
   });
 
   it('can be controlled', function () {
-    let renders = [];
+    let setValues = [];
 
     function Test() {
-      let [value, setValue] = useState({start: 20, end: 40});
-      renders.push(value);
+      let [value, _setValue] = useState({start: 20, end: 40});
+      let setValue = useCallback((val) => {
+        setValues.push(val);
+        _setValue(val);
+      }, [_setValue]);
 
       return (<RangeSlider label="The Label" value={value} onChange={setValue} />);
     }
@@ -154,7 +157,7 @@ describe('RangeSlider', function () {
     expect(sliderRight).toHaveAttribute('aria-valuetext', '50');
     expect(output).toHaveTextContent('30 – 50');
 
-    expect(renders).toStrictEqual([{start: 20, end: 40}, {start: 30, end: 40}, {start: 30, end: 50}]);
+    expect(setValues).toStrictEqual([{start: 30, end: 40}, {start: 30, end: 50}]);
   });
 
   it('supports a custom valueLabel', function () {
@@ -178,6 +181,44 @@ describe('RangeSlider', function () {
     fireEvent.change(sliderRight, {target: {value: '60'}});
     expect(output).toHaveTextContent('A5B60C');
     expect(sliderRight).toHaveAttribute('aria-valuetext', '60');
+  });
+
+  it('supports form name', () => {
+    let {getAllByRole} = render(<RangeSlider label="Value" value={{start: 10, end: 40}} startName="minCookies" endName="maxCookies" />);
+    let inputs = getAllByRole('slider');
+    expect(inputs[0]).toHaveAttribute('name', 'minCookies');
+    expect(inputs[0]).toHaveValue('10');
+    expect(inputs[1]).toHaveAttribute('name', 'maxCookies');
+    expect(inputs[1]).toHaveValue('40');
+  });
+
+  it('supports form reset', () => {
+    function Test() {
+      let [value, setValue] = React.useState({start: 10, end: 40});
+      return (
+        <Provider theme={theme}>
+          <form>
+            <RangeSlider label="Value" value={value} onChange={setValue} />
+            <input type="reset" data-testid="reset" />
+          </form>
+        </Provider>
+      );
+    }
+
+    let {getByTestId, getAllByRole} = render(<Test />);
+    let inputs = getAllByRole('slider');
+
+    expect(inputs[0]).toHaveValue('10');
+    expect(inputs[1]).toHaveValue('40');
+    fireEvent.change(inputs[0], {target: {value: '30'}});
+    fireEvent.change(inputs[1], {target: {value: '60'}});
+    expect(inputs[0]).toHaveValue('30');
+    expect(inputs[1]).toHaveValue('60');
+
+    let button = getByTestId('reset');
+    act(() => userEvent.click(button));
+    expect(inputs[0]).toHaveValue('10');
+    expect(inputs[1]).toHaveValue('40');
   });
 
   describe('formatOptions', () => {

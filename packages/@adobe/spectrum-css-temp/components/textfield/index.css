@@ -76,7 +76,7 @@ governing permissions and limitations under the License.
   /* Change the input font styles in all browsers */
   @extend %i18nFontFamily;
   font-size: var(--spectrum-textfield-text-size);
-  line-height: var(--spectrum-textfield-text-line-height);
+  line-height: var(--spectrum-textfield-height);
   text-overflow: ellipsis;
 
   transition: border-color var(--spectrum-global-animation-duration-100) ease-in-out,
@@ -205,6 +205,10 @@ governing permissions and limitations under the License.
   /* when textarea is inside a label wrapper, make it flex to take up remaining height. */
   flex: 1 1 auto;
   min-height: 0;
+
+  .spectrum-Textfield-input {
+    line-height: var(--spectrum-textfield-text-line-height);
+  }
 
   &.spectrum-Textfield--quiet {
     /* quiet textfields grow based on text content, up to the height of the container. */

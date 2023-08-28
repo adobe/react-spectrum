@@ -124,12 +124,14 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       placeholderValue: props.placeholderValue,
       hideTimeZone: props.hideTimeZone,
       hourCycle: props.hourCycle,
+      shouldForceLeadingZeros: props.shouldForceLeadingZeros,
       granularity: props.granularity,
       isDisabled: props.isDisabled,
       isReadOnly: props.isReadOnly,
       isRequired: props.isRequired,
       validationState: state.validationState,
-      autoFocus: props.autoFocus
+      autoFocus: props.autoFocus,
+      name: props.name
     },
     descriptionProps,
     errorMessageProps,
@@ -138,14 +140,14 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       id: buttonId,
       'aria-haspopup': 'dialog',
       'aria-label': stringFormatter.format('calendar'),
-      'aria-labelledby': `${labelledBy} ${buttonId}`,
+      'aria-labelledby': `${buttonId} ${labelledBy}`,
       'aria-describedby': ariaDescribedBy,
       'aria-expanded': state.isOpen || undefined,
       onPress: () => state.setOpen(true)
     },
     dialogProps: {
       id: dialogId,
-      'aria-labelledby': `${labelledBy} ${buttonId}`
+      'aria-labelledby': `${buttonId} ${labelledBy}`
     },
     calendarProps: {
       autoFocus: true,

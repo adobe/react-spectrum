@@ -16,18 +16,17 @@ import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
-import {Content} from '@react-spectrum/view';
+import {Content, View} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
 import {Flex} from '@react-spectrum/layout';
-import {Heading} from '@react-spectrum/text';
+import {Heading, Text} from '@react-spectrum/text';
 import {Item, Picker, Section, SpectrumPickerProps} from '../';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React,  {useState} from 'react';
-import {Text} from '@react-spectrum/text';
 import {useAsyncList} from '@react-stately/data';
-import {View} from '@react-spectrum/view';
+import {userEvent, within} from '@storybook/testing-library';
 
 let flatOptions = [
   {id: 1, name: 'Aardvark'},
@@ -168,6 +167,15 @@ export default {
 export type DefaultStory = ComponentStoryObj<typeof DefaultPicker>;
 export const Default: DefaultStory = {
   render: (args) => <DefaultPicker {...args} />
+};
+
+// Need to interact with picker for the aXe plugin to catch the 'aria-hidden-focus' false positive
+Default.play = async ({canvasElement}) => {
+  let canvas = within(canvasElement);
+  let button = await canvas.findByRole('button');
+  await userEvent.click(button);
+  let body = canvasElement.ownerDocument.body;
+  await within(body).findByRole('listbox');
 };
 
 export const Disabled: DefaultStory = {

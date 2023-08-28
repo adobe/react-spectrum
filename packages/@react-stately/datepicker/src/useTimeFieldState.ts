@@ -12,7 +12,7 @@
 
 import {DateFieldState, useDateFieldState} from '.';
 import {DateValue, TimePickerProps, TimeValue} from '@react-types/datepicker';
-import {getLocalTimeZone, GregorianCalendar, Time, toCalendarDateTime, today, toTime} from '@internationalized/date';
+import {getLocalTimeZone, GregorianCalendar, Time, toCalendarDateTime, today, toTime, toZoned} from '@internationalized/date';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo} from 'react';
 
@@ -21,12 +21,17 @@ export interface TimeFieldStateOptions<T extends TimeValue = TimeValue> extends 
   locale: string
 }
 
+export interface TimeFieldState extends DateFieldState {
+  /** The current time value. */
+  timeValue: Time
+}
+
 /**
  * Provides state management for a time field component.
  * A time field allows users to enter and edit time values using a keyboard.
  * Each part of a time value is displayed in an individually editable segment.
  */
-export function useTimeFieldState<T extends TimeValue = TimeValue>(props: TimeFieldStateOptions<T>): DateFieldState {
+export function useTimeFieldState<T extends TimeValue = TimeValue>(props: TimeFieldStateOptions<T>): TimeFieldState {
   let {
     placeholderValue = new Time(),
     minValue,
@@ -42,16 +47,22 @@ export function useTimeFieldState<T extends TimeValue = TimeValue>(props: TimeFi
 
   let v = value || placeholderValue;
   let day = v && 'day' in v ? v : undefined;
-  let placeholderDate = useMemo(() => convertValue(placeholderValue), [placeholderValue]);
+  let defaultValueTimeZone = props.defaultValue && 'timeZone' in props.defaultValue ? props.defaultValue.timeZone : undefined;
+  let placeholderDate = useMemo(() => {
+    let valueTimeZone = v && 'timeZone' in v ? v.timeZone : undefined;
+
+    return (valueTimeZone || defaultValueTimeZone) && placeholderValue ? toZoned(convertValue(placeholderValue), valueTimeZone || defaultValueTimeZone) : convertValue(placeholderValue);
+  }, [placeholderValue, v, defaultValueTimeZone]);
   let minDate = useMemo(() => convertValue(minValue, day), [minValue, day]);
   let maxDate = useMemo(() => convertValue(maxValue, day), [maxValue, day]);
 
+  let timeValue = useMemo(() => value && 'day' in value ? toTime(value) : value as Time, [value]);
   let dateTime = useMemo(() => value == null ? null : convertValue(value), [value]);
   let onChange = newValue => {
-    setValue(v && 'day' in v ? newValue : newValue && toTime(newValue));
+    setValue(day || defaultValueTimeZone ? newValue : newValue && toTime(newValue));
   };
 
-  return useDateFieldState({
+  let state = useDateFieldState({
     ...props,
     value: dateTime,
     defaultValue: undefined,
@@ -64,6 +75,11 @@ export function useTimeFieldState<T extends TimeValue = TimeValue>(props: TimeFi
     // Calendar should not matter for time fields.
     createCalendar: () => new GregorianCalendar()
   });
+
+  return {
+    ...state,
+    timeValue
+  };
 }
 
 function convertValue(value: TimeValue, date: DateValue = today(getLocalTimeZone())) {

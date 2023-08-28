@@ -162,3 +162,9 @@
 .express.large {
   --spectrum-switch-track-width: 36px;
 }
+
+@media (forced-colors: active) {
+  .express.express {
+    --spectrum-popover-border-size: var(--spectrum-alias-border-size-thin);
+  }
+}

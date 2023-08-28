@@ -11,8 +11,7 @@
  */
 
 import {act, fireEvent} from '@testing-library/react';
-import type {ITypeOpts} from '@testing-library/user-event';
-import userEvent from '@testing-library/user-event';
+import userEvent, {ITypeOpts} from '@testing-library/user-event';
 
 // Triggers a "press" event on an element.
 // TODO: move to somewhere more common

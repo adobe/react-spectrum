@@ -44,6 +44,9 @@ import DateField from '@react-spectrum/docs/pages/assets/component-illustrations
 import TimeField from '@react-spectrum/docs/pages/assets/component-illustrations/TimeField.svg';
 import DatePicker from '@react-spectrum/docs/pages/assets/component-illustrations/DatePicker.svg';
 import DateRangePicker from '@react-spectrum/docs/pages/assets/component-illustrations/DateRangePicker.svg';
+import TagGroup from '@react-spectrum/docs/pages/assets/component-illustrations/TagGroup.svg';
+import FileTrigger from '@react-spectrum/docs/pages/assets/component-illustrations/FileTrigger.svg'
+import DropZone from '@react-spectrum/docs/pages/assets/component-illustrations/DropZone.svg'
 
 ---
 category: Concepts
@@ -139,7 +142,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
       background: var(--spectrum-global-color-gray-150);
     }
 
-    &:disabled {
+    &[data-disabled] {
       border-color: var(--border-color-disabled);
       color: var(--text-color-disabled);
       & span[aria-hidden] {
@@ -220,7 +223,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
     display: flex;
     flex-direction: column;
 
-    &[aria-selected=true] {
+    &[data-selected] {
       font-weight: 600;
 
       &::before {
@@ -239,7 +242,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
       color: var(--highlight-foreground);
     }
 
-    &[aria-disabled] {
+    &[data-disabled] {
       color: var(--text-color-disabled);
     }
 
@@ -303,7 +306,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
     --text-color-disabled: GrayText;
     --focus-ring-color: Highlight;
 
-    .react-aria-Button:disabled span[aria-hidden] {
+    .react-aria-Button[data-disabled] span[aria-hidden] {
       background: transparent;
     }
   }
@@ -323,8 +326,6 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
 
 </details>
 
-If you're using SSR via a framework like Next.js or Remix, you'll also need to wrap your application in an `<SSRProvider>`. See the [Server Side Rendering](ssr.html) docs for more details.
-
 ## Styling
 
 React Aria Components do not include any styles by default, allowing you to build custom designs to fit your application or design system. Each component accepts the standard `className` and `style` props which enable using vanilla CSS, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc.
@@ -342,7 +343,7 @@ When a custom `className` is not provided, each component includes a default cla
 Some components support multiple UI states (e.g. pressed, hovered, selected, etc.). React Aria Components exposes states using DOM attributes, which can be targeted by CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. They can be thought of like custom CSS pseudo classes. For example:
 
 ```css render=false
-.react-aria-Item[aria-selected=true] {
+.react-aria-Item[data-selected] {
   /* ... */
 }
 
@@ -424,6 +425,51 @@ If you are using Tailwind CSS, we recommend using the [tailwindcss-animate](http
 
 The documentation for each component includes many examples styled using vanilla CSS and the default class names. We also have an example of many of the components using Tailwind CSS. You can find the [code](https://github.com/adobe/react-spectrum/blob/main/examples/rac-tailwind/src/App.js) in the repo, as well as a [live demo](https://reactspectrum.blob.core.windows.net/reactspectrum/f239d0b1a96c3e6119135fe6bbf1994dc9984257/verdaccio/rac-tailwind/index.html).
 
+## Tailwind CSS Plugin
+
+There is a Tailwind CSS plugin available which makes styling different [states](#states) easier.
+
+This allows an element with the `data-selected` attribute to be styled in Tailwind with `selected:` instead of `data-[selected]:`. Non-boolean data attributes follow the `{name}-{value}` pattern, so you can style an element with `data-orientation="horizontal"` using `orientation-horizontal:`.
+
+To install:
+
+```
+yarn add tailwindcss-react-aria-components
+```
+
+Then add the plugin to your `tailwind.config.js` file:
+
+```jsx
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  plugins: [
+    require('tailwindcss-react-aria-components')
+  ],
+}
+```
+
+You can optionally specify a prefix using `require('tailwindcss-react-aria-components')({prefix: 'rac'})`. This will allow you to use `rac-selected:` instead of `selected:`.
+
+### Boolean states
+
+The `data-selected` state can be styled with `selected:` like this:
+
+```jsx
+<Button className="selected:bg-blue">
+  {/* ... */}
+</Button>
+```
+
+### Non-boolean states
+
+The `data-orientation="vertical"` state can be styled with `orientation-vertical:` like this:
+
+```jsx
+<Tabs className="orientation-vertical:flex-row">
+  {/* ... */}
+</Tabs>
+```
+
 ## Components
 
 ### Buttons
@@ -496,6 +542,13 @@ The documentation for each component includes many examples styled using vanilla
   title="Table"
   description="A table displays data in rows and columns, with row selection and sorting.">
   <Table />
+</ExampleCard>
+
+<ExampleCard
+  url="TagGroup.html"
+  title="TagGroup"
+  description="A tag group displays a list of items, with support for keyboard navigation, selection, and removal.">
+  <TagGroup />
 </ExampleCard>
 
 </section>
@@ -635,6 +688,13 @@ The documentation for each component includes many examples styled using vanilla
   <Slider />
 </ExampleCard>
 
+<ExampleCard
+  url="FileTrigger.html"
+  title="FileTrigger"
+  description="A file trigger allows a user to access the file system with a Button.">
+  <FileTrigger />
+</ExampleCard>
+
 </section>
 
 ### Navigation
@@ -680,6 +740,19 @@ The documentation for each component includes many examples styled using vanilla
   title="Meter"
   description="A meter represents a quantity within a known range, or a fractional value.">
   <Meter />
+</ExampleCard>
+
+</section>
+
+### Drag and Drop
+
+<section className={styles.cardGroup}>
+
+<ExampleCard
+  url="DropZone.html"
+  title="DropZone"
+  description="A drop zone is an area into which one or multiple objects can be dragged and dropped.">
+  <DropZone />
 </ExampleCard>
 
 </section>

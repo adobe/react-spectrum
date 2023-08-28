@@ -98,6 +98,7 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
     hideTimeZone: props.hideTimeZone,
     hourCycle: props.hourCycle,
     granularity: props.granularity,
+    shouldForceLeadingZeros: props.shouldForceLeadingZeros,
     isDisabled: props.isDisabled,
     isReadOnly: props.isReadOnly,
     isRequired: props.isRequired,
@@ -149,27 +150,29 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
       id: buttonId,
       'aria-haspopup': 'dialog',
       'aria-label': stringFormatter.format('calendar'),
-      'aria-labelledby': `${labelledBy} ${buttonId}`,
+      'aria-labelledby': `${buttonId} ${labelledBy}`,
       'aria-describedby': ariaDescribedBy,
       'aria-expanded': state.isOpen || undefined,
       onPress: () => state.setOpen(true)
     },
     dialogProps: {
       id: dialogId,
-      'aria-labelledby': `${labelledBy} ${buttonId}`
+      'aria-labelledby': `${buttonId} ${labelledBy}`
     },
     startFieldProps: {
       ...startFieldProps,
       ...commonFieldProps,
       value: state.value?.start,
       onChange: start => state.setDateTime('start', start),
-      autoFocus: props.autoFocus
+      autoFocus: props.autoFocus,
+      name: props.startName
     },
     endFieldProps: {
       ...endFieldProps,
       ...commonFieldProps,
       value: state.value?.end,
-      onChange: end => state.setDateTime('end', end)
+      onChange: end => state.setDateTime('end', end),
+      name: props.endName
     },
     descriptionProps,
     errorMessageProps,
