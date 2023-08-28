@@ -290,7 +290,7 @@ function PendingButtonOnClickComponent(props) {
   let [isPending, setPending] = useState(false);
 
   let handlePress = (e) => {
-    action('press')(e);
+    action('click')(e);
     setPending(true);
     setTimeout(() => {
       setPending(false);
