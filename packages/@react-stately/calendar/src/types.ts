@@ -29,7 +29,7 @@ interface CalendarStateBase {
   readonly timeZone: string,
   /**
    * The current validation state of the selected value.
-   * @deprecated Use `isInvalid` instead.
+   * @deprecated Use `isValueInvalid` instead.
    */
   readonly validationState: ValidationState,
   /** Whether the calendar is invalid. */
