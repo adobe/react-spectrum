@@ -103,7 +103,15 @@ governing permissions and limitations under the License.
   background-color: var(--spectrum-table-background-color);
 
   &:focus-ring {
-    box-shadow: inset 0 0 0 2px var(--spectrum-table-cell-border-color-key-focus);
+    &::after {
+      content: "";
+      height: 100%;
+      position: absolute;
+      width: 100%;
+      left: 0px;
+      top: 0px;
+      box-shadow: inset 0 0 0 2px var(--spectrum-table-cell-border-color-key-focus);
+    }
   }
 
   &.is-drop-target {

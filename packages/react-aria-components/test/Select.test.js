@@ -182,4 +182,13 @@ describe('Select', () => {
     await user.click(button);
     expect(button).toHaveTextContent('close');
   });
+
+  it('should send disabled prop to the hidden field', () => {
+    render(
+      <TestSelect isDisabled />
+    );
+    userEvent.tab();
+
+    expect(document.activeElement).toBe(document.body);
+  });
 });

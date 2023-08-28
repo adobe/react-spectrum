@@ -129,6 +129,38 @@ describe('ComboBox', () => {
     expect(options).toHaveLength(1);
   });
 
+  it('should support dynamic collections', async () => {
+    let defaultItems = [
+      {id: 1, name: 'Cat'},
+      {id: 2, name: 'Dog'},
+      {id: 3, name: 'Kangaroo'}
+    ];
+    let {getByRole} = render(
+      <ComboBox defaultItems={defaultItems}>
+        <Label>Favorite Animal</Label>
+        <Input />
+        <Button />
+        <Text slot="description">Description</Text>
+        <Text slot="errorMessage">Error</Text>
+        <Popover>
+          <ListBox>
+            {item => <Item>{item.name}</Item>}
+          </ListBox>
+        </Popover>
+      </ComboBox>
+    );
+
+    let input = getByRole('combobox');
+    act(() => {
+      input.focus();
+    });
+    await user.keyboard('c');
+
+    let listbox = getByRole('listbox');
+    let options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(1);
+  });
+
   it('should support render props', async () => {
     let {getByRole} = render(
       <ComboBox>

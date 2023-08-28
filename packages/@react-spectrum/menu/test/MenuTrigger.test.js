@@ -539,9 +539,9 @@ describe('MenuTrigger', function () {
 
     it.each`
       Name                      | Component      | props | menuProps
-      ${'MenuTrigger single'}   | ${MenuTrigger} | ${{}} | ${{selectionMode: 'single'}}
-      ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{closeOnSelect: true}} | ${{selectionMode: 'multiple'}}
-      ${'MenuTrigger none'}     | ${MenuTrigger} | ${{}} | ${{selectionMode: 'none'}}
+      ${'MenuTrigger single'}   | ${MenuTrigger} | ${{}} | ${{selectionMode: 'single', onClose}}
+      ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{closeOnSelect: true}} | ${{selectionMode: 'multiple', onClose}}
+      ${'MenuTrigger none'}     | ${MenuTrigger} | ${{}} | ${{selectionMode: 'none', onClose}}
     `('$Name closes on menu item selection if toggled by mouse click', function ({Component, props, menuProps}) {
       tree = renderComponent(Component, props, menuProps);
       openAndTriggerMenuItem(tree, props.role, menuProps.selectionMode, (item) => triggerPress(item));
@@ -549,13 +549,14 @@ describe('MenuTrigger', function () {
       let menu = tree.queryByRole('menu');
       expect(menu).toBeNull();
       expect(document.activeElement).toBe(tree.getByRole('button'));
+      expect(onClose).toHaveBeenCalledTimes(1);
     });
 
     it.each`
       Name                      | Component      | props | menuProps
-      ${'MenuTrigger single'}   | ${MenuTrigger} | ${{}} | ${{selectionMode: 'single'}}
-      ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{}} | ${{selectionMode: 'multiple'}}
-      ${'MenuTrigger none'}     | ${MenuTrigger} | ${{}} | ${{selectionMode: 'none'}}
+      ${'MenuTrigger single'}   | ${MenuTrigger} | ${{}} | ${{selectionMode: 'single', onClose}}
+      ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{}} | ${{selectionMode: 'multiple', onClose}}
+      ${'MenuTrigger none'}     | ${MenuTrigger} | ${{}} | ${{selectionMode: 'none', onClose}}
     `('$Name closes on menu item selection if toggled by ENTER key', function ({Component, props, menuProps}) {
       tree = renderComponent(Component, props, menuProps);
       openAndTriggerMenuItem(tree, props.role, menuProps.selectionMode, (item) => fireEvent.keyDown(item, {key: 'Enter', code: 13, charCode: 13}));
@@ -563,23 +564,25 @@ describe('MenuTrigger', function () {
       let menu = tree.queryByRole('menu');
       expect(menu).toBeNull();
       expect(document.activeElement).toBe(tree.getByRole('button'));
+      expect(onClose).toHaveBeenCalledTimes(1);
     });
 
     it.each`
       Name                      | Component      | props | menuProps
-      ${'MenuTrigger single'}   | ${MenuTrigger} | ${{}} | ${{selectionMode: 'single'}}
-      ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{}} | ${{selectionMode: 'multiple'}}
+      ${'MenuTrigger single'}   | ${MenuTrigger} | ${{}} | ${{selectionMode: 'single', onClose}}
+      ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{}} | ${{selectionMode: 'multiple', onClose}}
     `('$Name doesn\'t close on menu item selection if toggled by SPACE key (all selection modes except "none")', function ({Component, props, menuProps}) {
       tree = renderComponent(Component, props, menuProps);
       openAndTriggerMenuItem(tree, props.role, menuProps.selectionMode, (item) => fireEvent.keyDown(item, {key: ' ', code: 32, charCode: 32}));
 
       let menu = tree.queryByRole('menu');
       expect(menu).toBeTruthy();
+      expect(onClose).toHaveBeenCalledTimes(0);
     });
 
     it.each`
       Name                  | Component      | props | menuProps
-      ${'MenuTrigger none'} | ${MenuTrigger} | ${{}} | ${{selectionMode: 'none'}}
+      ${'MenuTrigger none'} | ${MenuTrigger} | ${{}} | ${{selectionMode: 'none', onClose}}
     `('$Name closes on menu item selection if toggled by SPACE key (selectionMode=none)', function ({Component, props, menuProps}) {
       tree = renderComponent(Component, props, menuProps);
       openAndTriggerMenuItem(tree, props.role, menuProps.selectionMode, (item) => fireEvent.keyDown(item, {key: ' ', code: 32, charCode: 32}));
@@ -587,11 +590,12 @@ describe('MenuTrigger', function () {
       let menu = tree.queryByRole('menu');
       expect(menu).toBeNull();
       expect(document.activeElement).toBe(tree.getByRole('button'));
+      expect(onClose).toHaveBeenCalledTimes(1);
     });
 
     it.each`
       Name             | Component      | props
-      ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
+      ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, onClose}}
     `('$Name closes the menu when blurring the menu', function ({Component, props}) {
       tree = renderComponent(Component, props, {});
       expect(onOpenChange).toBeCalledTimes(0);
@@ -609,6 +613,7 @@ describe('MenuTrigger', function () {
       expect(menu).not.toBeInTheDocument();
       expect(button).toHaveAttribute('aria-expanded', 'false');
       expect(onOpenChange).toBeCalledTimes(2);
+      expect(onClose).toHaveBeenCalledTimes(0);
     });
 
     it.each`
