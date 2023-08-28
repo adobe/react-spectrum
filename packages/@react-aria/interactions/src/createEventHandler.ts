@@ -23,8 +23,15 @@ export function createEventHandler<T extends SyntheticEvent>(handler: (e: BaseEv
 
   let shouldStopPropagation = true;
   return (e: T) => {
-    let event: BaseEvent<T> = {
-      ...e,
+    // Mutates the original event object to support Preact because we aren't dealing
+    // with synthetic events. The event object that Preact passes to this function
+    // does not have very many of its "own" properties; rather, it inherits most of
+    // its properties from KeyboardEvents, which means using the spread operator will
+    // not transfer the properties to our new `event` object. If we were to either
+    // try to copying the properties from the original event's prototype or using
+    // that original event as the prototype of this new object, we would actually get
+    // an illegal-invokation error as soon as we started using it.
+    let event: BaseEvent<T> = Object.assign(e, {
       preventDefault() {
         e.preventDefault();
       },
@@ -37,7 +44,7 @@ export function createEventHandler<T extends SyntheticEvent>(handler: (e: BaseEv
       continuePropagation() {
         shouldStopPropagation = false;
       }
-    };
+    });
 
     handler(event);
 
