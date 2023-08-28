@@ -13,7 +13,7 @@ export default Layout;
 import docs from 'docs:react-aria-components';
 import i18nDocs from 'docs:@internationalized/date';
 import statelyDocs from 'docs:@react-stately/datepicker';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/datepicker/docs/daterangepicker-anatomy.svg';
@@ -1129,69 +1129,106 @@ function MyDateSegment(props) {
 }
 ```
 
-### Hooks
+### Contexts
 
-If you need to customize things even further, such as accessing internal state or customizing DOM structure, you can drop down to the lower
-level Hook-based API. `DateRangePicker` sends props to its child elements via public React contexts for each component. You can use this context to
-implement replacements for any component, using hooks from `react-aria`. This allows you to replace only the components you need to customize,
-and keep using the others.
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
 
-`DateRangePicker` uses the following hooks. See the linked documentation for more details.
+<ContextTable components={['DateRangePicker']} docs={docs} />
 
-* [useDateRangePicker](useDateRangePicker.html)
-* [useDateField](useDateField.html)
-* [useButton](useButton.html)
-* [usePopover](usePopover.html)
-* [useDialog](useDialog.html)
-* [useRangeCalendar](useRangeCalendar.html)
+This example shows a `FieldGroup` component that renders a group of date pickers with a title and optional error message. It uses the [useId](useId.html) hook to generate a unique id for the error message. All of the child DateRangePickers are marked invalid and associated with the error message via the `aria-describedby` attribute passed to the `DateRangePickerContext` provider.
 
-To replace a component used within a `DateRangePicker`, create your own component and use the <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook to merge the local props and ref with the ones sent via context by `DateRangePicker`. This example shows how you could implement a custom `RangeCalendar` component that works with `DateRangePicker`.
+```tsx example
+import {DateRangePickerContext} from 'react-aria-components';
+import {useId} from 'react-aria';
 
-```tsx
-import {RangeCalendarContext, useContextProps} from 'react-aria-components';
-import {useRangeCalendarState} from 'react-stately';
-import {useRangeCalendar} from 'react-aria';
-
-function MyRangeCalendar(props) {
-  // Merge local props and ref with props from context.
-  let ref = React.useRef();
-  [props, ref] = useContextProps(props, ref, CalendarContext);
-
-  // Call useCalendarState and useCalendar.
-  let state = useRangeCalendarState({...props});
-  let {calendarProps} = useRangeCalendar(props, state, ref);
-
-  // Render stuff
-  // ...
+interface FieldGroupProps {
+  title?: string,
+  children?: React.ReactNode,
+  errorMessage?: string
 }
-```
 
-This also works the other way. If you need to customize `DateRangePicker` itself, but want to reuse the components it contains, you can do so by providing the necessary contexts. The `Provider` component is an easier way to send multiple contexts at once. You can look at the [DateRangePicker source code](...) for more details on how to set this up.
-
-```tsx
-import {useDateRangePicker, LabelContext, ButtonContext, RangeCalendarContext} from 'react-aria';
-import {Provider} from 'react-aria-components';
-
-function MyDateRangePicker(props) {
-  // ...
-  let ref = useRef(null);
-  let {
-    labelProps,
-    buttonProps,
-    calendarProps,
-    // ...
-  } = useDateRangePicker({ /* ... */ });
-
+function FieldGroup({title, children, errorMessage}: FieldGroupProps) {
+  let errorId = useId();
   return (
-    <Provider
-      values={[
-        [LabelContext, labelProps],
-        [ButtonContext, buttonProps],
-        [RangeCalendarContext, calendarProps],
-        // ...
-      ]}>
-      {props.children}
-    </Provider>
+    <fieldset>
+      <legend>{title}</legend>
+      {/*- begin highlight -*/}
+      <DateRangePickerContext.Provider value={{
+        validationState: errorMessage ? 'invalid' : undefined,
+        'aria-describedby': errorMessage ? errorId : undefined
+      }}>
+      {/*- end highlight -*/}
+        {children}
+      </DateRangePickerContext.Provider>
+      {errorMessage && <small id={errorId} className="invalid">{errorMessage}</small>}
+    </fieldset>
   );
 }
+
+<FieldGroup title="Dates" errorMessage="Ticket sale and event dates cannot overlap.">
+  <MyDateRangePicker label="Ticket sale dates" defaultValue={{start: parseDate('2023-07-12'), end: parseDate('2023-08-04')}} />
+  <MyDateRangePicker label="Event dates" defaultValue={{start: parseDate('2023-08-01'), end: parseDate('2023-08-10')}} />
+</FieldGroup>
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+fieldset {
+  padding: 1.5em;
+  width: fit-content;
+}
+
+.invalid {
+  color: var(--spectrum-global-color-red-600);
+  margin-top: 1em;
+  display: block;
+}
+
+@media (forced-colors: active) {
+  .invalid {
+    color: LinkText;
+  }
+}
+```
+
+</details>
+
+### Custom children
+
+DateRangePicker passes props to its child components, such as the label and popover, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
+
+<ContextTable components={['Label', 'Group', 'Button', 'Popover', 'Dialog', 'RangeCalendar', 'Text']} docs={docs} />
+
+This example consumes from `LabelContext` in an existing styled label component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by DateRangePicker.
+
+```tsx
+import type {LabelProps} from 'react-aria-components';
+import {LabelContext, useContextProps} from 'react-aria-components';
+
+const MyCustomLabel = React.forwardRef((props: LabelProps, ref: React.ForwardedRef<HTMLLabelElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, LabelContext);
+  ///- end highlight -///
+
+  // ... your existing Label component
+  return <label {...props} ref={ref} />;
+});
+```
+
+Now you can use `MyCustomLabel` within a `DateRangePicker`, in place of the builtin React Aria Components `Label`.
+
+```tsx
+<DateRangePicker>
+  {/*- begin highlight -*/}
+  <MyCustomLabel>Name</MyCustomLabel>
+  {/*- end highlight -*/}
+  {/* ... */}
+</DateRangePicker>
+```
+
+### Hooks
+
+If you need to customize things even further, such as accessing internal state, intercepting events, or customizing the DOM structure, you can drop down to the lower level Hook-based API. See [useDateRangePicker](useDateRangePicker.html) for more details.

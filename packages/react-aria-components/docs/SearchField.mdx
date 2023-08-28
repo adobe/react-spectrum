@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import statelyDocs from 'docs:@react-stately/searchfield';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/searchfield/docs/anatomy.svg';
@@ -471,6 +471,88 @@ If you need to customize one of the components within a `SearchField`, such as `
 function MyInput(props) {
   return <Input {...props} className="my-input" />
 }
+```
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['SearchField']} docs={docs} />
+
+This example shows a `FieldGroup` component that renders a group of search fields with a title. The entire group can be marked as disabled via the `isDisabled` prop, which is passed to all child search fields via the `SearchFieldContext` provider.
+
+```tsx example
+import {SearchFieldContext} from 'react-aria-components';
+
+interface FieldGroupProps {
+  title?: string,
+  children?: React.ReactNode,
+  isDisabled?: boolean
+}
+
+function FieldGroup({title, children, isDisabled}: FieldGroupProps) {
+  return (
+    <fieldset>
+      <legend>{title}</legend>
+      {/*- begin highlight -*/}
+      <SearchFieldContext.Provider value={{isDisabled}}>
+      {/*- end highlight -*/}
+        {children}
+      </SearchFieldContext.Provider>
+    </fieldset>
+  );
+}
+
+<FieldGroup title="Filters" isDisabled>
+  <MySearchField label="Name" defaultValue="Devon" />
+  <MySearchField label="Email" defaultValue="devon@example.com" />
+</FieldGroup>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+fieldset {
+  padding: 1.5em;
+  width: fit-content;
+}
+```
+
+</details>
+
+### Custom children
+
+SearchField passes props to its child components, such as the label and input, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
+
+<ContextTable components={['Label', 'Input', 'Button', 'Text']} docs={docs} />
+
+This example consumes from `LabelContext` in an existing styled label component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by SearchField.
+
+```tsx
+import type {LabelProps} from 'react-aria-components';
+import {LabelContext, useContextProps} from 'react-aria-components';
+
+const MyCustomLabel = React.forwardRef((props: LabelProps, ref: React.ForwardedRef<HTMLLabelElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, LabelContext);
+  ///- end highlight -///
+
+  // ... your existing Label component
+  return <label {...props} ref={ref} />;
+});
+```
+
+Now you can use `MyCustomLabel` within a `SearchField`, in place of the builtin React Aria Components `Label`.
+
+```tsx
+<SearchField>
+  {/*- begin highlight -*/}
+  <MyCustomLabel>Name</MyCustomLabel>
+  {/*- end highlight -*/}
+  <Input />
+</SearchField>
 ```
 
 ### Hooks

@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/datepicker/docs/daterangepicker-anatomy.svg';
@@ -230,6 +230,70 @@ A `ToggleButton` can be disabled using the `isDisabled` prop.
 
 ## Advanced customization
 
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['ToggleButton']} docs={docs} />
+
+This example shows a `ButtonGroup` component that renders a group of buttons. The entire group can be marked as disabled via the `isDisabled` prop, which is passed to all child buttons via the `ButtonContext` provider.
+
+```tsx example
+import {ToggleButtonContext} from 'react-aria-components';
+
+interface ButtonGroupProps {
+  children?: React.ReactNode,
+  isDisabled?: boolean
+}
+
+function ButtonGroup({children, isDisabled}: ButtonGroupProps) {
+  return (
+    <div style={{display: 'flex', gap: 8}}>
+      {/*- begin highlight -*/}
+      <ToggleButtonContext.Provider value={{isDisabled}}>
+      {/*- end highlight -*/}
+        {children}
+      </ToggleButtonContext.Provider>
+    </div>
+  );
+}
+
+<ButtonGroup isDisabled>
+  <ToggleButton isSelected aria-label="Favorite">★</ToggleButton>
+  <ToggleButton aria-label="Flag">⚑</ToggleButton>
+</ButtonGroup>
+```
+
 ### Hooks
 
-If you need to customize things further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useToggleButton](useToggleButton.html) for more details.
+If you need to customize things further, such as intercepting events or customizing DOM elements, you can drop down to the lower level Hook-based API. Consume from `ToggleButtonContext` in your component with <TypeLink links={docs.links} type={docs.exports.useContextProps} /> to make it compatible with other React Aria Components. See [useToggleButton](useToggleButton.html) for more details.
+
+This example uses [Framer Motion](https://www.framer.com/motion/) to create an `AnimatedToggleButton` component that animates based on the `isSelected` state. It can be used standalone or as a part of any React Aria component.
+
+```tsx
+import type {ToggleButtonProps} from 'react-aria-components';
+import {ToggleButtonContext, useContextProps} from 'react-aria-components';
+import {useToggleState} from 'react-stately';
+import {useToggleButton} from 'react-aria';
+import {motion} from 'framer-motion';
+
+const AnimatedToggleButton = React.forwardRef((props: ToggleButtonProps, ref: React.ForwardedRef<HTMLButtonElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, ButtonContext);
+  ///- end highlight -///
+
+  let state = useToggleState(props);
+  let {buttonProps} = useToggleButton(props, state, ref);
+  return (
+    <motion.button
+      {...buttonProps}
+      ref={ref}
+      animate={{
+        scale: state.isSelected ? 1.2 : 1
+      }}>
+      {props.children}
+    </motion.button>
+  );
+});
+```
