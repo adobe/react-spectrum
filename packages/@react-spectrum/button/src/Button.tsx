@@ -41,9 +41,6 @@ function disablePendingProps(props) {
     props.onPressEnd = undefined;
     props.onPressChange = undefined;
     props.onPressUp = undefined;
-    props.onFocus = undefined;
-    props.onBlur = undefined;
-    props.onFocusChange = undefined;
     props.onKeyDown = undefined;
     props.onKeyUp = undefined;
     props.onClick = undefined;
