@@ -154,7 +154,7 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
     color: var(--text-color-invalid);
   }
 
-  &[data-validation-state=invalid] {
+  &[data-invalid] {
     [slot=end]:after {
       content: '🚫' / '';
       content: '🚫';
@@ -997,9 +997,9 @@ import {today} from '@internationalized/date';
 
 `DateRangePicker` supports marking certain dates as _unavailable_. These dates remain focusable with the keyboard in the calendar so that navigation is consistent, but cannot be selected by the user. The `isDateUnavailable` prop accepts a callback that is called to evaluate whether each visible date is unavailable.
 
-Note that by default, users may not select non-contiguous ranges, i.e. ranges that contain unavailable dates within them. Once a start date is selected in the calendar, enabled dates will be restricted to subsequent dates until an unavailable date is hit. While this is handled automatically in the calendar, additional validation logic must be provided to ensure an invalid state is displayed in the date field. This can be achieved using the `validationState` prop. See [below](#non-contiguous-ranges) for an example of how to allow non-contiguous ranges.
+Note that by default, users may not select non-contiguous ranges, i.e. ranges that contain unavailable dates within them. Once a start date is selected in the calendar, enabled dates will be restricted to subsequent dates until an unavailable date is hit. While this is handled automatically in the calendar, additional validation logic must be provided to ensure an invalid state is displayed in the date field. This can be achieved using the `isInvalid` prop. See [below](#non-contiguous-ranges) for an example of how to allow non-contiguous ranges.
 
-This example includes multiple unavailable date ranges, e.g. dates when a rental house is not available. The `minValue` prop is also used to prevent selecting dates before today. The `validationState` prop is used to mark selected date ranges with unavailable dates in the middle as invalid.
+This example includes multiple unavailable date ranges, e.g. dates when a rental house is not available. The `minValue` prop is also used to prevent selecting dates before today. The `isInvalid` prop is used to mark selected date ranges with unavailable dates in the middle as invalid.
 
 ```tsx example
 import type {DateRange} from 'react-aria-components';
@@ -1024,7 +1024,7 @@ function Example() {
       isDateUnavailable={isDateUnavailable}
       value={value}
       onChange={setValue}
-      validationState={isInvalid ? 'invalid' : undefined} />
+      isInvalid={isInvalid} />
   );
 }
 ```
@@ -1048,7 +1048,7 @@ function Example() {
 
 ### Help text
 
-The `description` slot can be used to associate additional help text with a date range picker. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `validationState` prop to semantically mark the date range picker as invalid for assistive technologies.
+The `description` slot can be used to associate additional help text with a date range picker. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to semantically mark the date range picker as invalid for assistive technologies.
 
 This example validates that the selected date range is a maximum of 1 week in duration.
 
@@ -1067,7 +1067,7 @@ function Example() {
       label="Trip dates"
       value={range}
       onChange={setRange}
-      validationState={isInvalid ? 'invalid' : 'valid'}
+      isInvalid={isInvalid}
       description={isInvalid ? undefined : 'Select your vacation dates'}
       errorMessage={isInvalid ? 'Maximum stay duration is 1 week' : undefined} />
   );
@@ -1154,7 +1154,7 @@ function FieldGroup({title, children, errorMessage}: FieldGroupProps) {
       <legend>{title}</legend>
       {/*- begin highlight -*/}
       <DateRangePickerContext.Provider value={{
-        validationState: errorMessage ? 'invalid' : undefined,
+        isInvalid: !!errorMessage,
         'aria-describedby': errorMessage ? errorId : undefined
       }}>
       {/*- end highlight -*/}

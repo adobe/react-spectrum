@@ -520,7 +520,7 @@ The difference is that `isReadOnly` still allows the input to be focused, while 
 
 ### Help text
 
-The `description` slot can be used to associate additional help text with a number field. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `validationState` prop to semantically mark the number field as invalid for assistive technologies.
+The `description` slot can be used to associate additional help text with a number field. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to semantically mark the number field as invalid for assistive technologies.
 
 ```tsx example
 function Example() {
@@ -529,7 +529,7 @@ function Example() {
 
   return (
     <MyNumberField
-      validationState={Number.isNaN(value) ? undefined : (isValid ? 'valid' : 'invalid')}
+      isInvalid={Number.isNaN(value) && !isValid}
       value={value}
       onChange={setValue}
       label="Positive numbers only"

@@ -116,7 +116,7 @@ import {Checkbox} from 'react-aria-components';
     }
   }
 
-  &[data-validation-state=invalid] {
+  &[data-invalid] {
     .checkbox {
       border-color: var(--invalid-color);
     }
@@ -326,10 +326,10 @@ The Checkbox will visually remain indeterminate until the `isIndeterminate` prop
 ### Validation
 
 Checkboxes can display a validation state to communicate to the user if the current value is invalid.
-Implement your own validation logic in your app and pass `"invalid"` to the Checkbox via the `validationState` prop.
+Implement your own validation logic in your app and set the `isInvalid` prop accordingly.
 
 ```tsx example
-<MyCheckbox validationState="invalid">I accept the terms and conditions</MyCheckbox>
+<MyCheckbox isInvalid>I accept the terms and conditions</MyCheckbox>
 ```
 
 ### Disabled

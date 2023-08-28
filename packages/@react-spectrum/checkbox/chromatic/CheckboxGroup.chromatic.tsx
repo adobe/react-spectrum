@@ -126,14 +126,14 @@ IsEmphasized.story = {
   name: 'isEmphasized'
 };
 
-export const ValidationStateInvalid = () => render({validationState: 'invalid'});
+export const ValidationStateInvalid = () => render({isInvalid: true});
 
 ValidationStateInvalid.story = {
   name: 'validationState: "invalid"'
 };
 
 export const ValidationStateInvalidOnOneCheckbox = () =>
-  render({}, [{}, {validationState: 'invalid'}, {}]);
+  render({}, [{}, {isInvalid: true}, {}]);
 
 ValidationStateInvalidOnOneCheckbox.story = {
   name: 'validationState: "invalid" on one checkbox'
@@ -148,7 +148,7 @@ WithDescription.story = {
 export const WithErrorMessage = () =>
   render({
     errorMessage: 'Please select a valid combination of pets.',
-    validationState: 'invalid'
+    isInvalid: true
   });
 
 WithErrorMessage.story = {
@@ -158,7 +158,7 @@ WithErrorMessage.story = {
 export const WithErrorMessageAndErrorIcon = () =>
   render({
     errorMessage: 'Please select a valid combination of pets.',
-    validationState: 'invalid',
+    isInvalid: true,
     showErrorIcon: true
   });
 
@@ -203,7 +203,7 @@ FormName.story = {
 };
 
 export const ShowErrorIcon = () =>
-  render({validationState: 'invalid', errorMessage: 'Error message.', showErrorIcon: true});
+  render({isInvalid: true, errorMessage: 'Error message.', showErrorIcon: true});
 
 ShowErrorIcon.story = {
   name: 'show error icon'

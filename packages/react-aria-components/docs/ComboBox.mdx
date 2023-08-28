@@ -82,7 +82,7 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
     padding: 0.286rem 2rem 0.286rem 0.571rem;
     vertical-align: middle;
 
-    &[aria-invalid] {
+    &[data-invalid] {
       border-color: var(--spectrum-global-color-red-600);
     }
 
@@ -968,7 +968,7 @@ function AsyncLoadingExample() {
 
 ### Help text
 
-The `description` slot can be used to associate additional help text with a ComboBox. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `validationState` prop to semantically mark the ComboBox as invalid for assistive technologies.
+The `description` slot can be used to associate additional help text with a ComboBox. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to semantically mark the ComboBox as invalid for assistive technologies.
 
 ```tsx example
 function Example() {
@@ -990,7 +990,7 @@ function Example() {
 
   return (
     <MyComboBox
-      validationState={!animalId ? undefined : isValid ? 'valid' : 'invalid'}
+      isInvalid={animalId && !isValid}
       label="Favorite animal"
       description={isValid ? 'Pick your favorite animal, you will be judged.' : null}
       errorMessage={isValid ? null : animalId === 2

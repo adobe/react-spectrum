@@ -725,7 +725,7 @@ The `isReadOnly` boolean prop makes the RangeCalendar's value immutable. Unlike 
 
 ### Error message
 
-`RangeCalendar` tries to avoid allowing the user to select invalid dates in the first place (see [Validation](#validation) and [Unavailable dates](#unavailable-dates) above). However, if according to application logic a selected date range is invalid, the `validationState` prop can be set to `"invalid"`. This alerts assistive technology users that the selection is invalid, and can be used for styling purposes as well. In addition, the `errorMessage` slot may be used to help the user fix the issue.
+`RangeCalendar` tries to avoid allowing the user to select invalid dates in the first place (see [Validation](#validation) and [Unavailable dates](#unavailable-dates) above). However, if according to application logic a selected date range is invalid, the `isInvalid` prop can be set. This alerts assistive technology users that the selection is invalid, and can be used for styling purposes as well. In addition, the `errorMessage` slot may be used to help the user fix the issue.
 
 This example validates that the selected date range is a maximum of 1 week in duration.
 
@@ -744,7 +744,7 @@ function Example() {
       aria-label="Trip dates"
       value={range}
       onChange={setRange}
-      validationState={isInvalid ? 'invalid' : 'valid'}
+      isInvalid={isInvalid}
       errorMessage={isInvalid ? 'Maximum stay duration is 1 week' : undefined} />
   );
 }
