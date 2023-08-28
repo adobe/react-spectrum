@@ -612,7 +612,6 @@ function TableVirtualizer(props) {
   }, [state.contentSize, headerRef, bodyRef, domRef]);
 
   let headerHeight = layout.getLayoutInfo('header')?.rect.height || 0;
-  let visibleRect = state.virtualizer.visibleRect;
 
   // Sync the scroll position from the table body to the header container.
   let onScroll = useCallback(() => {
@@ -649,7 +648,6 @@ function TableVirtualizer(props) {
             role="presentation"
             className={classNames(styles, 'spectrum-Table-headWrapper')}
             style={{
-              width: visibleRect.width,
               height: headerHeight,
               overflow: 'hidden',
               position: 'relative',

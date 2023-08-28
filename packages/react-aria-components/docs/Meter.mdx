@@ -11,7 +11,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:react-aria-components';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/meter/docs/anatomy.svg';
@@ -257,6 +257,23 @@ The `valueLabel` prop allows the formatted value to be replaced with a custom st
 ```
 
 ## Advanced customization
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['Meter']} docs={docs} />
+
+This example sets the `formatOptions` via context, which applies to all nested meters.
+
+```tsx example
+import {MeterContext} from 'react-aria-components';
+
+<MeterContext.Provider value={{formatOptions: {style: 'decimal'}}}>
+  <MyMeter label="Widgets" value={28.5} />
+  <MyMeter label="Cookies" value={68.75} />
+</MeterContext.Provider>
+```
 
 ### Hooks
 

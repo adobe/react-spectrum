@@ -142,15 +142,17 @@ export const ComboBoxRenderPropsListBoxDynamic = () => (
 );
 
 export const ListBoxExample = () => (
-  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace">
+  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace" aria-label="test listbox">
     <MyItem>Foo</MyItem>
     <MyItem>Bar</MyItem>
     <MyItem>Baz</MyItem>
   </ListBox>
 );
 
+// Known accessibility false positive: https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#listbox
+// also has a aXe landmark error, not sure what it means
 export const ListBoxSections = () => (
-  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace">
+  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace" aria-label="test listbox with section">
     <Section className={styles.group}>
       <Header style={{fontSize: '1.2em'}}>Section 1</Header>
       <MyItem>Foo</MyItem>
@@ -168,7 +170,7 @@ export const ListBoxSections = () => (
 );
 
 export const ListBoxComplex = () => (
-  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace">
+  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace" aria-label="listbox complex">
     <MyItem>
       <Text slot="label">Item 1</Text>
       <Text slot="description">Description</Text>
@@ -192,6 +194,9 @@ export const SelectExample = () => (
       <span aria-hidden="true" style={{paddingLeft: 5}}>▼</span>
     </Button>
     <Popover>
+      <OverlayArrow>
+        <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
+      </OverlayArrow>
       <ListBox className={styles.menu}>
         <MyItem>Foo</MyItem>
         <MyItem>Bar</MyItem>
@@ -580,6 +585,7 @@ export const ModalExample = () => (
   </DialogTrigger>
 );
 
+// Has error with invalid aria-controls, bug documented here: https://github.com/adobe/react-spectrum/issues/4781#issuecomment-1641057070
 export const TabsExample = () => (
   <Tabs>
     <TabList aria-label="History of Ancient Rome" style={{display: 'flex', gap: 8}}>
@@ -599,6 +605,7 @@ export const TabsExample = () => (
   </Tabs>
 );
 
+// Has error with invalid aria-controls, bug documented here: https://github.com/adobe/react-spectrum/issues/4781#issuecomment-1641057070
 export const TabsRenderProps = () => {
   const [tabOrientation, setTabOrientation] = useState<TabsProps['orientation']>('vertical');
 
@@ -805,6 +812,7 @@ function Copyable() {
       <div
         {...clipboardProps}
         role="textbox"
+        aria-label="copyable element"
         tabIndex={0}
         className={styles.copyable}>
         Copy me
@@ -904,7 +912,7 @@ export const DropzoneExampleWithDraggableObject = (props) => (
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')} >
-      <Text slot="heading">
+      <Text slot="label">
         DropZone Area
       </Text>
     </DropZone>
@@ -920,7 +928,7 @@ export const DropzoneExampleWithCopyableObject = (props) => (
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
-      <Text slot="heading">
+      <Text slot="label">
         DropZone Area
       </Text>
     </DropZone>
@@ -940,7 +948,7 @@ export const DropzoneWithRenderProps = (props) => (
       onDropExit={action('OnDropExit')}>
       {({isHovered, isFocused, isFocusVisible, isDropTarget}) => (
         <div>
-          <Text slot="heading">
+          <Text slot="label">
             DropzoneArea
           </Text>
           <div>isHovered: {isHovered ? 'true' : 'false'}</div>

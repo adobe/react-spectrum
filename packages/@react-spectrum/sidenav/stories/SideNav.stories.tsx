@@ -109,6 +109,7 @@ export const DefaultWithSections = () => (
   </SideNav>
 );
 
+// Has accessibility errors caught by aXe ('aria-required-children' and 'aria-required-parent'), revisit when SideNav gets picked up again
 DefaultWithSections.story = {
   name: 'Default with sections'
 };

@@ -111,6 +111,14 @@ The `granularity` prop allows you to control the smallest unit that is displayed
   defaultValue={parseAbsoluteToLocal('2021-04-07T18:45:22Z')} />
 ```
 
+### HTML forms
+
+TimeField supports the `name` prop for integration with HTML forms. The value will be submitted to the server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted string, e.g. `"08:45:00"`.
+
+```tsx example
+<TimeField label="Meeting time" name="meetingTime" />
+```
+
 ## Labeling
 
 A visual label should be provided for the `TimeField` using the `label` prop. If the `TimeField` is required, the `isRequired` and `necessityIndicator` props can be used to show a required state.
