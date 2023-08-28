@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import sharedDocs from 'docs:@react-types/shared';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/listbox/docs/anatomy.svg';
@@ -1845,6 +1845,184 @@ If you need to customize one of the components within a `ListBox`, such as `Item
 function MyItem(props) {
   return <Item {...props} className="my-item" />
 }
+```
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['ListBox']} docs={docs} />
+
+This example shows a component that accepts a `ListBox` and a [Checkbox](Checkbox.html) as children, and allows the user to select or deselect all items by toggling the checkbox.
+
+```tsx example render=false export=true
+import {CheckboxContext, ListBoxContext} from 'react-aria-components';
+
+function SelectAllListBox({children}) {
+  let [selectedKeys, onSelectionChange] = React.useState<Selection>(new Set());
+  let isSelected = selectedKeys === 'all';
+  let onChange = (isSelected: boolean) => {
+    onSelectionChange(isSelected ? 'all' : new Set());
+  };
+
+  return (
+    <CheckboxContext.Provider value={{isSelected, onChange}}>
+      <ListBoxContext.Provider value={{selectedKeys, onSelectionChange}}>
+        {children}
+      </ListBoxContext.Provider>
+    </CheckboxContext.Provider>
+  );
+}
+```
+
+The `SelectAllListBox` component can be reused to allow the user to toggle select all for any nested `ListBox`.
+
+```tsx example
+import {Checkbox} from 'react-aria-components';
+
+<SelectAllListBox>
+  <Checkbox>
+    <div className="checkbox">
+      <svg viewBox="0 0 18 18" aria-hidden="true">
+        <polyline points="1 9 7 14 15 4" />
+      </svg>
+    </div>
+    Select All
+  </Checkbox>
+  <ListBox selectionMode="multiple" aria-label="Ice cream flavors">
+    <Item>Chocolate</Item>
+    <Item>Mint</Item>
+    <Item>Strawberry</Item>
+    <Item>Vanilla</Item>
+  </ListBox>
+</SelectAllListBox>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Checkbox {
+  --label-color: var(--spectrum-alias-text-color);
+  --deselected-color: gray;
+  --deselected-color-pressed: dimgray;
+  --selected-color: slateblue;
+  --selected-color-pressed: lch(from slateblue calc(l - 10%) c h);
+  --checkmark-color: white;
+
+  display: flex;
+  align-items: center;
+  gap: 0.571rem;
+  font-size: 1.143rem;
+  color: var(--label-color);
+  margin-bottom: 8px;
+
+  .checkbox {
+    width: 1.143rem;
+    height: 1.143rem;
+    border: 2px solid var(--deselected-color);
+    border-radius: 4px;
+    transition: all 200ms;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  & svg {
+    width: 1rem;
+    height: 1rem;
+    fill: none;
+    stroke: var(--checkmark-color);
+    stroke-width: 3px;
+    stroke-dasharray: 22px;
+    stroke-dashoffset: 66;
+    transition: all 200ms;
+  }
+
+  &[data-pressed] .checkbox {
+    border-color: var(--deselected-color-pressed);
+  }
+
+  &[data-selected],
+  &[data-indeterminate] {
+    .checkbox {
+      border-color: var(--selected-color);
+      background: var(--selected-color);
+    }
+
+    &[data-pressed] .checkbox {
+      border-color: var(--selected-color-pressed);
+      background: var(--selected-color-pressed);
+    }
+
+    & svg {
+      stroke-dashoffset: 44;
+    }
+  }
+
+  &[data-indeterminate] {
+    & svg {
+      stroke: none;
+      fill: var(--checkmark-color);
+    }
+  }
+
+  &[data-focus-visible] .checkbox {
+    box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--selected-color);
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Checkbox {
+    forced-color-adjust: none;
+
+    --label-color: ButtonText;
+    --deselected-color: ButtonBorder;
+    --deselected-color-pressed: ButtonBorder;
+    --selected-color: Highlight;
+    --selected-color-pressed: Highlight;
+    --checkmark-color: HighlightText;
+    --spectrum-alias-background-color-default: Canvas;
+  }
+}
+```
+
+</details>
+
+### Custom children
+
+ListBox passes props to its child components, such as the section headers and separators, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
+
+<ContextTable components={['Separator', 'Header', 'Text']} docs={docs} />
+
+This example consumes from `TextContext` in an existing styled typography component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by ListBox.
+
+```tsx
+import type {TextProps} from 'react-aria-components';
+import {TextContext, useContextProps} from 'react-aria-components';
+
+const MyText = React.forwardRef((props: TextProps, ref: React.ForwardedRef<HTMLElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, TextContext);
+  ///- end highlight -///
+
+  // ... your existing Text component
+  return <span {...props} ref={ref} />;
+});
+```
+
+Now you can use `MyText` within a `Menu`, in place of the builtin React Aria Components `Text`.
+
+```tsx
+<ListBox>
+  <Item>
+    {/*- begin highlight -*/}
+    <MyText slot="label">Option</MyText>
+    {/*- end highlight -*/}
+  </Item>
+  {/* ... */}
+</ListBox>
 ```
 
 ### Hooks

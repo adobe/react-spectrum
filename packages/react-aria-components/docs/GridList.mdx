@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import sharedDocs from 'docs:@react-types/shared';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/gridlist/docs/anatomy.svg';
@@ -1673,6 +1673,155 @@ function MyItem(props) {
 }
 ```
 
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['GridList']} docs={docs} />
+
+This example shows a component that accepts a `GridList` and a [ToggleButton](ToggleButton.html) as children, and allows the user to turn selection mode for the list on and off by pressing the button.
+
+```tsx example render=false export=true
+import type {SelectionMode} from 'react-aria-components';
+import {ToggleButtonContext, GridListContext} from 'react-aria-components';
+
+function Selectable({children}) {
+  let [isSelected, onChange] = React.useState(false);
+  let selectionMode: SelectionMode = isSelected ? 'multiple' : 'none';
+  return (
+    <ToggleButtonContext.Provider value={{isSelected, onChange}}>
+      {/*- begin highlight -*/}
+      <GridListContext.Provider value={{selectionMode}}>
+      {/*- end highlight -*/}
+        {children}
+      </GridListContext.Provider>
+    </ToggleButtonContext.Provider>
+  );
+}
+```
+
+The `Selectable` component can be reused to make the selection mode of any nested `GridList` controlled by a `ToggleButton`.
+
+```tsx example
+import {ToggleButton} from 'react-aria-components';
+
+<Selectable>
+  <ToggleButton>Select</ToggleButton>
+  <GridList aria-label="Ice cream flavors">
+    <MyItem>Chocolate</MyItem>
+    <MyItem>Mint</MyItem>
+    <MyItem>Strawberry</MyItem>
+    <MyItem>Vanilla</MyItem>
+  </GridList>
+</Selectable>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ToggleButton {
+  --deselected-border-color: var(--spectrum-gray-400);
+  --deselected-border-color-pressed: var(--spectrum-gray-500);
+  --deselected-background-color: var(--spectrum-gray-50);
+  --deselected-background-color-pressed: var(--spectrum-gray-100);
+  --selected-color: var(--spectrum-gray-800);
+  --selected-color-pressed: var(--spectrum-gray-900);
+  --text-color: var(--spectrum-alias-text-color);
+  --text-color-selected: var(--spectrum-gray-50);
+
+  color: var(--text-color);
+  background: var(--deselected-background-color);
+  border: 1px solid var(--deselected-border-color);
+  border-radius: 4px;
+  appearance: none;
+  vertical-align: middle;
+  font-size: 1rem;
+  text-align: center;
+  margin: 0 0 8px 0;
+  outline: none;
+  padding: 4px 12px;
+
+  &[data-pressed] {
+    box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
+    background: var(--deselected-background-color-pressed);
+    border-color: var(--deselected-border-color-pressed);
+  }
+
+  &[aria-pressed=true] {
+    background: var(--selected-color);
+    border-color: var(--selected-color);
+    color: var(--text-color-selected);
+
+    &[data-pressed] {
+      background: var(--selected-color-pressed);
+      border-color: var(--selected-color-pressed);
+    }
+  }
+
+  &[data-focus-visible] {
+    border-color: var(--selected-color);
+    box-shadow: 0 0 0 1px var(--selected-color);
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-ToggleButton {
+    forced-color-adjust: none;
+
+    --deselected-border-color: ButtonBorder;
+    --deselected-border-color-pressed: ButtonBorder;
+    --deselected-background-color: ButtonFace;
+    --deselected-background-color-pressed: ButtonFace;
+    --selected-color: Highlight;
+    --selected-color-pressed: Highlight;
+    --text-color: ButtonText;
+    --text-color-selected: HighlightText;
+  }
+}
+```
+
+</details>
+
+### Custom children
+
+GridList passes props to its child components, such as the selection checkboxes, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
+
+<ContextTable components={['Checkbox', 'Button', 'Text']} docs={docs} />
+
+This example consumes from `CheckboxContext` in an existing styled checkbox component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by GridList. See [useCheckbox](useCheckbox.html) for more details about the hooks used in this example.
+
+```tsx
+import type {CheckboxProps} from 'react-aria-components';
+import {CheckboxContext, useContextProps} from 'react-aria-components';
+import {useToggleState} from 'react-stately';
+import {useCheckbox} from 'react-aria';
+
+const MyCustomCheckbox = React.forwardRef((props: CheckboxProps, ref: React.ForwardedRef<HTMLInputElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, CheckboxContext);
+  ///- end highlight -///
+
+  let state = useToggleState(props);
+  let {inputProps} = useCheckbox(props, state, ref);
+  return <input {...inputProps} ref={ref} />;
+});
+```
+
+Now you can use `MyCustomCheckbox` within a `GridList`, in place of the builtin React Aria Components `Checkbox`.
+
+```tsx
+<GridList>
+  <Item>
+    {/*- begin highlight -*/}
+    <MyCustomCheckbox slot="selection" />
+    {/*- end highlight -*/}
+    {/* ... */}
+  </Item>
+</GridList>
+```
+
 ### Hooks
 
-If you need to customize things even further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useGridList](useGridList.html) for more details.
+If you need to customize things even further, such as accessing internal state, intercepting events, or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useGridList](useGridList.html) for more details.

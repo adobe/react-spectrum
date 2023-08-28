@@ -461,7 +461,7 @@ export interface CalendarCellProps extends RenderProps<CalendarCellRenderProps> 
 
 function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRef<HTMLDivElement>) {
   let state = useContext(InternalCalendarContext)!;
-  let {startDate: currentMonth} = useContext(InternalCalendarGridContext)!;
+  let {startDate: currentMonth} = useContext(InternalCalendarGridContext) ?? {startDate: state.visibleRange.start};
   let objectRef = useObjectRef(ref);
   let {cellProps, buttonProps, ...states} = useCalendarCell(
     {date},

@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import statelyDocs from 'docs:@react-stately/combobox';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/combobox/docs/anatomy.svg';
@@ -70,10 +70,14 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
 
 ```css
 .react-aria-ComboBox {
+  --border-color: var(--spectrum-alias-border-color);
+  --border-color-disabled: var(--spectrum-alias-border-color-disabled);
+  --button-background: slateblue;
+
   .react-aria-Input {
     margin: 0;
     font-size: 1.072rem;
-    border: 1px solid var(--spectrum-global-color-gray-400);
+    border: 1px solid var(--border-color);
     border-radius: 6px;
     padding: 0.286rem 2rem 0.286rem 0.571rem;
     vertical-align: middle;
@@ -86,6 +90,10 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
       outline: none;
       border-color: slateblue;
       box-shadow: 0 0 0 1px slateblue;
+    }
+
+    &[data-disabled] {
+      border-color: var(--border-color-disabled);
     }
   }
 
@@ -102,6 +110,10 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
     vertical-align: middle;
     font-size: 0.857rem;
     outline: none;
+
+    &[data-disabled] {
+      background: var(--border-color-disabled);
+    }
   }
 
   [slot=description] {
@@ -196,10 +208,16 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
 
 @media (forced-colors: active) {
   .react-aria-ComboBox {
+    --border-color: ButtonBorder;
+    --border-color-disabled: GrayText;
+
     .react-aria-Button {
       background: ButtonFace;
       color: ButtonText;
       border: 1px solid ButtonBorder;
+      &[data-disabled] {
+        background: transparent;
+      }
     }
   }
 
@@ -1033,72 +1051,96 @@ function MyListBox(props) {
 }
 ```
 
-### Hooks
+### Contexts
 
-If you need to customize things even further, such as accessing internal state or customizing DOM structure, you can drop down to the lower
-level Hook-based API. `ComboBox` sends props to its child elements via public React contexts for each component. You can use this context to
-implement replacements for any component, using hooks from `react-aria`. This allows you to replace only the components you need to customize,
-and keep using the others.
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
 
-`ComboBox` uses the following hooks. See the linked documentation for more details.
+<ContextTable components={['ComboBox']} docs={docs} />
 
-* [useComboBox](useComboBox.html)
-* [useListBox](useListBox.html)
-* [usePopover](usePopover.html)
-* [useButton](useButton.html)
+This example shows a `FieldGroup` component that renders a group of filters with a title. The entire group can be marked as disabled via the `isDisabled` prop, which is passed to all child selects via the `ComboBoxContext` provider.
 
-To replace a component used within a `ComboBox`, create your own component and use the <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook
-to merge the local props and ref with the ones sent via context by `ComboBox`. This example shows how you could implement a custom `ListBox` component that works with `ComboBox`.
+```tsx example
+import {ComboBoxContext} from 'react-aria-components';
 
-```tsx
-import {ListBoxContext, useContextProps} from 'react-aria-components';
-import {useListBox} from 'react-aria';
-
-function MyListBox(props) {
-  // Merge local props and ref with props from context.
-  let ref = React.useRef();
-  [props, ref] = useContextProps(props, ref, ListBoxContext);
-
-  // Get state sent from ComboBox via context, and call useListBox.
-  let {state} = React.useContext(ListBoxContext);
-  let {listBoxProps} = useListBox(props, state, ref);
-
-  // Render stuff
-  // ...
+interface FieldGroupProps {
+  title?: string,
+  children?: React.ReactNode,
+  isDisabled?: boolean
 }
-```
 
-This also works the other way. If you need to customize `ComboBox` itself, but want to reuse the components it contains, you can do so by providing
-the necessary contexts. The `Provider` component is an easier way to send multiple contexts at once.
-
-```tsx
-import {useComboBox, LabelContext, ButtonContext, InputContext, PopoverContext, ListBoxContext} from 'react-aria';
-import {Provider} from 'react-aria-components';
-
-function MyComboBox(props) {
-  // ...
-  let buttonRef = useRef(null);
-  let inputRef = useRef(null);
-  let listBoxRef = useRef(null);
-  let popoverRef = useRef(null);
-  let {
-    buttonProps,
-    inputProps,
-    listBoxProps,
-    labelProps
-  } = useComboBox({ /* ... */ });
-
+function FieldGroup({title, children, isDisabled}: FieldGroupProps) {
   return (
-    <Provider
-      values={[
-        [LabelContext, {...labelProps, ref: labelRef}],
-        [ButtonContext, {...buttonProps, ref: buttonRef}],
-        [InputContext, {...inputProps, ref: inputRef}],
-        [PopoverContext, {ref: popoverRef}],
-        [ListBoxContext, {...listBoxProps, ref: listBoxRef}]
-      ]}>
-      {props.children}
-    </Provider>
+    <fieldset>
+      <legend>{title}</legend>
+      {/*- begin highlight -*/}
+      <ComboBoxContext.Provider value={{isDisabled}}>
+      {/*- end highlight -*/}
+        {children}
+      </ComboBoxContext.Provider>
+    </fieldset>
   );
 }
+
+<FieldGroup title="Filters" isDisabled>
+  <MyComboBox label="Status" defaultSelectedKey="published">
+    <Item id="draft">Draft</Item>
+    <Item id="published">Published</Item>
+    <Item id="deleted">Deleted</Item>
+  </MyComboBox>
+  <MyComboBox label="Author" defaultSelectedKey="emma">
+    <Item id="john">John</Item>
+    <Item id="emma">Emma</Item>
+    <Item id="tim">Tim</Item>
+  </MyComboBox>
+</FieldGroup>
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+fieldset {
+  padding: 1.5em;
+  width: fit-content;
+}
+```
+
+</details>
+
+### Custom children
+
+ComboBox passes props to its child components, such as the label and input, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
+
+<ContextTable components={['Label', 'Button', 'Input', 'Popover', 'ListBox', 'Text']} docs={docs} />
+
+This example consumes from `LabelContext` in an existing styled label component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by ComboBox.
+
+```tsx
+import type {LabelProps} from 'react-aria-components';
+import {LabelContext, useContextProps} from 'react-aria-components';
+
+const MyCustomLabel = React.forwardRef((props: LabelProps, ref: React.ForwardedRef<HTMLLabelElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, LabelContext);
+  ///- end highlight -///
+
+  // ... your existing Label component
+  return <label {...props} ref={ref} />;
+});
+```
+
+Now you can use `MyCustomLabel` within a `ComboBox`, in place of the builtin React Aria Components `Label`.
+
+```tsx
+<ComboBox>
+  {/*- begin highlight -*/}
+  <MyCustomLabel>Name</MyCustomLabel>
+  {/*- end highlight -*/}
+  {/* ... */}
+</ComboBox>
+```
+
+### Hooks
+
+If you need to customize things even further, such as accessing internal state, intercepting events, or customizing the DOM structure, you can drop down to the lower level Hook-based API. See [useComboBox](useComboBox.html) for more details.

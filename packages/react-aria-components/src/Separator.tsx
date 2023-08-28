@@ -18,9 +18,9 @@ import {useShallowRender} from './Collection';
 
 export interface SeparatorProps extends AriaSeparatorProps, StyleProps, SlotProps {}
 
-export const SeparatorContext = createContext<ContextValue<SeparatorProps, Element>>({});
+export const SeparatorContext = createContext<ContextValue<SeparatorProps, HTMLElement>>({});
 
-function Separator(originalProps: SeparatorProps, originalRef: ForwardedRef<Element>) {
+function Separator(originalProps: SeparatorProps, originalRef: ForwardedRef<HTMLElement>) {
   let [props, ref] = useContextProps(originalProps, originalRef, SeparatorContext);
   let {elementType, orientation, style, className} = props;
   let Element = (elementType as ElementType) || 'hr';

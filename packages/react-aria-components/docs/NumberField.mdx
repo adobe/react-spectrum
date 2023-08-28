@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import statelyDocs from 'docs:@react-stately/numberfield';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/numberfield/docs/anatomy.svg';
@@ -564,6 +564,92 @@ If you need to customize one of the components within a `NumberField`, such as `
 function MyInput(props) {
   return <Input {...props} className="my-input" />
 }
+```
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['NumberField']} docs={docs} />
+
+This example shows a `FieldGroup` component that renders a group of number fields with a title. The entire group can be marked as read only via the `isReadOnly` prop, which is passed to all child number fields via the `NumberFieldContext` provider.
+
+```tsx example
+import {NumberFieldContext} from 'react-aria-components';
+
+interface FieldGroupProps {
+  title?: string,
+  children?: React.ReactNode,
+  isReadOnly?: boolean
+}
+
+function FieldGroup({title, children, isReadOnly}: FieldGroupProps) {
+  return (
+    <fieldset>
+      <legend>{title}</legend>
+      {/*- begin highlight -*/}
+      <NumberFieldContext.Provider value={{isReadOnly}}>
+      {/*- end highlight -*/}
+        {children}
+      </NumberFieldContext.Provider>
+    </fieldset>
+  );
+}
+
+<FieldGroup title="Dimensions" isReadOnly>
+  <MyNumberField label="Width" defaultValue={1024} />
+  <MyNumberField label="Height" defaultValue={768} />
+</FieldGroup>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+fieldset {
+  padding: 1.5em;
+  width: fit-content;
+}
+```
+
+</details>
+
+### Custom children
+
+NumberField passes props to its child components, such as the label and input, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
+
+<ContextTable components={['Label', 'Group', 'Input', 'Button', 'Text']} docs={docs} />
+
+This example consumes from `LabelContext` in an existing styled label component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by NumberField.
+
+```tsx
+import type {LabelProps} from 'react-aria-components';
+import {LabelContext, useContextProps} from 'react-aria-components';
+
+const MyCustomLabel = React.forwardRef((props: LabelProps, ref: React.ForwardedRef<HTMLLabelElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, LabelContext);
+  ///- end highlight -///
+
+  // ... your existing Label component
+  return <label {...props} ref={ref} />;
+});
+```
+
+Now you can use `MyCustomLabel` within a `NumberField`, in place of the builtin React Aria Components `Label`.
+
+```tsx
+<NumberField>
+  {/*- begin highlight -*/}
+  <MyCustomLabel>Value</MyCustomLabel>
+  {/*- end highlight -*/}
+  <Group>
+    <Button slot="decrement">-</Button>
+    <Input />
+    <Button slot="increment">+</Button>
+  </Group>
+</NumberField>
 ```
 
 ### Hooks
