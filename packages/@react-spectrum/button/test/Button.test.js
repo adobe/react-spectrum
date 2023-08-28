@@ -30,10 +30,6 @@ describe('Button', function () {
     jest.useFakeTimers();
   });
 
-  afterAll(() => {
-    jest.useRealTimers();
-  });
-
   afterEach(() => {
     onPressSpy.mockClear();
   });
