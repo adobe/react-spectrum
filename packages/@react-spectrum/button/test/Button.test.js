@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, triggerPress} from '@react-spectrum/test-utils';
+import {act, fireEvent, queryByRole, render, triggerPress} from '@react-spectrum/test-utils';
 import {ActionButton, Button, ClearButton, LogicButton} from '../';
 import {Checkbox, defaultTheme} from '@adobe/react-spectrum';
 import {Form} from '@react-spectrum/form';
@@ -293,19 +293,21 @@ describe('Button', function () {
         </Button>
       );
     }
-    let {getByRole} = render(<TestComponent />);
+    let {getByRole, queryByRole} = render(<TestComponent />);
     let button = getByRole('button');
     expect(button).not.toHaveAttribute('aria-disabled');
     triggerPress(button);
     // Button is disabled immediately, but spinner visibility is delayed
     expect(button).toHaveAttribute('aria-disabled', 'true');
+    let spinner = queryByRole('progressbar');
+    expect(spinner).not.toBeInTheDocument();
     // Multiple clicks shouldn't call onPressSpy
     triggerPress(button);
     act(() => {
       jest.advanceTimersByTime(spinnerVisibilityDelay);
     });
-    let spinner = getByRole('progressbar');
     expect(button).toHaveAttribute('aria-disabled', 'true');
+    spinner = queryByRole('progressbar');
     expect(spinner).toBeVisible();
     expect(spinner).toHaveAttribute('aria-label', 'Loading…');
     expect(onPressSpy).toHaveBeenCalledTimes(1);
