@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, queryByRole, render, triggerPress} from '@react-spectrum/test-utils';
+import {act, fireEvent, render, triggerPress} from '@react-spectrum/test-utils';
 import {ActionButton, Button, ClearButton, LogicButton} from '../';
 import {Checkbox, defaultTheme} from '@adobe/react-spectrum';
 import {Form} from '@react-spectrum/form';
