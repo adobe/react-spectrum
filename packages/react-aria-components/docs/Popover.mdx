@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import typesDocs from 'docs:@react-types/overlays';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/overlays/docs/popover-anatomy.svg';
@@ -419,6 +419,49 @@ function Example() {
 ```
 
 ## Advanced customization
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['Popover']} docs={docs} />
+
+This example shows a `HelpTrigger` component that wraps a button and a popover and shows the popover when the user presses the <Keyboard>?</Keyboard> key. It uses `ButtonContext` to provide a keyboard listener and ref to a nested button, and `PopoverContext` to provide the trigger ref and open state to the nested popover.
+
+```tsx example
+import {ButtonContext, PopoverContext} from 'react-aria-components';
+
+interface HelpTriggerProps {
+  children?: React.ReactNode
+}
+
+function HelpTrigger({children}: HelpTriggerProps) {
+  let triggerRef = React.useRef(null);
+  let [isOpen, setOpen] = React.useState(false);
+  let onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === '?') {
+      setOpen(true);
+    }
+  };
+
+  return (
+    <ButtonContext.Provider value={{onKeyDown, ref: triggerRef}}>
+      {/*- begin highlight -*/}
+      <PopoverContext.Provider value={{triggerRef, isOpen, onOpenChange: setOpen}}>
+      {/*- end highlight -*/}
+        {children}
+      </PopoverContext.Provider>
+    </ButtonContext.Provider>
+  );
+}
+
+<HelpTrigger>
+  <Button>Press ? for help</Button>
+  <MyPopover>
+    Do you need help?
+  </MyPopover>
+</HelpTrigger>
+```
 
 ### Hooks
 

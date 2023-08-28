@@ -13,7 +13,7 @@ export default Layout;
 import docs from 'docs:react-aria-components';
 import i18nDocs from 'docs:@internationalized/date';
 import statelyDocs from 'docs:@react-stately/calendar';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/calendar/docs/rangecalendar-anatomy.svg';
@@ -87,37 +87,12 @@ import {RangeCalendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-
       text-align: center;
       font-size: 1.375rem;
     }
+  }
 
-    .react-aria-Button {
-      background: var(--button-background);
-      border: 1px solid var(--button-border);
-      color: var(--text-color);
-      box-shadow: 0 1px 2px rgba(0 0 0 / 0.1);
-      border-radius: 4px;
-      appearance: none;
-      vertical-align: middle;
-      font-size: 1rem;
-      width: 2rem;
-      height: 2rem;
-      padding: 0;
-      text-align: center;
-      margin: 0;
-      outline: none;
-
-      &[data-focus-visible] {
-        border-color: var(--highlight-background);
-        box-shadow: 0 0 0 1px var(--highlight-background);
-      }
-
-      &[data-pressed] {
-        background: var(--button-backgound-pressed);
-      }
-
-      &[data-disabled] {
-        border-color: var(--button-border-disabled);
-        color: var(--text-color-disabled);
-      }
-    }
+  .react-aria-Button {
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
   }
 
   & table {
@@ -189,15 +164,48 @@ import {RangeCalendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-
   }
 }
 
+.react-aria-Button {
+  --button-background: var(--spectrum-global-color-gray-50);
+  --button-backgound-pressed: var(--spectrum-global-color-gray-100);
+  --button-border: var(--spectrum-global-color-gray-400);
+  --button-border-disabled: var(--spectrum-alias-border-color-disabled);
+  --focus-ring-color: slateblue;
+  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+
+  background: var(--button-background);
+  border: 1px solid var(--button-border);
+  color: var(--text-color);
+  box-shadow: 0 1px 2px rgba(0 0 0 / 0.1);
+  border-radius: 4px;
+  appearance: none;
+  vertical-align: middle;
+  font-size: 1rem;
+  padding: 0.4rem;
+  text-align: center;
+  margin: 0;
+  outline: none;
+
+  &[data-focus-visible] {
+    border-color: var(--focus-ring-color);
+    box-shadow: 0 0 0 1px var(--focus-ring-color);
+  }
+
+  &[data-pressed] {
+    background: var(--button-backgound-pressed);
+  }
+
+  &[data-disabled] {
+    border-color: var(--button-border-disabled);
+    color: var(--text-color-disabled);
+  }
+}
+
 @media (forced-colors: active) {
   .react-aria-RangeCalendar {
     forced-color-adjust: none;
 
     --highlight-background: Highlight;
     --highlight-foreground: HighlightText;
-    --button-border: ButtonBorder;
-    --button-border-disabled: GrayText;
-    --button-background: ButtonFace;
     --text-color: ButtonText;
     --text-color-disabled: GrayText;
     --text-color-invalid: LinkText;
@@ -205,6 +213,15 @@ import {RangeCalendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-
     --invalid-color: LinkText;
     --pressed-color: Canvas;
     --spectrum-alias-background-color-default: Canvas;
+  }
+
+  .react-aria-Button {
+    --button-border: ButtonBorder;
+    --button-border-disabled: GrayText;
+    --button-background: ButtonFace;
+    --button-backgound-pressed: ButtonFace;
+    --focus-ring-color: Highlight;
+    --text-color-disabled: GrayText;
   }
 }
 ```
@@ -751,6 +768,121 @@ If you need to customize one of the components within a `RangeCalendar`, such as
 function MyCalendarCell(props) {
   return <CalendarCell {...props} className="my-item" />
 }
+```
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['RangeCalendar']} docs={docs} />
+
+This example uses `RangeCalendarContext` to create a composite component containing a calendar and buttons representing preset dates. The <TypeLink links={docs.links} type={docs.exports.useSlottedContext} /> hook can be used to consume contexts that support the `slot` prop.
+
+```tsx example render=false export=true
+import {RangeCalendarContext, useSlottedContext} from 'react-aria-components';
+
+function CalendarPicker({children}) {
+  let [value, onChange] = React.useState(null);
+  let [focusedValue, onFocusChange] = React.useState(null);
+
+  return (
+    /*- begin highlight -*/
+    <RangeCalendarContext.Provider value={{value, onChange, focusedValue, onFocusChange}}>
+    {/*- end highlight -*/}
+      <div className="calendar-picker">
+        {children}
+      </div>
+    </RangeCalendarContext.Provider>
+  );
+}
+
+interface PresetProps {
+  value: {start: CalendarDate, end: CalendarDate},
+  children: React.ReactNode
+}
+
+function Preset({value, children}: PresetProps) {
+  /*- begin highlight -*/
+  let context = useSlottedContext(RangeCalendarContext);
+  /*- end highlight -*/
+  let onPress = () => {
+    context.onFocusChange(value.start);
+    context.onChange(value);
+  };
+
+  return (
+    <Button onPress={onPress}>{children}</Button>
+  );
+}
+```
+
+Now you can combine a `RangeCalendar` and one or more `Preset` components in a `CalendarPicker`.
+
+```tsx example
+import {startOfWeek, endOfWeek, startOfMonth, endOfMonth} from '@internationalized/date';
+import {useLocale} from 'react-aria';
+
+function Example() {
+  let {locale} = useLocale();
+  let now = today(getLocalTimeZone());
+  let nextMonth = now.add({months: 1});
+
+  return (
+    <CalendarPicker>
+      <Preset value={{start: startOfMonth(now), end: endOfMonth(now)}}>This month</Preset>
+      <Preset value={{start: startOfWeek(now, locale), end: endOfWeek(now, locale)}}>This week</Preset>
+      <Preset value={{start: startOfMonth(nextMonth), end: endOfMonth(nextMonth)}}>Next month</Preset>
+      <MyRangeCalendar aria-label="Date filter" />
+    </CalendarPicker>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.calendar-picker {
+  > .react-aria-Button {
+    margin: 0 4px 8px 4px;
+  }
+}
+```
+
+</details>
+
+### Custom children
+
+RangeCalendar passes props to its child components, such as the heading and buttons, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
+
+<ContextTable components={['Heading', 'Button', 'Text']} docs={docs} />
+
+This example consumes from `HeadingContext` in an existing styled heading component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by RangeCalendar.
+
+```tsx
+import type {HeadingProps} from 'react-aria-components';
+import {HeadingContext, useContextProps} from 'react-aria-components';
+
+const MyCustomHeading = React.forwardRef((props: HeadingProps, ref: React.ForwardedRef<HTMLHeadingElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, HeadingContext);
+  ///- end highlight -///
+
+  // ... your existing Heading component
+  return <h2 {...props} ref={ref} />;
+});
+```
+
+Now you can use `MyCustomHeading` within a `RangeCalendar`, in place of the builtin React Aria Components `Heading`.
+
+```tsx
+<RangeCalendar>
+  {/*- begin highlight -*/}
+  <MyCustomHeading />
+  {/*- end highlight -*/}
+  {/* ... */}
+</RangeCalendar>
 ```
 
 ### Hooks

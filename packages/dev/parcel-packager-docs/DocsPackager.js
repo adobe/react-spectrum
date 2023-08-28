@@ -282,6 +282,7 @@ function mergeInterface(obj) {
   }
 
   let properties = {};
+  let exts = [];
   if (obj.type === 'interface') {
     merge(properties, obj.properties);
 
@@ -291,8 +292,15 @@ function mergeInterface(obj) {
         console.log('ext should not be null', obj);
         continue;
       }
-      merge(properties, mergeInterface(ext).properties);
+      let merged = mergeInterface(ext);
+      if (merged.type === 'interface') {
+        merge(properties, merged.properties);
+      } else {
+        exts.push(merged);
+      }
     }
+  } else {
+    return obj;
   }
 
   return {
@@ -301,7 +309,7 @@ function mergeInterface(obj) {
     name: obj.name,
     properties,
     typeParameters: obj.typeParameters,
-    extends: [],
+    extends: exts,
     description: obj.description
   };
 }

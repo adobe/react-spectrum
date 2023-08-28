@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import statelyDocs from 'docs:@react-stately/select';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/tabs/docs/anatomy.svg';
@@ -328,7 +328,7 @@ function Example() {
           The Jurassic ranges from 200 million years to 145 million years ago.
         </TabPanel>
         <TabPanel id="cretaceous">
-          The Cretaceous is the longest period of the Mesozoic, spanning from 145 million to 66 years ago.
+          The Cretaceous is the longest period of the Mesozoic, spanning from 145 million to 66 million years ago.
         </TabPanel>
       </Tabs>
     </>
@@ -482,6 +482,96 @@ to the `items` prop. See [Collections](../react-stately/Collections.html) for mo
 ```
 
 ## Advanced customization
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['Tabs']} docs={docs} />
+
+This example shows a `Router` component that accepts `Tabs` and `Link` elements as children. When a link is clicked, it updates the selected tab accordingly.
+
+```tsx example render=false export=true
+import type {PressEvent} from 'react-aria-components';
+import {TabsContext, LinkContext} from 'react-aria-components';
+
+function Router({children}) {
+  let [selectedKey, onSelectionChange] = React.useState(null);
+  let onPress = (e: PressEvent) => {
+    onSelectionChange(e.target.getAttribute('data-href'));
+  };
+
+  return (
+    /*- begin highlight -*/
+    <TabsContext.Provider value={{selectedKey, onSelectionChange}}>
+    {/*- end highlight -*/}
+      <LinkContext.Provider value={{onPress}}>
+        {children}
+      </LinkContext.Provider>
+    </TabsContext.Provider>
+  );
+}
+```
+
+Now clicking a link rendered within a `Router` navigates to the linked tab.
+
+```tsx example
+import {Link} from 'react-aria-components';
+
+<Router>
+  <Tabs>
+    <TabList aria-label="Mesozoic time periods">
+      <Tab id="triassic">Triassic</Tab>
+      <Tab id="jurassic">Jurassic</Tab>
+      <Tab id="cretaceous">Cretaceous</Tab>
+    </TabList>
+    <TabPanel id="triassic">
+      The Triassic ranges roughly from 252 million to 201 million years ago,
+      preceding the <Link data-href="jurassic">Jurassic Period</Link>.
+    </TabPanel>
+    <TabPanel id="jurassic">
+      The Jurassic ranges from 200 million years to 145 million years ago,
+      preceding the <Link data-href="cretaceous">Cretaceous Period</Link>.
+    </TabPanel>
+    <TabPanel id="cretaceous">
+      The Cretaceous is the longest period of the Mesozoic, spanning from 145 million to 66 million years ago.
+    </TabPanel>
+  </Tabs>
+</Router>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Link {
+  --focus-ring-color: slateblue;
+  --text-color: var(--spectrum-global-color-gray-800);
+
+  color: var(--text-color);
+  outline: none;
+  position: relative;
+  text-decoration: underline;
+  cursor: pointer;
+
+  &[data-focus-visible]:after {
+    content: '';
+    position: absolute;
+    inset: -2px -4px;
+    border-radius: 6px;
+    border: 2px solid var(--focus-ring-color);
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Link {
+    --focus-ring-color: Highlight;
+    --text-color: LinkText;
+  }
+}
+```
+
+</details>
 
 ### Hooks
 

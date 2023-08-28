@@ -1,12 +1,18 @@
 import {SliderState} from '@react-stately/slider';
 
-export const sliderIds = new WeakMap<SliderState, string>();
+interface SliderData {
+  id: string,
+  'aria-describedby'?: string,
+  'aria-details'?: string
+}
+
+export const sliderData = new WeakMap<SliderState, SliderData>();
 
 export function getSliderThumbId(state: SliderState, index: number) {
-  let id = sliderIds.get(state);
-  if (!id) {
+  let data = sliderData.get(state);
+  if (!data) {
     throw new Error('Unknown slider state');
   }
 
-  return `${id}-${index}`;
+  return `${data.id}-${index}`;
 }

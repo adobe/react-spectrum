@@ -13,7 +13,7 @@ export default Layout;
 import docs from 'docs:react-aria-components';
 import statelyDocs from 'docs:@react-stately/checkbox';
 import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/checkbox/docs/checkboxgroup-anatomy.svg';
@@ -552,6 +552,88 @@ CheckboxGroup supports the `name` prop, paired with the Checkbox `value` prop, f
 ```
 
 ## Advanced customization
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+The components in a CheckboxGroup support the following contexts:
+
+<ContextTable components={['CheckboxGroup', 'Checkbox']} docs={docs} />
+
+This example shows a `CheckboxDescription` component that accepts a checkbox in its children and renders a description element below it. It uses the [useId](useId.html) hook to generate a unique id for the description, and associates it with the checkbox via the `aria-describedby` attribute passed to the `CheckboxContext` provider.
+
+```tsx example
+import {CheckboxContext} from 'react-aria-components';
+import {useId} from 'react-aria';
+
+interface CheckboxDescriptionProps {
+  children?: React.ReactNode,
+  description?: string
+}
+
+function CheckboxDescription({children, description}: CheckboxDescriptionProps) {
+  let descriptionId = useId();
+  return (
+    <div>
+      {/*- begin highlight -*/}
+      <CheckboxContext.Provider value={{'aria-describedby': descriptionId}}>
+      {/*- end highlight -*/}
+        {children}
+      </CheckboxContext.Provider>
+      <small id={descriptionId}>{description}</small>
+    </div>
+  );
+}
+
+<MyCheckboxGroup label="Email settings" defaultValue={['newsletter', 'deals', 'notifications']}>
+  <CheckboxDescription description="Receive our newsletter once per week.">
+    <MyCheckbox value="newsletter">Newsletter</MyCheckbox>
+  </CheckboxDescription>
+  <CheckboxDescription description="The best deals and sales for members.">
+    <MyCheckbox value="deals">Deals</MyCheckbox>
+  </CheckboxDescription>
+  <CheckboxDescription description="Notifications about your orders.">
+    <MyCheckbox value="notifications">Notifications</MyCheckbox>
+  </CheckboxDescription>
+</MyCheckboxGroup>
+```
+
+### Custom children
+
+CheckboxGroup passes props to its child components, such as the label, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
+
+<ContextTable components={['Label', 'Text']} docs={docs} />
+
+This example consumes from `LabelContext` in an existing styled label component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by CheckboxGroup.
+
+```tsx
+import type {LabelProps} from 'react-aria-components';
+import {LabelContext, useContextProps} from 'react-aria-components';
+
+const MyCustomLabel = React.forwardRef((props: LabelProps, ref: React.ForwardedRef<HTMLLabelElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, LabelContext);
+  ///- end highlight -///
+
+  // ... your existing Label component
+  return <label {...props} ref={ref} />;
+});
+```
+
+Now you can use `MyCustomLabel` within a `CheckboxGroup`, in place of the builtin React Aria Components `Label`.
+
+```tsx
+<CheckboxGroup>
+  {/*- begin highlight -*/}
+  <MyCustomLabel>Favorite sports</MyCustomLabel>
+  {/*- end highlight -*/}
+  <MyCheckbox value="soccer">Soccer</MyCheckbox>
+  <MyCheckbox value="baseball">Baseball</MyCheckbox>
+  <MyCheckbox value="basketball">Basketball</MyCheckbox>
+</CheckboxGroup>
+```
 
 ### Hooks
 

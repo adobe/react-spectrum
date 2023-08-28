@@ -18,7 +18,7 @@ import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, OutputHTMLAttributes, RefObject, useContext, useRef} from 'react';
 import {SliderState, useSliderState} from 'react-stately';
 
-export interface SliderProps<T = number | number[]> extends AriaSliderProps<T>, RenderProps<SliderRenderProps>, SlotProps {
+export interface SliderProps<T = number | number[]> extends Omit<AriaSliderProps<T>, 'label'>, RenderProps<SliderRenderProps>, SlotProps {
   /**
    * The display format of the value label.
    */

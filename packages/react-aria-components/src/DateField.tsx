@@ -79,7 +79,7 @@ function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: Forwarded
     <Provider
       values={[
         [DateInputContext, {state, fieldProps, ref: fieldRef, inputRef, inputProps}],
-        [LabelContext, {...labelProps, ref: labelRef}],
+        [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [TextContext, {
           slots: {
             description: descriptionProps,

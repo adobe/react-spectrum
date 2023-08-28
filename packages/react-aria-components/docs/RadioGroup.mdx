@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/radio/docs/anatomy.svg';
@@ -308,7 +308,7 @@ function MyRadioGroup({
 }: MyRadioGroupProps) {
   return (
     <RadioGroup {...props}>
-      {label}
+      <Label>{label}</Label>
       {children}
       {description && <Text slot="description">{description}</Text>}
       {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
@@ -463,6 +463,86 @@ RadioGroup supports the `name` prop, paired with the Radio `value` prop, for int
 ```
 
 ## Advanced customization
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['RadioGroup', 'Radio']} docs={docs} />
+
+This example shows a `RadioDescription` component that accepts a radio in its children and renders a description element below it. It uses the [useId](useId.html) hook to generate a unique id for the description, and associates it with the radio via the `aria-describedby` attribute passed to the `RadioContext` provider.
+
+```tsx example
+import {RadioContext} from 'react-aria-components';
+import {useId} from 'react-aria';
+
+interface RadioDescriptionProps {
+  children?: React.ReactNode,
+  description?: string
+}
+
+function RadioDescription({children, description}: RadioDescriptionProps) {
+  let descriptionId = useId();
+  return (
+    <div>
+      {/*- begin highlight -*/}
+      <RadioContext.Provider value={{'aria-describedby': descriptionId}}>
+      {/*- end highlight -*/}
+        {children}
+      </RadioContext.Provider>
+      <small id={descriptionId}>{description}</small>
+    </div>
+  );
+}
+
+<MyRadioGroup label="Show scrollbars" defaultValue="automatic">
+  <RadioDescription description="Scrollbars will always be visible when using a mouse, and only while scrolling when using a trackpad.">
+    <Radio value="automatic">Automatic</Radio>
+  </RadioDescription>
+  <RadioDescription description="Scrollbars will appear only while you are scrolling.">
+    <Radio value="scrolling">While scrolling</Radio>
+  </RadioDescription>
+  <RadioDescription description="Scrollbars will always be visible.">
+    <Radio value="always">Always</Radio>
+  </RadioDescription>
+</MyRadioGroup>
+```
+
+### Custom children
+
+RadioGroup passes props to its child components, such as the label, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
+
+<ContextTable components={['Label', 'Text']} docs={docs} />
+
+This example consumes from `LabelContext` in an existing styled label component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by RadioGroup.
+
+```tsx
+import type {LabelProps} from 'react-aria-components';
+import {LabelContext, useContextProps} from 'react-aria-components';
+
+const MyCustomLabel = React.forwardRef((props: LabelProps, ref: React.ForwardedRef<HTMLLabelElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, LabelContext);
+  ///- end highlight -///
+
+  // ... your existing Label component
+  return <label {...props} ref={ref} />;
+});
+```
+
+Now you can use `MyCustomLabel` within a `RadioGroup`, in place of the builtin React Aria Components `Label`.
+
+```tsx
+<RadioGroup>
+  {/*- begin highlight -*/}
+  <MyCustomLabel>Favorite pet</MyCustomLabel>
+  {/*- end highlight -*/}
+  <Radio value="dogs">Dog</Radio>
+  <Radio value="cats">Cat</Radio>
+  <Radio value="dragon">Dragon</Radio>
+</RadioGroup>
+```
 
 ### Hooks
 
