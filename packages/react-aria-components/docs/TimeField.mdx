@@ -13,7 +13,7 @@ export default Layout;
 import docs from 'docs:react-aria-components';
 import i18nDocs from 'docs:@internationalized/date';
 import statelyDocs from 'docs:@react-stately/datepicker';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/datepicker/docs/timefield-anatomy.svg';
@@ -507,6 +507,108 @@ If you need to customize one of the components within a `TimeField`, such as `La
 function MyDateSegment(props) {
   return <MyDateSegment {...props} className="my-date-segment" />
 }
+```
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['TimeField']} docs={docs} />
+
+This example shows a `FieldGroup` component that renders a group of time fields with a title and optional error message. It uses the [useId](useId.html) hook to generate a unique id for the error message. All of the child TimeFields are marked invalid and associated with the error message via the `aria-describedby` attribute passed to the `TimeFieldContext` provider.
+
+```tsx example
+import {TimeFieldContext} from 'react-aria-components';
+import {useId} from 'react-aria';
+
+interface FieldGroupProps {
+  title?: string,
+  children?: React.ReactNode,
+  errorMessage?: string
+}
+
+function FieldGroup({title, children, errorMessage}: FieldGroupProps) {
+  let errorId = useId();
+  return (
+    <fieldset>
+      <legend>{title}</legend>
+      {/*- begin highlight -*/}
+      <TimeFieldContext.Provider value={{
+        validationState: errorMessage ? 'invalid' : undefined,
+        'aria-describedby': errorMessage ? errorId : undefined
+      }}>
+      {/*- end highlight -*/}
+        {children}
+      </TimeFieldContext.Provider>
+      {errorMessage && <small id={errorId} className="invalid">{errorMessage}</small>}
+    </fieldset>
+  );
+}
+
+<FieldGroup title="Schedule meeting time" errorMessage="End time must be after start time.">
+  <MyTimeField label="Start" defaultValue={new Time(13)} />
+  <MyTimeField label="End" defaultValue={new Time(9)} />
+</FieldGroup>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+fieldset {
+  padding: 1.5em;
+  width: fit-content;
+}
+
+.invalid {
+  color: var(--spectrum-global-color-red-600);
+  margin-top: 1em;
+  display: block;
+}
+
+@media (forced-colors: active) {
+  .invalid {
+    color: LinkText;
+  }
+}
+```
+
+</details>
+
+### Custom children
+
+TimeField passes props to its child components, such as the label, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
+
+<ContextTable components={['Label', 'Text']} docs={docs} />
+
+This example consumes from `LabelContext` in an existing styled label component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by TimeField.
+
+```tsx
+import type {LabelProps} from 'react-aria-components';
+import {LabelContext, useContextProps} from 'react-aria-components';
+
+const MyCustomLabel = React.forwardRef((props: LabelProps, ref: React.ForwardedRef<HTMLLabelElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, LabelContext);
+  ///- end highlight -///
+
+  // ... your existing Label component
+  return <label {...props} ref={ref} />;
+});
+```
+
+Now you can use `MyCustomLabel` within a `TimeField`, in place of the builtin React Aria Components `Label`.
+
+```tsx
+<TimeField>
+  {/*- begin highlight -*/}
+  <MyCustomLabel>Name</MyCustomLabel>
+  {/*- end highlight -*/}
+  <DateInput>
+    {segment => <DateSegment segment={segment} />}
+  </DateInput>
+</TimeField>
 ```
 
 ### Hooks

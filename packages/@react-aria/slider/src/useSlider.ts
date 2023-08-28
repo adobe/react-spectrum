@@ -13,7 +13,7 @@
 import {AriaSliderProps} from '@react-types/slider';
 import {clamp, mergeProps, useGlobalListeners} from '@react-aria/utils';
 import {DOMAttributes} from '@react-types/shared';
-import {getSliderThumbId, sliderIds} from './utils';
+import {getSliderThumbId, sliderData} from './utils';
 import React, {LabelHTMLAttributes, OutputHTMLAttributes, RefObject, useRef} from 'react';
 import {setInteractionModality, useMove} from '@react-aria/interactions';
 import {SliderState} from '@react-stately/slider';
@@ -54,7 +54,11 @@ export function useSlider<T extends number | number[]>(
   let isVertical = props.orientation === 'vertical';
 
   // Attach id of the label to the state so it can be accessed by useSliderThumb.
-  sliderIds.set(state, labelProps.id ?? fieldProps.id);
+  sliderData.set(state, {
+    id: labelProps.id ?? fieldProps.id,
+    'aria-describedby': props['aria-describedby'],
+    'aria-details': props['aria-details']
+  });
 
   let {direction} = useLocale();
 
