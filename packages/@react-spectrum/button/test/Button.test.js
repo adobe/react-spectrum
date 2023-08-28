@@ -277,7 +277,7 @@ describe('Button', function () {
     expect(eventDown.defaultPrevented).toBeFalsy();
   });
 
-  // iPending state
+  // isPending state
   it('displays a spinner after a short delay when isPending prop is true', function () {
     let spinnerVisibilityDelay = 1000;
     let onPressSpy = jest.fn();
