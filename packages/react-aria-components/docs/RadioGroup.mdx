@@ -261,21 +261,7 @@ function MyRadioGroup({
 </MyRadioGroup>
 ```
 
-## Usage
-
-The following examples show how to use the `MyRadioGroup` component created in the above example.
-
-### Orientation
-
-RadioGroups are vertically oriented by default.
-The `orientation` prop can be used to change the orientation to horizontal.
-
-```tsx example
-<MyRadioGroup label="Favorite avatar" orientation="horizontal">
-  <Radio value="wizard">Wizard</Radio>
-  <Radio value="dragon">Dragon</Radio>
-</MyRadioGroup>
-```
+## Value
 
 ### Default value
 
@@ -309,7 +295,18 @@ function Example() {
 }
 ```
 
-### Validation
+### HTML forms
+
+RadioGroup supports the `name` prop, paired with the Radio `value` prop, for integration with HTML forms.
+
+```tsx example
+<MyRadioGroup label="Favorite pet" name="pet">
+  <Radio value="dogs">Dogs</Radio>
+  <Radio value="cats">Cats</Radio>
+</MyRadioGroup>
+```
+
+## Validation
 
 RadioGroups can display a validation state to communicate to the user if the current value is invalid.
 Implement your own validation logic in your app and set the `isInvalid` prop accordingly.
@@ -321,7 +318,19 @@ Implement your own validation logic in your app and set the `isInvalid` prop acc
 </MyRadioGroup>
 ```
 
-### Help text
+## Orientation
+
+RadioGroups are vertically oriented by default.
+The `orientation` prop can be used to change the orientation to horizontal.
+
+```tsx example
+<MyRadioGroup label="Favorite avatar" orientation="horizontal">
+  <Radio value="wizard">Wizard</Radio>
+  <Radio value="dragon">Dragon</Radio>
+</MyRadioGroup>
+```
+
+## Help text
 
 The `description` slot can be used to associate additional help text with a radio group. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to semantically mark the radio group as invalid for assistive technologies.
 
@@ -355,7 +364,7 @@ function Example() {
 }
 ```
 
-### Disabled
+## Disabled
 
 The entire RadioGroup can be disabled with the `isDisabled` prop.
 
@@ -386,17 +395,6 @@ See the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/
 <MyRadioGroup label="Favorite avatar" defaultValue="wizard" isReadOnly>
   <Radio value="wizard">Wizard</Radio>
   <Radio value="dragon">Dragon</Radio>
-</MyRadioGroup>
-```
-
-### HTML forms
-
-RadioGroup supports the `name` prop, paired with the Radio `value` prop, for integration with HTML forms.
-
-```tsx example
-<MyRadioGroup label="Favorite pet" name="pet">
-  <Radio value="dogs">Dogs</Radio>
-  <Radio value="cats">Cats</Radio>
 </MyRadioGroup>
 ```
 

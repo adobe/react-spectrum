@@ -229,9 +229,7 @@ function MyCheckbox({children, ...props}: CheckboxProps) {
 <MyCheckbox>Unsubscribe</MyCheckbox>
 ```
 
-## Usage
-
-The following examples show how to use the `MyCheckbox` component created in the above example.
+## Value
 
 ### Default value
 
@@ -270,7 +268,15 @@ The Checkbox will visually remain indeterminate until the `isIndeterminate` prop
 <MyCheckbox isIndeterminate>Subscribe</MyCheckbox>
 ```
 
-### Validation
+### HTML forms
+
+Checkbox supports the `name` and `value` props for integration with HTML forms.
+
+```tsx example
+<MyCheckbox name="newsletter" value="subscribe">Subscribe</MyCheckbox>
+```
+
+## Validation
 
 Checkboxes can display a validation state to communicate to the user if the current value is invalid.
 Implement your own validation logic in your app and set the `isInvalid` prop accordingly.
@@ -279,7 +285,7 @@ Implement your own validation logic in your app and set the `isInvalid` prop acc
 <MyCheckbox isInvalid>I accept the terms and conditions</MyCheckbox>
 ```
 
-### Disabled
+## Disabled
 
 Checkboxes can be disabled using the `isDisabled` prop.
 
@@ -294,15 +300,6 @@ See the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/
 
 ```tsx example
 <MyCheckbox isSelected isReadOnly>Agree</MyCheckbox>
-```
-
-
-### HTML forms
-
-Checkbox supports the `name` and `value` props for integration with HTML forms.
-
-```tsx example
-<MyCheckbox name="newsletter" value="subscribe">Subscribe</MyCheckbox>
 ```
 
 ## Props

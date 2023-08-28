@@ -207,9 +207,7 @@ function MyTextField({label, description, errorMessage, ...props}: MyTextFieldPr
 <MyTextField label="Name" />
 ```
 
-## Usage
-
-The following examples show how to use the `MyTextField` component created in the above example.
+## Value
 
 ### Default value
 
@@ -238,14 +236,28 @@ function Example() {
 }
 ```
 
+### HTML forms
+
+TextField supports the `name` prop for integration with HTML forms. In addition, attributes such as `type`, `pattern`, `inputMode`, and others are passed through to the underlying `<input>` element.
+
+```tsx example
+<MyTextField label="Email" name="email" type="email" />
+```
+
+## Help text
+
 ### Description
 
 The `description` slot can be used to associate additional help text with a text field.
 
 ```tsx example
-<MyTextField
-  label="Email"
-  description="Enter an email for us to contact you about your order." />
+<TextField>
+  <Label>Email</Label>
+  <Input />
+  {/*- begin highlight -*/}
+  <Text slot="description">Enter an email for us to contact you about your order.</Text>
+  {/*- end highlight -*/}
+</TextField>
 ```
 
 ### Error message
@@ -254,13 +266,16 @@ The `errorMessage` slot can be used to help the user fix a validation error. It 
 semantically mark the input element as invalid for assistive technologies.
 
 ```tsx example
-<MyTextField
-  label="Email"
-  isInvalid
-  errorMessage="Please enter a valid email address." />
+<TextField isInvalid>
+  <Label>Email</Label>
+  <Input />
+  {/*- begin highlight -*/}
+  <Text slot="errorMessage">Please enter a valid email address.</Text>
+  {/*- end highlight -*/}
+</TextField>
 ```
 
-### Disabled
+## Disabled
 
 A TextField can be disabled using the `isDisabled` prop.
 
@@ -277,7 +292,7 @@ and the contents can still be copied. See [the MDN docs](https://developer.mozil
 <MyTextField label="Email" defaultValue="abc@adobe.com" isReadOnly />
 ```
 
-### Required
+## Required
 
 A TextField can be marked as required using the `isRequired` prop. This is exposed to assistive technologies by React Aria. It's your responsibility to add additional visual styling if needed.
 
@@ -285,15 +300,7 @@ A TextField can be marked as required using the `isRequired` prop. This is expos
 <MyTextField label="Email" isRequired />
 ```
 
-### HTML forms
-
-TextField supports the `name` prop for integration with HTML forms. In addition, attributes such as `type`, `pattern`, `inputMode`, and others are passed through to the underlying `<input>` element.
-
-```tsx example
-<MyTextField label="Email" name="email" type="email" />
-```
-
-### Multi-line
+## Multi-line
 
 TextField supports using the `TextArea` component in place of `Input` for multi-line text input.
 

@@ -445,11 +445,7 @@ function MyItem(props: ItemProps) {
 
 </details>
 
-## Usage
-
-The following examples show how to use the `MyComboBox` component created in the above example.
-
-### Dynamic collections
+## Dynamic collections
 
 ComboBox follows the [Collection Components API](../react-stately/collections.html), accepting both static and dynamic collections.
 The examples above show static collections, which can be used when the full list of options is known ahead of time. Dynamic collections,
@@ -485,7 +481,53 @@ function Example() {
 }
 ```
 
-### Allow custom values
+## Value
+
+A ComboBox's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultInputValue` prop.
+Alternatively, a controlled value can be provided using the `inputValue` prop. Note that the input value of the ComboBox does not affect
+the ComboBox's selected option.
+
+```tsx example
+function Example() {
+  let options = [
+    {id: 1, name: 'Adobe Photoshop'},
+    {id: 2, name: 'Adobe XD'},
+    {id: 3, name: 'Adobe InDesign'},
+    {id: 4, name: 'Adobe AfterEffects'},
+    {id: 5, name: 'Adobe Illustrator'},
+    {id: 6, name: 'Adobe Lightroom'},
+    {id: 7, name: 'Adobe Premiere Pro'},
+    {id: 8, name: 'Adobe Fresco'},
+    {id: 9, name: 'Adobe Dreamweaver'}
+  ];
+  let [value, setValue] = React.useState('Adobe XD');
+
+  return (
+    <div style={{display: 'flex', gap: 16, flexWrap: 'wrap'}}>
+      <MyComboBox
+        label="Adobe product (Uncontrolled)"
+        defaultItems={options}
+        /*- begin highlight -*/
+        defaultInputValue="Adobe XD">
+        {/*- end highlight -*/}
+        {item => <Item>{item.name}</Item>}
+      </MyComboBox>
+
+      <MyComboBox
+        label="Pick an Adobe product (Controlled)"
+        defaultItems={options}
+        /*- begin highlight -*/
+        inputValue={value}
+        onInputChange={setValue}>
+        {/*- end highlight -*/}
+        {item => <Item>{item.name}</Item>}
+      </MyComboBox>
+    </div>
+  );
+}
+```
+
+### Custom values
 
 By default, `ComboBox` doesn't allow users to specify a value that doesn't exist in the list of options and will revert the input value to
 the current selected value on blur. By specifying `allowsCustomValue`, this behavior is suppressed and the user is free to enter
@@ -502,11 +544,83 @@ any value within the field.
 </MyComboBox>
 ```
 
-### Sections
+### HTML forms
+
+ComboBox supports the `name` prop for integration with HTML forms. By default, the `id` of the selected item will be submitted to the server. If the `formValue` prop is set to `"text"` or the `allowsCustomValue` prop is true, the text in the input field will be submitted instead.
+
+```tsx example
+<div style={{display: 'flex', gap: 16, flexWrap: 'wrap'}}>
+  <MyComboBox
+    label="Favorite Animal"
+    ///- begin highlight -///
+    name="favoriteAnimalId"
+    ///- end highlight -///
+  >
+    <Item id="panda">Panda</Item>
+    <Item id="cat">Cat</Item>
+    <Item id="dog">Dog</Item>
+  </MyComboBox>
+  <MyComboBox
+    label="Ice cream flavor"
+    ///- begin highlight -///
+    name="iceCream"
+    formValue="text"
+    allowsCustomValue
+    ///- end highlight -///
+  >
+    <Item>Chocolate</Item>
+    <Item>Mint</Item>
+    <Item>Strawberry</Item>
+    <Item>Vanilla</Item>
+  </MyComboBox>
+</div>
+```
+
+## Selection
+Setting a selected option can be done by using the `defaultSelectedKey` or `selectedKey` prop. The selected key corresponds to the `key` of an item. See [Events](#events) for more details on selection events.
+Additionally, see the `react-stately` [Selection docs](../react-stately/selection.html#selected-key-data-type) for caveats regarding selection prop typing.
+
+```tsx example
+function Example() {
+  let options = [
+    {id: 1, name: 'Adobe Photoshop'},
+    {id: 2, name: 'Adobe XD'},
+    {id: 3, name: 'Adobe InDesign'},
+    {id: 4, name: 'Adobe AfterEffects'},
+    {id: 5, name: 'Adobe Illustrator'},
+    {id: 6, name: 'Adobe Lightroom'},
+    {id: 7, name: 'Adobe Premiere Pro'},
+    {id: 8, name: 'Adobe Fresco'},
+    {id: 9, name: 'Adobe Dreamweaver'}
+  ];
+  let [productId, setProductId] = React.useState<React.Key>(9);
+
+  return (
+    <div style={{display: 'flex', gap: 16, flexWrap: 'wrap'}}>
+      <MyComboBox
+        label="Pick an Adobe product (uncontrolled)"
+        defaultItems={options}
+        defaultSelectedKey={9}>
+        {item => <Item>{item.name}</Item>}
+      </MyComboBox>
+
+      <MyComboBox
+        label="Pick an Adobe product (controlled)"
+        defaultItems={options}
+        selectedKey={productId}
+        onSelectionChange={selected => setProductId(selected)}>
+        {item => <Item>{item.name}</Item>}
+      </MyComboBox>
+    </div>
+  );
+}
+```
+
+## Sections
 
 ComboBox supports sections in order to group options. Sections can be used by wrapping groups of items in a `Section` element. A `<Header>` element may also be included to label the section.
 
-#### Static items
+### Static items
 
 ```tsx example
 import {Section, Header} from 'react-aria-components';
@@ -537,7 +651,7 @@ import {Section, Header} from 'react-aria-components';
 </MyComboBox>
 ```
 
-#### Dynamic items
+### Dynamic items
 
 Sections used with dynamic items are populated from a hierarchical data structure. Please note that `Section` takes an array of data using the `items` prop only. If the section also has a header,
 the <TypeLink links={docs.links} type={docs.exports.Collection} /> component can be used to render the child items.
@@ -584,10 +698,11 @@ function Example() {
 }
 ```
 
-### Complex items
+## Text slots
 
-Items within ComboBox also allow for additional content used to better communicate options. Icons and descriptions can be added to the `children` of `Item` as shown in the example below.
-If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements.
+By default, items in a ComboBox are labeled by their text contents for accessibility. Items also support the "label" and "description" slots to separate primary and secondary content, which improves screen reader announcements and can also be used for styling purposes.
+
+**Note**: The ARIA spec prohibits listbox items from including interactive content such as buttons, checkboxes, etc.
 
 ```tsx example
 import {Text} from 'react-aria-components';
@@ -612,7 +727,7 @@ import {Text} from 'react-aria-components';
 </MyComboBox>
 ```
 
-### Custom filtering
+## Custom filtering
 
 By default, `ComboBox` uses a "contains" function from [useFilter](useFilter.html) to filter the list of options. This can be overridden using the `defaultFilter` prop, or by using the `items` prop to control the filtered list. When `items` is provided rather than `defaultItems`, `ComboBox` does no filtering of its own.
 
@@ -655,7 +770,7 @@ function Example() {
 }
 ```
 
-### Fully controlled
+## Fully controlled
 
 The following example shows how you would create a controlled ComboBox, controlling everything from the selected value (`selectedKey`)
 to the combobox options (`items`). By passing in `inputValue`, `selectedKey`, and `items` to the `ComboBox` you can control
@@ -741,7 +856,7 @@ function ControlledComboBox() {
 <ControlledComboBox />
 ```
 
-### Menu trigger behavior
+## Menu trigger behavior
 
 `ComboBox` supports three different `menuTrigger` prop values:
 
@@ -762,7 +877,7 @@ The example below has `menuTrigger` set to `focus`.
 </MyComboBox>
 ```
 
-### Disabled options
+## Disabled options
 
 You can disable specific options by providing an array of keys to `ComboBox`
 via the `disabledKeys` prop. This will prevent options with matching keys from being pressable and
@@ -779,7 +894,7 @@ receiving keyboard focus as shown in the example below. Note that you are respon
 </MyComboBox>
 ```
 
-### Asynchronous loading
+## Asynchronous loading
 
 This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading
 and filtering of data from a server. You may additionally want to display a spinner to indicate the loading
@@ -821,7 +936,7 @@ function AsyncLoadingExample() {
 }
 ```
 
-### Help text
+## Help text
 
 The `description` slot can be used to associate additional help text with a ComboBox. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to semantically mark the ComboBox as invalid for assistive technologies.
 
@@ -844,53 +959,26 @@ function Example() {
   ]);
 
   return (
-    <MyComboBox
-      isInvalid={animalId && !isValid}
-      label="Favorite animal"
-      description={isValid ? 'Pick your favorite animal, you will be judged.' : null}
-      errorMessage={isValid ? null : animalId === 2
+    <ComboBox selectedKey={animalId} onSelectionChange={setAnimalId} isInvalid={animalId && !isValid}>
+      <Label>Favorite Animal</Label>
+      <div>
+        <Input />
+        <Button>▼</Button>
+      </div>
+      {/*- begin highlight -*/}
+      {isValid && <Text slot="description">Pick your favorite animal, you will be judged.</Text>}
+      {!isValid && <Text slot="errorMessage">{animalId === 2
         ? 'The author of this example is a dog person.'
-        : "Oh no it's a snake! Choose anything else."}
-      items={options}
-      selectedKey={animalId}
-      onSelectionChange={(selected) => setAnimalId(selected)}
-    >
-      {(item) => <Item>{item.name}</Item>}
-    </MyComboBox>
+        : "Oh no it's a snake! Choose anything else."}</Text>}
+      {/*- end highlight -*/}
+      <Popover>
+        <ListBox items={options}>
+          {item => <Item>{item.name}</Item>}
+        </ListBox>
+      </Popover>
+    </ComboBox>
   );
 }
-```
-
-### HTML forms
-
-ComboBox supports the `name` prop for integration with HTML forms. By default, the `id` of the selected item will be submitted to the server. If the `formValue` prop is set to `"text"` or the `allowsCustomValue` prop is true, the text in the input field will be submitted instead.
-
-```tsx example
-<div style={{display: 'flex', gap: 16, flexWrap: 'wrap'}}>
-  <MyComboBox
-    label="Favorite Animal"
-    ///- begin highlight -///
-    name="favoriteAnimalId"
-    ///- end highlight -///
-  >
-    <Item id="panda">Panda</Item>
-    <Item id="cat">Cat</Item>
-    <Item id="dog">Dog</Item>
-  </MyComboBox>
-  <MyComboBox
-    label="Ice cream flavor"
-    ///- begin highlight -///
-    name="iceCream"
-    formValue="text"
-    allowsCustomValue
-    ///- end highlight -///
-  >
-    <Item>Chocolate</Item>
-    <Item>Mint</Item>
-    <Item>Strawberry</Item>
-    <Item>Vanilla</Item>
-  </MyComboBox>
-</div>
 ```
 
 ## Props

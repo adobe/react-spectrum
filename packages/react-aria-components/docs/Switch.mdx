@@ -196,9 +196,7 @@ function MySwitch({children, ...props}: MySwitchProps) {
 <MySwitch>Wi-Fi</MySwitch>
 ```
 
-## Usage
-
-The following examples show how to use the `MySwitch` component created in the above example.
+## Value
 
 ### Default value
 
@@ -225,7 +223,15 @@ function Example() {
 }
 ```
 
-### Disabled
+### HTML forms
+
+Switch supports the `name` and `value` props for integration with HTML forms.
+
+```tsx example
+<MySwitch name="power" value="low">Low power mode</MySwitch>
+```
+
+## Disabled
 
 Switches can be disabled using the `isDisabled` prop.
 
@@ -240,15 +246,6 @@ See the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/
 
 ```tsx example
 <MySwitch isSelected isReadOnly>Bluetooth</MySwitch>
-```
-
-
-### HTML forms
-
-Switch supports the `name` and `value` props for integration with HTML forms.
-
-```tsx example
-<MySwitch name="power" value="low">Low power mode</MySwitch>
 ```
 
 ## Props
