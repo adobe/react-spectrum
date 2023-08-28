@@ -26,7 +26,6 @@ import {mergeProps} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ElementType, ReactElement, useEffect, useState} from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
-import {SpectrumProgressCircleProps} from '@react-types/progress';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {Text} from '@react-spectrum/text';
 import {useButton} from '@react-aria/button';
@@ -73,13 +72,6 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
   let {hoverProps, isHovered} = useHover({isDisabled});
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {styleProps} = useStyleProps(otherProps);
-  let progressCircleProps: SpectrumProgressCircleProps = {
-    'aria-label': stringFormatter.format('loading'),
-    isIndeterminate: true,
-    size: 'S',
-    UNSAFE_className: classNames(styles, 'spectrum-Button-circleLoader'),
-    ...((variant === 'overBackground' || staticColor) && {variant: 'overBackground'})
-  };
   let hasLabel = useHasChild(`.${styles['spectrum-Button-label']}`, domRef);
   let hasIcon = useHasChild(`.${styles['spectrum-Icon']}`, domRef);
   let [isProgressVisible, setIsProgressVisible] = useState(false);
@@ -145,7 +137,11 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
             }
           }}>
           {isProgressVisible && <ProgressCircle
-            {...progressCircleProps} />}
+            aria-label={stringFormatter.format('loading')}
+            isIndeterminate
+            size="S"
+            UNSAFE_className={classNames(styles, 'spectrum-Button-circleLoader')}
+            variant={staticColor ? 'overBackground' : undefined} />}
           {typeof children === 'string'
             ? <Text>{children}</Text>
             : children}
