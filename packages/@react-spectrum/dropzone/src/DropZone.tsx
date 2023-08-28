@@ -54,6 +54,7 @@ function DropZone(props: SpectrumDropZoneProps, ref: DOMRef<HTMLDivElement>) {
         }}>
         {children}
       </SlotProvider>
+      <div className={classNames(styles, 'spectrum-Dropzone-backdrop')} />
       <div
         id={messageId}
         className={

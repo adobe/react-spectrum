@@ -28,6 +28,16 @@ governing permissions and limitations under the License.
   padding: var(--spectrum-dropzone-padding);
   border-style: dashed;
 
+  .spectrum-Dropzone-backdrop {
+    display: none;
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
   &:focus {
     outline: 0;
     border-style: dashed;
@@ -35,8 +45,15 @@ governing permissions and limitations under the License.
       border-style: solid;
     }
   }
+
   &[data-drop-target].spectrum-Dropzone--filled {
     .spectrum-Dropzone-banner {
+      display: block;
+    }
+  }
+
+  &[data-drop-target] {
+    .spectrum-Dropzone-backdrop {
       display: block;
     }
   }
@@ -53,4 +70,19 @@ governing permissions and limitations under the License.
   padding: var(--spectrum-dropzone-padding-y) var(--spectrum-dropzone-padding-x);
   border-radius: var(--spectrum-dropzone-border-radius);
   border: 1px solid var(--spectrum-dropzone-banner-border-color);
+}
+
+@media (forced-colors: active) {
+  .spectrum-Dropzone {
+    &[data-drop-target] {
+      .spectrum-Dropzone-backdrop {
+        display: none;
+      }
+    }
+    &[data-drop-target].spectrum-Dropzone--filled {
+      .spectrum-Dropzone-backdrop {
+        display: block;
+      }
+    }
+  }
 }
