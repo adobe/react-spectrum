@@ -879,14 +879,12 @@ describe('ComboBox', function () {
 
       let combobox = getByRole('combobox');
       expect(combobox.value).toBe('Two');
-      expect(onInputChange).toHaveBeenCalledTimes(1);
-      expect(onInputChange).toHaveBeenLastCalledWith('Two');
 
       act(() => combobox.focus());
       fireEvent.change(combobox, {target: {value: 'Tw'}});
       act(() => jest.runAllTimers());
 
-      expect(onInputChange).toHaveBeenCalledTimes(2);
+      expect(onInputChange).toHaveBeenCalledTimes(1);
       expect(onInputChange).toHaveBeenLastCalledWith('Tw');
       expect(combobox.value).toBe('Tw');
       let listbox = getByRole('listbox');
@@ -907,7 +905,7 @@ describe('ComboBox', function () {
       expect(queryByRole('listbox')).toBeNull();
       expect(combobox.value).toBe('Two');
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
-      expect(onInputChange).toHaveBeenCalledTimes(3);
+      expect(onInputChange).toHaveBeenCalledTimes(2);
       expect(onInputChange).toHaveBeenLastCalledWith('Two');
     });
 
@@ -916,14 +914,12 @@ describe('ComboBox', function () {
 
       let combobox = getByRole('combobox');
       expect(combobox.value).toBe('Two');
-      expect(onInputChange).toHaveBeenCalledTimes(1);
-      expect(onInputChange).toHaveBeenLastCalledWith('Two');
 
       act(() => combobox.focus());
       fireEvent.change(combobox, {target: {value: 'Tw'}});
       act(() => jest.runAllTimers());
 
-      expect(onInputChange).toHaveBeenCalledTimes(2);
+      expect(onInputChange).toHaveBeenCalledTimes(1);
       expect(onInputChange).toHaveBeenLastCalledWith('Tw');
       expect(combobox.value).toBe('Tw');
       let listbox = getByRole('listbox');
@@ -938,7 +934,7 @@ describe('ComboBox', function () {
       // selectionManager.select from useSingleSelectListState always calls onSelectionChange even if the key is the same
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenLastCalledWith('2');
-      expect(onInputChange).toHaveBeenCalledTimes(3);
+      expect(onInputChange).toHaveBeenCalledTimes(2);
       expect(onInputChange).toHaveBeenLastCalledWith('Two');
     });
 
@@ -2344,7 +2340,6 @@ describe('ComboBox', function () {
         });
 
         expect(combobox.value).toBe('Two');
-        expect(onInputChange).toHaveBeenLastCalledWith('Two');
 
         let listbox = getByRole('listbox');
         expect(listbox).toBeVisible();
@@ -2382,7 +2377,6 @@ describe('ComboBox', function () {
         let {getByRole, rerender} = render(<ExampleComboBox selectedKey="2" />);
         let combobox = getByRole('combobox');
         expect(combobox.value).toBe('Two');
-        expect(onInputChange).toHaveBeenLastCalledWith('Two');
 
         rerender(<ExampleComboBox selectedKey="1" />);
         expect(combobox.value).toBe('One');

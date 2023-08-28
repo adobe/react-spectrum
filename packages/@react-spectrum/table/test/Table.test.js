@@ -38,7 +38,8 @@ let {
   InlineDeleteButtons: DeletableRowsTable,
   EmptyStateStory: EmptyStateTable,
   WithBreadcrumbNavigation: TableWithBreadcrumbs,
-  TypeaheadWithDialog: TypeaheadWithDialog
+  TypeaheadWithDialog: TypeaheadWithDialog,
+  ColumnHeaderFocusRingTable
 } = composeStories(stories);
 
 
@@ -184,6 +185,9 @@ export let tableTests = () => {
 
     return el;
   };
+
+  let focusCell = (tree, text) => act(() => getCell(tree, text).focus());
+  let moveFocus = (key, opts = {}) => {fireEvent.keyDown(document.activeElement, {key, ...opts});};
 
   it('renders a static table', function () {
     let {getByRole} = render(
@@ -925,9 +929,6 @@ export let tableTests = () => {
         </TableBody>
       </TableView>
     );
-
-    let focusCell = (tree, text) => act(() => getCell(tree, text).focus());
-    let moveFocus = (key, opts = {}) => {fireEvent.keyDown(document.activeElement, {key, ...opts});};
 
     describe('ArrowRight', function () {
       it('should move focus to the next cell in a row with ArrowRight', function () {
@@ -4449,14 +4450,27 @@ export let tableTests = () => {
       await act(() => Promise.resolve());
       let table = tree.getByRole('grid');
       let header = within(table).getAllByRole('columnheader')[2];
-      expect(header).not.toHaveAttribute('tabindex');
+      expect(header).toHaveAttribute('tabindex', '-1');
       let headerButton = within(header).getByRole('button');
       expect(headerButton).toHaveAttribute('aria-disabled', 'true');
-      // Can't progamatically focus the column headers since they have no tab index when table is empty
-      act(() => {
-        header.focus();
-      });
-      expect(document.activeElement).toBe(document.body);
+    });
+
+    it('should shift focus to the table if table becomes empty via column sort', function () {
+      let tree = render(<ColumnHeaderFocusRingTable />);
+      let rows = tree.getAllByRole('row');
+      expect(rows).toHaveLength(3);
+      focusCell(tree, 'Height');
+      expect(document.activeElement).toHaveTextContent('Height');
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      act(() => jest.advanceTimersByTime(500));
+      let table = tree.getByRole('grid');
+      expect(document.activeElement).toBe(table);
+      // Run the rest of the timeout and run the transitions
+      act(() => {jest.runAllTimers();});
+      act(() => {jest.runAllTimers();});
+      rows = tree.getAllByRole('row');
+      expect(rows).toHaveLength(2);
     });
 
     it('should disable press interactions with the column headers', async function () {
