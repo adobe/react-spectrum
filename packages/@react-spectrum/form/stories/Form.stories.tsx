@@ -625,19 +625,19 @@ function FormWithSubmit() {
         <Checkbox
           value="terms"
           isRequired
-          validationState={getValidationState(policies.includes('terms'))}>
+          isInvalid={getValidationState(policies.includes('terms')) === 'invalid'}>
           Terms and conditions
         </Checkbox>
         <Checkbox
           value="privacy"
           isRequired
-          validationState={getValidationState(policies.includes('privacy'))}>
+          isInvalid={getValidationState(policies.includes('privacy')) === 'invalid'}>
           Privacy policy
         </Checkbox>
         <Checkbox
           value="cookies"
           isRequired
-          validationState={getValidationState(policies.includes('cookies'))}>
+          isInvalid={getValidationState(policies.includes('cookies')) === 'invalid'}>
           Cookie policy
         </Checkbox>
       </CheckboxGroup>
@@ -647,7 +647,7 @@ function FormWithSubmit() {
         value="truth"
         isSelected={truth}
         onChange={(chain(() => setTruthDirty(true), setTruth))}
-        validationState={getValidationState(truth)}>
+        isInvalid={getValidationState(truth) === 'invalid'}>
         I am telling the truth
       </Checkbox>
 
@@ -656,7 +656,7 @@ function FormWithSubmit() {
         isRequired
         value={pet}
         onChange={chain(() => setPetDirty(true), setPet)}
-        validationState={getValidationState(Boolean(pet))}>
+        isInvalid={getValidationState(Boolean(pet)) === 'invalid'}>
         <Radio value="dogs">
           Dogs
         </Radio>

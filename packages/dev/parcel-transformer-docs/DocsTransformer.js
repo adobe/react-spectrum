@@ -237,6 +237,7 @@ module.exports = new Transformer({
       if (path.isFunction() || path.isTSDeclareFunction()) {
         if (isReactComponent(path)) {
           let props = path.node.params[0];
+          let ref = path.node.params[1];
           let docs = getJSDocs(path);
           return Object.assign(node, {
             type: 'component',
@@ -248,6 +249,9 @@ module.exports = new Transformer({
             typeParameters: path.node.typeParameters
               ? path.get('typeParameters.params').map(p => processExport(p))
               : [],
+            ref: ref && ref.typeAnnotation
+              ? processExport(path.get('params.1.typeAnnotation.typeAnnotation'))
+              : null,
             description: docs.description || null
           });
         } else {
