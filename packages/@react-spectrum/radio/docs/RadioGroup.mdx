@@ -150,10 +150,10 @@ function Example() {
 ## Validation
 
 RadioGroups can display a validation state to communicate to the user if the current value is invalid.
-Implement your own validation logic in your app and pass `"invalid"` to the RadioGroup via the `validationState` prop.
+Implement your own validation logic in your app and set the `isInvalid` prop accordingly.
 
 ```tsx example
-<RadioGroup label="Favorite avatar" validationState="invalid">
+<RadioGroup label="Favorite avatar" isInvalid>
   <Radio value="wizard">Wizard</Radio>
   <Radio value="dragon">Dragon</Radio>
 </RadioGroup>
@@ -200,7 +200,7 @@ and "end" refers to the right most edge. For right-to-left (RTL) languages, this
 ### Help text
 [View guidelines](https://spectrum.adobe.com/page/radio-group/#Help-text-(description-and-error-message))
 
-Both a description and an error message can be supplied to a RadioGroup. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
+Both a description and an error message can be supplied to a RadioGroup. The description is always visible unless `isInvalid` is true and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
 
 ```tsx example
 function Example() {
@@ -211,7 +211,7 @@ function Example() {
     <RadioGroup
       aria-label="Favorite pet"
       onChange={setSelected}
-      validationState={isValid ? 'valid' : 'invalid'}
+      isInvalid={!isValid}
       description="Please select a pet."
       errorMessage={
         selected === 'cats'

@@ -19,6 +19,7 @@ import {
   InputDOMProps,
   LabelableProps,
   RangeValue,
+  SpectrumFieldValidation,
   SpectrumLabelableProps,
   StyleProps,
   Validation,
@@ -97,7 +98,7 @@ export interface AriaDateRangePickerProps<T extends DateValue> extends AriaDateP
   endName?: string
 }
 
-interface SpectrumDateFieldBase extends SpectrumLabelableProps, HelpTextProps, StyleProps {
+interface SpectrumDateFieldBase extends SpectrumLabelableProps, HelpTextProps, SpectrumFieldValidation, StyleProps {
   /**
    * Whether the date picker should be displayed with a quiet style.
    * @default false
@@ -123,9 +124,9 @@ interface SpectrumDatePickerBase extends SpectrumDateFieldBase, SpectrumLabelabl
   shouldFlip?: boolean
 }
 
-export interface SpectrumDatePickerProps<T extends DateValue> extends AriaDatePickerProps<T>, SpectrumDatePickerBase {}
-export interface SpectrumDateRangePickerProps<T extends DateValue> extends AriaDateRangePickerProps<T>, SpectrumDatePickerBase {}
-export interface SpectrumDateFieldProps<T extends DateValue> extends AriaDateFieldProps<T>, SpectrumDateFieldBase {}
+export interface SpectrumDatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'isInvalid' | 'validationState'>, SpectrumDatePickerBase {}
+export interface SpectrumDateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'isInvalid' | 'validationState'>, SpectrumDatePickerBase {}
+export interface SpectrumDateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'isInvalid' | 'validationState'>, SpectrumDateFieldBase {}
 
 export type TimeValue = Time | CalendarDateTime | ZonedDateTime;
 type MappedTimeValue<T> =
@@ -162,7 +163,7 @@ export interface TimePickerProps<T extends TimeValue> extends InputBase, Validat
 
 export interface AriaTimeFieldProps<T extends TimeValue> extends TimePickerProps<T>, AriaLabelingProps, DOMProps, InputDOMProps {}
 
-export interface SpectrumTimeFieldProps<T extends TimeValue> extends AriaTimeFieldProps<T>, SpectrumLabelableProps, StyleProps, InputDOMProps {
+export interface SpectrumTimeFieldProps<T extends TimeValue> extends Omit<AriaTimeFieldProps<T>, 'isInvalid' | 'validationState'>, SpectrumFieldValidation, SpectrumLabelableProps, StyleProps, InputDOMProps {
   /**
    * Whether the time field should be displayed with a quiet style.
    * @default false

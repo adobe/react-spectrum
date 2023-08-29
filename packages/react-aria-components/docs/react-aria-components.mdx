@@ -142,7 +142,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
       background: var(--spectrum-global-color-gray-150);
     }
 
-    &:disabled {
+    &[data-disabled] {
       border-color: var(--border-color-disabled);
       color: var(--text-color-disabled);
       & span[aria-hidden] {
@@ -223,7 +223,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
     display: flex;
     flex-direction: column;
 
-    &[aria-selected=true] {
+    &[data-selected] {
       font-weight: 600;
 
       &::before {
@@ -242,7 +242,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
       color: var(--highlight-foreground);
     }
 
-    &[aria-disabled] {
+    &[data-disabled] {
       color: var(--text-color-disabled);
     }
 
@@ -306,7 +306,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
     --text-color-disabled: GrayText;
     --focus-ring-color: Highlight;
 
-    .react-aria-Button:disabled span[aria-hidden] {
+    .react-aria-Button[data-disabled] span[aria-hidden] {
       background: transparent;
     }
   }
@@ -343,7 +343,7 @@ When a custom `className` is not provided, each component includes a default cla
 Some components support multiple UI states (e.g. pressed, hovered, selected, etc.). React Aria Components exposes states using DOM attributes, which can be targeted by CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. They can be thought of like custom CSS pseudo classes. For example:
 
 ```css render=false
-.react-aria-Item[aria-selected=true] {
+.react-aria-Item[data-selected] {
   /* ... */
 }
 
@@ -424,6 +424,51 @@ If you are using Tailwind CSS, we recommend using the [tailwindcss-animate](http
 ## Examples
 
 The documentation for each component includes many examples styled using vanilla CSS and the default class names. We also have an example of many of the components using Tailwind CSS. You can find the [code](https://github.com/adobe/react-spectrum/blob/main/examples/rac-tailwind/src/App.js) in the repo, as well as a [live demo](https://reactspectrum.blob.core.windows.net/reactspectrum/f239d0b1a96c3e6119135fe6bbf1994dc9984257/verdaccio/rac-tailwind/index.html).
+
+## Tailwind CSS Plugin
+
+There is a Tailwind CSS plugin available which makes styling different [states](#states) easier.
+
+This allows an element with the `data-selected` attribute to be styled in Tailwind with `selected:` instead of `data-[selected]:`. Non-boolean data attributes follow the `{name}-{value}` pattern, so you can style an element with `data-orientation="horizontal"` using `orientation-horizontal:`.
+
+To install:
+
+```
+yarn add tailwindcss-react-aria-components
+```
+
+Then add the plugin to your `tailwind.config.js` file:
+
+```jsx
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  plugins: [
+    require('tailwindcss-react-aria-components')
+  ],
+}
+```
+
+You can optionally specify a prefix using `require('tailwindcss-react-aria-components')({prefix: 'rac'})`. This will allow you to use `rac-selected:` instead of `selected:`.
+
+### Boolean states
+
+The `data-selected` state can be styled with `selected:` like this:
+
+```jsx
+<Button className="selected:bg-blue">
+  {/* ... */}
+</Button>
+```
+
+### Non-boolean states
+
+The `data-orientation="vertical"` state can be styled with `orientation-vertical:` like this:
+
+```jsx
+<Tabs className="orientation-vertical:flex-row">
+  {/* ... */}
+</Tabs>
+```
 
 ## Components
 

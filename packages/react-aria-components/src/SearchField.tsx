@@ -17,7 +17,7 @@ import {filterDOMProps} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
-import {SearchFieldState, useSearchFieldState, ValidationState} from 'react-stately';
+import {SearchFieldState, useSearchFieldState} from 'react-stately';
 import {TextContext} from './Text';
 
 export interface SearchFieldRenderProps {
@@ -32,17 +32,17 @@ export interface SearchFieldRenderProps {
    */
   isDisabled: boolean,
   /**
-   * Validation state of the search field.
-   * @selector [data-validation-state="valid | invalid"]
+   * Whether the search field is invalid.
+   * @selector [data-invalid]
    */
-  validationState: ValidationState | undefined,
+  isInvalid: boolean,
   /**
    * State of the search field.
    */
   state: SearchFieldState
 }
 
-export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, RenderProps<SearchFieldRenderProps>, SlotProps {}
+export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState'>, RenderProps<SearchFieldRenderProps>, SlotProps {}
 
 export const SearchFieldContext = createContext<ContextValue<SearchFieldProps, HTMLDivElement>>(null);
 
@@ -61,7 +61,7 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
     values: {
       isEmpty: state.value === '',
       isDisabled: props.isDisabled || false,
-      validationState: props.validationState,
+      isInvalid: props.isInvalid || false,
       state
     },
     defaultClassName: 'react-aria-SearchField'
@@ -78,7 +78,7 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
       slot={props.slot}
       data-empty={state.value === '' || undefined}
       data-disabled={props.isDisabled || undefined}
-      data-validation-state={props.validationState || undefined}>
+      data-invalid={props.isInvalid || undefined}>
       <Provider
         values={[
           [LabelContext, {...labelProps, ref: labelRef}],

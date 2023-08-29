@@ -28,8 +28,7 @@ function CheckboxGroup(props: SpectrumCheckboxGroupProps, ref: DOMRef<HTMLDivEle
   let {
     isEmphasized,
     children,
-    orientation = 'vertical',
-    validationState
+    orientation = 'vertical'
   } = props;
   let domRef = useDOMRef(ref);
   let state = useCheckboxGroupState(props);
@@ -56,7 +55,7 @@ function CheckboxGroup(props: SpectrumCheckboxGroupProps, ref: DOMRef<HTMLDivEle
             }
           )
         }>
-        <Provider isEmphasized={isEmphasized} validationState={validationState}>
+        <Provider isEmphasized={isEmphasized} validationState={state.isInvalid ? 'invalid' : undefined}>
           <CheckboxGroupContext.Provider value={state}>
             {children}
           </CheckboxGroupContext.Provider>

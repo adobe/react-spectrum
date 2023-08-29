@@ -28,7 +28,7 @@ export default {
     necessityIndicator: 'icon',
     labelPosition: 'top',
     labelAlign: 'start',
-    validationState: null,
+    isInvalid: false,
     orientation: 'vertical'
   },
   argTypes: {
@@ -48,12 +48,6 @@ export default {
       control: {
         type: 'radio',
         options: ['start', 'end']
-      }
-    },
-    validationState: {
-      control: {
-        type: 'radio',
-        options: [null, 'valid', 'invalid']
       }
     },
     orientation: {
@@ -96,7 +90,7 @@ WithDescription.story = {
 };
 
 export const WithErrorMessage = (args) =>
-  render({...args, errorMessage: 'Please select a pet.', validationState: 'invalid'});
+  render({...args, errorMessage: 'Please select a pet.', isInvalid: true});
 
 WithErrorMessage.story = {
   name: 'with error message'
@@ -106,7 +100,7 @@ export const WithErrorMessageAndErrorIcon = (args) =>
   render({
     ...args,
     errorMessage: 'Please select a pet.',
-    validationState: 'invalid',
+    isInvalid: true,
     showErrorIcon: true
   });
 
@@ -236,7 +230,7 @@ function renderWithDescriptionErrorMessageAndValidation(props) {
           {...props}
           aria-label="Favorite pet"
           onChange={setSelected}
-          validationState={isValid ? 'valid' : 'invalid'}
+          isInvalid={!isValid}
           description="Please select a pet."
           errorMessage={
           selected === 'cats'
