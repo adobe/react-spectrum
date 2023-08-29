@@ -438,20 +438,6 @@ it changed:
   
 
 
- packages/@react-types/shared/src/inputs.d.ts:ValidationState
-  
-#### packages/@react-types/shared/src/inputs.d.ts:ValidationState
--type ValidationState = {
--  'valid' | 'invalid'
--}
-it changed:
-- @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
-
-
-  -----------------------------------
-  
-
-
   ### @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
   
 #### @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
@@ -466,7 +452,6 @@ changed by:
  packages/@react-types/shared/src/selection.d.ts:Selection
  packages/@react-types/shared/src/selection.d.ts:SelectionBehavior
  packages/@react-types/shared/src/selection.d.ts:SelectionMode
- packages/@react-types/shared/src/inputs.d.ts:ValidationState
 
 +SpectrumTagGroupProps<T> {
 +  actionLabel?: string
@@ -482,6 +467,7 @@ changed by:
 +  errorMessage?: ReactNode
 +  id?: string
 +  isDisabled?: boolean
++  isInvalid?: boolean
 +  isRequired?: boolean
 +  items?: Iterable<T>
 +  label?: ReactNode
@@ -491,7 +477,6 @@ changed by:
 +  selectedKeys?: 'all' | Iterable<Key>
 +  selectionBehavior?: SelectionBehavior
 +  selectionMode?: SelectionMode
-+  validationState?: ValidationState
 +}
 
   -----------------------------------

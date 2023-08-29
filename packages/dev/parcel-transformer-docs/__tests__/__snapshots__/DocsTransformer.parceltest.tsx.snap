@@ -1335,10 +1335,19 @@ exports[`DocsTransformer - API interface merging merges properties when extendin
             "type": "boolean",
           },
         },
+        "isInvalid": {
+          "default": null,
+          "description": "Whether the input value is invalid.",
+          "name": "isInvalid",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "type": "boolean",
+          },
+        },
         "isRequired": {
           "default": null,
-          "description": "Whether user input is required on the input before form submission.
-Often paired with the \`necessityIndicator\` prop to add a visual indicator to the input.",
+          "description": "Whether user input is required on the input before form submission.",
           "name": "isRequired",
           "optional": true,
           "type": "property",
@@ -1511,8 +1520,8 @@ Often paired with the \`necessityIndicator\` prop to add a visual indicator to t
           },
         },
         "validationState": {
+          "access": "private",
           "default": null,
-          "description": "Whether the input should display its "valid" or "invalid" visual styling.",
           "name": "validationState",
           "optional": true,
           "type": "property",
