@@ -20,7 +20,10 @@ interface OverlayArrowContextValue {
   placement: PlacementAxis
 }
 
-export const OverlayArrowContext = createContext<OverlayArrowContextValue | null>(null);
+export const OverlayArrowContext = createContext<OverlayArrowContextValue>({
+  arrowProps: {},
+  placement: 'bottom'
+});
 
 export interface OverlayArrowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'className' | 'style' | 'children'>, RenderProps<OverlayArrowRenderProps> {}
 

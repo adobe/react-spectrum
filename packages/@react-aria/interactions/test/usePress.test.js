@@ -591,6 +591,65 @@ describe('usePress', function () {
       ]);
     });
 
+    it('should not ignore virtual pointer events on android ', function () {
+      let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Android');
+
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPress={addEvent}
+          onPressUp={addEvent} />
+      );
+
+      let el = res.getByText('test');
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', width: 0, height: 0}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', width: 0, height: 0, clientX: 0, clientY: 0}));
+      
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'press',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        }
+      ]);
+
+      uaMock.mockRestore();
+    });
+
     it('should detect Android TalkBack double tap', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
@@ -2678,6 +2737,87 @@ describe('usePress', function () {
     });
   });
 
+  describe('event bubbling', () => {
+    function Pressable(props) {
+      let {pressProps} = usePress(props);
+      return (
+        <div {...pressProps} data-testid={props['data-testid']}>
+          {props.children}
+        </div>
+      );
+    }
+
+    describe.each`
+      type                | prepare               | actions
+      ${'Mouse Events'}   | ${installMouseEvent}  | ${[
+        (el) => fireEvent.mouseDown(el, {button: 0}),
+        (el) => fireEvent.mouseUp(el, {button: 0})
+      ]}
+      ${'Pointer Events'} | ${installPointerEvent}| ${[
+        (el) => fireEvent.pointerDown(el, {button: 0, pointerId: 1}),
+        (el) => fireEvent.pointerUp(el, {button: 0, pointerId: 1})
+      ]}
+      ${'Touch Events'}   | ${() => {}}           | ${[
+        (el) => fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]}),
+        (el) => fireEvent.touchEnd(el, {changedTouches: [{identifier: 1}]})
+      ]}
+    `('$type', ({actions: [start, end], prepare}) => {
+      prepare();
+
+      it('should stop propagation by default', () => {
+        let outerPressMock = jest.fn();
+        let innerPressMock = jest.fn();
+        let res = render(
+          <Pressable
+            onPressStart={outerPressMock}
+            onPressEnd={outerPressMock}
+            onPress={outerPressMock}>
+            <Pressable
+              data-testid="test"
+              onPressStart={innerPressMock}
+              onPressEnd={innerPressMock}
+              onPress={innerPressMock}>
+              inner
+            </Pressable>
+          </Pressable>
+        );
+
+        let el = res.getByTestId('test');
+        start(el);
+        end(el);
+        expect(outerPressMock.mock.calls).toHaveLength(0);
+        expect(innerPressMock.mock.calls).toHaveLength(3);
+      });
+
+      it('should allow propagation if continuePropagation is called', () => {
+        let outerPressMock = jest.fn();
+        let innerPressMock = jest.fn().mockImplementation(e => e.continuePropagation());
+        let res = render(
+          <Pressable
+            onPressStart={outerPressMock}
+            onPressEnd={outerPressMock}
+            onPress={outerPressMock}
+            onPressUp={outerPressMock}>
+            <Pressable
+              data-testid="test"
+              onPressStart={innerPressMock}
+              onPressEnd={innerPressMock}
+              onPress={innerPressMock}
+              onPressUp={innerPressMock}>
+              inner
+            </Pressable>
+          </Pressable>
+        );
+
+        let el = res.getByTestId('test');
+        start(el);
+        end(el);
+        expect(outerPressMock.mock.calls).toHaveLength(4);
+        expect(innerPressMock.mock.calls).toHaveLength(4);
+      });
+    });
+  });
+
   describe('portal event bubbling', () => {
     function PortalExample(props) {
       let {elementType: ElementType = 'div', ...otherProps} = props;
@@ -2730,7 +2870,7 @@ describe('usePress', function () {
         (el) => fireEvent.pointerUp(el, {button: 0, pointerId: 1})
       ]}
       ${'Touch Events'}   | ${() => {}}           | ${[
-        (el) => fireEvent.touchStart(el, {changedTouches: [{identifier: 1}]}),
+        (el) => fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]}),
         (el) => fireEvent.touchEnd(el, {changedTouches: [{identifier: 1}]})
       ]}
     `('$type', ({actions: [start, end], prepare}) => {

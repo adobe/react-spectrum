@@ -105,10 +105,10 @@ describe('DatePicker', () => {
   it('should support render props', () => {
     let {getByRole} = render(
       <DatePicker minValue={new CalendarDate(2023, 1, 1)} defaultValue={new CalendarDate(2020, 2, 3)}>
-        {({validationState}) => (
+        {({isInvalid}) => (
           <>
             <Label>Birth date</Label>
-            <Group data-validation-state={validationState}>
+            <Group data-validation-state={isInvalid ? 'invalid' : null}>
               <DateInput>
                 {(segment) => <DateSegment segment={segment} />}
               </DateInput>
@@ -132,8 +132,14 @@ describe('DatePicker', () => {
         )}
       </DatePicker>
     );
-    
+
     let group = getByRole('group');
     expect(group).toHaveAttribute('data-validation-state', 'invalid');
+  });
+
+  it('should support form value', () => {
+    render(<TestDatePicker name="birthday" value={new CalendarDate(2020, 2, 3)} />);
+    let input = document.querySelector('input[name=birthday]');
+    expect(input).toHaveValue('2020-02-03');
   });
 });

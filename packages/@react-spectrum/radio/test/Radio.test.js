@@ -385,14 +385,14 @@ describe('Radios', function () {
     expect(radioGroup).toHaveAttribute('aria-orientation', 'horizontal');
   });
 
-  it('v3 RadioGroup sets aria-invalid when validationState="invalid"', () => {
-    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet', validationState: 'invalid'}, []);
+  it('v3 RadioGroup sets aria-invalid when isInvalid', () => {
+    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet', isInvalid: true}, []);
     let radioGroup = getByRole('radiogroup');
     expect(radioGroup).toHaveAttribute('aria-invalid', 'true');
   });
 
   it('v3 RadioGroup passes through aria-errormessage', () => {
-    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet', validationState: 'invalid', 'aria-errormessage': 'test'}, []);
+    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet', isInvalid: true, 'aria-errormessage': 'test'}, []);
     let radioGroup = getByRole('radiogroup');
     expect(radioGroup).toHaveAttribute('aria-invalid', 'true');
     expect(radioGroup).toHaveAttribute('aria-errormessage', 'test');
@@ -426,13 +426,48 @@ describe('Radios', function () {
   });
 
   it('should support error message', function () {
-    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet', errorMessage: 'Error message', validationState: 'invalid'}, []);
+    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet', errorMessage: 'Error message', isInvalid: true}, []);
 
     let group = getByRole('radiogroup');
     expect(group).toHaveAttribute('aria-describedby');
 
     let description = document.getElementById(group.getAttribute('aria-describedby'));
     expect(description).toHaveTextContent('Error message');
+  });
+
+  it('supports form reset', () => {
+    function Test() {
+      let [value, setValue] = React.useState('dogs');
+      return (
+        <Provider theme={theme}>
+          <form>
+            <RadioGroup name="pet" label="Favorite Pet" value={value} onChange={setValue}>
+              <Radio value="dogs">Dogs</Radio>
+              <Radio value="cats">Cats</Radio>
+              <Radio value="dragons">Dragons</Radio>
+            </RadioGroup>
+            <input type="reset" data-testid="reset" />
+          </form>
+        </Provider>
+      );
+    }
+
+    let {getAllByRole, getByTestId} = render(<Test />);
+    let radios = getAllByRole('radio');
+
+    expect(radios[0]).toBeChecked();
+    expect(radios[1]).not.toBeChecked();
+    expect(radios[2]).not.toBeChecked();
+    act(() => userEvent.click(radios[1]));
+    expect(radios[0]).not.toBeChecked();
+    expect(radios[1]).toBeChecked();
+    expect(radios[2]).not.toBeChecked();
+
+    let button = getByTestId('reset');
+    act(() => userEvent.click(button));
+    expect(radios[0]).toBeChecked();
+    expect(radios[1]).not.toBeChecked();
+    expect(radios[2]).not.toBeChecked();
   });
 
   describe('Radio group supports roving tabIndex ', function () {

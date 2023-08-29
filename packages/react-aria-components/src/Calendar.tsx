@@ -20,7 +20,31 @@ import {HeadingContext} from './Heading';
 import React, {createContext, ForwardedRef, forwardRef, ReactElement, useContext} from 'react';
 import {TextContext} from './Text';
 
-export interface CalendarProps<T extends DateValue> extends Omit<BaseCalendarProps<T>, 'errorMessage'>, RenderProps<CalendarState>, SlotProps {
+export interface CalendarRenderProps {
+  /**
+   * Whether the calendar is disabled.
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean,
+  /**
+   * State of the calendar.
+   */
+  state: CalendarState,
+  /**
+   * Whether the calendar is invalid.
+   * @selector [data-invalid]
+   */
+  isInvalid: boolean
+}
+
+export interface RangeCalendarRenderProps extends Omit<CalendarRenderProps, 'state'> {
+  /**
+   * State of the range calendar.
+   */
+  state: RangeCalendarState
+}
+
+export interface CalendarProps<T extends DateValue> extends Omit<BaseCalendarProps<T>, 'errorMessage' | 'validationState'>, RenderProps<CalendarRenderProps>, SlotProps {
   /**
    * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
@@ -28,7 +52,7 @@ export interface CalendarProps<T extends DateValue> extends Omit<BaseCalendarPro
   visibleDuration?: DateDuration
 }
 
-export interface RangeCalendarProps<T extends DateValue> extends Omit<BaseRangeCalendarProps<T>, 'errorMessage'>, RenderProps<RangeCalendarState>, SlotProps {
+export interface RangeCalendarProps<T extends DateValue> extends Omit<BaseRangeCalendarProps<T>, 'errorMessage' | 'validationState'>, RenderProps<RangeCalendarRenderProps>, SlotProps {
   /**
    * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
@@ -53,12 +77,22 @@ function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRe
 
   let renderProps = useRenderProps({
     ...props,
-    values: state,
+    values: {
+      state,
+      isDisabled: props.isDisabled || false,
+      isInvalid: state.isValueInvalid
+    },
     defaultClassName: 'react-aria-Calendar'
   });
 
   return (
-    <div {...renderProps} {...calendarProps} ref={ref} slot={props.slot}>
+    <div
+      {...renderProps}
+      {...calendarProps}
+      ref={ref}
+      slot={props.slot}
+      data-disabled={props.isDisabled || undefined}
+      data-invalid={state.isValueInvalid || undefined}>
       <Provider
         values={[
           [ButtonContext, {
@@ -122,12 +156,22 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: F
 
   let renderProps = useRenderProps({
     ...props,
-    values: state,
+    values: {
+      state,
+      isDisabled: props.isDisabled || false,
+      isInvalid: state.isValueInvalid
+    },
     defaultClassName: 'react-aria-RangeCalendar'
   });
 
   return (
-    <div {...renderProps} {...calendarProps} ref={ref} slot={props.slot}>
+    <div
+      {...renderProps}
+      {...calendarProps}
+      ref={ref}
+      slot={props.slot}
+      data-disabled={props.isDisabled || undefined}
+      data-invalid={state.isValueInvalid || undefined}>
       <Provider
         values={[
           [ButtonContext, {
@@ -183,7 +227,7 @@ export interface CalendarCellRenderProps {
    * Whether the cell is currently hovered with a mouse.
    * @selector [data-hovered]
    */
-   isHovered: boolean,
+  isHovered: boolean,
   /**
    * Whether the cell is currently being pressed.
    * @selector [data-pressed]
@@ -203,10 +247,10 @@ export interface CalendarCellRenderProps {
    * Whether the cell is the last date in a range selection.
    * @selector [data-selection-end]
    */
-   isSelectionEnd: boolean,
+  isSelectionEnd: boolean,
   /**
    * Whether the cell is focused.
-   * @selector :focus
+   * @selector [data-focused]
    */
   isFocused: boolean,
   /**
@@ -245,7 +289,7 @@ export interface CalendarCellRenderProps {
   isUnavailable: boolean,
   /**
    * Whether the cell is part of an invalid selection.
-   * @selector [aria-invalid]
+   * @selector [data-invalid]
    */
   isInvalid: boolean
 }
@@ -417,7 +461,7 @@ export interface CalendarCellProps extends RenderProps<CalendarCellRenderProps> 
 
 function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRef<HTMLDivElement>) {
   let state = useContext(InternalCalendarContext)!;
-  let {startDate: currentMonth} = useContext(InternalCalendarGridContext)!;
+  let {startDate: currentMonth} = useContext(InternalCalendarGridContext) ?? {startDate: state.visibleRange.start};
   let objectRef = useObjectRef(ref);
   let {cellProps, buttonProps, ...states} = useCalendarCell(
     {date},
@@ -451,6 +495,7 @@ function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRe
   });
 
   let dataAttrs = {
+    'data-focused': states.isFocused || undefined,
     'data-hovered': isHovered || undefined,
     'data-pressed': states.isPressed || undefined,
     'data-unavailable': states.isUnavailable || undefined,
@@ -460,7 +505,8 @@ function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRe
     'data-outside-month': isOutsideMonth || undefined,
     'data-selected': states.isSelected || undefined,
     'data-selection-start': isSelectionStart || undefined,
-    'data-selection-end': isSelectionEnd || undefined
+    'data-selection-end': isSelectionEnd || undefined,
+    'data-invalid': states.isInvalid || undefined
   };
 
   return (

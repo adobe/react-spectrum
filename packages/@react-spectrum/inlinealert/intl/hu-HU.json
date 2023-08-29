@@ -1,6 +1,6 @@
 {
-  "negative": "Hiba",
   "info": "Információ",
-  "positive": "Siker",
-  "notice": "Figyelmeztetés"
+  "negative": "Hiba",
+  "notice": "Figyelmeztetés",
+  "positive": "Siker"
 }

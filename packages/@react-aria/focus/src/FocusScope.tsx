@@ -551,13 +551,10 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scopeRef, contain]);
 
-  // useLayoutEffect instead of useEffect so the active element is saved synchronously instead of asynchronously.
   useLayoutEffect(() => {
     if (!restoreFocus) {
       return;
     }
-
-    focusScopeTree.getTreeNode(scopeRef).nodeToRestore = nodeToRestoreRef.current;
 
     // Handle the Tab key so that tabbing out of the scope goes to the next element
     // after the node that had focus when the scope mounted. This is important when
@@ -621,6 +618,18 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
       if (!contain) {
         document.removeEventListener('keydown', onKeyDown, true);
       }
+    };
+  }, [scopeRef, restoreFocus, contain]);
+
+  // useLayoutEffect instead of useEffect so the active element is saved synchronously instead of asynchronously.
+  useLayoutEffect(() => {
+    if (!restoreFocus) {
+      return;
+    }
+
+    focusScopeTree.getTreeNode(scopeRef).nodeToRestore = nodeToRestoreRef.current;
+
+    return () => {
       let nodeToRestore = focusScopeTree.getTreeNode(scopeRef).nodeToRestore;
 
       // if we already lost focus to the body and this was the active scope, then we should attempt to restore
@@ -662,7 +671,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
         });
       }
     };
-  }, [scopeRef, restoreFocus, contain]);
+  }, [scopeRef, restoreFocus]);
 }
 
 /**

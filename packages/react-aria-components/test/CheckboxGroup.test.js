@@ -132,16 +132,16 @@ describe('CheckboxGroup', () => {
   });
 
   it('should support validation state', () => {
-    let className = ({validationState}) => validationState;
-    let {getByRole, getAllByRole} = renderGroup({validationState: 'invalid', className}, {className});
+    let className = ({isInvalid}) => isInvalid ? 'invalid' : null;
+    let {getByRole, getAllByRole} = renderGroup({isInvalid: true, className}, {className});
     let group = getByRole('group');
     let checkbox = getAllByRole('checkbox')[0];
     let label = checkbox.closest('label');
 
-    expect(group).toHaveAttribute('data-validation-state', 'invalid');
+    expect(group).toHaveAttribute('data-invalid', 'true');
     expect(group).toHaveClass('invalid');
 
-    expect(label).toHaveAttribute('data-validation-state', 'invalid');
+    expect(label).toHaveAttribute('data-invalid', 'true');
     expect(label).toHaveClass('invalid');
   });
 
@@ -161,7 +161,7 @@ describe('CheckboxGroup', () => {
 
   it('supports help text', () => {
     let {getByRole, getAllByRole} = render(
-      <CheckboxGroup validationState="invalid">
+      <CheckboxGroup isInvalid>
         <Label>Test</Label>
         <Checkbox value="a">A</Checkbox>
         <Text slot="description">Description</Text>
@@ -192,5 +192,13 @@ describe('CheckboxGroup', () => {
     let group = getByRole('group');
     let label = document.getElementById(group.getAttribute('aria-labelledby'));
     expect(label).toHaveAttribute('data-required', 'true');
+  });
+
+  it('should support aria-describedby on a checkbox', () => {
+    let {getAllByRole} = renderGroup({}, {'aria-describedby': 'test'});
+    let checkboxes = getAllByRole('checkbox');
+    for (let checkbox of checkboxes) {
+      expect(checkbox).toHaveAttribute('aria-describedby', 'test');
+    }
   });
 });

@@ -12,9 +12,8 @@
 
 import {AriaLabelingProps} from '@react-types/shared';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import {DropOptions, mergeProps, useClipboard, useDrop, useFocusRing, useHover, useId, VisuallyHidden} from 'react-aria';
-import {FileTriggerContext} from './FileTrigger';
-import {filterDOMProps, useLabels} from '@react-aria/utils';
+import {DropOptions, mergeProps, useClipboard, useDrop, useFocusRing, useHover, VisuallyHidden} from 'react-aria';
+import {filterDOMProps, useLabels, useSlotId} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
 
@@ -51,9 +50,10 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   let {dropProps, dropButtonProps, isDropTarget} = useDrop({...props, ref: buttonRef, hasDropButton: true});
   let {hoverProps, isHovered} = useHover({});
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
-  
-  let textId = useId();
-  let labelProps = useLabels({'aria-labelledby': textId});
+
+  let textId = useSlotId();
+  let ariaLabel = props['aria-label'] || 'DropZone';
+  let labelProps = useLabels({'aria-label': ariaLabel, 'aria-labelledby': textId});
 
   let {clipboardProps} = useClipboard({
     onPaste: (items) => props.onDrop?.({
@@ -76,8 +76,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   return (
     <Provider
       values={[
-        [FileTriggerContext, {}],
-        [TextContext, {id: textId, slot: 'heading'}]
+        [TextContext, {id: textId, slot: 'label'}]
       ]}>
       {/* eslint-disable-next-line */}
       <div
@@ -92,8 +91,8 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
         <VisuallyHidden>
           <button
             {...mergeProps(dropButtonProps, focusProps, clipboardProps, labelProps)}
-            aria-label="DropZone" // will need to update with string formatter
-            ref={buttonRef} />   
+            aria-label={ariaLabel}
+            ref={buttonRef} />
         </VisuallyHidden>
         {renderProps.children}
       </div>
@@ -102,7 +101,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
 }
 
 /**
- * A dropzone is an area into which one or multiple objects can be dragged and dropped.
+ * A drop zone is an area into which one or multiple objects can be dragged and dropped.
  */
 const _DropZone = forwardRef(DropZone);
 export {_DropZone as DropZone};

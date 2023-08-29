@@ -86,6 +86,11 @@ export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTrigge
           e.preventDefault();
           state.toggle('last');
           break;
+        default:
+          // Allow other keys.
+          if ('continuePropagation' in e) {
+            e.continuePropagation();
+          }
       }
     }
   };

@@ -52,6 +52,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     shouldFlip = true,
     placeholder = stringFormatter.format('placeholder'),
     validationState,
+    isInvalid = validationState === 'invalid',
     isQuiet,
     label,
     labelPosition = 'top' as LabelPosition,
@@ -166,7 +167,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
           styles,
           'spectrum-Dropdown',
           {
-            'is-invalid': validationState === 'invalid' && !isDisabled,
+            'is-invalid': isInvalid && !isDisabled,
             'is-disabled': isDisabled,
             'spectrum-Dropdown--quiet': isQuiet
           }
@@ -185,7 +186,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
           isActive={state.isOpen}
           isQuiet={isQuiet}
           isDisabled={isDisabled}
-          validationState={validationState}
+          isInvalid={isInvalid}
           autoFocus={autoFocus}
           UNSAFE_className={classNames(styles, 'spectrum-Dropdown-trigger', {'is-hovered': isHovered})}>
           <SlotProvider
@@ -213,7 +214,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
               aria-label={stringFormatter.format('loading')}
               UNSAFE_className={classNames(styles, 'spectrum-Dropdown-progressCircle')} />
           }
-          {validationState === 'invalid' && !isLoadingInitial && !isDisabled &&
+          {isInvalid && !isLoadingInitial && !isDisabled &&
             <AlertMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-invalidIcon')} />
           }
           <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />

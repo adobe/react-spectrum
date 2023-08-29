@@ -297,7 +297,7 @@ function mergeInterface(obj) {
   }
 
   let properties = {};
-  let extendsArray = [];
+  let exts = [];
   if (obj.type === 'interface') {
     merge(properties, obj.properties);
 
@@ -307,20 +307,25 @@ function mergeInterface(obj) {
         console.log('ext should not be null', obj);
         continue;
       }
-      let extProperties = mergeInterface(ext).properties;
-      if (Object.keys(extProperties).length === 0) {
-        extendsArray.push(ext);
+      let merged = mergeInterface(ext);
+      if (merged.type === 'interface') {
+        merge(properties, merged.properties);
       } else {
-        merge(properties, extProperties);
+        exts.push(merged);
       }
     }
+  } else {
+    return obj;
   }
 
   return {
-    ...obj,
     type: 'interface',
+    id: obj.id,
+    name: obj.name,
     properties,
-    extends: extendsArray
+    typeParameters: obj.typeParameters,
+    extends: exts,
+    description: obj.description
   };
 }
 

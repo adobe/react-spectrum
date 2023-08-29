@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Text, TimeField, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Text, TimeField, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
@@ -142,15 +142,17 @@ export const ComboBoxRenderPropsListBoxDynamic = () => (
 );
 
 export const ListBoxExample = () => (
-  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace">
+  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace" aria-label="test listbox">
     <MyItem>Foo</MyItem>
     <MyItem>Bar</MyItem>
     <MyItem>Baz</MyItem>
   </ListBox>
 );
 
+// Known accessibility false positive: https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#listbox
+// also has a aXe landmark error, not sure what it means
 export const ListBoxSections = () => (
-  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace">
+  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace" aria-label="test listbox with section">
     <Section className={styles.group}>
       <Header style={{fontSize: '1.2em'}}>Section 1</Header>
       <MyItem>Foo</MyItem>
@@ -168,7 +170,7 @@ export const ListBoxSections = () => (
 );
 
 export const ListBoxComplex = () => (
-  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace">
+  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace" aria-label="listbox complex">
     <MyItem>
       <Text slot="label">Item 1</Text>
       <Text slot="description">Description</Text>
@@ -192,6 +194,9 @@ export const SelectExample = () => (
       <span aria-hidden="true" style={{paddingLeft: 5}}>▼</span>
     </Button>
     <Popover>
+      <OverlayArrow>
+        <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
+      </OverlayArrow>
       <ListBox className={styles.menu}>
         <MyItem>Foo</MyItem>
         <MyItem>Bar</MyItem>
@@ -428,7 +433,7 @@ export const SliderExample = () => (
     <div style={{display: 'flex', alignSelf: 'stretch'}}>
       <Label>Test</Label>
       <SliderOutput style={{flex: '1 0 auto', textAlign: 'end'}}>
-        {state => `${state.getThumbValueLabel(0)} - ${state.getThumbValueLabel(1)}`}
+        {({state}) => `${state.getThumbValueLabel(0)} - ${state.getThumbValueLabel(1)}`}
       </SliderOutput>
     </div>
     <SliderTrack
@@ -580,6 +585,7 @@ export const ModalExample = () => (
   </DialogTrigger>
 );
 
+// Has error with invalid aria-controls, bug documented here: https://github.com/adobe/react-spectrum/issues/4781#issuecomment-1641057070
 export const TabsExample = () => (
   <Tabs>
     <TabList aria-label="History of Ancient Rome" style={{display: 'flex', gap: 8}}>
@@ -599,6 +605,7 @@ export const TabsExample = () => (
   </Tabs>
 );
 
+// Has error with invalid aria-controls, bug documented here: https://github.com/adobe/react-spectrum/issues/4781#issuecomment-1641057070
 export const TabsRenderProps = () => {
   const [tabOrientation, setTabOrientation] = useState<TabsProps['orientation']>('vertical');
 
@@ -646,68 +653,88 @@ export const TableExample = () => {
   });
 
   return (
-    <Table
-      aria-label="Example table"
-      style={{height: '210px', maxWidth: '400px'}}>
-      <TableHeader>
-        <Column isRowHeader>Name</Column>
-        <Column>Type</Column>
-        <Column>Date Modified</Column>
-        <Column>Actions</Column>
-      </TableHeader>
-      <TableBody items={list.items}>
-        {item => (
-          <Row>
-            <Cell>{item.name}</Cell>
-            <Cell>{item.type}</Cell>
-            <Cell>{item.date}</Cell>
-            <Cell>
-              <DialogTrigger>
-                <Button>Delete</Button>
-                <ModalOverlay
-                  style={{
-                    position: 'fixed',
-                    zIndex: 100,
-                    top: 0,
-                    left: 0,
-                    bottom: 0,
-                    right: 0,
-                    background: 'rgba(0, 0, 0, 0.5)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                  <Modal
+    <ResizableTableContainer style={{width: 300, overflow: 'auto'}}>
+      <Table aria-label="Example table">
+        <TableHeader>
+          <MyColumn isRowHeader defaultWidth="50%">Name</MyColumn>
+          <MyColumn>Type</MyColumn>
+          <MyColumn>Date Modified</MyColumn>
+          <MyColumn>Actions</MyColumn>
+        </TableHeader>
+        <TableBody items={list.items}>
+          {item => (
+            <Row>
+              <Cell>{item.name}</Cell>
+              <Cell>{item.type}</Cell>
+              <Cell>{item.date}</Cell>
+              <Cell>
+                <DialogTrigger>
+                  <Button>Delete</Button>
+                  <ModalOverlay
                     style={{
-                      background: 'Canvas',
-                      color: 'CanvasText',
-                      border: '1px solid gray',
-                      padding: 30
+                      position: 'fixed',
+                      zIndex: 100,
+                      top: 0,
+                      left: 0,
+                      bottom: 0,
+                      right: 0,
+                      background: 'rgba(0, 0, 0, 0.5)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
                     }}>
-                    <Dialog>
-                      {({close}) => (<>
-                        <Heading>Delete item</Heading>
-                        <p>Are you sure?</p>
-                        <Button onPress={close}>Cancel</Button>
-                        <Button
-                          onPress={() => {
-                            close();
-                            list.remove(item.id);
-                          }}>
-                          Delete
-                        </Button>
-                      </>)}
-                    </Dialog>
-                  </Modal>
-                </ModalOverlay>
-              </DialogTrigger>
-            </Cell>
-          </Row>
-        )}
-      </TableBody>
-    </Table>
+                    <Modal
+                      style={{
+                        background: 'Canvas',
+                        color: 'CanvasText',
+                        border: '1px solid gray',
+                        padding: 30
+                      }}>
+                      <Dialog>
+                        {({close}) => (<>
+                          <Heading>Delete item</Heading>
+                          <p>Are you sure?</p>
+                          <Button onPress={close}>Cancel</Button>
+                          <Button
+                            onPress={() => {
+                              close();
+                              list.remove(item.id);
+                            }}>
+                            Delete
+                          </Button>
+                        </>)}
+                      </Dialog>
+                    </Modal>
+                  </ModalOverlay>
+                </DialogTrigger>
+              </Cell>
+            </Row>
+          )}
+        </TableBody>
+      </Table>
+    </ResizableTableContainer>
   );
 };
+
+function MyColumn(props) {
+  return (
+    <Column {...props}>
+      {({startResize}) => (
+        <div style={{display: 'flex'}}>
+          <MenuTrigger>
+            <Button style={{flex: 1, textAlign: 'left'}}>{props.children}</Button>
+            <Popover>
+              <Menu className={styles.menu} onAction={() => startResize()}>
+                <MyItem id="resize">Resize</MyItem>
+              </Menu>
+            </Popover>
+          </MenuTrigger>
+          <ColumnResizer />
+        </div>
+      )}
+    </Column>
+  );
+}
 
 function MyItem(props) {
   return (
@@ -785,6 +812,7 @@ function Copyable() {
       <div
         {...clipboardProps}
         role="textbox"
+        aria-label="copyable element"
         tabIndex={0}
         className={styles.copyable}>
         Copy me
@@ -797,6 +825,7 @@ export const DropzoneExampleWithFileTriggerLink = (props) => (
   <div>
     <DropZone
       {...props}
+      aria-label={'testing aria-label'}
       className={styles.dropzone}
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
@@ -883,7 +912,7 @@ export const DropzoneExampleWithDraggableObject = (props) => (
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')} >
-      <Text slot="heading">
+      <Text slot="label">
         DropZone Area
       </Text>
     </DropZone>
@@ -899,7 +928,7 @@ export const DropzoneExampleWithCopyableObject = (props) => (
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
-      <Text slot="heading">
+      <Text slot="label">
         DropZone Area
       </Text>
     </DropZone>
@@ -919,7 +948,7 @@ export const DropzoneWithRenderProps = (props) => (
       onDropExit={action('OnDropExit')}>
       {({isHovered, isFocused, isFocusVisible, isDropTarget}) => (
         <div>
-          <Text slot="heading">
+          <Text slot="label">
             DropzoneArea
           </Text>
           <div>isHovered: {isHovered ? 'true' : 'false'}</div>
@@ -1031,4 +1060,65 @@ ListBoxDnd.story = {
       options: ['horizontal', 'vertical']
     }
   }
+};
+
+export const RadioGroupExample = () => {
+  return (
+    <RadioGroup
+      className={styles.radiogroup}>
+      <Label>Favorite pet</Label>
+      <Radio className={styles.radio} value="dogs">Dog</Radio>
+      <Radio className={styles.radio} value="cats">Cat</Radio>
+      <Radio className={styles.radio} value="dragon">Dragon</Radio>
+    </RadioGroup>
+  );
+};
+
+export const RadioGroupInDialogExample = () => {
+  return (
+    <DialogTrigger>
+      <Button>Open dialog</Button>
+      <ModalOverlay
+        style={{
+          position: 'fixed',
+          zIndex: 100,
+          top: 0,
+          left: 0,
+          bottom: 0,
+          right: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+        <Modal
+          style={{
+            background: 'Canvas',
+            color: 'CanvasText',
+            border: '1px solid gray',
+            padding: 30
+          }}>
+          <Dialog
+            style={{
+              outline: '2px solid transparent',
+              outlineOffset: '2px',
+              position: 'relative'
+            }}>
+            {({close}) => (
+              <>
+                <div>
+                  <RadioGroupExample />
+                </div>
+                <div>
+                  <Button onPress={close} style={{marginTop: 10}}>
+                    Close
+                  </Button>
+                </div>
+              </>
+            )}
+          </Dialog>
+        </Modal>
+      </ModalOverlay>
+    </DialogTrigger>
+  );
 };

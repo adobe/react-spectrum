@@ -131,13 +131,13 @@ describe('ListBox', () => {
   it('should support sections', () => {
     let {getAllByRole} = render(
       <ListBox aria-label="Sandwich contents" selectionMode="multiple">
-        <Section>
+        <Section data-test-prop="test-section-1">
           <Header>Veggies</Header>
           <Item id="lettuce">Lettuce</Item>
           <Item id="tomato">Tomato</Item>
           <Item id="onion">Onion</Item>
         </Section>
-        <Section>
+        <Section data-test-prop="test-section-2">
           <Header>Protein</Header>
           <Item id="ham">Ham</Item>
           <Item id="tuna">Tuna</Item>
@@ -154,6 +154,9 @@ describe('ListBox', () => {
 
     expect(groups[0]).toHaveAttribute('aria-labelledby');
     expect(document.getElementById(groups[0].getAttribute('aria-labelledby'))).toHaveTextContent('Veggies');
+
+    expect(groups[0]).toHaveAttribute('data-test-prop', 'test-section-1');
+    expect(groups[1]).toHaveAttribute('data-test-prop', 'test-section-2');
   });
 
   it('should support dynamic collections', () => {

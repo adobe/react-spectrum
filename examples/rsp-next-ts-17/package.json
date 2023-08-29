@@ -1,0 +1,32 @@
+{
+  "name": "rsp-next-ts",
+  "version": "0.1.0",
+  "private": true,
+  "homepage": ".",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "export": "next export",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@adobe/react-spectrum": "^3.26.0",
+    "@react-spectrum/color": "^3.0.0-beta.16",
+    "@react-spectrum/inlinealert": "^3.0.0-rc.0",
+    "@react-spectrum/toast": "^3.0.0-alpha.0",
+    "@spectrum-icons/illustrations": "^3.5.0",
+    "@spectrum-icons/workflow": "^4.0.3",
+    "next": "^12",
+    "next-transpile-modules": "^10.0.0",
+    "react": "^17",
+    "react-dom": "^17"
+  },
+  "devDependencies": {
+    "@types/node": "^18.8.2",
+    "@types/react": "^18.0.21",
+    "eslint": "^8.24.0",
+    "eslint-config-next": "^13.4.1",
+    "typescript": "^5.1.3"
+  }
+}

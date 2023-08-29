@@ -879,14 +879,12 @@ describe('ComboBox', function () {
 
       let combobox = getByRole('combobox');
       expect(combobox.value).toBe('Two');
-      expect(onInputChange).toHaveBeenCalledTimes(1);
-      expect(onInputChange).toHaveBeenLastCalledWith('Two');
 
       act(() => combobox.focus());
       fireEvent.change(combobox, {target: {value: 'Tw'}});
       act(() => jest.runAllTimers());
 
-      expect(onInputChange).toHaveBeenCalledTimes(2);
+      expect(onInputChange).toHaveBeenCalledTimes(1);
       expect(onInputChange).toHaveBeenLastCalledWith('Tw');
       expect(combobox.value).toBe('Tw');
       let listbox = getByRole('listbox');
@@ -907,7 +905,7 @@ describe('ComboBox', function () {
       expect(queryByRole('listbox')).toBeNull();
       expect(combobox.value).toBe('Two');
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
-      expect(onInputChange).toHaveBeenCalledTimes(3);
+      expect(onInputChange).toHaveBeenCalledTimes(2);
       expect(onInputChange).toHaveBeenLastCalledWith('Two');
     });
 
@@ -916,14 +914,12 @@ describe('ComboBox', function () {
 
       let combobox = getByRole('combobox');
       expect(combobox.value).toBe('Two');
-      expect(onInputChange).toHaveBeenCalledTimes(1);
-      expect(onInputChange).toHaveBeenLastCalledWith('Two');
 
       act(() => combobox.focus());
       fireEvent.change(combobox, {target: {value: 'Tw'}});
       act(() => jest.runAllTimers());
 
-      expect(onInputChange).toHaveBeenCalledTimes(2);
+      expect(onInputChange).toHaveBeenCalledTimes(1);
       expect(onInputChange).toHaveBeenLastCalledWith('Tw');
       expect(combobox.value).toBe('Tw');
       let listbox = getByRole('listbox');
@@ -938,7 +934,7 @@ describe('ComboBox', function () {
       // selectionManager.select from useSingleSelectListState always calls onSelectionChange even if the key is the same
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenLastCalledWith('2');
-      expect(onInputChange).toHaveBeenCalledTimes(3);
+      expect(onInputChange).toHaveBeenCalledTimes(2);
       expect(onInputChange).toHaveBeenLastCalledWith('Two');
     });
 
@@ -1586,6 +1582,41 @@ describe('ComboBox', function () {
 
       act(() => {
         combobox.blur();
+        jest.runAllTimers();
+      });
+
+      expect(onSelectionChange).not.toHaveBeenCalled();
+    });
+
+    it('retains selected key on tab', function () {
+      let {getByRole} = renderComboBox({allowsCustomValue: true, selectedKey: '2'});
+
+      let combobox = getByRole('combobox');
+      act(() => {
+        userEvent.click(combobox);
+        jest.runAllTimers();
+      });
+
+      act(() => {
+        userEvent.tab();
+        jest.runAllTimers();
+      });
+
+      expect(onSelectionChange).not.toHaveBeenCalled();
+    });
+
+    it('retains selected key on enter', function () {
+      let {getByRole} = renderComboBox({allowsCustomValue: true, selectedKey: '2'});
+
+      let combobox = getByRole('combobox');
+      act(() => {
+        userEvent.click(combobox);
+        jest.runAllTimers();
+      });
+
+      act(() => {
+        fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
+        fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
         jest.runAllTimers();
       });
 
@@ -2309,7 +2340,6 @@ describe('ComboBox', function () {
         });
 
         expect(combobox.value).toBe('Two');
-        expect(onInputChange).toHaveBeenLastCalledWith('Two');
 
         let listbox = getByRole('listbox');
         expect(listbox).toBeVisible();
@@ -2347,7 +2377,6 @@ describe('ComboBox', function () {
         let {getByRole, rerender} = render(<ExampleComboBox selectedKey="2" />);
         let combobox = getByRole('combobox');
         expect(combobox.value).toBe('Two');
-        expect(onInputChange).toHaveBeenLastCalledWith('Two');
 
         rerender(<ExampleComboBox selectedKey="1" />);
         expect(combobox.value).toBe('One');
@@ -4724,7 +4753,7 @@ describe('ComboBox', function () {
     });
 
     afterAll(function () {
-      jest.restoreAllMocks();
+      jest.clearAllMocks();
     });
     // NVDA workaround so that letters are read out when user presses left/right arrow to navigate through what they typed
     it('clears aria-activedescendant when user presses left/right arrow (NVDA fix)', function () {
@@ -5155,6 +5184,120 @@ describe('ComboBox', function () {
         expect(queryAllByRole('checkbox')).toEqual([]);
         expect(getByRole('combobox')).toBeVisible();
         expect(getByRole('listbox')).toBeVisible();
+      });
+    });
+  });
+
+  describe('forms', () => {
+    describe('desktop', () => {
+      beforeAll(function () {
+        jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+      });
+
+      afterAll(function () {
+        jest.clearAllMocks();
+      });
+
+      it('should support form reset', () => {
+        let {getByRole, getByTestId} = render(
+          <form>
+            <ExampleComboBox name="test" />
+            <input type="reset" data-testid="reset" />
+          </form>
+        );
+
+        let combobox = getByRole('combobox');
+        expect(combobox).toHaveAttribute('name', 'test');
+        typeText(combobox, 'Tw');
+
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        let listbox = getByRole('listbox');
+        let items = within(listbox).getAllByRole('option');
+        act(() => {
+          triggerPress(items[0]);
+          jest.runAllTimers();
+        });
+
+        expect(combobox).toHaveValue('Two');
+
+        let button = getByTestId('reset');
+        act(() => userEvent.click(button));
+        expect(combobox).toHaveValue('');
+      });
+
+      it('should support formValue', () => {
+        let {getByRole, rerender} = render(<ExampleComboBox name="test" selectedKey="2" />);
+        let input = getByRole('combobox');
+        expect(input).toHaveAttribute('name', 'test');
+        expect(input).toHaveValue('Two');
+        expect(document.querySelector('input[type=hidden]')).toBeNull();
+
+        rerender(<ExampleComboBox name="test" formValue="key" selectedKey="2" />);
+        expect(input).not.toHaveAttribute('name');
+
+        let hiddenInput = document.querySelector('input[type=hidden]');
+        expect(hiddenInput).toHaveAttribute('name', 'test');
+        expect(hiddenInput).toHaveValue('2');
+      });
+    });
+
+    describe('mobile', () => {
+      beforeEach(() => {
+        jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 700);
+      });
+
+      afterEach(() => {
+        act(() => jest.runAllTimers());
+        jest.clearAllMocks();
+      });
+
+      it('should support form reset', () => {
+        let {getByRole, getAllByRole, getByTestId} = render(
+          <form>
+            <ExampleComboBox name="test" />
+            <input type="reset" data-testid="reset" />
+          </form>
+        );
+
+        let button = getAllByRole('button')[0];
+
+        triggerPress(button);
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        let tray = getByTestId('tray');
+        expect(tray).toBeVisible();
+        let combobox = getByRole('searchbox');
+        expect(combobox).not.toHaveAttribute('name');
+        let listbox = getByRole('listbox');
+
+        let items = within(listbox).getAllByRole('option');
+        act(() => {
+          triggerPress(items[0]);
+          jest.runAllTimers();
+        });
+
+        let input = document.querySelector('input[name=test]');
+        expect(input).toHaveValue('One');
+
+        let reset = getByTestId('reset');
+        act(() => userEvent.click(reset));
+        expect(input).toHaveValue('');
+      });
+
+      it('should support formValue', () => {
+        let {rerender} = render(<ExampleComboBox name="test" selectedKey="2" />);
+        let input = document.querySelector('input[name=test]');
+        expect(input).toHaveAttribute('type', 'hidden');
+        expect(input).toHaveAttribute('name', 'test');
+        expect(input).toHaveValue('Two');
+
+        rerender(<ExampleComboBox name="test" formValue="key" selectedKey="2" />);
+        expect(input).toHaveValue('2');
       });
     });
   });
