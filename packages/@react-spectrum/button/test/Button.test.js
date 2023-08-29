@@ -284,7 +284,12 @@ describe('Button', function () {
     function TestComponent() {
       let [pending, setPending] = useState(false);
       return (
-        <Button onPress={(pending) => { setPending(true); onPressSpy(); }} isPending={pending}>
+        <Button
+          onPress={(pending) => {
+            setPending(true);
+            onPressSpy();
+          }}
+          UNSTABLE_isPending={pending}>
           Click Me
         </Button>
       );
@@ -311,7 +316,11 @@ describe('Button', function () {
 
   // isPending anchor element
   it('removes href attribute from anchor element when isPending is true', () => {
-    let {getByRole} = render(<Button elementType="a" href="//example.com" isPending>Click Me</Button>);
+    let {getByRole} = render(
+      <Button elementType="a" href="//example.com" UNSTABLE_isPending>
+        Click Me
+      </Button>
+    );
     let button = getByRole('button');
     expect(button).not.toHaveAttribute('href');
   });

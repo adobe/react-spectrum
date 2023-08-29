@@ -63,7 +63,7 @@ export default {
       control: 'select',
       options: ['white', 'black']
     },
-    isPending: {
+    UNSTABLE_isPending: {
       control: 'boolean',
       defaultValue: false
     }
@@ -257,7 +257,7 @@ function Pending(props) {
       </View>
 
       <View padding={16}>
-        <Button variant="primary" isPending={props.isPending} onPress={() => {window.alert('use storybook control to change this button isPending prop');}}>
+        <Button variant="primary" UNSTABLE_isPending={props.UNSTABLE_isPending} onPress={() => {window.alert('use storybook control to change this button UNSTABLE_isPending prop');}}>
           <Text>Controlled pending</Text>
         </Button>
       </View>
@@ -266,7 +266,7 @@ function Pending(props) {
 }
 let timerValue = 5000;
 function PendingButtonComponent(props) {
-  let [isPending, setPending] = useState(false);
+  let [UNSTABLE_isPending, setPending] = useState(false);
 
   let handlePress = (e) => {
     action('press')(e);
@@ -279,7 +279,7 @@ function PendingButtonComponent(props) {
   return (
     <Button
       {...props}
-      isPending={isPending}
+      UNSTABLE_isPending={UNSTABLE_isPending}
       onPress={handlePress}>
       {props.children}
     </Button>
@@ -287,7 +287,7 @@ function PendingButtonComponent(props) {
 }
 
 function PendingButtonOnClickComponent(props) {
-  let [isPending, setPending] = useState(false);
+  let [UNSTABLE_isPending, setPending] = useState(false);
 
   let handlePress = (e) => {
     action('click')(e);
@@ -300,7 +300,7 @@ function PendingButtonOnClickComponent(props) {
   return (
     <Button
       {...props}
-      isPending={isPending}
+      UNSTABLE_isPending={UNSTABLE_isPending}
       onClick={handlePress}>
       {props.children}
     </Button>
