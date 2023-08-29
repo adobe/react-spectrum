@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, render, triggerPress} from '@react-spectrum/test-utils';
 import {ActionButton, Button, ClearButton, LogicButton} from '../';
 import {Checkbox, defaultTheme} from '@adobe/react-spectrum';
-import {fireEvent, render, triggerPress} from '@react-spectrum/test-utils';
 import {Form} from '@react-spectrum/form';
 import {Provider} from '@react-spectrum/provider';
-import React from 'react';
+import React, {useState} from 'react';
 
 /**
  * Logic Button has no tests outside of this file because functionally it is identical
@@ -25,6 +25,10 @@ import React from 'react';
 
 describe('Button', function () {
   let onPressSpy = jest.fn();
+
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
 
   afterEach(() => {
     onPressSpy.mockClear();
@@ -273,6 +277,53 @@ describe('Button', function () {
     expect(eventDown.defaultPrevented).toBeFalsy();
   });
 
+  // isPending state
+  it('displays a spinner after a short delay when isPending prop is true', function () {
+    let spinnerVisibilityDelay = 1000;
+    let onPressSpy = jest.fn();
+    function TestComponent() {
+      let [pending, setPending] = useState(false);
+      return (
+        <Button
+          onPress={(pending) => {
+            setPending(true);
+            onPressSpy();
+          }}
+          UNSTABLE_isPending={pending}>
+          Click Me
+        </Button>
+      );
+    }
+    let {getByRole, queryByRole} = render(<TestComponent />);
+    let button = getByRole('button');
+    expect(button).not.toHaveAttribute('aria-disabled');
+    triggerPress(button);
+    // Button is disabled immediately, but spinner visibility is delayed
+    expect(button).toHaveAttribute('aria-disabled', 'true');
+    let spinner = queryByRole('progressbar');
+    expect(spinner).not.toBeInTheDocument();
+    // Multiple clicks shouldn't call onPressSpy
+    triggerPress(button);
+    act(() => {
+      jest.advanceTimersByTime(spinnerVisibilityDelay);
+    });
+    expect(button).toHaveAttribute('aria-disabled', 'true');
+    spinner = queryByRole('progressbar');
+    expect(spinner).toBeVisible();
+    expect(spinner).toHaveAttribute('aria-label', 'Loading…');
+    expect(onPressSpy).toHaveBeenCalledTimes(1);
+  });
+
+  // isPending anchor element
+  it('removes href attribute from anchor element when isPending is true', () => {
+    let {getByRole} = render(
+      <Button elementType="a" href="//example.com" UNSTABLE_isPending>
+        Click Me
+      </Button>
+    );
+    let button = getByRole('button');
+    expect(button).not.toHaveAttribute('href');
+  });
 
   // 'implicit submission' can't be tested https://github.com/testing-library/react-testing-library/issues/487
 });

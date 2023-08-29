@@ -53,8 +53,13 @@ export interface DatePickerState extends OverlayTriggerState {
   isOpen: boolean,
   /** Sets whether the calendar popover is open. */
   setOpen(isOpen: boolean): void,
-  /** The current validation state of the date picker, based on the `validationState`, `minValue`, and `maxValue` props. */
+  /**
+   * The current validation state of the date picker, based on the `validationState`, `minValue`, and `maxValue` props.
+   * @deprecated Use `isInvalid` instead.
+   */
   validationState: ValidationState,
+  /** Whether the date picker is invalid, based on the `isInvalid`, `minValue`, and `maxValue` props. */
+  isInvalid: boolean,
   /** Formats the selected value using the given options. */
   formatValue(locale: string, fieldOptions: FieldOptions): string
 }
@@ -120,9 +125,10 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
     }
   };
 
-  let validationState: ValidationState = props.validationState ||
-    (isInvalid(value, props.minValue, props.maxValue) ? 'invalid' : null) ||
-    (value && props.isDateUnavailable?.(value) ? 'invalid' : null);
+  let isValueInvalid = props.isInvalid || props.validationState === 'invalid' ||
+    isInvalid(value, props.minValue, props.maxValue) ||
+    value && props.isDateUnavailable?.(value);
+  let validationState: ValidationState = props.validationState || (isValueInvalid ? 'invalid' : null);
 
   return {
     value,
@@ -145,6 +151,7 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
       overlayState.setOpen(isOpen);
     },
     validationState,
+    isInvalid: isValueInvalid,
     formatValue(locale, fieldOptions) {
       if (!dateValue) {
         return '';

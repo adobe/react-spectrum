@@ -154,13 +154,13 @@ describe('Checkbox', () => {
     expect(label).toHaveClass('readonly');
   });
 
-  it('should support validation state', () => {
-    let {getByRole} = render(<Checkbox validationState="invalid" className={({validationState}) => validationState}>Test</Checkbox>);
+  it('should support invalid state', () => {
+    let {getByRole} = render(<Checkbox isInvalid className={({isInvalid}) => isInvalid ? 'invalid' : ''}>Test</Checkbox>);
     let checkbox = getByRole('checkbox');
     let label = checkbox.closest('label');
 
     expect(checkbox).toHaveAttribute('aria-invalid', 'true');
-    expect(label).toHaveAttribute('data-validation-state', 'invalid');
+    expect(label).toHaveAttribute('data-invalid', 'true');
     expect(label).toHaveClass('invalid');
   });
 

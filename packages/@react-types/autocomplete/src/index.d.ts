@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, CollectionBase, DOMProps, LoadingState, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, AsyncLoadable, CollectionBase, DOMProps, LoadingState, SpectrumFieldValidation, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps} from '@react-types/shared';
 import {Key, ReactElement} from 'react';
 import {MenuTriggerAction} from '@react-types/combobox';
 import {SearchFieldProps} from '@react-types/searchfield';
@@ -34,10 +34,10 @@ export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<Sear
    */
   menuTrigger?: MenuTriggerAction,
   /** Handler that is called when the SearchAutocomplete is submitted.
-   * 
+   *
    * A `value` will be passed if the submission is a custom value (e.g. a user types then presses enter).
    * If the input is a selected item, `value` will be null.
-   * 
+   *
    * A `key` will be passed if the submission is a selected item (e.g. a user clicks or presses enter on an option).
    * If the input is a custom value, `key` will be null.
    */
@@ -46,7 +46,7 @@ export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<Sear
 
 export interface AriaSearchAutocompleteProps<T> extends SearchAutocompleteProps<T>, DOMProps, AriaLabelingProps {}
 
-export interface SpectrumSearchAutocompleteProps<T> extends SpectrumTextInputBase, Omit<AriaSearchAutocompleteProps<T>, 'menuTrigger'>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
+export interface SpectrumSearchAutocompleteProps<T> extends SpectrumTextInputBase, Omit<AriaSearchAutocompleteProps<T>, 'menuTrigger' | 'isInvalid' | 'validationState'>, SpectrumFieldValidation, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
   /**
    * The interaction required to display the SearchAutocomplete menu. Note that this prop has no effect on the mobile SearchAutocomplete experience.
    * @default 'input'

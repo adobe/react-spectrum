@@ -27,7 +27,6 @@ function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLElement>) {
   props = useFormProps(props);
   let {
     isEmphasized,
-    validationState,
     children,
     orientation = 'vertical'
   } = props;
@@ -59,7 +58,6 @@ function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLElement>) {
         <RadioContext.Provider
           value={{
             isEmphasized,
-            validationState,
             state
           }}>
           {children}

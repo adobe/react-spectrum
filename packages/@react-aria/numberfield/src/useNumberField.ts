@@ -66,6 +66,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     maxValue,
     autoFocus,
     validationState,
+    isInvalid,
     label,
     formatOptions,
     onBlur = () => {},
@@ -192,6 +193,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     isReadOnly,
     isRequired,
     validationState,
+    isInvalid,
     value: inputValue,
     defaultValue: undefined, // defaultValue already used to populate state.inputValue, unneeded here
     autoComplete: 'off',

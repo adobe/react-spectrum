@@ -74,7 +74,7 @@ describe('useColorField', function () {
   });
 
   it('should return prop for invalid', function () {
-    let {inputProps} = renderColorFieldHook({validationState: 'invalid'});
+    let {inputProps} = renderColorFieldHook({isInvalid: true});
     expect(inputProps['aria-invalid']).toBe(true);
   });
 

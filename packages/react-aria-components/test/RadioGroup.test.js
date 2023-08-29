@@ -234,9 +234,9 @@ describe('RadioGroup', () => {
     expect(label).toHaveClass('readonly');
   });
 
-  it('should support validation state', () => {
-    let className = ({validationState}) => validationState;
-    let {getByRole, getAllByRole} = renderGroup({validationState: 'invalid', className}, {className});
+  it('should support invalid state', () => {
+    let className = ({isInvalid}) => isInvalid ? 'invalid' : null;
+    let {getByRole, getAllByRole} = renderGroup({isInvalid: true, className}, {className});
     let group = getByRole('radiogroup');
     let radio = getAllByRole('radio')[0];
     let label = radio.closest('label');
@@ -244,7 +244,7 @@ describe('RadioGroup', () => {
     expect(group).toHaveAttribute('aria-invalid', 'true');
     expect(group).toHaveClass('invalid');
 
-    expect(label).toHaveAttribute('data-validation-state', 'invalid');
+    expect(label).toHaveAttribute('data-invalid', 'true');
     expect(label).toHaveClass('invalid');
   });
 
@@ -272,7 +272,7 @@ describe('RadioGroup', () => {
 
   it('supports help text', () => {
     let {getByRole, getAllByRole} = render(
-      <RadioGroup validationState="invalid">
+      <RadioGroup isInvalid>
         <Label>Test</Label>
         <Radio value="a">A</Radio>
         <Text slot="description">Description</Text>

@@ -506,6 +506,7 @@ footer li:last-child:after {
 
 .article pre {
   background: var(--spectrum-global-color-gray-75);
+  border: 1px solid var(--spectrum-gray-200);
   --code-padding: 18px;
   padding: var(--code-padding);
   border-radius: 4px;
@@ -515,6 +516,7 @@ footer li:last-child:after {
 
 .article pre:global(.example) {
   border-radius: 4px 4px 0 0;
+  border-bottom: none;
   margin-bottom: 0;
 }
 
@@ -526,6 +528,8 @@ footer li:last-child:after {
 
 .article pre + div > .example {
   border-radius: 0 0 4px 4px;
+  border: 1px solid var(--spectrum-gray-200);
+  border-top: none;
 }
 
 code {

@@ -11,7 +11,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:react-aria-components';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/menu/docs/menu-trigger-anatomy.svg';
@@ -20,6 +20,7 @@ import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
 import Popover from '@react-spectrum/docs/pages/assets/component-illustrations/Popover.svg';
+import {Keyboard} from '@react-spectrum/text';
 
 ---
 category: Collections
@@ -778,62 +779,92 @@ function MyMenu(props) {
 }
 ```
 
-### Hooks
+### Custom children
 
-If you need to customize things even further, such as accessing internal state or customizing DOM structure, you can drop down to the lower
-level Hook-based API. `MenuTrigger` and `Menu` send props to their child elements via public React contexts for each component. You can use this context to
-implement replacements for any component, using hooks from `react-aria`. This allows you to replace only the components you need to customize,
-and keep using the others.
+MenuTrigger passes props to its child components, such as the button and popover, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
 
-`Menu` uses the following hooks. See the linked documentation for more details.
+<ContextTable components={['Button', 'Popover', 'Menu', 'Separator', 'Text', 'Keyboard']} docs={docs} />
 
-* [useMenu](useMenu.html)
-* [usePopover](usePopover.html)
-* [useButton](useButton.html)
-
-To replace a component used within a `Menu`, create your own component and use the <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook to merge the local props and ref with the ones sent via context by `Menu`. This example shows how you could implement a custom `Menu` component that works with `MenuTrigger`.
+This example consumes from `KeyboardContext` in an existing styled keyboard shortcut component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by Menu.
 
 ```tsx
-import {MenuContext, useContextProps} from 'react-aria-components';
-import {useMenu} from 'react-aria';
-import {useTreeState} from 'react-stately';
+import {KeyboardContext, useContextProps} from 'react-aria-components';
 
-function MyMenu(props) {
-  // Merge local props and ref with props from context.
-  let ref = React.useRef();
-  [props, ref] = useContextProps(props, ref, MenuContext);
+const MyKeyboard = React.forwardRef((props: React.HTMLAttributes<HTMLElement>, ref: React.ForwardedRef<HTMLElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, KeyboardContext);
+  ///- end highlight -///
 
-  let state = useTreeState(props);
-  let {menuProps} = useMenu(props, state, ref);
-
-  // Render stuff
-  // ...
-}
+  // ... your existing Keyboard component
+  return <kbd {...props} ref={ref} />;
+});
 ```
 
-This also works the other way. If you need to customize `MenuTrigger` itself, but want to reuse the components it contains, you can do so by providing the necessary contexts. The `Provider` component is an easier way to send multiple contexts at once.
+Now you can use `MyKeyboard` within a `Menu`, in place of the builtin React Aria Components `Keyboard`.
 
 ```tsx
+<Menu>
+  <Item textValue="Paste">
+    <Text slot="label">Paste</Text>
+    {/*- begin highlight -*/}
+    <MyKeyboard>⌘V</MyKeyboard>
+    {/*- end highlight -*/}
+  </Item>
+  {/* ... */}
+</Menu>
+```
+
+### Hooks
+
+If you need to customize things further, such as intercepting events or customizing DOM structure, you can drop down to the lower level Hook-based API. React Aria Hooks and Components can be mixed and matched by providing or consuming from the corresponding contexts that are exported for each component. See [useMenu](useMenu.html) for details.
+
+This example implements a custom `OptionMenuTrigger` component that intercepts the keyboard and press events returned by `useMenuTrigger` so that the menu only opens if the user holds the <Keyboard>Alt</Keyboard> key. This allows a button to have a default action, with additional options for power users.
+
+```tsx example render=false export=true
 import {ButtonContext, PopoverContext, MenuContext, Provider} from 'react-aria-components';
+import {useMenuTriggerState} from 'react-stately';
 import {useMenuTrigger} from 'react-aria';
 
-function MyMenuTrigger(props) {
-  // ...
-  let ref = useRef(null);
-  let {
-    menuTriggerProps,
-    menuProps
-  } = useMenuTrigger({ /* ... */ });
+function OptionMenuTrigger(props: MenuTriggerProps) {
+  let state = useMenuTriggerState(props);
+  let ref = React.useRef(null);
+  let {menuTriggerProps, menuProps} = useMenuTrigger(props, state, ref);
 
   return (
+    // Provider is a utility that renders multiple context providers without nesting.
     <Provider
       values={[
-        [ButtonContext, {...menuTriggerProps, ref}],
-        [PopoverContext, {state, triggerRef: ref}],
+        [ButtonContext, {
+          ...menuTriggerProps,
+          // Intercept events and only forward to useMenuTrigger if alt key is held.
+          onPressStart: e => e.altKey && menuTriggerProps.onPressStart(e),
+          onPress: e => (e.pointerType !== 'mouse' || e.altKey) && menuTriggerProps.onPress(e),
+          onKeyDown: e => e.altKey && menuTriggerProps.onKeyDown(e),
+          ref,
+          isPressed: state.isOpen
+        }],
+        [PopoverContext, {state, triggerRef: ref, placement: 'bottom start'}],
         [MenuContext, menuProps]
       ]}>
       {props.children}
     </Provider>
   );
 }
+```
+
+By providing the above contexts, the existing `Button`, `Popover`, and `Menu` components from React Aria Components can be used with this custom trigger built with the hooks.
+
+```tsx example
+<OptionMenuTrigger>
+  <Button>Save</Button>
+  <Popover>
+    <Menu>
+      <Item>Save</Item>
+      <Item>Save as…</Item>
+      <Item>Rename…</Item>
+      <Item>Delete…</Item>
+    </Menu>
+  </Popover>
+</OptionMenuTrigger>
 ```

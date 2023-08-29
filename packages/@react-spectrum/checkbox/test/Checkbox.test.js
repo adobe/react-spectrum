@@ -119,7 +119,7 @@ describe('Checkbox', function () {
 
   it.each`
     Name          | Component   | props
-    ${'Checkbox'} | ${Checkbox} | ${{onChange: onChangeSpy, validationState: 'invalid'}}
+    ${'Checkbox'} | ${Checkbox} | ${{onChange: onChangeSpy, isInvalid: true}}
   `('$Name can be invalid', function ({Component, props}) {
     let {getByRole} = render(<Component {...props}>Click Me</Component>);
 
@@ -130,7 +130,7 @@ describe('Checkbox', function () {
 
   it.each`
     Name          | Component   | props
-    ${'Checkbox'} | ${Checkbox} | ${{onChange: onChangeSpy, validationState: 'invalid', 'aria-errormessage': 'test'}}
+    ${'Checkbox'} | ${Checkbox} | ${{onChange: onChangeSpy, isInvalid: true, 'aria-errormessage': 'test'}}
   `('$Name passes through aria-errormessage', function ({Component, props}) {
     let {getByRole} = render(<Component {...props}>Click Me</Component>);
 

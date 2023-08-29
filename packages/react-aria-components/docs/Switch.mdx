@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/switch/docs/anatomy.svg';
@@ -304,6 +304,42 @@ Switch supports the `name` and `value` props for integration with HTML forms.
 ```
 
 ## Advanced customization
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['Switch']} docs={docs} />
+
+This example shows a `SwitchDescription` component that accepts a switch in its children and renders a description element below it. It uses the [useId](useId.html) hook to generate a unique id for the description, and associates it with the switch via the `aria-describedby` attribute passed to the `SwitchContext` provider.
+
+```tsx example
+import {SwitchContext} from 'react-aria-components';
+import {useId} from 'react-aria';
+
+interface SwitchDescriptionProps {
+  children?: React.ReactNode,
+  description?: string
+}
+
+function SwitchDescription({children, description}: SwitchDescriptionProps) {
+  let descriptionId = useId();
+  return (
+    <div>
+      {/*- begin highlight -*/}
+      <SwitchContext.Provider value={{'aria-describedby': descriptionId}}>
+      {/*- end highlight -*/}
+        {children}
+      </SwitchContext.Provider>
+      <small id={descriptionId}>{description}</small>
+    </div>
+  );
+}
+
+<SwitchDescription description="Connected to 'Starbucks Wifi'.">
+  <MySwitch defaultSelected>Wi-Fi</MySwitch>
+</SwitchDescription>
+```
 
 ### Hooks
 

@@ -76,4 +76,17 @@ describe('FileTrigger', () => {
     expect(input.files.item(0)).toStrictEqual(file);
     expect(input.files).toHaveLength(1);
   });
+
+  it('should attach a ref to the input', () => {
+    let ref = React.createRef();
+    let {getByTestId} = render(
+      <FileTrigger ref={ref} data-testid="foo" name="foibles">
+        <Button>Upload</Button>
+      </FileTrigger>
+    );
+
+    let input = getByTestId('foo');
+    expect(ref.current).toBe(input);
+    expect(input).toHaveAttribute('name', 'foibles');
+  });
 });
