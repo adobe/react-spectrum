@@ -24,7 +24,7 @@ import {DraggableListBox} from './DraggableListBox';
 import {DragPreview} from '../src/DragPreview';
 import {DroppableGridExample} from './DroppableGrid';
 import {DroppableListBox, DroppableListBoxExample} from './DroppableListBox';
-import dropzoneStyles from '@adobe/spectrum-css-temp/components/dropzone/vars.css';
+import dropzoneStyles from '@adobe/spectrum-css-temp/components/dnd/vars.css';
 import {Flex} from '@react-spectrum/layout';
 import {FocusRing} from '@react-aria/focus';
 import Folder from '@spectrum-icons/workflow/Folder';
@@ -250,7 +250,7 @@ export const MultipleCollectionDropTargets = {
 
 export const Reorderable = () => <ReorderableGridExample />;
 
-function Draggable() {
+export function Draggable() {
   let {dragProps, isDragging} = useDrag({
     getItems() {
       return [{
