@@ -43,7 +43,9 @@ export interface AriaOverlayProps {
    * out interaction with elements that should not dismiss the overlay.
    * By default, onClose will always be called on interaction outside the overlay ref.
    */
-  shouldCloseOnInteractOutside?: (element: Element) => boolean
+  shouldCloseOnInteractOutside?: (element: Element) => boolean,
+  // TODO: option that makes it so it closes all menu when clicking outside.
+  isMenu?: boolean
 }
 
 export interface OverlayAria {
@@ -67,7 +69,8 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
     isOpen,
     isDismissable = false,
     isKeyboardDismissDisabled = false,
-    shouldCloseOnInteractOutside
+    shouldCloseOnInteractOutside,
+    isMenu
   } = props;
 
   // Add the overlay ref to the stack of visible overlays on mount, and remove on unmount.
@@ -84,16 +87,16 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
     };
   }, [isOpen, ref]);
 
-  // Only hide the overlay when it is the topmost visible overlay in the stack.
+  // Only hide the overlay when it is the topmost visible overlay in the stack or if it is a subMenu.
   let onHide = () => {
-    if (visibleOverlays[visibleOverlays.length - 1] === ref && onClose) {
+    if ((visibleOverlays[visibleOverlays.length - 1] === ref || isMenu) && onClose) {
       onClose();
     }
   };
 
   let onInteractOutsideStart = (e: SyntheticEvent<Element>) => {
     if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.target as Element)) {
-      if (visibleOverlays[visibleOverlays.length - 1] === ref) {
+      if (visibleOverlays[visibleOverlays.length - 1] === ref && !isMenu) {
         e.stopPropagation();
         e.preventDefault();
       }
@@ -102,7 +105,7 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
 
   let onInteractOutside = (e: SyntheticEvent<Element>) => {
     if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.target as Element)) {
-      if (visibleOverlays[visibleOverlays.length - 1] === ref) {
+      if (visibleOverlays[visibleOverlays.length - 1] === ref && !isMenu) {
         e.stopPropagation();
         e.preventDefault();
       }

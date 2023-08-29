@@ -87,6 +87,7 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
         scrollRef={menuRef}
         placement={initialPlacement}
         hideArrow
+        isMenu
         shouldFlip={shouldFlip}>
         {menu}
       </Popover>

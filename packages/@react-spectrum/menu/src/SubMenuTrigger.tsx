@@ -151,6 +151,7 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
         isNonModal
         enableBothDismissButtons
         disableFocusManagement
+        isMenu
 
         // Props from MenuTriggerImplementation
         UNSAFE_style={{clipPath: 'unset'}}
