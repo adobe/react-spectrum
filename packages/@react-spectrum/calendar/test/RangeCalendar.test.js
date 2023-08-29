@@ -635,7 +635,7 @@ describe('RangeCalendar', () => {
 
       it('does not allow dragging the end of an invalid range', () => {
         let onChange = jest.fn();
-        let {getAllByLabelText, getByText} = render(<RangeCalendar validationState="invalid" onChange={onChange} defaultValue={{start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 20)}} />);
+        let {getAllByLabelText, getByText} = render(<RangeCalendar isInvalid onChange={onChange} defaultValue={{start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 20)}} />);
 
         fireEvent.pointerDown(getByText('20'), {pointerType: 'touch'});
 
@@ -1230,11 +1230,11 @@ describe('RangeCalendar', () => {
       expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2022, 3, 9), end: new CalendarDate(2022, 4, 8)});
     });
 
-    it('should support validationState', () => {
+    it('should support invalid state', () => {
       let {getByRole} = render(
         <RangeCalendar
           defaultValue={{start: new CalendarDate(2022, 3, 10), end: new CalendarDate(2022, 3, 12)}}
-          validationState="invalid" />
+          isInvalid />
       );
 
       let cell = getByRole('button', {name: 'Friday, March 11, 2022 selected'});
@@ -1255,7 +1255,7 @@ describe('RangeCalendar', () => {
       let {getByRole} = render(
         <RangeCalendar
           defaultValue={{start: new CalendarDate(2022, 3, 10), end: new CalendarDate(2022, 3, 12)}}
-          validationState="invalid"
+          isInvalid
           errorMessage="Selection dates cannot include weekends." />
       );
 
@@ -1273,7 +1273,7 @@ describe('RangeCalendar', () => {
       expect(description).toBe('Selection dates cannot include weekends. Click to start selecting date range');
     });
 
-    it('does not show error message without validationState="invalid"', () => {
+    it('does not show error message without isInvalid', () => {
       let {getByRole} = render(
         <RangeCalendar
           defaultValue={{start: new CalendarDate(2022, 3, 10), end: new CalendarDate(2022, 3, 12)}}

@@ -290,7 +290,7 @@ describe('CheckboxGroup', () => {
   it('does not add aria-invalid to every checkbox by default', () => {
     let {getAllByRole} = render(
       <Provider theme={theme}>
-        <CheckboxGroup label="Favorite Pet" validationState="invalid">
+        <CheckboxGroup label="Favorite Pet" isInvalid>
           <Checkbox value="dogs">Dogs</Checkbox>
           <Checkbox value="cats">Cats</Checkbox>
           <Checkbox value="dragons">Dragons</Checkbox>
@@ -304,12 +304,12 @@ describe('CheckboxGroup', () => {
     expect(checkboxes[2]).not.toHaveAttribute('aria-invalid');
   });
 
-  it('supports validationState on individual checkboxes', () => {
+  it('supports invalid state on individual checkboxes', () => {
     let {getAllByRole} = render(
       <Provider theme={theme}>
         <CheckboxGroup label="Agree to the following">
-          <Checkbox value="terms" validationState="invalid">Terms and conditions</Checkbox>
-          <Checkbox value="cookies" validationState="invalid">Cookies</Checkbox>
+          <Checkbox value="terms" isInvalid>Terms and conditions</Checkbox>
+          <Checkbox value="cookies" isInvalid>Cookies</Checkbox>
           <Checkbox value="privacy">Privacy policy</Checkbox>
         </CheckboxGroup>
       </Provider>
@@ -358,7 +358,7 @@ describe('CheckboxGroup', () => {
   it('should support error message', function () {
     let {getByRole} = render(
       <Provider theme={theme}>
-        <CheckboxGroup label="Favorite Pet" errorMessage="Error message" validationState="invalid">
+        <CheckboxGroup label="Favorite Pet" errorMessage="Error message" isInvalid>
           <Checkbox value="dogs">Dogs</Checkbox>
           <Checkbox value="cats">Cats</Checkbox>
           <Checkbox value="dragons">Dragons</Checkbox>

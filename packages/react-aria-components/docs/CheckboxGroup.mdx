@@ -146,7 +146,7 @@ import {CheckboxGroup, Checkbox, Label} from 'react-aria-components';
     }
   }
 
-  &[data-validation-state=invalid] {
+  &[data-invalid] {
     .checkbox {
       border-color: var(--invalid-color);
     }
@@ -429,21 +429,21 @@ function Example() {
 ### Group validation
 
 CheckboxGroups can display a validation state to communicate to the user if the current value is invalid.
-Implement your own validation logic in your app and pass `"invalid"` to the `validationState` prop to either
+Implement your own validation logic in your app and set the `isInvalid` prop to either
 the `CheckboxGroup` or an individual `Checkbox` to mark it as invalid.
 
 If the group as a whole is invalid, for example if the user must choose at least one option but failed
-to do so, then pass `validationState="invalid"` to the `CheckboxGroup`.
+to do so, then pass `isInvalid` to the `CheckboxGroup`.
 
-The following example shows how to require that at least one option is selected. It sets the `validationState`
-prop to `"invalid"` when no options are selected and removes it otherwise.
+The following example shows how to require that at least one option is selected. It sets the `isInvalid`
+prop when no options are selected and removes it otherwise.
 
 ```tsx example
 function Example() {
   let [selected, setSelected] = React.useState<string[]>([]);
 
   return (
-    <MyCheckboxGroup label="Sandwich condiments" value={selected} onChange={setSelected} isRequired validationState={selected.length === 0 ? 'invalid' : undefined}>
+    <MyCheckboxGroup label="Sandwich condiments" value={selected} onChange={setSelected} isRequired isInvalid={selected.length === 0}>
       <MyCheckbox value="lettuce">Lettuce</MyCheckbox>
       <MyCheckbox value="tomato">Tomato</MyCheckbox>
       <MyCheckbox value="onion">Onion</MyCheckbox>
@@ -456,11 +456,11 @@ function Example() {
 ### Individual Checkbox validation
 
 If an individual checkbox is invalid, for example if the user must select a particular option but failed
-to do so, then pass `validationState="invalid"` to the `Checkbox` element instead.
+to do so, then pass `isInvalid` to the `Checkbox` element instead.
 
 The following example shows how to require that all items are selected. It uses the `isRequired` prop on each individual `Checkbox`
 element to indicate to assistive technology that every checkbox is required. By default, the `isRequired` prop on the `CheckboxGroup` only
-indicates that the group is required, not any individual option. In addition, `validationState="invalid"` is set on each checkbox that is not yet checked.
+indicates that the group is required, not any individual option. In addition, `isInvalid` is set on each checkbox that is not yet checked.
 
 ```tsx example
 function Example() {
@@ -468,9 +468,9 @@ function Example() {
 
   return (
     <MyCheckboxGroup label="Agree to the following" isRequired value={selected} onChange={setSelected}>
-      <MyCheckbox value="terms" isRequired validationState={!selected.includes('terms') ? 'invalid' : undefined}>Terms and conditions</MyCheckbox>
-      <MyCheckbox value="privacy" isRequired validationState={!selected.includes('privacy') ? 'invalid' : undefined}>Privacy policy</MyCheckbox>
-      <MyCheckbox value="cookies" isRequired validationState={!selected.includes('cookies') ? 'invalid' : undefined}>Cookie policy</MyCheckbox>
+      <MyCheckbox value="terms" isRequired isInvalid={!selected.includes('terms')}>Terms and conditions</MyCheckbox>
+      <MyCheckbox value="privacy" isRequired isInvalid={!selected.includes('privacy')}>Privacy policy</MyCheckbox>
+      <MyCheckbox value="cookies" isRequired isInvalid={!selected.includes('cookies')}>Cookie policy</MyCheckbox>
     </MyCheckboxGroup>
   );
 }
@@ -478,7 +478,7 @@ function Example() {
 
 ### Help text
 
-The `description` slot can be used to associate additional help text with a checkbox group. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `validationState` prop to semantically mark the checkbox group as invalid for assistive technologies.
+The `description` slot can be used to associate additional help text with a checkbox group. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to semantically mark the checkbox group as invalid for assistive technologies.
 
 ```tsx example
 function Example() {
@@ -490,7 +490,7 @@ function Example() {
       label="Pets"
       onChange={setChecked}
       value={checked}
-      validationState={isValid ? 'valid' : 'invalid'}
+      isInvalid={!isValid}
       description={isValid ? 'Select your pets.' : undefined}
       errorMessage={isValid ? undefined : checked.includes('cats')
         ? 'No cats allowed.'

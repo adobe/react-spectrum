@@ -34,7 +34,12 @@ export interface InputRenderProps {
    * Whether the input is disabled.
    * @selector [data-disabled]
    */
-  isDisabled: boolean
+  isDisabled: boolean,
+  /**
+   * Whether the input is invalid.
+   * @selector [data-invalid]
+   */
+  isInvalid: boolean
 }
 
 export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'style'>, StyleRenderProps<InputRenderProps> {}
@@ -50,9 +55,16 @@ function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
     autoFocus: props.autoFocus
   });
 
+  let isInvalid = !!props['aria-invalid'] && props['aria-invalid'] !== 'false';
   let renderProps = useRenderProps({
     ...props,
-    values: {isHovered, isFocused, isFocusVisible, isDisabled: props.disabled || false},
+    values: {
+      isHovered,
+      isFocused,
+      isFocusVisible,
+      isDisabled: props.disabled || false,
+      isInvalid
+    },
     defaultClassName: 'react-aria-Input'
   });
 
@@ -64,7 +76,8 @@ function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
       data-focused={isFocused || undefined}
       data-disabled={props.disabled || undefined}
       data-hovered={isHovered || undefined}
-      data-focus-visible={isFocusVisible || undefined} />
+      data-focus-visible={isFocusVisible || undefined}
+      data-invalid={isInvalid || undefined} />
   );
 }
 

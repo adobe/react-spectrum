@@ -110,10 +110,10 @@ describe('DateRangePicker', () => {
   it('should support render props', () => {
     let {getByRole} = render(
       <DateRangePicker defaultValue={{start: new CalendarDate(2023, 1, 10), end: new CalendarDate(2023, 1, 1)}}>
-        {({validationState}) => (
+        {({isInvalid}) => (
           <>
             <Label>Trip dates</Label>
-            <Group data-validation-state={validationState}>
+            <Group data-validation-state={isInvalid ? 'invalid' : null}>
               <DateInput slot="start">
                 {(segment) => <DateSegment segment={segment} />}
               </DateInput>
