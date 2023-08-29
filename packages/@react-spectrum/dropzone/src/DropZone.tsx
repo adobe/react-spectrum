@@ -68,7 +68,7 @@ function DropZone(props: SpectrumDropZoneProps, ref: DOMRef<HTMLDivElement>) {
             styleProps.className
           )
         }>
-        {replaceMessage ? replaceMessage : stringFormatter.format('message')}
+        {replaceMessage ? replaceMessage : stringFormatter.format('replaceMessage')}
       </div>
     </RACDropZone>
   );
