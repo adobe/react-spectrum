@@ -96,7 +96,7 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
 
   let onInteractOutsideStart = (e: SyntheticEvent<Element>) => {
     if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.target as Element)) {
-      if (visibleOverlays[visibleOverlays.length - 1] === ref && !isMenu) {
+      if (visibleOverlays[visibleOverlays.length - 1] === ref) {
         e.stopPropagation();
         e.preventDefault();
       }
@@ -105,7 +105,7 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
 
   let onInteractOutside = (e: SyntheticEvent<Element>) => {
     if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.target as Element)) {
-      if (visibleOverlays[visibleOverlays.length - 1] === ref && !isMenu) {
+      if (visibleOverlays[visibleOverlays.length - 1] === ref) {
         e.stopPropagation();
         e.preventDefault();
       }
