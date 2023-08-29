@@ -270,7 +270,7 @@ describe('useControlledState tests', function () {
     }
 
     function TransitionButton({onClick}) {
-      let [UNSTABLE_isPending, startTransition] = React.useTransition();
+      let [isPending, startTransition] = React.useTransition();
       return (
         <button
           data-testid="show"
@@ -279,7 +279,7 @@ describe('useControlledState tests', function () {
               onClick();
             });
           }}>
-          {UNSTABLE_isPending ? 'Loading' : 'Show'}
+          {isPending ? 'Loading' : 'Show'}
         </button>
       );
     }
@@ -322,7 +322,7 @@ describe('useControlledState tests', function () {
     function Test(props) {
       let [value, setValue] = useControlledState(undefined, 1, props.onChange);
       let [showChild, setShowChild] = useState(false);
-      let [UNSTABLE_isPending, startTransition] = React.useTransition();
+      let [isPending, startTransition] = React.useTransition();
 
       return (
         <>
@@ -335,7 +335,7 @@ describe('useControlledState tests', function () {
               });
             }}>
             {value}
-            {UNSTABLE_isPending ? ' (Loading)' : ''}
+            {isPending ? ' (Loading)' : ''}
           </button>
           {showChild && <AsyncChild />}
         </>
