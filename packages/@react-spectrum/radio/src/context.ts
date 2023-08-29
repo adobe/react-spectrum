@@ -16,7 +16,6 @@ import React, {useContext} from 'react';
 interface RadioGroupContext {
   isEmphasized?: boolean,
   name?: string,
-  validationState?: 'valid' | 'invalid',
   state: RadioGroupState
 }
 

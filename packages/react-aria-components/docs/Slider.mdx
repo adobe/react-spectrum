@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import statelyDocs from 'docs:@react-stately/slider';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/slider/docs/anatomy.svg';
@@ -520,8 +520,80 @@ If you need to customize one of the components within a `Slider`, such as `Label
 
 ```tsx
 function MySliderOutput(props) {
-  return <MySliderOutput {...props} className="my-slider-output" />
+  return <SliderOutput {...props} className="my-slider-output" />
 }
+```
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['Slider']} docs={docs} />
+
+This example shows a `SliderDescription` component that accepts a slider in its children and renders a description element below it. It uses the [useId](useId.html) hook to generate a unique id for the description, and associates it with the slider via the `aria-describedby` attribute passed to the `SwitchContext` provider.
+
+```tsx example
+import {SliderContext} from 'react-aria-components';
+import {useId} from 'react-aria';
+
+interface SliderDescriptionProps {
+  children?: React.ReactNode,
+  description?: string
+}
+
+function SliderDescription({children, description}: SliderDescriptionProps) {
+  let descriptionId = useId();
+  return (
+    <div>
+      {/*- begin highlight -*/}
+      <SliderContext.Provider value={{'aria-describedby': descriptionId}}>
+      {/*- end highlight -*/}
+        {children}
+      </SliderContext.Provider>
+      <small id={descriptionId}>{description}</small>
+    </div>
+  );
+}
+
+<SliderDescription description="Keeping your display on may shorten its life.">
+  <MySlider label="Turn off display after" minValue={10} maxValue={60} defaultValue={45} formatOptions={{style: 'unit', unit: 'minute'}} />
+</SliderDescription>
+```
+
+### Custom children
+
+Slider passes props to its child components, such as the label, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
+
+<ContextTable components={['Label']} docs={docs} />
+
+This example consumes from `LabelContext` in an existing styled label component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by Slider.
+
+```tsx
+import type {LabelProps} from 'react-aria-components';
+import {LabelContext, useContextProps} from 'react-aria-components';
+
+const MyCustomLabel = React.forwardRef((props: LabelProps, ref: React.ForwardedRef<HTMLLabelElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, LabelContext);
+  ///- end highlight -///
+
+  // ... your existing Label component
+  return <label {...props} ref={ref} />;
+});
+```
+
+Now you can use `MyCustomLabel` within a `Slider`, in place of the builtin React Aria Components `Label`.
+
+```tsx
+<Slider>
+  {/*- begin highlight -*/}
+  <MyCustomLabel>Opacity</MyCustomLabel>
+  {/*- end highlight -*/}
+  <SliderTrack>
+    <SliderThumb />
+  </SliderTrack>
+</Slider>
 ```
 
 ### Hooks

@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import typesDocs from 'docs:@react-types/overlays';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/dialog/docs/anatomy.svg';
@@ -393,6 +393,40 @@ Alert dialogs are a special type of dialog meant to present a prompt that the us
 ```
 
 ## Advanced customization
+
+### Custom children
+
+DialogTrigger and Dialog pass props to their child components, such as the trigger button and modal overlay, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
+
+<ContextTable components={['Button', 'Dialog', 'Modal', 'Popover', 'Heading']} docs={docs} />
+
+This example consumes from `HeadingContext` in an existing styled heading component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by Dialog.
+
+```tsx
+import type {HeadingProps} from 'react-aria-components';
+import {HeadingContext, useContextProps} from 'react-aria-components';
+
+const MyCustomHeading = React.forwardRef((props: HeadingProps, ref: React.ForwardedRef<HTMLHeadingElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, HeadingContext);
+  ///- end highlight -///
+
+  // ... your existing Heading component
+  return <h2 {...props} ref={ref} />;
+});
+```
+
+Now you can use `MyCustomHeading` within a `Dialog`, in place of the builtin React Aria Components `Heading`.
+
+```tsx
+<Dialog>
+  {/*- begin highlight -*/}
+  <MyCustomHeading>Dialog title</MyCustomHeading>
+  {/*- end highlight -*/}
+  {/* ... */}
+</Dialog>
+```
 
 ### Hooks
 

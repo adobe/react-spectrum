@@ -15,13 +15,17 @@ import {ReactNode} from 'react';
 export type ValidationState = 'valid' | 'invalid';
 
 export interface Validation {
+  /** Whether user input is required on the input before form submission. */
+  isRequired?: boolean,
+  /** Whether the input value is invalid. */
+  isInvalid?: boolean,
+  /** @deprecated Use `isInvalid` instead. */
+  validationState?: ValidationState
+}
+
+export interface SpectrumFieldValidation extends Omit<Validation, 'isInvalid' | 'validationState'> {
   /** Whether the input should display its "valid" or "invalid" visual styling. */
-  validationState?: ValidationState,
-  /**
-   * Whether user input is required on the input before form submission.
-   * Often paired with the `necessityIndicator` prop to add a visual indicator to the input.
-   */
-  isRequired?: boolean
+  validationState?: ValidationState
 }
 
 export interface InputBase {
@@ -78,7 +82,7 @@ export interface HelpTextProps {
 }
 
 // Spectrum specific types. Extends `Validation` so that the `validationState` prop is available.
-export interface SpectrumHelpTextProps extends HelpTextProps, Validation {
+export interface SpectrumHelpTextProps extends HelpTextProps {
   /** Whether the description is displayed with lighter text. */
   isDisabled?: boolean,
   /** Whether an error icon is rendered. */

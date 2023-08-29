@@ -25,7 +25,6 @@ const attributes = {
     'invalid'
   ],
   enum: {
-    'validation-state': ['invalid', 'valid'],
     placement: ['left', 'right', 'top', 'bottom'],
     type: ['literal', 'year', 'month', 'day'],
     layout: ['grid', 'stack'],
