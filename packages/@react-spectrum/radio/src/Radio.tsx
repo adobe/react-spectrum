@@ -36,7 +36,6 @@ function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
   let radioGroupProps = useRadioProvider();
   let {
     isEmphasized,
-    validationState,
     state
   } = radioGroupProps;
 
@@ -60,7 +59,7 @@ function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
             // 'spectrum-Radio--labelBelow': labelPosition === 'bottom',
             'spectrum-Radio--quiet': !isEmphasized,
             'is-disabled': isDisabled,
-            'is-invalid': validationState === 'invalid',
+            'is-invalid': state.isInvalid,
             'is-hovered': isHovered
           },
           styleProps.className

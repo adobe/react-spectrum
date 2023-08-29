@@ -21,6 +21,7 @@ import {
   InputBase,
   InputDOMProps,
   LabelableProps,
+  SpectrumFieldValidation,
   SpectrumLabelableProps,
   SpectrumTextInputBase,
   StyleProps,
@@ -103,7 +104,7 @@ export interface ColorFieldProps extends Omit<ValueBase<string | Color | null>, 
 
 export interface AriaColorFieldProps extends ColorFieldProps, AriaLabelingProps, FocusableDOMProps, Omit<TextInputDOMProps, 'minLength' | 'maxLength' | 'pattern' | 'type' | 'inputMode' | 'autoComplete'>, AriaValidationProps {}
 
-export interface SpectrumColorFieldProps extends SpectrumTextInputBase, AriaColorFieldProps, SpectrumLabelableProps, StyleProps {
+export interface SpectrumColorFieldProps extends SpectrumTextInputBase, Omit<AriaColorFieldProps, 'isInvalid' | 'validationState'>, SpectrumFieldValidation, SpectrumLabelableProps, StyleProps {
   /** Whether the ColorField should be displayed with a quiet style. */
   isQuiet?: boolean
 }

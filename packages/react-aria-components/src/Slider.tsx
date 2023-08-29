@@ -209,7 +209,7 @@ export interface SliderThumbRenderProps {
   isDisabled: boolean
 }
 
-export interface SliderThumbProps extends AriaSliderThumbProps, RenderProps<SliderThumbRenderProps> {}
+export interface SliderThumbProps extends Omit<AriaSliderThumbProps, 'validationState'>, RenderProps<SliderThumbRenderProps> {}
 
 function SliderThumb(props: SliderThumbProps, ref: ForwardedRef<HTMLDivElement>) {
   let {state, trackRef} = useContext(InternalSliderContext)!;

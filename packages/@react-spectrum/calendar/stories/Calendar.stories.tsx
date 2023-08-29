@@ -79,9 +79,8 @@ export default {
       control: 'select',
       options: [null, 'single', 'visible']
     },
-    validationState: {
-      control: 'select',
-      options: [null, 'valid', 'invalid']
+    isInvalid: {
+      control: 'boolean'
     },
     'aria-label': {
       control: 'text'

@@ -667,7 +667,7 @@ The `isReadOnly` boolean prop makes the Calendar's value immutable. Unlike `isDi
 
 ### Error message
 
-`Calendar` tries to avoid allowing the user to select invalid dates in the first place (see [Validation](#validation) and [Unavailable dates](#unavailable-dates) above). However, if according to application logic a selected date is invalid, the `validationState` prop can be set to `"invalid"`. This alerts assistive technology users that the selection is invalid, and can be used for styling purposes as well. In addition, the `errorMessage` slot may be used to help the user fix the issue.
+`Calendar` tries to avoid allowing the user to select invalid dates in the first place (see [Validation](#validation) and [Unavailable dates](#unavailable-dates) above). However, if according to application logic a selected date is invalid, the `isInvalid` prop can be set. This alerts assistive technology users that the selection is invalid, and can be used for styling purposes as well. In addition, the `errorMessage` slot may be used to help the user fix the issue.
 
 This example validates that the selected date is a weekday and not a weekend according to the current locale.
 
@@ -685,7 +685,7 @@ function Example() {
       aria-label="Appointment date"
       value={date}
       onChange={setDate}
-      validationState={isInvalid ? 'invalid' : 'valid'}
+      isInvalid={isInvalid}
       errorMessage={isInvalid ? 'We are closed on weekends' : undefined} />
   );
 }

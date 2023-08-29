@@ -385,14 +385,14 @@ describe('Radios', function () {
     expect(radioGroup).toHaveAttribute('aria-orientation', 'horizontal');
   });
 
-  it('v3 RadioGroup sets aria-invalid when validationState="invalid"', () => {
-    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet', validationState: 'invalid'}, []);
+  it('v3 RadioGroup sets aria-invalid when isInvalid', () => {
+    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet', isInvalid: true}, []);
     let radioGroup = getByRole('radiogroup');
     expect(radioGroup).toHaveAttribute('aria-invalid', 'true');
   });
 
   it('v3 RadioGroup passes through aria-errormessage', () => {
-    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet', validationState: 'invalid', 'aria-errormessage': 'test'}, []);
+    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet', isInvalid: true, 'aria-errormessage': 'test'}, []);
     let radioGroup = getByRole('radiogroup');
     expect(radioGroup).toHaveAttribute('aria-invalid', 'true');
     expect(radioGroup).toHaveAttribute('aria-errormessage', 'test');
@@ -426,7 +426,7 @@ describe('Radios', function () {
   });
 
   it('should support error message', function () {
-    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet', errorMessage: 'Error message', validationState: 'invalid'}, []);
+    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet', errorMessage: 'Error message', isInvalid: true}, []);
 
     let group = getByRole('radiogroup');
     expect(group).toHaveAttribute('aria-describedby');

@@ -119,7 +119,7 @@ import {RadioGroup, Radio, Label} from 'react-aria-components';
     }
   }
 
-  &[data-validation-state=invalid] {
+  &[data-invalid] {
     &:before {
       border-color: var(--invalid-color);
     }
@@ -374,10 +374,10 @@ function Example() {
 ### Validation
 
 RadioGroups can display a validation state to communicate to the user if the current value is invalid.
-Implement your own validation logic in your app and pass `"invalid"` to the RadioGroup via the `validationState` prop.
+Implement your own validation logic in your app and set the `isInvalid` prop accordingly.
 
 ```tsx example
-<MyRadioGroup label="Favorite avatar" validationState="invalid">
+<MyRadioGroup label="Favorite avatar" isInvalid>
   <Radio value="wizard">Wizard</Radio>
   <Radio value="dragon">Dragon</Radio>
 </MyRadioGroup>
@@ -385,7 +385,7 @@ Implement your own validation logic in your app and pass `"invalid"` to the Radi
 
 ### Help text
 
-The `description` slot can be used to associate additional help text with a radio group. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `validationState` prop to semantically mark the radio group as invalid for assistive technologies.
+The `description` slot can be used to associate additional help text with a radio group. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to semantically mark the radio group as invalid for assistive technologies.
 
 ```tsx example
 function Example() {
@@ -396,7 +396,7 @@ function Example() {
     <MyRadioGroup
       aria-label="Favorite pet"
       onChange={setSelected}
-      validationState={isValid ? 'valid' : 'invalid'}
+      isInvalid={!isValid}
       description={isValid ? 'Please select a pet.' : undefined}
       errorMessage={isValid ? undefined :
         selected === 'cats'

@@ -439,7 +439,7 @@ This example only accepts times between 9 AM and 5 PM.
 
 ### Help text
 
-The `description` slot can be used to associate additional help text with a date field. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `validationState` prop to semantically mark the date field as invalid for assistive technologies.
+The `description` slot can be used to associate additional help text with a date field. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to semantically mark the date field as invalid for assistive technologies.
 
 This example validates that the selected time is on a 15 minute increment.
 
@@ -453,7 +453,7 @@ function Example() {
       label="Meeting time"
       value={time}
       onChange={setTime}
-      validationState={isInvalid ? 'invalid' : 'valid'}
+      isInvalid={!!isInvalid}
       description={isInvalid ? undefined : 'Select a meeting time'}
       errorMessage={isInvalid ? 'Meetings start every 15 minutes.' : undefined} />
   );
@@ -534,7 +534,7 @@ function FieldGroup({title, children, errorMessage}: FieldGroupProps) {
       <legend>{title}</legend>
       {/*- begin highlight -*/}
       <TimeFieldContext.Provider value={{
-        validationState: errorMessage ? 'invalid' : undefined,
+        isInvalid: !!errorMessage,
         'aria-describedby': errorMessage ? errorId : undefined
       }}>
       {/*- end highlight -*/}

@@ -114,7 +114,7 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
     color: var(--text-color-invalid);
   }
 
-  &[data-validation-state=invalid] {
+  &[data-invalid] {
     .react-aria-DateInput:after {
       content: '🚫' / '';
       content: '🚫';
@@ -957,7 +957,7 @@ function Example() {
 
 ### Help text
 
-The `description` slot can be used to associate additional help text with a date picker. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `validationState` prop to semantically mark the date picker as invalid for assistive technologies.
+The `description` slot can be used to associate additional help text with a date picker. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to semantically mark the date picker as invalid for assistive technologies.
 
 This example validates that the selected date is a weekday and not a weekend according to the current locale.
 
@@ -975,7 +975,7 @@ function Example() {
       label="Appointment date"
       value={date}
       onChange={setDate}
-      validationState={isInvalid ? 'invalid' : 'valid'}
+      isInvalid={isInvalid}
       description={isInvalid ? undefined : 'Select a weekday'}
       errorMessage={isInvalid ? 'We are closed on weekends' : undefined} />
   );
@@ -1059,7 +1059,7 @@ function FieldGroup({title, children, errorMessage}: FieldGroupProps) {
       <legend>{title}</legend>
       {/*- begin highlight -*/}
       <DatePickerContext.Provider value={{
-        validationState: errorMessage ? 'invalid' : undefined,
+        isInvalid: !!errorMessage,
         'aria-describedby': errorMessage ? errorId : undefined
       }}>
       {/*- end highlight -*/}
