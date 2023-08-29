@@ -533,6 +533,7 @@ describe('Radios', function () {
       expect(radios[1]).toHaveAttribute('tabIndex', '0');
       expect(radios[2]).toHaveAttribute('tabIndex', '-1');
     });
+
     describe('roving tab timers', () => {
       beforeAll(() => {
         jest.useFakeTimers();
