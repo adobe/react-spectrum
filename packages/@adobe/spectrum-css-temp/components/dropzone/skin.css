@@ -37,22 +37,9 @@ governing permissions and limitations under the License.
     }
   }
 
-  &[data-drop-target]::after{
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: var(--spectrum-dropzone-background-color-selected-hover);
-  }
-}
-
-.spectrum-Dropzone-illustratedMessage {
-
-  &.focus-visible {
-    svg{
-      color: var(--spectrum-dropzone-illustratedmessage-illustration-color-key-focus);
+  &[data-drop-target] {
+    .spectrum-Dropzone-backdrop {
+      background-color: var(--spectrum-dropzone-background-color-selected-hover);
     }
   }
 }
@@ -62,13 +49,7 @@ governing permissions and limitations under the License.
     --spectrum-dropzone-border-color: CanvasText;
     --spectrum-dropzone-border-color-selected-hover: Highlight;
     --spectrum-dropzone-background-color-selected-hover: Canvas;
-  }
-
-  .spectrum-Dropzone-banner {
     --spectrum-dropzone-banner-border-color: CanvasText;
-  }
-
-  .spectrum-Dropzone-illustratedMessage {
     --spectrum-dropzone-illustratedmessage-illustration-color-key-focus: Highlight;
   }
 }

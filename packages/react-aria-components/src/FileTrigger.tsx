@@ -9,10 +9,11 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
+import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {Input} from './Input';
 import {PressResponder} from '@react-aria/interactions';
 import React, {ForwardedRef, forwardRef, ReactNode} from 'react';
-import {useObjectRef} from '@react-aria/utils';
 
 export interface FileTriggerProps {
   /**
@@ -42,23 +43,25 @@ export interface FileTriggerProps {
 }
 
 function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLInputElement>) {
-  let {onChange, acceptedFileTypes, allowsMultiple, defaultCamera, name, children} = props; 
+  let {onChange, acceptedFileTypes, allowsMultiple, defaultCamera, name, children, ...rest} = props;
   let inputRef = useObjectRef(ref);
+  let domProps = filterDOMProps(rest);
 
   return (
     <>
       <PressResponder onPress={() => inputRef.current?.click()}>
         {children}
       </PressResponder>
-      <Input 
+      <Input
+        {...domProps}
         type="file"
         ref={inputRef}
         style={{display: 'none'}}
-        accept={acceptedFileTypes?.toString()} 
-        onChange={(e) => onChange?.(e.target.files)} 
-        capture={defaultCamera} 
+        accept={acceptedFileTypes?.toString()}
+        onChange={(e) => onChange?.(e.target.files)}
+        capture={defaultCamera}
         multiple={allowsMultiple}
-        name={name} /> 
+        name={name} />
     </>
   );
 }
