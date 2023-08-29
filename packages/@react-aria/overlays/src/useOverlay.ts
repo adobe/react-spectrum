@@ -43,7 +43,13 @@ export interface AriaOverlayProps {
    * out interaction with elements that should not dismiss the overlay.
    * By default, onClose will always be called on interaction outside the overlay ref.
    */
-  shouldCloseOnInteractOutside?: (element: Element) => boolean
+  shouldCloseOnInteractOutside?: (element: Element) => boolean,
+
+  /**
+   * Whether the overlay should be closed even if it isn't the top most visible overlay in the stack.
+   * Specifically used for submenu actions.
+   */
+  isMenu?: boolean
 }
 
 export interface OverlayAria {
@@ -67,7 +73,8 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
     isOpen,
     isDismissable = false,
     isKeyboardDismissDisabled = false,
-    shouldCloseOnInteractOutside
+    shouldCloseOnInteractOutside,
+    isMenu
   } = props;
 
   // Add the overlay ref to the stack of visible overlays on mount, and remove on unmount.
@@ -84,9 +91,9 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
     };
   }, [isOpen, ref]);
 
-  // Only hide the overlay when it is the topmost visible overlay in the stack.
+  // Only hide the overlay when it is the topmost visible overlay in the stack or if it is a menu.
   let onHide = () => {
-    if (visibleOverlays[visibleOverlays.length - 1] === ref && onClose) {
+    if ((visibleOverlays[visibleOverlays.length - 1] === ref || isMenu) && onClose) {
       onClose();
     }
   };
