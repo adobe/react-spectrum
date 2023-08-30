@@ -745,7 +745,7 @@ export let MenuItemUnavailable = {
       </ContextualHelpTrigger>
       <Item key="3">Three</Item>
       <ContextualHelpTrigger isUnavailable>
-        <Item key="bar">
+        <Item key="bar" textValue="Four">
           <Text>Four</Text>
           <Text slot={'description'}>Shut the door</Text>
         </Item>

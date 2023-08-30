@@ -23,6 +23,7 @@ export function useSafelyMouseToSubmenu(options: SafeMouseToSubmenuOptions) {
   let submenuRect = useRef<DOMRect>(null);
   let triggerRect = useRef<DOMRect>(null);
   let lastProcessedTime = useRef<number>(0);
+  let isPointerMovingTowardsSubmenu = useRef<boolean>(false);
 
   useEffect(() => {
     let menu = menuRef.current;
@@ -51,23 +52,9 @@ export function useSafelyMouseToSubmenu(options: SafeMouseToSubmenuOptions) {
         return;
       }
 
+      let prevIsPointerMovingTowardsSubmenu = isPointerMovingTowardsSubmenu.current;
+
       let {clientX: mouseX, clientY: mouseY} = e;
-
-      // Check if pointer is not over trigger.
-      if (mouseX >= triggerRect.current.left && mouseX <= triggerRect.current.right &&
-        mouseY >= triggerRect.current.top && mouseY <= triggerRect.current.bottom) {
-        return;
-      }
-
-      // Check if pointer is over menu.
-      if (!menuRect.current ||
-        mouseX < menuRect.current.left || mouseX > menuRect.current.right ||
-        mouseY < menuRect.current.top || mouseY > menuRect.current.bottom) {
-        return;
-      }
-
-      // Check if pointer is accelerating.
-      lastProcessedTime.current = currentTime;
 
       if (!prevPointerPos.current) {
         prevPointerPos.current = {x: mouseX, y: mouseY, time: currentTime};
@@ -79,11 +66,6 @@ export function useSafelyMouseToSubmenu(options: SafeMouseToSubmenuOptions) {
       let dy = mouseY - prevPointerPos.current.y;
 
       let speed = Math.sqrt(dx * dx + dy * dy) / timeDelta;
-      let acceleration = currentSpeed.current !== null ? (speed - currentSpeed.current) / timeDelta : 0;
-
-      if (acceleration < 0) {
-        return;
-      }
 
       // Check if pointer is moving towards submenu.
       if (!submenuRect.current) {
@@ -99,18 +81,38 @@ export function useSafelyMouseToSubmenu(options: SafeMouseToSubmenuOptions) {
       let angleBottom = Math.atan2(toSubmenuBottom, toSubmenuX);
       let anglePointer = Math.atan2(dy, dx);
 
-      if (anglePointer > angleTop && anglePointer < angleBottom) {
-        e.stopPropagation();
+      isPointerMovingTowardsSubmenu.current = anglePointer < angleTop && anglePointer > angleBottom;
+
+      // If pointer was previously moving towards submenu but is no longer moving towards submenu,
+      // fire a pointerenter on the underlying item.
+      if (prevIsPointerMovingTowardsSubmenu && !isPointerMovingTowardsSubmenu.current) {
+        let target = document.elementFromPoint(mouseX, mouseY);
+        if (target) {
+          target.dispatchEvent(new PointerEvent('pointerenter', {bubbles: true, cancelable: true}));
+        }
       }
 
       currentSpeed.current = speed;
       prevPointerPos.current = {x: mouseX, y: mouseY, time: currentTime};
     };
 
-    window.addEventListener('pointermove', onPointerMove);
+    let onPointerEnter = (e: PointerEvent) => {
+      if (isPointerMovingTowardsSubmenu.current) {
+        e.stopPropagation();
+        e.preventDefault();
+      }
+    };
+
+    menu.addEventListener('pointermove', onPointerMove);
+    [...menu.childNodes].forEach((node) => {
+      node.addEventListener('pointerenter', onPointerEnter);
+    });
 
     return () => {
-      window.removeEventListener('pointermove', onPointerMove);
+      menu.removeEventListener('pointermove', onPointerMove);
+      [...menu.childNodes].forEach((node) => {
+        node.removeEventListener('pointerenter', onPointerEnter);
+      });
       window.removeEventListener('resize', updateMenuRects);
     };
 
