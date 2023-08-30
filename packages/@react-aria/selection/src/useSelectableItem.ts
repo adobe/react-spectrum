@@ -195,8 +195,6 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // Clicking the checkbox enters selection mode, after which clicking anywhere on any row toggles selection for that row.
   // With highlight selection, onAction is secondary, and occurs on double click. Single click selects the row.
   // With touch, onAction occurs on single tap, and long press enters selection mode.
-  // If the item is a link, it behaves as an action when selectionMode is "none" or "multiple".
-  // If selectionMode is "single", it is assumed that links will control the selection instead.
   let isLinkOverride = manager.isLink(key) && linkBehavior === 'override';
   let hasLinkAction = manager.isLink(key) && linkBehavior !== 'selection' && linkBehavior !== 'none';
   let allowsSelection = !isDisabled && manager.canSelectItem(key) && !isLinkOverride;

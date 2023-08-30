@@ -16,6 +16,7 @@ import {ButtonContext} from './Button';
 import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, mergeProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {LabelContext} from './Label';
+import {LinkDOMProps} from '@react-types/shared';
 import {ListState, Node, useListState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, Key, ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
 import {TextContext} from './Text';
@@ -183,7 +184,7 @@ export interface TagRenderProps extends Omit<ItemRenderProps, 'allowsDragging' |
   allowsRemoving: boolean
 }
 
-export interface TagProps extends RenderProps<TagRenderProps> {
+export interface TagProps extends RenderProps<TagRenderProps>, LinkDOMProps {
   /** A unique id for the tag. */
   id?: Key,
   /**
