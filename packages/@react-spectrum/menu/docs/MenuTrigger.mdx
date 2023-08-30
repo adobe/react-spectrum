@@ -10,8 +10,8 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
+import contextualHelpTriggerTypes from 'docs:@react-spectrum/menu/src/ContextualHelpTrigger.tsx';
 import docs from 'docs:@react-spectrum/menu';
-import types from 'docs:./types.ts';
 import {HeaderInfo, PropTable, PageDescription, VersionBadge} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/menu/package.json';
 import {Keyboard} from '@react-spectrum/text';
@@ -185,7 +185,11 @@ import {Content} from '@react-spectrum/view';
 <PropTable component={docs.exports.MenuTrigger} links={docs.links} />
 
 ### ContextualHelpTrigger Props
-<PropTable component={{props: types.exports.ContextualHelpTriggerProps}} links={docs.links} />
+<PropTable component={{
+  props: {
+    properties: Object.fromEntries(Object.entries(docs.exports.SpectrumMenuDialogTriggerProps.properties))
+  }
+}} links={contextualHelpTriggerTypes.links} />
 
 ## Visual options
 
