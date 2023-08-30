@@ -143,8 +143,8 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
       'aria-label': `, ${props['aria-label'] ?? ''}`,
       'aria-labelledby': [
         valueId,
-        (props['aria-labelledby'] || props['aria-label']) && triggerProps.id,
-        !props['aria-labelledby'] && !props['aria-label'] && labelProps.id,
+        !(props['aria-labelledby'] && props['aria-label']) && triggerProps.id,
+        !(props['aria-labelledby'] || props['aria-label']) && labelProps.id,
         props['aria-labelledby']
       ].filter(Boolean).join(' '),
       onFocus(e: FocusEvent) {
