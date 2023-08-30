@@ -68,7 +68,14 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
   }), ref);
   let interactions = mergeProps(pressProps, focusableProps);
   let domProps = filterDOMProps(props, {labelable: true});
-  let tabIndex = state.lastFocusedValue === value || state.lastFocusedValue == null ? 0 : -1;
+  let tabIndex = -1;
+  if (state.selectedValue != null) {
+    if (state.selectedValue === value) {
+      tabIndex = 0;
+    }
+  } else if (state.lastFocusedValue === value || state.lastFocusedValue == null) {
+    tabIndex = 0;
+  }
   if (isDisabled) {
     tabIndex = undefined;
   }
@@ -87,7 +94,7 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
       onChange,
       'aria-describedby': [
         props['aria-describedby'],
-        state.validationState === 'invalid' ? radioGroupErrorMessageIds.get(state) : null,
+        state.isInvalid ? radioGroupErrorMessageIds.get(state) : null,
         radioGroupDescriptionIds.get(state)
       ].filter(Boolean).join(' ') || undefined
     }),

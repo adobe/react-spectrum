@@ -16,11 +16,13 @@ import {ContextValue, forwardRefType, Provider, SlotProps, StyleProps, useContex
 import {filterDOMProps} from '@react-aria/utils';
 import {HeadingContext} from './Heading';
 import {LinkContext} from './Link';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, RefObject} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, Key, RefObject} from 'react';
 
 export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, Omit<AriaBreadcrumbsProps, 'children'>, StyleProps, SlotProps {
   /** Whether the breadcrumbs are disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  /** Handler that is called when a breadcrumb is clicked. */
+  onAction?: (key: Key) => void
 }
 
 export const BreadcrumbsContext = createContext<ContextValue<BreadcrumbsProps<any>, HTMLElement>>(null);
@@ -62,7 +64,8 @@ function BreadcrumbsInner<T extends object>({props, collection, breadcrumbsRef: 
             key={node.key}
             node={node}
             isCurrent={i === collection.size - 1}
-            isDisabled={props.isDisabled} />
+            isDisabled={props.isDisabled}
+            onAction={props.onAction} />
         ))}
       </ol>
     </nav>
@@ -78,15 +81,17 @@ export {_Breadcrumbs as Breadcrumbs};
 interface BreadcrumbItemProps {
   node: Node<object>,
   isCurrent: boolean,
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  onAction?: (key: Key) => void
 }
 
-function BreadcrumbItem({node, isCurrent, isDisabled}: BreadcrumbItemProps) {
+function BreadcrumbItem({node, isCurrent, isDisabled, onAction}: BreadcrumbItemProps) {
   // Recreating useBreadcrumbItem because we want to use composition instead of having the link builtin.
   let headingProps: HTMLAttributes<HTMLHeadingElement> | null = isCurrent ? {'aria-current': 'page'} : null;
   let linkProps = {
     'aria-current': isCurrent ? 'page' : null,
-    isDisabled: isDisabled || isCurrent
+    isDisabled: isDisabled || isCurrent,
+    onPress: () => onAction?.(node.key)
   };
 
   return (

@@ -11,7 +11,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:react-aria-components';
-import {PropTable, HeaderInfo, PageDescription, StateTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, PageDescription, StateTable, ContextTable, TypeLink} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/tag/docs/anatomy.svg';
@@ -522,6 +522,148 @@ function MyTag(props) {
 }
 ```
 
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['TagGroup']} docs={docs} />
+
+This example shows a component that accepts a `TagGroup` and a [ToggleButton](ToggleButton.html) as children, and allows the user to turn edit mode for the tag group on and off by pressing the button.
+
+```tsx example render=false export=true
+import {ToggleButtonContext, TagGroupContext} from 'react-aria-components';
+
+function Removable({children, onRemove}) {
+  let [isSelected, onChange] = React.useState(false);
+  return (
+    <ToggleButtonContext.Provider value={{isSelected, onChange}}>
+      {/*- begin highlight -*/}
+      <TagGroupContext.Provider value={{onRemove: isSelected && onRemove}}>
+      {/*- end highlight -*/}
+        {children}
+      </TagGroupContext.Provider>
+    </ToggleButtonContext.Provider>
+  );
+}
+```
+
+The `Removable` component can be reused to make the edit mode of any nested `TagGroup` controlled by a `ToggleButton`.
+
+```tsx example
+import {ToggleButton} from 'react-aria-components';
+
+<Removable onRemove={ids => alert(`Remove ${[...ids]}`)}>
+  <MyTagGroup label="Ice cream flavor">
+    <MyTag id="chocolate">Chocolate</MyTag>
+    <MyTag id="mint">Mint</MyTag>
+    <MyTag id="strawberry">Strawberry</MyTag>
+    <MyTag id="vanilla">Vanilla</MyTag>
+  </MyTagGroup>
+  <ToggleButton>Edit</ToggleButton>
+</Removable>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ToggleButton {
+  --deselected-border-color: var(--spectrum-gray-400);
+  --deselected-border-color-pressed: var(--spectrum-gray-500);
+  --deselected-background-color: var(--spectrum-gray-50);
+  --deselected-background-color-pressed: var(--spectrum-gray-100);
+  --selected-color: var(--spectrum-gray-800);
+  --selected-color-pressed: var(--spectrum-gray-900);
+  --text-color: var(--spectrum-alias-text-color);
+  --text-color-selected: var(--spectrum-gray-50);
+
+  color: var(--text-color);
+  background: var(--deselected-background-color);
+  border: 1px solid var(--deselected-border-color);
+  border-radius: 4px;
+  appearance: none;
+  vertical-align: middle;
+  font-size: 1rem;
+  text-align: center;
+  margin: 8px 0 0 0;
+  outline: none;
+  padding: 4px 12px;
+
+  &[data-pressed] {
+    box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
+    background: var(--deselected-background-color-pressed);
+    border-color: var(--deselected-border-color-pressed);
+  }
+
+  &[aria-pressed=true] {
+    background: var(--selected-color);
+    border-color: var(--selected-color);
+    color: var(--text-color-selected);
+
+    &[data-pressed] {
+      background: var(--selected-color-pressed);
+      border-color: var(--selected-color-pressed);
+    }
+  }
+
+  &[data-focus-visible] {
+    border-color: var(--selected-color);
+    box-shadow: 0 0 0 1px var(--selected-color);
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-ToggleButton {
+    forced-color-adjust: none;
+
+    --deselected-border-color: ButtonBorder;
+    --deselected-border-color-pressed: ButtonBorder;
+    --deselected-background-color: ButtonFace;
+    --deselected-background-color-pressed: ButtonFace;
+    --selected-color: Highlight;
+    --selected-color-pressed: Highlight;
+    --text-color: ButtonText;
+    --text-color-selected: HighlightText;
+  }
+}
+```
+
+</details>
+
+### Custom children
+
+TagGroup passes props to its child components, such as the label, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
+
+<ContextTable components={['Label', 'Text']} docs={docs} />
+
+This example consumes from `LabelContext` in an existing styled label component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by TagGroup.
+
+```tsx
+import type {LabelProps} from 'react-aria-components';
+import {LabelContext, useContextProps} from 'react-aria-components';
+
+const MyCustomLabel = React.forwardRef((props: LabelProps, ref: React.ForwardedRef<HTMLLabelElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, LabelContext);
+  ///- end highlight -///
+
+  // ... your existing Label component
+  return <label {...props} ref={ref} />;
+});
+```
+
+Now you can use `MyCustomLabel` within a `TagGroup`, in place of the builtin React Aria Components `Label`.
+
+```tsx
+<TagGroup>
+  {/*- begin highlight -*/}
+  <MyCustomLabel>Name</MyCustomLabel>
+  {/*- end highlight -*/}
+  {/* ... */}
+</TagGroup>
+```
+
 ### Hooks
 
-If you need to customize things even further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useTagGroup](useTagGroup.html) for more details.
+If you need to customize things even further, such as accessing internal state, intercepting events, or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useTagGroup](useTagGroup.html) for more details.

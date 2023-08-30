@@ -33,6 +33,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     necessityIndicator,
     includeNecessityIndicatorInAccessibilityName,
     validationState,
+    isInvalid,
     description,
     errorMessage,
     isDisabled,
@@ -49,7 +50,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let hasHelpText = !!description || errorMessage && validationState === 'invalid';
+  let hasHelpText = !!description || errorMessage && (isInvalid || validationState === 'invalid');
   let contextualHelpId = useId();
 
   let fallbackLabelPropsId = useId();
@@ -84,6 +85,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
       description={description}
       errorMessage={errorMessage}
       validationState={validationState}
+      isInvalid={isInvalid}
       isDisabled={isDisabled}
       showErrorIcon={showErrorIcon}
       gridArea="helpText" />

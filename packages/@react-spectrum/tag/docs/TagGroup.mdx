@@ -217,7 +217,7 @@ and "end" refers to the right most edge. For right-to-left (RTL) languages, this
 ### Help text
 [View guidelines](https://spectrum.adobe.com/page/help-text/)
 
-Both a description and an error message can be supplied to a TagGroup. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
+Both a description and an error message can be supplied to a TagGroup. The description is always visible unless `isInvalid` is true and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
 
 ```tsx example
 function Example() {
@@ -242,7 +242,7 @@ function Example() {
       items={items}
       onRemove={onRemove}
       aria-label="TagGroup help text example"
-      validationState={isValid ? 'valid' : 'invalid'}
+      isInvalid={!isValid}
       description="Please include tags for related categories."
       errorMessage="Must contain no more than 3 tags. Please remove some."
       >

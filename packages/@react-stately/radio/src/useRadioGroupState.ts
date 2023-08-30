@@ -32,8 +32,14 @@ export interface RadioGroupState {
   /** Whether the radio group is required. */
   readonly isRequired: boolean,
 
-  /** Whether the radio group is valid or invalid. */
+  /**
+   * Whether the radio group is valid or invalid.
+   * @deprecated Use `isInvalid` instead.
+   */
   readonly validationState: ValidationState | null,
+
+  /** Whether the radio group is invalid. */
+  readonly isInvalid: boolean,
 
   /** The currently selected value. */
   readonly selectedValue: string | null,
@@ -76,6 +82,7 @@ export function useRadioGroupState(props: RadioGroupProps): RadioGroupState  {
     isDisabled: props.isDisabled || false,
     isReadOnly: props.isReadOnly || false,
     isRequired: props.isRequired || false,
-    validationState: props.validationState || null
+    validationState: props.validationState || null,
+    isInvalid: props.isInvalid || props.validationState === 'invalid'
   };
 }
