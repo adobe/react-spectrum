@@ -12,17 +12,19 @@
 
 import {classNames, useIsMobileDevice} from '@react-spectrum/utils';
 import {MenuContext, MenuDialogContext, useMenuStateContext} from './context';
-import {Placement} from '@react-types/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
 import React, {Key, ReactElement, useRef} from 'react';
-import {SpectrumMenuTriggerProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useMenuTriggerState} from '@react-stately/menu';
 
-// TODO: Change from MenuTrigger, omit 'trigger' since we don't want to support long press on a submenu
-// Also check if we are ok not having isOpen and defaultOpen.
-interface SubMenuTriggerProps extends Omit<SpectrumMenuTriggerProps, 'trigger' | 'isOpen' | 'defaultOpen'> {
+// TODO: Add shouldFlip and closeOnSelect if we feel like those should be customizable for SubMenuTrigger
+// Other MenuTriggerProps like onOpenChange and positioning stuff have been removed as per discussion
+interface SubMenuTriggerProps {
+  /**
+   * The contents of the SubMenuTrigger - a Item and a Menu.
+   */
+  children: ReactElement[],
   targetKey: Key
 }
 
@@ -36,12 +38,7 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
   let triggerRef = useRef<HTMLLIElement>();
   let menuRef = useRef<HTMLUListElement>();
   let {
-    children,
-    align = 'start',
-    shouldFlip = true,
-    direction = 'end',
-    closeOnSelect,
-    onOpenChange
+    children
   } = props;
 
   let [menuTrigger, menu] = React.Children.toArray(children);
@@ -53,7 +50,6 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
 
   // TODO: call useMenuTriggerState in place of useOverlayTriggerState since they are basically the same except for focusStrategy which we need for SubMenu autofocus
   let subMenuState = useMenuTriggerState({isOpen: parentMenuState.expandedKeys.has(props.targetKey), onOpenChange: (val) => {
-    onOpenChange && onOpenChange(val);
     if (!val) {
       if (parentMenuState.expandedKeys.has(props.targetKey)) {
         // TODO: hides menu, currenly triggered since hovering away causes focus to move out of the sub menu and triggers a close via useOverlay
@@ -81,20 +77,6 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
     }
   };
 
-  let initialPlacement: Placement;
-  switch (direction) {
-    case 'left':
-    case 'right':
-    case 'start':
-    case 'end':
-      initialPlacement = `${direction} ${align === 'end' ? 'bottom' : 'top'}` as Placement;
-      break;
-    case 'bottom':
-    case 'top':
-    default:
-      initialPlacement = `${direction} ${align}` as Placement;
-  }
-
   let isMobile = useIsMobileDevice();
   let menuContext = {
     ...menuProps,
@@ -106,7 +88,6 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
     onClose: topLevelMenuState.close,
     // Separate handler for useMenuItem, used to close just the submenu when the user presses ArrowLeft in a submenu
     onSubMenuClose: menuProps.onClose,
-    closeOnSelect,
     // TODO:useMenuItem currently handles opening the submenu, perhaps copy over the pressProps/some of the keydown stuff from useMenuTrigger's implementation
     // and move it to a useSubMenuTrigger hook or modify useMenuTrigger so it can distingush between the typical menuTrigger stuff. Problem is that useMenuItem doesn't
     // accept pressProps or dom attributes...
@@ -147,9 +128,8 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
         state={subMenuState}
         triggerRef={triggerRef}
         scrollRef={menuRef}
-        placement={initialPlacement}
-        hideArrow
-        shouldFlip={shouldFlip}>
+        placement="end top"
+        hideArrow>
         {menu}
       </Popover>
     );

@@ -65,7 +65,6 @@ function ContextualHelpTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): Rea
       }
     }
   };
-
   return (
     <>
       <MenuDialogContext.Provider value={{isUnavailable, triggerRef}}>{trigger}</MenuDialogContext.Provider>
@@ -106,14 +105,12 @@ ContextualHelpTrigger.getCollectionNode = function* getCollectionNode<T>(props: 
 
   yield {
     element: React.cloneElement(trigger, {...trigger.props, hasChildItems: true}),
-    wrapper: (element) => {
-      return (
-        <ContextualHelpTrigger key={element.key} targetKey={element.key} {...props}>
-          {element}
-          {content}
-        </ContextualHelpTrigger>
-      );
-    }
+    wrapper: (element) => (
+      <ContextualHelpTrigger key={element.key} targetKey={element.key} {...props}>
+        {element}
+        {content}
+      </ContextualHelpTrigger>
+    )
   };
 };
 

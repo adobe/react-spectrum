@@ -75,7 +75,6 @@ describe('SubMenu', function () {
   let onAction = jest.fn();
   let subMenuOnAction = jest.fn();
   let onOpenChange = jest.fn();
-  let subMenuOnOpenChange = jest.fn();
   let onSelectionChange = jest.fn();
   let subMenuOnSelectionChange = jest.fn();
   let onClose = jest.fn();
@@ -156,7 +155,7 @@ describe('SubMenu', function () {
   });
 
   it('submenu closes when hover leaves the submenu trigger', function () {
-    let tree = render(<SubMenuStatic menuTriggerProps={{onOpenChange}} subMenuTrigger1Props={{onOpenChange: subMenuOnOpenChange}} />);
+    let tree = render(<SubMenuStatic menuTriggerProps={{onOpenChange}} />);
     let triggerButton = tree.getByRole('button');
     triggerPress(triggerButton);
     act(() => {jest.runAllTimers();});
@@ -166,7 +165,6 @@ describe('SubMenu', function () {
     expect(document.activeElement).toBe(menu);
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenLastCalledWith(true);
-    expect(subMenuOnOpenChange).not.toHaveBeenCalled;
     let menuItems = within(menu).getAllByRole('menuitem');
     let subMenuTrigger1 = menuItems[1];
     expect(subMenuTrigger1).toHaveAttribute('aria-haspopup', 'menu');
@@ -178,8 +176,6 @@ describe('SubMenu', function () {
     expect(menus).toHaveLength(2);
     expect(subMenuTrigger1).toHaveAttribute('aria-expanded', 'true');
     expect(onOpenChange).toHaveBeenCalledTimes(1);
-    expect(subMenuOnOpenChange).toHaveBeenCalledTimes(1);
-    expect(subMenuOnOpenChange).toHaveBeenLastCalledWith(true);
 
     fireEvent.mouseLeave(subMenuTrigger1);
     fireEvent.mouseEnter(menuItems[0]);
@@ -188,8 +184,6 @@ describe('SubMenu', function () {
     expect(menus).toHaveLength(1);
     expect(subMenuTrigger1).toHaveAttribute('aria-expanded', 'false');
     expect(onOpenChange).toHaveBeenCalledTimes(1);
-    expect(subMenuOnOpenChange).toHaveBeenCalledTimes(2);
-    expect(subMenuOnOpenChange).toHaveBeenLastCalledWith(false);
   });
 
   it('only allows one submenu open at a time', function () {
@@ -234,13 +228,12 @@ describe('SubMenu', function () {
       ${'rtl, ArrowKeys'} | ${'ar-AE'}  | ${[() => pressArrowLeft(), () => pressArrowRight()]}
       ${'ltr, Enter/Esc'} | ${'en-US'}  | ${[() => pressEnter(), () => pressEsc()]}
     `('opens/closes the submenu via keyboard ($Name)', function ({Name, locale, actions}) {
-      let tree = render(<SubMenuStatic menuTriggerProps={{onOpenChange}} subMenuTrigger1Props={{onOpenChange: subMenuOnOpenChange}} />, 'medium', locale);
+      let tree = render(<SubMenuStatic menuTriggerProps={{onOpenChange}} />, 'medium', locale);
       let triggerButton = tree.getByRole('button');
       pressArrowDown(triggerButton);
       act(() => {jest.runAllTimers();});
       expect(onOpenChange).toHaveBeenCalledTimes(1);
       expect(onOpenChange).toHaveBeenLastCalledWith(true);
-      expect(subMenuOnOpenChange).not.toHaveBeenCalled;
 
       let menu = tree.getByRole('menu');
       expect(menu).toBeTruthy();
@@ -256,8 +249,6 @@ describe('SubMenu', function () {
       expect(menus).toHaveLength(2);
       expect(subMenuTrigger1).toHaveAttribute('aria-expanded', 'true');
       expect(onOpenChange).toHaveBeenCalledTimes(1);
-      expect(subMenuOnOpenChange).toHaveBeenCalledTimes(1);
-      expect(subMenuOnOpenChange).toHaveBeenLastCalledWith(true);
 
       let subMenu1Items = within(menus[1]).getAllByRole('menuitem');
       expect(document.activeElement).toBe(subMenu1Items[0]);
@@ -271,8 +262,6 @@ describe('SubMenu', function () {
         expect(triggerButton).toHaveAttribute('aria-expanded', 'false');
         expect(onOpenChange).toHaveBeenCalledTimes(2);
         expect(onOpenChange).toHaveBeenLastCalledWith(false);
-        // TODO: update the below depending on discussion of onOpenChange
-        expect(subMenuOnOpenChange).toHaveBeenCalledTimes(1);
       } else {
         // Only closes the current submenu via Arrow keys
         menus = tree.getAllByRole('menu', {hidden: true});
@@ -280,8 +269,6 @@ describe('SubMenu', function () {
         expect(subMenuTrigger1).toHaveAttribute('aria-expanded', 'false');
         expect(document.activeElement).toBe(subMenuTrigger1);
         expect(onOpenChange).toHaveBeenCalledTimes(1);
-        expect(subMenuOnOpenChange).toHaveBeenCalledTimes(2);
-        expect(subMenuOnOpenChange).toHaveBeenLastCalledWith(false);
       }
     });
   });
@@ -293,7 +280,6 @@ describe('SubMenu', function () {
           onAction={onAction}
           onClose={onClose}
           menuTriggerProps={{onOpenChange}}
-          subMenuTrigger1Props={{onOpenChange: subMenuOnOpenChange}}
           subMenu1Props={{onAction: subMenuOnAction, onClose: subMenuOnClose}} />
         );
       let triggerButton = tree.getByRole('button');
@@ -301,7 +287,6 @@ describe('SubMenu', function () {
       act(() => {jest.runAllTimers();});
       expect(onOpenChange).toHaveBeenCalledTimes(1);
       expect(onOpenChange).toHaveBeenLastCalledWith(true);
-      expect(subMenuOnOpenChange).not.toHaveBeenCalled;
 
       // Click on the 3rd level SubMenu item
       let menu = tree.getByRole('menu');
@@ -311,8 +296,6 @@ describe('SubMenu', function () {
       fireEvent.mouseEnter(subMenuTrigger1);
       act(() => {jest.runAllTimers();});
       expect(onOpenChange).toHaveBeenCalledTimes(1);
-      expect(subMenuOnOpenChange).toHaveBeenCalledTimes(1);
-      expect(subMenuOnOpenChange).toHaveBeenLastCalledWith(true);
       let menus = tree.getAllByRole('menu', {hidden: true});
       expect(menus).toHaveLength(2);
       let subMenu1 = menus[1];
@@ -339,8 +322,6 @@ describe('SubMenu', function () {
       expect(subMenuOnClose).not.toHaveBeenCalled();
       expect(onOpenChange).toHaveBeenCalledTimes(2);
       expect(onOpenChange).toHaveBeenLastCalledWith(false);
-      // TODO: update the below depending on discussion of onOpenChange
-      expect(subMenuOnOpenChange).toHaveBeenCalledTimes(1);
 
       // Click on the 2rd level SubMenu item which has its own onAction defined
       triggerPress(triggerButton);
@@ -367,8 +348,6 @@ describe('SubMenu', function () {
       expect(subMenuOnClose).toHaveBeenCalledTimes(1);
       expect(onOpenChange).toHaveBeenCalledTimes(4);
       expect(onOpenChange).toHaveBeenLastCalledWith(false);
-      // TODO: update the below depending on discussion of onOpenChange
-      expect(subMenuOnOpenChange).toHaveBeenCalledTimes(2);
     });
 
     it('should not trigger onClose when closing the submenu with Esc', function () {
