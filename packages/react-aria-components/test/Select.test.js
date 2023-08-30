@@ -80,7 +80,7 @@ describe('Select', () => {
 
     let button = getByRole('button');
     expect(button.closest('.react-aria-Select')).toHaveAttribute('slot', 'test');
-    expect(button).toHaveAttribute('aria-label', 'test');
+    expect(button).toHaveAttribute('aria-label', ', test');
   });
 
   it('supports items with render props', () => {
