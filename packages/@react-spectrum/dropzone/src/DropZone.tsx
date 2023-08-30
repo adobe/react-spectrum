@@ -13,9 +13,12 @@
 import {AriaLabelingProps, DOMProps, DOMRef, StyleProps} from '@react-types/shared';
 import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DropZoneProps, DropZone as RACDropZone} from 'react-aria-components';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {mergeProps, useId} from '@react-aria/utils';
 import React, {ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/dropzone/vars.css';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface SpectrumDropZoneProps extends DropZoneProps, DOMProps, StyleProps, AriaLabelingProps {
   /** The content to display in the drop zone. */
@@ -31,6 +34,7 @@ function DropZone(props: SpectrumDropZoneProps, ref: DOMRef<HTMLDivElement>) {
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
   let messageId = useId();
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   return (
     <RACDropZone
@@ -64,7 +68,7 @@ function DropZone(props: SpectrumDropZoneProps, ref: DOMRef<HTMLDivElement>) {
             styleProps.className
           )
         }>
-        {replaceMessage ? replaceMessage : 'Drop file to replace'}
+        {replaceMessage ? replaceMessage : stringFormatter.format('replaceMessage')}
       </div>
     </RACDropZone>
   );
