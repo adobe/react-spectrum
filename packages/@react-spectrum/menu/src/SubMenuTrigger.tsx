@@ -26,13 +26,7 @@ interface SubMenuTriggerProps extends Omit<SpectrumMenuTriggerProps, 'trigger' |
   targetKey: Key
 }
 
-// TODO: User doesn't need to provide target key, we handle that
 export interface SpectrumSubMenuTriggerProps extends Omit<SubMenuTriggerProps, 'targetKey'> {}
-
-// TODO: for now, copies MenuTrigger and pulls some stuff from ContextualHelpTrigger. After getting stuff rendering
-// evaluate if we could instead just modify MenuTrigger and reuse it. At the moment we don't want all the stuff from useMenuTrigger for a
-// sub menu item trigger (aka keydown down arrow opens/long press handling)
-
 // TODO: Think about if it should reuse the same state MenuTrigger uses or use its own
 // How to control it so that only one submenu can be open at once. At the moment we actually handle this via useMenuItem since it calls setExpandedKey with a single key on open
 // and we don't allow isOpen/defaultOpen on SubMenus
@@ -51,10 +45,6 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
   } = props;
 
   let [menuTrigger, menu] = React.Children.toArray(children);
-
-  // TODO: Change from MenuTrigger, will need to disable the SubMenuTrigger if disabledKey includes the wrapped item? Test in story
-  // Actually already handled in useMenuItem for submenus?
-
 
   // TODO: Grab the tree state from the parent, each level of SubMenuTrigger has its own state tracking the
   // expanded state of its immediate children (aka each Menu has its own tree state) and thus enforce that only a single key on its level is open at a time.
@@ -79,7 +69,8 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
   // TODO: also can grab aria-controls from useMenu, but unsure if needed (don't need subMenuId either if so). Test with and without it
   // Doesn't seem to have a noticeable effect on the announcements
   let {menuTriggerProps, menuProps} = useMenuTrigger({trigger: 'press', isDisabled: parentMenuState.disabledKeys.has(props.targetKey)}, subMenuState, triggerRef);
-  let {id: subMenuTriggerId} = menuTriggerProps;
+  // TODO: just dd all of the menuTriggerProps here to the context
+  let {id, 'aria-controls': ariaControls} = menuTriggerProps;
 
   let onExit = () => {
     // if focus was already moved back to a menu item, don't need to do anything
@@ -105,7 +96,6 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
   }
 
   let isMobile = useIsMobileDevice();
-  // TODO: figure out what exactly we need to propagate down
   let menuContext = {
     ...menuProps,
     ref: menuRef,
@@ -151,7 +141,6 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
         isNonModal
         enableBothDismissButtons
         disableFocusManagement
-        isMenu
 
         // Props from MenuTriggerImplementation
         UNSAFE_style={{clipPath: 'unset'}}
@@ -175,7 +164,7 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
   return (
     <>
       {/* TODO rename MenuDialogContext to something more generic */}
-      <MenuDialogContext.Provider value={{triggerRef, openSubMenu, id: subMenuTriggerId}}>{menuTrigger}</MenuDialogContext.Provider>
+      <MenuDialogContext.Provider value={{triggerRef, openSubMenu, id, 'aria-controls': ariaControls}}>{menuTrigger}</MenuDialogContext.Provider>
       <MenuContext.Provider value={menuContext}>
         {overlay}
       </MenuContext.Provider>

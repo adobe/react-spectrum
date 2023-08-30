@@ -28,20 +28,19 @@ export default {
 };
 
 // TODO: add chromatic stories
-// Also add story where the submenu trigger is disabled
 export const SubMenuStatic = {
   render: (args) => (
     renderMenuTrigger(
-      <Menu {...args}>
+      <Menu onAction={action('lvl 1 menu onAction')} {...args}>
         <Item key="Lvl 1 Item 1">Lvl 1 Item 1</Item>
         <SubMenuTrigger onOpenChange={action('Lvl 1 Item 2 onOpenChange')} {...args.subMenuTrigger1Props}>
           <Item key="Lvl 1 Item 2">Lvl 1 Item 2</Item>
-          <Menu {...args.subMenu1Props}>
+          <Menu onAction={action('lvl 2 menu onAction')} {...args.subMenu1Props}>
             <Item key="Lvl 2 Item 1">Lvl 2 Item 1</Item>
             <Item key="Lvl 2 Item 2">Lvl 2 Item 2</Item>
             <SubMenuTrigger onOpenChange={action('Lvl 2 Item 3 onOpenChange')} {...args.subMenuTrigger2Props}>
               <Item key="Lvl 2 Item 3">Lvl 2 Item 3</Item>
-              <Menu {...args.subMenu2Props}>
+              <Menu onAction={action('lvl 3 menu onAction')} {...args.subMenu2Props}>
                 <Item key="Lvl 3 Item 1">Lvl 3 Item 1</Item>
                 <Item key="Lvl 3 Item 2">Lvl 3 Item 2</Item>
                 <Item key="Lvl 3 Item 3">Lvl 3 Item 3</Item>
@@ -80,7 +79,7 @@ let dynamicRenderFunc = (item) => {
     return (
       <SubMenuTrigger onOpenChange={action(`${item.name} onOpenChange`)}>
         <Item key={item.name}>{item.name}</Item>
-        <Menu items={item.children}>
+        <Menu items={item.children} onAction={action(`${item.name} onAction`)}>
           {(item) => dynamicRenderFunc(item)}
         </Menu>
       </SubMenuTrigger>
@@ -111,7 +110,7 @@ export const SubMenuStaticSections = {
           <Item key="Sec 1 Lvl 1 Item 1">Sec 1 Lvl 1 Item 1</Item>
           <SubMenuTrigger onOpenChange={action('Sec 1 Lvl 1 Item 2 onOpenChange')}>
             <Item key="Sec 1 Lvl 1 Item 2">Sec 1 Lvl 1 Item 2</Item>
-            <Menu id="gaweg">
+            <Menu onAction={action('Sec 1 Lvl 2 menu onAction')}>
               <Section title="Sub Section 1">
                 <Item key="Sec 1 SubSec 1 Lvl 2 Item 1">Sec 1 SubSec 1 Lvl 2 Item 1</Item>
                 <Item key="Sec 1 SubSec 1 Lvl 2 Item 2">Sec 1 SubSec 1 Lvl 2 Item 2</Item>
@@ -125,7 +124,7 @@ export const SubMenuStaticSections = {
           <Item key="Sec 2 Lvl 1 Item 1">Sec 2 Lvl 1 Item 1</Item>
           <SubMenuTrigger onOpenChange={action('Sec 2 Lvl 1 Item 2 onOpenChange')}>
             <Item key="Sec 2 Lvl 1 Item 2">Sec 2 Lvl 1 Item 2</Item>
-            <Menu id="test">
+            <Menu onAction={action('Sec 2 Lvl 2 menu onAction')}>
               <Section title="Sub Section 1">
                 <Item key="Sec 2 SubSec 1 Lvl 2 Item 1">Sec 2 SubSec 1 Lvl 2 Item 1</Item>
                 <Item key="Sec 2 SubSec 1 Lvl 2 Item 2">Sec 2 SubSec 1 Lvl 2 Item 2</Item>
@@ -196,7 +195,7 @@ let dynamicRenderTrigger = (item: ItemNode, Icon) => (
       {item.icon && <Icon size="S" />}
       <Text>{item.name}</Text>
     </Item>
-    <Menu items={item.children}>
+    <Menu items={item.children} onAction={action(`${item.name} onAction`)}>
       {(item) => dynamicRenderFuncSections(item)}
     </Menu>
   </SubMenuTrigger>

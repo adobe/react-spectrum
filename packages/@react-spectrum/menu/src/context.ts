@@ -35,7 +35,8 @@ export interface MenuDialogContextValue {
   isUnavailable?: boolean,
   openSubMenu?: (val?: FocusStrategy) => void,
   triggerRef?: MutableRefObject<HTMLLIElement>,
-  id?: string
+  id?: string,
+  'aria-controls'?: string
 }
 
 export const MenuDialogContext = React.createContext<MenuDialogContextValue | undefined>(undefined);

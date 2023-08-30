@@ -124,12 +124,13 @@ describe('SubMenu', function () {
     act(() => {jest.runAllTimers();});
     let menus = tree.getAllByRole('menu', {hidden: true});
     expect(menus).toHaveLength(2);
-    let submenu1 = menus[1];
-    expect(document.activeElement).toBe(submenu1);
-    expect(submenu1).toHaveAttribute('aria-labelledby', subMenuTrigger1.id);
+    let subMenu1 = menus[1];
+    expect(document.activeElement).toBe(subMenu1);
+    expect(subMenu1).toHaveAttribute('aria-labelledby', subMenuTrigger1.id);
     expect(subMenuTrigger1).toHaveAttribute('aria-expanded', 'true');
+    expect(subMenuTrigger1).toHaveAttribute('aria-controls', subMenu1.id);
 
-    let subMenu1Items = within(submenu1).getAllByRole('menuitem');
+    let subMenu1Items = within(subMenu1).getAllByRole('menuitem');
     expect(subMenu1Items).toHaveLength(3);
     expect(subMenu1Items[2]).toHaveTextContent('Lvl 2 Item 3');
 
@@ -143,12 +144,13 @@ describe('SubMenu', function () {
 
     menus = tree.getAllByRole('menu', {hidden: true});
     expect(menus).toHaveLength(3);
-    let submenu2 = menus[2];
-    expect(document.activeElement).toBe(submenu2);
-    expect(submenu2).toHaveAttribute('aria-labelledby', subMenuTrigger2.id);
+    let subMenu2 = menus[2];
+    expect(document.activeElement).toBe(subMenu2);
+    expect(subMenu2).toHaveAttribute('aria-labelledby', subMenuTrigger2.id);
     expect(subMenuTrigger2).toHaveAttribute('aria-expanded', 'true');
+    expect(subMenuTrigger2).toHaveAttribute('aria-controls', subMenu2.id);
 
-    let subMenu2Items = within(submenu2).getAllByRole('menuitem');
+    let subMenu2Items = within(subMenu2).getAllByRole('menuitem');
     expect(subMenu2Items).toHaveLength(3);
     expect(subMenu2Items[2]).toHaveTextContent('Lvl 3 Item 3');
   });
@@ -313,18 +315,18 @@ describe('SubMenu', function () {
       expect(subMenuOnOpenChange).toHaveBeenLastCalledWith(true);
       let menus = tree.getAllByRole('menu', {hidden: true});
       expect(menus).toHaveLength(2);
-      let submenu1 = menus[1];
-      expect(document.activeElement).toBe(submenu1);
-      let subMenu1Items = within(submenu1).getAllByRole('menuitem');
+      let subMenu1 = menus[1];
+      expect(document.activeElement).toBe(subMenu1);
+      let subMenu1Items = within(subMenu1).getAllByRole('menuitem');
       let subMenuTrigger2 = subMenu1Items[2];
       fireEvent.mouseLeave(subMenuTrigger1);
       fireEvent.mouseEnter(subMenuTrigger2);
       act(() => {jest.runAllTimers();});
       menus = tree.getAllByRole('menu', {hidden: true});
       expect(menus).toHaveLength(3);
-      let submenu2 = menus[2];
-      expect(document.activeElement).toBe(submenu2);
-      let subMenu2Items = within(submenu2).getAllByRole('menuitem');
+      let subMenu2 = menus[2];
+      expect(document.activeElement).toBe(subMenu2);
+      let subMenu2Items = within(subMenu2).getAllByRole('menuitem');
       triggerPress(subMenu2Items[2]);
       act(() => {jest.runAllTimers();});
       menus = tree.queryAllByRole('menu', {hidden: true});
@@ -351,9 +353,9 @@ describe('SubMenu', function () {
       act(() => {jest.runAllTimers();});
       menus = tree.getAllByRole('menu', {hidden: true});
       expect(menus).toHaveLength(2);
-      submenu1 = menus[1];
-      expect(document.activeElement).toBe(submenu1);
-      subMenu1Items = within(submenu1).getAllByRole('menuitem');
+      subMenu1 = menus[1];
+      expect(document.activeElement).toBe(subMenu1);
+      subMenu1Items = within(subMenu1).getAllByRole('menuitem');
       triggerPress(subMenu1Items[1]);
       act(() => {jest.runAllTimers();});
       menus = tree.queryAllByRole('menu', {hidden: true});
@@ -386,8 +388,8 @@ describe('SubMenu', function () {
       act(() => {jest.runAllTimers();});
       let menus = tree.getAllByRole('menu', {hidden: true});
       expect(menus).toHaveLength(2);
-      let submenu1 = menus[1];
-      expect(document.activeElement).toBe(submenu1);
+      let subMenu1 = menus[1];
+      expect(document.activeElement).toBe(subMenu1);
       pressEsc();
       act(() => {jest.runAllTimers();});
       menus = tree.queryAllByRole('menu');

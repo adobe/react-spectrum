@@ -68,6 +68,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
     popupType = 'menu';
     isUnavailable = menuDialogContext.isUnavailable;
     domProps.id = menuDialogContext.id;
+    domProps['aria-controls'] = menuDialogContext['aria-controls'];
     if (isUnavailable) {
       popupType = 'dialog';
     }
