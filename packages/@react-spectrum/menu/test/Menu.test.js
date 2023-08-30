@@ -763,7 +763,7 @@ describe('Menu', function () {
         expect(items[1]).toHaveAttribute('href', 'https://adobe.com');
 
         let onClick = jest.fn();
-        document.addEventListener('click', onClick);
+        window.addEventListener('click', onClick);
 
         if (type === 'mouse') {
           triggerPress(items[1]);
@@ -774,7 +774,7 @@ describe('Menu', function () {
         expect(onAction).toHaveBeenCalledTimes(1);
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onClick).toHaveBeenCalledTimes(1);
-        document.removeEventListener('click', onClick);
+        window.removeEventListener('click', onClick);
       });
     });
   });

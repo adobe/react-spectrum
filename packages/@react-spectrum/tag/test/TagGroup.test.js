@@ -761,7 +761,7 @@ describe('TagGroup', function () {
     }
 
     let onClick = jest.fn();
-    document.addEventListener('click', onClick, {once: true});
+    window.addEventListener('click', onClick, {once: true});
     triggerPress(tags[0]);
     expect(onClick).toHaveBeenCalledTimes(1);
     expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);

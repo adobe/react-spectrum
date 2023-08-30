@@ -1494,7 +1494,7 @@ describe('ListView', function () {
         }
 
         let onClick = jest.fn();
-        document.addEventListener('click', onClick, {once: true});
+        window.addEventListener('click', onClick, {once: true});
         trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
@@ -1518,7 +1518,7 @@ describe('ListView', function () {
         }
 
         let onClick = jest.fn();
-        document.addEventListener('click', onClick, {once: true});
+        window.addEventListener('click', onClick, {once: true});
         trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
@@ -1528,11 +1528,11 @@ describe('ListView', function () {
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
 
         onClick = jest.fn();
-        document.addEventListener('click', onClick);
+        window.addEventListener('click', onClick);
         trigger(items[1], ' ');
         expect(onClick).not.toHaveBeenCalled();
         expect(items[1]).toHaveAttribute('aria-selected', 'true');
-        document.removeEventListener('click', onClick);
+        window.removeEventListener('click', onClick);
       });
 
       it.each(['single', 'multiple'])('should support links with selectionStyle="highlight" selectionMode="%s"', function (selectionMode) {
@@ -1552,7 +1552,7 @@ describe('ListView', function () {
         }
 
         let onClick = jest.fn();
-        document.addEventListener('click', onClick);
+        window.addEventListener('click', onClick);
         if (type === 'mouse') {
           triggerPress(items[0]);
         } else {
@@ -1561,10 +1561,10 @@ describe('ListView', function () {
         }
         expect(onClick).not.toHaveBeenCalled();
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
-        document.removeEventListener('click', onClick);
+        window.removeEventListener('click', onClick);
 
         onClick = jest.fn();
-        document.addEventListener('click', onClick, {once: true});
+        window.addEventListener('click', onClick, {once: true});
         if (type === 'mouse') {
           userEvent.dblClick(items[0], {pointerType: 'mouse'});
         } else {

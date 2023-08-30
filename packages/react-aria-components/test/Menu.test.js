@@ -287,7 +287,7 @@ describe('Menu', () => {
         expect(items[1]).toHaveAttribute('href', 'https://adobe.com');
 
         let onClick = jest.fn();
-        document.addEventListener('click', onClick);
+        window.addEventListener('click', onClick);
 
         if (type === 'mouse') {
           userEvent.click(items[1]);

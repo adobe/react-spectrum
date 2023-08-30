@@ -274,7 +274,7 @@ describe('TagGroup', () => {
         expect(items[2]).not.toHaveAttribute('data-href');
 
         let onClick = jest.fn();
-        document.addEventListener('click', onClick);
+        window.addEventListener('click', onClick);
 
         trigger(items[1]);
         expect(onSelectionChange).not.toHaveBeenCalled();

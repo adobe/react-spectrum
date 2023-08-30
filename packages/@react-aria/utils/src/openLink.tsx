@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {focusWithoutScrolling, isWebKit} from '@react-aria/utils';
+import {focusWithoutScrolling, isWebKit} from './index';
 import {LinkDOMProps} from '@react-types/shared';
 import React, {createContext, ReactNode, useContext, useMemo} from 'react';
 

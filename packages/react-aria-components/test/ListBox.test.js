@@ -666,7 +666,7 @@ describe('ListBox', () => {
         }
 
         let onClick = jest.fn();
-        document.addEventListener('click', onClick, {once: true});
+        window.addEventListener('click', onClick, {once: true});
         trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
@@ -688,7 +688,7 @@ describe('ListBox', () => {
         }
 
         let onClick = jest.fn();
-        document.addEventListener('click', onClick, {once: true});
+        window.addEventListener('click', onClick, {once: true});
         trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
@@ -696,7 +696,7 @@ describe('ListBox', () => {
         expect(items[0]).not.toHaveAttribute('aria-selected', 'true');
 
         onClick = jest.fn();
-        document.addEventListener('click', onClick, {once: true});
+        window.addEventListener('click', onClick, {once: true});
         trigger(items[1]);
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
@@ -719,7 +719,7 @@ describe('ListBox', () => {
         }
 
         let onClick = jest.fn();
-        document.addEventListener('click', onClick, {once: true});
+        window.addEventListener('click', onClick, {once: true});
         if (type === 'mouse') {
           userEvent.click(items[0]);
         } else {
@@ -730,7 +730,7 @@ describe('ListBox', () => {
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
 
         onClick = jest.fn();
-        document.addEventListener('click', onClick, {once: true});
+        window.addEventListener('click', onClick, {once: true});
         if (type === 'mouse') {
           userEvent.dblClick(items[0], {pointerType: 'mouse'});
         } else {
