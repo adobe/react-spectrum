@@ -83,7 +83,8 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
             return menuItem;
           })}
         </ul>
-        <div ref={scopedRef} />
+        {/* Make the portal container for submenus wide enough so that the submenu items can render as wide as they need to be */}
+        <div ref={scopedRef} style={{width: '100vw', position: 'absolute'}} />
       </FocusScope>
     </MenuStateContext.Provider>
   );
