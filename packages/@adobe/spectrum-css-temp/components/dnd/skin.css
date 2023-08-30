@@ -1,5 +1,5 @@
 /*
-Copyright 2019 Adobe. All rights reserved.
+Copyright 2023 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -11,45 +11,48 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Dropzone {
-  --spectrum-dropzone-illustratedmessage-illustration-color-key-focus: var(--spectrum-global-color-blue-500);
+    --spectrum-dropzone-illustratedmessage-illustration-color-selected: var(--spectrum-global-color-blue-400);
+    --spectrum-dropzone-illustratedmessage-illustration-color-key-focus: var(--spectrum-global-color-blue-500);
 }
 
 .spectrum-Dropzone {
   border-color: var(--spectrum-dropzone-border-color);
 
-  &[data-focus-visible]{
-    border-color: var(--spectrum-dropzone-border-color-selected-hover);
-  }
-
-  &[data-drop-target] {
-    border-style: solid;
+  &.is-dragged {
     border-color: var(--spectrum-dropzone-border-color-selected-hover);
     background-color: var(--spectrum-dropzone-background-color-selected-hover);
 
-    .spectrum-Dropzone-illustratedMessage {
-      svg {
-        color: var(--spectrum-dropzone-illustratedmessage-illustration-color-key-focus);
-      }
+    .spectrum-IllustratedMessage-illustration {
+      color: var(--spectrum-dropzone-illustratedmessage-illustration-color-selected);
     }
+  }
 
+  &:focus:not(.is-dragged) {
+    border-color: var(--spectrum-dropzone-border-color);
+    .spectrum-IllustratedMessage-illustration {
+      color: var(--spectrum-dropzone-illustratedmessage-illustration-color-key-focus);
+    }
     &.focus-ring {
       border-color: var(--spectrum-dropzone-border-color-selected-hover);
     }
-  }
-
-  &[data-drop-target] {
-    .spectrum-Dropzone-backdrop {
-      background-color: var(--spectrum-dropzone-background-color-selected-hover);
+    &.is-dragged.focus-ring {
+      .spectrum-IllustratedMessage-illustration {
+        color: var(--spectrum-dropzone-illustratedmessage-illustration-color-selected);
+      }
     }
   }
 }
-
+  
 @media (forced-colors: active) {
   .spectrum-Dropzone {
     --spectrum-dropzone-border-color: CanvasText;
+    --spectrum-dropzone-illustratedmessage-illustration-color-selected: Highlight;
     --spectrum-dropzone-border-color-selected-hover: Highlight;
     --spectrum-dropzone-background-color-selected-hover: Canvas;
-    --spectrum-dropzone-banner-border-color: CanvasText;
-    --spectrum-dropzone-illustratedmessage-illustration-color-key-focus: Highlight;
+
+    &.is-dragged {
+      forced-color-adjust: none;
+    }
   }
 }
+  
