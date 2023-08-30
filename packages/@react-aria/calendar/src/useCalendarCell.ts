@@ -89,7 +89,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
   isDisabled = isDisabled || state.isCellDisabled(date);
   let isUnavailable = state.isCellUnavailable(date);
   let isSelectable = !isDisabled && !isUnavailable;
-  let isInvalid = state.validationState === 'invalid' && (
+  let isInvalid = state.isValueInvalid && (
     'highlightedRange' in state
       ? !state.anchorDate && state.highlightedRange && date.compare(state.highlightedRange.start) >= 0 && date.compare(state.highlightedRange.end) <= 0
       : state.value && isSameDay(state.value, date)

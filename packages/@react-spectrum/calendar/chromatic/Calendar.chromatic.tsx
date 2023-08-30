@@ -41,7 +41,7 @@ export const Unavailable = () => (
 );
 export const VisibleMonths2 = () => <Calendar value={date} visibleMonths={2} />;
 export const VisibleMonths3 = () => <Calendar value={date} visibleMonths={3} />;
-export const Invalid = () => <Calendar value={date} validationState="invalid" />;
-export const ErrorMessage = () => <Calendar value={date} validationState="invalid" errorMessage="Selection invalid." />;
+export const Invalid = () => <Calendar value={date} isInvalid />;
+export const ErrorMessage = () => <Calendar value={date} isInvalid errorMessage="Selection invalid." />;
 export const UnavailableInvalid = () => <Calendar value={date} isDateUnavailable={d => d.compare(date) === 0} />;
 export const DisabledInvalid = () => <Calendar value={date} minValue={new CalendarDate(2022, 2, 5)} />;

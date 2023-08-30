@@ -15,7 +15,7 @@ import {CalendarContext, RangeCalendarContext} from './Calendar';
 import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {createCalendar} from '@internationalized/date';
 import {DateInputContext} from './DateField';
-import {DatePickerState, DateRangePickerState, useDateFieldState, useDatePickerState, useDateRangePickerState, ValidationState} from 'react-stately';
+import {DatePickerState, DateRangePickerState, useDateFieldState, useDatePickerState, useDateRangePickerState} from 'react-stately';
 import {DialogContext} from './Dialog';
 import {filterDOMProps} from '@react-aria/utils';
 import {GroupContext} from './Group';
@@ -41,14 +41,14 @@ export interface DatePickerRenderProps {
    */
   isDisabled: boolean,
   /**
+   * Whether the date picker is invalid.
+   * @selector [data-disabled]
+   */
+  isInvalid: boolean,
+  /**
    * State of the date picker.
    */
-  state: DatePickerState,
-  /**
-   * Validation state of the date picker.
-   * @selector [data-validation-state="valid | invalid"]
-   */
-  validationState: ValidationState
+  state: DatePickerState
 }
 export interface DateRangePickerRenderProps extends Omit<DatePickerRenderProps, 'state'> {
   /**
@@ -57,8 +57,8 @@ export interface DateRangePickerRenderProps extends Omit<DatePickerRenderProps, 
   state: DateRangePickerState
 }
 
-export interface DatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DatePickerRenderProps>, SlotProps {}
-export interface DateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateRangePickerRenderProps>, SlotProps {}
+export interface DatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState'>, RenderProps<DatePickerRenderProps>, SlotProps {}
+export interface DateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState'>, RenderProps<DateRangePickerRenderProps>, SlotProps {}
 
 export const DatePickerContext = createContext<ContextValue<DatePickerProps<any>, HTMLDivElement>>(null);
 export const DateRangePickerContext = createContext<ContextValue<DateRangePickerProps<any>, HTMLDivElement>>(null);
@@ -98,7 +98,7 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
       isFocusWithin: isFocused,
       isFocusVisible,
       isDisabled: props.isDisabled || false,
-      validationState: state.validationState
+      isInvalid: state.isInvalid
     },
     defaultClassName: 'react-aria-DatePicker'
   });
@@ -130,7 +130,7 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
         ref={ref}
         slot={props.slot}
         data-focus-within={isFocused || undefined}
-        data-validation-state={state.validationState || undefined}
+        data-invalid={state.isInvalid || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-disabled={props.isDisabled || undefined} />
     </Provider>
@@ -189,7 +189,7 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
       isFocusWithin: isFocused,
       isFocusVisible,
       isDisabled: props.isDisabled || false,
-      validationState: state.validationState
+      isInvalid: state.isInvalid
     },
     defaultClassName: 'react-aria-DateRangePicker'
   });
@@ -238,7 +238,7 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
         ref={ref}
         slot={props.slot}
         data-focus-within={isFocused || undefined}
-        data-validation-state={state.validationState || undefined}
+        data-invalid={state.isInvalid || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-disabled={props.isDisabled || undefined} />
     </Provider>

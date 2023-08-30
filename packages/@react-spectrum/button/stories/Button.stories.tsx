@@ -15,7 +15,7 @@ import Bell from '@spectrum-icons/workflow/Bell';
 import {Button} from '../';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Flex} from '@react-spectrum/layout';
-import React, {ElementType} from 'react';
+import React, {ElementType, useState} from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
 import {Text} from '@react-spectrum/text';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
@@ -62,6 +62,10 @@ export default {
     staticColor: {
       control: 'select',
       options: ['white', 'black']
+    },
+    UNSTABLE_isPending: {
+      control: 'boolean',
+      defaultValue: false
     }
   }
 } as ComponentMeta<typeof Button>;
@@ -100,6 +104,10 @@ export const UserSelect: ButtonStory = {
       data: 'Pressing and holding on either buttons shouldn\'t trigger text selection on the button labels (wait for buttons to turn red).'
     }
   }
+};
+
+export const PendingSpinner: ButtonStory = {
+  render: (args) => <Pending {...args} />
 };
 
 function render<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> = {variant: 'primary'}) {
@@ -222,5 +230,79 @@ function Example() {
         Press and hold (no overwrite)
       </Button>
     </Flex>
+  );
+}
+
+function Pending(props) {
+
+  return (
+    <>
+      <View backgroundColor={props.variant === 'overBackground' ? 'static-blue-700' : undefined} padding={16}>
+        <PendingButtonComponent {...props}>click me!</PendingButtonComponent>
+      </View>
+
+      <View backgroundColor={props.variant === 'overBackground' ? 'static-blue-700' : undefined} padding={16}>
+        <PendingButtonComponent
+          {...props}>
+          <Bell />
+          <Text>I have an icon</Text>
+        </PendingButtonComponent>
+      </View>
+
+      <View backgroundColor={props.variant === 'overBackground' ? 'static-blue-700' : undefined} padding={16}>
+        <PendingButtonOnClickComponent
+          {...props}>
+          <Text>with onClick</Text>
+        </PendingButtonOnClickComponent>
+      </View>
+
+      <View padding={16}>
+        <Button variant="primary" UNSTABLE_isPending={props.UNSTABLE_isPending} onPress={() => {window.alert('use storybook control to change this button UNSTABLE_isPending prop');}}>
+          <Text>Controlled pending</Text>
+        </Button>
+      </View>
+    </>
+  );
+}
+let timerValue = 5000;
+function PendingButtonComponent(props) {
+  let [UNSTABLE_isPending, setPending] = useState(false);
+
+  let handlePress = (e) => {
+    action('press')(e);
+    setPending(true);
+    setTimeout(() => {
+      setPending(false);
+    }, timerValue);
+  };
+
+  return (
+    <Button
+      {...props}
+      UNSTABLE_isPending={UNSTABLE_isPending}
+      onPress={handlePress}>
+      {props.children}
+    </Button>
+  );
+}
+
+function PendingButtonOnClickComponent(props) {
+  let [UNSTABLE_isPending, setPending] = useState(false);
+
+  let handlePress = (e) => {
+    action('click')(e);
+    setPending(true);
+    setTimeout(() => {
+      setPending(false);
+    }, timerValue);
+  };
+
+  return (
+    <Button
+      {...props}
+      UNSTABLE_isPending={UNSTABLE_isPending}
+      onClick={handlePress}>
+      {props.children}
+    </Button>
   );
 }

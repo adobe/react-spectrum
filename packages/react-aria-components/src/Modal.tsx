@@ -11,15 +11,15 @@
  */
 
 import {AriaModalOverlayProps, DismissButton, Overlay, useModalOverlay} from 'react-aria';
+import {ContextValue, forwardRefType, RenderProps, SlotProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
 import {DOMAttributes} from '@react-types/shared';
 import {filterDOMProps, mergeProps, mergeRefs, useObjectRef, useViewportSize} from '@react-aria/utils';
-import {forwardRefType, RenderProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext, useMemo, useRef} from 'react';
 
-export interface ModalOverlayProps extends AriaModalOverlayProps, OverlayTriggerProps, RenderProps<ModalRenderProps> {}
+export interface ModalOverlayProps extends AriaModalOverlayProps, OverlayTriggerProps, RenderProps<ModalRenderProps>, SlotProps {}
 
-interface ModalContextValue {
+interface ModalContextValue extends ModalOverlayProps {
   state?: OverlayTriggerState
 }
 
@@ -31,7 +31,7 @@ interface InternalModalContextValue {
   state: OverlayTriggerState
 }
 
-export const ModalContext = createContext<ModalContextValue | null>(null);
+export const ModalContext = createContext<ContextValue<ModalContextValue, HTMLDivElement>>(null);
 const InternalModalContext = createContext<InternalModalContextValue | null>(null);
 
 export interface ModalRenderProps {
@@ -96,7 +96,8 @@ const _Modal = /*#__PURE__*/ (forwardRef as forwardRefType)(Modal);
 export {_Modal as Modal};
 
 function ModalOverlayWithForwardRef(props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) {
-  let ctx = useContext(ModalContext);
+  [props, ref] = useContextProps(props, ref, ModalContext);
+  let ctx = props as ModalContextValue;
   let localState = useOverlayTriggerState(props);
   let state = props.isOpen != null || props.defaultOpen != null || !ctx?.state ? localState : ctx.state;
 

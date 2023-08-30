@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import typesDocs from 'docs:@react-types/overlays';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/overlays/docs/modal-anatomy.svg';
@@ -421,6 +421,58 @@ function Example() {
 ```
 
 ## Advanced customization
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['Modal']} docs={docs} />
+
+This example shows a `KeyboardModalTrigger` component that shows a modal when a user presses a specific key from anywhere on the page. It uses `ModalContext` to set the open state of the nested modal.
+
+```tsx example render=false export=true
+import {ModalContext} from 'react-aria-components';
+
+interface KeyboardModalTriggerProps {
+  keyboardShortcut: string,
+  children: React.ReactNode
+}
+
+function KeyboardModalTrigger(props: KeyboardModalTriggerProps) {
+  let [isOpen, setOpen] = React.useState(false);
+  React.useEffect(() => {
+    let onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === props.keyboardShortcut) {
+        setOpen(true);
+      }
+    };
+
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [props.keyboardShortcut]);
+
+  return (
+    /*- begin highlight -*/
+    <ModalContext.Provider value={{isOpen, onOpenChange: setOpen}}>
+    {/*- end highlight -*/}
+      {props.children}
+    </ModalContext.Provider>
+  );
+}
+```
+
+The following example uses `KeyboardModalTrigger` to show a modal when the <Keyboard>/</Keyboard> key is pressed.
+
+```tsx example hidden
+<KeyboardModalTrigger keyboardShortcut="/">
+  <Modal isDismissable>
+    <Dialog>
+      <Heading>Command palette</Heading>
+      <p>Your cool command palette UI here!</p>
+    </Dialog>
+  </Modal>
+</KeyboardModalTrigger>
+```
 
 ### Hooks
 
