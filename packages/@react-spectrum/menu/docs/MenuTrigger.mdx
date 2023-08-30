@@ -11,6 +11,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/menu';
+import types from 'docs:./types.ts';
 import {HeaderInfo, PropTable, PageDescription, VersionBadge} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/menu/package.json';
 import {Keyboard} from '@react-spectrum/text';
@@ -184,7 +185,7 @@ import {Content} from '@react-spectrum/view';
 <PropTable component={docs.exports.MenuTrigger} links={docs.links} />
 
 ### ContextualHelpTrigger Props
-<PropTable component={docs.exports.ContextualHelpTrigger} links={docs.links} />
+<PropTable component={{props: types.exports.ContextualHelpTriggerProps}} links={docs.links} />
 
 ## Visual options
 
