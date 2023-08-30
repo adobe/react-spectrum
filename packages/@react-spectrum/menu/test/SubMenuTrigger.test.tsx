@@ -70,7 +70,6 @@ function pressSpace() {
   fireEvent.keyUp(document.activeElement, {key: ' '});
 }
 
-// TODO: Add tests for disabledKeys and making the trigger disabled via disabledKeys
 describe('SubMenu', function () {
   let onAction = jest.fn();
   let subMenuOnAction = jest.fn();
@@ -219,6 +218,62 @@ describe('SubMenu', function () {
     expect(subMenuTrigger1).toHaveAttribute('aria-expanded', 'false');
     expect(subMenuTrigger2).toHaveAttribute('aria-expanded', 'true');
     expect(within(menus[1]).getAllByRole('menuitem')).toHaveLength(4);
+  });
+
+  it('should close everything if the user clicks outside of the submenus', function () {
+    let tree = render(<SubMenuStatic />);
+    let triggerButton = tree.getByRole('button');
+    triggerPress(triggerButton);
+    act(() => {jest.runAllTimers();});
+
+    let menu = tree.getByRole('menu');
+    expect(menu).toBeTruthy();
+    let subMenuTrigger1 = within(menu).getAllByRole('menuitem')[1];
+    fireEvent.mouseEnter(subMenuTrigger1);
+    act(() => {jest.runAllTimers();});
+    let menus = tree.getAllByRole('menu', {hidden: true});
+    expect(menus).toHaveLength(2);
+
+    let subMenuTrigger2 = within(menus[1]).getAllByRole('menuitem')[2];
+    fireEvent.mouseLeave(subMenuTrigger1);
+    fireEvent.mouseEnter(subMenuTrigger2);
+    act(() => {jest.runAllTimers();});
+    menus = tree.getAllByRole('menu', {hidden: true});
+    expect(menus).toHaveLength(3);
+
+    triggerPress(document.body);
+    act(() => {jest.runAllTimers();});
+    act(() => {jest.runAllTimers();});
+    menus = tree.queryAllByRole('menu', {hidden: true});
+    expect(menus).toHaveLength(0);
+    expect(document.activeElement).toBe(triggerButton);
+  });
+
+  it('disables a submenu trigger if the wrapped item is in the disabledKeys array', function () {
+    let tree = render(<SubMenuStatic disabledKeys={['Lvl 1 Item 2']} />);
+    let triggerButton = tree.getByRole('button');
+    triggerPress(triggerButton);
+    act(() => {jest.runAllTimers();});
+
+    let menu = tree.getByRole('menu');
+    expect(menu).toBeTruthy();
+    let menuItems = within(menu).getAllByRole('menuitem');
+    let subMenuTrigger = menuItems[1];
+    expect(subMenuTrigger).toHaveAttribute('aria-haspopup', 'menu');
+
+    fireEvent.mouseEnter(subMenuTrigger);
+    act(() => {jest.runAllTimers();});
+    let menus = tree.getAllByRole('menu', {hidden: true});
+    expect(menus).toHaveLength(1);
+    expect(subMenuTrigger).toHaveAttribute('aria-expanded', 'false');
+    expect(subMenuTrigger).toHaveAttribute('aria-disabled', 'true');
+
+    pressArrowDown();
+    expect(document.activeElement).toBe(menuItems[0]);
+    expect(document.activeElement).toHaveTextContent('Lvl 1 Item 1');
+    pressArrowDown();
+    expect(document.activeElement).toBe(menuItems[2]);
+    expect(document.activeElement).toHaveTextContent('Lvl 1 Item 3');
   });
 
   describe('keyboard interactions', function () {
@@ -427,7 +482,8 @@ describe('SubMenu', function () {
       expect(onSelectionChange).toBeCalledTimes(2);
       expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Lvl 1 Item 1', 'Lvl 1 Item 3']));
       pressArrowUp();
-      let subMenuTrigger = menuItems[1];
+
+      let subMenuTrigger = within(menu).getAllByRole('menuitem')[0];
       expect(subMenuTrigger).toHaveAttribute('aria-expanded', 'false');
       expect(document.activeElement).toBe(subMenuTrigger);
       pressEnter();
@@ -462,7 +518,7 @@ describe('SubMenu', function () {
       let menuItems = within(menu).getAllByRole('menuitemcheckbox');
       expect(document.activeElement).toBe(menuItems[0]);
       pressArrowDown();
-      let subMenuTrigger = menuItems[1];
+      let subMenuTrigger = within(menu).getAllByRole('menuitem')[0];
       expect(subMenuTrigger).toHaveAttribute('aria-expanded', 'false');
       expect(document.activeElement).toBe(subMenuTrigger);
 
@@ -479,7 +535,7 @@ describe('SubMenu', function () {
       pressArrowDown();
 
       // Click on the submenu's submenu trigger
-      let subMenuTrigger2 = subMenu1Items[2];
+      let subMenuTrigger2 = within(menus[1]).getAllByRole('menuitem')[0];
       expect(subMenuTrigger2).toHaveAttribute('aria-expanded', 'false');
       expect(document.activeElement).toBe(subMenuTrigger2);
       triggerPress(document.activeElement);
@@ -493,7 +549,27 @@ describe('SubMenu', function () {
     });
 
     it('doesnt select a submenu trigger even if its key is specified in selectedKeys', function () {
-      // TODO: need to debug why the trigger's key gets mutated before writing this test
+      let tree = render(
+        <SubMenuStatic
+          onSelectionChange={onSelectionChange}
+          selectionMode="multiple"
+          selectedKeys={['Lvl 1 Item 1', 'Lvl 1 Item 2']} />
+        );
+      let triggerButton = tree.getByRole('button');
+      pressArrowDown(triggerButton);
+      act(() => {jest.runAllTimers();});
+      let menu = tree.getByRole('menu');
+      expect(menu).toBeTruthy();
+      let menuCheckboxItems = within(menu).getAllByRole('menuitemcheckbox');
+      expect(menuCheckboxItems).toHaveLength(2);
+      expect(menuCheckboxItems[0]).toHaveAttribute('aria-checked', 'true');
+
+      // The submenu trigger isn't selectable so it shouldn't have the menuitemcheckbox role
+      let menuItems = within(menu).getAllByRole('menuitem');
+      expect(menuItems).toHaveLength(1);
+      let subMenuTrigger = menuItems[0];
+      expect(subMenuTrigger).toHaveAttribute('aria-expanded', 'false');
+      expect(subMenuTrigger).not.toHaveAttribute('aria-checked');
     });
   });
 });

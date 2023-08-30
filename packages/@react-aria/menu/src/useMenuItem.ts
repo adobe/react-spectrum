@@ -144,10 +144,12 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let onAction = isTrigger ? onActionMenuDialogTrigger : props.onAction || data.onAction;
 
   let role = 'menuitem';
-  if (state.selectionManager.selectionMode === 'single') {
-    role = 'menuitemradio';
-  } else if (state.selectionManager.selectionMode === 'multiple') {
-    role = 'menuitemcheckbox';
+  if (!isTrigger) {
+    if (state.selectionManager.selectionMode === 'single') {
+      role = 'menuitemradio';
+    } else if (state.selectionManager.selectionMode === 'multiple') {
+      role = 'menuitemcheckbox';
+    }
   }
 
   let labelId = useSlotId();
@@ -162,7 +164,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     'aria-describedby': [descriptionId, keyboardId].filter(Boolean).join(' ') || undefined
   };
 
-  if (state.selectionManager.selectionMode !== 'none') {
+  if (state.selectionManager.selectionMode !== 'none' && !isTrigger) {
     ariaProps['aria-checked'] = isSelected;
   }
 
