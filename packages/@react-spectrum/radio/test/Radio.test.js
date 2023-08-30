@@ -561,19 +561,17 @@ describe('Radios', function () {
         expect(radios[2]).toHaveAttribute('tabIndex', '0');
         expect(radios[3]).toHaveAttribute('tabIndex', '0');
 
-        userEvent.tab();
+        await user.tab();
         act(() => {jest.runAllTimers();});
         expect(document.activeElement).toBe(buttons[0]);
-        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
-        userEvent.tab();
+        await user.keyboard('{Enter}');
+        await user.tab();
         act(() => {jest.runAllTimers();});
         expect(document.activeElement).toBe(radios[1]);
-        userEvent.tab();
+        await user.tab();
         act(() => {jest.runAllTimers();});
         expect(document.activeElement).toBe(buttons[1]);
-        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+        await user.keyboard('{Enter}');
 
         expect(radios[0]).toHaveAttribute('tabIndex', '-1');
         expect(radios[1]).toHaveAttribute('tabIndex', '-1');
