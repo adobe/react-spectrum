@@ -22,7 +22,7 @@ import {useOverlayTriggerState} from '@react-stately/overlays';
 interface MenuDialogTriggerProps<T> extends ItemProps<T> {
   /** Whether the menu item is currently unavailable. */
   isUnavailable?: boolean,
-  /** The Item which triggers opening of the Dialog, and the Dialog itself. */
+  /** The triggering Item and the Dialog, respectively. */
   children: [ReactElement, ReactElement],
   targetKey: Key
 }
