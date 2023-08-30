@@ -667,7 +667,7 @@ function Cell(props: CellProps, ref: ForwardedRef<HTMLTableCellElement>): JSX.El
 /**
  * A cell within a table row.
  */
-const _Cell = forwardRef(Cell);
+const _Cell = /*#__PURE__*/ (forwardRef as forwardRefType)(Cell);
 export {_Cell as Cell};
 
 function TableHeaderRowGroup<T>({collection}: {collection: TableCollection<T>}) {
