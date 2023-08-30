@@ -656,8 +656,6 @@ export interface CellRenderProps {
 
 export interface CellProps extends RenderProps<CellRenderProps> {
   id?: Key,
-  /** The contents of the cell. */
-  children: ReactNode,
   /** A string representation of the cell's contents, used for features like typeahead. */
   textValue?: string
 }
