@@ -16,7 +16,7 @@ import {getItemCount} from '@react-stately/collections';
 import {isFocusVisible, useHover, useKeyboard, usePress} from '@react-aria/interactions';
 import {Key, RefObject, useCallback, useRef} from 'react';
 import {menuData} from './useMenu';
-import {mergeProps, openLink, useEffectEvent, useLayoutEffect, useSlotId} from '@react-aria/utils';
+import {mergeProps, useEffectEvent, useLayoutEffect, useRouter, useSlotId} from '@react-aria/utils';
 import {TreeState} from '@react-stately/tree';
 import {useLocale} from '@react-aria/i18n';
 import {useSelectableItem} from '@react-aria/selection';
@@ -134,17 +134,14 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   let onAction = isTrigger ? onActionMenuDialogTrigger : props.onAction || data.onAction;
+  let router = useRouter();
   let performAction = (e: PressEvent) => {
     if (onAction) {
       onAction(key);
     }
 
-    // If the menu item is a link, trigger it here so the browser opens it.
-    // The browser default behavior is prevented by usePress.
-    // This ensures that menu item actions always occur consistently regardless
-    // of whether they are links or not.
     if (e.target instanceof HTMLAnchorElement) {
-      openLink(e.target, e);
+      router.open(e.target, e);
     }
   };
 
@@ -205,9 +202,11 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     ref,
     shouldSelectOnPressUp: true,
     allowsDifferentPressOrigin: true,
-    // Disable default link handling because we handle it ourselves above.
-    // In menus, links behave like an override – link items are not selectable.
-    isLinkDisabled: true
+    // Disable all handling of links in useSelectable item
+    // because we handle it ourselves. The behavior of menus
+    // is slightly different from other collections because
+    // actions are performed on key down rather than key up.
+    linkBehavior: 'none'
   });
 
   let {pressProps, isPressed} = usePress({

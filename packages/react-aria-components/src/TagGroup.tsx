@@ -205,7 +205,7 @@ export {_Tag as Tag};
 
 function TagItem({item}) {
   let {state} = useContext(InternalTagGroupContext)!;
-  let ref = useObjectRef<any>(item.props.ref);
+  let ref = useObjectRef<HTMLDivElement>(item.props.ref);
   let {focusProps, isFocusVisible} = useFocusRing({within: true});
   let {rowProps, gridCellProps, removeButtonProps, ...states} = useTag({item}, state, ref);
 
@@ -234,14 +234,11 @@ function TagItem({item}) {
     }
   }, [item.textValue]);
 
-  let DOMProps = filterDOMProps(props as any);
-  delete DOMProps.id;
-
   return (
     <div
       ref={ref}
       {...renderProps}
-      {...mergeProps(DOMProps, rowProps, focusProps, hoverProps)}
+      {...mergeProps(filterDOMProps(props as any), rowProps, focusProps, hoverProps)}
       data-selected={states.isSelected || undefined}
       data-disabled={states.isDisabled || undefined}
       data-hovered={isHovered || undefined}

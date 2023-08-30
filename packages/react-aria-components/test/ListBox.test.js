@@ -639,4 +639,108 @@ describe('ListBox', () => {
       act(() => jest.runAllTimers());
     });
   });
+
+  describe('links', function () {
+    describe.each(['mouse', 'keyboard'])('%s', (type) => {
+      let trigger = (item) => {
+        if (type === 'mouse') {
+          userEvent.click(item);
+        } else {
+          fireEvent.keyDown(item, {key: 'Enter'});
+          fireEvent.keyUp(item, {key: 'Enter'});
+        }
+      };
+
+      it('should support links with selectionMode="none"', function () {
+        let {getAllByRole} = render(
+          <ListBox aria-label="listbox">
+            <Item href="https://google.com">One</Item>
+            <Item href="https://adobe.com">Two</Item>
+          </ListBox>
+        );
+
+        let items = getAllByRole('option');
+        for (let item of items) {
+          expect(item.tagName).toBe('A');
+          expect(item).toHaveAttribute('href');
+        }
+
+        let onClick = jest.fn();
+        document.addEventListener('click', onClick, {once: true});
+        trigger(items[0]);
+        expect(onClick).toHaveBeenCalledTimes(1);
+        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+      });
+
+      it.each(['single', 'multiple'])('should support links with selectionMode="%s"', function (selectionMode) {
+        let {getAllByRole} = render(
+          <ListBox aria-label="listbox" selectionMode={selectionMode}>
+            <Item href="https://google.com">One</Item>
+            <Item href="https://adobe.com">Two</Item>
+          </ListBox>
+        );
+
+        let items = getAllByRole('option');
+        for (let item of items) {
+          expect(item.tagName).toBe('A');
+          expect(item).toHaveAttribute('href');
+        }
+
+        let onClick = jest.fn();
+        document.addEventListener('click', onClick, {once: true});
+        trigger(items[0]);
+        expect(onClick).toHaveBeenCalledTimes(1);
+        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+        expect(items[0]).not.toHaveAttribute('aria-selected', 'true');
+
+        onClick = jest.fn();
+        document.addEventListener('click', onClick, {once: true});
+        trigger(items[1]);
+        expect(onClick).toHaveBeenCalledTimes(1);
+        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[0][0].target.href).toBe('https://adobe.com/');
+        expect(items[1]).not.toHaveAttribute('aria-selected', 'true');
+      });
+
+      it.each(['single', 'multiple'])('should support links with selectionMode="%s" selectionBehavior="replace"', function (selectionMode) {
+        let {getAllByRole} = render(
+          <ListBox aria-label="listbox" selectionMode={selectionMode} selectionBehavior="replace">
+            <Item href="https://google.com">One</Item>
+            <Item href="https://adobe.com">Two</Item>
+          </ListBox>
+        );
+
+        let items = getAllByRole('option');
+        for (let item of items) {
+          expect(item.tagName).toBe('A');
+          expect(item).toHaveAttribute('href');
+        }
+
+        let onClick = jest.fn();
+        document.addEventListener('click', onClick, {once: true});
+        if (type === 'mouse') {
+          userEvent.click(items[0]);
+        } else {
+          fireEvent.keyDown(items[0], {key: ' '});
+          fireEvent.keyUp(items[0], {key: ' '});
+        }
+        expect(onClick).not.toHaveBeenCalled();
+        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+
+        onClick = jest.fn();
+        document.addEventListener('click', onClick, {once: true});
+        if (type === 'mouse') {
+          userEvent.dblClick(items[0], {pointerType: 'mouse'});
+        } else {
+          fireEvent.keyDown(items[0], {key: 'Enter'});
+          fireEvent.keyUp(items[0], {key: 'Enter'});
+        }
+        expect(onClick).toHaveBeenCalledTimes(1);
+        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+      });
+    });
+  });
 });

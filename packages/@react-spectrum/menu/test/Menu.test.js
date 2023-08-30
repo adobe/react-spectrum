@@ -737,33 +737,45 @@ describe('Menu', function () {
   });
 
   describe('supports links', function () {
-    it.each(['none', 'single', 'multiple'])('with selectionMode = %s', function (selectionMode) {
-      let onAction = jest.fn();
-      let onSelectionChange = jest.fn();
-      let tree = render(
-        <Provider theme={theme}>
-          <Menu aria-label="menu" selectionMode={selectionMode} onSelectionChange={onSelectionChange} onAction={onAction}>
-            <Item href="https://google.com">One</Item>
-            <Item href="https://adobe.com">Two</Item>
-          </Menu>
-        </Provider>
-      );
+    describe.each(['mouse', 'keyboard'])('%s', (type) => {
+      it.each(['none', 'single', 'multiple'])('with selectionMode = %s', function (selectionMode) {
+        let onAction = jest.fn();
+        let onSelectionChange = jest.fn();
+        let tree = render(
+          <Provider theme={theme}>
+            <Menu aria-label="menu" selectionMode={selectionMode} onSelectionChange={onSelectionChange} onAction={onAction}>
+              <Item href="https://google.com">One</Item>
+              <Item href="https://adobe.com">Two</Item>
+            </Menu>
+          </Provider>
+        );
 
-      let role = {
-        none: 'menuitem',
-        single: 'menuitemradio',
-        multiple: 'menuitemcheckbox'
-      }[selectionMode];
-      let items = tree.getAllByRole(role);
-      expect(items).toHaveLength(2);
-      expect(items[0].tagName).toBe('A');
-      expect(items[0]).toHaveAttribute('href', 'https://google.com');
-      expect(items[1].tagName).toBe('A');
-      expect(items[1]).toHaveAttribute('href', 'https://adobe.com');
+        let role = {
+          none: 'menuitem',
+          single: 'menuitemradio',
+          multiple: 'menuitemcheckbox'
+        }[selectionMode];
+        let items = tree.getAllByRole(role);
+        expect(items).toHaveLength(2);
+        expect(items[0].tagName).toBe('A');
+        expect(items[0]).toHaveAttribute('href', 'https://google.com');
+        expect(items[1].tagName).toBe('A');
+        expect(items[1]).toHaveAttribute('href', 'https://adobe.com');
 
-      triggerPress(items[1]);
-      expect(onAction).toHaveBeenCalledTimes(1);
-      expect(onSelectionChange).not.toHaveBeenCalled();
+        let onClick = jest.fn();
+        document.addEventListener('click', onClick);
+
+        if (type === 'mouse') {
+          triggerPress(items[1]);
+        } else {
+          fireEvent.keyDown(items[1], {key: 'Enter'});
+          fireEvent.keyUp(items[1], {key: 'Enter'});
+        }
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onClick).toHaveBeenCalledTimes(1);
+        document.removeEventListener('click', onClick);
+      });
     });
   });
 });

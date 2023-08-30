@@ -11,11 +11,12 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Text, TimeField, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Tag, TagGroup, TagList, Text, TimeField, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
 import React, {useRef, useState} from 'react';
+import {RouterProvider} from '@react-aria/utils';
 import styles from '../example/index.css';
 import {useListData} from 'react-stately';
 
@@ -142,14 +143,35 @@ export const ComboBoxRenderPropsListBoxDynamic = () => (
   </ComboBox>
 );
 
-export const ListBoxExample = () => (
-  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace" aria-label="test listbox">
+export const ListBoxExample = (args) => (
+  <ListBox className={styles.menu} {...args} aria-label="test listbox">
     <MyItem>Foo</MyItem>
     <MyItem>Bar</MyItem>
     <MyItem>Baz</MyItem>
     <MyItem href="http://google.com">Google</MyItem>
   </ListBox>
 );
+
+ListBoxExample.story = {
+  args: {
+    selectionMode: 'none',
+    selectionBehavior: 'toggle'
+  },
+  argTypes: {
+    selectionMode: {
+      control: {
+        type: 'radio',
+        options: ['none', 'single', 'multiple']
+      }
+    },
+    selectionBehavior: {
+      control: {
+        type: 'radio',
+        options: ['toggle', 'replace']
+      }
+    }
+  }
+};
 
 // Known accessibility false positive: https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#listbox
 // also has a aXe landmark error, not sure what it means
@@ -628,39 +650,26 @@ export const ModalExample = () => (
 
 export const TabsExample = () => {
   let [url, setUrl] = useState('/FoR');
-  React.useEffect(() => {
-    let onClick = e => {
-      if (e.target instanceof HTMLAnchorElement) {
-        e.preventDefault();
-        setUrl(e.target.pathname);
-      }
-    };
-
-    document.addEventListener('click', onClick);
-    return () => {
-      document.removeEventListener('click', onClick);
-    };
-  }, []);
 
   return (
-    <Tabs selectedKey={url}>
-      <TabList aria-label="History of Ancient Rome" style={{display: 'flex', gap: 8}}>
-        <CustomTab id="/FoR" href="/FoR">Founding of Rome</CustomTab>
-        <CustomTab id="/MaR" href="/MaR">Monarchy and Republic</CustomTab>
-        <CustomTab id="/Emp" href="/Emp">Empire</CustomTab>
-        {/* <CustomTab id="link" href="https://example.com/" target="frame">Link</CustomTab> */}
-      </TabList>
-      <TabPanel id="/FoR">
-        Arma virumque cano, Troiae qui primus ab oris.
-      </TabPanel>
-      <TabPanel id="/MaR">
-        Senatus Populusque Romanus.
-      </TabPanel>
-      <TabPanel id="/Emp">
-        Alea jacta est.
-      </TabPanel>
-      {/* <iframe name="frame" /> */}
-    </Tabs>
+    <RouterProvider navigate={setUrl}>
+      <Tabs selectedKey={url}>
+        <TabList aria-label="History of Ancient Rome" style={{display: 'flex', gap: 8}}>
+          <CustomTab id="/FoR" href="/FoR">Founding of Rome</CustomTab>
+          <CustomTab id="/MaR" href="/MaR">Monarchy and Republic</CustomTab>
+          <CustomTab id="/Emp" href="/Emp">Empire</CustomTab>
+        </TabList>
+        <TabPanel id="/FoR">
+          Arma virumque cano, Troiae qui primus ab oris.
+        </TabPanel>
+        <TabPanel id="/MaR">
+          Senatus Populusque Romanus.
+        </TabPanel>
+        <TabPanel id="/Emp">
+          Alea jacta est.
+        </TabPanel>
+      </Tabs>
+    </RouterProvider>
   );
 };
 

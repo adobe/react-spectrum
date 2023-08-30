@@ -5303,6 +5303,14 @@ describe('ComboBox', function () {
   });
 
   describe('links', () => {
+    beforeAll(function () {
+      jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+    });
+
+    afterAll(function () {
+      jest.clearAllMocks();
+    });
+
     it.each(['mouse', 'keyboard'])('supports links on items with %s', async (type) => {
       let tree = render(
         <Provider theme={theme}>

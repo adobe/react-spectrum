@@ -16,7 +16,7 @@ import {AriaComboBoxProps} from '@react-types/combobox';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
 import {BaseEvent, DOMAttributes, KeyboardDelegate, PressEvent} from '@react-types/shared';
-import {chain, isAppleDevice, mergeProps, openLink, useLabels} from '@react-aria/utils';
+import {chain, isAppleDevice, mergeProps, useLabels, useRouter} from '@react-aria/utils';
 import {ComboBoxState} from '@react-stately/combobox';
 import {FocusEvent, InputHTMLAttributes, KeyboardEvent, RefObject, TouchEvent, useEffect, useMemo, useRef} from 'react';
 import {getChildNodes, getItemCount} from '@react-stately/collections';
@@ -106,6 +106,8 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     isVirtualized: true
   });
 
+  let router = useRouter();
+
   // For textfield specific keydown operations
   let onKeyDown = (e: BaseEvent<KeyboardEvent<any>>) => {
     switch (e.key) {
@@ -121,7 +123,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
           if (e.key === 'Enter') {
             let item = listBoxRef.current.querySelector(`[data-key="${state.selectionManager.focusedKey}"]`);
             if (item instanceof HTMLAnchorElement) {
-              openLink(item, e);
+              router.open(item, e);
             }
           }
 
@@ -342,7 +344,8 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
       autoFocus: state.focusStrategy,
       shouldUseVirtualFocus: true,
       shouldSelectOnPressUp: true,
-      shouldFocusOnHover: true
+      shouldFocusOnHover: true,
+      linkBehavior: 'selection' as const
     }),
     descriptionProps,
     errorMessageProps

@@ -53,7 +53,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   } = props;
 
   let {direction} = useLocale();
-  let {onAction} = listMap.get(state);
+  let {onAction, linkBehavior} = listMap.get(state);
   let descriptionId = useSlotId();
 
   // We need to track the key of the item at the time it was last focused so that we force
@@ -77,7 +77,8 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     isVirtualized,
     shouldSelectOnPressUp,
     onAction: onAction ? () => onAction(node.key) : undefined,
-    focus
+    focus,
+    linkBehavior
   });
 
   let onKeyDown = (e: ReactKeyboardEvent) => {

@@ -856,5 +856,8 @@ describe('Tabs', function () {
     expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
     triggerPress(tabs[1]);
     expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
+
+    fireEvent.keyDown(tabs[1], {key: 'ArrowRight'});
+    expect(tabs[2]).toHaveAttribute('aria-selected', 'true');
   });
 });

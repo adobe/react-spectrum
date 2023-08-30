@@ -14,7 +14,7 @@ import {DOMAttributes, FocusableElement, FocusStrategy, KeyboardDelegate} from '
 import {flushSync} from 'react-dom';
 import {FocusEvent, Key, KeyboardEvent, RefObject, useEffect, useRef} from 'react';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
-import {focusWithoutScrolling, mergeProps, openSyntheticLink, scrollIntoView, scrollIntoViewport, useEvent} from '@react-aria/utils';
+import {focusWithoutScrolling, mergeProps, scrollIntoView, scrollIntoViewport, useEvent, useRouter} from '@react-aria/utils';
 import {getInteractionModality} from '@react-aria/interactions';
 import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
@@ -80,7 +80,15 @@ export interface AriaSelectableCollectionOptions {
    * The ref attached to the scrollable body. Used to provide automatic scrolling on item focus for non-virtualized collections.
    * If not provided, defaults to the collection ref.
    */
-  scrollRef?: RefObject<HTMLElement>
+  scrollRef?: RefObject<HTMLElement>,
+  /**
+   * The behavior of links in the collection.
+   * - 'action': link behaves like onAction.
+   * - 'selection': link follows selection interactions (e.g. if URL drives selection).
+   * - 'override': links override all other interactions (link items are not selectable).
+   * @default 'action'
+   */
+  linkBehavior?: 'action' | 'selection' | 'override'
 }
 
 export interface SelectableCollectionAria {
@@ -106,10 +114,11 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     allowsTabNavigation = false,
     isVirtualized,
     // If no scrollRef is provided, assume the collection ref is the scrollable region
-    scrollRef = ref
+    scrollRef = ref,
+    linkBehavior = 'action'
   } = options;
   let {direction} = useLocale();
-
+  let router = useRouter();
 
   let onKeyDown = (e: KeyboardEvent) => {
     // Prevent option + tab from doing anything since it doesn't move focus to the cells, only buttons/checkboxes
@@ -125,19 +134,23 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
     const navigateToKey = (key: Key | undefined, childFocus?: FocusStrategy) => {
       if (key != null) {
-        if (manager.isLink(key) && manager.selectionMode === 'single' && selectOnFocus && !isNonContiguousSelectionModifier(e)) {
+        if (manager.isLink(key) && linkBehavior === 'selection' && selectOnFocus && !isNonContiguousSelectionModifier(e)) {
           // Set focused key and re-render synchronously to bring item into view if needed.
           flushSync(() => {
             manager.setFocusedKey(key, childFocus);
           });
 
           let item = scrollRef.current.querySelector(`[data-key="${key}"]`);
-          openSyntheticLink(item, e);
+          router.open(item, e);
 
           return;
         }
 
         manager.setFocusedKey(key, childFocus);
+
+        if (manager.isLink(key) && linkBehavior === 'override') {
+          return;
+        }
 
         if (e.shiftKey && manager.selectionMode === 'multiple') {
           manager.extendSelection(key);

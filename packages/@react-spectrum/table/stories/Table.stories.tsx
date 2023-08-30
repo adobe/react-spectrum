@@ -1847,29 +1847,8 @@ export const TypeaheadWithDialog: TableStory = {
 };
 
 export const Links = (args) => {
-  let [url, setUrl] = useState('https://adobe.com');
-  React.useEffect(() => {
-    if (args.selectionMode !== 'single') {
-      return;
-    }
-
-    let onClick = e => {
-      if (e.target instanceof HTMLAnchorElement && !e.metaKey && !e.ctrlKey) {
-        e.preventDefault();
-        setUrl(e.target.href);
-      }
-    };
-
-    document.addEventListener('click', onClick);
-    return () => {
-      document.removeEventListener('click', onClick);
-    };
-  }, [args.selectionMode]);
-
-  let selectedKeys = args.selectionMode === 'single' ? [url] : undefined;
-
   return (
-    <TableView {...args} aria-label="Bookmarks table" selectedKeys={selectedKeys} onSelectionChange={action('onSelectionChange')}>
+    <TableView {...args} aria-label="Bookmarks table" onSelectionChange={action('onSelectionChange')}>
       <TableHeader>
         <Column>Name</Column>
         <Column>URL</Column>

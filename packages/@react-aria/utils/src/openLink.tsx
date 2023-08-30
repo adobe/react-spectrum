@@ -12,6 +12,54 @@
 
 import {focusWithoutScrolling, isWebKit} from '@react-aria/utils';
 import {LinkDOMProps} from '@react-types/shared';
+import React, {createContext, ReactNode, useContext, useMemo} from 'react';
+
+interface Router {
+  open: (target: Element, modifiers: Modifiers) => void
+}
+
+const RouterContext = createContext<Router>({
+  open: openSyntheticLink
+});
+
+interface RouterProviderProps {
+  navigate: (path: string) => void,
+  children: ReactNode
+}
+
+export function RouterProvider(props: RouterProviderProps) {
+  let {children, navigate} = props;
+
+  let ctx = useMemo(() => ({
+    open: (target: Element, modifiers: Modifiers) => {
+      getSyntheticLink(target, link => {
+        if (
+          (!link.target || link.target === '_self') &&
+          link.origin === location.origin &&
+          !link.hasAttribute('download') &&
+          !modifiers.metaKey && // open in new tab (mac)
+          !modifiers.ctrlKey && // open in new tab (windows)
+          !modifiers.altKey && // download
+          !modifiers.shiftKey
+        ) {
+          navigate(link.pathname + link.search + link.hash);
+        } else {
+          openLink(link, modifiers);
+        }
+      });
+    }
+  }), [navigate]);
+
+  return (
+    <RouterContext.Provider value={ctx}>
+      {children}
+    </RouterContext.Provider>
+  );
+}
+
+export function useRouter(): Router {
+  return useContext(RouterContext);
+}
 
 interface Modifiers {
   metaKey?: boolean,
@@ -36,9 +84,9 @@ export function openLink(target: HTMLAnchorElement, modifiers: Modifiers, setOpe
 
 openLink.isOpening = false;
 
-export function openSyntheticLink(target: Element, modifiers: Modifiers) {
+function getSyntheticLink(target: Element, open: (link: HTMLAnchorElement) => void) {
   if (target instanceof HTMLAnchorElement) {
-    openLink(target, modifiers);
+    open(target);
   } else if (target.hasAttribute('data-href')) {
     let link = document.createElement('a');
     link.href = target.getAttribute('data-href');
@@ -58,9 +106,13 @@ export function openSyntheticLink(target: Element, modifiers: Modifiers) {
       link.referrerPolicy = target.getAttribute('data-referrer-policy');
     }
     target.appendChild(link);
-    openLink(link, modifiers);
+    open(link);
     target.removeChild(link);
   }
+}
+
+function openSyntheticLink(target: Element, modifiers: Modifiers) {
+  getSyntheticLink(target, link => openLink(link, modifiers));
 }
 
 export function getSyntheticLinkProps(props: LinkDOMProps) {

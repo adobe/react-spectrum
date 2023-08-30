@@ -20,8 +20,7 @@ import {
   HTMLAttributeAnchorTarget,
   HTMLAttributeReferrerPolicy,
   DOMAttributes as ReactDOMAttributes,
-  ReactEventHandler,
-  AnchorHTMLAttributes
+  ReactEventHandler
 } from 'react';
 
 export interface AriaLabelingProps {

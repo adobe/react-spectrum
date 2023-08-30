@@ -14,7 +14,7 @@ import {DOMAttributes, FocusableElement, LongPressEvent, PressEvent} from '@reac
 import {focusSafely} from '@react-aria/focus';
 import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
 import {Key, RefObject, useEffect, useRef} from 'react';
-import {mergeProps, openLink, openSyntheticLink} from '@react-aria/utils';
+import {mergeProps, openLink, useRouter} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {PressProps, useLongPress, usePress} from '@react-aria/interactions';
 
@@ -55,13 +55,20 @@ export interface SelectableItemOptions {
   shouldUseVirtualFocus?: boolean,
   /** Whether the item is disabled. */
   isDisabled?: boolean,
-  /** Whether the default link behavior should be disabled. */
-  isLinkDisabled?: boolean,
   /**
    * Handler that is called when a user performs an action on the item. The exact user event depends on
    * the collection's `selectionBehavior` prop and the interaction modality.
    */
-  onAction?: () => void
+  onAction?: () => void,
+  /**
+   * The behavior of links in the collection.
+   * - 'action': link behaves like onAction.
+   * - 'selection': link follows selection interactions (e.g. if URL drives selection).
+   * - 'override': links override all other interactions (link items are not selectable).
+   * - 'none': links are disabled for both selection and actions (e.g. handled elsewhere).
+   * @default 'action'
+   */
+  linkBehavior?: 'action' | 'selection' | 'override' | 'none'
 }
 
 export interface SelectableItemStates {
@@ -108,24 +115,33 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     shouldUseVirtualFocus,
     focus,
     isDisabled,
-    isLinkDisabled,
     onAction,
-    allowsDifferentPressOrigin
+    allowsDifferentPressOrigin,
+    linkBehavior = 'action'
   } = options;
+  let router = useRouter();
 
   let onSelect = (e: PressEvent | LongPressEvent | PointerEvent) => {
     if (e.pointerType === 'keyboard' && isNonContiguousSelectionModifier(e)) {
       manager.toggleSelection(key);
     } else {
-      if (manager.selectionMode === 'none' || (manager.isLink(key) && isLinkDisabled)) {
+      if (manager.selectionMode === 'none') {
         return;
       }
 
-      if (manager.selectionMode === 'single') {
-        if (manager.isLink(key)) {
-          openSyntheticLink(ref.current, e);
+      if (manager.isLink(key)) {
+        if (linkBehavior === 'selection') {
+          router.open(ref.current, e);
+          // Always set selected keys back to what they were so that select and combobox close.
           manager.setSelectedKeys(manager.selectedKeys);
-        } else if (manager.isSelected(key) && !manager.disallowEmptySelection) {
+          return;
+        } else if (linkBehavior === 'override' || linkBehavior === 'none') {
+          return;
+        }
+      }
+
+      if (manager.selectionMode === 'single') {
+        if (manager.isSelected(key) && !manager.disallowEmptySelection) {
           manager.toggleSelection(key);
         } else {
           manager.replaceSelection(key);
@@ -181,12 +197,14 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // With touch, onAction occurs on single tap, and long press enters selection mode.
   // If the item is a link, it behaves as an action when selectionMode is "none" or "multiple".
   // If selectionMode is "single", it is assumed that links will control the selection instead.
-  let allowsSelection = !isDisabled && manager.canSelectItem(key);
-  let allowsActions = (onAction || (manager.isLink(key) && manager.selectionMode !== 'single' && !isLinkDisabled)) && !isDisabled;
+  let isLinkOverride = manager.isLink(key) && linkBehavior === 'override';
+  let hasLinkAction = manager.isLink(key) && linkBehavior !== 'selection' && linkBehavior !== 'none';
+  let allowsSelection = !isDisabled && manager.canSelectItem(key) && !isLinkOverride;
+  let allowsActions = (onAction || hasLinkAction) && !isDisabled;
   let hasPrimaryAction = allowsActions && (
     manager.selectionBehavior === 'replace'
       ? !allowsSelection
-      : manager.isEmpty
+      : !allowsSelection || manager.isEmpty
   );
   let hasSecondaryAction = allowsActions && allowsSelection && manager.selectionBehavior === 'replace';
   let hasAction = hasPrimaryAction || hasSecondaryAction;
@@ -201,8 +219,8 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       onAction();
     }
 
-    if (manager.selectionMode !== 'single' && manager.isLink(key)) {
-      openSyntheticLink(ref.current, e);
+    if (hasLinkAction) {
+      router.open(ref.current, e);
     }
   };
 
@@ -233,13 +251,13 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
           }
 
           performAction(e);
-        } else if (e.pointerType !== 'keyboard') {
+        } else if (e.pointerType !== 'keyboard' && allowsSelection) {
           onSelect(e);
         }
       };
     } else {
       itemPressProps.onPressUp = hasPrimaryAction ? null : (e) => {
-        if (e.pointerType !== 'keyboard') {
+        if (e.pointerType !== 'keyboard' && allowsSelection) {
           onSelect(e);
         }
       };
@@ -256,8 +274,10 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       // For keyboard, select on key down. If there is an action, the Space key selects on key down,
       // and the Enter key performs onAction on key up.
       if (
-        (e.pointerType === 'mouse' && !hasPrimaryAction) ||
-        (e.pointerType === 'keyboard' && (!hasAction || isSelectionKey()))
+        allowsSelection && (
+          (e.pointerType === 'mouse' && !hasPrimaryAction) ||
+          (e.pointerType === 'keyboard' && (!allowsActions || isSelectionKey()))
+        )
       ) {
         onSelect(e);
       }
@@ -276,7 +296,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       ) {
         if (hasAction) {
           performAction(e);
-        } else {
+        } else if (allowsSelection) {
           onSelect(e);
         }
       }

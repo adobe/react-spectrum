@@ -4540,169 +4540,154 @@ export let tableTests = () => {
   });
 
   describe('links', function () {
-    it('should support links', function () {
-      let {getAllByRole} = render(
-        <Provider theme={theme}>
-          <TableView aria-label="Table">
-            <TableHeader>
-              <Column>Foo</Column>
-              <Column>Bar</Column>
-              <Column>Baz</Column>
-            </TableHeader>
-            <TableBody>
-              <Row href="https://google.com">
-                <Cell>Foo 1</Cell>
-                <Cell>Bar 1</Cell>
-                <Cell>Baz 1</Cell>
-              </Row>
-              <Row href="https://adobe.com">
-                <Cell>Foo 2</Cell>
-                <Cell>Bar 2</Cell>
-                <Cell>Baz 2</Cell>
-              </Row>
-            </TableBody>
-          </TableView>
-        </Provider>
-      );
+    describe.each(['mouse', 'keyboard'])('%s', (type) => {
+      let trigger = (item, key = 'Enter') => {
+        if (type === 'mouse') {
+          triggerPress(item);
+        } else {
+          fireEvent.keyDown(item, {key});
+          fireEvent.keyUp(item, {key});
+        }
+      };
 
-      let items = getAllByRole('row').slice(1);
-      for (let item of items) {
-        expect(item.tagName).not.toBe('A');
-        expect(item).toHaveAttribute('data-href');
-      }
+      it('should support links with selectionMode="none"', function () {
+        let {getAllByRole} = render(
+          <Provider theme={theme}>
+            <TableView aria-label="Table">
+              <TableHeader>
+                <Column>Foo</Column>
+                <Column>Bar</Column>
+                <Column>Baz</Column>
+              </TableHeader>
+              <TableBody>
+                <Row href="https://google.com">
+                  <Cell>Foo 1</Cell>
+                  <Cell>Bar 1</Cell>
+                  <Cell>Baz 1</Cell>
+                </Row>
+                <Row href="https://adobe.com">
+                  <Cell>Foo 2</Cell>
+                  <Cell>Bar 2</Cell>
+                  <Cell>Baz 2</Cell>
+                </Row>
+              </TableBody>
+            </TableView>
+          </Provider>
+        );
 
-      let onClick = jest.fn();
-      document.addEventListener('click', onClick, {once: true});
-      triggerPress(items[0]);
-      expect(onClick).toHaveBeenCalledTimes(1);
-      expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
-      expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
-    });
+        let items = getAllByRole('row').slice(1);
+        for (let item of items) {
+          expect(item.tagName).not.toBe('A');
+          expect(item).toHaveAttribute('data-href');
+        }
 
-    it('should support links with checkbox selection', function () {
-      let {getAllByRole} = render(
-        <Provider theme={theme}>
-          <TableView aria-label="Table" selectionMode="multiple">
-            <TableHeader>
-              <Column>Foo</Column>
-              <Column>Bar</Column>
-              <Column>Baz</Column>
-            </TableHeader>
-            <TableBody>
-              <Row href="https://google.com">
-                <Cell>Foo 1</Cell>
-                <Cell>Bar 1</Cell>
-                <Cell>Baz 1</Cell>
-              </Row>
-              <Row href="https://adobe.com">
-                <Cell>Foo 2</Cell>
-                <Cell>Bar 2</Cell>
-                <Cell>Baz 2</Cell>
-              </Row>
-            </TableBody>
-          </TableView>
-        </Provider>
-      );
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        document.addEventListener('click', onClick, {once: true});
+        trigger(items[0]);
+        expect(onClick).toHaveBeenCalledTimes(1);
+        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+      });
 
-      let items = getAllByRole('row').slice(1);
-      for (let item of items) {
-        expect(item.tagName).not.toBe('A');
-        expect(item).toHaveAttribute('data-href');
-      }
+      it.each(['single', 'multiple'])('should support links with selectionStyle="checkbox" selectionMode="%s"', function (selectionMode) {
+        let {getAllByRole} = render(
+          <Provider theme={theme}>
+            <TableView aria-label="Table" selectionMode={selectionMode}>
+              <TableHeader>
+                <Column>Foo</Column>
+                <Column>Bar</Column>
+                <Column>Baz</Column>
+              </TableHeader>
+              <TableBody>
+                <Row href="https://google.com">
+                  <Cell>Foo 1</Cell>
+                  <Cell>Bar 1</Cell>
+                  <Cell>Baz 1</Cell>
+                </Row>
+                <Row href="https://adobe.com">
+                  <Cell>Foo 2</Cell>
+                  <Cell>Bar 2</Cell>
+                  <Cell>Baz 2</Cell>
+                </Row>
+              </TableBody>
+            </TableView>
+          </Provider>
+        );
 
-      let onClick = jest.fn();
-      document.addEventListener('click', onClick, {once: true});
-      triggerPress(items[0]);
-      expect(onClick).toHaveBeenCalledTimes(1);
-      expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
-      expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+        let items = getAllByRole('row').slice(1);
+        for (let item of items) {
+          expect(item.tagName).not.toBe('A');
+          expect(item).toHaveAttribute('data-href');
+        }
 
-      userEvent.click(within(items[0]).getByRole('checkbox'));
-      expect(items[0]).toHaveAttribute('aria-selected', 'true');
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        document.addEventListener('click', onClick, {once: true});
+        trigger(items[0]);
+        expect(onClick).toHaveBeenCalledTimes(1);
+        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
 
-      onClick = jest.fn();
-      document.addEventListener('click', onClick, {once: true});
-      triggerPress(items[1]);
-      expect(onClick).not.toHaveBeenCalled();
-    });
+        userEvent.click(within(items[0]).getByRole('checkbox'));
+        expect(items[0]).toHaveAttribute('aria-selected', 'true');
 
-    it('should support links with highlight selection', function () {
-      let {getAllByRole} = render(
-        <Provider theme={theme}>
-          <TableView aria-label="Table" selectionMode="multiple" selectionStyle="highlight">
-            <TableHeader>
-              <Column>Foo</Column>
-              <Column>Bar</Column>
-              <Column>Baz</Column>
-            </TableHeader>
-            <TableBody>
-              <Row href="https://google.com">
-                <Cell>Foo 1</Cell>
-                <Cell>Bar 1</Cell>
-                <Cell>Baz 1</Cell>
-              </Row>
-              <Row href="https://adobe.com">
-                <Cell>Foo 2</Cell>
-                <Cell>Bar 2</Cell>
-                <Cell>Baz 2</Cell>
-              </Row>
-            </TableBody>
-          </TableView>
-        </Provider>
-      );
+        onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        document.addEventListener('click', onClick);
+        trigger(items[1], ' ');
+        expect(onClick).not.toHaveBeenCalled();
+        expect(items[1]).toHaveAttribute('aria-selected', 'true');
+        document.removeEventListener('click', onClick);
+      });
 
-      let items = getAllByRole('row').slice(1);
-      for (let item of items) {
-        expect(item.tagName).not.toBe('A');
-        expect(item).toHaveAttribute('data-href');
-      }
+      it.each(['single', 'multiple'])('should support links with selectionStyle="highlight" selectionMode="%s"', function (selectionMode) {
+        let {getAllByRole} = render(
+          <Provider theme={theme}>
+            <TableView aria-label="Table" selectionMode={selectionMode} selectionStyle="highlight">
+              <TableHeader>
+                <Column>Foo</Column>
+                <Column>Bar</Column>
+                <Column>Baz</Column>
+              </TableHeader>
+              <TableBody>
+                <Row href="https://google.com">
+                  <Cell>Foo 1</Cell>
+                  <Cell>Bar 1</Cell>
+                  <Cell>Baz 1</Cell>
+                </Row>
+                <Row href="https://adobe.com">
+                  <Cell>Foo 2</Cell>
+                  <Cell>Bar 2</Cell>
+                  <Cell>Baz 2</Cell>
+                </Row>
+              </TableBody>
+            </TableView>
+          </Provider>
+        );
 
-      let onClick = jest.fn();
-      document.addEventListener('click', onClick, {once: true});
-      userEvent.dblClick(items[0], {pointerType: 'mouse'});
-      expect(onClick).toHaveBeenCalledTimes(1);
-      expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
-      expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
-    });
+        let items = getAllByRole('row').slice(1);
+        for (let item of items) {
+          expect(item.tagName).not.toBe('A');
+          expect(item).toHaveAttribute('data-href');
+        }
 
-    it('should support links with single selection', function () {
-      let {getAllByRole} = render(
-        <Provider theme={theme}>
-          <TableView aria-label="Table" selectionMode="single">
-            <TableHeader>
-              <Column>Foo</Column>
-              <Column>Bar</Column>
-              <Column>Baz</Column>
-            </TableHeader>
-            <TableBody>
-              <Row href="https://google.com">
-                <Cell>Foo 1</Cell>
-                <Cell>Bar 1</Cell>
-                <Cell>Baz 1</Cell>
-              </Row>
-              <Row href="https://adobe.com">
-                <Cell>Foo 2</Cell>
-                <Cell>Bar 2</Cell>
-                <Cell>Baz 2</Cell>
-              </Row>
-            </TableBody>
-          </TableView>
-        </Provider>
-      );
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        document.addEventListener('click', onClick);
+        trigger(items[0], ' ');
+        expect(onClick).not.toHaveBeenCalled();
+        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+        document.removeEventListener('click', onClick);
 
-      let items = getAllByRole('row').slice(1);
-      for (let item of items) {
-        expect(item.tagName).not.toBe('A');
-        expect(item).toHaveAttribute('data-href');
-      }
-
-      let onClick = jest.fn();
-      document.addEventListener('click', onClick, {once: true});
-      triggerPress(items[0]);
-      expect(onClick).toHaveBeenCalledTimes(1);
-      expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
-      expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
-      expect(items[0]).not.toHaveAttribute('aria-selected', 'true');
+        onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        document.addEventListener('click', onClick, {once: true});
+        if (type === 'mouse') {
+          userEvent.dblClick(items[0], {pointerType: 'mouse'});
+        } else {
+          fireEvent.keyDown(items[0], {key: 'Enter'});
+          fireEvent.keyUp(items[0], {key: 'Enter'});
+        }
+        expect(onClick).toHaveBeenCalledTimes(1);
+        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+      });
     });
   });
 };

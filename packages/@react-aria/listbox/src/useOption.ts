@@ -133,7 +133,8 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
     isVirtualized,
     shouldUseVirtualFocus,
     isDisabled,
-    onAction: data?.onAction ? () => data?.onAction?.(key) : undefined
+    onAction: data?.onAction ? () => data?.onAction?.(key) : undefined,
+    linkBehavior: data?.linkBehavior
   });
 
   let {hoverProps} = useHover({
