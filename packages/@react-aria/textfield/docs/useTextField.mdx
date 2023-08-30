@@ -163,13 +163,13 @@ The `description` prop can be used to associate additional help text with a text
 
 ### Error message
 
-The `errorMessage` prop can be used to help the user fix a validation error. It should be combined with the `validationState` prop to
+The `errorMessage` prop can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to
 semantically mark the input element as invalid for assistive technologies.
 
 ```tsx example
 <TextField
   label="Email"
-  validationState="invalid"
+  isInvalid
   errorMessage="Please enter a valid email address." />
 ```
 

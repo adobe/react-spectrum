@@ -1,0 +1,58 @@
+/*
+Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+.spectrum-Dropzone {
+    --spectrum-dropzone-illustratedmessage-illustration-color-selected: var(--spectrum-global-color-blue-400);
+    --spectrum-dropzone-illustratedmessage-illustration-color-key-focus: var(--spectrum-global-color-blue-500);
+}
+
+.spectrum-Dropzone {
+  border-color: var(--spectrum-dropzone-border-color);
+
+  &.is-dragged {
+    border-color: var(--spectrum-dropzone-border-color-selected-hover);
+    background-color: var(--spectrum-dropzone-background-color-selected-hover);
+
+    .spectrum-IllustratedMessage-illustration {
+      color: var(--spectrum-dropzone-illustratedmessage-illustration-color-selected);
+    }
+  }
+
+  &:focus:not(.is-dragged) {
+    border-color: var(--spectrum-dropzone-border-color);
+    .spectrum-IllustratedMessage-illustration {
+      color: var(--spectrum-dropzone-illustratedmessage-illustration-color-key-focus);
+    }
+    &.focus-ring {
+      border-color: var(--spectrum-dropzone-border-color-selected-hover);
+    }
+    &.is-dragged.focus-ring {
+      .spectrum-IllustratedMessage-illustration {
+        color: var(--spectrum-dropzone-illustratedmessage-illustration-color-selected);
+      }
+    }
+  }
+}
+  
+@media (forced-colors: active) {
+  .spectrum-Dropzone {
+    --spectrum-dropzone-border-color: CanvasText;
+    --spectrum-dropzone-illustratedmessage-illustration-color-selected: Highlight;
+    --spectrum-dropzone-border-color-selected-hover: Highlight;
+    --spectrum-dropzone-background-color-selected-hover: Canvas;
+
+    &.is-dragged {
+      forced-color-adjust: none;
+    }
+  }
+}
+  

@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, DOMProps as SharedDOMProps} from '@react-types/shared';
 import {mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
-import React, {createContext, CSSProperties, ReactNode, RefCallback, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {Context, createContext, CSSProperties, ForwardedRef, ReactNode, RefCallback, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {useIsSSR} from 'react-aria';
 
@@ -33,7 +33,7 @@ interface SlottedValue<T> {
 
 export type ContextValue<T extends SlotProps, E extends Element> = SlottedValue<WithRef<T, E>> | WithRef<T, E> | null | undefined;
 
-type ProviderValue<T> = [React.Context<T>, T];
+type ProviderValue<T> = [Context<T>, T];
 type ProviderValues<A, B, C, D, E, F, G, H> =
   | [ProviderValue<A>]
   | [ProviderValue<A>, ProviderValue<B>]
@@ -46,7 +46,7 @@ type ProviderValues<A, B, C, D, E, F, G, H> =
 
 interface ProviderProps<A, B, C, D, E, F, G, H> {
   values: ProviderValues<A, B, C, D, E, F, G, H>,
-  children: React.ReactNode
+  children: ReactNode
 }
 
 export function Provider<A, B, C, D, E, F, G, H>({values, children}: ProviderProps<A, B, C, D, E, F, G, H>): JSX.Element {
@@ -132,25 +132,31 @@ export function useRenderProps<T>(props: RenderPropsHookOptions<T>) {
   }, [className, style, children, defaultClassName, defaultChildren, values]);
 }
 
-export type WithRef<T, E> = T & {ref?: React.ForwardedRef<E>};
+export type WithRef<T, E> = T & {ref?: ForwardedRef<E>};
 export interface SlotProps {
   /** A slot name for the component. Slots allow the component to receive props from a parent component. */
   slot?: string
 }
 
-export function useContextProps<T, U extends SlotProps, E extends Element>(props: T & SlotProps, ref: React.ForwardedRef<E>, context: React.Context<ContextValue<U, E>>): [T, React.RefObject<E>] {
-  let ctx = useContext(context) || {};
-  if ('slots' in ctx && ctx.slots) {
-    if (!props.slot && !ctx.slots[defaultSlot]) {
+export function useSlottedContext<U extends SlotProps, E extends Element>(context: Context<ContextValue<U, E>>, slot?: string): WithRef<U, E> | null | undefined {
+  let ctx = useContext(context);
+  if (ctx && 'slots' in ctx && ctx.slots) {
+    if (!slot && !ctx.slots[defaultSlot]) {
       throw new Error('A slot prop is required');
     }
-    let slot = props.slot || defaultSlot;
-    if (!ctx.slots[slot]) {
+    let slotKey = slot || defaultSlot;
+    if (!ctx.slots[slotKey]) {
       // @ts-ignore
-      throw new Error(`Invalid slot "${props.slot}". Valid slot names are ` + new Intl.ListFormat().format(Object.keys(ctx.slots).map(p => `"${p}"`)) + '.');
+      throw new Error(`Invalid slot "${slot}". Valid slot names are ` + new Intl.ListFormat().format(Object.keys(ctx.slots).map(p => `"${p}"`)) + '.');
     }
-    ctx = ctx.slots[slot];
+    return ctx.slots[slotKey];
   }
+  // @ts-ignore
+  return ctx;
+}
+
+export function useContextProps<T, U extends SlotProps, E extends Element>(props: T & SlotProps, ref: ForwardedRef<E>, context: Context<ContextValue<U, E>>): [T, RefObject<E>] {
+  let ctx = useSlottedContext(context, props.slot) || {};
   // @ts-ignore - TS says "Type 'unique symbol' cannot be used as an index type." but not sure why.
   let {ref: contextRef, [slotCallbackSymbol]: callback, ...contextProps} = ctx;
   let mergedRef = useObjectRef(useMemo(() => mergeRefs(ref, contextRef), [ref, contextRef]));

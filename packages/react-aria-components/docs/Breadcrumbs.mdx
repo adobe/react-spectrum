@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/breadcrumbs/docs/anatomy.svg';
@@ -236,7 +236,7 @@ A `Link` can be targeted with the `.react-aria-Link` CSS selector, or by overrid
 The examples above show static collections, which can be used when the full list of options is known ahead of time. Dynamic collections,
 as shown below, can be used when the options come from an external data source such as an API call, or update over time.
 
-As seen below, an iterable list of options is passed to the Breadcrumbs using the `items` prop. A function provided as `children` of the `<Breadcrumbs>` is called to render each item. When a breadcrumb is pressed, the `onPress` event is triggered and the breadcrumbs array is updated.
+As seen below, an iterable list of options is passed to the Breadcrumbs using the `items` prop. A function provided as `children` of the `<Breadcrumbs>` is called to render each item. When a breadcrumb is pressed, the `onAction` event is triggered and the breadcrumbs array is updated.
 
 ```tsx example
 function Example() {
@@ -246,13 +246,14 @@ function Example() {
     {id: 3, label: 'March 2022 Assets'}
   ]);
 
-  let navigate = (item: typeof breadcrumbs[0]) => {
-    setBreadcrumbs(breadcrumbs.slice(0, breadcrumbs.indexOf(item) + 1));
+  let navigate = (id: React.Key) => {
+    let i = breadcrumbs.findIndex(item => item.id === id);
+    setBreadcrumbs(breadcrumbs.slice(0, i + 1));
   };
 
   return (
-    <Breadcrumbs items={breadcrumbs}>
-      {item => <Item><Link onPress={() => navigate(item)}>{item.label}</Link></Item>}
+    <Breadcrumbs items={breadcrumbs} onAction={navigate}>
+      {item => <Item><Link>{item.label}</Link></Item>}
     </Breadcrumbs>
   );
 }
@@ -337,6 +338,104 @@ Individual breadcrumbs can also be disabled by passing the `isDisabled` prop to 
 ```
 
 ## Advanced customization
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['Breadcrumbs']} docs={docs} />
+
+This example shows a `Router` component that accepts `Breadcrumbs` and `Link` elements as children, and tracks a history stack. When a link is clicked, it is pushed to the stack and automatically updates the breadcrumbs. When a breadcrumb is clicked, the stack is popped to that location.
+
+```tsx example render=false export=true
+import type {PressEvent} from 'react-aria-components';
+import {BreadcrumbsContext, LinkContext} from 'react-aria-components';
+
+interface RouterItem {
+  id: number,
+  label: string
+}
+
+function Router({children}) {
+  let [items, setItems] = React.useState<RouterItem[]>([
+    {id: 0, label: 'Home'},
+    {id: 1, label: 'React Aria'},
+  ]);
+
+  // Pop stack when a breadcrumb item is clicked.
+  let onAction = (id: React.Key) => {
+    let i = items.findIndex(item => item.id === id);
+    setItems(items.slice(0, i + 1));
+  };
+
+  // Push stack when a link is clicked.
+  let onPress = (e: PressEvent) => {
+    let label = e.target.textContent;
+    setItems(items.concat({id: items.length, label}));
+  };
+
+  return (
+    /*- begin highlight -*/
+    <BreadcrumbsContext.Provider value={{items, onAction}}>
+    {/*- end highlight -*/}
+      <LinkContext.Provider value={{onPress}}>
+        {children}
+      </LinkContext.Provider>
+    </BreadcrumbsContext.Provider>
+  );
+}
+```
+
+**Note**: `LinkContext` only affects links outside `Breadcrumbs` because `Breadcrumbs` also provides a value for `LinkContext` which overrides an outer provider. See [custom children](#custom-children) below for more details.
+
+Now when you place `Breadcrumbs` inside a `Router`, it automatically has access to the location history via context.
+
+```tsx example
+<Router>
+  <Breadcrumbs>
+    {(item: RouterItem) => <Item><Link>{item.label}</Link></Item>}
+  </Breadcrumbs>
+  <ul>
+    <li><Link>Breadcrumbs</Link></li>
+    <li><Link>Button</Link></li>
+    <li><Link>Calendar</Link></li>
+  </ul>
+</Router>
+```
+
+### Custom children
+
+Breadcrumbs passes props to its child components, such as the links, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
+
+<ContextTable components={['Link', 'Heading']} docs={docs} />
+
+This example consumes from `HeadingContext` in an existing styled heading component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by Breadcrumbs.
+
+```tsx
+import type {HeadingProps} from 'react-aria-components';
+import {HeadingContext, useContextProps} from 'react-aria-components';
+
+const MyCustomHeading = React.forwardRef((props: HeadingProps, ref: React.ForwardedRef<HTMLHeadingElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, HeadingContext);
+  ///- end highlight -///
+
+  // ... your existing Heading component
+  return <h2 {...props} ref={ref} />;
+});
+```
+
+Now you can use `MyCustomHeading` within `Breadcrumbs`, in place of the builtin React Aria Components `Heading`.
+
+```tsx
+<Breadcrumbs>
+  {/* ... */}
+  {/*- begin highlight -*/}
+  <Item><MyCustomHeading>Custom heading</MyCustomHeading></Item>
+  {/*- end highlight -*/}
+</Breadcrumbs>
+```
 
 ### Hooks
 

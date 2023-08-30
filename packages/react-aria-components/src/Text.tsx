@@ -23,7 +23,7 @@ function Text(props: TextProps, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, TextContext);
   let {elementType: ElementType = 'span', ...domProps} = props;
   // @ts-ignore
-  return <ElementType {...domProps} ref={ref} />;
+  return <ElementType className="react-aria-Text" {...domProps} ref={ref} />;
 }
 
 const _Text = forwardRef(Text);

@@ -147,8 +147,9 @@ module.exports = new Transformer({
               }
             });
             let css = transformed.code.toString();
+            let code = node.meta && node.meta.includes('hidden') ? [] : responsiveCode(node);
             return [
-              ...responsiveCode(node),
+              ...code,
               {
                 type: 'mdxJsxFlowElement',
                 name: 'style',

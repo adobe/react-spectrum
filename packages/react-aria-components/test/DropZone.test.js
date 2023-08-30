@@ -89,7 +89,7 @@ describe('DropZone', () => {
       </DropZone>);
     let dropzone = getByTestId('foo');
     let button = getByRole('button');
-    
+
     expect(dropzone).not.toHaveAttribute('data-focus-visible');
     expect(dropzone).not.toHaveClass('focus');
 
@@ -147,9 +147,9 @@ describe('DropZone', () => {
       </DropZone>
     );
     let dropzone = getByTestId('foo');
-    
+
     expect(dropzone).toHaveTextContent('Not Focused');
-    
+
     userEvent.tab();
     expect(dropzone).toHaveTextContent('Focused');
   });
@@ -162,9 +162,23 @@ describe('DropZone', () => {
         </FileTrigger>
       </DropZone>
     );
-      
+
     let button = getByTestId('foo');
     expect(button).toHaveClass('react-aria-Button');
+  });
+
+  it('should attach a ref to the dropzone if provided as a prop', () => {
+    let ref = React.createRef();
+    let {getByTestId} = render(
+      <DropZone data-testid="foo" ref={ref}>
+        <FileTrigger>
+          <Button>Upload</Button>
+        </FileTrigger>
+      </DropZone>
+    );
+
+    let dropzone = getByTestId('foo');
+    expect(ref.current).toEqual(dropzone);
   });
 
   describe('drag and drop', function () {
@@ -177,7 +191,7 @@ describe('DropZone', () => {
         width: 100,
         height: 50
       }));
-  
+
       jest.useFakeTimers();
     });
 
@@ -273,7 +287,7 @@ describe('DropZone', () => {
               getText: expect.any(Function)
             }
           ]
-          
+
         });
 
         expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('hello world');
@@ -313,8 +327,8 @@ describe('DropZone', () => {
         let dropzone = tree.getByTestId('foo');
         let button = tree.getAllByRole('button')[1];
         let draggable = tree.getByText('Drag me');
-        
-        expect(dropzone).toHaveClass('react-aria-DropZone');       
+
+        expect(dropzone).toHaveClass('react-aria-DropZone');
         expect(draggable).toHaveAttribute('draggable', 'true');
 
         userEvent.tab();
@@ -363,7 +377,7 @@ describe('DropZone', () => {
         </>
       );
       let button = tree.getByRole('button');
-  
+
       let clipboardData = new DataTransfer();
       userEvent.tab();
       expect(document.activeElement).toBe(button);
@@ -375,7 +389,7 @@ describe('DropZone', () => {
 
       fireEvent(button, new ClipboardEvent('paste', {clipboardData}));
 
-      expect(onDrop).toHaveBeenCalledTimes(1); 
+      expect(onDrop).toHaveBeenCalledTimes(1);
       expect(onDrop).toHaveBeenCalledWith(
         {
           type: 'drop',
