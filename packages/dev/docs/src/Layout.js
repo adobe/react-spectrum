@@ -442,22 +442,22 @@ function Nav({currentPageName, pages}) {
           </h2>
         </a>
       </header>
-      {sections.map(section => {
+      {sections.map((section, i) => {
         let contents = categories.filter(c => section.pages[c]?.length).map(key => {
           const headingId = `${section.title ? section.title.toLowerCase() + '-' : ''}${key.trim().toLowerCase().replace(/\s+/g, '-')}-heading`;
           return (
-            <>
+            <React.Fragment key={headingId}>
               <h3 className={sideNavStyles['spectrum-SideNav-heading']} id={headingId}>{key}</h3>
               <ul className={sideNavStyles['spectrum-SideNav']} aria-labelledby={headingId}>
-                {section.pages[key].sort((a, b) => (a.order || 0) < (b.order || 0) || a.title < b.title ? -1 : 1).map(p => <SideNavItem {...p} preRelease={section.title === 'Components' ? '' : p.preRelease} />)}
+                {section.pages[key].sort((a, b) => (a.order || 0) < (b.order || 0) || a.title < b.title ? -1 : 1).map(p => <SideNavItem key={p.title} {...p} preRelease={section.title === 'Components' ? '' : p.preRelease} />)}
               </ul>
-            </>
+            </React.Fragment>
           );
         });
 
         if (section.title) {
           return (
-            <details open={section.isActive}>
+            <details key={section.title} open={section.isActive}>
               <summary style={{fontWeight: 'bold'}}>
                 <ChevronRight size="S" /> {section.title}
                 {section.title === 'Components' && <VersionBadge version={Object.values(section.pages)[0][0].preRelease} style={{marginLeft: 'auto', fontWeight: 'normal'}} />}
@@ -466,7 +466,7 @@ function Nav({currentPageName, pages}) {
             </details>
           );
         } else {
-          return <>{contents}</>;
+          return <React.Fragment key={i}>{contents}</React.Fragment>;
         }
       })}
     </nav>
