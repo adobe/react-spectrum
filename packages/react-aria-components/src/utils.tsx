@@ -326,3 +326,20 @@ export function createHideableComponent<T, P = {}>(fn: (props: P, ref: React.Ref
   Wrapper.displayName = fn.displayName || fn.name;
   return (React.forwardRef as forwardRefType)(Wrapper);
 }
+
+/**
+ * Filters out `data-*` attributes.
+ * @param props
+ */
+export function filterDataAttrs(props): {} {
+  const prefix = /^(data-.*)$/;
+  let filteredProps = {};
+
+  for (const prop in props) {
+    if (!prefix.test(prop)) {
+      filteredProps[prop] = props[prop];
+    }
+  }
+
+  return filteredProps;
+}

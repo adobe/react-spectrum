@@ -187,7 +187,7 @@ export const ListBoxComplex = () => (
 );
 
 export const SelectExample = () => (
-  <Select>
+  <Select data-testid="select-example">
     <Label style={{display: 'block'}}>Test</Label>
     <Button>
       <SelectValue />
@@ -207,7 +207,7 @@ export const SelectExample = () => (
 );
 
 export const SelectRenderProps = () => (
-  <Select>
+  <Select data-test-id="select-render-props">
     {({isOpen}) => (
       <>
         <Label style={{display: 'block'}}>Test</Label>
@@ -1067,7 +1067,7 @@ export const RadioGroupExample = () => {
     <RadioGroup
       className={styles.radiogroup}>
       <Label>Favorite pet</Label>
-      <Radio className={styles.radio} value="dogs">Dog</Radio>
+      <Radio className={styles.radio} value="dogs" data-test-id="radio-group-example">Dog</Radio>
       <Radio className={styles.radio} value="cats">Cat</Radio>
       <Radio className={styles.radio} value="dragon">Dragon</Radio>
     </RadioGroup>
