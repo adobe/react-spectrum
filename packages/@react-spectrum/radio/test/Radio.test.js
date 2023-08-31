@@ -534,15 +534,72 @@ describe('Radios', function () {
       expect(radios[2]).toHaveAttribute('tabIndex', '-1');
     });
 
-    it('RadioGroup roving tabIndex for autoFocus', async () => {
-      jest.useFakeTimers();
-      let {getAllByRole} = renderRadioGroup(RadioGroup, Radio, {}, [{}, {autoFocus: true}, {}]);
-      let radios = getAllByRole('radio');
-      act(() => {jest.runAllTimers();});
-      expect(radios[0]).toHaveAttribute('tabIndex', '-1');
-      expect(radios[1]).toHaveAttribute('tabIndex', '0');
-      expect(radios[2]).toHaveAttribute('tabIndex', '-1');
-      jest.useRealTimers();
+    describe('roving tab timers', () => {
+      beforeAll(() => {
+        jest.useFakeTimers();
+      });
+      afterAll(() => {
+        jest.useRealTimers();
+      });
+      it('RadioGroup roving tabIndex for controlled radios', async () => {
+        function ControlledRadioGroup(props) {
+          let [value, setValue] = React.useState(null);
+          return (
+            <>
+              <Button variant="primary" onPress={() => setValue('cats')}>
+                Make it "Two"
+              </Button>
+              <RadioGroup aria-label="favorite pet" value={value} onChange={setValue}>
+                <Radio value="dogs">Dogs</Radio>
+                <Radio value="cats">Cats</Radio>
+                <Radio value="dragons">Dragons</Radio>
+                <Radio value="unicorns">Unicorns</Radio>
+              </RadioGroup>
+              <Button variant="primary" onPress={() => setValue('dragons')}>
+                Make it "Three"
+              </Button>
+            </>
+          );
+        }
+
+        let {getAllByRole} = render(
+          <ControlledRadioGroup />
+        );
+        let radios = getAllByRole('radio');
+        let buttons = getAllByRole('button');
+        expect(radios[0]).toHaveAttribute('tabIndex', '0');
+        expect(radios[1]).toHaveAttribute('tabIndex', '0');
+        expect(radios[2]).toHaveAttribute('tabIndex', '0');
+        expect(radios[3]).toHaveAttribute('tabIndex', '0');
+
+        userEvent.tab();
+        act(() => {jest.runAllTimers();});
+        expect(document.activeElement).toBe(buttons[0]);
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+        userEvent.tab();
+        act(() => {jest.runAllTimers();});
+        expect(document.activeElement).toBe(radios[1]);
+        userEvent.tab();
+        act(() => {jest.runAllTimers();});
+        expect(document.activeElement).toBe(buttons[1]);
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+        expect(radios[0]).toHaveAttribute('tabIndex', '-1');
+        expect(radios[1]).toHaveAttribute('tabIndex', '-1');
+        expect(radios[2]).toHaveAttribute('tabIndex', '0');
+        expect(radios[3]).toHaveAttribute('tabIndex', '-1');
+      });
+
+      it('RadioGroup roving tabIndex for autoFocus', async () => {
+        let {getAllByRole} = renderRadioGroup(RadioGroup, Radio, {}, [{}, {autoFocus: true}, {}]);
+        let radios = getAllByRole('radio');
+        act(() => {jest.runAllTimers();});
+        expect(radios[0]).toHaveAttribute('tabIndex', '-1');
+        expect(radios[1]).toHaveAttribute('tabIndex', '0');
+        expect(radios[2]).toHaveAttribute('tabIndex', '-1');
+      });
     });
 
     it.each`
