@@ -165,8 +165,8 @@ function Radio(props: RadioProps, ref: ForwardedRef<HTMLInputElement>) {
     children: typeof props.children === 'function' ? true : props.children
   }, state, domRef);
 
-  // TODO: Review with team - does it matter if we filter before passing to useRadio hook or filter the return?
-  inputProps = filterDataAttrs(props);
+  // TODO: Review with team - yarn does it matter if we filter before passing to useRadio hook or filter the return?
+  inputProps = filterDataAttrs(inputProps);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let interactionDisabled = isDisabled || state.isReadOnly;
 
