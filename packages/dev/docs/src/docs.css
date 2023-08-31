@@ -667,6 +667,11 @@ h2.sectionHeader {
   margin-bottom: 8px;
 }
 
+h3.sectionHeader.sectionHeader,
+h4.sectionHeader.sectionHeader  {
+  margin-top: 2em;
+}
+
 .anchor {
   opacity: 0;
   transition: all 125ms ease-in-out;
