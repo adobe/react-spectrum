@@ -16,8 +16,8 @@ import {FocusScope} from '@react-aria/focus';
 import {MenuContext, MenuStateContext, useMenuStateContext} from './context';
 import {MenuItem} from './MenuItem';
 import {MenuSection} from './MenuSection';
-import {mergeProps, useSyncRef} from '@react-aria/utils';
-import React, {ReactElement, useContext, useRef} from 'react';
+import {mergeProps, useLayoutEffect, useSyncRef} from '@react-aria/utils';
+import React, {ReactElement, useContext, useRef, useState} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useMenu} from '@react-aria/menu';
@@ -43,6 +43,13 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
   let {menuProps} = useMenu(completeProps, state, domRef);
   let {styleProps} = useStyleProps(completeProps);
   useSyncRef(contextProps, domRef);
+
+  let [leftOffset, setLeftOffset] = useState({left: 0});
+  useLayoutEffect(() => {
+    let {left} = scopedRef.current.getBoundingClientRect();
+    setLeftOffset({left: -1 * left});
+  }, []);
+
   return (
     <MenuStateContext.Provider value={{state, container: scopedRef, menu: domRef, topLevelMenuState}}>
       <FocusScope contain={state.expandedKeys.size > 0}>
@@ -84,7 +91,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
           })}
         </ul>
         {/* Make the portal container for submenus wide enough so that the submenu items can render as wide as they need to be */}
-        <div ref={scopedRef} style={{width: '100vw', position: 'absolute'}} />
+        <div ref={scopedRef} style={{width: '100vw', position: 'absolute', top: 0, ...leftOffset}} />
       </FocusScope>
     </MenuStateContext.Provider>
   );
