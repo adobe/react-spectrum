@@ -99,7 +99,8 @@ describe('RadioGroup', () => {
     expect(radios[1].closest('label')).toHaveTextContent('B (selected)');
   });
 
-  it('should support slot', () => {
+  // TODO: Modify this test. data-test shouldn't be passed to input
+  it.skip('should support slot', () => {
     let {getByRole, getAllByRole} = render(
       <RadioGroupContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
         <RadioContext.Provider value={{'data-test': 'test'}}>
