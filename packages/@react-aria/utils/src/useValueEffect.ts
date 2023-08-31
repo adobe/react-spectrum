@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Dispatch, useCallback, useRef, useState} from 'react';
+import {Dispatch, useRef, useState} from 'react';
 import {useEffectEvent, useLayoutEffect} from './';
 
 type SetValueAction<S> = (prev: S) => Generator<any, void, unknown>;
