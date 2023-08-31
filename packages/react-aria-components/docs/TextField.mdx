@@ -244,7 +244,7 @@ TextField supports the `name` prop for integration with HTML forms. In addition,
 <MyTextField label="Email" name="email" type="email" />
 ```
 
-## Help text
+## Validation
 
 ### Description
 
@@ -275,6 +275,14 @@ semantically mark the input element as invalid for assistive technologies.
 </TextField>
 ```
 
+### Required
+
+A TextField can be marked as required using the `isRequired` prop. This is exposed to assistive technologies by React Aria. It's your responsibility to add additional visual styling if needed.
+
+```tsx example
+<MyTextField label="Email" isRequired />
+```
+
 ## Disabled
 
 A TextField can be disabled using the `isDisabled` prop.
@@ -290,14 +298,6 @@ and the contents can still be copied. See [the MDN docs](https://developer.mozil
 
 ```tsx example
 <MyTextField label="Email" defaultValue="abc@adobe.com" isReadOnly />
-```
-
-## Required
-
-A TextField can be marked as required using the `isRequired` prop. This is exposed to assistive technologies by React Aria. It's your responsibility to add additional visual styling if needed.
-
-```tsx example
-<MyTextField label="Email" isRequired />
 ```
 
 ## Multi-line

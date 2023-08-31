@@ -216,7 +216,7 @@ import {Tabs, TabList, Tab, TabPanel} from 'react-aria-components';
 
 </section>
 
-## Usage
+## Selection
 
 ### Default selection
 
@@ -268,6 +268,27 @@ function Example() {
   );
 }
 ```
+
+### Keyboard Activation
+
+By default, pressing the arrow keys while focus is on a Tab will switch selection to the adjacent Tab in that direction, updating the content displayed accordingly. If you would like to prevent selection change
+from happening automatically you can set the `keyboardActivation` prop to "manual". This will prevent tab selection from changing on arrow key press, requiring a subsequent `Enter` or `Space` key press to confirm
+tab selection.
+
+```tsx example
+<Tabs keyboardActivation="manual">
+  <TabList aria-label="Input settings">
+    <Tab id="mouse">Mouse Settings</Tab>
+    <Tab id="keyboard">Keyboard Settings</Tab>
+    <Tab id="gamepad">Gamepad Settings</Tab>
+  </TabList>
+  <TabPanel id="mouse">Mouse Settings</TabPanel>
+  <TabPanel id="keyboard">Keyboard Settings</TabPanel>
+  <TabPanel id="gamepad">Gamepad Settings</TabPanel>
+</Tabs>
+```
+
+## Content
 
 ### Focusable content
 
@@ -342,26 +363,7 @@ function Example() {
 }
 ```
 
-### Keyboard Activation
-
-By default, pressing the arrow keys while focus is on a Tab will switch selection to the adjacent Tab in that direction, updating the content displayed accordingly. If you would like to prevent selection change
-from happening automatically you can set the `keyboardActivation` prop to "manual". This will prevent tab selection from changing on arrow key press, requiring a subsequent `Enter` or `Space` key press to confirm
-tab selection.
-
-```tsx example
-<Tabs keyboardActivation="manual">
-  <TabList aria-label="Input settings">
-    <Tab id="mouse">Mouse Settings</Tab>
-    <Tab id="keyboard">Keyboard Settings</Tab>
-    <Tab id="gamepad">Gamepad Settings</Tab>
-  </TabList>
-  <TabPanel id="mouse">Mouse Settings</TabPanel>
-  <TabPanel id="keyboard">Keyboard Settings</TabPanel>
-  <TabPanel id="gamepad">Gamepad Settings</TabPanel>
-</Tabs>
-```
-
-### Orientation
+## Orientation
 
 By default, tabs are horizontally oriented. The `orientation` prop can be set to `vertical` to change this. This does not affect keyboard navigation. You are responsible for styling your tabs accordingly.
 
@@ -378,7 +380,7 @@ By default, tabs are horizontally oriented. The `orientation` prop can be set to
 </Tabs>
 ```
 
-### Disabled
+## Disabled
 
 All tabs can be disabled using the `isDisabled` prop.
 

@@ -320,9 +320,7 @@ function MyCheckbox({children, ...props}: MyCheckboxProps) {
 </MyCheckboxGroup>
 ```
 
-## Usage
-
-The following examples show how to use the `MyCheckboxGroup` and `MyCheckbox` components created in the above example.
+## Value
 
 ### Default value
 
@@ -356,6 +354,20 @@ function Example() {
   );
 }
 ```
+
+### HTML forms
+
+CheckboxGroup supports the `name` prop, paired with the Checkbox `value` prop, for integration with HTML forms.
+
+```tsx example
+<MyCheckboxGroup label="Favorite sports" name="sports">
+  <MyCheckbox value="soccer">Soccer</MyCheckbox>
+  <MyCheckbox value="baseball">Baseball</MyCheckbox>
+  <MyCheckbox value="basketball">Basketball</MyCheckbox>
+</MyCheckboxGroup>
+```
+
+## Validation
 
 ### Group validation
 
@@ -417,25 +429,27 @@ function Example() {
   let isValid = checked.length === 2 && checked.includes('dogs') && checked.includes('dragons');
 
   return (
-    <MyCheckboxGroup
-      label="Pets"
+    <CheckboxGroup
       onChange={setChecked}
       value={checked}
+      /*- begin highlight -*/
       isInvalid={!isValid}
-      description={isValid ? 'Select your pets.' : undefined}
-      errorMessage={isValid ? undefined : checked.includes('cats')
-        ? 'No cats allowed.'
-        : 'Select only dogs and dragons.'}
+      /*- end highlight -*/
     >
+      <Label>Pets</Label>
       <MyCheckbox value="dogs">Dogs</MyCheckbox>
       <MyCheckbox value="cats">Cats</MyCheckbox>
       <MyCheckbox value="dragons">Dragons</MyCheckbox>
-    </MyCheckboxGroup>
+      {/*- begin highlight -*/}
+      {isValid && <Text slot="description">Select your pets.</Text>}
+      {!isValid && <Text slot="errorMessage">{checked.includes('cats') ? 'No cats allowed.' : 'Select only dogs and dragons.'}</Text>}
+      {/*- end highlight -*/}
+    </CheckboxGroup>
   );
 }
 ```
 
-### Disabled
+## Disabled
 
 The entire CheckboxGroup can be disabled with the `isDisabled` prop.
 
@@ -464,18 +478,6 @@ See the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/
 
 ```tsx example
 <MyCheckboxGroup label="Favorite sports" defaultValue={['baseball']} isReadOnly>
-  <MyCheckbox value="soccer">Soccer</MyCheckbox>
-  <MyCheckbox value="baseball">Baseball</MyCheckbox>
-  <MyCheckbox value="basketball">Basketball</MyCheckbox>
-</MyCheckboxGroup>
-```
-
-### HTML forms
-
-CheckboxGroup supports the `name` prop, paired with the Checkbox `value` prop, for integration with HTML forms.
-
-```tsx example
-<MyCheckboxGroup label="Favorite sports" name="sports">
   <MyCheckbox value="soccer">Soccer</MyCheckbox>
   <MyCheckbox value="baseball">Baseball</MyCheckbox>
   <MyCheckbox value="basketball">Basketball</MyCheckbox>

@@ -277,22 +277,7 @@ function MySlider<T extends number | number[]>({label, thumbLabels, ...props}: M
 <MySlider label="Range" defaultValue={[30, 60]} thumbLabels={['start', 'end']} />
 ```
 
-## Usage
-
-The following examples show how to use the `MySlider` component created in the above examples.
-
-### Vertical orientation
-
-Sliders are horizontally oriented by default. The `orientation` prop can be set to `"vertical"` to create a vertical slider.
-This example also uses `aria-label` rather than `label` to create a slider with no visible label.
-
-```tsx example
-<MySlider
-  orientation="vertical"
-  aria-label="Opacity"
-  maxValue={1}
-  step={0.01} />
-```
+## Value
 
 ### Controlled value
 
@@ -331,9 +316,25 @@ function Example() {
 }
 ```
 
-### onChangeEnd
+### HTML forms
 
-The `onChangeEnd` prop can be used to handle when a user stops dragging a slider, whereas the `onChange` prop is called as the user drags.
+Each SliderThumb supports the `name` prop for integration with HTML forms.
+
+```tsx example
+<Slider defaultValue={50}>
+  <Label>Opacity</Label>
+  <SliderOutput />
+  <SliderTrack>
+    {/*- begin highlight -*/}
+    <SliderThumb name="opacity" />
+    {/*- end highlight -*/}
+  </SliderTrack>
+</Slider>
+```
+
+## Events
+
+The `onChange` prop is called as the user drags a slider. The `onChangeEnd` prop can be used to handle when a user stops dragging.
 
 ```tsx example
 function Example() {
@@ -350,6 +351,8 @@ function Example() {
 }
 ```
 
+## Validation
+
 ### Custom value scale
 
 By default, slider values are precentages between 0 and 100. A different scale can be used by setting the `minValue` and `maxValue` props.
@@ -360,18 +363,6 @@ By default, slider values are precentages between 0 and 100. A different scale c
   minValue={50}
   maxValue={150}
   defaultValue={100} />
-```
-
-### Value formatting
-
-Values are formatted as a percentage by default, but this can be modified by using the `formatOptions` prop to specify a different format.
-`formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied based on the current locale.
-
-```tsx example
-<MySlider
-  label="Currency"
-  formatOptions={{style: 'currency', currency: 'JPY'}}
-  defaultValue={60} />
 ```
 
 ### Step values
@@ -389,6 +380,33 @@ This example allows increments of 5 between 0 and 100.
   step={5} />
 ```
 
+## Visual options
+
+### Vertical orientation
+
+Sliders are horizontally oriented by default. The `orientation` prop can be set to `"vertical"` to create a vertical slider.
+This example also uses `aria-label` rather than `label` to create a slider with no visible label.
+
+```tsx example
+<MySlider
+  orientation="vertical"
+  aria-label="Opacity"
+  maxValue={1}
+  step={0.01} />
+```
+
+### Value formatting
+
+Values are formatted as a percentage by default, but this can be modified by using the `formatOptions` prop to specify a different format.
+`formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied based on the current locale.
+
+```tsx example
+<MySlider
+  label="Currency"
+  formatOptions={{style: 'currency', currency: 'JPY'}}
+  defaultValue={60} />
+```
+
 ### Disabled
 
 A slider can be disabled using the `isDisabled` prop.
@@ -398,22 +416,6 @@ A slider can be disabled using the `isDisabled` prop.
   label="Cookies to share"
   defaultValue={25}
   isDisabled />
-```
-
-### HTML forms
-
-Each SliderThumb supports the `name` prop for integration with HTML forms.
-
-```tsx example
-<Slider defaultValue={50}>
-  <Label>Opacity</Label>
-  <SliderOutput />
-  <SliderTrack>
-    {/*- begin highlight -*/}
-    <SliderThumb name="opacity" />
-    {/*- end highlight -*/}
-  </SliderTrack>
-</Slider>
 ```
 
 ## Props
@@ -430,28 +432,19 @@ A `<Label>` accepts all HTML attributes.
 
 A `<SliderOutput>` renders the current value of the slider as text.
 
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
-  <PropTable component={docs.exports.SliderOutput} links={docs.links} />
-</details>
+<PropTable component={docs.exports.SliderOutput} links={docs.links} />
 
 ### SliderTrack
 
 The `<SliderTrack>` component is a grouping of one or more `<SliderThumb>` elements.
 
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
-  <PropTable component={docs.exports.SliderTrack} links={docs.links} />
-</details>
+<PropTable component={docs.exports.SliderTrack} links={docs.links} />
 
 ### SliderThumb
 
 The `<SliderThumb>` component renders an individual thumb within a `<SliderTrack>`.
 
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
-  <PropTable component={docs.exports.SliderThumb} links={docs.links} />
-</details>
+<PropTable component={docs.exports.SliderThumb} links={docs.links} />
 
 ## Styling
 

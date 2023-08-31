@@ -258,9 +258,7 @@ function MySearchField({label, description, errorMessage, ...props}: MySearchFie
 <MySearchField label="Search" />
 ```
 
-## Usage
-
-The following examples show how to use the `MySearchField` component created in the above example.
+## Value
 
 ### Default value
 
@@ -289,7 +287,15 @@ function Example() {
 }
 ```
 
-### Events
+### HTML forms
+
+SearchField supports the `name` prop for integration with HTML forms. In addition, attributes such as `type`, `pattern`, `inputMode`, and others are passed through to the underlying `<input>` element.
+
+```tsx example
+<MySearchField label="Email" name="email" type="email" />
+```
+
+## Events
 
 The most commonly used handlers for events in SearchField are the:
 - `onChange` prop which is triggered whenever the value is edited by the user.
@@ -319,14 +325,21 @@ function Example() {
 }
 ```
 
+## Help text
+
 ### Description
 
 The `description` slot can be used to associate additional help text with a search field.
 
 ```tsx example
-<MySearchField
-  label="Email"
-  description="Enter an email for us to contact you about your order." />
+<SearchField>
+  <Label>Email</Label>
+  <Input />
+  <Button>✕</Button>
+  {/*- begin highlight -*/}
+  <Text slot="description">Enter an email for us to contact you about your order.</Text>
+  {/*- end highlight -*/}
+</SearchField>
 ```
 
 ### Error message
@@ -335,13 +348,17 @@ The `errorMessage` slot can be used to help the user fix a validation error. It 
 semantically mark the input element as invalid for assistive technologies.
 
 ```tsx example
-<MySearchField
-  label="Email"
-  isInvalid
-  errorMessage="Please enter a valid email address." />
+<SearchField>
+  <Label>Email</Label>
+  <Input />
+  <Button>✕</Button>
+  {/*- begin highlight -*/}
+  <Text slot="errorMessage">Please enter a valid email address.</Text>
+  {/*- end highlight -*/}
+</SearchField>
 ```
 
-### Disabled
+## Disabled
 
 A SearchField can be disabled using the `isDisabled` prop.
 
@@ -356,14 +373,6 @@ and the contents can still be copied. See [the MDN docs](https://developer.mozil
 
 ```tsx example
 <MySearchField label="Email" defaultValue="abc@adobe.com" isReadOnly />
-```
-
-### HTML forms
-
-SearchField supports the `name` prop for integration with HTML forms. In addition, attributes such as `type`, `pattern`, `inputMode`, and others are passed through to the underlying `<input>` element.
-
-```tsx example
-<MySearchField label="Email" name="email" type="email" />
 ```
 
 ## Props

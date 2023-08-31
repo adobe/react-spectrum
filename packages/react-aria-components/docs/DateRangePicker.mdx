@@ -440,7 +440,10 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
 <DateRangePicker>
   <Label />
   <Group>
-    <DateInput>
+    <DateInput slot="start">
+      {segment => <DateSegment segment={segment} />}
+    </DateInput>
+    <DateInput slot="end">
       {segment => <DateSegment segment={segment} />}
     </DateInput>
     <Button />
@@ -591,11 +594,7 @@ function MyDateRangePicker<T extends DateValue>({label, description, errorMessag
 <MyDateRangePicker label="Event date" />
 ```
 
-## Usage
-
-The following examples show how to use the `MyDateRangePicker` component created in the above example.
-
-### Value
+## Value
 
 A `DateRangePicker` displays a placeholder by default. An initial, uncontrolled value can be provided to the `DateRangePicker` using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
 
@@ -626,30 +625,6 @@ function Example() {
         label="Date range (controlled)"
         value={value}
         onChange={setValue} />
-    </>
-  );
-}
-```
-
-### Events
-
-`DateRangePicker` accepts an `onChange` prop which is triggered whenever the start or end date is edited by the user. The example below uses `onChange` to update a separate element with a formatted version of the date range in the user's locale and local time zone. This is done by converting the dates to native JavaScript `Date` objects to pass to the formatter.
-
-```tsx example
-import {getLocalTimeZone} from '@internationalized/date';
-import {useDateFormatter} from '@react-aria/i18n';
-
-function Example() {
-  let [range, setRange] = React.useState({
-    start: parseDate('2020-07-03'),
-    end: parseDate('2020-07-10')
-  });
-  let formatter = useDateFormatter({dateStyle: 'long'});
-
-  return (
-    <>
-      <MyDateRangePicker label="Date range" value={range} onChange={setRange} />
-      <p>Selected date: {range ? formatter.formatRange(range.start.toDate(getLocalTimeZone()), range.end.toDate(getLocalTimeZone())) : '--'}</p>
     </>
   );
 }
@@ -707,12 +682,16 @@ function Example() {
     <>
       <MyDateRangePicker
         label="Date and time range"
+        /*- begin highlight -*/
         granularity="second"
+        /*- end highlight -*/
         value={date}
         onChange={setDate} />
       <MyDateRangePicker
         label="Date range"
+        /*- begin highlight -*/
         granularity="day"
+        /*- end highlight -*/
         value={date}
         onChange={setDate} />
     </>
@@ -750,7 +729,9 @@ import {I18nProvider} from '@react-aria/i18n';
 function Example() {
   let [range, setRange] = React.useState<DateRange | null>(null);
   return (
+    /*- begin highlight -*/
     <I18nProvider locale="hi-IN-u-ca-indian">
+    {/*- end highlight -*/}
       <MyDateRangePicker label="Date range" value={range} onChange={setRange} />
       <p>Start date: {range?.start.toString()}</p>
       <p>End date: {range?.end.toString()}</p>
@@ -758,6 +739,40 @@ function Example() {
   );
 }
 ```
+
+### HTML forms
+
+DateRangePicker supports the `startName` and `endName` props for integration with HTML forms. The values will be submitted to the server as [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted strings according to the granularity of the value. For example, if the date range picker allows selecting only dates then strings such as `"2023-02-03"` will be submitted, and if it allows selecting times then strings such as `"2023-02-03T08:45:00"` will be submitted. See the [Value](#value) section above for more details about the supported value types.
+
+```tsx example
+<MyDateRangePicker label="Trip dates" startName="startDate" endName="endDate" />
+```
+
+## Events
+
+`DateRangePicker` accepts an `onChange` prop which is triggered whenever the start or end date is edited by the user. The example below uses `onChange` to update a separate element with a formatted version of the date range in the user's locale and local time zone. This is done by converting the dates to native JavaScript `Date` objects to pass to the formatter.
+
+```tsx example
+import {getLocalTimeZone} from '@internationalized/date';
+import {useDateFormatter} from '@react-aria/i18n';
+
+function Example() {
+  let [range, setRange] = React.useState({
+    start: parseDate('2020-07-03'),
+    end: parseDate('2020-07-10')
+  });
+  let formatter = useDateFormatter({dateStyle: 'long'});
+
+  return (
+    <>
+      <MyDateRangePicker label="Date range" value={range} onChange={setRange} />
+      <p>Selected date: {range ? formatter.formatRange(range.start.toDate(getLocalTimeZone()), range.end.toDate(getLocalTimeZone())) : '--'}</p>
+    </>
+  );
+}
+```
+
+## Validation
 
 ### Minimum and maximum values
 
@@ -770,7 +785,9 @@ import {today} from '@internationalized/date';
 
 <MyDateRangePicker
   label="Trip dates"
+  /*- begin highlight -*/
   minValue={today(getLocalTimeZone())}
+  /*- end highlight -*/
   defaultValue={{
     start: parseDate('2022-02-03'),
     end: parseDate('2022-05-03')
@@ -805,7 +822,9 @@ function Example() {
     <MyDateRangePicker
       label="Trip dates"
       minValue={today(getLocalTimeZone())}
+      /*- begin highlight -*/
       isDateUnavailable={isDateUnavailable}
+      /*- end highlight -*/
       value={value}
       onChange={setValue}
       isInvalid={isInvalid} />
@@ -826,7 +845,14 @@ import {useLocale} from '@react-aria/i18n';
 function Example() {
   let {locale} = useLocale();
 
-  return <MyDateRangePicker label="Time off request" isDateUnavailable={date => isWeekend(date, locale)} allowsNonContiguousRanges />
+  return (
+    <MyDateRangePicker
+      label="Time off request"
+      isDateUnavailable={date => isWeekend(date, locale)}
+      /*- begin highlight -*/
+      allowsNonContiguousRanges />
+      /*- end highlight -*/
+  );
 }
 ```
 
@@ -852,11 +878,16 @@ function Example() {
       value={range}
       onChange={setRange}
       isInvalid={isInvalid}
+      /*- begin highlight -*/
       description={isInvalid ? undefined : 'Select your vacation dates'}
-      errorMessage={isInvalid ? 'Maximum stay duration is 1 week' : undefined} />
+      errorMessage={isInvalid ? 'Maximum stay duration is 1 week' : undefined}
+      /*- end highlight -*/
+    />
   );
 }
 ```
+
+## Format options
 
 ### Placeholder value
 
@@ -891,14 +922,6 @@ By default, `DateRangePicker` displays times in either 12 or 24 hour hour format
   label="Date range"
   granularity="minute"
   hourCycle={24} />
-```
-
-### HTML forms
-
-DateRangePicker supports the `startName` and `endName` props for integration with HTML forms. The values will be submitted to the server as [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted strings according to the granularity of the value. For example, if the date range picker allows selecting only dates then strings such as `"2023-02-03"` will be submitted, and if it allows selecting times then strings such as `"2023-02-03T08:45:00"` will be submitted. See the [Value](#value) section above for more details about the supported value types.
-
-```tsx example
-<MyDateRangePicker label="Trip dates" startName="startDate" endName="endDate" />
 ```
 
 ## Props

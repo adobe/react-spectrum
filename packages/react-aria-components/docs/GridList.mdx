@@ -428,12 +428,7 @@ function MyCheckbox() {
 </MyGridList>
 ```
 
-## Usage
-
-
-The following examples show how to use the `MyGridList` and `MyItem` components created in the above example.
-
-### Dynamic collections
+## Content
 
 So far, our examples have shown static collections, where the data is hard coded.
 Dynamic collections, as shown below, can be used when the data comes from an external data source such as an API, or updates over time.
@@ -454,7 +449,13 @@ function ExampleList(props: GridListProps<ItemValue>) {
   ];
 
   return (
-    <MyGridList aria-label="Example dynamic collection List" selectionMode="multiple" items={rows} {...props}>
+    <MyGridList
+      aria-label="Example dynamic collection List"
+      selectionMode="multiple"
+      /*- begin highlight -*/
+      items={rows}
+      /*- end highlight -*/
+      {...props}>
       {item => (
         <MyItem textValue={item.name}>
           {item.name}
@@ -466,17 +467,25 @@ function ExampleList(props: GridListProps<ItemValue>) {
 }
 ```
 
+## Selection
+
 ### Single selection
 
 By default, `GridList` doesn't allow row selection but this can be enabled using the `selectionMode` prop. Use `defaultSelectedKeys` to provide a default set of selected rows.
 Note that the value of the selected keys must match the `id` prop of the row.
 
-The example below enables single selection mode, and uses `defaultSelectedKeys` to select the row with key equal to "2".
+The example below enables single selection mode, and uses `defaultSelectedKeys` to select the id with key equal to `2`.
 A user can click on a different row to change the selection, or click on the same row again to deselect it entirely.
 
 ```tsx example
 // Using the example above
-<ExampleList aria-label="List with single selection" selectionMode="single" selectionBehavior="replace" defaultSelectedKeys={[2]} />
+<ExampleList
+  aria-label="List with single selection"
+  /*- begin highlight -*/
+  selectionMode="single"
+  defaultSelectedKeys={[2]}
+  /*- end highlight -*/
+/>
 ```
 
 ### Multiple selection
@@ -484,7 +493,12 @@ A user can click on a different row to change the selection, or click on the sam
 Multiple selection can be enabled by setting `selectionMode` to `multiple`. Our example displays checkboxes when the list allows multiple selection.
 
 ```tsx example
-<ExampleList aria-label="List with multiple selection" selectionMode="multiple" defaultSelectedKeys={[2, 4]} />
+<ExampleList
+  aria-label="List with multiple selection"
+  /*- begin highlight -*/
+  selectionMode="multiple"
+  /*- end highlight -*/
+  defaultSelectedKeys={[2, 4]} />
 ```
 
 ### Disallow empty selection
@@ -493,7 +507,14 @@ Multiple selection can be enabled by setting `selectionMode` to `multiple`. Our 
 In this mode, if a single row is selected and the user presses it, it will not be deselected.
 
 ```tsx example
-<ExampleList aria-label="List with disallowed empty selection" selectionMode="multiple" defaultSelectedKeys={[2]} disallowEmptySelection />
+<ExampleList
+  aria-label="List with disallowed empty selection"
+  selectionMode="multiple"
+  defaultSelectedKeys={[2]}
+  /*- begin highlight -*/
+  disallowEmptySelection
+  /*- end highlight -*/
+/>
 ```
 
 ### Controlled selection
@@ -515,28 +536,19 @@ function PokemonList(props: GridListProps<ItemValue>) {
   let [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([2]));
 
   return (
-    <MyGridList aria-label="List with controlled selection" items={rows} selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>
+    <MyGridList
+      aria-label="List with controlled selection"
+      items={rows}
+      selectionMode="multiple"
+      /*- begin highlight -*/
+      selectedKeys={selectedKeys}
+      onSelectionChange={setSelectedKeys}
+      /*- end highlight -*/
+      {...props}>
       {item => <MyItem>{item.name}</MyItem>}
     </MyGridList>
   );
 }
-```
-
-### Disabled rows
-
-You can disable specific rows by providing an array of keys to `GridList` via the `disabledKeys` prop. This will disable all interactions on disabled rows,
-unless the `disabledBehavior` prop is used to change this behavior.
-Note that you are responsible for the styling of disabled rows, however, the selection checkbox will be automatically disabled.
-
-```tsx example
-// Using the example above
-<PokemonList aria-label="List with disabled rows" selectionMode="multiple" disabledKeys={[3]} />
-```
-
-When `disabledBehavior` is set to `selection`, interactions such as focus, dragging, or actions can still be performed on disabled rows.
-
-```tsx example
-<PokemonList aria-label="List with selection disabled for disabled rows" selectionMode="multiple" disabledKeys={[3]} disabledBehavior="selection" />
 ```
 
 ### Selection behavior
@@ -548,10 +560,16 @@ When `selectionBehavior` is set to `"replace"`, clicking a row with the mouse re
 These selection styles implement the behaviors defined in [Aria Practices](https://w3c.github.io/aria-practices/#listbox_kbd_interaction).
 
 ```tsx example
-<PokemonList aria-label="List with replace selection behavior" selectionMode="multiple" selectionBehavior="replace" />
+<PokemonList
+  aria-label="List with replace selection behavior"
+  selectionMode="multiple"
+  /*- begin highlight -*/
+  selectionBehavior="replace"
+  /*- end highlight -*/
+/>
 ```
 
-### Row actions
+## Row actions
 
 `GridList` supports row actions via the `onAction` prop, which is useful for functionality such as navigation. When nothing is selected, the list performs actions by default when clicking or tapping a row.
 Items may be selected using the checkbox, or by long pressing on touch devices. When at least one item is selected, the list is in selection mode, and clicking or tapping a row toggles the selection. Actions may also
@@ -561,12 +579,56 @@ This behavior is slightly different when `selectionBehavior="replace"`, where si
 
 ```tsx example
 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24 }}>
-  <ExampleList aria-label="Checkbox selection list with row actions" selectionMode="multiple" selectionBehavior="toggle" onAction={key => alert(`Opening item ${key}...`)} />
-  <ExampleList aria-label="Highlight selection list with row actions" selectionMode="multiple" selectionBehavior="replace" onAction={key => alert(`Opening item ${key}...`)} />
+  <ExampleList
+    aria-label="Checkbox selection list with row actions"
+    electionMode="multiple"
+    /*- begin highlight -*/
+    selectionBehavior="toggle"
+    onAction={key => alert(`Opening item ${key}...`)}
+    /*- end highlight -*/
+  />
+  <ExampleList
+    aria-label="Highlight selection list with row actions"
+    selectionMode="multiple"
+    /*- begin highlight -*/
+    selectionBehavior="replace"
+    onAction={key => alert(`Opening item ${key}...`)}
+    /*- end highlight -*/
+  />
 </div>
 ```
 
-### Asynchronous loading
+## Disabled items
+
+You can disable specific rows by providing an array of keys to `GridList` via the `disabledKeys` prop. This will disable all interactions on disabled rows,
+unless the `disabledBehavior` prop is used to change this behavior.
+Note that you are responsible for the styling of disabled rows, however, the selection checkbox will be automatically disabled.
+
+```tsx example
+// Using the example above
+<PokemonList
+  aria-label="List with disabled rows"
+  selectionMode="multiple"
+  /*- begin highlight -*/
+  disabledKeys={[3]}
+  /*- end highlight -*/
+/>
+```
+
+When `disabledBehavior` is set to `selection`, interactions such as focus, dragging, or actions can still be performed on disabled rows.
+
+```tsx example
+<PokemonList
+  aria-label="List with selection disabled for disabled rows"
+  selectionMode="multiple"
+  disabledKeys={[3]}
+  /*- begin highlight -*/
+  disabledBehavior="selection"
+  /*- end highlight -*/
+/>
+```
+
+## Asynchronous loading
 
 This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading of data from a server. You may additionally want to display a spinner to indicate the loading state to the user, or support features like infinite scroll to load more data.
 
@@ -607,12 +669,17 @@ function AsyncList() {
 }
 ```
 
-### Empty state
+## Empty state
 
 Use the `renderEmptyState` prop to customize what the `GridList` will display if there are no items.
 
 ```tsx example
-<GridList aria-label="Search results" renderEmptyState={() => 'No results found.'}>
+<GridList
+  aria-label="Search results"
+  /*- begin highlight -*/
+  renderEmptyState={() => 'No results found.'}
+  /*- end highlight -*/
+>
   {[]}
 </GridList>
 ```

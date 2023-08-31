@@ -247,11 +247,7 @@ function MyTimeField<T extends TimeValue>({label, description, errorMessage, ...
 <MyTimeField label="Event time" />
 ```
 
-## Usage
-
-The following examples show how to use the `MyTimeField` component created in the above example.
-
-### Value
+## Value
 
 A `TimeField` displays a placeholder by default. An initial, uncontrolled value can be provided to the `TimeField` using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
 
@@ -310,7 +306,28 @@ import {parseAbsoluteToLocal} from '@internationalized/date';
 />
 ```
 
-### Events
+### Granularity
+
+The `granularity` prop allows you to control the smallest unit that is displayed by `TimeField`. By default, times are displayed with `"minute"` granularity. More granular time values can be displayed by setting the `granularity` prop to `"second"`.
+
+```tsx example
+<MyTimeField
+  label="Event time"
+  /*- begin highlight -*/
+  granularity="second"
+  /*- end highlight -*/
+  defaultValue={parseAbsoluteToLocal('2021-04-07T18:45:22Z')} />
+```
+
+### HTML forms
+
+TimeField supports the `name` prop for integration with HTML forms. The value will be submitted to the server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted string, e.g. `"08:45:00"`.
+
+```tsx example
+<MyTimeField label="Meeting time" name="meetingTime" />
+```
+
+## Events
 
 `TimeField` accepts an `onChange` prop which is triggered whenever the time is edited by the user. The example below uses `onChange` to update a separate element with a formatted version of the date in the user's locale and local time zone. This is done by converting the date to a native JavaScript `Date` object to pass to the formatter. `TimeField` allows editing the time components while keeping the date fixed.
 
@@ -330,16 +347,7 @@ function Example() {
 }
 ```
 
-### Granularity
-
-The `granularity` prop allows you to control the smallest unit that is displayed by `TimeField`. By default, times are displayed with `"minute"` granularity. More granular time values can be displayed by setting the `granularity` prop to `"second"`.
-
-```tsx example
-<MyTimeField
-  label="Event time"
-  granularity="second"
-  defaultValue={parseAbsoluteToLocal('2021-04-07T18:45:22Z')} />
-```
+## Validation
 
 ### Minimum and maximum values
 
@@ -350,8 +358,10 @@ This example only accepts times between 9 AM and 5 PM.
 ```tsx example
 <MyTimeField
   label="Meeting time"
+  /*- begin highlight -*/
   minValue={new Time(9)}
   maxValue={new Time(17)}
+  /*- end highlight -*/
   defaultValue={new Time(8)} />
 ```
 
@@ -364,19 +374,24 @@ This example validates that the selected time is on a 15 minute increment.
 ```tsx example
 function Example() {
   let [time, setTime] = React.useState(new Time(9, 15));
-  let isInvalid = time?.minute % 15;
+  let isInvalid = time?.minute % 15 !== 0;
 
   return (
-    <MyTimeField
-      label="Meeting time"
-      value={time}
-      onChange={setTime}
-      isInvalid={!!isInvalid}
-      description={isInvalid ? undefined : 'Select a meeting time'}
-      errorMessage={isInvalid ? 'Meetings start every 15 minutes.' : undefined} />
+    <TimeField value={time} onChange={setTime} isInvalid={isInvalid}>
+      <Label>Meeting time</Label>
+      <DateInput>
+        {segment => <DateSegment segment={segment} />}
+      </DateInput>
+      {/*- begin highlight -*/}
+      {!isInvalid && <Text slot="description">Select a meeting time</Text>}
+      {isInvalid && <Text slot="errorMessage">Meetings start every 15 minutes.</Text>}
+      {/*- end highlight -*/}
+    </TimeField>
   );
 }
 ```
+
+## Format options
 
 ### Placeholder value
 
@@ -405,14 +420,6 @@ By default, `TimeField` displays times in either 12 or 24 hour hour format depen
 <MyTimeField
   label="Appointment time"
   hourCycle={24} />
-```
-
-### HTML forms
-
-TimeField supports the `name` prop for integration with HTML forms. The value will be submitted to the server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted string, e.g. `"08:45:00"`.
-
-```tsx example
-<MyTimeField label="Meeting time" name="meetingTime" />
 ```
 
 ## Props

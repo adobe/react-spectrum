@@ -187,9 +187,7 @@ import {Breadcrumbs, Item, Link, Heading} from 'react-aria-components';
 
 </section>
 
-## Usage
-
-### Dynamic collections
+## Content
 
 `Breadcrumbs` follows the [Collection Components API](../react-stately/collections.html), accepting both static and dynamic collections.
 The examples above show static collections, which can be used when the full list of options is known ahead of time. Dynamic collections,
@@ -218,7 +216,7 @@ function Example() {
 }
 ```
 
-### Heading
+## Heading
 
 The last breadcrumb may be used as a heading for the page by placing a `<Heading>` element within the `<Item>` instead of a `<Link>`. By default, this is an `h3` element, but this can be changed with the `level` prop on the `Heading`.
 
@@ -232,7 +230,7 @@ import {Heading} from 'react-aria-components';
 </Breadcrumbs>
 ```
 
-### Router links
+## Router links
 
 The `<Link>` component can wrap a custom link element provided by a router like [React Router](https://reactrouter.com/en/main).
 
@@ -245,7 +243,7 @@ import {Link as RouterLink} from 'react-router-dom';
 </Breadcrumbs>
 ```
 
-### Separator icons
+## Separator icons
 
 The above examples use the CSS `:after` pseudo class to add separators between each item. These may also be DOM elements instead, e.g. SVG icons. Be sure that they have `aria-hidden="true"` so they are hidden from assistive technologies.
 
@@ -274,7 +272,7 @@ import ChevronIcon from '@spectrum-icons/workflow/ChevronDoubleRight';
 
 </details>
 
-### Disabled
+## Disabled
 
 Breadcrumbs can be disabled using the `isDisabled` prop. This indicates that navigation is not currently available. When a breadcrumb is disabled, `onPress` will not be triggered, navigation will not occur, and links will be marked as `aria-disabled` for assistive technologies.
 

@@ -140,11 +140,11 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow} from 'react-aria-c
   color: var(--spectrum-alias-text-color);
   appearance: none;
   vertical-align: middle;
-  font-size: 1.2rem;
+  font-size: 1rem;
   text-align: center;
   margin: 0;
   outline: none;
-  padding: 6px;
+  padding: 6px 10px;
   transition: border-color 200ms;
 
   &[data-hovered] {
@@ -234,9 +234,7 @@ function MyPopover({children, ...props}: MyPopoverProps) {
 </DialogTrigger>
 ```
 
-## Usage
-
-The following examples show how to use the `MyPopover` component created in the above example.
+## Positioning
 
 ### Placement
 
@@ -333,7 +331,7 @@ The example below will maintain at least 50px between the popover and the edge o
 </DialogTrigger>
 ```
 
-### Controlled open state
+## Controlled open state
 
 The above examples have shown `Popover` used within a `<DialogTrigger>`, which handles opening the popover when a button is clicked, and positioning relative to the trigger. This is convenient, but there are cases where you want to show a popover programmatically rather than as a result of a user action, or render the `<Popover>` in a different part of the JSX tree.
 

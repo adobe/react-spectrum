@@ -293,9 +293,7 @@ function MyTag({children, ...props}: TagProps) {
 </MyTagGroup>
 ```
 
-## Usage
-
-### Remove tags
+## Removing tags
 
 The `onRemove` prop can be used to allow the user to remove tags. In the above example, an additional `<Button slot="remove>` element is rendered when a tag group allows removing. The user can also press the backspace key while a tag is focused to remove the tag from the group. Additionally, when [selection](#selection) is enabled, all selected items will be deleted when pressing the backspace key on a selected tag.
 
@@ -326,7 +324,7 @@ function Example() {
 }
 ```
 
-### Selection
+## Selection
 
  TagGroup supports multiple selection modes. By default, selection is disabled, however this can be changed using the `selectionMode` prop.
  Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `id` prop of the items.
@@ -360,7 +358,7 @@ function Example() {
  }
  ```
 
- ### Disabled tags
+ ## Disabled tags
 
  TagGroup supports marking items as disabled using the `disabledKeys` prop. Each key in this list
  corresponds with the `id` prop passed to the `Tag` component, or automatically derived from the values passed
@@ -384,7 +382,7 @@ function Example() {
  </MyTagGroup>
  ```
 
- ### Empty state
+## Empty state
 
 Use the `renderEmptyState` prop to customize what a `TagList` will display if there are no items.
 
@@ -398,6 +396,8 @@ Use the `renderEmptyState` prop to customize what a `TagList` will display if th
   </TagList>
 </TagGroup>
 ```
+
+## Help text
 
 ### Description
 

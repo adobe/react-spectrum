@@ -146,11 +146,11 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
   color: var(--spectrum-alias-text-color);
   appearance: none;
   vertical-align: middle;
-  font-size: 1.2rem;
+  font-size: 1rem;
   text-align: center;
   margin: 0;
   outline: none;
-  padding: 6px;
+  padding: 6px 10px;
   transition: border-color 200ms;
 
   &[data-hovered] {
@@ -213,7 +213,7 @@ import {Modal, ModalOverlay} from 'react-aria-components';
 </ModalOverlay>
 ```
 
-## Usage
+## Interactions
 
 ### Dismissable
 
@@ -251,31 +251,7 @@ By default, modals can be closed by pressing the <Keyboard>Escape</Keyboard> key
 </DialogTrigger>
 ```
 
-### Controlled open state
-
-The above examples have shown `Modal` used within a `<DialogTrigger>`, which handles opening the modal when a button is clicked. This is convenient, but there are cases where you want to show a modal programmatically rather than as a result of a user action, or render the `<Modal>` in a different part of the JSX tree.
-
-To do this, you can manage the modal's `isOpen` state yourself and provide it as a prop to the `<Modal>` element. The `onOpenChange` prop will be called when the user closes the modal, and should be used to update your state.
-
-```tsx example
-function Example() {
-  let [isOpen, setOpen] = React.useState(false);
-
-  return (
-    <>
-      <Button onPress={() => setOpen(true)}>Open dialog</Button>
-      <Modal isDismissable isOpen={isOpen} onOpenChange={setOpen}>
-        <Dialog>
-          <Heading>Notice</Heading>
-          <p>Click outside to close this dialog.</p>
-        </Dialog>
-      </Modal>
-    </>
-  );
-}
-```
-
-### Custom overlay
+## Custom overlay
 
 `ModalOverlay` can be used to customize the backdrop rendered behind a `Modal`. Together with support for custom entry and exit animations, you can build other types of overlays beyond traditional modal dialogs such as trays or drawers.
 
@@ -362,6 +338,30 @@ import {ModalOverlay} from 'react-aria-components';
 ```
 
 </details>
+
+## Controlled open state
+
+The above examples have shown `Modal` used within a `<DialogTrigger>`, which handles opening the modal when a button is clicked. This is convenient, but there are cases where you want to show a modal programmatically rather than as a result of a user action, or render the `<Modal>` in a different part of the JSX tree.
+
+To do this, you can manage the modal's `isOpen` state yourself and provide it as a prop to the `<Modal>` element. The `onOpenChange` prop will be called when the user closes the modal, and should be used to update your state.
+
+```tsx example
+function Example() {
+  let [isOpen, setOpen] = React.useState(false);
+
+  return (
+    <>
+      <Button onPress={() => setOpen(true)}>Open dialog</Button>
+      <Modal isDismissable isOpen={isOpen} onOpenChange={setOpen}>
+        <Dialog>
+          <Heading>Notice</Heading>
+          <p>Click outside to close this dialog.</p>
+        </Dialog>
+      </Modal>
+    </>
+  );
+}
+```
 
 ## Props
 

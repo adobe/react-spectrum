@@ -302,6 +302,125 @@ A `Calendar` uses the following components, which may also be used standalone or
 
 </section>
 
+## Reusable wrappers
+
+If you will use a RangeCalendar in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+```tsx example export=true
+import type {RangeCalendarProps, DateValue} from 'react-aria-components';
+import {Text} from 'react-aria-components';
+
+interface MyRangeCalendarProps<T extends DateValue> extends RangeCalendarProps<T> {
+  errorMessage?: string
+}
+
+function MyRangeCalendar<T extends DateValue>({errorMessage, ...props}: MyRangeCalendarProps<T>) {
+  return (
+    <RangeCalendar {...props}>
+      <header>
+        <Button slot="previous">◀</Button>
+        <Heading />
+        <Button slot="next">▶</Button>
+      </header>
+      <CalendarGrid>
+        {date => <CalendarCell date={date} />}
+      </CalendarGrid>
+      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
+    </RangeCalendar>
+  );
+}
+
+<MyRangeCalendar aria-label="Trip dates" />
+```
+
+## Value
+
+A `RangeCalendar` has no selection by default. An initial, uncontrolled value can be provided to the `RangeCalendar` using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
+
+Date ranges are objects with `start` and `end` properties containing date values, which are provided using objects in the [@internationalized/date](../internationalized/date/) package. This library handles correct international date manipulation across calendars, time zones, and other localization concerns.
+
+`RangeCalendar` supports values with both date and time components, but only allows users to modify the dates. By default, `RangeCalendar` will emit <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDate} /> objects in the `onChange` event, but if a <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDateTime} /> or <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> object is passed as the `value` or `defaultValue`, values of that type will be emitted, changing only the date and preserving the time components.
+
+```tsx example
+import {parseDate} from '@internationalized/date';
+
+function Example() {
+  let [value, setValue] = React.useState({
+    start: parseDate('2020-02-03'),
+    end: parseDate('2020-02-12')
+  });
+
+  return (
+    <div style={{display: 'flex', gap: 20, flexWrap: 'wrap'}}>
+      <MyRangeCalendar
+        aria-label="Date range (uncontrolled)"
+        defaultValue={{
+          start: parseDate('2020-02-03'),
+          end: parseDate('2020-02-12')
+        }} />
+      <MyRangeCalendar
+        aria-label="Date range (controlled)"
+        value={value}
+        onChange={setValue} />
+    </div>
+  );
+}
+```
+
+### International calendars
+
+`RangeCalendar` supports selecting dates in many calendar systems used around the world, including Gregorian, Hebrew, Indian, Islamic, Buddhist, and more. Dates are automatically displayed in the appropriate calendar system for the user's locale. The calendar system can be overridden using the [Unicode calendar locale extension](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/calendar#adding_a_calendar_in_the_locale_string), passed to the [I18nProvider](I18nProvider.html) component.
+
+Selected dates passed to `onChange` always use the same calendar system as the `value` or `defaultValue` prop. If no `value` or `defaultValue` is provided, then dates passed to `onChange` are always in the Gregorian calendar since this is the most commonly used. This means that even though the user selects dates in their local calendar system, applications are able to deal with dates from all users consistently.
+
+The below example displays a `RangeCalendar` in the Hindi language, using the Indian calendar. Dates emitted from `onChange` are in the Gregorian calendar.
+
+```tsx example
+import type {DateRange} from 'react-aria-components';
+import {I18nProvider} from '@react-aria/i18n';
+
+function Example() {
+  let [range, setRange] = React.useState<DateRange | null>(null);
+  return (
+    <I18nProvider locale="hi-IN-u-ca-indian">
+      <MyRangeCalendar aria-label="Date range" value={range} onChange={setRange} />
+      <p>Start date: {range?.start.toString()}</p>
+      <p>End date: {range?.end.toString()}</p>
+    </I18nProvider>
+  );
+}
+```
+
+## Events
+
+`RangeCalendar` accepts an `onChange` prop which is triggered whenever a date is selected by the user. The example below uses `onChange` to update a separate element with a formatted version of the date in the user's locale. This is done by converting the date to a native JavaScript `Date` object to pass to the formatter.
+
+```tsx example
+import {getLocalTimeZone} from '@internationalized/date';
+import {useDateFormatter} from '@react-aria/i18n';
+
+function Example() {
+  let [range, setRange] = React.useState({
+    start: parseDate('2020-07-03'),
+    end: parseDate('2020-07-10')
+  });
+  let formatter = useDateFormatter({dateStyle: 'long'});
+
+  return (
+    <>
+      <MyRangeCalendar aria-label="Date range" value={range} onChange={setRange} />
+      <p>
+        Selected date:{' '}
+        {formatter.formatRange(
+          range.start.toDate(getLocalTimeZone()),
+          range.end.toDate(getLocalTimeZone())
+        )}
+      </p>
+    </>
+  );
+}
+```
+
 ## Multi-month
 
 Multiple `CalendarGrid` elements can be rendered to show multiple months at once. The `visibleDuration` prop should be provided to the `RangeCalendar` component to specify how many months are visible, and each `CalendarGrid` accepts an `offset` prop to specify its starting date relative to the first visible date.
@@ -352,130 +471,7 @@ The `pageBehavior` prop allows you to control how the calendar navigates between
 </RangeCalendar>
 ```
 
-## Reusable wrappers
-
-If you will use a RangeCalendar in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
-
-```tsx example export=true
-import type {RangeCalendarProps, DateValue} from 'react-aria-components';
-import {Text} from 'react-aria-components';
-
-interface MyRangeCalendarProps<T extends DateValue> extends RangeCalendarProps<T> {
-  errorMessage?: string
-}
-
-function MyRangeCalendar<T extends DateValue>({errorMessage, ...props}: MyRangeCalendarProps<T>) {
-  return (
-    <RangeCalendar {...props}>
-      <header>
-        <Button slot="previous">◀</Button>
-        <Heading />
-        <Button slot="next">▶</Button>
-      </header>
-      <CalendarGrid>
-        {date => <CalendarCell date={date} />}
-      </CalendarGrid>
-      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
-    </RangeCalendar>
-  );
-}
-
-<MyRangeCalendar aria-label="Trip dates" />
-```
-
-## Usage
-
-The following examples show how to use the `MyRangeCalendar` component created in the above example.
-
-### Value
-
-A `RangeCalendar` has no selection by default. An initial, uncontrolled value can be provided to the `RangeCalendar` using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
-
-Date ranges are objects with `start` and `end` properties containing date values, which are provided using objects in the [@internationalized/date](../internationalized/date/) package. This library handles correct international date manipulation across calendars, time zones, and other localization concerns.
-
-`RangeCalendar` supports values with both date and time components, but only allows users to modify the dates. By default, `RangeCalendar` will emit <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDate} /> objects in the `onChange` event, but if a <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDateTime} /> or <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> object is passed as the `value` or `defaultValue`, values of that type will be emitted, changing only the date and preserving the time components.
-
-```tsx example
-import {parseDate} from '@internationalized/date';
-
-function Example() {
-  let [value, setValue] = React.useState({
-    start: parseDate('2020-02-03'),
-    end: parseDate('2020-02-12')
-  });
-
-  return (
-    <div style={{display: 'flex', gap: 20, flexWrap: 'wrap'}}>
-      <MyRangeCalendar
-        aria-label="Date range (uncontrolled)"
-        defaultValue={{
-          start: parseDate('2020-02-03'),
-          end: parseDate('2020-02-12')
-        }} />
-      <MyRangeCalendar
-        aria-label="Date range (controlled)"
-        value={value}
-        onChange={setValue} />
-    </div>
-  );
-}
-```
-
-### Events
-
-`RangeCalendar` accepts an `onChange` prop which is triggered whenever a date is selected by the user. The example below uses `onChange` to update a separate element with a formatted version of the date in the user's locale. This is done by converting the date to a native JavaScript `Date` object to pass to the formatter.
-
-```tsx example
-import {getLocalTimeZone} from '@internationalized/date';
-import {useDateFormatter} from '@react-aria/i18n';
-
-function Example() {
-  let [range, setRange] = React.useState({
-    start: parseDate('2020-07-03'),
-    end: parseDate('2020-07-10')
-  });
-  let formatter = useDateFormatter({dateStyle: 'long'});
-
-  return (
-    <>
-      <MyRangeCalendar aria-label="Date range" value={range} onChange={setRange} />
-      <p>
-        Selected date:{' '}
-        {formatter.formatRange(
-          range.start.toDate(getLocalTimeZone()),
-          range.end.toDate(getLocalTimeZone())
-        )}
-      </p>
-    </>
-  );
-}
-```
-
-### International calendars
-
-`RangeCalendar` supports selecting dates in many calendar systems used around the world, including Gregorian, Hebrew, Indian, Islamic, Buddhist, and more. Dates are automatically displayed in the appropriate calendar system for the user's locale. The calendar system can be overridden using the [Unicode calendar locale extension](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/calendar#adding_a_calendar_in_the_locale_string), passed to the [I18nProvider](I18nProvider.html) component.
-
-Selected dates passed to `onChange` always use the same calendar system as the `value` or `defaultValue` prop. If no `value` or `defaultValue` is provided, then dates passed to `onChange` are always in the Gregorian calendar since this is the most commonly used. This means that even though the user selects dates in their local calendar system, applications are able to deal with dates from all users consistently.
-
-The below example displays a `RangeCalendar` in the Hindi language, using the Indian calendar. Dates emitted from `onChange` are in the Gregorian calendar.
-
-```tsx example
-import type {DateRange} from 'react-aria-components';
-import {I18nProvider} from '@react-aria/i18n';
-
-function Example() {
-  let [range, setRange] = React.useState<DateRange | null>(null);
-  return (
-    <I18nProvider locale="hi-IN-u-ca-indian">
-      <MyRangeCalendar aria-label="Date range" value={range} onChange={setRange} />
-      <p>Start date: {range?.start.toString()}</p>
-      <p>End date: {range?.end.toString()}</p>
-    </I18nProvider>
-  );
-}
-```
-
-### Validation
+## Validation
 
 By default, `RangeCalendar` allows selecting any date range. The `minValue` and `maxValue` props can also be used to prevent the user from selecting dates outside a certain range.
 
@@ -529,44 +525,6 @@ function Example() {
 }
 ```
 
-### Controlling the focused date
-
-By default, the first selected date is focused when a `RangeCalendar` first mounts. If no `value` or `defaultValue` prop is provided, then the current date is focused.  However, `RangeCalendar` supports controlling which date is focused using the `focusedValue` and `onFocusChange` props. This also determines which month is visible. The `defaultFocusedValue` prop allows setting the initial focused date when the `RangeCalendar` first mounts, without controlling it.
-
-This example focuses July 1, 2021 by default. The user may change the focused date, and the `onFocusChange` event updates the state. Clicking the button resets the focused date back to the initial value.
-
-```tsx example
-import {CalendarDate} from '@internationalized/date';
-
-function Example() {
-  let defaultDate = new CalendarDate(2021, 7, 1);
-  let [focusedDate, setFocusedDate] = React.useState(defaultDate);
-
-  return (
-    <div style={{flexDirection: 'column', alignItems: 'start', gap: 20}}>
-      <button onClick={() => setFocusedDate(defaultDate)}>Reset focused date</button>
-      <MyRangeCalendar focusedValue={focusedDate} onFocusChange={setFocusedDate} />
-    </div>
-  );
-}
-```
-
-### Disabled
-
-The `isDisabled` boolean prop makes the RangeCalendar disabled. Cells cannot be focused or selected.
-
-```tsx example
-<MyRangeCalendar aria-label="Trip dates" isDisabled />
-```
-
-### Read only
-
-The `isReadOnly` boolean prop makes the RangeCalendar's value immutable. Unlike `isDisabled`, the RangeCalendar remains focusable.
-
-```tsx example
-<MyRangeCalendar aria-label="Trip dates" value={{start: today(getLocalTimeZone()), end: today(getLocalTimeZone()).add({ weeks: 1 })}} isReadOnly />
-```
-
 ### Error message
 
 `RangeCalendar` tries to avoid allowing the user to select invalid dates in the first place (see [Validation](#validation) and [Unavailable dates](#unavailable-dates) above). However, if according to application logic a selected date range is invalid, the `isInvalid` prop can be set. This alerts assistive technology users that the selection is invalid, and can be used for styling purposes as well. In addition, the `errorMessage` slot may be used to help the user fix the issue.
@@ -588,13 +546,54 @@ function Example() {
       aria-label="Trip dates"
       value={range}
       onChange={setRange}
+      /*- begin highlight -*/
       isInvalid={isInvalid}
-      errorMessage={isInvalid ? 'Maximum stay duration is 1 week' : undefined} />
+      errorMessage={isInvalid ? 'Maximum stay duration is 1 week' : undefined}
+      /*- end highlight -*/
+    />
   );
 }
 ```
 
-### Labeling
+## Controlling the focused date
+
+By default, the first selected date is focused when a `RangeCalendar` first mounts. If no `value` or `defaultValue` prop is provided, then the current date is focused.  However, `RangeCalendar` supports controlling which date is focused using the `focusedValue` and `onFocusChange` props. This also determines which month is visible. The `defaultFocusedValue` prop allows setting the initial focused date when the `RangeCalendar` first mounts, without controlling it.
+
+This example focuses July 1, 2021 by default. The user may change the focused date, and the `onFocusChange` event updates the state. Clicking the button resets the focused date back to the initial value.
+
+```tsx example
+import {CalendarDate} from '@internationalized/date';
+
+function Example() {
+  let defaultDate = new CalendarDate(2021, 7, 1);
+  let [focusedDate, setFocusedDate] = React.useState(defaultDate);
+
+  return (
+    <>
+      <button style={{marginBottom: 20}} onClick={() => setFocusedDate(defaultDate)}>Reset focused date</button>
+      <MyRangeCalendar focusedValue={focusedDate} onFocusChange={setFocusedDate} />
+    </>
+  );
+}
+```
+
+## Disabled
+
+The `isDisabled` boolean prop makes the RangeCalendar disabled. Cells cannot be focused or selected.
+
+```tsx example
+<MyRangeCalendar aria-label="Trip dates" isDisabled />
+```
+
+### Read only
+
+The `isReadOnly` boolean prop makes the RangeCalendar's value immutable. Unlike `isDisabled`, the RangeCalendar remains focusable.
+
+```tsx example
+<MyRangeCalendar aria-label="Trip dates" value={{start: today(getLocalTimeZone()), end: today(getLocalTimeZone()).add({ weeks: 1 })}} isReadOnly />
+```
+
+## Labeling
 
 An aria-label must be provided to the `RangeCalendar` for accessibility. If it is labeled by a separate element, an `aria-labelledby` prop must be provided using the `id` of the labeling element instead.
 
@@ -627,12 +626,7 @@ A `<Button>` accepts its contents as `children`. Other props such as `onPress` a
 
 A `<CalendarGrid>` renders an individual month within a `<RangeCalendar>`. It accepts a function as its `children`, which is called to render a `<CalendarCell>` for each date. This renders a default `<CalendarGridHeader>`, which displays the weekday names in the column headers. This can be customized by providing a `<CalendarGridHeader>` and `<CalendarGridBody>` as children instead of a function.
 
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
-
 <PropTable component={docs.exports.CalendarGrid} links={docs.links} />
-
-</details>
 
 ### CalendarGridHeader
 

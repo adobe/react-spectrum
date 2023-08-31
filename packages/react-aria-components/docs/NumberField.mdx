@@ -126,6 +126,7 @@ import {NumberField, Label, Group, Input, Button} from 'react-aria-components';
 
     &[data-disabled] {
       border-color: var(--field-border-disabled);
+      color: var(--text-color-disabled);
     }
   }
 
@@ -194,9 +195,9 @@ import {NumberField, Label, Group, Input, Button, Text} from 'react-aria-compone
 <NumberField>
   <Label />
   <Group>
-    <Button slot="decrement" />
     <Input />
     <Button slot="increment" />
+    <Button slot="decrement" />
   </Group>
   <Text slot="description" />
   <Text slot="errorMessage" />
@@ -269,9 +270,7 @@ function MyNumberField({label, description, errorMessage, ...props}: MyNumberFie
 <MyNumberField label="Cookies" />
 ```
 
-## Usage
-
-The following examples show how to use the `MyNumberField` component created in the above example.
+## Value
 
 ### Controlled
 
@@ -297,6 +296,25 @@ function Example() {
   );
 }
 ```
+
+### HTML forms
+
+NumberField supports the `name` prop for integration with HTML forms. The value will be submitted to the server as a raw number (e.g. `45`), not as a locale-dependent formatted string (e.g. `"$45.00"`).
+
+```tsx example
+<MyNumberField
+  label="Transaction amount"
+  /*- begin highlight -*/
+  name="amount"
+  /*- end highlight -*/
+  defaultValue={45}
+  formatOptions={{
+    style: 'currency',
+    currency: 'USD'
+  }} />
+```
+
+## Number formatting
 
 ### Decimals
 
@@ -383,6 +401,8 @@ may be necessary.
   }} />
 ```
 
+## Validation
+
 ### Minimum and maximum values
 
 The `minValue` and `maxValue` props can be used to limit the entered value to a specific range. The value will be clamped
@@ -428,16 +448,6 @@ Otherwise, the value starts from `0`.
   step={3} />
 ```
 
-### Disabled and read only
-
-The `isDisabled` and `isReadOnly` props can be used prevent the user from editing the value of the number field.
-The difference is that `isReadOnly` still allows the input to be focused, while `isDisabled` prevents all user interaction.
-
-```tsx example
-<MyNumberField label="Disabled" isDisabled value={25} />
-<MyNumberField label="Read only" isReadOnly value={32} />
-```
-
 ### Help text
 
 The `description` slot can be used to associate additional help text with a number field. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to semantically mark the number field as invalid for assistive technologies.
@@ -448,30 +458,43 @@ function Example() {
   let isValid = React.useMemo(() => value > 0 || Number.isNaN(value), [value]);
 
   return (
-    <MyNumberField
-      isInvalid={Number.isNaN(value) && !isValid}
+    <NumberField
       value={value}
       onChange={setValue}
-      label="Positive numbers only"
-      description={isValid ? 'Enter a positive number.' : undefined}
-      errorMessage={isValid ? undefined : value === 0 ? 'Is zero positive?' : 'Positive numbers are bigger than 0.'} />
+      /*- begin highlight -*/
+      isInvalid={Number.isNaN(value) && !isValid}
+      /*- end highlight -*/
+    >
+      <Label>Positive numbers only</Label>
+      <Group>
+        <Button slot="decrement">-</Button>
+        <Input />
+        <Button slot="increment">+</Button>
+      </Group>
+      {/*- begin highlight -*/}
+      {isValid && <Text slot="description">Enter a positive number.</Text>}
+      {!isValid && <Text slot="errorMessage">{value === 0 ? 'Is zero positive?' : 'Positive numbers are bigger than 0.'}</Text>}
+      {/*- end highlight -*/}
+    </NumberField>
   );
 }
 ```
 
-### HTML forms
+## Disabled
 
-NumberField supports the `name` prop for integration with HTML forms. The value will be submitted to the server as a raw number (e.g. `45`), not as a locale-dependent formatted string (e.g. `"$45.00"`).
+The `isDisabled` prop can be used prevent the user from editing the value of the number field.
 
 ```tsx example
-<MyNumberField
-  label="Transaction amount"
-  name="amount"
-  defaultValue={45}
-  formatOptions={{
-    style: 'currency',
-    currency: 'USD'
-  }} />
+<MyNumberField label="Disabled" isDisabled value={25} />
+```
+
+### Read only
+
+The `isReadOnly` prop makes the NumberField's value immutable. Unlike `isDisabled`, the TextField remains focusable
+and the contents can still be copied. See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
+
+```tsx example
+<MyNumberField label="Read only" isReadOnly value={32} />
 ```
 
 ## Props

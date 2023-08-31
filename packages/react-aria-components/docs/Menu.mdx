@@ -71,11 +71,11 @@ import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
   border-radius: 4px;
   appearance: none;
   vertical-align: middle;
-  font-size: 1.2rem;
+  font-size: 1rem;
   text-align: center;
   margin: 0;
   outline: none;
-  padding: 0.286rem 0.857rem;
+  padding: 6px 10px;
 
   &[data-pressed] {
     box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
@@ -250,11 +250,11 @@ help achieve accessible menu components that can be styled as needed.
 
 <Anatomy />
 
-A menu trigger consists of a button or other trigger element combined with a popup menu,
+A menu trigger consists of a button or other trigger element combined with a menu displayed in a popover,
 with a list of menu items or sections inside. Users can click, touch, or use the keyboard on the button to open the menu.
 
 ```tsx
-import {MenuTrigger, Button, Popover, Menu, Item, Separator, Section, Header, Text} from 'react-aria-components';
+import {MenuTrigger, Button, Popover, Menu, Item, Separator, Section, Header, Text, Keyboard} from 'react-aria-components';
 
 <MenuTrigger>
   <Button />
@@ -263,6 +263,7 @@ import {MenuTrigger, Button, Popover, Menu, Item, Separator, Section, Header, Te
       <Item>
         <Text slot="label" />
         <Text slot="description" />
+        <Keyboard />
       </Item>
       <Separator />
       <Section>
@@ -384,18 +385,14 @@ function MyItem(props: ItemProps) {
 
 </details>
 
-## Usage
-
-The following examples show how to use the `MyMenuButton` component created in the above example.
-
-### Dynamic collections
+## Content
 
 `Menu` follows the [Collection Components API](../react-stately/collections.html), accepting both static and dynamic collections.
 The examples above show static collections, which can be used when the full list of options is known ahead of time. Dynamic collections,
 as shown below, can be used when the options come from an external data source such as an API call, or update over time.
 
 As seen below, an iterable list of options is passed to the Menu using the `items` prop. Each item accepts an `id` prop, which
-is passed to the `onSelectionChange` handler to identify the selected item. Alternatively, if the item objects contain an `id` property,
+is passed to the `onAction` handler to identify the selected item. Alternatively, if the item objects contain an `id` property,
 as shown in the example below, then this is used automatically and an `id` prop is not required.
 
 ```tsx example
@@ -418,13 +415,13 @@ function Example() {
 }
 ```
 
-### Selection
+## Selection
 
 Menu supports multiple selection modes. By default, selection is disabled, however this can be changed using the `selectionMode` prop.
 Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `id` prop of the items.
 See the `react-stately` [Selection docs](../react-stately/selection.html#selected-key-data-type) for more details.
 
-#### Single
+### Single
 
 ```tsx example
 import type {Selection} from 'react-aria-components';
@@ -445,7 +442,7 @@ function Example() {
 }
 ```
 
-#### Multiple
+### Multiple
 
 ```tsx example
 import type {Selection} from 'react-aria-components';
@@ -467,31 +464,11 @@ function Example() {
 }
 ```
 
-### Separators
-
-Separators may be added between menu items in order to create groupings. See [Sections](#sections) for more on creating labeled groupings.
-
-```tsx example
-import {Separator} from 'react-aria-components';
-
-<MyMenuButton label="Actions" onAction={alert}>
-  <Item id="new">New…</Item>
-  <Item id="open">Open…</Item>
-  <Separator />
-  <Item id="save">Save</Item>
-  <Item id="save-as">Save as…</Item>
-  <Item id="rename">Rename…</Item>
-  <Separator />
-  <Item id="page-setup">Page setup…</Item>
-  <Item id="print">Print…</Item>
-</MyMenuButton>
-```
-
-### Sections
+## Sections
 
 Menu supports sections with headings in order to group items. Sections can be used by wrapping groups of Items in a `Section` component. A `<Header>` element may also be included to label the section.
 
-#### Static items
+### Static items
 
 ```tsx example
 import {Section, Header} from 'react-aria-components';
@@ -511,7 +488,7 @@ import {Section, Header} from 'react-aria-components';
 </MyMenuButton>
 ```
 
-#### Dynamic items
+### Dynamic items
 
 The above example shows sections with static items. Sections can also be populated from a heirarchical data structure.
 Similarly to the props on Menu, `<Section>` takes an array of data using the `items` prop. If the section also has a header,
@@ -562,13 +539,33 @@ function Example() {
 }
 ```
 
-#### Accessibility
+### Separators
 
-Sections without a `title` must provide an `aria-label` for accessibility.
+Separators may be added between menu items or sections in order to create non-labeled groupings.
 
-### Complex menu items
+```tsx example
+import {Separator} from 'react-aria-components';
 
-By default, menu items that only contain text will be labeled by the contents of the item. The `<Text>` and `<Keyboard>` components may be used within a menu item to add a description and keyboard shortcut. These slots improve screen reader announcement, and may also be used for styling and layout purposes.
+<MyMenuButton label="Actions" onAction={alert}>
+  <Item id="new">New…</Item>
+  <Item id="open">Open…</Item>
+  <Separator />
+  <Item id="save">Save</Item>
+  <Item id="save-as">Save as…</Item>
+  <Item id="rename">Rename…</Item>
+  <Separator />
+  <Item id="page-setup">Page setup…</Item>
+  <Item id="print">Print…</Item>
+</MyMenuButton>
+```
+
+### Accessibility
+
+Sections without a `<Header>` must provide an `aria-label` for accessibility.
+
+## Text slots
+
+By default, items in a `ListBox` are labeled by their text contents for accessibility. Items also support the "label" and "description" slots to separate primary and secondary content, which improves screen reader announcements and can also be used for styling purposes. The `<Keyboard>` component can also be used to display a keyboard shortcut.
 
 ```tsx example
 import {Text, Keyboard} from 'react-aria-components';
@@ -592,7 +589,7 @@ import {Text, Keyboard} from 'react-aria-components';
 </MyMenuButton>
 ```
 
-### Disabled items
+## Disabled items
 
 `Menu` supports marking items as disabled using the `disabledKeys` prop. Each key in this list
 corresponds with the `id` prop passed to the `Item` component, or automatically derived from the values passed
@@ -608,7 +605,7 @@ Disabled items are not focusable or keyboard navigable, and do not trigger `onAc
 </MyMenuButton>
 ```
 
-### Controlled open state
+## Controlled open state
 
 The open state of the menu can be controlled via the `defaultOpen` and `isOpen` props.
 

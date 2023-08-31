@@ -305,7 +305,7 @@ select components that can be styled as needed without compromising on high qual
 <Anatomy />
 
 A select consists of a label, a button which displays a selected value, and a listbox, displayed in a
-popup. Users can click, touch, or use the keyboard on the button to open the listbox popup.
+popover. Users can click, touch, or use the keyboard on the button to open the listbox popover.
 
 `Select` also supports optional description and error message elements, which can be used
 to provide more context about the field, and any validation messages. These are linked with the
@@ -489,7 +489,7 @@ function MyItem(props: ItemProps) {
 
 </details>
 
-## Dynamic collections
+## Content
 
 `Select` follows the [Collection Components API](../react-stately/collections.html), accepting both static and dynamic collections.
 The examples above show static collections, which can be used when the full list of options is known ahead of time. Dynamic collections,
@@ -519,6 +519,53 @@ function Example() {
     </MySelect>
   );
 }
+```
+
+## Selection
+
+Setting a selected option can be done by using the `defaultSelectedKey` or `selectedKey` prop. The selected key corresponds to the `id` prop of an item.
+When `Select` is used with a dynamic collection as described above, the id of each item is derived from the data.
+See the `react-stately` [Selection docs](../react-stately/selection.html) for more details.
+
+```tsx example
+function Example() {
+  let options = [
+    {name: 'Koala'},
+    {name: 'Kangaroo'},
+    {name: 'Platypus'},
+    {name: 'Bald Eagle'},
+    {name: 'Bison'},
+    {name: 'Skunk'}
+  ];
+  let [animal, setAnimal] = React.useState<React.Key>("Bison");
+
+  return (
+    <MySelect
+      label="Pick an animal (controlled)"
+      items={options}
+      selectedKey={animal}
+      onSelectionChange={selected => setAnimal(selected)}>
+      {item => <Item id={item.name}>{item.name}</Item>}
+    </MySelect>
+  );
+}
+```
+
+### HTML forms
+
+Select supports the `name` prop for integration with HTML forms. The `id` of the selected item will be submitted to the server.
+
+```tsx example
+<MySelect
+  label="Favorite Animal"
+  ///- begin highlight -///
+  name="favoriteAnimalId"
+  ///- end highlight -///
+>
+  <Item id="panda">Panda</Item>
+  <Item id="cat">Cat</Item>
+  <Item id="dog">Dog</Item>
+</MySelect>
 ```
 
 ## Sections
@@ -625,53 +672,6 @@ import {Text} from 'react-aria-components';
     <Text slot="label">Admin</Text>
     <Text slot="description">Full access</Text>
   </Item>
-</MySelect>
-```
-
-## Selection
-
-Setting a selected option can be done by using the `defaultSelectedKey` or `selectedKey` prop. The selected key corresponds to the `id` prop of an item.
-When `Select` is used with a dynamic collection as described above, the id of each item is derived from the data.
-See the `react-stately` [Selection docs](../react-stately/selection.html) for more details.
-
-```tsx example
-function Example() {
-  let options = [
-    {name: 'Koala'},
-    {name: 'Kangaroo'},
-    {name: 'Platypus'},
-    {name: 'Bald Eagle'},
-    {name: 'Bison'},
-    {name: 'Skunk'}
-  ];
-  let [animal, setAnimal] = React.useState<React.Key>("Bison");
-
-  return (
-    <MySelect
-      label="Pick an animal (controlled)"
-      items={options}
-      selectedKey={animal}
-      onSelectionChange={selected => setAnimal(selected)}>
-      {item => <Item id={item.name}>{item.name}</Item>}
-    </MySelect>
-  );
-}
-```
-
-### HTML forms
-
-Select supports the `name` prop for integration with HTML forms. The `id` of the selected item will be submitted to the server.
-
-```tsx example
-<MySelect
-  label="Favorite Animal"
-  ///- begin highlight -///
-  name="favoriteAnimalId"
-  ///- end highlight -///
->
-  <Item id="panda">Panda</Item>
-  <Item id="cat">Cat</Item>
-  <Item id="dog">Dog</Item>
 </MySelect>
 ```
 

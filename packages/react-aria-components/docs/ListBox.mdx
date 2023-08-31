@@ -177,8 +177,8 @@ Note: `ListBox` only handles the list itself. For a dropdown, see [Select](Selec
 
 <Anatomy />
 
-A listbox consists of a container element, with a list of options or sections inside.
-Users can select one or more options by clicking, tapping, or navigating with the keyboard.
+A listbox consists of a container element, with a list of items or sections inside.
+Users can select one or more items by clicking, tapping, or navigating with the keyboard.
 
 ```tsx
 import {ListBox, Item, Section, Header, Text} from 'react-aria-components';
@@ -304,9 +304,7 @@ function MyItem(props: ItemProps) {
 
 </details>
 
-## Usage
-
-### Dynamic collections
+## Content
 
 `ListBox` follows the [Collection Components API](../react-stately/collections.html), accepting both static and dynamic collections.
 The examples above show static collections, which can be used when the full list of options is known ahead of time. Dynamic collections,
@@ -338,7 +336,7 @@ function Example() {
 }
 ```
 
-### Selection
+## Selection
 
 ListBox supports multiple selection modes. By default, selection is disabled, however this can be changed using the `selectionMode` prop.
 Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `id` prop of the items.
@@ -352,7 +350,14 @@ function Example() {
 
   return (
     <>
-      <ListBox aria-label="Sandwich contents" selectionMode="multiple" selectedKeys={selected} onSelectionChange={setSelected}>
+      <ListBox
+        aria-label="Sandwich contents"
+        /*- begin highlight -*/
+        selectionMode="multiple"
+        selectedKeys={selected}
+        onSelectionChange={setSelected}
+        /*- end highlight -*/
+      >
         <Item id="lettuce">Lettuce</Item>
         <Item id="tomato">Tomato</Item>
         <Item id="cheese">Cheese</Item>
@@ -375,7 +380,13 @@ When `selectionBehavior` is set to `"replace"`, clicking a row with the mouse re
 These selection behaviors are defined in [Aria Practices](https://w3c.github.io/aria-practices/#listbox_kbd_interaction).
 
 ```tsx example
-<ListBox aria-label="Sandwich contents" selectionMode="multiple" selectionBehavior="replace">
+<ListBox
+  aria-label="Sandwich contents"
+  selectionMode="multiple"
+  /*- begin highlight -*/
+  selectionBehavior="replace"
+  /*- end highlight -*/
+>
   <Item id="lettuce">Lettuce</Item>
   <Item id="tomato">Tomato</Item>
   <Item id="cheese">Cheese</Item>
@@ -385,11 +396,11 @@ These selection behaviors are defined in [Aria Practices](https://w3c.github.io/
 </ListBox>
 ```
 
-### Sections
+## Sections
 
 ListBox supports sections in order to group options. Sections can be used by wrapping groups of items in a `Section` element. A `<Header>` element may also be included to label the section.
 
-#### Static items
+### Static items
 
 ```tsx example
 import {Section, Header} from 'react-aria-components';
@@ -416,7 +427,7 @@ import {Section, Header} from 'react-aria-components';
 </ListBox>
 ```
 
-#### Dynamic items
+### Dynamic items
 
 The above example shows sections with static items. Sections can also be populated from a heirarchical data structure.
 Similarly to the props on ListBox, `<Section>` takes an array of data using the `items` prop. If the section also has a header,
@@ -461,16 +472,16 @@ function Example() {
 }
 ```
 
-#### Accessibility
+### Accessibility
 
-Sections without a `title` must provide an `aria-label` for accessibility.
+Sections without a `<Header>` must provide an `aria-label` for accessibility.
 
-### Complex options
+## Text slots
 
-By default, options items that only contain text will be labeled by the contents of the item. The `<Text>` component may be used to add a description using the `slot="description"` prop. Slots improve screen reader announcements, and may also be used for styling and layout purposes.
+By default, items in a `ListBox` are labeled by their text contents for accessibility. Items also support the "label" and "description" slots to separate primary and secondary content, which improves screen reader announcements and can also be used for styling purposes.
 
-**NOTE: listbox options cannot contain interactive content (e.g. buttons, checkboxes, etc.).
-For these cases, see [GridList](GridList.html) instead.**
+**Note**: The ARIA spec prohibits listbox items from including interactive content such as buttons, checkboxes, etc.
+For these cases, see [GridList](GridList.html) instead.
 
 ```tsx example
 import {Text} from 'react-aria-components';
@@ -491,11 +502,11 @@ import {Text} from 'react-aria-components';
 </ListBox>
 ```
 
-### Layouts
+## Layouts
 
 By default, ListBox expects items to be arranged in a vertical stack, and implements keyboard navigation and drag and drop accordingly. The `layout` and `orientation` props can be used to change this behavior, allowing you to build horizontal and vertical stacks and grids.
 
-#### Horizontal stack
+### Horizontal stack
 
 This example displays a horizontal list of cards. The left and right arrow keys can be used to navigate between the items.
 
@@ -623,7 +634,7 @@ let albums = [
 
 </details>
 
-#### Vertical grid
+### Vertical grid
 
 The `layout` prop can be set to `"grid"` to enable two-dimensional keyboard navigation. By default, the grid scrolls vertically. The left, right, up, and down arrow keys can be used to navigate between the cards in this example.
 
@@ -658,7 +669,7 @@ The `layout` prop can be set to `"grid"` to enable two-dimensional keyboard navi
 
 </details>
 
-#### Horizontal grid
+### Horizontal grid
 
 The `layout="grid"` and `orientation="horizontal"` props can be combined to build a two dimensional grid where the items are grouped into columns, and the grid scrolls horizontally.
 
@@ -726,7 +737,7 @@ The `layout="grid"` and `orientation="horizontal"` props can be combined to buil
 
 </details>
 
-### Asynchronous loading
+## Asynchronous loading
 
 This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading
 of data from a server. You may additionally want to display a spinner to indicate the loading
@@ -762,14 +773,20 @@ function AsyncLoadingExample() {
 }
 ```
 
-### Disabled items
+## Disabled items
 
 `ListBox` supports marking items as disabled using the `disabledKeys` prop. Each key in this list
 corresponds with the `id` prop passed to the `Item` component, or automatically derived from the values passed
 to the `items` prop. See [Collections](../react-stately/Collections.html) for more details.
 
 ```tsx example
-<ListBox aria-label="Choose sandwich contents" selectionMode="multiple" disabledKeys={['tuna']}>
+<ListBox
+  aria-label="Choose sandwich contents"
+  selectionMode="multiple"
+  /*- begin highlight -*/
+  disabledKeys={['tuna']}
+  /*- end highlight -*/
+>
   <Item id="lettuce">Lettuce</Item>
   <Item id="tomato">Tomato</Item>
   <Item id="cheese">Cheese</Item>
@@ -779,12 +796,17 @@ to the `items` prop. See [Collections](../react-stately/Collections.html) for mo
 </ListBox>
 ```
 
-### Empty state
+## Empty state
 
 Use the `renderEmptyState` prop to customize what the `ListBox` will display if there are no items.
 
 ```tsx example
-<ListBox aria-label="Search results" renderEmptyState={() => 'No results found.'}>
+<ListBox
+  aria-label="Search results"
+  /*- begin highlight -*/
+  renderEmptyState={() => 'No results found.'}
+  /*- end highlight -*/
+>
   {[]}
 </ListBox>
 ```

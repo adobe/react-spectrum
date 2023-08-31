@@ -148,11 +148,11 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
   appearance: none;
   vertical-align: middle;
   font-family: system-ui;
-  font-size: 1.2rem;
+  font-size: 1rem;
   text-align: center;
   margin: 0;
   outline: none;
-  padding: 6px;
+  padding: 6px 10px;
   transition: border-color 200ms;
 
   &[data-hovered] {
@@ -219,11 +219,7 @@ import {DialogTrigger, Modal, Dialog, Button, Heading} from 'react-aria-componen
 
 If a dialog does not have a visible heading element, an `aria-label` or `aria-labelledby` prop must be passed instead to identify the element to assistive technology.
 
-## Usage
-
-A `Dialog` should be placed within an overlay component such as [Modal](Modal.html) or [Popover](Popover.html).
-
-### Popover
+## Popover
 
 A `Dialog` may be placed within a [Popover](Popover.html) to display it in context with a trigger element.
 
@@ -327,7 +323,7 @@ import {Popover, OverlayArrow} from 'react-aria-components';
 
 </details>
 
-### Alert dialog
+## Alert dialog
 
 Alert dialogs are a special type of dialog meant to present a prompt that the user must confirm before an action proceeds. An alert dialog may also behave differently with assistive technologies, such as playing a system alert sound when opening. Use the `role="alertdialog"` prop on the `<Dialog>` element to make an alert dialog.
 

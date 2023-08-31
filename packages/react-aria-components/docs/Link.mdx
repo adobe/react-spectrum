@@ -122,7 +122,7 @@ keyboard users may activate links using the <Keyboard>Enter</Keyboard> key.
 If a visual label is not provided (e.g. an icon or image only link), then an `aria-label` or
 `aria-labelledby` prop must be passed to identify the link to assistive technology.
 
-## Usage
+## Content
 
 ### Router links
 
@@ -146,7 +146,7 @@ Note: this will not behave like a native link. Browser features like context men
 <Link onPress={() => alert('Pressed link')}>Adobe</Link>
 ```
 
-### Events
+## Events
 
 `Link` supports user interactions via mouse, keyboard, and touch. You can handle all of these via the `onPress` prop. This is similar to the standard `onClick` event, but normalized to support all interaction methods equally. In addition, the `onPressStart`, `onPressEnd`, and `onPressChange` events are fired as the user interacts with the link.
 
@@ -169,7 +169,7 @@ function Example() {
 }
 ```
 
-### Disabled
+## Disabled
 
 A link can be disabled by passing the `isDisabled` property. This will work with both native
 link elements as well as client handled links. Native navigation will be disabled, and the `onPress`

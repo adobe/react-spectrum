@@ -183,13 +183,19 @@ function MyMeter({label, ...props}: MyMeterProps) {
 <MyMeter label="Storage space" value={80} />
 ```
 
-## Usage
+## Value
 
-The following examples show how to use the `MyMeter` component created in the above example.
+Meters are controlled with the `value` prop. By default, the `value` prop represents the current percentage of progress, as the minimum and maximum values default to 0 and 100, respectively.
+
+```tsx example
+<MyMeter
+  label="Storage space"
+  value={25} />
+```
 
 ### Custom value scale
 
-By default, the `value` prop represents the current percentage of progress, as the minimum and maximum values default to 0 and 100, respectively. Alternatively, a different scale can be used by setting the `minValue` and `maxValue` props.
+A custom value scale can be used by setting the `minValue` and `maxValue` props.
 
 ```tsx example
 <MyMeter
@@ -198,6 +204,8 @@ By default, the `value` prop represents the current percentage of progress, as t
   maxValue={150}
   value={100} />
 ```
+
+## Labeling
 
 ### Value formatting
 

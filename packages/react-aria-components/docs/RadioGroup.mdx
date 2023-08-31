@@ -318,6 +318,42 @@ Implement your own validation logic in your app and set the `isInvalid` prop acc
 </MyRadioGroup>
 ```
 
+### Help text
+
+The `description` slot can be used to associate additional help text with a radio group. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to semantically mark the radio group as invalid for assistive technologies.
+
+```tsx example
+function Example() {
+  let [selected, setSelected] = React.useState('dogs');
+  let isValid = selected === 'dogs';
+
+  return (
+    <RadioGroup
+      value={selected}
+      onChange={setSelected}
+      /*- begin highlight -*/
+      isInvalid={!isValid}
+      /*- end highlight -*/
+    >
+      <Label>Favorite pet</Label>
+      <Radio value="dogs">
+        Dogs
+      </Radio>
+      <Radio value="cats">
+        Cats
+      </Radio>
+      <Radio value="dragons">
+        Dragons
+      </Radio>
+      {/*- begin highlight -*/}
+      {isValid && <Text slot="description">Please select a pet.</Text>}
+      {!isValid && <Text slot="errorMessage">{selected === 'cats' ? 'No cats allowed.': 'Please select dogs.'}</Text>}
+      {/*- end highlight -*/}
+    </RadioGroup>
+  );
+}
+```
+
 ## Orientation
 
 RadioGroups are vertically oriented by default.
@@ -328,40 +364,6 @@ The `orientation` prop can be used to change the orientation to horizontal.
   <Radio value="wizard">Wizard</Radio>
   <Radio value="dragon">Dragon</Radio>
 </MyRadioGroup>
-```
-
-## Help text
-
-The `description` slot can be used to associate additional help text with a radio group. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to semantically mark the radio group as invalid for assistive technologies.
-
-```tsx example
-function Example() {
-  let [selected, setSelected] = React.useState('dogs');
-  let isValid = selected === 'dogs';
-
-  return (
-    <MyRadioGroup
-      aria-label="Favorite pet"
-      onChange={setSelected}
-      isInvalid={!isValid}
-      description={isValid ? 'Please select a pet.' : undefined}
-      errorMessage={isValid ? undefined :
-        selected === 'cats'
-          ? 'No cats allowed.'
-          : 'Please select dogs.'
-      }>
-      <Radio value="dogs">
-        Dogs
-      </Radio>
-      <Radio value="cats">
-        Cats
-      </Radio>
-      <Radio value="dragons">
-        Dragons
-      </Radio>
-    </MyRadioGroup>
-  );
-}
 ```
 
 ## Disabled

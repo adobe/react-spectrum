@@ -169,37 +169,6 @@ A `ProgressBar` uses the following components, which may also be used standalone
 
 </section>
 
-## Circular
-
-Progress bars may also be represented using a circular visualization rather than a line. This is often used to represent indeterminate
-operations, but may also be used for determinate progress indicators when space is limited. The following example shows a progress bar
-visualized as a circular spinner using SVG.
-
-```tsx example
-let center = 16;
-let strokeWidth = 4;
-let r = 16 - strokeWidth;
-let c = 2 * r * Math.PI;
-
-<ProgressBar aria-label="Loading…" value={60}>
-  {({percentage}) => <>
-    <svg width={64} height={64} viewBox="0 0 32 32" fill="none" strokeWidth={strokeWidth}>
-      <circle cx={center} cy={center} r={r - (strokeWidth / 2 - 0.25)} stroke="var(--circle-color)" strokeWidth={0.5} />
-      <circle cx={center} cy={center} r={r + (strokeWidth / 2 - 0.25)} stroke="var(--circle-color)" strokeWidth={0.5} />
-      <circle
-        cx={center}
-        cy={center}
-        r={r}
-        stroke="var(--fill-color)"
-        strokeDasharray={`${c} ${c}`}
-        strokeDashoffset={c - percentage / 100 * c}
-        strokeLinecap="round"
-        transform="rotate(-90 16 16)" />
-    </svg>
-  </>}
-</ProgressBar>
-```
-
 ## Reusable wrappers
 
 If you will use a ProgressBar in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
@@ -230,13 +199,17 @@ function MyProgressBar({label, ...props}: MyProgressBarProps) {
 <MyProgressBar label="Loading…" value={80} />
 ```
 
-## Usage
+## Value
 
-The following examples show how to use the `MyProgressBar` component created in the above example.
+ProgressBars are controlled with the `value` prop. By default, the `value` prop represents the current percentage of progress, as the minimum and maximum values default to 0 and 100, respectively.
+
+```tsx example
+<MyProgressBar label="Loading…" value={25} />
+```
 
 ### Custom value scale
 
-By default, the `value` prop represents the current percentage of progress, as the minimum and maximum values default to 0 and 100, respectively. Alternatively, a different scale can be used by setting the `minValue` and `maxValue` props.
+A custom value scale can be used by setting the `minValue` and `maxValue` props.
 
 ```tsx example
 <MyProgressBar
@@ -245,6 +218,18 @@ By default, the `value` prop represents the current percentage of progress, as t
   maxValue={150}
   value={100} />
 ```
+
+### Indeterminate
+
+The `isIndeterminate` prop can be used to represent an interdeterminate operation.
+
+```tsx example
+<MyProgressBar
+  aria-label="Loading…"
+  isIndeterminate />
+```
+
+## Labeling
 
 ### Value formatting
 
@@ -269,14 +254,35 @@ The `valueLabel` prop allows the formatted value to be replaced with a custom st
   value={30} />
 ```
 
-### Indeterminate
+## Circular
 
-The `isIndeterminate` prop can be used to represent an interdeterminate operation.
+Progress bars may also be represented using a circular visualization rather than a line. This is often used to represent indeterminate
+operations, but may also be used for determinate progress indicators when space is limited. The following example shows a progress bar
+visualized as a circular spinner using SVG.
 
 ```tsx example
-<MyProgressBar
-  aria-label="Loading…"
-  isIndeterminate />
+let center = 16;
+let strokeWidth = 4;
+let r = 16 - strokeWidth;
+let c = 2 * r * Math.PI;
+
+<ProgressBar aria-label="Loading…" value={60}>
+  {({percentage}) => <>
+    <svg width={64} height={64} viewBox="0 0 32 32" fill="none" strokeWidth={strokeWidth}>
+      <circle cx={center} cy={center} r={r - (strokeWidth / 2 - 0.25)} stroke="var(--circle-color)" strokeWidth={0.5} />
+      <circle cx={center} cy={center} r={r + (strokeWidth / 2 - 0.25)} stroke="var(--circle-color)" strokeWidth={0.5} />
+      <circle
+        cx={center}
+        cy={center}
+        r={r}
+        stroke="var(--fill-color)"
+        strokeDasharray={`${c} ${c}`}
+        strokeDashoffset={c - percentage / 100 * c}
+        strokeLinecap="round"
+        transform="rotate(-90 16 16)" />
+    </svg>
+  </>}
+</ProgressBar>
 ```
 
 ## Props
