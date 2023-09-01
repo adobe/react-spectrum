@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-export {Breadcrumbs, BreadcrumbsContext} from './Breadcrumbs';
+export {Breadcrumbs, BreadcrumbsContext, Breadcrumb} from './Breadcrumbs';
 export {Button, ButtonContext} from './Button';
 export {Calendar, CalendarGrid, CalendarGridHeader, CalendarGridBody, CalendarHeaderCell, CalendarCell, RangeCalendar, CalendarContext, RangeCalendarContext} from './Calendar';
 export {Checkbox, CheckboxGroup, CheckboxGroupContext, CheckboxContext} from './Checkbox';
@@ -55,7 +55,7 @@ export {TooltipTrigger, Tooltip} from './Tooltip';
 export {useDragAndDrop, DropIndicator, DropIndicatorContext} from './useDragAndDrop';
 export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem, SSRProvider} from 'react-aria';
 
-export type {BreadcrumbsProps} from './Breadcrumbs';
+export type {BreadcrumbsProps, BreadcrumbProps} from './Breadcrumbs';
 export type {ButtonProps, ButtonRenderProps} from './Button';
 export type {CalendarCellProps, CalendarProps, CalendarRenderProps, CalendarGridProps, CalendarGridHeaderProps, CalendarGridBodyProps, CalendarHeaderCellProps, CalendarCellRenderProps, RangeCalendarProps, RangeCalendarRenderProps} from './Calendar';
 export type {CheckboxGroupProps, CheckboxGroupRenderProps, CheckboxRenderProps, CheckboxProps} from './Checkbox';
