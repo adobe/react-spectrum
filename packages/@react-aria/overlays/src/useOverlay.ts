@@ -44,12 +44,10 @@ export interface AriaOverlayProps {
    * By default, onClose will always be called on interaction outside the overlay ref.
    */
   shouldCloseOnInteractOutside?: (element: Element) => boolean,
-
   /**
-   * Whether the overlay should be closed even if it isn't the top most visible overlay in the stack.
-   * Specifically used for submenu actions.
+   * The ref for the underlay element if any.
    */
-  isMenu?: boolean
+  underlayRef?: RefObject<Element>
 }
 
 export interface OverlayAria {
@@ -74,7 +72,7 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
     isDismissable = false,
     isKeyboardDismissDisabled = false,
     shouldCloseOnInteractOutside,
-    isMenu
+    underlayRef
   } = props;
 
   // Add the overlay ref to the stack of visible overlays on mount, and remove on unmount.
@@ -91,9 +89,9 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
     };
   }, [isOpen, ref]);
 
-  // Only hide the overlay when it is the topmost visible overlay in the stack or if it is a menu.
+  // Only hide the overlay when it is the topmost visible overlay in the stack.
   let onHide = () => {
-    if ((visibleOverlays[visibleOverlays.length - 1] === ref || isMenu) && onClose) {
+    if (visibleOverlays[visibleOverlays.length - 1] === ref && onClose) {
       onClose();
     }
   };
@@ -127,7 +125,7 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
   };
 
   // Handle clicking outside the overlay to close it
-  useInteractOutside({ref, onInteractOutside: isDismissable ? onInteractOutside : null, onInteractOutsideStart});
+  useInteractOutside({ref, onInteractOutside: isDismissable || !underlayRef ? onInteractOutside : null, onInteractOutsideStart});
 
   let {focusWithinProps} = useFocusWithin({
     isDisabled: !shouldCloseOnBlur,
@@ -156,6 +154,7 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
     if (e.target === e.currentTarget) {
       e.preventDefault();
     }
+    isDismissable && onClose();
   };
 
   return {
