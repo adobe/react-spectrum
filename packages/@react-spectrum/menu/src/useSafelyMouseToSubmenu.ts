@@ -18,7 +18,6 @@ interface SafeMouseToSubmenuOptions {
 export function useSafelyMouseToSubmenu(options: SafeMouseToSubmenuOptions) {
   let {menuRef, submenuRef, triggerRef, isOpen} = options;
   let prevPointerPos = useRef<{x: number, y: number, time: number}>(null);
-  let currentSpeed = useRef<number>(null);
   let menuRect = useRef<DOMRect>(null);
   let submenuRect = useRef<DOMRect>(null);
   let triggerRect = useRef<DOMRect>(null);
@@ -61,11 +60,8 @@ export function useSafelyMouseToSubmenu(options: SafeMouseToSubmenuOptions) {
         return;
       }
 
-      let timeDelta = currentTime - prevPointerPos.current.time;
       let dx = mouseX - prevPointerPos.current.x;
       let dy = mouseY - prevPointerPos.current.y;
-
-      let speed = Math.sqrt(dx * dx + dy * dy) / timeDelta;
 
       // Check if pointer is moving towards submenu.
       if (!submenuRect.current) {
@@ -92,7 +88,6 @@ export function useSafelyMouseToSubmenu(options: SafeMouseToSubmenuOptions) {
         }
       }
 
-      currentSpeed.current = speed;
       prevPointerPos.current = {x: mouseX, y: mouseY, time: currentTime};
     };
 
