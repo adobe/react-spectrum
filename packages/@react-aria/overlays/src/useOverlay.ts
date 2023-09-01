@@ -149,8 +149,6 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
     if (e.target === e.currentTarget) {
       e.preventDefault();
     }
-
-    isDismissable && onClose();
   };
 
   return {
