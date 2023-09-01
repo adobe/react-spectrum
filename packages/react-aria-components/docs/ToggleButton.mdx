@@ -66,11 +66,11 @@ import {ToggleButton} from 'react-aria-components';
   border-radius: 4px;
   appearance: none;
   vertical-align: middle;
-  font-size: 1.2rem;
+  font-size: 1rem;
   text-align: center;
   margin: 0;
   outline: none;
-  padding: 4px 12px;
+  padding: 6px 10px;
 
   &[data-pressed] {
     box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
@@ -145,6 +145,34 @@ the state using the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> key
 If a visual label is not provided (e.g. an icon only button), then an `aria-label` or
 `aria-labelledby` prop must be passed to identify the button to assistive technology.
 
+## Selection
+
+A default selection state for a toggle button can be set using the `defaultSelected` prop, or controlled with the `isSelected` prop. The `onChange` event is fired when the user presses the button, toggling the boolean. See React's documentation on
+[uncontrolled components](https://reactjs.org/docs/uncontrolled-components.html) for more info.
+
+```tsx example
+function Example() {
+  let [isSelected, setSelected] = React.useState(false);
+
+  return (
+    <ToggleButton
+      isSelected={isSelected}
+      onChange={setSelected}
+      aria-label="Star">
+      ★
+    </ToggleButton>
+  );
+}
+```
+
+## Disabled
+
+A `ToggleButton` can be disabled using the `isDisabled` prop.
+
+```tsx example
+<ToggleButton isDisabled>Pin</ToggleButton>
+```
+
 ## Props
 
 <PropTable component={docs.exports.ToggleButton} links={docs.links} />
@@ -197,36 +225,6 @@ Render props may also be used as children to alter what elements are rendered ba
 The states, selectors, and render props for `ToggleButton` are documented below.
 
 <StateTable properties={docs.exports.ToggleButtonRenderProps.properties} />
-
-## Usage
-
-### Controlled selection state
-
-A default selection state for a toggle button can be set using the `defaultSelected` prop, or controlled with the `isSelected` prop. The `onChange` event is fired when the user presses the button, toggling the boolean. See React's documentation on
-[uncontrolled components](https://reactjs.org/docs/uncontrolled-components.html) for more info.
-
-```tsx example
-function Example() {
-  let [isSelected, setSelected] = React.useState(false);
-
-  return (
-    <ToggleButton
-      isSelected={isSelected}
-      onChange={setSelected}
-      aria-label="Star">
-      ★
-    </ToggleButton>
-  );
-}
-```
-
-### Disabled
-
-A `ToggleButton` can be disabled using the `isDisabled` prop.
-
-```tsx example
-<ToggleButton isDisabled>Pin</ToggleButton>
-```
 
 ## Advanced customization
 

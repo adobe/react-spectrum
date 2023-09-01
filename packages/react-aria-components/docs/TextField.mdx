@@ -141,6 +141,17 @@ and the `aria-labelledby` attribute on the `<input>` element.
 to provide more context about the field, and any validation messages. These are linked with the
 input via the `aria-describedby` attribute.
 
+```tsx
+import {TextField, Label, Input, Button, Text} from 'react-aria-components';
+
+<TextField>
+  <Label />
+  <Input />
+  <Text slot="description" />
+  <Text slot="errorMessage" />
+</TextField>
+```
+
 If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead
 to identify the element to screen readers.
 
@@ -165,6 +176,142 @@ A `TextField` uses the following components, which may also be used standalone o
 </ExampleCard>
 
 </section>
+
+## Reusable wrappers
+
+If you will use a TextField in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+This example wraps `TextField` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#description)).
+
+```tsx example export=true
+import type {TextFieldProps} from 'react-aria-components';
+import {Text} from 'react-aria-components';
+
+interface MyTextFieldProps extends TextFieldProps {
+  label?: string,
+  description?: string,
+  errorMessage?: string
+}
+
+function MyTextField({label, description, errorMessage, ...props}: MyTextFieldProps) {
+  return (
+    <TextField {...props}>
+      <Label>{label}</Label>
+      <Input />
+      {description && <Text slot="description">{description}</Text>}
+      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
+    </TextField>
+  );
+}
+
+<MyTextField label="Name" />
+```
+
+## Value
+
+### Default value
+
+A TextField's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop.
+
+```tsx example
+<MyTextField
+  label="Email"
+  defaultValue="me@email.com" />
+```
+
+### Controlled value
+
+The `value` prop can be used to make the value controlled. The `onChange` event is fired when the user edits the text, and receives the new value.
+
+```tsx example
+function Example() {
+  let [text, setText] = React.useState('');
+
+  return (
+    <>
+      <MyTextField label="Your text" onChange={setText} />
+      <p>Mirrored text: {text}</p>
+    </>
+  );
+}
+```
+
+### HTML forms
+
+TextField supports the `name` prop for integration with HTML forms. In addition, attributes such as `type`, `pattern`, `inputMode`, and others are passed through to the underlying `<input>` element.
+
+```tsx example
+<MyTextField label="Email" name="email" type="email" />
+```
+
+## Validation
+
+### Description
+
+The `description` slot can be used to associate additional help text with a text field.
+
+```tsx example
+<TextField>
+  <Label>Email</Label>
+  <Input />
+  {/*- begin highlight -*/}
+  <Text slot="description">Enter an email for us to contact you about your order.</Text>
+  {/*- end highlight -*/}
+</TextField>
+```
+
+### Error message
+
+The `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to
+semantically mark the input element as invalid for assistive technologies.
+
+```tsx example
+<TextField isInvalid>
+  <Label>Email</Label>
+  <Input />
+  {/*- begin highlight -*/}
+  <Text slot="errorMessage">Please enter a valid email address.</Text>
+  {/*- end highlight -*/}
+</TextField>
+```
+
+### Required
+
+A TextField can be marked as required using the `isRequired` prop. This is exposed to assistive technologies by React Aria. It's your responsibility to add additional visual styling if needed.
+
+```tsx example
+<MyTextField label="Email" isRequired />
+```
+
+## Disabled
+
+A TextField can be disabled using the `isDisabled` prop.
+
+```tsx example
+<MyTextField label="Email" isDisabled />
+```
+
+### Read only
+
+The `isReadOnly` boolean prop makes the TextField's text content immutable. Unlike `isDisabled`, the TextField remains focusable
+and the contents can still be copied. See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
+
+```tsx example
+<MyTextField label="Email" defaultValue="abc@adobe.com" isReadOnly />
+```
+
+## Multi-line
+
+TextField supports using the `TextArea` component in place of `Input` for multi-line text input.
+
+```tsx example
+import {TextField, Label, TextArea} from 'react-aria-components';
+
+<TextField>
+  <Label>Comment</Label>
+  <TextArea />
+</TextField>
+```
 
 ## Props
 
@@ -239,135 +386,6 @@ An `TextArea` can be targeted with the `.react-aria-TextArea` CSS selector, or b
 ### Text
 
 The help text elements within a `TextField` can be targeted with the `[slot=description]` and `[slot=errorMessage]` CSS selectors, or by adding a custom `className`.
-
-## Reusable wrappers
-
-If you will use a TextField in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
-
-This example wraps `TextField` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#description)).
-
-```tsx example export=true
-import type {TextFieldProps} from 'react-aria-components';
-import {Text} from 'react-aria-components';
-
-interface MyTextFieldProps extends TextFieldProps {
-  label?: string,
-  description?: string,
-  errorMessage?: string
-}
-
-function MyTextField({label, description, errorMessage, ...props}: MyTextFieldProps) {
-  return (
-    <TextField {...props}>
-      <Label>{label}</Label>
-      <Input />
-      {description && <Text slot="description">{description}</Text>}
-      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
-    </TextField>
-  );
-}
-
-<MyTextField label="Name" />
-```
-
-## Usage
-
-The following examples show how to use the `MyTextField` component created in the above example.
-
-### Default value
-
-A TextField's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop.
-
-```tsx example
-<MyTextField
-  label="Email"
-  defaultValue="me@email.com" />
-```
-
-### Controlled value
-
-The `value` prop can be used to make the value controlled. The `onChange` event is fired when the user edits the text, and receives the new value.
-
-```tsx example
-function Example() {
-  let [text, setText] = React.useState('');
-
-  return (
-    <>
-      <MyTextField label="Your text" onChange={setText} />
-      <p>Mirrored text: {text}</p>
-    </>
-  );
-}
-```
-
-### Description
-
-The `description` slot can be used to associate additional help text with a text field.
-
-```tsx example
-<MyTextField
-  label="Email"
-  description="Enter an email for us to contact you about your order." />
-```
-
-### Error message
-
-The `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to
-semantically mark the input element as invalid for assistive technologies.
-
-```tsx example
-<MyTextField
-  label="Email"
-  isInvalid
-  errorMessage="Please enter a valid email address." />
-```
-
-### Disabled
-
-A TextField can be disabled using the `isDisabled` prop.
-
-```tsx example
-<MyTextField label="Email" isDisabled />
-```
-
-### Read only
-
-The `isReadOnly` boolean prop makes the TextField's text content immutable. Unlike `isDisabled`, the TextField remains focusable
-and the contents can still be copied. See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
-
-```tsx example
-<MyTextField label="Email" defaultValue="abc@adobe.com" isReadOnly />
-```
-
-### Required
-
-A TextField can be marked as required using the `isRequired` prop. This is exposed to assistive technologies by React Aria. It's your responsibility to add additional visual styling if needed.
-
-```tsx example
-<MyTextField label="Email" isRequired />
-```
-
-### HTML forms
-
-TextField supports the `name` prop for integration with HTML forms. In addition, attributes such as `type`, `pattern`, `inputMode`, and others are passed through to the underlying `<input>` element.
-
-```tsx example
-<MyTextField label="Email" name="email" type="email" />
-```
-
-### Multi-line
-
-TextField supports using the `TextArea` component in place of `Input` for multi-line text input.
-
-```tsx example
-import {TextField, Label, TextArea} from 'react-aria-components';
-
-<TextField>
-  <Label>Comment</Label>
-  <TextArea />
-</TextField>
-```
 
 ## Advanced customization
 

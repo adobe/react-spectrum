@@ -199,6 +199,109 @@ In most cases, checkboxes should have a visual label. If the checkbox does not h
 an `aria-label` or `aria-labelledby` prop must be passed instead to identify the element to assistive
 technology.
 
+## Reusable wrappers
+
+If you will use a Checkbox in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+This example wraps `Checkbox` and all of its children together into a single component. It also shows how to use render props to conditionally render a different indicator icon when the checkbox is in an indeterminate state.
+
+```tsx example export=true
+import type {CheckboxProps} from 'react-aria-components';
+
+function MyCheckbox({children, ...props}: CheckboxProps) {
+  return (
+    <Checkbox {...props}>
+      {({isIndeterminate}) => <>
+        <div className="checkbox">
+          <svg viewBox="0 0 18 18" aria-hidden="true">
+            {isIndeterminate
+              ? <rect x={1} y={7.5} width={15} height={3} />
+              : <polyline points="1 9 7 14 15 4" />
+            }
+          </svg>
+        </div>
+        {children}
+      </>}
+    </Checkbox>
+  );
+}
+
+<MyCheckbox>Unsubscribe</MyCheckbox>
+```
+
+## Value
+
+### Default value
+
+Checkboxes are not selected by default. The `defaultSelected` prop can be used to set the default state.
+
+```tsx example
+<MyCheckbox defaultSelected>Subscribe</MyCheckbox>
+```
+
+### Controlled value
+
+The `isSelected` prop can be used to make the selected state controlled. The `onChange` event is fired when the user presses the checkbox, and receives the new value.
+
+```tsx example
+function Example() {
+  let [selected, setSelection] = React.useState(false);
+
+  return (
+    <>
+      <MyCheckbox isSelected={selected} onChange={setSelection}>
+        Subscribe
+      </MyCheckbox>
+      <p>{`You are ${selected ? 'subscribed' : 'unsubscribed'}`}</p>
+    </>
+  );
+}
+```
+
+### Indeterminate
+
+A Checkbox can be in an indeterminate state, controlled using the `isIndeterminate` prop.
+This overrides the appearance of the Checkbox, whether selection is controlled or uncontrolled.
+The Checkbox will visually remain indeterminate until the `isIndeterminate` prop is set to false, regardless of user interaction.
+
+```tsx example
+<MyCheckbox isIndeterminate>Subscribe</MyCheckbox>
+```
+
+### HTML forms
+
+Checkbox supports the `name` and `value` props for integration with HTML forms.
+
+```tsx example
+<MyCheckbox name="newsletter" value="subscribe">Subscribe</MyCheckbox>
+```
+
+## Validation
+
+Checkboxes can display a validation state to communicate to the user if the current value is invalid.
+Implement your own validation logic in your app and set the `isInvalid` prop accordingly.
+
+```tsx example
+<MyCheckbox isInvalid>I accept the terms and conditions</MyCheckbox>
+```
+
+## Disabled
+
+Checkboxes can be disabled using the `isDisabled` prop.
+
+```tsx example
+<MyCheckbox isDisabled>Subscribe</MyCheckbox>
+```
+
+### Read only
+
+The `isReadOnly` prop makes the selection immutable. Unlike `isDisabled`, the Checkbox remains focusable.
+See the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
+
+```tsx example
+<MyCheckbox isSelected isReadOnly>Agree</MyCheckbox>
+```
+
 ## Props
 
 <PropTable component={docs.exports.Checkbox} links={docs.links} />
@@ -251,112 +354,6 @@ Render props may also be used as children to alter what elements are rendered ba
 The states, selectors, and render props for `Checkbox` are documented below.
 
 <StateTable properties={docs.exports.CheckboxRenderProps.properties} />
-
-## Reusable wrappers
-
-If you will use a Checkbox in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
-
-This example wraps `Checkbox` and all of its children together into a single component. It also shows how to use render props to conditionally render a different indicator icon when the checkbox is in an indeterminate state.
-
-```tsx example export=true
-import type {CheckboxProps} from 'react-aria-components';
-
-function MyCheckbox({children, ...props}: CheckboxProps) {
-  return (
-    <Checkbox {...props}>
-      {({isIndeterminate}) => <>
-        <div className="checkbox">
-          <svg viewBox="0 0 18 18" aria-hidden="true">
-            {isIndeterminate
-              ? <rect x={1} y={7.5} width={15} height={3} />
-              : <polyline points="1 9 7 14 15 4" />
-            }
-          </svg>
-        </div>
-        {children}
-      </>}
-    </Checkbox>
-  );
-}
-
-<MyCheckbox>Unsubscribe</MyCheckbox>
-```
-
-## Usage
-
-The following examples show how to use the `MyCheckbox` component created in the above example.
-
-### Default value
-
-Checkboxes are not selected by default. The `defaultSelected` prop can be used to set the default state.
-
-```tsx example
-<MyCheckbox defaultSelected>Subscribe</MyCheckbox>
-```
-
-### Controlled value
-
-The `isSelected` prop can be used to make the selected state controlled. The `onChange` event is fired when the user presses the checkbox, and receives the new value.
-
-```tsx example
-function Example() {
-  let [selected, setSelection] = React.useState(false);
-
-  return (
-    <>
-      <MyCheckbox isSelected={selected} onChange={setSelection}>
-        Subscribe
-      </MyCheckbox>
-      <p>{`You are ${selected ? 'subscribed' : 'unsubscribed'}`}</p>
-    </>
-  );
-}
-```
-
-### Indeterminate
-
-A Checkbox can be in an indeterminate state, controlled using the `isIndeterminate` prop.
-This overrides the appearance of the Checkbox, whether selection is controlled or uncontrolled.
-The Checkbox will visually remain indeterminate until the `isIndeterminate` prop is set to false, regardless of user interaction.
-
-```tsx example
-<MyCheckbox isIndeterminate>Subscribe</MyCheckbox>
-```
-
-### Validation
-
-Checkboxes can display a validation state to communicate to the user if the current value is invalid.
-Implement your own validation logic in your app and set the `isInvalid` prop accordingly.
-
-```tsx example
-<MyCheckbox isInvalid>I accept the terms and conditions</MyCheckbox>
-```
-
-### Disabled
-
-Checkboxes can be disabled using the `isDisabled` prop.
-
-```tsx example
-<MyCheckbox isDisabled>Subscribe</MyCheckbox>
-```
-
-### Read only
-
-The `isReadOnly` prop makes the selection immutable. Unlike `isDisabled`, the Checkbox remains focusable.
-See the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
-
-```tsx example
-<MyCheckbox isSelected isReadOnly>Agree</MyCheckbox>
-```
-
-
-### HTML forms
-
-Checkbox supports the `name` and `value` props for integration with HTML forms.
-
-```tsx example
-<MyCheckbox name="newsletter" value="subscribe">Subscribe</MyCheckbox>
-```
 
 ## Advanced customization
 
