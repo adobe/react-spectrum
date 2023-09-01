@@ -43,11 +43,7 @@ export interface AriaOverlayProps {
    * out interaction with elements that should not dismiss the overlay.
    * By default, onClose will always be called on interaction outside the overlay ref.
    */
-  shouldCloseOnInteractOutside?: (element: Element) => boolean,
-  /**
-   * The ref for the underlay element if any.
-   */
-  underlayRef?: RefObject<Element>
+  shouldCloseOnInteractOutside?: (element: Element) => boolean
 }
 
 export interface OverlayAria {
@@ -71,8 +67,7 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
     isOpen,
     isDismissable = false,
     isKeyboardDismissDisabled = false,
-    shouldCloseOnInteractOutside,
-    underlayRef
+    shouldCloseOnInteractOutside
   } = props;
 
   // Add the overlay ref to the stack of visible overlays on mount, and remove on unmount.
@@ -125,7 +120,7 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
   };
 
   // Handle clicking outside the overlay to close it
-  useInteractOutside({ref, onInteractOutside: isDismissable || !underlayRef ? onInteractOutside : null, onInteractOutsideStart});
+  useInteractOutside({ref, onInteractOutside: isDismissable ? onInteractOutside : null, onInteractOutsideStart});
 
   let {focusWithinProps} = useFocusWithin({
     isDisabled: !shouldCloseOnBlur,
@@ -154,6 +149,7 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
     if (e.target === e.currentTarget) {
       e.preventDefault();
     }
+
     isDismissable && onClose();
   };
 

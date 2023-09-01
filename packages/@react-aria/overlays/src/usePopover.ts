@@ -30,10 +30,6 @@ export interface AriaPopoverProps extends Omit<AriaPositionProps, 'isOpen' | 'on
    */
   popoverRef: RefObject<Element>,
   /**
-   * The ref for the underlay element if any.
-   */
-  underlayRef?: RefObject<Element>,
-  /**
    * Whether the popover is non-modal, i.e. elements outside the popover may be
    * interacted with by assistive technologies.
    *
@@ -72,7 +68,6 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
   let {
     triggerRef,
     popoverRef,
-    underlayRef,
     isNonModal,
     isKeyboardDismissDisabled,
     ...otherProps
@@ -84,8 +79,7 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
       onClose: state.close,
       shouldCloseOnBlur: true,
       isDismissable: !isNonModal,
-      isKeyboardDismissDisabled,
-      underlayRef: underlayRef
+      isKeyboardDismissDisabled
     },
     popoverRef
   );

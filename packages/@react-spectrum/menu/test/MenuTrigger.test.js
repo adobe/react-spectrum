@@ -1178,7 +1178,7 @@ describe('MenuTrigger', function () {
         expect(dialog).toBeVisible();
       });
 
-      it('should close everything if the user clicks outside of the subdialog', function () {
+      it('should close everything if the user clicks on the underlay of the root menu', function () {
         renderTree();
         let menu = openMenu();
         let menuItems = within(menu).getAllByRole('menuitem');
@@ -1193,7 +1193,9 @@ describe('MenuTrigger', function () {
 
         expect(document.activeElement).toBe(dialog);
 
-        triggerPress(document.body);
+        let underlay = tree.getByTestId('underlay', {hidden: true});
+        fireEvent.pointerDown(underlay);
+        fireEvent.pointerUp(underlay);
         act(() => {jest.runAllTimers();});
         act(() => {jest.runAllTimers();});
         expect(dialog).not.toBeInTheDocument();

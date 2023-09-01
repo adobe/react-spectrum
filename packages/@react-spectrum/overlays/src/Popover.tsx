@@ -94,7 +94,6 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
     state,
     wrapperRef
   } = props;
-  let underlayRef = useRef();
   let {styleProps} = useStyleProps(props);
 
   let {size, borderWidth, arrowRef} = useArrowSize();
@@ -112,14 +111,13 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
     popoverRef: ref,
     maxHeight: null,
     arrowSize: hideArrow ? 0 : secondary,
-    arrowBoundaryOffset: borderRadius,
-    underlayRef: underlayRef
+    arrowBoundaryOffset: borderRadius
   }, state);
   let {focusWithinProps} = useFocusWithin(props);
   // Attach Transition's nodeRef to outermost wrapper for node.reflow: https://github.com/reactjs/react-transition-group/blob/c89f807067b32eea6f68fd6c622190d88ced82e2/src/Transition.js#L231
   return (
     <div ref={wrapperRef}>
-      {!isNonModal && <Underlay ref={underlayRef} isTransparent {...underlayProps} isOpen={isOpen} /> }
+      {!isNonModal && <Underlay isTransparent {...underlayProps} isOpen={isOpen} /> }
       <div
         {...styleProps}
         {...mergeProps(popoverProps, focusWithinProps)}
