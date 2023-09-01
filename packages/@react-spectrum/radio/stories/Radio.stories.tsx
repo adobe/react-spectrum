@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Content, ContextualHelp, Flex, Heading} from '@adobe/react-spectrum';
+import {Button, Content, ContextualHelp, Flex, Heading} from '@adobe/react-spectrum';
 import {Provider} from '@react-spectrum/provider';
 import {Radio, RadioGroup} from '../src';
 import React, {useState} from 'react';
@@ -253,3 +253,30 @@ function renderWithDescriptionErrorMessageAndValidation(props) {
 
   return <Example />;
 }
+
+export const ControlledRovingTab = () => {
+  const [selected, setSelected] = useState('1');
+
+  return (
+    <Flex direction="column" gap="16px" alignItems="center" margin="16px">
+      <Button variant="primary" onPress={() => setSelected('2')}>
+        Make it "Two"
+      </Button>
+      <RadioGroup
+        label="Lucky number? (controlled)"
+        value={selected}
+        onChange={setSelected}>
+        <Radio value="1">One</Radio>
+        <Radio value="2">Two</Radio>
+        <Radio value="3">Three</Radio>
+        <Radio value="4">Four</Radio>
+      </RadioGroup>
+      <Button variant="primary" onPress={() => setSelected('3')}>
+        Make it "Three"
+      </Button>
+    </Flex>
+  );
+};
+ControlledRovingTab.story = {
+  name: 'controlled roving tab'
+};
