@@ -113,11 +113,11 @@ export function useSafelyMouseToSubmenu(options: SafeMouseToSubmenuOptions) {
     };
 
     menu.addEventListener('pointermove', onPointerMove);
-    menu.addEventListener('pointerenter', onPointerEnter);
+    menu.addEventListener('pointerenter', onPointerEnter, {capture: true});
 
     return () => {
       menu.removeEventListener('pointermove', onPointerMove);
-      menu.removeEventListener('pointerenter', onPointerEnter);
+      menu.removeEventListener('pointerenter', onPointerEnter, {capture: true});
     };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
