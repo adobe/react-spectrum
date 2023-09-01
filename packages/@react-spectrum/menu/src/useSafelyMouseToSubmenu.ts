@@ -1,14 +1,11 @@
 import {MutableRefObject, RefObject, useEffect, useRef} from 'react';
+import {useResizeObserver} from '@react-aria/utils';
 
 interface SafeMouseToSubmenuOptions {
   /** Ref for the parent menu. */
-  menuRef: RefObject<HTMLElement>,
+  menuRef: RefObject<Element>,
   /** Ref for the submenu. */
-  submenuRef: MutableRefObject<any>,
-  /** Ref for the submenu's trigger element. */
-  triggerRef: RefObject<HTMLElement>,
-  /** Whether the submenu is open. */
-  isOpen: boolean
+  submenuRef: MutableRefObject<any>
 }
 
 /**
@@ -16,32 +13,29 @@ interface SafeMouseToSubmenuOptions {
  * Prevents pointer events from going to the underlying menu if the user is moving their pointer towards the sub-menu.
  */
 export function useSafelyMouseToSubmenu(options: SafeMouseToSubmenuOptions) {
-  let {menuRef, submenuRef, triggerRef, isOpen} = options;
+  let {menuRef, submenuRef} = options;
   let prevPointerPos = useRef<{x: number, y: number, time: number}>(null);
+  let triggerRect = useRef<DOMRect>(null);
   let menuRect = useRef<DOMRect>(null);
   let submenuRect = useRef<DOMRect>(null);
-  let triggerRect = useRef<DOMRect>(null);
   let lastProcessedTime = useRef<number>(0);
   let isPointerMovingTowardsSubmenu = useRef<boolean>(false);
+
+  useResizeObserver({
+    ref: menuRef,
+    onResize: () => menuRect.current = menuRef.current.getBoundingClientRect()
+  });
 
   useEffect(() => {
     let menu = menuRef.current;
     let submenu = (submenuRef.current.UNSAFE_getDOMNode() as HTMLElement);
 
-    if (!menu || !submenu || !isOpen) {
+    if (!menu || !submenu) {
       return;
     }
 
     menuRect.current = menu.getBoundingClientRect();
     submenuRect.current = submenu.getBoundingClientRect();
-    triggerRect.current = triggerRef.current.getBoundingClientRect();
-
-    let updateMenuRects = () => {
-      menuRect.current = menu.getBoundingClientRect();
-      submenuRect.current = submenu.getBoundingClientRect();
-    };
-
-    window.addEventListener('resize', updateMenuRects);
 
     let onPointerMove = (e: PointerEvent) => {
       let currentTime = Date.now();
@@ -50,6 +44,17 @@ export function useSafelyMouseToSubmenu(options: SafeMouseToSubmenuOptions) {
       if (currentTime - lastProcessedTime.current < 16) {
         return;
       }
+
+      // Measure trigger element if we haven't already.
+      if (!triggerRect.current) {
+        triggerRect.current = (e.target as HTMLElement).closest('li').getBoundingClientRect();
+      }
+
+      // If mouse is still over trigger element, do nothing.
+      // if (e.clientX > triggerRect.current.left && e.clientX < triggerRect.current.right &&
+      //   e.clientY > triggerRect.current.top && e.clientY < triggerRect.current.bottom) {
+      //   return;
+      // }
 
       let prevIsPointerMovingTowardsSubmenu = isPointerMovingTowardsSubmenu.current;
 
@@ -73,17 +78,20 @@ export function useSafelyMouseToSubmenu(options: SafeMouseToSubmenuOptions) {
       let toSubmenuTop = submenuRect.current.top;
       let toSubmenuBottom = submenuRect.current.bottom - mouseY;
 
+      // See if mouse is moving towards submenu.
+      // Check if angle of mouse movement is between angle to top of submenu and angle to bottom of submenu.
+      let anglePointer = Math.atan2(dy, dx);
       let angleTop = Math.atan2(toSubmenuTop, toSubmenuX);
       let angleBottom = Math.atan2(toSubmenuBottom, toSubmenuX);
-      let anglePointer = Math.atan2(dy, dx);
 
-      isPointerMovingTowardsSubmenu.current = anglePointer < angleTop && anglePointer > angleBottom;
+      isPointerMovingTowardsSubmenu.current =  anglePointer < angleTop && anglePointer > angleBottom;
+      console.log({anglePointer, angleTop, angleBottom});
 
       // If pointer was previously moving towards submenu but is no longer moving towards submenu,
       // fire a pointerenter on the underlying item.
       if (prevIsPointerMovingTowardsSubmenu && !isPointerMovingTowardsSubmenu.current) {
         let target = document.elementFromPoint(mouseX, mouseY);
-        if (target) {
+        if (target && menu.contains(target)) {
           target.dispatchEvent(new PointerEvent('pointerenter', {bubbles: true, cancelable: true}));
         }
       }
@@ -92,6 +100,12 @@ export function useSafelyMouseToSubmenu(options: SafeMouseToSubmenuOptions) {
     };
 
     let onPointerEnter = (e: PointerEvent) => {
+      // Do nothing if over trigger element.
+      if (e.clientX > triggerRect.current.left && e.clientX < triggerRect.current.right &&
+        e.clientY > triggerRect.current.top && e.clientY < triggerRect.current.bottom) {
+        return;
+      }
+
       if (isPointerMovingTowardsSubmenu.current) {
         e.stopPropagation();
         e.preventDefault();
@@ -99,17 +113,13 @@ export function useSafelyMouseToSubmenu(options: SafeMouseToSubmenuOptions) {
     };
 
     menu.addEventListener('pointermove', onPointerMove);
-    [...menu.childNodes].forEach((node) => {
-      node.addEventListener('pointerenter', onPointerEnter);
-    });
+    menu.addEventListener('pointerenter', onPointerEnter);
 
     return () => {
       menu.removeEventListener('pointermove', onPointerMove);
-      [...menu.childNodes].forEach((node) => {
-        node.removeEventListener('pointerenter', onPointerEnter);
-      });
-      window.removeEventListener('resize', updateMenuRects);
+      menu.removeEventListener('pointerenter', onPointerEnter);
     };
 
-  }, [menuRef, submenuRef, isOpen, triggerRef]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [submenuRef.current]);
 }
