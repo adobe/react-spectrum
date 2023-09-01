@@ -24,7 +24,7 @@ export default {
 };
 
 export const ComboBoxExample = () => (
-  <ComboBox>
+  <ComboBox data-test-id="combo-box-example">
     <Label style={{display: 'block'}}>Test</Label>
     <div style={{display: 'flex'}}>
       <Input />
@@ -49,7 +49,7 @@ interface ComboBoxItem {
 
 let items: ComboBoxItem[] = [{id: '1', name: 'Foo'}, {id: '2', name: 'Bar'}, {id: '3', name: 'Baz'}];
 export const ComboBoxRenderPropsStatic = () => (
-  <ComboBox>
+  <ComboBox data-test-id="combo-box-render-props-static">
     {({isOpen}) => (
       <>
         <Label style={{display: 'block'}}>Test</Label>
@@ -186,8 +186,10 @@ export const ListBoxComplex = () => (
   </ListBox>
 );
 
+// Notice that `data-test-id` stays on top element and
+// `id` renders on button
 export const SelectExample = () => (
-  <Select data-testid="select-example">
+  <Select data-test-id="select-example" id="select-example-id">
     <Label style={{display: 'block'}}>Test</Label>
     <Button>
       <SelectValue />
@@ -276,7 +278,7 @@ export const MenuComplex = () => (
 );
 
 export const NumberFieldExample = () => (
-  <NumberField formatOptions={{style: 'currency', currency: 'USD'}}>
+  <NumberField data-test-id="number-field-example" formatOptions={{style: 'currency', currency: 'USD'}}>
     <Label>Test</Label>
     <Group style={{display: 'flex'}}>
       <Button slot="decrement">-</Button>
@@ -287,16 +289,16 @@ export const NumberFieldExample = () => (
 );
 
 export const DateFieldExample = () => (
-  <DateField>
+  <DateField data-test-id="date-field-example">
     <Label style={{display: 'block'}}>Date</Label>
-    <DateInput className={styles.field}>
+    <DateInput className={styles.field} data-test-id2="date-input">
       {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
     </DateInput>
   </DateField>
 );
 
 export const TimeFieldExample = () => (
-  <TimeField>
+  <TimeField data-test-id="time-field-example">
     <Label style={{display: 'block'}}>Time</Label>
     <DateInput className={styles.field}>
       {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
@@ -349,7 +351,7 @@ export const RangeCalendarExample = () => (
 );
 
 export const DatePickerExample = () => (
-  <DatePicker>
+  <DatePicker data-test-id="date-picker-example">
     <Label style={{display: 'block'}}>Date</Label>
     <Group style={{display: 'inline-flex'}}>
       <DateInput className={styles.field}>
@@ -382,7 +384,7 @@ export const DatePickerExample = () => (
 );
 
 export const DateRangePickerExample = () => (
-  <DateRangePicker>
+  <DateRangePicker data-test-id="date-range-picker-example">
     <Label style={{display: 'block'}}>Date</Label>
     <Group style={{display: 'inline-flex'}}>
       <div className={styles.field}>
@@ -422,6 +424,7 @@ export const DateRangePickerExample = () => (
 
 export const SliderExample = () => (
   <Slider
+    data-test-id="slider-example"
     defaultValue={[30, 60]}
     style={{
       position: 'relative',
@@ -961,8 +964,10 @@ export const DropzoneWithRenderProps = (props) => (
   </div>
 );
 
+// TODO: Should data- attr pass to hidden input? It isn't duplicated, so not sure what expectation is.
 export const FileTriggerButton = (props) => (
   <FileTrigger
+    data-test-id="dropzone-example-with-file-trigger-link"
     {...props}
     onChange={action('OnChange')} >
     <Button>Upload</Button>
@@ -1062,12 +1067,14 @@ ListBoxDnd.story = {
   }
 };
 
+// TODO confirm that aria-label and id should render on hidden input
 export const RadioGroupExample = () => {
   return (
     <RadioGroup
+      data-test-id="radio-group-example"
       className={styles.radiogroup}>
       <Label>Favorite pet</Label>
-      <Radio className={styles.radio} value="dogs" data-test-id="radio-group-example">Dog</Radio>
+      <Radio className={styles.radio} value="dogs" aria-label="furry dog" id="radio-dogs" data-test-id="radio-group-example-radio-1">Dog</Radio>
       <Radio className={styles.radio} value="cats">Cat</Radio>
       <Radio className={styles.radio} value="dragon">Dragon</Radio>
     </RadioGroup>

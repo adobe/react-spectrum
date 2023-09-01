@@ -331,6 +331,9 @@ export function createHideableComponent<T, P = {}>(fn: (props: P, ref: React.Ref
  * Filters out `data-*` attributes.
  * @param props
  */
+// TODO: Type props?
+// Something super generic or leave it as is?
+// What should we guard against?
 export function filterDataAttrs(props): {} {
   const prefix = /^(data-.*)$/;
   let filteredProps = {};
