@@ -20,12 +20,17 @@ import React, {Key, ReactElement, useRef} from 'react';
 import {useOverlayTriggerState} from '@react-stately/overlays';
 import {useSafelyMouseToSubmenu} from './useSafelyMouseToSubmenu';
 
-export interface SpectrumMenuDialogTriggerProps<T> extends ItemProps<T> {
+interface MenuDialogTriggerProps<T> extends ItemProps<T> {
+  /** Whether the menu item is currently unavailable. */
   isUnavailable?: boolean,
+  /** The triggering Item and the Dialog, respectively. */
+  children: [ReactElement, ReactElement],
   targetKey: Key
 }
 
-function ContextualHelpTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): ReactElement {
+export interface SpectrumMenuDialogTriggerProps<T> extends Omit<MenuDialogTriggerProps<T>, 'targetKey' | 'title' | 'textValue' | 'childItems' | 'hasChildItems'> {}
+
+function ContextualHelpTrigger<T>(props: MenuDialogTriggerProps<T>): ReactElement {
   let {isUnavailable} = props;
 
   let triggerRef = useRef<HTMLLIElement>(null);
@@ -123,5 +128,5 @@ ContextualHelpTrigger.getCollectionNode = function* getCollectionNode<T>(props: 
   };
 };
 
-let _Item = ContextualHelpTrigger as <T>(props: ItemProps<T> & {isUnavailable?: boolean}) => JSX.Element;
+let _Item = ContextualHelpTrigger as <T>(props: SpectrumMenuDialogTriggerProps<T>) => JSX.Element;
 export {_Item as ContextualHelpTrigger};
