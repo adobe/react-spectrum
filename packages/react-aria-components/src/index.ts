@@ -74,7 +74,7 @@ export type {LabelProps} from './Label';
 export type {LinkProps} from './Link';
 export type {LinkRenderProps} from './Link';
 export type {ListBoxProps, ListBoxRenderProps} from './ListBox';
-export type {MenuItemRenderProps, MenuProps, MenuTriggerProps} from './Menu';
+export type {MenuProps, MenuTriggerProps} from './Menu';
 export type {MeterProps, MeterRenderProps} from './Meter';
 export type {ModalOverlayProps, ModalRenderProps} from './Modal';
 export type {NumberFieldProps, NumberFieldRenderProps} from './NumberField';
