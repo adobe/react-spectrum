@@ -163,8 +163,13 @@ import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
 
     &[data-selection-mode] {
       padding-left: 24px;
+      &::before {
+        position: absolute;
+        left: 4px;
+        font-weight: 600;
+      }
 
-      &[data-selected]::before {
+      &[data-selection-mode=multiple][data-selected]::before {
         content: '✓';
         content: '✓' / '';
         alt: ' ';
@@ -173,7 +178,7 @@ import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
         font-weight: 600;
       }
 
-      &[role=menuitemradio][data-selected]::before {
+      &[data-selection-mode=single][data-selected]::before {
         content: '●';
         content: '●' / '';
         transform: scale(0.7)
