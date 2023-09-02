@@ -1311,22 +1311,6 @@ function Example() {
   box-sizing: border-box;
   outline: none;
 
-  .react-aria-Section:not(:first-child) {
-    margin-top: 12px;
-  }
-
-  .react-aria-Header {
-    font-size: 1.143rem;
-    font-weight: bold;
-    padding: 0 0.714rem;
-  }
-
-  [role=separator] {
-    height: 1px;
-    background: var(--separator-color);
-    margin: 2px 4px;
-  }
-
   .react-aria-Item {
     margin: 2px;
     padding: 0.286rem 0.571rem;
@@ -1345,45 +1329,6 @@ function Example() {
     &[data-focused] {
       background: var(--highlight-background);
       color: var(--highlight-foreground);
-    }
-
-    &[data-disabled] {
-      color: var(--text-color-disabled);
-    }
-
-    [slot=label] {
-      font-weight: bold;
-      grid-area: label;
-    }
-
-    [slot=description] {
-      font-size: small;
-      grid-area: desc;
-    }
-
-    & kbd {
-      grid-area: kbd;
-      font-family: monospace;
-      text-align: end;
-    }
-
-    &[data-checked] {
-      padding-left: 24px;
-
-      &[data-checked=true]::before {
-        content: '✓';
-        content: '✓' / '';
-        alt: ' ';
-        position: absolute;
-        left: 4px;
-        font-weight: 600;
-      }
-
-      &[role=menuitemradio][data-checked=true]::before {
-        content: '●';
-        content: '●' / '';
-        transform: scale(0.7)
-      }
     }
   }
 }
