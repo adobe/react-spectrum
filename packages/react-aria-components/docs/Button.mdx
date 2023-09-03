@@ -66,11 +66,12 @@ import {Button} from 'react-aria-components';
   border-radius: 4px;
   appearance: none;
   vertical-align: middle;
-  font-size: 1.2rem;
+  font-size: 1rem;
   text-align: center;
   margin: 0;
   outline: none;
-  padding: 4px 12px;
+  padding: 6px 10px;
+  text-decoration: none;
 
   &[data-pressed] {
     box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
@@ -127,6 +128,49 @@ buttons using the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys.
 If a visual label is not provided (e.g. an icon only button), then an `aria-label` or
 `aria-labelledby` prop must be passed to identify the button to assistive technology.
 
+## Events
+
+`Button` supports user interactions via mouse, keyboard, and touch. You can handle all of these via the `onPress` prop. This is similar to the standard `onClick` event, but normalized to support all interaction methods equally. In addition, the `onPressStart`, `onPressEnd`, and `onPressChange` events are fired as the user interacts with the button.
+
+Each of these handlers receives a <TypeLink links={typesDocs.links} type={typesDocs.exports.PressEvent} />, which exposes information about the target and the type of event that triggered the interaction. See [usePress](usePress.html) for more details.
+
+```tsx example
+function Example() {
+  let [pointerType, setPointerType] = React.useState('');
+
+  return (
+    <>
+      <Button
+        onPressStart={e => setPointerType(e.pointerType)}
+        onPressEnd={() => setPointerType('')}>
+        Press me
+      </Button>
+      <p>{pointerType ? `You are pressing the button with a ${pointerType}!` : 'Ready to be pressed.'}</p>
+    </>
+  )
+}
+```
+
+## Disabled
+
+A `Button` can be disabled using the `isDisabled` prop.
+
+```tsx example
+<Button isDisabled>Pin</Button>
+```
+
+## Link buttons
+
+The `Button` component always represents a button semantically. To create a link that visually looks like a button, use the [Link](Link.html) component instead. You can reuse the same styles you apply to the `Button` component on the `Link`.
+
+```tsx example
+import {Link} from 'react-aria-components';
+
+<Link className="react-aria-Button">
+  <a href="https://adobe.com/" target="_blank">Adobe</a>
+</Link>
+```
+
 ## Props
 
 <PropTable component={docs.exports.Button} links={docs.links} />
@@ -179,40 +223,6 @@ Render props may also be used as children to alter what elements are rendered ba
 The states, selectors, and render props for `Button` are documented below.
 
 <StateTable properties={docs.exports.ButtonRenderProps.properties} />
-
-## Usage
-
-### Events
-
-`Button` supports user interactions via mouse, keyboard, and touch. You can handle all of these via the `onPress` prop. This is similar to the standard `onClick` event, but normalized to support all interaction methods equally. In addition, the `onPressStart`, `onPressEnd`, and `onPressChange` events are fired as the user interacts with the button.
-
-Each of these handlers receives a <TypeLink links={typesDocs.links} type={typesDocs.exports.PressEvent} />, which exposes information about the target and the type of event that triggered the interaction. See [usePress](usePress.html) for more details.
-
-```tsx example
-function Example() {
-  let [pointerType, setPointerType] = React.useState('');
-
-  return (
-    <>
-      <Button
-        onPressStart={e => setPointerType(e.pointerType)}
-        onPressEnd={() => setPointerType('')}>
-        Press me
-      </Button>
-      <p>{pointerType ? `You are pressing the button with a ${pointerType}!` : 'Ready to be pressed.'}</p>
-    </>
-  )
-}
-```
-
-### Disabled
-
-A `Button` can be disabled using the `isDisabled` prop.
-
-```tsx example
-<Button isDisabled>Pin</Button>
-```
-
 
 ## Advanced customization
 

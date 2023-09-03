@@ -148,11 +148,11 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
   appearance: none;
   vertical-align: middle;
   font-family: system-ui;
-  font-size: 1.2rem;
+  font-size: 1rem;
   text-align: center;
   margin: 0;
   outline: none;
-  padding: 6px;
+  padding: 6px 10px;
   transition: border-color 200ms;
 
   &[data-hovered] {
@@ -204,67 +204,22 @@ building fully accessible custom dialogs from scratch is very difficult and erro
 
 A dialog consists of a container element and an optional title. It can be placed within a [Modal](Modal.html) or [Popover](Popover.html), to create modal dialogs, popovers, and other types of overlays. A `DialogTrigger` can be used to open a dialog overlay in response to a user action, e.g. clicking a button.
 
-If a dialog does not have a visible heading element, an `aria-label` or `aria-labelledby` prop must be passed instead to identify the element to assistive technology.
+```tsx
+import {DialogTrigger, Modal, Dialog, Button, Heading} from 'react-aria-components';
 
-## Props
-
-### DialogTrigger
-
-<PropTable component={docs.exports.DialogTrigger} links={docs.links} />
-
-### Dialog
-
-<PropTable component={docs.exports.Dialog} links={docs.links} />
-
-### Heading
-
-A `<Heading>` accepts all HTML attributes.
-
-## Styling
-
-React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
-
-```css
-.react-aria-Dialog {
-  /* ... */
-}
-```
-
-A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
-
-```jsx
-<Dialog className="my-dialog">
-  {/* ... */}
-</Dialog>
-```
-
-The selectors for each component used in a `Dialog` are documented below.
-
-### DialogTrigger
-
-The `DialogTrigger` component does not render any DOM elements (it only passes through its children) so it does not support styling. If you need a wrapper element, add one yourself inside the `<DialogTrigger>`.
-
-```jsx
 <DialogTrigger>
-  <div className="my-dialog-trigger">
-    {/* ... */}
-  </div>
+  <Button />
+  <Modal>
+    <Dialog>
+      <Heading />
+    </Dialog>
+  </Modal>
 </DialogTrigger>
 ```
 
-### Dialog
+If a dialog does not have a visible heading element, an `aria-label` or `aria-labelledby` prop must be passed instead to identify the element to assistive technology.
 
-A `Dialog` can be targeted with the `.react-aria-Dialog` CSS selector, or by overriding with a custom `className`.
-
-### Heading
-
-A `Heading` can be targeted with the `.react-aria-Heading` CSS selector, or by overriding with a custom `className`.
-
-## Usage
-
-A `Dialog` should be placed within an overlay component such as [Modal](Modal.html) or [Popover](Popover.html).
-
-### Popover
+## Popover
 
 A `Dialog` may be placed within a [Popover](Popover.html) to display it in context with a trigger element.
 
@@ -368,7 +323,7 @@ import {Popover, OverlayArrow} from 'react-aria-components';
 
 </details>
 
-### Alert dialog
+## Alert dialog
 
 Alert dialogs are a special type of dialog meant to present a prompt that the user must confirm before an action proceeds. An alert dialog may also behave differently with assistive technologies, such as playing a system alert sound when opening. Use the `role="alertdialog"` prop on the `<Dialog>` element to make an alert dialog.
 
@@ -391,6 +346,60 @@ Alert dialogs are a special type of dialog meant to present a prompt that the us
   </Modal>
 </DialogTrigger>
 ```
+
+## Props
+
+### DialogTrigger
+
+<PropTable component={docs.exports.DialogTrigger} links={docs.links} />
+
+### Dialog
+
+<PropTable component={docs.exports.Dialog} links={docs.links} />
+
+### Heading
+
+A `<Heading>` accepts all HTML attributes.
+
+## Styling
+
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-Dialog {
+  /* ... */
+}
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<Dialog className="my-dialog">
+  {/* ... */}
+</Dialog>
+```
+
+The selectors for each component used in a `Dialog` are documented below.
+
+### DialogTrigger
+
+The `DialogTrigger` component does not render any DOM elements (it only passes through its children) so it does not support styling. If you need a wrapper element, add one yourself inside the `<DialogTrigger>`.
+
+```jsx
+<DialogTrigger>
+  <div className="my-dialog-trigger">
+    {/* ... */}
+  </div>
+</DialogTrigger>
+```
+
+### Dialog
+
+A `Dialog` can be targeted with the `.react-aria-Dialog` CSS selector, or by overriding with a custom `className`.
+
+### Heading
+
+A `Heading` can be targeted with the `.react-aria-Heading` CSS selector, or by overriding with a custom `className`.
 
 ## Advanced customization
 

@@ -52,6 +52,7 @@
     "packages/react-stately",
     "packages/react-aria",
     "packages/react-aria-components",
+    "packages/tailwindcss-react-aria-components",
     "packages/*/*"
   ],
   "devDependencies": {
