@@ -143,6 +143,14 @@ represent the progress visually, while a wrapper element represents the progress
 assistive technology using the [progressbar](https://www.w3.org/TR/wai-aria-1.2/#progressbar)
 ARIA role.
 
+```tsx
+import {ProgressBar, Label} from 'react-aria-components';
+
+<ProgressBar>
+  <Label />
+</ProgressBar>
+```
+
 If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead
 to identify the element to screen readers.
 
@@ -160,6 +168,122 @@ A `ProgressBar` uses the following components, which may also be used standalone
 </ExampleCard>
 
 </section>
+
+## Reusable wrappers
+
+If you will use a ProgressBar in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+This example wraps `ProgressBar` and all of its children together into a single component which accepts a `label` prop that is passed to the right place.
+
+```tsx example export=true
+import type {ProgressBarProps} from 'react-aria-components';
+
+interface MyProgressBarProps extends ProgressBarProps {
+  label?: string
+}
+
+function MyProgressBar({label, ...props}: MyProgressBarProps) {
+  return (
+    <ProgressBar {...props}>
+      {({percentage, valueText}) => <>
+        <Label>{label}</Label>
+        <span className="value">{valueText}</span>
+        <div className="bar">
+          <div className="fill" style={{width: percentage + '%'}} />
+        </div>
+      </>}
+    </ProgressBar>
+  );
+}
+
+<MyProgressBar label="Loading…" value={80} />
+```
+
+## Value
+
+ProgressBars are controlled with the `value` prop. By default, the `value` prop represents the current percentage of progress, as the minimum and maximum values default to 0 and 100, respectively.
+
+```tsx example
+<MyProgressBar label="Loading…" value={25} />
+```
+
+### Custom value scale
+
+A custom value scale can be used by setting the `minValue` and `maxValue` props.
+
+```tsx example
+<MyProgressBar
+  label="Loading…"
+  minValue={50}
+  maxValue={150}
+  value={100} />
+```
+
+### Indeterminate
+
+The `isIndeterminate` prop can be used to represent an interdeterminate operation.
+
+```tsx example
+<MyProgressBar
+  aria-label="Loading…"
+  isIndeterminate />
+```
+
+## Labeling
+
+### Value formatting
+
+Values are formatted as a percentage by default, but this can be modified by using the `formatOptions` prop to specify a different format.
+`formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied based on the current locale.
+
+```tsx example
+<MyProgressBar
+  label="Sending…"
+  formatOptions={{style: 'currency', currency: 'JPY'}}
+  value={60} />
+```
+
+### Custom value label
+
+The `valueLabel` prop allows the formatted value to be replaced with a custom string.
+
+```tsx example
+<MyProgressBar
+  label="Feeding…"
+  valueLabel="30 of 100 dogs"
+  value={30} />
+```
+
+## Circular
+
+Progress bars may also be represented using a circular visualization rather than a line. This is often used to represent indeterminate
+operations, but may also be used for determinate progress indicators when space is limited. The following example shows a progress bar
+visualized as a circular spinner using SVG.
+
+```tsx example
+let center = 16;
+let strokeWidth = 4;
+let r = 16 - strokeWidth;
+let c = 2 * r * Math.PI;
+
+<ProgressBar aria-label="Loading…" value={60}>
+  {({percentage}) => <>
+    <svg width={64} height={64} viewBox="0 0 32 32" fill="none" strokeWidth={strokeWidth}>
+      <circle cx={center} cy={center} r={r - (strokeWidth / 2 - 0.25)} stroke="var(--circle-color)" strokeWidth={0.5} />
+      <circle cx={center} cy={center} r={r + (strokeWidth / 2 - 0.25)} stroke="var(--circle-color)" strokeWidth={0.5} />
+      <circle
+        cx={center}
+        cy={center}
+        r={r}
+        stroke="var(--fill-color)"
+        strokeDasharray={`${c} ${c}`}
+        strokeDashoffset={c - percentage / 100 * c}
+        strokeLinecap="round"
+        transform="rotate(-90 16 16)" />
+    </svg>
+  </>}
+</ProgressBar>
+```
 
 ## Props
 
@@ -202,116 +326,6 @@ A `ProgressBar` can be targeted with the `.react-aria-ProgressBar` CSS selector,
 ### Label
 
 A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overriding with a custom `className`.
-
-## Circular
-
-Progress bars may also be represented using a circular visualization rather than a line. This is often used to represent indeterminate
-operations, but may also be used for determinate progress indicators when space is limited. The following example shows a progress bar
-visualized as a circular spinner using SVG.
-
-```tsx example
-let center = 16;
-let strokeWidth = 4;
-let r = 16 - strokeWidth;
-let c = 2 * r * Math.PI;
-
-<ProgressBar aria-label="Loading…" value={60}>
-  {({percentage}) => <>
-    <svg width={64} height={64} viewBox="0 0 32 32" fill="none" strokeWidth={strokeWidth}>
-      <circle cx={center} cy={center} r={r - (strokeWidth / 2 - 0.25)} stroke="var(--circle-color)" strokeWidth={0.5} />
-      <circle cx={center} cy={center} r={r + (strokeWidth / 2 - 0.25)} stroke="var(--circle-color)" strokeWidth={0.5} />
-      <circle
-        cx={center}
-        cy={center}
-        r={r}
-        stroke="var(--fill-color)"
-        strokeDasharray={`${c} ${c}`}
-        strokeDashoffset={c - percentage / 100 * c}
-        strokeLinecap="round"
-        transform="rotate(-90 16 16)" />
-    </svg>
-  </>}
-</ProgressBar>
-```
-
-## Reusable wrappers
-
-If you will use a ProgressBar in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
-
-This example wraps `ProgressBar` and all of its children together into a single component which accepts a `label` prop that is passed to the right place.
-
-```tsx example export=true
-import type {ProgressBarProps} from 'react-aria-components';
-
-interface MyProgressBarProps extends ProgressBarProps {
-  label?: string
-}
-
-function MyProgressBar({label, ...props}: MyProgressBarProps) {
-  return (
-    <ProgressBar {...props}>
-      {({percentage, valueText}) => <>
-        <Label>{label}</Label>
-        <span className="value">{valueText}</span>
-        <div className="bar">
-          <div className="fill" style={{width: percentage + '%'}} />
-        </div>
-      </>}
-    </ProgressBar>
-  );
-}
-
-<MyProgressBar label="Loading…" value={80} />
-```
-
-## Usage
-
-The following examples show how to use the `MyProgressBar` component created in the above example.
-
-### Custom value scale
-
-By default, the `value` prop represents the current percentage of progress, as the minimum and maximum values default to 0 and 100, respectively. Alternatively, a different scale can be used by setting the `minValue` and `maxValue` props.
-
-```tsx example
-<MyProgressBar
-  label="Loading…"
-  minValue={50}
-  maxValue={150}
-  value={100} />
-```
-
-### Value formatting
-
-Values are formatted as a percentage by default, but this can be modified by using the `formatOptions` prop to specify a different format.
-`formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied based on the current locale.
-
-```tsx example
-<MyProgressBar
-  label="Sending…"
-  formatOptions={{style: 'currency', currency: 'JPY'}}
-  value={60} />
-```
-
-### Custom value label
-
-The `valueLabel` prop allows the formatted value to be replaced with a custom string.
-
-```tsx example
-<MyProgressBar
-  label="Feeding…"
-  valueLabel="30 of 100 dogs"
-  value={30} />
-```
-
-### Indeterminate
-
-The `isIndeterminate` prop can be used to represent an interdeterminate operation.
-
-```tsx example
-<MyProgressBar
-  aria-label="Loading…"
-  isIndeterminate />
-```
 
 ## Advanced customization
 

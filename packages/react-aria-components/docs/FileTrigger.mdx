@@ -40,8 +40,7 @@ type: component
 ## Example
 
 ```tsx example
-import {FileTrigger} from 'react-aria-components';
-import {Button} from 'react-aria-components';
+import {FileTrigger, Button} from 'react-aria-components';
 
 function Example(){
   let [file, setFile] = React.useState(null);
@@ -82,11 +81,11 @@ function Example(){
   border-radius: 4px;
   appearance: none;
   vertical-align: middle;
-  font-size: 1.2rem;
+  font-size: 1rem;
   text-align: center;
   margin: 0;
   outline: none;
-  padding: 4px 12px;
+  padding: 6px 10px;
 
   &[data-pressed] {
     box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
@@ -132,6 +131,14 @@ A file input can be created with an `<input type=“file”>` element, but this 
 
 A `FileTrigger` wraps around a pressable child such as a button, and includes a visually hidden input element that allows the user to select files from their device.
 
+```tsx
+import {FileTrigger, Button} from 'react-aria-components';
+
+<FileTrigger>
+  <Button />
+</FileTrigger>
+```
+
 If a visual label is not provided on the pressable child, then an `aria-label` or `aria-labelledby` prop must be passed to identify the file trigger to assistive technology.
 
 ### Composed Components
@@ -148,25 +155,7 @@ A `FileTrigger` can use the following components, which may also be used standal
 
 </section>
 
-## Props
-
-<PropTable component={docs.exports.FileTrigger} links={docs.links} />
-
-## Styling
-
-### FileTrigger 
-
-The `FileTrigger` component does not render any element of its own so it does not support styling. 
-
-### Button
-
-A [Button](Button.html) can be targeted with the `.react-aria-Button` CSS selector, or by overriding with a custom `className`. It supports the following states:
-
-<StateTable properties={docs.exports.ButtonRenderProps.properties} />
-
-## Usage
-
-### Accepted file types
+## Accepted file types
 
 By default, the file trigger will accept any file type. To support only certain file types, pass an array of the [mime type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) of files via the `acceptedFileTypes` prop.
 
@@ -176,7 +165,7 @@ By default, the file trigger will accept any file type. To support only certain 
 </FileTrigger>
 ```
 
-### Multiple files
+## Multiple files
 
 A file trigger can accept multiple files by passsing the `allowsMultiple` property.
 
@@ -186,7 +175,7 @@ A file trigger can accept multiple files by passsing the `allowsMultiple` proper
 </FileTrigger>
 ```
 
-### Capture
+## Media capture
 
 To specify the media capture mechanism to capture media on the spot, pass `user` for the user-facing camera or `environment` for the outward-facing camera via the `defaultCamera` prop.
 
@@ -197,3 +186,19 @@ This behavior only works on mobile devices. On desktop devices, it will open the
   <Button>Open Camera</Button>
 </FileTrigger>
 ````
+
+## Props
+
+<PropTable component={docs.exports.FileTrigger} links={docs.links} />
+
+## Styling
+
+### FileTrigger
+
+The `FileTrigger` component does not render any element of its own so it does not support styling.
+
+### Button
+
+A [Button](Button.html) can be targeted with the `.react-aria-Button` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.ButtonRenderProps.properties} />
