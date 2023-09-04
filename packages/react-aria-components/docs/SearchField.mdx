@@ -183,6 +183,18 @@ the <Keyboard>Enter</Keyboard> key to trigger the `onSubmit` event.
 to provide more context about the field, and any validation messages. These are linked with the
 input via the `aria-describedby` attribute.
 
+```tsx
+import {SearchField, Label, Input, Button, Text} from 'react-aria-components';
+
+<SearchField>
+  <Label />
+  <Input />
+  <Button />
+  <Text slot="description" />
+  <Text slot="errorMessage" />
+</SearchField>
+```
+
 If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead
 to identify the element to screen readers.
 
@@ -214,6 +226,154 @@ A `SearchField` uses the following components, which may also be used standalone
 </ExampleCard>
 
 </section>
+
+## Reusable wrappers
+
+If you will use a SearchField in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+This example wraps `SearchField` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#description)).
+
+```tsx example export=true
+import type {SearchFieldProps} from 'react-aria-components';
+import {Text} from 'react-aria-components';
+
+interface MySearchFieldProps extends SearchFieldProps {
+  label?: string,
+  description?: string,
+  errorMessage?: string
+}
+
+function MySearchField({label, description, errorMessage, ...props}: MySearchFieldProps) {
+  return (
+    <SearchField {...props}>
+      <Label>{label}</Label>
+      <Input />
+      <Button>✕</Button>
+      {description && <Text slot="description">{description}</Text>}
+      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
+    </SearchField>
+  );
+}
+
+<MySearchField label="Search" />
+```
+
+## Value
+
+### Default value
+
+A SearchField's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop.
+
+```tsx example
+<MySearchField
+  label="Search"
+  defaultValue="Puppies" />
+```
+
+### Controlled value
+
+The `value` prop can be used to make the value controlled. The `onChange` event is fired when the user edits the text, and receives the new value.
+
+```tsx example
+function Example() {
+  let [text, setText] = React.useState('');
+
+  return (
+    <>
+      <MySearchField label="Search" onChange={setText} />
+      <p>Mirrored text: {text}</p>
+    </>
+  );
+}
+```
+
+### HTML forms
+
+SearchField supports the `name` prop for integration with HTML forms. In addition, attributes such as `type`, `pattern`, `inputMode`, and others are passed through to the underlying `<input>` element.
+
+```tsx example
+<MySearchField label="Email" name="email" type="email" />
+```
+
+## Events
+
+The most commonly used handlers for events in SearchField are the:
+- `onChange` prop which is triggered whenever the value is edited by the user.
+- `onSubmit` prop which is triggered whenever the value is submitted by the user (e.g. by pressing <Keyboard>Enter</Keyboard>).
+- `onClear` prop which is triggered whenever the value is cleared by the user (e.g. by pressing clear button or <Keyboard>Escape</Keyboard> key).
+
+The example below uses `onChange`, `onSubmit`, and `onClear` to update two separate elements with the text entered into the SearchField.
+
+```tsx example
+function Example() {
+  let [currentText, setCurrentText] = React.useState('');
+  let [submittedText, setSubmittedText] = React.useState('');
+
+  return (
+    <div>
+      <MySearchField
+        onClear={() => setCurrentText('')}
+        onChange={setCurrentText}
+        onSubmit={setSubmittedText}
+        label="Your text"
+        value={currentText}
+      />
+      <p>Mirrored text: {currentText}</p>
+      <p>Submitted text: {submittedText}</p>
+    </div>
+  );
+}
+```
+
+## Help text
+
+### Description
+
+The `description` slot can be used to associate additional help text with a search field.
+
+```tsx example
+<SearchField>
+  <Label>Email</Label>
+  <Input />
+  <Button>✕</Button>
+  {/*- begin highlight -*/}
+  <Text slot="description">Enter an email for us to contact you about your order.</Text>
+  {/*- end highlight -*/}
+</SearchField>
+```
+
+### Error message
+
+The `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to
+semantically mark the input element as invalid for assistive technologies.
+
+```tsx example
+<SearchField>
+  <Label>Email</Label>
+  <Input />
+  <Button>✕</Button>
+  {/*- begin highlight -*/}
+  <Text slot="errorMessage">Please enter a valid email address.</Text>
+  {/*- end highlight -*/}
+</SearchField>
+```
+
+## Disabled
+
+A SearchField can be disabled using the `isDisabled` prop.
+
+```tsx example
+<MySearchField label="Email" isDisabled />
+```
+
+### Read only
+
+The `isReadOnly` boolean prop makes the SearchField's text content immutable. Unlike `isDisabled`, the SearchField remains focusable
+and the contents can still be copied. See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
+
+```tsx example
+<MySearchField label="Email" defaultValue="abc@adobe.com" isReadOnly />
+```
 
 ## Props
 
@@ -321,145 +481,6 @@ A [Button](Button.html) can be targeted with the `.react-aria-Button` CSS select
 ### Text
 
 The help text elements within a `SearchField` can be targeted with the `[slot=description]` and `[slot=errorMessage]` CSS selectors, or by adding a custom `className`.
-
-## Reusable wrappers
-
-If you will use a SearchField in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
-
-This example wraps `SearchField` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#description)).
-
-```tsx example export=true
-import type {SearchFieldProps} from 'react-aria-components';
-import {Text} from 'react-aria-components';
-
-interface MySearchFieldProps extends SearchFieldProps {
-  label?: string,
-  description?: string,
-  errorMessage?: string
-}
-
-function MySearchField({label, description, errorMessage, ...props}: MySearchFieldProps) {
-  return (
-    <SearchField {...props}>
-      <Label>{label}</Label>
-      <Input />
-      <Button>✕</Button>
-      {description && <Text slot="description">{description}</Text>}
-      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
-    </SearchField>
-  );
-}
-
-<MySearchField label="Search" />
-```
-
-## Usage
-
-The following examples show how to use the `MySearchField` component created in the above example.
-
-### Default value
-
-A SearchField's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop.
-
-```tsx example
-<MySearchField
-  label="Search"
-  defaultValue="Puppies" />
-```
-
-### Controlled value
-
-The `value` prop can be used to make the value controlled. The `onChange` event is fired when the user edits the text, and receives the new value.
-
-```tsx example
-function Example() {
-  let [text, setText] = React.useState('');
-
-  return (
-    <>
-      <MySearchField label="Search" onChange={setText} />
-      <p>Mirrored text: {text}</p>
-    </>
-  );
-}
-```
-
-### Events
-
-The most commonly used handlers for events in SearchField are the:
-- `onChange` prop which is triggered whenever the value is edited by the user.
-- `onSubmit` prop which is triggered whenever the value is submitted by the user (e.g. by pressing <Keyboard>Enter</Keyboard>).
-- `onClear` prop which is triggered whenever the value is cleared by the user (e.g. by pressing clear button or <Keyboard>Escape</Keyboard> key).
-
-The example below uses `onChange`, `onSubmit`, and `onClear` to update two separate elements with the text entered into the SearchField.
-
-```tsx example
-function Example() {
-  let [currentText, setCurrentText] = React.useState('');
-  let [submittedText, setSubmittedText] = React.useState('');
-
-  return (
-    <div>
-      <MySearchField
-        onClear={() => setCurrentText('')}
-        onChange={setCurrentText}
-        onSubmit={setSubmittedText}
-        label="Your text"
-        value={currentText}
-      />
-      <p>Mirrored text: {currentText}</p>
-      <p>Submitted text: {submittedText}</p>
-    </div>
-  );
-}
-```
-
-### Description
-
-The `description` slot can be used to associate additional help text with a search field.
-
-```tsx example
-<MySearchField
-  label="Email"
-  description="Enter an email for us to contact you about your order." />
-```
-
-### Error message
-
-The `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to
-semantically mark the input element as invalid for assistive technologies.
-
-```tsx example
-<MySearchField
-  label="Email"
-  isInvalid
-  errorMessage="Please enter a valid email address." />
-```
-
-### Disabled
-
-A SearchField can be disabled using the `isDisabled` prop.
-
-```tsx example
-<MySearchField label="Email" isDisabled />
-```
-
-### Read only
-
-The `isReadOnly` boolean prop makes the SearchField's text content immutable. Unlike `isDisabled`, the SearchField remains focusable
-and the contents can still be copied. See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
-
-```tsx example
-<MySearchField label="Email" defaultValue="abc@adobe.com" isReadOnly />
-```
-
-### HTML forms
-
-SearchField supports the `name` prop for integration with HTML forms. In addition, attributes such as `type`, `pattern`, `inputMode`, and others are passed through to the underlying `<input>` element.
-
-```tsx example
-<MySearchField label="Email" name="email" type="email" />
-```
 
 ## Advanced customization
 
