@@ -330,7 +330,7 @@ describe('useControlledState tests', function () {
     let resolve;
     const AsyncChild = React.lazy(() => new Promise((r) => {resolve = r;}));
     function Test(props) {
-      let [value, setValue] = useControlledState(undefined, 1, props.onChange);
+      let [value, setValue] = useControlledState<number>(undefined, 1, props.onChange);
       let [showChild, setShowChild] = useState(false);
       let [isPending, startTransition] = React.useTransition();
 
