@@ -13,7 +13,9 @@
     "@react-spectrum/list": "^3.6.1"
   },
   "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0"
+    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0",
+    "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0",
+    "@react-spectrum/provider": "^3.0.0"
   },
   "publishConfig": {
     "access": "public"

@@ -345,7 +345,11 @@ function GridListItem({item}) {
         <div {...gridCellProps}>
           <Provider
             values={[
-              [CheckboxContext, checkboxProps],
+              [CheckboxContext, {
+                slots: {
+                  selection: checkboxProps
+                }
+              }],
               [ButtonContext, {
                 slots: {
                   [defaultSlot]: {},

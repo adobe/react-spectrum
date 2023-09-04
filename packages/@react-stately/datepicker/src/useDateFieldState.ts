@@ -51,8 +51,13 @@ export interface DateFieldState {
   segments: DateSegment[],
   /** A date formatter configured for the current locale and format. */
   dateFormatter: DateFormatter,
-  /** The current validation state of the date field, based on the `validationState`, `minValue`, and `maxValue` props. */
+  /**
+   * The current validation state of the date field, based on the `validationState`, `minValue`, and `maxValue` props.
+   * @deprecated Use `isInvalid` instead.
+   */
   validationState: ValidationState,
+  /** Whether the date field is invalid, based on the `isInvalid`, `minValue`, and `maxValue` props. */
+  isInvalid: boolean,
   /** The granularity for the field, based on the `granularity` prop and current value. */
   granularity: Granularity,
   /** The maximum date or time unit that is displayed in the field. */
@@ -309,8 +314,9 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     }
   };
 
-  let validationState: ValidationState = props.validationState ||
-    (isInvalid(calendarValue, props.minValue, props.maxValue) ? 'invalid' : null);
+  let isValueInvalid = props.isInvalid || props.validationState === 'invalid' ||
+    isInvalid(calendarValue, props.minValue, props.maxValue);
+  let validationState: ValidationState = props.validationState || (isValueInvalid ? 'invalid' : null);
 
   return {
     value: calendarValue,
@@ -320,6 +326,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     segments,
     dateFormatter,
     validationState,
+    isInvalid: isValueInvalid,
     granularity,
     maxGranularity: props.maxGranularity ?? 'year',
     isDisabled,

@@ -19,7 +19,7 @@ import {LabelContext} from './Label';
 import {ListBoxContext} from './ListBox';
 import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
-import {SelectState, useSelectState, ValidationState} from 'react-stately';
+import {SelectState, useSelectState} from 'react-stately';
 import {TextContext} from './Text';
 
 export interface SelectRenderProps {
@@ -44,10 +44,10 @@ export interface SelectRenderProps {
    */
   isOpen: boolean,
   /**
-   * Validation state of the select.
-   * @selector [data-validation-state="valid | invalid"]
+   * Whether the select is invalid.
+   * @selector [data-invalid]
    */
-  validationState: ValidationState | undefined,
+  isInvalid: boolean,
   /**
    * Whether the select is required.
    * @selector [data-required]
@@ -55,7 +55,7 @@ export interface SelectRenderProps {
   isRequired: boolean
 }
 
-export interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage' | 'items'>, RenderProps<SelectRenderProps>, SlotProps {}
+export interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'items'>, RenderProps<SelectRenderProps>, SlotProps {}
 
 interface SelectValueContext {
   state: SelectState<unknown>,
@@ -83,9 +83,9 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
     isFocused: state.isFocused,
     isFocusVisible,
     isDisabled: props.isDisabled || false,
-    validationState: props.validationState,
+    isInvalid: props.isInvalid || false,
     isRequired: props.isRequired || false
-  }), [state.isOpen, state.isFocused, isFocusVisible, props.isDisabled, props.validationState, props.isRequired]);
+  }), [state.isOpen, state.isFocused, isFocusVisible, props.isDisabled, props.isInvalid, props.isRequired]);
 
   // Get props for child elements from useSelect
   let buttonRef = useRef<HTMLButtonElement>(null);
@@ -163,7 +163,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
           data-focus-visible={isFocusVisible || undefined}
           data-open={state.isOpen || undefined}
           data-disabled={props.isDisabled || undefined}
-          data-validation-state={props.validationState || undefined}
+          data-invalid={props.isInvalid || undefined}
           data-required={props.isRequired || undefined} />
         <HiddenSelect
           state={state}

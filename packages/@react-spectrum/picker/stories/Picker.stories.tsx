@@ -128,11 +128,8 @@ export default {
     isRequired: {
       control: 'boolean'
     },
-    validationState: {
-      control: {
-        type: 'radio',
-        options: [null, 'valid', 'invalid']
-      }
+    isInvalid: {
+      control: 'boolean'
     },
     isQuiet: {
       control: 'boolean'
