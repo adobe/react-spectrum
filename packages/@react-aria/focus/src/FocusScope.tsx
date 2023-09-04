@@ -382,8 +382,9 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain: boolean) {
     };
   }, [scopeRef, contain]);
 
+  // This is a useLayoutEffect so it is guaranteed to run before our async synthetic blur
   // eslint-disable-next-line arrow-body-style
-  useEffect(() => {
+  useLayoutEffect(() => {
     return () => {
       if (raf.current) {
         cancelAnimationFrame(raf.current);
@@ -534,7 +535,9 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
     let onFocus = () => {
       // If focusing an element in a child scope of the currently active scope, the child becomes active.
       // Moving out of the active scope to an ancestor is not allowed.
-      if (!activeScope || isAncestorScope(activeScope, scopeRef)) {
+      if ((!activeScope || isAncestorScope(activeScope, scopeRef)) &&
+      isElementInScope(document.activeElement, scopeRef.current)
+      ) {
         activeScope = scopeRef;
       }
     };
@@ -548,20 +551,17 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scopeRef, contain]);
 
-  // useLayoutEffect instead of useEffect so the active element is saved synchronously instead of asynchronously.
   useLayoutEffect(() => {
     if (!restoreFocus) {
       return;
     }
-
-    focusScopeTree.getTreeNode(scopeRef).nodeToRestore = nodeToRestoreRef.current;
 
     // Handle the Tab key so that tabbing out of the scope goes to the next element
     // after the node that had focus when the scope mounted. This is important when
     // using portals for overlays, so that focus goes to the expected element when
     // tabbing out of the overlay.
     let onKeyDown = (e: KeyboardEvent) => {
-      if (e.key !== 'Tab' || e.altKey || e.ctrlKey || e.metaKey) {
+      if (e.key !== 'Tab' || e.altKey || e.ctrlKey || e.metaKey || !shouldContainFocus(scopeRef)) {
         return;
       }
 
@@ -618,6 +618,18 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
       if (!contain) {
         document.removeEventListener('keydown', onKeyDown, true);
       }
+    };
+  }, [scopeRef, restoreFocus, contain]);
+
+  // useLayoutEffect instead of useEffect so the active element is saved synchronously instead of asynchronously.
+  useLayoutEffect(() => {
+    if (!restoreFocus) {
+      return;
+    }
+
+    focusScopeTree.getTreeNode(scopeRef).nodeToRestore = nodeToRestoreRef.current;
+
+    return () => {
       let nodeToRestore = focusScopeTree.getTreeNode(scopeRef).nodeToRestore;
 
       // if we already lost focus to the body and this was the active scope, then we should attempt to restore
@@ -659,7 +671,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
         });
       }
     };
-  }, [scopeRef, restoreFocus, contain]);
+  }, [scopeRef, restoreFocus]);
 }
 
 /**

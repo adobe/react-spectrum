@@ -13,7 +13,7 @@
 import {disableTextSelection, restoreTextSelection}  from './textSelection';
 import {DOMAttributes, MoveEvents, PointerType} from '@react-types/shared';
 import React, {useMemo, useRef} from 'react';
-import {useGlobalListeners} from '@react-aria/utils';
+import {useEffectEvent, useGlobalListeners} from '@react-aria/utils';
 
 export interface MoveResult {
   /** Props to spread on the target element. */
@@ -43,52 +43,54 @@ export function useMove(props: MoveEvents): MoveResult {
 
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
+  let move = useEffectEvent((originalEvent: EventBase, pointerType: PointerType, deltaX: number, deltaY: number) => {
+    if (deltaX === 0 && deltaY === 0) {
+      return;
+    }
+
+    if (!state.current.didMove) {
+      state.current.didMove = true;
+      onMoveStart?.({
+        type: 'movestart',
+        pointerType,
+        shiftKey: originalEvent.shiftKey,
+        metaKey: originalEvent.metaKey,
+        ctrlKey: originalEvent.ctrlKey,
+        altKey: originalEvent.altKey
+      });
+    }
+    onMove({
+      type: 'move',
+      pointerType,
+      deltaX: deltaX,
+      deltaY: deltaY,
+      shiftKey: originalEvent.shiftKey,
+      metaKey: originalEvent.metaKey,
+      ctrlKey: originalEvent.ctrlKey,
+      altKey: originalEvent.altKey
+    });
+  });
+
+  let end = useEffectEvent((originalEvent: EventBase, pointerType: PointerType) => {
+    restoreTextSelection();
+    if (state.current.didMove) {
+      onMoveEnd?.({
+        type: 'moveend',
+        pointerType,
+        shiftKey: originalEvent.shiftKey,
+        metaKey: originalEvent.metaKey,
+        ctrlKey: originalEvent.ctrlKey,
+        altKey: originalEvent.altKey
+      });
+    }
+  });
+
   let moveProps = useMemo(() => {
     let moveProps: DOMAttributes = {};
 
     let start = () => {
       disableTextSelection();
       state.current.didMove = false;
-    };
-    let move = (originalEvent: EventBase, pointerType: PointerType, deltaX: number, deltaY: number) => {
-      if (deltaX === 0 && deltaY === 0) {
-        return;
-      }
-
-      if (!state.current.didMove) {
-        state.current.didMove = true;
-        onMoveStart?.({
-          type: 'movestart',
-          pointerType,
-          shiftKey: originalEvent.shiftKey,
-          metaKey: originalEvent.metaKey,
-          ctrlKey: originalEvent.ctrlKey,
-          altKey: originalEvent.altKey
-        });
-      }
-      onMove({
-        type: 'move',
-        pointerType,
-        deltaX: deltaX,
-        deltaY: deltaY,
-        shiftKey: originalEvent.shiftKey,
-        metaKey: originalEvent.metaKey,
-        ctrlKey: originalEvent.ctrlKey,
-        altKey: originalEvent.altKey
-      });
-    };
-    let end = (originalEvent: EventBase, pointerType: PointerType) => {
-      restoreTextSelection();
-      if (state.current.didMove) {
-        onMoveEnd?.({
-          type: 'moveend',
-          pointerType,
-          shiftKey: originalEvent.shiftKey,
-          metaKey: originalEvent.metaKey,
-          ctrlKey: originalEvent.ctrlKey,
-          altKey: originalEvent.altKey
-        });
-      }
     };
 
     if (typeof PointerEvent === 'undefined') {
@@ -223,7 +225,7 @@ export function useMove(props: MoveEvents): MoveResult {
     };
 
     return moveProps;
-  }, [state, onMoveStart, onMove, onMoveEnd, addGlobalListener, removeGlobalListener]);
+  }, [state, addGlobalListener, removeGlobalListener, move, end]);
 
   return {moveProps};
 }

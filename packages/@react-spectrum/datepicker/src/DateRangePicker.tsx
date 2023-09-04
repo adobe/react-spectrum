@@ -45,7 +45,8 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
     isReadOnly,
     autoFocus,
     placeholderValue,
-    maxVisibleMonths = 1
+    maxVisibleMonths = 1,
+    pageBehavior
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let targetRef = useRef<HTMLDivElement>();
@@ -119,7 +120,7 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
       descriptionProps={descriptionProps}
       errorMessageProps={errorMessageProps}
       validationState={state.validationState}
-      UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-fieldWrapper')}>
+      wrapperClassName={classNames(datepickerStyles, 'react-spectrum-Datepicker-fieldWrapper')}>
       <div
         {...mergeProps(groupProps, hoverProps, focusProps)}
         className={className}
@@ -173,6 +174,7 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
                 <RangeCalendar
                   {...calendarProps}
                   visibleMonths={visibleMonths}
+                  pageBehavior={pageBehavior}
                   UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-calendar', {'is-invalid': state.validationState === 'invalid'})} />
                 {showTimeField &&
                   <Flex gap="size-100" marginTop="size-100" UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-timeFields')}>

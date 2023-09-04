@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@react-spectrum/test-utils';
-import {Label, Radio, RadioGroup, RadioGroupContext, Text} from '../';
+import {Button, Dialog, DialogTrigger, Label, Modal, Radio, RadioContext, RadioGroup, RadioGroupContext, Text} from '../';
+import {fireEvent, render, within} from '@react-spectrum/test-utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -61,16 +61,61 @@ describe('RadioGroup', () => {
     }
   });
 
-  it('should support slot', () => {
+  it('should support render props', () => {
     let {getByRole} = render(
+      <RadioGroup isRequired>
+        {({isRequired}) => (
+          <>
+            <Label data-required={isRequired}>Test</Label>
+            <Radio value="a">A</Radio>
+            <Radio value="b">B</Radio>
+            <Radio value="c">C</Radio>
+          </>
+        )}
+      </RadioGroup>
+    );
+    let group = getByRole('radiogroup');
+    let label = document.getElementById(group.getAttribute('aria-labelledby'));
+    expect(label).toHaveAttribute('data-required', 'true');
+  });
+
+  it('should support Radio render props', () => {
+    let {getAllByRole} = render(
+      <RadioGroup defaultValue="a">
+        <Label>Test</Label>
+        <Radio value="a">
+          {({isSelected}) => isSelected ? 'A (selected)' : 'A'}
+        </Radio>
+        <Radio value="b">
+          {({isSelected}) => isSelected ? 'B (selected)' : 'B'}
+        </Radio>
+      </RadioGroup>
+    );
+    let radios = getAllByRole('radio');
+    expect(radios[0].closest('label')).toHaveTextContent('A (selected)');
+    expect(radios[1].closest('label')).toHaveTextContent('B');
+    userEvent.click(radios[1]);
+    expect(radios[0].closest('label')).toHaveTextContent('A');
+    expect(radios[1].closest('label')).toHaveTextContent('B (selected)');
+  });
+
+  it('should support slot', () => {
+    let {getByRole, getAllByRole} = render(
       <RadioGroupContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
-        <TestRadioGroup groupProps={{slot: 'test'}} />
+        <RadioContext.Provider value={{'data-test': 'test'}}>
+          <TestRadioGroup groupProps={{slot: 'test'}} />
+        </RadioContext.Provider>
       </RadioGroupContext.Provider>
     );
 
     let group = getByRole('radiogroup');
     expect(group).toHaveAttribute('slot', 'test');
     expect(group).toHaveAttribute('aria-label', 'test');
+
+    let radios = getAllByRole('radio');
+    for (let radio of radios) {
+      expect(radio).toHaveAttribute('data-test', 'test');
+    }
   });
 
   it('should support hover', () => {
@@ -93,7 +138,7 @@ describe('RadioGroup', () => {
     let {getAllByRole} = renderGroup({}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
     let radio = getAllByRole('radio')[0];
     let label = radio.closest('label');
-    
+
     expect(label).not.toHaveAttribute('data-focus-visible');
     expect(label).not.toHaveClass('focus');
 
@@ -184,9 +229,9 @@ describe('RadioGroup', () => {
     expect(label).toHaveClass('readonly');
   });
 
-  it('should support validation state', () => {
-    let className = ({validationState}) => validationState;
-    let {getByRole, getAllByRole} = renderGroup({validationState: 'invalid', className}, {className});
+  it('should support invalid state', () => {
+    let className = ({isInvalid}) => isInvalid ? 'invalid' : null;
+    let {getByRole, getAllByRole} = renderGroup({isInvalid: true, className}, {className});
     let group = getByRole('radiogroup');
     let radio = getAllByRole('radio')[0];
     let label = radio.closest('label');
@@ -194,7 +239,7 @@ describe('RadioGroup', () => {
     expect(group).toHaveAttribute('aria-invalid', 'true');
     expect(group).toHaveClass('invalid');
 
-    expect(label).toHaveAttribute('data-validation-state', 'invalid');
+    expect(label).toHaveAttribute('data-invalid', 'true');
     expect(label).toHaveClass('invalid');
   });
 
@@ -222,7 +267,7 @@ describe('RadioGroup', () => {
 
   it('supports help text', () => {
     let {getByRole, getAllByRole} = render(
-      <RadioGroup validationState="invalid">
+      <RadioGroup isInvalid>
         <Label>Test</Label>
         <Radio value="a">A</Radio>
         <Text slot="description">Description</Text>
@@ -237,5 +282,99 @@ describe('RadioGroup', () => {
     let radio = getAllByRole('radio')[0];
     expect(radio).toHaveAttribute('aria-describedby');
     expect(radio.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Error Description');
+  });
+
+  it('should not navigate within the group using Tab', () => {
+    let {getAllByRole} = renderGroup({}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
+    let radios = getAllByRole('radio');
+    let labelA = radios[0].closest('label');
+    let labelB = radios[1].closest('label');
+    let labelC = radios[2].closest('label');
+
+    const expectNotFocused = (...labels) => {
+      labels.forEach((label) => {
+        expect(label).not.toHaveAttribute('data-focus-visible');
+        expect(label).not.toHaveClass('focus');
+      });
+    };
+
+    expectNotFocused(labelA, labelB, labelC);
+
+    userEvent.tab();
+    expect(document.activeElement).toBe(radios[0]);
+    expect(labelA).toHaveAttribute('data-focus-visible', 'true');
+    expect(labelA).toHaveClass('focus');
+    expectNotFocused(labelB, labelC);
+
+    userEvent.tab();
+    expectNotFocused(labelA, labelB, labelC);
+
+    userEvent.tab({shift: true});
+    expect(document.activeElement).toBe(radios[2]);
+    expect(labelC).toHaveAttribute('data-focus-visible', 'true');
+    expect(labelC).toHaveClass('focus');
+    expectNotFocused(labelA, labelB);
+  });
+
+  it('should not navigate within the group using Tab in Dialog', () => {
+    let {getByRole} = render(
+      <DialogTrigger>
+        <Button>Trigger</Button>
+        <Modal data-test="modal">
+          <Dialog role="alertdialog" data-test="dialog">
+            {({close}) => (
+              <>
+                <TestRadioGroup radioProps={{className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''}} />
+                <Button onPress={close}>Close</Button>
+              </>
+            )}
+          </Dialog>
+        </Modal>
+      </DialogTrigger>
+    );
+
+    let trigger = getByRole('button');
+    userEvent.click(trigger);
+
+    let dialog = getByRole('alertdialog');
+
+    let radios = within(dialog).getAllByRole('radio');
+    let labelA = radios[0].closest('label');
+    let labelB = radios[1].closest('label');
+    let labelC = radios[2].closest('label');
+
+    const expectNotFocused = (...labels) => {
+      labels.forEach((label) => {
+        expect(label).not.toHaveAttribute('data-focus-visible');
+        expect(label).not.toHaveClass('focus');
+      });
+    };
+
+    expectNotFocused(labelA, labelB, labelC);
+
+    userEvent.tab();
+    expect(document.activeElement).toBe(radios[0]);
+    expect(labelA).toHaveAttribute('data-focus-visible', 'true');
+    expect(labelA).toHaveClass('focus');
+    expectNotFocused(labelB, labelC);
+
+    userEvent.tab();
+    let close = within(dialog).getByRole('button');
+    expect(document.activeElement).toBe(close);
+    expectNotFocused(labelA, labelB, labelC);
+
+    userEvent.tab({shift: true});
+    expect(document.activeElement).toBe(radios[2]);
+    expect(labelC).toHaveAttribute('data-focus-visible', 'true');
+    expect(labelC).toHaveClass('focus');
+    expectNotFocused(labelA, labelB);
+  });
+
+  it('should support aria-describedby on a radio', () => {
+    let {getAllByRole} = renderGroup({}, {'aria-describedby': 'test'});
+    let radios = getAllByRole('radio');
+    for (let radio of radios) {
+      expect(radio).toHaveAttribute('aria-describedby', 'test');
+    }
   });
 });

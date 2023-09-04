@@ -12,10 +12,9 @@
 
 import {AriaActionGroupProps} from '@react-types/actiongroup';
 import {createFocusManager} from '@react-aria/focus';
-import {DOMAttributes, FocusableElement} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, Orientation} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {ListState} from '@react-stately/list';
-import {Orientation} from '@react-types/shared';
 import {RefObject} from 'react';
 import {useLocale} from '@react-aria/i18n';
 

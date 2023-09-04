@@ -26,10 +26,9 @@ import {
 import {classNames} from '@react-spectrum/utils';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {mergeProps, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import {useCheckbox} from '@react-aria/checkbox';
-import {useRef} from 'react';
 import {useTableColumnResizeState, useTableState} from '@react-stately/table';
 import {useToggleState} from '@react-stately/toggle';
 import {VisuallyHidden} from '@react-aria/visually-hidden';

@@ -68,6 +68,22 @@ describe('Menu', () => {
     expect(menu).toHaveAttribute('aria-label', 'test');
   });
 
+  it('should support refs', () => {
+    let listBoxRef = React.createRef();
+    let sectionRef = React.createRef();
+    let itemRef = React.createRef();
+    render(
+      <Menu aria-label="Test" ref={listBoxRef}>
+        <Section ref={sectionRef}>
+          <Item ref={itemRef}>Cat</Item>
+        </Section>
+      </Menu>
+    );
+    expect(listBoxRef.current).toBeInstanceOf(HTMLElement);
+    expect(sectionRef.current).toBeInstanceOf(HTMLElement);
+    expect(itemRef.current).toBeInstanceOf(HTMLElement);
+  });
+
   it('should support slots', () => {
     let {getByRole} = render(
       <Menu aria-label="Actions">
@@ -138,6 +154,21 @@ describe('Menu', () => {
 
     expect(groups[0]).toHaveAttribute('aria-labelledby');
     expect(document.getElementById(groups[0].getAttribute('aria-labelledby'))).toHaveTextContent('Veggies');
+  });
+
+  it('should support dynamic collections', () => {
+    let items = [
+      {id: 'cat', name: 'Cat'},
+      {id: 'dog', name: 'Dog'}
+    ];
+
+    let {getAllByRole} = render(
+      <Menu aria-label="Test" items={items}>
+        {(item) => <Item id={item.id}>{item.name}</Item>}
+      </Menu>
+    );
+
+    expect(getAllByRole('menuitem').map((it) => it.textContent)).toEqual(['Cat', 'Dog']);
   });
 
   it('should support focus ring', () => {

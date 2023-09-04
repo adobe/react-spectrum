@@ -1,0 +1,28 @@
+<svg style="background:var(--anatomy-gray-100); padding: calc((152px - 108px) / 2) 10px" height="108" viewBox="0 0 231 108">
+  <g id="Group_156666" data-name="Group 156666" transform="translate(-1610 -1745)">
+    <g id="Rectangle_82" data-name="Rectangle 82" transform="translate(1610 1745)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-800)" stroke-width="1">
+      <rect width="231" height="50" rx="6" stroke="none"/>
+      <rect x="0.5" y="0.5" width="230" height="49" rx="5.5" fill="none"/>
+    </g>
+    <g id="Rectangle_84" data-name="Rectangle 84" transform="translate(1610 1803)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1">
+      <rect width="231" height="50" rx="6" stroke="none"/>
+      <rect x="0.5" y="0.5" width="230" height="49" rx="5.5" fill="none"/>
+    </g>
+    <g id="Checkbox" transform="translate(1622 1754)">
+      <rect id="Placement_Area" data-name="Placement Area" width="14" height="32" fill="red" opacity="0"/>
+      <rect id="Box" width="14" height="14" rx="2" transform="translate(0 9)" fill="var(--anatomy-gray-800)"/>
+      <g id="Checkmark">
+        <path id="Path_63887" data-name="Path 63887" d="M9.1,1.19a.96.96,0,0,0-1.347.162L3.645,6.585l-1.417-1.7A.96.96,0,0,0,.753,6.113L2.93,8.726c.02.024.049.032.07.054a.9.9,0,0,0,.074.086.921.921,0,0,0,.134.072.937.937,0,0,0,.1.054.956.956,0,0,0,.358.079h0a.955.955,0,0,0,.372-.084.935.935,0,0,0,.1-.059.91.91,0,0,0,.14-.08.9.9,0,0,0,.072-.09c.02-.02.049-.03.068-.054L9.267,2.538A.96.96,0,0,0,9.1,1.19Z" transform="translate(2 11)" fill="var(--anatomy-gray-75)"/>
+      </g>
+    </g>
+    <rect id="Rectangle_142244" data-name="Rectangle 142244" width="179" height="20" rx="4" transform="translate(1648 1760)" fill="var(--anatomy-gray-300)"/>
+    <rect id="Rectangle_142245" data-name="Rectangle 142245" width="179" height="20" rx="4" transform="translate(1648 1818)" fill="var(--anatomy-gray-200)"/>
+    <g id="Checkbox-2" data-name="Checkbox" transform="translate(1622 1812)">
+      <rect id="Placement_Area-2" data-name="Placement Area" width="14" height="32" fill="red" opacity="0"/>
+      <g id="Box-2" data-name="Box" transform="translate(0 9)" fill="var(--anatomy-gray-75)" stroke="var(--anatomy-gray-600)" stroke-width="2">
+        <rect width="14" height="14" rx="2" stroke="none"/>
+        <rect x="1" y="1" width="12" height="12" rx="1" fill="none"/>
+      </g>
+    </g>
+  </g>
+</svg>

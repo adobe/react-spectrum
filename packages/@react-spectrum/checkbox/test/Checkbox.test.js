@@ -115,7 +115,7 @@ describe('Checkbox', function () {
 
   it.each`
     Name          | Component   | props
-    ${'Checkbox'} | ${Checkbox} | ${{onChange: onChangeSpy, validationState: 'invalid'}}
+    ${'Checkbox'} | ${Checkbox} | ${{onChange: onChangeSpy, isInvalid: true}}
   `('$Name can be invalid', function ({Component, props}) {
     let {getByRole} = render(<Component {...props}>Click Me</Component>);
 
@@ -126,7 +126,7 @@ describe('Checkbox', function () {
 
   it.each`
     Name          | Component   | props
-    ${'Checkbox'} | ${Checkbox} | ${{onChange: onChangeSpy, validationState: 'invalid', 'aria-errormessage': 'test'}}
+    ${'Checkbox'} | ${Checkbox} | ${{onChange: onChangeSpy, isInvalid: true, 'aria-errormessage': 'test'}}
   `('$Name passes through aria-errormessage', function ({Component, props}) {
     let {getByRole} = render(<Component {...props}>Click Me</Component>);
 
@@ -260,5 +260,28 @@ describe('Checkbox', function () {
     });
     expect(checkbox.checked).toBeFalsy();
     expect(onChangeSpy).not.toHaveBeenCalled();
+  });
+
+  it('supports form reset', () => {
+    function Test() {
+      let [isSelected, setSelected] = React.useState(false);
+      return (
+        <form>
+          <Checkbox data-testid="checkbox" isSelected={isSelected} onChange={setSelected}>Checkbox</Checkbox>
+          <input type="reset" data-testid="reset" />
+        </form>
+      );
+    }
+
+    let {getByTestId} = render(<Test />);
+    let input = getByTestId('checkbox');
+
+    expect(input).not.toBeChecked();
+    act(() => userEvent.click(input));
+    expect(input).toBeChecked();
+
+    let button = getByTestId('reset');
+    act(() => userEvent.click(button));
+    expect(input).not.toBeChecked();
   });
 });

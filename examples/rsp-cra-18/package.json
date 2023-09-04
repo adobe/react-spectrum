@@ -5,6 +5,7 @@
   "homepage": ".",
   "dependencies": {
     "@adobe/react-spectrum": "latest",
+    "@react-spectrum/inlinealert": "^3.0.0-rc.0",
     "@spectrum-icons/workflow": "latest",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
@@ -16,14 +17,15 @@
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-scripts": "5.0.1",
-    "typescript": "^4.7.3",
+    "typescript": "5.0.4",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "install-17": "yarn add -W react@^17 react-dom@^17"
   },
   "eslintConfig": {
     "extends": [

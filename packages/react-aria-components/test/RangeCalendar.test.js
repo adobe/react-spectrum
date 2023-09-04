@@ -12,7 +12,7 @@
 
 import {act, fireEvent, render, within} from '@react-spectrum/test-utils';
 import {Button, CalendarCell, CalendarGrid, CalendarGridBody, CalendarGridHeader, CalendarHeaderCell, Heading, RangeCalendar, RangeCalendarContext} from 'react-aria-components';
-import {getLocalTimeZone, startOfMonth, startOfWeek, today} from '@internationalized/date';
+import {CalendarDate, getLocalTimeZone, startOfMonth, startOfWeek, today} from '@internationalized/date';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -34,7 +34,7 @@ let renderCalendar = (calendarProps, gridProps, cellProps) => render(<TestCalend
 describe('RangeCalendar', () => {
   it('should render with default classes', () => {
     let {getByRole} = renderCalendar();
-    let group = getByRole('group');
+    let group = getByRole('application');
     expect(group).toHaveAttribute('class', 'react-aria-RangeCalendar');
 
     let grid = getByRole('grid');
@@ -55,7 +55,7 @@ describe('RangeCalendar', () => {
 
   it('should render with custom classes', () => {
     let {getByRole} = renderCalendar({className: 'calendar'}, {className: 'grid'}, {className: 'cell'});
-    let group = getByRole('group');
+    let group = getByRole('application');
     expect(group).toHaveAttribute('class', 'calendar');
 
     let grid = getByRole('grid');
@@ -68,7 +68,7 @@ describe('RangeCalendar', () => {
 
   it('should support DOM props', () => {
     let {getByRole} = renderCalendar({'data-foo': 'bar'}, {'data-bar': 'baz'}, {'data-baz': 'foo'});
-    let group = getByRole('group');
+    let group = getByRole('application');
     expect(group).toHaveAttribute('data-foo', 'bar');
 
     let grid = getByRole('grid');
@@ -121,9 +121,34 @@ describe('RangeCalendar', () => {
       </RangeCalendarContext.Provider>
     );
 
-    let group = getByRole('group');
+    let group = getByRole('application');
     expect(group).toHaveAttribute('slot', 'test');
     expect(group).toHaveAttribute('aria-label', expect.stringContaining('test'));
+  });
+
+  it('should support render props', () => {
+    let {getByRole} = render(
+      <RangeCalendar
+        aria-label="Trip dates"
+        minValue={new CalendarDate(2023, 1, 1)}
+        defaultValue={{start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 2, 10)}}>
+        {({isInvalid}) => (
+          <>
+            <header>
+              <Button slot="previous">◀</Button>
+              <Heading />
+              <Button slot="next">▶</Button>
+            </header>
+            <CalendarGrid data-validation-state={isInvalid ? 'invalid' : null}>
+              {(date) => <CalendarCell date={date} />}
+            </CalendarGrid>
+          </>
+        )}
+      </RangeCalendar>
+    );
+
+    let grid = getByRole('grid');
+    expect(grid).toHaveAttribute('data-validation-state', 'invalid');
   });
 
   it('should support multi-month calendars', () => {
@@ -273,7 +298,7 @@ describe('RangeCalendar', () => {
 
   it('should support invalid state', () => {
     let {getByRole} = renderCalendar({
-      validationState: 'invalid',
+      isInvalid: true,
       value: {
         start: startOfWeek(startOfMonth(today(getLocalTimeZone())), 'en-US').add({days: 7}),
         end: startOfWeek(startOfMonth(today(getLocalTimeZone())), 'en-US').add({days: 10})

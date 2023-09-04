@@ -335,7 +335,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
   // Only apply aria-describedby to the first segment, unless the field is invalid. This avoids it being
   // read every time the user navigates to a new segment.
   let firstSegment = useMemo(() => state.segments.find(s => s.isEditable), [state.segments]);
-  if (segment !== firstSegment && state.validationState !== 'invalid') {
+  if (segment !== firstSegment && !state.isInvalid) {
     ariaDescribedBy = undefined;
   }
 
@@ -346,7 +346,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
   // This is needed because VoiceOver on iOS does not announce groups.
   let name = segment.type === 'literal' ? '' : displayNames.of(segment.type);
   let labelProps = useLabels({
-    'aria-label': (ariaLabel ? ariaLabel + ' ' : '') + name,
+    'aria-label': `${name}${ariaLabel ? `, ${ariaLabel}` : ''}${ariaLabelledBy ? ', ' : ''}`,
     'aria-labelledby': ariaLabelledBy
   });
 
@@ -364,7 +364,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     segmentProps: mergeProps(spinButtonProps, labelProps, {
       id,
       ...touchPropOverrides,
-      'aria-invalid': state.validationState === 'invalid' ? 'true' : undefined,
+      'aria-invalid': state.isInvalid ? 'true' : undefined,
       'aria-describedby': ariaDescribedBy,
       'aria-readonly': state.isReadOnly || !segment.isEditable ? 'true' : undefined,
       'data-placeholder': segment.isPlaceholder || undefined,

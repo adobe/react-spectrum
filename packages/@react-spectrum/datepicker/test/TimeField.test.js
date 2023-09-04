@@ -11,10 +11,10 @@
  */
 
 import {act, fireEvent, render as render_, within} from '@react-spectrum/test-utils';
+import {parseZonedDateTime, Time} from '@internationalized/date';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {Time} from '@internationalized/date';
 import {TimeField} from '../';
 import userEvent from '@testing-library/user-event';
 
@@ -136,6 +136,8 @@ describe('TimeField', function () {
     it('should call blur when focus leaves', function () {
       let {getAllByRole} = render(<TimeField label="Time" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} />);
       let segments = getAllByRole('spinbutton');
+      // workaround bug in userEvent.tab(). hidden inputs aren't focusable.
+      document.querySelector('input[type=hidden]').tabIndex = -1;
 
       expect(onBlurSpy).not.toHaveBeenCalled();
       expect(onFocusChangeSpy).not.toHaveBeenCalled();
@@ -175,6 +177,99 @@ describe('TimeField', function () {
       expect(segments[1]).toHaveFocus();
       expect(onKeyDownSpy).toHaveBeenCalledTimes(1);
       expect(onKeyUpSpy).toHaveBeenCalledTimes(2);
+    });
+
+    describe('timeZone', function () {
+      it('should have a timeZone when set by defaultValue', function () {
+        let {getByRole} = render(<TimeField label="Time" defaultValue={parseZonedDateTime('2023-07-01T00:45-07:00[America/Los_Angeles]')} />);
+        let timezone = getByRole('textbox');
+
+        expect(timezone.getAttribute('aria-label')).toBe('time zone, ');
+        expect(within(timezone).getByText('PDT')).toBeInTheDocument();
+      });
+
+      it('should keep timeZone from defaultValue when minute segment cleared', function () {
+        let {getAllByRole, getByRole} = render(<TimeField label="Time" defaultValue={parseZonedDateTime('2023-07-01T01:05-07:00[America/Los_Angeles]')} />);
+        let timezone = getByRole('textbox');
+        let segments = getAllByRole('spinbutton');
+
+        userEvent.tab();
+        expect(segments[0]).toHaveFocus();
+
+        userEvent.tab();
+        expect(segments[1]).toHaveFocus();
+        expect(segments[1]).toHaveAttribute('aria-valuetext', '05');
+        expect(timezone.getAttribute('aria-label')).toBe('time zone, ');
+        expect(within(timezone).getByText('PDT')).toBeInTheDocument();
+
+        fireEvent.keyDown(document.activeElement, {key: 'Backspace'});
+        fireEvent.keyUp(document.activeElement, {key: 'Backspace'});
+        expect(segments[1]).toHaveAttribute('aria-valuetext', 'Empty');
+        expect(timezone.getAttribute('aria-label')).toBe('time zone, ');
+        expect(within(timezone).getByText('PDT')).toBeInTheDocument();
+      });
+
+      it('should keep timeZone from defaultValue when minute segment cleared then set', function () {
+        let {getAllByRole, getByRole} = render(<TimeField label="Time" defaultValue={parseZonedDateTime('2023-07-01T01:05-07:00[America/Los_Angeles]')} />);
+        let timezone = getByRole('textbox');
+        let segments = getAllByRole('spinbutton');
+
+        userEvent.tab();
+        expect(segments[0]).toHaveFocus();
+
+        userEvent.tab();
+        expect(segments[1]).toHaveFocus();
+        expect(segments[1]).toHaveAttribute('aria-valuetext', '05');
+        expect(timezone.getAttribute('aria-label')).toBe('time zone, ');
+        expect(within(timezone).getByText('PDT')).toBeInTheDocument();
+
+        fireEvent.keyDown(document.activeElement, {key: 'Backspace'});
+        fireEvent.keyUp(document.activeElement, {key: 'Backspace'});
+        expect(segments[1]).toHaveFocus();
+        expect(segments[1]).toHaveAttribute('aria-valuetext', 'Empty');
+        expect(timezone.getAttribute('aria-label')).toBe('time zone, ');
+        expect(within(timezone).getByText('PDT')).toBeInTheDocument();
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+        expect(segments[1]).toHaveAttribute('aria-valuetext', '00');
+        expect(timezone.getAttribute('aria-label')).toBe('time zone, ');
+        expect(within(timezone).getByText('PDT')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('forms', () => {
+    it('supports form reset', () => {
+      function Test() {
+        let [value, setValue] = React.useState(new Time(8, 30));
+        return (
+          <form>
+            <TimeField name="time" label="Value" value={value} onChange={setValue} />
+            <input type="reset" data-testid="reset" />
+          </form>
+        );
+      }
+
+      let {getByTestId, getByRole, getAllByRole} = render(<Test />);
+      let group = getByRole('group');
+      let input = document.querySelector('input[name=time]');
+      let segments = getAllByRole('spinbutton');
+
+      let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+      expect(getDescription()).toBe('Selected Time: 8:30 AM');
+
+      expect(input).toHaveValue('08:30:00');
+      expect(input).toHaveAttribute('name', 'time');
+      fireEvent.keyDown(segments[0], {key: 'ArrowUp'});
+      fireEvent.keyUp(segments[0], {key: 'ArrowUp'});
+      expect(getDescription()).toBe('Selected Time: 9:30 AM');
+      expect(input).toHaveValue('09:30:00');
+
+      let button = getByTestId('reset');
+      act(() => userEvent.click(button));
+      expect(getDescription()).toBe('Selected Time: 8:30 AM');
+      expect(input).toHaveValue('08:30:00');
     });
   });
 });

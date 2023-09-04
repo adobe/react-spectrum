@@ -87,6 +87,14 @@ The Checkbox will visually remain indeterminate until the `isIndeterminate` prop
 <Checkbox isIndeterminate>Subscribe</Checkbox>
 ```
 
+### HTML forms
+
+Checkbox supports the `name` and `value` props for integration with HTML forms.
+
+```tsx example
+<Checkbox name="newsletter" value="subscribe">Subscribe</Checkbox>
+```
+
 ## Events
 
 Checkboxes accept a user defined `onChange` prop, triggered whenever the Checkbox is clicked.
@@ -110,10 +118,10 @@ function Example() {
 ## Validation
 
 Checkboxes can display a validation state to communicate to the user if the current value is invalid.
-Implement your own validation logic in your app and pass `"invalid"` to the Checkbox via the `validationState` prop.
-
+Implement your own validation logic in your app and set the `isInvalid` prop accordingly.
+The invalid state is only communicated via a color change so in order to be accessible the validation error must also be communicated in another way.
 ```tsx example
-<Checkbox validationState="invalid">I accept the terms and conditions</Checkbox>
+<Checkbox isInvalid>I accept the terms and conditions</Checkbox>
 ```
 
 ## Props

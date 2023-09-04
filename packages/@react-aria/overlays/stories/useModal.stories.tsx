@@ -13,16 +13,20 @@
 import {ActionButton} from '@react-spectrum/button';
 import {OverlayContainer, OverlayProvider, useModal} from '../src';
 import React, {useState} from 'react';
-import {storiesOf} from '@storybook/react';
 
+export default {
+  title: 'useModal'
+};
 
-storiesOf('useModal', module)
-  .add('default container', () => (
-    <App />
-  ))
-  .add('different container', () => (
-    <App useAlternateContainer />
-  ));
+export const DefaultContainer = {
+  render: () => <App />,
+  name: 'default container'
+};
+
+export const DifferentContainer = {
+  render: () => <App useAlternateContainer />,
+  name: 'different container'
+};
 
 function App(props) {
   let [showModal, setShowModal] = useState(false);

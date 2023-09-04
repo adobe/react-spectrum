@@ -14,10 +14,11 @@ jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, installPointerEvent, render as renderComponent, triggerPress, within} from '@react-spectrum/test-utils';
 import {ActionButton} from '@react-spectrum/button';
 import {announce} from '@react-aria/live-announcer';
-import {FocusExample, renderEmptyState} from '../stories/ListView.stories';
+import {FocusExample} from '../stories/ListViewActions.stories';
 import {Item, ListView} from '../src';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {renderEmptyState} from '../stories/ListView.stories';
 import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
@@ -1422,10 +1423,10 @@ describe('ListView', function () {
       });
       expect(grid.scrollTop).toBe(0);
 
-      focusRow(tree, 'Item 10');
-      expect(document.activeElement).toBe(getRow(tree, 'Item 10'));
+      focusRow(tree, 'Item 1');
+      expect(document.activeElement).toBe(getRow(tree, 'Item 1'));
 
-      expect(grid.scrollTop).toBe(380);
+      expect(grid.scrollTop).toBe(20);
     });
 
     it('should scroll to a row when it is focused off screen', function () {

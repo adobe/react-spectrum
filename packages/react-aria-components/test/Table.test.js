@@ -11,8 +11,10 @@
  */
 
 import {act, fireEvent, render, within} from '@react-spectrum/test-utils';
-import {Button, Cell, Checkbox, Collection, Column, Row, Table, TableBody, TableHeader, useDragAndDrop, useTableOptions} from '../';
-import React from 'react';
+import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, ResizableTableContainer, Row, Table, TableBody, TableHeader, useDragAndDrop, useTableOptions} from '../';
+import React, {useMemo, useState} from 'react';
+import {resizingTests} from '@react-aria/table/test/tableResizingTests';
+import {setInteractionModality} from '@react-aria/interactions';
 import userEvent from '@testing-library/user-event';
 
 function MyColumn(props) {
@@ -25,6 +27,7 @@ function MyColumn(props) {
             {sortDirection === 'ascending' ? '▲' : '▼'}
           </span>
         )}
+        {props.allowsResizing && <ColumnResizer />}
       </>)}
     </Column>
   );
@@ -573,6 +576,66 @@ describe('Table', () => {
     expect(document.activeElement).toBe(cell);
   });
 
+  it('should support refs', () => {
+    let tableRef = React.createRef();
+    let headerRef = React.createRef();
+    let columnRef = React.createRef();
+    let bodyRef = React.createRef();
+    let rowRef = React.createRef();
+    let cellRef = React.createRef();
+    render(
+      <Table aria-label="Search results" ref={tableRef}>
+        <TableHeader ref={headerRef}>
+          <Column isRowHeader ref={columnRef}>Name</Column>
+          <Column>Type</Column>
+        </TableHeader>
+        <TableBody ref={bodyRef}>
+          <Row ref={rowRef}>
+            <Cell ref={cellRef}>Foo</Cell>
+            <Cell>Bar</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    );
+    expect(tableRef.current).toBeInstanceOf(HTMLTableElement);
+    expect(headerRef.current).toBeInstanceOf(HTMLTableSectionElement);
+    expect(columnRef.current).toBeInstanceOf(HTMLTableCellElement);
+    expect(bodyRef.current).toBeInstanceOf(HTMLTableSectionElement);
+    expect(rowRef.current).toBeInstanceOf(HTMLTableRowElement);
+    expect(cellRef.current).toBeInstanceOf(HTMLTableCellElement);
+  });
+
+  it('should support cell render props', () => {
+    let {getAllByRole} = render(
+      <Table aria-label="Search results">
+        <TableHeader>
+          <Column isRowHeader>
+            {({isFocused}) => `Name${isFocused ? ' (focused)' : ''}`}
+          </Column>
+          <Column>Type</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>
+              {({isFocused}) => `Foo${isFocused ? ' (focused)' : ''}`}
+            </Cell>
+            <Cell>Bar</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    );
+
+    let headers = getAllByRole('columnheader');
+    expect(headers[0]).toHaveTextContent('Name');
+    act(() => headers[0].focus());
+    expect(headers[0]).toHaveTextContent('Name (focused)');
+
+    let cells = getAllByRole('rowheader');
+    expect(cells[0]).toHaveTextContent('Foo');
+    act(() => cells[0].focus());
+    expect(cells[0]).toHaveTextContent('Foo (focused)');
+  });
+
   describe('drag and drop', () => {
     it('should support drag button slot', () => {
       let {getAllByRole} = render(<DraggableTable />);
@@ -673,5 +736,97 @@ describe('Table', () => {
 
       expect(onRootDrop).toHaveBeenCalledTimes(1);
     });
+  });
+
+  describe('column resizing', () => {
+    // I'd use tree.getByRole(role, {name: text}) here, but it's unbearably slow.
+    function getColumn(tree, name) {
+      // Find by text, then go up to the element with the cell role.
+      let el = tree.getByText(name);
+      while (el && !/columnheader/.test(el.getAttribute('role'))) {
+        el = el.parentElement;
+      }
+
+      return el;
+    }
+
+    function resizeCol(tree, col, delta) {
+      act(() => {setInteractionModality('pointer');});
+      let column = getColumn(tree, col);
+      let resizer = within(column).getByRole('slider');
+
+      fireEvent.pointerEnter(resizer);
+
+      // actual locations do not matter, the delta matters between events for the calculation of useMove
+      fireEvent.pointerDown(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 0, pageY: 30});
+      fireEvent.pointerMove(resizer, {pointerType: 'mouse', pointerId: 1, pageX: delta, pageY: 25});
+      fireEvent.pointerUp(resizer, {pointerType: 'mouse', pointerId: 1});
+    }
+
+    function resizeTable(clientWidth, newValue) {
+      clientWidth.mockImplementation(() => newValue);
+      fireEvent(window, new Event('resize'));
+      act(() => {jest.runAllTimers();});
+    }
+
+    let defaultColumns = [
+      {name: 'Name', uid: 'name', width: '1fr'},
+      {name: 'Type', uid: 'type', width: '1fr'},
+      {name: 'Height', uid: 'height'},
+      {name: 'Weight', uid: 'weight'},
+      {name: 'Level', uid: 'level', width: '5fr'}
+    ];
+
+    resizingTests(render, (tree, ...args) => tree.rerender(...args), ResizableTable, ControlledResizableTable, resizeCol, resizeTable);
+
+    function ResizableTable(props) {
+      let {columns, rows} = props;
+      return (
+        <ResizableTableContainer>
+          <Table aria-label="Files">
+            <MyTableHeader columns={columns}>
+              {column => (
+                <MyColumn {...column} isRowHeader={column.id === 'name'}>
+                  {column.name}
+                </MyColumn>
+              )}
+            </MyTableHeader>
+            <TableBody items={rows}>
+              {item => (
+                <MyRow columns={columns}>
+                  {column => <Cell>{item[column.key]}</Cell>}
+                </MyRow>
+              )}
+            </TableBody>
+          </Table>
+        </ResizableTableContainer>
+      );
+    }
+
+    function ControlledResizableTable(props) {
+      let {columns = defaultColumns, rows} = props;
+      let [widths, setWidths] = useState(() => new Map(columns.filter(col => col.width).map((col) => [col.uid, col.width])));
+      let cols = useMemo(() => columns.map(col => ({...col, width: widths.get(col.uid)})), [columns, widths]);
+      return (
+        <ResizableTableContainer onResizeStart={props.onResizeStart} onResize={w => {setWidths(w); props.onResize?.(w);}} onResizeEnd={props.onResizeEnd}>
+          <Table aria-label="Files">
+            <MyTableHeader columns={cols}>
+              {column => (
+                <MyColumn {...column} id={column.uid} isRowHeader={column.uid === 'name'} allowsResizing>
+                  {column.name}
+                </MyColumn>
+              )}
+            </MyTableHeader>
+            <TableBody items={rows}>
+              {item => (
+                <MyRow columns={columns}>
+                  {column => <Cell>{item[column.key]}</Cell>}
+                </MyRow>
+              )}
+            </TableBody>
+          </Table>
+        </ResizableTableContainer>
+      );
+    }
   });
 });

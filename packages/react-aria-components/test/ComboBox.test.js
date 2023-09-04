@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ComboBox, ComboBoxContext, Input, Item, Label, ListBox, Popover, Text} from '../';
+import {Button, ComboBox, ComboBoxContext, Header, Input, Item, Label, ListBox, Popover, Section, Text} from '../';
 import React from 'react';
 import {render, within} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
@@ -24,9 +24,9 @@ let TestComboBox = (props) => (
     <Text slot="errorMessage">Error</Text>
     <Popover>
       <ListBox>
-        <Item>Cat</Item>
-        <Item>Dog</Item>
-        <Item>Kangaroo</Item>
+        <Item id="1">Cat</Item>
+        <Item id="2">Dog</Item>
+        <Item id="3">Kangaroo</Item>
       </ListBox>
     </Popover>
   </ComboBox>
@@ -83,5 +83,111 @@ describe('ComboBox', () => {
     expect(button).not.toHaveAttribute('data-pressed');
     userEvent.click(button);
     expect(button).toHaveAttribute('data-pressed');
+  });
+
+  it('should support filtering sections', () => {
+    let {getByRole} = render(
+      <ComboBox>
+        <Label>Preferred fruit or vegetable</Label>
+        <Input />
+        <Button />
+        <Popover>
+          <ListBox>
+            <Section>
+              <Header>Fruit</Header>
+              <Item id="Apple">Apple</Item>
+              <Item id="Banana">Banana</Item>
+            </Section>
+            <Section>
+              <Header>Vegetable</Header>
+              <Item id="Cabbage">Cabbage</Item>
+              <Item id="Broccoli">Broccoli</Item>
+            </Section>
+          </ListBox>
+        </Popover>
+      </ComboBox>
+    );
+
+    let input = getByRole('combobox');
+    userEvent.type(input, 'p');
+
+    let listbox = getByRole('listbox');
+    let groups = within(listbox).getAllByRole('group');
+    expect(groups).toHaveLength(1);
+    expect(groups[0]).toHaveAttribute('aria-labelledby');
+    expect(document.getElementById(groups[0].getAttribute('aria-labelledby'))).toHaveTextContent('Fruit');
+
+    let options = within(groups[0]).getAllByRole('option');
+    expect(options).toHaveLength(1);
+  });
+
+  it('should support dynamic collections', () => {
+    let defaultItems = [
+      {id: 1, name: 'Cat'},
+      {id: 2, name: 'Dog'},
+      {id: 3, name: 'Kangaroo'}
+    ];
+    let {getByRole} = render(
+      <ComboBox defaultItems={defaultItems}>
+        <Label>Favorite Animal</Label>
+        <Input />
+        <Button />
+        <Text slot="description">Description</Text>
+        <Text slot="errorMessage">Error</Text>
+        <Popover>
+          <ListBox>
+            {item => <Item>{item.name}</Item>}
+          </ListBox>
+        </Popover>
+      </ComboBox>
+    );
+
+    let input = getByRole('combobox');
+    userEvent.type(input, 'c');
+
+    let listbox = getByRole('listbox');
+    let options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(1);
+  });
+
+  it('should support render props', () => {
+    let {getByRole} = render(
+      <ComboBox>
+        {({isOpen}) => (
+          <>
+            <Label>Favorite Animal</Label>
+            <Input />
+            <Button>{isOpen ? 'close' : 'open'}</Button>
+            <Popover>
+              <ListBox>
+                <Item>Cat</Item>
+                <Item>Dog</Item>
+                <Item>Kangaroo</Item>
+              </ListBox>
+            </Popover>
+          </>
+        )}
+      </ComboBox>
+    );
+
+    let button = getByRole('button');
+    expect(button).toHaveTextContent('open');
+
+    userEvent.click(button);
+    expect(button).toHaveTextContent('close');
+  });
+
+  it('should support formValue', () => {
+    let {getByRole, rerender} = render(<TestComboBox name="test" selectedKey="2" />);
+    let input = getByRole('combobox');
+    expect(input).not.toHaveAttribute('name');
+    expect(input).toHaveValue('Dog');
+    let hiddenInput = document.querySelector('input[type=hidden]');
+    expect(hiddenInput).toHaveAttribute('name', 'test');
+    expect(hiddenInput).toHaveValue('2');
+
+    rerender(<TestComboBox name="test" formValue="text" selectedKey="2" />);
+    expect(input).toHaveAttribute('name', 'test');
+    expect(document.querySelector('input[type=hidden]')).toBeNull();
   });
 });

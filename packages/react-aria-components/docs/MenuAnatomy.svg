@@ -1,0 +1,123 @@
+<svg style="max-height: 340px; background: var(--anatomy-gray-100); padding: 12px; margin-bottom: 16px; width: calc(100% - 24px); border-radius: 4px;" viewBox="-135 0 540 340">
+  <title>Menu anatomy diagram</title>
+  <desc>Shows a menu component with labels pointing to its parts, including the trigger, menu, group, section heading, menu item, menu item label, menu item description, and menu item keyboard shortcut elements.</desc>
+  <defs>
+    <filter id="rectangle-12" x="310.5" y="121" width="226" height="251" filterUnits="userSpaceOnUse">
+      <feOffset dy="1" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feFlood flood-opacity="0.149"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g transform="translate(-1083 -404)">
+    <g transform="translate(595 395)">
+      <g transform="matrix(1, 0, 0, 1, 187.5, -26)" filter="url(#rectangle-12)">
+        <g id="rectangle-12-4" data-name="rectangle-12" transform="translate(316.5 126)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1.5">
+          <rect width="214" height="239" rx="6" stroke="none"/>
+          <rect x="0.75" y="0.75" width="212.5" height="237.5" rx="5.25" fill="none"/>
+        </g>
+      </g>
+      <g transform="translate(505 131)" fill="var(--anatomy-gray-900)" opacity="0.04">
+        <path d="M0,0H212V64H0Z" stroke="none" />
+        <path d="M 1 1 L 1 63 L 211 63 L 211 1 L 1 1 M 0 0 L 212 0 L 212 64 L 0 64 L 0 0 Z" stroke="none" fill="rgba(0,0,0,0)" />
+      </g><text transform="translate(522 158)" fill="var(--anatomy-gray-800)" font-size="20" font-family="Adobe-Clean">
+        <tspan x="0" y="0">Option 1</tspan>
+      </text><text transform="translate(522 227)" fill="var(--anatomy-gray-800)" font-size="20" font-family="Adobe-Clean">
+        <tspan x="0" y="0">Option 2</tspan>
+      </text>
+      <g transform="translate(397 498.5)"><text transform="translate(346 -316.5)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+          <tspan x="0" y="0">Menu item</tspan>
+        </text>
+        <path d="M-1244-611.5V-639.55a2.5,2.5,0,0,1-2-2.449,2.5,2.5,0,0,1,2.5-2.5,2.5,2.5,0,0,1,2.5,2.5,2.5,2.5,0,0,1-2,2.449V-611.5Z" transform="translate(953 -1564.5) rotate(-90)" fill="var(--anatomy-gray-500)" />
+      </g>
+      <g transform="translate(397 472.5)"><text transform="translate(346 -316.5)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+          <tspan x="0" y="0">Menu item keyboard shortcut</tspan>
+        </text>
+        <path d="M-1244-611.5v-32.05a2.5,2.5,0,0,1-2-2.45,2.5,2.5,0,0,1,2.5-2.5,2.5,2.5,0,0,1,2.5,2.5,2.5,2.5,0,0,1-2,2.45v32.05Z" transform="translate(953 -1564.5) rotate(-90)" fill="var(--anatomy-gray-500)" />
+      </g>
+      <g transform="translate(104 500.755)"><text transform="translate(366 -344.755)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+          <tspan x="-82.589" y="0">Menu item label</tspan>
+        </text>
+        <path d="M2,42V4.95a2.5,2.5,0,1,1,1,0V42Z" transform="translate(413.5 -351.754) rotate(90)" fill="var(--anatomy-gray-500)" />
+      </g><text transform="translate(522 183)" fill="rgba(73,110,194,0.75)" font-size="16" font-family="Adobe-Clean">
+        <tspan x="0" y="0">Description</tspan>
+      </text><text transform="translate(522 252)" fill="rgba(73,110,194,0.75)" font-size="16" font-family="Adobe-Clean">
+        <tspan x="0" y="0">Description</tspan>
+      </text><text transform="translate(522 295)" fill="var(--anatomy-gray-800)" font-size="20" font-family="Adobe-Clean">
+        <tspan x="0" y="0">Option 3</tspan>
+      </text><text transform="translate(522 320)" fill="rgba(73,110,194,0.75)" font-size="16" font-family="Adobe-Clean">
+        <tspan x="0" y="0">Description</tspan>
+      </text>
+      <g transform="translate(104 526.755)"><text transform="translate(366 -344.755)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+          <tspan x="-113.126" y="0">Menu item description</tspan>
+        </text>
+        <path d="M2,42V4.95a2.5,2.5,0,1,1,1,0V42Z" transform="translate(413.5 -351.754) rotate(90)" fill="var(--anatomy-gray-500)" />
+      </g>
+      <g transform="translate(295 421)">
+        <text transform="translate(402 -349)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+          <tspan x="-14.612" y="0">Menu</tspan>
+        </text>
+        <path d="M-1170-358.5a2.5,2.5,0,0,1,2-2.45V-381h1v20.05a2.5,2.5,0,0,1,2,2.45,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-1170-358.5Z" transform="translate(1569.5 38)" fill="var(--anatomy-gray-500)" />
+        <path d="M-1170-358.5a2.5,2.5,0,0,1,2-2.45V-381h1v20.05a2.5,2.5,0,0,1,2,2.45,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-1170-358.5Z" transform="translate(1569.5 38)" fill="var(--anatomy-gray-500)" />
+      </g><text transform="translate(522 122)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean" style="font-weight: 700; letter-spacing: 0.06em">
+        <tspan x="0" y="0">SECTION TITLE</tspan>
+      </text>
+      <g transform="translate(104 464.755)"><text transform="translate(366 -344.755)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+          <tspan x="-75.11" y="0">Section header</tspan>
+        </text>
+        <path d="M2,42V4.95a2.5,2.5,0,1,1,1,0V42Z" transform="translate(413.5 -351.754) rotate(90)" fill="var(--anatomy-gray-500)" />
+      </g>
+      <rect width="8" height="1" transform="translate(732.14 223.776)" fill="var(--anatomy-gray-500)" />
+      <g transform="translate(723.117 108)">
+        <rect width="8.023" height="1" fill="var(--anatomy-gray-500)" />
+        <rect width="1" height="226.234" transform="translate(8.023)" fill="var(--anatomy-gray-500)" />
+        <rect width="8.023" height="1" transform="translate(0 225.234)" fill="var(--anatomy-gray-500)" />
+      </g><text transform="translate(745 229)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+        <tspan x="0" y="0">Section</tspan>
+      </text><text transform="translate(669 158)" fill="rgba(73,110,194,0.75)" font-size="20" font-family="LucidaGrande, Lucida Grande">
+        <tspan x="0" y="0">⌘</tspan>
+        <tspan y="0" font-family="Adobe-Clean">K</tspan>
+      </text>
+      <g transform="translate(104 526.755)"><text transform="translate(366 -344.755)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+          <tspan x="-113.126" y="0">Menu item description</tspan>
+        </text>
+        <path d="M2,42V4.95a2.5,2.5,0,1,1,1,0V42Z" transform="translate(413.5 -351.754) rotate(90)" fill="var(--anatomy-gray-500)" />
+      </g>
+      <g id="Group_151077" data-name="Group 151077" transform="translate(94 580.531)">
+        <text id="Popover" transform="translate(376 -345.255)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="-41.522" y="0">Popover</tspan></text>
+        <path id="Union_19-5" data-name="Union 19" d="M2,32V4.95a2.5,2.5,0,1,1,1,0V32Z" transform="translate(413.5 -351.754) rotate(90)" fill="var(--anatomy-gray-500)"/>
+      </g>
+    </g>
+    <g transform="translate(1099 443.801)">
+      <g transform="translate(0 0.199)" fill="var(--anatomy-gray-200)" stroke="rgba(0,0,0,0)" stroke-width="1">
+        <rect width="165" height="44" rx="4" stroke="none" />
+        <rect x="0.5" y="0.5" width="164" height="43" rx="3.5" fill="none" />
+      </g>
+      <path d="M5.525,0h154.7a5.525,5.525,0,0,1,5.525,5.525V38.674a5.525,5.525,0,0,1-5.525,5.525H5.525A5.525,5.525,0,0,1,0,38.674V5.525A5.525,5.525,0,0,1,5.525,0Zm0,1.381A4.144,4.144,0,0,0,1.381,5.525V38.674a4.144,4.144,0,0,0,4.144,4.144h154.7a4.144,4.144,0,0,0,4.144-4.144V5.525a4.144,4.144,0,0,0-4.144-4.144Z" fill="var(--anatomy-gray-500)" />
+      <g transform="translate(9.248 9.52)">
+        <g transform="translate(10.366 10.37)" fill="var(--anatomy-gray-900)" stroke="var(--anatomy-gray-900)" stroke-width="1">
+          <circle cx="2.348" cy="2.348" r="2.348" stroke="none" />
+          <circle cx="2.348" cy="2.348" r="1.848" fill="none" />
+        </g>
+        <g transform="translate(18.446 10.37)" fill="var(--anatomy-gray-900)" stroke="var(--anatomy-gray-900)" stroke-width="1">
+          <circle cx="2.348" cy="2.348" r="2.348" stroke="none" />
+          <circle cx="2.348" cy="2.348" r="1.848" fill="none" />
+        </g>
+        <g transform="translate(2.285 10.37)" fill="var(--anatomy-gray-900)" stroke="var(--anatomy-gray-900)" stroke-width="1">
+          <circle cx="2.348" cy="2.348" r="2.348" stroke="none" />
+          <circle cx="2.348" cy="2.348" r="1.848" fill="none" />
+        </g>
+      </g><text transform="translate(44 26.199)" fill="var(--anatomy-gray-900)" font-size="18" font-family="Adobe-Clean">
+        <tspan x="0" y="0">More Actions</tspan>
+      </text>
+    </g>
+    <g transform="translate(715 765)">
+      <text transform="translate(402 -348)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+        <tspan x="-33.755" y="0">Menu Trigger</tspan>
+      </text>
+      <path d="M-1170-358.5a2.5,2.5,0,0,1,2-2.45V-381h1v20.05a2.5,2.5,0,0,1,2,2.45,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-1170-358.5Z" transform="translate(1569.5 38)" fill="var(--anatomy-gray-500)" />
+      <path d="M-1170-358.5a2.5,2.5,0,0,1,2-2.45V-381h1v20.05a2.5,2.5,0,0,1,2,2.45,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-1170-358.5Z" transform="translate(1569.5 38)" fill="var(--anatomy-gray-500)" />
+    </g>
+  </g>
+</svg>

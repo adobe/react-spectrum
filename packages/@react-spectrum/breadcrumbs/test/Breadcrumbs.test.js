@@ -19,7 +19,7 @@ import {theme} from '@react-spectrum/theme-default';
 
 describe('Breadcrumbs', function () {
   beforeAll(() => {
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
   beforeEach(() => {
     jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () {
@@ -31,7 +31,6 @@ describe('Breadcrumbs', function () {
     });
 
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
   });
 
   afterEach(() => {

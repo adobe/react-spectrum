@@ -37,7 +37,7 @@ import {ToC} from './ToC';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import {VersionBadge} from './VersionBadge';
 
-const ENABLE_PAGE_TYPES = false;
+const ENABLE_PAGE_TYPES = true;
 const INDEX_RE = /^(?:[^/]+\/)?index\.html$/;
 const TLD = 'react-spectrum.adobe.com';
 const HERO = {
@@ -109,7 +109,7 @@ function isBlogSection(section) {
   return section === 'blog' || section === 'releases';
 }
 
-function Page({children, currentPage, publicUrl, styles, scripts}) {
+function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
   let parts = currentPage.name.split('/');
   let isBlog = isBlogSection(parts[0]);
   let isSubpage = parts.length > 1 && !INDEX_RE.test(currentPage.name);
@@ -123,6 +123,12 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
   let title = currentPage.title + (!INDEX_RE.test(currentPage.name) || isBlog ? ` – ${pageSection}` : '');
   let hero = (parts.length > 1 ? HERO[parts[0]] : '') || heroImageHome;
   let heroUrl = `https://${TLD}/${currentPage.image || path.basename(hero)}`;
+  let githubLink = pathToPage;
+  if (githubLink.startsWith('/tmp/')) {
+    githubLink = githubLink.slice(5);
+    githubLink = githubLink.substring(githubLink.indexOf('/') + 1);
+    githubLink = githubLink.replace(/docs/, 'packages');
+  }
 
   return (
     <html
@@ -198,6 +204,7 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
         <meta property="og:image" content={heroUrl} />
         <meta property="og:description" content={description} />
         <meta property="og:locale" content="en_US" />
+        <meta data-github-src={githubLink} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{__html: JSON.stringify(
@@ -365,7 +372,6 @@ function Nav({currentPageName, pages}) {
       </li>
     );
   }
-
   let isActive = (pageMap) => {
     for (let key in pageMap) {
       if (pageMap[key].some(p => p.name === currentPageName)) {
@@ -436,22 +442,22 @@ function Nav({currentPageName, pages}) {
           </h2>
         </a>
       </header>
-      {sections.map(section => {
+      {sections.map((section, i) => {
         let contents = categories.filter(c => section.pages[c]?.length).map(key => {
           const headingId = `${section.title ? section.title.toLowerCase() + '-' : ''}${key.trim().toLowerCase().replace(/\s+/g, '-')}-heading`;
           return (
-            <>
+            <React.Fragment key={headingId}>
               <h3 className={sideNavStyles['spectrum-SideNav-heading']} id={headingId}>{key}</h3>
               <ul className={sideNavStyles['spectrum-SideNav']} aria-labelledby={headingId}>
-                {section.pages[key].sort((a, b) => (a.order || 0) < (b.order || 0) || a.title < b.title ? -1 : 1).map(p => <SideNavItem {...p} preRelease={section.title === 'Components' ? '' : p.preRelease} />)}
+                {section.pages[key].sort((a, b) => (a.order || 0) < (b.order || 0) || a.title < b.title ? -1 : 1).map(p => <SideNavItem key={p.title} {...p} preRelease={section.title === 'Components' ? '' : p.preRelease} />)}
               </ul>
-            </>
+            </React.Fragment>
           );
         });
 
         if (section.title) {
           return (
-            <details open={section.isActive}>
+            <details key={section.title} open={section.isActive}>
               <summary style={{fontWeight: 'bold'}}>
                 <ChevronRight size="S" /> {section.title}
                 {section.title === 'Components' && <VersionBadge version={Object.values(section.pages)[0][0].preRelease} style={{marginLeft: 'auto', fontWeight: 'normal'}} />}
@@ -460,7 +466,7 @@ function Nav({currentPageName, pages}) {
             </details>
           );
         } else {
-          return <>{contents}</>;
+          return <React.Fragment key={i}>{contents}</React.Fragment>;
         }
       })}
     </nav>
@@ -482,11 +488,11 @@ function Footer() {
     </footer>
   );
 }
-
 export const PageContext = React.createContext();
 export function BaseLayout({scripts, styles, pages, currentPage, publicUrl, children, toc}) {
+  let pathToPage = currentPage.filePath.substring(currentPage.filePath.indexOf('packages/'), currentPage.filePath.length);
   return (
-    <Page scripts={scripts} styles={styles} publicUrl={publicUrl} currentPage={currentPage}>
+    <Page scripts={scripts} styles={styles} publicUrl={publicUrl} currentPage={currentPage} pathToPage={pathToPage}>
       <div style={{isolation: 'isolate'}}>
         <header className={docStyles.pageHeader} />
         <Nav currentPageName={currentPage.name} pages={pages} />
@@ -503,6 +509,12 @@ export function BaseLayout({scripts, styles, pages, currentPage, publicUrl, chil
             </ImageContext.Provider>
           </MDXProvider>
           {toc.length ? <ToC toc={toc} /> : null}
+          {!(
+            pathToPage.includes('index.mdx') ||
+            pathToPage.includes('/blog/') ||
+            pathToPage.includes('/releases/') ||
+            pathToPage.includes('react-aria-components.mdx')
+          ) && <div id="edit-page" className={docStyles.editPageContainer} />}
           <Footer />
         </main>
       </div>

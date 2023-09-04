@@ -21,7 +21,7 @@ import {FocusScope} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {OpenTransition} from '@react-spectrum/overlays';
-import React, {ReactElement, Ref, useEffect, useRef} from 'react';
+import React, {ReactElement, Ref, useEffect, useRef, useState} from 'react';
 import {SpectrumActionBarProps} from '@react-types/actionbar';
 import styles from './actionbar.css';
 import {Text} from '@react-spectrum/text';
@@ -65,9 +65,9 @@ function ActionBarInner<T>(props: ActionBarInnerProps<T>, ref: Ref<HTMLDivElemen
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   // Store the last count greater than zero in a ref so that we can retain it while rendering the fade-out animation.
-  let lastCount = useRef(selectedItemCount);
-  if (selectedItemCount === 'all' || selectedItemCount > 0) {
-    lastCount.current = selectedItemCount;
+  let [lastCount, setLastCount] = useState(selectedItemCount);
+  if ((selectedItemCount === 'all' || selectedItemCount > 0) && selectedItemCount !== lastCount) {
+    setLastCount(selectedItemCount);
   }
 
   let {keyboardProps} = useKeyboard({
@@ -80,8 +80,12 @@ function ActionBarInner<T>(props: ActionBarInnerProps<T>, ref: Ref<HTMLDivElemen
   });
 
   // Announce "actions available" on mount.
+  let isInitial = useRef(true);
   useEffect(() => {
-    announce(stringFormatter.format('actionsAvailable'));
+    if (isInitial.current) {
+      isInitial.current = false;
+      announce(stringFormatter.format('actionsAvailable'));
+    }
   }, [stringFormatter]);
 
   return (
@@ -120,9 +124,9 @@ function ActionBarInner<T>(props: ActionBarInnerProps<T>, ref: Ref<HTMLDivElemen
             <CrossLarge />
           </ActionButton>
           <Text UNSAFE_className={classNames(styles, 'react-spectrum-ActionBar-selectedCount')}>
-            {lastCount.current === 'all'
+            {lastCount === 'all'
               ? stringFormatter.format('selectedAll')
-              : stringFormatter.format('selected', {count: lastCount.current})}
+              : stringFormatter.format('selected', {count: lastCount})}
           </Text>
         </div>
       </div>

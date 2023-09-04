@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {act} from '@testing-library/react';
+
 jest.mock('@react-aria/live-announcer');
 import {announce} from '@react-aria/live-announcer';
 import {Calendar} from '../';
@@ -21,12 +23,11 @@ import {useLocale} from '@react-aria/i18n';
 let keyCodes = {'Enter': 13, ' ': 32, 'PageUp': 33, 'PageDown': 34, 'End': 35, 'Home': 36, 'ArrowLeft': 37, 'ArrowUp': 38, 'ArrowRight': 39, 'ArrowDown': 40};
 
 describe('Calendar', () => {
-  beforeEach(() => {
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+  beforeAll(() => {
+    jest.useFakeTimers();
   });
-
   afterEach(() => {
-    window.requestAnimationFrame.mockRestore();
+    act(() => {jest.runAllTimers();});
   });
 
   describe('basics', () => {
@@ -319,11 +320,11 @@ describe('Calendar', () => {
       expect(onChange).toHaveBeenCalledTimes(2);
     });
 
-    it('should support validationState', () => {
+    it('should support invalid state', () => {
       let {getByRole} = render(
         <Calendar
           defaultValue={new CalendarDate(2022, 3, 11)}
-          validationState="invalid" />
+          isInvalid />
       );
 
       let cell = getByRole('button', {name: 'Friday, March 11, 2022 selected'});
@@ -339,7 +340,7 @@ describe('Calendar', () => {
       let {getByRole} = render(
         <Calendar
           defaultValue={new CalendarDate(2022, 3, 11)}
-          validationState="invalid"
+          isInvalid
           errorMessage="Selection dates cannot include weekends." />
       );
 
@@ -352,7 +353,7 @@ describe('Calendar', () => {
       expect(description).toBe('Selection dates cannot include weekends.');
     });
 
-    it('does not show error message without validationState="invalid"', () => {
+    it('does not show error message without isInvalid', () => {
       let {getByRole} = render(
         <Calendar
           defaultValue={new CalendarDate(2022, 3, 11)}
@@ -388,13 +389,13 @@ describe('Calendar', () => {
     });
   });
 
-  // These tests only work against v3
   describe('announcing', () => {
     it('announces when the current month changes', () => {
       let {getAllByLabelText} = render(<Calendar defaultValue={new CalendarDate(2019, 6, 5)} />);
 
       let nextButton = getAllByLabelText('Next')[0];
       triggerPress(nextButton);
+      act(() => {jest.runAllTimers();});
 
       expect(announce).toHaveBeenCalledTimes(1);
       expect(announce).toHaveBeenCalledWith('July 2019');
@@ -405,6 +406,7 @@ describe('Calendar', () => {
 
       let newDate = getByText('17');
       triggerPress(newDate);
+      act(() => {jest.runAllTimers();});
 
       expect(announce).toHaveBeenCalledTimes(1);
       expect(announce).toHaveBeenCalledWith('Selected Date: Monday, June 17, 2019', 'polite', 4000);
@@ -418,6 +420,8 @@ describe('Calendar', () => {
       expect(selectedDate).toHaveFocus();
 
       fireEvent.keyDown(grid, {key: 'ArrowRight'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+      act(() => {jest.runAllTimers();});
       expect(getByLabelText('Thursday, June 6, 2019', {exact: false})).toHaveFocus();
     });
 
@@ -426,6 +430,7 @@ describe('Calendar', () => {
 
       let newDate = getByText('17');
       triggerPress(newDate);
+      act(() => {jest.runAllTimers();});
 
       expect(announce).toHaveBeenCalledTimes(1);
       expect(announce).toHaveBeenCalledWith('Selected Date: Saturday, February 17, 5 BC', 'polite', 4000);
@@ -433,6 +438,7 @@ describe('Calendar', () => {
       announce.mockReset();
       let nextButton = getAllByLabelText('Next')[0];
       triggerPress(nextButton);
+      act(() => {jest.runAllTimers();});
 
       expect(announce).toHaveBeenCalledTimes(1);
       expect(announce).toHaveBeenCalledWith('March 5 BC');

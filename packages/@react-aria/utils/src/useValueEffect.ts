@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Dispatch, useCallback, useRef, useState} from 'react';
-import {useLayoutEffect} from './';
+import {Dispatch, useRef, useState} from 'react';
+import {useEffectEvent, useLayoutEffect} from './';
 
 type SetValueAction<S> = (prev: S) => Generator<any, void, unknown>;
 
@@ -21,15 +21,11 @@ type SetValueAction<S> = (prev: S) => Generator<any, void, unknown>;
 // written linearly.
 export function useValueEffect<S>(defaultValue: S | (() => S)): [S, Dispatch<SetValueAction<S>>] {
   let [value, setValue] = useState(defaultValue);
-  let valueRef = useRef(value);
   let effect = useRef(null);
-
-  valueRef.current = value;
 
   // Store the function in a ref so we can always access the current version
   // which has the proper `value` in scope.
-  let nextRef = useRef(null);
-  nextRef.current = () => {
+  let nextRef = useEffectEvent(() => {
     // Run the generator to the next yield.
     let newValue = effect.current.next();
 
@@ -43,23 +39,23 @@ export function useValueEffect<S>(defaultValue: S | (() => S)): [S, Dispatch<Set
     // then continue to the next yield. Otherwise,
     // set the value in state and wait for the next layout effect.
     if (value === newValue.value) {
-      nextRef.current();
+      nextRef();
     } else {
       setValue(newValue.value);
     }
-  };
+  });
 
   useLayoutEffect(() => {
     // If there is an effect currently running, continue to the next yield.
     if (effect.current) {
-      nextRef.current();
+      nextRef();
     }
   });
 
-  let queue = useCallback(fn => {
-    effect.current = fn(valueRef.current);
-    nextRef.current();
-  }, [effect, nextRef]);
+  let queue = useEffectEvent(fn => {
+    effect.current = fn(value);
+    nextRef();
+  });
 
   return [value, queue];
 }

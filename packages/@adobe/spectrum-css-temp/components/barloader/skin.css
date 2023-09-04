@@ -10,11 +10,9 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-:root {
-  --spectrum-barloader-large-track-fill-color: var(--spectrum-accent-color-900);
-}
-
 .spectrum-BarLoader {
+  --spectrum-barloader-large-track-fill-color: var(--spectrum-accent-color-900);
+
   .spectrum-BarLoader-fill {
     background: var(--spectrum-barloader-large-track-fill-color);
   }
@@ -69,6 +67,10 @@ governing permissions and limitations under the License.
   .spectrum-BarLoader-track {
     forced-color-adjust: none;
     --spectrum-barloader-large-track-fill-color: ButtonText;
+    --spectrum-barloader-large-over-background-track-fill-color: ButtonText;
+    --spectrum-meter-large-track-color-positive: ButtonText;
+    --spectrum-meter-large-track-color-warning: ButtonText;
+    --spectrum-meter-large-track-color-critical: ButtonText;
     --spectrum-barloader-large-track-color: ButtonFace;
     border: 1px solid ButtonText;
   }

@@ -13,7 +13,7 @@
 import {AriaSliderProps} from '@react-types/slider';
 import {clamp, mergeProps, useGlobalListeners} from '@react-aria/utils';
 import {DOMAttributes} from '@react-types/shared';
-import {getSliderThumbId, sliderIds} from './utils';
+import {getSliderThumbId, sliderData} from './utils';
 import React, {LabelHTMLAttributes, OutputHTMLAttributes, RefObject, useRef} from 'react';
 import {setInteractionModality, useMove} from '@react-aria/interactions';
 import {SliderState} from '@react-stately/slider';
@@ -54,7 +54,11 @@ export function useSlider<T extends number | number[]>(
   let isVertical = props.orientation === 'vertical';
 
   // Attach id of the label to the state so it can be accessed by useSliderThumb.
-  sliderIds.set(state, labelProps.id ?? fieldProps.id);
+  sliderData.set(state, {
+    id: labelProps.id ?? fieldProps.id,
+    'aria-describedby': props['aria-describedby'],
+    'aria-details': props['aria-details']
+  });
 
   let {direction} = useLocale();
 
@@ -66,8 +70,6 @@ export function useSlider<T extends number | number[]>(
   // It is set onMouseDown/onTouchDown; see trackProps below.
   const realTimeTrackDraggingIndex = useRef<number | null>(null);
 
-  const stateRef = useRef<SliderState>(null);
-  stateRef.current = state;
   const reverseX = direction === 'rtl';
   const currentPosition = useRef<number>(null);
   const {moveProps} = useMove({
@@ -79,7 +81,7 @@ export function useSlider<T extends number | number[]>(
       let size = isVertical ? height : width;
 
       if (currentPosition.current == null) {
-        currentPosition.current = stateRef.current.getThumbPercent(realTimeTrackDraggingIndex.current) * size;
+        currentPosition.current = state.getThumbPercent(realTimeTrackDraggingIndex.current) * size;
       }
 
       let delta = isVertical ? deltaY : deltaX;
@@ -91,12 +93,12 @@ export function useSlider<T extends number | number[]>(
 
       if (realTimeTrackDraggingIndex.current != null && trackRef.current) {
         const percent = clamp(currentPosition.current / size, 0, 1);
-        stateRef.current.setThumbPercent(realTimeTrackDraggingIndex.current, percent);
+        state.setThumbPercent(realTimeTrackDraggingIndex.current, percent);
       }
     },
     onMoveEnd() {
       if (realTimeTrackDraggingIndex.current != null) {
-        stateRef.current.setThumbDragging(realTimeTrackDraggingIndex.current, false);
+        state.setThumbDragging(realTimeTrackDraggingIndex.current, false);
         realTimeTrackDraggingIndex.current = null;
       }
     }

@@ -19,12 +19,11 @@ import docsStyle from './docs.css';
 import {FocusScope} from '@react-aria/focus';
 import highlightCss from './syntax-highlight.css';
 import {Modal} from '@react-spectrum/overlays';
-import {Pressable} from '@react-aria/interactions';
+import {Pressable, usePress} from '@react-aria/interactions';
 import React, {useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {ThemeProvider} from './ThemeSwitcher';
 import {useLayoutEffect} from '@react-aria/utils';
-import {usePress} from '@react-aria/interactions';
 
 let links = document.querySelectorAll('a[data-link]');
 let images = document.querySelectorAll('img[data-img]');

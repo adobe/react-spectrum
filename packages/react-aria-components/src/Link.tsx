@@ -11,8 +11,8 @@
  */
 
 import {AriaLinkOptions, mergeProps, useFocusRing, useHover, useLink} from 'react-aria';
-import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import {mergeRefs} from '@react-aria/utils';
+import {ContextValue, forwardRefType, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {filterDOMProps, mergeRefs} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, useMemo} from 'react';
 
 export interface LinkProps extends Omit<AriaLinkOptions, 'elementType'>, RenderProps<LinkRenderProps>, SlotProps {}
@@ -20,7 +20,7 @@ export interface LinkProps extends Omit<AriaLinkOptions, 'elementType'>, RenderP
 export interface LinkRenderProps {
   /**
    * Whether the link is the current item within a list.
-   * @selector [aria-current]
+   * @selector [data-current]
    */
   isCurrent: boolean,
   /**
@@ -35,7 +35,7 @@ export interface LinkRenderProps {
   isPressed: boolean,
   /**
    * Whether the link is focused, either via a mouse or keyboard.
-   * @selector :focus
+   * @selector [data-focused]
    */
   isFocused: boolean,
   /**
@@ -45,7 +45,7 @@ export interface LinkRenderProps {
   isFocusVisible: boolean,
   /**
    * Whether the link is disabled.
-   * @selector [aria-disabled]
+   * @selector [data-disabled]
    */
   isDisabled: boolean
 }
@@ -55,7 +55,7 @@ export const LinkContext = createContext<ContextValue<LinkProps, HTMLAnchorEleme
 function Link(props: LinkProps, ref: ForwardedRef<HTMLAnchorElement>) {
   [props, ref] = useContextProps(props, ref, LinkContext);
 
-  let elementType = typeof props.children === 'string' ? 'span' : 'a';
+  let elementType = typeof props.children === 'string' || typeof props.children === 'function' ? 'span' : 'a';
   let {linkProps, isPressed} = useLink({...props, elementType}, ref);
 
   let {hoverProps, isHovered} = useHover(props);
@@ -74,6 +74,9 @@ function Link(props: LinkProps, ref: ForwardedRef<HTMLAnchorElement>) {
     }
   });
 
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
+
   let element: any = typeof renderProps.children === 'string'
     ? <span>{renderProps.children}</span>
     : React.Children.only(renderProps.children);
@@ -81,11 +84,14 @@ function Link(props: LinkProps, ref: ForwardedRef<HTMLAnchorElement>) {
   return React.cloneElement(element, {
     ref: useMemo(() => element.ref ? mergeRefs(element.ref, ref) : ref, [element.ref, ref]),
     slot: props.slot,
-    ...mergeProps(renderProps, linkProps, hoverProps, focusProps, {
+    ...mergeProps(DOMProps, renderProps, linkProps, hoverProps, focusProps, {
       children: element.props.children,
+      'data-focused': isFocused || undefined,
       'data-hovered': isHovered || undefined,
       'data-pressed': isPressed || undefined,
-      'data-focus-visible': isFocusVisible || undefined
+      'data-focus-visible': isFocusVisible || undefined,
+      'data-current': !!props['aria-current'] || undefined,
+      'data-disabled': props.isDisabled  || undefined
     }, element.props)
   });
 }
@@ -94,5 +100,5 @@ function Link(props: LinkProps, ref: ForwardedRef<HTMLAnchorElement>) {
  * A link allows a user to navigate to another page or resource within a web page
  * or application.
  */
-const _Link = forwardRef(Link);
+const _Link = /*#__PURE__*/ (forwardRef as forwardRefType)(Link);
 export {_Link as Link};

@@ -19,7 +19,9 @@ import {
   FocusableProps,
   HelpTextProps,
   InputBase,
+  InputDOMProps,
   LabelableProps,
+  SpectrumFieldValidation,
   SpectrumLabelableProps,
   SpectrumTextInputBase,
   StyleProps,
@@ -102,7 +104,7 @@ export interface ColorFieldProps extends Omit<ValueBase<string | Color | null>, 
 
 export interface AriaColorFieldProps extends ColorFieldProps, AriaLabelingProps, FocusableDOMProps, Omit<TextInputDOMProps, 'minLength' | 'maxLength' | 'pattern' | 'type' | 'inputMode' | 'autoComplete'>, AriaValidationProps {}
 
-export interface SpectrumColorFieldProps extends SpectrumTextInputBase, AriaColorFieldProps, SpectrumLabelableProps, StyleProps {
+export interface SpectrumColorFieldProps extends SpectrumTextInputBase, Omit<AriaColorFieldProps, 'isInvalid' | 'validationState'>, SpectrumFieldValidation, SpectrumLabelableProps, StyleProps {
   /** Whether the ColorField should be displayed with a quiet style. */
   isQuiet?: boolean
 }
@@ -121,7 +123,7 @@ export interface ColorWheelProps extends Omit<ValueBase<string | Color>, 'onChan
   defaultValue?: string | Color
 }
 
-export interface AriaColorWheelProps extends ColorWheelProps, DOMProps, AriaLabelingProps {}
+export interface AriaColorWheelProps extends ColorWheelProps, InputDOMProps, DOMProps, AriaLabelingProps {}
 
 export interface SpectrumColorWheelProps extends AriaColorWheelProps, Omit<StyleProps, 'width' | 'height'> {
   /** The outer diameter of the ColorWheel. */
@@ -137,7 +139,7 @@ export interface ColorSliderProps extends Omit<SliderProps<string | Color>, 'min
   onChangeEnd?: (value: Color) => void
 }
 
-export interface AriaColorSliderProps extends ColorSliderProps, DOMProps, AriaLabelingProps {}
+export interface AriaColorSliderProps extends ColorSliderProps, InputDOMProps, DOMProps, AriaLabelingProps {}
 
 export interface SpectrumColorSliderProps extends AriaColorSliderProps, StyleProps {
   /** Whether the value label is displayed. True by default if there is a label, false by default if not. */
@@ -159,7 +161,16 @@ export interface ColorAreaProps extends Omit<ValueBase<string | Color>, 'onChang
   onChangeEnd?: (value: Color) => void
 }
 
-export interface AriaColorAreaProps extends ColorAreaProps, DOMProps, AriaLabelingProps {}
+export interface AriaColorAreaProps extends ColorAreaProps, DOMProps, AriaLabelingProps {
+  /**
+   * The name of the x channel input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   */
+  xName?: string,
+  /**
+   * The name of the y channel input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   */
+  yName?: string
+}
 
 export interface SpectrumColorAreaProps extends AriaColorAreaProps, Omit<StyleProps, 'width' | 'height'> {
   /** Size of the Color Area. */
