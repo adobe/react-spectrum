@@ -5,7 +5,9 @@ interface SafelyMouseToSubmenuOptions {
   /** Ref for the parent menu. */
   menuRef: RefObject<Element>,
   /** Ref for the submenu. */
-  submenuRef: RefObject<Element>
+  submenuRef: RefObject<Element>,
+  /** Whether the submenu is open. */
+  isOpen: boolean
 }
 
 /**
@@ -13,7 +15,7 @@ interface SafelyMouseToSubmenuOptions {
  * Prevents pointer events from going to the underlying menu if the user is moving their pointer towards the sub-menu.
  */
 export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
-  let {menuRef, submenuRef} = options;
+  let {menuRef, submenuRef, isOpen} = options;
   let prevPointerPos = useRef<{x: number, y: number, time: number}>(null);
   let triggerRect = useRef<DOMRect>(null);
   let submenuRect = useRef<DOMRect>(null);
@@ -29,7 +31,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
     let menu = menuRef.current;
     let submenu = submenuRef.current;
 
-    if (!menu || !submenu) {
+    if (!menu || !submenu || !isOpen) {
       return;
     }
 
@@ -64,8 +66,8 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
       // Check if pointer is moving towards submenu.
       let direction = mouseX > submenuRect.current.right ? 'left' : 'right';
       let toSubmenuX = direction === 'right' ? submenuRect.current.right - mouseX :  mouseX - submenuRect.current.left;
-      let angleTop = Math.atan2(submenuRect.current.top, toSubmenuX);
-      let angleBottom = Math.atan2(submenuRect.current.bottom - mouseY, toSubmenuX);
+      let angleTop = Math.atan2(mouseY - submenuRect.current.top, toSubmenuX);
+      let angleBottom = Math.atan2(mouseY - submenuRect.current.bottom, toSubmenuX);
       let anglePointer = Math.atan2(mouseY - prevPointerPos.current.y, mouseX - prevPointerPos.current.x);
       isPointerMovingTowardsSubmenu.current =  anglePointer < angleTop && anglePointer > angleBottom;
 
@@ -101,5 +103,5 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
       menu.removeEventListener('pointerenter', onPointerEnter, {capture: true});
     };
 
-  }, [menuRef, submenuRef]);
+  }, [isOpen, menuRef, submenuRef]);
 }

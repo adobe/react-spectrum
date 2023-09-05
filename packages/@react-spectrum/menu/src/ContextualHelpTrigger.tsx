@@ -76,7 +76,8 @@ function ContextualHelpTrigger<T>(props: MenuDialogTriggerProps<T>): ReactElemen
 
   useSafelyMouseToSubmenu({
     menuRef: menu,
-    submenuRef: submenu
+    submenuRef: submenu,
+    isOpen: state.isOpen
   });
   
   return (
