@@ -88,6 +88,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
       }
 
       if (isPointerMovingTowardsSubmenu.current) {
+        console.log('prevent');
         e.stopPropagation();
         e.preventDefault();
       }
@@ -101,6 +102,5 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
       menu.removeEventListener('pointerenter', onPointerEnter, {capture: true});
     };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [submenuRef.current]);
+  }, [menuRef, submenuRef]);
 }
