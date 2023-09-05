@@ -341,7 +341,8 @@ function GridListItem({item}) {
         data-pressed={states.isPressed || undefined}
         data-allows-dragging={!!dragState || undefined}
         data-dragging={isDragging || undefined}
-        data-drop-target={dropIndicator?.isDropTarget || undefined}>
+        data-drop-target={dropIndicator?.isDropTarget || undefined}
+        data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}>
         <div {...gridCellProps}>
           <Provider
             values={[
