@@ -814,7 +814,10 @@ export interface ItemRenderProps {
    * @selector [data-disabled]
    */
   isDisabled: boolean,
-  /** The type of selection that is allowed in the collection. */
+  /**
+   * The type of selection that is allowed in the collection.
+   * @selector [data-selection-mode="single | multiple"]
+   */
   selectionMode: SelectionMode,
   /** The selection behavior for the collection. */
   selectionBehavior: SelectionBehavior,
