@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaModalOverlayProps, DismissButton, Overlay, useModalOverlay} from 'react-aria';
+import {AriaModalOverlayProps, DismissButton, Overlay, useIsSSR, useModalOverlay} from 'react-aria';
 import {ContextValue, forwardRefType, RenderProps, SlotProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
 import {DOMAttributes} from '@react-types/shared';
 import {filterDOMProps, mergeProps, mergeRefs, useObjectRef, useViewportSize} from '@react-aria/utils';
@@ -106,8 +106,9 @@ function ModalOverlayWithForwardRef(props: ModalOverlayProps, ref: ForwardedRef<
   let isOverlayExiting = useExitAnimation(objectRef, state.isOpen);
   let isModalExiting = useExitAnimation(modalRef, state.isOpen);
   let isExiting = isOverlayExiting || isModalExiting;
+  let isSSR = useIsSSR();
 
-  if (!state.isOpen && !isExiting) {
+  if ((!state.isOpen && !isExiting) || isSSR) {
     return null;
   }
 

@@ -360,6 +360,8 @@ If you're using Tailwind CSS, you can use [ARIA states](https://tailwindcss.com/
 </Item>
 ````
 
+You can also use our Tailwind CSS [plugin](#tailwind-css-plugin) to get shortened modifiers.
+
 In order to ensure high quality interactions across browsers and devices, React Aria Components includes states such as `data-hovered` and `data-pressed` which are similar to CSS pseudo classes such as `:hover` and `:active`, but work consistently between mouse, touch, and keyboard modalities. You can read more about this in our [blog post series](../blog/building-a-button-part-1.html) and our [Interactions](interactions.html) overview.
 
 All of the states and selectors for each component are listed in their respective documentation.
@@ -452,10 +454,10 @@ You can optionally specify a prefix using `require('tailwindcss-react-aria-compo
 
 ### Boolean states
 
-The `data-selected` state can be styled with `selected:` like this:
+The `data-pressed` state can be styled with `pressed:` like this:
 
 ```jsx
-<Button className="selected:bg-blue">
+<Button className="pressed:bg-blue">
   {/* ... */}
 </Button>
 ```
