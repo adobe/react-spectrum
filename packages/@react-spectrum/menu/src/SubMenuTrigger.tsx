@@ -13,10 +13,14 @@
 import {classNames, useIsMobileDevice} from '@react-spectrum/utils';
 import {MenuContext, MenuDialogContext, useMenuStateContext} from './context';
 import {Popover, Tray} from '@react-spectrum/overlays';
-import React, {Key, ReactElement, useRef} from 'react';
+import React, {Key, ReactElement, useCallback, useEffect, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useMenuTriggerState} from '@react-stately/menu';
+import {useOverlayTriggerState} from '@react-stately/overlays';
+import {FocusStrategy, PressEvent} from '@react-types/shared';
+import {useLocale} from '@react-aria/i18n';
+import {useEffectEvent, useId, useLayoutEffect} from '@react-aria/utils';
 
 // TODO: Add shouldFlip and closeOnSelect if we feel like those should be customizable for SubMenuTrigger
 // Other MenuTriggerProps like onOpenChange and positioning stuff have been removed as per discussion
@@ -38,35 +42,112 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
   let triggerRef = useRef<HTMLLIElement>();
   let menuRef = useRef<HTMLUListElement>();
   let {
-    children
+    children,
+    targetKey
   } = props;
 
   let [menuTrigger, menu] = React.Children.toArray(children);
 
-  // TODO: Grab the tree state from the parent, each level of SubMenuTrigger has its own state tracking the
-  // expanded state of its immediate children (aka each Menu has its own tree state) and thus enforce that only a single key on its level is open at a time.
-  // Each SubMenuTrigger has its own open state enforced by the expandedKeys state of its parent trigger.
-  let {state: parentMenuState, container, menu: parentMenu, topLevelMenuState} = useMenuStateContext();
-
-  // TODO: call useMenuTriggerState in place of useOverlayTriggerState since they are basically the same except for focusStrategy which we need for SubMenu autofocus
-  let subMenuState = useMenuTriggerState({isOpen: parentMenuState.expandedKeys.has(props.targetKey), onOpenChange: (val) => {
-    if (!val) {
-      if (parentMenuState.expandedKeys.has(props.targetKey)) {
-        // TODO: hides menu, currenly triggered since hovering away causes focus to move out of the sub menu and triggers a close via useOverlay
-        parentMenuState.toggleKey(props.targetKey);
+  let {container, menu: parentMenu, menuTreeState} = useMenuStateContext();
+  // TODO: block for useSubMenuTriggerState? Takes targetKey and menuTreeState
+  // Need some form of isOpen and close for usePopover. Will also need closeAll for onClose for menu items, would be kinda weird
+  // to pass in both menuTreeState and the state returned by useSubMenuTriggerState.
+  // WOuld it be helpful returning level as well?
+  let {expandedKeysStack, openSubMenu, closeSubMenu, closeAll} = menuTreeState;
+  let [level] = React.useState(expandedKeysStack?.length + 1);
+  // TODO memoize?
+  console.log('expanded', expandedKeysStack)
+  let isOpen = expandedKeysStack[level - 1] === targetKey;
+  let [focusStrategy, setFocusStrategy] = React.useState<FocusStrategy>(null);
+  let subMenuTriggerState = {
+    focusStrategy,
+    isOpen,
+    open(focusStrategy: FocusStrategy = null) {
+      setFocusStrategy(focusStrategy);
+      openSubMenu(targetKey, level);
+    },
+    close() {
+      setFocusStrategy(null);
+      closeSubMenu(targetKey, level);
+    },
+    closeAll,
+    // TODO: add setOpen and toggle for type parity with useOverlayTriggerState type that Tray and Popover expect. Perhaps call useOverlayTriggerState in
+    // this hook and just make it controlled? Then spread?
+    setOpen: () => {},
+    toggle(focusStrategy: FocusStrategy = null) {
+      setFocusStrategy(focusStrategy);
+      if (isOpen) {
+        closeSubMenu(targetKey, level);
+      } else {
+        openSubMenu(targetKey, level);
       }
     }
-  }});
+  };
 
-  // TODO: For now sourcing the bare minimum from useMenuTrigger since useMenuItem handles submenu trigger interaction and aria-haspopup/aria-expanded
-  // Some of those can be sourced from useMenuTrigger (aria-expanded, etc) and/or provided by the hook via modifications (perhaps the press/keyboard/hover interactions)
-  // but to be discussed/revisited. The main issue is that useMenuItem doesn't accept press props or DOMProps so it makes moving the submenu trigger interactions code into useMenuTrigger awkward since
-  // useMenuTrigger assumes something like useButton will consume the props it provides and thus only provides the press props for usePress consumption.
-  // TODO: also can grab aria-controls from useMenu, but unsure if needed (don't need subMenuId either if so). Test with and without it
-  // Doesn't seem to have a noticeable effect on the announcements
-  let {menuTriggerProps, menuProps} = useMenuTrigger({trigger: 'press', isDisabled: parentMenuState.disabledKeys.has(props.targetKey)}, subMenuState, triggerRef);
-  // TODO: just dd all of the menuTriggerProps here to the context
-  let {id, 'aria-controls': ariaControls} = menuTriggerProps;
+  // TODO: block for useSubMenuTrigger
+  // needs aria properties, do later
+  let subMenuTriggerId = useId();
+  let overlayId = useId();
+  let {direction} = useLocale();
+  let openTimeout = useRef<ReturnType<typeof setTimeout> | undefined>();
+  let cancelOpenTimeout = useCallback(() => {
+    if (openTimeout.current) {
+      clearTimeout(openTimeout.current);
+      openTimeout.current = undefined;
+    }
+  }, [openTimeout]);
+
+
+  // TODO: replace all open calls with this
+  let onSubmenuOpen = useEffectEvent((focusStrategy?: FocusStrategy) => {
+    cancelOpenTimeout();
+    subMenuTriggerState.open(focusStrategy);
+  });
+
+  let onSubMenuClose = useEffectEvent(() => {
+    cancelOpenTimeout();
+    subMenuTriggerState.close();
+  });
+
+  useLayoutEffect(() => {
+    return () => cancelOpenTimeout();
+  }, [cancelOpenTimeout]);
+
+
+  // TODO: problem with setting up the submenu close handlers here is that we don't get access to the onClose the user provides
+  // to the menu since this is too far up. Maybe just provide the subMenuTriggerState and have useMenu and useMenuItem handle the key handlers internally?
+  // For now just also provide a prop to subMenuProps called isSubMenu
+  let subMenuKeyDown = (e) => {
+    switch (e.key) {
+      case 'ArrowLeft':
+        if (direction === 'ltr') {
+          onSubMenuClose();
+        }
+        break;
+      case 'ArrowRight':
+        if (direction === 'rtl') {
+          onSubMenuClose;
+        }
+        break;
+      case 'Escape':
+        subMenuTriggerState.closeAll();
+    }
+  };
+
+  let subMenuTriggerKeyDown = (e) => {
+    switch (e.key) {
+      case 'ArrowRight':
+        if (direction === 'ltr') {
+          onSubmenuOpen('first');
+        }
+        break;
+      case 'ArrowLeft':
+        if (direction === 'rtl') {
+          onSubmenuOpen('first');
+        }
+        break;
+    }
+  };
 
   let onExit = () => {
     // if focus was already moved back to a menu item, don't need to do anything
@@ -77,22 +158,74 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
     }
   };
 
+  // TODO: disabled state is determined in useMenuItem, make sure to merge the press handlers with the ones useMenuItem sets up
+  let onPressStart = (e: PressEvent) => {
+    if (e.pointerType === 'virtual' || e.pointerType === 'keyboard') {
+      // If opened with a screen reader or keyboard, auto focus the first submenu item.
+      onSubmenuOpen('first');
+    }
+  };
+
+  let onPress = (e: PressEvent) => {
+    if (e.pointerType === 'touch') {
+      onSubmenuOpen();
+    }
+  };
+
+  // TODO: need to fix this so that hovering back onto the submenu trigger doesn't actually close the submenu
+  let onHoverChange = (isHovered) => {
+    if (isHovered && !subMenuTriggerState.isOpen) {
+      if (!openTimeout.current) {
+        openTimeout.current = setTimeout(() => {
+          // TODO: this should set autofocus to false so focus doesn't move into the next menu
+          onSubmenuOpen();
+        }, 200);
+      }
+    } else if (!isHovered) {
+      cancelOpenTimeout();
+    }
+  };
+
+  let subMenuTriggerProps = {
+    id: subMenuTriggerId,
+    'aria-controls': subMenuTriggerState.isOpen ? overlayId : null,
+    'aria-haspopup': 'menu',
+    'aria-expanded': isOpen ? 'true' : 'false',
+    onPressStart,
+    onPress,
+    onHoverChange,
+    onKeyDown: subMenuTriggerKeyDown
+  };
+
+  let subMenuProps = {
+    onClose: subMenuTriggerState.closeAll,
+    onKeyDown: subMenuKeyDown,
+    isSubMenu: true,
+    'aria-labelledby': subMenuTriggerId,
+    autoFocus: subMenuTriggerState.focusStrategy || true,
+    id: overlayId
+  };
+
+  let popoverProps = {
+    onExit,
+    isNonModal: true
+  };
+
+  let overlayProps = {
+    disableFocusManagement: true
+  };
+
+
+  // End block
+
+
+
+
+
   let isMobile = useIsMobileDevice();
   let menuContext = {
-    ...menuProps,
+    ...subMenuProps,
     ref: menuRef,
-    // Selecting a menu item in a sub menu should also close ALL menus, so we close the root menu instead of just the submenu.
-    // Overrides menuProps.onClose
-    // TODO: onOpenChange for submenus won't trigger when onClose here is called since we are only closing the root menu, should
-    // we chain calls for all the submenus as well? Not even sure of the use case for having onOpenChange or onOpen for submenus
-    onClose: topLevelMenuState.close,
-    // Separate handler for useMenuItem, used to close just the submenu when the user presses ArrowLeft in a submenu
-    onSubMenuClose: menuProps.onClose,
-    // TODO:useMenuItem currently handles opening the submenu, perhaps copy over the pressProps/some of the keydown stuff from useMenuTrigger's implementation
-    // and move it to a useSubMenuTrigger hook or modify useMenuTrigger so it can distingush between the typical menuTrigger stuff. Problem is that useMenuItem doesn't
-    // accept pressProps or dom attributes...
-    // For now pass it into the hook via contexts and weak maps, but ideally I think useMenuTrigger should handle creating the bulk of the interaction handlers + aria attributes and
-    // that stuff would get provided to useMenuItem to be processed?
     UNSAFE_style: isMobile ? {
       width: '100%',
       maxHeight: 'inherit'
@@ -105,7 +238,7 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
   // TODO: handle tray experience later
   if (isMobile) {
     overlay = (
-      <Tray state={subMenuState}>
+      <Tray state={subMenuTriggerState}>
         {menu}
       </Tray>
     );
@@ -113,19 +246,16 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
     overlay = (
       <Popover
         // Props from ContextualHelpTrigger implementation
-        onExit={onExit}
+        {...popoverProps}
+        {...overlayProps}
         // TODO Omitted onBlurWithin, doesn't seem like it was necessary?
         container={container.current}
-        // TODO: for now placement is customizable by user as per discussion, still need offset
-        // will need to test all the combinations
         offset={-10}
-        isNonModal
         enableBothDismissButtons
-        disableFocusManagement
 
         // Props from MenuTriggerImplementation
         UNSAFE_style={{clipPath: 'unset'}}
-        state={subMenuState}
+        state={subMenuTriggerState}
         triggerRef={triggerRef}
         scrollRef={menuRef}
         placement="end top"
@@ -135,16 +265,10 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
     );
   }
 
-  let openSubMenu = (focusStrategy) => {
-    // TODO: call setExpandedKeys here or just do it in useMenuItem?
-    // parentMenuState.setExpandedKeys()
-    subMenuState.open(focusStrategy);
-  };
-
   return (
     <>
       {/* TODO rename MenuDialogContext to something more generic */}
-      <MenuDialogContext.Provider value={{triggerRef, openSubMenu, id, 'aria-controls': ariaControls}}>{menuTrigger}</MenuDialogContext.Provider>
+      <MenuDialogContext.Provider value={{triggerRef, ...subMenuTriggerProps}}>{menuTrigger}</MenuDialogContext.Provider>
       <MenuContext.Provider value={menuContext}>
         {overlay}
       </MenuContext.Provider>

@@ -47,7 +47,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let menuDialogContext = useMenuDialogContext();
   let {direction} = useLocale();
-  let {triggerRef} = menuDialogContext || {};
+  let {triggerRef, ...subMenuTriggerProps} = menuDialogContext || {};
   // TODO rename all instances of menuDialogTrigger to something more generic to submenus
   // If menuDialogContext.isUnavailable is explicitly false, then disable all submenu behavior
   let isMenuDialogTrigger = !!menuDialogContext && menuDialogContext.isUnavailable !== false;
@@ -95,7 +95,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
       isVirtualized,
       onAction,
       'aria-haspopup': popupType,
-      onOpen: menuDialogContext?.openSubMenu
+      ...subMenuTriggerProps
     },
     state,
     ref

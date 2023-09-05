@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusStrategy} from '@react-types/shared';
+import {DOMProps, FocusStrategy, HoverEvents, KeyboardEvents, PressEvents} from '@react-types/shared';
 import {MenuTriggerState} from '@react-stately/menu';
 import React, {HTMLAttributes, MutableRefObject, RefObject, useContext} from 'react';
 import {TreeState} from '@react-stately/tree';
@@ -22,7 +22,15 @@ export interface MenuContextValue extends Omit<HTMLAttributes<HTMLElement>, 'aut
   autoFocus?: boolean | FocusStrategy,
   ref?: MutableRefObject<HTMLUListElement>,
   state?: MenuTriggerState,
-  onSubMenuClose?: () => void
+  onSubMenuClose?: () => void,
+  // TODO: update this type when I add hook for initializing this state
+  menuTreeState?: {
+    expandedKeysStack: string[],
+    setExpandedKeysStack,
+    closeAll,
+    openSubMenu,
+    closeSubMenu
+  }
 }
 
 export const MenuContext = React.createContext<MenuContextValue>({});
@@ -31,12 +39,12 @@ export function useMenuContext(): MenuContextValue {
   return useContext(MenuContext);
 }
 
-export interface MenuDialogContextValue {
+export interface MenuDialogContextValue extends DOMProps, Pick<PressEvents, 'onPressStart' | 'onPress'>, Pick<HoverEvents, 'onHoverChange'>, Pick<KeyboardEvents, 'onKeyDown'> {
   isUnavailable?: boolean,
-  openSubMenu?: (val?: FocusStrategy) => void,
   triggerRef?: MutableRefObject<HTMLLIElement>,
-  id?: string,
-  'aria-controls'?: string
+  'aria-controls'?: string,
+  'aria-haspopup'?: string,
+  'aria-expanded'?: string
 }
 
 export const MenuDialogContext = React.createContext<MenuDialogContextValue | undefined>(undefined);
@@ -49,7 +57,14 @@ export interface MenuStateContextValue<T> {
   state?: TreeState<T>,
   container?: RefObject<HTMLElement>,
   menu?: RefObject<HTMLUListElement>,
-  topLevelMenuState?: MenuTriggerState
+  // TODO: update this type
+  menuTreeState?: {
+    expandedKeysStack: string[],
+    setExpandedKeysStack,
+    closeAll,
+    openSubMenu,
+    closeSubMenu
+  }
 }
 
 export const MenuStateContext = React.createContext<MenuStateContextValue<any>>(undefined);

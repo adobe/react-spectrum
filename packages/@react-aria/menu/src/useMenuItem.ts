@@ -87,8 +87,8 @@ export interface AriaMenuItemProps {
   /** What kind of popup the item opens. */
   'aria-haspopup'?: 'menu' | 'dialog',
 
-  // TODO: best way to pass this in? We need a way to infor the SubMenuTrigger what the focus strategy is so we can auto focus the right submenu item
-  onOpen?: (val?: FocusStrategy) => void
+  // // TODO: best way to pass this in? We need a way to infor the SubMenuTrigger what the focus strategy is so we can auto focus the right submenu item
+  // onOpen?: (val?: FocusStrategy) => void
 }
 
 /**
@@ -103,7 +103,11 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     closeOnSelect,
     isVirtualized,
     'aria-haspopup': hasPopup,
-    onOpen
+    // TODO: open it up fully to all pressProps + hoverEvents + keyboardEvents?
+    onPressStart: pressStartProp,
+    onPress,
+    onHoverChange,
+    onKeyDown
   } = props;
   let {direction} = useLocale();
 
@@ -113,35 +117,36 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let isDisabled = props.isDisabled ?? state.disabledKeys.has(key);
   let isSelected = props.isSelected ?? state.selectionManager.isSelected(key);
 
-  let openTimeout = useRef<ReturnType<typeof setTimeout> | undefined>();
-  let cancelOpenTimeout = useCallback(() => {
-    if (openTimeout.current) {
-      clearTimeout(openTimeout.current);
-      openTimeout.current = undefined;
-    }
-  }, [openTimeout]);
+  // let openTimeout = useRef<ReturnType<typeof setTimeout> | undefined>();
+  // let cancelOpenTimeout = useCallback(() => {
+  //   if (openTimeout.current) {
+  //     clearTimeout(openTimeout.current);
+  //     openTimeout.current = undefined;
+  //   }
+  // }, [openTimeout]);
 
-  let onSubmenuOpen = useEffectEvent((focusStrategy?: FocusStrategy) => {
-    cancelOpenTimeout();
-    state.setExpandedKeys(new Set([key]));
-    onOpen && onOpen(focusStrategy);
-  });
+  // let onSubmenuOpen = useEffectEvent((focusStrategy?: FocusStrategy) => {
+  //   cancelOpenTimeout();
+  //   state.setExpandedKeys(new Set([key]));
+  //   onOpen && onOpen(focusStrategy);
+  // });
 
-  useLayoutEffect(() => {
-    return () => cancelOpenTimeout();
-  }, [cancelOpenTimeout]);
+  // useLayoutEffect(() => {
+  //   return () => cancelOpenTimeout();
+  // }, [cancelOpenTimeout]);
 
   let data = menuData.get(state);
   let isSubMenuItem = !!data.onSubMenuClose;
   let onClose = props.onClose || data.onClose;
-  let onActionMenuDialogTrigger = useCallback(() => {
-    if (hasPopup === 'dialog') {
-      onSubmenuOpen();
-    }
-    // will need to disable this lint rule when using useEffectEvent https://react.dev/learn/separating-events-from-effects#logic-inside-effects-is-reactive
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasPopup]);
-  let onAction = isTrigger ? onActionMenuDialogTrigger : props.onAction || data.onAction;
+  // let onActionMenuDialogTrigger = useCallback(() => {
+  //   if (hasPopup === 'dialog') {
+  //     onSubmenuOpen();
+  //   }
+  //   // will need to disable this lint rule when using useEffectEvent https://react.dev/learn/separating-events-from-effects#logic-inside-effects-is-reactive
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [hasPopup]);
+  // TODO: remove onActionMenuDialogTrigger
+  let onAction = isTrigger ? () => {} : props.onAction || data.onAction;
 
   let role = 'menuitem';
   if (!isTrigger) {
@@ -173,10 +178,10 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     ariaProps['aria-setsize'] = getItemCount(state.collection);
   }
 
-  if (hasPopup != null) {
-    ariaProps['aria-haspopup'] = hasPopup;
-    ariaProps['aria-expanded'] = isOpen ? 'true' : 'false';
-  }
+  // if (hasPopup != null) {
+  //   ariaProps['aria-haspopup'] = hasPopup;
+  //   ariaProps['aria-expanded'] = isOpen ? 'true' : 'false';
+  // }
 
   // TODO: for press and keyboard interactions, perhaps move into useMenuTrigger (aka support option for isSubMenu)/useSubMenuTrigger
   // instead of having it in useMenuItem
@@ -185,17 +190,18 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
       onAction(key);
     }
 
-    if (isTrigger && e.pointerType === 'virtual' && !isDisabled) {
-      // If opened with a screen reader, auto focus the first submenu item.
-      onSubmenuOpen('first');
-    }
+    pressStartProp && pressStartProp(e);
+    // if (isTrigger && e.pointerType === 'virtual' && !isDisabled) {
+    //   // If opened with a screen reader, auto focus the first submenu item.
+    //   onSubmenuOpen('first');
+    // }
   };
 
-  let onPress = (e: PressEvent) => {
-    if (isTrigger && e.pointerType === 'touch' && !isDisabled) {
-      onSubmenuOpen();
-    }
-  };
+  // let onPress = (e: PressEvent) => {
+  //   if (isTrigger && e.pointerType === 'touch' && !isDisabled) {
+  //     onSubmenuOpen();
+  //   }
+  // };
 
   let onPressUp = (e: PressEvent) => {
     if (e.pointerType !== 'keyboard') {
@@ -234,17 +240,18 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
         }
       }
     },
-    onHoverChange: isHovered => {
-      if (isHovered && isTrigger && !state.expandedKeys.has(key)) {
-        if (!openTimeout.current) {
-          openTimeout.current = setTimeout(() => {
-            onSubmenuOpen();
-          }, 200);
-        }
-      } else if (!isHovered) {
-        cancelOpenTimeout();
-      }
-    }
+    onHoverChange
+    // onHoverChange: isHovered => {
+    //   if (isHovered && isTrigger && !state.expandedKeys.has(key)) {
+    //     if (!openTimeout.current) {
+    //       openTimeout.current = setTimeout(() => {
+    //         onSubmenuOpen();
+    //       }, 200);
+    //     }
+    //   } else if (!isHovered) {
+    //     cancelOpenTimeout();
+    //   }
+    // }
   });
 
   // TODO: there is an issue where focus doesn't seem to move into the newly opened submenu when opening it via keyboard
@@ -261,36 +268,39 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
         case ' ':
           if (!isDisabled && state.selectionManager.selectionMode === 'none' && !isTrigger && closeOnSelect !== false && onClose) {
             onClose();
-          } else if (isTrigger && !isDisabled) {
-            onSubmenuOpen('first');
           }
+          // } else if (isTrigger && !isDisabled) {
+          //   onSubmenuOpen('first');
+          // }
           break;
         case 'Enter':
           // The Enter key should always close on select, except if overridden.
           if (!isDisabled && closeOnSelect !== false && !isTrigger && onClose) {
             onClose();
-          } else if (isTrigger && !isDisabled) {
-            onSubmenuOpen('first');
           }
+          // } else if (isTrigger && !isDisabled) {
+          //   onSubmenuOpen('first');
+          // }
           break;
-        case 'ArrowRight':
-          if (isTrigger && direction === 'ltr') {
-            onSubmenuOpen('first');
-          } else if (direction === 'rtl' && isSubMenuItem) {
-            data.onSubMenuClose();
-          } else {
-            e.continuePropagation();
-          }
-          break;
-        case 'ArrowLeft':
-          if (isTrigger && direction === 'rtl') {
-            onSubmenuOpen('first');
-          } else if (direction === 'ltr' && isSubMenuItem) {
-            data.onSubMenuClose();
-          } else {
-            e.continuePropagation();
-          }
-          break;
+        // case 'ArrowRight':
+        //   if (isTrigger && direction === 'ltr') {
+        //     onSubmenuOpen('first');
+        //   } else if (direction === 'rtl' && isSubMenuItem) {
+        //     // TODO remove, handled by Menu now
+        //     data.onSubMenuClose();
+        //   } else {
+        //     e.continuePropagation();
+        //   }
+        //   break;
+        // case 'ArrowLeft':
+        //   if (isTrigger && direction === 'rtl') {
+        //     onSubmenuOpen('first');
+        //   } else if (direction === 'ltr' && isSubMenuItem) {
+        //     data.onSubMenuClose();
+        //   } else {
+        //     e.continuePropagation();
+        //   }
+        //   break;
         default:
           e.continuePropagation();
           break;
@@ -301,7 +311,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   return {
     menuItemProps: {
       ...ariaProps,
-      ...mergeProps(itemProps, pressProps, hoverProps, keyboardProps)
+      ...mergeProps(itemProps, pressProps, hoverProps, keyboardProps, {onKeyDown})
     },
     labelProps: {
       id: labelId

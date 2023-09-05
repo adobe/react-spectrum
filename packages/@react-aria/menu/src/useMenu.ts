@@ -30,13 +30,15 @@ export interface AriaMenuOptions<T> extends Omit<AriaMenuProps<T>, 'children'> {
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
    */
-  keyboardDelegate?: KeyboardDelegate
+  keyboardDelegate?: KeyboardDelegate,
+  // TODO: just extend KeyboardEvents?
+  onKeyDown?: (e: KeyboardEvent) => void
 }
 
 interface MenuData {
   onClose?: () => void,
   onAction?: (key: Key) => void,
-  onSubMenuClose?: () => void
+  // onSubMenuClose?: () => void
 }
 
 export const menuData = new WeakMap<TreeState<unknown>, MenuData>();
@@ -50,10 +52,8 @@ export const menuData = new WeakMap<TreeState<unknown>, MenuData>();
 export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: RefObject<HTMLElement>): MenuAria {
   let {
     shouldFocusWrap = true,
-    // TODO: only to close the submenu on ArrowLeft press
-    onSubMenuClose,
-    // TODO: only for Esc key handling in submenus
-    onCloseAllMenus,
+    onKeyDown,
+    isSubMenu,
     ...otherProps
   } = props;
 
@@ -74,11 +74,11 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
   menuData.set(state, {
     onClose: props.onClose,
     onAction: props.onAction,
-    onSubMenuClose
+    // onSubMenuClose
   });
 
   return {
-    menuProps: mergeProps(domProps, {
+    menuProps: mergeProps(domProps, {onKeyDown}, {
       role: 'menu',
       // this forces AT to move their cursors into any open sub dialogs, the sub dialogs contain hidden close buttons in order to come back to this level of the menu
       'aria-hidden': state.expandedKeys.size > 0 ? true : undefined,
@@ -87,13 +87,14 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
         // don't clear the menu selected keys if the user is presses escape since escape closes the menu
         if (e.key !== 'Escape') {
           listProps.onKeyDown(e);
-        } else {
-          // TODO: should I stop propagation here? Right now I'm stopping it so that only the root menu's onOpenChange fires
-          // otherwise the last leaf submenu's onOpenChange will also fire but its kinda weird cuz non of the other intermediate submenus
-          // will fire onOpenChange since it is an unmount. The last leaf submenu only fires because useOverlay also handles Esc
-          e.stopPropagation();
-          onCloseAllMenus && onCloseAllMenus();
         }
+        // else {
+        //   // TODO: should I stop propagation here? Right now I'm stopping it so that only the root menu's onOpenChange fires
+        //   // otherwise the last leaf submenu's onOpenChange will also fire but its kinda weird cuz non of the other intermediate submenus
+        //   // will fire onOpenChange since it is an unmount. The last leaf submenu only fires because useOverlay also handles Esc
+        //   e.stopPropagation();
+        //   // onCloseAllMenus && onCloseAllMenus();
+        // }
       }
     })
   };

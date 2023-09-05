@@ -25,21 +25,18 @@ import {useTreeState} from '@react-stately/tree';
 
 function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLUListElement>) {
   let contextProps = useContext(MenuContext);
-  let {onClose} = contextProps;
   let parentMenuContext = useMenuStateContext();
-  let {topLevelMenuState} = parentMenuContext || {};
+  let {menuTreeState} = parentMenuContext || {};
   if (!parentMenuContext) {
-    topLevelMenuState = contextProps.state;
+    menuTreeState = contextProps.menuTreeState;
   }
   let completeProps = {
-    ...mergeProps(contextProps, {onCloseAllMenus: onClose}, props)
+    ...mergeProps(contextProps, props)
   };
-
   let domRef = useDOMRef(ref);
   let scopedRef = useRef(null);
   let state = useTreeState(completeProps);
-  // TODO: feels a bit awkward passing the menu's trigger state via props since we already are passing the menu's tree state as state.
-  // Perhaps we should combine TreeState and the trigger state together? Alternatively I could add a 2nd kind of onClose handler to useMenu (opted for this one)
+  // TODO add isSubMenu to useMenu?
   let {menuProps} = useMenu(completeProps, state, domRef);
   let {styleProps} = useStyleProps(completeProps);
   useSyncRef(contextProps, domRef);
@@ -49,9 +46,8 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
     let {left} = scopedRef.current.getBoundingClientRect();
     setLeftOffset({left: -1 * left});
   }, []);
-
   return (
-    <MenuStateContext.Provider value={{state, container: scopedRef, menu: domRef, topLevelMenuState}}>
+    <MenuStateContext.Provider value={{state, container: scopedRef, menu: domRef, menuTreeState}}>
       <FocusScope contain={state.expandedKeys.size > 0}>
         <ul
           {...menuProps}
