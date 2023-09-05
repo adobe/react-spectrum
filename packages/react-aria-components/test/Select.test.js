@@ -186,4 +186,13 @@ describe('Select', () => {
 
     expect(document.activeElement).toBe(document.body);
   });
+
+  it('should send required prop to the hidden field', () => {
+    let {container} = render(
+      <TestSelect isRequired />
+    );
+
+    let input = container.querySelector('input');
+    expect(input).toHaveAttribute('required');
+  });
 });

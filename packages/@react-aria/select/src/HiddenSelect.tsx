@@ -30,7 +30,10 @@ export interface AriaHiddenSelectProps {
   name?: string,
 
   /** Sets the disabled state of the select and input. */
-  isDisabled?: boolean
+  isDisabled?: boolean,
+
+  /** Whether user input is required on the input before form submission. */
+  isRequired?: boolean
 }
 
 export interface HiddenSelectProps<T> extends AriaHiddenSelectProps {
@@ -52,7 +55,7 @@ export interface AriaHiddenSelectOptions extends AriaHiddenSelectProps {
  * navigation, and native HTML form submission.
  */
 export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: SelectState<T>, triggerRef: RefObject<FocusableElement>) {
-  let {autoComplete, name, isDisabled} = props;
+  let {autoComplete, name, isDisabled, isRequired} = props;
   let modality = useInteractionModality();
   let {visuallyHiddenProps} = useVisuallyHidden();
 
@@ -87,7 +90,8 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
       tabIndex: modality == null || state.isFocused || state.isOpen ? -1 : 0,
       style: {fontSize: 16},
       onFocus: () => triggerRef.current.focus(),
-      disabled: isDisabled
+      disabled: isDisabled,
+      required: isRequired
     },
     selectProps: {
       tabIndex: -1,
