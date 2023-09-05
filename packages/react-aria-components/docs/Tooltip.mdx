@@ -185,11 +185,175 @@ fully accessible tooltips that can be styled as needed.
 A tooltip consists of two parts: the trigger element and the tooltip itself.
 Users may reveal the tooltip by hovering or focusing the trigger.
 
+```tsx
+import {TooltipTrigger, Tooltip, OverlayArrow, Button} from 'react-aria-components';
+
+<TooltipTrigger>
+  <Button />
+  <Tooltip>
+    <OverlayArrow />
+  </Tooltip>
+</TooltipTrigger>
+```
+
 ### Accessibility
 
 Tooltip triggers must be focusable and hoverable in order to ensure that all users can activate them. When displayed, TooltipTrigger automatically associates the tooltip with the trigger element so that it is described by the tooltip content.
 
 **Note**: tooltips are not shown on touch screen interactions. Ensure that your UI is usable without tooltips, or use an alternative component such as a [Popover](Popover.html) to show information in an adjacent element.
+
+## Reusable wrappers
+
+If you will use a Tooltip in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+This example wraps `Tooltip` and all of its children together into a single component.
+
+```tsx example export=true
+import type {TooltipProps} from 'react-aria-components';
+
+interface MyTooltipProps extends Omit<TooltipProps, 'children'> {
+  children: React.ReactNode
+}
+
+function MyTooltip({children, ...props}: MyTooltipProps) {
+  return (
+    <Tooltip {...props}>
+      <OverlayArrow>
+        <svg width={8} height={8}><path d="M0 0,L4 4,L8 0" /></svg>
+      </OverlayArrow>
+      {children}
+    </Tooltip>
+  );
+}
+
+<TooltipTrigger>
+  <Button>💾</Button>
+  <MyTooltip>Save</MyTooltip>
+</TooltipTrigger>
+```
+
+## Interactions
+
+### Delay
+
+Tooltips appear after a short delay when hovering the trigger, or instantly when using keyboard focus. This delay is called the "warmup period", and it is a global timer, shared by all tooltips. Once a tooltip is displayed, other tooltips display immediately. If the user waits for the "cooldown period" before hovering another element, the warmup timer restarts.
+
+```tsx example
+<div style={{display: 'flex', gap: 8}}>
+  <TooltipTrigger>
+    <Button>Hover me</Button>
+    <MyTooltip>I come up after a delay.</MyTooltip>
+  </TooltipTrigger>
+  <TooltipTrigger>
+    <Button>Then hover me</Button>
+    <MyTooltip>If you did it quickly, I appear immediately.</MyTooltip>
+  </TooltipTrigger>
+</div>
+```
+
+The delay can be adjusted for hover using the `delay` prop.
+
+```tsx example
+<TooltipTrigger delay={0}>
+  <Button>💾</Button>
+  <MyTooltip>Save</MyTooltip>
+</TooltipTrigger>
+```
+
+### Trigger
+
+By default, tooltips appear both on hover and on focus. The `trigger` prop can be set to `"focus"` to display the tooltip only on focus, and not on hover.
+
+```tsx example
+<TooltipTrigger trigger="focus">
+  <Button>💿</Button>
+  <MyTooltip>Burn CD</MyTooltip>
+</TooltipTrigger>
+```
+
+## Controlled open state
+
+The open state of the tooltip can be controlled via the `defaultOpen` and `isOpen` props.
+
+
+```tsx example
+function Example() {
+  let [isOpen, setOpen] = React.useState(false);
+
+  return (
+    <>
+      <TooltipTrigger isOpen={isOpen} onOpenChange={setOpen}>
+        <Button>📣</Button>
+        <MyTooltip>Notifications</MyTooltip>
+      </TooltipTrigger>
+      <p>Tooltip is {isOpen ? 'showing' : 'not showing'}</p>
+    </>
+  );
+}
+```
+
+## Positioning
+
+### Placement
+
+The Tooltip's placement with respect to its trigger element can be adjusted using the `placement`
+prop. See the props table for a full list of available placement combinations.
+
+```tsx example
+<div style={{display: 'flex', gap: 8}}>
+  <TooltipTrigger>
+    <Button>⬅️</Button>
+    <MyTooltip placement="start">In left-to-right, this is on the left. In right-to-left, this is on the right.</MyTooltip>
+  </TooltipTrigger>
+  <TooltipTrigger>
+    <Button>⬆️</Button>
+    <MyTooltip placement="top">This tooltip is above the button.</MyTooltip>
+  </TooltipTrigger>
+  <TooltipTrigger>
+    <Button>⬇️</Button>
+    <MyTooltip placement="bottom">This tooltip is below the button.</MyTooltip>
+  </TooltipTrigger>
+  <TooltipTrigger>
+    <Button>➡️</Button>
+    <MyTooltip placement="end">In left-to-right, this is on the right. In right-to-left, this is on the left.</MyTooltip>
+  </TooltipTrigger>
+</div>
+```
+
+### Offset and cross offset
+
+The Tooltip's offset with respect to its trigger can be adjusted using the `offset` and
+`crossOffset` props. The `offset` prop controls the spacing applied along the main axis between the element and its
+trigger whereas the `crossOffset` prop handles the spacing applied along the cross axis.
+
+Below is a tooltip offset by an additional 50px above the trigger.
+
+```tsx example
+<TooltipTrigger>
+  <Button>☝️</Button>
+  <MyTooltip offset={50}>This will shift up.</MyTooltip>
+</TooltipTrigger>
+```
+
+Below is a tooltip cross offset by an additional 100px to the right of the trigger.
+
+```tsx example
+<TooltipTrigger>
+  <Button>👉</Button>
+  <MyTooltip crossOffset={60} placement="bottom">This will shift over to the right.</MyTooltip>
+</TooltipTrigger>
+```
+
+## Disabled
+
+The `isDisabled` prop can be provided to a TooltipTrigger to disable the tooltip, without disabling the trigger it displays on.
+
+```tsx example
+<TooltipTrigger isDisabled>
+  <Button>🖨</Button>
+  <MyTooltip>Print</MyTooltip>
+</TooltipTrigger>
+```
 
 ## Props
 
@@ -280,159 +444,6 @@ A `Tooltip` can be targeted with the `.react-aria-Tooltip` CSS selector, or by o
 A `OverlayArrow` can be targeted with the `.react-aria-OverlayArrow` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
 
 <StateTable properties={docs.exports.OverlayArrowRenderProps.properties} />
-
-## Reusable wrappers
-
-If you will use a Tooltip in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
-
-This example wraps `Tooltip` and all of its children together into a single component.
-
-```tsx example export=true
-import type {TooltipProps} from 'react-aria-components';
-
-interface MyTooltipProps extends Omit<TooltipProps, 'children'> {
-  children: React.ReactNode
-}
-
-function MyTooltip({children, ...props}: MyTooltipProps) {
-  return (
-    <Tooltip {...props}>
-      <OverlayArrow>
-        <svg width={8} height={8}><path d="M0 0,L4 4,L8 0" /></svg>
-      </OverlayArrow>
-      {children}
-    </Tooltip>
-  );
-}
-
-<TooltipTrigger>
-  <Button>💾</Button>
-  <MyTooltip>Save</MyTooltip>
-</TooltipTrigger>
-```
-
-## Usage
-
-The following examples show how to use the `MyTooltip` component created in the above example.
-
-### Delay
-
-Tooltips appear after a short delay when hovering the trigger, or instantly when using keyboard focus. This delay is called the "warmup period", and it is a global timer, shared by all tooltips. Once a tooltip is displayed, other tooltips display immediately. If the user waits for the "cooldown period" before hovering another element, the warmup timer restarts.
-
-```tsx example
-<div style={{display: 'flex', gap: 8}}>
-  <TooltipTrigger>
-    <Button>Hover me</Button>
-    <MyTooltip>I come up after a delay.</MyTooltip>
-  </TooltipTrigger>
-  <TooltipTrigger>
-    <Button>Then hover me</Button>
-    <MyTooltip>If you did it quickly, I appear immediately.</MyTooltip>
-  </TooltipTrigger>
-</div>
-```
-
-The delay can be adjusted for hover using the `delay` prop.
-
-```tsx example
-<TooltipTrigger delay={0}>
-  <Button>💾</Button>
-  <MyTooltip>Save</MyTooltip>
-</TooltipTrigger>
-```
-
-### Trigger
-
-By default, tooltips appear both on hover and on focus. The `trigger` prop can be set to `"focus"` to display the tooltip only on focus, and not on hover.
-
-```tsx example
-<TooltipTrigger trigger="focus">
-  <Button>💿</Button>
-  <MyTooltip>Burn CD</MyTooltip>
-</TooltipTrigger>
-```
-
-### Controlled open state
-
-The open state of the tooltip can be controlled via the `defaultOpen` and `isOpen` props.
-
-
-```tsx example
-function Example() {
-  let [isOpen, setOpen] = React.useState(false);
-
-  return (
-    <>
-      <TooltipTrigger isOpen={isOpen} onOpenChange={setOpen}>
-        <Button>📣</Button>
-        <MyTooltip>Notifications</MyTooltip>
-      </TooltipTrigger>
-      <p>Tooltip is {isOpen ? 'showing' : 'not showing'}</p>
-    </>
-  );
-}
-```
-
-### Placement
-
-The Tooltip's placement with respect to its trigger element can be adjusted using the `placement`
-prop. See the props table for a full list of available placement combinations.
-
-```tsx example
-<div style={{display: 'flex', gap: 8}}>
-  <TooltipTrigger>
-    <Button>⬅️</Button>
-    <MyTooltip placement="start">In left-to-right, this is on the left. In right-to-left, this is on the right.</MyTooltip>
-  </TooltipTrigger>
-  <TooltipTrigger>
-    <Button>⬆️</Button>
-    <MyTooltip placement="top">This tooltip is above the button.</MyTooltip>
-  </TooltipTrigger>
-  <TooltipTrigger>
-    <Button>⬇️</Button>
-    <MyTooltip placement="bottom">This tooltip is below the button.</MyTooltip>
-  </TooltipTrigger>
-  <TooltipTrigger>
-    <Button>➡️</Button>
-    <MyTooltip placement="end">In left-to-right, this is on the right. In right-to-left, this is on the left.</MyTooltip>
-  </TooltipTrigger>
-</div>
-```
-
-### Offset and cross offset
-
-The Tooltip's offset with respect to its trigger can be adjusted using the `offset` and
-`crossOffset` props. The `offset` prop controls the spacing applied along the main axis between the element and its
-trigger whereas the `crossOffset` prop handles the spacing applied along the cross axis.
-
-Below is a tooltip offset by an additional 50px above the trigger.
-
-```tsx example
-<TooltipTrigger>
-  <Button>☝️</Button>
-  <MyTooltip offset={50}>This will shift up.</MyTooltip>
-</TooltipTrigger>
-```
-
-Below is a tooltip cross offset by an additional 100px to the right of the trigger.
-
-```tsx example
-<TooltipTrigger>
-  <Button>👉</Button>
-  <MyTooltip crossOffset={60} placement="bottom">This will shift over to the right.</MyTooltip>
-</TooltipTrigger>
-```
-
-### Disabled
-
-The `isDisabled` prop can be provided to a TooltipTrigger to disable the tooltip, without disabling the trigger it displays on.
-
-```tsx example
-<TooltipTrigger isDisabled>
-  <Button>🖨</Button>
-  <MyTooltip>Print</MyTooltip>
-</TooltipTrigger>
-```
 
 ## Advanced customization
 

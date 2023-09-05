@@ -130,13 +130,14 @@ function Example() {
       <ComboBox
         label="Adobe product (Uncontrolled)"
         defaultItems={options}
-        defaultInputValue={"Adobe XD"}>
+        defaultInputValue="Adobe XD">
         {item => <Item>{item.name}</Item>}
       </ComboBox>
 
       <ComboBox
         label="Pick an Adobe product (Controlled)"
-        defaultItems={options} inputValue={value}
+        defaultItems={options}
+        inputValue={value}
         onInputChange={setValue}>
         {item => <Item>{item.name}</Item>}
       </ComboBox>

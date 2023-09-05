@@ -190,6 +190,17 @@ to navigate within the group, and the <Keyboard>Space</Keyboard> key to select a
 to provide more context about the field, and any validation messages. These are linked with the
 inputs via the `aria-describedby` attribute.
 
+```tsx
+import {RadioGroup, Radio, Label, Text} from 'react-aria-components';
+
+<RadioGroup>
+  <Label />
+  <Radio />
+  <Text slot="description" />
+  <Text slot="errorMessage" />
+</RadioGroup>
+```
+
 Individual radio buttons must have a visual label. If the radio group does not have a visible label,
 an `aria-label` or `aria-labelledby` prop must be passed instead to identify the element to assistive
 technology.
@@ -208,6 +219,186 @@ A `RadioGroup` uses the following components, which may also be used standalone 
 </ExampleCard>
 
 </section>
+
+## Reusable wrappers
+
+If you will use a RadioGroup in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+This example wraps `RadioGroup` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)).
+
+```tsx example export=true
+import type {RadioGroupProps} from 'react-aria-components';
+import {Text} from 'react-aria-components';
+
+interface MyRadioGroupProps extends Omit<RadioGroupProps, 'children'> {
+  children?: React.ReactNode,
+  label?: string,
+  description?: string,
+  errorMessage?: string
+}
+
+function MyRadioGroup({
+  label,
+  description,
+  errorMessage,
+  children,
+  ...props
+}: MyRadioGroupProps) {
+  return (
+    <RadioGroup {...props}>
+      <Label>{label}</Label>
+      {children}
+      {description && <Text slot="description">{description}</Text>}
+      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
+    </RadioGroup>
+  );
+}
+
+<MyRadioGroup label="Favorite sport">
+  <Radio value="soccer">Soccer</Radio>
+  <Radio value="baseball">Baseball</Radio>
+  <Radio value="basketball">Basketball</Radio>
+</MyRadioGroup>
+```
+
+## Value
+
+### Default value
+
+An initial, uncontrolled value can be provided to the RadioGroup using the `defaultValue` prop, which accepts a value corresponding with the `value` prop of each Radio.
+
+```tsx example
+<MyRadioGroup label="Are you a wizard?" defaultValue="yes">
+  <Radio value="yes">Yes</Radio>
+  <Radio value="no">No</Radio>
+</MyRadioGroup>
+```
+
+### Controlled value
+
+A controlled value can be provided using the `value` prop, which accepts a value corresponding with the `value` prop of each Radio.
+The `onChange` event is fired when the user selects a radio.
+
+```tsx example
+function Example() {
+  let [selected, setSelected] = React.useState('');
+
+  return (
+    <>
+      <MyRadioGroup label="Favorite avatar" value={selected} onChange={setSelected}>
+        <Radio value="wizard">Wizard</Radio>
+        <Radio value="dragon">Dragon</Radio>
+      </MyRadioGroup>
+      <p>You have selected: {selected}</p>
+    </>
+  );
+}
+```
+
+### HTML forms
+
+RadioGroup supports the `name` prop, paired with the Radio `value` prop, for integration with HTML forms.
+
+```tsx example
+<MyRadioGroup label="Favorite pet" name="pet">
+  <Radio value="dogs">Dogs</Radio>
+  <Radio value="cats">Cats</Radio>
+</MyRadioGroup>
+```
+
+## Validation
+
+RadioGroups can display a validation state to communicate to the user if the current value is invalid.
+Implement your own validation logic in your app and set the `isInvalid` prop accordingly.
+
+```tsx example
+<MyRadioGroup label="Favorite avatar" isInvalid>
+  <Radio value="wizard">Wizard</Radio>
+  <Radio value="dragon">Dragon</Radio>
+</MyRadioGroup>
+```
+
+### Help text
+
+The `description` slot can be used to associate additional help text with a radio group. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to semantically mark the radio group as invalid for assistive technologies.
+
+```tsx example
+function Example() {
+  let [selected, setSelected] = React.useState('dogs');
+  let isValid = selected === 'dogs';
+
+  return (
+    <RadioGroup
+      value={selected}
+      onChange={setSelected}
+      /*- begin highlight -*/
+      isInvalid={!isValid}
+      /*- end highlight -*/
+    >
+      <Label>Favorite pet</Label>
+      <Radio value="dogs">
+        Dogs
+      </Radio>
+      <Radio value="cats">
+        Cats
+      </Radio>
+      <Radio value="dragons">
+        Dragons
+      </Radio>
+      {/*- begin highlight -*/}
+      {isValid && <Text slot="description">Please select a pet.</Text>}
+      {!isValid && <Text slot="errorMessage">{selected === 'cats' ? 'No cats allowed.': 'Please select dogs.'}</Text>}
+      {/*- end highlight -*/}
+    </RadioGroup>
+  );
+}
+```
+
+## Orientation
+
+RadioGroups are vertically oriented by default.
+The `orientation` prop can be used to change the orientation to horizontal.
+
+```tsx example
+<MyRadioGroup label="Favorite avatar" orientation="horizontal">
+  <Radio value="wizard">Wizard</Radio>
+  <Radio value="dragon">Dragon</Radio>
+</MyRadioGroup>
+```
+
+## Disabled
+
+The entire RadioGroup can be disabled with the `isDisabled` prop.
+
+```tsx example
+<MyRadioGroup label="Favorite sport" isDisabled>
+  <Radio value="soccer">Soccer</Radio>
+  <Radio value="baseball">Baseball</Radio>
+  <Radio value="basketball">Basketball</Radio>
+</MyRadioGroup>
+```
+
+To disable an individual radio, pass `isDisabled` to the `Radio` instead.
+
+```tsx example
+<MyRadioGroup label="Favorite sport">
+  <Radio value="soccer">Soccer</Radio>
+  <Radio value="baseball" isDisabled>Baseball</Radio>
+  <Radio value="basketball">Basketball</Radio>
+</MyRadioGroup>
+```
+
+### Read only
+
+The `isReadOnly` prop makes the selection immutable. Unlike `isDisabled`, the RadioGroup remains focusable.
+See the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
+
+```tsx example
+<MyRadioGroup label="Favorite avatar" defaultValue="wizard" isReadOnly>
+  <Radio value="wizard">Wizard</Radio>
+  <Radio value="dragon">Dragon</Radio>
+</MyRadioGroup>
+```
 
 ## Props
 
@@ -281,186 +472,6 @@ A `Radio` can be targeted with the `.react-aria-Radio` CSS selector, or by overr
 ### Text
 
 The help text elements within a `RadioGroup` can be targeted with the `[slot=description]` and `[slot=errorMessage]` CSS selectors, or by adding a custom `className`.
-
-## Reusable wrappers
-
-If you will use a RadioGroup in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
-
-This example wraps `RadioGroup` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)).
-
-```tsx example export=true
-import type {RadioGroupProps} from 'react-aria-components';
-import {Text} from 'react-aria-components';
-
-interface MyRadioGroupProps extends Omit<RadioGroupProps, 'children'> {
-  children?: React.ReactNode,
-  label?: string,
-  description?: string,
-  errorMessage?: string
-}
-
-function MyRadioGroup({
-  label,
-  description,
-  errorMessage,
-  children,
-  ...props
-}: MyRadioGroupProps) {
-  return (
-    <RadioGroup {...props}>
-      <Label>{label}</Label>
-      {children}
-      {description && <Text slot="description">{description}</Text>}
-      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
-    </RadioGroup>
-  );
-}
-
-<MyRadioGroup label="Favorite sport">
-  <Radio value="soccer">Soccer</Radio>
-  <Radio value="baseball">Baseball</Radio>
-  <Radio value="basketball">Basketball</Radio>
-</MyRadioGroup>
-```
-
-## Usage
-
-The following examples show how to use the `MyRadioGroup` component created in the above example.
-
-### Orientation
-
-RadioGroups are vertically oriented by default.
-The `orientation` prop can be used to change the orientation to horizontal.
-
-```tsx example
-<MyRadioGroup label="Favorite avatar" orientation="horizontal">
-  <Radio value="wizard">Wizard</Radio>
-  <Radio value="dragon">Dragon</Radio>
-</MyRadioGroup>
-```
-
-### Default value
-
-An initial, uncontrolled value can be provided to the RadioGroup using the `defaultValue` prop, which accepts a value corresponding with the `value` prop of each Radio.
-
-```tsx example
-<MyRadioGroup label="Are you a wizard?" defaultValue="yes">
-  <Radio value="yes">Yes</Radio>
-  <Radio value="no">No</Radio>
-</MyRadioGroup>
-```
-
-### Controlled value
-
-A controlled value can be provided using the `value` prop, which accepts a value corresponding with the `value` prop of each Radio.
-The `onChange` event is fired when the user selects a radio.
-
-```tsx example
-function Example() {
-  let [selected, setSelected] = React.useState('');
-
-  return (
-    <>
-      <MyRadioGroup label="Favorite avatar" value={selected} onChange={setSelected}>
-        <Radio value="wizard">Wizard</Radio>
-        <Radio value="dragon">Dragon</Radio>
-      </MyRadioGroup>
-      <p>You have selected: {selected}</p>
-    </>
-  );
-}
-```
-
-### Validation
-
-RadioGroups can display a validation state to communicate to the user if the current value is invalid.
-Implement your own validation logic in your app and set the `isInvalid` prop accordingly.
-
-```tsx example
-<MyRadioGroup label="Favorite avatar" isInvalid>
-  <Radio value="wizard">Wizard</Radio>
-  <Radio value="dragon">Dragon</Radio>
-</MyRadioGroup>
-```
-
-### Help text
-
-The `description` slot can be used to associate additional help text with a radio group. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to semantically mark the radio group as invalid for assistive technologies.
-
-```tsx example
-function Example() {
-  let [selected, setSelected] = React.useState('dogs');
-  let isValid = selected === 'dogs';
-
-  return (
-    <MyRadioGroup
-      aria-label="Favorite pet"
-      onChange={setSelected}
-      isInvalid={!isValid}
-      description={isValid ? 'Please select a pet.' : undefined}
-      errorMessage={isValid ? undefined :
-        selected === 'cats'
-          ? 'No cats allowed.'
-          : 'Please select dogs.'
-      }>
-      <Radio value="dogs">
-        Dogs
-      </Radio>
-      <Radio value="cats">
-        Cats
-      </Radio>
-      <Radio value="dragons">
-        Dragons
-      </Radio>
-    </MyRadioGroup>
-  );
-}
-```
-
-### Disabled
-
-The entire RadioGroup can be disabled with the `isDisabled` prop.
-
-```tsx example
-<MyRadioGroup label="Favorite sport" isDisabled>
-  <Radio value="soccer">Soccer</Radio>
-  <Radio value="baseball">Baseball</Radio>
-  <Radio value="basketball">Basketball</Radio>
-</MyRadioGroup>
-```
-
-To disable an individual radio, pass `isDisabled` to the `Radio` instead.
-
-```tsx example
-<MyRadioGroup label="Favorite sport">
-  <Radio value="soccer">Soccer</Radio>
-  <Radio value="baseball" isDisabled>Baseball</Radio>
-  <Radio value="basketball">Basketball</Radio>
-</MyRadioGroup>
-```
-
-### Read only
-
-The `isReadOnly` prop makes the selection immutable. Unlike `isDisabled`, the RadioGroup remains focusable.
-See the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
-
-```tsx example
-<MyRadioGroup label="Favorite avatar" defaultValue="wizard" isReadOnly>
-  <Radio value="wizard">Wizard</Radio>
-  <Radio value="dragon">Dragon</Radio>
-</MyRadioGroup>
-```
-
-### HTML forms
-
-RadioGroup supports the `name` prop, paired with the Radio `value` prop, for integration with HTML forms.
-
-```tsx example
-<MyRadioGroup label="Favorite pet" name="pet">
-  <Radio value="dogs">Dogs</Radio>
-  <Radio value="cats">Cats</Radio>
-</MyRadioGroup>
-```
 
 ## Advanced customization
 

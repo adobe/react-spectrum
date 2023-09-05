@@ -127,6 +127,14 @@ represent the value visually, while a wrapper element represents the meter to
 assistive technology using the [meter](https://www.w3.org/WAI/ARIA/apg/patterns/meter/)
 ARIA role.
 
+```tsx
+import {Meter, Label} from 'react-aria-components';
+
+<Meter>
+  <Label />
+</Meter>
+```
+
 If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead
 to identify the element to screen readers.
 
@@ -144,6 +152,83 @@ A `Meter` uses the following components, which may also be used standalone or re
 </ExampleCard>
 
 </section>
+
+## Reusable wrappers
+
+If you will use a Meter in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+This example wraps `Meter` and all of its children together into a single component which accepts a `label` prop that is passed to the right place.
+
+```tsx example export=true
+import type {MeterProps} from 'react-aria-components';
+
+interface MyMeterProps extends MeterProps {
+  label?: string
+}
+
+function MyMeter({label, ...props}: MyMeterProps) {
+  return (
+    <Meter {...props}>
+      {({percentage, valueText}) => <>
+        <Label>{label}</Label>
+        <span className="value">{valueText}</span>
+        <div className="bar">
+          <div className="fill" style={{width: percentage + '%'}} />
+        </div>
+      </>}
+    </Meter>
+  );
+}
+
+<MyMeter label="Storage space" value={80} />
+```
+
+## Value
+
+Meters are controlled with the `value` prop. By default, the `value` prop represents the current percentage of progress, as the minimum and maximum values default to 0 and 100, respectively.
+
+```tsx example
+<MyMeter
+  label="Storage space"
+  value={25} />
+```
+
+### Custom value scale
+
+A custom value scale can be used by setting the `minValue` and `maxValue` props.
+
+```tsx example
+<MyMeter
+  label="Widgets Used"
+  minValue={50}
+  maxValue={150}
+  value={100} />
+```
+
+## Labeling
+
+### Value formatting
+
+Values are formatted as a percentage by default, but this can be modified by using the `formatOptions` prop to specify a different format.
+`formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied based on the current locale.
+
+```tsx example
+<MyMeter
+  label="Currency"
+  formatOptions={{style: 'currency', currency: 'JPY'}}
+  value={60} />
+```
+
+### Custom value label
+
+The `valueLabel` prop allows the formatted value to be replaced with a custom string.
+
+```tsx example
+<MyMeter
+  label="Space used"
+  valueLabel="54 of 60GB"
+  value={90} />
+```
 
 ## Props
 
@@ -186,75 +271,6 @@ A `Meter` can be targeted with the `.react-aria-Meter` CSS selector, or by overr
 ### Label
 
 A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by adding a custom `className`.
-
-## Reusable wrappers
-
-If you will use a Meter in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
-
-This example wraps `Meter` and all of its children together into a single component which accepts a `label` prop that is passed to the right place.
-
-```tsx example export=true
-import type {MeterProps} from 'react-aria-components';
-
-interface MyMeterProps extends MeterProps {
-  label?: string
-}
-
-function MyMeter({label, ...props}: MyMeterProps) {
-  return (
-    <Meter {...props}>
-      {({percentage, valueText}) => <>
-        <Label>{label}</Label>
-        <span className="value">{valueText}</span>
-        <div className="bar">
-          <div className="fill" style={{width: percentage + '%'}} />
-        </div>
-      </>}
-    </Meter>
-  );
-}
-
-<MyMeter label="Storage space" value={80} />
-```
-
-## Usage
-
-The following examples show how to use the `MyMeter` component created in the above example.
-
-### Custom value scale
-
-By default, the `value` prop represents the current percentage of progress, as the minimum and maximum values default to 0 and 100, respectively. Alternatively, a different scale can be used by setting the `minValue` and `maxValue` props.
-
-```tsx example
-<MyMeter
-  label="Widgets Used"
-  minValue={50}
-  maxValue={150}
-  value={100} />
-```
-
-### Value formatting
-
-Values are formatted as a percentage by default, but this can be modified by using the `formatOptions` prop to specify a different format.
-`formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied based on the current locale.
-
-```tsx example
-<MyMeter
-  label="Currency"
-  formatOptions={{style: 'currency', currency: 'JPY'}}
-  value={60} />
-```
-
-### Custom value label
-
-The `valueLabel` prop allows the formatted value to be replaced with a custom string.
-
-```tsx example
-<MyMeter
-  label="Space used"
-  valueLabel="54 of 60GB"
-  value={90} />
-```
 
 ## Advanced customization
 

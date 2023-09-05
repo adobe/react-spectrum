@@ -1,0 +1,139 @@
+<svg style="max-height: 395px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 583 395">
+  <defs>
+    <clipPath id="clip-path">
+      <rect width="5" height="30.5" fill="none"/>
+    </clipPath>
+    <filter id="rectangle-12" x="294" y="113" width="232" height="251" filterUnits="userSpaceOnUse">
+      <feOffset dy="1" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feFlood flood-opacity="0.149"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Group_151081" data-name="Group 151081" transform="translate(-228 -34)">
+    <text id="Typography" transform="translate(244 93)" fill="var(--anatomy-gray-600)" font-size="15" font-family="Adobe-Clean"><tspan x="0" y="0">Label</tspan></text>
+    <text id="Typography-2" data-name="Typography" transform="translate(244 163)" fill="var(--anatomy-gray-600)" font-size="15" font-family="Adobe-Clean"><tspan x="0" y="0">Help text</tspan></text>
+    <g id="Group_1983" data-name="Group 1983" transform="translate(-928 -484)">
+      <g id="rectangle-18" transform="translate(1172 587)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-900)" stroke-width="1">
+        <path d="M5,0H186a0,0,0,0,1,0,0V40a0,0,0,0,1,0,0H5a5,5,0,0,1-5-5V5A5,5,0,0,1,5,0Z" stroke="none"/>
+        <path d="M5,.5H185.5a0,0,0,0,1,0,0v39a0,0,0,0,1,0,0H5A4.5,4.5,0,0,1,.5,35V5A4.5,4.5,0,0,1,5,.5Z" fill="none"/>
+      </g>
+      <g id="rectangle-18-2" data-name="rectangle-18" transform="translate(1352 587)" fill="var(--anatomy-gray-100)" stroke="var(--anatomy-gray-500)" stroke-width="1">
+        <path d="M0,0H35a5,5,0,0,1,5,5V35a5,5,0,0,1-5,5H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" stroke="none"/>
+        <path d="M.5.5H35A4.5,4.5,0,0,1,39.5,5V35A4.5,4.5,0,0,1,35,39.5H.5a0,0,0,0,1,0,0V.5A0,0,0,0,1,.5.5Z" fill="none"/>
+      </g>
+      <path id="Path_470" data-name="Path 470" d="M11,2a1,1,0,0,0-1.71-.71L6,4.59,2.71,1.29A1,1,0,1,0,1.29,2.71l4,4a1,1,0,0,0,1.41,0l4-4A1,1,0,0,0,11,2Z" transform="translate(1366.004 603.006)" fill="var(--anatomy-gray-600)"/>
+      <g id="rectangle-18-3" data-name="rectangle-18" transform="translate(1172 587)" fill="none" stroke="var(--anatomy-gray-500)" stroke-width="1">
+        <rect width="220" height="40" rx="5" stroke="none"/>
+        <rect x="0.5" y="0.5" width="219" height="39" rx="4.5" fill="none"/>
+      </g>
+    </g>
+    <g id="Component_14_1" data-name="Component 14 – 1" transform="translate(248 51.5)" clip-path="url(#clip-path)">
+      <circle id="Ellipse_1" data-name="Ellipse 1" cx="2.5" cy="2.5" r="2.5" transform="translate(0 25.5)" fill="var(--anatomy-gray-500)"/>
+      <line id="Line_1" data-name="Line 1" y1="28" transform="translate(2.5)" fill="none" stroke="var(--anatomy-gray-500)" stroke-width="1"/>
+    </g>
+    <text id="Label" transform="translate(237 47)" fill="var(--anatomy-gray-900)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="0" y="0">Label</tspan></text>
+    <g id="Group_22733" data-name="Group 22733" transform="translate(-54 1)">
+      <g id="Component_14_3" data-name="Component 14 – 3" transform="translate(404 82.5)" clip-path="url(#clip-path)">
+        <circle id="Ellipse_1-2" data-name="Ellipse 1" cx="2.5" cy="2.5" r="2.5" transform="translate(0 25.5)" fill="var(--anatomy-gray-500)"/>
+        <line id="Line_1-2" data-name="Line 1" y1="28" transform="translate(2.5)" fill="none" stroke="var(--anatomy-gray-500)" stroke-width="1"/>
+      </g>
+      <text id="Input" transform="translate(406 78)" fill="var(--anatomy-gray-900)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="-13.149" y="0">Input</tspan></text>
+    </g>
+    <text id="Typography-3" data-name="Typography" transform="translate(528 93)" fill="var(--anatomy-gray-600)" font-size="15" font-family="Adobe-Clean"><tspan x="0" y="0">Label</tspan></text>
+    <g id="Group_1982" data-name="Group 1982" transform="translate(-644 -484)">
+      <g id="rectangle-18-4" data-name="rectangle-18" transform="translate(1172 587)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-900)" stroke-width="1">
+        <path d="M5,0H186a0,0,0,0,1,0,0V40a0,0,0,0,1,0,0H5a5,5,0,0,1-5-5V5A5,5,0,0,1,5,0Z" stroke="none"/>
+        <path d="M5,.5H185.5a0,0,0,0,1,0,0v39a0,0,0,0,1,0,0H5A4.5,4.5,0,0,1,.5,35V5A4.5,4.5,0,0,1,5,.5Z" fill="none"/>
+      </g>
+      <g id="rectangle-18-5" data-name="rectangle-18" transform="translate(1352 587)" fill="var(--anatomy-gray-200)" stroke="var(--anatomy-gray-500)" stroke-width="1">
+        <path d="M0,0H35a5,5,0,0,1,5,5V35a5,5,0,0,1-5,5H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" stroke="none"/>
+        <path d="M.5.5H35A4.5,4.5,0,0,1,39.5,5V35A4.5,4.5,0,0,1,35,39.5H.5a0,0,0,0,1,0,0V.5A0,0,0,0,1,.5.5Z" fill="none"/>
+      </g>
+      <path id="Path_470-2" data-name="Path 470" d="M11,2a1,1,0,0,0-1.71-.71L6,4.59,2.71,1.29A1,1,0,1,0,1.29,2.71l4,4a1,1,0,0,0,1.41,0l4-4A1,1,0,0,0,11,2Z" transform="translate(1366.004 603.006)" fill="var(--anatomy-gray-600)"/>
+      <g id="rectangle-18-6" data-name="rectangle-18" transform="translate(1172 587)" fill="none" stroke="var(--anatomy-gray-500)" stroke-width="1">
+        <rect width="220" height="40" rx="5" stroke="none"/>
+        <rect x="0.5" y="0.5" width="219" height="39" rx="4.5" fill="none"/>
+      </g>
+      <g id="Group_151080" data-name="Group 151080" transform="translate(928 484)">
+        <rect id="Rectangle_136813" data-name="Rectangle 136813" width="1" height="21" transform="translate(277 111)" fill="var(--anatomy-gray-600)"/>
+        <text id="Typography-4" data-name="Typography" transform="translate(256 128)" fill="var(--anatomy-gray-900)" font-size="17" font-family="Adobe-Clean"><tspan x="0" y="0">Op</tspan></text>
+      </g>
+    </g>
+    <g id="Group_4113" data-name="Group 4113" transform="translate(-259 54)">
+      <text id="_Help_text_description_or_error_message_" data-name="​​Help text (description
+or error message)" transform="translate(543 150)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="-55.198" y="0">​​Help text (description </tspan><tspan x="-44.57" y="16">or error message)</tspan></text>
+      <g id="Group_151078" data-name="Group 151078" transform="translate(14)">
+        <circle id="Ellipse_378" data-name="Ellipse 378" cx="2.5" cy="2.5" r="2.5" transform="translate(526 112)" fill="var(--anatomy-gray-500)"/>
+        <rect id="Rectangle_3657" data-name="Rectangle 3657" width="1" height="21" transform="translate(528 116)" fill="var(--anatomy-gray-500)"/>
+      </g>
+    </g>
+    <g id="Group_151079" data-name="Group 151079">
+      <rect id="Rectangle_136813-2" data-name="Rectangle 136813" width="1" height="21" transform="translate(277 111)" fill="var(--anatomy-gray-600)"/>
+      <text id="Typography-5" data-name="Typography" transform="translate(256 128)" fill="var(--anatomy-gray-900)" font-size="17" font-family="Adobe-Clean"><tspan x="0" y="0">Op</tspan></text>
+    </g>
+    <g id="Group_22734" data-name="Group 22734" transform="translate(38 1)">
+      <g id="Component_14_27" data-name="Component 14 – 27" transform="translate(404 82.5)" clip-path="url(#clip-path)">
+        <circle id="Ellipse_1-3" data-name="Ellipse 1" cx="2.5" cy="2.5" r="2.5" transform="translate(0 25.5)" fill="var(--anatomy-gray-500)"/>
+        <line id="Line_1-3" data-name="Line 1" y1="28" transform="translate(2.5)" fill="none" stroke="var(--anatomy-gray-500)" stroke-width="1"/>
+      </g>
+      <text id="Button" transform="translate(406 78)" fill="var(--anatomy-gray-900)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="-16.744" y="0">Button</tspan></text>
+    </g>
+    <g id="Group_22736" data-name="Group 22736" transform="translate(23 52)">
+      <g transform="matrix(1, 0, 0, 1, 205, -18)" filter="url(#rectangle-12)">
+        <g id="rectangle-12-2" data-name="rectangle-12" transform="translate(300 118)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1.5">
+          <rect width="220" height="239" rx="6" stroke="none"/>
+          <rect x="0.75" y="0.75" width="218.5" height="237.5" rx="5.25" fill="none"/>
+        </g>
+      </g>
+      <g id="Hover" transform="translate(505 131)" fill="var(--anatomy-gray-900)" opacity="0.04">
+        <path d="M0,0H220V64H0Z" stroke="none"/>
+        <path d="M 1 1 L 1 63 L 219 63 L 219 1 L 1 1 M 0 0 L 220 0 L 220 64 L 0 64 L 0 0 Z" stroke="none" fill="var(--anatomy-gray-900)" fill-opacity="0"/>
+      </g>
+      <text id="Option_1" data-name="Option 1" transform="translate(522 158)" fill="var(--anatomy-gray-800)" font-size="20" font-family="Adobe-Clean"><tspan x="0" y="0">Option 1</tspan></text>
+      <text id="Option_2" data-name="Option 2" transform="translate(522 227)" fill="var(--anatomy-gray-800)" font-size="20" font-family="Adobe-Clean"><tspan x="0" y="0">Option 2</tspan></text>
+      <g id="Group_151069" data-name="Group 151069" transform="translate(403 492.5)">
+        <text id="Item" transform="translate(346 -316.5)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="0" y="0">Item</tspan></text>
+        <path id="Union_19" data-name="Union 19" d="M-1244-611.5V-639.55a2.5,2.5,0,0,1-2-2.449,2.5,2.5,0,0,1,2.5-2.5,2.5,2.5,0,0,1,2.5,2.5,2.5,2.5,0,0,1-2,2.449V-611.5Z" transform="translate(953 -1564.5) rotate(-90)" fill="var(--anatomy-gray-500)"/>
+      </g>
+      <g id="Checkmark" transform="translate(693 142.981)">
+        <rect id="Frame" width="18" height="18" transform="translate(0 0.019)" fill="var(--anatomy-gray-600)" opacity="0"/>
+        <path id="Shape" d="M5.672,13.022A1.366,1.366,0,0,1,4.6,12.509l-3.321-4A1.336,1.336,0,0,1,3.388,6.858l2.284,2.66,6.29-8a1.335,1.335,0,1,1,2.1,1.642L6.709,12.508A1.3,1.3,0,0,1,5.672,13.022Z" transform="translate(0.335 -0.673)" fill="var(--anatomy-gray-600)"/>
+      </g>
+      <g id="Group_151072" data-name="Group 151072" transform="translate(105 500.755)">
+        <text id="Item_label" data-name="Item label" transform="translate(366 -344.755)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="-50.492" y="0">Item label</tspan></text>
+        <path id="Union_19-2" data-name="Union 19" d="M2,42V4.95a2.5,2.5,0,1,1,1,0V42Z" transform="translate(413.5 -351.754) rotate(90)" fill="var(--anatomy-gray-500)"/>
+      </g>
+      <text id="Description" transform="translate(522 183)" fill="var(--anatomy-gray-800)" fill-opacity="0.75" font-size="16" font-family="Adobe-Clean"><tspan x="0" y="0">Description</tspan></text>
+      <text id="Description-2" data-name="Description" transform="translate(522 252)" fill="var(--anatomy-gray-800)" fill-opacity="0.75" font-size="16" font-family="Adobe-Clean"><tspan x="0" y="0">Description</tspan></text>
+      <text id="Option_3" data-name="Option 3" transform="translate(522 295)" fill="var(--anatomy-gray-800)" font-size="20" font-family="Adobe-Clean"><tspan x="0" y="0">Option 3</tspan></text>
+      <text id="Description-3" data-name="Description" transform="translate(522 320)" fill="var(--anatomy-gray-800)" fill-opacity="0.75" font-size="16" font-family="Adobe-Clean"><tspan x="0" y="0">Description</tspan></text>
+      <g id="Group_151073" data-name="Group 151073" transform="translate(105 526.755)">
+        <text id="Item_description" data-name="Item description" transform="translate(366 -345.755)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="-81.029" y="0">Item description</tspan></text>
+        <path id="Union_19-3" data-name="Union 19" d="M2,42V4.95a2.5,2.5,0,1,1,1,0V42Z" transform="translate(413.5 -351.754) rotate(90)" fill="var(--anatomy-gray-500)"/>
+      </g>
+      <text id="Detail" transform="translate(522 122)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean" font-weight="700" letter-spacing="0.06em"><tspan x="0" y="0">SECTION TITLE</tspan></text>
+      <g id="Group_151075" data-name="Group 151075" transform="translate(105 464.755)">
+        <text id="Section_header" data-name="Section header" transform="translate(366 -344.755)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="-74.737" y="0">Section header</tspan></text>
+        <path id="Union_19-4" data-name="Union 19" d="M2,42V4.95a2.5,2.5,0,1,1,1,0V42Z" transform="translate(413.5 -351.754) rotate(90)" fill="var(--anatomy-gray-500)"/>
+      </g>
+      <rect id="Rectangle_138455" data-name="Rectangle 138455" width="8" height="1" transform="translate(738.14 223.776)" fill="var(--anatomy-gray-500)"/>
+      <g id="Group_72703" data-name="Group 72703" transform="translate(729.117 108)">
+        <rect id="Rectangle_138451" data-name="Rectangle 138451" width="8.023" height="1" fill="var(--anatomy-gray-500)"/>
+        <rect id="Rectangle_138453" data-name="Rectangle 138453" width="1" height="226.234" transform="translate(8.023)" fill="var(--anatomy-gray-500)"/>
+        <rect id="Rectangle_138452" data-name="Rectangle 138452" width="8.023" height="1" transform="translate(0 225.234)" fill="var(--anatomy-gray-500)"/>
+      </g>
+      <text id="Section" transform="translate(751 229)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="0" y="0">Section</tspan></text>
+      <g id="Group_151077" data-name="Group 151077" transform="translate(95 580.531)">
+        <text id="Popover" transform="translate(376 -345.255)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="-41.522" y="0">Popover</tspan></text>
+        <path id="Union_19-5" data-name="Union 19" d="M2,32V4.95a2.5,2.5,0,1,1,1,0V32Z" transform="translate(413.5 -351.754) rotate(90)" fill="var(--anatomy-gray-500)"/>
+      </g>
+      <g id="Group_151069-2" data-name="Group 151069" transform="translate(336 690.5)">
+        <rect id="Rectangle_3659" data-name="Rectangle 3659" width="20" height="31" transform="translate(354 -360.5)" fill="red" opacity="0"/>
+        <text id="ListBox" transform="translate(364 -316.5)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="-18.181" y="0">ListBox</tspan></text>
+        <path id="Union_19-6" data-name="Union 19" d="M-1244-611.5V-639.55a2.5,2.5,0,0,1-2-2.449,2.5,2.5,0,0,1,2.5-2.5,2.5,2.5,0,0,1,2.5,2.5,2.5,2.5,0,0,1-2,2.449V-611.5Z" transform="translate(1607.5 282)" fill="var(--anatomy-gray-500)"/>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -112,17 +112,25 @@ function Example() {
 
 ## Features
 
-There is no native element to implement a drop zone in HTML. `DropZone` helps achieve accessible dropzone components that can be styled as needed. 
+There is no native element to implement a drop zone in HTML. `DropZone` helps achieve accessible dropzone components that can be styled as needed.
 
-* **Styleable** – Hover, keyboard focus, and the drop target states are provided for easy styling. These styles only apply when interacting with an appropriate input device, unlike CSS pseudo classes. 
+* **Styleable** – Hover, keyboard focus, and the drop target states are provided for easy styling. These styles only apply when interacting with an appropriate input device, unlike CSS pseudo classes.
 * **Accessible** – Support for native drag and drop via mouse and touch, as well as keyboard and screen reader interactions. Copy and paste is also supported as a keyboard accessible alternative.
 * **Flexible** – Files, directories, and custom data types can be dropped, and the contents of the drop zone can be fully customized.
 
 ## Anatomy
 
-A drop zone consists of a target element for the dropped objects. Users may drop objects via mouse, keyboard, or touch. `DropZone` accepts any content as its children, which may change when the user drops content. A [FileTrigger](FileTrigger.html) is commonly paired with a DropZone to allow a user to choose files from their device. 
+A drop zone consists of a target element for the dropped objects. Users may drop objects via mouse, keyboard, or touch. `DropZone` accepts any content as its children, which may change when the user drops content. A [FileTrigger](FileTrigger.html) is commonly paired with a DropZone to allow a user to choose files from their device.
 
-A visual label should be provided to `DropZone` using a `Text` element with a `label` slot. If it is not provided, then an `aria-label` or `aria-labelledby` prop must be passed to identify the visually hidden button to assistive technology. 
+A visual label should be provided to `DropZone` using a `Text` element with a `label` slot. If it is not provided, then an `aria-label` or `aria-labelledby` prop must be passed to identify the visually hidden button to assistive technology.
+
+```tsx
+import {DropZone, Text} from 'react-aria-components';
+
+<DropZone>
+  <Text slot="label" />
+</DropZone>
+```
 
 ### Composed Components
 A drop zone can include a `FileTrigger` as a child, which may also be used standalone or reused in other components.
@@ -137,6 +145,213 @@ A drop zone can include a `FileTrigger` as a child, which may also be used stand
 </ExampleCard>
 
 </section>
+
+## Events
+
+`DropZone` supports user interactions via mouse, keyboard, and touch. You can handle all of these via the `onDrop` prop. In addition, the `onDropEnter`, `onDropMove`, and `onDropExit` events are fired as the user interacts with the dropzone.
+
+```tsx example
+import type {TextDropItem} from '@react-aria/dnd';
+
+function Example() {
+  let [dropped, setDropped] = React.useState(null);
+
+  return (
+    <>
+      <Draggable />
+      <DropZone
+        onDrop={async(e) => {
+          let items = await Promise.all(
+            e.items
+              .filter(item => item.kind === 'text' && item.types.has('text/plain'))
+              .map((item: TextDropItem) => item.getText('text/plain'))
+          );
+          setDropped(items.join('\n'));
+        }}>
+        <Text slot="label">
+          {dropped || 'Drop here'}
+        </Text>
+      </ DropZone>
+    </>
+  );
+}
+
+<Example />
+
+```
+
+The `Draggable` component used above is defined below. See [useDrag](useDrag.html) for more details and documentation.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example render=false export=true
+import {useDrag} from '@react-aria/dnd';
+
+function Draggable() {
+  let {dragProps, isDragging} = useDrag({
+    getItems() {
+      return [{
+        'text/plain': 'hello world',
+        'my-app-custom-type': JSON.stringify({message: 'hello world'})
+      }];
+    }
+  });
+
+  return (
+    <div {...dragProps} role="button" tabIndex={0} className={`draggable ${isDragging ? 'dragging' : ''}`}>
+      Drag me
+    </div>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.draggable {
+  display: inline-block;
+  vertical-align: top;
+  border: 1px solid gray;
+  padding: 10px;
+  margin-right: 20px;
+  border-radius: 4px;
+}
+
+.draggable.dragging {
+  opacity: 0.5;
+}
+```
+
+</details>
+</details>
+
+## Labeling
+
+The `label` slot enables the user to reference the text content to define the dropzone's accessible name.
+
+```tsx example
+import {Text} from 'react-aria-components';
+
+function Example() {
+  let [dropped, setDropped] = React.useState(false);
+
+  return (
+    <DropZone
+      onDrop={() => setDropped(true)}>
+      <Text slot="label">
+        {dropped ? 'Successful drop!' : 'Drop files here'}
+      </Text>
+    </DropZone>
+  );
+}
+```
+
+## FileTrigger
+
+To allow the selection of files from the user's device, pass `FileTrigger` as a child of `DropZone`.
+
+```tsx example
+import {FileTrigger, Button} from 'react-aria-components';
+
+function Example() {
+  let [file, setFile] = React.useState(null);
+
+  return(
+    <DropZone>
+      <FileTrigger
+        onChange={(e) => {
+          let files = Array.from(e);
+          let urls = files.map((file) => file.name);
+          setFile(urls);
+        }}>
+        <Button>Select a file</Button>
+      </FileTrigger>
+      {file && file}
+    </DropZone>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Button {
+  --border-color: var(--spectrum-alias-border-color);
+  --border-color-pressed: var(--spectrum-alias-border-color-down);
+  --border-color-disabled: var(--spectrum-alias-border-color-disabled);
+  --background-color: var(--spectrum-global-color-gray-50);
+  --background-color-pressed: var(--spectrum-global-color-gray-100);
+  --text-color: var(--spectrum-alias-text-color);
+  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+  --focus-ring-color: slateblue;
+
+  color: var(--text-color);
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  appearance: none;
+  vertical-align: middle;
+  font-size: 1rem;
+  text-align: center;
+  margin: 0;
+  outline: none;
+  padding: 6px 10px;
+
+  &[data-pressed] {
+    box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
+    background: var(--background-color-pressed);
+    border-color: var(--border-color-pressed);
+  }
+
+  &[data-focus-visible] {
+    border-color: var(--focus-ring-color);
+    box-shadow: 0 0 0 1px var(--focus-ring-color);
+  }
+
+  &:disabled {
+    border-color: var(--border-color-disabled);
+    color: var(--text-color-disabled);
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Button {
+    forced-color-adjust: none;
+    --border-color: ButtonBorder;
+    --border-color-pressed: ButtonBorder;
+    --border-color-disabled: GrayText;
+    --background-color: ButtonFace;
+    --background-color-pressed: ButtonFace;
+    --text-color: ButtonText;
+    --text-color-disabled: GrayText;
+    --focus-ring-color: Highlight;
+  }
+}
+```
+
+</details>
+
+## Visual feedback
+
+A dropzone displays visual feedback to the user when a drag hovers over the drop target by passing the `getDropOpertation` function. If a drop target only supports data of specific types (e.g. images, videos, text, etc.), then it should implement the `getDropOperation` prop and return `cancel` for types that aren't supported. This will prevent visual feedback indicating that the drop target accepts the dragged data when this is not true. [Read more about getDropOperation.](https://react-spectrum.adobe.com/react-aria/useDrop.html#getdropoperation)
+
+```tsx example
+
+function Example() {
+  let [dropped, setDropped] = React.useState(false);
+
+  return (
+    <DropZone
+      getDropOperation={(types) => types.has('image/png') ? 'copy' : 'cancel'}
+      onDrop={() => setDropped(true)}>
+      {dropped ? 'Successful drop!' : 'Drop files here'}
+    </DropZone>
+  );
+}
+```
 
 ## Props
 
@@ -190,217 +405,6 @@ Render props may also be used as children to alter what elements are rendered ba
 The states, selectors, and render props for `DropZone` are documented below.
 
 <StateTable properties={docs.exports.DropZoneRenderProps.properties} />
-
-## Usage
-
-### Events
-
-`DropZone` supports user interactions via mouse, keyboard, and touch. You can handle all of these via the `onDrop` prop. In addition, the `onDropEnter`, `onDropMove`, and `onDropExit` events are fired as the user interacts with the dropzone. 
-
-```tsx example
-import type {TextDropItem} from '@react-aria/dnd';
-
-function Example() {
-  let [dropped, setDropped] = React.useState(null);
-
-  return (
-    <>
-      <Draggable />
-      <DropZone
-        onDrop={async(e) => {
-          let items = await Promise.all(
-            e.items
-              .filter(item => item.kind === 'text' && item.types.has('text/plain'))
-              .map((item: TextDropItem) => item.getText('text/plain'))
-          );
-          setDropped(items.join('\n'));
-        }}>
-        <Text slot="label">
-          {dropped || 'Drop here'}
-        </Text>
-      </ DropZone>
-    </>
-  );
-}
-
-<Example />
-
-```
-
-#### Draggable
-
-The `Draggable` component used above is defined below. See [useDrag](useDrag.html) for more details and documentation.
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
-
-```tsx example render=false export=true
-import {useDrag} from '@react-aria/dnd';
-
-function Draggable() {
-  let {dragProps, isDragging} = useDrag({
-    getItems() {
-      return [{
-        'text/plain': 'hello world',
-        'my-app-custom-type': JSON.stringify({message: 'hello world'})
-      }];
-    }
-  });
-
-  return (
-    <div {...dragProps} role="button" tabIndex={0} className={`draggable ${isDragging ? 'dragging' : ''}`}>
-      Drag me
-    </div>
-  );
-}
-```
-</details>
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
-
-```css
-.draggable {
-  display: inline-block;
-  vertical-align: top;
-  border: 1px solid gray;
-  padding: 10px;
-  margin-right: 20px;
-  border-radius: 4px;
-}
-
-.draggable.dragging {
-  opacity: 0.5;
-}
-```
-
-</details>
-
-### Labeling
-
-The `label` slot enables the user to reference the text content to define the dropzone's accessible name. 
-
-```tsx example
-import {Text} from 'react-aria-components';
-
-function Example() {
-  let [dropped, setDropped] = React.useState(false);
-
-  return (
-    <DropZone
-      onDrop={() => setDropped(true)}>
-      <Text slot="label">
-        {dropped ? 'Successful drop!' : 'Drop files here'}
-      </Text>
-    </DropZone>
-  );
-}
-```
-
-### FileTrigger
-
-To allow the selection of files from the user's device, pass `FileTrigger` as a child of `DropZone`.
-
-```tsx example
-import {FileTrigger, Button} from 'react-aria-components';
-
-function Example() {
-  let [file, setFile] = React.useState(null);
-
-  return(
-    <DropZone>
-      <FileTrigger
-        onChange={(e) => {
-          let files = Array.from(e);
-          let urls = files.map((file) => file.name);
-          setFile(urls);
-        }}>
-        <Button>Select a file</Button>
-      </FileTrigger>
-      {file && file}
-    </DropZone>
-  );
-}
-```
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
-
-```css
-.react-aria-Button {
-  --border-color: var(--spectrum-alias-border-color);
-  --border-color-pressed: var(--spectrum-alias-border-color-down);
-  --border-color-disabled: var(--spectrum-alias-border-color-disabled);
-  --background-color: var(--spectrum-global-color-gray-50);
-  --background-color-pressed: var(--spectrum-global-color-gray-100);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
-  --focus-ring-color: slateblue;
-
-  color: var(--text-color);
-  background: var(--background-color);
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  appearance: none;
-  vertical-align: middle;
-  font-size: 1.2rem;
-  text-align: center;
-  margin: 0;
-  outline: none;
-  padding: 4px 12px;
-
-  &[data-pressed] {
-    box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
-    background: var(--background-color-pressed);
-    border-color: var(--border-color-pressed);
-  }
-
-  &[data-focus-visible] {
-    border-color: var(--focus-ring-color);
-    box-shadow: 0 0 0 1px var(--focus-ring-color);
-  }
-
-  &:disabled {
-    border-color: var(--border-color-disabled);
-    color: var(--text-color-disabled);
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-Button {
-    forced-color-adjust: none;
-    --border-color: ButtonBorder;
-    --border-color-pressed: ButtonBorder;
-    --border-color-disabled: GrayText;
-    --background-color: ButtonFace;
-    --background-color-pressed: ButtonFace;
-    --text-color: ButtonText;
-    --text-color-disabled: GrayText;
-    --focus-ring-color: Highlight;
-  }
-}
-```
-
-</details>
-
-### Visual feedback
-
-A dropzone displays visual feedback to the user when a drag hovers over the drop target by passing the `getDropOpertation` function. If a drop target only supports data of specific types (e.g. images, videos, text, etc.), then it should implement the `getDropOperation` prop and return `cancel` for types that aren't supported. This will prevent visual feedback indicating that the drop target accepts the dragged data when this is not true. [Read more about getDropOperation.](https://react-spectrum.adobe.com/react-aria/useDrop.html#getdropoperation)
-
-```tsx example
-
-function Example() {
-  let [dropped, setDropped] = React.useState(false);
-
-  return (
-    <DropZone
-      getDropOperation={(types) => types.has('image/png') ? 'copy' : 'cancel'}
-      onDrop={() => setDropped(true)}>
-      {dropped ? 'Successful drop!' : 'Drop files here'}
-    </DropZone>
-  );
-}
-```
 
 ## Advanced customization
 
