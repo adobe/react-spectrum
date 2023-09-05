@@ -1,11 +1,11 @@
-import {MutableRefObject, RefObject, useEffect, useRef} from 'react';
+import {RefObject, useEffect, useRef} from 'react';
 import {useResizeObserver} from '@react-aria/utils';
 
 interface SafeMouseToSubmenuOptions {
   /** Ref for the parent menu. */
   menuRef: RefObject<Element>,
   /** Ref for the submenu. */
-  submenuRef: MutableRefObject<any>
+  submenuRef: RefObject<Element>
 }
 
 /**
@@ -28,7 +28,7 @@ export function useSafelyMouseToSubmenu(options: SafeMouseToSubmenuOptions) {
 
   useEffect(() => {
     let menu = menuRef.current;
-    let submenu = (submenuRef.current.UNSAFE_getDOMNode() as HTMLElement);
+    let submenu = submenuRef.current;
 
     if (!menu || !submenu) {
       return;

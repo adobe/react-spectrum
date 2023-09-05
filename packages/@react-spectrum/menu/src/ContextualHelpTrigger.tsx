@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, SlotProvider, useIsMobileDevice} from '@react-spectrum/utils';
+import {classNames, SlotProvider, useIsMobileDevice, useUnwrapDOMRef} from '@react-spectrum/utils';
 import {DismissButton} from '@react-aria/overlays';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
 import {ItemProps} from '@react-types/shared';
@@ -72,9 +72,11 @@ function ContextualHelpTrigger<T>(props: MenuDialogTriggerProps<T>): ReactElemen
     }
   };
 
+  let submenu = useUnwrapDOMRef(popoverRef);
+
   useSafelyMouseToSubmenu({
     menuRef: menu,
-    submenuRef: popoverRef
+    submenuRef: submenu
   });
   
   return (
