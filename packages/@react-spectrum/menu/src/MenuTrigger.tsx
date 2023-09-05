@@ -62,6 +62,9 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
   // Should we include the open state of the root menu in it? That means we will need to tie the
   // root menu's open state to this expandedKeysStack, meaning we'd have to toggle the menuTrigger state when the
   // stack is wiped. Perhaps we have the key stack just track the submenu expanded keys and have closeAll also call state.close for the root
+
+  // TODO: Problem is that clicking outside of the all the menu's doesn't wipe the expandedKeysStack. Perhaps handle this in useSubMenutrigger
+  // and wipe it if the submenutrigger has unmounted?
   let [expandedKeysStack, setExpandedKeysStack] = React.useState<string[]>([]);
   let closeAll = useCallback(() => {
     console.log('calling close all')

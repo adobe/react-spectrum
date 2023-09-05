@@ -13,7 +13,7 @@
 import {classNames, useIsMobileDevice} from '@react-spectrum/utils';
 import {MenuContext, MenuDialogContext, useMenuStateContext} from './context';
 import {Popover, Tray} from '@react-spectrum/overlays';
-import React, {Key, ReactElement, useCallback, useEffect, useRef} from 'react';
+import React, {Key, ReactElement, useCallback, useEffect, useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useMenuTriggerState} from '@react-stately/menu';
@@ -21,6 +21,7 @@ import {useOverlayTriggerState} from '@react-stately/overlays';
 import {FocusStrategy, PressEvent} from '@react-types/shared';
 import {useLocale} from '@react-aria/i18n';
 import {useEffectEvent, useId, useLayoutEffect} from '@react-aria/utils';
+import {useKeyboard} from '@react-aria/interactions';
 
 // TODO: Add shouldFlip and closeOnSelect if we feel like those should be customizable for SubMenuTrigger
 // Other MenuTriggerProps like onOpenChange and positioning stuff have been removed as per discussion
@@ -55,11 +56,12 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
   // WOuld it be helpful returning level as well?
   let {expandedKeysStack, openSubMenu, closeSubMenu, closeAll} = menuTreeState;
   let [level] = React.useState(expandedKeysStack?.length + 1);
-  // TODO memoize?
   console.log('expanded', expandedKeysStack)
   let isOpen = expandedKeysStack[level - 1] === targetKey;
   let [focusStrategy, setFocusStrategy] = React.useState<FocusStrategy>(null);
-  let subMenuTriggerState = {
+  // TODO: new instance is made since useMenuTriggerState returns a new isntance thus menuTreeState has a new instance every time
+  // need to fix
+  let subMenuTriggerState = useMemo(() => ({
     focusStrategy,
     isOpen,
     open(focusStrategy: FocusStrategy = null) {
@@ -82,7 +84,7 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
         openSubMenu(targetKey, level);
       }
     }
-  };
+  }), [isOpen, closeAll, closeSubMenu, openSubMenu, focusStrategy, setFocusStrategy, level, targetKey]);
 
   // TODO: block for useSubMenuTrigger
   // needs aria properties, do later
@@ -97,8 +99,6 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
     }
   }, [openTimeout]);
 
-
-  // TODO: replace all open calls with this
   let onSubmenuOpen = useEffectEvent((focusStrategy?: FocusStrategy) => {
     cancelOpenTimeout();
     subMenuTriggerState.open(focusStrategy);
@@ -110,44 +110,59 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
   });
 
   useLayoutEffect(() => {
-    return () => cancelOpenTimeout();
+    return () => {
+      cancelOpenTimeout();
+    };
   }, [cancelOpenTimeout]);
 
 
   // TODO: problem with setting up the submenu close handlers here is that we don't get access to the onClose the user provides
   // to the menu since this is too far up. Maybe just provide the subMenuTriggerState and have useMenu and useMenuItem handle the key handlers internally?
   // For now just also provide a prop to subMenuProps called isSubMenu
-  let subMenuKeyDown = (e) => {
-    switch (e.key) {
-      case 'ArrowLeft':
-        if (direction === 'ltr') {
-          onSubMenuClose();
-        }
-        break;
-      case 'ArrowRight':
-        if (direction === 'rtl') {
-          onSubMenuClose;
-        }
-        break;
-      case 'Escape':
-        subMenuTriggerState.closeAll();
-    }
-  };
 
-  let subMenuTriggerKeyDown = (e) => {
-    switch (e.key) {
-      case 'ArrowRight':
-        if (direction === 'ltr') {
-          onSubmenuOpen('first');
-        }
-        break;
-      case 'ArrowLeft':
-        if (direction === 'rtl') {
-          onSubmenuOpen('first');
-        }
-        break;
+  let {keyboardProps: subMenuKeyboardProps} = useKeyboard({
+    onKeyDown: (e) => {
+      switch (e.key) {
+        case 'ArrowLeft':
+          if (direction === 'ltr') {
+            onSubMenuClose();
+          }
+          break;
+        case 'ArrowRight':
+          if (direction === 'rtl') {
+            onSubMenuClose;
+          }
+          break;
+        case 'Escape':
+          subMenuTriggerState.closeAll();
+          break;
+        default:
+          e.continuePropagation();
+          break;
+      }
     }
-  };
+  });
+
+  // TODO: perhaps just make this onKeyDown and not use useKeyboard since we continuePropagation in both cases
+  let {keyboardProps: subMenuTriggerKeyboardProps} = useKeyboard({
+    onKeyDown: (e) => {
+      switch (e.key) {
+        case 'ArrowRight':
+          if (direction === 'ltr') {
+            onSubmenuOpen('first');
+          }
+          // fallthrough so useMenuItem keydown handlers are called
+        case 'ArrowLeft':
+          if (direction === 'rtl') {
+            onSubmenuOpen('first');
+          }
+        default:
+          e.continuePropagation();
+          break;
+      }
+    }
+  });
+
 
   let onExit = () => {
     // if focus was already moved back to a menu item, don't need to do anything
@@ -194,16 +209,16 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
     onPressStart,
     onPress,
     onHoverChange,
-    onKeyDown: subMenuTriggerKeyDown
+    ...subMenuTriggerKeyboardProps
   };
 
   let subMenuProps = {
     onClose: subMenuTriggerState.closeAll,
-    onKeyDown: subMenuKeyDown,
     isSubMenu: true,
     'aria-labelledby': subMenuTriggerId,
     autoFocus: subMenuTriggerState.focusStrategy || true,
-    id: overlayId
+    id: overlayId,
+    ...subMenuKeyboardProps
   };
 
   let popoverProps = {
