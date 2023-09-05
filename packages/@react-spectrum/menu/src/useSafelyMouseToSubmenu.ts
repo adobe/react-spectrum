@@ -50,12 +50,6 @@ export function useSafelyMouseToSubmenu(options: SafeMouseToSubmenuOptions) {
         triggerRect.current = (e.target as HTMLElement).closest('li').getBoundingClientRect();
       }
 
-      // If mouse is still over trigger element, do nothing.
-      // if (e.clientX > triggerRect.current.left && e.clientX < triggerRect.current.right &&
-      //   e.clientY > triggerRect.current.top && e.clientY < triggerRect.current.bottom) {
-      //   return;
-      // }
-
       let prevIsPointerMovingTowardsSubmenu = isPointerMovingTowardsSubmenu.current;
 
       let {clientX: mouseX, clientY: mouseY} = e;
@@ -65,29 +59,19 @@ export function useSafelyMouseToSubmenu(options: SafeMouseToSubmenuOptions) {
         return;
       }
 
-      let dx = mouseX - prevPointerPos.current.x;
-      let dy = mouseY - prevPointerPos.current.y;
-
-      // Check if pointer is moving towards submenu.
       if (!submenuRect.current) {
         return;
       }
 
+      // Check if pointer is moving towards submenu.
       let direction = mouseX > submenuRect.current.right ? 'left' : 'right';
       let toSubmenuX = direction === 'right' ? submenuRect.current.right - mouseX :  mouseX - submenuRect.current.left;
-      let toSubmenuTop = submenuRect.current.top;
-      let toSubmenuBottom = submenuRect.current.bottom - mouseY;
-
-      // See if mouse is moving towards submenu.
-      // Check if angle of mouse movement is between angle to top of submenu and angle to bottom of submenu.
-      let anglePointer = Math.atan2(dy, dx);
-      let angleTop = Math.atan2(toSubmenuTop, toSubmenuX);
-      let angleBottom = Math.atan2(toSubmenuBottom, toSubmenuX);
-
+      let angleTop = Math.atan2(submenuRect.current.top, toSubmenuX);
+      let angleBottom = Math.atan2(submenuRect.current.bottom - mouseY, toSubmenuX);
+      let anglePointer = Math.atan2(mouseY - prevPointerPos.current.y, mouseX - prevPointerPos.current.x);
       isPointerMovingTowardsSubmenu.current =  anglePointer < angleTop && anglePointer > angleBottom;
 
-      // If pointer was previously moving towards submenu but is no longer moving towards submenu,
-      // fire a pointerenter on the underlying item.
+      // If pointer was previously moving towards submenu but no longer is, fire a pointerenter on menu item the mouse is currently over.
       if (prevIsPointerMovingTowardsSubmenu && !isPointerMovingTowardsSubmenu.current) {
         let target = document.elementFromPoint(mouseX, mouseY);
         if (target && menu.contains(target)) {
@@ -99,7 +83,7 @@ export function useSafelyMouseToSubmenu(options: SafeMouseToSubmenuOptions) {
     };
 
     let onPointerEnter = (e: PointerEvent) => {
-      // Do nothing if over trigger element.
+      // Do nothing if mouse is still over trigger element.
       if (e.clientX > triggerRect.current.left && e.clientX < triggerRect.current.right &&
         e.clientY > triggerRect.current.top && e.clientY < triggerRect.current.bottom) {
         return;
