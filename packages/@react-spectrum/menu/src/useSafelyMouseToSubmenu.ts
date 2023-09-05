@@ -1,7 +1,7 @@
 import {RefObject, useEffect, useRef} from 'react';
 import {useResizeObserver} from '@react-aria/utils';
 
-interface SafeMouseToSubmenuOptions {
+interface SafelyMouseToSubmenuOptions {
   /** Ref for the parent menu. */
   menuRef: RefObject<Element>,
   /** Ref for the submenu. */
@@ -12,18 +12,17 @@ interface SafeMouseToSubmenuOptions {
  * Allows the user to move their pointer to the submenu without it closing when their mouse leaves the trigger element.
  * Prevents pointer events from going to the underlying menu if the user is moving their pointer towards the sub-menu.
  */
-export function useSafelyMouseToSubmenu(options: SafeMouseToSubmenuOptions) {
+export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
   let {menuRef, submenuRef} = options;
   let prevPointerPos = useRef<{x: number, y: number, time: number}>(null);
   let triggerRect = useRef<DOMRect>(null);
-  let menuRect = useRef<DOMRect>(null);
   let submenuRect = useRef<DOMRect>(null);
   let lastProcessedTime = useRef<number>(0);
   let isPointerMovingTowardsSubmenu = useRef<boolean>(false);
 
   useResizeObserver({
-    ref: menuRef,
-    onResize: () => menuRect.current = menuRef.current.getBoundingClientRect()
+    ref: submenuRef,
+    onResize: () => submenuRect.current = menuRef.current.getBoundingClientRect()
   });
 
   useEffect(() => {
@@ -34,7 +33,6 @@ export function useSafelyMouseToSubmenu(options: SafeMouseToSubmenuOptions) {
       return;
     }
 
-    menuRect.current = menu.getBoundingClientRect();
     submenuRect.current = submenu.getBoundingClientRect();
 
     let onPointerMove = (e: PointerEvent) => {
