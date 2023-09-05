@@ -12,7 +12,7 @@
 
 
 import {AriaMenuProps, mergeProps, useFocusRing, useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
-import {BaseCollection, CollectionProps, ItemProps, ItemRenderProps, useCachedChildren, useCollection} from './Collection';
+import {BaseCollection, CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
 import {MenuTriggerProps as BaseMenuTriggerProps, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
 import {ButtonContext} from './Button';
 import {ContextValue, forwardRefType, Provider, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot} from './utils';
@@ -169,14 +169,6 @@ function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionP
   );
 }
 
-export interface MenuItemRenderProps extends ItemRenderProps {
-  /**
-   * Whether the item is currently selected.
-   * @selector [data-selected]
-   */
-   isSelected: boolean
-}
-
 interface MenuItemProps<T> {
   item: Node<T>
 }
@@ -215,7 +207,8 @@ function MenuItem<T>({item}: MenuItemProps<T>) {
       data-focused={states.isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={states.isPressed || undefined}
-      data-selected={states.isSelected || undefined}>
+      data-selected={states.isSelected || undefined}
+      data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}>
       <Provider
         values={[
           [TextContext, {

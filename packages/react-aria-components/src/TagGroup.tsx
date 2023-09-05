@@ -245,7 +245,8 @@ function TagItem({item}) {
       data-focused={states.isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={states.isPressed || undefined}
-      data-allows-removing={states.allowsRemoving || undefined}>
+      data-allows-removing={states.allowsRemoving || undefined}
+      data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}>
       <div {...gridCellProps}>
         <Provider
           values={[
