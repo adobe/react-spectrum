@@ -1177,6 +1177,33 @@ describe('MenuTrigger', function () {
         let dialog = tree.getByRole('dialog');
         expect(dialog).toBeVisible();
       });
+
+      it('should close everything if the user clicks on the underlay of the root menu', function () {
+        renderTree();
+        let menu = openMenu();
+        let menuItems = within(menu).getAllByRole('menuitem');
+        let unavailableItem = menuItems[4];
+        expect(unavailableItem).toBeVisible();
+        expect(unavailableItem).toHaveAttribute('aria-haspopup', 'dialog');
+
+        fireEvent.mouseEnter(unavailableItem);
+        act(() => {jest.runAllTimers();});
+        let dialog = tree.getByRole('dialog');
+        expect(dialog).toBeVisible();
+
+        expect(document.activeElement).toBe(dialog);
+
+        let underlay = tree.getByTestId('underlay', {hidden: true});
+        fireEvent.pointerDown(underlay);
+        fireEvent.pointerUp(underlay);
+        act(() => {jest.runAllTimers();});
+        act(() => {jest.runAllTimers();});
+        expect(dialog).not.toBeInTheDocument();
+        expect(menu).not.toBeInTheDocument();
+
+        let triggerButton = tree.getByRole('button');
+        expect(document.activeElement).toBe(triggerButton);
+      });
     });
   });
 });
