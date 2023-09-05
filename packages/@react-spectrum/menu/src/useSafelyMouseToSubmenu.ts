@@ -88,7 +88,6 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
       }
 
       if (isPointerMovingTowardsSubmenu.current) {
-        console.log('prevent');
         e.stopPropagation();
         e.preventDefault();
       }
