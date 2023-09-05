@@ -410,7 +410,8 @@ function Option<T>({item}: OptionProps<T>) {
         data-focus-visible={states.isFocusVisible || undefined}
         data-pressed={states.isPressed || undefined}
         data-dragging={isDragging || undefined}
-        data-drop-target={droppableItem?.isDropTarget || undefined}>
+        data-drop-target={droppableItem?.isDropTarget || undefined}
+        data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}>
         <Provider
           values={[
             [TextContext, {
