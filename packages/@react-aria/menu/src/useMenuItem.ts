@@ -85,7 +85,7 @@ export interface AriaMenuItemProps {
   onAction?: (key: Key) => void,
 
   /** What kind of popup the item opens. */
-  'aria-haspopup'?: 'menu' | 'dialog',
+  'aria-haspopup'?: 'menu' | 'dialog'
 
   // // TODO: best way to pass this in? We need a way to infor the SubMenuTrigger what the focus strategy is so we can auto focus the right submenu item
   // onOpen?: (val?: FocusStrategy) => void
@@ -166,7 +166,10 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     role,
     'aria-label': props['aria-label'],
     'aria-labelledby': labelId,
-    'aria-describedby': [descriptionId, keyboardId].filter(Boolean).join(' ') || undefined
+    'aria-describedby': [descriptionId, keyboardId].filter(Boolean).join(' ') || undefined,
+    'aria-controls': isTrigger ? props['aria-controls'] : undefined,
+    'aria-haspopup': hasPopup,
+    'aria-expanded': isTrigger ? props['aria-expanded'] : undefined,
   };
 
   if (state.selectionManager.selectionMode !== 'none' && !isTrigger) {
@@ -177,11 +180,6 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     ariaProps['aria-posinset'] = state.collection.getItem(key).index;
     ariaProps['aria-setsize'] = getItemCount(state.collection);
   }
-
-  // if (hasPopup != null) {
-  //   ariaProps['aria-haspopup'] = hasPopup;
-  //   ariaProps['aria-expanded'] = isOpen ? 'true' : 'false';
-  // }
 
   // TODO: for press and keyboard interactions, perhaps move into useMenuTrigger (aka support option for isSubMenu)/useSubMenuTrigger
   // instead of having it in useMenuItem
