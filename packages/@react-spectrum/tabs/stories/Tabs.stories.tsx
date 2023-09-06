@@ -664,12 +664,12 @@ interface DynamicTabItem {
 }
 
 let items = [
-  {name: 'Tab 1', children: 'Tab Body 1', icon: <Dashboard size="S" />},
-  {name: 'Tab 2', children: 'Tab Body 2', icon: <Calendar size="S" />},
-  {name: 'Tab 3', children: 'Tab Body 3', icon: <Bookmark size="S" />},
-  {name: 'Tab 4', children: 'Tab Body 4', icon: <Dashboard size="S" />},
-  {name: 'Tab 5', children: 'Tab Body 5', icon: <Calendar size="S" />},
-  {name: 'Tab 6', children: 'Tab Body 6', icon: <Bookmark size="S" />}
+  {name: 'Tab 1', children: 'Tab Body 1', icon: <Dashboard />},
+  {name: 'Tab 2', children: 'Tab Body 2', icon: <Calendar />},
+  {name: 'Tab 3', children: 'Tab Body 3', icon: <Bookmark />},
+  {name: 'Tab 4', children: 'Tab Body 4', icon: <Dashboard />},
+  {name: 'Tab 5', children: 'Tab Body 5', icon: <Calendar />},
+  {name: 'Tab 6', children: 'Tab Body 6', icon: <Bookmark />}
 ] as DynamicTabItem[];
 
 let DynamicTabs = (props: Omit<SpectrumTabsProps<DynamicTabItem>, 'children'>) => {
