@@ -32,12 +32,6 @@ export function createEventHandler<T extends SyntheticEvent>(handler: (e: BaseEv
     // that original event as the prototype of this new object, we would actually get
     // an illegal-invokation error as soon as we started using it.
     let event: BaseEvent<T> = Object.assign(e, {
-      preventDefault() {
-        e.preventDefault();
-      },
-      isDefaultPrevented() {
-        return e.isDefaultPrevented();
-      },
       stopPropagation() {
         console.error('stopPropagation is now the default behavior for events in React Spectrum. You can use continuePropagation() to revert this behavior.');
       },
