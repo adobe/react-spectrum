@@ -383,6 +383,8 @@ function Nav({currentPageName, pages}) {
   let sections = [];
   if (currentPageName.startsWith('react-aria') && ENABLE_PAGE_TYPES) {
     let {Introduction, Concepts, Interactions, Focus, Internationalization, 'Server Side Rendering': ssr, Utilities, ...hooks} = pagesByType.other;
+    let interactions = {...pagesByType.interaction, Interactions, Focus};
+    let utilities = {Internationalization, 'Server Side Rendering': ssr, Utilities};
     sections.push({pages: {Introduction, Concepts}});
     sections.push({
       title: 'Components',
@@ -394,20 +396,22 @@ function Nav({currentPageName, pages}) {
       pages: hooks,
       isActive: isActive(hooks)
     });
-    sections.push({
-      title: 'Patterns',
-      pages: pagesByType.pattern,
-      isActive: isActive(pagesByType.pattern)
-    });
+    if (pagesByType.pattern) {
+      sections.push({
+        title: 'Patterns',
+        pages: pagesByType.pattern,
+        isActive: isActive(pagesByType.pattern)
+      });
+    }
     sections.push({
       title: 'Interactions',
-      pages: {Interactions, Focus},
-      isActive: isActive({Interactions, Focus})
+      pages: interactions,
+      isActive: isActive(interactions)
     });
     sections.push({
       title: 'Utilities',
-      pages: {Internationalization, 'Server Side Rendering': ssr, Utilities},
-      isActive: isActive({Internationalization, 'Server Side Rendering': ssr, Utilities})
+      pages: utilities,
+      isActive: isActive(utilities)
     });
   } else {
     sections.push({
