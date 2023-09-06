@@ -30,11 +30,11 @@ export function useMenuState(props: {}, state: MenuTriggerState): MenuTreeState 
   // Or even merge the two states together?
 
   // TODO: Another problem is that clicking outside of the all the menu's doesn't wipe the expandedKeysStack. Perhaps handle this in useSubMenutrigger
-  // and wipe it if the submenutrigger has unmounted?
+  // and wipe it if the submenutrigger has unmounted? Or maybe it is reasonable to have the user pass () => closeAll() to useOverlay like it is done in the aria example that we have
 
   let [expandedKeysStack, setExpandedKeysStack] = useState<string[]>([]);
   let closeAll = useCallback(() => {
-    console.log('calling close all')
+    console.log('calling close all');
     setExpandedKeysStack([]);
     state.close();
   }, [state]);
@@ -50,7 +50,7 @@ export function useMenuState(props: {}, state: MenuTriggerState): MenuTreeState 
       let key = oldStack[level - 1];
       console.log('key', key, oldStack, oldStack.slice(0, level - 1));
       if (key === triggerKey) {
-        console.log('inreturn', oldStack.slice(0, level - 1))
+        console.log('inreturn', oldStack.slice(0, level - 1));
         return oldStack.slice(0, level - 1);
       } else {
         return oldStack;

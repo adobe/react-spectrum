@@ -10,15 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, FocusableElement, FocusStrategy, PressEvent} from '@react-types/shared';
+import {DOMAttributes, DOMProps, FocusableElement, PressEvent} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
 import {getItemCount} from '@react-stately/collections';
 import {isFocusVisible, useHover, useKeyboard, usePress} from '@react-aria/interactions';
-import {Key, RefObject, useCallback, useRef} from 'react';
+import {Key, RefObject} from 'react';
 import {menuData} from './useMenu';
-import {mergeProps, useEffectEvent, useLayoutEffect, useSlotId} from '@react-aria/utils';
+import {mergeProps, useSlotId} from '@react-aria/utils';
 import {TreeState} from '@react-stately/tree';
-import {useLocale} from '@react-aria/i18n';
 import {useSelectableItem} from '@react-aria/selection';
 
 export interface MenuItemAria {
@@ -44,7 +43,7 @@ export interface MenuItemAria {
   isDisabled: boolean
 }
 
-export interface AriaMenuItemProps {
+export interface AriaMenuItemProps extends DOMProps {
   /**
    * Whether the menu item is disabled.
    * @deprecated - pass disabledKeys to useTreeState instead.
@@ -85,10 +84,15 @@ export interface AriaMenuItemProps {
   onAction?: (key: Key) => void,
 
   /** What kind of popup the item opens. */
-  'aria-haspopup'?: 'menu' | 'dialog'
+  'aria-haspopup'?: 'menu' | 'dialog',
 
-  // // TODO: best way to pass this in? We need a way to infor the SubMenuTrigger what the focus strategy is so we can auto focus the right submenu item
-  // onOpen?: (val?: FocusStrategy) => void
+  // TODO: descriptions, open it up fully to all pressProps + hoverEvents + keyboardEvents?
+  onPressStart?: (e: PressEvent) => void,
+  onPress?: (e: PressEvent) => void,
+  onHoverChange?: (isHovering: boolean) => void,
+  onKeyDown?: (e: KeyboardEvent) => void,
+  'aria-expanded'?: boolean | 'true' | 'false',
+  'aria-controls'?: string
 }
 
 /**
@@ -103,49 +107,17 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     closeOnSelect,
     isVirtualized,
     'aria-haspopup': hasPopup,
-    // TODO: open it up fully to all pressProps + hoverEvents + keyboardEvents?
     onPressStart: pressStartProp,
     onPress,
     onHoverChange,
     onKeyDown
   } = props;
-  let {direction} = useLocale();
 
   let isTrigger = !!hasPopup;
-  let isOpen = state.expandedKeys.has(key);
-
   let isDisabled = props.isDisabled ?? state.disabledKeys.has(key);
   let isSelected = props.isSelected ?? state.selectionManager.isSelected(key);
-
-  // let openTimeout = useRef<ReturnType<typeof setTimeout> | undefined>();
-  // let cancelOpenTimeout = useCallback(() => {
-  //   if (openTimeout.current) {
-  //     clearTimeout(openTimeout.current);
-  //     openTimeout.current = undefined;
-  //   }
-  // }, [openTimeout]);
-
-  // let onSubmenuOpen = useEffectEvent((focusStrategy?: FocusStrategy) => {
-  //   cancelOpenTimeout();
-  //   state.setExpandedKeys(new Set([key]));
-  //   onOpen && onOpen(focusStrategy);
-  // });
-
-  // useLayoutEffect(() => {
-  //   return () => cancelOpenTimeout();
-  // }, [cancelOpenTimeout]);
-
   let data = menuData.get(state);
-  let isSubMenuItem = !!data.onSubMenuClose;
   let onClose = props.onClose || data.onClose;
-  // let onActionMenuDialogTrigger = useCallback(() => {
-  //   if (hasPopup === 'dialog') {
-  //     onSubmenuOpen();
-  //   }
-  //   // will need to disable this lint rule when using useEffectEvent https://react.dev/learn/separating-events-from-effects#logic-inside-effects-is-reactive
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [hasPopup]);
-  // TODO: remove onActionMenuDialogTrigger
   let onAction = isTrigger ? () => {} : props.onAction || data.onAction;
 
   let role = 'menuitem';
@@ -182,25 +154,13 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     ariaProps['aria-setsize'] = getItemCount(state.collection);
   }
 
-  // TODO: for press and keyboard interactions, perhaps move into useMenuTrigger (aka support option for isSubMenu)/useSubMenuTrigger
-  // instead of having it in useMenuItem
   let onPressStart = (e: PressEvent) => {
     if (e.pointerType === 'keyboard' && onAction) {
       onAction(key);
     }
 
     pressStartProp && pressStartProp(e);
-    // if (isTrigger && e.pointerType === 'virtual' && !isDisabled) {
-    //   // If opened with a screen reader, auto focus the first submenu item.
-    //   onSubmenuOpen('first');
-    // }
   };
-
-  // let onPress = (e: PressEvent) => {
-  //   if (isTrigger && e.pointerType === 'touch' && !isDisabled) {
-  //     onSubmenuOpen();
-  //   }
-  // };
 
   let onPressUp = (e: PressEvent) => {
     if (e.pointerType !== 'keyboard') {
@@ -216,7 +176,6 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     }
   };
 
-  // TODO: for sub menu trigger items, will need to add a onAction perhaps to prevent selection operations?
   let {itemProps, isFocused} = useSelectableItem({
     selectionManager: state.selectionManager,
     key,
@@ -242,17 +201,6 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
       }
     },
     onHoverChange
-    // onHoverChange: isHovered => {
-    //   if (isHovered && isTrigger && !state.expandedKeys.has(key)) {
-    //     if (!openTimeout.current) {
-    //       openTimeout.current = setTimeout(() => {
-    //         onSubmenuOpen();
-    //       }, 200);
-    //     }
-    //   } else if (!isHovered) {
-    //     cancelOpenTimeout();
-    //   }
-    // }
   });
 
   // TODO: there is an issue where focus doesn't seem to move into the newly opened submenu when opening it via keyboard
@@ -270,38 +218,13 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
           if (!isDisabled && state.selectionManager.selectionMode === 'none' && !isTrigger && closeOnSelect !== false && onClose) {
             onClose();
           }
-          // } else if (isTrigger && !isDisabled) {
-          //   onSubmenuOpen('first');
-          // }
           break;
         case 'Enter':
           // The Enter key should always close on select, except if overridden.
           if (!isDisabled && closeOnSelect !== false && !isTrigger && onClose) {
             onClose();
           }
-          // } else if (isTrigger && !isDisabled) {
-          //   onSubmenuOpen('first');
-          // }
           break;
-        // case 'ArrowRight':
-        //   if (isTrigger && direction === 'ltr') {
-        //     onSubmenuOpen('first');
-        //   } else if (direction === 'rtl' && isSubMenuItem) {
-        //     // TODO remove, handled by Menu now
-        //     data.onSubMenuClose();
-        //   } else {
-        //     e.continuePropagation();
-        //   }
-        //   break;
-        // case 'ArrowLeft':
-        //   if (isTrigger && direction === 'rtl') {
-        //     onSubmenuOpen('first');
-        //   } else if (direction === 'ltr' && isSubMenuItem) {
-        //     data.onSubMenuClose();
-        //   } else {
-        //     e.continuePropagation();
-        //   }
-        //   break;
         default:
           e.continuePropagation();
           break;

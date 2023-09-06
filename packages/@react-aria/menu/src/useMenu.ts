@@ -32,13 +32,12 @@ export interface AriaMenuOptions<T> extends Omit<AriaMenuProps<T>, 'children'> {
    */
   keyboardDelegate?: KeyboardDelegate,
   // TODO: just extend KeyboardEvents? update type
-  onKeyDown?: any
+  onKeyDown?: (e: KeyboardEvent) => void
 }
 
 interface MenuData {
   onClose?: () => void,
-  onAction?: (key: Key) => void,
-  // onSubMenuClose?: () => void
+  onAction?: (key: Key) => void
 }
 
 export const menuData = new WeakMap<TreeState<unknown>, MenuData>();
@@ -72,8 +71,7 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
 
   menuData.set(state, {
     onClose: props.onClose,
-    onAction: props.onAction,
-    // onSubMenuClose
+    onAction: props.onAction
   });
 
   return {
@@ -87,13 +85,6 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
         if (e.key !== 'Escape') {
           listProps.onKeyDown(e);
         }
-        // else {
-        //   // TODO: should I stop propagation here? Right now I'm stopping it so that only the root menu's onOpenChange fires
-        //   // otherwise the last leaf submenu's onOpenChange will also fire but its kinda weird cuz non of the other intermediate submenus
-        //   // will fire onOpenChange since it is an unmount. The last leaf submenu only fires because useOverlay also handles Esc
-        //   e.stopPropagation();
-        //   // onCloseAllMenus && onCloseAllMenus();
-        // }
       }
     })
   };

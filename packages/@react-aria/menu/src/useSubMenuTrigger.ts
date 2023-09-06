@@ -16,12 +16,10 @@ import {FocusableElement, FocusStrategy, PressEvent} from '@react-types/shared';
 import {RefObject, useCallback, useRef} from 'react';
 import type {SubMenuTriggerState} from '@react-stately/menu';
 import {useEffectEvent, useId, useLayoutEffect} from '@react-aria/utils';
-import {useKeyboard} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 
-
 export interface AriaSubMenuTriggerProps {
-  parentMenu: RefObject<HTMLElement>,
+  parentMenu: RefObject<HTMLElement>
   // TODO: add menuRef so arrow left from trigger can move focus into the Menu?
 }
 
@@ -71,53 +69,48 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
   }, [cancelOpenTimeout]);
 
 
-  // TODO: problem with setting up the submenu close handlers here is that we don't get access to the onClose the user provides (not a problem if we wanna keep
-  // onClose to fire only if the user selects a item)
-  // to the menu since this is too far up. Maybe just provide the subMenuTriggerState and have useMenu and useMenuItem handle the key handlers internally?
-
-  let {keyboardProps: subMenuKeyboardProps} = useKeyboard({
-    onKeyDown: (e) => {
-      switch (e.key) {
-        case 'ArrowLeft':
-          if (direction === 'ltr') {
-            onSubMenuClose();
-          }
-          break;
-        case 'ArrowRight':
-          if (direction === 'rtl') {
-            onSubMenuClose;
-          }
-          break;
-        case 'Escape':
-          state.closeAll();
-          break;
-        default:
-          e.continuePropagation();
-          break;
-      }
+  // TODO: problem with setting up the submenu close handlers here is that we don't get access to the onClose the user provides
+  // to the menu since this is too far up . Maybe just provide the subMenuTriggerState and have useMenu and useMenuItem handle the key handlers internally?
+  // Maybe we should just have the user pass something like onMenuClose to the trigger level since we have the same problem of being unable to call onClose if the user interacts outside?
+  // Maybe have Menu call onClose in an effect when it detects that it is unmounting?
+  // (not a problem if we wanna keep onClose to fire only if the user selects a item)
+  let subMenuKeyDown = (e: KeyboardEvent) => {
+    switch (e.key) {
+      case 'ArrowLeft':
+        if (direction === 'ltr') {
+          // TODO: for issue where the arrow left is closing too many menus, maybe because the event is going through portals? Detect if event is happening from within the actual menu?
+          e.stopPropagation();
+          onSubMenuClose();
+        }
+        break;
+      case 'ArrowRight':
+        if (direction === 'rtl') {
+          e.stopPropagation();
+          onSubMenuClose();
+        }
+        break;
+      case 'Escape':
+        state.closeAll();
+        break;
     }
-  });
+  };
 
   // TODO: perhaps just make this onKeyDown and not use useKeyboard since we continuePropagation in both cases
-  // TODO maybe can also move focus to the submenu as well on
-  let {keyboardProps: subMenuTriggerKeyboardProps} = useKeyboard({
-    onKeyDown: (e) => {
-      switch (e.key) {
-        case 'ArrowRight':
-          if (direction === 'ltr') {
-            onSubmenuOpen('first');
-          }
-          // fallthrough so useMenuItem keydown handlers are called
-        case 'ArrowLeft':
-          if (direction === 'rtl') {
-            onSubmenuOpen('first');
-          }
-        default:
-          e.continuePropagation();
-          break;
-      }
+  // TODO maybe can also move focus to the submenu as well on ArrowLeft if
+  let subMenuTriggerKeyDown = (e: KeyboardEvent) => {
+    switch (e.key) {
+      case 'ArrowRight':
+        if (direction === 'ltr') {
+          onSubmenuOpen('first');
+        }
+        break;
+      case 'ArrowLeft':
+        if (direction === 'rtl') {
+          onSubmenuOpen('first');
+        }
+        break;
     }
-  });
+  };
 
   // TODO: disabled state is determined in useMenuItem, make sure to merge the press handlers with the ones useMenuItem sets up
   let onPressStart = (e: PressEvent) => {
@@ -134,6 +127,7 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
   };
 
   // TODO: need to fix this so that hovering back onto the submenu trigger doesn't actually close the submenu
+  // actually might be in useMenuItem's onHoverStart
   let onHoverChange = (isHovered) => {
     if (isHovered && !state.isOpen) {
       if (!openTimeout.current) {
@@ -154,6 +148,7 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
       // this leads to blur never being fired nor focus on the body
       ref.current.focus();
     }
+    cancelOpenTimeout();
   };
 
   return {
@@ -165,7 +160,7 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
       onPressStart,
       onPress,
       onHoverChange,
-      ...subMenuTriggerKeyboardProps
+      onKeyDown: subMenuTriggerKeyDown
     },
     subMenuProps: {
       // makes item selection in submenu close all menus
@@ -175,7 +170,7 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
       // TODO: get rid of the true so hover doesn't open it
       autoFocus: state.focusStrategy || true,
       id: overlayId,
-      ...subMenuKeyboardProps
+      onKeyDown: subMenuKeyDown
     },
     popoverProps: {
       isNonModal: true

@@ -10,19 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, FocusStrategy, HoverEvents, KeyboardEvents, PressEvents} from '@react-types/shared';
+import {DOMProps, FocusStrategy, HoverEvents, PressEvents} from '@react-types/shared';
 import {MenuTreeState, MenuTriggerState} from '@react-stately/menu';
 import React, {HTMLAttributes, MutableRefObject, RefObject, useContext} from 'react';
 import {TreeState} from '@react-stately/tree';
 
-export interface MenuContextValue extends Omit<HTMLAttributes<HTMLElement>, 'autoFocus'> {
+// TODO: debug typescript issue here, not sure why it is complaining about the keydown types now
+export interface MenuContextValue extends Omit<HTMLAttributes<HTMLElement>, 'autoFocus' | 'onKeyDown'> {
   onClose?: () => void,
   closeOnSelect?: boolean,
   shouldFocusWrap?: boolean,
   autoFocus?: boolean | FocusStrategy,
   ref?: MutableRefObject<HTMLUListElement>,
   state?: MenuTriggerState,
-  menuTreeState?: MenuTreeState
+  menuTreeState?: MenuTreeState,
+  onKeyDown?: (e: KeyboardEvent) => void
 }
 
 export const MenuContext = React.createContext<MenuContextValue>({});
@@ -31,12 +33,13 @@ export function useMenuContext(): MenuContextValue {
   return useContext(MenuContext);
 }
 
-export interface MenuDialogContextValue extends DOMProps, Pick<PressEvents, 'onPressStart' | 'onPress'>, Pick<HoverEvents, 'onHoverChange'>, Pick<KeyboardEvents, 'onKeyDown'> {
+export interface MenuDialogContextValue extends DOMProps, Pick<PressEvents, 'onPressStart' | 'onPress'>, Pick<HoverEvents, 'onHoverChange'> {
   isUnavailable?: boolean,
   triggerRef?: MutableRefObject<HTMLLIElement>,
+  'aria-expanded'?: boolean | 'true' | 'false',
   'aria-controls'?: string,
   'aria-haspopup'?: string,
-  'aria-expanded'?: string
+  onKeyDown?: (e: KeyboardEvent) => void
 }
 
 export const MenuDialogContext = React.createContext<MenuDialogContextValue | undefined>(undefined);

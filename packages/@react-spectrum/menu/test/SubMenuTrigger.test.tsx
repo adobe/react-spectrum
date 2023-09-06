@@ -443,16 +443,18 @@ describe('SubMenu', function () {
       let subMenuTrigger1 = menuItems[1];
       triggerPress(subMenuTrigger1);
       act(() => {jest.runAllTimers();});
+      menu = tree.getByRole('menu');
+      expect(menu).toBeTruthy();
       expect(onAction).not.toHaveBeenCalled();
       pressEnter();
       act(() => {jest.runAllTimers();});
       expect(onAction).not.toHaveBeenCalled();
-      menu = tree.getByRole('menu');
-      expect(menu).toBeTruthy();
+      let menus = tree.getAllByRole('menu');
+      expect(menus).toHaveLength(2);
 
       triggerPress(menuItems[0]);
       act(() => {jest.runAllTimers();});
-      let menus = tree.queryAllByRole('menu');
+      menus = tree.queryAllByRole('menu');
       expect(menus).toHaveLength(0);
       expect(onAction).toHaveBeenCalledTimes(1);
       expect(onAction).toHaveBeenLastCalledWith('Lvl 1 Item 1');
