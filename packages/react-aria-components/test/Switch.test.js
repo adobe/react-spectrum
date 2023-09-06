@@ -28,10 +28,12 @@ describe('Switch', () => {
     expect(s).toHaveAttribute('class', 'test');
   });
 
-  it('should support DOM props', () => {
-    let {getByRole} = render(<Switch data-foo="bar">Test</Switch>);
+  it('should support data- props on label element', () => {
+    let {getByRole} = render(<Switch data-foo="bar" >Test</Switch>);
     let s = getByRole('switch');
-    expect(s).toHaveAttribute('data-foo', 'bar');
+    let label = s.closest('label');
+    expect(label).toHaveAttribute('data-foo', 'bar');
+    expect(s).not.toHaveAttribute('data-foo');
   });
 
   it('should support render props', () => {
@@ -42,9 +44,9 @@ describe('Switch', () => {
     let label = s.closest('label');
     expect(s).not.toBeChecked();
     expect(label).toHaveTextContent('Off');
-    
+
     userEvent.click(s);
-    
+
     expect(s).toBeChecked();
     expect(label).toHaveTextContent('On');
   });
@@ -81,7 +83,7 @@ describe('Switch', () => {
     let {getByRole} = render(<Switch className={({isFocusVisible}) => isFocusVisible ? 'focus' : ''}>Test</Switch>);
     let s = getByRole('switch');
     let label = s.closest('label');
-    
+
     expect(label).not.toHaveAttribute('data-focus-visible');
     expect(label).not.toHaveClass('focus');
 
