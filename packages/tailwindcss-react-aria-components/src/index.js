@@ -14,7 +14,7 @@ const attributes = {
     'allows-dragging',
     'allows-removing',
     'allows-sorting',
-    'placeholder',
+    ['placeholder-shown', 'placeholder'],
     'selected',
     'indeterminate',
     ['read-only', 'readonly'],
@@ -57,7 +57,7 @@ const nativeVariantSelectors = new Map([
   ['focused', ':focus'],
   ['readonly', ':read-only'],
   ['open', '[open]'],
-  ['placeholder', '::placeholder']
+  ['placeholder', ':placeholder-shown']
 ]);
 
 // If no prefix is specified, we want to avoid overriding native variants on non-RAC components, so we only target elements with the data-rac attribute for those variants.
