@@ -6,6 +6,8 @@ interface SafelyMouseToSubmenuOptions {
   menuRef: RefObject<Element>,
   /** Ref for the submenu. */
   submenuRef: RefObject<Element>,
+  /** Ref for the trigger element. */
+  triggerRef: RefObject<Element>,
   /** Whether the submenu is open. */
   isOpen: boolean
 }
@@ -15,27 +17,47 @@ interface SafelyMouseToSubmenuOptions {
  * Prevents pointer events from going to the underlying menu if the user is moving their pointer towards the sub-menu.
  */
 export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
-  let {menuRef, submenuRef, isOpen} = options;
+  let {menuRef, submenuRef, triggerRef, isOpen} = options;
   let prevPointerPos = useRef<{x: number, y: number, time: number}>(null);
   let triggerRect = useRef<DOMRect>(null);
   let submenuRect = useRef<DOMRect>(null);
   let lastProcessedTime = useRef<number>(0);
   let isPointerMovingTowardsSubmenu = useRef<boolean>(false);
 
+  let updateSubmenuRect = () => {
+    if (submenuRef.current) {
+      submenuRect.current = submenuRef.current.getBoundingClientRect();
+    }
+  };
+
+  let updateTriggerRect = () => {
+    if (triggerRect.current) {
+      triggerRect.current = triggerRef.current.getBoundingClientRect();
+    }
+  };
+
+  
   useResizeObserver({
     ref: submenuRef,
-    onResize: () => submenuRect.current = submenuRef.current.getBoundingClientRect()
+    onResize: updateSubmenuRect
+  });
+
+  useResizeObserver({
+    ref: triggerRef,
+    onResize: updateTriggerRect
   });
 
   useEffect(() => {
     let menu = menuRef.current;
     let submenu = submenuRef.current;
+    let trigger = triggerRef.current;
 
-    if (!menu || !submenu || !isOpen) {
+    if (!menu || !submenu || !trigger || !isOpen) {
       return;
     }
 
     submenuRect.current = submenu.getBoundingClientRect();
+    triggerRect.current = trigger.getBoundingClientRect();
 
     let onPointerMove = (e: PointerEvent) => {
       let currentTime = Date.now();
@@ -43,11 +65,6 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
       // Throttle
       if (currentTime - lastProcessedTime.current < 16) {
         return;
-      }
-
-      // Measure trigger element if we haven't already.
-      if (!triggerRect.current) {
-        triggerRect.current = (e.target as HTMLElement).closest('li').getBoundingClientRect();
       }
 
       let prevIsPointerMovingTowardsSubmenu = isPointerMovingTowardsSubmenu.current;

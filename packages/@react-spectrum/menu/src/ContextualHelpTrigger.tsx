@@ -72,11 +72,12 @@ function ContextualHelpTrigger<T>(props: MenuDialogTriggerProps<T>): ReactElemen
     }
   };
 
-  let submenu = useUnwrapDOMRef(popoverRef);
+  let submenuRef = useUnwrapDOMRef(popoverRef);
 
   useSafelyMouseToSubmenu({
     menuRef: menu,
-    submenuRef: submenu,
+    submenuRef,
+    triggerRef,
     isOpen: state.isOpen
   });
   
