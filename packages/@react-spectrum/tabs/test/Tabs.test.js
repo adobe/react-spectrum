@@ -398,8 +398,8 @@ describe('Tabs', function () {
 
     let picker = getByRole('button');
     let pickerLabel = within(picker).getByText('Tab 1');
-    expect(picker).toHaveAttribute('aria-label', 'Test Tabs');
-    expect(picker).toHaveAttribute('aria-labelledby', `${pickerLabel.id} ${picker.id} external label`);
+    expect(picker).toHaveAttribute('aria-label', ', Test Tabs');
+    expect(picker).toHaveAttribute('aria-labelledby', `${pickerLabel.id} external label`);
 
     triggerPress(picker);
     act(() => jest.runAllTimers());
