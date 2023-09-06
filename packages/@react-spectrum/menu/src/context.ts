@@ -11,7 +11,7 @@
  */
 
 import {DOMProps, FocusStrategy, HoverEvents, KeyboardEvents, PressEvents} from '@react-types/shared';
-import {MenuTriggerState} from '@react-stately/menu';
+import {MenuTreeState, MenuTriggerState} from '@react-stately/menu';
 import React, {HTMLAttributes, MutableRefObject, RefObject, useContext} from 'react';
 import {TreeState} from '@react-stately/tree';
 
@@ -22,15 +22,7 @@ export interface MenuContextValue extends Omit<HTMLAttributes<HTMLElement>, 'aut
   autoFocus?: boolean | FocusStrategy,
   ref?: MutableRefObject<HTMLUListElement>,
   state?: MenuTriggerState,
-  onSubMenuClose?: () => void,
-  // TODO: update this type when I add hook for initializing this state
-  menuTreeState?: {
-    expandedKeysStack: string[],
-    setExpandedKeysStack,
-    closeAll,
-    openSubMenu,
-    closeSubMenu
-  }
+  menuTreeState?: MenuTreeState
 }
 
 export const MenuContext = React.createContext<MenuContextValue>({});
@@ -57,14 +49,7 @@ export interface MenuStateContextValue<T> {
   state?: TreeState<T>,
   container?: RefObject<HTMLElement>,
   menu?: RefObject<HTMLUListElement>,
-  // TODO: update this type
-  menuTreeState?: {
-    expandedKeysStack: string[],
-    setExpandedKeysStack,
-    closeAll,
-    openSubMenu,
-    closeSubMenu
-  }
+  menuTreeState?: MenuTreeState
 }
 
 export const MenuStateContext = React.createContext<MenuStateContextValue<any>>(undefined);

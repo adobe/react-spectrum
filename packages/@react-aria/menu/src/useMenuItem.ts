@@ -170,7 +170,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     // TODO: perhaps we should just expect that the user would spread these on the submenu trigger directly
     'aria-controls': isTrigger ? props['aria-controls'] : undefined,
     'aria-haspopup': hasPopup,
-    'aria-expanded': isTrigger ? props['aria-expanded'] : undefined,
+    'aria-expanded': isTrigger ? props['aria-expanded'] : undefined
   };
 
   if (state.selectionManager.selectionMode !== 'none' && !isTrigger) {

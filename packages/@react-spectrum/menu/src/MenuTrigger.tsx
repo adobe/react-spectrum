@@ -16,11 +16,11 @@ import {MenuContext} from './context';
 import {Placement} from '@react-types/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
 import {PressResponder} from '@react-aria/interactions';
-import React, {forwardRef, Fragment, useCallback, useRef} from 'react';
+import React, {forwardRef, Fragment, useRef} from 'react';
 import {SpectrumMenuTriggerProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
+import {useMenuState, useMenuTriggerState} from '@react-stately/menu';
 import {useMenuTrigger} from '@react-aria/menu';
-import {useMenuTriggerState} from '@react-stately/menu';
 
 function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) {
   let triggerRef = useRef<HTMLElement>();
@@ -56,49 +56,7 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
   }
 
   let isMobile = useIsMobileDevice();
-
-
-  // TODO: block for eventual useMenuState
-  // Should we include the open state of the root menu in it? That means we will need to tie the
-  // root menu's open state to this expandedKeysStack, meaning we'd have to toggle the menuTrigger state when the
-  // stack is wiped. Perhaps we have the key stack just track the submenu expanded keys and have closeAll also call state.close for the root
-
-  // TODO: Problem is that clicking outside of the all the menu's doesn't wipe the expandedKeysStack. Perhaps handle this in useSubMenutrigger
-  // and wipe it if the submenutrigger has unmounted?
-  let [expandedKeysStack, setExpandedKeysStack] = React.useState<string[]>([]);
-  let closeAll = useCallback(() => {
-    console.log('calling close all')
-    setExpandedKeysStack([]);
-    state.close();
-  }, [setExpandedKeysStack, state]);
-  let openSubMenu = useCallback((triggerKey, level) => {
-    console.log('calling open submenu', triggerKey, level);
-    setExpandedKeysStack(oldStack => [...oldStack.slice(0, level), triggerKey]);
-  }, [setExpandedKeysStack]);
-  let closeSubMenu = useCallback((triggerKey, level) => {
-    console.log('calling close submenu', triggerKey, level);
-    setExpandedKeysStack(oldStack => {
-      let key = oldStack[level - 1];
-      console.log('key', key, oldStack, oldStack.slice(0, level - 1));
-      if (key === triggerKey) {
-        console.log('inreturn', oldStack.slice(0, level - 1))
-        return oldStack.slice(0, level - 1);
-      } else {
-        return oldStack;
-      }
-    });
-  }, [setExpandedKeysStack]);
-
-  let menuTreeState = {
-    expandedKeysStack,
-    setExpandedKeysStack,
-    closeAll,
-    openSubMenu,
-    closeSubMenu
-  };
-  // End block
-
-
+  let menuTreeState = useMenuState({}, state);
   let menuContext = {
     ...menuProps,
     state,
@@ -145,6 +103,7 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
           {menuTrigger}
         </PressResponder>
       </SlotProvider>
+      {/* TODO: figure out why lint is complaining here */}
       <MenuContext.Provider value={menuContext}>
         {overlay}
       </MenuContext.Provider>

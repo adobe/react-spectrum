@@ -28,6 +28,7 @@ export default {
 };
 
 // TODO: add chromatic stories
+// TODO: test without any keys defined
 export const SubMenuStatic = {
   render: (args) => (
     renderMenuTrigger(

@@ -31,8 +31,8 @@ export interface AriaMenuOptions<T> extends Omit<AriaMenuProps<T>, 'children'> {
    * to override the default.
    */
   keyboardDelegate?: KeyboardDelegate,
-  // TODO: just extend KeyboardEvents?
-  onKeyDown?: (e: KeyboardEvent) => void
+  // TODO: just extend KeyboardEvents? update type
+  onKeyDown?: any
 }
 
 interface MenuData {
@@ -53,7 +53,6 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
   let {
     shouldFocusWrap = true,
     onKeyDown,
-    isSubMenu,
     ...otherProps
   } = props;
 
