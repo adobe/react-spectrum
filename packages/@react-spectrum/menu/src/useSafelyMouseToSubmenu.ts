@@ -35,7 +35,6 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
       triggerRect.current = triggerRef.current.getBoundingClientRect();
     }
   };
-
   
   useResizeObserver({
     ref: submenuRef,
@@ -120,5 +119,5 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
       menu.removeEventListener('pointerenter', onPointerEnter, {capture: true});
     };
 
-  }, [isOpen, menuRef, submenuRef]);
+  }, [isOpen, menuRef, submenuRef, triggerRef]);
 }
