@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, GridList, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Text, TimeField, ToggleButton, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, GridList, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Text, TextField, TimeField, ToggleButton, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
@@ -390,7 +390,7 @@ export const DateRangePickerExample = () => (
     <Label style={{display: 'block'}}>Date</Label>
     <Group style={{display: 'inline-flex'}}>
       <div className={styles.field}>
-        <DateInput slot="start" style={{display: 'inline-flex'}}>
+        <DateInput data-test-id="date-range-picker-date-input" slot="start" style={{display: 'inline-flex'}}>
           {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
         </DateInput>
         <span aria-hidden="true" style={{padding: '0 4px'}}>–</span>
@@ -832,6 +832,7 @@ export const DropzoneExampleWithFileTriggerLink = (props) => (
       {...props}
       aria-label={'testing aria-label'}
       className={styles.dropzone}
+      data-test-id="drop-zone-example-with-file-trigger-link"
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
@@ -966,10 +967,10 @@ export const DropzoneWithRenderProps = (props) => (
   </div>
 );
 
-// TODO: Should data- attr pass to hidden input? It isn't duplicated, so not sure what expectation is.
+// TODO: Should data- attr pass to hidden input? It isn't duplicated, so not sure what the expectation is.
 export const FileTriggerButton = (props) => (
   <FileTrigger
-    data-test-id="dropzone-example-with-file-trigger-link"
+    data-test-id="filetrigger-example"
     {...props}
     onChange={action('OnChange')} >
     <Button>Upload</Button>
@@ -1154,4 +1155,31 @@ export const ToggleButtonExample = () => {
   );
 };
 
+// TODO: fix styles for `.indicator`
+export const SwitchExample = () => {
+  return (
+    <Switch data-test-id="switch-example">
+      <div className="react-aria-Switch-indicator" />
+      Switch me
+    </Switch>
+  );
+};
 
+export const TextfieldExample = () => {
+  return (
+    <TextField data-test-id="textfield-example">
+      <Label>First name</Label>
+      <Input />
+    </TextField>
+  );
+};
+
+export const LinkExample = () => {
+  return (
+    <Link data-test-id="link-example">
+      <a href="https://www.imdb.com/title/tt6348138/" target="_blank">
+        The missing link
+      </a>
+    </Link>
+  );
+};

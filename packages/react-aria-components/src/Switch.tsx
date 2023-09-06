@@ -11,7 +11,7 @@
  */
 
 import {AriaSwitchProps, mergeProps, useFocusRing, useHover, usePress, useSwitch, VisuallyHidden} from 'react-aria';
-import {ContextValue, forwardRefType, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, filterDataAttrs, forwardRefType, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, useState} from 'react';
 import {ToggleState, useToggleState} from 'react-stately';
@@ -70,6 +70,7 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLInputElement>) {
     // ReactNode type doesn't allow function children.
     children: typeof props.children === 'function' ? true : props.children
   }, state, ref);
+  inputProps = filterDataAttrs(inputProps);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let isInteractionDisabled = props.isDisabled || props.isReadOnly;
 

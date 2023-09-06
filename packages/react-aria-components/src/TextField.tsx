@@ -11,7 +11,7 @@
  */
 
 import {AriaTextFieldProps, useTextField} from 'react-aria';
-import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, DOMProps, filterDataAttrs, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
@@ -49,6 +49,7 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
     inputElementType,
     label
   }, inputRef);
+  inputProps = filterDataAttrs(inputProps);
 
   // Intercept setting the input ref so we can determine what kind of element we have.
   // useTextField uses this to determine what props to include.
