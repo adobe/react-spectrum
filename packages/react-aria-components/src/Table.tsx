@@ -656,8 +656,6 @@ export interface CellRenderProps {
 
 export interface CellProps extends RenderProps<CellRenderProps> {
   id?: Key,
-  /** The contents of the cell. */
-  children: ReactNode,
   /** A string representation of the cell's contents, used for features like typeahead. */
   textValue?: string
 }
@@ -669,7 +667,7 @@ function Cell(props: CellProps, ref: ForwardedRef<HTMLTableCellElement>): JSX.El
 /**
  * A cell within a table row.
  */
-const _Cell = forwardRef(Cell);
+const _Cell = /*#__PURE__*/ (forwardRef as forwardRefType)(Cell);
 export {_Cell as Cell};
 
 function TableHeaderRowGroup<T>({collection}: {collection: TableCollection<T>}) {
@@ -1083,7 +1081,8 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
         data-focus-visible={isFocusVisible || undefined}
         data-pressed={states.isPressed || undefined}
         data-dragging={isDragging || undefined}
-        data-drop-target={dropIndicator?.isDropTarget || undefined}>
+        data-drop-target={dropIndicator?.isDropTarget || undefined}
+        data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}>
         <Provider
           values={[
             [CheckboxContext, {

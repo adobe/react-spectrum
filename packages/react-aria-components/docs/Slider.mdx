@@ -211,6 +211,21 @@ element displaying the current values textually, and a label.
 The thumbs can be dragged to allow a user to change their value. In addition, the
 track can be clicked to move the nearest thumb to that position.
 
+```tsx
+import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-components';
+
+<Slider>
+  <Label />
+  <SliderOutput />
+  <SliderTrack>
+    <SliderThumb />
+    <SliderThumb>
+      <Label />
+    </SliderThumb>
+  </SliderTrack>
+</Slider>
+```
+
 If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead
 to identify the slider and thumbs to screen readers.
 
@@ -229,6 +244,180 @@ A `Slider` uses the following components, which may also be used standalone or r
 
 </section>
 
+## Reusable wrappers
+
+If you will use a Slider in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+This example wraps `Slider` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `SliderTrack` and `SliderOutput` render props to render multiple slider thumbs, depending on the provided values. When multiple thumbs are rendered, each `SliderThumb` should have an `aria-label`, which is provided via the `thumbLabels` prop in this example.
+
+```tsx example export=true
+import type {SliderProps} from 'react-aria-components';
+
+interface MySliderProps<T> extends SliderProps<T> {
+  label?: string,
+  thumbLabels?: string[]
+}
+
+function MySlider<T extends number | number[]>({label, thumbLabels, ...props}: MySliderProps<T>) {
+  return (
+    <Slider {...props}>
+      <Label>{label}</Label>
+      <SliderOutput>
+        {({state}) => state.values.map((_, i) => state.getThumbValueLabel(i)).join(' – ')}
+      </SliderOutput>
+      <SliderTrack>
+        {({state}) => state.values.map((_, i) => (
+          <SliderThumb key={i} index={i} aria-label={thumbLabels?.[i]} />
+        ))}
+      </SliderTrack>
+    </Slider>
+  );
+}
+
+<MySlider label="Range" defaultValue={[30, 60]} thumbLabels={['start', 'end']} />
+```
+
+## Value
+
+### Controlled value
+
+The `value` prop paired with the `onChange` event can be used to make a slider controlled. The value must fall between the Slider's minimum and maximum values, which default to 0 and 100 respectively. The `onChange` event receives the new slider value as a parameter, which can be used to update state.
+
+```tsx example
+function Example() {
+  let [value, setValue] = React.useState(25);
+  return (
+    <>
+      <MySlider<number>
+        label="Cookies to buy"
+        value={value}
+        onChange={setValue} />
+      <p>Current value: {value}</p>
+    </>
+  );
+}
+```
+
+Multi thumb sliders specify their values as an array rather than a single number.
+
+```tsx example
+function Example() {
+  let [value, setValue] = React.useState([25, 75]);
+  return (
+    <>
+      <MySlider<number[]>
+        label="Range"
+        thumbLabels={['start', 'end']}
+        value={value}
+        onChange={setValue} />
+      <p>Current value: {value.join(' – ')}</p>
+    </>
+  );
+}
+```
+
+### HTML forms
+
+Each SliderThumb supports the `name` prop for integration with HTML forms.
+
+```tsx example
+<Slider defaultValue={50}>
+  <Label>Opacity</Label>
+  <SliderOutput />
+  <SliderTrack>
+    {/*- begin highlight -*/}
+    <SliderThumb name="opacity" />
+    {/*- end highlight -*/}
+  </SliderTrack>
+</Slider>
+```
+
+## Events
+
+The `onChange` prop is called as the user drags a slider. The `onChangeEnd` prop can be used to handle when a user stops dragging.
+
+```tsx example
+function Example() {
+  let [value, setValue] = React.useState(25);
+  return (
+    <>
+      <MySlider<number>
+        label="Cookies to buy"
+        defaultValue={value}
+        onChangeEnd={setValue} />
+      <p>Current value: {value}</p>
+    </>
+  );
+}
+```
+
+## Validation
+
+### Custom value scale
+
+By default, slider values are precentages between 0 and 100. A different scale can be used by setting the `minValue` and `maxValue` props.
+
+```tsx example
+<MySlider
+  label="Cookies to buy"
+  minValue={50}
+  maxValue={150}
+  defaultValue={100} />
+```
+
+### Step values
+
+The `step` prop can be used to snap the value to certain increments. The steps are calculated
+starting from the minimum. For example, if `minValue={2}`, and `step={3}`, the valid step values would be 2, 5, 8, 11, etc.
+This example allows increments of 5 between 0 and 100.
+
+```tsx example
+<MySlider
+  label="Amount"
+  formatOptions={{style: 'currency', currency: 'USD'}}
+  minValue={0}
+  maxValue={100}
+  step={5} />
+```
+
+## Visual options
+
+### Vertical orientation
+
+Sliders are horizontally oriented by default. The `orientation` prop can be set to `"vertical"` to create a vertical slider.
+This example also uses `aria-label` rather than `label` to create a slider with no visible label.
+
+```tsx example
+<MySlider
+  orientation="vertical"
+  aria-label="Opacity"
+  maxValue={1}
+  step={0.01} />
+```
+
+### Value formatting
+
+Values are formatted as a percentage by default, but this can be modified by using the `formatOptions` prop to specify a different format.
+`formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied based on the current locale.
+
+```tsx example
+<MySlider
+  label="Currency"
+  formatOptions={{style: 'currency', currency: 'JPY'}}
+  defaultValue={60} />
+```
+
+### Disabled
+
+A slider can be disabled using the `isDisabled` prop.
+
+```tsx example
+<MySlider
+  label="Cookies to share"
+  defaultValue={25}
+  isDisabled />
+```
+
 ## Props
 
 ### Slider
@@ -243,28 +432,19 @@ A `<Label>` accepts all HTML attributes.
 
 A `<SliderOutput>` renders the current value of the slider as text.
 
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
-  <PropTable component={docs.exports.SliderOutput} links={docs.links} />
-</details>
+<PropTable component={docs.exports.SliderOutput} links={docs.links} />
 
 ### SliderTrack
 
 The `<SliderTrack>` component is a grouping of one or more `<SliderThumb>` elements.
 
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
-  <PropTable component={docs.exports.SliderTrack} links={docs.links} />
-</details>
+<PropTable component={docs.exports.SliderTrack} links={docs.links} />
 
 ### SliderThumb
 
 The `<SliderThumb>` component renders an individual thumb within a `<SliderTrack>`.
 
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
-  <PropTable component={docs.exports.SliderThumb} links={docs.links} />
-</details>
+<PropTable component={docs.exports.SliderThumb} links={docs.links} />
 
 ## Styling
 
@@ -339,178 +519,6 @@ The `SliderTrack` component can be targeted with the `.react-aria-SliderTrack` C
 The `SliderThumb` component can be targeted with the `.react-aria-SliderThumb` CSS selector, or by overriding with a custom `className`. It supports the following states:
 
 <StateTable properties={docs.exports.SliderThumbRenderProps.properties} />
-
-## Reusable wrappers
-
-If you will use a Slider in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
-
-This example wraps `Slider` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `SliderTrack` and `SliderOutput` render props to render multiple slider thumbs, depending on the provided values. When multiple thumbs are rendered, each `SliderThumb` should have an `aria-label`, which is provided via the `thumbLabels` prop in this example.
-
-```tsx example export=true
-import type {SliderProps} from 'react-aria-components';
-
-interface MySliderProps<T> extends SliderProps<T> {
-  label?: string,
-  thumbLabels?: string[]
-}
-
-function MySlider<T extends number | number[]>({label, thumbLabels, ...props}: MySliderProps<T>) {
-  return (
-    <Slider {...props}>
-      <Label>{label}</Label>
-      <SliderOutput>
-        {({state}) => state.values.map((_, i) => state.getThumbValueLabel(i)).join(' – ')}
-      </SliderOutput>
-      <SliderTrack>
-        {({state}) => state.values.map((_, i) => (
-          <SliderThumb key={i} index={i} aria-label={thumbLabels?.[i]} />
-        ))}
-      </SliderTrack>
-    </Slider>
-  );
-}
-
-<MySlider label="Range" defaultValue={[30, 60]} thumbLabels={['start', 'end']} />
-```
-
-## Usage
-
-The following examples show how to use the `MySlider` component created in the above examples.
-
-### Vertical orientation
-
-Sliders are horizontally oriented by default. The `orientation` prop can be set to `"vertical"` to create a vertical slider.
-This example also uses `aria-label` rather than `label` to create a slider with no visible label.
-
-```tsx example
-<MySlider
-  orientation="vertical"
-  aria-label="Opacity"
-  maxValue={1}
-  step={0.01} />
-```
-
-### Controlled value
-
-The `value` prop paired with the `onChange` event can be used to make a slider controlled. The value must fall between the Slider's minimum and maximum values, which default to 0 and 100 respectively. The `onChange` event receives the new slider value as a parameter, which can be used to update state.
-
-```tsx example
-function Example() {
-  let [value, setValue] = React.useState(25);
-  return (
-    <>
-      <MySlider<number>
-        label="Cookies to buy"
-        value={value}
-        onChange={setValue} />
-      <p>Current value: {value}</p>
-    </>
-  );
-}
-```
-
-Multi thumb sliders specify their values as an array rather than a single number.
-
-```tsx example
-function Example() {
-  let [value, setValue] = React.useState([25, 75]);
-  return (
-    <>
-      <MySlider<number[]>
-        label="Range"
-        thumbLabels={['start', 'end']}
-        value={value}
-        onChange={setValue} />
-      <p>Current value: {value.join(' – ')}</p>
-    </>
-  );
-}
-```
-
-### onChangeEnd
-
-The `onChangeEnd` prop can be used to handle when a user stops dragging a slider, whereas the `onChange` prop is called as the user drags.
-
-```tsx example
-function Example() {
-  let [value, setValue] = React.useState(25);
-  return (
-    <>
-      <MySlider<number>
-        label="Cookies to buy"
-        defaultValue={value}
-        onChangeEnd={setValue} />
-      <p>Current value: {value}</p>
-    </>
-  );
-}
-```
-
-### Custom value scale
-
-By default, slider values are precentages between 0 and 100. A different scale can be used by setting the `minValue` and `maxValue` props.
-
-```tsx example
-<MySlider
-  label="Cookies to buy"
-  minValue={50}
-  maxValue={150}
-  defaultValue={100} />
-```
-
-### Value formatting
-
-Values are formatted as a percentage by default, but this can be modified by using the `formatOptions` prop to specify a different format.
-`formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied based on the current locale.
-
-```tsx example
-<MySlider
-  label="Currency"
-  formatOptions={{style: 'currency', currency: 'JPY'}}
-  defaultValue={60} />
-```
-
-### Step values
-
-The `step` prop can be used to snap the value to certain increments. The steps are calculated
-starting from the minimum. For example, if `minValue={2}`, and `step={3}`, the valid step values would be 2, 5, 8, 11, etc.
-This example allows increments of 5 between 0 and 100.
-
-```tsx example
-<MySlider
-  label="Amount"
-  formatOptions={{style: 'currency', currency: 'USD'}}
-  minValue={0}
-  maxValue={100}
-  step={5} />
-```
-
-### Disabled
-
-A slider can be disabled using the `isDisabled` prop.
-
-```tsx example
-<MySlider
-  label="Cookies to share"
-  defaultValue={25}
-  isDisabled />
-```
-
-### HTML forms
-
-Each SliderThumb supports the `name` prop for integration with HTML forms.
-
-```tsx example
-<Slider defaultValue={50}>
-  <Label>Opacity</Label>
-  <SliderOutput />
-  <SliderTrack>
-    {/*- begin highlight -*/}
-    <SliderThumb name="opacity" />
-    {/*- end highlight -*/}
-  </SliderTrack>
-</Slider>
-```
 
 ## Advanced customization
 

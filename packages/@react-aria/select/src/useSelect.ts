@@ -140,10 +140,12 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
       isDisabled,
       onKeyDown: chain(triggerProps.onKeyDown, onKeyDown, props.onKeyDown),
       onKeyUp: props.onKeyUp,
+      'aria-label': `, ${props['aria-label'] ?? ''}`,
       'aria-labelledby': [
         valueId,
-        triggerProps['aria-labelledby'],
-        triggerProps['aria-label'] && !triggerProps['aria-labelledby'] ? triggerProps.id : null
+        !(props['aria-labelledby'] && props['aria-label']) && triggerProps.id,
+        !(props['aria-labelledby'] || props['aria-label']) && labelProps.id,
+        props['aria-labelledby']
       ].filter(Boolean).join(' '),
       onFocus(e: FocusEvent) {
         if (state.isFocused) {

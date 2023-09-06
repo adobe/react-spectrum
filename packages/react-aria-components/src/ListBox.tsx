@@ -43,6 +43,11 @@ export interface ListBoxRenderProps {
    */
   isDropTarget: boolean,
   /**
+   * Whether the items are arranged in a stack or grid.
+   * @selector [data-layout="stack | grid"]
+   */
+  layout: 'stack' | 'grid',
+  /**
    * State of the listbox.
    */
   state: ListState<unknown>
@@ -231,6 +236,7 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
       isEmpty: state.collection.size === 0,
       isFocused,
       isFocusVisible,
+      layout: props.layout || 'stack',
       state
     }
   });
@@ -414,7 +420,8 @@ function Option<T>({item}: OptionProps<T>) {
         data-focus-visible={states.isFocusVisible || undefined}
         data-pressed={states.isPressed || undefined}
         data-dragging={isDragging || undefined}
-        data-drop-target={droppableItem?.isDropTarget || undefined}>
+        data-drop-target={droppableItem?.isDropTarget || undefined}
+        data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}>
         <Provider
           values={[
             [TextContext, {

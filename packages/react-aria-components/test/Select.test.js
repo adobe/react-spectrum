@@ -35,7 +35,7 @@ let TestSelect = (props) => (
 
 describe('Select', () => {
   it('provides slots', () => {
-    let {getByRole} = render(<TestSelect />);
+    let {getByRole, getByText} = render(<TestSelect />);
 
     let button = getByRole('button');
     expect(button).toHaveTextContent('Select an item');
@@ -45,9 +45,8 @@ describe('Select', () => {
     expect(select).toHaveAttribute('data-foo', 'bar');
 
     expect(button).toHaveAttribute('aria-labelledby');
-    let label = document.getElementById(button.getAttribute('aria-labelledby').split(' ')[1]);
+    let label = getByText('Favorite Animal');
     expect(label).toHaveAttribute('class', 'react-aria-Label');
-    expect(label).toHaveTextContent('Favorite Animal');
 
     let valueOrPlaceholder = document.getElementById(button.getAttribute('aria-labelledby').split(' ')[0]);
     expect(valueOrPlaceholder).toHaveAttribute('class', 'react-aria-SelectValue');
@@ -80,7 +79,7 @@ describe('Select', () => {
 
     let button = getByRole('button');
     expect(button.closest('.react-aria-Select')).toHaveAttribute('slot', 'test');
-    expect(button).toHaveAttribute('aria-label', 'test');
+    expect(button).toHaveAttribute('aria-label', ', test');
   });
 
   it('supports items with render props', () => {
