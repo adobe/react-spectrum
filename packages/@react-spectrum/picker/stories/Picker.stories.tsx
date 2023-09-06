@@ -236,14 +236,35 @@ export const FalsyKey: PickerStory = {
   name: 'falsy item key'
 };
 
-export const NoLabel: PickerStory = {
+export type LabelledByStory = ComponentStoryObj<any>;
+export const LabelledBy: LabelledByStory = {
   args: {
-    children: (item: any) => <Item>{item.name}</Item>,
-    items: flatOptions,
-    'aria-label': 'Test',
+    'aria-label': null,
+    'aria-labelledby': true,
     label: null
   },
-  name: 'no visible label'
+  argTypes: {
+    'aria-label': {
+      control: 'text'
+    },
+    'aria-labelledby': {
+      control: 'boolean'
+    }
+  },
+  render: (args) => (
+    <>
+      <div id="test label">Test label</div>
+      <Picker {...args} aria-labelledby={args['aria-labelledby'] ? 'test label' : null} items={flatOptions}>
+        {(item: any) => <Item>{item.name}</Item>}
+      </Picker>
+    </>
+  ),
+  name: 'no visible label combination story',
+  parameters: {
+    description: {
+      data: 'Use controls to add/remove a visible label, aria-label, and toggle the aria-labelledby on/off'
+    }
+  }
 };
 
 export const ContextualHelpPicker: PickerStory = {
