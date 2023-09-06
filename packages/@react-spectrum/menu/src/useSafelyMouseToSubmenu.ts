@@ -24,7 +24,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
 
   useResizeObserver({
     ref: submenuRef,
-    onResize: () => submenuRect.current = menuRef.current.getBoundingClientRect()
+    onResize: () => submenuRect.current = submenuRef.current.getBoundingClientRect()
   });
 
   useEffect(() => {
