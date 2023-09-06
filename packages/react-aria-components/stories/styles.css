@@ -248,3 +248,15 @@
   border-color: orange;
   background-color: transparent;
 }
+
+:global(.react-spectrum-story [type="search"]) {
+  &::-webkit-search-cancel-button,
+  &::-webkit-search-decoration {
+    -webkit-appearance: none;
+  }
+}
+
+:global(.react-aria-ToggleButton[data-selected]) {
+  background-color: gray;
+}
+

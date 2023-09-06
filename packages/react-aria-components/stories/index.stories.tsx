@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Text, TimeField, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, GridList, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Text, TimeField, ToggleButton, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
@@ -33,7 +33,9 @@ export const ComboBoxExample = () => (
       </Button>
     </div>
     <Popover placement="bottom end">
-      <ListBox className={styles.menu}>
+      <ListBox
+        data-test-id="combo-box-list-box"
+        className={styles.menu}>
         <MyItem>Foo</MyItem>
         <MyItem>Bar</MyItem>
         <MyItem>Baz</MyItem>
@@ -1129,3 +1131,27 @@ export const RadioGroupInDialogExample = () => {
     </DialogTrigger>
   );
 };
+
+export const SearchFieldExample = () => {
+  return (
+    <SearchField data-test-id="search-field-example">
+      <Label>Search</Label>
+      <Input />
+      <Button>✕</Button>
+    </SearchField>
+  );
+};
+
+export const ButtonExample = () => {
+  return (
+    <Button data-test-id="button-example" onPress={() => alert('Hello world!')}>Press me</Button>
+  );
+};
+
+export const ToggleButtonExample = () => {
+  return (
+    <ToggleButton data-test-id="toggle-button-example">Toggle</ToggleButton>
+  );
+};
+
+
