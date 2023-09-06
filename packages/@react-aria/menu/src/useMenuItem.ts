@@ -167,6 +167,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     'aria-label': props['aria-label'],
     'aria-labelledby': labelId,
     'aria-describedby': [descriptionId, keyboardId].filter(Boolean).join(' ') || undefined,
+    // TODO: perhaps we should just expect that the user would spread these on the submenu trigger directly
     'aria-controls': isTrigger ? props['aria-controls'] : undefined,
     'aria-haspopup': hasPopup,
     'aria-expanded': isTrigger ? props['aria-expanded'] : undefined,
@@ -228,6 +229,8 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let {hoverProps} = useHover({
     isDisabled,
     onHoverStart() {
+      // TODO: will need to update the below's expandedKeys check since we don't use expandedKeys to check open status anymore
+      // perhaps remove the second part of the if since we are going to want to make auto focus not make it into the opened popover automatically
       if (!isFocusVisible() && !(isTrigger && state.expandedKeys.has(key))) {
         state.selectionManager.setFocused(true);
         state.selectionManager.setFocusedKey(key);
