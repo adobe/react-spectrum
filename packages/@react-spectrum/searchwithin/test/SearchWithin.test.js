@@ -187,7 +187,7 @@ describe('SearchWithin labeling', function () {
 
     expect(group).not.toHaveAttribute('aria-labelledby');
     expect(searchfield).toHaveAttribute('aria-labelledby', `${hiddenLabel.id} ${picker.id}`);
-    expect(picker).toHaveAttribute('aria-labelledby', `${picker.childNodes[0].id} ${hiddenLabel.id}`);
+    expect(picker).toHaveAttribute('aria-labelledby', `${picker.childNodes[0].id} ${picker.id}  ${hiddenLabel.id}`);
   });
 
   it('label = foo', function () {
@@ -203,7 +203,7 @@ describe('SearchWithin labeling', function () {
 
     expect(group).toHaveAttribute('aria-labelledby', label.id);
     expect(searchfield).toHaveAttribute('aria-labelledby', `${label.id} ${hiddenLabel.id} ${picker.id}`);
-    expect(picker).toHaveAttribute('aria-labelledby', `${picker.childNodes[0].id} ${label.id} ${hiddenLabel.id}`);
+    expect(picker).toHaveAttribute('aria-labelledby', `${picker.childNodes[0].id} ${picker.id} ${label.id} ${hiddenLabel.id}`);
 
     expect(label).toHaveAttribute('for', searchfield.id);
   });
@@ -220,7 +220,7 @@ describe('SearchWithin labeling', function () {
 
     expect(group).not.toHaveAttribute('aria-labelledby');
     expect(searchfield).toHaveAttribute('aria-labelledby', `${group.id} ${hiddenLabel.id} ${picker.id}`);
-    expect(picker).toHaveAttribute('aria-labelledby', `${picker.childNodes[0].id} ${group.id} ${hiddenLabel.id}`);
+    expect(picker).toHaveAttribute('aria-labelledby', `${picker.childNodes[0].id} ${picker.id} ${group.id} ${hiddenLabel.id}`);
   });
 
   it('aria-labelledby = {id}', function () {
@@ -251,6 +251,6 @@ describe('SearchWithin labeling', function () {
     expect(group).toHaveAttribute('aria-labelledby', 'id-foo-label');
     expect(searchfield).toHaveAttribute('aria-labelledby', `id-foo-label ${hiddenLabel.id} ${picker.id}`);
     expect(searchfield).toHaveAttribute('id', 'id-searchfield');
-    expect(picker).toHaveAttribute('aria-labelledby', `${picker.childNodes[0].id} id-foo-label ${hiddenLabel.id}`);
+    expect(picker).toHaveAttribute('aria-labelledby', `${picker.childNodes[0].id} ${picker.id} id-foo-label ${hiddenLabel.id}`);
   });
 });
