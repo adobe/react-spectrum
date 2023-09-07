@@ -35,5 +35,8 @@
     "babel-loader": "8.0.2",
     "jest": "^26",
     "patch-package": "^8.0.0"
+  },
+  "resolutions": {
+    "terser-webpack-plugin": "4.2.3"
   }
 }
