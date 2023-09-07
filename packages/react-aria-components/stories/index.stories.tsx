@@ -1155,11 +1155,10 @@ export const ToggleButtonExample = () => {
   );
 };
 
-// TODO: fix styles for `.indicator`
 export const SwitchExample = () => {
   return (
     <Switch data-test-id="switch-example">
-      <div className="react-aria-Switch-indicator" />
+      <div className="switchExample-indicator" />
       Switch me
     </Switch>
   );
