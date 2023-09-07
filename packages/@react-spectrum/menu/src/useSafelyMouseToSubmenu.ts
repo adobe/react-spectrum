@@ -18,7 +18,7 @@ interface SafelyMouseToSubmenuOptions {
  */
 export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
   let {menuRef, submenuRef, triggerRef, isOpen} = options;
-  let prevPointerPos = useRef<{x: number, y: number, time: number}>(null);
+  let prevPointerPos = useRef<{x: number, y: number}>(null);
   let triggerRect = useRef<DOMRect>(null);
   let submenuRect = useRef<DOMRect>(null);
   let lastProcessedTime = useRef<number>(0);
@@ -71,7 +71,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
       let {clientX: mouseX, clientY: mouseY} = e;
 
       if (!prevPointerPos.current) {
-        prevPointerPos.current = {x: mouseX, y: mouseY, time: currentTime};
+        prevPointerPos.current = {x: mouseX, y: mouseY};
         return;
       }
 
@@ -81,7 +81,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
 
       // Check if pointer is moving towards submenu.
       let direction = mouseX > submenuRect.current.right ? 'left' : 'right';
-      let toSubmenuX = direction === 'right' ? submenuRect.current.right - mouseX :  mouseX - submenuRect.current.left;
+      let toSubmenuX = direction === 'right' ? submenuRect.current.left - mouseX :  mouseX - submenuRect.current.right;
       let angleTop = Math.atan2(mouseY - submenuRect.current.top, toSubmenuX);
       let angleBottom = Math.atan2(mouseY - submenuRect.current.bottom, toSubmenuX);
       let anglePointer = Math.atan2(mouseY - prevPointerPos.current.y, mouseX - prevPointerPos.current.x);
@@ -95,13 +95,12 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
         }
       }
 
-      prevPointerPos.current = {x: mouseX, y: mouseY, time: currentTime};
+      prevPointerPos.current = {x: mouseX, y: mouseY};
     };
 
     let onPointerEnter = (e: PointerEvent) => {
-      // Do nothing if mouse is still over trigger element.
-      if (e.clientX > triggerRect.current.left && e.clientX < triggerRect.current.right &&
-        e.clientY > triggerRect.current.top && e.clientY < triggerRect.current.bottom) {
+      // If event came from within trigger, do nothing.
+      if (trigger.contains(e.target as Node) || trigger === e.target) {
         return;
       }
 
