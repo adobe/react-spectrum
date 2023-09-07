@@ -328,13 +328,10 @@ export function createHideableComponent<T, P = {}>(fn: (props: P, ref: React.Ref
 }
 
 /**
- * Filters out `data-*` attributes.
+ * Filters out `data-*` attributes to keep them from being passed down and duplicated.
  * @param props
  */
-// TODO: Type props?
-// Something super generic or leave it as is?
-// What should we guard against?
-export function filterDataAttrs(props): {} {
+export function filterDataAttrs(props: DOMProps & AriaLabelingProps): {} {
   const prefix = /^(data-.*)$/;
   let filteredProps = {};
 
