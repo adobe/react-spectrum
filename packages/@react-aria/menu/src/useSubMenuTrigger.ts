@@ -85,8 +85,8 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
     switch (e.key) {
       case 'ArrowLeft':
         if (direction === 'ltr') {
-          // TODO: for issue where the arrow left is closing too many menus, maybe because the event is going through portals? Detect if event is happening from within the actual menu?
           e.stopPropagation();
+          // TODO: for issue where the arrow left is closing too many menus, maybe because the event is going through portals? Detect if event is happening from within the actual menu?
           onSubMenuClose();
         }
         break;
@@ -97,6 +97,7 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
         }
         break;
       case 'Escape':
+        e.stopPropagation();
         state.closeAll();
         break;
     }
@@ -113,6 +114,9 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
           } else {
             onSubmenuOpen('first');
           }
+        } else if (state.isOpen) {
+          e.stopPropagation();
+          onSubMenuClose();
         }
         break;
       case 'ArrowLeft':
@@ -122,6 +126,9 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
           } else {
             onSubmenuOpen('first');
           }
+        } else if (state.isOpen) {
+          e.stopPropagation();
+          onSubMenuClose();
         }
         break;
     }
