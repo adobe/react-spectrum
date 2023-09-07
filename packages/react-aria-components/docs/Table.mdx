@@ -15,7 +15,7 @@ import sharedDocs from 'docs:@react-types/shared';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
-import Anatomy from '@react-aria/table/docs/TableAnatomy.svg';
+import Anatomy from './TableAnatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
@@ -385,18 +385,19 @@ HTML tables are meant for static content, rather than tables with rich interacti
 `Table` helps achieve accessible and interactive table components that can be styled as needed.
 
 * **Row selection** – Single or multiple selection, with optional checkboxes, disabled rows, and both `toggle` and `replace` selection behaviors.
-* **Columns** – Support for column sorting, [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) columns, and nested column groups.
+* **Columns** – Support for column sorting, [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) columns, and nested column groups. Columns may optionally allow user resizing via mouse, touch, and keyboard interactions.
 * **Interactive children** – Table cells may include interactive elements such as buttons, menus, etc.
 * **Actions** – Rows and cells support optional actions such as navigation via click, tap, double click, or <Keyboard>Enter</Keyboard> key.
 * **Async loading** – Support for loading and sorting items asynchronously.
 * **Keyboard navigation** – Table rows, cells, and focusable children can be navigated using the arrow keys, along with page up/down, home/end, etc. Typeahead, auto scrolling, and selection modifier keys are supported as well.
+* **Drag and drop** – Tables support drag and drop to reorder, insert, or update rows via mouse, touch, keyboard, and screen reader interactions.
 * **Touch friendly** – Selection and actions adapt their behavior depending on the device. For example, selection is activated via long press on touch when row actions are present.
 * **Accessible** – Follows the [ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/), with additional selection announcements via an ARIA live region. Extensively tested across many devices and [assistive technologies](accessibility.html#testing) to ensure announcements and behaviors are consistent.
 
 
 ## Anatomy
 
-<Anatomy role="img" aria-label="Anatomy diagram of a list container, consisting of multiple list items. Each list item contains a selection checkbox, a list item row, and a list item cell." />
+<Anatomy role="img" aria-label="Anatomy diagram of a table, consisting of multiple rows and columns. The table header includes a select all checkbox, file name and size columns, and a column resizer. Each row in the table body contains a drag button, a selection checkbox, and file name and size cells." />
 
 A table consists of a container element, with columns and rows of cells containing data inside. The cells within a table may contain focusable elements or plain text content. Columns may be nested to create column groups.
 
