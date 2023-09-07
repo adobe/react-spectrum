@@ -1132,7 +1132,7 @@ export const RadioGroupInDialogExample = () => {
 
 export const SearchFieldExample = () => {
   return (
-    <SearchField data-testid="search-field-example">
+    <SearchField className={classNames(styles, 'searchFieldExample')} data-testid="search-field-example">
       <Label>Search</Label>
       <Input />
       <Button>✕</Button>
@@ -1148,14 +1148,14 @@ export const ButtonExample = () => {
 
 export const ToggleButtonExample = () => {
   return (
-    <ToggleButton data-testid="toggle-button-example">Toggle</ToggleButton>
+    <ToggleButton className={classNames(styles, 'toggleButtonExample')} data-testid="toggle-button-example">Toggle</ToggleButton>
   );
 };
 
 export const SwitchExample = () => {
   return (
-    <Switch data-testid="switch-example">
-      <div className="switchExample-indicator" />
+    <Switch className={classNames(styles, 'switchExample')} data-testid="switch-example">
+      <div className={classNames(styles, 'switchExample-indicator')} />
       Switch me
     </Switch>
   );
