@@ -68,7 +68,7 @@ Compared with the React Aria hooks, the components provide a default DOM structu
 
 ## Status
 
-React Aria Components is currently in **alpha**. This means APIs will likely change in future updates as we discover the best ways to use it, and there are some known bugs and limitations. That said, it is based on a solid and battle-tested foundation in React Aria, and we would love for you to try it out and give us feedback! This will directly help us shape the APIs and make it the best library it can be. Please report issues and feature requests [on GitHub](https://github.com/adobe/react-spectrum/issues).
+React Aria Components is currently in **beta**. This means most APIs are stable but some changes may still occur, and there are some known bugs. That said, it is based on a solid and battle-tested foundation in React Aria, and we would love for you to try it out and give us feedback! Please report issues and feature requests [on GitHub](https://github.com/adobe/react-spectrum/issues).
 
 ## Installation
 
@@ -326,151 +326,13 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
 
 </details>
 
-## Styling
+### Styling
 
-React Aria Components do not include any styles by default, allowing you to build custom designs to fit your application or design system. Each component accepts the standard `className` and `style` props which enable using vanilla CSS, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc.
-
-When a custom `className` is not provided, each component includes a default class name following the `react-aria-ComponentName` naming convention. You can use this to style a component with standard CSS without needing any custom classes.
-
-```css render=false
-.react-aria-Select {
-  /* ... */
-}
-```
-
-### States
-
-Some components support multiple UI states (e.g. pressed, hovered, selected, etc.). React Aria Components exposes states using DOM attributes, which can be targeted by CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. They can be thought of like custom CSS pseudo classes. For example:
-
-```css render=false
-.react-aria-Item[data-selected] {
-  /* ... */
-}
-
-.react-aria-Item[data-focused] {
-  /* ... */
-}
-```
-
-If you're using Tailwind CSS, you can use [ARIA states](https://tailwindcss.com/docs/hover-focus-and-other-states#aria-states) and [data attributes](https://tailwindcss.com/docs/hover-focus-and-other-states#data-attributes) as modifiers.
-
-```jsx
-<Item className="aria-selected:bg-blue-400 data-[focused]:bg-gray-100">
-  Item
-</Item>
-````
-
-You can also use our Tailwind CSS [plugin](#tailwind-css-plugin) to get shortened modifiers.
-
-In order to ensure high quality interactions across browsers and devices, React Aria Components includes states such as `data-hovered` and `data-pressed` which are similar to CSS pseudo classes such as `:hover` and `:active`, but work consistently between mouse, touch, and keyboard modalities. You can read more about this in our [blog post series](../blog/building-a-button-part-1.html) and our [Interactions](interactions.html) overview.
-
-All of the states and selectors for each component are listed in their respective documentation.
-
-### Render props
-
-The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
-
-```jsx
-<Item className={({isSelected}) => isSelected ? 'bg-blue-400' : 'bg-gray-100'}>
-  Item
-</Item>
-```
-
-Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render a checkmark icon when an item is selected.
-
-```jsx
-<Item>
-  {({isSelected}) => (
-    <>
-      {isSelected && <CheckmarkIcon />}
-      <span>Item</span>
-    </>
-  )}
-</Item>
-```
-
-### Animation
-
-Overlay components such as [Popover](Popover.html) and [Modal](Modal.html) support entry and exit animations via the `[data-entering]` and `[data-exiting]` states, or via the corresponding render prop functions. You can use these states to apply CSS keyframe animations. These components will automatically wait for any exit animations to complete before they are removed from the DOM.
-
-```css render=false
-.react-aria-Popover[data-entering] {
-  animation: slide 300ms;
-}
-
-.react-aria-Popover[data-exiting] {
-  animation: slide 300ms reverse;
-}
-
-@keyframes slide {
-  from {
-    transform: translateY(-20px);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-```
-
-If you are using Tailwind CSS, we recommend using the [tailwindcss-animate](https://github.com/jamiebuilds/tailwindcss-animate) plugin. This includes utilities for building common animations such as fading, sliding, and zooming.
-
-```jsx
-<Popover className="data-[entering]:animate-in data-[entering]:fade-in data-[exiting]:animate-out data-[exiting]:fade-out">
-  {/* ... */}
-</Popover>
-```
+React Aria Components do not include any styles by default, allowing you to build custom designs to fit your application or design system. It works with any styling solution, including vanilla CSS, Tailwind CSS, CSS-in-JS, etc. See the [styling guide](styling.html) for full details.
 
 ## Examples
 
 The documentation for each component includes many examples styled using vanilla CSS and the default class names. We also have an example of many of the components using Tailwind CSS. You can find the [code](https://github.com/adobe/react-spectrum/blob/main/examples/rac-tailwind/src/App.js) in the repo, as well as a [live demo](https://reactspectrum.blob.core.windows.net/reactspectrum/f239d0b1a96c3e6119135fe6bbf1994dc9984257/verdaccio/rac-tailwind/index.html).
-
-## Tailwind CSS Plugin
-
-There is a Tailwind CSS plugin available which makes styling different [states](#states) easier.
-
-This allows an element with the `data-selected` attribute to be styled in Tailwind with `selected:` instead of `data-[selected]:`. Non-boolean data attributes follow the `{name}-{value}` pattern, so you can style an element with `data-orientation="horizontal"` using `orientation-horizontal:`.
-
-To install:
-
-```
-yarn add tailwindcss-react-aria-components
-```
-
-Then add the plugin to your `tailwind.config.js` file:
-
-```jsx
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  plugins: [
-    require('tailwindcss-react-aria-components')
-  ],
-}
-```
-
-You can optionally specify a prefix using `require('tailwindcss-react-aria-components')({prefix: 'rac'})`. This will allow you to use `rac-selected:` instead of `selected:`.
-
-### Boolean states
-
-The `data-pressed` state can be styled with `pressed:` like this:
-
-```jsx
-<Button className="pressed:bg-blue">
-  {/* ... */}
-</Button>
-```
-
-### Non-boolean states
-
-The `data-orientation="vertical"` state can be styled with `orientation-vertical:` like this:
-
-```jsx
-<Tabs className="orientation-vertical:flex-row">
-  {/* ... */}
-</Tabs>
-```
 
 ## Components
 
