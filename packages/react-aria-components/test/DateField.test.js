@@ -151,10 +151,10 @@ describe('DateField', () => {
   it('should support render props', () => {
     let {getByRole} = render(
       <DateField minValue={new CalendarDate(2023, 1, 1)} defaultValue={new CalendarDate(2020, 2, 3)}>
-        {({validationState}) => (
+        {({isInvalid}) => (
           <>
             <Label>Birth date</Label>
-            <DateInput data-validation-state={validationState}>
+            <DateInput data-validation-state={isInvalid ? 'invalid' : null}>
               {segment => <DateSegment segment={segment} />}
             </DateInput>
           </>

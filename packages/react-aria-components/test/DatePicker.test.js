@@ -105,10 +105,10 @@ describe('DatePicker', () => {
   it('should support render props', () => {
     let {getByRole} = render(
       <DatePicker minValue={new CalendarDate(2023, 1, 1)} defaultValue={new CalendarDate(2020, 2, 3)}>
-        {({validationState}) => (
+        {({isInvalid}) => (
           <>
             <Label>Birth date</Label>
-            <Group data-validation-state={validationState}>
+            <Group data-validation-state={isInvalid ? 'invalid' : null}>
               <DateInput>
                 {(segment) => <DateSegment segment={segment} />}
               </DateInput>

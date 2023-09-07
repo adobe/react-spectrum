@@ -49,43 +49,45 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
   return (
     <MenuStateContext.Provider value={{state, container: scopedRef, menu: domRef, menuTreeState}}>
       <FocusScope contain={state.expandedKeys.size > 0}>
-        <ul
-          {...menuProps}
-          {...styleProps}
-          ref={domRef}
-          className={
-            classNames(
-              styles,
-              'spectrum-Menu',
-              styleProps.className
-            )
-          }>
-          {[...state.collection].map(item => {
-            if (item.type === 'section') {
-              return (
-                <MenuSection
+        <div style={{overflow: 'hidden', maxHeight: '100%', display: 'inline-flex', borderRadius: 'var(--spectrum-alias-border-radius-regular)'}}>
+          <ul
+            {...menuProps}
+            {...styleProps}
+            ref={domRef}
+            className={
+              classNames(
+                styles,
+                'spectrum-Menu',
+                styleProps.className
+              )
+            }>
+            {[...state.collection].map(item => {
+              if (item.type === 'section') {
+                return (
+                  <MenuSection
+                    key={item.key}
+                    item={item}
+                    state={state}
+                    onAction={completeProps.onAction} />
+                );
+              }
+
+              let menuItem = (
+                <MenuItem
                   key={item.key}
                   item={item}
                   state={state}
                   onAction={completeProps.onAction} />
               );
-            }
 
-            let menuItem = (
-              <MenuItem
-                key={item.key}
-                item={item}
-                state={state}
-                onAction={completeProps.onAction} />
-            );
+              if (item.wrapper) {
+                menuItem = item.wrapper(menuItem);
+              }
 
-            if (item.wrapper) {
-              menuItem = item.wrapper(menuItem);
-            }
-
-            return menuItem;
-          })}
-        </ul>
+              return menuItem;
+            })}
+          </ul>
+        </div>
         {/* Make the portal container for submenus wide enough so that the submenu items can render as wide as they need to be */}
         <div ref={scopedRef} style={{width: '100vw', position: 'absolute', top: 0, ...leftOffset}} />
       </FocusScope>

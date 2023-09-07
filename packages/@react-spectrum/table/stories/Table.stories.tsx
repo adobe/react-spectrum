@@ -1805,6 +1805,7 @@ let typeAheadRows = [
   ...Array.from({length: 100}, (v, i) => ({id: i, firstname: 'Aubrey', lastname: 'Sheppard', birthday: 'May 7'})),
   {id: 101, firstname: 'John', lastname: 'Doe', birthday: 'May 7'}
 ];
+
 export const TypeaheadWithDialog: TableStory = {
   render: (args) => (
     <div style={{height: '90vh'}}>
@@ -1844,3 +1845,48 @@ export const TypeaheadWithDialog: TableStory = {
     </div>
   )
 };
+
+export const ColumnHeaderFocusRingTable = {
+  render: () => <LoadingTable />,
+  storyName: 'column header focus after loading',
+  parameters: {
+    description: {
+      data: 'Column header should remain focused even if the table collections empties/loading state changes to loading'
+    }
+  }
+};
+
+const allItems = [
+  {key: 'sam', name: 'Sam', height: 66, birthday: 'May 3'},
+  {key: 'julia', name: 'Julia', height: 70, birthday: 'February 10'}
+];
+
+function LoadingTable() {
+  const [items, setItems] = useState(allItems);
+  const [loadingState, setLoadingState] = useState(undefined);
+  const onSortChange = () => {
+    setItems([]);
+    setLoadingState('loading');
+    setTimeout(() => {
+      setItems(items.length > 1 ? [...items.slice(0, 1)] : []);
+      setLoadingState(undefined);
+    }, 1000);
+  };
+
+  return (
+    <TableView aria-label="Table" selectionMode="multiple" onSortChange={onSortChange} height={300}>
+      <TableHeader>
+        <Column key="name">Name</Column>
+        <Column key="height" allowsSorting>Height</Column>
+        <Column key="birthday">Birthday</Column>
+      </TableHeader>
+      <TableBody items={items} loadingState={loadingState}>
+        {item => (
+          <Row key={item.key}>
+            {column => <Cell>{item[column]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}

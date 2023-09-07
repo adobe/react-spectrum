@@ -32,7 +32,7 @@ describe('FileTrigger', () => {
         <Button>Upload</Button>
       </FileTrigger>
     );
-    
+
     let button = getByRole('button');
     expect(button).toHaveAttribute('class', 'react-aria-Button');
   });
@@ -67,5 +67,18 @@ describe('FileTrigger', () => {
     expect(link.files[0]).toStrictEqual(file);
     expect(link.files.item(0)).toStrictEqual(file);
     expect(link.files).toHaveLength(1);
+  });
+
+  it('should attach a ref to the input', () => {
+    let ref = React.createRef();
+    let {getByTestId} = render(
+      <FileTrigger ref={ref} data-testid="foo" name="foibles">
+        <Button>Upload</Button>
+      </FileTrigger>
+    );
+
+    let input = getByTestId('foo');
+    expect(ref.current).toBe(input);
+    expect(input).toHaveAttribute('name', 'foibles');
   });
 });

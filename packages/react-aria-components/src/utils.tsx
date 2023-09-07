@@ -12,8 +12,9 @@
 
 import {AriaLabelingProps, DOMProps as SharedDOMProps} from '@react-types/shared';
 import {mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
-import React, {createContext, CSSProperties, ReactNode, RefCallback, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {Context, createContext, CSSProperties, ForwardedRef, ReactNode, RefCallback, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
+import {useIsSSR} from 'react-aria';
 
 // Override forwardRef types so generics work.
 declare function forwardRef<T, P = {}>(
@@ -32,7 +33,7 @@ interface SlottedValue<T> {
 
 export type ContextValue<T extends SlotProps, E extends Element> = SlottedValue<WithRef<T, E>> | WithRef<T, E> | null | undefined;
 
-type ProviderValue<T> = [React.Context<T>, T];
+type ProviderValue<T> = [Context<T>, T];
 type ProviderValues<A, B, C, D, E, F, G, H> =
   | [ProviderValue<A>]
   | [ProviderValue<A>, ProviderValue<B>]
@@ -45,7 +46,7 @@ type ProviderValues<A, B, C, D, E, F, G, H> =
 
 interface ProviderProps<A, B, C, D, E, F, G, H> {
   values: ProviderValues<A, B, C, D, E, F, G, H>,
-  children: React.ReactNode
+  children: ReactNode
 }
 
 export function Provider<A, B, C, D, E, F, G, H>({values, children}: ProviderProps<A, B, C, D, E, F, G, H>): JSX.Element {
@@ -125,30 +126,37 @@ export function useRenderProps<T>(props: RenderPropsHookOptions<T>) {
     return {
       className: computedClassName ?? defaultClassName,
       style: computedStyle,
-      children: computedChildren
+      children: computedChildren,
+      'data-rac': ''
     };
   }, [className, style, children, defaultClassName, defaultChildren, values]);
 }
 
-export type WithRef<T, E> = T & {ref?: React.ForwardedRef<E>};
+export type WithRef<T, E> = T & {ref?: ForwardedRef<E>};
 export interface SlotProps {
   /** A slot name for the component. Slots allow the component to receive props from a parent component. */
   slot?: string
 }
 
-export function useContextProps<T, U extends SlotProps, E extends Element>(props: T & SlotProps, ref: React.ForwardedRef<E>, context: React.Context<ContextValue<U, E>>): [T, React.RefObject<E>] {
-  let ctx = useContext(context) || {};
-  if ('slots' in ctx && ctx.slots) {
-    if (!props.slot && !ctx.slots[defaultSlot]) {
+export function useSlottedContext<U extends SlotProps, E extends Element>(context: Context<ContextValue<U, E>>, slot?: string): WithRef<U, E> | null | undefined {
+  let ctx = useContext(context);
+  if (ctx && 'slots' in ctx && ctx.slots) {
+    if (!slot && !ctx.slots[defaultSlot]) {
       throw new Error('A slot prop is required');
     }
-    let slot = props.slot || defaultSlot;
-    if (!ctx.slots[slot]) {
+    let slotKey = slot || defaultSlot;
+    if (!ctx.slots[slotKey]) {
       // @ts-ignore
-      throw new Error(`Invalid slot "${props.slot}". Valid slot names are ` + new Intl.ListFormat().format(Object.keys(ctx.slots).map(p => `"${p}"`)) + '.');
+      throw new Error(`Invalid slot "${slot}". Valid slot names are ` + new Intl.ListFormat().format(Object.keys(ctx.slots).map(p => `"${p}"`)) + '.');
     }
-    ctx = ctx.slots[slot];
+    return ctx.slots[slotKey];
   }
+  // @ts-ignore
+  return ctx;
+}
+
+export function useContextProps<T, U extends SlotProps, E extends Element>(props: T & SlotProps, ref: ForwardedRef<E>, context: Context<ContextValue<U, E>>): [T, RefObject<E>] {
+  let ctx = useSlottedContext(context, props.slot) || {};
   // @ts-ignore - TS says "Type 'unique symbol' cannot be used as an index type." but not sure why.
   let {ref: contextRef, [slotCallbackSymbol]: callback, ...contextProps} = ctx;
   let mergedRef = useObjectRef(useMemo(() => mergeRefs(ref, contextRef), [ref, contextRef]));
@@ -256,4 +264,65 @@ function useAnimation(ref: RefObject<HTMLElement>, isActive: boolean, onEnd: () 
   }, [ref, isActive, onEnd]);
 }
 
+// React doesn't understand the <template> element, which doesn't have children like a normal element.
+// It will throw an error during hydration when it expects the firstChild to contain content rendered
+// on the server, when in reality, the browser will have placed this inside the `content` document fragment.
+// This monkey patches the firstChild property for our special hidden template elements to work around this error.
+// See https://github.com/facebook/react/issues/19932
+if (typeof HTMLTemplateElement !== 'undefined') {
+  const getFirstChild = Object.getOwnPropertyDescriptor(Node.prototype, 'firstChild')!.get!;
+  Object.defineProperty(HTMLTemplateElement.prototype, 'firstChild', {
+    configurable: true,
+    enumerable: true,
+    get: function () {
+      if (this.dataset.reactAriaHidden) {
+        return this.content.firstChild;
+      } else {
+        return getFirstChild.call(this);
+      }
+    }
+  });
+}
+
 export const HiddenContext = createContext<boolean>(false);
+
+// Portal to nowhere
+const hiddenFragment = typeof DocumentFragment !== 'undefined' ? new DocumentFragment() : null;
+
+export function Hidden(props: {children: ReactNode}) {
+  let isHidden = useContext(HiddenContext);
+  let isSSR = useIsSSR();
+  if (isHidden) {
+    // Don't hide again if we are already hidden.
+    return <>{props.children}</>;
+  }
+
+  let children = (
+    <HiddenContext.Provider value>
+      {props.children}
+    </HiddenContext.Provider>
+  );
+
+  // In SSR, portals are not supported by React. Instead, render into a <template>
+  // element, which the browser will never display to the user. In addition, the
+  // content is not part of the DOM tree, so it won't affect ids or other accessibility attributes.
+  return isSSR
+    ? <template data-react-aria-hidden>{children}</template>
+    : ReactDOM.createPortal(children, hiddenFragment!);
+}
+
+// Creates a component that forwards its ref and returns null if it is in a <Hidden> subtree.
+// Note: this function is handled specially in the documentation generator. If you change it, you'll need to update DocsTransformer as well.
+export function createHideableComponent<T, P = {}>(fn: (props: P, ref: React.Ref<T>) => React.ReactElement | null): (props: P & React.RefAttributes<T>) => React.ReactElement | null {
+  let Wrapper = (props: P, ref: React.Ref<T>) => {
+    let isHidden = useContext(HiddenContext);
+    if (isHidden) {
+      return null;
+    }
+
+    return fn(props, ref);
+  };
+  // @ts-ignore - for react dev tools
+  Wrapper.displayName = fn.displayName || fn.name;
+  return (React.forwardRef as forwardRefType)(Wrapper);
+}

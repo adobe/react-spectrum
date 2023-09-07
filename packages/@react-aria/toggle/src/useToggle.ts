@@ -29,7 +29,9 @@ export interface ToggleAria {
   /** Whether the toggle is disabled. */
   isDisabled: boolean,
   /** Whether the toggle is read only. */
-  isReadOnly: boolean
+  isReadOnly: boolean,
+  /** Whether the toggle is invalid. */
+  isInvalid: boolean
 }
 
 /**
@@ -45,7 +47,8 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
     children,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby,
-    validationState = 'valid'
+    validationState = 'valid',
+    isInvalid
   } = props;
 
   let onChange = (e) => {
@@ -74,7 +77,7 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
 
   return {
     inputProps: mergeProps(domProps, {
-      'aria-invalid': validationState === 'invalid' || undefined,
+      'aria-invalid': isInvalid || validationState === 'invalid' || undefined,
       'aria-errormessage': props['aria-errormessage'],
       'aria-controls': props['aria-controls'],
       'aria-readonly': isReadOnly || undefined,
@@ -89,6 +92,7 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
     isSelected: state.isSelected,
     isPressed,
     isDisabled,
-    isReadOnly
+    isReadOnly,
+    isInvalid: isInvalid || validationState === 'invalid'
   };
 }
