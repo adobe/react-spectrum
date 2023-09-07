@@ -58,6 +58,7 @@ function ContextualHelpTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): Rea
       triggerRef.current.focus();
     }
   };
+  // TODO: double check when this even fires
   let onBlurWithin = (e) => {
     if (e.relatedTarget && popoverRef.current && !popoverRef.current?.UNSAFE_getDOMNode().contains(e.relatedTarget)) {
       if (menuState.expandedKeys.has(props.targetKey)) {

@@ -386,7 +386,7 @@ export const SubMenuActions = {
         <Item key="Lvl 1 Item 2">Lvl 1 Item 2</Item>
         <Menu onAction={action('onAction lvl 2 menu')} onClose={action('onClose menu 2')}>
           <Item key="Lvl 2 Item 1">Lvl 2 Item 1</Item>
-          <Item key="Lvl 1 Item 2">Lvl 2 Item 2</Item>
+          <Item key="Lvl 2 Item 2">Lvl 2 Item 2</Item>
           <SubMenuTrigger>
             <Item key="Lvl 2 Item 3">Lvl 2 Item 3</Item>
             <Menu onAction={action('onAction lvl 3 menu')} onClose={action('onClose menu 3')}>

@@ -15,10 +15,12 @@ import {AriaMenuItemProps} from './useMenuItem';
 import {AriaMenuOptions} from './useMenu';
 import type {AriaPopoverProps} from '@react-aria/overlays';
 import {FocusableElement, FocusStrategy, PressEvent} from '@react-types/shared';
+import {isElementInChildOfActiveScope} from '@react-aria/focus';
 import {RefObject, useCallback, useRef} from 'react';
 import type {SubMenuTriggerState} from '@react-stately/menu';
 import {useEffectEvent, useId, useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
+
 
 export interface AriaSubMenuTriggerProps {
   /** Ref of the menu that contains the submenu trigger. */
@@ -154,6 +156,12 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
     }
   };
 
+  let onBlur = (e) => {
+    if (state.isOpen && (!isElementInChildOfActiveScope(e.relatedTarget) || parentMenuRef.current.contains(e.relatedTarget))) {
+      onSubMenuClose();
+    }
+  };
+
   let onExit = () => {
     // if focus was already moved back to a menu item, don't need to do anything
     if (!parentMenuRef.current.contains(document.activeElement)) {
@@ -166,12 +174,6 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
 
   let shouldCloseOnInteractOutside = (target) => {
     return target !== ref.current;
-    // if (e.)
-    // TODO: prevent close if e.related target is the triggerElement, but close if it is a element elsewhere in said menu
-    // TODO: this actually doesn't work that well since the user could hover the sub menu trigger then a adjacent menuitem and then the submenu won't close when it should
-    // perhaps watch for focus changes in every Menu and if said menu has a submenu that is open, check if focus has been moved to
-    // an element that isn't in its active scope and isn't the submenu trigger and if so close the sub menu trigger
-    // import {isElementInChildOfActiveScope} from '@react-aria/focus';
   };
 
   return {
@@ -183,7 +185,8 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
       onPressStart,
       onPress,
       onHoverChange,
-      onKeyDown: subMenuTriggerKeyDown
+      onKeyDown: subMenuTriggerKeyDown,
+      onBlur
     },
     subMenuProps: {
       // makes item selection in submenu close all menus

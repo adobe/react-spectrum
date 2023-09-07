@@ -11,10 +11,9 @@
  */
 
 import {DOMAttributes, DOMProps, FocusableElement, PressEvent} from '@react-types/shared';
-import {focusSafely} from '@react-aria/focus';
+import {FocusEvent, Key, RefObject} from 'react';
 import {getItemCount} from '@react-stately/collections';
 import {isFocusVisible, useHover, useKeyboard, usePress} from '@react-aria/interactions';
-import {Key, RefObject} from 'react';
 import {menuData} from './useMenu';
 import {mergeProps, useSlotId} from '@react-aria/utils';
 import {TreeState} from '@react-stately/tree';
@@ -91,6 +90,7 @@ export interface AriaMenuItemProps extends DOMProps {
   onPress?: (e: PressEvent) => void,
   onHoverChange?: (isHovering: boolean) => void,
   onKeyDown?: (e: KeyboardEvent) => void,
+  onBlur?: (e: FocusEvent<Element>) => void,
   'aria-expanded'?: boolean | 'true' | 'false',
   'aria-controls'?: string
 }
@@ -110,7 +110,8 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     onPressStart: pressStartProp,
     onPress,
     onHoverChange,
-    onKeyDown
+    onKeyDown,
+    onBlur
   } = props;
 
   let isTrigger = !!hasPopup;
@@ -228,7 +229,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   return {
     menuItemProps: {
       ...ariaProps,
-      ...mergeProps(itemProps, pressProps, hoverProps, keyboardProps, {onKeyDown})
+      ...mergeProps(itemProps, pressProps, hoverProps, keyboardProps, {onKeyDown, onBlur})
     },
     labelProps: {
       id: labelId
