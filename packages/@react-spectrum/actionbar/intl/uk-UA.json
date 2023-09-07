@@ -2,6 +2,6 @@
   "actions": "Дії",
   "actionsAvailable": "Доступні дії.",
   "clearSelection": "Очистити вибір",
-  "selected": "{count, plural, =0 {Нічого не вибрано} other {Вибрано: #}}",
+  "selected": "Вибрано: {count}",
   "selectedAll": "Усе вибрано"
 }

@@ -234,6 +234,17 @@ and the <Keyboard>Space</Keyboard> key to toggle it.
 to provide more context about the field, and any validation messages. These are linked with the
 inputs via the `aria-describedby` attribute.
 
+```tsx
+import {CheckboxGroup, Checkbox, Label, Text} from 'react-aria-components';
+
+<CheckboxGroup>
+  <Label />
+  <Checkbox />
+  <Text slot="description" />
+  <Text slot="errorMessage" />
+</CheckboxGroup>
+```
+
 Individual checkboxes must have a visual label. If the checkbox group does not have a visible label,
 an `aria-label` or `aria-labelledby` prop must be passed instead to identify the element to assistive
 technology.
@@ -252,6 +263,226 @@ A `CheckboxGroup` uses the following components, which may also be used standalo
 </ExampleCard>
 
 </section>
+
+## Reusable wrappers
+
+If you will use a CheckboxGroup in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+This example wraps `CheckboxGroup` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)).
+
+```tsx example export=true
+import type {CheckboxGroupProps, CheckboxProps} from 'react-aria-components';
+import {Text} from 'react-aria-components';
+
+interface MyCheckboxGroupProps extends Omit<CheckboxGroupProps, 'children'> {
+  children?: React.ReactNode,
+  label?: string,
+  description?: string,
+  errorMessage?: string
+}
+
+function MyCheckboxGroup({
+  label,
+  description,
+  errorMessage,
+  children,
+  ...props
+}: MyCheckboxGroupProps) {
+  return (
+    <CheckboxGroup {...props}>
+      {label}
+      {children}
+      {description && <Text slot="description">{description}</Text>}
+      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
+    </CheckboxGroup>
+  );
+}
+
+interface MyCheckboxProps extends Omit<CheckboxProps, 'children'> {
+  children?: React.ReactNode
+}
+
+function MyCheckbox({children, ...props}: MyCheckboxProps) {
+  return (
+    <Checkbox {...props}>
+      <div className="checkbox" aria-hidden="true">
+        <svg viewBox="0 0 18 18"><polyline points="1 9 7 14 15 4" /></svg>
+      </div>
+      {children}
+    </Checkbox>
+  );
+}
+
+<MyCheckboxGroup label="Favorite sports">
+  <MyCheckbox value="soccer">Soccer</MyCheckbox>
+  <MyCheckbox value="baseball">Baseball</MyCheckbox>
+  <MyCheckbox value="basketball">Basketball</MyCheckbox>
+</MyCheckboxGroup>
+```
+
+## Value
+
+### Default value
+
+An initial, uncontrolled value can be provided to the CheckboxGroup using the `defaultValue` prop, which accepts an array of selected items that map to the
+`value` prop on each Checkbox.
+
+```tsx example
+<MyCheckboxGroup label="Favorite sports (uncontrolled)" defaultValue={['soccer', 'baseball']}>
+  <MyCheckbox value="soccer">Soccer</MyCheckbox>
+  <MyCheckbox value="baseball">Baseball</MyCheckbox>
+  <MyCheckbox value="basketball">Basketball</MyCheckbox>
+</MyCheckboxGroup>
+```
+
+### Controlled value
+
+A controlled value can be provided using the `value` prop, which accepts an array of selected items, which map to the
+`value` prop on each Checkbox. The `onChange` event is fired when the user checks or unchecks an option. It receives a new array
+containing the updated selected values.
+
+```tsx example
+function Example() {
+  let [selected, setSelected] = React.useState(['soccer', 'baseball']);
+
+  return (
+    <MyCheckboxGroup label="Favorite sports (controlled)" value={selected} onChange={setSelected}>
+      <MyCheckbox value="soccer">Soccer</MyCheckbox>
+      <MyCheckbox value="baseball">Baseball</MyCheckbox>
+      <MyCheckbox value="basketball">Basketball</MyCheckbox>
+    </MyCheckboxGroup>
+  );
+}
+```
+
+### HTML forms
+
+CheckboxGroup supports the `name` prop, paired with the Checkbox `value` prop, for integration with HTML forms.
+
+```tsx example
+<MyCheckboxGroup label="Favorite sports" name="sports">
+  <MyCheckbox value="soccer">Soccer</MyCheckbox>
+  <MyCheckbox value="baseball">Baseball</MyCheckbox>
+  <MyCheckbox value="basketball">Basketball</MyCheckbox>
+</MyCheckboxGroup>
+```
+
+## Validation
+
+### Group validation
+
+CheckboxGroups can display a validation state to communicate to the user if the current value is invalid.
+Implement your own validation logic in your app and set the `isInvalid` prop to either
+the `CheckboxGroup` or an individual `Checkbox` to mark it as invalid.
+
+If the group as a whole is invalid, for example if the user must choose at least one option but failed
+to do so, then pass `isInvalid` to the `CheckboxGroup`.
+
+The following example shows how to require that at least one option is selected. It sets the `isInvalid`
+prop when no options are selected and removes it otherwise.
+
+```tsx example
+function Example() {
+  let [selected, setSelected] = React.useState<string[]>([]);
+
+  return (
+    <MyCheckboxGroup label="Sandwich condiments" value={selected} onChange={setSelected} isRequired isInvalid={selected.length === 0}>
+      <MyCheckbox value="lettuce">Lettuce</MyCheckbox>
+      <MyCheckbox value="tomato">Tomato</MyCheckbox>
+      <MyCheckbox value="onion">Onion</MyCheckbox>
+      <MyCheckbox value="sprouts">Sprouts</MyCheckbox>
+    </MyCheckboxGroup>
+  );
+}
+```
+
+### Individual Checkbox validation
+
+If an individual checkbox is invalid, for example if the user must select a particular option but failed
+to do so, then pass `isInvalid` to the `Checkbox` element instead.
+
+The following example shows how to require that all items are selected. It uses the `isRequired` prop on each individual `Checkbox`
+element to indicate to assistive technology that every checkbox is required. By default, the `isRequired` prop on the `CheckboxGroup` only
+indicates that the group is required, not any individual option. In addition, `isInvalid` is set on each checkbox that is not yet checked.
+
+```tsx example
+function Example() {
+  let [selected, setSelected] = React.useState<string[]>([]);
+
+  return (
+    <MyCheckboxGroup label="Agree to the following" isRequired value={selected} onChange={setSelected}>
+      <MyCheckbox value="terms" isRequired isInvalid={!selected.includes('terms')}>Terms and conditions</MyCheckbox>
+      <MyCheckbox value="privacy" isRequired isInvalid={!selected.includes('privacy')}>Privacy policy</MyCheckbox>
+      <MyCheckbox value="cookies" isRequired isInvalid={!selected.includes('cookies')}>Cookie policy</MyCheckbox>
+    </MyCheckboxGroup>
+  );
+}
+```
+
+### Help text
+
+The `description` slot can be used to associate additional help text with a checkbox group. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to semantically mark the checkbox group as invalid for assistive technologies.
+
+```tsx example
+function Example() {
+  let [checked, setChecked] = React.useState(['dogs', 'dragons']);
+  let isValid = checked.length === 2 && checked.includes('dogs') && checked.includes('dragons');
+
+  return (
+    <CheckboxGroup
+      onChange={setChecked}
+      value={checked}
+      /*- begin highlight -*/
+      isInvalid={!isValid}
+      /*- end highlight -*/
+    >
+      <Label>Pets</Label>
+      <MyCheckbox value="dogs">Dogs</MyCheckbox>
+      <MyCheckbox value="cats">Cats</MyCheckbox>
+      <MyCheckbox value="dragons">Dragons</MyCheckbox>
+      {/*- begin highlight -*/}
+      {isValid && <Text slot="description">Select your pets.</Text>}
+      {!isValid && <Text slot="errorMessage">{checked.includes('cats') ? 'No cats allowed.' : 'Select only dogs and dragons.'}</Text>}
+      {/*- end highlight -*/}
+    </CheckboxGroup>
+  );
+}
+```
+
+## Disabled
+
+The entire CheckboxGroup can be disabled with the `isDisabled` prop.
+
+```tsx example
+<MyCheckboxGroup label="Favorite sports" isDisabled>
+  <MyCheckbox value="soccer">Soccer</MyCheckbox>
+  <MyCheckbox value="baseball">Baseball</MyCheckbox>
+  <MyCheckbox value="basketball">Basketball</MyCheckbox>
+</MyCheckboxGroup>
+```
+
+To disable an individual checkbox, pass `isDisabled` to the `Checkbox` instead.
+
+```tsx example
+<MyCheckboxGroup label="Favorite sports">
+  <MyCheckbox value="soccer">Soccer</MyCheckbox>
+  <MyCheckbox value="baseball" isDisabled>Baseball</MyCheckbox>
+  <MyCheckbox value="basketball">Basketball</MyCheckbox>
+</MyCheckboxGroup>
+```
+
+### Read only
+
+The `isReadOnly` prop makes the selection immutable. Unlike `isDisabled`, the CheckboxGroup remains focusable.
+See the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
+
+```tsx example
+<MyCheckboxGroup label="Favorite sports" defaultValue={['baseball']} isReadOnly>
+  <MyCheckbox value="soccer">Soccer</MyCheckbox>
+  <MyCheckbox value="baseball">Baseball</MyCheckbox>
+  <MyCheckbox value="basketball">Basketball</MyCheckbox>
+</MyCheckboxGroup>
+```
 
 ## Props
 
@@ -332,224 +563,6 @@ A `Checkbox` can be targeted with the `.react-aria-Checkbox` CSS selector, or by
 ### Text
 
 The help text elements within a `CheckboxGroup` can be targeted with the `[slot=description]` and `[slot=errorMessage]` CSS selectors, or by adding a custom `className`.
-
-## Reusable wrappers
-
-If you will use a CheckboxGroup in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
-
-This example wraps `CheckboxGroup` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)).
-
-```tsx example export=true
-import type {CheckboxGroupProps, CheckboxProps} from 'react-aria-components';
-import {Text} from 'react-aria-components';
-
-interface MyCheckboxGroupProps extends Omit<CheckboxGroupProps, 'children'> {
-  children?: React.ReactNode,
-  label?: string,
-  description?: string,
-  errorMessage?: string
-}
-
-function MyCheckboxGroup({
-  label,
-  description,
-  errorMessage,
-  children,
-  ...props
-}: MyCheckboxGroupProps) {
-  return (
-    <CheckboxGroup {...props}>
-      {label}
-      {children}
-      {description && <Text slot="description">{description}</Text>}
-      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
-    </CheckboxGroup>
-  );
-}
-
-interface MyCheckboxProps extends Omit<CheckboxProps, 'children'> {
-  children?: React.ReactNode
-}
-
-function MyCheckbox({children, ...props}: MyCheckboxProps) {
-  return (
-    <Checkbox {...props}>
-      <div className="checkbox" aria-hidden="true">
-        <svg viewBox="0 0 18 18"><polyline points="1 9 7 14 15 4" /></svg>
-      </div>
-      {children}
-    </Checkbox>
-  );
-}
-
-<MyCheckboxGroup label="Favorite sports">
-  <MyCheckbox value="soccer">Soccer</MyCheckbox>
-  <MyCheckbox value="baseball">Baseball</MyCheckbox>
-  <MyCheckbox value="basketball">Basketball</MyCheckbox>
-</MyCheckboxGroup>
-```
-
-## Usage
-
-The following examples show how to use the `MyCheckboxGroup` and `MyCheckbox` components created in the above example.
-
-### Default value
-
-An initial, uncontrolled value can be provided to the CheckboxGroup using the `defaultValue` prop, which accepts an array of selected items that map to the
-`value` prop on each Checkbox.
-
-```tsx example
-<MyCheckboxGroup label="Favorite sports (uncontrolled)" defaultValue={['soccer', 'baseball']}>
-  <MyCheckbox value="soccer">Soccer</MyCheckbox>
-  <MyCheckbox value="baseball">Baseball</MyCheckbox>
-  <MyCheckbox value="basketball">Basketball</MyCheckbox>
-</MyCheckboxGroup>
-```
-
-### Controlled value
-
-A controlled value can be provided using the `value` prop, which accepts an array of selected items, which map to the
-`value` prop on each Checkbox. The `onChange` event is fired when the user checks or unchecks an option. It receives a new array
-containing the updated selected values.
-
-```tsx example
-function Example() {
-  let [selected, setSelected] = React.useState(['soccer', 'baseball']);
-
-  return (
-    <MyCheckboxGroup label="Favorite sports (controlled)" value={selected} onChange={setSelected}>
-      <MyCheckbox value="soccer">Soccer</MyCheckbox>
-      <MyCheckbox value="baseball">Baseball</MyCheckbox>
-      <MyCheckbox value="basketball">Basketball</MyCheckbox>
-    </MyCheckboxGroup>
-  );
-}
-```
-
-### Group validation
-
-CheckboxGroups can display a validation state to communicate to the user if the current value is invalid.
-Implement your own validation logic in your app and set the `isInvalid` prop to either
-the `CheckboxGroup` or an individual `Checkbox` to mark it as invalid.
-
-If the group as a whole is invalid, for example if the user must choose at least one option but failed
-to do so, then pass `isInvalid` to the `CheckboxGroup`.
-
-The following example shows how to require that at least one option is selected. It sets the `isInvalid`
-prop when no options are selected and removes it otherwise.
-
-```tsx example
-function Example() {
-  let [selected, setSelected] = React.useState<string[]>([]);
-
-  return (
-    <MyCheckboxGroup label="Sandwich condiments" value={selected} onChange={setSelected} isRequired isInvalid={selected.length === 0}>
-      <MyCheckbox value="lettuce">Lettuce</MyCheckbox>
-      <MyCheckbox value="tomato">Tomato</MyCheckbox>
-      <MyCheckbox value="onion">Onion</MyCheckbox>
-      <MyCheckbox value="sprouts">Sprouts</MyCheckbox>
-    </MyCheckboxGroup>
-  );
-}
-```
-
-### Individual Checkbox validation
-
-If an individual checkbox is invalid, for example if the user must select a particular option but failed
-to do so, then pass `isInvalid` to the `Checkbox` element instead.
-
-The following example shows how to require that all items are selected. It uses the `isRequired` prop on each individual `Checkbox`
-element to indicate to assistive technology that every checkbox is required. By default, the `isRequired` prop on the `CheckboxGroup` only
-indicates that the group is required, not any individual option. In addition, `isInvalid` is set on each checkbox that is not yet checked.
-
-```tsx example
-function Example() {
-  let [selected, setSelected] = React.useState<string[]>([]);
-
-  return (
-    <MyCheckboxGroup label="Agree to the following" isRequired value={selected} onChange={setSelected}>
-      <MyCheckbox value="terms" isRequired isInvalid={!selected.includes('terms')}>Terms and conditions</MyCheckbox>
-      <MyCheckbox value="privacy" isRequired isInvalid={!selected.includes('privacy')}>Privacy policy</MyCheckbox>
-      <MyCheckbox value="cookies" isRequired isInvalid={!selected.includes('cookies')}>Cookie policy</MyCheckbox>
-    </MyCheckboxGroup>
-  );
-}
-```
-
-### Help text
-
-The `description` slot can be used to associate additional help text with a checkbox group. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to semantically mark the checkbox group as invalid for assistive technologies.
-
-```tsx example
-function Example() {
-  let [checked, setChecked] = React.useState(['dogs', 'dragons']);
-  let isValid = checked.length === 2 && checked.includes('dogs') && checked.includes('dragons');
-
-  return (
-    <MyCheckboxGroup
-      label="Pets"
-      onChange={setChecked}
-      value={checked}
-      isInvalid={!isValid}
-      description={isValid ? 'Select your pets.' : undefined}
-      errorMessage={isValid ? undefined : checked.includes('cats')
-        ? 'No cats allowed.'
-        : 'Select only dogs and dragons.'}
-    >
-      <MyCheckbox value="dogs">Dogs</MyCheckbox>
-      <MyCheckbox value="cats">Cats</MyCheckbox>
-      <MyCheckbox value="dragons">Dragons</MyCheckbox>
-    </MyCheckboxGroup>
-  );
-}
-```
-
-### Disabled
-
-The entire CheckboxGroup can be disabled with the `isDisabled` prop.
-
-```tsx example
-<MyCheckboxGroup label="Favorite sports" isDisabled>
-  <MyCheckbox value="soccer">Soccer</MyCheckbox>
-  <MyCheckbox value="baseball">Baseball</MyCheckbox>
-  <MyCheckbox value="basketball">Basketball</MyCheckbox>
-</MyCheckboxGroup>
-```
-
-To disable an individual checkbox, pass `isDisabled` to the `Checkbox` instead.
-
-```tsx example
-<MyCheckboxGroup label="Favorite sports">
-  <MyCheckbox value="soccer">Soccer</MyCheckbox>
-  <MyCheckbox value="baseball" isDisabled>Baseball</MyCheckbox>
-  <MyCheckbox value="basketball">Basketball</MyCheckbox>
-</MyCheckboxGroup>
-```
-
-### Read only
-
-The `isReadOnly` prop makes the selection immutable. Unlike `isDisabled`, the CheckboxGroup remains focusable.
-See the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
-
-```tsx example
-<MyCheckboxGroup label="Favorite sports" defaultValue={['baseball']} isReadOnly>
-  <MyCheckbox value="soccer">Soccer</MyCheckbox>
-  <MyCheckbox value="baseball">Baseball</MyCheckbox>
-  <MyCheckbox value="basketball">Basketball</MyCheckbox>
-</MyCheckboxGroup>
-```
-
-### HTML forms
-
-CheckboxGroup supports the `name` prop, paired with the Checkbox `value` prop, for integration with HTML forms.
-
-```tsx example
-<MyCheckboxGroup label="Favorite sports" name="sports">
-  <MyCheckbox value="soccer">Soccer</MyCheckbox>
-  <MyCheckbox value="baseball">Baseball</MyCheckbox>
-  <MyCheckbox value="basketball">Basketball</MyCheckbox>
-</MyCheckboxGroup>
-```
 
 ## Advanced customization
 
