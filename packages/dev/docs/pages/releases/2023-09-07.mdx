@@ -11,7 +11,7 @@ import {BlogPostLayout, Hero} from '@react-spectrum/docs';
 export default BlogPostLayout;
 
 ---
-description: In today's release, the InlineAlert component is going to GA! Explore the options in the React Spectrum InlineAlert docs. Our React Aria Components have new additions including TextArea, FileTrigger, and DropZone. Our date/time components have also had some usability updates, usePress now supports an option to continue propagation, and we improved support for HTML forms across our components.
+description: In this release, we’re moving React Aria Components from alpha to beta! With this milestone, we’ve made some API updates based on early feedback, introduced a new Tailwind CSS plugin, and updated the documentation with improved content and organization. This release also deprecates the `validationState` prop in many components and replaces it with an `isInvalid` boolean prop. It also includes fixes for an infinite resize loop bug in `ButtonGroup`, a press handling bug on certain Android devices, and new documentation for our pre-release components.
 date: 2023-09-07
 ---
 
@@ -26,13 +26,11 @@ As always, huge thanks to all of our contributors!
 
 React Aria Components includes the following API changes:
 
-
 - All states are now exposed on DOM elements as data attributes. Previously, some states were documented as ARIA attributes or native CSS pseudo classes, but this caused some confusion. Switching to data attributes for all states ensures API consistency and allows us to handle future ARIA pattern changes more easily without breaking your styles. See the Styling section in each component’s documentation for the full list of supported states.
 - Breadcrumbs now uses the `<Breadcrumb>` component instead of `<Item>`. In addition, it does not include a `<nav>` element by default anymore. The `<ol>` element is now the root element.
 - All components with validation support moved from the `validationState` prop to the `isInvalid` prop. This is exposed as `data-invalid` instead of `data-validation-state` as well.
 
 In addition to the above API changes, we also released the following improvements:
-
 
 - New [Styling](https://react-spectrum.adobe.com/react-aria/styling.html) page in the docs that gives an overview of the various methods to style React Aria Components, including states, render props, slots, and animation with CSS keyframes and Framer Motion.
 - A new [Tailwind CSS plugin](https://react-spectrum.adobe.com/react-aria/styling.html#plugin) that gives you shorter modifier names and autocomplete for the states of React Aria Components.
@@ -75,8 +73,8 @@ In React Spectrum and React Aria hooks, we have deprecated the `validationState`
 
 Fixes to pre-released components are listed below. Please feel free to try them out, and report any issues you encounter.
 
-- Unavailable Menu Items (alpha)
-    - Fix Unavailable Menu Item's Popover positioning - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/4917)    
+- [Unavailable Menu Items](https://react-spectrum.adobe.com/react-spectrum/Menu.html#unavailable-items) (alpha)
+    - Fix Unavailable Menu Item's Popover positioning - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/4917)
 - DropZone (alpha)
     - React Spectrum `DropZone` - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/4757)
 
