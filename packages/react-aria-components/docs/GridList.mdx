@@ -15,7 +15,7 @@ import sharedDocs from 'docs:@react-types/shared';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
-import Anatomy from '@react-aria/gridlist/docs/anatomy.svg';
+import Anatomy from './GridListAnatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
@@ -317,6 +317,7 @@ HTML lists are meant for static content, rather than lists with rich interaction
 * **Actions** – Items support optional row actions such as navigation via click, tap, double click, or <Keyboard>Enter</Keyboard> key.
 * **Async loading** – Support for loading items asynchronously.
 * **Keyboard navigation** – List items and focusable children can be navigated using the arrow keys, along with page up/down, home/end, etc. Typeahead, auto scrolling, and selection modifier keys are supported as well.
+* **Drag and drop** – GridList supports drag and drop to reorder, insert, or update items via mouse, touch, keyboard, and screen reader interactions.
 * **Touch friendly** – Selection and actions adapt their behavior depending on the device. For example, selection is activated via long press on touch when item actions are present.
 * **Accessible** – Follows the [ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/), with additional selection announcements via an ARIA live region. Extensively tested across many devices and [assistive technologies](accessibility.html#testing) to ensure announcements and behaviors are consistent.
 
@@ -324,7 +325,7 @@ HTML lists are meant for static content, rather than lists with rich interaction
 
 ## Anatomy
 
-<Anatomy role="img" aria-label="Anatomy diagram of a list container, consisting of multiple list items. Each list item contains a selection checkbox, a list item row, and a list item cell." />
+<Anatomy role="img" aria-label="Anatomy diagram of a list container, consisting of multiple list items. Each list item contains a drag button, a selection checkbox, an icon, a title, and a description." />
 
 A grid list consists of a container element, with rows of data inside. The rows within a list may contain focusable elements or plain text content.
 If the list supports row selection, each row can optionally include a selection checkbox.
