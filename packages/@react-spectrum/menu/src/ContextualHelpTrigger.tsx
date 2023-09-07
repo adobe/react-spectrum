@@ -36,6 +36,7 @@ function ContextualHelpTrigger<T>(props: MenuDialogTriggerProps<T>): ReactElemen
   let triggerRef = useRef<HTMLLIElement>(null);
   let popoverRef = useRef(null);
   let {state: menuState, container, menu} = useMenuStateContext();
+  let submenuRef = useUnwrapDOMRef(popoverRef);
   let state = useOverlayTriggerState({isOpen: menuState.expandedKeys.has(props.targetKey), onOpenChange: (val) => {
     if (!val) {
       if (menuState.expandedKeys.has(props.targetKey)) {
@@ -65,14 +66,12 @@ function ContextualHelpTrigger<T>(props: MenuDialogTriggerProps<T>): ReactElemen
     }
   };
   let onBlurWithin = (e) => {
-    if (e.relatedTarget && popoverRef.current && !popoverRef.current?.UNSAFE_getDOMNode().contains(e.relatedTarget)) {
+    if (e.relatedTarget && popoverRef.current && !submenuRef.current?.contains(e.relatedTarget)) {
       if (menuState.expandedKeys.has(props.targetKey)) {
         menuState.toggleKey(props.targetKey);
       }
     }
   };
-
-  let submenuRef = useUnwrapDOMRef(popoverRef);
 
   useSafelyMouseToSubmenu({
     menuRef: menu,
