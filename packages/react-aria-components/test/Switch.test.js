@@ -155,4 +155,13 @@ describe('Switch', () => {
     expect(label).toHaveAttribute('data-readonly');
     expect(label).toHaveClass('readonly');
   });
+
+  it('should render data- attributes only on the outer element', () => {
+    let {getAllByTestId} = render(
+      <Switch data-testid="switch-test">Test</Switch>
+    );
+    let outerEl = getAllByTestId('switch-test');
+    expect(outerEl).toHaveLength(1);
+    expect(outerEl[0]).toHaveClass('react-aria-Switch');
+  });
 });

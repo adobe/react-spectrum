@@ -24,7 +24,7 @@ export default {
 };
 
 export const ComboBoxExample = () => (
-  <ComboBox data-test-id="combo-box-example">
+  <ComboBox data-testid="combo-box-example">
     <Label style={{display: 'block'}}>Test</Label>
     <div style={{display: 'flex'}}>
       <Input />
@@ -34,7 +34,7 @@ export const ComboBoxExample = () => (
     </div>
     <Popover placement="bottom end">
       <ListBox
-        data-test-id="combo-box-list-box"
+        data-testid="combo-box-list-box"
         className={styles.menu}>
         <MyItem>Foo</MyItem>
         <MyItem>Bar</MyItem>
@@ -51,7 +51,7 @@ interface ComboBoxItem {
 
 let items: ComboBoxItem[] = [{id: '1', name: 'Foo'}, {id: '2', name: 'Bar'}, {id: '3', name: 'Baz'}];
 export const ComboBoxRenderPropsStatic = () => (
-  <ComboBox data-test-id="combo-box-render-props-static">
+  <ComboBox data-testid="combo-box-render-props-static">
     {({isOpen}) => (
       <>
         <Label style={{display: 'block'}}>Test</Label>
@@ -188,10 +188,8 @@ export const ListBoxComplex = () => (
   </ListBox>
 );
 
-// Notice that `data-test-id` stays on top element and
-// `id` renders on button
 export const SelectExample = () => (
-  <Select data-test-id="select-example" id="select-example-id">
+  <Select data-testid="select-example" id="select-example-id">
     <Label style={{display: 'block'}}>Test</Label>
     <Button>
       <SelectValue />
@@ -211,7 +209,7 @@ export const SelectExample = () => (
 );
 
 export const SelectRenderProps = () => (
-  <Select data-test-id="select-render-props">
+  <Select data-testid="select-render-props">
     {({isOpen}) => (
       <>
         <Label style={{display: 'block'}}>Test</Label>
@@ -280,7 +278,7 @@ export const MenuComplex = () => (
 );
 
 export const NumberFieldExample = () => (
-  <NumberField data-test-id="number-field-example" formatOptions={{style: 'currency', currency: 'USD'}}>
+  <NumberField data-testid="number-field-example" formatOptions={{style: 'currency', currency: 'USD'}}>
     <Label>Test</Label>
     <Group style={{display: 'flex'}}>
       <Button slot="decrement">-</Button>
@@ -291,16 +289,16 @@ export const NumberFieldExample = () => (
 );
 
 export const DateFieldExample = () => (
-  <DateField data-test-id="date-field-example">
+  <DateField data-testid="date-field-example">
     <Label style={{display: 'block'}}>Date</Label>
-    <DateInput className={styles.field} data-test-id2="date-input">
+    <DateInput className={styles.field} data-testid2="date-input">
       {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
     </DateInput>
   </DateField>
 );
 
 export const TimeFieldExample = () => (
-  <TimeField data-test-id="time-field-example">
+  <TimeField data-testid="time-field-example">
     <Label style={{display: 'block'}}>Time</Label>
     <DateInput className={styles.field}>
       {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
@@ -353,7 +351,7 @@ export const RangeCalendarExample = () => (
 );
 
 export const DatePickerExample = () => (
-  <DatePicker data-test-id="date-picker-example">
+  <DatePicker data-testid="date-picker-example">
     <Label style={{display: 'block'}}>Date</Label>
     <Group style={{display: 'inline-flex'}}>
       <DateInput className={styles.field}>
@@ -386,11 +384,11 @@ export const DatePickerExample = () => (
 );
 
 export const DateRangePickerExample = () => (
-  <DateRangePicker data-test-id="date-range-picker-example">
+  <DateRangePicker data-testid="date-range-picker-example">
     <Label style={{display: 'block'}}>Date</Label>
     <Group style={{display: 'inline-flex'}}>
       <div className={styles.field}>
-        <DateInput data-test-id="date-range-picker-date-input" slot="start" style={{display: 'inline-flex'}}>
+        <DateInput data-testid="date-range-picker-date-input" slot="start" style={{display: 'inline-flex'}}>
           {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
         </DateInput>
         <span aria-hidden="true" style={{padding: '0 4px'}}>–</span>
@@ -426,7 +424,7 @@ export const DateRangePickerExample = () => (
 
 export const SliderExample = () => (
   <Slider
-    data-test-id="slider-example"
+    data-testid="slider-example"
     defaultValue={[30, 60]}
     style={{
       position: 'relative',
@@ -832,7 +830,7 @@ export const DropzoneExampleWithFileTriggerLink = (props) => (
       {...props}
       aria-label={'testing aria-label'}
       className={styles.dropzone}
-      data-test-id="drop-zone-example-with-file-trigger-link"
+      data-testid="drop-zone-example-with-file-trigger-link"
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
@@ -970,7 +968,7 @@ export const DropzoneWithRenderProps = (props) => (
 // TODO: Should data- attr pass to hidden input? It isn't duplicated, so not sure what the expectation is.
 export const FileTriggerButton = (props) => (
   <FileTrigger
-    data-test-id="filetrigger-example"
+    data-testid="filetrigger-example"
     {...props}
     onChange={action('OnChange')} >
     <Button>Upload</Button>
@@ -1074,10 +1072,10 @@ ListBoxDnd.story = {
 export const RadioGroupExample = () => {
   return (
     <RadioGroup
-      data-test-id="radio-group-example"
+      data-testid="radio-group-example"
       className={styles.radiogroup}>
       <Label>Favorite pet</Label>
-      <Radio className={styles.radio} value="dogs" aria-label="furry dog" id="radio-dogs" data-test-id="radio-group-example-radio-1">Dog</Radio>
+      <Radio className={styles.radio} value="dogs" data-testid="radio-dog">Dog</Radio>
       <Radio className={styles.radio} value="cats">Cat</Radio>
       <Radio className={styles.radio} value="dragon">Dragon</Radio>
     </RadioGroup>
@@ -1135,7 +1133,7 @@ export const RadioGroupInDialogExample = () => {
 
 export const SearchFieldExample = () => {
   return (
-    <SearchField data-test-id="search-field-example">
+    <SearchField data-testid="search-field-example">
       <Label>Search</Label>
       <Input />
       <Button>✕</Button>
@@ -1145,19 +1143,19 @@ export const SearchFieldExample = () => {
 
 export const ButtonExample = () => {
   return (
-    <Button data-test-id="button-example" onPress={() => alert('Hello world!')}>Press me</Button>
+    <Button data-testid="button-example" onPress={() => alert('Hello world!')}>Press me</Button>
   );
 };
 
 export const ToggleButtonExample = () => {
   return (
-    <ToggleButton data-test-id="toggle-button-example">Toggle</ToggleButton>
+    <ToggleButton data-testid="toggle-button-example">Toggle</ToggleButton>
   );
 };
 
 export const SwitchExample = () => {
   return (
-    <Switch data-test-id="switch-example">
+    <Switch data-testid="switch-example">
       <div className="switchExample-indicator" />
       Switch me
     </Switch>
@@ -1166,7 +1164,7 @@ export const SwitchExample = () => {
 
 export const TextfieldExample = () => {
   return (
-    <TextField data-test-id="textfield-example">
+    <TextField data-testid="textfield-example">
       <Label>First name</Label>
       <Input />
     </TextField>
@@ -1175,7 +1173,7 @@ export const TextfieldExample = () => {
 
 export const LinkExample = () => {
   return (
-    <Link data-test-id="link-example">
+    <Link data-testid="link-example">
       <a href="https://www.imdb.com/title/tt6348138/" target="_blank">
         The missing link
       </a>

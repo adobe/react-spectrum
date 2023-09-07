@@ -378,4 +378,24 @@ describe('RadioGroup', () => {
       expect(radio).toHaveAttribute('aria-describedby', 'test');
     }
   });
+
+  it('should render data- attributes only on the outer Radio element', () => {
+    let {getAllByTestId} = render(
+      <RadioGroup data-testid="radio-group">
+        <Label>Test</Label>
+        <Radio data-testid="radio-a" value="a">
+          A
+        </Radio>
+        <Radio value="b">
+          B
+        </Radio>
+        <Radio value="c">
+          C
+        </Radio>
+      </RadioGroup>
+    );
+    let radio = getAllByTestId('radio-a');
+    expect(radio).toHaveLength(1);
+    expect(radio[0].nodeName).toBe('LABEL');
+  });
 });

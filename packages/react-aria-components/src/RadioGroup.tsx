@@ -164,8 +164,6 @@ function Radio(props: RadioProps, ref: ForwardedRef<HTMLInputElement>) {
     // ReactNode type doesn't allow function children.
     children: typeof props.children === 'function' ? true : props.children
   }, state, domRef);
-
-  // TODO: Review with team - yarn does it matter if we filter before passing to useRadio hook or filter the return?
   inputProps = filterDataAttrs(inputProps);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let interactionDisabled = isDisabled || state.isReadOnly;
