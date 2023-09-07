@@ -600,7 +600,7 @@ workflows:
       - docs-verdaccio:
           filters:
             branches:
-              only: main
+              only: upgrade-node
           requires:
             - install
       - deploy:
