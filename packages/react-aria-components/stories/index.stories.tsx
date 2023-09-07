@@ -963,8 +963,8 @@ export const DropzoneWithRenderProps = (props) => (
 
 export const FileTriggerButton = (props) => (
   <FileTrigger
-    {...props}
-    onSelect={action('onSelect')} >
+    onSelect={action('onSelect')}
+    {...props} >
     <Button>Upload</Button>
   </FileTrigger>
 );

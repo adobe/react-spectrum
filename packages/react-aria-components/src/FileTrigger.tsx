@@ -33,17 +33,13 @@ export interface FileTriggerProps {
    */
   onSelect?: (files: FileList | null) => void,
   /**
-   * The name of the input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
-   */
-  name?: string,
-  /**
    * The children of the component.
    */
   children?: ReactNode
 }
 
 function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLInputElement>) {
-  let {onSelect, acceptedFileTypes, allowsMultiple, defaultCamera, name, children, ...rest} = props;
+  let {onSelect, acceptedFileTypes, allowsMultiple, defaultCamera, children, ...rest} = props;
   let inputRef = useObjectRef(ref);
   let domProps = filterDOMProps(rest);
 
@@ -51,7 +47,7 @@ function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLInputElement
     <>
       <PressResponder 
         onPress={() => {
-          if (inputRef.current) {
+          if (inputRef.current.value) {
             inputRef.current.value = '';
           }
           inputRef.current?.click();
@@ -66,8 +62,7 @@ function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLInputElement
         accept={acceptedFileTypes?.toString()}
         onChange={(e) => onSelect?.(e.target.files)}
         capture={defaultCamera}
-        multiple={allowsMultiple}
-        name={name} />
+        multiple={allowsMultiple} />
     </>
   );
 }
