@@ -1068,7 +1068,6 @@ ListBoxDnd.story = {
   }
 };
 
-// TODO confirm that aria-label and id should render on hidden input
 export const RadioGroupExample = () => {
   return (
     <RadioGroup
