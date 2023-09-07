@@ -47,8 +47,8 @@ export interface AriaPopoverProps extends Omit<AriaPositionProps, 'isOpen' | 'on
    * @default false
    */
   isKeyboardDismissDisabled?: boolean,
-  // TODO: option that makes it so it closes all popovers when clicking outside.
-  isMenu?: boolean
+  // TODO: update description to be popover specific
+  shouldCloseOnInteractOutside?: (element: Element) => boolean
 }
 
 export interface PopoverAria {
@@ -72,7 +72,7 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     popoverRef,
     isNonModal,
     isKeyboardDismissDisabled,
-    isMenu,
+    shouldCloseOnInteractOutside,
     ...otherProps
   } = props;
 
@@ -83,7 +83,7 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
       shouldCloseOnBlur: true,
       isDismissable: !isNonModal,
       isKeyboardDismissDisabled,
-      isMenu
+      shouldCloseOnInteractOutside
     },
     popoverRef
   );

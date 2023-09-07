@@ -41,7 +41,6 @@ export function useSubMenuTriggerState(props: SubMenuTriggerProps, state: MenuTr
   let {triggerKey} = props;
   let {expandedKeysStack, openSubMenu, closeSubMenu, closeAll} = state;
   let [level] = useState(expandedKeysStack?.length + 1);
-  console.log('expanded', expandedKeysStack);
   let isOpen = useMemo(() => expandedKeysStack[level - 1] === triggerKey, [expandedKeysStack, triggerKey, level]);
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy>(null);
 

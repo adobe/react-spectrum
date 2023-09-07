@@ -10,8 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+
 import {AriaMenuItemProps} from './useMenuItem';
 import {AriaMenuOptions} from './useMenu';
+import type {AriaPopoverProps} from '@react-aria/overlays';
 import {FocusableElement, FocusStrategy, PressEvent} from '@react-types/shared';
 import {RefObject, useCallback, useRef} from 'react';
 import type {SubMenuTriggerState} from '@react-stately/menu';
@@ -19,19 +21,22 @@ import {useEffectEvent, useId, useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
 export interface AriaSubMenuTriggerProps {
-  parentMenu: RefObject<HTMLElement>
-  // TODO: add menuRef so arrow left from trigger can move focus into the Menu?
+  /** Ref of the menu that contains the submenu trigger. */
+  parentMenuRef: RefObject<HTMLElement>,
+  /** Ref of the submenu opened by the submenu trigger. */
+  subMenuRef: RefObject<HTMLElement>
 }
 
 export interface SubMenuTriggerAria<T> {
   subMenuTriggerProps: AriaMenuItemProps,
   subMenuProps: AriaMenuOptions<T>,
-  popoverProps: {
-    isNonModal: boolean
-  },
-  overlayProps: {
+  popoverProps: Pick<AriaPopoverProps, 'isNonModal'>,
+  // TODO: perhaps cherry pick these props from existing types, comes from several different types though
+  overlayProps:
+  {
     onExit: () => void,
-    disableFocusManagement: boolean
+    disableFocusManagement: boolean,
+    shouldCloseOnInteractOutside: (element: Element) => boolean
   }
 }
 
@@ -40,7 +45,7 @@ export interface SubMenuTriggerAria<T> {
 // TODO: debatable if we should have a useSubMenu hook for the submenu key handlers. Feels better to have it here so we don't need to ferry around
 // things like parentMenu and the timeout canceling since those are available
 export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubMenuTriggerState, ref: RefObject<FocusableElement>): SubMenuTriggerAria<T> {
-  let {parentMenu} = props;
+  let {parentMenuRef, subMenuRef} = props;
   let subMenuTriggerId = useId();
   let overlayId = useId();
   let {direction} = useLocale();
@@ -101,12 +106,20 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
     switch (e.key) {
       case 'ArrowRight':
         if (direction === 'ltr') {
-          onSubmenuOpen('first');
+          if (!!subMenuRef?.current && document.activeElement === ref?.current) {
+            subMenuRef.current.focus();
+          } else {
+            onSubmenuOpen('first');
+          }
         }
         break;
       case 'ArrowLeft':
         if (direction === 'rtl') {
-          onSubmenuOpen('first');
+          if (!!subMenuRef?.current && document.activeElement === ref?.current) {
+            subMenuRef.current.focus();
+          } else {
+            onSubmenuOpen('first');
+          }
         }
         break;
     }
@@ -143,12 +156,22 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
 
   let onExit = () => {
     // if focus was already moved back to a menu item, don't need to do anything
-    if (!parentMenu.current.contains(document.activeElement)) {
+    if (!parentMenuRef.current.contains(document.activeElement)) {
       // need to return focus to the trigger because hitting Esc causes focus to go to the subdialog, which is then unmounted
       // this leads to blur never being fired nor focus on the body
       ref.current.focus();
     }
     cancelOpenTimeout();
+  };
+
+  let shouldCloseOnInteractOutside = (target) => {
+    return target !== ref.current;
+    // if (e.)
+    // TODO: prevent close if e.related target is the triggerElement, but close if it is a element elsewhere in said menu
+    // TODO: this actually doesn't work that well since the user could hover the sub menu trigger then a adjacent menuitem and then the submenu won't close when it should
+    // perhaps watch for focus changes in every Menu and if said menu has a submenu that is open, check if focus has been moved to
+    // an element that isn't in its active scope and isn't the submenu trigger and if so close the sub menu trigger
+    // import {isElementInChildOfActiveScope} from '@react-aria/focus';
   };
 
   return {
@@ -167,8 +190,7 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
       onClose: state.closeAll,
       // isSubMenu: true,
       'aria-labelledby': subMenuTriggerId,
-      // TODO: get rid of the true so hover doesn't open it
-      autoFocus: state.focusStrategy || true,
+      autoFocus: state.focusStrategy,
       id: overlayId,
       onKeyDown: subMenuKeyDown
     },
@@ -177,7 +199,8 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
     },
     overlayProps: {
       onExit,
-      disableFocusManagement: true
+      disableFocusManagement: true,
+      shouldCloseOnInteractOutside
     }
   };
 }

@@ -188,16 +188,9 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let {hoverProps} = useHover({
     isDisabled,
     onHoverStart() {
-      // TODO: will need to update the below's expandedKeys check since we don't use expandedKeys to check open status anymore
-      // perhaps remove the second part of the if since we are going to want to make auto focus not make it into the opened popover automatically
-      if (!isFocusVisible() && !(isTrigger && state.expandedKeys.has(key))) {
+      if (!isFocusVisible()) {
         state.selectionManager.setFocused(true);
         state.selectionManager.setFocusedKey(key);
-        // focus immediately so that a focus scope opened on hover has the correct restore node
-        let isFocused = key === state.selectionManager.focusedKey;
-        if (isFocused && state.selectionManager.isFocused && document.activeElement !== ref.current) {
-          focusSafely(ref.current);
-        }
       }
     },
     onHoverChange

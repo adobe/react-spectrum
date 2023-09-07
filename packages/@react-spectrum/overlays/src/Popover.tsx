@@ -101,6 +101,7 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
   let borderDiagonal = borderWidth * Math.SQRT2;
   let primary = size + borderDiagonal;
   let secondary = primary * 2;
+
   let {
     popoverProps,
     arrowProps,
