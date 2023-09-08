@@ -29,7 +29,9 @@ export default {
   args: {
     onPress: action('press'),
     onPressStart: action('pressstart'),
-    onPressEnd: action('pressend')
+    onPressEnd: action('pressend'),
+    onFocus: action('focus'),
+    onBlur: action('blur')
   },
   argTypes: {
     onPress: {
