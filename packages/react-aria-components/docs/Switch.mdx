@@ -171,6 +171,83 @@ In most cases, switches should have a visual label. If the switch does not have 
 an `aria-label` or `aria-labelledby` prop must be passed instead to identify the element to assistive
 technology.
 
+## Reusable wrappers
+
+If you will use a Switch in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+This example wraps `Switch` and all of its children together into a single component.
+
+```tsx example export=true
+import type {SwitchProps} from 'react-aria-components';
+
+interface MySwitchProps extends Omit<SwitchProps, 'children'> {
+  children: React.ReactNode
+}
+
+function MySwitch({children, ...props}: MySwitchProps) {
+  return (
+    <Switch {...props}>
+      <div className="indicator" />
+      {children}
+    </Switch>
+  );
+}
+
+<MySwitch>Wi-Fi</MySwitch>
+```
+
+## Value
+
+### Default value
+
+Switches are not selected by default. The `defaultSelected` prop can be used to set the default state.
+
+```tsx example
+<MySwitch defaultSelected>Wi-Fi</MySwitch>
+```
+
+### Controlled value
+
+The `isSelected` prop can be used to make the selected state controlled. The `onChange` event is fired when the user presses the switch, and receives the new value.
+
+```tsx example
+function Example() {
+  let [selected, setSelected] = React.useState(false);
+
+  return (
+    <>
+      <MySwitch onChange={setSelected}>Low power mode</MySwitch>
+      <p>{selected ? 'Low' : 'High'} power mode active.</p>
+    </>
+  );
+}
+```
+
+### HTML forms
+
+Switch supports the `name` and `value` props for integration with HTML forms.
+
+```tsx example
+<MySwitch name="power" value="low">Low power mode</MySwitch>
+```
+
+## Disabled
+
+Switches can be disabled using the `isDisabled` prop.
+
+```tsx example
+<MySwitch isDisabled>Airplane Mode</MySwitch>
+```
+
+### Read only
+
+The `isReadOnly` prop makes the selection immutable. Unlike `isDisabled`, the Switch remains focusable.
+See the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
+
+```tsx example
+<MySwitch isSelected isReadOnly>Bluetooth</MySwitch>
+```
+
 ## Props
 
 <PropTable component={docs.exports.Switch} links={docs.links} />
@@ -222,86 +299,6 @@ Render props may also be used as children to alter what elements are rendered ba
 The states, selectors, and render props for `Switch` are documented below.
 
 <StateTable properties={docs.exports.SwitchRenderProps.properties} />
-
-## Reusable wrappers
-
-If you will use a Switch in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
-
-This example wraps `Switch` and all of its children together into a single component.
-
-```tsx example export=true
-import type {SwitchProps} from 'react-aria-components';
-
-interface MySwitchProps extends Omit<SwitchProps, 'children'> {
-  children: React.ReactNode
-}
-
-function MySwitch({children, ...props}: MySwitchProps) {
-  return (
-    <Switch {...props}>
-      <div className="indicator" />
-      {children}
-    </Switch>
-  );
-}
-
-<MySwitch>Wi-Fi</MySwitch>
-```
-
-## Usage
-
-The following examples show how to use the `MySwitch` component created in the above example.
-
-### Default value
-
-Switches are not selected by default. The `defaultSelected` prop can be used to set the default state.
-
-```tsx example
-<MySwitch defaultSelected>Wi-Fi</MySwitch>
-```
-
-### Controlled value
-
-The `isSelected` prop can be used to make the selected state controlled. The `onChange` event is fired when the user presses the switch, and receives the new value.
-
-```tsx example
-function Example() {
-  let [selected, setSelected] = React.useState(false);
-
-  return (
-    <>
-      <MySwitch onChange={setSelected}>Low power mode</MySwitch>
-      <p>{selected ? 'Low' : 'High'} power mode active.</p>
-    </>
-  );
-}
-```
-
-### Disabled
-
-Switches can be disabled using the `isDisabled` prop.
-
-```tsx example
-<MySwitch isDisabled>Airplane Mode</MySwitch>
-```
-
-### Read only
-
-The `isReadOnly` prop makes the selection immutable. Unlike `isDisabled`, the Switch remains focusable.
-See the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
-
-```tsx example
-<MySwitch isSelected isReadOnly>Bluetooth</MySwitch>
-```
-
-
-### HTML forms
-
-Switch supports the `name` and `value` props for integration with HTML forms.
-
-```tsx example
-<MySwitch name="power" value="low">Low power mode</MySwitch>
-```
 
 ## Advanced customization
 

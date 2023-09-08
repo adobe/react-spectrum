@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, screen, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, screen, triggerPress, within} from '@react-spectrum/test-utils';
 import {ActionGroup} from '../';
 import {Button} from '@react-spectrum/button';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
@@ -55,28 +55,6 @@ class BtnBehavior {
   }
 }
 let btnBehavior = new BtnBehavior();
-
-function pressKeyOnButton(key) {
-  return (button) => {
-    fireEvent.keyDown(button, {key});
-  };
-}
-
-function pressArrowRight(button) {
-  return pressKeyOnButton('ArrowRight')(button);
-}
-
-function pressArrowLeft(button) {
-  return pressKeyOnButton('ArrowLeft')(button);
-}
-
-function pressArrowUp(button) {
-  return pressKeyOnButton('ArrowUp')(button);
-}
-
-function pressArrowDown(button) {
-  return pressKeyOnButton('ArrowDown')(button);
-}
 
 function verifyResult(buttons, values, index) {
   expect(buttons).checkButtonIndex(values, index);
@@ -129,7 +107,10 @@ function renderComponentWithExtraInputs(props) {
 }
 
 describe('ActionGroup', function () {
+  let user;
+
   beforeAll(function () {
+    user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
 
     jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () {
@@ -144,6 +125,11 @@ describe('ActionGroup', function () {
   afterEach(() => {
     btnBehavior.reset();
   });
+  let tab = async () => await user.tab();
+  let pressArrowRight = async () => await user.keyboard('{ArrowRight}');
+  let pressArrowLeft = async () => await user.keyboard('{ArrowLeft}');
+  let pressArrowUp = async () => await user.keyboard('{ArrowUp}');
+  let pressArrowDown = async () => await user.keyboard('{ArrowDown}');
 
   it.each`
   Name               | ComponentGroup   | Component
@@ -192,15 +178,15 @@ describe('ActionGroup', function () {
 
   it.each`
     Name                                                   | props                                         | orders
-    ${'(left/right arrows, ltr + horizontal) ActionGroup'} | ${{locale: 'de-DE'}}                          | ${[{action: () => {userEvent.tab();}, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
-    ${'(left/right arrows, rtl + horizontal) ActionGroup'} | ${{locale: 'ar-AE'}}                          | ${[{action: () => {userEvent.tab();}, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowRight, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.forward}]}
-    ${'(up/down arrows, ltr + horizontal) ActionGroup'}    | ${{locale: 'de-DE'}}                          | ${[{action: () => {userEvent.tab();}, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
-    ${'(up/down arrows, rtl + horizontal) ActionGroup'}    | ${{locale: 'ar-AE'}}                          | ${[{action: () => {userEvent.tab();}, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
-    ${'(left/right arrows, ltr + vertical) ActionGroup'}   | ${{locale: 'de-DE', orientation: 'vertical'}} | ${[{action: () => {userEvent.tab();}, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
-    ${'(left/right arrows, rtl + vertical) ActionGroup'}   | ${{locale: 'ar-AE', orientation: 'vertical'}} | ${[{action: () => {userEvent.tab();}, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
-    ${'(up/down arrows, ltr + vertical) ActionGroup'}      | ${{locale: 'de-DE', orientation: 'vertical'}} | ${[{action: () => {userEvent.tab();}, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
-    ${'(up/down arrows, rtl + vertical) ActionGroup'}      | ${{locale: 'ar-AE', orientation: 'vertical'}} | ${[{action: () => {userEvent.tab();}, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
-  `('$Name shifts button focus in the correct direction on key press', function ({Name, props, orders}) {
+    ${'(left/right arrows, ltr + horizontal) ActionGroup'} | ${{locale: 'de-DE'}}                          | ${[{action: tab, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
+    ${'(left/right arrows, rtl + horizontal) ActionGroup'} | ${{locale: 'ar-AE'}}                          | ${[{action: tab, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowRight, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.forward}]}
+    ${'(up/down arrows, ltr + horizontal) ActionGroup'}    | ${{locale: 'de-DE'}}                          | ${[{action: tab, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
+    ${'(up/down arrows, rtl + horizontal) ActionGroup'}    | ${{locale: 'ar-AE'}}                          | ${[{action: tab, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
+    ${'(left/right arrows, ltr + vertical) ActionGroup'}   | ${{locale: 'de-DE', orientation: 'vertical'}} | ${[{action: tab, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
+    ${'(left/right arrows, rtl + vertical) ActionGroup'}   | ${{locale: 'ar-AE', orientation: 'vertical'}} | ${[{action: tab, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
+    ${'(up/down arrows, ltr + vertical) ActionGroup'}      | ${{locale: 'de-DE', orientation: 'vertical'}} | ${[{action: tab, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
+    ${'(up/down arrows, rtl + vertical) ActionGroup'}      | ${{locale: 'ar-AE', orientation: 'vertical'}} | ${[{action: tab, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
+  `('$Name shifts button focus in the correct direction on key press', async function ({Name, props, orders}) {
     let tree = render(
       <Provider theme={theme} locale={props.locale}>
         <ActionGroup orientation={props.orientation} >
@@ -213,24 +199,26 @@ describe('ActionGroup', function () {
 
     let buttons = tree.getAllByRole('button');
 
-    orders.forEach(({action, result}, index) => {
-      action(document.activeElement);
+    let index = 0;
+    for (let {action, result} of orders) {
+      await action();
       verifyResult(buttons, result(), index);
-    });
+      index++;
+    }
   });
 
   it.each`
     Name                     | props                | disabledKeys   | orders
-    ${'middle disabled'}     | ${{locale: 'de-DE'}} | ${['1']}       | ${[{action: () => {userEvent.tab();}, result: () => ['0', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['0', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1']}]}
-    ${'first disabled'}      | ${{locale: 'de-DE'}} | ${['0']}       | ${[{action: () => {userEvent.tab();}, result: () => ['-1', '0', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '0', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '0', '-1']}]}
-    ${'last disabled'}       | ${{locale: 'de-DE'}} | ${['2']}       | ${[{action: () => {userEvent.tab();}, result: () => ['0', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '0', '-1']}, {action: pressArrowRight, result: () => ['0', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '0', '-1']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1']}]}
-    ${'1&2 disabled'}        | ${{locale: 'de-DE'}} | ${['0', '1']}  | ${[{action: () => {userEvent.tab();}, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}]}
-    ${'rtl middle disabled'} | ${{locale: 'ar-AE'}} | ${['1']}       | ${[{action: () => {userEvent.tab();}, result: () => ['0', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['0', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1']}]}
-    ${'rtl first disabled'}  | ${{locale: 'ar-AE'}} | ${['0']}       | ${[{action: () => {userEvent.tab();}, result: () => ['-1', '0', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '0', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '0', '-1']}]}
-    ${'rtl last disabled'}   | ${{locale: 'ar-AE'}} | ${['2']}       | ${[{action: () => {userEvent.tab();}, result: () => ['0', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '0', '-1']}, {action: pressArrowRight, result: () => ['0', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '0', '-1']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1']}]}
-    ${'rtl 1&2 disabled'}    | ${{locale: 'ar-AE'}} | ${['0', '1']}  | ${[{action: () => {userEvent.tab();}, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}]}
+    ${'middle disabled'}     | ${{locale: 'de-DE'}} | ${['1']}       | ${[{action: tab, result: () => ['0', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['0', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1']}]}
+    ${'first disabled'}      | ${{locale: 'de-DE'}} | ${['0']}       | ${[{action: tab, result: () => ['-1', '0', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '0', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '0', '-1']}]}
+    ${'last disabled'}       | ${{locale: 'de-DE'}} | ${['2']}       | ${[{action: tab, result: () => ['0', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '0', '-1']}, {action: pressArrowRight, result: () => ['0', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '0', '-1']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1']}]}
+    ${'1&2 disabled'}        | ${{locale: 'de-DE'}} | ${['0', '1']}  | ${[{action: tab, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}]}
+    ${'rtl middle disabled'} | ${{locale: 'ar-AE'}} | ${['1']}       | ${[{action: tab, result: () => ['0', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['0', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1']}]}
+    ${'rtl first disabled'}  | ${{locale: 'ar-AE'}} | ${['0']}       | ${[{action: tab, result: () => ['-1', '0', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '0', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '0', '-1']}]}
+    ${'rtl last disabled'}   | ${{locale: 'ar-AE'}} | ${['2']}       | ${[{action: tab, result: () => ['0', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '0', '-1']}, {action: pressArrowRight, result: () => ['0', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '0', '-1']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1']}]}
+    ${'rtl 1&2 disabled'}    | ${{locale: 'ar-AE'}} | ${['0', '1']}  | ${[{action: tab, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}]}
 
-  `('$Name skips disabled keys', function ({Name, props, disabledKeys, orders}) {
+  `('$Name skips disabled keys', async function ({Name, props, disabledKeys, orders}) {
     let tree = render(
       <Provider theme={theme} locale={props.locale}>
         <ActionGroup disabledKeys={disabledKeys}>
@@ -243,17 +231,19 @@ describe('ActionGroup', function () {
 
     let buttons = tree.getAllByRole('button');
 
-    orders.forEach(({action, result}, index) => {
-      action(document.activeElement);
+    let index = 0;
+    for (let {action, result} of orders) {
+      await action();
       verifyResult(buttons, result(), index);
-    });
+      index++;
+    }
   });
 
   it.each`
     Name                         | props                | disabledKeys   | orders
-    ${'middle two disabled'}     | ${{locale: 'de-DE'}} | ${['1', '2']}  | ${[{action: () => {userEvent.tab();}, result: () => ['0', '-1', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '-1', '0']}, {action: pressArrowRight, result: () => ['0', '-1', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1', '-1']}]}
-    ${'rtl middle two disabled'} | ${{locale: 'de-DE'}} | ${['1', '2']}  | ${[{action: () => {userEvent.tab();}, result: () => ['0', '-1', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '-1', '0']}, {action: pressArrowRight, result: () => ['0', '-1', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1', '-1']}]}
-  `('$Name skips multiple disabled keys', function ({Name, props, disabledKeys, orders}) {
+    ${'middle two disabled'}     | ${{locale: 'de-DE'}} | ${['1', '2']}  | ${[{action: tab, result: () => ['0', '-1', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '-1', '0']}, {action: pressArrowRight, result: () => ['0', '-1', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1', '-1']}]}
+    ${'rtl middle two disabled'} | ${{locale: 'de-DE'}} | ${['1', '2']}  | ${[{action: tab, result: () => ['0', '-1', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '-1', '0']}, {action: pressArrowRight, result: () => ['0', '-1', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1', '-1']}]}
+  `('$Name skips multiple disabled keys', async function ({Name, props, disabledKeys, orders}) {
     let tree = render(
       <Provider theme={theme} locale={props.locale}>
         <ActionGroup disabledKeys={disabledKeys}>
@@ -267,10 +257,12 @@ describe('ActionGroup', function () {
 
     let buttons = tree.getAllByRole('button');
 
-    orders.forEach(({action, result}, index) => {
-      action(document.activeElement);
+    let index = 0;
+    for (let {action, result} of orders) {
+      await action();
       verifyResult(buttons, result(), index);
-    });
+      index++;
+    }
   });
 
   it('should be focusable from Tab', async function () {
@@ -281,14 +273,14 @@ describe('ActionGroup', function () {
     let buttons = tree.getAllByRole('radio');
     act(() => {buttonBefore.focus();});
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(buttons[0]);
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(buttonAfter);
   });
 
-  it('should be focusable from Shift + Tab', function () {
+  it('should be focusable from Shift + Tab', async function () {
     let tree = renderComponentWithExtraInputs({selectionMode: 'single'});
 
     let buttonBefore = tree.getByLabelText('ButtonBefore');
@@ -296,14 +288,14 @@ describe('ActionGroup', function () {
     let buttons = tree.getAllByRole('radio');
     act(() => {buttonAfter.focus();});
 
-    userEvent.tab({shift: true});
+    await user.tab({shift: true});
     expect(document.activeElement).toBe(buttons[1]);
 
-    userEvent.tab({shift: true});
+    await user.tab({shift: true});
     expect(document.activeElement).toBe(buttonBefore);
   });
 
-  it('should remember last focused item', function () {
+  it('should remember last focused item', async function () {
     let tree = renderComponentWithExtraInputs({selectionMode: 'single'});
 
     let buttonBefore = tree.getByLabelText('ButtonBefore');
@@ -311,16 +303,16 @@ describe('ActionGroup', function () {
     let buttons = tree.getAllByRole('radio');
     act(() => {buttonBefore.focus();});
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(buttons[0]);
 
-    pressArrowRight(buttons[0]);
+    await pressArrowRight();
     expect(document.activeElement).toBe(buttons[1]);
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(buttonAfter);
 
-    userEvent.tab({shift: true});
+    await user.tab({shift: true});
     expect(document.activeElement).toBe(buttons[1]);
   });
 
@@ -591,17 +583,17 @@ describe('ActionGroup', function () {
 
     let button = tree.getByRole('button');
 
+    triggerPress(button);
     act(() => {
-      triggerPress(button);
       jest.runAllTimers();
     });
 
     let dialog = tree.getByRole('dialog');
     expect(dialog).toBeVisible();
 
+    fireEvent.keyDown(dialog, {key: 'Escape'});
+    fireEvent.keyUp(dialog, {key: 'Escape'});
     act(() => {
-      fireEvent.keyDown(dialog, {key: 'Escape'});
-      fireEvent.keyUp(dialog, {key: 'Escape'});
       jest.runAllTimers();
     });
 
@@ -632,7 +624,7 @@ describe('ActionGroup', function () {
     expect(button).toHaveAttribute('aria-describedby', tooltip.id);
   });
 
-  it('no infinite loop if all keys are disabled', function () {
+  it('no infinite loop if all keys are disabled', async function () {
     let tree = render(
       <Provider theme={theme}>
         <input type="text" id="foo" autoFocus />
@@ -648,13 +640,13 @@ describe('ActionGroup', function () {
     expect(actiongroup).toHaveAttribute('aria-disabled', 'true');
     let inputs = tree.getAllByRole('textbox');
     expect(document.activeElement).toBe(inputs[0]);
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(inputs[1]);
-    userEvent.tab({shift: true});
+    await user.tab({shift: true});
     expect(document.activeElement).toBe(inputs[0]);
   });
 
-  it('not disabled if extraneous disabledKeys are provided', function () {
+  it('not disabled if extraneous disabledKeys are provided', async function () {
     let tree = render(
       <Provider theme={theme}>
         <input type="text" id="foo" autoFocus />
@@ -671,13 +663,13 @@ describe('ActionGroup', function () {
     let inputs = tree.getAllByRole('textbox');
     let buttons = tree.getAllByRole('radio');
     expect(document.activeElement).toBe(inputs[0]);
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(buttons[1]);
-    userEvent.tab({shift: true});
+    await user.tab({shift: true});
     expect(document.activeElement).toBe(inputs[0]);
   });
 
-  it('is disabled if extraneous disabledKeys are provided in addition to all keys being disabled', function () {
+  it('is disabled if extraneous disabledKeys are provided in addition to all keys being disabled', async function () {
     let tree = render(
       <Provider theme={theme}>
         <input type="text" id="foo" autoFocus />
@@ -693,9 +685,9 @@ describe('ActionGroup', function () {
     expect(actiongroup).toHaveAttribute('aria-disabled', 'true');
     let inputs = tree.getAllByRole('textbox');
     expect(document.activeElement).toBe(inputs[0]);
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(inputs[1]);
-    userEvent.tab({shift: true});
+    await user.tab({shift: true});
     expect(document.activeElement).toBe(inputs[0]);
   });
 
@@ -767,7 +759,7 @@ describe('ActionGroup', function () {
       expect(items[0]).toHaveAttribute('data-element', 'two');
     });
 
-    it('handles keyboard focus management properly', function () {
+    it('handles keyboard focus management properly', async function () {
       let onAction = jest.fn();
       let tree = render(
         <Provider theme={theme}>
@@ -790,7 +782,7 @@ describe('ActionGroup', function () {
       expect(buttons[0]).toHaveAttribute('tabIndex', '0');
       expect(buttons[1]).toHaveAttribute('tabIndex', '-1');
 
-      pressArrowRight(buttons[0]);
+      await pressArrowRight();
       expect(buttons[0]).toHaveAttribute('tabIndex', '-1');
       expect(buttons[1]).toHaveAttribute('tabIndex', '0');
     });
