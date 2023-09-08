@@ -10,33 +10,55 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames} from '@react-spectrum/utils';
+import {Button} from '@react-spectrum/button';
 import {DropZone, SpectrumDropZoneProps} from '../';
-import {Flex, Grid, repeat} from '@react-spectrum/layout';
-import {generatePowerset} from '@react-spectrum/story-utils';
+import {FileTrigger, Text} from 'react-aria-components';
 import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Meta} from '@storybook/react';
 import React from 'react';
-import styles from '@adobe/spectrum-css-temp/components/dropzone/vars.css';
 import Upload from '@spectrum-icons/illustrations/Upload';
 
-export default {
+const meta: Meta<SpectrumDropZoneProps> = {
   title: 'DropZone',
-  parameter: {
-    chromaticProvider: {
-      locales: ['en-US']
-    }
+  component: DropZone
+};
+
+export default meta;
+
+export const Default = {
+  args: {
+    children: (
+      <>
+        <IllustratedMessage>
+          <Upload />
+          <Heading>
+            <Text slot="label">
+              Drag and drop here
+            </Text>
+          </Heading>
+        </IllustratedMessage>
+      </>
+    )
   }
 };
 
-export const Test = () => (
-  <DropZone data-focus-visible>
-    <IllustratedMessage>
-      <Upload />
-      <Heading>
-        Drag and drop here
-      </Heading>
-    </IllustratedMessage>
-  </DropZone>
-)
+export const WithFileTrigger = {
+  args: {
+    children: (
+      <>
+        <IllustratedMessage>
+          <Upload />
+          <Heading>
+            <Text slot="label">
+              Drag and drop here
+            </Text>
+          </Heading>
+          <FileTrigger>
+            <Button variant="primary">Select a file</Button>
+          </FileTrigger>
+        </IllustratedMessage>
+      </>
+    )
+  }
+};
