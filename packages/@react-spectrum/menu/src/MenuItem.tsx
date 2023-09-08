@@ -52,7 +52,6 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   // If menuDialogContext.isUnavailable is explicitly false, then disable all submenu behavior
   let isMenuDialogTrigger = !!menuDialogContext && menuDialogContext.isUnavailable !== false;
   let isUnavailable;
-  let popupType;
   let {
     closeOnSelect
   } = useMenuContext();
@@ -65,19 +64,12 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   } = item;
 
   if (isMenuDialogTrigger) {
-    popupType = 'menu';
     isUnavailable = menuDialogContext.isUnavailable;
-    domProps.id = menuDialogContext.id;
-    domProps['aria-controls'] = menuDialogContext['aria-controls'];
-    if (isUnavailable) {
-      popupType = 'dialog';
-    }
   }
 
   let isDisabled = state.disabledKeys.has(key);
   let isSelectable = !isMenuDialogTrigger && state.selectionManager.selectionMode !== 'none';
   let isSelected = isSelectable && state.selectionManager.isSelected(key);
-
   let itemref = useRef<HTMLLIElement>(null);
   let ref = useObjectRef(useMemo(() => mergeRefs(itemref, triggerRef), [itemref, triggerRef]));
   let {
@@ -94,7 +86,6 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
       closeOnSelect,
       isVirtualized,
       onAction,
-      'aria-haspopup': popupType,
       ...subMenuTriggerProps
     },
     state,

@@ -11,11 +11,11 @@
  */
 
 import {DOMAttributes, DOMProps, FocusableElement, PressEvent} from '@react-types/shared';
+import {filterDOMProps, mergeProps, useSlotId} from '@react-aria/utils';
 import {FocusEvent, Key, RefObject} from 'react';
 import {getItemCount} from '@react-stately/collections';
 import {isFocusVisible, useHover, useKeyboard, usePress} from '@react-aria/interactions';
 import {menuData} from './useMenu';
-import {mergeProps, useSlotId} from '@react-aria/utils';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableItem} from '@react-aria/selection';
 
@@ -229,7 +229,9 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   return {
     menuItemProps: {
       ...ariaProps,
-      ...mergeProps(itemProps, pressProps, hoverProps, keyboardProps, {onKeyDown, onBlur})
+      // TODO: perhaps we just expect the user to spread onKEyDown,onBlur, id and aria attributes directly? This feels more in line with
+      // how useMenuTrigger passes stuff to useButton
+      ...mergeProps(itemProps, pressProps, hoverProps, keyboardProps, {onKeyDown, onBlur}, filterDOMProps(props))
     },
     labelProps: {
       id: labelId

@@ -38,7 +38,7 @@ export interface MenuDialogContextValue extends DOMProps, Pick<PressEvents, 'onP
   triggerRef?: MutableRefObject<HTMLLIElement>,
   'aria-expanded'?: boolean | 'true' | 'false',
   'aria-controls'?: string,
-  'aria-haspopup'?: string,
+  'aria-haspopup'?: 'dialog' | 'menu',
   onKeyDown?: (e: KeyboardEvent) => void
 }
 

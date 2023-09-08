@@ -17,7 +17,8 @@ import {ItemProps} from '@react-types/shared';
 import {MenuDialogContext, useMenuStateContext} from './context';
 import {Modal, Popover} from '@react-spectrum/overlays';
 import React, {Key, ReactElement, useRef} from 'react';
-import {useOverlayTriggerState} from '@react-stately/overlays';
+import {useSubMenuTrigger} from '@react-aria/menu';
+import {useSubMenuTriggerState} from '@react-stately/menu';
 
 interface MenuDialogTriggerProps<T> extends ItemProps<T> {
   /** Whether the menu item is currently unavailable. */
@@ -30,18 +31,12 @@ interface MenuDialogTriggerProps<T> extends ItemProps<T> {
 export interface SpectrumMenuDialogTriggerProps<T> extends Omit<MenuDialogTriggerProps<T>, 'targetKey' | 'title' | 'textValue' | 'childItems' | 'hasChildItems'> {}
 
 function ContextualHelpTrigger<T>(props: MenuDialogTriggerProps<T>): ReactElement {
-  let {isUnavailable} = props;
-
+  let {isUnavailable, targetKey} = props;
   let triggerRef = useRef<HTMLLIElement>(null);
   let popoverRef = useRef(null);
-  let {state: menuState, container, menu} = useMenuStateContext();
-  let state = useOverlayTriggerState({isOpen: menuState.expandedKeys.has(props.targetKey), onOpenChange: (val) => {
-    if (!val) {
-      if (menuState.expandedKeys.has(props.targetKey)) {
-        menuState.toggleKey(props.targetKey);
-      }
-    }
-  }});
+  let {container, menuTreeState, menu: parentMenuRef} = useMenuStateContext();
+  let subMenuTriggerState = useSubMenuTriggerState({triggerKey: targetKey}, menuTreeState);
+  let {subMenuTriggerProps, popoverProps, overlayProps} = useSubMenuTrigger({parentMenuRef, subMenuRef: popoverRef, subMenuType: 'dialog', isDisabled: !isUnavailable}, subMenuTriggerState, triggerRef);
   let slots = {};
   if (isUnavailable) {
     slots = {
@@ -55,47 +50,37 @@ function ContextualHelpTrigger<T>(props: MenuDialogTriggerProps<T>): ReactElemen
 
   let isMobile = useIsMobileDevice();
 
-  let onExit = () => {
-    // if focus was already moved back to a menu item, don't need to do anything
-    if (!menu.current.contains(document.activeElement)) {
-      // need to return focus to the trigger because hitting Esc causes focus to go to the subdialog, which is then unmounted
-      // this leads to blur never being fired nor focus on the body
-      triggerRef.current.focus();
-    }
-  };
-  // TODO: double check when this even fires
   let onBlurWithin = (e) => {
     if (e.relatedTarget && popoverRef.current && !popoverRef.current?.UNSAFE_getDOMNode().contains(e.relatedTarget)) {
-      if (menuState.expandedKeys.has(props.targetKey)) {
-        menuState.toggleKey(props.targetKey);
+      if (subMenuTriggerState.isOpen) {
+        subMenuTriggerState.close();
       }
     }
   };
   return (
     <>
-      <MenuDialogContext.Provider value={{isUnavailable, triggerRef}}>{trigger}</MenuDialogContext.Provider>
+      <MenuDialogContext.Provider value={{isUnavailable, triggerRef, ...subMenuTriggerProps}}>{trigger}</MenuDialogContext.Provider>
       <SlotProvider slots={slots}>
         {
           isMobile ? (
-            <Modal state={state} isDismissable>
-              <DismissButton onDismiss={state.close} />
+            <Modal state={subMenuTriggerState} isDismissable>
+              <DismissButton onDismiss={subMenuTriggerState.close} />
               {content}
-              <DismissButton onDismiss={state.close} />
+              <DismissButton onDismiss={subMenuTriggerState.close} />
             </Modal>
           ) : (
             <Popover
-              onExit={onExit}
+              {...popoverProps}
+              {...overlayProps}
               onBlurWithin={onBlurWithin}
               container={container.current}
-              state={state}
+              state={subMenuTriggerState}
               ref={popoverRef}
               triggerRef={triggerRef}
               placement="end top"
               offset={-10}
               hideArrow
-              isNonModal
-              enableBothDismissButtons
-              disableFocusManagement>
+              enableBothDismissButtons>
               {content}
             </Popover>
           )
@@ -106,11 +91,17 @@ function ContextualHelpTrigger<T>(props: MenuDialogTriggerProps<T>): ReactElemen
 }
 
 ContextualHelpTrigger.getCollectionNode = function* getCollectionNode<T>(props: ItemProps<T>) {
-  let [trigger] = React.Children.toArray(props.children) as ReactElement[];
+  let childArray: ReactElement[] = [];
+  React.Children.forEach(props.children, child => {
+    if (React.isValidElement(child)) {
+      childArray.push(child);
+    }
+  });
+  let [trigger] = childArray;
   let [, content] = props.children as [ReactElement, ReactElement];
 
   yield {
-    element: React.cloneElement(trigger, {...trigger.props, hasChildItems: true}),
+    element: React.cloneElement(trigger, {...trigger.props, hasChildItems: true, isTrigger: true}),
     wrapper: (element) => (
       <ContextualHelpTrigger key={element.key} targetKey={element.key} {...props}>
         {element}

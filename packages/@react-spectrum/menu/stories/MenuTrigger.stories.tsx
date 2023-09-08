@@ -786,6 +786,7 @@ export let MenuItemUnavailableToggling = {
   render: () => <MenuWithUnavailableSometimes />
 };
 
+// TODO: fix tabbing behavior, is there any way for the Dialog not to get autofocused?
 function MenuWithUnavailableSometimes(props) {
   let [isUnavailable, setIsUnavailable] = useState(false);
   return (

@@ -21,12 +21,15 @@ import type {SubMenuTriggerState} from '@react-stately/menu';
 import {useEffectEvent, useId, useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
-
 export interface AriaSubMenuTriggerProps {
   /** Ref of the menu that contains the submenu trigger. */
   parentMenuRef: RefObject<HTMLElement>,
   /** Ref of the submenu opened by the submenu trigger. */
-  subMenuRef: RefObject<HTMLElement>
+  subMenuRef: RefObject<HTMLElement>,
+  // TODO: naming. Also talk about if this should be customizable in this hook or if it belongs somewhere else
+  /** Type of the submenu being rendered. */
+  subMenuType?: 'dialog' | 'menu',
+  isDisabled?: boolean
 }
 
 export interface SubMenuTriggerAria<T> {
@@ -47,7 +50,7 @@ export interface SubMenuTriggerAria<T> {
 // TODO: debatable if we should have a useSubMenu hook for the submenu key handlers. Feels better to have it here so we don't need to ferry around
 // things like parentMenu and the timeout canceling since those are available
 export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubMenuTriggerState, ref: RefObject<FocusableElement>): SubMenuTriggerAria<T> {
-  let {parentMenuRef, subMenuRef} = props;
+  let {parentMenuRef, subMenuRef, subMenuType = 'menu', isDisabled} = props;
   let subMenuTriggerId = useId();
   let overlayId = useId();
   let {direction} = useLocale();
@@ -103,63 +106,81 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
     }
   };
 
+  let subMenuProps = {
+    id: overlayId,
+    'aria-labelledby': subMenuTriggerId,
+    ...(subMenuType === 'menu' && {
+      onClose: state.closeAll,
+      // isSubMenu: true,
+      autoFocus: state.focusStrategy,
+      onKeyDown: subMenuKeyDown
+    })
+  };
+
   // TODO: perhaps just make this onKeyDown and not use useKeyboard since we continuePropagation in both cases
   // TODO maybe can also move focus to the submenu as well on ArrowLeft if
   let subMenuTriggerKeyDown = (e: KeyboardEvent) => {
     switch (e.key) {
       case 'ArrowRight':
-        if (direction === 'ltr') {
-          if (!!subMenuRef?.current && document.activeElement === ref?.current) {
-            subMenuRef.current.focus();
-          } else {
-            onSubmenuOpen('first');
+        if (!isDisabled) {
+          if (direction === 'ltr') {
+            if (subMenuType === 'menu' && !!subMenuRef?.current && document.activeElement === ref?.current) {
+              subMenuRef.current.focus();
+            } else {
+              onSubmenuOpen('first');
+            }
+          } else if (state.isOpen) {
+            e.stopPropagation();
+            onSubMenuClose();
           }
-        } else if (state.isOpen) {
-          e.stopPropagation();
-          onSubMenuClose();
         }
+
         break;
       case 'ArrowLeft':
-        if (direction === 'rtl') {
-          if (!!subMenuRef?.current && document.activeElement === ref?.current) {
-            subMenuRef.current.focus();
-          } else {
-            onSubmenuOpen('first');
+        if (!isDisabled) {
+          if (direction === 'rtl') {
+            if (subMenuType === 'menu' && !!subMenuRef?.current && document.activeElement === ref?.current) {
+              subMenuRef.current.focus();
+            } else {
+              onSubmenuOpen('first');
+            }
+          } else if (state.isOpen) {
+            e.stopPropagation();
+            onSubMenuClose();
           }
-        } else if (state.isOpen) {
-          e.stopPropagation();
-          onSubMenuClose();
         }
         break;
     }
   };
 
   // TODO: disabled state is determined in useMenuItem, make sure to merge the press handlers with the ones useMenuItem sets up
+  // Actually, still check for isDisabled for cases like non isUnavaiable ContextualHelpTriggers which won't make the menu item disabled
+  // just stop the sub menu from opening
   let onPressStart = (e: PressEvent) => {
-    if (e.pointerType === 'virtual' || e.pointerType === 'keyboard') {
+    if (!isDisabled && (e.pointerType === 'virtual' || e.pointerType === 'keyboard')) {
       // If opened with a screen reader or keyboard, auto focus the first submenu item.
       onSubmenuOpen('first');
     }
   };
 
   let onPress = (e: PressEvent) => {
-    if (e.pointerType === 'touch') {
+    if (!isDisabled && e.pointerType === 'touch') {
       onSubmenuOpen();
     }
   };
 
-  // TODO: need to fix this so that hovering back onto the submenu trigger doesn't actually close the submenu
-  // actually might be in useMenuItem's onHoverStart
   let onHoverChange = (isHovered) => {
-    if (isHovered && !state.isOpen) {
-      if (!openTimeout.current) {
-        openTimeout.current = setTimeout(() => {
-          // TODO: this should set autofocus to false so focus doesn't move into the next menu
-          onSubmenuOpen();
-        }, 200);
+    if (!isDisabled) {
+      if (isHovered && !state.isOpen) {
+        if (!openTimeout.current) {
+          openTimeout.current = setTimeout(() => {
+            // TODO: this should set autofocus to false so focus doesn't move into the next menu
+            onSubmenuOpen();
+          }, 200);
+        }
+      } else if (!isHovered) {
+        cancelOpenTimeout();
       }
-    } else if (!isHovered) {
-      cancelOpenTimeout();
     }
   };
 
@@ -187,7 +208,7 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
     subMenuTriggerProps: {
       id: subMenuTriggerId,
       'aria-controls': state.isOpen ? overlayId : null,
-      'aria-haspopup': 'menu',
+      'aria-haspopup': !isDisabled ? subMenuType : null,
       'aria-expanded': state.isOpen ? 'true' : 'false',
       onPressStart,
       onPress,
@@ -195,15 +216,7 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
       onKeyDown: subMenuTriggerKeyDown,
       onBlur
     },
-    subMenuProps: {
-      // makes item selection in submenu close all menus
-      onClose: state.closeAll,
-      // isSubMenu: true,
-      'aria-labelledby': subMenuTriggerId,
-      autoFocus: state.focusStrategy,
-      id: overlayId,
-      onKeyDown: subMenuKeyDown
-    },
+    subMenuProps,
     popoverProps: {
       isNonModal: true
     },
