@@ -238,7 +238,7 @@ function Example() {
 function Pending(props) {
 
   return (
-    <>
+    <Flex wrap="wrap">
       <View backgroundColor={props.variant === 'overBackground' ? 'static-blue-700' : undefined} padding={16}>
         <PendingButtonComponent {...props}>click me!</PendingButtonComponent>
       </View>
@@ -259,11 +259,11 @@ function Pending(props) {
       </View>
 
       <View padding={16}>
-        <Button variant="primary" UNSTABLE_isPending={props.UNSTABLE_isPending} onPress={() => {window.alert('use storybook control to change this button UNSTABLE_isPending prop');}}>
+        <Button {...props} variant="primary" UNSTABLE_isPending={props.UNSTABLE_isPending} onPress={() => {window.alert('use storybook control to change this button UNSTABLE_isPending prop');}}>
           <Text>Controlled pending</Text>
         </Button>
       </View>
-    </>
+    </Flex>
   );
 }
 let timerValue = 5000;
