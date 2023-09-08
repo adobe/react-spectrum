@@ -13,7 +13,7 @@
 import {AriaColorWheelProps} from '@react-types/color';
 import {ColorWheelState} from '@react-stately/color';
 import {DOMAttributes} from '@react-types/shared';
-import {focusWithoutScrolling, mergeProps, useGlobalListeners, useLabels} from '@react-aria/utils';
+import {focusWithoutScrolling, mergeProps, useFormReset, useGlobalListeners, useLabels} from '@react-aria/utils';
 import React, {ChangeEvent, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
 import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
@@ -43,7 +43,8 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
     isDisabled,
     innerRadius,
     outerRadius,
-    'aria-label': ariaLabel
+    'aria-label': ariaLabel,
+    name
   } = props;
 
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
@@ -55,6 +56,8 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
       focusWithoutScrolling(inputRef.current);
     }
   }, [inputRef]);
+
+  useFormReset(inputRef, state.hue, state.setHue);
 
   let currentPosition = useRef<{x: number, y: number}>(null);
 
@@ -311,6 +314,7 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
         'aria-valuetext': state.value.formatChannelValue('hue', locale),
         disabled: isDisabled,
         value: `${state.value.getChannelValue('hue')}`,
+        name,
         onChange: (e: ChangeEvent<HTMLInputElement>) => {
           state.setHue(parseFloat(e.target.value));
         }

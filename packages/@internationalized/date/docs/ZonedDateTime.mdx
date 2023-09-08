@@ -103,7 +103,7 @@ date.toString(); // '2022-02-03T12:24:45-08:00[America/Los_Angeles]'
 
 By default, `ZonedDateTime` uses the Gregorian calendar system, but many other calendar systems that are used around the world are supported, such as Hebrew, Indian, Islamic, Buddhist, Ethiopic, and more. A <TypeLink links={docs.links} type={docs.exports.Calendar} /> instance can be passed to the `ZonedDateTime` constructor to represent dates in that calendar system.
 
-This example creates a date in the Buddhist calendar system, which is equivalent to April 4th, 2020 at 9:15 AM in the Gregorian calendar.
+This example creates a date in the Buddhist calendar system, which is equivalent to April 30th, 2020 at 9:15 AM in the Gregorian calendar.
 
 ```tsx
 import {BuddhistCalendar} from '@internationalized/date';
@@ -121,7 +121,7 @@ See the [Calendar](Calendar.html#implementations) docs for details about the sup
 
 Many calendar systems have only one era, or a modern era and a pre-modern era (e.g. AD and BC in the Gregorian calendar). However, other calendar systems may have many eras. For example, the Japanese calendar has eras for the reign of each Emperor. `ZonedDateTime` represents eras using string identifiers, which can be passed as an additional parameter to the constructor before the year. When eras are present, years are numbered starting from 1 within the era.
 
-This example creates a date in the Japanese calendar system, which is equivalent to April 4th, 2020 at 9:15 AM in the Gregorian calendar.
+This example creates a date in the Japanese calendar system, which is equivalent to April 30th, 2019 at 9:15 AM in the Gregorian calendar.
 
 ```tsx
 import {JapaneseCalendar} from '@internationalized/date';
@@ -288,11 +288,11 @@ The `round` option may also be passed, which causes the value to be rounded to i
 ```tsx
 let date = parseZonedDateTime('2022-02-03T09:22[America/Los_Angeles]');
 
-date.cycle('minute', 15); // 2027-02-03T09:37[America/Los_Angeles]
-date.cycle('minute', 15, {round: true}); // 2025-02-03T09:30[America/Los_Angeles]
+date.cycle('minute', 15); // 2022-02-03T09:37:00-08:00[America/Los_Angeles]
+date.cycle('minute', 15, {round: true}); // 2022-02-03T09:30:00-08:00[America/Los_Angeles]
 
-date.cycle('minute', -15); // 2017-02-03T09:07[America/Los_Angeles]
-date.cycle('minute', -15, {round: true}); // 2020-02-03T09:15[America/Los_Angeles]
+date.cycle('minute', -15); // 2022-02-03T09:07:00-08:00[America/Los_Angeles]
+date.cycle('minute', -15, {round: true}); // 2022-02-03T09:15:00-08:00[America/Los_Angeles]
 ```
 
 By default, the `hour` field is cycled within a 24 hour range. The `hourCycle` option can be set to `12` to use a 12 hour clock instead, which will preserve the AM/PM value when formatted.
@@ -511,8 +511,8 @@ The <TypeLink links={docs.links} type={docs.exports.getWeeksInMonth} /> function
 ```tsx
 import {getWeeksInMonth} from '@internationalized/date';
 
-let date = parseZonedDateTime('2022-01-01T08:30[America/Los_Angeles]');
+let date = parseZonedDateTime('2023-01-01T08:30[America/Los_Angeles]');
 
-getWeeksInMonth(date, 'en-US'); // 6
-getWeeksInMonth(date, 'fr-FR'); // 5
+getWeeksInMonth(date, 'en-US'); // 5
+getWeeksInMonth(date, 'fr-FR'); // 6
 ```

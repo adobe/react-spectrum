@@ -34,6 +34,13 @@
 .react-spectrum-Table-cell {
   display: flex;
   align-items: center;
+
+  &.react-spectrum-Table-cell--hasExpandCollapseButton {
+    display: grid;
+    grid-template-columns: var(--spectrum-global-dimension-size-400) 1fr;
+    grid-template-rows: 1fr;
+    grid-template-areas: "expand-button contents";
+  }
 }
 
 .react-spectrum-Table-cellWrapper > .react-spectrum-Table-cell {

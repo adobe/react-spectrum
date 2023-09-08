@@ -950,7 +950,7 @@ describe('Picker', function () {
       it('supports error message', function () {
         let {getByText, getByRole} = render(
           <Provider theme={theme}>
-            <Picker label="Test" errorMessage="Please select a valid item." validationState="invalid" onSelectionChange={onSelectionChange}>
+            <Picker label="Test" errorMessage="Please select a valid item." isInvalid onSelectionChange={onSelectionChange}>
               <Item>One</Item>
               <Item>Two</Item>
               <Item>Three</Item>
@@ -2193,6 +2193,42 @@ describe('Picker', function () {
       fireEvent.submit(getByTestId('form'));
       expect(onSubmit).toHaveBeenCalledTimes(1);
       expect(value).toEqual('one');
+    });
+
+    it('supports form reset', () => {
+      function Test() {
+        let [value, setValue] = React.useState('one');
+        return (
+          <Provider theme={theme}>
+            <form>
+              <Picker name="picker" data-testid="picker" label="Test" selectedKey={value} onSelectionChange={setValue}>
+                <Item key="one">One</Item>
+                <Item key="two">Two</Item>
+                <Item key="three">Three</Item>
+              </Picker>
+              <input type="reset" data-testid="reset" />
+            </form>
+          </Provider>
+        );
+      }
+
+      let {getByTestId, getByRole} = render(<Test />);
+      let picker = getByTestId('picker');
+      let input = document.querySelector('[name=picker]');
+
+      expect(input).toHaveValue('one');
+      triggerPress(picker);
+      act(() => jest.runAllTimers());
+
+      let listbox = getByRole('listbox');
+      let items = within(listbox).getAllByRole('option');
+      expect(items.length).toBe(3);
+      triggerPress(items[1]);
+      expect(input).toHaveValue('two');
+
+      let button = getByTestId('reset');
+      act(() => userEvent.click(button));
+      expect(input).toHaveValue('one');
     });
   });
 });

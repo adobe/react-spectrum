@@ -530,9 +530,9 @@ describe('MenuTrigger', function () {
 
     it.each`
       Name                      | Component      | props | menuProps
-      ${'MenuTrigger single'}   | ${MenuTrigger} | ${{}} | ${{selectionMode: 'single'}}
-      ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{closeOnSelect: true}} | ${{selectionMode: 'multiple'}}
-      ${'MenuTrigger none'}     | ${MenuTrigger} | ${{}} | ${{selectionMode: 'none'}}
+      ${'MenuTrigger single'}   | ${MenuTrigger} | ${{}} | ${{selectionMode: 'single', onClose}}
+      ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{closeOnSelect: true}} | ${{selectionMode: 'multiple', onClose}}
+      ${'MenuTrigger none'}     | ${MenuTrigger} | ${{}} | ${{selectionMode: 'none', onClose}}
     `('$Name closes on menu item selection if toggled by mouse click', function ({Component, props, menuProps}) {
       tree = renderComponent(Component, props, menuProps);
       openAndTriggerMenuItem(tree, props.role, menuProps.selectionMode, (item) => triggerPress(item));
@@ -540,13 +540,14 @@ describe('MenuTrigger', function () {
       let menu = tree.queryByRole('menu');
       expect(menu).toBeNull();
       expect(document.activeElement).toBe(tree.getByRole('button'));
+      expect(onClose).toHaveBeenCalledTimes(1);
     });
 
     it.each`
       Name                      | Component      | props | menuProps
-      ${'MenuTrigger single'}   | ${MenuTrigger} | ${{}} | ${{selectionMode: 'single'}}
-      ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{}} | ${{selectionMode: 'multiple'}}
-      ${'MenuTrigger none'}     | ${MenuTrigger} | ${{}} | ${{selectionMode: 'none'}}
+      ${'MenuTrigger single'}   | ${MenuTrigger} | ${{}} | ${{selectionMode: 'single', onClose}}
+      ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{}} | ${{selectionMode: 'multiple', onClose}}
+      ${'MenuTrigger none'}     | ${MenuTrigger} | ${{}} | ${{selectionMode: 'none', onClose}}
     `('$Name closes on menu item selection if toggled by ENTER key', function ({Component, props, menuProps}) {
       tree = renderComponent(Component, props, menuProps);
       openAndTriggerMenuItem(tree, props.role, menuProps.selectionMode, (item) => fireEvent.keyDown(item, {key: 'Enter', code: 13, charCode: 13}));
@@ -554,23 +555,25 @@ describe('MenuTrigger', function () {
       let menu = tree.queryByRole('menu');
       expect(menu).toBeNull();
       expect(document.activeElement).toBe(tree.getByRole('button'));
+      expect(onClose).toHaveBeenCalledTimes(1);
     });
 
     it.each`
       Name                      | Component      | props | menuProps
-      ${'MenuTrigger single'}   | ${MenuTrigger} | ${{}} | ${{selectionMode: 'single'}}
-      ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{}} | ${{selectionMode: 'multiple'}}
+      ${'MenuTrigger single'}   | ${MenuTrigger} | ${{}} | ${{selectionMode: 'single', onClose}}
+      ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{}} | ${{selectionMode: 'multiple', onClose}}
     `('$Name doesn\'t close on menu item selection if toggled by SPACE key (all selection modes except "none")', function ({Component, props, menuProps}) {
       tree = renderComponent(Component, props, menuProps);
       openAndTriggerMenuItem(tree, props.role, menuProps.selectionMode, (item) => fireEvent.keyDown(item, {key: ' ', code: 32, charCode: 32}));
 
       let menu = tree.queryByRole('menu');
       expect(menu).toBeTruthy();
+      expect(onClose).toHaveBeenCalledTimes(0);
     });
 
     it.each`
       Name                  | Component      | props | menuProps
-      ${'MenuTrigger none'} | ${MenuTrigger} | ${{}} | ${{selectionMode: 'none'}}
+      ${'MenuTrigger none'} | ${MenuTrigger} | ${{}} | ${{selectionMode: 'none', onClose}}
     `('$Name closes on menu item selection if toggled by SPACE key (selectionMode=none)', function ({Component, props, menuProps}) {
       tree = renderComponent(Component, props, menuProps);
       openAndTriggerMenuItem(tree, props.role, menuProps.selectionMode, (item) => fireEvent.keyDown(item, {key: ' ', code: 32, charCode: 32}));
@@ -578,11 +581,12 @@ describe('MenuTrigger', function () {
       let menu = tree.queryByRole('menu');
       expect(menu).toBeNull();
       expect(document.activeElement).toBe(tree.getByRole('button'));
+      expect(onClose).toHaveBeenCalledTimes(1);
     });
 
     it.each`
       Name             | Component      | props
-      ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
+      ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, onClose}}
     `('$Name closes the menu when blurring the menu', function ({Component, props}) {
       tree = renderComponent(Component, props, {});
       expect(onOpenChange).toBeCalledTimes(0);
@@ -600,6 +604,7 @@ describe('MenuTrigger', function () {
       expect(menu).not.toBeInTheDocument();
       expect(button).toHaveAttribute('aria-expanded', 'false');
       expect(onOpenChange).toBeCalledTimes(2);
+      expect(onClose).toHaveBeenCalledTimes(0);
     });
 
     it.each`
@@ -1171,6 +1176,33 @@ describe('MenuTrigger', function () {
 
         let dialog = tree.getByRole('dialog');
         expect(dialog).toBeVisible();
+      });
+
+      it('should close everything if the user clicks on the underlay of the root menu', function () {
+        renderTree();
+        let menu = openMenu();
+        let menuItems = within(menu).getAllByRole('menuitem');
+        let unavailableItem = menuItems[4];
+        expect(unavailableItem).toBeVisible();
+        expect(unavailableItem).toHaveAttribute('aria-haspopup', 'dialog');
+
+        fireEvent.mouseEnter(unavailableItem);
+        act(() => {jest.runAllTimers();});
+        let dialog = tree.getByRole('dialog');
+        expect(dialog).toBeVisible();
+
+        expect(document.activeElement).toBe(dialog);
+
+        let underlay = tree.getByTestId('underlay', {hidden: true});
+        fireEvent.pointerDown(underlay);
+        fireEvent.pointerUp(underlay);
+        act(() => {jest.runAllTimers();});
+        act(() => {jest.runAllTimers();});
+        expect(dialog).not.toBeInTheDocument();
+        expect(menu).not.toBeInTheDocument();
+
+        let triggerButton = tree.getByRole('button');
+        expect(document.activeElement).toBe(triggerButton);
       });
     });
   });
