@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
 import {Header, Item, ListBox, ListBoxContext, Section, Text, useDragAndDrop} from '../';
 import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';
@@ -45,11 +45,14 @@ let keyPress = (key) => {
 };
 
 describe('ListBox', () => {
-  beforeEach(() => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
   });
 
   afterEach(() => {
+    act(() => {jest.runAllTimers();});
     jest.restoreAllMocks();
   });
 
@@ -276,42 +279,42 @@ describe('ListBox', () => {
     expect(getAllByRole('option').map(o => o.textContent)).toEqual(['Hi']);
   });
 
-  it('should support hover', () => {
+  it('should support hover', async () => {
     let {getAllByRole} = renderListbox({selectionMode: 'multiple'}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
     let option = getAllByRole('option')[0];
 
     expect(option).not.toHaveAttribute('data-hovered');
     expect(option).not.toHaveClass('hover');
 
-    userEvent.hover(option);
+    await user.hover(option);
     expect(option).toHaveAttribute('data-hovered', 'true');
     expect(option).toHaveClass('hover');
 
-    userEvent.unhover(option);
+    await user.unhover(option);
     expect(option).not.toHaveAttribute('data-hovered');
     expect(option).not.toHaveClass('hover');
   });
 
-  it('should not show hover state when item is not interactive', () => {
+  it('should not show hover state when item is not interactive', async () => {
     let {getAllByRole} = renderListbox({}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
     let option = getAllByRole('option')[0];
 
     expect(option).not.toHaveAttribute('data-hovered');
     expect(option).not.toHaveClass('hover');
 
-    userEvent.hover(option);
+    await user.hover(option);
     expect(option).not.toHaveAttribute('data-hovered');
     expect(option).not.toHaveClass('hover');
   });
 
-  it('should support focus ring', () => {
+  it('should support focus ring', async () => {
     let {getAllByRole} = renderListbox({selectionMode: 'multiple'}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
     let option = getAllByRole('option')[0];
 
     expect(option).not.toHaveAttribute('data-focus-visible');
     expect(option).not.toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(option);
     expect(option).toHaveAttribute('data-focus-visible', 'true');
     expect(option).toHaveClass('focus');
@@ -354,18 +357,18 @@ describe('ListBox', () => {
     expect(option).not.toHaveClass('pressed');
   });
 
-  it('should support selection state', () => {
+  it('should support selection state', async () => {
     let {getAllByRole} = renderListbox({selectionMode: 'multiple'}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
     let option = getAllByRole('option')[0];
 
     expect(option).not.toHaveAttribute('aria-selected', 'true');
     expect(option).not.toHaveClass('selected');
 
-    userEvent.click(option);
+    await user.click(option);
     expect(option).toHaveAttribute('aria-selected', 'true');
     expect(option).toHaveClass('selected');
 
-    userEvent.click(option);
+    await user.click(option);
     expect(option).not.toHaveAttribute('aria-selected', 'true');
     expect(option).not.toHaveClass('selected');
   });
@@ -391,11 +394,11 @@ describe('ListBox', () => {
     expect(option).toHaveTextContent('No results');
   });
 
-  it('should support horizontal orientation', () => {
+  it('should support horizontal orientation', async () => {
     let {getAllByRole} = renderListbox({orientation: 'horizontal'});
     let options = getAllByRole('option');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(options[0]);
 
     keyPress('ArrowRight');
@@ -408,7 +411,7 @@ describe('ListBox', () => {
     expect(document.activeElement).toBe(options[1]);
   });
 
-  it('should support grid layout', () => {
+  it('should support grid layout', async () => {
     let {getAllByRole} = renderListbox({layout: 'grid'});
     let options = getAllByRole('option');
 
@@ -421,7 +424,7 @@ describe('ListBox', () => {
       }
     });
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(options[0]);
 
     keyPress('ArrowDown');
@@ -437,7 +440,7 @@ describe('ListBox', () => {
     expect(document.activeElement).toBe(options[1]);
   });
 
-  it('should support horizontal grid layout', () => {
+  it('should support horizontal grid layout', async () => {
     let {getAllByRole} = renderListbox({layout: 'grid', orientation: 'horizontal'});
     let options = getAllByRole('option');
 
@@ -450,7 +453,7 @@ describe('ListBox', () => {
       }
     });
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(options[0]);
 
     keyPress('ArrowRight');
@@ -561,12 +564,12 @@ describe('ListBox', () => {
       expect(onRootDrop).toHaveBeenCalledTimes(1);
     });
 
-    it('should support horizontal orientation', () => {
+    it('should support horizontal orientation', async () => {
       let onReorder = jest.fn();
       let {getAllByRole} = render(<DraggableListBox onReorder={onReorder} orientation="horizontal" />);
       let options = getAllByRole('option');
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(options[0]);
       keyPress('Enter');
       act(() => jest.runAllTimers());
@@ -581,7 +584,7 @@ describe('ListBox', () => {
       act(() => jest.runAllTimers());
     });
 
-    it('should support grid layout', () => {
+    it('should support grid layout', async () => {
       let onReorder = jest.fn();
       let {getAllByRole} = render(<DraggableListBox onReorder={onReorder} layout="grid" />);
       let options = getAllByRole('option');
@@ -595,7 +598,7 @@ describe('ListBox', () => {
         }
       });
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(options[0]);
       keyPress('Enter');
       act(() => jest.runAllTimers());
@@ -610,7 +613,7 @@ describe('ListBox', () => {
       act(() => jest.runAllTimers());
     });
 
-    it('should support horizontal grid layout', () => {
+    it('should support horizontal grid layout', async () => {
       let onReorder = jest.fn();
       let {getAllByRole} = render(<DraggableListBox onReorder={onReorder} layout="grid" orientation="horizontal" />);
       let options = getAllByRole('option');
@@ -624,7 +627,7 @@ describe('ListBox', () => {
         }
       });
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(options[0]);
       keyPress('Enter');
       act(() => jest.runAllTimers());
