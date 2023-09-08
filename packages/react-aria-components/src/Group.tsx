@@ -29,10 +29,25 @@ export interface GroupRenderProps {
    * Whether an element within the group is keyboard focused.
    * @selector [data-focus-visible]
    */
-  isFocusVisible: boolean
+  isFocusVisible: boolean,
+  /**
+   * Whether the group is disabled.
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean,
+  /**
+   * Whether the group is invalid.
+   * @selector [data-invalid]
+   */
+  isInvalid: boolean
 }
 
-export interface GroupProps extends Omit<HTMLAttributes<HTMLElement>, 'className' | 'style'>, StyleRenderProps<GroupRenderProps> {}
+export interface GroupProps extends Omit<HTMLAttributes<HTMLElement>, 'className' | 'style'>, StyleRenderProps<GroupRenderProps> {
+  /** Whether the group is disabled. */
+  isDisabled?: boolean,
+  /** Whether the group is invalid. */
+  isInvalid?: boolean
+}
 
 export const GroupContext = createContext<ContextValue<GroupProps, HTMLDivElement>>({});
 
@@ -44,20 +59,25 @@ function Group(props: GroupProps, ref: ForwardedRef<HTMLDivElement>) {
     within: true
   });
 
+  let {isDisabled, isInvalid, ...otherProps} = props;
+  isDisabled ??= !!props['aria-disabled'] && props['aria-disabled'] !== 'false';
+  isInvalid ??= !!props['aria-invalid'] && props['aria-invalid'] !== 'false';
   let renderProps = useRenderProps({
     ...props,
-    values: {isHovered, isFocusWithin: isFocused, isFocusVisible},
+    values: {isHovered, isFocusWithin: isFocused, isFocusVisible, isDisabled, isInvalid},
     defaultClassName: 'react-aria-Group'
   });
 
   return (
     <div
-      {...mergeProps(props, focusProps, hoverProps)}
+      {...mergeProps(otherProps, focusProps, hoverProps)}
       {...renderProps}
       ref={ref}
       data-focus-within={isFocused || undefined}
       data-hovered={isHovered || undefined}
-      data-focus-visible={isFocusVisible || undefined}>
+      data-focus-visible={isFocusVisible || undefined}
+      data-disabled={isDisabled || undefined}
+      data-invalid={isInvalid || undefined}>
       {props.children}
     </div>
   );

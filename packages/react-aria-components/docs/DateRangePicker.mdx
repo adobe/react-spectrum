@@ -1296,6 +1296,98 @@ Now you can use `MyCustomLabel` within a `DateRangePicker`, in place of the buil
 </DateRangePicker>
 ```
 
+### State
+
+DateRangePicker provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.DateRangePickerState} /> object to its children via `DateRangePickerStateContext`. This can be used to access and manipulate the date range picker's state.
+
+This example shows a `DateRangePickerClearButton` component that can be placed within a `DateRangePicker` to allow the user to clear the selected value.
+
+```tsx example
+import {DateRangePickerStateContext} from 'react-aria-components';
+
+function DateRangePickerClearButton() {
+  /*- begin highlight -*/
+  let state = React.useContext(DateRangePickerStateContext)!;
+  /*- end highlight -*/
+  return (
+    <Button
+      // Don't inherit default Button behavior from DateRangePicker.
+      slot={null}
+      className="clear-button"
+      aria-label="Clear"
+      onPress={() => state.setValue(null)}>
+      ✕
+    </Button>
+  );
+}
+
+<DateRangePicker defaultValue={{start: parseDate('2023-07-12'), end: parseDate('2023-08-04')}}>
+  <Label>Trip dates</Label>
+  <Group>
+    <DateInput slot="start">
+      {segment => <DateSegment segment={segment} />}
+    </DateInput>
+    <span aria-hidden="true">–</span>
+    <DateInput slot="end">
+      {segment => <DateSegment segment={segment} />}
+    </DateInput>
+    {/*- begin highlight -*/}
+    <DateRangePickerClearButton />
+    {/*- end highlight -*/}
+    <Button>▼</Button>
+  </Group>
+  <Popover>
+    <Dialog>
+      <RangeCalendar>
+        <header>
+          <Button slot="previous">◀</Button>
+          <Heading />
+          <Button slot="next">▶</Button>
+        </header>
+        <CalendarGrid>
+          {date => <CalendarCell date={date} />}
+        </CalendarGrid>
+      </RangeCalendar>
+    </Dialog>
+  </Popover>
+</DateRangePicker>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.clear-button {
+  width: 1.143rem;
+  height: 1.143rem;
+  border-radius: 1.143rem;
+  font-size: 0.857rem;
+  line-height: 0.857rem;
+  vertical-align: middle;
+  text-align: center;
+  background: gray;
+  color: white;
+  border: none;
+  padding: 0;
+  outline: none;
+
+  &[data-pressed] {
+    background: dimgray;
+  }
+
+  &[data-focus-visible] {
+    outline: 2px solid slateblue;
+    outline-offset: 2px;
+  }
+
+  + .react-aria-Button {
+    margin-left: 4px;
+  }
+}
+```
+
+</details>
+
 ### Hooks
 
 If you need to customize things even further, such as accessing internal state, intercepting events, or customizing the DOM structure, you can drop down to the lower level Hook-based API. See [useDateRangePicker](useDateRangePicker.html) for more details.

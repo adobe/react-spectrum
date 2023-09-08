@@ -50,7 +50,7 @@ function BreadcrumbsInner<T extends object>({props, collection, breadcrumbsRef: 
     <ol
       ref={ref}
       {...filterDOMProps(props, {labelable: true})}
-      slot={props.slot}
+      slot={props.slot || undefined}
       style={props.style}
       className={props.className ?? 'react-aria-Breadcrumbs'}>
       {[...collection].map((node, i) => (
