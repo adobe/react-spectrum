@@ -167,6 +167,8 @@ listbox components that can be styled as needed.
 
 * **Item selection** – Single or multiple selection, disabled rows, and both `toggle` and `replace` selection behaviors.
 * **Keyboard navigation** – List items can be navigated using the arrow keys, along with page up/down, home/end, etc. Typeahead, auto scrolling, and selection modifier keys are supported as well.
+* **Layout options** – Items can be arranged in a vertical or horizontal stack, or as a two-dimensional grid.
+* **Drag and drop** – ListBox supports drag and drop to reorder, insert, or update items via mouse, touch, keyboard, and screen reader interactions.
 * **Touch friendly** – Selection behavior adapts depending on the device. For example, selection occurs on mouse down but on touch up, which is consistent with native conventions.
 * **Accessible** – Follows the [ARIA listbox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/), with support for items and sections, and slots for label and description elements within each item for improved screen reader announcement.
 * **Styleable** – Items include builtin states for styling, such as hover, press, focus, selected, and disabled.
@@ -175,7 +177,7 @@ Note: `ListBox` only handles the list itself. For a dropdown, see [Select](Selec
 
 ## Anatomy
 
-<Anatomy />
+<Anatomy role="img" aria-label="Anatomy diagram of a list container, consisting of multiple list items. Each list item contains a label and description. The items are grouped into a section with a header." />
 
 A listbox consists of a container element, with a list of items or sections inside.
 Users can select one or more items by clicking, tapping, or navigating with the keyboard.

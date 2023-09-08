@@ -2,6 +2,6 @@
   "actions": "פעולות",
   "actionsAvailable": "פעולות זמינות.",
   "clearSelection": "נקה בחירה",
-  "selected": "{count, plural, =0 {לא בוצעה בחירה} other {# נבחרו}}",
+  "selected": "{count, plural, =0 {לא בוצעה בחירה} one { # בחר} other {# נבחרו}}\",",
   "selectedAll": "כל הפריטים שנבחרו"
 }
