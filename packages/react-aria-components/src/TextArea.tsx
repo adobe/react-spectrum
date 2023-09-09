@@ -16,9 +16,16 @@ function TextArea(props: TextAreaProps, ref: ForwardedRef<HTMLTextAreaElement>) 
     autoFocus: props.autoFocus
   });
 
+  let isInvalid = !!props['aria-invalid'] && props['aria-invalid'] !== 'false';
   let renderProps = useRenderProps({
     ...props,
-    values: {isHovered, isFocused, isFocusVisible, isDisabled: props.disabled || false},
+    values: {
+      isHovered,
+      isFocused,
+      isFocusVisible,
+      isDisabled: props.disabled || false,
+      isInvalid
+    },
     defaultClassName: 'react-aria-TextArea'
   });
 
@@ -27,8 +34,11 @@ function TextArea(props: TextAreaProps, ref: ForwardedRef<HTMLTextAreaElement>) 
       {...mergeProps(props, focusProps, hoverProps)}
       {...renderProps}
       ref={ref}
+      data-focused={isFocused || undefined}
+      data-disabled={props.disabled || undefined}
       data-hovered={isHovered || undefined}
-      data-focus-visible={isFocusVisible || undefined} />
+      data-focus-visible={isFocusVisible || undefined}
+      data-invalid={isInvalid || undefined} />
   );
 }
 /**

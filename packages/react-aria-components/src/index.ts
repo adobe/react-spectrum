@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-export {Breadcrumbs, BreadcrumbsContext} from './Breadcrumbs';
+export {Breadcrumbs, BreadcrumbsContext, Breadcrumb} from './Breadcrumbs';
 export {Button, ButtonContext} from './Button';
 export {Calendar, CalendarGrid, CalendarGridHeader, CalendarGridBody, CalendarHeaderCell, CalendarCell, RangeCalendar, CalendarContext, RangeCalendarContext} from './Calendar';
 export {Checkbox, CheckboxGroup, CheckboxGroupContext, CheckboxContext} from './Checkbox';
@@ -19,7 +19,7 @@ export {DateField, DateInput, DateSegment, TimeField, DateFieldContext, TimeFiel
 export {DatePicker, DateRangePicker, DatePickerContext, DateRangePickerContext} from './DatePicker';
 export {DialogTrigger, Dialog, DialogContext} from './Dialog';
 export {DropZone, DropZoneContext} from './DropZone';
-export {FileTrigger, FileTriggerContext} from './FileTrigger';
+export {FileTrigger} from './FileTrigger';
 export {GridList, GridListContext} from './GridList';
 export {Group, GroupContext} from './Group';
 export {Header} from './Header';
@@ -37,14 +37,14 @@ export {NumberField, NumberFieldContext} from './NumberField';
 export {OverlayArrow} from './OverlayArrow';
 export {Popover, PopoverContext} from './Popover';
 export {ProgressBar, ProgressBarContext} from './ProgressBar';
-export {Provider, useContextProps} from './utils';
+export {Provider, useContextProps, useSlottedContext} from './utils';
 export {RadioGroup, Radio, RadioGroupContext, RadioContext} from './RadioGroup';
 export {SearchField, SearchFieldContext} from './SearchField';
 export {Select, SelectValue, SelectContext} from './Select';
 export {Separator, SeparatorContext} from './Separator';
 export {Slider, SliderOutput, SliderTrack, SliderThumb, SliderContext} from './Slider';
 export {Switch, SwitchContext} from './Switch';
-export {Table, Row, Cell, Column, TableHeader, TableBody, TableContext, useTableOptions} from './Table';
+export {Table, Row, Cell, Column, ColumnResizer, TableHeader, TableBody, TableContext, ResizableTableContainer, useTableOptions} from './Table';
 export {Tabs, TabList, TabPanel, Tab, TabsContext} from './Tabs';
 export {TagGroup, TagGroupContext, TagList, Tag} from './TagGroup';
 export {Text, TextContext} from './Text';
@@ -55,7 +55,7 @@ export {TooltipTrigger, Tooltip} from './Tooltip';
 export {useDragAndDrop, DropIndicator, DropIndicatorContext} from './useDragAndDrop';
 export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem, SSRProvider} from 'react-aria';
 
-export type {BreadcrumbsProps} from './Breadcrumbs';
+export type {BreadcrumbsProps, BreadcrumbProps} from './Breadcrumbs';
 export type {ButtonProps, ButtonRenderProps} from './Button';
 export type {CalendarCellProps, CalendarProps, CalendarRenderProps, CalendarGridProps, CalendarGridHeaderProps, CalendarGridBodyProps, CalendarHeaderCellProps, CalendarCellRenderProps, RangeCalendarProps, RangeCalendarRenderProps} from './Calendar';
 export type {CheckboxGroupProps, CheckboxGroupRenderProps, CheckboxRenderProps, CheckboxProps} from './Checkbox';
@@ -74,7 +74,7 @@ export type {LabelProps} from './Label';
 export type {LinkProps} from './Link';
 export type {LinkRenderProps} from './Link';
 export type {ListBoxProps, ListBoxRenderProps} from './ListBox';
-export type {MenuItemRenderProps, MenuProps, MenuTriggerProps} from './Menu';
+export type {MenuProps, MenuTriggerProps} from './Menu';
 export type {MeterProps, MeterRenderProps} from './Meter';
 export type {ModalOverlayProps, ModalRenderProps} from './Modal';
 export type {NumberFieldProps, NumberFieldRenderProps} from './NumberField';
@@ -87,7 +87,7 @@ export type {SelectProps, SelectValueProps, SelectValueRenderProps, SelectRender
 export type {SeparatorProps} from './Separator';
 export type {SliderOutputProps, SliderProps, SliderRenderProps, SliderThumbProps, SliderTrackProps, SliderTrackRenderProps, SliderThumbRenderProps} from './Slider';
 export type {SwitchProps, SwitchRenderProps} from './Switch';
-export type {TableProps, TableRenderProps, TableHeaderProps, TableBodyProps, TableBodyRenderProps, ColumnProps, ColumnRenderProps, RowProps, RowRenderProps, CellProps, CellRenderProps} from './Table';
+export type {TableProps, TableRenderProps, TableHeaderProps, TableBodyProps, TableBodyRenderProps, ResizableTableContainerProps, ColumnProps, ColumnRenderProps, ColumnResizerProps, ColumnResizerRenderProps, RowProps, RowRenderProps, CellProps, CellRenderProps} from './Table';
 export type {TabListProps, TabListRenderProps, TabPanelProps, TabPanelRenderProps, TabProps, TabsProps, TabRenderProps, TabsRenderProps} from './Tabs';
 export type {TagGroupProps, TagListProps, TagListRenderProps, TagProps, TagRenderProps} from './TagGroup';
 export type {TextAreaProps} from './TextArea';
@@ -99,5 +99,5 @@ export type {DragAndDropHooks, DragAndDropOptions, DropIndicatorProps} from './u
 export type {ContextValue, SlotProps} from './utils';
 
 export type {DateValue, DateRange, TimeValue} from 'react-aria';
-export type {DirectoryDropItem, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragPreviewRenderer, DragTypes, DropItem, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem} from 'react-aria';
-export type {Selection} from 'react-stately';
+export type {DirectoryDropItem, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragPreviewRenderer, DragTypes, DropItem, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem, PressEvent} from 'react-aria';
+export type {Selection, SortDescriptor, SortDirection, SelectionMode} from 'react-stately';

@@ -13,6 +13,7 @@
 import {DOMAttributes} from '@react-types/shared';
 import {GridRowProps} from '@react-aria/grid';
 import {RefObject} from 'react';
+import {tableNestedRows} from '@react-stately/flags';
 import {TableState} from '@react-stately/table';
 
 export interface TableHeaderRowAria {
@@ -32,7 +33,7 @@ export function useTableHeaderRow<T>(props: GridRowProps<T>, state: TableState<T
     role: 'row'
   };
 
-  if (isVirtualized && !('expandedKeys' in state)) {
+  if (isVirtualized && !(tableNestedRows() && 'expandedKeys' in state)) {
     rowProps['aria-rowindex'] = node.index + 1; // aria-rowindex is 1 based
   }
 

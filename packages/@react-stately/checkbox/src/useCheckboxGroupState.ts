@@ -24,6 +24,15 @@ export interface CheckboxGroupState {
   /** Whether the checkbox group is read only. */
   readonly isReadOnly: boolean,
 
+  /**
+   * The current validation state of the checkbox group.
+   * @deprecated Use `isInvalid` instead.
+   */
+  readonly validationState: ValidationState,
+
+  /** Whether the checkbox group is invalid. */
+  readonly isInvalid: boolean,
+
   /** Returns whether the given value is selected. */
   isSelected(value: string): boolean,
 
@@ -37,10 +46,7 @@ export interface CheckboxGroupState {
   removeValue(value: string): void,
 
   /** Toggles a value in the set of selected values. */
-  toggleValue(value: string): void,
-
-  /** The current validation state of the checkbox group. */
-  validationState: ValidationState
+  toggleValue(value: string): void
 }
 
 /**
@@ -90,7 +96,8 @@ export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxG
         setValue(selectedValues.concat(value));
       }
     },
-    validationState: props.validationState
+    validationState: props.validationState,
+    isInvalid: props.isInvalid || props.validationState === 'invalid'
   };
 
   return state;

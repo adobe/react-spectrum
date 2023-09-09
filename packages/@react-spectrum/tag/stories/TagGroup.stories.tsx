@@ -91,9 +91,8 @@ export default {
       control: 'select',
       options: ['start', 'end']
     },
-    validationState: {
-      control: 'select',
-      options: [null, 'valid', 'invalid']
+    isInvalid: {
+      control: 'boolean'
     },
     description: {
       control: 'text'

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render as render_, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render as render_, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
 import {CalendarDate, CalendarDateTime, EthiopicCalendar, getLocalTimeZone, JapaneseCalendar, toCalendarDateTime, today} from '@internationalized/date';
 import {DatePicker} from '../';
 import {Provider} from '@react-spectrum/provider';
@@ -54,7 +54,9 @@ function render(el) {
 }
 
 describe('DatePicker', function () {
+  let user;
   beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
   });
   afterEach(() => {
@@ -200,7 +202,7 @@ describe('DatePicker', function () {
       onKeyUpSpy.mockClear();
     });
 
-    it('should focus field, move a segment, and open popover and does not blur', function () {
+    it('should focus field, move a segment, and open popover and does not blur', async function () {
       let {getByRole, getAllByRole} = render(<DatePicker label="Date" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} />);
       let segments = getAllByRole('spinbutton');
       let button = getByRole('button');
@@ -209,13 +211,13 @@ describe('DatePicker', function () {
       expect(onFocusChangeSpy).not.toHaveBeenCalled();
       expect(onFocusSpy).not.toHaveBeenCalled();
 
-      userEvent.tab();
+      await user.tab();
       expect(segments[0]).toHaveFocus();
       expect(onBlurSpy).not.toHaveBeenCalled();
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
 
-      userEvent.tab();
+      await user.tab();
       expect(segments[1]).toHaveFocus();
       expect(onBlurSpy).not.toHaveBeenCalled();
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
@@ -231,7 +233,7 @@ describe('DatePicker', function () {
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
     });
 
-    it('should focus field and leave to blur', function () {
+    it('should focus field and leave to blur', async function () {
       let {getAllByRole} = render(<DatePicker label="Date" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} />);
       let segments = getAllByRole('spinbutton');
 
@@ -239,13 +241,13 @@ describe('DatePicker', function () {
       expect(onFocusChangeSpy).not.toHaveBeenCalled();
       expect(onFocusSpy).not.toHaveBeenCalled();
 
-      userEvent.tab();
+      await user.tab();
       expect(segments[0]).toHaveFocus();
       expect(onBlurSpy).not.toHaveBeenCalled();
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
 
-      userEvent.click(document.body);
+      await user.click(document.body);
       expect(document.body).toHaveFocus();
       expect(onBlurSpy).toHaveBeenCalledTimes(1);
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(2);
@@ -307,21 +309,21 @@ describe('DatePicker', function () {
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.body).toHaveFocus();
       expect(onBlurSpy).toHaveBeenCalledTimes(1);
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(2);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
     });
 
-    it('should trigger right arrow key event for segment navigation', function () {
+    it('should trigger right arrow key event for segment navigation', async function () {
       let {getAllByRole} = render(<DatePicker label="Date" onKeyDown={onKeyDownSpy} onKeyUp={onKeyUpSpy} />);
       let segments = getAllByRole('spinbutton');
 
       expect(onKeyDownSpy).not.toHaveBeenCalled();
       expect(onKeyUpSpy).not.toHaveBeenCalled();
 
-      userEvent.tab();
+      await user.tab();
       expect(segments[0]).toHaveFocus();
       expect(onKeyDownSpy).not.toHaveBeenCalled();
       expect(onKeyUpSpy).toHaveBeenCalledTimes(1);
@@ -519,7 +521,7 @@ describe('DatePicker', function () {
       expect(getTextValue(combobox)).toBe('2/4/2019, 1:45 AM');
     });
 
-    it('should not fire onChange until both date and time are selected', function () {
+    it('should fire onChange until both date and time are selected', function () {
       let onChange = jest.fn();
       let {getByRole, getAllByRole, getAllByLabelText} = render(
         <Provider theme={theme}>
@@ -577,17 +579,18 @@ describe('DatePicker', function () {
 
       expect(document.activeElement).toHaveAttribute('aria-valuetext', '00');
 
-      expect(onChange).not.toHaveBeenCalled();
-      expectPlaceholder(combobox, 'mm/dd/yyyy, ––:–– AM');
+      expect(onChange).toHaveBeenCalledTimes(1);
+      let parts = formatter.formatToParts(today(getLocalTimeZone()).toDate(getLocalTimeZone()));
+      let month = parts.find(p => p.type === 'month').value;
+      let day = parts.find(p => p.type === 'day').value;
+      let year = parts.find(p => p.type === 'year').value;
+      expectPlaceholder(combobox, `${month}/${day}/${year}, 12:00 AM`);
 
       fireEvent.keyDown(hour, {key: 'ArrowRight'});
       fireEvent.keyUp(hour, {key: 'ArrowRight'});
 
       expect(document.activeElement).toHaveAttribute('aria-label', 'AM/PM, ');
-      expect(document.activeElement).toHaveAttribute('aria-valuetext', 'Empty');
-
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
-      fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+      expect(document.activeElement).toHaveAttribute('aria-valuetext', 'AM');
 
       expect(dialog).toBeVisible();
       expect(onChange).toHaveBeenCalledTimes(1);
@@ -596,7 +599,7 @@ describe('DatePicker', function () {
       expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
     });
 
-    it('should confirm time placeholder on blur if date is selected', function () {
+    it('should confirm time placeholder on blur if date is selected', async function () {
       let onChange = jest.fn();
       let {getByRole, getAllByRole} = render(
         <Provider theme={theme}>
@@ -621,7 +624,7 @@ describe('DatePicker', function () {
       expect(todayCell).toHaveAttribute('aria-selected', 'true');
       expect(onChange).not.toHaveBeenCalled();
 
-      userEvent.click(document.body);
+      await user.click(document.body);
       act(() => jest.runAllTimers());
 
       expect(dialog).not.toBeInTheDocument();
@@ -632,7 +635,7 @@ describe('DatePicker', function () {
       expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
     });
 
-    it('should not confirm on blur if date is not selected', function () {
+    it('should not confirm on blur if date is not selected', async function () {
       let onChange = jest.fn();
       let {getByRole, getAllByRole, getAllByLabelText} = render(
         <Provider theme={theme}>
@@ -663,14 +666,76 @@ describe('DatePicker', function () {
 
       expect(hour).toHaveAttribute('aria-valuetext', '12 AM');
 
-      userEvent.click(document.body);
+      await user.click(document.body);
       act(() => jest.runAllTimers());
 
       expect(dialog).not.toBeInTheDocument();
       expect(onChange).not.toHaveBeenCalled();
     });
 
-    it('should clear date and time when controlled value is set to null', function () {
+    it('should confirm valid date time on dialog close', async function () {
+      let onChange = jest.fn();
+      let {getByRole, getAllByRole, getAllByLabelText} = render(
+        <Provider theme={theme}>
+          <DatePicker label="Date" granularity="minute" onChange={onChange} />
+        </Provider>
+      );
+
+      let combobox = getAllByRole('group')[0];
+      expectPlaceholder(combobox, 'mm/dd/yyyy, ––:–– AM');
+
+      let button = getByRole('button');
+      await user.click(button);
+      act(() => jest.runAllTimers());
+
+      let dialog = getByRole('dialog');
+      expect(dialog).toBeVisible();
+
+      let cells = getAllByRole('gridcell');
+      let todayCell = cells.find(cell => cell.firstChild.getAttribute('aria-label')?.startsWith('Today'));
+      await user.click(todayCell.firstChild);
+      expect(todayCell).toHaveAttribute('aria-selected', 'true');
+      expect(onChange).not.toHaveBeenCalled();
+
+      let timeField = getAllByLabelText('Time')[0];
+      expectPlaceholder(timeField, '––:–– AM');
+
+      let hour = within(timeField).getByLabelText('hour,');
+      expect(hour).toHaveAttribute('role', 'spinbutton');
+      expect(hour).toHaveAttribute('aria-valuetext', 'Empty');
+
+      act(() => hour.focus());
+      fireEvent.keyDown(hour, {key: 'ArrowUp'});
+      fireEvent.keyUp(hour, {key: 'ArrowUp'});
+
+      expect(hour).toHaveAttribute('aria-valuetext', '12 AM');
+
+      let minute = within(timeField).getByLabelText('minute,');
+      expect(minute).toHaveAttribute('role', 'spinbutton');
+      expect(minute).toHaveAttribute('aria-valuetext', 'Empty');
+
+      act(() => minute.focus());
+      fireEvent.keyDown(minute, {key: 'ArrowUp'});
+      fireEvent.keyUp(minute, {key: 'ArrowUp'});
+      fireEvent.keyDown(minute, {key: 'ArrowUp'});
+      fireEvent.keyUp(minute, {key: 'ArrowUp'});
+
+      expect(minute).toHaveAttribute('aria-valuetext', '01');
+
+      await user.click(document.body);
+      act(() => jest.runAllTimers());
+
+      expect(dialog).not.toBeInTheDocument();
+      expect(onChange).toHaveBeenCalledTimes(2);
+      let formatter = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'numeric', day: 'numeric'});
+      let parts = formatter.formatToParts(today(getLocalTimeZone()).toDate(getLocalTimeZone()));
+      let month = parts.find(p => p.type === 'month').value;
+      let day = parts.find(p => p.type === 'day').value;
+      let year = parts.find(p => p.type === 'year').value;
+      expectPlaceholder(combobox, `${month}/${day}/${year}, 12:01 AM`);
+    });
+
+    it('should clear date and time when controlled value is set to null', async function () {
       function ControlledDatePicker() {
         let [value, setValue] = React.useState(null);
         return (<>
@@ -690,7 +755,7 @@ describe('DatePicker', function () {
       expectPlaceholder(combobox, 'mm/dd/yyyy, ––:–– AM');
 
       let button = getAllByRole('button')[0];
-      triggerPress(button);
+      await user.click(button);
 
       let cells = getAllByRole('gridcell');
       let timeField = getAllByLabelText('Time')[0];
@@ -715,11 +780,9 @@ describe('DatePicker', function () {
       fireEvent.keyDown(hour, {key: 'ArrowRight'});
       fireEvent.keyUp(hour, {key: 'ArrowRight'});
       expect(document.activeElement).toHaveAttribute('aria-label', 'AM/PM, ');
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
-      fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
       expect(document.activeElement).toHaveAttribute('aria-valuetext', 'AM');
 
-      userEvent.click(document.body);
+      await user.click(document.body);
       act(() => jest.runAllTimers());
 
       let value = toCalendarDateTime(today(getLocalTimeZone()));
@@ -1836,7 +1899,7 @@ describe('DatePicker', function () {
   });
 
   describe('forms', () => {
-    it('supports form reset', () => {
+    it('supports form reset', async () => {
       function Test() {
         let [value, setValue] = React.useState(new CalendarDate(2020, 2, 3));
         return (
@@ -1863,7 +1926,7 @@ describe('DatePicker', function () {
       expect(input).toHaveValue('2020-03-03');
 
       let button = getByTestId('reset');
-      act(() => userEvent.click(button));
+      await user.click(button);
       expect(getDescription()).toBe('Selected Date: February 3, 2020');
       expect(input).toHaveValue('2020-02-03');
     });

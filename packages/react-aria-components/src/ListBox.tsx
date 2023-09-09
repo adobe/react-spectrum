@@ -11,7 +11,7 @@
  */
 
 import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
-import {CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
+import {CollectionProps, Document, ItemProps, useCachedChildren, useCollection, useCollectionPortal} from './Collection';
 import {ContextValue, forwardRefType, HiddenContext, Provider, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, useListState} from 'react-stately';
@@ -43,12 +43,17 @@ export interface ListBoxRenderProps {
    */
   isDropTarget: boolean,
   /**
+   * Whether the items are arranged in a stack or grid.
+   * @selector [data-layout="stack | grid"]
+   */
+  layout: 'stack' | 'grid',
+  /**
    * State of the listbox.
    */
   state: ListState<unknown>
 }
 
-export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<ListBoxRenderProps>, SlotProps {
+export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children' | 'label'>, CollectionProps<T>, StyleRenderProps<ListBoxRenderProps>, SlotProps {
   /** How multiple selection should behave in the collection. */
   selectionBehavior?: SelectionBehavior,
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the ListBox. */
@@ -69,7 +74,8 @@ export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children'>, 
 }
 
 interface ListBoxContextValue<T> extends ListBoxProps<T> {
-  state?: ListState<T>
+  state?: ListState<T>,
+  document?: Document<any, any>
 }
 
 interface InternalListBoxContextValue {
@@ -85,17 +91,27 @@ const InternalListBoxContext = createContext<InternalListBoxContextValue | null>
 
 function ListBox<T>(props: ListBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ListBoxContext);
-  let state = (props as ListBoxContextValue<T>).state;
+  let ctx = props as ListBoxContextValue<T>;
   let isHidden = useContext(HiddenContext);
 
-  if (state) {
-    return isHidden ? null : <ListBoxInner state={state} props={props} listBoxRef={ref} />;
+  // The structure of ListBox is a bit strange because it needs to work inside other components like ComboBox and Select.
+  // Those components render two copies of their children so that the collection can be built even when the popover is closed.
+  // The first copy sends a collection document via context which we render the collection portal into.
+  // The second copy sends a ListState object via context which we use to render the ListBox without rebuilding the state.
+  // Otherwise, we have a standalone ListBox, so we need to create a collection and state ourselves.
+
+  if (ctx.document) {
+    return <ListBoxPortal {...props} />;
   }
 
-  return <ListBoxPortal props={props} listBoxRef={ref} />;
+  if (ctx.state) {
+    return isHidden ? null : <ListBoxInner state={ctx.state} props={props} listBoxRef={ref} />;
+  }
+
+  return <StandaloneListBox props={props} listBoxRef={ref} />;
 }
 
-function ListBoxPortal({props, listBoxRef}) {
+function StandaloneListBox({props, listBoxRef}) {
   let {portal, collection} = useCollection(props);
   props = {...props, collection, children: null, items: null};
   let state = useListState(props);
@@ -105,6 +121,10 @@ function ListBoxPortal({props, listBoxRef}) {
       <ListBoxInner state={state} props={props} listBoxRef={listBoxRef} />
     </>
   );
+}
+
+function ListBoxPortal(props) {
+  return <>{useCollectionPortal(props, props.document)}</>;
 }
 
 /**
@@ -216,6 +236,7 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
       isEmpty: state.collection.size === 0,
       isFocused,
       isFocusVisible,
+      layout: props.layout || 'stack',
       state
     }
   });
@@ -249,7 +270,7 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
         <Provider
           values={[
             [InternalListBoxContext, {state, shouldFocusOnHover: props.shouldFocusOnHover, dragAndDropHooks, dragState, dropState}],
-            [SeparatorContext, {elementType: 'li'}],
+            [SeparatorContext, {elementType: 'div'}],
             [DropIndicatorContext, {render: ListBoxDropIndicatorWrapper}]
           ]}>
           {children}
@@ -265,7 +286,7 @@ interface ListBoxSectionProps<T> extends StyleProps {
   section: Node<T>
 }
 
-function ListBoxSection<T>({section, className, style, ...otherProps}: ListBoxSectionProps<T>) {
+function ListBoxSection<T>({section, className, style}: ListBoxSectionProps<T>) {
   let {state} = useContext(InternalListBoxContext)!;
   let [headingRef, heading] = useSlot();
   let {headingProps, groupProps} = useListBoxSection({
@@ -278,14 +299,11 @@ function ListBoxSection<T>({section, className, style, ...otherProps}: ListBoxSe
     children: item => {
       switch (item.type) {
         case 'header': {
-          let {ref, ...otherProps} = item.props;
           return (
-            <Header
-              {...headingProps}
-              {...otherProps}
-              ref={mergeRefs(headingRef, ref)}>
-              {item.rendered}
-            </Header>
+            <SectionHeader
+              item={item}
+              headingProps={headingProps}
+              headingRef={headingRef} />
           );
         }
         case 'item':
@@ -298,13 +316,26 @@ function ListBoxSection<T>({section, className, style, ...otherProps}: ListBoxSe
 
   return (
     <section
-      {...filterDOMProps(otherProps)}
+      {...filterDOMProps(section.props)}
       {...groupProps}
       className={className || section.props?.className || 'react-aria-Section'}
       style={style || section.props?.style}
       ref={section.props.ref}>
       {children}
     </section>
+  );
+}
+
+// This is a separate component so that headingProps.id doesn't override the item key in useCachedChildren.
+function SectionHeader({item, headingProps, headingRef}) {
+  let {ref, ...otherProps} = item.props;
+  return (
+    <Header
+      {...headingProps}
+      {...otherProps}
+      ref={mergeRefs(headingRef, ref)}>
+      {item.rendered}
+    </Header>
   );
 }
 
@@ -377,12 +408,16 @@ function Option<T>({item}: OptionProps<T>) {
         {...mergeProps(filterDOMProps(props as any), optionProps, hoverProps, draggableItem?.dragProps, droppableItem?.dropProps)}
         {...renderProps}
         ref={ref}
+        data-allows-dragging={!!dragState || undefined}
+        data-selected={states.isSelected || undefined}
+        data-disabled={states.isDisabled || undefined}
         data-hovered={isHovered || undefined}
         data-focused={states.isFocused || undefined}
         data-focus-visible={states.isFocusVisible || undefined}
         data-pressed={states.isPressed || undefined}
         data-dragging={isDragging || undefined}
-        data-drop-target={droppableItem?.isDropTarget || undefined}>
+        data-drop-target={droppableItem?.isDropTarget || undefined}
+        data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}>
         <Provider
           values={[
             [TextContext, {

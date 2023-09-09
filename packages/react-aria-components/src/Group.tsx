@@ -22,7 +22,7 @@ export interface GroupRenderProps {
   isHovered: boolean,
   /**
    * Whether an element within the group is focused, either via a mouse or keyboard.
-   * @selector :focus-within
+   * @selector [data-focus-within]
    */
   isFocusWithin: boolean,
   /**
@@ -55,6 +55,7 @@ function Group(props: GroupProps, ref: ForwardedRef<HTMLDivElement>) {
       {...mergeProps(props, focusProps, hoverProps)}
       {...renderProps}
       ref={ref}
+      data-focus-within={isFocused || undefined}
       data-hovered={isHovered || undefined}
       data-focus-visible={isFocusVisible || undefined}>
       {props.children}

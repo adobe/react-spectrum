@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, getAllByRole as getAllByRoleInContainer, render as render_, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, getAllByRole as getAllByRoleInContainer, pointerMap, render as render_, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, toCalendarDateTime, today} from '@internationalized/date';
 import {DateRangePicker} from '../';
 import {Provider} from '@react-spectrum/provider';
@@ -65,8 +65,13 @@ function render(el) {
 }
 
 describe('DateRangePicker', function () {
+  let user;
+
   // there are live announcers, we need to be able to get rid of them after each test or get a warning in the console about act()
-  beforeAll(() => jest.useFakeTimers());
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+    jest.useFakeTimers();
+  });
   afterEach(() => {
     act(() => {
       jest.runAllTimers();
@@ -277,7 +282,7 @@ describe('DateRangePicker', function () {
       onKeyUpSpy.mockClear();
     });
 
-    it('should focus field, move a segment, and open popover and does not blur', function () {
+    it('should focus field, move a segment, and open popover and does not blur', async function () {
       let {getByRole, getAllByRole} = render(<DateRangePicker label="Date" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} />);
       let segments = getAllByRole('spinbutton');
       let button = getByRole('button');
@@ -286,13 +291,13 @@ describe('DateRangePicker', function () {
       expect(onFocusChangeSpy).not.toHaveBeenCalled();
       expect(onFocusSpy).not.toHaveBeenCalled();
 
-      userEvent.tab();
+      await user.tab();
       expect(segments[0]).toHaveFocus();
       expect(onBlurSpy).not.toHaveBeenCalled();
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
 
-      userEvent.tab();
+      await user.tab();
       expect(segments[1]).toHaveFocus();
       expect(onBlurSpy).not.toHaveBeenCalled();
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
@@ -308,7 +313,7 @@ describe('DateRangePicker', function () {
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
     });
 
-    it('should focus field and leave to blur', function () {
+    it('should focus field and leave to blur', async function () {
       let {getAllByRole} = render(<DateRangePicker label="Date" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} />);
       let segments = getAllByRole('spinbutton');
 
@@ -316,13 +321,13 @@ describe('DateRangePicker', function () {
       expect(onFocusChangeSpy).not.toHaveBeenCalled();
       expect(onFocusSpy).not.toHaveBeenCalled();
 
-      userEvent.tab();
+      await user.tab();
       expect(segments[0]).toHaveFocus();
       expect(onBlurSpy).not.toHaveBeenCalled();
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
 
-      userEvent.click(document.body);
+      await user.click(document.body);
       expect(document.body).toHaveFocus();
       expect(onBlurSpy).toHaveBeenCalledTimes(1);
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(2);
@@ -384,21 +389,21 @@ describe('DateRangePicker', function () {
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.body).toHaveFocus();
       expect(onBlurSpy).toHaveBeenCalledTimes(1);
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(2);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
     });
 
-    it('should trigger right arrow key event for segment navigation', function () {
+    it('should trigger right arrow key event for segment navigation', async function () {
       let {getAllByRole} = render(<DateRangePicker label="Date" onKeyDown={onKeyDownSpy} onKeyUp={onKeyUpSpy} />);
       let segments = getAllByRole('spinbutton');
 
       expect(onKeyDownSpy).not.toHaveBeenCalled();
       expect(onKeyUpSpy).not.toHaveBeenCalled();
 
-      userEvent.tab();
+      await user.tab();
       expect(segments[0]).toHaveFocus();
       expect(onKeyDownSpy).not.toHaveBeenCalled();
       expect(onKeyUpSpy).toHaveBeenCalledTimes(1);
@@ -584,7 +589,7 @@ describe('DateRangePicker', function () {
       expectPlaceholder(startDate, 'mm/dd/yyyy, ––:–– AM');
       expectPlaceholder(endDate, 'mm/dd/yyyy, ––:–– AM');
 
-      for (let timeField of [startTimeField, endTimeField]) {
+      for (let [index, timeField] of [startTimeField, endTimeField].entries()) {
         let hour = within(timeField).getByLabelText('hour,');
         expect(hour).toHaveAttribute('role', 'spinbutton');
         expect(hour).toHaveAttribute('aria-valuetext', 'Empty');
@@ -609,18 +614,22 @@ describe('DateRangePicker', function () {
 
         expect(document.activeElement).toHaveAttribute('aria-valuetext', '00');
 
-        expect(onChange).not.toHaveBeenCalled();
-        expectPlaceholder(startDate, 'mm/dd/yyyy, ––:–– AM');
-        expectPlaceholder(endDate, 'mm/dd/yyyy, ––:–– AM');
+        if (index === 0) {
+          expect(onChange).toHaveBeenCalledTimes(0);
+          expectPlaceholder(startDate, 'mm/dd/yyyy, ––:–– AM');
+          expectPlaceholder(endDate, 'mm/dd/yyyy, ––:–– AM');
+        } else {
+          let localTime = today(getLocalTimeZone());
+          expect(onChange).toHaveBeenCalledTimes(1);
+          expectPlaceholder(startDate, `${localTime.month}/1/${localTime.year}, 12:00 AM`);
+          expectPlaceholder(endDate, `${localTime.month}/2/${localTime.year}, 12:00 AM`);
+        }
 
-        fireEvent.keyDown(hour, {key: 'ArrowRight'});
-        fireEvent.keyUp(hour, {key: 'ArrowRight'});
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
 
         expect(document.activeElement).toHaveAttribute('aria-label', 'AM/PM, ');
-        expect(document.activeElement).toHaveAttribute('aria-valuetext', 'Empty');
-
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+        expect(document.activeElement).toHaveAttribute('aria-valuetext', 'AM');
       }
 
       expect(dialog).toBeVisible();
@@ -632,7 +641,7 @@ describe('DateRangePicker', function () {
       expect(getTextValue(endDate)).toBe(formatter.format(endValue.toDate(getLocalTimeZone())));
     });
 
-    it('should confirm time placeholders on blur if date range is selected', function () {
+    it('should confirm time placeholders on blur if date range is selected', async function () {
       let onChange = jest.fn();
       let {getByRole, getAllByRole, getByTestId} = render(
         <Provider theme={theme}>
@@ -659,7 +668,7 @@ describe('DateRangePicker', function () {
       triggerPress(enabledCells[1].firstChild);
       expect(onChange).not.toHaveBeenCalled();
 
-      userEvent.click(document.body);
+      await user.click(document.body);
       act(() => jest.runAllTimers());
 
       expect(dialog).not.toBeInTheDocument();
@@ -672,7 +681,7 @@ describe('DateRangePicker', function () {
       expect(getTextValue(endDate)).toBe(formatter.format(endValue.toDate(getLocalTimeZone())));
     });
 
-    it('should not confirm on blur if date range is not selected', function () {
+    it('should not confirm on blur if date range is not selected', async function () {
       let onChange = jest.fn();
       let {getByRole, getAllByLabelText, getByTestId} = render(
         <Provider theme={theme}>
@@ -705,14 +714,14 @@ describe('DateRangePicker', function () {
 
       expect(hour).toHaveAttribute('aria-valuetext', '12 AM');
 
-      userEvent.click(document.body);
+      await user.click(document.body);
       act(() => jest.runAllTimers());
 
       expect(dialog).not.toBeInTheDocument();
       expect(onChange).not.toHaveBeenCalled();
     });
 
-    it('should clear date and time when controlled value is set to null', function () {
+    it('should clear date and time when controlled value is set to null', async function () {
       function ControlledDateRangePicker() {
         let [value, setValue] = React.useState(null);
         return (<>
@@ -761,11 +770,9 @@ describe('DateRangePicker', function () {
         fireEvent.keyDown(hour, {key: 'ArrowRight'});
         fireEvent.keyUp(hour, {key: 'ArrowRight'});
         expect(document.activeElement).toHaveAttribute('aria-label', 'AM/PM, ');
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
       }
 
-      userEvent.click(document.body);
+      await user.click(document.body);
       act(() => jest.runAllTimers());
 
       let startValue = toCalendarDateTime(today(getLocalTimeZone())).set({day: 1});
@@ -1473,7 +1480,7 @@ describe('DateRangePicker', function () {
   });
 
   describe('forms', () => {
-    it('supports form reset', () => {
+    it('supports form reset', async () => {
       function Test() {
         let [value, setValue] = React.useState({start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2022, 4, 8)});
         return (
@@ -1504,7 +1511,7 @@ describe('DateRangePicker', function () {
       expect(end).toHaveValue('2022-04-08');
 
       let button = getByTestId('reset');
-      act(() => userEvent.click(button));
+      await user.click(button);
       expect(getDescription()).toBe('Selected Range: February 3, 2020 to April 8, 2022');
       expect(start).toHaveValue('2020-02-03');
       expect(end).toHaveValue('2022-04-08');

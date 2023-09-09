@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, installPointerEvent, render, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
 import {DataTransfer, DataTransferItem, DragEvent} from './mocks';
 import {DraggableCollectionExample} from '../stories/DraggableCollection';
 import {DraggableListBox} from '../stories/DraggableListBox';
@@ -22,6 +22,11 @@ import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
 describe('useDraggableCollection', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   beforeEach(() => {
     jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({
       left: 0,
@@ -146,9 +151,9 @@ describe('useDraggableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(3);
 
-      userEvent.click(cells[0]);
+      await user.click(cells[0]);
       expect(rows[0]).toHaveAttribute('aria-selected', 'true');
-      userEvent.click(cells[1]);
+      await user.click(cells[1]);
       expect(rows[1]).toHaveAttribute('aria-selected', 'true');
 
       let dataTransfer = new DataTransfer();
@@ -243,7 +248,7 @@ describe('useDraggableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(3);
 
-      userEvent.click(cells[0]);
+      await user.click(cells[0]);
       expect(rows[0]).toHaveAttribute('aria-selected', 'true');
 
       let dataTransfer = new DataTransfer();
@@ -333,7 +338,7 @@ describe('useDraggableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(3);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(cells[0]);
 
       fireEvent.keyDown(cells[0], {key: 'ArrowDown'});
@@ -416,7 +421,7 @@ describe('useDraggableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(3);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(cells[0]);
 
       fireEvent.keyDown(cells[0], {key: ' '});
@@ -515,7 +520,7 @@ describe('useDraggableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(3);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(cells[0]);
 
       fireEvent.keyDown(cells[0], {key: 'ArrowDown'});
@@ -605,7 +610,7 @@ describe('useDraggableCollection', () => {
       let options = within(listbox).getAllByRole('option');
       expect(options).toHaveLength(3);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(options[0]);
 
       fireEvent.keyDown(options[0], {key: ' '});
@@ -696,7 +701,7 @@ describe('useDraggableCollection', () => {
       let options = within(listbox).getAllByRole('option');
       expect(options).toHaveLength(3);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(options[0]);
 
       fireEvent.keyDown(options[0], {key: ' '});
@@ -1043,11 +1048,11 @@ describe('useDraggableCollection', () => {
       expect(options).toHaveLength(3);
 
       fireEvent.focus(options[0]);
-      act(() => userEvent.click(options[0], {pointerType: 'touch'}));
+      await user.pointer({target: options[0], keys: '[TouchA]'});
       expect(options[0]).toHaveAttribute('aria-selected', 'true');
       expect(document.getElementById(options[0].getAttribute('aria-describedby'))).toHaveTextContent('Long press to start dragging');
 
-      act(() => userEvent.click(options[1], {pointerType: 'touch'}));
+      await user.pointer({target: options[1], keys: '[TouchA]'});
       expect(options[1]).toHaveAttribute('aria-selected', 'true');
       expect(document.getElementById(options[1].getAttribute('aria-describedby'))).toHaveTextContent('Long press to drag 2 selected items.');
 
@@ -1131,7 +1136,7 @@ describe('useDraggableCollection', () => {
       fireEvent.focus(options[0]);
       expect(options[0]).not.toHaveAttribute('aria-describedby');
 
-      act(() => userEvent.click(options[0], {pointerType: 'touch'}));
+      await user.pointer({target: options[0], keys: '[TouchA]'});
       expect(options[0]).not.toHaveAttribute('aria-selected', 'true');
       expect(options[0]).not.toHaveAttribute('aria-describedby');
       expect(onDragStart).toHaveBeenCalledTimes(0);
@@ -1148,7 +1153,7 @@ describe('useDraggableCollection', () => {
       expect(options[0]).toHaveAttribute('aria-selected', 'true');
       expect(document.getElementById(options[0].getAttribute('aria-describedby'))).toHaveTextContent('Long press to start dragging');
 
-      act(() => userEvent.click(options[1], {pointerType: 'touch'}));
+      await user.pointer({target: options[1], keys: '[TouchA]'});
       expect(options[1]).toHaveAttribute('aria-selected', 'true');
       expect(document.getElementById(options[1].getAttribute('aria-describedby'))).toHaveTextContent('Long press to drag 2 selected items');
 
