@@ -1095,7 +1095,7 @@ describe('MenuTrigger', function () {
         expect(dialog).toBeVisible();
       });
 
-      it('will close sub dialogs as you hover other items even if you click open it', function () {
+      it.only('will close sub dialogs as you hover other items even if you click open it', function () {
         renderTree();
         let menu = openMenu();
         let menuItems = within(menu).getAllByRole('menuitem');

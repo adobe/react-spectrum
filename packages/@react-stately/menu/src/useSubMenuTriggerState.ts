@@ -27,6 +27,7 @@ export interface SubMenuTriggerState extends OverlayTriggerState {
   open: (focusStrategy?: FocusStrategy | null) => void,
   close: () => void,
   closeAll: () => void,
+  level: number,
   toggle: (focusStrategy?: FocusStrategy | null) => void,
   setOpen: () => void
 }
@@ -70,9 +71,10 @@ export function useSubMenuTriggerState(props: SubMenuTriggerProps, state: MenuTr
     open,
     close,
     closeAll,
+    level,
     // TODO: add setOpen and toggle for type parity with useOverlayTriggerState type that Tray and Popover expect. Perhaps call useOverlayTriggerState in
     // this hook and just make it controlled? Then spread?
     setOpen: () => {},
     toggle
-  }), [isOpen, open, close, closeAll, focusStrategy, toggle]);
+  }), [isOpen, open, close, closeAll, focusStrategy, toggle, level]);
 }
