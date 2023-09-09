@@ -11,7 +11,7 @@
  */
 
 import {ClipboardEvent, DataTransfer, DataTransferItem} from './mocks';
-import {fireEvent, render} from '@react-spectrum/test-utils';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
 import {useClipboard} from '../';
 import userEvent from '@testing-library/user-event';
@@ -32,12 +32,16 @@ function Copyable(props) {
 }
 
 describe('useClipboard', () => {
-  it('should copy items to the clipboard', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+  it('should copy items to the clipboard', async () => {
     let onCopy = jest.fn();
     let tree = render(<Copyable onCopy={onCopy} />);
     let button = tree.getByRole('button');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(button);
 
     let clipboardData = new DataTransfer();
@@ -64,12 +68,12 @@ describe('useClipboard', () => {
     expect(onCopy).not.toHaveBeenCalled();
   });
 
-  it('should not enable copying when there is no getItems option', () => {
+  it('should not enable copying when there is no getItems option', async () => {
     let onCopy = jest.fn();
     let tree = render(<Copyable getItems={null} onCopy={onCopy} />);
     let button = tree.getByRole('button');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(button);
 
     let clipboardData = new DataTransfer();
@@ -81,12 +85,12 @@ describe('useClipboard', () => {
     expect(onCopy).not.toHaveBeenCalled();
   });
 
-  it('should cut items to the clipboard', () => {
+  it('should cut items to the clipboard', async () => {
     let onCut = jest.fn();
     let tree = render(<Copyable onCut={onCut} />);
     let button = tree.getByRole('button');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(button);
 
     let clipboardData = new DataTransfer();
@@ -113,12 +117,12 @@ describe('useClipboard', () => {
     expect(onCut).not.toHaveBeenCalled();
   });
 
-  it('should not enable cutting when there is no getItems option', () => {
+  it('should not enable cutting when there is no getItems option', async () => {
     let onCut = jest.fn();
     let tree = render(<Copyable getItems={null} onCut={onCut} />);
     let button = tree.getByRole('button');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(button);
 
     let clipboardData = new DataTransfer();
@@ -130,11 +134,11 @@ describe('useClipboard', () => {
     expect(onCut).not.toHaveBeenCalled();
   });
 
-  it('should not enable cutting when there is no onCut option', () => {
+  it('should not enable cutting when there is no onCut option', async () => {
     let tree = render(<Copyable />);
     let button = tree.getByRole('button');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(button);
 
     let clipboardData = new DataTransfer();
@@ -150,7 +154,7 @@ describe('useClipboard', () => {
     let tree = render(<Copyable onPaste={onPaste} />);
     let button = tree.getByRole('button');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(button);
 
     let clipboardData = new DataTransfer();
@@ -186,11 +190,11 @@ describe('useClipboard', () => {
     expect(onPaste).not.toHaveBeenCalled();
   });
 
-  it('should not enable pasting when there is no onPaste option', () => {
+  it('should not enable pasting when there is no onPaste option', async () => {
     let tree = render(<Copyable />);
     let button = tree.getByRole('button');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(button);
 
     let clipboardData = new DataTransfer();
@@ -208,7 +212,7 @@ describe('useClipboard', () => {
       let tree = render(<Copyable getItems={getItems} onPaste={onPaste} />);
       let button = tree.getByRole('button');
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(button);
 
       let clipboardData = new DataTransfer();
@@ -239,7 +243,7 @@ describe('useClipboard', () => {
       let tree = render(<Copyable getItems={getItems} onPaste={onPaste} />);
       let button = tree.getByRole('button');
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(button);
 
       let clipboardData = new DataTransfer();
@@ -281,7 +285,7 @@ describe('useClipboard', () => {
       let tree = render(<Copyable getItems={getItems} onPaste={onPaste} />);
       let button = tree.getByRole('button');
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(button);
 
       let clipboardData = new DataTransfer();
@@ -322,7 +326,7 @@ describe('useClipboard', () => {
       let tree = render(<Copyable getItems={getItems} onPaste={onPaste} />);
       let button = tree.getByRole('button');
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(button);
 
       let clipboardData = new DataTransfer();

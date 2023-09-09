@@ -11,8 +11,8 @@
  */
 
 import {Input, Label, Text, TextArea, TextField, TextFieldContext} from '../';
+import {pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestTextField = (props) => (
@@ -25,12 +25,17 @@ let TestTextField = (props) => (
 );
 
 describe('TextField', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
   describe.each([
     {name: 'Input', component: Input},
     {name: 'TextArea', component: TextArea}]
   )('$name', ({name, component}) => {
     it('provides slots', () => {
       let {getByRole} = render(<TestTextField input={component} />);
+
 
       let input = getByRole('textbox');
       expect(input).toHaveValue('test');
@@ -64,35 +69,35 @@ describe('TextField', () => {
       expect(textbox).toHaveAttribute('aria-label', 'test');
     });
 
-    it('should support hover state', () => {
+    it('should support hover state', async () => {
       let {getByRole} = render(<TestTextField input={component} inputProps={{className: ({isHovered}) => isHovered ? 'hover' : ''}} />);
       let input = getByRole('textbox');
 
       expect(input).not.toHaveAttribute('data-hovered');
       expect(input).not.toHaveClass('hover');
 
-      userEvent.hover(input);
+      await user.hover(input);
       expect(input).toHaveAttribute('data-hovered', 'true');
       expect(input).toHaveClass('hover');
 
-      userEvent.unhover(input);
+      await user.unhover(input);
       expect(input).not.toHaveAttribute('data-hovered');
       expect(input).not.toHaveClass('hover');
     });
 
-    it('should support focus visible state', () => {
+    it('should support focus visible state', async () => {
       let {getByRole} = render(<TestTextField input={component} inputProps={{className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''}} />);
       let input = getByRole('textbox');
 
       expect(input).not.toHaveAttribute('data-focus-visible');
       expect(input).not.toHaveClass('focus');
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(input);
       expect(input).toHaveAttribute('data-focus-visible', 'true');
       expect(input).toHaveClass('focus');
 
-      userEvent.tab();
+      await user.tab();
       expect(input).not.toHaveAttribute('data-focus-visible');
       expect(input).not.toHaveClass('focus');
     });
