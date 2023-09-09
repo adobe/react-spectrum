@@ -14,6 +14,7 @@ import docs from 'docs:react-aria-components';
 import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
+import themes from '@react-spectrum/docs/themes/dark.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/checkbox/docs/checkbox-anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
@@ -57,7 +58,7 @@ import {Checkbox} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer layout, selected, invalid, theme;
+@layer layout, selected, indeterminate, invalid, disabled, theme;
 @layer layout {
   .react-aria-Checkbox {
     display: flex;

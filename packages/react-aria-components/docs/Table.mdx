@@ -85,6 +85,10 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import './Button.mdx';
+@import './Checkbox.mdx';
+```
 
 ```css
 .react-aria-Table {
@@ -228,73 +232,6 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
   }
 }
 
-.react-aria-Checkbox {
-  --deselected-color: gray;
-  --deselected-color-pressed: dimgray;
-  --selected-color: slateblue;
-  --selected-color-pressed: lch(from slateblue calc(l - 10%) c h);
-  --checkmark-color: white;
-  --focus-ring-color: slateblue;
-
-  width: 1rem;
-  height: 1rem;
-  border: 2px solid var(--deselected-color);
-  border-radius: 4px;
-  transition: all 200ms;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  & svg {
-    width: 0.857rem;
-    height: 0.857rem;
-    fill: none;
-    stroke: var(--checkmark-color);
-    stroke-width: 3px;
-    stroke-dasharray: 22px;
-    stroke-dashoffset: 66;
-    transition: all 200ms;
-  }
-
-  &[data-focus-visible] {
-    box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--focus-ring-color);
-  }
-
-  &[data-pressed] {
-    border-color: var(--deselected-color-pressed);
-  }
-
-  &[data-selected],
-  &[data-indeterminate] {
-    border-color: var(--selected-color);
-    background: var(--selected-color);
-
-    &[data-pressed] {
-      border-color: var(--selected-color-pressed);
-      background: var(--selected-color-pressed);
-    }
-
-    &[data-focus-visible] {
-      box-shadow: 0 0 0 2px var(--background-color), 0 0 0 4px var(--selected-color);
-    }
-
-    & svg {
-      stroke-dashoffset: 44;
-    }
-  }
-
-  &[data-indeterminate] {
-    & svg {
-      stroke: none;
-      fill: var(--checkmark-color);
-    }
-  }
-
-  &[data-disabled] {
-    opacity: 0.4;
-  }
-}
-
 :where(.react-aria-Row) .react-aria-Checkbox {
   --selected-color: white;
   --selected-color-pressed: #ddd;
@@ -302,35 +239,6 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
   --background-color: var(--highlight-background);
 }
 
-.react-aria-Button {
-  background: transparent;
-  border: none;
-  border-radius: 4px;
-  appearance: none;
-  vertical-align: middle;
-  font-size: 1.2rem;
-  text-align: center;
-  line-height: 1.2em;
-  margin: 0;
-  outline: none;
-  padding: 4px 6px;
-  transition: background 200ms;
-  --focus-ring-color: slateblue;
-  --hover-highlight: var(--spectrum-alias-highlight-hover);
-  --active-highlight: var(--spectrum-alias-highlight-active);
-
-  &[data-hovered] {
-    background: var(--hover-highlight);
-  }
-
-  &[data-pressed] {
-    background: var(--active-highlight);
-  }
-
-  &[data-focus-visible] {
-    box-shadow: 0 0 0 2px var(--focus-ring-color);
-  }
-}
 
 @media (forced-colors: active) {
   .react-aria-Table {
@@ -540,12 +448,14 @@ function MyCheckbox() {
   return (
     <Checkbox slot="selection">
       {({isIndeterminate}) => (
-        <svg viewBox="0 0 18 18" aria-hidden="true">
-          {isIndeterminate
-            ? <rect x={1} y={7.5} width={15} height={3} />
-            : <polyline points="1 9 7 14 15 4" />
-          }
-        </svg>
+        <div className="checkbox">
+          <svg viewBox="0 0 18 18" aria-hidden="true">
+            {isIndeterminate
+              ? <rect x={1} y={7.5} width={15} height={3} />
+              : <polyline points="1 9 7 14 15 4" />
+            }
+          </svg>
+        </div>
       )}
     </Checkbox>
   );
