@@ -14,7 +14,6 @@ import docs from 'docs:react-aria-components';
 import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
-import themes from '@react-spectrum/docs/themes/dark.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/checkbox/docs/checkbox-anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
@@ -58,8 +57,9 @@ import {Checkbox} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer layout, selected, indeterminate, invalid, disabled, theme;
-@layer layout {
+@layer checkbox;
+@layer checkbox.layout, checkbox.theme, checkbox.selected, checkbox.indeterminate, checkbox.invalid, checkbox.disabled;
+@layer checkbox.layout {
   .react-aria-Checkbox {
     display: flex;
     align-items: center;
@@ -87,19 +87,19 @@ import {Checkbox} from 'react-aria-components';
       stroke-dashoffset: 66;
       transition: all 200ms;
     }
-  }
 
-  &[data-pressed] .checkbox {
-    border-color: var(--deselected-color-pressed);
-  }
+    &[data-pressed] .checkbox {
+      border-color: var(--deselected-color-pressed);
+    }
 
-  &[data-focus-visible] .checkbox {
-    box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--selected-color);
+    &[data-focus-visible] .checkbox {
+      box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--selected-color);
+    }
   }
 }
 
 /* this part would move out to a different theme file */
-@layer theme {
+@layer checkbox.theme {
   .react-aria-Checkbox {
     --label-color: var(--spectrum-alias-text-color);
     --deselected-color: gray;
@@ -133,7 +133,7 @@ import {Checkbox} from 'react-aria-components';
   }
 }
 
-@layer selected {
+@layer checkbox.selected {
   .react-aria-Checkbox {
     &[data-selected],
     &[data-indeterminate] {
@@ -274,7 +274,7 @@ Implement your own validation logic in your app and set the `isInvalid` prop acc
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer invalid {
+@layer checkbox.invalid {
   .react-aria-Checkbox {
     &[data-invalid] {
       .checkbox {
@@ -313,7 +313,7 @@ Checkboxes can be disabled using the `isDisabled` prop.
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer disabled {
+@layer checkbox.disabled {
   .react-aria-Checkbox {
     &[data-disabled] {
       opacity: 0.4;

@@ -12,7 +12,6 @@
 
 const {Transformer} = require('@parcel/plugin');
 const flatMap = require('unist-util-flatmap');
-const flatMapAsync = require('./flatMapAsync');
 const treeSitter = require('tree-sitter-highlight');
 const {fragmentUnWrap, fragmentWrap} = require('./MDXFragments');
 const yaml = require('js-yaml');
