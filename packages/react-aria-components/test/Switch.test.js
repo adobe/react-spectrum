@@ -10,12 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@react-spectrum/test-utils';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
 import {Switch, SwitchContext} from '../';
 import userEvent from '@testing-library/user-event';
 
 describe('Switch', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
   it('should render a s with default class', () => {
     let {getByRole} = render(<Switch>Test</Switch>);
     let s = getByRole('switch').closest('label');
@@ -34,7 +38,7 @@ describe('Switch', () => {
     expect(s).toHaveAttribute('data-foo', 'bar');
   });
 
-  it('should support render props', () => {
+  it('should support render props', async () => {
     let {getByRole} = render(
       <Switch>{({isSelected}) => isSelected ? 'On' : 'Off'}</Switch>
     );
@@ -42,9 +46,9 @@ describe('Switch', () => {
     let label = s.closest('label');
     expect(s).not.toBeChecked();
     expect(label).toHaveTextContent('Off');
-    
-    userEvent.click(s);
-    
+
+    await user.click(s);
+
     expect(s).toBeChecked();
     expect(label).toHaveTextContent('On');
   });
@@ -61,36 +65,36 @@ describe('Switch', () => {
     expect(s).toHaveAttribute('aria-label', 'test');
   });
 
-  it('should support hover', () => {
+  it('should support hover', async () => {
     let {getByRole} = render(<Switch className={({isHovered}) => isHovered ? 'hover' : ''}>Test</Switch>);
     let s = getByRole('switch').closest('label');
 
     expect(s).not.toHaveAttribute('data-hovered');
     expect(s).not.toHaveClass('hover');
 
-    userEvent.hover(s);
+    await user.hover(s);
     expect(s).toHaveAttribute('data-hovered', 'true');
     expect(s).toHaveClass('hover');
 
-    userEvent.unhover(s);
+    await user.unhover(s);
     expect(s).not.toHaveAttribute('data-hovered');
     expect(s).not.toHaveClass('hover');
   });
 
-  it('should support focus ring', () => {
+  it('should support focus ring', async () => {
     let {getByRole} = render(<Switch className={({isFocusVisible}) => isFocusVisible ? 'focus' : ''}>Test</Switch>);
     let s = getByRole('switch');
     let label = s.closest('label');
-    
+
     expect(label).not.toHaveAttribute('data-focus-visible');
     expect(label).not.toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(s);
     expect(label).toHaveAttribute('data-focus-visible', 'true');
     expect(label).toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(label).not.toHaveAttribute('data-focus-visible');
     expect(label).not.toHaveClass('focus');
   });
@@ -121,7 +125,7 @@ describe('Switch', () => {
     expect(label).toHaveClass('disabled');
   });
 
-  it('should support selected state', () => {
+  it('should support selected state', async () => {
     let onChange = jest.fn();
     let {getByRole} = render(<Switch onChange={onChange} className={({isSelected}) => isSelected ? 'selected' : ''}>Test</Switch>);
     let s = getByRole('switch');
@@ -131,13 +135,13 @@ describe('Switch', () => {
     expect(label).not.toHaveAttribute('data-selected');
     expect(label).not.toHaveClass('selected');
 
-    userEvent.click(s);
+    await user.click(s);
     expect(onChange).toHaveBeenLastCalledWith(true);
     expect(s).toBeChecked();
     expect(label).toHaveAttribute('data-selected', 'true');
     expect(label).toHaveClass('selected');
 
-    userEvent.click(s);
+    await user.click(s);
     expect(onChange).toHaveBeenLastCalledWith(false);
     expect(s).not.toBeChecked();
     expect(label).not.toHaveAttribute('data-selected');

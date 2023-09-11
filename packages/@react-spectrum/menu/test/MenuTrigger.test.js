@@ -15,7 +15,14 @@ import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {Content, Footer} from '@react-spectrum/view';
 import {ContextualHelpTrigger, Item, Menu, MenuTrigger, Section} from '../';
-import {DEFAULT_LONG_PRESS_TIME, installPointerEvent, triggerLongPress, triggerPress, triggerTouch} from '@react-spectrum/test-utils';
+import {
+  DEFAULT_LONG_PRESS_TIME,
+  installPointerEvent,
+  pointerMap,
+  triggerLongPress,
+  triggerPress,
+  triggerTouch
+} from '@react-spectrum/test-utils';
 import {Dialog} from '@react-spectrum/dialog';
 import {Heading, Text} from '@react-spectrum/text';
 import {Link} from '@react-spectrum/link';
@@ -62,8 +69,10 @@ describe('MenuTrigger', function () {
   let onClose = jest.fn();
   let onSelect = jest.fn();
   let onSelectionChange = jest.fn();
+  let user;
 
   beforeAll(function () {
+    user = userEvent.setup({delay: null, pointerMap});
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
@@ -1095,7 +1104,7 @@ describe('MenuTrigger', function () {
         expect(dialog).toBeVisible();
       });
 
-      it('will close sub dialogs as you hover other items even if you click open it', function () {
+      it('will close sub dialogs as you hover other items even if you click open it', async function () {
         renderTree();
         let menu = openMenu();
         let menuItems = within(menu).getAllByRole('menuitem');
@@ -1127,18 +1136,18 @@ describe('MenuTrigger', function () {
         expect(dialog).toBeInTheDocument();
         expect(document.activeElement).toBe(dialog);
 
-        userEvent.tab();
+        await user.tab();
         act(() => {jest.runAllTimers();});
         let link = screen.getByRole('link');
         expect(document.activeElement).toBe(link);
 
-        userEvent.tab();
+        await user.tab();
         act(() => {jest.runAllTimers();});
         expect(dialog).not.toBeInTheDocument();
         expect(document.activeElement).toBe(menuItems[4]);
       });
 
-      it('will close everything if the user shift tabs out of the subdialog', function () {
+      it('will close everything if the user shift tabs out of the subdialog', async function () {
         renderTree();
         let menu = openMenu();
         let menuItems = within(menu).getAllByRole('menuitem');
@@ -1153,7 +1162,7 @@ describe('MenuTrigger', function () {
 
         expect(document.activeElement).toBe(dialog);
 
-        userEvent.tab({shift: true});
+        await user.tab({shift: true});
         act(() => {jest.runAllTimers();});
         act(() => {jest.runAllTimers();});
         expect(dialog).not.toBeInTheDocument();

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render as render_, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render as render_, within} from '@react-spectrum/test-utils';
 import {parseZonedDateTime, Time} from '@internationalized/date';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -36,6 +36,11 @@ function render(el) {
 }
 
 describe('TimeField', function () {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   it('should include a selected value description', function () {
     let {getByRole, getAllByRole} = render(<TimeField label="Date" value={new Time(8, 45)} />);
 
@@ -111,7 +116,7 @@ describe('TimeField', function () {
       onKeyUpSpy.mockClear();
     });
 
-    it('should focus field and switching segments via tab does not change focus', function () {
+    it('should focus field and switching segments via tab does not change focus', async function () {
       let {getAllByRole} = render(<TimeField label="Time" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} />);
       let segments = getAllByRole('spinbutton');
 
@@ -119,21 +124,21 @@ describe('TimeField', function () {
       expect(onFocusChangeSpy).not.toHaveBeenCalled();
       expect(onFocusSpy).not.toHaveBeenCalled();
 
-      userEvent.tab();
+      await user.tab();
       expect(segments[0]).toHaveFocus();
 
       expect(onBlurSpy).not.toHaveBeenCalled();
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
 
-      userEvent.tab();
+      await user.tab();
       expect(segments[1]).toHaveFocus();
       expect(onBlurSpy).not.toHaveBeenCalled();
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
     });
 
-    it('should call blur when focus leaves', function () {
+    it('should call blur when focus leaves', async function () {
       let {getAllByRole} = render(<TimeField label="Time" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} />);
       let segments = getAllByRole('spinbutton');
       // workaround bug in userEvent.tab(). hidden inputs aren't focusable.
@@ -143,31 +148,31 @@ describe('TimeField', function () {
       expect(onFocusChangeSpy).not.toHaveBeenCalled();
       expect(onFocusSpy).not.toHaveBeenCalled();
 
-      userEvent.tab();
+      await user.tab();
       expect(segments[0]).toHaveFocus();
 
-      userEvent.tab();
+      await user.tab();
       expect(segments[1]).toHaveFocus();
       expect(onBlurSpy).toHaveBeenCalledTimes(0);
 
-      userEvent.tab();
+      await user.tab();
       expect(segments[2]).toHaveFocus();
       expect(onBlurSpy).toHaveBeenCalledTimes(0);
 
-      userEvent.tab();
+      await user.tab();
       expect(onBlurSpy).toHaveBeenCalledTimes(1);
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(2);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
     });
 
-    it('should trigger right arrow key event for segment navigation', function () {
+    it('should trigger right arrow key event for segment navigation', async function () {
       let {getAllByRole} = render(<TimeField label="Time" onKeyDown={onKeyDownSpy} onKeyUp={onKeyUpSpy} />);
       let segments = getAllByRole('spinbutton');
 
       expect(onKeyDownSpy).not.toHaveBeenCalled();
       expect(onKeyUpSpy).not.toHaveBeenCalled();
 
-      userEvent.tab();
+      await user.tab();
       expect(segments[0]).toHaveFocus();
       expect(onKeyDownSpy).not.toHaveBeenCalled();
       expect(onKeyUpSpy).toHaveBeenCalledTimes(1);
@@ -188,15 +193,15 @@ describe('TimeField', function () {
         expect(within(timezone).getByText('PDT')).toBeInTheDocument();
       });
 
-      it('should keep timeZone from defaultValue when minute segment cleared', function () {
+      it('should keep timeZone from defaultValue when minute segment cleared', async function () {
         let {getAllByRole, getByRole} = render(<TimeField label="Time" defaultValue={parseZonedDateTime('2023-07-01T01:05-07:00[America/Los_Angeles]')} />);
         let timezone = getByRole('textbox');
         let segments = getAllByRole('spinbutton');
 
-        userEvent.tab();
+        await user.tab();
         expect(segments[0]).toHaveFocus();
 
-        userEvent.tab();
+        await user.tab();
         expect(segments[1]).toHaveFocus();
         expect(segments[1]).toHaveAttribute('aria-valuetext', '05');
         expect(timezone.getAttribute('aria-label')).toBe('time zone, ');
@@ -209,15 +214,15 @@ describe('TimeField', function () {
         expect(within(timezone).getByText('PDT')).toBeInTheDocument();
       });
 
-      it('should keep timeZone from defaultValue when minute segment cleared then set', function () {
+      it('should keep timeZone from defaultValue when minute segment cleared then set', async function () {
         let {getAllByRole, getByRole} = render(<TimeField label="Time" defaultValue={parseZonedDateTime('2023-07-01T01:05-07:00[America/Los_Angeles]')} />);
         let timezone = getByRole('textbox');
         let segments = getAllByRole('spinbutton');
 
-        userEvent.tab();
+        await user.tab();
         expect(segments[0]).toHaveFocus();
 
-        userEvent.tab();
+        await user.tab();
         expect(segments[1]).toHaveFocus();
         expect(segments[1]).toHaveAttribute('aria-valuetext', '05');
         expect(timezone.getAttribute('aria-label')).toBe('time zone, ');
@@ -240,7 +245,7 @@ describe('TimeField', function () {
   });
 
   describe('forms', () => {
-    it('supports form reset', () => {
+    it('supports form reset', async () => {
       function Test() {
         let [value, setValue] = React.useState(new Time(8, 30));
         return (
@@ -267,7 +272,7 @@ describe('TimeField', function () {
       expect(input).toHaveValue('09:30:00');
 
       let button = getByTestId('reset');
-      act(() => userEvent.click(button));
+      await user.click(button);
       expect(getDescription()).toBe('Selected Time: 8:30 AM');
       expect(input).toHaveValue('08:30:00');
     });

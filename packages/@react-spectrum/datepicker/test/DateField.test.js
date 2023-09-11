@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render as render_, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render as render_, within} from '@react-spectrum/test-utils';
 import {CalendarDate, CalendarDateTime, ZonedDateTime} from '@internationalized/date';
 import {DateField} from '../';
 import {Provider} from '@react-spectrum/provider';
@@ -36,6 +36,10 @@ function render(el) {
 }
 
 describe('DateField', function () {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
   describe('labeling', function () {
     it('should support labeling', function () {
       let {getAllByRole, getByText} = render(<DateField label="Date" />);
@@ -235,7 +239,7 @@ describe('DateField', function () {
       onKeyUpSpy.mockClear();
     });
 
-    it('should focus field and switching segments via tab does not change focus', function () {
+    it('should focus field and switching segments via tab does not change focus', async function () {
       let {getAllByRole} = render(<DateField label="Date" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} />);
       let segments = getAllByRole('spinbutton');
 
@@ -243,21 +247,21 @@ describe('DateField', function () {
       expect(onFocusChangeSpy).not.toHaveBeenCalled();
       expect(onFocusSpy).not.toHaveBeenCalled();
 
-      userEvent.tab();
+      await user.tab();
       expect(segments[0]).toHaveFocus();
 
       expect(onBlurSpy).not.toHaveBeenCalled();
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
 
-      userEvent.tab();
+      await user.tab();
       expect(segments[1]).toHaveFocus();
       expect(onBlurSpy).not.toHaveBeenCalled();
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
     });
 
-    it('should call blur when focus leaves', function () {
+    it('should call blur when focus leaves', async function () {
       let {getAllByRole} = render(<DateField label="Date" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} />);
       let segments = getAllByRole('spinbutton');
       // workaround bug in userEvent.tab(). hidden inputs aren't focusable.
@@ -267,30 +271,30 @@ describe('DateField', function () {
       expect(onFocusChangeSpy).not.toHaveBeenCalled();
       expect(onFocusSpy).not.toHaveBeenCalled();
 
-      userEvent.tab();
+      await user.tab();
       expect(segments[0]).toHaveFocus();
 
-      userEvent.tab();
+      await user.tab();
       expect(segments[1]).toHaveFocus();
 
-      userEvent.tab();
+      await user.tab();
       expect(segments[2]).toHaveFocus();
       expect(onBlurSpy).toHaveBeenCalledTimes(0);
 
-      userEvent.tab();
+      await user.tab();
       expect(onBlurSpy).toHaveBeenCalledTimes(1);
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(2);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
     });
 
-    it('should trigger right arrow key event for segment navigation', function () {
+    it('should trigger right arrow key event for segment navigation', async function () {
       let {getAllByRole} = render(<DateField label="Date" onKeyDown={onKeyDownSpy} onKeyUp={onKeyUpSpy} />);
       let segments = getAllByRole('spinbutton');
 
       expect(onKeyDownSpy).not.toHaveBeenCalled();
       expect(onKeyUpSpy).not.toHaveBeenCalled();
 
-      userEvent.tab();
+      await user.tab();
       expect(segments[0]).toHaveFocus();
       expect(onKeyDownSpy).not.toHaveBeenCalled();
       expect(onKeyUpSpy).toHaveBeenCalledTimes(1);
@@ -316,7 +320,7 @@ describe('DateField', function () {
       expect(input).toHaveValue('2020-02-03T12:24:45-08:00[America/Los_Angeles]');
     });
 
-    it('supports form reset', () => {
+    it('supports form reset', async () => {
       function Test() {
         let [value, setValue] = React.useState(new CalendarDate(2020, 2, 3));
         return (
@@ -343,7 +347,7 @@ describe('DateField', function () {
       expect(input).toHaveValue('2020-03-03');
 
       let button = getByTestId('reset');
-      act(() => userEvent.click(button));
+      await user.click(button);
       expect(getDescription()).toBe('Selected Date: February 3, 2020');
       expect(input).toHaveValue('2020-02-03');
     });
