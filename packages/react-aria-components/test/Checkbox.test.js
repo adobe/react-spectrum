@@ -11,11 +11,16 @@
  */
 
 import {Checkbox, CheckboxContext} from '../';
-import {fireEvent, render} from '@react-spectrum/test-utils';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
 describe('Checkbox', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   it('should render a checkbox with default class', () => {
     let {getByRole} = render(<Checkbox>Test</Checkbox>);
     let checkbox = getByRole('checkbox').closest('label');
@@ -46,23 +51,23 @@ describe('Checkbox', () => {
     expect(checkbox).toHaveAttribute('aria-label', 'test');
   });
 
-  it('should support hover', () => {
+  it('should support hover', async () => {
     let {getByRole} = render(<Checkbox className={({isHovered}) => isHovered ? 'hover' : ''}>Test</Checkbox>);
     let checkbox = getByRole('checkbox').closest('label');
 
     expect(checkbox).not.toHaveAttribute('data-hovered');
     expect(checkbox).not.toHaveClass('hover');
 
-    userEvent.hover(checkbox);
+    await user.hover(checkbox);
     expect(checkbox).toHaveAttribute('data-hovered', 'true');
     expect(checkbox).toHaveClass('hover');
 
-    userEvent.unhover(checkbox);
+    await user.unhover(checkbox);
     expect(checkbox).not.toHaveAttribute('data-hovered');
     expect(checkbox).not.toHaveClass('hover');
   });
 
-  it('should support focus ring', () => {
+  it('should support focus ring', async () => {
     let {getByRole} = render(<Checkbox className={({isFocusVisible}) => isFocusVisible ? 'focus' : ''}>Test</Checkbox>);
     let checkbox = getByRole('checkbox');
     let label = checkbox.closest('label');
@@ -70,12 +75,12 @@ describe('Checkbox', () => {
     expect(label).not.toHaveAttribute('data-focus-visible');
     expect(label).not.toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(checkbox);
     expect(label).toHaveAttribute('data-focus-visible', 'true');
     expect(label).toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(label).not.toHaveAttribute('data-focus-visible');
     expect(label).not.toHaveClass('focus');
   });
@@ -106,7 +111,7 @@ describe('Checkbox', () => {
     expect(label).toHaveClass('disabled');
   });
 
-  it('should support selected state', () => {
+  it('should support selected state', async () => {
     let onChange = jest.fn();
     let {getByRole} = render(<Checkbox onChange={onChange} className={({isSelected}) => isSelected ? 'selected' : ''}>Test</Checkbox>);
     let checkbox = getByRole('checkbox');
@@ -116,13 +121,13 @@ describe('Checkbox', () => {
     expect(label).not.toHaveAttribute('data-selected');
     expect(label).not.toHaveClass('selected');
 
-    userEvent.click(checkbox);
+    await user.click(checkbox);
     expect(onChange).toHaveBeenLastCalledWith(true);
     expect(checkbox).toBeChecked();
     expect(label).toHaveAttribute('data-selected', 'true');
     expect(label).toHaveClass('selected');
 
-    userEvent.click(checkbox);
+    await user.click(checkbox);
     expect(onChange).toHaveBeenLastCalledWith(false);
     expect(checkbox).not.toBeChecked();
     expect(label).not.toHaveAttribute('data-selected');
@@ -169,13 +174,13 @@ describe('Checkbox', () => {
     expect(label).toHaveClass('required');
   });
 
-  it('should support render props', () => {
+  it('should support render props', async () => {
     let {getByRole} =  render(<Checkbox>{({isSelected}) => isSelected ? 'Selected' : 'Not Selected'}</Checkbox>);
     let checkbox = getByRole('checkbox').closest('label');
 
     expect(checkbox).toHaveTextContent('Not Selected');
 
-    userEvent.click(checkbox);
+    await user.click(checkbox);
     expect(checkbox).toHaveTextContent('Selected');
   });
 });
