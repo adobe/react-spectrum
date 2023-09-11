@@ -174,7 +174,6 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
       if (isHovered && !state.isOpen) {
         if (!openTimeout.current) {
           openTimeout.current = setTimeout(() => {
-            // TODO: this should set autofocus to false so focus doesn't move into the next menu
             onSubmenuOpen();
           }, 200);
         }
@@ -190,18 +189,37 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
     }
   };
 
-  let onExit = () => {
-    // if focus was already moved back to a menu item, don't need to do anything
-    if (!parentMenuRef.current.contains(document.activeElement)) {
-      // need to return focus to the trigger because hitting Esc causes focus to go to the subdialog, which is then unmounted
-      // this leads to blur never being fired nor focus on the body
-      ref.current.focus();
+  // TODO: Track the external element being interacted with so that we can move focus to it when the subMenu closes. If we don't manually move focus, then focus gets lost to the body
+  // Calling ref.current.focus in useMenuItem's onHoverStart doesn't seem to move focus properly unfortunately
+  let closeTarget = useRef(null);
+  let shouldCloseOnInteractOutside = (target) => {
+    if (target !== ref.current) {
+      closeTarget.current = target;
+      return true;
     }
-    cancelOpenTimeout();
+
+    return false;
   };
 
-  let shouldCloseOnInteractOutside = (target) => {
-    return target !== ref.current;
+  // TODO: this onExit is Spectrum specific, so kinda weird to have in the aria hook. However, perhaps it would be nice if the aria Popover has onExit as well so
+  // users wouldn't need to reimplement this?
+  let onExit = () => {
+    // TODO: A bit awkward, but this first part of the if statement handles moving focus to the item the user hovers, specifically if said item is a menu item
+    // in one of the menu ancestors of the currently open submenu. The ideal logic would be to check if the closeTarget was in any of the menus in the tree and do nothing if so. Technically
+    // the else if part of this handles this already since hovering a submenu item sets it as the focusedKey and then focusing the submenu itself will move focus to the focusedKey via useSelectableCollection,
+    // but it breaks if the user hovers the base menu's first submenu trigger since then the first submenu won't actually close
+    // due to the logic in shouldCloseOnInteractOutside, and thus the first submenu retains focus, overriding the hover focus of the root menu's submenu trigger
+    // Double check if I can use any of the FocusScope scope checkers
+    if (closeTarget.current) {
+      closeTarget.current?.focus();
+      closeTarget.current = null;
+    } else if (!parentMenuRef.current.contains(document.activeElement)) {
+      // need to return focus to the trigger because hitting Esc causes focus to go to the subdialog, which is then unmounted
+      // this leads to blur never being fired nor focus on the body
+      parentMenuRef.current.focus();
+    }
+
+    cancelOpenTimeout();
   };
 
   return {
