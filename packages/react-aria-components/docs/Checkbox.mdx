@@ -58,7 +58,7 @@ import {Checkbox} from 'react-aria-components';
 
 ```css
 @layer checkbox;
-@layer checkbox.layout, checkbox.theme, checkbox.selected, checkbox.indeterminate, checkbox.invalid, checkbox.disabled;
+@layer checkbox.layout, checkbox.theme, checkbox.selected, checkbox.indeterminate, checkbox.invalid, checkbox.disabled, checkbox.hcm;
 @layer checkbox.layout {
   .react-aria-Checkbox {
     display: flex;
@@ -110,6 +110,8 @@ import {Checkbox} from 'react-aria-components';
     --invalid-color: var(--spectrum-global-color-red-600);
     --invalid-color-pressed: var(--spectrum-global-color-red-700);
   }
+}
+@layer checkbox.hcm {
   @media (forced-colors: active) {
     .react-aria-Checkbox {
       forced-color-adjust: none;

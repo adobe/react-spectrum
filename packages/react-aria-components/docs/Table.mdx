@@ -234,6 +234,9 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
       }
     }
   }
+  /* could remove, but then we're at the mercy of import order, also contains a lot of knowledge of structure of checkbox */
+  /* would be nice if checkboxes had a variant for this set of overrides instead, then table wouldn't need to know about it */
+  /* or at the very least variant + variables that are api */
   @layer checkbox {
     .react-aria-Checkbox {
       --focus-ring-color: slateblue;
@@ -248,13 +251,12 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
       }
     }
   }
-}
-
-:where(.react-aria-Row) .react-aria-Checkbox {
-  --selected-color: white;
-  --selected-color-pressed: #ddd;
-  --checkmark-color: slateblue;
-  --background-color: var(--highlight-background);
+  :where(.react-aria-Row) .react-aria-Checkbox {
+    --selected-color: white;
+    --selected-color-pressed: #ddd;
+    --checkmark-color: slateblue;
+    --background-color: var(--highlight-background);
+  }
 }
 
 
