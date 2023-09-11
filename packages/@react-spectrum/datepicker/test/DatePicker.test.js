@@ -510,15 +510,21 @@ describe('DatePicker', function () {
 
       act(() => hour.focus());
       fireEvent.keyDown(hour, {key: 'Backspace'});
+      fireEvent.keyUp(hour, {key: 'Backspace'});
       expect(hour).toHaveAttribute('aria-valuetext', '1 AM');
 
       fireEvent.keyDown(hour, {key: 'Backspace'});
-      expect(hour).toHaveAttribute('aria-valuetext', '1 AM');
+      fireEvent.keyUp(hour, {key: 'Backspace'});
+      expect(hour).toHaveAttribute('aria-valuetext', 'Empty');
+
+      fireEvent.keyDown(hour, {key: 'ArrowUp'});
+      fireEvent.keyUp(hour, {key: 'ArrowUp'});
+      expect(hour).toHaveAttribute('aria-valuetext', '12 AM');
 
       expect(dialog).toBeVisible();
-      expect(onChange).toHaveBeenCalledTimes(2);
+      expect(onChange).toHaveBeenCalledTimes(4);
       expect(onChange).toHaveBeenCalledWith(new CalendarDateTime(2019, 2, 4, 1, 45));
-      expect(getTextValue(combobox)).toBe('2/4/2019, 1:45 AM');
+      expect(getTextValue(combobox)).toBe('2/4/2019, 12:45 AM');
     });
 
     it('should fire onChange until both date and time are selected', function () {
