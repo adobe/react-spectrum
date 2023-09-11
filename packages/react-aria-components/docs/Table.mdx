@@ -235,8 +235,9 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
     }
   }
   /* could remove, but then we're at the mercy of import order, also contains a lot of knowledge of structure of checkbox */
+  /* we'd need to check for circular dependencies and we'd need to declare this at the top like the checkbox layers, and it'd be project wide? */
   /* would be nice if checkboxes had a variant for this set of overrides instead, then table wouldn't need to know about it */
-  /* or at the very least variant + variables that are api */
+  /* or at the very least customize layer + variables that are api? */
   @layer checkbox {
     .react-aria-Checkbox {
       --focus-ring-color: slateblue;
