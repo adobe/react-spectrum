@@ -12,8 +12,8 @@
 
 import {Button, Calendar, CalendarCell, CalendarGrid, DateInput, DatePicker, DatePickerContext, DateSegment, Dialog, Group, Heading, Label, Popover, Text} from 'react-aria-components';
 import {CalendarDate} from '@internationalized/date';
+import {pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestDatePicker = (props) => (
@@ -45,7 +45,11 @@ let TestDatePicker = (props) => (
 );
 
 describe('DatePicker', () => {
-  it('provides slots', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+  it('provides slots', async () => {
     let {getByRole, getAllByRole} = render(<TestDatePicker />);
 
     let group = getByRole('group');
@@ -70,7 +74,7 @@ describe('DatePicker', () => {
       expect(segment).toHaveAttribute('data-type');
     }
 
-    userEvent.click(button);
+    await user.click(button);
 
     let dialog = getByRole('dialog');
     expect(dialog).toHaveAttribute('class', 'react-aria-Dialog');
@@ -93,12 +97,12 @@ describe('DatePicker', () => {
     expect(group).toHaveAttribute('aria-label', 'test');
   });
 
-  it('should apply isPressed state to button when expanded', () => {
+  it('should apply isPressed state to button when expanded', async () => {
     let {getByRole} = render(<TestDatePicker />);
     let button = getByRole('button');
 
     expect(button).not.toHaveAttribute('data-pressed');
-    userEvent.click(button);
+    await user.click(button);
     expect(button).toHaveAttribute('data-pressed');
   });
 

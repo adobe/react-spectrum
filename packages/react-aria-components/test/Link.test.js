@@ -10,12 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@react-spectrum/test-utils';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import {Link, LinkContext} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
 describe('Link', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   it('should render a link with default class', () => {
     let {getByRole} = render(<Link>Test</Link>);
     let link = getByRole('link');
@@ -35,11 +40,11 @@ describe('Link', () => {
     expect(link).toHaveAttribute('data-foo', 'bar');
   });
 
-  it('should support render props', () => {
+  it('should support render props', async () => {
     let {getByRole} = render(<Link>{({isHovered}) => isHovered ? 'Hovered' : 'Test'}</Link>);
     let link = getByRole('link');
     expect(link).toHaveTextContent('Test');
-    userEvent.hover(link);
+    await user.hover(link);
     expect(link).toHaveTextContent('Hovered');
   });
 
@@ -62,35 +67,35 @@ describe('Link', () => {
     expect(link).toHaveAttribute('class', 'react-aria-Link');
   });
 
-  it('should support hover', () => {
+  it('should support hover', async () => {
     let {getByRole} = render(<Link className={({isHovered}) => isHovered ? 'hover' : ''}>Test</Link>);
     let link = getByRole('link');
 
     expect(link).not.toHaveAttribute('data-hovered');
     expect(link).not.toHaveClass('hover');
 
-    userEvent.hover(link);
+    await user.hover(link);
     expect(link).toHaveAttribute('data-hovered', 'true');
     expect(link).toHaveClass('hover');
 
-    userEvent.unhover(link);
+    await user.unhover(link);
     expect(link).not.toHaveAttribute('data-hovered');
     expect(link).not.toHaveClass('hover');
   });
 
-  it('should support focus ring', () => {
+  it('should support focus ring', async () => {
     let {getByRole} = render(<Link className={({isFocusVisible}) => isFocusVisible ? 'focus' : ''}>Test</Link>);
     let link = getByRole('link');
-    
+
     expect(link).not.toHaveAttribute('data-focus-visible');
     expect(link).not.toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(link);
     expect(link).toHaveAttribute('data-focus-visible', 'true');
     expect(link).toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(link).not.toHaveAttribute('data-focus-visible');
     expect(link).not.toHaveClass('focus');
   });

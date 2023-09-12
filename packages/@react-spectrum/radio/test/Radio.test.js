@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@react-spectrum/test-utils';
+import {act, pointerMap, render} from '@react-spectrum/test-utils';
 import {Button} from '@react-spectrum/button';
 import {Provider} from '@react-spectrum/provider';
 import {Radio, RadioGroup} from '../';
@@ -71,27 +71,6 @@ class RadioBehavior {
 }
 let radioBehavior = new RadioBehavior();
 
-function pressKeyOnElement(key) {
-  return (element) => {
-    fireEvent.keyDown(element, {key});
-  };
-}
-
-function pressArrowRight(element) {
-  return pressKeyOnElement('ArrowRight')(element);
-}
-
-function pressArrowLeft(element) {
-  return pressKeyOnElement('ArrowLeft')(element);
-}
-
-function pressArrowUp(element) {
-  return pressKeyOnElement('ArrowUp')(element);
-}
-
-function pressArrowDown(element) {
-  return pressKeyOnElement('ArrowDown')(element);
-}
 
 function verifyResult(radios, values, index) {
   expect(radios).checkRadioIndex(values, index);
@@ -121,15 +100,25 @@ expect.extend({
 
 describe('Radios', function () {
   let onChangeSpy = jest.fn();
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
 
   afterEach(() => {
     onChangeSpy.mockClear();
   });
 
+  let tab = async () => await user.tab();
+  let pressArrowRight = async () => await user.keyboard('{ArrowRight}');
+  let pressArrowLeft = async () => await user.keyboard('{ArrowLeft}');
+  let pressArrowUp = async () => await user.keyboard('{ArrowUp}');
+  let pressArrowDown = async () => await user.keyboard('{ArrowDown}');
+
   it.each`
     Name         | ComponentGroup  | Component  | groupProps                 | radioProps
     ${'Radio'}   | ${RadioGroup}   | ${Radio}   | ${{onChange: onChangeSpy}} | ${[{}, {}, {}]}
-  `('$Name handles defaults', function ({Name, ComponentGroup, Component, groupProps, radioProps}) {
+  `('$Name handles defaults', async function ({Name, ComponentGroup, Component, groupProps, radioProps}) {
     let {getByRole, getAllByRole, getByLabelText} = renderRadioGroup(ComponentGroup, Component, groupProps, radioProps);
 
     let radioGroup = getByRole('radiogroup');
@@ -151,7 +140,7 @@ describe('Radios', function () {
     expect(radios[2].checked).toBe(false);
 
     let dogs = getByLabelText('Dogs');
-    userEvent.click(dogs);
+    await user.click(dogs);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith('dogs');
 
@@ -221,7 +210,7 @@ describe('Radios', function () {
   it.each`
     Name         | ComponentGroup  | Component  | groupProps                 | radioProps
     ${'Radio'}   | ${RadioGroup}   | ${Radio}   | ${{onChange: onChangeSpy}} | ${[{}, {isDisabled: true}, {}]}
-  `('$Name can have a single disabled radio', function ({ComponentGroup, Component, groupProps, radioProps}) {
+  `('$Name can have a single disabled radio', async function ({ComponentGroup, Component, groupProps, radioProps}) {
     let {getByRole, getByLabelText, getAllByRole} = renderRadioGroup(ComponentGroup, Component, groupProps, radioProps);
 
     let radioGroup = getByRole('radiogroup');
@@ -235,12 +224,12 @@ describe('Radios', function () {
     // have to click label or it won't work
     let dogs = getByLabelText('Dogs');
     let cats = getByLabelText('Cats');
-    userEvent.click(cats);
+    await user.click(cats);
     expect(onChangeSpy).not.toHaveBeenCalled();
     expect(radios[0].checked).toBe(false);
     expect(radios[1].checked).toBe(false);
     expect(radios[2].checked).toBe(false);
-    userEvent.click(dogs);
+    await user.click(dogs);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith('dogs');
     expect(radios[0].checked).toBe(true);
@@ -251,7 +240,7 @@ describe('Radios', function () {
   it.each`
     Name         | ComponentGroup  | Component  | groupProps                                   | radioProps
     ${'Radio'}   | ${RadioGroup}   | ${Radio}   | ${{isReadOnly: true, onChange: onChangeSpy}} | ${[{}, {}, {}]}
-  `('$Name can be readonly', function ({ComponentGroup, Component, groupProps, radioProps}) {
+  `('$Name can be readonly', async function ({ComponentGroup, Component, groupProps, radioProps}) {
     let {getByRole, getAllByRole, getByLabelText} = renderRadioGroup(ComponentGroup, Component, groupProps, radioProps);
 
     let radioGroup = getByRole('radiogroup');
@@ -264,14 +253,14 @@ describe('Radios', function () {
     }
 
     let cats = getByLabelText('Cats');
-    userEvent.click(cats);
+    await user.click(cats);
     expect(onChangeSpy).not.toHaveBeenCalled();
   });
 
   it.each`
     Name         | ComponentGroup  | Component  | groupProps                 | radioProps
     ${'Radio'}   | ${RadioGroup}   | ${Radio}   | ${{onChange: onChangeSpy}} | ${[{isReadOnly: true}, {}, {}]}
-  `('$Name individual radios cannot be readonly', function ({ComponentGroup, Component, groupProps, radioProps}) {
+  `('$Name individual radios cannot be readonly', async function ({ComponentGroup, Component, groupProps, radioProps}) {
     let {getByRole, getAllByRole, getByLabelText} = renderRadioGroup(ComponentGroup, Component, groupProps, radioProps);
 
     let radioGroup = getByRole('radiogroup');
@@ -283,14 +272,14 @@ describe('Radios', function () {
     expect(radios[2]).not.toHaveAttribute('readonly');
 
     let dogs = getByLabelText('Dogs');
-    userEvent.click(dogs);
+    await user.click(dogs);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
   });
 
   it.each`
     Name         | ComponentGroup  | Component  | groupProps                                                  | radioProps
     ${'Radio'}   | ${RadioGroup}   | ${Radio}   | ${{defaultValue: 'dragons', onChange: onChangeSpy}}         | ${[{}, {}, {}]}
-  `('$Name can have a default value', function ({ComponentGroup, Component, groupProps, radioProps}) {
+  `('$Name can have a default value', async function ({ComponentGroup, Component, groupProps, radioProps}) {
     let {getByRole, getByLabelText, getAllByRole} = renderRadioGroup(ComponentGroup, Component, groupProps, radioProps);
 
     let radioGroup = getByRole('radiogroup');
@@ -304,7 +293,7 @@ describe('Radios', function () {
 
     // have to click label or it won't work
     let dogs = getByLabelText('Dogs');
-    userEvent.click(dogs);
+    await user.click(dogs);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith('dogs');
     expect(radios[0].checked).toBe(true);
@@ -315,7 +304,7 @@ describe('Radios', function () {
   it.each`
     Name         | ComponentGroup  | Component  | groupProps                                           | radioProps
     ${'Radio'}   | ${RadioGroup}   | ${Radio}   | ${{value: 'dragons', onChange: onChangeSpy}}         | ${[{}, {}, {}]}
-  `('$Name can be controlled', function ({ComponentGroup, Component, groupProps, radioProps}) {
+  `('$Name can be controlled', async function ({ComponentGroup, Component, groupProps, radioProps}) {
     let {getByRole, getByLabelText, getAllByRole} = renderRadioGroup(ComponentGroup, Component, groupProps, radioProps);
 
     let radioGroup = getByRole('radiogroup');
@@ -328,7 +317,7 @@ describe('Radios', function () {
     expect(radios[2].checked).toBe(true);
 
     let dogs = getByLabelText('Dogs');
-    userEvent.click(dogs);
+    await user.click(dogs);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith('dogs');
     expect(radios[0].checked).toBe(false);
@@ -435,7 +424,7 @@ describe('Radios', function () {
     expect(description).toHaveTextContent('Error message');
   });
 
-  it('supports form reset', () => {
+  it('supports form reset', async () => {
     function Test() {
       let [value, setValue] = React.useState('dogs');
       return (
@@ -458,13 +447,13 @@ describe('Radios', function () {
     expect(radios[0]).toBeChecked();
     expect(radios[1]).not.toBeChecked();
     expect(radios[2]).not.toBeChecked();
-    act(() => userEvent.click(radios[1]));
+    await user.click(radios[1]);
     expect(radios[0]).not.toBeChecked();
     expect(radios[1]).toBeChecked();
     expect(radios[2]).not.toBeChecked();
 
     let button = getByTestId('reset');
-    act(() => userEvent.click(button));
+    await user.click(button);
     expect(radios[0]).toBeChecked();
     expect(radios[1]).not.toBeChecked();
     expect(radios[2]).not.toBeChecked();
@@ -476,7 +465,7 @@ describe('Radios', function () {
     });
 
 
-    it('does not tab through individual radios', () => {
+    it('does not tab through individual radios', async () => {
       // this test gives a false sense of security, it doesn't catch the problem
       // where all keydown events were being stopped in the radio group
       let {getByRole, getAllByRole} = render(
@@ -495,22 +484,22 @@ describe('Radios', function () {
       // 0. body/nothing is focused
 
       // 1. tab once to focus button before radiogroup
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(button);
       expect(document.activeElement).not.toBe(radios[0]);
       expect(document.activeElement).not.toBe(radios[1]);
       expect(document.activeElement).not.toBe(radios[2]);
 
       // 2. tab once again to focus radiogroup (= first radiobutton)
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).not.toBe(button);
       expect(document.activeElement).toBe(radios[0]);
       expect(document.activeElement).not.toBe(radios[1]);
       expect(document.activeElement).not.toBe(radios[2]);
 
       // 3. tab once again to focus the body, and again to wrap back around to the button
-      userEvent.tab();
-      userEvent.tab();
+      await user.tab();
+      await user.tab();
       expect(document.activeElement).toBe(button);
       expect(document.activeElement).not.toBe(radios[0]);
       expect(document.activeElement).not.toBe(radios[1]);
@@ -527,7 +516,7 @@ describe('Radios', function () {
       act(() => {radios[0].focus();});
       expect(document.activeElement).toBe(radios[0]);
 
-      userEvent.click(radios[1]);
+      await user.click(radios[1]);
       expect(document.activeElement).toBe(radios[1]);
       expect(radios[0]).toHaveAttribute('tabIndex', '-1');
       expect(radios[1]).toHaveAttribute('tabIndex', '0');
@@ -572,19 +561,17 @@ describe('Radios', function () {
         expect(radios[2]).toHaveAttribute('tabIndex', '0');
         expect(radios[3]).toHaveAttribute('tabIndex', '0');
 
-        userEvent.tab();
+        await user.tab();
         act(() => {jest.runAllTimers();});
         expect(document.activeElement).toBe(buttons[0]);
-        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
-        userEvent.tab();
+        await user.keyboard('{Enter}');
+        await user.tab();
         act(() => {jest.runAllTimers();});
         expect(document.activeElement).toBe(radios[1]);
-        userEvent.tab();
+        await user.tab();
         act(() => {jest.runAllTimers();});
         expect(document.activeElement).toBe(buttons[1]);
-        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+        await user.keyboard('{Enter}');
 
         expect(radios[0]).toHaveAttribute('tabIndex', '-1');
         expect(radios[1]).toHaveAttribute('tabIndex', '-1');
@@ -604,16 +591,16 @@ describe('Radios', function () {
 
     it.each`
       Name                                                  | props                                           | orders
-      ${'(left/right arrows, ltr + horizontal) RadioGroup'} | ${{locale: 'de-DE', orientation: 'horizontal'}} | ${[{action: () => userEvent.tab(), result: () => expectedFocus.radio1Focused}, {action: pressArrowRight, result: radioBehavior.forward}, {action: pressArrowLeft, result: radioBehavior.backward}, {action: pressArrowLeft, result: radioBehavior.backward}]}
-      ${'(left/right arrows, rtl + horizontal) RadioGroup'} | ${{locale: 'ar-AE', orientation: 'horizontal'}} | ${[{action: () => userEvent.tab(), result: () => expectedFocus.radio1Focused}, {action: pressArrowRight, result: radioBehavior.backward}, {action: pressArrowLeft, result: radioBehavior.forward}, {action: pressArrowLeft, result: radioBehavior.forward}]}
-      ${'(up/down arrows, ltr + horizontal) RadioGroup'}    | ${{locale: 'de-DE', orientation: 'horizontal'}} | ${[{action: () => userEvent.tab(), result: () => expectedFocus.radio1Focused}, {action: pressArrowDown, result: radioBehavior.forward}, {action: pressArrowUp, result: radioBehavior.backward}, {action: pressArrowUp, result: radioBehavior.backward}]}
-      ${'(up/down arrows, rtl + horizontal) RadioGroup'}    | ${{locale: 'ar-AE', orientation: 'horizontal'}} | ${[{action: () => userEvent.tab(), result: () => expectedFocus.radio1Focused}, {action: pressArrowDown, result: radioBehavior.forward}, {action: pressArrowUp, result: radioBehavior.backward}, {action: pressArrowUp, result: radioBehavior.backward}]}
-      ${'(left/right arrows, ltr + vertical) RadioGroup'}   | ${{locale: 'de-DE'}}                            | ${[{action: () => userEvent.tab(), result: () => expectedFocus.radio1Focused}, {action: pressArrowRight, result: radioBehavior.forward}, {action: pressArrowLeft, result: radioBehavior.backward}, {action: pressArrowLeft, result: radioBehavior.backward}]}
-      ${'(left/right arrows, rtl + vertical) RadioGroup'}   | ${{locale: 'ar-AE'}}                            | ${[{action: () => userEvent.tab(), result: () => expectedFocus.radio1Focused}, {action: pressArrowRight, result: radioBehavior.forward}, {action: pressArrowLeft, result: radioBehavior.backward}, {action: pressArrowLeft, result: radioBehavior.backward}]}
-      ${'(up/down arrows, ltr + vertical) RadioGroup'}      | ${{locale: 'de-DE'}}                            | ${[{action: () => userEvent.tab(), result: () => expectedFocus.radio1Focused}, {action: pressArrowDown, result: radioBehavior.forward}, {action: pressArrowUp, result: radioBehavior.backward}, {action: pressArrowUp, result: radioBehavior.backward}]}
-      ${'(up/down arrows, rtl + vertical) RadioGroup'}      | ${{locale: 'ar-AE'}}                            | ${[{action: () => userEvent.tab(), result: () => expectedFocus.radio1Focused}, {action: pressArrowDown, result: radioBehavior.forward}, {action: pressArrowUp, result: radioBehavior.backward}, {action: pressArrowUp, result: radioBehavior.backward}]}
+      ${'(left/right arrows, ltr + horizontal) RadioGroup'} | ${{locale: 'de-DE', orientation: 'horizontal'}} | ${[{action: tab, result: () => expectedFocus.radio1Focused}, {action: pressArrowRight, result: radioBehavior.forward}, {action: pressArrowLeft, result: radioBehavior.backward}, {action: pressArrowLeft, result: radioBehavior.backward}]}
+      ${'(left/right arrows, rtl + horizontal) RadioGroup'} | ${{locale: 'ar-AE', orientation: 'horizontal'}} | ${[{action: tab, result: () => expectedFocus.radio1Focused}, {action: pressArrowRight, result: radioBehavior.backward}, {action: pressArrowLeft, result: radioBehavior.forward}, {action: pressArrowLeft, result: radioBehavior.forward}]}
+      ${'(up/down arrows, ltr + horizontal) RadioGroup'}    | ${{locale: 'de-DE', orientation: 'horizontal'}} | ${[{action: tab, result: () => expectedFocus.radio1Focused}, {action: pressArrowDown, result: radioBehavior.forward}, {action: pressArrowUp, result: radioBehavior.backward}, {action: pressArrowUp, result: radioBehavior.backward}]}
+      ${'(up/down arrows, rtl + horizontal) RadioGroup'}    | ${{locale: 'ar-AE', orientation: 'horizontal'}} | ${[{action: tab, result: () => expectedFocus.radio1Focused}, {action: pressArrowDown, result: radioBehavior.forward}, {action: pressArrowUp, result: radioBehavior.backward}, {action: pressArrowUp, result: radioBehavior.backward}]}
+      ${'(left/right arrows, ltr + vertical) RadioGroup'}   | ${{locale: 'de-DE'}}                            | ${[{action: tab, result: () => expectedFocus.radio1Focused}, {action: pressArrowRight, result: radioBehavior.forward}, {action: pressArrowLeft, result: radioBehavior.backward}, {action: pressArrowLeft, result: radioBehavior.backward}]}
+      ${'(left/right arrows, rtl + vertical) RadioGroup'}   | ${{locale: 'ar-AE'}}                            | ${[{action: tab, result: () => expectedFocus.radio1Focused}, {action: pressArrowRight, result: radioBehavior.forward}, {action: pressArrowLeft, result: radioBehavior.backward}, {action: pressArrowLeft, result: radioBehavior.backward}]}
+      ${'(up/down arrows, ltr + vertical) RadioGroup'}      | ${{locale: 'de-DE'}}                            | ${[{action: tab, result: () => expectedFocus.radio1Focused}, {action: pressArrowDown, result: radioBehavior.forward}, {action: pressArrowUp, result: radioBehavior.backward}, {action: pressArrowUp, result: radioBehavior.backward}]}
+      ${'(up/down arrows, rtl + vertical) RadioGroup'}      | ${{locale: 'ar-AE'}}                            | ${[{action: tab, result: () => expectedFocus.radio1Focused}, {action: pressArrowDown, result: radioBehavior.forward}, {action: pressArrowUp, result: radioBehavior.backward}, {action: pressArrowUp, result: radioBehavior.backward}]}
     `('$Name default keyboard navigation with wrapping', async ({props, orders}) => {
-      let {getByRole, getAllByRole} = render(
+      let {getAllByRole} = render(
         <Provider theme={theme} locale={props.locale}>
           <RadioGroup aria-label="favorite pet" orientation={props.orientation}>
             <Radio value="dogs">Dogs</Radio>
@@ -624,27 +611,27 @@ describe('Radios', function () {
       );
 
       let radios = getAllByRole('radio');
-      let radioGroup = getByRole('radiogroup');
-      act(() => {radioGroup.focus();});
 
-      orders.forEach(({action, result}, index) => {
-        action(document.activeElement);
+      let index = 0;
+      for (let {action, result} of orders) {
+        await action();
         verifyResult(radios, result(), index);
-      });
+        index++;
+      }
     });
 
     let und = null;
     it.each`
       Name                     | props                | disabledKeys  | orders
-      ${'middle disabled'}     | ${{locale: 'de-DE'}} | ${[1]}        | ${[{action: () => userEvent.tab(), result: () => ['0', und, '-1']}, {action: pressArrowRight, result: () => ['-1', und, '0']}, {action: pressArrowRight, result: () => ['0', und, '-1']}, {action: pressArrowLeft, result: () => ['-1', und, '0']}, {action: pressArrowLeft, result: () => ['0', und, '-1']}]}
-      ${'first disabled'}      | ${{locale: 'de-DE'}} | ${[0]}        | ${[{action: () => userEvent.tab(), result: () => [und, '0', '-1']}, {action: pressArrowRight, result: () => [und, '-1', '0']}, {action: pressArrowRight, result: () => [und, '0', '-1']}, {action: pressArrowLeft, result: () => [und, '-1', '0']}, {action: pressArrowLeft, result: () => [und, '0', '-1']}]}
-      ${'last disabled'}       | ${{locale: 'de-DE'}} | ${[2]}        | ${[{action: () => userEvent.tab(), result: () => ['0', '-1', und]}, {action: pressArrowRight, result: () => ['-1', '0', und]}, {action: pressArrowRight, result: () => ['0', '-1', und]}, {action: pressArrowLeft, result: () => ['-1', '0', und]}, {action: pressArrowLeft, result: () => ['0', '-1', und]}]}
-      ${'1&2 disabled'}        | ${{locale: 'de-DE'}} | ${[0, 1]}     | ${[{action: () => userEvent.tab(), result: () => [und, und, '0']}, {action: pressArrowRight, result: () => [und, und, '0']}, {action: pressArrowRight, result: () => [und, und, '0']}, {action: pressArrowLeft, result: () => [und, und, '0']}, {action: pressArrowLeft, result: () => [und, und, '0']}]}
-      ${'rtl middle disabled'} | ${{locale: 'ar-AE'}} | ${[1]}        | ${[{action: () => userEvent.tab(), result: () => ['0', und, '-1']}, {action: pressArrowRight, result: () => ['-1', und, '0']}, {action: pressArrowRight, result: () => ['0', und, '-1']}, {action: pressArrowLeft, result: () => ['-1', und, '0']}, {action: pressArrowLeft, result: () => ['0', und, '-1']}]}
-      ${'rtl first disabled'}  | ${{locale: 'ar-AE'}} | ${[0]}        | ${[{action: () => userEvent.tab(), result: () => [und, '0', '-1']}, {action: pressArrowRight, result: () => [und, '-1', '0']}, {action: pressArrowRight, result: () => [und, '0', '-1']}, {action: pressArrowLeft, result: () => [und, '-1', '0']}, {action: pressArrowLeft, result: () => [und, '0', '-1']}]}
-      ${'rtl last disabled'}   | ${{locale: 'ar-AE'}} | ${[2]}        | ${[{action: () => userEvent.tab(), result: () => ['0', '-1', und]}, {action: pressArrowRight, result: () => ['-1', '0', und]}, {action: pressArrowRight, result: () => ['0', '-1', und]}, {action: pressArrowLeft, result: () => ['-1', '0', und]}, {action: pressArrowLeft, result: () => ['0', '-1', und]}]}
-      ${'rtl 1&2 disabled'}    | ${{locale: 'ar-AE'}} | ${[0, 1]}     | ${[{action: () => userEvent.tab(), result: () => [und, und, '0']}, {action: pressArrowRight, result: () => [und, und, '0']}, {action: pressArrowRight, result: () => [und, und, '0']}, {action: pressArrowLeft, result: () => [und, und, '0']}, {action: pressArrowLeft, result: () => [und, und, '0']}]}
-    `('$Name skips disabled radios', function ({Name, props, disabledKeys, orders}) {
+      ${'middle disabled'}     | ${{locale: 'de-DE'}} | ${[1]}        | ${[{action: tab, result: () => ['0', und, '-1']}, {action: pressArrowRight, result: () => ['-1', und, '0']}, {action: pressArrowRight, result: () => ['0', und, '-1']}, {action: pressArrowLeft, result: () => ['-1', und, '0']}, {action: pressArrowLeft, result: () => ['0', und, '-1']}]}
+      ${'first disabled'}      | ${{locale: 'de-DE'}} | ${[0]}        | ${[{action: tab, result: () => [und, '0', '-1']}, {action: pressArrowRight, result: () => [und, '-1', '0']}, {action: pressArrowRight, result: () => [und, '0', '-1']}, {action: pressArrowLeft, result: () => [und, '-1', '0']}, {action: pressArrowLeft, result: () => [und, '0', '-1']}]}
+      ${'last disabled'}       | ${{locale: 'de-DE'}} | ${[2]}        | ${[{action: tab, result: () => ['0', '-1', und]}, {action: pressArrowRight, result: () => ['-1', '0', und]}, {action: pressArrowRight, result: () => ['0', '-1', und]}, {action: pressArrowLeft, result: () => ['-1', '0', und]}, {action: pressArrowLeft, result: () => ['0', '-1', und]}]}
+      ${'1&2 disabled'}        | ${{locale: 'de-DE'}} | ${[0, 1]}     | ${[{action: tab, result: () => [und, und, '0']}, {action: pressArrowRight, result: () => [und, und, '0']}, {action: pressArrowRight, result: () => [und, und, '0']}, {action: pressArrowLeft, result: () => [und, und, '0']}, {action: pressArrowLeft, result: () => [und, und, '0']}]}
+      ${'rtl middle disabled'} | ${{locale: 'ar-AE'}} | ${[1]}        | ${[{action: tab, result: () => ['0', und, '-1']}, {action: pressArrowRight, result: () => ['-1', und, '0']}, {action: pressArrowRight, result: () => ['0', und, '-1']}, {action: pressArrowLeft, result: () => ['-1', und, '0']}, {action: pressArrowLeft, result: () => ['0', und, '-1']}]}
+      ${'rtl first disabled'}  | ${{locale: 'ar-AE'}} | ${[0]}        | ${[{action: tab, result: () => [und, '0', '-1']}, {action: pressArrowRight, result: () => [und, '-1', '0']}, {action: pressArrowRight, result: () => [und, '0', '-1']}, {action: pressArrowLeft, result: () => [und, '-1', '0']}, {action: pressArrowLeft, result: () => [und, '0', '-1']}]}
+      ${'rtl last disabled'}   | ${{locale: 'ar-AE'}} | ${[2]}        | ${[{action: tab, result: () => ['0', '-1', und]}, {action: pressArrowRight, result: () => ['-1', '0', und]}, {action: pressArrowRight, result: () => ['0', '-1', und]}, {action: pressArrowLeft, result: () => ['-1', '0', und]}, {action: pressArrowLeft, result: () => ['0', '-1', und]}]}
+      ${'rtl 1&2 disabled'}    | ${{locale: 'ar-AE'}} | ${[0, 1]}     | ${[{action: tab, result: () => [und, und, '0']}, {action: pressArrowRight, result: () => [und, und, '0']}, {action: pressArrowRight, result: () => [und, und, '0']}, {action: pressArrowLeft, result: () => [und, und, '0']}, {action: pressArrowLeft, result: () => [und, und, '0']}]}
+    `('$Name skips disabled radios', async function ({Name, props, disabledKeys, orders}) {
       let tree = render(
         <Provider theme={theme} locale={props.locale}>
           <RadioGroup aria-label="favorite pet" orientation="horizontal">
@@ -656,20 +643,20 @@ describe('Radios', function () {
       );
 
       let radios = tree.getAllByRole('radio');
-      let radioGroup = tree.getByRole('radiogroup');
-      act(() => {radioGroup.focus();});
 
-      orders.forEach(({action, result}, index) => {
-        action(document.activeElement);
+      let index = 0;
+      for (let {action, result} of orders) {
+        await action();
         verifyResult(radios, result(), index);
-      });
+        index++;
+      }
     });
 
     it.each`
       Name                         | props                | disabledKeys | orders
-      ${'middle two disabled'}     | ${{locale: 'de-DE'}} | ${[1, 2]}    | ${[{action: () => userEvent.tab(), result: () => ['0', und, und, '-1']}, {action: pressArrowRight, result: () => ['-1', und, und, '0']}, {action: pressArrowRight, result: () => ['0', und, und, '-1']}, {action: pressArrowLeft, result: () => ['-1', und, und, '0']}, {action: pressArrowLeft, result: () => ['0', und, und, '-1']}]}
-      ${'rtl middle two disabled'} | ${{locale: 'de-DE'}} | ${[1, 2]}    | ${[{action: () => userEvent.tab(), result: () => ['0', und, und, '-1']}, {action: pressArrowRight, result: () => ['-1', und, und, '0']}, {action: pressArrowRight, result: () => ['0', und, und, '-1']}, {action: pressArrowLeft, result: () => ['-1', und, und, '0']}, {action: pressArrowLeft, result: () => ['0', und, und, '-1']}]}
-    `('$Name skips multiple disabled radios', function ({Name, props, disabledKeys, orders}) {
+      ${'middle two disabled'}     | ${{locale: 'de-DE'}} | ${[1, 2]}    | ${[{action: tab, result: () => ['0', und, und, '-1']}, {action: pressArrowRight, result: () => ['-1', und, und, '0']}, {action: pressArrowRight, result: () => ['0', und, und, '-1']}, {action: pressArrowLeft, result: () => ['-1', und, und, '0']}, {action: pressArrowLeft, result: () => ['0', und, und, '-1']}]}
+      ${'rtl middle two disabled'} | ${{locale: 'de-DE'}} | ${[1, 2]}    | ${[{action: tab, result: () => ['0', und, und, '-1']}, {action: pressArrowRight, result: () => ['-1', und, und, '0']}, {action: pressArrowRight, result: () => ['0', und, und, '-1']}, {action: pressArrowLeft, result: () => ['-1', und, und, '0']}, {action: pressArrowLeft, result: () => ['0', und, und, '-1']}]}
+    `('$Name skips multiple disabled radios', async function ({Name, props, disabledKeys, orders}) {
       let tree = render(
         <Provider theme={theme} locale={props.locale}>
           <RadioGroup aria-label="favorite pet" orientation="horizontal">
@@ -682,13 +669,13 @@ describe('Radios', function () {
       );
 
       let radios = tree.getAllByRole('radio');
-      let radioGroup = tree.getByRole('radiogroup');
-      act(() => {radioGroup.focus();});
 
-      orders.forEach(({action, result}, index) => {
-        action(document.activeElement);
+      let index = 0;
+      for (let {action, result} of orders) {
+        await action();
         verifyResult(radios, result(), index);
-      });
+        index++;
+      }
     });
   });
 });

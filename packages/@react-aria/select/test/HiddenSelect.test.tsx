@@ -1,5 +1,6 @@
 import {HiddenSelect, HiddenSelectProps} from '../src';
 import {Item} from 'react-stately';
+import {pointerMap} from '@react-spectrum/test-utils';
 import React, {useRef} from 'react';
 import {render, screen} from '@testing-library/react';
 import {SelectProps, useSelectState} from '@react-stately/select';
@@ -31,6 +32,11 @@ const makeItems = (size: number) => (new Array(size).fill('')).map((__, index) =
 }));
 
 describe('<HiddenSelect />', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   it('should successfully render for collection.size <= 300 and no selected key', () => {
     render(
       <HiddenSelectExample items={makeItems(5)} />
@@ -47,7 +53,7 @@ describe('<HiddenSelect />', () => {
     );
   });
 
-  it('should trigger on onSelectionChange when select onchange is triggered (autofill)', () => {
+  it('should trigger on onSelectionChange when select onchange is triggered (autofill)', async () => {
     const onSelectionChange = jest.fn();
     render(
       <HiddenSelectExample
@@ -57,7 +63,7 @@ describe('<HiddenSelect />', () => {
     );
 
     const select = screen.getByLabelText('select');
-    userEvent.selectOptions(select, '5');
+    await user.selectOptions(select, '5');
     expect(onSelectionChange).toBeCalledWith('5');
   });
 
