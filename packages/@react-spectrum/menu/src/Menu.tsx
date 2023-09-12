@@ -46,15 +46,9 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
     setLeftOffset({left: -1 * left});
   }, []);
 
-  // TODO: think about if passing the level down is the best way to figure out if the current menu has an expanded submenu for containment purposes.
-  // I could instead still leverage treestate and expanded keys by passing the tree state into useSubMenuTriggerState and calling
-  // state.setExpandedKeys on open/close but that feels iffy since we don't use expandedKeys at all anymore
-  // TODO: The logic behind this is that every submenu with its own submenu should have contain=true. This is so we can tab between the submenutrigger and the submenu
-  let level = completeProps.level ?? 0;
-  let hasOpenSubMenu = level === 0 ? menuTreeState?.expandedKeysStack.length > 0 : state.collection.getItem(menuTreeState.expandedKeysStack[level]) != null;
   return (
-    <MenuStateContext.Provider value={{container: scopedRef, menu: domRef, menuTreeState}}>
-      <FocusScope contain={hasOpenSubMenu}>
+    <MenuStateContext.Provider value={{container: scopedRef, menu: domRef, menuTreeState, state}}>
+      <FocusScope contain={state.expandedKeys.size > 0}>
         <div style={{overflow: 'hidden', maxHeight: '100%', display: 'inline-flex', borderRadius: 'var(--spectrum-alias-border-radius-regular)'}}>
           <ul
             {...menuProps}

@@ -646,19 +646,19 @@ describe('SubMenu', function () {
       let triggerButton = tree.getByRole('button');
       triggerPress(triggerButton);
       act(() => {jest.runAllTimers();});
-      let menu = tree.getByRole('menu');
+      let menu = tree.getByRole('menu', {hidden: true});
       expect(menu).toBeTruthy();
       let menuItems = within(menu).getAllByRole('menuitem');
       let subMenuTrigger1 = menuItems[1];
       triggerPress(subMenuTrigger1);
       act(() => {jest.runAllTimers();});
-      menu = tree.getByRole('menu');
+      menu = tree.getByRole('menu', {hidden: true});
       expect(menu).toBeTruthy();
       expect(onAction).not.toHaveBeenCalled();
       await user.keyboard('[Enter]');
       act(() => {jest.runAllTimers();});
       expect(onAction).not.toHaveBeenCalled();
-      let menus = tree.getAllByRole('menu');
+      let menus = tree.getAllByRole('menu', {hidden: true});
       expect(menus).toHaveLength(2);
 
       triggerPress(menuItems[0]);

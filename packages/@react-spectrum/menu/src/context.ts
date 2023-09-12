@@ -24,8 +24,7 @@ export interface MenuContextValue extends Omit<HTMLAttributes<HTMLElement>, 'aut
   ref?: MutableRefObject<HTMLUListElement>,
   state?: MenuTriggerState,
   menuTreeState?: MenuTreeState,
-  onKeyDown?: (e: KeyboardEvent) => void,
-  level?: number
+  onKeyDown?: (e: KeyboardEvent) => void
 }
 
 export const MenuContext = React.createContext<MenuContextValue>({});

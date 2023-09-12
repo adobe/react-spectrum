@@ -34,8 +34,8 @@ function ContextualHelpTrigger<T>(props: MenuDialogTriggerProps<T>): ReactElemen
   let {isUnavailable, targetKey} = props;
   let triggerRef = useRef<HTMLLIElement>(null);
   let popoverRef = useRef(null);
-  let {container, menuTreeState, menu: parentMenuRef} = useMenuStateContext();
-  let subMenuTriggerState = useSubMenuTriggerState({triggerKey: targetKey}, menuTreeState);
+  let {container, menuTreeState, menu: parentMenuRef, state} = useMenuStateContext();
+  let subMenuTriggerState = useSubMenuTriggerState({triggerKey: targetKey}, {...menuTreeState, ...state});
   let {subMenuTriggerProps, popoverProps, overlayProps} = useSubMenuTrigger({parentMenuRef, subMenuRef: popoverRef, subMenuType: 'dialog', isDisabled: !isUnavailable}, subMenuTriggerState, triggerRef);
   let slots = {};
   if (isUnavailable) {

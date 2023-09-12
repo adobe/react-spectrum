@@ -111,8 +111,7 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
     ...(subMenuType === 'menu' && {
       onClose: state.closeAll,
       autoFocus: state.focusStrategy,
-      onKeyDown: subMenuKeyDown,
-      level: state.level
+      onKeyDown: subMenuKeyDown
     })
   };
 
