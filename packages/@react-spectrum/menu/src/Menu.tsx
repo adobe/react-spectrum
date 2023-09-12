@@ -36,7 +36,6 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
   let domRef = useDOMRef(ref);
   let scopedRef = useRef(null);
   let state = useTreeState(completeProps);
-  // TODO add isSubMenu to useMenu?
   let {menuProps} = useMenu(completeProps, state, domRef);
   let {styleProps} = useStyleProps(completeProps);
   useSyncRef(contextProps, domRef);
@@ -54,7 +53,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
   let level = completeProps.level ?? 0;
   let hasOpenSubMenu = level === 0 ? menuTreeState?.expandedKeysStack.length > 0 : state.collection.getItem(menuTreeState.expandedKeysStack[level]) != null;
   return (
-    <MenuStateContext.Provider value={{state, container: scopedRef, menu: domRef, menuTreeState}}>
+    <MenuStateContext.Provider value={{container: scopedRef, menu: domRef, menuTreeState}}>
       <FocusScope contain={hasOpenSubMenu}>
         <div style={{overflow: 'hidden', maxHeight: '100%', display: 'inline-flex', borderRadius: 'var(--spectrum-alias-border-radius-regular)'}}>
           <ul

@@ -89,7 +89,6 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
       case 'ArrowLeft':
         if (direction === 'ltr') {
           e.stopPropagation();
-          // TODO: for issue where the arrow left is closing too many menus, maybe because the event is going through portals? Detect if event is happening from within the actual menu?
           onSubMenuClose();
         }
         break;
@@ -117,8 +116,6 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
     })
   };
 
-  // TODO: perhaps just make this onKeyDown and not use useKeyboard since we continuePropagation in both cases
-  // TODO maybe can also move focus to the submenu as well on ArrowLeft if
   let subMenuTriggerKeyDown = (e: KeyboardEvent) => {
     switch (e.key) {
       case 'ArrowRight':
@@ -153,9 +150,6 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
     }
   };
 
-  // TODO: disabled state is determined in useMenuItem, make sure to merge the press handlers with the ones useMenuItem sets up
-  // Actually, still check for isDisabled for cases like non isUnavaiable ContextualHelpTriggers which won't make the menu item disabled
-  // just stop the sub menu from opening
   let onPressStart = (e: PressEvent) => {
     if (!isDisabled && (e.pointerType === 'virtual' || e.pointerType === 'keyboard')) {
       // If opened with a screen reader or keyboard, auto focus the first submenu item.

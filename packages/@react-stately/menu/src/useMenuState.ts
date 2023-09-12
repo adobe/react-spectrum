@@ -34,24 +34,18 @@ export function useMenuState(props: {}, state: MenuTriggerState): MenuTreeState 
 
   let [expandedKeysStack, setExpandedKeysStack] = useState<string[]>([]);
   let closeAll = useCallback(() => {
-    // console.log('calling close all');
     setExpandedKeysStack([]);
     state.close();
   }, [state]);
 
   let openSubMenu = useCallback((triggerKey, level) => {
-    // console.log('calling open submenu', triggerKey, level);
     setExpandedKeysStack(oldStack => [...oldStack.slice(0, level), triggerKey]);
   }, []);
 
   let closeSubMenu = useCallback((triggerKey, level) => {
-    // console.trace()
-    // console.log('calling close submenu', triggerKey, level);
     setExpandedKeysStack(oldStack => {
       let key = oldStack[level - 1];
-      // console.log('key', key, oldStack, oldStack.slice(0, level - 1));
       if (key === triggerKey) {
-        // console.log('inreturn', oldStack.slice(0, level - 1));
         return oldStack.slice(0, level - 1);
       } else {
         return oldStack;
@@ -59,7 +53,7 @@ export function useMenuState(props: {}, state: MenuTriggerState): MenuTreeState 
     });
   }, []);
 
-  // Memo is a bit useless here since menuTriggerState always returns a new instance causing closeAll to return one as well
+  // TODO: Memo is a bit useless here since menuTriggerState always returns a new instance causing closeAll to return one as well
   return useMemo(() => ({
     expandedKeysStack,
     closeAll,

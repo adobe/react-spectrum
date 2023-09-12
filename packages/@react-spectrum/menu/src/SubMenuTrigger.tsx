@@ -29,9 +29,6 @@ interface SubMenuTriggerProps {
 }
 
 export interface SpectrumSubMenuTriggerProps extends Omit<SubMenuTriggerProps, 'targetKey'> {}
-// TODO: Think about if it should reuse the same state MenuTrigger uses or use its own
-// How to control it so that only one submenu can be open at once. At the moment we actually handle this via useMenuItem since it calls setExpandedKey with a single key on open
-// and we don't allow isOpen/defaultOpen on SubMenus
 
 // TODO: got rid of user provided ref support since it doesn't really make sense for submenus IMO
 function SubMenuTrigger(props: SubMenuTriggerProps) {
@@ -68,15 +65,11 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
   } else {
     overlay = (
       <Popover
-        // Props from ContextualHelpTrigger implementation
         {...popoverProps}
         {...overlayProps}
-        // TODO Omitted onBlurWithin, doesn't seem like it was necessary?
         container={container.current}
         offset={-10}
         enableBothDismissButtons
-
-        // Props from MenuTriggerImplementation
         UNSAFE_style={{clipPath: 'unset'}}
         state={subMenuTriggerState}
         triggerRef={triggerRef}
@@ -100,8 +93,6 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
 }
 
 SubMenuTrigger.getCollectionNode = function* (props: SpectrumSubMenuTriggerProps) {
-  // React.Children.toArray mutates the Item's key which is problematic for user provided keys
-  // TODO: perhaps make this same change in ContextualHelpTrigger too
   let childArray: ReactElement[] = [];
   React.Children.forEach(props.children, child => {
     if (React.isValidElement(child)) {

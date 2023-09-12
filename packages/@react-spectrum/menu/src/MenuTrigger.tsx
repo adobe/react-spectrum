@@ -57,9 +57,12 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
 
   let isMobile = useIsMobileDevice();
   let menuTreeState = useMenuState({}, state);
+  // TODO: override menuTriggerState's .close so we clear the expandedKeysStack when clicking on the underlay or whenever
+  // Popover's .close is triggered. Alternatively, we could potentially clear it in a cleanup effect when the root menu unmounts...
+  // Current approach feels iffy, might be able to do something different if we have each submenu call
+  let close = menuTreeState.closeAll;
   let menuContext = {
     ...menuProps,
-    state,
     ref: menuRef,
     onClose: state.close,
     closeOnSelect,
@@ -76,7 +79,7 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
   let overlay;
   if (isMobile) {
     overlay = (
-      <Tray state={state}>
+      <Tray state={{...state, close}}>
         {menu}
       </Tray>
     );
@@ -84,7 +87,7 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
     overlay = (
       <Popover
         UNSAFE_style={{clipPath: 'unset', overflow: 'visible'}}
-        state={state}
+        state={{...state, close}}
         triggerRef={menuTriggerRef}
         scrollRef={menuRef}
         placement={initialPlacement}
@@ -102,7 +105,6 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
           {menuTrigger}
         </PressResponder>
       </SlotProvider>
-      {/* TODO: figure out why lint is complaining here */}
       <MenuContext.Provider value={menuContext}>
         {overlay}
       </MenuContext.Provider>
