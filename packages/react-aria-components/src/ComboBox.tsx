@@ -133,7 +133,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
     descriptionProps,
     errorMessageProps
   } = useComboBox({
-    ...props,
+    ...filterDataAttrs(props),
     label,
     inputRef,
     buttonRef,
@@ -141,7 +141,6 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
     popoverRef,
     name: formValue === 'text' ? name : undefined
   }, state);
-  inputProps = filterDataAttrs(inputProps);
 
   // Make menu width match input + button
   let [menuWidth, setMenuWidth] = useState<string | null>(null);
