@@ -104,10 +104,10 @@ describe('RadioGroup', () => {
     expect(radios[1].closest('label')).toHaveTextContent('B (selected)');
   });
 
-  // TODO: Modify this test. data-test shouldn't be passed to input
-  it.skip('should support slot', () => {
-    let {getByRole, getAllByRole} = render(
-      <RadioGroupContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
+  it('should support slot', () => {
+    let {getByRole, getAllByText} = render(
+      <RadioGroupContext.Provider
+        value={{slots: {test: {'aria-label': 'test'}}}}>
         <RadioContext.Provider value={{'data-test': 'test'}}>
           <TestRadioGroup groupProps={{slot: 'test'}} />
         </RadioContext.Provider>
@@ -118,9 +118,10 @@ describe('RadioGroup', () => {
     expect(group).toHaveAttribute('slot', 'test');
     expect(group).toHaveAttribute('aria-label', 'test');
 
-    let radios = getAllByRole('radio');
-    for (let radio of radios) {
-      expect(radio).toHaveAttribute('data-test', 'test');
+    // label elements were not being found with getAllByRole('label')
+    let labels = getAllByText(/A|B|C/i);
+    for (let label of labels) {
+      expect(label).toHaveAttribute('data-test', 'test');
     }
   });
 
