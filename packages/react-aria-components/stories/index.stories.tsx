@@ -965,7 +965,6 @@ export const DropzoneWithRenderProps = (props) => (
   </div>
 );
 
-// TODO: Should data- attr pass to hidden input? It isn't duplicated, so not sure what the expectation is.
 export const FileTriggerButton = (props) => (
   <FileTrigger
     onSelect={action('onSelect')}
