@@ -1,0 +1,144 @@
+diff --git a/node_modules/webpack/lib/Compilation.js b/node_modules/webpack/lib/Compilation.js
+index 6329174..196c4bb 100644
+--- a/node_modules/webpack/lib/Compilation.js
++++ b/node_modules/webpack/lib/Compilation.js
+@@ -1915,7 +1915,7 @@ class Compilation extends Tapable {
+ 		const hashFunction = outputOptions.hashFunction;
+ 		const hashDigest = outputOptions.hashDigest;
+ 		const hashDigestLength = outputOptions.hashDigestLength;
+-		const hash = createHash(hashFunction);
++		const hash = createHash('sha512');
+ 		if (outputOptions.hashSalt) {
+ 			hash.update(outputOptions.hashSalt);
+ 		}
+@@ -1936,7 +1936,7 @@ class Compilation extends Tapable {
+ 		const modules = this.modules;
+ 		for (let i = 0; i < modules.length; i++) {
+ 			const module = modules[i];
+-			const moduleHash = createHash(hashFunction);
++			const moduleHash = createHash('sha512');
+ 			module.updateHash(moduleHash);
+ 			module.hash = /** @type {string} */ (moduleHash.digest(hashDigest));
+ 			module.renderedHash = module.hash.substr(0, hashDigestLength);
+@@ -1957,7 +1957,7 @@ class Compilation extends Tapable {
+ 		});
+ 		for (let i = 0; i < chunks.length; i++) {
+ 			const chunk = chunks[i];
+-			const chunkHash = createHash(hashFunction);
++			const chunkHash = createHash('sha512');
+ 			try {
+ 				if (outputOptions.hashSalt) {
+ 					chunkHash.update(outputOptions.hashSalt);
+@@ -1994,7 +1994,7 @@ class Compilation extends Tapable {
+ 		const hashFunction = outputOptions.hashFunction;
+ 		const hashDigest = outputOptions.hashDigest;
+ 		const hashDigestLength = outputOptions.hashDigestLength;
+-		const hash = createHash(hashFunction);
++		const hash = createHash('sha512');
+ 		hash.update(this.fullHash);
+ 		hash.update(update);
+ 		this.fullHash = /** @type {string} */ (hash.digest(hashDigest));
+diff --git a/node_modules/webpack/lib/HashedModuleIdsPlugin.js b/node_modules/webpack/lib/HashedModuleIdsPlugin.js
+index 7a860f7..2e0d9c6 100644
+--- a/node_modules/webpack/lib/HashedModuleIdsPlugin.js
++++ b/node_modules/webpack/lib/HashedModuleIdsPlugin.js
+@@ -43,7 +43,7 @@ class HashedModuleIdsPlugin {
+ 							const id = module.libIdent({
+ 								context: this.options.context || compiler.options.context
+ 							});
+-							const hash = createHash(options.hashFunction);
++							const hash = createHash('sha512');
+ 							hash.update(id);
+ 							const hashId = /** @type {string} */ (hash.digest(
+ 								options.hashDigest
+diff --git a/node_modules/webpack/lib/JavascriptModulesPlugin.js b/node_modules/webpack/lib/JavascriptModulesPlugin.js
+index 2c1bbe4..61fe7bd 100644
+--- a/node_modules/webpack/lib/JavascriptModulesPlugin.js
++++ b/node_modules/webpack/lib/JavascriptModulesPlugin.js
+@@ -130,7 +130,7 @@ class JavascriptModulesPlugin {
+ 						hashDigestLength,
+ 						hashFunction
+ 					} = outputOptions;
+-					const hash = createHash(hashFunction);
++					const hash = createHash('sha512');
+ 					if (hashSalt) hash.update(hashSalt);
+ 					const template = chunk.hasRuntime()
+ 						? compilation.mainTemplate
+diff --git a/node_modules/webpack/lib/ModuleFilenameHelpers.js b/node_modules/webpack/lib/ModuleFilenameHelpers.js
+index bd0742b..9ad4687 100644
+--- a/node_modules/webpack/lib/ModuleFilenameHelpers.js
++++ b/node_modules/webpack/lib/ModuleFilenameHelpers.js
+@@ -42,7 +42,7 @@ const getBefore = (str, token) => {
+ };
+ 
+ const getHash = str => {
+-	const hash = createHash("md4");
++	const hash = createHash("sha512");
+ 	hash.update(str);
+ 	const digest = /** @type {string} */ (hash.digest("hex"));
+ 	return digest.substr(0, 4);
+diff --git a/node_modules/webpack/lib/NamedModulesPlugin.js b/node_modules/webpack/lib/NamedModulesPlugin.js
+index 2d84aaf..102b244 100644
+--- a/node_modules/webpack/lib/NamedModulesPlugin.js
++++ b/node_modules/webpack/lib/NamedModulesPlugin.js
+@@ -8,7 +8,7 @@ const createHash = require("./util/createHash");
+ const RequestShortener = require("./RequestShortener");
+ 
+ const getHash = str => {
+-	const hash = createHash("md4");
++	const hash = createHash("sha512");
+ 	hash.update(str);
+ 	const digest = /** @type {string} */ (hash.digest("hex"));
+ 	return digest.substr(0, 4);
+diff --git a/node_modules/webpack/lib/NormalModule.js b/node_modules/webpack/lib/NormalModule.js
+index 76aa1bd..a952cc2 100644
+--- a/node_modules/webpack/lib/NormalModule.js
++++ b/node_modules/webpack/lib/NormalModule.js
+@@ -414,7 +414,7 @@ class NormalModule extends Module {
+ 	}
+ 
+ 	_initBuildHash(compilation) {
+-		const hash = createHash(compilation.outputOptions.hashFunction);
++		const hash = createHash('sha512');
+ 		if (this._source) {
+ 			hash.update("source");
+ 			this._source.updateHash(hash);
+diff --git a/node_modules/webpack/lib/SourceMapDevToolPlugin.js b/node_modules/webpack/lib/SourceMapDevToolPlugin.js
+index 3018eb2..cb714bd 100644
+--- a/node_modules/webpack/lib/SourceMapDevToolPlugin.js
++++ b/node_modules/webpack/lib/SourceMapDevToolPlugin.js
+@@ -346,7 +346,7 @@ class SourceMapDevToolPlugin {
+ 									: filename,
+ 								query,
+ 								basename: basename(filename),
+-								contentHash: createHash("md4")
++								contentHash: createHash("sha512")
+ 									.update(sourceMapString)
+ 									.digest("hex")
+ 							};
+diff --git a/node_modules/webpack/lib/optimize/ConcatenatedModule.js b/node_modules/webpack/lib/optimize/ConcatenatedModule.js
+index df4d216..ea8cecb 100644
+--- a/node_modules/webpack/lib/optimize/ConcatenatedModule.js
++++ b/node_modules/webpack/lib/optimize/ConcatenatedModule.js
+@@ -560,7 +560,7 @@ class ConcatenatedModule extends Module {
+ 				orderedConcatenationListIdentifiers += " ";
+ 			}
+ 		}
+-		const hash = createHash("md4");
++		const hash = createHash("sha512");
+ 		hash.update(orderedConcatenationListIdentifiers);
+ 		return this.rootModule.identifier() + " " + hash.digest("hex");
+ 	}
+diff --git a/node_modules/webpack/lib/optimize/SplitChunksPlugin.js b/node_modules/webpack/lib/optimize/SplitChunksPlugin.js
+index e7d560b..8243e8c 100644
+--- a/node_modules/webpack/lib/optimize/SplitChunksPlugin.js
++++ b/node_modules/webpack/lib/optimize/SplitChunksPlugin.js
+@@ -22,7 +22,7 @@ const deterministicGroupingForModules = /** @type {function(DeterministicGroupin
+ 
+ const hashFilename = name => {
+ 	return crypto
+-		.createHash("md4")
++		.createHash("sha512")
+ 		.update(name)
+ 		.digest("hex")
+ 		.slice(0, 8);

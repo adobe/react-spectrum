@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
 import {Button, Calendar, CalendarCell, CalendarContext, CalendarGrid, CalendarGridBody, CalendarGridHeader, CalendarHeaderCell, Heading} from 'react-aria-components';
 import {CalendarDate, getLocalTimeZone, startOfMonth, startOfWeek, today} from '@internationalized/date';
 import React from 'react';
@@ -32,6 +32,10 @@ let TestCalendar = ({calendarProps, gridProps, cellProps}) => (
 let renderCalendar = (calendarProps, gridProps, cellProps) => render(<TestCalendar {...{calendarProps, gridProps, cellProps}} />);
 
 describe('Calendar', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
   it('should render with default classes', () => {
     let {getByRole} = renderCalendar();
     let group = getByRole('application');
@@ -153,7 +157,7 @@ describe('Calendar', () => {
     expect(grids[1]).toHaveAttribute('aria-label', 'Appointment date, ' + formatter.format(today(getLocalTimeZone()).add({months: 1}).toDate(getLocalTimeZone())));
   });
 
-  it('should support hover', () => {
+  it('should support hover', async () => {
     let {getByRole} = renderCalendar({}, {}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
     let grid = getByRole('grid');
     let cell = within(grid).getAllByRole('button')[7];
@@ -161,16 +165,16 @@ describe('Calendar', () => {
     expect(cell).not.toHaveAttribute('data-hovered');
     expect(cell).not.toHaveClass('hover');
 
-    userEvent.hover(cell);
+    await user.hover(cell);
     expect(cell).toHaveAttribute('data-hovered', 'true');
     expect(cell).toHaveClass('hover');
 
-    userEvent.unhover(cell);
+    await user.unhover(cell);
     expect(cell).not.toHaveAttribute('data-hovered');
     expect(cell).not.toHaveClass('hover');
   });
 
-  it('should support focus ring', () => {
+  it('should support focus ring', async () => {
     let {getByRole} = renderCalendar({}, {}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
     let grid = getByRole('grid');
     let cell = within(grid).getAllByRole('button')[7];
@@ -178,13 +182,13 @@ describe('Calendar', () => {
     expect(cell).not.toHaveAttribute('data-focus-visible');
     expect(cell).not.toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     act(() => cell.focus());
     expect(document.activeElement).toBe(cell);
     expect(cell).toHaveAttribute('data-focus-visible', 'true');
     expect(cell).toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(cell).not.toHaveAttribute('data-focus-visible');
     expect(cell).not.toHaveClass('focus');
   });
@@ -206,7 +210,7 @@ describe('Calendar', () => {
     expect(cell).not.toHaveClass('pressed');
   });
 
-  it('should support selected state', () => {
+  it('should support selected state', async () => {
     let {getByRole} = renderCalendar({}, {}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
     let grid = getByRole('grid');
     let cell = within(grid).getAllByRole('button')[7];
@@ -214,7 +218,7 @@ describe('Calendar', () => {
     expect(cell).not.toHaveAttribute('data-selected');
     expect(cell).not.toHaveClass('selected');
 
-    userEvent.click(cell);
+    await user.click(cell);
     expect(cell).toHaveAttribute('data-selected', 'true');
     expect(cell).toHaveClass('selected');
   });
