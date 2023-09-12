@@ -31,7 +31,7 @@ function ScrollingDecorator(props) {
     );
   } else {
     return (
-      <StoryWrapper style={{...styles, minHeight: minHeight}}>
+      <StoryWrapper style={{...styles, width: '100vw', minHeight: minHeight}}>
         {children}
       </StoryWrapper>
     );
