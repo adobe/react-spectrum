@@ -594,6 +594,23 @@ import {Text, Keyboard} from 'react-aria-components';
 </MyMenuButton>
 ```
 
+## Long press
+
+By default, MenuTrigger opens by pressing the trigger element or activating it via the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys. However, there may be cases in which your trigger element should perform a separate default action on press, and should only display the Menu when long pressed. This behavior can be changed by providing `"longPress"` to the `trigger` prop. With this prop, the Menu will only be opened upon pressing and holding the trigger element or by using the <Keyboard>Option</Keyboard> (<Keyboard>Alt</Keyboard> on Windows) + <Keyboard>Down Arrow</Keyboard>/<Keyboard>Up Arrow</Keyboard> keys while focusing the trigger element.
+
+```tsx example
+<MenuTrigger trigger="longPress">
+  <Button onPress={() => alert('crop')}>Crop</Button>
+  <Popover>
+    <Menu onAction={alert}>
+      <Item id="rotate">Rotate</Item>
+      <Item id="slice">Slice</Item>
+      <Item id="clone-stamp">Clone stamp</Item>
+    </Menu>
+  </Popover>
+</MenuTrigger>
+```
+
 ## Disabled items
 
 `Menu` supports marking items as disabled using the `disabledKeys` prop. Each key in this list

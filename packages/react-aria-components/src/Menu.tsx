@@ -14,12 +14,12 @@
 import {AriaMenuProps, mergeProps, useFocusRing, useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
 import {BaseCollection, CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
 import {MenuTriggerProps as BaseMenuTriggerProps, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
-import {ButtonContext} from './Button';
 import {ContextValue, forwardRefType, Provider, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {Header} from './Header';
 import {KeyboardContext} from './Keyboard';
 import {PopoverContext} from './Popover';
+import {PressResponder} from '@react-aria/interactions';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
@@ -44,10 +44,11 @@ export function MenuTrigger(props: MenuTriggerProps) {
     <Provider
       values={[
         [MenuContext, menuProps],
-        [ButtonContext, {...menuTriggerProps, ref, isPressed: state.isOpen}],
         [PopoverContext, {state, triggerRef: ref, placement: 'bottom start'}]
       ]}>
-      {props.children}
+      <PressResponder {...menuTriggerProps} ref={ref} isPressed={state.isOpen}>
+        {props.children}
+      </PressResponder>
     </Provider>
   );
 }
