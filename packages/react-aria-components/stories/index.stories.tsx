@@ -834,7 +834,7 @@ export const DropzoneExampleWithFileTriggerLink = (props) => (
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
-      <FileTrigger onChange={action('onChange')}>
+      <FileTrigger onSelect={action('onSelect')}>
         <Link>Upload</Link>
       </FileTrigger>
     </DropZone>
@@ -849,7 +849,7 @@ export const DropzoneExampleWithFileTriggerButton = (props) => (
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
-      <FileTrigger onChange={action('onChange')} >
+      <FileTrigger onSelect={action('onSelect')} >
         <Button>Upload</Button>
       </FileTrigger>
     </DropZone>
@@ -865,7 +865,7 @@ export const DropzoneExampleWithDraggableAndFileTrigger = (props) => (
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
-      <FileTrigger onChange={action('onChange')} >
+      <FileTrigger onSelect={action('onSelect')} >
         <Button>Browse</Button>
       </FileTrigger>
       Or drag into here
@@ -883,7 +883,7 @@ export const DropZoneOnlyAcceptPNGWithFileTrigger = (props) => (
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')} >
-      <FileTrigger onChange={action('onChange')} acceptedFileTypes={['image/png']}>
+      <FileTrigger onSelect={action('onSelect')} acceptedFileTypes={['image/png']}>
         <Button>Upload</Button>
       </FileTrigger>
     </DropZone>
@@ -900,7 +900,7 @@ export const DropZoneWithCaptureMobileOnly = (props) => (
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')} >
-      <FileTrigger onChange={action('onChange')} defaultCamera="environment">
+      <FileTrigger onSelect={action('onSelect')} defaultCamera="environment">
         <Button>Upload</Button>
       </FileTrigger>
     </DropZone>
@@ -968,9 +968,9 @@ export const DropzoneWithRenderProps = (props) => (
 // TODO: Should data- attr pass to hidden input? It isn't duplicated, so not sure what the expectation is.
 export const FileTriggerButton = (props) => (
   <FileTrigger
+    onSelect={action('onSelect')}
     data-testid="filetrigger-example"
-    {...props}
-    onChange={action('OnChange')} >
+    {...props} >
     <Button>Upload</Button>
   </FileTrigger>
 );
@@ -978,7 +978,7 @@ export const FileTriggerButton = (props) => (
 export const FileTriggerLinkAllowsMultiple = (props) => (
   <FileTrigger
     {...props}
-    onChange={action('OnChange')}
+    onSelect={action('onSelect')}
     allowsMultiple >
     <Link>Select a file</Link>
   </FileTrigger>

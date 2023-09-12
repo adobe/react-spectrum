@@ -261,7 +261,7 @@ function Example() {
   return(
     <DropZone>
       <FileTrigger
-        onChange={(e) => {
+        onSelect={(e) => {
           let files = Array.from(e);
           let urls = files.map((file) => file.name);
           setFile(urls);
