@@ -385,8 +385,8 @@ describe('RadioGroup', () => {
     }
   });
 
-  it('should render data- attributes only on the outer Radio element', () => {
-    let {getAllByTestId} = render(
+  it('should render data- attributes only on the outer Radio element or RadioGroup', () => {
+    let {getAllByTestId, getAllByRole} = render(
       <RadioGroup data-testid="radio-group">
         <Label>Test</Label>
         <Radio data-testid="radio-a" value="a">
@@ -403,5 +403,9 @@ describe('RadioGroup', () => {
     let radio = getAllByTestId('radio-a');
     expect(radio).toHaveLength(1);
     expect(radio[0].nodeName).toBe('LABEL');
+    let group = getAllByRole('radiogroup');
+    expect(group).toHaveLength(1);
+    expect(group[0]).toHaveAttribute('data-testid', 'radio-group');
+
   });
 });
