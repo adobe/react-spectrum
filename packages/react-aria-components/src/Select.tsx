@@ -12,7 +12,7 @@
 
 import {AriaSelectProps, HiddenSelect, useFocusRing, useSelect} from 'react-aria';
 import {ButtonContext} from './Button';
-import {ContextValue, filterDataAttrs, forwardRefType, Hidden, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, removeDataAttributes, forwardRefType, Hidden, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {ItemRenderProps, useCollectionDocument} from './Collection';
 import {LabelContext} from './Label';
@@ -98,7 +98,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
     descriptionProps,
     errorMessageProps
   } = useSelect({...props, label}, state, buttonRef);
-  triggerProps = filterDataAttrs(triggerProps);
+  triggerProps = removeDataAttributes(triggerProps);
 
   // Make menu width match input + button
   let [buttonWidth, setButtonWidth] = useState<string | null>(null);

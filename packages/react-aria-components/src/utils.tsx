@@ -331,7 +331,7 @@ export function createHideableComponent<T, P = {}>(fn: (props: P, ref: React.Ref
  * Filters out `data-*` attributes to keep them from being passed down and duplicated.
  * @param props
  */
-export function filterDataAttrs(props: SharedDOMProps & AriaLabelingProps): SharedDOMProps & AriaLabelingProps {
+export function removeDataAttributes(props: SharedDOMProps & AriaLabelingProps): SharedDOMProps & AriaLabelingProps {
   const prefix = /^(data-.*)$/;
   let filteredProps = {};
 

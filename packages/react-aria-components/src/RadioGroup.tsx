@@ -11,7 +11,7 @@
  */
 
 import {AriaRadioGroupProps, AriaRadioProps, Orientation, useFocusRing, useHover, usePress, useRadio, useRadioGroup, VisuallyHidden} from 'react-aria';
-import {ContextValue, filterDataAttrs, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, removeDataAttributes, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
 import {LabelContext} from './Label';
 import {RadioGroupState, useRadioGroupState} from 'react-stately';
@@ -164,7 +164,7 @@ function Radio(props: RadioProps, ref: ForwardedRef<HTMLInputElement>) {
     // ReactNode type doesn't allow function children.
     children: typeof props.children === 'function' ? true : props.children
   }, state, domRef);
-  inputProps = filterDataAttrs(inputProps);
+  inputProps = removeDataAttributes(inputProps);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let interactionDisabled = isDisabled || state.isReadOnly;
 

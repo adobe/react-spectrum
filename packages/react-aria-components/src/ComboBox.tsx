@@ -12,7 +12,7 @@
 import {AriaComboBoxProps, useComboBox, useFilter} from 'react-aria';
 import {ButtonContext} from './Button';
 import {Collection, Node, useComboBoxState} from 'react-stately';
-import {ContextValue, filterDataAttrs, forwardRefType, Hidden, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, removeDataAttributes, forwardRefType, Hidden, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
@@ -133,7 +133,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
     descriptionProps,
     errorMessageProps
   } = useComboBox({
-    ...filterDataAttrs(props),
+    ...removeDataAttributes(props),
     label,
     inputRef,
     buttonRef,

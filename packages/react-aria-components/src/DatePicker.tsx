@@ -12,7 +12,7 @@
 import {AriaDatePickerProps, AriaDateRangePickerProps, DateValue, useDateField, useDatePicker, useDateRangePicker, useFocusRing, useLocale} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CalendarContext, RangeCalendarContext} from './Calendar';
-import {ContextValue, filterDataAttrs, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, removeDataAttributes, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {createCalendar} from '@internationalized/date';
 import {DateInputContext} from './DateField';
 import {DatePickerState, DateRangePickerState, useDateFieldState, useDatePickerState, useDateRangePickerState} from 'react-stately';
@@ -78,7 +78,7 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
     descriptionProps,
     errorMessageProps
   } = useDatePicker({...props, label}, state, groupRef);
-  groupProps = filterDataAttrs(groupProps);
+  groupProps = removeDataAttributes(groupProps);
 
   let {locale} = useLocale();
   let fieldState = useDateFieldState({
@@ -160,7 +160,7 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
     descriptionProps,
     errorMessageProps
   } = useDateRangePicker({...props, label}, state, groupRef);
-  groupProps = filterDataAttrs(groupProps);
+  groupProps = removeDataAttributes(groupProps);
 
   let {locale} = useLocale();
   let startFieldState = useDateFieldState({

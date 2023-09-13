@@ -12,7 +12,7 @@
 
 import {AriaNumberFieldProps, useLocale, useNumberField} from 'react-aria';
 import {ButtonContext} from './Button';
-import {ContextValue, filterDataAttrs, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, removeDataAttributes, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
@@ -58,7 +58,7 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
     descriptionProps,
     errorMessageProps
   } = useNumberField({...props, label}, state, inputRef);
-  inputProps = filterDataAttrs(inputProps);
+  inputProps = removeDataAttributes(inputProps);
 
   let renderProps = useRenderProps({
     ...props,
