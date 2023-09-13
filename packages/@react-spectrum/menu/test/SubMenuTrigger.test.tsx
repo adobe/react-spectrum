@@ -488,8 +488,8 @@ describe('SubMenu', function () {
 
       let menu = tree.getByRole('menu');
       expect(menu).toBeTruthy();
-      // let menuItems = within(menu).getAllByRole('menuitem');
-      // let subMenuTrigger1 = menuItems[1];
+      let menuItems = within(menu).getAllByRole('menuitem');
+      let subMenuTrigger1 = menuItems[1];
       await user.keyboard('[ArrowDown]');
       await user.keyboard('[ArrowRight]');
       act(() => {jest.runAllTimers();});
@@ -526,12 +526,11 @@ describe('SubMenu', function () {
       menus = tree.getAllByRole('menu', {hidden: true});
       expect(menus).toHaveLength(3);
 
-      // TODO: for some reason focus remains on the subMenuTrigger2 here, doesn't match browser behavior
-      // await user.tab({shift: true});
-      // act(() => {jest.runAllTimers();});
-      // menus = tree.getAllByRole('menu', {hidden: true});
-      // expect(menus).toHaveLength(2);
-      // expect(document.activeElement).toBe(subMenuTrigger1);
+      await user.tab({shift: true});
+      act(() => {jest.runAllTimers();});
+      menus = tree.getAllByRole('menu', {hidden: true});
+      expect(menus).toHaveLength(2);
+      expect(document.activeElement).toBe(subMenuTrigger1);
 
       // TODO: an additional shift tab restores focus to the original trigger, but should it actually move focus to the preceeding element? The reason for
       // this is that the base menu still has a submenu rendered, making it contain focus and thus restore focus

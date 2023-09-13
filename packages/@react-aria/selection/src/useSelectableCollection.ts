@@ -11,6 +11,7 @@
  */
 
 import {DOMAttributes, FocusableElement, FocusStrategy, KeyboardDelegate} from '@react-types/shared';
+import {flushSync} from 'react-dom';
 import {FocusEvent, Key, KeyboardEvent, RefObject, useEffect, useRef} from 'react';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {focusWithoutScrolling, mergeProps, scrollIntoView, scrollIntoViewport, useEvent} from '@react-aria/utils';
@@ -242,7 +243,9 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
           // in the collection, so that the browser default behavior will apply starting from that element
           // rather than the currently focused one.
           if (e.shiftKey) {
-            ref.current.focus();
+            // Needs flushSync to make sure expandedKeys is updated before focus is moved out of the containing Menu's FocusScope. Without this
+            // the menu's contain isn't adjusted in time resulting in FocusScope contain keydown handlers not being cleaned up. Caught in test, doesn't happen in browser cuz lucky
+            flushSync(() => ref.current.focus());
           } else {
             let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
             let next: FocusableElement;
