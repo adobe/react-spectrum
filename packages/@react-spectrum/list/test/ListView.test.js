@@ -1534,7 +1534,7 @@ describe('ListView', function () {
           expect(item).toHaveAttribute('data-href');
         }
 
-        let onClick = jest.fn();
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
         window.addEventListener('click', onClick, {once: true});
         trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
@@ -1558,7 +1558,7 @@ describe('ListView', function () {
           expect(item).toHaveAttribute('data-href');
         }
 
-        let onClick = jest.fn();
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
         window.addEventListener('click', onClick, {once: true});
         trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
@@ -1592,7 +1592,7 @@ describe('ListView', function () {
           expect(item).toHaveAttribute('data-href');
         }
 
-        let onClick = jest.fn();
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
         window.addEventListener('click', onClick);
         if (type === 'mouse') {
           triggerPress(items[0]);

@@ -875,7 +875,7 @@ describe('Table', () => {
           expect(item).toHaveAttribute('data-href');
         }
 
-        let onClick = jest.fn();
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
         window.addEventListener('click', onClick, {once: true});
         await trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
@@ -912,7 +912,7 @@ describe('Table', () => {
           expect(item).toHaveAttribute('data-href');
         }
 
-        let onClick = jest.fn();
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
         window.addEventListener('click', onClick, {once: true});
         await trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
@@ -958,7 +958,7 @@ describe('Table', () => {
           expect(item).toHaveAttribute('data-href');
         }
 
-        let onClick = jest.fn();
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
         window.addEventListener('click', onClick, {once: true});
         if (type === 'mouse') {
           await user.click(items[0]);

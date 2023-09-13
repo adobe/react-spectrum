@@ -748,7 +748,7 @@ describe('TagGroup', function () {
       expect(tag).toHaveAttribute('data-href');
     }
 
-    let onClick = jest.fn();
+    let onClick = jest.fn().mockImplementation(e => e.preventDefault());
     window.addEventListener('click', onClick, {once: true});
     triggerPress(tags[0]);
     expect(onClick).toHaveBeenCalledTimes(1);

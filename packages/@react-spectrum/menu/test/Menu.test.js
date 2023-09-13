@@ -762,7 +762,7 @@ describe('Menu', function () {
         expect(items[1].tagName).toBe('A');
         expect(items[1]).toHaveAttribute('href', 'https://adobe.com');
 
-        let onClick = jest.fn();
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
         window.addEventListener('click', onClick);
 
         if (type === 'mouse') {
