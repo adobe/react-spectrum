@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaLabelingProps} from '@react-types/shared';
 import {ContextValue, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {mergeProps, useFocusRing, useHover} from 'react-aria';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
@@ -32,7 +33,16 @@ export interface GroupRenderProps {
   isFocusVisible: boolean
 }
 
-export interface GroupProps extends Omit<HTMLAttributes<HTMLElement>, 'className' | 'style'>, StyleRenderProps<GroupRenderProps> {}
+export interface GroupProps extends AriaLabelingProps, Omit<HTMLAttributes<HTMLElement>, 'className' | 'style' | 'role'>, StyleRenderProps<GroupRenderProps> {
+  /**
+   * An accessibility role for the group. By default, this is set to `'group'`.
+   * Use `'region'` when the contents of the group is important enough to be
+   * included in the page table of contents. Use `'presentation'` if the group
+   * is visual only and does not represent a semantic grouping of controls.
+   * @default 'group'
+   */
+  role?: 'group' | 'region' | 'presentation'
+}
 
 export const GroupContext = createContext<ContextValue<GroupProps, HTMLDivElement>>({});
 
@@ -55,6 +65,7 @@ function Group(props: GroupProps, ref: ForwardedRef<HTMLDivElement>) {
       {...mergeProps(props, focusProps, hoverProps)}
       {...renderProps}
       ref={ref}
+      role={props.role ?? 'group'}
       data-focus-within={isFocused || undefined}
       data-hovered={isHovered || undefined}
       data-focus-visible={isFocusVisible || undefined}>
@@ -64,7 +75,7 @@ function Group(props: GroupProps, ref: ForwardedRef<HTMLDivElement>) {
 }
 
 /**
- * An group represents a set of related UI controls.
+ * A group represents a set of related UI controls, and supports interactive states for styling.
  */
 const _Group = forwardRef(Group);
 export {_Group as Group};

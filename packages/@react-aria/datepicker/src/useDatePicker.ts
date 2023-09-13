@@ -16,7 +16,7 @@ import {AriaDialogProps} from '@react-types/dialog';
 import {CalendarProps} from '@react-types/calendar';
 import {createFocusManager} from '@react-aria/focus';
 import {DatePickerState} from '@react-stately/datepicker';
-import {DOMAttributes, KeyboardEvent} from '@react-types/shared';
+import {DOMAttributes, GroupDOMAttributes, KeyboardEvent} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useDescription, useId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -31,7 +31,7 @@ export interface DatePickerAria {
   /** Props for the date picker's visible label element, if any. */
   labelProps: DOMAttributes,
   /** Props for the grouping element containing the date field and button. */
-  groupProps: DOMAttributes,
+  groupProps: GroupDOMAttributes,
   /** Props for the date field. */
   fieldProps: AriaDatePickerProps<DateValue>,
   /** Props for the popover trigger button. */
@@ -83,7 +83,7 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
 
   return {
     groupProps: mergeProps(domProps, groupProps, fieldProps, descProps, focusWithinProps, {
-      role: 'group',
+      role: 'group' as const,
       'aria-disabled': props.isDisabled || null,
       'aria-labelledby': labelledBy,
       'aria-describedby': ariaDescribedBy,
