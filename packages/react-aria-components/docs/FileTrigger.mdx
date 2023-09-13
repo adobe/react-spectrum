@@ -24,7 +24,7 @@ import Button from '@react-spectrum/docs/pages/assets/component-illustrations/Ac
 import Link from '@react-spectrum/docs/pages/assets/component-illustrations/Link.svg';
 
 ---
-category: Forms
+category: Buttons
 keywords: [filetrigger, input, aria]
 type: component
 ---
@@ -48,7 +48,7 @@ function Example(){
   return (
     <>
       <FileTrigger
-        onChange={(e) => {
+        onSelect={(e) => {
           let files = Array.from(e);
           let urls = files.map((file) => file.name);
           setFile(urls);
