@@ -81,14 +81,17 @@ export function useToastQueue<T>(queue: ToastQueue<T>): ToastState<T> {
   let getSnapshot = useCallback(() => queue.visibleToasts, [queue]);
   let visibleToasts = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 
-  return {
-    visibleToasts,
-    add: (content, options) => queue.add(content, options),
-    close: key => queue.close(key),
-    remove: key => queue.remove(key),
-    pauseAll: () => queue.pauseAll(),
-    resumeAll: () => queue.resumeAll()
-  };
+  return useMemo(
+    () => ({
+      visibleToasts,
+      add: (content, options) => queue.add(content, options),
+      close: (key) => queue.close(key),
+      remove: (key) => queue.remove(key),
+      pauseAll: () => queue.pauseAll(),
+      resumeAll: () => queue.resumeAll(),
+    }),
+    [visibleToasts, queue],
+  );
 }
 
 /**
