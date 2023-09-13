@@ -12,7 +12,7 @@
 
 import {AriaSelectProps, HiddenSelect, useFocusRing, useSelect} from 'react-aria';
 import {ButtonContext} from './Button';
-import {ContextValue, removeDataAttributes, forwardRefType, Hidden, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, forwardRefType, Hidden, Provider, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {ItemRenderProps, useCollectionDocument} from './Collection';
 import {LabelContext} from './Label';
