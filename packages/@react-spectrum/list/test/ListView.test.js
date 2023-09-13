@@ -1568,7 +1568,7 @@ describe('ListView', function () {
         await user.click(within(items[0]).getByRole('checkbox'));
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
 
-        onClick = jest.fn();
+        onClick = jest.fn().mockImplementation(e => e.preventDefault());
         window.addEventListener('click', onClick);
         trigger(items[1], ' ');
         expect(onClick).not.toHaveBeenCalled();
@@ -1604,7 +1604,7 @@ describe('ListView', function () {
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
         window.removeEventListener('click', onClick);
 
-        onClick = jest.fn();
+        onClick = jest.fn().mockImplementation(e => e.preventDefault());
         window.addEventListener('click', onClick, {once: true});
         if (type === 'mouse') {
           await user.dblClick(items[0], {pointerType: 'mouse'});

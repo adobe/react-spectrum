@@ -1007,7 +1007,7 @@ describe('ListBox', function () {
         expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
         expect(items[0]).not.toHaveAttribute('aria-selected', 'true');
 
-        onClick = jest.fn();
+        onClick = jest.fn().mockImplementation(e => e.preventDefault());
         window.addEventListener('click', onClick, {once: true});
         trigger(items[1]);
         expect(onClick).toHaveBeenCalledTimes(1);

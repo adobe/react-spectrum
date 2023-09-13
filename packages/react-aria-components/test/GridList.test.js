@@ -397,7 +397,7 @@ describe('GridList', () => {
         await user.click(within(items[0]).getByRole('checkbox'));
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
 
-        onClick = jest.fn();
+        onClick = jest.fn().mockImplementation(e => e.preventDefault());
         window.addEventListener('click', onClick, {once: true});
         await trigger(items[1], ' ');
         expect(onClick).not.toHaveBeenCalled();
@@ -429,7 +429,7 @@ describe('GridList', () => {
         expect(onClick).not.toHaveBeenCalled();
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
 
-        onClick = jest.fn();
+        onClick = jest.fn().mockImplementation(e => e.preventDefault());
         window.addEventListener('click', onClick, {once: true});
         if (type === 'mouse') {
           await user.dblClick(items[0], {pointerType: 'mouse'});

@@ -698,7 +698,7 @@ describe('ListBox', () => {
         expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
         expect(items[0]).not.toHaveAttribute('aria-selected', 'true');
 
-        onClick = jest.fn();
+        onClick = jest.fn().mockImplementation(e => e.preventDefault());
         window.addEventListener('click', onClick, {once: true});
         await trigger(items[1]);
         expect(onClick).toHaveBeenCalledTimes(1);
@@ -732,7 +732,7 @@ describe('ListBox', () => {
         expect(onClick).not.toHaveBeenCalled();
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
 
-        onClick = jest.fn();
+        onClick = jest.fn().mockImplementation(e => e.preventDefault());
         window.addEventListener('click', onClick, {once: true});
         if (type === 'mouse') {
           await user.dblClick(items[0], {pointerType: 'mouse'});
