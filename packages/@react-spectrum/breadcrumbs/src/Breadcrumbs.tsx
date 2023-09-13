@@ -156,6 +156,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
       <BreadcrumbItem key="menu">
         <MenuTrigger>
           <ActionButton
+            UNSAFE_className={classNames(styles, 'spectrum-Breadcrumbs-actionButton')}
             aria-label="…"
             isQuiet
             isDisabled={isDisabled}>
