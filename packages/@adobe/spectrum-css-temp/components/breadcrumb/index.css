@@ -66,6 +66,11 @@ governing permissions and limitations under the License.
     }
   }
 
+  &:not(:first-child) {
+    > .spectrum-Breadcrumbs-actionButton {
+      margin-inline-start: var(--spectrum-breadcrumb-button-gap);
+    }
+  }
   > .spectrum-Breadcrumbs-actionButton {
     margin-inline-end: var(--spectrum-breadcrumb-button-gap);
   }
