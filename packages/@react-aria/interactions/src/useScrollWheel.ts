@@ -37,5 +37,5 @@ export function useScrollWheel(props: ScrollWheelProps, ref: RefObject<HTMLEleme
     }
   }, [onScroll]);
 
-  useEvent(ref, 'wheel', isDisabled ? null : onScrollHandler);
+  useEvent(ref, 'wheel', isDisabled ? undefined : onScrollHandler);
 }

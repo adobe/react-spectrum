@@ -82,7 +82,7 @@ export function restoreTextSelection(target?: Element) {
     if (target && modifiedElementMap.has(target)) {
       let targetOldUserSelect = modifiedElementMap.get(target);
 
-      if (target.style.userSelect === 'none') {
+      if (target.style.userSelect === 'none' && targetOldUserSelect) {
         target.style.userSelect = targetOldUserSelect;
       }
 

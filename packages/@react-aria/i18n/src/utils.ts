@@ -24,6 +24,9 @@ export function isRTL(locale: string) {
   if (Intl.Locale) {
     // @ts-ignore
     let script = new Intl.Locale(locale).maximize().script;
+    if (!script) {
+      return false;
+    }
     return RTL_SCRIPTS.has(script);
   }
 

@@ -11,17 +11,16 @@
  */
 
 import {DOMAttributes} from '@react-types/shared';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useObjectRef} from '@react-aria/utils';
 import {PressProps, usePress} from './usePress';
-import React, {ReactElement, RefObject, useRef} from 'react';
+import React, {ForwardedRef, ReactElement} from 'react';
 
 interface PressableProps extends PressProps {
   children: ReactElement<DOMAttributes, string>
 }
 
-export const Pressable = React.forwardRef(({children, ...props}: PressableProps, ref: RefObject<Element>) => {
-  let newRef = useRef();
-  ref = ref ?? newRef;
+export const Pressable = React.forwardRef(({children, ...props}: PressableProps, ref: ForwardedRef<HTMLElement>) => {
+  ref = useObjectRef(ref);
   let {pressProps} = usePress({...props, ref});
   let child = React.Children.only(children);
   return React.cloneElement(

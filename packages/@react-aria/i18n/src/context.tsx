@@ -21,7 +21,7 @@ export interface I18nProviderProps {
   locale?: string
 }
 
-const I18nContext = React.createContext<Locale>(null);
+const I18nContext = React.createContext<Locale | null>(null);
 
 /**
  * Provides the locale for the application to all child components.
