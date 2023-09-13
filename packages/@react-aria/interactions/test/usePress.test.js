@@ -2128,12 +2128,15 @@ describe('usePress', function () {
           onPressUp={addEvent} />
       );
 
+      let spy = jest.spyOn(window.navigator, 'platform', 'get').mockImplementation(() => 'Mac');
+
       let el = res.getByText('test');
       fireEvent.keyDown(el, {key: 'Meta'});
       fireEvent.keyDown(el, {key: 'Enter', metaKey: true});
       // macOS doesn't fire keyup events while Meta key is held.
       // we simulate this when the Meta key itself is released.
       fireEvent.keyUp(el, {key: 'Meta'});
+      spy.mockRestore();
 
       expect(events).toEqual([
         {
@@ -2468,6 +2471,7 @@ describe('usePress', function () {
       );
 
       let el = getByText('test');
+      // no on mouse down because this is simulating it coming from another element.
       fireEvent.mouseUp(el, {detail: 1});
 
       expect(events).toEqual([

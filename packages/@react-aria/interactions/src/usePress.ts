@@ -17,7 +17,7 @@
 
 import {disableTextSelection, restoreTextSelection} from './textSelection';
 import {DOMAttributes, FocusableElement, PressEvent as IPressEvent, PointerType, PressEvents} from '@react-types/shared';
-import {focusWithoutScrolling, isVirtualClick, isVirtualPointerEvent, mergeProps, openLink, useEffectEvent, useGlobalListeners, useSyncRef} from '@react-aria/utils';
+import {focusWithoutScrolling, isMac, isVirtualClick, isVirtualPointerEvent, mergeProps, openLink, useEffectEvent, useGlobalListeners, useSyncRef} from '@react-aria/utils';
 import {PressResponderContext} from './context';
 import {RefObject, useContext, useEffect, useMemo, useRef, useState} from 'react';
 
@@ -285,7 +285,7 @@ export function usePress(props: PressHookProps): PressResult {
           // https://bugs.chromium.org/p/chromium/issues/detail?id=1393524
           // https://bugs.webkit.org/show_bug.cgi?id=55291
           // https://bugzilla.mozilla.org/show_bug.cgi?id=1299553
-          if (e.metaKey) {
+          if (e.metaKey && isMac()) {
             state.metaKeyEvents.set(e.key, e.nativeEvent);
           }
         } else if (e.key === 'Meta') {
