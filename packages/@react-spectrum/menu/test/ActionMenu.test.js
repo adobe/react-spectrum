@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, triggerPress, within} from '@react-spectrum/test-utils';
 import {ActionMenu, Item} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -23,8 +23,10 @@ let CLOSE_TIME = 350;
 describe('ActionMenu', function () {
   let onActionSpy = jest.fn();
   let onOpenChange = jest.fn();
+  let user;
 
   beforeAll(function () {
+    user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
   });
 
@@ -198,7 +200,7 @@ describe('ActionMenu', function () {
       expect(menu).toHaveAttribute('aria-labelledby', button.id);
     });
 
-    it('using keyboard', function () {
+    it('using keyboard', async function () {
       let tree = render(
         <Provider theme={theme}>
           <TooltipTrigger delay={0}>
@@ -213,7 +215,7 @@ describe('ActionMenu', function () {
       );
 
       let button = tree.getByRole('button');
-      userEvent.tab();
+      await user.tab();
       expect(button).toBe(document.activeElement);
 
       let tooltip = tree.getByRole('tooltip');

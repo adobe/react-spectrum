@@ -11,7 +11,7 @@
  */
 
 import {Button, Header, Item, Keyboard, Menu, MenuContext, MenuTrigger, Popover, Section, Separator, Text} from '../';
-import {fireEvent, render} from '@react-spectrum/test-utils';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -26,6 +26,11 @@ let TestMenu = ({menuProps, itemProps}) => (
 let renderMenu = (menuProps, itemProps) => render(<TestMenu {...{menuProps, itemProps}} />);
 
 describe('Menu', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   it('should render with default classes', () => {
     let {getByRole, getAllByRole} = renderMenu();
     let menu = getByRole('menu');
@@ -171,14 +176,14 @@ describe('Menu', () => {
     expect(getAllByRole('menuitem').map((it) => it.textContent)).toEqual(['Cat', 'Dog']);
   });
 
-  it('should support focus ring', () => {
+  it('should support focus ring', async () => {
     let {getAllByRole} = renderMenu({}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
     let menuitem = getAllByRole('menuitem')[0];
 
     expect(menuitem).not.toHaveAttribute('data-focus-visible');
     expect(menuitem).not.toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(menuitem);
     expect(menuitem).toHaveAttribute('data-focus-visible', 'true');
     expect(menuitem).toHaveClass('focus');
@@ -205,18 +210,18 @@ describe('Menu', () => {
     expect(menuitem).not.toHaveClass('pressed');
   });
 
-  it('should support selection state', () => {
+  it('should support selection state', async () => {
     let {getAllByRole} = renderMenu({selectionMode: 'multiple'}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
     let menuitem = getAllByRole('menuitemcheckbox')[0];
 
     expect(menuitem).not.toHaveAttribute('aria-checked', 'true');
     expect(menuitem).not.toHaveClass('selected');
 
-    userEvent.click(menuitem);
+    await user.click(menuitem);
     expect(menuitem).toHaveAttribute('aria-checked', 'true');
     expect(menuitem).toHaveClass('selected');
 
-    userEvent.click(menuitem);
+    await user.click(menuitem);
     expect(menuitem).not.toHaveAttribute('aria-checked', 'true');
     expect(menuitem).not.toHaveClass('selected');
   });
@@ -229,7 +234,7 @@ describe('Menu', () => {
     expect(menuitem).toHaveClass('disabled');
   });
 
-  it('should support menu trigger', () => {
+  it('should support menu trigger', async () => {
     let onAction = jest.fn();
     let {getByRole, getAllByRole} = render(
       <MenuTrigger>
@@ -249,7 +254,7 @@ describe('Menu', () => {
     let button = getByRole('button');
     expect(button).not.toHaveAttribute('data-pressed');
 
-    userEvent.click(button);
+    await user.click(button);
     expect(button).toHaveAttribute('data-pressed');
 
     let menu = getByRole('menu');
@@ -258,7 +263,7 @@ describe('Menu', () => {
     let popover = menu.closest('.react-aria-Popover');
     expect(popover).toBeInTheDocument();
 
-    userEvent.click(getAllByRole('menuitem')[1]);
+    await user.click(getAllByRole('menuitem')[1]);
     expect(onAction).toHaveBeenLastCalledWith('rename');
   });
 });

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@react-spectrum/test-utils';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import {Label, Slider, SliderContext, SliderOutput, SliderThumb, SliderTrack} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -28,6 +28,11 @@ let TestSlider = ({sliderProps, thumbProps, trackProps, outputProps}) => (
 let renderSlider = (sliderProps, thumbProps, trackProps, outputProps) => render(<TestSlider {...{sliderProps, thumbProps, trackProps, outputProps}} />);
 
 describe('Slider', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   it('should render a button with default class', () => {
     let {getByRole} = renderSlider();
     let group = getByRole('group');
@@ -83,7 +88,7 @@ describe('Slider', () => {
     expect(group).toHaveAttribute('aria-label', 'test');
   });
 
-  it('should support focus ring', () => {
+  it('should support focus ring', async () => {
     let {getByRole} = renderSlider({}, {className: ({isFocusVisible}) => `thumb ${isFocusVisible ? 'focus' : ''}`});
     let slider = getByRole('slider');
     let thumb = slider.closest('.thumb');
@@ -91,12 +96,12 @@ describe('Slider', () => {
     expect(thumb).not.toHaveAttribute('data-focus-visible');
     expect(thumb).not.toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(slider);
     expect(thumb).toHaveAttribute('data-focus-visible', 'true');
     expect(thumb).toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(thumb).not.toHaveAttribute('data-focus-visible');
     expect(thumb).not.toHaveClass('focus');
   });
@@ -117,18 +122,18 @@ describe('Slider', () => {
     expect(thumb).not.toHaveClass('dragging');
   });
 
-  it('should support hover state', () => {
+  it('should support hover state', async () => {
     let {getByRole} = renderSlider({}, {className: ({isHovered}) => `thumb ${isHovered ? 'hovered' : ''}`});
     let thumb = getByRole('slider').closest('.thumb');
 
     expect(thumb).not.toHaveAttribute('data-hovered');
     expect(thumb).not.toHaveClass('hovered');
 
-    userEvent.hover(thumb);
+    await user.hover(thumb);
     expect(thumb).toHaveAttribute('data-hovered', 'true');
     expect(thumb).toHaveClass('hovered');
 
-    userEvent.unhover(thumb);
+    await user.unhover(thumb);
     expect(thumb).not.toHaveAttribute('data-hovered');
     expect(thumb).not.toHaveClass('hovered');
   });

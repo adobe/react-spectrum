@@ -10,12 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {actHook as act, act as actDOM, render, renderHook} from '@react-spectrum/test-utils';
+import {actHook as act, pointerMap, render, renderHook} from '@react-spectrum/test-utils';
 import React, {useEffect, useState} from 'react';
 import {useControlledState} from '../src';
 import userEvent from '@testing-library/user-event';
 
 describe('useControlledState tests', function () {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   it('can handle default setValue behavior, wont invoke onChange for the same value twice in a row', () => {
     let onChangeSpy = jest.fn();
     let {result} = renderHook(() => useControlledState<string>(undefined, 'defaultValue', onChangeSpy));
@@ -84,7 +89,7 @@ describe('useControlledState tests', function () {
     expect(consoleWarnSpy).toHaveBeenLastCalledWith('We can not support a function callback. See Github Issues for details https://github.com/adobe/react-spectrum/issues/2320');
   });
 
-  it('does not trigger too many renders', () => {
+  it('does not trigger too many renders', async () => {
     let renderSpy = jest.fn();
 
     let TestComponent = (props) => {
@@ -104,9 +109,7 @@ describe('useControlledState tests', function () {
     if (!process.env.STRICT_MODE) {
       expect(renderSpy).toBeCalledTimes(1);
     }
-    actDOM(() =>
-      userEvent.click(button)
-    );
+    await user.click(button);
     getByTestId('6');
     if (!process.env.STRICT_MODE) {
       expect(renderSpy).toBeCalledTimes(2);
@@ -244,7 +247,7 @@ describe('useControlledState tests', function () {
     expect(consoleWarnSpy).toHaveBeenLastCalledWith('WARN: A component changed from uncontrolled to controlled.');
   });
 
-  it('should work with suspense when controlled', () => {
+  it('should work with suspense when controlled', async () => {
     if (parseInt(React.version, 10) < 18) {
       return;
     }
@@ -300,7 +303,7 @@ describe('useControlledState tests', function () {
     let show = tree.getByTestId('show');
 
     expect(value).toHaveTextContent('1');
-    userEvent.click(value);
+    await user.click(value);
 
     // Clicking the button should update the value as normal.
     expect(value).toHaveTextContent('2');
@@ -310,13 +313,13 @@ describe('useControlledState tests', function () {
     // Clicking the show button starts a transition. The new value of 3
     // will be thrown away by React since the component suspended.
     expect(show).toHaveTextContent('Show');
-    userEvent.click(show);
+    await user.click(show);
     expect(show).toHaveTextContent('Loading');
     expect(value).toHaveTextContent('2');
 
     // Since the previous render was thrown away, the current value shown
     // to the user is still 2. Clicking the button should bump it to 3 again.
-    userEvent.click(value);
+    await user.click(value);
     expect(value).toHaveTextContent('3');
     expect(onChange).toHaveBeenCalledTimes(2);
     expect(onChange).toHaveBeenLastCalledWith(3);
@@ -361,7 +364,7 @@ describe('useControlledState tests', function () {
     let value = tree.getByTestId('value');
 
     expect(value).toHaveTextContent('1');
-    userEvent.click(value);
+    await user.click(value);
 
     // React aborts the render, so the value stays at 1.
     expect(value).toHaveTextContent('1 (Loading)');
@@ -369,7 +372,7 @@ describe('useControlledState tests', function () {
     expect(onChange).toHaveBeenLastCalledWith(2);
 
     // Attempting to change the value will be aborted again.
-    userEvent.click(value);
+    await user.click(value);
     expect(value).toHaveTextContent('1 (Loading)');
     expect(onChange).toHaveBeenCalledTimes(1);
     expect(onChange).toHaveBeenLastCalledWith(2);
@@ -381,7 +384,7 @@ describe('useControlledState tests', function () {
     expect(value).toHaveTextContent('2');
 
     // Now incrementing works again.
-    userEvent.click(value);
+    await user.click(value);
     expect(value).toHaveTextContent('3');
     expect(onChange).toHaveBeenCalledTimes(2);
     expect(onChange).toHaveBeenLastCalledWith(3);

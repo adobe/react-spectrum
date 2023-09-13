@@ -2,6 +2,6 @@
   "actions": "Darbības",
   "actionsAvailable": "Pieejamas darbības.",
   "clearSelection": "Notīrīt atlasi",
-  "selected": "{count, plural, =0 {Nav atlasīts nekas} other {Atlasīts: #}}",
+  "selected": "{count, plural, =0 {Nav atlasīts nekas} other {Atlasīts(-i): #}}",
   "selectedAll": "Atlasīts viss"
 }

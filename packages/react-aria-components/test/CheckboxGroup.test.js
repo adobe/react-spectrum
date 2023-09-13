@@ -11,8 +11,8 @@
  */
 
 import {Checkbox, CheckboxGroup, CheckboxGroupContext, Label, Text} from '../';
+import {pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestCheckboxGroup = ({groupProps, checkboxProps}) => (
@@ -27,6 +27,11 @@ let TestCheckboxGroup = ({groupProps, checkboxProps}) => (
 let renderGroup = (groupProps, checkboxProps) => render(<TestCheckboxGroup {...{groupProps, checkboxProps}} />);
 
 describe('CheckboxGroup', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   it('should render a checkbox group with default classes', () => {
     let {getByRole, getAllByRole} = renderGroup();
     let group = getByRole('group');
@@ -95,7 +100,7 @@ describe('CheckboxGroup', () => {
     expect(label).toHaveClass('disabled');
   });
 
-  it('should support selected state', () => {
+  it('should support selected state', async () => {
     let onChange = jest.fn();
     let {getAllByRole} = renderGroup({onChange}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
     let checkboxes = getAllByRole('checkbox');
@@ -105,13 +110,13 @@ describe('CheckboxGroup', () => {
     expect(label).not.toHaveAttribute('data-selected');
     expect(label).not.toHaveClass('selected');
 
-    userEvent.click(checkboxes[0]);
+    await user.click(checkboxes[0]);
     expect(onChange).toHaveBeenLastCalledWith(['a']);
     expect(checkboxes[0]).toBeChecked();
     expect(label).toHaveAttribute('data-selected', 'true');
     expect(label).toHaveClass('selected');
 
-    userEvent.click(checkboxes[0]);
+    await user.click(checkboxes[0]);
     expect(onChange).toHaveBeenLastCalledWith([]);
     expect(checkboxes[0]).not.toBeChecked();
     expect(label).not.toHaveAttribute('data-selected');
