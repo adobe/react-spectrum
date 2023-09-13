@@ -2,6 +2,6 @@
   "actions": "Handlinger",
   "actionsAvailable": "Tilgjengelige handlinger.",
   "clearSelection": "Tøm utvalg",
-  "selected": "{count, plural, =0 {Ingen er valgt} other {# er valgt}}",
+  "selected": "Valde element: {count}",
   "selectedAll": "Alle er valgt"
 }

@@ -11,7 +11,7 @@
  */
 
 import {Button, Label, Tag, TagGroup, TagList, Text} from '../';
-import {fireEvent, render} from '@react-spectrum/test-utils';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -42,7 +42,9 @@ let RemovableTag = (props) => (
 let renderTagGroup = (tagGroupProps, tagListProps, itemProps) => render(<TestTagGroup {...{tagGroupProps, tagListProps, itemProps}} />);
 
 describe('TagGroup', () => {
-  beforeEach(() => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
   });
 
@@ -111,42 +113,42 @@ describe('TagGroup', () => {
     expect(grid.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Description Error');
   });
 
-  it('should support hover', () => {
+  it('should support hover', async () => {
     let {getAllByRole} = renderTagGroup({selectionMode: 'multiple'}, {}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
     let row = getAllByRole('row')[0];
 
     expect(row).not.toHaveAttribute('data-hovered');
     expect(row).not.toHaveClass('hover');
 
-    userEvent.hover(row);
+    await user.hover(row);
     expect(row).toHaveAttribute('data-hovered', 'true');
     expect(row).toHaveClass('hover');
 
-    userEvent.unhover(row);
+    await user.unhover(row);
     expect(row).not.toHaveAttribute('data-hovered');
     expect(row).not.toHaveClass('hover');
   });
 
-  it('should not show hover state when item is not interactive', () => {
+  it('should not show hover state when item is not interactive', async () => {
     let {getAllByRole} = renderTagGroup({}, {}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
     let row = getAllByRole('row')[0];
 
     expect(row).not.toHaveAttribute('data-hovered');
     expect(row).not.toHaveClass('hover');
 
-    userEvent.hover(row);
+    await user.hover(row);
     expect(row).not.toHaveAttribute('data-hovered');
     expect(row).not.toHaveClass('hover');
   });
 
-  it('should support focus ring', () => {
+  it('should support focus ring', async () => {
     let {getAllByRole} = renderTagGroup({selectionMode: 'multiple'}, {}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
     let row = getAllByRole('row')[0];
 
     expect(row).not.toHaveAttribute('data-focus-visible');
     expect(row).not.toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(row);
     expect(row).toHaveAttribute('data-focus-visible', 'true');
     expect(row).toHaveClass('focus');
@@ -189,18 +191,18 @@ describe('TagGroup', () => {
     expect(row).not.toHaveClass('pressed');
   });
 
-  it('should support selection state', () => {
+  it('should support selection state', async () => {
     let {getAllByRole} = renderTagGroup({selectionMode: 'multiple'}, {}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
     let row = getAllByRole('row')[0];
 
     expect(row).not.toHaveAttribute('aria-selected', 'true');
     expect(row).not.toHaveClass('selected');
 
-    userEvent.click(row);
+    await user.click(row);
     expect(row).toHaveAttribute('aria-selected', 'true');
     expect(row).toHaveClass('selected');
 
-    userEvent.click(row);
+    await user.click(row);
     expect(row).not.toHaveAttribute('aria-selected', 'true');
     expect(row).not.toHaveClass('selected');
   });
@@ -213,7 +215,7 @@ describe('TagGroup', () => {
     expect(row).toHaveClass('disabled');
   });
 
-  it('should support removing items', () => {
+  it('should support removing items', async () => {
     let onRemove = jest.fn();
     let {getAllByRole} = renderTagGroup({onRemove}, {}, {className: ({allowsRemoving}) => allowsRemoving ? 'removable' : ''});
     let row = getAllByRole('row')[0];
@@ -223,7 +225,7 @@ describe('TagGroup', () => {
 
     let button = getAllByRole('button')[0];
     expect(button).toHaveAttribute('aria-label', 'Remove');
-    userEvent.click(button);
+    await user.click(button);
     expect(onRemove).toHaveBeenCalledTimes(1);
   });
 
