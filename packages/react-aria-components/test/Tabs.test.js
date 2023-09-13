@@ -295,7 +295,7 @@ describe('Tabs', () => {
     expect(onSelectionChange).toBeCalledTimes(1);
   });
 
-  it('should support tabs as links', function () {
+  it('should support tabs as links', async function () {
     let {getAllByRole} = render(<TabsExample />);
 
     let tabs = getAllByRole('tab');
@@ -307,7 +307,7 @@ describe('Tabs', () => {
     expect(tabs[2]).toHaveAttribute('href', '/Emp');
 
     expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
-    userEvent.click(tabs[1]);
+    await user.click(tabs[1]);
     expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
 
     fireEvent.keyDown(tabs[1], {key: 'ArrowRight'});

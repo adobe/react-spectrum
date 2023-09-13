@@ -269,7 +269,7 @@ describe('Menu', () => {
 
   describe('supports links', function () {
     describe.each(['mouse', 'keyboard'])('%s', (type) => {
-      it.each(['none', 'single', 'multiple'])('with selectionMode = %s', function (selectionMode) {
+      it.each(['none', 'single', 'multiple'])('with selectionMode = %s', async function (selectionMode) {
         let onAction = jest.fn();
         let onSelectionChange = jest.fn();
         let tree = render(
@@ -291,11 +291,11 @@ describe('Menu', () => {
         expect(items[1].tagName).toBe('A');
         expect(items[1]).toHaveAttribute('href', 'https://adobe.com');
 
-        let onClick = jest.fn();
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
         window.addEventListener('click', onClick);
 
         if (type === 'mouse') {
-          userEvent.click(items[1]);
+          await user.click(items[1]);
         } else {
           fireEvent.keyDown(items[1], {key: 'Enter'});
           fireEvent.keyUp(items[1], {key: 'Enter'});

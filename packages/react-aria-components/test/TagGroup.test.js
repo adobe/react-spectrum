@@ -245,16 +245,16 @@ describe('TagGroup', () => {
 
   describe('supports links', function () {
     describe.each(['mouse', 'keyboard'])('%s', (type) => {
-      let trigger = item => {
+      let trigger = async item => {
         if (type === 'mouse') {
-          userEvent.click(item);
+          await user.click(item);
         } else {
           fireEvent.keyDown(item, {key: 'Enter'});
           fireEvent.keyUp(item, {key: 'Enter'});
         }
       };
 
-      it.each(['none', 'single', 'multiple'])('with selectionMode = %s', function (selectionMode) {
+      it.each(['none', 'single', 'multiple'])('with selectionMode = %s', async function (selectionMode) {
         let onSelectionChange = jest.fn();
         let tree = render(
           <TagGroup selectionMode={selectionMode} onSelectionChange={onSelectionChange}>
@@ -275,19 +275,19 @@ describe('TagGroup', () => {
         expect(items[1]).toHaveAttribute('data-href', 'https://adobe.com');
         expect(items[2]).not.toHaveAttribute('data-href');
 
-        let onClick = jest.fn();
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
         window.addEventListener('click', onClick);
 
-        trigger(items[1]);
+        await trigger(items[1]);
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onClick).toHaveBeenCalledTimes(1);
 
         if (selectionMode !== 'none') {
-          trigger(items[2]);
+          await trigger(items[2]);
           expect(onSelectionChange).toHaveBeenCalledTimes(1);
           expect(items[2]).toHaveAttribute('aria-selected', 'true');
 
-          trigger(items[1]);
+          await trigger(items[1]);
           expect(onSelectionChange).toHaveBeenCalledTimes(1);
           expect(onClick).toHaveBeenCalledTimes(2);
 

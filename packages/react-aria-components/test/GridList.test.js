@@ -342,16 +342,16 @@ describe('GridList', () => {
 
   describe('links', function () {
     describe.each(['mouse', 'keyboard'])('%s', (type) => {
-      let trigger = (item, key = 'Enter') => {
+      let trigger = async (item, key = 'Enter') => {
         if (type === 'mouse') {
-          userEvent.click(item);
+          await user.click(item);
         } else {
           fireEvent.keyDown(item, {key});
           fireEvent.keyUp(item, {key});
         }
       };
 
-      it('should support links with selectionMode="none"', function () {
+      it('should support links with selectionMode="none"', async function () {
         let {getAllByRole} = render(
           <GridList aria-label="listview">
             <Item href="https://google.com">One</Item>
@@ -367,13 +367,13 @@ describe('GridList', () => {
 
         let onClick = jest.fn();
         window.addEventListener('click', onClick, {once: true});
-        trigger(items[0]);
+        await trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
         expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
       });
 
-      it.each(['single', 'multiple'])('should support links with selectionBehavior="toggle" selectionMode="%s"', function (selectionMode) {
+      it.each(['single', 'multiple'])('should support links with selectionBehavior="toggle" selectionMode="%s"', async function (selectionMode) {
         let {getAllByRole} = render(
           <GridList aria-label="listview" selectionMode={selectionMode}>
             <Item href="https://google.com" textValue="one"><Checkbox slot="selection" /> One</Item>
@@ -389,22 +389,22 @@ describe('GridList', () => {
 
         let onClick = jest.fn();
         window.addEventListener('click', onClick, {once: true});
-        trigger(items[0]);
+        await trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
         expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
 
-        userEvent.click(within(items[0]).getByRole('checkbox'));
+        await user.click(within(items[0]).getByRole('checkbox'));
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
 
         onClick = jest.fn();
         window.addEventListener('click', onClick, {once: true});
-        trigger(items[1], ' ');
+        await trigger(items[1], ' ');
         expect(onClick).not.toHaveBeenCalled();
         expect(items[1]).toHaveAttribute('aria-selected', 'true');
       });
 
-      it.each(['single', 'multiple'])('should support links with selectionBehavior="replace" selectionMode="%s"', function (selectionMode) {
+      it.each(['single', 'multiple'])('should support links with selectionBehavior="replace" selectionMode="%s"', async function (selectionMode) {
         let {getAllByRole} = render(
           <GridList aria-label="listview" selectionMode={selectionMode} selectionBehavior="replace">
             <Item href="https://google.com">One</Item>
@@ -421,7 +421,7 @@ describe('GridList', () => {
         let onClick = jest.fn();
         window.addEventListener('click', onClick, {once: true});
         if (type === 'mouse') {
-          userEvent.click(items[0]);
+          await user.click(items[0]);
         } else {
           fireEvent.keyDown(items[0], {key: ' '});
           fireEvent.keyUp(items[0], {key: ' '});
@@ -432,7 +432,7 @@ describe('GridList', () => {
         onClick = jest.fn();
         window.addEventListener('click', onClick, {once: true});
         if (type === 'mouse') {
-          userEvent.dblClick(items[0], {pointerType: 'mouse'});
+          await user.dblClick(items[0], {pointerType: 'mouse'});
         } else {
           fireEvent.keyDown(items[0], {key: 'Enter'});
           fireEvent.keyUp(items[0], {key: 'Enter'});

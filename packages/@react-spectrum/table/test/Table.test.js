@@ -4633,16 +4633,16 @@ export let tableTests = () => {
 
   describe('links', function () {
     describe.each(['mouse', 'keyboard'])('%s', (type) => {
-      let trigger = (item, key = 'Enter') => {
+      let trigger = async (item, key = 'Enter') => {
         if (type === 'mouse') {
-          triggerPress(item);
+          await user.click(item);
         } else {
           fireEvent.keyDown(item, {key});
           fireEvent.keyUp(item, {key});
         }
       };
 
-      it('should support links with selectionMode="none"', function () {
+      it('should support links with selectionMode="none"', async function () {
         let {getAllByRole} = render(
           <Provider theme={theme}>
             <TableView aria-label="Table">
@@ -4675,13 +4675,13 @@ export let tableTests = () => {
 
         let onClick = jest.fn().mockImplementation(e => e.preventDefault());
         window.addEventListener('click', onClick, {once: true});
-        trigger(items[0]);
+        await trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
         expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
       });
 
-      it.each(['single', 'multiple'])('should support links with selectionStyle="checkbox" selectionMode="%s"', function (selectionMode) {
+      it.each(['single', 'multiple'])('should support links with selectionStyle="checkbox" selectionMode="%s"', async function (selectionMode) {
         let {getAllByRole} = render(
           <Provider theme={theme}>
             <TableView aria-label="Table" selectionMode={selectionMode}>
@@ -4714,23 +4714,23 @@ export let tableTests = () => {
 
         let onClick = jest.fn().mockImplementation(e => e.preventDefault());
         window.addEventListener('click', onClick, {once: true});
-        trigger(items[0]);
+        await trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
         expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
 
-        userEvent.click(within(items[0]).getByRole('checkbox'));
+        await user.click(within(items[0]).getByRole('checkbox'));
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
 
         onClick = jest.fn().mockImplementation(e => e.preventDefault());
         window.addEventListener('click', onClick);
-        trigger(items[1], ' ');
+        await trigger(items[1], ' ');
         expect(onClick).not.toHaveBeenCalled();
         expect(items[1]).toHaveAttribute('aria-selected', 'true');
         document.removeEventListener('click', onClick);
       });
 
-      it.each(['single', 'multiple'])('should support links with selectionStyle="highlight" selectionMode="%s"', function (selectionMode) {
+      it.each(['single', 'multiple'])('should support links with selectionStyle="highlight" selectionMode="%s"', async function (selectionMode) {
         let {getAllByRole} = render(
           <Provider theme={theme}>
             <TableView aria-label="Table" selectionMode={selectionMode} selectionStyle="highlight">
@@ -4763,7 +4763,7 @@ export let tableTests = () => {
 
         let onClick = jest.fn().mockImplementation(e => e.preventDefault());
         window.addEventListener('click', onClick);
-        trigger(items[0], ' ');
+        await trigger(items[0], ' ');
         expect(onClick).not.toHaveBeenCalled();
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
         document.removeEventListener('click', onClick);
@@ -4771,7 +4771,7 @@ export let tableTests = () => {
         onClick = jest.fn().mockImplementation(e => e.preventDefault());
         window.addEventListener('click', onClick, {once: true});
         if (type === 'mouse') {
-          userEvent.dblClick(items[0], {pointerType: 'mouse'});
+          await user.dblClick(items[0], {pointerType: 'mouse'});
         } else {
           fireEvent.keyDown(items[0], {key: 'Enter'});
           fireEvent.keyUp(items[0], {key: 'Enter'});

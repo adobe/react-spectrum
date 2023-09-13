@@ -1542,7 +1542,7 @@ describe('ListView', function () {
         expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
       });
 
-      it.each(['single', 'multiple'])('should support links with selectionStyle="checkbox" selectionMode="%s"', function (selectionMode) {
+      it.each(['single', 'multiple'])('should support links with selectionStyle="checkbox" selectionMode="%s"', async function (selectionMode) {
         let {getAllByRole} = render(
           <Provider theme={theme}>
             <ListView aria-label="listview" selectionMode={selectionMode}>
@@ -1565,7 +1565,7 @@ describe('ListView', function () {
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
         expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
 
-        userEvent.click(within(items[0]).getByRole('checkbox'));
+        await user.click(within(items[0]).getByRole('checkbox'));
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
 
         onClick = jest.fn();
@@ -1576,7 +1576,7 @@ describe('ListView', function () {
         window.removeEventListener('click', onClick);
       });
 
-      it.each(['single', 'multiple'])('should support links with selectionStyle="highlight" selectionMode="%s"', function (selectionMode) {
+      it.each(['single', 'multiple'])('should support links with selectionStyle="highlight" selectionMode="%s"', async function (selectionMode) {
         let {getAllByRole} = render(
           <Provider theme={theme}>
             <ListView aria-label="listview" selectionMode={selectionMode} selectionStyle="highlight">
@@ -1607,7 +1607,7 @@ describe('ListView', function () {
         onClick = jest.fn();
         window.addEventListener('click', onClick, {once: true});
         if (type === 'mouse') {
-          userEvent.dblClick(items[0], {pointerType: 'mouse'});
+          await user.dblClick(items[0], {pointerType: 'mouse'});
         } else {
           fireEvent.keyDown(items[0], {key: 'Enter'});
           fireEvent.keyUp(items[0], {key: 'Enter'});
