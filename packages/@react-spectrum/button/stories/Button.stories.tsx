@@ -252,6 +252,27 @@ function Pending(props) {
       </View>
 
       <View backgroundColor={props.variant === 'overBackground' ? 'static-blue-700' : undefined} padding={16}>
+        <TooltipTrigger offset={2}>
+          <Button {...props} aria-label="Notifications">
+            <Bell />
+          </Button>
+          <Tooltip>Notifications</Tooltip>
+        </TooltipTrigger>
+      </View>
+
+      <View backgroundColor={props.variant === 'overBackground' ? 'static-blue-700' : undefined} padding={16}>
+        <Button {...props} aria-label="No tooltip">
+          <Bell />
+        </Button>
+      </View>
+
+      <View backgroundColor={props.variant === 'overBackground' ? 'static-blue-700' : undefined} padding={16}>
+        <Button {...props}>
+          <Bell />
+        </Button>
+      </View>
+
+      <View backgroundColor={props.variant === 'overBackground' ? 'static-blue-700' : undefined} padding={16}>
         <PendingButtonOnClickComponent
           {...props}>
           <Text>with onClick</Text>
