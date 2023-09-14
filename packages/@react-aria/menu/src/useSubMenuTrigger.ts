@@ -68,8 +68,13 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
   });
 
   let onSubMenuClose = useEffectEvent(() => {
+    console.trace();
     cancelOpenTimeout();
     state.close();
+    // TODO: needed for Tray case since closing a sub menu there doesn't trigger onExit since shares a overlay
+    if (!parentMenuRef.current.contains(document.activeElement)) {
+      parentMenuRef.current.focus();
+    }
   });
 
   useLayoutEffect(() => {
@@ -111,7 +116,9 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
     ...(subMenuType === 'menu' && {
       onClose: state.closeAll,
       autoFocus: state.focusStrategy,
-      onKeyDown: subMenuKeyDown
+      onKeyDown: subMenuKeyDown,
+      // TODO: this is needed specifically for the tray experience, do we want to include in the hook return types?
+      onSubMenuClose
     })
   };
 
@@ -176,6 +183,7 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
     }
   };
 
+  // TODO: this onBlur is being fired when Menu in tray becomes visibility hidden/display: none. Perhaps do opacity and position absolute?
   let onBlur = (e) => {
     if (state.isOpen && (!isElementInChildOfActiveScope(e.relatedTarget) || parentMenuRef.current.contains(e.relatedTarget))) {
       onSubMenuClose();

@@ -50,7 +50,8 @@ export function useMenuDialogContext(): MenuDialogContextValue {
 
 export interface MenuStateContextValue<T> {
   state?: TreeState<T>,
-  container?: RefObject<HTMLElement>,
+  popoverContainerRef?: RefObject<HTMLElement>,
+  trayContainerRef?: RefObject<HTMLElement>,
   menu?: RefObject<HTMLUListElement>,
   menuTreeState?: MenuTreeState
 }

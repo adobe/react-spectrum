@@ -12,8 +12,9 @@
 
 import {classNames, useIsMobileDevice} from '@react-spectrum/utils';
 import {MenuContext, MenuDialogContext, useMenuStateContext} from './context';
-import {Popover, Tray} from '@react-spectrum/overlays';
+import {Popover} from '@react-spectrum/overlays';
 import React, {Key, ReactElement, useRef} from 'react';
+import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useSubMenuTrigger} from '@react-aria/menu';
 import {useSubMenuTriggerState} from '@react-stately/menu';
@@ -40,7 +41,7 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
   } = props;
 
   let [menuTrigger, menu] = React.Children.toArray(children);
-  let {container, menu: parentMenuRef, menuTreeState, state} = useMenuStateContext();
+  let {popoverContainerRef, trayContainerRef, menu: parentMenuRef, menuTreeState, state} = useMenuStateContext();
   let subMenuTriggerState = useSubMenuTriggerState({triggerKey: targetKey}, {...menuTreeState, ...state});
   let {subMenuTriggerProps, subMenuProps, popoverProps, overlayProps} = useSubMenuTrigger({parentMenuRef, subMenuRef: menuRef}, subMenuTriggerState, triggerRef);
   let isMobile = useIsMobileDevice();
@@ -55,19 +56,15 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
   };
 
   let overlay;
-  // TODO: handle tray experience later
-  if (isMobile) {
-    overlay = (
-      <Tray state={subMenuTriggerState}>
-        {menu}
-      </Tray>
-    );
+  if (isMobile && trayContainerRef.current && subMenuTriggerState.isOpen) {
+    // TODO: Will need the same SSR stuff as Overlay? Might not since this trigger should theoretically only be mounted if a parent menu is mounted and thus we aren't in a SSR state
+    overlay = ReactDOM.createPortal(menu, trayContainerRef.current);
   } else {
     overlay = (
       <Popover
         {...popoverProps}
         {...overlayProps}
-        container={container.current}
+        container={popoverContainerRef.current}
         offset={-10}
         enableBothDismissButtons
         UNSAFE_style={{clipPath: 'unset'}}
