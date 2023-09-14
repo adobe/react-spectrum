@@ -26,6 +26,7 @@ import Popover from '@react-spectrum/docs/pages/assets/component-illustrations/P
 import DateField from '@react-spectrum/docs/pages/assets/component-illustrations/DateField.svg';
 import Calendar from '@react-spectrum/docs/pages/assets/component-illustrations/Calendar.svg';
 import Dialog from '@react-spectrum/docs/pages/assets/component-illustrations/Dialog.svg';
+import InternationalizedDate from '@react-spectrum/docs/pages/assets/component-illustrations/InternationalizedDate.svg';
 
 ---
 category: Date and Time
@@ -397,6 +398,40 @@ A date picker consists of a label, and group containing a [date field](DateField
 
 `DatePicker` also supports optional description and error message elements, which can be used to provide more context about the field, and any validation messages. These are linked with the input via the `aria-describedby` attribute.
 
+```tsx
+import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, CalendarGrid, CalendarGridHeader, CalendarHeaderCell, CalendarGridBody, CalendarCell, Button, Heading, DateInput, DateSegment, Text} from 'react-aria-components';
+
+<DatePicker>
+  <Label />
+  <Group>
+    <DateInput>
+      {segment => <DateSegment segment={segment} />}
+    </DateInput>
+    <Button />
+  </Group>
+  <Text slot="description" />
+  <Text slot="errorMessage" />
+  <Popover>
+    <Dialog>
+      <Calendar>
+        <Button slot="previous" />
+        <Heading />
+        <Button slot="next" />
+        <CalendarGrid>
+          <CalendarGridHeader>
+            {day => <CalendarHeaderCell />}
+          </CalendarGridHeader>
+          <CalendarGridBody>
+            {date => <CalendarCell date={date} />}
+          </CalendarGridBody>
+        </CalendarGrid>
+        <Text slot="errorMessage" />
+      </Calendar>
+    </Dialog>
+  </Popover>
+</DatePicker>
+```
+
 If the date picker does not have a visible label, an `aria-label` or `aria-labelledby` prop must be passed instead to identify it to assistive technology.
 
 Note that most of this anatomy is shared with [DateRangePicker](DateRangePicker.html), so you can reuse many components between them if you have both.
@@ -405,7 +440,16 @@ Note that most of this anatomy is shared with [DateRangePicker](DateRangePicker.
 
 `DatePicker` makes use of the following concepts:
 
-* [@internationalized/date](../internationalized/date/index.html)
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="../internationalized/date/index.html"
+  title="@internationalized/date"
+  description="Represent and manipulate dates and times in a locale-aware manner.">
+  <InternationalizedDate />
+</ExampleCard>
+
+</section>
 
 ### Composed components
 
@@ -456,6 +500,330 @@ A `DatePicker` uses the following components, which may also be used standalone 
 </ExampleCard>
 
 </section>
+
+## Reusable wrappers
+
+If you will use a DatePicker in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+This example wraps `DatePicker` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)).
+
+```tsx example export=true
+import type {DatePickerProps, DateValue} from 'react-aria-components';
+import {Text} from 'react-aria-components';
+
+interface MyDatePickerProps<T extends DateValue> extends DatePickerProps<T> {
+  label?: string,
+  description?: string,
+  errorMessage?: string
+}
+
+function MyDatePicker<T extends DateValue>({label, description, errorMessage, ...props}: MyDatePickerProps<T>) {
+  return (
+    <DatePicker {...props}>
+      <Label>{label}</Label>
+      <Group>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+        <Button>▼</Button>
+      </Group>
+      {description && <Text slot="description">{description}</Text>}
+      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
+      <Popover>
+        <Dialog>
+          <Calendar>
+            <header>
+              <Button slot="previous">◀</Button>
+              <Heading />
+              <Button slot="next">▶</Button>
+            </header>
+            <CalendarGrid>
+              {date => <CalendarCell date={date} />}
+            </CalendarGrid>
+            {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
+          </Calendar>
+        </Dialog>
+      </Popover>
+    </DatePicker>
+
+  );
+}
+
+<MyDatePicker label="Event date" />
+```
+
+## Value
+
+A `DatePicker` displays a placeholder by default. An initial, uncontrolled value can be provided to the `DatePicker` using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
+
+Date values are provided using objects in the [@internationalized/date](../internationalized/date/) package. This library handles correct international date manipulation across calendars, time zones, and other localization concerns. `DatePicker` supports values of the following types:
+
+* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDate} /> – a date without any time components. May be parsed from a string representation using the <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseDate} /> function. Use this type to represent dates where the time is not important, such as a birthday or an all day calendar event.
+* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDateTime} /> – a date with a time, but not in any specific time zone. May be parsed from a string representation using the <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseDateTime} /> function. Use this type to represent times that occur at the same local time regardless of the time zone, such as the time of New Years Eve fireworks which always occur at midnight. Most times are better stored as a `ZonedDateTime`.
+* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> – a date with a time in a specific time zone. May be parsed from a string representation using the <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseZonedDateTime} />, <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseAbsolute} />, or <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseAbsoluteToLocal} /> functions. Use this type to represent an exact moment in time at a particular location on Earth.
+
+```tsx example
+import {parseDate} from '@internationalized/date';
+
+function Example() {
+  let [value, setValue] = React.useState(parseDate('2020-02-03'));
+
+  return (
+    <>
+      <MyDatePicker
+        label="Date (uncontrolled)"
+        defaultValue={parseDate('2020-02-03')} />
+      <MyDatePicker
+        label="Date (controlled)"
+        value={value}
+        onChange={setValue} />
+    </>
+  );
+}
+```
+
+
+### Time zones
+
+`DatePicker` is time zone aware when a <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> object is provided as the value. In this case, the time zone abbreviation is displayed, and time zone concerns such as daylight saving time are taken into account when the value is manipulated.
+
+In most cases, your data will come from and be sent to a server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted string. [@internationalized/date](../internationalized/date/) includes functions for parsing strings in multiple formats into <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> objects. Which format you use will depend on what information you need to store.
+
+* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseZonedDateTime} /> – This function parses a date with an explicit time zone and optional UTC offset attached (e.g. `"2021-11-07T00:45[America/Los_Angeles]"` or `"2021-11-07T00:45-07:00[America/Los_Angeles]"`). This format preserves the maximum amount of information. If the exact local time and time zone that a user selected is important, use this format. Storing the time zone and offset that was selected rather than converting to UTC ensures that the local time is correct regardless of daylight saving rule changes (e.g. if a locale abolishes DST). Examples where this applies include calendar events, reminders, and other times that occur in a particular location.
+* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseAbsolute} /> – This function parses an absolute date and time that occurs at the same instant at all locations on Earth. It can be represented in UTC (e.g. `"2021-11-07T07:45:00Z"`), or stored with a particular offset (e.g. `"2021-11-07T07:45:00-07:00"`). A time zone identifier, e.g. `America/Los_Angeles`, must be passed, and the result will be converted into that time zone. Absolute times are the best way to represent events that occurred in the past, or future events where an exact time is needed, regardless of time zone.
+* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseAbsoluteToLocal} /> – This function parses an absolute date and time into the current user's local time zone. It is a shortcut for `parseAbsolute`, and accepts the same formats.
+
+```tsx example
+import {parseZonedDateTime} from '@internationalized/date';
+
+<MyDatePicker
+  label="Event date"
+  defaultValue={parseZonedDateTime('2022-11-07T00:45[America/Los_Angeles]')} />
+```
+
+`DatePicker` displays times in the time zone included in the `ZonedDateTime` object. The above example is always displayed in Pacific Standard Time because the `America/Los_Angeles` time zone identifier is provided. [@internationalized/date](../internationalized/date/) includes functions for converting dates between time zones, or parsing a date directly into a specific time zone or the user's local time zone, as shown below.
+
+```tsx example
+import {parseAbsoluteToLocal} from '@internationalized/date';
+
+<MyDatePicker
+  label="Event date"
+  defaultValue={parseAbsoluteToLocal('2021-11-07T07:45:00Z')}
+/>
+```
+
+### Granularity
+
+The `granularity` prop allows you to control the smallest unit that is displayed by `DatePicker`. By default, `CalendarDate` values are displayed with `"day"` granularity (year, month, and day), and `CalendarDateTime` and `ZonedDateTime` values are displayed with `"minute"` granularity. More granular time values can be displayed by setting the `granularity` prop to `"second"`.
+
+In addition, when a value with a time is provided but you wish to only display the date, you can set the granularity to `"day"`. This has no effect on the actual value (it still has a time component), only on what fields are displayed. In the following example, two DatePickers are synchronized with the same value, but display different granularities.
+
+```tsx example
+function Example() {
+  let [date, setDate] = React.useState(parseAbsoluteToLocal('2021-04-07T18:45:22Z'));
+
+  return (
+    <>
+      <MyDatePicker
+        label="Date and time"
+        /*- begin highlight -*/
+        granularity="second"
+        /*- end highlight -*/
+        value={date}
+        onChange={setDate} />
+      <MyDatePicker
+        label="Date"
+        /*- begin highlight -*/
+        granularity="day"
+        /*- end highlight -*/
+        value={date}
+        onChange={setDate} />
+    </>
+  );
+}
+```
+
+If no `value` or `defaultValue` prop is passed, then the `granularity` prop also affects which type of value is emitted from the `onChange` event. Note that by default, time values will not have a time zone because none was supplied. You can override this by setting the `placeholderValue` prop explicitly. Values emitted from `onChange` will use the time zone of the placeholder value.
+
+```tsx example
+import {now} from '@internationalized/date';
+
+<MyDatePicker
+  label="Event date"
+  granularity="second" />
+<MyDatePicker
+  label="Event date"
+  placeholderValue={now('America/New_York')}
+  granularity="second" />
+```
+
+### International calendars
+
+`DatePicker` supports selecting dates in many calendar systems used around the world, including Gregorian, Hebrew, Indian, Islamic, Buddhist, and more. Dates are automatically displayed in the appropriate calendar system for the user's locale. The calendar system can be overridden using the [Unicode calendar locale extension](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/calendar#adding_a_calendar_in_the_locale_string), passed to the [I18nProvider](I18nProvider.html) component.
+
+Selected dates passed to `onChange` always use the same calendar system as the `value` or `defaultValue` prop. If no `value` or `defaultValue` is provided, then dates passed to `onChange` are always in the Gregorian calendar since this is the most commonly used. This means that even though the user selects dates in their local calendar system, applications are able to deal with dates from all users consistently.
+
+The below example displays a `DatePicker` in the Hindi language, using the Indian calendar. Dates emitted from `onChange` are in the Gregorian calendar.
+
+```tsx example
+import {I18nProvider} from '@react-aria/i18n';
+
+function Example() {
+  let [date, setDate] = React.useState<DateValue | null>(null);
+  return (
+    /*- begin highlight -*/
+    <I18nProvider locale="hi-IN-u-ca-indian">
+    {/*- end highlight -*/}
+      <MyDatePicker label="Date" value={date} onChange={setDate} />
+      <p>Selected date: {date?.toString()}</p>
+    </I18nProvider>
+  );
+}
+```
+
+### HTML forms
+
+DatePicker supports the `name` prop for integration with HTML forms. The value will be submitted to the server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted string according to the granularity of the value. For example, if the date picker allows selecting only a date then a string such as `"2023-02-03"` will be submitted, and if it allows selecting a time then a string such as `"2023-02-03T08:45:00"` will be submitted. See the [Value](#value) section above for more details about the supported value types.
+
+```tsx example
+<MyDatePicker label="Birth date" name="birthday" />
+```
+
+## Events
+
+`DatePicker` accepts an `onChange` prop which is triggered whenever the date is edited by the user. The example below uses `onChange` to update a separate element with a formatted version of the date in the user's locale and local time zone. This is done by converting the date to a native JavaScript `Date` object to pass to the formatter.
+
+```tsx example
+import {getLocalTimeZone} from '@internationalized/date';
+import {useDateFormatter} from '@react-aria/i18n';
+
+function Example() {
+  let [date, setDate] = React.useState(parseDate('1985-07-03'));
+  let formatter = useDateFormatter({dateStyle: 'full'});
+
+  return (
+    <>
+      <MyDatePicker label="Birth date" value={date} onChange={setDate} />
+      <p>Selected date: {date ? formatter.format(date.toDate(getLocalTimeZone())) : '--'}</p>
+    </>
+  );
+}
+```
+
+## Validation
+
+### Minimum and maximum values
+
+The `minValue` and `maxValue` props can also be used to perform builtin validation. This prevents the user from selecting dates outside the valid range in the calendar, and marks the date field as invalid using ARIA. You should implement a visual indication that the date picker is invalid as well.
+
+This example only accepts dates after today.
+
+```tsx example
+import {today} from '@internationalized/date';
+
+<MyDatePicker
+  label="Appointment date"
+  /*- begin highlight -*/
+  minValue={today(getLocalTimeZone())}
+  /*- end highlight -*/
+  defaultValue={parseDate('2022-02-03')} />
+```
+
+### Unavailable dates
+
+`DatePicker` supports marking certain dates as _unavailable_. These dates remain focusable with the keyboard in the calendar so that navigation is consistent, but cannot be selected by the user. When an unavailable date is entered into the date field, it is marked as invalid. The `isDateUnavailable` prop accepts a callback that is called to evaluate whether each visible date is unavailable.
+
+This example includes multiple unavailable date ranges, e.g. dates when no appointments are available. In addition, all weekends are unavailable. The `minValue` prop is also used to prevent selecting dates before today.
+
+```tsx example
+import {today, isWeekend} from '@internationalized/date';
+import {useLocale} from '@react-aria/i18n';
+
+function Example() {
+  let now = today(getLocalTimeZone());
+  let disabledRanges = [
+    [now, now.add({days: 5})],
+    [now.add({days: 14}), now.add({days: 16})],
+    [now.add({days: 23}), now.add({days: 24})],
+  ];
+
+  let {locale} = useLocale();
+  let isDateUnavailable = (date: DateValue) => isWeekend(date, locale) || disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+
+  return (
+    <MyDatePicker
+      label="Appointment date"
+      minValue={today(getLocalTimeZone())}
+      /*- begin highlight -*/
+      isDateUnavailable={isDateUnavailable}
+      /*- end highlight -*/
+    />
+  );
+}
+```
+
+### Help text
+
+The `description` slot can be used to associate additional help text with a date picker. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to semantically mark the date picker as invalid for assistive technologies.
+
+This example validates that the selected date is a weekday and not a weekend according to the current locale.
+
+```tsx example
+import {today, isWeekend} from '@internationalized/date';
+import {useLocale} from 'react-aria';
+
+function Example() {
+  let [date, setDate] = React.useState(today(getLocalTimeZone()));
+  let {locale} = useLocale();
+  let isInvalid = date && isWeekend(date, locale);
+
+  return (
+    <MyDatePicker
+      label="Appointment date"
+      value={date}
+      onChange={setDate}
+      isInvalid={isInvalid}
+      /*- begin highlight -*/
+      description={isInvalid ? undefined : 'Select a weekday'}
+      errorMessage={isInvalid ? 'We are closed on weekends' : undefined} />
+      /*- end highlight -*/
+  );
+}
+```
+
+## Format options
+
+### Placeholder value
+
+When no value is set, a placeholder is shown. The format of the placeholder is influenced by the `granularity` and `placeholderValue` props. `placeholderValue` also controls the default values of each segment when the user first interacts with them, e.g. using the up and down arrow keys, as well as the default month shown in the calendar popover. By default, the `placeholderValue` is the current date at midnight, but you can set it to a more appropriate value if needed.
+
+```tsx example
+import {CalendarDate} from '@internationalized/date';
+
+<MyDatePicker label="Birth date" placeholderValue={new CalendarDate(1980, 1, 1)} />
+```
+
+### Hide time zone
+
+When a `ZonedDateTime` object is provided as the value to `DatePicker`, the time zone abbreviation is displayed by default. However, if this is displayed elsewhere or implicit based on the usecase, it can be hidden using the `hideTimeZone` option.
+
+```tsx example
+<MyDatePicker
+  label="Appointment time"
+  defaultValue={parseZonedDateTime('2022-11-07T10:45[America/Los_Angeles]')}
+  hideTimeZone />
+```
+
+### Hour cycle
+
+By default, `DatePicker` displays times in either 12 or 24 hour hour format depending on the user's locale. However, this can be overridden using the `hourCycle` prop if needed for a specific usecase. This example forces `DatePicker` to use 24-hour time, regardless of the locale.
+
+```tsx example
+<MyDatePicker
+  label="Appointment time"
+  granularity="minute"
+  hourCycle={24} />
+```
 
 ## Props
 
@@ -716,311 +1084,6 @@ A `CalendarCell` can be targeted with the `.react-aria-CalendarCell` CSS selecto
 ### Text
 
 The help text elements within a `DatePicker` can be targeted with the `[slot=description]` and `[slot=errorMessage]` CSS selectors, or by adding a custom `className`.
-
-## Reusable wrappers
-
-If you will use a DatePicker in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
-
-This example wraps `DatePicker` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)).
-
-```tsx example export=true
-import type {DatePickerProps, DateValue} from 'react-aria-components';
-import {Text} from 'react-aria-components';
-
-interface MyDatePickerProps<T extends DateValue> extends DatePickerProps<T> {
-  label?: string,
-  description?: string,
-  errorMessage?: string
-}
-
-function MyDatePicker<T extends DateValue>({label, description, errorMessage, ...props}: MyDatePickerProps<T>) {
-  return (
-    <DatePicker {...props}>
-      <Label>{label}</Label>
-      <Group>
-        <DateInput>
-          {segment => <DateSegment segment={segment} />}
-        </DateInput>
-        <Button>▼</Button>
-      </Group>
-      {description && <Text slot="description">{description}</Text>}
-      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
-      <Popover>
-        <Dialog>
-          <Calendar>
-            <header>
-              <Button slot="previous">◀</Button>
-              <Heading />
-              <Button slot="next">▶</Button>
-            </header>
-            <CalendarGrid>
-              {date => <CalendarCell date={date} />}
-            </CalendarGrid>
-            {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
-          </Calendar>
-        </Dialog>
-      </Popover>
-    </DatePicker>
-
-  );
-}
-
-<MyDatePicker label="Event date" />
-```
-
-## Usage
-
-The following examples show how to use the `MyDatePicker` component created in the above example.
-
-### Value
-
-A `DatePicker` displays a placeholder by default. An initial, uncontrolled value can be provided to the `DatePicker` using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
-
-Date values are provided using objects in the [@internationalized/date](../internationalized/date/) package. This library handles correct international date manipulation across calendars, time zones, and other localization concerns. `DatePicker` supports values of the following types:
-
-* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDate} /> – a date without any time components. May be parsed from a string representation using the <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseDate} /> function. Use this type to represent dates where the time is not important, such as a birthday or an all day calendar event.
-* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDateTime} /> – a date with a time, but not in any specific time zone. May be parsed from a string representation using the <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseDateTime} /> function. Use this type to represent times that occur at the same local time regardless of the time zone, such as the time of New Years Eve fireworks which always occur at midnight. Most times are better stored as a `ZonedDateTime`.
-* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> – a date with a time in a specific time zone. May be parsed from a string representation using the <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseZonedDateTime} />, <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseAbsolute} />, or <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseAbsoluteToLocal} /> functions. Use this type to represent an exact moment in time at a particular location on Earth.
-
-```tsx example
-import {parseDate} from '@internationalized/date';
-
-function Example() {
-  let [value, setValue] = React.useState(parseDate('2020-02-03'));
-
-  return (
-    <>
-      <MyDatePicker
-        label="Date (uncontrolled)"
-        defaultValue={parseDate('2020-02-03')} />
-      <MyDatePicker
-        label="Date (controlled)"
-        value={value}
-        onChange={setValue} />
-    </>
-  );
-}
-```
-
-### Events
-
-`DatePicker` accepts an `onChange` prop which is triggered whenever the date is edited by the user. The example below uses `onChange` to update a separate element with a formatted version of the date in the user's locale and local time zone. This is done by converting the date to a native JavaScript `Date` object to pass to the formatter.
-
-```tsx example
-import {getLocalTimeZone} from '@internationalized/date';
-import {useDateFormatter} from '@react-aria/i18n';
-
-function Example() {
-  let [date, setDate] = React.useState(parseDate('1985-07-03'));
-  let formatter = useDateFormatter({dateStyle: 'full'});
-
-  return (
-    <>
-      <MyDatePicker label="Birth date" value={date} onChange={setDate} />
-      <p>Selected date: {date ? formatter.format(date.toDate(getLocalTimeZone())) : '--'}</p>
-    </>
-  );
-}
-```
-
-### Time zones
-
-`DatePicker` is time zone aware when a <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> object is provided as the value. In this case, the time zone abbreviation is displayed, and time zone concerns such as daylight saving time are taken into account when the value is manipulated.
-
-In most cases, your data will come from and be sent to a server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted string. [@internationalized/date](../internationalized/date/) includes functions for parsing strings in multiple formats into <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> objects. Which format you use will depend on what information you need to store.
-
-* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseZonedDateTime} /> – This function parses a date with an explicit time zone and optional UTC offset attached (e.g. `"2021-11-07T00:45[America/Los_Angeles]"` or `"2021-11-07T00:45-07:00[America/Los_Angeles]"`). This format preserves the maximum amount of information. If the exact local time and time zone that a user selected is important, use this format. Storing the time zone and offset that was selected rather than converting to UTC ensures that the local time is correct regardless of daylight saving rule changes (e.g. if a locale abolishes DST). Examples where this applies include calendar events, reminders, and other times that occur in a particular location.
-* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseAbsolute} /> – This function parses an absolute date and time that occurs at the same instant at all locations on Earth. It can be represented in UTC (e.g. `"2021-11-07T07:45:00Z"`), or stored with a particular offset (e.g. `"2021-11-07T07:45:00-07:00"`). A time zone identifier, e.g. `America/Los_Angeles`, must be passed, and the result will be converted into that time zone. Absolute times are the best way to represent events that occurred in the past, or future events where an exact time is needed, regardless of time zone.
-* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseAbsoluteToLocal} /> – This function parses an absolute date and time into the current user's local time zone. It is a shortcut for `parseAbsolute`, and accepts the same formats.
-
-```tsx example
-import {parseZonedDateTime} from '@internationalized/date';
-
-<MyDatePicker
-  label="Event date"
-  defaultValue={parseZonedDateTime('2022-11-07T00:45[America/Los_Angeles]')} />
-```
-
-`DatePicker` displays times in the time zone included in the `ZonedDateTime` object. The above example is always displayed in Pacific Standard Time because the `America/Los_Angeles` time zone identifier is provided. [@internationalized/date](../internationalized/date/) includes functions for converting dates between time zones, or parsing a date directly into a specific time zone or the user's local time zone, as shown below.
-
-```tsx example
-import {parseAbsoluteToLocal} from '@internationalized/date';
-
-<MyDatePicker
-  label="Event date"
-  defaultValue={parseAbsoluteToLocal('2021-11-07T07:45:00Z')}
-/>
-```
-
-### Granularity
-
-The `granularity` prop allows you to control the smallest unit that is displayed by `DatePicker`. By default, `CalendarDate` values are displayed with `"day"` granularity (year, month, and day), and `CalendarDateTime` and `ZonedDateTime` values are displayed with `"minute"` granularity. More granular time values can be displayed by setting the `granularity` prop to `"second"`.
-
-In addition, when a value with a time is provided but you wish to only display the date, you can set the granularity to `"day"`. This has no effect on the actual value (it still has a time component), only on what fields are displayed. In the following example, two DatePickers are synchronized with the same value, but display different granularities.
-
-```tsx example
-function Example() {
-  let [date, setDate] = React.useState(parseAbsoluteToLocal('2021-04-07T18:45:22Z'));
-
-  return (
-    <>
-      <MyDatePicker
-        label="Date and time"
-        granularity="second"
-        value={date}
-        onChange={setDate} />
-      <MyDatePicker
-        label="Date"
-        granularity="day"
-        value={date}
-        onChange={setDate} />
-    </>
-  );
-}
-```
-
-If no `value` or `defaultValue` prop is passed, then the `granularity` prop also affects which type of value is emitted from the `onChange` event. Note that by default, time values will not have a time zone because none was supplied. You can override this by setting the `placeholderValue` prop explicitly. Values emitted from `onChange` will use the time zone of the placeholder value.
-
-```tsx example
-import {now} from '@internationalized/date';
-
-<MyDatePicker
-  label="Event date"
-  granularity="second" />
-<MyDatePicker
-  label="Event date"
-  placeholderValue={now('America/New_York')}
-  granularity="second" />
-```
-
-### International calendars
-
-`DatePicker` supports selecting dates in many calendar systems used around the world, including Gregorian, Hebrew, Indian, Islamic, Buddhist, and more. Dates are automatically displayed in the appropriate calendar system for the user's locale. The calendar system can be overridden using the [Unicode calendar locale extension](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/calendar#adding_a_calendar_in_the_locale_string), passed to the [I18nProvider](I18nProvider.html) component.
-
-Selected dates passed to `onChange` always use the same calendar system as the `value` or `defaultValue` prop. If no `value` or `defaultValue` is provided, then dates passed to `onChange` are always in the Gregorian calendar since this is the most commonly used. This means that even though the user selects dates in their local calendar system, applications are able to deal with dates from all users consistently.
-
-The below example displays a `DatePicker` in the Hindi language, using the Indian calendar. Dates emitted from `onChange` are in the Gregorian calendar.
-
-```tsx example
-import {I18nProvider} from '@react-aria/i18n';
-
-function Example() {
-  let [date, setDate] = React.useState<DateValue | null>(null);
-  return (
-    <I18nProvider locale="hi-IN-u-ca-indian">
-      <MyDatePicker label="Date" value={date} onChange={setDate} />
-      <p>Selected date: {date?.toString()}</p>
-    </I18nProvider>
-  );
-}
-```
-
-### Minimum and maximum values
-
-The `minValue` and `maxValue` props can also be used to perform builtin validation. This prevents the user from selecting dates outside the valid range in the calendar, and marks the date field as invalid using ARIA. You should implement a visual indication that the date picker is invalid as well.
-
-This example only accepts dates after today.
-
-```tsx example
-import {today} from '@internationalized/date';
-
-<MyDatePicker
-  label="Appointment date"
-  minValue={today(getLocalTimeZone())}
-  defaultValue={parseDate('2022-02-03')} />
-```
-
-### Unavailable dates
-
-`DatePicker` supports marking certain dates as _unavailable_. These dates remain focusable with the keyboard in the calendar so that navigation is consistent, but cannot be selected by the user. When an unavailable date is entered into the date field, it is marked as invalid. The `isDateUnavailable` prop accepts a callback that is called to evaluate whether each visible date is unavailable.
-
-This example includes multiple unavailable date ranges, e.g. dates when no appointments are available. In addition, all weekends are unavailable. The `minValue` prop is also used to prevent selecting dates before today.
-
-```tsx example
-import {today, isWeekend} from '@internationalized/date';
-import {useLocale} from '@react-aria/i18n';
-
-function Example() {
-  let now = today(getLocalTimeZone());
-  let disabledRanges = [
-    [now, now.add({days: 5})],
-    [now.add({days: 14}), now.add({days: 16})],
-    [now.add({days: 23}), now.add({days: 24})],
-  ];
-
-  let {locale} = useLocale();
-  let isDateUnavailable = (date: DateValue) => isWeekend(date, locale) || disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
-
-  return <MyDatePicker label="Appointment date" minValue={today(getLocalTimeZone())} isDateUnavailable={isDateUnavailable} />
-}
-```
-
-### Help text
-
-The `description` slot can be used to associate additional help text with a date picker. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to semantically mark the date picker as invalid for assistive technologies.
-
-This example validates that the selected date is a weekday and not a weekend according to the current locale.
-
-```tsx example
-import {today, isWeekend} from '@internationalized/date';
-import {useLocale} from 'react-aria';
-
-function Example() {
-  let [date, setDate] = React.useState(today(getLocalTimeZone()));
-  let {locale} = useLocale();
-  let isInvalid = date && isWeekend(date, locale);
-
-  return (
-    <MyDatePicker
-      label="Appointment date"
-      value={date}
-      onChange={setDate}
-      isInvalid={isInvalid}
-      description={isInvalid ? undefined : 'Select a weekday'}
-      errorMessage={isInvalid ? 'We are closed on weekends' : undefined} />
-  );
-}
-```
-
-### Placeholder value
-
-When no value is set, a placeholder is shown. The format of the placeholder is influenced by the `granularity` and `placeholderValue` props. `placeholderValue` also controls the default values of each segment when the user first interacts with them, e.g. using the up and down arrow keys, as well as the default month shown in the calendar popover. By default, the `placeholderValue` is the current date at midnight, but you can set it to a more appropriate value if needed.
-
-```tsx example
-import {CalendarDate} from '@internationalized/date';
-
-<MyDatePicker label="Birth date" placeholderValue={new CalendarDate(1980, 1, 1)} />
-```
-
-### Hide time zone
-
-When a `ZonedDateTime` object is provided as the value to `DatePicker`, the time zone abbreviation is displayed by default. However, if this is displayed elsewhere or implicit based on the usecase, it can be hidden using the `hideTimeZone` option.
-
-```tsx example
-<MyDatePicker
-  label="Appointment time"
-  defaultValue={parseZonedDateTime('2022-11-07T10:45[America/Los_Angeles]')}
-  hideTimeZone />
-```
-
-### Hour cycle
-
-By default, `DatePicker` displays times in either 12 or 24 hour hour format depending on the user's locale. However, this can be overridden using the `hourCycle` prop if needed for a specific usecase. This example forces `DatePicker` to use 24-hour time, regardless of the locale.
-
-```tsx example
-<MyDatePicker
-  label="Appointment time"
-  granularity="minute"
-  hourCycle={24} />
-```
-
-### HTML forms
-
-DatePicker supports the `name` prop for integration with HTML forms. The value will be submitted to the server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted string according to the granularity of the value. For example, if the date picker allows selecting only a date then a string such as `"2023-02-03"` will be submitted, and if it allows selecting a time then a string such as `"2023-02-03T08:45:00"` will be submitted. See the [Value](#value) section above for more details about the supported value types.
-
-```tsx example
-<MyDatePicker label="Birth date" name="birthday" />
-```
 
 ## Advanced customization
 

@@ -274,6 +274,7 @@ function DateSegment({segment, ...otherProps}: DateSegmentProps, ref: ForwardedR
       {...mergeProps(filterDOMProps(otherProps as any), segmentProps)}
       {...renderProps}
       ref={domRef}
+      data-placeholder={segment.isPlaceholder || undefined}
       data-invalid={state.isInvalid || undefined}
       data-readonly={!segment.isEditable || undefined}
       data-type={segment.type} />

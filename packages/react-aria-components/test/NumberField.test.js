@@ -11,8 +11,8 @@
  */
 
 import {Button, Group, Input, Label, NumberField, NumberFieldContext, Text} from '../';
+import {pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestNumberField = (props) => (
@@ -29,6 +29,10 @@ let TestNumberField = (props) => (
 );
 
 describe('NumberField', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
   it('provides slots', () => {
     let {getByRole, getAllByRole} = render(<TestNumberField />);
 
@@ -66,23 +70,23 @@ describe('NumberField', () => {
     expect(textbox).toHaveAttribute('aria-label', 'test');
   });
 
-  it('should support hover state', () => {
+  it('should support hover state', async () => {
     let {getByRole} = render(<TestNumberField groupProps={{className: ({isHovered}) => isHovered ? 'hover' : ''}} />);
     let group = getByRole('group');
 
     expect(group).not.toHaveAttribute('data-hovered');
     expect(group).not.toHaveClass('hover');
 
-    userEvent.hover(group);
+    await user.hover(group);
     expect(group).toHaveAttribute('data-hovered', 'true');
     expect(group).toHaveClass('hover');
 
-    userEvent.unhover(group);
+    await user.unhover(group);
     expect(group).not.toHaveAttribute('data-hovered');
     expect(group).not.toHaveClass('hover');
   });
 
-  it('should support focus visible state', () => {
+  it('should support focus visible state', async () => {
     let {getByRole} = render(<TestNumberField groupProps={{className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''}} />);
     let group = getByRole('group');
     let input = getByRole('textbox');
@@ -90,12 +94,12 @@ describe('NumberField', () => {
     expect(group).not.toHaveAttribute('data-focus-visible');
     expect(group).not.toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(input);
     expect(group).toHaveAttribute('data-focus-visible', 'true');
     expect(group).toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(group).not.toHaveAttribute('data-focus-visible');
     expect(group).not.toHaveClass('focus');
   });

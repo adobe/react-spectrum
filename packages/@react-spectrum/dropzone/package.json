@@ -42,7 +42,7 @@
     "@react-spectrum/utils": "^3.10.1",
     "@react-types/shared": "^3.19.0",
     "@swc/helpers": "^0.5.0",
-    "react-aria-components": "^1.0.0-alpha.6"
+    "react-aria-components": "1.0.0-beta.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1",

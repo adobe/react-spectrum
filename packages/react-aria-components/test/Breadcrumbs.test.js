@@ -10,26 +10,26 @@
  * governing permissions and limitations under the License.
  */
 
-import {Breadcrumbs, BreadcrumbsContext, Item, Link} from 'react-aria-components';
+import {Breadcrumb, Breadcrumbs, BreadcrumbsContext, Link} from 'react-aria-components';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils';
 
 let renderBreadcrumbs = (breadcrumbsProps, itemProps) => render(
   <Breadcrumbs {...breadcrumbsProps}>
-    <Item {...itemProps}><Link><a href="/">Home</a></Link></Item>
-    <Item {...itemProps}><Link><a href="/react-aria">React Aria</a></Link></Item>
-    <Item {...itemProps}><Link>useBreadcrumbs</Link></Item>
+    <Breadcrumb {...itemProps}><Link><a href="/">Home</a></Link></Breadcrumb>
+    <Breadcrumb {...itemProps}><Link><a href="/react-aria">React Aria</a></Link></Breadcrumb>
+    <Breadcrumb {...itemProps}><Link>useBreadcrumbs</Link></Breadcrumb>
   </Breadcrumbs>
 );
 
 describe('Breadcrumbs', () => {
   it('should render with default class', () => {
     let {getByRole, getAllByRole} = renderBreadcrumbs();
-    let breadcrumbs = getByRole('navigation');
+    let breadcrumbs = getByRole('list');
     expect(breadcrumbs).toHaveClass('react-aria-Breadcrumbs');
 
     for (let item of getAllByRole('listitem')) {
-      expect(item).toHaveClass('react-aria-Item');
+      expect(item).toHaveClass('react-aria-Breadcrumb');
     }
 
     let links = getAllByRole('link');
@@ -40,7 +40,7 @@ describe('Breadcrumbs', () => {
 
   it('should render with custom class', () => {
     let {getByRole, getAllByRole} = renderBreadcrumbs({className: 'breadcrumbs'}, {className: 'item'});
-    let breadcrumbs = getByRole('navigation');
+    let breadcrumbs = getByRole('list');
     expect(breadcrumbs).toHaveClass('breadcrumbs');
 
     for (let item of getAllByRole('listitem')) {
@@ -50,7 +50,7 @@ describe('Breadcrumbs', () => {
 
   it('should support DOM props', () => {
     let {getByRole, getAllByRole} = renderBreadcrumbs({'data-foo': 'bar'}, {'data-bar': 'foo'});
-    let breadcrumbs = getByRole('navigation');
+    let breadcrumbs = getByRole('list');
     expect(breadcrumbs).toHaveAttribute('data-foo', 'bar');
 
     for (let item of getAllByRole('listitem')) {
@@ -62,12 +62,12 @@ describe('Breadcrumbs', () => {
     let {getByRole} = render(
       <BreadcrumbsContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
         <Breadcrumbs slot="test">
-          <Item><Link>Test</Link></Item>
+          <Breadcrumb><Link>Test</Link></Breadcrumb>
         </Breadcrumbs>
       </BreadcrumbsContext.Provider>
     );
 
-    let breadcrumbs = getByRole('navigation');
+    let breadcrumbs = getByRole('list');
     expect(breadcrumbs).toHaveAttribute('slot', 'test');
     expect(breadcrumbs).toHaveAttribute('aria-label', 'test');
   });
@@ -81,10 +81,10 @@ describe('Breadcrumbs', () => {
 
     let {getAllByRole} = render(
       <Breadcrumbs items={items}>
-        {(item) => <Item>{item.name}</Item>}
+        {(item) => <Breadcrumb>{item.name}</Breadcrumb>}
       </Breadcrumbs>
     );
-    
+
     expect(getAllByRole('listitem').map((it) => it.textContent)).toEqual(['Item 1', 'Item 2', 'Item 3']);
   });
 });
