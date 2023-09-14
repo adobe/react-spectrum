@@ -10,71 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, DOMAttributes, FocusStrategy, KeyboardDelegate, Node} from '@react-types/shared';
-import {Key, RefObject, useMemo} from 'react';
+import {AriaSelectableCollectionOptions, useSelectableCollection} from './useSelectableCollection';
+import {Collection, DOMAttributes, KeyboardDelegate, Node} from '@react-types/shared';
+import {Key, useMemo} from 'react';
 import {ListKeyboardDelegate} from './ListKeyboardDelegate';
-import {MultipleSelectionManager} from '@react-stately/selection';
 import {useCollator} from '@react-aria/i18n';
-import {useSelectableCollection} from './useSelectableCollection';
 
-export interface AriaSelectableListOptions {
-  /**
-   * An interface for reading and updating multiple selection state.
-   */
-  selectionManager: MultipleSelectionManager,
+export interface AriaSelectableListOptions extends Omit<AriaSelectableCollectionOptions, 'keyboardDelegate'> {
   /**
    * State of the collection.
    */
   collection: Collection<Node<unknown>>,
   /**
-   * The item keys that are disabled. These items cannot be selected, focused, or otherwise interacted with.
-   */
-  disabledKeys: Set<Key>,
-  /**
-   * A ref to the item.
-   */
-  ref?: RefObject<HTMLElement>,
-  /**
-   * A delegate that returns collection item keys with respect to visual layout.
+   * A delegate object that implements behavior for keyboard focus movement.
    */
   keyboardDelegate?: KeyboardDelegate,
   /**
-   * Whether the collection or one of its items should be automatically focused upon render.
-   * @default false
+   * The item keys that are disabled. These items cannot be selected, focused, or otherwise interacted with.
    */
-  autoFocus?: boolean | FocusStrategy,
-  /**
-   * Whether focus should wrap around when the end/start is reached.
-   * @default false
-   */
-  shouldFocusWrap?: boolean,
-  /**
-   * Whether the option is contained in a virtual scroller.
-   */
-  isVirtualized?: boolean,
-  /**
-   * Whether the collection allows empty selection.
-   * @default false
-   */
-  disallowEmptySelection?: boolean,
-  /**
-   * Whether selection should occur automatically on focus.
-   * @default false
-   */
-  selectOnFocus?: boolean,
-  /**
-   * Whether typeahead is disabled.
-   * @default false
-   */
-  disallowTypeAhead?: boolean,
-  /**
-   * Whether the collection items should use virtual focus instead of being focused directly.
-   */
-  shouldUseVirtualFocus?: boolean,
-  /**
-   * Whether navigation through tab key is enabled.
-   */
-  allowsTabNavigation?: boolean
+  disabledKeys: Set<Key>
 }
 
 export interface SelectableListAria {
@@ -93,15 +47,7 @@ export function useSelectableList(props: AriaSelectableListOptions): SelectableL
     collection,
     disabledKeys,
     ref,
-    keyboardDelegate,
-    autoFocus,
-    shouldFocusWrap,
-    isVirtualized,
-    disallowEmptySelection,
-    selectOnFocus = selectionManager.selectionBehavior === 'replace',
-    disallowTypeAhead,
-    shouldUseVirtualFocus,
-    allowsTabNavigation
+    keyboardDelegate
   } = props;
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
@@ -113,18 +59,10 @@ export function useSelectableList(props: AriaSelectableListOptions): SelectableL
   ), [keyboardDelegate, collection, disabledKeys, ref, collator, disabledBehavior]);
 
   let {collectionProps} = useSelectableCollection({
+    ...props,
     ref,
     selectionManager,
-    keyboardDelegate: delegate,
-    autoFocus,
-    shouldFocusWrap,
-    disallowEmptySelection,
-    selectOnFocus,
-    disallowTypeAhead,
-    shouldUseVirtualFocus,
-    allowsTabNavigation,
-    isVirtualized,
-    scrollRef: ref
+    keyboardDelegate: delegate
   });
 
   return {

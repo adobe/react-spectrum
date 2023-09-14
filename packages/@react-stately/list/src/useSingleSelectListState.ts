@@ -47,7 +47,7 @@ export function useSingleSelectListState<T extends object>(props: SingleSelectLi
     allowDuplicateSelectionEvents: true,
     selectedKeys,
     onSelectionChange: (keys: Set<Key>) => {
-      let key = keys.values().next().value;
+      let key = keys.values().next().value ?? null;
 
       // Always fire onSelectionChange, even if the key is the same
       // as the current key (useControlledState does not).
