@@ -17,9 +17,12 @@ import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 
 ```jsx import
 import {DropZone} from '@react-spectrum/dropzone';
-import Bell from '@spectrum-icons/workflow/Bell';
-import {View} from '@react-spectrum/view';
-import {Flex} from '@react-spectrum/layout';
+import {Heading} from '@react-spectrum/text';
+import {Content} from '@react-spectrum/view';
+import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
+import {Text} from 'react-aria-components';
+import {FileTrigger} from 'react-aria-components';
+import {Button} from '@react-spectrum/button';
 ```
 
 ---
@@ -38,11 +41,7 @@ category: Drag and drop
 ## Example
 
 ```tsx example
-import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
-import {Heading} from '@react-spectrum/text';
-import {Text} from 'react-aria-components';
 import Upload from '@spectrum-icons/illustrations/Upload';
-
 
 function Example() {
   return (
@@ -67,10 +66,6 @@ function Example() {
 A drop zone accepts an [IllustratedMessage](IllustratedMessage.html) as a child which is comprised of three areas:  an illustration, a title, and a body. Each of these sections can be populated by providing the following components to the IllustratedMessage as children: svg, [Heading](Heading.html) (title), and [Content](Content.html) (body). A [FileTrigger](FileTrigger.html) is commonly paired with a DropZone to allow a user to choose files from their device. 
 
 ```tsx example
-import {Content} from '@react-spectrum/view';
-import {FileTrigger} from 'react-aria-components';
-import {Button} from '@react-spectrum/button';
-
 <DropZone
   maxWidth="size-3000">
   <IllustratedMessage>
@@ -320,13 +315,10 @@ A drop zone displays visual feedback to the user when a drag hovers over the dro
 ```tsx example
 
 function Example() {
-  let [dropped, setDropped] = React.useState(false);
-
   return (
     <DropZone
       maxWidth="size-3000"
-      getDropOperation={(types) => types.has('image/png') ? 'copy' : 'cancel'}
-      onDrop={() => setDropped(true)}>
+      getDropOperation={(types) => types.has('image/png') ? 'copy' : 'cancel'}>
       <IllustratedMessage>
         <Upload />
         <Heading>
