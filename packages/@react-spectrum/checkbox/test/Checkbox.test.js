@@ -10,13 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render} from '@react-spectrum/test-utils';
 import {Checkbox} from '../';
+import {pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
 describe('Checkbox', function () {
   let onChangeSpy = jest.fn();
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
 
   afterEach(() => {
     onChangeSpy.mockClear();
@@ -26,7 +30,7 @@ describe('Checkbox', function () {
     Name                       | Component   | props
     ${'Checkbox'}              | ${Checkbox} | ${{onChange: onChangeSpy}}
     ${'Checkbox isEmphasized'} | ${Checkbox} | ${{onChange: onChangeSpy, isEmphasized: true}}
-  `('$Name default unchecked can be checked', function ({Component, props}) {
+  `('$Name default unchecked can be checked', async function ({Component, props}) {
     let {getByLabelText} = render(<Component {...props}>Click Me</Component>);
 
     let checkbox = getByLabelText('Click Me');
@@ -34,12 +38,12 @@ describe('Checkbox', function () {
     expect(checkbox.checked).toBeFalsy();
     expect(onChangeSpy).not.toHaveBeenCalled();
 
-    userEvent.click(checkbox);
+    await user.click(checkbox);
     expect(checkbox.checked).toBeTruthy();
     expect(onChangeSpy).toHaveBeenCalled();
     expect(onChangeSpy.mock.calls[0][0]).toBe(true);
 
-    userEvent.click(checkbox);
+    await user.click(checkbox);
     expect(onChangeSpy).toHaveBeenCalled();
     expect(onChangeSpy.mock.calls[1][0]).toBe(false);
 
@@ -50,14 +54,14 @@ describe('Checkbox', function () {
     Name                       | Component   | props
     ${'Checkbox'}              | ${Checkbox} | ${{onChange: onChangeSpy, defaultSelected: true, value: 'newsletter'}}
     ${'Checkbox isEmphasized'} | ${Checkbox} | ${{onChange: onChangeSpy, defaultSelected: true, isEmphasized: true, value: 'newsletter'}}
-  `('$Name can be default checked', function ({Component, props}) {
+  `('$Name can be default checked', async function ({Component, props}) {
     let {getByLabelText} = render(<Component {...props}>Click Me</Component>);
 
     let checkbox = getByLabelText('Click Me');
     expect(checkbox.value).toBe('newsletter');
     expect(checkbox.checked).toBeTruthy();
 
-    userEvent.click(checkbox);
+    await user.click(checkbox);
     expect(checkbox.checked).toBeFalsy();
     expect(onChangeSpy).toHaveBeenCalled();
     expect(onChangeSpy.mock.calls[0][0]).toBe(false);
@@ -67,14 +71,14 @@ describe('Checkbox', function () {
     Name                       | Component   | props
     ${'Checkbox'}              | ${Checkbox} | ${{onChange: onChangeSpy, isSelected: true}}
     ${'Checkbox isEmphasized'} | ${Checkbox} | ${{onChange: onChangeSpy, isSelected: true, isEmphasized: true}}
-  `('$Name can be controlled checked', function ({Component, props}) {
+  `('$Name can be controlled checked', async function ({Component, props}) {
     let {getByLabelText} = render(<Component {...props}>Click Me</Component>);
 
     let checkbox = getByLabelText('Click Me');
     expect(checkbox.value).toBe('on');
     expect(checkbox.checked).toBeTruthy();
 
-    userEvent.click(checkbox);
+    await user.click(checkbox);
     expect(checkbox.checked).toBeTruthy();
     expect(onChangeSpy).toHaveBeenCalled();
     expect(onChangeSpy.mock.calls[0][0]).toBe(false);
@@ -84,14 +88,14 @@ describe('Checkbox', function () {
     Name                       | Component   | props
     ${'Checkbox'}              | ${Checkbox} | ${{onChange: onChangeSpy, isSelected: false}}
     ${'Checkbox isEmphasized'} | ${Checkbox} | ${{onChange: onChangeSpy, isSelected: false, isEmphasized: true}}
-  `('$Name can be controlled unchecked', function ({Component, props}) {
+  `('$Name can be controlled unchecked', async function ({Component, props}) {
     let {getByLabelText} = render(<Component {...props}>Click Me</Component>);
 
     let checkbox = getByLabelText('Click Me');
     expect(checkbox.value).toBe('on');
     expect(checkbox.checked).toBeFalsy();
 
-    userEvent.click(checkbox);
+    await user.click(checkbox);
     expect(checkbox.checked).toBeFalsy();
     expect(onChangeSpy).toHaveBeenCalled();
     expect(onChangeSpy.mock.calls[0][0]).toBe(true);
@@ -101,14 +105,14 @@ describe('Checkbox', function () {
     Name                       | Component   | props
     ${'Checkbox'}              | ${Checkbox} | ${{onChange: onChangeSpy, isDisabled: true}}
     ${'Checkbox isEmphasized'} | ${Checkbox} | ${{onChange: onChangeSpy, isDisabled: true, isEmphasized: true}}
-  `('$Name can be disabled', function ({Component, props}) {
+  `('$Name can be disabled', async function ({Component, props}) {
     let {getByLabelText} = render(<Component {...props}>Click Me</Component>);
 
     let checkbox = getByLabelText('Click Me');
     expect(checkbox.value).toBe('on');
     expect(checkbox.checked).toBeFalsy();
 
-    userEvent.click(checkbox);
+    await user.click(checkbox);
     expect(checkbox.checked).toBeFalsy();
     expect(onChangeSpy).not.toHaveBeenCalled();
   });
@@ -140,7 +144,7 @@ describe('Checkbox', function () {
     Name                       | Component   | props
     ${'Checkbox'}              | ${Checkbox} | ${{onChange: onChangeSpy, isIndeterminate: true}}
     ${'Checkbox isEmphasized'} | ${Checkbox} | ${{onChange: onChangeSpy, isIndeterminate: true, isEmphasized: true}}
-  `('$Name can be indeterminate', function ({Component, props}) {
+  `('$Name can be indeterminate', async function ({Component, props}) {
     let {getByLabelText} = render(<Component {...props}>Click Me</Component>);
 
     let checkbox = getByLabelText('Click Me');
@@ -148,13 +152,13 @@ describe('Checkbox', function () {
     expect(checkbox.indeterminate).toBeTruthy();
     expect(checkbox.checked).toBeFalsy();
 
-    userEvent.click(checkbox);
+    await user.click(checkbox);
     expect(checkbox.indeterminate).toBeTruthy();
     expect(checkbox.checked).toBeTruthy();
     expect(onChangeSpy).toHaveBeenCalled();
     expect(onChangeSpy.mock.calls[0][0]).toBe(true);
 
-    userEvent.click(checkbox);
+    await user.click(checkbox);
     expect(checkbox.indeterminate).toBeTruthy();
     expect(checkbox.checked).toBeFalsy();
     expect(onChangeSpy.mock.calls[1][0]).toBe(false);
@@ -233,14 +237,14 @@ describe('Checkbox', function () {
   it.each`
     Name          | Component   | props
     ${'Checkbox'} | ${Checkbox} | ${{onChange: onChangeSpy, isSelected: true, isReadOnly: true}}
-  `('$Name supports readOnly', function ({Component, props}) {
+  `('$Name supports readOnly', async function ({Component, props}) {
     let {getByLabelText} = render(<Component {...props}>Click Me</Component>);
 
     let checkbox = getByLabelText('Click Me');
     expect(checkbox.value).toBe('on');
     expect(checkbox.checked).toBeTruthy();
 
-    userEvent.click(checkbox);
+    await user.click(checkbox);
     expect(checkbox.checked).toBeTruthy();
     expect(onChangeSpy).not.toHaveBeenCalled();
   });
@@ -248,21 +252,19 @@ describe('Checkbox', function () {
   it.each`
     Name          | Component   | props
     ${'Checkbox'} | ${Checkbox} | ${{onChange: onChangeSpy, isReadOnly: true}}
-  `('$Name supports uncontrolled readOnly', function ({Component, props}) {
+  `('$Name supports uncontrolled readOnly', async function ({Component, props}) {
     let {getByLabelText} = render(<Component {...props}>Click Me</Component>);
 
     let checkbox = getByLabelText('Click Me');
     expect(checkbox.value).toBe('on');
     expect(checkbox.checked).toBeFalsy();
 
-    act(() => {
-      userEvent.click(checkbox);
-    });
+    await user.click(checkbox);
     expect(checkbox.checked).toBeFalsy();
     expect(onChangeSpy).not.toHaveBeenCalled();
   });
 
-  it('supports form reset', () => {
+  it('supports form reset', async () => {
     function Test() {
       let [isSelected, setSelected] = React.useState(false);
       return (
@@ -277,11 +279,11 @@ describe('Checkbox', function () {
     let input = getByTestId('checkbox');
 
     expect(input).not.toBeChecked();
-    act(() => userEvent.click(input));
+    await user.click(input);
     expect(input).toBeChecked();
 
     let button = getByTestId('reset');
-    act(() => userEvent.click(button));
+    await user.click(button);
     expect(input).not.toBeChecked();
   });
 });

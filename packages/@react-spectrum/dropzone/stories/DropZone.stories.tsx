@@ -125,7 +125,7 @@ function Example(props) {
           <Content>
             <FileTrigger
               allowsMultiple
-              onChange={(e) => {
+              onSelect={(e) => {
                 let files = Array.from(e);
                 let rows = files.map((file, index) => ({name: file.name, type: file.type, id: index}));
                 setFilledSrc(rows);
@@ -232,7 +232,7 @@ function DropZoneWithButton(props) {
           </Heading>
           <Content>
             <FileTrigger
-              onChange={(e) => {
+              onSelect={(e) => {
                 let files = Array.from(e);
                 let src = files.map(file => URL.createObjectURL(file));
                 let type = files.map(file => file.type);

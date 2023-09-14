@@ -11,11 +11,16 @@
  */
 
 import {Button, ButtonContext} from '../';
-import {fireEvent, render} from '@react-spectrum/test-utils';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
 describe('Button', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   it('should render a button with default class', () => {
     let {getByRole} = render(<Button>Test</Button>);
     let button = getByRole('button');
@@ -53,35 +58,35 @@ describe('Button', () => {
     expect(button).toHaveAttribute('aria-label', 'test');
   });
 
-  it('should support hover', () => {
+  it('should support hover', async () => {
     let {getByRole} = render(<Button className={({isHovered}) => isHovered ? 'hover' : ''}>Test</Button>);
     let button = getByRole('button');
 
     expect(button).not.toHaveAttribute('data-hovered');
     expect(button).not.toHaveClass('hover');
 
-    userEvent.hover(button);
+    await user.hover(button);
     expect(button).toHaveAttribute('data-hovered', 'true');
     expect(button).toHaveClass('hover');
 
-    userEvent.unhover(button);
+    await user.unhover(button);
     expect(button).not.toHaveAttribute('data-hovered');
     expect(button).not.toHaveClass('hover');
   });
 
-  it('should support focus ring', () => {
+  it('should support focus ring', async () => {
     let {getByRole} = render(<Button className={({isFocusVisible}) => isFocusVisible ? 'focus' : ''}>Test</Button>);
     let button = getByRole('button');
 
     expect(button).not.toHaveAttribute('data-focus-visible');
     expect(button).not.toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(button);
     expect(button).toHaveAttribute('data-focus-visible', 'true');
     expect(button).toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(button).not.toHaveAttribute('data-focus-visible');
     expect(button).not.toHaveClass('focus');
   });

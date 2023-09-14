@@ -161,10 +161,15 @@ import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
       text-align: end;
     }
 
-    &[data-selected] {
+    &[data-selection-mode] {
       padding-left: 24px;
+      &::before {
+        position: absolute;
+        left: 4px;
+        font-weight: 600;
+      }
 
-      &[data-selected]::before {
+      &[data-selection-mode=multiple][data-selected]::before {
         content: '✓';
         content: '✓' / '';
         alt: ' ';
@@ -173,7 +178,7 @@ import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
         font-weight: 600;
       }
 
-      &[role=menuitemradio][data-selected]::before {
+      &[data-selection-mode=single][data-selected]::before {
         content: '●';
         content: '●' / '';
         transform: scale(0.7)
@@ -791,7 +796,7 @@ A `Header` within a `Section` can be targeted with the `.react-aria-Header` CSS 
 
 An `Item` can be targeted with the `.react-aria-Item` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
 
-<StateTable properties={docs.exports.MenuItemRenderProps.properties} />
+<StateTable properties={docs.exports.ItemRenderProps.properties} />
 
 Items also support two slots: a label, and a description. When provided using the `<Text>` element, the item will have `aria-labelledby` and `aria-describedby` attributes pointing to these slots, improving screen reader announcement. See [complex items](#complex-items) for an example.
 

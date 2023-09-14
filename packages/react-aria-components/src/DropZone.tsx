@@ -12,8 +12,10 @@
 
 import {AriaLabelingProps} from '@react-types/shared';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import {DropOptions, mergeProps, useClipboard, useDrop, useFocusRing, useHover, VisuallyHidden} from 'react-aria';
+import {DropOptions, mergeProps, useClipboard, useDrop, useFocusRing, useHover, useLocalizedStringFormatter, VisuallyHidden} from 'react-aria';
 import {filterDOMProps, useLabels, useSlotId} from '@react-aria/utils';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
 
@@ -50,9 +52,10 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   let {dropProps, dropButtonProps, isDropTarget} = useDrop({...props, ref: buttonRef, hasDropButton: true});
   let {hoverProps, isHovered} = useHover({});
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   let textId = useSlotId();
-  let ariaLabel = props['aria-label'] || 'DropZone';
+  let ariaLabel = props['aria-label'] || stringFormatter.format('dropzoneLabel');
   let messageId = (isDropTarget && props['aria-labelledby']) ? props['aria-labelledby'] : null;
   let ariaLabelledby = [textId, messageId].filter(Boolean).join(' ');
   let labelProps = useLabels({'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledby});

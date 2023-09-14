@@ -62,6 +62,8 @@ exports.build = async function ({options}) {
 exports.corePresets = [];
 exports.previewPresets = [];
 
+exports.bail = async function (e) {};
+
 async function createParcel(options, isDev = false) {
   await generateHTML(options);
   await generateJS(options);
