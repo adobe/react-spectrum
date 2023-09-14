@@ -20,7 +20,7 @@ import {mergeProps, useLayoutEffect, useSyncRef} from '@react-aria/utils';
 import React, {ReactElement, useContext, useRef, useState} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import {useMenu} from '@react-aria/menu';
+import {useMenu, useSafelyMouseToSubmenu} from '@react-aria/menu';
 import {useTreeState} from '@react-stately/tree';
 
 function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLUListElement>) {
@@ -37,6 +37,9 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
   let scopedRef = useRef(null);
   let state = useTreeState(completeProps);
   let {menuProps} = useMenu(completeProps, state, domRef);
+  let submenuRef = useRef(null);
+  let submenuTriggerRef = useRef(null);
+  let submenuListeners = useSafelyMouseToSubmenu({menuRef: domRef, submenuRef, triggerRef: submenuTriggerRef, isOpen: state.expandedKeys.size > 0});
   let {styleProps} = useStyleProps(completeProps);
   useSyncRef(contextProps, domRef);
 
@@ -47,11 +50,12 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
   }, []);
 
   return (
-    <MenuStateContext.Provider value={{container: scopedRef, menu: domRef, menuTreeState, state}}>
+    <MenuStateContext.Provider value={{container: scopedRef, menu: domRef, menuTreeState, state, submenu: submenuRef, submenuTrigger: submenuTriggerRef}}>
       <FocusScope contain={state.expandedKeys.size > 0}>
         <div style={{overflow: 'hidden', maxHeight: '100%', display: 'inline-flex', borderRadius: 'var(--spectrum-alias-border-radius-regular)'}}>
           <ul
             {...menuProps}
+            {...submenuListeners}
             {...styleProps}
             ref={domRef}
             className={

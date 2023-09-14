@@ -13,7 +13,7 @@
 import {classNames, useIsMobileDevice} from '@react-spectrum/utils';
 import {MenuContext, MenuDialogContext, useMenuStateContext} from './context';
 import {Popover, Tray} from '@react-spectrum/overlays';
-import React, {Key, ReactElement, useRef} from 'react';
+import React, {Key, ReactElement} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useSubMenuTrigger} from '@react-aria/menu';
 import {useSubMenuTriggerState} from '@react-stately/menu';
@@ -32,15 +32,13 @@ export interface SpectrumSubMenuTriggerProps extends Omit<SubMenuTriggerProps, '
 
 // TODO: got rid of user provided ref support since it doesn't really make sense for submenus IMO
 function SubMenuTrigger(props: SubMenuTriggerProps) {
-  let triggerRef = useRef<HTMLLIElement>();
-  let menuRef = useRef<HTMLUListElement>();
   let {
     children,
     targetKey
   } = props;
 
   let [menuTrigger, menu] = React.Children.toArray(children);
-  let {container, menu: parentMenuRef, menuTreeState, state} = useMenuStateContext();
+  let {container, menu: parentMenuRef, menuTreeState, state, submenu: menuRef, submenuTrigger: triggerRef} = useMenuStateContext();
   let subMenuTriggerState = useSubMenuTriggerState({triggerKey: targetKey}, {...menuTreeState, ...state});
   let {subMenuTriggerProps, subMenuProps, popoverProps, overlayProps} = useSubMenuTrigger({parentMenuRef, subMenuRef: menuRef}, subMenuTriggerState, triggerRef);
   let isMobile = useIsMobileDevice();
