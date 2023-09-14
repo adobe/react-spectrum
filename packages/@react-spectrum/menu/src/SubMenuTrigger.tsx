@@ -11,7 +11,7 @@
  */
 
 import {classNames, useIsMobileDevice} from '@react-spectrum/utils';
-import {MenuContext, MenuDialogContext, useMenuStateContext} from './context';
+import {MenuContext, SubMenuTriggerContext, useMenuStateContext} from './context';
 import {Popover} from '@react-spectrum/overlays';
 import React, {Key, ReactElement, useRef} from 'react';
 import ReactDOM from 'react-dom';
@@ -91,8 +91,7 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
 
   return (
     <>
-      {/* TODO rename MenuDialogContext to something more generic */}
-      <MenuDialogContext.Provider value={{triggerRef, ...subMenuTriggerProps}}>{menuTrigger}</MenuDialogContext.Provider>
+      <SubMenuTriggerContext.Provider value={{triggerRef, ...subMenuTriggerProps}}>{menuTrigger}</SubMenuTriggerContext.Provider>
       <MenuContext.Provider value={menuContext}>
         {overlay}
       </MenuContext.Provider>

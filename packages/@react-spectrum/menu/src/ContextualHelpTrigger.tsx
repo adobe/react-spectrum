@@ -12,11 +12,12 @@
 
 import {classNames, SlotProvider, useIsMobileDevice} from '@react-spectrum/utils';
 import {DismissButton} from '@react-aria/overlays';
+import {getInteractionModality} from '@react-aria/interactions';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
 import {ItemProps} from '@react-types/shared';
-import {MenuDialogContext, useMenuStateContext} from './context';
 import {Modal, Popover} from '@react-spectrum/overlays';
 import React, {Key, ReactElement, useRef} from 'react';
+import {SubMenuTriggerContext, useMenuStateContext} from './context';
 import {useSubMenuTrigger} from '@react-aria/menu';
 import {useSubMenuTriggerState} from '@react-stately/menu';
 
@@ -51,7 +52,7 @@ function ContextualHelpTrigger<T>(props: MenuDialogTriggerProps<T>): ReactElemen
   let isMobile = useIsMobileDevice();
 
   let onBlurWithin = (e) => {
-    if (e.relatedTarget && popoverRef.current && !popoverRef.current?.UNSAFE_getDOMNode().contains(e.relatedTarget)) {
+    if (e.relatedTarget && popoverRef.current && (!popoverRef.current?.UNSAFE_getDOMNode().contains(e.relatedTarget) && !(e.relatedTarget === triggerRef.current && getInteractionModality() === 'pointer'))) {
       if (subMenuTriggerState.isOpen) {
         subMenuTriggerState.close();
       }
@@ -59,7 +60,7 @@ function ContextualHelpTrigger<T>(props: MenuDialogTriggerProps<T>): ReactElemen
   };
   return (
     <>
-      <MenuDialogContext.Provider value={{isUnavailable, triggerRef, ...subMenuTriggerProps}}>{trigger}</MenuDialogContext.Provider>
+      <SubMenuTriggerContext.Provider value={{isUnavailable, triggerRef, ...subMenuTriggerProps}}>{trigger}</SubMenuTriggerContext.Provider>
       <SlotProvider slots={slots}>
         {
           isMobile ? (
