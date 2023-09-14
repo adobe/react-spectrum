@@ -43,21 +43,17 @@ category: Drag and drop
 ```tsx example
 import Upload from '@spectrum-icons/illustrations/Upload';
 
-function Example() {
-  return (
-    <DropZone
-      maxWidth="size-3000">
-      <IllustratedMessage>
-        <Upload />
-        <Heading>
-          <Text slot="label">
-            Drag and drop your file
-          </Text>
-        </Heading>
-      </IllustratedMessage>
-    </DropZone>
-  );
-}
+<DropZone
+  maxWidth="size-3000">
+  <IllustratedMessage>
+    <Upload />
+    <Heading>
+      <Text slot="label">
+        Drag and drop your file
+      </Text>
+    </Heading>
+  </IllustratedMessage>
+</DropZone>
 ```
 
 
@@ -315,10 +311,14 @@ A drop zone displays visual feedback to the user when a drag hovers over the dro
 ```tsx example
 
 function Example() {
+  let [isFilled, setIsFilled] = React.useState(false);
+
   return (
     <DropZone
       maxWidth="size-3000"
-      getDropOperation={(types) => types.has('image/png') ? 'copy' : 'cancel'}>
+      isFilled={isFilled}
+      getDropOperation={(types) => types.has('image/png') ? 'copy' : 'cancel'}
+      onDrop={() => setIsFilled(true)}>
       <IllustratedMessage>
         <Upload />
         <Heading>
