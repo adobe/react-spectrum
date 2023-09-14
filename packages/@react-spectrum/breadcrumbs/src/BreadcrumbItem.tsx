@@ -67,7 +67,7 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
           UNSAFE_className={
             classNames(
               styles,
-          'spectrum-Breadcrumbs-itemSeparator',
+              'spectrum-Breadcrumbs-itemSeparator',
               {
                 'is-reversed': direction === 'rtl'
               }
