@@ -45,6 +45,13 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
   let subMenuTriggerState = useSubMenuTriggerState({triggerKey: targetKey}, {...menuTreeState, ...state});
   let {subMenuTriggerProps, subMenuProps, popoverProps, overlayProps} = useSubMenuTrigger({parentMenuRef, subMenuRef: menuRef}, subMenuTriggerState, triggerRef);
   let isMobile = useIsMobileDevice();
+  let onBackButtonPress = () => {
+    subMenuTriggerState.close();
+    if (parentMenuRef.current && !parentMenuRef.current.contains(document.activeElement)) {
+      // TODO: needs a delay for the parent menu in the tray to no longer be display: none
+      requestAnimationFrame(() => parentMenuRef.current.focus());
+    }
+  };
   let menuContext = {
     ...subMenuProps,
     ref: menuRef,
@@ -52,12 +59,16 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
       width: '100%',
       maxHeight: 'inherit'
     } : undefined,
-    UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile})
+    UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile}),
+    ...(isMobile && {onBackButtonPress})
   };
 
   let overlay;
   if (isMobile && trayContainerRef.current && subMenuTriggerState.isOpen) {
     // TODO: Will need the same SSR stuff as Overlay? Might not since this trigger should theoretically only be mounted if a parent menu is mounted and thus we aren't in a SSR state
+    // TODO: Deleting uneeded handlers for Tray experience since Tray is a Spectrum specific implementation detail
+    delete subMenuTriggerProps.onBlur;
+    delete subMenuTriggerProps.onHoverChange;
     overlay = ReactDOM.createPortal(menu, trayContainerRef.current);
   } else {
     overlay = (

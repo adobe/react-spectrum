@@ -11,7 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import ArrowLeftMedium from '@spectrum-icons/ui/ArrowLeftMedium';
+import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {classNames, useDOMRef, useIsMobileDevice, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {Flex} from '@react-spectrum/layout';
@@ -21,7 +21,7 @@ import intlMessages from '../intl/*.json';
 import {MenuContext, MenuStateContext, useMenuStateContext} from './context';
 import {MenuItem} from './MenuItem';
 import {MenuSection} from './MenuSection';
-import {mergeProps, useLayoutEffect, useSlotId, useSyncRef} from '@react-aria/utils';
+import {mergeProps, useLayoutEffect, useSyncRef} from '@react-aria/utils';
 import React, {ReactElement, useContext, useRef, useState} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
@@ -59,11 +59,9 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
 
   let isMobile = useIsMobileDevice();
   let hasOpenSubMenu = state.expandedKeys.size > 0;
-  // let trayStyles = {opacity: state.expandedKeys.size > 0 ? 0 : 100, position: isSubMenu ? 'absolute' : 'unset', width: '100%'};
   let trayStyles = {
     ...(hasOpenSubMenu && {
-      height: '0px',
-      maxHeight: '0px'
+      display: 'none'
     }),
     width: '100%'
   };
@@ -72,29 +70,27 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
   let backButtonLabel = stringFormatter.format('backButton', {
     prevMenuButton: backButtonText
   });
-  // TODO: add code to position absolute the subMenu and opacity 0 the non leaf menus? But that means
   // TODO: add slide transition
   return (
     <MenuStateContext.Provider value={{popoverContainerRef, trayContainerRef, menu: domRef, menuTreeState, state}}>
       {/* TODO: this is a tray container for the base menu, each sub menu should also have the same so that we can still have the proper MenuState context nesting? */}
       <div ref={trayContainerRef} />
       <FocusScope contain={state.expandedKeys.size > 0}>
+        {/* TODO: move the below styles into spectrum css */}
         <div style={{overflow: 'hidden', maxHeight: '100%', display: 'inline-flex', flexDirection: 'column', borderRadius: 'var(--spectrum-alias-border-radius-regular)', ...(isMobile && trayStyles)}}>
           {isMobile && isSubMenu && state.expandedKeys.size === 0 && (
             // TODO: check labeling with team and get translated strings
-            // Also fix styling, get rid of Flex with normal div if we don't need it
-            <Flex>
+            <Flex marginStart="size-10">
+              {/* TODO: should it even have the same styles of ActionButton (press down styles)? Should label be part of the button? */}
               <ActionButton
                 aria-label={backButtonLabel}
                 isQuiet
-                onPress={() => {
-                  // TODO: Perhaps get this from MenuContext from SubMenuTrigger since Tray is a spectrum detail
-                  completeProps.onSubMenuClose();
-                }}>
-                {direction === 'rtl' ? <ArrowLeftMedium UNSAFE_style={{rotate: '180deg'}} /> : <ArrowLeftMedium />}
+                onPress={contextProps.onBackButtonPress}>
+                {/* We don't have a ArrowLeftSmall so make due with ArrowDownSmall and transforms */}
+                {direction === 'rtl' ? <ArrowDownSmall UNSAFE_style={{rotate: '270deg'}} /> : <ArrowDownSmall UNSAFE_style={{rotate: '90deg'}} />}
               </ActionButton>
-              {/* TODO style text positioning */}
-              <span style={{display: 'flex'}}>{backButtonText}</span>
+              {/* TODO move styles to menu css,  --spectrum-heading-subtitle3-text-color is the color, weight is var(--spectrum-global-font-weight-bold) here */}
+              <span style={{display: 'flex', marginTop: '7px', fontWeight: 700, color: 'var(--spectrum-global-color-gray-900)'}}>{backButtonText}</span>
             </Flex>
           )}
           <ul
