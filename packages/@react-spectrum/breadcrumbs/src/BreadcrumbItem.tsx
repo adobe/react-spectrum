@@ -11,8 +11,9 @@
  */
 
 import {BreadcrumbItemProps} from '@react-types/breadcrumbs';
-import ChevronRightSmall from '@spectrum-icons/ui/ChevronRightSmall';
+// eslint-disable-next-line monorepo/no-internal-import
 import ChevronRight from '@spectrum-icons/express/ChevronRight';
+import ChevronRightSmall from '@spectrum-icons/ui/ChevronRightSmall';
 import {classNames, getWrappedElement} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
@@ -61,30 +62,31 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
         {element}
       </FocusRing>
-      {isCurrent === false && (provider?.theme?.global?.express ?
-          (<ChevronRight
-              UNSAFE_className={
-                  classNames(
-                      styles,
-                      'spectrum-Breadcrumbs-itemSeparator',
-                      {
-                          'is-reversed': direction === 'rtl'
-                      }
-                  )
+      {isCurrent === false && (provider?.theme?.global?.express ? (
+        <ChevronRight
+          UNSAFE_className={
+            classNames(
+              styles,
+          'spectrum-Breadcrumbs-itemSeparator',
+              {
+                'is-reversed': direction === 'rtl'
               }
-          />)
-          :
-          (<ChevronRightSmall
-              UNSAFE_className={
-                classNames(
-                  styles,
-                  'spectrum-Breadcrumbs-itemSeparator',
-                  {
-                    'is-reversed': direction === 'rtl'
-                  }
-                )
-          }
-        />)
+            )
+          } />
+      )
+      :
+      (
+        <ChevronRightSmall
+          UNSAFE_className={
+            classNames(
+              styles,
+              'spectrum-Breadcrumbs-itemSeparator',
+              {
+                'is-reversed': direction === 'rtl'
+              }
+            )
+          } />
+      )
       )}
     </Fragment>
   );
