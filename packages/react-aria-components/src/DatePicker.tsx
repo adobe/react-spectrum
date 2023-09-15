@@ -12,7 +12,7 @@
 import {AriaDatePickerProps, AriaDateRangePickerProps, DateValue, useDatePicker, useDateRangePicker, useFocusRing} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CalendarContext, RangeCalendarContext} from './Calendar';
-import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, forwardRefType, Provider, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DateFieldContext} from './DateField';
 import {DatePickerState, DateRangePickerState, useDatePickerState, useDateRangePickerState} from 'react-stately';
 import {DialogContext, OverlayTriggerStateContext} from './Dialog';
@@ -78,7 +78,7 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
     calendarProps,
     descriptionProps,
     errorMessageProps
-  } = useDatePicker({...props, label}, state, groupRef);
+  } = useDatePicker({...removeDataAttributes(props), label}, state, groupRef);
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
   let renderProps = useRenderProps({
@@ -150,7 +150,7 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
     calendarProps,
     descriptionProps,
     errorMessageProps
-  } = useDateRangePicker({...props, label}, state, groupRef);
+  } = useDateRangePicker({...removeDataAttributes(props), label}, state, groupRef);
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
   let renderProps = useRenderProps({

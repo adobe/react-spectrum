@@ -13,7 +13,7 @@
 import {AriaSelectProps, HiddenSelect, useFocusRing, useLocalizedStringFormatter, useSelect} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CollectionDocumentContext, ItemRenderProps, useCollectionDocument} from './Collection';
-import {ContextValue, forwardRefType, Hidden, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {ContextValue, forwardRefType, Hidden, Provider, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -94,7 +94,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
     menuProps,
     descriptionProps,
     errorMessageProps
-  } = useSelect({...props, label}, state, buttonRef);
+  } = useSelect({...removeDataAttributes(props), label}, state, buttonRef);
 
   // Make menu width match input + button
   let [buttonWidth, setButtonWidth] = useState<string | null>(null);

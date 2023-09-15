@@ -11,7 +11,7 @@
  */
 
 import {AriaTextFieldProps, useTextField} from 'react-aria';
-import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, DOMProps, forwardRefType, Provider, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
@@ -45,7 +45,7 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   let [labelRef, label] = useSlot();
   let [inputElementType, setInputElementType] = useState('input');
   let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField<any>({
-    ...props,
+    ...removeDataAttributes(props),
     inputElementType,
     label
   }, inputRef);
