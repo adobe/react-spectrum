@@ -87,7 +87,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
       <div
         {...mergeProps(dropProps, hoverProps, DOMProps)}
         {...renderProps}
-        slot={props.slot}
+        slot={props.slot || undefined}
         ref={ref}
         onClick={() => buttonRef.current?.focus()}
         data-hovered={isHovered || undefined}

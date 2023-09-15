@@ -77,7 +77,7 @@ function Link(props: LinkProps, ref: ForwardedRef<HTMLAnchorElement>) {
   return (
     <ElementType
       ref={ref}
-      slot={props.slot}
+      slot={props.slot || undefined}
       {...mergeProps(renderProps, linkProps, hoverProps, focusProps)}
       data-focused={isFocused || undefined}
       data-hovered={isHovered || undefined}

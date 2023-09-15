@@ -12,9 +12,9 @@
 
 import {AriaLabelingProps, LinkDOMProps} from '@react-types/shared';
 import {AriaTabListProps, AriaTabPanelProps, mergeProps, Orientation, useFocusRing, useHover, useTab, useTabList, useTabPanel} from 'react-aria';
-import {BaseCollection, CollectionProps, Document, useCollectionDocument, useCollectionPortal, useSSRCollectionNode} from './Collection';
 import {Collection, Node, TabListState, useTabListState} from 'react-stately';
-import {ContextValue, createHideableComponent, forwardRefType, Hidden, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {CollectionDocumentContext, CollectionPortal, CollectionProps, useCollectionDocument, useSSRCollectionNode} from './Collection';
+import {ContextValue, createHideableComponent, forwardRefType, Hidden, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, Key, RefObject, useContext, useMemo} from 'react';
 
@@ -111,15 +111,8 @@ export interface TabPanelRenderProps {
   state: TabListState<unknown>
 }
 
-interface InternalTabsContextValue {
-  state: TabListState<object>,
-  orientation: Orientation,
-  keyboardActivation: 'automatic' | 'manual'
-}
-
 export const TabsContext = createContext<ContextValue<TabsProps, HTMLDivElement>>(null);
-const InternalTabsContext = createContext<InternalTabsContextValue | null>(null);
-const DocumentContext = createContext<Document<any, BaseCollection<any>> | null>(null);
+export const TabListStateContext = createContext<TabListState<object> | null>(null);
 
 function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TabsContext);
@@ -136,9 +129,9 @@ function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
       {/* Render a hidden copy of the children so that we can build the collection before constructing the state.
         * This should always come before the real DOM content so we have built the collection by the time it renders during SSR. */}
       <Hidden>
-        <DocumentContext.Provider value={document}>
+        <CollectionDocumentContext.Provider value={document}>
           {children}
-        </DocumentContext.Provider>
+        </CollectionDocumentContext.Provider>
       </Hidden>
       <TabsInner props={props} collection={collection} tabsRef={ref} />
     </>
@@ -152,7 +145,7 @@ interface TabsInnerProps {
 }
 
 function TabsInner({props, tabsRef: ref, collection}: TabsInnerProps) {
-  let {orientation = 'horizontal', keyboardActivation = 'automatic'} = props;
+  let {orientation = 'horizontal'} = props;
   let state = useTabListState({
     ...props,
     collection,
@@ -176,14 +169,18 @@ function TabsInner({props, tabsRef: ref, collection}: TabsInnerProps) {
       {...focusProps}
       {...renderProps}
       ref={ref}
-      slot={props.slot}
+      slot={props.slot || undefined}
       data-focused={isFocused || undefined}
       data-orientation={orientation}
       data-focus-visible={isFocusVisible || undefined}
       data-disabled={state.isDisabled || undefined}>
-      <InternalTabsContext.Provider value={{state, orientation, keyboardActivation}}>
+      <Provider
+        values={[
+          [TabsContext, props],
+          [TabListStateContext, state]
+        ]}>
         {renderProps.children}
-      </InternalTabsContext.Provider>
+      </Provider>
     </div>
   );
 }
@@ -195,14 +192,10 @@ const _Tabs = /*#__PURE__*/ (forwardRef as forwardRefType)(Tabs);
 export {_Tabs as Tabs};
 
 function TabList<T extends object>(props: TabListProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element {
-  let document = useContext(DocumentContext);
+  let document = useContext(CollectionDocumentContext);
   return document
-    ? <TabListPortal props={props} document={document} />
+    ? <CollectionPortal {...props} />
     : <TabListInner props={props} forwardedRef={ref} />;
-}
-
-function TabListPortal({props, document}) {
-  return <>{useCollectionPortal(props, document)}</>;
 }
 
 interface TabListInnerProps<T> {
@@ -211,7 +204,8 @@ interface TabListInnerProps<T> {
 }
 
 function TabListInner<T extends object>({props, forwardedRef: ref}: TabListInnerProps<T>) {
-  let {state, orientation, keyboardActivation} = useContext(InternalTabsContext)!;
+  let state = useContext(TabListStateContext)!;
+  let {orientation = 'horizontal', keyboardActivation = 'automatic'} = useSlottedContext(TabsContext)!;
   let objectRef = useObjectRef(ref);
 
   let {tabListProps} = useTabList({
@@ -308,7 +302,7 @@ function TabInner({item, state}: {item: Node<object>, state: TabListState<object
 }
 
 function TabPanel(props: TabPanelProps, forwardedRef: ForwardedRef<HTMLDivElement>) {
-  const {state} = useContext(InternalTabsContext)!;
+  const state = useContext(TabListStateContext)!;
   let ref = useObjectRef<HTMLDivElement>(forwardedRef);
   let {tabPanelProps} = useTabPanel(props, state, ref);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();

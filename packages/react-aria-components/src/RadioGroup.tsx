@@ -103,7 +103,7 @@ export interface RadioRenderProps {
 
 export const RadioGroupContext = createContext<ContextValue<RadioGroupProps, HTMLDivElement>>(null);
 export const RadioContext = createContext<ContextValue<Partial<RadioProps>, HTMLInputElement>>(null);
-let InternalRadioContext = createContext<RadioGroupState | null>(null);
+export const RadioGroupStateContext = createContext<RadioGroupState | null>(null);
 
 function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, RadioGroupContext);
@@ -132,7 +132,7 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
       {...radioGroupProps}
       {...renderProps}
       ref={ref}
-      slot={props.slot}
+      slot={props.slot || undefined}
       data-orientation={props.orientation || 'vertical'}
       data-invalid={state.isInvalid || undefined}
       data-disabled={state.isDisabled || undefined}
@@ -140,7 +140,7 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
       data-required={state.isRequired || undefined}>
       <Provider
         values={[
-          [InternalRadioContext, state],
+          [RadioGroupStateContext, state],
           [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
           [TextContext, {
             slots: {
@@ -157,7 +157,7 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
 
 function Radio(props: RadioProps, ref: ForwardedRef<HTMLInputElement>) {
   [props, ref] = useContextProps(props, ref, RadioContext);
-  let state = React.useContext(InternalRadioContext)!;
+  let state = React.useContext(RadioGroupStateContext)!;
   let domRef = useObjectRef(ref);
   let {inputProps, isSelected, isDisabled, isPressed: isPressedKeyboard} = useRadio({
     ...props,

@@ -12,13 +12,14 @@
 
 import {AriaSelectProps, HiddenSelect, useFocusRing, useLocalizedStringFormatter, useSelect} from 'react-aria';
 import {ButtonContext} from './Button';
-import {ContextValue, forwardRefType, Hidden, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {CollectionDocumentContext, ItemRenderProps, useCollectionDocument} from './Collection';
+import {ContextValue, forwardRefType, Hidden, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {ItemRenderProps, useCollectionDocument} from './Collection';
 import {LabelContext} from './Label';
-import {ListBoxContext} from './ListBox';
+import {ListBoxContext, ListStateContext} from './ListBox';
+import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {SelectState, useSelectState} from 'react-stately';
@@ -59,14 +60,8 @@ export interface SelectRenderProps {
 
 export interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'items'>, RenderProps<SelectRenderProps>, SlotProps {}
 
-interface SelectValueContext {
-  state: SelectState<unknown>,
-  valueProps: HTMLAttributes<HTMLElement>,
-  placeholder?: string
-}
-
 export const SelectContext = createContext<ContextValue<SelectProps<any>, HTMLDivElement>>(null);
-const InternalSelectContext = createContext<SelectValueContext | null>(null);
+export const SelectStateContext = createContext<SelectState<unknown> | null>(null);
 
 function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SelectContext);
@@ -130,24 +125,28 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
       <Hidden>
         <Provider
           values={[
-            [InternalSelectContext, {state, valueProps, placeholder: props.placeholder}],
-            [ListBoxContext, {document}]
+            [SelectContext, props],
+            [SelectStateContext, state],
+            [CollectionDocumentContext, document]
           ]}>
           {renderProps.children}
         </Provider>
       </Hidden>
       <Provider
         values={[
-          [InternalSelectContext, {state, valueProps, placeholder: props.placeholder}],
+          [SelectContext, props],
+          [SelectStateContext, state],
+          [SelectValueContext, valueProps],
           [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
           [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen}],
+          [OverlayTriggerStateContext, state],
           [PopoverContext, {
-            state,
             triggerRef: buttonRef,
             placement: 'bottom start',
             style: {'--trigger-width': buttonWidth} as React.CSSProperties
           }],
-          [ListBoxContext, {state, ...menuProps}],
+          [ListBoxContext, menuProps],
+          [ListStateContext, state],
           [TextContext, {
             slots: {
               description: descriptionProps,
@@ -160,7 +159,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
           {...renderProps}
           {...focusProps}
           ref={ref}
-          slot={props.slot}
+          slot={props.slot || undefined}
           data-focused={state.isFocused || undefined}
           data-focus-visible={isFocusVisible || undefined}
           data-open={state.isOpen || undefined}
@@ -198,8 +197,12 @@ export interface SelectValueRenderProps<T> {
 
 export interface SelectValueProps<T extends object> extends Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>, RenderProps<SelectValueRenderProps<T>> {}
 
+export const SelectValueContext = createContext<ContextValue<SelectValueProps<any>, HTMLSpanElement>>(null);
+
 function SelectValue<T extends object>(props: SelectValueProps<T>, ref: ForwardedRef<HTMLSpanElement>) {
-  let {state, valueProps, placeholder} = useContext(InternalSelectContext)!;
+  [props, ref] = useContextProps(props, ref, SelectValueContext);
+  let state = useContext(SelectStateContext)!;
+  let {placeholder} = useSlottedContext(SelectContext)!;
   let selectedItem = state.selectedKey != null
     ? state.collection.getItem(state.selectedKey)
     : null;
@@ -233,10 +236,9 @@ function SelectValue<T extends object>(props: SelectValueProps<T>, ref: Forwarde
   });
 
   let DOMProps = filterDOMProps(props);
-  delete DOMProps.id;
 
   return (
-    <span ref={ref} {...DOMProps} {...valueProps} {...renderProps} data-placeholder={!selectedItem || undefined}>
+    <span ref={ref} {...DOMProps} {...renderProps} data-placeholder={!selectedItem || undefined}>
       {/* clear description and error message slots */}
       <TextContext.Provider value={undefined}>
         {renderProps.children}
