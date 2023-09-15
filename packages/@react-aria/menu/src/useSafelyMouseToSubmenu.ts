@@ -72,6 +72,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
       let anglePointer = Math.atan2(prevMouseY - mouseY, (direction === 'left' ? -(mouseX - prevMouseX) : mouseX - prevMouseX));
       setIsPointerMovingTowardsSubmenu(anglePointer < angleTop && anglePointer > angleBottom);
 
+      lastProcessedTime.current = currentTime;
       prevPointerPos.current = {x: mouseX, y: mouseY};
     };
 
@@ -81,7 +82,6 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
       window.removeEventListener('pointermove', onPointerMove);
     };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, submenuRef]);
   
   return {
