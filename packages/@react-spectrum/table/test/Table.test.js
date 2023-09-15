@@ -4630,6 +4630,158 @@ export let tableTests = () => {
       expect(table).toHaveAttribute('tabIndex', '0');
     });
   });
+
+  describe('links', function () {
+    describe.each(['mouse', 'keyboard'])('%s', (type) => {
+      let trigger = async (item, key = 'Enter') => {
+        if (type === 'mouse') {
+          await user.click(item);
+        } else {
+          fireEvent.keyDown(item, {key});
+          fireEvent.keyUp(item, {key});
+        }
+      };
+
+      it('should support links with selectionMode="none"', async function () {
+        let {getAllByRole} = render(
+          <Provider theme={theme}>
+            <TableView aria-label="Table">
+              <TableHeader>
+                <Column>Foo</Column>
+                <Column>Bar</Column>
+                <Column>Baz</Column>
+              </TableHeader>
+              <TableBody>
+                <Row href="https://google.com">
+                  <Cell>Foo 1</Cell>
+                  <Cell>Bar 1</Cell>
+                  <Cell>Baz 1</Cell>
+                </Row>
+                <Row href="https://adobe.com">
+                  <Cell>Foo 2</Cell>
+                  <Cell>Bar 2</Cell>
+                  <Cell>Baz 2</Cell>
+                </Row>
+              </TableBody>
+            </TableView>
+          </Provider>
+        );
+
+        let items = getAllByRole('row').slice(1);
+        for (let item of items) {
+          expect(item.tagName).not.toBe('A');
+          expect(item).toHaveAttribute('data-href');
+        }
+
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick, {once: true});
+        await trigger(items[0]);
+        expect(onClick).toHaveBeenCalledTimes(1);
+        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+      });
+
+      it.each(['single', 'multiple'])('should support links with selectionStyle="checkbox" selectionMode="%s"', async function (selectionMode) {
+        let {getAllByRole} = render(
+          <Provider theme={theme}>
+            <TableView aria-label="Table" selectionMode={selectionMode}>
+              <TableHeader>
+                <Column>Foo</Column>
+                <Column>Bar</Column>
+                <Column>Baz</Column>
+              </TableHeader>
+              <TableBody>
+                <Row href="https://google.com">
+                  <Cell>Foo 1</Cell>
+                  <Cell>Bar 1</Cell>
+                  <Cell>Baz 1</Cell>
+                </Row>
+                <Row href="https://adobe.com">
+                  <Cell>Foo 2</Cell>
+                  <Cell>Bar 2</Cell>
+                  <Cell>Baz 2</Cell>
+                </Row>
+              </TableBody>
+            </TableView>
+          </Provider>
+        );
+
+        let items = getAllByRole('row').slice(1);
+        for (let item of items) {
+          expect(item.tagName).not.toBe('A');
+          expect(item).toHaveAttribute('data-href');
+        }
+
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick, {once: true});
+        await trigger(items[0]);
+        expect(onClick).toHaveBeenCalledTimes(1);
+        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+
+        await user.click(within(items[0]).getByRole('checkbox'));
+        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+
+        onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick);
+        await trigger(items[1], ' ');
+        expect(onClick).not.toHaveBeenCalled();
+        expect(items[1]).toHaveAttribute('aria-selected', 'true');
+        document.removeEventListener('click', onClick);
+      });
+
+      it.each(['single', 'multiple'])('should support links with selectionStyle="highlight" selectionMode="%s"', async function (selectionMode) {
+        let {getAllByRole} = render(
+          <Provider theme={theme}>
+            <TableView aria-label="Table" selectionMode={selectionMode} selectionStyle="highlight">
+              <TableHeader>
+                <Column>Foo</Column>
+                <Column>Bar</Column>
+                <Column>Baz</Column>
+              </TableHeader>
+              <TableBody>
+                <Row href="https://google.com">
+                  <Cell>Foo 1</Cell>
+                  <Cell>Bar 1</Cell>
+                  <Cell>Baz 1</Cell>
+                </Row>
+                <Row href="https://adobe.com">
+                  <Cell>Foo 2</Cell>
+                  <Cell>Bar 2</Cell>
+                  <Cell>Baz 2</Cell>
+                </Row>
+              </TableBody>
+            </TableView>
+          </Provider>
+        );
+
+        let items = getAllByRole('row').slice(1);
+        for (let item of items) {
+          expect(item.tagName).not.toBe('A');
+          expect(item).toHaveAttribute('data-href');
+        }
+
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick);
+        await trigger(items[0], ' ');
+        expect(onClick).not.toHaveBeenCalled();
+        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+        document.removeEventListener('click', onClick);
+
+        onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick, {once: true});
+        if (type === 'mouse') {
+          await user.dblClick(items[0], {pointerType: 'mouse'});
+        } else {
+          fireEvent.keyDown(items[0], {key: 'Enter'});
+          fireEvent.keyUp(items[0], {key: 'Enter'});
+        }
+        expect(onClick).toHaveBeenCalledTimes(1);
+        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+      });
+    });
+  });
 };
 
 describe('TableView', tableTests);

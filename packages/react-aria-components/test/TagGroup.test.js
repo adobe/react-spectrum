@@ -242,4 +242,58 @@ describe('TagGroup', () => {
     expect(grid).toHaveAttribute('data-empty', 'true');
     expect(grid).toHaveTextContent('No results');
   });
+
+  describe('supports links', function () {
+    describe.each(['mouse', 'keyboard'])('%s', (type) => {
+      let trigger = async item => {
+        if (type === 'mouse') {
+          await user.click(item);
+        } else {
+          fireEvent.keyDown(item, {key: 'Enter'});
+          fireEvent.keyUp(item, {key: 'Enter'});
+        }
+      };
+
+      it.each(['none', 'single', 'multiple'])('with selectionMode = %s', async function (selectionMode) {
+        let onSelectionChange = jest.fn();
+        let tree = render(
+          <TagGroup selectionMode={selectionMode} onSelectionChange={onSelectionChange}>
+            <Label>Tags</Label>
+            <TagList>
+              <Tag href="https://google.com">One</Tag>
+              <Tag href="https://adobe.com">Two</Tag>
+              <Tag>Non link</Tag>
+            </TagList>
+          </TagGroup>
+        );
+
+        let items = tree.getAllByRole('row');
+        expect(items).toHaveLength(3);
+        expect(items[0].tagName).not.toBe('A');
+        expect(items[0]).toHaveAttribute('data-href', 'https://google.com');
+        expect(items[1].tagName).not.toBe('A');
+        expect(items[1]).toHaveAttribute('data-href', 'https://adobe.com');
+        expect(items[2]).not.toHaveAttribute('data-href');
+
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick);
+
+        await trigger(items[1]);
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onClick).toHaveBeenCalledTimes(1);
+
+        if (selectionMode !== 'none') {
+          await trigger(items[2]);
+          expect(onSelectionChange).toHaveBeenCalledTimes(1);
+          expect(items[2]).toHaveAttribute('aria-selected', 'true');
+
+          await trigger(items[1]);
+          expect(onSelectionChange).toHaveBeenCalledTimes(1);
+          expect(onClick).toHaveBeenCalledTimes(2);
+
+          document.removeEventListener('click', onClick);
+        }
+      });
+    });
+  });
 });

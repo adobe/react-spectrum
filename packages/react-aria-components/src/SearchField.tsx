@@ -75,7 +75,7 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
       {...DOMProps}
       {...renderProps}
       ref={ref}
-      slot={props.slot}
+      slot={props.slot || undefined}
       data-empty={state.value === '' || undefined}
       data-disabled={props.isDisabled || undefined}
       data-invalid={props.isInvalid || undefined}>

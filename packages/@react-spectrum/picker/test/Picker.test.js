@@ -2233,4 +2233,44 @@ describe('Picker', function () {
       expect(input).toHaveValue('one');
     });
   });
+
+  describe('links', () => {
+    it.each(['mouse', 'keyboard'])('supports links on items with %s', async (type) => {
+      let tree = render(
+        <Provider theme={theme}>
+          <Picker label="Picker with links">
+            <Item href="https://google.com">One</Item>
+            <Item href="https://adobe.com">Two</Item>
+          </Picker>
+        </Provider>
+      );
+
+      let button = tree.getByRole('button');
+      triggerPress(button);
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      let listbox = tree.getByRole('listbox');
+      let items = within(listbox).getAllByRole('option');
+      expect(items).toHaveLength(2);
+      expect(items[0].tagName).toBe('A');
+      expect(items[0]).toHaveAttribute('href', 'https://google.com');
+      expect(items[1].tagName).toBe('A');
+      expect(items[1]).toHaveAttribute('href', 'https://adobe.com');
+
+      if (type === 'mouse') {
+        triggerPress(items[0]);
+      } else {
+        fireEvent.keyDown(items[0], {key: 'Enter'});
+        fireEvent.keyUp(items[0], {key: 'Enter'});
+      }
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(button).toHaveTextContent('Select an option…');
+      expect(listbox).not.toBeInTheDocument();
+    });
+  });
 });

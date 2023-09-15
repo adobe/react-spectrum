@@ -117,7 +117,7 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLInputElement>) {
   return (
     <label
       {...mergeProps(DOMProps, pressProps, hoverProps, renderProps)}
-      slot={props.slot}
+      slot={props.slot || undefined}
       data-selected={isSelected || undefined}
       data-pressed={pressed || undefined}
       data-hovered={isHovered || undefined}
