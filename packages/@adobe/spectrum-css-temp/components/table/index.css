@@ -370,6 +370,10 @@ svg.spectrum-Table-sortedIcon {
   cursor: default;
   transition: background-color var(--spectrum-global-animation-duration-100) ease-in-out;
 
+  &[data-href] {
+    cursor: pointer;
+  }
+
   &:focus {
     outline: 0;
   }

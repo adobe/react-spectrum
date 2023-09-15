@@ -11,6 +11,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/breadcrumbs';
+import utilsDocs from 'docs:@react-aria/utils';
 import {HeaderInfo, PropTable, TypeLink, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/breadcrumbs/package.json';
 
@@ -77,6 +78,22 @@ function Example() {
   );
 }
 ```
+
+## Links
+
+By default, interacting with an item in Breadcrumbs triggers `onAction`. Items may also be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component.
+
+```tsx example
+<Breadcrumbs>
+  <Item href="/">Home</Item>
+  <Item href="/react-spectrum">React Spectrum</Item>
+  <Item href="/react-spectrum/Breadcrumbs">Breadcrumbs</Item>
+</Breadcrumbs>
+```
+
+### Client side routing
+
+The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={utilsDocs.links} type={utilsDocs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
 ## Props
 

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {focusWithoutScrolling, isWebKit} from './index';
+import {focusWithoutScrolling, isMac, isWebKit} from './index';
 import {LinkDOMProps} from '@react-types/shared';
 import React, {createContext, ReactNode, useContext, useMemo} from 'react';
 
@@ -27,6 +27,10 @@ interface RouterProviderProps {
   children: ReactNode
 }
 
+/**
+ * A RouterProvider accepts a `navigate` function from a framework or client side router,
+ * and provides it to all nested React Aria links to enable client side navigation.
+ */
 export function RouterProvider(props: RouterProviderProps) {
   let {children, navigate} = props;
 
@@ -72,7 +76,7 @@ export function openLink(target: HTMLAnchorElement, modifiers: Modifiers, setOpe
   let {metaKey, ctrlKey, altKey, shiftKey} = modifiers;
   // WebKit does not support firing click events with modifier keys, but does support keyboard events.
   // https://github.com/WebKit/WebKit/blob/c03d0ac6e6db178f90923a0a63080b5ca210d25f/Source/WebCore/html/HTMLAnchorElement.cpp#L184
-  let event = isWebKit() && process.env.NODE_ENV !== 'test'
+  let event = isWebKit() && isMac() && process.env.NODE_ENV !== 'test'
     // @ts-ignore - keyIdentifier is a non-standard property, but it's what webkit expects
     ? new KeyboardEvent('keydown', {keyIdentifier: 'Enter', metaKey, ctrlKey, altKey, shiftKey})
     : new MouseEvent('click', {metaKey, ctrlKey, altKey, shiftKey, bubbles: true, cancelable: true});

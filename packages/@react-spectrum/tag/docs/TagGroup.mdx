@@ -11,7 +11,8 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/tag';
-import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
+import utilsDocs from 'docs:@react-aria/utils';
+import {HeaderInfo, PropTable, PageDescription, TypeLink} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/tag/package.json';
 
 ```jsx import
@@ -138,6 +139,23 @@ TagGroup supports an `onAction` handler that, when used with the `actionLabel` p
   <Item>Shopping</Item>
 </TagGroup>
 ```
+
+## Links
+
+Tags may be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component.
+
+```tsx example
+<TagGroup label="Links">
+  <Item href="https://adobe.com/" target="_blank">Adobe</Item>
+  <Item href="https://apple.com/" target="_blank">Apple</Item>
+  <Item href="https://google.com/" target="_blank">Google</Item>
+  <Item href="https://microsoft.com/" target="_blank">Microsoft</Item>
+</TagGroup>
+```
+
+### Client side routing
+
+The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={utilsDocs.links} type={utilsDocs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
 ## Props
 
