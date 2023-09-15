@@ -48,7 +48,7 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
     visibleMonths = 1
   } = props;
   let {styleProps} = useStyleProps(props);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/calendar');
   let {direction} = useLocale();
   let currentMonth = state.visibleRange.start;
   let monthDateFormatter = useDateFormatter({

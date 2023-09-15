@@ -71,7 +71,7 @@ const MESSAGES = {
  */
 export function useDrag(options: DragOptions): DragResult {
   let {hasDragButton} = options;
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/dnd');
   let state = useRef({
     options,
     x: 0,

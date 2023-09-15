@@ -14,6 +14,9 @@ import {LocalizedString, LocalizedStringDictionary, LocalizedStringFormatter, Lo
 import {useLocale} from './context';
 import {useMemo} from 'react';
 
+const localeSymbol = Symbol.for('react-aria.i18n.locale');
+const stringsSymbol = Symbol.for('react-aria.i18n.strings');
+
 const cache = new WeakMap();
 function getCachedDictionary<K extends string, T extends LocalizedString>(strings: LocalizedStrings<K, T>): LocalizedStringDictionary<K, T> {
   let dictionary = cache.get(strings);
@@ -26,12 +29,46 @@ function getCachedDictionary<K extends string, T extends LocalizedString>(string
 }
 
 /**
+ * Returns a cached LocalizedStringDictionary for the given strings.
+ */
+export function useLocalizedStringDicationary<K extends string = string, T extends LocalizedString = string>(strings: LocalizedStrings<K, T>, packageName?: string): LocalizedStringDictionary<K, T> {
+  strings = getGlobalStrings(packageName) || strings;
+  return getCachedDictionary(strings);
+}
+
+/**
  * Provides localized string formatting for the current locale. Supports interpolating variables,
  * selecting the correct pluralization, and formatting numbers. Automatically updates when the locale changes.
  * @param strings - A mapping of languages to localized strings by key.
  */
-export function useLocalizedStringFormatter<K extends string = string, T extends LocalizedString = string>(strings: LocalizedStrings<K, T>): LocalizedStringFormatter<K, T> {
+export function useLocalizedStringFormatter<K extends string = string, T extends LocalizedString = string>(strings: LocalizedStrings<K, T>, packageName?: string): LocalizedStringFormatter<K, T> {
   let {locale} = useLocale();
-  let dictionary = useMemo(() => getCachedDictionary(strings), [strings]);
+  if (typeof window !== 'undefined' && window[localeSymbol]) {
+    let serverLocale = window[localeSymbol];
+    if (locale !== serverLocale) {
+      console.warn(`Client locale "${locale} does not match server rendered locale "${serverLocale}". Ensure that your app is wrapped in an I18nProvider with the same locale as passed to LocalizedStringProvider.`);
+    }
+    locale = serverLocale;
+  }
+  let dictionary = useLocalizedStringDicationary(strings, packageName);
   return useMemo(() => new LocalizedStringFormatter(locale, dictionary), [locale, dictionary]);
+}
+
+let cachedGlobalStrings: LocalizedStrings<any, any> | null | undefined = undefined;
+
+function getGlobalStrings(packageName: string) {
+  if (typeof window === 'undefined') {
+    return undefined;
+  }
+
+  let locale = window[localeSymbol];
+  if (cachedGlobalStrings === undefined) {
+    let globalStrings = window[stringsSymbol];
+    cachedGlobalStrings = {};
+    for (let pkg in globalStrings) {
+      cachedGlobalStrings[pkg] = {[locale]: globalStrings[pkg]};
+    }
+  }
+
+  return cachedGlobalStrings?.[packageName];
 }

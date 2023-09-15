@@ -45,7 +45,7 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
   let {target} = props;
   let {collection} = state;
 
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/dnd');
   let dragSession = DragManager.useDragSession();
   let {dropProps} = useDroppableItem(props, state, ref);
   let id = useId();

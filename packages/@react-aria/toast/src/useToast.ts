@@ -85,7 +85,7 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
 
   let titleId = useId();
   let descriptionId = useSlotId();
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/toast');
 
   return {
     toastProps: {

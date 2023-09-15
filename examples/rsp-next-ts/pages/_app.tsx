@@ -23,7 +23,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   enableTableNestedRows();
 
   return (
-    <Provider theme={lightTheme} colorScheme={theme}>
+    <Provider theme={lightTheme} colorScheme={theme} locale="en">
       <Grid
         areas={["header", "content"]}
         columns={["1fr"]}

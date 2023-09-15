@@ -21,7 +21,7 @@ interface PaginationAriaProps {
 }
 
 export function usePagination(props: PaginationAriaProps, state: PaginationState) {
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/pagination');
 
   let onPrevious = () => {
     state.onDecrement();

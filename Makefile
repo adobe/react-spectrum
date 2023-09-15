@@ -95,6 +95,7 @@ build:
 	done
 	sed -i.bak s/\.js/\.mjs/ packages/@react-aria/i18n/dist/import.mjs
 	rm packages/@react-aria/i18n/dist/import.mjs.bak
+	node scripts/buildI18n.js
 
 website:
 	yarn build:docs --public-url /reactspectrum/$$(git rev-parse HEAD)/docs --dist-dir dist/$$(git rev-parse HEAD)/docs

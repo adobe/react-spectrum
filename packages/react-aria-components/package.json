@@ -8,13 +8,26 @@
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "exports": {
-    "types": "./dist/types.d.ts",
-    "import": "./dist/import.mjs",
-    "require": "./dist/main.js"
+    ".": {
+      "types": "./dist/types.d.ts",
+      "import": "./dist/import.mjs",
+      "require": "./dist/main.js"
+    },
+    "./i18n": {
+      "types": "./i18n/index.d.ts",
+      "import": "./i18n/index.mjs",
+      "require": "./i18n/index.js"
+    },
+    "./i18n/*": {
+      "types": "./i18n/lang.d.ts",
+      "import": "./i18n/*.mjs",
+      "require": "./i18n/*.js"
+    }
   },
   "files": [
     "dist",
-    "src"
+    "src",
+    "i18n"
   ],
   "sideEffects": false,
   "repository": {
@@ -23,7 +36,9 @@
   },
   "dependencies": {
     "@internationalized/date": "^3.5.0",
+    "@internationalized/string": "^3.1.1",
     "@react-aria/focus": "^3.14.1",
+    "@react-aria/i18n": "^3.8.2",
     "@react-aria/interactions": "^3.18.0",
     "@react-aria/utils": "^3.20.0",
     "@react-stately/table": "^3.11.1",

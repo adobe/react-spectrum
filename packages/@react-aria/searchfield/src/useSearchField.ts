@@ -45,7 +45,7 @@ export function useSearchField(
   state: SearchFieldState,
   inputRef: RefObject<HTMLInputElement>
 ): SearchFieldAria {
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/searchfield');
   let {
     isDisabled,
     isReadOnly,

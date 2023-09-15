@@ -53,7 +53,7 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/dialog');
 
   let confirmVariant: SpectrumButtonProps['variant'] = 'primary';
   if (variant) {

@@ -203,7 +203,7 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
   let domRef = useDOMRef(ref);
   let headerRef = useRef<HTMLDivElement>();
   let bodyRef = useRef<HTMLDivElement>();
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/table');
 
   let density = props.density || 'regular';
   let columnLayout = useMemo(
@@ -824,7 +824,7 @@ function ResizableTableColumnHeader(props) {
     headerMenuOpen,
     setHeaderMenuOpen
   } = useTableContext();
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/table');
   let {pressProps, isPressed} = usePress({isDisabled: isEmpty});
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
@@ -1023,7 +1023,7 @@ function TableDragHeaderCell({column}) {
     node: column,
     isVirtualized: true
   }, state, ref);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/table');
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
@@ -1383,7 +1383,7 @@ function ExpandableRowChevron({cell}) {
   let {direction} = useLocale();
   let {state} = useTableContext();
   let expandButtonRef = useRef();
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/table');
   let isExpanded;
 
   if ('expandedKeys' in state) {

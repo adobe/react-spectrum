@@ -47,7 +47,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   let cardViewLayout = useMemo(() => typeof layout === 'function' ? new layout({collator, cardOrientation, scale}) : layout, [layout, collator, cardOrientation, scale]);
   let layoutType = cardViewLayout.layoutType;
 
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/card');
   let {direction} = useLocale();
   let {collection} = useListState(props);
 

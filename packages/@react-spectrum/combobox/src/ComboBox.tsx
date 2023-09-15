@@ -82,7 +82,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     formValue = 'text';
   }
 
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/combobox');
   let isAsync = loadingState != null;
   let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
   let unwrappedPopoverRef = useUnwrapDOMRef(popoverRef);
@@ -218,7 +218,7 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
     menuTrigger
   } = props;
   let {hoverProps, isHovered} = useHover({});
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/combobox');
   let timeout = useRef(null);
   let [showLoading, setShowLoading] = useState(false);
 

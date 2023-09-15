@@ -54,7 +54,7 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
     size,
     ...otherProps
   } = props;
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/dialog');
   let {styleProps} = useStyleProps(otherProps);
 
   size = type === 'popover' ? (size || 'S') : (size || 'L');

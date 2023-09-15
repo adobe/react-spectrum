@@ -68,7 +68,7 @@ export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, st
     ariaSort = isSortedColumn ? sortDirection : 'none';
   }
 
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/table');
   let sortDescription;
   if (allowsSorting) {
     sortDescription = `${stringFormatter.format('sortable')}`;

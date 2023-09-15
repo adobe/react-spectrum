@@ -31,7 +31,7 @@ export function PaginationInput(props: PaginationBase) {
   props = useProviderProps(props);
   let state = usePaginationState(props);
   let {prevButtonProps, nextButtonProps, textProps} = usePagination(props, state);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/pagination');
   let {direction} = useLocale();
   const {maxValue} = props;
 

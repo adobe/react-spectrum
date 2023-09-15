@@ -75,7 +75,7 @@ export interface CalendarCellAria {
 export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarState | RangeCalendarState, ref: RefObject<HTMLElement>): CalendarCellAria {
   let {date, isDisabled} = props;
   let {errorMessageId, selectedDateDescription} = hookData.get(state);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/calendar');
   let dateFormatter = useDateFormatter({
     weekday: 'long',
     day: 'numeric',

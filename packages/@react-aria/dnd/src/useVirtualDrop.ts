@@ -29,7 +29,7 @@ const MESSAGES = {
 };
 
 export function useVirtualDrop(): VirtualDropResult {
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/dnd');
   let modality = useDragModality();
   let dragSession = DragManager.useDragSession();
   let descriptionProps = useDescription(dragSession ? stringFormatter.format(MESSAGES[modality]) : '');

@@ -74,7 +74,7 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
     onSubmit = () => {}
   } = props;
 
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/autocomplete');
   let isAsync = loadingState != null;
   let popoverRef = useRef<DOMRefValue<HTMLDivElement>>(null);
   let unwrappedPopoverRef = useUnwrapDOMRef(popoverRef);
@@ -215,7 +215,7 @@ function _SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>, ref
     clearButtonProps
   } = props;
   let {hoverProps, isHovered} = useHover({});
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/autocomplete');
   let domProps = filterDOMProps(props);
   let timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   let [showLoading, setShowLoading] = useState(false);

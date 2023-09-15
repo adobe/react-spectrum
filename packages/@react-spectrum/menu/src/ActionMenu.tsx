@@ -25,7 +25,7 @@ import {useSlotProps} from '@react-spectrum/utils';
 
 function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: FocusableRef<HTMLButtonElement>) {
   props = useSlotProps(props, 'actionMenu');
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/menu');
   let buttonProps = filterDOMProps(props, {labelable: true});
   if (buttonProps['aria-label'] === undefined) {
     buttonProps['aria-label'] = stringFormatter.format('moreActions');

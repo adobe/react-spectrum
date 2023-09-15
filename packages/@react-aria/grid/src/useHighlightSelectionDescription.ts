@@ -29,7 +29,7 @@ export interface HighlightSelectionDescriptionProps {
  * @param props
  */
 export function useHighlightSelectionDescription(props: HighlightSelectionDescriptionProps): AriaLabelingProps {
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/grid');
   let modality = useInteractionModality();
   // null is the default if the user hasn't interacted with the table at all yet or the rest of the page
   let shouldLongPress = (modality === 'pointer' || modality === 'virtual' || modality == null)

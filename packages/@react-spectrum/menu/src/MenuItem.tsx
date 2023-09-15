@@ -42,7 +42,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
     isVirtualized,
     onAction
   } = props;
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/menu');
   let menuDialogContext = useMenuDialogContext();
   let {triggerRef} = menuDialogContext || {};
   let isMenuDialogTrigger = !!menuDialogContext;

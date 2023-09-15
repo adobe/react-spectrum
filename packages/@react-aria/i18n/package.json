@@ -6,12 +6,20 @@
   "main": "dist/main.js",
   "module": "dist/module.js",
   "exports": {
-    "types": "./dist/types.d.ts",
-    "import": "./dist/import.mjs",
-    "require": "./dist/main.js"
+    ".": {
+      "types": "./dist/types.d.ts",
+      "import": "./dist/import.mjs",
+      "require": "./dist/main.js"
+    },
+    "./server": {
+      "import": "./server/index.mjs",
+      "require": "./server/index.js"
+    }
   },
   "real-main": "dist/real-main.js",
   "real-module": "dist/real-module.js",
+  "server-module": "server/index.mjs",
+  "server-main": "server/index.js",
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "targets": {
@@ -23,6 +31,18 @@
       "includeNodeModules": false
     },
     "real-main": {
+      "outputFormat": "commonjs",
+      "isLibrary": true,
+      "includeNodeModules": false
+    },
+    "server-module": {
+      "source": "src/server.tsx",
+      "outputFormat": "esmodule",
+      "isLibrary": true,
+      "includeNodeModules": false
+    },
+    "server-main": {
+      "source": "src/server.tsx",
       "outputFormat": "commonjs",
       "isLibrary": true,
       "includeNodeModules": false
@@ -38,7 +58,8 @@
   },
   "files": [
     "dist",
-    "src"
+    "src",
+    "server"
   ],
   "sideEffects": false,
   "repository": {

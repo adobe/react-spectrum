@@ -28,7 +28,7 @@ import {VisuallyHidden} from '@react-aria/visually-hidden';
 function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   props = useFormProps(props);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/searchwithin');
   let {styleProps} = useStyleProps(props);
   let {
     children,
