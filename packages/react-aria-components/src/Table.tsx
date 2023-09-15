@@ -1,4 +1,4 @@
-import {AriaLabelingProps} from '@react-types/shared';
+import {AriaLabelingProps, LinkDOMProps} from '@react-types/shared';
 import {BaseCollection, CollectionContext, CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useCollectionChildren, useSSRCollectionNode} from './Collection';
 import {buildHeaderRows, TableColumnResizeState} from '@react-stately/table';
 import {ButtonContext} from './Button';
@@ -7,9 +7,11 @@ import {ColumnSize, ColumnStaticSize, TableCollection as ITableCollection, Table
 import {ContextValue, defaultSlot, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useTableColumnResizeState, useTableState} from 'react-stately';
 import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
-import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
+import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useLocalizedStringFormatter, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
 import {filterDOMProps, useLayoutEffect, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import React, {createContext, ForwardedRef, forwardRef, Key, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 
@@ -594,7 +596,7 @@ export {_TableBody as TableBody};
 
 export interface RowRenderProps extends ItemRenderProps {}
 
-export interface RowProps<T> extends StyleRenderProps<RowRenderProps> {
+export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMProps {
   id?: Key,
   /** A list of columns used when dynamically rendering cells. */
   columns?: Iterable<T>,
@@ -895,6 +897,7 @@ function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivEleme
   if (!layoutState) {
     throw new Error('Wrap your <Table> in a <ResizableTableContainer> to enable column resizing');
   }
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   let {onResizeStart, onResize, onResizeEnd} = useContext(ResizableTableContainerContext)!;
   let {column, triggerRef} = useContext(ColumnResizerContext)!;
@@ -902,8 +905,7 @@ function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivEleme
   let {resizerProps, inputProps, isResizing} = useTableColumnResize(
     {
       column,
-      // TODO: translate
-      'aria-label': props['aria-label'] || 'Resizer',
+      'aria-label': props['aria-label'] || stringFormatter.format('tableResizer'),
       onResizeStart,
       onResize,
       onResizeEnd,

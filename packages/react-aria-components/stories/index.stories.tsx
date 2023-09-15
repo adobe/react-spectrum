@@ -11,11 +11,12 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Text, TimeField, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Tag, TagGroup, TagList, Text, TimeField, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
 import React, {useRef, useState} from 'react';
+import {RouterProvider} from '@react-aria/utils';
 import styles from '../example/index.css';
 import {useListData} from 'react-stately';
 
@@ -37,6 +38,7 @@ export const ComboBoxExample = () => (
         <MyItem>Foo</MyItem>
         <MyItem>Bar</MyItem>
         <MyItem>Baz</MyItem>
+        <MyItem href="http://google.com">Google</MyItem>
       </ListBox>
     </Popover>
   </ComboBox>
@@ -141,13 +143,35 @@ export const ComboBoxRenderPropsListBoxDynamic = () => (
   </ComboBox>
 );
 
-export const ListBoxExample = () => (
-  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace" aria-label="test listbox">
+export const ListBoxExample = (args) => (
+  <ListBox className={styles.menu} {...args} aria-label="test listbox">
     <MyItem>Foo</MyItem>
     <MyItem>Bar</MyItem>
     <MyItem>Baz</MyItem>
+    <MyItem href="http://google.com">Google</MyItem>
   </ListBox>
 );
+
+ListBoxExample.story = {
+  args: {
+    selectionMode: 'none',
+    selectionBehavior: 'toggle'
+  },
+  argTypes: {
+    selectionMode: {
+      control: {
+        type: 'radio',
+        options: ['none', 'single', 'multiple']
+      }
+    },
+    selectionBehavior: {
+      control: {
+        type: 'radio',
+        options: ['toggle', 'replace']
+      }
+    }
+  }
+};
 
 // Known accessibility false positive: https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#listbox
 // also has a aXe landmark error, not sure what it means
@@ -186,6 +210,42 @@ export const ListBoxComplex = () => (
   </ListBox>
 );
 
+export const TagGroupExample = (props) => (
+  <TagGroup {...props}>
+    <Label>Categories</Label>
+    <TagList style={{display: 'flex', gap: 4}}>
+      <MyTag href="https://nytimes.com">News</MyTag>
+      <MyTag>Travel</MyTag>
+      <MyTag>Gaming</MyTag>
+      <MyTag>Shopping</MyTag>
+    </TagList>
+  </TagGroup>
+);
+
+TagGroupExample.args = {
+  selectionMode: 'none',
+  selectionBehavior: 'toggle'
+};
+
+TagGroupExample.argTypes = {
+  selectionMode: {
+    control: {
+      type: 'inline-radio',
+      options: ['none', 'single', 'multiple']
+    }
+  },
+  selectionBehavior: {
+    control: {
+      type: 'inline-radio',
+      options: ['toggle', 'replace']
+    }
+  }
+};
+
+function MyTag(props) {
+  return <Tag {...props} style={({isSelected}) => ({border: '1px solid gray', borderRadius: 4, padding: '0 4px', background: isSelected ? 'black' : '', color: isSelected ? 'white' : '', cursor: props.href ? 'pointer' : 'default'})} />;
+}
+
 export const SelectExample = () => (
   <Select>
     <Label style={{display: 'block'}}>Test</Label>
@@ -201,6 +261,7 @@ export const SelectExample = () => (
         <MyItem>Foo</MyItem>
         <MyItem>Bar</MyItem>
         <MyItem>Baz</MyItem>
+        <MyItem href="http://google.com">Google</MyItem>
       </ListBox>
     </Popover>
   </Select>
@@ -220,6 +281,7 @@ export const SelectRenderProps = () => (
             <MyItem>Foo</MyItem>
             <MyItem>Bar</MyItem>
             <MyItem>Baz</MyItem>
+            <MyItem href="http://google.com">Google</MyItem>
           </ListBox>
         </Popover>
       </>
@@ -231,12 +293,13 @@ export const MenuExample = () => (
   <MenuTrigger>
     <Button aria-label="Menu">☰</Button>
     <Popover>
-      <Menu className={styles.menu}>
+      <Menu className={styles.menu} onAction={action('onAction')}>
         <Section className={styles.group}>
           <Header style={{fontSize: '1.2em'}}>Section 1</Header>
           <MyItem>Foo</MyItem>
           <MyItem>Bar</MyItem>
           <MyItem>Baz</MyItem>
+          <MyItem href="https://google.com">Google</MyItem>
         </Section>
         <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
         <Section className={styles.group}>
@@ -585,25 +648,30 @@ export const ModalExample = () => (
   </DialogTrigger>
 );
 
-// Has error with invalid aria-controls, bug documented here: https://github.com/adobe/react-spectrum/issues/4781#issuecomment-1641057070
-export const TabsExample = () => (
-  <Tabs>
-    <TabList aria-label="History of Ancient Rome" style={{display: 'flex', gap: 8}}>
-      <CustomTab id="FoR">Founding of Rome</CustomTab>
-      <CustomTab id="MaR">Monarchy and Republic</CustomTab>
-      <CustomTab id="Emp">Empire</CustomTab>
-    </TabList>
-    <TabPanel id="FoR">
-      Arma virumque cano, Troiae qui primus ab oris.
-    </TabPanel>
-    <TabPanel id="MaR">
-      Senatus Populusque Romanus.
-    </TabPanel>
-    <TabPanel id="Emp">
-      Alea jacta est.
-    </TabPanel>
-  </Tabs>
-);
+export const TabsExample = () => {
+  let [url, setUrl] = useState('/FoR');
+
+  return (
+    <RouterProvider navigate={setUrl}>
+      <Tabs selectedKey={url}>
+        <TabList aria-label="History of Ancient Rome" style={{display: 'flex', gap: 8}}>
+          <CustomTab id="/FoR" href="/FoR">Founding of Rome</CustomTab>
+          <CustomTab id="/MaR" href="/MaR">Monarchy and Republic</CustomTab>
+          <CustomTab id="/Emp" href="/Emp">Empire</CustomTab>
+        </TabList>
+        <TabPanel id="/FoR">
+          Arma virumque cano, Troiae qui primus ab oris.
+        </TabPanel>
+        <TabPanel id="/MaR">
+          Senatus Populusque Romanus.
+        </TabPanel>
+        <TabPanel id="/Emp">
+          Alea jacta est.
+        </TabPanel>
+      </Tabs>
+    </RouterProvider>
+  );
+};
 
 // Has error with invalid aria-controls, bug documented here: https://github.com/adobe/react-spectrum/issues/4781#issuecomment-1641057070
 export const TabsRenderProps = () => {

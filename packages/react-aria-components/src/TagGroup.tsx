@@ -16,6 +16,7 @@ import {CollectionDocumentContext, CollectionProps, ItemProps, ItemRenderProps, 
 import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
 import {LabelContext} from './Label';
+import {LinkDOMProps} from '@react-types/shared';
 import {ListStateContext} from './ListBox';
 import {Node, useListState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, Key, ReactNode, useContext, useEffect, useRef} from 'react';
@@ -179,7 +180,7 @@ export interface TagRenderProps extends Omit<ItemRenderProps, 'allowsDragging' |
   allowsRemoving: boolean
 }
 
-export interface TagProps extends RenderProps<TagRenderProps> {
+export interface TagProps extends RenderProps<TagRenderProps>, LinkDOMProps {
   /** A unique id for the tag. */
   id?: Key,
   /**

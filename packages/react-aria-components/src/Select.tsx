@@ -10,11 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaSelectProps, HiddenSelect, useFocusRing, useSelect} from 'react-aria';
+import {AriaSelectProps, HiddenSelect, useFocusRing, useLocalizedStringFormatter, useSelect} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CollectionDocumentContext, ItemRenderProps, useCollectionDocument} from './Collection';
 import {ContextValue, forwardRefType, Hidden, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListStateContext} from './ListBox';
 import {OverlayTriggerStateContext} from './Dialog';
@@ -220,10 +222,11 @@ function SelectValue<T extends object>(props: SelectValueProps<T>, ref: Forwarde
     });
   }
 
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+
   let renderProps = useRenderProps({
     ...props,
-    // TODO: localize this.
-    defaultChildren: rendered || placeholder || 'Select an item',
+    defaultChildren: rendered || placeholder || stringFormatter.format('selectPlaceholder'),
     defaultClassName: 'react-aria-SelectValue',
     values: {
       selectedItem: state.selectedItem?.value as T ?? null,

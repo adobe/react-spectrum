@@ -66,7 +66,7 @@ function BreadcrumbsInner<T extends object>({props, collection, breadcrumbsRef: 
 }
 
 /**
- * Breadcrumbs display a heirarchy of links to the current page or resource in an application.
+ * Breadcrumbs display a hierarchy of links to the current page or resource in an application.
  */
 const _Breadcrumbs = /*#__PURE__*/ (forwardRef as forwardRefType)(Breadcrumbs);
 export {_Breadcrumbs as Breadcrumbs};
