@@ -12,10 +12,10 @@
 
 import {AriaLinkOptions, mergeProps, useFocusRing, useHover, useLink} from 'react-aria';
 import {ContextValue, forwardRefType, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import {filterDOMProps, mergeRefs} from '@react-aria/utils';
-import React, {createContext, ForwardedRef, forwardRef, useMemo} from 'react';
+import {LinkDOMProps} from '@react-types/shared';
+import React, {createContext, ElementType, ForwardedRef, forwardRef} from 'react';
 
-export interface LinkProps extends Omit<AriaLinkOptions, 'elementType'>, RenderProps<LinkRenderProps>, SlotProps {}
+export interface LinkProps extends Omit<AriaLinkOptions, 'elementType'>, LinkDOMProps, RenderProps<LinkRenderProps>, SlotProps {}
 
 export interface LinkRenderProps {
   /**
@@ -55,8 +55,8 @@ export const LinkContext = createContext<ContextValue<LinkProps, HTMLAnchorEleme
 function Link(props: LinkProps, ref: ForwardedRef<HTMLAnchorElement>) {
   [props, ref] = useContextProps(props, ref, LinkContext);
 
-  let elementType = typeof props.children === 'string' || typeof props.children === 'function' ? 'span' : 'a';
-  let {linkProps, isPressed} = useLink({...props, elementType}, ref);
+  let ElementType: ElementType = props.href ? 'a' : 'span';
+  let {linkProps, isPressed} = useLink({...props, elementType: ElementType}, ref);
 
   let {hoverProps, isHovered} = useHover(props);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
@@ -74,26 +74,20 @@ function Link(props: LinkProps, ref: ForwardedRef<HTMLAnchorElement>) {
     }
   });
 
-  let DOMProps = filterDOMProps(props);
-  delete DOMProps.id;
-
-  let element: any = typeof renderProps.children === 'string'
-    ? <span>{renderProps.children}</span>
-    : React.Children.only(renderProps.children);
-
-  return React.cloneElement(element, {
-    ref: useMemo(() => element.ref ? mergeRefs(element.ref, ref) : ref, [element.ref, ref]),
-    slot: props.slot,
-    ...mergeProps(DOMProps, renderProps, linkProps, hoverProps, focusProps, {
-      children: element.props.children,
-      'data-focused': isFocused || undefined,
-      'data-hovered': isHovered || undefined,
-      'data-pressed': isPressed || undefined,
-      'data-focus-visible': isFocusVisible || undefined,
-      'data-current': !!props['aria-current'] || undefined,
-      'data-disabled': props.isDisabled  || undefined
-    }, element.props)
-  });
+  return (
+    <ElementType
+      ref={ref}
+      slot={props.slot}
+      {...mergeProps(renderProps, linkProps, hoverProps, focusProps)}
+      data-focused={isFocused || undefined}
+      data-hovered={isHovered || undefined}
+      data-pressed={isPressed || undefined}
+      data-focus-visible={isFocusVisible || undefined}
+      data-current={!!props['aria-current'] || undefined}
+      data-disabled={props.isDisabled  || undefined}>
+      {renderProps.children}
+    </ElementType>
+  );
 }
 
 /**

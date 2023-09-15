@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps} from '@react-types/shared';
+import {AriaLabelingProps, LinkDOMProps} from '@react-types/shared';
 import {AriaTabListProps, AriaTabPanelProps, mergeProps, Orientation, useFocusRing, useHover, useTab, useTabList, useTabPanel} from 'react-aria';
 import {BaseCollection, CollectionProps, Document, useCollectionDocument, useCollectionPortal, useSSRCollectionNode} from './Collection';
 import {Collection, Node, TabListState, useTabListState} from 'react-stately';
@@ -42,7 +42,7 @@ export interface TabListRenderProps {
   state: TabListState<unknown>
 }
 
-export interface TabProps extends RenderProps<TabRenderProps>, AriaLabelingProps {
+export interface TabProps extends RenderProps<TabRenderProps>, AriaLabelingProps, LinkDOMProps {
   id?: Key
 }
 
@@ -269,7 +269,7 @@ export {_Tab as Tab};
 
 function TabInner({item, state}: {item: Node<object>, state: TabListState<object>}) {
   let {key} = item;
-  let ref = useObjectRef<HTMLDivElement>(item.props.ref);
+  let ref = useObjectRef<any>(item.props.ref);
   let {tabProps, isSelected, isDisabled, isPressed} = useTab({key}, state, ref);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let {hoverProps, isHovered} = useHover({
@@ -291,11 +291,12 @@ function TabInner({item, state}: {item: Node<object>, state: TabListState<object
     }
   });
 
-  let DOMProps = filterDOMProps(item.props);
+  let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
+  let DOMProps = filterDOMProps(item.props as any, {isLink: !!item.props.href});
   delete DOMProps.id;
 
   return (
-    <div
+    <ElementType
       {...mergeProps(DOMProps, tabProps, focusProps, hoverProps, renderProps)}
       ref={ref}
       data-selected={isSelected || undefined}

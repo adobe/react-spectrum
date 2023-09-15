@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {CollectionBase} from '@react-types/shared';
+import {CollectionBase, LinkDOMProps} from '@react-types/shared';
 import {createPortal} from 'react-dom';
 import {forwardRefType, RenderProps, StyleProps} from './utils';
 import {Collection as ICollection, Node, SelectionBehavior, SelectionMode, ItemProps as SharedItemProps, SectionProps as SharedSectionProps} from 'react-stately';
@@ -876,7 +876,7 @@ export function useSSRCollectionNode<T extends Element>(Type: string, props: obj
   return <Type ref={itemRef}>{children}</Type>;
 }
 
-export interface ItemProps<T = object> extends Omit<SharedItemProps<T>, 'children'>, RenderProps<ItemRenderProps> {
+export interface ItemProps<T = object> extends Omit<SharedItemProps<T>, 'children'>, RenderProps<ItemRenderProps>, LinkDOMProps {
   /** The unique id of the item. */
   id?: Key,
   /** The object value that this item represents. When using dynamic collections, this is set automatically. */

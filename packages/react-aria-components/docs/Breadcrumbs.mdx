@@ -46,8 +46,8 @@ type: component
 import {Breadcrumbs, Breadcrumb, Link} from 'react-aria-components';
 
 <Breadcrumbs>
-  <Breadcrumb><Link><a href="/">Home</a></Link></Breadcrumb>
-  <Breadcrumb><Link><a href="/react-aria">React Aria</a></Link></Breadcrumb>
+  <Breadcrumb><Link href="/">Home</Link></Breadcrumb>
+  <Breadcrumb><Link href="/react-aria">React Aria</Link></Breadcrumb>
   <Breadcrumb><Link>Breadcrumbs</Link></Breadcrumb>
 </Breadcrumbs>
 ```
@@ -127,7 +127,7 @@ import {Breadcrumbs, Breadcrumb, Link} from 'react-aria-components';
 Breadcrumbs provide a list of links to parent pages of the current page in hierarchical order.
 `Breadcrumbs` helps implement these in an accessible way.
 
-* **Flexible** – Support for navigation links, JavaScript handled links, or custom element types (e.g. router links).
+* **Flexible** – Support for HTML navigation links, JavaScript handled links, and client side routing.
 * **Accessible** – Implemented as an ordered list of links. The last link is automatically marked as the current page using `aria-current`.
 * **Styleable** – Hover, press, and keyboard focus states are provided for easy styling. These states only apply when interacting with an appropriate input device, unlike CSS pseudo classes.
 
@@ -207,18 +207,39 @@ function Example() {
 }
 ```
 
-## Router links
+### Client side routing
 
-The `<Link>` component can wrap a custom link element provided by a router like [React Router](https://reactrouter.com/en/main).
+The `<Link>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the `RouterProvider` component at the root of your app. Any `<Link>` within a `<RouterProvider>` will trigger the provided `navigate` function when pressed, and prevent the browser default navigation behavior.
+
+This example uses React Router but the structure is applicable for any router.
 
 ```tsx
-import {Link as RouterLink} from 'react-router-dom';
+import {RouterProvider} from 'react-aria-components';
+import {useNavigate} from 'react-router-dom';
 
-<Breadcrumbs>
-  <Breadcrumb><Link><RouterLink to="/foo">Foo</RouterLink></Link></Breadcrumb>
-  <Breadcrumb><Link>Bar</Link></Breadcrumb>
-</Breadcrumbs>
+function App({children}) {
+  let navigate = useNavigate();
+  return (
+    <RouterProvider navigate={navigate}>
+      {children}
+    </RouterProvider>
+  );
+}
 ```
+
+With this setup in the root of your app, any link within it will automatically trigger client side routing.
+
+```tsx
+<App>
+  {/* ... */}
+  <Breadcrumbs>
+    <Breadcrumb><Link href="/foo">Foo</Link></Breadcrumb>
+    <Breadcrumb><Link>Bar</Link></Breadcrumb>
+  </Breadcrumbs>
+</App>
+```
+
+Note that external links to different origins will not trigger client side routing.
 
 ## Separator icons
 
@@ -229,7 +250,7 @@ import ChevronIcon from '@spectrum-icons/workflow/ChevronDoubleRight';
 
 <Breadcrumbs>
   <Breadcrumb className="my-item">
-    <Link><a href="/">Home</a></Link>
+    <Link href="/">Home</Link>
     <ChevronIcon size="S" />
   </Breadcrumb>
   <Breadcrumb><Link>React Aria</Link></Breadcrumb>
@@ -256,8 +277,8 @@ When breadcrumbs are used as a main navigation element for a page, they can be p
 ```tsx example
 <nav aria-label="Breadcrumbs">
   <Breadcrumbs>
-    <Breadcrumb><Link><a href="/">Home</a></Link></Breadcrumb>
-    <Breadcrumb><Link><a href="/react-aria">React Aria</a></Link></Breadcrumb>
+    <Breadcrumb><Link href="/">Home</Link></Breadcrumb>
+    <Breadcrumb><Link href="/react-aria">React Aria</Link></Breadcrumb>
     <Breadcrumb><Link>Breadcrumbs</Link></Breadcrumb>
   </Breadcrumbs>
 </nav>
@@ -271,8 +292,8 @@ Breadcrumbs can be disabled using the `isDisabled` prop. This indicates that nav
 
 ```tsx example
 <Breadcrumbs isDisabled>
-  <Breadcrumb><Link><a href="/">Home</a></Link></Breadcrumb>
-  <Breadcrumb><Link><a href="/react-aria">React Aria</a></Link></Breadcrumb>
+  <Breadcrumb><Link href="/">Home</Link></Breadcrumb>
+  <Breadcrumb><Link href="/react-aria">React Aria</Link></Breadcrumb>
   <Breadcrumb><Link>Breadcrumbs</Link></Breadcrumb>
 </Breadcrumbs>
 ```
@@ -281,8 +302,8 @@ Individual breadcrumbs can also be disabled by passing the `isDisabled` prop to 
 
 ```tsx example
 <Breadcrumbs>
-  <Breadcrumb><Link><a href="/">Home</a></Link></Breadcrumb>
-  <Breadcrumb><Link isDisabled><a href="/react-aria">React Aria</a></Link></Breadcrumb>
+  <Breadcrumb><Link href="/">Home</Link></Breadcrumb>
+  <Breadcrumb><Link isDisabled href="/react-aria">React Aria</Link></Breadcrumb>
   <Breadcrumb><Link>Breadcrumbs</Link></Breadcrumb>
 </Breadcrumbs>
 ```

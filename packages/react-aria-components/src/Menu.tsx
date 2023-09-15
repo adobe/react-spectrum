@@ -175,7 +175,7 @@ interface MenuItemProps<T> {
 
 function MenuItem<T>({item}: MenuItemProps<T>) {
   let state = useContext(InternalMenuContext)!;
-  let ref = useObjectRef<HTMLDivElement>(item.props.ref);
+  let ref = useObjectRef<any>(item.props.ref);
   let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({key: item.key}, state, ref);
 
   let props: ItemProps<T> = item.props;
@@ -194,11 +194,12 @@ function MenuItem<T>({item}: MenuItemProps<T>) {
     }
   });
 
-  let DOMProps = filterDOMProps(props as any);
+  let ElementType: React.ElementType = props.href ? 'a' : 'div';
+  let DOMProps = filterDOMProps(props as any, {isLink: !!props.href});
   delete DOMProps.id;
 
   return (
-    <div
+    <ElementType
       {...mergeProps(DOMProps, menuItemProps, focusProps)}
       {...renderProps}
       ref={ref}
@@ -221,6 +222,6 @@ function MenuItem<T>({item}: MenuItemProps<T>) {
         ]}>
         {renderProps.children}
       </Provider>
-    </div>
+    </ElementType>
   );
 }

@@ -344,7 +344,7 @@ interface OptionProps<T> {
 }
 
 function Option<T>({item}: OptionProps<T>) {
-  let ref = useObjectRef<HTMLDivElement>(item.props.ref);
+  let ref = useObjectRef<any>(item.props.ref);
   let {state, shouldFocusOnHover, dragAndDropHooks, dragState, dropState} = useContext(InternalListBoxContext)!;
   let {optionProps, labelProps, descriptionProps, ...states} = useOption(
     {key: item.key},
@@ -399,13 +399,17 @@ function Option<T>({item}: OptionProps<T>) {
     }
   }, [item.textValue]);
 
+  let ElementType: React.ElementType = props.href ? 'a' : 'div';
+  let DOMProps = filterDOMProps(props as any, {isLink: !!props.href});
+  delete DOMProps.id;
+
   return (
     <>
       {dragAndDropHooks?.useDropIndicator &&
         renderDropIndicator({type: 'item', key: item.key, dropPosition: 'before'})
       }
-      <div
-        {...mergeProps(filterDOMProps(props as any), optionProps, hoverProps, draggableItem?.dragProps, droppableItem?.dropProps)}
+      <ElementType
+        {...mergeProps(DOMProps, optionProps, hoverProps, draggableItem?.dragProps, droppableItem?.dropProps)}
         {...renderProps}
         ref={ref}
         data-allows-dragging={!!dragState || undefined}
@@ -429,7 +433,7 @@ function Option<T>({item}: OptionProps<T>) {
           ]}>
           {renderProps.children}
         </Provider>
-      </div>
+      </ElementType>
       {dragAndDropHooks?.useDropIndicator && state.collection.getKeyAfter(item.key) == null &&
         renderDropIndicator({type: 'item', key: item.key, dropPosition: 'after'})
       }

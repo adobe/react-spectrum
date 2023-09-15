@@ -160,18 +160,19 @@ function Tab<T>(props: TabProps<T>) {
   let {item, state} = props;
   let {key, rendered} = item;
 
-  let ref = useRef<HTMLDivElement>();
+  let ref = useRef<any>();
   let {tabProps, isSelected, isDisabled} = useTab({key}, state, ref);
 
   let {hoverProps, isHovered} = useHover({
     ...props
   });
-  let domProps = filterDOMProps(item.props);
+  let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
+  let domProps = filterDOMProps(item.props as any, {isLink: !!item.props.href});
   delete domProps.id;
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      <div
+      <ElementType
         {...mergeProps(tabProps, hoverProps, domProps)}
         ref={ref}
         className={classNames(
@@ -197,7 +198,7 @@ function Tab<T>(props: TabProps<T>) {
             ? <Text>{rendered}</Text>
             : rendered}
         </SlotProvider>
-      </div>
+      </ElementType>
     </FocusRing>
   );
 }
@@ -402,12 +403,7 @@ function TabPicker<T>(props: TabPickerProps<T>) {
     setPickerNode(node.current);
   }, [ref]);
 
-  let items = [...state.collection].map((item) => ({
-    rendered: item.rendered,
-    textValue: item.textValue,
-    id: item.key
-  }));
-
+  let items = [...state.collection];
   let pickerProps = {
     'aria-labelledby': ariaLabeledBy,
     'aria-label': ariaLabel
@@ -453,7 +449,7 @@ function TabPicker<T>(props: TabPickerProps<T>) {
           disabledKeys={state.disabledKeys}
           onSelectionChange={state.setSelectedKey}
           UNSAFE_className={classNames(styles, 'spectrum-Tabs-picker')}>
-          {item => <Item textValue={item.textValue}>{item.rendered}</Item>}
+          {item => <Item {...item.props}>{item.rendered}</Item>}
         </Picker>
         {pickerNode && <TabLine orientation="horizontal" selectedTab={pickerNode} selectedKey={state.selectedKey} />}
       </SlotProvider>

@@ -52,7 +52,8 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
     isUnavailable = menuDialogContext.isUnavailable;
   }
 
-  let domProps = filterDOMProps(item.props);
+  let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
+  let domProps = filterDOMProps(item.props, {isLink: !!item.props.href});
 
   let {
     closeOnSelect
@@ -66,7 +67,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   let isSelected = state.selectionManager.isSelected(key);
   let isDisabled = state.disabledKeys.has(key);
 
-  let itemref = useRef<HTMLLIElement>(null);
+  let itemref = useRef<any>(null);
   let ref = useObjectRef(useMemo(() => mergeRefs(itemref, triggerRef), [itemref, triggerRef]));
 
   let {
@@ -101,7 +102,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      <li
+      <ElementType
         {...mergeProps(menuItemProps, domProps)}
         ref={ref}
         className={classNames(
@@ -147,7 +148,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
             </SlotProvider>
           </ClearSlots>
         </Grid>
-      </li>
+      </ElementType>
     </FocusRing>
   );
 }
