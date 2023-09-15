@@ -158,4 +158,14 @@ describe('DateRangePicker', () => {
     let end = document.querySelector('input[name=end]');
     expect(end).toHaveValue('2023-01-20');
   });
+
+  it('should render data- attributes only on the outer element', () => {
+    let {getAllByTestId} = render(
+      <TestDateRangePicker data-testid="date-picker" />
+    );
+    let outerEl = getAllByTestId('date-picker');
+    expect(outerEl).toHaveLength(1);
+    expect(outerEl[0]).toHaveClass('react-aria-DateRangePicker');
+  });
+
 });

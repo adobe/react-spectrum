@@ -26,7 +26,7 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
   let triggerRef = useRef<HTMLElement>();
   let domRef = useDOMRef(ref);
   let menuTriggerRef = domRef || triggerRef;
-  let menuRef = useRef<HTMLUListElement>();
+  let menuRef = useRef<HTMLDivElement>();
   let {
     children,
     align = 'start',

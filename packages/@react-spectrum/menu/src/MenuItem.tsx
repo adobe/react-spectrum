@@ -44,6 +44,9 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
     isVirtualized,
     onAction
   } = props;
+  let {
+    closeOnSelect
+  } = useMenuContext();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let subMenuTriggerContext = useSubMenuTriggerContext();
   let {direction} = useLocale();
@@ -51,11 +54,8 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   // If menuDialogContext.isUnavailable is explicitly false, then disable all submenu behavior
   let isMenuDialogTrigger = !!subMenuTriggerContext && subMenuTriggerContext.isUnavailable !== false;
   let isUnavailable;
-  let {
-    closeOnSelect
-  } = useMenuContext();
-
-  let domProps = filterDOMProps(item.props);
+  let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
+  let domProps = filterDOMProps(item.props, {isLink: !!item.props.href});
 
   let {
     rendered,
@@ -69,7 +69,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   let isDisabled = state.disabledKeys.has(key);
   let isSelectable = !isMenuDialogTrigger && state.selectionManager.selectionMode !== 'none';
   let isSelected = isSelectable && state.selectionManager.isSelected(key);
-  let itemref = useRef<HTMLLIElement>(null);
+  let itemref = useRef<any>(null);
   let ref = useObjectRef(useMemo(() => mergeRefs(itemref, triggerRef), [itemref, triggerRef]));
   let {
     menuItemProps,
@@ -103,7 +103,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      <li
+      <ElementType
         {...mergeProps(menuItemProps, domProps)}
         ref={ref}
         className={classNames(
@@ -153,7 +153,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
             </SlotProvider>
           </ClearSlots>
         </Grid>
-      </li>
+      </ElementType>
     </FocusRing>
   );
 }

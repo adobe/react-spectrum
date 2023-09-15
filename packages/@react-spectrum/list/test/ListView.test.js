@@ -1506,4 +1506,116 @@ describe('ListView', function () {
       expect(document.activeElement).toBe(getRow(tree, 'Item 1'));
     });
   });
+
+  describe('links', function () {
+    describe.each(['mouse', 'keyboard'])('%s', (type) => {
+      let trigger = (item, key = 'Enter') => {
+        if (type === 'mouse') {
+          triggerPress(item);
+        } else {
+          fireEvent.keyDown(item, {key});
+          fireEvent.keyUp(item, {key});
+        }
+      };
+
+      it('should support links with selectionMode="none"', function () {
+        let {getAllByRole} = render(
+          <Provider theme={theme}>
+            <ListView aria-label="listview">
+              <Item href="https://google.com">One</Item>
+              <Item href="https://adobe.com">Two</Item>
+            </ListView>
+          </Provider>
+        );
+
+        let items = getAllByRole('row');
+        for (let item of items) {
+          expect(item.tagName).not.toBe('A');
+          expect(item).toHaveAttribute('data-href');
+        }
+
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick, {once: true});
+        trigger(items[0]);
+        expect(onClick).toHaveBeenCalledTimes(1);
+        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+      });
+
+      it.each(['single', 'multiple'])('should support links with selectionStyle="checkbox" selectionMode="%s"', async function (selectionMode) {
+        let {getAllByRole} = render(
+          <Provider theme={theme}>
+            <ListView aria-label="listview" selectionMode={selectionMode}>
+              <Item href="https://google.com">One</Item>
+              <Item href="https://adobe.com">Two</Item>
+            </ListView>
+          </Provider>
+        );
+
+        let items = getAllByRole('row');
+        for (let item of items) {
+          expect(item.tagName).not.toBe('A');
+          expect(item).toHaveAttribute('data-href');
+        }
+
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick, {once: true});
+        trigger(items[0]);
+        expect(onClick).toHaveBeenCalledTimes(1);
+        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+
+        await user.click(within(items[0]).getByRole('checkbox'));
+        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+
+        onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick);
+        trigger(items[1], ' ');
+        expect(onClick).not.toHaveBeenCalled();
+        expect(items[1]).toHaveAttribute('aria-selected', 'true');
+        window.removeEventListener('click', onClick);
+      });
+
+      it.each(['single', 'multiple'])('should support links with selectionStyle="highlight" selectionMode="%s"', async function (selectionMode) {
+        let {getAllByRole} = render(
+          <Provider theme={theme}>
+            <ListView aria-label="listview" selectionMode={selectionMode} selectionStyle="highlight">
+              <Item href="https://google.com">One</Item>
+              <Item href="https://adobe.com">Two</Item>
+            </ListView>
+          </Provider>
+        );
+
+        let items = getAllByRole('row');
+        for (let item of items) {
+          expect(item.tagName).not.toBe('A');
+          expect(item).toHaveAttribute('data-href');
+        }
+
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick);
+        if (type === 'mouse') {
+          triggerPress(items[0]);
+        } else {
+          fireEvent.keyDown(items[0], {key: ' '});
+          fireEvent.keyUp(items[0], {key: ' '});
+        }
+        expect(onClick).not.toHaveBeenCalled();
+        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+        window.removeEventListener('click', onClick);
+
+        onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick, {once: true});
+        if (type === 'mouse') {
+          await user.dblClick(items[0], {pointerType: 'mouse'});
+        } else {
+          fireEvent.keyDown(items[0], {key: 'Enter'});
+          fireEvent.keyUp(items[0], {key: 'Enter'});
+        }
+        expect(onClick).toHaveBeenCalledTimes(1);
+        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+      });
+    });
+  });
 });

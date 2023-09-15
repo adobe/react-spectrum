@@ -690,6 +690,10 @@ Now you can use `MyCustomLabel` within a `NumberField`, in place of the builtin 
 </NumberField>
 ```
 
+### State
+
+NumberField provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.NumberFieldState} /> object to its children via `NumberFieldStateContext`. This can be used to access and manipulate the NumberField's state.
+
 ### Hooks
 
 If you need to customize things even further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useNumberField](useNumberField.html) for more details.

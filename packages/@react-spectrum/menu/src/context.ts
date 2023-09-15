@@ -20,7 +20,7 @@ export interface MenuContextValue extends Omit<HTMLAttributes<HTMLElement>, 'aut
   closeOnSelect?: boolean,
   shouldFocusWrap?: boolean,
   autoFocus?: boolean | FocusStrategy,
-  ref?: MutableRefObject<HTMLUListElement>,
+  ref?: MutableRefObject<HTMLDivElement>,
   state?: MenuTriggerState,
   menuTreeState?: MenuTreeState,
   onKeyDown?: (e: KeyboardEvent) => void,
@@ -35,7 +35,7 @@ export function useMenuContext(): MenuContextValue {
 
 export interface SubMenuTriggerContextValue extends DOMProps, Pick<PressEvents, 'onPressStart' | 'onPress'>, Pick<HoverEvents, 'onHoverChange'> {
   isUnavailable?: boolean,
-  triggerRef?: MutableRefObject<HTMLLIElement>,
+  triggerRef?: MutableRefObject<HTMLElement>,
   'aria-expanded'?: boolean | 'true' | 'false',
   'aria-controls'?: string,
   'aria-haspopup'?: 'dialog' | 'menu',
@@ -52,7 +52,7 @@ export interface MenuStateContextValue<T> {
   state?: TreeState<T>,
   popoverContainerRef?: RefObject<HTMLElement>,
   trayContainerRef?: RefObject<HTMLElement>,
-  menu?: RefObject<HTMLUListElement>,
+  menu?: RefObject<HTMLDivElement>,
   menuTreeState?: MenuTreeState
 }
 
