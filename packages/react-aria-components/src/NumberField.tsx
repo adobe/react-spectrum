@@ -57,8 +57,7 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
     decrementButtonProps,
     descriptionProps,
     errorMessageProps
-  } = useNumberField({...props, label}, state, inputRef);
-  inputProps = removeDataAttributes(inputProps);
+  } = useNumberField({...removeDataAttributes(props), label}, state, inputRef);
 
   let renderProps = useRenderProps({
     ...props,

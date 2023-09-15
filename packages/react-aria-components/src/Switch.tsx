@@ -66,11 +66,10 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLInputElement>) {
   [props, ref] = useContextProps(props, ref, SwitchContext);
   let state = useToggleState(props);
   let {inputProps, isSelected, isDisabled, isReadOnly, isPressed: isPressedKeyboard} = useSwitch({
-    ...props,
+    ...removeDataAttributes(props),
     // ReactNode type doesn't allow function children.
     children: typeof props.children === 'function' ? true : props.children
   }, state, ref);
-  inputProps = removeDataAttributes(inputProps);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let isInteractionDisabled = props.isDisabled || props.isReadOnly;
 

@@ -77,8 +77,7 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
     calendarProps,
     descriptionProps,
     errorMessageProps
-  } = useDatePicker({...props, label}, state, groupRef);
-  groupProps = removeDataAttributes(groupProps);
+  } = useDatePicker({...removeDataAttributes(props), label}, state, groupRef);
 
   let {locale} = useLocale();
   let fieldState = useDateFieldState({
@@ -159,8 +158,7 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
     calendarProps,
     descriptionProps,
     errorMessageProps
-  } = useDateRangePicker({...props, label}, state, groupRef);
-  groupProps = removeDataAttributes(groupProps);
+  } = useDateRangePicker({...removeDataAttributes(props), label}, state, groupRef);
 
   let {locale} = useLocale();
   let startFieldState = useDateFieldState({

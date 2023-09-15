@@ -52,10 +52,9 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
   let [labelRef, label] = useSlot();
   let state = useSearchFieldState(props);
   let {labelProps, inputProps, clearButtonProps, descriptionProps, errorMessageProps} = useSearchField({
-    ...props,
+    ...removeDataAttributes(props),
     label
   }, state, inputRef);
-  inputProps = removeDataAttributes(inputProps);
 
   let renderProps = useRenderProps({
     ...props,

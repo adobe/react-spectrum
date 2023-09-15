@@ -160,11 +160,10 @@ function Radio(props: RadioProps, ref: ForwardedRef<HTMLInputElement>) {
   let state = React.useContext(InternalRadioContext)!;
   let domRef = useObjectRef(ref);
   let {inputProps, isSelected, isDisabled, isPressed: isPressedKeyboard} = useRadio({
-    ...props,
+    ...removeDataAttributes<RadioProps>(props),
     // ReactNode type doesn't allow function children.
     children: typeof props.children === 'function' ? true : props.children
   }, state, domRef);
-  inputProps = removeDataAttributes(inputProps);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let interactionDisabled = isDisabled || state.isReadOnly;
 

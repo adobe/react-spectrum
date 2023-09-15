@@ -60,11 +60,10 @@ function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: Forwarded
   let fieldRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot();
   let inputRef = useRef<HTMLInputElement>(null);
-  let {labelProps, fieldProps, inputProps, descriptionProps, errorMessageProps} = useDateField({...props, label, inputRef}, state, fieldRef);
-  fieldProps = removeDataAttributes(fieldProps);
+  let {labelProps, fieldProps, inputProps, descriptionProps, errorMessageProps} = useDateField({...removeDataAttributes(props), label, inputRef}, state, fieldRef);
 
   let renderProps = useRenderProps({
-    ...props,
+    ...removeDataAttributes(props),
     values: {
       state,
       isInvalid: state.isInvalid,
@@ -116,8 +115,7 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
   let fieldRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot();
   let inputRef = useRef<HTMLInputElement>(null);
-  let {labelProps, fieldProps, inputProps, descriptionProps, errorMessageProps} = useTimeField({...props, label, inputRef}, state, fieldRef);
-  fieldProps = removeDataAttributes(fieldProps);
+  let {labelProps, fieldProps, inputProps, descriptionProps, errorMessageProps} = useTimeField({...removeDataAttributes(props), label, inputRef}, state, fieldRef);
 
   let renderProps = useRenderProps({
     ...props,

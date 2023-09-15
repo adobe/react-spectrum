@@ -45,11 +45,10 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   let [labelRef, label] = useSlot();
   let [inputElementType, setInputElementType] = useState('input');
   let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField<any>({
-    ...props,
+    ...removeDataAttributes(props),
     inputElementType,
     label
   }, inputRef);
-  inputProps = removeDataAttributes(inputProps);
 
   // Intercept setting the input ref so we can determine what kind of element we have.
   // useTextField uses this to determine what props to include.

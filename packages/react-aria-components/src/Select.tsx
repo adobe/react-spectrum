@@ -97,8 +97,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
     menuProps,
     descriptionProps,
     errorMessageProps
-  } = useSelect({...props, label}, state, buttonRef);
-  triggerProps = removeDataAttributes(triggerProps);
+  } = useSelect({...removeDataAttributes(props), label}, state, buttonRef);
 
   // Make menu width match input + button
   let [buttonWidth, setButtonWidth] = useState<string | null>(null);
