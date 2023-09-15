@@ -11,14 +11,15 @@
  */
 
 import {AriaTagGroupProps, useFocusRing, useHover, useTag, useTagGroup} from 'react-aria';
-import {BaseCollection, CollectionProps, Document, ItemProps, ItemRenderProps, useCachedChildren, useCollectionDocument, useCollectionPortal, useSSRCollectionNode} from './Collection';
 import {ButtonContext} from './Button';
+import {CollectionDocumentContext, CollectionProps, ItemProps, ItemRenderProps, useCachedChildren, useCollectionDocument, useCollectionPortal, useSSRCollectionNode} from './Collection';
 import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {filterDOMProps, mergeProps, mergeRefs, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
 import {LabelContext} from './Label';
 import {LinkDOMProps} from '@react-types/shared';
-import {ListState, Node, useListState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, Key, ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
+import {ListStateContext} from './ListBox';
+import {Node, useListState} from 'react-stately';
+import React, {createContext, ForwardedRef, forwardRef, Key, ReactNode, useContext, useEffect, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface TagGroupProps extends Omit<AriaTagGroupProps<unknown>, 'children' | 'items' | 'label' | 'description' | 'errorMessage' | 'keyboardDelegate'>, DOMProps, SlotProps {}
@@ -46,15 +47,8 @@ export interface TagListProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'
   renderEmptyState?: () => ReactNode
 }
 
-interface InternalTagGroupContextValue {
-  state: ListState<any>,
-  document: Document<any, BaseCollection<any>>,
-  gridProps: HTMLAttributes<HTMLElement>,
-  tagListRef: RefObject<HTMLDivElement>
-}
-
 export const TagGroupContext = createContext<ContextValue<TagGroupProps, HTMLDivElement>>(null);
-const InternalTagGroupContext = createContext<InternalTagGroupContextValue | null>(null);
+export const TagListContext = createContext<ContextValue<TagListProps<any>, HTMLDivElement>>(null);
 
 function TagGroup(props: TagGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TagGroupContext);
@@ -85,13 +79,15 @@ function TagGroup(props: TagGroupProps, ref: ForwardedRef<HTMLDivElement>) {
     <div
       {...domProps}
       ref={ref}
-      slot={props.slot}
+      slot={props.slot || undefined}
       className={props.className ?? 'react-aria-TagGroup'}
       style={props.style}>
       <Provider
         values={[
           [LabelContext, {...labelProps, elementType: 'span', ref: labelRef}],
-          [InternalTagGroupContext, {state, document, gridProps, tagListRef}],
+          [TagListContext, {...gridProps, ref: tagListRef}],
+          [ListStateContext, state],
+          [CollectionDocumentContext, document],
           [TextContext, {
             slots: {
               description: descriptionProps,
@@ -113,8 +109,7 @@ export {_TagGroup as TagGroup};
 
 function TagList<T extends object>(props: TagListProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>) {
   // Render the portal first so that we have the collection by the time we render the DOM in SSR.
-  let {document} = useContext(InternalTagGroupContext)!;
-  let portal = useCollectionPortal(props, document);
+  let portal = useCollectionPortal(props);
   return (
     <>
       {portal}
@@ -129,8 +124,10 @@ interface TagListInnerProps<T> {
 }
 
 function TagListInner<T extends object>({props, forwardedRef}: TagListInnerProps<T>) {
-  let {state, gridProps, tagListRef} = useContext(InternalTagGroupContext)!;
-  let ref = mergeRefs(tagListRef, forwardedRef);
+  let state = useContext(ListStateContext)!;
+  let [gridProps, ref] = useContextProps(props, forwardedRef, TagListContext);
+  delete gridProps.items;
+  delete gridProps.renderEmptyState;
 
   let children = useCachedChildren({
     items: state.collection,
@@ -160,7 +157,6 @@ function TagListInner<T extends object>({props, forwardedRef}: TagListInnerProps
     <div
       {...mergeProps(gridProps, focusProps)}
       {...renderProps}
-      {...filterDOMProps(props as any)}
       ref={ref}
       data-empty={state.collection.size === 0 || undefined}
       data-focused={isFocused || undefined}
@@ -205,7 +201,7 @@ const _Tag = /*#__PURE__*/ (forwardRef as forwardRefType)(Tag);
 export {_Tag as Tag};
 
 function TagItem({item}) {
-  let {state} = useContext(InternalTagGroupContext)!;
+  let state = useContext(ListStateContext)!;
   let ref = useObjectRef<HTMLDivElement>(item.props.ref);
   let {focusProps, isFocusVisible} = useFocusRing({within: true});
   let {rowProps, gridCellProps, removeButtonProps, ...states} = useTag({item}, state, ref);

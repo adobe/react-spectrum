@@ -297,7 +297,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
       ...focusWithinProps,
       role: 'group',
       'aria-disabled': isDisabled,
-      'aria-invalid': validationState === 'invalid' ? 'true' : undefined
+      'aria-invalid': isInvalid || validationState === 'invalid' ? 'true' : undefined
     },
     labelProps,
     inputProps,

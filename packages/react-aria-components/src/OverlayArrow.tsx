@@ -10,18 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {forwardRefType, RenderProps, useRenderProps} from './utils';
-import {mergeProps} from '@react-aria/utils';
+import {ContextValue, forwardRefType, RenderProps, useContextProps, useRenderProps} from './utils';
 import {PlacementAxis} from 'react-aria';
-import React, {createContext, CSSProperties, ForwardedRef, forwardRef, HTMLAttributes, useContext} from 'react';
+import React, {createContext, CSSProperties, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
 
-interface OverlayArrowContextValue {
-  arrowProps: HTMLAttributes<HTMLElement>,
+interface OverlayArrowContextValue extends OverlayArrowProps {
   placement: PlacementAxis
 }
 
-export const OverlayArrowContext = createContext<OverlayArrowContextValue>({
-  arrowProps: {},
+export const OverlayArrowContext = createContext<ContextValue<OverlayArrowContextValue, HTMLDivElement>>({
   placement: 'bottom'
 });
 
@@ -36,9 +33,9 @@ export interface OverlayArrowRenderProps {
 }
 
 function OverlayArrow(props: OverlayArrowProps, ref: ForwardedRef<HTMLDivElement>) {
-  let {arrowProps, placement} = useContext(OverlayArrowContext)!;
+  [props, ref] = useContextProps(props, ref, OverlayArrowContext);
+  let placement = (props as OverlayArrowContextValue).placement;
   let style: CSSProperties = {
-    ...arrowProps.style,
     position: 'absolute',
     [placement]: '100%',
     transform: placement === 'top' || placement === 'bottom' ? 'translateX(-50%)' : 'translateY(-50%)'
@@ -54,7 +51,7 @@ function OverlayArrow(props: OverlayArrowProps, ref: ForwardedRef<HTMLDivElement
 
   return (
     <div
-      {...mergeProps(arrowProps, props)}
+      {...props}
       {...renderProps}
       style={{
         ...renderProps.style,
