@@ -178,3 +178,7 @@ export interface DOMAttributes<T = FocusableElement> extends AriaAttributes, Rea
   style?: CSSProperties | undefined,
   className?: string | undefined
 }
+
+export interface GroupDOMAttributes extends Omit<DOMAttributes<HTMLElement>, 'role'> {
+  role?: 'group' | 'region' | 'presentation'
+}
