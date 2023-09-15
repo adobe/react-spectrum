@@ -15,7 +15,6 @@ import {MenuTreeState, MenuTriggerState} from '@react-stately/menu';
 import React, {HTMLAttributes, MutableRefObject, RefObject, useContext} from 'react';
 import {TreeState} from '@react-stately/tree';
 
-// TODO: debug typescript issue here, not sure why it is complaining about the keydown types now
 export interface MenuContextValue extends Omit<HTMLAttributes<HTMLElement>, 'autoFocus' | 'onKeyDown'> {
   onClose?: () => void,
   closeOnSelect?: boolean,
@@ -24,7 +23,8 @@ export interface MenuContextValue extends Omit<HTMLAttributes<HTMLElement>, 'aut
   ref?: MutableRefObject<HTMLUListElement>,
   state?: MenuTriggerState,
   menuTreeState?: MenuTreeState,
-  onKeyDown?: (e: KeyboardEvent) => void
+  onKeyDown?: (e: KeyboardEvent) => void,
+  onBackButtonPress?: () => void
 }
 
 export const MenuContext = React.createContext<MenuContextValue>({});
@@ -33,7 +33,7 @@ export function useMenuContext(): MenuContextValue {
   return useContext(MenuContext);
 }
 
-export interface MenuDialogContextValue extends DOMProps, Pick<PressEvents, 'onPressStart' | 'onPress'>, Pick<HoverEvents, 'onHoverChange'> {
+export interface SubMenuTriggerContextValue extends DOMProps, Pick<PressEvents, 'onPressStart' | 'onPress'>, Pick<HoverEvents, 'onHoverChange'> {
   isUnavailable?: boolean,
   triggerRef?: MutableRefObject<HTMLLIElement>,
   'aria-expanded'?: boolean | 'true' | 'false',
@@ -42,15 +42,16 @@ export interface MenuDialogContextValue extends DOMProps, Pick<PressEvents, 'onP
   onKeyDown?: (e: KeyboardEvent) => void
 }
 
-export const MenuDialogContext = React.createContext<MenuDialogContextValue | undefined>(undefined);
+export const SubMenuTriggerContext = React.createContext<SubMenuTriggerContextValue | undefined>(undefined);
 
-export function useMenuDialogContext(): MenuDialogContextValue {
-  return useContext(MenuDialogContext);
+export function useSubMenuTriggerContext(): SubMenuTriggerContextValue {
+  return useContext(SubMenuTriggerContext);
 }
 
 export interface MenuStateContextValue<T> {
   state?: TreeState<T>,
-  container?: RefObject<HTMLElement>,
+  popoverContainerRef?: RefObject<HTMLElement>,
+  trayContainerRef?: RefObject<HTMLElement>,
   menu?: RefObject<HTMLUListElement>,
   menuTreeState?: MenuTreeState,
   submenu?: RefObject<HTMLUListElement>

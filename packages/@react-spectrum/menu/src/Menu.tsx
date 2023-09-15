@@ -10,9 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {ActionButton} from '@react-spectrum/button';
+import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
+import {classNames, useDOMRef, useIsMobileDevice, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
+import {Flex} from '@react-spectrum/layout';
 import {FocusScope} from '@react-aria/focus';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {MenuContext, MenuStateContext, useMenuStateContext} from './context';
 import {MenuItem} from './MenuItem';
 import {MenuSection} from './MenuSection';
@@ -20,38 +25,76 @@ import {mergeProps, useLayoutEffect, useSyncRef} from '@react-aria/utils';
 import React, {ReactElement, useContext, useRef, useState} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMenu, useSafelyMouseToSubmenu} from '@react-aria/menu';
 import {useTreeState} from '@react-stately/tree';
 
 function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLUListElement>) {
+  let isSubMenu = true;
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let contextProps = useContext(MenuContext);
   let parentMenuContext = useMenuStateContext();
-  let {menuTreeState} = parentMenuContext || {};
+  let {menuTreeState, state: parentMenuTreeState} = parentMenuContext || {};
   if (!parentMenuContext) {
     menuTreeState = contextProps.menuTreeState;
+    isSubMenu = false;
   }
   let completeProps = {
     ...mergeProps(contextProps, props)
   };
   let domRef = useDOMRef(ref);
-  let scopedRef = useRef(null);
+  let popoverContainerRef = useRef(null);
+  let trayContainerRef = useRef(null);
   let state = useTreeState(completeProps);
   let {menuProps} = useMenu(completeProps, state, domRef);
   let submenuRef = useRef(null);
   let style = useSafelyMouseToSubmenu({menuRef: domRef, submenuRef, isOpen: state.expandedKeys.size > 0});
   let {styleProps} = useStyleProps(completeProps);
   useSyncRef(contextProps, domRef);
+  let {direction} = useLocale();
 
   let [leftOffset, setLeftOffset] = useState({left: 0});
   useLayoutEffect(() => {
-    let {left} = scopedRef.current.getBoundingClientRect();
+    let {left} = popoverContainerRef.current.getBoundingClientRect();
     setLeftOffset({left: -1 * left});
   }, []);
 
+  let isMobile = useIsMobileDevice();
+  let hasOpenSubMenu = state.expandedKeys.size > 0;
+  let trayStyles = {
+    ...(hasOpenSubMenu && {
+      display: 'none'
+    }),
+    width: '100%'
+  };
+
+  let backButtonText = parentMenuTreeState?.collection.getItem(menuTreeState.expandedKeysStack.slice(-1)[0])?.textValue;
+  let backButtonLabel = stringFormatter.format('backButton', {
+    prevMenuButton: backButtonText
+  });
+  // TODO: add slide transition
   return (
-    <MenuStateContext.Provider value={{container: scopedRef, menu: domRef, menuTreeState, state, submenu: submenuRef}}>
+    <MenuStateContext.Provider value={{popoverContainerRef, trayContainerRef, menu: domRef, submenu: submenuRef, menuTreeState, state}}>
+      {/* TODO: this is a tray container for the base menu, each sub menu should also have the same so that we can still have the proper MenuState context nesting? */}
+      <div ref={trayContainerRef} />
       <FocusScope contain={state.expandedKeys.size > 0}>
-        <div style={{overflow: 'hidden', maxHeight: '100%', display: 'inline-flex', borderRadius: 'var(--spectrum-alias-border-radius-regular)'}}>
+        {/* TODO: move the below styles into spectrum css */}
+        <div style={{overflow: 'hidden', maxHeight: '100%', display: 'inline-flex', flexDirection: 'column', borderRadius: 'var(--spectrum-alias-border-radius-regular)', ...(isMobile && trayStyles)}}>
+          {isMobile && isSubMenu && state.expandedKeys.size === 0 && (
+            // TODO: check labeling with team and get translated strings
+            <Flex marginStart="size-10">
+              {/* TODO: should it even have the same styles of ActionButton (press down styles)? Should label be part of the button? */}
+              <ActionButton
+                aria-label={backButtonLabel}
+                isQuiet
+                onPress={contextProps.onBackButtonPress}>
+                {/* We don't have a ArrowLeftSmall so make due with ArrowDownSmall and transforms */}
+                {direction === 'rtl' ? <ArrowDownSmall UNSAFE_style={{rotate: '270deg'}} /> : <ArrowDownSmall UNSAFE_style={{rotate: '90deg'}} />}
+              </ActionButton>
+              {/* TODO move styles to menu css,  --spectrum-heading-subtitle3-text-color is the color, weight is var(--spectrum-global-font-weight-bold) here */}
+              <span style={{display: 'flex', marginTop: '7px', fontWeight: 700, color: 'var(--spectrum-global-color-gray-900)'}}>{backButtonText}</span>
+            </Flex>
+          )}
           <ul
             {...menuProps}
             {...styleProps}
@@ -92,7 +135,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
           </ul>
         </div>
         {/* Make the portal container for submenus wide enough so that the submenu items can render as wide as they need to be */}
-        <div ref={scopedRef} style={{width: '100vw', position: 'absolute', top: 0, ...leftOffset}} />
+        <div ref={popoverContainerRef} style={{width: '100vw', position: 'absolute', top: 0, ...leftOffset}} />
       </FocusScope>
     </MenuStateContext.Provider>
   );

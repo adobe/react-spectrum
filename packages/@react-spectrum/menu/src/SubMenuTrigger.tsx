@@ -11,9 +11,10 @@
  */
 
 import {classNames, useIsMobileDevice} from '@react-spectrum/utils';
-import {MenuContext, MenuDialogContext, useMenuStateContext} from './context';
-import {Popover, Tray} from '@react-spectrum/overlays';
+import {MenuContext, SubMenuTriggerContext, useMenuStateContext} from './context';
+import {Popover} from '@react-spectrum/overlays';
 import React, {Key, ReactElement, useRef} from 'react';
+import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useSubMenuTrigger} from '@react-aria/menu';
 import {useSubMenuTriggerState} from '@react-stately/menu';
@@ -32,16 +33,24 @@ export interface SpectrumSubMenuTriggerProps extends Omit<SubMenuTriggerProps, '
 
 // TODO: got rid of user provided ref support since it doesn't really make sense for submenus IMO
 function SubMenuTrigger(props: SubMenuTriggerProps) {
+  let triggerRef = useRef(null);
   let {
     children,
     targetKey
   } = props;
-  let triggerRef = useRef(null);
+  
   let [menuTrigger, menu] = React.Children.toArray(children);
-  let {container, menu: parentMenuRef, menuTreeState, state, submenu: menuRef} = useMenuStateContext();
+  let {popoverContainerRef, trayContainerRef, menu: parentMenuRef, submenu: menuRef, menuTreeState, state} = useMenuStateContext();
   let subMenuTriggerState = useSubMenuTriggerState({triggerKey: targetKey}, {...menuTreeState, ...state});
   let {subMenuTriggerProps, subMenuProps, popoverProps, overlayProps} = useSubMenuTrigger({parentMenuRef, subMenuRef: menuRef}, subMenuTriggerState, triggerRef);
   let isMobile = useIsMobileDevice();
+  let onBackButtonPress = () => {
+    subMenuTriggerState.close();
+    if (parentMenuRef.current && !parentMenuRef.current.contains(document.activeElement)) {
+      // TODO: needs a delay for the parent menu in the tray to no longer be display: none
+      requestAnimationFrame(() => parentMenuRef.current.focus());
+    }
+  };
   let menuContext = {
     ...subMenuProps,
     ref: menuRef,
@@ -49,23 +58,23 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
       width: '100%',
       maxHeight: 'inherit'
     } : undefined,
-    UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile})
+    UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile}),
+    ...(isMobile && {onBackButtonPress})
   };
 
   let overlay;
-  // TODO: handle tray experience later
-  if (isMobile) {
-    overlay = (
-      <Tray state={subMenuTriggerState}>
-        {menu}
-      </Tray>
-    );
+  if (isMobile && trayContainerRef.current && subMenuTriggerState.isOpen) {
+    // TODO: Will need the same SSR stuff as Overlay? Might not since this trigger should theoretically only be mounted if a parent menu is mounted and thus we aren't in a SSR state
+    // TODO: Deleting uneeded handlers for Tray experience since Tray is a Spectrum specific implementation detail
+    delete subMenuTriggerProps.onBlur;
+    delete subMenuTriggerProps.onHoverChange;
+    overlay = ReactDOM.createPortal(menu, trayContainerRef.current);
   } else {
     overlay = (
       <Popover
         {...popoverProps}
         {...overlayProps}
-        container={container.current}
+        container={popoverContainerRef.current}
         offset={-10}
         enableBothDismissButtons
         UNSAFE_style={{clipPath: 'unset'}}
@@ -81,8 +90,7 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
 
   return (
     <>
-      {/* TODO rename MenuDialogContext to something more generic */}
-      <MenuDialogContext.Provider value={{triggerRef, ...subMenuTriggerProps}}>{menuTrigger}</MenuDialogContext.Provider>
+      <SubMenuTriggerContext.Provider value={{triggerRef, ...subMenuTriggerProps}}>{menuTrigger}</SubMenuTriggerContext.Provider>
       <MenuContext.Provider value={menuContext}>
         {overlay}
       </MenuContext.Provider>

@@ -26,7 +26,7 @@ import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/text';
 import {TreeState} from '@react-stately/tree';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useMenuContext, useMenuDialogContext} from './context';
+import {useMenuContext, useSubMenuTriggerContext} from './context';
 import {useMenuItem} from '@react-aria/menu';
 
 interface MenuItemProps<T> {
@@ -45,12 +45,11 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
     onAction
   } = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
-  let menuDialogContext = useMenuDialogContext();
+  let subMenuTriggerContext = useSubMenuTriggerContext();
   let {direction} = useLocale();
-  let {triggerRef, ...subMenuTriggerProps} = menuDialogContext || {};
-  // TODO rename all instances of menuDialogTrigger to something more generic to submenus
+  let {triggerRef, ...subMenuTriggerProps} = subMenuTriggerContext || {};
   // If menuDialogContext.isUnavailable is explicitly false, then disable all submenu behavior
-  let isMenuDialogTrigger = !!menuDialogContext && menuDialogContext.isUnavailable !== false;
+  let isMenuDialogTrigger = !!subMenuTriggerContext && subMenuTriggerContext.isUnavailable !== false;
   let isUnavailable;
   let {
     closeOnSelect
@@ -64,7 +63,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   } = item;
 
   if (isMenuDialogTrigger) {
-    isUnavailable = menuDialogContext.isUnavailable;
+    isUnavailable = subMenuTriggerContext.isUnavailable;
   }
 
   let isDisabled = state.disabledKeys.has(key);
@@ -149,9 +148,6 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
                 isUnavailable && <InfoOutline slot="end" size="XS" alignSelf="center" aria-label={stringFormatter.format('unavailable')} />
               }
               {
-                // TODO: labeling for chevron
-                // TODO: need to push the chevron a bit to the right some more still since the svg is 18x18 and has extra whitespace to the right of the chevron tip.
-                // Maybe make its own slot and add a negative margin and increase the padding-inline-start by an equal amount?
                 !isUnavailable && isMenuDialogTrigger && (direction === 'rtl' ? <ChevronLeft slot="chevron" /> : <ChevronRight slot="chevron" />)
               }
             </SlotProvider>
