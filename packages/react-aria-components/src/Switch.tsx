@@ -11,7 +11,7 @@
  */
 
 import {AriaSwitchProps, mergeProps, useFocusRing, useHover, usePress, useSwitch, VisuallyHidden} from 'react-aria';
-import {ContextValue, forwardRefType, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, forwardRefType, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, useState} from 'react';
 import {ToggleState, useToggleState} from 'react-stately';
@@ -66,7 +66,7 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLInputElement>) {
   [props, ref] = useContextProps(props, ref, SwitchContext);
   let state = useToggleState(props);
   let {inputProps, isSelected, isDisabled, isReadOnly, isPressed: isPressedKeyboard} = useSwitch({
-    ...props,
+    ...removeDataAttributes(props),
     // ReactNode type doesn't allow function children.
     children: typeof props.children === 'function' ? true : props.children
   }, state, ref);

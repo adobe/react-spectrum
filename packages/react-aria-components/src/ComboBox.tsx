@@ -13,7 +13,7 @@ import {AriaComboBoxProps, useComboBox, useFilter} from 'react-aria';
 import {ButtonContext} from './Button';
 import {Collection, ComboBoxState, Node, useComboBoxState} from 'react-stately';
 import {CollectionDocumentContext, useCollectionDocument} from './Collection';
-import {ContextValue, forwardRefType, Hidden, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, forwardRefType, Hidden, Provider, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
@@ -139,15 +139,14 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
     descriptionProps,
     errorMessageProps
   } = useComboBox({
-    ...props,
+    ...removeDataAttributes(props),
     label,
     inputRef,
     buttonRef,
     listBoxRef,
     popoverRef,
     name: formValue === 'text' ? name : undefined
-  },
-  state);
+  }, state);
 
   // Make menu width match input + button
   let [menuWidth, setMenuWidth] = useState<string | null>(null);

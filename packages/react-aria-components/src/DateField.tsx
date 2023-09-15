@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 import {AriaDateFieldProps, AriaTimeFieldProps, DateValue, mergeProps, TimeValue, useDateField, useDateSegment, useLocale, useTimeField} from 'react-aria';
-import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, forwardRefType, Provider, removeDataAttributes, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {createCalendar} from '@internationalized/date';
 import {DateFieldState, DateSegmentType, DateSegment as IDateSegment, TimeFieldState, useDateFieldState, useTimeFieldState} from 'react-stately';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
@@ -56,10 +56,10 @@ function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: Forwarded
   let fieldRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot();
   let inputRef = useRef<HTMLInputElement>(null);
-  let {labelProps, fieldProps, inputProps, descriptionProps, errorMessageProps} = useDateField({...props, label, inputRef}, state, fieldRef);
+  let {labelProps, fieldProps, inputProps, descriptionProps, errorMessageProps} = useDateField({...removeDataAttributes(props), label, inputRef}, state, fieldRef);
 
   let renderProps = useRenderProps({
-    ...props,
+    ...removeDataAttributes(props),
     values: {
       state,
       isInvalid: state.isInvalid,
@@ -113,7 +113,7 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
   let fieldRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot();
   let inputRef = useRef<HTMLInputElement>(null);
-  let {labelProps, fieldProps, inputProps, descriptionProps, errorMessageProps} = useTimeField({...props, label, inputRef}, state, fieldRef);
+  let {labelProps, fieldProps, inputProps, descriptionProps, errorMessageProps} = useTimeField({...removeDataAttributes(props), label, inputRef}, state, fieldRef);
 
   let renderProps = useRenderProps({
     ...props,
