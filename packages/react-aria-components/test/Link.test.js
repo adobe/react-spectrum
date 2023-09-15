@@ -61,7 +61,7 @@ describe('Link', () => {
   });
 
   it('should render a link with <a> element', () => {
-    let {getByRole} = render(<Link><a href="test">Test</a></Link>);
+    let {getByRole} = render(<Link href="test">Test</Link>);
     let link = getByRole('link');
     expect(link.tagName).toBe('A');
     expect(link).toHaveAttribute('class', 'react-aria-Link');
