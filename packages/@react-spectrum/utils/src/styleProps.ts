@@ -166,9 +166,7 @@ function borderColorValue(value: BorderColorValue, version = 5) {
 }
 
 function borderSizeValue(value: BorderSizeValue) {
-  return value && value !== 'none'
-    ? `var(--spectrum-alias-border-size-${value})`
-    : '0';
+  return value ? `var(--spectrum-alias-border-size-${value})` : undefined;
 }
 
 function borderRadiusValue(value: BorderRadiusValue) {

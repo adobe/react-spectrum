@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {dimensionValue} from '../';
+import {convertStyleProps, dimensionValue, viewStyleProps} from '../';
 
 
 describe('styleProps', function () {
@@ -65,6 +65,15 @@ describe('styleProps', function () {
         let value = dimensionValue('var(--custom-variable, calc(100% - single-line-width))');
         expect(value).toBe('var(--custom-variable, calc(100% - var(--spectrum-global-dimension-single-line-width, var(--spectrum-alias-single-line-width))))');
       });
+    });
+  });
+
+  describe('borderSizeValue', function () {
+    it('borderEndWidth should return undefined style if the current breakpoint doesn\'t match', function () {
+      let style = convertStyleProps({borderEndWidth: {S: 'thin'}}, viewStyleProps, 'ltr', ['base']);
+      expect(style.borderRightWidth).toBeUndefined();
+      style = convertStyleProps({borderEndWidth: {S: 'thin'}}, viewStyleProps, 'ltr', ['base', 'S']);
+      expect(style.borderRightWidth).toBe('var(--spectrum-alias-border-size-thin)');
     });
   });
 });
