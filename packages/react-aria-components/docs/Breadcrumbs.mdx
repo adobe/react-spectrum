@@ -366,7 +366,7 @@ A `Breadcrumb` can be targeted with the `.react-aria-Breadcrumb` CSS selector, o
 
 ### Link
 
-A `Link` can be targeted with the `.react-aria-Link` CSS selector, or by overriding with a custom `className`. It clones its only child element (e.g. `<a>`) and adds additional props, which should be passed through to the underlying DOM node. If only text is provided, it is rendered as a `<span>`. Links support the following states and render props:
+A `Link` can be targeted with the `.react-aria-Link` CSS selector, or by overriding with a custom `className`. It is rendered as an `<a>` element when a href is provided via props. If only text is provided, it is rendered as a `<span>`. Links support the following states and render props:
 
 <StateTable properties={docs.exports.LinkRenderProps.properties} />
 
