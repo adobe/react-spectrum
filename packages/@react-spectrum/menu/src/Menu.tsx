@@ -38,8 +38,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
   let state = useTreeState(completeProps);
   let {menuProps} = useMenu(completeProps, state, domRef);
   let submenuRef = useRef(null);
-  let submenuTriggerRef = useRef(null);
-  let submenuListeners = useSafelyMouseToSubmenu({menuRef: domRef, submenuRef, triggerRef: submenuTriggerRef, isOpen: state.expandedKeys.size > 0});
+  let style = useSafelyMouseToSubmenu({menuRef: domRef, submenuRef, isOpen: state.expandedKeys.size > 0});
   let {styleProps} = useStyleProps(completeProps);
   useSyncRef(contextProps, domRef);
 
@@ -50,13 +49,13 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
   }, []);
 
   return (
-    <MenuStateContext.Provider value={{container: scopedRef, menu: domRef, menuTreeState, state, submenu: submenuRef, submenuTrigger: submenuTriggerRef}}>
+    <MenuStateContext.Provider value={{container: scopedRef, menu: domRef, menuTreeState, state, submenu: submenuRef}}>
       <FocusScope contain={state.expandedKeys.size > 0}>
         <div style={{overflow: 'hidden', maxHeight: '100%', display: 'inline-flex', borderRadius: 'var(--spectrum-alias-border-radius-regular)'}}>
           <ul
             {...menuProps}
-            {...submenuListeners}
             {...styleProps}
+            style={style}
             ref={domRef}
             className={
               classNames(

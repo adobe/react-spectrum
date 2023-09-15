@@ -13,7 +13,7 @@
 import {classNames, useIsMobileDevice} from '@react-spectrum/utils';
 import {MenuContext, MenuDialogContext, useMenuStateContext} from './context';
 import {Popover, Tray} from '@react-spectrum/overlays';
-import React, {Key, ReactElement} from 'react';
+import React, {Key, ReactElement, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useSubMenuTrigger} from '@react-aria/menu';
 import {useSubMenuTriggerState} from '@react-stately/menu';
@@ -36,9 +36,9 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
     children,
     targetKey
   } = props;
-
+  let triggerRef = useRef(null);
   let [menuTrigger, menu] = React.Children.toArray(children);
-  let {container, menu: parentMenuRef, menuTreeState, state, submenu: menuRef, submenuTrigger: triggerRef} = useMenuStateContext();
+  let {container, menu: parentMenuRef, menuTreeState, state, submenu: menuRef} = useMenuStateContext();
   let subMenuTriggerState = useSubMenuTriggerState({triggerKey: targetKey}, {...menuTreeState, ...state});
   let {subMenuTriggerProps, subMenuProps, popoverProps, overlayProps} = useSubMenuTrigger({parentMenuRef, subMenuRef: menuRef}, subMenuTriggerState, triggerRef);
   let isMobile = useIsMobileDevice();
