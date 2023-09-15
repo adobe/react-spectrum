@@ -60,8 +60,14 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
         setIsPointerMovingTowardsSubmenu(false);
         return;
       }
-
-      // Check if pointer is moving towards submenu.
+    
+      /* Check if pointer is moving towards submenu.
+        Uses the 2-argument arctangent (https://en.wikipedia.org/wiki/Atan2) to calculate:
+          - angle between previous pointer and top of submenu
+          - angle between previous pointer and bottom of submenu
+          - angle between previous pointer and current pointer (delta)
+        If the pointer delta angle value is between the top and bottom angle values, we know the pointer is moving towards the submenu.
+      */
       let direction = mouseX > submenuRect.current.right ? 'left' : 'right';
       let toSubmenuX = direction === 'right' ? submenuRect.current.left - mouseX : mouseX - submenuRect.current.right;
       let angleTop = Math.atan2(mouseY - submenuRect.current.top, toSubmenuX);
