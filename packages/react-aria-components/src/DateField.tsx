@@ -9,13 +9,15 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaDateFieldProps, AriaTimeFieldProps, DateValue, mergeProps, TimeValue, useDateField, useDateSegment, useFocusRing, useHover, useLocale, useTimeField} from 'react-aria';
+import {AriaDateFieldProps, AriaTimeFieldProps, DateValue, mergeProps, TimeValue, useDateField, useDateSegment, useLocale, useTimeField} from 'react-aria';
 import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {createCalendar} from '@internationalized/date';
-import {DateFieldState, DateSegmentType, DateSegment as IDateSegment, useDateFieldState, useTimeFieldState} from 'react-stately';
+import {DateFieldState, DateSegmentType, DateSegment as IDateSegment, TimeFieldState, useDateFieldState, useTimeFieldState} from 'react-stately';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {Group, GroupContext} from './Group';
+import {Input, InputContext} from './Input';
 import {LabelContext} from './Label';
-import React, {cloneElement, createContext, ForwardedRef, forwardRef, HTMLAttributes, InputHTMLAttributes, ReactElement, RefObject, useContext, useRef} from 'react';
+import React, {cloneElement, createContext, ForwardedRef, forwardRef, ReactElement, useContext, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface DateFieldRenderProps {
@@ -37,16 +39,10 @@ export interface DateFieldRenderProps {
 export interface DateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState'>, RenderProps<DateFieldRenderProps>, SlotProps {}
 export interface TimeFieldProps<T extends TimeValue> extends Omit<AriaTimeFieldProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState'>, RenderProps<DateFieldRenderProps>, SlotProps {}
 
-interface DateInputContextValue extends SlotProps {
-  state: DateFieldState,
-  fieldProps: HTMLAttributes<HTMLElement>,
-  inputProps: InputHTMLAttributes<HTMLInputElement>,
-  inputRef: RefObject<HTMLInputElement>
-}
-
 export const DateFieldContext = createContext<ContextValue<DateFieldProps<any>, HTMLDivElement>>(null);
 export const TimeFieldContext = createContext<ContextValue<TimeFieldProps<any>, HTMLDivElement>>(null);
-export const DateInputContext = createContext<ContextValue<DateInputContextValue, HTMLDivElement>>(null);
+export const DateFieldStateContext = createContext<DateFieldState | null>(null);
+export const TimeFieldStateContext = createContext<TimeFieldState | null>(null);
 
 function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DateFieldContext);
@@ -78,7 +74,9 @@ function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: Forwarded
   return (
     <Provider
       values={[
-        [DateInputContext, {state, fieldProps, ref: fieldRef, inputRef, inputProps}],
+        [DateFieldStateContext, state],
+        [GroupContext, {...fieldProps, ref: fieldRef}],
+        [InputContext, {...inputProps, ref: inputRef}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [TextContext, {
           slots: {
@@ -91,7 +89,7 @@ function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: Forwarded
         {...DOMProps}
         {...renderProps}
         ref={ref}
-        slot={props.slot}
+        slot={props.slot || undefined}
         data-invalid={state.isInvalid || undefined} />
     </Provider>
   );
@@ -133,7 +131,9 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
   return (
     <Provider
       values={[
-        [DateInputContext, {state, fieldProps, ref: fieldRef, inputRef, inputProps}],
+        [TimeFieldStateContext, state],
+        [GroupContext, {...fieldProps, ref: fieldRef}],
+        [InputContext, {...inputProps, ref: inputRef}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [TextContext, {
           slots: {
@@ -146,7 +146,7 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
         {...DOMProps}
         {...renderProps}
         ref={ref}
-        slot={props.slot}
+        slot={props.slot || undefined}
         data-invalid={state.isInvalid || undefined} />
     </Provider>
   );
@@ -158,8 +158,6 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
  */
 const _TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(TimeField);
 export {_TimeField as TimeField};
-
-const InternalDateInputContext = createContext<DateFieldState| null>(null);
 
 export interface DateInputRenderProps {
   /**
@@ -188,38 +186,60 @@ export interface DateInputProps extends SlotProps, StyleRenderProps<DateInputRen
   children: (segment: IDateSegment) => ReactElement
 }
 
-function DateInput({children, slot, ...otherProps}: DateInputProps, ref: ForwardedRef<HTMLDivElement>) {
-  let [{state, fieldProps, inputProps, inputRef}, fieldRef] = useContextProps({slot} as DateInputProps & DateInputContextValue, ref, DateInputContext);
+function DateInput(props: DateInputProps, ref: ForwardedRef<HTMLDivElement>): JSX.Element {
+  // If state is provided by DateField/TimeField, just render.
+  // Otherwise (e.g. in DatePicker), we need to call hooks and create state ourselves.
+  let dateFieldState = useContext(DateFieldStateContext);
+  let timeFieldState = useContext(TimeFieldStateContext);
+  return dateFieldState || timeFieldState
+    ? <DateInputInner {...props} ref={ref} />
+    : <DateInputStandalone {...props} ref={ref} />;
+}
 
-  let {hoverProps, isHovered} = useHover({});
-  let {isFocused, isFocusVisible, focusProps} = useFocusRing({
-    within: true,
-    isTextInput: true
+const DateInputStandalone = forwardRef((props: DateInputProps, ref: ForwardedRef<HTMLDivElement>) => {
+  let [dateFieldProps, fieldRef] = useContextProps({slot: props.slot} as DateFieldProps<any>, ref, DateFieldContext);
+  let {locale} = useLocale();
+  let state = useDateFieldState({
+    ...dateFieldProps,
+    locale,
+    createCalendar
   });
 
-  let renderProps = useRenderProps({
-    ...otherProps,
-    values: {isHovered, isFocusWithin: isFocused, isFocusVisible, isDisabled: state.isDisabled},
-    defaultClassName: 'react-aria-DateInput'
-  });
+  let inputRef = useRef<HTMLInputElement>(null);
+  let {fieldProps, inputProps} = useDateField({...dateFieldProps, inputRef}, state, fieldRef);
 
   return (
-    <InternalDateInputContext.Provider value={state}>
-      <div
-        {...mergeProps(filterDOMProps(otherProps as any), fieldProps, focusProps, hoverProps)}
-        {...renderProps}
-        ref={fieldRef}
-        slot={slot}
-        data-focus-within={isFocused || undefined}
-        data-hovered={isHovered || undefined}
-        data-focus-visible={isFocusVisible || undefined}
-        data-disabled={state.isDisabled || undefined}>
-        {state.segments.map((segment, i) => cloneElement(children(segment), {key: i}))}
-      </div>
-      <input {...inputProps} ref={inputRef} />
-    </InternalDateInputContext.Provider>
+    <Provider
+      values={[
+        [DateFieldStateContext, state],
+        [InputContext, {...inputProps, ref: inputRef}],
+        [GroupContext, {...fieldProps, ref: fieldRef}]
+      ]}>
+      <DateInputInner {...props} />
+    </Provider>
   );
-}
+});
+
+const DateInputInner = forwardRef((props: DateInputProps, ref: ForwardedRef<HTMLDivElement>) => {
+  let {className, children} = props;
+  let dateFieldState = useContext(DateFieldStateContext);
+  let timeFieldState = useContext(TimeFieldStateContext);
+  let state = dateFieldState ?? timeFieldState!;
+
+  return (
+    <>
+      <Group
+        {...props}
+        ref={ref}
+        slot={props.slot || undefined}
+        className={className ?? 'react-aria-DateInput'}
+        isInvalid={state.isInvalid}>
+        {state.segments.map((segment, i) => cloneElement(children(segment), {key: i}))}
+      </Group>
+      <Input />
+    </>
+  );
+});
 
 /**
  * A date input groups the editable date segments within a date field.
@@ -255,7 +275,9 @@ export interface DateSegmentProps extends RenderProps<DateSegmentRenderProps> {
 }
 
 function DateSegment({segment, ...otherProps}: DateSegmentProps, ref: ForwardedRef<HTMLDivElement>) {
-  let state = useContext(InternalDateInputContext)!;
+  let dateFieldState = useContext(DateFieldStateContext);
+  let timeFieldState = useContext(TimeFieldStateContext);
+  let state = dateFieldState ?? timeFieldState!;
   let domRef = useObjectRef(ref);
   let {segmentProps} = useDateSegment(segment, state, domRef);
   let renderProps = useRenderProps({

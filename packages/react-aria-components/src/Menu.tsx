@@ -19,13 +19,14 @@ import {ContextValue, forwardRefType, Provider, SlotProps, StyleProps, useContex
 import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {Header} from './Header';
 import {KeyboardContext} from './Keyboard';
+import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
 
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
-const InternalMenuContext = createContext<TreeState<unknown> | null>(null);
+export const MenuStateContext = createContext<TreeState<unknown> | null>(null);
 
 export interface MenuTriggerProps extends BaseMenuTriggerProps {
   children?: ReactNode
@@ -45,7 +46,8 @@ export function MenuTrigger(props: MenuTriggerProps) {
       values={[
         [MenuContext, menuProps],
         [ButtonContext, {...menuTriggerProps, ref, isPressed: state.isOpen}],
-        [PopoverContext, {state, triggerRef: ref, placement: 'bottom start'}]
+        [OverlayTriggerStateContext, state],
+        [PopoverContext, {triggerRef: ref, placement: 'bottom start'}]
       ]}>
       {props.children}
     </Provider>
@@ -102,12 +104,12 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
       {...filterDOMProps(props)}
       {...menuProps}
       ref={ref}
-      slot={props.slot}
+      slot={props.slot || undefined}
       style={props.style}
       className={props.className ?? 'react-aria-Menu'}>
       <Provider
         values={[
-          [InternalMenuContext, state],
+          [MenuStateContext, state],
           [SeparatorContext, {elementType: 'div'}]
         ]}>
         {children}
@@ -127,7 +129,7 @@ interface MenuSectionProps<T> extends StyleProps {
 }
 
 function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionProps<T>) {
-  let state = useContext(InternalMenuContext)!;
+  let state = useContext(MenuStateContext)!;
   let [headingRef, heading] = useSlot();
   let {headingProps, groupProps} = useMenuSection({
     heading,
@@ -174,7 +176,7 @@ interface MenuItemProps<T> {
 }
 
 function MenuItem<T>({item}: MenuItemProps<T>) {
-  let state = useContext(InternalMenuContext)!;
+  let state = useContext(MenuStateContext)!;
   let ref = useObjectRef<any>(item.props.ref);
   let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({key: item.key}, state, ref);
 
