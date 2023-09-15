@@ -53,7 +53,7 @@ export interface MenuStateContextValue<T> {
   container?: RefObject<HTMLElement>,
   menu?: RefObject<HTMLUListElement>,
   menuTreeState?: MenuTreeState,
-  submenu?: RefObject<HTMLElement>
+  submenu?: RefObject<HTMLUListElement>
 }
 
 export const MenuStateContext = React.createContext<MenuStateContextValue<any>>(undefined);
