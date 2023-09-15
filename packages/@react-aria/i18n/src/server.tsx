@@ -71,7 +71,7 @@ function serialize(strings: PackageLocalizedStrings): string {
     res = res.slice(0, -1) + ';';
   }
 
-  res += `window[Symbol.for('react-aria.i18n.strings')]={`;
+  res += "window[Symbol.for('react-aria.i18n.strings')]={";
   for (let pkg in strings) {
     res += `'${pkg}':{`;
     for (let key in strings[pkg]) {
@@ -80,7 +80,7 @@ function serialize(strings: PackageLocalizedStrings): string {
       if (common.has(s)) {
         s = common.get(s);
       }
-      res += `${/[ \(\)]/.test(key) ? JSON.stringify(key) : key}:${s},`;
+      res += `${/[ ()]/.test(key) ? JSON.stringify(key) : key}:${s},`;
     }
     res = res.slice(0, -1) + '},';
   }

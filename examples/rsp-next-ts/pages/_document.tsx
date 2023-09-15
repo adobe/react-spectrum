@@ -1,5 +1,5 @@
 import { Html, Head, Main, NextScript } from 'next/document'
-import {LocalizedStringProvider} from '@adobe/react-spectrum/intl';
+import {LocalizedStringProvider} from '@adobe/react-spectrum/i18n';
 
 export default function Document(props) {
   return (
