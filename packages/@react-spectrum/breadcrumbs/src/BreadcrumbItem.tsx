@@ -56,8 +56,8 @@ export function BreadcrumbItem(props: SpectrumBreadcrumbItemProps) {
           className={
             classNames(
               styles,
-              'spectrum-Breadcrumbs-itemLink',
               {
+                'spectrum-Breadcrumbs-itemLink': !isMenu,
                 'is-disabled': !isCurrent && isDisabled,
                 'is-hovered': isHovered
               }
