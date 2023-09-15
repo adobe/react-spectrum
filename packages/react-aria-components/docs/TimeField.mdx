@@ -641,6 +641,41 @@ Now you can use `MyCustomLabel` within a `TimeField`, in place of the builtin Re
 </TimeField>
 ```
 
+### State
+
+TimeField provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.TimeFieldState} /> object to its children via `TimeFieldStateContext`. This can be used to access and manipulate the time field's state.
+
+This example shows a `TimeZoneName` component that can be placed within a `TimeField` to display the full time zone name.
+
+```tsx example
+import {TimeFieldStateContext} from 'react-aria-components';
+import {useDateFormatter} from 'react-aria';
+
+function TimeZoneName() {
+  /*- begin highlight -*/
+  let state = React.useContext(TimeFieldStateContext)!;
+  /*- end highlight -*/
+  if ('timeZone' in state.value) {
+    let formatter = useDateFormatter({timeZoneName: 'long', timeZone: state.value.timeZone});
+    let timeZone = formatter
+      .formatToParts(state.value.toDate())
+      .find(p => p.type === 'timeZoneName').value;
+    return <small>{timeZone}</small>;
+  }
+  return null;
+}
+
+<TimeField defaultValue={parseAbsoluteToLocal('2021-04-07T18:45:22Z')}>
+  <Label>Time</Label>
+  <DateInput>
+    {segment => <DateSegment segment={segment} />}
+  </DateInput>
+  {/*- begin highlight -*/}
+  <TimeZoneName />
+  {/*- end highlight -*/}
+</TimeField>
+```
+
 ### Hooks
 
 If you need to customize things even further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useTimeField](useTimeField.html) for more details.

@@ -73,7 +73,7 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
       {...filterDOMProps(props)}
       {...renderProps}
       ref={ref}
-      slot={props.slot}
+      slot={props.slot || undefined}
       data-disabled={props.isDisabled || undefined}
       data-invalid={props.isInvalid || undefined}>
       <Provider

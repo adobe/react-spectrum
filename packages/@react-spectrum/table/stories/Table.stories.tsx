@@ -1846,6 +1846,40 @@ export const TypeaheadWithDialog: TableStory = {
   )
 };
 
+export const Links = (args) => {
+  return (
+    <TableView {...args} aria-label="Bookmarks table" onSelectionChange={action('onSelectionChange')}>
+      <TableHeader>
+        <Column>Name</Column>
+        <Column>URL</Column>
+        <Column>Date added</Column>
+      </TableHeader>
+      <TableBody>
+        <Row key="https://adobe.com/" href="https://adobe.com/">
+          <Cell>Adobe</Cell>
+          <Cell>https://adobe.com/</Cell>
+          <Cell>January 28, 2023</Cell>
+        </Row>
+        <Row key="https://google.com/" href="https://google.com/">
+          <Cell>Google</Cell>
+          <Cell>https://google.com/</Cell>
+          <Cell>April 5, 2023</Cell>
+        </Row>
+        <Row key="https://apple.com/" href="https://apple.com/">
+          <Cell>Apple</Cell>
+          <Cell>https://apple.com/</Cell>
+          <Cell>June 5, 2023</Cell>
+        </Row>
+        <Row key="https://nytimes.com/" href="https://nytimes.com/">
+          <Cell>New York Times</Cell>
+          <Cell>https://nytimes.com/</Cell>
+          <Cell>July 12, 2023</Cell>
+        </Row>
+      </TableBody>
+    </TableView>
+  );
+};
+
 export const ColumnHeaderFocusRingTable = {
   render: () => <LoadingTable />,
   storyName: 'column header focus after loading',

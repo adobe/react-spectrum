@@ -13,6 +13,7 @@
 import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
 import React from 'react';
 import {Tab, TabList, TabPanel, Tabs} from '../';
+import {TabsExample} from '../stories/index.stories';
 import userEvent from '@testing-library/user-event';
 
 let renderTabs = (tabsProps, tablistProps, tabProps, tabpanelProps) => render(
@@ -292,5 +293,24 @@ describe('Tabs', () => {
     expect(thirdItem).toHaveAttribute('aria-selected', 'true');
 
     expect(onSelectionChange).toBeCalledTimes(1);
+  });
+
+  it('should support tabs as links', async function () {
+    let {getAllByRole} = render(<TabsExample />);
+
+    let tabs = getAllByRole('tab');
+    expect(tabs[0].tagName).toBe('A');
+    expect(tabs[0]).toHaveAttribute('href', '/FoR');
+    expect(tabs[1].tagName).toBe('A');
+    expect(tabs[1]).toHaveAttribute('href', '/MaR');
+    expect(tabs[2].tagName).toBe('A');
+    expect(tabs[2]).toHaveAttribute('href', '/Emp');
+
+    expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
+    await user.click(tabs[1]);
+    expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
+
+    fireEvent.keyDown(tabs[1], {key: 'ArrowRight'});
+    expect(tabs[2]).toHaveAttribute('aria-selected', 'true');
   });
 });

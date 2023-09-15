@@ -13,10 +13,10 @@
 import {FocusableElement} from '@react-types/shared';
 import {getLastItem} from '@react-stately/collections';
 import {getRowLabelledBy} from './utils';
+import {getSyntheticLinkProps, mergeProps} from '@react-aria/utils';
 import type {GridNode} from '@react-types/grid';
 import {GridRowAria, GridRowProps, useGridRow} from '@react-aria/grid';
 import {HTMLAttributes, RefObject} from 'react';
-import {mergeProps} from '@react-aria/utils';
 import {TableCollection} from '@react-types/table';
 import {tableNestedRows} from '@react-stately/flags';
 import {TableState, TreeGridState} from '@react-stately/table';
@@ -74,9 +74,10 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
     }
   }
 
+  let linkProps = getSyntheticLinkProps(node.props);
   return {
     rowProps: {
-      ...mergeProps(rowProps, treeGridRowProps),
+      ...mergeProps(rowProps, treeGridRowProps, linkProps),
       'aria-labelledby': getRowLabelledBy(state, node.key)
     },
     ...states

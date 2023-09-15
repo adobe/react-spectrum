@@ -861,7 +861,7 @@ If you need to customize things further, such as intercepting events or customiz
 This example implements a custom `OptionMenuTrigger` component that intercepts the keyboard and press events returned by `useMenuTrigger` so that the menu only opens if the user holds the <Keyboard>Alt</Keyboard> key. This allows a button to have a default action, with additional options for power users.
 
 ```tsx example render=false export=true
-import {ButtonContext, PopoverContext, MenuContext, Provider} from 'react-aria-components';
+import {ButtonContext, OverlayTriggerStateContext, PopoverContext, MenuContext, Provider} from 'react-aria-components';
 import {useMenuTriggerState} from 'react-stately';
 import {useMenuTrigger} from 'react-aria';
 
@@ -883,7 +883,8 @@ function OptionMenuTrigger(props: MenuTriggerProps) {
           ref,
           isPressed: state.isOpen
         }],
-        [PopoverContext, {state, triggerRef: ref, placement: 'bottom start'}],
+        [OverlayTriggerStateContext, state],
+        [PopoverContext, {triggerRef: ref, placement: 'bottom start'}],
         [MenuContext, menuProps]
       ]}>
       {props.children}

@@ -988,3 +988,34 @@ export function FocusExample(args = {}) {
     </FocusScope>
   );
 }
+
+export const Links = (args) => {
+  return (
+    <ListBox aria-label="ListBox with links" width="250px" height={400} onSelectionChange={action('onSelectionChange')} {...args}>
+      <Item key="https://adobe.com/" href="https://adobe.com/">Adobe</Item>
+      <Item key="https://google.com/" href="https://google.com/">Google</Item>
+      <Item key="https://apple.com/" href="https://apple.com/">Apple</Item>
+      <Item key="https://nytimes.com/" href="https://nytimes.com/">New York Times</Item>
+      <Item>Non link</Item>
+    </ListBox>
+  );
+};
+
+Links.story = {
+  decorators: [(Story) => (
+    <StoryDecorator>
+      <Story />
+    </StoryDecorator>
+  )],
+  args: {
+    selectionMode: 'none'
+  },
+  argTypes: {
+    selectionMode: {
+      control: {
+        type: 'radio',
+        options: ['none', 'single', 'multiple']
+      }
+    }
+  }
+};

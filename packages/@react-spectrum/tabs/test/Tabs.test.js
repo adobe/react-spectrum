@@ -12,6 +12,7 @@
 
 import {act, fireEvent, mockImplementation, pointerMap, render, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
 import {Item, TabList, TabPanels, Tabs} from '../src';
+import {Links as LinksExample} from '../stories/Tabs.stories';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -841,5 +842,24 @@ describe('Tabs', function () {
     expect(tabs[0]).toHaveAttribute('tabindex', '0');
     expect(tabs[1]).toHaveAttribute('tabindex', '-1');
     expect(tabs[2]).toHaveAttribute('tabindex', '-1');
+  });
+
+  it('should support tabs as links', function () {
+    let {getAllByRole} = render(<Provider theme={theme}><LinksExample /></Provider>);
+
+    let tabs = getAllByRole('tab');
+    expect(tabs[0].tagName).toBe('A');
+    expect(tabs[0]).toHaveAttribute('href', '/one');
+    expect(tabs[1].tagName).toBe('A');
+    expect(tabs[1]).toHaveAttribute('href', '/two');
+    expect(tabs[2].tagName).toBe('A');
+    expect(tabs[2]).toHaveAttribute('href', '/three');
+
+    expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
+    triggerPress(tabs[1]);
+    expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
+
+    fireEvent.keyDown(tabs[1], {key: 'ArrowRight'});
+    expect(tabs[2]).toHaveAttribute('aria-selected', 'true');
   });
 });
