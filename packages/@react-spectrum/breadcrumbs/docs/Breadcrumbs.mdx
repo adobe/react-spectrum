@@ -11,7 +11,6 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/breadcrumbs';
-import utilsDocs from 'docs:@react-aria/utils';
 import {HeaderInfo, PropTable, TypeLink, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/breadcrumbs/package.json';
 
@@ -93,7 +92,7 @@ By default, interacting with an item in Breadcrumbs triggers `onAction`. Items m
 
 ### Client side routing
 
-The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={utilsDocs.links} type={utilsDocs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Spectrum components that support links, this works via the [Provider](Provider.html) component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
 ## Props
 

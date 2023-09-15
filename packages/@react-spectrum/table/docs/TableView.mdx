@@ -13,7 +13,6 @@ export default Layout;
 import docs from 'docs:@react-spectrum/table';
 import dndDocs from 'docs:@react-spectrum/dnd';
 import tableTypes from 'docs:@react-types/table/src/index.d.ts';
-import utilsDocs from 'docs:@react-aria/utils';
 import {HeaderInfo, PropTable, PageDescription, TypeLink, VersionBadge} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-spectrum/table/package.json';
@@ -545,7 +544,7 @@ Table rows may also be links to another page or website. This can be achieved by
 
 #### Client side routing
 
-The `<Row>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={utilsDocs.links} type={utilsDocs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+The `<Row>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Spectrum components that support links, this works via the [Provider](Provider.html) component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
 ## Sorting
 
