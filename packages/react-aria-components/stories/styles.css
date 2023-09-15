@@ -248,3 +248,13 @@
   border-color: orange;
   background-color: transparent;
 }
+
+:global(.react-aria-Toolbar) {
+  display: flex;
+  &[data-orientation=vertical] {
+    flex-direction: column;
+  }
+  &[data-orientation=horizontal] {
+    flex-direction: row;
+  }
+}

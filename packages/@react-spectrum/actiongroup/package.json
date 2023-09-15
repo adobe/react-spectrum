@@ -55,7 +55,8 @@
     "@react-types/shared": "^3.20.0",
     "@spectrum-icons/ui": "^3.5.5",
     "@spectrum-icons/workflow": "^4.2.4",
-    "@swc/helpers": "^0.5.0"
+    "@swc/helpers": "^0.5.0",
+    "react-aria-components": "1.0.0-beta.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1"
