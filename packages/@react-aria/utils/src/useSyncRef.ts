@@ -26,5 +26,5 @@ export function useSyncRef<T>(context: ContextValue<T>, ref: RefObject<T>) {
         context.ref.current = null;
       };
     }
-  }, [context, ref]);
+  });
 }

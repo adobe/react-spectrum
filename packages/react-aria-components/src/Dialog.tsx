@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 import {AriaDialogProps, useDialog, useOverlayTrigger} from 'react-aria';
-import {ButtonContext} from './Button';
 import {ContextValue, forwardRefType, Provider, SlotProps, StyleProps, useContextProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {HeadingContext} from './Heading';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
 import {PopoverContext} from './Popover';
+import {PressResponder} from '@react-aria/interactions';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useRef} from 'react';
 
 export interface DialogTriggerProps extends OverlayTriggerProps {
@@ -48,10 +48,11 @@ export function DialogTrigger(props: DialogTriggerProps) {
       values={[
         [OverlayTriggerStateContext, state],
         [DialogContext, overlayProps],
-        [ButtonContext, {...triggerProps, isPressed: state.isOpen, ref: buttonRef}],
         [PopoverContext, {triggerRef: buttonRef}]
       ]}>
-      {props.children}
+      <PressResponder {...triggerProps} ref={buttonRef} isPressed={state.isOpen}>
+        {props.children}
+      </PressResponder>
     </Provider>
   );
 }
@@ -78,7 +79,6 @@ function Dialog(props: DialogProps, ref: ForwardedRef<HTMLElement>) {
       className={props.className ?? 'react-aria-Dialog'}>
       <Provider
         values={[
-          [ButtonContext, undefined],
           // TODO: clear context within dialog content?
           [HeadingContext, {...titleProps, level: 2}]
         ]}>
