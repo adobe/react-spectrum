@@ -185,6 +185,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
       shouldSelectOnPressUp: true,
       shouldFocusOnHover: true,
       disallowEmptySelection: true,
+      linkBehavior: 'selection',
       onBlur: (e) => {
         if (e.currentTarget.contains(e.relatedTarget as Node)) {
           return;

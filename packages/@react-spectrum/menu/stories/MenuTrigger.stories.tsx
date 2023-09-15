@@ -830,3 +830,26 @@ function MenuWithUnavailableSometimes(props) {
     </>
   );
 }
+
+export const MenuWithLinks = (props) =>
+  render(
+    <Menu {...props} onAction={action('onAction')}>
+      <Item href="https://adobe.com">Adobe</Item>
+      <Item href="https://google.com">Google</Item>
+      <Item href="https://apple.com">Apple</Item>
+    </Menu>
+  );
+
+MenuWithLinks.story = {
+  args: {
+    selectionMode: 'none'
+  },
+  argTypes: {
+    selectionMode: {
+      control: {
+        type: 'inline-radio',
+        options: ['none', 'single', 'multiple']
+      }
+    }
+  }
+};

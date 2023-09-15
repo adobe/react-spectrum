@@ -50,7 +50,7 @@ function BreadcrumbsInner<T extends object>({props, collection, breadcrumbsRef: 
     <ol
       ref={ref}
       {...filterDOMProps(props, {labelable: true})}
-      slot={props.slot}
+      slot={props.slot || undefined}
       style={props.style}
       className={props.className ?? 'react-aria-Breadcrumbs'}>
       {[...collection].map((node, i) => (
@@ -66,7 +66,7 @@ function BreadcrumbsInner<T extends object>({props, collection, breadcrumbsRef: 
 }
 
 /**
- * Breadcrumbs display a heirarchy of links to the current page or resource in an application.
+ * Breadcrumbs display a hierarchy of links to the current page or resource in an application.
  */
 const _Breadcrumbs = /*#__PURE__*/ (forwardRef as forwardRefType)(Breadcrumbs);
 export {_Breadcrumbs as Breadcrumbs};

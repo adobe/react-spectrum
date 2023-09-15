@@ -604,6 +604,79 @@ Now you can use `MyCustomLabel` within a `Slider`, in place of the builtin React
 </Slider>
 ```
 
+### State
+
+Slider provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.SliderState} /> object to its children via `SliderStateContext`. This can be used to access and manipulate the slider's state.
+
+This example shows a `SliderNumberField` component that can be placed within a `Slider` to allow the user to enter a number and update the slider's value.
+
+```tsx example
+import {SliderStateContext, LabelContext, NumberField, Input, useSlottedContext} from 'react-aria-components';
+
+function SliderNumberField() {
+  /*- begin highlight -*/
+  let state = React.useContext(SliderStateContext)!;
+  /*- end highlight -*/
+  let labelProps = useSlottedContext(LabelContext)!;
+  return (
+    <NumberField
+      aria-labelledby={labelProps.id}
+      value={state.values[0]}
+      onChange={v => state.setThumbValue(0, v)}>
+      <Input />
+    </NumberField>
+  );
+}
+
+<Slider defaultValue={30}>
+  <Label>Opacity</Label>
+  {/*- begin highlight -*/}
+  <SliderNumberField />
+  {/*- end highlight -*/}
+  <SliderTrack>
+    <SliderThumb />
+  </SliderTrack>
+</Slider>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Input {
+  --field-border: var(--spectrum-alias-border-color);
+  --field-background: var(--spectrum-global-color-gray-50);
+  --text-color: var(--spectrum-alias-text-color);
+  --focus-ring-color: slateblue;
+
+  padding: 0.286rem;
+  margin: 0;
+  border: 1px solid var(--field-border);
+  border-radius: 6px;
+  background: var(--field-background);
+  font-size: 1rem;
+  color: var(--text-color);
+  width: 3ch;
+
+  &[data-focused] {
+    outline: none;
+    border-color: var(--focus-ring-color);
+    box-shadow: 0 0 0 1px var(--focus-ring-color);
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Input {
+    --field-border: ButtonBorder;
+    --field-background: Field;
+    --text-color: FieldText;
+    --focus-ring-color: Highlight;
+  }
+}
+```
+
+</details>
+
 ### Hooks
 
 If you need to customize things even further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useSlider](useSlider.html) for more details.
