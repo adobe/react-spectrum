@@ -68,20 +68,14 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
           - angle between previous pointer and current pointer (delta)
         If the pointer delta angle value is between the top and bottom angle values, we know the pointer is moving towards the submenu.
       */
+      let prevMouseX = prevPointerPos.current.x;
+      let prevMouseY = prevPointerPos.current.y;
       let direction = mouseX > submenuRect.current.right ? 'left' : 'right';
-      let toSubmenuX = direction === 'right' ? submenuRect.current.left - mouseX : mouseX - submenuRect.current.right;
-      let angleTop = Math.atan2(mouseY - submenuRect.current.top, toSubmenuX);
-      let angleBottom = Math.atan2(mouseY - submenuRect.current.bottom, toSubmenuX);
-      let anglePointer = Math.atan2(prevPointerPos.current.y - mouseY, (direction === 'left' ? -1 : 1) * (mouseX - prevPointerPos.current.x));
+      let toSubmenuX = direction === 'right' ? submenuRect.current.left - prevMouseX : prevMouseX - submenuRect.current.right;
+      let angleTop = Math.atan2(prevMouseY - submenuRect.current.top, toSubmenuX);
+      let angleBottom = Math.atan2(prevMouseY - submenuRect.current.bottom, toSubmenuX);
+      let anglePointer = Math.atan2(prevMouseY - mouseY, (direction === 'left' ? -(mouseX - prevMouseX) : mouseX - prevMouseX));
       setIsPointerMovingTowardsSubmenu(anglePointer < angleTop && anglePointer > angleBottom);
-
-      // If pointer was previously moving towards submenu but no longer is, fire a pointerenter on menu item the mouse is currently over.
-      if (prevIsPointerMovingTowardsSubmenu && !isPointerMovingTowardsSubmenu) {
-        let target = document.elementFromPoint(mouseX, mouseY);
-        if (target && menu.contains(target)) {
-          target.dispatchEvent(new PointerEvent('pointerenter', {bubbles: true, cancelable: true}));
-        }
-      }
 
       prevPointerPos.current = {x: mouseX, y: mouseY};
     };
