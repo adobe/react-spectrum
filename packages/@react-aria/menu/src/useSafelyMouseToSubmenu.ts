@@ -57,6 +57,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
       }
 
       if (!submenuRect.current) {
+        setIsPointerMovingTowardsSubmenu(false);
         return;
       }
 
