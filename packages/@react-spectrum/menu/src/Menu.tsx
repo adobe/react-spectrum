@@ -48,7 +48,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
   let state = useTreeState(completeProps);
   let {menuProps} = useMenu(completeProps, state, domRef);
   let submenuRef = useRef(null);
-  let style = useSafelyMouseToSubmenu({menuRef: domRef, submenuRef, isOpen: state.expandedKeys.size > 0});
+  let style = useSafelyMouseToSubmenu({submenuRef, isOpen: state.expandedKeys.size > 0});
   let {styleProps} = useStyleProps(completeProps);
   useSyncRef(contextProps, domRef);
   let {direction} = useLocale();

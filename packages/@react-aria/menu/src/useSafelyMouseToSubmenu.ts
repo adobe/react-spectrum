@@ -2,8 +2,6 @@ import {CSSProperties, RefObject, useEffect, useRef, useState} from 'react';
 import {useResizeObserver} from '@react-aria/utils';
 
 interface SafelyMouseToSubmenuOptions {
-  /** Ref for the parent menu. */
-  menuRef: RefObject<Element>,
   /** Ref for the submenu. */
   submenuRef: RefObject<Element>,
   /** Whether the submenu is open. */
@@ -15,7 +13,7 @@ interface SafelyMouseToSubmenuOptions {
  * Prevents pointer events from going to the underlying menu if the user is moving their pointer towards the sub-menu.
  */
 export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): CSSProperties {
-  let {menuRef, submenuRef, isOpen} = options;
+  let {submenuRef, isOpen} = options;
   let prevPointerPos = useRef<{x: number, y: number}>(null);
   let submenuRect = useRef<DOMRect>(null);
   let lastProcessedTime = useRef<number>(0);
@@ -30,10 +28,10 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
   useResizeObserver({ref: submenuRef, onResize: updateSubmenuRect});
 
   useEffect(() => {
-    let menu = menuRef.current;
     let submenu = submenuRef.current;
 
-    if (!menu || !submenu || !isOpen) {
+    if (!submenu || !isOpen) {
+      setIsPointerMovingTowardsSubmenu(false);
       return;
     }
 
@@ -47,8 +45,6 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
         return;
       }
 
-      let prevIsPointerMovingTowardsSubmenu = isPointerMovingTowardsSubmenu;
-
       let {clientX: mouseX, clientY: mouseY} = e;
 
       if (!prevPointerPos.current) {
@@ -57,7 +53,6 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
       }
 
       if (!submenuRect.current) {
-        setIsPointerMovingTowardsSubmenu(false);
         return;
       }
     
@@ -87,7 +82,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
     };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, menuRef, submenuRef]);
+  }, [isOpen, submenuRef]);
   
   return {
     pointerEvents: isPointerMovingTowardsSubmenu ? 'none' : undefined
