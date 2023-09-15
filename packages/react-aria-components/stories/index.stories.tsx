@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Tag, TagGroup, TagList, Text, TimeField, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Tag, TagGroup, TagList, Text, TextField, TimeField, ToggleButton, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
@@ -25,7 +25,7 @@ export default {
 };
 
 export const ComboBoxExample = () => (
-  <ComboBox>
+  <ComboBox data-testid="combo-box-example">
     <Label style={{display: 'block'}}>Test</Label>
     <div style={{display: 'flex'}}>
       <Input />
@@ -34,7 +34,9 @@ export const ComboBoxExample = () => (
       </Button>
     </div>
     <Popover placement="bottom end">
-      <ListBox className={styles.menu}>
+      <ListBox
+        data-testid="combo-box-list-box"
+        className={styles.menu}>
         <MyItem>Foo</MyItem>
         <MyItem>Bar</MyItem>
         <MyItem>Baz</MyItem>
@@ -51,7 +53,7 @@ interface ComboBoxItem {
 
 let items: ComboBoxItem[] = [{id: '1', name: 'Foo'}, {id: '2', name: 'Bar'}, {id: '3', name: 'Baz'}];
 export const ComboBoxRenderPropsStatic = () => (
-  <ComboBox>
+  <ComboBox data-testid="combo-box-render-props-static">
     {({isOpen}) => (
       <>
         <Label style={{display: 'block'}}>Test</Label>
@@ -247,7 +249,7 @@ function MyTag(props) {
 }
 
 export const SelectExample = () => (
-  <Select>
+  <Select data-testid="select-example" id="select-example-id">
     <Label style={{display: 'block'}}>Test</Label>
     <Button>
       <SelectValue />
@@ -268,7 +270,7 @@ export const SelectExample = () => (
 );
 
 export const SelectRenderProps = () => (
-  <Select>
+  <Select data-testid="select-render-props">
     {({isOpen}) => (
       <>
         <Label style={{display: 'block'}}>Test</Label>
@@ -339,7 +341,7 @@ export const MenuComplex = () => (
 );
 
 export const NumberFieldExample = () => (
-  <NumberField formatOptions={{style: 'currency', currency: 'USD'}}>
+  <NumberField data-testid="number-field-example" formatOptions={{style: 'currency', currency: 'USD'}}>
     <Label>Test</Label>
     <Group style={{display: 'flex'}}>
       <Button slot="decrement">-</Button>
@@ -350,16 +352,16 @@ export const NumberFieldExample = () => (
 );
 
 export const DateFieldExample = () => (
-  <DateField>
+  <DateField data-testid="date-field-example">
     <Label style={{display: 'block'}}>Date</Label>
-    <DateInput className={styles.field}>
+    <DateInput className={styles.field} data-testid2="date-input">
       {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
     </DateInput>
   </DateField>
 );
 
 export const TimeFieldExample = () => (
-  <TimeField>
+  <TimeField data-testid="time-field-example">
     <Label style={{display: 'block'}}>Time</Label>
     <DateInput className={styles.field}>
       {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
@@ -412,7 +414,7 @@ export const RangeCalendarExample = () => (
 );
 
 export const DatePickerExample = () => (
-  <DatePicker>
+  <DatePicker data-testid="date-picker-example">
     <Label style={{display: 'block'}}>Date</Label>
     <Group style={{display: 'inline-flex'}}>
       <DateInput className={styles.field}>
@@ -445,11 +447,11 @@ export const DatePickerExample = () => (
 );
 
 export const DateRangePickerExample = () => (
-  <DateRangePicker>
+  <DateRangePicker data-testid="date-range-picker-example">
     <Label style={{display: 'block'}}>Date</Label>
     <Group style={{display: 'inline-flex'}}>
       <div className={styles.field}>
-        <DateInput slot="start" style={{display: 'inline-flex'}}>
+        <DateInput data-testid="date-range-picker-date-input" slot="start" style={{display: 'inline-flex'}}>
           {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
         </DateInput>
         <span aria-hidden="true" style={{padding: '0 4px'}}>–</span>
@@ -485,6 +487,7 @@ export const DateRangePickerExample = () => (
 
 export const SliderExample = () => (
   <Slider
+    data-testid="slider-example"
     defaultValue={[30, 60]}
     style={{
       position: 'relative',
@@ -895,6 +898,7 @@ export const DropzoneExampleWithFileTriggerLink = (props) => (
       {...props}
       aria-label={'testing aria-label'}
       className={styles.dropzone}
+      data-testid="drop-zone-example-with-file-trigger-link"
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
@@ -1032,6 +1036,7 @@ export const DropzoneWithRenderProps = (props) => (
 export const FileTriggerButton = (props) => (
   <FileTrigger
     onSelect={action('onSelect')}
+    data-testid="filetrigger-example"
     {...props} >
     <Button>Upload</Button>
   </FileTrigger>
@@ -1133,9 +1138,10 @@ ListBoxDnd.story = {
 export const RadioGroupExample = () => {
   return (
     <RadioGroup
+      data-testid="radio-group-example"
       className={styles.radiogroup}>
       <Label>Favorite pet</Label>
-      <Radio className={styles.radio} value="dogs">Dog</Radio>
+      <Radio className={styles.radio} value="dogs" data-testid="radio-dog">Dog</Radio>
       <Radio className={styles.radio} value="cats">Cat</Radio>
       <Radio className={styles.radio} value="dragon">Dragon</Radio>
     </RadioGroup>
@@ -1188,5 +1194,55 @@ export const RadioGroupInDialogExample = () => {
         </Modal>
       </ModalOverlay>
     </DialogTrigger>
+  );
+};
+
+export const SearchFieldExample = () => {
+  return (
+    <SearchField className={classNames(styles, 'searchFieldExample')} data-testid="search-field-example">
+      <Label>Search</Label>
+      <Input />
+      <Button>✕</Button>
+    </SearchField>
+  );
+};
+
+export const ButtonExample = () => {
+  return (
+    <Button data-testid="button-example" onPress={() => alert('Hello world!')}>Press me</Button>
+  );
+};
+
+export const ToggleButtonExample = () => {
+  return (
+    <ToggleButton className={classNames(styles, 'toggleButtonExample')} data-testid="toggle-button-example">Toggle</ToggleButton>
+  );
+};
+
+export const SwitchExample = () => {
+  return (
+    <Switch className={classNames(styles, 'switchExample')} data-testid="switch-example">
+      <div className={classNames(styles, 'switchExample-indicator')} />
+      Switch me
+    </Switch>
+  );
+};
+
+export const TextfieldExample = () => {
+  return (
+    <TextField data-testid="textfield-example">
+      <Label>First name</Label>
+      <Input />
+    </TextField>
+  );
+};
+
+export const LinkExample = () => {
+  return (
+    <Link data-testid="link-example">
+      <a href="https://www.imdb.com/title/tt6348138/" target="_blank">
+        The missing link
+      </a>
+    </Link>
   );
 };
