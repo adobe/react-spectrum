@@ -826,7 +826,7 @@ interface PresetProps {
 
 function Preset({value, children}: PresetProps) {
   /*- begin highlight -*/
-  let context = useSlottedContext(RangeCalendarContext);
+  let context = useSlottedContext(RangeCalendarContext)!;
   /*- end highlight -*/
   let onPress = () => {
     context.onFocusChange(value.start);
@@ -905,6 +905,41 @@ Now you can use `MyCustomHeading` within a `RangeCalendar`, in place of the buil
   <MyCustomHeading />
   {/*- end highlight -*/}
   {/* ... */}
+</RangeCalendar>
+```
+
+### State
+
+RangeCalendar provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.RangeCalendarState} /> object to its children via `RangeCalendarStateContext`. This can be used to access and manipulate the calendar's state.
+
+This example shows a `RangeCalendarValue` component that can be placed within a `RangeCalendar` to display the currently selected date as a formatted string.
+
+```tsx example
+import {RangeCalendarStateContext} from 'react-aria-components';
+import {useDateFormatter} from 'react-aria';
+
+function RangeCalendarValue() {
+  /*- begin highlight -*/
+  let state = React.useContext(RangeCalendarStateContext)!;
+  /*- end highlight -*/
+  let start = state.value?.start.toDate(getLocalTimeZone());
+  let end = state.value?.end.toDate(getLocalTimeZone());
+  let formatted = start && end ? useDateFormatter().formatRange(start, end) : 'None';
+  return <small>Selected date range: {formatted}</small>;
+}
+
+<RangeCalendar>
+  <header>
+    <Button slot="previous">◀</Button>
+    <Heading />
+    <Button slot="next">▶</Button>
+  </header>
+  <CalendarGrid>
+    {date => <CalendarCell date={date} />}
+  </CalendarGrid>
+  {/*- begin highlight -*/}
+  <RangeCalendarValue />
+  {/*- end highlight -*/}
 </RangeCalendar>
 ```
 

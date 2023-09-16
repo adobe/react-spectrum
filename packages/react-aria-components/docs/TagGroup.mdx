@@ -11,6 +11,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:react-aria-components';
+import statelyDocs from 'docs:@react-stately/list';
 import {PropTable, HeaderInfo, PageDescription, StateTable, ContextTable, TypeLink} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
@@ -693,6 +694,35 @@ Now you can use `MyCustomLabel` within a `TagGroup`, in place of the builtin Rea
   <MyCustomLabel>Name</MyCustomLabel>
   {/*- end highlight -*/}
   {/* ... */}
+</TagGroup>
+```
+
+### State
+
+TagGroup provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.ListState} /> object to its children via `ListStateContext`. This can be used to access and manipulate the TagGroup's state.
+
+This example shows a `SelectionCount` component that can be placed within a `TagGroup` to display the number of selected tags.
+
+```tsx example
+import {ListStateContext} from 'react-aria-components';
+
+function SelectionCount() {
+  /*- begin highlight -*/
+  let state = React.useContext(ListStateContext)!;
+  /*- end highlight -*/
+  let selected = state.selectionManager.selectedKeys.size;
+  return <small>{selected} tags selected.</small>;
+}
+
+<TagGroup selectionMode="multiple">
+  <Label>Tags</Label>
+  <TagList>
+    <Tag>News</Tag>
+    <Tag>Travel</Tag>
+    <Tag>Gaming</Tag>
+    <Tag>Shopping</Tag>
+  </TagList>
+  <SelectionCount />
 </TagGroup>
 ```
 

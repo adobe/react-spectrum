@@ -947,4 +947,74 @@ describe('ListBox', function () {
       expect(options[0]).toHaveAttribute('aria-setsize', '3');
     });
   });
+
+  describe('links', function () {
+    describe.each(['mouse', 'keyboard'])('%s', (type) => {
+      let trigger = (item) => {
+        if (type === 'mouse') {
+          triggerPress(item);
+        } else {
+          fireEvent.keyDown(item, {key: 'Enter'});
+          fireEvent.keyUp(item, {key: 'Enter'});
+        }
+      };
+
+      it('should support links with selectionMode="none"', function () {
+        let {getAllByRole} = render(
+          <Provider theme={theme}>
+            <ListBox aria-label="listbox">
+              <Item href="https://google.com">One</Item>
+              <Item href="https://adobe.com">Two</Item>
+            </ListBox>
+          </Provider>
+        );
+
+        let items = getAllByRole('option');
+        for (let item of items) {
+          expect(item.tagName).toBe('A');
+          expect(item).toHaveAttribute('href');
+        }
+
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick, {once: true});
+        trigger(items[0]);
+        expect(onClick).toHaveBeenCalledTimes(1);
+        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+      });
+
+      it.each(['single', 'multiple'])('should support links with selectionMode="%s"', function (selectionMode) {
+        let {getAllByRole} = render(
+          <Provider theme={theme}>
+            <ListBox aria-label="listbox" selectionMode={selectionMode}>
+              <Item href="https://google.com">One</Item>
+              <Item href="https://adobe.com">Two</Item>
+            </ListBox>
+          </Provider>
+        );
+
+        let items = getAllByRole('option');
+        for (let item of items) {
+          expect(item.tagName).toBe('A');
+          expect(item).toHaveAttribute('href');
+        }
+
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick, {once: true});
+        trigger(items[0]);
+        expect(onClick).toHaveBeenCalledTimes(1);
+        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+        expect(items[0]).not.toHaveAttribute('aria-selected', 'true');
+
+        onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick, {once: true});
+        trigger(items[1]);
+        expect(onClick).toHaveBeenCalledTimes(1);
+        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[0][0].target.href).toBe('https://adobe.com/');
+        expect(items[1]).not.toHaveAttribute('aria-selected', 'true');
+      });
+    });
+  });
 });

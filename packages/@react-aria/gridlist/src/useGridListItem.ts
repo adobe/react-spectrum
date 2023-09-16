@@ -13,7 +13,7 @@
 import {DOMAttributes, FocusableElement, Node as RSNode} from '@react-types/shared';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getRowId, listMap} from './utils';
-import {getScrollParent, mergeProps, scrollIntoViewport, useSlotId} from '@react-aria/utils';
+import {getScrollParent, getSyntheticLinkProps, mergeProps, scrollIntoViewport, useSlotId} from '@react-aria/utils';
 import {isFocusVisible} from '@react-aria/interactions';
 import type {ListState} from '@react-stately/list';
 import {KeyboardEvent as ReactKeyboardEvent, RefObject, useRef} from 'react';
@@ -53,7 +53,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   } = props;
 
   let {direction} = useLocale();
-  let {onAction} = listMap.get(state);
+  let {onAction, linkBehavior} = listMap.get(state);
   let descriptionId = useSlotId();
 
   // We need to track the key of the item at the time it was last focused so that we force
@@ -77,7 +77,8 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     isVirtualized,
     shouldSelectOnPressUp,
     onAction: onAction ? () => onAction(node.key) : undefined,
-    focus
+    focus,
+    linkBehavior
   });
 
   let onKeyDown = (e: ReactKeyboardEvent) => {
@@ -177,7 +178,8 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     }
   };
 
-  let rowProps: DOMAttributes = mergeProps(itemProps, {
+  let linkProps = getSyntheticLinkProps(node.props);
+  let rowProps: DOMAttributes = mergeProps(itemProps, linkProps, {
     role: 'row',
     onKeyDownCapture: onKeyDown,
     onFocus,
