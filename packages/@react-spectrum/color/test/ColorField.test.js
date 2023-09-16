@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, typeText} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import {chain} from '@react-aria/utils';
 import {ColorField} from '../';
 import {parseColor} from '@react-stately/color';
@@ -30,6 +30,11 @@ function renderComponent(props) {
 }
 
 describe('ColorField', function () {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   it('should handle defaults', function () {
     let {
       getByLabelText,
@@ -124,7 +129,7 @@ describe('ColorField', function () {
     expect(colorField.value).toBe('#AABBCC');
   });
 
-  it('should handle uncontrolled state', function () {
+  it('should handle uncontrolled state', async function () {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({defaultValue: '#abc', onChange: onChangeSpy});
 
@@ -133,8 +138,8 @@ describe('ColorField', function () {
 
     act(() => {
       colorField.focus();
-      userEvent.clear(colorField);
     });
+    await user.clear(colorField);
     expect(colorField.value).toBe('');
     expect(onChangeSpy).not.toHaveBeenCalled();
     act(() => {
@@ -148,8 +153,8 @@ describe('ColorField', function () {
     act(() => {
       colorField.focus();
     });
-    typeText(colorField, 'cba');
-    typeText(colorField, 'cba');
+    await user.keyboard('cba');
+    await user.keyboard('cba');
     act(() => {
       colorField.blur();
     });
@@ -158,7 +163,7 @@ describe('ColorField', function () {
     expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#cbacba'));
   });
 
-  it('should handle uncontrolled state typing same value twice', function () {
+  it('should handle uncontrolled state typing same value twice', async function () {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({onChange: onChangeSpy});
 
@@ -167,7 +172,7 @@ describe('ColorField', function () {
     act(() => {
       colorField.focus();
     });
-    typeText(colorField, 'cbacba');
+    await user.keyboard('cbacba');
     act(() => {
       colorField.blur();
     });
@@ -175,16 +180,16 @@ describe('ColorField', function () {
 
     act(() => {
       colorField.focus();
-      userEvent.clear(colorField);
     });
-    typeText(colorField, 'cbacba');
+    await user.clear(colorField);
+    await user.keyboard('cbacba');
     act(() => {
       colorField.blur();
     });
     expect(colorField.value).toBe('#CBACBA');
   });
 
-  it('should not update value in controlled state', function () {
+  it('should not update value in controlled state', async function () {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({value: '#abc', onChange: onChangeSpy});
 
@@ -193,8 +198,8 @@ describe('ColorField', function () {
 
     act(() => {
       colorField.focus();
-      userEvent.clear(colorField);
     });
+    await user.clear(colorField);
     // blur must be called in its own act
     act(() => {
       colorField.blur();
@@ -206,9 +211,9 @@ describe('ColorField', function () {
 
     act(() => {
       colorField.focus();
-      userEvent.type(colorField, '{selectall}');
     });
-    typeText(colorField, 'cba');
+    await user.clear(colorField);
+    await user.keyboard('cba');
     act(() => {
       colorField.blur();
     });
@@ -217,7 +222,7 @@ describe('ColorField', function () {
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
   });
 
-  it('should update value in controlled state when implemented', function () {
+  it('should update value in controlled state when implemented', async function () {
     function ColorFieldControlled(props) {
       let {onChange} = props;
       let [color, setColor] = useState(props.value);
@@ -237,8 +242,8 @@ describe('ColorField', function () {
 
     act(() => {
       colorField.focus();
-      userEvent.clear(colorField);
     });
+    await user.clear(colorField);
     act(() => {
       colorField.blur();
     });
@@ -250,21 +255,21 @@ describe('ColorField', function () {
     act(() => {
       colorField.focus();
     });
-    typeText(colorField, 'cba');
+    await user.keyboard('cba');
     act(() => {colorField.blur();});
     expect(colorField.value).toBe('#CCBBAA');
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
     expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#CCBBAA'));
   });
 
-  it('should disallow invalid characters and revert back to last valid value if left incomplete', function () {
+  it('should disallow invalid characters and revert back to last valid value if left incomplete', async function () {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({onChange: onChangeSpy});
     let colorField = getByLabelText('Primary Color');
     expect(colorField.value).toBe('');
 
     act(() => {colorField.focus();});
-    typeText(colorField, 'abc');
+    await user.keyboard('abc');
     act(() => {colorField.blur();});
     expect(colorField.value).toBe('#AABBCC');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
@@ -273,8 +278,8 @@ describe('ColorField', function () {
     act(() => {
       colorField.focus();
     });
-    userEvent.clear(colorField);
-    typeText(colorField, 'abcxyz8b');
+    await user.clear(colorField);
+    await user.keyboard('abcxyz8b');
     expect(colorField.value).toBe('abc8b');
     act(() => {colorField.blur();});
     /* is this really what we expect?? */

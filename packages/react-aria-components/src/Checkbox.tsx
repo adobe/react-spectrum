@@ -10,20 +10,20 @@
  * governing permissions and limitations under the License.
  */
 import {AriaCheckboxGroupProps, AriaCheckboxProps, mergeProps, useCheckbox, useCheckboxGroup, useCheckboxGroupItem, useFocusRing, useHover, usePress, VisuallyHidden} from 'react-aria';
-import {CheckboxGroupState, useCheckboxGroupState, useToggleState, ValidationState} from 'react-stately';
+import {CheckboxGroupState, useCheckboxGroupState, useToggleState} from 'react-stately';
 import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, useContext, useState} from 'react';
 import {TextContext} from './Text';
 
-export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<CheckboxGroupRenderProps>, SlotProps {}
-export interface CheckboxProps extends Omit<AriaCheckboxProps, 'children'>, RenderProps<CheckboxRenderProps>, SlotProps {}
+export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState'>, RenderProps<CheckboxGroupRenderProps>, SlotProps {}
+export interface CheckboxProps extends Omit<AriaCheckboxProps, 'children' | 'validationState'>, RenderProps<CheckboxRenderProps>, SlotProps {}
 
 export interface CheckboxGroupRenderProps {
   /**
    * Whether the checkbox group is disabled.
-   * @selector [aria-disabled]
+   * @selector [data-disabled]
    */
   isDisabled: boolean,
   /**
@@ -37,10 +37,14 @@ export interface CheckboxGroupRenderProps {
    */
   isRequired: boolean,
   /**
-   * The validation state of the checkbox group.
-   * @selector [data-validation-state="invalid" | "valid"]
+   * Whether the checkbox group is invalid.
+   * @selector [data-invalid]
    */
-  validationState: ValidationState
+  isInvalid: boolean,
+  /**
+   * State of the checkbox group.
+   */
+  state: CheckboxGroupState
 }
 
 export interface CheckboxRenderProps {
@@ -50,7 +54,7 @@ export interface CheckboxRenderProps {
    */
   isSelected: boolean,
   /**
-   * Whether the checkbox is selected.
+   * Whether the checkbox is indeterminate.
    * @selector [data-indeterminate]
    */
   isIndeterminate: boolean,
@@ -85,10 +89,10 @@ export interface CheckboxRenderProps {
    */
   isReadOnly: boolean,
   /**
-   * Whether the checkbox is valid or invalid.
-   * @selector [data-validation-state="valid | invalid"]
+   * Whether the checkbox invalid.
+   * @selector [data-invalid]
    */
-  validationState?: ValidationState,
+  isInvalid: boolean,
   /**
    * Whether the checkbox is required.
    * @selector [data-required]
@@ -97,7 +101,7 @@ export interface CheckboxRenderProps {
 }
 
 export const CheckboxGroupContext = createContext<ContextValue<CheckboxGroupProps, HTMLDivElement>>(null);
-const InternalCheckboxGroupContext = createContext<CheckboxGroupState | null>(null);
+export const CheckboxGroupStateContext = createContext<CheckboxGroupState | null>(null);
 
 function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, CheckboxGroupContext);
@@ -114,7 +118,8 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivEleme
       isDisabled: state.isDisabled,
       isReadOnly: state.isReadOnly,
       isRequired: props.isRequired || false,
-      validationState: state.validationState
+      isInvalid: state.isInvalid,
+      state
     },
     defaultClassName: 'react-aria-CheckboxGroup'
   });
@@ -124,14 +129,15 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivEleme
       {...groupProps}
       {...renderProps}
       ref={ref}
-      slot={props.slot}
+      slot={props.slot || undefined}
       data-readonly={state.isReadOnly || undefined}
       data-required={props.isRequired || undefined}
-      data-validation-state={state.validationState || undefined}>
+      data-invalid={state.isInvalid || undefined}
+      data-disabled={props.isDisabled || undefined}>
       <Provider
         values={[
-          [InternalCheckboxGroupContext, state],
-          [LabelContext, {...labelProps, ref: labelRef}],
+          [CheckboxGroupStateContext, state],
+          [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
           [TextContext, {
             slots: {
               description: descriptionProps,
@@ -149,7 +155,7 @@ export const CheckboxContext = createContext<ContextValue<CheckboxProps, HTMLInp
 
 function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
   [props, ref] = useContextProps(props, ref, CheckboxContext);
-  let groupState = useContext(InternalCheckboxGroupContext);
+  let groupState = useContext(CheckboxGroupStateContext);
   let {inputProps, isSelected, isDisabled, isReadOnly, isPressed: isPressedKeyboard} = groupState
     // eslint-disable-next-line react-hooks/rules-of-hooks
     ? useCheckboxGroupItem({
@@ -202,7 +208,7 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
       isFocusVisible,
       isDisabled,
       isReadOnly,
-      validationState: props.validationState || groupState?.validationState,
+      isInvalid: props.isInvalid || groupState?.isInvalid || false,
       isRequired: props.isRequired || false
     }
   });
@@ -213,7 +219,7 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
   return (
     <label
       {...mergeProps(DOMProps, pressProps, hoverProps, renderProps)}
-      slot={props.slot}
+      slot={props.slot || undefined}
       data-selected={isSelected || undefined}
       data-indeterminate={props.isIndeterminate || undefined}
       data-pressed={pressed || undefined}
@@ -222,7 +228,7 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
       data-focus-visible={isFocusVisible || undefined}
       data-disabled={isDisabled || undefined}
       data-readonly={isReadOnly || undefined}
-      data-validation-state={props.validationState || groupState?.validationState || undefined}
+      data-invalid={props.isInvalid || groupState?.isInvalid || undefined}
       data-required={props.isRequired || undefined}>
       <VisuallyHidden elementType="span">
         <input {...inputProps} {...focusProps} ref={ref} />

@@ -11,37 +11,76 @@
  */
 
 import {AriaTextFieldProps, useTextField} from 'react-aria';
-import {ContextValue, DOMProps, Provider, SlotProps, useContextProps, useSlot} from './utils';
+import {ContextValue, DOMProps, forwardRefType, Provider, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
-import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useCallback, useRef, useState} from 'react';
+import {TextAreaContext} from './TextArea';
 import {TextContext} from './Text';
 
-export interface TextFieldProps extends Omit<AriaTextFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, DOMProps, SlotProps {}
+export interface TextFieldRenderProps {
+  /**
+   * Whether the text field is disabled.
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean,
+  /**
+   * Whether the value is invalid.
+   * @selector [data-invalid]
+   */
+  isInvalid: boolean
+}
+
+export interface TextFieldProps extends Omit<AriaTextFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState'>, Omit<DOMProps, 'style' | 'className' | 'children'>, SlotProps, RenderProps<TextFieldRenderProps> {
+  /** Whether the value is invalid. */
+  isInvalid?: boolean
+}
 
 export const TextFieldContext = createContext<ContextValue<TextFieldProps, HTMLDivElement>>(null);
 
 function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TextFieldContext);
-  let inputRef = useRef<HTMLInputElement>(null);
+  let inputRef = useRef(null);
   let [labelRef, label] = useSlot();
-  let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField({
-    ...props,
+  let [inputElementType, setInputElementType] = useState('input');
+  let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField<any>({
+    ...removeDataAttributes(props),
+    inputElementType,
     label
   }, inputRef);
+
+  // Intercept setting the input ref so we can determine what kind of element we have.
+  // useTextField uses this to determine what props to include.
+  let inputOrTextAreaRef = useCallback((el) => {
+    inputRef.current = el;
+    if (el) {
+      setInputElementType(el instanceof HTMLTextAreaElement ? 'textarea' : 'input');
+    }
+  }, []);
+
+  let renderProps = useRenderProps({
+    ...props,
+    values: {
+      isDisabled: props.isDisabled || false,
+      isInvalid: props.isInvalid || false
+    },
+    defaultClassName: 'react-aria-TextField'
+  });
 
   return (
     <div
       {...filterDOMProps(props)}
+      {...renderProps}
       ref={ref}
-      slot={props.slot}
-      className={props.className ?? 'react-aria-TextField'}
-      style={props.style}>
+      slot={props.slot || undefined}
+      data-disabled={props.isDisabled || undefined}
+      data-invalid={props.isInvalid || undefined}>
       <Provider
         values={[
           [LabelContext, {...labelProps, ref: labelRef}],
-          [InputContext, {...inputProps, ref: inputRef}],
+          [InputContext, {...inputProps, ref: inputOrTextAreaRef}],
+          [TextAreaContext, {...inputProps, ref: inputOrTextAreaRef}],
           [TextContext, {
             slots: {
               description: descriptionProps,
@@ -49,7 +88,7 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
             }
           }]
         ]}>
-        {props.children}
+        {renderProps.children}
       </Provider>
     </div>
   );
@@ -58,5 +97,5 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
 /**
  * A text field allows a user to enter a plain text value with a keyboard.
  */
-const _TextField = forwardRef(TextField);
+const _TextField = (forwardRef as forwardRefType)(TextField);
 export {_TextField as TextField};

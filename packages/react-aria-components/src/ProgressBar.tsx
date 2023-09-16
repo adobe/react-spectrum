@@ -26,7 +26,7 @@ export interface ProgressBarRenderProps {
    * A formatted version of the value.
    * @selector [aria-valuetext]
    */
-  valueText?: string,
+  valueText: string | undefined,
   /**
    * Whether the progress bar is indeterminate.
    * @selector :not([aria-valuenow])
@@ -65,7 +65,7 @@ function ProgressBar(props: ProgressBarProps, ref: ForwardedRef<HTMLDivElement>)
   });
 
   return (
-    <div {...progressBarProps} {...renderProps} ref={ref} slot={props.slot}>
+    <div {...progressBarProps} {...renderProps} ref={ref} slot={props.slot || undefined}>
       <LabelContext.Provider value={{...labelProps, ref: labelRef, elementType: 'span'}}>
         {renderProps.children}
       </LabelContext.Provider>

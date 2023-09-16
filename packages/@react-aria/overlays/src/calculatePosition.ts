@@ -101,7 +101,7 @@ const TOTAL_SIZE = {
 const PARSED_PLACEMENT_CACHE = {};
 
 // @ts-ignore
-let visualViewport = typeof window !== 'undefined' && window.visualViewport;
+let visualViewport = typeof document !== 'undefined' && window.visualViewport;
 
 function getContainerDimensions(containerNode: Element): Dimensions {
   let width = 0, height = 0, totalWidth = 0, totalHeight = 0, top = 0, left = 0;
@@ -143,7 +143,9 @@ function getDelta(
   containerDimensions: Dimensions,
   padding: number
 ) {
-  let containerScroll = containerDimensions.scroll[axis];
+  let root = document.scrollingElement || document.documentElement;
+  let isScrollPrevented = window.getComputedStyle(root).overflow === 'hidden';
+  let containerScroll = isScrollPrevented ? 0 : containerDimensions.scroll[axis];
   let containerHeight = containerDimensions[AXIS_SIZE[axis]];
 
   let startEdgeOffset = offset - padding - containerScroll;
@@ -393,7 +395,7 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
     offset,
     crossOffset,
     maxHeight,
-    arrowSize,
+    arrowSize = 0,
     arrowBoundaryOffset = 0
   } = opts;
 

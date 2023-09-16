@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
-import {render, typeText} from '@react-spectrum/test-utils';
 import {TextArea} from '../';
+import userEvent from '@testing-library/user-event';
 
 let testId = 'test-id';
 let mockScrollHeight = 500;
@@ -24,6 +25,11 @@ function renderComponent(Component, props) {
 describe('TextArea', () => {
   let onChange = jest.fn();
   let oldScrollHeight = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'scrollHeight');
+  let user;
+
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
 
   beforeEach(() => {
     Object.defineProperty(HTMLElement.prototype, 'scrollHeight', {configurable: true, value: mockScrollHeight});
@@ -54,33 +60,36 @@ describe('TextArea', () => {
     expect(input.style.height).toBe(`${mockScrollHeight}px`);
   });
 
-  it('isQuiet can adjust after text "grows"', () => {
+  it('isQuiet can adjust after text "grows"', async () => {
     let tree = renderComponent(TextArea, {isQuiet: true});
     let input = tree.getByTestId(testId);
     let newScrollHeight = 1000;
     expect(input.style.height).toBe(`${mockScrollHeight}px`);
     // this will be cleaned up in the afterEach
     Object.defineProperty(HTMLElement.prototype, 'scrollHeight', {configurable: true, value: newScrollHeight});
-    typeText(input, '15');
+    await user.tab();
+    await user.keyboard('15');
     expect(input.style.height).toBe(`${newScrollHeight}px`);
   });
 
-  it('default can adjust after text "grows"', () => {
+  it('default can adjust after text "grows"', async () => {
     let tree = renderComponent(TextArea, {});
     let input = tree.getByTestId(testId);
     let newScrollHeight = 1000;
     expect(input.style.height).toBe(`${mockScrollHeight}px`);
     // this will be cleaned up in the afterEach
     Object.defineProperty(HTMLElement.prototype, 'scrollHeight', {configurable: true, value: newScrollHeight});
-    typeText(input, '15');
+    await user.tab();
+    await user.keyboard('15');
     expect(input.style.height).toBe(`${newScrollHeight}px`);
   });
 
-  it('default does not change height when a height prop is set', () => {
+  it('default does not change height when a height prop is set', async () => {
     let tree = renderComponent(TextArea, {height: 'size-2000'});
     let input = tree.getByTestId(testId);
     expect(input.style.height).toBe('');
-    typeText(input, '15');
+    await user.tab();
+    await user.keyboard('15');
     expect(input.style.height).toBe('');
   });
 });

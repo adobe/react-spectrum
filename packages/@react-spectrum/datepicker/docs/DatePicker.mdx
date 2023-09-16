@@ -165,6 +165,14 @@ function Example() {
 }
 ```
 
+### HTML forms
+
+DatePicker supports the `name` prop for integration with HTML forms. The value will be submitted to the server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted string according to the granularity of the value. For example, if the date picker allows selecting only a date then a string such as `"2023-02-03"` will be submitted, and if it allows selecting a time then a string such as `"2023-02-03T08:45:00"` will be submitted. See the [Value](#value) section above for more details about the supported value types.
+
+```tsx example
+<DatePicker label="Birth date" name="birthday" />
+```
+
 ## Labeling
 
 A visual label should be provided for the `DatePicker` using the `label` prop. If the `DatePicker` is required, the `isRequired` and `necessityIndicator` props can be used to show a required state.
@@ -204,7 +212,7 @@ function Example() {
   return (
     <>
       <DatePicker label="Birth date" value={date} onChange={setDate} />
-      <p>Selected date: {formatter.format(date.toDate(getLocalTimeZone()))}</p>
+      <p>Selected date: {date ? formatter.format(date.toDate(getLocalTimeZone())) : '--'}</p>
     </>
   );
 }
@@ -229,7 +237,7 @@ function Example() {
       label="Appointment date"
       value={date}
       onChange={setDate}
-      validationState={isWeekend(date, locale) ? 'invalid' : 'valid'}
+      validationState={date && isWeekend(date, locale) ? 'invalid' : 'valid'}
       description="Select a weekday"
       errorMessage="We are closed on weekends" />
   );
@@ -353,6 +361,14 @@ By default, the calendar popover displays a single month. The `maxVisibleMonths`
 
 ```tsx example
 <DatePicker label="Appointment date" maxVisibleMonths={3} />
+```
+
+### Page behavior
+
+By default, when pressing the next or previous buttons, pagination will advance by the `maxVisibleMonths` value. This behavior can be changed to page by single months instead, by setting `pageBehavior` to `single`.
+
+```tsx example
+<DatePicker label="Appointment date" maxVisibleMonths={3} pageBehavior="single" />
 ```
 
 ### Hide time zone

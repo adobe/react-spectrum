@@ -12,9 +12,9 @@
 
 import {alignCenter, constrainValue, isInvalid, previousAvailableDate} from './utils';
 import {Calendar, CalendarDate, DateDuration, GregorianCalendar, isEqualDay, maxDate, minDate, toCalendar, toCalendarDate} from '@internationalized/date';
-import {CalendarState, PageBehavior, RangeCalendarState} from './types';
+import {CalendarState, RangeCalendarState} from './types';
 import {DateRange, DateValue, RangeCalendarProps} from '@react-types/calendar';
-import {RangeValue} from '@react-types/shared';
+import {RangeValue, ValidationState} from '@react-types/shared';
 import {useCalendarState} from './useCalendarState';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo, useRef, useState} from 'react';
@@ -33,12 +33,7 @@ export interface RangeCalendarStateOptions<T extends DateValue = DateValue> exte
    * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
    */
-  visibleDuration?: DateDuration,
-  /**
-   * Controls the behavior of paging. Pagination either works by advancing the visible page by visibleDuration (default) or one unit of visibleDuration.
-   * @default visible
-   */
-  pageBehavior?: PageBehavior
+  visibleDuration?: DateDuration
 }
 
 /**
@@ -150,7 +145,8 @@ export function useRangeCalendarState<T extends DateValue = DateValue>(props: Ra
     return isInvalid(value.start, minValue, maxValue) || isInvalid(value.end, minValue, maxValue);
   }, [isDateUnavailable, value, anchorDate, minValue, maxValue]);
 
-  let validationState = props.validationState || (isInvalidSelection ? 'invalid' : null);
+  let isValueInvalid = props.isInvalid || props.validationState === 'invalid' || isInvalidSelection;
+  let validationState: ValidationState = isValueInvalid ? 'invalid' : null;
 
   return {
     ...calendar,
@@ -160,6 +156,7 @@ export function useRangeCalendarState<T extends DateValue = DateValue>(props: Ra
     setAnchorDate,
     highlightedRange,
     validationState,
+    isValueInvalid,
     selectFocusedDate() {
       selectDate(calendar.focusedDate);
     },

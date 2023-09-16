@@ -26,7 +26,7 @@ export interface MeterRenderProps {
    * A formatted version of the value.
    * @selector [aria-valuetext]
    */
-  valueText?: string
+  valueText: string | undefined
 }
 
 export const MeterContext = createContext<ContextValue<MeterProps, HTMLDivElement>>(null);
@@ -58,7 +58,7 @@ function Meter(props: MeterProps, ref: ForwardedRef<HTMLDivElement>) {
   });
 
   return (
-    <div {...meterProps} {...renderProps} ref={ref} slot={props.slot}>
+    <div {...meterProps} {...renderProps} ref={ref} slot={props.slot || undefined}>
       <LabelContext.Provider value={{...labelProps, ref: labelRef, elementType: 'span'}}>
         {renderProps.children}
       </LabelContext.Provider>

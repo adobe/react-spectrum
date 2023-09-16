@@ -101,7 +101,7 @@ function Tabs(props) {
     <div className={`tabs ${props.orientation || ''}`}>
       <div {...tabListProps} ref={ref}>
         {[...state.collection].map((item) => (
-          <Tab key={item.key} item={item} state={state} orientation={props.orientation} />
+          <Tab key={item.key} item={item} state={state} />
         ))}
       </div>
       <TabPanel key={state.selectedItem?.key} state={state} />
@@ -109,7 +109,7 @@ function Tabs(props) {
   );
 }
 
-function Tab({item, state, orientation}) {
+function Tab({item, state}) {
   let {key, rendered} = item;
   let ref = React.useRef(null);
   let {tabProps} = useTab({key}, state, ref);
@@ -236,7 +236,7 @@ function Example() {
           The Jurassic ranges from 200 million years to 145 million years ago.
         </Item>
         <Item key="cretaceous" title="Cretaceous">
-          The Cretaceous is the longest period of the Mesozoic, spanning from 145 million to 66 years ago.
+          The Cretaceous is the longest period of the Mesozoic, spanning from 145 million to 66 million years ago.
         </Item>
       </Tabs>
     </>
@@ -319,7 +319,7 @@ tab selection.
 
 ### Orientation
 
-By default, tabs are horizontally oriented. The `orientation` prop can be set to `vertical` to change this. This affects keyboard navigation. You are responsible for styling your tabs accordingly.
+By default, tabs are horizontally oriented. The `orientation` prop can be set to `vertical` to change this. This does not affect keyboard navigation. You are responsible for styling your tabs accordingly.
 
 ```tsx example
 <Tabs aria-label="Chat log orientation example" orientation="vertical">

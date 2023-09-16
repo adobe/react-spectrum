@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-InputGroup {
+  --spectrum-inputgroup-border-color-focus: var(--spectrum-alias-input-border-color-key-focus);
   background: var(--spectrum-textfield-background-color);
 
   .spectrum-FieldButton {
@@ -78,13 +79,13 @@ governing permissions and limitations under the License.
 .spectrum-InputGroup.is-focused {
   .spectrum-FieldButton:before,
   .spectrum-InputGroup-input {
-    border-color: var(--spectrum-alias-input-border-color-key-focus);
+    border-color: var(--spectrum-inputgroup-border-color-focus);
   }
 
   &.spectrum-InputGroup--invalid {
     .spectrum-FieldButton:before,
     .spectrum-InputGroup-input {
-      border-color: var(--spectrum-alias-input-border-color-key-focus);
+      border-color: var(--spectrum-inputgroup-border-color-focus);
     }
   }
 }
@@ -264,19 +265,36 @@ governing permissions and limitations under the License.
     --spectrum-dropdown-border-color-error: Highlight;
     --spectrum-dropdown-border-color-key-focus: Highlight;
     --spectrum-textfield-border-color-error: Highlight;
+    --spectrum-textfield-border-color-error-hover: Highlight;
     --spectrum-textfield-border-color-hover: Highlight;
     --spectrum-textfield-border-color-key-focus: Highlight;
-    --spectrum-textfield-quiet-border-color: CanvasText;
+    --spectrum-textfield-quiet-border-color: ButtonText;
     --spectrum-textfield-quiet-border-color-disabled: GrayText;
     --spectrum-textfield-quiet-border-color-hover: Highlight;
     --spectrum-textfield-quiet-border-color-key-focus: Highlight;
     --spectrum-textfield-text-color-disabled: GrayText;
+    --spectrum-inputgroup-border-color-focus: Highlight;
+
     forced-color-adjust: none;
     .spectrum-InputGroup-input {
       forced-color-adjust: auto;
+      --spectrum-textfield-border-color: ButtonText;
+      --spectrum-textfield-background-color-disabled: Canvas;
     }
     .spectrum-FieldButton {
       forced-color-adjust: auto;
+      --spectrum-fieldbutton-background-color: Canvas;
+      --spectrum-fieldbutton-quiet-background-color: Canvas;
+      --spectrum-fieldbutton-icon-color: ButtonText;
+      --spectrum-fieldbutton-background-color-down: Canvas;
+      --spectrum-fieldbutton-quiet-background-color-down: Canvas;
+      --spectrum-fieldbutton-icon-color-down: ButtonText;
+      --spectrum-fieldbutton-background-color-disabled: Canvas;
+      --spectrum-fieldbutton-quiet-background-color-disabled: Canvas;
+      --spectrum-fieldbutton-background-color-hover: Canvas;
+      --spectrum-fieldbutton-quiet-background-color-hover: Canvas;
+      --spectrum-fieldbutton-icon-color-hover: ButtonText;
+      background-clip: unset;
     }
 
     &.is-disabled:not(.spectrum-InputGroup--invalid):not(.spectrum-InputGroup--quiet) .spectrum-FieldButton {
@@ -312,8 +330,8 @@ governing permissions and limitations under the License.
   .spectrum-InputGroup--invalid {
     .spectrum-FieldButton {
       &:before {
-         border-color: Highlight;
-       }
+        border-color: Highlight;
+      }
     }
     &.is-disabled:not(.spectrum-InputGroup--quiet) .spectrum-InputGroup-input {
       border-color: GrayText;
@@ -347,4 +365,3 @@ governing permissions and limitations under the License.
     }
   }
 }
-

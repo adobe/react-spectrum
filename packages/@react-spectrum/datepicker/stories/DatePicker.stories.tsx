@@ -121,6 +121,9 @@ export default {
     hideTimeZone: {
       control: 'boolean'
     },
+    shouldForceLeadingZeros: {
+      control: 'boolean'
+    },
     isDisabled: {
       control: 'boolean'
     },
@@ -360,7 +363,7 @@ function Example(props) {
 }
 
 function ControlledExample(props) {
-  let [value, setValue] = React.useState(null);
+  let [value, setValue] = React.useState(props.value);
 
   return (
     <Flex direction="column" alignItems="center" gap="size-150">

@@ -92,6 +92,9 @@ export function useDrag(options: DragOptions): DragResult {
       return;
     }
 
+    // Prevent the drag event from propagating to any parent draggables
+    e.stopPropagation();
+
     // If this drag was initiated by a mobile screen reader (e.g. VoiceOver or TalkBack), enter virtual dragging mode.
     if (modalityOnPointerDown.current === 'virtual') {
       e.preventDefault();
@@ -149,13 +152,10 @@ export function useDrag(options: DragOptions): DragResult {
 
     // Enforce that drops are handled by useDrop.
     addGlobalListener(window, 'drop', e => {
-      if (!DragManager.isValidDropTarget(e.target as Element)) {
-        e.preventDefault();
-        e.stopPropagation();
-        throw new Error('Drags initiated from the React Aria useDrag hook may only be dropped on a target created with useDrop. This ensures that a keyboard and screen reader accessible alternative is available.');
-      }
-    }, {capture: true, once: true});
-
+      e.preventDefault();
+      e.stopPropagation();
+      console.warn('Drags initiated from the React Aria useDrag hook may only be dropped on a target created with useDrop. This ensures that a keyboard and screen reader accessible alternative is available.');
+    }, {once: true});
     state.x = e.clientX;
     state.y = e.clientY;
 
@@ -167,6 +167,9 @@ export function useDrag(options: DragOptions): DragResult {
   };
 
   let onDrag = (e: DragEvent) => {
+    // Prevent the drag event from propagating to any parent draggables
+    e.stopPropagation();
+
     if (e.clientX === state.x && e.clientY === state.y) {
       return;
     }
@@ -184,6 +187,9 @@ export function useDrag(options: DragOptions): DragResult {
   };
 
   let onDragEnd = (e: DragEvent) => {
+    // Prevent the drag event from propagating to any parent draggables
+    e.stopPropagation();
+
     if (typeof options.onDragEnd === 'function') {
       let event: DragEndEvent = {
         type: 'dragend',

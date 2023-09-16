@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Alignment, DOMProps, LabelPosition, NecessityIndicator, SpectrumHelpTextProps, StyleProps} from '@react-types/shared';
+import {Alignment, DOMProps, LabelPosition, NecessityIndicator, SpectrumFieldValidation, SpectrumHelpTextProps, StyleProps, Validation} from '@react-types/shared';
 import {ElementType, HTMLAttributes, ReactElement, ReactNode} from 'react';
 
 export interface LabelProps {
@@ -30,7 +30,7 @@ interface SpectrumLabelPropsBase extends LabelProps, DOMProps, StyleProps {
 
 export interface SpectrumLabelProps extends SpectrumLabelPropsBase, HTMLAttributes<HTMLElement> {}
 
-export interface SpectrumFieldProps extends SpectrumLabelPropsBase, SpectrumHelpTextProps {
+export interface SpectrumFieldProps extends SpectrumLabelPropsBase, SpectrumHelpTextProps, Omit<Validation, 'validationState'>, SpectrumFieldValidation {
   children: ReactElement,
   label?: ReactNode,
   contextualHelp?: ReactNode,

@@ -26,6 +26,7 @@ import {Item, Picker, Section, SpectrumPickerProps} from '../';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React,  {useState} from 'react';
 import {useAsyncList} from '@react-stately/data';
+import {userEvent, within} from '@storybook/testing-library';
 
 let flatOptions = [
   {id: 1, name: 'Aardvark'},
@@ -127,11 +128,8 @@ export default {
     isRequired: {
       control: 'boolean'
     },
-    validationState: {
-      control: {
-        type: 'radio',
-        options: [null, 'valid', 'invalid']
-      }
+    isInvalid: {
+      control: 'boolean'
     },
     isQuiet: {
       control: 'boolean'
@@ -166,6 +164,15 @@ export default {
 export type DefaultStory = ComponentStoryObj<typeof DefaultPicker>;
 export const Default: DefaultStory = {
   render: (args) => <DefaultPicker {...args} />
+};
+
+// Need to interact with picker for the aXe plugin to catch the 'aria-hidden-focus' false positive
+Default.play = async ({canvasElement}) => {
+  let canvas = within(canvasElement);
+  let button = await canvas.findByRole('button');
+  await userEvent.click(button);
+  let body = canvasElement.ownerDocument.body;
+  await within(body).findByRole('listbox');
 };
 
 export const Disabled: DefaultStory = {
@@ -229,14 +236,35 @@ export const FalsyKey: PickerStory = {
   name: 'falsy item key'
 };
 
-export const NoLabel: PickerStory = {
+export type LabelledByStory = ComponentStoryObj<any>;
+export const LabelledBy: LabelledByStory = {
   args: {
-    children: (item: any) => <Item>{item.name}</Item>,
-    items: flatOptions,
-    'aria-label': 'Test',
+    'aria-label': null,
+    'aria-labelledby': true,
     label: null
   },
-  name: 'no visible label'
+  argTypes: {
+    'aria-label': {
+      control: 'text'
+    },
+    'aria-labelledby': {
+      control: 'boolean'
+    }
+  },
+  render: (args) => (
+    <>
+      <div id="test">Test label</div>
+      <Picker {...args} aria-labelledby={args['aria-labelledby'] ? 'test' : null} items={flatOptions}>
+        {(item: any) => <Item>{item.name}</Item>}
+      </Picker>
+    </>
+  ),
+  name: 'no visible label combination story',
+  parameters: {
+    description: {
+      data: 'Use controls to add/remove a visible label, aria-label, and toggle the aria-labelledby on/off'
+    }
+  }
 };
 
 export const ContextualHelpPicker: PickerStory = {
@@ -322,6 +350,16 @@ export const Scrolling: ScrollingStory = {
     </View>
   ),
   name: 'scrolling container'
+};
+
+export const Links: PickerStory = {
+  render: (args) => (
+    <Picker {...args}>
+      <Item key="foo">Foo</Item>
+      <Item key="bar">Bar</Item>
+      <Item href="https://google.com">Google</Item>
+    </Picker>
+  )
 };
 
 function DefaultPicker(props: SpectrumPickerProps<object>) {

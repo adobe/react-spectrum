@@ -28,9 +28,10 @@ import {
   today
 } from '@internationalized/date';
 import {CalendarProps, DateValue} from '@react-types/calendar';
-import {CalendarState, PageBehavior} from './types';
+import {CalendarState} from './types';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo, useState} from 'react';
+import {ValidationState} from '@react-types/shared';
 
 export interface CalendarStateOptions<T extends DateValue = DateValue> extends CalendarProps<T> {
   /** The locale to display and edit the value according to. */
@@ -47,11 +48,6 @@ export interface CalendarStateOptions<T extends DateValue = DateValue> extends C
    * @default {months: 1}
    */
   visibleDuration?: DateDuration,
-  /**
-   * Controls the behavior of paging. Pagination either works by advancing the visible page by visibleDuration (default) or one unit of visibleDuration.
-   * @default visible
-   */
-  pageBehavior?: PageBehavior,
   /** Determines how to align the initial selection relative to the visible date range. */
   selectionAlignment?: 'start' | 'center' | 'end'
 }
@@ -172,7 +168,8 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
 
     return isInvalid(calendarDateValue, minValue, maxValue);
   }, [calendarDateValue, isDateUnavailable, minValue, maxValue]);
-  let validationState = props.validationState || (isUnavailable ? 'invalid' : null);
+  let isValueInvalid = props.isInvalid || props.validationState === 'invalid' || isUnavailable;
+  let validationState: ValidationState = isValueInvalid ? 'invalid' : null;
 
   let pageDuration = useMemo(() => {
     if (pageBehavior === 'visible') {
@@ -196,6 +193,7 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
     focusedDate,
     timeZone,
     validationState,
+    isValueInvalid,
     setFocusedDate(date) {
       focusCell(date);
       setFocused(true);

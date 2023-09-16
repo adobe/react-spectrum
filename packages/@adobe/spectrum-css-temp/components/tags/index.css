@@ -48,6 +48,7 @@ governing permissions and limitations under the License.
   align-items: center;
   box-sizing: border-box;
   position: relative;
+  cursor: default;
 
   margin: var(--spectrum-tag-margin);
   padding-inline-start: calc(var(--spectrum-tag-padding-x) - var(--spectrum-tag-border-size));
@@ -65,7 +66,12 @@ governing permissions and limitations under the License.
     box-shadow var(--spectrum-global-animation-duration-100) ease-in-out,
     background-color var(--spectrum-global-animation-duration-100) ease-in-out;
 
+  &[data-href] {
+    cursor: pointer;
+  }
+
   &.is-disabled {
+    cursor: default;
     pointer-events: none;
   }
 
@@ -100,7 +106,6 @@ governing permissions and limitations under the License.
     margin-inline-end: var(--spectrum-tag-padding-x);
     flex: 1 1 auto;
     font-size: var(--spectrum-tag-text-size);
-    cursor: default;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;

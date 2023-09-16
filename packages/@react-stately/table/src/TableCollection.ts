@@ -184,7 +184,6 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
     let rowHeaderColumnKeys: Set<Key> = new Set();
     let body: GridNode<T>;
     let columns: GridNode<T>[] = [];
-
     // Add cell for selection checkboxes if needed.
     if (opts?.showSelectionCheckboxes) {
       let rowHeaderColumn: GridNode<T> = {

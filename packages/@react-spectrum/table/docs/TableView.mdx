@@ -490,7 +490,7 @@ In the highlight selection style, however, clicking a row with the mouse _replac
 modifier keys such as <Keyboard>Ctrl</Keyboard>, <Keyboard>Cmd</Keyboard>, and <Keyboard>Shift</Keyboard> can be used. On touch screen devices, selection always behaves as toggle since modifier
 keys may not be available.
 
-These selection styles implement the behaviors defined in [Aria Practices](https://w3c.github.io/aria-practices/#listbox_kbd_interaction).
+These selection styles implement the behaviors defined in [Aria Practices](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/#keyboardinteraction).
 
 ```tsx example
 <PokemonTable selectionMode="multiple" selectionStyle="highlight" />
@@ -1056,7 +1056,7 @@ function DroppableTableViewFolder(props: DndTableViewProps) {
             {columnKey => (
               <Cell>
                 {item[columnKey]}
-                {columnKey === 'type' && item[columnKey] === 'folder' && item.childNodes.length > 0 && 
+                {columnKey === 'type' && item[columnKey] === 'folder' && item.childNodes.length > 0 &&
                  ` (${item.childNodes?.length} dropped item(s)`
                 }
               </Cell>
@@ -1163,7 +1163,6 @@ function ReorderableTable() {
     <TableView
       aria-label="Reorderable TableView"
       selectionMode="multiple"
-      width="size-5000"
       height="size-3600"
       dragAndDropHooks={dragAndDropHooks}>
       <TableHeader columns={columns}>
@@ -1519,7 +1518,7 @@ Use the `renderPreview` prop to provide a custom drag preview. `keys` and `dragg
 
 ```tsx example export=true render=false
 import {View} from '@react-spectrum/view';
-  
+
 function CustomDragPreviewExample() {
   let columns = [
     {name: 'Name', id: 'name'},
@@ -1559,7 +1558,6 @@ function CustomDragPreviewExample() {
     <TableView
       aria-label="Draggable TableView example with custom drag preview"
       selectionMode="multiple"
-      width="size-5000"
       height="size-3600"
       dragAndDropHooks={dragAndDropHooks}>
       <TableHeader columns={columns}>

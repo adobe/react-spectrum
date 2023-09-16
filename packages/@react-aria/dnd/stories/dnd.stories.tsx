@@ -24,7 +24,7 @@ import {DraggableListBox} from './DraggableListBox';
 import {DragPreview} from '../src/DragPreview';
 import {DroppableGridExample} from './DroppableGrid';
 import {DroppableListBox, DroppableListBoxExample} from './DroppableListBox';
-import dropzoneStyles from '@adobe/spectrum-css-temp/components/dropzone/vars.css';
+import dropzoneStyles from '@adobe/spectrum-css-temp/components/dnd/vars.css';
 import {Flex} from '@react-spectrum/layout';
 import {FocusRing} from '@react-aria/focus';
 import Folder from '@spectrum-icons/workflow/Folder';
@@ -58,9 +58,9 @@ export const Default = () => (
   <Flex direction="column" gap="size-200" alignItems="center">
     <Draggable />
     <Droppable />
-    <input />
+    <input aria-label="test input 1" />
     <Droppable type="text/html" />
-    <input />
+    <input aria-label="test input 2" />
     <Droppable />
   </Flex>
 );
@@ -74,7 +74,14 @@ export const NestedDropRegions = {
       </Droppable>
     </Flex>
   ),
-  name: 'nested drop regions'
+  name: 'nested drop regions',
+  parameters: {
+    a11y: {
+      config: {
+        rules: [{id: 'nested-interactive', enabled: false}]
+      }
+    }
+  }
 };
 
 export const DraggableListbox = {
@@ -243,7 +250,7 @@ export const MultipleCollectionDropTargets = {
 
 export const Reorderable = () => <ReorderableGridExample />;
 
-function Draggable() {
+export function Draggable() {
   let {dragProps, isDragging} = useDrag({
     getItems() {
       return [{

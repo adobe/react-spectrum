@@ -10,81 +10,103 @@
  * governing permissions and limitations under the License.
  */
 
-import {Input, Label, Text, TextField, TextFieldContext} from '../';
+import {Input, Label, Text, TextArea, TextField, TextFieldContext} from '../';
+import {pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestTextField = (props) => (
-  <TextField defaultValue="test" data-foo="bar" {...props}>
+  <TextField defaultValue="test" data-testid="text-field-test" data-foo="bar" {...props}>
     <Label>Test</Label>
-    <Input {...props.inputProps} />
+    <props.input {...props.inputProps} />
     <Text slot="description">Description</Text>
     <Text slot="errorMessage">Error</Text>
   </TextField>
 );
 
 describe('TextField', () => {
-  it('provides slots', () => {
-    let {getByRole} = render(<TestTextField />);
-
-    let input = getByRole('textbox');
-    expect(input).toHaveValue('test');
-    expect(input).toHaveAttribute('class', 'react-aria-Input');
-
-    expect(input.closest('.react-aria-TextField')).toHaveAttribute('data-foo', 'bar');
-
-    expect(input).toHaveAttribute('aria-labelledby');
-    let label = document.getElementById(input.getAttribute('aria-labelledby'));
-    expect(label).toHaveAttribute('class', 'react-aria-Label');
-    expect(label).toHaveTextContent('Test');
-
-    expect(input).toHaveAttribute('aria-describedby');
-    expect(input.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Description Error');
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
   });
+  describe.each([
+    {name: 'Input', component: Input},
+    {name: 'TextArea', component: TextArea}]
+  )('$name', ({name, component}) => {
+    it('provides slots', () => {
+      let {getByRole} = render(<TestTextField input={component} />);
 
-  it('should support slot', () => {
-    let {getByRole} = render(
-      <TextFieldContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
-        <TestTextField slot="test" />
-      </TextFieldContext.Provider>
-    );
 
-    let textbox = getByRole('textbox');
-    expect(textbox.closest('.react-aria-TextField')).toHaveAttribute('slot', 'test');
-    expect(textbox).toHaveAttribute('aria-label', 'test');
-  });
+      let input = getByRole('textbox');
+      expect(input).toHaveValue('test');
+      expect(input).toHaveAttribute('class', `react-aria-${name}`);
+      if (name === 'Input') {
+        expect(input).toHaveAttribute('type', 'text');
+      } else {
+        expect(input).not.toHaveAttribute('type');
+      }
 
-  it('should support hover state', () => {
-    let {getByRole} = render(<TestTextField inputProps={{className: ({isHovered}) => isHovered ? 'hover' : ''}} />);
-    let input = getByRole('textbox');
+      expect(input.closest('.react-aria-TextField')).toHaveAttribute('data-foo', 'bar');
 
-    expect(input).not.toHaveAttribute('data-hovered');
-    expect(input).not.toHaveClass('hover');
+      expect(input).toHaveAttribute('aria-labelledby');
+      let label = document.getElementById(input.getAttribute('aria-labelledby'));
+      expect(label).toHaveAttribute('class', 'react-aria-Label');
+      expect(label).toHaveTextContent('Test');
 
-    userEvent.hover(input);
-    expect(input).toHaveAttribute('data-hovered', 'true');
-    expect(input).toHaveClass('hover');
+      expect(input).toHaveAttribute('aria-describedby');
+      expect(input.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Description Error');
+    });
 
-    userEvent.unhover(input);
-    expect(input).not.toHaveAttribute('data-hovered');
-    expect(input).not.toHaveClass('hover');
-  });
+    it('should support slot', () => {
+      let {getByRole} = render(
+        <TextFieldContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
+          <TestTextField slot="test" input={component} />
+        </TextFieldContext.Provider>
+      );
 
-  it('should support focus visible state', () => {
-    let {getByRole} = render(<TestTextField inputProps={{className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''}} />);
-    let input = getByRole('textbox');
+      let textbox = getByRole('textbox');
+      expect(textbox.closest('.react-aria-TextField')).toHaveAttribute('slot', 'test');
+      expect(textbox).toHaveAttribute('aria-label', 'test');
+    });
 
-    expect(input).not.toHaveAttribute('data-focus-visible');
-    expect(input).not.toHaveClass('focus');
+    it('should support hover state', async () => {
+      let {getByRole} = render(<TestTextField input={component} inputProps={{className: ({isHovered}) => isHovered ? 'hover' : ''}} />);
+      let input = getByRole('textbox');
 
-    userEvent.tab();
-    expect(document.activeElement).toBe(input);
-    expect(input).toHaveAttribute('data-focus-visible', 'true');
-    expect(input).toHaveClass('focus');
+      expect(input).not.toHaveAttribute('data-hovered');
+      expect(input).not.toHaveClass('hover');
 
-    userEvent.tab();
-    expect(input).not.toHaveAttribute('data-focus-visible');
-    expect(input).not.toHaveClass('focus');
+      await user.hover(input);
+      expect(input).toHaveAttribute('data-hovered', 'true');
+      expect(input).toHaveClass('hover');
+
+      await user.unhover(input);
+      expect(input).not.toHaveAttribute('data-hovered');
+      expect(input).not.toHaveClass('hover');
+    });
+
+    it('should support focus visible state', async () => {
+      let {getByRole} = render(<TestTextField input={component} inputProps={{className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''}} />);
+      let input = getByRole('textbox');
+
+      expect(input).not.toHaveAttribute('data-focus-visible');
+      expect(input).not.toHaveClass('focus');
+
+      await user.tab();
+      expect(document.activeElement).toBe(input);
+      expect(input).toHaveAttribute('data-focus-visible', 'true');
+      expect(input).toHaveClass('focus');
+
+      await user.tab();
+      expect(input).not.toHaveAttribute('data-focus-visible');
+      expect(input).not.toHaveClass('focus');
+    });
+
+    it('should render data- attributes only on the outer element', () => {
+      let {getAllByTestId} = render(<TestTextField input={component} />);
+      let outerEl = getAllByTestId('text-field-test');
+      expect(outerEl).toHaveLength(1);
+      expect(outerEl[0]).toHaveClass('react-aria-TextField');
+    });
   });
 });

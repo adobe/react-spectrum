@@ -1,6 +1,8 @@
 {
+  "collapse": "접기",
   "columnResizer": "열 크기 조정기",
   "drag": "드래그",
+  "expand": "펼치기",
   "loading": "로드 중",
   "loadingMore": "추가 로드 중",
   "resizeColumn": "열 크기 조정",

@@ -18,7 +18,7 @@ import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Form} from '@react-spectrum/form';
 import {Heading} from '@react-spectrum/text';
 // @ts-ignore
-import intlMessages from './intl/*.json';
+import intlMessages from './intlMessages.json';
 import {Item, Picker} from '@react-spectrum/picker';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
@@ -49,7 +49,6 @@ let TranslateForm = (props) => {
       <CheckboxGroup
         defaultValue={['cow', 'goat']}
         label={strings.format('ruminants')}
-        validationState="valid"
         description={strings.format('areRuminats')}
         contextualHelp={(
           <ContextualHelp>
@@ -86,7 +85,7 @@ let TranslateForm = (props) => {
       <Picker
         label={strings.format('ruminants')}
         defaultSelectedKey={strings.format('chicken')}
-        validationState="invalid"
+        isInvalid
         errorMessage={strings.format('notRuminatError')}
         contextualHelp={(
           <ContextualHelp>
@@ -102,7 +101,6 @@ let TranslateForm = (props) => {
       <RadioGroup
         label={strings.format('ruminants')}
         defaultValue={strings.format('sheep')}
-        validationState="valid"
         description={strings.format('areRuminats')}
         contextualHelp={(
           <ContextualHelp>

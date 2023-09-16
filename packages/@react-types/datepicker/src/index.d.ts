@@ -16,8 +16,10 @@ import {
   FocusableProps,
   HelpTextProps,
   InputBase,
+  InputDOMProps,
   LabelableProps,
   RangeValue,
+  SpectrumFieldValidation,
   SpectrumLabelableProps,
   StyleProps,
   Validation,
@@ -25,6 +27,7 @@ import {
 } from '@react-types/shared';
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from '@internationalized/date';
 import {OverlayTriggerProps} from '@react-types/overlays';
+import {PageBehavior} from '@react-types/calendar';
 
 export type DateValue = CalendarDate | CalendarDateTime | ZonedDateTime;
 type MappedDateValue<T> =
@@ -51,18 +54,29 @@ interface DateFieldBase<T extends DateValue> extends InputBase, Validation, Focu
    * Whether to hide the time zone abbreviation.
    * @default false
    */
-  hideTimeZone?: boolean
+  hideTimeZone?: boolean,
+  /**
+   * Whether to always show leading zeros in the month, day, and hour fields.
+   * By default, this is determined by the user's locale.
+   */
+  shouldForceLeadingZeros?: boolean
 }
 
 interface AriaDateFieldBaseProps<T extends DateValue> extends DateFieldBase<T>, AriaLabelingProps, DOMProps {}
 export interface DateFieldProps<T extends DateValue> extends DateFieldBase<T>, ValueBase<T | null, MappedDateValue<T>> {}
-export interface AriaDateFieldProps<T extends DateValue> extends DateFieldProps<T>, AriaDateFieldBaseProps<T> {}
+export interface AriaDateFieldProps<T extends DateValue> extends DateFieldProps<T>, AriaDateFieldBaseProps<T>, InputDOMProps {}
 
-interface DatePickerBase<T extends DateValue> extends DateFieldBase<T>, OverlayTriggerProps {}
+interface DatePickerBase<T extends DateValue> extends DateFieldBase<T>, OverlayTriggerProps {
+  /**
+   * Controls the behavior of paging. Pagination either works by advancing the visible page by visibleDuration (default) or one unit of visibleDuration.
+   * @default visible
+   */
+  pageBehavior?: PageBehavior
+}
 export interface AriaDatePickerBaseProps<T extends DateValue> extends DatePickerBase<T>, AriaLabelingProps, DOMProps {}
 
 export interface DatePickerProps<T extends DateValue> extends DatePickerBase<T>, ValueBase<T | null, MappedDateValue<T>> {}
-export interface AriaDatePickerProps<T extends DateValue> extends DatePickerProps<T>, AriaDatePickerBaseProps<T> {}
+export interface AriaDatePickerProps<T extends DateValue> extends DatePickerProps<T>, AriaDatePickerBaseProps<T>, InputDOMProps {}
 
 export type DateRange = RangeValue<DateValue>;
 export interface DateRangePickerProps<T extends DateValue> extends DatePickerBase<T>, ValueBase<RangeValue<T> | null, RangeValue<MappedDateValue<T>>> {
@@ -73,9 +87,18 @@ export interface DateRangePickerProps<T extends DateValue> extends DatePickerBas
   allowsNonContiguousRanges?: boolean
 }
 
-export interface AriaDateRangePickerProps<T extends DateValue> extends AriaDatePickerBaseProps<T>, DateRangePickerProps<T> {}
+export interface AriaDateRangePickerProps<T extends DateValue> extends AriaDatePickerBaseProps<T>, DateRangePickerProps<T> {
+  /**
+   * The name of the start date input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   */
+  startName?: string,
+  /**
+   * The name of the end date input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   */
+  endName?: string
+}
 
-interface SpectrumDateFieldBase extends SpectrumLabelableProps, HelpTextProps, StyleProps {
+interface SpectrumDateFieldBase extends SpectrumLabelableProps, HelpTextProps, SpectrumFieldValidation, StyleProps {
   /**
    * Whether the date picker should be displayed with a quiet style.
    * @default false
@@ -101,9 +124,9 @@ interface SpectrumDatePickerBase extends SpectrumDateFieldBase, SpectrumLabelabl
   shouldFlip?: boolean
 }
 
-export interface SpectrumDatePickerProps<T extends DateValue> extends AriaDatePickerProps<T>, SpectrumDatePickerBase {}
-export interface SpectrumDateRangePickerProps<T extends DateValue> extends AriaDateRangePickerProps<T>, SpectrumDatePickerBase {}
-export interface SpectrumDateFieldProps<T extends DateValue> extends AriaDateFieldProps<T>, SpectrumDateFieldBase {}
+export interface SpectrumDatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'isInvalid' | 'validationState'>, SpectrumDatePickerBase {}
+export interface SpectrumDateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'isInvalid' | 'validationState'>, SpectrumDatePickerBase {}
+export interface SpectrumDateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'isInvalid' | 'validationState'>, SpectrumDateFieldBase {}
 
 export type TimeValue = Time | CalendarDateTime | ZonedDateTime;
 type MappedTimeValue<T> =
@@ -123,6 +146,11 @@ export interface TimePickerProps<T extends TimeValue> extends InputBase, Validat
   /** Whether to hide the time zone abbreviation. */
   hideTimeZone?: boolean,
   /**
+   * Whether to always show leading zeros in the hour field.
+   * By default, this is determined by the user's locale.
+   */
+  shouldForceLeadingZeros?: boolean,
+  /**
    * A placeholder time that influences the format of the placeholder shown when no value is selected.
    * Defaults to 12:00 AM or 00:00 depending on the hour cycle.
    */
@@ -133,9 +161,9 @@ export interface TimePickerProps<T extends TimeValue> extends InputBase, Validat
   maxValue?: TimeValue
 }
 
-export interface AriaTimeFieldProps<T extends TimeValue> extends TimePickerProps<T>, AriaLabelingProps, DOMProps {}
+export interface AriaTimeFieldProps<T extends TimeValue> extends TimePickerProps<T>, AriaLabelingProps, DOMProps, InputDOMProps {}
 
-export interface SpectrumTimeFieldProps<T extends TimeValue> extends AriaTimeFieldProps<T>, SpectrumLabelableProps, StyleProps {
+export interface SpectrumTimeFieldProps<T extends TimeValue> extends Omit<AriaTimeFieldProps<T>, 'isInvalid' | 'validationState'>, SpectrumFieldValidation, SpectrumLabelableProps, StyleProps, InputDOMProps {
   /**
    * Whether the time field should be displayed with a quiet style.
    * @default false

@@ -16,7 +16,7 @@ import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isAndroid, mergeProps, useDescription} from '@react-aria/utils';
-import {RefObject} from 'react';
+import {RefObject, useEffect} from 'react';
 import {TableState} from '@react-stately/table';
 import {useFocusable} from '@react-aria/focus';
 import {useGridCell} from '@react-aria/grid';
@@ -80,6 +80,13 @@ export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, st
 
   let descriptionProps = useDescription(sortDescription);
 
+  let shouldDisableFocus = state.collection.size === 0;
+  useEffect(() => {
+    if (shouldDisableFocus && state.selectionManager.focusedKey === node.key) {
+      state.selectionManager.setFocusedKey(null);
+    }
+  }, [shouldDisableFocus, state.selectionManager, node.key]);
+
   return {
     columnHeaderProps: {
       ...mergeProps(
@@ -87,8 +94,8 @@ export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, st
         pressProps,
         focusableProps,
         descriptionProps,
-        // If the table is empty, make all column headers untabbable or programatically focusable
-        state.collection.size === 0 && {tabIndex: null}
+        // If the table is empty, make all column headers untabbable
+        shouldDisableFocus && {tabIndex: -1}
       ),
       role: 'columnheader',
       id: getColumnHeaderId(state, node.key),

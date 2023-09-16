@@ -182,6 +182,14 @@ function Example() {
 }
 ```
 
+### HTML forms
+
+DateRangePicker supports the `startName` and `endName` props for integration with HTML forms. The values will be submitted to the server as [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted strings according to the granularity of the value. For example, if the date range picker allows selecting only dates then strings such as `"2023-02-03"` will be submitted, and if it allows selecting times then strings such as `"2023-02-03T08:45:00"` will be submitted. See the [Value](#value) section above for more details about the supported value types.
+
+```tsx example
+<DateRangePicker label="Trip dates" startName="startDate" endName="endDate" />
+```
+
 ## Labeling
 
 A visual label should be provided for the `DateRangePicker` using the `label` prop. If the `DateRangePicker` is required, the `isRequired` and `necessityIndicator` props can be used to show a required state.
@@ -224,7 +232,7 @@ function Example() {
   return (
     <>
       <DateRangePicker label="Date range" value={range} onChange={setRange} />
-      <p>Selected date: {formatter.formatRange(range.start.toDate(getLocalTimeZone()), range.end.toDate(getLocalTimeZone()))}</p>
+      <p>Selected date: {range ? formatter.formatRange(range.start.toDate(getLocalTimeZone()), range.end.toDate(getLocalTimeZone())) : '--'}</p>
     </>
   );
 }
@@ -250,7 +258,7 @@ function Example() {
       label="Date range"
       value={range}
       onChange={setRange}
-      validationState={isSameMonth(range.start, range.end) ? 'valid' : 'invalid'}
+      validationState={range && !isSameMonth(range.start, range.end) ? 'invalid' : 'valid'}
       description="Select a range within the same month"
       errorMessage="Start and end dates must be in the same month" />
   );
@@ -404,6 +412,14 @@ By default, the calendar popover displays a single month. The `maxVisibleMonths`
 
 ```tsx example
 <DateRangePicker label="Date range" maxVisibleMonths={3} />
+```
+
+### Page behavior
+
+By default, when pressing the next or previous buttons, pagination will advance by the `maxVisibleMonths` value. This behavior can be changed to page by single months instead, by setting `pageBehavior` to `single`.
+
+```tsx example
+<DateRangePicker label="Date range" maxVisibleMonths={3} pageBehavior="single" />
 ```
 
 ### Hide time zone

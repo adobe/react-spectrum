@@ -173,6 +173,9 @@ export function toDate(dateTime: CalendarDate | CalendarDateTime, timeZone: stri
   return new Date(toAbsolute(dateTime, timeZone, disambiguation));
 }
 
+/**
+ * Takes a Unix epoch (milliseconds since 1970) and converts it to the provided time zone.
+ */
 export function fromAbsolute(ms: number, timeZone: string): ZonedDateTime {
   let offset = getTimeZoneOffset(ms, timeZone);
   let date = new Date(ms + offset);
@@ -187,6 +190,9 @@ export function fromAbsolute(ms: number, timeZone: string): ZonedDateTime {
   return new ZonedDateTime(year, month, day, timeZone, offset, hour, minute, second, millisecond);
 }
 
+/**
+ * Takes a `Date` object and converts it to the provided time zone.
+ */
 export function fromDate(date: Date, timeZone: string): ZonedDateTime {
   return fromAbsolute(date.getTime(), timeZone);
 }

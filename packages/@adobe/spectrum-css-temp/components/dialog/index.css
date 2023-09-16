@@ -59,12 +59,14 @@ governing permissions and limitations under the License.
   max-width: 100%;
 
   max-height: inherit;
-
+  overflow: hidden;
   outline: none;
 
   --spectrum-dialog-padding-x: var(--spectrum-dialog-padding);
   --spectrum-dialog-padding-y: var(--spectrum-dialog-padding);
   --spectrum-dialog-border-radius: var(--spectrum-border-radius);
+
+  border-radius: var(--spectrum-dialog-border-radius);
 }
 
 .spectrum-Dialog--small {
@@ -271,6 +273,7 @@ governing permissions and limitations under the License.
   width: 100%;
   height: 100%;
 
+  border-style: none;
   border-radius: 0;
 }
 /** @unofficial */

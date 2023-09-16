@@ -125,7 +125,17 @@ const options = [
 ];
 
 export default {
-  title: 'useSelectableList'
+  title: 'useSelectableList',
+  parameters: {
+    a11y: {
+      config: {
+        rules: [
+          // Ignore landmark accessibility failure since the list is to test for selection/scrolling only
+          {id: 'list', enabled: false}
+        ]
+      }
+    }
+  }
 };
 
 export const StaticUlStaticSubUl = () => (
@@ -227,16 +237,4 @@ export const MultiSelectDisallowEmptySelectOnFocus = () => (
 
 MultiSelectDisallowEmptySelectOnFocus.story = {
   name: 'multi select, disallow empty, select on focus'
-};
-
-export const MultiSelectDisallowSelectAll = () => (
-  <List selectionMode="multiple" disallowSelectAll>
-    <Item>Paco de Lucia</Item>
-    <Item>Vicente Amigo</Item>
-    <Item>Gerardo Nunez</Item>
-  </List>
-);
-
-MultiSelectDisallowSelectAll.story = {
-  name: 'multi select, disallow select all'
 };

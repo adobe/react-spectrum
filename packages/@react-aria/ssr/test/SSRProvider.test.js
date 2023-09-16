@@ -118,7 +118,18 @@ describe('SSRProvider', function () {
   });
 
   it('should generate a random prefix when not server rendered', function () {
+    let env = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'production';
     let tree = render(<Test />);
     expect(/^react-aria\d+-/.test(tree.getByTestId('test').id)).toBe(true);
+    process.env.NODE_ENV = env;
+  });
+
+  it('should not generate a random prefix in tests', function () {
+    let env = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'test';
+    let tree = render(<Test />);
+    expect(/^react-aria-/.test(tree.getByTestId('test').id)).toBe(true);
+    process.env.NODE_ENV = env;
   });
 });
