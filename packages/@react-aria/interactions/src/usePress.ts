@@ -17,7 +17,7 @@
 
 import {disableTextSelection, restoreTextSelection} from './textSelection';
 import {DOMAttributes, FocusableElement, PressEvent as IPressEvent, PointerType, PressEvents} from '@react-types/shared';
-import {focusWithoutScrolling, isVirtualClick, isVirtualPointerEvent, mergeProps, useEffectEvent, useGlobalListeners, useSyncRef} from '@react-aria/utils';
+import {focusWithoutScrolling, isMac, isVirtualClick, isVirtualPointerEvent, mergeProps, openLink, useEffectEvent, useGlobalListeners, useSyncRef} from '@react-aria/utils';
 import {PressResponderContext} from './context';
 import {RefObject, useContext, useEffect, useMemo, useRef, useState} from 'react';
 
@@ -49,11 +49,13 @@ interface PressState {
   ignoreEmulatedMouseEvents: boolean,
   ignoreClickAfterPress: boolean,
   didFirePressStart: boolean,
+  isTriggeringEvent: boolean,
   activePointerId: any,
   target: FocusableElement | null,
   isOverTarget: boolean,
   pointerType: PointerType,
-  userSelect?: string
+  userSelect?: string,
+  metaKeyEvents?: Map<string, KeyboardEvent>
 }
 
 interface EventBase {
@@ -113,6 +115,8 @@ class PressEvent implements IPressEvent {
   }
 }
 
+const LINK_CLICKED = Symbol('linkClicked');
+
 /**
  * Handles press interactions across mouse, touch, keyboard, and screen readers.
  * It normalizes behavior across browsers and platforms, and handles many nuances
@@ -141,6 +145,7 @@ export function usePress(props: PressHookProps): PressResult {
     ignoreEmulatedMouseEvents: false,
     ignoreClickAfterPress: false,
     didFirePressStart: false,
+    isTriggeringEvent: false,
     activePointerId: null,
     target: null,
     isOverTarget: false,
@@ -156,6 +161,7 @@ export function usePress(props: PressHookProps): PressResult {
     }
 
     let shouldStopPropagation = true;
+    state.isTriggeringEvent = true;
     if (onPressStart) {
       let event = new PressEvent('pressstart', pointerType, originalEvent);
       onPressStart(event);
@@ -166,6 +172,7 @@ export function usePress(props: PressHookProps): PressResult {
       onPressChange(true);
     }
 
+    state.isTriggeringEvent = false;
     state.didFirePressStart = true;
     setPressed(true);
     return shouldStopPropagation;
@@ -179,6 +186,7 @@ export function usePress(props: PressHookProps): PressResult {
 
     state.ignoreClickAfterPress = true;
     state.didFirePressStart = false;
+    state.isTriggeringEvent = true;
 
     let shouldStopPropagation = true;
     if (onPressEnd) {
@@ -199,17 +207,21 @@ export function usePress(props: PressHookProps): PressResult {
       shouldStopPropagation &&= event.shouldStopPropagation;
     }
 
+    state.isTriggeringEvent = false;
     return shouldStopPropagation;
   });
 
   let triggerPressUp = useEffectEvent((originalEvent: EventBase, pointerType: PointerType) => {
+    let state = ref.current;
     if (isDisabled) {
       return;
     }
 
     if (onPressUp) {
+      state.isTriggeringEvent = true;
       let event = new PressEvent('pressup', pointerType, originalEvent);
       onPressUp(event);
+      state.isTriggeringEvent = false;
       return event.shouldStopPropagation;
     }
 
@@ -265,11 +277,19 @@ export function usePress(props: PressHookProps): PressResult {
           if (shouldStopPropagation) {
             e.stopPropagation();
           }
-        } else if (e.key === 'Enter' && isHTMLAnchorLink(e.currentTarget)) {
-          // If the target is a link, we won't have handled this above because we want the default
-          // browser behavior to open the link when pressing Enter. But we still need to prevent
-          // default so that elements above do not also handle it (e.g. table row).
-          e.stopPropagation();
+
+          // Keep track of the keydown events that occur while the Meta (e.g. Command) key is held.
+          // macOS has a bug where keyup events are not fired while the Meta key is down.
+          // When the Meta key itself is released we will get an event for that, and we'll act as if
+          // all of these other keys were released as well.
+          // https://bugs.chromium.org/p/chromium/issues/detail?id=1393524
+          // https://bugs.webkit.org/show_bug.cgi?id=55291
+          // https://bugzilla.mozilla.org/show_bug.cgi?id=1299553
+          if (e.metaKey && isMac()) {
+            state.metaKeyEvents.set(e.key, e.nativeEvent);
+          }
+        } else if (e.key === 'Meta') {
+          state.metaKeyEvents = new Map();
         }
       },
       onKeyUp(e) {
@@ -282,7 +302,7 @@ export function usePress(props: PressHookProps): PressResult {
           return;
         }
 
-        if (e && e.button === 0) {
+        if (e && e.button === 0 && !state.isTriggeringEvent && !openLink.isOpening) {
           let shouldStopPropagation = true;
           if (isDisabled) {
             e.preventDefault();
@@ -290,7 +310,7 @@ export function usePress(props: PressHookProps): PressResult {
 
           // If triggered from a screen reader or by using element.click(),
           // trigger as if it were a keyboard click.
-          if (!state.ignoreClickAfterPress && !state.ignoreEmulatedMouseEvents && (state.pointerType === 'virtual' || isVirtualClick(e.nativeEvent))) {
+          if (!state.ignoreClickAfterPress && !state.ignoreEmulatedMouseEvents && !state.isPressed && (state.pointerType === 'virtual' || isVirtualClick(e.nativeEvent))) {
             // Ensure the element receives focus (VoiceOver on iOS does not do this)
             if (!isDisabled && !preventFocusOnPress) {
               focusWithoutScrolling(e.currentTarget);
@@ -317,7 +337,6 @@ export function usePress(props: PressHookProps): PressResult {
           e.preventDefault();
         }
 
-        state.isPressed = false;
         let target = e.target as Element;
         let shouldStopPropagation = triggerPressEnd(createEvent(state.target, e), 'keyboard', state.target.contains(target));
         removeAllGlobalListeners();
@@ -326,10 +345,26 @@ export function usePress(props: PressHookProps): PressResult {
           e.stopPropagation();
         }
 
-        // If the target is a link, trigger the click method to open the URL,
-        // but defer triggering pressEnd until onClick event handler.
-        if (state.target instanceof HTMLElement && state.target.contains(target) && (isHTMLAnchorLink(state.target) || state.target.getAttribute('role') === 'link')) {
-          state.target.click();
+        // If a link was triggered with a key other than Enter, open the URL ourselves.
+        // This means the link has a role override, and the default browser behavior
+        // only applies when using the Enter key.
+        if (e.key !== 'Enter' && isHTMLAnchorLink(state.target) && state.target.contains(target) && !e[LINK_CLICKED]) {
+          // Store a hidden property on the event so we only trigger link click once,
+          // even if there are multiple usePress instances attached to the element.
+          e[LINK_CLICKED] = true;
+          openLink(state.target, e, false);
+        }
+
+        state.isPressed = false;
+        state.metaKeyEvents?.delete(e.key);
+      } else if (e.key === 'Meta' && state.metaKeyEvents?.size) {
+        // If we recorded keydown events that occurred while the Meta key was pressed,
+        // and those haven't received keyup events already, fire keyup events ourselves.
+        // See comment above for more info about the macOS bug causing this.
+        let events = state.metaKeyEvents;
+        state.metaKeyEvents = null;
+        for (let event of events.values()) {
+          state.target.dispatchEvent(new KeyboardEvent('keyup', event));
         }
       }
     };
@@ -541,7 +576,7 @@ export function usePress(props: PressHookProps): PressResult {
         }
 
         if (!state.ignoreEmulatedMouseEvents && e.button === 0) {
-          triggerPressUp(e, state.pointerType);
+          triggerPressUp(e, state.pointerType || 'mouse');
         }
       };
 
@@ -726,7 +761,7 @@ export function usePress(props: PressHookProps): PressResult {
   };
 }
 
-function isHTMLAnchorLink(target: Element): boolean {
+function isHTMLAnchorLink(target: Element): target is HTMLAnchorElement {
   return target.tagName === 'A' && target.hasAttribute('href');
 }
 
@@ -741,11 +776,8 @@ function isValidKeyboardEvent(event: KeyboardEvent, currentTarget: Element): boo
     !((element instanceof HTMLInputElement && !isValidInputKey(element, key)) ||
       element instanceof HTMLTextAreaElement ||
       element.isContentEditable) &&
-    // A link with a valid href should be handled natively,
-    // unless it also has role='button' and was triggered using Space.
-    (!isHTMLAnchorLink(element) || (role === 'button' && key !== 'Enter')) &&
-    // An element with role='link' should only trigger with Enter key
-    !(role === 'link' && key !== 'Enter')
+    // Links should only trigger with Enter key
+    !((role === 'link' || (!role && isHTMLAnchorLink(element))) && key !== 'Enter')
   );
 }
 
@@ -829,7 +861,7 @@ function isOverTarget(point: EventPoint, target: Element) {
 
 function shouldPreventDefault(target: Element) {
   // We cannot prevent default if the target is a draggable element.
-  return !(target instanceof HTMLElement) || !target.draggable;
+  return !(target instanceof HTMLElement) || !target.hasAttribute('draggable');
 }
 
 function shouldPreventDefaultKeyboard(target: Element, key: string) {
@@ -839,6 +871,10 @@ function shouldPreventDefaultKeyboard(target: Element, key: string) {
 
   if (target instanceof HTMLButtonElement) {
     return target.type !== 'submit' && target.type !== 'reset';
+  }
+
+  if (isHTMLAnchorLink(target)) {
+    return false;
   }
 
   return true;

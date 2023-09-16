@@ -51,7 +51,15 @@ export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'chil
    * Whether focus should wrap around when the end/start is reached.
    * @default false
    */
-  shouldFocusWrap?: boolean
+  shouldFocusWrap?: boolean,
+  /**
+   * The behavior of links in the collection.
+   * - 'action': link behaves like onAction.
+   * - 'selection': link follows selection interactions (e.g. if URL drives selection).
+   * - 'override': links override all other interactions (link items are not selectable).
+   * @default 'action'
+   */
+  linkBehavior?: 'action' | 'selection' | 'override'
 }
 
 export interface GridListAria {
@@ -70,7 +78,8 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
   let {
     isVirtualized,
     keyboardDelegate,
-    onAction
+    onAction,
+    linkBehavior = 'action'
   } = props;
 
   if (!props['aria-label'] && !props['aria-labelledby']) {
@@ -85,11 +94,12 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     keyboardDelegate: keyboardDelegate,
     isVirtualized,
     selectOnFocus: state.selectionManager.selectionBehavior === 'replace',
-    shouldFocusWrap: props.shouldFocusWrap
+    shouldFocusWrap: props.shouldFocusWrap,
+    linkBehavior
   });
 
   let id = useId(props.id);
-  listMap.set(state, {id, onAction});
+  listMap.set(state, {id, onAction, linkBehavior});
 
   let descriptionProps = useHighlightSelectionDescription({
     selectionManager: state.selectionManager,

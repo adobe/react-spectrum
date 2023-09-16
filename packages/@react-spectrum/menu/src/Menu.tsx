@@ -23,7 +23,7 @@ import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useMenu} from '@react-aria/menu';
 import {useTreeState} from '@react-stately/tree';
 
-function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLUListElement>) {
+function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDivElement>) {
   let contextProps = useContext(MenuContext);
   let completeProps = {
     ...mergeProps(contextProps, props)
@@ -40,7 +40,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
     <MenuStateContext.Provider value={{state, container: scopedRef, menu: domRef}}>
       <FocusScope contain={state.expandedKeys.size > 0}>
         <div style={{overflow: 'hidden', maxHeight: '100%', display: 'inline-flex', borderRadius: 'var(--spectrum-alias-border-radius-regular)'}}>
-          <ul
+          <div
             {...menuProps}
             {...styleProps}
             ref={domRef}
@@ -76,7 +76,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
 
               return menuItem;
             })}
-          </ul>
+          </div>
         </div>
         <div ref={scopedRef} />
       </FocusScope>
@@ -89,5 +89,5 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
  */
 // forwardRef doesn't support generic parameters, so cast the result to the correct type
 // https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
-const _Menu = React.forwardRef(Menu) as <T>(props: SpectrumMenuProps<T> & {ref?: DOMRef<HTMLUListElement>}) => ReactElement;
+const _Menu = React.forwardRef(Menu) as <T>(props: SpectrumMenuProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_Menu as Menu};

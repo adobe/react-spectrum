@@ -11,7 +11,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:react-aria-components';
-import statelyDocs from 'docs:@react-stately/select';
+import statelyDocs from 'docs:@react-stately/tabs';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
@@ -318,7 +318,7 @@ The above examples have shown tabs with static items. The `items` prop can be us
 Each item accepts an `id` prop, which is passed to the `onSelectionChange` handler to identify the selected item. Alternatively, if the item objects contain an `id` property, as shown in the example below, then this is used automatically and an `id` prop is not required. See [Collection Components](../react-stately/collections.html) for more details.
 
 ```tsx example
-import {Collection} from 'react-aria-components';
+import {Collection, Button} from 'react-aria-components';
 
 function Example() {
   let [tabs, setTabs] = React.useState([
@@ -350,9 +350,9 @@ function Example() {
         <TabList aria-label="Dynamic tabs" items={tabs} style={{flex: 1}}>
           {item => <Tab>{item.title}</Tab>}
         </TabList>
-        <div style={{borderBottom: '1px solid gray'}}>
-          <button onClick={addTab}>Add tab</button>
-          <button onClick={removeTab}>Remove tab</button>
+        <div className="button-group">
+          <Button onPress={addTab}>Add tab</Button>
+          <Button onPress={removeTab}>Remove tab</Button>
         </div>
       </div>
       <Collection items={tabs}>
@@ -362,6 +362,65 @@ function Example() {
   );
 }
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.button-group {
+  border-bottom: 1px solid gray;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.react-aria-Button {
+  --border-color: var(--spectrum-alias-border-color);
+  --border-color-pressed: var(--spectrum-alias-border-color-down);
+  --background-color: var(--spectrum-global-color-gray-50);
+  --background-color-pressed: var(--spectrum-global-color-gray-100);
+  --text-color: var(--spectrum-alias-text-color);
+  --focus-ring-color: slateblue;
+
+  color: var(--text-color);
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  appearance: none;
+  vertical-align: middle;
+  font-size: 1rem;
+  text-align: center;
+  margin: 0;
+  outline: none;
+  padding: 6px 10px;
+  text-decoration: none;
+
+  &[data-pressed] {
+    box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
+    background: var(--background-color-pressed);
+    border-color: var(--border-color-pressed);
+  }
+
+  &[data-focus-visible] {
+    border-color: var(--focus-ring-color);
+    box-shadow: 0 0 0 1px var(--focus-ring-color);
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Button {
+    forced-color-adjust: none;
+    --border-color: ButtonBorder;
+    --border-color-pressed: ButtonBorder;
+    --background-color: ButtonFace;
+    --background-color-pressed: ButtonFace;
+    --text-color: ButtonText;
+    --focus-ring-color: Highlight;
+  }
+}
+```
+
+</details>
 
 ## Orientation
 
@@ -602,6 +661,48 @@ import {Link} from 'react-aria-components';
 ```
 
 </details>
+
+### State
+
+Tabs provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.TabListState} /> object to its children via `TabListStateContext`. This can be used to access and manipulate the tab list state.
+
+This example shows a `TabNavigation` component that can be placed within `Tabs` to navigate to the previous or next selected tab.
+
+```tsx example
+import {TabListStateContext, Button} from 'react-aria-components';
+
+function TabNavigation() {
+  /*- begin highlight -*/
+  let state = React.useContext(TabListStateContext);
+  /*- end highlight -*/
+  let prevKey = state?.collection.getKeyBefore(state.selectedKey);
+  let nextKey = state?.collection.getKeyAfter(state.selectedKey);
+  let onPrev = prevKey != null ? () => state.setSelectedKey(prevKey) : null;
+  let onNext = nextKey != null ? () => state.setSelectedKey(nextKey) : null;
+  return (
+    <div className="button-group">
+      <Button aria-label="Previous tab" onPress={onPrev}>⬅</Button>
+      <Button aria-label="Next tab" onPress={onNext}>➡</Button>
+    </div>
+  );
+}
+
+<Tabs>
+  <div style={{display: 'flex'}}>
+    <TabList aria-label="Tabs" style={{flex: 1}}>
+      <Tab id="home">Home</Tab>
+      <Tab id="projects">Projects</Tab>
+      <Tab id="search">Search</Tab>
+    </TabList>
+    {/*- begin highlight -*/}
+    <TabNavigation />
+    {/*- end highlight -*/}
+  </div>
+  <TabPanel id="home">Home</TabPanel>
+  <TabPanel id="projects">Projects</TabPanel>
+  <TabPanel id="search">Search</TabPanel>
+</Tabs>
+```
 
 ### Hooks
 
