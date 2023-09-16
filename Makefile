@@ -94,6 +94,9 @@ build:
 		do cp $$pkg/dist/module.js $$pkg/dist/import.mjs; \
 	done
 	sed -i.bak s/\.js/\.mjs/ packages/@react-aria/i18n/dist/import.mjs
+	sed -i '' 's/@react-aria\/i18n/.\/real-main.js/' packages/@react-aria/i18n/dist/useMessageFormatter.js
+	sed -i '' 's/@react-aria\/i18n/.\/real-module.js/' packages/@react-aria/i18n/dist/useMessageFormatter.module.js
+	sed -i '' 's/@react-aria\/i18n/.\/real-module.mjs/' packages/@react-aria/i18n/dist/useMessageFormatter.module.mjs
 	rm packages/@react-aria/i18n/dist/import.mjs.bak
 
 website:
