@@ -137,7 +137,7 @@ function Example() {
         </IllustratedMessage>
       </DropZone>
       {isFilled && 
-        <div style={{"margin-top": "20px"}}>
+        <div className="files">
           <File />
           {filledSrc}
         </div>}
@@ -190,6 +190,10 @@ function Draggable() {
 
 .draggable.dragging {
   opacity: 0.5;
+}
+
+.files{
+  margin-top: 20px;
 }
 ```
 
@@ -307,7 +311,8 @@ function DraggableImage() {
 
 ### Replace message
 
-When a drop zone is in a filled state and has an object dragged over it, a message will appear in front of the drop zone. By default, this message will say "Drop file to replace". However, users can choose to customize this message through the `replaceMessage` prop. This message should describe the interaction that will occur when the object is dropped. 
+When a drop zone is in a filled state and has an object dragged over it, a message will appear in front of the drop zone. By default, this message will say "Drop file to replace". However, users can choose to customize this message through the `replaceMessage` prop. This message should describe the interaction that will occur when the object is dropped. If required, this message should also be internationalized. 
+
 
 ```tsx example
 function Example() {
