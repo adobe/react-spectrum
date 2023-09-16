@@ -23,7 +23,7 @@ import {useLocalizedStringFormatter} from '@react-aria/i18n';
 export interface SpectrumDropZoneProps extends DropZoneProps, DOMProps, StyleProps, AriaLabelingProps {
   /** The content to display in the drop zone. */
   children: ReactNode,
-  /** Whether the dropzone has been filled. */
+  /** Whether the drop zone has been filled. */
   isFilled?: boolean,
   /** The message to replace the default banner message that is shown when the drop zone is filled. */
   replaceMessage?: string
