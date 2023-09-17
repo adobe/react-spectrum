@@ -13,8 +13,6 @@ governing permissions and limitations under the License.
 :root {
   --spectrum-font-fallbacks-sans: adobe-clean, 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Ubuntu, 'Trebuchet MS', 'Lucida Grande', sans-serif;
 
-  font-synthesis: weight;
-
   /* Not used
   --spectrum-font-fallbacks-serif: serif;
   --spectrum-font-fallbacks-mono: monospace;
@@ -46,6 +44,7 @@ governing permissions and limitations under the License.
 
 .i18nFontFamily {
   font-family: var(--spectrum-font-family-base);
+  font-synthesis: weight;
 
   &:lang(ar) {
     font-family: var(--spectrum-font-family-ar);

@@ -98,7 +98,7 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
         classNames(
           toastContainerStyles,
           'spectrum-Toast',
-          {'focus-ring': props.toast.key === state.visibleToasts[0].key && isFocusVisible}
+          {'focus-ring': props.toast.key === state.visibleToasts[0]?.key && isFocusVisible}
         )
       )}
       style={{

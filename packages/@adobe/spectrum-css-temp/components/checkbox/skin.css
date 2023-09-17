@@ -215,6 +215,7 @@ governing permissions and limitations under the License.
     .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box,
     .spectrum-Checkbox-box,
     &.is-indeterminate .spectrum-Checkbox-box,
+    &.is-indeterminate .spectrum-Checkbox-input:focus-visible + .spectrum-Checkbox-box,
     .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box {
       &:before {
         border-color: var(--spectrum-checkbox-box-border-color-error);

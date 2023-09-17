@@ -235,6 +235,13 @@ svg.spectrum-Table-sortedIcon {
   /* need to subtract 1px here because 14px * 1.5 + 14px + 14px = 49px, and we want 48px */
   line-height: calc(calc(var(--spectrum-table-cell-text-size) * var(--spectrum-table-cell-text-line-height)) - 1px);
   padding: var(--spectrum-table-cell-padding-y) var(--spectrum-table-cell-padding-x);
+
+  &.spectrum-Table-cell--hasExpandCollapseButton {
+    display: grid;
+    grid-template-columns: var(--spectrum-global-dimension-size-400) 1fr;
+    grid-template-rows: 1fr;
+    grid-template-areas: "expand-button contents";
+  }
 }
 
 .spectrum-Table-cellContents {

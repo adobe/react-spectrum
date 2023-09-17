@@ -6,7 +6,7 @@
   --spectrum-focus-ring-color: xvar(--spectrum-high-contrast-focus-ring-color, var(--spectrum-alias-focus-ring-color));
 
   &:after {
-    border-radius: calc(var(--spectrum-focus-ring-border-radius) - var(--spectrum-focus-ring-size) + var(--spectrum-focus-ring-gap) * 2);
+    border-radius: calc(var(--spectrum-focus-ring-border-radius) + var(--spectrum-focus-ring-gap));
     content: '';
     display: block;
     position: absolute;
