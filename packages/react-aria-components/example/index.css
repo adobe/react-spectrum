@@ -288,3 +288,87 @@ html {
     opacity: 0.4;
   }
 }
+
+.toggleButtonExample[data-selected] {
+  background-color: gray;
+}
+
+.searchFieldExample [type="search"] {
+  &::-webkit-search-cancel-button,
+  &::-webkit-search-decoration {
+    -webkit-appearance: none;
+  }
+}
+
+.switchExample {
+  --label-color: var(--spectrum-alias-text-color);
+  --deselected-color: gray;
+  --deselected-color-pressed: dimgray;
+  --selected-color: slateblue;
+  --selected-color-pressed: rgb(74, 59, 166);
+  --track-color: var(--spectrum-alias-background-color-default);
+  --indicator-color: var(--selected-color);
+  --indicator-color-pressed: var(--selected-color-pressed);
+
+  display: flex;
+  align-items: center;
+  gap: 0.571rem;
+  color: var(--label-color);
+
+  .switchExample-indicator {
+    width: 2rem;
+    height: 1.143rem;
+    border: 2px solid var(--deselected-color);
+    background: var(--track-color);
+    border-radius: 1.143rem;
+    transition: all 200ms;
+
+    &:before {
+      content: '';
+      display: block;
+      margin: 0.143rem;
+      width: 0.857rem;
+      height: 0.857rem;
+      background: var(--indicator-color);
+      border-radius: 16px;
+      transition: all 200ms;
+    }
+  }
+
+  &[data-pressed] {
+    .switchExample-indicator {
+      border-color: var(--deselected-color-pressed);
+
+      &:before {
+        background-color: var(--indicator-color-pressed);
+      }
+    }
+  }
+
+  &[data-selected] {
+    .switchExample-indicator {
+      border-color: var(--selected-color);
+      background: var(--selected-color);
+
+      &:before {
+        background-color: var(--track-color);
+        transform: translateX(100%);
+      }
+    }
+
+    &[data-pressed] {
+      .switchExample-indicator {
+        border-color: var(--selected-color-pressed);
+        background: var(--selected-color-pressed);
+      }
+    }
+  }
+
+  &[data-focus-visible] .switchExample-indicator {
+    box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--selected-color);
+  }
+
+  &[data-disabled] {
+    opacity: 0.4;
+  }
+}
