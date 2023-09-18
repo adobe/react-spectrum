@@ -48,7 +48,8 @@ export function useTab<T>(
     key,
     ref,
     isDisabled,
-    shouldSelectOnPressUp
+    shouldSelectOnPressUp,
+    linkBehavior: 'selection'
   });
 
   let tabId = generateId(state, key, 'tab');

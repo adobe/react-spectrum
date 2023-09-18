@@ -11,7 +11,7 @@
  */
 
 import {DOMAttributes, DOMProps, FocusableElement, PressEvent} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useSlotId} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useRouter, useSlotId} from '@react-aria/utils';
 import {FocusEvent, Key, RefObject} from 'react';
 import {getItemCount} from '@react-stately/collections';
 import {isFocusVisible, useHover, useKeyboard, usePress} from '@react-aria/interactions';
@@ -120,6 +120,16 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let data = menuData.get(state);
   let onClose = props.onClose || data.onClose;
   let onAction = isTrigger ? () => {} : props.onAction || data.onAction;
+  let router = useRouter();
+  let performAction = (e: PressEvent) => {
+    if (onAction) {
+      onAction(key);
+    }
+
+    if (e.target instanceof HTMLAnchorElement) {
+      router.open(e.target, e);
+    }
+  };
 
   let role = 'menuitem';
   if (!isTrigger) {
@@ -156,8 +166,8 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   }
 
   let onPressStart = (e: PressEvent) => {
-    if (e.pointerType === 'keyboard' && onAction) {
-      onAction(key);
+    if (e.pointerType === 'keyboard') {
+      performAction(e);
     }
 
     pressStartProp && pressStartProp(e);
@@ -165,13 +175,11 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
 
   let onPressUp = (e: PressEvent) => {
     if (e.pointerType !== 'keyboard') {
-      if (onAction) {
-        onAction(key);
-      }
+      performAction(e);
 
       // Pressing a menu item should close by default in single selection mode but not multiple
       // selection mode, except if overridden by the closeOnSelect prop.
-      if (!isTrigger && onClose && (closeOnSelect ?? state.selectionManager.selectionMode !== 'multiple')) {
+      if (!isTrigger && onClose && (closeOnSelect ?? (state.selectionManager.selectionMode !== 'multiple' || state.selectionManager.isLink(key)))) {
         onClose();
       }
     }
@@ -182,10 +190,20 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     key,
     ref,
     shouldSelectOnPressUp: true,
-    allowsDifferentPressOrigin: true
+    allowsDifferentPressOrigin: true,
+    // Disable all handling of links in useSelectable item
+    // because we handle it ourselves. The behavior of menus
+    // is slightly different from other collections because
+    // actions are performed on key down rather than key up.
+    linkBehavior: 'none'
   });
 
-  let {pressProps, isPressed} = usePress({onPressStart, onPress, onPressUp, isDisabled: isDisabled || (isTrigger && state.expandedKeys.has(key))});
+  let {pressProps, isPressed} = usePress({
+    onPressStart,
+    onPress,
+    onPressUp,
+    isDisabled: isDisabled || (isTrigger && state.expandedKeys.has(key))
+  });
   let {hoverProps} = useHover({
     isDisabled,
     onHoverStart() {

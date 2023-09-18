@@ -146,4 +146,13 @@ describe('DatePicker', () => {
     let input = document.querySelector('input[name=birthday]');
     expect(input).toHaveValue('2020-02-03');
   });
+
+  it('should render data- attributes only on the outer element', () => {
+    let {getAllByTestId} = render(
+      <TestDatePicker data-testid="date-picker" />
+    );
+    let outerEl = getAllByTestId('date-picker');
+    expect(outerEl).toHaveLength(1);
+    expect(outerEl[0]).toHaveClass('react-aria-DatePicker');
+  });
 });

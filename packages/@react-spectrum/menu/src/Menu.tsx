@@ -29,7 +29,7 @@ import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMenu, useSafelyMouseToSubmenu} from '@react-aria/menu';
 import {useTreeState} from '@react-stately/tree';
 
-function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLUListElement>) {
+function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDivElement>) {
   let isSubMenu = true;
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let contextProps = useContext(MenuContext);
@@ -76,6 +76,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
   return (
     <MenuStateContext.Provider value={{popoverContainerRef, trayContainerRef, menu: domRef, submenu: submenuRef, menuTreeState, state}}>
       {/* TODO: this is a tray container for the base menu, each sub menu should also have the same so that we can still have the proper MenuState context nesting? */}
+      {/* TODO: maybe this div should be after the FocusScope? */}
       <div ref={trayContainerRef} />
       <FocusScope contain={state.expandedKeys.size > 0}>
         {/* TODO: move the below styles into spectrum css */}
@@ -95,7 +96,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
               <span style={{display: 'flex', marginTop: '7px', fontWeight: 700, color: 'var(--spectrum-global-color-gray-900)'}}>{backButtonText}</span>
             </Flex>
           )}
-          <ul
+          <div
             {...menuProps}
             style={mergeProps(style, styleProps.style)}
             ref={domRef}
@@ -131,7 +132,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
 
               return menuItem;
             })}
-          </ul>
+          </div>
         </div>
         {/* Make the portal container for submenus wide enough so that the submenu items can render as wide as they need to be */}
         <div ref={popoverContainerRef} style={{width: '100vw', position: 'absolute', top: 0, ...leftOffset}} />
@@ -145,5 +146,5 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
  */
 // forwardRef doesn't support generic parameters, so cast the result to the correct type
 // https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
-const _Menu = React.forwardRef(Menu) as <T>(props: SpectrumMenuProps<T> & {ref?: DOMRef<HTMLUListElement>}) => ReactElement;
+const _Menu = React.forwardRef(Menu) as <T>(props: SpectrumMenuProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_Menu as Menu};

@@ -46,7 +46,16 @@ export interface AriaListBoxOptions<T> extends Omit<AriaListBoxProps<T>, 'childr
   shouldSelectOnPressUp?: boolean,
 
   /** Whether options should be focused when the user hovers over them. */
-  shouldFocusOnHover?: boolean
+  shouldFocusOnHover?: boolean,
+
+  /**
+   * The behavior of links in the collection.
+   * - 'action': link behaves like onAction.
+   * - 'selection': link follows selection interactions (e.g. if URL drives selection).
+   * - 'override': links override all other interactions (link items are not selectable).
+   * @default 'override'
+   */
+  linkBehavior?: 'action' | 'selection' | 'override'
 }
 
 /**
@@ -57,12 +66,21 @@ export interface AriaListBoxOptions<T> extends Omit<AriaListBoxProps<T>, 'childr
  */
 export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>, ref: RefObject<HTMLElement>): ListBoxAria {
   let domProps = filterDOMProps(props, {labelable: true});
+  let linkBehavior = props.linkBehavior || (state.selectionManager.selectionBehavior === 'replace' ? 'action' : 'override');
+  if (state.selectionManager.selectionBehavior === 'toggle' && linkBehavior === 'action') {
+    // linkBehavior="action" does not work with selectionBehavior="toggle" because there is no way
+    // to initiate selection (checkboxes are not allowed inside a listbox). Link items will not be
+    // selectable in this configuration.
+    linkBehavior = 'override';
+  }
+
   let {listProps} = useSelectableList({
     ...props,
     ref,
     selectionManager: state.selectionManager,
     collection: state.collection,
-    disabledKeys: state.disabledKeys
+    disabledKeys: state.disabledKeys,
+    linkBehavior
   });
 
   let {focusWithinProps} = useFocusWithin({
@@ -79,7 +97,8 @@ export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>,
     shouldSelectOnPressUp: props.shouldSelectOnPressUp,
     shouldFocusOnHover: props.shouldFocusOnHover,
     isVirtualized: props.isVirtualized,
-    onAction: props.onAction
+    onAction: props.onAction,
+    linkBehavior
   });
 
   let {labelProps, fieldProps} = useLabel({

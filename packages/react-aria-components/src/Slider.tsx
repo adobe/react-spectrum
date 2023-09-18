@@ -11,11 +11,10 @@
  */
 
 import {AriaSliderProps, AriaSliderThumbProps, mergeProps, Orientation, useFocusRing, useHover, useNumberFormatter, useSlider, useSliderThumb, VisuallyHidden} from 'react-aria';
-import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {DOMAttributes} from '@react-types/shared';
-import {filterDOMProps, mergeRefs} from '@react-aria/utils';
+import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {filterDOMProps} from '@react-aria/utils';
 import {LabelContext} from './Label';
-import React, {createContext, ForwardedRef, forwardRef, OutputHTMLAttributes, RefObject, useContext, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, OutputHTMLAttributes, RefObject, useContext, useRef} from 'react';
 import {SliderState, useSliderState} from 'react-stately';
 
 export interface SliderProps<T = number | number[]> extends Omit<AriaSliderProps<T>, 'label'>, RenderProps<SliderRenderProps>, SlotProps {
@@ -25,15 +24,10 @@ export interface SliderProps<T = number | number[]> extends Omit<AriaSliderProps
   formatOptions?: Intl.NumberFormatOptions
 }
 
-interface SliderContextValue {
-  state: SliderState,
-  trackProps: DOMAttributes,
-  outputProps: OutputHTMLAttributes<HTMLOutputElement>,
-  trackRef: RefObject<HTMLDivElement>
-}
-
 export const SliderContext = createContext<ContextValue<SliderProps, HTMLDivElement>>(null);
-const InternalSliderContext = createContext<SliderContextValue | null>(null);
+export const SliderStateContext = createContext<SliderState | null>(null);
+export const SliderTrackContext = createContext<ContextValue<SliderTrackContextValue, HTMLDivElement>>(null);
+export const SliderOutputContext = createContext<ContextValue<SliderOutputContextValue, HTMLOutputElement>>(null);
 
 export interface SliderRenderProps {
   /**
@@ -81,7 +75,9 @@ function Slider<T extends number | number[]>(props: SliderProps<T>, ref: Forward
   return (
     <Provider
       values={[
-        [InternalSliderContext, {state, trackProps, trackRef, outputProps}],
+        [SliderStateContext, state],
+        [SliderTrackContext, {...trackProps, ref: trackRef}],
+        [SliderOutputContext, outputProps],
         [LabelContext, {...labelProps, ref: labelRef}]
       ]}>
       <div
@@ -89,7 +85,7 @@ function Slider<T extends number | number[]>(props: SliderProps<T>, ref: Forward
         {...groupProps}
         {...renderProps}
         ref={ref}
-        slot={props.slot}
+        slot={props.slot || undefined}
         data-orientation={state.orientation}
         data-disabled={state.isDisabled || undefined} />
     </Provider>
@@ -103,9 +99,12 @@ const _Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(Slider);
 export {_Slider as Slider};
 
 export interface SliderOutputProps extends RenderProps<SliderRenderProps> {}
+interface SliderOutputContextValue extends Omit<OutputHTMLAttributes<HTMLOutputElement>, 'children' | 'className' | 'style'>, SliderOutputProps {}
 
-function SliderOutput({children, style, className, ...otherProps}: SliderOutputProps, ref: ForwardedRef<HTMLOutputElement>) {
-  let {state, outputProps} = useContext(InternalSliderContext)!;
+function SliderOutput(props: SliderOutputProps, ref: ForwardedRef<HTMLOutputElement>) {
+  [props, ref] = useContextProps(props, ref, SliderOutputContext);
+  let {children, style, className, ...otherProps} = props;
+  let state = useContext(SliderStateContext)!;
   let renderProps = useRenderProps({
     className,
     style,
@@ -121,7 +120,7 @@ function SliderOutput({children, style, className, ...otherProps}: SliderOutputP
 
   return (
     <output
-      {...mergeProps(filterDOMProps(otherProps as any), outputProps)}
+      {...otherProps}
       {...renderProps}
       ref={ref}
       data-orientation={state.orientation || undefined}
@@ -144,11 +143,12 @@ export interface SliderTrackRenderProps extends SliderRenderProps {
 }
 
 export interface SliderTrackProps extends RenderProps<SliderTrackRenderProps> {}
+interface SliderTrackContextValue extends Omit<HTMLAttributes<HTMLElement>, 'children' | 'className' | 'style'>, SliderTrackProps {}
 
 function SliderTrack(props: SliderTrackProps, ref: ForwardedRef<HTMLDivElement>) {
-  let {state, trackProps, trackRef} = useContext(InternalSliderContext)!;
+  [props, ref] = useContextProps(props, ref, SliderTrackContext);
+  let state = useContext(SliderStateContext)!;
   let {hoverProps, isHovered} = useHover({});
-  let domRef = mergeRefs(ref, trackRef);
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-SliderTrack',
@@ -162,9 +162,9 @@ function SliderTrack(props: SliderTrackProps, ref: ForwardedRef<HTMLDivElement>)
 
   return (
     <div
-      {...mergeProps(filterDOMProps(props as any), hoverProps, trackProps)}
+      {...mergeProps(props, hoverProps)}
       {...renderProps}
-      ref={domRef}
+      ref={ref}
       data-hovered={isHovered || undefined}
       data-orientation={state.orientation || undefined}
       data-disabled={state.isDisabled || undefined} />
@@ -212,14 +212,15 @@ export interface SliderThumbRenderProps {
 export interface SliderThumbProps extends Omit<AriaSliderThumbProps, 'validationState'>, RenderProps<SliderThumbRenderProps> {}
 
 function SliderThumb(props: SliderThumbProps, ref: ForwardedRef<HTMLDivElement>) {
-  let {state, trackRef} = useContext(InternalSliderContext)!;
+  let state = useContext(SliderStateContext)!;
+  let {ref: trackRef} = useSlottedContext(SliderTrackContext)!;
   let {index = 0} = props;
   let inputRef = useRef<HTMLInputElement>(null);
   let [labelRef, label] = useSlot();
   let {thumbProps, inputProps, labelProps, isDragging, isFocused, isDisabled} = useSliderThumb({
     ...props,
     index,
-    trackRef,
+    trackRef: trackRef as RefObject<HTMLDivElement>,
     inputRef,
     label
   }, state);

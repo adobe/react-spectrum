@@ -15,7 +15,8 @@ import type {ListState} from '@react-stately/list';
 
 interface ListMapShared {
   id: string,
-  onAction: (key: Key) => void
+  onAction: (key: Key) => void,
+  linkBehavior?: 'action' | 'selection' | 'override'
 }
 
 // Used to share:

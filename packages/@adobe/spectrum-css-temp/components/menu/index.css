@@ -77,6 +77,7 @@ governing permissions and limitations under the License.
 .spectrum-Menu-item {
   cursor: default;
   position: relative;
+  display: block;
 
   box-sizing: border-box;
 
@@ -89,8 +90,16 @@ governing permissions and limitations under the License.
   font-style: normal;
   text-decoration: none;
 
+  &[href] {
+    cursor: pointer;
+  }
+
   &:focus {
     outline: none;
+  }
+
+  &.is-disabled {
+    cursor: default;
   }
 
   &.is-selected {

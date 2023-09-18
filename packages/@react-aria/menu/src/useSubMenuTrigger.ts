@@ -105,6 +105,7 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
     }
   };
 
+  // TODO: look up the trigger text content via submenutriggerstate.collection.getItem and triggerKey here and add it as aria-label
   let subMenuProps = {
     id: overlayId,
     'aria-labelledby': subMenuTriggerId,
