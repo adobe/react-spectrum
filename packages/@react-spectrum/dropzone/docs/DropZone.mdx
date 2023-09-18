@@ -94,7 +94,7 @@ A visual label should be provided to `DropZone` using a `Text` element with a `l
 
 ### Internationalization
 
-In order to internationalize a drop zone, a localized string should be passed to the `aria-label` prop.
+In order to internationalize a drop zone, a localized string should be passed to the `Text` element with a `label` slot or to the `aria-label` prop, as well as the `replaceMessage` prop.
 
 ## Events
 
@@ -311,7 +311,7 @@ function DraggableImage() {
 
 ### Replace message
 
-When a drop zone is in a filled state and has an object dragged over it, a message will appear in front of the drop zone. By default, this message will say "Drop file to replace". However, users can choose to customize this message through the `replaceMessage` prop. This message should describe the interaction that will occur when the object is dropped. If required, this message should also be internationalized. 
+When a drop zone is in a filled state and has an object dragged over it, a message will appear in front of the drop zone. By default, this message will say "Drop file to replace". However, users can choose to customize this message through the `replaceMessage` prop. This message should describe the interaction that will occur when the object is dropped. It should also be internationalized if needed. 
 
 
 ```tsx example
