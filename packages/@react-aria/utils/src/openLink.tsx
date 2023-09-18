@@ -15,10 +15,12 @@ import {LinkDOMProps} from '@react-types/shared';
 import React, {createContext, ReactNode, useContext, useMemo} from 'react';
 
 interface Router {
+  isNative: boolean,
   open: (target: Element, modifiers: Modifiers) => void
 }
 
 const RouterContext = createContext<Router>({
+  isNative: true,
   open: openSyntheticLink
 });
 
@@ -35,17 +37,10 @@ export function RouterProvider(props: RouterProviderProps) {
   let {children, navigate} = props;
 
   let ctx = useMemo(() => ({
+    isNative: false,
     open: (target: Element, modifiers: Modifiers) => {
       getSyntheticLink(target, link => {
-        if (
-          (!link.target || link.target === '_self') &&
-          link.origin === location.origin &&
-          !link.hasAttribute('download') &&
-          !modifiers.metaKey && // open in new tab (mac)
-          !modifiers.ctrlKey && // open in new tab (windows)
-          !modifiers.altKey && // download
-          !modifiers.shiftKey
-        ) {
+        if (shouldClientNavigate(link, modifiers)) {
           navigate(link.pathname + link.search + link.hash);
         } else {
           openLink(link, modifiers);
@@ -70,6 +65,18 @@ interface Modifiers {
   ctrlKey?: boolean,
   altKey?: boolean,
   shiftKey?: boolean
+}
+
+export function shouldClientNavigate(link: HTMLAnchorElement, modifiers: Modifiers) {
+  return (
+    (!link.target || link.target === '_self') &&
+    link.origin === location.origin &&
+    !link.hasAttribute('download') &&
+    !modifiers.metaKey && // open in new tab (mac)
+    !modifiers.ctrlKey && // open in new tab (windows)
+    !modifiers.altKey && // download
+    !modifiers.shiftKey
+  );
 }
 
 export function openLink(target: HTMLAnchorElement, modifiers: Modifiers, setOpening = true) {
