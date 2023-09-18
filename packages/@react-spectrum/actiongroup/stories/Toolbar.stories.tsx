@@ -68,7 +68,7 @@ export const Default: ToolbarStory = {
             let Icon = item.icon;
             return (
               <TooltipTrigger>
-                <Item key={item.id} textValue={item.textValue}><Icon /></Item>
+                <Item key={item.id} textValue={item.textValue}><Icon aria-label={item.textValue} /></Item>
                 <Tooltip>{item.textValue}</Tooltip>
               </TooltipTrigger>
             );
@@ -78,7 +78,7 @@ export const Default: ToolbarStory = {
         <ActionGroup items={items2} aria-label="view">
           {(item) => {
             let Icon = item.icon;
-            return <Item key={item.id} textValue={item.textValue}><Icon /></Item>;
+            return <Item key={item.id} textValue={item.textValue}><Icon aria-label={item.textValue} /></Item>;
           }}
         </ActionGroup>
       </>
@@ -95,7 +95,7 @@ export const DisabledKeys: ToolbarStory = {
             let Icon = item.icon;
             return (
               <TooltipTrigger>
-                <Item key={item.id} textValue={item.textValue}><Icon /></Item>
+                <Item key={item.id} textValue={item.textValue}><Icon aria-label={item.textValue} /></Item>
                 <Tooltip>{item.textValue}</Tooltip>
               </TooltipTrigger>
             );
@@ -105,14 +105,14 @@ export const DisabledKeys: ToolbarStory = {
         <ActionGroup items={items2} isDisabled aria-label="view">
           {(item) => {
             let Icon = item.icon;
-            return <Item key={item.id} textValue={item.textValue}><Icon /></Item>;
+            return <Item key={item.id} textValue={item.textValue}><Icon aria-label={item.textValue} /></Item>;
           }}
         </ActionGroup>
         <Divider />
         <ActionGroup items={items3} aria-label="inspect">
           {(item) => {
             let Icon = item.icon;
-            return <Item key={item.id} textValue={item.textValue}><Icon /></Item>;
+            return <Item key={item.id} textValue={item.textValue}><Icon aria-label={item.textValue} /></Item>;
           }}
         </ActionGroup>
       </>
