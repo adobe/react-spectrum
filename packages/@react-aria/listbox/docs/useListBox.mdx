@@ -572,7 +572,7 @@ function Option({item, state}) {
   let {optionProps} = useOption({key: item.key}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
   /*- begin highlight -*/
-  let ElementType = item.props.href ? 'a' : 'div';
+  let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
   /*- end highlight -*/
 
   return (
@@ -626,9 +626,9 @@ function ListBox(props) {
 }
 function Option({item, state}) {
   let ref = React.useRef(null);
-  let {optionProps, labelProps, descriptionProps} = useOption({key: item.key}, state, ref);
+  let {optionProps} = useOption({key: item.key}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
-  let ElementType = item.props.href ? 'a' : 'div';
+  let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
 
   return (
     <ElementType

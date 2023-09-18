@@ -691,9 +691,9 @@ function Menu(props) {
 function MenuItem({item, state}) {
   // Get props for the menu item element and child elements
   let ref = React.useRef(null);
-  let {menuItemProps, isFocused} = useMenuItem({key: item.key}, state, ref);
+  let {menuItemProps} = useMenuItem({key: item.key}, state, ref);
   /*- begin highlight -*/
-  let ElementType = item.props.href ? 'a' : 'div';
+  let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
   /*- end highlight -*/
 
   return (
