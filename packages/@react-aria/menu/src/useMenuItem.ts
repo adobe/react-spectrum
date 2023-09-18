@@ -170,7 +170,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
 
   let item = state.collection.getItem(key);
   if (isVirtualized) {
-    ariaProps['aria-posinset'] = item.index;
+    ariaProps['aria-posinset'] = item?.index;
     ariaProps['aria-setsize'] = getItemCount(state.collection);
   }
 
@@ -283,7 +283,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     }
   });
 
-  let domProps = filterDOMProps(item.props, {isLink: !!item.props.href});
+  let domProps = filterDOMProps(item.props, {isLink: !!item?.props?.href});
   delete domProps.id;
   return {
     menuItemProps: {
