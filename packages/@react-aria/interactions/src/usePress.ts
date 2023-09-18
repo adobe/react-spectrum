@@ -17,7 +17,7 @@
 
 import {disableTextSelection, restoreTextSelection} from './textSelection';
 import {DOMAttributes, FocusableElement, PressEvent as IPressEvent, PointerType, PressEvents} from '@react-types/shared';
-import {focusWithoutScrolling, isVirtualClick, isVirtualPointerEvent, mergeProps, useEffectEvent, useGlobalListeners, useSyncRef} from '@react-aria/utils';
+import {focusWithoutScrolling, isVirtualClick, isVirtualPointerEvent, mergeProps, ownerDocument, ownerWindow, useEffectEvent, useGlobalListeners, useSyncRef} from '@react-aria/utils';
 import {PressResponderContext} from './context';
 import {RefObject, useContext, useEffect, useMemo, useRef, useState} from 'react';
 
@@ -259,7 +259,7 @@ export function usePress(props: PressHookProps): PressResult {
 
             // Focus may move before the key up event, so register the event on the document
             // instead of the same element where the key down event occurred.
-            addGlobalListener(document, 'keyup', onKeyUp, false);
+            addGlobalListener(ownerDocument(e.currentTarget), 'keyup', onKeyUp, false);
           }
 
           if (shouldStopPropagation) {
@@ -375,9 +375,9 @@ export function usePress(props: PressHookProps): PressResult {
 
           shouldStopPropagation = triggerPressStart(e, state.pointerType);
 
-          addGlobalListener(document, 'pointermove', onPointerMove, false);
-          addGlobalListener(document, 'pointerup', onPointerUp, false);
-          addGlobalListener(document, 'pointercancel', onPointerCancel, false);
+          addGlobalListener(ownerDocument(e.currentTarget), 'pointermove', onPointerMove, false);
+          addGlobalListener(ownerDocument(e.currentTarget), 'pointerup', onPointerUp, false);
+          addGlobalListener(ownerDocument(e.currentTarget), 'pointercancel', onPointerCancel, false);
         }
 
         if (shouldStopPropagation) {
@@ -499,7 +499,7 @@ export function usePress(props: PressHookProps): PressResult {
           e.stopPropagation();
         }
 
-        addGlobalListener(document, 'mouseup', onMouseUp, false);
+        addGlobalListener(ownerDocument(e.currentTarget), 'mouseup', onMouseUp, false);
       };
 
       pressProps.onMouseEnter = (e) => {
@@ -599,7 +599,7 @@ export function usePress(props: PressHookProps): PressResult {
           e.stopPropagation();
         }
 
-        addGlobalListener(window, 'scroll', onScroll, true);
+        addGlobalListener(ownerWindow(e.currentTarget), 'scroll', onScroll, true);
       };
 
       pressProps.onTouchMove = (e) => {
@@ -738,8 +738,8 @@ function isValidKeyboardEvent(event: KeyboardEvent, currentTarget: Element): boo
   // "Spacebar" is for IE 11
   return (
     (key === 'Enter' || key === ' ' || key === 'Spacebar' || code === 'Space') &&
-    !((element instanceof HTMLInputElement && !isValidInputKey(element, key)) ||
-      element instanceof HTMLTextAreaElement ||
+    !((element instanceof ownerWindow(element).HTMLInputElement && !isValidInputKey(element, key)) ||
+      element instanceof ownerWindow(element).HTMLTextAreaElement ||
       element.isContentEditable) &&
     // A link with a valid href should be handled natively,
     // unless it also has role='button' and was triggered using Space.

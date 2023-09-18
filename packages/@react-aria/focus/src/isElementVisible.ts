@@ -10,8 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {ownerWindow} from "@react-aria/utils";
+
 function isStyleVisible(element: Element) {
-  if (!(element instanceof HTMLElement) && !(element instanceof SVGElement)) {
+  const elementWindow = ownerWindow(element);
+  if (!(element instanceof elementWindow.HTMLElement) && !(element instanceof elementWindow.SVGElement)) {
     return false;
   }
 
