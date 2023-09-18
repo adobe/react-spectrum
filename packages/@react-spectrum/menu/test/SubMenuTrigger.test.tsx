@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render as renderComponent, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, installPointerEvent, pointerMap, render as renderComponent, triggerTouch, within} from '@react-spectrum/test-utils';
 import {composeStories} from '@storybook/testing-react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -36,7 +36,6 @@ let render = (children, scale = 'medium' as Scale, locale = 'en-US') => {
   return tree;
 };
 
-// TODO: add tabbing tests
 describe('SubMenu', function () {
   let user;
   let onAction = jest.fn();
@@ -72,7 +71,7 @@ describe('SubMenu', function () {
   `('renders $Name submenu', async function ({Component}) {
     let tree = render(<Component />);
     let triggerButton = tree.getByRole('button');
-    triggerPress(triggerButton);
+    await user.pointer({target: triggerButton, keys: '[MouseLeft]'});
     act(() => {jest.runAllTimers();});
 
     let menu = tree.getByRole('menu');
@@ -124,7 +123,7 @@ describe('SubMenu', function () {
   it('submenu closes when hover leaves the submenu trigger', async function () {
     let tree = render(<SubMenuStatic menuTriggerProps={{onOpenChange}} />);
     let triggerButton = tree.getByRole('button');
-    triggerPress(triggerButton);
+    await user.pointer({target: triggerButton, keys: '[MouseLeft]'});
     act(() => {jest.runAllTimers();});
 
     let menu = tree.getByRole('menu');
@@ -155,7 +154,7 @@ describe('SubMenu', function () {
   it('only allows one submenu open at a time', async function () {
     let tree = render(<Complex />);
     let triggerButton = tree.getByRole('button');
-    triggerPress(triggerButton);
+    await user.pointer({target: triggerButton, keys: '[MouseLeft]'});
     act(() => {jest.runAllTimers();});
 
     let menu = tree.getByRole('menu');
@@ -313,7 +312,7 @@ describe('SubMenu', function () {
   it('should close everything if the user clicks outside of the submenus', async function () {
     let tree = render(<SubMenuStatic />);
     let triggerButton = tree.getByRole('button');
-    triggerPress(triggerButton);
+    await user.pointer({target: triggerButton, keys: '[MouseLeft]'});
     act(() => {jest.runAllTimers();});
 
     let menu = tree.getByRole('menu');
@@ -344,7 +343,7 @@ describe('SubMenu', function () {
   it('disables a submenu trigger if the wrapped item is in the disabledKeys array', async function () {
     let tree = render(<SubMenuStatic disabledKeys={['Lvl 1 Item 2']} />);
     let triggerButton = tree.getByRole('button');
-    triggerPress(triggerButton);
+    await user.pointer({target: triggerButton, keys: '[MouseLeft]'});
     act(() => {jest.runAllTimers();});
 
     let menu = tree.getByRole('menu');
@@ -547,7 +546,7 @@ describe('SubMenu', function () {
           subMenu1Props={{onAction: subMenuOnAction, onClose: subMenuOnClose}} />
         );
       let triggerButton = tree.getByRole('button');
-      triggerPress(triggerButton);
+      await user.pointer({target: triggerButton, keys: '[MouseLeft]'});
       act(() => {jest.runAllTimers();});
       expect(onOpenChange).toHaveBeenCalledTimes(1);
       expect(onOpenChange).toHaveBeenLastCalledWith(true);
@@ -573,7 +572,7 @@ describe('SubMenu', function () {
       let subMenu2 = menus[2];
       expect(document.activeElement).toBe(subMenuTrigger2);
       let subMenu2Items = within(subMenu2).getAllByRole('menuitem');
-      triggerPress(subMenu2Items[2]);
+      await user.pointer({target: subMenu2Items[2], keys: '[MouseLeft]'});
       act(() => {jest.runAllTimers();});
       menus = tree.queryAllByRole('menu', {hidden: true});
       // Closes all menus when a submenu action is triggered. No action/close handlers are called since
@@ -587,7 +586,7 @@ describe('SubMenu', function () {
       expect(onOpenChange).toHaveBeenLastCalledWith(false);
 
       // Click on the 2rd level SubMenu item which has its own onAction defined
-      triggerPress(triggerButton);
+      await user.pointer({target: triggerButton, keys: '[MouseLeft]'});
       act(() => {jest.runAllTimers();});
       menu = tree.getByRole('menu');
       expect(menu).toBeTruthy();
@@ -600,7 +599,7 @@ describe('SubMenu', function () {
       subMenu1 = menus[1];
       expect(document.activeElement).toBe(subMenuTrigger1);
       subMenu1Items = within(subMenu1).getAllByRole('menuitem');
-      triggerPress(subMenu1Items[1]);
+      await user.pointer({target: subMenu1Items[1], keys: '[MouseLeft]'});
       act(() => {jest.runAllTimers();});
       menus = tree.queryAllByRole('menu', {hidden: true});
       expect(menus).toHaveLength(0);
@@ -620,7 +619,7 @@ describe('SubMenu', function () {
           subMenu1Props={{onClose: subMenuOnClose}} />
         );
       let triggerButton = tree.getByRole('button');
-      triggerPress(triggerButton);
+      await user.pointer({target: triggerButton, keys: '[MouseLeft]'});
       act(() => {jest.runAllTimers();});
       let menu = tree.getByRole('menu');
       expect(menu).toBeTruthy();
@@ -643,13 +642,13 @@ describe('SubMenu', function () {
     it('should not trigger root menu\' onAction when pressing on a submenu trigger item', async function () {
       let tree = render(<SubMenuStatic onAction={onAction} />);
       let triggerButton = tree.getByRole('button');
-      triggerPress(triggerButton);
+      await user.pointer({target: triggerButton, keys: '[MouseLeft]'});
       act(() => {jest.runAllTimers();});
       let menu = tree.getByRole('menu', {hidden: true});
       expect(menu).toBeTruthy();
       let menuItems = within(menu).getAllByRole('menuitem');
       let subMenuTrigger1 = menuItems[1];
-      triggerPress(subMenuTrigger1);
+      await user.pointer({target: subMenuTrigger1, keys: '[MouseLeft]'});
       act(() => {jest.runAllTimers();});
       menu = tree.getByRole('menu', {hidden: true});
       expect(menu).toBeTruthy();
@@ -660,7 +659,7 @@ describe('SubMenu', function () {
       let menus = tree.getAllByRole('menu', {hidden: true});
       expect(menus).toHaveLength(2);
 
-      triggerPress(menuItems[0]);
+      await user.pointer({target: menuItems[0], keys: '[MouseLeft]'});
       act(() => {jest.runAllTimers();});
       menus = tree.queryAllByRole('menu');
       expect(menus).toHaveLength(0);
@@ -733,7 +732,7 @@ describe('SubMenu', function () {
       expect(document.activeElement).toBe(subMenuTrigger);
 
       // Click on the menu's submenu trigger
-      triggerPress(document.activeElement);
+      await user.pointer({target: document.activeElement, keys: '[MouseLeft]'});
       expect(onSelectionChange).not.toHaveBeenCalled();
       await user.keyboard('[Enter]');
       act(() => {jest.runAllTimers();});
@@ -748,7 +747,7 @@ describe('SubMenu', function () {
       let subMenuTrigger2 = within(menus[1]).getAllByRole('menuitem')[0];
       expect(subMenuTrigger2).toHaveAttribute('aria-expanded', 'false');
       expect(document.activeElement).toBe(subMenuTrigger2);
-      triggerPress(document.activeElement);
+      await user.pointer({target: document.activeElement, keys: '[MouseLeft]'});
       expect(subMenuOnSelectionChange).not.toHaveBeenCalled();
       await user.keyboard('[Enter]');
       act(() => {jest.runAllTimers();});
@@ -780,6 +779,173 @@ describe('SubMenu', function () {
       let subMenuTrigger = menuItems[0];
       expect(subMenuTrigger).toHaveAttribute('aria-expanded', 'false');
       expect(subMenuTrigger).not.toHaveAttribute('aria-checked');
+    });
+  });
+
+  describe('submenu tray', function () {
+    installPointerEvent();
+    beforeEach(() => {
+      jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 700);
+    });
+
+    afterEach(() => {
+      act(() => jest.runAllTimers());
+      jest.clearAllMocks();
+    });
+
+    it('should open sub menus in the same tray on touch press', async function () {
+      let tree = render(<SubMenuStatic />);
+      let triggerButton = tree.getByRole('button');
+      await user.pointer({target: triggerButton, keys: '[TouchA]'});
+      act(() => {jest.runAllTimers();});
+
+      let tray = tree.getByTestId('tray');
+      let menu = within(tray).getByRole('menu');
+      expect(menu).toBeTruthy();
+      let buttons = within(tray).getAllByRole('button');
+      expect(buttons).toHaveLength(2);
+      for (let button of buttons) {
+        expect(button).toHaveAttribute('aria-label', 'Dismiss');
+      }
+      let menuItems = within(menu).getAllByRole('menuitem');
+      let subMenuTrigger1 = menuItems[1];
+      triggerTouch(subMenuTrigger1);
+      // TODO: userEvent isn't returning pointerType touch here...
+      // await user.pointer({target: subMenuTrigger1, keys: '[TouchA]', pointerName: 'TouchA'});
+      act(() => {jest.runAllTimers();});
+
+      let menus = within(tray).getAllByRole('menu', {hidden: true});
+      expect(menus).toHaveLength(2);
+      // All menus other than the latest sub menu should be in the tray but hidden from view
+      expect(menus[1]).not.toBeVisible();
+      let subMenu1 = menus[0];
+      expect(document.activeElement).toBe(subMenuTrigger1);
+      expect(subMenu1).toHaveAttribute('aria-labelledby', subMenuTrigger1.id);
+      buttons = within(tray).getAllByRole('button');
+      expect(buttons).toHaveLength(3);
+      for (let button of buttons) {
+        if (button.getAttribute('aria-label') !== 'Dismiss') {
+          expect(button).toHaveAttribute('aria-label', `Return to ${subMenuTrigger1.textContent}`);
+        }
+      }
+      let menuHeader = within(tray).getAllByText(subMenuTrigger1.textContent)[0];
+      expect(menuHeader).toBeVisible();
+      expect(menuHeader.tagName).toBe('SPAN');
+      let subMenu1Items = within(subMenu1).getAllByRole('menuitem');
+      let subMenuTrigger2 = subMenu1Items[2];
+      triggerTouch(subMenuTrigger2);
+      // await user.pointer({target: subMenuTrigger2, keys: '[TouchA]'});
+      act(() => {jest.runAllTimers();});
+
+      menus = within(tray).getAllByRole('menu', {hidden: true});
+      expect(menus).toHaveLength(3);
+      expect(menus[1]).not.toBeVisible();
+      expect(menus[2]).not.toBeVisible();
+      let subMenu2 = menus[0];
+      expect(document.activeElement).toBe(subMenuTrigger2);
+      expect(subMenu2).toHaveAttribute('aria-labelledby', subMenuTrigger2.id);
+      buttons = within(tray).getAllByRole('button');
+      expect(buttons).toHaveLength(3);
+      for (let button of buttons) {
+        if (button.getAttribute('aria-label') !== 'Dismiss') {
+          expect(button).toHaveAttribute('aria-label', `Return to ${subMenuTrigger2.textContent}`);
+        }
+      }
+      menuHeader = within(tray).getAllByText(subMenuTrigger2.textContent)[0];
+      expect(menuHeader).toBeVisible();
+      expect(menuHeader.tagName).toBe('SPAN');
+    });
+
+    it('should provide a back button to close the submenu', async function () {
+      let tree = render(<SubMenuStatic />);
+      let triggerButton = tree.getByRole('button');
+      await user.pointer({target: triggerButton, keys: '[TouchA]'});
+      act(() => {jest.runAllTimers();});
+
+      let tray = tree.getByTestId('tray');
+      let menu = within(tray).getByRole('menu');
+      expect(menu).toBeTruthy();
+      let menuItems = within(menu).getAllByRole('menuitem');
+      let subMenuTrigger1 = menuItems[1];
+      triggerTouch(subMenuTrigger1);
+      // await user.pointer({target: subMenuTrigger1, keys: '[TouchA]'});
+      act(() => {jest.runAllTimers();});
+
+      let menus = within(tray).getAllByRole('menu', {hidden: true});
+      expect(menus).toHaveLength(2);
+      let subMenu1 = menus[0];
+      let subMenu1Items = within(subMenu1).getAllByRole('menuitem');
+      let subMenuTrigger2 = subMenu1Items[2];
+      triggerTouch(subMenuTrigger2);
+      // await user.pointer({target: subMenuTrigger2, keys: '[TouchA]'});
+      act(() => {jest.runAllTimers();});
+
+      menus = within(tray).getAllByRole('menu', {hidden: true});
+      expect(menus).toHaveLength(3);
+      menuItems = within(menus[0]).getAllByRole('menuitem');
+      expect(menuItems[0]).toHaveTextContent('Lvl 3');
+      let buttons = within(tray).getAllByRole('button');
+      expect(buttons).toHaveLength(3);
+      expect(buttons[1]).toHaveAttribute('aria-label', `Return to ${subMenuTrigger2.textContent}`);
+      triggerTouch(buttons[1]);
+      // await user.pointer({target: buttons[1], keys: '[TouchA]'});
+      act(() => {jest.runAllTimers();});
+
+      menus = within(tray).getAllByRole('menu', {hidden: true});
+      expect(menus).toHaveLength(2);
+      menuItems = within(menus[0]).getAllByRole('menuitem');
+      expect(menuItems[0]).toHaveTextContent('Lvl 2');
+      expect(document.activeElement).toBe(subMenuTrigger2);
+      buttons = within(tray).getAllByRole('button');
+      expect(buttons).toHaveLength(3);
+      expect(buttons[1]).toHaveAttribute('aria-label', `Return to ${subMenuTrigger1.textContent}`);
+      triggerTouch(buttons[1]);
+      // await user.pointer({target: buttons[1], keys: '[TouchA]'});
+      act(() => {jest.runAllTimers();});
+
+      menus = within(tray).getAllByRole('menu', {hidden: true});
+      expect(menus).toHaveLength(1);
+      menuItems = within(menus[0]).getAllByRole('menuitem');
+      expect(menuItems[0]).toHaveTextContent('Lvl 1');
+    });
+
+    it('should not open/close submenus on hover', async function () {
+      let tree = render(<SubMenuStatic />);
+      let triggerButton = tree.getByRole('button');
+      await user.pointer({target: triggerButton, keys: '[TouchA]'});
+      act(() => {jest.runAllTimers();});
+
+      let tray = tree.getByTestId('tray');
+      let menu = within(tray).getByRole('menu');
+      let menuItems = within(menu).getAllByRole('menuitem');
+      let subMenuTrigger1 = menuItems[1];
+      await user.pointer({target: subMenuTrigger1});
+      act(() => {jest.runAllTimers();});
+
+      let menus = within(tray).getAllByRole('menu', {hidden: true});
+      expect(menus).toHaveLength(1);
+      triggerTouch(subMenuTrigger1);
+      // await user.pointer({target: subMenuTrigger1, keys: '[TouchA]'});
+      act(() => {jest.runAllTimers();});
+
+      menus = within(tray).getAllByRole('menu', {hidden: true});
+      expect(menus).toHaveLength(2);
+      menuItems = within(menus[0]).getAllByRole('menuitem');
+      await user.pointer({target: menuItems[2]});
+      act(() => {jest.runAllTimers();});
+
+      menus = within(tray).getAllByRole('menu', {hidden: true});
+      expect(menus).toHaveLength(2);
+    });
+
+    describe('keyboard interactions', function () {
+      it('should allow the user to open and close menus with the arrow keys', function () {
+
+      });
+
+      it('should allow the user to tab to the back button and close the submenu', function () {
+
+      });
     });
   });
 });

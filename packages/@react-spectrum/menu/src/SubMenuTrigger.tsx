@@ -33,8 +33,8 @@ export interface SpectrumSubMenuTriggerProps extends Omit<SubMenuTriggerProps, '
 
 // TODO: got rid of user provided ref support since it doesn't really make sense for submenus IMO
 function SubMenuTrigger(props: SubMenuTriggerProps) {
-  let triggerRef = useRef<HTMLLIElement>();
-  let menuRef = useRef<HTMLUListElement>();
+  let triggerRef = useRef<HTMLDivElement>();
+  let menuRef = useRef<HTMLDivElement>();
   let {
     children,
     targetKey
@@ -64,12 +64,14 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
   };
 
   let overlay;
-  if (isMobile && trayContainerRef.current && subMenuTriggerState.isOpen) {
-    // TODO: Will need the same SSR stuff as Overlay? Might not since this trigger should theoretically only be mounted if a parent menu is mounted and thus we aren't in a SSR state
-    // TODO: Deleting uneeded handlers for Tray experience since Tray is a Spectrum specific implementation detail
+  if (isMobile)  {
     delete subMenuTriggerProps.onBlur;
     delete subMenuTriggerProps.onHoverChange;
-    overlay = ReactDOM.createPortal(menu, trayContainerRef.current);
+    if (trayContainerRef.current && subMenuTriggerState.isOpen) {
+      // TODO: Will need the same SSR stuff as Overlay? Might not since this trigger should theoretically only be mounted if a parent menu is mounted and thus we aren't in a SSR state
+      // TODO: Deleting uneeded handlers for Tray experience since Tray is a Spectrum specific implementation detail
+      overlay = ReactDOM.createPortal(menu, trayContainerRef.current);
+    }
   } else {
     overlay = (
       <Popover
@@ -78,7 +80,7 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
         container={popoverContainerRef.current}
         offset={-10}
         enableBothDismissButtons
-        UNSAFE_style={{clipPath: 'unset'}}
+        UNSAFE_style={{clipPath: 'unset', overflow: 'visible'}}
         state={subMenuTriggerState}
         triggerRef={triggerRef}
         scrollRef={menuRef}

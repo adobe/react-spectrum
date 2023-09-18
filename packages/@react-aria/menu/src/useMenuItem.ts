@@ -11,7 +11,7 @@
  */
 
 import {DOMAttributes, DOMProps, FocusableElement, PressEvent} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useEffectEvent, useLayoutEffect, useRouter, useSlotId} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useRouter, useSlotId} from '@react-aria/utils';
 import {FocusEvent, Key, RefObject} from 'react';
 import {getItemCount} from '@react-stately/collections';
 import {isFocusVisible, useHover, useKeyboard, usePress} from '@react-aria/interactions';

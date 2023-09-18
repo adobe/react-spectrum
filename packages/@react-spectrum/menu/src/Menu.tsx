@@ -74,6 +74,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   return (
     <MenuStateContext.Provider value={{popoverContainerRef, trayContainerRef, menu: domRef, menuTreeState, state}}>
       {/* TODO: this is a tray container for the base menu, each sub menu should also have the same so that we can still have the proper MenuState context nesting? */}
+      {/* TODO: maybe this div should be after the FocusScope? */}
       <div ref={trayContainerRef} />
       <FocusScope contain={state.expandedKeys.size > 0}>
         {/* TODO: move the below styles into spectrum css */}
