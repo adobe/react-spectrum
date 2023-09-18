@@ -146,7 +146,7 @@ let ToolbarInner = forwardRef((props: ToolbarProps, ref: ForwardedRef<HTMLDivEle
       {...mergeProps(toolbarProps, DOMProps)}
       {...renderProps}
       ref={ref}
-      slot={props.slot}
+      slot={props.slot || undefined}
       data-orientation={props.orientation || 'horizontal'}>
       {renderProps.children}
     </div>

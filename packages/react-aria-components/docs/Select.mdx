@@ -1104,6 +1104,49 @@ Now you can use `MyCustomLabel` within a `Select`, in place of the builtin React
 </Select>
 ```
 
+### State
+
+Select provides an <TypeLink links={statelyDocs.links} type={statelyDocs.exports.SelectState} /> object to its children via `SelectStateContext`. This can be used to access and manipulate the select's state.
+
+This example shows a `SelectClearButton` component that can be placed within a `Select` to allow the user to clear the selected item.
+
+```tsx example
+import {SelectStateContext} from 'react-aria-components';
+
+function SelectClearButton() {
+  /*- begin highlight -*/
+  let state = React.useContext(SelectStateContext);
+  /*- end highlight -*/
+  return (
+    <Button
+      // Don't inherit behavior from Select.
+      slot={null}
+      style={{fontSize: 'small', marginTop: 6, padding: 4}}
+      onPress={() => state?.setSelectedKey(null)}>
+      Clear
+    </Button>
+  );
+}
+
+<Select>
+  <Label>Favorite Animal</Label>
+  <Button>
+    <SelectValue />
+    <span aria-hidden="true">▼</span>
+  </Button>
+  {/*- begin highlight -*/}
+  <SelectClearButton />
+  {/*- end highlight -*/}
+  <Popover>
+    <ListBox>
+      <Item>Cat</Item>
+      <Item>Dog</Item>
+      <Item>Kangaroo</Item>
+    </ListBox>
+  </Popover>
+</Select>
+```
+
 ### Hooks
 
 If you need to customize things even further, such as accessing internal state, intercepting events, or customizing the DOM structure, you can drop down to the lower level Hook-based API. See [useSelect](useSelect.html) for more details.

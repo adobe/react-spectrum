@@ -11,6 +11,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:react-aria-components';
+import statelyDocs from 'docs:@react-stately/radio';
 import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
@@ -554,6 +555,10 @@ Now you can use `MyCustomLabel` within a `RadioGroup`, in place of the builtin R
   <Radio value="dragon">Dragon</Radio>
 </RadioGroup>
 ```
+
+### State
+
+RadioGroup provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.RadioGroupState} /> object to its children via `RadioGroupStateContext`. This can be used to access and manipulate the radio group's state.
 
 ### Hooks
 

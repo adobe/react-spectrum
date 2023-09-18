@@ -45,7 +45,7 @@ function Separator(originalProps: SeparatorProps, originalRef: ForwardedRef<HTML
       style={style}
       className={className ?? 'react-aria-Separator'}
       ref={ref}
-      slot={props.slot} />
+      slot={props.slot || undefined} />
   );
 }
 
