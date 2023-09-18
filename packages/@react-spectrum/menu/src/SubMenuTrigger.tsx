@@ -52,21 +52,12 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
       requestAnimationFrame(() => parentMenuRef.current.focus());
     }
   };
-  let menuContext = {
-    ...subMenuProps,
-    ref: menuRef,
-    UNSAFE_style: isMobile ? {
-      width: '100%',
-      maxHeight: 'inherit'
-    } : undefined,
-    UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile}),
-    ...(isMobile && {onBackButtonPress})
-  };
 
   let overlay;
   if (isMobile)  {
     delete subMenuTriggerProps.onBlur;
     delete subMenuTriggerProps.onHoverChange;
+    subMenuProps.autoFocus ??= true;
     if (trayContainerRef.current && subMenuTriggerState.isOpen) {
       // TODO: Will need the same SSR stuff as Overlay? Might not since this trigger should theoretically only be mounted if a parent menu is mounted and thus we aren't in a SSR state
       // TODO: Deleting uneeded handlers for Tray experience since Tray is a Spectrum specific implementation detail
@@ -90,6 +81,19 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
       </Popover>
     );
   }
+
+  let menuContext = {
+    ...subMenuProps,
+    ref: menuRef,
+    UNSAFE_style: isMobile ? {
+      width: '100%',
+      maxHeight: 'inherit'
+    } : undefined,
+    UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile}),
+    ...(isMobile && {
+      onBackButtonPress
+    })
+  };
 
   return (
     <>
