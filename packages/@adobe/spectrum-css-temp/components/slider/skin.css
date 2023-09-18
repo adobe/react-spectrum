@@ -58,7 +58,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Slider-ramp {
-  & path {
+  path {
     fill: var(--spectrum-slider-track-color);
   }
 }
@@ -275,7 +275,7 @@ governing permissions and limitations under the License.
       }
     }
     .spectrum-Slider-ramp {
-      & path {
+      path {
         fill: var(--spectrum-slider-ramp-track-color-disabled);
       }
     }

@@ -59,7 +59,7 @@
     display: flex;
     align-items: center;
 
-    & svg {
+    svg {
       margin-right: var(--spectrum-global-dimension-static-size-100);
     }
   }

@@ -557,7 +557,7 @@
   padding-inline-start: 0;
 
   .react-spectrum-ListViewItem-checkbox {
-    & input {
+    input {
       inset-inline-start: 0;
     }
   }

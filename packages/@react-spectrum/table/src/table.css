@@ -195,7 +195,7 @@
         forced-color-adjust: none;
       }
 
-      & svg {
+      svg {
         margin: auto 0;
         display: block;
         padding: var(--spectrum-global-dimension-size-40);

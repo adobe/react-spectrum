@@ -37,7 +37,7 @@ html {
     font-size: small;
   }
 
-  & kbd {
+  kbd {
     grid-area: kbd;
     place-self: center end;
   }
@@ -217,11 +217,11 @@ html {
     align-items: center;
   }
 
-  & [slot=description] {
+  [slot=description] {
     font-size: 12px;
   }
 
-  & [slot=errorMessage] {
+  [slot=errorMessage] {
     font-size: 12px;
     color: var(--spectrum-global-color-red-600);
   }

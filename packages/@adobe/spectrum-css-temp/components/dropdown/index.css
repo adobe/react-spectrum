@@ -28,7 +28,7 @@ governing permissions and limitations under the License.
   min-inline-size: var(--spectrum-dropdown-min-width);
 
   /* Hack to enable select-powered Dropdowns */
-  & select {
+  select {
     appearance: none;
     -ms-appearance: none; /* Edge */
 
