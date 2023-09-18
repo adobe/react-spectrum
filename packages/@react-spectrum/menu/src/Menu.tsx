@@ -97,8 +97,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
           )}
           <ul
             {...menuProps}
-            {...styleProps}
-            style={style}
+            style={mergeProps(style, styleProps.style)}
             ref={domRef}
             className={
               classNames(
