@@ -181,4 +181,19 @@ describe('DateField', () => {
     let input = document.querySelector('input[name=birthday]');
     expect(input).toHaveValue('2020-02-03');
   });
+
+  it('should render data- attributes only on the outer element', () => {
+    let {getAllByTestId} = render(
+      <DateField data-testid="date-field">
+        <Label>Birth Date</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </DateField>
+    );
+    let outerEl = getAllByTestId('date-field');
+    expect(outerEl).toHaveLength(1);
+    expect(outerEl[0]).toHaveClass('react-aria-DateField');
+  });
+
 });

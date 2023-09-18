@@ -16,8 +16,8 @@ import {render} from '@react-spectrum/test-utils';
 
 let renderBreadcrumbs = (breadcrumbsProps, itemProps) => render(
   <Breadcrumbs {...breadcrumbsProps}>
-    <Breadcrumb {...itemProps}><Link><a href="/">Home</a></Link></Breadcrumb>
-    <Breadcrumb {...itemProps}><Link><a href="/react-aria">React Aria</a></Link></Breadcrumb>
+    <Breadcrumb {...itemProps}><Link href="/">Home</Link></Breadcrumb>
+    <Breadcrumb {...itemProps}><Link href="/react-aria">React Aria</Link></Breadcrumb>
     <Breadcrumb {...itemProps}><Link>useBreadcrumbs</Link></Breadcrumb>
   </Breadcrumbs>
 );

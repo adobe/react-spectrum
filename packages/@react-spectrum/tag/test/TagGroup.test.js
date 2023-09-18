@@ -731,4 +731,28 @@ describe('TagGroup', function () {
     expect(tags[0]).toHaveAttribute('data-foo', 'one');
     expect(tags[1]).toHaveAttribute('data-foo', 'two');
   });
+
+  it('should support links', function () {
+    let {getAllByRole} = render(
+      <Provider theme={theme}>
+        <TagGroup aria-label="tag group">
+          <Item href="https://google.com">One</Item>
+          <Item href="https://adobe.com">Two</Item>
+        </TagGroup>
+      </Provider>
+    );
+
+    let tags = getAllByRole('row');
+    for (let tag of tags) {
+      expect(tag.tagName).not.toBe('A');
+      expect(tag).toHaveAttribute('data-href');
+    }
+
+    let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+    window.addEventListener('click', onClick, {once: true});
+    triggerPress(tags[0]);
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+    expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+  });
 });

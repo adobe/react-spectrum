@@ -43,11 +43,12 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
     rendered,
     key
   } = item;
-  let domProps = filterDOMProps(item.props);
+  let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
+  let domProps = filterDOMProps(item.props, {isLink: !!item.props.href});
   delete domProps.id;
   let state = useContext(ListBoxContext);
 
-  let ref = useRef<HTMLDivElement>();
+  let ref = useRef<any>();
   let {optionProps, labelProps, descriptionProps, isSelected, isDisabled, isFocused} = useOption(
     {
       'aria-label': item['aria-label'],
@@ -73,7 +74,7 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      <div
+      <ElementType
         {...mergeProps(optionProps, shouldFocusOnHover ? {} : hoverProps, domProps)}
         ref={ref}
         className={classNames(
@@ -118,7 +119,7 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
             </SlotProvider>
           </ClearSlots>
         </Grid>
-      </div>
+      </ElementType>
     </FocusRing>
   );
 }

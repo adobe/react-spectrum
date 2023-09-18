@@ -15,8 +15,9 @@ import {CheckboxContext} from './Checkbox';
 import {Collection, DraggableCollectionState, DroppableCollectionState, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
 import {CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
 import {ContextValue, defaultSlot, forwardRefType, Provider, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
-import {DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
+import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {filterDOMProps, isIOS, isWebKit, useObjectRef} from '@react-aria/utils';
+import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
 import {TextContext} from './Text';
 
@@ -56,15 +57,8 @@ export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>
   renderEmptyState?: () => ReactNode
 }
 
-interface InternalGridListContextValue {
-  state: ListState<unknown>,
-  dragAndDropHooks?: DragAndDropHooks,
-  dragState?: DraggableCollectionState,
-  dropState?: DroppableCollectionState
-}
 
 export const GridListContext = createContext<ContextValue<GridListProps<any>, HTMLDivElement>>(null);
-const InternalGridListContext = createContext<InternalGridListContextValue | null>(null);
 
 function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   // Render the portal first so that we have the collection by the time we render the DOM in SSR.
@@ -220,14 +214,15 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
         {...renderProps}
         {...mergeProps(gridProps, focusProps, droppableCollection?.collectionProps, emptyStatePropOverrides)}
         ref={ref}
-        slot={props.slot}
+        slot={props.slot || undefined}
         data-drop-target={isRootDropTarget || undefined}
         data-empty={state.collection.size === 0 || undefined}
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}>
         <Provider
           values={[
-            [InternalGridListContext, {state, dragAndDropHooks, dragState, dropState}],
+            [ListStateContext, state],
+            [DragAndDropContext, {dragAndDropHooks, dragState, dropState}],
             [DropIndicatorContext, {render: GridListDropIndicatorWrapper}]
           ]}>
           {isListDroppable && <RootDropIndicator />}
@@ -248,7 +243,8 @@ const _GridList = /*#__PURE__*/ (forwardRef as forwardRefType)(GridList);
 export {_GridList as GridList};
 
 function GridListItem({item}) {
-  let {state, dragAndDropHooks, dragState, dropState} = useContext(InternalGridListContext)!;
+  let state = useContext(ListStateContext)!;
+  let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
   let ref = useObjectRef<HTMLDivElement>(item.props.ref);
   let {rowProps, gridCellProps, descriptionProps, ...states} = useGridListItem(
     {
@@ -382,7 +378,7 @@ function GridListItem({item}) {
 
 function GridListDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
   ref = useObjectRef(ref);
-  let {dragAndDropHooks, dropState} = useContext(InternalGridListContext)!;
+  let {dragAndDropHooks, dropState} = useContext(DragAndDropContext);
   let buttonRef = useRef<HTMLDivElement>(null);
   let {dropIndicatorProps, isHidden, isDropTarget} = dragAndDropHooks!.useDropIndicator!(
     props,
@@ -438,7 +434,7 @@ function GridListDropIndicator(props: GridListDropIndicatorProps, ref: Forwarded
 const GridListDropIndicatorForwardRef = forwardRef(GridListDropIndicator);
 
 function RootDropIndicator() {
-  let {dragAndDropHooks, dropState} = useContext(InternalGridListContext)!;
+  let {dragAndDropHooks, dropState} = useContext(DragAndDropContext);
   let ref = useRef<HTMLDivElement>(null);
   let {dropIndicatorProps} = dragAndDropHooks!.useDropIndicator!({
     target: {type: 'root'}
