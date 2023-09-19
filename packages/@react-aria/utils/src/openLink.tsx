@@ -11,6 +11,7 @@
  */
 
 import {focusWithoutScrolling, isMac, isWebKit} from './index';
+import {isFirefox, isIPad} from './platform';
 import {LinkDOMProps} from '@react-types/shared';
 import React, {createContext, ReactNode, useContext, useMemo} from 'react';
 
@@ -74,6 +75,19 @@ interface Modifiers {
 
 export function openLink(target: HTMLAnchorElement, modifiers: Modifiers, setOpening = true) {
   let {metaKey, ctrlKey, altKey, shiftKey} = modifiers;
+
+  // Firefox does not recognize keyboard events as a user action by default, and the popup blocker
+  // will prevent links with target="_blank" from opening. However, it does allow the event if the
+  // Command/Control key is held, which opens the link in a background tab. This seems like the best we can do.
+  // See https://bugzilla.mozilla.org/show_bug.cgi?id=257870 and https://bugzilla.mozilla.org/show_bug.cgi?id=746640.
+  if (isFirefox() && window.event?.type?.startsWith('key') && target.target === '_blank') {
+    if (isMac()) {
+      metaKey = true;
+    } else {
+      ctrlKey = true;
+    }
+  }
+
   // WebKit does not support firing click events with modifier keys, but does support keyboard events.
   // https://github.com/WebKit/WebKit/blob/c03d0ac6e6db178f90923a0a63080b5ca210d25f/Source/WebCore/html/HTMLAnchorElement.cpp#L184
   let event = isWebKit() && isMac() && !isIPad() && process.env.NODE_ENV !== 'test'
