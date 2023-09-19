@@ -66,12 +66,6 @@ module.exports = {
       'jsdoc/require-description': OFF
     }
   }, {
-    files: ['**/dev/**', '**/scripts/**'],
-    rules: {
-      'jsdoc/require-jsdoc': OFF,
-      'jsdoc/require-description': OFF
-    }
-  }, {
     files: ['packages/@react-aria/interactions/**/*.ts', 'packages/@react-aria/interactions/**/*.tsx'],
     rules: {
       'no-restricted-globals': [
