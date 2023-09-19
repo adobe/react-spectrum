@@ -224,7 +224,6 @@ function Example() {
         isFilled={isFilled}
         maxWidth="size-3000"
         height="size-2400"
-        UNSAFE_className={isFilled && 'is-filled'}
         getDropOperation={(types) =>  (types.has('image/png') || types.has('image/jpeg')) ? 'copy' : 'cancel'}
         onDrop={async (e) => {
           e.items.find(async (item) => {
@@ -267,11 +266,6 @@ function Example() {
   object-fit: cover;
   border-radius: var(--spectrum-alias-border-radius-small);
 }
-
-.is-filled {
-  border-style: solid;
-}
-
 ```
 </details>
 
@@ -301,7 +295,7 @@ function DraggableImage() {
       <img
         width="150px"
         height="100px"
-        alt="Cosmic Sky"
+        alt="Traditional Roof"
         src="https://i.imgur.com/Z7AzH2c.jpg"/>
     </div>
   );
