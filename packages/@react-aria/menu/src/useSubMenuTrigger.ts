@@ -14,7 +14,7 @@
 import {AriaMenuItemProps} from './useMenuItem';
 import {AriaMenuOptions} from './useMenu';
 import type {AriaPopoverProps} from '@react-aria/overlays';
-import {FocusableElement, FocusStrategy, PressEvent} from '@react-types/shared';
+import {FocusableElement, FocusStrategy, PressEvent, Node as RSNode} from '@react-types/shared';
 import {isElementInChildOfActiveScope} from '@react-aria/focus';
 import {RefObject, useCallback, useRef} from 'react';
 import type {SubMenuTriggerState} from '@react-stately/menu';
@@ -29,7 +29,10 @@ export interface AriaSubMenuTriggerProps {
   // TODO: naming. Also talk about if this should be customizable in this hook or if it belongs somewhere else
   /** Type of the submenu being rendered. */
   subMenuType?: 'dialog' | 'menu',
-  isDisabled?: boolean
+  /** Whether the submenu trigger is disabled. */
+  isDisabled?: boolean,
+  /** An object representing the submenu trigger menu item. Contains all the relevant information that makes up the menu item. */
+  node: RSNode<unknown>
 }
 
 export interface SubMenuTriggerAria<T> {
@@ -50,7 +53,7 @@ export interface SubMenuTriggerAria<T> {
 // TODO: debatable if we should have a useSubMenu hook for the submenu key handlers. Feels better to have it here so we don't need to ferry around
 // things like parentMenu and the timeout canceling since those are available
 export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubMenuTriggerState, ref: RefObject<FocusableElement>): SubMenuTriggerAria<T> {
-  let {parentMenuRef, subMenuRef, subMenuType = 'menu', isDisabled} = props;
+  let {parentMenuRef, subMenuRef, subMenuType = 'menu', isDisabled, node} = props;
   let subMenuTriggerId = useId();
   let overlayId = useId();
   let {direction} = useLocale();
@@ -105,10 +108,9 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
     }
   };
 
-  // TODO: look up the trigger text content via submenutriggerstate.collection.getItem and triggerKey here and add it as aria-label
   let subMenuProps = {
     id: overlayId,
-    'aria-labelledby': subMenuTriggerId,
+    'aria-label': node.textValue,
     ...(subMenuType === 'menu' && {
       onClose: state.closeAll,
       autoFocus: state.focusStrategy,

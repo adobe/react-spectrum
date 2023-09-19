@@ -41,8 +41,13 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
 
   let [menuTrigger, menu] = React.Children.toArray(children);
   let {popoverContainerRef, trayContainerRef, menu: parentMenuRef, submenu: menuRef, menuTreeState, state} = useMenuStateContext();
+  let triggerNode = state.collection.getItem(targetKey);
   let subMenuTriggerState = useSubMenuTriggerState({triggerKey: targetKey}, {...menuTreeState, ...state});
-  let {subMenuTriggerProps, subMenuProps, popoverProps, overlayProps} = useSubMenuTrigger({parentMenuRef, subMenuRef: menuRef}, subMenuTriggerState, triggerRef);
+  let {subMenuTriggerProps, subMenuProps, popoverProps, overlayProps} = useSubMenuTrigger({
+    node: triggerNode,
+    parentMenuRef,
+    subMenuRef: menuRef
+  }, subMenuTriggerState, triggerRef);
   let isMobile = useIsMobileDevice();
   let onBackButtonPress = () => {
     subMenuTriggerState.close();
@@ -51,21 +56,12 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
       requestAnimationFrame(() => parentMenuRef.current.focus());
     }
   };
-  let menuContext = {
-    ...subMenuProps,
-    ref: menuRef,
-    UNSAFE_style: isMobile ? {
-      width: '100%',
-      maxHeight: 'inherit'
-    } : undefined,
-    UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile}),
-    ...(isMobile && {onBackButtonPress})
-  };
 
   let overlay;
   if (isMobile)  {
     delete subMenuTriggerProps.onBlur;
     delete subMenuTriggerProps.onHoverChange;
+    subMenuProps.autoFocus ??= true;
     if (trayContainerRef.current && subMenuTriggerState.isOpen) {
       // TODO: Will need the same SSR stuff as Overlay? Might not since this trigger should theoretically only be mounted if a parent menu is mounted and thus we aren't in a SSR state
       // TODO: Deleting uneeded handlers for Tray experience since Tray is a Spectrum specific implementation detail
@@ -89,6 +85,19 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
       </Popover>
     );
   }
+
+  let menuContext = {
+    ...subMenuProps,
+    ref: menuRef,
+    UNSAFE_style: isMobile ? {
+      width: '100%',
+      maxHeight: 'inherit'
+    } : undefined,
+    UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile}),
+    ...(isMobile && {
+      onBackButtonPress
+    })
+  };
 
   return (
     <>

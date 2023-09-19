@@ -92,7 +92,7 @@ describe('SubMenu', function () {
     expect(menus).toHaveLength(2);
     let subMenu1 = menus[1];
     expect(document.activeElement).toBe(subMenuTrigger1);
-    expect(subMenu1).toHaveAttribute('aria-labelledby', subMenuTrigger1.id);
+    expect(subMenu1).toHaveAttribute('aria-label', subMenuTrigger1.textContent);
     expect(subMenuTrigger1).toHaveAttribute('aria-expanded', 'true');
     expect(subMenuTrigger1).toHaveAttribute('aria-controls', subMenu1.id);
 
@@ -111,7 +111,7 @@ describe('SubMenu', function () {
     expect(menus).toHaveLength(3);
     let subMenu2 = menus[2];
     expect(document.activeElement).toBe(subMenuTrigger2);
-    expect(subMenu2).toHaveAttribute('aria-labelledby', subMenuTrigger2.id);
+    expect(subMenu2).toHaveAttribute('aria-label', subMenuTrigger2.textContent);
     expect(subMenuTrigger2).toHaveAttribute('aria-expanded', 'true');
     expect(subMenuTrigger2).toHaveAttribute('aria-controls', subMenu2.id);
 
@@ -414,7 +414,6 @@ describe('SubMenu', function () {
         menus = tree.getAllByRole('menu', {hidden: true});
         expect(menus).toHaveLength(1);
         expect(subMenuTrigger1).toHaveAttribute('aria-expanded', 'false');
-        // expect(document.activeElement).toBe(subMenuTrigger1);
         expect(onOpenChange).toHaveBeenCalledTimes(1);
       }
     });
@@ -809,9 +808,8 @@ describe('SubMenu', function () {
       }
       let menuItems = within(menu).getAllByRole('menuitem');
       let subMenuTrigger1 = menuItems[1];
+      // TODO: userevent pointer is detected as a virtual press...
       triggerTouch(subMenuTrigger1);
-      // TODO: userEvent isn't returning pointerType touch here...
-      // await user.pointer({target: subMenuTrigger1, keys: '[TouchA]', pointerName: 'TouchA'});
       act(() => {jest.runAllTimers();});
 
       let menus = within(tray).getAllByRole('menu', {hidden: true});
@@ -819,8 +817,8 @@ describe('SubMenu', function () {
       // All menus other than the latest sub menu should be in the tray but hidden from view
       expect(menus[1]).not.toBeVisible();
       let subMenu1 = menus[0];
-      expect(document.activeElement).toBe(subMenuTrigger1);
-      expect(subMenu1).toHaveAttribute('aria-labelledby', subMenuTrigger1.id);
+      expect(document.activeElement).toBe(subMenu1);
+      expect(subMenu1).toHaveAttribute('aria-label', subMenuTrigger1.textContent);
       buttons = within(tray).getAllByRole('button');
       expect(buttons).toHaveLength(3);
       for (let button of buttons) {
@@ -834,7 +832,6 @@ describe('SubMenu', function () {
       let subMenu1Items = within(subMenu1).getAllByRole('menuitem');
       let subMenuTrigger2 = subMenu1Items[2];
       triggerTouch(subMenuTrigger2);
-      // await user.pointer({target: subMenuTrigger2, keys: '[TouchA]'});
       act(() => {jest.runAllTimers();});
 
       menus = within(tray).getAllByRole('menu', {hidden: true});
@@ -842,8 +839,8 @@ describe('SubMenu', function () {
       expect(menus[1]).not.toBeVisible();
       expect(menus[2]).not.toBeVisible();
       let subMenu2 = menus[0];
-      expect(document.activeElement).toBe(subMenuTrigger2);
-      expect(subMenu2).toHaveAttribute('aria-labelledby', subMenuTrigger2.id);
+      expect(document.activeElement).toBe(subMenu2);
+      expect(subMenu2).toHaveAttribute('aria-label', subMenuTrigger2.textContent);
       buttons = within(tray).getAllByRole('button');
       expect(buttons).toHaveLength(3);
       for (let button of buttons) {
@@ -868,7 +865,6 @@ describe('SubMenu', function () {
       let menuItems = within(menu).getAllByRole('menuitem');
       let subMenuTrigger1 = menuItems[1];
       triggerTouch(subMenuTrigger1);
-      // await user.pointer({target: subMenuTrigger1, keys: '[TouchA]'});
       act(() => {jest.runAllTimers();});
 
       let menus = within(tray).getAllByRole('menu', {hidden: true});
@@ -877,7 +873,6 @@ describe('SubMenu', function () {
       let subMenu1Items = within(subMenu1).getAllByRole('menuitem');
       let subMenuTrigger2 = subMenu1Items[2];
       triggerTouch(subMenuTrigger2);
-      // await user.pointer({target: subMenuTrigger2, keys: '[TouchA]'});
       act(() => {jest.runAllTimers();});
 
       menus = within(tray).getAllByRole('menu', {hidden: true});
@@ -888,7 +883,6 @@ describe('SubMenu', function () {
       expect(buttons).toHaveLength(3);
       expect(buttons[1]).toHaveAttribute('aria-label', `Return to ${subMenuTrigger2.textContent}`);
       triggerTouch(buttons[1]);
-      // await user.pointer({target: buttons[1], keys: '[TouchA]'});
       act(() => {jest.runAllTimers();});
 
       menus = within(tray).getAllByRole('menu', {hidden: true});
@@ -900,7 +894,6 @@ describe('SubMenu', function () {
       expect(buttons).toHaveLength(3);
       expect(buttons[1]).toHaveAttribute('aria-label', `Return to ${subMenuTrigger1.textContent}`);
       triggerTouch(buttons[1]);
-      // await user.pointer({target: buttons[1], keys: '[TouchA]'});
       act(() => {jest.runAllTimers();});
 
       menus = within(tray).getAllByRole('menu', {hidden: true});
@@ -925,7 +918,6 @@ describe('SubMenu', function () {
       let menus = within(tray).getAllByRole('menu', {hidden: true});
       expect(menus).toHaveLength(1);
       triggerTouch(subMenuTrigger1);
-      // await user.pointer({target: subMenuTrigger1, keys: '[TouchA]'});
       act(() => {jest.runAllTimers();});
 
       menus = within(tray).getAllByRole('menu', {hidden: true});
@@ -939,12 +931,66 @@ describe('SubMenu', function () {
     });
 
     describe('keyboard interactions', function () {
-      it('should allow the user to open and close menus with the arrow keys', function () {
+      it('should allow the user to open and close menus with the arrow keys', async function () {
+        let tree = render(<SubMenuStatic />);
+        await user.tab();
+        await user.keyboard('[ArrowDown]');
+        act(() => {jest.runAllTimers();});
 
+        let tray = tree.getByTestId('tray');
+        let menu = within(tray).getByRole('menu');
+        let menuItems = within(menu).getAllByRole('menuitem');
+        await user.keyboard('[ArrowDown]');
+        let subMenuTrigger1 = menuItems[1];
+        expect(document.activeElement).toBe(subMenuTrigger1);
+        await user.keyboard('[ArrowRight]');
+        act(() => {jest.runAllTimers();});
+
+        let menus = within(tray).getAllByRole('menu', {hidden: true});
+        expect(menus).toHaveLength(2);
+        menuItems = within(menus[0]).getAllByRole('menuitem');
+        expect(menuItems[0]).toHaveTextContent('Lvl 2');
+        expect(document.activeElement).toBe(menuItems[0]);
+        await user.keyboard('[ArrowLeft]');
+        act(() => {jest.runAllTimers();});
+
+        menus = within(tray).getAllByRole('menu', {hidden: true});
+        expect(menus).toHaveLength(1);
+        menuItems = within(menus[0]).getAllByRole('menuitem');
+        expect(menuItems[0]).toHaveTextContent('Lvl 1');
       });
 
-      it('should allow the user to tab to the back button and close the submenu', function () {
+      it('should allow the user to tab to the back button and close the submenu', async function () {
+        let tree = render(<SubMenuStatic />);
+        await user.tab();
+        await user.keyboard('[ArrowDown]');
+        act(() => {jest.runAllTimers();});
 
+        let tray = tree.getByTestId('tray');
+        let menu = within(tray).getByRole('menu');
+        let menuItems = within(menu).getAllByRole('menuitem');
+        await user.keyboard('[ArrowDown]');
+        let subMenuTrigger1 = menuItems[1];
+        expect(document.activeElement).toBe(subMenuTrigger1);
+        await user.keyboard('[ArrowRight]');
+        act(() => {jest.runAllTimers();});
+
+        let menus = within(tray).getAllByRole('menu', {hidden: true});
+        expect(menus).toHaveLength(2);
+        menuItems = within(menus[0]).getAllByRole('menuitem');
+        expect(menuItems[0]).toHaveTextContent('Lvl 2');
+        expect(document.activeElement).toBe(menuItems[0]);
+
+        await user.tab({shift: true});
+        expect(document.activeElement).toHaveAttribute('aria-label', `Return to ${subMenuTrigger1.textContent}`);
+        await user.keyboard('[Enter]');
+        act(() => {jest.runAllTimers();});
+
+        menus = within(tray).getAllByRole('menu', {hidden: true});
+        expect(menus).toHaveLength(1);
+        menuItems = within(menus[0]).getAllByRole('menuitem');
+        expect(menuItems[0]).toHaveTextContent('Lvl 1');
+        expect(document.activeElement).toBe(subMenuTrigger1);
       });
     });
   });
