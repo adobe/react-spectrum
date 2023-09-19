@@ -92,7 +92,7 @@ describe('SubMenu', function () {
     expect(menus).toHaveLength(2);
     let subMenu1 = menus[1];
     expect(document.activeElement).toBe(subMenuTrigger1);
-    expect(subMenu1).toHaveAttribute('aria-labelledby', subMenuTrigger1.id);
+    expect(subMenu1).toHaveAttribute('aria-label', subMenuTrigger1.textContent);
     expect(subMenuTrigger1).toHaveAttribute('aria-expanded', 'true');
     expect(subMenuTrigger1).toHaveAttribute('aria-controls', subMenu1.id);
 
@@ -111,7 +111,7 @@ describe('SubMenu', function () {
     expect(menus).toHaveLength(3);
     let subMenu2 = menus[2];
     expect(document.activeElement).toBe(subMenuTrigger2);
-    expect(subMenu2).toHaveAttribute('aria-labelledby', subMenuTrigger2.id);
+    expect(subMenu2).toHaveAttribute('aria-label', subMenuTrigger2.textContent);
     expect(subMenuTrigger2).toHaveAttribute('aria-expanded', 'true');
     expect(subMenuTrigger2).toHaveAttribute('aria-controls', subMenu2.id);
 
@@ -818,7 +818,7 @@ describe('SubMenu', function () {
       expect(menus[1]).not.toBeVisible();
       let subMenu1 = menus[0];
       expect(document.activeElement).toBe(subMenu1);
-      expect(subMenu1).toHaveAttribute('aria-labelledby', subMenuTrigger1.id);
+      expect(subMenu1).toHaveAttribute('aria-label', subMenuTrigger1.textContent);
       buttons = within(tray).getAllByRole('button');
       expect(buttons).toHaveLength(3);
       for (let button of buttons) {
@@ -840,7 +840,7 @@ describe('SubMenu', function () {
       expect(menus[2]).not.toBeVisible();
       let subMenu2 = menus[0];
       expect(document.activeElement).toBe(subMenu2);
-      expect(subMenu2).toHaveAttribute('aria-labelledby', subMenuTrigger2.id);
+      expect(subMenu2).toHaveAttribute('aria-label', subMenuTrigger2.textContent);
       buttons = within(tray).getAllByRole('button');
       expect(buttons).toHaveLength(3);
       for (let button of buttons) {

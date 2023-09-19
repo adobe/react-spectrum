@@ -79,10 +79,9 @@ export function useSubMenuTriggerState<T>(props: SubMenuTriggerProps, state: Men
     open,
     close,
     closeAll,
-    triggerKey,
     // TODO: add setOpen and toggle for type parity with useOverlayTriggerState type that Tray and Popover expect. Perhaps call useOverlayTriggerState in
     // this hook and just make it controlled? Then spread?
     setOpen: () => {},
     toggle
-  }), [isOpen, open, close, closeAll, triggerKey, focusStrategy, toggle]);
+  }), [isOpen, open, close, closeAll, focusStrategy, toggle]);
 }

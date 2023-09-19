@@ -42,8 +42,13 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
 
   let [menuTrigger, menu] = React.Children.toArray(children);
   let {popoverContainerRef, trayContainerRef, menu: parentMenuRef, menuTreeState, state} = useMenuStateContext();
+  let triggerNode = state.collection.getItem(targetKey);
   let subMenuTriggerState = useSubMenuTriggerState({triggerKey: targetKey}, {...menuTreeState, ...state});
-  let {subMenuTriggerProps, subMenuProps, popoverProps, overlayProps} = useSubMenuTrigger({parentMenuRef, subMenuRef: menuRef}, subMenuTriggerState, triggerRef);
+  let {subMenuTriggerProps, subMenuProps, popoverProps, overlayProps} = useSubMenuTrigger({
+    node: triggerNode,
+    parentMenuRef,
+    subMenuRef: menuRef
+  }, subMenuTriggerState, triggerRef);
   let isMobile = useIsMobileDevice();
   let onBackButtonPress = () => {
     subMenuTriggerState.close();
