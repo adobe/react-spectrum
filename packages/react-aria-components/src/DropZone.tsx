@@ -60,6 +60,8 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   let ariaLabelledby = [textId, messageId].filter(Boolean).join(' ');
   let labelProps = useLabels({'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledby});
 
+  let ariaDescribedby = props['aria-describedby'];
+
   let {clipboardProps} = useClipboard({
     onPaste: (items) => props.onDrop?.({
       type: 'drop',
@@ -97,6 +99,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
         <VisuallyHidden>
           <button
             {...mergeProps(dropButtonProps, focusProps, clipboardProps, labelProps)}
+            aria-describedby={ariaDescribedby}
             ref={buttonRef} />
         </VisuallyHidden>
         {renderProps.children}
