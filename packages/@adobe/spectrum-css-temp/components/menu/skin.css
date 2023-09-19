@@ -21,6 +21,10 @@ governing permissions and limitations under the License.
   background-color: var(--spectrum-selectlist-background-color);
 }
 
+.spectrum-SubMenu-headerWrapper {
+  --spectrum-heading-subtitle3-text-color: var(--spectrum-global-color-gray-900);
+}
+
 .spectrum-Menu-item {
   background-color: var(--spectrum-selectlist-option-background-color);
   color: var(--spectrum-selectlist-option-text-color);
@@ -73,6 +77,11 @@ governing permissions and limitations under the License.
 .spectrum-Menu-description {
   color: var(--spectrum-global-color-gray-700);
 }
+
+.spectrum-SubMenu-header {
+  color: var(--spectrum-heading-subtitle3-text-color);
+}
+
 @media (forced-colors: active) {
   .spectrum-Menu-divider {
     background-color: CanvasText;

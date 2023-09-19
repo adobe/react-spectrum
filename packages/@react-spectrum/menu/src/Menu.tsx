@@ -14,7 +14,6 @@ import {ActionButton} from '@react-spectrum/button';
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {classNames, useDOMRef, useIsMobileDevice, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {Flex} from '@react-spectrum/layout';
 import {FocusScope} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -60,14 +59,6 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   }, []);
 
   let isMobile = useIsMobileDevice();
-  let hasOpenSubMenu = state.expandedKeys.size > 0;
-  let trayStyles = {
-    ...(hasOpenSubMenu && {
-      display: 'none'
-    }),
-    width: '100%'
-  };
-
   let backButtonText = parentMenuTreeState?.collection.getItem(menuTreeState.expandedKeysStack.slice(-1)[0])?.textValue;
   let backButtonLabel = stringFormatter.format('backButton', {
     prevMenuButton: backButtonText
@@ -79,12 +70,20 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
       {/* TODO: maybe this div should be after the FocusScope? */}
       <div ref={trayContainerRef} />
       <FocusScope contain={state.expandedKeys.size > 0}>
-        {/* TODO: move the below styles into spectrum css */}
-        <div style={{overflow: 'hidden', maxHeight: '100%', display: 'inline-flex', flexDirection: 'column', borderRadius: 'var(--spectrum-alias-border-radius-regular)', ...(isMobile && trayStyles)}}>
+        <div
+          className={
+            classNames(
+              styles,
+              'spectrum-Menu-wrapper',
+              {
+                'spectrum-Menu-trayWrapper': isMobile,
+                'is-expanded': isMobile && state.expandedKeys.size > 0
+              }
+            )
+        }>
           {isMobile && isSubMenu && state.expandedKeys.size === 0 && (
             // TODO: check labeling with team and get translated strings
-            <Flex marginStart="size-10">
-              {/* TODO: should it even have the same styles of ActionButton (press down styles)? Should label be part of the button? */}
+            <div className={classNames(styles, 'spectrum-SubMenu-headerWrapper')}>
               <ActionButton
                 aria-label={backButtonLabel}
                 isQuiet
@@ -92,9 +91,8 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
                 {/* We don't have a ArrowLeftSmall so make due with ArrowDownSmall and transforms */}
                 {direction === 'rtl' ? <ArrowDownSmall UNSAFE_style={{rotate: '270deg'}} /> : <ArrowDownSmall UNSAFE_style={{rotate: '90deg'}} />}
               </ActionButton>
-              {/* TODO move styles to menu css,  --spectrum-heading-subtitle3-text-color is the color, weight is var(--spectrum-global-font-weight-bold) here */}
-              <span style={{display: 'flex', marginTop: '7px', fontWeight: 700, color: 'var(--spectrum-global-color-gray-900)'}}>{backButtonText}</span>
-            </Flex>
+              <span className={classNames(styles, 'spectrum-SubMenu-header')}>{backButtonText}</span>
+            </div>
           )}
           <div
             {...menuProps}

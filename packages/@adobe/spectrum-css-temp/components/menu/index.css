@@ -221,3 +221,30 @@ governing permissions and limitations under the License.
   align-self: center;
   padding-inline-start: var(--spectrum-global-dimension-size-300);
 }
+
+.spectrum-Menu-wrapper {
+  overflow: hidden;
+  max-height: 100%;
+  display: inline-flex;
+  flex-direction: column;
+  border-radius: var(--spectrum-alias-border-radius-regular);
+}
+
+.spectrum-Menu-trayWrapper {
+  width: 100%;
+  &.is-expanded {
+    display: none;
+  }
+
+  .spectrum-SubMenu-headerWrapper {
+    display: flex;
+    margin: 4px 4px 0px 4px;
+  }
+
+  .spectrum-SubMenu-header {
+    display: flex;
+    margin-top: 7px;
+    margin-inline-start: 4px;
+    font-weight: var(--spectrum-selectlist-heading-text-font-weight);
+  }
+}
