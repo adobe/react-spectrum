@@ -681,8 +681,8 @@ function TabNavigation() {
   let onNext = nextKey != null ? () => state.setSelectedKey(nextKey) : null;
   return (
     <div className="button-group">
-      <Button aria-label="Previous tab" onPress={onPrev}>⬅</Button>
-      <Button aria-label="Next tab" onPress={onNext}>➡</Button>
+      <Button aria-label="Previous tab" onPress={onPrev}>←</Button>
+      <Button aria-label="Next tab" onPress={onNext}>→</Button>
     </div>
   );
 }
@@ -702,6 +702,14 @@ function TabNavigation() {
   <TabPanel id="projects">Projects</TabPanel>
   <TabPanel id="search">Search</TabPanel>
 </Tabs>
+```
+
+```css hidden
+.button-group .react-aria-Button[aria-label] {
+  font-size: 1.2rem;
+  line-height: 1rem;
+  font-weight: bold;
+}
 ```
 
 ### Hooks
