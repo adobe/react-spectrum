@@ -2997,12 +2997,21 @@ describe('usePress', function () {
   describe('Owner document and window', () => {
     installPointerEvent();
 
+    let iframe;
+    let iframeRoot;
+    beforeEach(() => {
+      iframe = document.createElement('iframe');
+      window.document.body.appendChild(iframe);
+      iframeRoot = iframe.contentWindow.document.createElement('div');
+      iframe.contentWindow.document.body.appendChild(iframeRoot);
+    });
+
+    afterEach(() => {
+      iframe.remove();
+    });
+
     const IframeExample = (props) => {
       React.useEffect(() => {
-        const iframe = document.createElement('iframe');
-        window.document.body.appendChild(iframe);
-        const iframeRoot = iframe.contentWindow.document.createElement('div');
-        iframe.contentWindow.document.body.appendChild(iframeRoot);
         ReactDOMRender(<Example
           {...props}
           data-testid="example" />, iframeRoot);
@@ -3011,7 +3020,7 @@ describe('usePress', function () {
       return null;
     };
 
-    test('should receive and handle press events in the correct document and window object', async () => {
+    test('should handle press events', async () => {
       let events = [];
       let addEvent = (e) => events.push(e);
       render(
@@ -3071,6 +3080,68 @@ describe('usePress', function () {
           type: 'press',
           target: el,
           pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        }
+      ]);
+    });
+
+    test('should handle click events and ignore virtual point events', async () => {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      render(
+        <IframeExample
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPress={addEvent}
+          onPressUp={addEvent} />
+      );
+
+      await waitFor(() => {
+        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="example"]')).toBeTruthy();
+      });
+
+      const el = document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="example"]');
+
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', width: 0, height: 0}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', width: 0, height: 0, clientX: 0, clientY: 0}));
+      expect(events).toEqual([]);
+
+      fireEvent.click(el);
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'press',
+          target: el,
+          pointerType: 'virtual',
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
