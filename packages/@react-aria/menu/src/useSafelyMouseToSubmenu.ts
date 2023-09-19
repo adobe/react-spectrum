@@ -38,6 +38,10 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
     submenuRect.current = submenu.getBoundingClientRect();
 
     let onPointerMove = (e: PointerEvent) => {
+      if (e.pointerType === 'touch' || e.pointerType === 'pen') {
+        return;
+      }
+
       let currentTime = Date.now();
 
       // Throttle
