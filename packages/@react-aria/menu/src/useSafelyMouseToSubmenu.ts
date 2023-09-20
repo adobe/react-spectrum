@@ -77,6 +77,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
       // Pointer has already reached submenu
       if ((submenuSide.current === 'left' && mouseX < submenuRect.current.right) || (submenuSide.current === 'right' && mouseX > submenuRect.current.left)) {
         setMovements([]);
+        clearTimeout(timeout.current);
         return;
       }
     
