@@ -11,6 +11,7 @@ interface SafelyMouseToSubmenuOptions {
 const ALLOWED_INVALID_MOVEMENTS = 2;
 const THROTTLE_TIME = 50;
 const TIMEOUT_TIME = 500;
+const ANGLE_PADDING = Math.PI / 12; // 15°
 
 /**
  * Allows the user to move their pointer to the submenu without it closing when their mouse leaves the trigger element.
@@ -78,9 +79,8 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
       let prevMouseY = prevPointerPos.current.y;
       let direction = mouseX > submenuRect.current.right ? 'left' : 'right';
       let toSubmenuX = direction === 'right' ? submenuRect.current.left - prevMouseX : prevMouseX - submenuRect.current.right;
-      let padding = Math.PI / 12; // 15° 
-      let angleTop = Math.atan2(prevMouseY - submenuRect.current.top, toSubmenuX) + padding;
-      let angleBottom = Math.atan2(prevMouseY - submenuRect.current.bottom, toSubmenuX) - padding;
+      let angleTop = Math.atan2(prevMouseY - submenuRect.current.top, toSubmenuX) + ANGLE_PADDING;
+      let angleBottom = Math.atan2(prevMouseY - submenuRect.current.bottom, toSubmenuX) - ANGLE_PADDING;
       let anglePointer = Math.atan2(prevMouseY - mouseY, (direction === 'left' ? -(mouseX - prevMouseX) : mouseX - prevMouseX));
       let isMovingTowardsSubmenu = anglePointer < angleTop && anglePointer > angleBottom;
       setMovements((prevMovements) => [...prevMovements, isMovingTowardsSubmenu].slice(-(ALLOWED_INVALID_MOVEMENTS + 1)));
