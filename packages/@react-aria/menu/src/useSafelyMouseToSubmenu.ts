@@ -85,6 +85,12 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
       if (anglePointer < angleTop && anglePointer > angleBottom) {
         timeout.current = setTimeout(() => {
           setIsPointerMovingTowardsSubmenu(false);
+          setTimeout(() => {
+            // Fire a pointermove event to trigger the menu to close.
+            // Wait until pointer-events:none is no longer applied
+            let target = document.elementFromPoint(mouseX, mouseY);
+            target.dispatchEvent(new PointerEvent('pointerenter', {bubbles: true, cancelable: true}));
+          }, 100);
         }, 500);
       }
     };
