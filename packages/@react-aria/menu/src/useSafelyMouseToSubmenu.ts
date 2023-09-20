@@ -23,6 +23,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
   let submenuRect = useRef<DOMRect>(null);
   let lastProcessedTime = useRef<number>(0);
   let timeout = useRef(null);
+  let submenuSide = useRef(null);
 
   // Keep track of the last few pointer movements, where true = moving towards submenu, false = moving away from submenu.
   let [movements, setMovements] = useState<Array<boolean>>([]);
@@ -30,6 +31,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
   let updateSubmenuRect = () => {
     if (submenuRef.current) {
       submenuRect.current = submenuRef.current.getBoundingClientRect();
+      submenuSide.current = null;
     }
   };
 
@@ -58,6 +60,10 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
       }
 
       let {clientX: mouseX, clientY: mouseY} = e;
+      
+      if (!submenuSide.current) {
+        submenuSide.current = mouseX > submenuRect.current.right ? 'left' : 'right';
+      }
 
       if (!prevPointerPos.current) {
         prevPointerPos.current = {x: mouseX, y: mouseY};
@@ -77,11 +83,10 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
       */
       let prevMouseX = prevPointerPos.current.x;
       let prevMouseY = prevPointerPos.current.y;
-      let direction = mouseX > submenuRect.current.right ? 'left' : 'right';
-      let toSubmenuX = direction === 'right' ? submenuRect.current.left - prevMouseX : prevMouseX - submenuRect.current.right;
+      let toSubmenuX = submenuSide.current === 'right' ? submenuRect.current.left - prevMouseX : prevMouseX - submenuRect.current.right;
       let angleTop = Math.atan2(prevMouseY - submenuRect.current.top, toSubmenuX) + ANGLE_PADDING;
       let angleBottom = Math.atan2(prevMouseY - submenuRect.current.bottom, toSubmenuX) - ANGLE_PADDING;
-      let anglePointer = Math.atan2(prevMouseY - mouseY, (direction === 'left' ? -(mouseX - prevMouseX) : mouseX - prevMouseX));
+      let anglePointer = Math.atan2(prevMouseY - mouseY, (submenuSide.current === 'left' ? -(mouseX - prevMouseX) : mouseX - prevMouseX));
       let isMovingTowardsSubmenu = anglePointer < angleTop && anglePointer > angleBottom;
       setMovements((prevMovements) => [...prevMovements, isMovingTowardsSubmenu].slice(-(ALLOWED_INVALID_MOVEMENTS + 1)));
 
