@@ -75,6 +75,8 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
         {...overlayProps}
         container={popoverContainerRef.current}
         offset={-10}
+        containerPadding={0}
+        crossOffset={-5}
         enableBothDismissButtons
         UNSAFE_style={{clipPath: 'unset', overflow: 'visible'}}
         state={subMenuTriggerState}

@@ -247,14 +247,18 @@ export const SubMenuDynamicSections = {
 
 let subMenuNoSection = [
   {name: 'Section 1', isSection: true, children: [
-    {name: 'Sec 1 Lvl 1 Item 1'},
+    {name: 'Sec 1 Lvl 1 Item 1', children: [
+      {name: 'Sec 1 Lvl 2.1 Item 1'},
+      {name: 'Sec 1 Lvl 2.1 Item 2'},
+      {name: 'Sec 1 Lvl 2.1 Item 3'}
+    ]},
     {name: 'Sec 1 Lvl 1 Item 2', children: [
-      {name: 'Sec 1 Lvl 2 Item 1'},
-      {name: 'Sec 1 Lvl 2 Item 2'},
-      {name: 'Sec 1 Lvl 2 Item 3', children: [
-        {name: 'Sec 1 Lvl 3 Item 1'},
-        {name: 'Sec 1 Lvl 3 Item 2'},
-        {name: 'Sec 1 Lvl 3 Item 3'}
+      {name: 'Sec 1 Lvl 2.2 Item 1'},
+      {name: 'Sec 1 Lvl 2.2 Item 2'},
+      {name: 'Sec 1 Lvl 2.2 Item 3', children: [
+        {name: 'Sec 1 Lvl 3.2 Item 1'},
+        {name: 'Sec 1 Lvl 3.2 Item 2'},
+        {name: 'Sec 1 Lvl 3.2 Item 3'}
       ]}
     ]},
     {name: 'Sec 1 Lvl 1 Item 3'}
@@ -273,7 +277,13 @@ export const MainSectionsSubNoSections = {
 };
 
 let subMenuSections = [
-  {name: 'Lvl 1 Item 1'},
+  {name: 'Lvl 1 Item 1', children: [
+    {name: 'Section 1', isSection: true, children: [
+      {name: 'Sec 1 Lvl 2.1 Item 1'},
+      {name: 'Sec 1 Lvl 2.1 Item 2'},
+      {name: 'Sec 1 Lvl 2.1 Item 3'}
+    ]}
+  ]},
   {name: 'Lvl 1 Item 2', children: [
     {name: 'Section 1', isSection: true, children: [
       {name: 'Sec 1 Lvl 2 Item 1'},
