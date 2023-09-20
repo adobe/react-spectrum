@@ -8,6 +8,10 @@ interface SafelyMouseToSubmenuOptions {
   isOpen: boolean
 }
 
+const ALLOWED_INVALID_MOVEMENTS = 2;
+const THROTTLE_TIME = 50;
+const TIMEOUT_TIME = 500;
+
 /**
  * Allows the user to move their pointer to the submenu without it closing when their mouse leaves the trigger element.
  * Prevents pointer events from going to the underlying menu if the user is moving their pointer towards the sub-menu.
@@ -17,8 +21,10 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
   let prevPointerPos = useRef<{x: number, y: number}>(null);
   let submenuRect = useRef<DOMRect>(null);
   let lastProcessedTime = useRef<number>(0);
-  let [isPointerMovingTowardsSubmenu, setIsPointerMovingTowardsSubmenu] = useState(false);
   let timeout = useRef(null);
+
+  // Keep track of the last few pointer movements, where true = moving towards submenu, false = moving away from submenu.
+  let [movements, setMovements] = useState<Array<boolean>>([]);
 
   let updateSubmenuRect = () => {
     if (submenuRef.current) {
@@ -32,7 +38,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
     let submenu = submenuRef.current;
 
     if (!submenu || !isOpen) {
-      setIsPointerMovingTowardsSubmenu(false);
+      setMovements([]);
       return;
     }
 
@@ -46,7 +52,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
       let currentTime = Date.now();
 
       // Throttle
-      if (currentTime - lastProcessedTime.current < 16) {
+      if (currentTime - lastProcessedTime.current < THROTTLE_TIME) {
         return;
       }
 
@@ -76,23 +82,24 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
       let angleTop = Math.atan2(prevMouseY - submenuRect.current.top, toSubmenuX) + padding;
       let angleBottom = Math.atan2(prevMouseY - submenuRect.current.bottom, toSubmenuX) - padding;
       let anglePointer = Math.atan2(prevMouseY - mouseY, (direction === 'left' ? -(mouseX - prevMouseX) : mouseX - prevMouseX));
-      setIsPointerMovingTowardsSubmenu(anglePointer < angleTop && anglePointer > angleBottom);
+      let isMovingTowardsSubmenu = anglePointer < angleTop && anglePointer > angleBottom;
+      setMovements((prevMovements) => [...prevMovements, isMovingTowardsSubmenu].slice(-(ALLOWED_INVALID_MOVEMENTS + 1)));
 
       lastProcessedTime.current = currentTime;
       prevPointerPos.current = {x: mouseX, y: mouseY};
 
-      // If the pointer is moving towards the submenu, start a timer to close if no movement is detected after 500ms.
+      // If the pointer is moving towards the submenu, start a timeout to close if no other movements are made after 500ms.
       clearTimeout(timeout.current);
-      if (anglePointer < angleTop && anglePointer > angleBottom) {
+      if (isMovingTowardsSubmenu) {
         timeout.current = setTimeout(() => {
-          setIsPointerMovingTowardsSubmenu(false);
+          setMovements([]);
           setTimeout(() => {
             // Fire a pointermove event to trigger the menu to close.
             // Wait until pointer-events:none is no longer applied
             let target = document.elementFromPoint(mouseX, mouseY);
             target.dispatchEvent(new PointerEvent('pointerenter', {bubbles: true, cancelable: true}));
           }, 100);
-        }, 500);
+        }, TIMEOUT_TIME);
       }
     };
 
@@ -106,6 +113,6 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
   }, [isOpen, submenuRef]);
   
   return {
-    pointerEvents: isPointerMovingTowardsSubmenu ? 'none' : undefined
+    pointerEvents: movements.length < (ALLOWED_INVALID_MOVEMENTS + 1) || movements.every((m) => m === false) ? undefined : 'none'
   };
 }
