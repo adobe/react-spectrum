@@ -11,6 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {BackgroundColorValue} from '@react-types/shared';
 import Bell from '@spectrum-icons/workflow/Bell';
 import {Button} from '../';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
@@ -235,56 +236,82 @@ function Example() {
   );
 }
 
+function PendingButtonContainerComponent(props) {
+  let {children, ...otherProps} = props;
+
+  function containerBackgroundColor(variant, staticColor): BackgroundColorValue | undefined {
+    if (variant === 'overBackground' || staticColor === 'white') {
+      return 'static-blue-700';
+    }
+    if (staticColor === 'black') {
+      return 'static-yellow-200';
+    }
+    return;
+  }
+
+  return (
+    <View backgroundColor={containerBackgroundColor(otherProps.variant, otherProps.staticColor)} padding={16} {...otherProps}>
+      {children}
+    </View>
+  );
+}
+
 function Pending(props) {
 
   return (
-    <Flex wrap="wrap">
-      <View backgroundColor={props.variant === 'overBackground' ? 'static-blue-700' : undefined} padding={16}>
-        <PendingButtonComponent {...props}>click me!</PendingButtonComponent>
-      </View>
+    <div>
+      <Flex wrap="wrap">
+        <PendingButtonContainerComponent {...props}>
+          <PendingButtonComponent {...props}>click me!</PendingButtonComponent>
+        </PendingButtonContainerComponent>
 
-      <View backgroundColor={props.variant === 'overBackground' ? 'static-blue-700' : undefined} padding={16}>
-        <PendingButtonComponent
-          {...props}>
-          <Bell />
-          <Text>I have an icon</Text>
-        </PendingButtonComponent>
-      </View>
+        <PendingButtonContainerComponent {...props}>
+          <PendingButtonComponent
+            {...props}>
+            <Bell />
+            <Text>I have an icon</Text>
+          </PendingButtonComponent>
+        </PendingButtonContainerComponent>
 
-      <View backgroundColor={props.variant === 'overBackground' ? 'static-blue-700' : undefined} padding={16}>
-        <TooltipTrigger offset={2}>
-          <Button {...props} aria-label="Notifications">
+        <PendingButtonContainerComponent {...props}>
+          <PendingButtonOnClickComponent
+            {...props}>
+            <Text>with onClick</Text>
+          </PendingButtonOnClickComponent>
+        </PendingButtonContainerComponent>
+      </Flex>
+
+      <View flexBasis={'100%'} paddingTop={16}>Controlled:</View>
+
+      <Flex wrap="wrap">
+        <PendingButtonContainerComponent {...props}>
+          <TooltipTrigger offset={2}>
+            <Button {...props} aria-label="Notifications" onPress={() => {window.alert('use storybook control to change this button UNSTABLE_isPending prop');}}>
+              <Bell />
+            </Button>
+            <Tooltip>Notifications</Tooltip>
+          </TooltipTrigger>
+        </PendingButtonContainerComponent>
+
+        <PendingButtonContainerComponent {...props}>
+          <Button {...props} aria-label="No tooltip" onPress={() => {window.alert('use storybook control to change this button UNSTABLE_isPending prop');}}>
             <Bell />
           </Button>
-          <Tooltip>Notifications</Tooltip>
-        </TooltipTrigger>
-      </View>
+        </PendingButtonContainerComponent>
 
-      <View backgroundColor={props.variant === 'overBackground' ? 'static-blue-700' : undefined} padding={16}>
-        <Button {...props} aria-label="No tooltip">
-          <Bell />
-        </Button>
-      </View>
+        <PendingButtonContainerComponent {...props}>
+          <Button {...props} onPress={() => {window.alert('use storybook control to change this button UNSTABLE_isPending prop');}}>
+            <Bell />
+          </Button>
+        </PendingButtonContainerComponent>
 
-      <View backgroundColor={props.variant === 'overBackground' ? 'static-blue-700' : undefined} padding={16}>
-        <Button {...props}>
-          <Bell />
-        </Button>
-      </View>
-
-      <View backgroundColor={props.variant === 'overBackground' ? 'static-blue-700' : undefined} padding={16}>
-        <PendingButtonOnClickComponent
-          {...props}>
-          <Text>with onClick</Text>
-        </PendingButtonOnClickComponent>
-      </View>
-
-      <View padding={16}>
-        <Button {...props} variant="primary" UNSTABLE_isPending={props.UNSTABLE_isPending} onPress={() => {window.alert('use storybook control to change this button UNSTABLE_isPending prop');}}>
-          <Text>Controlled pending</Text>
-        </Button>
-      </View>
-    </Flex>
+        <PendingButtonContainerComponent {...props}>
+          <Button {...props} UNSTABLE_isPending={props.UNSTABLE_isPending} onPress={() => {window.alert('use storybook control to change this button UNSTABLE_isPending prop');}}>
+            <Text>Controlled pending</Text>
+          </Button>
+        </PendingButtonContainerComponent>
+      </Flex>
+    </div>
   );
 }
 let timerValue = 5000;
