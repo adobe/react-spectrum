@@ -2995,8 +2995,6 @@ describe('usePress', function () {
   });
 
   describe('Owner document and window', () => {
-    installPointerEvent();
-
     let iframe;
     let iframeRoot;
     beforeEach(() => {
@@ -3020,7 +3018,79 @@ describe('usePress', function () {
       return null;
     };
 
-    test('should handle press events', async () => {
+    describe('Pointer events', () => {
+      installPointerEvent();
+
+      test('should fire press events based on pointer events', async () => {
+        let events = [];
+        let addEvent = (e) => events.push(e);
+        render(
+          <IframeExample
+            onPressStart={addEvent}
+            onPressEnd={addEvent}
+            onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+            onPress={addEvent}
+            onPressUp={addEvent} />
+        );
+
+        await waitFor(() => {
+          expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="example"]')).toBeTruthy();
+        });
+
+        const el = document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="example"]');
+        fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+        fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+
+        expect(events).toEqual([
+          {
+            type: 'pressstart',
+            target: el,
+            pointerType: 'mouse',
+            ctrlKey: false,
+            metaKey: false,
+            shiftKey: false,
+            altKey: false
+          },
+          {
+            type: 'presschange',
+            pressed: true
+          },
+          {
+            type: 'pressup',
+            target: el,
+            pointerType: 'mouse',
+            ctrlKey: false,
+            metaKey: false,
+            shiftKey: false,
+            altKey: false
+          },
+          {
+            type: 'pressend',
+            target: el,
+            pointerType: 'mouse',
+            ctrlKey: false,
+            metaKey: false,
+            shiftKey: false,
+            altKey: false
+          },
+          {
+            type: 'presschange',
+            pressed: false
+          },
+          {
+            type: 'press',
+            target: el,
+            pointerType: 'mouse',
+            ctrlKey: false,
+            metaKey: false,
+            shiftKey: false,
+            altKey: false
+          }
+        ]);
+      });
+    });
+
+    test('should handle keyboard events', async function () {
       let events = [];
       let addEvent = (e) => events.push(e);
       render(
@@ -3033,18 +3103,18 @@ describe('usePress', function () {
       );
 
       await waitFor(() => {
-        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="example"]')).toBeTruthy();
+        expect(iframe.contentWindow.document.body.querySelector('div[data-testid="example"]')).toBeTruthy();
       });
 
-      const el = document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="example"]');
-      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
-      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+      const el = iframe.contentWindow.document.body.querySelector('div[data-testid="example"]');
+      fireEvent.keyDown(el, {key: ' '});
+      fireEvent.keyUp(el, {key: ' '});
 
       expect(events).toEqual([
         {
           type: 'pressstart',
           target: el,
-          pointerType: 'mouse',
+          pointerType: 'keyboard',
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
@@ -3057,7 +3127,7 @@ describe('usePress', function () {
         {
           type: 'pressup',
           target: el,
-          pointerType: 'mouse',
+          pointerType: 'keyboard',
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
@@ -3066,7 +3136,7 @@ describe('usePress', function () {
         {
           type: 'pressend',
           target: el,
-          pointerType: 'mouse',
+          pointerType: 'keyboard',
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
@@ -3079,7 +3149,7 @@ describe('usePress', function () {
         {
           type: 'press',
           target: el,
-          pointerType: 'mouse',
+          pointerType: 'keyboard',
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
@@ -3088,7 +3158,81 @@ describe('usePress', function () {
       ]);
     });
 
-    test('should handle click events and ignore virtual point events', async () => {
+    describe('Mouse events', () => {
+      installMouseEvent();
+
+      test('should fire press events based on mouse events', async () => {
+        let events = [];
+        let addEvent = (e) => events.push(e);
+        render(
+          <IframeExample
+            onPressStart={addEvent}
+            onPressEnd={addEvent}
+            onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+            onPress={addEvent}
+            onPressUp={addEvent} />
+        );
+
+        await waitFor(() => {
+          expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="example"]')).toBeTruthy();
+        });
+
+        const el = document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="example"]');
+        fireEvent.mouseDown(el, {detail: 1});
+        fireEvent.mouseUp(el, {detail: 1});
+        fireEvent.click(el, {detail: 1});
+
+        expect(events).toEqual([
+          {
+            type: 'pressstart',
+            target: el,
+            pointerType: 'mouse',
+            ctrlKey: false,
+            metaKey: false,
+            shiftKey: false,
+            altKey: false
+          },
+          {
+            type: 'presschange',
+            pressed: true
+          },
+          {
+            type: 'pressup',
+            target: el,
+            pointerType: 'mouse',
+            ctrlKey: false,
+            metaKey: false,
+            shiftKey: false,
+            altKey: false
+          },
+          {
+            type: 'pressend',
+            target: el,
+            pointerType: 'mouse',
+            ctrlKey: false,
+            metaKey: false,
+            shiftKey: false,
+            altKey: false
+          },
+          {
+            type: 'presschange',
+            pressed: false
+          },
+          {
+            type: 'press',
+            target: el,
+            pointerType: 'mouse',
+            ctrlKey: false,
+            metaKey: false,
+            shiftKey: false,
+            altKey: false
+          }
+        ]);
+      });
+
+    });
+
+    test('should fire press events events for virtual click events from screen readers', async () => {
       let events = [];
       let addEvent = (e) => events.push(e);
       render(
@@ -3104,10 +3248,6 @@ describe('usePress', function () {
       });
 
       const el = document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="example"]');
-
-      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', width: 0, height: 0}));
-      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', width: 0, height: 0, clientX: 0, clientY: 0}));
-      expect(events).toEqual([]);
 
       fireEvent.click(el);
       expect(events).toEqual([
