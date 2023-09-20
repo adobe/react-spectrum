@@ -475,6 +475,63 @@ to the `items` prop. See [Collections](../react-stately/Collections.html) for mo
 </Tabs>
 ```
 
+## Links
+
+Tabs may be rendered as links to different routes in your application. This can be achieved by passing the `href` prop to the `<Tab>` component. By default, links perform native browser navigation. However, you'll usually want to synchronize the selected tab with the URL from your client side router. This takes two steps:
+
+1. Set up a <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> at the root of your app. This will handle link navigation from all React Aria components using your framework or router. See the [client side routing guide](routing.html) to learn how to set this up.
+2. Use the `selectedKey` prop to set the selected tab based on the URL, as [described above](#selection).
+
+This example uses [React Router](https://reactrouter.com/en/main) to setup routes for each tab and synchronize the selection with the URL.
+
+```tsx
+import {useLocation, useNavigate, BrowserRouter, Routes, Route} from 'react-router-dom';
+import {RouterProvider} from 'react-aria-components';
+
+function AppTabs() {
+  let {pathname} = useLocation();
+
+  return (
+    <Tabs selectedKey={pathname}>
+      <TabList aria-label="Tabs">
+        <Tab id="/" href="/">Home</Tab>
+        <Tab id="/shared" href="/shared">Shared</Tab>
+        <Tab id="/deleted" href="/deleted">Deleted</Tab>
+      </TabList>
+      <TabPanel id={pathname}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/shared" element={<SharedPage />} />
+          <Route path="/deleted" element={<DeletedPage />} />
+        </Routes>
+      </TabPanel>
+    </Tabs>
+  );
+}
+
+function App() {
+  let navigate = useNavigate();
+  return (
+    <RouterProvider navigate={navigate}>
+      <Routes>
+        <Route path="/*" element={<AppTabs />} />
+      </Routes>
+    </RouterProvider>
+  );
+}
+
+<BrowserRouter>
+  <App />
+</BrowserRouter>
+```
+
+```css hidden
+.react-aria-Tab[href] {
+  text-decoration: none;
+  cursor: pointer;
+}
+```
+
 ## Props
 
 ### Tabs
