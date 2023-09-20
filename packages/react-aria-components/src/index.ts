@@ -51,7 +51,7 @@ export {Text, TextContext} from './Text';
 export {TextArea, TextAreaContext} from './TextArea';
 export {TextField, TextFieldContext} from './TextField';
 export {ToggleButton, ToggleButtonContext} from './ToggleButton';
-export {Toolbar, ToolbarContext} from './Toolbar';
+export {Toolbar, ToolbarContext, ToolbarNestingContext, useToolbarNestingContext} from './Toolbar';
 export {TooltipTrigger, Tooltip, TooltipTriggerStateContext, TooltipContext} from './Tooltip';
 export {useDragAndDrop, DropIndicator, DropIndicatorContext, DragAndDropContext} from './useDragAndDrop';
 export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem, SSRProvider} from 'react-aria';

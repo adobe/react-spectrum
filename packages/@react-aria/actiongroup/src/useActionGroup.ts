@@ -31,7 +31,8 @@ export interface ActionGroupAria {
 export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListState<T>, ref: RefObject<FocusableElement>): ActionGroupAria {
   let {
     isDisabled,
-    orientation = 'horizontal' as Orientation
+    orientation = 'horizontal' as Orientation,
+    isInsideAToolbar = false
   } = props;
   let allKeys = [...state.collection.getKeys()];
   if (!allKeys.some(key => !state.disabledKeys.has(key))) {
@@ -70,14 +71,17 @@ export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListSta
     }
   };
 
-  let role = BUTTON_GROUP_ROLES[state.selectionManager.selectionMode];
+  let role: string | undefined = BUTTON_GROUP_ROLES[state.selectionManager.selectionMode];
+  if (isInsideAToolbar && role === 'toolbar') {
+    role = 'group';
+  }
   return {
     actionGroupProps: {
       ...filterDOMProps(props, {labelable: true}),
       role,
       'aria-orientation': role === 'toolbar' ? orientation : undefined,
       'aria-disabled': isDisabled,
-      onKeyDown
+      onKeyDown: !isInsideAToolbar ? onKeyDown : undefined
     }
   };
 }

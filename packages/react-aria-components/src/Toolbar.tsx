@@ -14,7 +14,7 @@ import {ContextValue, forwardRefType, RenderProps, SlotProps, useContextProps, u
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {FocusScope, useFocusManager} from '@react-aria/focus';
 import {MultipleSelection, Orientation} from '@react-types/shared';
-import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, KeyboardEventHandler, useRef} from 'react';
 import {useLocale} from '@react-aria/i18n';
 
 export interface ToolbarRenderProps {
@@ -45,17 +45,18 @@ export const ToolbarContext = createContext<ContextValue<ToolbarProps, HTMLDivEl
 // Any reason not to include ref? i feel like we've been sad about not including it down the line
 // same with state...
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function useToolbar(props: ToolbarProps, ref: ForwardedRef<HTMLDivElement>) {
+function useToolbar(props: ToolbarProps & {isInsideAToolbar: boolean}, ref: ForwardedRef<HTMLDivElement>) {
   const {
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledBy,
-    orientation = 'horizontal'
+    orientation = 'horizontal',
+    isInsideAToolbar
   } = props;
   const {direction} = useLocale();
   const shouldReverse = direction === 'rtl' && orientation === 'horizontal';
   const focusManager = useFocusManager();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const onKeyDown = (e) => {
+
+  const onKeyDown: KeyboardEventHandler = (e) => {
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
       if (shouldReverse) {
         focusManager.focusPrevious();
@@ -111,13 +112,13 @@ function useToolbar(props: ToolbarProps, ref: ForwardedRef<HTMLDivElement>) {
 
   return {
     toolbarProps: {
-      role: 'toolbar',
+      role: !isInsideAToolbar ? 'toolbar' : undefined,
       'aria-orientation': orientation,
       'aria-label': ariaLabel,
       'aria-labelledby': ariaLabel == null ? ariaLabelledBy : undefined,
-      onKeyDownCapture: onKeyDown,
-      onFocusCapture: onFocus,
-      onBlurCapture: onBlur
+      onKeyDownCapture: !isInsideAToolbar ? onKeyDown : undefined,
+      onFocusCapture: !isInsideAToolbar ? onFocus : undefined,
+      onBlurCapture: !isInsideAToolbar ? onBlur : undefined
     }
   };
 }
@@ -130,9 +131,18 @@ function Toolbar(props: ToolbarProps, ref: ForwardedRef<HTMLDivElement>) {
   );
 }
 
+// I don't like exporting this, but it's the only way I can think of for ActionGroup to know if it's in a Toolbar
+// This is required so that we don't render a role="toolbar" inside another role="toolbar"
+// Eventually we'll hopefully move ActionGroup to being implemented by Toolbar and then we can remove this
+/** @private */
+export const ToolbarNestingContext = createContext({isInsideAToolbar: false});
+/** @private */
+export const useToolbarNestingContext = () => React.useContext(ToolbarNestingContext);
+
 let ToolbarInner = forwardRef((props: ToolbarProps, ref: ForwardedRef<HTMLDivElement>) => {
   [props, ref] = useContextProps(props, ref, ToolbarContext);
-  let {toolbarProps} = useToolbar(props, ref);
+  let {isInsideAToolbar} = useToolbarNestingContext();
+  let {toolbarProps} = useToolbar({...props, isInsideAToolbar}, ref);
   let renderProps = useRenderProps({
     ...props,
     values: {orientation: props.orientation || 'horizontal'},
@@ -148,7 +158,9 @@ let ToolbarInner = forwardRef((props: ToolbarProps, ref: ForwardedRef<HTMLDivEle
       ref={ref}
       slot={props.slot || undefined}
       data-orientation={props.orientation || 'horizontal'}>
-      {renderProps.children}
+      <ToolbarNestingContext.Provider value={{isInsideAToolbar: true}}>
+        {renderProps.children}
+      </ToolbarNestingContext.Provider>
     </div>
   );
 });

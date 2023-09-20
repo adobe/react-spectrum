@@ -13,4 +13,3 @@
 export {ActionGroup} from './ActionGroup';
 export {Item} from '@react-stately/collections';
 export type {SpectrumActionGroupProps} from '@react-types/actiongroup';
-export {Toolbar} from './Toolbar';

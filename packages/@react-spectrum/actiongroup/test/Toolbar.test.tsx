@@ -22,7 +22,7 @@ import {
 } from '@adobe/react-spectrum';
 import {pointerMap} from '@react-spectrum/test-utils';
 import React from 'react';
-import {Toolbar} from '../';
+import {Toolbar} from '../stories/Toolbar.stories';
 import userEvent from '@testing-library/user-event';
 
 describe('Toolbar', () => {

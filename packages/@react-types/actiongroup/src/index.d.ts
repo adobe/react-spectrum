@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, DOMProps, ItemElement, ItemRenderer, MultipleSelection, Orientation, StyleProps} from '@react-types/shared';
-import {Key, ReactElement, ReactNode} from 'react';
+import {Key, ReactElement} from 'react';
 
 // Not extending CollectionBase to avoid async loading props
 export interface ActionGroupProps<T> extends MultipleSelection {
@@ -35,7 +35,12 @@ export interface ActionGroupProps<T> extends MultipleSelection {
    * Invoked when an action is taken on a child. Especially useful when `selectionMode` is none.
    * The sole argument `key` is the key for the item.
    */
-  onAction?: (key: Key) => void
+  onAction?: (key: Key) => void,
+  /**
+   * Whether the ActionGroup is displayed in a Toolbar.
+   * @default false
+   */
+  isInsideAToolbar?: boolean
 }
 
 export interface AriaActionGroupProps<T> extends ActionGroupProps<T>, DOMProps, AriaLabelingProps {}
@@ -71,14 +76,4 @@ export interface SpectrumActionGroupProps<T> extends AriaActionGroupProps<T>, St
   buttonLabelBehavior?: 'show' | 'collapse' | 'hide',
   /** The icon displayed in the dropdown menu button when a selectable ActionGroup is collapsed. */
   summaryIcon?: ReactElement
-}
-
-export interface SpectrumToolbarProps {
-  /** The ActionGroups to display in the toolbar. */
-  children: ReactNode | ReactElement[],
-  /**
-   * The orientation of the entire toolbar.
-   * @default 'horizontal'
-   */
-  orientation?: Orientation
 }

@@ -174,8 +174,8 @@ describe('Toolbar', () => {
     render(
       <>
         <Button>Before</Button>
-        <Toolbar>
-          <div aria-label="Align text">
+        <Toolbar aria-label="Tools">
+          <Toolbar aria-label="Align text">
             <Button key="alignleft">
               <Text>Align left</Text>
             </Button>
@@ -185,16 +185,16 @@ describe('Toolbar', () => {
             <Button key="alignright">
               <Text>Align right</Text>
             </Button>
-          </div>
+          </Toolbar>
           <hr />
-          <div aria-label="Zoom">
+          <Toolbar aria-label="Zoom">
             <Button key="zoomin">
               <Text>Zoom in</Text>
             </Button>
             <Button key="zoomout">
               <Text>Zoom out</Text>
             </Button>
-          </div>
+          </Toolbar>
         </Toolbar>
         <Button>After</Button>
       </>
@@ -279,8 +279,8 @@ describe('Toolbar', () => {
     render(
       <I18nProvider locale="he-IL">
         <Button>Before</Button>
-        <Toolbar>
-          <div aria-label="Align text">
+        <Toolbar aria-label="Tools">
+          <Toolbar aria-label="Align text">
             <Button key="alignleft">
               <Text>Align left</Text>
             </Button>
@@ -290,16 +290,16 @@ describe('Toolbar', () => {
             <Button key="alignright">
               <Text>Align right</Text>
             </Button>
-          </div>
+          </Toolbar>
           <hr />
-          <div aria-label="Zoom">
+          <Toolbar aria-label="Zoom">
             <Button key="zoomin">
               <Text>Zoom in</Text>
             </Button>
             <Button key="zoomout">
               <Text>Zoom out</Text>
             </Button>
-          </div>
+          </Toolbar>
         </Toolbar>
         <Button>After</Button>
       </I18nProvider>

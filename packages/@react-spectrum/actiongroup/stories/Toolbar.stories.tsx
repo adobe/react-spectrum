@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionGroup, Toolbar} from '../';
+import {ActionGroup} from '../';
+import {AriaLabelingProps, Orientation} from '@react-types/shared';
+import {classNames, SlotProvider, useSlotProps} from '@react-spectrum/utils';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import CopyIcon from '@spectrum-icons/workflow/Copy';
 import DeleteIcon from '@spectrum-icons/workflow/Delete';
@@ -19,11 +21,52 @@ import DrawIcon from '@spectrum-icons/workflow/Draw';
 import InfoIcon from '@spectrum-icons/workflow/Info';
 import {Item} from '@react-stately/collections';
 import PropertiesIcon from '@spectrum-icons/workflow/Properties';
-import React from 'react';
+import {Toolbar as RACToolbar} from 'react-aria-components';
+import React, {ForwardedRef, forwardRef, ReactElement, ReactNode, useMemo} from 'react';
+import styles from './toolbar.css';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
+import {useProviderProps} from '@react-spectrum/provider';
 import ViewCardIcon from '@spectrum-icons/workflow/ViewCard';
 import ViewGridIcon from '@spectrum-icons/workflow/ViewGrid';
 import ViewListIcon from '@spectrum-icons/workflow/ViewList';
+
+
+export interface SpectrumToolbarProps extends AriaLabelingProps {
+  /** The ActionGroups to display in the toolbar. */
+  children: ReactNode | ReactElement[],
+  /**
+   * The orientation of the entire toolbar.
+   * @default 'horizontal'
+   */
+  orientation?: Orientation
+}
+
+export const Toolbar = forwardRef((props: SpectrumToolbarProps, ref: ForwardedRef<HTMLDivElement>) => {
+  props = useProviderProps(props);
+  props = useSlotProps(props, 'toolbar');
+  let {
+    orientation = 'horizontal'
+  } = props;
+
+  let slots = useMemo(() => ({
+    actionGroup: {orientation},
+    divider: {orientation: orientation === 'horizontal' ? 'vertical' : 'horizontal', size: 'S'}
+  }), [orientation]);
+  return (
+    <RACToolbar
+      {...props}
+      ref={ref}
+      className={
+        classNames(
+          styles,
+          'spectrum-Toolbar'
+        )}>
+      <SlotProvider slots={slots}>
+        {props.children}
+      </SlotProvider>
+    </RACToolbar>
+  );
+});
 
 export default {
   title: 'Toolbar',
@@ -38,7 +81,8 @@ export default {
       control: 'radio',
       options: ['horizontal', 'vertical']
     }
-  }
+  },
+  excludeStories: ['Toolbar']
 } as ComponentMeta<typeof Toolbar>;
 
 export type ToolbarStory = ComponentStoryObj<typeof Toolbar>;
@@ -83,14 +127,16 @@ export const Default: ToolbarStory = {
         </ActionGroup>
       </>
     )
-  }
+  },
+  render: (args) => <Toolbar {...args} />
 };
 
 export const DisabledKeys: ToolbarStory = {
   args: {
+    'aria-label': 'The big toolbar',
     children: (
       <>
-        <ActionGroup items={items1} disabledKeys={new Set(['copy'])} aria-label="manage">
+        <ActionGroup items={items1} disabledKeys={new Set(['copy'])} aria-label="manage" selectionMode="multiple">
           {(item) => {
             let Icon = item.icon;
             return (
@@ -109,7 +155,7 @@ export const DisabledKeys: ToolbarStory = {
           }}
         </ActionGroup>
         <Divider />
-        <ActionGroup items={items3} aria-label="inspect">
+        <ActionGroup items={items3} aria-label="inspect" selectionMode="single">
           {(item) => {
             let Icon = item.icon;
             return <Item key={item.id} textValue={item.textValue}><Icon aria-label={item.textValue} /></Item>;

@@ -204,15 +204,3 @@ governing permissions and limitations under the License.
 .spectrum-ActionGroup-item--iconOnly {
   padding-inline-end: var(--spectrum-actionbutton-icon-padding-x);
 }
-
-.spectrum-Toolbar {
-  display: flex;
-  gap: 8px;
-  width: fit-content;
-  &[data-orientation="vertical"] {
-    flex-direction: column;
-  }
-  &[data-orientation="horizontal"] {
-    flex-direction: row;
-  }
-}
