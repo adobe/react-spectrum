@@ -228,12 +228,14 @@ describe('Toolbar', () => {
     await user.tab();
     expect(alignLeft).toHaveFocus();
 
-    // Right and down arrow keys navigate to next action buttons
+    // Right arrow key navigates to next action buttons
     await user.keyboard('{ArrowRight}');
     expect(alignCenter).toHaveFocus();
+    // Down arrow key does nothing when horizontally oriented
     await user.keyboard('{ArrowDown}');
-    expect(alignRight).toHaveFocus();
+    expect(alignCenter).toHaveFocus();
 
+    await user.keyboard('{ArrowRight}');
     // Arrow keys navigate across dividers to other action groups
     await user.keyboard('{ArrowRight}');
     expect(zoomIn).toHaveFocus();
@@ -263,12 +265,14 @@ describe('Toolbar', () => {
     await user.tab();
     expect(alignRight).toHaveFocus();
 
-    // Left and up arrow keys navigate to previous action buttons
+    // Left arrow key navigates to previous action buttons
     await user.keyboard('{ArrowLeft}');
     expect(alignCenter).toHaveFocus();
+    // Up arrow key does nothing when horizontally oriented
     await user.keyboard('{ArrowUp}');
-    expect(alignLeft).toHaveFocus();
+    expect(alignCenter).toHaveFocus();
 
+    await user.keyboard('{ArrowLeft}');
     // Blurring then tabbing re-enters toolbar at the last focused action button
     fireEvent.blur(alignLeft);
     act(() => {
@@ -282,6 +286,115 @@ describe('Toolbar', () => {
     expect(alignLeft).toHaveFocus();
     await user.click(zoomOut);
     await user.keyboard('{ArrowRight}');
+    expect(zoomOut).toHaveFocus();
+
+    // Other keys don't affect focus
+    await user.keyboard('{Enter}');
+    expect(zoomOut).toHaveFocus();
+  });
+
+  it('supports keyboard navigation with orientation vertical', async () => {
+    render(
+      <Provider theme={defaultTheme}>
+        <ActionButton>Before</ActionButton>
+        <Toolbar orientation="vertical">
+          <ActionGroup aria-label="Align text">
+            <Item key="alignleft">
+              <Text>Align left</Text>
+            </Item>
+            <Item key="aligncenter">
+              <Text>Align center</Text>
+            </Item>
+            <Item key="alignright">
+              <Text>Align right</Text>
+            </Item>
+          </ActionGroup>
+          <Divider />
+          <ActionGroup aria-label="Zoom">
+            <Item key="zoomin">
+              <Text>Zoom in</Text>
+            </Item>
+            <Item key="zoomout">
+              <Text>Zoom out</Text>
+            </Item>
+          </ActionGroup>
+        </Toolbar>
+        <ActionButton>After</ActionButton>
+      </Provider>
+    );
+
+    const before = screen.getByRole('button', {name: 'Before'});
+    const alignLeft = screen.getByRole('button', {name: 'Align left'});
+    const alignCenter = screen.getByRole('button', {name: 'Align center'});
+    const alignRight = screen.getByRole('button', {name: 'Align right'});
+    const zoomIn = screen.getByRole('button', {name: 'Zoom in'});
+    const zoomOut = screen.getByRole('button', {name: 'Zoom out'});
+    const after = screen.getByRole('button', {name: 'After'});
+
+    await user.tab();
+
+    // Tab enters the toolbar
+    await user.tab();
+    expect(alignLeft).toHaveFocus();
+
+    // Down arrow key navigates to next action buttons
+    await user.keyboard('{ArrowDown}');
+    expect(alignCenter).toHaveFocus();
+    // Right arrow key does nothing when vertically oriented
+    await user.keyboard('{ArrowRight}');
+    expect(alignCenter).toHaveFocus();
+
+    await user.keyboard('{ArrowDown}');
+    // Arrow keys navigate across dividers to other action groups
+    await user.keyboard('{ArrowDown}');
+    expect(zoomIn).toHaveFocus();
+    await user.keyboard('{ArrowUp}');
+    expect(alignRight).toHaveFocus();
+
+    // Tab exits and shift-tab re-enters the toolbar at the last focused action button
+    // Using await user.tab() doesn't work here because jsdom doesn't take over tabbing
+    // out of the toolbar correctly once focusFirst() or focusLast() is called.
+    // As a workaround, we have to manually fire keyDown and keyUp events to validate
+    // the 'Tab' case of onKeyDown, then manually focus the before and after buttons.
+    await user.tab();
+    act(() => {
+      after.focus();
+    });
+    expect(after).toHaveFocus();
+
+    await user.tab({shift: true});
+    expect(alignRight).toHaveFocus();
+
+    await user.tab({shift: true});
+    act(() => {
+      before.focus();
+    });
+    expect(before).toHaveFocus();
+
+    await user.tab();
+    expect(alignRight).toHaveFocus();
+
+    // Up arrow key navigates to previous action buttons
+    await user.keyboard('{ArrowUp}');
+    expect(alignCenter).toHaveFocus();
+    // Left arrow key does nothing when vertically oriented
+    await user.keyboard('{ArrowLeft}');
+    expect(alignCenter).toHaveFocus();
+
+    await user.keyboard('{ArrowLeft}');
+    // Blurring then tabbing re-enters toolbar at the last focused action button
+    fireEvent.blur(alignLeft);
+    act(() => {
+      before.focus();
+    });
+    await user.tab();
+    expect(alignLeft).toHaveFocus();
+
+    // Arrow keys do not wrap across collection
+    await user.keyboard('{ArrowUp}');
+    expect(alignLeft).toHaveFocus();
+    await user.click(zoomOut);
+    await user.keyboard('{ArrowDown}');
     expect(zoomOut).toHaveFocus();
 
     // Other keys don't affect focus
@@ -323,16 +436,17 @@ describe('Toolbar', () => {
     await user.tab();
     expect(screen.getByRole('button', {name: 'Align left'})).toHaveFocus();
 
-    // Left and up arrow keys navigate to next action buttons
+    // Left arrow key navigates to next action buttons
     await user.keyboard('{ArrowLeft}');
     expect(screen.getByRole('button', {name: 'Align center'})).toHaveFocus();
     await user.keyboard('{ArrowUp}');
-    expect(screen.getByRole('button', {name: 'Align right'})).toHaveFocus();
+    expect(screen.getByRole('button', {name: 'Align center'})).toHaveFocus();
 
-    // Right and down arrow keys navigate to previous action buttons
+    await user.keyboard('{ArrowLeft}');
+    // Right arrow key navigates to previous action buttons
     await user.keyboard('{ArrowRight}');
     expect(screen.getByRole('button', {name: 'Align center'})).toHaveFocus();
     await user.keyboard('{ArrowDown}');
-    expect(screen.getByRole('button', {name: 'Align left'})).toHaveFocus();
+    expect(screen.getByRole('button', {name: 'Align center'})).toHaveFocus();
   });
 });

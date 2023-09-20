@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Tag, TagGroup, TagList, Text, TextField, TimeField, ToggleButton, Toolbar, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Checkbox, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Tag, TagGroup, TagList, Text, TextField, TimeField, ToggleButton, Toolbar, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
@@ -1250,8 +1250,59 @@ export const LinkExample = () => {
 export const ToolbarExample = (props) => {
   return (
     <Toolbar {...props}>
-      <Button>Hello</Button>
-      <Button>Bye</Button>
+      <ToggleButton className={classNames(styles, 'toggleButtonExample')}><strong>B</strong></ToggleButton>
+      <ToggleButton className={classNames(styles, 'toggleButtonExample')}><div style={{textDecoration: 'underline'}}>U</div></ToggleButton>
+      <ToggleButton className={classNames(styles, 'toggleButtonExample')}><i>I</i></ToggleButton>
+      {/* radio does not work in toolbar yet, selection doesn't follow focus
+      <RadioGroup orientation="horizontal" className={styles.radiogroup} aria-label="Text Alignment">
+        <Radio className={styles.radio} value="left">Left</Radio>
+        <Radio className={styles.radio} value="center">Center</Radio>
+        <Radio className={styles.radio} value="right">Right</Radio>
+      </RadioGroup>
+      */}
+      {/* disabled buttons do not work in toolbar yet, the buttons cannot be focused
+      <Toolbar>
+        <Button isDisabled>Copy</Button>
+        <Button isDisabled>Paste</Button>
+        <Button isDisabled>Cut</Button>
+      </Toolbar>
+      */}
+      {/* select does not work in toolbar yet, focus can't move "Right Arrow" past it
+      <Select data-testid="select-example" id="select-example-id">
+        <Button>
+          <SelectValue />
+          <span aria-hidden="true" style={{paddingLeft: 5}}>▼</span>
+        </Button>
+        <Popover>
+          <OverlayArrow>
+            <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
+          </OverlayArrow>
+          <ListBox className={styles.menu}>
+            <MyItem>Serif</MyItem>
+            <MyItem>Sans serif</MyItem>
+            <MyItem>Monospace</MyItem>
+          </ListBox>
+        </Popover>
+      </Select>*/}
+      {/* numberfield does not work in toolbar yet, focus stops on the stepper buttons
+      <NumberField data-testid="number-field-example" formatOptions={{style: 'currency', currency: 'USD'}}>
+        <Label>Test</Label>
+        <Group style={{display: 'flex'}}>
+          <Button slot="decrement">-</Button>
+          <Input />
+          <Button slot="increment">+</Button>
+        </Group>
+      </NumberField>
+      */}
+      <Checkbox>
+        <div className="checkbox">
+          <svg viewBox="0 0 18 18" aria-hidden="true">
+            <polyline points="1 9 7 14 15 4" />
+          </svg>
+        </div>
+        Night Mode
+      </Checkbox>
+      <Link href="https://google.com">Help</Link>
     </Toolbar>
   );
 };

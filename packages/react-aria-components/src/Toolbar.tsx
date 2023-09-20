@@ -57,13 +57,17 @@ function useToolbar(props: ToolbarProps & {isInsideAToolbar: boolean}, ref: Forw
   const focusManager = useFocusManager();
 
   const onKeyDown: KeyboardEventHandler = (e) => {
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+    if (
+      (orientation === 'horizontal' && e.key === 'ArrowRight')
+      || (orientation === 'vertical' && e.key === 'ArrowDown')) {
       if (shouldReverse) {
         focusManager.focusPrevious();
       } else {
         focusManager.focusNext();
       }
-    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    } else if (
+      (orientation === 'horizontal' && e.key === 'ArrowLeft')
+      || (orientation === 'vertical' && e.key === 'ArrowUp')) {
       if (shouldReverse) {
         focusManager.focusNext();
       } else {
