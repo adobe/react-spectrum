@@ -60,10 +60,6 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
       }
 
       let {clientX: mouseX, clientY: mouseY} = e;
-      
-      if (!submenuSide.current) {
-        submenuSide.current = mouseX > submenuRect.current.right ? 'left' : 'right';
-      }
 
       if (!prevPointerPos.current) {
         prevPointerPos.current = {x: mouseX, y: mouseY};
@@ -71,6 +67,16 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
       }
 
       if (!submenuRect.current) {
+        return;
+      }
+
+      if (!submenuSide.current) {
+        submenuSide.current = mouseX > submenuRect.current.right ? 'left' : 'right';
+      }
+
+      // Pointer has already reached submenu
+      if ((submenuSide.current === 'left' && mouseX < submenuRect.current.right) || (submenuSide.current === 'right' && mouseX > submenuRect.current.left)) {
+        setMovements([]);
         return;
       }
     
