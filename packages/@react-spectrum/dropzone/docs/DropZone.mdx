@@ -14,7 +14,6 @@ import docs from 'docs:@react-spectrum/dropzone';
 import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/dropzone/package.json';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
-import DropZoneAnatomy from './images/DropZoneAnatomy.svg';
 import styles from '@react-spectrum/docs/src/docs.css';
 
 ```jsx import
@@ -61,12 +60,6 @@ import Upload from '@spectrum-icons/illustrations/Upload';
 
 ## Content
 
-A standard DropZone has the following anatomy:
-
-<div className={styles.exampleImage}>
-  <DropZoneAnatomy />
-</div>
-
 A drop zone accepts an [IllustratedMessage](IllustratedMessage.html) as a child which is comprised of three areas:  an illustration, a title, and a body. Each of these sections can be populated by providing the following components to the IllustratedMessage as children: a SVG, a [Heading](Heading.html) (title), and a [Content](Content.html) (body). A [FileTrigger](../react-aria/FileTrigger.html) is commonly paired with a DropZone to allow a user to choose files from their device. 
 
 ```tsx example
@@ -94,7 +87,7 @@ A visual label should be provided to `DropZone` using a `Text` element with a `l
 
 ### Internationalization
 
-In order to internationalize a drop zone, a localized string should be passed to the `Text` element with a `label` slot or to the `aria-label` prop, as well as the `replaceMessage` prop.
+In order to internationalize a drop zone, a localized string should be passed to the `Text` element with a `label` slot or to the `aria-label` prop, in addition to the `replaceMessage` prop.
 
 ## Events
 
