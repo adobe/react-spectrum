@@ -174,6 +174,7 @@ describe('ProgressCircle', function () {
     expect(progressCircles[0]).not.toHaveClass('spectrum-CircleLoader--staticWhite');
     expect(progressCircles[1]).toHaveClass('spectrum-CircleLoader--staticWhite');
     expect(progressCircles[1]).not.toHaveClass('spectrum-CircleLoader--staticBlack');
-    expect(progressCircles[2]).not.toHaveClass('spectrum-CircleLoader--staticBlack', 'spectrum-CircleLoader--staticWhite');
+    expect(progressCircles[2]).not.toHaveClass('spectrum-CircleLoader--staticBlack');
+    expect(progressCircles[2]).not.toHaveClass('spectrum-CircleLoader--staticWhite');
   });
 });

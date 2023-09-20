@@ -106,6 +106,8 @@ describe('ProgressBar', function () {
     expect(progressBars[0]).not.toHaveClass('spectrum-BarLoader--staticWhite');
     expect(progressBars[1]).toHaveClass('spectrum-BarLoader--staticWhite');
     expect(progressBars[1]).not.toHaveClass('spectrum-BarLoader--staticBlack');
-    expect(progressBars[2]).not.toHaveClass('spectrum-BarLoader--staticBlack', 'spectrum-BarLoader--staticWhite');
+    expect(progressBars[2]).not.toHaveClass('spectrum-BarLoader--staticBlack');
+    expect(progressBars[2]).not.toHaveClass('spectrum-BarLoader--staticWhite');
+
   });
 });
