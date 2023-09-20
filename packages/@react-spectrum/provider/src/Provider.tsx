@@ -37,6 +37,7 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   let prevContext = useProvider();
   let prevColorScheme = prevContext && prevContext.colorScheme;
   let prevBreakpoints = prevContext && prevContext.breakpoints;
+  let prevPortalContainer = prevContext && prevContext.portalContainer;
   let {
     theme = prevContext && prevContext.theme,
     defaultColorScheme
@@ -57,6 +58,7 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     scale = prevContext ? prevContext.scale : autoScale,
     locale = prevContext ? prevLocale : null,
     breakpoints = prevContext ? prevBreakpoints : DEFAULT_BREAKPOINTS,
+    portalContainer = prevPortalContainer,
     children,
     isQuiet,
     isEmphasized,
@@ -79,7 +81,8 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     isDisabled,
     isRequired,
     isReadOnly,
-    validationState
+    validationState,
+    portalContainer
   };
 
   let matchedBreakpoints = useMatchedBreakpoints(breakpoints);

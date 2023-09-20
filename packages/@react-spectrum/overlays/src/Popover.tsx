@@ -21,6 +21,7 @@ import overrideStyles from './overlays.css';
 import React, {forwardRef, MutableRefObject, ReactNode, RefObject, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
 import {Underlay} from './Underlay';
+import {useProvider} from '@react-spectrum/provider';
 
 interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef' | 'maxHeight'>, FocusWithinProps, StyleProps {
   children: ReactNode,
@@ -74,9 +75,10 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
   } = props;
   let domRef = useDOMRef(ref);
   let wrapperRef = useRef<HTMLDivElement>(null);
+  let {portalContainer} = useProvider();
 
   return (
-    <Overlay {...otherProps} isOpen={state.isOpen} nodeRef={wrapperRef}>
+    <Overlay {...otherProps} container={portalContainer} isOpen={state.isOpen} nodeRef={wrapperRef}>
       <PopoverWrapper ref={domRef} {...props} wrapperRef={wrapperRef}>
         {children}
       </PopoverWrapper>
