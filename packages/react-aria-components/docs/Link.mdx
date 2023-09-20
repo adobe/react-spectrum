@@ -120,11 +120,13 @@ keyboard users may activate links using the <Keyboard>Enter</Keyboard> key.
 If a visual label is not provided (e.g. an icon or image only link), then an `aria-label` or
 `aria-labelledby` prop must be passed to identify the link to assistive technology.
 
-## Events
+## Content
 
-### Client side routing
+Links accept content as children. If the link has an href prop, it will be rendered as an `<a>` element.
 
-The `<Link>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+```tsx example
+<Link href="https://adobe.com" target="_blank">Adobe.com</Link>
+```
 
 ### JavaScript handled links
 
@@ -158,6 +160,10 @@ function Example() {
   )
 }
 ```
+
+### Client side routing
+
+The `<Link>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
 ## Disabled
 
