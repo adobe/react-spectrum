@@ -10,7 +10,7 @@ interface SafelyMouseToSubmenuOptions {
 
 const ALLOWED_INVALID_MOVEMENTS = 2;
 const THROTTLE_TIME = 50;
-const TIMEOUT_TIME = 500;
+const TIMEOUT_TIME = 1000;
 const ANGLE_PADDING = Math.PI / 12; // 15°
 
 /**
