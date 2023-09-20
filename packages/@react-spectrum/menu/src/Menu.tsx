@@ -66,8 +66,6 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   // TODO: add slide transition
   return (
     <MenuStateContext.Provider value={{popoverContainerRef, trayContainerRef, menu: domRef, submenu: submenuRef, menuTreeState, state}}>
-      {/* TODO: this is a tray container for the base menu, each sub menu should also have the same so that we can still have the proper MenuState context nesting? */}
-      {/* TODO: maybe this div should be after the FocusScope? */}
       <div ref={trayContainerRef} />
       <FocusScope contain={state.expandedKeys.size > 0}>
         <div
