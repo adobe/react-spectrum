@@ -18,6 +18,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
   let submenuRect = useRef<DOMRect>(null);
   let lastProcessedTime = useRef<number>(0);
   let [isPointerMovingTowardsSubmenu, setIsPointerMovingTowardsSubmenu] = useState(false);
+  let timeout = useRef(null);
 
   let updateSubmenuRect = () => {
     if (submenuRef.current) {
@@ -78,12 +79,21 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
 
       lastProcessedTime.current = currentTime;
       prevPointerPos.current = {x: mouseX, y: mouseY};
+
+      // If the pointer is moving towards the submenu, start a timer to close if no movement is detected after 500ms.
+      clearTimeout(timeout.current);
+      if (anglePointer < angleTop && anglePointer > angleBottom) {
+        timeout.current = setTimeout(() => {
+          setIsPointerMovingTowardsSubmenu(false);
+        }, 500);
+      }
     };
 
     window.addEventListener('pointermove', onPointerMove);
 
     return () => {
       window.removeEventListener('pointermove', onPointerMove);
+      clearTimeout(timeout.current);
     };
 
   }, [isOpen, submenuRef]);
