@@ -607,6 +607,29 @@ This behavior is slightly different when `selectionBehavior="replace"`, where si
 </div>
 ```
 
+### Links
+
+Items in a GridList may also be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component. Links behave the same way as described above for row actions depending on the `selectionMode` and `selectionBehavior`.
+
+```tsx example
+<MyGridList aria-label="Links" selectionMode="multiple">
+  <MyItem href="https://adobe.com/" target="_blank">Adobe</MyItem>
+  <MyItem href="https://apple.com/" target="_blank">Apple</MyItem>
+  <MyItem href="https://google.com/" target="_blank">Google</MyItem>
+  <MyItem href="https://microsoft.com/" target="_blank">Microsoft</MyItem>
+</MyGridList>
+```
+
+```css hidden
+.react-aria-Item[data-href] {
+  cursor: pointer;
+}
+```
+
+#### Client side routing
+
+The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+
 ## Disabled items
 
 You can disable specific rows by providing an array of keys to `GridList` via the `disabledKeys` prop. This will disable all interactions on disabled rows,

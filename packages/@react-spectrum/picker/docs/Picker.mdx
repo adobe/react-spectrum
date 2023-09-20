@@ -168,6 +168,23 @@ Picker supports the `name` prop for integration with HTML forms. The `key` of th
 </Picker>
 ```
 
+## Links
+
+By default, interacting with an item in a Picker triggers `onSelectionChange`. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component. Link items in a `Picker` are not selectable.
+
+```tsx example
+<Picker label="Project">
+  <Item href="https://example.com/" target="_blank">Create new…</Item>
+  <Item>Proposal</Item>
+  <Item>Budget</Item>
+  <Item>Onboarding</Item>
+</Picker>
+```
+
+### Client side routing
+
+The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Spectrum components that support links, this works via the [Provider](Provider.html) component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+
 ## Sections
 Picker supports sections in order to group options. Sections can be used by wrapping groups of items in a `Section` element. Each `Section` takes a `title` and `key` prop.
 

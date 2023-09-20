@@ -10,15 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {focusWithoutScrolling, isWebKit} from './index';
+import {focusWithoutScrolling, isMac, isWebKit} from './index';
+import {isFirefox, isIPad} from './platform';
 import {LinkDOMProps} from '@react-types/shared';
 import React, {createContext, ReactNode, useContext, useMemo} from 'react';
 
 interface Router {
+  isNative: boolean,
   open: (target: Element, modifiers: Modifiers) => void
 }
 
 const RouterContext = createContext<Router>({
+  isNative: true,
   open: openSyntheticLink
 });
 
@@ -27,21 +30,18 @@ interface RouterProviderProps {
   children: ReactNode
 }
 
+/**
+ * A RouterProvider accepts a `navigate` function from a framework or client side router,
+ * and provides it to all nested React Aria links to enable client side navigation.
+ */
 export function RouterProvider(props: RouterProviderProps) {
   let {children, navigate} = props;
 
   let ctx = useMemo(() => ({
+    isNative: false,
     open: (target: Element, modifiers: Modifiers) => {
       getSyntheticLink(target, link => {
-        if (
-          (!link.target || link.target === '_self') &&
-          link.origin === location.origin &&
-          !link.hasAttribute('download') &&
-          !modifiers.metaKey && // open in new tab (mac)
-          !modifiers.ctrlKey && // open in new tab (windows)
-          !modifiers.altKey && // download
-          !modifiers.shiftKey
-        ) {
+        if (shouldClientNavigate(link, modifiers)) {
           navigate(link.pathname + link.search + link.hash);
         } else {
           openLink(link, modifiers);
@@ -68,11 +68,36 @@ interface Modifiers {
   shiftKey?: boolean
 }
 
+export function shouldClientNavigate(link: HTMLAnchorElement, modifiers: Modifiers) {
+  return (
+    (!link.target || link.target === '_self') &&
+    link.origin === location.origin &&
+    !link.hasAttribute('download') &&
+    !modifiers.metaKey && // open in new tab (mac)
+    !modifiers.ctrlKey && // open in new tab (windows)
+    !modifiers.altKey && // download
+    !modifiers.shiftKey
+  );
+}
+
 export function openLink(target: HTMLAnchorElement, modifiers: Modifiers, setOpening = true) {
   let {metaKey, ctrlKey, altKey, shiftKey} = modifiers;
+
+  // Firefox does not recognize keyboard events as a user action by default, and the popup blocker
+  // will prevent links with target="_blank" from opening. However, it does allow the event if the
+  // Command/Control key is held, which opens the link in a background tab. This seems like the best we can do.
+  // See https://bugzilla.mozilla.org/show_bug.cgi?id=257870 and https://bugzilla.mozilla.org/show_bug.cgi?id=746640.
+  if (isFirefox() && window.event?.type?.startsWith('key') && target.target === '_blank') {
+    if (isMac()) {
+      metaKey = true;
+    } else {
+      ctrlKey = true;
+    }
+  }
+
   // WebKit does not support firing click events with modifier keys, but does support keyboard events.
   // https://github.com/WebKit/WebKit/blob/c03d0ac6e6db178f90923a0a63080b5ca210d25f/Source/WebCore/html/HTMLAnchorElement.cpp#L184
-  let event = isWebKit() && process.env.NODE_ENV !== 'test'
+  let event = isWebKit() && isMac() && !isIPad() && process.env.NODE_ENV !== 'test'
     // @ts-ignore - keyIdentifier is a non-standard property, but it's what webkit expects
     ? new KeyboardEvent('keydown', {keyIdentifier: 'Enter', metaKey, ctrlKey, altKey, shiftKey})
     : new MouseEvent('click', {metaKey, ctrlKey, altKey, shiftKey, bubbles: true, cancelable: true});

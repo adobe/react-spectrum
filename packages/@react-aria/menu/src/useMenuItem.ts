@@ -11,12 +11,12 @@
  */
 
 import {DOMAttributes, FocusableElement, PressEvent} from '@react-types/shared';
+import {filterDOMProps, mergeProps, useEffectEvent, useLayoutEffect, useRouter, useSlotId} from '@react-aria/utils';
 import {focusSafely} from '@react-aria/focus';
 import {getItemCount} from '@react-stately/collections';
 import {isFocusVisible, useHover, useKeyboard, usePress} from '@react-aria/interactions';
 import {Key, RefObject, useCallback, useRef} from 'react';
 import {menuData} from './useMenu';
-import {mergeProps, useEffectEvent, useLayoutEffect, useRouter, useSlotId} from '@react-aria/utils';
 import {TreeState} from '@react-stately/tree';
 import {useLocale} from '@react-aria/i18n';
 import {useSelectableItem} from '@react-aria/selection';
@@ -168,8 +168,9 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     ariaProps['aria-checked'] = isSelected;
   }
 
+  let item = state.collection.getItem(key);
   if (isVirtualized) {
-    ariaProps['aria-posinset'] = state.collection.getItem(key).index;
+    ariaProps['aria-posinset'] = item?.index;
     ariaProps['aria-setsize'] = getItemCount(state.collection);
   }
 
@@ -282,10 +283,12 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     }
   });
 
+  let domProps = filterDOMProps(item.props, {isLink: !!item?.props?.href});
+  delete domProps.id;
   return {
     menuItemProps: {
       ...ariaProps,
-      ...mergeProps(itemProps, pressProps, hoverProps, keyboardProps)
+      ...mergeProps(domProps, itemProps, pressProps, hoverProps, keyboardProps)
     },
     labelProps: {
       id: labelId
