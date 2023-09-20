@@ -23,7 +23,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
   let submenuRect = useRef<DOMRect>(null);
   let lastProcessedTime = useRef<number>(0);
   let timeout = useRef(null);
-  let submenuSide = useRef(null);
+  let submenuSide = useRef<'left' | 'right'>(null);
 
   // Keep track of the last few pointer movements, where true = moving towards submenu, false = moving away from submenu.
   let [movements, setMovements] = useState<Array<boolean>>([]);

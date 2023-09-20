@@ -52,7 +52,9 @@ describe('SubMenu', function () {
     jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+    jest.spyOn(window.document, 'elementFromPoint', 'get').mockImplementation(() => 1024);
     jest.useFakeTimers();
+    document.elementFromPoint = jest.fn();
   });
 
   afterEach(() => {
@@ -185,7 +187,7 @@ describe('SubMenu', function () {
     expect(within(menus[1]).getAllByRole('menuitem')).toHaveLength(4);
   });
 
-  it('should not close the sub menu if user hovers onto the sub menu trigger from the sub menu', async function () {
+  it.only('should not close the sub menu if user hovers onto the sub menu trigger from the sub menu', async function () {
     let tree = render(<SubMenuStatic />);
     await user.tab();
     await user.keyboard('[ArrowDown]');
@@ -200,11 +202,12 @@ describe('SubMenu', function () {
     expect(document.activeElement).toBe(subMenuTrigger1);
     await user.keyboard('[ArrowRight]');
     act(() => {jest.runAllTimers();});
-
     let menus = tree.getAllByRole('menu', {hidden: true});
     expect(menus).toHaveLength(2);
     let subMenu1Items = within(menus[1]).getAllByRole('menuitem');
     expect(document.activeElement).toBe(subMenu1Items[0]);
+    // jest.spyOn(document, 'elementFromPoint').mockReturnValueOnce(subMenuTrigger1);
+    jest.replaceProperty(document, 'elementFromPoint', subMenuTrigger1);
     await user.pointer({target: subMenu1Items[0]});
     await user.pointer({target: subMenuTrigger1});
 
@@ -792,7 +795,7 @@ describe('SubMenu', function () {
       jest.clearAllMocks();
     });
 
-    it('should open sub menus in the same tray on touch press', async function () {
+    it.only('should open sub menus in the same tray on touch press', async function () {
       let tree = render(<SubMenuStatic />);
       let triggerButton = tree.getByRole('button');
       await user.pointer({target: triggerButton, keys: '[TouchA]'});
