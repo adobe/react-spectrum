@@ -58,6 +58,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
       if (currentTime - lastProcessedTime.current < THROTTLE_TIME) {
         return;
       }
+      clearTimeout(timeout.current);
 
       let {clientX: mouseX, clientY: mouseY} = e;
 
@@ -77,7 +78,6 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
       // Pointer has already reached submenu
       if ((submenuSide.current === 'left' && mouseX < submenuRect.current.right) || (submenuSide.current === 'right' && mouseX > submenuRect.current.left)) {
         setMovements([]);
-        clearTimeout(timeout.current);
         return;
       }
     
@@ -101,7 +101,6 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
       prevPointerPos.current = {x: mouseX, y: mouseY};
 
       // If the pointer is moving towards the submenu, start a timeout to close if no other movements are made after 500ms.
-      clearTimeout(timeout.current);
       if (isMovingTowardsSubmenu) {
         timeout.current = setTimeout(() => {
           setMovements([]);
