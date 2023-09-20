@@ -94,10 +94,10 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
         timeout.current = setTimeout(() => {
           setMovements([]);
           setTimeout(() => {
-            // Fire a pointermove event to trigger the menu to close.
+            // Fire a pointerover event to trigger the menu to close.
             // Wait until pointer-events:none is no longer applied
             let target = document.elementFromPoint(mouseX, mouseY);
-            target.dispatchEvent(new PointerEvent('pointerenter', {bubbles: true, cancelable: true}));
+            target.dispatchEvent(new PointerEvent('pointerover', {bubbles: true, cancelable: true}));
           }, 100);
         }, TIMEOUT_TIME);
       }
