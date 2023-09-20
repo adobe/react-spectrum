@@ -72,8 +72,9 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
       let prevMouseY = prevPointerPos.current.y;
       let direction = mouseX > submenuRect.current.right ? 'left' : 'right';
       let toSubmenuX = direction === 'right' ? submenuRect.current.left - prevMouseX : prevMouseX - submenuRect.current.right;
-      let angleTop = Math.atan2(prevMouseY - submenuRect.current.top, toSubmenuX);
-      let angleBottom = Math.atan2(prevMouseY - submenuRect.current.bottom, toSubmenuX);
+      let padding = Math.PI / 12; // 15° 
+      let angleTop = Math.atan2(prevMouseY - submenuRect.current.top, toSubmenuX) + padding;
+      let angleBottom = Math.atan2(prevMouseY - submenuRect.current.bottom, toSubmenuX) - padding;
       let anglePointer = Math.atan2(prevMouseY - mouseY, (direction === 'left' ? -(mouseX - prevMouseX) : mouseX - prevMouseX));
       setIsPointerMovingTowardsSubmenu(anglePointer < angleTop && anglePointer > angleBottom);
 
