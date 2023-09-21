@@ -62,7 +62,8 @@ export interface RangeCalendarProps<T extends DateValue> extends Omit<BaseRangeC
 
 export const CalendarContext = createContext<ContextValue<CalendarProps<any>, HTMLDivElement>>({});
 export const RangeCalendarContext = createContext<ContextValue<RangeCalendarProps<any>, HTMLDivElement>>({});
-const InternalCalendarContext = createContext<CalendarState | RangeCalendarState | null>(null);
+export const CalendarStateContext = createContext<CalendarState | null>(null);
+export const RangeCalendarStateContext = createContext<RangeCalendarState | null>(null);
 
 function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, CalendarContext);
@@ -90,7 +91,7 @@ function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRe
       {...renderProps}
       {...calendarProps}
       ref={ref}
-      slot={props.slot}
+      slot={props.slot || undefined}
       data-disabled={props.isDisabled || undefined}
       data-invalid={state.isValueInvalid || undefined}>
       <Provider
@@ -102,7 +103,7 @@ function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRe
             }
           }],
           [HeadingContext, {'aria-hidden': true, level: 2, children: title}],
-          [InternalCalendarContext, state],
+          [CalendarStateContext, state],
           [TextContext, {
             slots: {
               errorMessage: errorMessageProps
@@ -169,7 +170,7 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: F
       {...renderProps}
       {...calendarProps}
       ref={ref}
-      slot={props.slot}
+      slot={props.slot || undefined}
       data-disabled={props.isDisabled || undefined}
       data-invalid={state.isValueInvalid || undefined}>
       <Provider
@@ -181,7 +182,7 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: F
             }
           }],
           [HeadingContext, {'aria-hidden': true, level: 2, children: title}],
-          [InternalCalendarContext, state],
+          [RangeCalendarStateContext, state],
           [TextContext, {
             slots: {
               errorMessage: errorMessageProps
@@ -324,7 +325,9 @@ interface InternalCalendarGridContextValue {
 const InternalCalendarGridContext = createContext<InternalCalendarGridContextValue | null>(null);
 
 function CalendarGrid(props: CalendarGridProps, ref: ForwardedRef<HTMLTableElement>) {
-  let state = useContext(InternalCalendarContext)!;
+  let calendarState = useContext(CalendarStateContext);
+  let rangeCalendarState = useContext(RangeCalendarStateContext);
+  let state = calendarState ?? rangeCalendarState!;
   let startDate = state.visibleRange.start;
   if (props.offset) {
     startDate = startDate.add(props.offset);
@@ -424,7 +427,9 @@ export interface CalendarGridBodyProps extends StyleProps {
 
 function CalendarGridBody(props: CalendarGridBodyProps, ref: ForwardedRef<HTMLTableSectionElement>) {
   let {children, style, className} = props;
-  let state = useContext(InternalCalendarContext)!;
+  let calendarState = useContext(CalendarStateContext);
+  let rangeCalendarState = useContext(RangeCalendarStateContext);
+  let state = calendarState ?? rangeCalendarState!;
   let {startDate} = useContext(InternalCalendarGridContext)!;
   let {locale} = useLocale();
   let weeksInMonth = getWeeksInMonth(startDate, locale);
@@ -460,7 +465,9 @@ export interface CalendarCellProps extends RenderProps<CalendarCellRenderProps> 
 }
 
 function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRef<HTMLDivElement>) {
-  let state = useContext(InternalCalendarContext)!;
+  let calendarState = useContext(CalendarStateContext);
+  let rangeCalendarState = useContext(RangeCalendarStateContext);
+  let state = calendarState ?? rangeCalendarState!;
   let {startDate: currentMonth} = useContext(InternalCalendarGridContext) ?? {startDate: state.visibleRange.start};
   let objectRef = useObjectRef(ref);
   let {cellProps, buttonProps, ...states} = useCalendarCell(

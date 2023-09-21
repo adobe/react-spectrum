@@ -453,7 +453,12 @@ function Nav({currentPageName, pages}) {
             <React.Fragment key={headingId}>
               <h3 className={sideNavStyles['spectrum-SideNav-heading']} id={headingId}>{key}</h3>
               <ul className={sideNavStyles['spectrum-SideNav']} aria-labelledby={headingId}>
-                {section.pages[key].sort((a, b) => (a.order || 0) < (b.order || 0) || a.title < b.title ? -1 : 1).map(p => <SideNavItem key={p.title} {...p} preRelease={section.title === 'Components' ? '' : p.preRelease} />)}
+                {section.pages[key].sort((a, b) => {
+                  if (a.order !== b.order) {
+                    return (a.order || 0) - (b.order || 0);
+                  }
+                  return a.title < b.title ? -1 : 1;
+                }).map(p => <SideNavItem key={p.title} {...p} preRelease={section.title === 'Components' ? '' : p.preRelease} />)}
               </ul>
             </React.Fragment>
           );

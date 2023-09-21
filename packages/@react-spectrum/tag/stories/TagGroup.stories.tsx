@@ -280,3 +280,13 @@ function OnRemoveExample(props) {
     </TagGroup>
   );
 }
+
+export const Links: TagGroupStory = {
+  render: (args) => (
+    <TagGroup aria-label="Tag group with links" {...args}>
+      <Item href="https://adobe.com">Adobe</Item>
+      <Item href="https://google.com">Google</Item>
+      <Item href="https://apple.com">Apple</Item>
+    </TagGroup>
+  )
+};

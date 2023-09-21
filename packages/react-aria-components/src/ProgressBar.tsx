@@ -65,7 +65,7 @@ function ProgressBar(props: ProgressBarProps, ref: ForwardedRef<HTMLDivElement>)
   });
 
   return (
-    <div {...progressBarProps} {...renderProps} ref={ref} slot={props.slot}>
+    <div {...progressBarProps} {...renderProps} ref={ref} slot={props.slot || undefined}>
       <LabelContext.Provider value={{...labelProps, ref: labelRef, elementType: 'span'}}>
         {renderProps.children}
       </LabelContext.Provider>

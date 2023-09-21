@@ -59,3 +59,7 @@ export function isChrome() {
 export function isAndroid() {
   return testUserAgent(/Android/i);
 }
+
+export function isFirefox() {
+  return testUserAgent(/Firefox/i);
+}

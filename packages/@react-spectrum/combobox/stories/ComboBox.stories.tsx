@@ -427,6 +427,16 @@ export const WHCM: ComboBoxStory = {
   )
 };
 
+export const Links: ComboBoxStory = {
+  render: (args) => (
+    <ComboBox {...args}>
+      <Item key="foo">Foo</Item>
+      <Item key="bar">Bar</Item>
+      <Item href="https://google.com">Google</Item>
+    </ComboBox>
+  )
+};
+
 function LoadingExamples(props) {
   return (
     <Flex gap="size-300" direction="column" >
