@@ -55,12 +55,13 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   let textId = useSlotId();
+  let dropzoneId = useSlotId();
   let ariaLabel = props['aria-label'] || stringFormatter.format('dropzoneLabel');
   let messageId = (isDropTarget && props['aria-labelledby']) ? props['aria-labelledby'] : null;
-  let ariaLabelledby = [textId, messageId].filter(Boolean).join(' ');
-  let labelProps = useLabels({'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledby});
-
-  let ariaDescribedby = props['aria-describedby'];
+  // Chrome + VO will not announce the drop zone's accessible name if useLabels combines an aria-label and aria-labelledby
+  let ariaLabelledby = [dropzoneId, textId, messageId].filter(Boolean).join(' ');
+  let labelProps = useLabels({
+    'aria-labelledby': ariaLabelledby});
 
   let {clipboardProps} = useClipboard({
     onPaste: (items) => props.onDrop?.({
@@ -97,9 +98,12 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
         data-focus-visible={isFocusVisible || undefined}
         data-drop-target={isDropTarget || undefined} >
         <VisuallyHidden>
+          {/* Added as a workaround for a Chrome + VO bug where it will not announce the aria label */}
+          <div id={dropzoneId}>
+            {ariaLabel}
+          </div>
           <button
             {...mergeProps(dropButtonProps, focusProps, clipboardProps, labelProps)}
-            aria-describedby={ariaDescribedby}
             ref={buttonRef} />
         </VisuallyHidden>
         {renderProps.children}
