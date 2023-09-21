@@ -12,11 +12,15 @@
 
 import {CalendarDate} from '@internationalized/date';
 import {DateField, DateFieldContext, DateInput, DateSegment, Label, Text} from '../';
+import {pointerMap, render, within} from '@react-spectrum/test-utils';
 import React from 'react';
-import {render, within} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 describe('DateField', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
   it('provides slots', () => {
     let {getByRole, getAllByRole} = render(
       <DateField data-foo="bar">
@@ -87,7 +91,7 @@ describe('DateField', () => {
     expect(group).toHaveAttribute('aria-label', 'test');
   });
 
-  it('should support hover state', () => {
+  it('should support hover state', async () => {
     let {getByRole} = render(
       <DateField>
         <Label>Birth date</Label>
@@ -101,16 +105,16 @@ describe('DateField', () => {
     expect(group).not.toHaveAttribute('data-hovered');
     expect(group).not.toHaveClass('hover');
 
-    userEvent.hover(group);
+    await user.hover(group);
     expect(group).toHaveAttribute('data-hovered', 'true');
     expect(group).toHaveClass('hover');
 
-    userEvent.unhover(group);
+    await user.unhover(group);
     expect(group).not.toHaveAttribute('data-hovered');
     expect(group).not.toHaveClass('hover');
   });
 
-  it('should support focus visible state', () => {
+  it('should support focus visible state', async () => {
     let {getByRole} = render(
       <DateField>
         <Label>Birth date</Label>
@@ -124,12 +128,12 @@ describe('DateField', () => {
     expect(group).not.toHaveAttribute('data-focus-visible');
     expect(group).not.toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
     expect(group).toHaveAttribute('data-focus-visible', 'true');
     expect(group).toHaveClass('focus');
 
-    userEvent.tab({shift: true});
+    await user.tab({shift: true});
     expect(group).not.toHaveAttribute('data-focus-visible');
     expect(group).not.toHaveClass('focus');
   });
@@ -177,4 +181,19 @@ describe('DateField', () => {
     let input = document.querySelector('input[name=birthday]');
     expect(input).toHaveValue('2020-02-03');
   });
+
+  it('should render data- attributes only on the outer element', () => {
+    let {getAllByTestId} = render(
+      <DateField data-testid="date-field">
+        <Label>Birth Date</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </DateField>
+    );
+    let outerEl = getAllByTestId('date-field');
+    expect(outerEl).toHaveLength(1);
+    expect(outerEl[0]).toHaveClass('react-aria-DateField');
+  });
+
 });

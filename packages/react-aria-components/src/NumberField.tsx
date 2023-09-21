@@ -12,7 +12,7 @@
 
 import {AriaNumberFieldProps, useLocale, useNumberField} from 'react-aria';
 import {ButtonContext} from './Button';
-import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, forwardRefType, Provider, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
@@ -42,6 +42,7 @@ export interface NumberFieldRenderProps {
 export interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState'>, InputDOMProps, RenderProps<NumberFieldRenderProps>, SlotProps {}
 
 export const NumberFieldContext = createContext<ContextValue<NumberFieldProps, HTMLDivElement>>(null);
+export const NumberFieldStateContext = createContext<NumberFieldState | null>(null);
 
 function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, NumberFieldContext);
@@ -57,7 +58,7 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
     decrementButtonProps,
     descriptionProps,
     errorMessageProps
-  } = useNumberField({...props, label}, state, inputRef);
+  } = useNumberField({...removeDataAttributes(props), label}, state, inputRef);
 
   let renderProps = useRenderProps({
     ...props,
@@ -75,6 +76,7 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
   return (
     <Provider
       values={[
+        [NumberFieldStateContext, state],
         [GroupContext, groupProps],
         [InputContext, {...inputProps, ref: inputRef}],
         [LabelContext, {...labelProps, ref: labelRef}],
@@ -95,7 +97,7 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
         {...DOMProps}
         {...renderProps}
         ref={ref}
-        slot={props.slot}
+        slot={props.slot || undefined}
         data-disabled={props.isDisabled || undefined}
         data-invalid={props.isInvalid || undefined} />
       {props.name && <input type="hidden" name={props.name} value={isNaN(state.numberValue) ? '' : state.numberValue} />}

@@ -7,7 +7,8 @@
     "build": "webpack --mode production",
     "start": "webpack-dev-server --mode development --open",
     "test": "test",
-    "install-17": "yarn add -W react@^17 react-dom@^17"
+    "install-17": "yarn add -W react@^17 react-dom@^17",
+    "postinstall": "patch-package"
   },
   "private": true,
   "workspaces": [
@@ -26,12 +27,16 @@
     "@babel/cli": "^7.1.0",
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-react": "^7.0.0",
-    "webpack": "^4.46.0",
+    "webpack": "4.46.0",
     "webpack-cli": "3.1.1",
     "webpack-dev-server": "3.1.8",
     "style-loader": "0.23.0",
     "css-loader": "1.0.0",
     "babel-loader": "8.0.2",
-    "jest": "^26"
+    "jest": "^26",
+    "patch-package": "^8.0.0"
+  },
+  "resolutions": {
+    "terser-webpack-plugin": "4.2.3"
   }
 }

@@ -11,7 +11,7 @@
  */
 
 import {AriaToastRegionProps, useToastRegion} from '@react-aria/toast';
-import {classNames, useIsMobileDevice} from '@react-spectrum/utils';
+import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Provider} from '@react-spectrum/provider';
 import React, {ReactElement, ReactNode, useRef} from 'react';
@@ -29,7 +29,6 @@ export function Toaster(props: ToastContainerProps): ReactElement {
     children,
     state
   } = props;
-  let containerPlacement = useIsMobileDevice() ? 'center' : 'right';
 
   let ref = useRef();
   let {regionProps} = useToastRegion(props, state, ref);
@@ -41,7 +40,7 @@ export function Toaster(props: ToastContainerProps): ReactElement {
           {...regionProps}
           ref={ref}
           data-position="bottom"
-          data-placement={containerPlacement}
+          data-placement="center"
           className={classNames(
             toastContainerStyles,
             'react-spectrum-ToastContainer'

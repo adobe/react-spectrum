@@ -352,6 +352,16 @@ export const Scrolling: ScrollingStory = {
   name: 'scrolling container'
 };
 
+export const Links: PickerStory = {
+  render: (args) => (
+    <Picker {...args}>
+      <Item key="foo">Foo</Item>
+      <Item key="bar">Bar</Item>
+      <Item href="https://google.com">Google</Item>
+    </Picker>
+  )
+};
+
 function DefaultPicker(props: SpectrumPickerProps<object>) {
   return (
     <Picker {...props}>

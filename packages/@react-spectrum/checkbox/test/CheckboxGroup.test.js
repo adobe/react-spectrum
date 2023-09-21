@@ -10,15 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render, within} from '@react-spectrum/test-utils';
 import {Checkbox, CheckboxGroup} from '../';
+import {pointerMap, render, within} from '@react-spectrum/test-utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
 describe('CheckboxGroup', () => {
-  it('handles defaults', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
+  it('handles defaults', async () => {
     let onChangeSpy = jest.fn();
     let {getByRole, getAllByRole, getByLabelText} = render(
       <Provider theme={theme}>
@@ -48,7 +53,7 @@ describe('CheckboxGroup', () => {
     expect(checkboxes[2].checked).toBe(false);
 
     let dragons = getByLabelText('Dragons');
-    userEvent.click(dragons);
+    await user.click(dragons);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(['dragons']);
 
@@ -214,7 +219,7 @@ describe('CheckboxGroup', () => {
     expect(checkboxes[2]).toHaveAttribute('aria-readonly', 'true');
   });
 
-  it('should not update state for readonly checkbox', () => {
+  it('should not update state for readonly checkbox', async () => {
     let groupOnChangeSpy = jest.fn();
     let checkboxOnChangeSpy = jest.fn();
     let {getAllByRole, getByLabelText} = render(
@@ -230,7 +235,7 @@ describe('CheckboxGroup', () => {
     let checkboxes = getAllByRole('checkbox');
     let dragons = getByLabelText('Dragons');
 
-    userEvent.click(dragons);
+    await user.click(dragons);
 
     expect(groupOnChangeSpy).toHaveBeenCalledTimes(0);
     expect(checkboxOnChangeSpy).toHaveBeenCalledTimes(0);
@@ -373,7 +378,7 @@ describe('CheckboxGroup', () => {
     expect(description).toHaveTextContent('Error message');
   });
 
-  it('supports form reset', () => {
+  it('supports form reset', async () => {
     function Test() {
       let [value, setValue] = React.useState(['dogs']);
       return (
@@ -396,13 +401,13 @@ describe('CheckboxGroup', () => {
     expect(checkboxes[0]).toBeChecked();
     expect(checkboxes[1]).not.toBeChecked();
     expect(checkboxes[2]).not.toBeChecked();
-    act(() => userEvent.click(checkboxes[1]));
+    await user.click(checkboxes[1]);
     expect(checkboxes[0]).toBeChecked();
     expect(checkboxes[1]).toBeChecked();
     expect(checkboxes[2]).not.toBeChecked();
 
     let button = getByTestId('reset');
-    act(() => userEvent.click(button));
+    await user.click(button);
     expect(checkboxes[0]).toBeChecked();
     expect(checkboxes[1]).not.toBeChecked();
     expect(checkboxes[2]).not.toBeChecked();
