@@ -102,8 +102,7 @@ governing permissions and limitations under the License.
   margin-block-end: 0;
   font-size: inherit;
 
-  &[href],
-  &[tabindex="0"] {
+  &:not([aria-disabled]) {
     cursor: pointer;
 
     &:hover,

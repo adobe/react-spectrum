@@ -388,8 +388,6 @@ function Option<T>({item}: OptionProps<T>) {
   }, [item.textValue]);
 
   let ElementType: React.ElementType = props.href ? 'a' : 'div';
-  let DOMProps = filterDOMProps(props as any, {isLink: !!props.href});
-  delete DOMProps.id;
 
   return (
     <>
@@ -397,7 +395,7 @@ function Option<T>({item}: OptionProps<T>) {
         renderDropIndicator({type: 'item', key: item.key, dropPosition: 'before'})
       }
       <ElementType
-        {...mergeProps(DOMProps, optionProps, hoverProps, draggableItem?.dragProps, droppableItem?.dropProps)}
+        {...mergeProps(optionProps, hoverProps, draggableItem?.dragProps, droppableItem?.dropProps)}
         {...renderProps}
         ref={ref}
         data-allows-dragging={!!dragState || undefined}
