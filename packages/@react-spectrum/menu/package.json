@@ -39,6 +39,7 @@
     "@react-aria/focus": "^3.14.1",
     "@react-aria/i18n": "^3.8.2",
     "@react-aria/interactions": "^3.18.0",
+    "@react-aria/label": "^3.7.0",
     "@react-aria/menu": "^3.10.2",
     "@react-aria/overlays": "^3.17.0",
     "@react-aria/selection": "^3.16.2",

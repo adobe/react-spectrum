@@ -20,10 +20,11 @@ import intlMessages from '../intl/*.json';
 import {MenuContext, MenuStateContext, useMenuStateContext} from './context';
 import {MenuItem} from './MenuItem';
 import {MenuSection} from './MenuSection';
-import {mergeProps, useLayoutEffect, useSyncRef} from '@react-aria/utils';
+import {mergeProps, useId, useLayoutEffect, useSyncRef} from '@react-aria/utils';
 import React, {ReactElement, useContext, useRef, useState} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
+import {useLabel} from '@react-aria/label';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMenu, useSafelyMouseToSubmenu} from '@react-aria/menu';
 import {useTreeState} from '@react-stately/tree';
@@ -60,9 +61,10 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
 
   let isMobile = useIsMobileDevice();
   let backButtonText = parentMenuTreeState?.collection.getItem(menuTreeState.expandedKeysStack.slice(-1)[0])?.textValue;
-  let backButtonLabel = stringFormatter.format('backButton', {
-    prevMenuButton: backButtonText
-  });
+  let backButtonLabel = stringFormatter.format('backButton');
+  let buttonId = useId();
+  let {labelProps, fieldProps} = useLabel({id: buttonId, label: backButtonText, 'aria-label': backButtonLabel, labelElementType: 'span'});
+
   // TODO: add slide transition
   return (
     <MenuStateContext.Provider value={{popoverContainerRef, trayContainerRef, menu: domRef, submenu: submenuRef, menuTreeState, state}}>
@@ -83,13 +85,13 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
             // TODO: check labeling with team and get translated strings
             <div className={classNames(styles, 'spectrum-SubMenu-headerWrapper')}>
               <ActionButton
-                aria-label={backButtonLabel}
+                {...fieldProps}
                 isQuiet
                 onPress={contextProps.onBackButtonPress}>
                 {/* We don't have a ArrowLeftSmall so make due with ArrowDownSmall and transforms */}
                 {direction === 'rtl' ? <ArrowDownSmall UNSAFE_style={{rotate: '270deg'}} /> : <ArrowDownSmall UNSAFE_style={{rotate: '90deg'}} />}
               </ActionButton>
-              <span className={classNames(styles, 'spectrum-SubMenu-header')}>{backButtonText}</span>
+              <span {...labelProps} className={classNames(styles, 'spectrum-SubMenu-header')}>{backButtonText}</span>
             </div>
           )}
           <div
