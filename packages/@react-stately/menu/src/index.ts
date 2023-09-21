@@ -11,8 +11,8 @@
  */
 
 export {useMenuTriggerState} from './useMenuTriggerState';
-export {useMenuState} from './useMenuState';
-export {useSubMenuTriggerState} from './useSubMenuTriggerState';
+export {UNSTABLE_useMenuState} from './useMenuState';
+export {UNSTABLE_useSubMenuTriggerState} from './useSubMenuTriggerState';
 
 export type {MenuTriggerProps} from '@react-types/menu';
 export type {MenuTriggerState} from './useMenuTriggerState';

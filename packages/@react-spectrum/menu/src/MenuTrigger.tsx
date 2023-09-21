@@ -19,7 +19,7 @@ import {PressResponder} from '@react-aria/interactions';
 import React, {forwardRef, Fragment, useRef} from 'react';
 import {SpectrumMenuTriggerProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import {useMenuState, useMenuTriggerState} from '@react-stately/menu';
+import {UNSTABLE_useMenuState, useMenuTriggerState} from '@react-stately/menu';
 import {useMenuTrigger} from '@react-aria/menu';
 
 function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) {
@@ -56,10 +56,9 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
   }
 
   let isMobile = useIsMobileDevice();
-  let menuTreeState = useMenuState({}, state);
+  let menuTreeState = UNSTABLE_useMenuState({}, state);
   // TODO: override menuTriggerState's .close so we clear the expandedKeysStack when clicking on the underlay or whenever
   // Popover's .close is triggered. Alternatively, we could potentially clear it in a cleanup effect when the root menu unmounts...
-  // Current approach feels iffy, might be able to do something different if we have each submenu call
   let close = menuTreeState.closeAll;
   let menuContext = {
     ...menuProps,

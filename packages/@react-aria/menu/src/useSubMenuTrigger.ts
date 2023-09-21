@@ -49,10 +49,9 @@ export interface SubMenuTriggerAria<T> {
 }
 
 // TODO description
-// TODO: needs UNSTABLE?
 // TODO: debatable if we should have a useSubMenu hook for the submenu keyboard handlers. Feels better to have it here so we don't need to ferry around
 // things like parentMenuRef and the open timeout canceling since we centralized them here
-export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubMenuTriggerState, ref: RefObject<FocusableElement>): SubMenuTriggerAria<T> {
+export function UNSTABLE_useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubMenuTriggerState, ref: RefObject<FocusableElement>): SubMenuTriggerAria<T> {
   let {parentMenuRef, subMenuRef, subMenuType = 'menu', isDisabled, node} = props;
   let subMenuTriggerId = useId();
   let overlayId = useId();

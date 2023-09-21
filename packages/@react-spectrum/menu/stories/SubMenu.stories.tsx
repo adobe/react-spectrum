@@ -11,18 +11,20 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {ActionButton} from '@react-spectrum/button';
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
 import AnnotatePen from '@spectrum-icons/workflow/AnnotatePen';
 import {Content} from '@react-spectrum/view';
-import {ContextualHelpTrigger, Item, Menu, Section, SubMenuTrigger} from '../';
+import {ContextualHelpTrigger, Item, Menu, MenuTrigger, Section, SubMenuTrigger} from '../';
 import defaultConfig, {render as renderMenuTrigger} from './MenuTrigger.stories';
 import {Dialog} from '@react-spectrum/dialog';
 import {Heading, Keyboard, Text} from '@react-spectrum/text';
 import React from 'react';
 import TextIndentIncrease from '@spectrum-icons/workflow/TextIndentIncrease';
 import TextItalics from '@spectrum-icons/workflow/TextItalic';
+import {ToggleButton} from '@adobe/react-spectrum';
 
 export default {
   ...defaultConfig,
@@ -30,7 +32,6 @@ export default {
 };
 
 // TODO: add chromatic stories
-// TODO: test without any keys defined
 export const SubMenuStatic = {
   render: (args) => (
     renderMenuTrigger(
@@ -102,8 +103,6 @@ export const SubMenuDynamic = {
   ),
   name: 'dynamic submenu items'
 };
-
-// TODO: TreeState might be too much/not a good fit since expandedKeys should only support one (can't have multiple sub menus at a time), something to keep in mind
 
 export const SubMenuStaticSections = {
   render: () => (
@@ -390,53 +389,6 @@ export const Complex = {
   name: 'complex'
 };
 
-export const UnavailableWithSubMenu = {
-  render: (args) => (
-    renderMenuTrigger(
-      <Menu onAction={action('lvl 1 menu onAction')} {...args}>
-        <Item key="Lvl 1 Item 1">Lvl 1 Item 1</Item>
-        <SubMenuTrigger>
-          <Item key="Lvl 1 Item 2">Lvl 1 Item 2</Item>
-          <Menu onAction={action('lvl 2.2 menu onAction')} {...args.subMenu1Props}>
-            <ContextualHelpTrigger isUnavailable>
-              <Item key="Lvl 2 Item 1">Lvl 2.2 Item 1</Item>
-              <Dialog>
-                <Heading>another one</Heading>
-                <Content>try hovering on other items</Content>
-              </Dialog>
-            </ContextualHelpTrigger>
-            <Item key="Lvl 2 Item 2">Lvl 2.2 Item 2</Item>
-            <SubMenuTrigger>
-              <Item key="Lvl 2 Item 3">Lvl 2.2 Item 3</Item>
-              <Menu onAction={action('lvl 3 menu onAction')} {...args.subMenu2Props}>
-                <Item key="Lvl 3 Item 1">Lvl 3 Item 1</Item>
-                <Item key="Lvl 3 Item 2">Lvl 3 Item 2</Item>
-                <Item key="Lvl 3 Item 3">Lvl 3 Item 3</Item>
-              </Menu>
-            </SubMenuTrigger>
-          </Menu>
-        </SubMenuTrigger>
-        <ContextualHelpTrigger isUnavailable>
-          <Item key="Lvl 1 Item 3">Lvl 1 Item 3</Item>
-          <Dialog>
-            <Heading>hello</Heading>
-            <Content>Is it me you're looking for?</Content>
-          </Dialog>
-        </ContextualHelpTrigger>
-        <SubMenuTrigger>
-          <Item key="Lvl 1 Item 4">Lvl 1 Item 4</Item>
-          <Menu onAction={action('lvl 2.4 menu onAction')} {...args.subMenu1Props}>
-            <Item key="Lvl 2.4 Item 1">Lvl 2.4 Item 1</Item>
-            <Item key="Lvl 2.4 Item 2">Lvl 2.4 Item 2</Item>
-            <Item key="Lvl 2.4 Item 3">Lvl 2.4 Item 3</Item>
-          </Menu>
-        </SubMenuTrigger>
-      </Menu>
-    )
-  ),
-  name: 'with unavailable menu item'
-};
-
 export const SubMenuActions = {
   render: (args) => renderMenuTrigger(
     <Menu onAction={action('onAction lvl 1 menu')} onClose={action('onClose lvl 1 menu')} {...args}>
@@ -515,4 +467,121 @@ export const DisabledSubMenuTrigger = {
   parameters: {description: {data: 'Lvl 2 submenu trigger is disabled'}}
 };
 
-// TODO: make a story that has a menu item that conditionally becomes a submenu trigger and a contextualHelpTrigger
+export const NoKeysProvided = {
+  render: (args) => (
+    renderMenuTrigger(
+      <Menu onAction={action('lvl 1 menu onAction')} {...args}>
+        <Item>Lvl 1 Item 1</Item>
+        <SubMenuTrigger>
+          <Item>Lvl 1 Item 2</Item>
+          <Menu onAction={action('lvl 2 menu onAction')} {...args.subMenu1Props}>
+            <Item>Lvl 2 Item 1</Item>
+            <Item>Lvl 2 Item 2</Item>
+            <SubMenuTrigger>
+              <Item>Lvl 2 Item 3</Item>
+              <Menu onAction={action('lvl 3 menu onAction')} {...args.subMenu2Props}>
+                <Item>Lvl 3 Item 1</Item>
+                <Item>Lvl 3 Item 2</Item>
+                <Item>Lvl 3 Item 3</Item>
+              </Menu>
+            </SubMenuTrigger>
+          </Menu>
+        </SubMenuTrigger>
+        <Item>Lvl 1 Item 3</Item>
+      </Menu>
+    , args.menuTriggerProps)
+  ),
+  name: 'no keys provided',
+  parameters: {description: {data: 'No keys are provided so they should be autogenerated. It should allow for duplicated menu item keys across each submenu level, reflected in onAction'}}
+};
+
+export const ConditionalSubMenu = {
+  render: (args) => <ConditionalSubMenuExample {...args} />,
+  name: 'conditional submenu'
+};
+
+function ConditionalSubMenuExample(props) {
+  let [disabled, setDisablde] = React.useState(false);
+
+  return (
+    <>
+      <ToggleButton isSelected={disabled} onChange={setDisablde}>Toggle item 2 unavailable</ToggleButton>
+      <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
+        <MenuTrigger onOpenChange={action('onOpenChange')} {...props}>
+          <ActionButton>
+            Menu Button
+          </ActionButton>
+          <Menu onAction={action('onAction')}>
+            <Item key="Lvl 1 Item 1">Lvl 1 Item 1</Item>
+            {disabled ? (
+              <ContextualHelpTrigger isUnavailable>
+                <Item key="Lvl 1 Item 2">Lvl 1 Item 2</Item>
+                <Dialog>
+                  <Heading>SubMenuTrigger disabled</Heading>
+                  <Content>You don't have permissions for this submenu</Content>
+                </Dialog>
+              </ContextualHelpTrigger>
+            ) : (
+              <SubMenuTrigger>
+                <Item key="Lvl 1 Item 2">Lvl 1 Item 2</Item>
+                <Menu>
+                  <Item key="Lvl 2 Item 1">Lvl 2 Item 1</Item>
+                  <Item key="Lvl 2 Item 2">Lvl 2 Item 2</Item>
+                  <Item key="Lvl 2 Item 3">Lvl 2 Item 3</Item>
+                </Menu>
+              </SubMenuTrigger>
+            )}
+            <Item key="Lvl 1 Item 3">Lvl 1 Item 3</Item>
+          </Menu>
+        </MenuTrigger>
+      </div>
+    </>
+  );
+}
+
+export const UnavailableWithSubMenu = {
+  render: (args) => (
+    renderMenuTrigger(
+      <Menu onAction={action('lvl 1 menu onAction')} {...args}>
+        <Item key="Lvl 1 Item 1">Lvl 1 Item 1</Item>
+        <SubMenuTrigger>
+          <Item key="Lvl 1 Item 2">Lvl 1 Item 2</Item>
+          <Menu onAction={action('lvl 2.2 menu onAction')} {...args.subMenu1Props}>
+            <ContextualHelpTrigger isUnavailable>
+              <Item key="Lvl 2 Item 1">Lvl 2.2 Item 1</Item>
+              <Dialog>
+                <Heading>another one</Heading>
+                <Content>try hovering on other items</Content>
+              </Dialog>
+            </ContextualHelpTrigger>
+            <Item key="Lvl 2 Item 2">Lvl 2.2 Item 2</Item>
+            <SubMenuTrigger>
+              <Item key="Lvl 2 Item 3">Lvl 2.2 Item 3</Item>
+              <Menu onAction={action('lvl 3 menu onAction')} {...args.subMenu2Props}>
+                <Item key="Lvl 3 Item 1">Lvl 3 Item 1</Item>
+                <Item key="Lvl 3 Item 2">Lvl 3 Item 2</Item>
+                <Item key="Lvl 3 Item 3">Lvl 3 Item 3</Item>
+              </Menu>
+            </SubMenuTrigger>
+          </Menu>
+        </SubMenuTrigger>
+        <ContextualHelpTrigger isUnavailable>
+          <Item key="Lvl 1 Item 3">Lvl 1 Item 3</Item>
+          <Dialog>
+            <Heading>hello</Heading>
+            <Content>Is it me you're looking for?</Content>
+          </Dialog>
+        </ContextualHelpTrigger>
+        <SubMenuTrigger>
+          <Item key="Lvl 1 Item 4">Lvl 1 Item 4</Item>
+          <Menu onAction={action('lvl 2.4 menu onAction')} {...args.subMenu1Props}>
+            <Item key="Lvl 2.4 Item 1">Lvl 2.4 Item 1</Item>
+            <Item key="Lvl 2.4 Item 2">Lvl 2.4 Item 2</Item>
+            <Item key="Lvl 2.4 Item 3">Lvl 2.4 Item 3</Item>
+          </Menu>
+        </SubMenuTrigger>
+      </Menu>
+    )
+  ),
+  name: 'with unavailable menu item'
+};

@@ -18,8 +18,8 @@ import {ItemProps} from '@react-types/shared';
 import {Modal, Popover} from '@react-spectrum/overlays';
 import React, {Key, ReactElement, useRef} from 'react';
 import {SubMenuTriggerContext, useMenuStateContext} from './context';
-import {useSubMenuTrigger} from '@react-aria/menu';
-import {useSubMenuTriggerState} from '@react-stately/menu';
+import {UNSTABLE_useSubMenuTrigger} from '@react-aria/menu';
+import {UNSTABLE_useSubMenuTriggerState} from '@react-stately/menu';
 
 interface MenuDialogTriggerProps<T> extends ItemProps<T> {
   /** Whether the menu item is currently unavailable. */
@@ -37,8 +37,8 @@ function ContextualHelpTrigger<T>(props: MenuDialogTriggerProps<T>): ReactElemen
   let popoverRef = useRef(null);
   let {popoverContainerRef, menuTreeState, menu: parentMenuRef, state} = useMenuStateContext();
   let triggerNode = state.collection.getItem(targetKey);
-  let subMenuTriggerState = useSubMenuTriggerState({triggerKey: targetKey}, {...menuTreeState, ...state});
-  let {subMenuTriggerProps, popoverProps, overlayProps} = useSubMenuTrigger({
+  let subMenuTriggerState = UNSTABLE_useSubMenuTriggerState({triggerKey: targetKey}, {...menuTreeState, ...state});
+  let {subMenuTriggerProps, popoverProps, overlayProps} = UNSTABLE_useSubMenuTrigger({
     node: triggerNode,
     parentMenuRef,
     subMenuRef: popoverRef,

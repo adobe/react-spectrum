@@ -23,26 +23,26 @@ export interface SubMenuTriggerProps {
 
 export interface SubMenuTriggerState extends OverlayTriggerState {
   // TODO descriptions
+  // Need some form of isOpen and close for usePopover. Also need closeAll for onClose for menu items, would be kinda weird
+  // to pass in both menuTreeState and the state returned by useSubMenuTriggerState to useMenu.
   isOpen: boolean,
   focusStrategy: FocusStrategy | null,
   open: (focusStrategy?: FocusStrategy | null) => void,
   close: () => void,
   closeAll: () => void,
+  // TODO: add setOpen and toggle for type parity with useOverlayTriggerState type that Tray and Popover expect. Perhaps call useOverlayTriggerState in
+  // this hook and just make it controlled? Then spread? Kinda weird since they are unused but needed for type parity.
   toggle: (focusStrategy?: FocusStrategy | null) => void,
   setOpen: () => void
 }
 
 // TODO: ideally onClose would be passed in from the Trigger level rather than the menu level so that we could call it
 // TODO descriptions and naming
-// TODO: needs UNSTABLE?
 // TODO: I'm passing in the parent menu's TreeState now so that we can set expanded keys so a menu can know if it has any sub menus open.
 // The alternative to using expandedKeys would involve making each menu track which "level" it belongs to and have it the look up that index in
 // the MenuTreeState's expandedKeyStack and see if its collection has a matching key. This feels arguably more correct but would then involve
 // having useMenu accept MenuTreeState instead which might not be the worst thing tbh. Open to discussion
-export function useSubMenuTriggerState<T>(props: SubMenuTriggerProps, state: MenuTreeState & TreeState<T>): SubMenuTriggerState  {
-  // Need some form of isOpen and close for usePopover. Will also need closeAll for onClose for menu items, would be kinda weird
-  // to pass in both menuTreeState and the state returned by useSubMenuTriggerState.
-  // WOuld it be helpful returning level as well?
+export function UNSTABLE_useSubMenuTriggerState<T>(props: SubMenuTriggerProps, state: MenuTreeState & TreeState<T>): SubMenuTriggerState  {
   let {triggerKey} = props;
   let {expandedKeysStack, openSubMenu, closeSubMenu, closeAll, setExpandedKeys, expandedKeys, toggleKey} = state;
   let [level] = useState(expandedKeysStack?.length + 1);
@@ -72,15 +72,12 @@ export function useSubMenuTriggerState<T>(props: SubMenuTriggerProps, state: Men
     }
   }, [close, open, isOpen]);
 
-  // Memo is a bit useless here since menuTreeState always returns a new instance
   return useMemo(() => ({
     focusStrategy,
     isOpen,
     open,
     close,
     closeAll,
-    // TODO: add setOpen and toggle for type parity with useOverlayTriggerState type that Tray and Popover expect. Perhaps call useOverlayTriggerState in
-    // this hook and just make it controlled? Then spread?
     setOpen: () => {},
     toggle
   }), [isOpen, open, close, closeAll, focusStrategy, toggle]);
