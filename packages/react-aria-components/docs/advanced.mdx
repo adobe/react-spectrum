@@ -18,6 +18,7 @@ category: Concepts
 keywords: [aria, accessibility, react, component]
 type: component
 description: React Aria Components is built using a flexible and composable API that you can extend to build new patterns. If you need even more customizability, drop down to the lower level Hook-based API for even more control over rendering and behavior. Mix and match as needed.
+order: 3
 ---
 
 # Advanced customization
@@ -45,7 +46,7 @@ This architecture also enables you to reuse React Aria Components in your own cu
 
 ### Custom patterns
 
-Each React Aria Component exports a corresponding context that you can use to build your own compositional APIs similar to the builtin components. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+Each React Aria Component exports a corresponding context that you can use to build your own compositional APIs similar to the built-in components. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
 
 This example shows a `FieldGroup` component that renders a group of text fields. The entire group can be marked as disabled via the `isDisabled` prop, which is passed to all child text fields via the `TextFieldContext` provider.
 
@@ -78,11 +79,11 @@ Any `TextField` component you place inside a `FieldGroup` will automatically rec
 </FieldGroup>
 ```
 
-The contexts consumed by each component are listed in the Advanced Customization section of their documentation.
+The contexts consumed by each component are listed in the Advanced Customization section of their documentation, along with examples of some potential use cases.
 
 ### Slots
 
-Some patterns include multiple instances of the same component. These use the `slot` prop to distinguish each instance. Separate props can be sent to each slot by providing an object with keys for each slot name.
+Some patterns include multiple instances of the same component. These use the `slot` prop to distinguish each instance. Slots are named children within a component that can receive separate behaviors and [styles](styling.html#slots). Separate props can be sent to slots by providing an object with keys for each slot name to the component's context provider.
 
 This example shows a `Stepper` component with slots for its increment and decrement buttons.
 
@@ -113,11 +114,11 @@ function Stepper({children}) {
 </Stepper>
 ```
 
-The slots supported by each component are shown in the Anatomy section of their documentation.
+The slots provided by each built-in React Aria component are shown in the Anatomy section of their documentation.
 
 ### Provider
 
-The `Provider` component is a utility that makes it easier to provide multiple React contexts without manually nesting them. Pass pairs of contexts and values as an array to the `values` prop.
+In complex components, you may need to provide many contexts. The `Provider` component is a utility that makes it easier to provide multiple React contexts without manually nesting them. This can be achieved by passing pairs of contexts and values as an array to the `values` prop.
 
 ```tsx
 import {Provider, ButtonContext, InputContext} from 'react-aria-components';
@@ -147,7 +148,7 @@ You can also consume from contexts provided by React Aria Components in your own
 
 #### useContextProps
 
-The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by a parent component. The local props always take precedence over the context values (following the rules documented in [mergeProps](mergeProps.html)).
+The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by a parent component. The local props always take precedence over the context values (following the rules documented in [mergeProps](mergeProps.html)). `useContextProps` supports the [slot](#slots) prop to indicate which value to consume from context.
 
 ```tsx
 import type {LabelProps} from 'react-aria-components';
@@ -166,7 +167,7 @@ const MyCustomLabel = React.forwardRef(
 );
 ```
 
-Since it consumes from `LabelContext`, `MyCustomLabel` can be used within any component, instead of the builtin React Aria Components `Label`.
+Since it consumes from `LabelContext`, `MyCustomLabel` can be used within any React Aria component instead of the built-in `Label`.
 
 ```tsx
 <TextField>
@@ -179,7 +180,7 @@ Since it consumes from `LabelContext`, `MyCustomLabel` can be used within any co
 
 #### useSlottedContext
 
-To consume a context without merging with existing props, use the <TypeLink links={docs.links} type={docs.exports.useSlottedContext} /> hook. This works just like React's `useContext` but also accepts an optional slot argument to identify which slot name to consume.
+To consume a context without merging with existing props, use the <TypeLink links={docs.links} type={docs.exports.useSlottedContext} /> hook. This works like React's `useContext`, and also accepts an optional slot argument to identify which slot name to consume.
 
 ```tsx
 import {useSlottedContext} from 'react-aria-components';
@@ -227,11 +228,11 @@ The state interfaces and their associated contexts supported by each component a
 
 ## Hooks
 
-If you need to customize things even further, such as accessing internal state, intercepting events, or customizing DOM structure, you can drop down to the lower level Hook-based API. Hooks only provide behavior and leave all rendering to you. This gives you more control and flexibility, but requires additional glue code to set up.
+If you need to customize things even further, such as overriding behavior, intercepting events, or customizing DOM structure, you can drop down to the lower level Hook-based API. Hooks only provide behavior and leave all rendering to you. This gives you more control and flexibility, but requires additional glue code to set up.
 
 React Aria Components and Hooks can be used together, allowing you to mix and match depending on the level of customization you require. We recommend starting with the component API by default, and only dropping down to hooks when you need to customize something that the component API does not allow.
 
-Some potential usecases for Hooks are:
+Some potential use cases for Hooks are:
 
 * Overriding which DOM element a component renders
 * Rendering a subset of the children (e.g. virtualized scrolling)
@@ -258,14 +259,14 @@ const MyCheckbox = React.forwardRef((props: CheckboxProps, ref: React.ForwardedR
   [props, ref] = useContextProps(props, ref, CheckboxContext);
   ///- end highlight -///
 
-  // Follow the hook docs...
+  // Follow the hook docs and implement your customizations...
   let state = useToggleState(props);
   let {inputProps} = useCheckbox(props, state, ref);
   return <input {...inputProps} ref={ref} />;
 });
 ```
 
-Since `MyCheckbox` consumes from `CheckboxContext`, it can be used within other React Aria Components in place of the default `Checkbox` component, such as within a [Table](Table.html) or [GridList](GridList.html). This lets you replace only the checkbox with a custom implementation, without rewriting all other React Aria Components you might use it in.
+Since `MyCheckbox` consumes from `CheckboxContext` it can be used within other React Aria Components in place of the built-in `Checkbox`, such as within a [Table](Table.html) or [GridList](GridList.html). This lets you provide a custom checkbox implementation without rewriting all other React Aria Components you might use it in.
 
 ```tsx
 <GridList>
