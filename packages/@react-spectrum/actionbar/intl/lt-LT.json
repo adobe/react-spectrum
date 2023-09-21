@@ -2,6 +2,6 @@
   "actions": "Veiksmai",
   "actionsAvailable": "Galimi veiksmai.",
   "clearSelection": "Išvalyti pasirinkimą",
-  "selected": "{count, plural, =0 {Nieko nepasirinkta} other {Pasirinkta #}}",
+  "selected": "Pasirinkta: {count}",
   "selectedAll": "Pasirinkta viskas"
 }

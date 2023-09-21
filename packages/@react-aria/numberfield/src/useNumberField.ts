@@ -13,7 +13,7 @@
 import {AriaButtonProps} from '@react-types/button';
 import {AriaNumberFieldProps} from '@react-types/numberfield';
 import {chain, filterDOMProps, isAndroid, isIOS, isIPhone, mergeProps, useFormReset, useId} from '@react-aria/utils';
-import {DOMAttributes, TextInputDOMProps} from '@react-types/shared';
+import {DOMAttributes, GroupDOMAttributes, TextInputDOMProps} from '@react-types/shared';
 import {
   InputHTMLAttributes,
   LabelHTMLAttributes,
@@ -37,7 +37,7 @@ export interface NumberFieldAria {
   /** Props for the label element. */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   /** Props for the group wrapper around the input and stepper buttons. */
-  groupProps: DOMAttributes,
+  groupProps: GroupDOMAttributes,
   /** Props for the input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Props for the increment button, to be passed to [useButton](useButton.html). */
@@ -299,10 +299,10 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
 
   return {
     groupProps: {
+      ...focusWithinProps,
       role: 'group',
       'aria-disabled': isDisabled,
-      'aria-invalid': validationState === 'invalid' ? 'true' : undefined,
-      ...focusWithinProps
+      'aria-invalid': isInvalid || validationState === 'invalid' ? 'true' : undefined
     },
     labelProps,
     inputProps,

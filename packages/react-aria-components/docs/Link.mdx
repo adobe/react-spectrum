@@ -43,10 +43,8 @@ type: component
 ```tsx example
 import {Link} from 'react-aria-components';
 
-<Link>
-  <a href="https://www.imdb.com/title/tt6348138/" target="_blank">
-    The missing link
-  </a>
+<Link href="https://www.imdb.com/title/tt6348138/" target="_blank">
+  The missing link
 </Link>
 ```
 
@@ -109,7 +107,7 @@ element with an `href` attribute. However, if the link does not have an href, an
 handled client side with JavaScript instead, it will not be exposed to assistive technology properly.
 `Link` helps achieve accessible links with either native HTML elements or custom element types.
 
-* **Flexible** – Support for navigation links, JavaScript handled links, or custom element types (e.g. router links). Disabled links are also supported.
+* **Flexible** – Support for HTML navigation links, JavaScript handled links, and client side routing. Disabled links are also supported.
 * **Accessible** – Implemented as a custom ARIA link when handled via JavaScript, and otherwise as a native HTML link.
 * **Styleable** – Hover, press, and keyboard focus states are provided for easy styling. These states only apply when interacting with an appropriate input device, unlike CSS pseudo classes.
 
@@ -124,21 +122,15 @@ If a visual label is not provided (e.g. an icon or image only link), then an `ar
 
 ## Content
 
-### Router links
+Links accept content as children. If the link has an href prop, it will be rendered as an `<a>` element.
 
-The `<Link>` component can wrap a custom link element provided by a router like [React Router](https://reactrouter.com/en/main).
-
-```tsx
-import {Link as RouterLink} from 'react-router-dom';
-
-<Link>
-  <RouterLink to="/foo">Foo</RouterLink>
-</Link>
+```tsx example
+<Link href="https://adobe.com" target="_blank">Adobe.com</Link>
 ```
 
-### Client handled links
+### JavaScript handled links
 
-When the content is plain text, a `<Link>` is rendered as a `<span>` but exposed to assistive technologies as a link. Events will need to be handled in JavaScript with the `onPress` prop.
+When a `<Link`> does not have an `href` prop, it is rendered as a `<span role="link">` instead of an `<a>`. Events will need to be handled in JavaScript with the `onPress` prop.
 
 Note: this will not behave like a native link. Browser features like context menus and open in new tab will not apply.
 
@@ -169,6 +161,10 @@ function Example() {
 }
 ```
 
+### Client side routing
+
+The `<Link>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+
 ## Disabled
 
 A link can be disabled by passing the `isDisabled` property. This will work with both native
@@ -176,7 +172,7 @@ link elements as well as client handled links. Native navigation will be disable
 event will not be fired. The link will be exposed as disabled to assistive technology with ARIA.
 
 ```tsx example
-<Link isDisabled><a href="https://adobe.com" target="_blank">Disabled link</a></Link>
+<Link isDisabled href="https://adobe.com" target="_blank">Disabled link</Link>
 ```
 
 ## Props
@@ -276,7 +272,7 @@ Now any `Link` inside a `Router` will update the router state when it is pressed
 ```
 
 ```css hidden
-ul {
+ul:not([class]) {
   padding: 0px;
 }
 ```

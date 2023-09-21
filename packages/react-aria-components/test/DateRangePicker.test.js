@@ -12,8 +12,8 @@
 
 import {Button, CalendarCell, CalendarGrid, DateInput, DateRangePicker, DateRangePickerContext, DateSegment, Dialog, Group, Heading, Label, Popover, RangeCalendar, Text} from 'react-aria-components';
 import {CalendarDate} from '@internationalized/date';
+import {pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestDateRangePicker = (props) => (
@@ -49,7 +49,12 @@ let TestDateRangePicker = (props) => (
 );
 
 describe('DateRangePicker', () => {
-  it('provides slots', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
+  it('provides slots', async () => {
     let {getByRole, getAllByRole} = render(<TestDateRangePicker />);
 
     let group = getByRole('group');
@@ -75,7 +80,7 @@ describe('DateRangePicker', () => {
       expect(segment).toHaveAttribute('data-type');
     }
 
-    userEvent.click(button);
+    await user.click(button);
 
     let dialog = getByRole('dialog');
     expect(dialog).toHaveAttribute('class', 'react-aria-Dialog');
@@ -98,12 +103,12 @@ describe('DateRangePicker', () => {
     expect(group).toHaveAttribute('aria-label', 'test');
   });
 
-  it('should apply isPressed state to button when expanded', () => {
+  it('should apply isPressed state to button when expanded', async () => {
     let {getByRole} = render(<TestDateRangePicker />);
     let button = getByRole('button');
 
     expect(button).not.toHaveAttribute('data-pressed');
-    userEvent.click(button);
+    await user.click(button);
     expect(button).toHaveAttribute('data-pressed');
   });
 
@@ -153,4 +158,14 @@ describe('DateRangePicker', () => {
     let end = document.querySelector('input[name=end]');
     expect(end).toHaveValue('2023-01-20');
   });
+
+  it('should render data- attributes only on the outer element', () => {
+    let {getAllByTestId} = render(
+      <TestDateRangePicker data-testid="date-picker" />
+    );
+    let outerEl = getAllByTestId('date-picker');
+    expect(outerEl).toHaveLength(1);
+    expect(outerEl[0]).toHaveClass('react-aria-DateRangePicker');
+  });
+
 });

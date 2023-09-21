@@ -1,4 +1,4 @@
-import {AriaLabelingProps} from '@react-types/shared';
+import {AriaLabelingProps, LinkDOMProps} from '@react-types/shared';
 import {BaseCollection, CollectionContext, CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useCollectionChildren, useSSRCollectionNode} from './Collection';
 import {buildHeaderRows, TableColumnResizeState} from '@react-stately/table';
 import {ButtonContext} from './Button';
@@ -6,10 +6,12 @@ import {CheckboxContext} from './Checkbox';
 import {ColumnSize, ColumnStaticSize, TableCollection as ITableCollection, TableProps as SharedTableProps} from '@react-types/table';
 import {ContextValue, defaultSlot, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useTableColumnResizeState, useTableState} from 'react-stately';
-import {DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
-import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
+import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
+import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useLocalizedStringFormatter, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
 import {filterDOMProps, useLayoutEffect, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import React, {createContext, ForwardedRef, forwardRef, Key, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 
@@ -244,16 +246,9 @@ function ResizableTableContainer(props: ResizableTableContainerProps, ref: Forwa
 const _ResizableTableContainer = forwardRef(ResizableTableContainer);
 export {_ResizableTableContainer as ResizableTableContainer};
 
-interface InternalTableContextValue {
-  state: TableState<unknown>,
-  dragAndDropHooks?: DragAndDropHooks,
-  dragState?: DraggableCollectionState,
-  dropState?: DroppableCollectionState,
-  layoutState?: TableColumnResizeState<unknown>
-}
-
 export const TableContext = createContext<ContextValue<TableProps, HTMLTableElement>>(null);
-const InternalTableContext = createContext<InternalTableContextValue | null>(null);
+export const TableStateContext = createContext<TableState<unknown> | null>(null);
+export const TableColumnResizeStateContext = createContext<TableColumnResizeState<unknown> | null>(null);
 
 export interface TableRenderProps {
   /**
@@ -389,7 +384,7 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
 
   let style = renderProps.style;
   let tableContainerContext = useContext(ResizableTableContainerContext);
-  let layoutState: TableColumnResizeState<unknown> | undefined = undefined;
+  let layoutState: TableColumnResizeState<unknown> | null = null;
   if (tableContainerContext) {
     layoutState = tableContainerContext.useTableColumnResizeState({
       tableWidth: tableContainerContext.tableWidth
@@ -408,7 +403,9 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
       </TableOptionsContext.Provider>
       <Provider
         values={[
-          [InternalTableContext, {state, dragAndDropHooks, dragState, dropState, layoutState}],
+          [TableStateContext, state],
+          [TableColumnResizeStateContext, layoutState],
+          [DragAndDropContext, {dragAndDropHooks, dragState, dropState}],
           [DropIndicatorContext, {render: TableDropIndicatorWrapper}]
         ]}>
         <FocusScope>
@@ -418,7 +415,7 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
             {...mergeProps(gridProps, focusProps, droppableCollection?.collectionProps)}
             style={style}
             ref={ref}
-            slot={props.slot}
+            slot={props.slot || undefined}
             data-allows-dragging={isListDraggable || undefined}
             data-drop-target={isRootDropTarget || undefined}
             data-focused={isFocused || undefined}
@@ -599,7 +596,7 @@ export {_TableBody as TableBody};
 
 export interface RowRenderProps extends ItemRenderProps {}
 
-export interface RowProps<T> extends StyleRenderProps<RowRenderProps> {
+export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMProps {
   id?: Key,
   /** A list of columns used when dynamically rendering cells. */
   columns?: Iterable<T>,
@@ -747,7 +744,7 @@ function TableBodyRowGroup<T>({collection, isDroppable}: {collection: TableColle
 
 function TableHeaderRow<T>({item}: {item: GridNode<T>}) {
   let ref = useRef<HTMLTableRowElement>(null);
-  let {state} = useContext(InternalTableContext)!;
+  let state = useContext(TableStateContext)!;
   let {rowProps} = useTableHeaderRow({node: item}, state, ref);
   let {checkboxProps} = useTableSelectAllCheckbox(state);
 
@@ -788,7 +785,7 @@ const ColumnResizerContext = createContext<ColumnResizerContextValue | null>(nul
 
 function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
   let ref = useObjectRef<HTMLTableHeaderCellElement>(column.props.ref);
-  let {state} = useContext(InternalTableContext)!;
+  let state = useContext(TableStateContext)!;
   let {columnHeaderProps} = useTableColumnHeader(
     {node: column},
     state,
@@ -797,7 +794,7 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let {hoverProps, isHovered} = useHover({});
 
-  let {layoutState} = useContext(InternalTableContext)!;
+  let layoutState = useContext(TableColumnResizeStateContext);
   let isResizing = false;
   if (layoutState) {
     isResizing = layoutState.resizingColumn === column.key;
@@ -896,10 +893,11 @@ export interface ColumnResizerProps extends RenderProps<ColumnResizerRenderProps
 }
 
 function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivElement>) {
-  let {layoutState} = useContext(InternalTableContext)!;
+  let layoutState = useContext(TableColumnResizeStateContext);
   if (!layoutState) {
     throw new Error('Wrap your <Table> in a <ResizableTableContainer> to enable column resizing');
   }
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   let {onResizeStart, onResize, onResizeEnd} = useContext(ResizableTableContainerContext)!;
   let {column, triggerRef} = useContext(ColumnResizerContext)!;
@@ -907,8 +905,7 @@ function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivEleme
   let {resizerProps, inputProps, isResizing} = useTableColumnResize(
     {
       column,
-      // TODO: translate
-      'aria-label': props['aria-label'] || 'Resizer',
+      'aria-label': props['aria-label'] || stringFormatter.format('tableResizer'),
       onResizeStart,
       onResize,
       onResizeEnd,
@@ -986,7 +983,8 @@ export {_ColumnResizer as ColumnResizer};
 
 function TableRow<T>({item}: {item: GridNode<T>}) {
   let ref = useObjectRef<HTMLTableRowElement>(item.props.ref);
-  let {state, dragAndDropHooks, dragState, dropState} = useContext(InternalTableContext)!;
+  let state = useContext(TableStateContext)!;
+  let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
   let {rowProps, ...states} = useTableRow(
     {
       node: item,
@@ -1081,7 +1079,8 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
         data-focus-visible={isFocusVisible || undefined}
         data-pressed={states.isPressed || undefined}
         data-dragging={isDragging || undefined}
-        data-drop-target={dropIndicator?.isDropTarget || undefined}>
+        data-drop-target={dropIndicator?.isDropTarget || undefined}
+        data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}>
         <Provider
           values={[
             [CheckboxContext, {
@@ -1114,7 +1113,8 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
 
 function TableCell<T>({cell}: {cell: GridNode<T>}) {
   let ref = useObjectRef<HTMLTableCellElement>(cell.props.ref);
-  let {state, dragState} = useContext(InternalTableContext)!;
+  let state = useContext(TableStateContext)!;
+  let {dragState} = useContext(DragAndDropContext);
 
   // @ts-ignore
   cell.column = state.collection.columns[cell.index];
@@ -1154,7 +1154,7 @@ function TableCell<T>({cell}: {cell: GridNode<T>}) {
 
 function TableDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
   ref = useObjectRef(ref);
-  let {dragAndDropHooks, dropState} = useContext(InternalTableContext)!;
+  let {dragAndDropHooks, dropState} = useContext(DragAndDropContext)!;
   let buttonRef = useRef<HTMLDivElement>(null);
   let {dropIndicatorProps, isHidden, isDropTarget} = dragAndDropHooks!.useDropIndicator!(
     props,
@@ -1185,7 +1185,7 @@ function TableDropIndicator(props: TableDropIndicatorProps, ref: ForwardedRef<HT
     ...otherProps
   } = props;
 
-  let {state} = useContext(InternalTableContext)!;
+  let state = useContext(TableStateContext)!;
   let {visuallyHiddenProps} = useVisuallyHidden();
   let renderProps = useRenderProps({
     ...otherProps,
@@ -1215,7 +1215,8 @@ function TableDropIndicator(props: TableDropIndicatorProps, ref: ForwardedRef<HT
 const TableDropIndicatorForwardRef = forwardRef(TableDropIndicator);
 
 function RootDropIndicator() {
-  let {state, dragAndDropHooks, dropState} = useContext(InternalTableContext)!;
+  let state = useContext(TableStateContext)!;
+  let {dragAndDropHooks, dropState} = useContext(DragAndDropContext);
   let ref = useRef<HTMLDivElement>(null);
   let {dropIndicatorProps} = dragAndDropHooks!.useDropIndicator!({
     target: {type: 'root'}

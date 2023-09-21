@@ -11,7 +11,7 @@
  */
 
 export {Pressable} from './Pressable';
-export {PressResponder} from './PressResponder';
+export {PressResponder, ClearPressResponder} from './PressResponder';
 export {useFocus} from './useFocus';
 export {
   isFocusVisible,

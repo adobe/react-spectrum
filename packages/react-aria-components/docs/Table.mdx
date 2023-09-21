@@ -15,13 +15,14 @@ import sharedDocs from 'docs:@react-types/shared';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
-import Anatomy from '@react-aria/table/docs/TableAnatomy.svg';
+import Anatomy from './TableAnatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import {Keyboard} from '@react-spectrum/text';
 import Collections from '@react-spectrum/docs/pages/assets/component-illustrations/Collections.svg';
 import Selection from '@react-spectrum/docs/pages/assets/component-illustrations/Selection.svg';
+import DragAndDrop from '@react-spectrum/docs/pages/assets/component-illustrations/DragAndDrop.svg';
 import Checkbox from '@react-spectrum/docs/pages/assets/component-illustrations/Checkbox.svg';
 import Button from '@react-spectrum/docs/pages/assets/component-illustrations/Button.svg';
 
@@ -385,18 +386,19 @@ HTML tables are meant for static content, rather than tables with rich interacti
 `Table` helps achieve accessible and interactive table components that can be styled as needed.
 
 * **Row selection** – Single or multiple selection, with optional checkboxes, disabled rows, and both `toggle` and `replace` selection behaviors.
-* **Columns** – Support for column sorting, [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) columns, and nested column groups.
+* **Columns** – Support for column sorting, [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) columns, and nested column groups. Columns may optionally allow user resizing via mouse, touch, and keyboard interactions.
 * **Interactive children** – Table cells may include interactive elements such as buttons, menus, etc.
 * **Actions** – Rows and cells support optional actions such as navigation via click, tap, double click, or <Keyboard>Enter</Keyboard> key.
-* **Async loading** – Support for loading and sorting items asynchronously, with infinite and virtualized scrolling.
+* **Async loading** – Support for loading and sorting items asynchronously.
 * **Keyboard navigation** – Table rows, cells, and focusable children can be navigated using the arrow keys, along with page up/down, home/end, etc. Typeahead, auto scrolling, and selection modifier keys are supported as well.
+* **Drag and drop** – Tables support drag and drop to reorder, insert, or update rows via mouse, touch, keyboard, and screen reader interactions.
 * **Touch friendly** – Selection and actions adapt their behavior depending on the device. For example, selection is activated via long press on touch when row actions are present.
 * **Accessible** – Follows the [ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/), with additional selection announcements via an ARIA live region. Extensively tested across many devices and [assistive technologies](accessibility.html#testing) to ensure announcements and behaviors are consistent.
 
 
 ## Anatomy
 
-<Anatomy role="img" aria-label="Anatomy diagram of a list container, consisting of multiple list items. Each list item contains a selection checkbox, a list item row, and a list item cell." />
+<Anatomy role="img" aria-label="Anatomy diagram of a table, consisting of multiple rows and columns. The table header includes a select all checkbox, file name and size columns, and a column resizer. Each row in the table body contains a drag button, a selection checkbox, and file name and size cells." />
 
 A table consists of a container element, with columns and rows of cells containing data inside. The cells within a table may contain focusable elements or plain text content. Columns may be nested to create column groups.
 
@@ -449,6 +451,13 @@ import {Table, TableHeader, TableBody, Column, Row, Cell, Button, Checkbox, Resi
   title="Selection"
   description="Interactions and data structures to represent selection.">
   <Selection />
+</ExampleCard>
+
+<ExampleCard
+  url="dnd.html"
+  title="Drag and drop"
+  description="Concepts and interactions for an accessible drag and drop experience.">
+  <DragAndDrop />
 </ExampleCard>
 
 </section>
@@ -521,11 +530,11 @@ function MyTableHeader<T extends object>({columns, children}: TableHeaderProps<T
   );
 }
 
-function MyRow<T extends object>({id, columns, children}: RowProps<T>) {
+function MyRow<T extends object>({id, columns, children, ...otherProps}: RowProps<T>) {
   let {selectionBehavior, allowsDragging} = useTableOptions();
 
   return (
-    <Row id={id}>
+    <Row id={id} {...otherProps}>
       {allowsDragging && <Cell><Button slot="drag">≡</Button></Cell>}
       {selectionBehavior === 'toggle' && <Cell><MyCheckbox /></Cell>}
       <Collection items={columns}>
@@ -758,6 +767,46 @@ and reverts the selection behavior back to `"replace"`. Keyboard behaviors are u
 </div>
 ```
 
+### Links
+
+Table rows may also be links to another page or website. This can be achieved by passing the `href` prop to the `<Row>` component. Links behave the same way as described above for row actions depending on the `selectionMode` and `selectionBehavior`.
+
+```tsx example
+<Table aria-label="Bookmarks" selectionMode="multiple">
+  <MyTableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>URL</Column>
+    <Column>Date added</Column>
+  </MyTableHeader>
+  <TableBody>
+    <MyRow href="https://adobe.com/" target="_blank">
+      <Cell>Adobe</Cell>
+      <Cell>https://adobe.com/</Cell>
+      <Cell>January 28, 2023</Cell>
+    </MyRow>
+    <MyRow href="https://google.com/" target="_blank">
+      <Cell>Google</Cell>
+      <Cell>https://google.com/</Cell>
+      <Cell>April 5, 2023</Cell>
+    </MyRow>
+    <MyRow href="https://nytimes.com/" target="_blank">
+      <Cell>New York Times</Cell>
+      <Cell>https://nytimes.com/</Cell>
+      <Cell>July 12, 2023</Cell>
+    </MyRow>
+  </TableBody>
+</Table>
+```
+
+```css hidden
+.react-aria-Row[data-href] {
+  cursor: pointer;
+}
+```
+
+#### Client side routing
+
+The `<Row>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
 ## Disabled rows
 
@@ -1311,22 +1360,6 @@ function Example() {
   box-sizing: border-box;
   outline: none;
 
-  .react-aria-Section:not(:first-child) {
-    margin-top: 12px;
-  }
-
-  .react-aria-Header {
-    font-size: 1.143rem;
-    font-weight: bold;
-    padding: 0 0.714rem;
-  }
-
-  [role=separator] {
-    height: 1px;
-    background: var(--separator-color);
-    margin: 2px 4px;
-  }
-
   .react-aria-Item {
     margin: 2px;
     padding: 0.286rem 0.571rem;
@@ -1345,45 +1378,6 @@ function Example() {
     &[data-focused] {
       background: var(--highlight-background);
       color: var(--highlight-foreground);
-    }
-
-    &[data-disabled] {
-      color: var(--text-color-disabled);
-    }
-
-    [slot=label] {
-      font-weight: bold;
-      grid-area: label;
-    }
-
-    [slot=description] {
-      font-size: small;
-      grid-area: desc;
-    }
-
-    & kbd {
-      grid-area: kbd;
-      font-family: monospace;
-      text-align: end;
-    }
-
-    &[data-checked] {
-      padding-left: 24px;
-
-      &[data-checked=true]::before {
-        content: '✓';
-        content: '✓' / '';
-        alt: ' ';
-        position: absolute;
-        left: 4px;
-        font-weight: 600;
-      }
-
-      &[role=menuitemradio][data-checked=true]::before {
-        content: '●';
-        content: '●' / '';
-        transform: scale(0.7)
-      }
     }
   }
 }

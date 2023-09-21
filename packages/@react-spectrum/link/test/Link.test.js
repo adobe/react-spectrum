@@ -68,6 +68,14 @@ describe('Link', function () {
     expect(link).toHaveAttribute('tabIndex', '0');
   });
 
+  it('supports href', () => {
+    let {getByRole} = render(<Link href="https://adobe.com">Click me</Link>);
+    let link = getByRole('link');
+    expect(link).toBeDefined();
+    expect(link.nodeName).toBe('A');
+    expect(link.href).toBe('https://adobe.com/');
+  });
+
   it('Wraps custom child element', () => {
     let ref = React.createRef();
     let {getByRole} = render(
@@ -137,5 +145,13 @@ describe('Link', function () {
     });
     expect(onOpenChange).toHaveBeenCalledTimes(2);
     expect(tooltip).not.toBeInTheDocument();
+  });
+
+  it('supports RouterProvider', () => {
+    let navigate = jest.fn();
+    let {getByRole} = render(<Provider theme={theme} router={{navigate}}><Link href="/foo">Click me</Link></Provider>);
+    let link = getByRole('link');
+    triggerPress(link);
+    expect(navigate).toHaveBeenCalledWith('/foo');
   });
 });

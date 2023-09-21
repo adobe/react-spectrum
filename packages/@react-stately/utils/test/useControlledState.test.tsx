@@ -10,15 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {actHook as act, act as actDOM, render, renderHook} from '@react-spectrum/test-utils';
+import {actHook as act, pointerMap, render, renderHook} from '@react-spectrum/test-utils';
 import React, {useEffect, useState} from 'react';
 import {useControlledState} from '../src';
 import userEvent from '@testing-library/user-event';
 
 describe('useControlledState tests', function () {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   it('can handle default setValue behavior, wont invoke onChange for the same value twice in a row', () => {
     let onChangeSpy = jest.fn();
-    let {result} = renderHook(() => useControlledState(undefined, 'defaultValue', onChangeSpy));
+    let {result} = renderHook(() => useControlledState<string>(undefined, 'defaultValue', onChangeSpy));
     let [value, setValue] = result.current;
     expect(value).toBe('defaultValue');
     expect(onChangeSpy).not.toHaveBeenCalled();
@@ -49,7 +54,7 @@ describe('useControlledState tests', function () {
 
   it('using NaN will only trigger onChange once', () => {
     let onChangeSpy = jest.fn();
-    let {result} = renderHook(() => useControlledState(undefined, undefined, onChangeSpy));
+    let {result} = renderHook(() => useControlledState<number | undefined>(undefined, undefined, onChangeSpy));
     let [value, setValue] = result.current;
     expect(value).not.toBeDefined();
     expect(onChangeSpy).not.toHaveBeenCalled();
@@ -65,13 +70,15 @@ describe('useControlledState tests', function () {
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
   });
 
+  // @deprecated - ignore TS
   it('can handle callback setValue behavior', () => {
     let onChangeSpy = jest.fn();
     let consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-    let {result} = renderHook(() => useControlledState(undefined, 'defaultValue', onChangeSpy));
+    let {result} = renderHook(() => useControlledState<string>(undefined, 'defaultValue', onChangeSpy));
     let [value, setValue] = result.current;
     expect(value).toBe('defaultValue');
     expect(onChangeSpy).not.toHaveBeenCalled();
+    // @ts-ignore
     act(() => setValue((prevValue) => {
       expect(prevValue).toBe('defaultValue');
       return 'newValue';
@@ -82,7 +89,7 @@ describe('useControlledState tests', function () {
     expect(consoleWarnSpy).toHaveBeenLastCalledWith('We can not support a function callback. See Github Issues for details https://github.com/adobe/react-spectrum/issues/2320');
   });
 
-  it('does not trigger too many renders', () => {
+  it('does not trigger too many renders', async () => {
     let renderSpy = jest.fn();
 
     let TestComponent = (props) => {
@@ -102,9 +109,7 @@ describe('useControlledState tests', function () {
     if (!process.env.STRICT_MODE) {
       expect(renderSpy).toBeCalledTimes(1);
     }
-    actDOM(() =>
-      userEvent.click(button)
-    );
+    await user.click(button);
     getByTestId('6');
     if (!process.env.STRICT_MODE) {
       expect(renderSpy).toBeCalledTimes(2);
@@ -113,7 +118,7 @@ describe('useControlledState tests', function () {
 
   it('can handle controlled setValue behavior', () => {
     let onChangeSpy = jest.fn();
-    let {result} = renderHook(() => useControlledState('controlledValue', 'defaultValue', onChangeSpy));
+    let {result} = renderHook(() => useControlledState<string>('controlledValue', 'defaultValue', onChangeSpy));
     let [value, setValue] = result.current;
     expect(value).toBe('controlledValue');
     expect(onChangeSpy).not.toHaveBeenCalled();
@@ -131,6 +136,7 @@ describe('useControlledState tests', function () {
     expect(onChangeSpy).not.toHaveBeenCalled();
   });
 
+  // @deprecated - ignore TS
   it('can handle controlled callback setValue behavior', () => {
     let onChangeSpy = jest.fn();
     let consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
@@ -139,6 +145,7 @@ describe('useControlledState tests', function () {
     expect(value).toBe('controlledValue');
     expect(onChangeSpy).not.toHaveBeenCalled();
 
+    // @ts-ignore
     act(() => setValue((prevValue) => {
       expect(prevValue).toBe('controlledValue');
       return 'newValue';
@@ -149,6 +156,7 @@ describe('useControlledState tests', function () {
 
     onChangeSpy.mockClear();
 
+    // @ts-ignore
     act(() => setValue((prevValue) => {
       expect(prevValue).toBe('controlledValue');
       return 'controlledValue';
@@ -159,6 +167,7 @@ describe('useControlledState tests', function () {
     expect(consoleWarnSpy).toHaveBeenLastCalledWith('We can not support a function callback. See Github Issues for details https://github.com/adobe/react-spectrum/issues/2320');
   });
 
+  // @deprecated - ignore TS
   it('can handle controlled callback setValue behavior after prop change', () => {
     let onChangeSpy = jest.fn();
     let propValue = 'controlledValue';
@@ -172,6 +181,7 @@ describe('useControlledState tests', function () {
     rerender();
     [value, setValue] = result.current;
 
+    // @ts-ignore
     act(() => setValue((prevValue) => {
       expect(prevValue).toBe('updated');
       return 'newValue';
@@ -182,6 +192,7 @@ describe('useControlledState tests', function () {
 
     onChangeSpy.mockClear();
 
+    // @ts-ignore
     act(() => setValue((prevValue) => {
       expect(prevValue).toBe('updated');
       return 'updated';
@@ -210,6 +221,7 @@ describe('useControlledState tests', function () {
     let [value] = result.current;
     expect(value).toBe('controlledValue');
     expect(onChangeSpy).not.toHaveBeenCalled();
+    // @ts-ignore this is an invalid case anyways
     rerender({value: undefined, defaultValue: 'defaultValue', onChange: onChangeSpy});
     expect(consoleWarnSpy).toHaveBeenLastCalledWith('WARN: A component changed from controlled to uncontrolled.');
   });
@@ -230,11 +242,12 @@ describe('useControlledState tests', function () {
     let [value] = result.current;
     expect(value).toBe('defaultValue');
     expect(onChangeSpy).not.toHaveBeenCalled();
+    // @ts-ignore this is an invalid case anyways
     rerender({value: 'controlledValue', defaultValue: 'defaultValue', onChange: onChangeSpy});
     expect(consoleWarnSpy).toHaveBeenLastCalledWith('WARN: A component changed from uncontrolled to controlled.');
   });
 
-  it('should work with suspense when controlled', () => {
+  it('should work with suspense when controlled', async () => {
     if (parseInt(React.version, 10) < 18) {
       return;
     }
@@ -290,7 +303,7 @@ describe('useControlledState tests', function () {
     let show = tree.getByTestId('show');
 
     expect(value).toHaveTextContent('1');
-    userEvent.click(value);
+    await user.click(value);
 
     // Clicking the button should update the value as normal.
     expect(value).toHaveTextContent('2');
@@ -300,13 +313,13 @@ describe('useControlledState tests', function () {
     // Clicking the show button starts a transition. The new value of 3
     // will be thrown away by React since the component suspended.
     expect(show).toHaveTextContent('Show');
-    userEvent.click(show);
+    await user.click(show);
     expect(show).toHaveTextContent('Loading');
     expect(value).toHaveTextContent('2');
 
     // Since the previous render was thrown away, the current value shown
     // to the user is still 2. Clicking the button should bump it to 3 again.
-    userEvent.click(value);
+    await user.click(value);
     expect(value).toHaveTextContent('3');
     expect(onChange).toHaveBeenCalledTimes(2);
     expect(onChange).toHaveBeenLastCalledWith(3);
@@ -320,7 +333,7 @@ describe('useControlledState tests', function () {
     let resolve;
     const AsyncChild = React.lazy(() => new Promise((r) => {resolve = r;}));
     function Test(props) {
-      let [value, setValue] = useControlledState(undefined, 1, props.onChange);
+      let [value, setValue] = useControlledState<number>(undefined, 1, props.onChange);
       let [showChild, setShowChild] = useState(false);
       let [isPending, startTransition] = React.useTransition();
 
@@ -351,7 +364,7 @@ describe('useControlledState tests', function () {
     let value = tree.getByTestId('value');
 
     expect(value).toHaveTextContent('1');
-    userEvent.click(value);
+    await user.click(value);
 
     // React aborts the render, so the value stays at 1.
     expect(value).toHaveTextContent('1 (Loading)');
@@ -359,7 +372,7 @@ describe('useControlledState tests', function () {
     expect(onChange).toHaveBeenLastCalledWith(2);
 
     // Attempting to change the value will be aborted again.
-    userEvent.click(value);
+    await user.click(value);
     expect(value).toHaveTextContent('1 (Loading)');
     expect(onChange).toHaveBeenCalledTimes(1);
     expect(onChange).toHaveBeenLastCalledWith(2);
@@ -371,7 +384,7 @@ describe('useControlledState tests', function () {
     expect(value).toHaveTextContent('2');
 
     // Now incrementing works again.
-    userEvent.click(value);
+    await user.click(value);
     expect(value).toHaveTextContent('3');
     expect(onChange).toHaveBeenCalledTimes(2);
     expect(onChange).toHaveBeenLastCalledWith(3);
