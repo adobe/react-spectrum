@@ -37,6 +37,8 @@ export function MenuSection<T>(props: MenuSectionProps<T>) {
   let {separatorProps} = useSeparator({
     elementType: 'div'
   });
+  let firstSectionKey = state.collection.getFirstKey();
+  let lastSectionKey = [...state.collection].filter(node => node.type === 'section').at(-1)?.key;
 
   return (
     <Fragment>
@@ -66,7 +68,12 @@ export function MenuSection<T>(props: MenuSectionProps<T>) {
           className={
             classNames(
               styles,
-              'spectrum-Menu'
+              'spectrum-Menu',
+              {
+                'spectrum-Menu-section--noHeading': item.rendered == null,
+                'spectrum-Menu-section--firstSection': item.key === firstSectionKey,
+                'spectrum-Menu-section--lastSection': item.key === lastSectionKey
+              }
             )
           }>
           {[...getChildNodes(item, state.collection)].map(node => {

@@ -131,7 +131,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
           </div>
         </div>
         {/* Make the portal container for submenus wide enough so that the submenu items can render as wide as they need to be */}
-        <div ref={popoverContainerRef} style={{width: '100vw', position: 'absolute', top: 0, ...leftOffset}} />
+        <div ref={popoverContainerRef} style={{width: '100vw', position: 'absolute', top: -5, ...leftOffset}} />
       </FocusScope>
     </MenuStateContext.Provider>
   );
