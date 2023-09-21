@@ -13,6 +13,7 @@
 import {act, fireEvent, render, screen} from '@testing-library/react';
 import {Button, Text, Toolbar, ToolbarContext} from '../';
 import {I18nProvider} from '@react-aria/i18n';
+
 import {pointerMap} from '@react-spectrum/test-utils';
 import React, {createRef} from 'react';
 import userEvent from '@testing-library/user-event';

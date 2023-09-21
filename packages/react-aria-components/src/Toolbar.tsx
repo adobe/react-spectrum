@@ -11,10 +11,10 @@
  */
 
 import {ContextValue, forwardRefType, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {createFocusManager} from '@react-aria/focus';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {FocusScope, useFocusManager} from '@react-aria/focus';
 import {MultipleSelection, Orientation} from '@react-types/shared';
-import React, {createContext, ForwardedRef, forwardRef, KeyboardEventHandler, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, KeyboardEventHandler, RefObject, useRef} from 'react';
 import {useLocale} from '@react-aria/i18n';
 
 export interface ToolbarRenderProps {
@@ -45,7 +45,7 @@ export const ToolbarContext = createContext<ContextValue<ToolbarProps, HTMLDivEl
 // Any reason not to include ref? i feel like we've been sad about not including it down the line
 // same with state...
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function useToolbar(props: ToolbarProps & {isInsideAToolbar: boolean}, ref: ForwardedRef<HTMLDivElement>) {
+function useToolbar(props: ToolbarProps & {isInsideAToolbar: boolean}, ref: RefObject<HTMLDivElement>) {
   const {
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledBy,
@@ -54,7 +54,7 @@ function useToolbar(props: ToolbarProps & {isInsideAToolbar: boolean}, ref: Forw
   } = props;
   const {direction} = useLocale();
   const shouldReverse = direction === 'rtl' && orientation === 'horizontal';
-  const focusManager = useFocusManager();
+  let focusManager = createFocusManager(ref);
 
   const onKeyDown: KeyboardEventHandler = (e) => {
     if (
@@ -108,7 +108,7 @@ function useToolbar(props: ToolbarProps & {isInsideAToolbar: boolean}, ref: Forw
   // If the element was removed, do nothing, either the first item in the first group,
   // or the last item in the last group will be focused, depending on direction.
   const onFocus = (e) => {
-    if (lastFocused.current && !e.currentTarget.contains(e.relatedTarget)) {
+    if (lastFocused.current && !e.currentTarget.contains(e.relatedTarget) && ref.current?.contains(e.target)) {
       lastFocused.current?.focus();
       lastFocused.current = null;
     }
@@ -128,22 +128,6 @@ function useToolbar(props: ToolbarProps & {isInsideAToolbar: boolean}, ref: Forw
 }
 
 function Toolbar(props: ToolbarProps, ref: ForwardedRef<HTMLDivElement>) {
-  return (
-    <FocusScope>
-      <ToolbarInner {...props} ref={ref} />
-    </FocusScope>
-  );
-}
-
-// I don't like exporting this, but it's the only way I can think of for ActionGroup to know if it's in a Toolbar
-// This is required so that we don't render a role="toolbar" inside another role="toolbar"
-// Eventually we'll hopefully move ActionGroup to being implemented by Toolbar and then we can remove this
-/** @private */
-export const ToolbarNestingContext = createContext({isInsideAToolbar: false});
-/** @private */
-export const useToolbarNestingContext = () => React.useContext(ToolbarNestingContext);
-
-let ToolbarInner = forwardRef((props: ToolbarProps, ref: ForwardedRef<HTMLDivElement>) => {
   [props, ref] = useContextProps(props, ref, ToolbarContext);
   let {isInsideAToolbar} = useToolbarNestingContext();
   let {toolbarProps} = useToolbar({...props, isInsideAToolbar}, ref);
@@ -167,7 +151,16 @@ let ToolbarInner = forwardRef((props: ToolbarProps, ref: ForwardedRef<HTMLDivEle
       </ToolbarNestingContext.Provider>
     </div>
   );
-});
+}
+
+// I don't like exporting this, but it's the only way I can think of for ActionGroup to know if it's in a Toolbar
+// This is required so that we don't render a role="toolbar" inside another role="toolbar"
+// Eventually we'll hopefully move ActionGroup to being implemented by Toolbar and then we can remove this
+/** @private */
+export const ToolbarNestingContext = createContext({isInsideAToolbar: false});
+/** @private */
+export const useToolbarNestingContext = () => React.useContext(ToolbarNestingContext);
+
 
 /**
  * A toolbar lets you group multiple interactive elements such as Buttons.

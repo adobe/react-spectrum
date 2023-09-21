@@ -1253,7 +1253,9 @@ export const ToolbarExample = (props) => {
       <ToggleButton className={classNames(styles, 'toggleButtonExample')}><strong>B</strong></ToggleButton>
       <ToggleButton className={classNames(styles, 'toggleButtonExample')}><div style={{textDecoration: 'underline'}}>U</div></ToggleButton>
       <ToggleButton className={classNames(styles, 'toggleButtonExample')}><i>I</i></ToggleButton>
-      {/* radio does not work in toolbar yet, selection doesn't follow focus
+      {/* radio group doesn't work, we need a way for focus management to fall through to the lower component
+      // but then be returned back to the Toolbar when we reach the end instead of wrapping
+      // We can implement a radio group as we did single selection mode for ActionGroup though, just not in RAC yet
       <RadioGroup orientation="horizontal" className={styles.radiogroup} aria-label="Text Alignment">
         <Radio className={styles.radio} value="left">Left</Radio>
         <Radio className={styles.radio} value="center">Center</Radio>
@@ -1267,8 +1269,10 @@ export const ToolbarExample = (props) => {
         <Button isDisabled>Cut</Button>
       </Toolbar>
       */}
-      {/* select does not work in toolbar yet, focus can't move "Right Arrow" past it
-      <Select data-testid="select-example" id="select-example-id">
+      {/* Select and Numberfield have non-tabbable focusable elements which you should NOT be able to arrow through
+      // meanwhile, radio groups have non-tabbable focusable elements which you SHOULD be able to arrow through
+      */}
+      <Select data-testid="select-example" id="select-example-id" aria-label="Font chooser">
         <Button>
           <SelectValue />
           <span aria-hidden="true" style={{paddingLeft: 5}}>▼</span>
@@ -1283,17 +1287,15 @@ export const ToolbarExample = (props) => {
             <MyItem>Monospace</MyItem>
           </ListBox>
         </Popover>
-      </Select>*/}
-      {/* numberfield does not work in toolbar yet, focus stops on the stepper buttons
+      </Select>
       <NumberField data-testid="number-field-example" formatOptions={{style: 'currency', currency: 'USD'}}>
-        <Label>Test</Label>
+        <Label>Font size</Label>
         <Group style={{display: 'flex'}}>
           <Button slot="decrement">-</Button>
           <Input />
           <Button slot="increment">+</Button>
         </Group>
       </NumberField>
-      */}
       <Checkbox>
         <div className="checkbox">
           <svg viewBox="0 0 18 18" aria-hidden="true">
@@ -1307,15 +1309,13 @@ export const ToolbarExample = (props) => {
   );
 };
 
-ToolbarExample.story = {
-  args: {
-    orientation: 'horizontal'
-  },
-  argTypes: {
-    orientation: {
-      control: 'radio',
-      options: ['horizontal', 'vertical']
-    }
+ToolbarExample.args = {
+  orientation: 'horizontal'
+};
+ToolbarExample.argTypes = {
+  orientation: {
+    control: 'radio',
+    options: ['horizontal', 'vertical']
   }
 };
 
