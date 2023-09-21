@@ -1,4 +1,5 @@
 {
   "moreActions": "المزيد من الإجراءات",
-  "unavailable": "غير مُتوفر، قُم بالتوسيع للحصول على التفاصيل"
+  "unavailable": "غير مُتوفر، قُم بالتوسيع للحصول على التفاصيل",
+  "backButton": "Return to {prevMenuButton}"
 }
