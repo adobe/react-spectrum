@@ -1616,6 +1616,30 @@ describe('ListView', function () {
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
         expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
       });
+
+      it('works with RouterProvider', async () => {
+        let navigate = jest.fn();
+        let {getAllByRole} = render(
+          <Provider theme={theme} router={{navigate}}>
+            <ListView aria-label="listview">
+              <Item href="/one">One</Item>
+              <Item href="https://adobe.com">Two</Item>
+            </ListView>
+          </Provider>
+        );
+
+        let items = getAllByRole('row');
+        trigger(items[0]);
+        expect(navigate).toHaveBeenCalledWith('/one');
+
+        navigate.mockReset();
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick, {once: true});
+
+        trigger(items[1]);
+        expect(navigate).not.toHaveBeenCalled();
+        expect(onClick).toHaveBeenCalledTimes(1);
+      });
     });
   });
 });

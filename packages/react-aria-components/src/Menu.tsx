@@ -198,12 +198,10 @@ function MenuItem<T>({item}: MenuItemProps<T>) {
   });
 
   let ElementType: React.ElementType = props.href ? 'a' : 'div';
-  let DOMProps = filterDOMProps(props as any, {isLink: !!props.href});
-  delete DOMProps.id;
 
   return (
     <ElementType
-      {...mergeProps(DOMProps, menuItemProps, focusProps)}
+      {...mergeProps(menuItemProps, focusProps)}
       {...renderProps}
       ref={ref}
       data-disabled={states.isDisabled || undefined}

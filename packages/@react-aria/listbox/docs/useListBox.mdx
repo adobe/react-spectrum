@@ -14,10 +14,12 @@ import docs from 'docs:@react-aria/listbox';
 import collectionsDocs from 'docs:@react-types/shared/src/collections.d.ts';
 import selectionDocs from 'docs:@react-stately/selection';
 import statelyDocs from 'docs:@react-stately/list';
+import utilsDocs from 'docs:@react-aria/utils';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-aria/listbox/package.json';
 import Anatomy from './anatomy.svg';
 import {Keyboard} from '@react-spectrum/text';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 
 ---
 category: Collections
@@ -142,18 +144,7 @@ function ListBox<T extends object>(props: AriaListBoxProps<T>) {
   return (
     <>
       <div {...labelProps}>{props.label}</div>
-      <ul
-        {...listBoxProps}
-        ref={ref}
-        style={{
-          padding: 0,
-          margin: '5px 0',
-          listStyle: 'none',
-          border: '1px solid gray',
-          maxWidth: 250,
-          maxHeight: 300,
-          overflow: 'auto'
-        }}>
+      <ul {...listBoxProps} ref={ref}>
         {[...state.collection].map(item => (
           item.type === 'section'
             ? <ListBoxSection key={item.key} section={item} state={state} />
@@ -167,7 +158,7 @@ function ListBox<T extends object>(props: AriaListBoxProps<T>) {
 function Option({item, state}) {
   // Get props for the option element
   let ref = React.useRef(null);
-  let {optionProps, isSelected, isDisabled} = useOption({key: item.key}, state, ref);
+  let {optionProps} = useOption({key: item.key}, state, ref);
 
   // Determine whether we should show a keyboard
   // focus ring for accessibility
@@ -177,14 +168,7 @@ function Option({item, state}) {
     <li
       {...mergeProps(optionProps, focusProps)}
       ref={ref}
-      style={{
-        background: isSelected ? 'blueviolet' : 'transparent',
-        color: isDisabled ? '#aaa' : isSelected ? 'white' : null,
-        padding: '2px 5px',
-        outline: isFocusVisible
-          ? '2px solid orange'
-          : 'none',
-      }}>
+      data-focus-visible={isFocusVisible}>
       {item.rendered}
     </li>
   );
@@ -196,6 +180,44 @@ function Option({item, state}) {
   <Item>Right</Item>
 </ListBox>
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+[role=listbox] {
+  padding: 0;
+  margin: 5px 0;
+  list-style: none;
+  border: 1px solid gray;
+  max-width: 250px;
+  max-height: 300px;
+  overflow: auto;
+}
+
+[role=option] {
+  display: block;
+  padding: 2px 5px;
+  outline: none;
+  cursor: default;
+  color: inherit;
+
+  &[data-focus-visible=true] {
+    outline: 2px solid orange;
+  }
+
+  &[aria-selected=true] {
+    background: blueviolet;
+    color: white;
+  }
+
+  &[aria-disabled] {
+    color: #aaa;
+  }
+}
+```
+
+</details>
 
 ## Dynamic collections
 
@@ -433,16 +455,7 @@ function ListBox(props) {
   return (
     <>
       <div {...labelProps}>{props.label}</div>
-      <ul
-        {...listBoxProps}
-        ref={ref}
-        style={{
-          padding: 0,
-          margin: '5px 0',
-          listStyle: 'none',
-          border: '1px solid gray',
-          maxWidth: 250
-        }}>
+      <ul {...listBoxProps} ref={ref}>
         {[...state.collection].map(item => (
           <Option
             key={item.key}
@@ -456,7 +469,7 @@ function ListBox(props) {
 ///- end collapse -///
 function Option({item, state}) {
   let ref = React.useRef(null);
-  let {optionProps, labelProps, descriptionProps, isSelected} = useOption({key: item.key}, state, ref);
+  let {optionProps, labelProps, descriptionProps} = useOption({key: item.key}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
 
   // Pull out the two expected children. We will clone them
@@ -467,14 +480,7 @@ function Option({item, state}) {
     <li
       {...mergeProps(optionProps, focusProps)}
       ref={ref}
-      style={{
-        background: isSelected ? 'blueviolet' : 'transparent',
-        color: isSelected ? 'white' : null,
-        padding: '2px 5px',
-        outline: isFocusVisible
-          ? '2px solid orange'
-          : 'none',
-      }}>
+      data-focus-visible={isFocusVisible}>
       {React.cloneElement(title, labelProps)}
       {React.cloneElement(description, descriptionProps)}
     </li>
@@ -532,6 +538,120 @@ function AsyncLoadingExample() {
   );
 }
 ```
+
+## Links
+
+By default, interacting with an item in a ListBox triggers `onSelectionChange`. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component.
+
+This example shows how to update the `Option` component with support for rendering an `<a>` element if an `href` prop is passed to the item. Note that you'll also need to render the `ListBox` as a `<div>` instead of a `<ul>`, since an `<a>` inside a `<ul>` is not valid HTML.
+
+```tsx example
+///- begin collapse -///
+function ListBox(props) {
+  let state = useListState(props);
+  let ref = React.useRef(null);
+  let {listBoxProps, labelProps} = useListBox(props, state, ref);
+
+  return (
+    <>
+      <div {...labelProps}>{props.label}</div>
+      <ul {...listBoxProps} ref={ref}>
+        {[...state.collection].map(item => (
+          <Option
+            key={item.key}
+            item={item}
+            state={state} />
+        ))}
+      </ul>
+    </>
+  );
+}
+///- end collapse -///
+function Option({item, state}) {
+  let ref = React.useRef(null);
+  let {optionProps} = useOption({key: item.key}, state, ref);
+  let {isFocusVisible, focusProps} = useFocusRing();
+  /*- begin highlight -*/
+  let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
+  /*- end highlight -*/
+
+  return (
+    <ElementType
+      {...mergeProps(optionProps, focusProps)}
+      ref={ref}
+      data-focus-visible={isFocusVisible}>
+      {item.rendered}
+    </ElementType>
+  );
+}
+
+<ListBox aria-label="Links">
+  <Item href="https://adobe.com/" target="_blank">Adobe</Item>
+  <Item href="https://apple.com/" target="_blank">Apple</Item>
+  <Item href="https://google.com/" target="_blank">Google</Item>
+  <Item href="https://microsoft.com/" target="_blank">Microsoft</Item>
+</ListBox>
+```
+
+```css hidden
+[role=option][href] {
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-touch-callout: none;
+}
+```
+
+By default, link items in a ListBox are not selectable, and only perform navigation when the user interacts with them. However, with the "replace" [selection behavior](#selection-behavior), items will be selected when single clicking or pressing the <Keyboard>Space</Keyboard> key, and navigate to the link when double clicking or pressing the <Keyboard>Enter</Keyboard> key.
+
+```tsx example
+///- begin collapse -///
+function ListBox(props) {
+  let state = useListState(props);
+  let ref = React.useRef(null);
+  let {listBoxProps, labelProps} = useListBox(props, state, ref);
+
+  return (
+    <>
+      <div {...labelProps}>{props.label}</div>
+      <ul {...listBoxProps} ref={ref}>
+        {[...state.collection].map(item => (
+          <Option
+            key={item.key}
+            item={item}
+            state={state} />
+        ))}
+      </ul>
+    </>
+  );
+}
+function Option({item, state}) {
+  let ref = React.useRef(null);
+  let {optionProps} = useOption({key: item.key}, state, ref);
+  let {isFocusVisible, focusProps} = useFocusRing();
+  let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
+
+  return (
+    <ElementType
+      {...mergeProps(optionProps, focusProps)}
+      ref={ref}
+      data-focus-visible={isFocusVisible}>
+      {item.rendered}
+    </ElementType>
+  );
+}
+///- end collapse -///
+
+<ListBox aria-label="Links" selectionMode="multiple" selectionBehavior="replace">
+  <Item href="https://adobe.com/" target="_blank">Adobe</Item>
+  <Item href="https://apple.com/" target="_blank">Apple</Item>
+  <Item href="https://google.com/" target="_blank">Google</Item>
+  <Item href="https://microsoft.com/" target="_blank">Microsoft</Item>
+</ListBox>
+```
+
+### Client side routing
+
+The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={utilsDocs.links} type={utilsDocs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
 ## Disabled items
 

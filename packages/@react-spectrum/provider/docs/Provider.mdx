@@ -97,6 +97,18 @@ This example specifies two breakpoints: `tablet` and `desktop`. It displays a [V
 </Provider>
 ```
 
+### Client side routing
+
+The Provider component accepts an optional `router` prop. This enables React Spectrum components that render links to perform client side navigation using your application or framework's client side router. See the [client side routing guide](routing.html) for details on how to set this up.
+
+```tsx
+let navigate = useNavigateFromYourRouter();
+
+<Provider theme={theme} router={{navigate}}>
+  <YourApp />
+</Provider>
+```
+
 ## Property groups
 Provider can also be used to define common properties for a group of components within it. For example, a group of components could be disabled together rather than individually by setting the `isDisabled` prop on any parent provider.
 
