@@ -12,17 +12,20 @@
 
 import {AriaToastRegionProps, useToastRegion} from '@react-aria/toast';
 import {classNames} from '@react-spectrum/utils';
-import {FocusRing} from '@react-aria/focus';
+import {mergeProps} from '@react-aria/utils';
 import {Provider} from '@react-spectrum/provider';
-import React, {ReactElement, ReactNode, useRef} from 'react';
+import React, {createContext, ReactElement, ReactNode, useRef} from 'react';
 import ReactDOM from 'react-dom';
 import toastContainerStyles from './toastContainer.css';
 import {ToastState} from '@react-stately/toast';
+import {useFocusRing} from '@react-aria/focus';
 
 interface ToastContainerProps extends AriaToastRegionProps {
   children: ReactNode,
   state: ToastState<unknown>
 }
+
+export const ToasterContext = createContext(false);
 
 export function Toaster(props: ToastContainerProps): ReactElement {
   let {
@@ -32,12 +35,13 @@ export function Toaster(props: ToastContainerProps): ReactElement {
 
   let ref = useRef();
   let {regionProps} = useToastRegion(props, state, ref);
+  let {focusProps, isFocusVisible} = useFocusRing();
 
   let contents = (
     <Provider UNSAFE_style={{background: 'transparent'}}>
-      <FocusRing focusRingClass={classNames(toastContainerStyles, 'focus-ring')}>
+      <ToasterContext.Provider value={isFocusVisible}>
         <div
-          {...regionProps}
+          {...mergeProps(regionProps, focusProps)}
           ref={ref}
           data-position="bottom"
           data-placement="center"
@@ -47,7 +51,7 @@ export function Toaster(props: ToastContainerProps): ReactElement {
           )}>
           {children}
         </div>
-      </FocusRing>
+      </ToasterContext.Provider>
     </Provider>
   );
 
