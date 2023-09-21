@@ -1,6 +1,8 @@
 {
+  "collapse": "Colapsar",
   "columnResizer": "Redimensionador de coluna",
   "drag": "Arrastar",
+  "expand": "Expandir",
   "loading": "A carregar...",
   "loadingMore": "A carregar mais...",
   "resizeColumn": "Redimensionar coluna",

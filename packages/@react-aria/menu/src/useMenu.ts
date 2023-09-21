@@ -63,7 +63,8 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
     selectionManager: state.selectionManager,
     collection: state.collection,
     disabledKeys: state.disabledKeys,
-    shouldFocusWrap
+    shouldFocusWrap,
+    linkBehavior: 'override'
   });
 
   menuData.set(state, {

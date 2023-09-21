@@ -20,7 +20,6 @@ import {
   classNames,
   useDOMRef,
   useFocusableRef,
-  useIsMobileDevice,
   useStyleProps,
   useUnwrapDOMRef
 } from '@react-spectrum/utils';
@@ -613,7 +612,6 @@ function TableVirtualizer(props) {
   }, [state.contentSize, headerRef, bodyRef, domRef]);
 
   let headerHeight = layout.getLayoutInfo('header')?.rect.height || 0;
-  let visibleRect = state.virtualizer.visibleRect;
 
   // Sync the scroll position from the table body to the header container.
   let onScroll = useCallback(() => {
@@ -650,7 +648,6 @@ function TableVirtualizer(props) {
             role="presentation"
             className={classNames(styles, 'spectrum-Table-headWrapper')}
             style={{
-              width: visibleRect.width,
               height: headerHeight,
               overflow: 'hidden',
               position: 'relative',
@@ -823,7 +820,6 @@ function ResizableTableColumnHeader(props) {
     headerRowHovered,
     setIsInResizeMode,
     isEmpty,
-    onFocusedResizer,
     isInResizeMode,
     headerMenuOpen,
     setHeaderMenuOpen
@@ -877,39 +873,8 @@ function ResizableTableColumnHeader(props) {
     return options;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allowsSorting]);
-  let isMobile = useIsMobileDevice();
 
   let resizingColumn = layout.resizingColumn;
-  let prevResizingColumn = useRef(null);
-  let timeout = useRef(null);
-  useEffect(() => {
-    if (prevResizingColumn.current !== resizingColumn &&
-      resizingColumn != null &&
-      resizingColumn === column.key) {
-      if (timeout.current) {
-        clearTimeout(timeout.current);
-      }
-      // focusSafely won't actually focus because the focus moves from the menuitem to the body during the after transition wait
-      // without the immediate timeout, Android Chrome doesn't move focus to the resizer
-      let focusResizer = () => {
-        resizingRef.current.focus();
-        onFocusedResizer();
-        timeout.current = null;
-      };
-      if (isMobile) {
-        timeout.current = setTimeout(focusResizer, 400);
-        return;
-      }
-      timeout.current = setTimeout(focusResizer, 0);
-    }
-    prevResizingColumn.current = resizingColumn;
-  }, [resizingColumn, column.key, isMobile, onFocusedResizer, resizingRef, prevResizingColumn, timeout]);
-
-  // eslint-disable-next-line arrow-body-style
-  useEffect(() => {
-    return () => clearTimeout(timeout.current);
-  }, []);
-
   let showResizer = !isEmpty && ((headerRowHovered && getInteractionModality() !== 'keyboard') || resizingColumn != null);
   let alignment = 'start';
   let menuAlign = 'start' as 'start' | 'end';

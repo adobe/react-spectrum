@@ -262,6 +262,10 @@
   }
 }
 
+.react-spectrum-ListView-row[data-href] {
+  cursor: pointer;
+}
+
 .react-spectrum-ListViewItem {
   display: grid; /* TODO: define grid areas */
   box-sizing: border-box;

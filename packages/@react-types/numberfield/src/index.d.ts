@@ -15,8 +15,8 @@ import {
   DOMProps,
   FocusableProps,
   HelpTextProps,
-  InputBase, LabelableProps,
-  RangeInputBase, SpectrumLabelableProps,
+  InputBase, InputDOMProps, LabelableProps,
+  RangeInputBase, SpectrumFieldValidation, SpectrumLabelableProps,
   StyleProps,
   TextInputBase,
   TextInputDOMEvents,
@@ -39,7 +39,7 @@ export interface AriaNumberFieldProps extends NumberFieldProps, DOMProps, AriaLa
   incrementAriaLabel?: string
 }
 
-export interface SpectrumNumberFieldProps extends Omit<AriaNumberFieldProps, 'placeholder'>, StyleProps, SpectrumLabelableProps {
+export interface SpectrumNumberFieldProps extends Omit<AriaNumberFieldProps, 'placeholder' | 'isInvalid' | 'validationState'>, SpectrumFieldValidation, InputDOMProps, StyleProps, SpectrumLabelableProps {
   /** Whether the numberfield should be displayed with a quiet style. */
   isQuiet?: boolean,
   /** Whether to hide the increment and decrement buttons. */

@@ -13,7 +13,7 @@
 import {ColorArea} from '../';
 import {composeStories} from '@storybook/testing-react';
 import {defaultTheme} from '@adobe/react-spectrum';
-import {fireEvent, installMouseEvent, installPointerEvent, render} from '@react-spectrum/test-utils';
+import {fireEvent, installMouseEvent, installPointerEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import {parseColor} from '@react-stately/color';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -37,8 +37,10 @@ const getBoundingClientRect = () => ({
 describe('ColorArea', () => {
   let onChangeSpy = jest.fn();
   let onChangeEndSpy = jest.fn();
+  let user;
 
   beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
     jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => SIZE);
     jest.useFakeTimers();
   });
@@ -79,7 +81,7 @@ describe('ColorArea', () => {
         expect(ySlider).toHaveAttribute('aria-hidden', 'true');
       });
 
-      it('disabled', () => {
+      it('disabled', async () => {
         let {getAllByRole} = render(<div>
           <button>A</button>
           <Component defaultValue={'#ff00ff'} isDisabled />
@@ -90,11 +92,11 @@ describe('ColorArea', () => {
         expect(xSlider).toHaveAttribute('disabled');
         expect(ySlider).toHaveAttribute('disabled');
 
-        userEvent.tab();
+        await user.tab();
         expect(document.activeElement).toBe(buttonA);
-        userEvent.tab();
+        await user.tab();
         expect(document.activeElement).toBe(buttonB);
-        userEvent.tab({shift: true});
+        await user.tab({shift: true});
         expect(document.activeElement).toBe(buttonA);
       });
 
@@ -143,7 +145,7 @@ describe('ColorArea', () => {
           ${'shiftup/shiftdown'}    | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowUp', shiftKey: true}), backward: (elem) => pressKey(elem, {key: 'ArrowDown', shiftKey: true})}}    | ${parseColor('#f011f0')}
           ${'pageup/pagedown'}      | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'PageUp'}), backward: (elem) => pressKey(elem, {key: 'PageDown'})}}                                      | ${parseColor('#f011f0')}
           ${'home/end'}             | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'Home'}), backward: (elem) => pressKey(elem, {key: 'End'})}}                                             | ${parseColor('#df00f0')}
-        `('$Name', ({props, actions: {forward, backward}, result}) => {
+        `('$Name', async ({props, actions: {forward, backward}, result}) => {
           let {getAllByRole} = render(
             <Component
               {...props}
@@ -166,7 +168,7 @@ describe('ColorArea', () => {
           expect(ySlider).toHaveAttribute('tabindex', '-1');
           expect(ySlider).toHaveAttribute('aria-hidden', 'true');
 
-          userEvent.tab();
+          await user.tab();
 
           forward(xSlider);
           expect(onChangeSpy).toHaveBeenCalledTimes(1);
@@ -199,7 +201,7 @@ describe('ColorArea', () => {
           ${'shiftup/shiftdown'}    | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowUp', shiftKey: true}), backward: (elem) => pressKey(elem, {key: 'ArrowDown', shiftKey: true})}}    | ${parseColor('#f011f0')}
           ${'pageup/pagedown'}      | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'PageUp'}), backward: (elem) => pressKey(elem, {key: 'PageDown'})}}                                      | ${parseColor('#f011f0')}
           ${'home/end'}             | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'End'}), backward: (elem) => pressKey(elem, {key: 'Home'})}}                                             | ${parseColor('#df00f0')}
-        `('$Name RTL', ({props, actions: {forward, backward}, result}) => {
+        `('$Name RTL', async ({props, actions: {forward, backward}, result}) => {
           let {getAllByRole} = render(
             <Provider locale="ar-AE" theme={defaultTheme}>
               <Component
@@ -224,7 +226,7 @@ describe('ColorArea', () => {
           expect(ySlider).toHaveAttribute('tabindex', '-1');
           expect(ySlider).toHaveAttribute('aria-hidden', 'true');
 
-          userEvent.tab();
+          await user.tab();
 
           forward(xSlider);
           expect(onChangeSpy).toHaveBeenCalledTimes(1);
@@ -249,7 +251,7 @@ describe('ColorArea', () => {
           expect(document.activeElement === xSlider ? ySlider : xSlider).not.toHaveAttribute('aria-hidden', 'true');
         });
 
-        it('no events when disabled', () => {
+        it('no events when disabled', async () => {
           let defaultColor = parseColor('#ff00ff');
           let {getAllByRole, getByRole} = render(<div>
             <Component
@@ -261,7 +263,7 @@ describe('ColorArea', () => {
           </div>);
           let buttonA = getByRole('button');
           let [xSlider] = getAllByRole('slider');
-          userEvent.tab();
+          await user.tab();
           expect(buttonA).toBe(document.activeElement);
 
           pressKey(xSlider, {key: 'LeftArrow'});
@@ -470,7 +472,7 @@ describe('ColorArea', () => {
       expect(ySlider).toHaveAttribute('aria-hidden', 'true');
     });
 
-    it('the slider is focusable', () => {
+    it('the slider is focusable', async () => {
       let {getAllByRole} = render(<div>
         <button>A</button>
         <ColorArea defaultValue={'#ff00ff'} />
@@ -479,9 +481,9 @@ describe('ColorArea', () => {
       let [xSlider, ySlider] = getAllByRole('slider', {hidden: true});
       let [buttonA, buttonB] = getAllByRole('button');
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(buttonA);
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(xSlider);
       // focusing into ColorArea, value text for each slider will include name and value for each channel
       expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 255, Green: 0');
@@ -490,12 +492,12 @@ describe('ColorArea', () => {
       // following a keyboard event that changes a value, value text for each slider will include only the name and value for that channel.
       expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 254');
       expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 0');
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(buttonB);
       // focusing out of ColorArea, value text for each slider will include name and value for each channel
       expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 254, Green: 0');
       expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 0, Red: 254');
-      userEvent.tab({shift: true});
+      await user.tab({shift: true});
       expect(document.activeElement).toBe(xSlider);
       // focusing back into ColorArea, value text for each slider will include name and value for each channel
       expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 254, Green: 0');
@@ -606,7 +608,7 @@ describe('ColorArea', () => {
       expect(zSlider).toHaveAttribute('aria-valuetext', '0°');
     });
 
-    it('the slider is focusable', () => {
+    it('the slider is focusable', async () => {
       let {getAllByRole, getByRole} = render(<div>
         <button>A</button>
         <DefaultColorArea defaultValue={'#ff00ff'} />
@@ -616,19 +618,57 @@ describe('ColorArea', () => {
       let colorField = getByRole('textbox');
       let [buttonA, buttonB] = getAllByRole('button');
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(buttonA);
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(xSlider);
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(zSlider);
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(colorField);
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(buttonB);
-      userEvent.tab({shift: true});
-      userEvent.tab({shift: true});
+      await user.tab({shift: true});
+      await user.tab({shift: true});
       expect(document.activeElement).toBe(zSlider);
+    });
+  });
+
+  describe('forms', () => {
+    it('supports form name', () => {
+      let {getAllByRole} = render(<ColorArea xName="red" yName="green" />);
+      let inputs = getAllByRole('slider', {hidden: true});
+      expect(inputs[0]).toHaveAttribute('name', 'red');
+      expect(inputs[0]).toHaveValue('255');
+      expect(inputs[1]).toHaveAttribute('name', 'green');
+      expect(inputs[1]).toHaveValue('255');
+    });
+
+    it('supports form reset', async () => {
+      function Test() {
+        let [value, setValue] = React.useState(parseColor('rgb(100, 200, 0)'));
+        return (
+          <form>
+            <ColorArea value={value} onChange={setValue} />
+            <input type="reset" data-testid="reset" />
+          </form>
+        );
+      }
+
+      let {getByTestId, getAllByRole} = render(<Test />);
+      let inputs = getAllByRole('slider', {hidden: true});
+
+      expect(inputs[0]).toHaveValue('100');
+      expect(inputs[1]).toHaveValue('200');
+      fireEvent.change(inputs[0], {target: {value: '10'}});
+      fireEvent.change(inputs[1], {target: {value: '20'}});
+      expect(inputs[0]).toHaveValue('10');
+      expect(inputs[1]).toHaveValue('20');
+
+      let button = getByTestId('reset');
+      await user.click(button);
+      expect(inputs[0]).toHaveValue('100');
+      expect(inputs[1]).toHaveValue('200');
     });
   });
 });

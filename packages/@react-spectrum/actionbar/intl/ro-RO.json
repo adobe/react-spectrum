@@ -2,6 +2,6 @@
   "actions": "Acțiuni",
   "actionsAvailable": "Acțiuni disponibile.",
   "clearSelection": "Goliți selecția",
-  "selected": "{count, plural, =0 {Niciunul selectat} other {# selectate}}",
+  "selected": "{count, plural, =0 {Niciunul selectat} one { # selectat} other {# selectate}}",
   "selectedAll": "Toate selectate"
 }

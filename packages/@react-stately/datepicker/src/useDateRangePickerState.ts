@@ -29,21 +29,21 @@ export interface DateRangePickerStateOptions<T extends DateValue = DateValue> ex
 type TimeRange = RangeValue<TimeValue>;
 export interface DateRangePickerState extends OverlayTriggerState {
   /** The currently selected date range. */
-  value: DateRange,
+  value: DateRange | null,
   /** Sets the selected date range. */
-  setValue(value: DateRange): void,
+  setValue(value: DateRange | null): void,
   /**
    * The date portion of the selected range. This may be set prior to `value` if the user has
    * selected a date range but has not yet selected a time range.
    */
-  dateRange: DateRange,
+  dateRange: DateRange | null,
   /** Sets the date portion of the selected range. */
   setDateRange(value: DateRange): void,
   /**
    * The time portion of the selected range. This may be set prior to `value` if the user has
    * selected a time range but has not yet selected a date range.
    */
-  timeRange: TimeRange,
+  timeRange: TimeRange | null,
   /** Sets the time portion of the selected range. */
   setTimeRange(value: TimeRange): void,
   /** Sets the date portion of either the start or end of the selected range. */
@@ -60,8 +60,13 @@ export interface DateRangePickerState extends OverlayTriggerState {
   isOpen: boolean,
   /** Sets whether the calendar popover is open. */
   setOpen(isOpen: boolean): void,
-  /** The current validation state of the date picker, based on the `validationState`, `minValue`, and `maxValue` props. */
+  /**
+   * The current validation state of the date range picker, based on the `validationState`, `minValue`, and `maxValue` props.
+   * @deprecated Use `isInvalid` instead.
+   */
   validationState: ValidationState,
+  /** Whether the date range picker is invalid, based on the `isInvalid`, `minValue`, and `maxValue` props. */
+  isInvalid: boolean,
   /** Formats the selected range using the given options. */
   formatValue(locale: string, fieldOptions: FieldOptions): {start: string, end: string}
 }
@@ -85,7 +90,7 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
   let value = controlledValue || placeholderValue;
 
   let setValue = (value: DateRange) => {
-    setPlaceholderValue(value);
+    setPlaceholderValue(value || {start: null, end: null});
     if (value?.start && value.end) {
       setControlledValue(value);
     } else {
@@ -148,14 +153,15 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
     }
   };
 
-  let validationState: ValidationState = props.validationState
+  let isValueInvalid = props.isInvalid || props.validationState === 'invalid'
     || (value != null && (
       isInvalid(value.start, props.minValue, props.maxValue) ||
       isInvalid(value.end, props.minValue, props.maxValue) ||
       (value.end != null && value.start != null && value.end.compare(value.start) < 0) ||
       (value?.start && props.isDateUnavailable?.(value.start)) ||
       (value?.end && props.isDateUnavailable?.(value.end))
-    ) ? 'invalid' : null);
+    ));
+  let validationState: ValidationState = props.validationState || (isValueInvalid ? 'invalid' : null);
 
   return {
     value,
@@ -190,6 +196,7 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
       overlayState.setOpen(isOpen);
     },
     validationState,
+    isInvalid: isValueInvalid,
     formatValue(locale, fieldOptions) {
       if (!value || !value.start || !value.end) {
         return null;

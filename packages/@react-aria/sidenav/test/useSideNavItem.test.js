@@ -25,6 +25,9 @@ describe('useSideNavItem', function () {
       },
       isDisabled() {
         return false;
+      },
+      isLink() {
+        return false;
       }
     },
     disabledKeys: new Set()

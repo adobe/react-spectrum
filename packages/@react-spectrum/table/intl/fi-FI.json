@@ -1,6 +1,8 @@
 {
+  "collapse": "Pienennä",
   "columnResizer": "Sarakekoon muuttaja",
   "drag": "Vedä",
+  "expand": "Laajenna",
   "loading": "Ladataan…",
   "loadingMore": "Ladataan lisää…",
   "resizeColumn": "Muuta sarakkeen kokoa",

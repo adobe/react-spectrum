@@ -13,11 +13,12 @@
 import {FocusableElement} from '@react-types/shared';
 import {getLastItem} from '@react-stately/collections';
 import {getRowLabelledBy} from './utils';
+import {getSyntheticLinkProps, mergeProps} from '@react-aria/utils';
 import type {GridNode} from '@react-types/grid';
 import {GridRowAria, GridRowProps, useGridRow} from '@react-aria/grid';
 import {HTMLAttributes, RefObject} from 'react';
-import {mergeProps} from '@react-aria/utils';
 import {TableCollection} from '@react-types/table';
+import {tableNestedRows} from '@react-stately/flags';
 import {TableState, TreeGridState} from '@react-stately/table';
 import {useLocale} from '@react-aria/i18n';
 
@@ -42,14 +43,14 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
   let {rowProps, ...states} = useGridRow<T, TableCollection<T>, TableState<T>>(props, state, ref);
   let {direction} = useLocale();
 
-  if (isVirtualized && !('expandedKeys' in state)) {
+  if (isVirtualized && !(tableNestedRows() && 'expandedKeys' in state)) {
     rowProps['aria-rowindex'] = node.index + 1 + state.collection.headerRows.length; // aria-rowindex is 1 based
   } else {
     delete rowProps['aria-rowindex'];
   }
 
   let treeGridRowProps: HTMLAttributes<HTMLElement> = {};
-  if ('expandedKeys' in state) {
+  if (tableNestedRows() && 'expandedKeys' in state) {
     let treeNode = state.keyMap.get(node.key);
     if (treeNode != null) {
       let hasChildRows = treeNode.props?.UNSTABLE_childItems || treeNode.props?.children?.length > state.userColumnCount;
@@ -73,9 +74,10 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
     }
   }
 
+  let linkProps = states.hasAction ? getSyntheticLinkProps(node.props) : {};
   return {
     rowProps: {
-      ...mergeProps(rowProps, treeGridRowProps),
+      ...mergeProps(rowProps, treeGridRowProps, linkProps),
       'aria-labelledby': getRowLabelledBy(state, node.key)
     },
     ...states

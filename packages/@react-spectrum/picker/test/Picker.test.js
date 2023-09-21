@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, triggerPress, within} from '@react-spectrum/test-utils';
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
@@ -29,8 +29,10 @@ import {Virtualizer} from '../../../@react-stately/virtualizer/src/Virtualizer';
 describe('Picker', function () {
   let offsetWidth, offsetHeight;
   let onSelectionChange = jest.fn();
+  let user;
 
   beforeAll(function () {
+    user = userEvent.setup({delay: null, pointerMap});
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
@@ -950,7 +952,7 @@ describe('Picker', function () {
       it('supports error message', function () {
         let {getByText, getByRole} = render(
           <Provider theme={theme}>
-            <Picker label="Test" errorMessage="Please select a valid item." validationState="invalid" onSelectionChange={onSelectionChange}>
+            <Picker label="Test" errorMessage="Please select a valid item." isInvalid onSelectionChange={onSelectionChange}>
               <Item>One</Item>
               <Item>Two</Item>
               <Item>Three</Item>
@@ -2016,7 +2018,7 @@ describe('Picker', function () {
       expect(focusSpies.onFocusChange).toHaveBeenCalledWith(true);
     });
 
-    it('calls onBlur and onFocus for the closed Picker', function () {
+    it('calls onBlur and onFocus for the closed Picker', async function () {
       let {getByTestId} = render(
         <Provider theme={theme}>
           <button data-testid="before" />
@@ -2037,23 +2039,23 @@ describe('Picker', function () {
       expect(focusSpies.onFocusChange).toHaveBeenCalledTimes(1);
       expect(focusSpies.onFocusChange).toHaveBeenNthCalledWith(1, true);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(afterBtn);
       expect(focusSpies.onBlur).toHaveBeenCalledTimes(1);
       expect(focusSpies.onFocusChange).toHaveBeenCalledTimes(2);
       expect(focusSpies.onFocusChange).toHaveBeenNthCalledWith(2, false);
 
-      userEvent.tab({shift: true});
+      await user.tab({shift: true});
       expect(focusSpies.onFocus).toHaveBeenCalledTimes(2);
       expect(focusSpies.onFocusChange).toHaveBeenNthCalledWith(3, true);
 
-      userEvent.tab({shift: true});
+      await user.tab({shift: true});
       expect(focusSpies.onBlur).toHaveBeenCalledTimes(2);
       expect(focusSpies.onFocusChange).toHaveBeenNthCalledWith(4, false);
       expect(document.activeElement).toBe(beforeBtn);
     });
 
-    it('calls onBlur and onFocus for the open Picker', function () {
+    it('calls onBlur and onFocus for the open Picker', async function () {
       let {getByRole, getByTestId} = render(
         <Provider theme={theme}>
           <button data-testid="before" />
@@ -2079,12 +2081,12 @@ describe('Picker', function () {
       let items = within(listbox).getAllByRole('option');
       expect(document.activeElement).toBe(items[0]);
 
-      userEvent.tab();
+      await user.tab();
       act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(afterBtn);
       expect(focusSpies.onBlur).toHaveBeenCalledTimes(1);
 
-      userEvent.tab({shift: true});
+      await user.tab({shift: true});
       expect(focusSpies.onFocus).toHaveBeenCalledTimes(2);
       expect(focusSpies.onFocusChange).toHaveBeenNthCalledWith(1, true);
       expect(focusSpies.onFocusChange).toHaveBeenNthCalledWith(2, false);
@@ -2097,7 +2099,7 @@ describe('Picker', function () {
       items = within(listbox).getAllByRole('option');
       expect(document.activeElement).toBe(items[0]);
 
-      userEvent.tab({shift: true});
+      await user.tab({shift: true});
       act(() => jest.runAllTimers());
       expect(focusSpies.onBlur).toHaveBeenCalledTimes(2);
       expect(focusSpies.onFocusChange).toHaveBeenNthCalledWith(4, false);
@@ -2193,6 +2195,105 @@ describe('Picker', function () {
       fireEvent.submit(getByTestId('form'));
       expect(onSubmit).toHaveBeenCalledTimes(1);
       expect(value).toEqual('one');
+    });
+
+    it('supports form reset', async () => {
+      function Test() {
+        let [value, setValue] = React.useState('one');
+        return (
+          <Provider theme={theme}>
+            <form>
+              <Picker name="picker" data-testid="picker" label="Test" selectedKey={value} onSelectionChange={setValue}>
+                <Item key="one">One</Item>
+                <Item key="two">Two</Item>
+                <Item key="three">Three</Item>
+              </Picker>
+              <input type="reset" data-testid="reset" />
+            </form>
+          </Provider>
+        );
+      }
+
+      let {getByTestId, getByRole} = render(<Test />);
+      let picker = getByTestId('picker');
+      let input = document.querySelector('[name=picker]');
+
+      expect(input).toHaveValue('one');
+      triggerPress(picker);
+      act(() => jest.runAllTimers());
+
+      let listbox = getByRole('listbox');
+      let items = within(listbox).getAllByRole('option');
+      expect(items.length).toBe(3);
+      triggerPress(items[1]);
+      expect(input).toHaveValue('two');
+
+      let button = getByTestId('reset');
+      await user.click(button);
+      expect(input).toHaveValue('one');
+    });
+  });
+
+  describe('links', () => {
+    it.each(['mouse', 'keyboard'])('supports links on items with %s', async (type) => {
+      let tree = render(
+        <Provider theme={theme}>
+          <Picker label="Picker with links">
+            <Item href="https://google.com">One</Item>
+            <Item href="https://adobe.com">Two</Item>
+          </Picker>
+        </Provider>
+      );
+
+      let button = tree.getByRole('button');
+      triggerPress(button);
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      let listbox = tree.getByRole('listbox');
+      let items = within(listbox).getAllByRole('option');
+      expect(items).toHaveLength(2);
+      expect(items[0].tagName).toBe('A');
+      expect(items[0]).toHaveAttribute('href', 'https://google.com');
+      expect(items[1].tagName).toBe('A');
+      expect(items[1]).toHaveAttribute('href', 'https://adobe.com');
+
+      if (type === 'mouse') {
+        triggerPress(items[0]);
+      } else {
+        fireEvent.keyDown(items[0], {key: 'Enter'});
+        fireEvent.keyUp(items[0], {key: 'Enter'});
+      }
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(button).toHaveTextContent('Select an option…');
+      expect(listbox).not.toBeInTheDocument();
+    });
+
+    it('works with RouterProvider', async () => {
+      let navigate = jest.fn();
+      let tree = render(
+        <Provider theme={theme} router={{navigate}}>
+          <Picker label="Picker with links">
+            <Item href="/one">One</Item>
+            <Item href="https://adobe.com">Two</Item>
+          </Picker>
+        </Provider>
+      );
+
+      let button = tree.getByRole('button');
+      triggerPress(button);
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      let listbox = tree.getByRole('listbox');
+      let items = within(listbox).getAllByRole('option');
+      triggerPress(items[0]);
+      expect(navigate).toHaveBeenCalledWith('/one');
     });
   });
 });

@@ -51,8 +51,13 @@ export interface DateFieldState {
   segments: DateSegment[],
   /** A date formatter configured for the current locale and format. */
   dateFormatter: DateFormatter,
-  /** The current validation state of the date field, based on the `validationState`, `minValue`, and `maxValue` props. */
+  /**
+   * The current validation state of the date field, based on the `validationState`, `minValue`, and `maxValue` props.
+   * @deprecated Use `isInvalid` instead.
+   */
   validationState: ValidationState,
+  /** Whether the date field is invalid, based on the `isInvalid`, `minValue`, and `maxValue` props. */
+  isInvalid: boolean,
   /** The granularity for the field, based on the `granularity` prop and current value. */
   granularity: Granularity,
   /** The maximum date or time unit that is displayed in the field. */
@@ -203,6 +208,8 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     () => props.value || props.defaultValue ? {...allSegments} : {}
   );
 
+  let clearedSegment = useRef<string>();
+
   // Reset placeholder when calendar changes
   let lastCalendarIdentifier = useRef(calendar.identifier);
   useEffect(() => {
@@ -235,8 +242,15 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     if (props.isDisabled || props.isReadOnly) {
       return;
     }
+    let validKeys = Object.keys(validSegments);
+    let allKeys = Object.keys(allSegments);
 
-    if (Object.keys(validSegments).length >= Object.keys(allSegments).length) {
+    // if all the segments are completed or a timefield with everything but am/pm set the time, also ignore when am/pm cleared
+    if (newValue == null) {
+      setDate(null);
+      setPlaceholderDate(createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone));
+      setValidSegments({});
+    } else if (validKeys.length >= allKeys.length || (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod && clearedSegment.current !== 'dayPeriod')) {
       // The display calendar should not have any effect on the emitted value.
       // Emit dates in the same calendar as the original value, if any, otherwise gregorian.
       newValue = toCalendar(newValue, v?.calendar || new GregorianCalendar());
@@ -244,6 +258,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     } else {
       setPlaceholderDate(newValue);
     }
+    clearedSegment.current = null;
   };
 
   let dateValue = useMemo(() => displayValue.toDate(timeZone), [displayValue, timeZone]);
@@ -289,7 +304,9 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   let adjustSegment = (type: Intl.DateTimeFormatPartTypes, amount: number) => {
     if (!validSegments[type]) {
       markValid(type);
-      if (Object.keys(validSegments).length >= Object.keys(allSegments).length) {
+      let validKeys = Object.keys(validSegments);
+      let allKeys = Object.keys(allSegments);
+      if (validKeys.length >= allKeys.length || (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod)) {
         setValue(displayValue);
       }
     } else {
@@ -297,8 +314,9 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     }
   };
 
-  let validationState: ValidationState = props.validationState ||
-    (isInvalid(calendarValue, props.minValue, props.maxValue) ? 'invalid' : null);
+  let isValueInvalid = props.isInvalid || props.validationState === 'invalid' ||
+    isInvalid(calendarValue, props.minValue, props.maxValue);
+  let validationState: ValidationState = props.validationState || (isValueInvalid ? 'invalid' : null);
 
   return {
     value: calendarValue,
@@ -308,6 +326,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     segments,
     dateFormatter,
     validationState,
+    isInvalid: isValueInvalid,
     granularity,
     maxGranularity: props.maxGranularity ?? 'year',
     isDisabled,
@@ -345,6 +364,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     },
     clearSegment(part) {
       delete validSegments[part];
+      clearedSegment.current = part;
       setValidSegments({...validSegments});
 
       let placeholder = createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone);

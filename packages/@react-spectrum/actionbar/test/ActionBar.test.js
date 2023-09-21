@@ -12,7 +12,7 @@
 
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, triggerPress, within} from '@react-spectrum/test-utils';
 import {announce} from '@react-aria/live-announcer';
 import {Example} from '../stories/Example';
 import {getFocusableTreeWalker} from '@react-aria/focus';
@@ -22,7 +22,9 @@ import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
 describe('ActionBar', () => {
+  let user;
   beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 500);
     jest.useFakeTimers();
@@ -128,7 +130,7 @@ describe('ActionBar', () => {
     expect(document.activeElement).toBe(checkbox);
   });
 
-  it('should restore focus where it came from after being closed via escape if no elements are removed', () => {
+  it('should restore focus where it came from after being closed via escape if no elements are removed', async () => {
     let tree = render(<Provider theme={theme}><Example /></Provider>);
     act(() => {jest.runAllTimers();});
 
@@ -136,7 +138,7 @@ describe('ActionBar', () => {
     let rows = within(table).getAllByRole('row');
     let checkbox = within(rows[1]).getByRole('checkbox');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(rows[1]);
     fireEvent.keyDown(document.activeElement, {key: 'Enter'});
     fireEvent.keyUp(document.activeElement, {key: 'Enter'});
@@ -175,7 +177,7 @@ describe('ActionBar', () => {
     let rows = within(table).getAllByRole('row');
     let checkbox = within(rows[1]).getByRole('checkbox');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(rows[1]);
     fireEvent.keyDown(document.activeElement, {key: 'Enter'});
     fireEvent.keyUp(document.activeElement, {key: 'Enter'});
@@ -223,7 +225,7 @@ describe('ActionBar', () => {
     let rows = within(table).getAllByRole('row');
     let checkbox = within(rows[1]).getByRole('checkbox');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(rows[1]);
     fireEvent.keyDown(document.activeElement, {key: 'Enter'});
     fireEvent.keyUp(document.activeElement, {key: 'Enter'});
