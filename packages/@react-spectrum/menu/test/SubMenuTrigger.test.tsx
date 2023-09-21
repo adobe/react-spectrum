@@ -824,16 +824,14 @@ describe('SubMenu', function () {
       expect(subMenu1).toHaveAttribute('aria-label', subMenuTrigger1.textContent);
       buttons = within(tray).getAllByRole('button');
       expect(buttons).toHaveLength(3);
+      for (let button of buttons) {
+        if (button.getAttribute('aria-label') !== 'Dismiss') {
+          expect(button).toHaveAttribute('aria-label', `Return to ${subMenuTrigger1.textContent}`);
+        }
+      }
       let menuHeader = within(tray).getAllByText(subMenuTrigger1.textContent)[0];
       expect(menuHeader).toBeVisible();
       expect(menuHeader.tagName).toBe('SPAN');
-      for (let button of buttons) {
-        if (button.getAttribute('aria-label') !== 'Dismiss') {
-          expect(button).toHaveAttribute('aria-label', 'Return to ');
-          expect(button).toHaveAttribute('aria-labelledby', `${button.id} ${menuHeader.id}`);
-        }
-      }
-
       let subMenu1Items = within(subMenu1).getAllByRole('menuitem');
       let subMenuTrigger2 = subMenu1Items[2];
       triggerTouch(subMenuTrigger2);
@@ -848,16 +846,14 @@ describe('SubMenu', function () {
       expect(subMenu2).toHaveAttribute('aria-label', subMenuTrigger2.textContent);
       buttons = within(tray).getAllByRole('button');
       expect(buttons).toHaveLength(3);
+      for (let button of buttons) {
+        if (button.getAttribute('aria-label') !== 'Dismiss') {
+          expect(button).toHaveAttribute('aria-label', `Return to ${subMenuTrigger2.textContent}`);
+        }
+      }
       menuHeader = within(tray).getAllByText(subMenuTrigger2.textContent)[0];
       expect(menuHeader).toBeVisible();
       expect(menuHeader.tagName).toBe('SPAN');
-
-      for (let button of buttons) {
-        if (button.getAttribute('aria-label') !== 'Dismiss') {
-          expect(button).toHaveAttribute('aria-label', 'Return to ');
-          expect(button).toHaveAttribute('aria-labelledby', `${button.id} ${menuHeader.id}`);
-        }
-      }
     });
 
     it('should provide a back button to close the submenu', async function () {
@@ -888,7 +884,7 @@ describe('SubMenu', function () {
       expect(menuItems[0]).toHaveTextContent('Lvl 3');
       let buttons = within(tray).getAllByRole('button');
       expect(buttons).toHaveLength(3);
-      expect(buttons[1]).toHaveAttribute('aria-label', 'Return to ');
+      expect(buttons[1]).toHaveAttribute('aria-label', `Return to ${subMenuTrigger2.textContent}`);
       triggerTouch(buttons[1]);
       act(() => {jest.runAllTimers();});
 
@@ -899,7 +895,7 @@ describe('SubMenu', function () {
       expect(document.activeElement).toBe(subMenuTrigger2);
       buttons = within(tray).getAllByRole('button');
       expect(buttons).toHaveLength(3);
-      expect(buttons[1]).toHaveAttribute('aria-label', 'Return to ');
+      expect(buttons[1]).toHaveAttribute('aria-label', `Return to ${subMenuTrigger1.textContent}`);
       triggerTouch(buttons[1]);
       act(() => {jest.runAllTimers();});
 
@@ -989,7 +985,7 @@ describe('SubMenu', function () {
         expect(document.activeElement).toBe(menuItems[0]);
 
         await user.tab({shift: true});
-        expect(document.activeElement).toHaveAttribute('aria-label', 'Return to ');
+        expect(document.activeElement).toHaveAttribute('aria-label', `Return to ${subMenuTrigger1.textContent}`);
         await user.keyboard('[Enter]');
         act(() => {jest.runAllTimers();});
 

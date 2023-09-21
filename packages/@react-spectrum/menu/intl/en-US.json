@@ -1,5 +1,5 @@
 {
     "moreActions": "More actions",
     "unavailable": "Unavailable, expand for details",
-    "backButton": "Return to "
+    "backButton": "Return to {prevMenuButton}"
 }
