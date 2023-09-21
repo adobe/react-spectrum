@@ -31,7 +31,8 @@ export interface AriaMenuOptions<T> extends Omit<AriaMenuProps<T>, 'children'> {
    * to override the default.
    */
   keyboardDelegate?: KeyboardDelegate,
-  // TODO: just extend KeyboardEvents? update type
+  // TODO: Should we have an accompanying onKeyUp even though we don't use it and then just extend KeyboardEvents?
+  // Should this be UNSTABLE? That would mean the props from useSubMenuTrigger would be the UNSTABLE variants as well
   onKeyDown?: (e: KeyboardEvent) => void
 }
 
@@ -79,8 +80,6 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
     menuProps: mergeProps(domProps, {onKeyDown}, {
       role: 'menu',
       // this forces AT to move their cursors into any open sub dialogs, the sub dialogs contain hidden close buttons in order to come back to this level of the menu
-      // TODO: since we are hiding the previous menu, perhaps we should get rid of the aria-labelledby on a sub menu since it is pointing to a trigger in the hidden menu
-      // Replace it with a aria-label of the trigger's text content? Problem is that we don't have access to that in the submenu
       'aria-hidden': state.expandedKeys.size > 0 ? true : undefined,
       ...listProps,
       onKeyDown: (e) => {

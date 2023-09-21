@@ -828,7 +828,7 @@ describe('SubMenu', function () {
       for (let button of buttons) {
         if (button.getAttribute('aria-label') !== 'Dismiss') {
           expect(button).toHaveAttribute('aria-label', 'Return to ');
-          expect(button).toHaveAttribute('aria-labelledby', `${button.id} ${menuHeader.id}`)
+          expect(button).toHaveAttribute('aria-labelledby', `${button.id} ${menuHeader.id}`);
         }
       }
 

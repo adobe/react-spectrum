@@ -47,26 +47,26 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   let {
     closeOnSelect
   } = useMenuContext();
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
-  let subMenuTriggerContext = useSubMenuTriggerContext();
-  let {direction} = useLocale();
-  let {triggerRef, ...subMenuTriggerProps} = subMenuTriggerContext || {};
-  // If menuDialogContext.isUnavailable is explicitly false, then disable all submenu behavior
-  let isMenuDialogTrigger = !!subMenuTriggerContext && subMenuTriggerContext.isUnavailable !== false;
-  let isUnavailable;
-  let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
-
   let {
     rendered,
     key
   } = item;
 
-  if (isMenuDialogTrigger) {
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let {direction} = useLocale();
+
+  let subMenuTriggerContext = useSubMenuTriggerContext();
+  let {triggerRef, ...subMenuTriggerProps} = subMenuTriggerContext || {};
+  let isSubMenuTrigger = !!subMenuTriggerContext;
+  let isUnavailable;
+  let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
+
+  if (isSubMenuTrigger) {
     isUnavailable = subMenuTriggerContext.isUnavailable;
   }
 
   let isDisabled = state.disabledKeys.has(key);
-  let isSelectable = !isMenuDialogTrigger && state.selectionManager.selectionMode !== 'none';
+  let isSelectable = !isSubMenuTrigger && state.selectionManager.selectionMode !== 'none';
   let isSelected = isSelectable && state.selectionManager.isSelected(key);
   let itemref = useRef<any>(null);
   let ref = useObjectRef(useMemo(() => mergeRefs(itemref, triggerRef), [itemref, triggerRef]));
@@ -147,7 +147,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
                 isUnavailable && <InfoOutline slot="end" size="XS" alignSelf="center" aria-label={stringFormatter.format('unavailable')} />
               }
               {
-                !isUnavailable && isMenuDialogTrigger && (direction === 'rtl' ? <ChevronLeft slot="chevron" /> : <ChevronRight slot="chevron" />)
+                isUnavailable == null && isSubMenuTrigger && (direction === 'rtl' ? <ChevronLeft slot="chevron" /> : <ChevronRight slot="chevron" />)
               }
             </SlotProvider>
           </ClearSlots>

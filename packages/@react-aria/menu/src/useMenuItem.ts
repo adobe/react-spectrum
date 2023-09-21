@@ -11,9 +11,8 @@
  */
 
 import {DOMAttributes, DOMProps, FocusableElement, PressEvent} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useEffectEvent, useLayoutEffect, useRouter, useSlotId} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useRouter, useSlotId} from '@react-aria/utils';
 import {FocusEvent, Key, RefObject} from 'react';
-import {focusSafely} from '@react-aria/focus';
 import {getItemCount} from '@react-stately/collections';
 import {isFocusVisible, useHover, useKeyboard, usePress} from '@react-aria/interactions';
 import {menuData} from './useMenu';
@@ -86,7 +85,9 @@ export interface AriaMenuItemProps extends DOMProps {
   /** What kind of popup the item opens. */
   'aria-haspopup'?: 'menu' | 'dialog',
 
-  // TODO: descriptions, open it up fully to all pressProps + hoverEvents + keyboardEvents?
+  // TODO: Add descriptions when these props are okayed
+  // Open it up fully to all pressProps + hoverEvents + keyboardEvents?
+  // Should these all be UNSTABLE? That would mean the return types from useSubMenuTrigger would be the UNSTABLE variants as well...
   onPressStart?: (e: PressEvent) => void,
   onPress?: (e: PressEvent) => void,
   onHoverChange?: (isHovering: boolean) => void,
@@ -152,6 +153,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     'aria-labelledby': labelId,
     'aria-describedby': [descriptionId, keyboardId].filter(Boolean).join(' ') || undefined,
     // TODO: perhaps we should just expect that the user would spread these on the submenu trigger directly
+    // instead of just passing it to useMenuItem? Kinda want to follow useButton's pattern where we handle aria-attributes pass throughs
     'aria-controls': isTrigger ? props['aria-controls'] : undefined,
     'aria-haspopup': hasPopup,
     'aria-expanded': isTrigger ? props['aria-expanded'] : undefined
@@ -217,7 +219,6 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     onHoverChange
   });
 
-  // TODO: there is an issue where focus doesn't seem to move into the newly opened submenu when opening it via keyboard
   let {keyboardProps} = useKeyboard({
     onKeyDown: (e) => {
       // Ignore repeating events, which may have started on the menu trigger before moving
@@ -251,8 +252,8 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   return {
     menuItemProps: {
       ...ariaProps,
-      // TODO: perhaps we just expect the user to spread onKEyDown,onBlur, id and aria attributes directly? This feels more in line with
-      // how useMenuTrigger passes stuff to useButton
+      // TODO: Similar question as the aria attributes above, do we just expect the user to spread onKeyDown, onBlur, id and aria attributes directly?
+      // This current approach of handling the passthroughs feels more in line with how useMenuTrigger passes stuff to useButton though
       ...mergeProps(domProps, itemProps, pressProps, hoverProps, keyboardProps, {onKeyDown, onBlur})
     },
     labelProps: {
