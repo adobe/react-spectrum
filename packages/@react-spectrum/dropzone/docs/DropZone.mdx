@@ -1,0 +1,361 @@
+{/* Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/dropzone';
+import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/dropzone/package.json';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import styles from '@react-spectrum/docs/src/docs.css';
+
+```jsx import
+import {DropZone} from '@react-spectrum/dropzone';
+import {Heading} from '@react-spectrum/text';
+import {Content} from '@react-spectrum/view';
+import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
+import {Text} from 'react-aria-components';
+import {FileTrigger} from 'react-aria-components';
+import {Button} from '@react-spectrum/button';
+```
+
+---
+category: Drag and drop
+---
+
+# DropZone
+
+<PageDescription>{docs.exports.DropZone.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['DropZone']}
+/>
+
+## Example
+
+```tsx example
+import Upload from '@spectrum-icons/illustrations/Upload';
+
+<DropZone
+  maxWidth="size-3000">
+  <IllustratedMessage>
+    <Upload />
+    <Heading>
+      <Text slot="label">
+        Drag and drop your file
+      </Text>
+    </Heading>
+  </IllustratedMessage>
+</DropZone>
+```
+
+
+## Content
+
+A drop zone accepts an [IllustratedMessage](IllustratedMessage.html) as a child which is comprised of three areas:  an illustration, a title, and a body. Each of these sections can be populated by providing the following components to the IllustratedMessage as children: a SVG, a [Heading](Heading.html) (title), and a [Content](Content.html) (body). A [FileTrigger](../react-aria/FileTrigger.html) is commonly paired with a DropZone to allow a user to choose files from their device. 
+
+```tsx example
+<DropZone
+  maxWidth="size-3000">
+  <IllustratedMessage>
+    <Upload />
+    <Heading>
+      <Text slot="label">
+        Drag and drop here
+      </Text>
+    </Heading>
+    <Content>
+      <FileTrigger>
+        <Button variant="primary">Browse</Button>
+      </FileTrigger>
+    </Content>
+  </IllustratedMessage>
+</DropZone>
+```
+
+### Accessibility
+
+A visual label should be provided to `DropZone` using a `Text` element with a `label` slot. If it is not provided, then an `aria-label` or `aria-labelledby` prop must be passed to identify the visually hidden button to assistive technology. 
+
+### Internationalization
+
+In order to internationalize a drop zone, a localized string should be passed to the `Text` element with a `label` slot or to the `aria-label` prop, in addition to the `replaceMessage` prop.
+
+## Events
+
+`DropZone` supports drop operations via mouse, keyboard, and touch. You can handle all of these via the `onDrop` prop. In addition, the `onDropEnter`, `onDropMove`, and `onDropExit` events are fired as the user enter and exists the dropzone during a drag operation. 
+
+The following example uses an `onDrop` handler to update the filled status stored in React state.
+
+```tsx example
+import File from '@spectrum-icons/illustrations/File';
+
+function Example() {
+  let [isFilled, setIsFilled] = React.useState(false);
+  let [filledSrc, setFilledSrc] = React.useState(null);
+
+  return (
+    <>
+      <Draggable />
+      <DropZone
+        maxWidth="size-3000"
+        isFilled={isFilled}
+        onDrop={async (e) => {
+          e.items.find(async (item) => {
+            if (item.kind === 'file') {
+              setFilledSrc(item.name);
+              setIsFilled(true);
+              
+            } else if (item.kind === 'text' && item.types.has('text/plain')) {
+              setFilledSrc(await item.getText('text/plain'));
+              setIsFilled(true);
+            }
+          });
+        }}>
+        <IllustratedMessage>
+          <Upload />
+          <Heading>
+            <Text slot="label">
+              Drag and drop here
+            </Text>
+          </Heading>
+        </IllustratedMessage>
+      </DropZone>
+      {isFilled && 
+        <div className="files">
+          <File />
+          {filledSrc}
+        </div>}
+    </>
+  );
+}
+```
+
+The `Draggable` component used above is defined below. See [useDrag](../react-aria/useDrag.html) for more details and documentation.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example render=false export=true
+import {useDrag} from '@react-aria/dnd';
+
+function Draggable() {
+  let {dragProps, isDragging} = useDrag({
+    getItems() {
+      return [{
+        'text/plain': 'hello world',
+        'my-app-custom-type': JSON.stringify({message: 'hello world'})
+      }];
+    }
+  });
+
+  return (
+    <div {...dragProps} role="button" tabIndex={0} className={`draggable ${isDragging ? 'dragging' : ''}`}>
+      Drag me
+    </div>
+  );
+}
+```
+</details>
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.draggable {
+  display: inline-block;
+  vertical-align: top;
+  border: 1px solid gray;
+  padding: 10px;
+  margin-right: 20px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  height: fit-content;
+}
+
+.draggable.dragging {
+  opacity: 0.5;
+}
+
+.files{
+  margin-top: 20px;
+}
+```
+
+</details>
+
+
+## Props
+
+<PropTable component={docs.exports.DropZone} links={docs.links} />
+
+## Visual options
+
+### Filled state
+
+The user is responsible for both managing the filled state of a drop zone and handling the associated styling. To set the drop zone to a filled state, the user must pass the `isFilled` prop.
+
+The example below demonstrates one way of styling the filled state.
+
+```tsx example
+function Example() {
+  let [filledSrc, setFilledSrc] = React.useState(null);
+  let [isFilled, setIsFilled] = React.useState(false);
+
+  return (
+    <>
+      <DraggableImage />
+      <DropZone
+        isFilled={isFilled}
+        maxWidth="size-3000"
+        height="size-2400"
+        getDropOperation={(types) =>  (types.has('image/png') || types.has('image/jpeg')) ? 'copy' : 'cancel'}
+        onDrop={async (e) => {
+          e.items.find(async (item) => {
+            if (item.kind === 'file') {
+              if (item.type === 'image/jpeg' || item.type === 'image/png') {
+                setFilledSrc(URL.createObjectURL(await item.getFile()));
+                setIsFilled(true);
+              }
+            } else if (item.kind === 'text') {
+              setFilledSrc(await item.getText('image/jpeg'));
+              setIsFilled(true);
+            }
+          });
+        }}>
+        <IllustratedMessage>
+            <Upload />
+            <Heading>
+              <Text slot="label">
+                Drag and drop photos
+              </Text>
+            </Heading>
+        </IllustratedMessage>
+        {isFilled && <img className={'images'} alt="" src={filledSrc} />}
+      </DropZone>
+    </>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.images {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--spectrum-alias-border-radius-small);
+}
+```
+</details>
+
+The `DraggableImage` component used above is defined below. See [useDrag](../react-aria/useDrag.html) for more details and documentation.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example render=false export=true
+function DraggableImage() {
+  let {dragProps, isDragging} = useDrag({
+    getItems() {
+      return [
+        {
+          'image/jpeg': 'https://i.imgur.com/Z7AzH2c.jpg'
+        }
+      ];
+    }
+  });
+
+  return (
+    <div
+      {...dragProps}
+      role="button"
+      tabIndex={0}
+      className={`draggable ${isDragging ? 'dragging' : ''}`} >
+      <img
+        width="150px"
+        height="100px"
+        alt="Traditional Roof"
+        src="https://i.imgur.com/Z7AzH2c.jpg"/>
+    </div>
+  );
+}
+```
+</details>
+
+### Replace message
+
+When a drop zone is in a filled state and has an object dragged over it, a message will appear in front of the drop zone. By default, this message will say "Drop file to replace". However, users can choose to customize this message through the `replaceMessage` prop. This message should describe the interaction that will occur when the object is dropped. It should also be internationalized if needed. 
+
+
+```tsx example
+function Example() {
+  let [isFilled, setIsFilled] = React.useState(false);
+
+  return (
+    <>
+      <Draggable />
+      <DropZone
+        isFilled={isFilled}
+        maxWidth="size-3000"
+        replaceMessage="This is a custom message"
+        onDrop={() => setIsFilled(true)}>
+        <IllustratedMessage>
+          <Upload />
+          <Heading>
+            <Text slot="label">
+              Drag and drop here
+            </Text>
+          </Heading>
+        </IllustratedMessage>
+      </DropZone>
+    </>
+  );
+}
+```
+
+### Visual feedback
+
+A drop zone displays visual feedback to the user when a drag hovers over the drop target by passing the `getDropOperation` function. If a drop target only supports data of specific types (e.g. images, videos, text, etc.), then it should implement the `getDropOperation` prop and return `cancel` for types that aren't supported. This will prevent visual feedback indicating that the drop target accepts the dragged data when this is not true. [Read more about getDropOperation.](../react-aria/useDrop.html#getdropoperation)
+
+```tsx example
+
+function Example() {
+  let [isFilled, setIsFilled] = React.useState(false);
+
+  return (
+    <DropZone
+      maxWidth="size-3000"
+      isFilled={isFilled}
+      getDropOperation={(types) => types.has('image/png') ? 'copy' : 'cancel'}
+      onDrop={() => setIsFilled(true)}>
+      <IllustratedMessage>
+        <Upload />
+        <Heading>
+          <Text slot="label">
+            Drag and drop here
+          </Text>
+        </Heading>
+        <Content>
+          <FileTrigger>
+            <Button variant="primary">Browse</Button>
+          </FileTrigger>
+        </Content>
+      </IllustratedMessage>
+    </DropZone>
+  );
+}
+```
