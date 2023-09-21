@@ -572,6 +572,10 @@ function AsyncLoadingExample() {
 }
 ```
 
+### Links
+
+By default, interacting with an item in a SearchAutocomplete updates the input value. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component. Interacting with link items navigates to the provided URL and does not update the input value. See the [links](useListBox.html#links) section in the `useListBox` docs for details on how to support this.
+
 ## Internationalization
 
 `useSearchAutocomplete` handles some aspects of internationalization automatically.

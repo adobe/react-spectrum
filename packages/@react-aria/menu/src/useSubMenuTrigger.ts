@@ -21,23 +21,24 @@ import {useEffectEvent, useId, useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
 export interface AriaSubMenuTriggerProps {
-  /** Ref of the menu that contains the submenu trigger. */
-  parentMenuRef: RefObject<HTMLElement>,
-  /** Ref of the submenu opened by the submenu trigger. */
-  subMenuRef: RefObject<HTMLElement>,
+  /** An object representing the submenu trigger menu item. Contains all the relevant information that makes up the menu item. */
+  node: RSNode<unknown>,
+  /** Whether the submenu trigger is disabled. */
+  isDisabled?: boolean,
   // TODO: naming. Also talk about if this should be customizable in this hook or if it belongs somewhere else
   /** Type of the submenu being rendered. */
   subMenuType?: 'dialog' | 'menu',
-  /** Whether the submenu trigger is disabled. */
-  isDisabled?: boolean,
-  /** An object representing the submenu trigger menu item. Contains all the relevant information that makes up the menu item. */
-  node: RSNode<unknown>
+  /** Ref of the menu that contains the submenu trigger. */
+  parentMenuRef: RefObject<HTMLElement>,
+  /** Ref of the submenu opened by the submenu trigger. */
+  subMenuRef: RefObject<HTMLElement>
 }
 
 export interface SubMenuTriggerAria<T> {
   subMenuTriggerProps: AriaMenuItemProps,
   subMenuProps: AriaMenuOptions<T>,
   popoverProps: Pick<AriaPopoverProps, 'isNonModal'>,
+  // TODO: descriptions
   // TODO: perhaps cherry pick these props from existing types, comes from several different types though
   overlayProps:
   {
@@ -49,8 +50,8 @@ export interface SubMenuTriggerAria<T> {
 
 // TODO description
 // TODO: needs UNSTABLE?
-// TODO: debatable if we should have a useSubMenu hook for the submenu key handlers. Feels better to have it here so we don't need to ferry around
-// things like parentMenu and the timeout canceling since those are available
+// TODO: debatable if we should have a useSubMenu hook for the submenu keyboard handlers. Feels better to have it here so we don't need to ferry around
+// things like parentMenuRef and the open timeout canceling since we centralized them here
 export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubMenuTriggerState, ref: RefObject<FocusableElement>): SubMenuTriggerAria<T> {
   let {parentMenuRef, subMenuRef, subMenuType = 'menu', isDisabled, node} = props;
   let subMenuTriggerId = useId();
@@ -84,7 +85,7 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
   // TODO: problem with setting up the submenu close handlers here is that we don't get access to the onClose the user provides
   // to the menu since this is too far up . Maybe just provide the subMenuTriggerState and have useMenu and useMenuItem handle the key handlers internally?
   // Maybe we should just have the user pass something like onMenuClose to the trigger level since we have the same problem of being unable to call onClose if the user interacts outside?
-  // Maybe have Menu call onClose in an effect when it detects that it is unmounting?
+  // Maybe have Menu call onClose in an effect when it detects that it is unmounting? StrictMode is problematic since the cleanup fires even when the component isn't actually unmounting
   // (not a problem if we wanna keep onClose to fire only if the user selects a item)
   let subMenuKeyDown = (e: KeyboardEvent) => {
     switch (e.key) {
@@ -207,7 +208,6 @@ export function useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubM
     // the else if part of this handles this already since hovering a submenu item sets it as the focusedKey and then focusing the submenu itself will move focus to the focusedKey via useSelectableCollection,
     // but it breaks if the user hovers the base menu's first submenu trigger since then the first submenu won't actually close
     // due to the logic in shouldCloseOnInteractOutside, and thus the first submenu retains focus, overriding the hover focus of the root menu's submenu trigger
-    // Double check if I can use any of the FocusScope scope checkers
     if (closeTarget.current) {
       closeTarget.current?.focus();
       closeTarget.current = null;

@@ -219,8 +219,7 @@ governing permissions and limitations under the License.
   /* keyboard shortcuts are always ASCII, so use base font */
   font-family: var(--spectrum-font-family-base);
 }
-/* TODO: confirm the spacing between longest text and chevron. XD differs from what we have for unavailable menu item and feels too wide*/
-/* TODO: also confirm the spacing when in large scale */
+
 .spectrum-Menu-chevron {
   margin-inline-end: calc(var(--spectrum-global-dimension-size-50) * -1);
   grid-area: chevron;
