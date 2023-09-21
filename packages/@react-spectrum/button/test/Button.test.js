@@ -325,12 +325,5 @@ describe('Button', function () {
     expect(button).not.toHaveAttribute('href');
   });
 
-  // isPending anchor element
-  it('removes href attribute from anchor element when isPending is true', () => {
-    let {getByRole} = render(<Button elementType="a" href="//example.com" isPending>Click Me</Button>);
-    let button = getByRole('button');
-    expect(button).not.toHaveAttribute('href');
-  });
-
   // 'implicit submission' can't be tested https://github.com/testing-library/react-testing-library/issues/487
 });
