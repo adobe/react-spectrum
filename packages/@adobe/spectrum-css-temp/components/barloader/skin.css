@@ -42,8 +42,13 @@ governing permissions and limitations under the License.
       background-color: rgba(0, 0, 0, 0.25);
     }
 
+    .spectrum-BarLoader-label,
+    .spectrum-BarLoader-percentage {
+      color: var(--spectrum-global-color-static-black);
+    }
+
     .spectrum-BarLoader-fill {
-      background: rgb(0, 0, 0);
+      background: var(--spectrum-global-color-static-black);
     }
   }
   &.is-positive {
