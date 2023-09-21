@@ -1239,10 +1239,8 @@ export const TextfieldExample = () => {
 
 export const LinkExample = () => {
   return (
-    <Link data-testid="link-example">
-      <a href="https://www.imdb.com/title/tt6348138/" target="_blank">
-        The missing link
-      </a>
+    <Link data-testid="link-example"href="https://www.imdb.com/title/tt6348138/" target="_blank">
+      The missing link
     </Link>
   );
 };

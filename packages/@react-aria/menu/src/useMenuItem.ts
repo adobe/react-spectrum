@@ -11,8 +11,9 @@
  */
 
 import {DOMAttributes, DOMProps, FocusableElement, PressEvent} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useRouter, useSlotId} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useEffectEvent, useLayoutEffect, useRouter, useSlotId} from '@react-aria/utils';
 import {FocusEvent, Key, RefObject} from 'react';
+import {focusSafely} from '@react-aria/focus';
 import {getItemCount} from '@react-stately/collections';
 import {isFocusVisible, useHover, useKeyboard, usePress} from '@react-aria/interactions';
 import {menuData} from './useMenu';
@@ -160,8 +161,9 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     ariaProps['aria-checked'] = isSelected;
   }
 
+  let item = state.collection.getItem(key);
   if (isVirtualized) {
-    ariaProps['aria-posinset'] = state.collection.getItem(key).index;
+    ariaProps['aria-posinset'] = item?.index;
     ariaProps['aria-setsize'] = getItemCount(state.collection);
   }
 
@@ -244,12 +246,14 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     }
   });
 
+  let domProps = filterDOMProps(item.props, {isLink: !!item?.props?.href});
+  delete domProps.id;
   return {
     menuItemProps: {
       ...ariaProps,
       // TODO: perhaps we just expect the user to spread onKEyDown,onBlur, id and aria attributes directly? This feels more in line with
       // how useMenuTrigger passes stuff to useButton
-      ...mergeProps(itemProps, pressProps, hoverProps, keyboardProps, {onKeyDown, onBlur}, filterDOMProps(props))
+      ...mergeProps(domProps, itemProps, pressProps, hoverProps, keyboardProps, {onKeyDown, onBlur})
     },
     labelProps: {
       id: labelId
