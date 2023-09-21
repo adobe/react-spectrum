@@ -86,6 +86,8 @@ function ContextualHelpTrigger<T>(props: MenuDialogTriggerProps<T>): ReactElemen
               ref={popoverRef}
               triggerRef={triggerRef}
               placement="end top"
+              containerPadding={0}
+              crossOffset={-5}
               offset={-10}
               hideArrow
               enableBothDismissButtons>

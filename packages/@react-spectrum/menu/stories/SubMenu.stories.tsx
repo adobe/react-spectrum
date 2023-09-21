@@ -15,9 +15,11 @@ import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
 import AnnotatePen from '@spectrum-icons/workflow/AnnotatePen';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelpTrigger, Item, Menu, Section, SubMenuTrigger} from '../';
 import defaultConfig, {render as renderMenuTrigger} from './MenuTrigger.stories';
-import {Item, Menu, Section, SubMenuTrigger} from '../';
-import {Keyboard, Text} from '@react-spectrum/text';
+import {Dialog} from '@react-spectrum/dialog';
+import {Heading, Keyboard, Text} from '@react-spectrum/text';
 import React from 'react';
 import TextIndentIncrease from '@spectrum-icons/workflow/TextIndentIncrease';
 import TextItalics from '@spectrum-icons/workflow/TextItalic';
@@ -386,6 +388,53 @@ export const Complex = {
     )
   ),
   name: 'complex'
+};
+
+export const UnavailableWithSubMenu = {
+  render: (args) => (
+    renderMenuTrigger(
+      <Menu onAction={action('lvl 1 menu onAction')} {...args}>
+        <Item key="Lvl 1 Item 1">Lvl 1 Item 1</Item>
+        <SubMenuTrigger>
+          <Item key="Lvl 1 Item 2">Lvl 1 Item 2</Item>
+          <Menu onAction={action('lvl 2.2 menu onAction')} {...args.subMenu1Props}>
+            <ContextualHelpTrigger isUnavailable>
+              <Item key="Lvl 2 Item 1">Lvl 2.2 Item 1</Item>
+              <Dialog>
+                <Heading>another one</Heading>
+                <Content>try hovering on other items</Content>
+              </Dialog>
+            </ContextualHelpTrigger>
+            <Item key="Lvl 2 Item 2">Lvl 2.2 Item 2</Item>
+            <SubMenuTrigger>
+              <Item key="Lvl 2 Item 3">Lvl 2.2 Item 3</Item>
+              <Menu onAction={action('lvl 3 menu onAction')} {...args.subMenu2Props}>
+                <Item key="Lvl 3 Item 1">Lvl 3 Item 1</Item>
+                <Item key="Lvl 3 Item 2">Lvl 3 Item 2</Item>
+                <Item key="Lvl 3 Item 3">Lvl 3 Item 3</Item>
+              </Menu>
+            </SubMenuTrigger>
+          </Menu>
+        </SubMenuTrigger>
+        <ContextualHelpTrigger isUnavailable>
+          <Item key="Lvl 1 Item 3">Lvl 1 Item 3</Item>
+          <Dialog>
+            <Heading>hello</Heading>
+            <Content>Is it me you're looking for?</Content>
+          </Dialog>
+        </ContextualHelpTrigger>
+        <SubMenuTrigger>
+          <Item key="Lvl 1 Item 4">Lvl 1 Item 4</Item>
+          <Menu onAction={action('lvl 2.4 menu onAction')} {...args.subMenu1Props}>
+            <Item key="Lvl 2.4 Item 1">Lvl 2.4 Item 1</Item>
+            <Item key="Lvl 2.4 Item 2">Lvl 2.4 Item 2</Item>
+            <Item key="Lvl 2.4 Item 3">Lvl 2.4 Item 3</Item>
+          </Menu>
+        </SubMenuTrigger>
+      </Menu>
+    )
+  ),
+  name: 'with unavailable menu item'
 };
 
 export const SubMenuActions = {
