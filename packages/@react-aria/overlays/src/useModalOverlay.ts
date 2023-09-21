@@ -30,6 +30,15 @@ export interface AriaModalOverlayProps {
    * @default false
    */
   isKeyboardDismissDisabled?: boolean
+  /** Whether the overlay should close when focus is lost or moves outside it. */
+  shouldCloseOnBlur?: boolean,
+    /**
+   * When user interacts with the argument element outside of the overlay ref,
+   * return true if onClose should be called.  This gives you a chance to filter
+   * out interaction with elements that should not dismiss the overlay.
+   * By default, onClose will always be called on interaction outside the overlay ref.
+   */
+  shouldCloseOnInteractOutside?: (element: Element) => boolean
 }
 
 export interface ModalOverlayAria {
