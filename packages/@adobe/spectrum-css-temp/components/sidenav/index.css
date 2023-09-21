@@ -62,7 +62,7 @@ governing permissions and limitations under the License.
     outline: none;
   }
 
-  &:focus-ring::before {
+  &:focus-visible::before {
     content: '';
     position: absolute;
     top: 0;

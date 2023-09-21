@@ -80,14 +80,14 @@ governing permissions and limitations under the License.
     }
   }
 
-  &:focus-ring {
+  &:focus-visible {
     border-color: var(--spectrum-card-border-color-key-focus);
     &:before {
       box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
     }
   }
 
-  &:focus-ring:hover.is-selected {
+  &:focus-visible:hover.is-selected {
     border-color: var(--spectrum-card-border-color-key-focus);
     &:before {
       box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
@@ -181,7 +181,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  &:focus-ring {
+  &:focus-visible {
     .spectrum-Card-grid {
       &:after {
         box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
@@ -189,7 +189,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  &:focus-ring:hover.is-selected {
+  &:focus-visible:hover.is-selected {
     .spectrum-Card-grid {
       &:after {
         box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
@@ -281,7 +281,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  &:focus-ring {
+  &:focus-visible {
     border-color: var(--spectrum-card-border-color-key-focus);
     .spectrum-Card-grid {
       &:before {
@@ -290,7 +290,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  &:focus-ring:hover.is-selected {
+  &:focus-visible:hover.is-selected {
     border-color: var(--spectrum-card-border-color-key-focus);
     .spectrum-Card-grid {
       &:before {
