@@ -19,11 +19,11 @@ const ANGLE_PADDING = Math.PI / 12; // 15°
  */
 export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): CSSProperties {
   let {submenuRef, isOpen} = options;
-  let prevPointerPos = useRef<{x: number, y: number}>(null);
-  let submenuRect = useRef<DOMRect>(null);
+  let prevPointerPos = useRef<{x: number, y: number} | undefined>();
+  let submenuRect = useRef<DOMRect | undefined>();
   let lastProcessedTime = useRef<number>(0);
-  let timeout = useRef(null);
-  let submenuSide = useRef<'left' | 'right'>(null);
+  let timeout = useRef<ReturnType<typeof setTimeout> | undefined>();
+  let submenuSide = useRef<'left' | 'right' | undefined>();
 
   // Keep track of the last few pointer movements, where true = moving towards submenu, false = moving away from submenu.
   let [movements, setMovements] = useState<Array<boolean>>([]);
@@ -31,7 +31,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
   let updateSubmenuRect = () => {
     if (submenuRef.current) {
       submenuRect.current = submenuRef.current.getBoundingClientRect();
-      submenuSide.current = null;
+      submenuSide.current = undefined;
     }
   };
 
@@ -108,7 +108,9 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
             // Fire a pointerover event to trigger the menu to close.
             // Wait until pointer-events:none is no longer applied
             let target = document.elementFromPoint(mouseX, mouseY);
-            target.dispatchEvent(new PointerEvent('pointerover', {bubbles: true, cancelable: true}));
+            if (target) {
+              target.dispatchEvent(new PointerEvent('pointerover', {bubbles: true, cancelable: true}));
+            }
           }, 100);
         }, TIMEOUT_TIME);
       }
