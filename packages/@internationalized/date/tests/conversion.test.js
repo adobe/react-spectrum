@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {BuddhistCalendar, CalendarDate, CalendarDateTime, EthiopicAmeteAlemCalendar, EthiopicCalendar, GregorianCalendar, HebrewCalendar, IndianCalendar, IslamicCivilCalendar, IslamicTabularCalendar, IslamicUmalquraCalendar, JapaneseCalendar, PersianCalendar, TaiwanCalendar, Time, toCalendar, toCalendarDate, toCalendarDateTime, toTime, ZonedDateTime} from '..';
-import {fromAbsolute, possibleAbsolutes, toAbsolute, toDate} from '../src/conversion';
+import { BuddhistCalendar, CalendarDate, CalendarDateTime, EthiopicAmeteAlemCalendar, EthiopicCalendar, GregorianCalendar, HebrewCalendar, IndianCalendar, IslamicCivilCalendar, IslamicTabularCalendar, IslamicUmalquraCalendar, JapaneseCalendar, PersianCalendar, TaiwanCalendar, Time, toCalendar, toCalendarDate, toCalendarDateTime, toTime, ZonedDateTime } from '..';
+import { fromAbsolute, possibleAbsolutes, toAbsolute, toDate } from '../src/conversion';
 
 describe('CalendarDate conversion', function () {
   describe('toAbsolute', function () {
@@ -149,6 +149,13 @@ describe('CalendarDate conversion', function () {
       expect(date.calendar.fromJulianDay(date.calendar.toJulianDay(date))).toEqual(new CalendarDate(2020, 9, 1));
     });
 
+    it('should round trip to the same date using persian calendar', function () {
+      const PersianCalendarTest = new PersianCalendar()
+      const persian = new CalendarDate(new PersianCalendar(), 1401, 12, 8);
+      const date = new CalendarDate(new GregorianCalendar(), 2023, 2, 27)
+      expect(PersianCalendarTest.fromJulianDay(date.calendar.toJulianDay(date))
+      ).toEqual(new CalendarDate(1401, 12, 8));
+    });
     describe('japanese', function () {
       it('japanese to gregorian', function () {
         let date = new CalendarDate(new JapaneseCalendar(), 'heisei', 31, 4, 30);
@@ -161,10 +168,10 @@ describe('CalendarDate conversion', function () {
       it('gregorian to japanese', function () {
         let date = new CalendarDate(2019, 4, 30);
         expect(toCalendar(date, new JapaneseCalendar())).toEqual(new CalendarDate(new JapaneseCalendar(), 'heisei', 31, 4, 30));
-
         date = new CalendarDate(2020, 4, 30);
         expect(toCalendar(date, new JapaneseCalendar())).toEqual(new CalendarDate(new JapaneseCalendar(), 'reiwa', 2, 4, 30));
       });
+
 
       it('returns the correct number of days for leap and non-leap years', function () {
         let date = new CalendarDate(new JapaneseCalendar(), 'reiwa', 4, 2, 5);
@@ -346,11 +353,13 @@ describe('CalendarDate conversion', function () {
       it('persian to gregorian', function () {
         let date = new CalendarDate(new PersianCalendar(), 1399, 6, 12);
         expect(toCalendar(date, new GregorianCalendar())).toEqual(new CalendarDate(2020, 9, 2));
+
       });
 
       it('gregorian to persian', function () {
         let date = new CalendarDate(2020, 9, 2);
         expect(toCalendar(date, new PersianCalendar())).toEqual(new CalendarDate(new PersianCalendar(), 1399, 6, 12));
+        expect(toCalendar(new CalendarDate(new GregorianCalendar(), 2023, 2, 27), new PersianCalendar())).toEqual(new CalendarDate(new PersianCalendar(), 1401, 12, 8));
       });
     });
 

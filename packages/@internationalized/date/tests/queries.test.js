@@ -33,8 +33,12 @@ import {
   startOfMonth,
   startOfWeek,
   startOfYear,
-  ZonedDateTime
+  ZonedDateTime,
+  GregorianCalendar,
+  PersianCalendar
 } from '..';
+import { toCalendar } from '../src';
+
 
 describe('queries', function () {
   describe('isSameDay', function () {
@@ -55,6 +59,9 @@ describe('queries', function () {
       expect(isSameDay(new CalendarDate(2021, 4, 16), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 10, 4))).toBe(false);
       expect(isSameDay(new CalendarDate(2021, 4, 17), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4))).toBe(false);
       expect(isSameDay(new CalendarDate(2021, 4, 16), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 3))).toBe(false);
+      expect(isSameDay(new CalendarDate(new PersianCalendar(), 1401, 12, 8), new CalendarDate(new GregorianCalendar(), 2023, 2, 27)),
+      ).toBe(true);
+
     });
   });
 
@@ -75,6 +82,8 @@ describe('queries', function () {
       expect(isSameMonth(new CalendarDate(2021, 4, 16), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 10, 4))).toBe(false);
       expect(isSameMonth(new CalendarDate(2021, 4, 17), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4))).toBe(true);
       expect(isSameMonth(new CalendarDate(2021, 4, 16), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 3))).toBe(true);
+      expect(isSameMonth(new CalendarDate(new PersianCalendar(), 1401, 12, 8), new CalendarDate(new GregorianCalendar(), 2023, 2, 27)),
+      ).toBe(true);
     });
 
     it('works with months that span different eras', function () {
@@ -100,6 +109,8 @@ describe('queries', function () {
       expect(isSameYear(new CalendarDate(2021, 4, 16), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 10, 4))).toBe(true);
       expect(isSameYear(new CalendarDate(2021, 4, 17), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4))).toBe(true);
       expect(isSameYear(new CalendarDate(2021, 4, 16), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 3))).toBe(true);
+      expect(isSameYear(new CalendarDate(new PersianCalendar(), 1401, 12, 8), new CalendarDate(new GregorianCalendar(), 2023, 2, 27)),
+      ).toBe(true);
     });
 
     it('works with months that span different eras', function () {
