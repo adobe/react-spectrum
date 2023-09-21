@@ -150,11 +150,11 @@ describe('CalendarDate conversion', function () {
     });
 
     it('should round trip to the same date using persian calendar', function () {
-      const PersianCalendarTest = new PersianCalendar()
       const persian = new CalendarDate(new PersianCalendar(), 1401, 12, 8);
-      const date = new CalendarDate(new GregorianCalendar(), 2023, 2, 27)
-      expect(PersianCalendarTest.fromJulianDay(date.calendar.toJulianDay(date))
-      ).toEqual(new CalendarDate(1401, 12, 8));
+      const date = 
+      expect(persian.calendar.fromJulianDay(date.calendar.toJulianDay(date))
+      ).toEqual(persian);
+
     });
     describe('japanese', function () {
       it('japanese to gregorian', function () {
