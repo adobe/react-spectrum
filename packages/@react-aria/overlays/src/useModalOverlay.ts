@@ -38,6 +38,7 @@ export function useModalOverlay(props: AriaModalOverlayProps, state: OverlayTrig
     isOpen: state.isOpen,
     onClose: state.close
   }, ref);
+
   usePreventScroll({
     isDisabled: !state.isOpen
   });
