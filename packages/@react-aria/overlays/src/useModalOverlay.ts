@@ -32,20 +32,12 @@ export interface ModalOverlayAria {
  * Provides the behavior and accessibility implementation for a modal component.
  * A modal is an overlay element which blocks interaction with elements outside it.
  */
-export function useModalOverlay(
-  props: AriaModalOverlayProps,
-  state: OverlayTriggerState,
-  ref: RefObject<HTMLElement>
-): ModalOverlayAria {
-  let {overlayProps, underlayProps} = useOverlay(
-    {
-      ...props,
-      isOpen: state.isOpen,
-      onClose: state.close
-    },
-    ref
-  );
-
+export function useModalOverlay(props: AriaModalOverlayProps, state: OverlayTriggerState, ref: RefObject<HTMLElement>): ModalOverlayAria {
+  let {overlayProps, underlayProps} = useOverlay({
+    ...props,
+    isOpen: state.isOpen,
+    onClose: state.close
+  }, ref);
   usePreventScroll({
     isDisabled: !state.isOpen
   });
