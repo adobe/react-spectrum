@@ -16,6 +16,7 @@ import {DropOptions, mergeProps, useClipboard, useDrop, useFocusRing, useHover, 
 import {filterDOMProps, useLabels, useSlotId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {isVirtualDragging} from '@react-aria/dnd';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
 
@@ -53,11 +54,12 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   let {hoverProps, isHovered} = useHover({});
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let isVirtualDrag = isVirtualDragging();
 
   let textId = useSlotId();
   let dropzoneId = useSlotId();
   let ariaLabel = props['aria-label'] || stringFormatter.format('dropzoneLabel');
-  let messageId = (isDropTarget && props['aria-labelledby']) ? props['aria-labelledby'] : null;
+  let messageId = (isVirtualDrag && props['aria-labelledby']) ? props['aria-labelledby'] : null;
   // Chrome + VO will not announce the drop zone's accessible name if useLabels combines an aria-label and aria-labelledby
   let ariaLabelledby = [dropzoneId, textId, messageId].filter(Boolean).join(' ');
   let labelProps = useLabels({
@@ -99,7 +101,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
         data-drop-target={isDropTarget || undefined} >
         <VisuallyHidden>
           {/* Added as a workaround for a Chrome + VO bug where it will not announce the aria label */}
-          <div id={dropzoneId}>
+          <div id={dropzoneId} aria-hidden="true">
             {ariaLabel}
           </div>
           <button

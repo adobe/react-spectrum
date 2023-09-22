@@ -41,7 +41,6 @@ function DropZone(props: SpectrumDropZoneProps, ref: DOMRef<HTMLDivElement>) {
       {...mergeProps(otherProps)}
       {...styleProps as Omit<React.HTMLAttributes<HTMLElement>, 'onDrop'>}
       aria-labelledby={isFilled ? messageId : null}
-      aria-describedby={isFilled ? messageId : null}
       className={
       classNames(
         styles,
