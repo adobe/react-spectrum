@@ -200,13 +200,11 @@ describe('SubMenu', function () {
     expect(document.activeElement).toBe(subMenuTrigger1);
     await user.keyboard('[ArrowRight]');
     act(() => {jest.runAllTimers();});
+
     let menus = tree.getAllByRole('menu', {hidden: true});
     expect(menus).toHaveLength(2);
     let subMenu1Items = within(menus[1]).getAllByRole('menuitem');
     expect(document.activeElement).toBe(subMenu1Items[0]);
-    class MockPointerEvent extends global.window.Event {}
-    global.window.PointerEvent = MockPointerEvent as any;
-    document.elementFromPoint = jest.fn(() => subMenuTrigger1);
     await user.pointer({target: subMenu1Items[0]});
     await user.pointer({target: subMenuTrigger1});
 
