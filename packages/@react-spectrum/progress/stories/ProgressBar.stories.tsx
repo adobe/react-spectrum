@@ -151,7 +151,7 @@ export const StaticColorWhite = (args) => (
 );
 
 StaticColorWhite.story = {
-  name: 'statiColor: white'
+  name: 'staticColor: white'
 };
 
 export const StaticColorBlack = (args) => (
@@ -159,7 +159,7 @@ export const StaticColorBlack = (args) => (
 );
 
 StaticColorBlack.story = {
-  name: 'statiColor: black'
+  name: 'staticColor: black'
 };
 
 export const ParentWidth100 = () => <span style={{width: '100%'}}>{render()}</span>;
