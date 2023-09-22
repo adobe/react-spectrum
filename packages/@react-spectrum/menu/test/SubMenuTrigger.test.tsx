@@ -794,7 +794,7 @@ describe('SubMenu', function () {
       jest.clearAllMocks();
     });
 
-    it.skip('should open sub menus in the same tray on touch press', async function () {
+    it('should open sub menus in the same tray on touch press', async function () {
       let tree = render(<SubMenuStatic />);
       let triggerButton = tree.getByRole('button');
       await user.pointer({target: triggerButton, keys: '[TouchA]'});
