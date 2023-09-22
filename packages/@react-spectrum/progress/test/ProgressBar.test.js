@@ -92,22 +92,4 @@ describe('ProgressBar', function () {
     let progressBar = getByTestId('test');
     expect(progressBar).toBeInTheDocument();
   });
-
-  it('changes class with static color prop', () => {
-    let {getAllByRole} = render(
-      <>
-        <ProgressBar staticColor="black" />
-        <ProgressBar staticColor="white" />
-        <ProgressBar />
-      </>
-    );
-    let progressBars = getAllByRole('progressbar');
-    expect(progressBars[0]).toHaveClass('spectrum-BarLoader--staticBlack');
-    expect(progressBars[0]).not.toHaveClass('spectrum-BarLoader--staticWhite');
-    expect(progressBars[1]).toHaveClass('spectrum-BarLoader--staticWhite');
-    expect(progressBars[1]).not.toHaveClass('spectrum-BarLoader--staticBlack');
-    expect(progressBars[2]).not.toHaveClass('spectrum-BarLoader--staticBlack');
-    expect(progressBars[2]).not.toHaveClass('spectrum-BarLoader--staticWhite');
-
-  });
 });

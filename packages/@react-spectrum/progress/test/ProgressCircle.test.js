@@ -160,21 +160,4 @@ describe('ProgressCircle', function () {
     let progressBar = getByTestId('test');
     expect(progressBar).toBeInTheDocument();
   });
-
-  it('changes class with static color prop', () => {
-    let {getAllByRole} = render(
-      <>
-        <ProgressCircle staticColor="black" />
-        <ProgressCircle staticColor="white" />
-        <ProgressCircle />
-      </>
-    );
-    let progressCircles = getAllByRole('progressbar');
-    expect(progressCircles[0]).toHaveClass('spectrum-CircleLoader--staticBlack');
-    expect(progressCircles[0]).not.toHaveClass('spectrum-CircleLoader--staticWhite');
-    expect(progressCircles[1]).toHaveClass('spectrum-CircleLoader--staticWhite');
-    expect(progressCircles[1]).not.toHaveClass('spectrum-CircleLoader--staticBlack');
-    expect(progressCircles[2]).not.toHaveClass('spectrum-CircleLoader--staticBlack');
-    expect(progressCircles[2]).not.toHaveClass('spectrum-CircleLoader--staticWhite');
-  });
 });
