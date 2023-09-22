@@ -34,13 +34,6 @@
 .react-spectrum-Table-cell {
   display: flex;
   align-items: center;
-
-  &.react-spectrum-Table-cell--hasExpandCollapseButton {
-    display: grid;
-    grid-template-columns: var(--spectrum-global-dimension-size-400) 1fr;
-    grid-template-rows: 1fr;
-    grid-template-areas: "expand-button contents";
-  }
 }
 
 .react-spectrum-Table-cellWrapper > .react-spectrum-Table-cell {
@@ -194,7 +187,7 @@
       border-radius: var(--spectrum-alias-border-radius-regular);
       padding: var(--spectrum-global-dimension-size-10);
 
-      &:focus-ring {
+      &:focus-visible {
         box-shadow: inset 0 0 0 2px var(--spectrum-table-cell-border-color-key-focus);
         outline: none;
 
