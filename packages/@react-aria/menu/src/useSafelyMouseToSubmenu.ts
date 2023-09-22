@@ -1,4 +1,5 @@
 import {CSSProperties, RefObject, useEffect, useRef, useState} from 'react';
+import {useInteractionModality} from '@react-aria/interactions';
 import {useResizeObserver} from '@react-aria/utils';
 
 interface SafelyMouseToSubmenuOptions {
@@ -37,10 +38,12 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
 
   useResizeObserver({ref: submenuRef, onResize: updateSubmenuRect});
 
+  let modality = useInteractionModality();
+
   useEffect(() => {
     let submenu = submenuRef.current;
 
-    if (!submenu || !isOpen) {
+    if (!submenu || !isOpen || modality !== 'pointer') {
       setMovements([]);
       return;
     }
@@ -123,7 +126,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
       clearTimeout(timeout.current);
     };
 
-  }, [isOpen, submenuRef]);
+  }, [isOpen, modality, submenuRef]);
   
   return {
     pointerEvents: movements.length < (ALLOWED_INVALID_MOVEMENTS + 1) || movements.every((m) => m === false) ? undefined : 'none'
