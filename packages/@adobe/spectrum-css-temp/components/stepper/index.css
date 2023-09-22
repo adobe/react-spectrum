@@ -27,7 +27,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Stepper {
-  @inherit: %spectrum-FocusRing;
+  composes: spectrum-FocusRing;
 
   display: inline-grid;
   position: relative;
@@ -161,8 +161,6 @@ governing permissions and limitations under the License.
     }
   }
   &.spectrum-Stepper--isQuiet {
-    @inherit: %spectrum-FocusRing--quiet;
-
     .spectrum-Stepper-icon {
       inset-inline-end: 0px;
     }
@@ -216,6 +214,10 @@ governing permissions and limitations under the License.
   }
 }
 
+.spectrum-Stepper--isQuiet {
+  composes: spectrum-FocusRing--quiet;
+}
+
 /* this is specific to handling default width */
 .spectrum-Stepper-container {
   /* ensure we have higher specificity than .spectrum-Field */
@@ -230,7 +232,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Stepper-button {
-  @inherit: %spectrum-BaseButton;
+  composes: spectrum-BaseButton;
 
   border-width: 0;
 

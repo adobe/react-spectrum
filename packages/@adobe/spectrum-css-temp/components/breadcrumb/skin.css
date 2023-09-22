@@ -35,7 +35,7 @@ governing permissions and limitations under the License.
       color: var(--spectrum-breadcrumb-text-color-hover);
     }
 
-    &:focus-ring {
+    &:focus-visible {
       color: var(--spectrum-breadcrumb-text-color-key-focus);
 
       &:before {
@@ -65,7 +65,7 @@ governing permissions and limitations under the License.
       }
     }
     .spectrum-Breadcrumbs-itemLink {
-      &:focus-ring {
+      &:focus-visible {
         color: var(--spectrum-breadcrumb-text-color-down);
         border-bottom: 0;
       }
