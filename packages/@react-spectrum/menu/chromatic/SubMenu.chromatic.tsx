@@ -25,7 +25,7 @@ import TextItalics from '@spectrum-icons/workflow/TextItalic';
 import {userEvent, within} from '@storybook/testing-library';
 
 const meta: Meta<SpectrumMenuTriggerProps> = {
-  title: 'SubMenuTrigger',
+  title: 'MenuTrigger/SubMenuTrigger',
   parameters: {
     chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true, express: false},
     // chromatic needs a bit more time than disableAnimations allows
@@ -45,7 +45,7 @@ let complex = [
       {name: 'Underline', shortcut: '⌘U'},
       {name: 'Strikethrough'}
     ]},
-    {textValue: 'Font size', isSection: true, children: [
+    {name: 'Font size', isSection: true, children: [
       {name: 'Bigger', shortcut: '⌘+'},
       {name: 'Smaller', shortcut: '⌘-'}
     ]},
@@ -145,6 +145,28 @@ Default.play = async ({canvasElement}) => {
   await userEvent.hover(menuItems[0]);
   let subMenuTrigger = await within(body).findByText('Baseline');
   await userEvent.hover(subMenuTrigger);
+};
+
+export const Mobile: DefaultStory = {
+  render: () => <DefaultSubMenu />,
+  name: 'mobile sub menu',
+  parameters: {
+    chromatic: {viewports: [320]},
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      locales: ['en-US'],
+      scales: ['large'],
+      disableAnimations: true
+    }
+  }
+};
+
+Mobile.play = async ({canvasElement}) => {
+  let body = canvasElement.ownerDocument.body;
+  let menu = await within(body).getByRole('menu');
+  let menuItems = within(menu).getAllByRole('menuitem');
+  await userEvent.click(menuItems[0]);
+  await within(body).findByText('Baseline');
 };
 
 function DefaultSubMenu(props) {
