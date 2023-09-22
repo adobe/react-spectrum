@@ -10,22 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import { ariaHideOutside } from "./ariaHideOutside";
-import { DOMAttributes } from "@react-types/shared";
-import { mergeProps } from "@react-aria/utils";
-import { OverlayTriggerState } from "@react-stately/overlays";
-import { RefObject, useEffect } from "react";
-import { AriaOverlayProps, useOverlay } from "./useOverlay";
-import { useOverlayFocusContain } from "./Overlay";
-import { usePreventScroll } from "./usePreventScroll";
+import {ariaHideOutside} from './ariaHideOutside';
+import {AriaOverlayProps, useOverlay} from './useOverlay';
+import {DOMAttributes} from '@react-types/shared';
+import {mergeProps} from '@react-aria/utils';
+import {OverlayTriggerState} from '@react-stately/overlays';
+import {RefObject, useEffect} from 'react';
+import {useOverlayFocusContain} from './Overlay';
+import {usePreventScroll} from './usePreventScroll';
 
 export interface AriaModalOverlayProps extends AriaOverlayProps {}
 
 export interface ModalOverlayAria {
   /** Props for the modal element. */
-  modalProps: DOMAttributes;
+  modalProps: DOMAttributes,
   /** Props for the underlay element. */
-  underlayProps: DOMAttributes;
+  underlayProps: DOMAttributes
 }
 
 /**
@@ -37,17 +37,17 @@ export function useModalOverlay(
   state: OverlayTriggerState,
   ref: RefObject<HTMLElement>
 ): ModalOverlayAria {
-  let { overlayProps, underlayProps } = useOverlay(
+  let {overlayProps, underlayProps} = useOverlay(
     {
       ...props,
       isOpen: state.isOpen,
-      onClose: state.close,
+      onClose: state.close
     },
     ref
   );
 
   usePreventScroll({
-    isDisabled: !state.isOpen,
+    isDisabled: !state.isOpen
   });
 
   useOverlayFocusContain();
@@ -60,6 +60,6 @@ export function useModalOverlay(
 
   return {
     modalProps: mergeProps(overlayProps),
-    underlayProps,
+    underlayProps
   };
 }
