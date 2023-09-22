@@ -15,7 +15,7 @@ import {createFocusManager} from '@react-aria/focus';
 import {DOMAttributes, FocusableElement, Orientation} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {ListState} from '@react-stately/list';
-import {RefObject} from 'react';
+import {KeyboardEventHandler, RefObject} from 'react';
 import {useLocale} from '@react-aria/i18n';
 
 const BUTTON_GROUP_ROLES = {
@@ -42,31 +42,113 @@ export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListSta
   let {direction} = useLocale();
   let focusManager = createFocusManager(ref);
   let flipDirection = direction === 'rtl' && orientation === 'horizontal';
-  let onKeyDown = (e) => {
-    if (!e.currentTarget.contains(e.target)) {
+  let onKeyDown: KeyboardEventHandler = (e) => {
+    if (!e.currentTarget.contains(e.target as HTMLElement)) {
       return;
     }
 
+    let next, willWrap;
     switch (e.key) {
       case 'ArrowRight':
-      case 'ArrowDown':
+        if (flipDirection) {
+          next = focusManager.focusPrevious({wrap: true, preview: true});
+          willWrap = next === focusManager.focusLast({preview: true});
+          if (willWrap) {
+            // delegate wrapping to a parent, such as toolbar
+            queueMicrotask(() => {
+              if (e.nativeEvent.defaultPrevented) {
+                return;
+              }
+              focusManager.focusLast();
+            });
+            return;
+          } else {
+            focusManager.focusPrevious({wrap: true});
+          }
+        } else {
+          next = focusManager.focusNext({wrap: true, preview: true});
+          willWrap = next === focusManager.focusFirst({preview: true});
+          if (willWrap) {
+            queueMicrotask(() => {
+              if (e.nativeEvent.defaultPrevented) {
+                return;
+              }
+              focusManager.focusFirst();
+            });
+            return;
+          } else {
+            focusManager.focusNext({wrap: true});
+          }
+        }
         e.preventDefault();
         e.stopPropagation();
-        if (e.key === 'ArrowRight' && flipDirection) {
-          focusManager.focusPrevious({wrap: true});
+        break;
+      case 'ArrowDown':
+        next = focusManager.focusNext({wrap: true, preview: true});
+        willWrap = next === focusManager.focusFirst({preview: true});
+        if (willWrap) {
+          queueMicrotask(() => {
+            if (e.nativeEvent.defaultPrevented) {
+              return;
+            }
+            focusManager.focusFirst();
+          });
+          return;
         } else {
           focusManager.focusNext({wrap: true});
         }
+        e.preventDefault();
+        e.stopPropagation();
         break;
       case 'ArrowLeft':
-      case 'ArrowUp':
+        if (flipDirection) {
+          next = focusManager.focusNext({wrap: true, preview: true});
+          willWrap = next === focusManager.focusFirst({preview: true});
+          if (willWrap) {
+            queueMicrotask(() => {
+              if (e.nativeEvent.defaultPrevented) {
+                return;
+              }
+              focusManager.focusFirst();
+            });
+            return;
+          } else {
+            focusManager.focusNext({wrap: true});
+          }
+        } else {
+          next = focusManager.focusPrevious({wrap: true, preview: true});
+          willWrap = next === focusManager.focusLast({preview: true});
+          if (willWrap) {
+            queueMicrotask(() => {
+              if (e.nativeEvent.defaultPrevented) {
+                return;
+              }
+              focusManager.focusLast();
+            });
+            return;
+          } else {
+            focusManager.focusPrevious({wrap: true});
+          }
+        }
         e.preventDefault();
         e.stopPropagation();
-        if (e.key === 'ArrowLeft' && flipDirection) {
-          focusManager.focusNext({wrap: true});
+        break;
+      case 'ArrowUp':
+        next = focusManager.focusPrevious({wrap: true, preview: true});
+        willWrap = next === focusManager.focusLast({preview: true});
+        if (willWrap) {
+          queueMicrotask(() => {
+            if (e.nativeEvent.defaultPrevented) {
+              return;
+            }
+            focusManager.focusLast();
+          });
+          return;
         } else {
           focusManager.focusPrevious({wrap: true});
         }
+        e.preventDefault();
+        e.stopPropagation();
         break;
     }
   };
@@ -81,7 +163,7 @@ export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListSta
       role,
       'aria-orientation': role === 'toolbar' ? orientation : undefined,
       'aria-disabled': isDisabled,
-      onKeyDown: !isInsideAToolbar ? onKeyDown : undefined
+      onKeyDown
     }
   };
 }

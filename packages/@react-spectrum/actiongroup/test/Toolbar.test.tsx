@@ -231,11 +231,14 @@ describe('Toolbar', () => {
     // Right arrow key navigates to next action buttons
     await user.keyboard('{ArrowRight}');
     expect(alignCenter).toHaveFocus();
-    // Down arrow key does nothing when horizontally oriented
+    // Down arrow key is controlled by the child component and can wrap
     await user.keyboard('{ArrowDown}');
-    expect(alignCenter).toHaveFocus();
+    expect(alignRight).toHaveFocus();
+    await user.keyboard('{ArrowDown}');
+    expect(alignLeft).toHaveFocus();
+    await user.keyboard('{ArrowUp}');
+    expect(alignRight).toHaveFocus();
 
-    await user.keyboard('{ArrowRight}');
     // Arrow keys navigate across dividers to other action groups
     await user.keyboard('{ArrowRight}');
     expect(zoomIn).toHaveFocus();
@@ -267,9 +270,6 @@ describe('Toolbar', () => {
 
     // Left arrow key navigates to previous action buttons
     await user.keyboard('{ArrowLeft}');
-    expect(alignCenter).toHaveFocus();
-    // Up arrow key does nothing when horizontally oriented
-    await user.keyboard('{ArrowUp}');
     expect(alignCenter).toHaveFocus();
 
     await user.keyboard('{ArrowLeft}');
@@ -340,11 +340,14 @@ describe('Toolbar', () => {
     // Down arrow key navigates to next action buttons
     await user.keyboard('{ArrowDown}');
     expect(alignCenter).toHaveFocus();
-    // Right arrow key does nothing when vertically oriented
+    // Right arrow key is controlled by child and can wrap
     await user.keyboard('{ArrowRight}');
-    expect(alignCenter).toHaveFocus();
+    expect(alignRight).toHaveFocus();
+    await user.keyboard('{ArrowRight}');
+    expect(alignLeft).toHaveFocus();
+    await user.keyboard('{ArrowLeft}');
+    expect(alignRight).toHaveFocus();
 
-    await user.keyboard('{ArrowDown}');
     // Arrow keys navigate across dividers to other action groups
     await user.keyboard('{ArrowDown}');
     expect(zoomIn).toHaveFocus();
@@ -377,11 +380,7 @@ describe('Toolbar', () => {
     // Up arrow key navigates to previous action buttons
     await user.keyboard('{ArrowUp}');
     expect(alignCenter).toHaveFocus();
-    // Left arrow key does nothing when vertically oriented
-    await user.keyboard('{ArrowLeft}');
-    expect(alignCenter).toHaveFocus();
 
-    await user.keyboard('{ArrowLeft}');
     // Blurring then tabbing re-enters toolbar at the last focused action button
     fireEvent.blur(alignLeft);
     act(() => {
@@ -439,14 +438,15 @@ describe('Toolbar', () => {
     // Left arrow key navigates to next action buttons
     await user.keyboard('{ArrowLeft}');
     expect(screen.getByRole('button', {name: 'Align center'})).toHaveFocus();
+    // Up/Down still go the same direction
     await user.keyboard('{ArrowUp}');
+    expect(screen.getByRole('button', {name: 'Align left'})).toHaveFocus();
+    await user.keyboard('{ArrowDown}');
     expect(screen.getByRole('button', {name: 'Align center'})).toHaveFocus();
 
     await user.keyboard('{ArrowLeft}');
     // Right arrow key navigates to previous action buttons
     await user.keyboard('{ArrowRight}');
-    expect(screen.getByRole('button', {name: 'Align center'})).toHaveFocus();
-    await user.keyboard('{ArrowDown}');
     expect(screen.getByRole('button', {name: 'Align center'})).toHaveFocus();
   });
 });

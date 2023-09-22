@@ -11,9 +11,9 @@
  */
 
 import {ContextValue, forwardRefType, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import {createFocusManager} from '@react-aria/focus';
+import {createFocusManager, focusSafely} from '@react-aria/focus';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {MultipleSelection, Orientation} from '@react-types/shared';
+import {FocusableElement, MultipleSelection, Orientation} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef, KeyboardEventHandler, RefObject, useRef} from 'react';
 import {useLocale} from '@react-aria/i18n';
 
@@ -54,24 +54,51 @@ function useToolbar(props: ToolbarProps & {isInsideAToolbar: boolean}, ref: RefO
   } = props;
   const {direction} = useLocale();
   const shouldReverse = direction === 'rtl' && orientation === 'horizontal';
-  let focusManager = createFocusManager(ref);
+  let focusManager = createFocusManager(ref, {tabbable: true});
 
   const onKeyDown: KeyboardEventHandler = (e) => {
     if (
-      (orientation === 'horizontal' && e.key === 'ArrowRight')
-      || (orientation === 'vertical' && e.key === 'ArrowDown')) {
+      ((orientation === 'horizontal' && e.key === 'ArrowRight')
+      || (orientation === 'vertical' && e.key === 'ArrowDown'))
+      && !e.nativeEvent.defaultPrevented) {
       if (shouldReverse) {
-        focusManager.focusPrevious();
+        let nextFocusable = focusManager.focusPrevious({tabbable: false, preview: true});
+        let nextTabbable = focusManager.focusPrevious({preview: true});
+        // for native radios, take over the focus so the radio isn't selected
+        if (nextFocusable && nextFocusable.getAttribute('type') === 'radio') {
+          focusElement(nextFocusable);
+        } else if (nextTabbable) {
+          focusElement(nextTabbable);
+        }
       } else {
-        focusManager.focusNext();
+        let nextFocusable = focusManager.focusNext({tabbable: false, preview: true});
+        let nextTabbable = focusManager.focusNext({preview: true});
+        if (nextFocusable && nextFocusable.getAttribute('type') === 'radio') {
+          focusElement(nextFocusable);
+        } else if (nextTabbable) {
+          focusElement(nextTabbable);
+        }
       }
     } else if (
-      (orientation === 'horizontal' && e.key === 'ArrowLeft')
-      || (orientation === 'vertical' && e.key === 'ArrowUp')) {
+      ((orientation === 'horizontal' && e.key === 'ArrowLeft')
+      || (orientation === 'vertical' && e.key === 'ArrowUp'))
+      && !e.nativeEvent.defaultPrevented) {
       if (shouldReverse) {
-        focusManager.focusNext();
+        let nextFocusable = focusManager.focusNext({tabbable: false, preview: true});
+        let nextTabbable = focusManager.focusNext({preview: true});
+        if (nextFocusable && nextFocusable.getAttribute('type') === 'radio') {
+          focusElement(nextFocusable);
+        } else if (nextTabbable) {
+          focusElement(nextTabbable);
+        }
       } else {
-        focusManager.focusPrevious();
+        let nextFocusable = focusManager.focusPrevious({tabbable: false, preview: true});
+        let nextTabbable = focusManager.focusPrevious({preview: true});
+        if (nextFocusable && nextFocusable.getAttribute('type') === 'radio') {
+          focusElement(nextFocusable);
+        } else if (nextTabbable) {
+          focusElement(nextTabbable);
+        }
       }
     } else if (e.key === 'Tab') {
       // When the tab key is pressed, we want to move focus
@@ -120,9 +147,9 @@ function useToolbar(props: ToolbarProps & {isInsideAToolbar: boolean}, ref: RefO
       'aria-orientation': orientation,
       'aria-label': ariaLabel,
       'aria-labelledby': ariaLabel == null ? ariaLabelledBy : undefined,
-      onKeyDownCapture: !isInsideAToolbar ? onKeyDown : undefined,
-      onFocusCapture: !isInsideAToolbar ? onFocus : undefined,
-      onBlurCapture: !isInsideAToolbar ? onBlur : undefined
+      onKeyDown: !isInsideAToolbar ? onKeyDown : undefined,
+      onFocus: !isInsideAToolbar ? onFocus : undefined,
+      onBlur: !isInsideAToolbar ? onBlur : undefined
     }
   };
 }
@@ -161,6 +188,21 @@ export const ToolbarNestingContext = createContext({isInsideAToolbar: false});
 /** @private */
 export const useToolbarNestingContext = () => React.useContext(ToolbarNestingContext);
 
+function focusElement(element: FocusableElement | null, scroll = false) {
+  if (element != null && !scroll) {
+    try {
+      focusSafely(element);
+    } catch (err) {
+      // ignore
+    }
+  } else if (element != null) {
+    try {
+      element.focus();
+    } catch (err) {
+      // ignore
+    }
+  }
+}
 
 /**
  * A toolbar lets you group multiple interactive elements such as Buttons.
