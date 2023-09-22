@@ -47,6 +47,8 @@ export interface AriaPopoverProps extends Omit<AriaPositionProps, 'isOpen' | 'on
    * @default false
    */
   isKeyboardDismissDisabled?: boolean,
+  // TODO: note new prop, essentially a passthrough to useOverlay, allows me to control when useOverlay will
+  // try to close the popover even if focus moves outside of the overlay (aka going from submenu to submenu trigger via mouse hover)
   // TODO: update description to be popover specific
   shouldCloseOnInteractOutside?: (element: Element) => boolean
 }

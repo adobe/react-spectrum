@@ -22,15 +22,11 @@ export interface MenuTreeState {
 }
 
 // TODO descriptions and naming. useMenuState or useMenuTreeState?
-// TODO: needs UNSTABLE?
 // Added props here so we can handle adding props in the future if need be, otherwise it would be a breaking change
-export function useMenuState(props: {}, state: MenuTriggerState): MenuTreeState  {
+export function UNSTABLE_useMenuState(props: {}, state: MenuTriggerState): MenuTreeState  {
   // TODO: Didn't really make sense to include the root menu key in the stack since its open state is goverened by MenuTriggerState unlike the submenus
   // We could have useMenuState track the root menu's open state as well or have Popover/Tray take closeAll instead of menuTriggerState.close()?
   // Or even merge the two states together?
-
-  // TODO: Another problem is that clicking outside of the all the menu's doesn't wipe the expandedKeysStack. Perhaps handle this in useSubMenutrigger
-  // and wipe it if the submenutrigger has unmounted? Or maybe it is reasonable to have the user pass () => closeAll() to useOverlay like it is done in the aria example that we have
 
   let [expandedKeysStack, setExpandedKeysStack] = useState<string[]>([]);
   let closeAll = useCallback(() => {
@@ -53,7 +49,6 @@ export function useMenuState(props: {}, state: MenuTriggerState): MenuTreeState 
     });
   }, []);
 
-  // TODO: Memo is a bit useless here since menuTriggerState always returns a new instance causing closeAll to return one as well
   return useMemo(() => ({
     expandedKeysStack,
     closeAll,

@@ -16,8 +16,8 @@ import {Popover} from '@react-spectrum/overlays';
 import React, {Key, ReactElement, useRef} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import {useSubMenuTrigger} from '@react-aria/menu';
-import {useSubMenuTriggerState} from '@react-stately/menu';
+import {UNSTABLE_useSubMenuTrigger} from '@react-aria/menu';
+import {UNSTABLE_useSubMenuTriggerState} from '@react-stately/menu';
 
 // TODO: Add shouldFlip and closeOnSelect if we feel like those should be customizable for SubMenuTrigger
 // Other MenuTriggerProps like onOpenChange and positioning stuff have been removed as per discussion
@@ -42,8 +42,8 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
   let [menuTrigger, menu] = React.Children.toArray(children);
   let {popoverContainerRef, trayContainerRef, menu: parentMenuRef, submenu: menuRef, menuTreeState, state} = useMenuStateContext();
   let triggerNode = state.collection.getItem(targetKey);
-  let subMenuTriggerState = useSubMenuTriggerState({triggerKey: targetKey}, {...menuTreeState, ...state});
-  let {subMenuTriggerProps, subMenuProps, popoverProps, overlayProps} = useSubMenuTrigger({
+  let subMenuTriggerState = UNSTABLE_useSubMenuTriggerState({triggerKey: targetKey}, {...menuTreeState, ...state});
+  let {subMenuTriggerProps, subMenuProps, popoverProps, overlayProps} = UNSTABLE_useSubMenuTrigger({
     node: triggerNode,
     parentMenuRef,
     subMenuRef: menuRef
@@ -52,7 +52,7 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
   let onBackButtonPress = () => {
     subMenuTriggerState.close();
     if (parentMenuRef.current && !parentMenuRef.current.contains(document.activeElement)) {
-      // TODO: needs a delay for the parent menu in the tray to no longer be display: none
+      // Delay for the parent menu in the tray to no longer be display: none so focus can properly be moved to it
       requestAnimationFrame(() => parentMenuRef.current.focus());
     }
   };
@@ -64,7 +64,6 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
     subMenuProps.autoFocus ??= true;
     if (trayContainerRef.current && subMenuTriggerState.isOpen) {
       // TODO: Will need the same SSR stuff as Overlay? Might not since this trigger should theoretically only be mounted if a parent menu is mounted and thus we aren't in a SSR state
-      // TODO: Deleting uneeded handlers for Tray experience since Tray is a Spectrum specific implementation detail
       overlay = ReactDOM.createPortal(menu, trayContainerRef.current);
     }
   } else {
