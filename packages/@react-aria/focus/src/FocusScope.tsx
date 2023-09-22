@@ -327,26 +327,13 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain?: boolean) 
       let scopeRoot = getScopeRoot(scope);
       let walker = getFocusableTreeWalker(scopeRoot, {tabbable: true}, scope);
       if (!focusedElement) {
-        return null;
+        return;
       }
       walker.currentNode = focusedElement;
       let nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as FocusableElement;
       if (!nextElement) {
-        if (e.shiftKey) {
-          let currNode = scope[scope.length - 1].nextElementSibling;
-          if (!currNode) {
-            return null;
-          }
-          walker.currentNode = currNode;
-          nextElement = walker.previousNode() as FocusableElement;
-        } else {
-          let currNode = scope[0].previousElementSibling;
-          if (!currNode) {
-            return null;
-          }
-          walker.currentNode = currNode;
-          nextElement = walker.nextNode() as FocusableElement;
-        }
+        walker.currentNode = e.shiftKey ? scope[scope.length - 1].nextElementSibling! : scope[0].previousElementSibling!;
+        nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as FocusableElement;
       }
 
       e.preventDefault();
