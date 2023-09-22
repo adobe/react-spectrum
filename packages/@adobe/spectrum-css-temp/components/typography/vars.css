@@ -2573,8 +2573,6 @@
   The &.spectrum makes it so users can do <div class="spectrum spectrum--large"> and still get the right font sizes
   Without this, they would have to do <div class="spectrum--large"><div class="spectrum">, which makes no sense
 */
-&.spectrum,
-&.spectrum-Body,
 .spectrum,
 .spectrum-Body {
   font-size: var(--spectrum-body-4-text-size, var(--spectrum-global-dimension-font-size-100));
@@ -2851,7 +2849,6 @@
 .spectrum-Code5 {
             color: var(--spectrum-body-code-5-text-color, var(--spectrum-global-color-gray-800));
           }
-&,
 .spectrum-Body {
   color: var(--spectrum-body-text-color, var(--spectrum-global-color-gray-800));
 }

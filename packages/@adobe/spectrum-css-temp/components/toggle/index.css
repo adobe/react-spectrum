@@ -72,7 +72,7 @@ governing permissions and limitations under the License.
     cursor: default;
   }
 
-  &:focus-ring {
+  &:focus-visible {
     + .spectrum-ToggleSwitch-switch {
       &:after {
         margin: calc(var(--spectrum-alias-focus-ring-gap) * -1);

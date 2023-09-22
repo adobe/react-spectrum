@@ -65,7 +65,7 @@ governing permissions and limitations under the License.
 
   min-width: var(--spectrum-splitbutton-trigger-min-width);
 
-  &:focus-ring {
+  &:focus-visible {
     box-shadow: none;
   }
 }

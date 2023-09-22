@@ -91,7 +91,7 @@ governing permissions and limitations under the License.
 }
 
 /* Only add the 2px ring for keyboard focus */
-.spectrum-InputGroup:focus-ring:not(.spectrum-InputGroup--quiet) {
+.spectrum-InputGroup:focus-visible:not(.spectrum-InputGroup--quiet) {
   .spectrum-FieldButton {
     z-index: 1;
   }
@@ -186,7 +186,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Datepicker--range {
-  &:focus-ring {
+  &:focus-visible {
     .spectrum-InputGroup-input {
       box-shadow: none !important;
     }
@@ -199,7 +199,7 @@ governing permissions and limitations under the License.
   }
 
   /* Focus ring: When one of the inputs or the button has keyboard focus, render the focus ring border around the entire input group by styling an adjacent descendant element. */
-  &:focus-ring {
+  &:focus-visible {
     box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-key-focus);
 
     &.spectrum-InputGroup--invalid {
@@ -217,7 +217,7 @@ governing permissions and limitations under the License.
     }
 
     /* Focus ring: When one of the inputs or the button has keyboard focus, render the focus ring border around the entire input group by styling an adjacent descendant element. */
-    &:focus-ring {
+    &:focus-visible {
       .spectrum-FieldButton {
         &:before {
            border-color: var(--spectrum-dropdown-border-color-key-focus);
@@ -230,7 +230,7 @@ governing permissions and limitations under the License.
          border-color: var(--spectrum-dropdown-border-color-error);
        }
       &.spectrum-FieldButton--invalid {
-        &:focus-ring {
+        &:focus-visible {
           border-color: var(--spectrum-dropdown-border-color-key-focus);
           box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-key-focus);
         }
@@ -248,12 +248,12 @@ governing permissions and limitations under the License.
              border-color: var(--spectrum-dropdown-border-color-key-focus);
            }
           &.spectrum-FieldButton--invalid {
-            &:focus-ring {
+            &:focus-visible {
               box-shadow: 0 2px 0 0 var(--spectrum-dropdown-border-color-key-focus);
             }
           }
         }
-        &:focus-ring {
+        &:focus-visible {
           box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-key-focus);
         }
       }
@@ -354,7 +354,7 @@ governing permissions and limitations under the License.
   }
 
   .spectrum-InputGroup {
-    &:focus-ring
+    &:focus-visible
     {
       &:not(.spectrum-InputGroup--quiet) {
         outline:2px solid Highlight;
