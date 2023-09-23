@@ -146,6 +146,22 @@ VariantOverBackground.story = {
   name: 'variant: overBackground'
 };
 
+export const StaticColorWhite = (args) => (
+  <div style={grayedBoxStyle}>{render({staticColor: 'white', ...args})}</div>
+);
+
+StaticColorWhite.story = {
+  name: 'staticColor: white'
+};
+
+export const StaticColorBlack = (args) => (
+  <div style={{...grayedBoxStyle, backgroundColor: 'rgb(206, 247, 243)'}}>{render({staticColor: 'black', ...args})}</div>
+);
+
+StaticColorBlack.story = {
+  name: 'staticColor: black'
+};
+
 export const ParentWidth100 = () => <span style={{width: '100%'}}>{render()}</span>;
 
 ParentWidth100.story = {
