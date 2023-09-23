@@ -139,6 +139,7 @@ export const Default: DefaultStory = {
 };
 
 Default.play = async ({canvasElement}) => {
+  // TODO: upgrade storybook testing library so we get user event 14 support
   let body = canvasElement.ownerDocument.body;
   let menu = await within(body).getByRole('menu');
   let menuItems = within(menu).getAllByRole('menuitem');
@@ -165,7 +166,9 @@ Mobile.play = async ({canvasElement}) => {
   let body = canvasElement.ownerDocument.body;
   let menu = await within(body).getByRole('menu');
   let menuItems = within(menu).getAllByRole('menuitem');
+  // TODO: need to use keyboard since userEvent click doesn't seem to open the menu
   await userEvent.click(menuItems[0]);
+  await userEvent.keyboard('[Enter]');
   await within(body).findByText('Baseline');
 };
 
