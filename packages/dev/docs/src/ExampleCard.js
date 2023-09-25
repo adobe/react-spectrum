@@ -10,7 +10,7 @@ export function ExampleCard(props) {
   let titleId = useId();
   let descriptionId = useId();
   return (
-    <a href={props.url} className={styles.exampleCard} {...getAnchorProps(props.url)} aria-labelledby={titleId} aria-describedby={descriptionId}>
+    <a href={props.url} className={styles.exampleCard} {...getAnchorProps(props.url)} aria-labelledby={titleId} aria-describedby={descriptionId} data-hover={styles['is-hovered']}>
       {props.children
         ? React.cloneElement(props.children, {'aria-hidden': true})
         : <Image src={props.preview} alt="" className={null} />

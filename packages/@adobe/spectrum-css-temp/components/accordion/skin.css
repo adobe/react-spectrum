@@ -31,7 +31,7 @@ governing permissions and limitations under the License.
     background-color: var(--spectrum-accordion-background-color-hover);
   }
 
-  &:focus-ring {
+  &:focus-visible {
     &:after  {
       background-color: var(--spectrum-accordion-border-left-color-key-focus);
     }
@@ -52,7 +52,7 @@ governing permissions and limitations under the License.
   .spectrum-Accordion-itemHeader {
     &,
     &:hover,
-    &:focus-ring {
+    &:focus-visible {
       color: var(--spectrum-accordion-text-color-disabled);
       background-color: transparent;
     }
@@ -60,7 +60,7 @@ governing permissions and limitations under the License.
 }
 @media (forced-colors: active) {
   .spectrum-Accordion-itemHeader {
-    &:focus-ring {
+    &:focus-visible {
       outline: 3px solid CanvasText;
     }
   }

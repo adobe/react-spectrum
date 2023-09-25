@@ -94,7 +94,13 @@ build:
 		do cp $$pkg/dist/module.js $$pkg/dist/import.mjs; \
 	done
 	sed -i.bak s/\.js/\.mjs/ packages/@react-aria/i18n/dist/import.mjs
+	sed -i.bak 's/@react-aria\/i18n/.\/real-main.js/' packages/@react-aria/i18n/dist/useMessageFormatter.js
+	sed -i.bak 's/@react-aria\/i18n/.\/real-module.js/' packages/@react-aria/i18n/dist/useMessageFormatter.module.js
+	sed -i.bak 's/@react-aria\/i18n/.\/real-module.mjs/' packages/@react-aria/i18n/dist/useMessageFormatter.module.mjs
 	rm packages/@react-aria/i18n/dist/import.mjs.bak
+	rm packages/@react-aria/i18n/dist/useMessageFormatter.js.bak
+	rm packages/@react-aria/i18n/dist/useMessageFormatter.module.js.bak
+	rm packages/@react-aria/i18n/dist/useMessageFormatter.module.mjs.bak
 
 website:
 	yarn build:docs --public-url /reactspectrum/$$(git rev-parse HEAD)/docs --dist-dir dist/$$(git rev-parse HEAD)/docs

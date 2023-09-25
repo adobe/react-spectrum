@@ -286,12 +286,10 @@ function TabInner({item, state}: {item: Node<object>, state: TabListState<object
   });
 
   let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
-  let DOMProps = filterDOMProps(item.props as any, {isLink: !!item.props.href});
-  delete DOMProps.id;
 
   return (
     <ElementType
-      {...mergeProps(DOMProps, tabProps, focusProps, hoverProps, renderProps)}
+      {...mergeProps(tabProps, focusProps, hoverProps, renderProps)}
       ref={ref}
       data-selected={isSelected || undefined}
       data-disabled={isDisabled || undefined}

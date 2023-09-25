@@ -22,7 +22,8 @@ const EXPRESS_ICON_MAPPING = {
   InfoMedium: 'SX_Info_18_N',
   InfoSmall: 'SX_Info_14_S',
   SuccessMedium: 'SX_CheckmarkCircle_18_N',
-  SuccessSmall: 'SX_CheckmarkCircle_14_S'
+  SuccessSmall: 'SX_CheckmarkCircle_14_S',
+  FolderBreadcrumb: 'SX_More_18'
 };
 
 let displayNameRegex = /.*?\.displayName = '(?<name>.*?)';/;
