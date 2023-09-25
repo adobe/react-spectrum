@@ -80,6 +80,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
   let onKeyDown: KeyboardEventHandler = (e) => {
     switch (e.key) {
       case 'ArrowLeft': {
+        e.persist?.();
         queueMicrotask(() => {
           if (e.nativeEvent.defaultPrevented) {
             return;
@@ -93,6 +94,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
         break;
       }
       case 'ArrowRight': {
+        e.persist?.();
         queueMicrotask(() => {
           if (e.nativeEvent.defaultPrevented) {
             return;

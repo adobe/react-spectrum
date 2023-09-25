@@ -55,6 +55,7 @@ export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListSta
           willWrap = next === focusManager.focusLast({preview: true});
           if (willWrap) {
             // delegate wrapping to a parent, such as toolbar
+            e.persist?.();
             queueMicrotask(() => {
               if (e.nativeEvent.defaultPrevented) {
                 return;
@@ -69,6 +70,7 @@ export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListSta
           next = focusManager.focusNext({wrap: true, preview: true});
           willWrap = next === focusManager.focusFirst({preview: true});
           if (willWrap) {
+            e.persist?.();
             queueMicrotask(() => {
               if (e.nativeEvent.defaultPrevented) {
                 return;
@@ -87,6 +89,7 @@ export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListSta
         next = focusManager.focusNext({wrap: true, preview: true});
         willWrap = next === focusManager.focusFirst({preview: true});
         if (willWrap) {
+          e.persist?.();
           queueMicrotask(() => {
             if (e.nativeEvent.defaultPrevented) {
               return;
@@ -105,6 +108,7 @@ export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListSta
           next = focusManager.focusNext({wrap: true, preview: true});
           willWrap = next === focusManager.focusFirst({preview: true});
           if (willWrap) {
+            e.persist?.();
             queueMicrotask(() => {
               if (e.nativeEvent.defaultPrevented) {
                 return;
@@ -119,6 +123,7 @@ export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListSta
           next = focusManager.focusPrevious({wrap: true, preview: true});
           willWrap = next === focusManager.focusLast({preview: true});
           if (willWrap) {
+            e.persist?.();
             queueMicrotask(() => {
               if (e.nativeEvent.defaultPrevented) {
                 return;
@@ -137,6 +142,7 @@ export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListSta
         next = focusManager.focusPrevious({wrap: true, preview: true});
         willWrap = next === focusManager.focusLast({preview: true});
         if (willWrap) {
+          e.persist?.();
           queueMicrotask(() => {
             if (e.nativeEvent.defaultPrevented) {
               return;

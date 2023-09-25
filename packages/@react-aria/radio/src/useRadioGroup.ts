@@ -111,6 +111,7 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
       }
     }
     if (nextElem) {
+      e.persist?.();
       queueMicrotask(() => {
         if (e.nativeEvent.defaultPrevented) {
           return;
