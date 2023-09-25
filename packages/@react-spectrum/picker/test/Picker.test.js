@@ -1664,34 +1664,34 @@ describe('Picker', function () {
       );
 
       await user.keyboard('{ArrowRight}');
+      await waitFor(() =>
+        expect(picker).toHaveTextContent('Two')
+      );
       expect(onSelectionChange).toHaveBeenCalledTimes(2);
+
+      await user.keyboard('{ArrowRight}');
+      await waitFor(() =>
+        expect(picker).toHaveTextContent('Three')
+      );
+      expect(onSelectionChange).toHaveBeenCalledTimes(3);
+
+      await user.keyboard('{ArrowRight}');
+      await waitFor(() =>
+        expect(picker).toHaveTextContent('Three')
+      );
+      expect(onSelectionChange).toHaveBeenCalledTimes(3);
+
+      await user.keyboard('{ArrowLeft}');
       await waitFor(() =>
         expect(picker).toHaveTextContent('Two')
       );
-
-      await user.keyboard('{ArrowRight}');
-      expect(onSelectionChange).toHaveBeenCalledTimes(3);
-      await waitFor(() =>
-        expect(picker).toHaveTextContent('Three')
-      );
-
-      await user.keyboard('{ArrowRight}');
-      expect(onSelectionChange).toHaveBeenCalledTimes(3);
-      await waitFor(() =>
-        expect(picker).toHaveTextContent('Three')
-      );
-
-      await user.keyboard('{ArrowLeft}');
       expect(onSelectionChange).toHaveBeenCalledTimes(4);
-      await waitFor(() =>
-        expect(picker).toHaveTextContent('Two')
-      );
 
       await user.keyboard('{ArrowLeft}');
-      expect(onSelectionChange).toHaveBeenCalledTimes(5);
       await waitFor(() =>
         expect(picker).toHaveTextContent('One')
       );
+      expect(onSelectionChange).toHaveBeenCalledTimes(5);
     });
   });
 
