@@ -48,9 +48,9 @@ governing permissions and limitations under the License.
   .spectrum-CircleLoader {
     --spectrum-loader-circle-medium-track-fill-color: Highlight;
     --spectrum-loader-circle-medium-over-background-track-fill-color: Highlight;
-    --spectrum-loader-circle-medium-track-color: CanvasText;
-    --spectrum-loader-circle-medium-over-background-track-color: CanvasText;
-    --spectrum-loader-circle-static-black-track-color: CanvasText;
     --spectrum-loader-circle-static-black-fill-color: Highlight;
+    --spectrum-loader-circle-medium-track-color: Background;
+    --spectrum-loader-circle-medium-over-background-track-color: Background;
+    --spectrum-loader-circle-static-black-track-color: Background;
   }
 }
