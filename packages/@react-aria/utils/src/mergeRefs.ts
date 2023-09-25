@@ -20,7 +20,7 @@ export function mergeRefs<T>(...refs: ForwardedRef<T>[]): ForwardedRef<T> {
     return refs[0];
   }
 
-  return (value: T) => {
+  return (value: T | null) => {
     for (let ref of refs) {
       if (typeof ref === 'function') {
         ref(value);

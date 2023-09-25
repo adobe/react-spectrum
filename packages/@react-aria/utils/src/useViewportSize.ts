@@ -55,7 +55,7 @@ export function useViewportSize(): ViewportSize {
 
 function getViewportSize(): ViewportSize {
   return {
-    width: visualViewport?.width || window.innerWidth,
-    height: visualViewport?.height || window.innerHeight
+    width: (visualViewport || {})?.width || window.innerWidth,
+    height: (visualViewport || {})?.height || window.innerHeight
   };
 }

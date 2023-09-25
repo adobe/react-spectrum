@@ -38,7 +38,7 @@ export function focusWithoutScrolling(element: FocusableElement) {
   }
 }
 
-let supportsPreventScrollCached: boolean = null;
+let supportsPreventScrollCached: boolean | null = null;
 function supportsPreventScroll() {
   if (supportsPreventScrollCached == null) {
     supportsPreventScrollCached = false;

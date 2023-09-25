@@ -45,9 +45,9 @@ function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLInputElement
 
   return (
     <>
-      <PressResponder 
+      <PressResponder
         onPress={() => {
-          if (inputRef.current.value) {
+          if (inputRef.current?.value) {
             inputRef.current.value = '';
           }
           inputRef.current?.click();

@@ -17,7 +17,7 @@ import {useRef} from 'react';
 export function useDeepMemo<T>(value: T, isEqual: (a: T, b: T) => boolean): T {
   // Using a ref during render is ok here because it's only an optimization – both values are equivalent.
   // If a render is thrown away, it'll still work the same no matter if the next render is the same or not.
-  let lastValue = useRef(null);
+  let lastValue = useRef<T | null>(null);
   if (value && lastValue.current && isEqual(value, lastValue.current)) {
     value = lastValue.current;
   }

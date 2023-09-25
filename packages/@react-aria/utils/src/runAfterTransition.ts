@@ -28,15 +28,15 @@ function setupGlobalEvents() {
 
   let onTransitionStart = (e: TransitionEvent) => {
     // Add the transitioning property to the list for this element.
-    let transitions = transitionsByElement.get(e.target);
+    let transitions = transitionsByElement.get(e.target as Element);
     if (!transitions) {
       transitions = new Set();
-      transitionsByElement.set(e.target, transitions);
+      transitionsByElement.set(e.target as Element, transitions);
 
       // The transitioncancel event must be registered on the element itself, rather than as a global
       // event. This enables us to handle when the node is deleted from the document while it is transitioning.
       // In that case, the cancel event would have nowhere to bubble to so we need to handle it directly.
-      e.target.addEventListener('transitioncancel', onTransitionEnd);
+      e.target?.addEventListener('transitioncancel', onTransitionEnd as EventListener);
     }
 
     transitions.add(e.propertyName);
@@ -44,7 +44,7 @@ function setupGlobalEvents() {
 
   let onTransitionEnd = (e: TransitionEvent) => {
     // Remove property from list of transitioning properties.
-    let properties = transitionsByElement.get(e.target);
+    let properties = transitionsByElement.get(e.target as Element);
     if (!properties) {
       return;
     }
@@ -53,8 +53,8 @@ function setupGlobalEvents() {
 
     // If empty, remove transitioncancel event, and remove the element from the list of transitioning elements.
     if (properties.size === 0) {
-      e.target.removeEventListener('transitioncancel', onTransitionEnd);
-      transitionsByElement.delete(e.target);
+      e.target?.removeEventListener('transitioncancel', onTransitionEnd as EventListener);
+      transitionsByElement.delete(e.target as Element);
     }
 
     // If no transitioning elements, call all of the queued callbacks.
