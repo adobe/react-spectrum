@@ -139,6 +139,19 @@ When a ProgressBar needs to be placed on top of a colored background, use the `o
 </View>
 ```
 
+### Static color
+
+When a ProgressBar needs to be placed on top of a dark background, use `staticColor='white'`. When it is over a light background, use `staticColor='black'`
+
+```tsx example
+<View backgroundColor="static-blue-700" padding="size-300">
+  <ProgressBar label="Loading…" staticColor="white" value={5} />
+</View>
+<View backgroundColor="static-yellow-400" padding="size-300">
+  <ProgressBar label="Loading…" staticColor="black" value={5} />
+</View>
+```
+
 ### Size
 [View guidelines](https://spectrum.adobe.com/page/progress-bar/#Size)
 
