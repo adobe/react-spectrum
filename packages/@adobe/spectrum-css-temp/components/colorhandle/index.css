@@ -10,15 +10,6 @@
   --spectrum-colorhandle-hitarea-radius: 100%;
 }
 
-%spectrum-ColorControl-handle--focused {
-  /* Bigger handle when focused */
-  width: calc(var(--spectrum-colorhandle-size) * 2);
-  height: calc(var(--spectrum-colorhandle-size) * 2);
-
-  margin-left: calc(-1 * var(--spectrum-colorhandle-size));
-  margin-top: calc(-1 * var(--spectrum-colorhandle-size));
-}
-
 .spectrum-ColorHandle {
   display: block;
   position: absolute;
@@ -64,14 +55,23 @@
     height: var(--spectrum-colorhandle-hitarea-size);
   }
 
-  &.is-focused,
-  &.focus-ring {
-    @extend %spectrum-ColorControl-handle--focused;
-  }
-
   &.is-disabled {
     pointer-events: none;
   }
+}
+
+.spectrum-ColorControl-handle--focused {
+  /* Bigger handle when focused */
+  width: calc(var(--spectrum-colorhandle-size) * 2);
+  height: calc(var(--spectrum-colorhandle-size) * 2);
+
+  margin-left: calc(-1 * var(--spectrum-colorhandle-size));
+  margin-top: calc(-1 * var(--spectrum-colorhandle-size));
+}
+
+.is-focused,
+.focus-ring {
+  composes: spectrum-ColorControl-handle--focused;
 }
 
 .spectrum-ColorHandle-color {

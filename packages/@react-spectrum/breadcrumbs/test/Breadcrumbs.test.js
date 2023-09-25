@@ -440,4 +440,33 @@ describe('Breadcrumbs', function () {
     expect(items[0].tagName).toBe('A');
     expect(items[0]).toHaveAttribute('href', 'https://example.com');
   });
+
+  it('should support RouterProvider', () => {
+    let navigate = jest.fn();
+    let {getByRole, getAllByRole} = render(
+      <Provider theme={theme} router={{navigate}}>
+        <Breadcrumbs>
+          <Item href="/">Example.com</Item>
+          <Item href="/foo">Foo</Item>
+          <Item href="/foo/bar">Bar</Item>
+          <Item href="/foo/bar/baz">Baz</Item>
+          <Item href="/foo/bar/baz/qux">Qux</Item>
+        </Breadcrumbs>
+      </Provider>
+    );
+
+    let links = getAllByRole('link');
+    triggerPress(links[0]);
+    expect(navigate).toHaveBeenCalledWith('/foo/bar');
+    navigate.mockReset();
+
+    let menuButton = getByRole('button');
+    triggerPress(menuButton);
+    act(() => {jest.runAllTimers();});
+
+    let menu = getByRole('menu');
+    let items = within(menu).getAllByRole('menuitemradio');
+    triggerPress(items[1]);
+    expect(navigate).toHaveBeenCalledWith('/foo');
+  });
 });

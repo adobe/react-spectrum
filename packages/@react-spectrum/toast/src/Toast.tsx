@@ -19,10 +19,11 @@ import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {QueuedToast, ToastState} from '@react-stately/toast';
-import React, {ReactNode} from 'react';
+import React, {ReactNode, useContext} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/toast/vars.css';
 import SuccessMedium from '@spectrum-icons/ui/SuccessMedium';
 import toastContainerStyles from './toastContainer.css';
+import {ToasterContext} from './Toaster';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useToast} from '@react-aria/toast';
 
@@ -73,6 +74,7 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let iconLabel = variant && variant !== 'neutral' ? stringFormatter.format(variant) : null;
   let Icon = ICONS[variant];
+  let isFocusVisible = useContext(ToasterContext);
 
   const handleAction = () => {
     if (onAction) {
@@ -95,7 +97,8 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
         styleProps.className,
         classNames(
           toastContainerStyles,
-          'spectrum-Toast'
+          'spectrum-Toast',
+          {'focus-ring': props.toast.key === state.visibleToasts[0]?.key && isFocusVisible}
         )
       )}
       style={{

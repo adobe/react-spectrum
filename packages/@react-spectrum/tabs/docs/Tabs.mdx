@@ -11,7 +11,8 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/tabs';
-import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
+import utilsDocs from 'docs:@react-aria/utils';
+import {HeaderInfo, PropTable, PageDescription, TypeLink} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/tabs/package.json';
 
 ```jsx import
@@ -333,6 +334,58 @@ function Example() {
     </Tabs>
   );
 }
+```
+
+## Links
+
+Tabs may be rendered as links to different routes in your application. This can be achieved by passing the `href` prop to the `<Item>` component. By default, links perform native browser navigation. However, you'll usually want to synchronize the selected tab with the URL from your client side router. This takes two steps:
+
+1. Set up a <TypeLink links={utilsDocs.links} type={utilsDocs.exports.RouterProvider} /> at the root of your app. This will handle link navigation from all React Aria components using your framework or router. See the [client side routing guide](routing.html) to learn how to set this up.
+2. Use the `selectedKey` prop to set the selected tab based on the URL, as [described above](#selection).
+
+This example uses [React Router](https://reactrouter.com/en/main) to setup routes for each tab and synchronize the selection with the URL.
+
+```tsx
+import {useLocation, useNavigate, BrowserRouter, Routes, Route, Outlet} from 'react-router-dom';
+import {RouterProvider} from '@adobe/react-spectrum';
+
+function AppTabs() {
+  let {pathname} = useLocation();
+
+  return (
+    <Tabs selectedKey={pathname}>
+      <TabList aria-label="Tabs">
+        <Item key="/" href="/">Home</Item>
+        <Item key="/shared" href="/shared">Shared</Item>
+        <Item key="/deleted" href="/deleted">Deleted</Item>
+      </TabList>
+      <TabPanels>
+        <Item key="/"><Outlet /></Item>
+        <Item key="/shared"><Outlet /></Item>
+        <Item key="/deleted"><Outlet /></Item>
+      </TabPanels>
+    </Tabs>
+  );
+}
+
+function App() {
+  let navigate = useNavigate();
+  return (
+    <RouterProvider navigate={navigate}>
+      <Routes>
+        <Route path="/" element={<AppTabs />}>
+          <Route index element={<HomePage />} />
+          <Route path="/shared" element={<SharedPage />} />
+          <Route path="/deleted" element={<DeletedPage />} />
+        </Route>
+      </Routes>
+    </RouterProvider>
+  );
+}
+
+<BrowserRouter>
+  <App />
+</BrowserRouter>
 ```
 
 ## Props

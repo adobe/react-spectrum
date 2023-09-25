@@ -1,4 +1,4 @@
-%spectrum-FocusRing-ring {
+.spectrum-FocusRing-ring {
   --spectrum-focus-ring-border-radius: var(--spectrum-textfield-border-radius);
   --spectrum-focus-ring-gap: var(--spectrum-alias-input-focusring-gap);
   --spectrum-focus-ring-size: var(--spectrum-alias-input-focusring-size);
@@ -6,7 +6,7 @@
   --spectrum-focus-ring-color: xvar(--spectrum-high-contrast-focus-ring-color, var(--spectrum-alias-focus-ring-color));
 
   &:after {
-    border-radius: calc(calc(var(--spectrum-focus-ring-border-radius) / 2) + var(--spectrum-focus-ring-gap) * 2);
+    border-radius: calc(var(--spectrum-focus-ring-border-radius) + var(--spectrum-focus-ring-gap));
     content: '';
     display: block;
     position: absolute;
@@ -22,27 +22,23 @@
   }
 }
 
-%spectrum-FocusRing-active {
-  &:after {
-    margin: calc(var(--spectrum-focus-ring-gap) * -1 - var(--spectrum-focus-ring-border-size));
-    box-shadow: 0 0 0 var(--spectrum-focus-ring-size) var(--spectrum-focus-ring-color);
+.spectrum-FocusRing {
+  composes: spectrum-FocusRing-ring;
+
+  &:focus-visible {
+    &:after {
+      margin: calc(var(--spectrum-focus-ring-gap) * -1 - var(--spectrum-focus-ring-border-size));
+      box-shadow: 0 0 0 var(--spectrum-focus-ring-size) var(--spectrum-focus-ring-color);
+    }
   }
 }
 
-%spectrum-FocusRing {
-  @inherit %spectrum-FocusRing-ring;
-
-  &:focus-ring {
-    @inherit %spectrum-FocusRing-active;
-  }
-}
-
-%spectrum-FocusRing--quiet {
+.spectrum-FocusRing--quiet {
   &:after {
     border-radius: 0;
   }
 
-  &:focus-ring {
+  &:focus-visible {
     &:after {
       margin: 0 0 calc(var(--spectrum-focus-ring-gap) * -1 - var(--spectrum-focus-ring-border-size)) 0;
       box-shadow: 0 var(--spectrum-focus-ring-size) 0 var(--spectrum-focus-ring-color);

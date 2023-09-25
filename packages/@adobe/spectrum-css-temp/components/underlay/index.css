@@ -21,7 +21,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Underlay {
-  @inherit: %spectrum-overlay;
+  composes: spectrum-overlay;
 
   position: fixed;
   top: 0;
@@ -44,8 +44,8 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-Underlay.is-open {
-  @inherit: %spectrum-overlay--open;
+.is-open {
+  composes: spectrum-overlay--open;
 
   /* Entry animations */
   transition: opacity var(--spectrum-dialog-background-entry-animation-duration) var(--spectrum-dialog-background-entry-animation-ease) var(--spectrum-dialog-background-entry-animation-delay);

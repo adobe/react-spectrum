@@ -344,7 +344,7 @@ These selection styles implement the behaviors defined in [Aria Practices](https
 <PokemonList selectionStyle="highlight" aria-label="Highlight selection ListView" />
 ```
 
-### Row actions
+## Row actions
 
 ListView supports row actions via the `onAction` prop, which is useful for functionality such as navigation. When nothing is selected, the ListView performs actions by default when clicking or tapping a row.
 Items may be selected using the checkbox, or by long pressing on touch devices. When at least one item is selected, the ListView is in selection mode, and clicking or tapping a row toggles the selection. Actions may also
@@ -359,6 +359,23 @@ This behavior is slightly different in the highlight selection style, where sing
   <PokemonList selectionStyle="highlight" onAction={key => alert(`Opening item ${key}...`)} aria-label="Highlight selection ListView with row actions" width="size-2400" />
 </Flex>
 ```
+
+### Links
+
+Items in a ListView may also be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component. Links behave the same way as described above for row actions depending on the `selectionMode` and `selectionStyle`.
+
+```tsx example
+<ListView aria-label="Links" selectionMode="multiple">
+  <Item href="https://adobe.com/" target="_blank">Adobe</Item>
+  <Item href="https://apple.com/" target="_blank">Apple</Item>
+  <Item href="https://google.com/" target="_blank">Google</Item>
+  <Item href="https://microsoft.com/" target="_blank">Microsoft</Item>
+</ListView>
+```
+
+#### Client side routing
+
+The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Spectrum components that support links, this works via the [Provider](Provider.html) component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
 ## Drag and drop
 
