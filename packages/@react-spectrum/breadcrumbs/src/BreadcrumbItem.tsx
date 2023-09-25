@@ -70,29 +70,16 @@ export function BreadcrumbItem(props: SpectrumBreadcrumbItemProps) {
           {children}
         </ElementType>
       </FocusRing>
-      {provider?.theme?.global?.express ? (
-        <ChevronRight
-          UNSAFE_className={
-            classNames(
-              styles,
-              'spectrum-Breadcrumbs-itemSeparator',
-              {
-                'is-reversed': direction === 'rtl'
-              }
-            )
-          } />
-        ) : (
-          <ChevronRightSmall
-            UNSAFE_className={
-              classNames(
-                styles,
-                'spectrum-Breadcrumbs-itemSeparator',
-                {
-                  'is-reversed': direction === 'rtl'
-                }
-              )
-            } />
-        )}
+      <ChevronRightSmall
+        UNSAFE_className={
+          classNames(
+            styles,
+            'spectrum-Breadcrumbs-itemSeparator',
+            {
+              'is-reversed': direction === 'rtl'
+            }
+          )
+        } />
     </Fragment>
   );
 }
