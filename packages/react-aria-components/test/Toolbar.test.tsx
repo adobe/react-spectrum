@@ -28,6 +28,9 @@ describe('Toolbar', () => {
     user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
   });
+  afterEach(() => {
+    act(() => {jest.runAllTimers();});
+  });
 
   it('renders', async () => {
     let ref = createRef<HTMLDivElement>();
