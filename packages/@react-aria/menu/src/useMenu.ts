@@ -15,6 +15,7 @@ import {DOMAttributes, KeyboardDelegate} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {Key, RefObject} from 'react';
 import {TreeState} from '@react-stately/tree';
+import {useSafelyMouseToSubmenu} from './useSafelyMouseToSubmenu';
 import {useSelectableList} from '@react-aria/selection';
 
 export interface MenuAria {
@@ -33,7 +34,8 @@ export interface AriaMenuOptions<T> extends Omit<AriaMenuProps<T>, 'children'> {
   keyboardDelegate?: KeyboardDelegate,
   // TODO: Should we have an accompanying onKeyUp even though we don't use it and then just extend KeyboardEvents?
   // Should this be UNSTABLE? That would mean the props from useSubMenuTrigger would be the UNSTABLE variants as well
-  onKeyDown?: (e: KeyboardEvent) => void
+  onKeyDown?: (e: KeyboardEvent) => void,
+  disableSafeMousing?: boolean
 }
 
 interface MenuData {
@@ -49,7 +51,7 @@ export const menuData = new WeakMap<TreeState<unknown>, MenuData>();
  * @param props - Props for the menu.
  * @param state - State for the menu, as returned by `useListState`.
  */
-export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: RefObject<HTMLElement>): MenuAria {
+export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: RefObject<HTMLElement>, submenuRef: RefObject<HTMLElement>): MenuAria {
   let {
     shouldFocusWrap = true,
     onKeyDown,
@@ -76,6 +78,8 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
     onAction: props.onAction
   });
 
+  let style = useSafelyMouseToSubmenu({submenuRef, isOpen: state.expandedKeys.size > 0});
+
   return {
     menuProps: mergeProps(domProps, {onKeyDown}, {
       role: 'menu',
@@ -87,7 +91,8 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
         if (e.key !== 'Escape') {
           listProps.onKeyDown(e);
         }
-      }
+      },
+      style
     })
   };
 }

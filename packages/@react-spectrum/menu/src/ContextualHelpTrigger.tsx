@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, SlotProvider, useIsMobileDevice} from '@react-spectrum/utils';
+import {classNames, SlotProvider, useDOMRef, useIsMobileDevice} from '@react-spectrum/utils';
 import {DismissButton} from '@react-aria/overlays';
 import {getInteractionModality} from '@react-aria/interactions';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
@@ -34,14 +34,13 @@ export interface SpectrumMenuDialogTriggerProps<T> extends Omit<MenuDialogTrigge
 function ContextualHelpTrigger<T>(props: MenuDialogTriggerProps<T>): ReactElement {
   let {isUnavailable, targetKey} = props;
   let triggerRef = useRef<HTMLLIElement>(null);
-  let popoverRef = useRef(null);
-  let {popoverContainerRef, menuTreeState, menu: parentMenuRef, state} = useMenuStateContext();
+  let {popoverContainerRef, menuTreeState, menu: parentMenuRef, state, submenu: submenuRef} = useMenuStateContext();
   let triggerNode = state.collection.getItem(targetKey);
   let subMenuTriggerState = UNSTABLE_useSubMenuTriggerState({triggerKey: targetKey}, {...menuTreeState, ...state});
   let {subMenuTriggerProps, popoverProps, overlayProps} = UNSTABLE_useSubMenuTrigger({
     node: triggerNode,
     parentMenuRef,
-    subMenuRef: popoverRef,
+    subMenuRef: submenuRef,
     subMenuType: 'dialog',
     isDisabled: !isUnavailable
   }, subMenuTriggerState, triggerRef);
@@ -59,12 +58,13 @@ function ContextualHelpTrigger<T>(props: MenuDialogTriggerProps<T>): ReactElemen
   let isMobile = useIsMobileDevice();
 
   let onBlurWithin = (e) => {
-    if (e.relatedTarget && popoverRef.current && (!popoverRef.current?.UNSAFE_getDOMNode().contains(e.relatedTarget) && !(e.relatedTarget === triggerRef.current && getInteractionModality() === 'pointer'))) {
+    if (e.relatedTarget && submenuRef.current && (!submenuRef.current?.contains(e.relatedTarget) && !(e.relatedTarget === triggerRef.current && getInteractionModality() === 'pointer'))) {
       if (subMenuTriggerState.isOpen) {
         subMenuTriggerState.close();
       }
     }
   };
+
   return (
     <>
       <SubMenuTriggerContext.Provider value={{isUnavailable, triggerRef, ...subMenuTriggerProps}}>{trigger}</SubMenuTriggerContext.Provider>
@@ -83,7 +83,7 @@ function ContextualHelpTrigger<T>(props: MenuDialogTriggerProps<T>): ReactElemen
               onBlurWithin={onBlurWithin}
               container={popoverContainerRef.current}
               state={subMenuTriggerState}
-              ref={popoverRef}
+              ref={subMenuRef}
               triggerRef={triggerRef}
               placement="end top"
               containerPadding={0}

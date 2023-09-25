@@ -45,9 +45,8 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   let popoverContainerRef = useRef(null);
   let trayContainerRef = useRef(null);
   let state = useTreeState(completeProps);
-  let {menuProps} = useMenu(completeProps, state, domRef);
   let submenuRef = useRef(null);
-  let style = useSafelyMouseToSubmenu({submenuRef, isOpen: state.expandedKeys.size > 0});
+  let {menuProps} = useMenu(completeProps, state, domRef, submenuRef);
   let {styleProps} = useStyleProps(completeProps);
   useSyncRef(contextProps, domRef);
   let {direction} = useLocale();
@@ -94,7 +93,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
           )}
           <div
             {...menuProps}
-            style={mergeProps(style, styleProps.style)}
+            style={styleProps.style}
             ref={domRef}
             className={
               classNames(
