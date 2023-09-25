@@ -11,6 +11,8 @@
  */
 
 import {BreadcrumbItemProps} from '@react-types/breadcrumbs';
+// eslint-disable-next-line monorepo/no-internal-import
+import ChevronRight from '@spectrum-icons/express/ChevronRight';
 import ChevronRightSmall from '@spectrum-icons/ui/ChevronRightSmall';
 import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
@@ -20,6 +22,7 @@ import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbItem} from '@react-aria/breadcrumbs';
 import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
+import {useProvider} from '@react-spectrum/provider';
 
 interface SpectrumBreadcrumbItemProps extends BreadcrumbItemProps {
   isMenu?: boolean
@@ -32,6 +35,7 @@ export function BreadcrumbItem(props: SpectrumBreadcrumbItemProps) {
     isDisabled,
     isMenu
   } = props;
+  let provider = useProvider();
 
   let {direction} = useLocale();
   let ref = useRef(null);
@@ -66,8 +70,8 @@ export function BreadcrumbItem(props: SpectrumBreadcrumbItemProps) {
           {children}
         </ElementType>
       </FocusRing>
-      {isCurrent === false &&
-        <ChevronRightSmall
+      {provider?.theme?.global?.express ? (
+        <ChevronRight
           UNSAFE_className={
             classNames(
               styles,
@@ -77,7 +81,18 @@ export function BreadcrumbItem(props: SpectrumBreadcrumbItemProps) {
               }
             )
           } />
-      }
+        ) : (
+          <ChevronRightSmall
+            UNSAFE_className={
+              classNames(
+                styles,
+                'spectrum-Breadcrumbs-itemSeparator',
+                {
+                  'is-reversed': direction === 'rtl'
+                }
+              )
+            } />
+        )}
     </Fragment>
   );
 }

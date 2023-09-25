@@ -12,8 +12,8 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaNumberFieldProps} from '@react-types/numberfield';
+import {chain, filterDOMProps, isAndroid, isIOS, isIPhone, mergeProps, useFormReset, useId} from '@react-aria/utils';
 import {DOMAttributes, GroupDOMAttributes, TextInputDOMProps} from '@react-types/shared';
-import {filterDOMProps, isAndroid, isIOS, isIPhone, mergeProps, useFormReset, useId} from '@react-aria/utils';
 import {
   InputHTMLAttributes,
   LabelHTMLAttributes,
@@ -182,6 +182,11 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   };
 
   let domProps = filterDOMProps(props);
+  let onKeyDownEnter = useCallback((e) => {
+    if (e.key === 'Enter') {
+      commit();
+    }
+  }, [commit]);
 
   let {labelProps, inputProps: textFieldProps, descriptionProps, errorMessageProps} = useFormattedTextField({
     ...otherProps,
@@ -206,7 +211,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     onBlur,
     onFocus,
     onFocusChange,
-    onKeyDown,
+    onKeyDown: useMemo(() => chain(onKeyDownEnter, onKeyDown), [onKeyDownEnter, onKeyDown]),
     onKeyUp,
     description,
     errorMessage
