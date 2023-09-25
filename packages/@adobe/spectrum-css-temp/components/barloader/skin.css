@@ -86,7 +86,7 @@ governing permissions and limitations under the License.
     forced-color-adjust: none;
     --spectrum-barloader-large-track-fill-color: ButtonText;
     --spectrum-barloader-large-over-background-track-fill-color: ButtonText;
-    --spectrum-barloader-large-over-background-track-color: ButtonText
+    --spectrum-barloader-large-over-background-track-color: ButtonText;
     --spectrum-barloader-static-black-track-color: ButtonText;
     --spectrum-barloader-static-black-fill-color: ButtonText;
     --spectrum-meter-large-track-color-positive: ButtonText;
