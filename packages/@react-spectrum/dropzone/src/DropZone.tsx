@@ -35,12 +35,12 @@ function DropZone(props: SpectrumDropZoneProps, ref: DOMRef<HTMLDivElement>) {
   let domRef = useDOMRef(ref);
   let messageId = useId();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
-
+  
   return (
     <RACDropZone
       {...mergeProps(otherProps)}
       {...styleProps as Omit<React.HTMLAttributes<HTMLElement>, 'onDrop'>}
-      aria-labelledby={isFilled ? messageId : null}
+      aria-labelledby={messageId}
       className={
       classNames(
         styles,
