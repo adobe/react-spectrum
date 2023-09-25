@@ -1253,9 +1253,11 @@ export const ToolbarExample = (props) => {
       <label htmlFor="before">Input Before Toolbar</label>
       <input id="before" type="text" />
       <Toolbar {...props}>
-        <ToggleButton className={classNames(styles, 'toggleButtonExample')}><strong>B</strong></ToggleButton>
-        <ToggleButton className={classNames(styles, 'toggleButtonExample')}><div style={{textDecoration: 'underline'}}>U</div></ToggleButton>
-        <ToggleButton className={classNames(styles, 'toggleButtonExample')}><i>I</i></ToggleButton>
+        <div role="group" aria-label="Text style">
+          <ToggleButton className={classNames(styles, 'toggleButtonExample')}><strong>B</strong></ToggleButton>
+          <ToggleButton className={classNames(styles, 'toggleButtonExample')}><div style={{textDecoration: 'underline'}}>U</div></ToggleButton>
+          <ToggleButton className={classNames(styles, 'toggleButtonExample')}><i>I</i></ToggleButton>
+        </div>
         <RadioGroup orientation="horizontal" className={styles.radiogroup} aria-label="Text Alignment">
           <Radio className={styles.radio} value="left">Left</Radio>
           <Radio className={styles.radio} value="center">Center</Radio>

@@ -251,6 +251,8 @@
 
 :global(.react-aria-Toolbar) {
   display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
   &[data-orientation=vertical] {
     flex-direction: column;
   }

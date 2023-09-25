@@ -25,6 +25,7 @@ import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 import {Virtualizer} from '../../../@react-stately/virtualizer/src/Virtualizer';
+import {waitFor} from '@testing-library/dom';
 
 describe('Picker', function () {
   let offsetWidth, offsetHeight;
@@ -1631,7 +1632,7 @@ describe('Picker', function () {
       expect(picker).toHaveTextContent('Two');
     });
 
-    it('move selection on Arrow-Left/Right', function () {
+    it('move selection on Arrow-Left/Right', async function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" onSelectionChange={onSelectionChange}>
@@ -1643,35 +1644,54 @@ describe('Picker', function () {
       );
 
       let picker = getByRole('button');
-      act(() => {picker.focus();});
+      await user.tab();
       expect(picker).toHaveTextContent('Select an option…');
-      fireEvent.keyDown(picker, {key: 'ArrowLeft'});
+      await user.keyboard('{ArrowLeft}');
       act(() => jest.runAllTimers());
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
-      expect(picker).toHaveTextContent('One');
+      expect(onSelectionChange).toHaveBeenLastCalledWith('one');
+      // wait for the microtask queue to be processed, i do not know why runAllTicks does not work as a single
+      // call, instead you have to call it three times with await
+      // i've checked, technically the microtask has been run by this point, but for some reason
+      // the state change does not occur, and won't occur, until after those three await calls
+      await waitFor(() =>
+        expect(picker).toHaveTextContent('One')
+      );
 
-      fireEvent.keyDown(picker, {key: 'ArrowLeft'});
-      expect(picker).toHaveTextContent('One');
+      await user.keyboard('{ArrowLeft}');
+      await waitFor(() =>
+        expect(picker).toHaveTextContent('One')
+      );
 
-      fireEvent.keyDown(picker, {key: 'ArrowRight'});
+      await user.keyboard('{ArrowRight}');
       expect(onSelectionChange).toHaveBeenCalledTimes(2);
-      expect(picker).toHaveTextContent('Two');
+      await waitFor(() =>
+        expect(picker).toHaveTextContent('Two')
+      );
 
-      fireEvent.keyDown(picker, {key: 'ArrowRight'});
+      await user.keyboard('{ArrowRight}');
       expect(onSelectionChange).toHaveBeenCalledTimes(3);
-      expect(picker).toHaveTextContent('Three');
+      await waitFor(() =>
+        expect(picker).toHaveTextContent('Three')
+      );
 
-      fireEvent.keyDown(picker, {key: 'ArrowRight'});
+      await user.keyboard('{ArrowRight}');
       expect(onSelectionChange).toHaveBeenCalledTimes(3);
-      expect(picker).toHaveTextContent('Three');
+      await waitFor(() =>
+        expect(picker).toHaveTextContent('Three')
+      );
 
-      fireEvent.keyDown(picker, {key: 'ArrowLeft'});
+      await user.keyboard('{ArrowLeft}');
       expect(onSelectionChange).toHaveBeenCalledTimes(4);
-      expect(picker).toHaveTextContent('Two');
+      await waitFor(() =>
+        expect(picker).toHaveTextContent('Two')
+      );
 
-      fireEvent.keyDown(picker, {key: 'ArrowLeft'});
+      await user.keyboard('{ArrowLeft}');
       expect(onSelectionChange).toHaveBeenCalledTimes(5);
-      expect(picker).toHaveTextContent('One');
+      await waitFor(() =>
+        expect(picker).toHaveTextContent('One')
+      );
     });
   });
 

@@ -57,6 +57,10 @@ function useToolbar(props: ToolbarProps & {isInsideAToolbar: boolean}, ref: RefO
   let focusManager = createFocusManager(ref, {tabbable: true});
 
   const onKeyDown: KeyboardEventHandler = (e) => {
+    // don't handle portalled events
+    if (!e.currentTarget.contains(e.target as HTMLElement)) {
+      return;
+    }
     if (
       ((orientation === 'horizontal' && e.key === 'ArrowRight')
       || (orientation === 'vertical' && e.key === 'ArrowDown'))

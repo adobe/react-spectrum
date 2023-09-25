@@ -16,7 +16,7 @@ import {composeStory} from '@storybook/react';
 import {I18nProvider} from '@react-aria/i18n';
 
 import Meta, {ToolbarExample as ToolbarExampleStory} from '../stories/index.stories';
-import {pointerMap} from '@react-spectrum/test-utils';
+import {pointerMap, within} from '@react-spectrum/test-utils';
 import React, {createRef} from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -445,7 +445,6 @@ describe('Toolbar', () => {
     render(<ToolbarExample />);
 
     let before = screen.getByRole('textbox', {name: 'Input Before Toolbar'});
-    let after = screen.getByRole('textbox', {name: 'Input After Toolbar'});
     let boldButton = screen.getByRole('button', {name: 'B'});
     let underlineButton = screen.getByRole('button', {name: 'U'});
     let italicButton = screen.getByRole('button', {name: 'I'});
@@ -622,7 +621,12 @@ describe('Toolbar', () => {
     await user.keyboard('{ArrowDown}');
     act(() => {jest.runAllTimers();});
     let popover = screen.getByRole('listbox');
+    let items = within(popover).getAllByRole('option');
     expect(popover).toBeVisible();
+
+    await user.keyboard('{ArrowRight}');
+    expect(popover).toBeVisible();
+    expect(document.activeElement).toBe(items[0]);
 
     await user.keyboard('{Escape}');
     act(() => {jest.runAllTimers();});

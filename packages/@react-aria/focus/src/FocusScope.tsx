@@ -721,7 +721,7 @@ export function createFocusManager(ref: RefObject<Element>, defaultOptions: Focu
       if (!root) {
         return;
       }
-      let {from, tabbable = defaultOptions.tabbable, wrap = defaultOptions.wrap, accept = defaultOptions.accept, preview = defaultOptions.accept} = opts;
+      let {from, tabbable = defaultOptions.tabbable, wrap = defaultOptions.wrap, accept = defaultOptions.accept, preview = defaultOptions.preview} = opts;
       let node = from || document.activeElement;
       let walker = getFocusableTreeWalker(root, {tabbable, accept});
       if (root.contains(node)) {
@@ -742,7 +742,7 @@ export function createFocusManager(ref: RefObject<Element>, defaultOptions: Focu
       if (!root) {
         return;
       }
-      let {from, tabbable = defaultOptions.tabbable, wrap = defaultOptions.wrap, accept = defaultOptions.accept, preview = defaultOptions.accept} = opts;
+      let {from, tabbable = defaultOptions.tabbable, wrap = defaultOptions.wrap, accept = defaultOptions.accept, preview = defaultOptions.preview} = opts;
       let node = from || document.activeElement;
       let walker = getFocusableTreeWalker(root, {tabbable, accept});
       if (root.contains(node)) {
@@ -769,7 +769,7 @@ export function createFocusManager(ref: RefObject<Element>, defaultOptions: Focu
       if (!root) {
         return;
       }
-      let {tabbable = defaultOptions.tabbable, accept = defaultOptions.accept, preview = defaultOptions.accept} = opts;
+      let {tabbable = defaultOptions.tabbable, accept = defaultOptions.accept, preview = defaultOptions.preview} = opts;
       let walker = getFocusableTreeWalker(root, {tabbable, accept});
       let nextNode = walker.nextNode() as FocusableElement;
       if (nextNode && !preview) {
@@ -782,7 +782,7 @@ export function createFocusManager(ref: RefObject<Element>, defaultOptions: Focu
       if (!root) {
         return;
       }
-      let {tabbable = defaultOptions.tabbable, accept = defaultOptions.accept, preview = defaultOptions.accept} = opts;
+      let {tabbable = defaultOptions.tabbable, accept = defaultOptions.accept, preview = defaultOptions.preview} = opts;
       let walker = getFocusableTreeWalker(root, {tabbable, accept});
       let next = last(walker);
       if (next && !preview) {

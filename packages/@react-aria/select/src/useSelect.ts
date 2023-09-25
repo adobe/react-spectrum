@@ -15,7 +15,7 @@ import {AriaListBoxOptions} from '@react-aria/listbox';
 import {AriaSelectProps} from '@react-types/select';
 import {chain, filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement, KeyboardDelegate} from '@react-types/shared';
-import {FocusEvent, KeyboardEventHandler, RefObject, useMemo, useRef} from 'react';
+import {FocusEvent, KeyboardEventHandler, RefObject, useMemo} from 'react';
 import {ListKeyboardDelegate, useTypeSelect} from '@react-aria/selection';
 import {SelectState} from '@react-stately/select';
 import {setInteractionModality} from '@react-aria/interactions';
