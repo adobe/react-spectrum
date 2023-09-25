@@ -63,7 +63,8 @@ async function build() {
       // Add a public url if provided via arg (for verdaccio prod doc website build since we want a commit hash)
       build: `DOCS_ENV=production PARCEL_WORKER_BACKEND=process parcel build 'docs/*/*/docs/*.mdx' 'docs/react-aria-components/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx' ${publicUrlFlag}`,
       postinstall: 'patch-package'
-    }
+    },
+    '@parcel/transformer-css': packageJSON['@parcel/transformer-css']
   };
 
   // Add dependencies on each published package to the package.json, and
@@ -124,7 +125,7 @@ async function build() {
   }
 
   // Only copy babel and parcel patches over
-  let patches = fs.readdirSync(path.join(__dirname, '..', 'patches')).filter(name => name.startsWith('@babel') || name.startsWith('@parcel'));
+  let patches = fs.readdirSync(path.join(__dirname, '..', 'patches')).filter(name => name.startsWith('@babel') || name.startsWith('@parcel') || name.startsWith('@spectrum-css') || name.startsWith('postcss'));
   for (let patch of patches) {
     fs.copySync(path.join(__dirname, '..', 'patches', patch), path.join(dir, 'patches', patch));
   }

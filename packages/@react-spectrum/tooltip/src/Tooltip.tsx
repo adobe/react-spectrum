@@ -58,7 +58,8 @@ function Tooltip(props: SpectrumTooltipProps, ref: DOMRef) {
         `spectrum-Tooltip--${variant}`,
         `spectrum-Tooltip--${placement}`,
         {
-          'is-open': isOpen
+          'is-open': isOpen,
+          [`is-open--${placement}`]: isOpen
         },
         styleProps.className
       )}

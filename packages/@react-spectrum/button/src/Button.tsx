@@ -138,7 +138,7 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
             isIndeterminate
             size="S"
             UNSAFE_className={classNames(styles, 'spectrum-Button-circleLoader')}
-            variant={staticColor ? 'overBackground' : undefined} />}
+            staticColor={staticColor} />}
           {typeof children === 'string'
             ? <Text>{children}</Text>
             : children}
