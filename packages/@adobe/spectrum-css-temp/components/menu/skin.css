@@ -78,7 +78,12 @@ governing permissions and limitations under the License.
   color: var(--spectrum-global-color-gray-700);
 }
 
-.spectrum-SubMenu-header {
+.spectrum-SubMenu-popover {
+  filter: unset;
+  -webkit-filter: unset;
+}
+
+.spectrum-SubMenu-heading {
   color: var(--spectrum-heading-subtitle3-text-color);
 }
 

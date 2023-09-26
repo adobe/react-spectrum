@@ -72,6 +72,7 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
       <Popover
         {...popoverProps}
         {...overlayProps}
+        UNSAFE_className={classNames(styles, 'spectrum-SubMenu-popover')}
         container={popoverContainerRef.current}
         offset={-10}
         containerPadding={0}
