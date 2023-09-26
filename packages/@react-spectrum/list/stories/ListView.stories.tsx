@@ -477,7 +477,7 @@ export const RemoveListItems = {
 };
 
 function Demo(props) {
-  let [items, setItems] = useState([
+  let [items, setItems] = useState<{key: number, label: string}[]>([
     {key: 1, label: 'utilities'}
   ]);
   let onDelete = (key) => {
@@ -492,7 +492,7 @@ function Demo(props) {
       width="250px"
       aria-label="ListView example with complex items"
       {...props}>
-      {(item) => {
+      {(item: {key: number, label: string}) => {
         return (
           <Item key={item.key} textValue={item.label}>
             <Text>{item.label}</Text>
@@ -504,7 +504,7 @@ function Demo(props) {
                 <Content>
                   <Text>Are you sure?</Text>
                   <FocusScope>
-                    <Button onPressStart={() => onDelete(item.key)}>
+                    <Button variant="accent" onPressStart={() => onDelete(item.key)}>
                       Delete
                     </Button>
                   </FocusScope>
