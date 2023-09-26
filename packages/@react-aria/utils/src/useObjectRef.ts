@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {MutableRefObject, useMemo, useRef} from 'react';
+import {LegacyRef, MutableRefObject, useMemo, useRef} from 'react';
 
 /**
  * Offers an object ref for a given callback ref or an object ref. Especially
@@ -21,8 +21,8 @@ import {MutableRefObject, useMemo, useRef} from 'react';
  * @returns An object ref that updates the given ref.
  * @see https://reactjs.org/docs/forwarding-refs.html
  */
-export function useObjectRef<T>(forwardedRef?: ((instance: T | null) => void) | MutableRefObject<T | null> | null): MutableRefObject<T | null> {
-  const objRef = useRef<T | null>(null);
+export function useObjectRef<T>(forwardedRef?: LegacyRef<T | undefined> | MutableRefObject<T | undefined>): MutableRefObject<T | undefined> {
+  const objRef = useRef<T | undefined>();
   return useMemo(() => ({
     get current() {
       return objRef.current;
@@ -32,7 +32,7 @@ export function useObjectRef<T>(forwardedRef?: ((instance: T | null) => void) | 
       if (typeof forwardedRef === 'function') {
         forwardedRef(value);
       } else if (forwardedRef) {
-        forwardedRef.current = value;
+        (forwardedRef as MutableRefObject<T | undefined>).current = value;
       }
     }
   }), [forwardedRef]);

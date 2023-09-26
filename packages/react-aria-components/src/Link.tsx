@@ -12,7 +12,7 @@
 
 import {AriaLinkOptions, mergeProps, useFocusRing, useHover, useLink} from 'react-aria';
 import {ContextValue, forwardRefType, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import React, {createContext, ElementType, ForwardedRef, forwardRef} from 'react';
+import React, {createContext, ElementType, ForwardedRef, forwardRef, RefObject} from 'react';
 
 export interface LinkProps extends Omit<AriaLinkOptions, 'elementType'>, RenderProps<LinkRenderProps>, SlotProps {}
 
@@ -52,10 +52,11 @@ export interface LinkRenderProps {
 export const LinkContext = createContext<ContextValue<LinkProps, HTMLAnchorElement>>(null);
 
 function Link(props: LinkProps, ref: ForwardedRef<HTMLAnchorElement>) {
-  [props, ref] = useContextProps(props, ref, LinkContext);
+  let mergedRef: RefObject<HTMLAnchorElement | null | undefined>;
+  [props, mergedRef] = useContextProps(props, ref, LinkContext);
 
   let ElementType: ElementType = props.href ? 'a' : 'span';
-  let {linkProps, isPressed} = useLink({...props, elementType: ElementType}, ref);
+  let {linkProps, isPressed} = useLink({...props, elementType: ElementType}, mergedRef);
 
   let {hoverProps, isHovered} = useHover(props);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
@@ -75,7 +76,7 @@ function Link(props: LinkProps, ref: ForwardedRef<HTMLAnchorElement>) {
 
   return (
     <ElementType
-      ref={ref}
+      ref={mergedRef}
       slot={props.slot || undefined}
       {...mergeProps(renderProps, linkProps, hoverProps, focusProps)}
       data-focused={isFocused || undefined}

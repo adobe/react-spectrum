@@ -17,7 +17,6 @@ import React, {
   createContext,
   CSSProperties,
   ForwardedRef,
-  MutableRefObject,
   ReactNode,
   RefCallback,
   RefObject,
@@ -180,11 +179,16 @@ export function useSlottedContext<T>(context: Context<SlottedContextValue<T>>, s
   return ctx;
 }
 
-export function useContextProps<T, U extends SlotProps, E extends Element>(props: T & SlotProps, ref: ForwardedRef<E>, context: Context<ContextValue<U, E>>): [T, RefObject<E>] {
+export function useContextProps<T, U extends SlotProps, E extends Element>(props: T & SlotProps, ref: ForwardedRef<E>, context: Context<ContextValue<U, E>>): [T, RefObject<E | null | undefined>] {
   let ctx = useSlottedContext(context, props.slot) || {};
   // @ts-ignore - TS says "Type 'unique symbol' cannot be used as an index type." but not sure why.
   let {ref: contextRef, [slotCallbackSymbol]: callback, ...contextProps} = ctx;
-  let mergedRef = useObjectRef(useMemo(() => mergeRefs(ref, contextRef), [ref, contextRef]));
+  let mergedRef = useObjectRef(
+    useMemo(
+      () => mergeRefs(ref, contextRef),
+        [ref, contextRef]
+    )
+  );
   let mergedProps = mergeProps(contextProps, props) as unknown as T;
 
   // A parent component might need the props from a child, so call slot callback if needed.

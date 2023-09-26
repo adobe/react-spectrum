@@ -15,13 +15,13 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {RefObject, SyntheticEvent, useEffect, useRef} from 'react';
+import {RefObject, useEffect, useRef} from 'react';
 import {useEffectEvent} from '@react-aria/utils';
 
 export interface InteractOutsideProps {
   ref: RefObject<Element>,
-  onInteractOutside?: (e: SyntheticEvent) => void,
-  onInteractOutsideStart?: (e: SyntheticEvent) => void,
+  onInteractOutside?: EventListener,
+  onInteractOutsideStart?: EventListener,
   /** Whether the interact outside events should be disabled. */
   isDisabled?: boolean
 }
@@ -37,7 +37,7 @@ export function useInteractOutside(props: InteractOutsideProps) {
     ignoreEmulatedMouseEvents: false
   });
 
-  let onPointerDown = useEffectEvent((e: SyntheticEvent) => {
+  let onPointerDown = useEffectEvent<EventListener>((e) => {
     if (onInteractOutside && isValidEvent(e, ref)) {
       if (onInteractOutsideStart) {
         onInteractOutsideStart(e);
@@ -46,7 +46,7 @@ export function useInteractOutside(props: InteractOutsideProps) {
     }
   });
 
-  let triggerInteractOutside = useEffectEvent((e: SyntheticEvent) => {
+  let triggerInteractOutside = useEffectEvent((e) => {
     if (onInteractOutside) {
       onInteractOutside(e);
     }
@@ -93,7 +93,7 @@ export function useInteractOutside(props: InteractOutsideProps) {
         state.isPointerDown = false;
       };
 
-      document.addEventListener('mousedown', onPointerDown, true);
+      document.addEventListener('mousedown', onPointerDown as EventListener, true);
       document.addEventListener('mouseup', onMouseUp, true);
       document.addEventListener('touchstart', onPointerDown, true);
       document.addEventListener('touchend', onTouchEnd, true);
