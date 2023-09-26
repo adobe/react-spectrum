@@ -11,8 +11,6 @@
  */
 
 import {BreadcrumbItemProps} from '@react-types/breadcrumbs';
-// eslint-disable-next-line monorepo/no-internal-import
-import ChevronRight from '@spectrum-icons/express/ChevronRight';
 import ChevronRightSmall from '@spectrum-icons/ui/ChevronRightSmall';
 import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
