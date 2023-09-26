@@ -6,7 +6,9 @@ interface SafelyMouseToSubmenuOptions {
   /** Ref for the submenu. */
   submenuRef: RefObject<Element>,
   /** Whether the submenu is open. */
-  isOpen: boolean
+  isOpen: boolean,
+  /** Whether this feature is disabled. */
+  isDisabled?: boolean
 }
 
 const ALLOWED_INVALID_MOVEMENTS = 2;
@@ -19,7 +21,7 @@ const ANGLE_PADDING = Math.PI / 12; // 15°
  * Prevents pointer events from going to the underlying menu if the user is moving their pointer towards the sub-menu.
  */
 export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): CSSProperties {
-  let {submenuRef, isOpen} = options;
+  let {submenuRef, isOpen, isDisabled} = options;
   let prevPointerPos = useRef<{x: number, y: number} | undefined>();
   let submenuRect = useRef<DOMRect | undefined>();
   let lastProcessedTime = useRef<number>(0);
@@ -43,7 +45,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
   useEffect(() => {
     let submenu = submenuRef.current;
 
-    if (!submenu || !isOpen || modality !== 'pointer') {
+    if (isDisabled || !submenu || !isOpen || modality !== 'pointer') {
       setMovements([]);
       return;
     }
@@ -126,9 +128,9 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
       clearTimeout(timeout.current);
     };
 
-  }, [isOpen, modality, submenuRef]);
-  
+  }, [isDisabled, isOpen, modality, submenuRef]);
+
   return {
-    pointerEvents: movements.length < (ALLOWED_INVALID_MOVEMENTS + 1) || movements.every((m) => m === false) ? undefined : 'none'
+    pointerEvents: movements.length === 0 || movements.every((m) => !m) ? undefined : 'none'
   };
 }

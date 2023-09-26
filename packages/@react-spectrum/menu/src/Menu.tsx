@@ -25,7 +25,7 @@ import React, {ReactElement, useContext, useRef, useState} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useMenu, useSafelyMouseToSubmenu} from '@react-aria/menu';
+import {useMenu} from '@react-aria/menu';
 import {useTreeState} from '@react-stately/tree';
 
 function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDivElement>) {
@@ -93,7 +93,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
           )}
           <div
             {...menuProps}
-            style={styleProps.style}
+            style={mergeProps(styleProps.style, menuProps.style)}
             ref={domRef}
             className={
               classNames(
