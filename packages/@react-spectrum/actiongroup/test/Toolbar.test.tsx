@@ -350,15 +350,15 @@ describe('Toolbar', () => {
     // Right arrow key is controlled by child and can wrap
     await user.keyboard('{ArrowRight}');
     await waitFor(() =>
-    expect(alignRight).toHaveFocus()
+      expect(alignRight).toHaveFocus()
     );
     await user.keyboard('{ArrowRight}');
     await waitFor(() =>
-    expect(alignLeft).toHaveFocus()
+      expect(alignLeft).toHaveFocus()
     );
     await user.keyboard('{ArrowLeft}');
     await waitFor(() =>
-    expect(alignRight).toHaveFocus()
+      expect(alignRight).toHaveFocus()
     );
 
     // Arrow keys navigate across dividers to other action groups
