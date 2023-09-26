@@ -62,6 +62,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
     prevMenuButton: backButtonText
   });
   // TODO: add slide transition
+  // TODO: make the below a dialog w/ heading
   return (
     <MenuStateContext.Provider value={{popoverContainerRef, trayContainerRef, menu: domRef, menuTreeState, state}}>
       <div ref={trayContainerRef} />
