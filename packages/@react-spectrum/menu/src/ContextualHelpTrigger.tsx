@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, SlotProvider, useDOMRef, useIsMobileDevice} from '@react-spectrum/utils';
+import {classNames, createDOMRef, SlotProvider, useIsMobileDevice} from '@react-spectrum/utils';
 import {DismissButton} from '@react-aria/overlays';
 import {getInteractionModality} from '@react-aria/interactions';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
@@ -64,7 +64,7 @@ function ContextualHelpTrigger<T>(props: MenuDialogTriggerProps<T>): ReactElemen
       }
     }
   };
-
+  let popoverRef = useRef(createDOMRef(submenuRef));
   return (
     <>
       <SubMenuTriggerContext.Provider value={{isUnavailable, triggerRef, ...subMenuTriggerProps}}>{trigger}</SubMenuTriggerContext.Provider>
@@ -83,7 +83,7 @@ function ContextualHelpTrigger<T>(props: MenuDialogTriggerProps<T>): ReactElemen
               onBlurWithin={onBlurWithin}
               container={popoverContainerRef.current}
               state={subMenuTriggerState}
-              ref={subMenuRef}
+              ref={popoverRef}
               triggerRef={triggerRef}
               placement="end top"
               containerPadding={0}
