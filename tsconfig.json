@@ -63,7 +63,9 @@
           "./packages/@react-types/text",
           "./packages/@react-types/view",
           "./packages/@react-types/well",
-          "./packages/react-aria-components"
+          "./packages/react-aria-components",
+          "./packages/@react-spectrum/radio",
+          "./packages/@react-stately/radio"
         ]
       }
     ]
