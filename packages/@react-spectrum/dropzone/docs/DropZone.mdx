@@ -390,7 +390,7 @@ function Example() {
         isFilled={isFilled}
         getDropOperation={(types) => types.has('image/png') ? 'copy' : 'cancel'}
         onDrop={async (e) => { 
-          let item = e.items.find((item) => item.kind === 'file') as FileDropItem;
+          let item = e.items.find((item) => item.kind === 'file' && item.type === 'image/png');
           if (item) {
             setFilledSrc({
               type: item.type,
@@ -410,7 +410,6 @@ function Example() {
               acceptedFileTypes={['image/png']}
               onSelect={(e) => {
                 let files = Array.from(e);
-                let src = files.map(file => URL.createObjectURL(file));
                 let type = files.map(file => file.type);
                 let name = files.map(file => file.name);
                 setFilledSrc({
