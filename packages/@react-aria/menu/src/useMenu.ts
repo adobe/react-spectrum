@@ -11,10 +11,11 @@
  */
 
 import {AriaMenuProps} from '@react-types/menu';
-import {DOMAttributes, KeyboardDelegate} from '@react-types/shared';
+import {DOMAttributes, KeyboardDelegate, KeyboardEvents} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {Key, RefObject} from 'react';
 import {TreeState} from '@react-stately/tree';
+import {useKeyboard} from '@react-aria/interactions';
 import {useSelectableList} from '@react-aria/selection';
 
 export interface MenuAria {
@@ -22,7 +23,7 @@ export interface MenuAria {
   menuProps: DOMAttributes
 }
 
-export interface AriaMenuOptions<T> extends Omit<AriaMenuProps<T>, 'children'> {
+export interface AriaMenuOptions<T> extends Omit<AriaMenuProps<T>, 'children'>, KeyboardEvents {
   /** Whether the menu uses virtual scrolling. */
   isVirtualized?: boolean,
 
@@ -30,10 +31,7 @@ export interface AriaMenuOptions<T> extends Omit<AriaMenuProps<T>, 'children'> {
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
    */
-  keyboardDelegate?: KeyboardDelegate,
-  // TODO: Should we have an accompanying onKeyUp even though we don't use it and then just extend KeyboardEvents?
-  // Should this be UNSTABLE? That would mean the props from useSubMenuTrigger would be the UNSTABLE variants as well
-  onKeyDown?: (e: KeyboardEvent) => void
+  keyboardDelegate?: KeyboardDelegate
 }
 
 interface MenuData {
@@ -53,6 +51,7 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
   let {
     shouldFocusWrap = true,
     onKeyDown,
+    onKeyUp,
     ...otherProps
   } = props;
 
@@ -76,8 +75,26 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
     onAction: props.onAction
   });
 
+  let {keyboardProps} = useKeyboard({
+    onKeyDown(e) {
+      // TODO: Let Tab propagate so FocusScope handle it. Revisit if we decide to close all menus
+      if (e.key === 'Tab') {
+        e.continuePropagation();
+      }
+
+      onKeyDown && onKeyDown(e);
+    },
+    onKeyUp(e) {
+      if (e.key === 'Tab') {
+        e.continuePropagation();
+      }
+
+      onKeyUp && onKeyUp(e);
+    }
+  });
+
   return {
-    menuProps: mergeProps(domProps, {onKeyDown}, {
+    menuProps: mergeProps(domProps, keyboardProps, {
       role: 'menu',
       // this forces AT to move their cursors into any open sub dialogs, the sub dialogs contain hidden close buttons in order to come back to this level of the menu
       'aria-hidden': state.expandedKeys.size > 0 ? true : undefined,

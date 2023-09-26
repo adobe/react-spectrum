@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, DOMProps, FocusableElement, PressEvent} from '@react-types/shared';
+import {DOMAttributes, DOMProps, FocusableElement, KeyboardEvent, PressEvent} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useRouter, useSlotId} from '@react-aria/utils';
 import {FocusEvent, Key, RefObject} from 'react';
 import {getItemCount} from '@react-stately/collections';

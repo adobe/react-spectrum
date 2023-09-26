@@ -62,6 +62,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
     prevMenuButton: backButtonText
   });
   let headingId = useSlotId();
+  let hasOpenSubMenuTray = isMobile && state.expandedKeys.size > 0;
   // TODO: add slide transition
   // TODO: make the below a dialog w/ heading
   return (
@@ -72,13 +73,14 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
           // TODO: check if this role should always be applied, even for non submenu cases
           role={headingId ? 'dialog' : undefined}
           aria-labelledby={headingId}
+          aria-hidden={hasOpenSubMenuTray}
           className={
             classNames(
               styles,
               'spectrum-Menu-wrapper',
               {
                 'spectrum-Menu-trayWrapper': isMobile,
-                'is-expanded': isMobile && state.expandedKeys.size > 0
+                'is-expanded': hasOpenSubMenuTray
               }
             )
         }>

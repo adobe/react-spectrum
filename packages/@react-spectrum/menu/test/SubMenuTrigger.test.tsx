@@ -801,6 +801,7 @@ describe('SubMenu', function () {
       let tray = tree.getByTestId('tray');
       let menu = within(tray).getByRole('menu');
       expect(menu).toBeTruthy();
+      expect(within(tray).queryByRole('dialog')).toBeFalsy();
       let buttons = within(tray).getAllByRole('button');
       expect(buttons).toHaveLength(2);
       for (let button of buttons) {
@@ -820,16 +821,13 @@ describe('SubMenu', function () {
       let subMenu1 = menus[0];
       expect(document.activeElement).toBe(subMenu1);
       expect(subMenu1).toHaveAttribute('aria-label', subMenuTrigger1.textContent);
-      buttons = within(tray).getAllByRole('button');
-      expect(buttons).toHaveLength(3);
-      for (let button of buttons) {
-        if (button.getAttribute('aria-label') !== 'Dismiss') {
-          expect(button).toHaveAttribute('aria-label', `Return to ${subMenuTrigger1.textContent}`);
-        }
-      }
-      let menuHeader = within(tray).getAllByText(subMenuTrigger1.textContent)[0];
+      let trayDialog = within(tray).getByRole('dialog');
+      expect(trayDialog).toBeTruthy();
+      let backButton = within(trayDialog).getByRole('button');
+      expect(backButton).toHaveAttribute('aria-label', `Return to ${subMenuTrigger1.textContent}`);
+      let menuHeader = within(trayDialog).getAllByText(subMenuTrigger1.textContent)[0];
       expect(menuHeader).toBeVisible();
-      expect(menuHeader.tagName).toBe('SPAN');
+      expect(menuHeader.tagName).toBe('H2');
       let subMenu1Items = within(subMenu1).getAllByRole('menuitem');
       let subMenuTrigger2 = subMenu1Items[2];
       triggerTouch(subMenuTrigger2);
@@ -842,16 +840,12 @@ describe('SubMenu', function () {
       let subMenu2 = menus[0];
       expect(document.activeElement).toBe(subMenu2);
       expect(subMenu2).toHaveAttribute('aria-label', subMenuTrigger2.textContent);
-      buttons = within(tray).getAllByRole('button');
-      expect(buttons).toHaveLength(3);
-      for (let button of buttons) {
-        if (button.getAttribute('aria-label') !== 'Dismiss') {
-          expect(button).toHaveAttribute('aria-label', `Return to ${subMenuTrigger2.textContent}`);
-        }
-      }
+      trayDialog = within(tray).getByRole('dialog');
+      backButton = within(trayDialog).getByRole('button');
+      expect(backButton).toHaveAttribute('aria-label', `Return to ${subMenuTrigger2.textContent}`);
       menuHeader = within(tray).getAllByText(subMenuTrigger2.textContent)[0];
       expect(menuHeader).toBeVisible();
-      expect(menuHeader.tagName).toBe('SPAN');
+      expect(menuHeader.tagName).toBe('H2');
     });
 
     it('should provide a back button to close the submenu', async function () {
