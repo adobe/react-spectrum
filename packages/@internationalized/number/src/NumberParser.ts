@@ -193,7 +193,7 @@ const nonLiteralParts = new Set(['decimal', 'fraction', 'integer', 'minusSign', 
 
 // This list is derived from https://www.unicode.org/cldr/charts/43/supplemental/language_plural_rules.html#comparison and includes
 // all unique numbers which we need to check in order to determine all the plural forms for a given locale.
-// TODO: add a link to the used script
+// See: https://github.com/adobe/react-spectrum/pull/5134/files#r1337037855 for used script
 const pluralNumbers = [
   0, 4, 2, 1, 11, 20, 3, 7, 100, 21, 0.1, 1.1
 ];
