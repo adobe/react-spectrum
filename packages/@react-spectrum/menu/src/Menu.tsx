@@ -20,7 +20,7 @@ import intlMessages from '../intl/*.json';
 import {MenuContext, MenuStateContext, useMenuStateContext} from './context';
 import {MenuItem} from './MenuItem';
 import {MenuSection} from './MenuSection';
-import {mergeProps, useLayoutEffect, useSyncRef} from '@react-aria/utils';
+import {mergeProps, useLayoutEffect, useSlotId, useSyncRef} from '@react-aria/utils';
 import React, {ReactElement, useContext, useRef, useState} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
@@ -61,6 +61,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   let backButtonLabel = stringFormatter.format('backButton', {
     prevMenuButton: backButtonText
   });
+  let headingId = useSlotId();
   // TODO: add slide transition
   // TODO: make the below a dialog w/ heading
   return (
@@ -68,6 +69,9 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
       <div ref={trayContainerRef} />
       <FocusScope contain={state.expandedKeys.size > 0}>
         <div
+          // TODO: check if this role should always be applied, even for non submenu cases
+          role={headingId ? 'dialog' : undefined}
+          aria-labelledby={headingId}
           className={
             classNames(
               styles,
@@ -80,7 +84,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
         }>
           {isMobile && isSubMenu && state.expandedKeys.size === 0 && (
             // TODO: check labeling with team and get translated strings
-            <div className={classNames(styles, 'spectrum-SubMenu-headerWrapper')}>
+            <div className={classNames(styles, 'spectrum-SubMenu-headingWrapper')}>
               <ActionButton
                 aria-label={backButtonLabel}
                 isQuiet
@@ -88,7 +92,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
                 {/* We don't have a ArrowLeftSmall so make due with ArrowDownSmall and transforms */}
                 {direction === 'rtl' ? <ArrowDownSmall UNSAFE_style={{rotate: '270deg'}} /> : <ArrowDownSmall UNSAFE_style={{rotate: '90deg'}} />}
               </ActionButton>
-              <span className={classNames(styles, 'spectrum-SubMenu-header')}>{backButtonText}</span>
+              <h2 id={headingId} className={classNames(styles, 'spectrum-SubMenu-heading')}>{backButtonText}</h2>
             </div>
           )}
           <div
