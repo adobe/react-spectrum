@@ -661,7 +661,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
             // ancestor scope that is still in the tree.
             treeNode = clonedTree.getTreeNode(scopeRef);
             while (treeNode) {
-              if (treeNode.scopeRef && focusScopeTree.getTreeNode(treeNode.scopeRef)) {
+              if (treeNode.scopeRef && focusScopeTree.getTreeNode(treeNode.scopeRef) && document.contains(treeNode.scopeRef.current[0])) {
                 focusFirstInScope(treeNode.scopeRef.current, true);
                 return;
               }

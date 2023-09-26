@@ -10,16 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
+
 jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, installPointerEvent, pointerMap, render as renderComponent, triggerPress, within} from '@react-spectrum/test-utils';
-import {ActionButton} from '@react-spectrum/button';
+import {ActionButton, Button} from '@react-spectrum/button';
 import {announce} from '@react-aria/live-announcer';
+import {Content} from '@react-spectrum/view';
+import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import {Divider} from '@react-spectrum/divider';
 import {FocusExample} from '../stories/ListViewActions.stories';
+import {FocusScope} from '@react-aria/focus';
+import {Heading, Text} from '@react-spectrum/text';
 import {Item, ListView} from '../src';
 import {Provider} from '@react-spectrum/provider';
-import React from 'react';
+import React, {useState} from 'react';
 import {renderEmptyState} from '../stories/ListView.stories';
-import {Text} from '@react-spectrum/text';
+import {screen} from '@testing-library/dom';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
@@ -603,6 +609,68 @@ describe('ListView', function () {
       rows = tree.getAllByRole('row');
       expect(document.activeElement).toBe(rows[rows.length - 2]);
       expect(rows[rows.length - 1]).toHaveAttribute('aria-disabled', 'true');
+    });
+
+    // TODO: fix this test, it appears that the table item animation out isn't running
+    it.skip('should restore focus after removing an item through a dialog', async function () {
+      function Demo() {
+        let [items, setItems] = useState([
+          {key: 1, label: 'utilities'}
+        ]);
+        let onDelete = (key) => {
+          setItems(prevItems => prevItems.filter((item) => item.key !== key));
+        };
+        return (
+          <ListView
+            selectionMode="multiple"
+            maxWidth="size-6000"
+            items={items}
+            height="300px"
+            aria-label="ListView example with complex items">
+            {(item) => {
+              return (
+                <Item textValue={item.label}>
+                  <Text>{item.label}</Text>
+                  <DialogTrigger type="popover">
+                    <ActionButton>Delete</ActionButton>
+                    <Dialog>
+                      <Heading>Warning, cannot undo</Heading>
+                      <Divider />
+                      <Content>
+                        <Text>Are you sure?</Text>
+                        <FocusScope>
+                          <Button onPressStart={() => onDelete(item.key)}>
+                            Delete
+                          </Button>
+                        </FocusScope>
+                      </Content>
+                    </Dialog>
+                  </DialogTrigger>
+                </Item>
+              );
+            }}
+          </ListView>
+        );
+      }
+      render(<Demo />);
+
+      await user.tab();
+      expect(document.activeElement).toBe(screen.getAllByRole('row')[0]);
+      await user.keyboard('{ArrowLeft}');
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(screen.getAllByRole('button')[0]);
+      await user.keyboard('{Enter}');
+      act(() => {jest.runAllTimers();});
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
+      await user.tab();
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toHaveTextContent('Delete');
+      let event = new KeyboardEvent('keydown', {'key': 'Enter', bubbles: true, cancelable: true});
+      act(() => {
+        document.activeElement.dispatchEvent(event);
+        jest.runAllTimers();
+      });
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
     });
   });
 
