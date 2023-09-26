@@ -20,7 +20,6 @@ import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbItem} from '@react-aria/breadcrumbs';
 import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
-import {useProvider} from '@react-spectrum/provider';
 
 interface SpectrumBreadcrumbItemProps extends BreadcrumbItemProps {
   isMenu?: boolean
@@ -33,7 +32,6 @@ export function BreadcrumbItem(props: SpectrumBreadcrumbItemProps) {
     isDisabled,
     isMenu
   } = props;
-  let provider = useProvider();
 
   let {direction} = useLocale();
   let ref = useRef(null);
