@@ -12,8 +12,8 @@
 
 import {ActionButton} from '@react-spectrum/button';
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
-import {classNames, useDOMRef, useIsMobileDevice, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {classNames, useDOMRef, useIsMobileDevice, useStyleProps, useUnwrapDOMRef} from '@react-spectrum/utils';
+import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -45,8 +45,9 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   let popoverContainerRef = useRef(null);
   let trayContainerRef = useRef(null);
   let state = useTreeState(completeProps);
-  let submenuRef = useRef(null);
-  let {menuProps} = useMenu(completeProps, state, domRef, submenuRef);
+  let submenuRef = useRef<DOMRefValue<HTMLDivElement>>();
+  let unwrappedSubmenuRef = useUnwrapDOMRef(submenuRef);
+  let {menuProps} = useMenu(completeProps, state, domRef, unwrappedSubmenuRef);
   let {styleProps} = useStyleProps(completeProps);
   useSyncRef(contextProps, domRef);
   let {direction} = useLocale();
