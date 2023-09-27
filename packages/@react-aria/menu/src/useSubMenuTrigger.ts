@@ -90,18 +90,15 @@ export function UNSTABLE_useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, st
     switch (e.key) {
       case 'ArrowLeft':
         if (direction === 'ltr') {
-          // e.stopPropagation();
           onSubMenuClose();
         }
         break;
       case 'ArrowRight':
         if (direction === 'rtl') {
-          // e.stopPropagation();
           onSubMenuClose();
         }
         break;
       case 'Escape':
-        // e.stopPropagation();
         state.closeAll();
         break;
     }

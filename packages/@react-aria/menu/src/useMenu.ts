@@ -78,17 +78,16 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
   let {keyboardProps} = useKeyboard({
     onKeyDown(e) {
       // TODO: Let Tab propagate so FocusScope handle it. Revisit if we decide to close all menus
-      if (e.key === 'Tab') {
+      // Also let Escape propagate so useOverlay handles closing the Menu overlay
+      if (e.key === 'Tab' || e.key === 'Escape') {
         e.continuePropagation();
       }
 
       onKeyDown && onKeyDown(e);
     },
     onKeyUp(e) {
-      if (e.key === 'Tab') {
-        e.continuePropagation();
-      }
-
+      // Need to continue keyup propagation so MenuTrigger button's press state is properly reset, otherwise it gets stuck in pressed state
+      e.continuePropagation();
       onKeyUp && onKeyUp(e);
     }
   });
