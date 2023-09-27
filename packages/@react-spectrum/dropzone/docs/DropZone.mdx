@@ -21,8 +21,6 @@ import {DropZone} from '@react-spectrum/dropzone';
 import {Heading} from '@react-spectrum/text';
 import {Content} from '@react-spectrum/view';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
-import {Text} from 'react-aria-components';
-import {FileTrigger} from 'react-aria-components';
 import {Button} from '@react-spectrum/button';
 ```
 
@@ -43,102 +41,36 @@ category: Drag and drop
 
 ```tsx example
 import Upload from '@spectrum-icons/illustrations/Upload';
-
-<DropZone
-  maxWidth="size-3000">
-  <IllustratedMessage>
-    <Upload />
-    <Heading>
-      <Text slot="label">
-        Drag and drop your file
-      </Text>
-    </Heading>
-  </IllustratedMessage>
-</DropZone>
-```
-
-
-## Content
-
-A drop zone accepts an [IllustratedMessage](IllustratedMessage.html) as a child which is comprised of three areas:  an illustration, a title, and a body. Each of these sections can be populated by providing the following components to the IllustratedMessage as children: a SVG, a [Heading](Heading.html) (title), and a [Content](Content.html) (body). A [FileTrigger](../react-aria/FileTrigger.html) is commonly paired with a DropZone to allow a user to choose files from their device. 
-
-```tsx example
-<DropZone
-  maxWidth="size-3000">
-  <IllustratedMessage>
-    <Upload />
-    <Heading>
-      <Text slot="label">
-        Drag and drop here
-      </Text>
-    </Heading>
-    <Content>
-      <FileTrigger>
-        <Button variant="primary">Browse</Button>
-      </FileTrigger>
-    </Content>
-  </IllustratedMessage>
-</DropZone>
-```
-
-### Accessibility
-
-A visual label should be provided to `DropZone` using a `Text` element with a `label` slot. If it is not provided, then an `aria-label` or `aria-labelledby` prop must be passed to identify the visually hidden button to assistive technology. 
-
-### Internationalization
-
-In order to internationalize a drop zone, a localized string should be passed to the `Text` element with a `label` slot or to the `aria-label` prop, in addition to the `replaceMessage` prop.
-
-## Events
-
-`DropZone` supports drop operations via mouse, keyboard, and touch. You can handle all of these via the `onDrop` prop. In addition, the `onDropEnter`, `onDropMove`, and `onDropExit` events are fired as the user enter and exists the dropzone during a drag operation. 
-
-The following example uses an `onDrop` handler to update the filled status stored in React state.
-
-```tsx example
-import File from '@spectrum-icons/illustrations/File';
+import {Text} from 'react-aria-components';
 
 function Example() {
   let [isFilled, setIsFilled] = React.useState(false);
-  let [filledSrc, setFilledSrc] = React.useState(null);
-
+  
   return (
     <>
       <Draggable />
       <DropZone
         maxWidth="size-3000"
         isFilled={isFilled}
-        onDrop={async (e) => {
-          e.items.find(async (item) => {
-            if (item.kind === 'file') {
-              setFilledSrc(item.name);
-              setIsFilled(true);
-              
-            } else if (item.kind === 'text' && item.types.has('text/plain')) {
-              setFilledSrc(await item.getText('text/plain'));
-              setIsFilled(true);
-            }
-          });
-        }}>
+        onDrop={() => setIsFilled(true)}>
         <IllustratedMessage>
           <Upload />
           <Heading>
             <Text slot="label">
-              Drag and drop here
+              Drag and drop your file
             </Text>
           </Heading>
         </IllustratedMessage>
       </DropZone>
-      {isFilled && 
-        <div className="files">
-          <File />
-          {filledSrc}
-        </div>}
+      {isFilled &&
+        <div className="dropped">
+          You dropped something!
+        </div>
+      }
     </>
-  );
+  )
 }
 ```
-
 The `Draggable` component used above is defined below. See [useDrag](../react-aria/useDrag.html) for more details and documentation.
 
 <details>
@@ -185,12 +117,115 @@ function Draggable() {
   opacity: 0.5;
 }
 
-.files{
+.dropped {
   margin-top: 20px;
 }
 ```
-
 </details>
+
+
+
+## Content
+
+A drop zone accepts an [IllustratedMessage](IllustratedMessage.html) as a child which is comprised of three areas:  an illustration, a title, and a body. Each of these sections can be populated by providing the following components to the IllustratedMessage as children: a SVG, a [Heading](Heading.html) (title), and a [Content](Content.html) (body). A [FileTrigger](../react-aria/FileTrigger.html) is commonly paired with a DropZone to allow a user to choose files from their device. 
+
+```tsx example
+import {FileTrigger} from 'react-aria-components';
+import {Text} from 'react-aria-components';
+
+function Example() {
+  let [isFilled, setIsFilled] = React.useState(false);
+
+  return (
+    <>
+      <Draggable />
+      <DropZone
+        maxWidth="size-3000"
+        isFilled={isFilled}
+        onDrop={() => setIsFilled(true)}>
+        <IllustratedMessage>
+          <Upload />
+          <Heading>
+            <Text slot="label">
+              Drag and drop here
+            </Text>
+          </Heading>
+          <Content>
+            <FileTrigger
+              onSelect={()=> setIsFilled(true)}>
+              <Button variant="primary">Browse</Button>
+            </FileTrigger>
+          </Content>
+        </IllustratedMessage>
+      </DropZone>
+      {isFilled &&
+        <div className="dropped">
+          You dropped something!
+        </div>
+      }
+    </>
+  )
+}
+```
+
+### Accessibility
+
+A visual label should be provided to `DropZone` using a `Text` element with a `label` slot. If it is not provided, then an `aria-label` or `aria-labelledby` prop must be passed to identify the visually hidden button to assistive technology. 
+
+### Internationalization
+
+In order to internationalize a drop zone, a localized string should be passed to the `Text` element with a `label` slot or to the `aria-label` prop, in addition to the `replaceMessage` prop.
+
+## Events
+
+`DropZone` supports drop operations via mouse, keyboard, and touch. You can handle all of these via the `onDrop` prop. In addition, the `onDropEnter`, `onDropMove`, and `onDropExit` events are fired as the user enter and exists the dropzone during a drag operation. 
+
+The following example uses an `onDrop` handler to update the filled status stored in React state.
+
+```tsx example
+import File from '@spectrum-icons/illustrations/File';
+import {Text} from 'react-aria-components';
+
+function Example() {
+  let [isFilled, setIsFilled] = React.useState(false);
+  let [filledSrc, setFilledSrc] = React.useState(null);
+
+  return (
+    <>
+      <Draggable />
+      <DropZone
+        maxWidth="size-3000"
+        isFilled={isFilled}
+        onDrop={async (e) => {
+          e.items.find(async (item) => {
+            if (item.kind === 'file') {
+              setFilledSrc(item.name);
+              setIsFilled(true);
+              
+            } else if (item.kind === 'text' && item.types.has('text/plain')) {
+              setFilledSrc(await item.getText('text/plain'));
+              setIsFilled(true);
+            }
+          });
+        }}>
+        <IllustratedMessage>
+          <Upload />
+          <Heading>
+            <Text slot="label">
+              Drag and drop here
+            </Text>
+          </Heading>
+        </IllustratedMessage>
+      </DropZone>
+      {isFilled && 
+        <div className="dropped">
+          <File />
+          {filledSrc}
+        </div>}
+    </>
+  );
+}
+```
 
 
 ## Props
@@ -206,6 +241,8 @@ The user is responsible for both managing the filled state of a drop zone and ha
 The example below demonstrates one way of styling the filled state.
 
 ```tsx example
+import {Text} from 'react-aria-components';
+
 function Example() {
   let [filledSrc, setFilledSrc] = React.useState(null);
   let [isFilled, setIsFilled] = React.useState(false);
@@ -302,6 +339,8 @@ When a drop zone is in a filled state and has an object dragged over it, a messa
 
 
 ```tsx example
+import {Text} from 'react-aria-components';
+
 function Example() {
   let [isFilled, setIsFilled] = React.useState(false);
 
@@ -322,6 +361,11 @@ function Example() {
           </Heading>
         </IllustratedMessage>
       </DropZone>
+      {isFilled &&
+        <div className="dropped">
+          You dropped something!
+        </div>
+      }
     </>
   );
 }
@@ -332,30 +376,60 @@ function Example() {
 A drop zone displays visual feedback to the user when a drag hovers over the drop target by passing the `getDropOperation` function. If a drop target only supports data of specific types (e.g. images, videos, text, etc.), then it should implement the `getDropOperation` prop and return `cancel` for types that aren't supported. This will prevent visual feedback indicating that the drop target accepts the dragged data when this is not true. [Read more about getDropOperation.](../react-aria/useDrop.html#getdropoperation)
 
 ```tsx example
+import {FileTrigger} from 'react-aria-components';
+import {Text} from 'react-aria-components';
+import {FileDropItem} from 'react-aria';
 
 function Example() {
   let [isFilled, setIsFilled] = React.useState(false);
+  let [filledSrc, setFilledSrc] = React.useState(null);
 
   return (
-    <DropZone
-      maxWidth="size-3000"
-      isFilled={isFilled}
-      getDropOperation={(types) => types.has('image/png') ? 'copy' : 'cancel'}
-      onDrop={() => setIsFilled(true)}>
-      <IllustratedMessage>
-        <Upload />
-        <Heading>
-          <Text slot="label">
-            Drag and drop here
-          </Text>
-        </Heading>
-        <Content>
-          <FileTrigger>
-            <Button variant="primary">Browse</Button>
-          </FileTrigger>
-        </Content>
-      </IllustratedMessage>
-    </DropZone>
+    <>
+      <DropZone
+        maxWidth="size-3000"
+        isFilled={isFilled}
+        getDropOperation={(types) => types.has('image/png') ? 'copy' : 'cancel'}
+        onDrop={async (e) => { 
+          let item = e.items.find((item: FileDropItem) => item.kind === 'file' && item.type === 'image/png') as FileDropItem;
+          if (item) {
+            setFilledSrc({
+              type: item.type,
+              name: item.name});
+            setIsFilled(true);
+          }
+        }}>
+        <IllustratedMessage>
+          <Upload />
+          <Heading>
+            <Text slot="label">
+              Drag and drop here
+            </Text>
+          </Heading>
+          <Content>
+            <FileTrigger
+              acceptedFileTypes={['image/png']}
+              onSelect={(e) => {
+                let file = (Array.from(e)).find((file) => file.type === "image/png")
+                if (file) {
+                  setFilledSrc({
+                    type: file.type,
+                    name: file.name
+                  })
+                  setIsFilled(true);
+                }
+              }}>              
+              <Button variant="primary">Browse</Button>
+            </FileTrigger>
+          </Content>
+        </IllustratedMessage>
+      </DropZone>
+      {isFilled && 
+        <div className="dropped">
+          {`${filledSrc.type} ${filledSrc.name}`}
+        </div>
+      }
+    </>
   );
 }
 ```
