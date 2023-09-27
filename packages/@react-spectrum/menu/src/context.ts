@@ -11,7 +11,7 @@
  */
 
 import {DOMProps, FocusStrategy, HoverEvents, KeyboardEvent, PressEvents} from '@react-types/shared';
-import {MenuTreeState, MenuTriggerState} from '@react-stately/menu';
+import {MenuTriggerState} from '@react-stately/menu';
 import React, {HTMLAttributes, MutableRefObject, RefObject, useContext} from 'react';
 import {TreeState} from '@react-stately/tree';
 
@@ -22,7 +22,6 @@ export interface MenuContextValue extends Omit<HTMLAttributes<HTMLElement>, 'aut
   autoFocus?: boolean | FocusStrategy,
   ref?: MutableRefObject<HTMLDivElement>,
   state?: MenuTriggerState,
-  menuTreeState?: MenuTreeState,
   onKeyDown?: (e: KeyboardEvent) => void,
   onBackButtonPress?: () => void
 }
@@ -53,7 +52,7 @@ export interface MenuStateContextValue<T> {
   popoverContainerRef?: RefObject<HTMLElement>,
   trayContainerRef?: RefObject<HTMLElement>,
   menu?: RefObject<HTMLDivElement>,
-  menuTreeState?: MenuTreeState
+  rootMenuTriggerState?: MenuTriggerState
 }
 
 export const MenuStateContext = React.createContext<MenuStateContextValue<any>>(undefined);

@@ -19,8 +19,8 @@ import {PressResponder} from '@react-aria/interactions';
 import React, {forwardRef, Fragment, useRef} from 'react';
 import {SpectrumMenuTriggerProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import {UNSTABLE_useMenuState, useMenuTriggerState} from '@react-stately/menu';
 import {useMenuTrigger} from '@react-aria/menu';
+import {useMenuTriggerState} from '@react-stately/menu';
 
 function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) {
   let triggerRef = useRef<HTMLElement>();
@@ -56,10 +56,6 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
   }
 
   let isMobile = useIsMobileDevice();
-  let menuTreeState = UNSTABLE_useMenuState({}, state);
-  // TODO: override menuTriggerState's .close so we clear the expandedKeysStack when clicking on the underlay or whenever
-  // Popover's .close is triggered. Alternatively, we could potentially clear it in a cleanup effect when the root menu unmounts...
-  let close = menuTreeState.closeAll;
   let menuContext = {
     ...menuProps,
     ref: menuRef,
@@ -71,14 +67,14 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
       maxHeight: 'inherit'
     } : undefined,
     UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile}),
-    menuTreeState
+    state
   };
 
   // On small screen devices, the menu is rendered in a tray, otherwise a popover.
   let overlay;
   if (isMobile) {
     overlay = (
-      <Tray state={{...state, close}}>
+      <Tray state={state}>
         {menu}
       </Tray>
     );
@@ -86,7 +82,7 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
     overlay = (
       <Popover
         UNSAFE_style={{clipPath: 'unset', overflow: 'visible'}}
-        state={{...state, close}}
+        state={state}
         triggerRef={menuTriggerRef}
         scrollRef={menuRef}
         placement={initialPlacement}

@@ -41,9 +41,9 @@ function ContextualHelpTrigger<T>(props: MenuDialogTriggerProps<T>): ReactElemen
   let {isUnavailable, targetKey} = props;
   let triggerRef = useRef<HTMLLIElement>(null);
   let popoverRef = useRef(null);
-  let {popoverContainerRef, trayContainerRef, menuTreeState, menu: parentMenuRef, state} = useMenuStateContext();
+  let {popoverContainerRef, trayContainerRef, rootMenuTriggerState, menu: parentMenuRef, state} = useMenuStateContext();
   let triggerNode = state.collection.getItem(targetKey);
-  let subMenuTriggerState = UNSTABLE_useSubMenuTriggerState({triggerKey: targetKey}, {...menuTreeState, ...state});
+  let subMenuTriggerState = UNSTABLE_useSubMenuTriggerState({triggerKey: targetKey}, {...rootMenuTriggerState, ...state});
   let {subMenuTriggerProps, popoverProps, overlayProps} = UNSTABLE_useSubMenuTrigger({
     node: triggerNode,
     parentMenuRef,
@@ -76,7 +76,7 @@ function ContextualHelpTrigger<T>(props: MenuDialogTriggerProps<T>): ReactElemen
   let tray;
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {direction} = useLocale();
-  let backButtonText = state?.collection.getItem(menuTreeState.expandedKeysStack.slice(-1)[0])?.textValue;
+  let backButtonText = state?.collection.getItem(rootMenuTriggerState.UNSTABLE_expandedKeysStack.slice(-1)[0])?.textValue;
   let backButtonLabel = stringFormatter.format('backButton', {
     prevMenuButton: backButtonText
   });

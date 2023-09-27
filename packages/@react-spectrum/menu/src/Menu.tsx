@@ -33,9 +33,9 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let contextProps = useContext(MenuContext);
   let parentMenuContext = useMenuStateContext();
-  let {menuTreeState, state: parentMenuTreeState} = parentMenuContext || {};
+  let {rootMenuTriggerState, state: parentMenuTreeState} = parentMenuContext || {};
   if (!parentMenuContext) {
-    menuTreeState = contextProps.menuTreeState;
+    rootMenuTriggerState = contextProps.state;
     isSubMenu = false;
   }
   let completeProps = {
@@ -57,7 +57,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   }, []);
 
   let isMobile = useIsMobileDevice();
-  let backButtonText = parentMenuTreeState?.collection.getItem(menuTreeState.expandedKeysStack.slice(-1)[0])?.textValue;
+  let backButtonText = parentMenuTreeState?.collection.getItem(rootMenuTriggerState.UNSTABLE_expandedKeysStack.slice(-1)[0])?.textValue;
   let backButtonLabel = stringFormatter.format('backButton', {
     prevMenuButton: backButtonText
   });
@@ -66,7 +66,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   // TODO: add slide transition
   // TODO: make the below a dialog w/ heading
   return (
-    <MenuStateContext.Provider value={{popoverContainerRef, trayContainerRef, menu: domRef, menuTreeState, state}}>
+    <MenuStateContext.Provider value={{popoverContainerRef, trayContainerRef, menu: domRef, rootMenuTriggerState, state}}>
       <div ref={trayContainerRef} />
       <FocusScope contain={state.expandedKeys.size > 0}>
         <div

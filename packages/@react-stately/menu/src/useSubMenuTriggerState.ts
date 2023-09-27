@@ -12,7 +12,7 @@
 
 import {FocusStrategy} from '@react-types/shared';
 import {Key, useCallback, useMemo, useState} from 'react';
-import type {MenuTreeState} from './useMenuState';
+import type {MenuTriggerState} from './useMenuTriggerState';
 import type {OverlayTriggerState} from '@react-stately/overlays';
 import type {TreeState} from '@react-stately/tree';
 
@@ -42,26 +42,28 @@ export interface SubMenuTriggerState extends OverlayTriggerState {
 // The alternative to using expandedKeys would involve making each menu track which "level" it belongs to and have it the look up that index in
 // the MenuTreeState's expandedKeyStack and see if its collection has a matching key. This feels arguably more correct but would then involve
 // having useMenu accept MenuTreeState instead which might not be the worst thing tbh. Open to discussion
-export function UNSTABLE_useSubMenuTriggerState<T>(props: SubMenuTriggerProps, state: MenuTreeState & TreeState<T>): SubMenuTriggerState  {
+
+// TODO: clear out MenuTreeState/MenuTriggerState in favor of just returning level
+export function UNSTABLE_useSubMenuTriggerState<T>(props: SubMenuTriggerProps, state: MenuTriggerState & TreeState<T>): SubMenuTriggerState  {
   let {triggerKey} = props;
-  let {expandedKeysStack, openSubMenu, closeSubMenu, closeAll, setExpandedKeys, expandedKeys, toggleKey} = state;
-  let [level] = useState(expandedKeysStack?.length + 1);
-  let isOpen = useMemo(() => expandedKeysStack[level - 1] === triggerKey, [expandedKeysStack, triggerKey, level]);
+  let {UNSTABLE_expandedKeysStack, UNSTABLE_openSubMenu, UNSTABLE_closeSubMenu, close: closeAll, setExpandedKeys, expandedKeys, toggleKey} = state;
+  let [level] = useState(UNSTABLE_expandedKeysStack?.length + 1);
+  let isOpen = useMemo(() => UNSTABLE_expandedKeysStack[level - 1] === triggerKey, [UNSTABLE_expandedKeysStack, triggerKey, level]);
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy>(null);
 
   let open = useCallback((focusStrategy: FocusStrategy = null) => {
     setFocusStrategy(focusStrategy);
     setExpandedKeys(new Set([triggerKey]));
-    openSubMenu(triggerKey, level);
-  }, [openSubMenu, level, triggerKey, setExpandedKeys]);
+    UNSTABLE_openSubMenu(triggerKey, level);
+  }, [UNSTABLE_openSubMenu, level, triggerKey, setExpandedKeys]);
 
   let close = useCallback(() => {
     setFocusStrategy(null);
     if (expandedKeys.has(triggerKey)) {
       toggleKey(triggerKey);
     }
-    closeSubMenu(triggerKey, level);
-  }, [closeSubMenu, level, triggerKey, toggleKey, expandedKeys]);
+    UNSTABLE_closeSubMenu(triggerKey, level);
+  }, [UNSTABLE_closeSubMenu, level, triggerKey, toggleKey, expandedKeys]);
 
   let toggle = useCallback((focusStrategy: FocusStrategy = null) => {
     setFocusStrategy(focusStrategy);
