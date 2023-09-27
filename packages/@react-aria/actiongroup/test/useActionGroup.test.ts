@@ -10,14 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {createRef} from 'react';
+import {createRef} from 'react';
+import {FocusableElement} from '@react-types/shared';
 import {renderHook} from '@react-spectrum/test-utils';
 import {useActionGroup} from '../';
 import {useListState} from '@react-stately/list';
 
 describe('useActionGroup', function () {
   let renderActionGroupHook = (props) => {
-    let ref = createRef(null);
+    let ref = createRef<FocusableElement>();
     let {result} = renderHook(() => useActionGroup(props, useListState(props), ref));
     return result.current;
   };
