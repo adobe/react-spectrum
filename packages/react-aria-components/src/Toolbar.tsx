@@ -11,10 +11,10 @@
  */
 
 import {ContextValue, forwardRefType, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import {createFocusManager, focusSafely} from '@react-aria/focus';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {FocusableElement, MultipleSelection, Orientation} from '@react-types/shared';
-import React, {createContext, ForwardedRef, forwardRef, KeyboardEventHandler, RefObject, useRef} from 'react';
+import {createFocusManager} from '@react-aria/focus';
+import {filterDOMProps, mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {MultipleSelection, Orientation} from '@react-types/shared';
+import React, {createContext, ForwardedRef, forwardRef, KeyboardEventHandler, RefObject, useRef, useState} from 'react';
 import {useLocale} from '@react-aria/i18n';
 
 export interface ToolbarRenderProps {
@@ -45,16 +45,21 @@ export const ToolbarContext = createContext<ContextValue<ToolbarProps, HTMLDivEl
 // Any reason not to include ref? i feel like we've been sad about not including it down the line
 // same with state...
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function useToolbar(props: ToolbarProps & {isInsideAToolbar: boolean}, ref: RefObject<HTMLDivElement>) {
+function useToolbar(props: ToolbarProps, ref: RefObject<HTMLDivElement>) {
   const {
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledBy,
-    orientation = 'horizontal',
-    isInsideAToolbar
+    orientation = 'horizontal'
   } = props;
+  let [isInToolbar, setInToolbar] = useState(false);
+  useLayoutEffect(() => {
+    if (ref.current && ref.current.parentElement?.closest('[role="toolbar"]')) {
+      setInToolbar(true);
+    }
+  }, [ref]);
   const {direction} = useLocale();
   const shouldReverse = direction === 'rtl' && orientation === 'horizontal';
-  let focusManager = createFocusManager(ref, {tabbable: true});
+  let focusManager = createFocusManager(ref);
 
   const onKeyDown: KeyboardEventHandler = (e) => {
     // don't handle portalled events
@@ -62,47 +67,20 @@ function useToolbar(props: ToolbarProps & {isInsideAToolbar: boolean}, ref: RefO
       return;
     }
     if (
-      ((orientation === 'horizontal' && e.key === 'ArrowRight')
-      || (orientation === 'vertical' && e.key === 'ArrowDown'))
-      && !e.nativeEvent.defaultPrevented) {
+      (orientation === 'horizontal' && e.key === 'ArrowRight')
+      || (orientation === 'vertical' && e.key === 'ArrowDown')) {
       if (shouldReverse) {
-        let nextFocusable = focusManager.focusPrevious({tabbable: false, preview: true});
-        let nextTabbable = focusManager.focusPrevious({preview: true});
-        // for native radios, take over the focus so the radio isn't selected
-        if (nextFocusable && nextFocusable.getAttribute('type') === 'radio') {
-          focusElement(nextFocusable);
-        } else if (nextTabbable) {
-          focusElement(nextTabbable);
-        }
+        focusManager.focusPrevious();
       } else {
-        let nextFocusable = focusManager.focusNext({tabbable: false, preview: true});
-        let nextTabbable = focusManager.focusNext({preview: true});
-        if (nextFocusable && nextFocusable.getAttribute('type') === 'radio') {
-          focusElement(nextFocusable);
-        } else if (nextTabbable) {
-          focusElement(nextTabbable);
-        }
+        focusManager.focusNext();
       }
     } else if (
-      ((orientation === 'horizontal' && e.key === 'ArrowLeft')
-      || (orientation === 'vertical' && e.key === 'ArrowUp'))
-      && !e.nativeEvent.defaultPrevented) {
+      (orientation === 'horizontal' && e.key === 'ArrowLeft')
+      || (orientation === 'vertical' && e.key === 'ArrowUp')) {
       if (shouldReverse) {
-        let nextFocusable = focusManager.focusNext({tabbable: false, preview: true});
-        let nextTabbable = focusManager.focusNext({preview: true});
-        if (nextFocusable && nextFocusable.getAttribute('type') === 'radio') {
-          focusElement(nextFocusable);
-        } else if (nextTabbable) {
-          focusElement(nextTabbable);
-        }
+        focusManager.focusNext();
       } else {
-        let nextFocusable = focusManager.focusPrevious({tabbable: false, preview: true});
-        let nextTabbable = focusManager.focusPrevious({preview: true});
-        if (nextFocusable && nextFocusable.getAttribute('type') === 'radio') {
-          focusElement(nextFocusable);
-        } else if (nextTabbable) {
-          focusElement(nextTabbable);
-        }
+        focusManager.focusPrevious();
       }
     } else if (e.key === 'Tab') {
       // When the tab key is pressed, we want to move focus
@@ -147,21 +125,20 @@ function useToolbar(props: ToolbarProps & {isInsideAToolbar: boolean}, ref: RefO
 
   return {
     toolbarProps: {
-      role: !isInsideAToolbar ? 'toolbar' : undefined,
+      role: !isInToolbar ? 'toolbar' : undefined,
       'aria-orientation': orientation,
       'aria-label': ariaLabel,
       'aria-labelledby': ariaLabel == null ? ariaLabelledBy : undefined,
-      onKeyDown: !isInsideAToolbar ? onKeyDown : undefined,
-      onFocus: !isInsideAToolbar ? onFocus : undefined,
-      onBlur: !isInsideAToolbar ? onBlur : undefined
+      onKeyDownCapture: !isInToolbar ? onKeyDown : undefined,
+      onFocusCapture: !isInToolbar ? onFocus : undefined,
+      onBlurCapture: !isInToolbar ? onBlur : undefined
     }
   };
 }
 
 function Toolbar(props: ToolbarProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ToolbarContext);
-  let {isInsideAToolbar} = useToolbarNestingContext();
-  let {toolbarProps} = useToolbar({...props, isInsideAToolbar}, ref);
+  let {toolbarProps} = useToolbar(props, ref);
   let renderProps = useRenderProps({
     ...props,
     values: {orientation: props.orientation || 'horizontal'},
@@ -177,35 +154,9 @@ function Toolbar(props: ToolbarProps, ref: ForwardedRef<HTMLDivElement>) {
       ref={ref}
       slot={props.slot || undefined}
       data-orientation={props.orientation || 'horizontal'}>
-      <ToolbarNestingContext.Provider value={{isInsideAToolbar: true}}>
-        {renderProps.children}
-      </ToolbarNestingContext.Provider>
+      {renderProps.children}
     </div>
   );
-}
-
-// I don't like exporting this, but it's the only way I can think of for ActionGroup to know if it's in a Toolbar
-// This is required so that we don't render a role="toolbar" inside another role="toolbar"
-// Eventually we'll hopefully move ActionGroup to being implemented by Toolbar and then we can remove this
-/** @private */
-export const ToolbarNestingContext = createContext({isInsideAToolbar: false});
-/** @private */
-export const useToolbarNestingContext = () => React.useContext(ToolbarNestingContext);
-
-function focusElement(element: FocusableElement | null, scroll = false) {
-  if (element != null && !scroll) {
-    try {
-      focusSafely(element);
-    } catch (err) {
-      // ignore
-    }
-  } else if (element != null) {
-    try {
-      element.focus();
-    } catch (err) {
-      // ignore
-    }
-  }
 }
 
 /**

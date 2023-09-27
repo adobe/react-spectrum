@@ -1256,61 +1256,6 @@ export const ToolbarExample = (props) => {
           <ToggleButton className={classNames(styles, 'toggleButtonExample')}><div style={{textDecoration: 'underline'}}>U</div></ToggleButton>
           <ToggleButton className={classNames(styles, 'toggleButtonExample')}><i>I</i></ToggleButton>
         </div>
-        <RadioGroup orientation="horizontal" className={styles.radiogroup} aria-label="Text Alignment">
-          <Radio className={styles.radio} value="left">Left</Radio>
-          <Radio className={styles.radio} value="center">Center</Radio>
-          <Radio className={styles.radio} value="right">Right</Radio>
-        </RadioGroup>
-        <div>
-          <div>
-            <input type="radio" id="huey" name="drone" value="huey" />
-            <label htmlFor="huey">Huey</label>
-          </div>
-
-          <div>
-            <input type="radio" id="dewey" name="drone" value="dewey" />
-            <label htmlFor="dewey">Dewey</label>
-          </div>
-
-          <div>
-            <input type="radio" id="louie" name="drone" value="louie" />
-            <label htmlFor="louie">Louie</label>
-          </div>
-        </div>
-        {/* disabled buttons do not work in toolbar yet, the buttons cannot be focused
-        <Toolbar>
-          <Button isDisabled>Copy</Button>
-          <Button isDisabled>Paste</Button>
-          <Button isDisabled>Cut</Button>
-        </Toolbar>
-        */}
-        {/* Select and Numberfield have non-tabbable focusable elements which you should NOT be able to arrow through
-        // meanwhile, radio groups have non-tabbable focusable elements which you SHOULD be able to arrow through
-        */}
-        <Select data-testid="select-example" id="select-example-id" aria-label="Font chooser">
-          <Button>
-            <SelectValue />
-            <span aria-hidden="true" style={{paddingLeft: 5}}>▼</span>
-          </Button>
-          <Popover>
-            <OverlayArrow>
-              <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
-            </OverlayArrow>
-            <ListBox className={styles.menu}>
-              <MyItem>Serif</MyItem>
-              <MyItem>Sans serif</MyItem>
-              <MyItem>Monospace</MyItem>
-            </ListBox>
-          </Popover>
-        </Select>
-        <NumberField data-testid="number-field-example" formatOptions={{style: 'currency', currency: 'USD'}}>
-          <Label>Font size</Label>
-          <Group style={{display: 'flex'}}>
-            <Button slot="decrement">-</Button>
-            <Input />
-            <Button slot="increment">+</Button>
-          </Group>
-        </NumberField>
         <Checkbox>
           <div className="checkbox">
             <svg viewBox="0 0 18 18" aria-hidden="true">

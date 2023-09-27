@@ -24,7 +24,6 @@ import {pointerMap} from '@react-spectrum/test-utils';
 import React from 'react';
 import {Toolbar} from '../stories/Toolbar.stories';
 import userEvent from '@testing-library/user-event';
-import {waitFor} from '@testing-library/dom';
 
 describe('Toolbar', () => {
   let user;
@@ -234,17 +233,11 @@ describe('Toolbar', () => {
     expect(alignCenter).toHaveFocus();
     // Down arrow key is controlled by the child component and can wrap
     await user.keyboard('{ArrowDown}');
-    await waitFor(() =>
-    expect(alignRight).toHaveFocus()
-    );
+    expect(alignRight).toHaveFocus();
     await user.keyboard('{ArrowDown}');
-    await waitFor(() =>
-    expect(alignLeft).toHaveFocus()
-    );
+    expect(alignLeft).toHaveFocus();
     await user.keyboard('{ArrowUp}');
-    await waitFor(() =>
-    expect(alignRight).toHaveFocus()
-    );
+    expect(alignRight).toHaveFocus();
 
     // Arrow keys navigate across dividers to other action groups
     await user.keyboard('{ArrowRight}');
@@ -349,17 +342,11 @@ describe('Toolbar', () => {
     expect(alignCenter).toHaveFocus();
     // Right arrow key is controlled by child and can wrap
     await user.keyboard('{ArrowRight}');
-    await waitFor(() =>
-      expect(alignRight).toHaveFocus()
-    );
+    expect(alignRight).toHaveFocus();
     await user.keyboard('{ArrowRight}');
-    await waitFor(() =>
-      expect(alignLeft).toHaveFocus()
-    );
+    expect(alignLeft).toHaveFocus();
     await user.keyboard('{ArrowLeft}');
-    await waitFor(() =>
-      expect(alignRight).toHaveFocus()
-    );
+    expect(alignRight).toHaveFocus();
 
     // Arrow keys navigate across dividers to other action groups
     await user.keyboard('{ArrowDown}');

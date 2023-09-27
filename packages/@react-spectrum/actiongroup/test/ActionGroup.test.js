@@ -22,7 +22,6 @@ import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import userEvent from '@testing-library/user-event';
-import {waitFor} from '@testing-library/dom';
 
 // Describes the tabIndex values of button 1 (column 1), 2, and 3 as focus is moved forward or back.
 // e.g. button2Focused describes button 2 having tabindex=0 while all other buttons have -1
@@ -57,8 +56,8 @@ class BtnBehavior {
 }
 let btnBehavior = new BtnBehavior();
 
-async function verifyResult(buttons, values, index) {
-  await waitFor(() => expect(buttons).checkButtonIndex(values, index));
+function verifyResult(buttons, values, index) {
+  expect(buttons).checkButtonIndex(values, index);
 }
 
 // Custom error message for button index equality check
@@ -203,7 +202,7 @@ describe('ActionGroup', function () {
     let index = 0;
     for (let {action, result} of orders) {
       await action();
-      await verifyResult(buttons, result(), index);
+      verifyResult(buttons, result(), index);
       index++;
     }
   });
@@ -235,7 +234,7 @@ describe('ActionGroup', function () {
     let index = 0;
     for (let {action, result} of orders) {
       await action();
-      await verifyResult(buttons, result(), index);
+      verifyResult(buttons, result(), index);
       index++;
     }
   });
@@ -261,7 +260,7 @@ describe('ActionGroup', function () {
     let index = 0;
     for (let {action, result} of orders) {
       await action();
-      await verifyResult(buttons, result(), index);
+      verifyResult(buttons, result(), index);
       index++;
     }
   });

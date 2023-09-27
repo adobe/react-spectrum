@@ -13,9 +13,9 @@
 import {AriaActionGroupProps} from '@react-types/actiongroup';
 import {createFocusManager} from '@react-aria/focus';
 import {DOMAttributes, FocusableElement, Orientation} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
-import {KeyboardEventHandler, RefObject} from 'react';
+import {filterDOMProps, useLayoutEffect} from '@react-aria/utils';
 import {ListState} from '@react-stately/list';
+import {RefObject, useState} from 'react';
 import {useLocale} from '@react-aria/i18n';
 
 const BUTTON_GROUP_ROLES = {
@@ -31,9 +31,16 @@ export interface ActionGroupAria {
 export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListState<T>, ref: RefObject<FocusableElement>): ActionGroupAria {
   let {
     isDisabled,
-    orientation = 'horizontal' as Orientation,
-    isInsideAToolbar = false
+    orientation = 'horizontal' as Orientation
   } = props;
+
+  let [isInToolbar, setInToolbar] = useState(false);
+  useLayoutEffect(() => {
+    if (ref.current && ref.current.parentElement?.closest('[role="toolbar"]')) {
+      setInToolbar(true);
+    }
+  }, [ref]);
+
   let allKeys = [...state.collection.getKeys()];
   if (!allKeys.some(key => !state.disabledKeys.has(key))) {
     isDisabled = true;
@@ -42,125 +49,37 @@ export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListSta
   let {direction} = useLocale();
   let focusManager = createFocusManager(ref);
   let flipDirection = direction === 'rtl' && orientation === 'horizontal';
-  let onKeyDown: KeyboardEventHandler = (e) => {
-    if (!e.currentTarget.contains(e.target as HTMLElement)) {
+  let onKeyDown = (e) => {
+    if (!e.currentTarget.contains(e.target)) {
       return;
     }
 
-    let next, willWrap;
     switch (e.key) {
       case 'ArrowRight':
-        if (flipDirection) {
-          next = focusManager.focusPrevious({wrap: true, preview: true});
-          willWrap = next === focusManager.focusLast({preview: true});
-          if (willWrap) {
-            // delegate wrapping to a parent, such as toolbar
-            e.persist?.();
-            queueMicrotask(() => {
-              if (e.nativeEvent.defaultPrevented) {
-                return;
-              }
-              focusManager.focusLast();
-            });
-            return;
-          } else {
-            focusManager.focusPrevious({wrap: true});
-          }
-        } else {
-          next = focusManager.focusNext({wrap: true, preview: true});
-          willWrap = next === focusManager.focusFirst({preview: true});
-          if (willWrap) {
-            e.persist?.();
-            queueMicrotask(() => {
-              if (e.nativeEvent.defaultPrevented) {
-                return;
-              }
-              focusManager.focusFirst();
-            });
-            return;
-          } else {
-            focusManager.focusNext({wrap: true});
-          }
-        }
+      case 'ArrowDown':
         e.preventDefault();
         e.stopPropagation();
-        break;
-      case 'ArrowDown':
-        next = focusManager.focusNext({wrap: true, preview: true});
-        willWrap = next === focusManager.focusFirst({preview: true});
-        if (willWrap) {
-          e.persist?.();
-          queueMicrotask(() => {
-            if (e.nativeEvent.defaultPrevented) {
-              return;
-            }
-            focusManager.focusFirst();
-          });
-          return;
+        if (e.key === 'ArrowRight' && flipDirection) {
+          focusManager.focusPrevious({wrap: true});
         } else {
           focusManager.focusNext({wrap: true});
         }
-        e.preventDefault();
-        e.stopPropagation();
         break;
       case 'ArrowLeft':
-        if (flipDirection) {
-          next = focusManager.focusNext({wrap: true, preview: true});
-          willWrap = next === focusManager.focusFirst({preview: true});
-          if (willWrap) {
-            e.persist?.();
-            queueMicrotask(() => {
-              if (e.nativeEvent.defaultPrevented) {
-                return;
-              }
-              focusManager.focusFirst();
-            });
-            return;
-          } else {
-            focusManager.focusNext({wrap: true});
-          }
-        } else {
-          next = focusManager.focusPrevious({wrap: true, preview: true});
-          willWrap = next === focusManager.focusLast({preview: true});
-          if (willWrap) {
-            e.persist?.();
-            queueMicrotask(() => {
-              if (e.nativeEvent.defaultPrevented) {
-                return;
-              }
-              focusManager.focusLast();
-            });
-            return;
-          } else {
-            focusManager.focusPrevious({wrap: true});
-          }
-        }
+      case 'ArrowUp':
         e.preventDefault();
         e.stopPropagation();
-        break;
-      case 'ArrowUp':
-        next = focusManager.focusPrevious({wrap: true, preview: true});
-        willWrap = next === focusManager.focusLast({preview: true});
-        if (willWrap) {
-          e.persist?.();
-          queueMicrotask(() => {
-            if (e.nativeEvent.defaultPrevented) {
-              return;
-            }
-            focusManager.focusLast();
-          });
-          return;
+        if (e.key === 'ArrowLeft' && flipDirection) {
+          focusManager.focusNext({wrap: true});
         } else {
           focusManager.focusPrevious({wrap: true});
         }
-        e.preventDefault();
-        e.stopPropagation();
         break;
     }
   };
 
   let role: string | undefined = BUTTON_GROUP_ROLES[state.selectionManager.selectionMode];
-  if (isInsideAToolbar && role === 'toolbar') {
+  if (isInToolbar && role === 'toolbar') {
     role = 'group';
   }
   return {

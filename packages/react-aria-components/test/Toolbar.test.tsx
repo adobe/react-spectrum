@@ -16,7 +16,7 @@ import {composeStory} from '@storybook/react';
 import {I18nProvider} from '@react-aria/i18n';
 
 import Meta, {ToolbarExample as ToolbarExampleStory} from '../stories/index.stories';
-import {pointerMap, within} from '@react-spectrum/test-utils';
+import {pointerMap} from '@react-spectrum/test-utils';
 import React, {createRef} from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -451,14 +451,6 @@ describe('Toolbar', () => {
     let boldButton = screen.getByRole('button', {name: 'B'});
     let underlineButton = screen.getByRole('button', {name: 'U'});
     let italicButton = screen.getByRole('button', {name: 'I'});
-    let leftRadio = screen.getByRole('radio', {name: 'Left'});
-    let centerRadio = screen.getByRole('radio', {name: 'Center'});
-    let rightRadio = screen.getByRole('radio', {name: 'Right'});
-    let hueyRadio = screen.getByRole('radio', {name: 'Huey'});
-    let deweyRadio = screen.getByRole('radio', {name: 'Dewey'});
-    let louieRadio = screen.getByRole('radio', {name: 'Louie'});
-    let fontSelect = screen.getByRole('button', {name: 'Select an item Font chooser'});
-    let fontNumberfield = screen.getByRole('textbox', {name: 'Font size'});
     let nightModeCheckbox = screen.getByRole('checkbox', {name: 'Night Mode'});
     let helpLink = screen.getByRole('link', {name: 'Help'});
 
@@ -473,173 +465,11 @@ describe('Toolbar', () => {
     await user.keyboard('{ArrowRight}');
     expect(italicButton).toHaveFocus();
     await user.keyboard('{ArrowRight}');
-    expect(leftRadio).toHaveFocus();
-    await user.keyboard('{ArrowRight}');
-    expect(centerRadio).toHaveFocus();
-    await user.keyboard('{ArrowRight}');
-    expect(rightRadio).toHaveFocus();
-    await user.keyboard('{ArrowRight}');
-    expect(hueyRadio).toHaveFocus();
-    await user.keyboard('{ArrowRight}');
-    expect(deweyRadio).toHaveFocus();
-    await user.keyboard('{ArrowRight}');
-    expect(louieRadio).toHaveFocus();
-    await user.keyboard('{ArrowRight}');
-    expect(fontSelect).toHaveFocus();
-    await user.keyboard('{ArrowRight}');
-    expect(fontNumberfield).toHaveFocus();
-    await user.keyboard('{ArrowRight}');
     expect(nightModeCheckbox).toHaveFocus();
     await user.keyboard('{ArrowRight}');
     expect(helpLink).toHaveFocus();
     // reached the end, should not wrap
     await user.keyboard('{ArrowRight}');
     expect(helpLink).toHaveFocus();
-
-    expect(leftRadio).not.toBeChecked();
-    expect(centerRadio).not.toBeChecked();
-    expect(rightRadio).not.toBeChecked();
-    expect(hueyRadio).not.toBeChecked();
-    expect(deweyRadio).not.toBeChecked();
-    expect(louieRadio).not.toBeChecked();
-  });
-
-  it('supports all radio groups', async () => {
-    render(<ToolbarExample />);
-
-    let before = screen.getByRole('textbox', {name: 'Input Before Toolbar'});
-    let boldButton = screen.getByRole('button', {name: 'B'});
-    let underlineButton = screen.getByRole('button', {name: 'U'});
-    let italicButton = screen.getByRole('button', {name: 'I'});
-    let leftRadio = screen.getByRole('radio', {name: 'Left'});
-    let centerRadio = screen.getByRole('radio', {name: 'Center'});
-    let rightRadio = screen.getByRole('radio', {name: 'Right'});
-    let hueyRadio = screen.getByRole('radio', {name: 'Huey'});
-    let deweyRadio = screen.getByRole('radio', {name: 'Dewey'});
-    let louieRadio = screen.getByRole('radio', {name: 'Louie'});
-
-    await user.tab();
-    expect(before).toHaveFocus();
-    await user.tab();
-    expect(boldButton).toHaveFocus();
-    await user.keyboard('{ArrowRight}');
-    expect(underlineButton).toHaveFocus();
-    await user.keyboard('{ArrowRight}');
-    expect(italicButton).toHaveFocus();
-
-    // verify RAC radio group
-    await user.keyboard('{ArrowRight}');
-    expect(leftRadio).toHaveFocus();
-    expect(centerRadio).not.toBeChecked();
-
-    await user.keyboard('{ArrowDown}');
-    expect(centerRadio).toHaveFocus();
-    expect(centerRadio).toBeChecked();
-
-    await user.keyboard('{ArrowDown}');
-    expect(rightRadio).toHaveFocus();
-    expect(rightRadio).toBeChecked();
-
-    await user.keyboard('{ArrowDown}');
-    expect(leftRadio).toHaveFocus();
-    expect(leftRadio).toBeChecked();
-
-    await user.keyboard('{ArrowRight}');
-    expect(centerRadio).toHaveFocus();
-    expect(centerRadio).not.toBeChecked();
-    expect(leftRadio).toBeChecked();
-
-    await user.keyboard('{ArrowRight}');
-    expect(rightRadio).toHaveFocus();
-    expect(rightRadio).not.toBeChecked();
-    expect(leftRadio).toBeChecked();
-
-    // now verify with native radio group
-    await user.keyboard('{ArrowRight}');
-    expect(hueyRadio).toHaveFocus();
-    expect(deweyRadio).not.toBeChecked();
-
-    await user.keyboard('{ArrowDown}');
-    expect(deweyRadio).toHaveFocus();
-    expect(deweyRadio).toBeChecked();
-
-    await user.keyboard('{ArrowDown}');
-    expect(louieRadio).toHaveFocus();
-    expect(louieRadio).toBeChecked();
-
-    await user.keyboard('{ArrowDown}');
-    expect(hueyRadio).toHaveFocus();
-    expect(hueyRadio).toBeChecked();
-
-    await user.keyboard('{ArrowRight}');
-    expect(deweyRadio).toHaveFocus();
-    expect(deweyRadio).not.toBeChecked();
-    expect(hueyRadio).toBeChecked();
-
-    await user.keyboard('{ArrowRight}');
-    expect(louieRadio).toHaveFocus();
-    expect(louieRadio).not.toBeChecked();
-    expect(hueyRadio).toBeChecked();
-  });
-
-  it('supports interactions with select and numberfield', async () => {
-    render(<ToolbarExample />);
-
-    let before = screen.getByRole('textbox', {name: 'Input Before Toolbar'});
-    let boldButton = screen.getByRole('button', {name: 'B'});
-    let underlineButton = screen.getByRole('button', {name: 'U'});
-    let italicButton = screen.getByRole('button', {name: 'I'});
-    let leftRadio = screen.getByRole('radio', {name: 'Left'});
-    let centerRadio = screen.getByRole('radio', {name: 'Center'});
-    let rightRadio = screen.getByRole('radio', {name: 'Right'});
-    let hueyRadio = screen.getByRole('radio', {name: 'Huey'});
-    let deweyRadio = screen.getByRole('radio', {name: 'Dewey'});
-    let louieRadio = screen.getByRole('radio', {name: 'Louie'});
-    let fontSelect = screen.getByRole('button', {name: 'Select an item Font chooser'});
-    let fontNumberfield = screen.getByRole('textbox', {name: 'Font size'});
-
-    await user.tab();
-    expect(before).toHaveFocus();
-    await user.tab();
-    expect(boldButton).toHaveFocus();
-    await user.keyboard('{ArrowRight}');
-    expect(underlineButton).toHaveFocus();
-    await user.keyboard('{ArrowRight}');
-    expect(italicButton).toHaveFocus();
-    await user.keyboard('{ArrowRight}');
-    expect(leftRadio).toHaveFocus();
-    await user.keyboard('{ArrowRight}');
-    expect(centerRadio).toHaveFocus();
-    await user.keyboard('{ArrowRight}');
-    expect(rightRadio).toHaveFocus();
-    await user.keyboard('{ArrowRight}');
-    expect(hueyRadio).toHaveFocus();
-    await user.keyboard('{ArrowRight}');
-    expect(deweyRadio).toHaveFocus();
-    await user.keyboard('{ArrowRight}');
-    expect(louieRadio).toHaveFocus();
-    await user.keyboard('{ArrowRight}');
-    expect(fontSelect).toHaveFocus();
-
-    await user.keyboard('{ArrowDown}');
-    act(() => {jest.runAllTimers();});
-    let popover = screen.getByRole('listbox');
-    let items = within(popover).getAllByRole('option');
-    expect(popover).toBeVisible();
-
-    await user.keyboard('{ArrowRight}');
-    expect(popover).toBeVisible();
-    expect(document.activeElement).toBe(items[0]);
-
-    await user.keyboard('{Escape}');
-    act(() => {jest.runAllTimers();});
-    expect(popover).not.toBeInTheDocument();
-
-    await user.keyboard('{ArrowRight}');
-    expect(fontNumberfield).toHaveFocus();
-
-    await user.keyboard('{ArrowUp}');
-    await user.keyboard('{ArrowUp}');
-    expect(fontNumberfield).toHaveValue('$1.00');
   });
 });

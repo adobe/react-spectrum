@@ -35,13 +35,11 @@ import styles from '@adobe/spectrum-css-temp/components/actiongroup/vars.css';
 import {Text} from '@react-spectrum/text';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {useActionGroup, useActionGroupItem} from '@react-aria/actiongroup';
-import {useToolbarNestingContext} from 'react-aria-components';
 
 
 function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   props = useSlotProps(props, 'actionGroup');
-  let {isInsideAToolbar} = useToolbarNestingContext();
 
   let {
     isEmphasized,
@@ -61,7 +59,7 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
   let domRef = useDOMRef(ref);
   let wrapperRef = useRef<HTMLDivElement>(null);
   let state = useListState({...props, suppressTextValueWarning: true});
-  let {actionGroupProps} = useActionGroup({...props, isInsideAToolbar}, state, domRef);
+  let {actionGroupProps} = useActionGroup(props, state, domRef);
   let isVertical = orientation === 'vertical';
   let providerProps = {isEmphasized, isDisabled, isQuiet};
   let {styleProps} = useStyleProps(props);

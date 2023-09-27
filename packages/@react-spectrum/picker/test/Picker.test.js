@@ -25,7 +25,6 @@ import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 import {Virtualizer} from '../../../@react-stately/virtualizer/src/Virtualizer';
-import {waitFor} from '@testing-library/dom';
 
 describe('Picker', function () {
   let offsetWidth, offsetHeight;
@@ -1650,47 +1649,29 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenLastCalledWith('one');
-      // wait for the microtask queue to be processed, i do not know why runAllTicks does not work as a single
-      // call, instead you have to call it three times with await
-      // i've checked, technically the microtask has been run by this point, but for some reason
-      // the state change does not occur, and won't occur, until after those three await calls
-      await waitFor(() =>
-        expect(picker).toHaveTextContent('One')
-      );
+      expect(picker).toHaveTextContent('One');
 
       await user.keyboard('{ArrowLeft}');
-      await waitFor(() =>
-        expect(picker).toHaveTextContent('One')
-      );
+      expect(picker).toHaveTextContent('One');
 
       await user.keyboard('{ArrowRight}');
-      await waitFor(() =>
-        expect(picker).toHaveTextContent('Two')
-      );
+      expect(picker).toHaveTextContent('Two');
       expect(onSelectionChange).toHaveBeenCalledTimes(2);
 
       await user.keyboard('{ArrowRight}');
-      await waitFor(() =>
-        expect(picker).toHaveTextContent('Three')
-      );
+      expect(picker).toHaveTextContent('Three');
       expect(onSelectionChange).toHaveBeenCalledTimes(3);
 
       await user.keyboard('{ArrowRight}');
-      await waitFor(() =>
-        expect(picker).toHaveTextContent('Three')
-      );
+      expect(picker).toHaveTextContent('Three');
       expect(onSelectionChange).toHaveBeenCalledTimes(3);
 
       await user.keyboard('{ArrowLeft}');
-      await waitFor(() =>
-        expect(picker).toHaveTextContent('Two')
-      );
+      expect(picker).toHaveTextContent('Two');
       expect(onSelectionChange).toHaveBeenCalledTimes(4);
 
       await user.keyboard('{ArrowLeft}');
-      await waitFor(() =>
-        expect(picker).toHaveTextContent('One')
-      );
+      expect(picker).toHaveTextContent('One');
       expect(onSelectionChange).toHaveBeenCalledTimes(5);
     });
   });

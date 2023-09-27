@@ -35,12 +35,7 @@ export interface ActionGroupProps<T> extends MultipleSelection {
    * Invoked when an action is taken on a child. Especially useful when `selectionMode` is none.
    * The sole argument `key` is the key for the item.
    */
-  onAction?: (key: Key) => void,
-  /**
-   * Whether the ActionGroup is displayed in a Toolbar.
-   * @default false
-   */
-  isInsideAToolbar?: boolean
+  onAction?: (key: Key) => void
 }
 
 export interface AriaActionGroupProps<T> extends ActionGroupProps<T>, DOMProps, AriaLabelingProps {}

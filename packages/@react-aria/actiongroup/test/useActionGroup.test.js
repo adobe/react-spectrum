@@ -10,14 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import React from 'react';
+import React, {createRef} from 'react';
 import {renderHook} from '@react-spectrum/test-utils';
 import {useActionGroup} from '../';
 import {useListState} from '@react-stately/list';
 
 describe('useActionGroup', function () {
   let renderActionGroupHook = (props) => {
-    let {result} = renderHook(() => useActionGroup(props, useListState(props)));
+    let ref = createRef(null);
+    let {result} = renderHook(() => useActionGroup(props, useListState(props), ref));
     return result.current;
   };
 

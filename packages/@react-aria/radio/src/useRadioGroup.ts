@@ -95,6 +95,7 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
       default:
         return;
     }
+    e.preventDefault();
     let walker = getFocusableTreeWalker(e.currentTarget, {from: e.target});
     let nextElem;
     if (nextDir === 'next') {
@@ -111,15 +112,9 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
       }
     }
     if (nextElem) {
-      e.persist?.();
-      queueMicrotask(() => {
-        if (e.nativeEvent.defaultPrevented) {
-          return;
-        }
-        // Call focus on nextElem so that keyboard navigation scrolls the radio into view
-        nextElem.focus();
-        state.setSelectedValue(nextElem.value);
-      });
+      // Call focus on nextElem so that keyboard navigation scrolls the radio into view
+      nextElem.focus();
+      state.setSelectedValue(nextElem.value);
     }
   };
 

@@ -45,8 +45,7 @@ export interface FocusManagerOptions {
   /** Whether focus should wrap around when it reaches the end of the scope. */
   wrap?: boolean,
   /** A callback that determines whether the given element is focused. */
-  accept?: (node: Element) => boolean,
-  preview?: boolean
+  accept?: (node: Element) => boolean
 }
 
 export interface FocusManager {
@@ -721,7 +720,7 @@ export function createFocusManager(ref: RefObject<Element>, defaultOptions: Focu
       if (!root) {
         return;
       }
-      let {from, tabbable = defaultOptions.tabbable, wrap = defaultOptions.wrap, accept = defaultOptions.accept, preview = defaultOptions.preview} = opts;
+      let {from, tabbable = defaultOptions.tabbable, wrap = defaultOptions.wrap, accept = defaultOptions.accept} = opts;
       let node = from || document.activeElement;
       let walker = getFocusableTreeWalker(root, {tabbable, accept});
       if (root.contains(node)) {
@@ -732,7 +731,7 @@ export function createFocusManager(ref: RefObject<Element>, defaultOptions: Focu
         walker.currentNode = root;
         nextNode = walker.nextNode() as FocusableElement;
       }
-      if (nextNode && !preview) {
+      if (nextNode) {
         focusElement(nextNode, true);
       }
       return nextNode;
@@ -742,14 +741,14 @@ export function createFocusManager(ref: RefObject<Element>, defaultOptions: Focu
       if (!root) {
         return;
       }
-      let {from, tabbable = defaultOptions.tabbable, wrap = defaultOptions.wrap, accept = defaultOptions.accept, preview = defaultOptions.preview} = opts;
+      let {from, tabbable = defaultOptions.tabbable, wrap = defaultOptions.wrap, accept = defaultOptions.accept} = opts;
       let node = from || document.activeElement;
       let walker = getFocusableTreeWalker(root, {tabbable, accept});
       if (root.contains(node)) {
         walker.currentNode = node;
       } else {
         let next = last(walker);
-        if (next && !preview) {
+        if (next) {
           focusElement(next, true);
         }
         return next;
@@ -759,7 +758,7 @@ export function createFocusManager(ref: RefObject<Element>, defaultOptions: Focu
         walker.currentNode = root;
         previousNode = last(walker);
       }
-      if (previousNode && !preview) {
+      if (previousNode) {
         focusElement(previousNode, true);
       }
       return previousNode;
@@ -769,10 +768,10 @@ export function createFocusManager(ref: RefObject<Element>, defaultOptions: Focu
       if (!root) {
         return;
       }
-      let {tabbable = defaultOptions.tabbable, accept = defaultOptions.accept, preview = defaultOptions.preview} = opts;
+      let {tabbable = defaultOptions.tabbable, accept = defaultOptions.accept} = opts;
       let walker = getFocusableTreeWalker(root, {tabbable, accept});
       let nextNode = walker.nextNode() as FocusableElement;
-      if (nextNode && !preview) {
+      if (nextNode) {
         focusElement(nextNode, true);
       }
       return nextNode;
@@ -782,10 +781,10 @@ export function createFocusManager(ref: RefObject<Element>, defaultOptions: Focu
       if (!root) {
         return;
       }
-      let {tabbable = defaultOptions.tabbable, accept = defaultOptions.accept, preview = defaultOptions.preview} = opts;
+      let {tabbable = defaultOptions.tabbable, accept = defaultOptions.accept} = opts;
       let walker = getFocusableTreeWalker(root, {tabbable, accept});
       let next = last(walker);
-      if (next && !preview) {
+      if (next) {
         focusElement(next, true);
       }
       return next;
