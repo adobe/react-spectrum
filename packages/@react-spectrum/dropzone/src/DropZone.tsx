@@ -12,11 +12,13 @@
 
 import {AriaLabelingProps, DOMProps, DOMRef, StyleProps} from '@react-types/shared';
 import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import * as DragManager from '@react-aria/dnd/src/DragManager';
 import {DropZoneProps, DropZone as RACDropZone} from 'react-aria-components';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {isVirtualDragging} from '@react-aria/dnd';
 import {mergeProps, useId} from '@react-aria/utils';
-import React, {ReactNode} from 'react';
+import React, {ReactNode, useEffect} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/dropzone/vars.css';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
@@ -35,12 +37,17 @@ function DropZone(props: SpectrumDropZoneProps, ref: DOMRef<HTMLDivElement>) {
   let domRef = useDOMRef(ref);
   let messageId = useId();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let isVirtualDrag = isVirtualDragging(); 
+  let dragSession = DragManager.useDragSession();
+
+  useEffect(() => {
+  }, [dragSession]);
 
   return (
     <RACDropZone
       {...mergeProps(otherProps)}
       {...styleProps as Omit<React.HTMLAttributes<HTMLElement>, 'onDrop'>}
-      aria-labelledby={messageId}
+      aria-labelledby={(isFilled && isVirtualDrag) && messageId}
       className={
       classNames(
         styles,
