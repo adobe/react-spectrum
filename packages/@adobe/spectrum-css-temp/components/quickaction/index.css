@@ -16,7 +16,7 @@ governing permissions and limitations under the License.
 .spectrum-QuickActions {
   box-sizing: border-box;
 
-  @inherit: %spectrum-overlay;
+  composes: spectrum-overlay;
 
   display: inline-flex;
   align-items: center;
@@ -29,7 +29,7 @@ governing permissions and limitations under the License.
   border-radius: var(--spectrum-quickactions-border-radius);
 
   &.is-open {
-    @inherit: %spectrum-overlay--open;
+    composes: spectrum-overlay--open;
   }
 
   .spectrum-ActionButton + .spectrum-ActionButton {
@@ -45,13 +45,13 @@ governing permissions and limitations under the License.
 
 .spectrum-QuickActions--right {
   &.is-open {
-    @inherit: %spectrum-overlay--left--open; /* should animate to the left when aligned right */
+    composes: spectrum-overlay--left--open; /* should animate to the left when aligned right */
   }
 }
 
 .spectrum-QuickActions--left {
   &.is-open {
-    @inherit: %spectrum-overlay--right--open; /* should animate to the right when aligned left */
+    composes: spectrum-overlay--right--open; /* should animate to the right when aligned left */
   }
 }
 

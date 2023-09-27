@@ -32,10 +32,12 @@ describe('Switch', () => {
     expect(s).toHaveAttribute('class', 'test');
   });
 
-  it('should support DOM props', () => {
-    let {getByRole} = render(<Switch data-foo="bar">Test</Switch>);
+  it('should support data- props on label element', () => {
+    let {getByRole} = render(<Switch data-foo="bar" >Test</Switch>);
     let s = getByRole('switch');
-    expect(s).toHaveAttribute('data-foo', 'bar');
+    let label = s.closest('label');
+    expect(label).toHaveAttribute('data-foo', 'bar');
+    expect(s).not.toHaveAttribute('data-foo');
   });
 
   it('should support render props', async () => {
@@ -156,5 +158,14 @@ describe('Switch', () => {
     expect(s).toHaveAttribute('aria-readonly', 'true');
     expect(label).toHaveAttribute('data-readonly');
     expect(label).toHaveClass('readonly');
+  });
+
+  it('should render data- attributes only on the outer element', () => {
+    let {getAllByTestId} = render(
+      <Switch data-testid="switch-test">Test</Switch>
+    );
+    let outerEl = getAllByTestId('switch-test');
+    expect(outerEl).toHaveLength(1);
+    expect(outerEl[0]).toHaveClass('react-aria-Switch');
   });
 });

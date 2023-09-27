@@ -26,11 +26,11 @@ governing permissions and limitations under the License.
     text-decoration: underline;
   }
 
-  &:focus-ring {
+  &:focus-visible {
     text-decoration: underline;
   }
 
-  &:focus-ring {
+  &:focus-visible {
     text-decoration: underline;
     text-decoration-style: double;
   }

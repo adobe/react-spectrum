@@ -491,4 +491,8 @@ export class SelectionManager implements MultipleSelectionManager {
   isDisabled(key: Key) {
     return this.state.disabledKeys.has(key) && this.state.disabledBehavior === 'all';
   }
+
+  isLink(key: Key) {
+    return !!this.collection.getItem(key)?.props?.href;
+  }
 }

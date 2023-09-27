@@ -116,7 +116,7 @@ function ActionBarInner<T>(props: ActionBarInnerProps<T>, ref: Ref<HTMLDivElemen
             {children}
           </ActionGroup>
           <ActionButton
-            gridArea="clear"
+            gridArea={styles.clear}
             aria-label={stringFormatter.format('clearSelection')}
             onPress={() => onClearSelection()}
             isQuiet

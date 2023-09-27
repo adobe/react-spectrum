@@ -11,7 +11,7 @@
  */
 
 import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
-import {Link, LinkContext} from '../';
+import {Link, LinkContext, RouterProvider} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -61,7 +61,7 @@ describe('Link', () => {
   });
 
   it('should render a link with <a> element', () => {
-    let {getByRole} = render(<Link><a href="test">Test</a></Link>);
+    let {getByRole} = render(<Link href="test">Test</Link>);
     let link = getByRole('link');
     expect(link.tagName).toBe('A');
     expect(link).toHaveAttribute('class', 'react-aria-Link');
@@ -125,5 +125,13 @@ describe('Link', () => {
 
     expect(link).toHaveAttribute('aria-disabled', 'true');
     expect(link).toHaveClass('disabled');
+  });
+
+  it('should work with RouterProvider', async () => {
+    let navigate = jest.fn();
+    let {getByRole} = render(<RouterProvider navigate={navigate}><Link href="/foo">Test</Link></RouterProvider>);
+    let link = getByRole('link');
+    await user.click(link);
+    expect(navigate).toHaveBeenCalledWith('/foo');
   });
 });

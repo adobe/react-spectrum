@@ -12,6 +12,7 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import typesDocs from 'docs:@react-types/overlays';
+import overlayStatelyDocs from 'docs:@react-stately/overlays';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
@@ -435,6 +436,36 @@ Now you can use `MyCustomHeading` within a `Dialog`, in place of the builtin Rea
   {/*- end highlight -*/}
   {/* ... */}
 </Dialog>
+```
+
+### State
+
+DialogTrigger provides an <TypeLink links={overlayStatelyDocs.links} type={overlayStatelyDocs.exports.OverlayTriggerState} /> object to its children via `OverlayTriggerStateContext`. This can be used to access and manipulate the dialog trigger's state.
+
+This example shows a `CloseButton` component that can be placed within a `DialogTrigger` to close the overlay.
+
+```tsx example
+import {OverlayTriggerStateContext} from 'react-aria-components';
+
+function CloseButton() {
+  /*- begin highlight -*/
+  let state = React.useContext(OverlayTriggerStateContext)!;
+  /*- end highlight -*/
+  return <Button onPress={() => state.close()}>Close</Button>;
+}
+
+<DialogTrigger>
+  <Button>About</Button>
+  <Modal isDismissable>
+    <Dialog>
+      <Heading>About</Heading>
+      <p>Copyright © 2023 Adobe. All rights reserved.</p>
+      {/*- begin highlight -*/}
+      <CloseButton />
+      {/*- end highlight -*/}
+    </Dialog>
+  </Modal>
+</DialogTrigger>
 ```
 
 ### Hooks

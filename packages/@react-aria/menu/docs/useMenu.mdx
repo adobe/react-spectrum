@@ -17,6 +17,7 @@ import menuDocs from 'docs:@react-aria/menu';
 import buttonDocs from 'docs:@react-aria/button';
 import statelyDocs from 'docs:@react-stately/menu';
 import treeDocs from 'docs:@react-stately/tree';
+import utilsDocs from 'docs:@react-aria/utils';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-aria/menu/package.json';
 import Anatomy from './menu-trigger-anatomy.svg';
@@ -178,15 +179,7 @@ function Menu<T extends object>(props: AriaMenuProps<T>) {
   let {menuProps} = useMenu(props, state, ref);
 
   return (
-    <ul
-      {...menuProps}
-      ref={ref}
-      style={{
-        margin: 0,
-        padding: 0,
-        listStyle: 'none',
-        width: 150
-      }}>
+    <ul {...menuProps} ref={ref}>
       {[...state.collection].map(item => (
         item.type === 'section'
           ? <MenuSection key={item.key} section={item} state={state} />
@@ -208,21 +201,10 @@ import {useMenuItem} from '@react-aria/menu';
 function MenuItem({item, state}) {
   // Get props for the menu item element
   let ref = React.useRef(null);
-  let {menuItemProps, isFocused, isSelected, isDisabled} = useMenuItem({key: item.key}, state, ref);
+  let {menuItemProps, isSelected} = useMenuItem({key: item.key}, state, ref);
 
   return (
-    <li
-      {...menuItemProps}
-      ref={ref}
-      style={{
-        background: isFocused ? 'gray' : 'transparent',
-        color: isDisabled ? 'gray' : isFocused ? 'white' : 'black',
-        padding: '2px 5px',
-        outline: 'none',
-        cursor: 'default',
-        display: 'flex',
-        justifyContent: 'space-between'
-      }}>
+    <li {...menuItemProps} ref={ref}>
       {item.rendered}
       {isSelected && <span aria-hidden="true">✅</span>}
     </li>
@@ -239,6 +221,40 @@ Now we can render a simple menu with actionable items:
   <Item key="paste">Paste</Item>
 </MenuButton>
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+[role=menu] {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  width: 200px;
+}
+
+[role=menuitem],
+[role=menuitemradio],
+[role=menuitemcheckbox] {
+  padding: 2px 5px;
+  outline: none;
+  cursor: default;
+  display: flex;
+  justify-content: space-between;
+  color: black;
+
+  &:focus {
+    background: gray;
+    color: white;
+  }
+
+  &[aria-disabled] {
+    color: gray;
+  }
+}
+```
+
+</details>
 
 ### Popover
 
@@ -556,15 +572,7 @@ function Menu(props) {
   let {menuProps} = useMenu(props, state, ref);
 
   return (
-    <ul
-      {...menuProps}
-      ref={ref}
-      style={{
-        margin: 0,
-        padding: 0,
-        listStyle: 'none',
-        width: 200
-      }}>
+    <ul {...menuProps} ref={ref}>
       {[...state.collection].map(item => (
         <MenuItem key={item.key} item={item} state={state} />
       ))}
@@ -579,8 +587,7 @@ function MenuItem({item, state}) {
     menuItemProps,
     labelProps,
     descriptionProps,
-    keyboardShortcutProps,
-    isFocused
+    keyboardShortcutProps
   } = useMenuItem({key: item.key}, state, ref);
 
   // Pull out the three expected children. We will clone them
@@ -588,19 +595,7 @@ function MenuItem({item, state}) {
   let [title, description, shortcut] = item.rendered;
 
   return (
-    <li
-      {...menuItemProps}
-      ref={ref}
-      style={{
-        background: isFocused ? 'gray' : 'transparent',
-        color: isFocused ? 'white' : null,
-        padding: '2px 5px',
-        outline: 'none',
-        cursor: 'default',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between'
-      }}>
+    <li {...menuItemProps} ref={ref}>
       <div>
         {React.cloneElement(title, labelProps)}
         {React.cloneElement(description, descriptionProps)}
@@ -645,6 +640,87 @@ The `isDisabled` property returned by `useMenuItem` can be used to style the ite
   <Item key="paste">Paste</Item>
 </MenuButton>
 ```
+
+## Links
+
+By default, interacting with an item in a Menu triggers `onAction` and optionally `onSelectionChange` depending on the `selectionMode`. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component. Link items in a menu are not selectable.
+
+This example shows how to update the `MenuItem` component with support for rendering an `<a>` element if an `href` prop is passed to the item. Note that you'll also need to render the `Menu` as a `<div>` instead of a `<ul>`, since an `<a>` inside a `<ul>` is not valid HTML.
+
+```tsx example
+///- begin collapse -///
+function MenuButton(props) {
+  let state = useMenuTriggerState(props);
+  let ref = React.useRef(null);
+  let {menuTriggerProps, menuProps} = useMenuTrigger({}, state, ref);
+
+  return (
+    <div style={{position: 'relative', display: 'inline-block'}}>
+      <Button
+        {...menuTriggerProps}
+        buttonRef={ref}
+        style={{height: 30, fontSize: 14}}>
+        {props.label}
+        <span aria-hidden="true" style={{paddingLeft: 5}}>▼</span>
+      </Button>
+      {state.isOpen &&
+        <Popover state={state} triggerRef={ref} placement="bottom start">
+          <Menu
+            {...props}
+            {...menuProps} />
+        </Popover>
+      }
+    </div>
+  );
+}
+
+function Menu(props) {
+  let state = useTreeState(props);
+  let ref = React.useRef(null);
+  let {menuProps} = useMenu(props, state, ref);
+
+  return (
+    <div {...menuProps} ref={ref}>
+      {[...state.collection].map(item => (
+        <MenuItem key={item.key} item={item} state={state} />
+      ))}
+    </div>
+  );
+}
+///- end collapse -///
+function MenuItem({item, state}) {
+  // Get props for the menu item element and child elements
+  let ref = React.useRef(null);
+  let {menuItemProps} = useMenuItem({key: item.key}, state, ref);
+  /*- begin highlight -*/
+  let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
+  /*- end highlight -*/
+
+  return (
+    <ElementType {...menuItemProps} ref={ref}>
+      {item.rendered}
+    </ElementType>
+  );
+}
+
+<MenuButton label="Links">
+  <Item href="https://adobe.com/" target="_blank">Adobe</Item>
+  <Item href="https://apple.com/" target="_blank">Apple</Item>
+  <Item href="https://google.com/" target="_blank">Google</Item>
+  <Item href="https://microsoft.com/" target="_blank">Microsoft</Item>
+</MenuButton>
+```
+
+```css hidden
+[role=menuitem][href] {
+  cursor: pointer;
+  text-decoration: none;
+}
+```
+
+### Client side routing
+
+The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={utilsDocs.links} type={utilsDocs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
 ## Controlled open state
 

@@ -15,7 +15,7 @@ import {AriaDatePickerProps, AriaDateRangePickerProps, DateValue} from '@react-t
 import {AriaDialogProps} from '@react-types/dialog';
 import {createFocusManager} from '@react-aria/focus';
 import {DateRangePickerState} from '@react-stately/datepicker';
-import {DOMAttributes, KeyboardEvent} from '@react-types/shared';
+import {DOMAttributes, GroupDOMAttributes, KeyboardEvent} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useDescription, useId} from '@react-aria/utils';
 import {focusManagerSymbol, roleSymbol} from './useDateField';
 // @ts-ignore
@@ -31,7 +31,7 @@ export interface DateRangePickerAria {
   /** Props for the date range picker's visible label element, if any. */
   labelProps: DOMAttributes,
   /** Props for the grouping element containing the date fields and button. */
-  groupProps: DOMAttributes,
+  groupProps: GroupDOMAttributes,
   /** Props for the start date field. */
   startFieldProps: AriaDatePickerProps<DateValue>,
   /** Props for the end date field. */
@@ -117,7 +117,7 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
 
   return {
     groupProps: mergeProps(domProps, groupProps, fieldProps, descProps, focusWithinProps, {
-      role: 'group',
+      role: 'group' as const,
       'aria-disabled': props.isDisabled || null,
       'aria-describedby': ariaDescribedBy,
       onKeyDown(e: KeyboardEvent) {
