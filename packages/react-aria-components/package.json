@@ -24,8 +24,8 @@
   "dependencies": {
     "@internationalized/date": "^3.5.0",
     "@react-aria/focus": "^3.14.1",
-    "@react-aria/i18n": "^3.8.2",
     "@react-aria/interactions": "^3.18.0",
+    "@react-aria/toolbar": "3.0.0-alpha.1",
     "@react-aria/utils": "^3.20.0",
     "@react-stately/table": "^3.11.1",
     "@react-types/calendar": "^3.4.0",
