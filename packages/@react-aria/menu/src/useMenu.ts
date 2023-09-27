@@ -33,9 +33,6 @@ export interface AriaMenuOptions<T> extends Omit<AriaMenuProps<T>, 'children'>, 
    * to override the default.
    */
   keyboardDelegate?: KeyboardDelegate,
-  // TODO: Should we have an accompanying onKeyUp even though we don't use it and then just extend KeyboardEvents?
-  // Should this be UNSTABLE? That would mean the props from useSubMenuTrigger would be the UNSTABLE variants as well
-  onKeyDown?: (e: KeyboardEvent) => void,
   /**
    * By default, if the user is moving their pointer towards a submenu, pointer events will be disabled on the menu.
    * This is so to prevent the submenu from closing due to hovering over a different item.
