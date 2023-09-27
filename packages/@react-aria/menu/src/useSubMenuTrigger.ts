@@ -14,7 +14,7 @@
 import {AriaMenuItemProps} from './useMenuItem';
 import {AriaMenuOptions} from './useMenu';
 import type {AriaPopoverProps} from '@react-aria/overlays';
-import {FocusableElement, FocusStrategy, PressEvent, Node as RSNode} from '@react-types/shared';
+import {FocusableElement, FocusStrategy, KeyboardEvent, PressEvent, Node as RSNode} from '@react-types/shared';
 import {RefObject, useCallback, useRef} from 'react';
 import type {SubMenuTriggerState} from '@react-stately/menu';
 import {useEffectEvent, useId, useLayoutEffect} from '@react-aria/utils';
@@ -90,18 +90,15 @@ export function UNSTABLE_useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, st
     switch (e.key) {
       case 'ArrowLeft':
         if (direction === 'ltr') {
-          e.stopPropagation();
           onSubMenuClose();
         }
         break;
       case 'ArrowRight':
         if (direction === 'rtl') {
-          e.stopPropagation();
           onSubMenuClose();
         }
         break;
       case 'Escape':
-        e.stopPropagation();
         state.closeAll();
         break;
     }

@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, DOMProps, FocusableElement, PressEvent} from '@react-types/shared';
+import {DOMAttributes, DOMProps, FocusableElement, FocusEvents, HoverEvents, KeyboardEvents, PressEvent, PressEvents} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useRouter, useSlotId} from '@react-aria/utils';
-import {FocusEvent, Key, RefObject} from 'react';
 import {getItemCount} from '@react-stately/collections';
-import {isFocusVisible, useHover, useKeyboard, usePress} from '@react-aria/interactions';
+import {isFocusVisible, useFocus, useHover, useKeyboard, usePress} from '@react-aria/interactions';
+import {Key, RefObject} from 'react';
 import {menuData} from './useMenu';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableItem} from '@react-aria/selection';
@@ -42,7 +42,7 @@ export interface MenuItemAria {
   isDisabled: boolean
 }
 
-export interface AriaMenuItemProps extends DOMProps {
+export interface AriaMenuItemProps extends DOMProps, PressEvents, HoverEvents, KeyboardEvents, FocusEvents  {
   /**
    * Whether the menu item is disabled.
    * @deprecated - pass disabledKeys to useTreeState instead.
@@ -85,15 +85,10 @@ export interface AriaMenuItemProps extends DOMProps {
   /** What kind of popup the item opens. */
   'aria-haspopup'?: 'menu' | 'dialog',
 
-  // TODO: Add descriptions when these props are okayed
-  // Open it up fully to all pressProps + hoverEvents + keyboardEvents?
-  // Should these all be UNSTABLE? That would mean the return types from useSubMenuTrigger would be the UNSTABLE variants as well...
-  onPressStart?: (e: PressEvent) => void,
-  onPress?: (e: PressEvent) => void,
-  onHoverChange?: (isHovering: boolean) => void,
-  onKeyDown?: (e: KeyboardEvent) => void,
-  onBlur?: (e: FocusEvent<Element>) => void,
+  /** Indicates whether the menu item's popup element is expanded or collapsed. */
   'aria-expanded'?: boolean | 'true' | 'false',
+
+  /** Identifies the menu item's popup element whose contents or presence is controlled by the menu item. */
   'aria-controls'?: string
 }
 
@@ -110,9 +105,17 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     isVirtualized,
     'aria-haspopup': hasPopup,
     onPressStart: pressStartProp,
+    onPressUp: pressUpProp,
     onPress,
+    onPressChange,
+    onPressEnd,
+    onHoverStart: hoverStartProp,
     onHoverChange,
+    onHoverEnd,
     onKeyDown,
+    onKeyUp,
+    onFocus,
+    onFocusChange,
     onBlur
   } = props;
 
@@ -152,11 +155,9 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     'aria-label': props['aria-label'],
     'aria-labelledby': labelId,
     'aria-describedby': [descriptionId, keyboardId].filter(Boolean).join(' ') || undefined,
-    // TODO: perhaps we should just expect that the user would spread these on the submenu trigger directly
-    // instead of just passing it to useMenuItem? Kinda want to follow useButton's pattern where we handle aria-attributes pass throughs
-    'aria-controls': isTrigger ? props['aria-controls'] : undefined,
+    'aria-controls': props['aria-controls'],
     'aria-haspopup': hasPopup,
-    'aria-expanded': isTrigger ? props['aria-expanded'] : undefined
+    'aria-expanded': props['aria-expanded']
   };
 
   if (state.selectionManager.selectionMode !== 'none' && !isTrigger) {
@@ -187,6 +188,8 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
         onClose();
       }
     }
+
+    pressUpProp && pressStartProp(e);
   };
 
   let {itemProps, isFocused} = useSelectableItem({
@@ -206,17 +209,21 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     onPressStart,
     onPress,
     onPressUp,
+    onPressChange,
+    onPressEnd,
     isDisabled: isDisabled || (isTrigger && state.expandedKeys.has(key))
   });
   let {hoverProps} = useHover({
     isDisabled,
-    onHoverStart() {
+    onHoverStart(e) {
       if (!isFocusVisible()) {
         state.selectionManager.setFocused(true);
         state.selectionManager.setFocusedKey(key);
       }
+      hoverStartProp && hoverStartProp(e);
     },
-    onHoverChange
+    onHoverChange,
+    onHoverEnd
   });
 
   let {keyboardProps} = useKeyboard({
@@ -244,17 +251,21 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
           e.continuePropagation();
           break;
       }
-    }
+    },
+    onKeyUp
   });
 
+  let {focusProps} = useFocus({onBlur, onFocus, onFocusChange});
   let domProps = filterDOMProps(item.props, {isLink: !!item?.props?.href});
   delete domProps.id;
+
   return {
     menuItemProps: {
       ...ariaProps,
-      // TODO: Similar question as the aria attributes above, do we just expect the user to spread onKeyDown, onBlur, id and aria attributes directly?
-      // This current approach of handling the passthroughs feels more in line with how useMenuTrigger passes stuff to useButton though
-      ...mergeProps(domProps, itemProps, pressProps, hoverProps, keyboardProps, {onKeyDown, onBlur})
+      // TODO: Key down from useSubmenuTrigger's subMenuTriggerProps not incorporated into useKeyboard here since we
+      // cannot sufficiently distinguish when propagation should be continued or stopped in this section of code.
+      // It should only stop propagation if handling the ArrowRight case when the submenutrigger's menu is open and focus is on the trigger,
+      ...mergeProps(domProps, itemProps, pressProps, hoverProps, keyboardProps, focusProps, {onKeyDown, onKeyUp})
     },
     labelProps: {
       id: labelId

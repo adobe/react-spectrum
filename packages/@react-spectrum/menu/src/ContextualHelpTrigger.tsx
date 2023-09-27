@@ -10,15 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionButton} from '@react-spectrum/button';
+import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {classNames, SlotProvider, useIsMobileDevice} from '@react-spectrum/utils';
-import {DismissButton} from '@react-aria/overlays';
+import {getInteractionModality} from '@react-aria/interactions';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {ItemProps} from '@react-types/shared';
-import {Modal, Popover} from '@react-spectrum/overlays';
+import {Popover} from '@react-spectrum/overlays';
 import React, {Key, ReactElement, useRef} from 'react';
+import ReactDOM from 'react-dom';
+import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {SubMenuTriggerContext, useMenuStateContext} from './context';
 import {UNSTABLE_useSubMenuTrigger} from '@react-aria/menu';
 import {UNSTABLE_useSubMenuTriggerState} from '@react-stately/menu';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
 interface MenuDialogTriggerProps<T> extends ItemProps<T> {
   /** Whether the menu item is currently unavailable. */
@@ -33,7 +40,7 @@ export interface SpectrumMenuDialogTriggerProps<T> extends Omit<MenuDialogTrigge
 function ContextualHelpTrigger<T>(props: MenuDialogTriggerProps<T>): ReactElement {
   let {isUnavailable, targetKey} = props;
   let triggerRef = useRef<HTMLLIElement>(null);
-  let {popoverContainerRef, menuTreeState, menu: parentMenuRef, state, submenu: submenuRef} = useMenuStateContext();
+  let {popoverContainerRef, trayContainerRef, menuTreeState, menu: parentMenuRef, state, submenu: submenuRef} = useMenuStateContext();
   let triggerNode = state.collection.getItem(targetKey);
   let subMenuTriggerState = UNSTABLE_useSubMenuTriggerState({triggerKey: targetKey}, {...menuTreeState, ...state});
   let {subMenuTriggerProps, popoverProps, overlayProps} = UNSTABLE_useSubMenuTrigger({
@@ -62,36 +69,79 @@ function ContextualHelpTrigger<T>(props: MenuDialogTriggerProps<T>): ReactElemen
       }
     }
   };
+
+  let overlay;
+  let tray;
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let {direction} = useLocale();
+  let backButtonText = state?.collection.getItem(menuTreeState.expandedKeysStack.slice(-1)[0])?.textValue;
+  let backButtonLabel = stringFormatter.format('backButton', {
+    prevMenuButton: backButtonText
+  });
+  let onBackButtonPress = () => {
+    subMenuTriggerState.close();
+    if (parentMenuRef.current && !parentMenuRef.current.contains(document.activeElement)) {
+      // Delay for the parent menu in the tray to no longer be display: none so focus can properly be moved to it
+      requestAnimationFrame(() => parentMenuRef.current.focus());
+    }
+  };
+
+  if (isMobile) {
+    if (trayContainerRef.current && subMenuTriggerState.isOpen) {
+      // TODO: would be nice to centralize this wrapper div and header so that Menu and ContextualHelpTrigger don't duplicate it
+      // TODO: update this so that the back button is a heading and the wrapper is a dialog? Are nested dialogs allowed? Otherwise overwrite the role on
+      // the inner dialog via slots? Or maybe just have the dismiss button handle it? Ask accessibility team if having two nested dialogs is a problem
+      tray = (
+        <div
+          className={
+            classNames(
+              styles,
+              'spectrum-Menu-wrapper',
+              'spectrum-Menu-trayWrapper'
+            )
+        }>
+          <div className={classNames(styles, 'spectrum-SubMenu-headerWrapper')}>
+            <ActionButton
+              aria-label={backButtonLabel}
+              isQuiet
+              onPress={onBackButtonPress}>
+              {/* We don't have a ArrowLeftSmall so make due with ArrowDownSmall and transforms */}
+              {direction === 'rtl' ? <ArrowDownSmall UNSAFE_style={{rotate: '270deg'}} /> : <ArrowDownSmall UNSAFE_style={{rotate: '90deg'}} />}
+            </ActionButton>
+            <span className={classNames(styles, 'spectrum-SubMenu-header')}>{backButtonText}</span>
+          </div>
+          {content}
+        </div>
+      );
+
+      overlay = ReactDOM.createPortal(tray, trayContainerRef.current);
+    }
+  } else {
+    overlay = (
+      <Popover
+        {...popoverProps}
+        {...overlayProps}
+        onBlurWithin={onBlurWithin}
+        container={popoverContainerRef.current}
+        state={subMenuTriggerState}
+        scrollRef={submenuRef}
+        triggerRef={triggerRef}
+        placement="end top"
+        containerPadding={0}
+        crossOffset={-5}
+        offset={-10}
+        hideArrow
+        enableBothDismissButtons>
+        {content}
+      </Popover>
+    );
+  }
+
   return (
     <>
       <SubMenuTriggerContext.Provider value={{isUnavailable, triggerRef, ...subMenuTriggerProps}}>{trigger}</SubMenuTriggerContext.Provider>
       <SlotProvider slots={slots}>
-        {
-          isMobile ? (
-            <Modal state={subMenuTriggerState} isDismissable>
-              <DismissButton onDismiss={subMenuTriggerState.close} />
-              {content}
-              <DismissButton onDismiss={subMenuTriggerState.close} />
-            </Modal>
-          ) : (
-            <Popover
-              {...popoverProps}
-              {...overlayProps}
-              onBlurWithin={onBlurWithin}
-              container={popoverContainerRef.current}
-              state={subMenuTriggerState}
-              scrollRef={submenuRef}
-              triggerRef={triggerRef}
-              placement="end top"
-              containerPadding={0}
-              crossOffset={-5}
-              offset={-10}
-              hideArrow
-              enableBothDismissButtons>
-              {content}
-            </Popover>
-          )
-        }
+        {overlay}
       </SlotProvider>
     </>
   );
