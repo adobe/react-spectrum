@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-
 import {AriaMenuItemProps} from './useMenuItem';
 import {AriaMenuOptions} from './useMenu';
 import type {AriaPopoverProps} from '@react-aria/overlays';
@@ -34,23 +33,41 @@ export interface AriaSubMenuTriggerProps {
   subMenuRef: RefObject<HTMLElement>
 }
 
+interface SubMenuTriggerProps extends AriaMenuItemProps {
+  /** Whether the submenu trigger is in an expanded state. */
+  isOpen: boolean
+}
+
+interface SubMenuProps<T> extends AriaMenuOptions<T> {
+  /** The level of the submenu. */
+  level: number
+}
+
 export interface SubMenuTriggerAria<T> {
-  subMenuTriggerProps: AriaMenuItemProps,
-  subMenuProps: AriaMenuOptions<T>,
+  /** Props for the submenu trigger menu item. */
+  subMenuTriggerProps: SubMenuTriggerProps,
+  /** Props for the submenu controlled by the submenu trigger menu item. */
+  subMenuProps: SubMenuProps<T>,
+  /** Props for the submenu's popover container. */
   popoverProps: Pick<AriaPopoverProps, 'isNonModal'>,
-  // TODO: descriptions
-  // TODO: perhaps cherry pick these props from existing types, comes from several different types though
-  overlayProps:
-  {
+  /** Props for the submenu's popover overlay container. */
+  overlayProps: {
+    // TODO add descriptions when I try to get rid of onExit and stuff
     onExit: () => void,
     disableFocusManagement: boolean,
     shouldCloseOnInteractOutside: (element: Element) => boolean
   }
 }
 
-// TODO description
 // TODO: debatable if we should have a useSubMenu hook for the submenu keyboard handlers. Feels better to have it here so we don't need to ferry around
 // things like parentMenuRef and the open timeout canceling since we centralized them here
+
+/**
+ * Provides the behavior and accessbility implementation for a submenu trigger and its associated submenu.
+ * @param props - Props for the submenu trigger and refs attach to its submenu and parent menu.
+ * @param state - State for the submenu trigger.
+ * @param ref - Ref to the submenu trigger element.
+ */
 export function UNSTABLE_useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubMenuTriggerState, ref: RefObject<FocusableElement>): SubMenuTriggerAria<T> {
   let {parentMenuRef, subMenuRef, subMenuType = 'menu', isDisabled, node} = props;
   let subMenuTriggerId = useId();
@@ -107,6 +124,7 @@ export function UNSTABLE_useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, st
   let subMenuProps = {
     id: overlayId,
     'aria-label': node.textValue,
+    level: state.level,
     ...(subMenuType === 'menu' && {
       onClose: state.closeAll,
       autoFocus: state.focusStrategy,
@@ -226,7 +244,8 @@ export function UNSTABLE_useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, st
       onPress,
       onHoverChange,
       onKeyDown: subMenuTriggerKeyDown,
-      onBlur
+      onBlur,
+      isOpen: state.isOpen
     },
     subMenuProps,
     popoverProps: {

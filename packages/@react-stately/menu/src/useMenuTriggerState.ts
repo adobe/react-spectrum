@@ -42,7 +42,8 @@ export interface MenuTriggerState extends OverlayTriggerState {
 
 /**
  * Manages state for a menu trigger. Tracks whether the menu is currently open,
- * and controls which item will receive focus when it opens.
+ * and controls which item will receive focus when it opens. Also tracks the open submenus within
+ * the menu tree via their trigger keys.
  */
 export function useMenuTriggerState(props: MenuTriggerProps): MenuTriggerState  {
   let overlayTriggerState = useOverlayTriggerState(props);

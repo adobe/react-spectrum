@@ -23,7 +23,8 @@ export interface MenuContextValue extends Omit<HTMLAttributes<HTMLElement>, 'aut
   ref?: MutableRefObject<HTMLDivElement>,
   state?: MenuTriggerState,
   onKeyDown?: (e: KeyboardEvent) => void,
-  onBackButtonPress?: () => void
+  onBackButtonPress?: () => void,
+  level?: number
 }
 
 export const MenuContext = React.createContext<MenuContextValue>({});
@@ -38,7 +39,8 @@ export interface SubMenuTriggerContextValue extends DOMProps, Pick<PressEvents, 
   'aria-expanded'?: boolean | 'true' | 'false',
   'aria-controls'?: string,
   'aria-haspopup'?: 'dialog' | 'menu',
-  onKeyDown?: (e: KeyboardEvent) => void
+  onKeyDown?: (e: KeyboardEvent) => void,
+  isOpen?: boolean
 }
 
 export const SubMenuTriggerContext = React.createContext<SubMenuTriggerContextValue | undefined>(undefined);

@@ -423,7 +423,7 @@ export const SubMenuSelection = {
         <Item key="Lvl 1 Item 2">Lvl 1 Item 2</Item>
         <Menu onSelectionChange={action('onSelectionChange lvl 2 menu')} selectionMode="single" defaultSelectedKeys={['Lvl 2 Item 3']}>
           <Item key="Lvl 2 Item 1">Lvl 2 Item 1</Item>
-          <Item key="Lvl 1 Item 2">Lvl 2 Item 2</Item>
+          <Item key="Lvl 2 Item 2">Lvl 2 Item 2</Item>
           <SubMenuTrigger>
             <Item key="Lvl 2 Item 3">Lvl 2 Item 3</Item>
             <Menu onSelectionChange={action('onSelectionChange lvl 3 menu')} selectionMode="multiple">
