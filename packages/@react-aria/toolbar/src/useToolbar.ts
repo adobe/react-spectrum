@@ -44,9 +44,7 @@ export function useToolbar(props: AriaToolbarProps, ref: RefObject<HTMLDivElemen
   // this will allow us to react should a parent re-render and change its role though
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useLayoutEffect(() => {
-    if (ref.current && ref.current.parentElement?.closest('[role="toolbar"]')) {
-      setInToolbar(true);
-    }
+    setInToolbar(!!(ref.current && ref.current.parentElement?.closest('[role="toolbar"]')));
   });
   const {direction} = useLocale();
   const shouldReverse = direction === 'rtl' && orientation === 'horizontal';
@@ -116,7 +114,7 @@ export function useToolbar(props: AriaToolbarProps, ref: RefObject<HTMLDivElemen
 
   return {
     toolbarProps: {
-      role: !isInToolbar ? 'toolbar' : undefined,
+      role: !isInToolbar ? 'toolbar' : 'group',
       'aria-orientation': orientation,
       'aria-label': ariaLabel,
       'aria-labelledby': ariaLabel == null ? ariaLabelledBy : undefined,

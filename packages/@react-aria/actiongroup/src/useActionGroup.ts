@@ -39,9 +39,7 @@ export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListSta
   // this will allow us to react should a parent re-render and change its role though
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useLayoutEffect(() => {
-    if (ref.current && ref.current.parentElement?.closest('[role="toolbar"]')) {
-      setInToolbar(true);
-    }
+    setInToolbar(!!(ref.current && ref.current.parentElement?.closest('[role="toolbar"]')));
   });
 
   let allKeys = [...state.collection.getKeys()];
