@@ -145,7 +145,7 @@ function getDelta(
 ) {
   let root = document.scrollingElement || document.documentElement;
   let isScrollPrevented = window.getComputedStyle(root).overflow === 'hidden';
-  let containerScroll = isScrollPrevented ? 0 : containerDimensions.scroll[axis];
+  let containerScroll = isScrollPrevented && (axis === 'left' || axis === 'right') ? 0 : containerDimensions.scroll[axis];
   let containerHeight = containerDimensions[AXIS_SIZE[axis]];
 
   let startEdgeOffset = offset - padding - containerScroll;
