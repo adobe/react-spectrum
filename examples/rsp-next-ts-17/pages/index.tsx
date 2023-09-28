@@ -157,7 +157,7 @@ export default function Home() {
             <ReorderableListView />
             <MenuTrigger>
               <ActionButton>Menu</ActionButton>
-              <Menu onAction={(key) => ToastQueue.positive(key)}>
+              <Menu onAction={(key) => ToastQueue.positive(key.toString())}>
                 <Item key="cut">Cut</Item>
                 <Item key="copy">Copy</Item>
                 <Item key="paste">Paste</Item>
@@ -212,7 +212,7 @@ export default function Home() {
                 {(item: any) =>
                   (<Row key={item.foo} UNSTABLE_childItems={item.childRows}>
                     {(key) => {
-                      return <Cell>{item[key]}</Cell>;
+                      return <Cell>{item[key.toString()]}</Cell>;
                     }}
                   </Row>)
                 }

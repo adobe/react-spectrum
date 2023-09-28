@@ -66,18 +66,16 @@ export function BreadcrumbItem(props: SpectrumBreadcrumbItemProps) {
           {children}
         </ElementType>
       </FocusRing>
-      {isCurrent === false &&
-        <ChevronRightSmall
-          UNSAFE_className={
-            classNames(
-              styles,
-              'spectrum-Breadcrumbs-itemSeparator',
-              {
-                'is-reversed': direction === 'rtl'
-              }
-            )
-          } />
-      }
+      <ChevronRightSmall
+        UNSAFE_className={
+          classNames(
+            styles,
+            'spectrum-Breadcrumbs-itemSeparator',
+            {
+              'is-reversed': direction === 'rtl'
+            }
+          )
+        } />
     </Fragment>
   );
 }

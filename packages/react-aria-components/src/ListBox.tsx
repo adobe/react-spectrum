@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
+import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
 import {CollectionDocumentContext, CollectionPortal, CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
 import {ContextValue, forwardRefType, HiddenContext, Provider, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
@@ -130,16 +130,18 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
   let isListDroppable = !!dragAndDropHooks?.useDroppableCollectionState;
   let {direction} = useLocale();
   let {disabledBehavior, disabledKeys} = selectionManager;
+  let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let keyboardDelegate = useMemo(() => (
     props.keyboardDelegate || new ListKeyboardDelegate({
       collection,
+      collator,
       ref: listBoxRef,
       disabledKeys: disabledBehavior === 'selection' ? new Set<React.Key>() : disabledKeys,
       layout,
       orientation,
       direction
     })
-  ), [collection, listBoxRef, disabledBehavior, disabledKeys, orientation, direction, props.keyboardDelegate, layout]);
+  ), [collection, collator, listBoxRef, disabledBehavior, disabledKeys, orientation, direction, props.keyboardDelegate, layout]);
 
   let {listBoxProps} = useListBox({
     ...props,
