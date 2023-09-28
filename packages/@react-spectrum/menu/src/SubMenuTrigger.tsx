@@ -43,7 +43,7 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
   let [menuTrigger, menu] = React.Children.toArray(children);
   let {popoverContainerRef, trayContainerRef, menu: parentMenuRef, rootMenuTriggerState, state} = useMenuStateContext();
   let triggerNode = state.collection.getItem(targetKey);
-  let subMenuTriggerState = UNSTABLE_useSubMenuTriggerState({triggerKey: targetKey}, {...rootMenuTriggerState, ...state});
+  let subMenuTriggerState = UNSTABLE_useSubMenuTriggerState({triggerKey: targetKey}, rootMenuTriggerState);
   let {subMenuTriggerProps, subMenuProps, popoverProps, overlayProps} = UNSTABLE_useSubMenuTrigger({
     node: triggerNode,
     parentMenuRef,
