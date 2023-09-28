@@ -109,10 +109,12 @@ governing permissions and limitations under the License.
   position: relative;
   animation-duration: var(--spectrum-barloader-large-indeterminate-duration);
   animation-iteration-count: infinite;
-  animation-name: indeterminate-loop-ltr;
   animation-timing-function: var(--spectrum-barloader-large-indeterminate-animation-ease);
   will-change: transform;
 
+  [dir='ltr'] & {
+    animation-name: indeterminate-loop-ltr;
+  }
   [dir='rtl'] & {
     animation-name: indeterminate-loop-rtl;
   }
