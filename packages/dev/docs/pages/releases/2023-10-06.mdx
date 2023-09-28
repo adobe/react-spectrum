@@ -1,0 +1,104 @@
+{/* Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+description: This month TagGroup and TableView column resizing and ActionBar are all being released to 3.0.0! We have also been making many improvements and bug fixes to React Aria Components. Lastly, our documentation website now has search functionality! We hope this will aid in discoverability for our components and hooks.
+date: 2023-10-06
+---
+
+# October 06, 2023 Release
+
+In this release, we are adding support of links in all collection components! 
+
+In addition, React Spectrum has a new pre-released component, [DropZone](https://react-spectrum.adobe.com/react-spectrum/DropZone.html). 
+
+More improvements and bug fixes have been made to [React Aria Components](../react-aria/react-aria-components.html) since its beta release. 
+
+As always, huge thanks to all of our contributors for helping to make this release possible!
+
+### FileTrigger API update
+
+This release of FileTrigger includes an API change. If you were using a previous version, you will need to update your code. See below for details.
+- Replaced the `OnChange` prop with `OnSelect`
+
+### Link API update
+
+Devon?
+
+## Enhancements
+
+- Add staticColor prop to ProgressCircle and ProgressBar - [@iamwillpowell](https://github.com/iamwillpowell) - [PR](https://github.com/adobe/react-spectrum/pull/5108)
+- Add support for 'none' as a BorderSizeValue to hide border - [@pr7prashant](https://github.com/pr7prashant) - [PR](https://github.com/adobe/react-spectrum/pull/5012)
+- Support links in collection components - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/4993)
+- Cover all plural forms in NumberParser - [@jbovenschen](https://github.com/jbovenschen) - [PR](https://github.com/adobe/react-spectrum/pull/5134)
+- Add TypeScript StrictMode to React Stately utils - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3926)
+
+## Fixes
+
+- Update Toast placement to bottom center - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5107)
+- Fix Unavailable MenuItem props - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5153)
+- Fix Popover placement for placement="start"|"end" - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/5137)
+- Remove Express icon dependency - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5130)
+- Fix NumberField form submission - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/4300)
+- Update Express Breadcrumb icon - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5059)
+- Fix client navigation check in Firefox - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5106)
+- Fix Breadcrumbs menu padding - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5086)
+- Fix i18n circular dependency - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5087)
+
+## Docs
+
+- Update keyboard pattern links in docs - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5055)
+- Add docs for the Group component - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5060)
+- Add docs for links in collections and client side routing guide - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5078)
+- Move React Aria dnd introduction to concepts section - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5088)
+
+## Under construction
+
+Fixes to pre-released components are listed below. Please feel free to try them out, and report any issues you encounter.
+
+**React Aria Components** (Beta)
+- Allow FileTrigger to accept the same file twice - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/5045)
+- Update RAC Link API - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5074)
+- Use PressResponder in RAC overlays and document MenuTrigger long press - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5065)
+- Filter data attributes - [@iamwillpowell](https://github.com/iamwillpowell) - [PR](https://github.com/adobe/react-spectrum/pull/5008)
+- Add translations to RAC - [@rgeraghty](https://github.com/rgeraghty) - [PR](https://github.com/adobe/react-spectrum/pull/5124)
+- Fix typeahead in RAC ListBox - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5146)
+- Advanced customization guide - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5066)
+- Minor doc improvements - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5101)
+- Fix specificity of Tailwind generated selectors - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5147)
+- Refactor internal contexts to expose state publicly - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5052)
+- Update Breadcrumb Link section in docs - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/5083)
+
+
+**React Spectrum DropZone** (Alpha)
+- React Spectrum DropZone docs - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/5076)
+- Add chromatic stories to React Spectrum DropZone - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/5053)
+
+
+
+What do we want to do with these commits?
+- Upgrade to Node 18 - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/4945)
+- Upgrade user event - [@snowystinger](https://github.com/snowystinger) - PR](https://github.com/adobe/react-spectrum/pull/4426)
+- Move to Lightning CSS and upgrade to PostCSS 8 - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5093)
+- Fix build link for React Spectrum and Tailwind example - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/5148)
+- Fix NextJS verdaccio build - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/5129)
+- Fix verdaccio built - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/5117)
+- Fix website build by including required patches - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/5121)
+- Add translations for Submenu tray back button - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/5114)
+- Add translations to RAC- [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/5064)
+
+
+## Released packages
+
+```
+
+```
