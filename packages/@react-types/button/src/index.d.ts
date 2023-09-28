@@ -76,9 +76,8 @@ export interface SpectrumButtonProps<T extends ElementType = 'button'> extends A
   staticColor?: 'white' | 'black',
   /**
    * Whether to disable events immediately and display a loading spinner after a 1 second delay.
-   * @private
    */
-  UNSTABLE_isPending?: boolean,
+  isPending?: boolean,
   /**
    * Whether the button should be displayed with a quiet style.
    * @deprecated
