@@ -1,3 +1,19 @@
+/*
+ * Copyright 2023 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+/* Scrapes data on CLDR https://www.unicode.org/cldr/charts/43/supplemental/language_plural_rules.html#comparison
+ * and generates a list of all possible values needed between all locales for plural rules.
+ * It is used by our NumberParser to generate all literal strings, ex units 1 foot, 2 feet, but other locales have more than 2 forms.
+ */
 import {JSDOM} from 'jsdom';
 
 function getRange(row) {
