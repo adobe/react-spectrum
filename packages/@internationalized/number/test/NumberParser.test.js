@@ -129,6 +129,24 @@ describe('NumberParser', function () {
       it('should return NaN for partial units', function () {
         expect(new NumberParser('en-US', {style: 'unit', unit: 'inch'}).parse('23.5 i')).toBe(NaN);
       });
+
+      it('should support plural forms', function () {
+        expect(new NumberParser('en-US', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('0 years')).toBe(0);
+        expect(new NumberParser('en-US', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('1 year')).toBe(1);
+        expect(new NumberParser('en-US', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('2 years')).toBe(2);
+        expect(new NumberParser('en-US', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('1.1 years')).toBe(1.1);
+
+        expect(new NumberParser('pl-PL', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('0 rok')).toBe(0);
+        expect(new NumberParser('pl-PL', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('1 lat')).toBe(1);
+        expect(new NumberParser('pl-PL', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('2 lata')).toBe(2);
+        expect(new NumberParser('pl-PL', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('37 lata')).toBe(37);
+        expect(new NumberParser('pl-PL', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('1.1 roku')).toBe(1.1);
+
+        expect(new NumberParser('fr-FR', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('1 an')).toBe(1);
+        expect(new NumberParser('fr-FR', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('8 ans')).toBe(8);
+        expect(new NumberParser('fr-FR', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('1,3 an')).toBe(1.3);
+        expect(new NumberParser('fr-FR', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('2,4 ans')).toBe(2.4);
+      });
     });
 
     describe('percents', function () {
