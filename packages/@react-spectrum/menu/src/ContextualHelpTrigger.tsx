@@ -106,7 +106,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
               'spectrum-Menu-trayWrapper'
             )
         }>
-          <div className={classNames(styles, 'spectrum-SubMenu-headerWrapper')}>
+          <div className={classNames(styles, 'spectrum-SubMenu-headingWrapper')}>
             <ActionButton
               aria-label={backButtonLabel}
               isQuiet
@@ -114,7 +114,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
               {/* We don't have a ArrowLeftSmall so make due with ArrowDownSmall and transforms */}
               {direction === 'rtl' ? <ArrowDownSmall UNSAFE_style={{rotate: '270deg'}} /> : <ArrowDownSmall UNSAFE_style={{rotate: '90deg'}} />}
             </ActionButton>
-            <span className={classNames(styles, 'spectrum-SubMenu-header')}>{backButtonText}</span>
+            <h2 className={classNames(styles, 'spectrum-SubMenu-heading')}>{backButtonText}</h2>
           </div>
           {content}
         </div>

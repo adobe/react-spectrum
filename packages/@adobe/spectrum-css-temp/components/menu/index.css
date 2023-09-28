@@ -250,6 +250,7 @@ governing permissions and limitations under the License.
   .spectrum-SubMenu-heading {
     display: flex;
     margin-top: 7px;
+    margin-bottom: 0px;
     margin-inline-start: 4px;
     font-weight: var(--spectrum-selectlist-heading-text-font-weight);
     font-size: var(--spectrum-dialog-title-text-size);

@@ -21,7 +21,7 @@ governing permissions and limitations under the License.
   background-color: var(--spectrum-selectlist-background-color);
 }
 
-.spectrum-SubMenu-headerWrapper {
+.spectrum-SubMenu-headingWrapper {
   --spectrum-heading-subtitle3-text-color: var(--spectrum-global-color-gray-900);
 }
 
