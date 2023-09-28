@@ -23,7 +23,7 @@ import {useLocalizedStringFormatter} from '@react-aria/i18n';
 export interface SpectrumDropZoneProps extends DropZoneProps, DOMProps, StyleProps, AriaLabelingProps {
   /** The content to display in the drop zone. */
   children: ReactNode,
-  /** Whether the dropzone has been filled. */
+  /** Whether the drop zone has been filled. */
   isFilled?: boolean,
   /** The message to replace the default banner message that is shown when the drop zone is filled. */
   replaceMessage?: string
@@ -75,7 +75,7 @@ function DropZone(props: SpectrumDropZoneProps, ref: DOMRef<HTMLDivElement>) {
 }
 
 /**
- * A dropzone is an area into which one or multiple objects can be dragged and dropped.
+ * A drop zone is an area into which one or multiple objects can be dragged and dropped.
  */
 let _DropZone = React.forwardRef(DropZone);
 export {_DropZone as DropZone};

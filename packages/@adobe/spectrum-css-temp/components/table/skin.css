@@ -54,7 +54,7 @@ governing permissions and limitations under the License.
       }
     }
 
-    &:focus-ring,
+    &:focus-visible,
     &.is-focused {
       color: var(--spectrum-table-header-text-color-key-focus);
 
@@ -74,7 +74,7 @@ governing permissions and limitations under the License.
 }
 
 /* Helper for shared drop target overlay */
-%drop-target {
+.is-drop-target {
   border-color: var(--spectrum-alias-border-color-focus);
   box-shadow: 0 0 0 1px var(--spectrum-alias-border-color-focus);
 
@@ -86,7 +86,7 @@ governing permissions and limitations under the License.
 .spectrum-Table-cell,
 .spectrum-Table-headCell,
 .spectrum-Table-headCellButton {
-  &:focus-ring,
+  &:focus-visible,
   &.is-focused {
     &::before {
       box-shadow: inset 0 0 0 2px var(--spectrum-table-cell-border-color-key-focus);
@@ -102,7 +102,7 @@ governing permissions and limitations under the License.
   border-color: var(--spectrum-table-border-color);
   background-color: var(--spectrum-table-background-color);
 
-  &:focus-ring {
+  &:focus-visible {
     &::after {
       content: "";
       height: 100%;
@@ -165,12 +165,12 @@ tbody.spectrum-Table-body {
     background-color: var(--spectrum-table-row-background-color-hover);
   }
 
-  &:focus-ring .spectrum-Table-cell,
+  &:focus-visible .spectrum-Table-cell,
   &.is-focused .spectrum-Table-cell {
     background-color: var(--spectrum-table-row-background-color-hover);
   }
 
-  &:focus-ring {
+  &:focus-visible {
     &:before {
       background-color: var(--spectrum-table-row-focus-indicator-color);
     }
@@ -221,7 +221,7 @@ tbody.spectrum-Table-body {
       background-color: var(--spectrum-table-row-background-color-selected-hover);
     }
 
-    &:focus-ring .spectrum-Table-cell,
+    &:focus-visible .spectrum-Table-cell,
     &.is-focused .spectrum-Table-cell {
       background-color: var(--spectrum-table-row-background-color-selected-key-focus);
     }
@@ -288,7 +288,7 @@ tbody.spectrum-Table-body {
       background-color: var(--spectrum-table-quiet-row-background-color-hover);
     }
 
-    &:focus-ring .spectrum-Table-cell,
+    &:focus-visible .spectrum-Table-cell,
     &.is-focused .spectrum-Table-cell {
       background-color: var(--spectrum-table-quiet-row-background-color-hover);
     }
@@ -306,7 +306,7 @@ tbody.spectrum-Table-body {
         background-color: var(--spectrum-table-quiet-row-background-color-selected-hover);
       }
 
-      &:focus-ring .spectrum-Table-cell,
+      &:focus-visible .spectrum-Table-cell,
       &.is-focused .spectrum-Table-cell {
         background-color: var(--spectrum-table-quiet-row-background-color-selected-key-focus);
       }
@@ -329,7 +329,7 @@ tbody.spectrum-Table-body {
 
   /* don't want the divider to add to the resizer's width since it's */
   &:active,
-  &:focus-ring {
+  &:focus-visible {
     &::after {
       background-color: unset;
     }
@@ -375,7 +375,7 @@ tbody.spectrum-Table-body {
   }
 
   .spectrum-Table-row {
-    &:focus-ring {
+    &:focus-visible {
       &:after {
         outline-color: var(--spectrum-table-row-focus-indicator-color);
       }

@@ -27,18 +27,22 @@ import {UNSTABLE_useSubMenuTrigger} from '@react-aria/menu';
 import {UNSTABLE_useSubMenuTriggerState} from '@react-stately/menu';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
-interface MenuDialogTriggerProps<T> extends ItemProps<T> {
+interface MenuDialogTriggerProps {
   /** Whether the menu item is currently unavailable. */
   isUnavailable?: boolean,
   /** The triggering Item and the Dialog, respectively. */
-  children: [ReactElement, ReactElement],
+  children: [ReactElement, ReactElement]
+}
+
+interface InternalMenuDialogTriggerProps extends MenuDialogTriggerProps {
   targetKey: Key
 }
 
-export interface SpectrumMenuDialogTriggerProps<T> extends Omit<MenuDialogTriggerProps<T>, 'targetKey' | 'title' | 'textValue' | 'childItems' | 'hasChildItems'> {}
+export interface SpectrumMenuDialogTriggerProps extends MenuDialogTriggerProps {}
 
-function ContextualHelpTrigger<T>(props: MenuDialogTriggerProps<T>): ReactElement {
+function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElement {
   let {isUnavailable, targetKey} = props;
+
   let triggerRef = useRef<HTMLLIElement>(null);
   let popoverRef = useRef(null);
   let {popoverContainerRef, trayContainerRef, rootMenuTriggerState, menu: parentMenuRef, state} = useMenuStateContext();
@@ -170,5 +174,5 @@ ContextualHelpTrigger.getCollectionNode = function* getCollectionNode<T>(props: 
   };
 };
 
-let _Item = ContextualHelpTrigger as <T>(props: SpectrumMenuDialogTriggerProps<T>) => JSX.Element;
+let _Item = ContextualHelpTrigger as (props: SpectrumMenuDialogTriggerProps) => JSX.Element;
 export {_Item as ContextualHelpTrigger};
