@@ -45,6 +45,11 @@ export interface DatePickerRenderProps {
    */
   isInvalid: boolean,
   /**
+   * Whether the date picker's popover is currently open.
+   * @selector [data-open]
+   */
+  isOpen: boolean,
+  /**
    * State of the date picker.
    */
   state: DatePickerState
@@ -88,7 +93,8 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
       isFocusWithin: isFocused,
       isFocusVisible,
       isDisabled: props.isDisabled || false,
-      isInvalid: state.isInvalid
+      isInvalid: state.isInvalid,
+      isOpen: state.isOpen
     },
     defaultClassName: 'react-aria-DatePicker'
   });
@@ -124,7 +130,8 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
         data-focus-within={isFocused || undefined}
         data-invalid={state.isInvalid || undefined}
         data-focus-visible={isFocusVisible || undefined}
-        data-disabled={props.isDisabled || undefined} />
+        data-disabled={props.isDisabled || undefined}
+        data-open={state.isOpen || undefined} />
     </Provider>
   );
 }
@@ -160,7 +167,8 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
       isFocusWithin: isFocused,
       isFocusVisible,
       isDisabled: props.isDisabled || false,
-      isInvalid: state.isInvalid
+      isInvalid: state.isInvalid,
+      isOpen: state.isOpen
     },
     defaultClassName: 'react-aria-DateRangePicker'
   });
@@ -201,7 +209,8 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
         data-focus-within={isFocused || undefined}
         data-invalid={state.isInvalid || undefined}
         data-focus-visible={isFocusVisible || undefined}
-        data-disabled={props.isDisabled || undefined} />
+        data-disabled={props.isDisabled || undefined}
+        data-open={state.isOpen || undefined} />
     </Provider>
   );
 }
