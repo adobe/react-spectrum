@@ -87,8 +87,12 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 ```css hidden
+/* We only import styles up to one page away, we don't follow those pages dependencies, so
+ * import everything and in the correct order of dependency so that layers don't overwrite each other. */
 @import './Button.mdx';
 @import './Checkbox.mdx';
+@import './Popover.mdx';
+@import './Menu.mdx';
 ```
 
 ```css
@@ -730,6 +734,7 @@ Table rows may also be links to another page or website. This can be achieved by
 ```
 
 ```css hidden
+/* why hide this? */
 .react-aria-Row[data-href] {
   cursor: pointer;
 }
@@ -1009,86 +1014,89 @@ import {ResizableTableContainer, ColumnResizer} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.react-aria-ResizableTableContainer {
-  --border-color: var(--spectrum-global-color-gray-400);
-  --background-color: var(--page-background);
-
-  max-width: 400px;
-  overflow: auto;
-  position: relative;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  background: var(--background-color);
-
-  .react-aria-Table {
-    border: none;
-  }
-
-  .flex-wrapper {
-    display: flex;
-    align-items: center;
-  }
-
-  .column-name,
-  .react-aria-Button {
-    flex: 1;
-    font: inherit;
-    text-align: start;
-    color: inherit;
-    overflow: hidden;
-    text-overflow: ellipsis;
-
-    &:focus-visible {
-      outline: 2px solid slateblue;
-    }
-  }
-
-  .react-aria-ColumnResizer {
-    width: 15px;
-    background-color: grey;
-    height: 25px;
-    flex: 0 0 auto;
-    touch-action: none;
-    box-sizing: border-box;
-    border: 5px;
-    border-style: none solid;
-    border-color: transparent;
-    background-clip: content-box;
-
-    &[data-resizable-direction=both] {
-      cursor: ew-resize;
-    }
-
-    &[data-resizable-direction=left] {
-      cursor: e-resize;
-    }
-
-    &[data-resizable-direction=right] {
-      cursor: w-resize;
-    }
-
-    &[data-focus-visible] {
-      background-color: slateblue;
-    }
-
-    &[data-resizing] {
-      border-color: slateblue;
-      background-color: transparent;
-    }
-  }
-
-  .react-aria-Column,
-  .react-aria-Cell {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-}
-
-@media (forced-colors: active) {
+@layer resizing-table {
   .react-aria-ResizableTableContainer {
-    --border-color: ButtonBorder;
-    --background-color: ButtonFace;
+    --border-color: var(--spectrum-global-color-gray-400);
+    --background-color: var(--page-background);
+
+    max-width: 400px;
+    overflow: auto;
+    position: relative;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--background-color);
+
+    .react-aria-Table {
+      border: none;
+    }
+
+    .flex-wrapper {
+      display: flex;
+      align-items: center;
+    }
+
+    .column-name,
+    .react-aria-Button {
+      flex: 1;
+      font: inherit;
+      text-align: start;
+      color: inherit;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      border-color: transparent;
+
+      &:focus-visible {
+        outline: 2px solid slateblue;
+      }
+    }
+
+    .react-aria-ColumnResizer {
+      width: 15px;
+      background-color: grey;
+      height: 25px;
+      flex: 0 0 auto;
+      touch-action: none;
+      box-sizing: border-box;
+      border: 5px;
+      border-style: none solid;
+      border-color: transparent;
+      background-clip: content-box;
+
+      &[data-resizable-direction=both] {
+        cursor: ew-resize;
+      }
+
+      &[data-resizable-direction=left] {
+        cursor: e-resize;
+      }
+
+      &[data-resizable-direction=right] {
+        cursor: w-resize;
+      }
+
+      &[data-focus-visible] {
+        background-color: slateblue;
+      }
+
+      &[data-resizing] {
+        border-color: slateblue;
+        background-color: transparent;
+      }
+    }
+
+    .react-aria-Column,
+    .react-aria-Cell {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .react-aria-ResizableTableContainer {
+      --border-color: ButtonBorder;
+      --background-color: ButtonFace;
+    }
   }
 }
 ```
@@ -1270,102 +1278,6 @@ function Example() {
   );
 }
 ```
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
-
-```css
-.react-aria-Menu {
-  --highlight-background: slateblue;
-  --highlight-foreground: white;
-  --separator-color: var(--spectrum-global-color-gray-500);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
-
-  max-height: inherit;
-  box-sizing: border-box;
-  overflow: auto;
-  padding: 2px;
-  margin: 0;
-  min-width: 150px;
-  box-sizing: border-box;
-  outline: none;
-
-  .react-aria-Item {
-    margin: 2px;
-    padding: 0.286rem 0.571rem;
-    border-radius: 6px;
-    outline: none;
-    cursor: default;
-    color: var(--text-color);
-    font-size: 1.072rem;
-    position: relative;
-    display: grid;
-    grid-template-areas: "label kbd"
-                        "desc  kbd";
-    align-items: center;
-    column-gap: 20px;
-
-    &[data-focused] {
-      background: var(--highlight-background);
-      color: var(--highlight-foreground);
-    }
-  }
-}
-
-.react-aria-Popover {
-  --background-color: var(--page-background);
-  --border-color: var(--spectrum-global-color-gray-400);
-
-  border: 1px solid var(--border-color);
-  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
-  border-radius: 6px;
-  background: var(--background-color);
-  outline: none;
-
-  &[data-placement=top] {
-    --origin: translateY(8px);
-  }
-
-  &[data-placement=bottom] {
-    --origin: translateY(-8px);
-  }
-
-  &[data-entering] {
-    animation: slide 200ms;
-  }
-
-  &[data-exiting] {
-    animation: slide 200ms reverse ease-in;
-  }
-}
-
-@keyframes slide {
-  from {
-    transform: var(--origin);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-Menu {
-    forced-color-adjust: none;
-
-    --highlight-background: Highlight;
-    --highlight-foreground: HighlightText;
-    --separator-color: ButtonBorder;
-    --text-color: ButtonText;
-    --text-color-disabled: GrayText;
-  }
-}
-```
-
-</details>
 
 ## Drag and drop
 
