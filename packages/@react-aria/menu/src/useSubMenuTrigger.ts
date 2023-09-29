@@ -14,6 +14,7 @@ import {AriaMenuItemProps} from './useMenuItem';
 import {AriaMenuOptions} from './useMenu';
 import type {AriaPopoverProps} from '@react-aria/overlays';
 import {FocusableElement, FocusStrategy, KeyboardEvent, PressEvent, Node as RSNode} from '@react-types/shared';
+import {getFocusableTreeWalker} from '@react-aria/focus';
 import {RefObject, useCallback, useRef} from 'react';
 import type {SubMenuTriggerState} from '@react-stately/menu';
 import {useEffectEvent, useId, useLayoutEffect} from '@react-aria/utils';
@@ -30,7 +31,9 @@ export interface AriaSubMenuTriggerProps {
   /** Ref of the menu that contains the submenu trigger. */
   parentMenuRef: RefObject<HTMLElement>,
   /** Ref of the submenu opened by the submenu trigger. */
-  subMenuRef: RefObject<HTMLElement>
+  subMenuRef: RefObject<HTMLElement>,
+  /** Ref of the root menu's trigger element.  */
+  rootMenuTriggerRef: RefObject<HTMLElement>
 }
 
 interface SubMenuTriggerProps extends AriaMenuItemProps {
@@ -53,7 +56,6 @@ export interface SubMenuTriggerAria<T> {
   /** Props for the submenu's popover overlay container. */
   overlayProps: {
     // TODO add descriptions when I try to get rid of onExit and stuff
-    onExit: () => void,
     disableFocusManagement: boolean,
     shouldCloseOnInteractOutside: (element: Element) => boolean
   }
@@ -69,7 +71,7 @@ export interface SubMenuTriggerAria<T> {
  * @param ref - Ref to the submenu trigger element.
  */
 export function UNSTABLE_useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubMenuTriggerState, ref: RefObject<FocusableElement>): SubMenuTriggerAria<T> {
-  let {parentMenuRef, subMenuRef, subMenuType = 'menu', isDisabled, node} = props;
+  let {parentMenuRef, subMenuRef, rootMenuTriggerRef, subMenuType = 'menu', isDisabled, node} = props;
   let subMenuTriggerId = useId();
   let overlayId = useId();
   let {direction} = useLocale();
@@ -103,6 +105,19 @@ export function UNSTABLE_useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, st
   // Maybe we should just have the user pass something like onMenuClose to the trigger level since we have the same problem of being unable to call onClose if the user interacts outside?
   // Maybe have Menu call onClose in an effect when it detects that it is unmounting? StrictMode is problematic since the cleanup fires even when the component isn't actually unmounting
   // (not a problem if we wanna keep onClose to fire only if the user selects a item)
+
+  let focusNext = (e) => {
+    let walker = getFocusableTreeWalker(document.body, {tabbable: true});
+    walker.currentNode = rootMenuTriggerRef.current;
+    let nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as FocusableElement;
+    // TODO this feels pretty gross, but I want to close all menus and focus the previous/next focusable element adjacent to the root menu trigger button
+    // The current solution relies on a delayed focus call so FocusScope/useSelectableCollection's focus handling/tab .focus() call doesn't get in the way
+    // However it doesn't quite work for ContextualTriggerDialog for unavailable menu items, specifically shift tab
+    // Making the root menu contain focus messes up the behavior even further...
+    // We could have Tab do nothing in a menu, but that feels like a departure from the accessibility menu pattern
+    requestAnimationFrame(() =>  nextElement.focus());
+    // nextElement.focus();
+  };
   let subMenuKeyDown = (e: KeyboardEvent) => {
     switch (e.key) {
       case 'ArrowLeft':
@@ -117,6 +132,11 @@ export function UNSTABLE_useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, st
         break;
       case 'Escape':
         state.closeAll();
+        break;
+      case 'Tab':
+        console.log('tab in usesubmenu keydown', e.isPropagationStopped())
+        state.closeAll();
+        focusNext(e);
         break;
     }
   };
@@ -202,36 +222,12 @@ export function UNSTABLE_useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, st
     }
   };
 
-  // TODO: Track the external element being interacted with so that we can move focus to it when the subMenu closes. If we don't manually move focus, then focus gets lost to the body
-  // Calling ref.current.focus in useMenuItem's onHoverStart doesn't seem to move focus properly unfortunately
-  let closeTarget = useRef(null);
   let shouldCloseOnInteractOutside = (target) => {
     if (target !== ref.current) {
-      closeTarget.current = target;
       return true;
     }
 
     return false;
-  };
-
-  // TODO: this onExit is Spectrum specific, so kinda weird to have in the aria hook. However, perhaps it would be nice if the aria Popover has onExit as well so
-  // users wouldn't need to reimplement this?
-  let onExit = () => {
-    // TODO: A bit awkward, but this first part of the if statement handles moving focus to the item the user hovers, specifically if said item is a menu item
-    // in one of the menu ancestors of the currently open submenu. The ideal logic would be to check if the closeTarget was in any of the menus in the tree and do nothing if so. Technically
-    // the else if part of this handles this already since hovering a submenu item sets it as the focusedKey and then focusing the submenu itself will move focus to the focusedKey via useSelectableCollection,
-    // but it breaks if the user hovers the base menu's first submenu trigger since then the first submenu won't actually close
-    // due to the logic in shouldCloseOnInteractOutside, and thus the first submenu retains focus, overriding the hover focus of the root menu's submenu trigger
-    if (closeTarget.current) {
-      closeTarget.current?.focus();
-      closeTarget.current = null;
-    } else if (!parentMenuRef.current.contains(document.activeElement)) {
-      // need to return focus to the trigger because hitting Esc causes focus to go to the subdialog, which is then unmounted
-      // this leads to blur never being fired nor focus on the body
-      parentMenuRef.current.focus();
-    }
-
-    cancelOpenTimeout();
   };
 
   return {
@@ -252,7 +248,6 @@ export function UNSTABLE_useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, st
       isNonModal: true
     },
     overlayProps: {
-      onExit,
       disableFocusManagement: true,
       shouldCloseOnInteractOutside
     }

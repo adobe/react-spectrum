@@ -534,6 +534,7 @@ function ConditionalSubMenuExample(props) {
             <Item key="Lvl 1 Item 3">Lvl 1 Item 3</Item>
           </Menu>
         </MenuTrigger>
+        <input />
       </div>
     </>
   );

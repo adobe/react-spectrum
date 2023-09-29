@@ -67,7 +67,8 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
       maxHeight: 'inherit'
     } : undefined,
     UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile}),
-    state
+    state,
+    menuTriggerRef
   };
 
   // On small screen devices, the menu is rendered in a tray, otherwise a popover.

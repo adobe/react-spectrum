@@ -24,7 +24,8 @@ export interface MenuContextValue extends Omit<HTMLAttributes<HTMLElement>, 'aut
   state?: MenuTriggerState,
   onKeyDown?: (e: KeyboardEvent) => void,
   onBackButtonPress?: () => void,
-  level?: number
+  level?: number,
+  menuTriggerRef?: RefObject<HTMLElement>
 }
 
 export const MenuContext = React.createContext<MenuContextValue>({});
@@ -54,7 +55,8 @@ export interface MenuStateContextValue<T> {
   popoverContainerRef?: RefObject<HTMLElement>,
   trayContainerRef?: RefObject<HTMLElement>,
   menu?: RefObject<HTMLDivElement>,
-  rootMenuTriggerState?: MenuTriggerState
+  rootMenuTriggerState?: MenuTriggerState,
+  rootMenuTriggerRef?: RefObject<HTMLElement>
 }
 
 export const MenuStateContext = React.createContext<MenuStateContextValue<any>>(undefined);

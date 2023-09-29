@@ -248,6 +248,9 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
             onClose();
           }
           break;
+        case 'Tab':
+          e.preventDefault();
+          break;
         default:
           e.continuePropagation();
           break;

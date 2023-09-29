@@ -827,6 +827,7 @@ function MenuWithUnavailableSometimes(props) {
             <Item key="5">Five</Item>
           </Menu>
         </MenuTrigger>
+        <input />
       </div>
     </>
   );

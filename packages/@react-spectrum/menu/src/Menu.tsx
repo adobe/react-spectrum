@@ -33,9 +33,10 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let contextProps = useContext(MenuContext);
   let parentMenuContext = useMenuStateContext();
-  let {rootMenuTriggerState, state: parentMenuTreeState} = parentMenuContext || {};
+  let {rootMenuTriggerState, rootMenuTriggerRef, state: parentMenuTreeState} = parentMenuContext || {};
   if (!parentMenuContext) {
     rootMenuTriggerState = contextProps.state;
+    rootMenuTriggerRef = contextProps.menuTriggerRef
     isSubMenu = false;
   }
   let completeProps = {
@@ -66,9 +67,10 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   let hasOpenSubMenu = state.collection.getItem(rootMenuTriggerState?.UNSTABLE_expandedKeysStack[menuLevel]) != null;
   // TODO: add slide transition
   return (
-    <MenuStateContext.Provider value={{popoverContainerRef, trayContainerRef, menu: domRef, rootMenuTriggerState, state}}>
+    <MenuStateContext.Provider value={{popoverContainerRef, trayContainerRef, menu: domRef, rootMenuTriggerRef, rootMenuTriggerState, state}}>
       <div ref={trayContainerRef} />
-      <FocusScope contain={hasOpenSubMenu}>
+      {/* <FocusScope contain={menuLevel === 0 && hasOpenSubMenu}> */}
+      <FocusScope>
         <div
           // TODO: check if this role should always be applied, even for non submenu cases
           role={headingId ? 'dialog' : undefined}

@@ -26,6 +26,7 @@ import {SubMenuTriggerContext, useMenuStateContext} from './context';
 import {UNSTABLE_useSubMenuTrigger} from '@react-aria/menu';
 import {UNSTABLE_useSubMenuTriggerState} from '@react-stately/menu';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import { FocusScope } from '@react-aria/focus';
 
 interface MenuDialogTriggerProps {
   /** Whether the menu item is currently unavailable. */
@@ -138,7 +139,9 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
         offset={-10}
         hideArrow
         enableBothDismissButtons>
-        {content}
+        <FocusScope restoreFocus>
+          {content}
+        </FocusScope>
       </Popover>
     );
   }
