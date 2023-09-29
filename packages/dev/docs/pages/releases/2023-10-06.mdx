@@ -11,22 +11,21 @@ import {BlogPostLayout, Hero} from '@react-spectrum/docs';
 export default BlogPostLayout;
 
 ---
-description: As we welcome the fall, we've extended support links across all collection components! To streamline integration with client-side routers, we've introduced the RouterProvider component which will allow you to seamlessly incorproate client-site routers without the need to wrap a router Link component. We've have also continued to make improvements and bug fixes to React Aria Components since its beta release. Internal contexts have been refactored to allow for great customizability. More detailed information on how to make use of this can be found in our Advanced Customization section. React Spectrum also has some new additons, including DropZone and isPending prop to Button. 
+description: In this release, we've extended support for links across all collection components! To streamline integration with client-side routers, we've introduced the RouterProvider component which will allow you to seamlessly incorproate client-site routers without the need to wrap a router Link component. We have also continued to make improvements and bug fixes to React Aria Components since its beta release. React Spectrum also has some new additons, including DropZone and isPending prop to Button. 
 
 date: 2023-10-06
 ---
 
 # October 06, 2023 Release
 
+In this release, we've extended support for links across all collection components! To streamline integration with client-side routers, we've introduced the `RouterProvider` component which will allow you to seamlessly incorproate client-site routers without the need to wrap a router Link component ([see docs]()). We have also continued to make improvements and bug fixes to [React Aria Components](../react-aria/react-aria-components.html) since its beta release. Internal contexts have been refactored to allow for greater customizability ([see docs](../react-aria/advanced.html)), MenuTrigger and DialogTrigger now use PressResponder to work with any pressable component, and updated documentation to help improve adoption. React Spectrum also has some new additons, including [DropZone](../react-spectrum/DropZone.html) and the [isPending](../react-spectrum/Button.html#pending) prop to Button. 
 
-In this release, we've extended support for links across all collection components! To streamline integration with client-side routers, we've introduced the `RouterProvider` component which will allow you to seamlessly incorproate client-site routers without the need to wrap a router Link component ([see docs]()). We've have also continued to make improvements and bug fixes to [React Aria Components](../react-aria/react-aria-components.html) since its beta release. Internal contexts have been refactored to allow for great customizability. More detailed information on how to make use of this can be found in our [Advanced Customization]() section. React Spectrum also has some new additons, including [DropZone](../react-spectrum/DropZone.html) and [isPending](../react-spectrum/Button.html#pending) prop to Button. 
-
-As always, huge thanks to all of our contributors for helping to make this release possible!
+As always, huge thanks to everyone in our community for their feedback and contributions to make this release possible!
 
 ### FileTrigger API update
 
 This release of FileTrigger includes an API change. If you were using a previous version, you will need to update your code. See below for details.
-- Replaced the `OnChange` prop with `OnSelect`
+- The `OnChange` prop has been replaced with `OnSelect`.
 
 ## Enhancements
 
@@ -47,11 +46,14 @@ This release of FileTrigger includes an API change. If you were using a previous
 - Fix client navigation check in Firefox - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5106)
 - Fix Breadcrumbs menu padding - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5086)
 - Fix i18n circular dependency - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5087)
+- Fix WHCM in Progress Bar - [@iamwillpowell](https://github.com/iamwillpowell) - [PR](https://github.com/adobe/react-spectrum/pull/5125)
+- Fix error during SSR when first Table column is not a row header - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5160)
+- Fix Unavailable MenuItem props - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5153)
+- Add fallback for Progress Bar's animation duration - [@iamwillpowell](https://github.com/iamwillpowell) - [PR](https://github.com/adobe/react-spectrum/pull/5136)
 
 ## Docs
 
 - Update keyboard pattern links in docs - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5055)
-- Add docs for the Group component - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5060)
 - Add docs for links in collections and client side routing guide - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5078)
 - Move React Aria dnd introduction to concepts section - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5088)
 
@@ -64,23 +66,22 @@ Fixes to pre-released components are listed below. Please feel free to try them 
 - Update RAC Link API - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5074)
 - Use PressResponder in RAC overlays and document MenuTrigger long press - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5065)
 - Filter data attributes - [@iamwillpowell](https://github.com/iamwillpowell) - [PR](https://github.com/adobe/react-spectrum/pull/5008)
-- Add translations to RAC - [@rgeraghty](https://github.com/rgeraghty) - [PR](https://github.com/adobe/react-spectrum/pull/5124)
 - Fix typeahead in RAC ListBox - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5146)
 - Advanced customization guide - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5066)
 - Minor doc improvements - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5101)
 - Fix specificity of Tailwind generated selectors - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5147)
 - Refactor internal contexts to expose state publicly - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5052)
 - Update Breadcrumb Link section in docs - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/5083)
-
+- Add missing DatePicker states - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5158)
+- Add docs for the Group component - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5060)
 
 **React Spectrum DropZone** (Alpha)
 - React Spectrum DropZone docs - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/5076)
 - Add chromatic stories to React Spectrum DropZone - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/5053)
 
-
 **React Spectrum Pending Button** (Beta)
-
-
+- Remove UNSAFE_ from isPending prop - [@iamwillpowell](https://github.com/iamwillpowell) - [PR](https://github.com/adobe/react-spectrum/pull/5150)
+- Add isPending to Button docs - [@iamwillpowell](https://github.com/iamwillpowell) - [PR](https://github.com/adobe/react-spectrum/pull/5150)
 
 What do we want to do with these commits?
 - Upgrade to Node 18 - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/4945)
@@ -92,7 +93,7 @@ What do we want to do with these commits?
 - Fix website build by including required patches - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/5121)
 - Add translations for Submenu tray back button - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/5114)
 - Add translations to RAC- [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/5064)
-
+- Add translations to RAC - [@rgeraghty](https://github.com/rgeraghty) - [PR](https://github.com/adobe/react-spectrum/pull/5124)
 
 ## Released packages
 
