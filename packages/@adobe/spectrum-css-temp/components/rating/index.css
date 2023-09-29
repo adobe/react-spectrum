@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 @import '../commons/index.css';
 
 /* A solid star */
-%spectrum-Rating-filledStar {
+.spectrum-Rating-filledStar {
   .spectrum-Rating-starActive {
     display: block;
   }
@@ -23,7 +23,7 @@ governing permissions and limitations under the License.
 }
 
 /* A star with an outline only */
-%spectrum-Rating-strokedStar {
+.spectrum-Rating-strokedStar {
   .spectrum-Rating-starActive {
     display: none;
   }
@@ -52,7 +52,7 @@ governing permissions and limitations under the License.
   /* When the entire component is hovered, show all solid icons */
   &:hover {
     .spectrum-Rating-icon {
-      @extend %spectrum-Rating-filledStar;
+      composes: spectrum-Rating-filledStar;
     }
   }
 }
@@ -75,10 +75,10 @@ governing permissions and limitations under the License.
   height: var(--spectrum-icon-star-height);
   padding: var(--spectrum-rating-icon-padding-y) 0;
 
-  @extend %spectrum-Rating-strokedStar;
+  composes: spectrum-Rating-strokedStar;
 
   &.is-selected {
-    @extend %spectrum-Rating-filledStar;
+    composes: spectrum-Rating-filledStar;
   }
 
   &.is-currentValue {
@@ -95,7 +95,7 @@ governing permissions and limitations under the License.
 
   /* All stars following the hovered star */
   &:hover ~ .spectrum-Rating-icon {
-    @extend %spectrum-Rating-strokedStar;
+    composes: spectrum-Rating-strokedStar;
   }
 }
 

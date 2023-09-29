@@ -11,7 +11,7 @@
  */
 
 import {DOMProps, DOMRefValue, FocusStrategy, HoverEvents, KeyboardEvent, PressEvents} from '@react-types/shared';
-import {MenuTreeState, MenuTriggerState} from '@react-stately/menu';
+import {MenuTriggerState} from '@react-stately/menu';
 import React, {HTMLAttributes, MutableRefObject, RefObject, useContext} from 'react';
 import {TreeState} from '@react-stately/tree';
 
@@ -22,9 +22,9 @@ export interface MenuContextValue extends Omit<HTMLAttributes<HTMLElement>, 'aut
   autoFocus?: boolean | FocusStrategy,
   ref?: MutableRefObject<HTMLDivElement>,
   state?: MenuTriggerState,
-  menuTreeState?: MenuTreeState,
   onKeyDown?: (e: KeyboardEvent) => void,
-  onBackButtonPress?: () => void
+  onBackButtonPress?: () => void,
+  level?: number
 }
 
 export const MenuContext = React.createContext<MenuContextValue>({});
@@ -39,7 +39,8 @@ export interface SubMenuTriggerContextValue extends DOMProps, Pick<PressEvents, 
   'aria-expanded'?: boolean | 'true' | 'false',
   'aria-controls'?: string,
   'aria-haspopup'?: 'dialog' | 'menu',
-  onKeyDown?: (e: KeyboardEvent) => void
+  onKeyDown?: (e: KeyboardEvent) => void,
+  isOpen?: boolean
 }
 
 export const SubMenuTriggerContext = React.createContext<SubMenuTriggerContextValue | undefined>(undefined);
@@ -53,8 +54,8 @@ export interface MenuStateContextValue<T> {
   popoverContainerRef?: RefObject<HTMLElement>,
   trayContainerRef?: RefObject<HTMLElement>,
   menu?: RefObject<HTMLDivElement>,
-  menuTreeState?: MenuTreeState,
-  submenu?: React.MutableRefObject<DOMRefValue<HTMLDivElement>>
+  submenu?: React.MutableRefObject<DOMRefValue<HTMLDivElement>>,
+  rootMenuTriggerState?: MenuTriggerState
 }
 
 export const MenuStateContext = React.createContext<MenuStateContextValue<any>>(undefined);

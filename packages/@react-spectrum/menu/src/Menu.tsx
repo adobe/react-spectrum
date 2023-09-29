@@ -33,9 +33,9 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let contextProps = useContext(MenuContext);
   let parentMenuContext = useMenuStateContext();
-  let {menuTreeState, state: parentMenuTreeState} = parentMenuContext || {};
+  let {rootMenuTriggerState, state: parentMenuTreeState} = parentMenuContext || {};
   if (!parentMenuContext) {
-    menuTreeState = contextProps.menuTreeState;
+    rootMenuTriggerState = contextProps.state;
     isSubMenu = false;
   }
   let completeProps = {
@@ -59,35 +59,34 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   }, []);
 
   let isMobile = useIsMobileDevice();
-  let backButtonText = parentMenuTreeState?.collection.getItem(menuTreeState.expandedKeysStack.slice(-1)[0])?.textValue;
+  let backButtonText = parentMenuTreeState?.collection.getItem(rootMenuTriggerState?.UNSTABLE_expandedKeysStack.slice(-1)[0])?.textValue;
   let backButtonLabel = stringFormatter.format('backButton', {
     prevMenuButton: backButtonText
   });
   let headingId = useSlotId();
-  let hasOpenSubMenuTray = isMobile && state.expandedKeys.size > 0;
+  let menuLevel = contextProps.level || 0;
+  let hasOpenSubMenu = state.collection.getItem(rootMenuTriggerState?.UNSTABLE_expandedKeysStack[menuLevel]) != null;
   // TODO: add slide transition
-  // TODO: make the below a dialog w/ heading
   return (
-    <MenuStateContext.Provider value={{popoverContainerRef, trayContainerRef, menu: domRef, submenu: submenuRef, menuTreeState, state}}>
+    <MenuStateContext.Provider value={{popoverContainerRef, trayContainerRef, menu: domRef, submenu: submenuRef, rootMenuTriggerState, state}}>
       <div ref={trayContainerRef} />
-      <FocusScope contain={state.expandedKeys.size > 0}>
+      <FocusScope contain={hasOpenSubMenu}>
         <div
           // TODO: check if this role should always be applied, even for non submenu cases
           role={headingId ? 'dialog' : undefined}
           aria-labelledby={headingId}
-          aria-hidden={hasOpenSubMenuTray}
+          aria-hidden={isMobile && hasOpenSubMenu}
           className={
             classNames(
               styles,
               'spectrum-Menu-wrapper',
               {
                 'spectrum-Menu-trayWrapper': isMobile,
-                'is-expanded': hasOpenSubMenuTray
+                'is-expanded': hasOpenSubMenu
               }
             )
         }>
-          {isMobile && isSubMenu && state.expandedKeys.size === 0 && (
-            // TODO: check labeling with team and get translated strings
+          {isMobile && isSubMenu && !hasOpenSubMenu && (
             <div className={classNames(styles, 'spectrum-SubMenu-headingWrapper')}>
               <ActionButton
                 aria-label={backButtonLabel}

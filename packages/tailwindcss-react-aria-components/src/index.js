@@ -64,7 +64,7 @@ const nativeVariantSelectors = new Map([
 let getSelector = (prefix, attributeName, attributeValue) => {
   let baseSelector = attributeValue ? `[data-${attributeName}="${attributeValue}"]` : `[data-${attributeName}]`;
   if (prefix === '' && nativeVariantSelectors.has(attributeName)) {
-    return `&:is([data-rac]${baseSelector}, :not([data-rac])${nativeVariantSelectors.get(attributeName)})`;
+    return [`&:where([data-rac])${baseSelector}`, `&:where(:not([data-rac]))${nativeVariantSelectors.get(attributeName)}`];
   } else {
     return `&${baseSelector}`;
   }

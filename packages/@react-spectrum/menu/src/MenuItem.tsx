@@ -112,7 +112,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
             'is-disabled': isDisabled,
             'is-selected': isSelected,
             'is-selectable': isSelectable,
-            'is-open': state.expandedKeys.has(key)
+            'is-open': subMenuTriggerProps.isOpen
           }
         )}>
         <Grid

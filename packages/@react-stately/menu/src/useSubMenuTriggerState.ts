@@ -12,9 +12,8 @@
 
 import {FocusStrategy} from '@react-types/shared';
 import {Key, useCallback, useMemo, useState} from 'react';
-import type {MenuTreeState} from './useMenuState';
+import type {MenuTriggerState} from './useMenuTriggerState';
 import type {OverlayTriggerState} from '@react-stately/overlays';
-import type {TreeState} from '@react-stately/tree';
 
 export interface SubMenuTriggerProps {
   /** Key of the trigger item. */
@@ -22,46 +21,45 @@ export interface SubMenuTriggerProps {
 }
 
 export interface SubMenuTriggerState extends OverlayTriggerState {
-  // TODO descriptions
-  // Need some form of isOpen and close for usePopover. Also need closeAll for onClose for menu items, would be kinda weird
-  // to pass in both menuTreeState and the state returned by useSubMenuTriggerState to useMenu.
+  /** Whether the submenu is currently open. */
   isOpen: boolean,
+  /** Controls which item will be auto focused when the submenu opens. */
   focusStrategy: FocusStrategy | null,
+  /** Opens the submenu. */
   open: (focusStrategy?: FocusStrategy | null) => void,
+  /** Closes the submenu. */
   close: () => void,
+  /** Closes all menus and submenus in the menu tree. */
   closeAll: () => void,
-  // TODO: add setOpen and toggle for type parity with useOverlayTriggerState type that Tray and Popover expect. Perhaps call useOverlayTriggerState in
-  // this hook and just make it controlled? Then spread? Kinda weird since they are unused but needed for type parity.
+  /** The level of the submenu. */
+  level: number,
+  // TODO: below two are unused, should I even document? Made setOpen private so people don't try to use
+  /** Toggles the submenu. */
   toggle: (focusStrategy?: FocusStrategy | null) => void,
+  /** @private */
   setOpen: () => void
 }
 
-// TODO: ideally onClose would be passed in from the Trigger level rather than the menu level so that we could call it
-// TODO descriptions and naming
-// TODO: I'm passing in the parent menu's TreeState now so that we can set expanded keys so a menu can know if it has any sub menus open.
-// The alternative to using expandedKeys would involve making each menu track which "level" it belongs to and have it the look up that index in
-// the MenuTreeState's expandedKeyStack and see if its collection has a matching key. This feels arguably more correct but would then involve
-// having useMenu accept MenuTreeState instead which might not be the worst thing tbh. Open to discussion
-export function UNSTABLE_useSubMenuTriggerState<T>(props: SubMenuTriggerProps, state: MenuTreeState & TreeState<T>): SubMenuTriggerState  {
+/**
+ * Manages state for a submenu trigger. Tracks whether the submenu is currently open, the level of the submenu, and
+ * controls which item will receive focus when it opens.
+ */
+export function UNSTABLE_useSubMenuTriggerState(props: SubMenuTriggerProps, state: MenuTriggerState): SubMenuTriggerState  {
   let {triggerKey} = props;
-  let {expandedKeysStack, openSubMenu, closeSubMenu, closeAll, setExpandedKeys, expandedKeys, toggleKey} = state;
-  let [level] = useState(expandedKeysStack?.length + 1);
-  let isOpen = useMemo(() => expandedKeysStack[level - 1] === triggerKey, [expandedKeysStack, triggerKey, level]);
+  let {UNSTABLE_expandedKeysStack, UNSTABLE_openSubMenu, UNSTABLE_closeSubMenu, close: closeAll} = state;
+  let [level] = useState(UNSTABLE_expandedKeysStack?.length + 1);
+  let isOpen = useMemo(() => UNSTABLE_expandedKeysStack[level - 1] === triggerKey, [UNSTABLE_expandedKeysStack, triggerKey, level]);
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy>(null);
 
   let open = useCallback((focusStrategy: FocusStrategy = null) => {
     setFocusStrategy(focusStrategy);
-    setExpandedKeys(new Set([triggerKey]));
-    openSubMenu(triggerKey, level);
-  }, [openSubMenu, level, triggerKey, setExpandedKeys]);
+    UNSTABLE_openSubMenu(triggerKey, level);
+  }, [UNSTABLE_openSubMenu, level, triggerKey]);
 
   let close = useCallback(() => {
     setFocusStrategy(null);
-    if (expandedKeys.has(triggerKey)) {
-      toggleKey(triggerKey);
-    }
-    closeSubMenu(triggerKey, level);
-  }, [closeSubMenu, level, triggerKey, toggleKey, expandedKeys]);
+    UNSTABLE_closeSubMenu(triggerKey, level);
+  }, [UNSTABLE_closeSubMenu, level, triggerKey]);
 
   let toggle = useCallback((focusStrategy: FocusStrategy = null) => {
     setFocusStrategy(focusStrategy);
@@ -78,7 +76,10 @@ export function UNSTABLE_useSubMenuTriggerState<T>(props: SubMenuTriggerProps, s
     open,
     close,
     closeAll,
+    level,
+    // TODO: Placeholders that aren't used but give us parity with OverlayTriggerState so we can use this in Popover. Refactor if we update Popover via
+    // https://github.com/adobe/react-spectrum/pull/4976#discussion_r1336472863
     setOpen: () => {},
     toggle
-  }), [isOpen, open, close, closeAll, focusStrategy, toggle]);
+  }), [isOpen, open, close, closeAll, focusStrategy, toggle, level]);
 }
