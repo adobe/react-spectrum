@@ -33,7 +33,7 @@ This beta release of FileTrigger includes an API change. If you were using a pre
 
 ### Spectrum class name changes
 
-This release includes an update to our build infrastructure that results in changes to the format of the CSS class names used by React Spectrum. If your app or tests are relying on CSS selectors such as `[class^="spectrum-Button"]`, you'll need to make updates. The simplest short-term solution is to change from `^=` (starts with) to `*=` (contains), but as a reminder, Spectrum class names are considered implementation details that may change at any time so you should not rely on them. Instead, we recommend using attributes like `role` or `data-testid` to query for elements in tests, and `ref` to access elements in components. See the [Testing](../react-spectrum/testing.html) guide to learn more.
+This release includes an important update to our build infrastructure that results in changes to the format of the CSS class names used by React Spectrum. If your app or tests are relying on CSS selectors such as `[class^="spectrum-Button"]`, you'll need to make updates. The simplest short-term solution is to change from `^=` (starts with) to `*=` (contains), but as a reminder, Spectrum class names are considered implementation details that may change at any time so you should not rely on them. Instead, we recommend using attributes like `role` or `data-testid` to query for elements in tests, and `ref` to access elements in components. See the [Testing](../react-spectrum/testing.html) guide to learn more.
 
 ## Enhancements
 
@@ -50,7 +50,6 @@ This release includes an update to our build infrastructure that results in chan
 - Fix `Popover` placement for start/end - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/5137)
 - Fix `NumberField` form submission - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/4300)
 - Update Express Breadcrumb icon - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5059)
-- Fix client navigation check in Firefox - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5106)
 - Resolve i18n circular dependency - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5087)
 - Improve WHCM support in `ProgressBar` - [@iamwillpowell](https://github.com/iamwillpowell) - [PR](https://github.com/adobe/react-spectrum/pull/5125)
 - Fix SSR when first Table column is not a row header - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5160)
