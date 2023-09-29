@@ -6,10 +6,10 @@ function JournalEntries(props : {list : Journal[]}){
     const element = props.list.map(item => (
         <li key={item.id}>
             <Divider size="M" marginTop="size-200" marginBottom="size-300" />
-            <p>Your day was: {item.rate} </p>
+            <p>Your day was: {item.rate.toString()} </p>
             <p>{item.description}</p>
         </li>
-        
+
     ))
 
     return (
