@@ -16,7 +16,7 @@ import docsStyle from './docs.css';
 import LinkOut from '@spectrum-icons/workflow/LinkOut';
 import {listen} from 'quicklink';
 import React, {useEffect, useRef, useState} from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {ThemeSwitcher} from './ThemeSwitcher';
 
@@ -182,16 +182,24 @@ function Hamburger() {
   );
 }
 
-ReactDOM.render(<>
-  <Hamburger />
-  <DocSearch />
-  <ThemeSwitcher />
-</>, document.querySelector('.' + docsStyle.pageHeader));
+let pageHeader = document.querySelector('.' + docsStyle.pageHeader);
+if (pageHeader) {
+  ReactDOM.createRoot(pageHeader).render(<>
+    <Hamburger />
+    <DocSearch />
+    <ThemeSwitcher />
+  </>);
+} else {
+  let exampleHeader = document.querySelector('.' + docsStyle.exampleHeader);
+  if (exampleHeader) {
+    ReactDOM.createRoot(exampleHeader).render(<ThemeSwitcher />);
+  }
+}
 
 let pathToPage = document.querySelector('[data-github-src]').getAttribute('data-github-src');
 let editPage = document.querySelector('#edit-page');
 if (pathToPage && editPage) {
-  ReactDOM.render(
+  ReactDOM.createRoot(editPage).render(
     <Link>
       <a
         href={encodeURI(`https://github.com/adobe/react-spectrum/tree/main/${encodeURI(pathToPage)}`)}
@@ -200,8 +208,7 @@ if (pathToPage && editPage) {
           <span>Edit this page</span><LinkOut size="S" />
         </Flex>
       </a>
-    </Link>,
-    editPage
+    </Link>
   );
 }
 
@@ -231,15 +238,17 @@ let lastScrollPosition = sessionStorage.getItem('sidebarScrollPosition');
 
 // If we have a recorded scroll position, and the last selected item is in the sidebar
 // (e.g. we're in the same category), then restore the scroll position.
-if (lastSelectedItem && lastScrollPosition && [...sidebar.querySelectorAll('a')].some(a => a.pathname === lastSelectedItem)) {
+if (sidebar && lastSelectedItem && lastScrollPosition && [...sidebar.querySelectorAll('a')].some(a => a.pathname === lastSelectedItem)) {
   sidebar.scrollTop = parseInt(lastScrollPosition, 10);
 }
 
-// Save scroll position of the sidebar when we're about to navigate
-window.addEventListener('pagehide', () => {
-  sessionStorage.setItem('sidebarSelectedItem', location.pathname);
-  sessionStorage.setItem('sidebarScrollPosition', sidebar.scrollTop);
-});
+if (sidebar) {
+  // Save scroll position of the sidebar when we're about to navigate
+  window.addEventListener('pagehide', () => {
+    sessionStorage.setItem('sidebarSelectedItem', location.pathname);
+    sessionStorage.setItem('sidebarScrollPosition', sidebar.scrollTop);
+  });
+}
 
 // Disable autoplay for videos when the prefers-reduced-motion media query is enabled.
 function reducedMotionCheck(e) {

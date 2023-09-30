@@ -600,3 +600,36 @@ export function Time({date}) {
     </time>
   );
 }
+
+export function ExampleLayout({scripts, styles, pages, currentPage, publicUrl, children, toc}) {
+  let pathToPage = currentPage.filePath.substring(currentPage.filePath.indexOf('packages/'), currentPage.filePath.length);
+  return (
+    <Page scripts={scripts} styles={styles} publicUrl={publicUrl} currentPage={currentPage} pathToPage={pathToPage}>
+      <div style={{isolation: 'isolate'}}>
+        <div className={docStyles.exampleHeader} />
+        <main className={docStyles.examplePage}>
+          <MDXProvider components={mdxComponents}>
+            <ImageContext.Provider value={publicUrl}>
+              <LinkProvider>
+                <PageContext.Provider value={{pages, currentPage}}>
+                  <SlotProvider slots={{keyboard: {UNSAFE_className: docStyles['keyboard']}}}>
+                    <article className={clsx(typographyStyles['spectrum-Typography'], docStyles.article, {[docStyles.inCategory]: !INDEX_RE.test(currentPage.name)})}>
+                      <div style={{display: 'flex', alignItems: 'center'}}>
+                        <a href="../" className={clsx(linkStyle['spectrum-Link'], linkStyle['spectrum-Link--secondary'], docStyles.link)}>React Aria</a>
+                        <ChevronRight size="XS" />
+                        <a href="./" className={clsx(linkStyle['spectrum-Link'], linkStyle['spectrum-Link--secondary'], docStyles.link)}>Examples</a>
+                      </div>
+                      {children}
+                    </article>
+                  </SlotProvider>
+                </PageContext.Provider>
+              </LinkProvider>
+            </ImageContext.Provider>
+          </MDXProvider>
+          {!pathToPage.includes('index.mdx') && <div id="edit-page" className={docStyles.editPageContainer} />}
+          <Footer />
+        </main>
+      </div>
+    </Page>
+  );
+}

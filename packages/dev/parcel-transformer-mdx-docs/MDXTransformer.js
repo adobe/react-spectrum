@@ -73,9 +73,9 @@ module.exports = new Transformer({
               let props = options.includes('hidden') ? 'isHidden' : '';
               if (/function (.|\n)*}\s*$/.test(code)) {
                 let name = code.match(/function (.*?)\s*\(/)[1];
-                code = `${code}\nRENDER_FNS.push(() => ReactDOM.render(<${provider} ${props}><${name} /></${provider}>, document.getElementById("${id}")));`;
+                code = `${code}\nRENDER_FNS.push(() => ReactDOM.createRoot(document.getElementById("${id}")).render(<${provider} ${props}><${name} /></${provider}>));`;
               } else if (/^<(.|\n)*>$/m.test(code)) {
-                code = code.replace(/^(<(.|\n)*>)$/m, `RENDER_FNS.push(() => ReactDOM.render(<${provider} ${props}>$1</${provider}>, document.getElementById("${id}")));`);
+                code = code.replace(/^(<(.|\n)*>)$/m, `RENDER_FNS.push(() => ReactDOM.createRoot(document.getElementById("${id}")).render(<${provider} ${props}>$1</${provider}>));`);
               }
             }
 
@@ -112,20 +112,34 @@ module.exports = new Transformer({
             }
 
             node.meta = options.includes('hidden') ? null : 'example';
+            let highlightedCode = transformExample(node, preRelease, keepIndividualImports);
+            let output = {
+              type: 'mdxJsxFlowElement',
+              name: 'div',
+              attributes: [
+                {
+                  type: 'mdxJsxAttribute',
+                  name: 'id',
+                  value: id
+                }
+              ]
+            };
+
+            if (options.includes('flip') || options.includes('standalone')) {
+              output.attributes.push({
+                type: 'mdxJsxAttribute',
+                name: 'className',
+                value: options.includes('standalone') ? 'standalone' : 'flip'
+              });
+              return [
+                output,
+                ...highlightedCode
+              ];
+            }
 
             return [
-              ...transformExample(node, preRelease, keepIndividualImports),
-              {
-                type: 'mdxJsxFlowElement',
-                name: 'div',
-                attributes: [
-                  {
-                    type: 'mdxJsxAttribute',
-                    name: 'id',
-                    value: id
-                  }
-                ]
-              }
+              ...highlightedCode,
+              output
             ];
           }
 
@@ -457,7 +471,7 @@ module.exports = new Transformer({
     // Add example code collected from the MDX.
     if (exampleCode.length > 0) {
       clientBundle += `import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import {Example as ExampleProvider} from '@react-spectrum/docs/src/ThemeSwitcher';
 let RENDER_FNS = [];
 ${exampleCode.join('\n')}
