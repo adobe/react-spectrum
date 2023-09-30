@@ -1,0 +1,12 @@
+{
+  "name": "parcel-transformer-css-global",
+  "version": "1.0.0",
+  "private": true,
+  "main": "CSSGlobalTransformer.js",
+  "engines": {
+    "parcel": "^2.9.2"
+  },
+  "dependencies": {
+    "@parcel/plugin": "^2.9.2"
+  }
+}

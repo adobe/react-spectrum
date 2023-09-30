@@ -9,6 +9,7 @@
     "bundle-text:*.svg": ["@parcel/transformer-svg", "@parcel/transformer-inline-string"],
     "*.{md,mdx}": ["parcel-transformer-mdx-docs"],
     "*.svg": ["@parcel/transformer-svg-react"],
+    "*.global.css": ["parcel-transformer-css-global", "..."],
     "*.css": ["...", "parcel-transformer-css-env"],
     "*.{js,mjs,jsm,jsx,es6,cjs,ts,tsx}": [
       "@parcel/transformer-js",
