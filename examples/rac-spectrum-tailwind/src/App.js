@@ -71,7 +71,6 @@ function SelectBox({ name, icon, description }) {
       data-rac
       value={name}
       className={({ isFocusVisible, isSelected, isPressed }) => `
-      group/item
       flex justify-center p-160 m-160 h-2000 w-2000 focus:outline-none border rounded
       ${isFocusVisible ? "ring-half ring-offset-0" : ""}
       ${isSelected ? "bg-accent-100 border-accent-700" : ""}
@@ -91,7 +90,6 @@ function SelectBox({ name, icon, description }) {
             <div className={`font-semibold`}>{name}</div>
             {description && <div className="text-sm">{description}</div>}
           </div>
-          <span className="invisible group-hover/item:visible">Test</span>
         </div>
       )}
     </Radio>
