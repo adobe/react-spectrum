@@ -72,7 +72,7 @@ let getSelector = (prefix, attributeName, attributeValue) => {
 
 let mapSelector = (selector, fn) => {
   if (Array.isArray(selector)) {
-    return selector.map(fn)
+    return selector.map(fn);
   } else {
     return fn(selector);
   }
