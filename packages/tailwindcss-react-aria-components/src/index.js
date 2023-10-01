@@ -78,16 +78,27 @@ let mapSelector = (selector, fn) => {
   }
 };
 
-module.exports = plugin.withOptions((options) => (({addVariant}) => {
+let addVariants = (variantName, selectors, addVariant, matchVariant) => {
+  addVariant(variantName, selectors);
+  matchVariant(
+    'group',
+    (_, {modifier}) =>
+      modifier
+        ? mapSelector(selectors, selector => `:merge(.group\\/${modifier})${selector.slice(1)} &`)
+        : mapSelector(selectors, selector => `:merge(.group)${selector.slice(1)} &`),
+    {values: {[variantName]: variantName}}
+  );
+  addVariant(`peer-${variantName}`, mapSelector(selectors, selector => `:merge(.peer)${selector.slice(1)} ~ &`));
+};
+
+module.exports = plugin.withOptions((options) => (({addVariant, matchVariant}) => {
   let prefix = options?.prefix ? `${options.prefix}-` : '';
   attributes.boolean.forEach((attribute) => {
     let variantName = Array.isArray(attribute) ? attribute[0] : attribute;
     variantName = `${prefix}${variantName}`;
     let attributeName = Array.isArray(attribute) ? attribute[1] : attribute;
     let selectors = getSelector(prefix, attributeName);
-    addVariant(variantName, selectors);
-    addVariant(`group-${variantName}`, mapSelector(selectors, selector => `:merge(.group)${selector.slice(1)} &`));
-    addVariant(`peer-${variantName}`, mapSelector(selectors, selector => `:merge(.peer)${selector.slice(1)} ~ &`));
+    addVariants(variantName, selectors, addVariant, matchVariant);
   });
   Object.keys(attributes.enum).forEach((attributeName) => {
     attributes.enum[attributeName].forEach(
@@ -95,9 +106,7 @@ module.exports = plugin.withOptions((options) => (({addVariant}) => {
           let name = shortNames[attributeName] || attributeName;
           let variantName = `${prefix}${name}-${attributeValue}`;
           let selectors = getSelector(prefix, attributeName, attributeValue);
-          addVariant(variantName, selectors);
-          addVariant(`group-${variantName}`, mapSelector(selectors, selector => `:merge(.group)${selector.slice(1)} &`));
-          addVariant(`peer-${variantName}`, mapSelector(selectors, selector => `:merge(.peer)${selector.slice(1)} ~ &`));
+          addVariants(variantName, selectors, addVariant, matchVariant);
         }
       );
   });
