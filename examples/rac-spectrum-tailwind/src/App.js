@@ -23,6 +23,14 @@ export function App() {
             <p>For the purpose of ensuring Tailwind's default selectors still work for non-RAC elements when using the plugin.</p>
           </div>
         </div>
+        <div className="flex justify-center">
+          <div className="flex flex-col">
+            <div className="flex justify-center bg-white border rounded group/item p-160 m-160 focus:outline-none">
+              <span className="invisible group-hover/item:visible">Shown when group is hovered</span>
+            </div>
+            <p>For the purpose of testing named groups.</p>
+          </div>
+        </div>
       </div>
     </Provider>
   );
@@ -63,6 +71,7 @@ function SelectBox({ name, icon, description }) {
       data-rac
       value={name}
       className={({ isFocusVisible, isSelected, isPressed }) => `
+      group/item
       flex justify-center p-160 m-160 h-2000 w-2000 focus:outline-none border rounded
       ${isFocusVisible ? "ring-half ring-offset-0" : ""}
       ${isSelected ? "bg-accent-100 border-accent-700" : ""}
@@ -82,6 +91,7 @@ function SelectBox({ name, icon, description }) {
             <div className={`font-semibold`}>{name}</div>
             {description && <div className="text-sm">{description}</div>}
           </div>
+          <span className="invisible group-hover/item:visible">Test</span>
         </div>
       )}
     </Radio>
