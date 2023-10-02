@@ -97,7 +97,7 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
 
 ```css
 @layer table;
-@layer table.layout;
+@layer table.layout, table.hcm;
 @layer table.layout {
   .react-aria-Table {
     --highlight-background: slateblue;
@@ -265,46 +265,47 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
   }
 }
 
+@layer table.hcm {
+  @media (forced-colors: active) {
+    .react-aria-Table {
+      forced-color-adjust: none;
 
-@media (forced-colors: active) {
-  .react-aria-Table {
-    forced-color-adjust: none;
-
-    --highlight-background: Highlight;
-    --highlight-foreground: HighlightText;
-    --border-color: ButtonBorder;
-    --background-color: ButtonFace;
-    --text-color: ButtonText;
-    --text-color-disabled: GrayText;
-  }
-
-  .react-aria-Checkbox {
-    forced-color-adjust: none;
-
-    --deselected-color: ButtonBorder;
-    --deselected-color-pressed: ButtonBorder;
-    --selected-color: Highlight;
-    --selected-color-pressed: Highlight;
-    --checkmark-color: HighlightText;
-    --spectrum-alias-background-color-default: Canvas;
-    --focus-ring-color: Highlight;
-
-    &[data-disabled] {
-      opacity: 1;
-      --deselected-color: GrayText;
-      --selected-color: GrayText;
+      --highlight-background: Highlight;
+      --highlight-foreground: HighlightText;
+      --border-color: ButtonBorder;
+      --background-color: ButtonFace;
+      --text-color: ButtonText;
+      --text-color-disabled: GrayText;
     }
-  }
 
-  .react-aria-Row .react-aria-Checkbox {
-    --selected-color: ButtonFace;
-    --selected-color-pressed: ButtonFace;
-    --checkmark-color: ButtonText;
-  }
+    .react-aria-Checkbox {
+      forced-color-adjust: none;
 
-  .react-aria-Button {
-    forced-color-adjust: none;
-    --focus-ring-color: Highlight;
+      --deselected-color: ButtonBorder;
+      --deselected-color-pressed: ButtonBorder;
+      --selected-color: Highlight;
+      --selected-color-pressed: Highlight;
+      --checkmark-color: HighlightText;
+      --spectrum-alias-background-color-default: Canvas;
+      --focus-ring-color: Highlight;
+
+      &[data-disabled] {
+        opacity: 1;
+        --deselected-color: GrayText;
+        --selected-color: GrayText;
+      }
+    }
+
+    .react-aria-Row .react-aria-Checkbox {
+      --selected-color: ButtonFace;
+      --selected-color-pressed: ButtonFace;
+      --checkmark-color: ButtonText;
+    }
+
+    .react-aria-Button {
+      forced-color-adjust: none;
+      --focus-ring-color: Highlight;
+    }
   }
 }
 ```

@@ -52,66 +52,12 @@ import {TimeField, Label, DateInput, DateSegment} from 'react-aria-components';
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
-
+```css hidden
+/* We only import styles up to one page away, we don't follow those pages dependencies, so
+* import everything and in the correct order of dependency so that layers don't overwrite each other. */
+@import './DateField.mdx';
+```
 ```css
-.react-aria-DateInput {
-  --field-border: var(--spectrum-global-color-gray-400);
-  --field-background: var(--spectrum-global-color-gray-50);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-placeholder: var(--spectrum-global-color-gray-700);
-  --text-color-invalid: var(--spectrum-global-color-red-600);
-  --highlight-background: slateblue;
-  --highlight-foreground: white;
-  --highlight-background-invalid: var(--spectrum-global-color-static-red-600);
-
-  display: flex;
-  padding: 4px;
-  border: 1px solid var(--field-border);
-  border-radius: 6px;
-  background: var(--field-background);
-  width: fit-content;
-  min-width: 150px;
-  white-space: nowrap;
-
-  &[data-focus-within] {
-    border-color: var(--highlight-background);
-    box-shadow: 0 0 0 1px var(--highlight-background);
-  }
-}
-
-.react-aria-DateSegment {
-  padding: 0 2px;
-  font-variant-numeric: tabular-nums;
-  text-align: end;
-  color: var(--text-color);
-
-  &[data-type=literal] {
-    padding: 0;
-  }
-
-  &[data-placeholder] {
-    color: var(--text-color-placeholder);
-    font-style: italic;
-  }
-
-  &:focus {
-    color: var(--highlight-foreground);
-    background: var(--highlight-background);
-    outline: none;
-    border-radius: 4px;
-    caret-color: transparent;
-  }
-
-  &[data-invalid] {
-    color: var(--text-color-invalid);
-
-    &:focus {
-      background: var(--highlight-background-invalid);
-      color: var(--highlight-foreground);
-    }
-  }
-}
-
 .react-aria-TimeField {
   --text-color-invalid: var(--spectrum-global-color-red-600);
 
@@ -128,19 +74,6 @@ import {TimeField, Label, DateInput, DateSegment} from 'react-aria-components';
 @media (forced-colors: active) {
   .react-aria-TimeField {
     --text-color-invalid: LinkText;
-  }
-
-  .react-aria-DateInput {
-    forced-color-adjust: none;
-
-    --field-border: ButtonBorder;
-    --field-background: Field;
-    --text-color: FieldText;
-    --text-color-placeholder: FieldText;
-    --text-color-invalid: LinkText;
-    --highlight-background: Highlight;
-    --highlight-foreground: HighlightText;
-    --highlight-background-invalid: LinkText;
   }
 }
 ```
@@ -580,30 +513,6 @@ function FieldGroup({title, children, errorMessage}: FieldGroupProps) {
   <MyTimeField label="End" defaultValue={new Time(9)} />
 </FieldGroup>
 ```
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
-
-```css
-fieldset {
-  padding: 1.5em;
-  width: fit-content;
-}
-
-.invalid {
-  color: var(--spectrum-global-color-red-600);
-  margin-top: 1em;
-  display: block;
-}
-
-@media (forced-colors: active) {
-  .invalid {
-    color: LinkText;
-  }
-}
-```
-
-</details>
 
 ### Custom children
 
