@@ -127,7 +127,7 @@ function Checkbox(props) {
   return (
     <label style={{display: 'flex', alignItems: 'center', opacity: props.isDisabled ? 0.4 : 1}}>
       <VisuallyHidden>
-        <input {...mergeProps(inputProps, focusProps)} ref={ref} />
+        <input {...mergeProps(inputProps, focusProps)} ref={ref} /> 
       </VisuallyHidden>
       <svg
         width={24}
