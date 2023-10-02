@@ -188,6 +188,12 @@ function RenderProvider(options: SpectrumToastOptions) {
         style="outline">
         Show Info Toast
       </Button>
+      <Button
+        onPress={() => ToastQueue.info('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.', {...options, onClose: action('onClose')})}
+        variant="accent"
+        style="outline">
+        Show Long Toast
+      </Button>
     </ButtonGroup>
   );
 }
