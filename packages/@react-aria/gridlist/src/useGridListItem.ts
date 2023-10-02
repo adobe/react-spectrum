@@ -181,7 +181,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   let linkProps = itemStates.hasAction ? getSyntheticLinkProps(node.props) : {};
   let rowProps: DOMAttributes = mergeProps(itemProps, linkProps, {
     role: 'row',
-    onKeyDownCapture: onKeyDown,
+    onKeyDown,
     onFocus,
     'aria-label': node.textValue || undefined,
     'aria-selected': state.selectionManager.canSelectItem(node.key) ? state.selectionManager.isSelected(node.key) : undefined,
