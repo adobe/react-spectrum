@@ -23,7 +23,7 @@ function run({options, content}) {
 }
 
 test('variants', async () => {
-  let content = html`<div data-rac className="hover:bg-red focus:bg-red focus-visible:bg-red focus-within:bg-red pressed:bg-red disabled:bg-red drop-target:bg-red dragging:bg-red empty:bg-red allows-dragging:bg-red allows-removing:bg-red allows-sorting:bg-red placeholder-shown:bg-red selected:bg-red indeterminate:bg-red read-only:bg-red required:bg-red entering:bg-red exiting:bg-red open:bg-red unavailable:bg-red outside-month:bg-red outside-visible-range:bg-red selection-start:bg-red selection-end:bg-red current:bg-red invalid:bg-red resizing:bg-red placement-left:bg-red placement-right:bg-red placement-top:bg-red placement-bottom:bg-red type-literal:bg-red type-year:bg-red type-month:bg-red type-day:bg-red layout-grid:bg-red layout-stack:bg-red orientation-horizontal:bg-red orientation-vertical:bg-red selection-single:bg-red selection-multiple:bg-red resizable-right:bg-red resizable-left:bg-red resizable-both:bg-red sort-ascending:bg-red sort-descending:bg-red group-pressed:bg-red peer-pressed:bg-red"></div>`;
+  let content = html`<div data-rac className="hover:bg-red focus:bg-red focus-visible:bg-red focus-within:bg-red pressed:bg-red disabled:bg-red drop-target:bg-red dragging:bg-red empty:bg-red allows-dragging:bg-red allows-removing:bg-red allows-sorting:bg-red placeholder-shown:bg-red selected:bg-red indeterminate:bg-red read-only:bg-red required:bg-red entering:bg-red exiting:bg-red open:bg-red unavailable:bg-red outside-month:bg-red outside-visible-range:bg-red selection-start:bg-red selection-end:bg-red current:bg-red invalid:bg-red resizing:bg-red placement-left:bg-red placement-right:bg-red placement-top:bg-red placement-bottom:bg-red type-literal:bg-red type-year:bg-red type-month:bg-red type-day:bg-red layout-grid:bg-red layout-stack:bg-red orientation-horizontal:bg-red orientation-vertical:bg-red selection-single:bg-red selection-multiple:bg-red resizable-right:bg-red resizable-left:bg-red resizable-both:bg-red sort-ascending:bg-red sort-descending:bg-red group-pressed:bg-red peer-pressed:bg-red group-hover:bg-red"></div>`;
   return run({content}).then((result) => {
     expect(result.css).toContain(css`
 .hover\:bg-red:where([data-rac])[data-hovered] {
@@ -31,6 +31,14 @@ test('variants', async () => {
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
 .hover\:bg-red:where(:not([data-rac])):hover {
+    --tw-bg-opacity: 1;
+    background-color: rgb(255 0 0 / var(--tw-bg-opacity))
+}
+.group:where([data-rac])[data-hovered] .group-hover\:bg-red {
+    --tw-bg-opacity: 1;
+    background-color: rgb(255 0 0 / var(--tw-bg-opacity))
+}
+.group:where(:not([data-rac])):hover .group-hover\:bg-red {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
