@@ -8,6 +8,7 @@ import ThemeSwitcher from "./ThemeSwitcher";
 import { SelectBoxGroup, SelectBox } from "./components/SelectBoxGroup";
 import { SentimentRatingGroup } from "./components/SentimentRatingGroup";
 import { NavigationBox } from "./components/NavigationBox";
+import { StarRatingGroup } from "./components/StarRatingGroup";
 
 export function App() {
   let [colorScheme, setColorScheme] = useState(undefined);
@@ -53,6 +54,8 @@ export function App() {
             </NavigationBox>
           </div>
         </div>
+
+        <StarRatingGroup isEmphasized />
 
         <div className="flex justify-center">
           <div className="flex flex-col max-w-sm">
