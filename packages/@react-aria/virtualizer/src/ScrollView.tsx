@@ -127,9 +127,19 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     if (!dom) {
       return;
     }
-
+    let isTestEnv = process.env.NODE_ENV === 'test';
     let w = dom.clientWidth;
     let h = dom.clientHeight;
+    // TODO: set w and h to Infinity so the ScrollView can render any amount of content in a non-mocked test env ScrollView
+    // TODO: make condition here the following: is Test env (process.env) and clientWidth/Height aren't defined? That way
+    // someone can still mock it
+    if (isTestEnv) {
+      w = Infinity;
+      h = Infinity;
+      // Need to call visibleRect change always so manual rerenders in the test work
+      onVisibleRectChange(new Rect(state.scrollLeft, state.scrollTop, w, h));
+    }
+
     if (sizeToFit && contentSize.width > 0 && contentSize.height > 0) {
       if (sizeToFit === 'width') {
         w = Math.min(w, contentSize.width);
@@ -166,9 +176,18 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     style.overflow = 'auto';
   }
 
+  let innerStyles = {
+    // TODO: If width and height aren't finite (aka is Infinity or NaN), don't use those values since it is invalid css
+    width: Number.isFinite(contentSize.width) ? contentSize.width : undefined,
+    height: Number.isFinite(contentSize.height) ? contentSize.height : undefined,
+    pointerEvents: (isScrolling ? 'none' : 'auto') as CSSProperties['pointerEvents'],
+    position: 'relative' as CSSProperties['position'],
+    ...innerStyle
+  };
+
   return (
     <div {...otherProps} style={style} ref={ref} onScroll={onScroll}>
-      <div role="presentation" style={{width: contentSize.width, height: contentSize.height, pointerEvents: isScrolling ? 'none' : 'auto', position: 'relative', ...innerStyle}}>
+      <div role="presentation" style={innerStyles}>
         {children}
       </div>
     </div>
