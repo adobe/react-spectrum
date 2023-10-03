@@ -130,14 +130,15 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     let isTestEnv = process.env.NODE_ENV === 'test';
     let w = dom.clientWidth;
     let h = dom.clientHeight;
+    // console.log('in scrollview', Object.getOwnPropertyNames(window.HTMLElement.prototype), Object.getOwnPropertyNames(window.HTMLElement.prototype).includes('clientHeight'), Object.getOwnPropertyDescriptor(window.HTMLElement.prototype, 'clientHeight'))
     // TODO: set w and h to Infinity so the ScrollView can render any amount of content in a non-mocked test env ScrollView
     // TODO: make condition here the following: is Test env (process.env) and clientWidth/Height aren't defined? That way
     // someone can still mock it
+    // TODO: the below isn't technically needed if we just mock getVisibleLayoutInfos in Virtualizer but then we won't be able to
+    // check if the clientWidth/Height is being mocked?
     if (isTestEnv) {
       w = Infinity;
       h = Infinity;
-      // Need to call visibleRect change always so manual rerenders in the test work
-      onVisibleRectChange(new Rect(state.scrollLeft, state.scrollTop, w, h));
     }
 
     if (sizeToFit && contentSize.width > 0 && contentSize.height > 0) {

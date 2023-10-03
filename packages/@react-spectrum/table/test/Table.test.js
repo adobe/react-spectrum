@@ -213,7 +213,7 @@ export let tableTests = () => {
         </TableBody>
       </TableView>
     );
-
+      // console.log('window', window.HTMLElement.prototype.clientHeight);
     let grid = getByRole('grid');
     expect(grid).toBeVisible();
     expect(grid).toHaveAttribute('aria-label', 'Table');

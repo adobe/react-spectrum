@@ -657,7 +657,16 @@ export class Virtualizer<T extends object, V, W> {
   }
 
   getVisibleLayoutInfos() {
-    let rect = this.shouldOverscan ? this._overscanManager.getOverscannedRect() : this.getVisibleRect();
+    let isTestEnv = process.env.NODE_ENV === 'test';
+    let rect;
+    if (isTestEnv) {
+      // TODO: perhaps replace with getContentRect so that scrollView can set the proper mocked rect if need be?
+      // rect = new Rect(0, 0, Infinity, Infinity);
+      rect = this._getContentRect();
+    } else {
+      rect = this.shouldOverscan ? this._overscanManager.getOverscannedRect() : this.getVisibleRect();
+    }
+
     this._visibleLayoutInfos = this._getLayoutInfoMap(rect);
     return this._visibleLayoutInfos;
   }
@@ -1131,6 +1140,7 @@ export class Virtualizer<T extends object, V, W> {
     }
   }
 
+  // TODO: perhaps have the isTestEnv check here as well and set to Infinity/Infinity? Or just rely on ScrollView setting contentSize as infnity?
   private _getContentRect(): Rect {
     return new Rect(0, 0, this.contentSize.width, this.contentSize.height);
   }
