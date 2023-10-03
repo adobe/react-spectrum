@@ -12,7 +12,7 @@
 
 import {CheckboxGroupContext} from './context';
 import CheckmarkSmall from '@spectrum-icons/ui/CheckmarkSmall';
-import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useFocusableRef, usePressScale, useStyleProps} from '@react-spectrum/utils';
 import DashSmall from '@spectrum-icons/ui/DashSmall';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
@@ -47,7 +47,7 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
   // This is a bit unorthodox. Typically, hooks cannot be called in a conditional,
   // but since the checkbox won't move in and out of a group, it should be safe.
   let groupState = useContext(CheckboxGroupContext);
-  let {inputProps} = groupState
+  let {inputProps, isPressed} = groupState
     // eslint-disable-next-line react-hooks/rules-of-hooks
     ? useCheckboxGroupItem({
       ...props,
@@ -79,6 +79,9 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
     }
   }
 
+  let boxRef = useRef(null);
+  usePressScale(boxRef, isPressed);
+
   return (
     <label
       {...styleProps}
@@ -105,7 +108,7 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
           ref={inputRef}
           className={classNames(styles, 'spectrum-Checkbox-input')} />
       </FocusRing>
-      <span className={classNames(styles, 'spectrum-Checkbox-box')}>{markIcon}</span>
+      <span className={classNames(styles, 'spectrum-Checkbox-box')} ref={boxRef}>{markIcon}</span>
       {children && (
         <span className={classNames(styles, 'spectrum-Checkbox-label')}>
           {children}

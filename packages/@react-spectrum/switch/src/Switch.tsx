@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useFocusableRef, usePressScale, useStyleProps} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React, {forwardRef, useRef} from 'react';
@@ -36,8 +36,10 @@ function Switch(props: SpectrumSwitchProps, ref: FocusableRef<HTMLLabelElement>)
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useFocusableRef(ref, inputRef);
   let state = useToggleState(props);
-  let {inputProps} = useSwitch(props, state, inputRef);
+  let {inputProps, isPressed} = useSwitch(props, state, inputRef);
 
+  let switchRef = useRef();
+  usePressScale(switchRef, isPressed);
 
   return (
     <label
@@ -62,7 +64,7 @@ function Switch(props: SpectrumSwitchProps, ref: FocusableRef<HTMLLabelElement>)
           ref={inputRef}
           className={classNames(styles, 'spectrum-ToggleSwitch-input')} />
       </FocusRing>
-      <span className={classNames(styles, 'spectrum-ToggleSwitch-switch')} />
+      <span className={classNames(styles, 'spectrum-ToggleSwitch-switch')} ref={switchRef} />
       {children && (
         <span className={classNames(styles, 'spectrum-ToggleSwitch-label')}>
           {children}

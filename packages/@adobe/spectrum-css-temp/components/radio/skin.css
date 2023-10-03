@@ -13,6 +13,7 @@ governing permissions and limitations under the License.
   /* todo: fix in DNA */
   --spectrum-radio-emphasized-circle-border-color-selected-key-focus: var(--spectrum-radio-emphasized-circle-border-color-selected-hover);
 
+  --spectrum-radio-emphasized-circle-background-color: var(--spectrum-alias-background-color-default);
 }
 
 .spectrum-Radio .spectrum-Radio-input {

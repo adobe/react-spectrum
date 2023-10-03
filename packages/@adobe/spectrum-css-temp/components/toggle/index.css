@@ -60,10 +60,10 @@ governing permissions and limitations under the License.
 
   &:checked + .spectrum-ToggleSwitch-switch {
     [dir='ltr'] &::before {
-      transform: translateX(calc(var(--spectrum-switch-track-width) - 100%));
+      transform: translateX(calc(var(--spectrum-switch-track-width) - 100%)) scale(var(--scale));
     }
     [dir='rtl'] &::before {
-      transform: translateX(calc(100% - var(--spectrum-switch-track-width)));
+      transform: translateX(calc(100% - var(--spectrum-switch-track-width))) scale(var(--scale));
     }
   }
 
@@ -118,6 +118,7 @@ governing permissions and limitations under the License.
   inset-inline-end: 0;
 
   border-radius: calc(var(--spectrum-switch-track-height) / 2);
+  --scale: 1;
 
   &:before {
     display: block;
@@ -128,7 +129,8 @@ governing permissions and limitations under the License.
 
   /* :before is used for the handle of the switch */
   &:before {
-    transition: background var(--spectrum-global-animation-duration-100) ease-in-out, border var(--spectrum-global-animation-duration-100) ease-in-out, transform var(--spectrum-global-animation-duration-100) ease-in-out, box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
+    transform: scale(var(--scale));
+    transition: background var(--spectrum-global-animation-duration-100) ease-in-out, border var(--spectrum-global-animation-duration-100) ease-in-out, transform var(--spectrum-global-animation-duration-100) ease-in-out, box-shadow var(--spectrum-global-animation-duration-100) ease-in-out, transform var(--spectrum-global-animation-duration-100) ease-in-out;
 
     inline-size: var(--spectrum-switch-handle-size);
     block-size: var(--spectrum-switch-handle-size);

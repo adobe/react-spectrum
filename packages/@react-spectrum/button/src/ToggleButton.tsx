@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, SlotProvider, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, SlotProvider, useFocusableRef, usePressScale, useStyleProps} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
@@ -41,6 +41,8 @@ function ToggleButton(props: SpectrumToggleButtonProps, ref: FocusableRef<HTMLBu
   let {hoverProps, isHovered} = useHover({isDisabled});
   let {styleProps} = useStyleProps(otherProps);
   let isTextOnly = React.Children.toArray(props.children).every(c => !React.isValidElement(c));
+
+  usePressScale(domRef, isPressed);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>

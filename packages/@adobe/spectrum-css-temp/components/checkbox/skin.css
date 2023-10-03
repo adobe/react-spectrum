@@ -21,6 +21,7 @@ governing permissions and limitations under the License.
   --spectrum-checkbox-quiet-box-border-color-selected-hover: var(--spectrum-alias-toggle-color-selected-hover);
   --spectrum-checkbox-quiet-box-border-color-selected-key-focus: var(--spectrum-alias-toggle-color-selected-key-focus);
 
+  --spectrum-checkbox-emphasized-box-background-color: var(--spectrum-alias-background-color-default);
   --spectrum-checkbox-emphasized-box-background-color-selected: var(--spectrum-accent-color-900);
   --spectrum-checkbox-emphasized-box-background-color-selected-hover: var(--spectrum-accent-color-1000);
   --spectrum-checkbox-emphasized-box-background-color-selected-key-focus: var(--spectrum-accent-color-1000);

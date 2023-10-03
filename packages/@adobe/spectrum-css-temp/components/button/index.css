@@ -65,7 +65,8 @@ governing permissions and limitations under the License.
   transition: background var(--spectrum-global-animation-duration-100) ease-out,
               border-color var(--spectrum-global-animation-duration-100) ease-out,
               color var(--spectrum-global-animation-duration-100) ease-out,
-              box-shadow var(--spectrum-global-animation-duration-100) ease-out;
+              box-shadow var(--spectrum-global-animation-duration-100) ease-out,
+              transform var(--spectrum-global-animation-duration-100) ease-out;
 
   text-decoration: none;
 
@@ -80,6 +81,7 @@ governing permissions and limitations under the License.
   cursor: default;
 
   isolation: isolate;
+  transform: scale(var(--scale));
 
   &:focus {
     outline: none;
@@ -316,7 +318,8 @@ a.spectrum-ActionButton {
 
   transition: background-color var(--spectrum-global-animation-duration-100),
     box-shadow var(--spectrum-global-animation-duration-100),
-    border-color var(--spectrum-global-animation-duration-100);
+    border-color var(--spectrum-global-animation-duration-100),
+    transform var(--spectrum-global-animation-duration-100);
 
   &:disabled,
   &.is-disabled {

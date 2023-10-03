@@ -130,6 +130,9 @@ governing permissions and limitations under the License.
   inline-size: var(--spectrum-checkbox-box-size);
   block-size: var(--spectrum-checkbox-box-size);
 
+  transition: transform var(--spectrum-global-animation-duration-100) ease-out;
+  transform: scale(var(--scale));
+
   /* Fix vertical alignment when not wrapping since we're flex-start */
   margin: calc((var(--spectrum-checkbox-height) - var(--spectrum-checkbox-box-size)) / 2) 0;
 

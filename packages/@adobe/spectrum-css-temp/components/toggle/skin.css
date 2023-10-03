@@ -21,6 +21,7 @@ governing permissions and limitations under the License.
   --spectrum-switch-quiet-handle-border-color-selected-hover: var(--spectrum-alias-toggle-color-selected-hover);
   --spectrum-switch-quiet-handle-border-color-selected-key-focus: var(--spectrum-alias-toggle-color-selected-key-focus);
 
+  --spectrum-switch-emphasized-handle-background-color: var(--spectrum-alias-background-color-default);
   --spectrum-switch-emphasized-track-color-selected: var(--spectrum-accent-color-900);
   --spectrum-switch-emphasized-handle-border-color-selected: var(--spectrum-accent-color-900);
   --spectrum-switch-emphasized-track-color-selected-hover: var(--spectrum-accent-color-1000);

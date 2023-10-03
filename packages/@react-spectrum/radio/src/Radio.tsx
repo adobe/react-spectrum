@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useFocusableRef, usePressScale, useStyleProps} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React, {forwardRef, useRef} from 'react';
@@ -39,11 +39,14 @@ function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
     state
   } = radioGroupProps;
 
-  let {inputProps} = useRadio({
+  let {inputProps, isPressed} = useRadio({
     ...props,
     ...radioGroupProps,
     isDisabled
   }, state, inputRef);
+
+  let buttonRef = useRef(null);
+  usePressScale(buttonRef, isPressed);
 
   return (
     <label
@@ -71,7 +74,7 @@ function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
           ref={inputRef}
           className={classNames(styles, 'spectrum-Radio-input')} />
       </FocusRing>
-      <span className={classNames(styles, 'spectrum-Radio-button')} />
+      <span className={classNames(styles, 'spectrum-Radio-button')} ref={buttonRef} />
       {children && (
         <span className={classNames(styles, 'spectrum-Radio-label')}>
           {children}

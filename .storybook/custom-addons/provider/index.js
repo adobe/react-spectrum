@@ -2,7 +2,8 @@ import React, {useEffect, useState} from 'react';
 import addons, { makeDecorator } from '@storybook/addons';
 import {getQueryParams} from '@storybook/client-api';
 import {Provider} from '@react-spectrum/provider';
-import {expressThemes, themes, defaultTheme} from '../../constants';
+// import {expressThemes, themes, defaultTheme} from '../../constants';
+import {theme} from '@react-spectrum/theme-s2';
 
 document.body.style.margin = '0';
 
@@ -21,7 +22,7 @@ function ProviderUpdater(props) {
   let [storyReady, setStoryReady] = useState(window.parent === window || window.parent !== window.top); // reduce content flash because it takes a moment to get the provider details
   // Typically themes are provided with both light + dark, and both scales.
   // To build our selector to see all themes, we need to hack it a bit.
-  let theme = (expressValue ? expressThemes : themes)[themeValue || 'light'] || defaultTheme;
+  // let theme = (expressValue ? expressThemes : themes)[themeValue || 'light'] || defaultTheme;
   let colorScheme = themeValue && themeValue.replace(/est$/, '');
   useEffect(() => {
     let channel = addons.getChannel();

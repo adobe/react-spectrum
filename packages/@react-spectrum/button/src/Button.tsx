@@ -15,6 +15,7 @@ import {
   SlotProvider,
   useFocusableRef,
   useHasChild,
+  usePressScale,
   useSlotProps,
   useStyleProps
 } from '@react-spectrum/utils';
@@ -97,6 +98,8 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
     variant = 'primary';
     staticColor = 'white';
   }
+
+  usePressScale(domRef, isPressed);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
