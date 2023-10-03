@@ -139,6 +139,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     if (isTestEnv) {
       w = Infinity;
       h = Infinity;
+      // TODO: maybe make w/h equal to the content width and height aka always fit?
     }
 
     if (sizeToFit && contentSize.width > 0 && contentSize.height > 0) {
