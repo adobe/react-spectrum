@@ -65,7 +65,7 @@ export function useRadioGroupState(props: RadioGroupProps): RadioGroupState  {
   // Preserved here for backward compatibility. React Aria now generates the name instead of stately.
   let name = useMemo(() => props.name || `radio-group-${instance}-${++i}`, [props.name]);
   let [selectedValue, setSelected] = useControlledState(props.value, props.defaultValue, props.onChange);
-  let [lastFocusedValue, setLastFocusedValue] = useState(null);
+  let [lastFocusedValue, setLastFocusedValue] = useState<string | null>(null);
 
   let setSelectedValue = (value) => {
     if (!props.isReadOnly && !props.isDisabled) {
@@ -75,7 +75,7 @@ export function useRadioGroupState(props: RadioGroupProps): RadioGroupState  {
 
   return {
     name,
-    selectedValue,
+    selectedValue: selectedValue || null,
     setSelectedValue,
     lastFocusedValue,
     setLastFocusedValue,
