@@ -7,6 +7,7 @@ import Building from "@spectrum-icons/workflow/Building";
 import ThemeSwitcher from "./ThemeSwitcher";
 import { SelectBoxGroup, SelectBox } from "./components/SelectBoxGroup";
 import { SentimentRatingGroup } from "./components/SentimentRatingGroup";
+import { NavigationBox } from "./components/NavigationBox";
 
 export function App() {
   let [colorScheme, setColorScheme] = useState(undefined);
@@ -32,10 +33,30 @@ export function App() {
             description="For of 10 or more"
           />
         </SelectBoxGroup>
+
         <SentimentRatingGroup />
+
+        <div className="text-center">
+          <span className="text-xl font-semibold">Navigation Boxes</span>
+          <div className="flex justify-center">
+            <NavigationBox
+              href="https://adobe.com"
+              src="https://i.imgur.com/DhygPot.jpg"
+            >
+              Premium
+            </NavigationBox>
+            <NavigationBox
+              href="https://adobe.com"
+              src="https://i.imgur.com/Z7AzH2c.png"
+            >
+              Templates
+            </NavigationBox>
+          </div>
+        </div>
+
         <div className="flex justify-center">
           <div className="flex flex-col max-w-sm">
-            <label for="test-input">Native input</label>
+            <label htmlFor="test-input">Native input</label>
             <input
               id="test-input"
               className="border focus:bg-gray-200 focus:outline-none focus:border-blue-600 hover:border-blue-300"
