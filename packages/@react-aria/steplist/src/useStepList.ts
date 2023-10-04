@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Adobe. All rights reserved.
+ * Copyright 2023 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,14 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {HTMLAttributes, RefObject, useMemo} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {SpectrumStepListProps, StepListAria, StepListState} from '@react-types/steplist';
 import {StepListKeyboardDelegate} from './StepListKeyboardDelegate';
-import {useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSelectableCollection} from '@react-aria/selection';
 
 export function useStepList<T>(props: SpectrumStepListProps<T>, state: StepListState<T>, ref: RefObject<HTMLOListElement>): StepListAria {
@@ -54,13 +53,11 @@ export function useStepList<T>(props: SpectrumStepListProps<T>, state: StepListS
     scrollRef: ref
   });
 
-  console.log('collectionProps', collectionProps);
-
-  const formatMessage = useMessageFormatter(intlMessages);
+  const strings = useLocalizedStringFormatter(intlMessages);
   const listProps: HTMLAttributes<HTMLElement> = {
     ...mergeProps(collectionProps, filterDOMProps(props)),
     'aria-orientation': orientation,
-    'aria-label': ariaLabel || formatMessage('steplist'),
+    'aria-label': ariaLabel || strings.format('steplist'),
     'aria-disabled': isDisabled
   };
 

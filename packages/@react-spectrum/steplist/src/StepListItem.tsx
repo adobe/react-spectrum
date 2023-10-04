@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Adobe. All rights reserved.
+ * Copyright 2023 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -18,7 +18,7 @@ import React, {useRef} from 'react';
 import {StepListItemProps} from '@react-types/steplist';
 import styles from '@adobe/spectrum-css-temp/components/steplist/vars.css';
 import {useHover} from '@react-aria/interactions';
-import {useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useStepListItem} from '@react-aria/steplist';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
@@ -42,14 +42,14 @@ export function StepListItem<T>(props: StepListItemProps<T>) {
   const isItemDisabled = state.disabledKeys.has(itemKey);
 
   let stepStateText = '';
-  const formatMessage = useMessageFormatter(intlMessages);
+  const stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   if (isSelected) {
-    stepStateText = formatMessage('current');
+    stepStateText = stringFormatter.format('current');
   } else if (isCompleted) {
-    stepStateText = formatMessage('completed');
+    stepStateText = stringFormatter.format('completed');
   } else {
-    stepStateText = formatMessage('notCompleted');
+    stepStateText = stringFormatter.format('notCompleted');
   }
 
   return (
