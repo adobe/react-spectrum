@@ -88,7 +88,14 @@ let addVariants = (variantName, selectors, addVariant, matchVariant) => {
         : mapSelector(selectors, selector => `:merge(.group)${selector.slice(1)} &`),
     {values: {[variantName]: variantName}}
   );
-  addVariant(`peer-${variantName}`, mapSelector(selectors, selector => `:merge(.peer)${selector.slice(1)} ~ &`));
+  matchVariant(
+    'peer',
+    (_, {modifier}) =>
+      modifier
+        ? mapSelector(selectors, selector => `:merge(.peer\\/${modifier})${selector.slice(1)} ~ &`)
+        : mapSelector(selectors, selector => `:merge(.peer)${selector.slice(1)} ~ &`),
+    {values: {[variantName]: variantName}}
+  );
 };
 
 module.exports = plugin.withOptions((options) => (({addVariant, matchVariant}) => {
