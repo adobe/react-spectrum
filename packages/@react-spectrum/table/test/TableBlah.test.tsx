@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render, screen} from '@react-spectrum/test-utils';
+import {act, pointerMap, render, screen} from '@react-spectrum/test-utils';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
 import {TableTester} from '@react-aria/test-utils';
 import {theme} from '@react-spectrum/theme-default';
+import userEvent from '@testing-library/user-event';
 
 let manyItems = [];
 for (let i = 1; i <= 100; i++) {
@@ -32,6 +33,7 @@ describe('Table ', function () {
   let offsetWidth, offsetHeight;
   let onSelectionChange = jest.fn();
   let onSortChange = jest.fn();
+  let user;
 
   let TableExample = (props) => {
     let [sort, setSort] = useState({});
@@ -61,6 +63,7 @@ describe('Table ', function () {
   beforeAll(function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+    user = userEvent.setup({delay: null, pointerMap});
   });
 
   afterAll(function () {
@@ -80,7 +83,7 @@ describe('Table ', function () {
     it('basic flow with TableTester', async function () {
       render(<TableExample />);
 
-      let table = new TableTester({element: screen.getByTestId('test'), timerType: 'real'});
+      let table = new TableTester({user, element: screen.getByTestId('test'), timerType: 'real'});
 
       table.toggleRowSelection({index: 2});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
@@ -111,7 +114,7 @@ describe('Table ', function () {
     it('basic flow with TableTester (testing menu sort change and highlight selection)', async function () {
       render(<TableExample allowsResizing selectionStyle="highlight" />);
 
-      let table = new TableTester({element: screen.getByTestId('test'), timerType: 'real'});
+      let table = new TableTester({user, element: screen.getByTestId('test'), timerType: 'real'});
 
       table.toggleRowSelection({index: 2});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
@@ -148,7 +151,7 @@ describe('Table ', function () {
     it('basic flow with TableTester', async function () {
       render(<TableExample />);
 
-      let table = new TableTester({element: screen.getByTestId('test'), timerType: 'real'});
+      let table = new TableTester({user, element: screen.getByTestId('test'), timerType: 'real'});
 
       table.toggleRowSelection({index: 2});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
@@ -179,7 +182,7 @@ describe('Table ', function () {
     it('basic flow with TableTester (testing menu sort change and highlight selection)', async function () {
       render(<TableExample allowsResizing selectionStyle="highlight" />);
 
-      let table = new TableTester({element: screen.getByTestId('test'), timerType: 'real'});
+      let table = new TableTester({user, element: screen.getByTestId('test'), timerType: 'real'});
 
       table.toggleRowSelection({index: 2});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);

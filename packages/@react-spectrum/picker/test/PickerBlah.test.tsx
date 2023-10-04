@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render, screen, simulateDesktop, simulateMobile, waitFor, waitForElementToBeRemoved, within} from '@react-spectrum/test-utils';
+import {act, pointerMap, render, screen, simulateDesktop, simulateMobile, waitFor, waitForElementToBeRemoved, within} from '@react-spectrum/test-utils';
 import {Button, Label, ListBox, Popover, Item as RACItem, Select, SelectValue, Text} from 'react-aria-components';
 import {Item, Picker} from '../src';
 import {Provider} from '@react-spectrum/provider';
@@ -24,12 +24,14 @@ describe('Picker/Select ', function () {
   let offsetWidth, offsetHeight;
   let onSelectionChange = jest.fn();
   let onOpenChange = jest.fn();
+  let user;
 
   beforeAll(function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     simulateDesktop();
+    user = userEvent.setup({delay: null, pointerMap});
   });
 
   afterAll(function () {
@@ -69,8 +71,9 @@ describe('Picker/Select ', function () {
       expect(label).toBeVisible();
       expect(value).toBeVisible();
 
-      // Note: userEvent properly fires a event that is detected as a mouse click by isVirtualClick in usePress
-      userEvent.click(picker);
+      // // Note: userEvent properly fires a event that is detected as a mouse click by isVirtualClick in usePress
+      // userEvent.click(picker);
+      await user.click(picker);
 
       let listbox = await findByRole('listbox');
       expect(listbox).toBeVisible();
@@ -86,7 +89,8 @@ describe('Picker/Select ', function () {
       expect(items[2]).toHaveTextContent('Three');
       expect(document.activeElement).toBe(listbox);
 
-      userEvent.click(items[2]);
+      // userEvent.click(items[2]);
+      await user.click(items[2])
 
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenLastCalledWith('three');
@@ -110,7 +114,7 @@ describe('Picker/Select ', function () {
         </Provider>
       );
 
-      let picker = new SelectTester({element: screen.getByTestId('test'), timerType: 'real'});
+      let picker = new SelectTester({user, element: screen.getByTestId('test'), timerType: 'real'});
       await picker.selectOption('Three');
       expect(picker.trigger).toHaveTextContent('Three');
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
@@ -137,7 +141,7 @@ describe('Picker/Select ', function () {
       );
 
       // TODO: update RAC select so data-testid doesn't propagate to the button
-      let picker = new SelectTester({element: screen.getAllByTestId('test')[0], timerType: 'real'});
+      let picker = new SelectTester({user, element: screen.getAllByTestId('test')[0], timerType: 'real'});
       await picker.selectOption('Cat');
       expect(picker.trigger).toHaveTextContent('Cat');
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
@@ -155,7 +159,7 @@ describe('Picker/Select ', function () {
       jest.clearAllMocks();
     });
 
-    it('basic flow without test util helpers', function () {
+    it('basic flow without test util helpers', async function () {
       let {getAllByText, getByText, getByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" data-testid="test" onSelectionChange={onSelectionChange} onOpenChange={onOpenChange}>
@@ -178,7 +182,7 @@ describe('Picker/Select ', function () {
       expect(label).toBeVisible();
       expect(value).toBeVisible();
 
-      userEvent.click(picker);
+      await user.click(picker);
       act(() => jest.runAllTimers());
 
       let listbox = getByRole('listbox');
@@ -195,7 +199,7 @@ describe('Picker/Select ', function () {
       expect(items[2]).toHaveTextContent('Three');
       expect(document.activeElement).toBe(listbox);
 
-      userEvent.click(items[2]);
+      await user.click(items[2]);
 
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenLastCalledWith('three');
@@ -219,7 +223,7 @@ describe('Picker/Select ', function () {
         </Provider>
       );
 
-      let picker = new SelectTester({element: screen.getByTestId('test')});
+      let picker = new SelectTester({user, element: screen.getByTestId('test')});
       await picker.selectOption('Three');
       expect(picker.trigger).toHaveTextContent('Three');
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
@@ -245,7 +249,7 @@ describe('Picker/Select ', function () {
         </Select>
       );
 
-      let picker = new SelectTester({element: screen.getAllByTestId('test')[0]});
+      let picker = new SelectTester({user, element: screen.getAllByTestId('test')[0]});
       await picker.selectOption('Cat');
       expect(picker.trigger).toHaveTextContent('Cat');
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
@@ -271,7 +275,7 @@ describe('Picker/Select ', function () {
         </Provider>
       );
 
-      let picker = new SelectTester({element: screen.getByTestId('test'), timerType: 'real'});
+      let picker = new SelectTester({user, element: screen.getByTestId('test'), timerType: 'real'});
       await picker.open();
       expect(await screen.findByTestId('tray')).toContainElement(picker.listbox);
     });

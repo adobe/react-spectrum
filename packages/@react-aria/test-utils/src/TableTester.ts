@@ -11,11 +11,12 @@
  */
 
 import {act, fireEvent, waitFor, within} from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 
 interface TableOptions {
   element: HTMLElement,
-  timerType?: 'fake' | 'real'
+  timerType?: 'fake' | 'real',
+  // User from user-event 14
+  user: any
 }
 
 // TODO: move to general util file and replace our existing one with this
@@ -37,22 +38,25 @@ export class TableTester {
   timerType: 'fake' | 'real';
   rows: HTMLElement[];
   columns: HTMLElement[];
+  user: any;
   private rowgroups: HTMLElement[];
 
   constructor(opts: TableOptions) {
     let {
       element,
-      timerType = 'fake'
+      timerType = 'fake',
+      user
     } = opts;
     this.element = element;
     this.timerType = timerType;
+    this.user = user;
     // This can potentially become stale? Double check, if so replace with getters that refetch the rows and columns
     this.rowgroups = within(this.element).getAllByRole('rowgroup');
     this.columns = within(this.rowgroups[0]).getAllByRole('columnheader');
     this.rows = within(this.rowgroups[1]).getAllByRole('row');
   }
 
-  toggleRowSelection(opts: {index?: number, text?: string, needsLongPress?: boolean}) {
+  async toggleRowSelection(opts: {index?: number, text?: string, needsLongPress?: boolean}) {
     let {
       index,
       text,
@@ -71,10 +75,10 @@ export class TableTester {
 
     let rowCheckbox = within(row).queryByRole('checkbox');
     if (rowCheckbox) {
-      userEvent.click(rowCheckbox);
+      await this.user.click(rowCheckbox);
     } else {
       let cell = within(row).getAllByRole('gridcell')[0];
-      needsLongPress ? triggerLongPress(cell) : userEvent.click(cell);
+      needsLongPress ? triggerLongPress(cell) : await this.user.click(cell);
     }
   }
 
@@ -99,7 +103,7 @@ export class TableTester {
     let menuButton = within(columnheader).queryByRole('button');
     if (menuButton) {
       let currentSort = columnheader.getAttribute('aria-sort');
-      userEvent.click(menuButton);
+      await this.user.click(menuButton);
       if (this.timerType === 'fake') {
         act(() => jest.runAllTimers());
       } else {
@@ -110,9 +114,9 @@ export class TableTester {
       await waitFor(() => expect(document.getElementById(menuId)).toBeInTheDocument());
       let menu = document.getElementById(menuId);
       if (currentSort === 'ascending') {
-        userEvent.click(within(menu).getAllByRole('menuitem')[1]);
+        await this.user.click(within(menu).getAllByRole('menuitem')[1]);
       } else {
-        userEvent.click(within(menu).getAllByRole('menuitem')[0]);
+        await this.user.click(within(menu).getAllByRole('menuitem')[0]);
       }
 
       if (this.timerType === 'fake') {
@@ -122,12 +126,12 @@ export class TableTester {
       await waitFor(() => expect(document.activeElement).toBe(menuButton));
       expect(menu).not.toBeInTheDocument();
     } else {
-      userEvent.click(columnheader);
+      await this.user.click(columnheader);
     }
   }
 
-  toggleSelectAll() {
+  async toggleSelectAll() {
     let checkbox = within(this.element).getByLabelText('Select All');
-    userEvent.click(checkbox);
+    await this.user.click(checkbox);
   }
 }

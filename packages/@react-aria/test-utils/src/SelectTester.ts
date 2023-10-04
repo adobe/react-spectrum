@@ -11,12 +11,13 @@
  */
 
 import {act, waitFor, within} from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 
 interface SelectOptions {
   // TODO: maybe accept a selector instead? will we ever need to refresh the node in case it becomes stale?
   element: HTMLElement,
-  timerType?: 'fake' | 'real'
+  timerType?: 'fake' | 'real',
+  // User from user-event 14
+  user: any
 }
 
 // TODO: replace with updated userEvent stuff
@@ -25,15 +26,22 @@ export class SelectTester {
   timerType: 'fake' | 'real';
   trigger: HTMLElement;
   listbox: HTMLElement;
+  user: any; // TODO: import UserEvent type from user event library
 
   constructor(opts: SelectOptions) {
     let {
       element,
-      timerType = 'fake'
+      timerType = 'fake',
+      user
     } = opts;
     this.element = element;
     this.timerType = timerType;
+    this.user = user;
   }
+
+  // TODO: Refactor and pull out all of these in favor of creating a user object that a user can import.
+  // TODO: Can determing whether we are using real vs fake timers based on what the end user passes to https://testing-library.com/docs/user-event/options/#advancetimers
+  // alternatively, maybe can just support fake timers and manually enable fake timers in our util funcs and disabled them after the func call?
 
   // TODO: Do we really need a discrete open function or should it all be put into selectOption? Figure the user might want to run assertions
   // on the open dropdown perhaps
@@ -45,7 +53,7 @@ export class SelectTester {
     }
     this.trigger = triggerButton;
 
-    userEvent.click(triggerButton);
+    await this.user.click(triggerButton);
     if (this.timerType === 'fake') {
       act(() => jest.runAllTimers());
     } else {
@@ -60,7 +68,7 @@ export class SelectTester {
     await this.open();
     // TODO: what if the user needs to scroll the list to find the option? What if there are multiple matches for text (hopefully the picker options are pretty unique)
     let option = within(this.listbox).getByText(optionText);
-    userEvent.click(option);
+    await this.user.click(option);
     if (this.timerType === 'fake') {
       act(() => jest.runAllTimers());
     }
