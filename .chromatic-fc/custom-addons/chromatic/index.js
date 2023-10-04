@@ -8,15 +8,15 @@ export const withChromaticProvider = makeDecorator({
   name: 'withChromaticProvider',
   parameterName: 'chromaticProvider',
   wrapper: (getStory, context, {options, parameters}) => {
-    options = {...options, ...parameters};
+    options = {express: false, ...options, ...parameters};
     let selectedLocales
     if (options.locales && options.locales.length) {
       selectedLocales = options.locales;
     } else {
-      selectedLocales = options.locales ? locales.map(l => l.value).slice(1) : ['en-US', 'ar-AE'];
+      selectedLocales = options.locales ? locales.map(l => l.value).slice(1) : ['en-US'];
     }
-    let colorSchemes = options.express ? [] : (options.colorSchemes || Object.keys(themes));
-    let scalesToRender = options.scales || Object.keys(scales);
+    let colorSchemes = options.express ? [] : (options.colorSchemes || ['light']);
+    let scalesToRender = options.scales || ['medium'];
     let height;
     let minHeight;
     if(isNaN(options.height)) {

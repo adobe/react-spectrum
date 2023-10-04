@@ -22,11 +22,6 @@ export const parameters = {
   chromatic: {forcedColors: 'active'}
 };
 
-// export const options = {
-//   locales: ['en-US'],
-//   scales: ['medium']
-// };
-
 export const decorators = [
   story => (
     <VerticalCenter style={{alignItems: 'center', minHeight: null, boxSizing: 'border-box', display: 'flex', justifyContent: 'center'}}>
