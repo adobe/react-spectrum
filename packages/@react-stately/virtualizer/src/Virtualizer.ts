@@ -657,11 +657,14 @@ export class Virtualizer<T extends object, V, W> {
   }
 
   getVisibleLayoutInfos() {
+    // TODO: move this check to somewhere common so it can be shared? Double check that this is the route we wanna go
     let isTestEnv = process.env.NODE_ENV === 'test';
+    let prototype = Object.getPrototypeOf(window.HTMLElement.prototype);
+    let isClientWidthMocked = Object.getOwnPropertyDescriptor(prototype, 'clientWidth');
+    let isClientHeightMocked = Object.getOwnPropertyDescriptor(prototype, 'clientHeight');
+
     let rect;
-    if (isTestEnv) {
-      // TODO: perhaps replace with getContentRect so that scrollView can set the proper mocked rect if need be?
-      // rect = new Rect(0, 0, Infinity, Infinity);
+    if (isTestEnv && !(isClientWidthMocked && isClientHeightMocked)) {
       rect = this._getContentRect();
     } else {
       rect = this.shouldOverscan ? this._overscanManager.getOverscannedRect() : this.getVisibleRect();

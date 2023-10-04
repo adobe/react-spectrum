@@ -59,9 +59,9 @@ describe('ListView', function () {
 
   beforeAll(function () {
     user = userEvent.setup({delay: null, pointerMap});
-    // offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
-    // offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
-    // scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 40);
+    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
+    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+    scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 40);
     jest.useFakeTimers();
   });
 
@@ -72,9 +72,9 @@ describe('ListView', function () {
   });
 
   afterAll(function () {
-    // offsetWidth.mockReset();
-    // offsetHeight.mockReset();
-    // scrollHeight.mockReset();
+    offsetWidth.mockReset();
+    offsetHeight.mockReset();
+    scrollHeight.mockReset();
   });
 
   let render = (children, locale = 'en-US', scale = 'medium') => {
@@ -464,8 +464,7 @@ describe('ListView', function () {
       });
     });
 
-    // TODO: skip since we are rendering all rows now
-    describe.skip('PageUp', function () {
+    describe('PageUp', function () {
       it('should move focus to a row a page above when focus starts on a row', function () {
         let tree = renderListWithFocusables({items: manyItems, selectionMode: 'single'});
         let start = getRow(tree, 'Foo 25');
@@ -485,8 +484,7 @@ describe('ListView', function () {
       });
     });
 
-    // TODO: skip since we are rendering all rows now
-    describe.skip('PageDown', function () {
+    describe('PageDown', function () {
       it('should move focus to a row a page below when focus starts on a row', async function () {
         let tree = renderListWithFocusables({items: manyItems, selectionMode: 'single'});
         await user.tab();
@@ -495,7 +493,6 @@ describe('ListView', function () {
         moveFocus('PageDown');
         expect(document.activeElement).toBe(getRow(tree, 'Foo 49'));
       });
-
 
       it('should move focus to a row a page below when focus starts in the row cell', function () {
         let tree = renderListWithFocusables({items: manyItems});
@@ -609,8 +606,7 @@ describe('ListView', function () {
     });
   });
 
-  // TODO: skip due to explicit check on listview height
-  it.skip('should display loading affordance with proper height (isLoading)', function () {
+  it('should display loading affordance with proper height (isLoading)', function () {
     let {getAllByRole} = render(<ListView aria-label="List" loadingState="loading">{[]}</ListView>);
     let row = getAllByRole('row')[0];
     expect(row.parentNode.style.height).toBe('1000px');
@@ -1393,8 +1389,7 @@ describe('ListView', function () {
   });
 
   describe('scrolling', function () {
-    // TODO: skip since has reliance on clientHeight mock
-    it.skip('should scroll to a row when it is focused', async function () {
+    it('should scroll to a row when it is focused', async function () {
       let tree = render(
         <ListView
           width="250px"
@@ -1443,8 +1438,7 @@ describe('ListView', function () {
       expect(grid.scrollTop).toBe(0);
     });
 
-    // TODO: skip since has reliance on clientHeight mock
-    it.skip('should scroll to a row when it is focused', function () {
+    it('should scroll to a row when it is focused', function () {
       let tree = render(
         <ListView
           width="250px"

@@ -40,9 +40,7 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
 // the sizes, they are instead more like the default values that the controlling logic uses
 // 2. defaultWidth function and minDefaultWidth passed must be the same in any implementation using
 // these tests, or the values will be wrong, if those functions were exposed we could generalize, but seems like a lot just for testing
-// TODO: many of the resizing tests fail if we provide an infinite content size to ScrollView because they operate off of percentages for column widths
-// resulting in NaN or Infinity
-  describe.skip('Resizing', () => {
+  describe('Resizing', () => {
     installPointerEvent();
     let clientWidth, clientHeight;
     let onResize;

@@ -143,14 +143,14 @@ export let tableTests = () => {
 
   beforeAll(function () {
     user = userEvent.setup({delay: null, pointerMap});
-    // offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
-    // offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
+    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     jest.useFakeTimers();
   });
 
   afterAll(function () {
-    // offsetWidth.mockReset();
-    // offsetHeight.mockReset();
+    offsetWidth.mockReset();
+    offsetHeight.mockReset();
   });
 
   afterEach(() => {
@@ -213,7 +213,7 @@ export let tableTests = () => {
         </TableBody>
       </TableView>
     );
-      // console.log('window', window.HTMLElement.prototype.clientHeight);
+
     let grid = getByRole('grid');
     expect(grid).toBeVisible();
     expect(grid).toHaveAttribute('aria-label', 'Table');
@@ -1252,8 +1252,7 @@ export let tableTests = () => {
       });
     });
 
-    // TODO: skip pageup/down cuz it is dependent on clientHight being mocked and doesn't work the same if we render all rows
-    describe.skip('PageDown', function () {
+    describe('PageDown', function () {
       it('should focus the cell a page below', function () {
         let tree = renderMany();
         focusCell(tree, 'Foo 1');
@@ -1285,7 +1284,7 @@ export let tableTests = () => {
       });
     });
 
-    describe.skip('PageUp', function () {
+    describe('PageUp', function () {
       it('should focus the cell a page above', function () {
         let tree = renderMany();
         focusCell(tree, 'Foo 25');
@@ -1435,8 +1434,7 @@ export let tableTests = () => {
         expect(document.activeElement).toBe(getCell(tree, 'Sam'));
       });
 
-      // TODO: the below tests rely on the height mocks and thus shouldn't be altered to work without them
-      describe.skip('type ahead with dialog triggers', function () {
+      describe('type ahead with dialog triggers', function () {
         beforeEach(function () {
           offsetHeight.mockRestore();
           offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
@@ -1779,8 +1777,7 @@ export let tableTests = () => {
       });
     });
 
-    // TODO: ignore since scroll position won't really work if you don't mock client height/width
-    describe.skip('scrolling', function () {
+    describe('scrolling', function () {
       it('should scroll to a cell when it is focused', function () {
         let tree = renderMany();
         let body = tree.getByRole('grid').childNodes[1];
@@ -2281,8 +2278,7 @@ export let tableTests = () => {
         checkSelection(onSelectionChange, expected);
       });
 
-      // TODO: skip because pageDown tests rely on client height
-      it.skip('should extend a selection with Shift + PageDown', function () {
+      it('should extend a selection with Shift + PageDown', function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
 
@@ -4129,8 +4125,7 @@ export let tableTests = () => {
       expect(within(table).queryByRole('progressbar')).toBeNull();
     });
 
-    // TODO: skip since we are rendering all 100 rows
-    it.skip('should fire onLoadMore when scrolling near the bottom', function () {
+    it('should fire onLoadMore when scrolling near the bottom', function () {
       let items = [];
       for (let i = 1; i <= 100; i++) {
         items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});

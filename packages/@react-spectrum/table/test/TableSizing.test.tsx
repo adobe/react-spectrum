@@ -78,9 +78,7 @@ let rerender = (tree, children, scale: Scale = 'medium') => {
   act(() => {jest.runAllTimers();});
   return newTree;
 };
-// TODO: many of the resizing tests fail if we provide an infinite content size to ScrollView because they operate off of percentages for column widths
-// resulting in NaN or Infinity
-describe.skip('TableViewSizing', function () {
+describe('TableViewSizing', function () {
   let offsetWidth, offsetHeight;
   let user;
 
