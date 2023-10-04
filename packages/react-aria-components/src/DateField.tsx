@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaDateFieldProps, AriaTimeFieldProps, DateValue, mergeProps, TimeValue, useDateField, useDateSegment, useLocale, useTimeField} from 'react-aria';
+import {AriaDateFieldProps, AriaTimeFieldProps, DateValue, mergeProps, TimeValue, useDateField, useDateSegment, useFocusRing, useHover, useLocale, useTimeField} from 'react-aria';
 import {ContextValue, forwardRefType, Provider, removeDataAttributes, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {createCalendar} from '@internationalized/date';
 import {DateFieldState, DateSegmentType, DateSegment as IDateSegment, TimeFieldState, useDateFieldState, useTimeFieldState} from 'react-stately';
@@ -249,6 +249,21 @@ export {_DateInput as DateInput};
 
 export interface DateSegmentRenderProps extends Omit<IDateSegment, 'isEditable'> {
   /**
+   * Whether the segment is currently hovered with a mouse.
+   * @selector [data-hovered]
+   */
+  isHovered: boolean,
+  /**
+   * Whether the segment is focused, either via a mouse or keyboard.
+   * @selector [data-focused]
+   */
+  isFocused: boolean,
+  /**
+   * Whether the segment is keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
    * Whether the value is a placeholder.
    * @selector [data-placeholder]
    */
@@ -280,26 +295,35 @@ function DateSegment({segment, ...otherProps}: DateSegmentProps, ref: ForwardedR
   let state = dateFieldState ?? timeFieldState!;
   let domRef = useObjectRef(ref);
   let {segmentProps} = useDateSegment(segment, state, domRef);
+  let {focusProps, isFocused, isFocusVisible} = useFocusRing();
+  let {hoverProps, isHovered} = useHover({isDisabled: state.isDisabled || segment.type === 'literal'});
   let renderProps = useRenderProps({
     ...otherProps,
     values: {
       ...segment,
       isReadOnly: !segment.isEditable,
-      isInvalid: state.isInvalid
+      isInvalid: state.isInvalid,
+      isHovered,
+      isFocused,
+      isFocusVisible
     },
     defaultChildren: segment.text,
     defaultClassName: 'react-aria-DateSegment'
   });
 
+
   return (
     <div
-      {...mergeProps(filterDOMProps(otherProps as any), segmentProps)}
+      {...mergeProps(filterDOMProps(otherProps as any), segmentProps, focusProps, hoverProps)}
       {...renderProps}
       ref={domRef}
       data-placeholder={segment.isPlaceholder || undefined}
       data-invalid={state.isInvalid || undefined}
       data-readonly={!segment.isEditable || undefined}
-      data-type={segment.type} />
+      data-type={segment.type}
+      data-hovered={isHovered || undefined}
+      data-focused={isFocused || undefined}
+      data-focus-visible={isFocusVisible || undefined} />
   );
 }
 
