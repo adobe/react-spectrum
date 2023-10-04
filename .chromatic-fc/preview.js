@@ -19,7 +19,10 @@ export const parameters = {
   },
   a11y: {},
   layout: 'fullscreen',
-  chromatic: {forcedColors: 'active'}
+  chromatic: {
+    forcedColors: 'active',
+    prefersColorScheme: 'dark'
+  }
 };
 
 export const decorators = [
