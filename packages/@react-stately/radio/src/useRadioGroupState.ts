@@ -42,7 +42,7 @@ export interface RadioGroupState {
   readonly isInvalid: boolean,
 
   /** The currently selected value. */
-  readonly selectedValue: string | null,
+  readonly selectedValue: string | null | undefined,
 
   /** Sets the selected value. */
   setSelectedValue(value: string): void,
@@ -75,7 +75,7 @@ export function useRadioGroupState(props: RadioGroupProps): RadioGroupState  {
 
   return {
     name,
-    selectedValue: selectedValue || null,
+    selectedValue: selectedValue,
     setSelectedValue,
     lastFocusedValue,
     setLastFocusedValue,

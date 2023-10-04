@@ -45,10 +45,12 @@
           "./packages/@react-spectrum/illustratedmessage",
           "./packages/@react-spectrum/image",
           "./packages/@react-spectrum/meter",
+          "./packages/@react-spectrum/radio",
           "./packages/@react-spectrum/statuslight",
           "./packages/@react-spectrum/text",
           "./packages/@react-spectrum/view",
           "./packages/@react-spectrum/well",
+          "./packages/@react-stately/radio",
           "./packages/@react-stately/utils",
           "./packages/@react-types/a",
           "./packages/@react-types/b",
@@ -63,9 +65,7 @@
           "./packages/@react-types/text",
           "./packages/@react-types/view",
           "./packages/@react-types/well",
-          "./packages/react-aria-components",
-          "./packages/@react-spectrum/radio",
-          "./packages/@react-stately/radio"
+          "./packages/react-aria-components"
         ]
       }
     ]
