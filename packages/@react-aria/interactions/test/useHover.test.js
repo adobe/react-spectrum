@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, installMouseEvent, installPointerEvent, render} from '@react-spectrum/test-utils';
 import {ActionButton} from '@react-spectrum/button';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
-import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
 import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -38,7 +37,7 @@ function pointerEvent(type, opts) {
 
 describe('useHover', function () {
   beforeAll(() => {
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   it('does not handle hover events if disabled', function () {
@@ -531,10 +530,7 @@ describe('useHover', function () {
     }
 
     beforeAll(() => {
-      jest.useFakeTimers('legacy');
-    });
-    afterAll(() => {
-      jest.useRealTimers();
+      jest.useFakeTimers();
     });
 
     let matchMedia;
@@ -548,9 +544,9 @@ describe('useHover', function () {
       // Ensure we close any dialogs before unmounting to avoid warning.
       let dialog = document.querySelector('[role="dialog"]');
       if (dialog) {
+        fireEvent.keyDown(dialog, {key: 'Escape'});
+        fireEvent.keyUp(dialog, {key: 'Escape'});
         act(() => {
-          fireEvent.keyDown(dialog, {key: 'Escape'});
-          fireEvent.keyUp(dialog, {key: 'Escape'});
           jest.runAllTimers();
         });
       }

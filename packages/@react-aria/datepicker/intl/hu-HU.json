@@ -1,9 +1,5 @@
 {
   "calendar": "Naptár",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "{start, date, long} – {end, date, long}",
-  "date": "Dátum",
-  "dateRange": "Dátumtartomány",
   "day": "nap",
   "dayPeriod": "napszak",
   "endDate": "Befejező dátum",
@@ -12,8 +8,11 @@
   "minute": "perc",
   "month": "hónap",
   "second": "másodperc",
+  "selectedDateDescription": "Kijelölt dátum: {date}",
+  "selectedRangeDescription": "Kijelölt tartomány: {startDate}–{endDate}",
+  "selectedTimeDescription": "Kijelölt idő: {time}",
   "startDate": "Kezdő dátum",
-  "year": "év",
+  "timeZoneName": "időzóna",
   "weekday": "hét napja",
-  "timeZoneName": "időzóna"
+  "year": "év"
 }

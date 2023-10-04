@@ -1,9 +1,5 @@
 {
   "calendar": "Kalender",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "{start, date, long} til {end, date, long}",
-  "date": "Dato",
-  "dateRange": "Datointerval",
   "day": "dag",
   "dayPeriod": "AM/PM",
   "endDate": "Slutdato",
@@ -12,8 +8,11 @@
   "minute": "minut",
   "month": "måned",
   "second": "sekund",
+  "selectedDateDescription": "Valgt dato: {date}",
+  "selectedRangeDescription": "Valgt interval: {startDate} til {endDate}",
+  "selectedTimeDescription": "Valgt tidspunkt: {time}",
   "startDate": "Startdato",
-  "year": "år",
+  "timeZoneName": "tidszone",
   "weekday": "ugedag",
-  "timeZoneName": "tidszone"
+  "year": "år"
 }

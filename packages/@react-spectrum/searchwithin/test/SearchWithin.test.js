@@ -9,14 +9,15 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {act, render} from '@testing-library/react';
+import {act, pointerMap, render, triggerPress} from '@react-spectrum/test-utils';
+import Filter from '@spectrum-icons/workflow/Filter';
 import {Item, Picker} from '@react-spectrum/picker';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {SearchWithin} from '../src';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress, typeText} from '@react-spectrum/test-utils';
+import userEvent from '@testing-library/user-event';
 
 let defaultProps = {
   label: 'Test'
@@ -26,7 +27,7 @@ function renderSearchWithin(props = {}, searchFieldProps = {}, pickerProps = {})
   return render(
     <Provider theme={theme}>
       <SearchWithin {...defaultProps} {...props}>
-        <SearchField placeholder="Search" {...searchFieldProps} />
+        <SearchField {...searchFieldProps} />
         <Picker defaultSelectedKey="all" {...pickerProps}>
           <Item key="all">All</Item>
           <Item key="campaigns">Campaigns</Item>
@@ -39,8 +40,11 @@ function renderSearchWithin(props = {}, searchFieldProps = {}, pickerProps = {})
 }
 
 describe('SearchWithin', function () {
+  let user;
+
   beforeAll(function () {
-    jest.useFakeTimers('legacy');
+    user = userEvent.setup({delay: null, pointerMap});
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -67,14 +71,26 @@ describe('SearchWithin', function () {
     expect(label).toBeVisible();
   });
 
-  it('can type in search and get onChange', function () {
+  it('should support custom icon', function () {
+    let {getByTestId} = renderSearchWithin({}, {icon: <Filter data-testid="filtericon" />});
+
+    expect(getByTestId('filtericon')).toBeTruthy();
+  });
+
+  it('should support no icon', function () {
+    let {queryByTestId} = renderSearchWithin({}, {icon: null});
+
+    expect(queryByTestId('searchicon')).toBeNull();
+  });
+
+  it('can type in search and get onChange', async function () {
     let onChange = jest.fn();
     let {getByRole} = renderSearchWithin({}, {onChange});
     let searchfield = getByRole('searchbox');
     expect(searchfield).toHaveAttribute('value', '');
 
     act(() => {searchfield.focus();});
-    typeText(searchfield, 'test search');
+    await user.keyboard('test search');
     act(() => {searchfield.blur();});
     expect(searchfield).toHaveAttribute('value', 'test search');
     expect(onChange).toBeCalledTimes(11);
@@ -94,17 +110,18 @@ describe('SearchWithin', function () {
   });
 
   it('searchfield and picker are labelled correctly', function () {
-    let {getByRole, getAllByText} = renderSearchWithin();
+    let {getByRole, getAllByText, getByText} = renderSearchWithin();
 
     let searchfield = getByRole('searchbox');
     let picker = getByRole('button');
     let group = getByRole('group');
+    let hiddenLabel = getByText('Search within');
     triggerPress(picker);
 
     let listbox = getByRole('listbox');
     let label = getAllByText('Test')[0];
-    expect(listbox).toHaveAttribute('aria-labelledby', `${label.id} ${picker.id}`);
-    expect(searchfield).toHaveAttribute('aria-labelledby', `${label.id} ${picker.id} ${picker.childNodes[0].id}`);
+    expect(listbox).toHaveAttribute('aria-labelledby', `${label.id} ${hiddenLabel.id}`);
+    expect(searchfield).toHaveAttribute('aria-labelledby', `${label.id} ${hiddenLabel.id} ${picker.id}`);
     expect(group).toHaveAttribute('aria-labelledby', label.id);
   });
 
@@ -135,7 +152,7 @@ describe('SearchWithin', function () {
   });
 
   it('slot props override props provided to children', function () {
-    let {getByRole, getAllByText} = renderSearchWithin(
+    let {getByRole, getAllByText, getByText} = renderSearchWithin(
       {isDisabled: true, isRequired: false, label: 'Test1'},
       {isDisabled: false, isRequired: true, label: 'Test2', isQuiet: true},
       {isDisabled: false, isRequired: true, label: 'Test3', isQuiet: true}
@@ -144,6 +161,7 @@ describe('SearchWithin', function () {
     let searchfield = getByRole('searchbox');
     let picker = getByRole('button');
     let group = getByRole('group');
+    let hiddenLabel = getByText('Search within');
     triggerPress(picker);
     let label = getAllByText('Test1')[0];
 
@@ -152,7 +170,7 @@ describe('SearchWithin', function () {
 
     expect(searchfield).not.toHaveAttribute('aria-required');
 
-    expect(searchfield).toHaveAttribute('aria-labelledby', `${label.id} ${picker.id} ${picker.childNodes[0].id}`);
+    expect(searchfield).toHaveAttribute('aria-labelledby', `${label.id} ${hiddenLabel.id} ${picker.id}`);
     expect(group).toHaveAttribute('aria-labelledby', label.id);
 
     expect(searchfield.classList.contains('is-quiet')).toBeFalsy();
@@ -162,17 +180,18 @@ describe('SearchWithin', function () {
 
 describe('SearchWithin labeling', function () {
   it('no label - default', function () {
-    let {getByRole} = renderSearchWithin({label: undefined});
+    let {getByRole, getByText} = renderSearchWithin({label: undefined});
 
     let group = getByRole('group');
     let searchfield = getByRole('searchbox');
     let picker = getByRole('button');
+    let hiddenLabel = getByText('Search within');
 
     expect(group).toHaveAttribute('aria-label', 'Search');
 
     expect(group).not.toHaveAttribute('aria-labelledby');
-    expect(searchfield).toHaveAttribute('aria-labelledby', `${picker.id} ${picker.childNodes[0].id}`);
-    expect(picker).toHaveAttribute('aria-labelledby', `${picker.id} ${picker.childNodes[0].id}`);
+    expect(searchfield).toHaveAttribute('aria-labelledby', `${hiddenLabel.id} ${picker.id}`);
+    expect(picker).toHaveAttribute('aria-labelledby', `${picker.childNodes[0].id} ${hiddenLabel.id}`);
   });
 
   it('label = foo', function () {
@@ -182,38 +201,40 @@ describe('SearchWithin labeling', function () {
     let searchfield = getByRole('searchbox');
     let picker = getByRole('button');
     let label = getByText('foo');
+    let hiddenLabel = getByText('Search within');
 
     expect(group).not.toHaveAttribute('aria-label');
 
     expect(group).toHaveAttribute('aria-labelledby', label.id);
-    expect(searchfield).toHaveAttribute('aria-labelledby', `${label.id} ${picker.id} ${picker.childNodes[0].id}`);
-    expect(picker).toHaveAttribute('aria-labelledby', `${label.id} ${picker.id} ${picker.childNodes[0].id}`);
+    expect(searchfield).toHaveAttribute('aria-labelledby', `${label.id} ${hiddenLabel.id} ${picker.id}`);
+    expect(picker).toHaveAttribute('aria-labelledby', `${picker.childNodes[0].id} ${label.id} ${hiddenLabel.id}`);
 
     expect(label).toHaveAttribute('for', searchfield.id);
   });
 
   it('aria-label = bar', function () {
-    let {getByRole} = renderSearchWithin({'aria-label': 'bar', label: undefined});
+    let {getByRole, getByText} = renderSearchWithin({'aria-label': 'bar', label: undefined});
 
     let group = getByRole('group');
     let searchfield = getByRole('searchbox');
     let picker = getByRole('button');
+    let hiddenLabel = getByText('Search within');
 
     expect(group).toHaveAttribute('aria-label', 'bar');
 
     expect(group).not.toHaveAttribute('aria-labelledby');
-    expect(searchfield).toHaveAttribute('aria-labelledby', `${group.id} ${picker.id} ${picker.childNodes[0].id}`);
-    expect(picker).toHaveAttribute('aria-labelledby', `${group.id} ${picker.id} ${picker.childNodes[0].id}`);
+    expect(searchfield).toHaveAttribute('aria-labelledby', `${group.id} ${hiddenLabel.id} ${picker.id}`);
+    expect(picker).toHaveAttribute('aria-labelledby', `${picker.childNodes[0].id} ${group.id} ${hiddenLabel.id}`);
   });
 
   it('aria-labelledby = {id}', function () {
-    let {getByRole} = render(
+    let {getByRole, getByText} = render(
       <Provider theme={theme}>
         <label id="id-foo-label" htmlFor="id-searchfield">
           Foo
         </label>
         <SearchWithin aria-labelledby="id-foo-label">
-          <SearchField id="id-searchfield" placeholder="Search"  />
+          <SearchField id="id-searchfield" />
           <Picker defaultSelectedKey="all">
             <Item key="all">All</Item>
             <Item key="campaigns">Campaigns</Item>
@@ -227,12 +248,13 @@ describe('SearchWithin labeling', function () {
     let group = getByRole('group');
     let searchfield = getByRole('searchbox');
     let picker = getByRole('button');
+    let hiddenLabel = getByText('Search within');
 
     expect(group).not.toHaveAttribute('aria-label');
 
     expect(group).toHaveAttribute('aria-labelledby', 'id-foo-label');
-    expect(searchfield).toHaveAttribute('aria-labelledby', `id-foo-label ${picker.id} ${picker.childNodes[0].id}`);
+    expect(searchfield).toHaveAttribute('aria-labelledby', `id-foo-label ${hiddenLabel.id} ${picker.id}`);
     expect(searchfield).toHaveAttribute('id', 'id-searchfield');
-    expect(picker).toHaveAttribute('aria-labelledby', `id-foo-label ${picker.id} ${picker.childNodes[0].id}`);
+    expect(picker).toHaveAttribute('aria-labelledby', `${picker.childNodes[0].id} id-foo-label ${hiddenLabel.id}`);
   });
 });

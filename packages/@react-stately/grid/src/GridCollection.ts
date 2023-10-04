@@ -94,8 +94,7 @@ export class GridCollection<T> implements IGridCollection<T> {
         childNodes: [...node.childNodes],
         rendered: undefined,
         textValue: undefined,
-        ...node,
-        index: i
+        ...node
       } as GridNode<T>;
 
       if (last) {
@@ -154,5 +153,10 @@ export class GridCollection<T> implements IGridCollection<T> {
   at(idx: number) {
     const keys = [...this.getKeys()];
     return this.getItem(keys[idx]);
+  }
+
+  getChildren(key: Key): Iterable<GridNode<T>> {
+    let node = this.keyMap.get(key);
+    return node?.childNodes || [];
   }
 }

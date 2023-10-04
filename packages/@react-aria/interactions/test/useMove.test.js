@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
-import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
+import {act, fireEvent, installMouseEvent, installPointerEvent, render} from '@react-spectrum/test-utils';
 import React from 'react';
 import {useMove} from '../';
 
@@ -24,13 +23,7 @@ function Example(props) {
 
 describe('useMove', function () {
   beforeAll(() => {
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
-    jest.useFakeTimers('legacy');
-  });
-
-  afterEach(() => {
-    // for restoreTextSelection
-    jest.runAllTimers();
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -427,4 +420,3 @@ describe('useMove', function () {
     });
   });
 });
-

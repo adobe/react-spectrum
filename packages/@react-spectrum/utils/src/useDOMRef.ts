@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMRef, DOMRefValue, FocusableRef, FocusableRefValue} from '@react-types/shared';
+import {DOMRef, DOMRefValue, FocusableElement, FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {RefObject, useImperativeHandle, useMemo, useRef} from 'react';
 
 export function createDOMRef<T extends HTMLElement = HTMLElement>(ref: RefObject<T>): DOMRefValue<T> {
@@ -21,7 +21,7 @@ export function createDOMRef<T extends HTMLElement = HTMLElement>(ref: RefObject
   };
 }
 
-export function createFocusableRef<T extends HTMLElement = HTMLElement>(domRef: RefObject<T>, focusableRef: RefObject<HTMLElement> = domRef): FocusableRefValue<T> {
+export function createFocusableRef<T extends HTMLElement = HTMLElement>(domRef: RefObject<T>, focusableRef: RefObject<FocusableElement> = domRef): FocusableRefValue<T> {
   return {
     ...createDOMRef(domRef),
     focus() {
@@ -38,7 +38,7 @@ export function useDOMRef<T extends HTMLElement = HTMLElement>(ref: DOMRef<T>): 
   return domRef;
 }
 
-export function useFocusableRef<T extends HTMLElement = HTMLElement>(ref: FocusableRef<T>, focusableRef?: RefObject<HTMLElement>): RefObject<T> {
+export function useFocusableRef<T extends HTMLElement = HTMLElement>(ref: FocusableRef<T>, focusableRef?: RefObject<FocusableElement>): RefObject<T> {
   let domRef = useRef<T>(null);
   useImperativeHandle(ref, () => createFocusableRef(domRef, focusableRef));
   return domRef;

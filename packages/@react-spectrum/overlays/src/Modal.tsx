@@ -10,41 +10,37 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaModalOverlayProps, useModalOverlay} from '@react-aria/overlays';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
-import {mergeProps, useViewportSize} from '@react-aria/utils';
-import {ModalProps} from '@react-types/overlays';
+import {DOMRef, StyleProps} from '@react-types/shared';
 import modalStyles from '@adobe/spectrum-css-temp/components/modal/vars.css';
 import {Overlay} from './Overlay';
+import {OverlayProps} from '@react-types/overlays';
+import {OverlayTriggerState} from '@react-stately/overlays';
 import overrideStyles from './overlays.css';
-import React, {forwardRef, HTMLAttributes, ReactNode, RefObject} from 'react';
+import React, {forwardRef, MutableRefObject, ReactNode, RefObject, useRef} from 'react';
 import {Underlay} from './Underlay';
-import {useModal, useOverlay, usePreventScroll} from '@react-aria/overlays';
+import {useViewportSize} from '@react-aria/utils';
 
-interface ModalWrapperProps extends HTMLAttributes<HTMLElement> {
+interface ModalProps extends AriaModalOverlayProps, StyleProps, Omit<OverlayProps, 'nodeRef' | 'shouldContainFocus'> {
   children: ReactNode,
+  state: OverlayTriggerState,
+  type?: 'modal' | 'fullscreen' | 'fullscreenTakeover'
+}
+
+interface ModalWrapperProps extends ModalProps {
   isOpen?: boolean,
-  onClose?: () => void,
-  type?: 'modal' | 'fullscreen' | 'fullscreenTakeover',
-  overlayProps: HTMLAttributes<HTMLElement>
+  wrapperRef: MutableRefObject<HTMLDivElement>
 }
 
 function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
-  let {children, onClose, type, ...otherProps} = props;
+  let {children, state, ...otherProps} = props;
   let domRef = useDOMRef(ref);
-  let {styleProps} = useStyleProps(props);
-
-  let {overlayProps, underlayProps} = useOverlay(props, domRef);
+  let wrapperRef = useRef<HTMLDivElement>(null);
 
   return (
-    <Overlay {...otherProps}>
-      <Underlay {...underlayProps} />
-      <ModalWrapper
-        {...styleProps}
-        onClose={onClose}
-        type={type}
-        ref={domRef}
-        overlayProps={overlayProps}>
+    <Overlay {...otherProps} isOpen={state.isOpen} nodeRef={wrapperRef}>
+      <ModalWrapper {...props} wrapperRef={wrapperRef} ref={domRef}>
         {children}
       </ModalWrapper>
     </Overlay>
@@ -57,12 +53,10 @@ let typeMap = {
 };
 
 let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject<HTMLDivElement>) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {children, isOpen, type, overlayProps, ...otherProps} = props;
+  let {type, children, state, isOpen, wrapperRef} = props;
   let typeVariant = typeMap[type];
-
-  usePreventScroll();
-  let {modalProps} = useModal();
+  let {styleProps} = useStyleProps(props);
+  let {modalProps, underlayProps} = useModalOverlay(props, state, ref);
 
   let wrapperClassName = classNames(
     modalStyles,
@@ -86,7 +80,7 @@ let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject
       'react-spectrum-Modal'
     ),
     {[`spectrum-Modal--${typeVariant}`]: typeVariant},
-    otherProps.className
+    styleProps.className
   );
 
   let viewport = useViewportSize();
@@ -94,14 +88,19 @@ let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject
     '--spectrum-visual-viewport-height': viewport.height + 'px'
   };
 
+  // Attach Transition's nodeRef to outer most wrapper for node.reflow: https://github.com/reactjs/react-transition-group/blob/c89f807067b32eea6f68fd6c622190d88ced82e2/src/Transition.js#L231
   return (
-    <div className={wrapperClassName} style={style}>
-      <div
-        {...mergeProps(otherProps, overlayProps, modalProps)}
-        ref={ref}
-        className={modalClassName}
-        data-testid="modal">
-        {children}
+    <div ref={wrapperRef}>
+      <Underlay {...underlayProps} isOpen={isOpen} />
+      <div className={wrapperClassName} style={style}>
+        <div
+          {...styleProps}
+          {...modalProps}
+          ref={ref}
+          className={modalClassName}
+          data-testid="modal">
+          {children}
+        </div>
       </div>
     </div>
   );

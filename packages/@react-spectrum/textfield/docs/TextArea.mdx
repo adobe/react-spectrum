@@ -31,7 +31,8 @@ keywords: [text area, input]
 <HeaderInfo
   packageData={packageData}
   componentNames={['TextArea']}
-  sourceData={[]} />
+  sourceData={[]}
+  since="3.0.0" />
 
 ## Example
 
@@ -63,11 +64,12 @@ function Example() {
 }
 ```
 
-Placeholder text that describes the expected value or formatting for the TextArea can be provided using the `placeholder` prop.
-Placeholder text will only appear when the TextArea is empty, and should not be used as a substitute for labeling the component with a visible label.
+### HTML forms
+
+TextArea supports the `name` prop for integration with HTML forms.
 
 ```tsx example
-<TextArea placeholder="abc@adobe.com, def@adobe.com" label="List of emails" />
+<TextArea label="Comment" name="comment" />
 ```
 
 ## Labeling
@@ -104,12 +106,11 @@ For a full list of supported events, see the [Props](#props) table below.
 The example below uses `onChange` to update a separate `pre` element with the same text entered into the TextArea.
 ```tsx example
 function Example() {
-  let [text, setText] = React.useState();
+  let [text, setText] = React.useState('');
 
   return (
     <Flex direction="column">
       <TextArea
-        placeholder="Enter some text"
         onChange={setText}
         label="Your text"
       />
@@ -134,7 +135,6 @@ function Example() {
     <TextArea
       validationState={isValid ? 'valid' : 'invalid'}
       value={value}
-      placeholder="Enter a description"
       onChange={setValue}
       label="Description" />
   );
@@ -151,11 +151,8 @@ function Example() {
 
 [View guidelines](https://spectrum.adobe.com/page/text-area/#Quiet)
 
-In addition to changing the visual style of the TextArea, the `isQuiet` prop removes the ability to manually resize the TextArea.
-To compensate, the TextArea automatically adjusts its own height to accommodate for additional lines of text.
-
 ```tsx example
-<TextArea label="Email" placeholder="Email Address" isQuiet />
+<TextArea label="Email" isQuiet />
 ```
 
 ### Disabled
@@ -163,7 +160,7 @@ To compensate, the TextArea automatically adjusts its own height to accommodate 
 [View guidelines](https://spectrum.adobe.com/page/text-area/#Disabled)
 
 ```tsx example
-<TextArea label="Email" placeholder="Email Address" isDisabled />
+<TextArea label="Email" isDisabled />
 ```
 
 ### Read only
@@ -206,6 +203,23 @@ function Example() {
     />
   );
 }
+```
+
+### Contextual help
+
+A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a TextArea.
+
+```tsx example
+import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
+
+<TextArea
+  label="Comment"
+  contextualHelp={
+    <ContextualHelp variant="info">
+      <Heading>Comment tips</Heading>
+      <Content>Comments will be screened prior to being published. Please be nice!</Content>
+    </ContextualHelp>
+  } />
 ```
 
 ### Custom width

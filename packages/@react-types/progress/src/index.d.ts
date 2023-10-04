@@ -34,8 +34,6 @@ interface ProgressBaseProps {
 export interface ProgressBarBaseProps extends ProgressBaseProps {
   /** The content to display as the label. */
   label?: ReactNode,
-  /** Whether the value's label is displayed. True by default if there's a label, false by default if not. */
-  showValueLabel?: boolean,
   /**
    * The display format of the value label.
    * @default {style: 'percent'}
@@ -70,7 +68,13 @@ export interface SpectrumProgressCircleProps extends AriaProgressCircleProps, St
    * @default 'M'
    */
   size?: 'S' | 'M' | 'L',
-  /** The [visual style](https://spectrum.adobe.com/page/progress-circle/#Over-background-variant) of the ProgressCircle. */
+  /** The static color style to apply. Useful when the button appears over a color background. */
+  staticColor?: 'white' | 'black',
+  /**
+   * The [visual style](https://spectrum.adobe.com/page/progress-circle/#Over-background-variant) of the ProgressCircle.
+   *
+   * @deprecated - use staticColor instead.
+   */
   variant?: 'overBackground'
 }
 
@@ -84,10 +88,17 @@ export interface SpectrumProgressBarBaseProps extends AriaProgressBarBaseProps, 
    * The label's overall position relative to the element it is labeling.
    * @default 'top'
    */
-  labelPosition?: LabelPosition
+  labelPosition?: LabelPosition,
+  /** Whether the value's label is displayed. True by default if there's a label, false by default if not. */
+  showValueLabel?: boolean
 }
 
 export interface SpectrumProgressBarProps extends SpectrumProgressBarBaseProps, ProgressBarProps {
-  /** The [visual style](https://spectrum.adobe.com/page/progress-bar/#Over-background-variant) of the ProgressBar. */
+  /** The static color style to apply. Useful when the button appears over a color background. */
+  staticColor?: 'white' | 'black',
+  /**
+   * The [visual style](https://spectrum.adobe.com/page/progress-bar/#Over-background-variant) of the ProgressBar.
+   * @deprecated - use staticColor instead.
+   */
   variant?: 'overBackground'
 }

@@ -12,6 +12,7 @@
 
 import {CheckboxGroupProps} from '@react-types/checkbox';
 import {useControlledState} from '@react-stately/utils';
+import {ValidationState} from '@react-types/shared';
 
 export interface CheckboxGroupState {
   /** Current selected values. */
@@ -22,6 +23,15 @@ export interface CheckboxGroupState {
 
   /** Whether the checkbox group is read only. */
   readonly isReadOnly: boolean,
+
+  /**
+   * The current validation state of the checkbox group.
+   * @deprecated Use `isInvalid` instead.
+   */
+  readonly validationState: ValidationState,
+
+  /** Whether the checkbox group is invalid. */
+  readonly isInvalid: boolean,
 
   /** Returns whether the given value is selected. */
   isSelected(value: string): boolean,
@@ -85,7 +95,9 @@ export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxG
       } else {
         setValue(selectedValues.concat(value));
       }
-    }
+    },
+    validationState: props.validationState,
+    isInvalid: props.isInvalid || props.validationState === 'invalid'
   };
 
   return state;

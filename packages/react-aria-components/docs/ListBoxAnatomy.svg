@@ -1,0 +1,46 @@
+<svg style="max-height: 239px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 394 239">
+  <g id="Group_151076" data-name="Group 151076" transform="translate(-388 -100)">
+    <g id="rectangle-12" transform="translate(504 100)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1.5">
+      <rect width="214" height="239" rx="6" stroke="none"/>
+      <rect x="0.75" y="0.75" width="212.5" height="237.5" rx="5.25" fill="none"/>
+    </g>
+    <g id="Hover" transform="translate(505 131)" fill="var(--anatomy-gray-900)" opacity="0.04">
+      <path d="M0,0H212V64H0Z" stroke="none"/>
+      <path d="M 1 1 L 1 63 L 211 63 L 211 1 L 1 1 M 0 0 L 212 0 L 212 64 L 0 64 L 0 0 Z" stroke="none" fill="var(--anatomy-gray-900)" fill-opacity="0"/>
+    </g>
+    <text id="Option_1" data-name="Option 1" transform="translate(522 158)" fill="var(--anatomy-gray-800)" font-size="20" font-family="Adobe-Clean"><tspan x="0" y="0">Option 1</tspan></text>
+    <text id="Option_2" data-name="Option 2" transform="translate(522 227)" fill="var(--anatomy-gray-800)" font-size="20" font-family="Adobe-Clean"><tspan x="0" y="0">Option 2</tspan></text>
+    <g id="Group_151069" data-name="Group 151069" transform="translate(397 492.5)">
+      <text id="Item" transform="translate(346 -316.5)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="0" y="0">Item</tspan></text>
+      <path id="Union_19" data-name="Union 19" d="M-1244-611.5V-639.55a2.5,2.5,0,0,1-2-2.449,2.5,2.5,0,0,1,2.5-2.5,2.5,2.5,0,0,1,2.5,2.5,2.5,2.5,0,0,1-2,2.449V-611.5Z" transform="translate(953 -1564.5) rotate(-90)" fill="var(--anatomy-gray-500)"/>
+    </g>
+    <g id="Checkmark" transform="translate(685 142.981)">
+      <rect id="Frame" width="18" height="18" transform="translate(0 0.019)" fill="var(--anatomy-gray-600)" opacity="0"/>
+      <path id="Shape" d="M5.672,13.022A1.366,1.366,0,0,1,4.6,12.509l-3.321-4A1.336,1.336,0,0,1,3.388,6.858l2.284,2.66,6.29-8a1.335,1.335,0,1,1,2.1,1.642L6.709,12.508A1.3,1.3,0,0,1,5.672,13.022Z" transform="translate(0.335 -0.673)" fill="var(--anatomy-gray-600)"/>
+    </g>
+    <g id="Group_151072" data-name="Group 151072" transform="translate(104 500.755)">
+      <text id="Item_label" data-name="Item label" transform="translate(366 -344.755)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="-50.492" y="0">Item label</tspan></text>
+      <path id="Union_19-2" data-name="Union 19" d="M2,42V4.95a2.5,2.5,0,1,1,1,0V42Z" transform="translate(413.5 -351.754) rotate(90)" fill="var(--anatomy-gray-500)"/>
+    </g>
+    <text id="Description" transform="translate(522 183)" fill="var(--anatomy-gray-800)" fill-opacity="0.75" font-size="16" font-family="Adobe-Clean"><tspan x="0" y="0">Description</tspan></text>
+    <text id="Description-2" data-name="Description" transform="translate(522 252)" fill="var(--anatomy-gray-800)" fill-opacity="0.75" font-size="16" font-family="Adobe-Clean"><tspan x="0" y="0">Description</tspan></text>
+    <text id="Option_3" data-name="Option 3" transform="translate(522 295)" fill="var(--anatomy-gray-800)" font-size="20" font-family="Adobe-Clean"><tspan x="0" y="0">Option 3</tspan></text>
+    <text id="Description-3" data-name="Description" transform="translate(522 320)" fill="var(--anatomy-gray-800)" fill-opacity="0.75" font-size="16" font-family="Adobe-Clean"><tspan x="0" y="0">Description</tspan></text>
+    <g id="Group_151073" data-name="Group 151073" transform="translate(104 526.755)">
+      <text id="Item_description" data-name="Item description" transform="translate(366 -344.755)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="-81.029" y="0">Item description</tspan></text>
+      <path id="Union_19-3" data-name="Union 19" d="M2,42V4.95a2.5,2.5,0,1,1,1,0V42Z" transform="translate(413.5 -351.754) rotate(90)" fill="var(--anatomy-gray-500)"/>
+    </g>
+    <text id="Detail" transform="translate(522 122)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean" font-weight="700" letter-spacing="0.06em"><tspan x="0" y="0">SECTION TITLE</tspan></text>
+    <g id="Group_151075" data-name="Group 151075" transform="translate(104 464.755)">
+      <text id="Section_header" data-name="Section header" transform="translate(366 -344.755)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="-74.737" y="0">Section header</tspan></text>
+      <path id="Union_19-4" data-name="Union 19" d="M2,42V4.95a2.5,2.5,0,1,1,1,0V42Z" transform="translate(413.5 -351.754) rotate(90)" fill="var(--anatomy-gray-500)"/>
+    </g>
+    <rect id="Rectangle_138455" data-name="Rectangle 138455" width="8" height="1" transform="translate(732.14 223.776)" fill="var(--anatomy-gray-500)"/>
+    <g id="Group_72703" data-name="Group 72703" transform="translate(723.117 108)">
+      <rect id="Rectangle_138451" data-name="Rectangle 138451" width="8.023" height="1" fill="var(--anatomy-gray-500)"/>
+      <rect id="Rectangle_138453" data-name="Rectangle 138453" width="1" height="226.234" transform="translate(8.023)" fill="var(--anatomy-gray-500)"/>
+      <rect id="Rectangle_138452" data-name="Rectangle 138452" width="8.023" height="1" transform="translate(0 225.234)" fill="var(--anatomy-gray-500)"/>
+    </g>
+    <text id="Section" transform="translate(745 229)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="0" y="0">Section</tspan></text>
+  </g>
+</svg>

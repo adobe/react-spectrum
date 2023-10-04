@@ -147,8 +147,16 @@ governing permissions and limitations under the License.
     content: '';
     display: block;
     block-size: 100%;
+  }
 
-    border-radius: var(--spectrum-slider-track-border-radius);
+  &:first-of-type::before {
+    border-start-start-radius: var(--spectrum-slider-track-border-radius);
+    border-end-start-radius: var(--spectrum-slider-track-border-radius);
+  }
+
+  &:last-of-type::before {
+    border-start-end-radius: var(--spectrum-slider-track-border-radius);
+    border-end-end-radius: var(--spectrum-slider-track-border-radius);
   }
 }
 
@@ -156,6 +164,7 @@ governing permissions and limitations under the License.
   margin-inline-start: 0;
   padding-block: 0;
   padding-inline: calc(var(--spectrum-slider-controls-margin) + var(--spectrum-slider-track-handleoffset)) 0;
+  z-index: 2;
 }
 
 .spectrum-Slider-fill--right {
@@ -190,23 +199,17 @@ governing permissions and limitations under the License.
 
 .spectrum-Slider--range {
   .spectrum-Slider-track {
+    padding-block: 0;
+    padding-inline: var(--spectrum-slider-track-middle-handleoffset) var(--spectrum-slider-track-middle-handleoffset);
+    inset-inline-start: auto;
+    inset-inline-end: auto;
+
     &:first-of-type {
       padding-block: 0;
       padding-inline: 0 var(--spectrum-slider-track-handleoffset);
       inset-inline-start: var(--spectrum-slider-range-track-reset);
       inset-inline-end: auto;
       margin-inline-start: var(--spectrum-slider-track-margin-offset);
-    }
-
-    /* Force specificity otherwise the ~ rules above override */
-    &:dir(ltr),
-    &:dir(rtl) {
-      padding-block: 0;
-      padding-inline: var(--spectrum-slider-track-middle-handleoffset) var(--spectrum-slider-track-middle-handleoffset);
-      inset-inline-start: auto;
-      inset-inline-end: auto;
-      margin-inline: var(--spectrum-slider-range-track-reset);
-      margin-block: var(--spectrum-slider-range-track-reset);
     }
     &:last-of-type {
       padding-block: 0;
@@ -243,7 +246,6 @@ governing permissions and limitations under the License.
 
 .spectrum-Slider-handle {
   position: absolute;
-  inset-inline-start: 0;
   inset-block-start: calc(var(--spectrum-slider-height) / 2);
   z-index: 2;
 
@@ -252,9 +254,6 @@ governing permissions and limitations under the License.
 
   inline-size: var(--spectrum-slider-handle-width);
   block-size: var(--spectrum-slider-handle-height);
-
-  margin-block: var(--spectrum-slider-handle-margin-top) 0;
-  margin-inline: calc(var(--spectrum-slider-handle-width) / -2) 0;
 
   border-width: var(--spectrum-slider-handle-border-size);
   border-style: solid;
@@ -272,11 +271,6 @@ governing permissions and limitations under the License.
     border-width: var(--spectrum-slider-handle-border-size-down);
     /* cursor: ns-resize; */
     /* cursor: grabbing; */
-  }
-
-  &:active,
-  $.is-dragged {
-
   }
 
   &:active,
@@ -347,6 +341,13 @@ governing permissions and limitations under the License.
   line-height: var(--spectrum-line-height-text-label);
 }
 
+.spectrum-Slider-labelContainer {
+  display: grid;
+  grid-template-areas: "label contextualHelp value";
+  grid-template-columns: auto 1fr auto;
+  justify-items: start;
+}
+
 .spectrum-Slider-label,
 .spectrum-Dial-label {
   padding-inline-start: 0;
@@ -365,6 +366,13 @@ governing permissions and limitations under the License.
 .spectrum-Slider-value {
   margin-inline-start: calc(var(--spectrum-slider-label-gap-x) / 2);
   white-space: nowrap;
+  grid-area: value;
+}
+
+.spectrum-Slider-contextualHelp.spectrum-Slider-contextualHelp {
+  grid-area: contextualHelp;
+  margin-inline-start: var(--spectrum-global-dimension-size-50);
+  margin-top: calc(-1 * var(--spectrum-global-dimension-size-25));
 }
 
 .spectrum-Slider-ticks {
@@ -459,7 +467,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Dial {
-  @inherit: .spectrum-Slider;
+  composes: spectrum-Slider;
   display: inline-flex;
   flex-direction: column;
 
@@ -470,7 +478,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Dial-labelContainer {
-  @inherit: .spectrum-Slider-labelContainer;
+  composes: spectrum-Slider-labelContainer;
   margin-block-end: var(--spectrum-dial-label-gap-y);
 }
 
@@ -482,7 +490,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Dial-controls {
-  @inherit: .spectrum-Slider-controls;
+  composes: spectrum-Slider-controls;
   inline-size: var(--spectrum-dial-width);
   block-size: var(--spectrum-dial-width);
   min-block-size: var(--spectrum-dial-controls-min-height);
@@ -516,7 +524,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Dial-handle {
-  @inherit: .spectrum-Slider-handle;
+  composes: spectrum-Slider-handle;
   inline-size: var(--spectrum-dial-handle-size);
   block-size: var(--spectrum-dial-handle-size);
   border-width: var(--spectrum-slider-handle-border-size);
@@ -555,7 +563,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Dial-input {
-  @inherit: .spectrum-Slider-input;
+  composes: spectrum-Slider-input;
   inline-size: var(--spectrum-dial-handle-size);
   block-size: var(--spectrum-dial-handle-size);
   inset-inline-start: 0;

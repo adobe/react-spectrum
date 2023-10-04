@@ -1,0 +1,49 @@
+.application {
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas:
+    "globalnav  globalnav globalnav"
+    "navigation content   navcontent";
+}
+
+.landmark {
+  outline: none;
+  position: relative;
+  &:focus:after {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    border: 2px solid black;
+    z-index: 1000;
+    box-shadow: 0 0 0 1px white, inset 0 0 0 1px white;
+  }
+}
+
+.globalnav {
+  composes: landmark;
+  grid-area: globalnav;
+  padding: 10px;
+  background: var(--spectrum-alias-categorical-color-6);
+}
+.navigation {
+  composes: landmark;
+  grid-area: navigation;
+  padding: 10px;
+  background: var(--spectrum-alias-categorical-color-2);
+}
+.main {
+  composes: landmark;
+  grid-area: content;
+  padding: 10px;
+  background: var(--spectrum-alias-categorical-color-3);
+}
+.navigation-content {
+  composes: landmark;
+  grid-area: navcontent;
+  padding: 10px;
+  background: var(--spectrum-alias-categorical-color-4);
+}

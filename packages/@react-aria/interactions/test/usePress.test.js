@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, installMouseEvent, installPointerEvent, render} from '@react-spectrum/test-utils';
 import {ActionButton} from '@react-spectrum/button';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
-import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
 import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -21,9 +20,9 @@ import {theme} from '@react-spectrum/theme-default';
 import {usePress} from '../';
 
 function Example(props) {
-  let {elementType: ElementType = 'div', style, ...otherProps} = props;
+  let {elementType: ElementType = 'div', style, draggable, ...otherProps} = props;
   let {pressProps} = usePress(otherProps);
-  return <ElementType {...pressProps} style={style} tabIndex="0">test</ElementType>;
+  return <ElementType {...pressProps} style={style} tabIndex="0" draggable={draggable}>{ElementType !== 'input' ? 'test' : undefined}</ElementType>;
 }
 
 function pointerEvent(type, opts) {
@@ -42,8 +41,7 @@ function pointerEvent(type, opts) {
 
 describe('usePress', function () {
   beforeAll(() => {
-    jest.useFakeTimers('legacy');
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -507,11 +505,24 @@ describe('usePress', function () {
       expect(allowDefault).toBe(false);
     });
 
-    it('should not prevent default when in a draggable container', function () {
+    it('should still prevent default when pressing on a non draggable + pressable item in a draggable container', function () {
       let res = render(
         <div draggable="true">
           <Example />
         </div>
+      );
+
+      let el = res.getByText('test');
+      let allowDefault = fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      expect(allowDefault).toBe(false);
+
+      allowDefault = fireEvent.mouseDown(el);
+      expect(allowDefault).toBe(false);
+    });
+
+    it('should not prevent default when pressing on a draggable item', function () {
+      let res = render(
+        <Example draggable="true" />
       );
 
       let el = res.getByText('test');
@@ -580,6 +591,65 @@ describe('usePress', function () {
       ]);
     });
 
+    it('should not ignore virtual pointer events on android ', function () {
+      let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Android');
+
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPress={addEvent}
+          onPressUp={addEvent} />
+      );
+
+      let el = res.getByText('test');
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', width: 0, height: 0}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', width: 0, height: 0, clientX: 0, clientY: 0}));
+
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'press',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        }
+      ]);
+
+      uaMock.mockRestore();
+    });
+
     it('should detect Android TalkBack double tap', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
@@ -594,8 +664,8 @@ describe('usePress', function () {
       let el = res.getByText('test');
       // Android TalkBack will occasionally fire a pointer down event with "width: 1, height: 1" instead of "width: 0, height: 0".
       // Make sure we can still determine that this is a virtual event by checking the pressure, detail, and height/width.
-      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
-      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
       expect(events).toEqual([]);
 
       // Virtual pointer event sets pointerType and onClick handles the rest
@@ -1036,11 +1106,22 @@ describe('usePress', function () {
       expect(allowDefault).toBe(false);
     });
 
-    it('should not prevent default when in a draggable container', function () {
+    it('should still prevent default when pressing on a non draggable + pressable item in a draggable container', function () {
       let res = render(
         <div draggable="true">
           <Example />
         </div>
+      );
+
+      let el = res.getByText('test');
+      let allowDefault = fireEvent.mouseDown(el);
+      expect(allowDefault).toBe(false);
+    });
+
+
+    it('should not prevent default when pressing on a draggable item', function () {
+      let res = render(
+        <Example draggable="true" />
       );
 
       let el = res.getByText('test');
@@ -1766,23 +1847,19 @@ describe('usePress', function () {
       // Space key handled should do nothing on a link
       expect(events).toEqual([]);
 
-      fireEvent.keyDown(el, {key: 'Enter'});
+      let shouldContinue = fireEvent.keyDown(el, {key: 'Enter'});
+      if (shouldContinue) {
+        // Browser fires click event as default action of keydown event.
+        fireEvent.click(el);
+      }
       fireEvent.keyUp(el, {key: 'Enter'});
-
-      // Enter key should handled natively
-      expect(events).toEqual([]);
-
-      fireEvent.click(el);
 
       // Click event, which is called when Enter key on a link is handled natively, should trigger a click.
       expect(events).toEqual([
         {
-          type: 'click'
-        },
-        {
           type: 'pressstart',
           target: el,
-          pointerType: 'virtual',
+          pointerType: 'keyboard',
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
@@ -1793,9 +1870,12 @@ describe('usePress', function () {
           pressed: true
         },
         {
+          type: 'click'
+        },
+        {
           type: 'pressup',
           target: el,
-          pointerType: 'virtual',
+          pointerType: 'keyboard',
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
@@ -1804,7 +1884,7 @@ describe('usePress', function () {
         {
           type: 'pressend',
           target: el,
-          pointerType: 'virtual',
+          pointerType: 'keyboard',
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
@@ -1817,7 +1897,7 @@ describe('usePress', function () {
         {
           type: 'press',
           target: el,
-          pointerType: 'virtual',
+          pointerType: 'keyboard',
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
@@ -1895,14 +1975,11 @@ describe('usePress', function () {
           metaKey: false,
           shiftKey: false,
           altKey: false
-        },
-        {
-          type: 'click'
         }
       ]);
     });
 
-    it('should explicitly call click method, but not fire press events, when Space key is triggered on a link with href and role="button"', function () {
+    it('should explicitly call click method when Space key is triggered on a link with href and role="button"', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
       let {getByText} = render(
@@ -1919,12 +1996,6 @@ describe('usePress', function () {
       );
 
       let el = getByText('test');
-
-      // Enter key should handled natively
-      fireEvent.keyDown(el, {key: 'Enter'});
-      fireEvent.keyUp(el, {key: 'Enter'});
-
-      expect(events).toEqual([]);
 
       // Space key handled by explicitly calling click
       fireEvent.keyDown(el, {key: ' '});
@@ -2045,6 +2116,76 @@ describe('usePress', function () {
       ]);
     });
 
+    it('should fire press events when Meta key is held to work around macOS bug', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent}
+          onPressUp={addEvent} />
+      );
+
+      let spy = jest.spyOn(window.navigator, 'platform', 'get').mockImplementation(() => 'Mac');
+
+      let el = res.getByText('test');
+      fireEvent.keyDown(el, {key: 'Meta'});
+      fireEvent.keyDown(el, {key: 'Enter', metaKey: true});
+      // macOS doesn't fire keyup events while Meta key is held.
+      // we simulate this when the Meta key itself is released.
+      fireEvent.keyUp(el, {key: 'Meta'});
+      spy.mockRestore();
+
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: true,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: true,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: true,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        },
+        {
+          type: 'press',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: true,
+          shiftKey: false,
+          altKey: false
+        }
+      ]);
+    });
+
     it('should handle when focus moves between keydown and keyup', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
@@ -2159,6 +2300,95 @@ describe('usePress', function () {
 
       expect(events).toEqual([]);
     });
+
+    it('should fire press events on checkboxes but not prevent default', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let {getByRole} = render(
+        <Example
+          elementType="input"
+          type="checkbox"
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent}
+          onPressUp={addEvent} />
+      );
+
+      let el = getByRole('checkbox');
+      fireEvent.keyDown(el, {key: 'Enter'});
+      fireEvent.keyUp(el, {key: 'Enter'});
+
+      // Enter key handled should do nothing on a checkbox
+      expect(events).toEqual([]);
+
+      let allow = fireEvent.keyDown(el, {key: ' '});
+      expect(allow).toBeTruthy();
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        }
+      ]);
+
+      allow = fireEvent.keyUp(el, {key: ' '});
+      expect(allow).toBeTruthy();
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        },
+        {
+          type: 'press',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        }
+      ]);
+    });
   });
 
   describe('virtual click events', function () {
@@ -2217,6 +2447,38 @@ describe('usePress', function () {
           type: 'press',
           target: el,
           pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        }
+      ]);
+    });
+
+    it('should ignore synthetic events fired during an onPressUp event', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let {getByText} = render(
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent}
+          onPressUp={e => {
+            addEvent(e);
+            e.target.click();
+          }} />
+      );
+
+      let el = getByText('test');
+      // no on mouse down because this is simulating it coming from another element.
+      fireEvent.mouseUp(el, {detail: 1});
+
+      expect(events).toEqual([
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
@@ -2329,7 +2591,7 @@ describe('usePress', function () {
       fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
       fireEvent.touchEnd(el, {changedTouches: [{identifier: 1}]});
 
-      act(() => {jest.advanceTimersByTime(300);});
+      act(() => {jest.advanceTimersByTime(316);});
       expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
 
       // Checkbox doesn't remove `user-select: none;` style from HTML Element issue
@@ -2499,7 +2761,7 @@ describe('usePress', function () {
       expect(document.documentElement.style.webkitUserSelect).toBe('none');
 
       unmount();
-      act(() => {jest.advanceTimersByTime(300);});
+      act(() => {jest.advanceTimersByTime(316);});
       expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
     });
 
@@ -2567,6 +2829,87 @@ describe('usePress', function () {
     });
   });
 
+  describe('event bubbling', () => {
+    function Pressable(props) {
+      let {pressProps} = usePress(props);
+      return (
+        <div {...pressProps} data-testid={props['data-testid']}>
+          {props.children}
+        </div>
+      );
+    }
+
+    describe.each`
+      type                | prepare               | actions
+      ${'Mouse Events'}   | ${installMouseEvent}  | ${[
+        (el) => fireEvent.mouseDown(el, {button: 0}),
+        (el) => fireEvent.mouseUp(el, {button: 0})
+      ]}
+      ${'Pointer Events'} | ${installPointerEvent}| ${[
+        (el) => fireEvent.pointerDown(el, {button: 0, pointerId: 1}),
+        (el) => fireEvent.pointerUp(el, {button: 0, pointerId: 1})
+      ]}
+      ${'Touch Events'}   | ${() => {}}           | ${[
+        (el) => fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]}),
+        (el) => fireEvent.touchEnd(el, {changedTouches: [{identifier: 1}]})
+      ]}
+    `('$type', ({actions: [start, end], prepare}) => {
+      prepare();
+
+      it('should stop propagation by default', () => {
+        let outerPressMock = jest.fn();
+        let innerPressMock = jest.fn();
+        let res = render(
+          <Pressable
+            onPressStart={outerPressMock}
+            onPressEnd={outerPressMock}
+            onPress={outerPressMock}>
+            <Pressable
+              data-testid="test"
+              onPressStart={innerPressMock}
+              onPressEnd={innerPressMock}
+              onPress={innerPressMock}>
+              inner
+            </Pressable>
+          </Pressable>
+        );
+
+        let el = res.getByTestId('test');
+        start(el);
+        end(el);
+        expect(outerPressMock.mock.calls).toHaveLength(0);
+        expect(innerPressMock.mock.calls).toHaveLength(3);
+      });
+
+      it('should allow propagation if continuePropagation is called', () => {
+        let outerPressMock = jest.fn();
+        let innerPressMock = jest.fn().mockImplementation(e => e.continuePropagation());
+        let res = render(
+          <Pressable
+            onPressStart={outerPressMock}
+            onPressEnd={outerPressMock}
+            onPress={outerPressMock}
+            onPressUp={outerPressMock}>
+            <Pressable
+              data-testid="test"
+              onPressStart={innerPressMock}
+              onPressEnd={innerPressMock}
+              onPress={innerPressMock}
+              onPressUp={innerPressMock}>
+              inner
+            </Pressable>
+          </Pressable>
+        );
+
+        let el = res.getByTestId('test');
+        start(el);
+        end(el);
+        expect(outerPressMock.mock.calls).toHaveLength(4);
+        expect(innerPressMock.mock.calls).toHaveLength(4);
+      });
+    });
+  });
+
   describe('portal event bubbling', () => {
     function PortalExample(props) {
       let {elementType: ElementType = 'div', ...otherProps} = props;
@@ -2586,32 +2929,26 @@ describe('usePress', function () {
     }
 
     beforeAll(() => {
-      jest.useFakeTimers('legacy');
-    });
-    afterAll(() => {
-      jest.useRealTimers();
+      jest.useFakeTimers();
     });
 
     let matchMedia;
     beforeEach(() => {
       matchMedia = new MatchMediaMock();
-      // this needs to be a setTimeout so that the dialog can be removed from the dom before the callback is invoked
-      jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(() => cb(), 0));
     });
 
     afterEach(() => {
       // Ensure we close any dialogs before unmounting to avoid warning.
       let dialog = document.querySelector('[role="dialog"]');
       if (dialog) {
+        fireEvent.keyDown(dialog, {key: 'Escape'});
+        fireEvent.keyUp(dialog, {key: 'Escape'});
         act(() => {
-          fireEvent.keyDown(dialog, {key: 'Escape'});
-          fireEvent.keyUp(dialog, {key: 'Escape'});
           jest.runAllTimers();
         });
       }
 
       matchMedia.clear();
-      window.requestAnimationFrame.mockRestore();
     });
 
     describe.each`
@@ -2625,7 +2962,7 @@ describe('usePress', function () {
         (el) => fireEvent.pointerUp(el, {button: 0, pointerId: 1})
       ]}
       ${'Touch Events'}   | ${() => {}}           | ${[
-        (el) => fireEvent.touchStart(el, {changedTouches: [{identifier: 1}]}),
+        (el) => fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]}),
         (el) => fireEvent.touchEnd(el, {changedTouches: [{identifier: 1}]})
       ]}
     `('$type', ({actions: [start, end], prepare}) => {

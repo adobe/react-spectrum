@@ -12,5 +12,5 @@
 
 /// <reference types="css-module-types" />
 
-export * from './ErrorBoundary';
-export * from './GeneratePowerset';
+export {ErrorBoundary} from './ErrorBoundary';
+export {generatePowerset} from './GeneratePowerset';

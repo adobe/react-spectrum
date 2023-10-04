@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 :root {
   --spectrum-padding: var(--spectrum-global-dimension-size-150);
   --spectrum-margin: var(--spectrum-padding);
-  --spectrum-border-radius: var(--spectrum-global-dimension-size-50);
+  --spectrum-border-radius: var(--spectrum-alias-border-radius-regular);
 
   --spectrum-component-single-line-height: var(--spectrum-alias-single-line-height);
   --spectrum-component-single-line-width: var(--spectrum-alias-single-line-width);

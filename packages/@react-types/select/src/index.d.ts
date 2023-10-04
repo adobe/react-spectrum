@@ -29,18 +29,13 @@ import {
   Validation
 } from '@react-types/shared';
 
-export interface SelectProps<T> extends CollectionBase<T>, AsyncLoadable, Omit<InputBase, 'isReadOnly'>, Validation, HelpTextProps, LabelableProps, TextInputBase, Omit<SingleSelection, 'disallowEmptySelection'>, FocusableProps {
+export interface SelectProps<T> extends CollectionBase<T>, Omit<InputBase, 'isReadOnly'>, Validation, HelpTextProps, LabelableProps, TextInputBase, Omit<SingleSelection, 'disallowEmptySelection'>, FocusableProps {
   /** Sets the open state of the menu. */
   isOpen?: boolean,
   /** Sets the default open state of the menu. */
   defaultOpen?: boolean,
   /** Method that is called when the open state of the menu changes. */
-  onOpenChange?: (isOpen: boolean) => void,
-  /**
-   * Whether the menu should automatically flip direction when space is limited.
-   * @default true
-   */
-  shouldFlip?: boolean
+  onOpenChange?: (isOpen: boolean) => void
 }
 
 export interface AriaSelectProps<T> extends SelectProps<T>, DOMProps, AriaLabelingProps, FocusableDOMProps {
@@ -54,7 +49,7 @@ export interface AriaSelectProps<T> extends SelectProps<T>, DOMProps, AriaLabeli
   name?: string
 }
 
-export interface SpectrumPickerProps<T> extends AriaSelectProps<T>, SpectrumLabelableProps, StyleProps  {
+export interface SpectrumPickerProps<T> extends AriaSelectProps<T>, AsyncLoadable, SpectrumLabelableProps, StyleProps  {
   /** Whether the textfield should be displayed with a quiet style. */
   isQuiet?: boolean,
   /** Alignment of the menu relative to the input target.
@@ -66,6 +61,11 @@ export interface SpectrumPickerProps<T> extends AriaSelectProps<T>, SpectrumLabe
    * @default 'bottom'
    */
   direction?: 'bottom' | 'top',
+  /**
+   * Whether the menu should automatically flip direction when space is limited.
+   * @default true
+   */
+  shouldFlip?: boolean,
   /** Width of the menu. */
   menuWidth?: DimensionValue,
   /** Whether the element should receive focus on render. */

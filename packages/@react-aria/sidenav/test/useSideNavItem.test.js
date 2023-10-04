@@ -11,7 +11,7 @@
  */
 
 import React from 'react';
-import {renderHook} from '@testing-library/react-hooks';
+import {renderHook} from '@react-spectrum/test-utils';
 import {useSideNavItem} from '../';
 
 describe('useSideNavItem', function () {
@@ -22,6 +22,12 @@ describe('useSideNavItem', function () {
       },
       canSelectItem() {
         return true;
+      },
+      isDisabled() {
+        return false;
+      },
+      isLink() {
+        return false;
       }
     },
     disabledKeys: new Set()

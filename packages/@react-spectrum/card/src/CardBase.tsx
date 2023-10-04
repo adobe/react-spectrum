@@ -15,8 +15,7 @@ import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, SlotProvider, useDOMRef, useHasChild, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, Node} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useLayoutEffect, useResizeObserver, useSlotId} from '@react-aria/utils';
-import {FocusRing} from '@react-aria/focus';
-import {getFocusableTreeWalker} from  '@react-aria/focus';
+import {FocusRing, getFocusableTreeWalker} from '@react-aria/focus';
 import React, {HTMLAttributes, useCallback, useMemo, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
 import {useCardViewContext} from './CardViewContext';
@@ -93,6 +92,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
     heading: {UNSAFE_className: classNames(styles, 'spectrum-Card-heading'), ...titleProps},
     content: {UNSAFE_className: classNames(styles, 'spectrum-Card-content'), ...contentProps},
     detail: {UNSAFE_className: classNames(styles, 'spectrum-Card-detail')}
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }), [titleProps, contentProps, height, isQuiet, orientation]);
 
   useLayoutEffect(() => {

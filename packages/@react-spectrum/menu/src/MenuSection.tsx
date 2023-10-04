@@ -11,6 +11,7 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
+import {getChildNodes} from '@react-stately/collections';
 import {MenuItem} from './MenuItem';
 import {Node} from '@react-types/shared';
 import React, {Fragment, Key} from 'react';
@@ -34,20 +35,20 @@ export function MenuSection<T>(props: MenuSectionProps<T>) {
   });
 
   let {separatorProps} = useSeparator({
-    elementType: 'li'
+    elementType: 'div'
   });
 
   return (
     <Fragment>
       {item.key !== state.collection.getFirstKey() &&
-        <li
+        <div
           {...separatorProps}
           className={classNames(
             styles,
             'spectrum-Menu-divider'
           )} />
       }
-      <li {...itemProps}>
+      <div {...itemProps}>
         {item.rendered &&
           <span
             {...headingProps}
@@ -60,7 +61,7 @@ export function MenuSection<T>(props: MenuSectionProps<T>) {
             {item.rendered}
           </span>
         }
-        <ul
+        <div
           {...groupProps}
           className={
             classNames(
@@ -68,7 +69,7 @@ export function MenuSection<T>(props: MenuSectionProps<T>) {
               'spectrum-Menu'
             )
           }>
-          {[...item.childNodes].map(node => {
+          {[...getChildNodes(item, state.collection)].map(node => {
             let item = (
               <MenuItem
                 key={node.key}
@@ -83,8 +84,8 @@ export function MenuSection<T>(props: MenuSectionProps<T>) {
 
             return item;
           })}
-        </ul>
-      </li>
+        </div>
+      </div>
     </Fragment>
   );
 }

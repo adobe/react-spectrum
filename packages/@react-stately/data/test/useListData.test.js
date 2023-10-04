@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, renderHook} from '@testing-library/react-hooks';
+import {actHook as act, renderHook} from '@react-spectrum/test-utils';
 import React from 'react';
 import {useListData} from '../src/useListData';
 
@@ -207,6 +207,64 @@ describe('useListData', function () {
     expect(result.current.items[2]).toBe(initialResult.items[2]);
     expect(result.current.items[3]).toEqual({name: 'Devon'});
     expect(result.current.items[4]).toEqual({name: 'Danni'});
+  });
+
+  it('should not wipe the list state when inserting before with a target key that doesn\'t exist', function () {
+    let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam', 'Julia'], initialFilterText: 'test'}));
+    let initialResult = result.current;
+    expect(initialResult.items).toBe(initial);
+    expect(initialResult.selectedKeys).toEqual(new Set(['Sam', 'Julia']));
+    expect(initialResult.filterText).toBe('test');
+
+    act(() => {
+      result.current.insertBefore('fakeKey', {name: 'Devon'});
+    });
+
+    expect(result.current.items).toBe(initialResult.items);
+    expect(result.current.selectedKeys).toBe(initialResult.selectedKeys);
+    expect(result.current.filterText).toBe(initialResult.filterText);
+  });
+
+  it('should not wipe the list state when inserting before with a target key that doesn\'t exist', function () {
+    let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam', 'Julia'], initialFilterText: 'test'}));
+    let initialResult = result.current;
+    expect(initialResult.items).toBe(initial);
+    expect(initialResult.selectedKeys).toEqual(new Set(['Sam', 'Julia']));
+    expect(initialResult.filterText).toBe('test');
+
+    act(() => {
+      result.current.insertAfter('fakeKey', {name: 'Devon'});
+    });
+
+    expect(result.current.items).toBe(initialResult.items);
+    expect(result.current.selectedKeys).toBe(initialResult.selectedKeys);
+    expect(result.current.filterText).toBe(initialResult.filterText);
+  });
+
+  it('should insert items into a empty list regardless of the target key provided (insertBefore)', function () {
+    let {result} = renderHook(() => useListData({initialItems: [], getKey}));
+    let initialResult = result.current;
+
+    act(() => {
+      result.current.insertBefore('fakeKey', {name: 'Devon'});
+    });
+
+    expect(result.current.items).not.toBe(initialResult.items);
+    expect(result.current.items).toHaveLength(1);
+    expect(result.current.items[0]).toEqual({name: 'Devon'});
+  });
+
+  it('should insert items into a empty list regardless of the target key provided (insertAfter)', function () {
+    let {result} = renderHook(() => useListData({initialItems: [], getKey}));
+    let initialResult = result.current;
+
+    act(() => {
+      result.current.insertAfter('fakeKey', {name: 'Devon'});
+    });
+
+    expect(result.current.items).not.toBe(initialResult.items);
+    expect(result.current.items).toHaveLength(1);
+    expect(result.current.items[0]).toEqual({name: 'Devon'});
   });
 
   it('should remove an item', function () {
@@ -597,6 +655,26 @@ describe('useListData', function () {
         many[2],
         many[0],
         many[4],
+        many[3],
+        many[5]
+      ]);
+    });
+
+    it('should move multiple items before another item to after that item', function () {
+      let {result} = renderHook(() => useListData({initialItems: many, getKey}));
+      let initialResult = result.current;
+
+      act(() => {
+        result.current.moveAfter('Five', ['Two', 'Three', 'Four']);
+      });
+
+      expect(result.current.items).not.toBe(initialResult.items);
+      expect(result.current.items).toHaveLength(6);
+      expect(result.current.items).toEqual([
+        many[0],
+        many[4],
+        many[1],
+        many[2],
         many[3],
         many[5]
       ]);

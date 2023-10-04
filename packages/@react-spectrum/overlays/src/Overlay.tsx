@@ -15,10 +15,22 @@ import {OpenTransition} from './OpenTransition';
 import {OverlayProps} from '@react-types/overlays';
 import {Provider} from '@react-spectrum/provider';
 import React, {useCallback, useState} from 'react';
-import ReactDOM from 'react-dom';
+import {Overlay as ReactAriaOverlay} from '@react-aria/overlays';
 
 function Overlay(props: OverlayProps, ref: DOMRef<HTMLDivElement>) {
-  let {children, isOpen, container, onEnter, onEntering, onEntered, onExit, onExiting, onExited} = props;
+  let {
+    children,
+    isOpen,
+    disableFocusManagement,
+    container,
+    onEnter,
+    onEntering,
+    onEntered,
+    onExit,
+    onExiting,
+    onExited,
+    nodeRef
+  } = props;
   let [exited, setExited] = useState(!isOpen);
 
   let handleEntered = useCallback(() => {
@@ -42,23 +54,24 @@ function Overlay(props: OverlayProps, ref: DOMRef<HTMLDivElement>) {
     return null;
   }
 
-  let contents = (
-    <Provider ref={ref} UNSAFE_style={{background: 'transparent', isolation: 'isolate'}}>
-      <OpenTransition
-        in={isOpen}
-        appear
-        onExit={onExit}
-        onExiting={onExiting}
-        onExited={handleExited}
-        onEnter={onEnter}
-        onEntering={onEntering}
-        onEntered={handleEntered}>
-        {children}
-      </OpenTransition>
-    </Provider>
+  return (
+    <ReactAriaOverlay portalContainer={container} disableFocusManagement={disableFocusManagement} isExiting={!isOpen}>
+      <Provider ref={ref} UNSAFE_style={{background: 'transparent', isolation: 'isolate'}} isDisabled={false}>
+        <OpenTransition
+          in={isOpen}
+          appear
+          onExit={onExit}
+          onExiting={onExiting}
+          onExited={handleExited}
+          onEnter={onEnter}
+          onEntering={onEntering}
+          onEntered={handleEntered}
+          nodeRef={nodeRef}>
+          {children}
+        </OpenTransition>
+      </Provider>
+    </ReactAriaOverlay>
   );
-
-  return ReactDOM.createPortal(contents, container || document.body);
 }
 
 let _Overlay = React.forwardRef(Overlay);

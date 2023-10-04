@@ -18,17 +18,17 @@ import intlMessages from '../intl/*.json';
 import {Menu} from './Menu';
 import {MenuTrigger} from './MenuTrigger';
 import More from '@spectrum-icons/workflow/More';
-import React from 'react';
+import React, {forwardRef, ReactElement} from 'react';
 import {SpectrumActionMenuProps} from '@react-types/menu';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSlotProps} from '@react-spectrum/utils';
 
 function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: FocusableRef<HTMLButtonElement>) {
-  props = useSlotProps(props, 'actionmenu');
-  let formatMessage = useMessageFormatter(intlMessages);
+  props = useSlotProps(props, 'actionMenu');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let buttonProps = filterDOMProps(props, {labelable: true});
   if (buttonProps['aria-label'] === undefined) {
-    buttonProps['aria-label'] = formatMessage('moreActions');
+    buttonProps['aria-label'] = stringFormatter.format('moreActions');
   }
 
   return (
@@ -57,5 +57,5 @@ function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: Fo
 /**
  * ActionMenu combines an ActionButton with a Menu for simple "more actions" use cases.
  */
-let _ActionMenu = React.forwardRef(ActionMenu);
+const _ActionMenu = forwardRef(ActionMenu) as <T>(props: SpectrumActionMenuProps<T> & {ref?: FocusableRef<HTMLButtonElement>}) => ReactElement;
 export {_ActionMenu as ActionMenu};

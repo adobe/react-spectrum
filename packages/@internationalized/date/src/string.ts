@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AnyDateTime, Disambiguation} from './types';
+import {AnyDateTime, DateTimeDuration, Disambiguation} from './types';
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
 import {epochFromDate, fromAbsolute, possibleAbsolutes, toAbsolute, toCalendar, toCalendarDateTime, toTimeZone} from './conversion';
 import {getLocalTimeZone} from './queries';
@@ -20,9 +20,14 @@ import {Mutable} from './utils';
 const TIME_RE = /^(\d{2})(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?$/;
 const DATE_RE = /^(\d{4})-(\d{2})-(\d{2})$/;
 const DATE_TIME_RE = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?$/;
-const ZONED_DATE_TIME_RE = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?(?:([+-]\d{2})(?::(\d{2}))?)?\[(.*?)\]$/;
-const ABSOLUTE_RE = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?(?:(?:([+-]\d{2})(?::(\d{2}))?)|Z)$/;
+const ZONED_DATE_TIME_RE = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?(?:([+-]\d{2})(?::?(\d{2}))?)?\[(.*?)\]$/;
+const ABSOLUTE_RE = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?(?:(?:([+-]\d{2})(?::?(\d{2}))?)|Z)$/;
+const DATE_TIME_DURATION_RE =
+    /^((?<negative>-)|\+)?P((?<years>\d*)Y)?((?<months>\d*)M)?((?<weeks>\d*)W)?((?<days>\d*)D)?((?<time>T)((?<hours>\d*[.,]?\d{1,9})H)?((?<minutes>\d*[.,]?\d{1,9})M)?((?<seconds>\d*[.,]?\d{1,9})S)?)?$/;
+const requiredDurationTimeGroups = ['hours', 'minutes', 'seconds'];
+const requiredDurationGroups = ['years', 'months', 'weeks', 'days', ...requiredDurationTimeGroups];
 
+/** Parses an ISO 8601 time string. */
 export function parseTime(value: string): Time {
   let m = value.match(TIME_RE);
   if (!m) {
@@ -37,6 +42,7 @@ export function parseTime(value: string): Time {
   );
 }
 
+/** Parses an ISO 8601 date string, with no time components. */
 export function parseDate(value: string): CalendarDate {
   let m = value.match(DATE_RE);
   if (!m) {
@@ -53,6 +59,7 @@ export function parseDate(value: string): CalendarDate {
   return date as CalendarDate;
 }
 
+/** Parses an ISO 8601 date and time string, with no time zone. */
 export function parseDateTime(value: string): CalendarDateTime {
   let m = value.match(DATE_TIME_RE);
   if (!m) {
@@ -73,6 +80,12 @@ export function parseDateTime(value: string): CalendarDateTime {
   return date as CalendarDateTime;
 }
 
+/**
+ * Parses an ISO 8601 date and time string with a time zone extension and optional UTC offset
+ * (e.g. "2021-11-07T00:45[America/Los_Angeles]" or "2021-11-07T00:45-07:00[America/Los_Angeles]").
+ * Ambiguous times due to daylight saving time transitions are resolved according to the `disambiguation`
+ * parameter.
+ */
 export function parseZonedDateTime(value: string, disambiguation?: Disambiguation): ZonedDateTime {
   let m = value.match(ZONED_DATE_TIME_RE);
   if (!m) {
@@ -113,6 +126,10 @@ export function parseZonedDateTime(value: string, disambiguation?: Disambiguatio
   return fromAbsolute(ms, date.timeZone);
 }
 
+/**
+ * Parses an ISO 8601 date and time string with a UTC offset (e.g. "2021-11-07T07:45:00Z"
+ * or "2021-11-07T07:45:00-07:00"). The result is converted to the provided time zone.
+ */
 export function parseAbsolute(value: string, timeZone: string): ZonedDateTime {
   let m = value.match(ABSOLUTE_RE);
   if (!m) {
@@ -140,6 +157,10 @@ export function parseAbsolute(value: string, timeZone: string): ZonedDateTime {
   return toTimeZone(date as ZonedDateTime, timeZone);
 }
 
+/**
+ * Parses an ISO 8601 date and time string with a UTC offset (e.g. "2021-11-07T07:45:00Z"
+ * or "2021-11-07T07:45:00-07:00"). The result is converted to the user's local time zone.
+ */
 export function parseAbsoluteToLocal(value: string): ZonedDateTime {
   return parseAbsolute(value, getLocalTimeZone());
 }
@@ -177,4 +198,71 @@ function offsetToString(offset: number) {
 
 export function zonedDateTimeToString(date: ZonedDateTime): string {
   return `${dateTimeToString(date)}${offsetToString(date.offset)}[${date.timeZone}]`;
+}
+
+/**
+ * Parses an ISO 8601 duration string (e.g. "P3Y6M6W4DT12H30M5S").
+ * @param value An ISO 8601 duration string.
+ * @returns A DateTimeDuration object.
+ */
+export function parseDuration(value: string): Required<DateTimeDuration> {
+  const match = value.match(DATE_TIME_DURATION_RE);
+
+  if (!match) {
+    throw new Error(`Invalid ISO 8601 Duration string: ${value}`);
+  }
+
+  const parseDurationGroup = (
+    group: string | undefined,
+    isNegative: boolean,
+    min: number,
+    max: number
+  ): number => {
+    if (!group) {
+      return 0;
+    }
+    try {
+      const sign = isNegative ? -1 : 1;
+      return sign * parseNumber(group.replace(',', '.'), min, max);
+    } catch {
+      throw new Error(`Invalid ISO 8601 Duration string: ${value}`);
+    }
+  };
+
+  const isNegative = !!match.groups?.negative;
+
+  const hasRequiredGroups = requiredDurationGroups.some(group => match.groups?.[group]);
+
+  if (!hasRequiredGroups) {
+    throw new Error(`Invalid ISO 8601 Duration string: ${value}`);
+  }
+
+  const durationStringIncludesTime = match.groups?.time;
+
+  if (durationStringIncludesTime) {
+    const hasRequiredDurationTimeGroups = requiredDurationTimeGroups.some(group => match.groups?.[group]);
+    if (!hasRequiredDurationTimeGroups) {
+      throw new Error(`Invalid ISO 8601 Duration string: ${value}`);
+    }
+  }
+
+  const duration: Mutable<DateTimeDuration> = {
+    years: parseDurationGroup(match.groups?.years, isNegative, 0, 9999),
+    months: parseDurationGroup(match.groups?.months, isNegative, 0, 12),
+    weeks: parseDurationGroup(match.groups?.weeks, isNegative, 0, Infinity),
+    days: parseDurationGroup(match.groups?.days, isNegative, 0, 31),
+    hours: parseDurationGroup(match.groups?.hours, isNegative, 0, 23),
+    minutes: parseDurationGroup(match.groups?.minutes, isNegative, 0, 59),
+    seconds: parseDurationGroup(match.groups?.seconds, isNegative, 0, 59)
+  };
+
+  if (((duration.hours % 1) !== 0) && (duration.minutes || duration.seconds)) {
+    throw new Error(`Invalid ISO 8601 Duration string: ${value} - only the smallest unit can be fractional`);
+  }
+
+  if (((duration.minutes % 1) !== 0) && duration.seconds) {
+    throw new Error(`Invalid ISO 8601 Duration string: ${value} - only the smallest unit can be fractional`);
+  }
+
+  return duration as Required<DateTimeDuration>;
 }

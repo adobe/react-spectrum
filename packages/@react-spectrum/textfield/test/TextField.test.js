@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, pointerMap, render, waitFor} from '@react-spectrum/test-utils';
 import Checkmark from '@spectrum-icons/workflow/Checkmark';
-import {fireEvent, render, waitFor} from '@testing-library/react';
 import React from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {TextArea, TextField} from '../';
-import {typeText} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let testId = 'test-id';
@@ -33,6 +32,10 @@ describe('Shared TextField behavior', () => {
   let onBlur = jest.fn();
   let onChange = jest.fn();
   let onFocus = jest.fn();
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
 
   afterEach(() => {
     onChange.mockClear();
@@ -54,11 +57,12 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}     | ${'text'}    | ${'INPUT'}
     ${'v3 TextArea'}    | ${TextArea}      | ${'text'}    | ${'TEXTAREA'}
     ${'v3 SearchField'} | ${SearchField}   | ${'search'}  | ${'INPUT'}
-  `('$Name renders with default textfield behavior', ({Name, Component, expectedType, expectedTagName}) => {
+  `('$Name renders with default textfield behavior', async ({Name, Component, expectedType, expectedTagName}) => {
     let tree = renderComponent(Component, {'aria-label': 'mandatory label'});
     let input = tree.getByTestId(testId);
     expect(input.value).toBe('');
-    typeText(input, inputText);
+    await user.tab();
+    await user.keyboard(inputText);
     expect(input.value).toBe(inputText);
     if (Name === 'v3 TextArea') {
       expect(input).not.toHaveAttribute('type');
@@ -85,11 +89,13 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
-  `('$Name renders with placeholder text', ({Name, Component}) => {
+  `('$Name renders with placeholder text and shows warning', ({Name, Component}) => {
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let tree = renderComponent(Component, {placeholder: inputText, 'aria-label': 'mandatory label'});
     expect(tree.getByPlaceholderText(inputText)).toBeTruthy();
     let input = tree.getByTestId(testId);
     expect(input.placeholder).toBe(inputText);
+    expect(spyWarn).toHaveBeenCalledWith(`Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/${Name.replace('v3 ', '')}.html#help-text`);
   });
 
   it.each`
@@ -111,12 +117,13 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
-  `('$Name calls onFocus when the the input field is focused', ({Name, Component}) => {
+  `('$Name calls onFocus when the the input field is focused', async ({Name, Component}) => {
     let tree = renderComponent(Component, {onFocus, 'aria-label': 'mandatory label'});
     let input = tree.getByTestId(testId);
-    fireEvent.focus(input);
+    act(() => input.focus());
     expect(onFocus).toHaveBeenCalledTimes(1);
-    userEvent.click(input);
+    act(() => input.blur());
+    await user.click(input);
     expect(onFocus).toHaveBeenCalledTimes(2);
   });
 
@@ -126,9 +133,9 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
   `('$Name calls onBlur when the input field loses focus', ({Name, Component}) => {
-    let tree = renderComponent(Component, {onBlur, 'aria-label': 'mandatory label'});
+    let tree = renderComponent(Component, {onBlur, autoFocus: true, 'aria-label': 'mandatory label'});
     let input = tree.getByTestId(testId);
-    fireEvent.blur(input);
+    act(() => input.blur());
     expect(onBlur).toHaveBeenCalledTimes(1);
   });
 
@@ -137,12 +144,12 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
-  `('$Name is uncontrolled if defaultValue prop is provided', ({Name, Component}) => {
+  `('$Name is uncontrolled if defaultValue prop is provided', async ({Name, Component}) => {
     let defaultValue = 'test';
     let newValue = 'blah';
-    let tree = renderComponent(Component, {onChange, defaultValue, 'aria-label': 'mandatory label'});
-    let input = tree.getByTestId(testId);
-    userEvent.type(input, newValue);
+    renderComponent(Component, {onChange, defaultValue, 'aria-label': 'mandatory label'});
+    await user.tab();
+    await user.keyboard(newValue);
     expect(onChange).toHaveBeenCalledTimes(newValue.length);
   });
 
@@ -151,13 +158,14 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
-  `('$Name is controlled if value prop is provided', ({Name, Component}) => {
+  `('$Name is controlled if value prop is provided', async ({Name, Component}) => {
     let value = 'test';
     let newValue = 'blah';
     let tree = renderComponent(Component, {onChange, value, 'aria-label': 'mandatory label'});
     let input = tree.getByTestId(testId);
     expect(input.value).toBe(value);
-    userEvent.type(input, newValue);
+    await user.tab();
+    await user.keyboard(newValue);
     expect(input.value).toBe(value);
     expect(onChange).toHaveBeenCalledTimes(newValue.length);
   });
@@ -228,14 +236,14 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}     | ${{isReadOnly: true, 'aria-label': 'mandatory label'}}
     ${'v3 TextArea'}    | ${TextArea}      | ${{isReadOnly: true, 'aria-label': 'mandatory label'}}
     ${'v3 SearchField'} | ${SearchField}   | ${{isReadOnly: true, 'aria-label': 'mandatory label'}}
-  `('$Name should support isReadOnly', ({Name, Component, props}) => {
+  `('$Name should support isReadOnly', async ({Name, Component, props}) => {
     let tree = renderComponent(Component, props);
     let input = tree.getByTestId(testId);
     expect(input).toHaveAttribute('readonly');
-    userEvent.click(input);
+    await user.click(input);
     expect(document.activeElement).toEqual(input);
 
-    // Note: simulating text input via fireEvent or "type"(userEvent library) still causes the input value to change
+    // Note: simulating text input via fireEvent or "type"(await user library) still causes the input value to change
     // Seems like this is a framework issue rather than a bug with TextField so omitting the test case
   });
 
@@ -244,11 +252,11 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}     | ${{isDisabled: true, 'aria-label': 'mandatory label'}}
     ${'v3 TextArea'}    | ${TextArea}      | ${{isDisabled: true, 'aria-label': 'mandatory label'}}
     ${'v3 SearchField'} | ${SearchField}   | ${{isDisabled: true, 'aria-label': 'mandatory label'}}
-  `('$Name should disable the input field if isDisabled=true', ({Name, Component, props}) => {
+  `('$Name should disable the input field if isDisabled=true', async ({Name, Component, props}) => {
     let tree = renderComponent(Component, props);
     let input = tree.getByTestId(testId);
     expect(input).toHaveAttribute('disabled');
-    userEvent.click(input);
+    await user.click(input);
     expect(document.activeElement).not.toEqual(input);
     // Note: simulating text input via fireEvent or "type"(userEvent library) still causes the input value to change
     // Seems like this is a framework issue rather than a bug with TextField so omitting the test case
@@ -431,5 +439,35 @@ describe('Shared TextField behavior', () => {
     let tree = renderComponent(Component, {excludeFromTabOrder: true, 'aria-label': 'mandatory label'});
     let input = tree.getByTestId(testId);
     expect(input).toHaveAttribute('tabIndex', '-1');
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 TextField'}   | ${TextField}
+    ${'v3 TextArea'}    | ${TextArea}
+    ${'v3 SearchField'} | ${SearchField}
+  `('$Name supports form reset', async ({Component}) => {
+    function Test() {
+      let [value, setValue] = React.useState('Devon');
+      return (
+        <form>
+          <Component data-testid="name" label="Name" value={value} onChange={setValue} />
+          <input type="reset" data-testid="reset" />
+        </form>
+      );
+    }
+
+    let {getByTestId} = render(<Test />);
+    let input = getByTestId('name');
+
+    expect(input).toHaveValue('Devon');
+    await user.tab();
+
+    await user.keyboard('[ArrowRight] test');
+    expect(input).toHaveValue('Devon test');
+
+    let button = getByTestId('reset');
+    await user.click(button);
+    expect(input).toHaveValue('Devon');
   });
 });

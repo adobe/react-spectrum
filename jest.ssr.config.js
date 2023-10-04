@@ -24,6 +24,8 @@ module.exports = {
     '\\.(css|styl)$': 'identity-obj-proxy'
   },
 
+  resolver: '<rootDir>/lib/jestResolver.js',
+
   // Run tests from one or more projects
   projects: ['<rootDir>'],
 
@@ -39,6 +41,8 @@ module.exports = {
 
   // The test environment that will be used for testing
   testEnvironment: 'jsdom',
+
+  setupFilesAfterEnv: ['<rootDir>scripts/setupTests.js'],
 
   // The glob patterns Jest uses to detect test files
   testMatch: [

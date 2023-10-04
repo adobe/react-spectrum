@@ -10,27 +10,46 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaPopoverProps, DismissButton, PopoverAria, usePopover} from '@react-aria/overlays';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, StyleProps} from '@react-types/shared';
+import {FocusWithinProps, useFocusWithin} from '@react-aria/interactions';
 import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {Overlay} from './Overlay';
+import {OverlayTriggerState} from '@react-stately/overlays';
 import overrideStyles from './overlays.css';
-import {PlacementAxis, PopoverProps} from '@react-types/overlays';
-import React, {forwardRef, HTMLAttributes, ReactNode, RefObject, useRef, useState} from 'react';
+import React, {forwardRef, MutableRefObject, ReactNode, RefObject, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
-import {useModal, useOverlay} from '@react-aria/overlays';
+import {Underlay} from './Underlay';
 
-interface PopoverWrapperProps extends HTMLAttributes<HTMLElement> {
+interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef' | 'maxHeight'>, FocusWithinProps, StyleProps {
   children: ReactNode,
-  placement?: PlacementAxis,
-  arrowProps?: HTMLAttributes<HTMLElement>,
   hideArrow?: boolean,
+  state: OverlayTriggerState,
+  shouldContainFocus?: boolean,
+  onEntering?: () => void,
+  onEnter?: () => void,
+  onEntered?: () => void,
+  onExiting?: () => void,
+  onExited?: () => void,
+  onExit?: () => void,
+  container?: HTMLElement,
+  disableFocusManagement?: boolean,
+  enableBothDismissButtons?: boolean
+}
+
+interface PopoverWrapperProps extends PopoverProps, FocusWithinProps {
   isOpen?: boolean,
-  onClose?: () => void,
-  shouldCloseOnBlur?: boolean,
-  isKeyboardDismissDisabled?: boolean,
-  isNonModal?: boolean,
-  isDismissable?: boolean
+  wrapperRef: MutableRefObject<HTMLDivElement>
+}
+
+interface ArrowProps {
+  arrowProps: PopoverAria['arrowProps'],
+  isLandscape: boolean,
+  arrowRef?: RefObject<SVGSVGElement>,
+  primary: number,
+  secondary: number,
+  borderDiagonal: number
 }
 
 /**
@@ -50,32 +69,15 @@ let arrowPlacement = {
 function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
   let {
     children,
-    placement,
-    arrowProps,
-    onClose,
-    shouldCloseOnBlur,
-    hideArrow,
-    isKeyboardDismissDisabled,
-    isNonModal,
-    isDismissable = true,
+    state,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
-  let {styleProps} = useStyleProps(props);
+  let wrapperRef = useRef<HTMLDivElement>(null);
 
   return (
-    <Overlay {...otherProps}>
-      <PopoverWrapper
-        {...styleProps}
-        ref={domRef}
-        placement={placement}
-        arrowProps={arrowProps}
-        onClose={onClose}
-        shouldCloseOnBlur={shouldCloseOnBlur}
-        isKeyboardDismissDisabled={isKeyboardDismissDisabled}
-        hideArrow={hideArrow}
-        isNonModal={isNonModal}
-        isDismissable={isDismissable}>
+    <Overlay {...otherProps} isOpen={state.isOpen} nodeRef={wrapperRef}>
+      <PopoverWrapper ref={domRef} {...props} wrapperRef={wrapperRef}>
         {children}
       </PopoverWrapper>
     </Overlay>
@@ -85,95 +87,135 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
 const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HTMLDivElement>) => {
   let {
     children,
-    placement = 'bottom',
-    arrowProps,
     isOpen,
     hideArrow,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    shouldCloseOnBlur,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isKeyboardDismissDisabled,
     isNonModal,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isDismissable,
-    ...otherProps
+    enableBothDismissButtons,
+    state,
+    wrapperRef
   } = props;
-  let {overlayProps} = useOverlay({...props, isDismissable: isDismissable && isOpen}, ref);
-  let {modalProps} = useModal({
-    isDisabled: isNonModal
-  });
+  let {styleProps} = useStyleProps(props);
 
+  let {size, borderWidth, arrowRef} = useArrowSize();
+  const borderRadius = usePopoverBorderRadius(ref);
+  let borderDiagonal = borderWidth * Math.SQRT2;
+  let primary = size + borderDiagonal;
+  let secondary = primary * 2;
+  let {
+    popoverProps,
+    arrowProps,
+    underlayProps,
+    placement
+  } = usePopover({
+    ...props,
+    popoverRef: ref,
+    maxHeight: null,
+    arrowSize: hideArrow ? 0 : secondary,
+    arrowBoundaryOffset: borderRadius
+  }, state);
+  let {focusWithinProps} = useFocusWithin(props);
+
+  let onPointerDown = () => {
+    state.close();
+  };
+
+  // Attach Transition's nodeRef to outermost wrapper for node.reflow: https://github.com/reactjs/react-transition-group/blob/c89f807067b32eea6f68fd6c622190d88ced82e2/src/Transition.js#L231
   return (
-    <div
-      {...mergeProps(otherProps, overlayProps, modalProps)}
-      ref={ref}
-      className={
-        classNames(
-          styles,
-          'spectrum-Popover',
-          `spectrum-Popover--${placement}`,
-          {
-            'spectrum-Popover--withTip': !hideArrow,
-            'is-open': isOpen
-          },
+    <div ref={wrapperRef}>
+      {!isNonModal && <Underlay isTransparent {...mergeProps(underlayProps, {onPointerDown})} isOpen={isOpen} /> }
+      <div
+        {...styleProps}
+        {...mergeProps(popoverProps, focusWithinProps)}
+        style={{
+          ...styleProps.style,
+          ...popoverProps.style
+        }}
+        ref={ref}
+        className={
           classNames(
-            overrideStyles,
+            styles,
             'spectrum-Popover',
-            'react-spectrum-Popover'
-          ),
-          otherProps.className
-        )
-      }
-      role="presentation"
-      data-testid="popover">
-      {children}
-      {hideArrow ? null : (
-        <Arrow arrowProps={arrowProps} direction={arrowPlacement[placement]} />
-      )}
+            `spectrum-Popover--${placement}`,
+            {
+              'spectrum-Popover--withTip': !hideArrow,
+              'is-open': isOpen,
+              [`is-open--${placement}`]: isOpen
+            },
+            classNames(
+              overrideStyles,
+              'spectrum-Popover',
+              'react-spectrum-Popover'
+            ),
+            styleProps.className
+          )
+        }
+        role="presentation"
+        data-testid="popover">
+        {(!isNonModal || enableBothDismissButtons) && <DismissButton onDismiss={state.close} />}
+        {children}
+        {hideArrow ? null : (
+          <Arrow
+            arrowProps={arrowProps}
+            isLandscape={arrowPlacement[placement] === 'bottom'}
+            arrowRef={arrowRef}
+            primary={primary}
+            secondary={secondary}
+            borderDiagonal={borderDiagonal} />
+        )}
+        <DismissButton onDismiss={state.close} />
+      </div>
     </div>
   );
 });
 
-let ROOT_2 = Math.sqrt(2);
+function usePopoverBorderRadius(popoverRef: RefObject<HTMLDivElement>) {
+  let [borderRadius, setBorderRadius] = useState(0);
+  useLayoutEffect(() => {
+    if (popoverRef.current) {
+      let spectrumBorderRadius = window.getComputedStyle(popoverRef.current).borderRadius;
+      if (spectrumBorderRadius !== '') {
+        setBorderRadius(parseInt(spectrumBorderRadius, 10));
+      }
+    }
+  }, [popoverRef]);
+  return borderRadius;
+}
 
-function Arrow(props) {
+function useArrowSize() {
   let [size, setSize] = useState(20);
   let [borderWidth, setBorderWidth] = useState(1);
-  let ref = useRef();
+  let arrowRef = useRef<SVGSVGElement>(null);
   // get the css value for the tip size and divide it by 2 for this arrow implementation
   useLayoutEffect(() => {
-    if (ref.current) {
-      let spectrumTipWidth = window.getComputedStyle(ref.current)
+    if (arrowRef.current) {
+      let spectrumTipWidth = window.getComputedStyle(arrowRef.current)
         .getPropertyValue('--spectrum-popover-tip-size');
       if (spectrumTipWidth !== '') {
         setSize(parseInt(spectrumTipWidth, 10) / 2);
       }
 
-      let spectrumBorderWidth = window.getComputedStyle(ref.current)
+      let spectrumBorderWidth = window.getComputedStyle(arrowRef.current)
         .getPropertyValue('--spectrum-popover-tip-borderWidth');
       if (spectrumBorderWidth !== '') {
         setBorderWidth(parseInt(spectrumBorderWidth, 10));
       }
     }
-  }, [ref]);
+  }, []);
+  return {size, borderWidth, arrowRef};
+}
 
-  let landscape = props.direction === 'top' || props.direction === 'bottom';
-  let mirror = props.direction === 'left' || props.direction === 'top';
-
-  let borderDiagonal = borderWidth * ROOT_2;
+function Arrow(props: ArrowProps) {
+  let {primary, secondary, isLandscape, arrowProps, borderDiagonal, arrowRef} = props;
   let halfBorderDiagonal = borderDiagonal / 2;
 
-  let secondary = 2 * size + 2 * borderDiagonal;
-  let primary = size + borderDiagonal;
-
-  let primaryStart = mirror ? primary : 0;
-  let primaryEnd = mirror ? halfBorderDiagonal : primary - halfBorderDiagonal;
+  let primaryStart = 0;
+  let primaryEnd = primary - halfBorderDiagonal;
 
   let secondaryStart = halfBorderDiagonal;
   let secondaryMiddle = secondary / 2;
   let secondaryEnd = secondary - halfBorderDiagonal;
 
-  let pathData = landscape ? [
+  let pathData = isLandscape ? [
     'M', secondaryStart, primaryStart,
     'L', secondaryMiddle, primaryEnd,
     'L', secondaryEnd, primaryStart
@@ -182,17 +224,15 @@ function Arrow(props) {
     'L', primaryEnd, secondaryMiddle,
     'L', primaryStart, secondaryEnd
   ];
-  let arrowProps = props.arrowProps;
 
-  /* use ceil because the svg needs to always accomodate the path inside it */
+  /* use ceil because the svg needs to always accommodate the path inside it */
   return (
     <svg
       xmlns="http://www.w3.org/svg/2000"
-      width={Math.ceil(landscape ? secondary : primary)}
-      height={Math.ceil(landscape ? primary : secondary)}
-      style={props.style}
+      width={Math.ceil(isLandscape ? secondary : primary)}
+      height={Math.ceil(isLandscape ? primary : secondary)}
       className={classNames(styles, 'spectrum-Popover-tip')}
-      ref={ref}
+      ref={arrowRef}
       {...arrowProps}>
       <path className={classNames(styles, 'spectrum-Popover-tip-triangle')} d={pathData.join(' ')} />
     </svg>

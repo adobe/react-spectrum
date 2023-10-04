@@ -12,8 +12,13 @@
 
 /// <reference types="css-module-types" />
 
-export * from './CardView';
-export * from './GalleryLayout';
-export * from './GridLayout';
-export * from './WaterfallLayout';
-export * from './Card';
+export type {GalleryLayoutOptions} from './GalleryLayout';
+export type {GridLayoutOptions} from './GridLayout';
+export type {WaterfallLayoutOptions} from './WaterfallLayout';
+
+export {CardView} from './CardView';
+export {GalleryLayout} from './GalleryLayout';
+export {GridLayout} from './GridLayout';
+export {WaterfallLayout} from './WaterfallLayout';
+export {Card} from './Card';
+export type {SpectrumCardViewProps} from '@react-types/card';

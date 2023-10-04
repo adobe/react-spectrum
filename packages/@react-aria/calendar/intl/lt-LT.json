@@ -1,11 +1,14 @@
 {
-  "dateSelected": "Pasirinkta {date, date, full}",
+  "dateRange": "Nuo {startDate} iki {endDate}",
+  "dateSelected": "Pasirinkta {date}",
   "finishRangeSelectionPrompt": "Spustelėkite, kad baigtumėte pasirinkti datų intervalą",
+  "maximumDate": "Paskutinė galima data",
+  "minimumDate": "Pirmoji galima data",
   "next": "Paskesnis",
   "previous": "Ankstesnis",
-  "selectedDateDescription": "Pasirinkta data: {date, date, full}",
-  "selectedRangeDescription": "Pasirinktas intervalas: nuo {start, date, long} iki {end, date, long}",
+  "selectedDateDescription": "Pasirinkta data: {date}",
+  "selectedRangeDescription": "Pasirinktas intervalas: {dateRange}",
   "startRangeSelectionPrompt": "Spustelėkite, kad pradėtumėte pasirinkti datų intervalą",
-  "todayDate": "Šiandien, {date, date, full}",
-  "todayDateSelected": "Šiandien, pasirinkta {date, date, full}"
+  "todayDate": "Šiandien, {date}",
+  "todayDateSelected": "Šiandien, pasirinkta {date}"
 }

@@ -1,0 +1,511 @@
+{/* Copyright 2022 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import docs from 'docs:@react-spectrum/dnd';
+import dndDocs from 'docs:@react-types/shared/src/dnd.d.ts';
+import {FunctionAPI, PageDescription, TypeContext, InterfaceType} from '@react-spectrum/docs';
+import {Keyboard} from '@react-spectrum/text';
+import DragPreview from '../../../@react-aria/dnd/docs/DragPreview.svg';
+import BetweenDropPosition from '../../../@react-aria/dnd/docs/BetweenDropPosition.svg';
+import OnDropPosition from '../../../@react-aria/dnd/docs/OnDropPosition.svg';
+import RootDropPosition from '../../../@react-aria/dnd/docs/RootDropPosition.svg';
+import DragAffordance from '../../../@react-aria/dnd/docs/DragAffordance.svg';
+import Anatomy from '../../../@react-aria/dnd/docs/Anatomy.svg';
+
+---
+category: Concepts
+keywords: [drag and drop, dnd]
+order: 6
+---
+
+# Drag and Drop
+
+This page describes how to enable drag and drop functionality for the various React Spectrum components that support it.
+
+## Introduction
+
+Drag and drop is a common UI interaction that allows users to transfer data between two locations by directly moving a visual representation on screen.
+It is a flexible, efficient, and intuitive way for users to perform a variety of tasks, and is widely supported across both desktop and mobile operating systems.
+In addition to the standard mouse and touch interactions, React Spectrum also implements keyboard and screen reader accessible alternatives for drag and drop to enable all users to perform these tasks.
+
+## Drag and Drop Concepts
+
+Before we dive into how to enable drag and drop in React Spectrum, let's touch briefly on the terminology and concepts of drag and drop. In a drag and drop operation, there is
+a **drag source** and a **drop target**. The drag source is the starting location of your dragged data and the drop target is its intended destination. The dragged data
+is made up of one or more **drag items**, each of which contains information specific to their original item within the drag source.
+
+<Anatomy role="img" aria-label="Drag and drop anatomy diagram, showing drag source, drag preview, and drop target." />
+
+A drag item contains several pieces of information: the **type** of the data, the item's **kind**, and the actual data itself. The type of a drag item can be one of the
+[common mime types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) or a custom type specific to your application. Multiple types can be attached to a
+single drag item so that the item's data can be provided in different formats for interoperability with various drop targets. For example, an image could be represented by an
+`image/jpeg` type and thus be recognized as a JPEG by a file upload drop target but also have a `plain/text` type that allows the image's file name to be communicated to a
+text input drop target. In addition, there are two kinds of items: string items include inline data in the form of a Unicode string, and file items include a reference to a file from
+the user's computer.
+
+There are several **drop operations** that can be performed in a drag and drop operation: `"move"`, `"copy"`, `"link"`, and `"cancel"`. A `"move"` operation indicates that the dragged data will be
+moved from its source location to the target location. A `"copy"` operation indicates that the dragged data will be copied to the target destination. A `"link"` operation indicates that
+there will be a relationship established between the source and target locations. Finally, a `"cancel"` operation indicates that the drag and drop operation will be canceled, resulting in
+no changes made to the source or target. The drag source can specify what drop operations are allowed for its data, allowing the drop target to decide what operation to perform, using the restrictions
+set by the drag source as a guideline.
+
+<figure style={{display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '20px 0'}}>
+  <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 50, marginBottom: 4, background: 'var(--anatomy-gray-100)', padding: 32, width: 'calc(100% - 64px)', borderRadius: 4}}>
+    <RootDropPosition role="img" aria-label="Root drop position" />
+    <OnDropPosition role="img" aria-label="On drop position" />
+    <BetweenDropPosition role="img" aria-label="Between drop position" />
+  </div>
+  <figcaption style={{fontStyle: 'italic'}}>The "root", "on", and "between" drop positions.</figcaption>
+</figure>
+
+Collection components, such as ListView and TableView, support multiple **drop positions**. The component may support a `"root"` drop position, allowing items to be dropped on the collection as a whole.
+It may also support `"on"` drop positions, such as when dropping into a folder in a list. If the collection allows reordering of its items, it could support `"between"` drop positions, allowing the
+user to insert or move items between other items. Any number of these drop positions can be allowed at the same time and the component can use the types of the dragged items to selectively allow or disallow certain positions.
+
+### Interaction modes
+
+There are several interaction modes that need to be considered for drag and drop. When using a mouse, you can click an item and drag by holding the mouse button down and moving the pointer. A drop can
+be performed by releasing the mouse button or canceled by the <Keyboard>Esc</Keyboard> key. A similar interaction can be performed via touch, with a drag initiated via a long press and a drop performed by
+removing your finger from the screen. In both cases, selecting and dragging an item is often accompanied by a **drag preview**. The drag preview is a smaller version of the dragged item that follows the cursor
+or touch point. When multiple items are dragged at once, the drag preview displays a stack of items instead, accompanied by a badge reflecting the total number of dragged items. Drop targets are visually highlighted
+when dragged over, and the desired drop operation can be controlled via modifier key presses or drop activations via hovering over the drop target for a period of time.
+
+<figure style={{display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '20px 0'}}>
+  <DragPreview role="img" aria-labelledby="drag-preview-caption" />
+  <figcaption id="drag-preview-caption" style={{fontStyle: 'italic'}}>A custom drag preview representing multiple drag items.</figcaption>
+</figure>
+
+For keyboards, copy and paste shortcuts have traditionally been the alternative method to drag and drop. This comes with many limitations as it is often hard to know where pasting is allowed and difficult to control the
+exact positioning of the pasted items. Touch screen readers are even more limited in their ability to perform these operations since they often lack access to a keyboard and thus cannot copy paste in the same manner.
+
+React Spectrum attempts to resolve the above limitations by providing interactive drag affordances that bring a user into drag and drop mode when triggered via keyboard or screen reader virtual click. To perform a drag and drop operation via a keyboard,
+first select the items to be dragged by focusing the row and pressing <Keyboard>Space</Keyboard>. You can then start the drag operation by moving focus to the drag handle on any of the selected rows via the arrow keys and hitting <Keyboard>Enter</Keyboard>
+or <Keyboard>Space</Keyboard>. Once a drag operation is started, you will be automatically brought to the first valid drop target. <Keyboard>Tab</Keyboard> can then be used to cycle through other valid drop targets. For collection components like the ListView above,
+<Keyboard>Tab</Keyboard> will move you on or off the overall component itself whereas <Keyboard>ArrowUp</Keyboard> and <Keyboard>ArrowDown</Keyboard> will cycle through the valid drop targets within the component itself. Hitting <Keyboard>Enter</Keyboard>
+will then confirm the drop operation on the focused drop target. To cancel a drag operation, you can hit <Keyboard>Esc</Keyboard> at any time.
+
+<figure style={{display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '20px 0'}}>
+  <DragAffordance role="img" aria-labelledby="drag-affordance-caption" />
+  <figcaption id="drag-affordance-caption" style={{fontStyle: 'italic'}}>A focusable drag affordance to initiate keyboard and screen reader drag and drop.</figcaption>
+</figure>
+
+For screen readers, please follow the custom instructions announced when focusing the row's drag handle to begin a drag operation. For screen readers on mobile devices, swiping left and right will
+move you between valid drop targets and double tapping will confirm a drop operation. Go ahead and try out drag and drop in the example below!
+
+## Examples
+
+```tsx snippet
+import {Flex} from '@react-spectrum/layout';
+
+<Flex gap="size-300">
+  <DraggableList />
+  <DroppableList />
+</Flex>
+```
+
+### Creating the draggable list
+
+For the first ListView in the example above, we want to make the rows draggable and have the dragged rows removed from the list upon a successful drop. To accomplish this,
+we first want to set up the initial list of items for our draggable ListView via [useListData](../react-stately/useListData.html) so that we have access to some helper methods
+to modify the list of items on the fly. Note that this is completely optional and is not required to enable drag and drop in React Spectrum. You may substitute `useListData` with
+[useAsyncList](../react-stately/useAsyncList.html) or with any other state management solution.
+
+```tsx
+let list = useListData({
+  initialItems: [
+    {id: 'a', type: 'file', name: 'Adobe Photoshop'},
+    {id: 'b', type: 'file', name: 'Adobe XD'},
+    {id: 'c', type: 'file', name: 'Adobe Dreamweaver'},
+    {id: 'd', type: 'file', name: 'Adobe InDesign'},
+    {id: 'e', type: 'file', name: 'Adobe Connect'}
+  ]
+});
+```
+
+Next, we need to specify the data associated with each dragged item by returning an array from the `getItems` function. As described above in the [concepts section](#drag-and-drop-concepts), each item includes a mapping of drag types to serialized data.
+In this case, we look up the information for each dragged item and serialize it, mapping it to a custom item type. This information will be processed and provided to the drop target's drop handlers on drop.
+
+```tsx
+let getItems = (keys) => [...keys].map(key => {
+  let item = list.getItem(key);
+  return {
+    'adobe-app': JSON.stringify(item)
+  };
+})
+```
+
+We also create an `onDragEnd` event handler for `useDragAndDrop` that handles removing the dragged items from the draggable list upon a successful drop operation. Note how we use
+the `.remove` method provided by `useListData` to remove the dropped items from our list.
+
+```tsx
+let onDragEnd = (e) => {
+  if (e.dropOperation === 'move') {
+    list.remove(...e.keys);
+  }
+}
+```
+
+Finally, we provide our `getItems` and `onDragEnd` functions as options to `useDragAndDrop`, providing us with a set of `dragAndDropHooks` that we can pass to our ListView directly.
+Below is what our draggable ListView would look like after combining everything together. For more info on `getItems` and `onDragEnd`, see the [props section](#props) below and the
+[React Aria docs](../react-aria/useDraggableCollection.html#drag-data).
+
+```tsx example export=true render=false
+import {Item, ListView, useListData} from '@adobe/react-spectrum';
+import {useDragAndDrop} from '@react-spectrum/dnd';
+
+function DraggableList() {
+  let list = useListData({
+    initialItems: [
+      {id: 'a', type: 'file', name: 'Adobe Photoshop'},
+      {id: 'b', type: 'file', name: 'Adobe XD'},
+      {id: 'c', type: 'file', name: 'Adobe Dreamweaver'},
+      {id: 'd', type: 'file', name: 'Adobe InDesign'},
+      {id: 'e', type: 'file', name: 'Adobe Connect'}
+    ]
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => {
+      let item = list.getItem(key);
+      return {
+        'adobe-app': JSON.stringify(item)
+      };
+    }),
+    onDragEnd: (e) => {
+      if (e.dropOperation === 'move') {
+        list.remove(...e.keys);
+      }
+    }
+  });
+
+  return (
+    <ListView
+      aria-label="Draggable list view example"
+      width="size-3600"
+      height="size-3600"
+      selectionMode="multiple"
+      items={list.items}
+      dragAndDropHooks={dragAndDropHooks}>
+      {item => (
+        <Item textValue={item.name}>
+          {item.name}
+        </Item>
+      )}
+    </ListView>
+  );
+}
+```
+
+### Creating the droppable list
+
+We want to make the second ListView droppable, accepting drops between items and onto folders but not at the root of the list. Similar to the draggable ListView, we'll start by initializing the default item list
+via [useListData](../react-stately/useListData.html). As a reminder, `useListData` is completely optional here and can be replaced by [useAsyncList](../react-stately/useAsyncList.html) or any other state management solution.
+
+```tsx
+let list = useListData({
+  initialItems: [
+    {id: 'f', type: 'file', name: 'Adobe AfterEffects'},
+    {id: 'g', type: 'file', name: 'Adobe Illustrator'},
+    {id: 'h', type: 'file', name: 'Adobe Lightroom'},
+    {id: 'i', type: 'file', name: 'Adobe Premiere Pro'},
+    {id: 'j', type: 'file', name: 'Adobe Fresco'},
+    {id: 'k', type: 'folder', name: 'Apps', childNodes: []}
+  ]
+});
+```
+
+Since we only want to accept items from the first ListView, we set up an array containing our custom type that will be provided to `useDragAndDrop`'s `acceptedDragTypes` option.
+
+```tsx
+let acceptedDragTypes = ['adobe-app'];
+```
+
+Next, we add support for insertion drops by providing an `onInsert` handler. This handler uses the relative drop position to insert the dropped items before or after the target item.
+Note how we can access each drop item's information by using the expected drag type and `getText`.
+
+```tsx
+let onInsert = async (e) => {
+  let {
+    items,
+    target
+  } = e;
+
+  let processedItems = await Promise.all(
+    items.map(async item => JSON.parse(await item.getText('adobe-app')))
+  );
+
+  if (target.dropPosition === 'before') {
+    list.insertBefore(target.key, ...processedItems);
+  } else if (target.dropPosition === 'after') {
+    list.insertAfter(target.key, ...processedItems);
+  }
+}
+```
+
+Similarly, item drops are enabled by providing an `onItemDrop` handler. The folder's contents are updated by using `list.update` to add the dropped items to
+the folder's `childNodes`. To ensure that we can only drop on the folder in the droppable list, we create a `shouldAcceptItemDrop` function that only returns `true`
+if the drop target has `childNodes`.
+
+```tsx
+let onItemDrop = async (e) => {
+  let {
+    items,
+    target
+  } = e;
+  let processedItems = await Promise.all(
+    items.map(async item => JSON.parse(await item.getText('adobe-app')))
+  );
+  let targetItem = list.getItem(target.key);
+  list.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
+}
+
+let shouldAcceptItemDrop = (target) => !!list.getItem(target.key).childNodes;
+```
+
+Below is what our droppable ListView would look like after combining everything together. By not supplying an `onRootDrop` handler to `useDragAndDrop`, we automatically
+exclude the root of the droppable list from the drop targets reachable via any of the drag and drop interaction modes. For more information on the options used above,
+please see the [API section](#high-level-drop-handlers-and-options) below.
+
+```tsx example export=true render=false
+import type {TextDropItem} from '@react-spectrum/dnd';
+import Folder from '@spectrum-icons/illustrations/Folder';
+import {Text} from '@react-spectrum/text';
+import {useDragAndDrop} from '@react-spectrum/dnd';
+
+function DroppableList() {
+  let list = useListData({
+    initialItems: [
+      {id: 'f', type: 'file', name: 'Adobe AfterEffects'},
+      {id: 'g', type: 'file', name: 'Adobe Illustrator'},
+      {id: 'h', type: 'file', name: 'Adobe Lightroom'},
+      {id: 'i', type: 'file', name: 'Adobe Premiere Pro'},
+      {id: 'j', type: 'file', name: 'Adobe Fresco'},
+      {id: 'k', type: 'folder', name: 'Apps',  childNodes: []}
+    ]
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    acceptedDragTypes: ['adobe-app'],
+    shouldAcceptItemDrop: (target) => !!list.getItem(target.key).childNodes,
+    onInsert: async (e) => {
+      let {
+        items,
+        target
+      } = e;
+      let processedItems = await Promise.all(
+        items.map(async (item: TextDropItem) => JSON.parse(await item.getText('adobe-app')))
+      );
+
+      if (target.dropPosition === 'before') {
+        list.insertBefore(target.key, ...processedItems);
+      } else if (target.dropPosition === 'after') {
+        list.insertAfter(target.key, ...processedItems);
+      }
+    },
+    onItemDrop: async (e) => {
+      let {
+        items,
+        target
+      } = e;
+      let processedItems = await Promise.all(
+        items.map(async (item: TextDropItem) => JSON.parse(await item.getText('adobe-app')))
+      );
+      let targetItem = list.getItem(target.key);
+      list.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
+    }
+  });
+
+  return (
+    <ListView
+      aria-label="Droppable list view example"
+      width="size-3600"
+      height="size-3600"
+      selectionMode="multiple"
+      items={list.items}
+      dragAndDropHooks={dragAndDropHooks}>
+      {item => (
+        <Item textValue={item.name} hasChildItems={item.type === 'folder'}>
+          {item.type === 'folder' && <Folder />}
+          <Text>{item.name}</Text>
+          {item.type === 'folder' &&
+            <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
+          }
+        </Item>
+      )}
+    </ListView>
+  );
+}
+```
+
+### Low-level API
+
+The above example makes use of several high-level events and options supported by `useDragAndDrop` to define the droppable ListView's behavior. However, you may have complex operations
+that would be difficult or impossible to implement using the high-level options alone. For situations like this, you can use `getDropOperation` and `onDrop` instead, granting you
+complete control over what drop operations should be returned and how any drop on your collection should be handled. For a more general explanation of these low-level options and how they work,
+see the [API section](#low-level-drop-handlers-and-options) below and the `useDroppableCollection` [React Aria docs](../react-aria/useDroppableCollection.html#low-level-api).
+
+The ListView below allows external directories to be dropped at its root level or between existing items. Files of a specific type can be dropped on certain pre-existing directories only.
+
+```tsx example
+import type {FileDropItem, DirectoryDropItem} from '@react-spectrum/dnd';
+import {DIRECTORY_DRAG_TYPE} from '@react-spectrum/dnd';
+
+function DroppableListLowLevelAPI() {
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Images', contains: 0, accept: ['image/png', 'image/jpeg']},
+      {id: 2, name: 'Videos', contains: 0, accept: ['video/mp4']},
+      {id: 3, name: 'Documents', contains: 0, accept: ['text/plain', 'application/pdf']}
+    ]
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    onDrop: async (e) => {
+      let items = await Promise.all(
+        e.items
+          .filter((item) => {
+            // Check if dropped item is accepted.
+            if (item.kind === 'file' && e.target.type === 'item' && e.target.dropPosition === 'on') {
+              let folder = list.getItem(e.target.key);
+              return folder.accept.includes(item.type);
+            }
+
+            return item.kind === 'directory';
+          })
+          .map(async (item: FileDropItem | DirectoryDropItem) => {
+            // Collect child count from dropped directories.
+            let contains = 0;
+            let accept;
+            if (item.kind === 'directory') {
+              for await (let _ of item.getEntries()) {
+                contains++;
+                accept = [];
+              }
+            }
+
+            return {
+              id: Math.random(),
+              name: item.name,
+              contains,
+              accept
+            };
+          })
+      );
+
+      // Update item count if dropping on an item, otherwise insert the new items in the list.
+      if (e.target.type === 'item') {
+        if (e.target.dropPosition === 'on') {
+          let item = list.getItem(e.target.key);
+          list.update(e.target.key, {
+            ...item,
+            contains: item.contains + items.length
+          });
+        } else if (e.target.dropPosition === 'before') {
+          list.insertBefore(e.target.key, ...items);
+        } else if (e.target.dropPosition === 'after') {
+          list.insertAfter(e.target.key, ...items);
+        }
+      } else {
+        // If dropping on the root, append the directory to the bottom of the list
+        list.append(...items);
+      }
+    },
+    getDropOperation: (target, types, allowedOperations) => {
+      // When dropping on an item, check whether the item accepts the drag types and cancel if not.
+      if (target.type === 'item' && target.dropPosition === 'on') {
+        let item = list.getItem(target.key);
+        return item.accept && item.accept.some((type) => types.has(type))
+          ? allowedOperations[0]
+          : 'cancel';
+      }
+
+      // If dropping a directory between items, support a copy operation.
+      return types.has(DIRECTORY_DRAG_TYPE) ? 'copy' : 'cancel';
+    }
+  });
+
+  return (
+    <ListView
+      aria-label="Low-level api droppable list view example"
+      width="size-3600"
+      height="size-3600"
+      selectionMode="multiple"
+      items={list.items}
+      dragAndDropHooks={dragAndDropHooks}>
+      {item => (
+        <Item textValue={item.name} hasChildItems>
+          <Folder />
+          <Text>{item.name}</Text>
+          <Text slot="description">{`contains ${item.contains} item(s)`}</Text>
+        </Item>
+      )}
+    </ListView>
+  );
+}
+```
+
+## API
+
+As seen in the [examples](#examples) above, enabling drag and drop for a supported React Spectrum component differs slightly from the typical event handler prop pattern that you may be familiar with.
+Instead of providing each event handler directly to the component, you must first import `useDragAndDrop` from the `@react-spectrum/dnd` package and provide this hook with your desired options.
+`useDragAndDrop` then provides you with a set of hooks that you can pass to the component via its `dragAndDropHooks` prop, thus enabling drag and drop operations for the component. This approach allows the drag and drop
+implementation to be included only when used, keeping bundle sizes small when unused by an application.
+
+Whether the component supports drag operations, drop operations, or both all depends on the options you provide to the `useDragAndDrop`. If you omit the `getItems` option, the component will not be draggable. Alternatively, if
+you don't provide an `onDrop` handler or any of the high-level drop handlers (`onInsert`/`onItemDrop`/`onReorder`/`onRootDrop`) to `useDragAndDrop` then the component will not be droppable.
+
+### High-level drop handlers and options
+<TypeContext.Provider value={dndDocs.links}>
+  <InterfaceType properties={dndDocs.exports.DroppableCollectionUtilityOptions.properties} />
+</TypeContext.Provider>
+
+As demonstrated in this [example](#creating-the-droppable-list), `useDragAndDrop` accepts a set of high-level drop handlers and options. Providing any of these high-level drop handlers will enable the corresponding
+drop behavior in your component (e.g. if you provide `onReorder`, internal insertion drop operations are enabled, provided the component is draggable as well). `acceptedDragTypes` allows
+you to control what types of drag items your droppable component should accept and `shouldAcceptItemDrop` gives you a greater degree of control over whether an item in your component is a valid drop target. Providing
+these two options will also automatically filter out any invalid drag items from the list of items provided to the drop handlers.
+
+### Low-level drop handlers and options
+<TypeContext.Provider value={dndDocs.links}>
+  <InterfaceType properties={dndDocs.exports.DroppableCollectionBaseProps.properties} />
+</TypeContext.Provider>
+
+These lower level drop handlers and options can be used to supplement or replace the high-level options mentioned above. `getDropOperation` allows you to allows you to specify what drop operations is returned based on the
+dragged items' drag types, the drop target information, and drop operations allowed by the drag source. It can be used in tandem with the higher level `acceptedDragTypes` and `shouldAcceptItemDrop` (when onItemDrop is provided) options. Those
+two options serve as a pre-filter, preemptively canceling any attempted drop operation that doesn't pass their requirements.
+
+`onDrop` can be used to handle all accepted drops, overriding any provided high-level drop handlers. On the other hand, `onDropEnter` and `onDropExit` can be freely used with any of the high-level drop handlers and options.
+
+### Props
+
+The full list of options for `useDragAndDrop` is available below.
+
+<FunctionAPI function={docs.exports.useDragAndDrop} links={docs.links} />
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.exports.DragAndDropOptions.properties} />
+</TypeContext.Provider>
+
+Of the various drag-specific options above, `getAllowedDropOperations` may be of particular interest. When the dragged items are dropped on a drop target created using the React Aria drag and drop hooks,
+the allowed drop operations you return in `getAllowedDropOperations` are provided to the drop target's `getDropOperation`, giving the drop target extra information to use when deciding what drop operation to execute. This in turn provides
+the `onDragEnd` and `onDrop` handlers with the executed drop operation, allowing you to decide what to do with the dragged items in your original component and in the dropped component.
+
+For instance, you may have a draggable collection of items that allows `"move"` and `"copy"` operations but you need a way to know whether or not you should be removing the dragged items
+from the list after a drop operation. A drop target that only allows `"copy"` operations, such as a file upload drop zone, would be able to return `"copy"` from its `getDropOperation` and communicate that
+to your draggable collection's `onDragEnd` handler, letting the draggable collection know that it shouldn't remove the dragged items from its list. Alternatively, a drop target that allows `"move"` operations, like in the
+[example](#examples) above, would return `move` from its `getDropOperation` and thus inform your draggable collection to remove the dragged items from its list.
+
+
+## Supported components
+
+The following list shows which components currently support drag and drop. Common drag and drop implementations are included in each component's documentation so definitely take a look!
+-  [ListView](ListView.html#drag-and-drop)
+-  [TableView](TableView.html#drag-and-drop)

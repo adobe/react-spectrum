@@ -31,7 +31,8 @@ keywords: [number field, input]
 <HeaderInfo
   packageData={packageData}
   componentNames={['NumberField']}
-  sourceData={[]} />
+  sourceData={[]}
+  since="3.10.0" />
 
 ## Example
 
@@ -63,6 +64,21 @@ function Example() {
     </Flex>
   );
 }
+```
+
+### HTML forms
+
+NumberField supports the `name` prop for integration with HTML forms. The value will be submitted to the server as a raw number (e.g. `45`), not as a locale-dependent formatted string (e.g. `"$45.00"`).
+
+```tsx example
+<NumberField
+  label="Transaction amount"
+  name="amount"
+  defaultValue={45}
+  formatOptions={{
+    style: 'currency',
+    currency: 'USD'
+  }} />
 ```
 
 ## Labeling
@@ -235,7 +251,7 @@ For a full list of supported events, see the [Props](#props) table below.
 The example below uses `onChange` to update a separate `pre` element with the same values entered into the NumberField.
 ```tsx example
 function Example() {
-  let [value, setValue] = React.useState();
+  let [value, setValue] = React.useState(null);
 
   return (
     <Flex direction="column" gap="size-150">
@@ -323,11 +339,11 @@ Both a description and an error message can be supplied to a NumberField. The de
 ```tsx example
 function Example() {
   let [value, setValue] = React.useState(1);
-  let isValid = React.useMemo(() => value > 0 || value === NaN, [value]);
+  let isValid = React.useMemo(() => value > 0 || Number.isNaN(value), [value]);
 
   return (
     <NumberField
-      validationState={value === NaN ? undefined : (isValid ? 'valid' : 'invalid')}
+      validationState={Number.isNaN(value) ? undefined : (isValid ? 'valid' : 'invalid')}
       value={value}
       onChange={setValue}
       label="Positive numbers only"
@@ -336,6 +352,29 @@ function Example() {
     />
   );
 }
+```
+
+### Contextual help
+
+A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a NumberField.
+
+```tsx example
+import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
+
+<NumberField
+  label="Exposure"
+  formatOptions={{
+    signDisplay: 'exceptZero',
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 2
+  }}
+  defaultValue={0}
+  contextualHelp={
+    <ContextualHelp>
+      <Heading>What is exposure?</Heading>
+      <Content>Exposure adjusts how bright the image is.</Content>
+    </ContextualHelp>
+  } />
 ```
 
 ### Custom width

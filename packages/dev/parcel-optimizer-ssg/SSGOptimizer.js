@@ -35,12 +35,12 @@ module.exports = new Optimizer({
     let pages = [];
     bundleGraph.traverseBundles(b => {
       let mainAsset = b.getMainEntry();
-      if (mainAsset && mainAsset.meta.isMDX) {
+      if (mainAsset && mainAsset.meta.isMDX && !mainAsset.meta.hidden) {
         let meta = mainAsset.meta;
         pages.push({
           url: urlJoin(b.target.publicUrl, rename(b)),
           name: rename(b),
-          title: meta.title,
+          title: meta.navigationTitle ?? meta.title,
           category: meta.category,
           description: meta.description,
           keywords: meta.keywords,
@@ -48,7 +48,8 @@ module.exports = new Optimizer({
           author: meta.author,
           image: getImageURL(meta.image, bundleGraph, b),
           order: meta.order,
-          preRelease: meta.preRelease
+          preRelease: meta.preRelease,
+          type: meta.type
         });
       }
     }, null);
@@ -65,6 +66,7 @@ module.exports = new Optimizer({
         })),
         pages,
         currentPage: {
+          filePath: mainAsset.filePath,
           category: mainAsset.meta.category,
           name,
           title: mainAsset.meta.title,
@@ -75,7 +77,8 @@ module.exports = new Optimizer({
           author: mainAsset.meta.author,
           image: getImageURL(mainAsset.meta.image, bundleGraph, bundle),
           order: mainAsset.meta.order,
-          preRelease: mainAsset.meta.preRelease
+          preRelease: mainAsset.meta.preRelease,
+          type: mainAsset.meta.type
         },
         toc: mainAsset.meta.toc,
         publicUrl: bundle.target.publicUrl

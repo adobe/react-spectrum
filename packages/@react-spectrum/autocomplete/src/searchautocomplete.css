@@ -23,18 +23,25 @@
   font-style: italic;
 }
 
+/* override .spectrum-InputGroup */
+.searchautocomplete.searchautocomplete {
+  border-radius: var(--spectrum-search-border-radius);
+  --spectrum-focus-ring-border-radius: var(--spectrum-search-border-radius);
+}
+
 .mobile-searchautocomplete {
   outline: none;
 }
 
 .mobile-input {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
 }
 
 .mobile-value {
-  vertical-align: middle;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .tray-dialog {

@@ -47,6 +47,10 @@ export interface NumberFormatOptions extends Intl.NumberFormatOptions {
   numberingSystem?: string
 }
 
+interface NumberRangeFormatPart extends Intl.NumberFormatPart {
+  source: 'startRange' | 'endRange' | 'shared'
+}
+
 /**
  * A wrapper around Intl.NumberFormat providing additional options, polyfills, and caching for performance.
  */
@@ -59,6 +63,7 @@ export class NumberFormatter implements Intl.NumberFormat {
     this.options = options;
   }
 
+  /** Formats a number value as a string, according to the locale and options provided to the constructor. */
   format(value: number): string {
     let res = '';
     if (!supportsSignDisplay && this.options.signDisplay != null) {
@@ -76,12 +81,51 @@ export class NumberFormatter implements Intl.NumberFormat {
     return res;
   }
 
+  /** Formats a number to an array of parts such as separators, digits, punctuation, and more. */
   formatToParts(value: number): Intl.NumberFormatPart[] {
     // TODO: implement signDisplay for formatToParts
     // @ts-ignore
     return this.numberFormatter.formatToParts(value);
   }
 
+  /** Formats a number range as a string. */
+  formatRange(start: number, end: number): string {
+    // @ts-ignore
+    if (typeof this.numberFormatter.formatRange === 'function') {
+      // @ts-ignore
+      return this.numberFormatter.formatRange(start, end);
+    }
+
+    if (end < start) {
+      throw new RangeError('End date must be >= start date');
+    }
+
+    // Very basic fallback for old browsers.
+    return `${this.format(start)} – ${this.format(end)}`;
+  }
+
+  /** Formats a number range as an array of parts. */
+  formatRangeToParts(start: number, end: number): NumberRangeFormatPart[] {
+    // @ts-ignore
+    if (typeof this.numberFormatter.formatRangeToParts === 'function') {
+      // @ts-ignore
+      return this.numberFormatter.formatRangeToParts(start, end);
+    }
+
+    if (end < start) {
+      throw new RangeError('End date must be >= start date');
+    }
+
+    let startParts = this.numberFormatter.formatToParts(start);
+    let endParts = this.numberFormatter.formatToParts(end);
+    return [
+      ...startParts.map(p => ({...p, source: 'startRange'} as NumberRangeFormatPart)),
+      {type: 'literal', value: ' – ', source: 'shared'},
+      ...endParts.map(p => ({...p, source: 'endRange'} as NumberRangeFormatPart))
+    ];
+  }
+
+  /** Returns the resolved formatting options based on the values passed to the constructor. */
   resolvedOptions(): Intl.ResolvedNumberFormatOptions {
     let options = this.numberFormatter.resolvedOptions();
     if (!supportsSignDisplay && this.options.signDisplay != null) {

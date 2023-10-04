@@ -14,13 +14,13 @@ import {action} from '@storybook/addon-actions';
 import {ActionMenu} from '..';
 import {Alignment} from '@react-types/shared';
 import {Checkbox} from '@react-spectrum/checkbox';
-import {Flex} from '../../layout';
+import {Flex} from '@react-spectrum/layout';
 import {Item} from '../';
-import {Meta, Story} from '@storybook/react';
-import {Picker} from '../../picker';
+import {Meta} from '@storybook/react';
+import {Picker} from '@react-spectrum/picker';
 import React, {useState} from 'react';
 import {SpectrumActionMenuProps} from '@react-types/menu';
-import {Tooltip, TooltipTrigger} from '../../tooltip';
+import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 
 const meta: Meta<SpectrumActionMenuProps<object>> = {
   title: 'ActionMenu',
@@ -29,7 +29,7 @@ const meta: Meta<SpectrumActionMenuProps<object>> = {
 
 export default meta;
 
-const Template = <T extends object>(): Story<SpectrumActionMenuProps<T>> => (args) => (
+const Template = (args) => (
   <ActionMenu onAction={action('action')} {...args}>
     <Item key="one">One</Item>
     <Item key="two">Two</Item>
@@ -119,29 +119,45 @@ function DirectionAlignment() {
   </Flex>);
 }
 
-export const Default = Template().bind({});
-Default.args = {};
+export const Default = {
+  render: Template,
+  args: {}
+};
 
-export const AriaLabel = Template().bind({});
-AriaLabel.args = {'aria-label': 'Some more actions'};
+export const AriaLabel = {
+  render: Template,
+  args: {'aria-label': 'Some more actions'}
+};
 
-export const DOMId = Template().bind({});
-DOMId.args = {id: 'my-action-menu'};
+export const DOMId = {
+  render: Template,
+  args: {id: 'my-action-menu'}
+};
 
-export const Quiet = Template().bind({});
-Quiet.args = {isQuiet: true};
+export const Quiet = {
+  render: Template,
+  args: {isQuiet: true}
+};
 
-export const Disabled = Template().bind({});
-Disabled.args = {isDisabled: true};
+export const Disabled = {
+  render: Template,
+  args: {isDisabled: true}
+};
 
-export const DisabledKeys = Template().bind({});
-DisabledKeys.args = {disabledKeys: ['two']};
+export const DisabledKeys = {
+  render: Template,
+  args: {disabledKeys: ['two']}
+};
 
-export const AutoFocus = Template().bind({});
-AutoFocus.args = {autoFocus: true};
+export const AutoFocus = {
+  render: Template,
+  args: {autoFocus: true}
+};
 
-export const DefaultOpen = Template().bind({});
-DefaultOpen.args = {onOpenChange: action('openChange'), defaultOpen: true};
+export const DefaultOpen = {
+  render: Template,
+  args: {onOpenChange: action('openChange'), defaultOpen: true}
+};
 
 export const ControlledOpen = () => {
   let [open, setOpen] = React.useState(false);
@@ -170,3 +186,21 @@ export const WithTooltip = () => (
     <Tooltip>Actions</Tooltip>
   </TooltipTrigger>
 );
+
+export const Dynamic = () => {
+  const items = [
+    {key: 'cut', label: 'Cut'},
+    {key: 'copy', label: 'Copy'},
+    {key: 'paste', label: 'Paste'}
+  ];
+
+  return (
+    <ActionMenu items={items}>
+      {(item) => (
+        <Item key={item.key}>
+          {item.label}
+        </Item>
+      )}
+    </ActionMenu>
+  );
+};

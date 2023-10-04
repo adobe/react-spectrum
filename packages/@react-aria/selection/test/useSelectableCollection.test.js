@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@testing-library/react';
-import {installPointerEvent} from '@react-spectrum/test-utils';
+import {fireEvent, installPointerEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import {Item} from '@react-stately/collections';
 import {List} from '../stories/List';
 import React from 'react';
@@ -19,11 +18,16 @@ import userEvent from '@testing-library/user-event';
 
 
 describe('useSelectableCollection', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   beforeEach(() => {
     jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 750);
   });
 
-  it('selects the first item it focuses if selectOnFocus', () => {
+  it('selects the first item it focuses if selectOnFocus', async () => {
     let {getAllByRole} = render(
       <List selectionMode="single">
         <Item>Paco de Lucia</Item>
@@ -33,12 +37,12 @@ describe('useSelectableCollection', () => {
     );
     let options = getAllByRole('option');
     expect(options[0]).not.toHaveAttribute('aria-selected');
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(options[0]);
     expect(options[0]).toHaveAttribute('aria-selected', 'true');
   });
 
-  it('can navigate without replacing the selection in multiple selection selectOnFocus', () => {
+  it('can navigate without replacing the selection in multiple selection selectOnFocus', async () => {
     let {getAllByRole} = render(
       <List selectionMode="multiple" selectionBehavior="replace">
         <Item>Paco de Lucia</Item>
@@ -48,7 +52,7 @@ describe('useSelectableCollection', () => {
     );
     let options = getAllByRole('option');
     expect(options[0]).not.toHaveAttribute('aria-selected');
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(options[0]);
     expect(options[0]).toHaveAttribute('aria-selected', 'true');
     expect(options[1]).not.toHaveAttribute('aria-selected');
@@ -85,7 +89,7 @@ describe('useSelectableCollection', () => {
   `('always uses toggle for $type', ({prepare, actions: [start, end]}) => {
     prepare();
     it('uses toggle mode when the interaction is touch', () => {
-      jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 600);
+      jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 700);
       let {getAllByRole} = render(
         <List selectionMode="multiple" selectionBehavior="replace">
           <Item>Paco de Lucia</Item>

@@ -24,14 +24,14 @@ const CURRENCY_SIGN_REGEX = new RegExp('^.*\\(.*\\).*$');
 const NUMBERING_SYSTEMS = ['latn', 'arab', 'hanidec'];
 
 /**
- * A NumberParser can be used perform locale aware parsing of numbers from Unicode strings,
- * as well as validation of partial user input. Automatically detects the numbering system
+ * A NumberParser can be used to perform locale-aware parsing of numbers from Unicode strings,
+ * as well as validation of partial user input. It automatically detects the numbering system
  * used in the input, and supports parsing decimals, percentages, currency values, and units
  * according to the locale.
  */
 export class NumberParser {
-  locale: string;
-  options: Intl.NumberFormatOptions;
+  private locale: string;
+  private options: Intl.NumberFormatOptions;
 
   constructor(locale: string, options: Intl.NumberFormatOptions = {}) {
     this.locale = locale;
@@ -191,11 +191,18 @@ class NumberParserImpl {
 
 const nonLiteralParts = new Set(['decimal', 'fraction', 'integer', 'minusSign', 'plusSign', 'group']);
 
+// This list is derived from https://www.unicode.org/cldr/charts/43/supplemental/language_plural_rules.html#comparison and includes
+// all unique numbers which we need to check in order to determine all the plural forms for a given locale.
+// See: https://github.com/adobe/react-spectrum/pull/5134/files#r1337037855 for used script
+const pluralNumbers = [
+  0, 4, 2, 1, 11, 20, 3, 7, 100, 21, 0.1, 1.1
+];
+
 function getSymbols(formatter: Intl.NumberFormat, intlOptions: Intl.ResolvedNumberFormatOptions, originalOptions: Intl.NumberFormatOptions): Symbols {
   // Note: some locale's don't add a group symbol until there is a ten thousands place
   let allParts = formatter.formatToParts(-10000.111);
   let posAllParts = formatter.formatToParts(10000.111);
-  let singularParts = formatter.formatToParts(1);
+  let pluralParts = pluralNumbers.map(n => formatter.formatToParts(n));
 
   let minusSign = allParts.find(p => p.type === 'minusSign')?.value ?? '-';
   let plusSign = posAllParts.find(p => p.type === 'plusSign')?.value;
@@ -212,10 +219,13 @@ function getSymbols(formatter: Intl.NumberFormat, intlOptions: Intl.ResolvedNumb
 
   // this set is also for a regex, it's all literals that might be in the string we want to eventually parse that
   // don't contribute to the numerical value
-  let pluralLiterals = allParts.filter(p => !nonLiteralParts.has(p.type)).map(p => escapeRegex(p.value));
-  let singularLiterals = singularParts.filter(p => !nonLiteralParts.has(p.type)).map(p => escapeRegex(p.value));
-  let sortedLiterals = [...new Set([...singularLiterals, ...pluralLiterals])].sort((a, b) => b.length - a.length);
-  let literals = new RegExp(`${sortedLiterals.join('|')}|[\\p{White_Space}]`, 'gu');
+  let allPartsLiterals = allParts.filter(p => !nonLiteralParts.has(p.type)).map(p => escapeRegex(p.value));
+  let pluralPartsLiterals = pluralParts.flatMap(p => p.filter(p => !nonLiteralParts.has(p.type)).map(p => escapeRegex(p.value)));
+  let sortedLiterals = [...new Set([...allPartsLiterals, ...pluralPartsLiterals])].sort((a, b) => b.length - a.length);
+
+  let literals = sortedLiterals.length === 0 ? 
+      new RegExp('[\\p{White_Space}]', 'gu') :
+      new RegExp(`${sortedLiterals.join('|')}|[\\p{White_Space}]`, 'gu');
 
   // These are for replacing non-latn characters with the latn equivalent
   let numerals = [...new Intl.NumberFormat(intlOptions.locale, {useGrouping: false}).format(9876543210)].reverse();

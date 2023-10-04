@@ -10,4 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useSliderState';
+export {useSliderState} from './useSliderState';
+
+export type {SliderStateOptions} from './useSliderState';
+export type {SliderState} from './useSliderState';

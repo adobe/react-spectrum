@@ -10,4 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useComboBoxState';
+export {useComboBoxState} from './useComboBoxState';
+
+export type {ComboBoxStateOptions, ComboBoxState} from './useComboBoxState';

@@ -10,16 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {GridCollection} from '@react-types/grid';
+import {DOMAttributes, FocusableElement} from '@react-types/shared';
+import {GridCollection, GridNode} from '@react-types/grid';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
-import {HTMLAttributes, RefObject} from 'react';
-import {Node} from '@react-types/shared';
-import {useSelectableItem} from '@react-aria/selection';
+import {RefObject} from 'react';
+import {SelectableItemStates, useSelectableItem} from '@react-aria/selection';
 
 export interface GridRowProps<T> {
   /** An object representing the grid row. Contains all the relevant information that makes up the grid row. */
-  node: Node<T>,
+  node: GridNode<T>,
   /** Whether the grid row is contained in a virtual scroller. */
   isVirtualized?: boolean,
   /** Whether selection should occur on press up instead of press down. */
@@ -32,9 +32,9 @@ export interface GridRowProps<T> {
   onAction?: () => void
 }
 
-export interface GridRowAria {
+export interface GridRowAria extends SelectableItemStates {
   /** Props for the grid row element. */
-  rowProps: HTMLAttributes<HTMLElement>,
+  rowProps: DOMAttributes,
   /** Whether the row is currently in a pressed state. */
   isPressed: boolean
 }
@@ -44,7 +44,7 @@ export interface GridRowAria {
  * @param props - Props for the row.
  * @param state - State of the parent grid, as returned by `useGridState`.
  */
-export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T, C>>(props: GridRowProps<T>, state: S, ref: RefObject<HTMLElement>): GridRowAria {
+export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T, C>>(props: GridRowProps<T>, state: S, ref: RefObject<FocusableElement>): GridRowAria {
   let {
     node,
     isVirtualized,
@@ -53,20 +53,22 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
   } = props;
 
   let {actions: {onRowAction}} = gridMap.get(state);
-  let {itemProps, isPressed} = useSelectableItem({
+  let {itemProps, ...states} = useSelectableItem({
     selectionManager: state.selectionManager,
     key: node.key,
     ref,
     isVirtualized,
     shouldSelectOnPressUp,
-    onAction: onRowAction ? () => onRowAction(node.key) : onAction
+    onAction: onRowAction ? () => onRowAction(node.key) : onAction,
+    isDisabled: state.collection.size === 0
   });
 
   let isSelected = state.selectionManager.isSelected(node.key);
 
-  let rowProps: HTMLAttributes<HTMLElement> = {
+  let rowProps: DOMAttributes = {
     role: 'row',
     'aria-selected': state.selectionManager.selectionMode !== 'none' ? isSelected : undefined,
+    'aria-disabled': states.isDisabled || undefined,
     ...itemProps
   };
 
@@ -76,6 +78,6 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
 
   return {
     rowProps,
-    isPressed
+    ...states
   };
 }

@@ -32,7 +32,8 @@ keywords: [switch, toggle, input]
   componentNames={['Switch']}
   sourceData={[
     {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/switch/'}
-  ]} />
+  ]}
+  since="3.0.0" />
 
 ## Example
 
@@ -89,6 +90,14 @@ function Example() {
 }
 ```
 
+### HTML forms
+
+Switch supports the `name` and `value` props for integration with HTML forms.
+
+```tsx example
+<Switch name="power" value="low">Low power mode</Switch>
+```
+
 ## Events
 
 Switches accept a user defined `onChange` prop, triggered whenever the Switch is pressed.
@@ -106,7 +115,7 @@ function Example() {
       <div>The Switch is on: {selected.toString()}</div>
     </>
   );
- }
+}
 ```
 
 ## Props

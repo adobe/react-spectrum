@@ -22,6 +22,7 @@ Section.getCollectionNode = function* getCollectionNode<T>(props: SectionProps<T
   let {children, title, items} = props;
   yield {
     type: 'section',
+    props: props,
     hasChildNodes: true,
     rendered: title,
     'aria-label': props['aria-label'],
@@ -30,7 +31,7 @@ Section.getCollectionNode = function* getCollectionNode<T>(props: SectionProps<T
         if (!items) {
           throw new Error('props.children was a function but props.items is missing');
         }
-    
+
         for (let item of items) {
           yield {
             type: 'item',

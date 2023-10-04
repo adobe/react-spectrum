@@ -1,0 +1,3 @@
+{
+  "invalidSelection": "{selectedCount, plural, one {Valt datum är inte tillgängligt.} other {Valda datum är inte tillgängliga.}}"
+}

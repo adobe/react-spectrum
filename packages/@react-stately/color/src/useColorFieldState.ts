@@ -14,7 +14,7 @@ import {Color, ColorFieldProps} from '@react-types/color';
 import {parseColor} from './Color';
 import {useColor} from './useColor';
 import {useControlledState} from '@react-stately/utils';
-import {useEffect, useMemo, useRef, useState} from 'react';
+import {useMemo, useState} from 'react';
 
 export interface ColorFieldState {
   /**
@@ -63,11 +63,11 @@ export function useColorFieldState(
   props: ColorFieldProps
 ): ColorFieldState {
   let {
-    step = 1,
     value,
     defaultValue,
     onChange
   } = props;
+  let {step} = MIN_COLOR.getChannelRange('red');
 
   let initialValue = useColor(value);
   let initialDefaultValue = useColor(defaultValue);
@@ -85,9 +85,11 @@ export function useColorFieldState(
     }
   };
 
-  useEffect(() => {
+  let [prevValue, setPrevValue] = useState(colorValue);
+  if (prevValue !== colorValue) {
     setInputValue(colorValue ? colorValue.toString('hex') : '');
-  }, [colorValue, setInputValue]);
+    setPrevValue(colorValue);
+  }
 
   let parsedValue = useMemo(() => {
     let color;
@@ -97,9 +99,7 @@ export function useColorFieldState(
       color = null;
     }
     return color;
-  }, [parseColor, inputValue]);
-  let parsed = useRef(null);
-  parsed.current = parsedValue;
+  }, [inputValue]);
 
   let commit = () => {
     // Set to empty state if input value is empty
@@ -110,12 +110,12 @@ export function useColorFieldState(
     }
 
     // if it failed to parse, then reset input to formatted version of current number
-    if (parsed.current == null) {
+    if (parsedValue == null) {
       setInputValue(colorValue ? colorValue.toString('hex') : '');
       return;
     }
 
-    safelySetColorValue(parsed.current);
+    safelySetColorValue(parsedValue);
     // in a controlled state, the numberValue won't change, so we won't go back to our old input without help
     let newColorValue = '';
     if (colorValue) {
@@ -125,7 +125,7 @@ export function useColorFieldState(
   };
 
   let increment = () => {
-    let newValue = addColorValue(parsed.current, step);
+    let newValue = addColorValue(parsedValue, step);
     // if we've arrived at the same value that was previously in the state, the
     // input value should be updated to match
     // ex type 4, press increment, highlight the number in the input, type 4 again, press increment
@@ -136,7 +136,7 @@ export function useColorFieldState(
     safelySetColorValue(newValue);
   };
   let decrement = () => {
-    let newValue = addColorValue(parsed.current, -step);
+    let newValue = addColorValue(parsedValue, -step);
     // if we've arrived at the same value that was previously in the state, the
     // input value should be updated to match
     // ex type 4, press increment, highlight the number in the input, type 4 again, press increment

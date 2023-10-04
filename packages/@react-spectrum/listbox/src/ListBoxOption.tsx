@@ -18,11 +18,10 @@ import {isFocusVisible, useHover} from '@react-aria/interactions';
 import {ListBoxContext} from './ListBoxContext';
 import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
-import React, {useContext} from 'react';
+import React, {useContext, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/text';
 import {useOption} from '@react-aria/listbox';
-import {useRef} from 'react';
 
 interface OptionProps<T> {
   item: Node<T>,
@@ -44,10 +43,10 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
     rendered,
     key
   } = item;
-
+  let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
   let state = useContext(ListBoxContext);
 
-  let ref = useRef<HTMLDivElement>();
+  let ref = useRef<any>();
   let {optionProps, labelProps, descriptionProps, isSelected, isDisabled, isFocused} = useOption(
     {
       'aria-label': item['aria-label'],
@@ -73,7 +72,7 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      <div
+      <ElementType
         {...mergeProps(optionProps, shouldFocusOnHover ? {} : hoverProps)}
         ref={ref}
         className={classNames(
@@ -118,7 +117,7 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
             </SlotProvider>
           </ClearSlots>
         </Grid>
-      </div>
+      </ElementType>
     </FocusRing>
   );
 }

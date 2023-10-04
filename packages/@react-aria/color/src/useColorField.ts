@@ -24,7 +24,7 @@ import {useFocusWithin, useScrollWheel} from '@react-aria/interactions';
 import {useFormattedTextField} from '@react-aria/textfield';
 import {useSpinButton} from '@react-aria/spinbutton';
 
-interface ColorFieldAria {
+export interface ColorFieldAria {
   /** Props for the label element. */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   /** Props for the input element. */
@@ -85,13 +85,15 @@ export function useColorField(
     } else if (e.deltaY < 0) {
       decrement();
     }
-  }, [isReadOnly, isDisabled, decrement, increment]);
+  }, [decrement, increment]);
   // If the input isn't supposed to receive input, disable scrolling.
   let scrollingDisabled = isDisabled || isReadOnly || !focusWithin;
   useScrollWheel({onScroll: onWheel, isDisabled: scrollingDisabled}, ref);
 
   let onChange = value => {
-    state.setInputValue(value);
+    if (state.validate(value)) {
+      state.setInputValue(value);
+    }
   };
 
   let {labelProps, inputProps} = useFormattedTextField(

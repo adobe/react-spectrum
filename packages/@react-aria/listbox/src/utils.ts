@@ -18,7 +18,9 @@ interface ListData {
   shouldSelectOnPressUp?: boolean,
   shouldFocusOnHover?: boolean,
   shouldUseVirtualFocus?: boolean,
-  isVirtualized?: boolean
+  isVirtualized?: boolean,
+  onAction?: (key: Key) => void,
+  linkBehavior?: 'action' | 'selection' | 'override'
 }
 
 export const listData = new WeakMap<ListState<unknown>, ListData>();

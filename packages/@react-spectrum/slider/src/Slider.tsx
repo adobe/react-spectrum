@@ -103,9 +103,10 @@ function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {
               isDisabled={props.isDisabled}
               trackRef={trackRef}
               inputRef={inputRef}
-              state={state} />
-            {upperTrack}
+              state={state}
+              name={props.name} />
             {filledTrack}
+            {upperTrack}
           </>
         );
       }}

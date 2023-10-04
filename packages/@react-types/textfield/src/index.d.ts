@@ -19,7 +19,9 @@ import {
   HelpTextProps,
   InputBase,
   LabelableProps,
+  SpectrumFieldValidation,
   SpectrumLabelableProps,
+  SpectrumTextInputBase,
   StyleProps,
   TextInputBase,
   TextInputDOMProps,
@@ -43,14 +45,14 @@ export interface AriaTextFieldProps extends TextFieldProps, AriaLabelingProps, F
   'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog'
 }
 
-export interface SpectrumTextFieldProps extends AriaTextFieldProps, SpectrumLabelableProps, StyleProps {
+export interface SpectrumTextFieldProps extends SpectrumTextInputBase, Omit<AriaTextFieldProps, 'isInvalid' | 'validationState'>, SpectrumFieldValidation, SpectrumLabelableProps, StyleProps {
   /** An icon to display at the start of the input. */
-  icon?: ReactElement,
+  icon?: ReactElement | null,
   /** Whether the input should be displayed with a quiet style. */
   isQuiet?: boolean
 }
 
 export interface TextFieldRef extends FocusableRefValue<HTMLInputElement | HTMLTextAreaElement, HTMLDivElement> {
   select(): void,
-  getInputElement(): HTMLInputElement | HTMLTextAreaElement
+  getInputElement(): HTMLInputElement | HTMLTextAreaElement | null
 }

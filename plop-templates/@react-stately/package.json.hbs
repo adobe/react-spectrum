@@ -7,6 +7,11 @@
   "main": "dist/main.js",
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
+  "exports": {
+    "types": "./dist/types.d.ts",
+    "import": "./dist/import.mjs",
+    "require": "./dist/main.js"
+  },
   "source": "src/index.ts",
   "files": ["dist", "src"],
   "sideEffects": false,
@@ -16,16 +21,16 @@
   },
   "dependencies": {
     {{#if (includes scopes "@react-types")}}
-    "@babel/runtime": "^7.6.2",
+    "@swc/helpers": "^0.5.0",
     "@react-stately/utils": "^3.0.0",
     "@react-types/{{packageName}}": "3.0.0-alpha.1"
     {{else}}
-    "@babel/runtime": "^7.6.2",
+    "@swc/helpers": "^0.5.0",
     "@react-stately/utils": "^3.0.0"
     {{/if}}
   },
   "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0-rc.1"
+    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0"
   },
   "publishConfig": {
     "access": "public"

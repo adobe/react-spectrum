@@ -14,10 +14,8 @@ governing permissions and limitations under the License.
 
 :root {
   --spectrum-menu-margin-x: var(--spectrum-global-dimension-size-40);
-  --spectrum-selectlist-heading-text-size: var(--spectrum-global-dimension-font-size-50);
-  --spectrum-selectlist-heading-text-font-weight: 400;
-  --spectrum-selectlist-heading-text-transform: uppercase;
-  --spectrum-selectlist-heading-letter-spacing: 0.06em;
+  --spectrum-selectlist-heading-text-size: var(--spectrum-global-dimension-font-size-100);
+  --spectrum-selectlist-heading-text-font-weight: var(--spectrum-global-font-weight-bold);
   --spectrum-selectlist-heading-margin: var(--spectrum-global-dimension-size-75) 0 0 0;
   --spectrum-selectlist-heading-padding-left: var(--spectrum-global-dimension-size-150);
   --spectrum-selectlist-heading-padding-right: var(--spectrum-global-dimension-size-450);
@@ -57,8 +55,8 @@ governing permissions and limitations under the License.
 
   & .spectrum-Menu-sectionHeading {
     /* Support headings as LI */
-    margin-block-start: var(--spectrum-menu-margin-x);
-    margin-block-end: var(--spectrum-menu-margin-x);
+    margin-block-start: var(--spectrum-global-dimension-size-75);
+    margin-block-end: var(--spectrum-global-dimension-size-40);
   }
 
   &:focus {
@@ -79,6 +77,7 @@ governing permissions and limitations under the License.
 .spectrum-Menu-item {
   cursor: default;
   position: relative;
+  display: block;
 
   box-sizing: border-box;
 
@@ -91,8 +90,16 @@ governing permissions and limitations under the License.
   font-style: normal;
   text-decoration: none;
 
+  &[href] {
+    cursor: pointer;
+  }
+
   &:focus {
     outline: none;
+  }
+
+  &.is-disabled {
+    cursor: default;
   }
 
   &.is-selected {
@@ -150,8 +157,6 @@ governing permissions and limitations under the License.
   font-size: var(--spectrum-selectlist-heading-text-size);
   font-weight: var(--spectrum-selectlist-heading-text-font-weight);
   line-height: var(--spectrum-text-body-line-height);
-  text-transform: var(--spectrum-selectlist-heading-text-transform);
-  letter-spacing: var(--spectrum-selectlist-heading-letter-spacing);
 }
 
 .spectrum-Menu .spectrum-Menu {
@@ -181,12 +186,12 @@ governing permissions and limitations under the License.
   }
 }
 
-/* Added .spectrum-Menu so paddings from component styles are overriden */
+/* Added .spectrum-Menu so paddings from component styles are overridden */
 .spectrum-Menu .spectrum-Menu-end {
   grid-area: end;
   justify-self: end;
   align-self: flex-start;
-  padding-inline-start: var(--spectrum-global-dimension-size-125);
+  padding-inline-start: var(--spectrum-global-dimension-size-250);
 }
 .spectrum-Menu-icon {
   grid-area: icon;

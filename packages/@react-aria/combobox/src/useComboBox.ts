@@ -15,34 +15,34 @@ import {AriaButtonProps} from '@react-types/button';
 import {AriaComboBoxProps} from '@react-types/combobox';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
-import {chain, isAppleDevice, mergeProps, useLabels} from '@react-aria/utils';
+import {BaseEvent, DOMAttributes, KeyboardDelegate, PressEvent} from '@react-types/shared';
+import {chain, isAppleDevice, mergeProps, useLabels, useRouter} from '@react-aria/utils';
 import {ComboBoxState} from '@react-stately/combobox';
-import {FocusEvent, HTMLAttributes, InputHTMLAttributes, KeyboardEvent, RefObject, TouchEvent, useEffect, useMemo, useRef} from 'react';
-import {getItemCount} from '@react-stately/collections';
+import {FocusEvent, InputHTMLAttributes, KeyboardEvent, RefObject, TouchEvent, useEffect, useMemo, useRef} from 'react';
+import {getChildNodes, getItemCount} from '@react-stately/collections';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {KeyboardDelegate, PressEvent} from '@react-types/shared';
 import {ListKeyboardDelegate, useSelectableCollection} from '@react-aria/selection';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMenuTrigger} from '@react-aria/menu';
-import {useMessageFormatter} from '@react-aria/i18n';
 import {useTextField} from '@react-aria/textfield';
 
-interface AriaComboBoxOptions<T> extends AriaComboBoxProps<T> {
+export interface AriaComboBoxOptions<T> extends Omit<AriaComboBoxProps<T>, 'children'> {
   /** The ref for the input element. */
   inputRef: RefObject<HTMLInputElement>,
   /** The ref for the list box popover. */
-  popoverRef: RefObject<HTMLDivElement>,
+  popoverRef: RefObject<Element>,
   /** The ref for the list box. */
   listBoxRef: RefObject<HTMLElement>,
   /** The ref for the optional list box popup trigger button.  */
-  buttonRef?: RefObject<HTMLElement>,
+  buttonRef?: RefObject<Element>,
   /** An optional keyboard delegate implementation, to override the default. */
   keyboardDelegate?: KeyboardDelegate
 }
 
-interface ComboBoxAria<T> {
+export interface ComboBoxAria<T> {
   /** Props for the label element. */
-  labelProps: HTMLAttributes<HTMLElement>,
+  labelProps: DOMAttributes,
   /** Props for the combo box input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Props for the list box, to be passed to [useListBox](useListBox.html). */
@@ -50,9 +50,9 @@ interface ComboBoxAria<T> {
   /** Props for the optional trigger button, to be passed to [useButton](useButton.html). */
   buttonProps: AriaButtonProps,
   /** Props for the combo box description element, if any. */
-  descriptionProps: HTMLAttributes<HTMLElement>,
+  descriptionProps: DOMAttributes,
   /** Props for the combo box error message element, if any. */
-  errorMessageProps: HTMLAttributes<HTMLElement>
+  errorMessageProps: DOMAttributes
 }
 
 /**
@@ -74,8 +74,8 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     isDisabled
   } = props;
 
-  let formatMessage = useMessageFormatter(intlMessages);
-  let {menuTriggerProps, menuProps} = useMenuTrigger(
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let {menuTriggerProps, menuProps} = useMenuTrigger<T>(
     {
       type: 'listbox',
       isDisabled: isDisabled || isReadOnly
@@ -106,8 +106,10 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     isVirtualized: true
   });
 
+  let router = useRouter();
+
   // For textfield specific keydown operations
-  let onKeyDown = (e: KeyboardEvent) => {
+  let onKeyDown = (e: BaseEvent<KeyboardEvent<any>>) => {
     switch (e.key) {
       case 'Enter':
       case 'Tab':
@@ -116,9 +118,28 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
           e.preventDefault();
         }
 
-        state.commit();
+        // If the focused item is a link, trigger opening it. Items that are links are not selectable.
+        if (state.isOpen && state.selectionManager.focusedKey != null && state.selectionManager.isLink(state.selectionManager.focusedKey)) {
+          if (e.key === 'Enter') {
+            let item = listBoxRef.current.querySelector(`[data-key="${state.selectionManager.focusedKey}"]`);
+            if (item instanceof HTMLAnchorElement) {
+              router.open(item, e);
+            }
+          }
+
+          state.close();
+        } else {
+          state.commit();
+        }
         break;
       case 'Escape':
+        if (
+          state.selectedKey !== null ||
+          state.inputValue === '' ||
+          props.allowsCustomValue
+        ) {
+          e.continuePropagation();
+        }
         state.revert();
         break;
       case 'ArrowDown':
@@ -134,9 +155,9 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     }
   };
 
-  let onBlur = (e: FocusEvent) => {
+  let onBlur = (e: FocusEvent<HTMLInputElement>) => {
     // Ignore blur if focused moved to the button or into the popover.
-    if (e.relatedTarget === buttonRef?.current || popoverRef.current?.contains(e.relatedTarget as HTMLElement)) {
+    if (e.relatedTarget === buttonRef?.current || popoverRef.current?.contains(e.relatedTarget)) {
       return;
     }
 
@@ -147,7 +168,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     state.setFocused(false);
   };
 
-  let onFocus = (e: FocusEvent) => {
+  let onFocus = (e: FocusEvent<HTMLInputElement>) => {
     if (state.isFocused) {
       return;
     }
@@ -187,13 +208,13 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
 
   let triggerLabelProps = useLabels({
     id: menuTriggerProps.id,
-    'aria-label': formatMessage('buttonLabel'),
+    'aria-label': stringFormatter.format('buttonLabel'),
     'aria-labelledby': props['aria-labelledby'] || labelProps.id
   });
 
   let listBoxProps = useLabels({
     id: menuProps.id,
-    'aria-label': formatMessage('listboxLabel'),
+    'aria-label': stringFormatter.format('listboxLabel'),
     'aria-labelledby': props['aria-labelledby'] || labelProps.id
   });
 
@@ -211,7 +232,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
       return;
     }
 
-    let rect = (e.target as HTMLElement).getBoundingClientRect();
+    let rect = (e.target as Element).getBoundingClientRect();
     let touch = e.changedTouches[0];
 
     let centerX = Math.ceil(rect.left + .5 * rect.width);
@@ -242,10 +263,10 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
       let section = sectionKey != null ? state.collection.getItem(sectionKey) : null;
       let sectionTitle = section?.['aria-label'] || (typeof section?.rendered === 'string' ? section.rendered : '') || '';
 
-      let announcement = formatMessage('focusAnnouncement', {
+      let announcement = stringFormatter.format('focusAnnouncement', {
         isGroupChange: section && sectionKey !== lastSection.current,
         groupTitle: sectionTitle,
-        groupCount: section ? [...section.childNodes].length : 0,
+        groupCount: section ? [...getChildNodes(section, state.collection)].length : 0,
         optionText: focusedItem['aria-label'] || focusedItem.textValue || '',
         isSelected
       });
@@ -270,7 +291,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
       (state.selectionManager.focusedKey == null || isAppleDevice());
 
     if (state.isOpen && (didOpenWithoutFocusedItem || optionCount !== lastSize.current)) {
-      let announcement = formatMessage('countAnnouncement', {optionCount});
+      let announcement = stringFormatter.format('countAnnouncement', {optionCount});
       announce(announcement);
     }
 
@@ -283,7 +304,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
   useEffect(() => {
     if (isAppleDevice() && state.isFocused && state.selectedItem && state.selectedKey !== lastSelectedKey.current) {
       let optionText = state.selectedItem['aria-label'] || state.selectedItem.textValue || '';
-      let announcement = formatMessage('selectedAnnouncement', {optionText});
+      let announcement = stringFormatter.format('selectedAnnouncement', {optionText});
       announce(announcement);
     }
 
@@ -323,7 +344,8 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
       autoFocus: state.focusStrategy,
       shouldUseVirtualFocus: true,
       shouldSelectOnPressUp: true,
-      shouldFocusOnHover: true
+      shouldFocusOnHover: true,
+      linkBehavior: 'selection' as const
     }),
     descriptionProps,
     errorMessageProps

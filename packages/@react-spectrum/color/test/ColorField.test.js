@@ -10,14 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import {chain} from '@react-aria/utils';
 import {ColorField} from '../';
 import {parseColor} from '@react-stately/color';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {typeText} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 function renderComponent(props) {
@@ -31,6 +30,11 @@ function renderComponent(props) {
 }
 
 describe('ColorField', function () {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   it('should handle defaults', function () {
     let {
       getByLabelText,
@@ -63,9 +67,11 @@ describe('ColorField', function () {
     expect(colorField).not.toHaveAttribute('aria-labelledby');
   });
 
-  it('should allow placeholder', function () {
+  it('should allow placeholder and show warning', function () {
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {getByPlaceholderText, getByRole} = renderComponent({placeholder: 'Enter a color'});
     expect(getByRole('textbox')).toBe(getByPlaceholderText('Enter a color'));
+    expect(spyWarn).toHaveBeenCalledWith('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/ColorField.html#help-text');
   });
 
   it('should show valid validation state', function () {
@@ -123,7 +129,7 @@ describe('ColorField', function () {
     expect(colorField.value).toBe('#AABBCC');
   });
 
-  it('should handle uncontrolled state', function () {
+  it('should handle uncontrolled state', async function () {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({defaultValue: '#abc', onChange: onChangeSpy});
 
@@ -132,8 +138,8 @@ describe('ColorField', function () {
 
     act(() => {
       colorField.focus();
-      userEvent.clear(colorField);
     });
+    await user.clear(colorField);
     expect(colorField.value).toBe('');
     expect(onChangeSpy).not.toHaveBeenCalled();
     act(() => {
@@ -147,8 +153,8 @@ describe('ColorField', function () {
     act(() => {
       colorField.focus();
     });
-    typeText(colorField, 'cba');
-    typeText(colorField, 'cba');
+    await user.keyboard('cba');
+    await user.keyboard('cba');
     act(() => {
       colorField.blur();
     });
@@ -157,7 +163,7 @@ describe('ColorField', function () {
     expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#cbacba'));
   });
 
-  it('should handle uncontrolled state typing same value twice', function () {
+  it('should handle uncontrolled state typing same value twice', async function () {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({onChange: onChangeSpy});
 
@@ -166,7 +172,7 @@ describe('ColorField', function () {
     act(() => {
       colorField.focus();
     });
-    typeText(colorField, 'cbacba');
+    await user.keyboard('cbacba');
     act(() => {
       colorField.blur();
     });
@@ -174,16 +180,16 @@ describe('ColorField', function () {
 
     act(() => {
       colorField.focus();
-      userEvent.clear(colorField);
     });
-    typeText(colorField, 'cbacba');
+    await user.clear(colorField);
+    await user.keyboard('cbacba');
     act(() => {
       colorField.blur();
     });
     expect(colorField.value).toBe('#CBACBA');
   });
 
-  it('should not update value in controlled state', function () {
+  it('should not update value in controlled state', async function () {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({value: '#abc', onChange: onChangeSpy});
 
@@ -192,8 +198,8 @@ describe('ColorField', function () {
 
     act(() => {
       colorField.focus();
-      userEvent.clear(colorField);
     });
+    await user.clear(colorField);
     // blur must be called in its own act
     act(() => {
       colorField.blur();
@@ -205,9 +211,9 @@ describe('ColorField', function () {
 
     act(() => {
       colorField.focus();
-      userEvent.type(colorField, '{selectall}');
     });
-    typeText(colorField, 'cba');
+    await user.clear(colorField);
+    await user.keyboard('cba');
     act(() => {
       colorField.blur();
     });
@@ -216,7 +222,7 @@ describe('ColorField', function () {
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
   });
 
-  it('should update value in controlled state when implemented', function () {
+  it('should update value in controlled state when implemented', async function () {
     function ColorFieldControlled(props) {
       let {onChange} = props;
       let [color, setColor] = useState(props.value);
@@ -236,8 +242,8 @@ describe('ColorField', function () {
 
     act(() => {
       colorField.focus();
-      userEvent.clear(colorField);
     });
+    await user.clear(colorField);
     act(() => {
       colorField.blur();
     });
@@ -249,21 +255,21 @@ describe('ColorField', function () {
     act(() => {
       colorField.focus();
     });
-    typeText(colorField, 'cba');
+    await user.keyboard('cba');
     act(() => {colorField.blur();});
     expect(colorField.value).toBe('#CCBBAA');
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
     expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#CCBBAA'));
   });
 
-  it('should disallow invalid characters and revert back to last valid value if left incomplete', function () {
+  it('should disallow invalid characters and revert back to last valid value if left incomplete', async function () {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({onChange: onChangeSpy});
     let colorField = getByLabelText('Primary Color');
     expect(colorField.value).toBe('');
 
     act(() => {colorField.focus();});
-    typeText(colorField, 'abc');
+    await user.keyboard('abc');
     act(() => {colorField.blur();});
     expect(colorField.value).toBe('#AABBCC');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
@@ -271,9 +277,9 @@ describe('ColorField', function () {
 
     act(() => {
       colorField.focus();
-      userEvent.clear(colorField);
     });
-    typeText(colorField, 'abcxyz8b');
+    await user.clear(colorField);
+    await user.keyboard('abcxyz8b');
     expect(colorField.value).toBe('abc8b');
     act(() => {colorField.blur();});
     /* is this really what we expect?? */
@@ -283,14 +289,13 @@ describe('ColorField', function () {
 
   it.each`
     Name                                | expected                 | key
-    ${'increment with arrow up key'}    | ${parseColor('#AAAAAE')}  | ${'ArrowUp'}
-    ${'decrement with arrow down key'}  | ${parseColor('#AAAAA6')}  | ${'ArrowDown'}
+    ${'increment with arrow up key'}    | ${parseColor('#AAAAAB')}  | ${'ArrowUp'}
+    ${'decrement with arrow down key'}  | ${parseColor('#AAAAA9')}  | ${'ArrowDown'}
   `('should handle $Name event', function ({expected, key}) {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({
       defaultValue: '#aaa',
-      onChange: onChangeSpy,
-      step: 4
+      onChange: onChangeSpy
     });
     let colorField = getByLabelText('Primary Color');
     expect(colorField.value).toBe('#AAAAAA');
@@ -303,14 +308,13 @@ describe('ColorField', function () {
 
   it.each`
     Name                                | expected                        | deltaY
-    ${'increment with mouse wheel'}     | ${parseColor('#AAAAAE')}  | ${10}
-    ${'decrement with mouse wheel'}     | ${parseColor('#AAAAA6')}  | ${-10}
+    ${'increment with mouse wheel'}     | ${parseColor('#AAAAAB')}  | ${10}
+    ${'decrement with mouse wheel'}     | ${parseColor('#AAAAA9')}  | ${-10}
   `('should handle $Name event', function ({expected, deltaY}) {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({
       defaultValue: '#aaa',
-      onChange: onChangeSpy,
-      step: 4
+      onChange: onChangeSpy
     });
     let colorField = getByLabelText('Primary Color');
     expect(colorField.value).toBe('#AAAAAA');

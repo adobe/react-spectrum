@@ -12,7 +12,7 @@
 
 import {parseColor} from '@react-stately/color';
 import React from 'react';
-import {renderHook} from '@testing-library/react-hooks';
+import {renderHook} from '@react-spectrum/test-utils';
 import {useColorField} from '../';
 
 describe('useColorField', function () {
@@ -74,7 +74,7 @@ describe('useColorField', function () {
   });
 
   it('should return prop for invalid', function () {
-    let {inputProps} = renderColorFieldHook({validationState: 'invalid'});
+    let {inputProps} = renderColorFieldHook({isInvalid: true});
     expect(inputProps['aria-invalid']).toBe(true);
   });
 

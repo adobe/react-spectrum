@@ -122,6 +122,11 @@ function getDaysInMonth(year: number, month: number): number {
   return 30;
 }
 
+/**
+ * The Hebrew calendar is used in Israel and around the world by the Jewish faith.
+ * Years include either 12 or 13 months depending on whether it is a leap year.
+ * In leap years, an extra month is inserted at month 6.
+ */
 export class HebrewCalendar implements Calendar {
   identifier = 'hebrew';
 
@@ -176,6 +181,7 @@ export class HebrewCalendar implements Calendar {
   }
 
   getYearsInEra(): number {
+    // 6239 gregorian
     return 9999;
   }
 

@@ -79,7 +79,7 @@ interface StoryThumbProps extends Omit<SliderThumbProps, 'index'> {
 interface SliderStateContext {
   sliderProps: StoryMultiSliderProps,
   state: SliderState,
-  trackRef: React.RefObject<HTMLElement>,
+  trackRef: React.RefObject<Element>,
   index: number
 }
 

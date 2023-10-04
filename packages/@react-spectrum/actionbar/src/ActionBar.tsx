@@ -21,32 +21,34 @@ import {FocusScope} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {OpenTransition} from '@react-spectrum/overlays';
-import React, {ReactElement, useEffect, useRef} from 'react';
+import React, {ReactElement, Ref, useEffect, useRef, useState} from 'react';
 import {SpectrumActionBarProps} from '@react-types/actionbar';
 import styles from './actionbar.css';
 import {Text} from '@react-spectrum/text';
 import {useKeyboard} from '@react-aria/interactions';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
 function ActionBar<T extends object>(props: SpectrumActionBarProps<T>, ref: DOMRef<HTMLDivElement>) {
   let isOpen = props.selectedItemCount !== 0;
+  let domRef = useDOMRef(ref);
 
   return (
     <OpenTransition
+      nodeRef={domRef}
       in={isOpen}
       mountOnEnter
       unmountOnExit>
-      <ActionBarInner {...props} ref={ref} />
+      <ActionBarInnerWithRef {...props} ref={domRef} />
     </OpenTransition>
   );
 }
 
-interface ActionBarInnerProps extends SpectrumActionBarProps<unknown> {
+interface ActionBarInnerProps<T> extends SpectrumActionBarProps<T> {
   isOpen?: boolean
 }
 
-const ActionBarInner = React.forwardRef((props: ActionBarInnerProps, ref: DOMRef<HTMLDivElement>) => {
+function ActionBarInner<T>(props: ActionBarInnerProps<T>, ref: Ref<HTMLDivElement>) {
   props = useProviderProps(props);
 
   let {
@@ -55,17 +57,17 @@ const ActionBarInner = React.forwardRef((props: ActionBarInnerProps, ref: DOMRef
     onAction,
     onClearSelection,
     selectedItemCount,
-    isOpen
+    isOpen,
+    items
   } = props;
 
   let {styleProps} = useStyleProps(props);
-  let domRef = useDOMRef(ref);
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   // Store the last count greater than zero in a ref so that we can retain it while rendering the fade-out animation.
-  let lastCount = useRef(selectedItemCount);
-  if (selectedItemCount === 'all' || selectedItemCount > 0) {
-    lastCount.current = selectedItemCount;
+  let [lastCount, setLastCount] = useState(selectedItemCount);
+  if ((selectedItemCount === 'all' || selectedItemCount > 0) && selectedItemCount !== lastCount) {
+    setLastCount(selectedItemCount);
   }
 
   let {keyboardProps} = useKeyboard({
@@ -78,9 +80,13 @@ const ActionBarInner = React.forwardRef((props: ActionBarInnerProps, ref: DOMRef
   });
 
   // Announce "actions available" on mount.
+  let isInitial = useRef(true);
   useEffect(() => {
-    announce(formatMessage('actionsAvailable'));
-  }, [formatMessage]);
+    if (isInitial.current) {
+      isInitial.current = false;
+      announce(stringFormatter.format('actionsAvailable'));
+    }
+  }, [stringFormatter]);
 
   return (
     <FocusScope restoreFocus>
@@ -88,7 +94,7 @@ const ActionBarInner = React.forwardRef((props: ActionBarInnerProps, ref: DOMRef
         {...filterDOMProps(props)}
         {...styleProps}
         {...keyboardProps}
-        ref={domRef}
+        ref={ref}
         className={classNames(
           styles,
           'react-spectrum-ActionBar', {
@@ -99,9 +105,10 @@ const ActionBarInner = React.forwardRef((props: ActionBarInnerProps, ref: DOMRef
         )}>
         <div className={classNames(styles, 'react-spectrum-ActionBar-bar')}>
           <ActionGroup
-            aria-label={formatMessage('actions')}
+            items={items}
+            aria-label={stringFormatter.format('actions')}
             isQuiet
-            staticColor={isEmphasized ? 'white' : null}
+            staticColor={isEmphasized ? 'white' : undefined}
             overflowMode="collapse"
             buttonLabelBehavior="collapse"
             onAction={onAction}
@@ -109,26 +116,28 @@ const ActionBarInner = React.forwardRef((props: ActionBarInnerProps, ref: DOMRef
             {children}
           </ActionGroup>
           <ActionButton
-            gridArea="clear"
-            aria-label={formatMessage('clearSelection')}
+            gridArea={styles.clear}
+            aria-label={stringFormatter.format('clearSelection')}
             onPress={() => onClearSelection()}
             isQuiet
-            staticColor={isEmphasized ? 'white' : null}>
+            staticColor={isEmphasized ? 'white' : undefined}>
             <CrossLarge />
           </ActionButton>
           <Text UNSAFE_className={classNames(styles, 'react-spectrum-ActionBar-selectedCount')}>
-            {lastCount.current === 'all'
-              ? formatMessage('selectedAll')
-              : formatMessage('selected', {count: lastCount.current})}
+            {lastCount === 'all'
+              ? stringFormatter.format('selectedAll')
+              : stringFormatter.format('selected', {count: lastCount})}
           </Text>
         </div>
       </div>
     </FocusScope>
   );
-});
+}
+
+const ActionBarInnerWithRef = React.forwardRef(ActionBarInner) as <T>(props: ActionBarInnerProps<T> & {ref?: Ref<HTMLDivElement>}) => ReactElement;
 
 /**
- * TODO: Add description of component here.
+ * Action bars are used for single and bulk selection patterns when a user needs to perform actions on one or more items at the same time.
  */
 const _ActionBar = React.forwardRef(ActionBar) as <T>(props: SpectrumActionBarProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_ActionBar as ActionBar};

@@ -11,14 +11,14 @@
  */
 
 import {FocusScope} from '../';
-import {Meta, Story} from '@storybook/react';
-import React, {ReactNode, useState} from 'react';
+import {Meta} from '@storybook/react';
+import React, {ReactNode, useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 
 const dialogsRoot = 'dialogsRoot';
 
 interface StoryProps {
-  usePortal: boolean,
+  isPortaled: boolean,
   contain: boolean
 }
 
@@ -34,10 +34,10 @@ const meta: Meta<StoryProps> = {
 
 export default meta;
 
-const Template = (): Story<StoryProps> => ({usePortal, contain = true}) => <Example usePortal={usePortal} contain={contain} />;
+const Template = ({isPortaled, contain = true}) => <Example isPortaled={isPortaled} contain={contain} />;
 
-function MaybePortal({children, usePortal}: { children: ReactNode, usePortal: boolean}) {
-  if (!usePortal) {
+function MaybePortal({children, isPortaled}: {children: ReactNode, isPortaled: boolean}) {
+  if (!isPortaled) {
     return <>{children}</>;
   }
 
@@ -47,7 +47,7 @@ function MaybePortal({children, usePortal}: { children: ReactNode, usePortal: bo
   );
 }
 
-function NestedDialog({onClose, usePortal, contain}: {onClose: VoidFunction, usePortal: boolean, contain: boolean}) {
+function NestedDialog({onClose, isPortaled, contain}: {onClose: VoidFunction, isPortaled: boolean, contain: boolean}) {
   let [open, setOpen] = useState(false);
   let [showNew, setShowNew] = useState(false);
   let onKeyDown = (e) => {
@@ -58,9 +58,10 @@ function NestedDialog({onClose, usePortal, contain}: {onClose: VoidFunction, use
   };
 
   return (
-    <MaybePortal usePortal={usePortal}>
+    <MaybePortal isPortaled={isPortaled}>
       <FocusScope contain={contain} restoreFocus autoFocus>
         {!showNew && (
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
           <div role="dialog" onKeyDown={onKeyDown}>
             <input />
             <input />
@@ -72,10 +73,11 @@ function NestedDialog({onClose, usePortal, contain}: {onClose: VoidFunction, use
             <button type="button" onClick={onClose}>
               close
             </button>
-            {open && <NestedDialog contain={contain} onClose={() => setOpen(false)} usePortal={usePortal} />}
+            {open && <NestedDialog contain={contain} onClose={() => setOpen(false)} isPortaled={isPortaled} />}
           </div>
         )}
         {showNew && (
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
           <div role="dialog" onKeyDown={onKeyDown}>
             <input />
             <input autoFocus />
@@ -87,32 +89,124 @@ function NestedDialog({onClose, usePortal, contain}: {onClose: VoidFunction, use
   );
 }
 
-function Example({usePortal, contain}: StoryProps) {
+export function Example({isPortaled, contain}: StoryProps) {
   let [open, setOpen] = useState(false);
 
   return (
     <div>
-      <input />
-
+      <input aria-label="input before" />
       <button type="button" onClick={() => setOpen(true)}>
         Open dialog
       </button>
-      <input />
-      {open && <NestedDialog onClose={() => setOpen(false)} usePortal={usePortal} contain={contain} />}
+      <input aria-label="input after" />
+      {open && <NestedDialog onClose={() => setOpen(false)} isPortaled={isPortaled} contain={contain} />}
 
       <div id={dialogsRoot} />
     </div>
   );
 }
 
-export const KeyboardNavigation = Template().bind({});
-KeyboardNavigation.args = {usePortal: false};
+function FocusableFirstInScopeExample() {
+  let [contentIndex, setContentIndex] = useState(0);
+  let [buttonRemoved, setButtonRemoved] = useState(false);
+  function DialogContent(index = 0) {
+    const nextIndex = index === 2 ? 0 : index + 1;
+    return (
+      <>
+        <h1 id={`heading-${index}`}>Dialog {index + 1}</h1>
+        {index === 2 ?
+          (
+            <>
+              <p>The end of the road.</p>
+              <button id={`button-${index}`} key={`button-${index}`} onClick={(e) => {(e.target as Element).remove(); setButtonRemoved(true);}}>Remove Me</button>
+              {buttonRemoved &&
+                <p>With no tabbable elements within the scope, FocusScope will try to focus the first focusable element within the scope, in this case, the dialog itself.</p>
+              }
+            </>
+          ) :
+          (
+            <>
+              <p>Content that will be replaced by <strong>Dialog {nextIndex + 1}</strong>.</p>
+              <button id={`button-${index}`} key={`button-${index}`} onClick={() => setContentIndex(nextIndex)}>Go to Dialog {nextIndex + 1}</button>
+            </>
+          )
+        }
 
-export const KeyboardNavigationInsidePortal = Template().bind({});
-KeyboardNavigationInsidePortal.args = {usePortal: true};
+      </>
+    );
+  }
+  const contents = [];
+  for (let i = 0; i < 3; i++) {
+    contents.push(DialogContent(i));
+  }
+  return (
+    <FocusScope contain>
+      <div role="dialog" tabIndex={-1} aria-labelledby={`heading-${contentIndex}`} style={{border: '1px solid currentColor', borderRadius: '5px', padding: '0 1.5rem 1.5rem', width: '15rem'}}>
+        {contents[contentIndex]}
+      </div>
+    </FocusScope>
+  );
+}
 
-export const KeyboardNavigationNoContain = Template().bind({});
-KeyboardNavigationNoContain.args = {usePortal: false, contain: false};
+function IgnoreRestoreFocusExample() {
+  const [display, setDisplay] = useState(false);
+  useEffect(() => {
+    let handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setDisplay(false);
+      }
+    };
+    document.body.addEventListener('keyup', handleKeyDown);
+    return () => {
+      document.body.removeEventListener('keyup', handleKeyDown);
+    };
+  }, []);
 
-export const KeyboardNavigationInsidePortalNoContain = Template().bind({});
-KeyboardNavigationInsidePortalNoContain.args = {usePortal: true, contain: false};
+  return (
+    <div>
+      <button type="button" onClick={() => setDisplay(state => !state)}>
+        {display ? 'Close dialog 1' : 'Open dialog 1'}
+      </button>
+      <button type="button" onClick={() => setDisplay(state => !state)}>
+        {display ? 'Close dialog 2' : 'Open dialog 2'}
+      </button>
+      {display &&
+        <FocusScope restoreFocus>
+          <div role="dialog">
+            <input  />
+            <input  />
+            <input  />
+          </div>
+        </FocusScope>
+      }
+    </div>
+  );
+}
+
+export const KeyboardNavigation = {
+  render: Template,
+  args: {isPortaled: false}
+};
+
+export const KeyboardNavigationInsidePortal = {
+  render: Template,
+  args: {isPortaled: true}
+};
+
+export const KeyboardNavigationNoContain = {
+  render: Template,
+  args: {isPortaled: false, contain: false}
+};
+
+export const KeyboardNavigationInsidePortalNoContain = {
+  render: Template,
+  args: {isPortaled: true, contain: false}
+};
+
+export const IgnoreRestoreFocus = {
+  render: () => <IgnoreRestoreFocusExample />
+};
+
+export const FocusableFirstInScope = {
+  render: () => <FocusableFirstInScopeExample />
+};

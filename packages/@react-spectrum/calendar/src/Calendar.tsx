@@ -12,17 +12,19 @@
 
 import {CalendarBase} from './CalendarBase';
 import {createCalendar} from '@internationalized/date';
+import {createDOMRef} from '@react-spectrum/utils';
 import {DateValue, SpectrumCalendarProps} from '@react-types/calendar';
-import React, {useMemo} from 'react';
+import {FocusableRef} from '@react-types/shared';
+import React, {ReactElement, useImperativeHandle, useMemo, useRef} from 'react';
 import {useCalendar} from '@react-aria/calendar';
 import {useCalendarState} from '@react-stately/calendar';
 import {useLocale} from '@react-aria/i18n';
+import {useProviderProps} from '@react-spectrum/provider';
 
-/**
- * Calendars display a grid of days in one or more months and allow users to select a single date.
- */
-export function Calendar<T extends DateValue>(props: SpectrumCalendarProps<T>) {
+function Calendar<T extends DateValue>(props: SpectrumCalendarProps<T>, ref: FocusableRef<HTMLElement>) {
+  props = useProviderProps(props);
   let {visibleMonths = 1} = props;
+  visibleMonths = Math.max(visibleMonths, 1);
   let visibleDuration = useMemo(() => ({months: visibleMonths}), [visibleMonths]);
   let {locale} = useLocale();
   let state = useCalendarState({
@@ -32,10 +34,31 @@ export function Calendar<T extends DateValue>(props: SpectrumCalendarProps<T>) {
     createCalendar
   });
 
+  let domRef = useRef();
+  useImperativeHandle(ref, () => ({
+    ...createDOMRef(domRef),
+    focus() {
+      state.setFocused(true);
+    }
+  }));
+
+  let {calendarProps, prevButtonProps, nextButtonProps, errorMessageProps} = useCalendar(props, state);
+
   return (
     <CalendarBase
       {...props}
+      visibleMonths={visibleMonths}
       state={state}
-      useCalendar={useCalendar} />
+      calendarRef={domRef}
+      calendarProps={calendarProps}
+      prevButtonProps={prevButtonProps}
+      nextButtonProps={nextButtonProps}
+      errorMessageProps={errorMessageProps} />
   );
 }
+
+/**
+ * Calendars display a grid of days in one or more months and allow users to select a single date.
+ */
+const _Calendar = React.forwardRef(Calendar) as <T extends DateValue>(props: SpectrumCalendarProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
+export {_Calendar as Calendar};

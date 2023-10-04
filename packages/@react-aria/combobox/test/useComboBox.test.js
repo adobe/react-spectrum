@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, renderHook} from '@testing-library/react-hooks';
+import {actHook as act, renderHook} from '@react-spectrum/test-utils';
 import {Item} from '@react-stately/collections';
 import {ListLayout} from '@react-stately/layout';
 import React from 'react';
@@ -70,7 +70,7 @@ describe('useComboBox', function () {
     expect(inputProps['aria-controls']).toBeFalsy();
     expect(inputProps['aria-activedescendant']).toBeFalsy();
     expect(listBoxProps.id).toBeTruthy();
-    expect(listBoxProps['aria-labelledby']).toBe(`${labelProps.id} ${listBoxProps.id}`);
+    expect(listBoxProps['aria-labelledby']).toBe(`${listBoxProps.id} ${labelProps.id}`);
     expect(buttonProps.id).toBeTruthy();
     expect(buttonProps.excludeFromTabOrder).toBeTruthy();
     expect(buttonProps['aria-haspopup']).toBeTruthy();

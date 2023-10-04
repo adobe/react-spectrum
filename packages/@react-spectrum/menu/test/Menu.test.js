@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
 import Bell from '@spectrum-icons/workflow/Bell';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Item, Menu, Section} from '../';
@@ -19,7 +19,6 @@ import {MenuContext} from '../src/context';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress} from '@react-spectrum/test-utils';
 
 let menuId = 'menu-id';
 
@@ -60,8 +59,7 @@ describe('Menu', function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -89,7 +87,7 @@ describe('Menu', function () {
       expect(section).toHaveAttribute('aria-labelledby');
       let heading = document.getElementById(section.getAttribute('aria-labelledby'));
       expect(heading).toBeTruthy();
-      expect(heading).toHaveAttribute('aria-hidden', 'true');
+      expect(heading).toHaveAttribute('role', 'presentation');
     }
 
     let dividers = within(menu).getAllByRole('separator');
@@ -99,7 +97,7 @@ describe('Menu', function () {
     expect(items.length).toBe(5);
     for (let item of items) {
       expect(item).toHaveAttribute('tabindex');
-      expect(item).toHaveAttribute('aria-disabled');
+      expect(item).not.toHaveAttribute('aria-disabled');
     }
     let item1 = within(menu).getByText('Foo');
     let item2 = within(menu).getByText('Bar');
@@ -736,5 +734,48 @@ describe('Menu', function () {
     let tree = renderComponent(Menu, {}, {'data-testid': 'test'});
     let menu = tree.getByRole('menu');
     expect(menu).toHaveAttribute('data-testid', 'test');
+  });
+
+  describe('supports links', function () {
+    describe.each(['mouse', 'keyboard'])('%s', (type) => {
+      it.each(['none', 'single', 'multiple'])('with selectionMode = %s', function (selectionMode) {
+        let onAction = jest.fn();
+        let onSelectionChange = jest.fn();
+        let tree = render(
+          <Provider theme={theme}>
+            <Menu aria-label="menu" selectionMode={selectionMode} onSelectionChange={onSelectionChange} onAction={onAction}>
+              <Item href="https://google.com">One</Item>
+              <Item href="https://adobe.com">Two</Item>
+            </Menu>
+          </Provider>
+        );
+
+        let role = {
+          none: 'menuitem',
+          single: 'menuitemradio',
+          multiple: 'menuitemcheckbox'
+        }[selectionMode];
+        let items = tree.getAllByRole(role);
+        expect(items).toHaveLength(2);
+        expect(items[0].tagName).toBe('A');
+        expect(items[0]).toHaveAttribute('href', 'https://google.com');
+        expect(items[1].tagName).toBe('A');
+        expect(items[1]).toHaveAttribute('href', 'https://adobe.com');
+
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick);
+
+        if (type === 'mouse') {
+          triggerPress(items[1]);
+        } else {
+          fireEvent.keyDown(items[1], {key: 'Enter'});
+          fireEvent.keyUp(items[1], {key: 'Enter'});
+        }
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onClick).toHaveBeenCalledTimes(1);
+        window.removeEventListener('click', onClick);
+      });
+    });
   });
 });

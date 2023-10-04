@@ -11,16 +11,22 @@
  */
 
 import {AriaRadioProps} from '@react-types/radio';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useFormReset} from '@react-aria/utils';
 import {InputHTMLAttributes, RefObject} from 'react';
-import {radioGroupNames} from './utils';
+import {radioGroupDescriptionIds, radioGroupErrorMessageIds, radioGroupNames} from './utils';
 import {RadioGroupState} from '@react-stately/radio';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
 
-interface RadioAria {
+export interface RadioAria {
   /** Props for the input element. */
-  inputProps: InputHTMLAttributes<HTMLElement>
+  inputProps: InputHTMLAttributes<HTMLInputElement>,
+  /** Whether the radio is disabled. */
+  isDisabled: boolean,
+  /** Whether the radio is currently selected. */
+  isSelected: boolean,
+  /** Whether the radio is in a pressed state. */
+  isPressed: boolean
 }
 
 /**
@@ -30,7 +36,7 @@ interface RadioAria {
  * @param state - State for the radio group, as returned by `useRadioGroupState`.
  * @param ref - Ref to the HTML input element.
  */
-export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: RefObject<HTMLElement>): RadioAria {
+export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: RefObject<HTMLInputElement>): RadioAria {
   let {
     value,
     children,
@@ -53,7 +59,7 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
     state.setSelectedValue(value);
   };
 
-  let {pressProps} = usePress({
+  let {pressProps, isPressed} = usePress({
     isDisabled
   });
 
@@ -62,10 +68,19 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
   }), ref);
   let interactions = mergeProps(pressProps, focusableProps);
   let domProps = filterDOMProps(props, {labelable: true});
-  let tabIndex = state.lastFocusedValue === value || state.lastFocusedValue == null ? 0 : -1;
+  let tabIndex = -1;
+  if (state.selectedValue != null) {
+    if (state.selectedValue === value) {
+      tabIndex = 0;
+    }
+  } else if (state.lastFocusedValue === value || state.lastFocusedValue == null) {
+    tabIndex = 0;
+  }
   if (isDisabled) {
     tabIndex = undefined;
   }
+
+  useFormReset(ref, state.selectedValue, state.setSelectedValue);
 
   return {
     inputProps: mergeProps(domProps, {
@@ -76,7 +91,15 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
       disabled: isDisabled,
       checked,
       value,
-      onChange
-    })
+      onChange,
+      'aria-describedby': [
+        props['aria-describedby'],
+        state.isInvalid ? radioGroupErrorMessageIds.get(state) : null,
+        radioGroupDescriptionIds.get(state)
+      ].filter(Boolean).join(' ') || undefined
+    }),
+    isDisabled,
+    isSelected: checked,
+    isPressed
   };
 }

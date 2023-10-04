@@ -10,16 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusEvent, HTMLAttributes, Key, KeyboardEvent, RefObject, useEffect, useRef} from 'react';
+import {DOMAttributes, FocusableElement, FocusStrategy, KeyboardDelegate} from '@react-types/shared';
+import {flushSync} from 'react-dom';
+import {FocusEvent, Key, KeyboardEvent, RefObject, useEffect, useRef} from 'react';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
-import {FocusStrategy, KeyboardDelegate} from '@react-types/shared';
-import {focusWithoutScrolling, mergeProps, scrollIntoView, useEvent} from '@react-aria/utils';
+import {focusWithoutScrolling, mergeProps, scrollIntoView, scrollIntoViewport, useEvent, useRouter} from '@react-aria/utils';
+import {getInteractionModality} from '@react-aria/interactions';
 import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useLocale} from '@react-aria/i18n';
 import {useTypeSelect} from './useTypeSelect';
 
-interface SelectableCollectionOptions {
+export interface AriaSelectableCollectionOptions {
   /**
    * An interface for reading and updating multiple selection state.
    */
@@ -78,18 +80,26 @@ interface SelectableCollectionOptions {
    * The ref attached to the scrollable body. Used to provide automatic scrolling on item focus for non-virtualized collections.
    * If not provided, defaults to the collection ref.
    */
-  scrollRef?: RefObject<HTMLElement | HTMLOListElement>
+  scrollRef?: RefObject<HTMLElement>,
+  /**
+   * The behavior of links in the collection.
+   * - 'action': link behaves like onAction.
+   * - 'selection': link follows selection interactions (e.g. if URL drives selection).
+   * - 'override': links override all other interactions (link items are not selectable).
+   * @default 'action'
+   */
+  linkBehavior?: 'action' | 'selection' | 'override'
 }
 
-interface SelectableCollectionAria {
+export interface SelectableCollectionAria {
   /** Props for the collection element. */
-  collectionProps: HTMLAttributes<HTMLElement>
+  collectionProps: DOMAttributes
 }
 
 /**
  * Handles interactions with selectable collections.
  */
-export function useSelectableCollection(options: SelectableCollectionOptions): SelectableCollectionAria {
+export function useSelectableCollection(options: AriaSelectableCollectionOptions): SelectableCollectionAria {
   let {
     selectionManager: manager,
     keyboardDelegate: delegate,
@@ -104,10 +114,11 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     allowsTabNavigation = false,
     isVirtualized,
     // If no scrollRef is provided, assume the collection ref is the scrollable region
-    scrollRef = ref
+    scrollRef = ref,
+    linkBehavior = 'action'
   } = options;
   let {direction} = useLocale();
-
+  let router = useRouter();
 
   let onKeyDown = (e: KeyboardEvent) => {
     // Prevent option + tab from doing anything since it doesn't move focus to the cells, only buttons/checkboxes
@@ -117,13 +128,29 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
 
     // Keyboard events bubble through portals. Don't handle keyboard events
     // for elements outside the collection (e.g. menus).
-    if (!ref.current.contains(e.target as HTMLElement)) {
+    if (!ref.current.contains(e.target as Element)) {
       return;
     }
 
     const navigateToKey = (key: Key | undefined, childFocus?: FocusStrategy) => {
       if (key != null) {
+        if (manager.isLink(key) && linkBehavior === 'selection' && selectOnFocus && !isNonContiguousSelectionModifier(e)) {
+          // Set focused key and re-render synchronously to bring item into view if needed.
+          flushSync(() => {
+            manager.setFocusedKey(key, childFocus);
+          });
+
+          let item = scrollRef.current.querySelector(`[data-key="${key}"]`);
+          router.open(item, e);
+
+          return;
+        }
+
         manager.setFocusedKey(key, childFocus);
+
+        if (manager.isLink(key) && linkBehavior === 'override') {
+          return;
+        }
 
         if (e.shiftKey && manager.selectionMode === 'multiple') {
           manager.extendSelection(key);
@@ -164,6 +191,9 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         if (delegate.getKeyLeftOf) {
           e.preventDefault();
           let nextKey = delegate.getKeyLeftOf(manager.focusedKey);
+          if (nextKey == null && shouldFocusWrap) {
+            nextKey = direction === 'rtl' ? delegate.getFirstKey?.(manager.focusedKey) : delegate.getLastKey?.(manager.focusedKey);
+          }
           navigateToKey(nextKey, direction === 'rtl' ? 'first' : 'last');
         }
         break;
@@ -172,6 +202,9 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         if (delegate.getKeyRightOf) {
           e.preventDefault();
           let nextKey = delegate.getKeyRightOf(manager.focusedKey);
+          if (nextKey == null && shouldFocusWrap) {
+            nextKey = direction === 'rtl' ? delegate.getLastKey?.(manager.focusedKey) : delegate.getFirstKey?.(manager.focusedKey);
+          }
           navigateToKey(nextKey, direction === 'rtl' ? 'last' : 'first');
         }
         break;
@@ -238,10 +271,10 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
             ref.current.focus();
           } else {
             let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
-            let next: HTMLElement;
-            let last: HTMLElement;
+            let next: FocusableElement;
+            let last: FocusableElement;
             do {
-              last = walker.lastChild() as HTMLElement;
+              last = walker.lastChild() as FocusableElement;
               if (last) {
                 next = last;
               }
@@ -305,13 +338,21 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
       // Restore the scroll position to what it was before.
       scrollRef.current.scrollTop = scrollPos.current.top;
       scrollRef.current.scrollLeft = scrollPos.current.left;
+    }
 
+    if (!isVirtualized && manager.focusedKey != null) {
       // Refocus and scroll the focused item into view if it exists within the scrollable region.
       let element = scrollRef.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
       if (element) {
-        // This prevents a flash of focus on the first/last element in the collection
-        focusWithoutScrolling(element);
-        scrollIntoView(scrollRef.current, element);
+        // This prevents a flash of focus on the first/last element in the collection, or the collection itself.
+        if (!element.contains(document.activeElement)) {
+          focusWithoutScrolling(element);
+        }
+
+        let modality = getInteractionModality();
+        if (modality === 'keyboard') {
+          scrollIntoViewport(element, {containingElement: ref.current});
+        }
       }
     }
   };
@@ -355,14 +396,26 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
 
   // If not virtualized, scroll the focused element into view when the focusedKey changes.
   // When virtualized, Virtualizer handles this internally.
+  let lastFocusedKey = useRef(manager.focusedKey);
   useEffect(() => {
-    if (!isVirtualized && manager.focusedKey && scrollRef?.current) {
+    let modality = getInteractionModality();
+    if (manager.isFocused && manager.focusedKey != null && scrollRef?.current) {
       let element = scrollRef.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
-      if (element) {
-        scrollIntoView(scrollRef.current, element);
+      if (element && modality === 'keyboard') {
+        if (!isVirtualized) {
+          scrollIntoView(scrollRef.current, element);
+        }
+        scrollIntoViewport(element, {containingElement: ref.current});
       }
     }
-  }, [isVirtualized, scrollRef, manager.focusedKey]);
+
+    // If the focused key becomes null (e.g. the last item is deleted), focus the whole collection.
+    if (manager.isFocused && manager.focusedKey == null && lastFocusedKey.current != null) {
+      focusSafely(ref.current);
+    }
+
+    lastFocusedKey.current = manager.focusedKey;
+  }, [isVirtualized, scrollRef, manager.focusedKey, manager.isFocused, ref]);
 
   let handlers = {
     onKeyDown,
@@ -370,7 +423,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     onBlur,
     onMouseDown(e) {
       // Ignore events that bubbled through portals.
-      if (e.currentTarget.contains(e.target)) {
+      if (scrollRef.current === e.target) {
         // Prevent focus going to the collection when clicking on the scrollbar.
         e.preventDefault();
       }

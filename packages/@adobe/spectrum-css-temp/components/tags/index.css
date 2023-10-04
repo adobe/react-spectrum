@@ -12,27 +12,52 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
-.spectrum-Tags {
-  display: inline-block;
-
-  margin: 0;
-  padding: 0;
-  list-style: none;
+:root {
+  --spectrum-tag-margin: calc(var(--spectrum-taggroup-tag-gap-y) / 2) calc(var(--spectrum-taggroup-tag-gap-x) / 2);
 }
 
-.spectrum-Tags-item {
-  display: inline-flex;
+.spectrum-Tags {
+  display: inline;
+
+  &:focus-visible {
+    outline: none;
+  }
+
+  &.focus-ring {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--spectrum-tag-border-color-key-focus);
+    /* Allows us to use a box-shadow for the focus ring. Should not cause layout shifts since it is within a container. */
+    display: block;
+  }
+}
+
+.spectrum-Tags-container {
+  &:not(.spectrum-Tags-container--empty) {
+    /* Aligns tags with label. */
+    margin-inline-start: calc(calc(var(--spectrum-taggroup-tag-gap-x) / 2) * -1);
+    margin-inline-end: calc(var(--spectrum-taggroup-tag-gap-x) / 2);
+  }
+}
+
+.spectrum-Tag {
+  composes: spectrum-FocusRing;
+  --spectrum-focus-ring-border-radius: var(--spectrum-tag-border-radius);
+  --spectrum-focus-ring-border-size: var(--spectrum-tag-border-size);
+
+  display: inline-grid;
   align-items: center;
   box-sizing: border-box;
+  position: relative;
+  cursor: default;
 
-  margin: calc(var(--spectrum-taggroup-tag-gap-y) / 2) calc(var(--spectrum-taggroup-tag-gap-x) / 2);
-  padding: 0 calc(var(--spectrum-tag-padding-x) - var(--spectrum-tag-border-size));
+  margin: var(--spectrum-tag-margin);
+  padding-inline-start: calc(var(--spectrum-tag-padding-x) - var(--spectrum-tag-border-size));
   block-size: var(--spectrum-tag-height);
   max-inline-size: 100%;
 
   border-width: var(--spectrum-tag-border-size);
   border-style: solid;
-  border-radius: var(--spectrum-border-radius);
+  border-radius: var(--spectrum-tag-border-radius);
   outline: none;
   user-select: none;
 
@@ -41,32 +66,85 @@ governing permissions and limitations under the License.
     box-shadow var(--spectrum-global-animation-duration-100) ease-in-out,
     background-color var(--spectrum-global-animation-duration-100) ease-in-out;
 
+  &[data-href] {
+    cursor: pointer;
+  }
+
   &.is-disabled {
+    cursor: default;
     pointer-events: none;
   }
 
-  > .spectrum-Tags-itemIcon {
-    margin-inline-end: var(--spectrum-tag-icon-padding-x);
-    margin-inline-start: calc(var(--spectrum-tag-deletable-border-size-key-focus) * -1);
+  .spectrum-Tag-removeButton {
+    grid-area: action;
+    height: calc(var(--spectrum-tag-height) - (2 * var(--spectrum-tag-border-size)));
+    width: var(--spectrum-global-dimension-size-300);
   }
 
-  .spectrum-Tags-itemClearButton {
-    display: flex;
-    margin-inline-end: calc(-0.5 * var(--spectrum-tag-padding-x));
-    margin-inline-start: var(--spectrum-tag-deletable-border-size-key-focus);
-    block-size: var(--spectrum-alias-font-size-default);
-    inline-size: var(--spectrum-alias-font-size-default);
-    border-radius: var(--spectrum-alias-border-radius-small);
+  .spectrum-Tag-cell {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: grid;
+    align-items: center;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: "decoration content action";
+  }
+
+  .spectrum-Tag-icon {
+    grid-area: decoration;
+    margin-inline-end: var(--spectrum-global-dimension-size-100);
+  }
+
+  .spectrum-Tag-avatar {
+    grid-area: decoration;
+    margin-inline-end: var(--spectrum-global-dimension-size-100);
+  }
+
+  .spectrum-Tag-content {
+    grid-area: content;
+    line-height: calc(var(--spectrum-tag-height) - calc(var(--spectrum-tag-border-size) * 2));
+    margin-inline-end: var(--spectrum-tag-padding-x);
+    flex: 1 1 auto;
+    font-size: var(--spectrum-tag-text-size);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    outline: none;
+  }
+
+  &.spectrum-Tag--removable {
+    .spectrum-Tag-content {
+      margin-inline-end: 0;
+    }
   }
 }
 
-.spectrum-Tags-itemLabel {
-  block-size: 100%;
-  line-height: calc(var(--spectrum-tag-height) - calc(var(--spectrum-tag-border-size) * 2));
-  flex: 1 1 auto;
-  font-size: var(--spectrum-tag-text-size);
-  cursor: default;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+.spectrum-Tags-actions {
+  display: inline;
+
+  .spectrum-Tags-actionButton {
+    display: inline;
+    height: var(--spectrum-tag-height);
+    font-size: var(--spectrum-tag-text-size);
+    margin: var(--spectrum-tag-margin);
+
+    &.spectrum-Tags-actionButton {
+      > span {
+        padding-inline-start: var(--spectrum-tag-padding-x);
+        padding-inline-end: var(--spectrum-tag-padding-x);
+      }
+    }
+  }
+}
+
+.spectrum-Tags-fieldWrapper.spectrum-Tags-fieldWrapper {
+  width: unset;
+
+  &:not(.spectrum-Tags-fieldWrapper--positionSide) {
+    display: grid;
+  }
+}
+
+.spectrum-Tags-empty-state {
+  min-height: var(--spectrum-tag-height);
 }

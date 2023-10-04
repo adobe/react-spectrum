@@ -38,7 +38,7 @@ module.exports = new Resolver({
         // these are full filepaths, so don't check if they start with the pattern, they won't
         if ((
           /@(react-spectrum|react-aria|react-stately|internationalized|spectrum-icons|adobe\/react-spectrum)/g.test(resolved.filePath)
-          || /(react-aria|react-stately)/g.test(resolved.filePath)
+          || /react-aria-components/g.test(resolved.filePath)
         ) && resolved.filePath.endsWith('.d.ts')) {
           resolved.filePath = path.resolve(path.dirname(resolved.filePath), '..', 'src', 'index.ts');
         }
@@ -47,6 +47,11 @@ module.exports = new Resolver({
         resolved.sideEffects = true;
         return resolved;
       }
+    }
+
+    if (/^@(react-spectrum|react-aria)\/(.*?)\/docs\/(.*)$/.test(specifier)) {
+      let baseDir = process.env.DOCS_ENV === 'production' ? 'docs' : 'packages';
+      return {filePath: path.join(options.projectRoot, baseDir, specifier)};
     }
   }
 });

@@ -21,7 +21,7 @@ import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/pagination/vars.css';
 import {TextField} from '@react-spectrum/textfield';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
-import {useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {usePagination} from '@react-aria/pagination';
 import {usePaginationState} from '@react-stately/pagination';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -31,7 +31,7 @@ export function PaginationInput(props: PaginationBase) {
   props = useProviderProps(props);
   let state = usePaginationState(props);
   let {prevButtonProps, nextButtonProps, textProps} = usePagination(props, state);
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {direction} = useLocale();
   const {maxValue} = props;
 
@@ -45,12 +45,14 @@ export function PaginationInput(props: PaginationBase) {
       </ActionButton>
       <TextField
         {...textProps}
+        // This is a filler for now to fix accessibility tests, will revisit when we pick Pagination back up
+        aria-label="pagination input"
         value={state.value}
         onChange={state.onChange}
         UNSAFE_className={classNames(styles, 'spectrum-Pagination-input')} />
       <span
         className={classNames(typographyStyles, 'spectrum-Body--secondary', classNames(styles, 'spectrum-Pagination-counter'))}>
-        {formatMessage('page_count', {n: maxValue})}
+        {stringFormatter.format('page_count', {n: maxValue})}
       </span>
       <ActionButton
         {...nextButtonProps}

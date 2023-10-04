@@ -12,22 +12,23 @@
 
 import {AriaSliderProps} from '@react-types/slider';
 import {clamp, mergeProps, useGlobalListeners} from '@react-aria/utils';
-import {getSliderThumbId, sliderIds} from './utils';
-import React, {HTMLAttributes, LabelHTMLAttributes, OutputHTMLAttributes, RefObject, useRef} from 'react';
+import {DOMAttributes} from '@react-types/shared';
+import {getSliderThumbId, sliderData} from './utils';
+import React, {LabelHTMLAttributes, OutputHTMLAttributes, RefObject, useRef} from 'react';
 import {setInteractionModality, useMove} from '@react-aria/interactions';
 import {SliderState} from '@react-stately/slider';
 import {useLabel} from '@react-aria/label';
 import {useLocale} from '@react-aria/i18n';
 
-interface SliderAria {
+export interface SliderAria {
   /** Props for the label element. */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
 
   /** Props for the root element of the slider component; groups slider inputs. */
-  groupProps: HTMLAttributes<HTMLElement>,
+  groupProps: DOMAttributes,
 
   /** Props for the track element. */
-  trackProps: HTMLAttributes<HTMLElement>,
+  trackProps: DOMAttributes,
 
   /** Props for the output element, displaying the value of the slider thumbs. */
   outputProps: OutputHTMLAttributes<HTMLOutputElement>
@@ -43,17 +44,21 @@ interface SliderAria {
  * accepts click and drag motions, so that the closest thumb will follow clicks and drags on
  * the track.
  */
-export function useSlider(
-  props: AriaSliderProps,
+export function useSlider<T extends number | number[]>(
+  props: AriaSliderProps<T>,
   state: SliderState,
-  trackRef: RefObject<HTMLElement>
+  trackRef: RefObject<Element>
 ): SliderAria {
   let {labelProps, fieldProps} = useLabel(props);
 
   let isVertical = props.orientation === 'vertical';
 
   // Attach id of the label to the state so it can be accessed by useSliderThumb.
-  sliderIds.set(state, labelProps.id ?? fieldProps.id);
+  sliderData.set(state, {
+    id: labelProps.id ?? fieldProps.id,
+    'aria-describedby': props['aria-describedby'],
+    'aria-details': props['aria-details']
+  });
 
   let {direction} = useLocale();
 
@@ -65,8 +70,6 @@ export function useSlider(
   // It is set onMouseDown/onTouchDown; see trackProps below.
   const realTimeTrackDraggingIndex = useRef<number | null>(null);
 
-  const stateRef = useRef<SliderState>(null);
-  stateRef.current = state;
   const reverseX = direction === 'rtl';
   const currentPosition = useRef<number>(null);
   const {moveProps} = useMove({
@@ -74,10 +77,11 @@ export function useSlider(
       currentPosition.current = null;
     },
     onMove({deltaX, deltaY}) {
-      let size = isVertical ? trackRef.current.offsetHeight : trackRef.current.offsetWidth;
+      let {height, width} = trackRef.current.getBoundingClientRect();
+      let size = isVertical ? height : width;
 
       if (currentPosition.current == null) {
-        currentPosition.current = stateRef.current.getThumbPercent(realTimeTrackDraggingIndex.current) * size;
+        currentPosition.current = state.getThumbPercent(realTimeTrackDraggingIndex.current) * size;
       }
 
       let delta = isVertical ? deltaY : deltaX;
@@ -89,12 +93,12 @@ export function useSlider(
 
       if (realTimeTrackDraggingIndex.current != null && trackRef.current) {
         const percent = clamp(currentPosition.current / size, 0, 1);
-        stateRef.current.setThumbPercent(realTimeTrackDraggingIndex.current, percent);
+        state.setThumbPercent(realTimeTrackDraggingIndex.current, percent);
       }
     },
     onMoveEnd() {
       if (realTimeTrackDraggingIndex.current != null) {
-        stateRef.current.setThumbDragging(realTimeTrackDraggingIndex.current, false);
+        state.setThumbDragging(realTimeTrackDraggingIndex.current, false);
         realTimeTrackDraggingIndex.current = null;
       }
     }
@@ -104,9 +108,10 @@ export function useSlider(
   let onDownTrack = (e: React.UIEvent, id: number, clientX: number, clientY: number) => {
     // We only trigger track-dragging if the user clicks on the track itself and nothing is currently being dragged.
     if (trackRef.current && !props.isDisabled && state.values.every((_, i) => !state.isThumbDragging(i))) {
-      let size = isVertical ? trackRef.current.offsetHeight : trackRef.current.offsetWidth;
+      let {height, width, top, left} = trackRef.current.getBoundingClientRect();
+      let size = isVertical ? height : width;
       // Find the closest thumb
-      const trackPosition = trackRef.current.getBoundingClientRect()[isVertical ? 'top' : 'left'];
+      const trackPosition = isVertical ? top : left;
       const clickPosition = isVertical ? clientY : clientX;
       const offset = clickPosition - trackPosition;
       let percent = offset / size;
@@ -168,7 +173,7 @@ export function useSlider(
     }
   };
 
-  if (labelProps.htmlFor) {
+  if ('htmlFor' in labelProps && labelProps.htmlFor) {
     // Ideally the `for` attribute should point to the first thumb, but VoiceOver on iOS
     // causes this to override the `aria-labelledby` on the thumb. This causes the first
     // thumb to only be announced as the slider label rather than its individual name as well.
@@ -192,19 +197,23 @@ export function useSlider(
       ...fieldProps
     },
     trackProps: mergeProps({
-      onMouseDown(e: React.MouseEvent<HTMLElement>) {
+      onMouseDown(e: React.MouseEvent) {
         if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
           return;
         }
         onDownTrack(e, undefined, e.clientX, e.clientY);
       },
-      onPointerDown(e: React.PointerEvent<HTMLElement>) {
+      onPointerDown(e: React.PointerEvent) {
         if (e.pointerType === 'mouse' && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) {
           return;
         }
         onDownTrack(e, e.pointerId, e.clientX, e.clientY);
       },
-      onTouchStart(e: React.TouchEvent<HTMLElement>) { onDownTrack(e, e.changedTouches[0].identifier, e.changedTouches[0].clientX, e.changedTouches[0].clientY); }
+      onTouchStart(e: React.TouchEvent) { onDownTrack(e, e.changedTouches[0].identifier, e.changedTouches[0].clientX, e.changedTouches[0].clientY); },
+      style: {
+        position: 'relative',
+        touchAction: 'none'
+      }
     }, moveProps),
     outputProps: {
       htmlFor: state.values.map((_, index) => getSliderThumbId(state, index)).join(' '),
