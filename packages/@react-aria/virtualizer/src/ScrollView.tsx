@@ -127,10 +127,10 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     if (!dom) {
       return;
     }
+    // TODO: move this check to somewhere common so it can be shared? Double check that this is the route we wanna go
     let isTestEnv = process.env.NODE_ENV === 'test';
-    let prototype = Object.getPrototypeOf(window.HTMLElement.prototype);
-    let isClientWidthMocked = Object.getOwnPropertyDescriptor(prototype, 'clientWidth');
-    let isClientHeightMocked = Object.getOwnPropertyDescriptor(prototype, 'clientHeight');
+    let isClientWidthMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes('clientWidth');
+    let isClientHeightMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes('clientHeight');
     let w = isTestEnv && !isClientWidthMocked ? Infinity : dom.clientWidth;
     let h = isTestEnv && !isClientHeightMocked ? Infinity : dom.clientHeight;
 
