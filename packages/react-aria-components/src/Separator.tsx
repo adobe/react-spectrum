@@ -18,10 +18,10 @@ import {useShallowRender} from './Collection';
 
 export interface SeparatorProps extends AriaSeparatorProps, StyleProps, SlotProps {}
 
-export const SeparatorContext = createContext<ContextValue<SeparatorProps, Element>>({});
+export const SeparatorContext = createContext<ContextValue<SeparatorProps, HTMLElement>>({});
 
-function Separator(props: SeparatorProps, ref: ForwardedRef<Element>) {
-  [props, ref] = useContextProps(props, ref, SeparatorContext);
+function Separator(originalProps: SeparatorProps, originalRef: ForwardedRef<HTMLElement>) {
+  let [props, ref] = useContextProps(originalProps, originalRef, SeparatorContext);
   let {elementType, orientation, style, className} = props;
   let Element = (elementType as ElementType) || 'hr';
   if (Element === 'hr' && orientation === 'vertical') {
@@ -33,7 +33,7 @@ function Separator(props: SeparatorProps, ref: ForwardedRef<Element>) {
     orientation
   });
 
-  let shallow = useShallowRender('separator', props, ref);
+  let shallow = useShallowRender('separator', originalProps, originalRef);
   if (shallow) {
     return shallow;
   }
@@ -45,7 +45,7 @@ function Separator(props: SeparatorProps, ref: ForwardedRef<Element>) {
       style={style}
       className={className ?? 'react-aria-Separator'}
       ref={ref}
-      slot={props.slot} />
+      slot={props.slot || undefined} />
   );
 }
 

@@ -37,3 +37,10 @@ governing permissions and limitations under the License.
     }
   }
 }
+
+@media (forced-colors: active) {
+  .spectrum-Popover {
+    --spectrum-popover-background-color: Canvas;
+    --spectrum-popover-border-color: CanvasText;
+  }
+}

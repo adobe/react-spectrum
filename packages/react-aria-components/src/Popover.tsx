@@ -15,7 +15,8 @@ import {ContextValue, forwardRefType, HiddenContext, RenderProps, SlotProps, use
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, RefObject} from 'react';
+import {OverlayTriggerStateContext} from './Dialog';
+import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext} from 'react';
 
 export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef'>, OverlayTriggerProps, RenderProps<PopoverRenderProps>, SlotProps {
   /**
@@ -45,22 +46,18 @@ export interface PopoverRenderProps {
   isExiting: boolean
 }
 
-interface PopoverContextValue extends PopoverProps {
-  state: OverlayTriggerState,
-  preserveChildren?: boolean,
-  triggerRef: RefObject<Element>
-}
-
-export const PopoverContext = createContext<ContextValue<PopoverContextValue, HTMLElement>>(null);
+export const PopoverContext = createContext<ContextValue<PopoverProps, HTMLElement>>(null);
 
 function Popover(props: PopoverProps, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, PopoverContext);
-  let ctx = props as PopoverContextValue;
+  let contextState = useContext(OverlayTriggerStateContext);
   let localState = useOverlayTriggerState(props);
-  let state = props.isOpen != null || props.defaultOpen != null || !ctx?.state ? localState : ctx.state;
+  let state = props.isOpen != null || props.defaultOpen != null || !contextState ? localState : contextState;
   let isExiting = useExitAnimation(ref, state.isOpen);
+  let isHidden = useContext(HiddenContext);
 
-  if (state && !state.isOpen && !isExiting) {
+  // If we are in a hidden tree, we still need to preserve our children.
+  if (isHidden) {
     let children = props.children;
     if (typeof children === 'function') {
       children = children({
@@ -70,13 +67,17 @@ function Popover(props: PopoverProps, ref: ForwardedRef<HTMLElement>) {
       });
     }
 
-    return ctx.preserveChildren ? <HiddenContext.Provider value>{children}</HiddenContext.Provider> : null;
+    return <>{children}</>;
+  }
+
+  if (state && !state.isOpen && !isExiting) {
+    return null;
   }
 
   return (
     <PopoverInner
       {...props}
-      triggerRef={ctx.triggerRef!}
+      triggerRef={props.triggerRef!}
       state={state}
       popoverRef={ref}
       isExiting={isExiting} />
@@ -115,19 +116,19 @@ function PopoverInner({state, isExiting, ...props}: PopoverInnerProps) {
   let style = {...renderProps.style, ...popoverProps.style};
 
   return (
-    <Overlay>
+    <Overlay isExiting={isExiting}>
       {!props.isNonModal && <div {...underlayProps} style={{position: 'fixed', inset: 0}} />}
       <div
         {...mergeProps(filterDOMProps(props as any), popoverProps)}
         {...renderProps}
         ref={ref}
-        slot={props.slot}
+        slot={props.slot || undefined}
         style={style}
         data-placement={placement}
         data-entering={isEntering || undefined}
         data-exiting={isExiting || undefined}>
         {!props.isNonModal && <DismissButton onDismiss={state.close} />}
-        <OverlayArrowContext.Provider value={{arrowProps, placement}}>
+        <OverlayArrowContext.Provider value={{...arrowProps, placement}}>
           {renderProps.children}
         </OverlayArrowContext.Provider>
         <DismissButton onDismiss={state.close} />

@@ -13,7 +13,7 @@
 import {AriaDateFieldProps as AriaDateFieldPropsBase, AriaTimeFieldProps, DateValue, TimeValue} from '@react-types/datepicker';
 import {createFocusManager, FocusManager} from '@react-aria/focus';
 import {DateFieldState, TimeFieldState} from '@react-stately/datepicker';
-import {DOMAttributes, KeyboardEvent} from '@react-types/shared';
+import {DOMAttributes, GroupDOMAttributes, KeyboardEvent} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useDescription, useFormReset} from '@react-aria/utils';
 import {FocusEvent, InputHTMLAttributes, RefObject, useEffect, useMemo, useRef} from 'react';
 // @ts-ignore
@@ -33,7 +33,7 @@ export interface DateFieldAria {
    /** Props for the field's visible label element, if any. */
   labelProps: DOMAttributes,
    /** Props for the field grouping element. */
-  fieldProps: DOMAttributes,
+  fieldProps: GroupDOMAttributes,
   /** Props for the hidden input element for HTML form submission. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Props for the description element, if any. */
@@ -110,14 +110,14 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
   // rather than role="group". Since the date picker/date range picker already has a role="group"
   // with a label and description, and the segments are already labeled by this as well, this
   // avoids very verbose duplicate announcements.
-  let fieldDOMProps: DOMAttributes;
+  let fieldDOMProps: GroupDOMAttributes;
   if (props[roleSymbol] === 'presentation') {
     fieldDOMProps = {
       role: 'presentation'
     };
   } else {
     fieldDOMProps = mergeProps(fieldProps, {
-      role: 'group',
+      role: 'group' as const,
       'aria-disabled': props.isDisabled || undefined,
       'aria-describedby': describedBy
     });

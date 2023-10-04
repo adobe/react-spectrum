@@ -1,0 +1,18 @@
+name: 📚 Documentation
+description: Have an issue or improvement for the react-spectrum documentation?
+body:
+  - type: markdown
+    attributes:
+      value: "### Thanks for filing an issue! Before you submit, search open/closed issues before submitting since someone might have asked the same thing before!"
+  - type: textarea
+    id: documentation-request
+    attributes:
+      label: 🙋 Documentation Request
+      description: Provide a general summary of the documentation request here
+    validations:
+      required: true
+  - type: input
+    id: company-team
+    attributes:
+      label: 🧢 Your Company/Team
+      description: Which product team is requesting this change? (i.e. Adobe/Photoshop)

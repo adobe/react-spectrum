@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import {Button, DropZone, DropZoneContext, FileTrigger, Link, Text} from '../';
 import {ClipboardEvent, DataTransfer, DataTransferItem, DragEvent} from '@react-aria/dnd/test/mocks';
 import {Draggable} from '@react-aria/dnd/test/examples';
@@ -18,10 +18,15 @@ import React from 'react';
 import userEvent from '@testing-library/user-event';
 
 describe('DropZone', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   it('should render a dropzone', () => {
     let {getByTestId} = render(
       <DropZone data-testid="foo">
-        <Text slot="heading">
+        <Text slot="label">
           Test
         </Text>
       </DropZone>
@@ -33,7 +38,7 @@ describe('DropZone', () => {
   it('should render a dropzone with custom class', () => {
     let {getByTestId} = render(
       <DropZone data-testid="foo" className="test">
-        <Text slot="heading">
+        <Text slot="label">
           Test
         </Text>
       </DropZone>);
@@ -44,7 +49,7 @@ describe('DropZone', () => {
   it('should support DOM props', () => {
     let {getByTestId} = render(
       <DropZone data-testid="foo" data-foo="bar">
-        <Text slot="heading">
+        <Text slot="label">
           Test
         </Text>
       </DropZone>);
@@ -64,41 +69,41 @@ describe('DropZone', () => {
     expect(dropzone).toHaveAttribute('slot', 'test');
   });
 
-  it('should support hover', () => {
+  it('should support hover', async () => {
     let {getByText} = render(<DropZone className={({isHovered}) => isHovered ? 'hover' : ''}>Test</DropZone>);
     let dropzone = getByText('Test');
 
     expect(dropzone).not.toHaveAttribute('data-hovered');
     expect(dropzone).not.toHaveClass('hover');
 
-    userEvent.hover(dropzone);
+    await user.hover(dropzone);
     expect(dropzone).toHaveAttribute('data-hovered', 'true');
     expect(dropzone).toHaveClass('hover');
 
-    userEvent.unhover(dropzone);
+    await user.unhover(dropzone);
     expect(dropzone).not.toHaveAttribute('data-hovered');
     expect(dropzone).not.toHaveClass('hover');
   });
 
-  it('should support focus ring', () => {
+  it('should support focus ring', async () => {
     let {getByTestId, getByRole} = render(
       <DropZone data-testid="foo" className={({isFocusVisible}) => isFocusVisible ? 'focus' : ''}>
-        <Text slot="heading">
+        <Text slot="label">
           Test
         </Text>
       </DropZone>);
     let dropzone = getByTestId('foo');
     let button = getByRole('button');
-    
+
     expect(dropzone).not.toHaveAttribute('data-focus-visible');
     expect(dropzone).not.toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(button);
     expect(dropzone).toHaveAttribute('data-focus-visible', 'true');
     expect(dropzone).toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(dropzone).not.toHaveAttribute('data-focus-visible');
     expect(dropzone).not.toHaveClass('focus');
   });
@@ -106,7 +111,7 @@ describe('DropZone', () => {
   it('should apply correct aria-labelledby', () => {
     let {getByRole, getByText} = render(
       <DropZone className="test">
-        <Text slot="heading">
+        <Text slot="label">
           Test
         </Text>
       </DropZone>);
@@ -140,31 +145,45 @@ describe('DropZone', () => {
     expect(button).toHaveAttribute('aria-label', 'test aria-label');
   });
 
-  it('should support render props', () => {
+  it('should support render props', async () => {
     let {getByTestId} = render(
       <DropZone data-testid="foo">
         {({isFocused}) => isFocused ? 'Focused' : 'Not Focused'}
       </DropZone>
     );
     let dropzone = getByTestId('foo');
-    
+
     expect(dropzone).toHaveTextContent('Not Focused');
-    
-    userEvent.tab();
+
+    await user.tab();
     expect(dropzone).toHaveTextContent('Focused');
   });
 
   it('should render FileTrigger as a child', () => {
     let {getByTestId} = render(
       <DropZone>
-        <FileTrigger data-testid="foo">
+        <FileTrigger>
+          <Button data-testid="foo">Upload</Button>
+        </FileTrigger>
+      </DropZone>
+    );
+
+    let button = getByTestId('foo');
+    expect(button).toHaveClass('react-aria-Button');
+  });
+
+  it('should attach a ref to the dropzone if provided as a prop', () => {
+    let ref = React.createRef();
+    let {getByTestId} = render(
+      <DropZone data-testid="foo" ref={ref}>
+        <FileTrigger>
           <Button>Upload</Button>
         </FileTrigger>
       </DropZone>
     );
-      
-    let fileTrigger = getByTestId('foo');
-    expect(fileTrigger).toHaveClass('react-aria-FileTrigger');
+
+    let dropzone = getByTestId('foo');
+    expect(ref.current).toEqual(dropzone);
   });
 
   describe('drag and drop', function () {
@@ -177,7 +196,7 @@ describe('DropZone', () => {
         width: 100,
         height: 50
       }));
-  
+
       jest.useFakeTimers();
     });
 
@@ -198,7 +217,7 @@ describe('DropZone', () => {
           <>
             <Draggable onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
             <DropZone data-testid="foo" onDropEnter={onDropEnter} onDrop={onDrop} onDropMove={onDropMove} >
-              <Text slot="heading">
+              <Text slot="label">
                 Test
               </Text>
             </DropZone>
@@ -273,7 +292,7 @@ describe('DropZone', () => {
               getText: expect.any(Function)
             }
           ]
-          
+
         });
 
         expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('hello world');
@@ -303,7 +322,7 @@ describe('DropZone', () => {
           <>
             <Draggable onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
             <DropZone data-testid="foo" onDropEnter={onDropEnter} onDrop={onDrop} onDropMove={onDropMove} >
-              <Text slot="heading">
+              <Text slot="label">
                 Test
               </Text>
             </DropZone>
@@ -313,11 +332,11 @@ describe('DropZone', () => {
         let dropzone = tree.getByTestId('foo');
         let button = tree.getAllByRole('button')[1];
         let draggable = tree.getByText('Drag me');
-        
-        expect(dropzone).toHaveClass('react-aria-DropZone');       
+
+        expect(dropzone).toHaveClass('react-aria-DropZone');
         expect(draggable).toHaveAttribute('draggable', 'true');
 
-        userEvent.tab();
+        await user.tab();
         fireEvent.keyDown(draggable, {key: 'Enter'});
         fireEvent.keyUp(draggable, {key: 'Enter'});
 
@@ -356,16 +375,16 @@ describe('DropZone', () => {
       let tree = render(
         <>
           <DropZone onDrop={onDrop}>
-            <Text slot="heading">
+            <Text slot="label">
               Test
             </Text>
           </DropZone >
         </>
       );
       let button = tree.getByRole('button');
-  
+
       let clipboardData = new DataTransfer();
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(button);
 
       clipboardData.items.add('hello world', 'text/plain');
@@ -375,7 +394,7 @@ describe('DropZone', () => {
 
       fireEvent(button, new ClipboardEvent('paste', {clipboardData}));
 
-      expect(onDrop).toHaveBeenCalledTimes(1); 
+      expect(onDrop).toHaveBeenCalledTimes(1);
       expect(onDrop).toHaveBeenCalledWith(
         {
           type: 'drop',

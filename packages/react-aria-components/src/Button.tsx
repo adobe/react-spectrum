@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 import {AriaButtonProps, mergeProps, useButton, useFocusRing, useHover} from 'react-aria';
-import {ContextValue, forwardRefType, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, createHideableComponent, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
-import React, {createContext, ForwardedRef, forwardRef} from 'react';
+import React, {createContext, ForwardedRef} from 'react';
 
 export interface ButtonRenderProps {
   /**
@@ -27,7 +27,7 @@ export interface ButtonRenderProps {
   isPressed: boolean,
   /**
    * Whether the button is focused, either via a mouse or keyboard.
-   * @selector :focus
+   * @selector [data-focused]
    */
   isFocused: boolean,
   /**
@@ -37,7 +37,7 @@ export interface ButtonRenderProps {
   isFocusVisible: boolean,
   /**
    * Whether the button is disabled.
-   * @selector :disabled
+   * @selector [data-disabled]
    */
   isDisabled: boolean
 }
@@ -93,7 +93,8 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
       {...mergeProps(buttonProps, focusProps, hoverProps)}
       {...renderProps}
       ref={ref}
-      slot={props.slot}
+      slot={props.slot || undefined}
+      data-disabled={props.isDisabled || undefined}
       data-pressed={ctx.isPressed || isPressed || undefined}
       data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
@@ -104,5 +105,5 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
 /**
  * A button allows a user to perform an action, with mouse, touch, and keyboard interactions.
  */
-const _Button = /*#__PURE__*/ (forwardRef as forwardRefType)(Button);
+const _Button = /*#__PURE__*/ createHideableComponent(Button);
 export {_Button as Button};

@@ -12,6 +12,10 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
+:root {
+  --spectrum-breadcrumb-separator-icon-position-adjustment: var(--spectrum-global-dimension-size-10);
+}
+
 .spectrum-Breadcrumbs {
   display: flex;
   justify-content: flex-start;
@@ -29,7 +33,7 @@ governing permissions and limitations under the License.
   position: relative;
 
   /* Fix alignment, it's not quite centered */
-  top: var(--spectrum-global-dimension-size-10);
+  top: xvar(--spectrum-breadcrumb-separator-icon-position-adjustment);
 
   width: var(--spectrum-breadcrumb-ui-icon-width);
   height: var(--spectrum-breadcrumb-ui-icon-height);
@@ -66,7 +70,12 @@ governing permissions and limitations under the License.
     }
   }
 
-  > .spectrum-ActionButton {
+  &:not(:first-child) {
+    > .spectrum-Breadcrumbs-actionButton {
+      margin-inline-start: var(--spectrum-breadcrumb-button-gap);
+    }
+  }
+  > .spectrum-Breadcrumbs-actionButton {
     margin-inline-end: var(--spectrum-breadcrumb-button-gap);
   }
 
@@ -102,12 +111,11 @@ governing permissions and limitations under the License.
   margin-block-end: 0;
   font-size: inherit;
 
-  &[href],
-  &[tabindex="0"] {
+  &:not([aria-disabled]) {
     cursor: pointer;
 
     &:hover,
-    &:focus-ring {
+    &:focus-visible {
       text-decoration: underline;
     }
   }
@@ -115,7 +123,7 @@ governing permissions and limitations under the License.
 
 
 .spectrum-Breadcrumbs-item.is-dragged .spectrum-Breadcrumbs-itemLink:before,
-.spectrum-Breadcrumbs-itemLink:focus-ring:before {
+.spectrum-Breadcrumbs-itemLink:focus-visible:before {
   position: absolute;
   top: 0;
   inset-inline-start: 0;

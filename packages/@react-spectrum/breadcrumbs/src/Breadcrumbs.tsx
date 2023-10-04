@@ -40,8 +40,11 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
 
   // Not using React.Children.toArray because it mutates the key prop.
   let childArray: ReactElement[] = [];
-  React.Children.forEach(children, child => {
+  React.Children.forEach(children, (child, index) => {
     if (React.isValidElement(child)) {
+      if (child.key == null) {
+        child = React.cloneElement(child, {key: index});
+      }
       childArray.push(child);
     }
   });
@@ -153,9 +156,10 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
     };
 
     let menuItem = (
-      <BreadcrumbItem key="menu">
+      <BreadcrumbItem key="menu" isMenu>
         <MenuTrigger>
           <ActionButton
+            UNSAFE_className={classNames(styles, 'spectrum-Breadcrumbs-actionButton')}
             aria-label="…"
             isQuiet
             isDisabled={isDisabled}>
@@ -201,6 +205,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
           )
         }>
         <BreadcrumbItem
+          {...child.props}
           key={key}
           isCurrent={isCurrent}
           isDisabled={isDisabled}

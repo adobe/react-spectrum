@@ -12,19 +12,19 @@
 
 import {Button, CalendarCell, CalendarGrid, DateInput, DateRangePicker, DateRangePickerContext, DateSegment, Dialog, Group, Heading, Label, Popover, RangeCalendar, Text} from 'react-aria-components';
 import {CalendarDate} from '@internationalized/date';
+import {pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestDateRangePicker = (props) => (
   <DateRangePicker data-foo="bar" {...props}>
     <Label>Trip dates</Label>
     <Group>
-      <DateInput slot="start" {...props.startInputProps}>
+      <DateInput slot="start">
         {(segment) => <DateSegment segment={segment} />}
       </DateInput>
       <span aria-hidden="true">–</span>
-      <DateInput slot="end" {...props.endInputProps}>
+      <DateInput slot="end">
         {(segment) => <DateSegment segment={segment} />}
       </DateInput>
       <Button>▼</Button>
@@ -49,7 +49,12 @@ let TestDateRangePicker = (props) => (
 );
 
 describe('DateRangePicker', () => {
-  it('provides slots', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
+  it('provides slots', async () => {
     let {getByRole, getAllByRole} = render(<TestDateRangePicker />);
 
     let group = getByRole('group');
@@ -75,7 +80,7 @@ describe('DateRangePicker', () => {
       expect(segment).toHaveAttribute('data-type');
     }
 
-    userEvent.click(button);
+    await user.click(button);
 
     let dialog = getByRole('dialog');
     expect(dialog).toHaveAttribute('class', 'react-aria-Dialog');
@@ -98,22 +103,32 @@ describe('DateRangePicker', () => {
     expect(group).toHaveAttribute('aria-label', 'test');
   });
 
-  it('should apply isPressed state to button when expanded', () => {
+  it('should apply isPressed state to button when expanded', async () => {
     let {getByRole} = render(<TestDateRangePicker />);
     let button = getByRole('button');
 
     expect(button).not.toHaveAttribute('data-pressed');
-    userEvent.click(button);
+    await user.click(button);
     expect(button).toHaveAttribute('data-pressed');
+  });
+
+  it('should support data-open state', async () => {
+    let {getByRole} = render(<TestDateRangePicker />);
+    let datePicker = document.querySelector('.react-aria-DateRangePicker');
+    let button = getByRole('button');
+
+    expect(datePicker).not.toHaveAttribute('data-open');
+    await user.click(button);
+    expect(datePicker).toHaveAttribute('data-open');
   });
 
   it('should support render props', () => {
     let {getByRole} = render(
       <DateRangePicker defaultValue={{start: new CalendarDate(2023, 1, 10), end: new CalendarDate(2023, 1, 1)}}>
-        {({validationState}) => (
+        {({isInvalid}) => (
           <>
             <Label>Trip dates</Label>
-            <Group data-validation-state={validationState}>
+            <Group data-validation-state={isInvalid ? 'invalid' : null}>
               <DateInput slot="start">
                 {(segment) => <DateSegment segment={segment} />}
               </DateInput>
@@ -147,10 +162,20 @@ describe('DateRangePicker', () => {
   });
 
   it('should support form value', () => {
-    render(<TestDateRangePicker startInputProps={{name: 'start'}} endInputProps={{name: 'end'}} value={{start: new CalendarDate(2023, 1, 10), end: new CalendarDate(2023, 1, 20)}} />);
+    render(<TestDateRangePicker startName="start" endName="end" value={{start: new CalendarDate(2023, 1, 10), end: new CalendarDate(2023, 1, 20)}} />);
     let start = document.querySelector('input[name=start]');
     expect(start).toHaveValue('2023-01-10');
     let end = document.querySelector('input[name=end]');
     expect(end).toHaveValue('2023-01-20');
   });
+
+  it('should render data- attributes only on the outer element', () => {
+    let {getAllByTestId} = render(
+      <TestDateRangePicker data-testid="date-picker" />
+    );
+    let outerEl = getAllByTestId('date-picker');
+    expect(outerEl).toHaveLength(1);
+    expect(outerEl[0]).toHaveClass('react-aria-DateRangePicker');
+  });
+
 });

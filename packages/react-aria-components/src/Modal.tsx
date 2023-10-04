@@ -10,28 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaModalOverlayProps, DismissButton, Overlay, useModalOverlay} from 'react-aria';
+import {AriaModalOverlayProps, DismissButton, Overlay, useIsSSR, useModalOverlay} from 'react-aria';
+import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
 import {DOMAttributes} from '@react-types/shared';
 import {filterDOMProps, mergeProps, mergeRefs, useObjectRef, useViewportSize} from '@react-aria/utils';
-import {forwardRefType, RenderProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
+import {OverlayTriggerStateContext} from './Dialog';
 import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext, useMemo, useRef} from 'react';
 
-export interface ModalOverlayProps extends AriaModalOverlayProps, OverlayTriggerProps, RenderProps<ModalRenderProps> {}
-
-interface ModalContextValue {
-  state?: OverlayTriggerState
-}
+export interface ModalOverlayProps extends AriaModalOverlayProps, OverlayTriggerProps, RenderProps<ModalRenderProps>, SlotProps {}
 
 interface InternalModalContextValue {
   modalProps: DOMAttributes,
   modalRef: RefObject<HTMLDivElement>,
   isExiting: boolean,
-  isDismissable?: boolean,
-  state: OverlayTriggerState
+  isDismissable?: boolean
 }
 
-export const ModalContext = createContext<ModalContextValue | null>(null);
+export const ModalContext = createContext<ContextValue<ModalOverlayProps, HTMLDivElement>>(null);
 const InternalModalContext = createContext<InternalModalContextValue | null>(null);
 
 export interface ModalRenderProps {
@@ -96,17 +92,19 @@ const _Modal = /*#__PURE__*/ (forwardRef as forwardRefType)(Modal);
 export {_Modal as Modal};
 
 function ModalOverlayWithForwardRef(props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) {
-  let ctx = useContext(ModalContext);
+  [props, ref] = useContextProps(props, ref, ModalContext);
+  let contextState = useContext(OverlayTriggerStateContext);
   let localState = useOverlayTriggerState(props);
-  let state = props.isOpen != null || props.defaultOpen != null || !ctx?.state ? localState : ctx.state;
+  let state = props.isOpen != null || props.defaultOpen != null || !contextState ? localState : contextState;
 
   let objectRef = useObjectRef(ref);
   let modalRef = useRef<HTMLDivElement>(null);
   let isOverlayExiting = useExitAnimation(objectRef, state.isOpen);
   let isModalExiting = useExitAnimation(modalRef, state.isOpen);
   let isExiting = isOverlayExiting || isModalExiting;
+  let isSSR = useIsSSR();
 
-  if (!state.isOpen && !isExiting) {
+  if ((!state.isOpen && !isExiting) || isSSR) {
     return null;
   }
 
@@ -148,7 +146,7 @@ function ModalOverlayInner(props: ModalOverlayInnerProps) {
   };
 
   return (
-    <Overlay>
+    <Overlay isExiting={props.isExiting}>
       <div
         {...mergeProps(filterDOMProps(props as any), underlayProps)}
         {...renderProps}
@@ -156,9 +154,13 @@ function ModalOverlayInner(props: ModalOverlayInnerProps) {
         ref={props.overlayRef}
         data-entering={entering || undefined}
         data-exiting={props.isExiting || undefined}>
-        <InternalModalContext.Provider value={{modalProps, modalRef, state, isExiting: props.isExiting, isDismissable: props.isDismissable}}>
+        <Provider
+          values={[
+            [InternalModalContext, {modalProps, modalRef, isExiting: props.isExiting, isDismissable: props.isDismissable}],
+            [OverlayTriggerStateContext, state]
+          ]}>
           {renderProps.children}
-        </InternalModalContext.Provider>
+        </Provider>
       </div>
     </Overlay>
   );
@@ -169,7 +171,8 @@ interface ModalContentProps extends RenderProps<ModalRenderProps> {
 }
 
 function ModalContent(props: ModalContentProps) {
-  let {modalProps, modalRef, isExiting, isDismissable, state} = useContext(InternalModalContext)!;
+  let {modalProps, modalRef, isExiting, isDismissable} = useContext(InternalModalContext)!;
+  let state = useContext(OverlayTriggerStateContext)!;
   let mergedRefs = useMemo(() => mergeRefs(props.modalRef, modalRef), [props.modalRef, modalRef]);
 
   let ref = useObjectRef(mergedRefs);

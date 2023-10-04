@@ -21,6 +21,7 @@ export default {
     '@react-spectrum/icon',
     '@react-spectrum/illustratedmessage',
     '@react-spectrum/image',
+    '@react-spectrum/inlinealert',
     '@react-spectrum/label',
     '@react-spectrum/labeledvalue',
     '@react-spectrum/layout',
@@ -53,7 +54,8 @@ export default {
     '@react-spectrum/well',
     '@spectrum-icons/illustrations',
     '@spectrum-icons/ui',
-    '@spectrum-icons/workflow'
+    '@spectrum-icons/workflow',
+    '@spectrum-icons/express'
   ],
   basePath:
     process.env.VERDACCIO && process.env.CIRCLE_SHA1

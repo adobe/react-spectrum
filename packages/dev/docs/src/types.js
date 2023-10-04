@@ -41,7 +41,12 @@ const DOC_LINKS = {
   'Intl.Collator': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator',
   'Intl.CollatorOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator/Collator',
   'AbortSignal': 'https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal',
-  'Key': 'https://reactjs.org/docs/lists-and-keys.html'
+  'Key': 'https://reactjs.org/docs/lists-and-keys.html',
+  'HTMLAttributes': 'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes',
+  'InputHTMLAttributes': 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#attributes',
+  'TextareaHTMLAttributes': 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea#attributes',
+  'LabelHTMLAttributes': 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label#attributes',
+  'OutputHTMLAttributes': 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/output#attributes'
 };
 
 export const TypeContext = React.createContext();
@@ -171,7 +176,7 @@ function Keyof({keyof}) {
 function Keyword({type}) {
   let link = getDoc(type);
   if (link) {
-    return <a href={link} className={`${styles.colorLink} token hljs-keyword`} rel="noreferrer" target="_blank">{type}</a>;
+    return <a href={link} className={`${styles.colorLink} token hljs-keyword`} data-hover={styles['is-hovered']} rel="noreferrer" target="_blank">{type}</a>;
   }
 
   return <span className="token hljs-keyword">{type}</span>;
@@ -180,7 +185,7 @@ function Keyword({type}) {
 function Identifier({name}) {
   let link = getDoc(name) || DOC_LINKS[name];
   if (link) {
-    return <a href={link} className={`${styles.colorLink} token hljs-name`} rel="noreferrer" target="_blank">{name}</a>;
+    return <a href={link} className={`${styles.colorLink} token hljs-name`} data-hover={styles['is-hovered']} rel="noreferrer" target="_blank">{name}</a>;
   }
 
   return <span className="token hljs-name">{name}</span>;
@@ -383,6 +388,9 @@ export function LinkRenderer() {
   return [...links.values()].map(({type, links}) => (
     <section key={type.id} id={type.id} data-title={type.name} hidden>
       {type.description && <Markdown options={{forceBlock: true, overrides: {a: {component: SpectrumLink}}}} className={styles['type-description']}>{type.description}</Markdown>}
+      {type.type === 'interface' && type.extends?.length > 0 &&
+        <p style={{paddingLeft: 'var(--spectrum-global-dimension-size-200)'}}><strong>Extends</strong>: <code className={`${typographyStyles['spectrum-Code4']}`}><JoinList elements={type.extends} joiner=", " /></code></p>
+      }
       <TypeContext.Provider value={links}>
         {type.type === 'interface' || type.type === 'alias' || type.type === 'component'
           ? <Type type={type} />
@@ -412,7 +420,7 @@ export function LinkType({id}) {
     registered.set(id, {type: used[id], links});
   }
 
-  return <a href={'#' + id} data-link={id} className={`${styles.colorLink} token hljs-name`}>{value.name}</a>;
+  return <a href={'#' + id} data-link={id} className={`${styles.colorLink} token hljs-name`} data-hover={styles['is-hovered']}>{value.name}</a>;
 }
 
 function SpectrumLink({href, children, title}) {
@@ -458,13 +466,13 @@ export function InterfaceType({description, properties: props, typeParameters, s
         <h3 className={typographyStyles['spectrum-Heading4']}>Properties</h3>
       }
       {properties.length > 0 &&
-        <table className={`${tableStyles['spectrum-Table']} ${tableStyles['spectrum-Table--quiet']} ${styles.propTable}`}>
+        <table className={`${tableStyles['spectrum-Table']} ${styles.propTable}`}>
           <thead>
             <tr>
               <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>Name</td>
               {!hideType && <td role="columnheader" className={tableStyles['spectrum-Table-headCell']} style={{'width': '30%'}}>Type</td>}
               {showDefault && <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>Default</td>}
-              <td role="columnheader" className={tableStyles['spectrum-Table-headCell']} style={!hideType ? {'width': '40%'} : undefined}>Description</td>
+              <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>Description</td>
             </tr>
           </thead>
           <tbody className={tableStyles['spectrum-Table-body']}>
@@ -479,7 +487,7 @@ export function InterfaceType({description, properties: props, typeParameters, s
                     : null
                   }
                 </td>
-                {!hideType && 
+                {!hideType &&
                   <td className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)} data-column="Type">
                     <code className={typographyStyles['spectrum-Code4']}>
                       <Type type={prop.value} />
@@ -504,7 +512,7 @@ export function InterfaceType({description, properties: props, typeParameters, s
         <h3 className={typographyStyles['spectrum-Heading4']}>Methods</h3>
       }
       {methods.length > 0 &&
-        <table className={`${tableStyles['spectrum-Table']} ${tableStyles['spectrum-Table--quiet']} ${styles.propTable} ${styles.methodTable}`}>
+        <table className={`${tableStyles['spectrum-Table']} ${styles.propTable} ${styles.methodTable}`}>
           <thead>
             <tr>
               <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>Method</td>

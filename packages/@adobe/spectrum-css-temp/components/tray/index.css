@@ -37,7 +37,7 @@
 }
 
 .spectrum-Tray {
-  @inherit: %spectrum-overlay;
+  composes: spectrum-overlay;
 
   /* defined here so it can be accessed from JS */
   --spectrum-tray-margin-top: 64px;
@@ -63,6 +63,9 @@
   display: flex;
   flex-direction: column;
 
+  overflow-x: hidden;
+  overflow-y: auto;
+
   border-radius: var(--spectrum-tray-full-width-border-radius) var(--spectrum-tray-full-width-border-radius) var(--spectrum-tray-border-radius) var(--spectrum-tray-border-radius);
 
   /* Start offset by the animation distance */
@@ -71,16 +74,16 @@
   /* Exit animations */
   transition: opacity var(--spectrum-dialog-exit-animation-duration) cubic-bezier(0.5, 0, 1, 1) var(--spectrum-dialog-exit-animation-delay),
     transform var(--spectrum-dialog-exit-animation-duration) cubic-bezier(0.5, 0, 1, 1) var(--spectrum-dialog-exit-animation-delay);
+}
 
-  &.is-open {
-    @inherit: %spectrum-overlay--open;
+.is-open {
+  composes: spectrum-overlay--open;
 
-    /* Entry animations */
-    transition: transform var(--spectrum-dialog-entry-animation-duration) cubic-bezier(0, 0, 0.40, 1) var(--spectrum-dialog-entry-animation-delay),
-                opacity var(--spectrum-dialog-entry-animation-duration) cubic-bezier(0, 0, 0.40, 1) var(--spectrum-dialog-entry-animation-delay);
+  /* Entry animations */
+  transition: transform var(--spectrum-dialog-entry-animation-duration) cubic-bezier(0, 0, 0.40, 1) var(--spectrum-dialog-entry-animation-delay),
+              opacity var(--spectrum-dialog-entry-animation-duration) cubic-bezier(0, 0, 0.40, 1) var(--spectrum-dialog-entry-animation-delay);
 
-    transform: translateY(0);
-  }
+  transform: translateY(0);
 }
 
 .spectrum-Tray--fixedHeight {
@@ -92,5 +95,12 @@
 @media (max-width: 450px) {
   .spectrum-Tray {
     border-radius: var(--spectrum-tray-border-radius);
+  }
+}
+
+@media (forced-colors: active) {
+  .spectrum-Tray {
+    border-width: var(--spectrum-alias-border-size-thin);
+    border-style: solid solid none;
   }
 }

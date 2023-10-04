@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-InputGroup {
+  --spectrum-inputgroup-border-color-focus: var(--spectrum-alias-input-border-color-key-focus);
   background: var(--spectrum-textfield-background-color);
 
   .spectrum-FieldButton {
@@ -78,19 +79,19 @@ governing permissions and limitations under the License.
 .spectrum-InputGroup.is-focused {
   .spectrum-FieldButton:before,
   .spectrum-InputGroup-input {
-    border-color: var(--spectrum-alias-input-border-color-key-focus);
+    border-color: var(--spectrum-inputgroup-border-color-focus);
   }
 
   &.spectrum-InputGroup--invalid {
     .spectrum-FieldButton:before,
     .spectrum-InputGroup-input {
-      border-color: var(--spectrum-alias-input-border-color-key-focus);
+      border-color: var(--spectrum-inputgroup-border-color-focus);
     }
   }
 }
 
 /* Only add the 2px ring for keyboard focus */
-.spectrum-InputGroup:focus-ring:not(.spectrum-InputGroup--quiet) {
+.spectrum-InputGroup:focus-visible:not(.spectrum-InputGroup--quiet) {
   .spectrum-FieldButton {
     z-index: 1;
   }
@@ -185,7 +186,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Datepicker--range {
-  &:focus-ring {
+  &:focus-visible {
     .spectrum-InputGroup-input {
       box-shadow: none !important;
     }
@@ -198,7 +199,7 @@ governing permissions and limitations under the License.
   }
 
   /* Focus ring: When one of the inputs or the button has keyboard focus, render the focus ring border around the entire input group by styling an adjacent descendant element. */
-  &:focus-ring {
+  &:focus-visible {
     box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-key-focus);
 
     &.spectrum-InputGroup--invalid {
@@ -216,7 +217,7 @@ governing permissions and limitations under the License.
     }
 
     /* Focus ring: When one of the inputs or the button has keyboard focus, render the focus ring border around the entire input group by styling an adjacent descendant element. */
-    &:focus-ring {
+    &:focus-visible {
       .spectrum-FieldButton {
         &:before {
            border-color: var(--spectrum-dropdown-border-color-key-focus);
@@ -229,7 +230,7 @@ governing permissions and limitations under the License.
          border-color: var(--spectrum-dropdown-border-color-error);
        }
       &.spectrum-FieldButton--invalid {
-        &:focus-ring {
+        &:focus-visible {
           border-color: var(--spectrum-dropdown-border-color-key-focus);
           box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-key-focus);
         }
@@ -247,12 +248,12 @@ governing permissions and limitations under the License.
              border-color: var(--spectrum-dropdown-border-color-key-focus);
            }
           &.spectrum-FieldButton--invalid {
-            &:focus-ring {
+            &:focus-visible {
               box-shadow: 0 2px 0 0 var(--spectrum-dropdown-border-color-key-focus);
             }
           }
         }
-        &:focus-ring {
+        &:focus-visible {
           box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-key-focus);
         }
       }
@@ -264,19 +265,36 @@ governing permissions and limitations under the License.
     --spectrum-dropdown-border-color-error: Highlight;
     --spectrum-dropdown-border-color-key-focus: Highlight;
     --spectrum-textfield-border-color-error: Highlight;
+    --spectrum-textfield-border-color-error-hover: Highlight;
     --spectrum-textfield-border-color-hover: Highlight;
     --spectrum-textfield-border-color-key-focus: Highlight;
-    --spectrum-textfield-quiet-border-color: CanvasText;
+    --spectrum-textfield-quiet-border-color: ButtonText;
     --spectrum-textfield-quiet-border-color-disabled: GrayText;
     --spectrum-textfield-quiet-border-color-hover: Highlight;
     --spectrum-textfield-quiet-border-color-key-focus: Highlight;
     --spectrum-textfield-text-color-disabled: GrayText;
+    --spectrum-inputgroup-border-color-focus: Highlight;
+
     forced-color-adjust: none;
     .spectrum-InputGroup-input {
       forced-color-adjust: auto;
+      --spectrum-textfield-border-color: ButtonText;
+      --spectrum-textfield-background-color-disabled: Canvas;
     }
     .spectrum-FieldButton {
       forced-color-adjust: auto;
+      --spectrum-fieldbutton-background-color: Canvas;
+      --spectrum-fieldbutton-quiet-background-color: Canvas;
+      --spectrum-fieldbutton-icon-color: ButtonText;
+      --spectrum-fieldbutton-background-color-down: Canvas;
+      --spectrum-fieldbutton-quiet-background-color-down: Canvas;
+      --spectrum-fieldbutton-icon-color-down: ButtonText;
+      --spectrum-fieldbutton-background-color-disabled: Canvas;
+      --spectrum-fieldbutton-quiet-background-color-disabled: Canvas;
+      --spectrum-fieldbutton-background-color-hover: Canvas;
+      --spectrum-fieldbutton-quiet-background-color-hover: Canvas;
+      --spectrum-fieldbutton-icon-color-hover: ButtonText;
+      background-clip: unset;
     }
 
     &.is-disabled:not(.spectrum-InputGroup--invalid):not(.spectrum-InputGroup--quiet) .spectrum-FieldButton {
@@ -312,8 +330,8 @@ governing permissions and limitations under the License.
   .spectrum-InputGroup--invalid {
     .spectrum-FieldButton {
       &:before {
-         border-color: Highlight;
-       }
+        border-color: Highlight;
+      }
     }
     &.is-disabled:not(.spectrum-InputGroup--quiet) .spectrum-InputGroup-input {
       border-color: GrayText;
@@ -336,7 +354,7 @@ governing permissions and limitations under the License.
   }
 
   .spectrum-InputGroup {
-    &:focus-ring
+    &:focus-visible
     {
       &:not(.spectrum-InputGroup--quiet) {
         outline:2px solid Highlight;
@@ -347,4 +365,3 @@ governing permissions and limitations under the License.
     }
   }
 }
-

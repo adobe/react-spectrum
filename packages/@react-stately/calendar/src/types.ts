@@ -27,8 +27,13 @@ interface CalendarStateBase {
   readonly maxValue?: DateValue,
   /** The time zone of the dates currently being displayed. */
   readonly timeZone: string,
-  /** The current validation state of the selected value. */
+  /**
+   * The current validation state of the selected value.
+   * @deprecated Use `isValueInvalid` instead.
+   */
   readonly validationState: ValidationState,
+  /** Whether the calendar is invalid. */
+  readonly isValueInvalid: boolean,
   /** The currently focused date. */
   readonly focusedDate: CalendarDate,
   /** Sets the focused date. */

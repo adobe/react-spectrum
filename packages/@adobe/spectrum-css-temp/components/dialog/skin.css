@@ -36,8 +36,3 @@ governing permissions and limitations under the License.
     color: var(--spectrum-dialog-warning-icon-color);
   }
 }
-@media (forced-colors: active) {
-  .spectrum-Dialog {
-    border: 1px solid transparent;
-  }
-}

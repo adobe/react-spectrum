@@ -129,6 +129,24 @@ describe('NumberParser', function () {
       it('should return NaN for partial units', function () {
         expect(new NumberParser('en-US', {style: 'unit', unit: 'inch'}).parse('23.5 i')).toBe(NaN);
       });
+
+      it('should support plural forms', function () {
+        expect(new NumberParser('en-US', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('0 years')).toBe(0);
+        expect(new NumberParser('en-US', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('1 year')).toBe(1);
+        expect(new NumberParser('en-US', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('2 years')).toBe(2);
+        expect(new NumberParser('en-US', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('1.1 years')).toBe(1.1);
+
+        expect(new NumberParser('pl-PL', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('0 rok')).toBe(0);
+        expect(new NumberParser('pl-PL', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('1 lat')).toBe(1);
+        expect(new NumberParser('pl-PL', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('2 lata')).toBe(2);
+        expect(new NumberParser('pl-PL', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('37 lata')).toBe(37);
+        expect(new NumberParser('pl-PL', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('1.1 roku')).toBe(1.1);
+
+        expect(new NumberParser('fr-FR', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('1 an')).toBe(1);
+        expect(new NumberParser('fr-FR', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('8 ans')).toBe(8);
+        expect(new NumberParser('fr-FR', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('1,3 an')).toBe(1.3);
+        expect(new NumberParser('fr-FR', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('2,4 ans')).toBe(2.4);
+      });
     });
 
     describe('percents', function () {
@@ -232,8 +250,10 @@ describe('NumberParser', function () {
       expect(new NumberParser('en-US', {style: 'currency', currency: 'USD', currencySign: 'accounting'}).isValidPartialNumber('-$10')).toBe(true);
 
       // typing latin characters in arabic locale should work
-      expect(new NumberParser('ar-AE', {style: 'currency', currency: 'USD', currencySign: 'accounting'}).isValidPartialNumber('(')).toBe(true);
-      expect(new NumberParser('ar-AE', {style: 'currency', currency: 'USD', currencySign: 'accounting'}).isValidPartialNumber('(10)')).toBe(true);
+      // 1564 is the character code for the arabic letter mark, an invisible character that marks bidi text for printing, you can find this included in chrome too
+      // TODO: we should still support just typing the '(' character, but this isn't a regression
+      expect(new NumberParser('ar-AE', {style: 'currency', currency: 'USD', currencySign: 'accounting'}).isValidPartialNumber(`(${String.fromCharCode(1564)}`)).toBe(true);
+      expect(new NumberParser('ar-AE', {style: 'currency', currency: 'USD', currencySign: 'accounting'}).isValidPartialNumber(`(${String.fromCharCode(1564)}10)`)).toBe(true);
       expect(new NumberParser('ar-AE', {style: 'currency', currency: 'USD', currencySign: 'accounting'}).isValidPartialNumber('-')).toBe(true);
       expect(new NumberParser('ar-AE', {style: 'currency', currency: 'USD', currencySign: 'accounting'}).isValidPartialNumber('-10')).toBe(true);
     });

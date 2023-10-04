@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, triggerPress, within} from '@react-spectrum/test-utils';
 import {Card, CardView, GalleryLayout, GridLayout, WaterfallLayout} from '../';
 import {composeStories} from '@storybook/testing-react';
 import {Content} from '@react-spectrum/view';
@@ -132,7 +132,9 @@ function DynamicCardView(props) {
 }
 
 describe('CardView', function () {
+  let user;
   beforeAll(function () {
+    user = userEvent.setup({delay: null, pointerMap});
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => mockWidth);
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => mockHeight);
     jest.useFakeTimers();
@@ -1005,7 +1007,7 @@ describe('CardView', function () {
       ${'Grid layout'}      | ${GridLayout}
       ${'Gallery layout'}   | ${GalleryLayout}
       ${'Waterfall layout'} | ${WaterfallLayout}
-    `('$Name CardView should move focus via type to select', function ({layout}) {
+    `('$Name CardView should move focus via type to select', async function ({layout}) {
       let tree = render(<DynamicCardView layout={layout} />);
       act(() => {
         jest.runAllTimers();
@@ -1015,7 +1017,7 @@ describe('CardView', function () {
       triggerPress(cards[1]);
       expect(document.activeElement).toBe(cards[1]);
 
-      userEvent.type(document.activeElement, 'Title 12');
+      await user.keyboard('Title 12');
       act(() => {
         jest.runAllTimers();
       });
@@ -1206,6 +1208,7 @@ describe('CardView', function () {
         jest.runAllTimers();
       });
       expect(within(grid).getByText('Title 12')).toBeTruthy();
+
 
       let spinner = within(grid).getByRole('progressbar');
       expect(spinner).toHaveAttribute('aria-label', 'Loading more…');

@@ -27,6 +27,7 @@ export default {
   title: 'TableView/Expandable rows'
 } as ComponentMeta<typeof TableView>;
 
+// Known accessibility issue that will be caught by aXe: https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#tableview
 export const StaticExpandableRows: TableStory = {
   args: {
     'aria-label': 'TableView with static expandable rows',

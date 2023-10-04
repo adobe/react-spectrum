@@ -54,6 +54,28 @@ export const OverBackground = {
   ]
 };
 
+export const StaticColorWhite = {
+  args: {...Default.args, staticColor: 'white'},
+  decorators: [
+    (Story) => (
+      <div style={grayedBoxStyle}>
+        <Story />
+      </div>
+    )
+  ]
+};
+
+export const StaticColorBlack = {
+  args: {...Default.args, staticColor: 'black'},
+  decorators: [
+    (Story) => (
+      <div style={{...grayedBoxStyle, backgroundColor: 'rgb(206, 247, 243)'}}>
+        <Story />
+      </div>
+    )
+  ]
+};
+
 export const Value0 = {
   args: {...Default.args, value: 0}
 };

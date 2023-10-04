@@ -43,7 +43,7 @@ export {useTab, useTabList, useTabPanel} from '@react-aria/tabs';
 export {useTag, useTagGroup} from '@react-aria/tag';
 export {useTextField} from '@react-aria/textfield';
 export {useTooltip, useTooltipTrigger} from '@react-aria/tooltip';
-export {chain, mergeProps, useId} from '@react-aria/utils';
+export {chain, mergeProps, useId, RouterProvider} from '@react-aria/utils';
 export {VisuallyHidden, useVisuallyHidden} from '@react-aria/visually-hidden';
 
 export type {AriaBreadcrumbItemProps, AriaBreadcrumbsProps, BreadcrumbItemAria, BreadcrumbsAria} from '@react-aria/breadcrumbs';
@@ -56,7 +56,7 @@ export type {AriaDialogProps, DialogAria} from '@react-aria/dialog';
 export type {AriaFocusRingProps, FocusableAria, FocusableOptions, FocusManager, FocusManagerOptions, FocusRingAria, FocusRingProps, FocusScopeProps} from '@react-aria/focus';
 export type {DateFormatter, DateFormatterOptions, Filter, FormatMessage, I18nProviderProps, Locale, LocalizedStrings} from '@react-aria/i18n';
 export type {ClipboardProps, ClipboardResult, DirectoryDropItem, DragEndEvent, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionOptions, DraggableCollectionStartEvent, DraggableItemProps, DraggableItemResult, DragItem, DragMoveEvent, DragOptions, DragPreviewProps, DragPreviewRenderer, DragResult, DragStartEvent, DragTypes, DropEnterEvent, DropEvent, DropExitEvent, DropIndicatorAria, DropIndicatorProps, DropItem, DropMoveEvent, DropOperation, DropOptions, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionOptions, DroppableCollectionReorderEvent, DroppableCollectionResult, DroppableCollectionRootDropEvent, DroppableItemOptions, DroppableItemResult, DropPosition, DropResult, DropTarget, DropTargetDelegate, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem} from '@react-aria/dnd';
-export type {FocusProps, FocusResult, FocusVisibleProps, FocusVisibleResult, FocusWithinProps, FocusWithinResult, HoverProps, HoverResult, InteractOutsideProps, KeyboardProps, KeyboardResult, LongPressProps, LongPressResult, MoveEvents, MoveResult, PressHookProps, PressProps, PressResult, ScrollWheelProps} from '@react-aria/interactions';
+export type {FocusProps, FocusResult, FocusVisibleProps, FocusVisibleResult, FocusWithinProps, FocusWithinResult, HoverProps, HoverResult, InteractOutsideProps, KeyboardProps, KeyboardResult, LongPressProps, LongPressResult, MoveEvents, MoveResult, PressHookProps, PressProps, PressResult, ScrollWheelProps, PressEvent, PressEvents, MoveStartEvent, MoveMoveEvent, MoveEndEvent, HoverEvent, HoverEvents, FocusEvents, KeyboardEvents} from '@react-aria/interactions';
 export type {AriaFieldProps, FieldAria, LabelAria, LabelAriaProps} from '@react-aria/label';
 export type {AriaLinkOptions, LinkAria} from '@react-aria/link';
 export type {AriaListBoxOptions, AriaListBoxProps, AriaListBoxSectionProps, AriaOptionProps, ListBoxAria, ListBoxSectionAria, OptionAria} from '@react-aria/listbox';

@@ -19,12 +19,20 @@ import {Modal, Popover} from '@react-spectrum/overlays';
 import React, {Key, ReactElement, useRef} from 'react';
 import {useOverlayTriggerState} from '@react-stately/overlays';
 
-export interface SpectrumMenuDialogTriggerProps<T> extends ItemProps<T> {
+interface MenuDialogTriggerProps {
+  /** Whether the menu item is currently unavailable. */
   isUnavailable?: boolean,
+  /** The triggering Item and the Dialog, respectively. */
+  children: [ReactElement, ReactElement]
+}
+
+interface InternalMenuDialogTriggerProps extends MenuDialogTriggerProps {
   targetKey: Key
 }
 
-function ContextualHelpTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): ReactElement {
+export interface SpectrumMenuDialogTriggerProps extends MenuDialogTriggerProps {}
+
+function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElement {
   let {isUnavailable} = props;
 
   let triggerRef = useRef<HTMLLIElement>(null);
@@ -114,5 +122,5 @@ ContextualHelpTrigger.getCollectionNode = function* getCollectionNode<T>(props: 
   };
 };
 
-let _Item = ContextualHelpTrigger as <T>(props: ItemProps<T> & {isUnavailable?: boolean}) => JSX.Element;
+let _Item = ContextualHelpTrigger as (props: SpectrumMenuDialogTriggerProps) => JSX.Element;
 export {_Item as ContextualHelpTrigger};

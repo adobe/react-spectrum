@@ -123,6 +123,7 @@ export default {
 export type TableStory = ComponentStoryObj<typeof TableView>;
 
 
+// Known accessibility issue that will be caught by aXe: https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#tableview
 export const Static: TableStory = {
   args: {
     'aria-label': 'TableView with static contents',
@@ -1804,6 +1805,7 @@ let typeAheadRows = [
   ...Array.from({length: 100}, (v, i) => ({id: i, firstname: 'Aubrey', lastname: 'Sheppard', birthday: 'May 7'})),
   {id: 101, firstname: 'John', lastname: 'Doe', birthday: 'May 7'}
 ];
+
 export const TypeaheadWithDialog: TableStory = {
   render: (args) => (
     <div style={{height: '90vh'}}>
@@ -1843,3 +1845,82 @@ export const TypeaheadWithDialog: TableStory = {
     </div>
   )
 };
+
+export const Links = (args) => {
+  return (
+    <TableView {...args} aria-label="Bookmarks table" onSelectionChange={action('onSelectionChange')}>
+      <TableHeader>
+        <Column>Name</Column>
+        <Column>URL</Column>
+        <Column>Date added</Column>
+      </TableHeader>
+      <TableBody>
+        <Row key="https://adobe.com/" href="https://adobe.com/">
+          <Cell>Adobe</Cell>
+          <Cell>https://adobe.com/</Cell>
+          <Cell>January 28, 2023</Cell>
+        </Row>
+        <Row key="https://google.com/" href="https://google.com/">
+          <Cell>Google</Cell>
+          <Cell>https://google.com/</Cell>
+          <Cell>April 5, 2023</Cell>
+        </Row>
+        <Row key="https://apple.com/" href="https://apple.com/">
+          <Cell>Apple</Cell>
+          <Cell>https://apple.com/</Cell>
+          <Cell>June 5, 2023</Cell>
+        </Row>
+        <Row key="https://nytimes.com/" href="https://nytimes.com/">
+          <Cell>New York Times</Cell>
+          <Cell>https://nytimes.com/</Cell>
+          <Cell>July 12, 2023</Cell>
+        </Row>
+      </TableBody>
+    </TableView>
+  );
+};
+
+export const ColumnHeaderFocusRingTable = {
+  render: () => <LoadingTable />,
+  storyName: 'column header focus after loading',
+  parameters: {
+    description: {
+      data: 'Column header should remain focused even if the table collections empties/loading state changes to loading'
+    }
+  }
+};
+
+const allItems = [
+  {key: 'sam', name: 'Sam', height: 66, birthday: 'May 3'},
+  {key: 'julia', name: 'Julia', height: 70, birthday: 'February 10'}
+];
+
+function LoadingTable() {
+  const [items, setItems] = useState(allItems);
+  const [loadingState, setLoadingState] = useState(undefined);
+  const onSortChange = () => {
+    setItems([]);
+    setLoadingState('loading');
+    setTimeout(() => {
+      setItems(items.length > 1 ? [...items.slice(0, 1)] : []);
+      setLoadingState(undefined);
+    }, 1000);
+  };
+
+  return (
+    <TableView aria-label="Table" selectionMode="multiple" onSortChange={onSortChange} height={300}>
+      <TableHeader>
+        <Column key="name">Name</Column>
+        <Column key="height" allowsSorting>Height</Column>
+        <Column key="birthday">Birthday</Column>
+      </TableHeader>
+      <TableBody items={items} loadingState={loadingState}>
+        {item => (
+          <Row key={item.key}>
+            {column => <Cell>{item[column]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
