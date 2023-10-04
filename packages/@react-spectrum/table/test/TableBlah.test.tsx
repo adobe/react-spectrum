@@ -85,15 +85,15 @@ describe('Table ', function () {
 
       let table = new TableTester({user, element: screen.getByTestId('test'), timerType: 'real'});
 
-      table.toggleRowSelection({index: 2});
+      await table.toggleRowSelection({index: 2});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Foo 3']));
 
-      table.toggleRowSelection({text: 'Foo 4'});
+      await table.toggleRowSelection({text: 'Foo 4'});
       expect(onSelectionChange).toHaveBeenCalledTimes(2);
       expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Foo 3', 'Foo 4']));
 
-      table.toggleSelectAll();
+      await table.toggleSelectAll();
       expect(onSelectionChange).toHaveBeenCalledTimes(3);
       expect((onSelectionChange.mock.calls[2][0])).toEqual('all');
 
@@ -112,15 +112,15 @@ describe('Table ', function () {
 
 
     it('basic flow with TableTester (testing menu sort change and highlight selection)', async function () {
-      render(<TableExample allowsResizing selectionStyle="highlight" />);
+      render(<TableExample allowsResizing selectionStyle="highlight" selectionMode="single" />);
 
       let table = new TableTester({user, element: screen.getByTestId('test'), timerType: 'real'});
 
-      table.toggleRowSelection({index: 2});
+      await table.toggleRowSelection({index: 2});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Foo 3']));
 
-      table.toggleRowSelection({text: 'Foo 4'});
+      await table.toggleRowSelection({text: 'Foo 4'});
       expect(onSelectionChange).toHaveBeenCalledTimes(2);
       expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Foo 4']));
 
@@ -153,15 +153,15 @@ describe('Table ', function () {
 
       let table = new TableTester({user, element: screen.getByTestId('test'), timerType: 'real'});
 
-      table.toggleRowSelection({index: 2});
+      await table.toggleRowSelection({index: 2});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Foo 3']));
 
-      table.toggleRowSelection({text: 'Foo 4'});
+      await table.toggleRowSelection({text: 'Foo 4'});
       expect(onSelectionChange).toHaveBeenCalledTimes(2);
       expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Foo 3', 'Foo 4']));
 
-      table.toggleSelectAll();
+      await table.toggleSelectAll();
       expect(onSelectionChange).toHaveBeenCalledTimes(3);
       expect((onSelectionChange.mock.calls[2][0])).toEqual('all');
 
@@ -180,15 +180,15 @@ describe('Table ', function () {
 
 
     it('basic flow with TableTester (testing menu sort change and highlight selection)', async function () {
-      render(<TableExample allowsResizing selectionStyle="highlight" />);
+      render(<TableExample allowsResizing selectionStyle="highlight" selectionMode="single" />);
 
       let table = new TableTester({user, element: screen.getByTestId('test'), timerType: 'real'});
 
-      table.toggleRowSelection({index: 2});
+      await table.toggleRowSelection({index: 2});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Foo 3']));
 
-      table.toggleRowSelection({text: 'Foo 4'});
+      await table.toggleRowSelection({text: 'Foo 4'});
       expect(onSelectionChange).toHaveBeenCalledTimes(2);
       expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Foo 4']));
 
