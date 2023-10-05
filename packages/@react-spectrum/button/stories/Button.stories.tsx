@@ -127,7 +127,7 @@ function render<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> 
 
   if (props.variant === 'overBackground' || props.staticColor === 'white') {
     return (
-      <View backgroundColor="static-blue-700" UNSAFE_style={{padding: '15px 20px', display: 'inline-block'}}>
+      <View backgroundColor="blue-700" UNSAFE_style={{padding: '15px 20px', display: 'inline-block'}}>
         {buttons}
       </View>
     );
@@ -160,7 +160,7 @@ function renderIconText<T extends ElementType = 'button'>(props: SpectrumButtonP
 
   if (props.variant === 'overBackground' || props.staticColor === 'white') {
     return (
-      <View backgroundColor="static-blue-700" UNSAFE_style={{padding: '15px 20px', display: 'inline-block'}}>
+      <View backgroundColor="blue-900" colorVersion={6} UNSAFE_style={{padding: '15px 20px', display: 'inline-block'}}>
         {buttons}
       </View>
     );
@@ -197,7 +197,7 @@ function renderIconOnly<T extends ElementType = 'button'>(props: SpectrumButtonP
 
   if (props.variant === 'overBackground' || props.staticColor === 'white') {
     return (
-      <View backgroundColor="static-blue-700" UNSAFE_style={{padding: '15px 20px', display: 'inline-block'}}>
+      <View backgroundColor="blue-900" colorVersion={6} UNSAFE_style={{padding: '15px 20px', display: 'inline-block'}}>
         {buttons}
       </View>
     );
@@ -241,7 +241,7 @@ function PendingButtonContainerComponent(props) {
 
   function containerBackgroundColor(variant, staticColor): BackgroundColorValue | undefined {
     if (variant === 'overBackground' || staticColor === 'white') {
-      return 'static-blue-700';
+      return 'blue-700';
     }
     if (staticColor === 'black') {
       return 'static-yellow-200';

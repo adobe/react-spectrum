@@ -89,12 +89,15 @@ export const CustomLabel: SwitchStory = {
 
 export const LongLabel: SwitchStory = {
   ...Default,
-  args: {children: (
-    <>
-      Super long checkbox label. Sample text. Arma virumque cano, Troiae qui primus ab oris. Italiam,
-      fato profugus, Laviniaque venit.
-    </>
-  )},
+  args: {
+    maxWidth: 'size-3000',
+    children: (
+      <>
+        Super long checkbox label. Sample text. Arma virumque cano, Troiae qui primus ab oris. Italiam,
+        fato profugus, Laviniaque venit.
+      </>
+    )
+  },
   name: 'long label'
 };
 

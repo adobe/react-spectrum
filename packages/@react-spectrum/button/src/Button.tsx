@@ -16,9 +16,11 @@ import {
   useFocusableRef,
   useHasChild,
   usePressScale,
+  pressScale,
   useSlotProps,
   useStyleProps
 } from '@react-spectrum/utils';
+import {Button as RACButton} from 'react-aria-components';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 // @ts-ignore
@@ -33,6 +35,7 @@ import {useButton} from '@react-aria/button';
 import {useHover} from '@react-aria/interactions';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
+import {tv} from 'tailwind-variants';
 
 function disablePendingProps(props) {
   // Don't allow interaction while isPending is true
@@ -49,6 +52,162 @@ function disablePendingProps(props) {
   }
   return props;
 }
+
+function oldStyle({isPressed, isHovered, isDisabled}) {
+  return classNames(
+    styles,
+    'spectrum-Button',
+    {
+      'spectrum-Button--iconOnly': hasIcon && !hasLabel,
+      'is-disabled': isDisabled || isProgressVisible,
+      'is-active': isPressed,
+      'is-hovered': isHovered,
+      'spectrum-Button--pending': isProgressVisible
+    },
+    styleProps.className
+  )
+}
+
+let baseButton = tv({
+  base: 'flex items-center justify-center rounded-full font-[inherit] font-bold cursor-default transition outline-none focus-visible:ring disabled:text-disabled',
+  variants: {
+    size: {
+      S: 'h-75 text-75 gap-ttv-75 px-125',
+      M: 'h-100 text-100 gap-ttv-100 px-ptt-100',
+      L: 'h-200 text-200 gap-ttv-200 px-250',
+      XL: 'h-300 text-300 gap-ttv-300 px-275'
+    },
+    style: {
+      fill: 'bg-base-tint border-none',
+      outline: 'border-200 border-solid'
+    }
+  },
+  compoundVariants: [
+    {
+      hasIcon: true,
+      hasLabel: false,
+      class: 'px-0 aspect-square'
+    }
+  ]
+});
+
+let buttonStyles = tv({
+  extend: baseButton,
+  base: 'disabled:text-disabled',
+  variants: {
+    variant: {
+      accent: 'tint-accent',
+      negative: 'tint-negative',
+      primary: 'tint-neutral',
+      secondary: 'tint-gray/200'
+    },
+    style: {
+      fill: 'disabled:bg-disabled',
+      outline: 'disabled:bg-transparent disabled:border-disabled'
+    }
+  },
+  compoundVariants: [
+    {
+      variant: ['accent', 'negative', 'primary'],
+      style: 'fill',
+      class: 'text-white'
+    },
+    {
+      variant: 'secondary',
+      class: 'text-base-neutral'
+    },
+    {
+      variant: ['accent', 'negative'],
+      style: 'outline',
+      class: 'border-base-tint-900 bg-hover-tint-200 text-base-tint'
+    },
+    {
+      variant: 'primary',
+      style: 'outline',
+      class: 'border-base-tint-800 bg-hover-tint-300 text-base-tint'
+    },
+    {
+      variant: 'secondary',
+      style: 'outline',
+      class: 'border-base-tint-300 bg-hover-tint-300'
+    }
+  ]
+}, {
+  // twMergeConfig: {
+  //   theme: {
+  //     borderWidth: ['100', '200']
+  //   },
+  //   classGroups: {
+  //     tint: [{'tint': [() => true]}],
+  //     'default-tint': [{'default-tint': [() => true]}],
+  //     'font-size': [{text: []}]
+  //   }
+  // }
+  twMerge: false
+});
+
+let staticColorButton = tv({
+  extend: baseButton,
+  base: 'disabled:text-tint-disabled',
+  variants: {
+    variant: {
+      primary: '',
+      secondary: ''
+    },
+    style: {
+      fill: 'disabled:bg-tint-disabled',
+      outline: 'bg-hover-tint-300 text-tint-900 disabled:border-tint-disabled'
+    },
+    staticColor: {
+      black: 'ring-black',
+      white: 'ring-white'
+    }
+  },
+  compoundVariants: [
+    {
+      staticColor: 'black',
+      variant: 'primary',
+      style: 'fill',
+      class: 'text-white'
+    },
+    {
+      staticColor: 'white',
+      variant: 'primary',
+      style: 'fill',
+      class: 'text-black'
+    },
+    {
+      staticColor: 'black',
+      variant: 'primary',
+      class: 'tint-transparent-black/800'
+    },
+    {
+      staticColor: 'white',
+      variant: 'primary',
+      class: 'tint-transparent-white/800'
+    },
+    {
+      staticColor: 'black',
+      variant: 'secondary',
+      class: 'tint-transparent-black/200 text-black'
+    },
+    {
+      staticColor: 'white',
+      variant: 'secondary',
+      class: 'tint-transparent-white/200 text-white'
+    },
+    {
+      variant: 'primary',
+      style: 'outline',
+      class: 'border-base-tint-800'
+    },
+    {
+      variant: 'secondary',
+      style: 'outline',
+      class: 'border-base-tint-300'
+    }
+  ]
+}, {twMerge: false});
 
 function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
@@ -70,8 +229,10 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
   let {hoverProps, isHovered} = useHover({isDisabled});
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {styleProps} = useStyleProps(otherProps);
-  let hasLabel = useHasChild(`.${styles['spectrum-Button-label']}`, domRef);
-  let hasIcon = useHasChild(`.${styles['spectrum-Icon']}`, domRef);
+  // let hasLabel = useHasChild(`.${styles['spectrum-Button-label']}`, domRef);
+  // let hasIcon = useHasChild(`.${styles['spectrum-Icon']}`, domRef);
+  let hasLabel = useHasChild('[data-label]', domRef);
+  let hasIcon = useHasChild('[data-icon]', domRef);
   let [isProgressVisible, setIsProgressVisible] = useState(false);
 
   useEffect(() => {
@@ -101,39 +262,66 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
 
   usePressScale(domRef, isPressed);
 
+  // let styles = hasIcon && !hasLabel ? iconOnlyButton : buttonStyles;
+  let styles = staticColor ? staticColorButton : buttonStyles;
+  if (staticColor && variant !== 'secondary') {
+    variant = 'primary';
+  }
+
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
-      <ElementType
+      <RACButton
         {...styleProps}
-        {...mergeProps(buttonProps, hoverProps)}
+        // {...mergeProps(buttonProps, hoverProps)}
+        {...props}
         ref={domRef}
         data-variant={variant}
         data-style={style}
         data-static-color={staticColor || undefined}
         aria-disabled={isPending || undefined}
+        data-has-icon={hasIcon || undefined}
+        data-icon-only={(hasIcon && !hasLabel) || undefined}
         aria-live={isPending ? 'polite' : undefined}
+        style={pressScale(domRef, styleProps.style)}
         className={
-          classNames(
-            styles,
-            'spectrum-Button',
-            {
-              'spectrum-Button--iconOnly': hasIcon && !hasLabel,
-              'is-disabled': isDisabled || isProgressVisible,
-              'is-active': isPressed,
-              'is-hovered': isHovered,
-              'spectrum-Button--pending': isProgressVisible
-            },
-            styleProps.className
-          )
+          styles({
+            variant,
+            style,
+            staticColor,
+            size: 'M',
+            hasIcon,
+            hasLabel
+          })
+          // classNames(
+          //   styles,
+          //   'spectrum-Button',
+          //   {
+          //     'spectrum-Button--iconOnly': hasIcon && !hasLabel,
+          //     'is-disabled': isDisabled || isProgressVisible,
+          //     'is-active': isPressed,
+          //     'is-hovered': isHovered,
+          //     'spectrum-Button--pending': isProgressVisible
+          //   },
+          //   styleProps.className
+          // )
+          // 'rounded-full font-bold cursor-default transition border-solid border outline-none focus-visible:ring ' +
+
+          // 'font-[inherit] text-base px-300 h-[32px] ' +
+
+          // 'bg-base-tint border-transparent text-white disabled:bg-background-disabled ' +
+          // 'tint-accent'
         }>
         <SlotProvider
           slots={{
             icon: {
               size: 'S',
-              UNSAFE_className: classNames(styles, 'spectrum-Icon')
+              UNSAFE_className: 'flex-shrink-0 ' + (hasLabel ? '-ml-[2px]' : ''),
+              'data-icon': true
+              // UNSAFE_className: classNames(styles, 'spectrum-Icon')
             },
             text: {
-              UNSAFE_className: classNames(styles, 'spectrum-Button-label')
+              // UNSAFE_className: classNames(styles, 'spectrum-Button-label')
+              'data-label': true
             }
           }}>
           {isProgressVisible && <ProgressCircle
@@ -146,7 +334,7 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
             ? <Text>{children}</Text>
             : children}
         </SlotProvider>
-      </ElementType>
+      </RACButton>
     </FocusRing>
   );
 }

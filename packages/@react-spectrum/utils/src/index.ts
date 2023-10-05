@@ -33,4 +33,4 @@ export {useIsMobileDevice} from './useIsMobileDevice';
 export {useValueEffect} from '@react-aria/utils';
 export {BreakpointProvider, useMatchedBreakpoints, useBreakpoint} from './BreakpointProvider';
 export {useResizeObserver} from '@react-aria/utils';
-export {usePressScale} from './usePressScale';
+export {usePressScale, pressScale} from './usePressScale';

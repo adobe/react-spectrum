@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {RefObject} from 'react';
+import {CSSProperties, RefObject} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 
 export function usePressScale(ref: RefObject<HTMLElement>, isPressed: boolean) {
@@ -31,4 +31,24 @@ export function usePressScale(ref: RefObject<HTMLElement>, isPressed: boolean) {
       ref.current.style.setProperty('--scale', '');
     }
   }, [ref, isPressed]);
+}
+
+export function pressScale(ref: RefObject<HTMLElement>, style: CSSProperties) {
+  return ({isPressed}: {isPressed: boolean}) => {
+    if (isPressed) {
+      let height = ref.current.offsetHeight;
+      let width = ref.current.offsetWidth;
+      let scale = 2;
+      if (width > 100) {
+        scale = 1;
+      }
+      let transform = window.getComputedStyle(ref.current).transform;
+      return {
+        ...style,
+        transform: `${transform} scale(${(height - scale) / height})`
+      };
+    } else {
+      return style;
+    }
+  };
 }
