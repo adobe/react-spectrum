@@ -10,17 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import StepList from '../';
-import {render} from '@testing-library/react';
 import React from 'react';
-import V2StepList from '@react/react-spectrum/StepList';
-
+import {render} from '@testing-library/react';
+import StepList from '../';
 
 describe('StepList', function () {
   it.each`
     Name | Component      | props
     ${'StepList'} | ${StepList}| ${{}}
-    ${'V2StepList'}      | ${V2StepList}      | ${{}}
   `('$Name handles defaults', function ({Component, props}) {
     let {getByRole, getByText} = render(<Component {...props}></Component>);
 
