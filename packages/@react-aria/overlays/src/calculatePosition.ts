@@ -23,8 +23,6 @@ interface Position {
 interface Dimensions {
   width: number,
   height: number,
-  totalWidth: number,
-  totalHeight: number,
   top: number,
   left: number,
   scroll: Position
@@ -100,19 +98,14 @@ const TOTAL_SIZE = {
 
 const PARSED_PLACEMENT_CACHE = {};
 
-// @ts-ignore
-let visualViewport = typeof document !== 'undefined' && window.visualViewport;
-
 function getContainerDimensions(containerNode: Element): Dimensions {
-  let width = 0, height = 0, totalWidth = 0, totalHeight = 0, top = 0, left = 0;
+  let width = 0, height = 0, top = 0, left = 0;
   let scroll: Position = {};
 
   if (containerNode.tagName === 'BODY') {
     let documentElement = document.documentElement;
-    totalWidth = documentElement.clientWidth;
-    totalHeight = documentElement.clientHeight;
-    width = visualViewport?.width ?? totalWidth;
-    height = visualViewport?.height ?? totalHeight;
+    width = documentElement.clientWidth;
+    height = documentElement.clientHeight;
 
     scroll.top = documentElement.scrollTop || containerNode.scrollTop;
     scroll.left = documentElement.scrollLeft || containerNode.scrollLeft;
@@ -120,11 +113,9 @@ function getContainerDimensions(containerNode: Element): Dimensions {
     ({width, height, top, left} = getOffset(containerNode));
     scroll.top = containerNode.scrollTop;
     scroll.left = containerNode.scrollLeft;
-    totalWidth = width;
-    totalHeight = height;
   }
 
-  return {width, height, totalWidth, totalHeight, scroll, top, left};
+  return {width, height, scroll, top, left};
 }
 
 function getScroll(node: Element): Offset {
