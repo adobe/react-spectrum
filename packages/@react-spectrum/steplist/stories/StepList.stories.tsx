@@ -13,7 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Item} from '@react-stately/collections';
-import React, {Key, useState} from 'react';
+import React from 'react';
 import {SpectrumStepListProps} from '@react-types/steplist';
 import {StepList} from '../';
 import {useAsyncList} from '@react-stately/data';

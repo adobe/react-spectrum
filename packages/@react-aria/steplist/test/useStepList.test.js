@@ -10,11 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {render} from '@testing-library/react';
-import {renderHook} from '@testing-library/react-hooks';
-import React, {useRef} from 'react';
-import {useStepList} from '../';
-
 describe('useStepList', function () {
   it('fill me in', function () {
     expect(true).toBeTruthy();
