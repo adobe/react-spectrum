@@ -3,6 +3,7 @@
   "resolvers": ["@parcel/resolver-glob", "parcel-resolver-storybook", "..."],
   "transformers": {
     "packages/*/*/intl/*.json": ["parcel-transformer-intl"],
+    "*.global.css": ["parcel-transformer-css-global", "..."],
     "*.{js,mjs,jsm,jsx,es6,cjs,ts,tsx}": [
       "@parcel/transformer-js",
       "@parcel/transformer-react-refresh-wrap"

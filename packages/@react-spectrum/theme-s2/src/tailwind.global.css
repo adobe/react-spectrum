@@ -1,0 +1,10 @@
+@config "../../tailwind-theme/src/tailwind-spectrum.js";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "adobe-clown";
+  src: url("./AdobeClownVF-Roman_crop.ttf");
+  font-display: swap;
+}

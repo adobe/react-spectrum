@@ -37,7 +37,10 @@
   },
   "dependencies": {
     "@react-types/provider": "^3.6.4",
-    "@swc/helpers": "^0.5.0"
+    "@swc/helpers": "^0.5.0",
+    "@adobe/spectrum-tokens": "^13.0.0-beta.3",
+    "style-dictionary": "^3.8.0",
+    "style-dictionary-sets": "^2.3.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1"
@@ -47,5 +50,8 @@
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0"
+  },
+  "scripts": {
+    "build:tokens": "style-dictionary build --config style-dictionary.config.js"
   }
 }

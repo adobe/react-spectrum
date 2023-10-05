@@ -12,13 +12,19 @@
 
 /// <reference types="css-module-types" />
 
-import dark from '@adobe/spectrum-css-temp/vars/s2-dark.css';
-import global from '@adobe/spectrum-css-temp/vars/spectrum-global.css';
-import large from '@adobe/spectrum-css-temp/vars/spectrum-large.css';
-import light from '@adobe/spectrum-css-temp/vars/s2-light.css';
-import medium from '@adobe/spectrum-css-temp/vars/spectrum-medium.css';
+// import dark from '@adobe/spectrum-css-temp/vars/s2-dark.css';
+// import global from '@adobe/spectrum-css-temp/vars/spectrum-global.css';
+// import large from '@adobe/spectrum-css-temp/vars/spectrum-large.css';
+// import light from '@adobe/spectrum-css-temp/vars/s2-light.css';
+import s_medium from '@adobe/spectrum-css-temp/vars/spectrum-medium.css';
 import s2 from '@adobe/spectrum-css-temp/vars/s2.css';
+import dark from '../dist/css/dark-vars.css';
+import global from '../dist/css/global-vars.css';
+import large from '../dist/css/large-vars.css';
+import light from '../dist/css/light-vars.css';
+import medium from '../dist/css/medium-vars.css';
 import {Theme} from '@react-types/provider';
+import './tailwind.global.css';
 
 export let theme: Theme = {
   global: {
@@ -29,10 +35,11 @@ export let theme: Theme = {
   dark,
   medium: {
     ...medium,
-    express: s2.medium
+    medium: s_medium['spectrum--medium']
+    // express: s2.medium
   },
   large: {
     ...large,
-    express: s2.large
+    // express: s2.large
   }
 };
