@@ -74,7 +74,8 @@ export function StarRating({
       ? ratingNum <= Number(hoveredRating)
       : ratingNum <= selectedNum;
   let [isHovered, setIsHovered] = useState(false);
-  let color = isEmphasized ? "accent-800" : "gray-700";
+  let fillColor = isEmphasized ? "fill-accent-800" : "fill-gray-700";
+  let bgColor = isEmphasized ? "bg-accent-800" : "bg-gray-700";
 
   useEffect(() => {
     if (isHovered) {
@@ -88,7 +89,7 @@ export function StarRating({
         <>
           {setIsHovered(isHovered)}
           <svg
-            className={isFilled || isHovered ? `fill-${color}` : ""}
+            className={isFilled || isHovered ? fillColor : ""}
             xmlns="http://www.w3.org/2000/svg"
             width={18}
             height={18}
@@ -100,7 +101,7 @@ export function StarRating({
             )}
           </svg>
           {isHovered && isSelected && (
-            <span className="flex w-full h-25 -mb-25 bg-accent-800" />
+            <span className={`flex w-full h-25 -mb-25 ${bgColor}`} />
           )}
         </>
       )}
