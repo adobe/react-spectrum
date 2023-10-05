@@ -70,8 +70,8 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 ```css hidden
-@import './Popover.mdx';
 @import './ListBox.mdx';
+@import './Popover.mdx';
 ```
 ```css
 @layer select;
@@ -153,6 +153,12 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
     [slot=errorMessage] {
       font-size: 12px;
       color: var(--spectrum-global-color-red-600);
+    }
+  }
+  @layer popover {
+    .react-aria-Popover {
+      padding: 0px;
+      min-width: var(--trigger-width);
     }
   }
 }
