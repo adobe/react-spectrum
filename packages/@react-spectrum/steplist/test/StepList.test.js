@@ -10,17 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
+import {Item} from '@react-stately/collections';
 import React from 'react';
-import {render} from '@testing-library/react';
-import StepList from '../';
+import {render} from '@react-spectrum/test-utils';
+import {StepList} from '../';
 
 describe('StepList', function () {
-  it.each`
-    Name | Component      | props
-    ${'StepList'} | ${StepList}| ${{}}
-  `('$Name handles defaults', function ({Component, props}) {
-    render(<Component {...props} />);
+  it('$Name handles defaults', function () {
+    let {getByLabelText} = render(
+      <StepList id="steplist-id" aria-label="steplist-test">
+        <Item>Step 1</Item>
+        <Item>Step 2</Item>
+      </StepList>
+    );
 
-    expect(true).toBeTruthy();
+    let stepList = getByLabelText('steplist-test');
+    expect(stepList).toHaveAttribute('id', 'steplist-id');
   });
 });
