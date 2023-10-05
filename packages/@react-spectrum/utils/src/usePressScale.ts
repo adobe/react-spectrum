@@ -43,6 +43,9 @@ export function pressScale(ref: RefObject<HTMLElement>, style: CSSProperties) {
         scale = 1;
       }
       let transform = window.getComputedStyle(ref.current).transform;
+      if (transform === 'none') {
+        transform = '';
+      }
       return {
         ...style,
         transform: `${transform} scale(${(height - scale) / height})`

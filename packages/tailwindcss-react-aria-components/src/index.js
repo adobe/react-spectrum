@@ -7,7 +7,6 @@ const attributes = {
     'focus-visible',
     'focus-within',
     'pressed',
-    'disabled',
     'drop-target',
     'dragging',
     'empty',
@@ -29,7 +28,8 @@ const attributes = {
     'selection-end',
     'current',
     'invalid',
-    'resizing'
+    'resizing',
+    'disabled'
   ],
   enum: {
     placement: ['left', 'right', 'top', 'bottom'],

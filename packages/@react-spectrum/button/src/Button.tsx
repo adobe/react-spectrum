@@ -72,10 +72,10 @@ let baseButton = tv({
   base: 'flex items-center justify-center rounded-full font-[inherit] font-bold cursor-default transition outline-none focus-visible:ring disabled:text-disabled',
   variants: {
     size: {
-      S: 'h-75 text-75 gap-ttv-75 px-125',
-      M: 'h-100 text-100 gap-ttv-100 px-ptt-100',
-      L: 'h-200 text-200 gap-ttv-200 px-250',
-      XL: 'h-300 text-300 gap-ttv-300 px-275'
+      S: 'h-c-75 text-75 gap-ttv-75 px-125',
+      M: 'h-c-100 text-100 gap-ttv-100 px-ptt-100',
+      L: 'h-c-200 text-200 gap-ttv-200 px-250',
+      XL: 'h-c-300 text-300 gap-ttv-300 px-275'
     },
     style: {
       fill: 'bg-base-tint border-none',

@@ -54,6 +54,10 @@ export default {
     },
     isInvalid: {
       control: 'boolean'
+    },
+    size: {
+      control: 'select',
+      options: ['S', 'M', 'L', 'XL']
     }
   }
 } as ComponentMeta<typeof Checkbox>;
@@ -69,6 +73,7 @@ export const CustomLabel: CheckboxStory = {
 export const LongLabel: CheckboxStory = {
   render: (args) => (
     <Checkbox
+      maxWidth="size-3000"
       {...args}>
       Super long checkbox label. Sample text. Arma virumque cano, Troiae qui primus ab oris. Italiam, fato profugus, Laviniaque venit.
     </Checkbox>
