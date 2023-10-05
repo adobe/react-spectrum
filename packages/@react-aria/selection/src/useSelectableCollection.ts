@@ -33,7 +33,7 @@ export interface AriaSelectableCollectionOptions {
   /**
    * The ref attached to the element representing the collection.
    */
-  ref: RefObject<HTMLElement | HTMLOListElement>,
+  ref: RefObject<HTMLElement>,
   /**
    * Whether the collection or one of its items should be automatically focused upon render.
    * @default false
