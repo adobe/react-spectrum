@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { defaultTheme, Provider } from "@adobe/react-spectrum";
-import { Label, Radio, RadioGroup } from "react-aria-components";
+import { Input, Group, TextField, Button } from "react-aria-components";
 import User from "@spectrum-icons/workflow/User";
 import UserGroup from "@spectrum-icons/workflow/UserGroup";
 import Building from "@spectrum-icons/workflow/Building";
@@ -9,6 +9,7 @@ import { SelectBoxGroup, SelectBox } from "./components/SelectBoxGroup";
 import { SentimentRatingGroup } from "./components/SentimentRatingGroup";
 import { NavigationBox } from "./components/NavigationBox";
 import { StarRatingGroup } from "./components/StarRatingGroup";
+import { GenInputField } from "./components/GenInputField";
 
 export function App() {
   let [colorScheme, setColorScheme] = useState(undefined);
@@ -55,7 +56,12 @@ export function App() {
           </div>
         </div>
 
-        <StarRatingGroup isEmphasized />
+        <div className="m-auto">
+          <StarRatingGroup isEmphasized />
+          <StarRatingGroup />
+        </div>
+
+        <GenInputField />
 
         <div className="flex justify-center">
           <div className="flex flex-col max-w-sm">
