@@ -13,11 +13,13 @@ interface StarRatingGroupProps extends Omit<RadioGroupProps, "children"> {
   defaultValue?: string;
   onChange?: (value: string) => void;
   isEmphasized?: boolean;
+  label?: string;
 }
 
 export function StarRatingGroup({
   ratingCount = 5,
   isEmphasized = false,
+  label = "Rating",
   ...other
 }: StarRatingGroupProps) {
   let allRatings = Array.from(Array(ratingCount).keys()).map((i) => String(i));
@@ -31,7 +33,7 @@ export function StarRatingGroup({
     >
       {({ state }) => (
         <>
-          <Label className="text-xl font-semibold">Star Rating</Label>
+          <Label className="text-xl font-semibold">{label}</Label>
           <Group className="focus-visible:ring">
             <div className="flex justify-evenly gap-75">
               {allRatings.map((rating) => (
