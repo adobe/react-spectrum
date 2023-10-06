@@ -22,7 +22,7 @@ export function App() {
       </h1>
       <section className="max-w-xl m-auto">
         <section className="mb-300">
-          <h2 className="text-2xl font-semibold underline underline-offset-2">
+          <h2 className="text-2xl font-semibold text-center underline underline-offset-2">
             Intro
           </h2>
           <h3 className="text-xl font-semibold">📙 Overview</h3>
@@ -33,10 +33,10 @@ export function App() {
               React Aria Components
             </Link>{" "}
             and <Link href="https://tailwindcss.com/">Tailwind CSS</Link>, with
-            a theme that features uses{" "}
-            <Link href="https://spectrum.adobe.com/">Spectrum</Link> styles. The
-            goal for this is to enable you to deliver accessible custom Spectrum
-            components more quickly.
+            a theme that features{" "}
+            <Link href="https://spectrum.adobe.com/">Spectrum</Link> styles and
+            values. The goal for this is to enable you to deliver accessible
+            custom Spectrum components more quickly.
           </div>
           <h3 className="text-xl font-semibold">✅ When to use this</h3>
           <div className="mb-200">
@@ -56,7 +56,7 @@ export function App() {
           </div>
         </section>
         <section className="mb-300">
-          <h2 className="text-2xl font-semibold underline underline-offset-2">
+          <h2 className="text-2xl font-semibold text-center underline underline-offset-2">
             Setup
           </h2>
           <ol>
@@ -128,8 +128,8 @@ module.exports = {
           </ol>
           <div></div>
         </section>
-        <section className="mb-300">
-          <h2 className="text-2xl font-semibold underline underline-offset-2">
+        <section className="mb-600">
+          <h2 className="text-2xl font-semibold text-center underline underline-offset-2">
             Usage
           </h2>
           <div>
@@ -177,7 +177,9 @@ module.exports = {
               </li>
             </ul>
             <div>
-              <h3 className="text-xl font-semibold">🪄 Styling based on state</h3>
+              <h3 className="text-xl font-semibold">
+                🪄 Styling based on state
+              </h3>
               To see how to add Tailwind styles based on state, see the{" "}
               <Link href="https://react-spectrum.adobe.com/react-aria/styling.html#tailwind-css">
                 RAC Styling docs
@@ -187,59 +189,66 @@ module.exports = {
           </div>
         </section>
       </section>
-      <div className="grid justify-center grid-cols-1 gap-160 auto-rows-fr">
-        <SelectBoxGroup label="Select Boxes" defaultValue="Team">
-          <SelectBox
-            name="Individual"
-            icon={<User size="XL" />}
-            description="For 1 person"
-          />
-          <SelectBox
-            name="Team"
-            icon={<UserGroup size="XL" />}
-            description="For teams of 9 or less"
-          />
-          <SelectBox
-            name="Enterprise"
-            icon={<Building size="XL" />}
-            description="For of 10 or more"
-          />
-        </SelectBoxGroup>
+      <section>
+        <h2 className="text-2xl font-bold text-center underline mb-300 underline-offset-2">
+          Examples
+        </h2>
+        <div className="grid justify-center grid-cols-1 gap-160 auto-rows-fr">
+          <SelectBoxGroup label="Select Boxes" defaultValue="Team">
+            <SelectBox
+              name="Individual"
+              icon={<User size="XL" />}
+              description="For 1 person"
+            />
+            <SelectBox
+              name="Team"
+              icon={<UserGroup size="XL" />}
+              description="For teams of 9 or less"
+            />
+            <SelectBox
+              name="Enterprise"
+              icon={<Building size="XL" />}
+              description="For of 10 or more"
+            />
+          </SelectBoxGroup>
 
-        <SentimentRatingGroup />
+          <SentimentRatingGroup />
 
-        <div className="text-center">
-          <span className="text-xl font-semibold mb-200">Navigation Boxes</span>
-          <div className="flex justify-center">
-            <NavigationBox
-              href="https://adobe.com"
-              src="https://i.imgur.com/DhygPot.jpg"
-            >
-              Premium
-            </NavigationBox>
-            <NavigationBox
-              href="https://adobe.com"
-              src="https://i.imgur.com/Z7AzH2c.png"
-            >
-              Templates
-            </NavigationBox>
+          <div className="text-center">
+            <span className="text-xl font-semibold mb-200">
+              Navigation Boxes
+            </span>
+            <div className="flex justify-center">
+              <NavigationBox
+                href="https://adobe.com"
+                src="https://i.imgur.com/DhygPot.jpg"
+              >
+                Premium
+              </NavigationBox>
+              <NavigationBox
+                href="https://adobe.com"
+                src="https://i.imgur.com/Z7AzH2c.png"
+              >
+                Templates
+              </NavigationBox>
+            </div>
+          </div>
+
+          <div className="m-auto space-y-200">
+            <StarRatingGroup label="Star Rating" />
+            <StarRatingGroup isEmphasized label="Star Rating (Emphasized)" />
+          </div>
+
+          <PlanSwitcher />
+
+          <div className="w-full m-auto">
+            <div className="text-xl font-semibold text-center mb-200">
+              GenAI Input
+            </div>
+            <GenInputField />
           </div>
         </div>
-
-        <div className="m-auto space-y-200">
-          <StarRatingGroup label="Star Rating" />
-          <StarRatingGroup isEmphasized label="Star Rating (Emphasized)" />
-        </div>
-
-        <PlanSwitcher />
-
-        <div className="w-full m-auto">
-          <div className="text-xl font-semibold text-center mb-200">
-            GenAI Input
-          </div>
-          <GenInputField />
-        </div>
-      </div>
+      </section>
     </Provider>
   );
 }
