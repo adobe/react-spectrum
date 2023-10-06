@@ -21,7 +21,10 @@ function Option({ side, value, children }: OptionProps) {
 
 export function PlanSwitcher() {
   return (
-    <RadioGroup className="relative m-auto flex justify-evenly w-[400px]">
+    <RadioGroup
+      defaultValue="annual"
+      className="relative m-auto flex justify-evenly w-[400px]"
+    >
       <span className="absolute py-1 text-xs text-white bg-gray-500 rounded left-100 px-75 -top-75">
         Save 33%
       </span>
