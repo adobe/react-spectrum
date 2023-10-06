@@ -61,7 +61,7 @@
           "./packages/@react-spectrum/text",
           "./packages/@react-spectrum/view",
           "./packages/@react-spectrum/well",
-          "./packages/@react-stately/searchfielda",
+          "./packages/@react-stately/searchfield",
           "./packages/@react-stately/radio",
           "./packages/@react-stately/utils",
           "./packages/@react-types/a",
