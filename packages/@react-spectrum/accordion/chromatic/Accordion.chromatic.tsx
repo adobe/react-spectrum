@@ -22,7 +22,7 @@ const meta: Meta<SpectrumAccordionProps<object>> = {
 
 export default meta;
 
-const Template = (args) => (
+export const Template = (args) => (
   <Accordion {...args}>
     <Item key="files" title="Your files">
       files

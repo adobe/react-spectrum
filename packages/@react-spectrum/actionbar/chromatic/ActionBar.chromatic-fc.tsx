@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2020 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -10,17 +11,22 @@
  * governing permissions and limitations under the License.
  */
 
-import {Meta} from '@storybook/react';
-import {SpectrumAccordionProps} from '@react-types/accordion';
-import {Template} from './Accordion.chromatic';
+import {Default, LargeWidth} from './ActionBar.chromatic';
+import {Flex} from '@react-spectrum/layout';
+import React from 'react';
 
-const meta: Meta<SpectrumAccordionProps<object>> = {
-  title: 'Accordion'
+export default {
+  title: 'ActionBar'
 };
 
-export default meta;
-
-export const Default = {
-  render: Template,
-  args: {defaultExpandedKeys: ['shared'], disabledKeys: ['last']}
+export const All = () => (
+  <Flex gap="size-100" direction={'column'}>
+    <h2>Default</h2>
+    <Default />
+    <h2>Large width</h2>
+    <LargeWidth />
+  </Flex>
+);
+All.story = {
+  name: 'all'
 };

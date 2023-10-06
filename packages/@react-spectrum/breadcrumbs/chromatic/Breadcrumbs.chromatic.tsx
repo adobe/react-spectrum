@@ -22,7 +22,7 @@ const meta: Meta<SpectrumBreadcrumbsProps<object>> = {
 
 export default meta;
 
-const Template = (args) => (
+export const Template = (args) => (
   <Breadcrumbs {...args}>
     <Item key="Folder 1">The quick brown fox jumps over</Item>
     <Item key="Folder 2">My Documents</Item>

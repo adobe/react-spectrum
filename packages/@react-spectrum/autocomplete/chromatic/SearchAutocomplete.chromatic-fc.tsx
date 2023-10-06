@@ -10,17 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {Meta} from '@storybook/react';
-import {SpectrumAccordionProps} from '@react-types/accordion';
-import {Template} from './Accordion.chromatic';
+import {Template} from './SearchAutocomplete.chromatic';
 
-const meta: Meta<SpectrumAccordionProps<object>> = {
-  title: 'Accordion'
+export default {
+  title: 'SearchAutocomplete'
 };
 
-export default meta;
-
-export const Default = {
+export const PropInputValue = {
   render: Template,
-  args: {defaultExpandedKeys: ['shared'], disabledKeys: ['last']}
+  name: 'inputValue: Blah',
+  args: {inputValue: 'Blah'}
 };

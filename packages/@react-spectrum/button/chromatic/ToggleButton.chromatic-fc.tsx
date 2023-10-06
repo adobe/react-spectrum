@@ -10,17 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import {Meta} from '@storybook/react';
-import {SpectrumAccordionProps} from '@react-types/accordion';
-import {Template} from './Accordion.chromatic';
+import {AllPossibleStates, StaticColorBlack, StaticColorWhite} from './ToggleButton.chromatic';
+import {Flex} from '@react-spectrum/layout';
+import React from 'react';
 
-const meta: Meta<SpectrumAccordionProps<object>> = {
-  title: 'Accordion'
+export default {
+  title: 'Button/ToggleButton'
 };
 
-export default meta;
+export const ToggleButton = () => (
+  <Flex direction={'column'} gap={'size-300'}>
+    <AllPossibleStates />
+    <StaticColorBlack />
+    <StaticColorWhite />
+  </Flex>
+);
 
-export const Default = {
-  render: Template,
-  args: {defaultExpandedKeys: ['shared'], disabledKeys: ['last']}
-};
+ToggleButton.story = {
+  name: 'all'
+}

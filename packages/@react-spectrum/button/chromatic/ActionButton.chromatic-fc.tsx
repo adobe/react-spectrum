@@ -10,17 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-import {Meta} from '@storybook/react';
-import {SpectrumAccordionProps} from '@react-types/accordion';
-import {Template} from './Accordion.chromatic';
+import {Flex} from '@react-spectrum/layout';
+import {IconText, StaticColorBlack, StaticColorWhite} from './ActionButton.chromatic';
+import React from 'react';
 
-const meta: Meta<SpectrumAccordionProps<object>> = {
-  title: 'Accordion'
+export default {
+  title: 'Button/ActionButtons'
 };
 
-export default meta;
-
-export const Default = {
-  render: Template,
-  args: {defaultExpandedKeys: ['shared'], disabledKeys: ['last']}
+export const All = () => (
+  <Flex gap="size-100" direction={'column'}>
+    <h2>icon + text</h2>
+    <IconText />
+    <h2>static color: white</h2>
+    <StaticColorWhite />
+    <h2>static color: black</h2>
+    <StaticColorBlack />
+  </Flex>
+);
+All.story = {
+  name: 'all'
 };
