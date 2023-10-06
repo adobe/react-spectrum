@@ -54,7 +54,7 @@ export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the GridList. */
   dragAndDropHooks?: DragAndDropHooks,
   /** Provides content to display when there are no items in the list. */
-  renderEmptyState?: () => ReactNode
+  renderEmptyState?: (isRootDropTarget: boolean) => ReactNode
 }
 
 
@@ -176,7 +176,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
     // they don't affect the layout of the children. However, WebKit currently has
     // a bug that makes grid elements with display: contents hidden to screen readers.
     // https://bugs.webkit.org/show_bug.cgi?id=239479
-    let content = props.renderEmptyState();
+    let content = props.renderEmptyState(isRootDropTarget);
     if (isWebKit()) {
       // For now, when in an empty state, swap the role to group in webkit.
       emptyStatePropOverrides = {
