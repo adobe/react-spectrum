@@ -23,3 +23,4 @@ export {useColorFieldState} from './useColorFieldState';
 
 export type {Color, ColorAreaProps, ColorFieldProps, ColorWheelProps} from '@react-types/color';
 export type {ColorSliderStateOptions} from './useColorSliderState';
+export type {HSBColor, HSLColor, RGBColor} from './Color';

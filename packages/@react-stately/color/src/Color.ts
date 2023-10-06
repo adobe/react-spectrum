@@ -81,7 +81,7 @@ abstract class Color implements IColor {
   }
   abstract getColorChannels(): [ColorChannel, ColorChannel, ColorChannel]
 }
-class RGBColor extends Color {
+export class RGBColor extends Color {
   constructor(private red: number, private green: number, private blue: number, private alpha: number) {
     super();
   }
@@ -279,7 +279,7 @@ class RGBColor extends Color {
 // - hsba(X, X%, X%, X)
 const HSB_REGEX = /hsb\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d+(?:.\d+)?%)\)|hsba\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d(.\d+)?)\)/;
 
-class HSBColor extends Color {
+export class HSBColor extends Color {
   constructor(private hue: number, private saturation: number, private brightness: number, private alpha: number) {
     super();
   }
@@ -421,7 +421,7 @@ function mod(n, m) {
   return ((n % m) + m) % m;
 }
 
-class HSLColor extends Color {
+export class HSLColor extends Color {
   constructor(private hue: number, private saturation: number, private lightness: number, private alpha: number) {
     super();
   }
