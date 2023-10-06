@@ -50,17 +50,17 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
   let pickerId = useId();
 
   let domRef = useFocusableRef(ref);
-  let groupRef = useRef<HTMLDivElement>();
+  let groupRef = useRef<HTMLDivElement>(null);
 
   // Measure the width of the field to inform the width of the menu.
-  let [menuWidth, setMenuWidth] = useState(null);
+  let [menuWidth, setMenuWidth] = useState<number | null>(null);
   let {scale} = useProvider();
 
   let onResize = useCallback(() => {
     let shouldUseGroup = !!label;
     let width = shouldUseGroup ? groupRef.current?.offsetWidth : domRef.current?.offsetWidth;
 
-    if (!isNaN(width)) {
+    if (width && !isNaN(width)) {
       setMenuWidth(width);
     }
   }, [groupRef, domRef, setMenuWidth, label]);

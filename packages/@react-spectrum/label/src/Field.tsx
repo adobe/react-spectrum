@@ -17,11 +17,11 @@ import {Label} from './Label';
 import {LabelPosition} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps, useId} from '@react-aria/utils';
-import React, {RefObject} from 'react';
+import React, {Ref, RefObject} from 'react';
 import {SpectrumFieldProps} from '@react-types/label';
 import {useFormProps} from '@react-spectrum/form';
 
-function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
+function Field(props: SpectrumFieldProps, ref: Ref<HTMLElement>) {
   let formProps = useFormProps(props);
   let isInForm = formProps !== props;
   props = formProps;

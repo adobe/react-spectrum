@@ -13,7 +13,7 @@
 import {classNames, useSlotProps} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import Magnifier from '@spectrum-icons/ui/Magnifier';
-import React, {forwardRef, RefObject, useRef} from 'react';
+import React, {forwardRef, ReactElement, Ref, useRef} from 'react';
 import {SpectrumSearchFieldProps} from '@react-types/searchfield';
 import styles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
@@ -22,7 +22,7 @@ import {useProviderProps} from '@react-spectrum/provider';
 import {useSearchField} from '@react-aria/searchfield';
 import {useSearchFieldState} from '@react-stately/searchfield';
 
-function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRef>) {
+function SearchField(props: SpectrumSearchFieldProps, ref: Ref<TextFieldRef>) {
   props = useSlotProps(props, 'searchfield');
   props = useProviderProps(props);
   let defaultIcon = (
@@ -42,7 +42,7 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
   }
 
   let state = useSearchFieldState(props);
-  let inputRef = useRef<HTMLInputElement>();
+  let inputRef = useRef<HTMLInputElement>(null);
   let {labelProps, inputProps, clearButtonProps, descriptionProps, errorMessageProps} = useSearchField(props, state, inputRef);
 
   let clearButton = (
@@ -84,12 +84,12 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
       inputRef={inputRef}
       isDisabled={isDisabled}
       icon={icon}
-      wrapperChildren={(state.value !== '' && !props.isReadOnly) && clearButton} />
+      wrapperChildren={(state.value !== '' && !props.isReadOnly) ? clearButton : undefined} />
   );
 }
 
 /**
  * A SearchField is a text field designed for searches.
  */
-let _SearchField = forwardRef(SearchField);
+let _SearchField = forwardRef(SearchField) as (props: SpectrumSearchFieldProps & {ref?: Ref<TextFieldRef>}) => ReactElement;
 export {_SearchField as SearchField};

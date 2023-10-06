@@ -59,7 +59,7 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
 
   useFormReset(inputRef, state.hue, state.setHue);
 
-  let currentPosition = useRef<{x: number, y: number}>(null);
+  let currentPosition = useRef<{x: number, y: number} | null>(null);
 
   let {keyboardProps} = useKeyboard({
     onKeyDown(e) {
@@ -116,7 +116,7 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
   let {moveProps: movePropsThumb} = useMove(moveHandler);
 
   let currentPointer = useRef<number | null | undefined>(undefined);
-  let isOnTrack = useRef<boolean>(false);
+  let isOnTrack = useRef<boolean | undefined>(false);
   let {moveProps: movePropsContainer} = useMove({
     onMoveStart() {
       if (isOnTrack.current) {
@@ -135,7 +135,7 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
     }
   });
 
-  let onThumbDown = (id: number | null) => {
+  let onThumbDown = (id: number | null | undefined) => {
     if (!state.isDragging) {
       currentPointer.current = id;
       focusInput();
@@ -167,7 +167,7 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
     }
   };
 
-  let onTrackDown = (track: Element, id: number | null, pageX: number, pageY: number) => {
+  let onTrackDown = (track: Element, id: number | null | undefined, pageX: number, pageY: number) => {
     let rect = track.getBoundingClientRect();
     let x = pageX - rect.x - rect.width / 2;
     let y = pageY - rect.y - rect.height / 2;
