@@ -1,4 +1,4 @@
-import { Radio, RadioGroup } from "react-aria-components";
+import { Radio, RadioGroup, Label } from "react-aria-components";
 
 interface OptionProps {
   side: "start" | "end";
@@ -23,17 +23,20 @@ export function PlanSwitcher() {
   return (
     <RadioGroup
       defaultValue="annual"
-      className="relative m-auto flex justify-evenly w-[400px]"
+      className="flex flex-col m-auto space-y-10 text-center"
     >
-      <span className="absolute py-1 text-xs text-white bg-gray-500 rounded left-100 px-75 -top-75">
-        Save 33%
-      </span>
-      <Option side="start" value="annual">
-        Annual
-      </Option>
-      <Option side="end" value="monthly">
-        Monthly
-      </Option>
+      <Label className="text-xl font-semibold">Plan Switcher</Label>
+      <div className="relative m-auto flex justify-evenly w-[400px]">
+        <span className="absolute py-1 text-xs text-white bg-gray-500 rounded left-100 px-75 -top-75">
+          Save 33%
+        </span>
+        <Option side="start" value="annual">
+          Annual
+        </Option>
+        <Option side="end" value="monthly">
+          Monthly
+        </Option>
+      </div>
     </RadioGroup>
   );
 }

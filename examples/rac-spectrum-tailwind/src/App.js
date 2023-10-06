@@ -32,10 +32,10 @@ export function App() {
             <Link href="https://react-spectrum.adobe.com/react-aria/react-aria-components.html">
               React Aria Components
             </Link>{" "}
-            and <Link href="https://tailwindcss.com/">Tailwind CSS</Link>, with a
-            theme that features uses{" "}
-            <Link href="https://spectrum.adobe.com/">Spectrum</Link> styles. The goal
-            for this is to enable you to deliver accessible custom Spectrum
+            and <Link href="https://tailwindcss.com/">Tailwind CSS</Link>, with
+            a theme that features uses{" "}
+            <Link href="https://spectrum.adobe.com/">Spectrum</Link> styles. The
+            goal for this is to enable you to deliver accessible custom Spectrum
             components more quickly.
           </div>
           <h3 className="text-xl font-semibold">✅ When to use this</h3>
@@ -221,23 +221,11 @@ module.exports = {
           <StarRatingGroup isEmphasized label="Star Rating (Emphasized)" />
         </div>
 
-        <PlanSwitcher />
+        <div className="m-auto">
+          <PlanSwitcher />
+        </div>
 
         <GenInputField />
-
-        <div className="flex justify-center">
-          <div className="flex flex-col max-w-sm">
-            <label htmlFor="test-input">Native input</label>
-            <input
-              id="test-input"
-              className="border focus:bg-gray-200 focus:outline-none focus:border-blue-600 hover:border-blue-300"
-            />
-            <p>
-              For the purpose of ensuring Tailwind's default selectors still
-              work for non-RAC elements when using the plugin.
-            </p>
-          </div>
-        </div>
       </div>
     </Provider>
   );
