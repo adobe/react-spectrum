@@ -25,7 +25,7 @@ export function PlanSwitcher() {
       defaultValue="annual"
       className="flex flex-col m-auto space-y-10 text-center"
     >
-      <Label className="text-xl font-semibold">Plan Switcher</Label>
+      <Label className="text-xl font-semibold mb-200">Plan Switcher</Label>
       <div className="relative m-auto flex justify-evenly w-[400px]">
         <span className="absolute py-1 text-xs text-white bg-gray-500 rounded left-100 px-75 -top-75">
           Save 33%

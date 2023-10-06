@@ -13,7 +13,7 @@ export function SelectBoxGroup({
 }: SelectBoxGroupProps) {
   return (
     <RadioGroup className="flex flex-col space-y-2 text-center" {...props}>
-      <Label className="text-xl font-semibold">{label}</Label>
+      <Label className="text-xl font-semibold mb-200">{label}</Label>
       <div className="flex justify-center">{children}</div>
     </RadioGroup>
   );

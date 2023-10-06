@@ -199,7 +199,7 @@ module.exports = {
         <SentimentRatingGroup />
 
         <div className="text-center">
-          <span className="text-xl font-semibold">Navigation Boxes</span>
+          <span className="text-xl font-semibold mb-200">Navigation Boxes</span>
           <div className="flex justify-center">
             <NavigationBox
               href="https://adobe.com"
@@ -216,16 +216,17 @@ module.exports = {
           </div>
         </div>
 
-        <div className="m-auto">
+        <div className="m-auto space-y-200">
           <StarRatingGroup label="Star Rating" />
           <StarRatingGroup isEmphasized label="Star Rating (Emphasized)" />
         </div>
 
-        <div className="m-auto">
-          <PlanSwitcher />
-        </div>
+        <PlanSwitcher />
 
-        <GenInputField />
+        <div className="w-full m-auto">
+          <div className="text-xl font-semibold text-center mb-200">GenAI Input</div>
+          <GenInputField />
+        </div>
       </div>
     </Provider>
   );

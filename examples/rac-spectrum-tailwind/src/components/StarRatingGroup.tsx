@@ -33,7 +33,7 @@ export function StarRatingGroup({
     >
       {({ state }) => (
         <>
-          <Label className="text-xl font-semibold">{label}</Label>
+          <Label className="text-xl font-semibold mb-200">{label}</Label>
           <Group className="focus-visible:ring">
             <div className="flex justify-evenly gap-75">
               {allRatings.map((rating) => (

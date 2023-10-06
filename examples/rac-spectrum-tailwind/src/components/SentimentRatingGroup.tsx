@@ -22,7 +22,7 @@ export function SentimentRatingGroup({
       className="flex flex-col m-auto space-y-10 text-center"
       {...other}
     >
-      <Label className="text-xl font-semibold">Sentiment Rating</Label>
+      <Label className="text-xl font-semibold mb-200">Sentiment Rating</Label>
       <div className="flex justify-between">
         <span>Least Likely</span>
         <span>Most Likely</span>
