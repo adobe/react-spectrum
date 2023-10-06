@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { defaultTheme, Provider } from "@adobe/react-spectrum";
+import { defaultTheme, Link, Provider } from "@adobe/react-spectrum";
 import User from "@spectrum-icons/workflow/User";
 import UserGroup from "@spectrum-icons/workflow/UserGroup";
 import Building from "@spectrum-icons/workflow/Building";
@@ -29,12 +29,12 @@ export function App() {
           <div className="mb-200">
             This resource is meant to help you get started with creating custom
             components using{" "}
-            <a href="https://react-spectrum.adobe.com/react-aria/react-aria-components.html">
+            <Link href="https://react-spectrum.adobe.com/react-aria/react-aria-components.html">
               React Aria Components
-            </a>{" "}
-            and <a href="https://tailwindcss.com/">Tailwind CSS</a>, with a
+            </Link>{" "}
+            and <Link href="https://tailwindcss.com/">Tailwind CSS</Link>, with a
             theme that features uses{" "}
-            <a href="https://spectrum.adobe.com/">Spectrum</a> styles. The goal
+            <Link href="https://spectrum.adobe.com/">Spectrum</Link> styles. The goal
             for this is to enable you to deliver accessible custom Spectrum
             components more quickly.
           </div>
@@ -64,17 +64,17 @@ export function App() {
               <h3 className="text-xl font-semibold">📦 Install dependencies</h3>
               <div className="mb-200">
                 We need to install{" "}
-                <a href="https://react-spectrum.adobe.com/react-spectrum/getting-started.html">
+                <Link href="https://react-spectrum.adobe.com/react-spectrum/getting-started.html">
                   React Spectrum
-                </a>
+                </Link>
                 ,{" "}
-                <a href="https://react-spectrum.adobe.com/react-aria/react-aria-components.html#installation">
+                <Link href="https://react-spectrum.adobe.com/react-aria/react-aria-components.html#installation">
                   React Aria Components
-                </a>
+                </Link>
                 , and the{" "}
-                <a href="https://react-spectrum.adobe.com/react-aria/styling.html#plugin">
+                <Link href="https://react-spectrum.adobe.com/react-aria/styling.html#plugin">
                   RAC Tailwind plugin
-                </a>
+                </Link>
                 .
               </div>
               <code className="p-40 bg-gray-200 rounded mb-200">
@@ -91,9 +91,9 @@ export function App() {
               <h3 className="text-xl font-semibold">⚡ Install Tailwind</h3>
               <div className="mb-200">
                 Follow the instructions in the{" "}
-                <a href="https://tailwindcss.com/docs/installation">
+                <Link href="https://tailwindcss.com/docs/installation">
                   Tailwind Docs
-                </a>{" "}
+                </Link>{" "}
                 based on your build setup.{" "}
               </div>
             </li>
@@ -169,9 +169,9 @@ module.exports = {
             <div>
               <h3 className="text-xl font-semibold">Styling based on state</h3>
               To see how to add Tailwind styles based on state, see the{" "}
-              <a href="https://react-spectrum.adobe.com/react-aria/styling.html#tailwind-css">
+              <Link href="https://react-spectrum.adobe.com/react-aria/styling.html#tailwind-css">
                 RAC Styling docs
-              </a>
+              </Link>
               .
             </div>
           </div>
