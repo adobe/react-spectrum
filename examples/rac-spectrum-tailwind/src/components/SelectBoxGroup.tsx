@@ -1,4 +1,3 @@
-import CheckmarkCircle from "@spectrum-icons/workflow/CheckmarkCircle";
 import type { RadioGroupProps } from "react-aria-components";
 import { Label, Radio, RadioGroup, Text } from "react-aria-components";
 

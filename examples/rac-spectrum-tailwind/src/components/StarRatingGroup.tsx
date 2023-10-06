@@ -1,5 +1,3 @@
-import StarOutline from "@spectrum-icons/workflow/StarOutline";
-import Star from "@spectrum-icons/workflow/StarOutline";
 import { useEffect, useState } from "react";
 import {
   Group,
