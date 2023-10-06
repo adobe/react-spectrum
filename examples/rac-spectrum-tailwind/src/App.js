@@ -10,6 +10,7 @@ import { SentimentRatingGroup } from "./components/SentimentRatingGroup";
 import { NavigationBox } from "./components/NavigationBox";
 import { StarRatingGroup } from "./components/StarRatingGroup";
 import { GenInputField } from "./components/GenInputField";
+import { PlanSwitcher } from "./components/PlanSwitcher";
 
 export function App() {
   let [colorScheme, setColorScheme] = useState(undefined);
@@ -60,6 +61,8 @@ export function App() {
           <StarRatingGroup isEmphasized />
           <StarRatingGroup />
         </div>
+
+        <PlanSwitcher />
 
         <GenInputField />
 
