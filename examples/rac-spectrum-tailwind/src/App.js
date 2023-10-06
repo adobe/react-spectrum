@@ -100,8 +100,10 @@ export function App() {
             <li>
               <h3 className="text-xl font-semibold">🛠️ Configure Tailwind</h3>
               <div className="mb-200">
-                In your tailwind.config.js, include the preset from this
-                template:
+                <div className="mb-200">
+                  In your tailwind.config.js, include the preset from this
+                  template:
+                </div>
                 <pre className="block p-40 bg-gray-200 rounded mb-200">{`/** @type {import('tailwindcss').Config} */
 module.exports = {
   presets: [
@@ -114,7 +116,15 @@ module.exports = {
 `}</pre>
               </div>
             </li>
-            <li>Add React Spectrum Provider to app</li>
+            <li>
+              Then, add a React Spectrum{" "}
+              <Link href="https://react-spectrum.adobe.com/react-spectrum/Provider.html">
+                Provider
+              </Link>{" "}
+              to your app if one doesn't already exist. This will ensure that
+              your page has access to the proper CSS variables. If you include
+              these variables using some other method, that will work too.
+            </li>
           </ol>
           <div></div>
         </section>
@@ -167,7 +177,7 @@ module.exports = {
               </li>
             </ul>
             <div>
-              <h3 className="text-xl font-semibold">Styling based on state</h3>
+              <h3 className="text-xl font-semibold">🪄 Styling based on state</h3>
               To see how to add Tailwind styles based on state, see the{" "}
               <Link href="https://react-spectrum.adobe.com/react-aria/styling.html#tailwind-css">
                 RAC Styling docs
@@ -224,7 +234,9 @@ module.exports = {
         <PlanSwitcher />
 
         <div className="w-full m-auto">
-          <div className="text-xl font-semibold text-center mb-200">GenAI Input</div>
+          <div className="text-xl font-semibold text-center mb-200">
+            GenAI Input
+          </div>
           <GenInputField />
         </div>
       </div>
