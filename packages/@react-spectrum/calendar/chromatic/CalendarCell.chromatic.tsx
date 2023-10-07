@@ -73,7 +73,7 @@ DarkLarge.parameters = {
   }
 };
 
-function AllStates() {
+export function AllStates() {
   let {scale} = useProvider();
   let size = scale === 'medium' ? 40 : 50;
   return (
