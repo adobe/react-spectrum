@@ -111,6 +111,7 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
     popoverRef: ref,
     maxHeight: null,
     arrowSize: hideArrow ? 0 : secondary,
+    arrowRef: arrowRef,
     arrowBoundaryOffset: borderRadius
   }, state);
   let {focusWithinProps} = useFocusWithin(props);
@@ -227,15 +228,22 @@ function Arrow(props: ArrowProps) {
 
   /* use ceil because the svg needs to always accommodate the path inside it */
   return (
-    <svg
-      xmlns="http://www.w3.org/svg/2000"
-      width={Math.ceil(isLandscape ? secondary : primary)}
-      height={Math.ceil(isLandscape ? primary : secondary)}
-      className={classNames(styles, 'spectrum-Popover-tip')}
+    <div
       ref={arrowRef}
-      {...arrowProps}>
-      <path className={classNames(styles, 'spectrum-Popover-tip-triangle')} d={pathData.join(' ')} />
-    </svg>
+      {...arrowProps}
+      {...{style: {
+        ...arrowProps.style,
+        height: `${secondary}px`,
+        width: `${secondary}px`
+      }}}>
+      <svg
+        xmlns="http://www.w3.org/svg/2000"
+        width={Math.ceil(isLandscape ? secondary : primary)}
+        height={Math.ceil(isLandscape ? primary : secondary)}
+        className={classNames(styles, 'spectrum-Popover-tip')}>
+        <path className={classNames(styles, 'spectrum-Popover-tip-triangle')} d={pathData.join(' ')} />
+      </svg>
+    </div>
   );
 }
 

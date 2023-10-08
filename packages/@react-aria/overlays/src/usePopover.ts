@@ -68,6 +68,7 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
   let {
     triggerRef,
     popoverRef,
+    arrowRef,
     isNonModal,
     isKeyboardDismissDisabled,
     ...otherProps
@@ -86,6 +87,7 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
 
   let {overlayProps: positionProps, arrowProps, placement} = useOverlayPosition({
     ...otherProps,
+    arrowRef,
     targetRef: triggerRef,
     overlayRef: popoverRef,
     isOpen: state.isOpen,

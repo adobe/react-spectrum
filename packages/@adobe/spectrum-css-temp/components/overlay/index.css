@@ -24,9 +24,7 @@ governing permissions and limitations under the License.
 
 .spectrum-overlay--open {
   visibility: visible;
-  /* In Edge (pre chromium), a stacking context is formed for opacity less then 1, and then its removed for 1. 
-     It causes a rendering flicker that is visible when css transition is applied. */
-  opacity: 0.9999;
+  opacity: 1;
 
   transition-delay: 0ms;
 
@@ -34,23 +32,17 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-overlay--bottom--open {
-  transform: translateY(var(--spectrum-overlay-positive-transform-distance));
+  transform: translateY(var(--spectrum-global-dimension-size-75));
 }
 
 .spectrum-overlay--top--open {
-  /*
-  Edge does not support combination of translate, calc and var.
-  New var equal to negative calculation result is added instead.
-  TODO: for Chromium Edge return to
   transform: translateX(calc(var(--spectrum-global-dimension-size-75) * -1));
-  */
-  transform: translateY(var(--spectrum-overlay-negative-transform-distance));
 }
 
 .spectrum-overlay--right--open {
-  transform: translateX(var(--spectrum-overlay-positive-transform-distance));
+  transform: translateX(var(--spectrum-global-dimension-size-75));
 }
 
 .spectrum-overlay--left--open {
-  transform: translateX(var(--spectrum-overlay-negative-transform-distance));
+  transform: translateX(calc(var(--spectrum-global-dimension-size-75) * -1));
 }

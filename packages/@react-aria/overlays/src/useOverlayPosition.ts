@@ -17,6 +17,8 @@ import {RefObject, useCallback, useRef, useState} from 'react';
 import {useCloseOnScroll} from './useCloseOnScroll';
 import {useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
+import {flip, size, useFloating, offset, shift, useTransitionStatus} from '@floating-ui/react';
+import {arrow} from '@floating-ui/dom';
 
 export interface AriaPositionProps extends PositionProps {
   /**
@@ -90,156 +92,66 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     containerPadding = 12,
     shouldFlip = true,
     boundaryElement = typeof document !== 'undefined' ? document.body : null,
-    offset = 0,
+    offset: foo = 0,
     crossOffset = 0,
     shouldUpdatePosition = true,
     isOpen = true,
     onClose,
     maxHeight,
-    arrowBoundaryOffset = 0
+    arrowBoundaryOffset = 0,
+    arrowRef
   } = props;
-  let [position, setPosition] = useState<PositionResult>({
-    position: {},
-    arrowOffsetLeft: undefined,
-    arrowOffsetTop: undefined,
-    maxHeight: undefined,
-    placement: undefined
+
+  let result = useFloating({
+    transform: false,
+    elements: {
+      reference: targetRef.current,
+      floating: overlayRef.current
+    },
+    placement: translateRTL(placement, direction),
+    middleware: [
+      flip({padding: 5}),
+      shift({padding: 5}),
+      size({
+        padding: 5,
+        apply({availableWidth, availableHeight, elements, placement, middlewareData}) {
+          // Do things with the data, e.g.
+          Object.assign(elements.floating.style, {
+            maxWidth: `${availableWidth}px`,
+            maxHeight: `${availableHeight - arrowSize - 5}px`
+          });
+        }
+      }),
+      offset(arrowSize + 5),
+      arrow({
+        element: arrowRef.current,
+        padding: arrowBoundaryOffset
+      })
+    ]
   });
-
-  let deps = [
-    shouldUpdatePosition,
-    placement,
-    overlayRef.current,
-    targetRef.current,
-    scrollRef.current,
-    containerPadding,
-    shouldFlip,
-    boundaryElement,
-    offset,
-    crossOffset,
-    isOpen,
-    direction,
-    maxHeight,
-    arrowBoundaryOffset,
-    arrowSize
-  ];
-
-  let updatePosition = useCallback(() => {
-    if (shouldUpdatePosition === false || !isOpen || !overlayRef.current || !targetRef.current || !scrollRef.current || !boundaryElement) {
-      return;
-    }
-
-    let position = calculatePosition({
-      placement: translateRTL(placement, direction),
-      overlayNode: overlayRef.current,
-      targetNode: targetRef.current,
-      scrollNode: scrollRef.current,
-      padding: containerPadding,
-      shouldFlip,
-      boundaryElement,
-      offset,
-      crossOffset,
-      maxHeight,
-      arrowSize,
-      arrowBoundaryOffset
-    });
-
-    // Modify overlay styles directly so positioning happens immediately without the need of a second render
-    // This is so we don't have to delay autoFocus scrolling or delay applying preventScroll for popovers
-    Object.keys(position.position).forEach(key => (overlayRef.current as HTMLElement).style[key] = position.position[key] + 'px');
-    (overlayRef.current as HTMLElement).style.maxHeight = position.maxHeight != null ?  position.maxHeight + 'px' : undefined;
-
-    // Trigger a set state for a second render anyway for arrow positioning
-    setPosition(position);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  // Update position when anything changes
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useLayoutEffect(updatePosition, deps);
-
-  // Update position on window resize
-  useResize(updatePosition);
-
-  // Update position when the overlay changes size (might need to flip).
-  useResizeObserver({
-    ref: overlayRef,
-    onResize: updatePosition
-  });
-
-  // Reposition the overlay and do not close on scroll while the visual viewport is resizing.
-  // This will ensure that overlays adjust their positioning when the iOS virtual keyboard appears.
-  let isResizing = useRef(false);
-  useLayoutEffect(() => {
-    let timeout: ReturnType<typeof setTimeout>;
-    let onResize = () => {
-      isResizing.current = true;
-      clearTimeout(timeout);
-
-      timeout = setTimeout(() => {
-        isResizing.current = false;
-      }, 500);
-
-      updatePosition();
-    };
-
-    visualViewport?.addEventListener('resize', onResize);
-    visualViewport?.addEventListener('scroll', onResize);
-
-    return () => {
-      visualViewport?.removeEventListener('resize', onResize);
-      visualViewport?.removeEventListener('scroll', onResize);
-    };
-  }, [updatePosition]);
-
-  let close = useCallback(() => {
-    if (!isResizing.current) {
-      onClose();
-    }
-  }, [onClose, isResizing]);
-
-  // When scrolling a parent scrollable region of the trigger (other than the body),
-  // we hide the popover. Otherwise, its position would be incorrect.
-  useCloseOnScroll({
-    triggerRef: targetRef,
-    isOpen,
-    onClose: onClose && close
-  });
+  console.log(result)
 
   return {
     overlayProps: {
-      style: {
-        position: 'absolute',
-        zIndex: 100000, // should match the z-index in ModalTrigger
-        ...position.position,
-        maxHeight: position.maxHeight
-      }
+      style: {...result.floatingStyles, zIndex: 1}
     },
-    placement: position.placement,
+    placement: result.placement.split('-')[0] as PlacementAxis,
     arrowProps: {
       'aria-hidden': 'true',
       role: 'presentation',
       style: {
-        left: position.arrowOffsetLeft,
-        top: position.arrowOffsetTop
+        position: 'absolute',
+        left: `${result?.middlewareData?.arrow?.x ?? 0}px`,
+        top: `${result?.middlewareData?.arrow?.y ?? 0}px`
       }
     },
-    updatePosition
+    updatePosition: result.update
   };
-}
-
-function useResize(onResize) {
-  useLayoutEffect(() => {
-    window.addEventListener('resize', onResize, false);
-    return () => {
-      window.removeEventListener('resize', onResize, false);
-    };
-  }, [onResize]);
 }
 
 function translateRTL(position, direction) {
   if (direction === 'rtl') {
-    return position.replace('start', 'right').replace('end', 'left');
+    return position.replace('start', 'right').replace('end', 'left').replace(' ', '-');
   }
-  return position.replace('start', 'left').replace('end', 'right');
+  return position.replace('start', 'left').replace('end', 'right').replace(' ', '-');
 }

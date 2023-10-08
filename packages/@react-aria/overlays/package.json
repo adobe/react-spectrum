@@ -32,7 +32,9 @@
     "@react-types/button": "^3.9.0",
     "@react-types/overlays": "^3.8.3",
     "@react-types/shared": "^3.21.0",
-    "@swc/helpers": "^0.5.0"
+    "@swc/helpers": "^0.5.0",
+    "@floating-ui/dom": "^1.5.3",
+    "@floating-ui/react": "^0.26.0"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0",
