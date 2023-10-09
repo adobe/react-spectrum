@@ -86,12 +86,12 @@ const stocks = [{"id":1,"symbol":"PAACR","name":"Pacific Special Acquisition Cor
 
 ```tsx example standalone
 import {Table, TableHeader, TableBody, Column, Row, Cell, ResizableTableContainer, ColumnResizer, Group} from 'react-aria-components';
-import type {ColumnProps, RowProps, CellProps} from 'react-aria-components';
+import type {ColumnProps, RowProps, CellProps, SortDescriptor} from 'react-aria-components';
 import ArrowUpIcon from '@spectrum-icons/ui/ArrowUpSmall';
 import {useState, useMemo} from 'react';
 
 function StockTableExample() {
-  let [sortDescriptor, setSortDescriptor] = useState({column: 'symbol', direction: 'ascending'});
+  let [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({column: 'symbol', direction: 'ascending'});
   let sortedItems = useMemo(() => {
     return stocks.sort((a, b) => {
       let first = a[sortDescriptor.column];
@@ -132,7 +132,7 @@ function StockTableExample() {
   );
 }
 
-function StockColumn(props: ColumnProps) {
+function StockColumn(props: ColumnProps & {children: React.ReactNode}) {
   return (
     <Column {...props} className="sticky top-0 p-0 border-0 border-b border-solid border-slate-300 bg-slate-200 font-bold text-left cursor-default first:rounded-tl-lg last:rounded-tr-lg whitespace-nowrap outline-none">
       {({allowsSorting, sortDirection}) => (
@@ -152,7 +152,7 @@ function StockColumn(props: ColumnProps) {
   );
 }
 
-function StockRow(props: RowProps) {
+function StockRow<T extends object>(props: RowProps<T>) {
   return <Row {...props} className="even:bg-slate-100 selected:bg-slate-600 selected:text-white cursor-default group outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-600 focus-visible:-outline-offset-4 selected:focus-visible:outline-white" />;
 }
 

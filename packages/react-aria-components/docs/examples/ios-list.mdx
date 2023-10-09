@@ -32,7 +32,6 @@ A re-creation of the iOS List View built with React Aria Components, [Framer Mot
 
 ```tsx import
 import './tailwind.global.css';
-import { motion } from "framer-motion";
 
 let messages = {
   "emails": [
@@ -119,6 +118,7 @@ let messages = {
 
 ```tsx example flip
 import { Button, Item, GridList } from "react-aria-components";
+import type {Selection, SelectionMode} from 'react-aria-components';
 import {
   motion,
   animate,
@@ -129,10 +129,11 @@ import {
   useMotionValueEvent
 } from "framer-motion";
 import { useRef, useState } from "react";
+import type {CSSProperties} from 'react';
 
 const MotionItem = motion(Item);
 const inertiaTransition = {
-  type: "inertia",
+  type: "inertia" as const,
   bounceStiffness: 300,
   bounceDamping: 40,
   timeConstant: 300
@@ -140,8 +141,13 @@ const inertiaTransition = {
 
 function SwipableList() {
   let [items, setItems] = useState(messages.emails);
-  let [selectedKeys, setSelectedKeys] = useState(new Set());
-  let [selectionMode, setSelectionMode] = useState("none");
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
+  let [selectionMode, setSelectionMode] = useState<SelectionMode>("none");
+  let onDelete = () => {
+    setItems(items.filter((i) => selectedKeys !== 'all' && !selectedKeys.has(i.id)));
+    setSelectedKeys(new Set());
+    setSelectionMode("none");
+  };
 
   return (
     <div className="flex flex-col h-full max-h-[500px] sm:w-[400px] -mx-[14px] sm:mx-0">
@@ -150,12 +156,8 @@ function SwipableList() {
         <Button
           className="text-blue-600 text-lg outline-none bg-transparent border-none transition pressed:text-blue-700 focus-visible:ring disabled:text-gray-400"
           style={{ opacity: selectionMode === "none" ? 0 : 1 }}
-          isDisabled={selectedKeys.size === 0}
-          onPress={() => {
-            setItems(items.filter((i) => !selectedKeys.has(i.id)));
-            setSelectedKeys(new Set());
-            setSelectionMode("none");
-          }}
+          isDisabled={selectedKeys !== 'all' && selectedKeys.size === 0}
+          onPress={onDelete}
         >
           Delete
         </Button>
@@ -202,7 +204,7 @@ function SwipableList() {
 }
 
 function ListItem({ id, children, textValue, onRemove }) {
-  let ref = useRef();
+  let ref = useRef(null);
   let x = useMotionValue(0);
   let isPresent = useIsPresent();
   let xPx = useMotionTemplate`${x}px`;
@@ -226,11 +228,12 @@ function ListItem({ id, children, textValue, onRemove }) {
       // Take item out of the flow if it is being removed.
       style={{ position: isPresent ? "relative" : "absolute" }}
     >
+      {/* @ts-ignore - Framer Motion's types don't handle functions properly. */}
       {({ selectionMode, isSelected }) => (
         // Content of the item can be swiped to reveal the delete button, or fully swiped to delete.
         <motion.div
           ref={ref}
-          style={{ x, "--x": xPx }}
+          style={{ x, "--x": xPx } as CSSProperties}
           className="flex items-center"
           drag={selectionMode === "none" ? "x" : undefined}
           dragConstraints={{ right: 0 }}

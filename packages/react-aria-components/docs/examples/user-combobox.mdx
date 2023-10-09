@@ -120,7 +120,7 @@ function ComboBoxExample() {
   );
 }
 
-function ListBoxItem(props: ItemProps) {
+function ListBoxItem(props: ItemProps & {children: React.ReactNode}) {
   return (
     <Item
       {...props}
@@ -169,10 +169,10 @@ module.exports = {
 </ExampleCard>
 
 <ExampleCard
-  url="../Button.html"
-  title="Button"
-  description="A button allows a user to perform an action.">
-  <Button />
+  url="../ListBox.html"
+  title="ListBox"
+  description="A listbox allows a user to select one or more options from a list.">
+  <ListBox style={{background: 'var(--anatomy-gray-100)', width: 'calc(100% - 20px)', padding: 10, maxHeight: 132}} />
 </ExampleCard>
 
 <ExampleCard
@@ -183,10 +183,10 @@ module.exports = {
 </ExampleCard>
 
 <ExampleCard
-  url="../ListBox.html"
-  title="ListBox"
-  description="A listbox allows a user to select one or more options from a list.">
-  <ListBox />
+  url="../Button.html"
+  title="Button"
+  description="A button allows a user to perform an action.">
+  <Button />
 </ExampleCard>
 
 </section>

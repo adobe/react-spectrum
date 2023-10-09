@@ -39,8 +39,14 @@ import {ListBox, Item, Text, ProgressBar} from 'react-aria-components';
 import {useAsyncList} from 'react-stately';
 import CheckCircleIcon from '@spectrum-icons/workflow/CheckmarkCircle';
 
+type Item = {
+  user: { name: string },
+  urls: { regular: string },
+  alt_description: string
+};
+
 function ImageGridExample() {
-  let list = useAsyncList({
+  let list = useAsyncList<Item, number>({
     async load({ signal, cursor }) {
       let page = cursor || 1;
       let res = await fetch(

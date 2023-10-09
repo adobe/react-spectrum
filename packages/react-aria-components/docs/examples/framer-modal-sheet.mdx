@@ -78,7 +78,7 @@ const MotionModal = motion(Modal);
 const MotionModalOverlay = motion(ModalOverlay);
 
 const inertiaTransition = {
-  type: "inertia",
+  type: "inertia" as const,
   bounceStiffness: 300,
   bounceDamping: 40,
   timeConstant: 300
@@ -92,7 +92,7 @@ const staticTransition = {
 const SHEET_MARGIN = 34;
 const SHEET_RADIUS = 12;
 
-const root = document.body.firstChild;
+const root = document.body.firstChild as HTMLElement;
 
 function Sheet() {
   let [isOpen, setOpen] = useState(false);
@@ -110,7 +110,7 @@ function Sheet() {
   let bodyTranslate = useTransform(y, [0, h], [SHEET_MARGIN - SHEET_RADIUS, 0]);
   let bodyBorderRadius = useTransform(y, [0, h], [SHEET_RADIUS, 0]);
 
-  useMotionValueEvent(bodyScale, 'change', v => root.style.scale = v);
+  useMotionValueEvent(bodyScale, 'change', v => root.style.scale = `${v}`);
   useMotionValueEvent(bodyTranslate, 'change', v => root.style.translate = `0 ${v}px`);
   useMotionValueEvent(bodyBorderRadius, 'change', v => root.style.borderRadius = `${v}px`);
 
@@ -128,7 +128,7 @@ function Sheet() {
             isOpen
             onOpenChange={setOpen}
             className="fixed inset-0 z-10"
-            style={{ backgroundColor: bg }}>
+            style={{ backgroundColor: bg as any }}>
             <MotionModal
               className="bg-[--page-background] absolute bottom-0 w-full rounded-t-xl shadow-lg"
               initial={{ y: h }}

@@ -364,6 +364,9 @@ function Nav({currentPageName, pages}) {
   } else if (currentPageName.startsWith('internationalized/') && currentPageName !== 'internationalized/index.html') {
     sectionIndex = '../index.html';
     back = '../../index.html';
+  } else if (currentPageName === 'react-aria/examples/index.html') {
+    sectionIndex = '../index.html';
+    back = '../../index.html';
   }
 
   function SideNavItem({name, url, title, preRelease}) {

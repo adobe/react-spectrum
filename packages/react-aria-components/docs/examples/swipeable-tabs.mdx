@@ -25,7 +25,7 @@ description: A swipeable Tabs component built with Framer Motion and CSS scroll 
 
 # Swipeable Tabs
 
-A swipeable [Tabs](Tabs.html) component built with with React Aria Components, [Framer Motion](https://www.framer.com/motion/), [Tailwind CSS](https://tailwindcss.com/), and [CSS scroll snapping](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_scroll_snap).
+A swipeable [Tabs](../Tabs.html) component built with with React Aria Components, [Framer Motion](https://www.framer.com/motion/), [Tailwind CSS](https://tailwindcss.com/), and [CSS scroll snapping](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_scroll_snap).
 
 ## Example
 
@@ -65,8 +65,8 @@ let tabs = [
 function AnimatedTabs() {
   let [selectedKey, setSelectedKey] = useState(tabs[0].id);
 
-  let tabListRef = useRef();
-  let tabPanelsRef = useRef();
+  let tabListRef = useRef(null);
+  let tabPanelsRef = useRef(null);
 
   // Track the scroll position of the tab panel container.
   let { scrollXProgress } = useScroll({
@@ -126,7 +126,7 @@ function AnimatedTabs() {
 
   // When the user clicks on a tab perform an animation of
   // the scroll position to the newly selected tab panel.
-  let animationRef = useRef();
+  let animationRef = useRef(null);
   let onSelectionChange = (selectedKey) => {
     setSelectedKey(selectedKey);
 
@@ -138,9 +138,7 @@ function AnimatedTabs() {
 
     let tabPanel = tabPanelsRef.current;
     let index = tabs.findIndex((tab) => tab.id === selectedKey);
-    if (animationRef.current) {
-      animationRef.current.stop();
-    }
+    animationRef.current?.stop();
     animationRef.current = animate(
       tabPanel.scrollLeft,
       tabPanel.scrollWidth * (index / tabs.length),
