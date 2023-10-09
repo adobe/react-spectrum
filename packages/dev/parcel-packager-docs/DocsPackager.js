@@ -197,7 +197,6 @@ module.exports = new Packager({
     walkLinks(result);
 
     function walkLinks(obj) {
-      // console.log('walk link', obj)
       let fn = (t) => {
         // don't follow the link if it's already in links, that's circular
         if (t && t.type === 'link' && !links[t.id]) {
@@ -335,7 +334,6 @@ function visitChildren(obj, fn) {
         optional: obj.optional,
         access: obj.access,
         description: obj.description,
-        access: obj.access,
         default: obj.default
       };
     case 'alias':
