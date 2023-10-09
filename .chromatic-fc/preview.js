@@ -20,8 +20,7 @@ export const parameters = {
   a11y: {},
   layout: 'fullscreen',
   chromatic: {
-    forcedColors: 'active',
-    prefersColorScheme: 'dark'
+    forcedColors: 'active'
   }
 };
 
