@@ -33,7 +33,7 @@ module.exports = new Packager({
             if (!packagingBundles.has(entryBundle)) {
               packagingBundles.set(entryBundle, getInlineBundleContents(
                 entryBundle,
-                bundleGraph,
+                bundleGraph
               ));
             }
 
@@ -58,7 +58,7 @@ module.exports = new Packager({
 
       let [asset, code] = assets.get(id);
       let moduleFunction = vm.compileFunction(code, ['exports', 'require', 'module', '__dirname', '__filename'], {
-        filename: asset.filePath,
+        filename: asset.filePath
       });
 
       let deps = new Map();
@@ -78,7 +78,7 @@ module.exports = new Packager({
         if (resolved) {
           deps.set(getSpecifier(dep), {id: resolved.id});
         } else {
-          deps.set(getSpecifier(dep), {specifier: dep.specifier})
+          deps.set(getSpecifier(dep), {specifier: dep.specifier});
         }
       }
 
@@ -177,7 +177,7 @@ module.exports = new Packager({
 
     return {
       contents: '<!doctype html>' + code
-    }
+    };
   }
 });
 
