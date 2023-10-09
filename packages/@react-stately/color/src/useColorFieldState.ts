@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Color, ColorFieldProps} from '@react-types/color';
-import {parseColor} from './Color';
+import {Color, parseColor} from './Color';
+import {ColorFieldProps} from '@react-types/color';
 import {useColor} from './useColor';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo, useState} from 'react';
