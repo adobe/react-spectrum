@@ -713,7 +713,7 @@ export const TabsRenderProps = () => {
   );
 };
 
-const ReordableTable = ({initialItems}: {initialItems: {id: string, name: string}[]}) => {
+const ReorderableTable = ({initialItems}: {initialItems: {id: string, name: string}[]}) => {
   let list = useListData({initialItems});
 
   const {dragAndDropHooks} = useDragAndDrop({
@@ -761,7 +761,7 @@ const ReordableTable = ({initialItems}: {initialItems: {id: string, name: string
   });
 
   return (
-    <Table aria-label="Reordable table" dragAndDropHooks={dragAndDropHooks}>
+    <Table aria-label="Reorderable table" dragAndDropHooks={dragAndDropHooks}>
       <TableHeader>
         <MyColumn isRowHeader defaultWidth="50%">Id</MyColumn>
         <MyColumn>Name</MyColumn>
@@ -778,13 +778,13 @@ const ReordableTable = ({initialItems}: {initialItems: {id: string, name: string
   );
 };
 
-export const ReordableTableExample = () => (
+export const ReorderableTableExample = () => (
   <>
     <ResizableTableContainer style={{width: 300, overflow: 'auto'}}>
-      <ReordableTable initialItems={[{id: '1', name: 'Bob'}]} />
+      <ReorderableTable initialItems={[{id: '1', name: 'Bob'}]} />
     </ResizableTableContainer>
     <ResizableTableContainer style={{width: 300, overflow: 'auto'}}>
-      <ReordableTable initialItems={[{id: '2', name: 'Alex'}]} />
+      <ReorderableTable initialItems={[{id: '2', name: 'Alex'}]} />
     </ResizableTableContainer>
   </>
 );
