@@ -26,7 +26,7 @@ governing permissions and limitations under the License.
     color: var(--spectrum-link-text-color-down);
   }
 
-  &:focus-ring {
+  &:focus-visible {
     color: var(--spectrum-link-text-color-key-focus);
   }
 

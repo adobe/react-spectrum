@@ -568,6 +568,30 @@ Select supports the `name` prop for integration with HTML forms. The `id` of the
 </MySelect>
 ```
 
+## Links
+
+By default, interacting with an item in a Select triggers `onSelectionChange`. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component. Link items in a `Select` are not selectable.
+
+```tsx example
+<MySelect label="Project">
+  <Item href="https://example.com/" target="_blank">Create new…</Item>
+  <Item>Proposal</Item>
+  <Item>Budget</Item>
+  <Item>Onboarding</Item>
+</MySelect>
+```
+
+```css hidden
+.react-aria-Item[href] {
+  text-decoration: none;
+  cursor: pointer;
+}
+```
+
+### Client side routing
+
+The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+
 ## Sections
 
 Select supports sections in order to group options. Sections can be used by wrapping groups of items in a `Section` element. A `<Header>` element may also be included to label the section.

@@ -115,6 +115,12 @@ function Example() {
       setEvents(events => [`move with pointerType = ${e.pointerType}, deltaX = ${e.deltaX}, deltaY = ${e.deltaY}`, ...events]);
     },
     onMoveEnd(e) {
+      setPosition(({x, y}) => {
+        // Clamp position on mouse up
+        x = clamp(x);
+        y = clamp(y);
+        return {x, y};
+      });
       setColor('black');
       setEvents(events => [`move end with pointerType = ${e.pointerType}`, ...events]);
     }

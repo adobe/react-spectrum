@@ -469,6 +469,30 @@ function Example() {
 }
 ```
 
+## Links
+
+By default, interacting with an item in a Menu triggers `onAction` and optionally `onSelectionChange` depending on the `selectionMode`. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component. Link items in a menu are not selectable.
+
+```tsx example
+<MyMenuButton label="Links">
+  <Item href="https://adobe.com/" target="_blank">Adobe</Item>
+  <Item href="https://apple.com/" target="_blank">Apple</Item>
+  <Item href="https://google.com/" target="_blank">Google</Item>
+  <Item href="https://microsoft.com/" target="_blank">Microsoft</Item>
+</MyMenuButton>
+```
+
+```css hidden
+.react-aria-Item[href] {
+  text-decoration: none;
+  cursor: pointer;
+}
+```
+
+### Client side routing
+
+The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+
 ## Sections
 
 Menu supports sections with headings in order to group items. Sections can be used by wrapping groups of Items in a `Section` component. A `<Header>` element may also be included to label the section.
