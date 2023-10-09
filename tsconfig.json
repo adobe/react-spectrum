@@ -58,6 +58,7 @@
           "./packages/@react-spectrum/radio",
           "./packages/@react-spectrum/statuslight",
           "./packages/@react-spectrum/switch",
+          "./packages/@react-spectrum/tag",
           "./packages/@react-spectrum/text",
           "./packages/@react-spectrum/view",
           "./packages/@react-spectrum/well",
