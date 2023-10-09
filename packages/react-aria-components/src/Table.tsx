@@ -37,11 +37,11 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
   }
 
   commit(firstKey: Key, lastKey: Key, isSSR = false) {
-    this.updateColumns();
+    this.updateColumns(isSSR);
     super.commit(firstKey, lastKey, isSSR);
   }
 
-  private updateColumns() {
+  private updateColumns(isSSR: boolean) {
     if (!this.columnsDirty) {
       return;
     }
@@ -75,7 +75,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
 
     this.headerRows = buildHeaderRows(columnKeyMap, this.columns);
     this.columnsDirty = false;
-    if (this.rowHeaderColumnKeys.size === 0 && this.columns.length > 0) {
+    if (this.rowHeaderColumnKeys.size === 0 && this.columns.length > 0 && !isSSR) {
       throw new Error('A table must have at least one Column with the isRowHeader prop set to true');
     }
   }
