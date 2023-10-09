@@ -17,8 +17,8 @@ import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps
 import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
 import {LabelContext} from './Label';
 import {LinkDOMProps} from '@react-types/shared';
+import {ListState, Node, useListState} from 'react-stately';
 import {ListStateContext} from './ListBox';
-import {Node, useListState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, Key, ReactNode, useContext, useEffect, useRef} from 'react';
 import {TextContext} from './Text';
 
@@ -44,7 +44,7 @@ export interface TagListRenderProps {
 
 export interface TagListProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, StyleRenderProps<TagListRenderProps> {
   /** Provides content to display when there are no items in the tag list. */
-  renderEmptyState?: () => ReactNode
+  renderEmptyState?: (props: {isFocused: boolean, isFocusVisible: boolean, state: ListState<unknown>}) => ReactNode
 }
 
 export const TagGroupContext = createContext<ContextValue<TagGroupProps, HTMLDivElement>>(null);
@@ -161,7 +161,11 @@ function TagListInner<T extends object>({props, forwardedRef}: TagListInnerProps
       data-empty={state.collection.size === 0 || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}>
-      {state.collection.size === 0 && props.renderEmptyState ? props.renderEmptyState() : children}
+      {state.collection.size === 0 && props.renderEmptyState ? props.renderEmptyState({
+        isFocused,
+        isFocusVisible,
+        state
+      }) : children}
     </div>
   );
 }

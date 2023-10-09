@@ -580,7 +580,7 @@ export interface TableBodyRenderProps {
 
 export interface TableBodyProps<T> extends CollectionProps<T>, StyleRenderProps<TableBodyRenderProps> {
   /** Provides content to display when there are no rows in the table. */
-  renderEmptyState?: () => ReactNode
+  renderEmptyState?: ({isDropTarget, state}: {isDropTarget: boolean, state: TableState<unknown>}) => ReactNode
 }
 
 function TableBody<T extends object>(props: TableBodyProps<T>, ref: ForwardedRef<HTMLTableSectionElement>): JSX.Element | null {
@@ -706,6 +706,10 @@ function TableBodyRowGroup<T>({collection, isDroppable}: {collection: TableColle
     }, [])
   });
 
+  let state = useContext(TableStateContext);
+  let {dropState} = useContext(DragAndDropContext);
+  let isRootDropTarget = isDroppable && dropState && (dropState.isDropTarget({type: 'root'}) ?? false);
+
   let props: TableBodyProps<T> = collection.body.props;
   let renderProps = useRenderProps({
     ...props,
@@ -722,7 +726,10 @@ function TableBodyRowGroup<T>({collection, isDroppable}: {collection: TableColle
     emptyState = (
       <tr role="row">
         <td role="gridcell" colSpan={collection.columnCount}>
-          {props.renderEmptyState()}
+          {props.renderEmptyState({
+            isDropTarget: isRootDropTarget,
+            state
+          })}
         </td>
       </tr>
     );
