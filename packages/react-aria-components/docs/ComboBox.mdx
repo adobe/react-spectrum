@@ -70,9 +70,11 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 ```css hidden
-@import './Popover.mdx';
+@import './Checkbox.mdx';
 @import './ListBox.mdx';
+@import './Popover.mdx';
 ```
+
 ```css
 @layer combobox;
 @layer combobox.layout, combobox.hcm;
@@ -132,11 +134,65 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
       font-size: 12px;
       color: var(--spectrum-global-color-red-600);
     }
-    @layer popover {
-      .react-aria-Popover {
-        padding: 0px;
+  }
+  @layer listbox {
+    .react-aria-ListBox {
+      display: block;
+      width: unset;
+      max-height: unset;
+      min-height: unset;
+      border: none;
+
+      .react-aria-Item {
+        padding: 0.286rem 0.571rem 0.286rem 1.571rem;
+
+        &[data-selected] {
+          font-weight: 600;
+
+          &::before {
+            content: '✓';
+            content: '✓' / '';
+            alt: ' ';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+          }
+        }
+
+        &[data-focused],
+        &[data-pressed] {
+          background: var(--highlight-background);
+          color: var(--highlight-foreground);
+        }
       }
     }
+  }
+  @layer popover {
+    .react-aria-Popover {
+      padding: 0px;
+      min-width: var(--trigger-width);
+      box-sizing: border-box;
+
+      &[data-entering] {
+        animation: slide 200ms;
+      }
+
+      &[data-exiting] {
+        animation: slide 200ms reverse ease-in;
+      }
+    }
+  }
+}
+
+@keyframes slide {
+  from {
+    transform: var(--origin);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
 

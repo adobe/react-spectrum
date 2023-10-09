@@ -122,21 +122,20 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow} from 'react-aria-c
       animation: slide 200ms reverse ease-in;
     }
   }
-
-  @keyframes slide {
-    from {
-      transform: var(--origin);
-      opacity: 0;
-    }
-
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
-  }
-
   .react-aria-Dialog {
     outline: none;
+  }
+}
+
+@keyframes slide {
+  from {
+    transform: var(--origin);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
 
