@@ -15,11 +15,11 @@ export type {ColorSliderState} from './useColorSliderState';
 export type {ColorWheelState} from './useColorWheelState';
 export type {ColorFieldState} from './useColorFieldState';
 
-export {HSBColor, HSLColor, parseColor, RGBColor} from './Color';
+export {Color, parseColor} from './Color';
 export {useColorAreaState} from './useColorAreaState';
 export {useColorSliderState} from './useColorSliderState';
 export {useColorWheelState} from './useColorWheelState';
 export {useColorFieldState} from './useColorFieldState';
 
-export type {Color, ColorAreaProps, ColorFieldProps, ColorWheelProps} from '@react-types/color';
+export type {ColorAreaProps, ColorFieldProps, ColorWheelProps} from '@react-types/color';
 export type {ColorSliderStateOptions} from './useColorSliderState';
