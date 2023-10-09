@@ -28,4 +28,4 @@ export const ToggleButton = () => (
 
 ToggleButton.story = {
   name: 'all'
-}
+};
