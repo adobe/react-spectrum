@@ -708,7 +708,7 @@ function TableBodyRowGroup<T>({collection, isDroppable}: {collection: TableColle
 
   let state = useContext(TableStateContext);
   let {dropState} = useContext(DragAndDropContext);
-  let isRootDropTarget = isDroppable && dropState && (dropState.isDropTarget({type: 'root'}) ?? false);
+  let isRootDropTarget = isDroppable && !!dropState && (dropState.isDropTarget({type: 'root'}) ?? false);
 
   let props: TableBodyProps<T> = collection.body.props;
   let renderProps = useRenderProps({
@@ -722,7 +722,7 @@ function TableBodyRowGroup<T>({collection, isDroppable}: {collection: TableColle
   });
 
   let emptyState;
-  if (collection.size === 0 && props.renderEmptyState) {
+  if (collection.size === 0 && props.renderEmptyState && state) {
     emptyState = (
       <tr role="row">
         <td role="gridcell" colSpan={collection.columnCount}>
