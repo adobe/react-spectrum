@@ -197,7 +197,7 @@ function AnimatedTabs() {
           {(tab) => (
             <TabPanel
               shouldForceMount
-              className="flex-shrink-0 w-full px-2 box-border snap-start outline-none -outline-offset-2 rounded data-[focus-visible]:outline-black">
+              className="flex-shrink-0 w-full px-2 box-border snap-start outline-none -outline-offset-2 rounded focus-visible:outline-black">
               <h2>{tab.label} contents...</h2>
               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean sit amet nisl blandit, pellentesque eros eu, scelerisque eros. Sed cursus urna at nunc lacinia dapibus.</p>
             </TabPanel>
@@ -207,6 +207,19 @@ function AnimatedTabs() {
     </Tabs>
   );
 }
+```
+
+### Tailwind config
+
+This example uses the [tailwindcss-react-aria-components](../styling.html#plugin) plugin. Add it to your `tailwind.config.js`:
+
+```tsx
+module.exports = {
+  // ...
+  plugins: [
+    require('tailwindcss-react-aria-components')
+  ]
+};
 ```
 
 ## Components

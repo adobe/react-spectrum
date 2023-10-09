@@ -117,7 +117,7 @@ function Sheet() {
   return (
     <>
       <Button
-        className="text-blue-600 text-lg font-semibold outline-none rounded bg-transparent border-none data-[pressed]:text-blue-700 data-[focus-visible]:ring"
+        className="text-blue-600 text-lg font-semibold outline-none rounded bg-transparent border-none pressed:text-blue-700 focus-visible:ring"
         onPress={() => setOpen(true)}>
         Open sheet
       </Button>
@@ -155,7 +155,7 @@ function Sheet() {
               <Dialog className="px-4 pb-4 outline-none">
                 <div className="flex justify-end">
                   <Button
-                    className="text-blue-600 text-lg font-semibold mb-8 outline-none rounded bg-transparent border-none data-[pressed]:text-blue-700 data-[focus-visible]:ring"
+                    className="text-blue-600 text-lg font-semibold mb-8 outline-none rounded bg-transparent border-none pressed:text-blue-700 focus-visible:ring"
                     onPress={() => setOpen(false)}>
                     Done
                   </Button>
@@ -177,6 +177,19 @@ function Sheet() {
     </>
   );
 }
+```
+
+### Tailwind config
+
+This example uses the [tailwindcss-react-aria-components](../styling.html#plugin) plugin. Add it to your `tailwind.config.js`:
+
+```tsx
+module.exports = {
+  // ...
+  plugins: [
+    require('tailwindcss-react-aria-components')
+  ]
+};
 ```
 
 ## Components
