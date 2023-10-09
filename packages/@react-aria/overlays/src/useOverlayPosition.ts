@@ -114,7 +114,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       shift({padding: 5}),
       size({
         padding: 5,
-        apply({availableWidth, availableHeight, elements, placement, middlewareData}) {
+        apply({availableWidth, availableHeight, elements}) {
           // Do things with the data, e.g.
           Object.assign(elements.floating.style, {
             maxWidth: `${availableWidth}px`,
@@ -130,6 +130,8 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     ]
   });
   console.log(result)
+  let arrowLeft = result?.middlewareData?.arrow?.x ?? 0;
+  let arrowTop = result?.middlewareData?.arrow?.y ?? 0;
 
   return {
     overlayProps: {
@@ -141,8 +143,8 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       role: 'presentation',
       style: {
         position: 'absolute',
-        left: `${result?.middlewareData?.arrow?.x ?? 0}px`,
-        top: `${result?.middlewareData?.arrow?.y ?? 0}px`
+        left: arrowLeft ? `${arrowLeft}px` : undefined,
+        top: arrowTop ? `${arrowTop}px` : undefined
       }
     },
     updatePosition: result.update

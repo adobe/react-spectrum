@@ -231,16 +231,11 @@ function Arrow(props: ArrowProps) {
     <div
       ref={arrowRef}
       {...arrowProps}
-      {...{style: {
-        ...arrowProps.style,
-        height: `${secondary}px`,
-        width: `${secondary}px`
-      }}}>
+      className={classNames(styles, 'spectrum-Popover-tip')}>
       <svg
         xmlns="http://www.w3.org/svg/2000"
         width={Math.ceil(isLandscape ? secondary : primary)}
-        height={Math.ceil(isLandscape ? primary : secondary)}
-        className={classNames(styles, 'spectrum-Popover-tip')}>
+        height={Math.ceil(isLandscape ? primary : secondary)}>
         <path className={classNames(styles, 'spectrum-Popover-tip-triangle')} d={pathData.join(' ')} />
       </svg>
     </div>
