@@ -726,6 +726,12 @@ module.exports = {
         down: 'var(--spectrum-neutral-content-color-down)',
         focus: 'var(--spectrum-neutral-content-color-key-focus)'
       },
+      'neutral-subdued': {
+        DEFAULT: 'var(--spectrum-neutral-subdued-content-color-default)',
+        hover: 'var(--spectrum-neutral-subdued-content-color-hover)',
+        down: 'var(--spectrum-neutral-subdued-content-color-down)',
+        focus: 'var(--spectrum-neutral-subdued-content-color-key-focus)'
+      },
       'transparent-white': {
         ...colors['transparent-white'],
         content: 'black',
@@ -827,9 +833,9 @@ module.exports = {
 
       // These are static.
       // 0: '0px',
-      // 50: 'var(--spectrum-spacing-50)',
-      // 75: 'var(--spectrum-spacing-75)',
-      // 100: 'var(--spectrum-spacing-100)',
+      'static-50': 'var(--spectrum-spacing-50)',
+      'static-75': 'var(--spectrum-spacing-75)',
+      'static-100': 'var(--spectrum-spacing-100)',
       // 200: 'var(--spectrum-spacing-200)',
       // 300: 'var(--spectrum-spacing-300)',
       // 400: 'var(--spectrum-spacing-400)',
@@ -866,6 +872,11 @@ module.exports = {
       'ttc-100': 'var(--spectrum-text-to-control-100)',
       'ttc-200': 'var(--spectrum-text-to-control-200)',
       'ttc-300': 'var(--spectrum-text-to-control-300)',
+
+      'ett-75': 'var(--spectrum-component-edge-to-text-75)',
+      'ett-100': 'var(--spectrum-component-edge-to-text-100)',
+      'ett-200': 'var(--spectrum-component-edge-to-text-200)',
+      'ett-300': 'var(--spectrum-component-edge-to-text-300)',
     },
     opacity: {
       100: '1',
@@ -887,12 +898,16 @@ module.exports = {
       4: '0.04'
     },
     height: height,
-    minHeight: height
+    minHeight: height,
+    width: {
+      ...dimensions,
+      'field': 'var(--spectrum-field-width)'
+    }
   },
   plugins: [
     require('tailwindcss-react-aria-components'),
     require('tailwindcss-animate'),
-    plugin(({addUtilities, matchUtilities, theme}) => {
+    plugin(({addUtilities, matchUtilities, theme, addBase}) => {
       // colors.tint = tint;
       let tintValues = {};
       for (let [prefix, property, themeProperty] of [['bg', 'backgroundColor'], ['border', 'borderColor'], ['outline', 'outlineColor'], ['text', 'color', 'textColor']]) {
@@ -1051,6 +1066,13 @@ module.exports = {
           '&:dir(rtl)': {
             '--dir': '-1'
           }
+        }
+      });
+
+      addBase({
+        '.reset-border': {
+          borderWidth: 0,
+          borderStyle: 'solid'
         }
       });
     })

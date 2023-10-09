@@ -30,7 +30,7 @@ const checkboxStyles = tv({
   slots: {
     base: 'group flex items-baseline transition text-base-neutral disabled:text-disabled',
     box: 'relative center-baseline justify-center w-[--size] shrink-0 transition',
-    fill: 'absolute w-full h-[--size] box-border transition-all bg-gray-75 border-200 border-solid rounded-75 group-selected:border-[calc(var(--size)/2)] group-selected:group-border-base-tint group-disabled:border-disabled-content group-focus-visible:ring',
+    fill: 'absolute w-[--size] h-[--size] box-border transition-all bg-gray-75 border-200 border-solid rounded-75 group-selected:border-[calc(var(--size)/2)] group-selected:group-border-base-tint group-disabled:border-disabled-content group-focus-visible:ring',
     checkmark: 'shrink-0 text-white opacity-0 scale-0 transition group-selected:opacity-100 group-selected:scale-100'
   },
   variants: {

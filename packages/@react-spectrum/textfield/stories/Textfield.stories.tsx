@@ -56,6 +56,12 @@ export default {
         type: 'radio',
         options: [null, 'valid', 'invalid']
       }
+    },
+    size: {
+      control: {
+        type: 'select',
+        options: ['S', 'M', 'L', 'XL']
+      }
     }
   }
 };

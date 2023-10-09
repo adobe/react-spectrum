@@ -21,6 +21,27 @@ import {SpectrumLabelProps} from '@react-types/label';
 import styles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
+import {Label as RACLabel} from 'react-aria-components';
+import {tv} from 'tailwind-variants';
+
+const labelStyles = tv({
+  base: 'flex items-baseline text-neutral-subdued group-disabled:text-disabled',
+  variants: {
+    size: {
+      S: 'text-75 gap-50',
+      M: 'text-75 gap-50',
+      L: 'text-100 gap-65',
+      XL: 'text-200 gap-65'
+    },
+    labelAlign: {
+      start: 'text-start justify-start',
+      end: 'text-end justify-end'
+    }
+  },
+  defaultVariants: {
+    size: 'M'
+  }
+}, {twMerge: false});
 
 function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
   props = useProviderProps(props);
@@ -33,8 +54,9 @@ function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
     includeNecessityIndicatorInAccessibilityName = false,
     htmlFor,
     for: labelFor,
-    elementType: ElementType = 'label',
+    elementType,
     onClick,
+    size,
     ...otherProps
   } = props;
 
@@ -45,36 +67,38 @@ function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
   let necessityLabel = isRequired ? stringFormatter.format('(required)') : stringFormatter.format('(optional)');
   let icon = (
     <Asterisk
-      UNSAFE_className={classNames(styles, 'spectrum-FieldLabel-requiredIcon')}
+      // UNSAFE_className={classNames(styles, 'spectrum-FieldLabel-requiredIcon')}
+      UNSAFE_className="center-baseline shrink-0"
       aria-label={includeNecessityIndicatorInAccessibilityName ? stringFormatter.format('(required)') : undefined} />
   );
 
-  let labelClassNames = classNames(
-    styles,
-    'spectrum-FieldLabel',
-    {
-      'spectrum-FieldLabel--positionSide': labelPosition === 'side',
-      'spectrum-FieldLabel--alignEnd': labelAlign === 'end'
-    },
-    styleProps.className
-  );
+  // let labelClassNames = classNames(
+  //   styles,
+  //   'spectrum-FieldLabel',
+  //   {
+  //     'spectrum-FieldLabel--positionSide': labelPosition === 'side',
+  //     'spectrum-FieldLabel--alignEnd': labelAlign === 'end'
+  //   },
+  //   styleProps.className
+  // );
 
   return (
-    <ElementType
+    <RACLabel
       {...filterDOMProps(otherProps)}
       {...styleProps}
       onClick={onClick}
       ref={domRef}
-      className={labelClassNames}
-      htmlFor={ElementType === 'label' ? labelFor || htmlFor : undefined}>
+      className={labelStyles({size, labelAlign})}
+      elementType={elementType}
+      htmlFor={elementType === 'label' ? labelFor || htmlFor : undefined}>
       {children}
-      {(necessityIndicator === 'label' || (necessityIndicator === 'icon' && isRequired)) && ' \u200b'}
+      {(necessityIndicator === 'label' || (necessityIndicator === 'icon' && isRequired)) && '\u200b'}
       {/* necessityLabel is hidden to screen readers if the field is required because
         * aria-required is set on the field in that case. That will already be announced,
         * so no need to duplicate it here. If optional, we do want it to be announced here. */}
       {necessityIndicator === 'label' && <span aria-hidden={!includeNecessityIndicatorInAccessibilityName ? isRequired : undefined}>{necessityLabel}</span>}
       {necessityIndicator === 'icon' && isRequired && icon}
-    </ElementType>
+    </RACLabel>
   );
 }
 

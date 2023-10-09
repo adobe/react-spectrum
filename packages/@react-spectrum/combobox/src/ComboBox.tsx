@@ -21,7 +21,7 @@ import {
 } from '@react-spectrum/utils';
 import comboboxStyles from './combobox.css';
 import {DOMRefValue, FocusableRef, FocusableRefValue} from '@react-types/shared';
-import {Field} from '@react-spectrum/label';
+import {Field, HelpText, Label} from '@react-spectrum/label';
 import {FieldButton} from '@react-spectrum/button';
 import {FocusRing} from '@react-aria/focus';
 // @ts-ignore
@@ -43,12 +43,16 @@ import React, {
 import {SpectrumComboBoxProps} from '@react-types/combobox';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
-import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
+// import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useComboBox} from '@react-aria/combobox';
 import {useComboBoxState} from '@react-stately/combobox';
 import {useFilter, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
+import { textfieldStyles } from '@react-spectrum/textfield/src/TextFieldBase';
+import { Provider, Button, ButtonContext, Group, Input, InputContext, LabelContext, TextContext } from 'react-aria-components';
+import AlertMedium from '@spectrum-icons/ui/AlertMedium';
+import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 
 function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
@@ -86,8 +90,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
   let isAsync = loadingState != null;
   let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
   let unwrappedPopoverRef = useUnwrapDOMRef(popoverRef);
-  let buttonRef = useRef<FocusableRefValue<HTMLElement>>();
-  let unwrappedButtonRef = useUnwrapDOMRef(buttonRef);
+  let buttonRef = useRef<HTMLElement>();
   let listBoxRef = useRef();
   let inputRef = useRef<HTMLInputElement>();
   let domRef = useFocusableRef(ref, inputRef);
@@ -106,7 +109,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     {
       ...props,
       keyboardDelegate: layout,
-      buttonRef: unwrappedButtonRef,
+      buttonRef,
       popoverRef: unwrappedPopoverRef,
       listBoxRef,
       inputRef: inputRef,
@@ -121,12 +124,12 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
   let {scale} = useProvider();
 
   let onResize = useCallback(() => {
-    if (unwrappedButtonRef.current && inputRef.current) {
-      let buttonWidth = unwrappedButtonRef.current.offsetWidth;
+    if (buttonRef.current && inputRef.current) {
+      let buttonWidth = buttonRef.current.offsetWidth;
       let inputWidth = inputRef.current.offsetWidth;
       setMenuWidth(buttonWidth + inputWidth);
     }
-  }, [unwrappedButtonRef, inputRef, setMenuWidth]);
+  }, [buttonRef, inputRef, setMenuWidth]);
 
   useResizeObserver({
     ref: domRef,
@@ -142,28 +145,39 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
 
   return (
     <>
-      <Field
+      {/* <Field
         {...props}
         descriptionProps={descriptionProps}
         errorMessageProps={errorMessageProps}
         labelProps={labelProps}
-        ref={domRef}>
+        ref={domRef}> */}
+      <Provider
+        values={[
+          [ButtonContext, {...buttonProps, isPressed: state.isOpen, ref: buttonRef}],
+          [InputContext, {...inputProps, ref: inputRef}],
+          [LabelContext, labelProps],
+          [TextContext, {
+            slots: {
+              description: descriptionProps,
+              errorMessage: errorMessageProps
+            }
+          }]
+        ]}>
         <ComboBoxInput
           {...props}
+          ref={domRef}
+          inputValue={state.inputValue}
           isOpen={state.isOpen}
-          loadingState={loadingState}
-          inputProps={inputProps}
-          inputRef={inputRef}
-          triggerProps={buttonProps}
-          triggerRef={buttonRef} />
-      </Field>
+          loadingState={loadingState} />
+      </Provider>
+      {/* </Field> */}
       {name && formValue === 'key' && <input type="hidden" name={name} value={state.selectedKey} />}
       <Popover
         state={state}
         UNSAFE_style={style}
         UNSAFE_className={classNames(styles, 'spectrum-InputGroup-popover', {'spectrum-InputGroup-popover--quiet': isQuiet})}
         ref={popoverRef}
-        triggerRef={unwrappedButtonRef}
+        triggerRef={buttonRef}
         scrollRef={listBoxRef}
         placement={`${direction} end`}
         hideArrow
@@ -192,10 +206,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
 });
 
 interface ComboBoxInputProps extends SpectrumComboBoxProps<unknown> {
-  inputProps: InputHTMLAttributes<HTMLInputElement>,
-  inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
-  triggerProps: AriaButtonProps,
-  triggerRef: RefObject<FocusableRefValue<HTMLElement>>,
+  inputValue: string,
   style?: React.CSSProperties,
   className?: string,
   isOpen?: boolean
@@ -203,13 +214,10 @@ interface ComboBoxInputProps extends SpectrumComboBoxProps<unknown> {
 
 const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInputProps, ref: RefObject<HTMLElement>) {
   let {
+    inputValue,
     isQuiet,
     isDisabled,
     validationState,
-    inputProps,
-    inputRef,
-    triggerProps,
-    triggerRef,
     autoFocus,
     style,
     className,
@@ -227,18 +235,18 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
       aria-label={stringFormatter.format('loading')}
       size="S"
       isIndeterminate
-      UNSAFE_className={classNames(
-        textfieldStyles,
-        'spectrum-Textfield-circleLoader',
-        classNames(
-          styles,
-          'spectrum-InputGroup-input-circleLoader'
-        )
-      )} />
+      // UNSAFE_className={classNames(
+      //   textfieldStyles,
+      //   'spectrum-Textfield-circleLoader',
+      //   classNames(
+      //     styles,
+      //     'spectrum-InputGroup-input-circleLoader'
+      //   )
+      // )} />
+      UNSAFE_className="shrink-0" />
   );
 
   let isLoading = loadingState === 'loading' || loadingState === 'filtering';
-  let inputValue = inputProps.value;
   let lastInputValue = useRef(inputValue);
   useEffect(() => {
     if (isLoading && !showLoading) {
@@ -264,6 +272,37 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
 
     lastInputValue.current = inputValue;
   }, [isLoading, showLoading, inputValue]);
+
+  let {base, fieldWrapper, field, input, label, invalidIcon, validIcon} = textfieldStyles({
+    size: 'M',
+    labelPosition: props.labelPosition,
+    labelAlign: props.labelAlign
+  });
+
+  let isInvalid = validationState === 'invalid';
+  let validation = isInvalid ? <AlertMedium UNSAFE_className={invalidIcon()} /> : <CheckmarkMedium UNSAFE_className={validIcon()} />;
+
+  let showSpinner = showLoading && (isOpen || menuTrigger === 'manual' || loadingState === 'loading');
+
+  return (
+    <div className={base()} ref={ref} data-rac data-disabled={isDisabled || undefined}>
+      <div className={label()}>
+        {props.label && <Label {...props}>{props.label}</Label>}
+        {props.contextualHelp}
+      </div>
+      <div className={fieldWrapper()}>
+        <Group role="presentation" className={field()} isInvalid={isInvalid} isDisabled={isDisabled}>
+          <Input className={input()} />
+          {showSpinner && loadingCircle}
+          {props.validationState && !isDisabled && loadingState != null ? validation : null}
+          <Button className="h-[calc(100%-theme(spacing.50)*2)] aspect-square me-50 p-0 flex items-center justify-center rounded-75 transition bg-base-gray-100 text-base-neutral disabled:bg-disabled disabled:text-disabled outline-none border-none">
+            <ChevronDownMedium />
+          </Button>
+        </Group>
+        <HelpText {...props} isInvalid={isInvalid} />
+      </div>
+    </div>
+  );
 
   return (
     <FocusRing

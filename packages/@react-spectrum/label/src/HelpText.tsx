@@ -14,7 +14,43 @@ import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, SpectrumFieldValidation, SpectrumHelpTextProps, StyleProps, Validation} from '@react-types/shared';
 import React, {HTMLAttributes} from 'react';
-import styles from '@adobe/spectrum-css-temp/components/helptext/vars.css';
+// import styles from '@adobe/spectrum-css-temp/components/helptext/vars.css';
+import {Text} from 'react-aria-components';
+import {tv} from 'tailwind-variants';
+
+const styles = tv({
+  slots: {
+    base: 'flex items-baseline',
+    icon: 'center-baseline shrink-0'
+  },
+  variants: {
+    size: {
+      S: {
+        base: 'text-75 gap-ttv-75'
+      },
+      M: {
+        base: 'text-75 gap-ttv-75'
+      },
+      L: {
+        base: 'text-100 gap-ttv-100'
+      },
+      XL: {
+        base: 'text-200 gap-ttv-200'
+      }
+    },
+    isInvalid: {
+      false: {
+        base: 'text-neutral-subdued'
+      },
+      true: {
+        base: 'text-negative'
+      }
+    }
+  },
+  defaultVariants: {
+    size: 'M'
+  }
+}, {twMerge: false});
 
 interface HelpTextProps extends SpectrumHelpTextProps, Omit<Validation, 'validationState'>, SpectrumFieldValidation, StyleProps {
   /** Props for the help text description element. */
@@ -32,36 +68,36 @@ function HelpText(props: HelpTextProps, ref: DOMRef<HTMLDivElement>) {
     isDisabled,
     showErrorIcon,
     descriptionProps,
-    errorMessageProps
+    errorMessageProps,
+    size = 'M'
   } = props;
   let domRef = useDOMRef(ref);
-  let isErrorMessage = errorMessage && (isInvalid || validationState === 'invalid');
+  isInvalid ||= validationState === 'invalid';
+  let isErrorMessage = errorMessage && isInvalid;
   let {styleProps} = useStyleProps(props);
 
+  let {base, icon} = styles({size, isInvalid});
+
   return (
-    <div
+    <Text
       {...styleProps}
-      className={classNames(
-        styles,
-        'spectrum-HelpText',
-        `spectrum-HelpText--${isErrorMessage ? 'negative' : 'neutral'}`,
-        {'is-disabled': isDisabled},
-        styleProps.className
-      )}
+      slot={isErrorMessage ? 'errorMessage' : 'description'}
+      // className={classNames(
+      //   styles,
+      //   'spectrum-HelpText',
+      //   `spectrum-HelpText--${isErrorMessage ? 'negative' : 'neutral'}`,
+      //   {'is-disabled': isDisabled},
+      //   styleProps.className
+      // )}
+      className={base()}
       ref={domRef}>
       {isErrorMessage ? (
         <>
-          {showErrorIcon && <AlertMedium UNSAFE_className={classNames(styles, 'spectrum-HelpText-validationIcon')} />}
-          <div {...errorMessageProps} className={classNames(styles, 'spectrum-HelpText-text')}>
-            {errorMessage}
-          </div>
+          {showErrorIcon && <span className={icon()}><AlertMedium /*UNSAFE_className={classNames(styles, 'spectrum-HelpText-validationIcon')}*/ /></span>}
+          {errorMessage}
         </>
-      ) : (
-        <div {...descriptionProps} className={classNames(styles, 'spectrum-HelpText-text')}>
-          {description}
-        </div>
-      )}
-    </div>
+      ) : description}
+    </Text>
   );
 }
 
