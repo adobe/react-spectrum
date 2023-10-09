@@ -10,17 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {RadioGroupState} from '@react-stately/radio';
-import React, {useContext} from 'react';
+import {testSSR} from '@react-spectrum/test-utils';
 
-interface RadioGroupContext {
-  isEmphasized?: boolean,
-  name?: string,
-  state: RadioGroupState
-}
+describe('useViewportSize SSR', () => {
+  it('should render without errors', async () => {
+    await testSSR(__filename, `
+      import {useViewportSize} from '../src';
 
-export const RadioContext = React.createContext<RadioGroupContext | null>(null);
+      function Viewport() {
+        useViewportSize();
+        return null;
+      }
 
-export function useRadioProvider(): RadioGroupContext {
-  return useContext(RadioContext) || {} as RadioGroupContext;
-}
+      <Viewport />
+    `);
+  });
+});

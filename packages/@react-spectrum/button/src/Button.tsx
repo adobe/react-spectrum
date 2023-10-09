@@ -34,8 +34,8 @@ import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
 function disablePendingProps(props) {
-  // Don't allow interaction while UNSTABLE_isPending is true
-  if (props.UNSTABLE_isPending) {
+  // Don't allow interaction while isPending is true
+  if (props.isPending) {
     props.onPress = undefined;
     props.onPressStart = undefined;
     props.onPressEnd = undefined;
@@ -60,7 +60,7 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
     style = variant === 'accent' || variant === 'cta' ? 'fill' : 'outline',
     staticColor,
     isDisabled,
-    UNSTABLE_isPending,
+    isPending,
     autoFocus,
     ...otherProps
   } = props;
@@ -76,20 +76,20 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout>;
 
-    if (UNSTABLE_isPending) {
-      // Start timer when UNSTABLE_isPending is set to true.
+    if (isPending) {
+      // Start timer when isPending is set to true.
       timeout = setTimeout(() => {
         setIsProgressVisible(true);
       }, 1000);
     } else {
-      // Exit loading state when UNSTABLE_isPending is set to false. */
+      // Exit loading state when isPending is set to false. */
       setIsProgressVisible(false);
     }
     return () => {
-      // Clean up on unmount or when user removes UNSTABLE_isPending prop before entering loading state.
+      // Clean up on unmount or when user removes isPending prop before entering loading state.
       clearTimeout(timeout);
     };
-  }, [UNSTABLE_isPending]);
+  }, [isPending]);
 
   if (variant === 'cta') {
     variant = 'accent';
@@ -107,8 +107,8 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
         data-variant={variant}
         data-style={style}
         data-static-color={staticColor || undefined}
-        aria-disabled={UNSTABLE_isPending || undefined}
-        aria-live={UNSTABLE_isPending ? 'polite' : undefined}
+        aria-disabled={isPending || undefined}
+        aria-live={isPending ? 'polite' : undefined}
         className={
           classNames(
             styles,
