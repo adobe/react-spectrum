@@ -148,7 +148,7 @@ function SwipableList() {
       {/* Toolbar */}
       <div className="flex pb-4 justify-between">
         <Button
-          className="text-blue-600 text-lg outline-none bg-transparent border-none transition data-[pressed]:text-blue-700 data-[focus-visible]:ring disabled:text-gray-400"
+          className="text-blue-600 text-lg outline-none bg-transparent border-none transition pressed:text-blue-700 focus-visible:ring disabled:text-gray-400"
           style={{ opacity: selectionMode === "none" ? 0 : 1 }}
           isDisabled={selectedKeys.size === 0}
           onPress={() => {
@@ -160,7 +160,7 @@ function SwipableList() {
           Delete
         </Button>
         <Button
-          className="text-blue-600 text-lg outline-none bg-transparent border-none transition data-[pressed]:text-blue-700 data-[focus-visible]:ring"
+          className="text-blue-600 text-lg outline-none bg-transparent border-none transition pressed:text-blue-700 focus-visible:ring"
           onPress={() => {
             setSelectionMode((m) => (m === "none" ? "multiple" : "none"));
             setSelectedKeys(new Set());
@@ -219,7 +219,7 @@ function ListItem({ id, children, textValue, onRemove }) {
     <MotionItem
       id={id}
       textValue={textValue}
-      className="outline-none group relative overflow-clip border-t border-0 border-solid last:border-b border-gray-200 dark:border-gray-800 data-[pressed]:bg-gray-200 dark:data-[pressed]:bg-gray-800 data-[selected]:bg-gray-200 dark:data-[selected]:bg-gray-800 data-[focus-visible]:outline data-[focus-visible]:outline-blue-600 data-[focus-visible]:-outline-offset-2"
+      className="outline-none group relative overflow-clip border-t border-0 border-solid last:border-b border-gray-200 dark:border-gray-800 pressed:bg-gray-200 dark:pressed:bg-gray-800 selected:bg-gray-200 dark:selected:bg-gray-800 focus-visible:outline focus-visible:outline-blue-600 focus-visible:-outline-offset-2"
       layout
       transition={{ duration: 0.25 }}
       exit={{ opacity: 0 }}
@@ -262,7 +262,7 @@ function ListItem({ id, children, textValue, onRemove }) {
           </motion.div>
           {selectionMode === "none" && (
             <Button
-              className="bg-red-600 data-[pressed]:bg-red-700 cursor-default text-lg outline-none border-none transition-colors text-white flex items-center absolute top-0 left-[100%] py-2 h-full z-0 isolate data-[focus-visible]:outline data-[focus-visible]:outline-blue-600 data-[focus-visible]:-outline-offset-2"
+              className="bg-red-600 pressed:bg-red-700 cursor-default text-lg outline-none border-none transition-colors text-white flex items-center absolute top-0 left-[100%] py-2 h-full z-0 isolate focus-visible:outline focus-visible:outline-blue-600 focus-visible:-outline-offset-2"
               style={{
                 // Calculate the size of the button based on the drag position,
                 // which is stored in a CSS variable above.
@@ -334,12 +334,25 @@ function SelectionCheckmark({ isSelected }) {
 }
 ```
 
+### Tailwind config
+
+This example uses the [tailwindcss-react-aria-components](../styling.html#plugin) plugin. Add it to your `tailwind.config.js`:
+
+```tsx
+module.exports = {
+  // ...
+  plugins: [
+    require('tailwindcss-react-aria-components')
+  ]
+};
+```
+
 ## Components
 
 <section className={styles.cardGroup} data-size="small">
 
 <ExampleCard
-  url="GridList.html"
+  url="../GridList.html"
   title="GridList"
   description="A grid list displays a list of interactive items, with keyboard navigation, row selection, and actions.">
   <ListView />

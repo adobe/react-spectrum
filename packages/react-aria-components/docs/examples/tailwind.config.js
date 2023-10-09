@@ -4,9 +4,10 @@ module.exports = {
     preflight: false
   },
   darkMode: ['class', '[style*="color-scheme: dark"]'],
-  content: [
-     './packages/react-aria-components/docs/examples/*.mdx'
-   ],
+  content: {
+    relative: true,
+    files: ['*.mdx']
+  },
   theme: {
     extend: {}
   },
