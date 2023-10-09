@@ -182,7 +182,7 @@ module.exports = new Transformer({
                 result += code;
               });
             } catch (e) {
-              console.log(e)
+              console.log(e);
             }
             return result;
           }
