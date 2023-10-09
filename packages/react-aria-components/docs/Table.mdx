@@ -1015,7 +1015,7 @@ Use the `renderEmptyState` prop to customize what the `TableBody` will display i
     <Column>Date Modified</Column>
   </TableHeader>
   {/*- begin highlight -*/}
-  <TableBody renderEmptyState={() => 'No results found.'}>
+  <TableBody renderEmptyState={({isDropTarget, state}) => <span style={{color: isDropTarget ? 'red' : 'black'}}>No results found.</span>}>
   {/*- end highlight -*/}
     {[]}
   </TableBody>
