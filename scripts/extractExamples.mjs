@@ -98,6 +98,9 @@ import ReactDOM from 'react-dom';
 `);
     let parts = file.split(path.sep);
     let dir = `${distDir}/${parts[1]}/${parts[2]}`;
+    if (parts[3] === 'examples') {
+      dir += '/examples';
+    }
     fs.mkdirSync(dir, {recursive: true});
     fs.writeFileSync(`${dir}/${path.basename(file).slice(0, -4) + '.tsx'}`, exampleCode.join('\n'));
   }
