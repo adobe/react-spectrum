@@ -114,24 +114,30 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
     }
   }
 
-  @keyframes fade {
-    from {
-      opacity: 0;
-    }
-
-    to {
-      opacity: 1;
+  @layer textfield {
+    .react-aria-TextField {
+      margin-bottom: 8px;
     }
   }
+}
 
-  @keyframes zoom {
-    from {
-      transform: scale(0.8);
-    }
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
 
-    to {
-      transform: scale(1);
-    }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes zoom {
+  from {
+    transform: scale(0.8);
+  }
+
+  to {
+    transform: scale(1);
   }
 }
 

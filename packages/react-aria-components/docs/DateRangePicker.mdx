@@ -82,9 +82,9 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
 /* We only import styles up to one page away, we don't follow those pages dependencies, so
 * import everything and in the correct order of dependency so that layers don't overwrite each other. */
 @import './Button.mdx';
-@import './RangeCalendar.mdx';
-@import './DateField.mdx';
 @import './Popover.mdx';
+@import './DateField.mdx';
+@import './RangeCalendar.mdx';
 ```
 
 ```css
@@ -152,29 +152,29 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
         margin-right: -2rem;
       }
     }
-  }
 
-  .react-aria-Button {
-    background: slateblue;
-    color: white;
-    border-radius: 4px;
-    border: none;
-    appearance: none;
-    margin-left: auto;
-    width: 1.429rem;
-    height: 1.429rem;
-    padding: 0;
-    vertical-align: middle;
-    font-size: 0.857rem;
-    outline: none;
-    box-sizing: content-box;
-    flex-shrink: 0;
-    border: 2px solid var(--page-background);
-    position: sticky;
-    right: 0;
+    .react-aria-Button {
+      background: slateblue;
+      color: white;
+      border-radius: 4px;
+      border: none;
+      appearance: none;
+      margin-left: auto;
+      width: 1.429rem;
+      height: 1.429rem;
+      padding: 0;
+      vertical-align: middle;
+      font-size: 0.857rem;
+      outline: none;
+      box-sizing: content-box;
+      flex-shrink: 0;
+      border: 2px solid var(--page-background);
+      position: sticky;
+      right: 0;
 
-    &[data-focus-visible] {
-      box-shadow: 0 0 0 2px slateblue;
+      &[data-focus-visible] {
+        box-shadow: 0 0 0 2px slateblue;
+      }
     }
   }
 

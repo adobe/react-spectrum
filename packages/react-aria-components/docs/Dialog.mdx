@@ -74,8 +74,8 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
 ```css hidden
 @import './Button.mdx';
 @import './TextField.mdx';
-@import './Modal.mdx';
 @import './Popover.mdx';
+@import './Modal.mdx';
 ```
 
 ```css
@@ -94,6 +94,26 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
       margin-top: 20px;
       margin-right: 8px;
     }
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes zoom {
+  from {
+    transform: scale(0.8);
+  }
+
+  to {
+    transform: scale(1);
   }
 }
 ```

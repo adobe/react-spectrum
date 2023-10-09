@@ -100,15 +100,21 @@ import {Calendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-
       padding: 0;
     }
 
+    & table {
+      border-collapse: collapse;
+
+      & td {
+        padding: 2px 0;
+      }
+    }
+
     .react-aria-CalendarCell {
-      width: 2rem;
-      line-height: 2rem;
+      width: 2.286rem;
+      line-height: 2.286rem;
       text-align: center;
       border-radius: 6px;
       cursor: default;
       outline: none;
-      border: 2px solid var(--spectrum-alias-background-color-default);
-      margin: -1px;
 
       &[data-outside-month] {
         display: none;
@@ -119,7 +125,7 @@ import {Calendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-
       }
 
       &[data-focus-visible] {
-        box-shadow: 0 0 0 2px var(--highlight-background);
+        box-shadow: inset 0 0 0 2px var(--highlight-background);
       }
 
       &[data-selected] {

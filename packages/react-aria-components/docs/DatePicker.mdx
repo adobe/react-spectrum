@@ -58,9 +58,11 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
   <Popover>
     <Dialog>
       <Calendar>
-        <Button slot="previous">◀</Button>
-        <Heading />
-        <Button slot="next">▶</Button>
+        <header>
+          <Button slot="previous">◀</Button>
+          <Heading />
+          <Button slot="next">▶</Button>
+        </header>
         <CalendarGrid>
           {date => <CalendarCell date={date} />}
         </CalendarGrid>
@@ -76,9 +78,9 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
 /* We only import styles up to one page away, we don't follow those pages dependencies, so
 * import everything and in the correct order of dependency so that layers don't overwrite each other. */
 @import './Button.mdx';
-@import './Calendar.mdx';
-@import './DateField.mdx';
 @import './Popover.mdx';
+@import './DateField.mdx';
+@import './Calendar.mdx';
 ```
 
 ```css
