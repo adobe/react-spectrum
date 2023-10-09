@@ -20,6 +20,7 @@ clean_all:
 	$(MAKE) clean
 	$(MAKE) clean_node_modules
 	$(MAKE) clean_dist
+	$(MAKE) clean_parcel
 
 clean_node_modules:
 	rm -rf node_modules
@@ -29,6 +30,9 @@ clean_node_modules:
 clean_dist:
 	rm -rf packages/*/*/dist
 	rm -rf packages/{react-aria,react-aria-components,react-stately}/dist
+
+clean_parcel:
+	rm -rf .parcel-cache
 
 packages/@spectrum-icons/workflow/src: packages/@spectrum-icons/workflow/package.json
 	yarn workspace @spectrum-icons/workflow make-icons
