@@ -10,24 +10,18 @@
  * governing permissions and limitations under the License.
  */
 const {Packager} = require('@parcel/plugin');
-const {PromiseQueue, urlJoin, replaceInlineReferences, replaceURLReferences, blobToString} = require('@parcel/utils');
+const {PromiseQueue, urlJoin, blobToString} = require('@parcel/utils');
 const Module = require('module');
 const path = require('path');
 const ReactDOMServer = require('react-dom/server');
 const React = require('react');
+const vm = require('vm');
+const {createBuildCache} = require('@parcel/core/lib/buildCache');
 
-const packagingBundles = new Map();
-const moduleCacheIds = new Set();
+const packagingBundles = createBuildCache();
+const moduleCache = createBuildCache();
 
 module.exports = new Packager({
-  async loadConfig({bundleGraph}) {
-    // clear cache at the start of each build.
-    packagingBundles.clear();
-    for (let id of moduleCacheIds) {
-      delete Module._cache[id];
-    }
-    moduleCacheIds.clear();
-  },
   async package({bundle, bundleGraph, getInlineBundleContents}) {
     let queue = new PromiseQueue({maxConcurrent: 32});
     bundle.traverse(node => {
@@ -56,19 +50,16 @@ module.exports = new Packager({
     });
 
     let assets = new Map(await queue.run());
-    let load = (id, parent) => {
-      const cachedModule = Module._cache[id];
+    let load = (id) => {
+      const cachedModule = moduleCache.get(id);
       if (cachedModule) {
         return cachedModule.exports;
       }
 
-      let m = new Module(id, parent);
-      Module._cache[id] = m;
-
       let [asset, code] = assets.get(id);
-      m.filename = asset.filePath;
-      m.paths = Module._nodeModulePaths(path.dirname(asset.filePath));
-      moduleCacheIds.add(id);
+      let moduleFunction = vm.compileFunction(code, ['exports', 'require', 'module', '__dirname', '__filename'], {
+        filename: asset.filePath,
+      });
 
       let deps = new Map();
       for (let dep of bundleGraph.getDependencies(asset)) {
@@ -91,29 +82,43 @@ module.exports = new Packager({
         }
       }
 
-      let defaultRequire = m.require;
-      m.require = id => {
+      let defaultRequire = Module.createRequire(asset.filePath);
+      let require = id => {
         let resolution = deps.get(id);
         if (resolution?.skipped) {
           return {};
         }
 
         if (resolution?.id) {
-          return load(resolution.id, m);
+          return load(resolution.id);
         }
 
         if (resolution?.specifier) {
           id = resolution.specifier;
         }
 
-        return defaultRequire.call(m, id);
+        return defaultRequire(id);
       };
 
-      m._compile(code, asset.filePath);
-      return m.exports;
+      require.resolve = defaultRequire.resolve;
+
+      let dirname = path.dirname(asset.filePath);
+      let module = {
+        exports: {},
+        require,
+        children: [],
+        filename: asset.filePath,
+        id,
+        path: dirname
+      };
+
+      moduleCache.set(id, module);
+
+      moduleFunction(module.exports, require, module, dirname, asset.filePath);
+      return module.exports;
     };
 
-    let Component = load(bundle.getMainEntry().id, module).default;
+    let Component = load(bundle.getMainEntry().id).default;
     let bundles = bundleGraph.getReferencedBundles(bundle).reverse();
 
     let pages = [];
