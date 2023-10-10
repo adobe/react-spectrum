@@ -16,7 +16,6 @@ import {filterDOMProps} from '@react-aria/utils';
 import {FlexProps} from '@react-types/layout';
 import React, {forwardRef} from 'react';
 import styles from './flex-gap.css';
-import {useIsSSR} from '@react-aria/ssr';
 
 const flexStyleProps: StyleHandlers = {
   direction: ['flexDirection', passthroughStyle],
