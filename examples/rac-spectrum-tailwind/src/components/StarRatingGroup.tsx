@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Group,
   Label,
@@ -25,6 +25,13 @@ export function StarRatingGroup({
   let allRatings = Array.from(Array(ratingCount).keys()).map((i) => String(i));
   let [hoveredRating, setHoveredRating] =
     useState<string | undefined>(undefined);
+
+  let onPointerOver = (e: any) => {
+    if (e.target.dataset?.rating) {
+      setHoveredRating(e.target.dataset.rating);
+    }
+  };
+
   return (
     <RadioGroup
       orientation="horizontal"
@@ -34,7 +41,10 @@ export function StarRatingGroup({
       {({ state }) => (
         <>
           <Label className="text-xl font-semibold mb-200">{label}</Label>
-          <Group className="focus-visible:ring">
+          <Group
+            className="focus-visible:ring group"
+            onPointerOver={onPointerOver}
+          >
             <div className="flex justify-evenly gap-75">
               {allRatings.map((rating) => (
                 <StarRating
@@ -43,7 +53,6 @@ export function StarRatingGroup({
                   selected={state.selectedValue}
                   isEmphasized={isEmphasized}
                   hoveredRating={hoveredRating}
-                  setHoveredRating={setHoveredRating}
                 />
               ))}
             </div>
@@ -59,13 +68,11 @@ export function StarRating({
   selected,
   isEmphasized,
   hoveredRating,
-  setHoveredRating,
 }: {
   rating: string;
   selected: string | null;
   isEmphasized?: boolean;
   hoveredRating: string | undefined;
-  setHoveredRating: (rating: string | undefined) => void;
 }) {
   let ratingNum = Number(rating);
   let selectedNum = Number(selected);
@@ -73,22 +80,15 @@ export function StarRating({
     hoveredRating !== null
       ? ratingNum <= Number(hoveredRating)
       : ratingNum <= selectedNum;
-  let [isHovered, setIsHovered] = useState(false);
   let fillColor = isEmphasized ? "fill-accent-800" : "fill-gray-700";
   let bgColor = isEmphasized ? "bg-accent-800" : "bg-gray-700";
-
-  useEffect(() => {
-    if (isHovered) {
-      setHoveredRating(rating);
-    }
-  }, [isHovered]);
 
   return (
     <Radio value={rating}>
       {({ isHovered, isSelected }) => (
         <>
-          {setIsHovered(isHovered)}
           <svg
+            data-rating={rating}
             className={isFilled || isHovered ? fillColor : ""}
             xmlns="http://www.w3.org/2000/svg"
             width={18}
