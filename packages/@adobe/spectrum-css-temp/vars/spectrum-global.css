@@ -655,4 +655,6 @@
   --spectrum-actiongroup-compact-button-gap: calc(-1 * var(--spectrum-actionbutton-border-size));
 
   --spectrum-alias-neutral-background-color: var(--spectrum-neutral-subdued-background-color-default);
+
+  --spectrum-breadcrumb-separator-icon-position-adjustment: var(--spectrum-global-dimension-size-10);
 }

@@ -2272,5 +2272,28 @@ describe('Picker', function () {
       expect(button).toHaveTextContent('Select an option…');
       expect(listbox).not.toBeInTheDocument();
     });
+
+    it('works with RouterProvider', async () => {
+      let navigate = jest.fn();
+      let tree = render(
+        <Provider theme={theme} router={{navigate}}>
+          <Picker label="Picker with links">
+            <Item href="/one">One</Item>
+            <Item href="https://adobe.com">Two</Item>
+          </Picker>
+        </Provider>
+      );
+
+      let button = tree.getByRole('button');
+      triggerPress(button);
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      let listbox = tree.getByRole('listbox');
+      let items = within(listbox).getAllByRole('option');
+      triggerPress(items[0]);
+      expect(navigate).toHaveBeenCalledWith('/one');
+    });
   });
 });

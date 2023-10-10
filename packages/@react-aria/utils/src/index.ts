@@ -11,12 +11,13 @@
  */
 export {useId, mergeIds, useSlotId} from './useId';
 export {chain} from './chain';
+export {getOwnerDocument, getOwnerWindow} from './domHelpers';
 export {mergeProps} from './mergeProps';
 export {mergeRefs} from './mergeRefs';
 export {filterDOMProps} from './filterDOMProps';
 export {focusWithoutScrolling} from './focusWithoutScrolling';
 export {getOffset} from './getOffset';
-export {openLink, getSyntheticLinkProps, RouterProvider, useRouter} from './openLink';
+export {openLink, getSyntheticLinkProps, RouterProvider, shouldClientNavigate, useRouter} from './openLink';
 export {runAfterTransition} from './runAfterTransition';
 export {useDrag1D} from './useDrag1D';
 export {useGlobalListeners} from './useGlobalListeners';

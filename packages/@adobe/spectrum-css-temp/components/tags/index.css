@@ -40,7 +40,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Tag {
-  @inherit: %spectrum-FocusRing;
+  composes: spectrum-FocusRing;
   --spectrum-focus-ring-border-radius: var(--spectrum-tag-border-radius);
   --spectrum-focus-ring-border-size: var(--spectrum-tag-border-size);
 

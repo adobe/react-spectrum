@@ -760,10 +760,7 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', result);
   });
 
-  // TODO: this doesn't work in Node 12 but it does in 13, once we can move to that in circle ci this can be un-skipped
-  // longer explanation - NumberFormat in Node 12 doesn't accept maximumFractionDigits, nor does it include it in some cases for
-  // the resolved options
-  it.skip.each`
+  it.each`
     Name
     ${'NumberField'}
   `('$Name properly formats percents', async () => {
@@ -1040,6 +1037,24 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', expected[3]);
     expect(onKeyDownSpy).toHaveBeenCalledTimes(3); // correct number of key events are called
     expect(onKeyUpSpy).toHaveBeenCalledTimes(3);
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('$Name sets number value on enter', async () => {
+    let {
+      textField
+    } = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'percent'}});
+
+    expect(textField).toHaveAttribute('inputMode', 'numeric');
+
+    act(() => {textField.focus();});
+    await user.keyboard('5.2');
+    expect(textField).toHaveAttribute('value', '52');
+    await user.keyboard('{Enter}');
+    expect(textField).toHaveAttribute('value', '52%');
+    expect(onChangeSpy).toHaveBeenCalledWith(0.52);
   });
 
   it.each`
