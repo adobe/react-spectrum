@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, MultipleSelection} from '@react-types/shared';
+import {AriaLabelingProps, MultipleSelection, Orientation} from '@react-types/shared';
 import {createFocusManager} from '@react-aria/focus';
 import {HTMLAttributes, KeyboardEventHandler, RefObject, useRef, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
@@ -21,14 +21,12 @@ export interface AriaToolbarProps extends AriaLabelingProps, MultipleSelection {
    * The orientation of the entire toolbar.
    * @default 'horizontal'
    */
-  orientation?: 'horizontal' | 'vertical'
+  orientation?: Orientation
 }
 
 interface ToolbarAria {
   toolbarProps: HTMLAttributes<HTMLElement>
 }
-
-// Any reason not to include state? i feel like we've been sad about not including a state arg in the past
 
 /**
  * Handles interactions for toolbar elements, such as keyboard navigation between elements.
