@@ -22,5 +22,5 @@ interface RadioGroupContext {
 export const RadioContext = React.createContext<RadioGroupContext | null>(null);
 
 export function useRadioProvider(): RadioGroupContext {
-  return useContext(RadioContext);
+  return useContext(RadioContext) || {} as RadioGroupContext;
 }

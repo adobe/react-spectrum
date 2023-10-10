@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, installMouseEvent, installPointerEvent, render} from '@react-spectrum/test-utils';
+import {act, fireEvent, installMouseEvent, installPointerEvent, render, waitFor} from '@react-spectrum/test-utils';
 import {ActionButton} from '@react-spectrum/button';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {render as ReactDOMRender} from 'react-dom';
 import {theme} from '@react-spectrum/theme-default';
 import {usePress} from '../';
 
@@ -2990,6 +2991,303 @@ describe('usePress', function () {
         end(el);
         expect(pressMock.mock.calls).toHaveLength(0);
       });
+    });
+  });
+
+  describe('Owner document and window', () => {
+    let iframe;
+    let iframeRoot;
+    beforeEach(() => {
+      iframe = document.createElement('iframe');
+      window.document.body.appendChild(iframe);
+      iframeRoot = iframe.contentWindow.document.createElement('div');
+      iframe.contentWindow.document.body.appendChild(iframeRoot);
+    });
+
+    afterEach(() => {
+      iframe.remove();
+    });
+
+    const IframeExample = (props) => {
+      React.useEffect(() => {
+        ReactDOMRender(<Example
+          {...props}
+          data-testid="example" />, iframeRoot);
+      }, [props]);
+
+      return null;
+    };
+
+    describe('Pointer events', () => {
+      installPointerEvent();
+
+      test('should fire press events based on pointer events', async () => {
+        let events = [];
+        let addEvent = (e) => events.push(e);
+        render(
+          <IframeExample
+            onPressStart={addEvent}
+            onPressEnd={addEvent}
+            onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+            onPress={addEvent}
+            onPressUp={addEvent} />
+        );
+
+        await waitFor(() => {
+          expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="example"]')).toBeTruthy();
+        });
+
+        const el = document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="example"]');
+        fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+        fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+
+        expect(events).toEqual([
+          {
+            type: 'pressstart',
+            target: el,
+            pointerType: 'mouse',
+            ctrlKey: false,
+            metaKey: false,
+            shiftKey: false,
+            altKey: false
+          },
+          {
+            type: 'presschange',
+            pressed: true
+          },
+          {
+            type: 'pressup',
+            target: el,
+            pointerType: 'mouse',
+            ctrlKey: false,
+            metaKey: false,
+            shiftKey: false,
+            altKey: false
+          },
+          {
+            type: 'pressend',
+            target: el,
+            pointerType: 'mouse',
+            ctrlKey: false,
+            metaKey: false,
+            shiftKey: false,
+            altKey: false
+          },
+          {
+            type: 'presschange',
+            pressed: false
+          },
+          {
+            type: 'press',
+            target: el,
+            pointerType: 'mouse',
+            ctrlKey: false,
+            metaKey: false,
+            shiftKey: false,
+            altKey: false
+          }
+        ]);
+      });
+    });
+
+    test('should handle keyboard events', async function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      render(
+        <IframeExample
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent}
+          onPressUp={addEvent} />
+      );
+
+      await waitFor(() => {
+        expect(iframe.contentWindow.document.body.querySelector('div[data-testid="example"]')).toBeTruthy();
+      });
+
+      const el = iframe.contentWindow.document.body.querySelector('div[data-testid="example"]');
+      fireEvent.keyDown(el, {key: ' '});
+      fireEvent.keyUp(el, {key: ' '});
+
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        },
+        {
+          type: 'press',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        }
+      ]);
+    });
+
+    describe('Mouse events', () => {
+      installMouseEvent();
+
+      test('should fire press events based on mouse events', async () => {
+        let events = [];
+        let addEvent = (e) => events.push(e);
+        render(
+          <IframeExample
+            onPressStart={addEvent}
+            onPressEnd={addEvent}
+            onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+            onPress={addEvent}
+            onPressUp={addEvent} />
+        );
+
+        await waitFor(() => {
+          expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="example"]')).toBeTruthy();
+        });
+
+        const el = document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="example"]');
+        fireEvent.mouseDown(el, {detail: 1});
+        fireEvent.mouseUp(el, {detail: 1});
+        fireEvent.click(el, {detail: 1});
+
+        expect(events).toEqual([
+          {
+            type: 'pressstart',
+            target: el,
+            pointerType: 'mouse',
+            ctrlKey: false,
+            metaKey: false,
+            shiftKey: false,
+            altKey: false
+          },
+          {
+            type: 'presschange',
+            pressed: true
+          },
+          {
+            type: 'pressup',
+            target: el,
+            pointerType: 'mouse',
+            ctrlKey: false,
+            metaKey: false,
+            shiftKey: false,
+            altKey: false
+          },
+          {
+            type: 'pressend',
+            target: el,
+            pointerType: 'mouse',
+            ctrlKey: false,
+            metaKey: false,
+            shiftKey: false,
+            altKey: false
+          },
+          {
+            type: 'presschange',
+            pressed: false
+          },
+          {
+            type: 'press',
+            target: el,
+            pointerType: 'mouse',
+            ctrlKey: false,
+            metaKey: false,
+            shiftKey: false,
+            altKey: false
+          }
+        ]);
+      });
+
+    });
+
+    test('should fire press events events for virtual click events from screen readers', async () => {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      render(
+        <IframeExample
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPress={addEvent}
+          onPressUp={addEvent} />
+      );
+
+      await waitFor(() => {
+        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="example"]')).toBeTruthy();
+      });
+
+      const el = document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="example"]');
+
+      fireEvent.click(el);
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'press',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        }
+      ]);
     });
   });
 });
