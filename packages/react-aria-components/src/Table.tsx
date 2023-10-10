@@ -720,7 +720,7 @@ function TableBodyRowGroup<T>(props: {collection: TableCollection<T>, isDroppabl
   let renderValues = {
     isDropTarget: isRootDropTarget,
     isEmpty: collection.size === 0
-  }
+  };
   let renderProps = useRenderProps({
     ...bodyProps,
     id: undefined,
