@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Tag, TagGroup, TagList, Text, TextField, TimeField, ToggleButton, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Checkbox, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Tag, TagGroup, TagList, Text, TextField, TimeField, ToggleButton, Toolbar, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
@@ -1244,3 +1244,41 @@ export const LinkExample = () => {
     </Link>
   );
 };
+
+export const ToolbarExample = (props) => {
+  return (
+    <div>
+      <label htmlFor="before">Input Before Toolbar</label>
+      <input id="before" type="text" />
+      <Toolbar {...props}>
+        <div role="group" aria-label="Text style">
+          <ToggleButton className={classNames(styles, 'toggleButtonExample')}><strong>B</strong></ToggleButton>
+          <ToggleButton className={classNames(styles, 'toggleButtonExample')}><div style={{textDecoration: 'underline'}}>U</div></ToggleButton>
+          <ToggleButton className={classNames(styles, 'toggleButtonExample')}><i>I</i></ToggleButton>
+        </div>
+        <Checkbox>
+          <div className="checkbox">
+            <svg viewBox="0 0 18 18" aria-hidden="true">
+              <polyline points="1 9 7 14 15 4" />
+            </svg>
+          </div>
+          Night Mode
+        </Checkbox>
+        <Link href="https://google.com">Help</Link>
+      </Toolbar>
+      <label htmlFor="after">Input After Toolbar</label>
+      <input id="after" type="text" />
+    </div>
+  );
+};
+
+ToolbarExample.args = {
+  orientation: 'horizontal'
+};
+ToolbarExample.argTypes = {
+  orientation: {
+    control: 'radio',
+    options: ['horizontal', 'vertical']
+  }
+};
+
