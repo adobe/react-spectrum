@@ -415,7 +415,7 @@ Use the `renderEmptyState` prop to customize what a `TagList` will display if th
 <TagGroup>
   <Label>Categories</Label>
   {/*- begin highlight -*/}
-  <TagList renderEmptyState={() => 'No categories.'}>
+  <TagList renderEmptyState={({state, isFocused, isFocusVisible}) => 'No categories.'}>
   {/*- end highlight -*/}
     {[]}
   </TagList>
