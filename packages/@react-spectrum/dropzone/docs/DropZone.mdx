@@ -357,52 +357,67 @@ function Example() {
 
 A DropZone displays visual feedback to the user when a drag hovers over the drop target by passing the `getDropOperation` function. If a drop target only supports data of specific types (e.g. images, videos, text, etc.), then it should implement the `getDropOperation` prop and return `'cancel'` for types that aren't supported. This will prevent visual feedback indicating that the drop target accepts the dragged data when this is not true. [Read more about getDropOperation.](../react-aria/useDrop.html#getdropoperation)
 
+In the below example, the drop zone only supports dropping JPEG images. If a JPEG is dragged over the drop zone, it will be highlighted and the operating system will display a copy cursor. If another type is dragged over the drop zone, then there is no visual feedback, indicating that a drop is not accepted. 
+
 ```tsx example
 import {FileTrigger} from 'react-aria-components';
 import {Text} from 'react-aria-components';
-import {FileDropItem} from 'react-aria';
 
 function Example() {
   let [filledSrc, setFilledSrc] = React.useState(null);
 
   return (
-    <DropZone
-      maxWidth="size-3000"
-      isFilled={!!filledSrc}
-      getDropOperation={(types) => types.has('image/png') ? 'copy' : 'cancel'}
-      onDrop={async (e) => {
-        let item = e.items.find((item: FileDropItem) => item.kind === 'file' && item.type === 'image/png') as FileDropItem;
-        if (item) {
-          setFilledSrc({
-            type: item.type,
-            name: item.name
-          });
-        }
-      }}>
-      <IllustratedMessage>
-        <Upload />
-        <Heading>
-          <Text slot="label">
-            {filledSrc ? `${filledSrc.type} ${filledSrc.name}` : 'Drag and drop here'}
-          </Text>
-        </Heading>
-        <Content>
-          <FileTrigger
-            acceptedFileTypes={['image/png']}
-            onSelect={(e) => {
-              let file = (Array.from(e)).find((file) => file.type === "image/png")
-              if (file) {
+    <>
+      <Draggable />
+      <DraggableImage />
+      <DropZone
+        maxWidth="size-3000"
+        isFilled={!!filledSrc}
+        getDropOperation={(types) => types.has('image/jpeg') ? 'copy' : 'cancel'}
+        onDrop={async (e) => {
+          e.items.find(async (item) => {
+            if (item.kind === 'file') {
+              if (item.type === 'image/jpeg') {
+                let file = await item.getFile();
                 setFilledSrc({
                   type: file.type,
                   name: file.name
                 })
               }
-            }}>
-            <Button variant="primary">Browse</Button>
-          </FileTrigger>
-        </Content>
-      </IllustratedMessage>
-    </DropZone>
+            } else if (item.kind === 'text') {
+              let file = await item.getText('image/jpeg');
+              setFilledSrc({
+                type: 'image/jpeg',
+                name: file
+              })
+            }
+          });
+        }}>
+        <IllustratedMessage>
+          <Upload />
+          <Heading>
+            <Text slot="label">
+              {filledSrc ? `${filledSrc.type} ${filledSrc.name}` : 'Drag and drop here'}
+            </Text>
+          </Heading>
+          <Content>
+            <FileTrigger
+              acceptedFileTypes={['image/jpeg']}
+              onSelect={(e) => {
+                let file = (Array.from(e)).find((file) => file.type === "image/jpeg")
+                if (file) {
+                  setFilledSrc({
+                    type: file.type,
+                    name: file.name
+                  })
+                }
+              }}>
+              <Button variant="primary">Browse</Button>
+            </FileTrigger>
+          </Content>
+        </IllustratedMessage>
+      </DropZone>
+    </>
   );
 }
 ```
