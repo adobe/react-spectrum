@@ -6,7 +6,7 @@ export function GenInputField() {
   let [isTextFieldFocused, setIsTextFieldFocused] = useState(false);
   return (
     <Group
-      className={`flex m-auto align-middle bg-white border rounded-full shadow-md h-800 w-[80%] ${
+      className={`flex m-auto align-middle bg-white dark:bg-black border rounded-full shadow-md h-800 w-[80%] ${
         isTextFieldFocused ? "ring" : ""
       }`}
     >
@@ -18,7 +18,7 @@ export function GenInputField() {
         aria-label="Prompt"
         className="flex-grow h-full p-150"
       >
-        <Input className="w-full h-full text-xl font-semibold text-black p-50 focus:outline-none" />
+        <Input className="w-full h-full text-xl font-semibold text-black dark:bg-black dark:text-white p-50 focus:outline-none" />
       </TextField>
       <Button
         isDisabled={value === ""}
