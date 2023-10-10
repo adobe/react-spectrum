@@ -709,7 +709,7 @@ Use the `renderEmptyState` prop to customize what the `GridList` will display if
 <GridList
   aria-label="Search results"
   /*- begin highlight -*/
-  renderEmptyState={() => 'No results found.'}
+  renderEmptyState={({isDropTarget, state, isFocused, isFocusVisible}) => 'No results found.'}
   /*- end highlight -*/
 >
   {[]}
@@ -1698,7 +1698,7 @@ function DndGridList(props: DndGridListProps) {
       onSelectionChange={list.setSelectedKeys}
       items={list.items}
       dragAndDropHooks={dragAndDropHooks}
-      renderEmptyState={() => 'Drop items here'}>
+      renderEmptyState={({isDropTarget}) => isDropTarget ? 'Items will be added' : 'Drop items here'}>
       {item => <MyItem>{item.name}</MyItem>}
     </MyGridList>
   );

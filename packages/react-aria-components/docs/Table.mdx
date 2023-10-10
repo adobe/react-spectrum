@@ -685,7 +685,7 @@ interface Pokemon {
 
 interface PokemonTableProps extends TableProps {
   items?: Pokemon[],
-  renderEmptyState?: () => string
+  renderEmptyState?: (props: {isDropTarget: boolean}) => string
 }
 
 function PokemonTable(props: PokemonTableProps) {
@@ -1015,7 +1015,7 @@ Use the `renderEmptyState` prop to customize what the `TableBody` will display i
     <Column>Date Modified</Column>
   </TableHeader>
   {/*- begin highlight -*/}
-  <TableBody renderEmptyState={({isDropTarget, state}) => <span style={{color: isDropTarget ? 'red' : 'black'}}>No results found.</span>}>
+  <TableBody renderEmptyState={({isDropTarget, state}) => 'No results found.'}>
   {/*- end highlight -*/}
     {[]}
   </TableBody>
@@ -1740,7 +1740,7 @@ function Example() {
       <PokemonTable
         items={items}
         dragAndDropHooks={dragAndDropHooks}
-        renderEmptyState={() => 'Drop items here'} />
+        renderEmptyState={({isDropTarget}) => isDropTarget ? 'Items will be dropped' : 'Drop items here'} />
     </div>
   );
 }
