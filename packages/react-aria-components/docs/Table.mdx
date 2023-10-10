@@ -1015,7 +1015,7 @@ Use the `renderEmptyState` prop to customize what the `TableBody` will display i
     <Column>Date Modified</Column>
   </TableHeader>
   {/*- begin highlight -*/}
-  <TableBody renderEmptyState={({isDropTarget, state}) => 'No results found.'}>
+  <TableBody renderEmptyState={() => 'No results found.'}>
   {/*- end highlight -*/}
     {[]}
   </TableBody>
@@ -1740,7 +1740,7 @@ function Example() {
       <PokemonTable
         items={items}
         dragAndDropHooks={dragAndDropHooks}
-        renderEmptyState={({isDropTarget}) => isDropTarget ? 'Items will be dropped' : 'Drop items here'} />
+        renderEmptyState={({isDropTarget}) => isDropTarget ? 'This will not be uploaded' : 'Drop items here'} />
     </div>
   );
 }

@@ -39,12 +39,16 @@ export interface TagListRenderProps {
    * Whether the tag list is currently keyboard focused.
    * @selector [data-focus-visible]
    */
-  isFocusVisible: boolean
+  isFocusVisible: boolean,
+  /**
+   * State of the TagGroup.
+   */
+  state: ListState<unknown>
 }
 
 export interface TagListProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, StyleRenderProps<TagListRenderProps> {
   /** Provides content to display when there are no items in the tag list. */
-  renderEmptyState?: (props: {isFocused: boolean, isFocusVisible: boolean, state: ListState<unknown>}) => ReactNode
+  renderEmptyState?: (props: TagListRenderProps) => ReactNode
 }
 
 export const TagGroupContext = createContext<ContextValue<TagGroupProps, HTMLDivElement>>(null);
@@ -149,7 +153,8 @@ function TagListInner<T extends object>({props, forwardedRef}: TagListInnerProps
     values: {
       isEmpty: state.collection.size === 0,
       isFocused,
-      isFocusVisible
+      isFocusVisible,
+      state
     }
   });
 
@@ -162,6 +167,7 @@ function TagListInner<T extends object>({props, forwardedRef}: TagListInnerProps
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}>
       {state.collection.size === 0 && props.renderEmptyState ? props.renderEmptyState({
+        isEmpty: state.collection.size === 0,
         isFocused,
         isFocusVisible,
         state

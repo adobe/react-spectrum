@@ -59,7 +59,7 @@ export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children' | 
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the ListBox. */
   dragAndDropHooks?: DragAndDropHooks,
   /** Provides content to display when there are no items in the list. */
-  renderEmptyState?: (props: {isDropTarget: boolean, isFocused: boolean, isFocusVisible: boolean, state: ListState<unknown>}) => ReactNode,
+  renderEmptyState?: (props: ListBoxRenderProps) => ReactNode,
   /**
    * Whether the items are arranged in a stack or grid.
    * @default 'stack'
@@ -236,8 +236,10 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
         style={{display: 'contents'}}>
         {props.renderEmptyState({
           isDropTarget: isRootDropTarget,
+          isEmpty: state.collection.size === 0,
           isFocused,
           isFocusVisible,
+          layout: props.layout || 'stack',
           state
         })}
       </div>

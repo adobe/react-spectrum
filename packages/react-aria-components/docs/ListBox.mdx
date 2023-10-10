@@ -850,7 +850,7 @@ Use the `renderEmptyState` prop to customize what the `ListBox` will display if 
 <ListBox
   aria-label="Search results"
   /*- begin highlight -*/
-  renderEmptyState={({isDropTarget, state, isFocused, isFocusVisible}) => 'No results found'}
+  renderEmptyState={() => 'No results found'}
   /*- end highlight -*/
 >
   {[]}

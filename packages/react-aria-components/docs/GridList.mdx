@@ -709,7 +709,7 @@ Use the `renderEmptyState` prop to customize what the `GridList` will display if
 <GridList
   aria-label="Search results"
   /*- begin highlight -*/
-  renderEmptyState={({isDropTarget, state, isFocused, isFocusVisible}) => 'No results found.'}
+  renderEmptyState={() => 'No results found.'}
   /*- end highlight -*/
 >
   {[]}

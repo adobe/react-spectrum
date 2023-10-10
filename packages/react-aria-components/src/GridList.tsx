@@ -54,7 +54,7 @@ export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the GridList. */
   dragAndDropHooks?: DragAndDropHooks,
   /** Provides content to display when there are no items in the list. */
-  renderEmptyState?: (props: {isDropTarget: boolean, isFocused: boolean, isFocusVisible: boolean, state: ListState<unknown>}) => ReactNode
+  renderEmptyState?: (props: GridListRenderProps) => ReactNode
 }
 
 
@@ -178,6 +178,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
     // https://bugs.webkit.org/show_bug.cgi?id=239479
     let content = props.renderEmptyState({
       isDropTarget: isRootDropTarget,
+      isEmpty: state.collection.size === 0,
       isFocused,
       isFocusVisible,
       state
