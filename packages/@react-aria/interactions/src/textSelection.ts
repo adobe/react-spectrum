@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {isIOS, runAfterTransition} from '@react-aria/utils';
+import {getOwnerDocument, isIOS, runAfterTransition} from '@react-aria/utils';
 
 // Safari on iOS starts selecting text on long press. The only way to avoid this, it seems,
 // is to add user-select: none to the entire page. Adding it to the pressable element prevents
@@ -36,8 +36,9 @@ let modifiedElementMap = new WeakMap<Element, string>();
 export function disableTextSelection(target?: Element) {
   if (isIOS()) {
     if (state === 'default') {
-      savedUserSelect = document.documentElement.style.webkitUserSelect;
-      document.documentElement.style.webkitUserSelect = 'none';
+      const documentObject = getOwnerDocument(target);
+      savedUserSelect = documentObject.documentElement.style.webkitUserSelect;
+      documentObject.documentElement.style.webkitUserSelect = 'none';
     }
 
     state = 'disabled';
@@ -67,8 +68,9 @@ export function restoreTextSelection(target?: Element) {
       runAfterTransition(() => {
         // Avoid race conditions
         if (state === 'restoring') {
-          if (document.documentElement.style.webkitUserSelect === 'none') {
-            document.documentElement.style.webkitUserSelect = savedUserSelect || '';
+          const documentObject = getOwnerDocument(target);
+          if (documentObject.documentElement.style.webkitUserSelect === 'none') {
+            documentObject.documentElement.style.webkitUserSelect = savedUserSelect || '';
           }
 
           savedUserSelect = '';
