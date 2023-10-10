@@ -169,7 +169,27 @@ import {GridList, Item, Button} from 'react-aria-components';
         margin-left: auto;
       }
       .react-aria-Button {
+        background: transparent;
         border: none;
+        font-size: 1.2rem;
+        line-height: 1.2em;
+        outline: none;
+        padding: 0.286rem 0.429rem;
+        transition: background 200ms;
+        --hover-highlight: var(--spectrum-alias-highlight-hover);
+        --active-highlight: var(--spectrum-alias-highlight-active);
+
+        &[data-hovered] {
+          background: var(--hover-highlight);
+        }
+
+        &[data-pressed] {
+          background: var(--active-highlight);
+        }
+
+        &[data-focus-visible] {
+          box-shadow: 0 0 0 2px var(--focus-ring-color);
+        }
       }
     }
 
