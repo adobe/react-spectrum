@@ -213,18 +213,19 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
   }
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
+  let renderValues = {
+    isDropTarget: isRootDropTarget,
+    isEmpty: state.collection.size === 0,
+    isFocused,
+    isFocusVisible,
+    layout: props.layout || 'stack',
+    state
+  };
   let renderProps = useRenderProps({
     className: props.className,
     style: props.style,
     defaultClassName: 'react-aria-ListBox',
-    values: {
-      isDropTarget: isRootDropTarget,
-      isEmpty: state.collection.size === 0,
-      isFocused,
-      isFocusVisible,
-      layout: props.layout || 'stack',
-      state
-    }
+    values: renderValues
   });
 
   let emptyState: JSX.Element | null = null;
@@ -234,14 +235,7 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
         // eslint-disable-next-line
         role="option"
         style={{display: 'contents'}}>
-        {props.renderEmptyState({
-          isDropTarget: isRootDropTarget,
-          isEmpty: state.collection.size === 0,
-          isFocused,
-          isFocusVisible,
-          layout: props.layout || 'stack',
-          state
-        })}
+        {props.renderEmptyState(renderValues)}
       </div>
     );
   }

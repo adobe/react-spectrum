@@ -850,7 +850,7 @@ Use the `renderEmptyState` prop to customize what the `ListBox` will display if 
 <ListBox
   aria-label="Search results"
   /*- begin highlight -*/
-  renderEmptyState={() => 'No results found'}
+  renderEmptyState={() => 'No results found.'}
   /*- end highlight -*/
 >
   {[]}
@@ -1098,7 +1098,7 @@ function Example() {
   return (
     <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
       <DraggableListBox />
-      <ListBox aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={({isDropTarget}) => isDropTarget ? 'This will not be uploaded' : 'Drop items here'}>
+      <ListBox aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => 'Drop items here'}>
         {item => <Item>{item.name}</Item>}
       </ListBox>
     </div>

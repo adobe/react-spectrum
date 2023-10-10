@@ -1698,7 +1698,7 @@ function DndGridList(props: DndGridListProps) {
       onSelectionChange={list.setSelectedKeys}
       items={list.items}
       dragAndDropHooks={dragAndDropHooks}
-      renderEmptyState={({isDropTarget}) => isDropTarget ? 'Items will be added' : 'Drop items here'}>
+      renderEmptyState={() => 'Drop items here'}>
       {item => <MyItem>{item.name}</MyItem>}
     </MyGridList>
   );

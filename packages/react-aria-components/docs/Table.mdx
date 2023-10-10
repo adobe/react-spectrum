@@ -685,7 +685,7 @@ interface Pokemon {
 
 interface PokemonTableProps extends TableProps {
   items?: Pokemon[],
-  renderEmptyState?: (props: {isDropTarget: boolean}) => string
+  renderEmptyState?: () => string
 }
 
 function PokemonTable(props: PokemonTableProps) {
@@ -1740,7 +1740,7 @@ function Example() {
       <PokemonTable
         items={items}
         dragAndDropHooks={dragAndDropHooks}
-        renderEmptyState={({isDropTarget}) => isDropTarget ? 'This will not be uploaded' : 'Drop items here'} />
+        renderEmptyState={() => 'Drop items here'} />
     </div>
   );
 }

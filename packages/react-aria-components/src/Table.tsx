@@ -421,7 +421,7 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
             data-focused={isFocused || undefined}
             data-focus-visible={isFocusVisible || undefined}>
             <TableHeaderRowGroup collection={collection} />
-            <TableBodyRowGroup collection={collection} isDroppable={isListDroppable} isFocused={isFocused} isFocusVisible={isFocusVisible} />
+            <TableBodyRowGroup collection={collection} isDroppable={isListDroppable} />
           </table>
         </FocusScope>
         {dragPreview}
@@ -575,12 +575,17 @@ export interface TableBodyRenderProps {
    * Whether the table body has no rows and should display its empty state.
    * @selector [data-empty]
    */
-  isEmpty: boolean
+  isEmpty: boolean,
+  /**
+   * Whether the Table is currently the active drop target.
+   * @selector [data-drop-target]
+   */
+  isDropTarget: boolean
 }
 
 export interface TableBodyProps<T> extends CollectionProps<T>, StyleRenderProps<TableBodyRenderProps> {
   /** Provides content to display when there are no rows in the table. */
-  renderEmptyState?: (props: TableRenderProps) => ReactNode
+  renderEmptyState?: (props: TableBodyRenderProps) => ReactNode
 }
 
 function TableBody<T extends object>(props: TableBodyProps<T>, ref: ForwardedRef<HTMLTableSectionElement>): JSX.Element | null {
@@ -693,8 +698,8 @@ function TableHeaderRowGroup<T>({collection}: {collection: TableCollection<T>}) 
   );
 }
 
-function TableBodyRowGroup<T>(props: {collection: TableCollection<T>, isDroppable: boolean, isFocused: boolean, isFocusVisible: boolean}) {
-  let {collection, isDroppable, isFocused, isFocusVisible} = props;
+function TableBodyRowGroup<T>(props: {collection: TableCollection<T>, isDroppable: boolean}) {
+  let {collection, isDroppable} = props;
   let bodyRows = useCachedChildren({
     items: collection.rows,
     children: useCallback((item: Node<T>) => {
@@ -712,14 +717,16 @@ function TableBodyRowGroup<T>(props: {collection: TableCollection<T>, isDroppabl
   let isRootDropTarget = isDroppable && !!dropState && (dropState.isDropTarget({type: 'root'}) ?? false);
 
   let bodyProps: TableBodyProps<T> = collection.body.props;
+  let renderValues = {
+    isDropTarget: isRootDropTarget,
+    isEmpty: collection.size === 0
+  }
   let renderProps = useRenderProps({
     ...bodyProps,
     id: undefined,
     children: undefined,
     defaultClassName: 'react-aria-TableBody',
-    values: {
-      isEmpty: collection.size === 0
-    }
+    values: renderValues
   });
 
   let emptyState;
@@ -727,12 +734,7 @@ function TableBodyRowGroup<T>(props: {collection: TableCollection<T>, isDroppabl
     emptyState = (
       <tr role="row">
         <td role="gridcell" colSpan={collection.columnCount}>
-          {bodyProps.renderEmptyState({
-            isDropTarget: isRootDropTarget,
-            isFocused,
-            isFocusVisible,
-            state
-          })}
+          {bodyProps.renderEmptyState(renderValues)}
         </td>
       </tr>
     );
