@@ -13,7 +13,7 @@ Compared with the React Aria hooks, React Aria Components provides a default DOM
 
 ## Status
 
-React Aria Components is currently in **alpha**. This means APIs will likely change in future updates as we discover the best ways to use it, and there are some known bugs and limitations. That said, it is based on a solid and battle-tested foundation in React Aria, and we would love for you to try it out and give us feedback! This will directly help us shape the APIs and make it the best library it can be. Please report issues and feature requests [on GitHub](https://github.com/adobe/react-spectrum/issues).
+React Aria Components is currently in **beta**. This means most APIs are stable but some changes may still occur, and there are some known bugs. That said, it is based on a solid and battle-tested foundation in React Aria, and we would love for you to try it out and give us feedback! Please report issues and feature requests [on GitHub](https://github.com/adobe/react-spectrum/issues).
 
 ## Documentation
 

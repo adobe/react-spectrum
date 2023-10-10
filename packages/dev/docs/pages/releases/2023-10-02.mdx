@@ -1,0 +1,280 @@
+{/* Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+description: In this release, we've added support for native links across all collection components in React Spectrum and React Aria! Now you can add links to components such as Menu, Breadcrumbs, Tabs and more. To streamline integration with client-side routers, we've introduced the RouterProvider component, allowing you to seamlessly incorporate client-side routers. See the client-side routing guide to learn how it set it up in your app. Since its beta release, we have made a number of improvements and bug fixes to React Aria Components. We have also added a new advanced customization guide that describes how to use contexts and hooks to build your own custom patterns using React Aria Components. React Spectrum has new additions, including DropZone and isPending prop to Button.
+
+date: 2023-10-02
+---
+
+# October 02, 2023 Release
+
+In this release, we've added support for native links across all collection components in React Spectrum and React Aria! Now you can add links to components such as `Menu`, `Breadcrumbs`, `Tabs` and more. To streamline integration with client-side routers, we've introduced the `RouterProvider` component, allowing you to seamlessly incorporate client-side routers. See the [client-side routing guide](../react-aria/routing.html) to learn how it set it up in your app.
+
+Since its beta release, we have made a number of improvements and bug fixes to [React Aria Components](../react-aria/react-aria-components.html). We have also added a new [advanced customization guide](../react-aria/advanced.html) that describes how to use contexts and hooks to build your own custom patterns using React Aria Components.
+
+For React Spectrum we have some new additions, including [DropZone](../react-spectrum/DropZone.html), static color support for [ProgressCircle](../react-spectrum/ProgressCircle.html#static-color) and [ProgressBar](../react-spectrum/ProgressBar.html#static-color), and support for [isPending](../react-spectrum/Button.html#pending) in `Button`.
+
+As always, huge thanks to everyone in our community for their feedback and contributions to make this release possible!
+
+### FileTrigger API update
+
+This beta release of FileTrigger includes an API change. If you were using a previous version, you will need to update your code. See below for details.
+- The `onChange` prop has been replaced with `onSelect`.
+
+### Spectrum class name changes
+
+This release includes an important update to our build infrastructure that results in changes to the format of the CSS class names used by React Spectrum. If your app or tests are relying on CSS selectors such as `[class^="spectrum-Button"]`, you'll need to make updates. The simplest short-term solution is to change from `^=` (starts with) to `*=` (contains), but as a reminder, Spectrum class names are considered implementation details that may change at any time so you should not rely on them. Instead, we recommend using attributes like `role` or `data-testid` to query for elements in tests, and `ref` to access elements in components. See the [Testing](../react-spectrum/testing.html) guide to learn more.
+
+## Enhancements
+
+- Add `staticColor` prop to `ProgressCircle` and `ProgressBar` - [@iamwillpowell](https://github.com/iamwillpowell) - [PR](https://github.com/adobe/react-spectrum/pull/5108)
+- Add support for 'none' in `BorderSizeValue` to hide border - [@pr7prashant](https://github.com/pr7prashant) - [PR](https://github.com/adobe/react-spectrum/pull/5012)
+- Support links in collection components - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/4993)
+- Cover all plural forms in `NumberParser` - [@jbovenschen](https://github.com/jbovenschen) - [PR](https://github.com/adobe/react-spectrum/pull/5134)
+- Add TypeScript StrictMode to React Stately utils - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3926)
+
+## Fixes
+
+- Update `Toast` placement to bottom center - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5107)
+- Update Unavailable `MenuItem` types - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5153)
+- Fix `Popover` placement for start/end - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/5137)
+- Fix `NumberField` form submission - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/4300)
+- Update Express Breadcrumb icon - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5059)
+- Resolve i18n circular dependency - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5087)
+- Improve WHCM support in `ProgressBar` - [@iamwillpowell](https://github.com/iamwillpowell) - [PR](https://github.com/adobe/react-spectrum/pull/5125)
+- Fix SSR when first Table column is not a row header - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5160)
+- Fix Unavailable `MenuItem` props - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5153)
+- Fix `useViewportSize` in SSR environments - [@yarastqt](https://github.com/yarastqt) - [PR](https://github.com/adobe/react-spectrum/pull/5163)
+- Fix `aria-expanded` in `useDatePicker` - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/5166)
+
+## Docs
+
+- Update keyboard pattern links in docs - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5055)
+- Add docs for links in collections and routing guide - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5078)
+- Move React Aria dnd introduction to concepts section - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5088)
+
+## Under construction
+
+Fixes to pre-released components are listed below. Please feel free to try them out, and report any issues you encounter.
+
+**React Aria Components** (Beta)
+- Allow FileTrigger to accept the same file twice - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/5045)
+- Update Link API - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5074)
+- Use `PressResponder` in RAC overlays and document MenuTrigger long press - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5065)
+- Filter data attributes - [@iamwillpowell](https://github.com/iamwillpowell) - [PR](https://github.com/adobe/react-spectrum/pull/5008)
+- Fix typeahead in ListBox - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5146)
+- Advanced customization guide - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5066)
+- Minor doc improvements - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5101)
+- Fix specificity of Tailwind generated selectors - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5147)
+- Refactor internal contexts to expose state publicly - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5052)
+- Update Breadcrumb Link section in docs - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/5083)
+- Add missing DatePicker states - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5158)
+- Add docs for the Group component - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5060)
+- Add translations - [@rgeraghty](https://github.com/rgeraghty) - [PR](https://github.com/adobe/react-spectrum/pull/5124)
+
+**React Spectrum DropZone** (Alpha)
+- React Spectrum `DropZone` docs - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/5076)
+
+**React Spectrum Pending Button** (Beta)
+- Add isPending to Button docs - [@iamwillpowell](https://github.com/iamwillpowell) - [PR](https://github.com/adobe/react-spectrum/pull/5150)
+
+
+## Released packages
+
+```
+ - @adobe/react-spectrum@3.31.0
+ - @internationalized/number@3.3.0
+ - @react-aria/accordion@3.0.0-alpha.22
+ - @react-aria/actiongroup@3.6.3
+ - @react-aria/aria-modal-polyfill@3.7.6
+ - @react-aria/autocomplete@3.0.0-alpha.21
+ - @react-aria/breadcrumbs@3.5.6
+ - @react-aria/button@3.8.3
+ - @react-aria/calendar@3.5.1
+ - @react-aria/checkbox@3.11.1
+ - @react-aria/color@3.0.0-beta.25
+ - @react-aria/combobox@3.7.0
+ - @react-aria/datepicker@3.8.0
+ - @react-aria/dialog@3.5.6
+ - @react-aria/dnd@3.4.2
+ - @react-aria/focus@3.14.2
+ - @react-aria/grid@3.8.3
+ - @react-aria/gridlist@3.7.0
+ - @react-aria/i18n@3.8.3
+ - @react-aria/interactions@3.19.0
+ - @react-aria/label@3.7.1
+ - @react-aria/landmark@3.0.0-beta.5
+ - @react-aria/link@3.6.0
+ - @react-aria/listbox@3.11.0
+ - @react-aria/menu@3.11.0
+ - @react-aria/meter@3.4.6
+ - @react-aria/numberfield@3.9.0
+ - @react-aria/overlays@3.18.0
+ - @react-aria/progress@3.4.6
+ - @react-aria/radio@3.8.1
+ - @react-aria/searchfield@3.5.6
+ - @react-aria/select@3.13.0
+ - @react-aria/selection@3.17.0
+ - @react-aria/separator@3.3.6
+ - @react-aria/slider@3.7.1
+ - @react-aria/spinbutton@3.5.3
+ - @react-aria/switch@3.5.5
+ - @react-aria/table@3.13.0
+ - @react-aria/tabs@3.8.0
+ - @react-aria/tag@3.2.0
+ - @react-aria/textfield@3.12.1
+ - @react-aria/toast@3.0.0-beta.5
+ - @react-aria/toggle@3.8.1
+ - @react-aria/tooltip@3.6.3
+ - @react-aria/utils@3.21.0
+ - @react-aria/virtualizer@3.9.3
+ - @react-aria/visually-hidden@3.8.5
+ - @react-spectrum/accordion@3.0.0-alpha.24
+ - @react-spectrum/actionbar@3.3.0
+ - @react-spectrum/actiongroup@3.9.3
+ - @react-spectrum/autocomplete@3.0.0-alpha.22
+ - @react-spectrum/avatar@3.0.5
+ - @react-spectrum/badge@3.1.6
+ - @react-spectrum/breadcrumbs@3.9.0
+ - @react-spectrum/button@3.14.0
+ - @react-spectrum/buttongroup@3.6.6
+ - @react-spectrum/calendar@3.4.1
+ - @react-spectrum/card@3.0.0-alpha.23
+ - @react-spectrum/checkbox@3.8.1
+ - @react-spectrum/color@3.0.0-beta.26
+ - @react-spectrum/combobox@3.10.2
+ - @react-spectrum/contextualhelp@3.6.3
+ - @react-spectrum/datepicker@3.8.0
+ - @react-spectrum/dialog@3.8.3
+ - @react-spectrum/divider@3.5.6
+ - @react-spectrum/dnd@3.3.3
+ - @react-spectrum/form@3.6.6
+ - @react-spectrum/icon@3.7.6
+ - @react-spectrum/illustratedmessage@3.4.6
+ - @react-spectrum/image@3.4.6
+ - @react-spectrum/inlinealert@3.1.1
+ - @react-spectrum/label@3.15.0
+ - @react-spectrum/labeledvalue@3.1.6
+ - @react-spectrum/layout@3.5.6
+ - @react-spectrum/link@3.6.0
+ - @react-spectrum/list@3.7.0
+ - @react-spectrum/listbox@3.12.0
+ - @react-spectrum/menu@3.15.0
+ - @react-spectrum/meter@3.4.6
+ - @react-spectrum/numberfield@3.7.2
+ - @react-spectrum/overlays@5.5.0
+ - @react-spectrum/picker@3.12.1
+ - @react-spectrum/progress@3.7.0
+ - @react-spectrum/provider@3.9.0
+ - @react-spectrum/radio@3.6.1
+ - @react-spectrum/searchfield@3.7.6
+ - @react-spectrum/slider@3.6.2
+ - @react-spectrum/statuslight@3.5.6
+ - @react-spectrum/switch@3.4.6
+ - @react-spectrum/table@3.12.0
+ - @react-spectrum/tabs@3.8.0
+ - @react-spectrum/tag@3.1.3
+ - @react-spectrum/text@3.4.6
+ - @react-spectrum/textfield@3.10.6
+ - @react-spectrum/theme-dark@3.5.6
+ - @react-spectrum/theme-default@3.5.6
+ - @react-spectrum/theme-express@3.0.0-alpha.8
+ - @react-spectrum/theme-light@3.4.6
+ - @react-spectrum/toast@3.0.0-beta.5
+ - @react-spectrum/tooltip@3.6.0
+ - @react-spectrum/utils@3.11.0
+ - @react-spectrum/view@3.6.3
+ - @react-spectrum/well@3.4.6
+ - @react-stately/calendar@3.4.1
+ - @react-stately/checkbox@3.5.1
+ - @react-stately/collections@3.10.2
+ - @react-stately/color@3.4.3
+ - @react-stately/combobox@3.7.1
+ - @react-stately/data@3.10.3
+ - @react-stately/datepicker@3.8.0
+ - @react-stately/dnd@3.2.5
+ - @react-stately/grid@3.8.2
+ - @react-stately/layout@3.13.2
+ - @react-stately/list@3.10.0
+ - @react-stately/menu@3.5.6
+ - @react-stately/numberfield@3.6.2
+ - @react-stately/overlays@3.6.3
+ - @react-stately/radio@3.9.1
+ - @react-stately/searchfield@3.4.6
+ - @react-stately/select@3.5.5
+ - @react-stately/selection@3.14.0
+ - @react-stately/slider@3.4.3
+ - @react-stately/table@3.11.2
+ - @react-stately/tabs@3.6.1
+ - @react-stately/toggle@3.6.3
+ - @react-stately/tooltip@3.4.5
+ - @react-stately/tree@3.7.3
+ - @react-stately/utils@3.8.0
+ - @react-stately/virtualizer@3.6.3
+ - @react-types/accordion@3.0.0-alpha.17
+ - @react-types/actionbar@3.1.3
+ - @react-types/actiongroup@3.4.5
+ - @react-types/autocomplete@3.0.0-alpha.17
+ - @react-types/avatar@3.0.3
+ - @react-types/badge@3.1.5
+ - @react-types/breadcrumbs@3.7.0
+ - @react-types/button@3.9.0
+ - @react-types/buttongroup@3.3.5
+ - @react-types/calendar@3.4.1
+ - @react-types/card@3.0.0-alpha.19
+ - @react-types/checkbox@3.5.2
+ - @react-types/color@3.0.0-beta.20
+ - @react-types/combobox@3.8.1
+ - @react-types/contextualhelp@3.2.6
+ - @react-types/datepicker@3.6.1
+ - @react-types/dialog@3.5.6
+ - @react-types/divider@3.3.5
+ - @react-types/form@3.5.4
+ - @react-types/grid@3.2.2
+ - @react-types/illustratedmessage@3.3.5
+ - @react-types/image@3.3.5
+ - @react-types/label@3.8.1
+ - @react-types/layout@3.3.11
+ - @react-types/link@3.5.0
+ - @react-types/list@3.2.7
+ - @react-types/listbox@3.4.5
+ - @react-types/menu@3.9.5
+ - @react-types/meter@3.3.5
+ - @react-types/numberfield@3.6.1
+ - @react-types/overlays@3.8.3
+ - @react-types/progress@3.5.0
+ - @react-types/provider@3.7.0
+ - @react-types/radio@3.5.2
+ - @react-types/searchfield@3.5.1
+ - @react-types/select@3.8.4
+ - @react-types/shared@3.21.0
+ - @react-types/slider@3.6.2
+ - @react-types/statuslight@3.3.5
+ - @react-types/switch@3.4.2
+ - @react-types/table@3.9.0
+ - @react-types/tabs@3.3.3
+ - @react-types/text@3.3.5
+ - @react-types/textfield@3.8.1
+ - @react-types/tooltip@3.4.5
+ - @react-types/view@3.4.5
+ - @react-types/well@3.3.5
+ - @spectrum-icons/color@3.5.6
+ - @spectrum-icons/express@3.0.0-alpha.10
+ - @spectrum-icons/illustrations@3.6.6
+ - @spectrum-icons/ui@3.6.0
+ - @spectrum-icons/workflow@4.2.5
+ - react-aria@3.29.0
+ - react-aria-components@1.0.0-beta.1
+ - react-stately@3.27.0
+ - tailwindcss-react-aria-components@1.0.0-beta.1
+```
