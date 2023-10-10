@@ -108,7 +108,7 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
       }
     },
     onMoveEnd() {
-      isOnTrack.current = undefined;
+      isOnTrack.current = false;
       state.setDragging(false);
       focusInput();
     }
@@ -116,7 +116,7 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
   let {moveProps: movePropsThumb} = useMove(moveHandler);
 
   let currentPointer = useRef<number | null | undefined>(undefined);
-  let isOnTrack = useRef<boolean | undefined>(false);
+  let isOnTrack = useRef<boolean>(false);
   let {moveProps: movePropsContainer} = useMove({
     onMoveStart() {
       if (isOnTrack.current) {

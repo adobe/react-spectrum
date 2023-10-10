@@ -171,7 +171,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
       }
     },
     onMoveEnd() {
-      isOnColorArea.current = undefined;
+      isOnColorArea.current = false;
       state.setDragging(false);
       let input = focusedInput === 'x' ? inputXRef : inputYRef;
       focusInput(input);
@@ -188,7 +188,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
   });
 
   let currentPointer = useRef<number | null | undefined>(undefined);
-  let isOnColorArea = useRef<boolean | undefined>(false);
+  let isOnColorArea = useRef<boolean>(false);
   let {moveProps: movePropsContainer} = useMove({
     onMoveStart() {
       if (isOnColorArea.current) {

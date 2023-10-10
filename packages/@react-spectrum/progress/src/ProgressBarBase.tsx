@@ -84,9 +84,9 @@ function ProgressBarBase(props: ProgressBarBaseProps, ref: DOMRef<HTMLDivElement
             {label}
         </span>
       }
-      {showValueLabel &&
+      {showValueLabel && barProps && 
         <div className={classNames(styles, 'spectrum-BarLoader-percentage')}>
-          {barProps?.['aria-valuetext']}
+          {barProps['aria-valuetext']}
         </div>
       }
       <div className={classNames(styles, 'spectrum-BarLoader-track')}>
