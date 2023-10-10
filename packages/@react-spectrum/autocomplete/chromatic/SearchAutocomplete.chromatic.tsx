@@ -64,7 +64,8 @@ const meta: Meta<SpectrumSearchAutocompleteProps<object>> = {
       locales: ['en-US'],
       scales: ['medium', 'large']
     }
-  }
+  },
+  excludeStories: ['Template']
 };
 
 export default meta;

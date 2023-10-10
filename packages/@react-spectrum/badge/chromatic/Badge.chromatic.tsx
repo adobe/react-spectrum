@@ -25,7 +25,8 @@ export type BadgeStory = ComponentStoryObj<typeof Badge>;
 
 export default {
   title: 'Badge',
-  component: Badge
+  component: Badge,
+  excludeStories: ['renderVariants']
 } as ComponentMeta<typeof Badge>;
 
 export const renderVariants = (args) => (

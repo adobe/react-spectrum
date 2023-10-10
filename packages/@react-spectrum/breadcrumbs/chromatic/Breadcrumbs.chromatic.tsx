@@ -17,7 +17,8 @@ import {SpectrumBreadcrumbsProps} from '@react-types/breadcrumbs';
 
 const meta: Meta<SpectrumBreadcrumbsProps<object>> = {
   title: 'Breadcrumbs',
-  component: Breadcrumbs
+  component: Breadcrumbs,
+  excludeStories: ['Template']
 };
 
 export default meta;

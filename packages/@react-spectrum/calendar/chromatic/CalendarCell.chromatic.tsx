@@ -18,7 +18,8 @@ import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {useProvider} from '@react-spectrum/provider';
 
 export default {
-  title: 'CalendarCall'
+  title: 'CalendarCall',
+  excludeStories: ['AllStates']
 };
 
 let states = [
