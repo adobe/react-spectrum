@@ -35,8 +35,9 @@ let modifiedElementMap = new WeakMap<Element, string>();
 
 export function disableTextSelection(target?: Element) {
   if (isIOS()) {
-    if (state === 'default' && target) {
-      const documentObject = getOwnerDocument(target);
+    if (state === 'default') {
+      // eslint-disable-next-line no-restricted-globals
+      const documentObject = target ? getOwnerDocument(target) : document;
       savedUserSelect = documentObject.documentElement.style.webkitUserSelect;
       documentObject.documentElement.style.webkitUserSelect = 'none';
     }
@@ -67,8 +68,9 @@ export function restoreTextSelection(target?: Element) {
       // for the whole page in the middle of the animation and cause jank.
       runAfterTransition(() => {
         // Avoid race conditions
-        if (state === 'restoring' && target) {
-          const documentObject = getOwnerDocument(target);
+        if (state === 'restoring') {
+          // eslint-disable-next-line no-restricted-globals
+          const documentObject = target ? getOwnerDocument(target) : document;
           if (documentObject.documentElement.style.webkitUserSelect === 'none') {
             documentObject.documentElement.style.webkitUserSelect = savedUserSelect || '';
           }
