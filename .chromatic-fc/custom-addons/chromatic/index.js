@@ -15,7 +15,6 @@ export const withChromaticProvider = makeDecorator({
     } else {
       selectedLocales = options.locales ? locales.map(l => l.value).slice(1) : ['en-US'];
     }
-    // TODO: Decide if more schemes are needed to cover Forced Color issues that could be theme dependent.
     let colorSchemes = options.express ? [] : (options.colorSchemes || ['light']);
     let scalesToRender = options.scales || ['medium'];
     let height;
