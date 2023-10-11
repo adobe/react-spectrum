@@ -6,6 +6,5 @@ export interface LabeledValueProps extends LabeledValueBaseProps {
   /** The value to display. */
   value: string | string[] | number | RangeValue<number> | DateTime | RangeValue<DateTime>,
   /** Formatting options for the value. The available options depend on the type passed to the `value` prop. */
-  // @ts-ignore
   formatOptions?: Intl.NumberFormatOptions | Intl.DateTimeFormatOptions | Intl.ListFormatOptions
 }

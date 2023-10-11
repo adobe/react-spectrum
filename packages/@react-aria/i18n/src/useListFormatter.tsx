@@ -18,11 +18,7 @@ import {useMemo} from 'react';
  * and handles caching of the list formatter for performance.
  * @param options - Formatting options.
  */
-
-// Typescript version 4.7 supports Intl.ListFormat - TODO upgrade
-// @ts-ignore
 export function useListFormatter(options: Intl.ListFormatOptions = {}): Intl.ListFormat {
   let {locale} = useLocale();
-  // @ts-ignore
   return useMemo(() => new Intl.ListFormat(locale, options), [locale, options]);
 }

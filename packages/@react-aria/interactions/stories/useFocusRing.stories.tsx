@@ -12,6 +12,7 @@
 
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
 import React, {useState} from 'react';
+import {ReactAria} from '@react-types/shared';
 import {SearchField} from '@react-spectrum/searchfield';
 
 let manyColumns = [];
