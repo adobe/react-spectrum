@@ -62,7 +62,7 @@ export function StarRatingGroup({
     </RadioGroup>
   );
 }
-// TODO: Unset hover state
+
 export function StarRating({
   rating,
   selected,
