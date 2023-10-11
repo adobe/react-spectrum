@@ -27,11 +27,11 @@ export function PlanSwitcher() {
     >
       <Label className="text-xl font-semibold mb-200">Plan Switcher</Label>
       <div className="relative m-auto flex justify-evenly w-[400px]">
-        <span className="absolute py-1 text-xs text-white bg-gray-500 rounded left-100 px-75 -top-75">
-          Save 33%
-        </span>
-        <Option side="start" value="annual">
+        <Option aria-label="Own label" side="start" value="annual">
           Annual
+          <span className="absolute py-1 text-xs text-white bg-gray-500 rounded left-100 px-75 -top-75">
+            Save 33%
+          </span>
         </Option>
         <Option side="end" value="monthly">
           Monthly
