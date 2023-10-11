@@ -1,17 +1,17 @@
 diff --git a/node_modules/@parcel/packager-js/lib/ScopeHoistingPackager.js b/node_modules/@parcel/packager-js/lib/ScopeHoistingPackager.js
-index f8ef750..c0e3086 100644
+index fa40bc7..0d06a5f 100644
 --- a/node_modules/@parcel/packager-js/lib/ScopeHoistingPackager.js
 +++ b/node_modules/@parcel/packager-js/lib/ScopeHoistingPackager.js
-@@ -364,7 +364,7 @@ class ScopeHoistingPackager {
+@@ -401,7 +401,7 @@ class ScopeHoistingPackager {
        code = code.replace('$parcel$filenameReplace', relPath);
      }
      let [depMap, replacements] = this.buildReplacements(asset, deps);
 -    let [prepend, prependLines, append] = this.buildAssetPrelude(asset, deps);
 +    let [prepend, prependLines, append] = this.buildAssetPrelude(asset, deps, replacements);
      if (prependLines > 0) {
-       sourceMap === null || sourceMap === void 0 ? void 0 : sourceMap.offsetLines(1, prependLines);
+       sourceMap === null || sourceMap === void 0 || sourceMap.offsetLines(1, prependLines);
        code = prepend + code;
-@@ -698,7 +698,7 @@ ${code}
+@@ -749,7 +749,7 @@ ${code}
      }
      return [res, lineCount];
    }
@@ -20,11 +20,11 @@ index f8ef750..c0e3086 100644
      let prepend = '';
      let prependLineCount = 0;
      let append = '';
-@@ -823,6 +823,7 @@ ${code}
+@@ -874,6 +874,7 @@ ${code}
          prepend += `\n${usedExports.map(exp => {
-           var _asset$symbols$get2, _asset$symbols$get2$m;
+           var _asset$symbols$get2;
            let resolved = this.getSymbolResolution(asset, asset, exp);
 +          resolved = replacements.get(resolved) || resolved;
            let get = this.buildFunctionExpression([], resolved);
-           let isEsmExport = !!((_asset$symbols$get2 = asset.symbols.get(exp)) !== null && _asset$symbols$get2 !== void 0 && (_asset$symbols$get2$m = _asset$symbols$get2.meta) !== null && _asset$symbols$get2$m !== void 0 && _asset$symbols$get2$m.isEsm);
+           let isEsmExport = !!((_asset$symbols$get2 = asset.symbols.get(exp)) !== null && _asset$symbols$get2 !== void 0 && (_asset$symbols$get2 = _asset$symbols$get2.meta) !== null && _asset$symbols$get2 !== void 0 && _asset$symbols$get2.isEsm);
            let set = !isEsmExport && asset.meta.hasCJSExports ? ', ' + this.buildFunctionExpression(['v'], `${resolved} = v`) : '';
