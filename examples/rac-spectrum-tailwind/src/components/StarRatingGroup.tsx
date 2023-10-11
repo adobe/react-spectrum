@@ -115,7 +115,7 @@ export function StarRating({
             )}
           </svg>
           {isHovered && isSelected && (
-            <span className={`flex w-full h-25 -mb-25 ${bgColor}`} />
+            <span aria-hidden="true" className={`flex w-full h-25 -mb-25 ${bgColor}`} />
           )}
         </>
       )}
