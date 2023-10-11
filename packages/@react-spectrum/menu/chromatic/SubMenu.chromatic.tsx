@@ -16,7 +16,7 @@ import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
 import AnnotatePen from '@spectrum-icons/workflow/AnnotatePen';
 import {ComponentStoryObj, Meta} from '@storybook/react';
-import {Item, Menu, MenuTrigger, Section, SubMenuTrigger} from '../';
+import {Item, Menu, MenuTrigger, Section, SubmenuTrigger} from '../';
 import {Keyboard, Text} from '@react-spectrum/text';
 import React from 'react';
 import {SpectrumMenuTriggerProps} from '@react-types/menu';
@@ -25,7 +25,7 @@ import TextItalics from '@spectrum-icons/workflow/TextItalic';
 import {userEvent, within} from '@storybook/testing-library';
 
 const meta: Meta<SpectrumMenuTriggerProps> = {
-  title: 'MenuTrigger/SubMenuTrigger',
+  title: 'MenuTrigger/SubmenuTrigger',
   parameters: {
     chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true, express: false},
     // chromatic needs a bit more time than disableAnimations allows
@@ -88,7 +88,7 @@ let iconMap = {
 };
 
 let dynamicRenderTrigger = (item: ItemNode, Icon) => (
-  <SubMenuTrigger>
+  <SubmenuTrigger>
     <Item key={item.name} textValue={item.name}>
       {item.icon && <Icon size="S" />}
       <Text>{item.name}</Text>
@@ -96,7 +96,7 @@ let dynamicRenderTrigger = (item: ItemNode, Icon) => (
     <Menu items={item.children}>
       {(item) => dynamicRenderFuncSections(item)}
     </Menu>
-  </SubMenuTrigger>
+  </SubmenuTrigger>
 );
 
 let dynamicRenderItem = (item, Icon) => (
@@ -131,10 +131,10 @@ let dynamicRenderFuncSections = (item: ItemNode) => {
   }
 };
 
-export type DefaultStory = ComponentStoryObj<typeof DefaultSubMenu>;
+export type DefaultStory = ComponentStoryObj<typeof DefaultSubmenu>;
 
 export const Default: DefaultStory = {
-  render: () => <DefaultSubMenu />,
+  render: () => <DefaultSubmenu />,
   name: 'sub menu expanded'
 };
 
@@ -149,7 +149,7 @@ Default.play = async ({canvasElement}) => {
 };
 
 export const Mobile: DefaultStory = {
-  render: () => <DefaultSubMenu />,
+  render: () => <DefaultSubmenu />,
   name: 'mobile sub menu',
   parameters: {
     chromatic: {viewports: [320]},
@@ -172,7 +172,7 @@ Mobile.play = async ({canvasElement}) => {
   await within(body).findByText('Baseline');
 };
 
-function DefaultSubMenu(props) {
+function DefaultSubmenu(props) {
   return (
     <MenuTrigger {...props} isOpen>
       <ActionButton>

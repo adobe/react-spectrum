@@ -22,9 +22,9 @@ import {Popover} from '@react-spectrum/overlays';
 import React, {Key, ReactElement, useRef} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import {SubMenuTriggerContext, useMenuStateContext} from './context';
-import {UNSTABLE_useSubMenuTrigger} from '@react-aria/menu';
-import {UNSTABLE_useSubMenuTriggerState} from '@react-stately/menu';
+import {SubmenuTriggerContext, useMenuStateContext} from './context';
+import {UNSTABLE_useSubmenuTrigger} from '@react-aria/menu';
+import {UNSTABLE_useSubmenuTriggerState} from '@react-stately/menu';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
 interface MenuDialogTriggerProps {
@@ -47,8 +47,8 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
   let popoverRef = useRef(null);
   let {popoverContainerRef, trayContainerRef, rootMenuTriggerState, menu: parentMenuRef, state} = useMenuStateContext();
   let triggerNode = state.collection.getItem(targetKey);
-  let subMenuTriggerState = UNSTABLE_useSubMenuTriggerState({triggerKey: targetKey}, {...rootMenuTriggerState, ...state});
-  let {subMenuTriggerProps, popoverProps, overlayProps} = UNSTABLE_useSubMenuTrigger({
+  let subMenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: targetKey}, {...rootMenuTriggerState, ...state});
+  let {subMenuTriggerProps, popoverProps, overlayProps} = UNSTABLE_useSubmenuTrigger({
     node: triggerNode,
     parentMenuRef,
     subMenuRef: popoverRef,
@@ -106,7 +106,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
               'spectrum-Menu-trayWrapper'
             )
         }>
-          <div className={classNames(styles, 'spectrum-SubMenu-headingWrapper')}>
+          <div className={classNames(styles, 'spectrum-Submenu-headingWrapper')}>
             <ActionButton
               aria-label={backButtonLabel}
               isQuiet
@@ -114,7 +114,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
               {/* We don't have a ArrowLeftSmall so make due with ArrowDownSmall and transforms */}
               {direction === 'rtl' ? <ArrowDownSmall UNSAFE_style={{rotate: '270deg'}} /> : <ArrowDownSmall UNSAFE_style={{rotate: '90deg'}} />}
             </ActionButton>
-            <h2 className={classNames(styles, 'spectrum-SubMenu-heading')}>{backButtonText}</h2>
+            <h2 className={classNames(styles, 'spectrum-Submenu-heading')}>{backButtonText}</h2>
           </div>
           {content}
         </div>
@@ -145,7 +145,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
 
   return (
     <>
-      <SubMenuTriggerContext.Provider value={{isUnavailable, triggerRef, ...subMenuTriggerProps}}>{trigger}</SubMenuTriggerContext.Provider>
+      <SubmenuTriggerContext.Provider value={{isUnavailable, triggerRef, ...subMenuTriggerProps}}>{trigger}</SubmenuTriggerContext.Provider>
       <SlotProvider slots={slots}>
         {overlay}
       </SlotProvider>

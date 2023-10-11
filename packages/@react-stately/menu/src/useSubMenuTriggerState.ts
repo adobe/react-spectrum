@@ -15,12 +15,12 @@ import {Key, useCallback, useMemo, useState} from 'react';
 import type {MenuTriggerState} from './useMenuTriggerState';
 import type {OverlayTriggerState} from '@react-stately/overlays';
 
-export interface SubMenuTriggerProps {
+export interface SubmenuTriggerProps {
   /** Key of the trigger item. */
   triggerKey: Key
 }
 
-export interface SubMenuTriggerState extends OverlayTriggerState {
+export interface SubmenuTriggerState extends OverlayTriggerState {
   /** Whether the submenu is currently open. */
   isOpen: boolean,
   /** Controls which item will be auto focused when the submenu opens. */
@@ -44,22 +44,22 @@ export interface SubMenuTriggerState extends OverlayTriggerState {
  * Manages state for a submenu trigger. Tracks whether the submenu is currently open, the level of the submenu, and
  * controls which item will receive focus when it opens.
  */
-export function UNSTABLE_useSubMenuTriggerState(props: SubMenuTriggerProps, state: MenuTriggerState): SubMenuTriggerState  {
+export function UNSTABLE_useSubmenuTriggerState(props: SubmenuTriggerProps, state: MenuTriggerState): SubmenuTriggerState  {
   let {triggerKey} = props;
-  let {UNSTABLE_expandedKeysStack, UNSTABLE_openSubMenu, UNSTABLE_closeSubMenu, close: closeAll} = state;
+  let {UNSTABLE_expandedKeysStack, UNSTABLE_openSubmenu, UNSTABLE_closeSubmenu, close: closeAll} = state;
   let [level] = useState(UNSTABLE_expandedKeysStack?.length + 1);
   let isOpen = useMemo(() => UNSTABLE_expandedKeysStack[level - 1] === triggerKey, [UNSTABLE_expandedKeysStack, triggerKey, level]);
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy>(null);
 
   let open = useCallback((focusStrategy: FocusStrategy = null) => {
     setFocusStrategy(focusStrategy);
-    UNSTABLE_openSubMenu(triggerKey, level);
-  }, [UNSTABLE_openSubMenu, level, triggerKey]);
+    UNSTABLE_openSubmenu(triggerKey, level);
+  }, [UNSTABLE_openSubmenu, level, triggerKey]);
 
   let close = useCallback(() => {
     setFocusStrategy(null);
-    UNSTABLE_closeSubMenu(triggerKey, level);
-  }, [UNSTABLE_closeSubMenu, level, triggerKey]);
+    UNSTABLE_closeSubmenu(triggerKey, level);
+  }, [UNSTABLE_closeSubmenu, level, triggerKey]);
 
   let toggle = useCallback((focusStrategy: FocusStrategy = null) => {
     setFocusStrategy(focusStrategy);

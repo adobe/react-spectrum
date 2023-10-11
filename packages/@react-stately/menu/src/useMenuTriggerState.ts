@@ -29,10 +29,10 @@ export interface MenuTriggerState extends OverlayTriggerState {
   close: () => void,
 
   /** Opens a specific submenu tied to a specific menu item at a specific level. */
-  UNSTABLE_openSubMenu: (triggerKey: Key, level: number) => void,
+  UNSTABLE_openSubmenu: (triggerKey: Key, level: number) => void,
 
   /** Closes a specific submenu tied to a specific menu item at a specific level. */
-  UNSTABLE_closeSubMenu: (triggerKey: Key, level: number) => void,
+  UNSTABLE_closeSubmenu: (triggerKey: Key, level: number) => void,
 
   /** An array of open submenu trigger keys within the menu tree.
    * The index of key within array matches the submenu level in the tree.
@@ -55,11 +55,11 @@ export function useMenuTriggerState(props: MenuTriggerProps): MenuTriggerState  
   };
 
   // TODO: if level > the length of the expandedKeyStack then this doesn't quite work.
-  let openSubMenu = (triggerKey, level) => {
+  let openSubmenu = (triggerKey, level) => {
     setExpandedKeysStack(oldStack => [...oldStack.slice(0, level), triggerKey]);
   };
 
-  let closeSubMenu = (triggerKey, level) => {
+  let closeSubmenu = (triggerKey, level) => {
     setExpandedKeysStack(oldStack => {
       let key = oldStack[level - 1];
       if (key === triggerKey) {
@@ -85,7 +85,7 @@ export function useMenuTriggerState(props: MenuTriggerProps): MenuTriggerState  
       closeAll();
     },
     UNSTABLE_expandedKeysStack: expandedKeysStack,
-    UNSTABLE_openSubMenu: openSubMenu,
-    UNSTABLE_closeSubMenu: closeSubMenu
+    UNSTABLE_openSubmenu: openSubmenu,
+    UNSTABLE_closeSubmenu: closeSubmenu
   };
 }

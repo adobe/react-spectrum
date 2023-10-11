@@ -15,13 +15,13 @@ import {composeStories} from '@storybook/testing-react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import type {Scale} from '@react-types/provider';
-import * as stories from '../stories/SubMenu.stories';
+import * as stories from '../stories/Submenu.stories';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
 let {
-  SubMenuStatic,
-  SubMenuDynamic,
+  SubmenuStatic,
+  SubmenuDynamic,
   Complex
 } = composeStories(stories);
 
@@ -36,7 +36,7 @@ let render = (children, scale = 'medium' as Scale, locale = 'en-US') => {
   return tree;
 };
 
-describe('SubMenu', function () {
+describe('Submenu', function () {
   let user;
   let onAction = jest.fn();
   let subMenuOnAction = jest.fn();
@@ -66,8 +66,8 @@ describe('SubMenu', function () {
 
   it.each`
     Name                 | Component
-    ${'static'}          | ${SubMenuStatic}
-    ${'dynamic'}         | ${SubMenuDynamic}
+    ${'static'}          | ${SubmenuStatic}
+    ${'dynamic'}         | ${SubmenuDynamic}
   `('renders $Name submenu', async function ({Component}) {
     let tree = render(<Component />);
     let triggerButton = tree.getByRole('button');
@@ -121,7 +121,7 @@ describe('SubMenu', function () {
   });
 
   it('submenu closes when hover leaves the submenu trigger', async function () {
-    let tree = render(<SubMenuStatic menuTriggerProps={{onOpenChange}} />);
+    let tree = render(<SubmenuStatic menuTriggerProps={{onOpenChange}} />);
     let triggerButton = tree.getByRole('button');
     await user.pointer({target: triggerButton, keys: '[MouseLeft]'});
     act(() => {jest.runAllTimers();});
@@ -186,7 +186,7 @@ describe('SubMenu', function () {
   });
 
   it('should not close the sub menu if user hovers onto the sub menu trigger from the sub menu', async function () {
-    let tree = render(<SubMenuStatic />);
+    let tree = render(<SubmenuStatic />);
     await user.tab();
     await user.keyboard('[ArrowDown]');
     act(() => {jest.runAllTimers();});
@@ -215,7 +215,7 @@ describe('SubMenu', function () {
   });
 
   it('should close the sub menu if the user hovers a neighboring menu item from the submenu trigger', async function () {
-    let tree = render(<SubMenuStatic />);
+    let tree = render(<SubmenuStatic />);
     await user.tab();
     await user.keyboard('[ArrowDown]');
     act(() => {jest.runAllTimers();});
@@ -262,7 +262,7 @@ describe('SubMenu', function () {
     ${'menu item'}
     ${'submenu trigger'}
   `('should close the sub menu if the user hovers a $Name from a earlier sub menu', async function ({Name}) {
-    let tree = render(<SubMenuStatic />);
+    let tree = render(<SubmenuStatic />);
     await user.tab();
     await user.keyboard('[ArrowDown]');
     act(() => {jest.runAllTimers();});
@@ -310,7 +310,7 @@ describe('SubMenu', function () {
   });
 
   it('should close everything if the user clicks outside of the submenus', async function () {
-    let tree = render(<SubMenuStatic />);
+    let tree = render(<SubmenuStatic />);
     let triggerButton = tree.getByRole('button');
     await user.pointer({target: triggerButton, keys: '[MouseLeft]'});
     act(() => {jest.runAllTimers();});
@@ -341,7 +341,7 @@ describe('SubMenu', function () {
   });
 
   it('disables a submenu trigger if the wrapped item is in the disabledKeys array', async function () {
-    let tree = render(<SubMenuStatic disabledKeys={['Lvl 1 Item 2']} />);
+    let tree = render(<SubmenuStatic disabledKeys={['Lvl 1 Item 2']} />);
     let triggerButton = tree.getByRole('button');
     await user.pointer({target: triggerButton, keys: '[MouseLeft]'});
     act(() => {jest.runAllTimers();});
@@ -374,7 +374,7 @@ describe('SubMenu', function () {
       ${'rtl, ArrowKeys'} | ${'ar-AE'}  | ${[async () => await user.keyboard('[ArrowLeft]'), async () => await user.keyboard('[ArrowRight]')]}
       ${'ltr, Enter/Esc'} | ${'en-US'}  | ${[async () => await user.keyboard('[Enter]'), async () => await user.keyboard('[Escape]')]}
     `('opens/closes the submenu via keyboard ($Name)', async function ({Name, locale, actions}) {
-      let tree = render(<SubMenuStatic menuTriggerProps={{onOpenChange}} />, 'medium', locale);
+      let tree = render(<SubmenuStatic menuTriggerProps={{onOpenChange}} />, 'medium', locale);
       let triggerButton = tree.getByRole('button');
       await user.tab();
       await user.keyboard('[ArrowDown]');
@@ -419,7 +419,7 @@ describe('SubMenu', function () {
     });
 
     it('should close the submenu if focus moves from the submenu trigger to a neighboring element via keyboard', async function () {
-      let tree = render(<SubMenuStatic />);
+      let tree = render(<SubmenuStatic />);
       await user.tab();
       await user.keyboard('[ArrowDown]');
       act(() => {jest.runAllTimers();});
@@ -447,7 +447,7 @@ describe('SubMenu', function () {
       ${'ltr, ArrowKeys'} | ${'en-US'}  | ${[async () => await user.keyboard('[ArrowLeft]')]}
       ${'rtl, ArrowKeys'} | ${'ar-AE'}  | ${[async () => await user.keyboard('[ArrowRight]')]}
     `('only closes the last submenu via keyboard if focus is on the trigger ($Name)', async function ({locale, actions}) {
-      let tree = render(<SubMenuStatic />, 'medium', locale);
+      let tree = render(<SubmenuStatic />, 'medium', locale);
       await user.tab();
       await user.keyboard('[ArrowDown]');
       act(() => {jest.runAllTimers();});
@@ -479,7 +479,7 @@ describe('SubMenu', function () {
     });
 
     it('should shift focus between a submenu trigger and its submenu when pressing tab', async function () {
-      let tree = render(<SubMenuStatic />);
+      let tree = render(<SubmenuStatic />);
       await user.tab();
       await user.keyboard('[ArrowDown]');
       act(() => {jest.runAllTimers();});
@@ -538,7 +538,7 @@ describe('SubMenu', function () {
   describe('user provided callbacks', function () {
     it('calls user provided submenu onAction and onClose when submenu option is pressed', async function () {
       let tree = render(
-        <SubMenuStatic
+        <SubmenuStatic
           onAction={onAction}
           onClose={onClose}
           menuTriggerProps={{onOpenChange}}
@@ -550,7 +550,7 @@ describe('SubMenu', function () {
       expect(onOpenChange).toHaveBeenCalledTimes(1);
       expect(onOpenChange).toHaveBeenLastCalledWith(true);
 
-      // Click on the 3rd level SubMenu item
+      // Click on the 3rd level Submenu item
       let menu = tree.getByRole('menu');
       expect(menu).toBeTruthy();
       let menuItems = within(menu).getAllByRole('menuitem');
@@ -584,7 +584,7 @@ describe('SubMenu', function () {
       expect(onOpenChange).toHaveBeenCalledTimes(2);
       expect(onOpenChange).toHaveBeenLastCalledWith(false);
 
-      // Click on the 2rd level SubMenu item which has its own onAction defined
+      // Click on the 2rd level Submenu item which has its own onAction defined
       await user.pointer({target: triggerButton, keys: '[MouseLeft]'});
       act(() => {jest.runAllTimers();});
       menu = tree.getByRole('menu');
@@ -613,7 +613,7 @@ describe('SubMenu', function () {
 
     it('should not trigger onClose when closing the submenu with Esc', async function () {
       let tree = render(
-        <SubMenuStatic
+        <SubmenuStatic
           onClose={onClose}
           subMenu1Props={{onClose: subMenuOnClose}} />
         );
@@ -639,7 +639,7 @@ describe('SubMenu', function () {
     });
 
     it('should not trigger root menu\' onAction when pressing on a submenu trigger item', async function () {
-      let tree = render(<SubMenuStatic onAction={onAction} />);
+      let tree = render(<SubmenuStatic onAction={onAction} />);
       let triggerButton = tree.getByRole('button');
       await user.pointer({target: triggerButton, keys: '[MouseLeft]'});
       act(() => {jest.runAllTimers();});
@@ -668,7 +668,7 @@ describe('SubMenu', function () {
 
     it('supports selectionMode and onSelectionChange on submenus', async function () {
       let tree = render(
-        <SubMenuStatic
+        <SubmenuStatic
           onSelectionChange={onSelectionChange}
           onClose={onClose}
           selectionMode="multiple"
@@ -713,7 +713,7 @@ describe('SubMenu', function () {
 
     it('does not trigger selection when clicking/pressing on a submenu trigger', async function () {
       let tree = render(
-        <SubMenuStatic
+        <SubmenuStatic
           onSelectionChange={onSelectionChange}
           selectionMode="multiple"
           subMenu1Props={{onSelectionChange: subMenuOnSelectionChange, onClose: subMenuOnClose, selectionMode: 'single'}} />
@@ -758,7 +758,7 @@ describe('SubMenu', function () {
 
     it('doesnt select a submenu trigger even if its key is specified in selectedKeys', async function () {
       let tree = render(
-        <SubMenuStatic
+        <SubmenuStatic
           onSelectionChange={onSelectionChange}
           selectionMode="multiple"
           selectedKeys={['Lvl 1 Item 1', 'Lvl 1 Item 2']} />
@@ -793,7 +793,7 @@ describe('SubMenu', function () {
     });
 
     it('should open sub menus in the same tray on touch press', async function () {
-      let tree = render(<SubMenuStatic />);
+      let tree = render(<SubmenuStatic />);
       let triggerButton = tree.getByRole('button');
       await user.pointer({target: triggerButton, keys: '[TouchA]'});
       act(() => {jest.runAllTimers();});
@@ -849,7 +849,7 @@ describe('SubMenu', function () {
     });
 
     it('should provide a back button to close the submenu', async function () {
-      let tree = render(<SubMenuStatic />);
+      let tree = render(<SubmenuStatic />);
       let triggerButton = tree.getByRole('button');
       await user.pointer({target: triggerButton, keys: '[TouchA]'});
       act(() => {jest.runAllTimers();});
@@ -898,7 +898,7 @@ describe('SubMenu', function () {
     });
 
     it('should not open/close submenus on hover', async function () {
-      let tree = render(<SubMenuStatic />);
+      let tree = render(<SubmenuStatic />);
       let triggerButton = tree.getByRole('button');
       await user.pointer({target: triggerButton, keys: '[TouchA]'});
       act(() => {jest.runAllTimers();});
@@ -927,7 +927,7 @@ describe('SubMenu', function () {
 
     describe('keyboard interactions', function () {
       it('should allow the user to open and close menus with the arrow keys', async function () {
-        let tree = render(<SubMenuStatic />);
+        let tree = render(<SubmenuStatic />);
         await user.tab();
         await user.keyboard('[ArrowDown]');
         act(() => {jest.runAllTimers();});
@@ -956,7 +956,7 @@ describe('SubMenu', function () {
       });
 
       it('should allow the user to tab to the back button and close the submenu', async function () {
-        let tree = render(<SubMenuStatic />);
+        let tree = render(<SubmenuStatic />);
         await user.tab();
         await user.keyboard('[ArrowDown]');
         act(() => {jest.runAllTimers();});

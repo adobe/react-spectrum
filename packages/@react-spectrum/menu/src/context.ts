@@ -33,7 +33,7 @@ export function useMenuContext(): MenuContextValue {
   return useContext(MenuContext);
 }
 
-export interface SubMenuTriggerContextValue extends DOMProps, Pick<PressEvents, 'onPressStart' | 'onPress'>, Pick<HoverEvents, 'onHoverChange'> {
+export interface SubmenuTriggerContextValue extends DOMProps, Pick<PressEvents, 'onPressStart' | 'onPress'>, Pick<HoverEvents, 'onHoverChange'> {
   isUnavailable?: boolean,
   triggerRef?: MutableRefObject<HTMLElement>,
   'aria-expanded'?: boolean | 'true' | 'false',
@@ -43,10 +43,10 @@ export interface SubMenuTriggerContextValue extends DOMProps, Pick<PressEvents, 
   isOpen?: boolean
 }
 
-export const SubMenuTriggerContext = React.createContext<SubMenuTriggerContextValue | undefined>(undefined);
+export const SubmenuTriggerContext = React.createContext<SubmenuTriggerContextValue | undefined>(undefined);
 
-export function useSubMenuTriggerContext(): SubMenuTriggerContextValue {
-  return useContext(SubMenuTriggerContext);
+export function useSubmenuTriggerContext(): SubmenuTriggerContextValue {
+  return useContext(SubmenuTriggerContext);
 }
 
 export interface MenuStateContextValue<T> {

@@ -17,7 +17,7 @@ import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
 import AnnotatePen from '@spectrum-icons/workflow/AnnotatePen';
 import {Content} from '@react-spectrum/view';
-import {ContextualHelpTrigger, Item, Menu, MenuTrigger, Section, SubMenuTrigger} from '../';
+import {ContextualHelpTrigger, Item, Menu, MenuTrigger, Section, SubmenuTrigger} from '../';
 import defaultConfig, {render as renderMenuTrigger} from './MenuTrigger.stories';
 import {Dialog} from '@react-spectrum/dialog';
 import {Heading, Keyboard, Text} from '@react-spectrum/text';
@@ -28,30 +28,30 @@ import {ToggleButton} from '@adobe/react-spectrum';
 
 export default {
   ...defaultConfig,
-  title: 'MenuTrigger/SubMenu'
+  title: 'MenuTrigger/Submenu'
 };
 
 // TODO: add chromatic stories
-export const SubMenuStatic = {
+export const SubmenuStatic = {
   render: (args) => (
     renderMenuTrigger(
       <Menu onAction={action('lvl 1 menu onAction')} {...args}>
         <Item key="Lvl 1 Item 1">Lvl 1 Item 1</Item>
-        <SubMenuTrigger>
+        <SubmenuTrigger>
           <Item key="Lvl 1 Item 2">Lvl 1 Item 2</Item>
           <Menu onAction={action('lvl 2 menu onAction')} {...args.subMenu1Props}>
             <Item key="Lvl 2 Item 1">Lvl 2 Item 1</Item>
             <Item key="Lvl 2 Item 2">Lvl 2 Item 2</Item>
-            <SubMenuTrigger>
+            <SubmenuTrigger>
               <Item key="Lvl 2 Item 3">Lvl 2 Item 3</Item>
               <Menu onAction={action('lvl 3 menu onAction')} {...args.subMenu2Props}>
                 <Item key="Lvl 3 Item 1">Lvl 3 Item 1</Item>
                 <Item key="Lvl 3 Item 2">Lvl 3 Item 2</Item>
                 <Item key="Lvl 3 Item 3">Lvl 3 Item 3</Item>
               </Menu>
-            </SubMenuTrigger>
+            </SubmenuTrigger>
           </Menu>
-        </SubMenuTrigger>
+        </SubmenuTrigger>
         <Item key="Lvl 1 Item 3">Lvl 1 Item 3</Item>
       </Menu>
     , args.menuTriggerProps)
@@ -59,7 +59,7 @@ export const SubMenuStatic = {
   name: 'static submenu items'
 };
 
-let dynamicSubMenu = [
+let dynamicSubmenu = [
   {name: 'Lvl 1 Item 1'},
   {name: 'Lvl 1 Item 2', children: [
     {name: 'Lvl 2 Item 1'},
@@ -81,22 +81,22 @@ let dynamicSubMenu = [
 let dynamicRenderFunc = (item) => {
   if (item.children) {
     return (
-      <SubMenuTrigger>
+      <SubmenuTrigger>
         <Item key={item.name}>{item.name}</Item>
         <Menu items={item.children} onAction={action(`${item.name} onAction`)}>
           {(item) => dynamicRenderFunc(item)}
         </Menu>
-      </SubMenuTrigger>
+      </SubmenuTrigger>
     );
   } else {
     return <Item key={item.name}>{item.name}</Item>;
   }
 };
 
-export const SubMenuDynamic = {
+export const SubmenuDynamic = {
   render: (args) => (
     renderMenuTrigger(
-      <Menu items={dynamicSubMenu} onAction={action('onAction')} {...args}>
+      <Menu items={dynamicSubmenu} onAction={action('onAction')} {...args}>
         {(item) => dynamicRenderFunc(item)}
       </Menu>
     )
@@ -104,13 +104,13 @@ export const SubMenuDynamic = {
   name: 'dynamic submenu items'
 };
 
-export const SubMenuStaticSections = {
+export const SubmenuStaticSections = {
   render: () => (
     renderMenuTrigger(
       <Menu onAction={action('onAction')}>
         <Section title="Section 1">
           <Item key="Sec 1 Lvl 1 Item 1">Sec 1 Lvl 1 Item 1</Item>
-          <SubMenuTrigger>
+          <SubmenuTrigger>
             <Item key="Sec 1 Lvl 1 Item 2">Sec 1 Lvl 1 Item 2</Item>
             <Menu onAction={action('Sec 1 Lvl 2 menu onAction')}>
               <Section title="Sub Section 1">
@@ -119,12 +119,12 @@ export const SubMenuStaticSections = {
                 <Item key="Sec 1 SubSec 1 Lvl 2 Item 3">Sec 1 SubSec 1 Lvl 2 Item 3</Item>
               </Section>
             </Menu>
-          </SubMenuTrigger>
+          </SubmenuTrigger>
           <Item key="Sec 1 Lvl 1 Item 3">Sec 1 Lvl 1 Item 3</Item>
         </Section>
         <Section title="Section 2">
           <Item key="Sec 2 Lvl 1 Item 1">Sec 2 Lvl 1 Item 1</Item>
-          <SubMenuTrigger>
+          <SubmenuTrigger>
             <Item key="Sec 2 Lvl 1 Item 2">Sec 2 Lvl 1 Item 2</Item>
             <Menu onAction={action('Sec 2 Lvl 2 menu onAction')}>
               <Section title="Sub Section 1">
@@ -133,7 +133,7 @@ export const SubMenuStaticSections = {
                 <Item key="Sec 2 SubSec 1 Lvl 2 Item 3">Sec 2 SubSec 1 Lvl 2 Item 3</Item>
               </Section>
             </Menu>
-          </SubMenuTrigger>
+          </SubmenuTrigger>
           <Item key="Sec 2 Lvl 1 Item 3">Sec 2 Lvl 1 Item 3</Item>
         </Section>
       </Menu>
@@ -142,7 +142,7 @@ export const SubMenuStaticSections = {
   name: 'static submenu items with sections'
 };
 
-let dynamicSubMenuSections = [
+let dynamicSubmenuSections = [
   {name: 'Section 1', isSection: true,  children: [
     {name: 'Sec 1 Lvl 1 Item 1'},
     {name: 'Sec 1 Lvl 1 Item 2', children: [
@@ -192,7 +192,7 @@ let iconMap = {
 };
 
 let dynamicRenderTrigger = (item: ItemNode, Icon) => (
-  <SubMenuTrigger>
+  <SubmenuTrigger>
     <Item key={item.name} textValue={item.name}>
       {item.icon && <Icon size="S" />}
       <Text>{item.name}</Text>
@@ -200,7 +200,7 @@ let dynamicRenderTrigger = (item: ItemNode, Icon) => (
     <Menu items={item.children} onAction={action(`${item.name} onAction`)}>
       {(item) => dynamicRenderFuncSections(item)}
     </Menu>
-  </SubMenuTrigger>
+  </SubmenuTrigger>
 );
 
 let dynamicRenderItem = (item, Icon) => (
@@ -235,10 +235,10 @@ let dynamicRenderFuncSections = (item: ItemNode) => {
   }
 };
 
-export const SubMenuDynamicSections = {
+export const SubmenuDynamicSections = {
   render: () => (
     renderMenuTrigger(
-      <Menu items={dynamicSubMenuSections} onAction={action('onAction')}>
+      <Menu items={dynamicSubmenuSections} onAction={action('onAction')}>
         {(item) => dynamicRenderFuncSections(item)}
       </Menu>
     )
@@ -389,25 +389,25 @@ export const Complex = {
   name: 'complex'
 };
 
-export const SubMenuActions = {
+export const SubmenuActions = {
   render: (args) => renderMenuTrigger(
     <Menu onAction={action('onAction lvl 1 menu')} onClose={action('onClose lvl 1 menu')} {...args}>
       <Item key="Lvl 1 Item 1">Lvl 1 Item 1</Item>
-      <SubMenuTrigger>
+      <SubmenuTrigger>
         <Item key="Lvl 1 Item 2">Lvl 1 Item 2</Item>
         <Menu onAction={action('onAction lvl 2 menu')} onClose={action('onClose menu 2')}>
           <Item key="Lvl 2 Item 1">Lvl 2 Item 1</Item>
           <Item key="Lvl 2 Item 2">Lvl 2 Item 2</Item>
-          <SubMenuTrigger>
+          <SubmenuTrigger>
             <Item key="Lvl 2 Item 3">Lvl 2 Item 3</Item>
             <Menu onAction={action('onAction lvl 3 menu')} onClose={action('onClose menu 3')}>
               <Item key="Lvl 3 Item 1">Lvl 3 Item 1</Item>
               <Item key="Lvl 3 Item 2">Lvl 3 Item 2</Item>
               <Item key="Lvl 3 Item 3">Lvl 3 Item 3</Item>
             </Menu>
-          </SubMenuTrigger>
+          </SubmenuTrigger>
         </Menu>
-      </SubMenuTrigger>
+      </SubmenuTrigger>
       <Item key="Lvl 1 Item 3">Lvl 1 Item 3</Item>
     </Menu>
   ),
@@ -415,25 +415,25 @@ export const SubMenuActions = {
   parameters: {description: {data: 'Each menu has its own onAction and onClose that are triggered only if its direct menu option was acted upon.'}}
 };
 
-export const SubMenuSelection = {
+export const SubmenuSelection = {
   render: (args) => renderMenuTrigger(
     <Menu onSelectionChange={action('onSelectionChange lvl 1 menu')} selectionMode="multiple" defaultSelectedKeys="all" {...args}>
       <Item key="Lvl 1 Item 1">Lvl 1 Item 1</Item>
-      <SubMenuTrigger>
+      <SubmenuTrigger>
         <Item key="Lvl 1 Item 2">Lvl 1 Item 2</Item>
         <Menu onSelectionChange={action('onSelectionChange lvl 2 menu')} selectionMode="single" defaultSelectedKeys={['Lvl 2 Item 3']}>
           <Item key="Lvl 2 Item 1">Lvl 2 Item 1</Item>
           <Item key="Lvl 2 Item 2">Lvl 2 Item 2</Item>
-          <SubMenuTrigger>
+          <SubmenuTrigger>
             <Item key="Lvl 2 Item 3">Lvl 2 Item 3</Item>
             <Menu onSelectionChange={action('onSelectionChange lvl 3 menu')} selectionMode="multiple">
               <Item key="Lvl 3 Item 1">Lvl 3 Item 1</Item>
               <Item key="Lvl 3 Item 2">Lvl 3 Item 2</Item>
               <Item key="Lvl 3 Item 3">Lvl 3 Item 3</Item>
             </Menu>
-          </SubMenuTrigger>
+          </SubmenuTrigger>
         </Menu>
-      </SubMenuTrigger>
+      </SubmenuTrigger>
       <Item key="Lvl 1 Item 3">Lvl 1 Item 3</Item>
     </Menu>
   ),
@@ -441,25 +441,25 @@ export const SubMenuSelection = {
   parameters: {description: {data: 'Lvl 1 and Lvl 3 menus have multiple selection, Lvl 2 menu has single selection'}}
 };
 
-export const DisabledSubMenuTrigger = {
+export const DisabledSubmenuTrigger = {
   render: (args) => renderMenuTrigger(
     <Menu onSelectionChange={action('onSelectionChange lvl 1 menu')} selectionMode="multiple" {...args}>
       <Item key="Lvl 1 Item 1">Lvl 1 Item 1</Item>
-      <SubMenuTrigger>
+      <SubmenuTrigger>
         <Item key="Lvl 1 Item 2">Lvl 1 Item 2</Item>
         <Menu onSelectionChange={action('onSelectionChange lvl 2 menu')} selectionMode="single" disabledKeys={['Lvl 2 Item 3']}>
           <Item key="Lvl 2 Item 1">Lvl 2 Item 1</Item>
           <Item key="Lvl 1 Item 2">Lvl 2 Item 2</Item>
-          <SubMenuTrigger>
+          <SubmenuTrigger>
             <Item key="Lvl 2 Item 3">Lvl 2 Item 3</Item>
             <Menu onSelectionChange={action('onSelectionChange lvl 3 menu')} selectionMode="multiple">
               <Item key="Lvl 3 Item 1">Lvl 3 Item 1</Item>
               <Item key="Lvl 3 Item 2">Lvl 3 Item 2</Item>
               <Item key="Lvl 3 Item 3">Lvl 3 Item 3</Item>
             </Menu>
-          </SubMenuTrigger>
+          </SubmenuTrigger>
         </Menu>
-      </SubMenuTrigger>
+      </SubmenuTrigger>
       <Item key="Lvl 1 Item 3">Lvl 1 Item 3</Item>
     </Menu>
   ),
@@ -472,21 +472,21 @@ export const NoKeysProvided = {
     renderMenuTrigger(
       <Menu onAction={action('lvl 1 menu onAction')} {...args}>
         <Item>Lvl 1 Item 1</Item>
-        <SubMenuTrigger>
+        <SubmenuTrigger>
           <Item>Lvl 1 Item 2</Item>
           <Menu onAction={action('lvl 2 menu onAction')} {...args.subMenu1Props}>
             <Item>Lvl 2 Item 1</Item>
             <Item>Lvl 2 Item 2</Item>
-            <SubMenuTrigger>
+            <SubmenuTrigger>
               <Item>Lvl 2 Item 3</Item>
               <Menu onAction={action('lvl 3 menu onAction')} {...args.subMenu2Props}>
                 <Item>Lvl 3 Item 1</Item>
                 <Item>Lvl 3 Item 2</Item>
                 <Item>Lvl 3 Item 3</Item>
               </Menu>
-            </SubMenuTrigger>
+            </SubmenuTrigger>
           </Menu>
-        </SubMenuTrigger>
+        </SubmenuTrigger>
         <Item>Lvl 1 Item 3</Item>
       </Menu>
     , args.menuTriggerProps)
@@ -495,12 +495,12 @@ export const NoKeysProvided = {
   parameters: {description: {data: 'No keys are provided so they should be autogenerated. It should allow for duplicated menu item keys across each submenu level, reflected in onAction'}}
 };
 
-export const ConditionalSubMenu = {
-  render: (args) => <ConditionalSubMenuExample {...args} />,
+export const ConditionalSubmenu = {
+  render: (args) => <ConditionalSubmenuExample {...args} />,
   name: 'conditional submenu'
 };
 
-function ConditionalSubMenuExample(props) {
+function ConditionalSubmenuExample(props) {
   let [disabled, setDisablde] = React.useState(false);
 
   return (
@@ -517,19 +517,19 @@ function ConditionalSubMenuExample(props) {
               <ContextualHelpTrigger isUnavailable>
                 <Item key="Lvl 1 Item 2">Lvl 1 Item 2</Item>
                 <Dialog>
-                  <Heading>SubMenuTrigger disabled</Heading>
+                  <Heading>SubmenuTrigger disabled</Heading>
                   <Content>You don't have permissions for this submenu</Content>
                 </Dialog>
               </ContextualHelpTrigger>
             ) : (
-              <SubMenuTrigger>
+              <SubmenuTrigger>
                 <Item key="Lvl 1 Item 2">Lvl 1 Item 2</Item>
                 <Menu>
                   <Item key="Lvl 2 Item 1">Lvl 2 Item 1</Item>
                   <Item key="Lvl 2 Item 2">Lvl 2 Item 2</Item>
                   <Item key="Lvl 2 Item 3">Lvl 2 Item 3</Item>
                 </Menu>
-              </SubMenuTrigger>
+              </SubmenuTrigger>
             )}
             <Item key="Lvl 1 Item 3">Lvl 1 Item 3</Item>
           </Menu>
@@ -539,12 +539,12 @@ function ConditionalSubMenuExample(props) {
   );
 }
 
-export const UnavailableWithSubMenu = {
+export const UnavailableWithSubmenu = {
   render: (args) => (
     renderMenuTrigger(
       <Menu onAction={action('lvl 1 menu onAction')} {...args}>
         <Item key="Lvl 1 Item 1">Lvl 1 Item 1</Item>
-        <SubMenuTrigger>
+        <SubmenuTrigger>
           <Item key="Lvl 1 Item 2">Lvl 1 Item 2</Item>
           <Menu onAction={action('lvl 2.2 menu onAction')} {...args.subMenu1Props}>
             <ContextualHelpTrigger isUnavailable>
@@ -555,16 +555,16 @@ export const UnavailableWithSubMenu = {
               </Dialog>
             </ContextualHelpTrigger>
             <Item key="Lvl 2 Item 2">Lvl 2.2 Item 2</Item>
-            <SubMenuTrigger>
+            <SubmenuTrigger>
               <Item key="Lvl 2 Item 3">Lvl 2.2 Item 3</Item>
               <Menu onAction={action('lvl 3 menu onAction')} {...args.subMenu2Props}>
                 <Item key="Lvl 3 Item 1">Lvl 3 Item 1</Item>
                 <Item key="Lvl 3 Item 2">Lvl 3 Item 2</Item>
                 <Item key="Lvl 3 Item 3">Lvl 3 Item 3</Item>
               </Menu>
-            </SubMenuTrigger>
+            </SubmenuTrigger>
           </Menu>
-        </SubMenuTrigger>
+        </SubmenuTrigger>
         <ContextualHelpTrigger isUnavailable>
           <Item key="Lvl 1 Item 3">Lvl 1 Item 3</Item>
           <Dialog>
@@ -572,14 +572,14 @@ export const UnavailableWithSubMenu = {
             <Content>Is it me you're looking for?</Content>
           </Dialog>
         </ContextualHelpTrigger>
-        <SubMenuTrigger>
+        <SubmenuTrigger>
           <Item key="Lvl 1 Item 4">Lvl 1 Item 4</Item>
           <Menu onAction={action('lvl 2.4 menu onAction')} {...args.subMenu1Props}>
             <Item key="Lvl 2.4 Item 1">Lvl 2.4 Item 1</Item>
             <Item key="Lvl 2.4 Item 2">Lvl 2.4 Item 2</Item>
             <Item key="Lvl 2.4 Item 3">Lvl 2.4 Item 3</Item>
           </Menu>
-        </SubMenuTrigger>
+        </SubmenuTrigger>
       </Menu>
     )
   ),
