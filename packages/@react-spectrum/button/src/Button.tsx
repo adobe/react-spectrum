@@ -111,10 +111,12 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
 
     let label = [];
 
+    // string child
     if (typeof children === 'string') {
       label.push(children);
     }
 
+    // aria-label on button
     // Might need to skip this one as it would still be on the button and adding pending might announce ok
     // Test how it announces
     if (props['aria-label']) {
@@ -136,18 +138,20 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
       label.push(children['props']['aria-label']);
     }
 
+    // loop multiple children looking for text and aria-labels
     if (Array.isArray(children)) {
       children.forEach((child) => {
+        // Text component with string child
         if (typeof child.props.children === 'string') {
           label.push(child.props.children);
         }
+        // Icon with aria-label
         if (child.props['aria-label']) {
           label.push(child.props['aria-label']);
         }
       });
     }
 
-    // localize
     label.push(stringFormatter.format('pending'));
     return label.join(' ');
   };
