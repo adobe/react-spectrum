@@ -207,6 +207,18 @@ export const MinMaxValue: DateFieldStory = {
   name: 'minValue: 2010/1/1, maxValue: 2020/1/1'
 };
 
+export const IsDateUnavailable: DateFieldStory = {
+  ...Default,
+  args: {
+    isDateUnavailable: (date) => {
+      return date.compare(new CalendarDate(1980, 1, 1)) >= 0 
+          && date.compare(new CalendarDate(1980, 1, 8)) <= 0;
+    },
+    errorMessage: 'Date unavailable.'
+  },
+  name: 'isDateUnavailable'
+};
+
 export const PlaceholderVal: DateFieldStory = {
   ...Default,
   args: {placeholderValue: new CalendarDate(1980, 1, 1)},
