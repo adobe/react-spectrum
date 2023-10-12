@@ -212,12 +212,12 @@ export const IsDateUnavailable: DateFieldStory = {
   args: {
     isDateUnavailable: (date) => {
       return date.compare(new CalendarDate(1980, 1, 1)) >= 0 
-          && date.compare(new CalendarDate(1980, 1, 8)) <= 0
+          && date.compare(new CalendarDate(1980, 1, 8)) <= 0;
     },
     errorMessage: 'Date unavailable.'
   },
   name: 'isDateUnavailable'
-}
+};
 
 export const PlaceholderVal: DateFieldStory = {
   ...Default,
