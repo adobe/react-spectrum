@@ -17,8 +17,8 @@ import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps
 import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
 import {LabelContext} from './Label';
 import {LinkDOMProps} from '@react-types/shared';
+import {ListState, Node, useListState} from 'react-stately';
 import {ListStateContext} from './ListBox';
-import {Node, useListState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, Key, ReactNode, useContext, useEffect, useRef} from 'react';
 import {TextContext} from './Text';
 
@@ -39,12 +39,16 @@ export interface TagListRenderProps {
    * Whether the tag list is currently keyboard focused.
    * @selector [data-focus-visible]
    */
-  isFocusVisible: boolean
+  isFocusVisible: boolean,
+  /**
+   * State of the TagGroup.
+   */
+  state: ListState<unknown>
 }
 
 export interface TagListProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, StyleRenderProps<TagListRenderProps> {
   /** Provides content to display when there are no items in the tag list. */
-  renderEmptyState?: () => ReactNode
+  renderEmptyState?: (props: TagListRenderProps) => ReactNode
 }
 
 export const TagGroupContext = createContext<ContextValue<TagGroupProps, HTMLDivElement>>(null);
@@ -142,15 +146,17 @@ function TagListInner<T extends object>({props, forwardedRef}: TagListInnerProps
   });
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
+  let renderValues = {
+    isEmpty: state.collection.size === 0,
+    isFocused,
+    isFocusVisible,
+    state
+  };
   let renderProps = useRenderProps({
     className: props.className,
     style: props.style,
     defaultClassName: 'react-aria-TagList',
-    values: {
-      isEmpty: state.collection.size === 0,
-      isFocused,
-      isFocusVisible
-    }
+    values: renderValues
   });
 
   return (
@@ -161,7 +167,7 @@ function TagListInner<T extends object>({props, forwardedRef}: TagListInnerProps
       data-empty={state.collection.size === 0 || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}>
-      {state.collection.size === 0 && props.renderEmptyState ? props.renderEmptyState() : children}
+      {state.collection.size === 0 && props.renderEmptyState ? props.renderEmptyState(renderValues) : children}
     </div>
   );
 }
