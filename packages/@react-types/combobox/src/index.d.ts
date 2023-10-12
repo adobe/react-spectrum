@@ -10,64 +10,97 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, CollectionBase, DOMProps, FocusableProps, HelpTextProps, InputBase, LabelableProps, LoadingState, SingleSelection, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps, TextInputBase, Validation} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  AsyncLoadable,
+  CollectionBase,
+  DOMProps,
+  FocusableProps,
+  HelpTextProps,
+  InputBase,
+  LabelableProps,
+  LoadingState,
+  SingleSelection,
+  SpectrumLabelableProps,
+  SpectrumTextInputBase,
+  StyleProps,
+  TextInputBase,
+  Validation,
+} from "@react-types/shared";
 
-export type MenuTriggerAction = 'focus' | 'input' | 'manual';
+export type MenuTriggerAction = "focus" | "input" | "manual";
 
-export interface ComboBoxProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'disallowEmptySelection'>, InputBase, TextInputBase, Validation, FocusableProps<HTMLInputElement>, LabelableProps, HelpTextProps {
+export interface ComboBoxProps<T>
+  extends CollectionBase<T>,
+    Omit<SingleSelection, "disallowEmptySelection">,
+    InputBase,
+    TextInputBase,
+    Validation,
+    FocusableProps<HTMLInputElement>,
+    LabelableProps,
+    HelpTextProps {
   /** The list of ComboBox items (uncontrolled). */
-  defaultItems?: Iterable<T>,
+  defaultItems?: Iterable<T>;
   /** The list of ComboBox items (controlled). */
-  items?: Iterable<T>,
+  items?: Iterable<T>;
   /** Method that is called when the open state of the menu changes. Returns the new open state and the action that caused the opening of the menu. */
-  onOpenChange?: (isOpen: boolean, menuTrigger?: MenuTriggerAction) => void,
+  onOpenChange?: (isOpen: boolean, menuTrigger?: MenuTriggerAction) => void;
   /** The value of the ComboBox input (controlled). */
-  inputValue?: string,
+  inputValue?: string;
   /** The default value of the ComboBox input (uncontrolled). */
-  defaultInputValue?: string,
+  defaultInputValue?: string;
   /** Handler that is called when the ComboBox input value changes. */
-  onInputChange?: (value: string) => void,
+  onInputChange?: (value: string) => void;
   /** Whether the ComboBox allows a non-item matching input value to be set. */
-  allowsCustomValue?: boolean,
+  allowsCustomValue?: boolean;
   // /**
   //  * Whether the Combobox should only suggest matching options or autocomplete the field with the nearest matching option.
   //  * @default 'suggest'
   //  */
   // completionMode?: 'suggest' | 'complete',
- /**
-  * The interaction required to display the ComboBox menu.
-  * @default 'input'
-  */
-  menuTrigger?: MenuTriggerAction,
+  /**
+   * The interaction required to display the ComboBox menu.
+   * @default 'input'
+   */
+  menuTrigger?: MenuTriggerAction;
   /**
    * The name of the input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
-  name?: string
+  name?: string;
 }
 
-export interface AriaComboBoxProps<T> extends ComboBoxProps<T>, DOMProps, AriaLabelingProps {
+export interface AriaComboBoxProps<T>
+  extends ComboBoxProps<T>,
+    DOMProps,
+    AriaLabelingProps {
   /** Whether keyboard navigation is circular. */
-  shouldFocusWrap?: boolean
+  shouldFocusWrap?: boolean;
 }
 
-export interface SpectrumComboBoxProps<T> extends SpectrumTextInputBase, Omit<AriaComboBoxProps<T>, 'menuTrigger'>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
+export interface SpectrumComboBoxProps<T>
+  extends SpectrumTextInputBase,
+    Omit<AriaComboBoxProps<T>, "menuTrigger">,
+    SpectrumLabelableProps,
+    StyleProps,
+    Omit<AsyncLoadable, "isLoading"> {
   /**
    * The interaction required to display the ComboBox menu. Note that this prop has no effect on the mobile ComboBox experience.
    * @default 'input'
    */
-  menuTrigger?: MenuTriggerAction,
+  menuTrigger?: MenuTriggerAction;
   /** Whether the ComboBox should be displayed with a quiet style. */
-  isQuiet?: boolean,
+  isQuiet?: boolean;
   /**
    * Direction the menu will render relative to the ComboBox.
    * @default 'bottom'
    */
-  direction?: 'bottom' | 'top',
+  direction?: "bottom" | "top";
   /** The current loading state of the ComboBox. Determines whether or not the progress circle should be shown. */
-  loadingState?: LoadingState,
+  loadingState?: LoadingState;
   /**
    * Whether the menu should automatically flip direction when space is limited.
    * @default true
    */
-  shouldFlip?: boolean
+  shouldFlip?: boolean;
+  portalContainer?: any;
 }
