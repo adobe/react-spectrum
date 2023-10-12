@@ -148,7 +148,7 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
     }
 
     // localize
-    label.push(stringFormatter.format('loading'));
+    label.push(stringFormatter.format('pending'));
     return label.join(' ');
   };
 
