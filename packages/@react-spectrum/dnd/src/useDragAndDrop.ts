@@ -37,7 +37,7 @@ import {
   useDraggableCollectionState,
   useDroppableCollectionState
 } from '@react-stately/dnd';
-import {RefObject, useMemo} from 'react';
+import React, {RefObject, useMemo} from 'react';
 
 interface DraggableCollectionStateOpts extends Omit<DraggableCollectionStateOptions, 'getItems'> {}
 

@@ -12,7 +12,7 @@
 
 import {CellProps} from '@react-types/table';
 import {PartialNode} from '@react-stately/collections';
-import {ReactElement} from 'react';
+import React, {ReactElement} from 'react';
 
 function Cell(props: CellProps): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
   return null;
