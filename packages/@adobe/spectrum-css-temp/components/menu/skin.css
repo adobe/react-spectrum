@@ -21,7 +21,7 @@ governing permissions and limitations under the License.
   background-color: var(--spectrum-selectlist-background-color);
 }
 
-.spectrum-SubMenu-headerWrapper {
+.spectrum-Submenu-headingWrapper {
   --spectrum-heading-subtitle3-text-color: var(--spectrum-global-color-gray-900);
 }
 
@@ -78,12 +78,12 @@ governing permissions and limitations under the License.
   color: var(--spectrum-global-color-gray-700);
 }
 
-.spectrum-SubMenu-popover {
+.spectrum-Submenu-popover {
   filter: unset;
   -webkit-filter: unset;
 }
 
-.spectrum-SubMenu-heading {
+.spectrum-Submenu-heading {
   color: var(--spectrum-heading-subtitle3-text-color);
 }
 

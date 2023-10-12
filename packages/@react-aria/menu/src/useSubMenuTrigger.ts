@@ -15,11 +15,11 @@ import {AriaMenuOptions} from './useMenu';
 import type {AriaPopoverProps} from '@react-aria/overlays';
 import {FocusableElement, FocusStrategy, KeyboardEvent, PressEvent, Node as RSNode} from '@react-types/shared';
 import {RefObject, useCallback, useRef} from 'react';
-import type {SubMenuTriggerState} from '@react-stately/menu';
+import type {SubmenuTriggerState} from '@react-stately/menu';
 import {useEffectEvent, useId, useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
-export interface AriaSubMenuTriggerProps {
+export interface AriaSubmenuTriggerProps {
   /** An object representing the submenu trigger menu item. Contains all the relevant information that makes up the menu item. */
   node: RSNode<unknown>,
   /** Whether the submenu trigger is disabled. */
@@ -33,21 +33,21 @@ export interface AriaSubMenuTriggerProps {
   subMenuRef: RefObject<HTMLDivElement>
 }
 
-interface SubMenuTriggerProps extends AriaMenuItemProps {
+interface SubmenuTriggerProps extends AriaMenuItemProps {
   /** Whether the submenu trigger is in an expanded state. */
   isOpen: boolean
 }
 
-interface SubMenuProps<T> extends AriaMenuOptions<T> {
+interface SubmenuProps<T> extends AriaMenuOptions<T> {
   /** The level of the submenu. */
   level: number
 }
 
-export interface SubMenuTriggerAria<T> {
+export interface SubmenuTriggerAria<T> {
   /** Props for the submenu trigger menu item. */
-  subMenuTriggerProps: SubMenuTriggerProps,
+  subMenuTriggerProps: SubmenuTriggerProps,
   /** Props for the submenu controlled by the submenu trigger menu item. */
-  subMenuProps: SubMenuProps<T>,
+  subMenuProps: SubmenuProps<T>,
   /** Props for the submenu's popover container. */
   popoverProps: Pick<AriaPopoverProps, 'isNonModal'>,
   /** Props for the submenu's popover overlay container. */
@@ -59,7 +59,7 @@ export interface SubMenuTriggerAria<T> {
   }
 }
 
-// TODO: debatable if we should have a useSubMenu hook for the submenu keyboard handlers. Feels better to have it here so we don't need to ferry around
+// TODO: debatable if we should have a useSubmenu hook for the submenu keyboard handlers. Feels better to have it here so we don't need to ferry around
 // things like parentMenuRef and the open timeout canceling since we centralized them here
 
 /**
@@ -68,7 +68,7 @@ export interface SubMenuTriggerAria<T> {
  * @param state - State for the submenu trigger.
  * @param ref - Ref to the submenu trigger element.
  */
-export function UNSTABLE_useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, state: SubMenuTriggerState, ref: RefObject<FocusableElement>): SubMenuTriggerAria<T> {
+export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: SubmenuTriggerState, ref: RefObject<FocusableElement>): SubmenuTriggerAria<T> {
   let {parentMenuRef, subMenuRef, subMenuType = 'menu', isDisabled, node} = props;
   let subMenuTriggerId = useId();
   let overlayId = useId();
@@ -86,7 +86,7 @@ export function UNSTABLE_useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, st
     state.open(focusStrategy);
   });
 
-  let onSubMenuClose = useEffectEvent(() => {
+  let onSubmenuClose = useEffectEvent(() => {
     cancelOpenTimeout();
     state.close();
   });
@@ -107,12 +107,12 @@ export function UNSTABLE_useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, st
     switch (e.key) {
       case 'ArrowLeft':
         if (direction === 'ltr') {
-          onSubMenuClose();
+          onSubmenuClose();
         }
         break;
       case 'ArrowRight':
         if (direction === 'rtl') {
-          onSubMenuClose();
+          onSubmenuClose();
         }
         break;
       case 'Escape':
@@ -144,7 +144,7 @@ export function UNSTABLE_useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, st
             }
           } else if (state.isOpen) {
             e.stopPropagation();
-            onSubMenuClose();
+            onSubmenuClose();
           }
         }
 
@@ -159,7 +159,7 @@ export function UNSTABLE_useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, st
             }
           } else if (state.isOpen) {
             e.stopPropagation();
-            onSubMenuClose();
+            onSubmenuClose();
           }
         }
         break;
@@ -198,7 +198,7 @@ export function UNSTABLE_useSubMenuTrigger<T>(props: AriaSubMenuTriggerProps, st
     // but breaks the case where the user is hovering over a submenu's submenu trigger child item and then hovers a root menu item (eg hover lvl 1 item 2 -> hover lvl 2 item 3 -> hover lvl 1 item 3)
     // Ideally we'd be able to track the full menu tree and then check if focus has moved to an element that isn't part of the current submenu tree and close it then
     if (state.isOpen && parentMenuRef.current.contains(e.relatedTarget)) {
-      onSubMenuClose();
+      onSubmenuClose();
     }
   };
 

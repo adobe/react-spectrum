@@ -185,6 +185,8 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   let onKeyDownEnter = useCallback((e) => {
     if (e.key === 'Enter') {
       commit();
+    } else {
+      e.continuePropagation();
     }
   }, [commit]);
 

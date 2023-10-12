@@ -12,11 +12,13 @@
 
 import {CalendarDate} from '@internationalized/date';
 import {DateField, DateFieldContext, DateInput, DateSegment, Label, Text} from '../';
-import {pointerMap, render, within} from '@react-spectrum/test-utils';
+import {installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
 describe('DateField', () => {
+  installPointerEvent();
+
   let user;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
@@ -96,7 +98,7 @@ describe('DateField', () => {
       <DateField>
         <Label>Birth date</Label>
         <DateInput className={({isHovered}) => isHovered ? 'hover' : ''}>
-          {segment => <DateSegment segment={segment} />}
+          {segment => <DateSegment segment={segment} className={({isHovered}) => isHovered ? 'hover' : ''} />}
         </DateInput>
       </DateField>
     );
@@ -112,6 +114,15 @@ describe('DateField', () => {
     await user.unhover(group);
     expect(group).not.toHaveAttribute('data-hovered');
     expect(group).not.toHaveClass('hover');
+
+    let segments = within(group).getAllByRole('spinbutton');
+    await user.hover(segments[0]);
+    expect(segments[0]).toHaveAttribute('data-hovered', 'true');
+    expect(segments[0]).toHaveClass('hover');
+
+    await user.unhover(segments[0]);
+    expect(segments[0]).not.toHaveAttribute('data-hovered', 'true');
+    expect(segments[0]).not.toHaveClass('hover');
   });
 
   it('should support focus visible state', async () => {
@@ -119,7 +130,7 @@ describe('DateField', () => {
       <DateField>
         <Label>Birth date</Label>
         <DateInput className={({isFocusVisible}) => isFocusVisible ? 'focus' : ''}>
-          {segment => <DateSegment segment={segment} />}
+          {segment => <DateSegment segment={segment} className={({isFocusVisible}) => isFocusVisible ? 'focus' : ''} />}
         </DateInput>
       </DateField>
     );
@@ -133,9 +144,15 @@ describe('DateField', () => {
     expect(group).toHaveAttribute('data-focus-visible', 'true');
     expect(group).toHaveClass('focus');
 
+    let segments = within(group).getAllByRole('spinbutton');
+    expect(segments[0]).toHaveAttribute('data-focus-visible', 'true');
+    expect(segments[0]).toHaveClass('focus');
+
     await user.tab({shift: true});
     expect(group).not.toHaveAttribute('data-focus-visible');
     expect(group).not.toHaveClass('focus');
+    expect(segments[0]).not.toHaveAttribute('data-focus-visible', 'true');
+    expect(segments[0]).not.toHaveClass('focus');
   });
 
   it('should support disabled state', () => {

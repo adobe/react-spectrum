@@ -60,11 +60,11 @@ export default {
     },
     style: {
       control: 'select',
-      options: ['fill', 'outline']
+      options: [undefined, 'fill', 'outline']
     },
     staticColor: {
       control: 'select',
-      options: ['white', 'black']
+      options: [undefined, 'white', 'black']
     },
     isPending: {
       control: 'boolean',
@@ -278,6 +278,10 @@ function Pending(props) {
             {...props}>
             <Text>with onClick</Text>
           </PendingButtonOnClickComponent>
+        </PendingButtonContainerComponent>
+
+        <PendingButtonContainerComponent {...props}>
+          <PendingButtonComponent isDisabled {...props}>disabled</PendingButtonComponent>
         </PendingButtonContainerComponent>
       </Flex>
 

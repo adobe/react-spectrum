@@ -15,11 +15,11 @@ export {useMenu} from './useMenu';
 export {useMenuItem} from './useMenuItem';
 export {useMenuSection} from './useMenuSection';
 export {useSafelyMouseToSubmenu} from './useSafelyMouseToSubmenu';
-export {UNSTABLE_useSubMenuTrigger} from './useSubMenuTrigger';
+export {UNSTABLE_useSubmenuTrigger} from './useSubmenuTrigger';
 
 export type {AriaMenuProps} from '@react-types/menu';
 export type {AriaMenuTriggerProps, MenuTriggerAria} from './useMenuTrigger';
 export type {AriaMenuOptions, MenuAria} from './useMenu';
 export type {AriaMenuItemProps, MenuItemAria} from './useMenuItem';
 export type {AriaMenuSectionProps, MenuSectionAria} from './useMenuSection';
-export type {AriaSubMenuTriggerProps, SubMenuTriggerAria} from './useSubMenuTrigger';
+export type {AriaSubmenuTriggerProps, SubmenuTriggerAria} from './useSubmenuTrigger';

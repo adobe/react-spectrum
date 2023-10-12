@@ -26,7 +26,7 @@ import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/text';
 import {TreeState} from '@react-stately/tree';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useMenuContext, useSubMenuTriggerContext} from './context';
+import {useMenuContext, useSubmenuTriggerContext} from './context';
 import {useMenuItem} from '@react-aria/menu';
 
 interface MenuItemProps<T> {
@@ -55,18 +55,18 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {direction} = useLocale();
 
-  let subMenuTriggerContext = useSubMenuTriggerContext();
+  let subMenuTriggerContext = useSubmenuTriggerContext();
   let {triggerRef, ...subMenuTriggerProps} = subMenuTriggerContext || {};
-  let isSubMenuTrigger = !!subMenuTriggerContext;
+  let isSubmenuTrigger = !!subMenuTriggerContext;
   let isUnavailable;
   let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
 
-  if (isSubMenuTrigger) {
+  if (isSubmenuTrigger) {
     isUnavailable = subMenuTriggerContext.isUnavailable;
   }
 
   let isDisabled = state.disabledKeys.has(key);
-  let isSelectable = !isSubMenuTrigger && state.selectionManager.selectionMode !== 'none';
+  let isSelectable = !isSubmenuTrigger && state.selectionManager.selectionMode !== 'none';
   let isSelected = isSelectable && state.selectionManager.isSelected(key);
   let itemref = useRef<any>(null);
   let ref = useObjectRef(useMemo(() => mergeRefs(itemref, triggerRef), [itemref, triggerRef]));
@@ -147,7 +147,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
                 isUnavailable && <InfoOutline slot="end" size="XS" alignSelf="center" aria-label={stringFormatter.format('unavailable')} />
               }
               {
-                isUnavailable == null && isSubMenuTrigger && (direction === 'rtl' ? <ChevronLeft slot="chevron" /> : <ChevronRight slot="chevron" />)
+                isUnavailable == null && isSubmenuTrigger && (direction === 'rtl' ? <ChevronLeft slot="chevron" /> : <ChevronRight slot="chevron" />)
               }
             </SlotProvider>
           </ClearSlots>

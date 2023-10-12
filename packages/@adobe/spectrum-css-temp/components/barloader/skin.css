@@ -12,6 +12,8 @@ governing permissions and limitations under the License.
 
 .spectrum-BarLoader {
   --spectrum-barloader-large-track-fill-color: var(--spectrum-accent-color-900);
+  --spectrum-barloader-static-black-track-color: rgba(0, 0, 0, 0.25);
+  --spectrum-barloader-static-black-fill-color: var(--spectrum-global-color-static-black);
 
   .spectrum-BarLoader-fill {
     background: var(--spectrum-barloader-large-track-fill-color);
@@ -39,16 +41,16 @@ governing permissions and limitations under the License.
   /* TODO: use semantic tokens or spectrum variables when available */
   &.spectrum-BarLoader--staticBlack {
     .spectrum-BarLoader-track {
-      background-color: rgba(0, 0, 0, 0.25);
+      background-color: var(--spectrum-barloader-static-black-track-color);
     }
 
     .spectrum-BarLoader-label,
     .spectrum-BarLoader-percentage {
-      color: var(--spectrum-global-color-static-black);
+      color: var(--spectrum-barloader-static-black-fill-color);
     }
 
     .spectrum-BarLoader-fill {
-      background: var(--spectrum-global-color-static-black);
+      background: var(--spectrum-barloader-static-black-fill-color);
     }
   }
   &.is-positive {
@@ -84,6 +86,9 @@ governing permissions and limitations under the License.
     forced-color-adjust: none;
     --spectrum-barloader-large-track-fill-color: ButtonText;
     --spectrum-barloader-large-over-background-track-fill-color: ButtonText;
+    --spectrum-barloader-large-over-background-track-color: ButtonFace;
+    --spectrum-barloader-static-black-track-color: ButtonFace;
+    --spectrum-barloader-static-black-fill-color: ButtonText;
     --spectrum-meter-large-track-color-positive: ButtonText;
     --spectrum-meter-large-track-color-warning: ButtonText;
     --spectrum-meter-large-track-color-critical: ButtonText;

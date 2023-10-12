@@ -242,14 +242,15 @@ governing permissions and limitations under the License.
     display: none;
   }
 
-  .spectrum-SubMenu-headingWrapper {
+  .spectrum-Submenu-headingWrapper {
     display: flex;
     margin: 4px 4px 0px 4px;
   }
 
-  .spectrum-SubMenu-heading {
+  .spectrum-Submenu-heading {
     display: flex;
     margin-top: 7px;
+    margin-bottom: 0px;
     margin-inline-start: 4px;
     font-weight: var(--spectrum-selectlist-heading-text-font-weight);
     font-size: var(--spectrum-dialog-title-text-size);

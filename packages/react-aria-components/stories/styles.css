@@ -248,3 +248,111 @@
   border-color: orange;
   background-color: transparent;
 }
+
+:global(.react-aria-Toolbar) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  &[data-orientation=vertical] {
+    flex-direction: column;
+  }
+  &[data-orientation=horizontal] {
+    flex-direction: row;
+  }
+}
+
+:global(.react-aria-Checkbox) {
+  --label-color: var(--spectrum-alias-text-color);
+  --deselected-color: gray;
+  --deselected-color-pressed: dimgray;
+  --selected-color: darkslateblue;
+  --selected-color-pressed: slateblue;
+  --checkmark-color: white;
+  --invalid-color: var(--spectrum-global-color-red-600);
+  --invalid-color-pressed: var(--spectrum-global-color-red-700);
+
+  display: flex;
+  align-items: center;
+  gap: 0.571rem;
+  font-size: 1.143rem;
+  color: var(--label-color);
+
+  :global(.checkbox) {
+    width: 1.143rem;
+    height: 1.143rem;
+    border: 2px solid var(--deselected-color);
+    border-radius: 4px;
+    transition: all 200ms;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  & svg {
+    width: 1rem;
+    height: 1rem;
+    fill: none;
+    stroke: var(--checkmark-color);
+    stroke-width: 3px;
+    stroke-dasharray: 22px;
+    stroke-dashoffset: 66;
+    transition: all 200ms;
+  }
+
+  &[data-pressed] :global(.checkbox) {
+    border-color: var(--deselected-color-pressed);
+  }
+
+  &[data-selected],
+  &[data-indeterminate] {
+    :global(.checkbox) {
+      border-color: var(--selected-color);
+      background: var(--selected-color);
+    }
+
+    &[data-pressed] :global(.checkbox) {
+      border-color: var(--selected-color-pressed);
+      background: var(--selected-color-pressed);
+    }
+
+    & svg {
+      stroke-dashoffset: 44;
+    }
+  }
+
+  &[data-invalid] {
+    :global(.checkbox) {
+      border-color: var(--invalid-color);
+    }
+
+    &[data-pressed] :global(.checkbox) {
+      border-color: var(--invalid-color-pressed);
+    }
+
+    &[data-selected],
+    &[data-indeterminate] {
+      :global(.checkbox) {
+        background: var(--invalid-color);
+      }
+
+      &[data-pressed] :global(.checkbox) {
+        background: var(--invalid-color-pressed);
+      }
+    }
+  }
+
+  &[data-indeterminate] {
+    & svg {
+      stroke: none;
+      fill: var(--checkmark-color);
+    }
+  }
+
+  &[data-focus-visible] :global(.checkbox) {
+    box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--selected-color);
+  }
+
+  &[data-disabled] {
+    opacity: 0.4;
+  }
+}

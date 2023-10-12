@@ -15,7 +15,7 @@ import React from 'react';
 
 // Open MenuTriggers behave funny if rendered off screen, especially with the offset stories
 const meta: Meta = {
-  title: 'MenuTriggerRTL/SubMenuTrigger',
+  title: 'MenuTriggerRTL/SubmenuTrigger',
   parameters: {
     chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['medium'], disableAnimations: true, express: false},
     // chromatic needs a bit more time than disableAnimations allows
@@ -29,4 +29,4 @@ export default meta;
 export {
   Default,
   Mobile
-} from './SubMenu.chromatic';
+} from './Submenu.chromatic';

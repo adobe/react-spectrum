@@ -29,14 +29,14 @@ import {useMenu} from '@react-aria/menu';
 import {useTreeState} from '@react-stately/tree';
 
 function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDivElement>) {
-  let isSubMenu = true;
+  let isSubmenu = true;
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let contextProps = useContext(MenuContext);
   let parentMenuContext = useMenuStateContext();
   let {rootMenuTriggerState, state: parentMenuTreeState} = parentMenuContext || {};
   if (!parentMenuContext) {
     rootMenuTriggerState = contextProps.state;
-    isSubMenu = false;
+    isSubmenu = false;
   }
   let completeProps = {
     ...mergeProps(contextProps, props)
@@ -65,29 +65,29 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   });
   let headingId = useSlotId();
   let menuLevel = contextProps.level || 0;
-  let hasOpenSubMenu = state.collection.getItem(rootMenuTriggerState?.UNSTABLE_expandedKeysStack[menuLevel]) != null;
+  let hasOpenSubmenu = state.collection.getItem(rootMenuTriggerState?.UNSTABLE_expandedKeysStack[menuLevel]) != null;
   // TODO: add slide transition
   return (
     <MenuStateContext.Provider value={{popoverContainerRef, trayContainerRef, menu: domRef, submenu: submenuRef, rootMenuTriggerState, state}}>
       <div ref={trayContainerRef} />
-      <FocusScope contain={hasOpenSubMenu}>
+      <FocusScope contain={hasOpenSubmenu}>
         <div
           // TODO: check if this role should always be applied, even for non submenu cases
           role={headingId ? 'dialog' : undefined}
           aria-labelledby={headingId}
-          aria-hidden={isMobile && hasOpenSubMenu}
+          aria-hidden={isMobile && hasOpenSubmenu}
           className={
             classNames(
               styles,
               'spectrum-Menu-wrapper',
               {
                 'spectrum-Menu-trayWrapper': isMobile,
-                'is-expanded': hasOpenSubMenu
+                'is-expanded': hasOpenSubmenu
               }
             )
         }>
-          {isMobile && isSubMenu && !hasOpenSubMenu && (
-            <div className={classNames(styles, 'spectrum-SubMenu-headingWrapper')}>
+          {isMobile && isSubmenu && !hasOpenSubmenu && (
+            <div className={classNames(styles, 'spectrum-Submenu-headingWrapper')}>
               <ActionButton
                 aria-label={backButtonLabel}
                 isQuiet
@@ -95,7 +95,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
                 {/* We don't have a ArrowLeftSmall so make due with ArrowDownSmall and transforms */}
                 {direction === 'rtl' ? <ArrowDownSmall UNSAFE_style={{rotate: '270deg'}} /> : <ArrowDownSmall UNSAFE_style={{rotate: '90deg'}} />}
               </ActionButton>
-              <h2 id={headingId} className={classNames(styles, 'spectrum-SubMenu-heading')}>{backButtonText}</h2>
+              <h2 id={headingId} className={classNames(styles, 'spectrum-Submenu-heading')}>{backButtonText}</h2>
             </div>
           )}
           <div

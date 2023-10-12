@@ -11,7 +11,10 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-CircleLoader {
+  /* TODO: Update to use semantic tokens when available */
   --spectrum-loader-circle-medium-track-fill-color: var(--spectrum-accent-color-900);
+  --spectrum-loader-circle-static-black-track-color: rgba(0, 0, 0, 0.25);
+  --spectrum-loader-circle-static-black-fill-color: var(--spectrum-global-color-static-black);
 }
 
 .spectrum-CircleLoader-track {
@@ -32,22 +35,12 @@ governing permissions and limitations under the License.
   }
 }
 
-/* TODO: use semantic tokens or spectrum variables when available */
 .spectrum-CircleLoader--staticBlack {
   .spectrum-CircleLoader-track {
-    border-color: rgba(0, 0, 0, 0.25);
+    border-color: var(--spectrum-loader-circle-static-black-track-color);
   }
   .spectrum-CircleLoader-fill {
-    border-color: var(--spectrum-global-color-static-black);
-  }
-}
-
-.spectrum-CircleLoader--indeterminate.spectrum-CircleLoader--overBackground {
-  .spectrum-CircleLoader-track {
-    border-color: var(--spectrum-loader-circle-medium-over-background-track-color);
-  }
-  .spectrum-CircleLoader-fill {
-    border-color: var(--spectrum-loader-circle-medium-over-background-track-fill-color);
+    border-color: var(--spectrum-loader-circle-static-black-fill-color);
   }
 }
 
@@ -55,6 +48,9 @@ governing permissions and limitations under the License.
   .spectrum-CircleLoader {
     --spectrum-loader-circle-medium-track-fill-color: Highlight;
     --spectrum-loader-circle-medium-over-background-track-fill-color: Highlight;
-    --spectrum-loader-circle-medium-track-color: CanvasText;
+    --spectrum-loader-circle-static-black-fill-color: Highlight;
+    --spectrum-loader-circle-medium-track-color: Background;
+    --spectrum-loader-circle-medium-over-background-track-color: Background;
+    --spectrum-loader-circle-static-black-track-color: Background;
   }
 }

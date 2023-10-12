@@ -13,7 +13,7 @@
 /// <reference types="css-module-types" />
 
 export {MenuTrigger} from './MenuTrigger';
-export {SubMenuTrigger} from './SubMenuTrigger';
+export {SubmenuTrigger} from './SubmenuTrigger';
 export {Menu} from './Menu';
 export {ActionMenu} from './ActionMenu';
 export {ContextualHelpTrigger} from './ContextualHelpTrigger';

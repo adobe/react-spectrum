@@ -11,28 +11,28 @@
  */
 
 import {classNames, useIsMobileDevice} from '@react-spectrum/utils';
-import {MenuContext, SubMenuTriggerContext, useMenuStateContext} from './context';
+import {MenuContext, SubmenuTriggerContext, useMenuStateContext} from './context';
 import {Popover} from '@react-spectrum/overlays';
 import React, {Key, ReactElement, useRef} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import {UNSTABLE_useSubMenuTrigger} from '@react-aria/menu';
-import {UNSTABLE_useSubMenuTriggerState} from '@react-stately/menu';
+import {UNSTABLE_useSubmenuTrigger} from '@react-aria/menu';
+import {UNSTABLE_useSubmenuTriggerState} from '@react-stately/menu';
 
-// TODO: Add shouldFlip and closeOnSelect if we feel like those should be customizable for SubMenuTrigger
+// TODO: Add shouldFlip and closeOnSelect if we feel like those should be customizable for SubmenuTrigger
 // Other MenuTriggerProps like onOpenChange and positioning stuff have been removed as per discussion
-interface SubMenuTriggerProps {
+interface SubmenuTriggerProps {
   /**
-   * The contents of the SubMenuTrigger - a Item and a Menu.
+   * The contents of the SubmenuTrigger - a Item and a Menu.
    */
   children: ReactElement[],
   targetKey: Key
 }
 
-export interface SpectrumSubMenuTriggerProps extends Omit<SubMenuTriggerProps, 'targetKey'> {}
+export interface SpectrumSubmenuTriggerProps extends Omit<SubmenuTriggerProps, 'targetKey'> {}
 
 // TODO: got rid of user provided ref support since it doesn't really make sense for submenus IMO
-function SubMenuTrigger(props: SubMenuTriggerProps) {
+function SubmenuTrigger(props: SubmenuTriggerProps) {
   let triggerRef = useRef<HTMLDivElement>();
   let {
     children,
@@ -42,8 +42,8 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
   let [menuTrigger, menu] = React.Children.toArray(children);
   let {popoverContainerRef, trayContainerRef, menu: parentMenuRef, submenu: menuRef, rootMenuTriggerState, state} = useMenuStateContext();
   let triggerNode = state.collection.getItem(targetKey);
-  let subMenuTriggerState = UNSTABLE_useSubMenuTriggerState({triggerKey: targetKey}, rootMenuTriggerState);
-  let {subMenuTriggerProps, subMenuProps, popoverProps, overlayProps} = UNSTABLE_useSubMenuTrigger({
+  let subMenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: targetKey}, rootMenuTriggerState);
+  let {subMenuTriggerProps, subMenuProps, popoverProps, overlayProps} = UNSTABLE_useSubmenuTrigger({
     node: triggerNode,
     parentMenuRef,
     subMenuRef: menuRef
@@ -71,7 +71,7 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
       <Popover
         {...popoverProps}
         {...overlayProps}
-        UNSAFE_className={classNames(styles, 'spectrum-SubMenu-popover')}
+        UNSAFE_className={classNames(styles, 'spectrum-Submenu-popover')}
         container={popoverContainerRef.current}
         offset={-10}
         containerPadding={0}
@@ -103,7 +103,7 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
 
   return (
     <>
-      <SubMenuTriggerContext.Provider value={{triggerRef, ...subMenuTriggerProps}}>{menuTrigger}</SubMenuTriggerContext.Provider>
+      <SubmenuTriggerContext.Provider value={{triggerRef, ...subMenuTriggerProps}}>{menuTrigger}</SubmenuTriggerContext.Provider>
       <MenuContext.Provider value={menuContext}>
         {overlay}
       </MenuContext.Provider>
@@ -111,7 +111,7 @@ function SubMenuTrigger(props: SubMenuTriggerProps) {
   );
 }
 
-SubMenuTrigger.getCollectionNode = function* (props: SpectrumSubMenuTriggerProps) {
+SubmenuTrigger.getCollectionNode = function* (props: SpectrumSubmenuTriggerProps) {
   let childArray: ReactElement[] = [];
   React.Children.forEach(props.children, child => {
     if (React.isValidElement(child)) {
@@ -124,13 +124,13 @@ SubMenuTrigger.getCollectionNode = function* (props: SpectrumSubMenuTriggerProps
   yield {
     element: React.cloneElement(trigger, {...trigger.props, hasChildItems: true, isTrigger: true}),
     wrapper: (element) => (
-      <SubMenuTrigger key={element.key} targetKey={element.key} {...props}>
+      <SubmenuTrigger key={element.key} targetKey={element.key} {...props}>
         {element}
         {content}
-      </SubMenuTrigger>
+      </SubmenuTrigger>
     )
   };
 };
 
-let _SubMenuTrigger = SubMenuTrigger as (props: SpectrumSubMenuTriggerProps) => JSX.Element;
-export {_SubMenuTrigger as SubMenuTrigger};
+let _SubmenuTrigger = SubmenuTrigger as (props: SpectrumSubmenuTriggerProps) => JSX.Element;
+export {_SubmenuTrigger as SubmenuTrigger};

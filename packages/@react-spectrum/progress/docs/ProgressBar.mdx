@@ -112,7 +112,7 @@ By default, the value label is formatted as a percentage. This can be customized
 
 Depending on the visualization being used (i.e. depending on the `showValueLabel` prop), a `label`, `aria-label`, or `aria-labelledby` prop is required.
 
-If using the over background variant, ensure the background offers enough contrast for the ProgressBar to be legible and meets color contrast guidelines.
+If using the `staticColor` prop, ensure the background offers enough contrast for the ProgressBar to be legible and meets color contrast guidelines.
 
 ### Internationalization
 
@@ -128,14 +128,16 @@ ProgressBar automatically uses the current locale to format the value label.
 
 ## Visual options
 
-### Over background
-[View guidelines](https://spectrum.adobe.com/page/progress-bar/#Over-background-variant)
+### Static color
 
-When a ProgressBar needs to be placed on top of a colored background, use the `overBackground` variant.
+When a ProgressBar needs to be placed on top of a dark background, use `staticColor='white'`. When it is placed over a light background, use `staticColor='black'`.
 
 ```tsx example
-<View backgroundColor="positive" padding="size-300">
-  <ProgressBar label="Loading…" variant="overBackground" value={5} />
+<View backgroundColor="static-blue-700" padding="size-300">
+  <ProgressBar label="Loading…" staticColor="white" value={5} />
+</View>
+<View backgroundColor="static-yellow-400" padding="size-300">
+  <ProgressBar label="Loading…" staticColor="black" value={5} />
 </View>
 ```
 
