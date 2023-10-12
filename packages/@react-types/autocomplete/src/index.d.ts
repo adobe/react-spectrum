@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, CollectionBase, DOMProps, LoadingState, SpectrumFieldValidation, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps} from '@react-types/shared';
-import {Key, ReactElement} from 'react';
+import {AriaLabelingProps, AsyncLoadable, CollectionBase, DOMProps, Key, LoadingState, SpectrumFieldValidation, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps} from '@react-types/shared';
 import {MenuTriggerAction} from '@react-types/combobox';
+import {ReactElement} from 'react';
 import {SearchFieldProps} from '@react-types/searchfield';
 
 export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<SearchFieldProps, 'onSubmit' | 'defaultValue' | 'value'> {

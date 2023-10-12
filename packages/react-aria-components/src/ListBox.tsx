@@ -17,6 +17,7 @@ import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContex
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, useListState} from 'react-stately';
 import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {Header} from './Header';
+import {Key} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
@@ -136,7 +137,7 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
       collection,
       collator,
       ref: listBoxRef,
-      disabledKeys: disabledBehavior === 'selection' ? new Set<React.Key>() : disabledKeys,
+      disabledKeys: disabledBehavior === 'selection' ? new Set<Key>() : disabledKeys,
       layout,
       orientation,
       direction

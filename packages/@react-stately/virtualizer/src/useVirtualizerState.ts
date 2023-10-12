@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection} from '@react-types/shared';
-import {Key, useCallback, useEffect, useMemo, useState} from 'react';
+import {Collection, Key} from '@react-types/shared';
 import {Layout} from './Layout';
 import {Rect} from './Rect';
 import {ReusableView} from './ReusableView';
 import {Size} from './Size';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 import {Virtualizer} from './Virtualizer';
 

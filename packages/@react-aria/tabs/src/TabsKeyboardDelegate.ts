@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Direction, KeyboardDelegate, Orientation} from '@react-types/shared';
-import {Key} from 'react';
+import {Collection, Direction, Key, KeyboardDelegate, Orientation} from '@react-types/shared';
+
 
 export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
   private collection: Collection<T>;

@@ -1,4 +1,4 @@
-import {AriaLabelingProps, LinkDOMProps} from '@react-types/shared';
+import {AriaLabelingProps, Key, LinkDOMProps} from '@react-types/shared';
 import {BaseCollection, CollectionContext, CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useCollectionChildren, useSSRCollectionNode} from './Collection';
 import {buildHeaderRows, TableColumnResizeState} from '@react-stately/table';
 import {ButtonContext} from './Button';
@@ -12,7 +12,7 @@ import {filterDOMProps, useLayoutEffect, useObjectRef, useResizeObserver} from '
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {createContext, ForwardedRef, forwardRef, Key, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 
 class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {

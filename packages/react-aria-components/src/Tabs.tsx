@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, LinkDOMProps} from '@react-types/shared';
+import {AriaLabelingProps, Key, LinkDOMProps} from '@react-types/shared';
 import {AriaTabListProps, AriaTabPanelProps, mergeProps, Orientation, useFocusRing, useHover, useTab, useTabList, useTabPanel} from 'react-aria';
 import {Collection, Node, TabListState, useTabListState} from 'react-stately';
 import {CollectionDocumentContext, CollectionPortal, CollectionProps, useCollectionDocument, useSSRCollectionNode} from './Collection';
 import {ContextValue, createHideableComponent, forwardRefType, Hidden, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
-import React, {createContext, ForwardedRef, forwardRef, Key, RefObject, useContext, useMemo} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext, useMemo} from 'react';
 
 export interface TabsProps extends Omit<AriaTabListProps<any>, 'items' | 'children'>, RenderProps<TabsRenderProps>, SlotProps {}
 

@@ -11,8 +11,8 @@
  */
 
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
+import {Key} from '@react-types/shared';
 import React, {useState} from 'react';
-import {ReactAria} from '@react-types/shared';
 import {SearchField} from '@react-spectrum/searchfield';
 
 let manyColumns = [];
@@ -73,7 +73,7 @@ function SearchExample() {
         <TableBody items={items}>
           {item =>
             (<Row key={item.foo}>
-              {key => <Cell>{item[key]}</Cell>}
+              {(key: Key) => <Cell>{item[key]}</Cell>}
             </Row>)
           }
         </TableBody>

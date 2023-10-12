@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 import {GridNode, GridRow, GridCollection as IGridCollection} from '@react-types/grid';
-import {Key} from 'react';
+
+import {Key} from '@react-types/shared';
 
 
 interface GridCollectionOptions<T> {

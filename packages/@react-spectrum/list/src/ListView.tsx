@@ -11,7 +11,7 @@
  */
 
 import {AriaGridListProps, useGridList} from '@react-aria/gridlist';
-import {AsyncLoadable, DOMRef, LoadingState, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import {AsyncLoadable, DOMRef, Key, LoadingState, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import type {DragAndDropHooks} from '@react-spectrum/dnd';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
@@ -26,7 +26,7 @@ import {ListState, useListState} from '@react-stately/list';
 import listStyles from './styles.css';
 import {ListViewItem} from './ListViewItem';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {Key, ReactElement, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {ReactElement, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import RootDropIndicator from './RootDropIndicator';
 import {DragPreview as SpectrumDragPreview} from './DragPreview';
 import {useCollator, useLocalizedStringFormatter} from '@react-aria/i18n';

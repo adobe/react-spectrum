@@ -9,12 +9,12 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {CollectionBase, LinkDOMProps} from '@react-types/shared';
+import {CollectionBase, Key, LinkDOMProps} from '@react-types/shared';
 import {createPortal} from 'react-dom';
 import {forwardRefType, RenderProps, StyleProps} from './utils';
 import {Collection as ICollection, Node, SelectionBehavior, SelectionMode, ItemProps as SharedItemProps, SectionProps as SharedSectionProps} from 'react-stately';
 import {mergeProps, useIsSSR} from 'react-aria';
-import React, {cloneElement, createContext, ForwardedRef, forwardRef, Key, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef} from 'react';
+import React, {cloneElement, createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef} from 'react';
 import {useSyncExternalStore as useSyncExternalStoreShim} from 'use-sync-external-store/shim/index.js';
 
 // This Collection implementation is perhaps a little unusual. It works by rendering the React tree into a
