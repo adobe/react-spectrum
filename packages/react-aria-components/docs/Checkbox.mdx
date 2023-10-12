@@ -58,9 +58,18 @@ import {Checkbox} from 'react-aria-components';
 
 ```css
 @layer checkbox;
-@layer checkbox.layout, checkbox.theme, checkbox.selected, checkbox.indeterminate, checkbox.invalid, checkbox.disabled, checkbox.hcm;
+@layer checkbox.layout, checkbox.hcm;
 @layer checkbox.layout {
   .react-aria-Checkbox {
+    --label-color: var(--spectrum-alias-text-color);
+    --deselected-color: gray;
+    --deselected-color-pressed: dimgray;
+    --selected-color: slateblue;
+    --selected-color-pressed: lch(from slateblue calc(l - 10%) c h);
+    --checkmark-color: white;
+    --invalid-color: var(--spectrum-global-color-red-600);
+    --invalid-color-pressed: var(--spectrum-global-color-red-700);
+
     display: flex;
     align-items: center;
     gap: 0.571rem;
@@ -95,48 +104,6 @@ import {Checkbox} from 'react-aria-components';
     &[data-focus-visible] .checkbox {
       box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--selected-color);
     }
-  }
-}
-
-/* this part would move out to a different theme file */
-@layer checkbox.theme {
-  .react-aria-Checkbox {
-    --label-color: var(--spectrum-alias-text-color);
-    --deselected-color: gray;
-    --deselected-color-pressed: dimgray;
-    --selected-color: slateblue;
-    --selected-color-pressed: lch(from slateblue calc(l - 10%) c h);
-    --checkmark-color: white;
-    --invalid-color: var(--spectrum-global-color-red-600);
-    --invalid-color-pressed: var(--spectrum-global-color-red-700);
-  }
-}
-@layer checkbox.hcm {
-  @media (forced-colors: active) {
-    .react-aria-Checkbox {
-      forced-color-adjust: none;
-
-      --label-color: ButtonText;
-      --deselected-color: ButtonBorder;
-      --deselected-color-pressed: ButtonBorder;
-      --selected-color: Highlight;
-      --selected-color-pressed: Highlight;
-      --checkmark-color: HighlightText;
-      --invalid-color: LinkText;
-      --invalid-color-pressed: LinkText;
-      --spectrum-alias-background-color-default: Canvas;
-
-      &[data-disabled] {
-        --deselected-color: GrayText;
-        --selected-color: GrayText;
-        --label-color: GrayText;
-      }
-    }
-  }
-}
-
-@layer checkbox.selected {
-  .react-aria-Checkbox {
     &[data-selected],
     &[data-indeterminate] {
       .checkbox {
@@ -158,6 +125,29 @@ import {Checkbox} from 'react-aria-components';
       & svg {
         stroke: none;
         fill: var(--checkmark-color);
+      }
+    }
+  }
+}
+@layer checkbox.hcm {
+  @media (forced-colors: active) {
+    .react-aria-Checkbox {
+      forced-color-adjust: none;
+
+      --label-color: ButtonText;
+      --deselected-color: ButtonBorder;
+      --deselected-color-pressed: ButtonBorder;
+      --selected-color: Highlight;
+      --selected-color-pressed: Highlight;
+      --checkmark-color: HighlightText;
+      --invalid-color: LinkText;
+      --invalid-color-pressed: LinkText;
+      --spectrum-alias-background-color-default: Canvas;
+
+      &[data-disabled] {
+        --deselected-color: GrayText;
+        --selected-color: GrayText;
+        --label-color: GrayText;
       }
     }
   }
@@ -276,7 +266,7 @@ Implement your own validation logic in your app and set the `isInvalid` prop acc
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer checkbox.invalid {
+@layer checkbox.layout {
   .react-aria-Checkbox {
     &[data-invalid] {
       .checkbox {
@@ -315,7 +305,7 @@ Checkboxes can be disabled using the `isDisabled` prop.
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer checkbox.disabled {
+@layer checkbox.layout {
   .react-aria-Checkbox {
     &[data-disabled] {
       opacity: 0.4;
