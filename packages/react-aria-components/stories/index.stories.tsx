@@ -14,7 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Checkbox, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Tag, TagGroup, TagList, Text, TextField, TimeField, ToggleButton, Toolbar, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
-import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
+import {FocusRing, isTextDropItem, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
 import React, {useRef, useState} from 'react';
 import {RouterProvider} from '@react-aria/utils';
 import styles from '../example/index.css';
@@ -712,6 +712,82 @@ export const TabsRenderProps = () => {
     </div>
   );
 };
+
+const ReorderableTable = ({initialItems}: {initialItems: {id: string, name: string}[]}) => {
+  let list = useListData({initialItems});
+
+  const {dragAndDropHooks} = useDragAndDrop({
+    getItems: keys => {
+      return [...keys].map(k => {
+        const item = list.getItem(k);
+        return {
+          'text/plain': item.id,
+          item: JSON.stringify(item)
+        };
+      });
+    },
+    getDropOperation: () => 'move',
+    onReorder: e => {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    },
+    onInsert: async e => {
+      const processedItems = await Promise.all(
+        e.items.filter(isTextDropItem).map(async item => JSON.parse(await item.getText('item')))
+      );
+      if (e.target.dropPosition === 'before') {
+        list.insertBefore(e.target.key, ...processedItems);
+      } else if (e.target.dropPosition === 'after') {
+        list.insertAfter(e.target.key, ...processedItems);
+      }
+    },
+
+    onDragEnd: e => {
+      if (e.dropOperation === 'move' && !e.isInternal) {
+        list.remove(...e.keys);
+      }
+    },
+
+    onRootDrop: async e => {
+      const processedItems = await Promise.all(
+        e.items.filter(isTextDropItem).map(async item => JSON.parse(await item.getText('item')))
+      );
+
+      list.append(...processedItems);
+    }
+  });
+
+  return (
+    <Table aria-label="Reorderable table" dragAndDropHooks={dragAndDropHooks}>
+      <TableHeader>
+        <MyColumn isRowHeader defaultWidth="50%">Id</MyColumn>
+        <MyColumn>Name</MyColumn>
+      </TableHeader>
+      <TableBody items={list.items} renderEmptyState={({isDropTarget}) => <span style={{color: isDropTarget ? 'red' : 'black'}}>Drop items here</span>}>
+        {item => (
+          <Row>
+            <Cell>{item.id}</Cell>
+            <Cell>{item.name}</Cell>
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+};
+
+export const ReorderableTableExample = () => (
+  <>
+    <ResizableTableContainer style={{width: 300, overflow: 'auto'}}>
+      <ReorderableTable initialItems={[{id: '1', name: 'Bob'}]} />
+    </ResizableTableContainer>
+    <ResizableTableContainer style={{width: 300, overflow: 'auto'}}>
+      <ReorderableTable initialItems={[{id: '2', name: 'Alex'}]} />
+    </ResizableTableContainer>
+  </>
+);
 
 export const TableExample = () => {
   let list = useListData({
