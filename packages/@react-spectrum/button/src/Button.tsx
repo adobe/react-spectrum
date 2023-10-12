@@ -98,6 +98,60 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
     staticColor = 'white';
   }
 
+
+  const getLabelFromChildren = ():string => {
+    // Text for spinner aria-label could come from one or more of:
+    // - child string
+    // - aria-label of button props
+    // - child Text component
+    // - child icon aria-label
+    // - could be absent
+
+    console.log('kids', children);
+
+    let label = [];
+
+    if (typeof children === 'string') {
+      label.push(children);
+    }
+
+    // Might need to skip this one as it would still be on the button and adding pending might announce ok
+    // Test how it announces
+    if (props['aria-label']) {
+      label.push(props['aria-label']);
+    }
+
+    // Is this really the best I can do?
+    if (
+      Object.prototype.hasOwnProperty.call(children, 'props') &&
+      Object.prototype.hasOwnProperty.call(children['props'], 'children') &&
+      typeof children['props']['children'] === 'string'
+    ) {
+      label.push(children['props']['children']);
+    }
+    if (
+      Object.prototype.hasOwnProperty.call(children, 'props') &&
+      Object.prototype.hasOwnProperty.call(children['props'], 'aria-label')
+    ) {
+      label.push(children['props']['aria-label']);
+    }
+
+    if (Array.isArray(children)) {
+      children.forEach((child) => {
+        if (typeof child.props.children === 'string') {
+          label.push(child.props.children);
+        }
+        if (child.props['aria-label']) {
+          label.push(child.props['aria-label']);
+        }
+      });
+    }
+
+    // localize
+    label.push(stringFormatter.format('loading'));
+    return label.join(' ');
+  };
+
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
       <ElementType
@@ -134,7 +188,7 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
             }
           }}>
           {isProgressVisible && <ProgressCircle
-            aria-label={stringFormatter.format('loading')}
+            aria-label={getLabelFromChildren()}
             isIndeterminate
             size="S"
             UNSAFE_className={classNames(styles, 'spectrum-Button-circleLoader')}

@@ -291,7 +291,7 @@ function Pending(props) {
         <PendingButtonContainerComponent {...props}>
           <TooltipTrigger offset={2}>
             <Button {...props} aria-label="Notifications" onPress={() => {window.alert('use storybook control to change this button isPending prop');}}>
-              <Bell />
+              <Bell aria-label="Hidden label" />
             </Button>
             <Tooltip>Notifications</Tooltip>
           </TooltipTrigger>
@@ -299,7 +299,7 @@ function Pending(props) {
 
         <PendingButtonContainerComponent {...props}>
           <Button {...props} aria-label="No tooltip" onPress={() => {window.alert('use storybook control to change this button isPending prop');}}>
-            <Bell />
+            <Bell aria-label="two aria labels" />
           </Button>
         </PendingButtonContainerComponent>
 
