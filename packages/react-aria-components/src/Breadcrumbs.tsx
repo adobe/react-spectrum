@@ -79,7 +79,7 @@ export interface BreadcrumbProps extends StyleProps {
   children: ReactNode
 }
 
-function Breadcrumb(props: BreadcrumbProps, ref: ForwardedRef<HTMLLIElement>): JSX.Element | null {
+function Breadcrumb(props: BreadcrumbProps, ref: ForwardedRef<HTMLLIElement>): React.JSX.Element | null {
   return useSSRCollectionNode('item', props, ref, props.children);
 }
 

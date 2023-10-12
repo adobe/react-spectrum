@@ -59,7 +59,7 @@ export function Link(props: SpectrumLinkProps) {
     )
   };
 
-  let link: JSX.Element;
+  let link: React.JSX.Element;
   if (href) {
     link = <a {...domProps}>{children}</a>;
   } else {

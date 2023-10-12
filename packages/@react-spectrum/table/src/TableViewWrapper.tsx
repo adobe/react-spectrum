@@ -32,7 +32,7 @@ export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionP
   /** Whether the TableView should be displayed with a quiet style. */
   isQuiet?: boolean,
   /** Sets what the TableView should render when there is no content to display. */
-  renderEmptyState?: () => JSX.Element,
+  renderEmptyState?: () => React.JSX.Element,
   /** Handler that is called when a user performs an action on a row. */
   onAction?: (key: Key) => void,
   /**

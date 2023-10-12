@@ -191,7 +191,7 @@ function TabsInner({props, tabsRef: ref, collection}: TabsInnerProps) {
 const _Tabs = /*#__PURE__*/ (forwardRef as forwardRefType)(Tabs);
 export {_Tabs as Tabs};
 
-function TabList<T extends object>(props: TabListProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element {
+function TabList<T extends object>(props: TabListProps<T>, ref: ForwardedRef<HTMLDivElement>): React.JSX.Element {
   let document = useContext(CollectionDocumentContext);
   return document
     ? <CollectionPortal {...props} />
@@ -251,7 +251,7 @@ function TabListInner<T extends object>({props, forwardedRef: ref}: TabListInner
 const _TabList = /*#__PURE__*/ (forwardRef as forwardRefType)(TabList);
 export {_TabList as TabList};
 
-function Tab(props: TabProps, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
+function Tab(props: TabProps, ref: ForwardedRef<HTMLDivElement>): React.JSX.Element | null {
   return useSSRCollectionNode('item', props, ref, props.children);
 }
 

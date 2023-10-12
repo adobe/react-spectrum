@@ -45,7 +45,7 @@ export interface SpectrumTagGroupProps<T> extends Omit<AriaTagGroupProps<T>, 'se
   /** Handler that is called when the action button is pressed. */
   onAction?: () => void,
   /** Sets what the TagGroup should render when there are no tags to display. */
-  renderEmptyState?: () => JSX.Element,
+  renderEmptyState?: () => React.JSX.Element,
   /** Limit the number of rows initially shown. This will render a button that allows the user to expand to show all tags. */
   maxRows?: number
 }

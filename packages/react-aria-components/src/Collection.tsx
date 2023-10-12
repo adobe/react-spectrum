@@ -890,7 +890,7 @@ export interface ItemProps<T = object> extends Omit<SharedItemProps<T>, 'childre
   value?: T
 }
 
-function Item<T extends object>(props: ItemProps<T>, ref: ForwardedRef<HTMLElement>): JSX.Element | null {
+function Item<T extends object>(props: ItemProps<T>, ref: ForwardedRef<HTMLElement>): React.JSX.Element | null {
   return useSSRCollectionNode('item', props, ref, props.children);
 }
 
@@ -906,7 +906,7 @@ export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children' 
   children?: ReactNode | ((item: T) => ReactElement)
 }
 
-function Section<T extends object>(props: SectionProps<T>, ref: ForwardedRef<HTMLElement>): JSX.Element | null {
+function Section<T extends object>(props: SectionProps<T>, ref: ForwardedRef<HTMLElement>): React.JSX.Element | null {
   let children = useCollectionChildren(props);
   return useSSRCollectionNode('section', props, ref, null, children);
 }
@@ -918,7 +918,7 @@ export const CollectionContext = createContext<CachedChildrenOptions<unknown> | 
 export const CollectionRendererContext = createContext<CollectionProps<any>['children']>(null);
 
 /** A Collection renders a list of items, automatically managing caching and keys. */
-export function Collection<T extends object>(props: CollectionProps<T>): JSX.Element {
+export function Collection<T extends object>(props: CollectionProps<T>): React.JSX.Element {
   let ctx = useContext(CollectionContext)!;
   props = mergeProps(ctx, props);
   let renderer = typeof props.children === 'function' ? props.children : null;

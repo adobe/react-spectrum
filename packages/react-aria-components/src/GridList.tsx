@@ -118,7 +118,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   let dropState: DroppableCollectionState | undefined = undefined;
   let droppableCollection: DroppableCollectionResult | undefined = undefined;
   let isRootDropTarget = false;
-  let dragPreview: JSX.Element | null = null;
+  let dragPreview: React.JSX.Element | null = null;
   let preview = useRef<DragPreviewRenderer>(null);
 
   if (isListDraggable && dragAndDropHooks) {

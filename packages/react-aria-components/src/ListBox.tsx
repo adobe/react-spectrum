@@ -181,7 +181,7 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
   let dropState: DroppableCollectionState | undefined = undefined;
   let droppableCollection: DroppableCollectionResult | undefined = undefined;
   let isRootDropTarget = false;
-  let dragPreview: JSX.Element | null = null;
+  let dragPreview: React.JSX.Element | null = null;
   let preview = useRef<DragPreviewRenderer>(null);
 
   if (isListDraggable && dragAndDropHooks) {
@@ -229,7 +229,7 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
     values: renderValues
   });
 
-  let emptyState: JSX.Element | null = null;
+  let emptyState: React.JSX.Element | null = null;
   if (state.collection.size === 0 && props.renderEmptyState) {
     emptyState = (
       <div

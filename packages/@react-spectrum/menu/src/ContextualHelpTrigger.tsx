@@ -122,5 +122,5 @@ ContextualHelpTrigger.getCollectionNode = function* getCollectionNode<T>(props: 
   };
 };
 
-let _Item = ContextualHelpTrigger as (props: SpectrumMenuDialogTriggerProps) => JSX.Element;
+let _Item = ContextualHelpTrigger as (props: SpectrumMenuDialogTriggerProps) => React.JSX.Element;
 export {_Item as ContextualHelpTrigger};

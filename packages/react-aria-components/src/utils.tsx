@@ -52,13 +52,13 @@ interface ProviderProps<A, B, C, D, E, F, G, H, I, J> {
   children: ReactNode
 }
 
-export function Provider<A, B, C, D, E, F, G, H, I, J>({values, children}: ProviderProps<A, B, C, D, E, F, G, H, I, J>): JSX.Element {
+export function Provider<A, B, C, D, E, F, G, H, I, J>({values, children}: ProviderProps<A, B, C, D, E, F, G, H, I, J>): React.JSX.Element {
   for (let [Context, value] of values) {
     // @ts-ignore
     children = <Context.Provider value={value}>{children}</Context.Provider>;
   }
 
-  return children as JSX.Element;
+  return children as React.JSX.Element;
 }
 
 export interface StyleProps {

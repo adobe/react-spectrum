@@ -196,7 +196,7 @@ export interface TagProps extends RenderProps<TagRenderProps>, LinkDOMProps {
   textValue?: string
 }
 
-function Tag(props: TagProps, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
+function Tag(props: TagProps, ref: ForwardedRef<HTMLDivElement>): React.JSX.Element | null {
   return useSSRCollectionNode('item', props, ref, props.children);
 }
 

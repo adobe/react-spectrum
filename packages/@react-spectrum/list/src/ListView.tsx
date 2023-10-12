@@ -49,7 +49,7 @@ export interface SpectrumListViewProps<T> extends AriaGridListProps<T>, StylePro
    */
   overflowMode?: 'truncate' | 'wrap',
   /** Sets what the ListView should render when there is no content to display. */
-  renderEmptyState?: () => JSX.Element,
+  renderEmptyState?: () => React.JSX.Element,
   /**
    * Handler that is called when a user performs an action on an item. The exact user event depends on
    * the collection's `selectionStyle` prop and the interaction modality.
